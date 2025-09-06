@@ -64,9 +64,9 @@ void SetInvisibleWalls();
 void SetTraps();
 void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y);
 void PaintMaze(CDC *pDC);
-CPoint GetRandomPoint(BOOL bRight);
+CPoint GetRandomPoint(bool bRight);
 CPoint ScreenToTile(CPoint pointScreen);
-BOOL InArtRegion(CPoint point);
+bool InArtRegion(CPoint point);
 
 CBmpButton  *m_pScrollButton;
 CSprite     *_playerSprite = nullptr;
@@ -87,10 +87,10 @@ CText       *m_pTimeText = nullptr;                // Time to be posted in Local
 CBitmap     *_localeBitmap = nullptr,              // Locale of game bitmap for title bar
              *_blankBitmap = nullptr;               // Blank area of locale for time display
 
-BOOL        _success;
-BOOL        m_bIgnoreScrollClick;
-BOOL        _playing;
-BOOL        _gameOver = FALSE;
+bool        _success;
+bool        m_bIgnoreScrollClick;
+bool        _playing;
+bool        _gameOver = false;
 POINT       _playerPos;
 unsigned int        m_nPlayerID = PODJ;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
@@ -106,7 +106,7 @@ struct  TILE {          // Data type for each square of the underlying Grid of t
 	unsigned int    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
 	unsigned int    m_nTrap;    // Index of trap bitmap to use for drawing
 	POINT   m_nDest;    // x,y Tile location of Trap exit point
-	BOOL    m_bHidden;  // 0 = Visible, 1 = Invisible
+	bool    m_bHidden;  // 0 = Visible, 1 = Invisible
 } _mazeTile[NUM_COLUMNS][NUM_ROWS];
 
 static CSound   *_gameSound = nullptr;                             // Game theme song
@@ -189,7 +189,7 @@ CMainWindow::CMainWindow() {
 	pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
 	delete pSourceDoc;
 
-	pDC->SelectPalette(pGamePalette, FALSE);            // select the game palette
+	pDC->SelectPalette(pGamePalette, false);            // select the game palette
 	pDC->RealizePalette();                              //...and realize it
 
 	ShowWindow(SW_SHOWNORMAL);
@@ -205,7 +205,7 @@ CMainWindow::CMainWindow() {
 	ASSERT(_success);
 	_success = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, 0, 0);
 	ASSERT(_success);
-	m_bIgnoreScrollClick = FALSE;
+	m_bIgnoreScrollClick = false;
 
 	pMazeBitmap = new CBitmap();
 	pMazeDC = new CDC();
@@ -213,7 +213,7 @@ CMainWindow::CMainWindow() {
 	pMazeBitmap->CreateCompatibleBitmap(pDC, NUM_COLUMNS * SQ_SIZE_X, NUM_ROWS * SQ_SIZE_Y);    // Set up MazeBitmap
 	pMazeDC->CreateCompatibleDC(pDC);                                   //...and DC
 	pOldBmp = pMazeDC->SelectObject(pMazeBitmap);                       // select the bitmap in
-	pOldPal = pMazeDC->SelectPalette(pGamePalette, FALSE);              // select the game palette
+	pOldPal = pMazeDC->SelectPalette(pGamePalette, false);              // select the game palette
 	pMazeDC->RealizePalette();                                          //...and realize it
 
 //
@@ -248,8 +248,8 @@ CMainWindow::CMainWindow() {
 	(*_playerSprite).SharePalette(pGamePalette);
 	_success = (*_playerSprite).LoadResourceCels(pDC, IDB_HODJ_LEFT + m_nPlayerID, NUM_CELS);
 	ASSERT(_success);
-	(*_playerSprite).SetMasked(TRUE);
-	(*_playerSprite).SetMobile(TRUE);
+	(*_playerSprite).SetMasked(true);
+	(*_playerSprite).SetMobile(true);
 
 	_localeBitmap = FetchResourceBitmap(pDC, nullptr, "IDB_LOCALE_BMP");
 	ASSERT(_localeBitmap != nullptr);
@@ -291,7 +291,7 @@ CMainWindow::CMainWindow() {
 	create_maze();             // create a maze layout given the intiialized maze
 	SetUpMaze();                // "translate" from the created maze into uniform grid of doom
 	PaintMaze(pMazeDC);         // draw it in the MazeBitmap
-	_playing = TRUE;
+	_playing = true;
 	SetTimer(GAME_TIMER, CLICK_TIME, nullptr);     // Reset ticker
 
 	if (pGameInfo->bMusicEnabled) {
@@ -318,7 +318,7 @@ CMainWindow::CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(nullptr, FALSE);                // invalidate the entire window
+	InvalidateRect(nullptr, false);                // invalidate the entire window
 	BeginPaint(&lpPaint);
 	SplashScreen();
 	EndPaint(&lpPaint);
@@ -338,7 +338,7 @@ void CMainWindow::SplashScreen() {
 	pDC = GetDC();
 
 	myDoc.OpenDocument(MAINSCREEN);
-	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);                            // Select Game Palette
+	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
 	pDC->RealizePalette();                              // Realize the palette to prevent palette shifting
 
 	hDIB = myDoc.GetHDIB();
@@ -372,7 +372,7 @@ void CMainWindow::SplashScreen() {
 			PaintBitmap(pDC, pGamePalette, _localeBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
 
-	(*pDC).SelectPalette(pPalOld, FALSE);                                           // Select back old palette
+	(*pDC).SelectPalette(pPalOld, false);                                           // Select back old palette
 	ReleaseDC(pDC);
 }
 
@@ -388,7 +388,7 @@ void CMainWindow::SplashScreen() {
 // typically in order to process control related activities.
 //
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 
@@ -408,12 +408,12 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_RULES:
 			KillTimer(GAME_TIMER);
 			CSound::waitWaveSounds();
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 
 			(void) RulesDlg.DoModal();
-			m_bIgnoreScrollClick = FALSE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+			m_bIgnoreScrollClick = false;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
 			if (!_gameOver)
 				SetTimer(GAME_TIMER, CLICK_TIME, nullptr);                     // Reset ticker
 			break;
@@ -421,28 +421,28 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_SCROLL:
 			KillTimer(GAME_TIMER);
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
 
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
-			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			CSound::waitWaveSounds();
 
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_OPTIONS_NEWGAME:                           // Selected New Game
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
 				if (!pGameInfo->bPlayingMetagame)
 					NewGame();
 				break;
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
 				if (!_gameOver)
 					SetTimer(GAME_TIMER, CLICK_TIME, nullptr);     // Reset ticker
 				break;
@@ -452,7 +452,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					pGameInfo->lScore = 0;
 				PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
 				ReleaseDC(pDC);
-				return FALSE;
+				return false;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -470,15 +470,15 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 			}
 
-			m_bIgnoreScrollClick = FALSE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+			m_bIgnoreScrollClick = false;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
 			break;
 		} //end switch(wParam)
 		ReleaseDC(pDC);
 	} // end if
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 
@@ -515,7 +515,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	                  NEWGAME_LOCATION_X + NEWGAME_WIDTH,
 	                  NEWGAME_LOCATION_Y + NEWGAME_HEIGHT);
 
-	if (rectTitle.PtInRect(point) && (pGameInfo->bPlayingMetagame == FALSE))
+	if (rectTitle.PtInRect(point) && (pGameInfo->bPlayingMetagame == false))
 		NewGame();                              // Activate New Game
 
 	if (_playing && InArtRegion(point)) {
@@ -766,8 +766,8 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 
 		if (_minutes == 0 && _seconds == 0) {           // No time left on the clock!!
 			KillTimer(nIDEvent);                        // Stop the Display timer
-			_playing = FALSE;
-			_gameOver = TRUE;
+			_playing = false;
+			_gameOver = true;
 			if (pGameInfo->bSoundEffectsEnabled) {
 				pEffect = new CSound((CWnd *)this, LOSE_SOUND,
 				                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
@@ -852,8 +852,8 @@ void CMainWindow::NewGame() {
 	if (_playerSprite != nullptr)
 		(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 		                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Display PLAYER
-	_playing = TRUE;                                // Game is started
-	_gameOver = FALSE;
+	_playing = true;                                // Game is started
+	_gameOver = false;
 
 	PaintBitmap(pDC, pGamePalette, _blankBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	if (_time == 0)
@@ -900,7 +900,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 	CPoint  NewPosition;
 	CPoint  TileLocation;
 	CPoint  Hit;
-	BOOL    bCollision = FALSE;
+	bool    bCollision = false;
 	POINT   Delta;
 	POINT   Step;
 	unsigned int    nBmpID = IDB_HODJ_RIGHT;
@@ -953,7 +953,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 
 			if (_mazeTile[NewPosition.x][NewPosition.y].m_nWall == PATH ||       // Either a pathway
 			        ((_mazeTile[NewPosition.x][NewPosition.y].m_nWall == TRAP &&     //...or a
-			          _mazeTile[NewPosition.x][NewPosition.y].m_bHidden == FALSE) ||  //...revealed trap
+			          _mazeTile[NewPosition.x][NewPosition.y].m_bHidden == false) ||  //...revealed trap
 			         _mazeTile[NewPosition.x][NewPosition.y].m_nWall == EXIT)) {     //...or exit is a GO
 				int i, x, y;
 				x = (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER;                  // Get player's position
@@ -982,7 +982,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 					                     SOUND_WAVE | SOUND_AUTODELETE); //| SOUND_ASYNCH ...Wave file, to delete itself
 					(*pEffect).play();                                                      //...play the narration
 				}
-				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = FALSE;
+				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = false;
 
 				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).EraseSprite(pDC);                          // Erase PlayerSprite
@@ -997,13 +997,13 @@ void CMainWindow::MovePlayer(CPoint point) {
 				if (_playerSprite != nullptr)                                      // Refresh PLAYER
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2);  //...in new direction
-				bCollision = TRUE;
+				bCollision = true;
 			}
 
 			if (_mazeTile[NewPosition.x][NewPosition.y].m_nWall == TRAP &&
 			        (_mazeTile[NewPosition.x][NewPosition.y].m_bHidden)) {       // Traps are only good once
 
-				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = FALSE;
+				_mazeTile[NewPosition.x][NewPosition.y].m_bHidden = false;
 				_playerPos.x = _mazeTile[NewPosition.x][NewPosition.y].m_nDest.x;
 				_playerPos.y = _mazeTile[NewPosition.x][NewPosition.y].m_nDest.y;
 				if (_playerSprite != nullptr)
@@ -1025,17 +1025,17 @@ void CMainWindow::MovePlayer(CPoint point) {
 				if (_playerSprite != nullptr)
 					(*_playerSprite).PaintSprite(pDC, (_playerPos.x * SQ_SIZE_X) + SIDE_BORDER,
 					                             (_playerPos.y * SQ_SIZE_Y) + TOP_BORDER - SQ_SIZE_Y / 2); // Update PLAYER
-				bCollision = TRUE;
+				bCollision = true;
 			}
 
 			if ((_mazeTile[NewPosition.x][NewPosition.y].m_nWall == WALL) ||
 			        (_mazeTile[NewPosition.x][NewPosition.y].m_nWall == START)) {
-				bCollision = TRUE;
+				bCollision = true;
 			}
 
 			if (_mazeTile[NewPosition.x][NewPosition.y].m_nWall == EXIT) {
-				_playing = FALSE;
-				_gameOver = TRUE;
+				_playing = false;
+				_gameOver = true;
 				KillTimer(GAME_TIMER);
 
 				if (pGameInfo->bSoundEffectsEnabled) {
@@ -1051,11 +1051,11 @@ void CMainWindow::MovePlayer(CPoint point) {
 					pGameInfo->lScore = 1;                  // A victorious maze solving
 					PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
 				}
-				bCollision = TRUE;
+				bCollision = true;
 			}
 
 			if ((NewPosition.x == Hit.x) && (NewPosition.y == Hit.y))
-				bCollision = TRUE;
+				bCollision = true;
 		} // end while
 
 		GetNewCursor();
@@ -1236,7 +1236,7 @@ void SetUpMaze() {
 
 	for (x = 0; x < NUM_COLUMNS; x++) {         // Now go through  mazeTile and fix up loose ends, as it were
 		for (y = 0; y < NUM_ROWS; y++) {
-			_mazeTile[x][y].m_bHidden = FALSE;
+			_mazeTile[x][y].m_bHidden = false;
 			if (_mazeTile[x][y].m_nWall == PATH) {
 				if (_mazeTile[x + 1][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y].m_nWall == PATH &&
 				        (_mazeTile[x][y + 1].m_nWall == PATH &&
@@ -1326,7 +1326,7 @@ void SetUpMaze() {
  *
  ****************************************************************/
 void AddEdges(CDC *pDC, int x, int y, int offset_x, int offset_y) {
-	if ((_mazeTile[x][y].m_bHidden == FALSE) && (_mazeTile[x][y].m_nWall == WALL)) {
+	if ((_mazeTile[x][y].m_bHidden == false) && (_mazeTile[x][y].m_nWall == WALL)) {
 
 		if ((y > 0) && ((((_mazeTile[x][y - 1].m_nWall == PATH) || (_mazeTile[x][y - 1].m_nWall == EXIT)) ||
 		                 (_mazeTile[x][y - 1].m_nWall == START)) || _mazeTile[x][y - 1].m_bHidden))    // TOP
@@ -1391,11 +1391,11 @@ void SetTraps() {
 	nNumTraps = MIN_TRAPS + (_difficulty / 2);        // 4 + ([1...10]/2) = 4 to 9
 
 	for (nTrapCount = 0; nTrapCount < nNumTraps; nTrapCount++) {
-		In = GetRandomPoint(FALSE);                                         // Pick a random PATH square
+		In = GetRandomPoint(false);                                         // Pick a random PATH square
 		_mazeTile[In.x][In.y].m_nWall = TRAP;                                // Make it a TRAP
-		_mazeTile[In.x][In.y].m_bHidden = TRUE;                              // Hide it
+		_mazeTile[In.x][In.y].m_bHidden = true;                              // Hide it
 		_mazeTile[In.x][In.y].m_nTrap = nTrapCount % NUM_TRAP_MAPS;          // Assign unique trap bitmap ID
-		_mazeTile[In.x][In.y].m_nDest = GetRandomPoint(TRUE);                // Pick a random Trap destination
+		_mazeTile[In.x][In.y].m_nDest = GetRandomPoint(true);                // Pick a random Trap destination
 	}
 }
 
@@ -1424,9 +1424,9 @@ void SetTraps() {
  *      CPoint      the random X and Y of a path space in the mazeTile grid
  *
  ****************************************************************/
-CPoint GetRandomPoint(BOOL bRight) {
+CPoint GetRandomPoint(bool bRight) {
 	CPoint  point;
-	BOOL    bLocated = FALSE;
+	bool    bLocated = false;
 
 	if (bRight)                                                             // Get random column
 		point.x = (brand() % (2 * (NUM_COLUMNS / 3))) + (NUM_COLUMNS / 3);   //...in the right half
@@ -1436,7 +1436,7 @@ CPoint GetRandomPoint(BOOL bRight) {
 
 	while (!bLocated) {
 		if (_mazeTile[point.x][point.y].m_nWall == PATH)
-			bLocated = TRUE;                                                // OK if it's a pathway
+			bLocated = true;                                                // OK if it's a pathway
 		else {                                                              // Otherwise, keep lookin'
 			point.x++;                                                      // Increment Column
 			point.y++;                                                      // Increment Row
@@ -1488,9 +1488,9 @@ void SetInvisibleWalls() {
 		for (y = 1; y < (NUM_ROWS - 1); y++) {
 			if (_mazeTile[x][y].m_nWall == WALL) {
 				if (_difficulty > MIN_DIFFICULTY)                 // Most difficult has all walls hidden
-					_mazeTile[x][y].m_bHidden = TRUE;                // Start with all walls hidden
+					_mazeTile[x][y].m_bHidden = true;                // Start with all walls hidden
 				else
-					_mazeTile[x][y].m_bHidden = FALSE;               // Least difficult has no walls hidden
+					_mazeTile[x][y].m_bHidden = false;               // Least difficult has no walls hidden
 				nTotalWalls++;
 			} // end if
 		} // end for y
@@ -1506,7 +1506,7 @@ void SetInvisibleWalls() {
 				for (i = x - 1; i <= x + 1; i++) {
 					for (j = y - 1; j <= y + 1; j++) {
 						if (_mazeTile[i][j].m_nWall == WALL && _mazeTile[i][j].m_bHidden) {
-							_mazeTile[i][j].m_bHidden = FALSE;       // so it's not hidden
+							_mazeTile[i][j].m_bHidden = false;       // so it's not hidden
 							nWallCount++;                           // increment the count
 						} // end if
 					} // end j
@@ -1779,15 +1779,15 @@ CPoint ScreenToTile(CPoint pointScreen) {
  *
  *  RETURN VALUE:
  *
- *      BOOL:   TRUE if point is within the Art Region,
- *              FALSE if point is outside the Art Region
+ *      bool:   true if point is within the Art Region,
+ *              false if point is outside the Art Region
  *
  ****************************************************************/
-BOOL InArtRegion(CPoint point) {
+bool InArtRegion(CPoint point) {
 	if ((point.x > SIDE_BORDER && point.x < GAME_WIDTH - SIDE_BORDER) &&        // See if point lies within
 	        (point.y > TOP_BORDER && point.y < GAME_HEIGHT - BOTTOM_BORDER))        //...ArtWork area
-		return TRUE;                                                            // Return true if it's inside
-	else return FALSE;                                                          //...and false if not
+		return true;                                                            // Return true if it's inside
+	else return false;                                                          //...and false if not
 }
 
 void CMainWindow::OnClose() {
@@ -1834,7 +1834,7 @@ void CMainWindow::OnClose() {
 	if (pOldBmp != nullptr)                    // Get rid of Scratch1
 		pMazeDC->SelectObject(pOldBmp);
 	if (pOldPal != nullptr)
-		pMazeDC->SelectPalette(pOldPal, FALSE);
+		pMazeDC->SelectPalette(pOldPal, false);
 	if (pMazeDC->m_hDC != nullptr) {
 		pMazeDC->DeleteDC();
 		delete pMazeDC;

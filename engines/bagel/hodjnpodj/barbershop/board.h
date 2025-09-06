@@ -35,7 +35,7 @@ public:     // functions
 	~CBoard();
 
 	CStack *GetStack(loc);
-	BOOL    IsTabStack(int);
+	bool    IsTabStack(int);
 
 public:     // vars
 	CStack  *m_pFound;

@@ -44,7 +44,7 @@ void CGuessDlg::DoDataExchange(CDataExchange* pDX) {
 	DDX_Text(pDX, IDC_EDIT, text);
 }
 
-BOOL CGuessDlg::OnInitDialog(void) {
+bool CGuessDlg::OnInitDialog(void) {
 	CEdit *pEdit;
 
 	CBmpDialog::OnInitDialog();
@@ -54,7 +54,7 @@ BOOL CGuessDlg::OnInitDialog(void) {
 
 	SetTimer(10, 50, nullptr);
 
-	return TRUE;
+	return true;
 }
 
 void CGuessDlg::OnTimer(uintptr nEventID) {
@@ -66,7 +66,7 @@ void CGuessDlg::OnTimer(uintptr nEventID) {
 	pEdit = (CEdit *)GetDlgItem(IDC_EDIT);
 	pEdit->SetFocus();
 	pEdit->GetWindowText(buf, MAX_PLENGTH + 1);
-	pEdit->SetSel(-1, strlen(buf), TRUE);
+	pEdit->SetSel(-1, strlen(buf), true);
 }
 
 void CGuessDlg::OnPaint() {
@@ -77,7 +77,7 @@ void CGuessDlg::OnSetFocus(CWnd *) {
 	SetTimer(10, 50, nullptr);
 }
 
-void CGuessDlg::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
+void CGuessDlg::OnActivate(unsigned int nState, CWnd *, bool bMinimized) {
 	CEdit *pEdit;
 
 	pEdit = (CEdit *)GetDlgItem(IDC_EDIT);
@@ -87,15 +87,15 @@ void CGuessDlg::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
 
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			pEdit->SetSel(-1, 0, TRUE);
-			InvalidateRect(nullptr, FALSE);
+			pEdit->SetSel(-1, 0, true);
+			InvalidateRect(nullptr, false);
 			break;
 		}
 	}
 }
 
-BOOL CGuessDlg::OnEraseBkgnd(CDC *) {
-	return TRUE;
+bool CGuessDlg::OnEraseBkgnd(CDC *) {
+	return true;
 }
 
 BEGIN_MESSAGE_MAP(CGuessDlg, CBmpDialog)

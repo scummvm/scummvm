@@ -77,22 +77,22 @@ extern CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nRe
  */
 extern CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy);
 
-BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
-BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
 
-BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
 
-BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, const char *pszName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
-BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
-BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const int resId, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
-BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const char *pszPathName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintMaskedDIB(CDC *pDC, CPalette *pPalette, const char *pszName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintMaskedResource(CDC *pDC, CPalette *pPalette, const int resId, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
+bool PaintMaskedResource(CDC *pDC, CPalette *pPalette, const char *pszPathName, const int x = 0, const int y = 0, const int dx = 0, const int dy = 0);
 
-BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, int nBlockSize);
-BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette *pPalette, int nBlockSize);
-BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette *pPalette, int nBlockSize, int nX, int nY, int nWidth, int nHeight);
+bool PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, int nBlockSize);
+bool PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette *pPalette, int nBlockSize);
+bool PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette *pPalette, int nBlockSize, int nX, int nY, int nWidth, int nHeight);
 
-BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, uint32 nMode);
-BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, const int x, const int y);
+bool BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, uint32 nMode);
+bool BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, const int x, const int y);
 
 CSize GetBitmapSize(CBitmap *pBitmap);
 CPalette *GetPalette(CDC *pDC, const char *pszBmpName);

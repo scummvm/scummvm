@@ -128,7 +128,7 @@ public:
 	void    PaintGram(CDC *pDC, const char *lpszCryptedGram);
 	void    PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, int i);
 	void    ReplaceLetter(CDC *pDC, int nOldType, int nNewType);
-	BOOL    IsHiLiteOn();
+	bool    IsHiLiteOn();
 	int     GetHiLiteType(CDC *pDC);
 	void    HiLiteOff(CDC *pDC);
 	void    HiLiteOn(CDC *pDC, int nTypeCode);
@@ -137,13 +137,13 @@ public:
 	void    RevealOn(CDC *pDC, int nTypeCode);
 	void    ClearGram(CDC *pDC);
 
-	BOOL IsHiLiteType(int nTypeCode);
-	BOOL IsAlphabetType(int nTypeCode);
-	BOOL IsGramType(int nTypeCode);
-	BOOL IsUsedType(int nTypeCode);
-	BOOL IsRevealType(int nTypeCode);
-	BOOL IsAlphaChar(char chChar);
-	BOOL IsSymbolChar(char chChar);
+	bool IsHiLiteType(int nTypeCode);
+	bool IsAlphabetType(int nTypeCode);
+	bool IsGramType(int nTypeCode);
+	bool IsUsedType(int nTypeCode);
+	bool IsRevealType(int nTypeCode);
+	bool IsAlphaChar(char chChar);
+	bool IsSymbolChar(char chChar);
 
 
 	char IndexToSymb(int nIndex);

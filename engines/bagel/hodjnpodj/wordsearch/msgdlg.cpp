@@ -96,7 +96,7 @@ CMsgDlg::CMsgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
  *      n/a
  *
  ****************************************************************/
-BOOL CMsgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMsgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -163,8 +163,8 @@ void CMsgDlg::SetInitialOptions(int nWhichMsg, int nWords) {
 	return;
 }
 
-BOOL CMsgDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CMsgDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -174,7 +174,7 @@ BOOL CMsgDlg::OnInitDialog() {
 	bSuccess = pMsgOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -219,7 +219,7 @@ void CMsgDlg::OnPaint(void) {
 
 	CDC     *pDC = GetDC();
 //  CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
-//  BOOL DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
+//  bool DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
 
 	CRect   rRect1(16, 36, 200, 56);
 	CRect   rRect2(16, 60, 200, 80);

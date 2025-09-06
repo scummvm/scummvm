@@ -107,46 +107,46 @@ CLogic::~CLogic() {
  *  n/a
  *
  ****************************************************************/
-BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
+bool CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 	CCard *pTopCard;
 
 	switch (pStack->GetID()) {
 
 	case fnd:       // foundation rules
-		if (pCard->IsFace() == TRUE)
-			return TRUE;
-		if (pStack->IsEmpty() == TRUE)
-			return FALSE;
+		if (pCard->IsFace() == true)
+			return true;
+		if (pStack->IsEmpty() == true)
+			return false;
 
 		pTopCard = pStack->Top();
-		if (pTopCard->IsManicurist() == TRUE)
-			return TRUE;
+		if (pTopCard->IsManicurist() == true)
+			return true;
 
 		if (
-		    pTopCard->IsCustomer() == TRUE &&
+		    pTopCard->IsCustomer() == true &&
 		    pCard->GetPip() == ONE_CARD
 		)
-			return TRUE;
+			return true;
 
 		if (
-		    pTopCard->IsBarber() == TRUE &&
+		    pTopCard->IsBarber() == true &&
 		    pCard->GetPip() == TEN_CARD
 		)
-			return TRUE;
+			return true;
 
 		if (pTopCard->GetPip() == ONE_CARD) {
 			if (pCard->GetPip() == TWO_CARD) {
-				return TRUE;
+				return true;
 			} else {
-				return FALSE;
+				return false;
 			}
 		}
 
 		if (pTopCard->GetPip() == TEN_CARD) {
 			if (pCard->GetPip() == NINE_CARD) {
-				return TRUE;
+				return true;
 			} else {
-				return FALSE;
+				return false;
 			}
 		}
 
@@ -155,77 +155,77 @@ BOOL CLogic::IsMoveOk(CCard *pCard, CStack *pStack) {
 		        pTopCard->GetPip() == (pCard->GetPip() + 1) ||
 		        pTopCard->GetPip() == (pCard->GetPip() - 1)
 		    ) &&
-		    pTopCard->IsFace() == FALSE
+		    pTopCard->IsFace() == false
 		)
-			return TRUE;
+			return true;
 
-		return FALSE;
+		return false;
 
 	case stock:
-		return FALSE;
+		return false;
 	case used:
-		return FALSE;
+		return false;
 	default:        // tab
-		if (pStack->IsEmpty() == TRUE) {     // empty space on tab?
+		if (pStack->IsEmpty() == true) {     // empty space on tab?
 			if (        // yes - source card from stack with other face cards?
 			    pCard->m_pStack->GetID() >= tab &&
 			    pCard->m_pStack->GetID() < stock &&
 			    pCard->m_pPrevCard != nullptr &&
-			    pCard->m_pPrevCard->m_bIsBack == TRUE
+			    pCard->m_pPrevCard->m_bIsBack == true
 			)
-				return TRUE;                // this is a valid move
+				return true;                // this is a valid move
 			if (        // yes - source card from stock?
 			    pCard->m_pStack->GetID() == used
 			)
-				return TRUE;                // this is a valid move
-			return FALSE;
+				return true;                // this is a valid move
+			return false;
 		}
 
 		if (
-		    pStack->IsEmpty() == TRUE &&
+		    pStack->IsEmpty() == true &&
 		    pCard->m_pStack->GetID() >= tab &&
 		    pCard->m_pStack->GetID() < stock &&
 		    pCard->m_pPrevCard != nullptr &&
-		    pCard->m_pPrevCard->m_bIsBack == TRUE
+		    pCard->m_pPrevCard->m_bIsBack == true
 		)                   // when there's an empty space on the tab
-			return TRUE;
+			return true;
 
 
 		pTopCard = pStack->Top();
 		if (pCard == pTopCard)   // card back on it's own stack?
-			return FALSE;           // yes, illegal
+			return false;           // yes, illegal
 
-		if (pTopCard->m_bIsBack == TRUE)
-			return FALSE;
+		if (pTopCard->m_bIsBack == true)
+			return false;
 
 		if (
-		    pTopCard->IsManicurist() == TRUE &&
-		    pCard->IsManicurist() == TRUE
+		    pTopCard->IsManicurist() == true &&
+		    pCard->IsManicurist() == true
 		)
-			return TRUE;
+			return true;
 
 		if (pTopCard->GetPip() == pCard->GetPip()) {
 			if (pCard->m_pStack->GetID() == used)            // Card from used stack?
-				return TRUE;                                // yes - acceptable move
+				return true;                                // yes - acceptable move
 			if (pCard->m_pPrevCard == nullptr)              // anything under cur card?
-				return TRUE;                                // no
-			if (pCard->m_pPrevCard->m_bIsBack == TRUE)   // card under cur card a card back?
-				return TRUE;                                // yes
-			return FALSE;
+				return true;                                // no
+			if (pCard->m_pPrevCard->m_bIsBack == true)   // card under cur card a card back?
+				return true;                                // yes
+			return false;
 		}
 
-		return FALSE;
+		return false;
 	}
 }
 
-BOOL CLogic::IsGameOver(CBoard *pBoard) {
+bool CLogic::IsGameOver(CBoard *pBoard) {
 	CStack  *pFnd;
 	CCard   *pCard;
 	int     i, j;
 
 	pFnd = pBoard->GetStack((loc) fnd);
 	if (pFnd->Size() == DECK)        // All cards on foundation?
-		return TRUE;                // Yes
+		return true;                // Yes
 
 	/******************************************************
 	* Check all combinations of tableau to tableau moves. *
@@ -234,18 +234,18 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		if ((pCard = pBoard->GetStack((loc) i)->Top()) == nullptr)
 			continue;
 
-		if (pCard->m_bIsBack == TRUE)
-			return FALSE;
+		if (pCard->m_bIsBack == true)
+			return false;
 
 		for (j = tab; j < stock; j++) {
 			if (pCard->m_pStack == pBoard->GetStack((loc) j))
 				continue;
-			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == TRUE)
-				return FALSE;
+			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == true)
+				return false;
 		} // end for
 	} // end for
 
-	//return FALSE; // used for debugging purposes
+	//return false; // used for debugging purposes
 
 	/*********************************************************
 	* Check all combinations of tableau to foundation moves. *
@@ -254,8 +254,8 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		if ((pCard = pBoard->GetStack((loc) i)->Top()) == nullptr)
 			continue;
 
-		if (IsMoveOk(pCard, pFnd) == TRUE)
-			return FALSE;
+		if (IsMoveOk(pCard, pFnd) == true)
+			return false;
 	} // end for
 
 	/************************************
@@ -278,8 +278,8 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		} // end for
 
 		for (j = fnd; j < stock; j++) {
-			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == TRUE)
-				return FALSE;
+			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == true)
+				return false;
 		} // end for
 
 		if (pCard->m_pStack->Bottom() == pCard)          // Out of cards on the Stock stack?
@@ -299,15 +299,15 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		} // end for
 
 		for (j = fnd; j < stock; j++) {
-			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == TRUE)
-				return FALSE;
+			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == true)
+				return false;
 		} // end for
 
 		if (pCard->m_pStack->Top() == pCard)             // Out of cards on the Stock stack?
 			break;
 	} // end while
 
-	return TRUE;    // Game over, no other possible moves
+	return true;    // Game over, no other possible moves
 }
 
 } // namespace Barbershop

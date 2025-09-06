@@ -27,7 +27,7 @@ namespace Bagel {
 namespace MFC {
 
 MMRESULT joySetCapture(HWND hwnd, unsigned int uJoyID,
-		unsigned int uPeriod, BOOL fChanged) {
+		unsigned int uPeriod, bool fChanged) {
 	return AfxGetApp()->joySetCapture(hwnd, uJoyID, uPeriod, fChanged);
 }
 

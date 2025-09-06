@@ -120,12 +120,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // C1ButtonDialog message handlers
 
-BOOL C1ButtonDialog::OnInitDialog() {
+bool C1ButtonDialog::OnInitDialog() {
 	CRect   statsRect;                  // game stats displays
 	int     nStat_col_offset;           // game stats placement
 	int     nStat_row_offset;
 	int     nStatWidth, nStatHeight;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	CDC     *pDC;
 	int     i;
 
@@ -185,7 +185,7 @@ BOOL C1ButtonDialog::OnInitDialog() {
 		(*m_pButton1).SetWindowText(m_pszButton1Text);
 	}
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void C1ButtonDialog::OnPaint() {
@@ -231,9 +231,9 @@ void C1ButtonDialog::OnCancel() {
 	EndDialog(IDOK);
 }
 
-BOOL C1ButtonDialog::OnEraseBkgnd(CDC *) {
+bool C1ButtonDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 } // namespace WordSearch

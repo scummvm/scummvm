@@ -41,7 +41,6 @@ namespace Metagame {
 #define DIMENSION(a) (sizeof(a) / sizeof(a[0]))
 #define UPPERBOUND(a) (DIMENSION(a) - 1)
 
-typedef int BOOL ;
 typedef char *XPSTR ;
 typedef char *XPSTR;
 typedef int *XPINT ;
@@ -116,7 +115,7 @@ typedef void *XPVOID ;
 #define CTRLKEY(ch) ((ch)+CCH_CTRLKEY)
 #define SHFTKEY(ch) ((ch)+CCH_SHFTKEY)
 
-inline BOOL EQV(BOOL b1, BOOL b2) {
+inline bool EQV(bool b1, bool b2) {
 	return (b1 != 0) == (b2 != 0);
 }
 

@@ -75,7 +75,7 @@ public:
 		return *this;
 	}
 
-	BOOL LoadString(unsigned int nID);
+	bool LoadString(unsigned int nID);
 };
 
 

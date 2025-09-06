@@ -25,7 +25,7 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
+bool CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 	DeleteObject();
 	m_hObject = new Impl(lpLogPalette);
 
@@ -93,7 +93,7 @@ unsigned int CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
 	return pal.size();
 }
 
-BOOL CPalette::AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
+bool CPalette::AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
 		const PALETTEENTRY *lpPaletteColors) {
 	// Set the new colors
 	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
@@ -107,7 +107,7 @@ BOOL CPalette::AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries
 	// Set the new system palette
 	AfxGetApp()->setPalette(*impl);
 
-	return TRUE;
+	return true;
 }
 
 unsigned int CPalette::GetNearestPaletteIndex(COLORREF crColor) {

@@ -32,7 +32,7 @@ namespace Mankala {
 // class CGenUtil -- general utilities
 class CGenUtil {
 	char m_cStartData ;
-	BOOL m_bRandomInit ;      // random number seed initialized
+	bool m_bRandomInit ;      // random number seed initialized
 	char m_cEndData ;
 
 public:
@@ -46,9 +46,9 @@ public:
 //- RandomInteger -- find random integer in specified range
 public:
 	int RandomInteger(int iLow, int iHigh) ;
-//- RandomEvent -- return TRUE with specified probability
+//- RandomEvent -- return true with specified probability
 public:
-	BOOL RandomEvent(int iNum, int iDenom) ;
+	bool RandomEvent(int iNum, int iDenom) ;
 //- RandomPermutation -- generate a random permutation
 //	Generates a permutation of size iSize of the
 //	integers from 0 to (iNum-1)
@@ -57,7 +57,7 @@ public:
 	                       int iSize, int *xpIntOut) ;
 //- NormalizeCRect --
 public:
-	BOOL PASCAL NormalizeCRect(CRect& cRect) ;
+	bool PASCAL NormalizeCRect(CRect& cRect) ;
 //- RandomSelection -- random selection of integer array
 public:
 	void RandomSelection(int *xpiArray, int iNum,

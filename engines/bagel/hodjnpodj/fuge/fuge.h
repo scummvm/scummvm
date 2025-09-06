@@ -68,7 +68,7 @@ protected:
 	void        LaunchBall(void);
 	void        StartPaddle(void);
 	void        EndPaddle(void);
-	void        PaintPaddle(BOOL);
+	void        PaintPaddle(bool);
 	CVector     BallOnPaddle(void);
 	void        StartBricks(void);
 	void        EndBricks(void);
@@ -77,7 +77,7 @@ protected:
 	void        BallvsPaddle(void);
 	void        BallvsBrick(DOUBLE);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	long        OnJoyStick(unsigned int, long);
 	void        OnPaint(void);
 	void        OnTimer(uintptr);
@@ -87,7 +87,7 @@ protected:
 	void        OnSysChar(unsigned int, unsigned int, unsigned int);
 	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
-	void        OnActivate(unsigned int, CWnd *, BOOL) override;
+	void        OnActivate(unsigned int, CWnd *, bool) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);
@@ -95,7 +95,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	BOOL        m_bBrickVisible[N_BRICKS];
+	bool        m_bBrickVisible[N_BRICKS];
 	CPoint      m_ptOrigin;
 	CRect       m_rNewGameButton;
 	CRect       m_rBlackHole;
@@ -134,14 +134,14 @@ protected:
 	int         m_nPaddleCelIndex;
 	int			m_nOldSize = -1;
 
-	BOOL        m_bMovingPaddle;
-	BOOL        m_bGameActive;
-	BOOL        m_bPause;
-	BOOL        m_bIgnoreScrollClick;
-	BOOL        m_bPaddleHit;
-	BOOL        m_bOutterWall;
-	BOOL        m_bJoyActive;
-	BOOL        m_bBallOnPaddle;
+	bool        m_bMovingPaddle;
+	bool        m_bGameActive;
+	bool        m_bPause;
+	bool        m_bIgnoreScrollClick;
+	bool        m_bPaddleHit;
+	bool        m_bOutterWall;
+	bool        m_bJoyActive;
+	bool        m_bBallOnPaddle;
 
 	CVector gvCenter;
 };

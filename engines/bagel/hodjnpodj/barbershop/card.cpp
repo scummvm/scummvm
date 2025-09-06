@@ -37,7 +37,7 @@ CCard::CCard() {
 	m_pNextCard = nullptr;
 	m_pSprite   = nullptr;
 	m_pStack    = nullptr;
-	m_bIsBack   = FALSE;
+	m_bIsBack   = false;
 	m_cOrigin   = CPoint(0, 0);
 }
 
@@ -54,7 +54,7 @@ CCard::CCard(int nValue) {
 	m_pNextCard = nullptr;
 	m_pSprite   = nullptr;
 	m_pStack    = nullptr;
-	m_bIsBack   = FALSE;
+	m_bIsBack   = false;
 	m_cOrigin   = CPoint(0, 0);
 }
 
@@ -65,7 +65,7 @@ CCard::CCard(suit enSuit, int nPip) {
 	m_pNextCard = nullptr;
 	m_pSprite   = nullptr;
 	m_pStack    = nullptr;
-	m_bIsBack   = FALSE;
+	m_bIsBack   = false;
 	m_cOrigin   = CPoint(0, 0);
 }
 

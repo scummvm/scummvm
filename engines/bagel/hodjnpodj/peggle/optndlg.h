@@ -58,9 +58,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnPaint();

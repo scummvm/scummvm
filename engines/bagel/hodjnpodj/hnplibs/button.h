@@ -75,17 +75,17 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(unsigned int nID, CWnd * pParent);
-	BOOL AutoLoad(unsigned int nID, CWnd * pParent);
+	bool SetControl(unsigned int nID, CWnd * pParent);
+	bool AutoLoad(unsigned int nID, CWnd * pParent);
 
-	BOOL LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelected, CBitmap *pFocus, CBitmap *pDisabled);
-	BOOL LoadBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
-	BOOL LoadBitmaps(const int nBase, const int nSelected = 0, const int nFocus = 0, const int nDisabled = 0);
-	BOOL LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
+	bool LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelected, CBitmap *pFocus, CBitmap *pDisabled);
+	bool LoadBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
+	bool LoadBitmaps(const int nBase, const int nSelected = 0, const int nFocus = 0, const int nDisabled = 0);
+	bool LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
 
 private:
 	CPalette    *m_pPalette;
-	//BOOL        m_bSharedPalette;
+	//bool        m_bSharedPalette;
 
 private:
 	/**
@@ -99,7 +99,7 @@ private:
 	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CBmpButton )
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -130,7 +130,7 @@ private:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CMaskedButton )
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -151,7 +151,7 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(unsigned int nID, CWnd * pParent);
+	bool SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cHighlight, COLORREF cShadow, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
@@ -169,7 +169,7 @@ private:
 	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CColorButton )
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -190,12 +190,12 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(unsigned int nID, CWnd * pParent);
+	bool SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
 private:
-	BOOL        m_bCheckState;
+	bool        m_bCheckState;
 	CPalette    *m_pPalette;
 	COLORREF    m_cButtonFace;
 	COLORREF    m_cButtonControl;
@@ -208,7 +208,7 @@ private:
 	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CCheckButton )
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg LRESULT OnSetCheck(WPARAM, LPARAM);
 	afx_msg LRESULT OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG
@@ -231,12 +231,12 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(unsigned int nID, CWnd * pParent);
+	bool SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
 private:
-	BOOL        m_bCheckState;
+	bool        m_bCheckState;
 	CPalette    *m_pPalette;
 	COLORREF    m_cButtonFace;
 	COLORREF    m_cButtonControl;
@@ -249,7 +249,7 @@ private:
 	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
 	//{{AFX_MSG( CRadioButton )
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg LRESULT OnSetCheck(WPARAM, LPARAM);
 	afx_msg LRESULT OnGetCheck(WPARAM, LPARAM);
 	//}}AFX_MSG

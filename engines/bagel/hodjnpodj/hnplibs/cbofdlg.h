@@ -31,8 +31,8 @@ namespace HodjNPodj {
 class CBmpDialog : public CDialog {
 public:
 	// Construction
-	CBmpDialog(CWnd *, CPalette *, int, const char *, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
-	CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, BOOL bSaveBackground = TRUE);
+	CBmpDialog(CWnd *, CPalette *, int, const char *, const int dx = -1, const int dy = -1, bool bSaveBackground = true);
+	CBmpDialog(CWnd *, CPalette *, int, int, const int dx = -1, const int dy = -1, bool bSaveBackground = true);
 
 	void RefreshBackground(CDC *pDC = nullptr);
 
@@ -50,11 +50,11 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CBmpDialog)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	BOOL OnInitDialog() override;
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	bool OnInitDialog() override;
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
 	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
@@ -67,7 +67,7 @@ protected:
 	int         m_nBmpID;
 	int         m_nDx;
 	int         m_nDy;
-	BOOL        m_bSaveBackground;
+	bool        m_bSaveBackground;
 };
 
 } // namespace HodjNPodj

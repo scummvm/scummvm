@@ -33,7 +33,7 @@ CGdiObject::~CGdiObject() {
 		DeleteObject();
 }
 
-BOOL CGdiObject::Attach(HGDIOBJ hObject) {
+bool CGdiObject::Attach(HGDIOBJ hObject) {
 	// Detach any prior object
 	Detach();
 
@@ -51,7 +51,7 @@ HGDIOBJ CGdiObject::Detach() {
 	return result;
 }
 
-BOOL CGdiObject::DeleteObject() {
+bool CGdiObject::DeleteObject() {
 	AfxUnhookObject();
 
 	// Check added to ensure I don't accidentally
@@ -64,7 +64,7 @@ BOOL CGdiObject::DeleteObject() {
 }
 
 CGdiObject *CGdiObject::FromHandle(HGDIOBJ h) {
-	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(true);
 	assert(pMap != nullptr);
 
 	CGdiObject *pObject = pMap->FromHandle(h);
@@ -73,7 +73,7 @@ CGdiObject *CGdiObject::FromHandle(HGDIOBJ h) {
 }
 
 void CGdiObject::AfxHookObject() {
-	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(true);
 	assert(pMap != nullptr);
 
 	if (!pMap->LookupPermanent(m_hObject)) {
@@ -84,7 +84,7 @@ void CGdiObject::AfxHookObject() {
 
 void CGdiObject::AfxUnhookObject() {
 	if (m_hObject && _permanent) {
-		CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+		CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(true);
 		assert(pMap != nullptr);
 
 		pMap->RemoveHandle(m_hObject);

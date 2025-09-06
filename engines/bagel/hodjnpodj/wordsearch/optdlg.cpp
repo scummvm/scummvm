@@ -109,7 +109,7 @@ CWSOptDlg::CWSOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
  *      n/a
  *
  ****************************************************************/
-BOOL CWSOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CWSOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	int nReturn = 0;
 // What ever button is clicked, end the dialog and send the ID of the button
@@ -119,11 +119,11 @@ BOOL CWSOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_MINI_BWTOGGLE:
 			if (m_bWordForwardOnly) {
-				m_bWordForwardOnly = FALSE;
-				pWordForwardButton->SetCheck(FALSE);
+				m_bWordForwardOnly = false;
+				pWordForwardButton->SetCheck(false);
 			} else {
-				m_bWordForwardOnly = TRUE;
-				pWordForwardButton->SetCheck(TRUE);
+				m_bWordForwardOnly = true;
+				pWordForwardButton->SetCheck(true);
 			}
 			break;
 
@@ -251,7 +251,7 @@ void CWSOptDlg::ClearDialogImage(void) {
  *
  *
  ****************************************************************/
-void CWSOptDlg::SetInitialOptions(int nTime, BOOL bShowWords, BOOL bWFO) {
+void CWSOptDlg::SetInitialOptions(int nTime, bool bShowWords, bool bWFO) {
 	switch (nTime) {
 	case 15:
 		m_nGameTime = 1;
@@ -297,8 +297,8 @@ void CWSOptDlg::SetInitialOptions(int nTime, BOOL bShowWords, BOOL bWFO) {
 }
 
 
-BOOL CWSOptDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CWSOptDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -320,7 +320,7 @@ BOOL CWSOptDlg::OnInitDialog() {
 	bSuccess = pWordForwardButton->SetControl(IDC_MINI_BWTOGGLE, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -430,11 +430,11 @@ void CWSOptDlg::OnPaint(void) {
 
 	pTime = (CScrollBar *)GetDlgItem(IDC_GAMETIME);
 
-	pTime->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, TRUE);
+	pTime->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, true);
 	if (m_nGameTime == 0)
-		pTime->SetScrollPos(GAMETIMEMAX, TRUE);
+		pTime->SetScrollPos(GAMETIMEMAX, true);
 	else
-		pTime->SetScrollPos(m_nGameTime, TRUE);
+		pTime->SetScrollPos(m_nGameTime, true);
 
 
 	return;
@@ -477,7 +477,7 @@ void CWSOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* p
 
 // first set the range of the scoll bar
 	if (pScrollBar->GetDlgCtrlID() == IDC_GAMETIME)
-		pScrollBar->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, TRUE);
+		pScrollBar->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, true);
 
 // get the scroll bar's current position, i.e. the current amount set
 	oldAmnt = pScrollBar->GetScrollPos();
@@ -506,7 +506,7 @@ void CWSOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* p
 	}
 
 // set the scroll bar to the new position
-	pScrollBar->SetScrollPos(newAmnt, TRUE);
+	pScrollBar->SetScrollPos(newAmnt, true);
 
 // set the current amount to the new amount just set
 // and paint this new amount onto the screen

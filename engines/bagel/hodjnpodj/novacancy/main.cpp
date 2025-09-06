@@ -73,7 +73,7 @@ CMainWindow::CMainWindow(void) {
 	CRect    tmpRect;
 	CDibDoc *pDibDoc;
 	ERROR_CODE errCode;
-	BOOL bSuccess;
+	bool bSuccess;
 	short i;
 	char szMapFile[256];
 
@@ -84,25 +84,25 @@ CMainWindow::CMainWindow(void) {
 	/* Initialize members   */
 	m_pScrollButton = nullptr;
 	m_pGamePalette = nullptr;
-	m_bIgnoreScrollClick = FALSE;
-	m_bSound = TRUE;
+	m_bIgnoreScrollClick = false;
+	m_bSound = true;
 	m_pCLRollingDie = nullptr;
 	m_pCRRollingDie = nullptr;
 
 
-	m_bGameLoadUp = TRUE;           //this flag is reset to FALSE as soon as the first paint message is processed.
+	m_bGameLoadUp = true;           //this flag is reset to false as soon as the first paint message is processed.
 	//It is used so that at the first paint message (as invoked from the UpdateWindow() call
 	// in gamedll.cpp) whether or not Meta Game is being played,
 	// the doors won't be painted when not a single door is closed as in the case of
 	// game load up. (The splash screen has doors open all the way.)
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
+	m_bPause = false;
+	m_bGameActive = false;
 	m_cActiveDoor = OPEN;           //  the game has just begun and no door is active. The 0-th door is always open.
 	m_cDoorCount = 0;               //  no door is closed.
 
 	m_cUnDoableThrows = 0;          //  no undoable throw has been registered yet.
-	m_bDiceJustThrown = FALSE;      // dice haven't been thrown yet
-	m_bOneDieCase = FALSE;          // always start w/ two dice on floor.
+	m_bDiceJustThrown = false;      // dice haven't been thrown yet
+	m_bOneDieCase = false;          // always start w/ two dice on floor.
 
 	// Set the coordinates for the "Start New Game" button
 	//
@@ -120,7 +120,7 @@ CMainWindow::CMainWindow(void) {
 	if (FileExists(szMapFile)) {
 		// Acquire the shared palette for our game from the splash screen art
 		if ((pDibDoc = new CDibDoc()) != nullptr) {
-			if (pDibDoc->OpenDocument(szMapFile) != FALSE)
+			if (pDibDoc->OpenDocument(szMapFile) != false)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
 				errCode = ERR_UNKNOWN;
@@ -150,7 +150,7 @@ CMainWindow::CMainWindow(void) {
 
 		if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
-			m_bIgnoreScrollClick = FALSE;
+			m_bIgnoreScrollClick = false;
 			tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
 			bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 			assert(bSuccess);
@@ -211,9 +211,9 @@ CMainWindow::CMainWindow(void) {
 	/* preload dice cell sprites */
 #pragma warning(disable: 4706)
 
-	m_bDiceBmpsLoaded = FALSE;
+	m_bDiceBmpsLoaded = false;
 
-	memset(m_bDoorBmpLoaded, FALSE, 10 * sizeof(BOOL));
+	memset(m_bDoorBmpLoaded, false, 10 * sizeof(bool));
 	for (i = 1; i < 10; pCDoorBmp[i] = new CSprite(), i++);
 
 #pragma warning(default: 4706)
@@ -261,7 +261,7 @@ void CMainWindow::HandleError(ERROR_CODE errCode) {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 
 	PaintScreen();
@@ -330,7 +330,7 @@ void CMainWindow::PaintScreen() {
 							if ((pCDoorBmp[ii] = new CSprite())) // ...in which case load a new CSprite.
 								pCDoorBmp[ii]->LoadCels(pDC, GetStringFromResource(IDS_D1 + ii - 1), NUM_DOOR_CELS);
 						//else errCode=ERR_MEMORY;
-						m_bDoorBmpLoaded[ii] = TRUE;
+						m_bDoorBmpLoaded[ii] = true;
 					}
 					if (m_iDoorStatus[ii] != OPEN) pCDoorBmp[ii]->SetCel(-1);                                     //paint the 1st cel.
 					// /* bypassed because of line #1 in the for loop*/ else pCDoorBmp[ii]->SetCel(NUM_DOOR_CELS-2);   //paint the last cel.
@@ -339,18 +339,18 @@ void CMainWindow::PaintScreen() {
 
 				}//end for(ii)
 
-				m_bGameJustBegun = FALSE;
-				m_bGameActive = TRUE;
+				m_bGameJustBegun = false;
+				m_bGameActive = true;
 				ReleaseDC(pDC);
 			}  //END -if (m_bGameActive)
 
-			m_bGameLoadUp = FALSE;                     // the next paint message is not a game load up paint.
+			m_bGameLoadUp = false;                     // the next paint message is not a game load up paint.
 		}  //end if(pDC && GamePalette)
 	} //end if FileExists(MINIGAME_MAP)
 }// end of function.
 
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this, m_pGamePalette, \
 	                       (pGameParams->bPlayingMetagame ? NO_NEWGAME : 0X00) | (m_bGameActive ? 0X0 : NO_RETURN) | NO_OPTIONS, \
 	                       nullptr, RULES,
@@ -366,11 +366,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			// hide the command scroll
 			//
-			m_pScrollButton->SendMessage(BM_SETSTATE, TRUE, 0);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0);
 
 			if (!m_bIgnoreScrollClick) {
 
-				m_bIgnoreScrollClick = TRUE;
+				m_bIgnoreScrollClick = true;
 
 				GamePause();
 
@@ -397,13 +397,13 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 				// show the command scroll
 				//
-				m_pScrollButton->SendMessage(BM_SETSTATE, FALSE, 0);
-				m_bIgnoreScrollClick = FALSE;
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0);
+				m_bIgnoreScrollClick = false;
 
 				//
 				// Check to see if the music state was changed and adjust to match it
 				//
-				if ((pGameParams->bMusicEnabled == FALSE) && (m_psndBkgndMusic != nullptr)) {
+				if ((pGameParams->bMusicEnabled == false) && (m_psndBkgndMusic != nullptr)) {
 					if (m_psndBkgndMusic->playing())
 						m_psndBkgndMusic->stop();
 				} else if (pGameParams->bMusicEnabled) {
@@ -419,21 +419,21 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void CMainWindow::GamePause(void) {
-	m_bPause = TRUE;
+	m_bPause = true;
 };
 
 
 void CMainWindow::GameResume(void) {
-	m_bPause = FALSE;
+	m_bPause = false;
 };
 
 void CMainWindow::PlayGame() {
@@ -466,8 +466,8 @@ void CMainWindow::PlayGame() {
 		hOldCursor = MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));
 		if ((pDC = GetDC()) != nullptr) {
 			if ((m_pCLRollingDie = new CSprite()) != nullptr) {
-				m_pCLRollingDie->SetMobile(TRUE);
-				m_pCLRollingDie->SetMasked(FALSE);
+				m_pCLRollingDie->SetMobile(true);
+				m_pCLRollingDie->SetMasked(false);
 				if (m_pCLRollingDie->LoadCels(pDC, GetStringFromResource(IDS_ROLLING_LDIE_ANIMATION), NUM_LDIE_CELS))
 					m_pCLRollingDie->LinkSprite();
 				else {
@@ -484,8 +484,8 @@ void CMainWindow::PlayGame() {
 			}  // end if m_pCLRollingDie
 
 			if ((m_pCRRollingDie = new CSprite)) {
-				m_pCRRollingDie->SetMobile(TRUE);
-				m_pCRRollingDie->SetMasked(FALSE);
+				m_pCRRollingDie->SetMobile(true);
+				m_pCRRollingDie->SetMasked(false);
 				if (m_pCRRollingDie->LoadCels(pDC, GetStringFromResource(IDS_ROLLING_RDIE_ANIMATION), NUM_RDIE_CELS))
 					m_pCRRollingDie->LinkSprite();
 				else {
@@ -531,7 +531,7 @@ void CMainWindow::PlayGame() {
 			HandleError(errCode);
 		}//end if pDC
 		MFC::SetCursor(hOldCursor);
-		m_bDiceBmpsLoaded = TRUE;
+		m_bDiceBmpsLoaded = true;
 	}    // m_bDiceBmpsLoaded
 
 	Common::strcpy_s(szMapFile, GetStringFromResource(IDS_MINI_GAME_MAP));
@@ -561,8 +561,8 @@ void CMainWindow::PlayGame() {
 		PaintMaskedBitmap(pDC, m_pGamePalette, pCLDieBmp[m_LDie], \
 		                  m_rLDie.left, m_rLDie.top, (int) m_rLDie.Width(), (int) m_rLDie.Height());
 
-		m_bDiceJustThrown = TRUE;
-		m_bGameActive = TRUE;
+		m_bDiceJustThrown = true;
+		m_bGameActive = true;
 
 		ReleaseDC(pDC);
 
@@ -573,22 +573,22 @@ void CMainWindow::PlayGame() {
 
 
 void CMainWindow::GameReset(void) {
-	m_bGameActive = FALSE;                      // there is no currently active game
+	m_bGameActive = false;                      // there is no currently active game
 
 	for (short i = 0; i < 10; i++) {
-		m_bDoorBmpLoaded[i] = FALSE;
+		m_bDoorBmpLoaded[i] = false;
 		m_iDoorStatus[i] = OPEN; //every door is open.
 	}// end i
 
-	m_bGameJustBegun = TRUE;
+	m_bGameJustBegun = true;
 	m_cActiveDoor = OPEN;                // the game has just begun and no door is active. The 0-th door is always open.
 	m_cDoorCount = 0;                       //  no door is closed.
 	m_cUnDoableThrows = 0;             //   no undoable throw has been registered yet.
 
-	m_bDiceJustThrown = FALSE;                   //dice haven't been thrown yet
-	m_bPause = FALSE;                           // the game is not paused
+	m_bDiceJustThrown = false;                   //dice haven't been thrown yet
+	m_bPause = false;                           // the game is not paused
 
-	m_bOneDieCase = FALSE;
+	m_bOneDieCase = false;
 	m_iMoveValid = 0;
 	//srand(LOWORD(timeGetTime()));
 
@@ -647,8 +647,8 @@ void CMainWindow::OnMouseMove(unsigned int, CPoint) {
 *   IMPLICIT INPUT PARAMETERS:
 *   Refer to MFC doc.
 *   m_r?Die                                 CRect       rectangle spanned by each die.
-*    m_bGameActive                  BOOL        is game on?
-*   m_bOneDieCase                   BOOL        is just one die to be rolled (from now on)?
+*    m_bGameActive                  bool        is game on?
+*   m_bOneDieCase                   bool        is just one die to be rolled (from now on)?
 *   m_pC?RollingDie                 CSprite     cell animation for each die.
 *   gn?DieLeft, gn?DieTop       int             Final positions for dice.
 *   m_?Die                                   int            The face value of the throw for each die.
@@ -667,7 +667,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	short i,
 	      iDoor;
 	short jj;
-	BOOL AllFxd,                       //flag to indicate all fixed (locked) doors.
+	bool AllFxd,                       //flag to indicate all fixed (locked) doors.
 	     AllClosed;                //flag to indicate all closed doors.
 	uint32 V;
 	CDC* pDC;
@@ -774,7 +774,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 			if (m_iMoveValid > 0) {                                         //dice can be clicked only if doors are correctly opened.When
 				// the game has just begun, everything is taken care of in the WM_PAINT message..
-				m_bDiceJustThrown = TRUE;                       //set flag if click is to be accepted.
+				m_bDiceJustThrown = true;                       //set flag if click is to be accepted.
 
 				for (i = 1; i < 10; i++) {
 					if (m_iDoorStatus[i] == CLOSED) {
@@ -782,7 +782,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 						if (pCDoorBmp[i]) {
 							delete pCDoorBmp[i];                                // and free up those sprites.
 							pCDoorBmp[i] = nullptr;
-							m_bDoorBmpLoaded[i] = FALSE;
+							m_bDoorBmpLoaded[i] = false;
 						}
 					}      // end if m_iDoorStatus[i]==CLOSED
 				}// end for i
@@ -791,7 +791,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				/*
 				determine if this throw is to be done with a single die. (ie. if throws 7 and above are all undoable)
 				*/
-				for (i = 7, AllFxd = TRUE; i < 13; i++) {            // i<13 because i==12 is the max doable throw with two dice.
+				for (i = 7, AllFxd = true; i < 13; i++) {            // i<13 because i==12 is the max doable throw with two dice.
 					/***** note that this was a bug in versions 1.0 thru 1.5 ******/
 					if (AllFxd) AllFxd = !IsThrowDoable((byte)i);
 					else  break;
@@ -868,7 +868,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 							LocalFree(hlocScore);
 						}
 						//}
-						m_bGameActive = FALSE;                      //set game over flag.
+						m_bGameActive = false;                      //set game over flag.
 						if (pGameParams->bPlayingMetagame) PostMessage(WM_CLOSE, 0, 0L);        //quit if in Meta game mode.
 
 						break;
@@ -940,7 +940,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 						if (!pCDoorBmp[i])
 							pCDoorBmp[i] = new CSprite;     // the sprite might have been deleted in prev game if that door was locked @end of game.
 						if (pCDoorBmp[i]) pCDoorBmp[i]->LoadCels(pDC, GetStringFromResource(IDS_D1 + i - 1), NUM_DOOR_CELS);
-						m_bDoorBmpLoaded[i] = TRUE;
+						m_bDoorBmpLoaded[i] = true;
 					}
 
 					/*
@@ -996,7 +996,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		}       //end if (m_bDiceJustThrown ...)
 
 		if (m_iMoveValid > 0) {                            //if valid move, check for the YOU WIN case.
-			for (AllClosed = TRUE, i = 1; i < 10; i++) {
+			for (AllClosed = true, i = 1; i < 10; i++) {
 				if (AllClosed) AllClosed = (m_iDoorStatus[i] != OPEN);
 				else break;
 			}
@@ -1007,8 +1007,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				pGameParams->lScore = 0x00L;        //make game result available to meta game.; no door open
 
 				m_iMoveValid = 0;
-				m_bDiceJustThrown = FALSE;
-				m_bGameActive = FALSE;
+				m_bDiceJustThrown = false;
+				m_bGameActive = false;
 				/* you have to quit the mini game if in MetaGame Mode */
 				if (pGameParams->bPlayingMetagame) PostMessage(WM_CLOSE, 0, 0L);
 			}//end if AllClosed
@@ -1040,7 +1040,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 *   IMPLICIT INPUT PARAMETERS:
 *   Refer to MFC doc.
 *   m_rDoor[ ]                              CRect       rectangle spanned by each door.
-*    m_bGameActive                  BOOL        is game on?
+*    m_bGameActive                  bool        is game on?
 *   m_iDoorStatus[ ]                    int             The Status of each door.
 *
 *   IMPLICIT OUTPUT PARAMETERS:
@@ -1243,12 +1243,12 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 }
 
 
-void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (!bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 
 		default:
@@ -1309,7 +1309,7 @@ short CMainWindow::LegalizeMove(short  j) {
 	if (m_bDiceJustThrown) {
 		DoorSum = 0;                                  // reset door sum if "j" is the first open door to be clicked upon
 		// ... after the dice were rolled in.
-		m_bDiceJustThrown = FALSE;
+		m_bDiceJustThrown = false;
 	}
 
 	DiceSum = (byte)(m_LDie + m_RDie);
@@ -1337,7 +1337,7 @@ short CMainWindow::LegalizeMove(short  j) {
 }
 
 
-BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
+bool CMainWindow::IsThrowDoable(byte DiceSum) {
 	/*****************************************************************************************************************
 	*   [IsThrowDoable]
 	*
@@ -1347,7 +1347,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 	*   combination just rolled in is a member of this set; if yes, the throw is doable, else not.
 	*
 	*   CALLING SEQUENCE:
-	*   BOOL _pascal IsThrowDoable(byte DiceSum)
+	*   bool _pascal IsThrowDoable(byte DiceSum)
 	*
 	*   FORMAL PARAMETERS:
 	*   DiceSum is the current throw of the dice.
@@ -1360,8 +1360,8 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 	*   N/A
 	*
 	*   RETURN VALUE:
-	*   returns TRUE if Throw is Doable.
-	*               FALSE if  Undoable.
+	*   returns true if Throw is Doable.
+	*               false if  Undoable.
 	*
 	*   ENVIRONMENT:
 	*   n/a
@@ -1383,7 +1383,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 	for (k = 1; k < Count + 1; k++) {
 		switch (k) {
 		case 1:
-			if (DiceSum < 10) if (m_iDoorStatus[DiceSum] == OPEN) return TRUE;
+			if (DiceSum < 10) if (m_iDoorStatus[DiceSum] == OPEN) return true;
 			break;
 
 		case 2:
@@ -1392,7 +1392,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 				for (i2 = i1 + 1; i2 < Count; i2++) {
 					sum = temp;
 					sum += s[i2];
-					if (sum == DiceSum) return TRUE;
+					if (sum == DiceSum) return true;
 				}
 			}
 			break;
@@ -1406,7 +1406,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 					for (i1 = i2 + 1; i1 < Count; i1++) {
 						sum = temp2;
 						sum += s[i1];
-						if (sum == DiceSum) return TRUE;
+						if (sum == DiceSum) return true;
 					}
 				}
 			}
@@ -1424,7 +1424,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 						for (i1 = i2 + 1; i1 < Count; i1++) {
 							sum = temp2;
 							sum += s[i1];
-							if (sum == DiceSum) return TRUE;
+							if (sum == DiceSum) return true;
 						}
 					}
 				}
@@ -1449,7 +1449,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 							for (i1 = i2 + 1; i1 < Count; i1++) {
 								sum = temp2;
 								sum += s[i1];
-								if (sum == DiceSum) return TRUE;
+								if (sum == DiceSum) return true;
 							}
 						}
 					}
@@ -1477,7 +1477,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 								for (i1 = i2 + 1; i1 < Count; i1++) {
 									sum = temp2;
 									sum += s[i1];
-									if (sum == DiceSum) return TRUE;
+									if (sum == DiceSum) return true;
 								}
 							}
 						}
@@ -1507,7 +1507,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 									for (i1 = i2 + 1; i1 < Count; i1++) {
 										sum = temp2;
 										sum += s[i1];
-										if (sum == DiceSum) return TRUE;
+										if (sum == DiceSum) return true;
 									}
 								}
 							}
@@ -1543,7 +1543,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 											for (i1 = i2 + 1; i1 < Count; i1++) {
 												sum = temp2;
 												sum += s[i1];
-												if (sum == DiceSum) return TRUE;
+												if (sum == DiceSum) return true;
 											}
 										}
 									}
@@ -1582,7 +1582,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 											for (i1 = i2 + 1; i1 < Count; i1++) {
 												sum = temp2;
 												sum += s[i1];
-												if (sum == DiceSum) return TRUE;
+												if (sum == DiceSum) return true;
 											}
 										}
 									}
@@ -1597,7 +1597,7 @@ BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 			break;
 		} //end switch(count)
 	}//end for -k
-	return FALSE;    //Undoable by default.
+	return false;    //Undoable by default.
 }
 #pragma warning(default: 4135)
 

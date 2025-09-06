@@ -38,9 +38,9 @@ extern CBfcMgr      *lpMetaGameStruct;
 
 // local prototypes
 //
-BOOL PlayEncounter(CWnd *, int);
-int  FindEncounter(BOOL, int, long, int, int, int, int, BOOL *);
-BOOL EligibleEncounter(int, BOOL, int, long);
+bool PlayEncounter(CWnd *, int);
+int  FindEncounter(bool, int, long, int, int, int, int, bool *);
+bool EligibleEncounter(int, bool, int, long);
 
 
 static const CEncounterTable Encounters[MG_ENC_COUNT] = {
@@ -565,12 +565,12 @@ static const CEncounterTable Encounters[MG_ENC_COUNT] = {
  *
  * FORMAL PARAMETERS:
  *
- *      BOOL        bHodj           Flag to tell which player this is
+ *      bool        bHodj           Flag to tell which player this is
  *      CInventory  *pInventory     pointer to the player's inventory object
  *      int         nNumSteps       Number of steps in the current move
  *      unsigned int        nPSector        Sector of player
  *      unsigned int        nOSector        Sector of opponent
- *      BOOL        bArray          Array of whether an encounter has been used already
+ *      bool        bArray          Array of whether an encounter has been used already
  *
  * RETURN VALUE:
  *
@@ -579,9 +579,9 @@ static const CEncounterTable Encounters[MG_ENC_COUNT] = {
  *
  ****************************************************************/
 
-int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInventory,
+int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInventory,
                 CInventory *pPawn, CInventory *pGeneral,
-                int nEncType, int nNumSteps, int nPSector, int nOSector, BOOL *pArray) {
+                int nEncType, int nNumSteps, int nPSector, int nOSector, bool *pArray) {
 	CInventory  *pTryOne, *pTryTwo;             // Temp pointers for Pawn & General to randomly pick one
 	CItem   *pItem;                             // Item pointer for player Inventory changes
 	long    lCrowns = 0;
@@ -594,14 +594,14 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 	int     nNarrsLeft = MG_NARR_COUNT,
 	        nTestProb;
 	int     RetVal = ENC_DO_NOTHING;
-	BOOL    bDone;                              // flag to check if an appropriate object was found
-	BOOL    bFoundTrap = FALSE;
+	bool    bDone;                              // flag to check if an appropriate object was found
+	bool    bFoundTrap = false;
 	int     nRandom = 0;
 
 	if (nEncType == ENC_BOOBYTRAP) {
 		for (i = 0; i < MG_TRAP_COUNT; i++) {                       // Traps are at the front of the array
 			if (!pArray[i]) {                                       // Check to see if there are any
-				bFoundTrap = TRUE;                                  // traps left
+				bFoundTrap = true;                                  // traps left
 				break;
 			}
 		} // end for
@@ -666,7 +666,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 							pItem = (*pInventory).FindItem(MG_OBJ_CROWN);           // get money item obj
 							if (pItem != nullptr)                                      //...if successful
 								(*pItem).SetQuantity(lCrowns);                      //...set Money int to am't
-							CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, (nRandFactor > 0) ? TRUE : FALSE, nChangeAmount);
+							CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, (nRandFactor > 0) ? true : false, nChangeAmount);
 							i++;                                                    // skip the one we just read in
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_OBJECT) { // Trap effects the inventory
 							if (Encounters[nID].m_Actions[i + 1] > 0) {             // If we are to add an item
@@ -688,11 +688,11 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 									(*pTryTwo).RemoveItem(pItem);                   //...and remove _it_ to pItem
 								}
 								(*pInventory).AddItem(pItem);                       // And put pItem in the player's
-								CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, TRUE, 1);
+								CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, true, 1);
 							}                                                       //...backpack Inventory
 							else {                                                  // Otherwise, he loses an item
 								nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT;     // don't count crowns and notebook
-								bDone = FALSE;
+								bDone = false;
 								while (!bDone) {
 									assert(nItems != 0);
 									pItem = (*pInventory).FetchItem(INVENT_MIN_ITEM_COUNT + brand() % nItems);   // Get one
@@ -706,8 +706,8 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 											(*pGeneral).AddItem(pItem);             //...and put it there
 										else
 											(*pPawn).AddItem(pItem);
-										CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, FALSE, 1);
-										bDone = TRUE;
+										CItemDialog ItemDlg(pWnd, pPalette, pItem, bHodj, false, 1);
+										bDone = true;
 									} // end if
 								} // end while
 							} // end elses
@@ -715,10 +715,10 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
 						} else if (Encounters[nID].m_Actions[i] == MG_ACT_TURN) {   // If he will lose or gain a turn
 							if (Encounters[nID].m_Actions[i + 1] > 0) {                 // If it's gain a turn
 								RetVal = ENC_GAIN_TURN;                             //...return that flag
-								CTurnDialog TurnDlg(pWnd, pPalette, bHodj, TRUE, TRUE);
+								CTurnDialog TurnDlg(pWnd, pPalette, bHodj, true, true);
 							} else {
 								RetVal = ENC_LOSE_TURN;                             //...or return the lose turn flag
-								CTurnDialog TurnDlg(pWnd, pPalette, bHodj, FALSE, TRUE);
+								CTurnDialog TurnDlg(pWnd, pPalette, bHodj, false, true);
 							}
 							i++;                                                    // skip the one we just read in
 						}
@@ -772,9 +772,9 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInvento
  *
  ****************************************************************/
 
-int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
+int FindEncounter(bool bHodj, int nPlayerSector, long lCrowns, int nItems,
                   int nStartEncounter, int nNumEncounters, int nEncPerSector,
-                  BOOL *pArray) {
+                  bool *pArray) {
 	int nStart = 0;                     // random point to start looking for encounter
 	int nGeneral = 0;                   // number of Generally-applicable encounters
 	int nID = 0;                        // ID of table member we're looking at
@@ -790,7 +790,7 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 		for (i = 0; i < nEncPerSector; i++) {                                           // Step thru sector-spec encs
 
 			// if not already used
-			if (pArray[nID] == FALSE) {
+			if (pArray[nID] == false) {
 
 				// if eligible for this action
 				if (EligibleEncounter(nID, bHodj, nItems, lCrowns)) {
@@ -818,7 +818,7 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 
 		// if not already used
 		//
-		if (pArray[nID] == FALSE) {                                                 // If it's unused
+		if (pArray[nID] == false) {                                                 // If it's unused
 
 			// if eligible for this action
 			if (EligibleEncounter(nID, bHodj, nItems, lCrowns)) {
@@ -851,18 +851,18 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
  *
  * RETURN VALUE:
  *
- *      BOOL            success / failure condition
+ *      bool            success / failure condition
  *
  ****************************************************************/
 
-BOOL PlayEncounter(CWnd *pWnd, int nID) {
+bool PlayEncounter(CWnd *pWnd, int nID) {
 	CGtlFrame   *pFrame = (CGtlFrame *) pWnd;
 	CSound      *pNarration = nullptr;
 	CGtlDoc     * xpGtlDoc = nullptr ;
 	CGtlView    * xpGtlFocusView, *xpGtlMouseView ;
 
 	if (Encounters[nID].m_lpszWavEFile == nullptr)                         // punt if no spec
-		return FALSE;
+		return false;
 
 	pFrame->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -870,24 +870,24 @@ BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	                        SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);       //...wave format, which deletes
 
 	if (pNarration == nullptr)
-		return FALSE;
+		return false;
 
 	(*pNarration).setDrivePath(lpMetaGameStruct->m_chCDPath);
 	(*pNarration).play();                                           //...play the narration
 	if (nID < MG_TRAP_COUNT)                                            // For Booby Traps:
 		CSound::waitWaveSounds();
 
-	return TRUE;
+	return true;
 }
 
 
-BOOL EligibleEncounter(int nID, BOOL bHodj, int nItems, long lCrowns) {
+bool EligibleEncounter(int nID, bool bHodj, int nItems, long lCrowns) {
 	int nAction = 0;                    // Holder for action to be taken
 	int i;
-	BOOL bEligible;
+	bool bEligible;
 
 	// assume eligible, must prove otherwise
-	bEligible = TRUE;
+	bEligible = true;
 
 	// Until there are no more Actions
 	//
@@ -944,7 +944,7 @@ BOOL EligibleEncounter(int nID, BOOL bHodj, int nItems, long lCrowns) {
 			assert(nID < MG_TRAP_COUNT);
 
 			if ((lCrowns <= 0) && (Encounters[nID].m_Actions[i + 1] < 0)) {
-				bEligible = FALSE;
+				bEligible = false;
 			}
 			i += 1;
 			break;
@@ -958,10 +958,10 @@ BOOL EligibleEncounter(int nID, BOOL bHodj, int nItems, long lCrowns) {
 			assert(nID < MG_TRAP_COUNT);
 
 			if ((nItems >= MG_OBJ_COUNT) && (Encounters[nID].m_Actions[i + 1] > 0)) {
-				bEligible = FALSE;
+				bEligible = false;
 
 			} else if ((nItems <= 0) && (Encounters[nID].m_Actions[i + 1] < 0)) {
-				bEligible = FALSE;
+				bEligible = false;
 			}
 			i += 1;
 			break;
@@ -971,7 +971,7 @@ BOOL EligibleEncounter(int nID, BOOL bHodj, int nItems, long lCrowns) {
 		//
 		case MG_ACT_HODJ:
 			if (!bHodj) {
-				bEligible = FALSE;
+				bEligible = false;
 			}
 			break;
 
@@ -980,7 +980,7 @@ BOOL EligibleEncounter(int nID, BOOL bHodj, int nItems, long lCrowns) {
 		//
 		case MG_ACT_PODJ:
 			if (bHodj) {
-				bEligible = FALSE;
+				bEligible = false;
 			}
 			break;
 

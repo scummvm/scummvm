@@ -143,8 +143,8 @@ public:
 	int m_iNumStones ;      // 0 means "many"
 	int m_iNumBmps ;        // number of bmp files for this combo
 	const char *m_xpszFilenameString ;  // sprintf string
-	BOOL m_bSubNumStones ;
-	BOOL m_bMasked ;        // mask white areas of bitmap
+	bool m_bSubNumStones ;
+	bool m_bMasked ;        // mask white areas of bitmap
 } ;
 
 // CBmpObject -- bitmap object
@@ -153,17 +153,17 @@ class CBmpObject {
 	friend class CMnkWindow ;
 	char m_cStartData ;
 	CBmpObject *m_xpcNextFree ;  // pointer to next in chain to free
-	BOOL m_bChained, m_bHeap ;  // on NextFree chain / on heap
+	bool m_bChained, m_bHeap ;  // on NextFree chain / on heap
 	CBmpObject *m_xpcNext ;     // pointer to next in chain
-	BOOL m_bDummy ;     // dummy object -- no bitmap
-	BOOL m_bMasked ;        // mask white areas of bitmap
+	bool m_bDummy ;     // dummy object -- no bitmap
+	bool m_bMasked ;        // mask white areas of bitmap
 	class CPitWnd *m_xpcPit ;   // ptr to pit, for pit/bin types
-	BOOL m_bInit ;      // flag: object is initialized
+	bool m_bInit ;      // flag: object is initialized
 	int m_iBmpType ;        // BMT_xxxx -- bitmap type
 	int m_iBmpArg ;
 	int m_iBmpNum ;
 	int m_iStoneNum ;       // for type BMT_STONE
-	BOOL m_bSprite ;        // flag: use sprite, not DIB
+	bool m_bSprite ;        // flag: use sprite, not DIB
 	class CSprite *m_xpcSprite ;   // if this is a sprite, store path
 	// there rather than in DIB
 	CDibDoc *m_xpDibDoc ;   // DIB document
@@ -184,7 +184,7 @@ class CMove {
 	friend class CMnk ;
 	friend class CMnkWindow ;
 	char m_cStartData ;
-	BOOL m_bRealMove ;  // this is CMove object for real board position
+	bool m_bRealMove ;  // this is CMove object for real board position
 	int m_iNumStones[NUMPLAYERS][NUMPITS + 2] ; // number of stones
 	// in each pit, prior to sowing
 	int m_iPlayer ;     // player on the move
@@ -194,11 +194,11 @@ class CMove {
 	int m_iBestWinValue ;   // best value found
 	int m_iBestMove ;       // best move
 	class CPit *m_xpcPit ;  // ptr to pit being sowed
-	BOOL m_bFreeTurn ;  // player got free turn
-	BOOL m_bCapture ;   // capture occurred
+	bool m_bFreeTurn ;  // player got free turn
+	bool m_bCapture ;   // capture occurred
 	int m_iCapturePit ; // # of opponent's pit that got captured
-	BOOL m_bHasCapture ;    // has a capture from here
-	BOOL m_bHasFree ;       // has free move from here
+	bool m_bHasCapture ;    // has a capture from here
+	bool m_bHasFree ;       // has free move from here
 	int m_iNumMoves ;       // number of legal moves
 	char m_cEndData ;
 
@@ -209,7 +209,7 @@ class CMove {
 	void Copy(CMove * xpcMove) {
 		memcpy(&m_cStartData,
 		       &xpcMove->m_cStartData, &m_cEndData - &m_cStartData) ;
-		m_bRealMove = FALSE ;
+		m_bRealMove = false ;
 	}
 
 public:
@@ -242,20 +242,20 @@ private:
 	CGenUtil m_cGenUtil ;       // general utility object
 	CTimeUtil m_cTimeUtil ;     // time utility object
 	char m_cStartData ;
-	BOOL m_bStartGame ;     // just starting game
-	BOOL m_bGameOver ;      // game is over
-	BOOL m_bGameOverMusicPlayed ;       // music played when game is over
+	bool m_bStartGame ;     // just starting game
+	bool m_bGameOver ;      // game is over
+	bool m_bGameOverMusicPlayed ;       // music played when game is over
 	int m_iTableStones ;    // number of stones in data table
 	long m_lNumConfigs ;    // # configs in best win table
 	long m_lTableSize ;     // size of best win table
-	BOOL m_bInitData ;      // flag: initialize data tables
+	bool m_bInitData ;      // flag: initialize data tables
 	class CMnkData FAR *m_lpCMnkData ;  // pointer to data tables
 	CSound *m_pSound;
 
 //    XPVOID m_cWnd ;   // mankala window
 //    int m_iPlayer ;   // Next player: 0=player 1, 1=player 2
 	int m_iStartStones ;    // #stones per pit at start
-	BOOL m_bComputer[NUMPLAYERS] ; // flag: player is
+	bool m_bComputer[NUMPLAYERS] ; // flag: player is
 	// computer (vs human)
 	class CPit *m_xpcPits[NUMPLAYERS][NUMPITS + 2] ;
 	// pointers to pit classes for pits, home bins,
@@ -274,22 +274,22 @@ private:
 	                }
 	m_eLevel[NUMPLAYERS]  ;     // level of computer play
 
-	BOOL m_bDumpPopulate, m_bDumpMoves, m_bDumpTree ; // dump options
+	bool m_bDumpPopulate, m_bDumpMoves, m_bDumpTree ; // dump options
 
 	char m_cEndData ;
 
 private:
 	/**
 	 * Read save file with best win table
-	 * @returns		TRUE if error, FALSE otherwise
+	 * @returns		true if error, false otherwise
 	 */
-	BOOL ReadTableFile();
+	bool ReadTableFile();
 
 	/**
 	 * Write out save file with best win table
-	 * @returns		TRUE if error, FALSE otherwise
+	 * @returns		true if error, false otherwise
 	 */
-	BOOL WriteTableFile();
+	bool WriteTableFile();
 
 public:
 	CMnk() {
@@ -300,45 +300,45 @@ public:
 // mnklog.cpp -- Mankala game logic
 
 //- InitMankala -- initialize a new game of Mankala
-private: BOOL InitMankala(void) ;
+private: bool InitMankala(void) ;
 //- Move -- make a move
-private: BOOL Move(CPit * xpcSowPit, CMove * xpcMove PDFT(nullptr)) ;
+private: bool Move(CPit * xpcSowPit, CMove * xpcMove PDFT(nullptr)) ;
 //- MoveStone -- move one stone for move
-public: BOOL MoveStone(CMove * xpcMove,
+public: bool MoveStone(CMove * xpcMove,
 	                       CPit * xpcFromPit, CPit * xpcToPit) ;
 //- InitData -- initialize data class object
-private: BOOL InitData(BOOL bInit PDFT(TRUE)) ;
+private: bool InitData(bool bInit PDFT(true)) ;
 //- CountConfigurations -- set up Configurations table
-	BOOL CountConfigurations(void) ;
+	bool CountConfigurations(void) ;
 //- PopulateTable -- compute values for best win table
-private: BOOL PopulateTable(void) ;
+private: bool PopulateTable(void) ;
 //- MapConfiguration -- map a configuration to its integer index,
 //		store configuration index into Move object
-	BOOL MapConfiguration(CMove * xpcMove) ;
+	bool MapConfiguration(CMove * xpcMove) ;
 //- UnmapConfiguration -- map configuration index back
 //				to configuration
-	BOOL UnmapConfiguration(CMove * xpcMove) ;
+	bool UnmapConfiguration(CMove * xpcMove) ;
 //- SearchMove -- search for best move
-private: BOOL SearchMove(CMove * xpcMove, int &iMove) ;
+private: bool SearchMove(CMove * xpcMove, int &iMove) ;
 //- Minimax -- find best move from supplied configuration
-	BOOL Minimax(CMove * xpcMove, int iDepth PDFT(0)) ;
+	bool Minimax(CMove * xpcMove, int iDepth PDFT(0)) ;
 //- StaticEvaluation -- determine static value of a position
-	BOOL StaticEvaluation(CMove * xpcMove) ;
+	bool StaticEvaluation(CMove * xpcMove) ;
 //- CountStones -- count total stones in configuration
-	BOOL CountStones(CMove * xpcMove) ;
+	bool CountStones(CMove * xpcMove) ;
 //- GetBestWinCount -- get position value in best win table
-private: BOOL GetBestWinCount(CMove * xpcMove) ;
+private: bool GetBestWinCount(CMove * xpcMove) ;
 //- SetBestWinCount -- set value in best win table
-private: BOOL SetBestWinCount(CMove * xpcMove) ;
+private: bool SetBestWinCount(CMove * xpcMove) ;
 //- DumpPosition -- dump contents of CMove object
-	BOOL DumpPosition(CMove * xpcMove) ;
+	bool DumpPosition(CMove * xpcMove) ;
 //- DumpBestWinTable -- dump fields of best win table
-	BOOL DumpBestWinTable(long lLow PDFT(0),
+	bool DumpBestWinTable(long lLow PDFT(0),
 	                      long lHigh PDFT(6 * 24 - 1)) ;
-	BOOL AggressiveStaticEvaluation(CMove* xpcMove);
+	bool AggressiveStaticEvaluation(CMove* xpcMove);
 
-	BOOL DefensiveStaticEvaluation(CMove*);
-	BOOL TreeAlgo(CMove*);
+	bool DefensiveStaticEvaluation(CMove*);
+	bool TreeAlgo(CMove*);
 	int ExtendedStaticEvaluation(MOVE*, MOVE*, signed char, int);
 
 } ; // CMnk
@@ -443,13 +443,13 @@ class CPitWnd : public CPit {
 // CMnkWindow:
 
 class CMnkWindow : public CFrameWnd, public CMnk {
-	bool bPlayedGameOnce = FALSE;
+	bool bPlayedGameOnce = false;
 	char m_cStartData2 ;
-	BOOL m_bJustStarted;    // flag to indicate beginning of game.
-	BOOL m_bGameWon;       //flag to indicate game result.
-	BOOL m_bRulesActive;    //flag to indicate the unfurled status of the rules scroll.
+	bool m_bJustStarted;    // flag to indicate beginning of game.
+	bool m_bGameWon;       //flag to indicate game result.
+	bool m_bRulesActive;    //flag to indicate the unfurled status of the rules scroll.
 	// ...this flag is set only when rules are invoked via the F1 key.
-	BOOL m_bScoresDisplayed; // to indicate that the Score has been displayed at the end of game,
+	bool m_bScoresDisplayed; // to indicate that the Score has been displayed at the end of game,
 	//... and should pop up again.
 	CText *m_pText;
 
@@ -459,8 +459,8 @@ class CMnkWindow : public CFrameWnd, public CMnk {
 	CBmpObject *m_xpcBmpFreeChain ;     // chain of objects to be freed
 //    CSprite * m_xpStoneSprite ;   // basic stone sprite (others dup'ed)
 	CBmpObject m_cBmpScroll ;       // options scroll bitmap object
-	BOOL m_bInMenu ;        // within options menu
-	BOOL    m_bPlaySound;
+	bool m_bInMenu ;        // within options menu
+	bool    m_bPlaySound;
 	char m_szDataDirectory[100] ;   // directory for data files
 
 	CRect m_cMainRect,   // screen area spanned by the game window
@@ -491,51 +491,51 @@ public: ~CMnkWindow(void) ;
 // mnkui.cpp -- Mankala game -- user interface
 
 //- StartGame -- start a new game
-private: BOOL StartGame(void) ;
+private: bool StartGame(void) ;
 //- PaintBitmapObject -- paint bitmap
-private: BOOL PaintBitmapObject(CBmpObject * xpcBmpObject,
+private: bool PaintBitmapObject(CBmpObject * xpcBmpObject,
 	                                int iBmpType PDFT(0), int iBmpArg PDFT(0)) ;
 //- InitBitmapObject -- set up DibDoc in bitmap object
-private: BOOL InitBitmapObject(CBmpObject * xpcBmpObject) ;
+private: bool InitBitmapObject(CBmpObject * xpcBmpObject) ;
 //- InitBitmapFilename -- set up filename bitmap object
-private: BOOL InitBitmapFilename(CBmpObject * xpcBmpObject) ;
+private: bool InitBitmapFilename(CBmpObject * xpcBmpObject) ;
 //- SetBitmapCoordinates -- set coordinates of bitmap
-private: BOOL SetBitmapCoordinates(
+private: bool SetBitmapCoordinates(
 	    CBmpObject * xpcBmpObject) ;
 //- AcceptClick -- process a mouse click by user
-	BOOL AcceptClick(CPoint cClickPoint) ;
+	bool AcceptClick(CPoint cClickPoint) ;
 //- MoveStoneDisplay -- move a stone from pit to another
-public: BOOL MoveStoneDisplay(CPitWnd * xpcFromPit,
+public: bool MoveStoneDisplay(CPitWnd * xpcFromPit,
 	                              CPitWnd * xpcToPit) ;
 //- AdjustPitDisplay -- adjust display of pit when
 //			number of stones changes
-private: BOOL AdjustPitDisplay(CPitWnd * xpcPit,
-	                               BOOL bForcePaint PDFT(FALSE)) ;
+private: bool AdjustPitDisplay(CPitWnd * xpcPit,
+	                               bool bForcePaint PDFT(false)) ;
 //- PaintScreen -- paint screen for mankala game
 private: void PaintScreen(void) ;
 //- ProcessDc -- handle processing of device context
-private: BOOL ProcessDc(BOOL bAlloc PDFT(TRUE)) ;
+private: bool ProcessDc(bool bAlloc PDFT(true)) ;
 //- AllocatePits -- allocate pits (including home bin/hand)
-	BOOL AllocatePits(void) ;
+	bool AllocatePits(void) ;
 //- SetCrabSign -- to my/your turn
-private: BOOL SetCrabSign(BOOL bPaint PDFT(TRUE)) ;
+private: bool SetCrabSign(bool bPaint PDFT(true)) ;
 //- FreePitResources -- free (optionally delete) all pit
 //		resources -- stone sprites and pit bitmaps
-private: BOOL FreePitResources(BOOL bDelete PDFT(FALSE)) ;
+private: bool FreePitResources(bool bDelete PDFT(false)) ;
 //- ClearBitmapObject -- release bitmap object
-private: BOOL ClearBitmapObject(CBmpObject * xpcBmpObject) ;
+private: bool ClearBitmapObject(CBmpObject * xpcBmpObject) ;
 //- ReleaseResources -- release all resources before term
 public: void ReleaseResources(void) ;
 //- DebugDialog -- put up debugging dialog box
-private: BOOL DebugDialog(void) ;
-public: void Setm_bJustStarted(BOOL U) {
+private: bool DebugDialog(void) ;
+public: void Setm_bJustStarted(bool U) {
 		m_bJustStarted = U; //- UserDialog -- put up user dialog box
 	}
-public: BOOL FAR PASCAL UserDialog(void) ;
+public: bool FAR PASCAL UserDialog(void) ;
 //- OptionsDialog -- call options dialog
-private: BOOL OptionsDialog(void) ;
+private: bool OptionsDialog(void) ;
 
-//private: BOOL CALLBACK ResetPitsDlgProc(HWND, unsigned int, WPARAM, LPARAM);
+//private: bool CALLBACK ResetPitsDlgProc(HWND, unsigned int, WPARAM, LPARAM);
 
 
 
@@ -554,7 +554,7 @@ private: BOOL OptionsDialog(void) ;
 //    static    void MoveSprite(CDC *pDC,CSprite *pSprite);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	virtual LRESULT OnMCINotify(WPARAM W, LPARAM L);
 	virtual LRESULT OnMMIONotify(WPARAM W, LPARAM L);
 
@@ -588,7 +588,7 @@ protected:
 class CMnkApp : public CWinApp {
 	CMnkWindow *m_xpcMnkWindow ;
 public:
-	BOOL InitInstance();
+	bool InitInstance();
 	int ExitInstance();
 } ;
 

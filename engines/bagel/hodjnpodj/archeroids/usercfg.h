@@ -55,8 +55,8 @@ public:
 
 protected:
 
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	void PutDlgData(void);
 	void ClearDialogImage(void);
 
@@ -76,7 +76,7 @@ protected:
 	int          m_nInitArcherLevel;
 	int          m_nInitNumLives;
 	int          m_nInitNumBadGuys;
-	BOOL         m_bShouldSave;           // True if we should save theses settings
+	bool         m_bShouldSave;           // True if we should save theses settings
 };
 
 } // namespace Archeroids

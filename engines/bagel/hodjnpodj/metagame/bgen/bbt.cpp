@@ -36,12 +36,12 @@ CBbtMgr::~CBbtMgr() {
 
 
 //* CBbtMgr::LinkButton -- link button into button manager
-BOOL CBbtMgr::LinkButton(CBbutton FAR *lpBbt,
+bool CBbtMgr::LinkButton(CBbutton FAR *lpBbt,
 	CBgbObject FAR *lpcBgbObject1,
 	CBgbObject FAR *lpcBgbObject2)
 	// lpBbt -- button object
 	// lpcBgbObject1, lpcBgbObject2 -- up/down graphic objects
-	// returns: TRUE if error, FALSE otherwise
+	// returns: true if error, false otherwise
 {
 	JXENTER(CBbtMgr::LinkButton);
 	int iError = 0;        // error code
@@ -54,7 +54,7 @@ BOOL CBbtMgr::LinkButton(CBbutton FAR *lpBbt,
 	if (!lpBbt->m_bChained) {
 		lpBbt->m_lpBbtNext = m_lpBbtChain;
 		m_lpBbtChain = lpBbt;
-		lpBbt->m_bChained = TRUE;
+		lpBbt->m_bChained = true;
 	}
 
 	// cleanup:
@@ -71,7 +71,7 @@ int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType)
 	JXENTER(CBbtMgr::AcceptClick);
 	int iId = 0;   // return value
 	CBbutton FAR *lpPtBbt = nullptr, FAR *lpBbt;
-	BOOL bButtonUp = FALSE, bButtonDown = FALSE;
+	bool bButtonUp = false, bButtonDown = false;
 
 	for (lpBbt = m_lpBbtChain; lpBbt; lpBbt = lpBbt->m_lpBbtNext)
 		if (lpBbt->PtInButton(crPoint))
@@ -80,7 +80,7 @@ int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType)
 	switch (iClickType) {
 	case CLICK_LDOWN:
 	case CLICK_LMOVE:
-		bButtonDown = TRUE;
+		bButtonDown = true;
 		break;
 
 	case CLICK_LUP:
@@ -113,9 +113,9 @@ int CBbtMgr::AcceptClick(CRPoint crPoint, int iClickType)
 }
 
 //* CBbtMgr::MoveDown -- move button down
-BOOL CBbtMgr::MoveDown(CBbutton FAR *lpDownBbt)
+bool CBbtMgr::MoveDown(CBbutton FAR *lpDownBbt)
 // lpDownBbt -- button to move down, if any
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CBbtMgr::MoveDown);
 	int iError = 0;        // error code

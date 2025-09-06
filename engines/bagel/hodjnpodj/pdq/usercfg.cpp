@@ -88,18 +88,18 @@ void CUserCfgDlg::GetDlgData() {
 	m_nGameSpeed = m_pSpeedScroll->GetScrollPos();
 	m_nShown = m_pShownScroll->GetScrollPos();
 
-	m_bRandomLetters = TRUE;
+	m_bRandomLetters = true;
 	if (pFixedButton->GetCheck() == 1)
-		m_bRandomLetters = FALSE;
+		m_bRandomLetters = false;
 
-	m_bShowNames = FALSE;
+	m_bShowNames = false;
 	if (m_pNamesButton->GetCheck() == 1) {
-		m_bShowNames = TRUE;
+		m_bShowNames = true;
 	}
 }
 
 
-BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
 	*/
@@ -108,25 +108,25 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case IDOK:
-			m_bShouldSave = TRUE;
+			m_bShouldSave = true;
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return FALSE;
+			return false;
 
 		/*
 		* reset params to default
 		*/
 		case ID_RESET:
 
-			m_bRandomLetters = FALSE;
+			m_bRandomLetters = false;
 			m_nShown = SHOWN_DEF;
 			m_nGameSpeed = SPEED_DEF;
-			m_bShowNames = TRUE;
+			m_bShowNames = true;
 
 			PutDlgData();
 			DispSpeed();
@@ -260,7 +260,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	char buf[10];
 	CDC *pDC;
@@ -270,12 +270,12 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	tmpRect.SetRect(22, 100, 122, 120);
 	m_pShownScroll = new CScrollBar;
 	m_pShownScroll->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SHOWN);
-	m_pShownScroll->SetScrollRange(SHOWN_MIN, SHOWN_MAX, TRUE);
+	m_pShownScroll->SetScrollRange(SHOWN_MIN, SHOWN_MAX, true);
 
 	tmpRect.SetRect(22, 138, 122, 158);
 	m_pSpeedScroll = new CScrollBar;
 	m_pSpeedScroll->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SPEED);
-	m_pSpeedScroll->SetScrollRange(SPEED_MIN, SPEED_MAX, TRUE);
+	m_pSpeedScroll->SetScrollRange(SPEED_MIN, SPEED_MAX, true);
 
 	pDC = GetDC();
 
@@ -326,16 +326,16 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		m_pNamesButton->SetControl(ID_NAMES, this);
 	}
 
-	m_bShouldSave = FALSE;
+	m_bShouldSave = false;
 
 	/*
 	* User can specify if he/she wants the letters to appear in a random order
 	* or in the predefined fixed order set by the MetaGame
 	*/
 	GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
-	m_bRandomLetters = FALSE;
+	m_bRandomLetters = false;
 	if (!scumm_stricmp(buf, "Yes"))
-		m_bRandomLetters = TRUE;
+		m_bRandomLetters = true;
 
 	/*
 	* This will determine how many letters are intially displayed (default is SHOWN_DEF)
@@ -354,12 +354,12 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 
 	GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
 	assert(strlen(buf) < 10);
-	m_bShowNames = FALSE;
+	m_bShowNames = false;
 	if (!scumm_stricmp(buf, "Yes"))
-		m_bShowNames = TRUE;
+		m_bShowNames = true;
 
 	PutDlgData();
-	return TRUE;
+	return true;
 }
 
 

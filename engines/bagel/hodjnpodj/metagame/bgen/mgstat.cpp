@@ -1032,8 +1032,8 @@ const CClueTable CMgStatic::cPodjClueTable[] = {
 
 #ifndef FRAME_EXE
 //* CMgStatic::FindClue -- find Hodj/Podj clue
-const CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
-// bPodj -- Hodj if FALSE, Podj if TRUE
+const CClueTable *CMgStatic::FindClue(bool bHodj, int iClue)
+// bPodj -- Hodj if false, Podj if true
 // returns: pointer to clue table entry
 {
 	//int iError = 0 ;            // error code

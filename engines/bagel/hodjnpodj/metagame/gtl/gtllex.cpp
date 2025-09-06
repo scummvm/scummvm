@@ -84,8 +84,8 @@ const char *CGtlData::FindKeyword(int iType)
 }
 
 //* CGtlData::ReadLine -- read input line
-BOOL CGtlData::ReadLine(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::ReadLine(void)
+// returns: true if error, false otherwise
 {
 	int iError = 0 ;        // error code
 	char szLine[512];       // input line
@@ -97,22 +97,22 @@ BOOL CGtlData::ReadLine(void)
 	char *xpszIdent;       // identifier string pointer
 	const CKeyTab * xpKytb ;      // pointer to keyword table
 	CLexElement * xpLxel, *xpLastLxel = nullptr ;  // last lexical element on line
-	BOOL bDone ;    // loop variable
+	bool bDone ;    // loop variable
 
 	JXENTER(CGtlData::ReadLine) ;
 
 	// zero out the lexical blocks
 	memset((void *)&m_cLexElts[0], 0, MAX_LEXELTS * sizeof(class CLexElement));
 
-	bDone = FALSE;
+	bDone = false;
 	while (!bDone) {
 
 		// read line and test for EOF
 		Common::strcpy_s(szLine, m_xpGtlFile->readLine().c_str());
 		if (m_xpGtlFile->eos()) {
-			bDone = TRUE ;  // last loop iteration
+			bDone = true ;  // last loop iteration
 			iError = 100 ;
-			m_bEof = TRUE ; // end of file
+			m_bEof = true ; // end of file
 			szLine[0] = '\0';
 		}
 
@@ -234,7 +234,7 @@ BOOL CGtlData::ReadLine(void)
 		// we're done if there was at least one lexical element,
 		//  and the last one is not a comma
 		if (xpLastLxel && xpLastLxel->m_iType != LXT_COMMA)
-			bDone = TRUE ;
+			bDone = true ;
 	}
 
 	// end of statement
@@ -248,8 +248,8 @@ cleanup:
 
 
 //* CGtlData::ErrorMsg -- publish error message
-BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, const char *szMessage)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::ErrorMsg(CLexElement * xpLxel, const char *szMessage)
+// returns: true if error, false otherwise
 {
 	int iError = 0 ;        // error code
 	char szLine[200] ;      // output line

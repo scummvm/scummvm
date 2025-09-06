@@ -46,23 +46,23 @@ private:
 	CColorButton *m_pContinueGameButton;
 	CColorButton *m_pOptionsGameButton;
 
-	BOOL         m_bMusic;
-	BOOL         m_bSoundFX;
-	BOOL         m_bScrolling;
+	bool         m_bMusic;
+	bool         m_bSoundFX;
+	bool         m_bScrolling;
 
 public:
 	CMetaOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);
 	void SetInitialOptions(CBfcMgr *);    // Sets the private members
 
 private:
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 	void ClearDialogImage(void);
 
 protected:
 	//{{AFX_MSG(COptions)
 	virtual void OnOK(void) override;
 	virtual void OnCancel(void) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

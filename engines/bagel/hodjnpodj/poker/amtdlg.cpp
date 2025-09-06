@@ -104,7 +104,7 @@ CSetAmountDlg::CSetAmountDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID
  *  n/a
  *
  ****************************************************************/
-BOOL CSetAmountDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CSetAmountDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -147,11 +147,11 @@ BOOL CSetAmountDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  * RETURN VALUE:
  *
- *  BOOL to tell windows that it has dealt this function
+ *  bool to tell windows that it has dealt this function
  *
  ****************************************************************/
-BOOL CSetAmountDlg::OnInitDialog(void) {
-	BOOL    bSuccess;
+bool CSetAmountDlg::OnInitDialog(void) {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -167,7 +167,7 @@ BOOL CSetAmountDlg::OnInitDialog(void) {
 	bSuccess = pCancelButton->SetControl(ID_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -298,8 +298,8 @@ void CSetAmountDlg::OnPaint(void) {
 
 	pSetAmountSB = new CScrollBar;
 	pSetAmountSB = (CScrollBar *)GetDlgItem(IDC_SETAMT_BAR);
-	pSetAmountSB->SetScrollRange(AMOUNTMIN, AMOUNTMAX, TRUE);
-	pSetAmountSB->SetScrollPos(nScrollPos, TRUE);
+	pSetAmountSB->SetScrollRange(AMOUNTMIN, AMOUNTMAX, true);
+	pSetAmountSB->SetScrollPos(nScrollPos, true);
 
 	if (pSetAmountSB != nullptr) {
 		pSetAmountSB = nullptr;
@@ -340,7 +340,7 @@ void CSetAmountDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBa
 	CDC         *pDC;
 
 // first set the range of the scoll bar
-	pScrollBar->SetScrollRange(AMOUNTMIN, AMOUNTMAX, TRUE);
+	pScrollBar->SetScrollRange(AMOUNTMIN, AMOUNTMAX, true);
 
 // get the scroll bar's current position, i.e. the current amount set
 	oldAmnt = pScrollBar->GetScrollPos();
@@ -372,7 +372,7 @@ void CSetAmountDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBa
 	}
 
 // set the scroll bar to the new position
-	pScrollBar->SetScrollPos(newAmnt, TRUE);
+	pScrollBar->SetScrollPos(newAmnt, true);
 
 // set the current amount to the new amount just set
 	switch (newAmnt) {
@@ -416,8 +416,8 @@ void CSetAmountDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBa
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-BOOL CSetAmountDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool CSetAmountDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void CSetAmountDlg::ClearDialogImage(void) {

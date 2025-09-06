@@ -112,9 +112,9 @@ void CBagVar::setBoolValue(bool bVal) {
 	assert(isValidObject(this));
 
 	if (bVal)
-		_sVarValue = "TRUE";
+		_sVarValue = "true";
 	else
-		_sVarValue = "FALSE";
+		_sVarValue = "false";
 }
 
 void CBagVar::setValue(int nVal) {

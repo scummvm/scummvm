@@ -104,7 +104,7 @@ private:
 public:
 	HGLOBAL m_hTemplate;
 	uint32 m_dwTemplateSize;
-	BOOL m_bSystemFont;
+	bool m_bSystemFont;
 
 public:
 	CDialogTemplate(LPCDLGTEMPLATE pTemplate = NULL);
@@ -115,14 +115,14 @@ public:
 	 */
 	void loadTemplate(CDialog *dialog);
 
-	BOOL HasFont() const;
-	BOOL SetFont(const char *lpFaceName, uint16 nFontSize);
-	BOOL SetSystemFont(uint16 nFontSize = 0);
-	BOOL GetFont(CString &strFaceName, uint16 &nFontSize) const;
+	bool HasFont() const;
+	bool SetFont(const char *lpFaceName, uint16 nFontSize);
+	bool SetSystemFont(uint16 nFontSize = 0);
+	bool GetFont(CString &strFaceName, uint16 &nFontSize) const;
 	void GetSizeInDialogUnits(SIZE *pSize) const;
 	void GetSizeInPixels(SIZE *pSize) const;
 
-	static BOOL GetFont(LPCDLGTEMPLATE pTemplate,
+	static bool GetFont(LPCDLGTEMPLATE pTemplate,
 		CString &strFaceName, uint16 &nFontSize);
 };
 

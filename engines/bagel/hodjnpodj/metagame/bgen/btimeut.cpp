@@ -27,16 +27,16 @@ namespace HodjNPodj {
 namespace Metagame {
 
 ///DEFS btimeut.h
-BOOL bTimeDelayPassed = TRUE ;
+bool bTimeDelayPassed = true ;
 
 void CALLBACK DelayMsCallback(HWND /* hWnd */,
                               unsigned int /* uMsg */, unsigned int /* uTimerId */, uint32 /* dwTime */);
 
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
-BOOL CTimeUtil::DelayMs(unsigned int uMs)
+bool CTimeUtil::DelayMs(unsigned int uMs)
 // uMs -- number of milliseconds to delay
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CTimeUtil::DelayMs) ;
 	int iError = 0 ;        // error code
@@ -48,7 +48,7 @@ BOOL CTimeUtil::DelayMs(unsigned int uMs)
 		goto cleanup ;
 	}
 
-	bTimeDelayPassed = FALSE ;  // time hasn't passed yet
+	bTimeDelayPassed = false ;  // time hasn't passed yet
 	while (!bTimeDelayPassed)   // loop until flag gets set again
 		DoPendingEvents() ;
 
@@ -74,7 +74,7 @@ void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
 // returns: void
 {
 	JXENTER(DelayMsCallback) ;
-	bTimeDelayPassed = TRUE ;   // elapsed time passed
+	bTimeDelayPassed = true ;   // elapsed time passed
 
 	JXELEAVE(DelayMsCallback) ;
 }

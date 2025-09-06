@@ -49,7 +49,7 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	//{{AFX_DATA_INIT(COptnDlg)
 	m_nSpeed = MIN_SPEED;
 	m_nNumButtons = MAX_BUTTONS;
-	m_bPlayGame = TRUE;
+	m_bPlayGame = true;
 	pSubOptionsPalette = pPalette;
 	//}}AFX_DATA_INIT
 }
@@ -92,7 +92,7 @@ int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog() {
+bool COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	CDC     *pDC;
@@ -119,7 +119,7 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	m_ScrollButtons.SetScrollRange(MIN_BUTTONS, MAX_BUTTONS, 0);
-	m_ScrollButtons.SetScrollPos(m_nNumButtons, TRUE);
+	m_ScrollButtons.SetScrollPos(m_nNumButtons, true);
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 175, 80);
 	if ((m_pSpeedText = new CText()) != nullptr) {
@@ -127,7 +127,7 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
-	m_ScrollSpeed.SetScrollPos(m_nSpeed, TRUE);
+	m_ScrollSpeed.SetScrollPos(m_nSpeed, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
@@ -153,7 +153,7 @@ BOOL COptnDlg::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void COptnDlg::OnDestroy(void) {
@@ -161,20 +161,20 @@ void COptnDlg::OnDestroy(void) {
 }
 
 
-BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 
 		switch (wParam) {
 
 		case IDC_PLAYGAME:
-			m_bPlayGame = TRUE;
+			m_bPlayGame = true;
 			(*pGameButton).SetCheck(m_bPlayGame);
 			(*pMusicButton).SetCheck(!m_bPlayGame);
 			break;
 
 		case IDC_PLAYMUSIC:
-			m_bPlayGame = FALSE;
+			m_bPlayGame = false;
 			(*pGameButton).SetCheck(m_bPlayGame);
 			(*pMusicButton).SetCheck(!m_bPlayGame);
 			break;
@@ -194,13 +194,13 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return TRUE;
+	return true;
 
 } // end OnCommand
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -241,7 +241,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
+		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();

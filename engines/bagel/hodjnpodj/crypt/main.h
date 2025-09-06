@@ -162,17 +162,17 @@ private:
 	CRect       m_cNewGame;             // area spanned by new game rect
 //	CCryptogram  *m_cCryptograms;        // cryptogram game object
 	CBmpButton  *m_pScrollButton;       // scroll button
-	BOOL        m_bIgnoreScrollClick;   // scroll button
-	BOOL        m_bIsFirstTimeHack;
+	bool        m_bIgnoreScrollClick;   // scroll button
+	bool        m_bIsFirstTimeHack;
 	CSprite     *m_pHourGlass;
 //	int          m_nTimer;
-//	BOOL     m_bPause;
+//	bool     m_bPause;
 
 private:
 	void        OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
@@ -208,7 +208,7 @@ protected:
 //
 class CTheApp : public CWinApp {
 public:
-	BOOL InitInstance();
+	bool InitInstance();
 	int ExitInstance();
 };
 

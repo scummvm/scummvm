@@ -31,7 +31,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Saves {
 
-typedef BOOL (CALLBACK *LPSAVEFUNC)(const char *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+typedef bool (CALLBACK *LPSAVEFUNC)(const char *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
 /**
  * Converts a CBfcMgr to a SAVEGAME_INFO
@@ -41,7 +41,7 @@ typedef BOOL (CALLBACK *LPSAVEFUNC)(const char *, CBfcMgr *, CWnd *, CPalette *,
  */
 extern void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo);
 
-extern BOOL ValidateSGInfo(SAVEGAME_INFO *);
+extern bool ValidateSGInfo(SAVEGAME_INFO *);
 extern ERROR_CODE ConvertFromSGI(CBfcMgr *, SAVEGAME_INFO *);
 
 /**
@@ -49,13 +49,13 @@ extern ERROR_CODE ConvertFromSGI(CBfcMgr *, SAVEGAME_INFO *);
  * User can choose which slot they want to save a game into,
  * and can give a description of the saved game.
  */
-extern BOOL SaveGame(CWnd *, CPalette *, ERROR_CODE *);
+extern bool SaveGame(CWnd *, CPalette *, ERROR_CODE *);
 
 /**
  * Shows a Restore-Game dialog box
  * User can select which game they want to restore.
 **/
-extern BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
+extern bool RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
 
 } // namespace Saves
 } // namespace Metagame

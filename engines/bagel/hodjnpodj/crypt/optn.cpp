@@ -99,7 +99,7 @@ int COptn::TimeToIndex(int nTime) {
 			return (int)nLow;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void COptn::DoDataExchange(CDataExchange* pDX) {
@@ -123,12 +123,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptn message handlers
 
-BOOL COptn::OnInitDialog() {
+bool COptn::OnInitDialog() {
 	CRect   statsRect;                      // game stats displays
 	int     nStat_col_offset;               // game stats placement
 	int     nStat_row_offset;
 	int     nStatWidth, nStatHeight;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	CDC     *pDC;
 
 	CBmpDialog::OnInitDialog();
@@ -171,8 +171,8 @@ BOOL COptn::OnInitDialog() {
 		bAssertCheck = (*m_pLttrsSlvd).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
-	m_LttrsSlvd.SetScrollRange(MIN_LTTRSSLVD, MAX_LTTRSSLVD, FALSE);    // setup Letters Solved defaults
-	m_LttrsSlvd.SetScrollPos(m_nLttrsSlvd, TRUE);
+	m_LttrsSlvd.SetScrollRange(MIN_LTTRSSLVD, MAX_LTTRSSLVD, false);    // setup Letters Solved defaults
+	m_LttrsSlvd.SetScrollPos(m_nLttrsSlvd, true);
 
 	nStat_row_offset += BOX_ROW_OFFSET;     // Time stat display box
 	statsRect.SetRect(
@@ -187,8 +187,8 @@ BOOL COptn::OnInitDialog() {
 		ASSERT(bAssertCheck);               // initialize the text objext
 	}
 
-	m_Time.SetScrollRange(MIN_INDEX_TIME, MAX_INDEX_TIME, FALSE);               // Time scroll bar defaults
-	m_Time.SetScrollPos(m_nTime, TRUE);
+	m_Time.SetScrollRange(MIN_INDEX_TIME, MAX_INDEX_TIME, false);               // Time scroll bar defaults
+	m_Time.SetScrollPos(m_nTime, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pGamePalette);                      // set the palette to use
@@ -201,7 +201,7 @@ BOOL COptn::OnInitDialog() {
 	}
 
 	ReleaseDC(pDC);
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void COptn::OnDestroy(void) {
@@ -212,7 +212,7 @@ void COptn::OnDestroy(void) {
 void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	// TODO: Add your message handler code here and/or call default
 	CDC     *pDC;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	char    msg[64];
 
 	pDC = GetDC();
@@ -259,7 +259,7 @@ void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScro
 		Common::sprintf_s(msg, "Letters Solved: %d", m_nLttrsSlvd);
 		bAssertCheck = (*m_pLttrsSlvd).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);
-		pScrollBar->SetScrollPos(m_nLttrsSlvd, TRUE);
+		pScrollBar->SetScrollPos(m_nLttrsSlvd, true);
 
 	} else if (pScrollBar->GetDlgCtrlID() == IDC_TIME) {
 		switch (nSBCode) {
@@ -298,7 +298,7 @@ void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScro
 		bAssertCheck = (*m_pTime).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
-		pScrollBar->SetScrollPos(m_nTime, TRUE);
+		pScrollBar->SetScrollPos(m_nTime, true);
 	} // end if
 
 	ReleaseDC(pDC);
@@ -308,7 +308,7 @@ void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScro
 
 void COptn::OnPaint() {
 	CDC     *pDC;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	char    msg[64];
 
 	CBmpDialog::OnPaint();
@@ -327,8 +327,8 @@ void COptn::OnPaint() {
 	ReleaseDC(pDC);
 }
 
-BOOL COptn::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptn::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void COptn::OnOK() {

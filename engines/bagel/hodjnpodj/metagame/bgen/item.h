@@ -86,8 +86,8 @@ public:
 	}
 	#endif
 
-	BOOL AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace);
-	BOOL AddNote(CNote *pNote);
+	bool AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace);
+	bool AddNote(CNote *pNote);
 	CNote *GetFirstNote(void) {
 		return (m_pNotes);
 	}

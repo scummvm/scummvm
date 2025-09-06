@@ -67,7 +67,7 @@ CInventory::~CInventory() {
 	CItem   *pItem;
 
 	m_nItemCount = 0;                               // zero the item count
-	while (TRUE) {                                  // flush the equipment list
+	while (true) {                                  // flush the equipment list
 		pItem = m_pEquipment;                       // ... one item at a time
 		if (pItem == nullptr)
 			break;

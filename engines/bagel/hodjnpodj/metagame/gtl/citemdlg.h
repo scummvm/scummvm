@@ -61,14 +61,14 @@ private:
 	CText *m_pTextMessage;
 	CColorButton *m_pOKButton;          // OKAY button on scroll
 	CItem *m_pItem;
-	BOOL            m_bHodj;
-	BOOL            m_bGain;
+	bool            m_bHodj;
+	bool            m_bGain;
 	long            m_lAmount;
 
 public:
 
 	// standard constructor
-	CItemDialog(CWnd *pParent, CPalette *pPalette, CItem *pItem, BOOL bHodj, BOOL bGain, long lAmount);
+	CItemDialog(CWnd *pParent, CPalette *pPalette, CItem *pItem, bool bHodj, bool bGain, long lAmount);
 
 	//  static  void UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY);
 
@@ -92,9 +92,9 @@ protected:
 	afx_msg void OnPaint();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

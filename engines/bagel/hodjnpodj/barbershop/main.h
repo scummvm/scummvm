@@ -41,7 +41,7 @@ private:
 	CSound      *m_pMIDISound;
 	CSound      *m_pWavSound;
 	CAnimate    *m_pAnim;
-	BOOL         m_bMIDIPlaying;
+	bool         m_bMIDIPlaying;
 
 public:
 	CMainWindow(void);
@@ -57,7 +57,7 @@ protected:
 	void        GameReset(void);
 	void        GamePause(void);
 	void        GameResume(void);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 
@@ -70,7 +70,7 @@ protected:
 	void        OnSysChar(unsigned int, unsigned int, unsigned int);
 	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
-	void        OnActivate(unsigned int, CWnd *, BOOL) override;
+	void        OnActivate(unsigned int, CWnd *, bool) override;
 	void        OnClose(void);
 	void        OnLButtonUp(unsigned int, CPoint);
 

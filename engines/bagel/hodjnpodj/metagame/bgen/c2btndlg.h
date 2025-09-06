@@ -60,9 +60,9 @@ protected:
 	afx_msg void OnPaint();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg bool OnEraseBkgnd(CDC *);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

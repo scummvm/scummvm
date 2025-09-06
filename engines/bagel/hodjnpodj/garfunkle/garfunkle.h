@@ -181,7 +181,7 @@ namespace Garkfunkle {
 #define HARP_OFFSET_Y       0
 #define CLARINET_OFFSET_Y   4
 
-//BOOL wait_awhile(int);
+//bool wait_awhile(int);
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -191,14 +191,14 @@ namespace Garkfunkle {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
-	BOOL GetNewSequence(const char* pszFileName);
-	BOOL GetNewSequence(int nLength);
-	void ActivateButtons(unsigned int nNumActive, BOOL bState);
+	bool GetNewSequence(const char* pszFileName);
+	bool GetNewSequence(int nLength);
+	void ActivateButtons(unsigned int nNumActive, bool bState);
 	void PlayBackSeries(int nNumNotes);
 	void NewGame();
 	void StartAnimation();
 	void StopAnimation();
-	BOOL wait_awhile(int nHundSecs);
+	bool wait_awhile(int nHundSecs);
 
 //added data members:
 	virtual void SplashScreen();
@@ -210,7 +210,7 @@ private:
 	CRect rectMusic[MAX_BUTTONS];             // Musician locations
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void OnDestroy();
 
 	//{{AFX_MSG( CMainWindow )
@@ -225,7 +225,7 @@ protected:
 	afx_msg void OnLButtonUp(unsigned int nFlags, CPoint point);
 	afx_msg void OnRButtonDown(unsigned int nFlags, CPoint point);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
-	afx_msg void OnActivate(unsigned int, CWnd*, BOOL) override;
+	afx_msg void OnActivate(unsigned int, CWnd*, bool) override;
 	afx_msg void OnClose();
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);

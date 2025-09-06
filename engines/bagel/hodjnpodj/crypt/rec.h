@@ -44,7 +44,7 @@ private:
 	char    m_lpszSource[MAX_SOURCE_LEN] = { 0 };
 
 public:
-	BOOL GetRecord(int nID);
+	bool GetRecord(int nID);
 
 	int GetID() const {
 		return m_nID;

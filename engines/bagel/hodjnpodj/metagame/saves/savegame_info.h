@@ -40,7 +40,7 @@ namespace Saves {
 #define BOFFO_GAME_ID   0x01464F42      // "BOF1" <--- our first game
 
 struct CLUE_ARRAY {
-	BOOL bUsed = false;
+	bool bUsed = false;
 	int iNoteID = 0;
 	int iPlaceID = 0;
 	int iPersonID = 0;
@@ -58,9 +58,9 @@ struct INVENTORY {
 
 struct PLAYER_INFO {
 	// These items are directly translated from CHodjPodj
-	BOOL m_bMoving = false;			// flag: this player moving
-	BOOL m_bComputer = false;		// flag: played by computer
-	BOOL m_bHaveMishMosh = false;
+	bool m_bMoving = false;			// flag: this player moving
+	bool m_bComputer = false;		// flag: played by computer
+	bool m_bHaveMishMosh = false;
 	int  m_iSectorCode = 0;			// MG_SECTOR_xxxx
 	int  m_iNode = 0;				// node # location
 	int  m_iSkillLevel = 0;
@@ -108,12 +108,12 @@ struct PLAYER_INFO {
 struct SAVEGAME_INFO {
 	unsigned long   m_lBoffoGameID = 0;
 	uint16  m_nFixedRecordSize = 0;
-	BOOL    m_bUsed = false;
+	bool    m_bUsed = false;
 	//	char    m_szSaveGameDescription[40];    // description of this saved game
 
 	PLAYER_INFO m_stPlayerInfo[MAX_PLAYERS];
 
-	BOOL    m_bTraps[240] = { false };		// table of used booby traps and narrations
+	bool    m_bTraps[240] = { false };		// table of used booby traps and narrations
 
 	int     m_iGameTime = 0;		// SHORT_GAME, MEDIUM_GAME or LONG_GAME
 
@@ -122,12 +122,12 @@ struct SAVEGAME_INFO {
 	byte   m_chJunk[80] = { 0 };	// for future use so the .SAV file size
 	// does not have to change
 
-	BOOL    m_bSoundEffectsEnabled = false;
-	BOOL    m_bMusicEnabled = false;
+	bool    m_bSoundEffectsEnabled = false;
+	bool    m_bMusicEnabled = false;
 
-	BOOL    m_bScrolling = false;
+	bool    m_bScrolling = false;
 
-	BOOL    m_bNewMishMosh = false;     // TRUE if frame should allocate new Mish/Mosh
+	bool    m_bNewMishMosh = false;     // true if frame should allocate new Mish/Mosh
 
 	void sync(Common::Serializer &s);
 };

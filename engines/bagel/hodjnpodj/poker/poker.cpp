@@ -65,7 +65,7 @@ namespace Poker {
 
 void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                    const char *pszAnimFile, const char *pszSoundFile,
-                   int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound);
+                   int nNumCels, int nXLoc, int nYLoc, int nSleep, bool bPlaySound);
 
 extern CMainPokerWindow *pcwndPoker;
 
@@ -75,7 +75,7 @@ CBmpButton      *pOptionButton = nullptr;      // Option button object for getti
 
 
 // gtb
-//static BOOL bIgnoreButtonClick = FALSE;
+//static bool bIgnoreButtonClick = false;
 int roundOfPlay;
 
 CSprite             *apCard[5];             // Bitmap buttons for displaying the cards
@@ -170,7 +170,7 @@ static const char *sBitmaps[53] = {
 };
 
 int     nPayOff;
-BOOL    bFirstTime;
+bool    bFirstTime;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -212,7 +212,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	CSize   mySize;
 	int     nCounter1;
-	BOOL    bTestCreate,                        // bool for testing the creation of each button
+	bool    bTestCreate,                        // bool for testing the creation of each button
 	        bTestLoadBmp,                       // bool for testing the loading of bitmaps
 	        bTestDibDoc;                        // bool for testing the creation of the splash screen
 	int     i;
@@ -241,12 +241,12 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		m_nRound = NUMBEROFROUNDS;
 		m_lStartingAmount = m_lpGameStruct->lCrowns;
 		m_lUserAmount = m_lpGameStruct->lCrowns;
-		m_bPlayRounds = TRUE;
+		m_bPlayRounds = true;
 	} else {
 		m_nRound = 0;
 		m_lStartingAmount = 1000;
 		m_lUserAmount = 1000;
-		m_bPlayRounds = FALSE;
+		m_bPlayRounds = false;
 	}
 
 	roundOfPlay = 0;
@@ -322,7 +322,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 
 	pDC = nullptr;
 	pDC = GetDC();
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
+	pOldPal = pDC->SelectPalette(pGamePalette, false);
 	pDC->RealizePalette();
 
 	pBetButtons = FetchBitmap(pDC, nullptr, BETBUTTONS);
@@ -395,7 +395,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		pBtnPalette = nullptr;
 	}
 
-	(void)pDC->SelectPalette(pOldPal, FALSE);
+	(void)pDC->SelectPalette(pOldPal, false);
 	pDC->RealizePalette();
 	pOldPal = nullptr;
 	ReleaseDC(pDC);
@@ -425,9 +425,9 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	nPayOff = IDC_POPO;
 
 // initialize BOOLS
-	m_bMiddleOfHand = FALSE;
-	m_bMouseCaptured = FALSE;
-	m_bEndHand = TRUE;
+	m_bMiddleOfHand = false;
+	m_bMouseCaptured = false;
+	m_bEndHand = true;
 
 	if (m_lpGameStruct->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME,
@@ -436,7 +436,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 			(*pGameSound).midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
-	bFirstTime = TRUE;
+	bFirstTime = true;
 
 	EndWaitCursor();
 
@@ -464,7 +464,7 @@ void CMainPokerWindow::initStatics() {
 
 	pGameSound = nullptr;
 	nPayOff = 0;
-	bFirstTime = FALSE;
+	bFirstTime = false;
 }
 
 /*****************************************************************
@@ -496,55 +496,55 @@ void CMainPokerWindow::initStatics() {
 void CMainPokerWindow::EnableBets() {
 
 // if not in Round play or have played less than m_nRound rounds
-	if ((m_bPlayRounds == FALSE) || (roundOfPlay < m_nRound)) {
+	if ((m_bPlayRounds == false) || (roundOfPlay < m_nRound)) {
 // disable/enable Bet buttons accoringly
 
 		if (m_lUserAmount >= 1) {
-			apBet[0]->EnableWindow(TRUE);
-			apBet[6]->EnableWindow(TRUE);
+			apBet[0]->EnableWindow(true);
+			apBet[6]->EnableWindow(true);
 		} else {
-			apBet[0]->EnableWindow(FALSE);
-			apBet[6]->EnableWindow(FALSE);
+			apBet[0]->EnableWindow(false);
+			apBet[6]->EnableWindow(false);
 		}
 
 		if (m_lUserAmount >= 5)
-			apBet[1]->EnableWindow(TRUE);
+			apBet[1]->EnableWindow(true);
 		else
-			apBet[1]->EnableWindow(FALSE);
+			apBet[1]->EnableWindow(false);
 
 		if (m_lUserAmount >= 10)
-			apBet[2]->EnableWindow(TRUE);
+			apBet[2]->EnableWindow(true);
 		else
-			apBet[2]->EnableWindow(FALSE);
+			apBet[2]->EnableWindow(false);
 
 		if (m_lUserAmount >= 25)
-			apBet[3]->EnableWindow(TRUE);
+			apBet[3]->EnableWindow(true);
 		else
-			apBet[3]->EnableWindow(FALSE);
+			apBet[3]->EnableWindow(false);
 
 		if (m_lUserAmount >= 100)
-			apBet[4]->EnableWindow(TRUE);
+			apBet[4]->EnableWindow(true);
 		else
-			apBet[4]->EnableWindow(FALSE);
+			apBet[4]->EnableWindow(false);
 
 		if (m_lUserAmount >= 1000)
-			apBet[5]->EnableWindow(TRUE);
+			apBet[5]->EnableWindow(true);
 		else
-			apBet[5]->EnableWindow(FALSE);
+			apBet[5]->EnableWindow(false);
 
 		if (m_lUserBet > 0)
-			pClearBet->EnableWindow(TRUE);
+			pClearBet->EnableWindow(true);
 		else
-			pClearBet->EnableWindow(FALSE);
+			pClearBet->EnableWindow(false);
 
 		if (m_lUserBet >= MAXBET) {
-			apBet[0]->EnableWindow(FALSE);
-			apBet[1]->EnableWindow(FALSE);
-			apBet[2]->EnableWindow(FALSE);
-			apBet[3]->EnableWindow(FALSE);
-			apBet[4]->EnableWindow(FALSE);
-			apBet[5]->EnableWindow(FALSE);
-			apBet[6]->EnableWindow(FALSE);
+			apBet[0]->EnableWindow(false);
+			apBet[1]->EnableWindow(false);
+			apBet[2]->EnableWindow(false);
+			apBet[3]->EnableWindow(false);
+			apBet[4]->EnableWindow(false);
+			apBet[5]->EnableWindow(false);
+			apBet[6]->EnableWindow(false);
 		}
 	}
 
@@ -634,7 +634,7 @@ void CMainPokerWindow::SplashScreen() {
 	char            cUser[12];                          // empty strings for displaying the user's amount
 // COLORREF clrOldColorRef;         // a place holder for the old text color in the DC
 // int              nOldBkMode;             // a place holder for the old Background Mode in the DC
-	BOOL            bTestDibDoc;                        // a bool for testing the return on DibDoc
+	bool            bTestDibDoc;                        // a bool for testing the return on DibDoc
 
 	char            cUserDisplay[32];       // the character array to display for the user's amount
 	char            cBetDisplay[12];                // the character array to display for the bet amount
@@ -762,21 +762,21 @@ void CMainPokerWindow::ResetGame(long lAmount) {
 		aDealtArray[nLoop][1] = 0;
 	}
 	for (nLoop = 0; nLoop < 5; ++nLoop) {
-		apHold[nLoop]->EnableWindow(FALSE);
-		if (bFirstTime == FALSE) {
-			abHoldArray[nLoop] = TRUE;
+		apHold[nLoop]->EnableWindow(false);
+		if (bFirstTime == false) {
+			abHoldArray[nLoop] = true;
 			SetHoldList(nLoop);
 		} else {
-			abHoldArray[nLoop] = FALSE;
+			abHoldArray[nLoop] = false;
 		}
 	}
 
 	if (bFirstTime)
-		bFirstTime = FALSE;
+		bFirstTime = false;
 
 // disable deal and draw buttons
-	pDealButton->EnableWindow(FALSE);
-	pDrawButton->EnableWindow(FALSE);
+	pDealButton->EnableWindow(false);
+	pDrawButton->EnableWindow(false);
 
 // clear out any bet
 	if (lAmount == 0L)
@@ -872,7 +872,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 }
 
 
-BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int         nHoldLoop, nLoop1;  // loop variables
 	int         nMainOption = 0;       // return from the Options dialog
 	CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette,
@@ -897,7 +897,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				break;
 
 			case IDC_OPTIONS_NEWGAME:                   // reset the game and start a new hand
-				if ((m_bPlayRounds == FALSE) && (m_bMiddleOfHand == FALSE)) {
+				if ((m_bPlayRounds == false) && (m_bMiddleOfHand == false)) {
 					ResetGame(m_lStartingAmount);
 				}
 				break;
@@ -951,20 +951,20 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		// the Draw button is hit
 		case IDC_DRAW:
 
-			m_bMiddleOfHand = FALSE;
+			m_bMiddleOfHand = false;
 
 			// increment the number of rounds
 			roundOfPlay++;
 			// for all cards not held, draw a new card
 			for (nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop) {
-				if (abHoldArray[nHoldLoop] == FALSE) {
+				if (abHoldArray[nHoldLoop] == false) {
 					ShowNewCard(DealNewCard(), nHoldLoop);
 					aDealtArray[nHoldLoop][1] = 0;
 				}
 			}
 			// check to see if the hand won
 			CheckWinningHand();
-			m_bEndHand = TRUE;
+			m_bEndHand = true;
 			for (nLoop1 = 0; nLoop1 < 5; ++nLoop1) {
 
 				pDC = GetDC();
@@ -981,11 +981,11 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				aDealtArray[nLoop1][1] = 0;
 			}
 
-			pDealButton->EnableWindow(FALSE);
-			pDrawButton->EnableWindow(FALSE);
+			pDealButton->EnableWindow(false);
+			pDrawButton->EnableWindow(false);
 			for (nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop) {
-				apHold[nHoldLoop]->EnableWindow(FALSE);
-				abHoldArray[nHoldLoop] = TRUE;
+				apHold[nHoldLoop]->EnableWindow(false);
+				abHoldArray[nHoldLoop] = true;
 				SetHoldList(nHoldLoop);
 			}
 
@@ -1007,7 +1007,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		// the Deal button is hit
 		case IDC_DEAL:
 
-			m_bMiddleOfHand = TRUE;
+			m_bMiddleOfHand = true;
 			// make sure that the Dealt array is reset
 			for (nLoop1 = 0; nLoop1 < 10; ++nLoop1) {
 				aDealtArray[nLoop1][0] = 0;
@@ -1019,52 +1019,52 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				ShowNewCard(DealNewCard(), nLoop1);
 
 			// enable the Draw, and Hold buttons
-			pDrawButton->EnableWindow(TRUE);
+			pDrawButton->EnableWindow(true);
 			for (nHoldLoop = 0; nHoldLoop < 5; ++nHoldLoop)
-				apHold[nHoldLoop]->EnableWindow(TRUE);
+				apHold[nHoldLoop]->EnableWindow(true);
 
 			// disable all other buttons
-			pDealButton->EnableWindow(FALSE);
+			pDealButton->EnableWindow(false);
 
-			apBet[0]->EnableWindow(FALSE);
-			apBet[1]->EnableWindow(FALSE);
-			apBet[2]->EnableWindow(FALSE);
-			apBet[3]->EnableWindow(FALSE);
-			apBet[4]->EnableWindow(FALSE);
-			apBet[5]->EnableWindow(FALSE);
-			apBet[6]->EnableWindow(FALSE);
+			apBet[0]->EnableWindow(false);
+			apBet[1]->EnableWindow(false);
+			apBet[2]->EnableWindow(false);
+			apBet[3]->EnableWindow(false);
+			apBet[4]->EnableWindow(false);
+			apBet[5]->EnableWindow(false);
+			apBet[6]->EnableWindow(false);
 
-			pClearBet->EnableWindow(FALSE);
+			pClearBet->EnableWindow(false);
 			break;
 
 		// if the Bet buttons are hit then set the bet accordingly
 		case IDC_BET1:
 			SetBet(1);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BET5:
 			SetBet(5);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BET10:
 			SetBet(10);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BET25:
 			SetBet(25);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BET100:
 			SetBet(100);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BET1000:
 			SetBet(1000);
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_BETALL:
 			SetBet(min(m_lUserAmount, (long)MAXBET));
-			pDealButton->EnableWindow(TRUE);
+			pDealButton->EnableWindow(true);
 			break;
 		case IDC_CLEARBET:
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
@@ -1072,17 +1072,17 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				sndPlaySound(WAV_CLEAR, SND_ASYNC);
 			}
 			SetBet(-1);
-			pDealButton->EnableWindow(FALSE);
+			pDealButton->EnableWindow(false);
 			break;
 		}
 
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 void CMainPokerWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
-	CSetPayoffsDlg  dlgPayOff((CWnd *)this, pGamePalette, IDD_WINRATIO, nPayOff, TRUE);
+	CSetPayoffsDlg  dlgPayOff((CWnd *)this, pGamePalette, IDD_WINRATIO, nPayOff, true);
 
 	(void)dlgPayOff.DoModal();
 
@@ -1099,7 +1099,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	        rLight;
 	CSprite *pSprite = nullptr;
 	CSound  *pEffect = nullptr;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i;
 
 
@@ -1114,7 +1114,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (NewGameRect.PtInRect(point) && !m_lpGameStruct->bPlayingMetagame)  {
 		SetCapture();
-		m_bMouseCaptured = TRUE;
+		m_bMouseCaptured = true;
 	} else if (rClock.PtInRect(point))  {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
@@ -1128,8 +1128,8 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			delete pSprite;
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
@@ -1227,7 +1227,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 void CMainPokerWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (m_bMouseCaptured) {
-		m_bMouseCaptured = FALSE;
+		m_bMouseCaptured = false;
 		ReleaseCapture();
 		if (NewGameRect.PtInRect(point) && !m_lpGameStruct->bPlayingMetagame)
 			ResetGame(m_lStartingAmount);
@@ -1442,7 +1442,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1466,7 +1466,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1506,7 +1506,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1528,7 +1528,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1550,7 +1550,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1572,7 +1572,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1603,7 +1603,7 @@ void CMainPokerWindow::CheckWinningHand() {
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
 				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, TRUE);
+				InvalidateRect(pPotRect, true);
 				delete pPotRect;
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
@@ -1631,7 +1631,7 @@ void CMainPokerWindow::CheckWinningHand() {
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
 				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, TRUE);
+				InvalidateRect(pPotRect, true);
 				delete pPotRect;
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
@@ -1658,7 +1658,7 @@ void CMainPokerWindow::CheckWinningHand() {
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
 				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, TRUE);
+				InvalidateRect(pPotRect, true);
 				delete pPotRect;
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
@@ -1702,7 +1702,7 @@ void CMainPokerWindow::CheckWinningHand() {
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
 			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, TRUE);
+			InvalidateRect(pPotRect, true);
 			delete pPotRect;
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
@@ -1781,7 +1781,7 @@ void CMainPokerWindow::SetBet(long lBet) {
 
 // redraw the pot and user amounts
 	pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-	InvalidateRect(pPotRect, TRUE);
+	InvalidateRect(pPotRect, true);
 	delete pPotRect;
 
 // adjust the bet buttons
@@ -1819,17 +1819,17 @@ void CMainPokerWindow::SetBet(long lBet) {
  *
  ****************************************************************/
 
-BOOL CMainPokerWindow::OnEraseBkgnd(CDC *pDC) {
+bool CMainPokerWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
-	return TRUE;
+	return true;
 }
 
-void CMainPokerWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainPokerWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 		}
 	return;
@@ -1859,14 +1859,14 @@ void CMainPokerWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMi
  *
  ****************************************************************/
 void CMainPokerWindow::SetHoldList(int nIndex) {
-	BOOL    bTestLoadBmp = FALSE; // bool for testing to make sure that bitmaps were loaded
+	bool    bTestLoadBmp = false; // bool for testing to make sure that bitmaps were loaded
 	CDC         *pDC = GetDC();
-	CPalette    *pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
+	CPalette    *pOldPal = pDC->SelectPalette(pGamePalette, false);
 
 	pDC->RealizePalette();
 
 	if (abHoldArray[nIndex]) {
-		abHoldArray[nIndex] = FALSE;
+		abHoldArray[nIndex] = false;
 		pUpBmp = ExtractBitmap(pDC, pHoldButtons, pGamePalette,
 		                       (nIndex * HOLD_BMP_GRID_WITDH), HOLD_BMP_GRID_TOP2,
 		                       arHoldRect[nIndex].right - arHoldRect[nIndex].left,
@@ -1876,7 +1876,7 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 			sndPlaySound(nullptr, SND_ASYNC);
 			sndPlaySound(WAV_HOLD, SND_ASYNC);
 		}
-		abHoldArray[nIndex] = TRUE;
+		abHoldArray[nIndex] = true;
 		pUpBmp = ExtractBitmap(pDC, pHoldButtons, pGamePalette,
 		                       (nIndex * HOLD_BMP_GRID_WITDH), HOLD_BMP_GRID_TOP1,
 		                       arHoldRect[nIndex].right - arHoldRect[nIndex].left,
@@ -1902,7 +1902,7 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 	pDnBmp = nullptr;
 	pDsBmp = nullptr;
 
-	(void)pDC->SelectPalette(pOldPal, FALSE);
+	(void)pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 }
 
@@ -1939,15 +1939,15 @@ int CMainPokerWindow::DealNewCard() {
 
 	int     nNewCard;           // contains the new card number
 	int     nCounter;     // loop counter
-	BOOL    bDealAgain;   // bool to test that the card has not already been dealt
+	bool    bDealAgain;   // bool to test that the card has not already been dealt
 
 // generate a new number 1-52
 	do {
-		bDealAgain = FALSE;
+		bDealAgain = false;
 		nNewCard = (brand() % 52) + 1;
 		for (nCounter = 0; nCounter < 9; ++nCounter) {
 			if (aDealtArray[nCounter][0] == nNewCard)
-				bDealAgain = TRUE;
+				bDealAgain = true;
 		}
 // until we get one that hs not been dealt yet
 	} while (bDealAgain);
@@ -1994,7 +1994,7 @@ int CMainPokerWindow::DealNewCard() {
  ****************************************************************/
 void CMainPokerWindow::ShowNewCard(int nCard, int nCardPos)    {
 	CPoint  ptTemp(arCardRect[nCardPos].left + 1, arCardRect[nCardPos].top + 1);
-	BOOL    bTestCreate = FALSE;
+	bool    bTestCreate = false;
 	CDC     *pDC = GetDC();
 
 	pDC = GetDC();
@@ -2007,9 +2007,9 @@ void CMainPokerWindow::ShowNewCard(int nCard, int nCardPos)    {
 	apCard[nCardPos]->SharePalette(pGamePalette);
 	bTestCreate = apCard[nCardPos]->LoadSprite(pDC, sBitmaps[nCard - 1]);
 	ASSERT(bTestCreate);                    // test for sprite's creation
-	apCard[nCardPos]->SetMasked(FALSE);
-	apCard[nCardPos]->SetMobile(FALSE);
-	apCard[nCardPos]->SetOptimizeSpeed(TRUE);
+	apCard[nCardPos]->SetMasked(false);
+	apCard[nCardPos]->SetMobile(false);
+	apCard[nCardPos]->SetOptimizeSpeed(true);
 	ReleaseDC(pDC);
 
 	apCard[nCardPos]->PaintSprite(pDC, ptTemp.x, ptTemp.y);
@@ -2278,12 +2278,12 @@ void CMainPokerWindow::ReleaseResources(void) {
 void CMainPokerWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -2340,10 +2340,10 @@ END_MESSAGE_MAP()
 // Routine to play easter egg animations and sounds
 void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                    const char *pszAnimFile, const char *pszSoundFile,
-                   int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound) {
+                   int nNumCels, int nXLoc, int nYLoc, int nSleep, bool bPlaySound) {
 	CSprite *pSprite = nullptr;
 	CSound  *pEffect = nullptr;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i;
 
 	pSprite = new CSprite;
@@ -2353,8 +2353,8 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		delete pSprite;
 		return;
 	}
-	(*pSprite).SetMasked(FALSE);
-	(*pSprite).SetMobile(FALSE);
+	(*pSprite).SetMasked(false);
+	(*pSprite).SetMobile(false);
 
 	if (bPlaySound) {
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a

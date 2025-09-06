@@ -33,7 +33,7 @@ namespace Metagame {
 class CGenUtil {
 
 	char m_cStartData ;
-	BOOL m_bRandomInit ;          // random number seed initialized
+	bool m_bRandomInit ;          // random number seed initialized
 	char m_cEndData ;
 
 public:
@@ -47,8 +47,8 @@ public:
 
 	int RandomInteger(int iLow, int iHigh) ;
 	void RandomPermutation(int iNum, int iSize, int *xpIntOut);
-	STATIC BOOL PASCAL NormalizeCRect(CRect& cRect) ;
-	BOOL RandomSelection(int *xpiArray, int iNum, int iSize);
+	STATIC bool PASCAL NormalizeCRect(CRect& cRect) ;
+	bool RandomSelection(int *xpiArray, int iNum, int iSize);
 } ;
 
 } // namespace Metagame

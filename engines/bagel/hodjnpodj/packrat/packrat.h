@@ -82,7 +82,7 @@ public:
 private:
 	HWND            m_hCallAppWnd = nullptr;
 	LPGAMESTRUCT    m_lpGameStruct = nullptr;
-	BOOL            m_bMouseCaptured = FALSE;
+	bool            m_bMouseCaptured = false;
 	int             *m_anMazeArray = 0;
 	int             m_nPDirection = 0;
 	POINT           m_ptCurrPLocInGrid = { 0, 0 };
@@ -100,7 +100,7 @@ private:
 	long            m_lScore = 0;
 	int             m_nMaze = 0;
 	int             m_nNextDir = 0;
-	BOOL            m_bSuspend = FALSE;
+	bool            m_bSuspend = false;
 	CRect   MainRect;                           // screen area spanned by the game window
 	CRect   OptionRect;                         // screen area spanned by the game window
 	CPoint  ptBaloon;
@@ -125,20 +125,20 @@ private:
 	void    PickUpObject();
 	void    PickUpSuperObject();
 	void    SetNewPlayerPos();
-	BOOL    SetNewBadGuyPos(int, BOOL);
+	bool    SetNewBadGuyPos(int, bool);
 	void    SetMaze();
 	void    SetLevel();
-	BOOL    PlayerKilled(int);
-	void    KillPlayer(BOOL = FALSE);
-	void    KillBadGuy(int, BOOL = FALSE);
+	bool    PlayerKilled(int);
+	void    KillPlayer(bool = false);
+	void    KillBadGuy(int, bool = false);
 	void    PaintObjects(int  = 1);
 	void    MoveBadGuys();
 	void    MovePlayer();
-	BOOL    CheckMessages();
+	bool    CheckMessages();
 	void    OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();
@@ -153,8 +153,8 @@ protected:
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	afx_msg void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 //	afx_msg void OnDrawItem( int, LPDRAWITEMSTRUCT );
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) override;
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG

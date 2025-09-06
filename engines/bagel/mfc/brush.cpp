@@ -40,7 +40,7 @@ CBrush::CBrush(int nIndex, COLORREF crColor) {
 	m_hObject = new Impl(nIndex, crColor);
 }
 
-BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
+bool CBrush::CreateSolidBrush(COLORREF crColor) {
 	DeleteObject();
 	m_hObject = new Impl(crColor);
 
@@ -48,7 +48,7 @@ BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 	return true;
 }
 
-BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
+bool CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	DeleteObject();
 	m_hObject = new Impl(lpLogBrush->lbStyle,
 	    lpLogBrush->lbColor);
@@ -57,7 +57,7 @@ BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	return true;
 }
 
-BOOL CBrush::CreateStockObject(int nIndex) {
+bool CBrush::CreateStockObject(int nIndex) {
 	switch (nIndex) {
 	case WHITE_BRUSH:
 		CreateSolidBrush(RGB(255, 255, 255));

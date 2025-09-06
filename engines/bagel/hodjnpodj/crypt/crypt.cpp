@@ -64,7 +64,7 @@ CCryptogram::CCryptogram(CDC *pDC) {
 	* Solved switch is used to prevent further user updates *
 	* after cryptogram is solved.                           *
 	********************************************************/
-	bIsGameOver         = FALSE;        // Initialize solved switch
+	bIsGameOver         = false;        // Initialize solved switch
 
 	BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 }
@@ -132,11 +132,11 @@ CCryptogram::~CCryptogram() {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CCryptogram::DrawGram(CDC *pDC) {
-	bIsGameOver = FALSE;
+bool CCryptogram::DrawGram(CDC *pDC) {
+	bIsGameOver = false;
 
-	if (m_cRecordGram->GetRecord(m_cStats->ResetGame()) == FALSE)        // Attempt to get the record
-		return FALSE;
+	if (m_cRecordGram->GetRecord(m_cStats->ResetGame()) == false)        // Attempt to get the record
+		return false;
 
 	m_cPaintGram->ClearGram(pDC);
 	m_cPaintGram->PaintAlphabet(pDC);
@@ -147,7 +147,7 @@ BOOL CCryptogram::DrawGram(CDC *pDC) {
 	m_cPaintGram->InitGramPosition(m_cRecordGram);
 	m_cPaintGram->PaintGram(pDC, m_chEncryptGram);
 
-	return TRUE;
+	return true;
 }
 
 void CCryptogram::DrawSource(CDC *pDC) {
@@ -227,7 +227,7 @@ void CCryptogram::SolveCryptogram(CDC *pDC) {
  *  void
  *
  ****************************************************************/
-BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
+bool CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	CSprite *pSprite;
 	int     nClickedCode;
 	int     nHiLiteCode;
@@ -238,9 +238,9 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	/*****************************
 	* Cryptogram already solved? *
 	*****************************/
-	if (bIsGameOver == TRUE) {
+	if (bIsGameOver == true) {
 		//MessageBeep(-1);                          // No - exit
-		return FALSE;
+		return false;
 	}
 
 	pSprite = m_cPaintGram->m_cDisplayLetters->Touched(cpointClicked);
@@ -250,31 +250,31 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	********************************/
 	if (pSprite == nullptr) {
 		//MessageBeep(-1);                          // No - exit
-		return FALSE;
+		return false;
 	}
 
 	/********************
 	* Symbol hilited?   *
 	********************/
 	nClickedCode = (*pSprite).GetTypeCode();
-	if (m_cPaintGram->IsSymbolChar(nClickedCode) == TRUE) {
-		return FALSE;                                   // Yes - do not hilite symbols
+	if (m_cPaintGram->IsSymbolChar(nClickedCode) == true) {
+		return false;                                   // Yes - do not hilite symbols
 	}
 
 	/********************
 	* Anything hilited? *
 	********************/
-	if (m_cPaintGram->IsHiLiteOn() == FALSE) {
+	if (m_cPaintGram->IsHiLiteOn() == false) {
 		m_cPaintGram->HiLiteOn(pDC, nClickedCode);  // No - hilite letter
-		return FALSE;
+		return false;
 	}
 
 	/****************************************************************
 	* Was the letter clicked same as the letter currenly hilited?   *
 	****************************************************************/
-	if (m_cPaintGram->IsHiLiteType(nClickedCode) == TRUE) {
+	if (m_cPaintGram->IsHiLiteType(nClickedCode) == true) {
 		m_cPaintGram->HiLiteOff(pDC);                // Yes - toggle hilite to off state
-		return FALSE;
+		return false;
 	}
 
 	/************************************************************
@@ -290,14 +290,14 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	) {
 		m_cPaintGram->HiLiteOff(pDC);               // Yes - turn hilite off
 		m_cPaintGram->HiLiteOn(pDC, nClickedCode);  // ...hilite new char
-		return FALSE;                               // out of here.
+		return false;                               // out of here.
 	}
 
 	/************************************************************
 	* User wants to switch letters.                             *
 	* Need to update internal cryptogram and visual reps.       *
 	************************************************************/
-	if (m_cPaintGram->IsAlphabetType(nHiLiteCode) == TRUE) {     // Is the hilited char in the alphabet region?
+	if (m_cPaintGram->IsAlphabetType(nHiLiteCode) == true) {     // Is the hilited char in the alphabet region?
 		nAlphaCode  = nHiLiteCode;                              // Yes - assign it the alpha code
 		nGramCode   = nClickedCode;
 	} else {
@@ -370,7 +370,7 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
  *  void
  *
  ****************************************************************/
-BOOL CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
+bool CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
 	char    nNewChar = toupper(nChar);
 	int     nHiLiteCode;
 	int     nReplaceCode;
@@ -380,25 +380,25 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
 	/*****************************
 	* Cryptogram already solved? *
 	*****************************/
-	if (bIsGameOver == TRUE) {
+	if (bIsGameOver == true) {
 		//MessageBeep(-1);                          // No - exit
-		return FALSE;
+		return false;
 	}
 
 	/****************************************
 	* Is this a valid alphabetical letter?  *
 	****************************************/
-	if (Common::isAlpha(nNewChar) == FALSE) {
+	if (Common::isAlpha(nNewChar) == false) {
 		MessageBeep(-1);                            // No - exit
-		return FALSE;
+		return false;
 	}
 
 	/********************
 	* Anything hilited? *
 	********************/
-	if (m_cPaintGram->IsHiLiteOn() == FALSE) {
+	if (m_cPaintGram->IsHiLiteOn() == false) {
 		m_cPaintGram->HiLiteOn(pDC, nNewChar);      // Turn hilite on that spec char
-		return FALSE;
+		return false;
 	}
 
 	/*******************************
@@ -406,9 +406,9 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
 	*******************************/
 	nHiLiteCode = m_cPaintGram->GetHiLiteType(pDC);
 	ASSERT(nHiLiteCode);
-	if (m_cPaintGram->IsGramType(nHiLiteCode) == FALSE) {
+	if (m_cPaintGram->IsGramType(nHiLiteCode) == false) {
 		MessageBeep(-1);                            // No - exit
-		return FALSE;
+		return false;
 	}
 
 	/*************************************
@@ -416,7 +416,7 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
 	*************************************/
 	if (nHiLiteCode == nNewChar) {
 		m_cPaintGram->HiLiteOff(pDC);               // Turn hilite off
-		return FALSE;
+		return false;
 	}
 
 	nAlphaCode  = nNewChar;
@@ -502,7 +502,7 @@ void CCryptogram::Encrypt() {
 	* Encrypt entire string using crypt map. *
 	*****************************************/
 	for (i = 0; m_chEncryptGram[i] != 0; i++) {
-		if ((m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == TRUE) &&                   // Is this a char?
+		if ((m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == true) &&                   // Is this a char?
 		        (m_nCryptMap[DECRYPT_MAP][m_cPaintGram->CharToIndex(m_chEncryptGram[i])] != NOT_USED)   // and should this char be encrypted?
 		   ) {
 			m_chEncryptGram[i] = m_cPaintGram->IndexToChar(
@@ -544,7 +544,7 @@ void CCryptogram::Encrypt() {
 void CCryptogram::CreateCryptMap(int nLettersSolved) {
 	int     nEncryptCode;       // encrypted value
 	int     nDecryptCode;       // normal/decrypted value
-	BOOL    bIsUsed;            // tells if encrypt-decrypt map was used
+	bool    bIsUsed;            // tells if encrypt-decrypt map was used
 	int     i, j;               // index
 
 	/*******************
@@ -560,12 +560,12 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 	* Create encryption map based on letters in phrase. *
 	****************************************************/
 	for (i = 0; m_chEncryptGram[i] != 0; i++) {
-		if (m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == TRUE) {     // Is this a char?
+		if (m_cPaintGram->IsAlphaChar(m_chEncryptGram[i]) == true) {     // Is this a char?
 
 			nDecryptCode = m_cPaintGram->CharToIndex(m_chEncryptGram[i]);
 			bIsUsed = (m_nCryptMap[DECRYPT_MAP][nDecryptCode] != NOT_USED);
 
-			if (bIsUsed == TRUE)     // Char already encrypted?
+			if (bIsUsed == true)     // Char already encrypted?
 				continue;           // Yes - loop to next char in text
 
 			/******************************
@@ -574,7 +574,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 			do {
 				nEncryptCode = brand() % ALPHABET;
 				bIsUsed = (m_nCryptMap[ENCRYPT_MAP][nEncryptCode] != NOT_USED);
-			} while (bIsUsed == TRUE || nEncryptCode == nDecryptCode);   // find unused map
+			} while (bIsUsed == true || nEncryptCode == nDecryptCode);   // find unused map
 
 			/**************************************
 			* Record new encrypt/decrypt mapping. *
@@ -597,13 +597,13 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 			    m_nCryptMap[DECRYPT_MAP][j] != NOT_USED &&      // in the quote and
 			    m_nCryptMap[DECRYPT_MAP][j] != j                // not already solved
 			) {
-				bIsUsed = TRUE;             // Yes - so break
+				bIsUsed = true;             // Yes - so break
 				break;
 			} else
-				bIsUsed = FALSE;            // No - not this letter, keep looking
+				bIsUsed = false;            // No - not this letter, keep looking
 		}
 
-		if (bIsUsed == FALSE)                // Any letters left to decrypt?
+		if (bIsUsed == false)                // Any letters left to decrypt?
 			break;                          // No - by pass loop.
 
 		do {
@@ -612,7 +612,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 			              m_nCryptMap[DECRYPT_MAP][nDecryptCode] != NOT_USED &&   // in quote and
 			              m_nCryptMap[DECRYPT_MAP][nDecryptCode] != nDecryptCode  // not already solved
 			          );
-		} while (bIsUsed == FALSE);
+		} while (bIsUsed == false);
 
 		nEncryptCode = m_nCryptMap[DECRYPT_MAP][nDecryptCode];  // gets corres decoder
 
@@ -622,7 +622,7 @@ void CCryptogram::CreateCryptMap(int nLettersSolved) {
 		* be used in it's place.                                            *
 		********************************************************************/
 		bIsUsed = (m_nCryptMap[ENCRYPT_MAP][nDecryptCode] != NOT_USED);
-		if (bIsUsed == TRUE) {                                                               // Decrypted letter used before?
+		if (bIsUsed == true) {                                                               // Decrypted letter used before?
 			m_nCryptMap[DECRYPT_MAP][m_nCryptMap[ENCRYPT_MAP][nDecryptCode]] = nEncryptCode;    // Yes - Swap around encrypted chars
 			m_nCryptMap[ENCRYPT_MAP][nEncryptCode] = m_nCryptMap[ENCRYPT_MAP][nDecryptCode];
 		} else {
@@ -734,18 +734,18 @@ int CCryptogram::UpdateCryptMap(int nOldType, int nNewType) {
  *  nTotalSolved - number of correctly decrypted letters
  *
  ****************************************************************/
-BOOL CCryptogram::IsSolved() {
+bool CCryptogram::IsSolved() {
 	int i;
 
 	for (i = 0; i < ALPHABET;  i++) {                    // flip thru Crypt Map
 		if ((m_nCryptMap[DECRYPT_MAP][i] != i) &&        // Any chars rep another char?
 		        (m_nCryptMap[DECRYPT_MAP][i] != NOT_USED))
-			return FALSE;                               // Yes - cryptogram not solved
+			return false;                               // Yes - cryptogram not solved
 	}
 
-	bIsGameOver = TRUE;                                 // Mark cryptogram as solved
+	bIsGameOver = true;                                 // Mark cryptogram as solved
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************

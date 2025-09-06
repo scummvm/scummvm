@@ -1974,7 +1974,7 @@ void setCICStatus(CBagStorageDev *sdev) {
 		workStr = "IN_CIC";
 		CBagVar *cicVar = g_VarManager->getVariable(workStr);
 		if (cicVar) {
-			workStr = sdev->isCIC() ? "TRUE" : "FALSE";
+			workStr = sdev->isCIC() ? "true" : "false";
 			cicVar->setValue(workStr);
 		}
 	}
@@ -1988,7 +1988,7 @@ bool getCICStatus() {
 	workStr = "IN_CIC";
 	CBagVar *cicVar = g_VarManager->getVariable(workStr);
 	if (cicVar) {
-		retValFl = (cicVar->getValue() == "TRUE");
+		retValFl = (cicVar->getValue() == "true");
 	}
 
 	return retValFl;

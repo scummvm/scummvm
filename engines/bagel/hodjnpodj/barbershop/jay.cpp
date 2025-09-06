@@ -43,7 +43,7 @@ void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
 	pMyPen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER, RGBCOLOR_DARKRED);      // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
+	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
 	(*pDC).RealizePalette();                                // Use it
 	pOldPen = pDC->SelectObject(pMyPen);         // Select the new pen & save old
 	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
@@ -52,7 +52,7 @@ void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pDC->SelectObject(pOldPen);                  // Select the old pen
 	pDC->SelectObject(pOldBrush);                // Select the old brush
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
-	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
+	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
 
 	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();

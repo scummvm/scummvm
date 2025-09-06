@@ -49,12 +49,12 @@ public:
 	/**
 	 * Called when the application starts
 	 */
-	BOOL InitApplication() override;
+	bool InitApplication() override;
 
 	/**
 	 * This routine is automatically called when the application is started.
 	 */
-	BOOL InitInstance() override;
+	bool InitInstance() override;
 
 	/**
 	 * This routine is automatically called when the application is
@@ -62,7 +62,7 @@ public:
 	 */
 	int ExitInstance() override;
 
-	BOOL OnIdle(long lCount) override;
+	bool OnIdle(long lCount) override;
 };
 
 extern bool dllLoaded;

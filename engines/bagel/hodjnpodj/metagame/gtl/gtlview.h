@@ -55,7 +55,7 @@ public:
 
 	char m_cStartData ;
 	CPoint m_cCurrentPosition ; // current mouse position
-	BOOL m_bBsuInit ;
+	bool m_bBsuInit ;
 	class CGtlFrame *m_xpFrame ;    // pointer to frame window
 	char m_cEndData ;
 
@@ -74,7 +74,7 @@ private:
 
 protected:
 	//- PreCreateWindow -- change view window style
-	BOOL PreCreateWindow(CREATESTRUCT& cCs) override;
+	bool PreCreateWindow(CREATESTRUCT& cCs) override;
 
 // Implementation
 public:
@@ -98,7 +98,7 @@ protected:
 	afx_msg void OnRButtonUp(unsigned int nFlags, CPoint point);
 	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg bool OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnVScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
@@ -107,7 +107,7 @@ protected:
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	afx_msg void OnTimer(uintptr);
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
+	afx_msg bool OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

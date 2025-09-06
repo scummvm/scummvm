@@ -948,7 +948,7 @@ void CBofSound::setQVol(int nSlot, int nVol) {
 	}
 }
 
-BOOL MessageBeep(int uType) {
+bool MessageBeep(int uType) {
 	warning("TODO: beep");
 	return true;
 }

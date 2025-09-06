@@ -42,17 +42,17 @@ const CString &CDocument::GetPathName() const {
 	return _unusedPathName;
 }
 
-void CDocument::SetPathName(const char *lpszPathName, BOOL bAddToMRU) {
+void CDocument::SetPathName(const char *lpszPathName, bool bAddToMRU) {
 }
 
 void CDocument::ClearPathName() {
 }
 
-BOOL CDocument::IsModified() {
+bool CDocument::IsModified() {
 	return m_bModified;
 }
 
-void CDocument::SetModifiedFlag(BOOL bModified) {
+void CDocument::SetModifiedFlag(bool bModified) {
 	m_bModified = bModified;
 }
 
@@ -83,7 +83,7 @@ void CDocument::DeleteContents() {
 }
 
 void CDocument::ReportSaveLoadException(const char *lpszPathName,
-        CException *e, BOOL bSaving, unsigned int nIDPDefault) {
+        CException *e, bool bSaving, unsigned int nIDPDefault) {
 	error("Save/load error");
 }
 
@@ -125,8 +125,8 @@ bool CDocument::SaveModified() {
 void CDocument::OnCloseDocument() {
 	// Destroy all frames viewing this document
 	// the last destroy may destroy us
-	BOOL bAutoDelete = m_bAutoDelete;
-	m_bAutoDelete = FALSE;  // don't destroy document while closing views
+	bool bAutoDelete = m_bAutoDelete;
+	m_bAutoDelete = false;  // don't destroy document while closing views
 
 	while (!m_viewList.empty()) {
 		size_t arrSize = m_viewList.size();

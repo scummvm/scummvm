@@ -27,20 +27,20 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-BOOL CCryptRecord::GetRecord(int nID) {
+bool CCryptRecord::GetRecord(int nID) {
 	Common::SeekableReadStream *cryptFile;
 	char chBuf;
 	int i;
 
 	if ((cryptFile = makeLzssStream(CRYPT_TXT_FILE)) == nullptr)
-		return FALSE;
+		return false;
 
 	cryptFile->seek(nID * RECORD_LEN + 1);
 
 	for (i = 0; ; i++) {                                 // Grab cryptogram
 		if (i >= MAX_GRAM_LEN) {
 			delete cryptFile;
-			return FALSE;
+			return false;
 		}
 
 		chBuf = (char)cryptFile->readByte();
@@ -63,7 +63,7 @@ BOOL CCryptRecord::GetRecord(int nID) {
 	for (i = 0; ; i++) {
 		// Grab source
 		if (i >= MAX_SOURCE_LEN)
-			return FALSE;
+			return false;
 
 		chBuf = (char)cryptFile->readByte();
 		if (chBuf == '\\') {
@@ -78,7 +78,7 @@ BOOL CCryptRecord::GetRecord(int nID) {
 	}
 
 	delete cryptFile;
-	return TRUE;
+	return true;
 }
 
 } // namespace Crypt

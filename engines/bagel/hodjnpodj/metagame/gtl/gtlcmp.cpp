@@ -36,9 +36,9 @@ extern CBfcMgr      *lpMetaGameStruct;
 
 //* CGtlData::SelectBestMove -- select best move for computer play
 //      (can also be used for human player for debugging or giving hints)
-BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
+bool CGtlData::SelectBestMove(CXodj * xpXodj)
 // xpXodj -- player
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SelectBestMove) ;
 	int iError = 0 ;            // error code
@@ -58,7 +58,7 @@ BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
 		// if no target location
 		if (!xpXodj->m_iTargetLocation) {
 			// need to gather info
-			xpXodj->m_bGatherInformation = TRUE ;
+			xpXodj->m_bGatherInformation = true ;
 		}
 	}
 
@@ -70,7 +70,7 @@ BOOL CGtlData::SelectBestMove(CXodj * xpXodj)
 
 	if (xpXodj->m_bGatherInformation) {
 
-		xpXodj->m_bGatherInformation = FALSE ;
+		xpXodj->m_bGatherInformation = false ;
 		xpXodj->m_iTargetLocation = 0 ; // no target location
 		xpStrategyInfo->xpTargetLocInfo = nullptr ;
 		// target location has to
@@ -115,9 +115,9 @@ cleanup:
 
 
 //* CGtlData::GatherInformation -- gather info to decide computer's move
-BOOL CGtlData::GatherInformation(CXodj * xpXodj)
+bool CGtlData::GatherInformation(CXodj * xpXodj)
 // xpXodj -- char for whom data is being gathered
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::GatherInformation) ;
 	int iError = 0 ;            // error code
@@ -188,9 +188,9 @@ BOOL CGtlData::GatherInformation(CXodj * xpXodj)
 
 //* CGtlData::DetermineWeights -- determine weight for each
 //              location (independent of distance)
-BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
+bool CGtlData::DetermineWeights(CXodj * xpXodj)
 // xpXodj -- char for whom weights are being determined
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::DetermineWeights) ;
 	int iError = 0 ;            // error code
@@ -199,12 +199,12 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 	CStratLocInfo * xpStratLocInfo ;
 	int     i, j;
 	int     nObjectCode = -1;
-	BOOL    bNeedObject = FALSE;
-	BOOL    bNeedMoney;
-	BOOL    bCanBuyObject;
+	bool    bNeedObject = false;
+	bool    bNeedMoney;
+	bool    bCanBuyObject;
 	CItem   *pItem = nullptr;
-	BOOL    bObjInGenStore;
-	BOOL    bCanSellObject;
+	bool    bObjInGenStore;
+	bool    bCanSellObject;
 
 	// For each eligible location, determine weight
 	for (iK = 0 ; iK < MG_LOC_MAX ; ++iK) {
@@ -231,8 +231,8 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 			break ;
 
 		case MG_WIN_MONEY:
-			bNeedObject = FALSE;
-			bNeedMoney = FALSE;
+			bNeedObject = false;
+			bNeedMoney = false;
 
 			for (i = 0; i < xpXodj->m_iWinInfoWon; i++) {
 
@@ -244,13 +244,13 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 				if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 					if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-						bNeedObject = TRUE;
+						bNeedObject = true;
 						break;
 					}
 				}
 			}
 
-			if (bNeedObject == FALSE) {
+			if (bNeedObject == false) {
 				for (i = 0; i < xpXodj->m_iSecondaryInfoWon; i++) {
 					if (xpXodj->m_bHodj) {
 						nObjectCode = CMgStatic::cHodjClueTable[xpXodj->m_iSecondaryInfoTable[i]].m_iArgument;
@@ -260,7 +260,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 					if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 						if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-							bNeedObject = TRUE;
+							bNeedObject = true;
 							break;
 						}
 					}
@@ -273,12 +273,12 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
 
 				if ((pItem != nullptr) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
-					bNeedMoney = TRUE;
+					bNeedMoney = true;
 			}
 
-			if (bNeedMoney == FALSE) {
+			if (bNeedMoney == false) {
 				if (xpXodj->m_iSecondaryInfoWon < xpXodj->m_iSecondaryInfoNeed) {
-					bNeedMoney = TRUE;
+					bNeedMoney = true;
 				}
 			}
 
@@ -300,13 +300,13 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 				if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 					if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-						bNeedObject = TRUE;
+						bNeedObject = true;
 						break;
 					}
 				}
 			}
 
-			if (bNeedObject == FALSE) {
+			if (bNeedObject == false) {
 				for (i = 0; i < xpXodj->m_iSecondaryInfoWon; i++) {
 					if (xpXodj->m_bHodj) {
 						nObjectCode = CMgStatic::cHodjClueTable[xpXodj->m_iSecondaryInfoTable[i]].m_iArgument;
@@ -316,7 +316,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 					if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 						if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-							bNeedObject = TRUE;
+							bNeedObject = true;
 							break;
 						}
 					}
@@ -331,9 +331,9 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 			break ;
 
 		case MG_VISIT_PAWNSHOP: // sell objects
-			bNeedObject = FALSE;
-			bNeedMoney = FALSE;
-			bCanSellObject = FALSE;
+			bNeedObject = false;
+			bNeedMoney = false;
+			bCanSellObject = false;
 
 			for (i = 0; i < xpXodj->m_iWinInfoWon; i++) {
 
@@ -345,13 +345,13 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 				if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 					if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-						bNeedObject = TRUE;
+						bNeedObject = true;
 						break;
 					}
 				}
 			}
 
-			if (bNeedObject == FALSE) {
+			if (bNeedObject == false) {
 				for (i = 0; i < xpXodj->m_iSecondaryInfoWon; i++) {
 					if (xpXodj->m_bHodj) {
 						nObjectCode = CMgStatic::cHodjClueTable[xpXodj->m_iSecondaryInfoTable[i]].m_iArgument;
@@ -361,7 +361,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 					if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 						if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-							bNeedObject = TRUE;
+							bNeedObject = true;
 							break;
 						}
 					}
@@ -374,18 +374,18 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
 
 				if ((pItem != nullptr) && (pItem->GetValue() > GetGameObjectCount(xpXodj, MG_OBJ_CROWN)))
-					bNeedMoney = TRUE;
+					bNeedMoney = true;
 			}
 
-			if (bNeedMoney == FALSE) {
+			if (bNeedMoney == false) {
 				if (xpXodj->m_iSecondaryInfoWon < xpXodj->m_iSecondaryInfoNeed) {
-					bNeedMoney = TRUE;
+					bNeedMoney = true;
 				}
 			}
 
 
 			if (bNeedMoney) {
-				bCanSellObject = TRUE;
+				bCanSellObject = true;
 				if (xpXodj->m_pInventory->ItemCount() > 2) {
 					for (i = 0; i < xpXodj->m_pInventory->ItemCount(); i++) {
 						pItem = xpXodj->m_pInventory->FetchItem(i);
@@ -395,29 +395,29 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 						        (pItem->m_nID != MG_OBJ_MISH) &&
 						        (pItem->m_nID != MG_OBJ_MOSH)) {
 
-							bCanSellObject = TRUE;
+							bCanSellObject = true;
 							for (j = 0; j < xpXodj->m_iRequiredObjectsCount; j++) {
 								if (xpXodj->m_iRequiredObjectsTable[j] == pItem->m_nID) {
-									bCanSellObject = FALSE;
+									bCanSellObject = false;
 									break;
 								}
 							}
 						} else {
-							bCanSellObject = FALSE;
+							bCanSellObject = false;
 						}
 						pItem = nullptr;
 						if (bCanSellObject)
 							break;
 					}
 				} else {
-					bCanSellObject = FALSE;
+					bCanSellObject = false;
 				}
 			}
 
 			if (bCanSellObject) {
 				CNode   *pNode = xpXodj->m_iCharNode + m_lpNodes;
 				if (pNode->m_iLocationCode == MG_LOC_PAWNSHOP)
-					bCanSellObject = FALSE;
+					bCanSellObject = false;
 			}
 
 			if (bCanSellObject) {
@@ -430,8 +430,8 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 		case MG_VISIT_GENERALSTR: /* general store: buy objects */
 		case MG_VISIT_BLACKMARKET: /* buy objects */
 
-			bNeedObject = FALSE;
-			bCanBuyObject = FALSE;
+			bNeedObject = false;
+			bCanBuyObject = false;
 
 			//  if I know I need an object
 			//      and I don't have that object
@@ -448,13 +448,13 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 				if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 					if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-						bNeedObject = TRUE;
+						bNeedObject = true;
 						break;
 					}
 				}
 			}
 
-			if (bNeedObject == FALSE) {
+			if (bNeedObject == false) {
 				for (i = 0; i < xpXodj->m_iSecondaryInfoWon; i++) {
 					if (xpXodj->m_bHodj) {
 						nObjectCode = CMgStatic::cHodjClueTable[xpXodj->m_iSecondaryInfoTable[i]].m_iArgument;
@@ -464,7 +464,7 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 					if ((nObjectCode >= MG_OBJ_BASE) && (nObjectCode <= MG_OBJ_MAX)) {
 						if (GetGameObjectCount(xpXodj, nObjectCode) == 0) {
-							bNeedObject = TRUE;
+							bNeedObject = true;
 							break;
 						}
 					}
@@ -479,25 +479,25 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 			if (bNeedObject) {
 
-				bObjInGenStore = TRUE;
+				bObjInGenStore = true;
 				pItem = xpXodj->m_pGenStore->FindItem(nObjectCode);
 
 				if (pItem == nullptr) {
 					pItem = xpXodj->m_pBlackMarket->FindItem(nObjectCode);
-					bObjInGenStore = FALSE;
+					bObjInGenStore = false;
 				}
 
 				if ((pItem != nullptr) && (pItem->GetValue() <= GetGameObjectCount(xpXodj, MG_OBJ_CROWN))) {
 
-					bCanBuyObject = TRUE;
+					bCanBuyObject = true;
 					if (lpMetaGameStruct->m_bVisitedStore) {
 						if (bObjInGenStore) {
 							if (xpStratLocInfo->m_iValueCode == MG_VISIT_BLACKMARKET) {
-								bCanBuyObject = FALSE;
+								bCanBuyObject = false;
 							}
 						} else {
 							if (xpStratLocInfo->m_iValueCode == MG_VISIT_GENERALSTR) {
-								bCanBuyObject = FALSE;
+								bCanBuyObject = false;
 							}
 						}
 					}
@@ -508,9 +508,9 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 			if (bCanBuyObject) {
 				CNode   *pNode = xpXodj->m_iCharNode + m_lpNodes;
 				if ((pNode->m_iLocationCode == MG_LOC_GENERALSTR) && (xpStratLocInfo->m_iValueCode == MG_VISIT_GENERALSTR))
-					bCanBuyObject = FALSE;
+					bCanBuyObject = false;
 				if ((pNode->m_iLocationCode == MG_LOC_BANDITHIDE) && (xpStratLocInfo->m_iValueCode == MG_VISIT_BLACKMARKET))
-					bCanBuyObject = FALSE;
+					bCanBuyObject = false;
 			}
 
 			if (bCanBuyObject) {
@@ -547,9 +547,9 @@ BOOL CGtlData::DetermineWeights(CXodj * xpXodj)
 
 //* CGtlData::DetermineDistances -- determine distance to each
 //                      eligible location
-BOOL CGtlData::DetermineDistances(CXodj * xpXodj)
+bool CGtlData::DetermineDistances(CXodj * xpXodj)
 // xpXodj -- char for whom data is being gathered
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::DetermineDistances) ;
 	int iError = 0 ;            // error code
@@ -590,9 +590,9 @@ BOOL CGtlData::DetermineDistances(CXodj * xpXodj)
 
 //* CGtlData::AdjustWeightByDistance -- adjust each by the distance
 //              of the node
-BOOL CGtlData::AdjustWeightByDistance(CXodj * xpXodj)
+bool CGtlData::AdjustWeightByDistance(CXodj * xpXodj)
 // xpXodj -- char for whom weight is being adjusted
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::AdjustWeightByDistance) ;
 	int iError = 0 ;            // error code
@@ -620,9 +620,9 @@ BOOL CGtlData::AdjustWeightByDistance(CXodj * xpXodj)
 }
 
 //* CGtlData::FindTopLocations -- find locations with top weights
-BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
+bool CGtlData::FindTopLocations(CXodj * xpXodj)
 // xpXodj -- char for whom weight is being adjusted
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::FindTopLocations) ;
 	int iError = 0 ;            // error code
@@ -690,9 +690,9 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 
 
 //* CGtlData::DumpBestMoveData -- dump data used in best move computation
-BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj) {
+bool CGtlData::DumpBestMoveData(CXodj *xpXodj) {
 	// No implementation
-	return FALSE;
+	return false;
 }
 
 } // namespace Gtl

@@ -50,8 +50,8 @@ int     m_nSweepSettings[15] =  {MIN_SWEEPS, 10, 15, 20, 30, 40, 50, 60, 80, 100
 COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	: CBmpDialog(pParent, pPalette, IDD_SUBOPTIONS, ".\\ART\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(COptnDlg)
-	m_bAutomatic = FALSE;
-	m_bChangeAtTwelve = FALSE;
+	m_bAutomatic = false;
+	m_bChangeAtTwelve = false;
 	m_nSweeps = 0;
 	m_nSpeed = MIN_SPEED;
 	nSweepSets = 15;
@@ -101,7 +101,7 @@ int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog() {
+bool COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	CDC     *pDC;
@@ -130,7 +130,7 @@ BOOL COptnDlg::OnInitDialog() {
 	m_ScrollSweeps.SetScrollRange(0, nSweepSets - 1, 0);
 	for (i = 0; i < (int)nSweepSets; i++) {
 		if (m_nSweepSettings[i] == (int)m_nSweeps)
-			m_ScrollSweeps.SetScrollPos(i, TRUE);
+			m_ScrollSweeps.SetScrollPos(i, true);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 70, LEFT_SIDE + 115, 88);
@@ -139,7 +139,7 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
-	m_ScrollSpeed.SetScrollPos(m_nSpeed, TRUE);
+	m_ScrollSpeed.SetScrollPos(m_nSpeed, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
 		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
@@ -165,12 +165,12 @@ BOOL COptnDlg::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -179,7 +179,7 @@ void COptnDlg::OnDestroy(void) {
 }
 
 
-BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 
@@ -210,7 +210,7 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return TRUE;
+	return true;
 
 } // end OnCommand
 
@@ -252,7 +252,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
+		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();

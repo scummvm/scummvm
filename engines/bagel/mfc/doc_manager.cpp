@@ -32,7 +32,7 @@ void CDocManager::AddDocTemplate(CDocTemplate *pTemplate) {
 			AddDocTemplate(tmp);
 		}
 		pStaticList.clear();
-		bStaticInit = FALSE;
+		bStaticInit = false;
 	} else {
 		ASSERT_VALID(pTemplate);
 		assert(!m_templateList.contains(pTemplate));
@@ -57,7 +57,7 @@ void CDocManager::OnFileOpen() {
 	error("TODO: CDocManager::onFileOpen");
 }
 
-void CDocManager::CloseAllDocuments(BOOL bEndSession) {
+void CDocManager::CloseAllDocuments(bool bEndSession) {
 	for (auto it = m_templateList.begin(); it != m_templateList.end(); ++it) {
 		CDocTemplate *pTemplate = *it;
 		ASSERT_KINDOF(CDocTemplate, pTemplate);

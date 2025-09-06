@@ -62,7 +62,7 @@ const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(unsigned int message) {
 	return nullptr;
 }
 
-BOOL CCmdTarget::OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
+bool CCmdTarget::OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
 		AFX_CMDHANDLERINFO *pHandlerInfo) {
 	// Determine the message number and code (packed into nCode)
 	const AFX_MSGMAP *pMessageMap;
@@ -117,7 +117,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int n
 		// just fill in the information, don't do it
 		pHandlerInfo->pTarget = pTarget;
 		pHandlerInfo->pmf = mmf.pfn;
-		return TRUE;
+		return true;
 	}
 
 	switch (nSig) {
@@ -195,7 +195,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int n
 		assert(!pCmdUI->m_bContinueRouting);    // idle - not set
 		(pTarget->*mmf.pfn_UPDATE_COMMAND_UI)(pCmdUI);
 		bResult = !pCmdUI->m_bContinueRouting;
-		pCmdUI->m_bContinueRouting = FALSE;     // go back to idle
+		pCmdUI->m_bContinueRouting = false;     // go back to idle
 	}
 	break;
 
@@ -208,7 +208,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int n
 		assert(!pCmdUI->m_bContinueRouting);    // idle - not set
 		(pTarget->*mmf.pfn_UPDATE_COMMAND_UI_RANGE)(pCmdUI, nID);
 		bResult = !pCmdUI->m_bContinueRouting;
-		pCmdUI->m_bContinueRouting = FALSE;     // go back to idle
+		pCmdUI->m_bContinueRouting = false;     // go back to idle
 	}
 	break;
 

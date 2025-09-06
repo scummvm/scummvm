@@ -50,7 +50,7 @@ CPalette        *pGamePalette = nullptr;       // Palette to be used throughout 
 static CSound   *pGameSound = nullptr;         // Game theme song
 CCryptogram     *m_cCryptograms;            // cryptogram game object
 static CSprite  *aHourGlass[MAX_HOURS];
-static BOOL     m_bPause;                   // flag to pause the timer
+static bool     m_bPause;                   // flag to pause the timer
 static int      m_nTimer;
 static int      tempLetters;
 static int      tempTimeLimit;
@@ -87,12 +87,12 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	CString WndClass;
 	CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	CSize   mySize;
-	BOOL    bSuccess;                   // bitmap button vars
+	bool    bSuccess;                   // bitmap button vars
 	CRect   ScrollRect;                 // bitmap button vars
 	CSprite *pSprite = nullptr;
 	int     i;
 
-	m_bPause = FALSE;
+	m_bPause = false;
 	m_nTimer = 0;
 	m_pHourGlass = nullptr;
 	m_hCallAppWnd = hCallingWnd;
@@ -167,7 +167,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	               "SCROLLUP"
 	           );
 	ASSERT(bSuccess);
-	m_bIgnoreScrollClick = FALSE;                           // set to process button clicks
+	m_bIgnoreScrollClick = false;                           // set to process button clicks
 
 	/*******************************************************
 	* Put up something to look at while we load up the game*
@@ -180,7 +180,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	*************************/
 	m_cCryptograms = new CCryptogram(pDC);
 	ASSERT(m_cCryptograms != nullptr);
-	if (m_lpGameStruct->bPlayingMetagame != FALSE) {
+	if (m_lpGameStruct->bPlayingMetagame != false) {
 		switch (m_lpGameStruct->nSkillLevel) {
 
 		case SKILLLEVEL_LOW:
@@ -207,7 +207,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	tempLetters = m_cCryptograms->m_cStats->m_nLettersSolved;
 	tempTimeLimit = m_cCryptograms->m_cStats->m_nTime;
-	m_bIsFirstTimeHack = TRUE;
+	m_bIsFirstTimeHack = true;
 
 	// pre-load of sections of the sun dial
 	//
@@ -221,8 +221,8 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 			pSprite->SetPosition(HOUR_X, HOUR_Y);
 
 			pSprite->SetTypeCode(IDB_HOUR + i);
-			pSprite->SetMasked(TRUE);
-			pSprite->SetMobile(FALSE);
+			pSprite->SetMasked(true);
+			pSprite->SetMobile(false);
 
 		}
 	} // end for
@@ -310,7 +310,7 @@ CMainWindow::~CMainWindow() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(nullptr, FALSE);                    // invalidate the entire window
+	InvalidateRect(nullptr, false);                    // invalidate the entire window
 	BeginPaint(&lpPaint);                           // bracket start of window update
 	SplashScreen();                                 // repaint our window's content
 	RefreshStats();                                 // repaint the stats
@@ -352,7 +352,7 @@ void CMainWindow::SplashScreen() {
 	CDibDoc myDoc;                                      // contains the artwork's DIB information
 	HDIB    hDIB;                                       // a handle to the DIB itself
 	CSprite *pSprite;                                   // points to sprite being processed
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	bSuccess = myDoc.OpenDocument(SPLASHSPEC);          // open the background art file and
 	ASSERT(bSuccess);                                   // open the background art file and
@@ -380,15 +380,15 @@ void CMainWindow::SplashScreen() {
 		pSprite = (*pSprite).GetNextSprite();
 	}          // ... fetch/save the background it covers up
 
-	if (m_bIsFirstTimeHack == TRUE) {
-		m_bIsFirstTimeHack = FALSE;
+	if (m_bIsFirstTimeHack == true) {
+		m_bIsFirstTimeHack = false;
 	}
 
 	ReleaseDC(pDC);                                     // release the window's context
 }
 
 void CMainWindow::DisplayStats(CDC *pDC) {
-	BOOL        bSuccess;
+	bool        bSuccess;
 
 	if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {
 		(*m_pHourGlass).ClearBackground();                  // ... background and repaint its image, thus
@@ -400,7 +400,7 @@ void CMainWindow::DisplayStats(CDC *pDC) {
 
 void CMainWindow::RefreshStats() {
 	CDC         *pDC;
-	//BOOL        bSuccess;
+	//bool        bSuccess;
 
 	pDC = GetDC();
 
@@ -410,7 +410,7 @@ void CMainWindow::RefreshStats() {
 			(*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
 		}
 	}
-	if (m_cCryptograms->bIsGameOver == TRUE) {
+	if (m_cCryptograms->bIsGameOver == true) {
 		if (m_lpGameStruct->bPlayingMetagame)
 			m_lpGameStruct->lScore = m_cCryptograms->m_cStats->m_nScore;
 	}
@@ -424,7 +424,7 @@ void CMainWindow::GameWin() {
 
 	KillTimer(STAT_TIMER_ID);
 	m_cCryptograms->m_cStats->m_nScore = SCORE_JACKPOT;
-	m_cCryptograms->bIsGameOver = TRUE;
+	m_cCryptograms->bIsGameOver = true;
 
 	RefreshStats();
 	pDC = GetDC();
@@ -443,7 +443,7 @@ void CMainWindow::GameLose() {
 	KillTimer(STAT_TIMER_ID);
 	pDC = GetDC();
 
-	m_cCryptograms->bIsGameOver = TRUE;
+	m_cCryptograms->bIsGameOver = true;
 	m_cCryptograms->m_cStats->m_nCountDown = 0;
 	m_cCryptograms->m_cStats->m_nScore = m_cCryptograms->LettersSolved() * SCORE_FACTOR;
 
@@ -484,7 +484,7 @@ void CMainWindow::GameLose() {
  *  n/a
  *
  ****************************************************************/
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC         *pDC;
 	long        IntervalLength = 0;
 	CRules      RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
@@ -497,18 +497,18 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	    (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr),
 		m_lpGameStruct);
 
-	m_bPause = TRUE;
+	m_bPause = true;
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
 
 		case IDC_OPTIONS_RULES:
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 
 			CSound::waitWaveSounds();
 			(void) RulesDlg.DoModal();
-			m_bPause = FALSE;
+			m_bPause = false;
 
 			break;
 
@@ -522,12 +522,12 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			/**********************************************************
 			* Dump User out if error occured in cryptogram text file. *
 			**********************************************************/
-			if (m_cCryptograms->DrawGram(pDC) == FALSE) {
+			if (m_cCryptograms->DrawGram(pDC) == false) {
 				char szMsg[128];
 				Common::sprintf_s(szMsg, "File error.  Check %s.", CRYPT_TXT_FILE);
 				MessageBox(szMsg);
 				PostMessage(WM_CLOSE, 0, 0);
-				return FALSE;
+				return false;
 			}
 
 			KillTimer(STAT_TIMER_ID);
@@ -547,38 +547,38 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			ReleaseDC(pDC);
 
-			m_bIgnoreScrollClick = FALSE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-			if (m_cCryptograms->IsSolved() == TRUE) {
+			m_bIgnoreScrollClick = false;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+			if (m_cCryptograms->IsSolved() == true) {
 				GameWin();
 				if (m_lpGameStruct->bPlayingMetagame)
 					PostMessage(WM_CLOSE, 0, 0);
 			}
-			m_bPause = FALSE;
+			m_bPause = false;
 
 			break;
 
 		case IDC_SCROLL:
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
-			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
-				m_bPause = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
+				m_bPause = false;
 				break;
 
 			case IDC_OPTIONS_NEWGAME:
 				pDC = GetDC();
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
 
 				//UpdateWindow();
 				PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
@@ -586,10 +586,10 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			case IDC_OPTIONS_QUIT:
 				PostMessage(WM_CLOSE, 0, 0);
-				return FALSE;
+				return false;
 
 			} //end switch(ComDlg.DoModal())
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
+			if ((m_lpGameStruct->bMusicEnabled == false) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					(*pGameSound).stop();
 			} else if (m_lpGameStruct->bMusicEnabled) {
@@ -609,7 +609,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -644,7 +644,7 @@ void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 
 	pDC = GetDC();
 
-	if (m_cCryptograms->HandleUserUpdate(pDC, nChar) == TRUE) {
+	if (m_cCryptograms->HandleUserUpdate(pDC, nChar) == true) {
 		GameWin();
 		if (m_lpGameStruct->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);
@@ -741,7 +741,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	        torch3Rect,
 	        torch4Rect,
 	        hourRect;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i,
 	        nPick = 0,
 	        nSleepTime;
@@ -760,7 +760,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	hourRect.SetRect(HOUR_X, HOUR_Y, HOUR_X + HOUR_DX, HOUR_Y + HOUR_DY);
 
 	pDC = GetDC();
-	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == TRUE) {
+	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == true) {
 		GameWin();
 		if (m_lpGameStruct->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);
@@ -768,7 +768,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	}
 	ReleaseDC(pDC);
 
-	if ((m_cNewGame.PtInRect(point) == TRUE) && (!m_lpGameStruct->bPlayingMetagame))
+	if ((m_cNewGame.PtInRect(point) == true) && (!m_lpGameStruct->bPlayingMetagame))
 		PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 	else if (skullRect.PtInRect(point)) {
 		pDC = GetDC();
@@ -776,8 +776,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		(*pSprite).SharePalette(pGamePalette);
 		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\skull.bmp", NUM_SKULL_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			nPick = brand() % NUM_SKULL_SOUNDS;
@@ -837,8 +837,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		(*pSprite).SharePalette(pGamePalette);
 		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn01.bmp", NUM_URN1_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN1, SOUND_QUEUE |
@@ -862,8 +862,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		(*pSprite).SharePalette(pGamePalette);
 		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn02.bmp", NUM_URN2_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN2, SOUND_QUEUE |
@@ -887,8 +887,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		(*pSprite).SharePalette(pGamePalette);
 		bSuccess = (*pSprite).LoadCels(pDC, ".\\art\\urn03.bmp", NUM_URN3_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN3, SOUND_QUEUE |
@@ -938,7 +938,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	CDC *pDC;
 
 	pDC = GetDC();
-	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == TRUE) {
+	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == true) {
 		GameWin();
 		if (m_lpGameStruct->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);
@@ -946,7 +946,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 		return;
 	}
 
-	if ((m_cNewGame.PtInRect(point) == TRUE) && (!m_lpGameStruct->bPlayingMetagame))
+	if ((m_cNewGame.PtInRect(point) == true) && (!m_lpGameStruct->bPlayingMetagame))
 		PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 }
 
@@ -1009,7 +1009,7 @@ void CMainWindow::OnRButtonDblClk(unsigned int nFlags, CPoint point) {
  *
  ****************************************************************/
 void CMainWindow::OnTimer(uintptr nIDEvent) {
-	if ((nIDEvent == STAT_TIMER_ID) && (m_bPause == FALSE)) {
+	if ((nIDEvent == STAT_TIMER_ID) && (m_bPause == false)) {
 		// move pointer to next hour glass formation
 		//
 		m_nTimer++;
@@ -1088,12 +1088,12 @@ void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigne
 void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_OPTIONS_RULES, BN_CLICKED);  // Activate the Options dialog
-		(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L); // Reset scroll button to up state
-		m_bIgnoreScrollClick = FALSE;
+		(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
+		m_bIgnoreScrollClick = false;
 	} else if (nChar == VK_F2) {                                 // F2 key is hit
 		SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);     // Activate the Rules dialog
-		(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L); // Reset scroll button to up state
-		m_bIgnoreScrollClick = FALSE;
+		(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
+		m_bIgnoreScrollClick = false;
 	}
 }
 
@@ -1181,12 +1181,12 @@ void CMainWindow::OnDestroy() {
 void CMainWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -1215,11 +1215,11 @@ void CMainWindow::FlushInputEvents(void) {
  *
  * RETURN VALUE:
  *
- *      BOOL        Success (TRUE) / Failure (FALSE) status
+ *      bool        Success (true) / Failure (false) status
  *
  ****************************************************************/
 /*
-BOOL CTheApp::InitInstance()
+bool CTheApp::InitInstance()
 {
     CMainWindow *pMyMain;
 
@@ -1236,7 +1236,7 @@ BOOL CTheApp::InitInstance()
 
     m_pMainWnd->UpdateWindow();
 
-    return(TRUE);
+    return(true);
 }
 
 */

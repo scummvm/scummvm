@@ -52,10 +52,10 @@ public:
 
 	// Implementation
 	virtual ~CDibDoc();
-	virtual BOOL SaveDocument(const char* pszPathName);
-	virtual BOOL OpenDocument(const char* pszPathName);
-	virtual BOOL OpenResourceDocument(const int nResID);
-	virtual BOOL OpenResourceDocument(const char* pszPathName);
+	virtual bool SaveDocument(const char* pszPathName);
+	virtual bool OpenDocument(const char* pszPathName);
+	virtual bool OpenResourceDocument(const int nResID);
+	virtual bool OpenResourceDocument(const char* pszPathName);
 
 private:
 	HDIB m_hDIB = nullptr;

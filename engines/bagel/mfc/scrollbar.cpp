@@ -34,7 +34,7 @@ ON_WM_MOUSEMOVE()
 ON_WM_MOUSELEAVE()
 END_MESSAGE_MAP()
 
-BOOL CScrollBar::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
+bool CScrollBar::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("SCROLLBAR", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }
@@ -43,7 +43,7 @@ int CScrollBar::GetScrollPos() const {
 	return _value;
 }
 
-int CScrollBar::SetScrollPos(int nPos, BOOL bRedraw) {
+int CScrollBar::SetScrollPos(int nPos, bool bRedraw) {
 	int oldPos = _value;
 	_value = CLIP(nPos, _minValue, _maxValue);
 	Invalidate();
@@ -57,7 +57,7 @@ void CScrollBar::GetScrollRange(int *lpMinPos, int *lpMaxPos) const {
 		*lpMaxPos = _maxValue;
 }
 
-void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {
+void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, bool bRedraw) {
 	_minValue = nMinPos;
 	_maxValue = nMaxPos;
 	_pageSize = MAX<int>((_maxValue - _minValue + 1) / 10, 1);
@@ -65,7 +65,7 @@ void CScrollBar::SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {
 	Invalidate();
 }
 
-BOOL CScrollBar::SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw) {
+bool CScrollBar::SetScrollInfo(LPSCROLLINFO lpScrollInfo, bool bRedraw) {
 	assert(lpScrollInfo->cbSize == sizeof(SCROLLINFO));
 	_minValue = lpScrollInfo->nMin;
 	_maxValue = lpScrollInfo->nMax;
@@ -77,7 +77,7 @@ BOOL CScrollBar::SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw) {
 	return true;
 }
 
-void CScrollBar::ShowScrollBar(BOOL bShow) {
+void CScrollBar::ShowScrollBar(bool bShow) {
 	warning("TODO: CScrollBar::ShowScrollBar");
 }
 

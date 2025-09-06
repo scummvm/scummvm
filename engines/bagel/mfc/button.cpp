@@ -35,7 +35,7 @@ ON_MESSAGE(BM_CLICK, CButton::OnBnClicked)
 ON_MESSAGE(BM_SETCHECK, CButton::OnBnSetCheck)
 END_MESSAGE_MAP()
 
-BOOL CButton::Create(const char *lpszCaption, uint32 dwStyle,
+bool CButton::Create(const char *lpszCaption, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("BUTTON", lpszCaption, dwStyle, rect,
 		pParentWnd, nID);
@@ -50,7 +50,7 @@ void CButton::SetCheck(int nCheck) {
 	SendMessage(BM_SETCHECK, nCheck);
 }
 
-void CButton::SetButtonStyle(unsigned int nStyle, BOOL bRedraw) {
+void CButton::SetButtonStyle(unsigned int nStyle, bool bRedraw) {
 	m_nStyle = (m_nStyle & ~0xf) | nStyle;
 	Invalidate();
 }
@@ -269,12 +269,12 @@ LRESULT CButton::OnBnSetCheck(WPARAM wParam, LPARAM lParam) {
 		CWnd *pWnd = this;
 
 		for (;;) {
-			pWnd = pParent->GetNextDlgGroupItem(pWnd, TRUE);
+			pWnd = pParent->GetNextDlgGroupItem(pWnd, true);
 			if (pWnd == this)
 				// No more to do
 				break;
 
-			pWnd->SendMessage(BM_SETCHECK, FALSE);
+			pWnd->SendMessage(BM_SETCHECK, false);
 		}
 	}
 

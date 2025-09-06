@@ -35,8 +35,8 @@ public:
 	CLogic();
 	~CLogic();
 
-	BOOL    IsMoveOk(CCard*, CStack*);
-	BOOL    IsGameOver(CBoard *pBoard);
+	bool    IsMoveOk(CCard*, CStack*);
+	bool    IsGameOver(CBoard *pBoard);
 };
 
 } // namespace Barbershop

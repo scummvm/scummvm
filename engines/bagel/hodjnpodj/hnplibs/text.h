@@ -67,16 +67,16 @@ public:
 	CText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
 	~CText();
 
-	BOOL SetupText(CDC *pDC, CPalette * pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
-	BOOL RestoreBackground(CDC *pDC);
-	BOOL DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
-	BOOL DisplayShadowedString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow = CTEXT_SHADOW_COLOR, const int DX = CTEXT_SHADOW_DX, const int DY = CTEXT_SHADOW_DY);
+	bool SetupText(CDC *pDC, CPalette * pPalette, CRect *pRect, int nJustify = JUSTIFY_CENTER);
+	bool RestoreBackground(CDC *pDC);
+	bool DisplayString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor = CTEXT_COLOR);
+	bool DisplayShadowedString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow = CTEXT_SHADOW_COLOR, const int DX = CTEXT_SHADOW_DX, const int DY = CTEXT_SHADOW_DY);
 
 private:
 	void InitializeFields(void);
-	BOOL SetupContexts(CDC *pDC);
+	bool SetupContexts(CDC *pDC);
 	void ReleaseContexts(void);
-	BOOL DisplayText(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const BOOL bShadowed);
+	bool DisplayText(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const bool bShadowed);
 
 private:
 	CDC         *m_pBackgroundDC;   // offscreen bitmap device context for background
@@ -93,15 +93,15 @@ private:
 	CRect       m_cRect;            // bounding rectangle of text area
 	CFont       *m_pFont;           // font to use for the text
 	int         m_nJustify;         // positioning within the rectangle
-	BOOL        m_bBounded;         // bounded versus free-form text output
-	BOOL        m_bHaveBackground;  // whether the background has been saved
+	bool        m_bBounded;         // bounded versus free-form text output
+	bool        m_bHaveBackground;  // whether the background has been saved
 	COLORREF    m_cTextColor;       // color to use for the text itself
 	COLORREF    m_cShadowColor;     // color to use for the text's shadow
 	int         m_nShadow_DX;       // horizontal offset for shadow
 	int         m_nShadow_DY;       // vertical offset for shadow
 
 	static  int     m_nTabStop;         // tabstop table
-	static  BOOL    m_bFontLoaded;      // font loaded flag
+	static  bool    m_bFontLoaded;      // font loaded flag
 };
 
 } // namespace HodjNPodj

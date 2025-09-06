@@ -42,7 +42,7 @@ CTheApp::CTheApp() {
 	hMetaInst = nullptr;
 }
 
-BOOL CTheApp::InitApplication() {
+bool CTheApp::InitApplication() {
 	if (_startupMinigame.empty()) {
 		// Main game
 		addResources("meta/hodjpodj.exe");
@@ -57,7 +57,7 @@ BOOL CTheApp::InitApplication() {
 	return CWinApp::InitApplication();
 }
 
-BOOL CTheApp::InitInstance() {
+bool CTheApp::InitInstance() {
 	if (_startupMinigame.empty()) {
 		// Main game
 		m_pMainWnd = new CHodjPodjWindow();
@@ -69,7 +69,7 @@ BOOL CTheApp::InitInstance() {
 		selectMinigame();
 	}
 
-	return TRUE;
+	return true;
 }
 
 int CTheApp::ExitInstance() {
@@ -116,8 +116,8 @@ void CTheApp::selectMinigame() {
 	lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
 	lpGameStruct->bSoundEffectsEnabled = true;
 	lpGameStruct->bMusicEnabled = true;
-	lpGameStruct->bPlayingMetagame = FALSE;
-	lpGameStruct->bPlayingHodj = TRUE;
+	lpGameStruct->bPlayingMetagame = false;
+	lpGameStruct->bPlayingHodj = true;
 
 	// Don't change folder for Maze O Doom demo
 	if (isMODDemo) {
@@ -131,7 +131,7 @@ void CTheApp::selectMinigame() {
 	game->_initFn(nullptr, lpGameStruct);
 }
 
-BOOL CTheApp::OnIdle(long lCount) {
+bool CTheApp::OnIdle(long lCount) {
 	CBofSound::audioTask();
 	return true;
 }

@@ -72,7 +72,7 @@ private:
 class CTime {
 public:
 	static CTime WINAPI GetCurrentTime();
-	static BOOL WINAPI IsValidFILETIME(const FILETIME &ft);
+	static bool WINAPI IsValidFILETIME(const FILETIME &ft);
 
 	CTime();
 	CTime(int64 time);

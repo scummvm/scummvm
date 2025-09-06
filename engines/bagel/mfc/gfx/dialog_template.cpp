@@ -50,19 +50,19 @@ bool CDialogTemplate::setTemplate(LPCDLGTEMPLATE pTemplate) {
 	return true;
 }
 
-BOOL CDialogTemplate::HasFont() const {
+bool CDialogTemplate::HasFont() const {
 	return false;
 }
 
-BOOL CDialogTemplate::SetFont(const char *lpFaceName, uint16 nFontSize) {
+bool CDialogTemplate::SetFont(const char *lpFaceName, uint16 nFontSize) {
 	return false;
 }
 
-BOOL CDialogTemplate::SetSystemFont(uint16 nFontSize) {
+bool CDialogTemplate::SetSystemFont(uint16 nFontSize) {
 	return false;
 }
 
-BOOL CDialogTemplate::GetFont(CString &strFaceName, uint16 &nFontSize) const {
+bool CDialogTemplate::GetFont(CString &strFaceName, uint16 &nFontSize) const {
 	return false;
 }
 
@@ -72,7 +72,7 @@ void CDialogTemplate::GetSizeInDialogUnits(SIZE *pSize) const {
 void CDialogTemplate::GetSizeInPixels(SIZE *pSize) const {
 }
 
-BOOL CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
+bool CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
 		CString &strFaceName, uint16 &nFontSize) {
 	return false;
 }
@@ -267,7 +267,7 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 		(WPARAM)dialog->_dialogFont.m_hObject, 0);
 
 	// Allow the dialog to set up replacement controls
-	CDataExchange exchange = { FALSE };
+	CDataExchange exchange = { false };
 	dialog->DoDataExchange(&exchange);
 }
 

@@ -33,7 +33,7 @@ CFile::CFile(const char *lpszFileName, unsigned int nOpenFlags) {
 		error("Could not open - %s", lpszFileName);
 }
 
-BOOL CFile::Open(const char *lpszFileName, unsigned int nOpenFlags, CFileException *pError) {
+bool CFile::Open(const char *lpszFileName, unsigned int nOpenFlags, CFileException *pError) {
 	Close();
 
 	Common::SeekableReadStream *rs = OpenFile(lpszFileName);

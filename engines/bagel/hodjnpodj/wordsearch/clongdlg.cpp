@@ -122,12 +122,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CLongDialog message handlers
 
-BOOL CLongDialog::OnInitDialog() {
+bool CLongDialog::OnInitDialog() {
 	CRect   statsRect;                  // game stats displays
 	int     nStat_col_offset;           // game stats placement
 	int     nStat_row_offset;
 	int     nStatWidth, nStatHeight;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	CDC     *pDC;
 	int     i;
 
@@ -187,7 +187,7 @@ BOOL CLongDialog::OnInitDialog() {
 		(*m_pButton1).SetWindowText(m_pszButton1Text);
 	}
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CLongDialog::OnPaint() {
@@ -233,9 +233,9 @@ void CLongDialog::OnCancel() {
 	EndDialog(IDOK);
 }
 
-BOOL CLongDialog::OnEraseBkgnd(CDC *) {
+bool CLongDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 } // namespace WordSearch

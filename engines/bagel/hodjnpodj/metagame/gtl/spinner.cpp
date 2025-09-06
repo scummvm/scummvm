@@ -117,7 +117,7 @@ IMPLEMENT_DYNCREATE(CSpinner, CObject)
 
 CSpinner::CSpinner() {
 	m_nValue = -1;                                  // no defined value
-	m_bVisible = FALSE;                             // not yet visible
+	m_bVisible = false;                             // not yet visible
 	m_pSprite = nullptr;                               // no loaded sprite
 	m_nX = m_nY = 0;                                // upper left hand corner
 	SetupSpinner();                                 // shuffle spinner values
@@ -141,7 +141,7 @@ CSpinner::CSpinner() {
  *
  ************************************************************************/
 
-CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
+CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, bool bHodj) {
 	Initialize(pWnd, pDC, nX, nY, bHodj);       // go initialize things
 	SetupSpinner();                                 // shuffle spinner values
 }
@@ -157,19 +157,19 @@ CSpinner::CSpinner(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
  *  int nX, nY      upper lefthand corner position for spinner
  *
  * Return Value:
- *  BOOL            success / failure
+ *  bool            success / failure
  *
  * Description:     Initialize all fields and load spinner spite.
  *
  ************************************************************************/
 
-BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
-	BOOL    bSuccess = FALSE;
+bool CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, bool bHodj) {
+	bool    bSuccess = false;
 
 	m_pWnd = pWnd;                                  // window for messages
 	m_pDC = pDC;                                    // context for display
 	m_nValue = -1;                                  // no initial value
-	m_bVisible = FALSE;                             // not yet visible
+	m_bVisible = false;                             // not yet visible
 	m_nX = nX;                                      // set the position
 	m_nY = nY;
 	m_bHodj = bHodj;
@@ -179,7 +179,7 @@ BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
 	        (m_pSprite != nullptr)) {
 		bSuccess = (*m_pSprite).LoadSprite(m_pDC, SPINNER_SPEC);
 		if (bSuccess)
-			(*m_pSprite).SetMasked(TRUE);
+			(*m_pSprite).SetMasked(true);
 		else {
 			delete m_pSprite;                       // failed so release it
 			m_pSprite = nullptr;
@@ -303,17 +303,17 @@ int CSpinner::Animate(int nX, int nY) {
  *  int nX, nY      upper left hand position for spinner
  *
  * Return Value:
- *  BOOL            success /failure
+ *  bool            success /failure
  *
  * Description:     reveal the spinner sprite, without any digits.
  *
  ************************************************************************/
 
-BOOL CSpinner::Show(int nX, int nY) {
-	BOOL    bSuccess = FALSE;
+bool CSpinner::Show(int nX, int nY) {
+	bool    bSuccess = false;
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
-		return FALSE;
+		return false;
 
 	m_nX = nX;
 	m_nY = nY;
@@ -321,7 +321,7 @@ BOOL CSpinner::Show(int nX, int nY) {
 	bSuccess = (*m_pSprite).PaintSprite(m_pDC, nX, nY);
 
 	if (bSuccess)
-		m_bVisible = TRUE;
+		m_bVisible = true;
 	return bSuccess;
 }
 
@@ -333,24 +333,24 @@ BOOL CSpinner::Show(int nX, int nY) {
  * Parameters:      none
  *
  * Return Value:
- *  BOOL            success /failure
+ *  bool            success /failure
  *
  * Description:     hide the spinner sprite.
  *
  ************************************************************************/
 
-BOOL CSpinner::Hide(void) {
-	BOOL    bSuccess = FALSE;
+bool CSpinner::Hide(void) {
+	bool    bSuccess = false;
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
-		return FALSE;
+		return false;
 
 	if (m_bVisible) {                                   // if visible ...
 		bSuccess = (*m_pSprite).EraseSprite(m_pDC);     // ... just erase the sprite
 		if (bSuccess)
-			m_bVisible = FALSE;                         // ... and mark spinner as invisible
+			m_bVisible = false;                         // ... and mark spinner as invisible
 	} else
-		bSuccess = TRUE;
+		bSuccess = true;
 
 	return bSuccess;
 }
@@ -376,7 +376,7 @@ int CSpinner::Spin(void) {
 	CRect       srcRect, dstARect, dstBRect;
 	int         nValue = -1;
 	CSound      *pSound;
-	BOOL        bSuccess = FALSE;
+	bool        bSuccess = false;
 	CWinApp *app = AfxGetApp();
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
@@ -448,35 +448,35 @@ punt:
  * Parameters:      none
  *
  * Return Value:
- *  BOOL            whether an urgent message is pending
+ *  bool            whether an urgent message is pending
  *
  * Description:     process pending non-keyboard/mouse messages.
  *
  ************************************************************************/
 
-BOOL CSpinner::HandleMessages(void) {
+bool CSpinner::HandleMessages(void) {
 	MSG     msg;
 
 	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
+			return true;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 	if (PeekMessage(&msg, nullptr, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
+			return true;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 	if (PeekMessage(&msg, nullptr, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
+			return true;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 
-	return FALSE;
+	return false;
 }
 
 } // namespace Gtl

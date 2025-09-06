@@ -49,17 +49,17 @@ public:
 	 * @param y	Y position
 	 * @param w	Width
 	 * @param h	Height
-	 * @return		True if movie's playable, else FALSE.
+	 * @return		True if movie's playable, else false.
 	 */
-	BOOL BlowWindow(CWnd *pParentWnd, BOOL bScroll, const char *lpszAviMovie,
+	bool BlowWindow(CWnd *pParentWnd, bool bScroll, const char *lpszAviMovie,
 		int x = 0, int y = 0, int w = MOVIE_WIDTH, int h = MOVIE_HEIGHT);
 
 protected:
 	/**
 	 * Plays a movie
-	 * @return	True if movie was playable; FALSE, if any error.
+	 * @return	True if movie was playable; false, if any error.
 	 */
-	BOOL PlayMovie();
+	bool PlayMovie();
 
 	CRect MovieRect;
 	CWnd *m_pParent = nullptr;

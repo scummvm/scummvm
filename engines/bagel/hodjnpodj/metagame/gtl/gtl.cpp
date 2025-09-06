@@ -34,8 +34,8 @@ namespace Gtl {
 ///DEFS gtl.h
 
 extern CGtlFrame *pMainWindow;
-extern BOOL bExitMetaDLL;
-extern BOOL st_bExitDll;
+extern bool bExitMetaDLL;
+extern bool st_bExitDll;
 
 static CSingleDocTemplate *pSdiDocTemplate = nullptr;
 
@@ -68,7 +68,7 @@ CGtlApp::CGtlApp() {
 CGtlApp::~CGtlApp() {
 }
 
-BOOL CGtlApp::InitApplication() {
+bool CGtlApp::InitApplication() {
 	bool result = CWinApp::InitApplication();
 	setFocusChangeProc(focusChange);
 	return result;
@@ -84,7 +84,7 @@ BOOL CGtlApp::InitApplication() {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlApp initialization
 
-BOOL CGtlApp::InitInstance() {
+bool CGtlApp::InitInstance() {
 
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
@@ -113,7 +113,7 @@ BOOL CGtlApp::InitInstance() {
 
 	m_iNumOpens = 0;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -131,8 +131,8 @@ void CGtlApp::CreateInstance(void) {
 }
 
 //* CGtlApp::CallOnFileNew --
-BOOL CGtlApp::CallOnFileNew(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlApp::CallOnFileNew(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileNew) ;
 	int iError = 0 ;            // error code
@@ -146,8 +146,8 @@ BOOL CGtlApp::CallOnFileNew(void)
 }
 
 //* CGtlApp::CallOnFileOpen --
-BOOL CGtlApp::CallOnFileOpen(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlApp::CallOnFileOpen(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileOpen) ;
 	int iError = 0 ;            // error code
@@ -161,8 +161,8 @@ BOOL CGtlApp::CallOnFileOpen(void)
 }
 
 //* CGtlApp::CallOnFileSave --
-BOOL CGtlApp::CallOnFileSave(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlApp::CallOnFileSave(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileSave) ;
 	int iError = 0 ;            // error code
@@ -179,7 +179,7 @@ BOOL CGtlApp::CallOnFileSave(void)
 //* CGtlApp::DoMessageBox -- override of CWinApp function to
 //              display message box messages
 int CGtlApp::DoMessageBox(const char *lpszPrompt, unsigned int nType, unsigned int nIDPrompt)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::DoMessageBox) ;
 	int iRetval = IDOK ;                // return value
@@ -188,7 +188,7 @@ int CGtlApp::DoMessageBox(const char *lpszPrompt, unsigned int nType, unsigned i
 	RETURN(iRetval) ;
 }
 
-BOOL CGtlApp::OnIdle(long lCount) {
+bool CGtlApp::OnIdle(long lCount) {
 	if (bExitMetaDLL) {
 		PostMessage(nullptr, WM_QUIT, 0, 0);
 		return false;
@@ -265,7 +265,7 @@ void CGtlApp::focusChange(CWnd *oldFocus, CWnd *newFocus) {
 
 IMPLEMENT_DYNAMIC(CGtlMDIChildWnd, CMDIChildWnd)
 
-BOOL CGtlMDIChildWnd::PreCreateWindow(CREATESTRUCT& cs) {
+bool CGtlMDIChildWnd::PreCreateWindow(CREATESTRUCT& cs) {
 	// By turning off the default MFC-defined FWS_ADDTOTITLE style,
 	// the framework will use first string in the document template
 	// STRINGTABLE resource instead of the document name.

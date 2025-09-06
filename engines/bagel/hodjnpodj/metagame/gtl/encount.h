@@ -70,10 +70,10 @@ public:
 } ;
 
 
-int DoEncounter(CWnd *pWnd, CPalette *pPalette, BOOL bHodj, CInventory *pInventory,
+int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInventory,
                 CInventory *pPawn, CInventory *pGeneral,
                 int EncType, int nNumSteps,
-                int nPSector, int nOSector, BOOL *pArray);
+                int nPSector, int nOSector, bool *pArray);
 
 } // namespace Gtl
 } // namespace Metagame

@@ -156,7 +156,7 @@ CRiddlesWindow::CRiddlesWindow(void) :
 	CDC     *pDC;
 	CDibDoc *pDibDoc;
 	ERROR_CODE errCode;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -169,8 +169,8 @@ CRiddlesWindow::CRiddlesWindow(void) :
 	m_pSunDial = nullptr;
 	m_pRiddle = nullptr;
 	m_pSoundTrack = nullptr;
-	m_bGameActive = FALSE;
-	m_bPause = FALSE;
+	m_bGameActive = false;
+	m_bPause = false;
 	m_nRiddleNumber = 0;
 	m_nTimer = 0;
 	gMainWindow = this;
@@ -194,7 +194,7 @@ CRiddlesWindow::CRiddlesWindow(void) :
 		// Acquire the shared palette for our game from the splash screen art
 		//
 		if ((pDibDoc = new CDibDoc()) != nullptr) {
-			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
+			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != false)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else {
 				// we don't know why OpenDocument failed, but it's still a fatal error
@@ -223,11 +223,11 @@ CRiddlesWindow::CRiddlesWindow(void) :
 
 		if ((pDC = GetDC()) != nullptr) {
 
-			pPalOld = pDC->SelectPalette(m_pGamePalette, FALSE);
+			pPalOld = pDC->SelectPalette(m_pGamePalette, false);
 
 			if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
-				m_bIgnoreScrollClick = FALSE;
+				m_bIgnoreScrollClick = false;
 				tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
 				bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 				assert(bSuccess);
@@ -245,7 +245,7 @@ CRiddlesWindow::CRiddlesWindow(void) :
 				errCode = ERR_MEMORY;
 			}
 
-			pDC->SelectPalette(pPalOld, FALSE);
+			pDC->SelectPalette(pPalOld, false);
 			ReleaseDC(pDC);
 		}
 	}
@@ -355,8 +355,8 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
 
 					pSprite->LoadSprite(pBmp, m_pGamePalette);
 
-					pSprite->SetMasked(TRUE);
-					pSprite->SetMobile(TRUE);
+					pSprite->SetMasked(true);
+					pSprite->SetMobile(true);
 
 				} else {
 					errCode = ERR_MEMORY;
@@ -370,12 +370,12 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
 
 			if ((m_pSunDial = new CSprite) != nullptr) {
 
-				if (m_pSunDial->LoadCels(pDC, ".\\ART\\DIALCEL.BMP", DIAL_SEGMENTS) != FALSE) {
+				if (m_pSunDial->LoadCels(pDC, ".\\ART\\DIALCEL.BMP", DIAL_SEGMENTS) != false) {
 
 					m_pSunDial->SharePalette(m_pGamePalette);
 
-					m_pSunDial->SetMasked(TRUE);
-					m_pSunDial->SetMobile(TRUE);
+					m_pSunDial->SetMasked(true);
+					m_pSunDial->SetMobile(true);
 					m_pSunDial->LinkSprite();
 
 					m_pSunDial->PaintSprite(pDC, DIAL_START_X, DIAL_START_Y);
@@ -400,7 +400,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
 void CRiddlesWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 	PaintScreen();
 	EndPaint(&lpPaint);
@@ -454,7 +454,7 @@ void CRiddlesWindow::PaintScreen() {
 }
 
 
-BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
@@ -470,11 +470,11 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			// hide the command scroll
 			//
-			m_pScrollButton->SendMessage(BM_SETSTATE, TRUE, 0);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0);
 
 			if (!m_bIgnoreScrollClick) {
 
-				m_bIgnoreScrollClick = TRUE;
+				m_bIgnoreScrollClick = true;
 
 				GamePause();
 				CSound::clearWaveSounds();
@@ -504,13 +504,13 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 				// show the command scroll
 				//
-				m_pScrollButton->SendMessage(BM_SETSTATE, FALSE, 0);
-				m_bIgnoreScrollClick = FALSE;
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0);
+				m_bIgnoreScrollClick = false;
 
 				//
 				// Check to see if the music state was changed and adjust to match it
 				//
-				if ((pGameParams->bMusicEnabled == FALSE) && (m_pSoundTrack != nullptr)) {
+				if ((pGameParams->bMusicEnabled == false) && (m_pSoundTrack != nullptr)) {
 					if (m_pSoundTrack->playing())
 						m_pSoundTrack->stop();
 				} else if (pGameParams->bMusicEnabled) {
@@ -526,21 +526,21 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void CRiddlesWindow::GamePause(void) {
-	m_bPause = TRUE;
+	m_bPause = true;
 };
 
 
 void CRiddlesWindow::GameResume(void) {
-	m_bPause = FALSE;
+	m_bPause = false;
 };
 
 void CRiddlesWindow::PlayGame() {
@@ -584,7 +584,7 @@ void CRiddlesWindow::PlayGame() {
 		if (m_nInitTimeLimit != 0)
 			SetTimer(TIMER_ID, 1000 / DIAL_SEGMENTS * m_nInitTimeLimit, nullptr);
 
-		m_bGameActive = TRUE;
+		m_bGameActive = true;
 	}
 
 	HandleError(errCode);
@@ -662,9 +662,9 @@ void CRiddlesWindow::GameReset(void) {
 	if (m_pEditText != nullptr)
 		m_pEditText->SetWindowText("");         // erase any text in edit ctrl
 
-	m_bGameActive = FALSE;                      // there is no current game
+	m_bGameActive = false;                      // there is no current game
 
-	m_bPause = FALSE;                           // the game is not pauses
+	m_bPause = false;                           // the game is not pauses
 
 	m_nTimeLimit = m_nInitTimeLimit;            // get time limit
 
@@ -899,7 +899,7 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const char *pszText, int nChars, int x, i
 				//
 				if ((pSprite = aMasterSpriteList[nID]->DuplicateSprite(pDC)) != nullptr) {
 
-					pSprite->SetMasked(TRUE);
+					pSprite->SetMasked(true);
 					pSprite->LinkSprite();
 
 					//
@@ -1313,7 +1313,7 @@ void CRiddlesWindow::ParseAnswer(const char *pszAnswer) {
 	}
 }
 
-BOOL CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
+bool CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
 	int i;
 
 	assert(pszGuess != nullptr);
@@ -1327,11 +1327,11 @@ BOOL CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
 		if (m_pRiddle->answers[i][0] != '\0') {
 
 			if (StrCompare(m_pRiddle->answers[i], pszGuess, strlen(m_pRiddle->answers[i])))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
@@ -1347,7 +1347,7 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CPoint  animLoc;                    // Where the specific cel is located
 	CSprite *pSprite;                   // Pointer to animation cel strip
 	CSound  *pEffect;                   // Sound effect for easter egg
-	BOOL    bSuccess;                   // Flag to check construction & loading success
+	bool    bSuccess;                   // Flag to check construction & loading success
 	char    animBuf[64],                // Buffer to hold file spec for bitmap file
 	        soundBuf[64];               // Buffer to hold file spec for sound file
 	int     i;                          // Frame counter
@@ -1408,8 +1408,8 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 		bSuccess = (*pSprite).LoadCels(pDC, animBuf, nNumCels);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if (bSuccess) {
 			if (pGameParams->bSoundEffectsEnabled) {
@@ -1467,14 +1467,14 @@ void CRiddlesWindow::FlushInputEvents(void) {
 
 	// find and remove all keyboard events
 	//
-	while (TRUE) {
+	while (true) {
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	// find and remove all mouse events
 	//
-	while (TRUE) {
+	while (true) {
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}

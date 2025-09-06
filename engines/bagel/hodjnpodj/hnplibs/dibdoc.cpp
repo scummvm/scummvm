@@ -89,7 +89,7 @@ void CDibDoc::InitDIBData() {
 }
 
 
-BOOL CDibDoc::OpenResourceDocument(const int nResID) {
+bool CDibDoc::OpenResourceDocument(const int nResID) {
 	char    chResID[8];
 
 	DeleteContents();
@@ -104,15 +104,15 @@ BOOL CDibDoc::OpenResourceDocument(const int nResID) {
 
 		Common::sprintf_s(buf, "Unable to load artwork resource: %s", chResID);
 		ShowMemoryInfo(buf, "Internal Problem");
-		return FALSE;
+		return false;
 	}
 	SetPathName(chResID);
-	SetModifiedFlag(FALSE);     // start off with unmodified
-	return TRUE;
+	SetModifiedFlag(false);     // start off with unmodified
+	return true;
 }
 
 
-BOOL CDibDoc::OpenResourceDocument(const char *pszPathName) {
+bool CDibDoc::OpenResourceDocument(const char *pszPathName) {
 	DeleteContents();
 
 	m_hDIB = ReadDIBResource(pszPathName);
@@ -124,11 +124,11 @@ BOOL CDibDoc::OpenResourceDocument(const char *pszPathName) {
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
-		return FALSE;
+		return false;
 	}
 	SetPathName(" ");
-	SetModifiedFlag(FALSE);     // start off with unmodified
-	return TRUE;
+	SetModifiedFlag(false);     // start off with unmodified
+	return true;
 }
 
 
@@ -142,7 +142,7 @@ CPalette *CDibDoc::DetachPalette() {
 }
 
 
-BOOL CDibDoc::OpenDocument(const char *pszPathName) {
+bool CDibDoc::OpenDocument(const char *pszPathName) {
 	CFile file;
 	CFileException fe;
 
@@ -153,8 +153,8 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 		ShowMemoryInfo(buf, "Internal Problem");
 
 		ReportSaveLoadException(pszPathName, &fe,
-		                        FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
-		return FALSE;
+		                        false, AFX_IDP_FAILED_TO_OPEN_DOC);
+		return false;
 	}
 
 	DeleteContents();
@@ -171,9 +171,9 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 		file.Abort(); // will not throw an exception
 		//      EndWaitCursor();
 		ReportSaveLoadException(pszPathName, eLoad,
-		                        FALSE, AFX_IDP_FAILED_TO_OPEN_DOC);
+		                        false, AFX_IDP_FAILED_TO_OPEN_DOC);
 		m_hDIB = nullptr;
-		return FALSE;
+		return false;
 	}
 	END_CATCH
 
@@ -185,18 +185,18 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 
 		Common::sprintf_s(buf, "Unable to load artwork file: %s", pszPathName);
 		ShowMemoryInfo(buf, "Internal Problem");
-		return FALSE;
+		return false;
 	}
 
 	SetPathName(pszPathName);
-	SetModifiedFlag(FALSE);     // start off with unmodified
-	return TRUE;
+	SetModifiedFlag(false);     // start off with unmodified
+	return true;
 }
 
 
-BOOL CDibDoc::SaveDocument(const char *pszPathName) {
+bool CDibDoc::SaveDocument(const char *pszPathName) {
 	// No implementation
-	return TRUE;
+	return true;
 }
 
 void CDibDoc::ReplaceHDIB(HDIB hDIB) {

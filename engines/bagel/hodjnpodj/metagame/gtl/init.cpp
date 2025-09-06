@@ -45,7 +45,7 @@ extern CGtlFrame       *pMainWindow;
 LPGAMESTRUCT    pGameInfo = nullptr;
 HWND            hThisWind;
 CBfcMgr         *lpMetaGameStruct = nullptr;
-BOOL            bJustReturned = FALSE;
+bool            bJustReturned = false;
 
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
@@ -77,7 +77,7 @@ BOOL            bJustReturned = FALSE;
  *
  ****************************************************************/
 
-HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
+HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, bool bMetaLoaded) {
 	ghwndParent = hParentWnd;
 	lpMetaGameStruct = lpBfcMgr;
 	priorApp = AfxGetApp();
@@ -96,24 +96,24 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 
 		pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 		xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, nullptr);
-		if (lpBfcMgr->m_bRestart == FALSE) {
+		if (lpBfcMgr->m_bRestart == false) {
 			xpGtlDoc->m_xpGtlData->m_xpXodjChain = nullptr;
 			xpGtlDoc->m_xpGtlData->m_xpCurXodj = nullptr;
 			xpGtlDoc->m_xpGtlData->m_iMishMoshLoc = 0;
 			pMainWindow->m_lpBfcMgr = nullptr;
 			pMainWindow->m_lpBfcMgr = lpBfcMgr;
-			xpGtlDoc->m_xpGtlData->m_bGameOver = FALSE;
+			xpGtlDoc->m_xpGtlData->m_bGameOver = false;
 		}
 		pMainWindow->ShowWindow(SW_SHOWNORMAL);
 		// if restoring a saved game
 		//
-		bJustReturned = TRUE;
+		bJustReturned = true;
 		if (lpBfcMgr->m_bRestoredGame) {
 
 			// Re-init the game using the restored info (i.e. lpBfcMgr)
 			//
-			xpGtlDoc->m_xpGtlData->m_bInitMetaGame = TRUE;
-			xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, TRUE);
+			xpGtlDoc->m_xpGtlData->m_bInitMetaGame = true;
+			xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, true);
 
 		} else if (lpBfcMgr->m_iFunctionCode) {
 

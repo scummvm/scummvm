@@ -53,13 +53,13 @@ private:
 public:
 	void ShowInventory(CPalette *, int = 1);
 	void ShowOptions(CPalette *);
-	BOOL ShowClue(CPalette *, CNote *);
+	bool ShowClue(CPalette *, CNote *);
 
 	class CGtlView *m_xpcLastFocusView ;        // last view with focus
 	class CGtlView *m_xpcLastMouseView ;        // last view touched by mouse
 	class CGtlDoc *m_xpDocument ;
 	class CBfcMgr *m_lpBfcMgr ;         // interface class
-	BOOL m_bExitDll ;           // if turned on, exit meta game DLL
+	bool m_bExitDll ;           // if turned on, exit meta game DLL
 	int         m_nReturnCode;
 
 	virtual ~CGtlFrame();
@@ -79,8 +79,8 @@ protected:
 	afx_msg void OnCallClose();
 	afx_msg void OnCallSave();
 	afx_msg void OnCallExit();
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivateApp(bool bActive, HTASK hTask);
 	afx_msg void OnSysCommand(unsigned int, LPARAM);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -88,22 +88,22 @@ protected:
 	// gtlfrm.cpp : implementation of the CGtlFrame class
 public:
 	//- NewFrame -- set pointer to interface manager in frame
-	BOOL NewFrame(CBfcMgr *lpBfcMgr PDFT(nullptr)) ;
-	BOOL ShowControlDialog(void) ;
-	BOOL ShowNodeDialog(void) ;
-	BOOL ShowInfoDialog(void) ;
-	BOOL ShowMenuDialog(void) ;
+	bool NewFrame(CBfcMgr *lpBfcMgr PDFT(nullptr)) ;
+	bool ShowControlDialog(void) ;
+	bool ShowNodeDialog(void) ;
+	bool ShowInfoDialog(void) ;
+	bool ShowMenuDialog(void) ;
 	//- GetCurrentDocAndView -- get last focused doc/view
-	BOOL GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
+	bool GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 	                          CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;
 
 protected:
 	//- PreCreateWindow -- change frame window style
-	BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
+	bool PreCreateWindow(CREATESTRUCT &cCs) override;
 
 public:
 	//- RecalcLayout -- override CFrameWnd::RecalcLayout
-	virtual void RecalcLayout(BOOL bNotify PDFT(TRUE)) ;
+	virtual void RecalcLayout(bool bNotify PDFT(true)) ;
 };
 
 } // namespace Gtl

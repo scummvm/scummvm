@@ -96,12 +96,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMessageBox message handlers
 
-BOOL CMessageBox::OnInitDialog() {
+bool CMessageBox::OnInitDialog() {
 	CRect   statsRect;                  // game stats displays
 	int     nStat_col_offset;           // game stats placement
 	int     nStat_row_offset;
 	int     nStatWidth, nStatHeight;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	CDC     *pDC;
 
 	CBmpDialog::OnInitDialog();
@@ -146,13 +146,13 @@ BOOL CMessageBox::OnInitDialog() {
 		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
 	}
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CMessageBox::OnPaint() {
 	// TODO: Add your message handler code here
 	CDC     *pDC;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 
 	CBmpDialog::OnPaint();
 	// Do not call CDialog::OnPaint() for painting messages
@@ -182,9 +182,9 @@ void CMessageBox::OnCancel() {
 	EndDialog(IDCANCEL);
 }
 
-BOOL CMessageBox::OnEraseBkgnd(CDC *pDC) {
+bool CMessageBox::OnEraseBkgnd(CDC *pDC) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 } // namespace HodjNPodj

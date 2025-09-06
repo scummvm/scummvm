@@ -102,7 +102,7 @@ int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog() {
+bool COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	CDC     *pDC;
@@ -138,7 +138,7 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 
 	m_ScrollDifficulty.SetScrollRange(MIN_DIFFICULTY, MAX_DIFFICULTY, 0);       //...last element is Max - 1
-	m_ScrollDifficulty.SetScrollPos(_difficulty, TRUE);
+	m_ScrollDifficulty.SetScrollPos(_difficulty, true);
 
 	statRect.SetRect(LEFT_SIDE, 115, LEFT_SIDE + 100, 130);
 	if ((m_pTimerText = new CText()) != nullptr) {
@@ -149,7 +149,7 @@ BOOL COptnDlg::OnInitDialog() {
 	if (_time == 0) _time = m_nTimeScale[TIMER_MAX - 1];
 	for (i = 0; i < TIMER_MAX; i++) {
 		if (m_nTimeScale[i] == _time)
-			m_ScrollTime.SetScrollPos(i, TRUE);
+			m_ScrollTime.SetScrollPos(i, true);
 	}
 
 	ReleaseDC(pDC);
@@ -164,12 +164,12 @@ BOOL COptnDlg::OnInitDialog() {
 		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -211,7 +211,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
+		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();

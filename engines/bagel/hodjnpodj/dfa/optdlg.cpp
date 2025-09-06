@@ -112,7 +112,7 @@ CDFAOptDlg::CDFAOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
  *      n/a
  *
  ****************************************************************/
-BOOL CDFAOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CDFAOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -192,8 +192,8 @@ void CDFAOptDlg::SetInitialOptions(int nGTime, int nBTime) {
 }
 
 
-BOOL CDFAOptDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CDFAOptDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -209,7 +209,7 @@ BOOL CDFAOptDlg::OnInitDialog() {
 	bSuccess = pDFACancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -291,11 +291,11 @@ void CDFAOptDlg::OnPaint(void) {
 
 	pGTime = new CScrollBar;
 	pGTime = (CScrollBar *)GetDlgItem(IDC_GAMETIME);
-	pGTime->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, TRUE);
+	pGTime->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, true);
 	if (m_nGameTime == 0)
-		pGTime->SetScrollPos(GAMETIMEMAX, TRUE);
+		pGTime->SetScrollPos(GAMETIMEMAX, true);
 	else
-		pGTime->SetScrollPos(m_nGameTime, TRUE);
+		pGTime->SetScrollPos(m_nGameTime, true);
 
 
 	switch (m_nBeaverTime) {
@@ -316,8 +316,8 @@ void CDFAOptDlg::OnPaint(void) {
 
 	pBTime = new CScrollBar;
 	pBTime = (CScrollBar *)GetDlgItem(IDC_BEAVERDUR);
-	pBTime->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, TRUE);
-	pBTime->SetScrollPos(m_nBeaverTime, TRUE);
+	pBTime->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, true);
+	pBTime->SetScrollPos(m_nBeaverTime, true);
 
 	if (pGTime != nullptr) {
 		pGTime = nullptr;
@@ -368,10 +368,10 @@ void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* 
 
 // first set the range of the scoll bar
 	if (pScrollBar->GetDlgCtrlID() == IDC_GAMETIME)
-		pScrollBar->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, TRUE);
+		pScrollBar->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, true);
 
 	if (pScrollBar->GetDlgCtrlID() == IDC_BEAVERDUR)
-		pScrollBar->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, TRUE);
+		pScrollBar->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, true);
 
 // get the scroll bar's current position, i.e. the current amount set
 	oldAmnt = pScrollBar->GetScrollPos();
@@ -416,7 +416,7 @@ void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* 
 	if (pScrollBar->GetDlgCtrlID() == IDC_BEAVERDUR)
 		m_nBeaverTime = newAmnt;
 
-	pScrollBar->SetScrollPos(newAmnt, TRUE);
+	pScrollBar->SetScrollPos(newAmnt, true);
 
 // set the current amount to the new amount just set
 // and paint this new amount onto the screen
@@ -465,8 +465,8 @@ void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-BOOL CDFAOptDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool CDFAOptDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void CDFAOptDlg::OnDestroy() {

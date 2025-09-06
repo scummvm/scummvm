@@ -46,8 +46,8 @@ public:
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispSpeed(void);
@@ -69,9 +69,9 @@ protected:
 	*/
 	unsigned int        m_nShown;               // initial number of letters to be revealed
 	unsigned int        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
-	BOOL        m_bRandomLetters;       // TRUE if letters to be revealed in random order
-	BOOL        m_bShowNames;           // TRUE if we shouldm show category names
-	BOOL        m_bShouldSave;          // TRUE if we should save theses values
+	bool        m_bRandomLetters;       // true if letters to be revealed in random order
+	bool        m_bShowNames;           // true if we shouldm show category names
+	bool        m_bShouldSave;          // true if we should save theses values
 };
 
 } // namespace PDQ

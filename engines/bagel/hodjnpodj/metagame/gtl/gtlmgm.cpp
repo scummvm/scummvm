@@ -37,7 +37,7 @@ namespace Gtl {
 
 extern CGtlFrame    *pMainWindow;
 extern CBfcMgr      *lpMetaGameStruct;
-extern BOOL         bExitMetaDLL;
+extern bool         bExitMetaDLL;
 
 int gnFurlongs = 10;
 
@@ -69,8 +69,8 @@ static const SPECIAL_TRAVEL aTravelArray[MG_SPECIAL_VISIT_COUNT] = {
 };
 
 // CGtlData::SetMetaGame -- set meta game on or off
-BOOL CGtlData::SetMetaGame(BOOL bOn)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::SetMetaGame(bool bOn)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SetMetaGame);
 	int iError = 0 ;            // error code
@@ -78,18 +78,18 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 
 	// turn meta game on
 	if (bOn && (!_metaGame || !m_bInitMetaGame || m_bStartMetaGame)) {
-		m_bStartMetaGame = FALSE ;
-		_metaGame = m_bInitMetaGame = TRUE ;
+		m_bStartMetaGame = false ;
+		_metaGame = m_bInitMetaGame = true ;
 		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr) ;
 	}
 
 	// turn off meta game
 	if (!bOn && _metaGame) {
-//      dbgtrc = TRUE ;
+//      dbgtrc = true ;
 
-		_metaGame = FALSE ;
-		m_bInitMetaGame = TRUE ;
-		InitMetaGame(nullptr, FALSE) ;             // release sprites
+		_metaGame = false ;
+		m_bInitMetaGame = true ;
+		InitMetaGame(nullptr, false) ;             // release sprites
 		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr);
 	}
 
@@ -100,16 +100,16 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 }
 
 //* CGtlData::InitMetaGame -- init or release sprites for Meta Game
-BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
+bool CGtlData::InitMetaGame(CGtlView *xpGtlView, bool bInit) {
 // xpGtlView -- view window (only for init)
-// bInit -- initialize if TRUE, release if FALSE
-// returns: TRUE if error, FALSE otherwise
+// bInit -- initialize if true, release if false
+// returns: true if error, false otherwise
 	JXENTER(CGtlData::InitMetaGame) ;
 	int iError = 0 ;            // error code
 	CXodj * xpXodj ;            // character block pointer
-	//BOOL bCenter = FALSE ;      // flag: centered
+	//bool bCenter = false ;      // flag: centered
 	CNode FAR *lpNode = nullptr;
-	BOOL bNodeFound ;
+	bool bNodeFound ;
 	int iN ;                    // loop variable
 
 	// if we want to initialize, and initialization hasn't previously occurred
@@ -122,7 +122,7 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 		m_cBgbMgr.AdjustLockCount(+1) ;
 
 		AdjustToView(xpGtlView) ;
-		m_bInitMetaGame = FALSE ;       // no more need to initialize
+		m_bInitMetaGame = false ;       // no more need to initialize
 
 		m_cBgbMgr.AdjustLockCount(-1) ;
 
@@ -136,13 +136,13 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 		for (xpXodj = m_xpXodjChain ; xpXodj ; xpXodj = xpXodj->m_xpXodjNext)
 
 			if (xpXodj->m_lpcCharSprite) {
-				bNodeFound = FALSE ;
+				bNodeFound = false ;
 				if (xpXodj->m_iCharNode < m_iNodes && !(lpNode = m_lpNodes + xpXodj->m_iCharNode)->m_bDeleted && lpNode->m_bRelocatable)
-					bNodeFound = TRUE ;
+					bNodeFound = true ;
 
 				for (iN = 0 ; !bNodeFound && iN < m_iNodes ; iN++)
 					if (!(lpNode = m_lpNodes + iN)->m_bDeleted && lpNode->m_bRelocatable)
-						xpXodj->m_iCharNode = iN, bNodeFound = TRUE ;
+						xpXodj->m_iCharNode = iN, bNodeFound = true ;
 
 				if (bNodeFound) {
 					xpXodj->m_lpcCharSprite->m_crPosition = NodeToPoint(lpNode, &xpXodj->m_lpcCharSprite->m_cSize) ;
@@ -150,21 +150,21 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 					// invalidate char's rectangle
 					//if (!bCenter)
 					//xpGtlView->m_cViewBsuSet.EdgeToCenter(xpXodj->m_lpcCharSprite->m_crPosition) ;
-					//bCenter = TRUE ;
+					//bCenter = true ;
 				}
 			}
 
 		// Centered screen around current player
 		//
 		if (!m_bJustPlayedMiniGame || (m_xpCurXodj->m_nTurns > 0)) {
-			xpGtlView->m_cViewBsuSet.EdgeToCenter(m_xpCurXodj->m_lpcCharSprite->m_crPosition, TRUE);
+			xpGtlView->m_cViewBsuSet.EdgeToCenter(m_xpCurXodj->m_lpcCharSprite->m_crPosition, true);
 		} else {
 			CXodj *pOtherXodj;
 
 			pOtherXodj = m_xpXodjChain;
 			if (m_xpCurXodj == m_xpXodjChain)
 				pOtherXodj = pOtherXodj->m_xpXodjNext;
-			xpGtlView->m_cViewBsuSet.EdgeToCenter(pOtherXodj->m_lpcCharSprite->m_crPosition, TRUE);
+			xpGtlView->m_cViewBsuSet.EdgeToCenter(pOtherXodj->m_lpcCharSprite->m_crPosition, true);
 		}
 
 		//ClearInhibitDraw() ;    // clear draw inhibit flag, if set
@@ -192,9 +192,9 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 }
 
 //* CGtlData::ProcessMove -- handle move processing
-BOOL CGtlData::ProcessMove(CNode FAR *lpTargetNode)
+bool CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 // lpTargetNode -- node to be moved to
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::ProcessMove) ;
 	int iError = 0 ;            // error code
@@ -214,14 +214,14 @@ BOOL CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 
 	// as long as the computer's on the move, then compute move and
 	// play it
-	while (!AfxGetApp()->isQuitting() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == FALSE) && (bExitMetaDLL == FALSE)) {
+	while (!AfxGetApp()->isQuitting() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
 
 		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
-		        ((m_xpCurXodj->m_bHodj == FALSE) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
+		        ((m_xpCurXodj->m_bHodj == false) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
 			m_xpCurXodj->m_iTargetLocation = MG_LOC_CASTLE;
 		else {
 
-			if ((lpMetaGameStruct->m_cHodj.m_bHaveMishMosh) && (m_xpCurXodj->m_bHodj == FALSE)) {
+			if ((lpMetaGameStruct->m_cHodj.m_bHaveMishMosh) && (m_xpCurXodj->m_bHodj == false)) {
 				m_xpCurXodj->m_iTargetLocation = MG_LOC_HODJ;
 			} else {
 				SelectBestMove(m_xpCurXodj);
@@ -255,9 +255,9 @@ BOOL CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 }
 
 //* CGtlData::MoveCharToNode -- move current character to specified node
-BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
+bool CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 // lpTargetNode -- node to be moved to
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::MoveCharToNode) ;
 	CWinApp *app = AfxGetApp();
@@ -267,7 +267,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	CMap *lpMap;
 	CPoint cOldPosition, cNewPosition ;
 	int iK ;            // loop variable
-	BOOL bDone = FALSE ;        // flag: done with move
+	bool bDone = false ;        // flag: done with move
 
 	int *lpiShortPath = nullptr ; // shortest path between nodes
 
@@ -302,7 +302,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 
 			m_xpCurXodj->m_iFurlongs -= lpNextNode->m_iWeight;
 			gnFurlongs = m_xpCurXodj->m_iFurlongs;
-			lpMetaGameStruct->m_bChanged = TRUE;
+			lpMetaGameStruct->m_bChanged = true;
 			SetFurlongs(m_xpCurXodj);
 			cOldPosition = NodeToPoint(lpNode, &lpChar->m_cSize) ;
 			cNewPosition = NodeToPoint(lpNextNode, &lpChar->m_cSize) ;
@@ -354,7 +354,7 @@ cleanup:
 *  RETURNS:  int = index of destination node.
 *
 *****************************************************************************/
-int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
+int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 	char szOldFileName[32];
 	CPoint ptNew, ptOld;
 	CPoint ptOffset(0, 0);
@@ -366,7 +366,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	const char *pSoundFile;
 	CSound *pSound;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-	BOOL bDoTransport;
+	bool bDoTransport;
 
 	xpGtlApp->DoWaitCursor(1);
 
@@ -393,9 +393,9 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
-		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
+		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, true);
 	} else {
-		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, FALSE);
+		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, false);
 	}
 
 	// save old filename
@@ -465,10 +465,10 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 	// if random transport
 	//
-	bDoTransport = FALSE;
+	bDoTransport = false;
 	if (nId == -1) {
 
-		bDoTransport = TRUE;
+		bDoTransport = true;
 
 		switch (iVisitId) {
 
@@ -576,9 +576,9 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 
 	assert(m_cBgbMgr.m_xpBsuSet != nullptr);
 	if (pCurPlayer->IfRelocatable()) {
-		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, TRUE);
+		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, true);
 	} else {
-		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, FALSE);
+		m_cBgbMgr.m_xpBsuSet->PrepareDc(m_cBgbMgr.m_xpDc, false);
 	}
 
 	// put back old filename
@@ -596,7 +596,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 		m_cBgbMgr.SetPosition(pCurPlayer, ptNew);
 
 		// Re-center new current player
-		m_xpcGtlDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(pCurPlayer->m_crPosition, TRUE);
+		m_xpcGtlDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(pCurPlayer->m_crPosition, true);
 
 		// pause at this location for 1 sec.
 		Sleep(1000);
@@ -868,13 +868,13 @@ int *CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	int iDistance, iNewDistance, iOldDistance ;
 	int i, iLength;
 	// current distance being processed
-	BOOL bChange, bLastChange ; // loop change flags
+	bool bChange, bLastChange ; // loop change flags
 	int iK, iL ; //, iT ;       // loop variables
 	int iLink ; // , iTest ;    // current link number
 	CNode FAR * lpNode ;        // current node
 	CNode FAR * lpTestNode ;    // current node
 	int *lpiPath = nullptr ;      // pointer to result path array
-	BOOL        bClipBounds = TRUE;
+	bool        bClipBounds = true;
 	CPoint      cStartPoint, cTargetPoint, cThisPoint;
 	CRect       cBoundingRect;
 	int iDistanceDX, iDistanceDY;
@@ -909,8 +909,8 @@ retry:
 	lpDist[iStartNode].m_iDistance = 0 ;
 	lpDist[iStartNode].m_iLength = 0 ;
 
-	for (bChange = FALSE, bLastChange = TRUE ; bLastChange ;
-	        bLastChange = bChange, bChange = FALSE, ++iDistance)
+	for (bChange = false, bLastChange = true ; bLastChange ;
+	        bLastChange = bChange, bChange = false, ++iDistance)
 
 		for (iK = 0 ; iK < m_iNodes ; ++iK) {
 			if (iK == iTargetNode)
@@ -953,7 +953,7 @@ retry:
 						else if (iOldDistance > iNewDistance)
 							///// || lpDist[iLink].m_iWeight == 0)
 						{
-							bChange = TRUE ;
+							bChange = true ;
 							lpDist[iLink].m_iCount = 1 ;
 							lpDist[iLink].m_iDistance = iNewDistance ;
 							lpDist[iLink].m_iFrom = iK ;
@@ -982,7 +982,7 @@ done:
 	if ((lpDist[iStartNode].m_iDistance >= MAXPOSINT) ||
 	        (lpDist[iTargetNode].m_iDistance >= MAXPOSINT)) {
 		if (bClipBounds) {
-			bClipBounds = FALSE;
+			bClipBounds = false;
 			goto retry;
 		}
 		goto cleanup ;
@@ -1039,14 +1039,14 @@ cleanup:
 }
 
 //* CGtlData::PositionCharacters -- set positions for Hodj and Podj
-BOOL CGtlData::PositionCharacters(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::PositionCharacters(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::PositionCharacters) ;
 	int iError = 0 ;            // error code
 	CXodj * xpXodj ;
 	CXodj * xpXodj1 = nullptr, *xpXodj2 = nullptr ;   // character objects
-	BOOL bSame, bSamePrev ;
+	bool bSame, bSamePrev ;
 
 	if ((xpXodj1 = m_xpXodjChain) != nullptr)
 		xpXodj2 = xpXodj1->m_xpXodjNext;
@@ -1080,30 +1080,30 @@ BOOL CGtlData::PositionCharacters(void)
 }
 
 //* CGtlData::PositionACharacter -- find positions for Hodj and Podj
-BOOL CGtlData::PositionACharacter(CXodj * xpXodj, int iShift)
+bool CGtlData::PositionACharacter(CXodj * xpXodj, int iShift)
 // xpXodj -- character object
 // iShift -- amount to shift left or right
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::PositionACharacter) ;
 	int iError = 0 ;            // error code
 	CNode FAR * lpNode = nullptr;
-	BOOL bNodeFound = FALSE ;
+	bool bNodeFound = false ;
 	int iN ;            // loop variable
 	CSize * lpSize ;    // size of character
 	CRPoint crPosition ;        // position of node
 
 	if (xpXodj) {
 		if (xpXodj->m_iCharNode >= 0 && xpXodj->m_iCharNode < m_iNodes && !(lpNode = m_lpNodes + xpXodj->m_iCharNode)->m_bDeleted)
-			bNodeFound = TRUE ;
+			bNodeFound = true ;
 
 		for (iN = 0 ; !bNodeFound && iN < m_iNodes ; iN++)
 			if (!(lpNode = m_lpNodes + iN)->m_bDeleted && !scumm_stricmp(lpNode->m_szLabel, "castle"))
-				xpXodj->m_iCharNode = iN, bNodeFound = TRUE ;
+				xpXodj->m_iCharNode = iN, bNodeFound = true ;
 
 		for (iN = 0 ; !bNodeFound && iN < m_iNodes ; iN++)
 			if (!(lpNode = m_lpNodes + iN)->m_bDeleted)
-				xpXodj->m_iCharNode = iN, bNodeFound = TRUE ;
+				xpXodj->m_iCharNode = iN, bNodeFound = true ;
 
 		if (bNodeFound && xpXodj->m_lpcCharSprite) {
 			lpSize = &xpXodj->m_lpcCharSprite->m_cSize ;

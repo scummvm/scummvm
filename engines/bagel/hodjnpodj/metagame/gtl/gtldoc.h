@@ -54,7 +54,7 @@ public:
 	virtual void Serialize(CArchive &ar);   // overridden for document i/o
 
 protected:
-	virtual BOOL OnNewDocument() override;
+	virtual bool OnNewDocument() override;
 
 // Generated message map functions
 protected:
@@ -72,11 +72,11 @@ public:
 protected:
 	//- InitDocument -- initialize document to specified file
 	void InitDocument(const char *xpszPathName);
-	virtual BOOL OnOpenDocument(const char* xpszPathName) override;
-	virtual BOOL OnSaveDocument(const char* xpszPathName);
+	virtual bool OnOpenDocument(const char* xpszPathName) override;
+	virtual bool OnSaveDocument(const char* xpszPathName);
 
 public:
-	virtual BOOL DoOnFileSaveAs(void);
+	virtual bool DoOnFileSaveAs(void);
 
 private:
 	//- OnChangedViewList -- called by MFC when a view is
@@ -85,7 +85,7 @@ private:
 
 public:
 	//- FixChecks -- fix dialog box check marks
-	BOOL FixChecks(void);
+	bool FixChecks(void);
 
 };
 

@@ -31,9 +31,9 @@ ON_WM_PAINT()
 ON_WM_NCDESTROY()
 END_MESSAGE_MAP()
 
-BOOL CView::PreCreateWindow(CREATESTRUCT &cs) {
+bool CView::PreCreateWindow(CREATESTRUCT &cs) {
 	assert(cs.style & WS_CHILD);
-	return TRUE;
+	return true;
 }
 
 int CView::OnCreate(LPCREATESTRUCT lpcs) {
@@ -84,7 +84,7 @@ void CView::OnInitialUpdate() {
 
 void CView::OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/) {
 	assert(pSender != this);
-	Invalidate(TRUE);
+	Invalidate(true);
 }
 
 void CView::OnPaint() {

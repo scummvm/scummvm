@@ -35,21 +35,21 @@ namespace WordSearch {
 class CWSOptDlg : public CBmpDialog {
 private:
 	int     m_nGameTime;
-	BOOL    m_bShowWord;
-	BOOL    m_bWordForwardOnly;
+	bool    m_bShowWord;
+	bool    m_bWordForwardOnly;
 	CRect   rDisplayTime;
 
 public:
 	CWSOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_MINIOPTIONS_DIALOG);
-	void SetInitialOptions(int = 0, BOOL = TRUE, BOOL = FALSE);  // Sets the private members
+	void SetInitialOptions(int = 0, bool = true, bool = false);  // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
 	virtual void OnCancel(void) override;
 	virtual void OnOK(void) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
@@ -69,13 +69,13 @@ public:
 	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, int);    // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
 	virtual void OnCancel(void) override;
 	virtual void OnOK(void) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

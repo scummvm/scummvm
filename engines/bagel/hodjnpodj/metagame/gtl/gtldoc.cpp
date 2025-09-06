@@ -55,10 +55,10 @@ CGtlDoc::~CGtlDoc() {
 	DeleteContents() ;
 }
 
-BOOL CGtlDoc::OnNewDocument() {
+bool CGtlDoc::OnNewDocument() {
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	if (!CDocument::OnNewDocument())
-		return FALSE;
+		return false;
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
@@ -68,7 +68,7 @@ BOOL CGtlDoc::OnNewDocument() {
 	else
 		InitDocument("default.gtl");
 
-	return TRUE;
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 
-//  dbgtrc = TRUE ;
+//  dbgtrc = true ;
 	m_xpGtlData = new CGtlData ;
 	m_xpGtlData->m_xpcGtlDoc = this ;
 	m_xpGtlData->m_bShowNodes = xpGtlApp->m_bShowNodes ;
@@ -107,27 +107,27 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 }
 
 //* CGtlDoc::OnOpenDocument --
-BOOL CGtlDoc::OnOpenDocument(const char *xpszPathName) {
+bool CGtlDoc::OnOpenDocument(const char *xpszPathName) {
 	if (!CDocument::OnOpenDocument(xpszPathName))
-		return FALSE;
+		return false;
 
 	InitDocument(xpszPathName) ;
-	return TRUE;
+	return true;
 }
 
 //* CGtlDoc::OnSaveDocument --
-BOOL CGtlDoc::OnSaveDocument(const char *xpszPathName) {
-	return TRUE;
+bool CGtlDoc::OnSaveDocument(const char *xpszPathName) {
+	return true;
 }
 
 
 //* CGtlDoc::DoOnFileSaveAs --
-BOOL CGtlDoc::DoOnFileSaveAs(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlDoc::DoOnFileSaveAs(void)
+// returns: true if error, false otherwise
 {
 	CDocument::OnFileSaveAs() ;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -184,8 +184,8 @@ void CGtlDoc::OnChangedViewList() {
 }
 
 //* CGtlDoc::FixChecks -- fix dialog box check marks
-BOOL CGtlDoc::FixChecks() {
-	return FALSE;
+bool CGtlDoc::FixChecks() {
+	return false;
 }
 
 } // namespace Gtl

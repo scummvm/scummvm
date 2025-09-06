@@ -30,7 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-extern HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded);
+extern HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, bool bMetaLoaded);
 extern void SetupCursor(void);
 extern void SetupWindow(CBfcMgr *);
 

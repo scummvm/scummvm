@@ -221,11 +221,11 @@ int StrFreqMatch(const char *mask, const char *test) {
 }
 
 
-BOOL StrCompare(const char *pszStr1, const char *pszStr2, unsigned int nSize) {
+bool StrCompare(const char *pszStr1, const char *pszStr2, unsigned int nSize) {
 	char *s1, *p, string1[256];   /* replace this stack hog with malloc */
 	char *s2, *sp, string2[256];       /* replace this stack hog with malloc */
 	int i, n, inc;
-	BOOL bMatch;
+	bool bMatch;
 
 	/* can't access null pointers */
 	assert(pszStr1 != nullptr);
@@ -298,7 +298,7 @@ BOOL StrCompare(const char *pszStr1, const char *pszStr2, unsigned int nSize) {
 	*/
 
 	/* assume they match */
-	bMatch = TRUE;
+	bMatch = true;
 
 	i = 0;
 	n = strlen(s1);
@@ -327,7 +327,7 @@ BOOL StrCompare(const char *pszStr1, const char *pszStr2, unsigned int nSize) {
 		}
 
 		if ((toupper(*s1) != toupper(*s2)) && (toupper(*p) != toupper(*s2))) {
-			bMatch = FALSE;
+			bMatch = false;
 			break;
 		}
 		s1++;
@@ -508,10 +508,10 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 *  synopsis  - return a true / false based on the probability given
 *            int nProbability          the probability of returning a true
 *
-*  purpose   to return a TRUE <nProbability> of the tine
+*  purpose   to return a true <nProbability> of the tine
 *
 *
-*  returns   BOOL
+*  returns   bool
 *
 **/
 bool ProbableTrue(int nProbability) {

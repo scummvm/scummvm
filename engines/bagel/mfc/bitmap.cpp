@@ -25,7 +25,7 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CBitmap::Attach(HBITMAP hObject) {
+bool CBitmap::Attach(HBITMAP hObject) {
 	return CGdiObject::Attach(hObject);
 }
 
@@ -33,7 +33,7 @@ HBITMAP CBitmap::Detach() {
 	return (HBITMAP)CGdiObject::Detach();
 }
 
-BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
+bool CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	const CDC::Impl *dc = static_cast<CDC::Impl *>(pDC->m_hDC);
 	Gfx::Surface *src = dc->getSurface();
 
@@ -58,7 +58,7 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	return true;
 }
 
-BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
+bool CBitmap::CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
 		unsigned int nBitcount, const void *lpBits) {
 	assert(nPlanes == 1);
 

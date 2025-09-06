@@ -100,7 +100,7 @@ CFrameWnd *CDocTemplate::CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther) {
 }
 
 void CDocTemplate::InitialUpdateFrame(CFrameWnd *pFrame, CDocument *pDoc,
-		BOOL bMakeVisible) {
+		bool bMakeVisible) {
 	// Just delagate to implementation in CFrameWnd
 	pFrame->InitialUpdateFrame(pDoc, bMakeVisible);
 }
@@ -115,7 +115,7 @@ void CDocTemplate::LoadTemplate() {
 	// TODO: If needed, menus and accelerators
 }
 
-void CDocTemplate::CloseAllDocuments(BOOL) {
+void CDocTemplate::CloseAllDocuments(bool) {
 	POSITION pos = GetFirstDocPosition();
 	while (pos != NULL)
 	{

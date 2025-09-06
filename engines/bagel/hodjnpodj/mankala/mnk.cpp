@@ -94,7 +94,7 @@ void CFileHeader::sync(Common::Serializer &s) {
  ****************************************************************/
 
 static HCURSOR  hHourGlassCursor;
-extern BOOL gbTurnSoundsOff;
+extern bool gbTurnSoundsOff;
 
 //* CMnkWindow::CMnkWindow() -- mankala window constructor function
 CMnkWindow::CMnkWindow(void) {
@@ -107,9 +107,9 @@ CMnkWindow::CMnkWindow(void) {
 	memset((char *)&m_cStartData2, 0, (size_t)((char *)&m_cEndData2 - (char *)&m_cStartData2)) ;
 	// zero out all my fields
 
-	m_bJustStarted = TRUE;
-	m_bStartGame = TRUE ;   // set flag - game just starting
-	m_bRulesActive = FALSE; //flag to indicate the rules scroll is unfurled.
+	m_bJustStarted = true;
+	m_bStartGame = true ;   // set flag - game just starting
+	m_bRulesActive = false; //flag to indicate the rules scroll is unfurled.
 	// this flag is set only when rules are invoked via the F1 key.
 
 	m_bPlaySound = pGameParams->bSoundEffectsEnabled;
@@ -126,15 +126,15 @@ CMnkWindow::CMnkWindow(void) {
 	// initialize default game options
 	m_iStartStones = GetPrivateProfileInt("Mankala", "StartStones", 3, INI_FILENAME) ; // 3 stones per pit
 
-	m_bComputer[1] = TRUE ; // player 1 is computer (0 is human)
+	m_bComputer[1] = true ; // player 1 is computer (0 is human)
 	m_iTableStones = MAXTABLESTONES ;
-	m_bInitData = FALSE ;       // don't init table
+	m_bInitData = false ;       // don't init table
 	m_iMaxDepth[0] = m_iMaxDepth[1] = 5 ;   // minimax depth
 	m_iCapDepth[0] = m_iCapDepth[1] = 3 ;   // capture depth
 
 	// *** debugging defaults
-//    m_bDumpPopulate = m_bDumpMoves = m_bDumpTree = TRUE ;
-//    m_bInitData = TRUE ;
+//    m_bDumpPopulate = m_bDumpMoves = m_bDumpTree = true ;
+//    m_bInitData = true ;
 //    m_iTableStones = 3 ;
 
 	Common::strcpy_s(m_szDataDirectory, DATADIR) ;    // data directory
@@ -199,7 +199,7 @@ CMnkWindow::CMnkWindow(void) {
 
 #define WSTYLE WS_POPUP|WS_CLIPCHILDREN
 
-		pDC->SelectPalette(CMnkWindow::m_xpGamePalette, FALSE);
+		pDC->SelectPalette(CMnkWindow::m_xpGamePalette, false);
 		pDC->RealizePalette();
 		ReleaseDC(pDC);
 		pDC = nullptr ;        // zero out context pointer
@@ -218,7 +218,7 @@ CMnkWindow::CMnkWindow(void) {
 	//
 	ShowWindow(SW_SHOWNORMAL);
 	PaintBitmapObject(&m_cBmpMain, BMT_MAIN) ;                      // paint main screen bitmap
-	m_cBmpScroll.m_bSprite = TRUE ;                                 // scroll is a sprite
+	m_cBmpScroll.m_bSprite = true ;                                 // scroll is a sprite
 	PaintBitmapObject(&m_cBmpScroll, BMT_SCROLL) ;
 
 
@@ -318,7 +318,7 @@ CMnkWindow::~CMnkWindow(void) {
 void CMnkWindow::OnPaint() {
 	PAINTSTRUCT lpPaint ;
 
-	InvalidateRect(nullptr, FALSE) ;   // invalidate the entire window
+	InvalidateRect(nullptr, false) ;   // invalidate the entire window
 	BeginPaint(&lpPaint) ;              // bracket start of window update
 	PaintScreen() ;                    // repaint our window's content
 	EndPaint(&lpPaint) ;                // bracket end of window update
@@ -357,7 +357,7 @@ void CMnkWindow::OnPaint() {
 // OnCommand
 //
 
-BOOL CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	if (HIWORD(lParam) == BN_CLICKED)
 		// only want to look at button clicks
@@ -373,7 +373,7 @@ BOOL CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 
-	return TRUE ;
+	return true ;
 }
 
 
@@ -417,12 +417,12 @@ void CMnkWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned in
 	int iRVal;
 
 	if (nChar == VK_F1) {
-		m_bRulesActive = FALSE;
+		m_bRulesActive = false;
 		CRules cRulesDlg(this, RULES, m_xpGamePalette, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : nullptr) ;
 		CSound::waitWaveSounds();
 		if ((iRVal = cRulesDlg.DoModal()) == -1)
 			MessageBox("The Mankala Rules Text File Can't Be Opened", "Error Opening File");
-		m_bRulesActive = FALSE;
+		m_bRulesActive = false;
 	} else if (nChar == VK_F2) {
 		OptionsDialog();
 	} else {
@@ -513,7 +513,7 @@ void CMnkWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	static int dyCursor = GetSystemMetrics(SM_CYCURSOR);
 
 	int iPlayer = 0, iPit = 0;
-	BOOL bFound;
+	bool bFound;
 	CDC *pDC;
 	CRect crctPitBounds, crctTxt;
 	HLOCAL hlocShells;
@@ -524,12 +524,12 @@ void CMnkWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	    DETERMINE the current location of the mouse visavis the pit locations
 	    if not in the main menu (scroll down mode).
 	*/
-	for (iPlayer = 0, bFound = FALSE; !(m_bRulesActive || m_bInMenu) && iPlayer < 2; iPlayer++) {
+	for (iPlayer = 0, bFound = false; !(m_bRulesActive || m_bInMenu) && iPlayer < 2; iPlayer++) {
 		for (iPit = -1; !bFound && iPit < NUMPITS ; bFound || ++iPit) {
 			pcBmpObject = &(m_xpcPits[iPlayer][iPit + 2]->m_cBmpObject) ;
 			crctPitBounds = CRect(pcBmpObject->m_cPosition, pcBmpObject->m_cSize);
 			if (crctPitBounds.PtInRect(point))
-				bFound = TRUE ;
+				bFound = true ;
 		}
 		if (bFound) break;
 	}//end for
@@ -616,7 +616,7 @@ void CMnkWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (rectTemp.PtInRect(point)) {
 		if ((pGameParams->bPlayingMetagame && !bPlayedGameOnce) || (!pGameParams->bPlayingMetagame)) {
-			bPlayedGameOnce = TRUE;
+			bPlayedGameOnce = true;
 			StartGame();
 		}
 	} else {
@@ -768,11 +768,11 @@ void CMnkWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 		do {
 			while (!m_bGameOver && !m_bComputer[xpcMove->m_iPlayer] && !(CMnk *)this->SearchMove(xpcMove, iPitToStartWith)) {
 				(CMnk*)this->Move((CPit*)(m_xpcPits[xpcMove->m_iPlayer][iPitToStartWith + 2]));
-				SetCrabSign(FALSE);
+				SetCrabSign(false);
 			}
 			while (!m_bGameOver && m_bComputer[xpcMove->m_iPlayer] && !(CMnk *)this->SearchMove(xpcMove, iPitToStartWith)) {
 				(CMnk*)this->Move((CPit*)(m_xpcPits[xpcMove->m_iPlayer][iPitToStartWith + 2]));
-				SetCrabSign(TRUE);
+				SetCrabSign(true);
 			}
 		} while (!m_bGameOver);
 		#endif //_DEMO
@@ -985,11 +985,11 @@ void CMnkWindow::OnClose() {
  *
  * RETURN VALUE:
  *
- *      BOOL        Success (TRUE) / Failure (FALSE) status
+ *      bool        Success (true) / Failure (false) status
  *
  ****************************************************************/
 /*
-BOOL CMnkApp::InitInstance()
+bool CMnkApp::InitInstance()
 {
     CMnkWindow  *pMyMain ;
 
@@ -1000,7 +1000,7 @@ BOOL CMnkApp::InitInstance()
     m_pMainWnd->ShowWindow( m_nCmdShow ) ;
     m_pMainWnd->UpdateWindow() ;
 
-    return(TRUE) ;
+    return(true) ;
 }
 */
 

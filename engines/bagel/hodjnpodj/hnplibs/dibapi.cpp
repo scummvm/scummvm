@@ -79,7 +79,7 @@ static BITMAPINFO *getDIBInfo(HDIB hDib) {
  *
  * Return Value:
  *
- * BOOL             - TRUE if DIB was drawn, FALSE otherwise
+ * bool             - true if DIB was drawn, false otherwise
  *
  * Description:
  *   Painting routine for a DIB.  Calls StretchDIBits() or
@@ -90,11 +90,11 @@ static BITMAPINFO *getDIBInfo(HDIB hDib) {
  *
  ************************************************************************/
 
-BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
+bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		LPRECT lpDIBRect, CPalette *pPal) {
 	Graphics::ManagedSurface *surf;
 	void *lpDIBBits;			// Pointer to DIB bits
-	BOOL bSuccess = FALSE;      // Success/fail flag
+	bool bSuccess = false;      // Success/fail flag
 	HPALETTE hPal = nullptr;		// Our DIB's palette
 	HPALETTE hOldPal = nullptr;		// Previous palette
 	HPALETTE hOldPal2 = nullptr;	// Previous palette
@@ -105,7 +105,7 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 
 	// Check for valid DIB handle
 	if (hDIB == nullptr)
-		return FALSE;
+		return false;
 
 	// Lock down the DIB, and get a pointer to it
 	surf = (Graphics::ManagedSurface *)hDIB;
@@ -116,7 +116,7 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
-		hOldPal = SelectPalette(hDC, hPal, FALSE);
+		hOldPal = SelectPalette(hDC, hPal, false);
 		(void)RealizePalette(hDC);
 	}
 
@@ -126,7 +126,7 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		if (hBitmap) {
 			hdcMem = CreateCompatibleDC(hDC);
 			if (hdcMem) {
-				hOldPal2 = SelectPalette(hdcMem, hPal, FALSE);
+				hOldPal2 = SelectPalette(hdcMem, hPal, false);
 				(void)RealizePalette(hdcMem);
 				hBitmapOld = SelectBitmap(hdcMem, hBitmap);
 				if ((RECTWIDTH(lpDCRect) == RECTWIDTH(lpDIBRect)) &&
@@ -140,9 +140,9 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 						hdcMem, lpDIBRect->left, lpDIBRect->top, RECTWIDTH(lpDIBRect), RECTHEIGHT(lpDIBRect),
 						SRCCOPY);
 				else
-					bSuccess = FALSE;
+					bSuccess = false;
 				(void)SelectBitmap(hdcMem, hBitmapOld);
-				(void)SelectPalette(hdcMem, hOldPal2, FALSE);
+				(void)SelectPalette(hdcMem, hOldPal2, false);
 				DeleteDC(hdcMem);
 			}
 		}
@@ -150,7 +150,7 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		if (hBitmap != nullptr)
 			DeleteBitmap(hBitmap);
 		if (pPal != nullptr)
-			SelectPalette(hDC, hOldPal, FALSE);
+			SelectPalette(hDC, hOldPal, false);
 
 		return bSuccess;
 	}
@@ -175,20 +175,20 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		SRCCOPY);                       // dwROP
 
 	if (pPal != nullptr)
-		SelectPalette(hDC, hOldPal, FALSE);
+		SelectPalette(hDC, hOldPal, false);
 
 	return bSuccess;
 }
 
-BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
+bool CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	uint16 wNumColors;
 	HANDLE hLogPal;
 	LPLOGPALETTE lpPal;
-	BOOL bResult = false;
+	bool bResult = false;
 
-	// If handle to DIB is invalid, return FALSE
+	// If handle to DIB is invalid, return false
 	if (hDIB == nullptr)
-		return FALSE;
+		return false;
 
 	// Get the number of colors in the DIB
 	wNumColors = DIBNumColors(hDIB);
@@ -231,7 +231,7 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
 	uint16 wNumColors;         // number of colors in color table
-	BOOL bResult;
+	bool bResult;
 
 	wNumColors = pOrigPal->GetPaletteEntries(0, 0, nullptr);
 	if (wNumColors == 0)
@@ -302,7 +302,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 		hPal = (HPALETTE)pPal->m_hObject;
 
 		// Select as foreground and realize it
-		hOldPal = SelectPalette(hDC, hPal, FALSE);
+		hOldPal = SelectPalette(hDC, hPal, false);
 		(void) RealizePalette(hDC);
 	}
 
@@ -317,7 +317,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 
 	/* Reselect old palette */
 	if (pPal != nullptr)
-		SelectPalette(hDC, hOldPal, FALSE);
+		SelectPalette(hDC, hOldPal, false);
 
 	return pBitmap;
 }

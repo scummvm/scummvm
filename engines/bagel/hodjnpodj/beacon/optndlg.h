@@ -50,8 +50,8 @@ public:
 	enum { IDD = IDD_SUBOPTIONS };
 	CScrollBar m_ScrollSweeps;
 	CScrollBar m_ScrollSpeed;
-	BOOL    m_bAutomatic;
-	BOOL    m_bChangeAtTwelve;
+	bool    m_bAutomatic;
+	bool    m_bChangeAtTwelve;
 	unsigned int    m_nSweeps;
 	unsigned int    m_nSpeed;
 	unsigned int    nSweepSets;
@@ -64,11 +64,11 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnPaint();

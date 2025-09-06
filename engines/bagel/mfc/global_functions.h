@@ -72,13 +72,13 @@ extern HMODULE GetModuleHandle(const char *lpModuleName);
 
 extern const char *AFXAPI AfxRegisterWndClass(unsigned int nClassStyle,
         HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
-extern BOOL GetClassInfo(HINSTANCE hInstance,
+extern bool GetClassInfo(HINSTANCE hInstance,
 	const char *lpClassName, LPWNDCLASS lpWndClass);
 extern int GetSystemMetrics(int nIndex);
 
 extern HGLOBAL GlobalAlloc(unsigned int uFlags, size_t dwBytes);
 extern void *GlobalLock(HGLOBAL hMem);
-extern BOOL GlobalUnlock(HGLOBAL hMem);
+extern bool GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
 extern size_t GlobalSize(HGLOBAL hMem);
 extern size_t GlobalCompact(uint32 dwMinFree);
@@ -99,7 +99,7 @@ extern uint32 GetPrivateProfileString(const char *lpAppName,
                                      const char *lpKeyName, const char *lpDefault, char * lpReturnedString,
                                      uint32  nSize, const char *lpFileName);
 
-extern BOOL WritePrivateProfileString(
+extern bool WritePrivateProfileString(
     const char *lpAppName, const char *lpKeyName,
     const char *lpString, const char *lpFileName);
 
@@ -108,12 +108,12 @@ extern FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance);
 extern void FreeProcInstance(FARPROC lpProc);
 extern HHOOK SetWindowsHookEx(int idHook,
                               HOOKPROC lpfn, HINSTANCE hmod, HTASK dwThreadId);
-extern BOOL UnhookWindowsHookEx(HHOOK hhk);
+extern bool UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
                               WPARAM wParam, LPARAM lParam);
 extern uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
     void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32) = nullptr);
-extern BOOL KillTimer(HWND hWnd, uintptr nIDEvent);
+extern bool KillTimer(HWND hWnd, uintptr nIDEvent);
 extern void Sleep(unsigned int milli);
 extern uint32 GetTickCount();
 
@@ -121,12 +121,12 @@ extern Common::SeekableReadStream *OpenFile(const char *filename);
 extern bool FileExists(const char *filename);
 extern long FileLength(const char *filename);
 
-extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
+extern bool PeekMessage(LPMSG lpMsg, HWND hWnd,
                         unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
                         unsigned int wRemoveMsg);
 extern void TranslateMessage(LPMSG lpMsg);
 extern void DispatchMessage(LPMSG lpMsg);
-extern BOOL PostMessage(HWND hWnd, unsigned int Msg,
+extern bool PostMessage(HWND hWnd, unsigned int Msg,
                         WPARAM wParam, LPARAM lParam);
 extern LRESULT SendMessage(HWND hWnd, unsigned int Msg,
                            WPARAM wParam, LPARAM lParam);
@@ -139,10 +139,10 @@ extern size_t SizeofResource(HMODULE hModule, HRSRC hResInfo);
 extern HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
 extern void *LockResource(HGLOBAL hResData);
 extern void UnlockResource(HGLOBAL hResData);
-extern BOOL FreeResource(HGLOBAL hResData);
+extern bool FreeResource(HGLOBAL hResData);
 extern HFONT CreateFontIndirect(const LOGFONT *lf);
 
-extern BOOL AfxExtractSubString(CString &rString, const char *lpszFullString,
+extern bool AfxExtractSubString(CString &rString, const char *lpszFullString,
 	int iSubString, char chSep = '\n');
 
 inline char *strUpper(char *s) {

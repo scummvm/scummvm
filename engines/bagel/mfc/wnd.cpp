@@ -85,7 +85,7 @@ CWnd::~CWnd() {
 	pMap->RemoveHandle(m_hWnd);
 }
 
-BOOL CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
+bool CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
 	uint32 dwStyle, const RECT &rect, CWnd *pParentWnd,
 	unsigned int nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
@@ -133,7 +133,7 @@ BOOL CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
 	return true;
 }
 
-BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
+bool CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 		void *lpParam /* = nullptr */) {
@@ -142,7 +142,7 @@ BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		pParentWnd->GetSafeHwnd(), nID, lpParam);
 }
 
-BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
+bool CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam) {
@@ -254,7 +254,7 @@ void CWnd::ShowWindow(int nCmdShow) {
 	SendMessage(WM_SHOWWINDOW, (m_nStyle & WS_VISIBLE) != 0);
 }
 
-BOOL CWnd::EnableWindow(BOOL bEnable) {
+bool CWnd::EnableWindow(bool bEnable) {
 	bool oldEnabled = (_itemState & ODS_DISABLED) == 0;
 	if (bEnable)
 		_itemState &= ~ODS_DISABLED;
@@ -279,7 +279,7 @@ void CWnd::UpdateWindow() {
 	}
 }
 
-BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
+bool CWnd::RedrawWindow(LPCRECT lpRectUpdate,
 	CRgn *prgnUpdate, unsigned int flags) {
 
 	if (flags & RDW_INVALIDATE) {
@@ -336,7 +336,7 @@ CWnd *CWnd::GetFocus() const {
 	return AfxGetApp()->GetFocus();
 }
 
-void CWnd::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CWnd::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// We're becoming active - ensure we repaint
 		Invalidate();
@@ -397,7 +397,7 @@ int CWnd::GetWindowText(char *lpszStringBuf, int nMaxCount) const {
 	return strlen(lpszStringBuf);
 }
 
-BOOL CWnd::SetWindowText(const char *lpszString) {
+bool CWnd::SetWindowText(const char *lpszString) {
 	_windowText = lpszString;
 	Invalidate();
 	return true;
@@ -430,7 +430,7 @@ CDC *CWnd::GetDC() {
 		hDC->Attach(_hFont);
 		hDC->Attach(_hPen);
 		hDC->Attach(_hBrush);
-		hDC->selectPalette(_hPalette, TRUE);
+		hDC->selectPalette(_hPalette, true);
 
 		RECT screenRect;
 		screenRect.left = screenRect.top = 0;
@@ -461,7 +461,7 @@ int CWnd::ReleaseDC(CDC *pDC) {
 	return 1;
 }
 
-BOOL CWnd::PostMessage(unsigned int message, WPARAM wParam, LPARAM lParam) {
+bool CWnd::PostMessage(unsigned int message, WPARAM wParam, LPARAM lParam) {
 	return AfxGetApp()->PostMessage(m_hWnd, message, wParam, lParam);
 }
 
@@ -496,7 +496,7 @@ bool CWnd::isRecursiveMessage(unsigned int message) {
 		message == WM_ENABLE;
 }
 
-BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
+bool CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 	LRESULT lResult = 0;
 	const AFX_MSGMAP_ENTRY *lpEntry;
 
@@ -507,7 +507,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 			goto LReturnTrue;
 		}
 
-		return FALSE;
+		return false;
 	} else if (message == WM_ACTIVATE) {
 		OnActivate(LOWORD(wParam), nullptr, false);
 		lResult = 1;
@@ -553,7 +553,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 		break;
 
 	case AfxSig_bb:     // AfxSig_bb, AfxSig_bw, AfxSig_bh
-		lResult = (this->*mmf.pfn_bb)((BOOL)wParam);
+		lResult = (this->*mmf.pfn_bb)((bool)wParam);
 		break;
 
 	case AfxSig_bWww:   // really AfxSig_bWiw
@@ -652,7 +652,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 
 	case AfxSig_vMwb:
 		(this->*mmf.pfn_vMwb)(CMenu::FromHandle((HMENU)wParam),
-			LOWORD(lParam), (BOOL)HIWORD(lParam));
+			LOWORD(lParam), (bool)HIWORD(lParam));
 		break;
 
 	case AfxSig_vW:
@@ -686,7 +686,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 
 	case AfxSig_vwWb:
 		(this->*mmf.pfn_vwWb)((unsigned int)(LOWORD(wParam)),
-			CWnd::FromHandle((HWND)lParam), (BOOL)HIWORD(wParam));
+			CWnd::FromHandle((HWND)lParam), (bool)HIWORD(wParam));
 		break;
 
 	case AfxSig_vwwW:
@@ -715,7 +715,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 
 	case AfxSig_vOWNER:
 		(this->*mmf.pfn_vOWNER)((int)wParam, (uint16 *)lParam);
-		lResult = TRUE;
+		lResult = true;
 		break;
 
 	case AfxSig_iis:
@@ -734,7 +734,7 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 		break;
 
 	case AfxSig_vCALC:
-		(this->*mmf.pfn_vCALC)((BOOL)wParam, (NCCALCSIZE_PARAMS *)lParam);
+		(this->*mmf.pfn_vCALC)((bool)wParam, (NCCALCSIZE_PARAMS *)lParam);
 		break;
 
 	case AfxSig_vPOS:
@@ -753,18 +753,18 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 	}
 	case AfxSig_vwSIZING:
 		(this->*mmf.pfn_vwl)(wParam, lParam);
-		lResult = TRUE;
+		lResult = true;
 		break;
 
 	case AfxSig_bwsp:
 		lResult = (this->*mmf.pfn_bwsp)(LOWORD(wParam), (short)HIWORD(wParam),
 			CPoint(LOWORD(lParam), HIWORD(lParam)));
 		if (!lResult)
-			return FALSE;
+			return false;
 		break;
 
 	case AfxSig_vwpb:
-		(this->*mmf.pfn_vFb)((HFONT)wParam, (BOOL)lParam);
+		(this->*mmf.pfn_vFb)((HFONT)wParam, (bool)lParam);
 		break;
 
 	default:
@@ -775,14 +775,14 @@ BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 LReturnTrue:
 	if (pResult != nullptr)
 		*pResult = lResult;
-	return TRUE;
+	return true;
 }
 
-BOOL CWnd::Validate() {
+bool CWnd::Validate() {
 	return ValidateRect(nullptr);
 }
 
-BOOL CWnd::ValidateRect(LPCRECT lpRect) {
+bool CWnd::ValidateRect(LPCRECT lpRect) {
 	if (!lpRect) {
 		// Remove entire area
 		_updateRect = Common::Rect();
@@ -796,13 +796,13 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 	return true;
 }
 
-void CWnd::Invalidate(BOOL bErase) {
+void CWnd::Invalidate(bool bErase) {
 	CRect clientRect;
 	GetClientRect(&clientRect);
 	InvalidateRect(&clientRect, bErase);
 }
 
-BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
+bool CWnd::InvalidateRect(LPCRECT lpRect, bool bErase) {
 	if (lpRect)
 		_updateRect.extend(*lpRect);
 	else
@@ -825,7 +825,7 @@ void CWnd::GetWindowRect(LPRECT lpRect) const {
 	lpRect->bottom = _windowRect.bottom;
 }
 
-BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
+bool CWnd::GetUpdateRect(LPRECT lpRect, bool bErase) {
 	if (lpRect)
 		*lpRect = RectToRECT(_updateRect);
 	_updateErase = bErase;
@@ -833,7 +833,7 @@ BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
 	return IsWindowDirty();
 }
 
-BOOL CWnd::GetClientRect(LPRECT lpRect) const {
+bool CWnd::GetClientRect(LPRECT lpRect) const {
 	lpRect->left = 0;
 	lpRect->top = 0;
 	lpRect->right = _windowRect.width();
@@ -901,7 +901,7 @@ RECT CWnd::GetWindowRectInParentCoords() const {
 	return rc;
 }
 
-void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
+void CWnd::MoveWindow(LPCRECT lpRect, bool bRepaint) {
 	_windowRect = *lpRect;
 	ValidateRect(nullptr);
 
@@ -932,7 +932,7 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 		InvalidateRect(nullptr, true);
 }
 
-void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
+void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, bool bRepaint) {
 	RECT r;
 	r.left = x;
 	r.top = y;
@@ -963,7 +963,7 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 	return dc->m_hDC;
 }
 
-BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
+bool CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
 	_updateRect = Common::Rect();
 	AfxGetApp()->afxUpdateWnds().remove(this);
 	_updateErase = false;
@@ -979,7 +979,7 @@ CWnd *CWnd::GetDlgItem(int nID) const {
 	return _children.contains(nID) ? _children[nID] : nullptr;
 }
 
-CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
+CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, bool bPrevious) const {
 	// First set up the children hash map as a straight array
 	// for easier iterating over
 	Common::Array<CWnd *> children;
@@ -1025,17 +1025,17 @@ CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
 	return children[startIdx];
 }
 
-BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
+bool CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
 	if (pWndCtrl != nullptr) {
 		pWndCtrl->SetFocus();            // Give it focus
-		SendMessage(WM_NEXTDLGCTL, (WPARAM)pWndCtrl->m_hWnd, TRUE);	// Update focus info
-		return TRUE;
+		SendMessage(WM_NEXTDLGCTL, (WPARAM)pWndCtrl->m_hWnd, true);	// Update focus info
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL CWnd::SubclassDlgItem(unsigned int nID, CWnd *pParent) {
+bool CWnd::SubclassDlgItem(unsigned int nID, CWnd *pParent) {
 	// Validate we're replacing the same kind of control
 	assert(pParent->_children.contains(nID));
 	CWnd *oldControl = pParent->_children[nID];
@@ -1073,7 +1073,7 @@ BOOL CWnd::SubclassDlgItem(unsigned int nID, CWnd *pParent) {
 	return true;
 }
 
-BOOL CWnd::SetDlgItemText(int nIDDlgItem, const char *lpString) {
+bool CWnd::SetDlgItemText(int nIDDlgItem, const char *lpString) {
 	CWnd *wnd = GetDlgItem(nIDDlgItem);
 
 	if (wnd) {
@@ -1106,7 +1106,7 @@ uintptr CWnd::SetTimer(uintptr nIDEvent, unsigned int nElapse,
 	return MFC::SetTimer(m_hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
-BOOL CWnd::KillTimer(uintptr nIDEvent) {
+bool CWnd::KillTimer(uintptr nIDEvent) {
 	return MFC::KillTimer(m_hWnd, nIDEvent);
 }
 
@@ -1136,7 +1136,7 @@ void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		pControl->DrawItem(lpDrawItemStruct);
 }
 
-BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
 	unsigned int nID = LOWORD(wParam);
 	int nCode = HIWORD(wParam);
 
@@ -1146,14 +1146,14 @@ BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return OnCmdMsg(nID, nCode, nullptr, nullptr);
 }
 
-void CWnd::OnSetFont(HFONT hFont, BOOL bRedraw) {
+void CWnd::OnSetFont(HFONT hFont, bool bRedraw) {
 	_hFont = hFont;
 
 	if (bRedraw)
 		Invalidate();
 }
 
-BOOL CWnd::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
+bool CWnd::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
 	MFC::SetCursor(MFC::LoadCursor(nullptr, IDC_ARROW));
 	return true;
 }
@@ -1189,7 +1189,7 @@ void CWnd::SendMessageToDescendants(unsigned int message,
 }
 
 void CWnd::SendMessageToDescendants(HWND hWnd, unsigned int message,
-		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm) {
+		WPARAM wParam, LPARAM lParam, bool bDeep, bool bOnlyPerm) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SendMessageToDescendants(message,
 		wParam, lParam, bDeep, bOnlyPerm);
@@ -1199,7 +1199,7 @@ bool CWnd::IsActiveWindow() const {
 	return AfxGetApp()->GetActiveWindow() == this;
 }
 
-void CWnd::SetFont(CFont *pFont, BOOL bRedraw) {
+void CWnd::SetFont(CFont *pFont, bool bRedraw) {
 	SendMessage(WM_SETFONT, (WPARAM)pFont->m_hObject, bRedraw);
 }
 
@@ -1207,13 +1207,13 @@ void CWnd::pause() {
 	AfxGetApp()->pause();
 }
 
-void CWnd::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void CWnd::OnShowWindow(bool bShow, unsigned int nStatus) {
 	if (bShow) {
 		// Invalidate this window
 		Invalidate();
 
 		// Invalidate all descendants
-		SendMessageToDescendants(WM_SETREDRAW, TRUE);
+		SendMessageToDescendants(WM_SETREDRAW, true);
 	}
 }
 

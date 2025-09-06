@@ -27,7 +27,6 @@
 namespace Bagel {
 namespace MFC {
 
-typedef int BOOL;
 typedef uint16 TCHAR;
 typedef uint16 SHORT;
 
@@ -42,14 +41,6 @@ typedef void *POSITION;
 #define PAL_DEFAULT 0x0000
 #define PAL_ANIMATED 0x0001
 #define PAL_EXPLICIT 0x0002
-
-#ifndef FALSE
-	#define FALSE               0
-#endif
-
-#ifndef TRUE
-	#define TRUE                1
-#endif
 
 #define HINSTANCE_ERROR (HINSTANCE)32
 

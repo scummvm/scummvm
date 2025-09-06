@@ -77,7 +77,7 @@ CSaveDlg::CSaveDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 }
 
 
-BOOL CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
 		case IDC_SLOT1:
@@ -87,19 +87,19 @@ BOOL CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_SLOT5:
 		case IDC_SLOT6:
 			EditDescription((int)wParam - IDC_SLOT1);
-			return TRUE;
+			return true;
 
 		case IDOK:
 			m_pSlotText[m_nCurSlot]->GetWindowText(szDescBuf, MAX_BUTTON_TEXT);
 			ClearDialogImage();
 			assert(m_nCurSlot != -1);
 			EndDialog(m_nCurSlot);
-			return TRUE;
+			return true;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(-1);
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -124,14 +124,14 @@ void CSaveDlg::EditDescription(int nNewSlot) {
 		m_pSlotButtons[m_nCurSlot]->UpdateWindow();
 
 		// re-enable old slot button
-		m_pSlotButtons[m_nCurSlot]->EnableWindow(TRUE);
+		m_pSlotButtons[m_nCurSlot]->EnableWindow(true);
 	}
 
 	// enable the OK button
-	m_pOkButton->EnableWindow(TRUE);
+	m_pOkButton->EnableWindow(true);
 
 	// disable this slot button
-	m_pSlotButtons[nNewSlot]->EnableWindow(FALSE);
+	m_pSlotButtons[nNewSlot]->EnableWindow(false);
 
 	// show the new edit box
 	m_pSlotText[nNewSlot]->ShowWindow(SW_SHOW);
@@ -153,11 +153,11 @@ void CSaveDlg::EditDescription(int nNewSlot) {
 }
 
 
-BOOL CSaveDlg::OnInitDialog(void) {
+bool CSaveDlg::OnInitDialog(void) {
 	CRect rect;
 	CDC *pDC;
 	int i;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
 
@@ -210,7 +210,7 @@ BOOL CSaveDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	return FALSE;
+	return false;
 }
 
 

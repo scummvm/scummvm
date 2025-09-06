@@ -214,13 +214,13 @@ public:
 	bool m_bRelocatable : 1;			// relocatable node
 	bool m_bWgtSpec : 1;				// weight specified
 	bool m_bSenSpec : 1;				// sensitivity specified
-	bool m_bMenu : 1;					// TRUE if menu
+	bool m_bMenu : 1;					// true if menu
 	byte m_iWeight = 0;				// node weight
 	byte m_iSensitivity = 0;			// distance to accept clickb
 
 	CNode();
 
-	BOOL IfRelocatable(void) {
+	bool IfRelocatable(void) {
 		return (m_bRelocatable != 0) ;
 	}
 };
@@ -281,13 +281,13 @@ public:
 	char m_cStartData ;
 	CXodj *m_xpXodjNext ;       // next in chain
 	char m_szName[MAX_LABEL_LENGTH] ;   // name of character
-	BOOL m_bHodj ;              // char is Hodj (not Podj)
+	bool m_bHodj ;              // char is Hodj (not Podj)
 	int m_iFurlongs ;           // number of furlongs available
 	int m_iCharNode ;           // node where character is positioned
 
 	int m_nTurns;               // number of turns remaining (not furlongs)
 
-	BOOL m_bComputer ;          // played by computer
+	bool m_bComputer ;          // played by computer
 	CMap FAR *m_lpMap ;         // bitmap object
 	CBgbObject FAR *m_lpcCharSprite ;   // character sprite bgb object
 	CBgbObject FAR *m_lpcIcon ;         // icon for character
@@ -323,7 +323,7 @@ public:
 
 	int m_iGameHistory[20] ;    // last 20 mini-games played
 	int m_iTargetLocation ;     // target location for computer play
-	BOOL m_bGatherInformation ; // if FALSE, data from last
+	bool m_bGatherInformation ; // if false, data from last
 	// GatherInformation is still valid
 
 	CInventory *m_pInventory ;   // items in personal inventory
@@ -356,38 +356,38 @@ private:
 	CNode FAR *m_lpNodes /* [MAX_NODES] */ ;      // node array
 
 	char m_cStartData ;
-	BOOL m_bGtlDll ;            // equals GTLDLL define
+	bool m_bGtlDll ;            // equals GTLDLL define
 	char m_szBmpDirectory[MAX_FILENAME_LENGTH] ; // bitmap file director
 	char m_szGtlFile[MAX_FILENAME_LENGTH] ; // gtl file name
 	char m_szListFile[MAX_FILENAME_LENGTH] ; // List file name
 	Common::SeekableReadStream *m_xpGtlFile = nullptr;         // ptr to file structure for .GTL file
 	Common::WriteStream *m_xpListFile = nullptr;        // ptr to file structure for .LST file
-	BOOL m_bListing ;           // listing file flag
+	bool m_bListing ;           // listing file flag
 	int m_iIndent ;             // current indent (decompile only)
 	int m_iLineNumber ;         // line number in input file
 	int m_iMaps, m_iNodes ;     // # of bitmaps, nodes
-	BOOL m_bEof ;               // end of file on input (or END stmt)
+	bool m_bEof ;               // end of file on input (or END stmt)
 	CNode FAR *m_lpLastNode ;   // pointer to last node
 	int m_iNumGenLabels ;               // number of generated lables
 	CLexElement *m_xpLexLabel ;         // current label lexeme
 	CLexElement m_cLexElts[MAX_LEXELTS] ;       // lexical element blocks
 	char m_szStringList[MAX_STRINGLIST] ;     // compiler input string
-	BOOL m_bSelectedLink ;      // flag: a link is selected
+	bool m_bSelectedLink ;      // flag: a link is selected
 	int m_iSelLinkPt1, m_iSelLinkPt2 ;  // indexes of selected link pts
 	uint32 m_stAcceptClickActive = 0;       // prevent recursion
 	uint32 m_stLDownTime = 0;       // time of left button down
 	CNode FAR *m_lpFoundNode ;  // node clicked on
 	CNode FAR *m_lpLastSelectedNode ;   // selected on click down
 
-	BOOL m_bJustPlayedMiniGame; // true for Mini-Games in ProcessGameResult
+	bool m_bJustPlayedMiniGame; // true for Mini-Games in ProcessGameResult
 
 	// fields for Draw routine
 public:
-	BOOL m_bInhibitDraw ;       // inhibit any actual drawing
-	BOOL m_bDrawing ;           // in Draw routine (prevent recursion)
+	bool m_bInhibitDraw ;       // inhibit any actual drawing
+	bool m_bDrawing ;           // in Draw routine (prevent recursion)
 	CGtlView *m_xpGtlView ;     // current view
-	BOOL m_bPaint ;             // WM_PAINT flag
-	BOOL m_bRelocatable ;       // device context is currently
+	bool m_bPaint ;             // WM_PAINT flag
+	bool m_bRelocatable ;       // device context is currently
 	// relocatable
 	CRect *m_xpClipRect ;       // relocatable clipping rectangle
 	CRect *m_xpDevClipRect ;    // device (non-relocatable)
@@ -399,21 +399,21 @@ public:
 	int m_iSizeX, m_iSizeY ;    // size of entire client area
 	// (entire bitmap)
 	int m_iMargin ;             // size of top margin of view window
-	BOOL m_bChangeSize ;        // size of window changed (because
+	bool m_bChangeSize ;        // size of window changed (because
 	// gtl modified the bitmap template)
 	int m_iViewSizeX, m_iViewSizeY ;    // size of view
 
-	BOOL m_bPaintBackground ;   // paint background
-	BOOL m_bShowNodes ;         // show nodes and links
-	BOOL m_bShowSensitivity ;           // show node sensitivities
-	BOOL m_bStartMetaGame ;     // start in meta game mode
-	BOOL _metaGame = false;		// meta game mode
-	BOOL m_bInitMetaGame ;      // init sprites at beginning of metagame
+	bool m_bPaintBackground ;   // paint background
+	bool m_bShowNodes ;         // show nodes and links
+	bool m_bShowSensitivity ;           // show node sensitivities
+	bool m_bStartMetaGame ;     // start in meta game mode
+	bool _metaGame = false;		// meta game mode
+	bool m_bInitMetaGame ;      // init sprites at beginning of metagame
 
 	CXodj *m_xpXodjChain ;      // chain of characters
 	CXodj *m_xpCurXodj ;        // character currently on the move
-	BOOL m_bSamePlace ;         // both characters are in same place
-	BOOL m_bGameOver ;          // game is over
+	bool m_bSamePlace ;         // both characters are in same place
+	bool m_bGameOver ;          // game is over
 
 	CBitmap  *m_pOffScreenBmp;
 	CPalette *m_pPalOld;
@@ -452,12 +452,12 @@ public:
 	/**
 	 * Compile .gtl file to internal objects.
 	 * @param xpszPathName	Input file name
-	 * @returns		TRUE if error, FALSE otherwise
+	 * @returns		true if error, false otherwise
 	 */
 	int Compile(const char *xpszPathName);
 
 	//- ParseLine -- parse input line
-	BOOL ParseLine(void) ;
+	bool ParseLine(void) ;
 	//- ParseInteger -- parse integer, store into node structure
 	CLexElement *ParseInteger(CLexElement * xpLxel,
 	                          int iPrevType, int FAR& iValue) ;
@@ -466,17 +466,17 @@ public:
 	CLexElement *ParseString(CLexElement * xpLxel,
 	                         int iPrevType, char *lpszValue, XPINT xpiValue) ;
 	//- GetLabel -- get bitmap or node label
-	BOOL GetLabel(CLexElement * xpLxel,
-	              BOOL bNode, int FAR& iIndex) ;
+	bool GetLabel(CLexElement * xpLxel,
+	              bool bNode, int FAR& iIndex) ;
 	//- GetLabel -- get bitmap or node label
-	BOOL GetLabel(char *lpszLabel,
-	              BOOL bNode, int FAR& iIndex) ;
+	bool GetLabel(char *lpszLabel,
+	              bool bNode, int FAR& iIndex) ;
 
 private:
 	//- AddLink -- link together a pair of nodes
-	BOOL AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
+	bool AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
 	//- AddLink -- add link to one node
-	BOOL AddLink(CNode FAR * lpNode, int iLink) ;
+	bool AddLink(CNode FAR * lpNode, int iLink) ;
 
 
 	// gtllex -- lexical analysis for graphics utility
@@ -484,9 +484,9 @@ private:
 	//- FindKeyword -- find keyword, given tree node type
 	const char *FindKeyword(int iType) ;
 	//- ReadLine -- read input line
-	BOOL ReadLine(void) ;
+	bool ReadLine(void) ;
 	//- ErrorMsg -- publish error message
-	BOOL ErrorMsg(CLexElement * xpLxel, const char *szMessage) ;
+	bool ErrorMsg(CLexElement * xpLxel, const char *szMessage) ;
 
 	// gtlui.cpp -- data interface to Windows
 
@@ -503,117 +503,117 @@ public:
 	void    ReleaseMemDC(CMemDC *);
 
 
-	BOOL SetColors(void) ;
+	bool SetColors(void) ;
 	//- ClearInhibitDraw -- clear m_bInhibitDraw flag
-	BOOL ClearInhibitDraw(void) ;
+	bool ClearInhibitDraw(void) ;
 	//- Draw -- draw data
-	BOOL Draw(CGtlView * xpGtlView, CRect * xpClipRect,
+	bool Draw(CGtlView * xpGtlView, CRect * xpClipRect,
 	          CDC* xpDc PDFT(nullptr)) ;
 	//- SwitchDc -- switch between relocatable/nonrelocatable
 	//              device context
-	BOOL SwitchDc(CDC * xpDc, BOOL bRelocatable) ;
+	bool SwitchDc(CDC * xpDc, bool bRelocatable) ;
 	//- DrawBitmaps -- draw bitmaps for Draw routine
-	BOOL DrawBitmaps(CDC *, BOOL);
+	bool DrawBitmaps(CDC *, bool);
 
 	//- DrawABitmap -- draw a bitmap object for Draw routine
-	BOOL DrawABitmap(CDC *, CBgbObject *, BOOL bPaint PDFT(FALSE));
+	bool DrawABitmap(CDC *, CBgbObject *, bool bPaint PDFT(false));
 
 	//- NodeToPoint -- return relocatable coordinates of node
 	//              adjusted by optional size object
 	CRPoint NodeToPoint(CNode * lpNode,
 	                    CSize FAR * lpcSize PDFT(nullptr)) ;
 	//- SpecifyUpdate -- specify update rectangle
-	BOOL SpecifyUpdate(CGtlView * xpGtlView) ;
+	bool SpecifyUpdate(CGtlView * xpGtlView) ;
 	//- UpdateDialogs -- update modeless dialog boxes
-	BOOL UpdateDialogs(BOOL bRetrieve PDFT(FALSE)) ;
+	bool UpdateDialogs(bool bRetrieve PDFT(false)) ;
 
 private:
 	//- UpdateMenuDialog -- update control dialog box
-	BOOL UpdateMenuDialog(BOOL bRetrieve) ;
+	bool UpdateMenuDialog(bool bRetrieve) ;
 
 	//- UpdateInfoDialog -- update information dialog box
-	BOOL UpdateInfoDialog(BOOL bRetrieve) ;
+	bool UpdateInfoDialog(bool bRetrieve) ;
 
 	//- UpdateControlDialog -- update control dialog box
-	BOOL UpdateControlDialog(BOOL bRetrieve) ;
+	bool UpdateControlDialog(bool bRetrieve) ;
 
 	//- UpdateNodeDialog -- update node dialog box
-	BOOL UpdateNodeDialog(BOOL bRetrieve) ;
+	bool UpdateNodeDialog(bool bRetrieve) ;
 
 	//- UpdateFocusRect -- update focus rectangle for hiliting
-	BOOL UpdateFocusRect(void) ;
+	bool UpdateFocusRect(void) ;
 
 	//- AdjustToView -- set up bitmaps for view
-	BOOL AdjustToView(CGtlView *);
+	bool AdjustToView(CGtlView *);
 
 	//- InitOverlay -- initialize overlay
-	BOOL InitOverlay(CMap FAR * lpMap) ;
+	bool InitOverlay(CMap FAR * lpMap) ;
 	//- NormalizeData -- normalize data after loading
-	BOOL NormalizeData(CGtlView * xpGtlView) ;
+	bool NormalizeData(CGtlView * xpGtlView) ;
 
 	// gtlmanp.cpp -- manipulate the data
 public:
 
 	//- AcceptClick -- process a mouse click by user
-	BOOL AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickType) ;
+	bool AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickType) ;
 	//- AcceptDeleteKey -- process depressing delete key
-	BOOL AcceptDeleteKey(CGtlView * xpGtlView) ;
+	bool AcceptDeleteKey(CGtlView * xpGtlView) ;
 
 private:
 	//- PointToNode -- find node closest to point
 	CNode FAR *PointToNode(CRPoint crPoint) ;
 	//- SelectNode -- algorithm when node is clicked
-	BOOL SelectNode(CNode FAR * lpNode) ;
+	bool SelectNode(CNode FAR * lpNode) ;
 	//- ModifySelectNode -- modify node select/deselect
-	BOOL ModifySelectNode(CNode FAR * lpNode PDFT(nullptr), BOOL bSelect PDFT(TRUE)) ;
+	bool ModifySelectNode(CNode FAR * lpNode PDFT(nullptr), bool bSelect PDFT(true)) ;
 	//- GetSelectedNode -- return selected node, or nullptr if none
 	CNode FAR *GetSelectedNode(void) ;
 	//- SelectLink -- select or deselect a link
-	BOOL SelectLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
+	bool SelectLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
 	//- IfLinked -- test whether two nodes are linked
-	BOOL IfLinked(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
+	bool IfLinked(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
 	//- DeleteNode -- delete node and all connecting links
-	BOOL DeleteNode(CNode * lpNode) ;
+	bool DeleteNode(CNode * lpNode) ;
 	//- DeleteLink -- delete link between two nodes
-	BOOL DeleteLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
+	bool DeleteLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
 	//- DeleteLinkIndex -- delete index from array of link
 	//              indices for a given node, if found
-	BOOL DeleteLinkIndex(CNode FAR * lpNode, int iLink) ;
+	bool DeleteLinkIndex(CNode FAR * lpNode, int iLink) ;
 	//- CallUpdate -- call to update all views for this map
-	BOOL CallUpdate(CNode FAR * lpNode1 PDFT(nullptr),
-	                CNode FAR * lpNode2 PDFT(nullptr), BOOL bLinks PDFT(FALSE),
-	                BOOL bWmPaint PDFT(FALSE)) ;
+	bool CallUpdate(CNode FAR * lpNode1 PDFT(nullptr),
+	                CNode FAR * lpNode2 PDFT(nullptr), bool bLinks PDFT(false),
+	                bool bWmPaint PDFT(false)) ;
 	//- CallUpdate -- call to update all views for this map
 	//              -- version which updates a bitmap object
-	BOOL CallUpdate(CBgbObject * lpcBgbObject) ;
+	bool CallUpdate(CBgbObject * lpcBgbObject) ;
 	//- CreateNode -- create a new node
-	BOOL CreateNode(CNode FAR * &lpNode, CRPoint crPosition) ;
+	bool CreateNode(CNode FAR * &lpNode, CRPoint crPosition) ;
 	//- MoveNode -- move node
-	BOOL MoveNode(CNode FAR * lpNode, CRPoint crPosition) ;
+	bool MoveNode(CNode FAR * lpNode, CRPoint crPosition) ;
 
-	int DoSpecialTravel(int, BOOL);
+	int DoSpecialTravel(int, bool);
 	void LoadCharDirection(CBgbObject *, CPoint, CPoint);
 
 	//- CreateLink -- create link between two nodes
-	BOOL CreateLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
+	bool CreateLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
 	//- SetNodePosition -- set position relative to bitmap
-	BOOL SetNodePosition(CNode FAR * lpNode, CRPoint crPosition) ;
+	bool SetNodePosition(CNode FAR * lpNode, CRPoint crPosition) ;
 
 
 	// gtlmgm.cpp -- meta game
 public:
 
 	//- SetMetaGame -- set meta game on or off
-	BOOL SetMetaGame(BOOL bOn) ;
+	bool SetMetaGame(bool bOn) ;
 	//- InitMetaGame -- init or release sprites for Meta Game
-	BOOL InitMetaGame(CGtlView * xpGtlView PDFT(nullptr),
-	                  BOOL bInit PDFT(TRUE)) ;
+	bool InitMetaGame(CGtlView * xpGtlView PDFT(nullptr),
+	                  bool bInit PDFT(true)) ;
 	//- ProcessMove -- handle move processing
-	BOOL ProcessMove(CNode FAR * lpTargetNode PDFT(nullptr)) ;
+	bool ProcessMove(CNode FAR * lpTargetNode PDFT(nullptr)) ;
 
 private:
 	//- MoveCharToNode -- move current character to specified node
-	BOOL MoveCharToNode(CNode FAR * lpTargetNode) ;
+	bool MoveCharToNode(CNode FAR * lpTargetNode) ;
 	//- EstimatePathDistance -- estimate distance between nodes
 	int EstimatePathDistance(CNode FAR * lpNode1,
 	                         CNode FAR * lpNode2) ;
@@ -623,11 +623,11 @@ private:
 
 public:
 	//- PositionCharacters -- set positions for Hodj and Podj
-	BOOL PositionCharacters(void) ;
+	bool PositionCharacters(void) ;
 
 private:
 	//- PositionACharacter -- find positions for Hodj and Podj
-	BOOL PositionACharacter(CXodj * xpXodj, int iShift) ;
+	bool PositionACharacter(CXodj * xpXodj, int iShift) ;
 	//- LocationToNode -- find node for game location
 	CNode FAR *LocationToNode(int iLocationCode) ;
 
@@ -639,55 +639,55 @@ public:
 
 private:
 	//- InitProblem -- initialize character problem
-	BOOL InitProblem(void) ;
+	bool InitProblem(void) ;
 	//- EndMoveProcessing -- handle things at end of a move
-	BOOL EndMoveProcessing(void) ;
+	bool EndMoveProcessing(void) ;
 
 public:
 	//- SwitchPlayers -- switch between Hodj and Podj
-	BOOL SwitchPlayers(void) ;
+	bool SwitchPlayers(void) ;
 	//- InitInterface -- init data for interface manager
-	BOOL InitInterface(int iCode, BOOL & bExitDll) ;
+	bool InitInterface(int iCode, bool & bExitDll) ;
 	//- ReturnFromInterface -- reset everything
 	//              after interface return
-	BOOL ReturnFromInterface(void) ;
+	bool ReturnFromInterface(void) ;
 
 private:
 	//- TakeIneligibleAction -- take action if character is at
 	//      a location but is not eligible to perform function
-	BOOL TakeIneligibleAction(CXodj * xpXodj,
+	bool TakeIneligibleAction(CXodj * xpXodj,
 	                          int iFunctionCode, int iLocationCode) ;
 	//- DumpGameStatus -- (debugging) dump status of game
-	BOOL DumpGameStatus(int iOptionFlags
+	bool DumpGameStatus(int iOptionFlags
 	                    PDFT(DUMPSTAT_EVERYTHING)) ;
 	//- ProcessGameResult -- process result of game,
 	//              optionally generating a random win
-	BOOL ProcessGameResult(CXodj * xpXodj,
+	bool ProcessGameResult(CXodj * xpXodj,
 	                       int iGameCode, LPGAMESTRUCT lpGameStruct PDFT(nullptr)) ;
 
 public:
 	//- GainRandomItem -- player receives a random item from store
-	BOOL GainRandomItem(CXodj * xpXodj) ;
+	bool GainRandomItem(CXodj * xpXodj) ;
 
 	//- GainMoney -- player has won some money
-	BOOL GainMoney(CXodj * xpXodj, long lCrowns) ;
+	bool GainMoney(CXodj * xpXodj, long lCrowns) ;
 
 	//- GainMishMosh -- player gets MishMosh
-	BOOL GainMishMosh(CXodj * xpXodj, long lCrowns) ;
+	bool GainMishMosh(CXodj * xpXodj, long lCrowns) ;
 
 	//- DivulgeInformation -- divulge information to player
-	BOOL DivulgeInformation(CXodj * xpXodj, BOOL bSecondary) ;
+	bool DivulgeInformation(CXodj * xpXodj, bool bSecondary) ;
 
 private:
 	//- DetermineEligibility -- determine whether
 	//  player has objects/money needed for current location
-	BOOL DetermineEligibility(CXodj *xpXodj, int, int &, BOOL bExecute PDFT(FALSE));
+	bool DetermineEligibility(CXodj *xpXodj, int, int &, bool bExecute PDFT(false));
 
 	//- DetermineGameEligibility -- determine if eligible to play
 	//  a game, and update game history if so (and bExecute)
 	// ***** modify this function to determine how often a user can
 	//  play the same game over and over
-	BOOL DetermineGameEligibility(CXodj *xpXodj, int iGameCode, BOOL bExecute PDFT(FALSE));
+	bool DetermineGameEligibility(CXodj *xpXodj, int iGameCode, bool bExecute PDFT(false));
 
 	//- GetGameObjectCount -- get the count of the specified
 	//      object in the player's inventory
@@ -695,12 +695,12 @@ private:
 
 	//- DetermineInfoEligibility -- determine if eligible to
 	//  get information at this location
-	BOOL DetermineInfoEligibility(CXodj * xpXodj,
-	                              int iLocationCode, BOOL bExecute PDFT(FALSE)) ;
+	bool DetermineInfoEligibility(CXodj * xpXodj,
+	                              int iLocationCode, bool bExecute PDFT(false)) ;
 
 	//- DetermineMishMoshEligibility -- determine if eligible to
 	//  grab Mish and Mosh from current location
-	BOOL DetermineMishMoshEligibility(CXodj *, int);
+	bool DetermineMishMoshEligibility(CXodj *, int);
 
 	void DoTransport(CXodj *, int);
 
@@ -709,22 +709,22 @@ private:
 private:
 	//- SelectBestMove -- select best move for computer play
 	//      (can also be used for human player for debugging or giving hints)
-	BOOL SelectBestMove(CXodj * xpXodj) ;
+	bool SelectBestMove(CXodj * xpXodj) ;
 	//- GatherInformation -- gather info to decide computer's move
-	BOOL GatherInformation(CXodj * xpXodj) ;
+	bool GatherInformation(CXodj * xpXodj) ;
 	//- DetermineWeights -- determine weight for each
 	//              location (independent of distance)
-	BOOL DetermineWeights(CXodj * xpXodj) ;
+	bool DetermineWeights(CXodj * xpXodj) ;
 	//- DetermineDistances -- determine distance to each
 	//                      eligible location
-	BOOL DetermineDistances(CXodj * xpXodj) ;
+	bool DetermineDistances(CXodj * xpXodj) ;
 	//- AdjustWeightByDistance -- adjust each by the distance
 	//              of the node
-	BOOL AdjustWeightByDistance(CXodj * xpXodj) ;
+	bool AdjustWeightByDistance(CXodj * xpXodj) ;
 	//- FindTopLocations -- find locations with top weights
-	BOOL FindTopLocations(CXodj * xpXodj) ;
+	bool FindTopLocations(CXodj * xpXodj) ;
 	//- DumpBestMoveData -- dump data used in best move computation
-	BOOL DumpBestMoveData(CXodj * xpXodj) ;
+	bool DumpBestMoveData(CXodj * xpXodj) ;
 
 	void CheckForTransport(CXodj *, int);
 	void SetFurlongs(CXodj *);

@@ -332,7 +332,7 @@ void EventLoop::checkForFrameUpdate() {
 	AfxGetApp()->AfxUnlockTempMaps();
 }
 
-BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
+bool EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
 		unsigned int wRemoveMsg) {
 	checkMessages();
@@ -340,7 +340,7 @@ BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 		wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 }
 
-BOOL EventLoop::PostMessage(HWND hWnd, unsigned int Msg,
+bool EventLoop::PostMessage(HWND hWnd, unsigned int Msg,
 		WPARAM wParam, LPARAM lParam) {
 	if (isQuitting())
 		return false;
@@ -462,7 +462,7 @@ void EventLoop::setMousePos(const Common::Point &pt) {
 }
 
 MMRESULT EventLoop::joySetCapture(HWND hwnd, unsigned int uJoyID,
-		unsigned int uPeriod, BOOL fChanged) {
+		unsigned int uPeriod, bool fChanged) {
 	assert(uJoyID == JOYSTICKID1);
 	_joystickWin = hwnd;
 	return JOYERR_NOERROR;
@@ -499,7 +499,7 @@ uintptr EventLoop::SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
 	return nIDEvent;
 }
 
-BOOL EventLoop::KillTimer(HWND hWnd, uintptr nIDEvent) {
+bool EventLoop::KillTimer(HWND hWnd, uintptr nIDEvent) {
 	for (auto it = _timers.begin(); it != _timers.end(); ++it) {
 		if (it->_hWnd == hWnd && it->_idEvent == nIDEvent) {
 			_timers.erase(it);

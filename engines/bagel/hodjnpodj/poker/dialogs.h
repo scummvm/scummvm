@@ -37,20 +37,20 @@ namespace Poker {
 //////////////////////////////////////////////////////////////////////////////
 class COptionsDlg : public CBmpDialog {
 private:
-	BOOL    m_bSoundOn;                 // bool for telling me should I play sounds or not
-	BOOL    m_bDisableSets;             // bool for telling me should I disable the
+	bool    m_bSoundOn;                 // bool for telling me should I play sounds or not
+	bool    m_bDisableSets;             // bool for telling me should I disable the
 	// "Set Amount" and "Set Payoffs" buttons
 
 public:
 	COptionsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_OPTIONS);
-	void SetInitialOptions(BOOL = FALSE, BOOL = TRUE);   // Sets the private members
+	void SetInitialOptions(bool = false, bool = true);   // Sets the private members
 	void ClearDialogImage();
 
 protected:
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 };
@@ -68,14 +68,14 @@ public:
 	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_SETAMOUNT);
 	void SetInitialOptions(long = 0);    // Sets the private members
 	void ClearDialogImage();
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -96,7 +96,7 @@ private:
 	char m_cStraightFlush[6];
 	char m_cRoyalFlush[6];
 	int  m_nSetOfOdds;
-	BOOL m_bJustDisplay;
+	bool m_bJustDisplay;
 	CRect crectRedraw;
 	CRect rectPair, rectPairJacks;
 	CRect rectTwoPair, rectThree;
@@ -106,23 +106,23 @@ private:
 	CRect rectRoyalFlush;
 
 public:
-	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
+	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_WINRATIO, int = IDC_POPO, bool = false);
 	void ClearDialogImage();
-	void OnKlingon(BOOL = TRUE);
-	void OnKuwaiti(BOOL = TRUE);
-	void OnMartian(BOOL = TRUE);
-	void OnPopo(BOOL = TRUE);
-	void OnVegas(BOOL = TRUE);
+	void OnKlingon(bool = true);
+	void OnKuwaiti(bool = true);
+	void OnMartian(bool = true);
+	void OnPopo(bool = true);
+	void OnVegas(bool = true);
 
 protected:
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnInitDialog(void) override;
 	afx_msg void OnSetpayoffs();
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnCancel() override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -137,11 +137,11 @@ public:
 	CUserWonDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERWON);
 	void SetInitialOptions(int = 0);
 	void ClearDialogImage();
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 
 protected:
 	virtual void OnOK(void) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()

@@ -52,13 +52,13 @@ public:
 
 	~CBbtMgr();
 	//- LinkButton -- link button into button manager
-	BOOL LinkButton(CBbutton FAR *lpBbt,
+	bool LinkButton(CBbutton FAR *lpBbt,
 		CBgbObject FAR *lpcBgbObject1,
 		CBgbObject FAR *lpcBgbObject2);
 	//- AcceptClick -- process mouse click or mouse move
 	int AcceptClick(CRPoint crPoint, int iClickType);
 	//- MoveDown -- move button down
-	BOOL MoveDown(CBbutton FAR *lpDownBbt PDFT(nullptr));
+	bool MoveDown(CBbutton FAR *lpDownBbt PDFT(nullptr));
 	//- GetCurrentBitmap -- get current bitmap for button
 	CBgbObject FAR *GetCurrentBitmap(CBbutton *xpBbt);
 };
@@ -85,9 +85,9 @@ public:
 			&m_cEndData - &m_cStartData);
 		m_iBbtId = iId;
 	}
-	BOOL PtInButton(const CRPoint &crPoint) const {
+	bool PtInButton(const CRPoint &crPoint) const {
 		return m_lpcBgbObject1 ?
-			m_lpcBgbObject1->GetRect().PtInRect(crPoint) : FALSE;
+			m_lpcBgbObject1->GetRect().PtInRect(crPoint) : false;
 	}
 };
 

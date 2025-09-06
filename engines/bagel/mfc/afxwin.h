@@ -77,12 +77,12 @@ public:
 	// Constructors
 	CMenu();
 
-	BOOL CreateMenu();
-	BOOL CreatePopupMenu();
-	BOOL LoadMenu(const char *lpszResourceName);
-	BOOL LoadMenu(unsigned int nIDResource);
-	BOOL LoadMenuIndirect(const void *lpMenuTemplate);
-	BOOL DestroyMenu();
+	bool CreateMenu();
+	bool CreatePopupMenu();
+	bool LoadMenu(const char *lpszResourceName);
+	bool LoadMenu(unsigned int nIDResource);
+	bool LoadMenuIndirect(const void *lpMenuTemplate);
+	bool DestroyMenu();
 
 	static CMenu *FromHandle(HMENU hMenu);
 
@@ -96,13 +96,13 @@ public:
 enum AfxSig {
 	AfxSig_end = 0,     // [marks end of message map]
 
-	AfxSig_b_D_v,               // BOOL (CDC*)
-	AfxSig_b_b_v,               // BOOL (BOOL)
-	AfxSig_b_u_v,               // BOOL (unsigned int)
-	AfxSig_b_h_v,               // BOOL (HANDLE)
-	AfxSig_b_W_uu,              // BOOL (CWnd*, unsigned int, unsigned int)
-	AfxSig_b_W_COPYDATASTRUCT,              // BOOL (CWnd*, COPYDATASTRUCT*)
-	AfxSig_b_v_HELPINFO,        // BOOL (LPHELPINFO);
+	AfxSig_b_D_v,               // bool (CDC*)
+	AfxSig_b_b_v,               // bool (bool)
+	AfxSig_b_u_v,               // bool (unsigned int)
+	AfxSig_b_h_v,               // bool (HANDLE)
+	AfxSig_b_W_uu,              // bool (CWnd*, unsigned int, unsigned int)
+	AfxSig_b_W_COPYDATASTRUCT,              // bool (CWnd*, COPYDATASTRUCT*)
+	AfxSig_b_v_HELPINFO,        // bool (LPHELPINFO);
 	AfxSig_CTLCOLOR,            // HBRUSH (CDC*, CWnd*, unsigned int)
 	AfxSig_CTLCOLOR_REFLECT,    // HBRUSH (CDC*, unsigned int)
 	AfxSig_i_u_W_u,             // int (unsigned int, CWnd*, unsigned int)  // ?TOITEM
@@ -111,7 +111,7 @@ enum AfxSig {
 	AfxSig_i_v_s,               // int (uint16 *)
 	AfxSig_l_w_l,               // LRESULT (WPARAM, LPARAM)
 	AfxSig_l_uu_M,              // LRESULT (unsigned int, unsigned int, CMenu*)
-	AfxSig_v_b_h,               // void (BOOL, HANDLE)
+	AfxSig_v_b_h,               // void (bool, HANDLE)
 	AfxSig_v_h_v,               // void (HANDLE)
 	AfxSig_v_h_h,               // void (HANDLE, HANDLE)
 	AfxSig_v_v_v,               // void ()
@@ -125,46 +125,46 @@ enum AfxSig {
 	AfxSig_v_u_W,               // void (unsigned int, CWnd*)
 	AfxSig_i_u_v,               // int (unsigned int)
 	AfxSig_u_u_v,               // unsigned int (unsigned int)
-	AfxSig_b_v_v,               // BOOL ()
+	AfxSig_b_v_v,               // bool ()
 	AfxSig_v_w_l,               // void (WPARAM, LPARAM)
-	AfxSig_MDIACTIVATE,         // void (BOOL, CWnd*, CWnd*)
+	AfxSig_MDIACTIVATE,         // void (bool, CWnd*, CWnd*)
 	AfxSig_v_D_v,               // void (CDC*)
 	AfxSig_v_M_v,               // void (CMenu*)
-	AfxSig_v_M_ub,              // void (CMenu*, unsigned int, BOOL)
+	AfxSig_v_M_ub,              // void (CMenu*, unsigned int, bool)
 	AfxSig_v_W_v,               // void (CWnd*)
 	AfxSig_v_v_W,               // void (CWnd*)
 	AfxSig_v_W_uu,              // void (CWnd*, unsigned int, unsigned int)
 	AfxSig_v_W_p,               // void (CWnd*, CPoint)
 	AfxSig_v_W_h,               // void (CWnd*, HANDLE)
 	AfxSig_C_v_v,               // HCURSOR ()
-	AfxSig_ACTIVATE,            // void (unsigned int, CWnd*, BOOL)
+	AfxSig_ACTIVATE,            // void (unsigned int, CWnd*, bool)
 	AfxSig_SCROLL,              // void (unsigned int, unsigned int, CWnd*)
 	AfxSig_SCROLL_REFLECT,      // void (unsigned int, unsigned int)
 	AfxSig_v_v_s,               // void (uint16 *)
 	AfxSig_v_u_cs,              // void (unsigned int, const char *)
-	AfxSig_OWNERDRAW,           // void (int, uint16 *) force return TRUE
+	AfxSig_OWNERDRAW,           // void (int, uint16 *) force return true
 	AfxSig_i_i_s,               // int (int, uint16 *)
 	AfxSig_u_v_p,               // unsigned int (CPoint)
 	AfxSig_u_v_v,               // unsigned int ()
-	AfxSig_v_b_NCCALCSIZEPARAMS,        // void (BOOL, NCCALCSIZE_PARAMS*)
+	AfxSig_v_b_NCCALCSIZEPARAMS,        // void (bool, NCCALCSIZE_PARAMS*)
 	AfxSig_v_v_WINDOWPOS,           // void (WINDOWPOS*)
 	AfxSig_v_uu_M,              // void (unsigned int, unsigned int, HMENU)
 	AfxSig_v_u_p,               // void (unsigned int, CPoint)
 	AfxSig_SIZING,              // void (unsigned int, LPRECT)
-	AfxSig_MOUSEWHEEL,          // BOOL (unsigned int, short, CPoint)
+	AfxSig_MOUSEWHEEL,          // bool (unsigned int, short, CPoint)
 	AfxSig_MOUSEHWHEEL,         // void (unsigned int, short, CPoint)
 	AfxSigCmd_v,                // void ()
-	AfxSigCmd_b,                // BOOL ()
+	AfxSigCmd_b,                // bool ()
 	AfxSigCmd_RANGE,            // void (unsigned int)
-	AfxSigCmd_EX,               // BOOL (unsigned int)
+	AfxSigCmd_EX,               // bool (unsigned int)
 	AfxSigNotify_v,             // void (NMHDR*, LRESULT*)
-	AfxSigNotify_b,             // BOOL (NMHDR*, LRESULT*)
+	AfxSigNotify_b,             // bool (NMHDR*, LRESULT*)
 	AfxSigNotify_RANGE,         // void (unsigned int, NMHDR*, LRESULT*)
-	AfxSigNotify_EX,            // BOOL (unsigned int, NMHDR*, LRESULT*)
+	AfxSigNotify_EX,            // bool (unsigned int, NMHDR*, LRESULT*)
 	AfxSigCmdUI,                // void (CCmdUI*)
 	AfxSigCmdUI_RANGE,          // void (CCmdUI*, unsigned int)
 	AfxSigCmd_v_pv,             // void (void*)
-	AfxSigCmd_b_pv,             // BOOL (void*)
+	AfxSigCmd_b_pv,             // bool (void*)
 	AfxSig_l,               // LRESULT ()
 	AfxSig_l_p,             // LRESULT (CPOINT)
 	AfxSig_u_W_u,               // unsigned int (CWnd*, unsigned int)
@@ -183,18 +183,18 @@ enum AfxSig {
 	AfxSig_INPUTDEVICECHANGE,       // void (unsigned short, HANDLE)
 	AfxSig_l_D_u,                   // LRESULT (CDC*, unsigned int)
 	AfxSig_i_v_S,               // int (const char *)
-	AfxSig_vwpb,                // void (HFONT, BOOL)
+	AfxSig_vwpb,                // void (HFONT, bool)
 	AfxSig_h_v_v,               // HANDLE ()
-	AfxSig_h_b_h,               // HANDLE (BOOL, HANDLE)
-	AfxSig_b_v_ii,              // BOOL (int, int)
+	AfxSig_h_b_h,               // HANDLE (bool, HANDLE)
+	AfxSig_b_v_ii,              // bool (int, int)
 	AfxSig_h_h_h,               // HANDLE (HANDLE, HANDLE)
-	AfxSig_MDINext,             // void (CWnd*, BOOL)
+	AfxSig_MDINext,             // void (CWnd*, bool)
 	AfxSig_u_u_l,               // unsigned int (unsigned int, LPARAM)
 
 	// Old
-	AfxSig_bD = AfxSig_b_D_v,      // BOOL (CDC*)
-	AfxSig_bb = AfxSig_b_b_v,      // BOOL (BOOL)
-	AfxSig_bWww = AfxSig_b_W_uu,    // BOOL (CWnd*, unsigned int, unsigned int)
+	AfxSig_bD = AfxSig_b_D_v,      // bool (CDC*)
+	AfxSig_bb = AfxSig_b_b_v,      // bool (bool)
+	AfxSig_bWww = AfxSig_b_W_uu,    // bool (CWnd*, unsigned int, unsigned int)
 	AfxSig_hDWw = AfxSig_CTLCOLOR,    // HBRUSH (CDC*, CWnd*, unsigned int)
 	AfxSig_hDw = AfxSig_CTLCOLOR_REFLECT,     // HBRUSH (CDC*, unsigned int)
 	AfxSig_iwWw = AfxSig_i_u_W_u,    // int (unsigned int, CWnd*, unsigned int)
@@ -212,60 +212,60 @@ enum AfxSig {
 	AfxSig_vwww = AfxSig_v_u_uu,    // void (unsigned int, unsigned int, unsigned int)
 	AfxSig_vwii = AfxSig_v_u_ii,    // void (unsigned int, int, int)
 	AfxSig_vwl = AfxSig_v_w_l,     // void (unsigned int, LPARAM)
-	AfxSig_vbWW = AfxSig_MDIACTIVATE,    // void (BOOL, CWnd*, CWnd*)
+	AfxSig_vbWW = AfxSig_MDIACTIVATE,    // void (bool, CWnd*, CWnd*)
 	AfxSig_vD = AfxSig_v_D_v,      // void (CDC*)
 	AfxSig_vM = AfxSig_v_M_v,      // void (CMenu*)
-	AfxSig_vMwb = AfxSig_v_M_ub,    // void (CMenu*, unsigned int, BOOL)
+	AfxSig_vMwb = AfxSig_v_M_ub,    // void (CMenu*, unsigned int, bool)
 
 	AfxSig_vW = AfxSig_v_W_v,      // void (CWnd*)
 	AfxSig_vWww = AfxSig_v_W_uu,    // void (CWnd*, unsigned int, unsigned int)
 	AfxSig_vWp = AfxSig_v_W_p,     // void (CWnd*, CPoint)
 	AfxSig_vWh = AfxSig_v_W_h,     // void (CWnd*, HANDLE)
 	AfxSig_vwW = AfxSig_v_u_W,     // void (unsigned int, CWnd*)
-	AfxSig_vwWb = AfxSig_ACTIVATE,    // void (unsigned int, CWnd*, BOOL)
+	AfxSig_vwWb = AfxSig_ACTIVATE,    // void (unsigned int, CWnd*, bool)
 	AfxSig_vwwW = AfxSig_SCROLL,    // void (unsigned int, unsigned int, CWnd*)
 	AfxSig_vwwx = AfxSig_SCROLL_REFLECT,    // void (unsigned int, unsigned int)
 	AfxSig_vs = AfxSig_v_v_s,      // void (uint16 *)
-	AfxSig_vOWNER = AfxSig_OWNERDRAW,  // void (int, uint16 *), force return TRUE
+	AfxSig_vOWNER = AfxSig_OWNERDRAW,  // void (int, uint16 *), force return true
 	AfxSig_iis = AfxSig_i_i_s,     // int (int, uint16 *)
 	AfxSig_wp = AfxSig_u_v_p,      // unsigned int (CPoint)
 	AfxSig_wv = AfxSig_u_v_v,      // unsigned int (void)
 	AfxSig_vPOS = AfxSig_v_v_WINDOWPOS,    // void (WINDOWPOS*)
-	AfxSig_vCALC = AfxSig_v_b_NCCALCSIZEPARAMS,   // void (BOOL, NCCALCSIZE_PARAMS*)
+	AfxSig_vCALC = AfxSig_v_b_NCCALCSIZEPARAMS,   // void (bool, NCCALCSIZE_PARAMS*)
 	AfxSig_vNMHDRpl = AfxSigNotify_v,    // void (NMHDR*, LRESULT*)
-	AfxSig_bNMHDRpl = AfxSigNotify_b,    // BOOL (NMHDR*, LRESULT*)
+	AfxSig_bNMHDRpl = AfxSigNotify_b,    // bool (NMHDR*, LRESULT*)
 	AfxSig_vwNMHDRpl = AfxSigNotify_RANGE,   // void (unsigned int, NMHDR*, LRESULT*)
-	AfxSig_bwNMHDRpl = AfxSigNotify_EX,   // BOOL (unsigned int, NMHDR*, LRESULT*)
-	AfxSig_bHELPINFO = AfxSig_b_v_HELPINFO,   // BOOL (HELPINFO*)
-	AfxSig_vwSIZING = AfxSig_SIZING,    // void (unsigned int, LPRECT) -- return TRUE
+	AfxSig_bwNMHDRpl = AfxSigNotify_EX,   // bool (unsigned int, NMHDR*, LRESULT*)
+	AfxSig_bHELPINFO = AfxSig_b_v_HELPINFO,   // bool (HELPINFO*)
+	AfxSig_vwSIZING = AfxSig_SIZING,    // void (unsigned int, LPRECT) -- return true
 
 	// signatures specific to CCmdTarget
 	AfxSig_cmdui = AfxSigCmdUI,   // void (CCmdUI*)
 	AfxSig_cmduiw = AfxSigCmdUI_RANGE,  // void (CCmdUI*, unsigned int)
 	AfxSig_vpv = AfxSigCmd_v_pv,     // void (void*)
-	AfxSig_bpv = AfxSigCmd_b_pv,     // BOOL (void*)
+	AfxSig_bpv = AfxSigCmd_b_pv,     // bool (void*)
 
 	// Other aliases (based on implementation)
 	AfxSig_vwwh = AfxSig_v_uu_M,                // void (unsigned int, unsigned int, HMENU)
 	AfxSig_vwp = AfxSig_v_u_p,                 // void (unsigned int, CPoint)
-	AfxSig_bw = AfxSig_b_u_v,      // BOOL (unsigned int)
-	AfxSig_bh = AfxSig_b_h_v,      // BOOL (HANDLE)
+	AfxSig_bw = AfxSig_b_u_v,      // bool (unsigned int)
+	AfxSig_bh = AfxSig_b_h_v,      // bool (HANDLE)
 	AfxSig_iw = AfxSig_i_u_v,      // int (unsigned int)
 	AfxSig_ww = AfxSig_u_u_v,      // unsigned int (unsigned int)
-	AfxSig_bv = AfxSig_b_v_v,      // BOOL (void)
+	AfxSig_bv = AfxSig_b_v_v,      // bool (void)
 	AfxSig_hv = AfxSig_C_v_v,      // HANDLE (void)
-	AfxSig_vb = AfxSig_vw,      // void (BOOL)
-	AfxSig_vbh = AfxSig_v_b_h,    // void (BOOL, HANDLE)
-	AfxSig_vbw = AfxSig_vww,    // void (BOOL, unsigned int)
+	AfxSig_vb = AfxSig_vw,      // void (bool)
+	AfxSig_vbh = AfxSig_v_b_h,    // void (bool, HANDLE)
+	AfxSig_vbw = AfxSig_vww,    // void (bool, unsigned int)
 	AfxSig_vhh = AfxSig_v_h_h,    // void (HANDLE, HANDLE)
 	AfxSig_vh = AfxSig_v_h_v,      // void (HANDLE)
 	AfxSig_viSS = AfxSig_vwl,   // void (int, STYLESTRUCT*)
 	AfxSig_bwl = AfxSig_lwl,
-	AfxSig_vwMOVING = AfxSig_vwSIZING,  // void (unsigned int, LPRECT) -- return TRUE
+	AfxSig_vwMOVING = AfxSig_vwSIZING,  // void (unsigned int, LPRECT) -- return true
 
 	AfxSig_vW2 = AfxSig_v_v_W,                 // void (CWnd*) (CWnd* comes from lParam)
-	AfxSig_bWCDS = AfxSig_b_W_COPYDATASTRUCT,               // BOOL (CWnd*, COPYDATASTRUCT*)
-	AfxSig_bwsp = AfxSig_MOUSEWHEEL,                // BOOL (unsigned int, short, CPoint)
+	AfxSig_bWCDS = AfxSig_b_W_COPYDATASTRUCT,               // bool (CWnd*, COPYDATASTRUCT*)
+	AfxSig_bwsp = AfxSig_MOUSEWHEEL,                // bool (unsigned int, short, CPoint)
 	AfxSig_vws = AfxSig_v_u_cs,
 };
 
@@ -355,30 +355,30 @@ union MessageMapFunctions {
 
 	// specific type safe variants for WM_COMMAND and WM_NOTIFY messages
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND)();
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bCOMMAND)();
+	bool(AFX_MSG_CALL CCmdTarget:: *pfn_bCOMMAND)();
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_RANGE)(unsigned int);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_EX)(unsigned int);
+	bool(AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_EX)(unsigned int);
 
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI)(CCmdUI *);
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI_RANGE)(CCmdUI *, unsigned int);
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_OTHER)(void *);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_OTHER_EX)(void *);
+	bool(AFX_MSG_CALL CCmdTarget:: *pfn_OTHER_EX)(void *);
 
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY)(NMHDR *, LRESULT *);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bNOTIFY)(NMHDR *, LRESULT *);
+	bool(AFX_MSG_CALL CCmdTarget:: *pfn_bNOTIFY)(NMHDR *, LRESULT *);
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_RANGE)(unsigned int, NMHDR *, LRESULT *);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_EX)(unsigned int, NMHDR *, LRESULT *);
+	bool(AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_EX)(unsigned int, NMHDR *, LRESULT *);
 
 	// Type safe variant for thread messages
 
 	void (AFX_MSG_CALL CWinThread:: *pfn_THREAD)(WPARAM, LPARAM);
 
 	// Specific type safe variants for WM-style messages
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bD)(CDC *);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bb)(BOOL);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWww)(CWnd *, unsigned int, unsigned int);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bHELPINFO)(HELPINFO *);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWCDS)(CWnd *, COPYDATASTRUCT *);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bD)(CDC *);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bb)(bool);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bWww)(CWnd *, unsigned int, unsigned int);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bHELPINFO)(HELPINFO *);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bWCDS)(CWnd *, COPYDATASTRUCT *);
 	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDWw)(CDC *, CWnd *, unsigned int);
 	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDw)(CDC *, unsigned int);
 	int (AFX_MSG_CALL CWnd:: *pfn_iwWw)(unsigned int, CWnd *, unsigned int);
@@ -395,31 +395,31 @@ union MessageMapFunctions {
 	void (AFX_MSG_CALL CWnd:: *pfn_vwww)(unsigned int, unsigned int, unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwii)(unsigned int, int, int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwl)(WPARAM, LPARAM);
-	void (AFX_MSG_CALL CWnd:: *pfn_vbWW)(BOOL, CWnd *, CWnd *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vbWW)(bool, CWnd *, CWnd *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vD)(CDC *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vM)(CMenu *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vMwb)(CMenu *, unsigned int, BOOL);
+	void (AFX_MSG_CALL CWnd:: *pfn_vMwb)(CMenu *, unsigned int, bool);
 
 	void (AFX_MSG_CALL CWnd:: *pfn_vW)(CWnd *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vWww)(CWnd *, unsigned int, unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vWp)(CWnd *, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vWh)(CWnd *, HANDLE);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwW)(unsigned int, CWnd *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwWb)(unsigned int, CWnd *, BOOL);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwWb)(unsigned int, CWnd *, bool);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwwW)(unsigned int, unsigned int, CWnd *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwwx)(unsigned int, unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vs)(uint16 *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, uint16 *);      // force return TRUE
+	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, uint16 *);      // force return true
 	int (AFX_MSG_CALL CWnd:: *pfn_iis)(int, uint16 *);
 	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
 	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wv)(void);
 	void (AFX_MSG_CALL CWnd:: *pfn_vPOS)(WINDOWPOS *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vCALC)(BOOL, NCCALCSIZE_PARAMS *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vCALC)(bool, NCCALCSIZE_PARAMS *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwp)(unsigned int, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwwh)(unsigned int, unsigned int, HANDLE);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(unsigned int, short, CPoint);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bwsp)(unsigned int, short, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vws)(unsigned int, const char *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vFb)(HFONT, BOOL);
+	void (AFX_MSG_CALL CWnd:: *pfn_vFb)(HFONT, bool);
 };
 
 /*============================================================================*/
@@ -489,14 +489,14 @@ public:
 public:
 	~CGdiObject() override;
 
-	BOOL Attach(HGDIOBJ hObject);
+	bool Attach(HGDIOBJ hObject);
 	HGDIOBJ Detach();
-	BOOL DeleteObject();
+	bool DeleteObject();
 
-	BOOL operator==(const CGdiObject &obj) const {
+	bool operator==(const CGdiObject &obj) const {
 		return obj.m_hObject == m_hObject;
 	}
-	BOOL operator!=(const CGdiObject &obj) const {
+	bool operator!=(const CGdiObject &obj) const {
 		return obj.m_hObject != m_hObject;
 	}
 };
@@ -525,7 +525,7 @@ public:
 	CPen(int nPenStyle, int nWidth, COLORREF crColor);
 	~CPen() override {}
 
-	BOOL CreatePen(int nPenStyle, int nWidth, COLORREF crColor);
+	bool CreatePen(int nPenStyle, int nWidth, COLORREF crColor);
 };
 
 class CBrush : public CGdiObject {
@@ -560,9 +560,9 @@ public:
 	~CBrush() override {
 	}
 
-	BOOL CreateSolidBrush(COLORREF crColor);
-	BOOL CreateBrushIndirect(const LOGBRUSH *lpLogBrush);
-	BOOL CreateStockObject(int nIndex);
+	bool CreateSolidBrush(COLORREF crColor);
+	bool CreateBrushIndirect(const LOGBRUSH *lpLogBrush);
+	bool CreateStockObject(int nIndex);
 };
 
 class CFont : public CGdiObject {
@@ -590,12 +590,12 @@ public:
 public:
 	~CFont() override {}
 
-	BOOL CreateFont(int nHeight, int nWidth, int nEscapement,
+	bool CreateFont(int nHeight, int nWidth, int nEscapement,
 	    int nOrientation, int nWeight, byte bItalic, byte bUnderline,
 	    byte cStrikeOut, byte nCharSet, byte nOutPrecision,
 	    byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
 	    const char *lpszFacename);
-	BOOL CreateFontIndirect(const LOGFONT *lpLogFont);
+	bool CreateFontIndirect(const LOGFONT *lpLogFont);
 };
 
 class CBitmap : public CGdiObject {
@@ -618,14 +618,14 @@ public:
 	~CBitmap() override {
 	}
 
-	BOOL Attach(HBITMAP hObject);
+	bool Attach(HBITMAP hObject);
 	HBITMAP Detach();
-	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
-	BOOL CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
+	bool CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
+	bool CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
 	    unsigned int nBitcount, const void *lpBits);
 	int GetObject(int nCount, void *lpObject) const;
 	long GetBitmapBits(long dwCount, void *lpBits) const;
-	BOOL GetBitmap(BITMAP *pBitMap) const {
+	bool GetBitmap(BITMAP *pBitMap) const {
 		return GetObject(sizeof(BITMAP), pBitMap);
 	}
 };
@@ -651,7 +651,7 @@ public:
 	~CPalette() override {
 	}
 
-	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
+	bool CreatePalette(LPLOGPALETTE lpLogPalette);
 	int GetObject(int nCount, void *lpObject) const;
 	unsigned int GetEntryCount() const;
 	unsigned int GetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
@@ -659,7 +659,7 @@ public:
 	unsigned int SetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors);
 	unsigned int SetPaletteEntries(const Graphics::Palette &pal);
-	BOOL AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
+	bool AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
 	                    const PALETTEENTRY *lpPaletteColors);
 	unsigned int GetNearestPaletteIndex(COLORREF crColor);
 	bool isEmpty() const {
@@ -677,9 +677,9 @@ public:
 	~CRgn() override {
 	}
 
-	BOOL CreateRectRgn(int x1, int y1, int x2, int y2);
-	BOOL CreateRectRgnIndirect(LPCRECT lpRect);
-	BOOL CreatePolygonRgn(const POINT *lpPoints,
+	bool CreateRectRgn(int x1, int y1, int x2, int y2);
+	bool CreateRectRgnIndirect(LPCRECT lpRect);
+	bool CreatePolygonRgn(const POINT *lpPoints,
 	                      int nCount, int nPolyFillMode);
 };
 
@@ -723,7 +723,7 @@ public:
 		HBRUSH _brush;
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
-		BOOL m_bForceBackground = FALSE;
+		bool m_bForceBackground = false;
 
 	public:
 		Impl(CWnd *wndOwner = nullptr);
@@ -736,8 +736,8 @@ public:
 		void setScreenRect();
 		void setScreenRect(const Common::Rect &r);
 
-		HPALETTE selectPalette(HPALETTE pal, BOOL bForceBackground);
-		CPalette *selectPalette(CPalette *pal, BOOL bForceBackground);
+		HPALETTE selectPalette(HPALETTE pal, bool bForceBackground);
+		CPalette *selectPalette(CPalette *pal, bool bForceBackground);
 		unsigned int realizePalette();
 		COLORREF GetNearestColor(COLORREF crColor) const;
 
@@ -775,15 +775,15 @@ public:
 		COLORREF getBkPixel() const;
 		int setBkMode(int nBkMode);
 		COLORREF setTextColor(COLORREF crColor);
-		BOOL textOut(int x, int y, const char *lpszString, int nCount,
+		bool textOut(int x, int y, const char *lpszString, int nCount,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
-		BOOL textOut(int x, int y, const CString &str,
+		bool textOut(int x, int y, const CString &str,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
-		BOOL extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+		bool extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 			const char *lpszString, unsigned int nCount, int *lpDxWidths);
-		BOOL extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+		bool extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 			const CString &str, int *lpDxWidths);
 		CSize tabbedTextOut(int x, int y, const char *lpszString, int nCount,
 			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
@@ -809,12 +809,12 @@ public:
 			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getOutputTabbedTextExtent(const CString &str,
 			int nTabPositions, int *lpnTabStopPositions) const;
-		BOOL grayString(CBrush *pBrush,
-			BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+		bool grayString(CBrush *pBrush,
+			bool(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 			int nCount, int x, int y, int nWidth, int nHeight);
 		unsigned int getTextAlign() const;
 		unsigned int setTextAlign(unsigned int nFlags);
-		BOOL getTextMetrics(LPTEXTMETRIC lpMetrics) const;
+		bool getTextMetrics(LPTEXTMETRIC lpMetrics) const;
 	};
 
 public:
@@ -832,11 +832,11 @@ public:
 		return static_cast<Impl *>(m_hDC);
 	}
 
-	BOOL CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
+	bool CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
 	              const char *lpszOutput, const void *lpInitData);
-	BOOL CreateCompatibleDC(CDC *pDC);
-	BOOL DeleteDC();
-	BOOL Attach(HDC hDC);
+	bool CreateCompatibleDC(CDC *pDC);
+	bool DeleteDC();
+	bool Attach(HDC hDC);
 	HDC Detach();
 	int SetStretchBltMode(int nStretchMode);
 	int GetDeviceCaps(int nIndex) const;
@@ -854,9 +854,9 @@ public:
 	virtual int GetClipBox(LPRECT lpRect) const;
 	void setClipRect(const Common::Rect &r);
 	void resetClipRect();
-	virtual BOOL PtVisible(int x, int y);
-	BOOL PtVisible(POINT point);
-	virtual BOOL RectVisible(LPCRECT lpRect);
+	virtual bool PtVisible(int x, int y);
+	bool PtVisible(POINT point);
+	virtual bool RectVisible(LPCRECT lpRect);
 	int SelectClipRgn(CRgn *pRgn);
 	int ExcludeClipRect(int x1, int y1, int x2, int y2);
 	int ExcludeClipRect(LPCRECT lpRect);
@@ -868,13 +868,13 @@ public:
 	int SelectClipRgn(CRgn *pRgn, int nMode);
 
 	int SetROP2(int nDrawMode);
-	BOOL DPtoLP(LPPOINT lpPoints, int nCount = 1);
-	BOOL DPtoLP(RECT *lpRect);
-	BOOL LPtoDP(LPPOINT lpPoints, int nCount = 1);
-	BOOL LPtoDP(RECT *lpRect);
-	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+	bool DPtoLP(LPPOINT lpPoints, int nCount = 1);
+	bool DPtoLP(RECT *lpRect);
+	bool LPtoDP(LPPOINT lpPoints, int nCount = 1);
+	bool LPtoDP(RECT *lpRect);
+	bool BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	            int xSrc, int ySrc, uint32 dwRop);
-	BOOL StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+	bool StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	                int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop);
 	void Ellipse(LPCRECT lpRect);
 	void Ellipse(int x1, int y1, int x2, int y2);
@@ -883,25 +883,25 @@ public:
 	void DrawFocusRect(const CRect &rect);
 	void FillRect(LPCRECT lpRect, CBrush *pBrush);
 	void FillSolidRect(LPCRECT lpRect, COLORREF crColor);
-	BOOL FloodFill(int x, int y, COLORREF crColor);
-	BOOL FloodFill(int x, int y, COLORREF crColor,
+	bool FloodFill(int x, int y, COLORREF crColor);
+	bool FloodFill(int x, int y, COLORREF crColor,
 	               unsigned int nFillType);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
-	BOOL DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags);
+	bool DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags);
 
-	BOOL Pie(
+	bool Pie(
 	    int x1, int y1,     // Upper-left corner of bounding rectangle
 	    int x2, int y2,     // Lower-right corner of bounding rectangle
 	    int x3, int y3,     // Starting point of the arc (on the ellipse)
 	    int x4, int y4      // Ending point of the arc (on the ellipse)
 	);
-	BOOL Pie(
+	bool Pie(
 	    LPCRECT lpRect,         // Pointer to bounding rectangle
 	    const POINT &ptStart,   // Start point of arc
 	    const POINT &ptEnd      // End point of arc
 	);
-	BOOL FrameRgn(CRgn *pRgn, CBrush *pBrush,
+	bool FrameRgn(CRgn *pRgn, CBrush *pBrush,
 	              int nWidth, int nHeight);
 
 	void MoveTo(int x, int y);
@@ -919,7 +919,7 @@ public:
 	HGDIOBJ SelectObject(HGDIOBJ hGdiObj);
 
 	COLORREF GetNearestColor(COLORREF crColor) const;
-	CPalette *SelectPalette(CPalette *pPalette, BOOL bForceBackground);
+	CPalette *SelectPalette(CPalette *pPalette, bool bForceBackground);
 	unsigned int RealizePalette();
 	void UpdateColors();
 	virtual COLORREF SetBkColor(COLORREF crColor);
@@ -928,11 +928,11 @@ public:
 
 	// Text Functions
 	virtual COLORREF SetTextColor(COLORREF crColor);
-	virtual BOOL TextOut(int x, int y, const char *lpszString, int nCount);
-	BOOL TextOut(int x, int y, const CString &str);
-	virtual BOOL ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+	virtual bool TextOut(int x, int y, const char *lpszString, int nCount);
+	bool TextOut(int x, int y, const CString &str);
+	virtual bool ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 	                        const char *lpszString, unsigned int nCount, int *lpDxWidths);
-	BOOL ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+	bool ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 	                const CString &str, int *lpDxWidths);
 	virtual CSize TabbedTextOut(int x, int y, const char *lpszString, int nCount,
 	                            int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
@@ -955,12 +955,12 @@ public:
 	                                int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(const CString &str,
 	                                int nTabPositions, int *lpnTabStopPositions) const;
-	virtual BOOL GrayString(CBrush *pBrush,
-	                        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+	virtual bool GrayString(CBrush *pBrush,
+	                        bool(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 	                        int nCount, int x, int y, int nWidth, int nHeight);
 	unsigned int GetTextAlign() const;
 	unsigned int SetTextAlign(unsigned int nFlags);
-	BOOL GetTextMetrics(LPTEXTMETRIC lpMetrics) const;
+	bool GetTextMetrics(LPTEXTMETRIC lpMetrics) const;
 };
 
 /*============================================================================*/
@@ -1008,7 +1008,7 @@ public:
 	void EndWaitCursor();
 	void RestoreWaitCursor();
 
-	BOOL OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
+	bool OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
 		AFX_CMDHANDLERINFO *pHandlerInfo);
 };
 
@@ -1025,12 +1025,12 @@ class CDocument : public CCmdTarget {
 private:
 	CString _title;
 	CString _unusedPathName;
-	BOOL m_bModified = FALSE;
+	bool m_bModified = false;
 	ViewArray m_viewList;
 
 public:
-	BOOL m_bAutoDelete = TRUE;	// default to auto delete document
-	BOOL m_bEmbedded = FALSE;	// default to file-based document
+	bool m_bAutoDelete = true;	// default to auto delete document
+	bool m_bEmbedded = false;	// default to file-based document
 	CDocTemplate *m_pDocTemplate = nullptr;
 
 public:
@@ -1044,13 +1044,13 @@ public:
 	const CString &GetTitle() const;
 	virtual void SetTitle(const char *lpszTitle);
 	const CString &GetPathName() const;
-	virtual void SetPathName(const char *lpszPathName, BOOL bAddToMRU = TRUE);
+	virtual void SetPathName(const char *lpszPathName, bool bAddToMRU = true);
 	virtual void ClearPathName();
 
-	virtual BOOL IsModified();
-	virtual void SetModifiedFlag(BOOL bModified = TRUE);
+	virtual bool IsModified();
+	virtual void SetModifiedFlag(bool bModified = true);
 	virtual void ReportSaveLoadException(const char *lpszPathName,
-		CException *e, BOOL bSaving, unsigned int nIDPDefault);
+		CException *e, bool bSaving, unsigned int nIDPDefault);
 	bool SaveModified();
 
 	void AddView(CView *pView);
@@ -1059,10 +1059,10 @@ public:
 	// Delete doc items etc
 	virtual void DeleteContents();
 
-	virtual BOOL OnNewDocument() {
+	virtual bool OnNewDocument() {
 		return true;
 	}
-	virtual BOOL OnOpenDocument(const char *lpszPathName) {
+	virtual bool OnOpenDocument(const char *lpszPathName) {
 		return true;
 	}
 	virtual void OnFileSaveAs() {}
@@ -1107,7 +1107,7 @@ protected:
 	static const MSG *GetCurrentMessage();
 
 	virtual void DoDataExchange(CDataExchange *dataExch) {}
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cs) {
+	virtual bool PreCreateWindow(CREATESTRUCT &cs) {
 		return true;
 	}
 	void createDialogIndirect(LPCDLGTEMPLATE dlgTemplate);
@@ -1123,11 +1123,11 @@ protected:
 	HPALETTE _hPalette;
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual bool OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 		return false;
 	}
-	virtual void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized);
+	virtual void OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized);
 
 	virtual LRESULT DefWindowProc(unsigned int nMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
@@ -1135,9 +1135,9 @@ protected:
 	virtual void OnSetFont(CFont *pFont) {
 	}
 
-	BOOL OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+	bool OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
-	afx_msg void OnActivateApp(BOOL bActive, uint32 dwThreadID) {}
+	afx_msg void OnActivateApp(bool bActive, uint32 dwThreadID) {}
 	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM) {
 		return 0;
 	}
@@ -1154,10 +1154,10 @@ protected:
 	}
 
 	afx_msg void OnDestroy() {}
-	afx_msg void OnEnable(BOOL bEnable) {}
-	afx_msg void OnEndSession(BOOL bEnding) {}
+	afx_msg void OnEnable(bool bEnable) {}
+	afx_msg void OnEndSession(bool bEnding) {}
 	afx_msg void OnEnterIdle(unsigned int nWhy, CWnd *pWho) {}
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC) {
+	afx_msg bool OnEraseBkgnd(CDC *pDC) {
 		return false;
 	}
 	afx_msg void OnIconEraseBkgnd(CDC *pDC) {}
@@ -1173,17 +1173,17 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon() {
 		return 0;
 	}
-	afx_msg BOOL OnQueryEndSession() {
+	afx_msg bool OnQueryEndSession() {
 		return false;
 	}
-	afx_msg BOOL OnQueryNewPalette() {
+	afx_msg bool OnQueryNewPalette() {
 		return false;
 	}
-	afx_msg BOOL OnQueryOpen() {
+	afx_msg bool OnQueryOpen() {
 		return false;
 	}
 	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
-	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy) {}
 	afx_msg void OnTCard(unsigned int idAction, uint32 dwActionData) {}
 	afx_msg void OnSessionChange(unsigned int nSessionState, unsigned int nId) {}
@@ -1195,10 +1195,10 @@ protected:
 	}
 
 	// Nonclient-Area message handler member functions
-	afx_msg BOOL OnNcActivate(BOOL bActive) {
+	afx_msg bool OnNcActivate(bool bActive) {
 		return false;
 	}
-	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct) {
+	afx_msg bool OnNcCreate(LPCREATESTRUCT lpCreateStruct) {
 		return false;
 	}
 	afx_msg void OnNcDestroy();
@@ -1231,7 +1231,7 @@ protected:
 	afx_msg void OnSysDeadChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
 	afx_msg void OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
 	afx_msg void OnSysKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
-	afx_msg BOOL OnAppCommand(CWnd *pWnd, unsigned int nCmd, unsigned int nDevice, unsigned int nKey) {
+	afx_msg bool OnAppCommand(CWnd *pWnd, unsigned int nCmd, unsigned int nDevice, unsigned int nKey) {
 		return false;
 	}
 	afx_msg void OnRawInput(unsigned int nInputCode, HRAWINPUT hRawInput) {}
@@ -1277,13 +1277,13 @@ protected:
 	afx_msg void OnMouseLeave() {}
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point) {}
 	afx_msg void OnMouseHWheel(unsigned int nFlags, short zDelta, CPoint pt) {}
-	afx_msg BOOL OnMouseWheel(unsigned int nFlags, short zDelta, CPoint pt) {
+	afx_msg bool OnMouseWheel(unsigned int nFlags, short zDelta, CPoint pt) {
 		return false;
 	}
 	afx_msg void OnRButtonDblClk(unsigned int nFlags, CPoint point) {}
 	afx_msg void OnRButtonDown(unsigned int nFlags, CPoint point) {}
 	afx_msg void OnRButtonUp(unsigned int nFlags, CPoint point) {}
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
+	afx_msg bool OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
 	afx_msg void OnTimer(uintptr nIDEvent) {}
 
 	// Control message handler member functions
@@ -1298,7 +1298,7 @@ protected:
 	afx_msg int OnVKeyToItem(unsigned int nKey, CListBox *pListBox, unsigned int nIndex) {
 		return 0;
 	}
-	afx_msg void OnSetFont(HFONT hFont, BOOL bRedraw);
+	afx_msg void OnSetFont(HFONT hFont, bool bRedraw);
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {}
 
@@ -1354,14 +1354,14 @@ public:
 	CWnd();
 	~CWnd() override;
 
-	BOOL Create(const char *lpszClassName, const char *lpszWindowName,
+	bool Create(const char *lpszClassName, const char *lpszWindowName,
 	    uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 	    CCreateContext *pContext = nullptr);
-	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
+	bool CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam = nullptr);
-	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
+	bool CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 		void *lpParam = nullptr);
@@ -1380,9 +1380,9 @@ public:
 	HWND GetSafeHwnd() const;
 
 	void ShowWindow(int nCmdShow);
-	BOOL EnableWindow(BOOL bEnable = TRUE);
+	bool EnableWindow(bool bEnable = true);
 	void UpdateWindow();
-	BOOL RedrawWindow(
+	bool RedrawWindow(
 	    LPCRECT lpRectUpdate = nullptr,
 	    CRgn *prgnUpdate = nullptr,
 	    unsigned int flags = RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN
@@ -1390,14 +1390,14 @@ public:
 	void SetActiveWindow();
 	void SetFocus();
 	CWnd *GetFocus() const;
-	BOOL IsWindowVisible() const {
+	bool IsWindowVisible() const {
 		return (GetStyle() & WS_VISIBLE) != 0;
 	}
 	void DestroyWindow();
-	void Invalidate(BOOL bErase = TRUE);
+	void Invalidate(bool bErase = true);
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(char *lpszStringBuf, int nMaxCount) const;
-	BOOL SetWindowText(const char *lpszString);
+	bool SetWindowText(const char *lpszString);
 	unsigned int GetState() const;
 	uint32 GetStyle() const {
 		return m_nStyle;
@@ -1411,20 +1411,20 @@ public:
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);
 
-	BOOL PostMessage(unsigned int message, WPARAM wParam = 0, LPARAM lParam = 0);
+	bool PostMessage(unsigned int message, WPARAM wParam = 0, LPARAM lParam = 0);
 	LRESULT SendMessage(unsigned int message, WPARAM wParam = 0, LPARAM lParam = 0);
 	void SendMessageToDescendants(unsigned int message,
 		WPARAM wParam = 0, LPARAM lParam = 0,
 		bool bDeep = true, bool bOnlyPerm = false);
 	static void SendMessageToDescendants(HWND hWnd, unsigned int message,
-		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm);
+		WPARAM wParam, LPARAM lParam, bool bDeep, bool bOnlyPerm);
 
-	BOOL Validate();
-	BOOL ValidateRect(LPCRECT lpRect = nullptr);
-	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
+	bool Validate();
+	bool ValidateRect(LPCRECT lpRect = nullptr);
+	bool InvalidateRect(LPCRECT lpRect, bool bErase = true);
 	void GetWindowRect(LPRECT lpRect) const;
-	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
-	BOOL GetClientRect(LPRECT lpRect) const;
+	bool GetUpdateRect(LPRECT lpRect, bool bErase = false);
+	bool GetClientRect(LPRECT lpRect) const;
 	RECT GetClientRect() const;
 	bool PointInClientRect(const POINT &pt) const;
 	void ClientToScreen(LPPOINT lpPoint) const;
@@ -1433,17 +1433,17 @@ public:
 	void ScreenToClient(LPRECT lpRect) const;
 	RECT GetWindowRectInParentCoords() const;
 
-	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = true);
+	void MoveWindow(LPCRECT lpRect, bool bRepaint = true);
 	void MoveWindow(int x, int y, int nWidth, int nHeight,
-	                BOOL bRepaint = TRUE);
+	                bool bRepaint = true);
 	HDC BeginPaint(LPPAINTSTRUCT lpPaint);
-	BOOL EndPaint(const PAINTSTRUCT *lpPaint);
+	bool EndPaint(const PAINTSTRUCT *lpPaint);
 
 	CWnd *GetDlgItem(int nID) const;
-	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
-	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
-	BOOL SubclassDlgItem(unsigned int nID, CWnd *pParent);
-	BOOL SetDlgItemText(int nIDDlgItem, const char *lpString);
+	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, bool bPrevious = false) const;
+	bool GotoDlgCtrl(CWnd *pWndCtrl);
+	bool SubclassDlgItem(unsigned int nID, CWnd *pParent);
+	bool SetDlgItemText(int nIDDlgItem, const char *lpString);
 	int GetDlgCtrlID() const;
 	void CheckDlgButton(int nIDButton, unsigned int nCheck);
 	LRESULT SendDlgItemMessage(int nID, unsigned int message,
@@ -1451,9 +1451,9 @@ public:
 
 	uintptr SetTimer(uintptr nIDEvent, unsigned int nElapse,
 	    void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32) = nullptr);
-	BOOL KillTimer(uintptr nIDEvent);
+	bool KillTimer(uintptr nIDEvent);
 
-	virtual BOOL PreTranslateMessage(MSG *pMsg) {
+	virtual bool PreTranslateMessage(MSG *pMsg) {
 		return false;
 	}
 	virtual int GetScrollPos() const {
@@ -1462,14 +1462,14 @@ public:
 	int GetScrollPosition() const {
 		return GetScrollPos();
 	}
-	virtual int SetScrollPos(int nPos, BOOL bRedraw = true) {
+	virtual int SetScrollPos(int nPos, bool bRedraw = true) {
 		return 0;
 	}
 	virtual void GetScrollRange(int *lpMinPos, int *lpMaxPos) const {}
 	void GetScrollRange(int /*nBar*/, int *lpMinPos, int *lpMaxPos) const {
 		GetScrollRange(lpMinPos, lpMaxPos);
 	}
-	virtual void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {}
+	virtual void SetScrollRange(int nMinPos, int nMaxPos, bool bRedraw) {}
 
 	void SetCapture();
 	void ReleaseCapture();
@@ -1484,7 +1484,7 @@ public:
 	HFONT GetFont() const {
 		return _hFont;
 	}
-	void SetFont(CFont *pFont, BOOL bRedraw = true);
+	void SetFont(CFont *pFont, bool bRedraw = true);
 
 	void pause();
 };
@@ -1498,29 +1498,29 @@ private:
 	CView *m_pViewActive = nullptr;
 
 	void ActivateFrame(int nCmdShow);
-	void OnUpdateFrameTitle(BOOL bAddToTitle);
+	void OnUpdateFrameTitle(bool bAddToTitle);
 	CWnd *CreateView(CCreateContext *pContext, unsigned int nID);
 
 protected:
-	BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
+	bool PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
 	}
 	int OnCreate(LPCREATESTRUCT lpcs);
 	int OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext);
-	BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext);
-	void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
+	bool OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext);
+	void OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) override;
 
 	enum RepositionFlags {
 		reposDefault = 0, reposQuery = 1, reposExtra = 2, reposNoPosLeftOver = 0x8000
 	};
-	BOOL RepositionBars(
+	bool RepositionBars(
 	    unsigned int nIDFirst,
 	    unsigned int nIDLast,
 	    unsigned int nIDLeftOver,
 	    unsigned int nFlag = reposDefault,
 	    LPRECT lpRectParam = nullptr,
 	    LPCRECT lpRectClient = nullptr,
-	    BOOL bStretch = TRUE
+	    bool bStretch = true
 	);
 
 	DECLARE_MESSAGE_MAP()
@@ -1529,7 +1529,7 @@ public:
 	~CFrameWnd() override {
 	}
 
-	BOOL Create(const char *lpszClassName,
+	bool Create(const char *lpszClassName,
 		const char *lpszWindowName,
 		uint32 dwStyle,
 		const RECT &rect,
@@ -1537,21 +1537,21 @@ public:
 		const char *lpszMenuName = nullptr,
 		uint32 dwExStyle = 0,
 		CCreateContext *pContext = nullptr);
-	BOOL Create(const char *lpszClassName, const char *lpszWindowName,
+	bool Create(const char *lpszClassName, const char *lpszWindowName,
 			uint32 dwStyle = WS_OVERLAPPEDWINDOW) {
 		CRect rectDefault;
 		return Create(lpszClassName, lpszWindowName, dwStyle, rectDefault);
 	}
 
 	HMENU GetMenu() const;
-	void RecalcLayout(BOOL bNotify = TRUE);
-	void InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible);
+	void RecalcLayout(bool bNotify = true);
+	void InitialUpdateFrame(CDocument *pDoc, bool bMakeVisible);
 
-	BOOL LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
+	bool LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 		CWnd *pParentWnd, CCreateContext *pContext);
 
 	CView *GetActiveView() const;
-	void SetActiveView(CView *pViewNew, BOOL bNotify = TRUE);
+	void SetActiveView(CView *pViewNew, bool bNotify = true);
 	void OnSetFocus(CWnd *pOldWnd);
 	CDocument *GetActiveDocument();
 };
@@ -1569,11 +1569,11 @@ private:
 	CFont _dialogFont;
 
 	void SetParent(CWnd *wnd);
-	BOOL CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
+	bool CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate, CWnd *pParentWnd,
 		void *lpDialogInit, HINSTANCE hInst);
-	BOOL CreateIndirect(HGLOBAL hDialogTemplate, CWnd *pParentWnd,
+	bool CreateIndirect(HGLOBAL hDialogTemplate, CWnd *pParentWnd,
 		HINSTANCE hInst);
-	BOOL CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+	bool CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		CWnd *pParentWnd, HINSTANCE hInst);
 	CWnd *GetDefaultPushButton() const;
 
@@ -1586,7 +1586,7 @@ protected:
 	}
 
 	void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
-	void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
+	void OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) override;
 
 public:
 	CDialog() {}
@@ -1595,17 +1595,17 @@ public:
 	explicit CDialog(unsigned int nIDTemplate,
 	                 CWnd *pParentWnd = nullptr);
 	~CDialog() override {}
-	BOOL Create(const char *lpszTemplateName,
+	bool Create(const char *lpszTemplateName,
 	            CWnd *pParentWnd = nullptr);
-	BOOL Create(unsigned int nIDTemplate,
+	bool Create(unsigned int nIDTemplate,
 	            CWnd *pParentWnd = nullptr);
 
 	int DoModal();
 	virtual void PreInitDialog() {}
-	virtual BOOL OnInitDialog() {
+	virtual bool OnInitDialog() {
 		return true;
 	}
-	BOOL PreTranslateMessage(MSG *pMsg) override;
+	bool PreTranslateMessage(MSG *pMsg) override;
 
 	uint32 GetDefID() const;
 	void SetDefID(unsigned int nID);
@@ -1621,14 +1621,14 @@ public:
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, long &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, double &value);
 	void AFXAPI DDX_Check(CDataExchange *pDX,
-	                      int nIDC, int &value);
+	                      int nIDC, bool value);
 	void AFXAPI DDV_MinMaxInt(CDataExchange *pDX,
 	                          int value, int nMin, int nMax);
 
 	// termination
 	void EndDialog(int nResult);
 
-	BOOL UpdateData(BOOL bSaveAndValidate = TRUE);
+	bool UpdateData(bool bSaveAndValidate = true);
 };
 
 class CStatic : public CWnd {
@@ -1665,12 +1665,12 @@ protected:
 public:
 	~CButton() override {
 	}
-	CVIRTUAL BOOL Create(const char *lpszCaption, uint32 dwStyle,
+	CVIRTUAL bool Create(const char *lpszCaption, uint32 dwStyle,
 	                     const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 
 	int GetCheck() const;
 	void SetCheck(int nCheck);
-	void SetButtonStyle(unsigned int nStyle, BOOL bRedraw = TRUE);
+	void SetButtonStyle(unsigned int nStyle, bool bRedraw = true);
 	unsigned int GetButtonStyle() const;
 };
 
@@ -1705,9 +1705,9 @@ protected:
 public:
 	~CEdit() override {
 	}
-	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
+	CVIRTUAL bool Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 	void LimitText(int nChars);
-	void SetSel(int nStartChar, int nEndChar, BOOL bNoScroll = FALSE);
+	void SetSel(int nStartChar, int nEndChar, bool bNoScroll = false);
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
@@ -1741,21 +1741,21 @@ protected:
 
 public:
 	~CScrollBar() override { }
-	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
+	CVIRTUAL bool Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 
 	int GetScrollPos() const override;
-	int SetScrollPos(int nPos, BOOL bRedraw = true) override;
+	int SetScrollPos(int nPos, bool bRedraw = true) override;
 	void GetScrollRange(int *lpMinPos, int *lpMaxPos) const override;
-	void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) override;
-	void ShowScrollBar(BOOL bShow);
-	BOOL SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw);
+	void SetScrollRange(int nMinPos, int nMaxPos, bool bRedraw) override;
+	void ShowScrollBar(bool bShow);
+	bool SetScrollInfo(LPSCROLLINFO lpScrollInfo, bool bRedraw);
 };
 
 class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
 
 protected:
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
+	virtual bool PreCreateWindow(CREATESTRUCT &cCs) override;
 	virtual void OnDraw(CDC *pDC) {}
 	void OnPaint();
 	void OnNcDestroy();
@@ -1775,7 +1775,7 @@ public:
 
 	void OnInitialUpdate();
 	virtual void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
-	virtual void OnActivateView(BOOL, CView *, CView *) {}
+	virtual void OnActivateView(bool, CView *, CView *) {}
 	virtual void OnActivateFrame(unsigned int nState, CFrameWnd *pFrameWnd) {}
 
 	CFrameWnd *GetParentFrame() const {
@@ -1839,16 +1839,16 @@ public:
 	 * then create new file with this type
 	 */
 	virtual CDocument *OpenDocumentFile(const char *lpszPathName,
-		BOOL bMakeVisible = TRUE) = 0;
+		bool bMakeVisible = true) = 0;
 	virtual CDocument *CreateNewDocument();
 	virtual CFrameWnd *CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther);
 	virtual void SetDefaultTitle(CDocument *pDocument) = 0;
 	virtual void InitialUpdateFrame(CFrameWnd *pFrame, CDocument *pDoc,
-		BOOL bMakeVisible = TRUE);
+		bool bMakeVisible = true);
 
 	virtual void AddDocument(CDocument *pDoc);      // must override
 	virtual void RemoveDocument(CDocument *pDoc);   // must override
-	virtual void CloseAllDocuments(BOOL bEndSession);
+	virtual void CloseAllDocuments(bool bEndSession);
 	virtual POSITION GetFirstDocPosition() const = 0;
 	virtual CDocument *GetNextDoc(POSITION &rPos) const = 0;
 
@@ -1880,7 +1880,7 @@ public:
 	 * then create new file with this type
 	 */
 	CDocument *OpenDocumentFile(const char *lpszPathName,
-		BOOL bMakeVisible = TRUE) override;
+		bool bMakeVisible = true) override;
 	void AddDocument(CDocument *pDoc) override;
 
 	void SetDefaultTitle(CDocument *pDocument) override;
@@ -1904,7 +1904,7 @@ public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void OnFileNew();
 	void OnFileOpen();
-	virtual void CloseAllDocuments(BOOL bEndSession);
+	virtual void CloseAllDocuments(bool bEndSession);
 };
 
 /*============================================================================*/
@@ -1937,7 +1937,7 @@ private:
 	CHandleMap<CWnd> *m_pmapWnd = nullptr;
 
 protected:
-	virtual BOOL InitInstance();
+	virtual bool InitInstance();
 	virtual int ExitInstance();
 
 public:
@@ -1962,8 +1962,8 @@ public:
 	 */
 	int Run();
 
-	virtual BOOL InitApplication();
-	virtual BOOL SaveAllModified();
+	virtual bool InitApplication();
+	virtual bool SaveAllModified();
 
 	void SetDialogBkColor();
 	HCURSOR LoadStandardCursor(const char *lpszCursorName);
@@ -1980,7 +1980,7 @@ public:
 	void DoWaitCursor(int nCode) override;
 
 	void AddDocTemplate(CDocTemplate *pTemplate);
-	void CloseAllDocuments(BOOL bEndSession);
+	void CloseAllDocuments(bool bEndSession);
 
 	unsigned int GetProfileInt(const char *lpszSection,
 	    const char *lpszEntry, int nDefault);
@@ -1988,7 +1988,7 @@ public:
 	    const char *lpszEntry, int nValue);
 	CString GetProfileString(const char *lpszSection,
 		const char *lpszEntry, const char *lpszDefault = nullptr) ;
-	BOOL WriteProfileString(const char *lpszSection,
+	bool WriteProfileString(const char *lpszSection,
 		const char *lpszEntry, const char *lpszValue);
 
 
@@ -1996,9 +1996,9 @@ public:
 	virtual void OnFileOpen();
 	virtual void OnFilePrintSetup() {}
 
-	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate = false);
-	CHandleMap<CDC> *afxMapHDC(BOOL bCreate = false);
-	CHandleMap<CWnd> *afxMapWnd(BOOL bCreate = false);
+	CHandleMap<CGdiObject> *afxMapHGDIOBJ(bool bCreate = false);
+	CHandleMap<CDC> *afxMapHDC(bool bCreate = false);
+	CHandleMap<CWnd> *afxMapWnd(bool bCreate = false);
 	void AfxUnlockTempMaps();
 
 	/*== ScummVM added functions ==*/
@@ -2024,7 +2024,7 @@ public:
 	HGLOBAL loadResource(HRSRC hResInfo);
 	void *lockResource(HGLOBAL hResData);
 	void unlockResource(HGLOBAL hResData);
-	BOOL freeResource(HGLOBAL hResData);
+	bool freeResource(HGLOBAL hResData);
 	const Libs::Resources &getResources() const {
 		return _resources;
 	}
@@ -2067,7 +2067,7 @@ public:
 
 	const char *AfxRegisterWndClass(unsigned int nClassStyle,
 		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon);
-	BOOL GetClassInfo(HINSTANCE hInstance,
+	bool GetClassInfo(HINSTANCE hInstance,
 		const char *  lpClassName, LPWNDCLASS lpWndClass);
 };
 

@@ -36,7 +36,7 @@ extern int  nSpeed,                 // Speed between evolutions
 extern int  nTurnCounter,           // Counts num of years before end of game
        nLifeCounter;           // Counts num of lives left to place
 
-extern BOOL bPrePlaceColonies,      // Whether they want to pre-place some
+extern bool bPrePlaceColonies,      // Whether they want to pre-place some
        bIsInfiniteLife,        // Tells if num of lives is set to infi
        bIsInfiniteTurns;       // Tells if num of turns is set to infi
 
@@ -57,13 +57,13 @@ void CUserCfgDlg::DoDataExchange(CDataExchange* pDX) {
 	DDX_Control(pDX, IDC_EVOLVESPEED, m_ScrollSpeed);
 }
 
-BOOL CUserCfgDlg::OnInitDialog() {
+bool CUserCfgDlg::OnInitDialog() {
 	int     i;
 	CRect   statsRect;                  // game stats displays
 	int     nStat_col_offset;           // game stats placement
 	int     nStat_row_offset;
 	int     nStatWidth, nStatHeight;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	CDC     *pDC;
 
 	CBmpDialog::OnInitDialog();
@@ -141,8 +141,8 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	} // end if
 
 	// setup the starting villages scroll bar
-	m_ScrollVillages.SetScrollRange(MIN_LIFE, MAX_LIFE, FALSE);
-	m_ScrollVillages.SetScrollPos(nLifeTemp, TRUE);
+	m_ScrollVillages.SetScrollRange(MIN_LIFE, MAX_LIFE, false);
+	m_ScrollVillages.SetScrollPos(nLifeTemp, true);
 
 	// set up the Speed stat display box
 	nStat_row_offset += 35; //48;
@@ -159,8 +159,8 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	} // end if
 
 	// setup the speed scroll bar
-	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, FALSE);
-	m_ScrollSpeed.SetScrollPos(nSpeedTemp, TRUE);
+	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, false);
+	m_ScrollSpeed.SetScrollPos(nSpeedTemp, true);
 
 	// set up the rounds stat display box
 	nStat_row_offset += 38; //48;
@@ -179,8 +179,8 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	// setup the speed scroll bar
-	m_ScrollRounds.SetScrollRange(MIN_TURNS, MAX_TURNS, FALSE);
-	m_ScrollRounds.SetScrollPos(nTurnCounterTemp, TRUE);
+	m_ScrollRounds.SetScrollRange(MIN_TURNS, MAX_TURNS, false);
+	m_ScrollRounds.SetScrollPos(nTurnCounterTemp, true);
 
 	/************************
 	* Set up color buttons. *
@@ -201,13 +201,13 @@ BOOL CUserCfgDlg::OnInitDialog() {
 		(*m_pCancelButton).SetControl(IDCANCEL, this);
 	} // end if
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	// TODO: Add your message handler code here and/or call default
 	CDC     *pDC;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	char    msg[64];
 
 	pDC = GetDC();
@@ -251,7 +251,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 			bAssertCheck = (*m_pSpeed).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);
 
-			pScrollBar->SetScrollPos(nSpeedTemp, TRUE);
+			pScrollBar->SetScrollPos(nSpeedTemp, true);
 		}
 	} else if (pScrollBar->GetDlgCtrlID() == IDC_STARTVILLAGES) {
 		int nOldCounter = nLifeTemp;
@@ -296,7 +296,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 			bAssertCheck = (*m_pVillages).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 
-			pScrollBar->SetScrollPos(nLifeTemp, TRUE);
+			pScrollBar->SetScrollPos(nLifeTemp, true);
 		}
 	} else if (pScrollBar->GetDlgCtrlID() == IDC_ROUNDS) {
 		int nOldCounter = nTurnCounterTemp;
@@ -341,7 +341,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 			bAssertCheck = (*m_pRounds).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 
-			pScrollBar->SetScrollPos(nTurnCounterTemp, TRUE);
+			pScrollBar->SetScrollPos(nTurnCounterTemp, true);
 		}
 	}
 
@@ -361,14 +361,14 @@ void CUserCfgDlg::OnOK() {
 	        m_nTurns[nTurnCounterTemp] == nTurnCounter) {
 		nSpeed = nSpeedTemp;                    // No - so just update speed counter
 		nCountDown = nSpeed * MONTHS;
-		EndDialog(FALSE);                       // and don't start new game
+		EndDialog(false);                       // and don't start new game
 		return;
 	} // end if
 
 	if (nLifeTemp == MAX_LIFE) {                 // infinite life?
-		bIsInfiniteLife = TRUE;                 // yes
+		bIsInfiniteLife = true;                 // yes
 	} else {
-		bIsInfiniteLife = FALSE;
+		bIsInfiniteLife = false;
 		nLifeCounter    = m_nLife[nLifeTemp];
 	} // end if
 	nLife = m_nLife[nLifeTemp];
@@ -377,9 +377,9 @@ void CUserCfgDlg::OnOK() {
 	nCountDown = nSpeed * MONTHS;
 
 	if (nTurnCounterTemp == MAX_TURNS) {         // fastest turn counter?
-		bIsInfiniteTurns = TRUE;
+		bIsInfiniteTurns = true;
 	} else {
-		bIsInfiniteTurns = FALSE;
+		bIsInfiniteTurns = false;
 	} // end if
 
 	nTurnCounter = m_nTurns[nTurnCounterTemp];
@@ -413,13 +413,13 @@ void CUserCfgDlg::OnOK() {
 
 void CUserCfgDlg::OnCancel() {
 	ClearDialogImage();
-	EndDialog(FALSE);
+	EndDialog(false);
 }
 
 void CUserCfgDlg::OnPaint() {
 	// TODO: Add your message handler code here
 	CDC     *pDC;
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 	char    msg[64];
 
 	CBmpDialog::OnPaint();
@@ -427,7 +427,7 @@ void CUserCfgDlg::OnPaint() {
 	pDC = GetDC();
 
 	// Display Starting Villages stats
-	if (bIsInfiniteLife == TRUE)
+	if (bIsInfiniteLife == true)
 		Common::sprintf_s(msg, "Villages: Unlimited");
 	else
 		Common::sprintf_s(msg, "Villages: %d", m_nLife[nLifeTemp]);
@@ -443,7 +443,7 @@ void CUserCfgDlg::OnPaint() {
 	ASSERT(bAssertCheck);   // paint the text
 
 	// set up the rounds stat display box
-	if (bIsInfiniteTurns == TRUE)
+	if (bIsInfiniteTurns == true)
 		Common::sprintf_s(msg, "Years: Unlimited");
 	else
 		Common::sprintf_s(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);

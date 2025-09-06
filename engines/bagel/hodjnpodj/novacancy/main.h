@@ -49,7 +49,7 @@ protected:
 	void        GameReset(void);
 	void        GamePause(void);
 	void        GameResume(void);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 
@@ -61,7 +61,7 @@ protected:
 	void        OnSysChar(unsigned int, unsigned int, unsigned int);
 	virtual  void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	virtual void        OnKeyDown(unsigned int, unsigned int, unsigned int);
-	void        OnActivate(unsigned int, CWnd *, BOOL) override;
+	void        OnActivate(unsigned int, CWnd *, bool) override;
 	void        OnClose(void);
 	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
 	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);
@@ -79,12 +79,12 @@ protected:
 	//assume all doors are equi-sized and equidistant.
 	CRect m_rDoor1;                //the first door
 	CRect m_rDoor[10];            //rectangles representing doors 0 thru 9  ; #0 is unused.
-	BOOL m_bDieUpdate;
-	BOOL m_iDoorStatus[10];        //status of every door.
-	BOOL m_bGameJustBegun;
-	BOOL m_bDiceJustThrown;
-	BOOL m_bDoorBmpLoaded[10];
-	BOOL m_bGameLoadUp;
+	bool m_bDieUpdate;
+	byte m_iDoorStatus[10];        //status of every door.
+	bool m_bGameJustBegun;
+	bool m_bDiceJustThrown;
+	bool m_bDoorBmpLoaded[10];
+	bool m_bGameLoadUp;
 
 	byte m_cDoorToOpen;
 	byte m_LDie;
@@ -97,7 +97,7 @@ protected:
 	//      -1=> Illegal move; stop and correct yourself. The dice are disabled.
 	byte m_cDoorCount;            //    keeps track of all closed doors, irrespective of the  validity of  the move
 	byte m_cActiveDoor;           //    the door whose status has just been changed (as result of mouse action).
-	BOOL m_bOneDieCase;        //   this variable is always FALSE unless doors 7, 8, and 9 are FIEXD.
+	bool m_bOneDieCase;        //   this variable is always false unless doors 7, 8, and 9 are FIEXD.
 
 	//other objects for animation...
 	CRect Paper,
@@ -110,10 +110,10 @@ protected:
 	      Hat6,
 	      UmbrStand;
 
-	BOOL        m_bGameActive;
-	BOOL        m_bPause;
-	BOOL        m_bIgnoreScrollClick;
-	BOOL        m_bSound;
+	bool        m_bGameActive;
+	bool        m_bPause;
+	bool        m_bIgnoreScrollClick;
+	bool        m_bSound;
 	CSound *m_psndBkgndMusic;
 
 	CSprite *m_pCLRollingDie;
@@ -121,12 +121,12 @@ protected:
 	CSprite *m_pCSingleRollingDie;      //unused in v.1.5 or later.
 
 private:
-	BOOL m_bDiceBmpsLoaded;
+	bool m_bDiceBmpsLoaded;
 	CString gWndClass;
 
 	void AnimateDice(void);
 	short LegalizeMove(short i);
-	BOOL IsThrowDoable(byte dice_sum);
+	bool IsThrowDoable(byte dice_sum);
 };
 
 

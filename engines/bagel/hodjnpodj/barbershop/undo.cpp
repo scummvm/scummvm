@@ -192,7 +192,7 @@ void CUndo::Reset() {
  * FUNCTIONAL DESCRIPTION:
  *
  *      Puts card back into original position.
- *      Returns TRUE if undo was possible, else FALSE.
+ *      Returns true if undo was possible, else false.
  *
  * FORMAL PARAMETERS:
  *
@@ -211,7 +211,7 @@ void CUndo::Reset() {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
+bool CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
 	CCard   *pCard;
 	CPoint  cPos;
 	int     i;
@@ -233,11 +233,11 @@ BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
 		} // end for
 
 		Reset();                    // clear undo
-		return TRUE;
+		return true;
 	} // end if
 
 	if (m_pStack == nullptr)            // basic card undo?
-		return FALSE;               // No - nothing can be undone
+		return false;               // No - nothing can be undone
 
 
 	m_pCard->m_pStack->Pop();       // undo move in internal rep
@@ -266,7 +266,7 @@ BOOL CUndo::Undo(CDC *pDC, CBoard *pBoard, CPaint *pPaint) {
 	} // end if
 
 	Reset();                        // clear undo
-	return TRUE;
+	return true;
 }
 
 } // namespace Barbershop

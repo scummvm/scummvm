@@ -45,10 +45,10 @@ void add_note_to_series(int nNewValue);
 
 CBmpButton  *m_pScrollButton;               // Scroll button
 CPalette    *pGamePalette = nullptr;           // Palette of current artwork
-BOOL        bSuccess = FALSE;
-BOOL        m_bIgnoreScrollClick;
-BOOL        bLDown = FALSE;                 // Make sure we only act on LUp if LDown was on a musician
-BOOL        bPlayingBackSeries = FALSE;
+bool        bSuccess = false;
+bool        m_bIgnoreScrollClick;
+bool        bLDown = false;                 // Make sure we only act on LUp if LDown was on a musician
+bool        bPlayingBackSeries = false;
 
 #define     FIRST_MUSICIAN      100
 #define     NOT_PLAYING         0
@@ -65,16 +65,16 @@ int         m_nButID = 0;                       // button which is animating
 CText       *m_pSignText = nullptr;                // The current series length display on the sign
 CBitmap     *pRibbon = nullptr;                    // The blue ribbon to be put on sign at win condition
 
-BOOL    m_bPlaying;
-BOOL    m_bNewGame = FALSE;
+bool    m_bPlaying;
+bool    m_bNewGame = false;
 
-BOOL    m_bPlayGame;                            // Options variables
+bool    m_bPlayGame;                            // Options variables
 int     m_nSpeed;                               // Speed is in MILLISECONDS
 int     m_nNumButtons;
 int     m_nWinCondition = 0;                    // Number needed to win the game (in meta mode only)
 
 // Temporary variables for new Options
-BOOL    tempPlayGame;
+bool    tempPlayGame;
 int     tempSpeed;          // Speed is in MILLISECONDS
 int     tempNumButtons;
 
@@ -154,7 +154,7 @@ CMainWindow::CMainWindow() {
 
 	pDC = GetDC();
 	pBackBitmap = FetchBitmap(pDC, &pGamePalette, MAINSCREEN);
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);           // select the game palette
+	pOldPal = pDC->SelectPalette(pGamePalette, false);           // select the game palette
 	pDC->RealizePalette();                                          //...and realize it
 
 	pBackBitmap->DeleteObject();
@@ -173,7 +173,7 @@ CMainWindow::CMainWindow() {
 	ASSERT(bSuccess);
 	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, 0, 0);
 	ASSERT(bSuccess);
-	m_bIgnoreScrollClick = FALSE;
+	m_bIgnoreScrollClick = false;
 
 	if (pGameInfo->bPlayingMetagame)                         // only in metamode
 		pRibbon = FetchBitmap(pDC, nullptr, RIBBON);            // load bitmap for ribbon
@@ -200,8 +200,8 @@ CMainWindow::CMainWindow() {
 		(*pAnimSprite[i]).SharePalette(pGamePalette);
 		bSuccess = (*pAnimSprite[i]).LoadCels(pDC, cAnimName[i], nNumCels[i]);
 		ASSERT(bSuccess);
-		(*pAnimSprite[i]).SetMasked(FALSE);
-		(*pAnimSprite[i]).SetMobile(FALSE);
+		(*pAnimSprite[i]).SetMasked(false);
+		(*pAnimSprite[i]).SetMobile(false);
 	}
 
 	// Set up the text on the sign to display the current series length
@@ -211,12 +211,12 @@ CMainWindow::CMainWindow() {
 		(*m_pSignText).SetupText(pDC, pGamePalette, &StartRect, JUSTIFY_CENTER);
 	}
 
-	(*pDC).SelectPalette(pOldPal, FALSE);           // Select back the old palette
+	(*pDC).SelectPalette(pOldPal, false);           // Select back the old palette
 	ReleaseDC(pDC);
 
 	//srand((unsigned) time(nullptr));                 // seed the random number generator
 
-	m_bPlayGame = TRUE;
+	m_bPlayGame = true;
 
 	if (pGameInfo->bPlayingMetagame) {
 		switch (pGameInfo->nSkillLevel) {
@@ -245,7 +245,7 @@ CMainWindow::CMainWindow() {
 	tempNumButtons = m_nNumButtons;
 	tempSpeed = m_nSpeed;
 
-	m_bPlaying = FALSE;
+	m_bPlaying = false;
 
 	GetNewSequence(MAX_SEQUENCE);                    // Get a random sequence
 	nNoteCount = 1;                                 // Set the count to the first note
@@ -256,7 +256,7 @@ CMainWindow::CMainWindow() {
 
 	EndWaitCursor();
 
-	if (pGameInfo->bPlayingMetagame == FALSE) {
+	if (pGameInfo->bPlayingMetagame == false) {
 		ActivateButtons(m_nNumButtons, NOT_PLAYING);     // Activate the buttons
 		PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog
 	}
@@ -266,10 +266,10 @@ CMainWindow::CMainWindow() {
 void CMainWindow::initStatics() {
 	m_pScrollButton = nullptr;
 	pGamePalette = nullptr;
-	bSuccess = FALSE;
-	m_bIgnoreScrollClick = FALSE;
-	bLDown = FALSE;
-	bPlayingBackSeries = FALSE;
+	bSuccess = false;
+	m_bIgnoreScrollClick = false;
+	bLDown = false;
+	bPlayingBackSeries = false;
 	pMusic = nullptr;
 	Common::fill(pAnimSprite, pAnimSprite + MAX_BUTTONS, nullptr);
 	Common::fill(pMusicians, pMusicians + (MAX_BUTTONS * 2), nullptr);
@@ -277,15 +277,15 @@ void CMainWindow::initStatics() {
 
 	m_pSignText = nullptr;
 	pRibbon = nullptr;
-	m_bPlaying = FALSE;
-	m_bNewGame = FALSE;
-	m_bPlayGame = FALSE;
+	m_bPlaying = false;
+	m_bNewGame = false;
+	m_bPlayGame = false;
 
 	m_nSpeed = 0;
 	m_nNumButtons = 0;
 	m_nWinCondition = 0;
 
-	tempPlayGame = FALSE;
+	tempPlayGame = false;
 	tempSpeed = 0;
 	tempNumButtons = 0;
 	nNoteCount = 0;
@@ -303,7 +303,7 @@ void CMainWindow::initStatics() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(nullptr, FALSE);                    // invalidate the entire window
+	InvalidateRect(nullptr, false);                    // invalidate the entire window
 	BeginPaint(&lpPaint);
 	SplashScreen();                                 // Paint the backdrop and scroll button
 	ActivateButtons(m_nNumButtons, NOT_PLAYING);     // Activate the buttons
@@ -363,7 +363,7 @@ void CMainWindow::SplashScreen() {
 // typically in order to process control related activities.
 //
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC     *pDC;
 	CNote   *pNewNote;
 	CSound  *pEffect = nullptr;
@@ -384,8 +384,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_START:                                 // And we're off!
 			if (pGameInfo->bPlayingMetagame)
 				wait_awhile(PAUSE_TIME);                 // Give the resources, etc. time to load
-			m_bPlaying = TRUE;
-			m_bNewGame = TRUE;
+			m_bPlaying = true;
+			m_bNewGame = true;
 			pNewNote = CNote::GetNoteHead();            // Get the first note
 			if (pNewNote) {                              // if list is not empty
 				PlayBackSeries(nNoteCount);                  // Play the first note
@@ -394,7 +394,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				SetTimer(PLAYER_TIMER, TIME_LIMIT, nullptr);    // Give the player TIME_LIMIT to respond
 			}                                           //...to head of list
 			else                                            // no note chain,
-				m_bPlaying = FALSE;                         //...so we can't play
+				m_bPlaying = false;                         //...so we can't play
 			break;
 
 		case IDC_A:                                     // If a musician button was hit...
@@ -431,8 +431,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					CSound::waitWaveSounds();
 
 					pNoteMarker = nullptr;
-					m_bPlaying = FALSE;
-					m_bNewGame = FALSE;
+					m_bPlaying = false;
+					m_bNewGame = false;
 					CNote::FlushNoteList();                     // Flush the last series of notes
 					if (pGameInfo->bPlayingMetagame)
 						PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
@@ -459,8 +459,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 						CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Game over", "You have won!");
 						CSound::waitWaveSounds();
-						m_bPlaying = FALSE;
-						m_bNewGame = FALSE;
+						m_bPlaying = false;
+						m_bNewGame = false;
 						CNote::FlushNoteList();
 						if (pGameInfo->bPlayingMetagame)
 							PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
@@ -492,37 +492,37 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case IDC_RULES:
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 
 			CSound::waitWaveSounds();
 			(void) RulesDlg.DoModal();
-			m_bIgnoreScrollClick = FALSE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+			m_bIgnoreScrollClick = false;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
 			break;
 
 		case IDC_SCROLL:
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
 
-			m_bIgnoreScrollClick = TRUE;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
-			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
+			m_bIgnoreScrollClick = true;
+			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_OPTIONS_NEWGAME:
 				if (!pGameInfo->bPlayingMetagame)
 					NewGame();
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
 				break;
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				m_bIgnoreScrollClick = FALSE;
+				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_bIgnoreScrollClick = false;
 				if (m_bPlayGame && m_bNewGame) {                         // playing repeat game & already
 					wait_awhile(PAUSE_TIME);                             // started...pause for a second
 					PostMessage(WM_COMMAND, IDC_START, BN_CLICKED);  // Activate the Options dialog
@@ -531,7 +531,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
 				PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
-				return FALSE;
+				return false;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -540,7 +540,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	ReleaseDC(pDC);
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -608,7 +608,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	else if (m_bNewGame && m_bPlaying) {
 		for (i = 0; i < m_nNumButtons; i++) {
 			if (rectMusic[i].PtInRect(point)) {
-				bLDown = TRUE;
+				bLDown = true;
 				KillTimer(PLAYER_TIMER);                                             // don't time out
 				m_nButID = i;
 				StartAnimation();
@@ -685,7 +685,7 @@ void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 				StopAnimation();
 				MFC::SendMessage(m_hWnd, WM_COMMAND, m_nButID + IDC_A, BN_CLICKED);          // Activate hit logic
 			}
-			bLDown = FALSE;
+			bLDown = false;
 		}
 	}
 }
@@ -809,7 +809,7 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 /* one-plus of low priority
 void CMainWindow::OnKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags)
 {
-    BOOL    bMusician = FALSE;
+    bool    bMusician = false;
 
         switch (nChar) {
 
@@ -819,7 +819,7 @@ void CMainWindow::OnKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int
             case '4':
             case '5':
             case '6':
-                bMusician = TRUE;
+                bMusician = true;
                 break;
 
             default:
@@ -885,7 +885,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		CMessageBox GameOverDlg((CWnd *)this, pGamePalette, "Time ran out!", buf);
 		CSound::waitWaveSounds();
 		pNoteMarker = nullptr;
-		m_bPlaying = FALSE;
+		m_bPlaying = false;
 		CNote::FlushNoteList();
 		if (pGameInfo->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);                         // and post a program exit
@@ -908,13 +908,13 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 
 }
 
-void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 
 	if (!bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			//InvalidateRect(nullptr, FALSE);
+			//InvalidateRect(nullptr, false);
 			break;
 
 		default:
@@ -938,14 +938,14 @@ void CMainWindow::NewGame() {
 
 	pDC = GetDC();
 
-	(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	m_bIgnoreScrollClick = FALSE;
+	(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+	m_bIgnoreScrollClick = false;
 
 	m_bPlayGame = tempPlayGame;
 	m_nNumButtons = tempNumButtons;
 	m_nSpeed = tempSpeed;
 
-	m_bNewGame = FALSE;
+	m_bNewGame = false;
 
 	CNote::FlushNoteList();
 	ActivateButtons(m_nNumButtons, NOT_PLAYING);             // Bring on the players!!
@@ -957,7 +957,7 @@ void CMainWindow::NewGame() {
 		Common::sprintf_s(msg, "%d", nNoteCount - 1);
 		(*m_pSignText).DisplayString(pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 	} else {
-		m_bPlaying = TRUE;                                  // Make sure we can play music
+		m_bPlaying = true;                                  // Make sure we can play music
 		Common::sprintf_s(msg, "");
 		(*m_pSignText).DisplayString(pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 	}
@@ -1014,37 +1014,37 @@ void CMainWindow::StopAnimation() {
 }
 
 
-BOOL CMainWindow::GetNewSequence(const char *pszFileName) {
+bool CMainWindow::GetNewSequence(const char *pszFileName) {
 	int  nNote;
 	char note[5];
 
 	ifstream IFStream(pszFileName);
 	if (IFStream.fail()) {
-		return FALSE;
+		return false;
 	}
 	while (!IFStream.eof()) {
 		IFStream.getline(note, sizeof(note));
 		nNote = atoi(note);
 		add_note_to_series(nNote);
 	}
-	return TRUE;
+	return true;
 }//end GetNewSequence()
 
-BOOL CMainWindow::GetNewSequence(int nLength) {
+bool CMainWindow::GetNewSequence(int nLength) {
 	int i;
 	for (i = nLength; i > 0; --i) {
 		add_note_to_series(brand() % m_nNumButtons);
 	}
-	return TRUE;
+	return true;
 }//end GetNewSequence()
 
-void CMainWindow::ActivateButtons(unsigned int nNumActive, BOOL bState) {
+void CMainWindow::ActivateButtons(unsigned int nNumActive, bool bState) {
 	CDC         *pDC;
 	CPalette    *pOldPal = nullptr;
 	unsigned int i;
 
 	pDC = GetDC();
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);           // select the game palette
+	pOldPal = pDC->SelectPalette(pGamePalette, false);           // select the game palette
 	pDC->RealizePalette();                                          //...and realize it
 
 	for (i = 0; i < nNumActive; i++) {
@@ -1057,7 +1057,7 @@ void CMainWindow::ActivateButtons(unsigned int nNumActive, BOOL bState) {
 		i++;
 	}
 
-	(*pDC).SelectPalette(pOldPal, FALSE);                        // Select back the old palette
+	(*pDC).SelectPalette(pOldPal, false);                        // Select back the old palette
 	ReleaseDC(pDC);
 
 }//end ActivateButtons()
@@ -1081,11 +1081,11 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 
 	pDC = GetDC();
 
-	bPlayingBackSeries = TRUE;
+	bPlayingBackSeries = true;
 
 //	HCURSOR HOldCursor = MFC::SetCursor( AfxGetApp ()->LoadStandardCursor( nullptr ) ); // Make cursor go away
 	HCURSOR HOldCursor = MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));          // Refresh cursor object
-	MFC::ShowCursor(TRUE);
+	MFC::ShowCursor(true);
 
 	pNewNote = CNote::GetNoteHead();
 	for (i = nNumNotes; i > 0; --i) {
@@ -1103,17 +1103,17 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 	}
 	pNewNote = nullptr;
 
-	MFC::ShowCursor(FALSE);
+	MFC::ShowCursor(false);
 	MFC::SetCursor(HOldCursor);
 
-	bPlayingBackSeries = FALSE;
+	bPlayingBackSeries = false;
 
 	ReleaseDC(pDC);
 
 }//end PlayBackSeries
 
 
-BOOL CMainWindow::wait_awhile(int nHundSecs) {                      // Given time is in hundreths of sec
+bool CMainWindow::wait_awhile(int nHundSecs) {                      // Given time is in hundreths of sec
 	uint32   goal;
 	MSG     msg;
 
@@ -1136,7 +1136,7 @@ BOOL CMainWindow::wait_awhile(int nHundSecs) {                      // Given tim
 
 	}                                   // spin yer wheels 'til nSecs pass
 
-	return TRUE;
+	return true;
 }//end wait_awhile()
 
 void CMainWindow::OnClose() {

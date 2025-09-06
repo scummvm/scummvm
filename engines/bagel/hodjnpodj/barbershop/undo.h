@@ -45,7 +45,7 @@ public:
 	void    Record(CStack*, CCard*);
 	void    Record(int);
 	void    Reset();
-	BOOL    Undo(CDC*, CBoard*, CPaint*);
+	bool    Undo(CDC*, CBoard*, CPaint*);
 
 	CRect   m_cUndoRect;
 private:

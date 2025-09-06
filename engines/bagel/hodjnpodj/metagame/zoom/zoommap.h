@@ -52,7 +52,7 @@ namespace Zoom {
 class CMainZoomWindow : public CFrameWnd {
 private:
 	HWND m_hCallAppWnd = (HWND)0;
-	BOOL m_bShowExit = false;
+	bool m_bShowExit = false;
 	CRect MainRect;                           // screen area spanned by the game window
 	CRect OptionRect;                         // screen area spanned by the option button
 
@@ -60,7 +60,7 @@ private:
 	CRect rLeaveRect;
 
 public:
-	CMainZoomWindow(HWND, BOOL);
+	CMainZoomWindow(HWND, bool);
 
 	void SplashScreen();
 
@@ -68,7 +68,7 @@ public:
 	static void FlushInputEvents();
 
 protected:
-	BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();
@@ -79,8 +79,8 @@ protected:
 	afx_msg void OnLButtonUp(unsigned int, CPoint);
 	afx_msg void OnMouseMove(unsigned int, CPoint);
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) override;
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

@@ -41,9 +41,9 @@ CBmpButton  *m_pCroPButton = nullptr;
 static  CCheckButton *pRandomButton = nullptr;                 // Framed check box
 
 extern  int8        BoardSelected;
-extern  BOOL        bRandomBoard;
+extern  bool        bRandomBoard;
 static  char        chNewBoard;
-static  BOOL        m_bRandom;
+static  bool        m_bRandom;
 
 /////////////////////////////////////////////////////////////////////////////
 // COptnDlg dialog
@@ -91,8 +91,8 @@ int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool COptnDlg::OnInitDialog() {
+	bool    bSuccess;
 	CRect   myRect;
 
 	COptions::OnInitDialog();
@@ -142,35 +142,35 @@ BOOL COptnDlg::OnInitDialog() {
 	if (!m_bRandom) {                                                // If not randomly selecting board
 		switch (chNewBoard) {
 		case CROSS:
-			(*m_pCroButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			(*m_pCroButton).SendMessage(BM_SETSTATE, true, 0L);
 			break;
 
 		case CROSS_PLUS:
-			(*m_pCroPButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			(*m_pCroPButton).SendMessage(BM_SETSTATE, true, 0L);
 			break;
 
 		case TRIANGLE:
-			(*m_pTriButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			(*m_pTriButton).SendMessage(BM_SETSTATE, true, 0L);
 			break;
 
 		default:                                        //case TRIANGLE_PLUS:
-			(*m_pTriPButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			(*m_pTriPButton).SendMessage(BM_SETSTATE, true, 0L);
 			break;
 		} // end switch
 	}
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 
 void COptnDlg::OnDestroy(void) {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 
 	if (m_pDlgBackground != nullptr) {
 		delete m_pDlgBackground;
 		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*m_pDlgParentWnd).ValidateRect(nullptr);
 	}
@@ -184,8 +184,8 @@ void COptnDlg::OnDestroy(void) {
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -228,69 +228,69 @@ void COptnDlg::OnRandom() {
 	m_bRandom = !m_bRandom;
 	((CWnd *)this)->CheckDlgButton(IDC_RANDOM, m_bRandom);
 
-	(*m_pCroPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pCroButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+	(*m_pCroPButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriPButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pCroButton).SendMessage(BM_SETSTATE, false, 0L);
 }
 
 void COptnDlg::OnClickedCross() {
 	if (m_bRandom) {
-		m_bRandom = FALSE;
+		m_bRandom = false;
 		((CWnd *)this)->CheckDlgButton(IDC_RANDOM, m_bRandom);
 	}
 	chNewBoard = CROSS;
 
-	(*m_pCroPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+	(*m_pCroPButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriPButton).SendMessage(BM_SETSTATE, false, 0L);
 
-	(*m_pCroButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+	(*m_pCroButton).SendMessage(BM_SETSTATE, true, 0L);
 }
 
 
 void COptnDlg::OnClickedCrossPlus() {
 	if (m_bRandom) {
-		m_bRandom = FALSE;
+		m_bRandom = false;
 		((CWnd *)this)->CheckDlgButton(IDC_RANDOM, m_bRandom);
 	}
 	chNewBoard = CROSS_PLUS;
 
-	(*m_pCroButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+	(*m_pCroButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriPButton).SendMessage(BM_SETSTATE, false, 0L);
 
-	(*m_pCroPButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+	(*m_pCroPButton).SendMessage(BM_SETSTATE, true, 0L);
 }
 
 
 void COptnDlg::OnClickedTriangle() {
 	if (m_bRandom) {
-		m_bRandom = FALSE;
+		m_bRandom = false;
 		((CWnd *)this)->CheckDlgButton(IDC_RANDOM, m_bRandom);
 	}
 	chNewBoard = TRIANGLE;
 
-	(*m_pCroButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pCroPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+	(*m_pCroButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pCroPButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriPButton).SendMessage(BM_SETSTATE, false, 0L);
 
-	(*m_pTriButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+	(*m_pTriButton).SendMessage(BM_SETSTATE, true, 0L);
 }
 
 
 void COptnDlg::OnClickedTrianglePlus() {
 	if (m_bRandom) {
-		m_bRandom = FALSE;
+		m_bRandom = false;
 		((CWnd *)this)->CheckDlgButton(IDC_RANDOM, m_bRandom);
 	}
 	chNewBoard = TRIANGLE_PLUS;
 
-	(*m_pCroButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pCroPButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-	(*m_pTriButton).SendMessage(BM_SETSTATE, FALSE, 0L);
+	(*m_pCroButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pCroPButton).SendMessage(BM_SETSTATE, false, 0L);
+	(*m_pTriButton).SendMessage(BM_SETSTATE, false, 0L);
 
-	(*m_pTriPButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+	(*m_pTriPButton).SendMessage(BM_SETSTATE, true, 0L);
 }
 
 } // namespace Peggle

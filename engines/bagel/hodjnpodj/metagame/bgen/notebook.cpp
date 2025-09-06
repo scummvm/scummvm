@@ -83,10 +83,10 @@ static  CFont *pNoteFont = nullptr;              // font to use for displaying n
 //static  char        chPathName[128];                // buffer to hold path name of the notebook file
 //static  CFile *pInfoFile = nullptr;              // the notebook file
 //static  uint32       nInfoFileSize = 0;              // size of notebook file
-//static  BOOL        bInfoEOF = FALSE;               // whether end-of-file has been reached
+//static  bool        bInfoEOF = false;               // whether end-of-file has been reached
 
-static  BOOL        bActiveWindow = FALSE;          // whether our window is active
-static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
+static  bool        bActiveWindow = false;          // whether our window is active
+static  bool        bFirstTime = true;              // flag for first time information is displayed
 //static  int         nNotebook_DX, nNotebook_DY;     // size of useable notebook background
 //static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
 //static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
@@ -100,14 +100,14 @@ static  CNote *pKeyNote = nullptr;               // single note to be shown
 
 
 
-BOOL CNotebook::SetupKeyboardHook(void) {
+bool CNotebook::SetupKeyboardHook(void) {
 	pNotebookDialog = this;                         // retain pointer to our dialog box
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, NotebookHookProc, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -118,7 +118,7 @@ void CNotebook::RemoveKeyboardHook(void) {
 	pNotebookDialog = nullptr;
 	lpfnKbdHook = nullptr;
 	hKbdHook = nullptr;
-	m_bKeyboardHook = FALSE;
+	m_bKeyboardHook = false;
 }
 
 
@@ -129,7 +129,7 @@ LRESULT NotebookHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK)lpfnKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
-		return FALSE;
+		return false;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -175,10 +175,10 @@ LRESULT NotebookHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CNotebook::UpdateNote(pDC);
 		(*pNotebookDialog).ReleaseDC(pDC);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -235,7 +235,7 @@ void CNotebook::OnCancel(void) {
 
 
 void CNotebook::OnDestroy() {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 
 	if (pNoteFont != nullptr)
 		delete pNoteFont;                           // release the font file
@@ -254,7 +254,7 @@ void CNotebook::OnDestroy() {
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
+		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -274,7 +274,7 @@ void CNotebook::OnDestroy() {
 	if (pBackgroundBitmap != nullptr) {                // if we had a background to refresh
 		delete pBackgroundBitmap;                   // ... then validate the parent window
 		pBackgroundBitmap = nullptr;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*pParentWnd).ValidateRect(nullptr);
 	}
@@ -294,8 +294,8 @@ void CNotebook::OnDestroy() {
 }
 
 
-BOOL CNotebook::OnInitDialog() {
-	BOOL    bSuccess;
+bool CNotebook::OnInitDialog() {
+	bool    bSuccess;
 	CWnd *pButton;                                               // pointer to the OKAY button
 	CRect   myRect;                                                 // rectangle that holds the button location
 	int     x, y, dx, dy;                                           // used for calculating positioning info
@@ -339,35 +339,35 @@ BOOL CNotebook::OnInitDialog() {
 
 	m_bKeyboardHook = SetupKeyboardHook();          // establish keyboard hook
 
-	bFirstTime = TRUE;
+	bFirstTime = true;
 
-	return TRUE;                                              // return TRUE  unless focused on a control
+	return true;                                              // return true  unless focused on a control
 }
 
 
-void CNotebook::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
-	BOOL    bUpdateNeeded;
+void CNotebook::OnActivate(unsigned int nState, CWnd *, bool /*bMinimized*/) {
+	bool    bUpdateNeeded;
 
 	switch (nState) {                                               // force a repaint if activated
 	case WA_INACTIVE:                                           // .. by switching from some other
-		bActiveWindow = FALSE;                                  // ... application
+		bActiveWindow = false;                                  // ... application
 		break;
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
+		bActiveWindow = true;
+		bUpdateNeeded = GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 	}
 }
 
 
 void CNotebook::OnPaint() {
-	BOOL        bSuccess;
+	bool        bSuccess;
 	CPaintDC    dc(this);                                           // device context for painting
 
 	if (bFirstTime) {                                           // acquire resources and if first time
-		bFirstTime = FALSE;
+		bFirstTime = false;
 		bSuccess = CreateWorkAreas(&dc);
 		if (!bSuccess)
 			CDialog::OnCancel();
@@ -382,7 +382,7 @@ void CNotebook::UpdateNotebook(CDC *pDC) {
 
 	DoWaitCursor();                                             // put up the hourglass cursor
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);  // setup the proper palette
+	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);  // setup the proper palette
 	(*pDC).RealizePalette();
 
 	if (pWorkDC == nullptr) {                                      // if we don't have a work area
@@ -401,7 +401,7 @@ void CNotebook::UpdateNotebook(CDC *pDC) {
 		(*pDC).BitBlt(0, 0, NOTEBOOK_DX, NOTEBOOK_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
-	(*pDC).SelectPalette(pPalOld, FALSE);                       // reset the palette
+	(*pDC).SelectPalette(pPalOld, false);                       // reset the palette
 
 	DoArrowCursor();                                            // return to an arrow cursor
 }
@@ -411,10 +411,10 @@ void CNotebook::UpdateNote(CDC *pDC) {
 	CPalette *pPalOld;
 
 	if (pWorkDC == nullptr)                                        // update everything if no work area
-		(*pNotebookDialog).InvalidateRect(nullptr, FALSE);
+		(*pNotebookDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
 		DoWaitCursor();                                         // put up the hourglass cursor
-		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // setup the proper palette
+		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
 		UpdateContent(pWorkDC);                                 // zap it to the screen
@@ -436,7 +436,7 @@ void CNotebook::UpdateNote(CDC *pDC) {
 			NOTEBOOK_DX - TEXT_MORE_DX,
 			NOTEBOOK_DY - NOTEBOOK_CURL_DY,
 			SRCCOPY);
-		(*pDC).SelectPalette(pPalOld, FALSE);                   // reset the palette
+		(*pDC).SelectPalette(pPalOld, false);                   // reset the palette
 		DoArrowCursor();
 	}                                                           // return to an arrow cursor
 }
@@ -571,8 +571,8 @@ void CNotebook::ShowClue(CNote *pNote) {
 }
 
 
-BOOL CNotebook::OnEraseBkgnd(CDC *) {
-	return TRUE;                                                  // do not automatically erase background to white
+bool CNotebook::OnEraseBkgnd(CDC *) {
+	return true;                                                  // do not automatically erase background to white
 }
 
 
@@ -597,7 +597,7 @@ void CNotebook::RefreshBackground(void) {
 }
 
 
-void CNotebook::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void CNotebook::OnShowWindow(bool bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -614,7 +614,7 @@ void CNotebook::OnSize(unsigned int nType, int cx, int cy) {
 
 
 int CNotebook::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	AddFontResource("msserif.fon");                       // create the text font we'll use
 	pNoteFont = new CFont();
@@ -629,14 +629,14 @@ int CNotebook::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 
-BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
-	BOOL        bSuccess = FALSE;
+bool CNotebook::CreateWorkAreas(CDC *pDC) {
+	bool        bSuccess = false;
 	//CPalette *pPalOld;
 	CRect       myRect;
 
 	pNotebookBitmap = FetchBitmap(pDC, nullptr, NOTEBOOK_SPEC); // fetch the notebook's bitmap
 	if (pNotebookBitmap == nullptr)                            // ... and punt if not successful
-		return FALSE;
+		return false;
 	// get the background bitmap
 	if ((GetFreeSpace(0) >= (unsigned long)500000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)400000))
@@ -644,7 +644,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	(*pDC).SelectPalette(pBackgroundPalette, FALSE); // create an offscreen bitmap that
+	(*pDC).SelectPalette(pBackgroundPalette, false); // create an offscreen bitmap that
 	(void)(*pDC).RealizePalette();                           // ... we can use to construct note
 	// ... entries to avoid flashes
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&
@@ -654,24 +654,24 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 			pWorkDC = new CDC();
 			if ((pWorkDC != nullptr) &&
 				(*pWorkDC).CreateCompatibleDC(pDC)) {
-				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, FALSE);
+				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
 				(void)(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
-					bSuccess = TRUE;
+					bSuccess = true;
 			}
 		}
 	} else {
 		pWork = nullptr;
 		pWorkDC = nullptr;
-		bSuccess = TRUE;
+		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, FALSE);
+	(void)(*pDC).SelectPalette(pWorkPalOld, false);
 
 	if (!bSuccess) {                                        // not successful, so tear down
 		if (pWorkPalOld != nullptr) {                          // ... the work area
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
+			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -690,7 +690,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 		pTitleText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 	*/
 
-	return TRUE;
+	return true;
 }
 
 
@@ -782,11 +782,11 @@ void CNotebook::OnLButtonDown(unsigned int nFlags, CPoint point) {
 }
 
 
-BOOL CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
+bool CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 

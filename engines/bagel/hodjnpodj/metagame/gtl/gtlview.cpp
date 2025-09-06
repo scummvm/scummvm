@@ -36,7 +36,7 @@ namespace Gtl {
 
 extern HWND     ghwndParent;
 extern CBfcMgr  *lpMetaGameStruct;
-extern BOOL     bExitMetaDLL;
+extern bool     bExitMetaDLL;
 extern CBgbMgr  *gpBgbMgr;
 
 
@@ -109,11 +109,11 @@ cleanup:
 void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 // returns: void
 {
-//    dbgtrc = TRUE ;   // debugging code
+//    dbgtrc = true ;   // debugging code
 
 	JXENTER(CGtlView::OnUpdate) ;
 	CGtlHint *xpcGtlHint = (CGtlHint *)xpHint ;
-	//BOOL bDone = FALSE ;    // TRUE when hint is fully identified
+	//bool bDone = false ;    // true when hint is fully identified
 
 	TRACE("Enter OnUpdate\n");
 
@@ -130,13 +130,13 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 	case HINT_UPDATE_RECT:
 		if (xpHint) {
 			xpGtlData->Draw(this, &xpcGtlHint->cHintRect);
-			//bDone = TRUE ;
+			//bDone = true ;
 		}
 		break ;
 
 	case HINT_UPDATE_FULL:
 		xpGtlData->Draw(this, nullptr);
-		//bDone = TRUE ;
+		//bDone = true ;
 		break ;
 
 	case HINT_INIT_METAGAME:
@@ -151,14 +151,14 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 		// for all views
 		//
 		if (xpDoc->m_xpGtlData)
-			xpDoc->m_xpGtlData->m_bChangeSize = TRUE;
+			xpDoc->m_xpGtlData->m_bChangeSize = true;
 		break;
 
 	default:
 
 		//xpGtlData->Draw(this, nullptr);
-		xpGtlData->m_bStartMetaGame = FALSE;
-		xpGtlData->_metaGame = xpGtlData->m_bInitMetaGame = TRUE;
+		xpGtlData->m_bStartMetaGame = false;
+		xpGtlData->_metaGame = xpGtlData->m_bInitMetaGame = true;
 		xpDoc->m_xpGtlData->InitMetaGame(this);
 
 		// BRIAN
@@ -189,9 +189,9 @@ void CGtlView::OnInitialUpdate(void) {
 	CGtlDoc *xpDoc = GetDocument() ;
 
 	#if NEWSCROLL
-//  m_cViewBsuSet.InitWndBsuSet(this, TRUE) ;
-	m_cViewBsuSet.InitWndBsuSet(this, SCROLLVIEW, FALSE) ;
-	m_bBsuInit = TRUE ;
+//  m_cViewBsuSet.InitWndBsuSet(this, true) ;
+	m_cViewBsuSet.InitWndBsuSet(this, SCROLLVIEW, false) ;
+	m_bBsuInit = true ;
 	if (m_bBsuInit && xpDoc->m_xpGtlData) {
 		m_cViewBsuSet.PrepareWndBsuSet(CSize(xpDoc->m_xpGtlData->m_iSizeX,
 		                                     xpDoc->m_xpGtlData->m_iSizeY),
@@ -234,11 +234,11 @@ void CGtlView::OnDestroy() {
 }
 
 //* CGtlView::PreCreateWindow -- change view window style
-BOOL CGtlView::PreCreateWindow(CREATESTRUCT& cCs)
+bool CGtlView::PreCreateWindow(CREATESTRUCT& cCs)
 // returns: value returned by base class function
 {
 	JXENTER(CGtlView::PreCreateWindow) ;
-	BOOL bRetval ;      // return value
+	bool bRetval ;      // return value
 	static CString stWndClass("") ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 
@@ -297,8 +297,8 @@ void CGtlView::OnDraw(CDC *xpDc) {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlView message handlers
 
-BOOL CGtlView::OnEraseBkgnd(CDC *) {
-	return TRUE ; // this tells MFC that the background has been erased
+bool CGtlView::OnEraseBkgnd(CDC *) {
+	return true ; // this tells MFC that the background has been erased
 }
 
 void CGtlView::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
@@ -320,7 +320,7 @@ void CGtlView::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	JXENTER(CGtlView::OnKeyDown) ;
 	CGtlDoc *xpDoc = GetDocument() ;
-	BOOL    bJunk, bAnimations;
+	bool    bJunk, bAnimations;
 	CPoint  ptEdge(0, 0);
 	CPoint  ptAdjustedEdge(0, 0);
 
@@ -328,7 +328,7 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 
 	case VK_F1: {
 		CRules RulesDlg(this, "metarule.txt", gpBgbMgr->m_xpGamePalette, nullptr);
-		if ((bAnimations = gpBgbMgr->AnimationsActive()) != FALSE)
+		if ((bAnimations = gpBgbMgr->AnimationsActive()) != false)
 			gpBgbMgr->PauseAnimations();
 		gpBgbMgr->CacheOptimize(2000000);
 		(void) RulesDlg.DoModal();
@@ -351,16 +351,16 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 
 	case VK_H:
 		if (xpDoc->m_xpGtlData->m_xpXodjChain->m_bHodj)
-			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_lpcCharSprite->m_crPosition, TRUE);
+			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_lpcCharSprite->m_crPosition, true);
 		else
-			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_xpXodjNext->m_lpcCharSprite->m_crPosition, TRUE);
+			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_xpXodjNext->m_lpcCharSprite->m_crPosition, true);
 		break;
 
 	case VK_P:
 		if (xpDoc->m_xpGtlData->m_xpXodjChain->m_bHodj)
-			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_xpXodjNext->m_lpcCharSprite->m_crPosition, TRUE);
+			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_xpXodjNext->m_lpcCharSprite->m_crPosition, true);
 		else
-			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_lpcCharSprite->m_crPosition, TRUE);
+			xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpXodjChain->m_lpcCharSprite->m_crPosition, true);
 		break;
 
 	/*
@@ -371,7 +371,7 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 
 	case VK_SPACE:
 	case VK_RETURN:
-		xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpCurXodj->m_lpcCharSprite->m_crPosition, TRUE);
+		xpDoc->m_xpcLastFocusView->m_cViewBsuSet.EdgeToCenter(xpDoc->m_xpGtlData->m_xpCurXodj->m_lpcCharSprite->m_crPosition, true);
 		break;
 
 	case VK_LEFT:
@@ -475,12 +475,12 @@ void CGtlView::OnSoundNotify(CSound *) {
 void CGtlView::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                      // find and remove all keyboard events
+	while (true) {                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, m_hWnd, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                      // find and remove all mouse events
+	while (true) {                      // find and remove all mouse events
 		if (!PeekMessage(&msg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -500,11 +500,11 @@ void CGtlView::OnTimer(uintptr nEventID) {
 }
 
 
-BOOL CGtlView::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
+bool CGtlView::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 } // namespace Gtl

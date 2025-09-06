@@ -150,7 +150,7 @@ public:
 		Close();
 	}
 
-	BOOL Open(const char *lpszFileName,
+	bool Open(const char *lpszFileName,
 		unsigned int nOpenFlags = CFile::modeRead,
 		CFileException *pError = nullptr);
 	void Close();

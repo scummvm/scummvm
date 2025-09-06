@@ -116,7 +116,7 @@ void CUserCfgDlg::GetDlgData() {
 }
 
 
-BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
 	*/
@@ -125,13 +125,13 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case IDOK:
-			m_bSave = TRUE;
+			m_bSave = true;
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		/*
 		* reset params to default
@@ -259,7 +259,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -269,12 +269,12 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	tmpRect.SetRect(22, 135, 122, 155);
 	m_pScrollBar = new CScrollBar;
 	m_pScrollBar->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_LIMIT);
-	m_pScrollBar->SetScrollRange(SCROLL_MIN, SCROLL_MAX, TRUE);
+	m_pScrollBar->SetScrollRange(SCROLL_MIN, SCROLL_MAX, true);
 
 	tmpRect.SetRect(22, 56, 90, 76);
 	m_pLevelScroll = new CScrollBar;
 	m_pLevelScroll->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_LEVEL);
-	m_pLevelScroll->SetScrollRange(LEVEL_MIN, LEVEL_MAX, TRUE);
+	m_pLevelScroll->SetScrollRange(LEVEL_MIN, LEVEL_MAX, true);
 
 	pDC = GetDC();
 
@@ -310,7 +310,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		(*pDefaultsButton).SetControl(ID_RESET, this);              // tie to the dialog control
 	}
 
-	m_bSave = FALSE;
+	m_bSave = false;
 
 	m_nTimeLimit = GetPrivateProfileInt(INI_SECTION, "TimeLimit", LIMIT_DEF, INI_FILENAME);
 	if (m_nTimeLimit == 0)
@@ -323,7 +323,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		m_nDifficultyLevel = LEVEL_DEF;
 
 	PutDlgData();
-	return TRUE;
+	return true;
 }
 
 

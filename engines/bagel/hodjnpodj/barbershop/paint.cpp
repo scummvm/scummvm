@@ -56,7 +56,7 @@ namespace Barbershop {
 CPaint::CPaint(CDC *pDC) {
 	CBitmap *pBmpCardSet = nullptr;
 	CBitmap *pCard = nullptr;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i, j;
 
 	for (i = 0; i < CARDS_PER_COL; i++) {    // Initialize master alphabet list
@@ -81,8 +81,8 @@ CPaint::CPaint(CDC *pDC) {
 			ASSERT(bSuccess);
 
 			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetHotspot(CARD_HOT_X, CARD_HOT_Y);
-			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMobile(TRUE);
-			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMasked(TRUE);
+			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMobile(true);
+			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMasked(true);
 		}  // end for
 
 		if (pBmpCardSet != nullptr) {
@@ -202,13 +202,13 @@ void CPaint::Board(CDC *pDC, CBoard *pBoard) {
 			m_pSprite->m_cCard = pCard[j];
 			(*m_pSprite).LinkSprite();
 
-			pCard[j]->m_bIsBack = FALSE;
+			pCard[j]->m_bIsBack = false;
 		} else {
 			m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) m_pSprite);
 			m_pSprite->m_cCard = pCard[j];
 			(*m_pSprite).LinkSprite();
 
-			pCard[j]->m_bIsBack = TRUE;
+			pCard[j]->m_bIsBack = true;
 		} // end if
 
 		pCard[j]->m_pSprite = m_pSprite;
@@ -228,7 +228,7 @@ void CPaint::Board(CDC *pDC, CBoard *pBoard) {
 
 		m_pSprite->m_cCard  = pCard[0];     // update internal card struct
 		pCard[0]->m_pSprite = m_pSprite;
-		pCard[0]->m_bIsBack = TRUE;
+		pCard[0]->m_bIsBack = true;
 
 		Stack(pDC, pCard[0], i);                    // paint it on screen
 		pCard[0] = pCard[0]->m_pNextCard;           // Advance to next card
@@ -328,12 +328,12 @@ void CPaint::FlipCard(CDC *pDC, CCard *pCard) {
 	* Reverse card. If it is a back, flip it forward, and vise versa. *
 	******************************************************************/
 	pCard->m_pSprite = new OSpr();
-	if (pCard->m_bIsBack == TRUE) {
+	if (pCard->m_bIsBack == true) {
 		(*m_cCardSet[pCard->GetValue()]).DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
-		pCard->m_bIsBack = FALSE;
+		pCard->m_bIsBack = false;
 	} else {
 		(*m_cCardSet[m_nCardBack]).DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
-		pCard->m_bIsBack = TRUE;
+		pCard->m_bIsBack = true;
 	}
 
 	pCard->m_pSprite->LinkSprite();
@@ -405,7 +405,7 @@ void CPaint::Stack(CDC *pDC, CCard *pCard, int nSize) {
 
 	default:
 		if (pCard->m_pPrevCard != nullptr) {    // card face req pos?
-			if (pCard->m_pPrevCard->m_bIsBack == FALSE) {
+			if (pCard->m_pPrevCard->m_bIsBack == false) {
 				pCard->m_cOrigin.x = pCard->m_pPrevCard->m_cOrigin.x + STACK_FACE_DX;
 				pCard->m_cOrigin.y = pCard->m_pPrevCard->m_cOrigin.y + STACK_FACE_DY;
 				break;
@@ -448,11 +448,11 @@ void CPaint::Stack(CDC *pDC, CCard *pCard, int nSize) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaint::IsNewBack(int nBack) {
+bool CPaint::IsNewBack(int nBack) {
 	if (m_nCardBack == nBack)  {     // any change?
-		return FALSE;
+		return false;
 	} else {
-		return TRUE;
+		return true;
 	}
 }
 
@@ -496,7 +496,7 @@ void CPaint::ChangeBack(CDC *pDC, CBoard *pBoard, int nBack) {
 		pCard   = pStack->Bottom();
 
 		while (pCard != nullptr) {
-			if (pCard->m_bIsBack == FALSE) {
+			if (pCard->m_bIsBack == false) {
 				pCard = pCard->m_pNextCard;
 				continue;
 			}

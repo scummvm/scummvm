@@ -48,8 +48,8 @@ public:
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispLimit(void);
@@ -69,7 +69,7 @@ protected:
 	CScrollBar *m_pLevelScroll;
 	unsigned int        m_nTimeLimit;
 	int         m_nDifficultyLevel;
-	BOOL        m_bSave;                    // True if should save theses values
+	bool        m_bSave;                    // True if should save theses values
 };
 
 } // namespace Riddles

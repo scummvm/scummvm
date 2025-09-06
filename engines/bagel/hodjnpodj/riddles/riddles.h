@@ -138,7 +138,7 @@ private:
 
 protected:
 	void        FlushInputEvents(void);
-	BOOL        CheckUserGuess(const char *);
+	bool        CheckUserGuess(const char *);
 	ERROR_CODE  RepaintSpriteList(void);
 	ERROR_CODE  LoadRiddle(void);
 	ERROR_CODE  BuildSpriteList(void);
@@ -147,7 +147,7 @@ protected:
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
 	ERROR_CODE  LoadMasterSprites(void);
 	void        GameReset(void);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 
@@ -175,9 +175,9 @@ protected:
 	int         m_nTimer;
 	int         m_nDifficultyLevel;
 	unsigned int        m_nRiddleNumber;
-	BOOL        m_bGameActive;
-	BOOL        m_bPause;
-	BOOL        m_bIgnoreScrollClick;
+	bool        m_bGameActive;
+	bool        m_bPause;
+	bool        m_bIgnoreScrollClick;
 };
 
 } // namespace Riddles

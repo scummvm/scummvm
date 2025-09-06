@@ -40,7 +40,7 @@ CDC::~CDC() {
 }
 
 CDC *CDC::FromHandle(HDC hDC) {
-	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(true);
 	assert(pMap != nullptr);
 
 	CDC *pObject = pMap->FromHandle(hDC);
@@ -49,7 +49,7 @@ CDC *CDC::FromHandle(HDC hDC) {
 }
 
 void CDC::AfxHookObject() {
-	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(true);
 	assert(pMap != nullptr);
 
 	if (!pMap->LookupPermanent(m_hDC)) {
@@ -60,7 +60,7 @@ void CDC::AfxHookObject() {
 
 void CDC::AfxUnhookObject() {
 	if (m_hDC && _permanent) {
-		CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+		CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(true);
 		assert(pMap != nullptr);
 
 		pMap->RemoveHandle(m_hDC);
@@ -68,12 +68,12 @@ void CDC::AfxUnhookObject() {
 	}
 }
 
-BOOL CDC::CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
+bool CDC::CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
                    const char *lpszOutput, const void *lpInitData) {
 	error("TODO: CDC::CreateDC");
 }
 
-BOOL CDC::CreateCompatibleDC(CDC *pDC) {
+bool CDC::CreateCompatibleDC(CDC *pDC) {
 	assert(!m_hDC);
 	CDC::Impl *dc = new CDC::Impl();
 
@@ -92,7 +92,7 @@ BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 	return true;
 }
 
-BOOL CDC::DeleteDC() {
+bool CDC::DeleteDC() {
 	AfxUnhookObject();
 
 	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
@@ -101,16 +101,16 @@ BOOL CDC::DeleteDC() {
 	return true;
 }
 
-BOOL CDC::Attach(HDC hDC) {
+bool CDC::Attach(HDC hDC) {
 	assert(m_hDC == nullptr);
 
 	if (hDC == nullptr)
-		return FALSE;
+		return false;
 
 	m_hDC = hDC;
 	AfxHookObject();
 
-	return TRUE;
+	return true;
 }
 
 HDC CDC::Detach() {
@@ -183,7 +183,7 @@ void CDC::resetClipRect() {
 	dc->getSurface()->resetClip();
 }
 
-BOOL CDC::PtVisible(int x, int y) {
+bool CDC::PtVisible(int x, int y) {
 	Gfx::Surface *surface = impl()->getSurface();
 	Common::Rect clipRect = surface->getClipRect();
 
@@ -199,11 +199,11 @@ BOOL CDC::PtVisible(int x, int y) {
 	return Common::Rect(pts[0].x, pts[0].y, pts[1].x, pts[1].y).contains(x, y);
 }
 
-BOOL CDC::PtVisible(POINT point) {
+bool CDC::PtVisible(POINT point) {
 	return PtVisible(point.x, point.y);
 }
 
-BOOL CDC::RectVisible(LPCRECT lpRect) {
+bool CDC::RectVisible(LPCRECT lpRect) {
 	Gfx::Surface *surface = impl()->getSurface();
 	Common::Rect clipRect = surface->getClipRect();
 
@@ -265,7 +265,7 @@ int CDC::SetROP2(int nDrawMode) {
 	return impl()->setROP2(nDrawMode);
 }
 
-BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
+bool CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
@@ -279,7 +279,7 @@ BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
 	return true;
 }
 
-BOOL CDC::DPtoLP(RECT *lpRect) {
+bool CDC::DPtoLP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
@@ -293,7 +293,7 @@ BOOL CDC::DPtoLP(RECT *lpRect) {
 	return true;
 }
 
-BOOL CDC::LPtoDP(LPPOINT lpPoints, int nCount) {
+bool CDC::LPtoDP(LPPOINT lpPoints, int nCount) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
@@ -307,7 +307,7 @@ BOOL CDC::LPtoDP(LPPOINT lpPoints, int nCount) {
 	return true;
 }
 
-BOOL CDC::LPtoDP(RECT *lpRect) {
+bool CDC::LPtoDP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
@@ -321,13 +321,13 @@ BOOL CDC::LPtoDP(RECT *lpRect) {
 	return true;
 }
 
-BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+bool CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
         int xSrc, int ySrc, uint32 dwRop) {
 	impl()->bitBlt(x, y, nWidth, nHeight, pSrcDC, xSrc, ySrc, dwRop);
 	return true;
 }
 
-BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
+bool CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
         int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop) {
 	impl()->stretchBlt(x, y, nWidth, nHeight, pSrcDC,
 		xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
@@ -367,12 +367,12 @@ void CDC::FillSolidRect(LPCRECT lpRect, COLORREF color) {
 	surf->fillRect(*lpRect, color);
 }
 
-BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
+bool CDC::FloodFill(int x, int y, COLORREF crColor) {
 	impl()->floodFill(x, y, crColor);
 	return true;
 }
 
-BOOL CDC::FloodFill(int x, int y, COLORREF crColor,
+bool CDC::FloodFill(int x, int y, COLORREF crColor,
         unsigned int nFillType) {
 	impl()->floodFill(x, y, crColor, nFillType);
 	return true;
@@ -386,12 +386,12 @@ void CDC::Rectangle(int x1, int y1, int x2, int y2) {
 	impl()->rectangle(x1, y1, x2, y2);
 }
 
-BOOL CDC::Pie(int x1, int y1, int x2, int y2,
+bool CDC::Pie(int x1, int y1, int x2, int y2,
               int x3, int y3, int x4, int y4) {
 	error("TODO: CDC::Pie");
 }
 
-BOOL CDC::DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags) {
+bool CDC::DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags) {
 	CRect rect = *lpRect;
 
 	// Determine edge colors
@@ -448,14 +448,14 @@ BOOL CDC::DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags) {
 	// Restore old pen
 	SelectObject(pOldPen);
 
-	return TRUE;
+	return true;
 }
 
-BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
+bool CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
 	error("TODO: CDC::Pie");
 }
 
-BOOL CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
+bool CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
                    int nWidth, int nHeight) {
 	impl()->frameRgn(pRgn, pBrush, nWidth, nHeight);
 	return true;
@@ -518,7 +518,7 @@ HGDIOBJ CDC::SelectObject(HGDIOBJ hGdiObj) {
 	return impl()->Attach(hGdiObj);
 }
 
-CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
+CPalette *CDC::SelectPalette(CPalette *pPalette, bool bForceBackground) {
 	HPALETTE hOld = impl()->selectPalette(
 		!pPalette ? nullptr : pPalette->m_hObject,
 		bForceBackground);
@@ -553,20 +553,20 @@ COLORREF CDC::SetTextColor(COLORREF crColor) {
 	return impl()->setTextColor(crColor);
 }
 
-BOOL CDC::TextOut(int x, int y, const char *lpszString, int nCount) {
+bool CDC::TextOut(int x, int y, const char *lpszString, int nCount) {
 	return impl()->textOut(x, y, lpszString, nCount);
 }
 
-BOOL CDC::TextOut(int x, int y, const CString &str) {
+bool CDC::TextOut(int x, int y, const CString &str) {
 	return impl()->textOut(x, y, str);
 }
 
-BOOL CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+bool CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
         const char *lpszString, unsigned int nCount, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
 }
 
-BOOL CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+bool CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
         const CString &str, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, str, lpDxWidths);
 }
@@ -632,8 +632,8 @@ CSize CDC::GetOutputTabbedTextExtent(const CString &str,
 		nTabPositions, lpnTabStopPositions);
 }
 
-BOOL CDC::GrayString(CBrush *pBrush,
-        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+bool CDC::GrayString(CBrush *pBrush,
+        bool(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
         int nCount, int x, int y, int nWidth, int nHeight) {
 	return impl()->grayString(pBrush, lpfnOutput, lpData,
 		nCount, x, y, nWidth, nHeight);
@@ -647,7 +647,7 @@ unsigned int CDC::SetTextAlign(unsigned int nFlags) {
 	return impl()->setTextAlign(nFlags);
 }
 
-BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
+bool CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	return impl()->getTextMetrics(lpMetrics);
 }
 
@@ -755,7 +755,7 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 	_bitmap = _defaultBitmap.bitmap();
 }
 
-HPALETTE CDC::Impl::selectPalette(HPALETTE pal, BOOL bForceBackground) {
+HPALETTE CDC::Impl::selectPalette(HPALETTE pal, bool bForceBackground) {
 	HPALETTE oldPal = _palette;
 	m_bForceBackground = bForceBackground;
 
@@ -771,7 +771,7 @@ HPALETTE CDC::Impl::selectPalette(HPALETTE pal, BOOL bForceBackground) {
 	return oldPal;
 }
 
-CPalette *CDC::Impl::selectPalette(CPalette *pal, BOOL bForceBackground) {
+CPalette *CDC::Impl::selectPalette(CPalette *pal, bool bForceBackground) {
 	CPalette *oldPal = _cPalette;
 	_cPalette = pal;
 	selectPalette((HPALETTE)_cPalette->m_hObject, bForceBackground);
@@ -1077,7 +1077,7 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 	return oldColor;
 }
 
-BOOL CDC::Impl::textOut(int x, int y, const char *lpszString, int nCount,
+bool CDC::Impl::textOut(int x, int y, const char *lpszString, int nCount,
 		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Gfx::Surface *dest = getSurface();
@@ -1110,7 +1110,7 @@ BOOL CDC::Impl::textOut(int x, int y, const char *lpszString, int nCount,
 	return true;
 }
 
-BOOL CDC::Impl::textOut(int x, int y, const CString &str,
+bool CDC::Impl::textOut(int x, int y, const CString &str,
 		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Gfx::Surface *dest = getSurface();
@@ -1126,12 +1126,12 @@ BOOL CDC::Impl::textOut(int x, int y, const CString &str,
 	return true;
 }
 
-BOOL CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+bool CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 		const char *lpszString, unsigned int nCount, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
 
-BOOL CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+bool CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 		const CString &str, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
@@ -1235,8 +1235,8 @@ CSize CDC::Impl::getOutputTabbedTextExtent(const CString &str,
 	error("TODO");
 }
 
-BOOL CDC::Impl::grayString(CBrush *pBrush,
-	BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
+bool CDC::Impl::grayString(CBrush *pBrush,
+	bool(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 	int nCount, int x, int y, int nWidth, int nHeight) {
 	error("TODO");
 }
@@ -1251,7 +1251,7 @@ unsigned int CDC::Impl::setTextAlign(unsigned int nFlags) {
 	return oldAlign;
 }
 
-BOOL CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
+bool CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	TEXTMETRIC &tm = *lpMetrics;
 	Gfx::Font *font = *(CFont::Impl *)_font;
 

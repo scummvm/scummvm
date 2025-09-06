@@ -35,7 +35,7 @@ typedef Graphics::ManagedSurface *HDIB;
 #define PALVERSION   0x300
 
 /* DIB Macros*/
-#define IS_WIN30_DIB(lpbi)      ( TRUE )
+#define IS_WIN30_DIB(lpbi)      ( true )
 
 #define RECTWIDTH(lpRect)       ((lpRect)->right - (lpRect)->left)
 #define RECTHEIGHT(lpRect)      ((lpRect)->bottom - (lpRect)->top)
@@ -50,7 +50,7 @@ typedef Graphics::ManagedSurface *HDIB;
 #define WIDTHBYTES(bits)    (((bits) + 31) / 32 * 4)
 
 /* Function prototypes */
-BOOL      PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal);
+bool      PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal);
 
 
 /**
@@ -63,7 +63,7 @@ BOOL      PaintDIB(HDC, LPRECT, HDIB, LPRECT, CPalette *pPal);
  * @param hDIB		Specifies the DIB
  * @return		Specifies the palette
  */
-extern BOOL CreateDIBPalette(HDIB hDIB, CPalette *cPal);
+extern bool CreateDIBPalette(HDIB hDIB, CPalette *cPal);
 
 /**
  * This function calculates the address of the DIB's bits and returns a

@@ -112,7 +112,7 @@ public:     // func
 	void    UpdateCard(CDC*, CCard*);
 	void    FlipCard(CDC*, CCard*);
 	void    Stack(CDC*, CCard*, int nSize = -1);
-	BOOL    IsNewBack(int);
+	bool    IsNewBack(int);
 	void    ChangeBack(CDC*, CBoard*, int);
 
 public:     // vars

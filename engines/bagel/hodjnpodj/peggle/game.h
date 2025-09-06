@@ -70,14 +70,14 @@ public:
 	void UndoTurn(void);
 
 private:
-	BOOL    m_bProgramActive;
+	bool    m_bProgramActive;
 	HWND    m_hCallAppWnd;
 	CRect   ScrollRect;
 
 	void    OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
@@ -96,7 +96,7 @@ protected:
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
-	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
+	afx_msg void OnActivateApp(bool bActive, HTASK hTask);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG

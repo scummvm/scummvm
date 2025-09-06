@@ -38,8 +38,8 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-extern BOOL bExitMetaDLL;
-extern BOOL st_bExitDll;
+extern bool bExitMetaDLL;
+extern bool st_bExitDll;
 
 extern CBgbMgr *gpBgbMgr;
 extern HWND ghwndParent;
@@ -96,8 +96,8 @@ CGtlFrame::~CGtlFrame() {
 }
 
 //* CGtlFrame::NewFrame -- set pointer to interface manager in frame
-BOOL CGtlFrame::NewFrame(CBfcMgr *lpBfcMgr)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlFrame::NewFrame(CBfcMgr *lpBfcMgr)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::NewFrame) ;
 	int iError = 0 ;        // error code
@@ -121,7 +121,7 @@ void CGtlFrame::OnDestroy() {
 	        && m_lpBfcMgr->m_iFunctionCode != MG_DLLX_QUIT)
 		iReturnValue = m_lpBfcMgr->m_iFunctionCode ;
 
-	lpMetaGameStruct->m_bRestart = TRUE;
+	lpMetaGameStruct->m_bRestart = true;
 
 	priorApp->PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, iReturnValue);
 	pMainWindow = nullptr;
@@ -141,22 +141,22 @@ int CGtlFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 /////////////////////////////////////////////////////////////////////////////
 // CGtlFrame message handlers
 
-BOOL CGtlFrame::ShowClue(CPalette *pPalette, CNote *pNote) {
+bool CGtlFrame::ShowClue(CPalette *pPalette, CNote *pNote) {
 	CNotebook dlgNoteBook((CWnd *)this, pPalette, nullptr, pNote);
 	dlgNoteBook.DoModal();
 	SetupCursor();
-	return FALSE;
+	return false;
 }
 
 //* CGtlFrame::GetCurrentDocAndView -- get last focused doc/view
-BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
+bool CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
                                      CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView)
 // xpcGtlDoc (output) -- the document which most recently had focus
 //      in some view, or nullptr if none
 // xpcGtlFocusView (output) -- view which had most recent focus, or nullptr
 // xpcGtlMouseView (output) -- the view for this same document that was
 //      most recently touched by the mouse, or nullptr
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::GetCurrentDocAndView) ;
 	int iError = 0 ;        // error code
@@ -185,11 +185,11 @@ BOOL CGtlFrame::GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 
 
 //* CGtlFrame::PreCreateWindow -- change frame window style
-BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
+bool CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 // returns: value returned by base class function
 {
 	JXENTER(CGtlFrame::PreCreateWindow) ;
-	BOOL bRetval ;      // return value
+	bool bRetval ;      // return value
 	static CString stWndClass("") ;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 //  CClientDC cDc(this) ;
@@ -231,7 +231,7 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 
 
 //* CGtlFrame::RecalcLayout -- override CFrameWnd::RecalcLayout
-void CGtlFrame::RecalcLayout(BOOL bNotify)
+void CGtlFrame::RecalcLayout(bool bNotify)
 // returns: void
 {
 	JXENTER(CGtlFrame::RecalcLayout) ;
@@ -263,7 +263,7 @@ void CGtlFrame::RecalcLayout(BOOL bNotify)
 
 ////* CGtlFrame::CallOnFileNew --
 void CGtlFrame::CallOnFileNew(void)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::CallOnFileNew) ;
 	int iError = 0 ;        // error code
@@ -279,7 +279,7 @@ void CGtlFrame::CallOnFileNew(void)
 
 ////* CGtlFrame::CallOnFileOpen --
 void CGtlFrame::CallOnFileOpen(void)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::CallOnFileOpen) ;
 	int iError = 0 ;        // error code
@@ -309,8 +309,8 @@ void CGtlFrame::ShowOptions(CPalette *pPalette) {
 	cOptionsDlg.SetInitialOptions(lpMetaGameStruct);    // Sets the private members
 	nOptionsReturn = cOptionsDlg.DoModal();
 	if (nOptionsReturn == 1) {
-		bExitMetaDLL = TRUE;
-		st_bExitDll = TRUE;
+		bExitMetaDLL = true;
+		st_bExitDll = true;
 	}
 
 	return;
@@ -383,8 +383,8 @@ void CGtlFrame::OnCallOpen() {
 
 }
 
-BOOL CGtlFrame::OnEraseBkgnd(CDC *) {
-	return TRUE;
+bool CGtlFrame::OnEraseBkgnd(CDC *) {
+	return true;
 }
 
 void CGtlFrame::OnCallClose() {
@@ -419,7 +419,7 @@ void CGtlFrame::OnCallExit() {
 	::PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) iReturnValue);
 	#else
 //  CWnd::DestroyWindow();
-	AfxGetApp()->CloseAllDocuments(FALSE);
+	AfxGetApp()->CloseAllDocuments(false);
 	#endif
 }
 
@@ -430,7 +430,7 @@ void CGtlFrame::OnSysCommand(unsigned int nID, LPARAM lParam) {
 }
 
 
-void CGtlFrame::OnActivateApp(BOOL bActive, HTASK /*hTask*/) {
+void CGtlFrame::OnActivateApp(bool bActive, HTASK /*hTask*/) {
 	if (!bActive)
 		gpBgbMgr->CacheFlush();
 }

@@ -42,14 +42,14 @@ public:
 
 private:
 	void GetScores();
-	BOOL OnInitDialog() override;
+	bool OnInitDialog() override;
 	void ClearDialogImage(void);
 
 protected:
 	//{{AFX_MSG(COptions)
 	virtual void OnOK(void) override;
 	virtual void OnCancel(void) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG

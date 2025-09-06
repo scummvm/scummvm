@@ -37,7 +37,7 @@ ON_WM_KILLFOCUS()
 ON_WM_TIMER()
 END_MESSAGE_MAP()
 
-BOOL CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
+bool CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("EDIT", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }
@@ -46,7 +46,7 @@ void CEdit::LimitText(int nChars) {
 	_maxLength = nChars;
 }
 
-void CEdit::SetSel(int nStartChar, int nEndChar, BOOL bNoScroll) {
+void CEdit::SetSel(int nStartChar, int nEndChar, bool bNoScroll) {
 	warning("TODO: CEdit::SetSel");
 }
 

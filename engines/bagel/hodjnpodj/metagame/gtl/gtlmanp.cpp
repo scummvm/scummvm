@@ -32,16 +32,16 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-extern BOOL     bExitMetaDLL;
+extern bool     bExitMetaDLL;
 
 ///DEFS gtldat.h
 
 //* CGtlData::AcceptClick -- process a mouse click by user
-BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickType)
+bool CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickType)
 // xpGtlView -- CGtlView object
 // cClickPoint -- position of mouse when click (button up) occurred
 // iClickType -- CLICK_xxxx -- left/right up/move/down/double
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::AcceptClick) ;
 	CNode *lpFoundNode = nullptr;  // current node
@@ -51,7 +51,7 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 
 	uint32 stNowTime ;   // current time
 	long lTimeDiff ;            // time difference
-	BOOL bExitDll = FALSE;
+	bool bExitDll = false;
 
 	// Save current time
 	stNowTime = g_system->getMillis();
@@ -183,11 +183,11 @@ CNode FAR *CGtlData::PointToNode(CRPoint crPoint)
 }
 
 //* CGtlData::CallUpdate -- call to update all views for this map
-BOOL CGtlData::CallUpdate(CNode FAR *lpNode1, CNode FAR *lpNode2, BOOL bLinks, BOOL bWmPaint)
+bool CGtlData::CallUpdate(CNode FAR *lpNode1, CNode FAR *lpNode2, bool bLinks, bool bWmPaint)
 // lpNode1, lpNode2 -- node or link specifying range to be updated
-// bLinks -- if TRUE, also update all links of lpNode1
-// bWmPaint -- if TRUE, use WM_PAINT message.
-// returns: TRUE if error, FALSE otherwise
+// bLinks -- if true, also update all links of lpNode1
+// bWmPaint -- if true, use WM_PAINT message.
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::CallUpdate) ;
 	int iError = 0 ;            // error code
@@ -223,7 +223,7 @@ BOOL CGtlData::CallUpdate(CNode FAR *lpNode1, CNode FAR *lpNode2, BOOL bLinks, B
 		                                    crPoint2.x + NODERADIUS,
 		                                    crPoint2.y + NODERADIUS))) ;
 
-//  SetModifiedFlag(TRUE) ;
+//  SetModifiedFlag(true) ;
 	((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, lHintParam, &cHint) ;
 
 	// want to update all node 1 links
@@ -247,9 +247,9 @@ BOOL CGtlData::CallUpdate(CNode FAR *lpNode1, CNode FAR *lpNode2, BOOL bLinks, B
 
 //* CGtlData::CallUpdate -- call to update all views for this map
 //              -- version which updates a bitmap object
-BOOL CGtlData::CallUpdate(CBgbObject * lpcBgbObject)
+bool CGtlData::CallUpdate(CBgbObject * lpcBgbObject)
 // lpcBgbObject -- pointer to object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::CallUpdate) ;
 	int iError = 0 ;            // error code

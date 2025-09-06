@@ -48,12 +48,12 @@ CMnkOpt::CMnkOpt(CWnd* pParent /*=nullptr*/)
 	m_iPlayer1 = -1;
 	m_iStartStones = 0;
 	m_iTableStones = 0;
-	m_bInitData = FALSE;
+	m_bInitData = false;
 	m_iMaxDepth0 = 0;
 	m_iMaxDepth1 = 0;
-	m_bDumpMoves = FALSE;
-	m_bDumpPopulate = FALSE;
-	m_bDumpTree = FALSE;
+	m_bDumpMoves = false;
+	m_bDumpPopulate = false;
+	m_bDumpTree = false;
 	m_iCapDepth0 = 0;
 	m_iCapDepth1 = 0;
 	//}}AFX_DATA_INIT
@@ -143,7 +143,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMnkUsr message handlers
 
-BOOL CMnkUsr::OnInitDialog() {
+bool CMnkUsr::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 
 	CDC     *pDC;
@@ -167,11 +167,11 @@ BOOL CMnkUsr::OnInitDialog() {
 	}
 
 	m_xpUScrShell = (CScrollBar *)GetDlgItem(IDC_USCRSHELL) ;
-	m_xpUScrShell->SetScrollRange(MINSTONES, MAXSTONES, TRUE) ;
+	m_xpUScrShell->SetScrollRange(MINSTONES, MAXSTONES, true) ;
 	m_xpUScrShell->SetScrollPos(m_iUShells) ;
 
 	m_xpUScrStrength = (CScrollBar *)GetDlgItem(IDC_USCRSTRENGTH) ;
-	m_xpUScrStrength->SetScrollRange(MINSTRENGTH, MAXSTRENGTH, TRUE) ;
+	m_xpUScrStrength->SetScrollRange(MINSTRENGTH, MAXSTRENGTH, true) ;
 	m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
@@ -186,7 +186,7 @@ BOOL CMnkUsr::OnInitDialog() {
 
 
 	ReleaseDC(pDC);
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CMnkUsr::ClearDialogImage(void) {
@@ -203,7 +203,7 @@ void CMnkUsr::ClearDialogImage(void) {
 	ValidateRect(nullptr);
 }
 
-BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
 	*/
@@ -214,12 +214,12 @@ BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return FALSE;
+			return false;
 
 		default:
 			break;
@@ -284,7 +284,7 @@ void CMnkUsr::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* xpS
 //    if (xpiVariable)
 //	*xpiVariable = iValCur ;
 
-	//UpdateData(FALSE) ;
+	//UpdateData(false) ;
 
 	UpdateScrollbars();
 

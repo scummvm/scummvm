@@ -36,7 +36,7 @@ extern HCURSOR          hGameCursor;
 
 extern void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                           const char *pszAnimFile, const char *pszSoundFile,
-                          int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound);
+                          int nNumCels, int nXLoc, int nYLoc, int nSleep, bool bPlaySound);
 
 CPalette    *pGamePalette = nullptr;       // Palette to be used throughout the game
 CBmpButton  *pOptionButton = nullptr;      // Option button object for getting to the options dialog
@@ -48,7 +48,7 @@ POINT   ptCurrPosInGrid;
 POINT   ptLastPosInGrid;
 POINT   ptOrigPosInGrid;
 
-BOOL    bResetGame;
+bool    bResetGame;
 
 CDC         *pOffScreenDC = nullptr;
 CPalette    *pOldOffScreenPal = nullptr;
@@ -120,7 +120,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CSize   mySize;
-	BOOL    bTestCreate;                        // bool for testing the creation of each button
+	bool    bTestCreate;                        // bool for testing the creation of each button
 	int     x, y;
 	CText   atxtDisplayRow[NUMBEROFROWS];
 
@@ -145,7 +145,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 
 	m_hCallAppWnd = hCallingWnd;
 
-	m_bWordsForwardOnly = FALSE;
+	m_bWordsForwardOnly = false;
 
 	// Initialize globals to point to class fields
 	for (int i = 0; i < WORDSPERLIST; ++i) {
@@ -160,7 +160,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	pbmpSplashScreen = new CBitmap();
 	pbmpSplashScreen = FetchBitmap(pDC, &pGamePalette, SPLASHSPEC);      // get splash screen and game palettte
 
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);   // load game palette
+	pOldPal = pDC->SelectPalette(pGamePalette, false);   // load game palette
 	pDC->RealizePalette();                                  // realize game palette
 
 	// set window coordinates to center game on screeen
@@ -169,7 +169,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	MainRect.right = MainRect.left + GAME_WIDTH;    // determine where to place the game window
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
-	pDC->SelectPalette(pOldPal, FALSE);             // replace old palette
+	pDC->SelectPalette(pOldPal, false);             // replace old palette
 	ReleaseDC(pDC);                                 // release our window context
 
 	// Create the window as a POPUP so that no boarders, title, or menu are present;
@@ -177,7 +177,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	Create(WndClass, "Boffo Games - Word Search", WS_POPUP, MainRect, nullptr, 0);
 
 	pDC = GetDC();
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);   // load game palette
+	pOldPal = pDC->SelectPalette(pGamePalette, false);   // load game palette
 	pDC->RealizePalette();                                  // realize game palette
 
 	pOptionButton = new CBmpButton;         // create the Options button
@@ -200,7 +200,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	pOffScreenBmp->CreateCompatibleBitmap(pDC, GAME_WIDTH, GAME_HEIGHT);     // create offscreen bitmap
 	pOffScreenDC->CreateCompatibleDC(pDC);               // create offscreen DC
 
-	pOldOffScreenPal = pOffScreenDC->SelectPalette(pGamePalette, FALSE);    // load in game palette
+	pOldOffScreenPal = pOffScreenDC->SelectPalette(pGamePalette, false);    // load in game palette
 	pOldOffScreenBmp = pOffScreenDC->SelectObject(pOffScreenBmp);            // load in offscreen bitmap
 	pOffScreenDC->RealizePalette();                                         // realize palette
 
@@ -216,8 +216,8 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	bTestCreate = pTimerSprite->LoadCels(pDC, TIMERSPRITE, TIMERSPRITECELS);
 	ASSERT(bTestCreate);                    // test for sprite's creation
 	pTimerSprite->SetPosition(FLOWER_X, FLOWER_Y);
-	pTimerSprite->SetMasked(TRUE);
-	pTimerSprite->SetMobile(FALSE);
+	pTimerSprite->SetMasked(true);
+	pTimerSprite->SetMobile(false);
 
 	for (y = 0; y < WORDSPERLIST; y++) {
 		arWordDisplay[y].SetRect(20, 50 + (y * 15), 170, 50 + (y * 15) + 14);
@@ -227,7 +227,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	// paint splash screen to offscreen DC
 	PaintBitmap(pOffScreenDC, pGamePalette, pbmpSplashScreen, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-	pDC->SelectPalette(pOldPal, FALSE);             // replace old palette
+	pDC->SelectPalette(pOldPal, false);             // replace old palette
 	ReleaseDC(pDC);                                 // release our window context
 
 	for (y = 0; y < NUMBEROFROWS; y++) {
@@ -237,20 +237,20 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 		}
 	}
 
-	if (m_lpGameStruct->bPlayingMetagame == TRUE) {
+	if (m_lpGameStruct->bPlayingMetagame == true) {
 		pDC = GetDC();
-		m_bShowWordList = FALSE;
+		m_bShowWordList = false;
 		if (m_lpGameStruct->nSkillLevel == SKILLLEVEL_LOW) {
 			m_nTimeForGame = 75;
-			m_bWordsForwardOnly = TRUE;
+			m_bWordsForwardOnly = true;
 		}
 		if (m_lpGameStruct->nSkillLevel == SKILLLEVEL_MEDIUM) {
 			m_nTimeForGame = 60;
-			m_bWordsForwardOnly = TRUE;
+			m_bWordsForwardOnly = true;
 		}
 		if (m_lpGameStruct->nSkillLevel == SKILLLEVEL_HIGH) {
 			m_nTimeForGame = 60;
-			m_bWordsForwardOnly = FALSE;
+			m_bWordsForwardOnly = false;
 		}
 
 //	SetTimer( GAMETIMER, nTimerRes, nullptr );
@@ -266,8 +266,8 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 //	nTimerRes = (unsigned int)( (m_nTimeForGame * 1000) / ( TIMERSPRITECELS - 1) );
 		nTimerRes = (unsigned int)((m_nTimeForGame * 1000) / (TIMERSPRITECELS - 2));
 		nLastCell = -1;
-		m_bShowWordList = TRUE;
-		m_bWordsForwardOnly  = FALSE;
+		m_bShowWordList = true;
+		m_bWordsForwardOnly  = false;
 	}
 
 //CreateNewGrid();
@@ -275,8 +275,8 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 //SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
 // create buttons
 
-	m_bMouseCaptured = FALSE;
-	bResetGame = FALSE;
+	m_bMouseCaptured = false;
+	bResetGame = false;
 	lCurrentTimer = 1;
 
 	nWordsLeft = WORDSPERLIST;
@@ -373,7 +373,7 @@ void CMainWSWindow::SplashScreen() {
 
 	ASSERT(pDC);
 
-	pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);                   // load game palette
+	pOldPalette = pDC->SelectPalette(pGamePalette, false);                   // load game palette
 	pDC->RealizePalette();                                                      // realize game palette
 
 	pTimerSprite->SetCel(nLastCell);
@@ -381,7 +381,7 @@ void CMainWSWindow::SplashScreen() {
 
 	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pOffScreenDC, 0, 0, SRCCOPY);     // Draw Word grid from offscreen
 
-	pDC->SelectPalette(pOldPalette, FALSE);     // replace old palette
+	pDC->SelectPalette(pOldPalette, false);     // replace old palette
 	ReleaseDC(pDC);                             // release the window's context
 
 }
@@ -441,8 +441,8 @@ void CMainWSWindow::CreateNewGrid() {
 	char    cSpace = ' ';
 	char    cTemp1[21];
 	char    cTemp2[21];
-	BOOL    bTemp1;
-	BOOL    bTemp2;
+	bool    bTemp1;
+	bool    bTemp2;
 	int     nWordLen;
 	CText   atxtDisplayRow[NUMBEROFROWS];
 	CString strTemp;
@@ -495,7 +495,7 @@ void CMainWSWindow::CreateNewGrid() {
 		_strGameListDisplay[y] = cTemp2;
 
 		nWordLen = strlen(cTemp1);
-		bTemp1 = TRUE;
+		bTemp1 = true;
 		if (m_bWordsForwardOnly)
 			nDirection = brand() % 4;
 		else
@@ -507,7 +507,7 @@ void CMainWSWindow::CreateNewGrid() {
 				nIterations1 = 0;
 				nIterations2++;
 				y = -1;
-				bTemp1 = FALSE;
+				bTemp1 = false;
 				continue;
 			}
 			ptSPos.x = brand() % NUMBEROFCOLS;
@@ -558,18 +558,18 @@ void CMainWSWindow::CreateNewGrid() {
 			case 0: // going right
 				if (ptSPos.x + nWordLen > NUMBEROFCOLS)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y][ptSPos.x + z] != '\0') &&
 					        (acGameGrid[ptSPos.y][ptSPos.x + z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y][ptSPos.x + z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 1: // going down and right
@@ -577,35 +577,35 @@ void CMainWSWindow::CreateNewGrid() {
 					continue;
 				if (ptSPos.y + nWordLen > NUMBEROFROWS)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y + z][ptSPos.x + z] != '\0') &&
 					        (acGameGrid[ptSPos.y + z][ptSPos.x + z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y + z][ptSPos.x + z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 2: // going down
 				if (ptSPos.y + nWordLen > NUMBEROFROWS)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y + z][ptSPos.x] != '\0') &&
 					        (acGameGrid[ptSPos.y + z][ptSPos.x] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y + z][ptSPos.x] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 3: // going down and left
@@ -613,35 +613,35 @@ void CMainWSWindow::CreateNewGrid() {
 					continue;
 				if (ptSPos.x - nWordLen < 0)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y + z][ptSPos.x - z] != '\0') &&
 					        (acGameGrid[ptSPos.y + z][ptSPos.x - z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y + z][ptSPos.x - z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 4: // going left
 				if (ptSPos.x - nWordLen < 0)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y][ptSPos.x - z] != '\0') &&
 					        (acGameGrid[ptSPos.y][ptSPos.x - z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y][ptSPos.x - z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 5: // going up and left
@@ -649,35 +649,35 @@ void CMainWSWindow::CreateNewGrid() {
 					continue;
 				if (ptSPos.y - nWordLen < 0)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y - z][ptSPos.x - z] != '\0') &&
 					        (acGameGrid[ptSPos.y - z][ptSPos.x - z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y - z][ptSPos.x - z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 6: // going up
 				if (ptSPos.y - nWordLen < 0)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y - z][ptSPos.x] != '\0') &&
 					        (acGameGrid[ptSPos.y - z][ptSPos.x] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y - z][ptSPos.x] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			case 7: // going up and right
@@ -685,18 +685,18 @@ void CMainWSWindow::CreateNewGrid() {
 					continue;
 				if (ptSPos.y - nWordLen < 0)
 					continue;
-				bTemp2 = TRUE;
+				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
 					if ((acGameGrid[ptSPos.y - z][ptSPos.x + z] != '\0') &&
 					        (acGameGrid[ptSPos.y - z][ptSPos.x + z] != cTemp1[z])) {
-						bTemp2 = FALSE;
+						bTemp2 = false;
 					}
 				}
-				if (bTemp2 == FALSE)
+				if (bTemp2 == false)
 					continue;
 				for (z = 0; z < nWordLen; z++) {
 					acGameGrid[ptSPos.y - z][ptSPos.x + z] = cTemp1[z];
-					bTemp1 = FALSE;
+					bTemp1 = false;
 				}
 				break;
 			}
@@ -735,7 +735,7 @@ void CMainWSWindow::CreateNewGrid() {
 	Common::sprintf_s(cDisplayTemp, "Words Left: %i", nWordsLeft);
 	ptxtScore->DisplayString(pOffScreenDC, cDisplayTemp, 16, FW_BOLD, DK_CYAN);    //Shadowed
 
-	m_bNoGrid = FALSE;
+	m_bNoGrid = false;
 	EndWaitCursor();
 
 	return;
@@ -787,28 +787,28 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 	if (nOption > 0) {
 
 		if (nOption >= 20000) {
-			pMainGameWnd->m_bWordsForwardOnly = FALSE;
+			pMainGameWnd->m_bWordsForwardOnly = false;
 			nOption -= 20000;
 		} else {
-			pMainGameWnd->m_bWordsForwardOnly = TRUE;
+			pMainGameWnd->m_bWordsForwardOnly = true;
 			nOption -= 10000;
 		}
 
 		if (nOption >= 2000) {
-			pMainGameWnd->m_bShowWordList = FALSE;
+			pMainGameWnd->m_bShowWordList = false;
 			nOption -= 2000;
 		} else {
-			pMainGameWnd->m_bShowWordList = TRUE;
+			pMainGameWnd->m_bShowWordList = true;
 			nOption -= 1000;
 		}
 
 		pMainGameWnd->m_nTimeForGame = nOption;
-		bResetGame = TRUE;
+		bResetGame = true;
 	}
 	return;
 }
 
-BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int             nMainOption = 0;       // return from the Options dialog
 
 	if (HIWORD(lParam) == BN_CLICKED)   {       // only want to look at button clicks
@@ -816,10 +816,10 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // Option button clicked, then put up the Options dialog
 		case IDC_OPTION:
-			pOptionButton->EnableWindow(FALSE);
-			bResetGame = FALSE;
+			pOptionButton->EnableWindow(false);
+			bResetGame = false;
 			KillTimer(GAMETIMER);
-			if (m_lpGameStruct->bPlayingMetagame == TRUE) {
+			if (m_lpGameStruct->bPlayingMetagame == true) {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, (NO_NEWGAME | NO_OPTIONS),
 				                            lpfnOptionCallback, RULESFILE,
 				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr),
@@ -844,15 +844,15 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					break;
 				case IDC_OPTIONS_NEWGAME:
 					// reset the game and start a new hand
-					bResetGame = TRUE;
+					bResetGame = true;
 					break;
 				}
 			}
-			pOptionButton->EnableWindow(TRUE);
+			pOptionButton->EnableWindow(true);
 			//
 			// Check to see if the music state was changed and adjust to match it
 			//
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
+			if ((m_lpGameStruct->bMusicEnabled == false) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					pGameSound->stop();
 			} else if (m_lpGameStruct->bMusicEnabled) {
@@ -867,7 +867,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 			if (bResetGame && !m_lpGameStruct->bPlayingMetagame)
 				ResetGame();
-			else if ((m_nTimeForGame > 0) && (m_bNoGrid == FALSE)) {
+			else if ((m_nTimeForGame > 0) && (m_bNoGrid == false)) {
 				long    lTemp = (long)m_nTimeForGame * 1000;
 
 				nTimerRes = (unsigned int)(lTemp / (TIMERSPRITECELS - 1));
@@ -879,7 +879,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
@@ -896,10 +896,10 @@ void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	rCow.SetRect(COW_X, COW_Y, COW_X + COW_DX, COW_Y + COW_DY);
 	rFlower.SetRect(FLOWER_X, FLOWER_Y, FLOWER_X + FLOWER_DX, FLOWER_Y + FLOWER_DY);
 
-	if (m_lpGameStruct->bPlayingMetagame == FALSE) {
+	if (m_lpGameStruct->bPlayingMetagame == false) {
 		if (rNewGame.PtInRect(point))  {
 			SetCapture();
-			m_bMouseCaptured = TRUE;
+			m_bMouseCaptured = true;
 		}
 	}
 
@@ -935,11 +935,11 @@ void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			if (arScreenGrid[y][x].PtInRect(point)) {
 				CBrush cBrush((COLORREF)RGB(0, 255, 255));
 				pDC = GetDC();
-				pTempPal =  pDC->SelectPalette(pGamePalette, FALSE);
+				pTempPal =  pDC->SelectPalette(pGamePalette, false);
 
 				SetCapture();
 				pDC->RealizePalette();
-				m_bMouseCaptured = TRUE;
+				m_bMouseCaptured = true;
 				ptCurrPosInGrid.x = x;
 				ptCurrPosInGrid.y = y;
 				ptOrigPosInGrid.x = x;
@@ -949,7 +949,7 @@ void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				ptLastPosInGrid.x = x;
 				ptLastPosInGrid.y = y;
 				pDC->FrameRect(&arScreenGrid[y][x], &cBrush);
-				pDC->SelectPalette(pTempPal, FALSE);
+				pDC->SelectPalette(pTempPal, false);
 				ReleaseDC(pDC);
 			}
 		}
@@ -1151,7 +1151,7 @@ void CMainWSWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 			RedrawWindow(&rRefreshRect);
 
 			pDC = GetDC();
-			pTempPal = pDC->SelectPalette(pGamePalette, FALSE);
+			pTempPal = pDC->SelectPalette(pGamePalette, false);
 			pDC->RealizePalette();
 			FrameRgn.CreatePolygonRgn(aptFrame, 6, WINDING);
 			pDC->FrameRgn(&FrameRgn, &cBrush, 1, 1);
@@ -1161,7 +1161,7 @@ void CMainWSWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 		ptLastPosInGrid.y = ptCurrPosInGrid.y;
 	}
 	if (pDC != nullptr) {
-		pDC->SelectPalette(pTempPal, FALSE);
+		pDC->SelectPalette(pTempPal, false);
 		ReleaseDC(pDC);
 	}
 	CWnd::OnMouseMove(nFlags, point);
@@ -1170,14 +1170,14 @@ void CMainWSWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	int     x, y;
 	POINT   ptTemp;
-	BOOL    bFoundWord = FALSE;
+	bool    bFoundWord = false;
 	int     nWordNum = 0;
 	int     a, b;
 	CRect   rTemp;
 
 
 	if (m_bMouseCaptured) {
-		m_bMouseCaptured = FALSE;
+		m_bMouseCaptured = false;
 		ReleaseCapture();
 		if (rNewGame.PtInRect(point) && !m_lpGameStruct->bPlayingMetagame) {
 			ResetGame();
@@ -1196,16 +1196,16 @@ void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 				acWordBack[x] = acWordChosen[y];
 
 			for (x = 0; x < WORDSPERLIST; x++) {
-				bFoundWord = FALSE;
+				bFoundWord = false;
 				nWordNum = 0;
-				if (_strGameList[x].IsEmpty() == FALSE) {
+				if (_strGameList[x].IsEmpty() == false) {
 					if (_strGameList[x] == acWordChosen) {
-						bFoundWord = TRUE;
+						bFoundWord = true;
 						nWordNum = x;
 						break;
 					} else {
 						if (_strGameList[x] == acWordBack) {
-							bFoundWord = TRUE;
+							bFoundWord = true;
 							nWordNum = x;
 							break;
 						}
@@ -1305,7 +1305,7 @@ void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 		if (nWordsLeft == 0) {
 			CMsgDlg     msgGameOver((CWnd *)this, pGamePalette);
 			KillTimer(GAMETIMER);
-			m_bNoGrid = TRUE;
+			m_bNoGrid = true;
 			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);
 				sndPlaySound(ALLFOUND_WAV, SND_SYNC);            // play sound
@@ -1379,7 +1379,7 @@ void CMainWSWindow::OnTimer(uintptr nWhichTimer) {
 			pTimerSprite->PaintSprite(pOffScreenDC, FLOWER_X, FLOWER_Y);
 
 			ReleaseDC(pDC);
-			m_bNoGrid = TRUE;
+			m_bNoGrid = true;
 			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);
 				sndPlaySound(TIMEOUT_WAV, SND_SYNC);             // play sound
@@ -1439,17 +1439,17 @@ void CMainWSWindow::OnTimer(uintptr nWhichTimer) {
  *
  ****************************************************************/
 
-BOOL CMainWSWindow::OnEraseBkgnd(CDC *pDC) {
+bool CMainWSWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
-	return TRUE;
+	return true;
 }
 
-void CMainWSWindow::OnActivate(unsigned int nState, CWnd    *pWndOther, BOOL bMinimized) {
+void CMainWSWindow::OnActivate(unsigned int nState, CWnd    *pWndOther, bool bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 		}
 	return;
@@ -1576,7 +1576,7 @@ void CMainWSWindow::ReleaseResources(void) {
 		pOffScreenDC->SelectObject(pOldOffScreenBmp);
 
 	if (pOldOffScreenPal != nullptr)
-		pOffScreenDC->SelectPalette(pOldOffScreenPal, FALSE);
+		pOffScreenDC->SelectPalette(pOldOffScreenPal, false);
 
 	if (pOffScreenDC->m_hDC != nullptr) {
 		pOffScreenDC->DeleteDC();
@@ -1642,12 +1642,12 @@ void CMainWSWindow::ReleaseResources(void) {
 void CMainWSWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -1705,10 +1705,10 @@ END_MESSAGE_MAP()
 
 void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
                    const char *pszAnimFile, const char *pszSoundFile,
-                   int nNumCels, int nXLoc, int nYLoc, int nSleep, BOOL bPlaySound) {
+                   int nNumCels, int nXLoc, int nYLoc, int nSleep, bool bPlaySound) {
 	CSprite *pSprite = nullptr;
 	CSound  *pEffect = nullptr;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i;
 
 	pSprite = new CSprite;
@@ -1718,8 +1718,8 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		delete pSprite;
 		return;
 	}
-	(*pSprite).SetMasked(FALSE);
-	(*pSprite).SetMobile(FALSE);
+	(*pSprite).SetMasked(false);
+	(*pSprite).SetMobile(false);
 
 	if (bPlaySound) {
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a

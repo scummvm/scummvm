@@ -93,8 +93,8 @@ void COptions::OnClickedAudio() {
 	CAudioCfgDlg dlgAudioCfg(this, pOptionsPalette, IDD_AUDIOCFG);
 
 	if (pGameInfo != nullptr) {
-		pGameInfo->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
-		pGameInfo->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
+		pGameInfo->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");
+		pGameInfo->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", true, "HODJPODJ.INI");
 	}
 
 	SetDefID(IDC_OPTIONS_RULES);

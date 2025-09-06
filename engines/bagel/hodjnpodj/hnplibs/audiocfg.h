@@ -43,8 +43,8 @@ public:
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void LoadIniSettings(void);
@@ -52,7 +52,7 @@ protected:
 	void UpdateOptions(void);
 	void ClearDialogImage(void);
 
-	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg bool OnEraseBkgnd(CDC *);
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnClose();
 	void OnDestroy();
@@ -66,8 +66,8 @@ protected:
 	CText        *m_pTxtVolume;
 
 	int          m_nVolume;
-	BOOL         m_bMusic;
-	BOOL         m_bSound;
+	bool         m_bMusic;
+	bool         m_bSound;
 };
 
 } // namespace HodjNPodj

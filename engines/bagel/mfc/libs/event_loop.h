@@ -197,11 +197,11 @@ public:
 	 * Checks the pending event queue for a message
 	 * with the specified criteria.
 	 */
-	BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
+	bool PeekMessage(LPMSG lpMsg, HWND hWnd,
 		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
 		unsigned int wRemoveMsg);
 
-	BOOL PostMessage(HWND hWnd, unsigned int Msg,
+	bool PostMessage(HWND hWnd, unsigned int Msg,
 		WPARAM wParam, LPARAM lParam);
 
 	void TranslateMessage(LPMSG lpMsg);
@@ -238,7 +238,7 @@ public:
 	}
 
 	MMRESULT joySetCapture(HWND hwnd, unsigned int uJoyID,
-		unsigned int uPeriod, BOOL fChanged);
+		unsigned int uPeriod, bool fChanged);
 	MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold);
 	MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji);
 	MMRESULT joyReleaseCapture(unsigned int uJoyID);
@@ -254,7 +254,7 @@ public:
 
 	uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
 		void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32));
-	BOOL KillTimer(HWND hWnd, uintptr nIDEvent);
+	bool KillTimer(HWND hWnd, uintptr nIDEvent);
 
 	void pause();
 
@@ -262,7 +262,7 @@ public:
 		return _updateWnds;
 	}
 
-	virtual BOOL OnIdle(long lCount) {
+	virtual bool OnIdle(long lCount) {
 		return false;
 	}
 

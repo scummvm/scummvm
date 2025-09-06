@@ -94,7 +94,7 @@ CUserWonDlg::CUserWonDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
  *      n/a
  *
  ****************************************************************/
-BOOL CUserWonDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserWonDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -244,8 +244,8 @@ void CUserWonDlg::OnPaint(void) {
 	return;
 }
 
-BOOL CUserWonDlg::OnInitDialog(void) {
-	BOOL    bSuccess;
+bool CUserWonDlg::OnInitDialog(void) {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -255,7 +255,7 @@ BOOL CUserWonDlg::OnInitDialog(void) {
 	bSuccess = pOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 void CUserWonDlg::OnDestroy() {

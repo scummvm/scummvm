@@ -59,7 +59,7 @@ typedef struct joyinfo_tag {
 } JOYINFO, *PJOYINFO, NEAR *NPJOYINFO, FAR *LPJOYINFO;
 
 extern MMRESULT joySetCapture(HWND hwnd,
-                              unsigned int uJoyID, unsigned int uPeriod, BOOL fChanged);
+                              unsigned int uJoyID, unsigned int uPeriod, bool fChanged);
 extern MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold);
 extern MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji);
 extern MMRESULT joyReleaseCapture(unsigned int uJoyID);

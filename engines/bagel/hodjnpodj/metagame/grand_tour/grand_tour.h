@@ -111,7 +111,7 @@ public:
 	void ResetScores(void);
 	void SaveCurrGame(void);
 	void RestoreGame(void);
-	int GetNextGameCode(BOOL = TRUE);
+	int GetNextGameCode(bool = true);
 
 	static  void ReleaseResources(void);
 	static  void FlushInputEvents(void);
@@ -119,7 +119,7 @@ public:
 private:
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();
@@ -130,8 +130,8 @@ protected:
 	afx_msg void OnMouseMove(unsigned int, CPoint);
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	afx_msg void OnChar(unsigned int, unsigned int, unsigned int);
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) override;
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

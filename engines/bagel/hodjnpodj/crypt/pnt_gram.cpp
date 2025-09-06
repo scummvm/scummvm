@@ -66,7 +66,7 @@ CPaintGram::CPaintGram(CDC *pDC)
 	    m_nStandardCharWidth(STANDARD_CHAR_WIDTH) {
 	CBitmap *pFontSource = nullptr,
 	         *pFontCel = nullptr;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i;
 	int     nExtraWidth = 0;
 	int     nFontWidth[] =  { 11, 10, 5, 9, 11, 11, 11, 11, 11,             // 9 symbols
@@ -105,8 +105,8 @@ CPaintGram::CPaintGram(CDC *pDC)
 		bSuccess = (*m_cAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cAlphabet[i]).SetMobile(TRUE);
-		(*m_cAlphabet[i]).SetMasked(TRUE);
+		(*m_cAlphabet[i]).SetMobile(true);
+		(*m_cAlphabet[i]).SetMasked(true);
 		(*m_cAlphabet[i]).SetTypeCode(IndexToChar(i));  // set user defined Type Code to corres to the letter
 	}  // end for
 
@@ -119,8 +119,8 @@ CPaintGram::CPaintGram(CDC *pDC)
 		bSuccess = (*m_cUsedAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cUsedAlphabet[i]).SetMobile(TRUE);
-		(*m_cUsedAlphabet[i]).SetMasked(TRUE);
+		(*m_cUsedAlphabet[i]).SetMobile(true);
+		(*m_cUsedAlphabet[i]).SetMasked(true);
 		(*m_cUsedAlphabet[i]).SetTypeCode(SetAlphaType(IndexToChar(i)));    // set user defined Type Code to corres to the letter
 	}  // end for
 
@@ -133,8 +133,8 @@ CPaintGram::CPaintGram(CDC *pDC)
 		bSuccess = (*m_cRevealAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cRevealAlphabet[i]).SetMobile(TRUE);
-		(*m_cRevealAlphabet[i]).SetMasked(TRUE);
+		(*m_cRevealAlphabet[i]).SetMobile(true);
+		(*m_cRevealAlphabet[i]).SetMasked(true);
 		(*m_cRevealAlphabet[i]).SetTypeCode(SetAlphaType(IndexToChar(i)));  // set user defined Type Code to corres to the letter
 	}  // end for
 
@@ -149,9 +149,9 @@ CPaintGram::CPaintGram(CDC *pDC)
 	bSuccess = (*m_cHiLite).LoadResourceSprite(pDC, HILITE_RESOURCE_ID);
 	ASSERT(bSuccess);
 
-	(*m_cHiLite).SetMobile(TRUE);
-	(*m_cHiLite).SetMasked(TRUE);
-	(*m_cHiLite).SetTypeCode(SetHiLiteTypeOn(FALSE));
+	(*m_cHiLite).SetMobile(true);
+	(*m_cHiLite).SetMasked(true);
+	(*m_cHiLite).SetTypeCode(SetHiLiteTypeOn(false));
 
 }
 
@@ -219,11 +219,11 @@ CPaintGram::~CPaintGram() {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsHiLiteType(int nTypeCode) {
-	if ((nTypeCode & HILITE_TYPE) != FALSE) {    // True is anything > 0
-		return TRUE;
+bool CPaintGram::IsHiLiteType(int nTypeCode) {
+	if ((nTypeCode & HILITE_TYPE) != false) {    // True is anything > 0
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -252,11 +252,11 @@ BOOL CPaintGram::IsHiLiteType(int nTypeCode) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsAlphabetType(int nTypeCode) {
-	if ((nTypeCode & ALPHA_TYPE) != FALSE) {     // True is anything > 0
-		return TRUE;
+bool CPaintGram::IsAlphabetType(int nTypeCode) {
+	if ((nTypeCode & ALPHA_TYPE) != false) {     // True is anything > 0
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -285,11 +285,11 @@ BOOL CPaintGram::IsAlphabetType(int nTypeCode) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsGramType(int nTypeCode) {
-	if (IsAlphabetType(nTypeCode) == FALSE) {    // True is anything > 0
-		return TRUE;
+bool CPaintGram::IsGramType(int nTypeCode) {
+	if (IsAlphabetType(nTypeCode) == false) {    // True is anything > 0
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -318,19 +318,19 @@ BOOL CPaintGram::IsGramType(int nTypeCode) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsUsedType(int nTypeCode) {
-	if ((nTypeCode & USED_TYPE) != FALSE) {      // True is anything > 0
-		return TRUE;
+bool CPaintGram::IsUsedType(int nTypeCode) {
+	if ((nTypeCode & USED_TYPE) != false) {      // True is anything > 0
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
-BOOL CPaintGram::IsRevealType(int nTypeCode) {
-	if ((nTypeCode & REVEAL_TYPE) != FALSE) {    // True is anything > 0
-		return TRUE;
+bool CPaintGram::IsRevealType(int nTypeCode) {
+	if ((nTypeCode & REVEAL_TYPE) != false) {    // True is anything > 0
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -359,11 +359,11 @@ BOOL CPaintGram::IsRevealType(int nTypeCode) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsAlphaChar(char chChar) {
+bool CPaintGram::IsAlphaChar(char chChar) {
 	if (chChar >= A && chChar <= Z) {
-		return TRUE;
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -392,8 +392,8 @@ BOOL CPaintGram::IsAlphaChar(char chChar) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsSymbolChar(char chChar) {
-	return SymbToIndex(chChar) != FALSE;
+bool CPaintGram::IsSymbolChar(char chChar) {
+	return SymbToIndex(chChar) != false;
 }
 
 /*****************************************************************
@@ -463,7 +463,7 @@ char CPaintGram::IndexToSymb(int nIndex) {
 	case 44:
 		return '9';
 	default:
-		return FALSE;
+		return false;
 	}
 }
 
@@ -534,7 +534,7 @@ int CPaintGram::SymbToIndex(char chChar) {
 	case '9':
 		return 44;
 	default:
-		return FALSE;
+		return false;
 	}
 }
 
@@ -566,7 +566,7 @@ int CPaintGram::SymbToIndex(char chChar) {
 char CPaintGram::IndexToChar(int nIndex) {
 	char chSym = IndexToSymb(nIndex);
 
-	if (chSym != FALSE) {
+	if (chSym != false) {
 		return (chSym);
 	} else {
 		return (char)nIndex + ASCII_OFFSET;
@@ -601,7 +601,7 @@ char CPaintGram::IndexToChar(int nIndex) {
 int CPaintGram::CharToIndex(char chChar) {
 	int nSym = SymbToIndex(chChar);
 
-	if (nSym != FALSE) {
+	if (nSym != false) {
 		return nSym;
 	} else {
 		return (int)toupper(chChar) - ASCII_OFFSET;
@@ -693,7 +693,7 @@ void CPaintGram::PaintGram(CDC *pDC, const char *lpszCryptedGram) {
 	* Once it finds a complete line within this boundary, it will   *
 	* call 'PaintLine' member to draw the visual line.              *
 	****************************************************************/
-	for (i = 0, nSpaceMarker = 0, nStartPos = 0; TRUE; i++) {
+	for (i = 0, nSpaceMarker = 0, nStartPos = 0; true; i++) {
 		if (lpszCryptedGram[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
 				nSpaceMarker++;                     // Advance one past space
@@ -740,7 +740,7 @@ void CPaintGram::PaintGram(CDC *pDC, const char *lpszCryptedGram) {
 			//((*m_cAlphabet[nChar]).GetSize()).cx + m_nGramLetterSpacing;
 		} // end if
 
-		if ((nIndexChar = SymbToIndex(lpszCryptedGram[i])) != FALSE) {   // '.' thru ':'
+		if ((nIndexChar = SymbToIndex(lpszCryptedGram[i])) != false) {   // '.' thru ':'
 			nLineLength += ((*m_cAlphabet[nIndexChar]).GetSize()).cx + m_nGramLetterSpacing;
 		} // end if
 	} // end for
@@ -795,7 +795,7 @@ void CPaintGram::PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, in
 		} // end if
 
 
-		if (IsAlphaChar(lpszCryptedGram[j]) == TRUE) {   // A - Z char?
+		if (IsAlphaChar(lpszCryptedGram[j]) == true) {   // A - Z char?
 			nChar = CharToIndex(lpszCryptedGram[j]);
 			m_cDisplayLetters = (*m_cAlphabet[nChar]).DuplicateSprite(pDC);
 			//(*m_cDisplayLetters).SetTypeCode(SetGramType(IndexToAlpha(i)));
@@ -807,7 +807,7 @@ void CPaintGram::PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, in
 			//cLetterDim.cx + m_nGramLetterSpacing;
 		} // end if
 
-		if (IsSymbolChar(lpszCryptedGram[j]) == TRUE) {      // '.' thru ':'
+		if (IsSymbolChar(lpszCryptedGram[j]) == true) {      // '.' thru ':'
 			nChar = CharToIndex(lpszCryptedGram[j]);
 			m_cDisplayLetters = (*m_cAlphabet[nChar]).DuplicateSprite(pDC);
 			(*m_cDisplayLetters).LinkSprite();
@@ -849,7 +849,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 	for (
 	    i = 0,
 	    nSpaceMarker = 0,
-	    nLineLength = m_nGramLeftMargin; TRUE ; i++
+	    nLineLength = m_nGramLeftMargin; true ; i++
 	) {             // Estimate for Gram
 		if (lpszGram[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
@@ -894,7 +894,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 	for (
 	    i = 0,
 	    nSpaceMarker = 0,
-	    nLineLength = m_nGramLeftMargin; TRUE ; i++
+	    nLineLength = m_nGramLeftMargin; true ; i++
 	) {             // Estimate for Gram
 		if (lpszSource[i] == 0) {
 			if ((nLineLength + m_nGramRightMargin) >= m_cGramRegion.Width()) {
@@ -964,16 +964,16 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CPaintGram::IsHiLiteOn() {
+bool CPaintGram::IsHiLiteOn() {
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 	while (m_cDisplayLetters != nullptr) {
-		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == TRUE) {
-			return TRUE;
+		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == true) {
+			return true;
 		}
 		m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
 	}
 
-	return FALSE;
+	return false;
 }
 
 /*****************************************************************
@@ -1007,12 +1007,12 @@ int CPaintGram::GetHiLiteType(CDC *pDC) {
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 	while (m_cDisplayLetters != nullptr) {
-		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == TRUE) {
+		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == true) {
 			crectSprite = (*m_cDisplayLetters).GetRect();
 			m_cDisplayLetters = (*m_cDisplayLetters).Interception(&crectSprite);
 			nTypeCode = (*m_cDisplayLetters).GetTypeCode();
 
-			if (IsHiLiteType(nTypeCode) == TRUE) {
+			if (IsHiLiteType(nTypeCode) == true) {
 				return (*m_cDisplayLetters).Interception(&crectSprite, m_cDisplayLetters)->GetTypeCode();
 			} else {
 				return nTypeCode;
@@ -1021,7 +1021,7 @@ int CPaintGram::GetHiLiteType(CDC *pDC) {
 		m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
 	}
 
-	return FALSE;
+	return false;
 }
 
 /*****************************************************************
@@ -1062,7 +1062,7 @@ void CPaintGram::HiLiteOff(CDC *pDC) {
 	while (m_cDisplayLetters != nullptr) {
 		nTypeCode = (*m_cDisplayLetters).GetTypeCode();         // Get sprite's Hilite Code
 
-		if (IsHiLiteType(nTypeCode) == TRUE) {               // Is this sprite hi-lited?
+		if (IsHiLiteType(nTypeCode) == true) {               // Is this sprite hi-lited?
 			pSprite = (*m_cDisplayLetters).GetNextSprite();     // Yes - save current pos in sprite chain
 			(*m_cDisplayLetters).RefreshBackground(pDC);        // ...repaint background
 			(*m_cDisplayLetters).UnlinkSprite();                // ...unlink it from chain
@@ -1121,7 +1121,7 @@ void CPaintGram::HiLiteOn(CDC *pDC, int nTypeCode) {
 			(*m_cDisplayLetters).LinkSprite();
 			(*m_cDisplayLetters).PaintSprite(pDC, cpointSprite);
 
-			if (IsAlphabetType(nTypeCode) == TRUE)               // Hilited char in alpha region?
+			if (IsAlphabetType(nTypeCode) == true)               // Hilited char in alpha region?
 				break;                                              // Yes - break out
 
 			m_cDisplayLetters = pSprite;                            // faster than GetNextSprite call
@@ -1181,9 +1181,9 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 			delete m_cDisplayLetters;
 
 			nIndexCode = CharToIndex(nNewType);
-			if (IsRevealType(nNewType) == TRUE) {
+			if (IsRevealType(nNewType) == true) {
 				m_cDisplayLetters = (*m_cRevealAlphabet[nIndexCode]).DuplicateSprite(pDC);  // setup new sprite
-			} else if (IsUsedType(nNewType) == TRUE) {
+			} else if (IsUsedType(nNewType) == true) {
 				m_cDisplayLetters = (*m_cUsedAlphabet[nIndexCode]).DuplicateSprite(pDC);    // setup new sprite
 			} else {
 				m_cDisplayLetters = (*m_cAlphabet[nIndexCode]).DuplicateSprite(pDC);        // setup new sprite
@@ -1192,8 +1192,8 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 			(*m_cDisplayLetters).LinkSprite();
 			(*m_cDisplayLetters).PaintSprite(pDC, cpointSprite);
 
-			if ((IsAlphabetType(nNewType) == TRUE) ||
-			        (IsAlphabetType(nOldType) == TRUE))                 // Replacing letter in the Alphabet region?
+			if ((IsAlphabetType(nNewType) == true) ||
+			        (IsAlphabetType(nOldType) == true))                 // Replacing letter in the Alphabet region?
 				return;                                             // Yes - only on in alphabet region to replace, so quit
 
 			m_cDisplayLetters = pSprite;                            // faster than GetNextSprite call

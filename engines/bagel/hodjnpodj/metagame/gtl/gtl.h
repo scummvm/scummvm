@@ -48,22 +48,22 @@ class CGtlApp : public CWinApp {
 public:
 	char m_cStartData ;
 	CBdbgMgr m_cBdbgMgr ;       // Boffo games debug manager object
-	BOOL m_bTitle ;             // flag -- use window with title bar
+	bool m_bTitle ;             // flag -- use window with title bar
 	int  m_iNumOpens ;          // number of document opens (including "New")
 	char m_szFilename[60] ;     // input file name
 	int  m_iX, m_iY ;           // position of screen
 	int  m_iHeight, m_iWidth ;  // height/width of screen
-	BOOL m_bControlDialog ;     // display control dialog box
-	BOOL m_bMenuDialog ;        // display menu dialog box
-	BOOL m_bInfoDialog ;        // display info dialog box
-	BOOL m_bNodeDialog ;        // display node dialog box
-	BOOL m_bShowNodes ;         // show nodes on map
-	BOOL m_bPaintBackground ;   // paint background on map paint
-	BOOL m_bStartMetaGame ;     // start meta game automatically
-	BOOL m_bDumpGamePlay ;      // dump game play
+	bool m_bControlDialog ;     // display control dialog box
+	bool m_bMenuDialog ;        // display menu dialog box
+	bool m_bInfoDialog ;        // display info dialog box
+	bool m_bNodeDialog ;        // display node dialog box
+	bool m_bShowNodes ;         // show nodes on map
+	bool m_bPaintBackground ;   // paint background on map paint
+	bool m_bStartMetaGame ;     // start meta game automatically
+	bool m_bDumpGamePlay ;      // dump game play
 	char m_cEndData ;
 
-	virtual BOOL InitInstance() override;
+	virtual bool InitInstance() override;
 
 	CGtlApp();  // constructor
 	~CGtlApp(); // destructor
@@ -76,16 +76,16 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	BOOL InitApplication() override;
+	bool InitApplication() override;
 	void CreateInstance(void);
-	BOOL CallOnFileNew(void) ;
-	BOOL CallOnFileOpen(void) ;
-	BOOL CallOnFileSave(void) ;
+	bool CallOnFileNew(void) ;
+	bool CallOnFileOpen(void) ;
+	bool CallOnFileSave(void) ;
 	//- DoMessageBox -- override of CWinApp function to
 	//              display message box messages
 	virtual int DoMessageBox(const char *lpszPrompt,
 	                         unsigned int nType, unsigned int nIDPrompt) ;
-	BOOL OnIdle(long lCount) override;
+	bool OnIdle(long lCount) override;
 
 private:
 	static void focusChange(CWnd *oldFocus, CWnd *newFocus);
@@ -96,7 +96,7 @@ private:
 class CGtlMDIChildWnd : public CMDIChildWnd {
 	DECLARE_DYNAMIC(CGtlMDIChildWnd)
 protected:
-	BOOL PreCreateWindow(CREATESTRUCT& cs);
+	bool PreCreateWindow(CREATESTRUCT& cs);
 };
 #endif
 

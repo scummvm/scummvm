@@ -104,7 +104,7 @@ CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int n
  *      n/a
  *
  ****************************************************************/
-BOOL CPackRatOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CPackRatOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 //int     nLevel = 1;
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
@@ -114,11 +114,11 @@ BOOL CPackRatOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		        case IDC_TOGGLEJOY:
 		            if ( m_bUseJoy ) {
 		                SetDlgItemText( IDC_TOGGLEJOY, "Turn Off Joystick" );
-		                m_bUseJoy = FALSE;
+		                m_bUseJoy = false;
 		            }
 		            else {
 		                SetDlgItemText( IDC_TOGGLEJOY, "Turn On Joystick" );
-		                m_bUseJoy = TRUE;
+		                m_bUseJoy = true;
 		            }
 		            break;
 		*/
@@ -196,8 +196,8 @@ void CPackRatOptDlg::SetInitialOptions(int nGameLevel, int nNumOfLives) {
 }
 
 
-BOOL CPackRatOptDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CPackRatOptDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -213,7 +213,7 @@ BOOL CPackRatOptDlg::OnInitDialog() {
 	bSuccess = pPRCancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -285,10 +285,10 @@ void CPackRatOptDlg::OnPaint(void) {
 	pLevel = (CScrollBar *)GetDlgItem(IDC_GAMELEVEL);
 	pLives = (CScrollBar *)GetDlgItem(IDC_NUMBEROFLIVES);
 
-	pLevel->SetScrollRange(LEVELMIN, LEVELMAX, TRUE);
-	pLives->SetScrollRange(LIVESMIN, LIVESMAX, TRUE);
-	pLevel->SetScrollPos(m_nLevel, TRUE);
-	pLives->SetScrollPos(m_nLives, TRUE);
+	pLevel->SetScrollRange(LEVELMIN, LEVELMAX, true);
+	pLives->SetScrollRange(LIVESMIN, LIVESMAX, true);
+	pLevel->SetScrollPos(m_nLevel, true);
+	pLives->SetScrollPos(m_nLives, true);
 
 	if (pLevel != nullptr) {
 		pLevel = nullptr;
@@ -336,10 +336,10 @@ void CPackRatOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollB
 // first set the range of the scoll bar
 	switch (pScrollBar->GetDlgCtrlID()) {
 	case IDC_GAMELEVEL:
-		pScrollBar->SetScrollRange(LEVELMIN, LEVELMAX, TRUE);
+		pScrollBar->SetScrollRange(LEVELMIN, LEVELMAX, true);
 		break;
 	case IDC_NUMBEROFLIVES:
-		pScrollBar->SetScrollRange(LIVESMIN, LIVESMAX, TRUE);
+		pScrollBar->SetScrollRange(LIVESMIN, LIVESMAX, true);
 		break;
 	}
 
@@ -410,7 +410,7 @@ void CPackRatOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollB
 	}
 
 // set the scroll bar to the new position
-	pScrollBar->SetScrollPos(newAmnt, TRUE);
+	pScrollBar->SetScrollPos(newAmnt, true);
 
 // set the current amount to the new amount just set
 // and paint this new amount onto the screen

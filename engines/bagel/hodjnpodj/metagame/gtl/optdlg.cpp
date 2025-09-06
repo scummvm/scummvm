@@ -104,7 +104,7 @@ CMetaOptDlg::CMetaOptDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParen
  *      n/a
  *
  ****************************************************************/
-BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	// What ever button is clicked, end the dialog and send the ID of the button
 	// clicked as the return from the dialog
 
@@ -114,7 +114,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			Saves::SaveGame((CWnd *)this, m_pPalette, nullptr);
 			ClearDialogImage();
 			EndDialog(0);
-			return TRUE;
+			return true;
 
 		case IDC_LEAVE_GAME:
 			if (m_pBfcMgr->m_bChanged) {
@@ -124,19 +124,19 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 			ClearDialogImage();
 			EndDialog(1);
-			return TRUE;
+			return true;
 
 		case IDC_OPTIONS: {
 			CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
-			m_bMusic = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
-			m_bSoundFX = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
+			m_bMusic = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");
+			m_bSoundFX = GetPrivateProfileInt("Meta", "SoundEffects", true, "HODJPODJ.INI");
 		}
-		return TRUE;
+		return true;
 
 		case IDC_RULES: {
 			CRules RulesDlg(this, "metarule.txt", m_pPalette, nullptr);
 			(void) RulesDlg.DoModal();
-			return TRUE;
+			return true;
 		}
 
 		case IDC_CONTINUE:
@@ -145,7 +145,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_pBfcMgr->m_bScrolling = m_bScrolling;
 			ClearDialogImage();
 			EndDialog(0);
-			return TRUE;
+			return true;
 		}
 	}
 	return CBmpDialog::OnCommand(wParam, lParam);
@@ -236,8 +236,8 @@ void CMetaOptDlg::SetInitialOptions(CBfcMgr *pMetaGameStruct) {
 }
 
 
-BOOL CMetaOptDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CMetaOptDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -270,9 +270,9 @@ BOOL CMetaOptDlg::OnInitDialog() {
 	m_pRulesGameButton->SetPalette(m_pPalette);
 	bSuccess = m_pRulesGameButton->SetControl(IDC_RULES, this);
 	ASSERT(bSuccess);
-//    m_pRulesGameButton->EnableWindow(FALSE);
+//    m_pRulesGameButton->EnableWindow(false);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -315,7 +315,7 @@ void CMetaOptDlg::OnPaint(void) {
 
 	CBmpDialog::OnPaint();
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 
 	EndPaint(&lpPaint);

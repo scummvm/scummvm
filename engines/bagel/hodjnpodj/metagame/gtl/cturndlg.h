@@ -54,14 +54,14 @@ class CTurnDialog : public CBmpDialog {
 private:
 	CColorButton *m_pOKButton;      // OKAY button on scroll
 	CText        *m_pTextMessage;
-	BOOL          m_bHodj;
-	BOOL          m_bGain;
-	BOOL          m_bTurn;          // True: win/lose turn, False: win/lose Game
+	bool          m_bHodj;
+	bool          m_bGain;
+	bool          m_bTurn;          // True: win/lose turn, False: win/lose Game
 
 public:
 
 	// standard constructor
-	CTurnDialog(CWnd *pParent, CPalette *pPalette, BOOL bHodj, BOOL bGain, BOOL bTurn);
+	CTurnDialog(CWnd *pParent, CPalette *pPalette, bool bHodj, bool bGain, bool bTurn);
 	void ClearDialogImage(void);
 
 	// Dialog Data
@@ -79,9 +79,9 @@ protected:
 	afx_msg void OnPaint();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnDestroy();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

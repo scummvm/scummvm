@@ -67,7 +67,7 @@ public:
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnInitDialog(void) override;
 
 	void OnClose();
 	void OnPaint();
@@ -79,7 +79,7 @@ protected:
 
 private:
 //	unsigned int            m_nTimeLimit;       //
-	BOOL            m_bSave;            // True if should save theses values
+	bool            m_bSave;            // True if should save theses values
 	CRect           m_cRectCardBack1;
 	CRect           m_cRectCardBack2;
 	unsigned int            m_nCardBack;

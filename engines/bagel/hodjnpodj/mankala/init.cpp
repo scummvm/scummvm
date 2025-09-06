@@ -83,7 +83,7 @@ HWND FAR PASCAL RunMank(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 		pMain->ShowWindow(SW_SHOWNORMAL);
 
 		pMain->UpdateWindow();
-		pMain->Setm_bJustStarted(FALSE);
+		pMain->Setm_bJustStarted(false);
 
 		pMain->SetActiveWindow();
 

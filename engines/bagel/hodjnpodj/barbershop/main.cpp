@@ -93,10 +93,10 @@ CMainWindow::CMainWindow(void) {
 	//
 	m_pScrollSprite = nullptr;
 	m_pGamePalette = nullptr;
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
-	m_bInMenu = FALSE;
-	m_bMIDIPlaying = FALSE;
+	m_bPause = false;
+	m_bGameActive = false;
+	m_bInMenu = false;
+	m_bMIDIPlaying = false;
 	m_pBarb = nullptr;
 	m_pMIDISound = nullptr;
 
@@ -122,7 +122,7 @@ CMainWindow::CMainWindow(void) {
 		// Acquire the shared palette for our game from the splash screen art
 		//
 		if ((pDibDoc = new CDibDoc()) != nullptr) {
-			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
+			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != false)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
 				errCode = ERR_UNKNOWN;
@@ -172,8 +172,8 @@ CMainWindow::CMainWindow(void) {
 				bSuccess = m_pScrollSprite->LoadSprite(pDC, ".\\ART\\SCROLBTN.BMP");
 				assert(bSuccess);
 				if (bSuccess) {
-					m_pScrollSprite->SetMasked(TRUE);
-					m_pScrollSprite->SetMobile(TRUE);
+					m_pScrollSprite->SetMasked(true);
+					m_pScrollSprite->SetMobile(true);
 				} else {
 					errCode = ERR_UNKNOWN;
 				}
@@ -235,13 +235,13 @@ CMainWindow::CMainWindow(void) {
 		// Start the game theme song
 		//
 		if (pGameParams->bMusicEnabled) {
-			m_bMIDIPlaying = TRUE;
+			m_bMIDIPlaying = true;
 			m_pMIDISound->midiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
 		}
 
 		// Automatically bring up the main menu if in stand alone mode
 		//
-		if (pGameParams->bPlayingMetagame != FALSE) {
+		if (pGameParams->bPlayingMetagame != false) {
 			PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 		} else {
 			PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
@@ -275,7 +275,7 @@ void CMainWindow::HandleError(ERROR_CODE errCode) {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 	PaintScreen();
 	EndPaint(&lpPaint);
@@ -328,7 +328,7 @@ void CMainWindow::PaintScreen() {
 }
 
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC *pDC;
 	bool bSuccess;
 
@@ -343,7 +343,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			GamePause();
 
 			// don't display the command scroll when in the menu
-			m_bInMenu = TRUE;
+			m_bInMenu = true;
 
 			// hide the command scroll
 			//
@@ -374,7 +374,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			// User has chosen to play a new game
 			//
 			case IDC_OPTIONS_NEWGAME:
-				if (m_pBarb->IsNewBack(g_nCardBack) == TRUE) {      // need to card back?
+				if (m_pBarb->IsNewBack(g_nCardBack) == true) {      // need to card back?
 					m_pBarb->ChangeBack(pDC, g_nCardBack);          // yes - change it
 				} // end if
 
@@ -389,9 +389,9 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				break;
 
 			default:
-				if (m_pBarb->IsNewBack(g_nCardBack) == TRUE) {      // need to card back?
+				if (m_pBarb->IsNewBack(g_nCardBack) == true) {      // need to card back?
 					m_pBarb->ChangeBack(pDC, g_nCardBack);          // yes - change it
-					Invalidate(TRUE);                               // set up for a redraw window
+					Invalidate(true);                               // set up for a redraw window
 				} // end if
 				break;
 
@@ -400,12 +400,12 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (!pGameParams->bMusicEnabled && m_bMIDIPlaying) {
 
 				m_pMIDISound->stop();
-				m_bMIDIPlaying = FALSE;
+				m_bMIDIPlaying = false;
 
 			} else if (pGameParams->bMusicEnabled && !m_bMIDIPlaying) {
 
 				m_pMIDISound->midiLoopPlaySegment(2470, 32160, 0, FMT_MILLISEC);
-				m_bMIDIPlaying = TRUE;
+				m_bMIDIPlaying = true;
 			}
 
 			// show the command scroll
@@ -416,9 +416,9 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			// ok to display the command scroll now
 			//
-			m_bInMenu = FALSE;
+			m_bInMenu = false;
 			GameResume();
-			return TRUE;
+			return true;
 		} // end case
 
 		case IDC_OPTIONS_NEWGAME:
@@ -428,16 +428,16 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return FALSE;
+	return false;
 }
 
 
 void CMainWindow::GamePause(void) {
-	m_bPause = TRUE;
+	m_bPause = true;
 }
 
 void CMainWindow::GameResume(void) {
-	m_bPause = FALSE;
+	m_bPause = false;
 }
 
 void CMainWindow::PlayGame() {
@@ -462,15 +462,15 @@ void CMainWindow::PlayGame() {
 			//
 			//CSprite::FlushSprites();
 			CSprite::FlushSpriteChain();        // Delete cards from memory
-			Invalidate(TRUE);
+			Invalidate(true);
 			UpdateWindow();
 			/*
-			            if ( pGameParams->bMusicEnabled != FALSE ) {
+			            if ( pGameParams->bMusicEnabled != false ) {
 			                m_pMIDISound->midiLoopPlaySegment(2000L, 33560L, 00L, FMT_MILLISEC);
 			            }
 			*/
 			m_pBarb->NewGame(pDC);
-			m_bGameActive = TRUE;
+			m_bGameActive = true;
 			ReleaseDC(pDC);
 		} else {
 			errCode = ERR_MEMORY;
@@ -523,7 +523,7 @@ void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (m_pBarb->m_pCrd != nullptr)        // r we currently moving a card?
 		return;                         // Yes - just quit.
 
-	if (m_pBarb->m_bIsGameOver == FALSE) {
+	if (m_pBarb->m_bIsGameOver == false) {
 		m_pBarb->OnLButtonDown(
 		    (CWnd*) this,
 		    m_pGamePalette,
@@ -556,40 +556,40 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (m_rNewGameButton.PtInRect(point)) {
 
 		// start a new game
-		if (pGameParams->bPlayingMetagame == FALSE)
+		if (pGameParams->bPlayingMetagame == false)
 			PlayGame();
 
-	} else if (m_pAnim->Clown(pDC, point) == TRUE) {
+	} else if (m_pAnim->Clown(pDC, point) == true) {
 		/************************************
 		* user clicked animation.           *
 		* animation handled in it's call.   *
 		************************************/
 		FlushInputEvents();
-	} else if (m_pAnim->UFO(pDC, point) == TRUE) {
+	} else if (m_pAnim->UFO(pDC, point) == true) {
 		/************************************
 		* user clicked animation.           *
 		* animation handled in it's call.   *
 		************************************/
 		FlushInputEvents();
-	} else if (m_pAnim->Brat(point) == TRUE) {
+	} else if (m_pAnim->Brat(point) == true) {
 		/************************************
 		* user clicked animation.           *
 		* animation handled in it's call.   *
 		************************************/
 		FlushInputEvents();
-	} else if (m_pAnim->Lollipop(point) == TRUE) {
+	} else if (m_pAnim->Lollipop(point) == true) {
 		/************************************
 		* user clicked animation.           *
 		* animation handled in it's call.   *
 		************************************/
 		FlushInputEvents();
-	} else if (m_pAnim->Haircut(point) == TRUE) {
+	} else if (m_pAnim->Haircut(point) == true) {
 		/************************************
 		* user clicked animation.           *
 		* animation handled in it's call.   *
 		************************************/
 		FlushInputEvents();
-	} else if (m_pBarb->m_bIsGameOver == FALSE) {
+	} else if (m_pBarb->m_bIsGameOver == false) {
 		m_pBarb->OnLButtonDown(
 		    (CWnd*) this,
 		    m_pGamePalette,
@@ -599,7 +599,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		// is this needed ?
 		CFrameWnd::OnLButtonDown(nFlags, point);
 
-		if (m_pBarb->m_bIsGameOver == TRUE) {
+		if (m_pBarb->m_bIsGameOver == true) {
 			if (pGameParams->bPlayingMetagame) {
 				Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
 				CMessageBox cGameOver(
@@ -655,17 +655,17 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	} else if (m_rNewGameButton.PtInRect(point)) {
 
 		// start a new game
-		if (pGameParams->bPlayingMetagame == FALSE)
+		if (pGameParams->bPlayingMetagame == false)
 			PlayGame();
 
-	} else if (m_pBarb->m_bIsGameOver == FALSE) {
+	} else if (m_pBarb->m_bIsGameOver == false) {
 		m_pBarb->OnLButtonDblClk(
 		    (CWnd*) this,
 		    m_pGamePalette,
 		    point
 		);
 
-		if (m_pBarb->m_bIsGameOver == TRUE) {
+		if (m_pBarb->m_bIsGameOver == true) {
 			if (pGameParams->bPlayingMetagame) {
 				Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
 				CMessageBox cGameOver(
@@ -703,11 +703,11 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	char    buf[32];
 
-	if (m_pBarb->m_bIsGameOver == FALSE) {
+	if (m_pBarb->m_bIsGameOver == false) {
 
 		m_pBarb->OnLButtonUp((CWnd*) this);
 
-		if (m_pBarb->m_bIsGameOver == TRUE) {
+		if (m_pBarb->m_bIsGameOver == true) {
 			if (pGameParams->bPlayingMetagame) {
 				Common::sprintf_s(buf, "Score: %d", m_pBarb->Score());
 				CMessageBox cGameOver(
@@ -830,27 +830,27 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 void CMainWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	} // end while
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	} // end while
 }
 
-void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (pWndOther)      // bullshit to rid warnings
-		TRUE;
+		true;
 
 	if (!bMinimized) {
 
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 
 		default:

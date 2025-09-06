@@ -34,7 +34,7 @@ namespace Life {
 // Globals!
 extern int nSpeed, nCountDown, nLife;
 extern int nTurnCounter, nLifeCounter;
-extern int bIsInfiniteLife, bIsInfiniteTurns;
+extern bool bIsInfiniteLife, bIsInfiniteTurns;
 extern CMainWindow *gMainWnd;
 extern CPalette *pGamePalette;
 extern CSprite *pScrollSprite;
@@ -66,13 +66,13 @@ extern CSprite *pScrollSprite;
  ****************************************************************/
 CLife::CLife(CDC *pDC) {
 	int     i;
-	BOOL    bCheck;
+	bool    bCheck;
 
 	m_dScore        = 0.0;
 	m_nYears        = 0;
 	m_nCumLife      = 0;
-	m_bIsEvolving   = FALSE;
-	m_bPrePlace     = FALSE;
+	m_bIsEvolving   = false;
+	m_bPrePlace     = false;
 
 	pColony = new colony(ROWS, COLS);
 	// Because this change came bout later
@@ -83,21 +83,21 @@ CLife::CLife(CDC *pDC) {
 		bCheck = (*pBaseSprite[i]).LoadSprite(pDC, curly[i]);
 		ASSERT(bCheck);
 
-		(*pBaseSprite[i]).SetMobile(TRUE);
-		(*pBaseSprite[i]).SetMasked(TRUE);
-		(*pBaseSprite[i]).SetOptimizeSpeed(TRUE);
+		(*pBaseSprite[i]).SetMobile(true);
+		(*pBaseSprite[i]).SetMasked(true);
+		(*pBaseSprite[i]).SetOptimizeSpeed(true);
 	}
 
 	for (i = 0 ; i < MONTHS ; i++) {
 		m_cCalendar.pMonthSprite[i] = new CSprite();
-		m_cCalendar.bIsOn[i] = FALSE;
+		m_cCalendar.bIsOn[i] = false;
 
 		m_cCalendar.pMonthSprite[i]->SharePalette(pGamePalette);
 		bCheck = m_cCalendar.pMonthSprite[i]->LoadSprite(pDC, months[i]);
 		ASSERT(bCheck);
 
-		m_cCalendar.pMonthSprite[i]->SetMobile(TRUE);
-		m_cCalendar.pMonthSprite[i]->SetMasked(TRUE);
+		m_cCalendar.pMonthSprite[i]->SetMobile(true);
+		m_cCalendar.pMonthSprite[i]->SetMasked(true);
 	}
 
 	//srand((unsigned) time(nullptr));     // seed the random number generator
@@ -174,7 +174,7 @@ CLife::~CLife() {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta) {
+void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlayingMeta) {
 	int i;
 	CSprite *pSprite;
 	CRect   myArea;
@@ -182,7 +182,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlay
 	CPoint sprite_loc;                  // center location of sprite on board
 	int row, col;                           // indices help find board cell
 	char buf[10];
-	BOOL bAssertCheck;      // used to check for assertion failures
+	bool bAssertCheck;      // used to check for assertion failures
 
 	// added routines to capture if button click was inside
 	//  legal board area
@@ -209,8 +209,8 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlay
 			return;
 		}
 	} else if (
-	    bPlayingMeta == TRUE ||     // can't remove life in meta OR
-	    m_bIsEvolving == TRUE       // if evolve was clicked.
+	    bPlayingMeta == true ||     // can't remove life in meta OR
+	    m_bIsEvolving == true       // if evolve was clicked.
 	) {
 //		MessageBeep(-1);
 		sndPlaySound(WAV_CANTDO, SND_SYNC);
@@ -230,7 +230,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlay
 	pSprite = CSprite::GetSpriteChain();
 	// User want to turn life off?
 	if ((*pColony).islife(row, col)) {
-		if (bIsInfiniteLife != TRUE) {
+		if (bIsInfiniteLife != true) {
 			//decrement colony counter if not infinite
 			nLifeCounter--;
 			Common::sprintf_s(buf, "%d", nLifeCounter);
@@ -251,7 +251,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlay
 	} else {
 		CRect   testRect;       // sprite area to be tested
 
-		if (bIsInfiniteLife != TRUE) {
+		if (bIsInfiniteLife != true) {
 			//Add life back to colony counter if finite
 			nLifeCounter++;
 			Common::sprintf_s(buf, "%d", nLifeCounter);
@@ -474,15 +474,15 @@ void CLife::DisplayMonth(int nMonth, CDC *pDC) {
 			i = j - 1;
 
 
-		if (m_cCalendar.bIsOn[i] == TRUE) {
+		if (m_cCalendar.bIsOn[i] == true) {
 			m_cCalendar.pMonthSprite[i]->EraseSprite(pDC);
-			m_cCalendar.bIsOn[i] = FALSE;
+			m_cCalendar.bIsOn[i] = false;
 		}
 	} else
 		j = 0;
 //b
 	m_cCalendar.pMonthSprite[j]->PaintSprite(pDC, MONTH_COL_POS + 1, MONTH_ROW_POS + 1);
-	m_cCalendar.bIsOn[j] = TRUE;
+	m_cCalendar.bIsOn[j] = true;
 }
 
 /*****************************************************************
@@ -515,9 +515,9 @@ void CLife::ResetMonths(CDC *pDC) {
 
 	// reset all calendars
 	for (i = 0 ; i < MONTHS ; i++) {
-		if (m_cCalendar.bIsOn[i] == TRUE) {
+		if (m_cCalendar.bIsOn[i] == true) {
 			m_cCalendar.pMonthSprite[i]->EraseSprite(pDC);
-			m_cCalendar.bIsOn[i] = FALSE;
+			m_cCalendar.bIsOn[i] = false;
 			break;
 		}
 	}

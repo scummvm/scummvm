@@ -57,7 +57,7 @@ CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	DoModal();
 }
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -69,7 +69,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	tmpRect.SetRect(22, 135, 122, 155);
 	if ((m_pScrollBar = new CScrollBar) != nullptr) {
 		m_pScrollBar->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_LIMIT);
-		m_pScrollBar->SetScrollRange(DIFF_MIN, DIFF_MAX, TRUE);
+		m_pScrollBar->SetScrollRange(DIFF_MIN, DIFF_MAX, true);
 	}
 
 	if ((pDC = GetDC()) != nullptr) {
@@ -121,12 +121,12 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		m_pCompButton->SetControl(ID_COMPUTER, this);
 	}
 
-	m_bSave = FALSE;
+	m_bSave = false;
 
 	LoadIniSettings();
 
 	PutDlgData();
-	return TRUE;
+	return true;
 }
 
 
@@ -140,13 +140,13 @@ void CUserCfgDlg::PutDlgData() {
 void CUserCfgDlg::GetDlgData() {
 	m_nDifficultyLevel = m_pScrollBar->GetScrollPos();
 
-	m_bUserGoesFirst = FALSE;
+	m_bUserGoesFirst = false;
 	if (m_pUserButton->GetCheck() == 1)
-		m_bUserGoesFirst = TRUE;
+		m_bUserGoesFirst = true;
 }
 
 
-BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	//
 	// respond to user
 	//
@@ -155,23 +155,23 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case IDOK:
-			m_bSave = TRUE;
+			m_bSave = true;
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return FALSE;
+			return false;
 
 		case ID_PLAYER:
-			m_bUserGoesFirst = TRUE;
+			m_bUserGoesFirst = true;
 			PutDlgData();
 			break;
 
 		case ID_COMPUTER:
-			m_bUserGoesFirst = FALSE;
+			m_bUserGoesFirst = false;
 			PutDlgData();
 			break;
 
@@ -277,7 +277,7 @@ void CUserCfgDlg::LoadIniSettings(void) {
 	// Get the UserGoesFirst option setting
 	//
 	nVal = GetPrivateProfileInt(INI_SECTION, "UserGoesFirst", TURN_DEF, INI_FILENAME);
-	m_bUserGoesFirst = (nVal == 0 ? FALSE : TRUE);
+	m_bUserGoesFirst = (nVal == 0 ? false : true);
 }
 
 void CUserCfgDlg::SaveIniSettings() {

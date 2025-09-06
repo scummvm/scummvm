@@ -55,11 +55,11 @@ int         nSpeed,                 // Speed between evolutions
             nPlace;                 // Profile holder for PrePlace bool
 int         nTurnCounter,           // Counts num of years before end of game
             nLifeCounter;           // Counts num of lives left to place
-BOOL        bPrePlaceColonies,      // Whether they want to pre-place some (default for meta)
+bool        bPrePlaceColonies,      // Whether they want to pre-place some (default for meta)
             bIsInfiniteLife,        // Tells if num of lives is set to infi
             bIsInfiniteTurns;       // Tells if num of turns is set to infi
 
-BOOL        gbNewGame;              // only used from options dialog
+bool        gbNewGame;              // only used from options dialog
 
 CColorButton    *pEvolveButton;
 
@@ -110,7 +110,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	        OkayRect,
 	        EvolveRect;
 	CDibDoc *pDibDoc;           // Used to get game palette
-	BOOL    bAssertCheck;       // Assertion check when getting game pal
+	bool    bAssertCheck;       // Assertion check when getting game pal
 
 
 	/*******************************************
@@ -182,7 +182,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/*********************************************
 	* Life settings. These are global variables. *
 	*********************************************/
-	if (m_lpGameStruct->bPlayingMetagame == TRUE) {      // playing meta game?
+	if (m_lpGameStruct->bPlayingMetagame == true) {      // playing meta game?
 		switch (m_lpGameStruct->nSkillLevel) {          // yes - what skill level?
 		case SKILLLEVEL_LOW:
 			nLife = VILLAGES_HI;                    // All levels start with 20
@@ -202,34 +202,34 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 		nSpeed              = SPEED_DEF;
 		nCountDown          = nSpeed * MONTHS;
 		nLifeCounter        = nLife;
-		bIsInfiniteTurns    = FALSE;
-		bIsInfiniteLife     = FALSE;
-		bPrePlaceColonies   = TRUE;
+		bIsInfiniteTurns    = false;
+		bIsInfiniteLife     = false;
+		bPrePlaceColonies   = true;
 	} else {                                            // playing stand alone
 		nSpeed = GetPrivateProfileInt(INI_SECTION, "Speed", SPEED_DEF, INI_FNAME);
 		nCountDown = nSpeed * MONTHS;
 
 		nTurnCounter = GetPrivateProfileInt(INI_SECTION, "Rounds", ROUNDS_DEF, INI_FNAME);
 		if (nTurnCounter == TURN_HI_BOUND) {             // fastest turn counter?
-			bIsInfiniteTurns = TRUE;
+			bIsInfiniteTurns = true;
 		} else {
-			bIsInfiniteTurns = FALSE;
+			bIsInfiniteTurns = false;
 		} // end if
 
 		nLife = GetPrivateProfileInt(INI_SECTION, "Villages", VILLAGES_DEF, INI_FNAME);
 		if (nLife == LIFE_HI_BOUND) {                // infinite life?
-			bIsInfiniteLife = TRUE;                 // yes
+			bIsInfiniteLife = true;                 // yes
 			nLifeCounter    = 0;
 		} else {
-			bIsInfiniteLife = FALSE;
+			bIsInfiniteLife = false;
 			nLifeCounter    = nLife;
 		} // end if
 
 		nPlace = GetPrivateProfileInt(INI_SECTION, "PrePlace", PLACE_DEF, INI_FNAME);
 		if (nPlace > 0) {            // fastest turn counter?
-			bPrePlaceColonies = TRUE;
+			bPrePlaceColonies = true;
 		} else {
-			bPrePlaceColonies = FALSE;
+			bPrePlaceColonies = false;
 		} // end if
 
 	} // end if
@@ -237,12 +237,12 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/*****************************************
 	* Reports whether game is active or not. *
 	*****************************************/
-	m_bGameActive       = FALSE;
+	m_bGameActive       = false;
 
 	/********************************
 	* Used with options dialog box. *
 	********************************/
-	gbNewGame           = FALSE;
+	gbNewGame           = false;
 
 	/************************
 	* Set up Evolve button. *
@@ -265,8 +265,8 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	(*pScrollSprite).SharePalette(pGamePalette);
 	bAssertCheck = (*pScrollSprite).LoadSprite(pDC, SCROLL_BUTTON);
 	ASSERT(bAssertCheck);
-	(*pScrollSprite).SetMasked(TRUE);
-	(*pScrollSprite).SetMobile(TRUE);
+	(*pScrollSprite).SetMasked(true);
+	(*pScrollSprite).SetMobile(true);
 
 	/******************************
 	* Initialize Sprite Calendar  *
@@ -275,8 +275,8 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	(*pCalendarSprite).SharePalette(pGamePalette);
 	bAssertCheck = (*pCalendarSprite).LoadSprite(pDC, CALENDAR_BMP);
 	ASSERT(bAssertCheck);
-	(*pCalendarSprite).SetMasked(TRUE);
-	(*pCalendarSprite).SetMobile(FALSE);
+	(*pCalendarSprite).SetMasked(true);
+	(*pCalendarSprite).SetMobile(false);
 
 	ReleaseDC(pDC);
 
@@ -288,7 +288,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/*************************
 	* Initialize MIDI sound. *
 	*************************/
-	if (m_lpGameStruct->bMusicEnabled != FALSE) {
+	if (m_lpGameStruct->bMusicEnabled != false) {
 		if ((m_pSound = new CSound((CWnd *) this, MIDI_SOUND, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END)) != nullptr) {
 			m_pSound->midiLoopPlaySegment(1500L, 31000L, 00L, FMT_MILLISEC);
 		} else {
@@ -304,8 +304,8 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/**************************
 	* New game or popup menu? *
 	**************************/
-	if (m_lpGameStruct->bPlayingMetagame == TRUE) {
-		bPrePlaceColonies = TRUE;                                   // in meta, pre-place ten
+	if (m_lpGameStruct->bPlayingMetagame == true) {
+		bPrePlaceColonies = true;                                   // in meta, pre-place ten
 		PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 	} else {
 		PostMessage(WM_COMMAND, IDC_COMMAND, BN_CLICKED);
@@ -351,8 +351,8 @@ CMainWindow::~CMainWindow() {
 void CMainWindow::initStatics() {
 	nSpeed = nCountDown = nLife = nPlace = 0;
 	nTurnCounter = nLifeCounter = 0;
-	bPrePlaceColonies = bIsInfiniteLife = bIsInfiniteTurns = FALSE;
-	gbNewGame = FALSE;
+	bPrePlaceColonies = bIsInfiniteLife = bIsInfiniteTurns = false;
+	gbNewGame = false;
 	pEvolveButton = nullptr;
 	pGamePalette = nullptr;
 	pScrollSprite = nullptr;
@@ -391,7 +391,7 @@ void CMainWindow::initStatics() {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(nullptr, FALSE);
+	InvalidateRect(nullptr, false);
 	BeginPaint(&lpPaint);
 	SplashScreen();
 	RefreshStats();
@@ -430,9 +430,9 @@ void CMainWindow::NewGame() {
 	        row,
 	        col;
 
-	if ((*m_cLife).m_bIsEvolving == TRUE) {      // Evolve timer on?
+	if ((*m_cLife).m_bIsEvolving == true) {      // Evolve timer on?
 		KillTimer(EVOLVE_TIMER_ID);             // yes - turn it off.
-		(*m_cLife).m_bIsEvolving = FALSE;
+		(*m_cLife).m_bIsEvolving = false;
 	} // end if
 
 	pDC = GetDC();
@@ -464,7 +464,7 @@ void CMainWindow::NewGame() {
 
 	SetDlgItemText(IDC_EVOLVE, "Evolve");        // Make sure button is reset to read Evolve
 
-	m_bGameActive = TRUE;
+	m_bGameActive = true;
 }
 
 /*****************************************************************
@@ -493,7 +493,7 @@ void CMainWindow::NewGame() {
  *
  ****************************************************************/
 void CMainWindow::GamePause() {
-	if ((*m_cLife).m_bIsEvolving == TRUE) {      // Evolve timer on?
+	if ((*m_cLife).m_bIsEvolving == true) {      // Evolve timer on?
 		KillTimer(EVOLVE_TIMER_ID);             // yes - turn it off.
 	} // end if
 }
@@ -524,7 +524,7 @@ void CMainWindow::GamePause() {
  *
  ****************************************************************/
 void CMainWindow::GameResume() {
-	if ((*m_cLife).m_bIsEvolving == TRUE) {
+	if ((*m_cLife).m_bIsEvolving == true) {
 		RefreshStats();
 		SetTimer(EVOLVE_TIMER_ID, EVOLVE_INTERVAL, nullptr);
 	}
@@ -556,12 +556,12 @@ void CMainWindow::GameResume() {
  *      [Discuss return value]
  *
  ****************************************************************/
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
-	BOOL bAssertCheck;
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+	bool bAssertCheck;
 	CDC *pDC;
 
 	if (HIWORD(lParam) != BN_CLICKED)
-		return TRUE;
+		return true;
 
 	if (wParam == IDC_COMMAND) {             // user click scroll sprite?
 		GamePause();
@@ -591,7 +591,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case IDC_OPTIONS_QUIT:          // quit game?
-			if (m_lpGameStruct->bPlayingMetagame != FALSE)
+			if (m_lpGameStruct->bPlayingMetagame != false)
 				m_lpGameStruct->lScore = LOSE;
 
 			PostMessage(WM_CLOSE, 0, 0);
@@ -620,25 +620,25 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		ASSERT(bAssertCheck);
 		GameResume();
 
-		//if ( gbNewGame == TRUE ) {
+		//if ( gbNewGame == true ) {
 		//  PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
-		//  gbNewGame = FALSE;
+		//  gbNewGame = false;
 		//}
 
 	} else if (wParam == IDC_EVOLVE) {                           // Evolve button was clicked
-		if ((*m_cLife).m_bIsEvolving == TRUE) {                  // currently evolving?
-			if (m_lpGameStruct->bPlayingMetagame == FALSE) {     // playing meta game?
-				(*m_cLife).m_bIsEvolving = FALSE;               // no - can turn evolve off, then
+		if ((*m_cLife).m_bIsEvolving == true) {                  // currently evolving?
+			if (m_lpGameStruct->bPlayingMetagame == false) {     // playing meta game?
+				(*m_cLife).m_bIsEvolving = false;               // no - can turn evolve off, then
 				KillTimer(EVOLVE_TIMER_ID);
 				SetDlgItemText(IDC_EVOLVE, "Evolve");            // so give them the Suspend option
 			}
 		} else {
-			(*m_cLife).m_bIsEvolving = TRUE;                    // no - turn it on
+			(*m_cLife).m_bIsEvolving = true;                    // no - turn it on
 			nCountDown = nSpeed * MONTHS;
-			if (m_lpGameStruct->bPlayingMetagame == FALSE) {     // not playing metagame
+			if (m_lpGameStruct->bPlayingMetagame == false) {     // not playing metagame
 				SetDlgItemText(IDC_EVOLVE, "Suspend");       // so give them the Suspend option
 			} else {                                            // Only works once in metagame,
-				(*pEvolveButton).EnableWindow(FALSE);            //...so disable evolve button
+				(*pEvolveButton).EnableWindow(false);            //...so disable evolve button
 			}
 
 			pDC = GetDC();                                      // Update visual calendars
@@ -652,7 +652,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		NewGame();
 	} // end if
 
-	return TRUE;
+	return true;
 }
 
 // OnChar and OnSysChar
@@ -690,7 +690,7 @@ void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigne
 	// User has hit ALT_F4 so close down this App
 	//
 	case VK_F4:
-		if (m_lpGameStruct->bPlayingMetagame != FALSE)
+		if (m_lpGameStruct->bPlayingMetagame != false)
 			m_lpGameStruct->lScore = LOSE;
 		PostMessage(WM_CLOSE, 0, 0);
 		break;
@@ -705,7 +705,7 @@ void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned i
 	if ((nChar == 'e') && (nFlags & 0x2000)) {          // ALT-e - evolve
 		PostMessage(WM_COMMAND, IDC_EVOLVE, BN_CLICKED);
 	} else if ((nChar == 'q') && (nFlags & 0x2000)) {    // Alt-q - quit
-		if (m_lpGameStruct->bPlayingMetagame != FALSE)
+		if (m_lpGameStruct->bPlayingMetagame != false)
 			m_lpGameStruct->lScore = LOSE;
 		PostMessage(WM_CLOSE, 0, 0);
 	} else {
@@ -773,11 +773,11 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	cTestRect = (*pScrollSprite).GetRect();
 
-	if (cTestRect.PtInRect(point) == TRUE) {
+	if (cTestRect.PtInRect(point) == true) {
 		SendMessage(WM_COMMAND, IDC_COMMAND, BN_CLICKED);
 	} else if (
-	    m_rNewGameButton.PtInRect(point) == TRUE &&
-	    m_lpGameStruct->bPlayingMetagame == FALSE
+	    m_rNewGameButton.PtInRect(point) == true &&
+	    m_lpGameStruct->bPlayingMetagame == false
 	) {             // playing meta game?
 		NewGame();          // no - new game ok
 	} else {
@@ -828,7 +828,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	if (cTestRect.PtInRect(point)) {
 		SendMessage(WM_COMMAND, IDC_COMMAND, BN_CLICKED);
 	} else if (m_rNewGameButton.PtInRect(point)  &&
-	           m_lpGameStruct->bPlayingMetagame == FALSE
+	           m_lpGameStruct->bPlayingMetagame == false
 	          ) {
 		NewGame();
 	} else {
@@ -878,13 +878,13 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		//          nothing left on the board?
 		if (
 		    !nLifeCounter &&
-		    bIsInfiniteLife != TRUE &&
+		    bIsInfiniteLife != true &&
 		    !(*m_cLife).ColonyPlaced() &&
-		    m_lpGameStruct->bPlayingMetagame == FALSE
+		    m_lpGameStruct->bPlayingMetagame == false
 		) {
 			KillTimer(EVOLVE_TIMER_ID);
 //b
-			if (m_lpGameStruct->bSoundEffectsEnabled != FALSE) {
+			if (m_lpGameStruct->bSoundEffectsEnabled != false) {
 				sndPlaySound(WAV_DEATH, SND_SYNC);
 				sndPlaySound(WAV_GAMEOVER, SND_ASYNC);  // When first starts up so
 				//  that u get to see the screen
@@ -897,9 +897,9 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 			    "No villages left."
 			);
 
-			(*m_cLife).m_bIsEvolving = FALSE;
+			(*m_cLife).m_bIsEvolving = false;
 
-			if (m_lpGameStruct->bSoundEffectsEnabled != FALSE) {
+			if (m_lpGameStruct->bSoundEffectsEnabled != false) {
 				sndPlaySound(nullptr, SND_SYNC);
 			}
 
@@ -925,7 +925,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 
 				if (nSpeed != FASTEST) {   // Evolve speed long enuf to play sound?
 					// Yes - play the tune
-					if (m_lpGameStruct->bSoundEffectsEnabled != FALSE)
+					if (m_lpGameStruct->bSoundEffectsEnabled != false)
 						sndPlaySound(WAV_EVOLVE, SND_ASYNC);
 					// Update visual calendar
 					RefreshStats();
@@ -944,10 +944,10 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 			}
 		} else {  // Yes -- shut this thing down
 			KillTimer(EVOLVE_TIMER_ID);
-			(*m_cLife).m_bIsEvolving = FALSE;
+			(*m_cLife).m_bIsEvolving = false;
 			char buf[64];
 			Common::sprintf_s(buf, "Score:  %ld", (long)(*m_cLife).m_dScore);
-			if (m_lpGameStruct->bSoundEffectsEnabled != FALSE)
+			if (m_lpGameStruct->bSoundEffectsEnabled != false)
 				sndPlaySound(WAV_GAMEOVER, SND_SYNC);   // When first starts up so
 			//  that u get to see the screen
 			CMessageBox GameOver(
@@ -957,7 +957,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 			    buf
 			);
 
-			if (m_lpGameStruct->bPlayingMetagame != FALSE) {
+			if (m_lpGameStruct->bPlayingMetagame != false) {
 				m_lpGameStruct->lScore = (long)(*m_cLife).m_dScore;
 				PostMessage(WM_CLOSE, 0, 0);
 			} else {
@@ -1091,7 +1091,7 @@ void CMainWindow::SplashScreen() {
 	CDibDoc myDoc;
 	HDIB    hDIB;
 	CSprite *pSprite;
-	BOOL    bCheck;
+	bool    bCheck;
 	int     nMonthIndex;
 
 	bCheck = myDoc.OpenDocument(SPLASHSPEC);
@@ -1167,7 +1167,7 @@ void CMainWindow::SplashScreen() {
  ****************************************************************/
 void CMainWindow::DisplayStats() {
 	CDC         *pDC;
-	BOOL        bAssertCheck;
+	bool        bAssertCheck;
 	CRect       statsRect;
 	char        buf[256];
 
@@ -1309,7 +1309,7 @@ void CMainWindow::DisplayStats() {
  ****************************************************************/
 void CMainWindow::RefreshStats() {
 	CDC         *pDC;
-	BOOL        bAssertCheck;
+	bool        bAssertCheck;
 	char        buf[256];
 
 	pDC = GetDC();
@@ -1325,7 +1325,7 @@ void CMainWindow::RefreshStats() {
 	ASSERT(bAssertCheck);   // paint the text
 
 	// Round box
-	if (bIsInfiniteTurns != TRUE) {
+	if (bIsInfiniteTurns != true) {
 		Common::sprintf_s(buf, "%d", (*m_cLife).m_nYears);
 
 		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
@@ -1354,7 +1354,7 @@ void CMainWindow::RefreshStats() {
 
 	// Colony left count box
 	// update colony count stat
-	if (bIsInfiniteLife == TRUE) {
+	if (bIsInfiniteLife == true) {
 		Common::sprintf_s(buf, "Unlim");
 		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
@@ -1426,10 +1426,10 @@ IMPLEMENT_DYNCREATE(CWindowMain, CFrameWnd)
 // called.  Any data may be set up at this point.
 //
 // Also, the main window of the application should be created and shown here.
-// Return TRUE if the initialization is successful.
+// Return true if the initialization is successful.
 //
 /*
-BOOL CTheApp::InitInstance()
+bool CTheApp::InitInstance()
 {
     //COLORREF clrCtlBk = RGB(0,0,0);
     //COLORREF clrCtlText = STATS_COLOR;
@@ -1449,7 +1449,7 @@ BOOL CTheApp::InitInstance()
 
     m_pMainWnd->UpdateWindow();
 
-    return TRUE;
+    return true;
 }
 */
 /////////////////////////////////////////////////////////////////////////////
@@ -1494,11 +1494,11 @@ END_MESSAGE_MAP()
 *
 ****************************************************************/
 void CALLBACK GetGameParams(CWnd *pParentWnd) {
-	gbNewGame = FALSE;
+	gbNewGame = false;
 	CUserCfgDlg dlgUserCfg(pParentWnd, pGamePalette, IDD_USERCFG);
 
 	if (dlgUserCfg.DoModal() == IDOK) {  // user click ok?
-		gbNewGame = TRUE;                   // restart game with new settings
+		gbNewGame = true;                   // restart game with new settings
 	}
 } // GetGameParams
 

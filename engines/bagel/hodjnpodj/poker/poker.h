@@ -214,7 +214,7 @@ namespace Poker {
 
 
 void PlayEasterEgg(CDC *, CWnd *, CPalette *, const char *,
-                   const char *, int, int, int, int, BOOL);
+                   const char *, int, int, int, int, bool);
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -224,14 +224,14 @@ void PlayEasterEgg(CDC *, CWnd *, CPalette *, const char *,
 
 class CMainPokerWindow : public CFrameWnd {
 public:
-	BOOL            m_bPlaySounds = FALSE;		// Bool for should I play sounds
-	BOOL            m_bMiddleOfHand = FALSE;	// Bool for am I in the middle of a hand
-	BOOL            m_bPlayRounds = FALSE;		// Bool for am I playing a certain # of rounds
+	bool            m_bPlaySounds = false;		// Bool for should I play sounds
+	bool            m_bMiddleOfHand = false;	// Bool for am I in the middle of a hand
+	bool            m_bPlayRounds = false;		// Bool for am I playing a certain # of rounds
 	long            m_lUserAmount = 0;
 	long            m_lStartingAmount = 0;
 
 private:
-	BOOL            abHoldArray[5] = { FALSE };	// Contains the state of the hold buttons
+	bool            abHoldArray[5] = { false };	// Contains the state of the hold buttons
 	int             aDealtArray[10][2] = {};	// Contains the list of cards already dealt
 	// the second element is 1 if the card is shown
 	long            m_lUserBet = 0;				// The amount of money the player currently has
@@ -248,8 +248,8 @@ private:
 	int             m_nPayOffPair = 0;
 	HWND            m_hCallAppWnd = nullptr;
 	LPGAMESTRUCT    m_lpGameStruct = nullptr;
-	BOOL            m_bMouseCaptured = FALSE;
-	BOOL            m_bEndHand = FALSE;
+	bool            m_bMouseCaptured = false;
+	bool            m_bEndHand = false;
 
 	CRect   MainRect;			// screen area spanned by the game window
 	CRect   BetRect1,			// window area spanned by the Bet1 button
@@ -290,7 +290,7 @@ private:
 	void    OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainPokerWindow )
 	afx_msg void OnPaint();
@@ -301,8 +301,8 @@ protected:
 	afx_msg void OnLButtonUp(unsigned int, CPoint);
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	afx_msg void OnDrawItem(int, LPDRAWITEMSTRUCT);
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) override;
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG

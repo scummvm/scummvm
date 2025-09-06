@@ -86,13 +86,13 @@ void CUserCfgDlg::PutDlgData() {
 
 	ReleaseDC(pDC);
 
-	MFC::SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, TRUE);
-	MFC::SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, TRUE);
-	MFC::SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, TRUE);
+	MFC::SetScrollPos(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, m_nInitGameSpeed, true);
+	MFC::SetScrollPos(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, m_nInitNumLives, true);
+	MFC::SetScrollPos(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, m_nInitArcherLevel, true);
 }
 
 
-BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
 	*/
@@ -101,15 +101,15 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case ID_OK:
-			m_bShouldSave = TRUE;
+			m_bShouldSave = true;
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return FALSE;
+			return false;
 
 		case ID_CANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return FALSE;
+			return false;
 
 		/*
 		* reset params to default
@@ -280,14 +280,14 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
 	int nVal;
 
 	CBmpDialog::OnInitDialog();
 
-	m_bShouldSave = FALSE;
+	m_bShouldSave = false;
 
 	// Get the game speed (1..10)
 	//
@@ -317,9 +317,9 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	if (nVal < BADGUYS_MIN || nVal > BADGUYS_MAX)
 		m_nInitNumBadGuys = DEFAULT_BADGUYS;
 
-	MFC::SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, TRUE);
-	MFC::SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, TRUE);
-	MFC::SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, TRUE);
+	MFC::SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, true);
+	MFC::SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, true);
+	MFC::SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, true);
 
 	pDC = GetDC();
 	tmpRect.SetRect(18, 113, 65, 132);
@@ -356,7 +356,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	}
 
 
-	return TRUE;
+	return true;
 }
 
 void CUserCfgDlg::OnPaint(void) {

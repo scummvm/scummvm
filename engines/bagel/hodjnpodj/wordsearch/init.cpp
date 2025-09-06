@@ -78,7 +78,7 @@ HWND FAR PASCAL RunWordSearch(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 // return the handle to this window
 	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
 	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
-	if (lpGameInfo->bPlayingMetagame == FALSE)
+	if (lpGameInfo->bPlayingMetagame == false)
 		MFC::PostMessage(pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
 	return pMainGameWnd->m_hWnd;
 }

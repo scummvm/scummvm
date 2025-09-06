@@ -104,8 +104,8 @@ CMainWindow::CMainWindow() {
 	pMyGamePalette = nullptr;
 	m_pScrollSprite = nullptr;
 	m_pSoundTrack = nullptr;
-	m_bInGuess = FALSE;
-	m_bInMenu = FALSE;
+	m_bInGuess = false;
+	m_bInMenu = false;
 	m_iLastType = -1;
 	gMain = this;
 	pGameParams->lScore = 0;
@@ -122,7 +122,7 @@ CMainWindow::CMainWindow() {
 
 	// Acquire the shared palette for our game from the splash screen art
 	if ((pDibDoc = new CDibDoc()) != nullptr) {
-		if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
+		if (pDibDoc->OpenDocument(MINI_GAME_MAP) != false)
 			pMyGamePalette = pDibDoc->DetachPalette();
 		else
 			errCode = ERR_FFIND;
@@ -161,8 +161,8 @@ CMainWindow::CMainWindow() {
 			m_pScrollSprite->SharePalette(pMyGamePalette);
 			bSuccess = m_pScrollSprite->LoadResourceSprite(pDC, IDB_SCROLBTN);
 			assert(bSuccess);
-			m_pScrollSprite->SetMasked(TRUE);
-			m_pScrollSprite->SetMobile(TRUE);
+			m_pScrollSprite->SetMasked(true);
+			m_pScrollSprite->SetMobile(true);
 		}
 
 		//
@@ -228,11 +228,11 @@ ERROR_CODE CMainWindow::LoadCategoryNames(void) {
 		for (i = 0; i < N_CATEGORIES; i++) {
 
 			if ((m_pCategories[i] = new CSprite) != nullptr) {
-				if (m_pCategories[i]->LoadSprite(pDC, pszCategoryBitmaps[i]) != FALSE) {
+				if (m_pCategories[i]->LoadSprite(pDC, pszCategoryBitmaps[i]) != false) {
 
 					m_pCategories[i]->SharePalette(pMyGamePalette);
-					m_pCategories[i]->SetMasked(TRUE);
-					m_pCategories[i]->SetMobile(TRUE);
+					m_pCategories[i]->SetMasked(true);
+					m_pCategories[i]->SetMobile(true);
 
 				} else {
 					errCode = ERR_UNKNOWN;
@@ -322,7 +322,7 @@ void CMainWindow::HandleError(ERROR_CODE errCode) {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 	PaintScreen();
 	EndPaint(&lpPaint);
@@ -338,7 +338,7 @@ void CMainWindow::PaintScreen() {
 	CDibDoc myDoc;
 	HDIB    hDIB;
 	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	myDoc.OpenDocument(MINI_GAME_MAP);
 	hDIB = myDoc.GetHDIB();
@@ -378,7 +378,7 @@ void CMainWindow::PaintScreen() {
 // This function is called when a WM_COMMAND message is issued,
 // typically in order to process control related activities.
 //
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       pMyGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (bInGame ? 0 : NO_RETURN),
@@ -397,7 +397,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			GamePauseTimer();
 
 			// indicate a state of being in the command menu
-			m_bInMenu = TRUE;
+			m_bInMenu = true;
 
 			pDC = GetDC();
 			assert(m_pScrollSprite != nullptr);
@@ -434,7 +434,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			SetFocus();
 
 			// not in command menu any more
-			m_bInMenu = FALSE;
+			m_bInMenu = false;
 
 			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
@@ -452,11 +452,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			GameResumeTimer();
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CMainWindow::PlayGame() {
@@ -466,9 +466,9 @@ void CMainWindow::PlayGame() {
 
 	pDC = GetDC();
 
-	bInGame = FALSE;
+	bInGame = false;
 	if ((errCode = InitGame(m_hWnd, pDC)) == ERR_NONE) {
-		bInGame = TRUE;
+		bInGame = true;
 		if (pGameParams->bPlayingMetagame)
 			m_nTurnCount++;
 
@@ -480,7 +480,7 @@ void CMainWindow::PlayGame() {
 
 			/* cleanup on error */
 			EndGame(pDC);
-			bInGame = FALSE;
+			bInGame = false;
 		}
 	}
 
@@ -517,7 +517,7 @@ void CMainWindow::OnClose() {
 
 		if (bInGame) {
 			EndGame(pDC);
-			bInGame = FALSE;
+			bInGame = false;
 		}
 		ReleaseDC(pDC);
 	}
@@ -644,9 +644,9 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 			if (nChar != KEY_ENTER)
 				m_pDlgGuess->text = CString((char)nChar);
 
-			m_bInGuess = TRUE;
+			m_bInGuess = true;
 			m_pDlgGuess->DoModal();
-			m_bInGuess = FALSE;
+			m_bInGuess = false;
 			SetFocus();
 
 			// Check user's guess with the actual phrase
@@ -671,7 +671,7 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 				pDC = gMain->GetDC();
 				EndGame(pDC);
 				gMain->ReleaseDC(pDC);
-				bInGame = FALSE;
+				bInGame = false;
 
 				pGameParams->lScore += (100 * nLeft) / nTotal;
 
@@ -745,7 +745,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	        horse1Rect,
 	        horse2Rect,
 	        flowerRect;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     i;
 
 	birdRect.SetRect(BIRD_X, BIRD_Y, BIRD_X + BIRD_DX, BIRD_Y + BIRD_DY);
@@ -783,8 +783,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameParams).bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_BIRD, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
@@ -812,8 +812,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameParams).bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE1, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
@@ -841,8 +841,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameParams).bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE2, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
@@ -870,8 +870,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameParams).bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_FLOWER, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
@@ -903,7 +903,7 @@ void CMainWindow::OnSetFocus(CWnd *) {
 	}
 }
 
-void CMainWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *, bool bMinimized) {
 	if (!bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:

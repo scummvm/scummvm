@@ -110,7 +110,7 @@ void CMainMenu::ClearDialogImage() {
 	clearButtons();
 
 	if (m_pDlgBackground != nullptr)
-		InvalidateRect(nullptr, FALSE);
+		InvalidateRect(nullptr, false);
 }
 
 void CMainMenu::OnDestroy() {
@@ -119,7 +119,7 @@ void CMainMenu::OnDestroy() {
 	clearButtons();
 }
 
-BOOL CMainMenu::OnInitDialog() {
+bool CMainMenu::OnInitDialog() {
 	CWnd *pWndTemp;
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
@@ -171,7 +171,7 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RULES);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
 	// Disable the NewGame button if told to do so
@@ -179,7 +179,7 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_NEWGAME);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
 	// Disable the Options button if told to do so
@@ -187,7 +187,7 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_OPTIONS);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
 	// Disable the Audio button if told to do so
@@ -195,7 +195,7 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_AUDIO);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
 	// Disable the Return button if told to do so
@@ -203,7 +203,7 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_RETURN);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
 	// Disable the Return button if told to do so
@@ -211,15 +211,15 @@ BOOL CMainMenu::OnInitDialog() {
 		pWndTemp = GetDlgItem(IDC_OPTIONS_QUIT);
 		assert(pWndTemp != nullptr);
 		if (pWndTemp != nullptr)
-			pWndTemp->EnableWindow(FALSE);
+			pWndTemp->EnableWindow(false);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
-BOOL CMainMenu::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool CMainMenu::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -311,8 +311,8 @@ void CMainMenu::OnClickedAudio() {
 	CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
 
 	if (_gameParams != nullptr) {
-		_gameParams->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
-		_gameParams->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
+		_gameParams->bMusicEnabled = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");
+		_gameParams->bSoundEffectsEnabled = GetPrivateProfileInt("Meta", "SoundEffects", true, "HODJPODJ.INI");
 	}
 }
 

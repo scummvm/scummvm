@@ -316,19 +316,19 @@ char *CItem::GetDescription(int nID, long nQuantity) {
  *  int nPlace      identifier of note location
  *
  * Return Value:
- *  BOOL            success / failure
+ *  bool            success / failure
  *
  * Description:     add a note entry to the notebook object.
  *
  ************************************************************************/
 
-BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
-	BOOL    bSuccess = FALSE;
+bool CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
+	bool    bSuccess = false;
 	CNote   *pNote;
 
 	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&            // punt if not using notebook
 	        (GetID() != MG_OBJ_PODJ_NOTEBOOK))
-		return FALSE;
+		return false;
 
 	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);    // create the note object
 	if (pNote != nullptr) {                            // ... and add it to the list
@@ -336,7 +336,7 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 		if (m_pNotes != nullptr)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
-		bSuccess = TRUE;
+		bSuccess = true;
 	}
 
 	return bSuccess;
@@ -351,21 +351,21 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
  *  CNote *pNote    note pointer
  *
  * Return Value:
- *  BOOL            success / failure
+ *  bool            success / failure
  *
  * Description:     add a note entry to the notebook object.
  *
  ************************************************************************/
 
-BOOL CItem::AddNote(CNote *pNote) {
-	BOOL    bSuccess = FALSE;
+bool CItem::AddNote(CNote *pNote) {
+	bool    bSuccess = false;
 
 	if (pNote != nullptr) {                            // ... and add it to the list
 		(*pNote).m_pNext = m_pNotes;                // make head of list follow us
 		if (m_pNotes != nullptr)                       // have list point back at us
 			(*m_pNotes).m_pPrev = pNote;
 		m_pNotes = pNote;                           // make us be new head of list
-		bSuccess = TRUE;
+		bSuccess = true;
 	}
 
 	return bSuccess;

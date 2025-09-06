@@ -47,7 +47,7 @@ namespace Life {
 class CCalendar {
 public:
 	CSprite *pMonthSprite[MONTHS];
-	BOOL    bIsOn[MONTHS];
+	bool    bIsOn[MONTHS];
 };
 
 class CLife {
@@ -56,7 +56,7 @@ public:
 	CLife(CDC *pDC);
 	// Destructor
 	~CLife();
-	void    change_board(unsigned int, CPoint, CDC*, BOOL);
+	void    change_board(unsigned int, CPoint, CDC*, bool);
 	void    evolution(CDC *pDC);
 	void    NewGame(CDC *pDC);
 	void    DisplayMonth(int nMonth, CDC *pDC);
@@ -70,8 +70,8 @@ public:
 	double      m_dScore;
 	int         m_nCumLife;
 	int         m_nYears;
-	BOOL        m_bIsEvolving;
-	BOOL        m_bPrePlace;
+	bool        m_bIsEvolving;
+	bool        m_bPrePlace;
 
 	CText       *pYears, *pYearsText1, *pYearsText2,
 	            *pColonyStat, *pColonyStatText1,

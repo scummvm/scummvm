@@ -53,8 +53,8 @@ public:
 	CSize(uint32 dwSize);
 
 	// Operations
-	BOOL operator==(SIZE size) const;
-	BOOL operator!=(SIZE size) const;
+	bool operator==(SIZE size) const;
+	bool operator!=(SIZE size) const;
 	void operator+=(SIZE size);
 	void operator-=(SIZE size);
 	void SetSize(int CX, int CY);
@@ -104,8 +104,8 @@ public:
 	void Offset(SIZE size);
 	void SetPoint(int X, int Y);
 
-	BOOL operator==(POINT point) const;
-	BOOL operator!=(POINT point) const;
+	bool operator==(POINT point) const;
+	bool operator!=(POINT point) const;
 	void operator+=(SIZE size);
 	void operator-=(SIZE size);
 	void operator+=(POINT point);
@@ -166,12 +166,12 @@ public:
 	operator LPRECT();
 	operator LPCRECT() const;
 
-	// returns TRUE if rectangle has no area
-	BOOL IsRectEmpty() const;
-	// returns TRUE if rectangle is at (0,0) and has no area
-	BOOL IsRectNull() const;
-	// returns TRUE if point is within rectangle
-	BOOL PtInRect(POINT point) const;
+	// returns true if rectangle has no area
+	bool IsRectEmpty() const;
+	// returns true if rectangle is at (0,0) and has no area
+	bool IsRectNull() const;
+	// returns true if point is within rectangle
+	bool PtInRect(POINT point) const;
 
 	// Operations
 
@@ -188,8 +188,8 @@ public:
 	void SetRectEmpty();
 	// copy from another rectangle
 	void CopyRect(LPCRECT lpSrcRect);
-	// TRUE if exactly the same as another rectangle
-	BOOL EqualRect(LPCRECT lpRect) const;
+	// true if exactly the same as another rectangle
+	bool EqualRect(LPCRECT lpRect) const;
 
 	// Inflate rectangle's width and height by
 	// x units to the left and right ends of the rectangle
@@ -241,24 +241,24 @@ public:
 	void MoveToXY(POINT point);
 
 	// set this rectangle to intersection of two others
-	BOOL IntersectRect(
+	bool IntersectRect(
 	    LPCRECT lpRect1,
 	    LPCRECT lpRect2);
 
 	// set this rectangle to bounding union of two others
-	BOOL UnionRect(
+	bool UnionRect(
 	    LPCRECT lpRect1,
 	    LPCRECT lpRect2);
 
 	// set this rectangle to minimum of two others
-	BOOL SubtractRect(
+	bool SubtractRect(
 	    LPCRECT lpRectSrc1,
 	    LPCRECT lpRectSrc2);
 
 	// Additional Operations
 	void operator=(const RECT &srcRect);
-	BOOL operator==(const RECT &rect) const;
-	BOOL operator!=(const RECT &rect) const;
+	bool operator==(const RECT &rect) const;
+	bool operator!=(const RECT &rect) const;
 	void operator+=(POINT point);
 	void operator+=(SIZE size);
 	void operator+=(LPCRECT lpRect);
@@ -315,11 +315,11 @@ inline CSize::CSize(uint32 dwSize) {
 	cy = (short)HIWORD(dwSize);
 }
 
-inline BOOL CSize::operator==(SIZE size) const {
+inline bool CSize::operator==(SIZE size) const {
 	return (cx == size.cx && cy == size.cy);
 }
 
-inline BOOL CSize::operator!=(SIZE size) const {
+inline bool CSize::operator!=(SIZE size) const {
 	return (cx != size.cx || cy != size.cy);
 }
 
@@ -418,11 +418,11 @@ inline void CPoint::SetPoint(
 	y = Y;
 }
 
-inline BOOL CPoint::operator==(POINT point) const {
+inline bool CPoint::operator==(POINT point) const {
 	return (x == point.x && y == point.y);
 }
 
-inline BOOL CPoint::operator!=(POINT point) const {
+inline bool CPoint::operator!=(POINT point) const {
 	return (x != point.x || y != point.y);
 }
 
@@ -547,15 +547,15 @@ inline CRect::operator LPCRECT() const {
 	return this;
 }
 
-inline BOOL CRect::IsRectEmpty() const {
+inline bool CRect::IsRectEmpty() const {
 	return (left >= right) && (top >= bottom);
 }
 
-inline BOOL CRect::IsRectNull() const {
+inline bool CRect::IsRectNull() const {
 	return (left == 0 && right == 0 && top == 0 && bottom == 0);
 }
 
-inline BOOL CRect::PtInRect(POINT point) const {
+inline bool CRect::PtInRect(POINT point) const {
 	return (point.x >= left) && (point.x < right) &&
 	       (point.y >= top) && (point.y < bottom);
 }
@@ -588,7 +588,7 @@ inline void CRect::CopyRect(LPCRECT lpSrcRect) {
 	bottom = lpSrcRect->bottom;
 }
 
-inline BOOL CRect::EqualRect(LPCRECT lpRect) const {
+inline bool CRect::EqualRect(LPCRECT lpRect) const {
 	return left == lpRect->left &&
 	       top == lpRect->top &&
 	       right == lpRect->right &&
@@ -660,7 +660,7 @@ inline void CRect::MoveToXY(POINT pt) {
 	MoveToY(pt.y);
 }
 
-inline BOOL CRect::IntersectRect(
+inline bool CRect::IntersectRect(
     LPCRECT lpRect1, LPCRECT lpRect2) {
 	return (lpRect1->left < lpRect2->right) &&
 	       (lpRect2->left < lpRect1->right) &&
@@ -668,11 +668,11 @@ inline BOOL CRect::IntersectRect(
 	       (lpRect2->top < lpRect1->bottom);
 }
 
-inline BOOL CRect::UnionRect(LPCRECT lpRect1, LPCRECT lpRect2) {
+inline bool CRect::UnionRect(LPCRECT lpRect1, LPCRECT lpRect2) {
 	if (!lpRect1 || !lpRect2) {
 		// Defensive: null input treated as empty
 		SetRect(0, 0, 0, 0);
-		return FALSE;
+		return false;
 	}
 
 	// Check for empty rects
@@ -703,11 +703,11 @@ inline void CRect::operator=(const RECT &srcRect) {
 	CopyRect(&srcRect);
 }
 
-inline BOOL CRect::operator==(const RECT &rect) const {
+inline bool CRect::operator==(const RECT &rect) const {
 	return EqualRect(&rect);
 }
 
-inline BOOL CRect::operator!=(const RECT &rect) const {
+inline bool CRect::operator!=(const RECT &rect) const {
 	return !EqualRect(&rect);
 }
 
@@ -791,20 +791,20 @@ inline CRect CRect::operator|(const RECT &rect2) const {
 	return rect;
 }
 
-inline BOOL CRect::SubtractRect(
+inline bool CRect::SubtractRect(
     LPCRECT lpRectSrc1, LPCRECT lpRectSrc2) {
 	// Calculate the intersection of the two rectangles
 	CRect intersect;
 	if (!intersect.IntersectRect(lpRectSrc1, lpRectSrc2)) {
 		// No overlap - return full original
 		*this = *lpRectSrc1;
-		return TRUE;
+		return true;
 	}
 
 	// If lpRectSrc2 fully covers lpRectSrc1, result is empty
 	if (intersect == *lpRectSrc1) {
 		SetRectEmpty();
-		return FALSE;
+		return false;
 	}
 
 	// Try to return a remaining portion that is a single rectangle
@@ -815,7 +815,7 @@ inline BOOL CRect::SubtractRect(
 	        intersect.right >= lpRectSrc1->right) {
 		SetRect(lpRectSrc1->left, lpRectSrc1->top,
 		        lpRectSrc1->right, intersect.top);
-		return TRUE;
+		return true;
 	}
 
 	// Bottom strip
@@ -824,7 +824,7 @@ inline BOOL CRect::SubtractRect(
 	        intersect.right >= lpRectSrc1->right) {
 		SetRect(lpRectSrc1->left, intersect.bottom,
 		        lpRectSrc1->right, lpRectSrc1->bottom);
-		return TRUE;
+		return true;
 	}
 
 	// Left strip
@@ -833,7 +833,7 @@ inline BOOL CRect::SubtractRect(
 	        intersect.bottom >= lpRectSrc1->bottom) {
 		SetRect(lpRectSrc1->left, lpRectSrc1->top,
 		        intersect.left, lpRectSrc1->bottom);
-		return TRUE;
+		return true;
 	}
 
 	// Right strip
@@ -842,13 +842,13 @@ inline BOOL CRect::SubtractRect(
 	        intersect.bottom >= lpRectSrc1->bottom) {
 		SetRect(intersect.right, lpRectSrc1->top,
 		        lpRectSrc1->right, lpRectSrc1->bottom);
-		return TRUE;
+		return true;
 	}
 
 	// If none of the simple cases apply, we can't represent the subtraction
 	// as a single rectangle - result is undefined
 	SetRectEmpty();
-	return FALSE;
+	return false;
 }
 
 inline void CRect::NormalizeRect() {

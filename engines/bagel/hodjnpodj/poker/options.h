@@ -61,12 +61,12 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(COptions)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual BOOL OnInitDialog();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	virtual bool OnInitDialog();
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK();
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
 	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);

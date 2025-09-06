@@ -63,8 +63,8 @@ CBarber::CBarber(CDC *pDC, CSound *pSound) {
 	* Switchs used to prevent further user updates          *
 	* after timer has run out, no moves left, or is solved. *
 	********************************************************/
-	m_bIsGameOver   = FALSE;        // Initialize solved switch
-	m_bIsWin        = FALSE;        // Initialize win/lose switch
+	m_bIsGameOver   = false;        // Initialize solved switch
+	m_bIsWin        = false;        // Initialize win/lose switch
 }
 
 /*****************************************************************
@@ -140,7 +140,7 @@ void CBarber::NewGame(CDC *pDC) {
 	m_cDck->Deal(m_cBrd);
 	m_cPnt->Board(pDC, m_cBrd);     // paint the cards visually on the board
 	m_pUndo->Reset();               // clear all undo info
-	m_bIsGameOver = FALSE;          // turn off game over switch
+	m_bIsGameOver = false;          // turn off game over switch
 }
 
 /*****************************************************************
@@ -195,31 +195,31 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 	int     i;                  // index
 
 	if (              // user want to undo a change?
-	    m_pUndo->m_cUndoRect.PtInRect(point) == TRUE &&
+	    m_pUndo->m_cUndoRect.PtInRect(point) == true &&
 	    m_pCrd == nullptr
 	) {
 		pDC = pWnd->GetDC();
 
-		if (pGameParams->bSoundEffectsEnabled != FALSE)
+		if (pGameParams->bSoundEffectsEnabled != false)
 			m_pSound->initialize(
 			    UNDO,
 			    SOUND_WAVE | SOUND_ASYNCH
 			);
 
-		if (m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == TRUE) {    // undo successful?
-			if (pGameParams->bSoundEffectsEnabled != FALSE)
+		if (m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == true) {    // undo successful?
+			if (pGameParams->bSoundEffectsEnabled != false)
 				m_pSound->play();
 
 			// undoing does not always guarantee there is a move left,
 			// but it is okay to reset game over switch anyway.
 			//
-			m_bIsGameOver = FALSE;                          // yes - undo successful.
+			m_bIsGameOver = false;                          // yes - undo successful.
 		} // end if
 		pWnd->ReleaseDC(pDC);
 		return;
 	} // end if
 
-	if (m_bIsGameOver == TRUE)
+	if (m_bIsGameOver == true)
 		return;
 
 	if ((m_pCrd = m_cPnt->IsOnCard(point)) == nullptr) {    // get card corr to point
@@ -229,27 +229,27 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 		* are cards on the used stack.                          *
 		********************************************************/
 		if (
-		    m_cBrd->GetStack((loc) stock)->m_cRect.PtInRect(point) == TRUE &&
-		    m_cBrd->GetStack((loc) stock)->IsEmpty() == TRUE
+		    m_cBrd->GetStack((loc) stock)->m_cRect.PtInRect(point) == true &&
+		    m_cBrd->GetStack((loc) stock)->IsEmpty() == true
 		) {
 			int nFlipSnd = 0;                                       // keeps track of when to play fwap sound
 			pDC = pWnd->GetDC();
 
 			// user wants to recycle used stack
 			//
-			if (pGameParams->bSoundEffectsEnabled != FALSE)          // init sound if it is enabled
+			if (pGameParams->bSoundEffectsEnabled != false)          // init sound if it is enabled
 				m_pSound->initialize(
 				    STOCKCARDS,
 				    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 				);
 
-			while (m_cBrd->GetStack((loc) used)->IsEmpty() != TRUE) {
+			while (m_cBrd->GetStack((loc) used)->IsEmpty() != true) {
 				pCard = m_cBrd->GetStack((loc) used)->Pop();        // take top card off used stack
 				m_cBrd->GetStack((loc) stock)->Push(pCard);         // put it on stock stack
 
 				// sound (if enabled)
 				if (
-				    pGameParams->bSoundEffectsEnabled != FALSE &&
+				    pGameParams->bSoundEffectsEnabled != false &&
 				    nFlipSnd % RECYCLE_SOUND_FREQ == 0
 				)
 					m_pSound->play();                                   // make flap sound...
@@ -296,7 +296,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 		pUsed   = m_cBrd->GetStack(used);       // get used stack too.
 
 		// sound (if enabled)
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(
 			    STOCKCARDS,
 			    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -320,7 +320,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 
 		pWnd->ReleaseDC(pDC);
 
-		if (pStock->IsEmpty() == TRUE)               // game over?
+		if (pStock->IsEmpty() == true)               // game over?
 			IsGameOver(pWnd);
 
 		m_pUndo->Record(i);                             // note stack flip for possible undoing
@@ -332,7 +332,7 @@ void CBarber::OnLButtonDown(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 		return; // have fun with these! (no special function)
 
 	default:    // tab stack
-		if (m_pCrd->m_bIsBack == TRUE) {         // want to flip over card?
+		if (m_pCrd->m_bIsBack == true) {         // want to flip over card?
 			pDC = pWnd->GetDC();                // yes
 			m_cPnt->FlipCard(pDC, m_pCrd);      // flip card
 			m_cPnt->UpdateCard(pDC, m_pCrd);    // paint it
@@ -377,27 +377,27 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 	int     i;
 
 	if (             // user want to undo a change?
-	    m_pUndo->m_cUndoRect.PtInRect(point) == TRUE &&
+	    m_pUndo->m_cUndoRect.PtInRect(point) == true &&
 	    m_pCrd == nullptr
 	) {
 		pDC = pWnd->GetDC();
-		if (pGameParams->bSoundEffectsEnabled != FALSE)
+		if (pGameParams->bSoundEffectsEnabled != false)
 			m_pSound->initialize(
 			    UNDO,
 			    SOUND_WAVE | SOUND_QUEUE
 			);
 
-		if (m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == TRUE) {    // undo successful?
-			if (pGameParams->bSoundEffectsEnabled != FALSE)
+		if (m_pUndo->Undo(pDC, m_cBrd, m_cPnt) == true) {    // undo successful?
+			if (pGameParams->bSoundEffectsEnabled != false)
 				m_pSound->play();
 
-			m_bIsGameOver = FALSE;                          // yes
+			m_bIsGameOver = false;                          // yes
 		}
 		pWnd->ReleaseDC(pDC);
 		return;
 	} // end if
 
-	if (m_bIsGameOver == TRUE)
+	if (m_bIsGameOver == true)
 		return;
 
 	if ((m_pCrd = m_cPnt->IsOnCard(point)) == nullptr) {    // get card corr to point
@@ -407,27 +407,27 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 		* are cards on the used stack.                          *
 		********************************************************/
 		if (
-		    m_cBrd->GetStack((loc) stock)->m_cRect.PtInRect(point) == TRUE  &&
-		    m_cBrd->GetStack((loc) stock)->IsEmpty() == TRUE
+		    m_cBrd->GetStack((loc) stock)->m_cRect.PtInRect(point) == true  &&
+		    m_cBrd->GetStack((loc) stock)->IsEmpty() == true
 		) {
 			int nFlipSnd = 0;                                       // keeps track of when to play fwap sound
 
 			// user wants to recycle used stack
 			//
-			if (pGameParams->bSoundEffectsEnabled != FALSE)          // init sound if it is enabled
+			if (pGameParams->bSoundEffectsEnabled != false)          // init sound if it is enabled
 				m_pSound->initialize(
 				    STOCKCARDS,
 				    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
 				);
 
 			pDC = pWnd->GetDC();
-			while (m_cBrd->GetStack((loc) used)->IsEmpty() != TRUE) {
+			while (m_cBrd->GetStack((loc) used)->IsEmpty() != true) {
 				pCard = m_cBrd->GetStack((loc) used)->Pop();        // get used card
 				m_cBrd->GetStack((loc) stock)->Push(pCard);         // put used card onto stock
 
 				// sound (if enabled)
 				if (            // play fwap sound...
-				    pGameParams->bSoundEffectsEnabled != FALSE &&   // every RECYCLE_'_FREQ card
+				    pGameParams->bSoundEffectsEnabled != false &&   // every RECYCLE_'_FREQ card
 				    nFlipSnd % RECYCLE_SOUND_FREQ == 0
 				)
 					m_pSound->play();                                   // make flap sound...
@@ -475,7 +475,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 		pUsed   = m_cBrd->GetStack(used);
 
 		// sound (if enabled)
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(
 			    STOCKCARDS,
 			    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -494,7 +494,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 			pWnd->ReleaseDC(pDC);
 		} // end for
 
-		if (pStock->IsEmpty() == TRUE)
+		if (pStock->IsEmpty() == true)
 			IsGameOver(pWnd);
 
 		m_pUndo->Record(i);     // note stack flip for possible undoing
@@ -503,7 +503,7 @@ void CBarber::OnLButtonDblClk(CWnd *pWnd, CPalette *pPalette, CPoint point) {
 	} // end case
 
 	default:    // tab stacks
-		if (m_pCrd->m_bIsBack == TRUE) {         // user want to flip a card?
+		if (m_pCrd->m_bIsBack == true) {         // user want to flip a card?
 			pDC = pWnd->GetDC();
 			m_cPnt->FlipCard(pDC, m_pCrd);
 			m_cPnt->UpdateCard(pDC, m_pCrd);
@@ -570,7 +570,7 @@ void CBarber::OnMouseMove(CDC *pDC, CPoint point) {
  ****************************************************************/
 void CBarber::OnLButtonUp(CWnd *pWnd) {
 	CDC     *pDC = nullptr;
-	BOOL    bSuccess = FALSE;
+	bool    bSuccess = false;
 	CRect   cTest;
 	CStack  *pStack;
 	int     i;
@@ -585,7 +585,7 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
 	************************************************************/
 	for (i = 0; i <= used; i++) {
 		pStack = m_cBrd->GetStack((loc) i);     // get appropriate stack
-		if (pStack->IsEmpty() == TRUE) {         // assigns rect of interest as
+		if (pStack->IsEmpty() == true) {         // assigns rect of interest as
 			cTest = pStack->m_cRect;            //  either base rect
 		} else {                                //  or card rect from top of stack
 			cTest = pStack->Top()->m_pSprite->GetRect();
@@ -610,16 +610,16 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
 		* within a stack's rect.                                *
 		********************************************************/
 //b
-		if (IsInRect(cTest, m_pCrd->m_pSprite->GetRect()) == FALSE) {  //!= TRUE ) { // is card on invalid area?
+		if (IsInRect(cTest, m_pCrd->m_pSprite->GetRect()) == false) {  //!= true ) { // is card on invalid area?
 			continue;
 		} // end if
 
-		if (m_pLogic->IsMoveOk(m_pCrd, pStack) == TRUE) {
+		if (m_pLogic->IsMoveOk(m_pCrd, pStack) == true) {
 			m_pUndo->Record(m_pCrd->m_pStack, m_pCrd);  // note move for possible undoing
 
 			m_pCrd->m_pStack->Pop();
 			pStack->Push(m_pCrd);
-			bSuccess = TRUE;
+			bSuccess = true;
 		} // end if
 		continue;
 //b     break;
@@ -629,7 +629,7 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
 	* Update visual display. *
 	*************************/
 	pDC = (*pWnd).GetDC();
-	if (bSuccess != TRUE) {                                  // card dropped over stack?
+	if (bSuccess != true) {                                  // card dropped over stack?
 		m_cPnt->UpdateCard(pDC, m_pCrd);                    // no - redraw card over original stack
 	} else {
 		m_cPnt->Stack(pDC, m_pCrd);                         // draw card apro stack
@@ -637,7 +637,7 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
 	(*pWnd).ReleaseDC(pDC);
 
 	m_pCrd = nullptr;                                          // clear current card
-	if (m_cBrd->GetStack(stock)->IsEmpty() == TRUE)
+	if (m_cBrd->GetStack(stock)->IsEmpty() == true)
 		IsGameOver(pWnd);                                       // game over?
 }
 
@@ -663,10 +663,10 @@ void CBarber::OnLButtonUp(CWnd *pWnd) {
  * RETURN VALUE:                n/a
  *
  ****************************************************************/
-BOOL CBarber::IsInRect(CRect cStk, CRect cCrd) {
+bool CBarber::IsInRect(CRect cStk, CRect cCrd) {
 //b CPoint  point;
 	CRect   inter;
-	BOOL    bTL;
+	bool    bTL;
 	/*
 	    point.x = cCrd.TopLeft().x + m_pCrd->m_pSprite->GetHotspot().x;
 	    point.y = cCrd.TopLeft().y + m_pCrd->m_pSprite->GetHotspot().y;
@@ -697,20 +697,20 @@ BOOL CBarber::IsInRect(CRect cStk, CRect cCrd) {
  * RETURN VALUE:                n/a
  *
  ****************************************************************/
-BOOL CBarber::IsGameOver(CWnd *pWnd) {
+bool CBarber::IsGameOver(CWnd *pWnd) {
 	/*****************************
 	* Determine if game is over. *
 	*****************************/
 	m_bIsGameOver = m_pLogic->IsGameOver(m_cBrd);
-	if (m_bIsGameOver == FALSE)
-		return FALSE;
+	if (m_bIsGameOver == false)
+		return false;
 
 	/**********************
 	* Determine win/loss. *
 	**********************/
 	if (m_cBrd->GetStack((loc) fnd)->Size() == DECK) {
 		// sound (if enabled)
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(
 			    WIN_SOUND,
 			    SOUND_WAVE | SOUND_ASYNCH
@@ -718,10 +718,10 @@ BOOL CBarber::IsGameOver(CWnd *pWnd) {
 			m_pSound->play();
 		}
 
-		m_bIsWin = TRUE;
+		m_bIsWin = true;
 	} else {
 		// sound (if enabled)
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(
 			    LOSE_SOUND,
 			    SOUND_WAVE | SOUND_ASYNCH
@@ -729,10 +729,10 @@ BOOL CBarber::IsGameOver(CWnd *pWnd) {
 			m_pSound->play();
 		}
 
-		m_bIsWin = FALSE;
+		m_bIsWin = false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -751,7 +751,7 @@ BOOL CBarber::IsGameOver(CWnd *pWnd) {
  * RETURN VALUE:                n/a
  *
  ****************************************************************/
-BOOL CBarber::IsNewBack(int nCardBack) {
+bool CBarber::IsNewBack(int nCardBack) {
 	return m_cPnt->IsNewBack(nCardBack);
 }
 

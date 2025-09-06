@@ -28,7 +28,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-CTurnDialog::CTurnDialog(CWnd* pParent, CPalette *pPalette, BOOL bHodj, BOOL bGain, BOOL bTurn)
+CTurnDialog::CTurnDialog(CWnd* pParent, CPalette *pPalette, bool bHodj, bool bGain, bool bTurn)
 	: CBmpDialog(pParent, pPalette, IDD_TURNDLG, ".\\art\\msscroll.bmp") {
 	// Initialize all members
 	//
@@ -79,8 +79,8 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CTurnDialog message handlers
 
-BOOL CTurnDialog::OnInitDialog() {
-	BOOL    bSuccess;
+bool CTurnDialog::OnInitDialog() {
+	bool    bSuccess;
 	CDC     *pDC;
 	CRect   textRect;                                               // game stats display
 	int     nText_col_offset;                                       // game stats placement
@@ -112,12 +112,12 @@ BOOL CTurnDialog::OnInitDialog() {
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CTurnDialog::OnPaint() {
 	CDC     *pDC;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	char    msgBuf[64],
 	        artBuf[64];
 
@@ -154,9 +154,9 @@ void CTurnDialog::OnCancel() {
 	EndDialog(IDCANCEL);
 }
 
-BOOL CTurnDialog::OnEraseBkgnd(CDC *) {
+bool CTurnDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 void CTurnDialog::ClearDialogImage(void) {

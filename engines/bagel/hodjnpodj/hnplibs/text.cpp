@@ -26,7 +26,7 @@ namespace Bagel {
 namespace HodjNPodj {
 
 int     CText::m_nTabStop = 20;             // tabstops every 20 pixels
-BOOL    CText::m_bFontLoaded = FALSE;       // no font initially loaded
+bool    CText::m_bFontLoaded = false;       // no font initially loaded
 
 
 IMPLEMENT_DYNCREATE(CText, CObject)
@@ -136,8 +136,8 @@ void CText::InitializeFields(void) {
 	m_nShadow_DX = 0;
 	m_nShadow_DY = 0;
 
-	m_bBounded = TRUE;
-	m_bHaveBackground = FALSE;
+	m_bBounded = true;
+	m_bHaveBackground = false;
 	m_nJustify = JUSTIFY_LEFT;
 
 	m_pFont = nullptr;
@@ -157,7 +157,7 @@ void CText::InitializeFields(void) {
  *
  * Return Value:
  *
- *  BOOL                success/failure condition
+ *  bool                success/failure condition
  *
  * Description:         build primary data objects and work areas; text
  *                      will be displayed centered within the defined
@@ -166,20 +166,20 @@ void CText::InitializeFields(void) {
  *
  ************************************************************************/
 
-BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) {
+bool CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) {
 	CPalette *pPalOld = nullptr;
 
-	m_bBounded = TRUE;                          // set for bounded area painting
+	m_bBounded = true;                          // set for bounded area painting
 	m_pPalette = pPalette;
 	m_nJustify = nJustify;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
 		(void)(*pDC).RealizePalette();
 	}
 
 	if (!m_bFontLoaded) {                       // load the font if we have not
-		m_bFontLoaded = TRUE;                   // ... done so already
+		m_bFontLoaded = true;                   // ... done so already
 		AddFontResource("msserif.fon");
 	}
 
@@ -190,17 +190,17 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 	m_pWork = new CBitmap();                    // create a bitmap to serve as our
 	if ((m_pWork == nullptr) ||                    // ... work area as we output text
 	        !(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return FALSE;
+		return false;
 
 	m_pBackground = new CBitmap();              // create a bitmap to hold the
 	if ((m_pBackground == nullptr) ||              // ... background we overwrite
 	        !(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return FALSE;
+		return false;
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
-	return TRUE;                              // return status
+	return true;                              // return status
 }
 
 
@@ -214,18 +214,18 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
  *
  * Return Value:
  *
- *  BOOL            success/failure condition
+ *  bool            success/failure condition
  *
  * Description:     repaint the background art, thereby erasing the text.
  *
  ************************************************************************/
 
-BOOL CText::RestoreBackground(CDC *pDC) {
-	BOOL        bSuccess = FALSE;
+bool CText::RestoreBackground(CDC *pDC) {
+	bool        bSuccess = false;
 	CPalette *pPalOld = nullptr;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
 		(void)(*pDC).RealizePalette();
 	}
 
@@ -244,7 +244,7 @@ BOOL CText::RestoreBackground(CDC *pDC) {
 	}
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
 	return bSuccess;
 }
@@ -264,17 +264,17 @@ BOOL CText::RestoreBackground(CDC *pDC) {
  *
  * Return Value:
  *
- *  BOOL            success/failure condition
+ *  bool            success/failure condition
  *
  * Description:     display a text string, formatted in the text object area.
  *
  ************************************************************************/
 
-BOOL CText::DisplayString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor) {
-	BOOL    bSuccess;
+bool CText::DisplayString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor) {
+	bool    bSuccess;
 
 	m_cTextColor = crColor;
-	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, FALSE);
+	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, false);
 	return bSuccess;
 }
 
@@ -294,20 +294,20 @@ BOOL CText::DisplayString(CDC *pDC, const char *pszText, const int nSize, const 
  *
  * Return Value:
  *
- *  BOOL            success/failure condition
+ *  bool            success/failure condition
  *
  * Description:     display a shadowed text string, formatted in the text object area.
  *
  ************************************************************************/
 
-BOOL CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow, const int nDX, const int nDY) {
-	BOOL    bSuccess;
+bool CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow, const int nDX, const int nDY) {
+	bool    bSuccess;
 
 	m_cTextColor = crColor;
 	m_cShadowColor = crShadow;
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
-	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, TRUE);
+	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, true);
 	return bSuccess;
 }
 
@@ -322,17 +322,17 @@ BOOL CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize
  *  char *pszText       point to text string to be displayed
  *  int nSize           point size of the text to be used
  *  int nWeight         weighting of the font (FW_ identifier)
- *  BOOL bShadowed      whether the text is shadowed
+ *  bool bShadowed      whether the text is shadowed
  *
  * Return Value:
  *
- *  BOOL            success/failure condition
+ *  bool            success/failure condition
  *
  * Description:     display a text string, formatted in the text object area.
  *
  ************************************************************************/
 
-BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const BOOL bShadowed) {
+bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const int nWeight, const bool bShadowed) {
 	CFont *pFontOld = nullptr;               // font that was mapped to the context
 	CSize       textInfo;                       // font info about the text to be displayed
 	TEXTMETRIC  fontMetrics;                    // info about the font itself
@@ -341,12 +341,12 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	CPalette *pPalOld = nullptr;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
 		(void)(*pDC).RealizePalette();
 	}
 
 	if (!SetupContexts(pDC))                        // setup the device contexts and map in
-		return FALSE;                             // ... the various bitmaps
+		return false;                             // ... the various bitmaps
 
 	if (!m_bHaveBackground) {
 		(void)(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
@@ -358,7 +358,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 		    m_cRect.left,
 		    m_cRect.top,
 		    SRCCOPY);
-		m_bHaveBackground = TRUE;
+		m_bHaveBackground = true;
 	}
 
 	// Create an instance of the specified font
@@ -434,9 +434,9 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	ReleaseContexts();
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -450,43 +450,43 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
  *
  * Return Value:
  *
- *  BOOL            success/failure condition
+ *  bool            success/failure condition
  *
  * Description:     create compatible device contexts for the background
  *                  and work areas, and map in their bitmaps.
  *
  ************************************************************************/
 
-BOOL CText::SetupContexts(CDC *pDC) {
+bool CText::SetupContexts(CDC *pDC) {
 	if (m_pWorkDC == nullptr) {
 		m_pWorkDC = new CDC();
 		if ((m_pWorkDC == nullptr) ||
 		        !(*m_pWorkDC).CreateCompatibleDC(pDC))
-			return FALSE;
+			return false;
 		if (m_pPalette != nullptr) {
-			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, FALSE);
+			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, false);
 			(void)(*m_pWorkDC).RealizePalette();
 		}
 		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
 		if (m_pWorkOld == nullptr)
-			return FALSE;
+			return false;
 	}
 
 	if (m_pBackgroundDC == nullptr) {
 		m_pBackgroundDC = new CDC();
 		if ((m_pBackgroundDC == nullptr) ||
 		        !(*m_pBackgroundDC).CreateCompatibleDC(pDC))
-			return FALSE;
+			return false;
 		if (m_pPalette != nullptr) {
-			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
+			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, false);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
 		if (m_pBackgroundOld == nullptr)
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -514,11 +514,11 @@ void CText::ReleaseContexts(void) {
 	}
 
 	if (m_pPalWorkOld != nullptr) {
-		(void)(*m_pWorkDC).SelectPalette(m_pPalWorkOld, FALSE);
+		(void)(*m_pWorkDC).SelectPalette(m_pPalWorkOld, false);
 		m_pPalWorkOld = nullptr;
 	}
 	if (m_pPalBackOld != nullptr) {
-		(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, FALSE);
+		(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, false);
 		m_pPalBackOld = nullptr;
 	}
 

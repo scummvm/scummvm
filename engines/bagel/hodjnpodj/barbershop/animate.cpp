@@ -51,21 +51,21 @@ CAnimate::CAnimate(CSound *pSound) {
 CAnimate::~CAnimate() {
 } // ~CAnimate
 
-BOOL CAnimate::Clown(CDC *pDC, CPoint point) {
-	BOOL    bSuccess;
+bool CAnimate::Clown(CDC *pDC, CPoint point) {
+	bool    bSuccess;
 	int     i;
 
-	if (m_cClownRect.PtInRect(point) == FALSE)
-		return FALSE;
+	if (m_cClownRect.PtInRect(point) == false)
+		return false;
 
 	m_pSprite = new CSprite;
 	(*m_pSprite).SharePalette(pGamePalette);
 	bSuccess = (*m_pSprite).LoadCels(pDC, CLOWN_BMP, CLOWN_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(FALSE);
-	(*m_pSprite).SetMobile(FALSE);
+	(*m_pSprite).SetMasked(false);
+	(*m_pSprite).SetMobile(false);
 
-	if (pGameParams->bSoundEffectsEnabled != FALSE) {
+	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
 		    CLOWN_WAV,
 		    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -73,7 +73,7 @@ BOOL CAnimate::Clown(CDC *pDC, CPoint point) {
 		m_pSound->play();
 	} // end if
 
-	if (bSuccess == TRUE) {
+	if (bSuccess == true) {
 		(*m_pSprite).SetCel(CLOWN_FRAMES);
 		for (i = 0; i < CLOWN_FRAMES - 1; i++) {
 			(*m_pSprite).PaintSprite(
@@ -90,24 +90,24 @@ BOOL CAnimate::Clown(CDC *pDC, CPoint point) {
 		m_pSprite = nullptr;
 	} // end if
 
-	return TRUE;
+	return true;
 } // clown
 
-BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
-	BOOL    bSuccess;
+bool CAnimate::UFO(CDC *pDC, CPoint point) {
+	bool    bSuccess;
 	int     i;
 
-	if (m_cCarRect.PtInRect(point) == FALSE)
-		return FALSE;
+	if (m_cCarRect.PtInRect(point) == false)
+		return false;
 
 	m_pSprite = new CSprite;
 	(*m_pSprite).SharePalette(pGamePalette);
 	bSuccess = (*m_pSprite).LoadCels(pDC, UFOA_BMP, UFOA_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(FALSE);
-	(*m_pSprite).SetMobile(FALSE);
+	(*m_pSprite).SetMasked(false);
+	(*m_pSprite).SetMobile(false);
 
-	if (pGameParams->bSoundEffectsEnabled != FALSE) {
+	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
 		    SPACESHIP_WAV,
 		    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -115,7 +115,7 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 		m_pSound->play();
 	} // end if
 
-	if (bSuccess == TRUE) {
+	if (bSuccess == true) {
 		int j;
 		(*m_pSprite).SetCel(UFOA_FRAMES);
 
@@ -127,7 +127,7 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 			Sleep(UFOA_TIME_SLICE);
 		} // end for
 
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(
 			    SPACERAY_WAV,
 			    SOUND_WAVE
@@ -154,10 +154,10 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 
 	bSuccess = (*m_pSprite).LoadCels(pDC, UFOB_BMP, UFOB_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(FALSE);
-	(*m_pSprite).SetMobile(FALSE);
+	(*m_pSprite).SetMasked(false);
+	(*m_pSprite).SetMobile(false);
 
-	if (pGameParams->bSoundEffectsEnabled != FALSE) {
+	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
 		    SPACESHIP_WAV,
 		    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -165,7 +165,7 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 		m_pSound->play();
 	} // end if
 
-	if (bSuccess == TRUE) {
+	if (bSuccess == true) {
 		int j;
 		(*m_pSprite).SetCel(UFOB_FRAMES);
 
@@ -177,7 +177,7 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 			Sleep(UFOB_TIME_SLICE);
 		} // end for
 
-		if (pGameParams->bSoundEffectsEnabled != FALSE) {
+		if (pGameParams->bSoundEffectsEnabled != false) {
 			m_pSound->initialize(  // play synchronous beam up sound
 			    SPACERAY_WAV,
 			    SOUND_WAVE
@@ -206,14 +206,14 @@ BOOL CAnimate::UFO(CDC *pDC, CPoint point) {
 		m_pSprite = nullptr;
 	} // end if
 
-	return TRUE;
+	return true;
 } // UFO
 
-BOOL CAnimate::Brat(CPoint point) {
-	if (m_cBratRect.PtInRect(point) == FALSE)
-		return FALSE;
+bool CAnimate::Brat(CPoint point) {
+	if (m_cBratRect.PtInRect(point) == false)
+		return false;
 
-	if (pGameParams->bSoundEffectsEnabled != FALSE) {
+	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
 		    BRAT_WAV,
 		    SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE
@@ -221,15 +221,15 @@ BOOL CAnimate::Brat(CPoint point) {
 		m_pSound->play();
 	}  // end if
 
-	return TRUE;
+	return true;
 } // Brat
 
-BOOL CAnimate::Lollipop(CPoint point) {
-	if (m_cLolliRect.PtInRect(point) == FALSE)
-		return FALSE;
+bool CAnimate::Lollipop(CPoint point) {
+	if (m_cLolliRect.PtInRect(point) == false)
+		return false;
 
-	if (pGameParams->bSoundEffectsEnabled == FALSE)
-		return TRUE;
+	if (pGameParams->bSoundEffectsEnabled == false)
+		return true;
 
 	if ((brand() % 2) == 0) {        // randomly chose sound wave to play
 		m_pSound->initialize(
@@ -244,15 +244,15 @@ BOOL CAnimate::Lollipop(CPoint point) {
 	} // end if
 
 	m_pSound->play();
-	return TRUE;
+	return true;
 } // Lollipop
 
-BOOL CAnimate::Haircut(CPoint point) {
-	if (m_cCutRect.PtInRect(point) == FALSE)
-		return FALSE;
+bool CAnimate::Haircut(CPoint point) {
+	if (m_cCutRect.PtInRect(point) == false)
+		return false;
 
-	if (pGameParams->bSoundEffectsEnabled == FALSE)
-		return TRUE;
+	if (pGameParams->bSoundEffectsEnabled == false)
+		return true;
 
 	m_pSound->initialize(
 	    CUT_WAV,
@@ -260,7 +260,7 @@ BOOL CAnimate::Haircut(CPoint point) {
 	);
 
 	m_pSound->play();
-	return TRUE;
+	return true;
 } // Haircut
 
 } // namespace Barbershop

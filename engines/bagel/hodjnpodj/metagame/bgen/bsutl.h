@@ -73,14 +73,14 @@ class CBsuSet {
 public:
 	char m_cStartData;
 	class CBsuBar *m_xpBarChain;   // chain of scroll bar objects
-	BOOL m_bInUpdateBars;  // prevent UpdateBars recursion
+	bool m_bInUpdateBars;  // prevent UpdateBars recursion
 	CDialog *m_xpDlg;      // dialog to be updated
 	CWnd *m_xpWnd;     // window to be scrolled
 
-	BOOL m_bDebugMessages;
-	BOOL m_bPrimary;   // primary in linked sets
-	BOOL m_bScrollView;    // window uses CScrollView
-	BOOL m_bScrollBars;    // window to have windows scroll bars
+	bool m_bDebugMessages;
+	bool m_bPrimary;   // primary in linked sets
+	bool m_bScrollView;    // window uses CScrollView
+	bool m_bScrollBars;    // window to have windows scroll bars
 	CBsuSet *m_xpSetLink;  // one alternate set of scroll bars
 	char m_cEndData;
 
@@ -93,51 +93,51 @@ public:
 
 	~CBsuSet(void);
 	//- InitWndBsuSet -- initialize bsu set for a window
-	BOOL InitWndBsuSet(CWnd *xpWnd,
-		BOOL bScrollView PDFT(FALSE), BOOL bScrollBars PDFT(FALSE),
+	bool InitWndBsuSet(CWnd *xpWnd,
+		bool bScrollView PDFT(false), bool bScrollBars PDFT(false),
 		CBsuSet *xpLinkSet PDFT(nullptr));
 	//- InitDlgBsuSet -- initialize bsu set for dialog box
-	BOOL InitDlgBsuSet(CDialog *xpDlg,
+	bool InitDlgBsuSet(CDialog *xpDlg,
 		CBsuSet *xpLinkSet PDFT(nullptr));
 	//- AddBarToSet -- add scroll bar to scroll bar set
-	BOOL AddBarToSet(int iId, int iWndScrollCode,
+	bool AddBarToSet(int iId, int iWndScrollCode,
 		int iBarType PDFT(0));
 	//- PrepareWndBsuSet -- prepare window scroll bar set
 	//      by filling in the device fields
-	BOOL PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect);
+	bool PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect);
 	//- UpdateWndDeviceExtents -- update window devices coordinates
-	BOOL UpdateWndDeviceExtents(void);
+	bool UpdateWndDeviceExtents(void);
 	//- LinkWndBsuSet -- link window/dialog bsu sets
-	BOOL LinkWndBsuSet(void);
+	bool LinkWndBsuSet(void);
 	//- PrepareDc -- replace OnPrepareDC -- set the viewport and
 	//  the clip rectangle to the specified region
-	BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
+	bool PrepareDc(CDC *xpDc, bool bRelocatable PDFT(true));
 	//- OnScroll -- handle OnHScroll and OnVScroll messages
-	BOOL OnScroll(unsigned int nSBCode, unsigned int nPos,
+	bool OnScroll(unsigned int nSBCode, unsigned int nPos,
 		CScrollBar *xpScrollBar, int iBarType PDFT(0));
 	//- GetBar -- get bsu scroll bar object
 	CBsuBar *GetBar(int iBarType);
 	//- ScrollWindowToPoint -- scroll window to spec point
-	BOOL ScrollWindowToPoint(CPoint cScrollPosition,
-		BOOL bScrollWindow PDFT(TRUE));
+	bool ScrollWindowToPoint(CPoint cScrollPosition,
+		bool bScrollWindow PDFT(true));
 	//- EdgeToCenter -- if point is on edge, scroll it to center
-	BOOL EdgeToCenter(CPoint cPoint, BOOL bScroll PDFT(FALSE));
+	bool EdgeToCenter(CPoint cPoint, bool bScroll PDFT(false));
 	//- SetSubWindowRect -- set rectangle to portion of window
 	//      (logical coordinates)
-	BOOL SetSubWindowRect(LPRECT lpRect, int iBsRegion);
+	bool SetSubWindowRect(LPRECT lpRect, int iBsRegion);
 	//- TestRect -- test whether rectangle is in window
-	BOOL TestRect(CRRect crTestRect,
-		BOOL &bPhysical, BOOL &bEdge);
+	bool TestRect(CRRect crTestRect,
+		bool &bPhysical, bool &bEdge);
 	//- GetWindowBars -- set rectangle to portion of window
 	//      (device coordinates)
-	BOOL GetWindowBars(CBsuBar *&xpHBar,
-		CBsuBar *&xpVBar, BOOL bErrorRtn PDFT(TRUE));
+	bool GetWindowBars(CBsuBar *&xpHBar,
+		CBsuBar *&xpVBar, bool bErrorRtn PDFT(true));
 	//- PointLogical -- convert device point to logical coords
 	CRPoint PointLogical(CPoint cPoint);
 	//- GetInfo -- get information about scroll set
-	BOOL GetInfo(CBsuInfo *xpBsuInfo);
+	bool GetInfo(CBsuInfo *xpBsuInfo);
 	//- DumpInfo -- dump information about scroll set
-	BOOL DumpInfo(char *lpStart PDFT(nullptr));
+	bool DumpInfo(char *lpStart PDFT(nullptr));
 };
 
 
@@ -176,21 +176,21 @@ public:
 // CRPoint -- relocatable point
 class CRPoint : public CPoint {
 public:
-	BOOL m_bRelocatable;
+	bool m_bRelocatable;
 
-	CRPoint(BOOL bRelocatable = TRUE) {
+	CRPoint(bool bRelocatable = true) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	CRPoint(CPoint cPt, BOOL bRelocatable = TRUE) : CPoint(cPt) {
+	CRPoint(CPoint cPt, bool bRelocatable = true) : CPoint(cPt) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	CRPoint(int iX, int iY, BOOL bRelocatable = TRUE) : CPoint(iX, iY) {
+	CRPoint(int iX, int iY, bool bRelocatable = true) : CPoint(iX, iY) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	BOOL IfRelocatable(void) const {
+	bool IfRelocatable(void) const {
 		return m_bRelocatable != 0;
 	}
 
@@ -202,13 +202,13 @@ public:
 // CRRect -- relocatable rectangle
 class CRRect : public CRect {
 public:
-	BOOL m_bRelocatable;
+	bool m_bRelocatable;
 
-	CRRect(BOOL bRelocatable = TRUE) {
+	CRRect(bool bRelocatable = true) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	CRRect(CRect cRc, BOOL bRelocatable = TRUE) : CRect(cRc) {
+	CRRect(CRect cRc, bool bRelocatable = true) : CRect(cRc) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
@@ -217,15 +217,15 @@ public:
 	}
 
 	CRRect(int iL, int iT, int iR, int iB,
-		BOOL bRelocatable = TRUE) : CRect(iL, iT, iR, iB) {
+		bool bRelocatable = true) : CRect(iL, iT, iR, iB) {
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	BOOL IfRelocatable(void) const {
+	bool IfRelocatable(void) const {
 		return m_bRelocatable != 0;
 	}
 
-	BOOL PtInRect(const CRPoint &crPoint) {
+	bool PtInRect(const CRPoint &crPoint) {
 		return EQV(m_bRelocatable, crPoint.m_bRelocatable)
 			&& CRect::PtInRect(crPoint);
 	}
@@ -242,8 +242,8 @@ public:
 class CGtlHint : public CObject {
 public:
 	char m_cStartData;
-	//    BOOL m_bFull ;    // full screen invalidate
-	BOOL m_bWmPaint;   // update with WM_PAINT message
+	//    bool m_bFull ;    // full screen invalidate
+	bool m_bWmPaint;   // update with WM_PAINT message
 	CRect cHintRect;
 	char m_cEndData;
 

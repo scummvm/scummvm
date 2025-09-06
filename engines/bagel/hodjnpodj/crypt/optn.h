@@ -60,7 +60,7 @@ private:
 	int         TimeToIndex(int nTime);
 
 public:
-	COptn(CWnd* pParent = nullptr, CPalette *pGamePalette = nullptr, int nLttrsSolvd = FALSE, int nTime = FALSE); // standard constructor
+	COptn(CWnd* pParent = nullptr, CPalette *pGamePalette = nullptr, int nLttrsSolvd = false, int nTime = false); // standard constructor
 	~COptn();
 	void ClearDialogImage(void);
 
@@ -78,9 +78,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(COptn)
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;

@@ -43,11 +43,11 @@ public:
 	void        PaintScreen(void);
 	ERROR_CODE  RepaintSpriteList(CDC *);
 	void        LoadIniSettings(void);
-	BOOL        MainLoop(void);
+	bool        MainLoop(void);
 
 protected:
 	void        FlushInputEvents(void);
-	BOOL        CheckMessages(void);
+	bool        CheckMessages(void);
 	ERROR_CODE  LoadMasterSprites(void);
 	void        ReleaseMasterSprites(void);
 	ERROR_CODE  LoadMasterSounds(void);
@@ -70,18 +70,18 @@ protected:
 	void        DestroyBadArrow(CLList *);
 	void        DestroyBadGuy(CLList *, CDC *);
 	void        PruneDeadBadGuys(void);
-	void        DestroyHay(CLList *, CRect, CDC *, BOOL);
+	void        DestroyHay(CLList *, CRect, CDC *, bool);
 	void        DeleteSprite(CSprite *);
-	BOOL        MoveArrows(CDC *);
-	BOOL        MoveBadGuys(CDC *);
+	bool        MoveArrows(CDC *);
+	bool        MoveBadGuys(CDC *);
 	void        MoveHodj(int);
-	void        LoseLife(CDC *, BOOL);
+	void        LoseLife(CDC *, bool);
 	void        HandleError(ERROR_CODE);
 	void        KillAnimation(void);
 	void        OnSoundNotify(CSound *pSound);
 	POINT       GetLeftMostBadGuy(void);
 
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	void OnPaint(void);
 	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void OnKeyDown(unsigned int, unsigned int, unsigned int);
@@ -89,7 +89,7 @@ protected:
 	void OnTimer(uintptr);
 	void OnClose(void);
 	long OnJoyStick(unsigned int, long);
-	void OnActivate(unsigned int, CWnd *, BOOL) override;
+	void OnActivate(unsigned int, CWnd *, bool) override;
 	void OnLButtonDown(unsigned int, CPoint);
 	void OnRButtonUp(unsigned int, CPoint);
 	void OnMouseMove(unsigned int, CPoint);
@@ -148,14 +148,14 @@ protected:
 	int          m_nLevel;
 	int          m_nWave;
 	unsigned int         m_nJoyLast;
-	BOOL         m_bPause;
-	BOOL         m_bGameActive;
-	BOOL         m_bJoyActive;
-	BOOL         m_bMoveMode;
-	BOOL         m_bInMenu;
-	BOOL         m_bNewGame;
-	BOOL         m_bAnimationsOn;
-	BOOL         m_bTimerActive;
+	bool         m_bPause;
+	bool         m_bGameActive;
+	bool         m_bJoyActive;
+	bool         m_bMoveMode;
+	bool         m_bInMenu;
+	bool         m_bNewGame;
+	bool         m_bAnimationsOn;
+	bool         m_bTimerActive;
 
 
 	// User Setup variables
@@ -172,7 +172,7 @@ protected:
 //
 class CTheApp : public CWinApp {
 public:
-	BOOL InitInstance();
+	bool InitInstance();
 	virtual int ExitInstance();
 };
 

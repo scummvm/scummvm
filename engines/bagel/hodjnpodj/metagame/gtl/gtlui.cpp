@@ -49,13 +49,13 @@ extern uint32 GetPhysicalMemory(void);
 
 
 CNode::CNode() {
-	m_bDeleted = FALSE;
-	m_bSelected = FALSE;
-	m_bRelative = FALSE;
-	m_bRelocatable = FALSE;
-	m_bWgtSpec = FALSE;
-	m_bSenSpec = FALSE;
-	m_bMenu = FALSE;
+	m_bDeleted = false;
+	m_bSelected = false;
+	m_bRelative = false;
+	m_bRelocatable = false;
+	m_bWgtSpec = false;
+	m_bSenSpec = false;
+	m_bMenu = false;
 }
 
 //* CGtlData::CGtlData -- constructor -- zero out all fields, allocate
@@ -121,7 +121,7 @@ void CGtlData::CreateOffScreenBmp(void) {
 			if ((m_pOffScreenBmp = new CBitmap) != nullptr) {
 
 				pScreenDC = m_xpGtlView->GetDC();
-				if (m_pOffScreenBmp->CreateCompatibleBitmap(pScreenDC, xpGtlApp->m_iWidth, xpGtlApp->m_iHeight) == FALSE) {
+				if (m_pOffScreenBmp->CreateCompatibleBitmap(pScreenDC, xpGtlApp->m_iWidth, xpGtlApp->m_iHeight) == false) {
 
 					delete m_pOffScreenBmp;
 					m_pOffScreenBmp = nullptr;
@@ -150,9 +150,9 @@ void CGtlData::PaintOffScreenBmp(void) {
 		if ((pMemDC = GetMemDC()) != nullptr) {
 
 			if ((pScreenDC = m_xpGtlView->GetDC()) != nullptr) {
-				pScreenPalOld = pScreenDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, FALSE);
+				pScreenPalOld = pScreenDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, false);
 				pScreenDC->BitBlt(0, 0, xpGtlApp->m_iWidth, xpGtlApp->m_iHeight, pMemDC->m_pDC, 0, 0, SRCCOPY);
-				pScreenDC->SelectPalette(pScreenPalOld, FALSE);
+				pScreenDC->SelectPalette(pScreenPalOld, false);
 				m_xpGtlView->ReleaseDC(pScreenDC);
 			}
 			ReleaseMemDC(pMemDC);
@@ -177,7 +177,7 @@ CMemDC *CGtlData::GetMemDC(void) {
 	if ((pMemDC = new CMemDC) != nullptr) {
 		pMemDC->m_pDC->CreateCompatibleDC(nullptr);
 		assert(m_cBgbMgr.m_xpGamePalette != nullptr);
-		pMemDC->m_pPalOld = pMemDC->m_pDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, FALSE);
+		pMemDC->m_pPalOld = pMemDC->m_pDC->SelectPalette(m_cBgbMgr.m_xpGamePalette, false);
 		pMemDC->m_pDC->RealizePalette();
 		pMemDC->m_hBmpOld = SelectBitmap(pMemDC->m_pDC->m_hDC, m_pOffScreenBmp->m_hObject);
 	}
@@ -191,14 +191,14 @@ void CGtlData::ReleaseMemDC(CMemDC *pMemDC) {
 
 	if (pMemDC != nullptr) {
 		SelectBitmap(pMemDC->m_pDC->m_hDC, pMemDC->m_hBmpOld);
-		pMemDC->m_pDC->SelectPalette(pMemDC->m_pPalOld, FALSE);
+		pMemDC->m_pDC->SelectPalette(pMemDC->m_pPalOld, false);
 		delete pMemDC;
 	}
 }
 
 //* CGtlData::SetColors -- set colors of various elements
-BOOL CGtlData::SetColors(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::SetColors(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SetColors) ;
 	int iError = 0 ;            // error code
@@ -222,17 +222,17 @@ BOOL CGtlData::SetColors(void)
 }
 
 //* CGtlData::ClearInhibitDraw -- clear m_bInhibitDraw flag
-BOOL CGtlData::ClearInhibitDraw(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::ClearInhibitDraw(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::ClearInhibitDraw) ;
 	int iError = 0 ;        // error code
 	CGtlView * xpGtlView = (CGtlView *)m_cBgbMgr.m_xpcView ;
 
 	if (m_bInhibitDraw) {
-		m_bInhibitDraw = FALSE ;
+		m_bInhibitDraw = false ;
 		if (xpGtlView)
-			xpGtlView->Invalidate(FALSE) ;   // repaint window
+			xpGtlView->Invalidate(false) ;   // repaint window
 	}
 
 // cleanup:
@@ -242,17 +242,17 @@ BOOL CGtlData::ClearInhibitDraw(void)
 }
 
 //* CGtlData::Draw -- draw data
-BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
+bool CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 // xpGtlView -- CGtlView object
 // xpClipRect -- clipping rectangle
 // xpDc -- device context (provided only for WM_PAINT)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::Draw) ;
 	int iError = 0 ;            // error code
 	CRPoint crPoint1, crPoint2 ;        // link points
 	CRPoint crPosition ;                // position within window
-	BOOL bPaint = (xpDc != nullptr) ;      // test for WM_PAINT
+	bool bPaint = (xpDc != nullptr) ;      // test for WM_PAINT
 	CMemDC *pMemDC;
 	CDC *pOldDC;
 
@@ -263,7 +263,7 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 	// avoid recursion
 	assert(!m_bDrawing);
 
-	m_bDrawing = TRUE ;
+	m_bDrawing = true ;
 	m_xpGtlView = xpGtlView ;
 	m_bPaint = bPaint ;
 
@@ -321,11 +321,11 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 		if (m_bPaint)
 			CSprite::ClearBackgrounds();
 
-		DrawBitmaps(xpDc, FALSE) ;  // draw non-overlay bitmaps
+		DrawBitmaps(xpDc, false) ;  // draw non-overlay bitmaps
 
 	
 		// paint sprites and moveable overlays
-		DrawBitmaps(xpDc, TRUE) ;   // draw non-overlay bitmaps
+		DrawBitmaps(xpDc, true) ;   // draw non-overlay bitmaps
 
 		if (m_pOffScreenBmp != nullptr) {
 			ReleaseMemDC(pMemDC);
@@ -343,7 +343,7 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 	m_cBgbMgr.ReleaseDc() ;
 
 	m_xpClipRect = m_xpDevClipRect = nullptr;
-	m_bDrawing = FALSE;
+	m_bDrawing = false;
 
 //exit:
 
@@ -353,27 +353,27 @@ BOOL CGtlData::Draw(CGtlView *xpGtlView, CRect *xpClipRect, CDC *xpDc)
 
 //* CGtlData::SwitchDc -- switch between relocatable/nonrelocatable
 //              device context
-BOOL CGtlData::SwitchDc(CDC *pDC, BOOL bRelocatable)
+bool CGtlData::SwitchDc(CDC *pDC, bool bRelocatable)
 // pDC -- pointer to device context
 // bRelocatable -- (non)relocatable flag
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SwitchDc) ;
 	int iError = 0 ;            // error code
 
 	if (bRelocatable && !m_bRelocatable) {
 
-		m_xpGtlView->m_cViewBsuSet.PrepareDc(pDC, TRUE) ;
+		m_xpGtlView->m_cViewBsuSet.PrepareDc(pDC, true) ;
 		if (!m_bPaint && m_xpClipRect)
 			pDC->IntersectClipRect(m_xpClipRect) ;
-		m_bRelocatable = TRUE ;
+		m_bRelocatable = true ;
 
 	} else if (!bRelocatable && m_bRelocatable) {
 
-		m_xpGtlView->m_cViewBsuSet.PrepareDc(pDC, FALSE) ;
+		m_xpGtlView->m_cViewBsuSet.PrepareDc(pDC, false) ;
 		if (m_xpDevClipRect)
 			pDC->IntersectClipRect(m_xpDevClipRect) ;
-		m_bRelocatable = FALSE ;
+		m_bRelocatable = false ;
 	}
 
 // cleanup:
@@ -384,10 +384,10 @@ BOOL CGtlData::SwitchDc(CDC *pDC, BOOL bRelocatable)
 
 
 //* CGtlData::DrawBitmaps -- draw bitmaps for Draw routine
-BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
+bool CGtlData::DrawBitmaps(CDC *pDC, bool bOverlay)
 // pDC -- device context
-// bOverlay -- if FALSE, draw base bitmaps; if TRUE, draw overlays
-// returns: TRUE if error, FALSE otherwise
+// bOverlay -- if false, draw base bitmaps; if true, draw overlays
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::DrawBitmaps) ;
 	int iError = 0 ;            // error code
@@ -407,7 +407,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 		lpMap = m_lpMaps + iK ;
 
 		if (!lpMap->m_bSpecialPaint && EQV(lpMap->m_bOverlay, bOverlay) && (_metaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
-			DrawABitmap(pDC, lpcBgbObject, TRUE);
+			DrawABitmap(pDC, lpcBgbObject, true);
 	}
 
 	m_cBgbMgr.ResumeAnimations();
@@ -416,16 +416,16 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 
 		// draw the hodj/podj bitmaps
 		for (xpXodj = m_xpXodjChain ; xpXodj ; xpXodj = xpXodj->m_xpXodjNext)
-			DrawABitmap(pDC, xpXodj->m_lpcCharSprite, TRUE);
+			DrawABitmap(pDC, xpXodj->m_lpcCharSprite, true);
 
 		// draw the correct hodj/podj icon
 		if (m_xpCurXodj)
-			DrawABitmap(pDC, m_xpCurXodj->m_lpcIcon, TRUE);
+			DrawABitmap(pDC, m_xpCurXodj->m_lpcIcon, true);
 
 		// draw buttons in current correct position
-		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cMiniButton), TRUE);
-		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cInvButton), TRUE);
-		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cScrollButton), TRUE);
+		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cMiniButton), true);
+		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cInvButton), true);
+		DrawABitmap(pDC, m_cBbtMgr.GetCurrentBitmap(&m_cScrollButton), true);
 
 		// draw number of furlongs
 		if ((xpXodj = m_xpCurXodj) != nullptr) {
@@ -437,7 +437,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 			if (iNumFurlongs > 24)
 				iNumFurlongs = 24 ;
 			if (((lpMap = m_lpFurlongMaps[iNumFurlongs]) != nullptr) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
-				DrawABitmap(pDC, lpcBgbObject, TRUE);
+				DrawABitmap(pDC, lpcBgbObject, true);
 		}
 	}
 
@@ -449,16 +449,16 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 
 
 //* CGtlData::DrawABitmap -- draw a bitmap object for Draw routine
-BOOL CGtlData::DrawABitmap(CDC *pDC, CBgbObject *pBgbObject, BOOL bPaint)
+bool CGtlData::DrawABitmap(CDC *pDC, CBgbObject *pBgbObject, bool bPaint)
 // pDC -- device context
 // pBgbObject -- pointer to graphics object to draw
-// bPaint -- if TRUE, called from WM_PAINT (Draw routine)
-// returns: TRUE if error, FALSE otherwise
+// bPaint -- if true, called from WM_PAINT (Draw routine)
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::DrawABitmap) ;
 	int iError = 0 ;            // error code
 	CRRect crDestRect ; // relocatable destination rectangle
-	BOOL bDrawBitmap = !bPaint ;
+	bool bDrawBitmap = !bPaint ;
 
 	assert(pBgbObject != nullptr);
 
@@ -479,7 +479,7 @@ BOOL CGtlData::DrawABitmap(CDC *pDC, CBgbObject *pBgbObject, BOOL bPaint)
 			// set crDestRect to the intersection, return true
 			// if result is not null rectangle
 			if (!m_xpDevClipRect || crDestRect.IntersectRect(&crDestRect, m_xpDevClipRect))
-				bDrawBitmap = TRUE ;
+				bDrawBitmap = true ;
 		}
 		if (bDrawBitmap) {
 			m_cBgbMgr.PaintBitmapObject(pBgbObject, bPaint);
@@ -498,7 +498,7 @@ BOOL CGtlData::DrawABitmap(CDC *pDC, CBgbObject *pBgbObject, BOOL bPaint)
 CRPoint CGtlData::NodeToPoint(CNode *lpNode, CSize FAR *lpcSize)
 // lpNode -- pointer to node
 // lpcSize -- pointer to size of bitmap sitting on node
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::NodeToPoint) ;
 	CRPoint crPosition ;                // output: position
@@ -527,15 +527,15 @@ CRPoint CGtlData::NodeToPoint(CNode *lpNode, CSize FAR *lpcSize)
 }
 
 //* CGtlData::SpecifyUpdate -- specify update rectangle
-BOOL CGtlData::SpecifyUpdate(CGtlView * xpGtlView)
+bool CGtlData::SpecifyUpdate(CGtlView * xpGtlView)
 // xpGtlView -- CGtlView object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SpecifyUpdate) ;
 	int iError = 0 ;            // error code
 
 	if (m_bChangeSize) {
-		xpGtlView->Invalidate(FALSE);
+		xpGtlView->Invalidate(false);
 
 		#if NEWSCROLL
 
@@ -546,7 +546,7 @@ BOOL CGtlData::SpecifyUpdate(CGtlView * xpGtlView)
 		#else
 		xpGtlView->SetScrollSizes(MM_TEXT, CSize(m_iSizeX, m_iSizeY)) ;
 		#endif
-		m_bChangeSize = FALSE ;
+		m_bChangeSize = false ;
 	}
 
 // cleanup:
@@ -559,9 +559,9 @@ BOOL CGtlData::SpecifyUpdate(CGtlView * xpGtlView)
 //
 
 //* CGtlData::AdjustToView -- set up bitmaps for view
-BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
+bool CGtlData::AdjustToView(CGtlView *xpGtlView)
 // xpGtlView -- CView window
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::AdjustToView);
 	int iError = 0;            // error code
@@ -570,7 +570,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	CMap *lpMap;
 	CNode *lpNode;
 	int iK;
-	BOOL bNewBitmap = FALSE;
+	bool bNewBitmap = false;
 	const CLocTable *xpLocTable = CMgStatic::cLocTable, *xpLocEntry;
 
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
@@ -586,7 +586,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 			if (!lpcBgbObject->m_bInit) {
 
-				bNewBitmap = TRUE;
+				bNewBitmap = true;
 
 				lpcBgbObject->m_iBgbType = lpMap->m_bSprite ? BGBT_SPRITE : BGBT_DIB ;
 				lpcBgbObject->m_crPosition.m_bRelocatable = (lpMap->m_bRelocatable != 0) ;
@@ -605,7 +605,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 	if (xpGtlView) {
 		if (!xpGtlView->m_bBsuInit && !xpGtlView-> m_cViewBsuSet.InitWndBsuSet(xpGtlView))
-			xpGtlView->m_bBsuInit = TRUE;
+			xpGtlView->m_bBsuInit = true;
 
 		xpGtlView->m_cViewBsuSet.PrepareWndBsuSet(CSize(m_iSizeX, m_iSizeY), CRect(0, m_iMargin, 0, 0));
 	}
@@ -614,7 +614,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 		if (!(lpNode = m_lpNodes + iK)->m_bDeleted) {
 
 			if (scumm_stricmp(lpNode->m_szLabel, "menu") == 0)
-				lpNode->m_bMenu = TRUE;
+				lpNode->m_bMenu = true;
 			#if 0
 			// find this nodes sector
 			//
@@ -670,34 +670,34 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 				if (iFurlong >= 0 && iFurlong < DIMENSION(m_lpFurlongMaps))
 					m_lpFurlongMaps[iFurlong] = lpMap ;
 
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Hodj") == 0 || scumm_stricmp(lpMap->m_szLabel, "Podj") == 0) {
 
 				InitOverlay(lpMap) ;    // initialize sprite
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib1") == 0) {
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 				m_cBbtMgr.LinkButton(&m_cMiniButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Minib2") == 0) {
-				lpMap->m_bSpecialPaint = TRUE;
+				lpMap->m_bSpecialPaint = true;
 				m_cBbtMgr.LinkButton(&m_cMiniButton, nullptr, lpcBgbObject);
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb1") == 0) {
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 				m_cBbtMgr.LinkButton(&m_cInvButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Invb2") == 0) {
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 				m_cBbtMgr.LinkButton(&m_cInvButton, nullptr, lpcBgbObject) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob1") == 0) {
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 				m_cBbtMgr.LinkButton(&m_cScrollButton, lpcBgbObject, nullptr) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "Scrob2") == 0) {
-				lpMap->m_bSpecialPaint = TRUE ;
+				lpMap->m_bSpecialPaint = true ;
 				m_cBbtMgr.LinkButton(&m_cScrollButton, nullptr, lpcBgbObject) ;
 
 			} else if (scumm_stricmp(lpMap->m_szLabel, "podjb1") == 0) {
@@ -715,7 +715,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	if (bNewBitmap) {
 
 		// this forces PositionCharacters to repaint
-		m_bSamePlace = TRUE ;
+		m_bSamePlace = true ;
 
 		PositionCharacters();
 	}
@@ -728,9 +728,9 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 
 //* CGtlData::InitOverlay -- initialize overlay
-BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
+bool CGtlData::InitOverlay(CMap FAR * lpMap)
 // lpMap -- bitmap object for overlay sprite
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::InitOverlay) ;
 	int iError = 0 ;            // error code
@@ -753,7 +753,7 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 		xpXodj->m_szName[0] = (char)toupper(xpXodj->m_szName[0]);
 
 		xpXodj->m_lpcCharSprite = lpMap->m_lpcBgbObject ;
-		lpMap->m_bSpecialPaint = TRUE ;
+		lpMap->m_bSpecialPaint = true ;
 
 		// GTB - 8/25 - I put this in to find and then place hodj and podj at the starting loc
 		// you'll find STARTING_LOCATION at the top of this file.
@@ -805,9 +805,9 @@ cleanup:
 }
 
 //* CGtlData::NormalizeData -- normalize data after loading
-BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
+bool CGtlData::NormalizeData(CGtlView * xpGtlView)
 // xpGtlView -- void pointer to current view
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::NormalizeData) ;
 	int iError = 0 ;            // error code
@@ -815,8 +815,8 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 	CMap FAR * lpMap, FAR * lpPrevMap ;
 	int iMinX = MAXPOSINT, iMinY = MAXPOSINT ;  // min x,y coordinates
 	int iMaxX = MINNEGINT, iMaxY = MINNEGINT ;  // max x,y coordinates
-	BOOL bPositionFound = FALSE ;
-	BOOL bChangeSize = FALSE, bChangeOrigin = FALSE ;
+	bool bPositionFound = false ;
+	bool bChangeSize = false, bChangeOrigin = false ;
 	CNode FAR * lpNode ;
 	CBgbObject FAR * lpcBgbObject, FAR * lpcPrevBgbObject ;
 
@@ -839,7 +839,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 				if (lpcPrevBgbObject) {
 					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x - lpcBgbObject->m_cSize.cx ;
 					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y ;
-					lpMap->m_bPositionDetermined = TRUE ;
+					lpMap->m_bPositionDetermined = true ;
 				}
 				break ;
 
@@ -847,7 +847,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 				if (lpcPrevBgbObject) {
 					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x + lpcPrevBgbObject->m_cSize.cx ;
 					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y ;
-					lpMap->m_bPositionDetermined = TRUE ;
+					lpMap->m_bPositionDetermined = true ;
 				}
 				break ;
 
@@ -855,7 +855,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 				if (lpcPrevBgbObject) {
 					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x ;
 					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y - lpcBgbObject->m_cSize.cy ;
-					lpMap->m_bPositionDetermined = TRUE ;
+					lpMap->m_bPositionDetermined = true ;
 				}
 				break ;
 
@@ -863,7 +863,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 				if (lpcPrevBgbObject) {
 					lpcBgbObject->m_crPosition.x = lpcPrevBgbObject->m_crPosition.x ;
 					lpcBgbObject->m_crPosition.y = lpcPrevBgbObject->m_crPosition.y + lpcPrevBgbObject->m_cSize.cy ;
-					lpMap->m_bPositionDetermined = TRUE ;
+					lpMap->m_bPositionDetermined = true ;
 				}
 				break ;
 
@@ -881,7 +881,7 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 				goto cleanup ;
 				// break ;
 			}
-			bPositionFound = TRUE ;
+			bPositionFound = true ;
 		}
 
 		if (!lpMap->m_bOverlay && lpMap->m_lpcBgbObject && lpMap->m_lpcBgbObject->m_crPosition.IfRelocatable()) {
@@ -938,9 +938,9 @@ BOOL CGtlData::NormalizeData(CGtlView * xpGtlView)
 	}
 
 	if (m_iSizeX != iMaxX - iMinX)
-		bChangeSize = TRUE, m_iSizeX = iMaxX - iMinX ;
+		bChangeSize = true, m_iSizeX = iMaxX - iMinX ;
 	if (m_iSizeY != iMaxY - iMinY)
-		bChangeSize = TRUE, m_iSizeY = iMaxY - iMinY ;
+		bChangeSize = true, m_iSizeY = iMaxY - iMinY ;
 
 	m_iMargin = 24;
 

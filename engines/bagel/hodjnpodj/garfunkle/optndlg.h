@@ -50,7 +50,7 @@ public:
 	enum { IDD = IDD_SUBOPTIONS };
 	CScrollBar  m_ScrollButtons;
 	CScrollBar  m_ScrollSpeed;
-	BOOL        m_bPlayGame;
+	bool        m_bPlayGame;
 	int m_nNumButtons;
 	int m_nSpeed;
 	CString mSpeedTable [NUM_SPEEDS];
@@ -62,11 +62,11 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
-	virtual BOOL OnInitDialog() override;
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnInitDialog() override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnPaint();

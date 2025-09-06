@@ -81,19 +81,19 @@ public:     // functions
 	int GetPip() const {
 		return m_nPip;
 	}
-	BOOL IsFace() const {
+	bool IsFace() const {
 		return m_nPip >= CUST_CARD;
 	}
-	BOOL IsCustomer() const {
+	bool IsCustomer() const {
 		return m_nPip == CUST_CARD;
 	}
-	BOOL IsBarber() const {
+	bool IsBarber() const {
 		return m_nPip == BARB_CARD;
 	}
-	BOOL IsManicurist() {
+	bool IsManicurist() {
 		return m_nPip == MANI_CARD;
 	}
-	BOOL operator==(int nValue) const {
+	bool operator==(int nValue) const {
 		return nValue == GetValue();
 	}
 	CCard &operator=(const CCard &);
@@ -103,7 +103,7 @@ public:     // vars
 	CCard   *m_pNextCard;
 	OSpr    *m_pSprite;
 	CStack  *m_pStack;
-	BOOL    m_bIsBack;
+	bool    m_bIsBack;
 	CPoint  m_cOrigin;
 };
 

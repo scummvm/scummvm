@@ -62,8 +62,8 @@ static CColorButton    *pCancelButton = nullptr;
 
 COptionsDlg::COptionsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
-	m_bSoundOn = TRUE;
-	m_bDisableSets = FALSE;
+	m_bSoundOn = true;
+	m_bDisableSets = false;
 	m_pOptionsPalette = pPalette;
 }
 
@@ -97,7 +97,7 @@ COptionsDlg::COptionsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
  *
  ****************************************************************/
 
-BOOL COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -150,11 +150,11 @@ BOOL COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  * RETURN VALUE:
  *
- *  BOOL to tell windows that it has dealt this function
+ *  bool to tell windows that it has dealt this function
  *
  ****************************************************************/
-BOOL COptionsDlg::OnInitDialog(void) {
-	BOOL    bSuccess;
+bool COptionsDlg::OnInitDialog(void) {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -179,8 +179,8 @@ BOOL COptionsDlg::OnInitDialog(void) {
 // if we are in the middle of a hand, or we are playing from the metagame
 // then disable the "Set Amount" and "Set Payoffs" buttons
 	if (m_bDisableSets) {
-		GetDlgItem(ID_SETUSERAMT)->EnableWindow(FALSE);
-		GetDlgItem(ID_SETPAYOFFS)->EnableWindow(FALSE);
+		GetDlgItem(ID_SETUSERAMT)->EnableWindow(false);
+		GetDlgItem(ID_SETPAYOFFS)->EnableWindow(false);
 	}
 
 // if the sound is on, set the text of the Toggle Sound button to "Sound Off"
@@ -190,7 +190,7 @@ BOOL COptionsDlg::OnInitDialog(void) {
 	else
 		SetDlgItemText(ID_TOGGLESOUND, "Sound On");
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -219,14 +219,14 @@ BOOL COptionsDlg::OnInitDialog(void) {
  *
  *
  ****************************************************************/
-void COptionsDlg::SetInitialOptions(BOOL bDisableSets, BOOL bSoundOn) {
+void COptionsDlg::SetInitialOptions(bool bDisableSets, bool bSoundOn) {
 	m_bDisableSets = bDisableSets;
 	m_bSoundOn = bSoundOn;
 	return;
 }
 
-BOOL COptionsDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptionsDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void COptionsDlg::OnDestroy() {

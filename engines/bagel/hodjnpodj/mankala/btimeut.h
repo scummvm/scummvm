@@ -36,7 +36,7 @@ void DoPendingEvents() ;
 class CTimeUtil {
 
 	char m_cStartData ;
-	//BOOL m_bTimeDelayPassed ;   // flag: DelayMs function time expired
+	//bool m_bTimeDelayPassed ;   // flag: DelayMs function time expired
 
 
 	char m_cEndData ;
@@ -49,7 +49,7 @@ public:
 
 private:
 	//- DelayMs -- delay for specified # of milliseconds
-	BOOL DelayMs(unsigned int uMs) ;
+	bool DelayMs(unsigned int uMs) ;
 
 	static void DelayMsCallback(HWND /* hWnd */,
 		unsigned int /* uMsg */, uintptr /* uTimerId */, uint32 /* dwTime */) ;

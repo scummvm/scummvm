@@ -70,7 +70,7 @@ HWND FAR PASCAL RunMaze(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	CMainWindow *pMain;
 
 //TEMP
-//	lpGameInfo->bPlayingMetagame = TRUE;
+//	lpGameInfo->bPlayingMetagame = true;
 //	lpGameInfo->nSkillLevel  = SKILLLEVEL_MEDIUM;
 //TEMP
 

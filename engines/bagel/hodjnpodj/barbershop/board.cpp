@@ -87,20 +87,20 @@ CStack *CBoard::GetStack(loc nStack) {
 	return nullptr;
 }
 
-BOOL CBoard::IsTabStack(int nStack) {
+bool CBoard::IsTabStack(int nStack) {
 	switch (nStack) {
 
 	case fnd:
-		return FALSE;
+		return false;
 
 	case stock:
-		return FALSE;
+		return false;
 
 	case used:
-		return FALSE;
+		return false;
 
 	default:
-		return TRUE;
+		return true;
 	}
 }
 

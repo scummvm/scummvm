@@ -73,7 +73,7 @@ public:
 	int         nSpeedTemp,             // remembers cur settings
 	            nTurnCounterTemp,
 	            nLifeTemp;
-	BOOL        bPrePlaceTemp;
+	bool        bPrePlaceTemp;
 
 	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
@@ -91,12 +91,12 @@ public:
 protected:
 	void ClearDialogImage(void);
 	virtual void DoDataExchange(CDataExchange*) override;    // DDX/DDV support
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnPrePlace();
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();

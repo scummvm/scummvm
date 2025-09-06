@@ -40,7 +40,7 @@ int CGenUtil::RandomInteger(int iLow, int iHigh)
 
 	// for first call, initialize the random number generator
 	if (!m_bRandomInit) {
-		//srand((unsigned) time(&tTime)), m_bRandomInit = TRUE ;
+		//srand((unsigned) time(&tTime)), m_bRandomInit = true ;
 
 		// Note: since brand() returns a value uniform in [0, 2^15-1], the
 		// following method, though simple, gives a slight preference
@@ -54,14 +54,14 @@ int CGenUtil::RandomInteger(int iLow, int iHigh)
 	return iRetval;
 }
 
-//* CGenUtil::RandomEvent -- return TRUE with specified probability
-BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
+//* CGenUtil::RandomEvent -- return true with specified probability
+bool CGenUtil::RandomEvent(int iNum, int iDenom)
 // iNum / iDenom -- numerator and denominator of probability
-// returns: TRUE with probability iNum / iDenom, FALSE otherwise
+// returns: true with probability iNum / iDenom, false otherwise
 {
 	JXENTER(CGenUtil::RandomEvent) ;
 	//int iError = 0 ;
-	BOOL bRetval ;      // return value
+	bool bRetval ;      // return value
 
 	bRetval = (iNum >= 1 + (brand() % iDenom)) ;
 	JXELEAVE(CGenUtil::RandomEvent) ;
@@ -82,7 +82,7 @@ void CGenUtil::RandomPermutation(int iNum,
 	int *xpInt ;    // array pointer variable
 	int iI, iJ, iK ;    // loop variables
 	int iRanVal ;   // random value to make a choice
-	BOOL bDup ;     // duplicate found flag
+	bool bDup ;     // duplicate found flag
 
 	JXENTER(CGenUtil::RandomPermutation) ;
 	if (iSize > iNum)   // can't handle more array than # of numbers
@@ -92,10 +92,10 @@ void CGenUtil::RandomPermutation(int iNum,
 		iRanVal = RandomInteger(0, iNum - iI - 1) ;
 		// get random number in interval
 		for (iJ = 0 ; iJ < iNum && iRanVal >= 0 ; ++iJ) {
-			bDup = FALSE ;      // not a duplicate yet
+			bDup = false ;      // not a duplicate yet
 			for (xpInt = xpIntOut, iK = 0 ; iK < iI ; ++iK, ++xpInt)
 				if (*xpInt == iJ)
-					bDup = TRUE ;
+					bDup = true ;
 			if (!bDup && iRanVal-- == 0)    // if not a duplicate
 				// and we've counted down the random integer
 				*xpInt = iJ ;       // store into array
@@ -105,9 +105,9 @@ void CGenUtil::RandomPermutation(int iNum,
 }
 
 //* CGenUtil::NormalizeCRect --
-BOOL CGenUtil::NormalizeCRect(CRect& cRect)
+bool CGenUtil::NormalizeCRect(CRect& cRect)
 // cRect -- rectangle to be normalized
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGenUtil::NormalizeCRect) ;
 	int iError = 0 ;        // error code

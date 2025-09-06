@@ -108,8 +108,8 @@ void COptions::OnOK(void) {
 }
 
 
-BOOL COptions::OnInitDialog(void) {
-	BOOL    bSuccess;
+bool COptions::OnInitDialog(void) {
+	bool    bSuccess;
 	CWnd    *pButton;
 	CDC     *pDC;
 	CDialog::OnInitDialog();                        // do basic dialog initialization
@@ -137,7 +137,7 @@ BOOL COptions::OnInitDialog(void) {
 	cDlgRect.top = (cWindRect.bottom + cWindRect.top - iDlgHeight) / 2 ;
 	cDlgRect.bottom = cDlgRect.top + iDlgHeight ;
 
-	MoveWindow(&cDlgRect, FALSE) ;  // center window, don't repaint
+	MoveWindow(&cDlgRect, false) ;  // center window, don't repaint
 
 	pDC = GetDC();
 	ASSERT(pDC != nullptr);
@@ -191,29 +191,29 @@ BOOL COptions::OnInitDialog(void) {
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 		pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
 		ASSERT(pButton != nullptr);                        // ... and verify we have it
-		(*pButton).EnableWindow(FALSE);
+		(*pButton).EnableWindow(false);
 	}
 	#else
 	if ((*pGameInfo).bPlayingMetagame) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 			pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
 			ASSERT(pButton != nullptr);                        // ... and verify we have it
-			(*pButton).EnableWindow(FALSE);
+			(*pButton).EnableWindow(false);
 			pButton = GetDlgItem(IDC_OPTIONS_NEWGAME);      // get the window for the options button
 			ASSERT(pButton != nullptr);                        // ... and verify we have it
-			(*pButton).EnableWindow(FALSE);
+			(*pButton).EnableWindow(false);
 		}
 	}
 	#endif
 
 	(void)bSuccess;  // suppress unused variable warning
 
-	return TRUE;  // return TRUE  unless focused on a control
+	return true;  // return true  unless focused on a control
 }
 
 
 void COptions::OnDestroy(void) {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 		if (pRulesButton != nullptr)
@@ -247,7 +247,7 @@ void COptions::OnDestroy(void) {
 		delete m_pDlgBackground;
 		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*m_pDlgParentWnd).ValidateRect(nullptr);
 	}
@@ -256,35 +256,35 @@ void COptions::OnDestroy(void) {
 }
 
 /*
-void COptions::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized)
+void COptions::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized)
 {
 if (!bMinimized)
     switch(nState) {
         case WA_ACTIVE:
         case WA_CLICKACTIVE:
-                InvalidateRect(nullptr,FALSE);
+                InvalidateRect(nullptr,false);
             break;
         }
 }
 */
 
-BOOL COptions::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptions::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
 void COptions::OnPaint(void) {
-	BOOL        bSuccess;
+	bool        bSuccess;
 	CPalette    *pPalOld = nullptr;
 
-	InvalidateRect(nullptr, FALSE);
+	InvalidateRect(nullptr, false);
 
 	CPaintDC    dc(this);                               // device context for painting
 
 	RefreshBackground();
 
 	if (pOptionsPalette != nullptr) {
-		pPalOld = dc.SelectPalette(pOptionsPalette, FALSE);
+		pPalOld = dc.SelectPalette(pOptionsPalette, false);
 		(void) dc.RealizePalette();
 	}
 
@@ -292,7 +292,7 @@ void COptions::OnPaint(void) {
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)
-		(void) dc.SelectPalette(pPalOld, FALSE);
+		(void) dc.SelectPalette(pPalOld, false);
 }
 
 
@@ -337,7 +337,7 @@ void COptions::ClearDialogImage(void) {
 			m_pCroButton = nullptr;
 			m_pCroPButton = nullptr;
 		}
-		InvalidateRect(nullptr, FALSE);
+		InvalidateRect(nullptr, false);
 		RefreshBackground();
 		ValidateRect(nullptr);
 	}
@@ -345,7 +345,7 @@ void COptions::ClearDialogImage(void) {
 
 
 void COptions::RefreshBackground(void) {
-	BOOL        bSuccess;
+	bool        bSuccess;
 	CDC         *pDC;
 	CPalette    *pPalOld = nullptr;
 
@@ -355,7 +355,7 @@ void COptions::RefreshBackground(void) {
 	pDC = GetDC();
 
 	if (pOptionsPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(pOptionsPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(pOptionsPalette, false);
 		(void)(*pDC).RealizePalette();
 	}
 
@@ -363,13 +363,13 @@ void COptions::RefreshBackground(void) {
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
 
 
-void COptions::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void COptions::OnShowWindow(bool bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here

@@ -495,7 +495,7 @@ public:
 	int m_iLengthCode ;         // MG_LENGTH_xxxx : length argument
 	int m_iNumObjects ;         // number of objects required
 	int m_iNumInfo ;            // # pieces of information required
-	BOOL m_bMoneyRequired ;     // if TRUE, one object must be money
+	bool m_bMoneyRequired ;     // if true, one object must be money
 } ;
 
 #define FINDS(tab, idx) { const C##tab *lpTab ; \
@@ -531,7 +531,7 @@ public:
 // mgstat.cpp -- meta game static tables
 
 //- MgStatic::FindClue -- find Hodj/Podj clue
-	static const CClueTable *FindClue(BOOL bPodj, int iClue) ;
+	static const CClueTable *FindClue(bool bPodj, int iClue) ;
 
 };
 

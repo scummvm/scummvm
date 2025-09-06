@@ -53,14 +53,14 @@ public:     // functions
 	CCard *Bottom() const {
 		return m_pBottomCard;
 	}
-	BOOL IsEmpty() const {
-		return (BOOL)(m_pTopCard == nullptr);
+	bool IsEmpty() const {
+		return (bool)(m_pTopCard == nullptr);
 	}
 	int GetID() const {
 		return m_nID;
 	}
-	BOOL    IsTab() {
-		return (BOOL)(m_nID >= tab && m_nID < stock);
+	bool    IsTab() {
+		return (bool)(m_nID >= tab && m_nID < stock);
 	}
 	int Size();
 

@@ -164,23 +164,23 @@ int     nPaintObject;
 int nPlayerMove;
 int anBadGuyMove[4];
 
-BOOL    bFirstTimer;
-BOOL    bEatTurtle;
-BOOL    abChangeTurtle[4];
+bool    bFirstTimer;
+bool    bEatTurtle;
+bool    abChangeTurtle[4];
 int     nEatTurtle;
-BOOL    bChangeTurtle;
+bool    bChangeTurtle;
 int     nOldTSpeed;
 
-BOOL    abGoodTurtle[4];
+bool    abGoodTurtle[4];
 
-BOOL    anSuperObj[4];
+bool    anSuperObj[4];
 
-BOOL    bEndGame;
-BOOL    bFlashTurtle;
+bool    bEndGame;
+bool    bFlashTurtle;
 
 int     anReleaseTurtleCount[4];
 
-BOOL    bUseJoyStick;
+bool    bUseJoyStick;
 unsigned int    awJoyCenter[2];
 
 int     nNumOfBGKilled;
@@ -188,13 +188,13 @@ int     nStartingLives;
 
 
 int     nKillBadGuy = 0;
-BOOL    bKillPlayer = FALSE;
+bool    bKillPlayer = false;
 
-BOOL    bResetGame;
+bool    bResetGame;
 
-BOOL    bMouseHidden = FALSE;
-BOOL    bInNewGameRect = FALSE;
-BOOL    bStart;
+bool    bMouseHidden = false;
+bool    bInNewGameRect = false;
+bool    bStart;
 
 int anCurrentMaze[999];
 const int anMaze4[999] = {
@@ -318,8 +318,8 @@ const int anMaze1[999] = {
 };
 
 int     nExtraLives;
-BOOL    bInLoop;
-BOOL    bBALLOONShown;
+bool    bInLoop;
+bool    bBALLOONShown;
 
 /*****************************************************************
  *
@@ -362,8 +362,8 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CSize   mySize;
-	BOOL    bTestCreate;                        // bool for testing the creation of each button
-	BOOL    bTestBmp;                       // bool for testing the creation of the splash screen
+	bool    bTestCreate;                        // bool for testing the creation of each button
+	bool    bTestBmp;                       // bool for testing the creation of the splash screen
 	int     nLoop1;
 	JOYINFO joyInfo;
 
@@ -425,7 +425,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 //UpdateWindow();
 
 //pDC = GetDC();
-//pOldPalette = pDC->SelectPalette( pGamePalette, FALSE );
+//pOldPalette = pDC->SelectPalette( pGamePalette, false );
 //pDC->RealizePalette();
 
 	pSSpaceBMP = FetchResourceBitmap(pDC, nullptr, IDB_SEMPTY);
@@ -435,14 +435,14 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 
 // create buttons
 
-	if (joySetCapture(m_hWnd, JOYSTICKID1, 5000, TRUE) == JOYERR_NOERROR) {
-		bUseJoyStick = TRUE;
+	if (joySetCapture(m_hWnd, JOYSTICKID1, 5000, true) == JOYERR_NOERROR) {
+		bUseJoyStick = true;
 		joySetThreshold(JOYSTICKID1, 2000);
 		joyGetPos(JOYSTICKID1, &joyInfo);
 		awJoyCenter[0] = (unsigned int)joyInfo.wXpos;
 		awJoyCenter[1] = (unsigned int)joyInfo.wYpos;
 	} else {
-		bUseJoyStick = FALSE;
+		bUseJoyStick = false;
 	}
 
 	if (m_lpGameStruct->bPlayingMetagame) {
@@ -451,11 +451,11 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		pBalloonSprite->SharePalette(pGamePalette);
 		bTestCreate = pBalloonSprite->LoadCels(pDC, BALLOONSPRITE, 1);
 		//bTestCreate = pLiveSprite->LoadResourceCels( pDC, IDB_LIVE, 1 );
-		pBalloonSprite->SetMasked(TRUE);
-		pBalloonSprite->SetMobile(FALSE);
-		pBalloonSprite->SetOptimizeSpeed(FALSE);
+		pBalloonSprite->SetMasked(true);
+		pBalloonSprite->SetMobile(false);
+		pBalloonSprite->SetOptimizeSpeed(false);
 		ASSERT(bTestCreate != 0);                // test for sprite's creation
-		bBALLOONShown = FALSE;
+		bBALLOONShown = false;
 	}
 
 	pOptionButton = new CBmpButton;         // create the Options button
@@ -476,72 +476,72 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		//bTestCreate = pPlayerRightSprite->LoadResourceCels( pDC, IDB_HODJR, 8 );
 		bTestCreate = pPlayerRightSprite->LoadCels(pDC, HODJRIGHTSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerRightSprite->SetMasked(TRUE);
-		pPlayerRightSprite->SetMobile(TRUE);
-		pPlayerRightSprite->SetOptimizeSpeed(TRUE);
+		pPlayerRightSprite->SetMasked(true);
+		pPlayerRightSprite->SetMobile(true);
+		pPlayerRightSprite->SetOptimizeSpeed(true);
 
 		pPlayerLeftSprite = new CSprite;
 		pPlayerLeftSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerLeftSprite->LoadResourceCels( pDC, IDB_HODJL, 8 );
 		bTestCreate = pPlayerLeftSprite->LoadCels(pDC, HODJLEFTSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerLeftSprite->SetMasked(TRUE);
-		pPlayerLeftSprite->SetMobile(TRUE);
-		pPlayerLeftSprite->SetOptimizeSpeed(TRUE);
+		pPlayerLeftSprite->SetMasked(true);
+		pPlayerLeftSprite->SetMobile(true);
+		pPlayerLeftSprite->SetOptimizeSpeed(true);
 
 		pPlayerUpSprite = new CSprite;
 		pPlayerUpSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerUpSprite->LoadResourceCels( pDC, IDB_HODJU, 8 );
 		bTestCreate = pPlayerUpSprite->LoadCels(pDC, HODJUPSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerUpSprite->SetMasked(TRUE);
-		pPlayerUpSprite->SetMobile(TRUE);
-		pPlayerUpSprite->SetOptimizeSpeed(TRUE);
+		pPlayerUpSprite->SetMasked(true);
+		pPlayerUpSprite->SetMobile(true);
+		pPlayerUpSprite->SetOptimizeSpeed(true);
 
 		pPlayerDownSprite = new CSprite;
 		pPlayerDownSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerDownSprite->LoadResourceCels( pDC, IDB_HODJD, 8 );
 		bTestCreate = pPlayerDownSprite->LoadCels(pDC, HODJDOWNSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerDownSprite->SetMasked(TRUE);
-		pPlayerDownSprite->SetMobile(TRUE);
-		pPlayerDownSprite->SetOptimizeSpeed(TRUE);
+		pPlayerDownSprite->SetMasked(true);
+		pPlayerDownSprite->SetMobile(true);
+		pPlayerDownSprite->SetOptimizeSpeed(true);
 	} else {
 		pPlayerRightSprite = new CSprite;
 		pPlayerRightSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerRightSprite->LoadResourceCels( pDC, IDB_PODJR, 8 );
 		bTestCreate = pPlayerRightSprite->LoadCels(pDC, PODJRIGHTSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerRightSprite->SetMasked(TRUE);
-		pPlayerRightSprite->SetMobile(TRUE);
-		pPlayerRightSprite->SetOptimizeSpeed(TRUE);
+		pPlayerRightSprite->SetMasked(true);
+		pPlayerRightSprite->SetMobile(true);
+		pPlayerRightSprite->SetOptimizeSpeed(true);
 
 		pPlayerLeftSprite = new CSprite;
 		pPlayerLeftSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerLeftSprite->LoadResourceCels( pDC, IDB_PODJL, 8 );
 		bTestCreate = pPlayerLeftSprite->LoadCels(pDC, PODJLEFTSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerLeftSprite->SetMasked(TRUE);
-		pPlayerLeftSprite->SetMobile(TRUE);
-		pPlayerLeftSprite->SetOptimizeSpeed(TRUE);
+		pPlayerLeftSprite->SetMasked(true);
+		pPlayerLeftSprite->SetMobile(true);
+		pPlayerLeftSprite->SetOptimizeSpeed(true);
 
 		pPlayerUpSprite = new CSprite;
 		pPlayerUpSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerUpSprite->LoadResourceCels( pDC, IDB_PODJU, 8 );
 		bTestCreate = pPlayerUpSprite->LoadCels(pDC, PODJUPSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerUpSprite->SetMasked(TRUE);
-		pPlayerUpSprite->SetMobile(TRUE);
-		pPlayerUpSprite->SetOptimizeSpeed(TRUE);
+		pPlayerUpSprite->SetMasked(true);
+		pPlayerUpSprite->SetMobile(true);
+		pPlayerUpSprite->SetOptimizeSpeed(true);
 
 		pPlayerDownSprite = new CSprite;
 		pPlayerDownSprite->SharePalette(pGamePalette);
 		//bTestCreate = pPlayerDownSprite->LoadResourceCels( pDC, IDB_PODJD, 8 );
 		bTestCreate = pPlayerDownSprite->LoadCels(pDC, PODJDOWNSPRITE, 8);
 		ASSERT(bTestCreate);                // test for sprite's creation
-		pPlayerDownSprite->SetMasked(TRUE);
-		pPlayerDownSprite->SetMobile(TRUE);
-		pPlayerDownSprite->SetOptimizeSpeed(TRUE);
+		pPlayerDownSprite->SetMasked(true);
+		pPlayerDownSprite->SetMobile(true);
+		pPlayerDownSprite->SetOptimizeSpeed(true);
 	}
 	pPlayerSprite = new CSprite;
 	pPlayerSprite = pPlayerUpSprite->DuplicateSprite(pDC);
@@ -554,108 +554,108 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pBadGuyUpSprite->SharePalette(pGamePalette);
 	bTestCreate = pBadGuyUpSprite->LoadCels(pDC, BADGUYSPRITEU, 7);
 //bTestCreate = pBadGuyUpSprite->LoadResourceCels( pDC, IDB_TURTLEBU, 7 );
-	pBadGuyUpSprite->SetMasked(TRUE);
-	pBadGuyUpSprite->SetMobile(TRUE);
-	pBadGuyUpSprite->SetOptimizeSpeed(TRUE);
+	pBadGuyUpSprite->SetMasked(true);
+	pBadGuyUpSprite->SetMobile(true);
+	pBadGuyUpSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyDownSprite  = new CSprite;
 	pBadGuyDownSprite->SharePalette(pGamePalette);
 	bTestCreate = pBadGuyDownSprite->LoadCels(pDC, BADGUYSPRITED, 7);
 //bTestCreate = pBadGuyDownSprite->LoadResourceCels( pDC, IDB_TURTLEBD, 7 );
-	pBadGuyDownSprite->SetMasked(TRUE);
-	pBadGuyDownSprite->SetMobile(TRUE);
-	pBadGuyDownSprite->SetOptimizeSpeed(TRUE);
+	pBadGuyDownSprite->SetMasked(true);
+	pBadGuyDownSprite->SetMobile(true);
+	pBadGuyDownSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyLeftSprite  = new CSprite;
 	pBadGuyLeftSprite->SharePalette(pGamePalette);
 	bTestCreate = pBadGuyLeftSprite->LoadCels(pDC, BADGUYSPRITEL, 7);
 //bTestCreate = pBadGuyLeftSprite->LoadResourceCels( pDC, IDB_TURTLEBL, 7 );
-	pBadGuyLeftSprite->SetMasked(TRUE);
-	pBadGuyLeftSprite->SetMobile(TRUE);
-	pBadGuyLeftSprite->SetOptimizeSpeed(TRUE);
+	pBadGuyLeftSprite->SetMasked(true);
+	pBadGuyLeftSprite->SetMobile(true);
+	pBadGuyLeftSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pBadGuyRightSprite  = new CSprite;
 	pBadGuyRightSprite->SharePalette(pGamePalette);
 	bTestCreate = pBadGuyRightSprite->LoadCels(pDC, BADGUYSPRITER, 7);
 //bTestCreate = pBadGuyRightSprite->LoadResourceCels( pDC, IDB_TURTLEBR, 7 );
-	pBadGuyRightSprite->SetMasked(TRUE);
-	pBadGuyRightSprite->SetMobile(TRUE);
-	pBadGuyRightSprite->SetOptimizeSpeed(TRUE);
+	pBadGuyRightSprite->SetMasked(true);
+	pBadGuyRightSprite->SetMobile(true);
+	pBadGuyRightSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyUpSprite  = new CSprite;
 	pGoodGuyUpSprite->SharePalette(pGamePalette);
 	bTestCreate = pGoodGuyUpSprite->LoadCels(pDC, GOODGUYSPRITEU, 7);
 //bTestCreate = pGoodGuyUpSprite->LoadResourceCels( pDC, IDB_TURTLEGU, 7 );
-	pGoodGuyUpSprite->SetMasked(TRUE);
-	pGoodGuyUpSprite->SetMobile(TRUE);
-	pGoodGuyUpSprite->SetOptimizeSpeed(TRUE);
+	pGoodGuyUpSprite->SetMasked(true);
+	pGoodGuyUpSprite->SetMobile(true);
+	pGoodGuyUpSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyDownSprite  = new CSprite;
 	pGoodGuyDownSprite->SharePalette(pGamePalette);
 	bTestCreate = pGoodGuyDownSprite->LoadCels(pDC, GOODGUYSPRITED, 7);
 //bTestCreate = pGoodGuyDownSprite->LoadResourceCels( pDC, IDB_TURTLEGD, 7 );
-	pGoodGuyDownSprite->SetMasked(TRUE);
-	pGoodGuyDownSprite->SetMobile(TRUE);
-	pGoodGuyDownSprite->SetOptimizeSpeed(TRUE);
+	pGoodGuyDownSprite->SetMasked(true);
+	pGoodGuyDownSprite->SetMobile(true);
+	pGoodGuyDownSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyLeftSprite  = new CSprite;
 	pGoodGuyLeftSprite->SharePalette(pGamePalette);
 	bTestCreate = pGoodGuyLeftSprite->LoadCels(pDC, GOODGUYSPRITEL, 7);
 //bTestCreate = pGoodGuyLeftSprite->LoadResourceCels( pDC, IDB_TURTLEGL, 7 );
-	pGoodGuyLeftSprite->SetMasked(TRUE);
-	pGoodGuyLeftSprite->SetMobile(TRUE);
-	pGoodGuyLeftSprite->SetOptimizeSpeed(TRUE);
+	pGoodGuyLeftSprite->SetMasked(true);
+	pGoodGuyLeftSprite->SetMobile(true);
+	pGoodGuyLeftSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pGoodGuyRightSprite  = new CSprite;
 	pGoodGuyRightSprite->SharePalette(pGamePalette);
 	bTestCreate = pGoodGuyRightSprite->LoadCels(pDC, GOODGUYSPRITER, 7);
 //bTestCreate = pGoodGuyRightSprite->LoadResourceCels( pDC, IDB_TURTLEGR, 7 );
-	pGoodGuyRightSprite->SetMasked(TRUE);
-	pGoodGuyRightSprite->SetMobile(TRUE);
-	pGoodGuyRightSprite->SetOptimizeSpeed(TRUE);
+	pGoodGuyRightSprite->SetMasked(true);
+	pGoodGuyRightSprite->SetMobile(true);
+	pGoodGuyRightSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashUpSprite  = new CSprite;
 	pFlashUpSprite->SharePalette(pGamePalette);
 	bTestCreate = pFlashUpSprite->LoadCels(pDC, FLASHSPRITEU, 7);
 //bTestCreate = pFlashUpSprite->LoadResourceCels( pDC, IDB_TURTLEFU, 7 );
-	pFlashUpSprite->SetMasked(TRUE);
-	pFlashUpSprite->SetMobile(TRUE);
-	pFlashUpSprite->SetOptimizeSpeed(TRUE);
+	pFlashUpSprite->SetMasked(true);
+	pFlashUpSprite->SetMobile(true);
+	pFlashUpSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashDownSprite  = new CSprite;
 	pFlashDownSprite->SharePalette(pGamePalette);
 	bTestCreate = pFlashDownSprite->LoadCels(pDC, FLASHSPRITED, 7);
 //bTestCreate = pFlashDownSprite->LoadResourceCels( pDC, IDB_TURTLEFD, 7 );
-	pFlashDownSprite->SetMasked(TRUE);
-	pFlashDownSprite->SetMobile(TRUE);
-	pFlashDownSprite->SetOptimizeSpeed(TRUE);
+	pFlashDownSprite->SetMasked(true);
+	pFlashDownSprite->SetMobile(true);
+	pFlashDownSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashLeftSprite  = new CSprite;
 	pFlashLeftSprite->SharePalette(pGamePalette);
 	bTestCreate = pFlashLeftSprite->LoadCels(pDC, FLASHSPRITEL, 7);
 //bTestCreate = pFlashLeftSprite->LoadResourceCels( pDC, IDB_TURTLEFL, 7 );
-	pFlashLeftSprite->SetMasked(TRUE);
-	pFlashLeftSprite->SetMobile(TRUE);
-	pFlashLeftSprite->SetOptimizeSpeed(TRUE);
+	pFlashLeftSprite->SetMasked(true);
+	pFlashLeftSprite->SetMobile(true);
+	pFlashLeftSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	pFlashRightSprite  = new CSprite;
 	pFlashRightSprite->SharePalette(pGamePalette);
 	bTestCreate = pFlashRightSprite->LoadCels(pDC, FLASHSPRITER, 7);
 //bTestCreate = pFlashRightSprite->LoadResourceCels( pDC, IDB_TURTLEFR, 7 );
-	pFlashRightSprite->SetMasked(TRUE);
-	pFlashRightSprite->SetMobile(TRUE);
-	pFlashRightSprite->SetOptimizeSpeed(TRUE);
+	pFlashRightSprite->SetMasked(true);
+	pFlashRightSprite->SetMobile(true);
+	pFlashRightSprite->SetOptimizeSpeed(true);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	for (nLoop1 = 0; nLoop1 < 4; nLoop1++) {
@@ -669,9 +669,9 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	pLiveSprite->SharePalette(pGamePalette);
 	bTestCreate = pLiveSprite->LoadCels(pDC, LIVESPRITE, 1);
 //bTestCreate = pLiveSprite->LoadResourceCels( pDC, IDB_LIVE, 1 );
-	pLiveSprite->SetMasked(TRUE);
-	pLiveSprite->SetMobile(TRUE);
-	pLiveSprite->SetOptimizeSpeed(FALSE);
+	pLiveSprite->SetMasked(true);
+	pLiveSprite->SetMobile(true);
+	pLiveSprite->SetOptimizeSpeed(false);
 	ASSERT(bTestCreate != 0);                // test for sprite's creation
 
 	for (nLoop1 = 0; nLoop1 < MAXLIVESPRITE; nLoop1++) {
@@ -692,7 +692,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	m_aptCurrBLocInGrid[3].x = 0;
 	m_aptCurrBLocInGrid[3].y = 0;
 
-	m_bMouseCaptured = FALSE;
+	m_bMouseCaptured = false;
 	m_nPDirection = 0;
 	m_nNextDir = m_nPDirection;
 	m_nBDirection = FOLLOWRIGHTWALL;
@@ -702,13 +702,13 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	m_anBDirection[3] = 4;
 	m_nNumberOfMoves = 0;
 	m_lScore = 0;
-	m_bSuspend = TRUE;
+	m_bSuspend = true;
 
-	bEatTurtle = FALSE;
+	bEatTurtle = false;
 	nEatTurtle = 0;
-	bFirstTimer = TRUE;
-	bChangeTurtle = FALSE;
-	bFlashTurtle = FALSE;
+	bFirstTimer = true;
+	bChangeTurtle = false;
+	bFlashTurtle = false;
 	nOldTSpeed = 0;
 
 	nPaintObject = 0;
@@ -717,7 +717,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 
 	nNumOfBGKilled = 0;
 
-	bEndGame = FALSE;
+	bEndGame = false;
 
 
 	if (m_lpGameStruct->bPlayingMetagame) {
@@ -739,7 +739,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		nStartingLives = 3;
 	}
 
-	bResetGame = FALSE;
+	bResetGame = false;
 
 	ResetGame();
 
@@ -757,13 +757,13 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	} // end if pGameSound
 
 	if (m_lpGameStruct->bPlayingMetagame) {
-		m_bSuspend = FALSE;
-		bFirstTimer = FALSE;
+		m_bSuspend = false;
+		bFirstTimer = false;
 		SetTimer(PACKRATTIMER, 50, nullptr);
 	}
 
-	bStart = FALSE;
-	bInLoop = FALSE;
+	bStart = false;
+	bInLoop = false;
 	EndWaitCursor();
 	(*this).SetFocus();
 }
@@ -809,31 +809,31 @@ void CMainPackRatWindow::initStatics() {
 	nPlayerMove = 0;
 	Common::fill(anBadGuyMove, anBadGuyMove + 4, 0);
 
-	bFirstTimer = FALSE;
-	bEatTurtle = FALSE;
-	Common::fill(abChangeTurtle, abChangeTurtle + 4, FALSE);
+	bFirstTimer = false;
+	bEatTurtle = false;
+	Common::fill(abChangeTurtle, abChangeTurtle + 4, false);
 	nEatTurtle = 0;
-	bChangeTurtle = FALSE;
+	bChangeTurtle = false;
 	nOldTSpeed = 0;
-	Common::fill(abGoodTurtle, abGoodTurtle + 4, FALSE);
-	Common::fill(anSuperObj, anSuperObj + 4, FALSE);
+	Common::fill(abGoodTurtle, abGoodTurtle + 4, false);
+	Common::fill(anSuperObj, anSuperObj + 4, false);
 
-	bEndGame = FALSE;
-	bFlashTurtle = FALSE;
+	bEndGame = false;
+	bFlashTurtle = false;
 	Common::fill(anReleaseTurtleCount, anReleaseTurtleCount + 4, 0);
 
-	bUseJoyStick = FALSE;
+	bUseJoyStick = false;
 	awJoyCenter[0] = awJoyCenter[1] = 0;
 
 	nNumOfBGKilled = 0;
 	nStartingLives = 0;
 
 	nKillBadGuy = 0;
-	bKillPlayer = FALSE;
-	bResetGame = FALSE;
-	bMouseHidden = FALSE;
-	bInNewGameRect = FALSE;
-	bStart = FALSE;
+	bKillPlayer = false;
+	bResetGame = false;
+	bMouseHidden = false;
+	bInNewGameRect = false;
+	bStart = false;
 }
 
 /*****************************************************************
@@ -865,7 +865,7 @@ void CMainPackRatWindow::SetMaze() {
 	CPalette    *pOldPal = nullptr;
 	int     nLoop1;
 	CBitmap *pTempBmp = nullptr;
-	BOOL    bTestBmp;
+	bool    bTestBmp;
 
 	SetLevel();
 
@@ -874,7 +874,7 @@ void CMainPackRatWindow::SetMaze() {
 //      pGamePalette = nullptr;
 //  }
 
-	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
+	pOldPal = pDC->SelectPalette(pGamePalette, false);
 	pDC->RealizePalette();
 
 	pTempBmp = new CBitmap();
@@ -948,20 +948,20 @@ void CMainPackRatWindow::SetMaze() {
 	}
 #endif
 
-	anSuperObj[0] = FALSE;
-	anSuperObj[1] = FALSE;
-	anSuperObj[2] = FALSE;
-	anSuperObj[3] = FALSE;
+	anSuperObj[0] = false;
+	anSuperObj[1] = false;
+	anSuperObj[2] = false;
+	anSuperObj[3] = false;
 	nNumOfBGKilled = 0;
-	bChangeTurtle = TRUE;
-	bEatTurtle = FALSE;
+	bChangeTurtle = true;
+	bEatTurtle = false;
 	nEatTurtle = 0;
-	KillPlayer(TRUE);
+	KillPlayer(true);
 
-	pDC->SelectPalette(pOldPal, FALSE);
+	pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 	RedrawWindow();
-	m_bSuspend = FALSE;
+	m_bSuspend = false;
 }
 
 /*****************************************************************
@@ -1198,12 +1198,12 @@ void CMainPackRatWindow::SetLevel() {
  *  n/a
  *
  ****************************************************************/
-void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
+void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, bool bFirstTime) {
 	CDC         *pDC = GetDC();
 
 	nKillBadGuy = 0;
 
-	m_bSuspend = TRUE;
+	m_bSuspend = true;
 
 	if (nWhichBadGuy >= BG4) {
 		if (apBadGuySprite[3] != nullptr)
@@ -1218,7 +1218,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 
 		apBadGuySprite[3]->PaintSprite(pDC, m_aptCurrentBPos[3]);
 		nWhichBadGuy -= BG4;
-		if (bFirstTime == FALSE) {
+		if (bFirstTime == false) {
 			nNumOfBGKilled++;
 			m_lScore += ((Power(2, (nNumOfBGKilled - 1)) * 25) * m_nGameLevel);
 		}
@@ -1237,7 +1237,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 
 		apBadGuySprite[2]->PaintSprite(pDC, m_aptCurrentBPos[2]);
 		nWhichBadGuy -= BG3;
-		if (bFirstTime == FALSE) {
+		if (bFirstTime == false) {
 			nNumOfBGKilled++;
 			m_lScore += ((Power(2, (nNumOfBGKilled - 1)) * 25) * m_nGameLevel);
 		}
@@ -1256,7 +1256,7 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 
 		apBadGuySprite[1]->PaintSprite(pDC, m_aptCurrentBPos[1]);
 		nWhichBadGuy -= BG2;
-		if (bFirstTime == FALSE) {
+		if (bFirstTime == false) {
 			nNumOfBGKilled++;
 			m_lScore += ((Power(2, (nNumOfBGKilled - 1)) * 25) * m_nGameLevel);
 		}
@@ -1275,14 +1275,14 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
 
 		apBadGuySprite[0]->PaintSprite(pDC, m_aptCurrentBPos[0]);
 		nWhichBadGuy -= BG1;
-		if (bFirstTime == FALSE) {
+		if (bFirstTime == false) {
 			nNumOfBGKilled++;
 			m_lScore += ((Power(2, (nNumOfBGKilled - 1)) * 25) * m_nGameLevel);
 		}
 	}
 
 	ReleaseDC(pDC);
-	m_bSuspend = FALSE;
+	m_bSuspend = false;
 	return;
 }
 
@@ -1310,19 +1310,19 @@ void CMainPackRatWindow::KillBadGuy(int nWhichBadGuy, BOOL bFirstTime) {
  *  n/a
  *
  ****************************************************************/
-void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
+void CMainPackRatWindow::KillPlayer(bool bFirstTime) {
 	CDC         *pDC = GetDC();
 	CMsgDlg     cMessageBoxDlg((CWnd *)this, pGamePalette);
 
-	bKillPlayer = FALSE;
+	bKillPlayer = false;
 
-	m_bSuspend = TRUE;
+	m_bSuspend = true;
 
 	pPlayerSprite->EraseSprite(pDC);
 
-	KillBadGuy((BG1 + BG2 + BG3 + BG4), TRUE);
+	KillBadGuy((BG1 + BG2 + BG3 + BG4), true);
 
-	m_bSuspend = TRUE;
+	m_bSuspend = true;
 //  m_anMazeArray[m_ptCurrPLocInGrid.x + ( m_ptCurrPLocInGrid.y * NUMBEROFCOLS )] = 0;
 	switch (m_nMaze) {
 	case 2:
@@ -1350,9 +1350,9 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 
 	ReleaseDC(pDC);
 
-	if (bFirstTime == FALSE) {
+	if (bFirstTime == false) {
 		m_nLives--;
-		pOptionButton->EnableWindow(TRUE);
+		pOptionButton->EnableWindow(true);
 		if (m_nLives == 0) {
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, SND_ASYNC);
@@ -1360,8 +1360,8 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 			}
 			if (m_bMouseCaptured) {
 				ReleaseCapture();
-				m_bMouseCaptured = FALSE;
-				while (MFC::ShowCursor(TRUE) < 0)
+				m_bMouseCaptured = false;
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 			cMessageBoxDlg.SetInitialOptions(4, m_lScore);
@@ -1369,10 +1369,10 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 			(*this).SetFocus();
 			m_nPDirection = 0;
 			m_nNextDir = 0;
-			m_bSuspend = TRUE;
+			m_bSuspend = true;
 			if (m_lpGameStruct->bPlayingMetagame) {
 				PostMessage(WM_CLOSE, 0, 0);
-				bEndGame = TRUE;
+				bEndGame = true;
 			}
 
 			if (m_lpGameStruct->bSoundEffectsEnabled) {
@@ -1384,8 +1384,8 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 		} else {
 			if (m_bMouseCaptured) {
 				ReleaseCapture();
-				m_bMouseCaptured = FALSE;
-				while (MFC::ShowCursor(TRUE) < 0)
+				m_bMouseCaptured = false;
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 			cMessageBoxDlg.SetInitialOptions(3, m_lScore, m_nLives);
@@ -1400,7 +1400,7 @@ void CMainPackRatWindow::KillPlayer(BOOL bFirstTime) {
 	RedrawWindow();
 	m_nPDirection = 0;
 	m_nNextDir = 0;
-	m_bSuspend = FALSE;
+	m_bSuspend = false;
 	return;
 }
 
@@ -1472,7 +1472,7 @@ void CMainPackRatWindow::OnPaint() {
  ****************************************************************/
 void CMainPackRatWindow::PaintObjects(int nSize) {
 	CDC *pDC = GetDC();
-	CPalette  *pOldPal = pDC->SelectPalette(pGamePalette, FALSE);
+	CPalette  *pOldPal = pDC->SelectPalette(pGamePalette, false);
 	int x, y;
 
 	pDC->RealizePalette();
@@ -1500,7 +1500,7 @@ void CMainPackRatWindow::PaintObjects(int nSize) {
 		CSprite::ReleaseBackdropDC();
 	}
 
-	pDC->SelectPalette(pOldPal, FALSE);
+	pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 	nPaintObject = 0;
 	ptNOLocInGrid.x = 0;
@@ -1536,14 +1536,14 @@ void CMainPackRatWindow::PaintObjects(int nSize) {
 void CMainPackRatWindow::PickUpSuperObject() {
 	int     y = 0;
 	int     x = 0;
-	BOOL    bInSequence = FALSE;
+	bool    bInSequence = false;
 
 	if (((m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] % 10) >= SUPEROBJ1) &&
 	        ((m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] % 10) <= SUPEROBJ4)) {
 
 		y = (m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] % 10);
 		m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] = 0;
-		bEatTurtle = TRUE;
+		bEatTurtle = true;
 		nEatTurtle = 1;
 		nEatTurtle = 1;
 		nOldTSpeed = m_nBadGuySpeed;
@@ -1552,17 +1552,17 @@ void CMainPackRatWindow::PickUpSuperObject() {
 			sndPlaySound(nullptr, SND_ASYNC);
 			sndPlaySound(SUPERSOUND, SND_ASYNC);
 		}
-		bChangeTurtle = TRUE;
+		bChangeTurtle = true;
 		m_nNumberOfObjectsLeft--;
 		m_lScore += (5 * m_nGameLevel);
 		nPaintObject = 2;
 		ptNOLocInGrid.x = m_ptCurrPLocInGrid.x;
 		ptNOLocInGrid.y = m_ptCurrPLocInGrid.y;
-		bInSequence = TRUE;
-		anSuperObj[y - 2] = TRUE;
+		bInSequence = true;
+		anSuperObj[y - 2] = true;
 		for (x = 0; x < (y - 1); x++) {
-			if (anSuperObj[x] != TRUE)
-				bInSequence = FALSE;
+			if (anSuperObj[x] != true)
+				bInSequence = false;
 		}
 		if (bInSequence) {
 			if (y == 5) {
@@ -1637,8 +1637,8 @@ void CMainPackRatWindow::PickUpObject() {
  *
  ****************************************************************/
 
-BOOL CMainPackRatWindow::PlayerKilled(int nWhichBadGuy) {
-	BOOL    bReturn = FALSE;
+bool CMainPackRatWindow::PlayerKilled(int nWhichBadGuy) {
+	bool    bReturn = false;
 
 	if ((m_aptCurrBLocInGrid[nWhichBadGuy].x == m_ptCurrPLocInGrid.x) &&
 	        (m_aptCurrBLocInGrid[nWhichBadGuy].y == m_ptCurrPLocInGrid.y)) {
@@ -1654,7 +1654,7 @@ BOOL CMainPackRatWindow::PlayerKilled(int nWhichBadGuy) {
 				sndPlaySound(nullptr, SND_ASYNC);
 				sndPlaySound(PLAYERSOUND, SND_ASYNC);
 			}
-			bReturn = TRUE;
+			bReturn = true;
 		}
 	}
 	return (bReturn);
@@ -1858,27 +1858,27 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 
 	for (nWhichBadGuy = 0; nWhichBadGuy < 4; nWhichBadGuy++) {
 		if (PlayerKilled(nWhichBadGuy)) {
-			bKillPlayer = TRUE;
+			bKillPlayer = true;
 			if (pDC != nullptr)
 				ReleaseDC(pDC);
 			return;
 		}
 	}
 
-	if (CheckMessages() == TRUE) {
+	if (CheckMessages() == true) {
 		PostMessage(WM_CLOSE);
-		bEndGame = TRUE;
+		bEndGame = true;
 	}
 
 	if (m_nNumberOfObjectsLeft < 0) {
 
 		if (m_lpGameStruct->bPlayingMetagame) {
-			pOptionButton->EnableWindow(TRUE);
+			pOptionButton->EnableWindow(true);
 			PaintObjects();
 			if (m_bMouseCaptured) {
 				ReleaseCapture();
-				m_bMouseCaptured = FALSE;
-				while (MFC::ShowCursor(TRUE) < 0)
+				m_bMouseCaptured = false;
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 			cMessageBoxDlg.SetInitialOptions(5, m_lScore);
@@ -1886,9 +1886,9 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			(*this).SetFocus();
 			m_nPDirection = 0;
 			m_nNextDir = 0;
-			m_bSuspend = TRUE;
+			m_bSuspend = true;
 			PostMessage(WM_CLOSE, 0, 0);
-			bEndGame = TRUE;
+			bEndGame = true;
 //          return;
 		} else {
 			m_nGameLevel++;
@@ -1897,38 +1897,38 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 					sndPlaySound(nullptr, SND_ASYNC);
 					sndPlaySound(LASTLEV_WAV, SND_ASYNC);
 				}
-				pOptionButton->EnableWindow(TRUE);
+				pOptionButton->EnableWindow(true);
 				if (m_bMouseCaptured) {
 					ReleaseCapture();
-					m_bMouseCaptured = FALSE;
-					while (MFC::ShowCursor(TRUE) < 0)
+					m_bMouseCaptured = false;
+					while (MFC::ShowCursor(true) < 0)
 						;
 				}
 				cMessageBoxDlg.SetInitialOptions(2, m_lScore);
 				cMessageBoxDlg.DoModal();
 				(*this).SetFocus();
-				m_bSuspend = TRUE;
+				m_bSuspend = true;
 				if (m_lpGameStruct->bPlayingMetagame) {
 					sndPlaySound(nullptr, SND_ASYNC);
 					PostMessage(WM_CLOSE, 0, 0);
-					bEndGame = TRUE;
+					bEndGame = true;
 				}
 			} else {
-				pOptionButton->EnableWindow(TRUE);
+				pOptionButton->EnableWindow(true);
 				if (m_lpGameStruct->bSoundEffectsEnabled) {
 					sndPlaySound(LEVEL_WAV, SND_ASYNC);
 				}
 				if (m_bMouseCaptured) {
 					ReleaseCapture();
-					m_bMouseCaptured = FALSE;
-					while (MFC::ShowCursor(TRUE) < 0)
+					m_bMouseCaptured = false;
+					while (MFC::ShowCursor(true) < 0)
 						;
 				}
 				cMessageBoxDlg.SetInitialOptions(1, m_lScore, (m_nGameLevel - 1));
 				cMessageBoxDlg.DoModal();
 				(*this).SetFocus();
 				SetMaze();
-				m_bSuspend = FALSE;
+				m_bSuspend = false;
 			}
 		}
 	}
@@ -2019,12 +2019,12 @@ void CMainPackRatWindow::MovePlayer() {
 		nPlayerMove = m_nPlayerSpeed;
 		break;
 	}
-	if (CheckMessages() == TRUE) {
+	if (CheckMessages() == true) {
 		PostMessage(WM_CLOSE);
-		bEndGame = TRUE;
+		bEndGame = true;
 	}
 	nPlayerMove++;
-	//pDC->SelectPalette( pOldPal, FALSE );
+	//pDC->SelectPalette( pOldPal, false );
 	ReleaseDC(pDC);
 	return;
 }
@@ -2053,14 +2053,14 @@ void CMainPackRatWindow::MovePlayer() {
  *  n/a
  *
  ****************************************************************/
-BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
-	BOOL    bReturn = TRUE;
+bool CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, bool bForceRepaint) {
+	bool    bReturn = true;
 	CDC     *pDC = GetDC();
 	int     nOldDir;
-//BOOL    bNewDirOK = FALSE;
+//bool    bNewDirOK = false;
 	CSprite *pTempSprite = nullptr;
-	BOOL    bSeePlayer = FALSE;
-	BOOL    bNearPlayer = FALSE;
+	bool    bSeePlayer = false;
+	bool    bNearPlayer = false;
 	int     nOldDirection;
 	int     nDirectionToGo = 0;
 	int     nDist1 = abs(m_aptCurrBLocInGrid[nWhichBadGuy].x - m_ptCurrPLocInGrid.x);
@@ -2073,7 +2073,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 
 	if (m_aptCurrBLocInGrid[nWhichBadGuy].x == m_ptCurrPLocInGrid.x) {
 		int     i, j, nSmaller, nLarger;
-		BOOL    bWall = FALSE;
+		bool    bWall = false;
 
 		if (m_aptCurrBLocInGrid[nWhichBadGuy].y > m_ptCurrPLocInGrid.y) {
 			nDirectionToGo = 1;
@@ -2089,19 +2089,19 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 
 		for (i = nSmaller; i < nLarger; i ++) {
 			if (m_anMazeArray[j + (i * NUMBEROFCOLS)] == WALL) {
-				bWall = TRUE;
+				bWall = true;
 				break;
 			}
 		}
 
-		if (bWall == FALSE) {
-			bSeePlayer = TRUE;
+		if (bWall == false) {
+			bSeePlayer = true;
 		}
 
 	} else {
 		if (m_aptCurrBLocInGrid[nWhichBadGuy].y == m_ptCurrPLocInGrid.y) {
 			int     i, j, nSmaller, nLarger;
-			BOOL    bWall = FALSE;
+			bool    bWall = false;
 
 			if (m_aptCurrBLocInGrid[nWhichBadGuy].x > m_ptCurrPLocInGrid.x) {
 				nDirectionToGo = 4;
@@ -2117,53 +2117,53 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 
 			for (i = nSmaller; i < nLarger; i ++) {
 				if (m_anMazeArray[i + (j * NUMBEROFCOLS)] == WALL) {
-					bWall = TRUE;
+					bWall = true;
 					break;
 				}
 			}
 
-			if (bWall == FALSE) {
-				bSeePlayer = TRUE;
+			if (bWall == false) {
+				bSeePlayer = true;
 			}
 
 		}
 	}
 
-	if ((bSeePlayer == FALSE) && (nDist1 < 10) && (nDist2 < 10)) {
+	if ((bSeePlayer == false) && (nDist1 < 10) && (nDist2 < 10)) {
 		nOldDirection = m_anBDirection[nWhichBadGuy];
 		if (nDist1 <= nDist2) {
 			if (m_aptCurrBLocInGrid[nWhichBadGuy].x > m_ptCurrPLocInGrid.x) {
 				nDirectionToGo = 4;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x - 1 + (m_aptCurrBLocInGrid[nWhichBadGuy].y * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			} else {
 				nDirectionToGo = 2;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x + 1 + (m_aptCurrBLocInGrid[nWhichBadGuy].y * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			}
 		}
 
-		if (bNearPlayer == FALSE) {
+		if (bNearPlayer == false) {
 			if (m_aptCurrBLocInGrid[nWhichBadGuy].y > m_ptCurrPLocInGrid.y) {
 				nDirectionToGo = 1;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x + ((m_aptCurrBLocInGrid[nWhichBadGuy].y - 1) * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			} else {
 				nDirectionToGo = 3;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x + ((m_aptCurrBLocInGrid[nWhichBadGuy].y + 1) * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			}
 		}
 
-		if (bNearPlayer == FALSE) {
+		if (bNearPlayer == false) {
 			if (m_aptCurrBLocInGrid[nWhichBadGuy].x > m_ptCurrPLocInGrid.x) {
 				nDirectionToGo = 4;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x - 1 + (m_aptCurrBLocInGrid[nWhichBadGuy].y * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			} else {
 				nDirectionToGo = 2;
 				if ((m_anMazeArray[m_aptCurrBLocInGrid[nWhichBadGuy].x + 1 + (m_aptCurrBLocInGrid[nWhichBadGuy].y * NUMBEROFCOLS)] != WALL) && (abs(nOldDirection - nDirectionToGo) != 2))
-					bNearPlayer = TRUE;
+					bNearPlayer = true;
 			}
 		}
 
@@ -2232,7 +2232,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 		}
 	}
 
-	if ((bSeePlayer || bNearPlayer) && (bEatTurtle == FALSE)) {
+	if ((bSeePlayer || bNearPlayer) && (bEatTurtle == false)) {
 		m_anBDirection[nWhichBadGuy] = nDirectionToGo;
 	}
 
@@ -2263,8 +2263,8 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 							pTempSprite = pFlashUpSprite->DuplicateSprite(pDC);
 						else
 							pTempSprite = pGoodGuyUpSprite->DuplicateSprite(pDC);
-						abGoodTurtle[nWhichBadGuy] = TRUE;
-						abChangeTurtle[nWhichBadGuy] = FALSE;
+						abGoodTurtle[nWhichBadGuy] = true;
+						abChangeTurtle[nWhichBadGuy] = false;
 					}
 				}
 
@@ -2273,7 +2273,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 			} else {
 				// change direction
 				m_anBDirection[nWhichBadGuy] = brand() % 4;
-				bReturn = FALSE;
+				bReturn = false;
 			}
 
 		}
@@ -2301,8 +2301,8 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 							pTempSprite = pFlashRightSprite->DuplicateSprite(pDC);
 						else
 							pTempSprite = pGoodGuyRightSprite->DuplicateSprite(pDC);
-						abGoodTurtle[nWhichBadGuy] = TRUE;
-						abChangeTurtle[nWhichBadGuy] = FALSE;
+						abGoodTurtle[nWhichBadGuy] = true;
+						abChangeTurtle[nWhichBadGuy] = false;
 					}
 				}
 
@@ -2311,7 +2311,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 			} else {
 				// change direction
 				m_anBDirection[nWhichBadGuy] = brand() % 4;
-				bReturn = FALSE;
+				bReturn = false;
 			}
 		}
 		break;
@@ -2338,8 +2338,8 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 							pTempSprite = pFlashDownSprite->DuplicateSprite(pDC);
 						else
 							pTempSprite = pGoodGuyDownSprite->DuplicateSprite(pDC);
-						abGoodTurtle[nWhichBadGuy] = TRUE;
-						abChangeTurtle[nWhichBadGuy] = FALSE;
+						abGoodTurtle[nWhichBadGuy] = true;
+						abChangeTurtle[nWhichBadGuy] = false;
 					}
 				}
 
@@ -2348,7 +2348,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 			} else {
 				// change direction
 				m_anBDirection[nWhichBadGuy] = brand() % 4;
-				bReturn = FALSE;
+				bReturn = false;
 			}
 		}
 		break;
@@ -2375,8 +2375,8 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 							pTempSprite = pFlashLeftSprite->DuplicateSprite(pDC);
 						else
 							pTempSprite = pGoodGuyLeftSprite->DuplicateSprite(pDC);
-						abGoodTurtle[nWhichBadGuy] = TRUE;
-						abChangeTurtle[nWhichBadGuy] = FALSE;
+						abGoodTurtle[nWhichBadGuy] = true;
+						abChangeTurtle[nWhichBadGuy] = false;
 					}
 				}
 
@@ -2385,7 +2385,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 			} else {
 				// change direction
 				m_anBDirection[nWhichBadGuy] = brand() % 4;
-				bReturn = FALSE;
+				bReturn = false;
 			}
 		}
 		break;
@@ -2404,7 +2404,7 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 	pTempSprite = nullptr;
 
 	if (PlayerKilled(nWhichBadGuy)) {
-		bKillPlayer = TRUE;
+		bKillPlayer = true;
 	} else {
 		if (nKillBadGuy != 0) {
 			if (pDC != nullptr)
@@ -2413,13 +2413,13 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 		}
 	}
 
-	if (CheckMessages() == TRUE) {
+	if (CheckMessages() == true) {
 		PostMessage(WM_CLOSE);
-		bEndGame = TRUE;
+		bEndGame = true;
 	}
 	if (m_anBDirection[nWhichBadGuy] > 4)
 		m_anBDirection[nWhichBadGuy] = brand() % 4;
-	bChangeTurtle = FALSE;
+	bChangeTurtle = false;
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 	return bReturn;
@@ -2452,8 +2452,8 @@ BOOL CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, BOOL bForceRepaint) {
 void CMainPackRatWindow::MoveBadGuys() {
 	CDC *pDC = GetDC();
 	int nWhichBadGuy;
-	BOOL    bTempBool1;
-	BOOL    bTempBool2;
+	bool    bTempBool1;
+	bool    bTempBool2;
 
 
 	for (nWhichBadGuy = 0; nWhichBadGuy < 4; nWhichBadGuy++) {
@@ -2473,11 +2473,11 @@ void CMainPackRatWindow::MoveBadGuys() {
 			}
 
 			anBadGuyMove[nWhichBadGuy] = 1;
-			bTempBool1 = FALSE;
-			bTempBool2 = FALSE;
-			while (bTempBool1 == FALSE) {
+			bTempBool1 = false;
+			bTempBool2 = false;
+			while (bTempBool1 == false) {
 				bTempBool1 = SetNewBadGuyPos(nWhichBadGuy, bTempBool2);
-				bTempBool2 = TRUE;
+				bTempBool2 = true;
 			}
 			if (bEndGame) {
 				ReleaseDC(pDC);
@@ -2507,9 +2507,9 @@ void CMainPackRatWindow::MoveBadGuys() {
 				apBadGuySprite[nWhichBadGuy]->PaintSprite(pDC, m_aptCurrentBPos[nWhichBadGuy]);
 				break;
 			}
-			if (CheckMessages() == TRUE) {
+			if (CheckMessages() == true) {
 				PostMessage(WM_CLOSE);
-				bEndGame = TRUE;
+				bEndGame = true;
 			}
 			anBadGuyMove[nWhichBadGuy]++;
 		}
@@ -2543,13 +2543,13 @@ void CMainPackRatWindow::MoveBadGuys() {
  *  n/a
  *
  ****************************************************************/
-BOOL CMainPackRatWindow::CheckMessages() {
+bool CMainPackRatWindow::CheckMessages() {
 	MSG msg;
 
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT) {
-			bEndGame = TRUE;
+			bEndGame = true;
 		}
 
 		TranslateMessage(&msg);
@@ -2674,7 +2674,7 @@ void CMainPackRatWindow::ResetGame() {
 	m_nLives = nStartingLives;
 	m_lScore = 0L;
 	nExtraLives = 4;
-	bEndGame = FALSE;
+	bEndGame = false;
 	SetMaze();
 	(*this).SetFocus();
 	return;
@@ -2719,7 +2719,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 //unsigned int            x = IDD_MINIOPTIONS_DIALOG;
 	CPackRatOptDlg  dlgMiniOptDlg(pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG);
 
-	bResetGame = FALSE;
+	bResetGame = false;
 
 	dlgMiniOptDlg.SetInitialOptions(min(pcwndPackRat->m_nGameLevel, 36), nStartingLives);
 
@@ -2727,30 +2727,30 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 	if (nOption != 0) {
 		pcwndPackRat->m_nGameLevel = nOption / 10;
 		nStartingLives = nOption % 10;
-		bResetGame = TRUE;
+		bResetGame = true;
 	}
 	return;
 }
 
-BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int             nMainOption = 0;       // return from the Options dialog
-	BOOL            bContinue = TRUE;
+	bool            bContinue = true;
 
 	if (HIWORD(lParam) == BN_CLICKED)           // only want to look at button clicks
 		switch (wParam) {
 
 // Option button clicked, then put up the Options dialog
 		case IDC_OPTION:
-			m_bSuspend = TRUE;
-			pOptionButton->EnableWindow(FALSE);
-			bResetGame = FALSE;
+			m_bSuspend = true;
+			pOptionButton->EnableWindow(false);
+			bResetGame = false;
 			UpdateWindow();
 			//CSound::waitWaveSounds();
 			sndPlaySound(nullptr, 0);
 			if (m_bMouseCaptured) {
 				ReleaseCapture();
-				m_bMouseCaptured = FALSE;
-				while (MFC::ShowCursor(TRUE) < 0)
+				m_bMouseCaptured = false;
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 			if (m_lpGameStruct->bPlayingMetagame) {
@@ -2762,8 +2762,8 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				case IDC_OPTIONS_QUIT:
 					//      if Quit buttons was hit, quit
 					PostMessage(WM_CLOSE, 0, 0);
-					bFirstTimer = FALSE;
-					bEndGame = TRUE;
+					bFirstTimer = false;
+					bEndGame = true;
 					break;
 				}
 			} else {
@@ -2775,16 +2775,16 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				case IDC_OPTIONS_QUIT:
 					//      if Quit buttons was hit, quit
 					PostMessage(WM_CLOSE, 0, 0);
-					bFirstTimer = FALSE;
-					bEndGame = TRUE;
+					bFirstTimer = false;
+					bEndGame = true;
 					break;
 				case IDC_OPTIONS_NEWGAME:
 					// reset the game and start a new hand
-					bResetGame = TRUE;
+					bResetGame = true;
 					break;
 				case IDC_OPTIONS_RETURN:
 					if (m_nLives <= 0) {
-						bContinue = FALSE;
+						bContinue = false;
 					}
 					break;
 				}
@@ -2810,16 +2810,16 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (bResetGame)
 				ResetGame();
 
-			pOptionButton->EnableWindow(TRUE);
-			m_bSuspend = FALSE;
+			pOptionButton->EnableWindow(true);
+			m_bSuspend = false;
 
-			if (bContinue == FALSE) {
-				m_bSuspend = TRUE;
-				return TRUE;
+			if (bContinue == false) {
+				m_bSuspend = true;
+				return true;
 			}
 
 			if (bFirstTimer) {
-				bFirstTimer = FALSE;
+				bFirstTimer = false;
 				SetTimer(PACKRATTIMER, 50, nullptr);
 			}
 			break;
@@ -2828,7 +2828,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 // if the Hols buttons are hit then set then accordingly
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 void CMainPackRatWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
@@ -2839,15 +2839,15 @@ void CMainPackRatWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 		int     dx, dy;
 
 		if (rMazeRect.PtInRect(point)) {
-			if (bMouseHidden == FALSE) {
-				while (MFC::ShowCursor(FALSE) >= 0)
+			if (bMouseHidden == false) {
+				while (MFC::ShowCursor(false) >= 0)
 					;
-				bMouseHidden = TRUE;
+				bMouseHidden = true;
 			}
 		} else {
 			if (bMouseHidden) {
-				bMouseHidden = FALSE;
-				while (MFC::ShowCursor(TRUE) < 0)
+				bMouseHidden = false;
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 		}
@@ -2883,12 +2883,12 @@ void CMainPackRatWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 void CMainPackRatWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
-	if (m_lpGameStruct->bPlayingMetagame == FALSE) {
-		if ((rNewGame.PtInRect(point)) && (m_bMouseCaptured == FALSE))  {
+	if (m_lpGameStruct->bPlayingMetagame == false) {
+		if ((rNewGame.PtInRect(point)) && (m_bMouseCaptured == false))  {
 			/*
 			            SetCapture();
-			            m_bMouseCaptured = TRUE;
-			            bInNewGameRect = TRUE;
+			            m_bMouseCaptured = true;
+			            bInNewGameRect = true;
 			*/
 			ResetGame();
 		}
@@ -2901,11 +2901,11 @@ void CMainPackRatWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 
 	/*
 	    if ( m_bMouseCaptured ) {
-	        m_bMouseCaptured = FALSE;
+	        m_bMouseCaptured = false;
 	        ReleaseCapture();
 
 	        if (bInNewGameRect ) {
-	            bInNewGameRect = FALSE;
+	            bInNewGameRect = false;
 	            ResetGame();
 	        }
 	    }
@@ -2917,16 +2917,16 @@ void CMainPackRatWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (m_bMouseCaptured) {
 		ReleaseCapture();
-		m_bMouseCaptured = FALSE;
-		while (MFC::ShowCursor(TRUE) < 0)
+		m_bMouseCaptured = false;
+		while (MFC::ShowCursor(true) < 0)
 			;
 	} else {
 		/*
 		this was the old way
 		*/
 		SetCapture();
-		m_bMouseCaptured = TRUE;
-		while (MFC::ShowCursor(FALSE) < 0)
+		m_bMouseCaptured = true;
+		while (MFC::ShowCursor(false) < 0)
 			;
 	}
 	CWnd::OnRButtonDown(nFlags, point);
@@ -2935,9 +2935,9 @@ void CMainPackRatWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 void CMainPackRatWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
 	/*
 	    if ( m_bMouseCaptured ) {
-	        m_bMouseCaptured = FALSE;
+	        m_bMouseCaptured = false;
 	        ReleaseCapture();
-	        while ( MFC::ShowCursor( TRUE ) < 0 )
+	        while ( MFC::ShowCursor( true ) < 0 )
 	            ;
 	    }
 	*/
@@ -2951,19 +2951,19 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 	switch (nChar) {
 	case VK_F1:
 		if (bInLoop) {
-			BOOL    bTemp = m_bSuspend;
-			m_bSuspend = TRUE;
+			bool    bTemp = m_bSuspend;
+			m_bSuspend = true;
 			sndPlaySound(nullptr, SND_ASYNC);
 			if (m_bMouseCaptured) {
-				m_bMouseCaptured = FALSE;
+				m_bMouseCaptured = false;
 				ReleaseCapture();
-				while (MFC::ShowCursor(TRUE) < 0)
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
-			pOptionButton->EnableWindow(FALSE);
+			pOptionButton->EnableWindow(false);
 			UpdateWindow();
 			(void) dlgRules.DoModal();      // invoke the help dialog box
-			pOptionButton->EnableWindow(TRUE);
+			pOptionButton->EnableWindow(true);
 			m_bSuspend = bTemp;
 		}
 		break;
@@ -2971,9 +2971,9 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 	case VK_F2:
 		if (bInLoop) {
 			if (m_bMouseCaptured) {
-				m_bMouseCaptured = FALSE;
+				m_bMouseCaptured = false;
 				ReleaseCapture();
-				while (MFC::ShowCursor(TRUE) < 0)
+				while (MFC::ShowCursor(true) < 0)
 					;
 			}
 			SendMessage(WM_COMMAND, IDC_OPTION, BN_CLICKED);
@@ -3008,9 +3008,9 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 	case VK_RETURN:
 	case VK_ESCAPE:
 		if (m_bMouseCaptured) {
-			m_bMouseCaptured = FALSE;
+			m_bMouseCaptured = false;
 			ReleaseCapture();
-			while (MFC::ShowCursor(TRUE) < 0)
+			while (MFC::ShowCursor(true) < 0)
 				;
 		}
 		break;
@@ -3026,11 +3026,11 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 void CMainPackRatWindow::OnTimer(uintptr nWhichTimer) {
 	if (nWhichTimer == PACKRATTIMER) {
 		KillTimer(PACKRATTIMER);
-		bEndGame = FALSE;
-		bInLoop = TRUE;
+		bEndGame = false;
+		bInLoop = true;
 		MainLoop();
-		bInLoop = FALSE;
-		bFirstTimer = TRUE;
+		bInLoop = false;
+		bFirstTimer = true;
 		return;
 	}
 	return;
@@ -3067,20 +3067,20 @@ void CMainPackRatWindow::MainLoop() {
 	int         nLoop2;
 	CDC         *pDC = nullptr;
 	POINT       ptLive;
-	BOOL        bRedrawLives = FALSE;
+	bool        bRedrawLives = false;
 
 	pTempSprite = new CSprite;
 
 	(*this).SetFocus();
-	while (bEndGame == FALSE) {
-		if (m_bSuspend == FALSE) {
+	while (bEndGame == false) {
+		if (m_bSuspend == false) {
 			if ((nEatTurtle <= (EATTURTLE - (4 * m_nGameLevel))) && (bEatTurtle)) {
-				bEatTurtle = TRUE;
+				bEatTurtle = true;
 				nEatTurtle++;
 				if (nEatTurtle > (EATTURTLE - (4 * m_nGameLevel) - 40))
-					bFlashTurtle = TRUE;
+					bFlashTurtle = true;
 				else
-					bFlashTurtle = FALSE;
+					bFlashTurtle = false;
 			} else {
 				if (pTempSprite != nullptr) {
 					pTempSprite = nullptr;
@@ -3089,8 +3089,8 @@ void CMainPackRatWindow::MainLoop() {
 
 				if (nEatTurtle > 0)  {
 					nNumOfBGKilled = 0;
-					bChangeTurtle = TRUE;
-					bEatTurtle = FALSE;
+					bChangeTurtle = true;
+					bEatTurtle = false;
 					nEatTurtle = 0;
 					m_nBadGuySpeed = nOldTSpeed;
 				}
@@ -3127,38 +3127,38 @@ void CMainPackRatWindow::MainLoop() {
 			if (bEndGame)
 				return;
 			if ((m_nPDirection != 0) || (m_nNextDir != 0) || (bUseJoyStick)) {
-				bStart = TRUE;
+				bStart = true;
 				MovePlayer();
 			}
 
 			if ((m_lpGameStruct->bPlayingMetagame) && (m_lScore > (350 * m_nGameLevel))) {
-				if (bBALLOONShown == FALSE) {
+				if (bBALLOONShown == false) {
 					pDC = GetDC();
 					pBalloonSprite->PaintSprite(pDC, ptBaloon.x, ptBaloon.y);
 					ReleaseDC(pDC);
-					bBALLOONShown = TRUE;
+					bBALLOONShown = true;
 				}
 			}
 
-			if ((m_lpGameStruct->bPlayingMetagame == FALSE) && (m_lScore > 40000)) {
+			if ((m_lpGameStruct->bPlayingMetagame == false) && (m_lScore > 40000)) {
 				if (nExtraLives == 1)
-					bRedrawLives = TRUE;
+					bRedrawLives = true;
 			}
-			if ((m_lpGameStruct->bPlayingMetagame == FALSE) && (m_lScore > 20000)) {
+			if ((m_lpGameStruct->bPlayingMetagame == false) && (m_lScore > 20000)) {
 				if (nExtraLives == 2)
-					bRedrawLives = TRUE;
+					bRedrawLives = true;
 			}
-			if ((m_lpGameStruct->bPlayingMetagame == FALSE) && (m_lScore > 10000)) {
+			if ((m_lpGameStruct->bPlayingMetagame == false) && (m_lScore > 10000)) {
 				if (nExtraLives == 3)
-					bRedrawLives = TRUE;
+					bRedrawLives = true;
 			}
-			if ((m_lpGameStruct->bPlayingMetagame == FALSE) && (m_lScore > 5000)) {
+			if ((m_lpGameStruct->bPlayingMetagame == false) && (m_lScore > 5000)) {
 				if (nExtraLives == 4)
-					bRedrawLives = TRUE;
+					bRedrawLives = true;
 			}
 
 			if (bRedrawLives) {
-				bRedrawLives = FALSE;
+				bRedrawLives = false;
 				if (m_nLives < MAXLIVES) {
 					if (m_lpGameStruct->bSoundEffectsEnabled) {
 						/*
@@ -3232,9 +3232,9 @@ void CMainPackRatWindow::MainLoop() {
 					return;
 			}
 		}
-		if (CheckMessages() == TRUE) {
+		if (CheckMessages() == true) {
 			PostMessage(WM_CLOSE);
-			bEndGame = TRUE;
+			bEndGame = true;
 			return;
 		}
 	}
@@ -3270,21 +3270,21 @@ void CMainPackRatWindow::MainLoop() {
  *
  ****************************************************************/
 
-BOOL CMainPackRatWindow::OnEraseBkgnd(CDC *pDC) {
+bool CMainPackRatWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
-	return TRUE;
+	return true;
 }
 
-void CMainPackRatWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) {
+void CMainPackRatWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_INACTIVE:
-			m_bSuspend = TRUE;
+			m_bSuspend = true;
 			break;
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			m_bSuspend = FALSE;
-			InvalidateRect(nullptr, FALSE);
+			m_bSuspend = false;
+			InvalidateRect(nullptr, false);
 			break;
 		}
 	return;
@@ -3332,9 +3332,9 @@ void CMainPackRatWindow::OnClose() {
 
 	if (m_bMouseCaptured) {
 		ReleaseCapture();
-		m_bMouseCaptured = FALSE;
+		m_bMouseCaptured = false;
 	}
-	while (MFC::ShowCursor(TRUE) < 0)
+	while (MFC::ShowCursor(true) < 0)
 		;
 
 	CFrameWnd ::OnClose();
@@ -3558,12 +3558,12 @@ int CMainPackRatWindow::Power(int nBase, int nPower) {
 void CMainPackRatWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}

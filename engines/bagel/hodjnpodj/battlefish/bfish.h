@@ -70,7 +70,7 @@ protected:
 	int         GetEnemyGridIndex(CPoint);
 	int         GetUserGridIndex(CPoint);
 	int         GetFishIndex(CSprite *);
-	BOOL        OkToPlaceFish(int, CPoint, BOOL);
+	bool        OkToPlaceFish(int, CPoint, bool);
 	void        PlaceFish(int, CPoint);
 	int         IndexToId(int);
 	int         IdToIndex(int);
@@ -83,7 +83,7 @@ protected:
 	int         FindNeighborTarget(int, int);
 	int         FindTarget(int, int);
 	int         FindMatch(int, int);
-	BOOL        FishFits(int, int, int);
+	bool        FishFits(int, int, int);
 	int         GetNeighbors(int, int);
 	void        CreatePlume(CPoint);
 	void        CreateHarpoon(CPoint);
@@ -92,7 +92,7 @@ protected:
 	void        PlaceTurnHarpoons(void);
 	void        RemoveTurnHarpoon(void);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);
@@ -104,7 +104,7 @@ protected:
 	void        OnSysChar(unsigned int, unsigned int, unsigned int);
 	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
-	void        OnActivate(unsigned int, CWnd *, BOOL) override;
+	void        OnActivate(unsigned int, CWnd *, bool) override;
 	void        OnClose(void);
 
 	DECLARE_MESSAGE_MAP()
@@ -134,14 +134,14 @@ protected:
 	int         m_nUserFish;
 	int         m_nTurns;
 	int         m_nDifficultyLevel;
-	BOOL        m_bGameActive;
-	BOOL        m_bPause;
-	BOOL        m_bUserEditMode;
-	BOOL        m_bMovingFish;
-	BOOL        m_bLastRotated;
-	BOOL        m_bStillCheck;
-	BOOL        m_bUsersTurn;
-	BOOL        m_bInMenu;
+	bool        m_bGameActive;
+	bool        m_bPause;
+	bool        m_bUserEditMode;
+	bool        m_bMovingFish;
+	bool        m_bLastRotated;
+	bool        m_bStillCheck;
+	bool        m_bUsersTurn;
+	bool        m_bInMenu;
 };
 
 } // namespace Battlefish

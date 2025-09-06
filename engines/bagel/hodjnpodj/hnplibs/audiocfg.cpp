@@ -63,19 +63,19 @@ void CAudioCfgDlg::PutDlgData() {
 void CAudioCfgDlg::GetDlgData() {
 	m_nVolume   = m_pScrollBar1->GetScrollPos();
 
-	m_bMusic = FALSE;
+	m_bMusic = false;
 	if (m_pMusicButton->GetCheck() == 1) {
-		m_bMusic = TRUE;
+		m_bMusic = true;
 	}
 
-	m_bSound = FALSE;
+	m_bSound = false;
 	if (m_pSoundButton->GetCheck() == 1) {
-		m_bSound = TRUE;
+		m_bSound = true;
 	}
 }
 
 
-BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to audio
 	*/
@@ -86,11 +86,11 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			SaveIniSettings();
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		case ID_MUSIC:
 			m_bMusic = !m_bMusic;
@@ -172,7 +172,7 @@ void CAudioCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar
 }
 
 
-BOOL CAudioCfgDlg::OnInitDialog(void) {
+bool CAudioCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -188,7 +188,7 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 		tmpRect.SetRect(54, 100, 168, 118);
 		if ((m_pScrollBar1 = new CScrollBar) != nullptr) {
 			m_pScrollBar1->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL1);
-			m_pScrollBar1->SetScrollRange(LEVEL_MIN, LEVEL_MAX, TRUE);
+			m_pScrollBar1->SetScrollRange(LEVEL_MIN, LEVEL_MAX, true);
 		}
 
 		ReleaseDC(pDC);
@@ -208,14 +208,14 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 		m_pMusicButton->SetPalette(m_pPalette);
 		m_pMusicButton->SetControl(ID_MUSIC, this);
 		if (!CSound::MidiAvailable())
-			m_pMusicButton->EnableWindow(FALSE);
+			m_pMusicButton->EnableWindow(false);
 	}
 
 	if ((m_pSoundButton = new CCheckButton) != nullptr) {
 		m_pSoundButton->SetPalette(m_pPalette);
 		m_pSoundButton->SetControl(ID_SOUND, this);
 		if (!CSound::SoundAvailable())
-			m_pSoundButton->EnableWindow(FALSE);
+			m_pSoundButton->EnableWindow(false);
 	}
 
 	LoadIniSettings();
@@ -223,9 +223,9 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 	PutDlgData();
 
 	if (!CSound::SoundVolumeAvailable() && !CSound::MidiVolumeAvailable())
-		m_pScrollBar1->EnableWindow(FALSE);
+		m_pScrollBar1->EnableWindow(false);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -253,8 +253,8 @@ void CAudioCfgDlg::UpdateOptions(void) {
 }
 
 
-BOOL CAudioCfgDlg::OnEraseBkgnd(CDC *) {
-	return TRUE;
+bool CAudioCfgDlg::OnEraseBkgnd(CDC *) {
+	return true;
 }
 
 
@@ -311,8 +311,8 @@ void CAudioCfgDlg::ClearDialogImage(void) {
 void CAudioCfgDlg::LoadIniSettings(void) {
 	int nMidiVolume, nWaveVolume;
 
-	m_bMusic = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
-	m_bSound = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
+	m_bMusic = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");
+	m_bSound = GetPrivateProfileInt("Meta", "SoundEffects", true, "HODJPODJ.INI");
 
 	nMidiVolume = GetPrivateProfileInt("Meta", "MidiVolume", LEVEL_DEF, "HODJPODJ.INI");
 	nWaveVolume = GetPrivateProfileInt("Meta", "WaveVolume", LEVEL_DEF, "HODJPODJ.INI");

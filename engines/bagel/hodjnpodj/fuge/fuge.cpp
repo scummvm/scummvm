@@ -360,7 +360,7 @@ CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 	CDC     *pDC;
 	CBitmap *pBmp;
 	ERROR_CODE errCode;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -436,7 +436,7 @@ CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 
 		if ((m_pScrollButton = new CBmpButton) != nullptr) {
 
-			m_bIgnoreScrollClick = FALSE;
+			m_bIgnoreScrollClick = false;
 			tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y, SCROLL_BUTTON_X + SCROLL_BUTTON_DX, SCROLL_BUTTON_Y + SCROLL_BUTTON_DY);
 			bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_MENU);
 			assert(bSuccess);
@@ -514,14 +514,14 @@ void CFugeWindow::initMembers() {
 	m_pScrollButton = nullptr;
 	m_pGamePalette = nullptr;
 	m_pSoundTrack = nullptr;
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
-	m_bIgnoreScrollClick = FALSE;
-	m_bBallOnPaddle = FALSE;
+	m_bPause = false;
+	m_bGameActive = false;
+	m_bIgnoreScrollClick = false;
+	m_bBallOnPaddle = false;
 	m_nPaddleCelIndex = 29;
 	m_pPaddle = nullptr;
 	m_pBall = nullptr;
-	m_bMovingPaddle = FALSE;
+	m_bMovingPaddle = false;
 	m_lScore = 0;
 	m_pBrickSound = nullptr;
 	m_pWallSound = nullptr;
@@ -533,8 +533,8 @@ void CFugeWindow::initMembers() {
 	m_hExtraLifeRes = nullptr;
 	pGameParams->lScore = 0;
 	m_nNumRows = 0;
-	m_bJoyActive = FALSE;
-	memset(m_bBrickVisible, 0, sizeof(BOOL) * N_BRICKS);
+	m_bJoyActive = false;
+	memset(m_bBrickVisible, 0, sizeof(bool) * N_BRICKS);
 }
 
 void CFugeWindow::initStatics() {
@@ -548,7 +548,7 @@ void CFugeWindow::initStatics() {
 void CFugeWindow::InitializeJoystick(void) {
 	JOYINFO     joyInfo;
 
-	if (joySetCapture(m_hWnd, JOYSTICKID1, 10000, TRUE) == JOYERR_NOERROR) {
+	if (joySetCapture(m_hWnd, JOYSTICKID1, 10000, true) == JOYERR_NOERROR) {
 		//
 		// Calibrate the joystick
 		//
@@ -556,7 +556,7 @@ void CFugeWindow::InitializeJoystick(void) {
 		joyGetPos(JOYSTICKID1, &joyInfo);
 		m_nJoyOrgX = joyInfo.wXpos;
 		m_nJoyOrgY = joyInfo.wYpos;
-		m_bJoyActive = TRUE;
+		m_bJoyActive = true;
 
 	} else {
 		//CMessageBox dlgNoJoystick((CWnd *)this, m_pGamePalette, "Warning!  No Joystick", "Driver Installed");
@@ -594,16 +594,16 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(void) {
 
 			if ((m_pBall = new CSprite) != nullptr) {
 
-				if (m_pBall->SharePalette(m_pGamePalette) != FALSE) {
+				if (m_pBall->SharePalette(m_pGamePalette) != false) {
 
-					if (m_pBall->LoadResourceSprite(pDC, IDB_BALL) != FALSE) {
+					if (m_pBall->LoadResourceSprite(pDC, IDB_BALL) != false) {
 
-						m_pBall->SetMasked(TRUE);
-						m_pBall->SetMobile(TRUE);
+						m_pBall->SetMasked(true);
+						m_pBall->SetMobile(true);
 
 						// uncomment this if we decide to animate the ball as
 						// it moves
-						//if (m_pBall->LoadResourceCels(pDC, IDB_BALLSTRIP, N_BALLS) == FALSE)
+						//if (m_pBall->LoadResourceCels(pDC, IDB_BALLSTRIP, N_BALLS) == false)
 						//    errCode = ERR_UNKNOWN;
 
 					} else {
@@ -665,7 +665,7 @@ void CFugeWindow::HandleError(ERROR_CODE errCode) {
 void CFugeWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 	PaintScreen();
 	EndPaint(&lpPaint);
@@ -733,7 +733,7 @@ void CFugeWindow::RepaintSpriteList(CDC *pDC) {
 }
 
 
-BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive ? 0 : NO_RETURN),
@@ -749,11 +749,11 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			// hide the command scroll
 			//
-			m_pScrollButton->SendMessage(BM_SETSTATE, TRUE, 0);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0);
 
 			if (!m_bIgnoreScrollClick) {
 
-				m_bIgnoreScrollClick = TRUE;
+				m_bIgnoreScrollClick = true;
 
 				GamePause();
 
@@ -781,8 +781,8 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 				// show the command scroll
 				//
-				m_pScrollButton->SendMessage(BM_SETSTATE, FALSE, 0);
-				m_bIgnoreScrollClick = FALSE;
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0);
+				m_bIgnoreScrollClick = false;
 
 				if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
@@ -801,22 +801,22 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void CFugeWindow::GamePause(void) {
-	m_bPause = TRUE;
+	m_bPause = true;
 };
 
 
 void CFugeWindow::GameResume(void) {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
-		m_bPause = FALSE;
+		m_bPause = false;
 };
 
 
@@ -848,8 +848,8 @@ void CFugeWindow::PlayGame(void) {
 		StartPaddle();
 
 		// game starts paused
-		m_bPause = TRUE;
-		m_bGameActive = TRUE;
+		m_bPause = true;
+		m_bGameActive = true;
 		SetTimer(TIMER_ID, TIMER_INTERVAL, nullptr);
 	}
 
@@ -880,14 +880,14 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(int nNewSize) {
 
 			if ((m_pPaddle = new CSprite) != nullptr) {
 
-				if (m_pPaddle->SharePalette(m_pGamePalette) != FALSE) {
+				if (m_pPaddle->SharePalette(m_pGamePalette) != false) {
 
-					if (m_pPaddle->LoadCels(pDC, pszPaddles[nNewSize], N_PADDLE_CELS) != FALSE) {
+					if (m_pPaddle->LoadCels(pDC, pszPaddles[nNewSize], N_PADDLE_CELS) != false) {
 
 						m_nOldSize = nNewSize;
-						m_pPaddle->SetMasked(TRUE);
-						m_pPaddle->SetMobile(TRUE);
-						m_pPaddle->SetAnimated(TRUE);
+						m_pPaddle->SetMasked(true);
+						m_pPaddle->SetMobile(true);
+						m_pPaddle->SetAnimated(true);
 
 					} else {
 						errCode = ERR_UNKNOWN;
@@ -1114,7 +1114,7 @@ void CFugeWindow::PaintBall(void) {
 			// Play the ball-gets-sucked-into-black-hole animation
 			//
 			LoseBall();
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 
 			// or has ball hit the paddle?
 			//
@@ -1134,7 +1134,7 @@ void CFugeWindow::PaintBall(void) {
 			//
 			// determine if a ball actually hit a brick
 			//
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 
 
 			// or did ball hit edge of ferris wheel
@@ -1231,7 +1231,7 @@ void CFugeWindow::PaintBall(void) {
 				m_vBallVector.Reflect(vBall);
 			}
 
-			m_bPaddleHit = FALSE;
+			m_bPaddleHit = false;
 		}
 
 		// only paint the ball if it actually moved
@@ -1261,7 +1261,7 @@ void CFugeWindow::BallvsPaddle(void) {
 	DOUBLE fLen1, fLen2, fLen3, fLen4, fLen5, fLen6, fMin, length;
 	int i, j, k;
 	int nRollBack = 0;
-	BOOL bHit;
+	bool bHit;
 
 	// calculate the 7 critical points for the paddle
 	//
@@ -1313,7 +1313,7 @@ void CFugeWindow::BallvsPaddle(void) {
 	// away from the center of the ball, then the ball has hit
 	// the paddle
 	//
-	bHit = FALSE;
+	bHit = false;
 	for (i = 0; i < N_CRIT_POINTS - 1; i++) {
 
 		switch (i) {
@@ -1358,15 +1358,15 @@ void CFugeWindow::BallvsPaddle(void) {
 		nRollBack = 0;
 		if (fLen1 <= BALL_RADIUS) {
 			nRollBack = BALL_RADIUS - (int)fLen1;
-			bHit = TRUE;
+			bHit = true;
 			break;
 		} else if (fLen2 <= BALL_RADIUS) {
 			nRollBack = (BALL_RADIUS - (int)fLen2);
-			bHit = TRUE;
+			bHit = true;
 			break;
 		} else if (fLen1 + fLen2 <= length) {
 			nRollBack = (int)(length - (fLen1 + fLen2)) + 2;
-			bHit = TRUE;
+			bHit = true;
 			break;
 		}
 	}
@@ -1511,7 +1511,7 @@ void CFugeWindow::BallvsPaddle(void) {
 			}
 		}
 
-		m_bPaddleHit = TRUE;
+		m_bPaddleHit = true;
 	}
 }
 
@@ -1529,7 +1529,7 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 	DOUBLE angle;
 	int i, j, nIndex, nLastIndex, nBrickIndex, nMaxHits;
 	int nBrick0, nBrick1, nRow0, nRow1, nRow2, nUse[MAX_BRICK_HITS];
-	BOOL bHit, bStillHit;
+	bool bHit, bStillHit;
 
 	// get bounding rectangle of the ball
 	//
@@ -1653,7 +1653,7 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 
 	// which brick did we hit?
 	//
-	bHit = FALSE;
+	bHit = false;
 
 	for (i = 0; i < nMaxHits; i++) {
 		nBrickIndex = nUse[i];
@@ -1679,7 +1679,7 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 					vPoints[j] += gvCenter;
 
 					if (distanceBetweenPoints(vBallCenter, vPoints[j]) < 11.0) {
-						bHit = TRUE;
+						bHit = true;
 					}
 				}
 
@@ -1795,7 +1795,7 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 						//
 					} else {
 
-						bStillHit = TRUE;
+						bStillHit = true;
 						while (bStillHit) {
 
 							// roll ball back to point of contact with brick
@@ -1804,11 +1804,11 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 							// get new center of ball
 							vBallCenter = m_ptBallLocation + BALL_RADIUS;
 
-							bStillHit = FALSE;
+							bStillHit = false;
 							for (j = 0; j < N_BRICK_POINTS; j++) {
 
 								if ((fLen[j] = distanceBetweenPoints(vBallCenter, vPoints[j])) < 11.0) {
-									bStillHit = TRUE;
+									bStillHit = true;
 									break;
 								}
 							}
@@ -1905,7 +1905,7 @@ void CFugeWindow::EraseBrick(CDC *pDC, int nBrickIndex) {
 	//
 	pDC->FloodFill(ptBrickPos[nBrickIndex].x + ptBrickSize[nBrickIndex].cx / 2, ptBrickPos[nBrickIndex].y + ptBrickSize[nBrickIndex].cy / 2, RGB(255, 255, 255));
 
-	m_bBrickVisible[nBrickIndex] = FALSE;
+	m_bBrickVisible[nBrickIndex] = false;
 }
 
 
@@ -1950,12 +1950,12 @@ void CFugeWindow::LoseBall(void) {
 		        //
 		        if ((pSprite = new CSprite) != nullptr) {
 
-		            if (pSprite->SharePalette(m_pGamePalette) != FALSE) {
+		            if (pSprite->SharePalette(m_pGamePalette) != false) {
 
-		                if (pSprite->LoadCels(pDC, ".\\ART\\LOSEBALL.BMP", N_BLACKHOLE_CELS) != FALSE) {
+		                if (pSprite->LoadCels(pDC, ".\\ART\\LOSEBALL.BMP", N_BLACKHOLE_CELS) != false) {
 
-		                    pSprite->SetMasked(TRUE);
-		                    pSprite->SetMobile(TRUE);
+		                    pSprite->SetMasked(true);
+		                    pSprite->SetMobile(true);
 		                    pSprite->LinkSprite();
 
 		                    for (i = 0; i < N_BLACKHOLE_CELS * 2; i++) {
@@ -2038,9 +2038,9 @@ void CFugeWindow::StartPaddle(void) {
 	if (m_pPaddle != nullptr)
 		m_pPaddle->LinkSprite();
 
-	m_bBallOnPaddle = TRUE;
+	m_bBallOnPaddle = true;
 
-	PaintPaddle(TRUE);
+	PaintPaddle(true);
 }
 
 
@@ -2062,8 +2062,8 @@ void CFugeWindow::LaunchBall(void) {
 	assert(m_bGameActive);
 	assert(m_bBallOnPaddle);
 
-	m_bPause = FALSE;
-	m_bBallOnPaddle = FALSE;
+	m_bPause = false;
+	m_bBallOnPaddle = false;
 
 	// starting ball vector is determined by the location of the paddle
 	m_vBallVector = gvCenter - (m_ptBallLocation + BALL_RADIUS);
@@ -2077,11 +2077,11 @@ void CFugeWindow::LaunchBall(void) {
 }
 
 
-void CFugeWindow::PaintPaddle(BOOL bPaint) {
+void CFugeWindow::PaintPaddle(bool bPaint) {
 	CVector vPaddle;
 	CDC *pDC;
 	int nOldIndex;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// verify that the input was not tainted
 	assert(m_nPaddleCelIndex < N_PADDLE_CELS * 2);
@@ -2184,7 +2184,7 @@ void CFugeWindow::StartBricks(void) {
 	for (i = 0; i < nBricks; i++) {
 
 		if (!m_bBrickVisible[i]) {
-			m_bBrickVisible[i] = TRUE;
+			m_bBrickVisible[i] = true;
 		}
 	}
 
@@ -2217,10 +2217,10 @@ void CFugeWindow::PaintBricks(CDC *pDC) {
 			if ((pMemBmp = new CBitmap) != nullptr) {
 
 				size = GetBitmapSize(pBmp);
-				if ((m_nNumRows != 0) && (pMemBmp->CreateCompatibleBitmap(pDC, size.cx, size.cy) != FALSE)) {
+				if ((m_nNumRows != 0) && (pMemBmp->CreateCompatibleBitmap(pDC, size.cx, size.cy) != false)) {
 
 					pMemDC->CreateCompatibleDC(nullptr);
-					pPalOld = pMemDC->SelectPalette(m_pGamePalette, FALSE);
+					pPalOld = pMemDC->SelectPalette(m_pGamePalette, false);
 					pMemDC->RealizePalette();
 					hOldBitmap = SelectBitmap(pMemDC->m_hDC, pMemBmp->m_hObject);
 
@@ -2235,12 +2235,12 @@ void CFugeWindow::PaintBricks(CDC *pDC) {
 						}
 					}
 
-					pScreenPalOld = pDC->SelectPalette(m_pGamePalette, FALSE);
+					pScreenPalOld = pDC->SelectPalette(m_pGamePalette, false);
 					pDC->BitBlt(0, 0, size.cx, size.cy, pMemDC, 0, 0, SRCCOPY);
-					pDC->SelectPalette(pScreenPalOld, FALSE);
+					pDC->SelectPalette(pScreenPalOld, false);
 
 					SelectBitmap(pMemDC->m_hDC, hOldBitmap);
-					pMemDC->SelectPalette(pPalOld, FALSE);
+					pMemDC->SelectPalette(pPalOld, false);
 
 					// fall back to yucky method
 					//
@@ -2277,14 +2277,14 @@ void CFugeWindow::PaintBricks(CDC *pDC) {
 		}
 	}
 	if (m_pScrollButton != nullptr) {
-		m_pScrollButton->Invalidate(FALSE);
+		m_pScrollButton->Invalidate(false);
 		m_pScrollButton->UpdateWindow();
 	}
 }
 
 
 void CFugeWindow::EndBricks(void) {
-	memset(m_bBrickVisible, 0, sizeof(BOOL) * N_BRICKS);
+	memset(m_bBrickVisible, 0, sizeof(bool) * N_BRICKS);
 }
 
 
@@ -2292,7 +2292,7 @@ void CFugeWindow::EndBricks(void) {
 void CFugeWindow::LoadIniSettings(void) {
 	if (pGameParams->bPlayingMetagame) {
 
-		m_bOutterWall = FALSE;
+		m_bOutterWall = false;
 		m_nInitNumBalls = 1;
 		m_nInitStartLevel = 3;
 		m_nGForceFactor = GFORCE_DEF;
@@ -2334,7 +2334,7 @@ void CFugeWindow::LoadIniSettings(void) {
 
 		m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
 		if (m_bOutterWall != 0)
-			m_bOutterWall = TRUE;
+			m_bOutterWall = true;
 
 		m_nGForceFactor = GetPrivateProfileInt(INI_SECTION, "Gravity", GFORCE_DEF, INI_FILENAME);
 		if ((m_nGForceFactor < GFORCE_MIN) || (m_nGForceFactor > GFORCE_MAX))
@@ -2361,13 +2361,13 @@ void CFugeWindow::GameReset(void) {
 
 	m_lExtraLifeScore = EXTRA_LIFE_SCORE;       // user needs this many points for an extra life
 
-	m_bGameActive = FALSE;                      // there is no currently active game
+	m_bGameActive = false;                      // there is no currently active game
 
-	m_bPause = FALSE;                           // the game is not paused
+	m_bPause = false;                           // the game is not paused
 
-	m_bBallOnPaddle = FALSE;                    // Ball is not yet on paddle
+	m_bBallOnPaddle = false;                    // Ball is not yet on paddle
 
-	m_bMovingPaddle = FALSE;                    // user is not moving the paddle
+	m_bMovingPaddle = false;                    // user is not moving the paddle
 
 	m_nBalls = m_nInitNumBalls;                 // reset # of balls
 
@@ -2379,7 +2379,7 @@ void CFugeWindow::GameReset(void) {
 
 	m_lScore = 0;                               // reset the score
 
-	m_bPaddleHit = FALSE;                       // paddle starts fresh
+	m_bPaddleHit = false;                       // paddle starts fresh
 }
 
 
@@ -2465,7 +2465,7 @@ long CFugeWindow::OnJoyStick(unsigned int wParam, long lParam) {
 				m_nPaddleCelIndex = 5;
 			}
 		}
-		PaintPaddle(FALSE);
+		PaintPaddle(false);
 	}
 
 	return 0;
@@ -2486,7 +2486,7 @@ void CFugeWindow::OnMouseMove(unsigned int, CPoint point) {
 			nMove = (point.x - m_ptOrigin.x) / MOUSE_SENS + 1;
 
 			m_nPaddleCelIndex += nMove;
-			PaintPaddle(FALSE);
+			PaintPaddle(false);
 			SetCursorPos(m_ptOrigin.x, m_ptOrigin.y);
 
 		} else if (point.x < m_ptOrigin.x) {
@@ -2494,7 +2494,7 @@ void CFugeWindow::OnMouseMove(unsigned int, CPoint point) {
 			nMove = -((m_ptOrigin.x - point.x) / MOUSE_SENS + 1);
 
 			m_nPaddleCelIndex += nMove;
-			PaintPaddle(FALSE);
+			PaintPaddle(false);
 			SetCursorPos(m_ptOrigin.x, m_ptOrigin.y);
 		}
 
@@ -2696,7 +2696,7 @@ void CFugeWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 
 		if (m_bGameActive) {
 			m_nPaddleCelIndex += PADDLE_CEL_JUMP;
-			PaintPaddle(FALSE);
+			PaintPaddle(false);
 		}
 		break;
 
@@ -2707,7 +2707,7 @@ void CFugeWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 
 		if (m_bGameActive) {
 			m_nPaddleCelIndex -= PADDLE_CEL_JUMP;
-			PaintPaddle(FALSE);
+			PaintPaddle(false);
 		}
 		break;
 
@@ -2756,13 +2756,13 @@ void CFugeWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 }
 
 
-void CFugeWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
+void CFugeWindow::OnActivate(unsigned int nState, CWnd *, bool bMinimized) {
 	if (!bMinimized) {
 
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 
 		default:

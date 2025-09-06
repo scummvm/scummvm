@@ -57,15 +57,15 @@ void CUserCfgDlg::DoDataExchange(CDataExchange *pDX) {
 	CDialog::DoDataExchange(pDX);
 }
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CDC     *pDC = GetDC();
 	CRect   tmpRect;
 
 	CBmpDialog::OnInitDialog();
-	m_bSave = FALSE;
+	m_bSave = false;
 
 	if ((m_ctextBox = new CText) != nullptr) {
-		BOOL    bAssertCheck;
+		bool    bAssertCheck;
 
 		tmpRect.SetRect(TEXT_LEFT, TEXT_TOP, TEXT_RIG, TEXT_BOT);
 		bAssertCheck = (*m_ctextBox).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
@@ -78,13 +78,13 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	} // end if
 
 	ReleaseDC(pDC);
-	return TRUE;
+	return true;
 }
 
 void CUserCfgDlg::OnPaint(void) {
 	CDC     *pDC = nullptr;
 	char    msg[64];
-	BOOL    bAssertCheck;
+	bool    bAssertCheck;
 
 	CBmpDialog::OnPaint();
 
@@ -109,7 +109,7 @@ void CUserCfgDlg::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CDC     *pDC = GetDC();
 
 	if (
-	    m_cRectCardBack1.PtInRect(point) == TRUE &&
+	    m_cRectCardBack1.PtInRect(point) == true &&
 	    m_nCardBack != CARD_BACK1
 	) {
 		// update visual image
@@ -119,7 +119,7 @@ void CUserCfgDlg::OnLButtonUp(unsigned int nFlags, CPoint point) {
 
 		m_nCardBack = CARD_BACK1;
 	} else if (
-	    m_cRectCardBack2.PtInRect(point) == TRUE &&
+	    m_cRectCardBack2.PtInRect(point) == true &&
 	    m_nCardBack != CARD_BACK2
 	) {
 		// update visual image
@@ -206,7 +206,7 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
 	pMyPen->CreatePen(PS_INSIDEFRAME, DELTA, rgbColor); // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
+	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
 	(*pDC).RealizePalette();                                // Use it
 
 	pOldPen = pDC->SelectObject(pMyPen);         // Select the new pen & save old
@@ -218,7 +218,7 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pDC->SelectObject(pOldPen);                  // Select the old pen
 	pDC->SelectObject(pOldBrush);                // Select the old brush
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
-	(*pDC).SelectPalette(pPalOld, FALSE);           // Select back the old palette
+	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
 
 	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
 		pMyBrush->DeleteObject();

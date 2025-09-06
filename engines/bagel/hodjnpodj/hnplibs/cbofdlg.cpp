@@ -26,7 +26,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, const char *pFileName, const int dx, const int dy, BOOL bSaveBackground)
+CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, const char *pFileName, const int dx, const int dy, bool bSaveBackground)
 	: CDialog(nID, pParent) {
 	// can't access null pointers
 	//
@@ -49,7 +49,7 @@ CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, const char *p
 	//}}AFX_DATA_INIT
 }
 
-CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, int nBmpID, const int dx, const int dy, BOOL bSaveBackground)
+CBmpDialog::CBmpDialog(CWnd *pParent, CPalette *pPalette, int nID, int nBmpID, const int dx, const int dy, bool bSaveBackground)
 	: CDialog(nID, pParent) {
 	// can't access null pointers
 	//
@@ -91,7 +91,7 @@ void CBmpDialog::EndDialog(int nResult) {
 
 
 void CBmpDialog::OnDestroy() {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 
 	//
 	// delete the bitmap created with FetchScreenBitmap
@@ -101,7 +101,7 @@ void CBmpDialog::OnDestroy() {
 		delete m_pDlgBackground;
 		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*m_pParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*m_pParentWnd).ValidateRect(nullptr);
 	}
@@ -110,7 +110,7 @@ void CBmpDialog::OnDestroy() {
 }
 
 
-BOOL CBmpDialog::OnInitDialog() {
+bool CBmpDialog::OnInitDialog() {
 	CRect cDlgRect, cWindRect;
 	int iDlgWidth, iDlgHeight;          // size of dialog box
 	CDC *pDC;
@@ -160,7 +160,7 @@ BOOL CBmpDialog::OnInitDialog() {
 	}
 	cDlgRect.bottom = cDlgRect.top + iDlgHeight;
 
-	MoveWindow(&cDlgRect, FALSE);                       // position window, don't repaint
+	MoveWindow(&cDlgRect, false);                       // position window, don't repaint
 
 	// if we are saving the background
 	//
@@ -171,12 +171,12 @@ BOOL CBmpDialog::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	return TRUE;  // return TRUE  unless focused on a control
+	return true;  // return true  unless focused on a control
 }
 
 
-BOOL CBmpDialog::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool CBmpDialog::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 
@@ -198,14 +198,14 @@ void CBmpDialog::RefreshBackground(CDC *pDC) {
 
 
 void CBmpDialog::OnPaint() {
-	InvalidateRect(nullptr, FALSE);
+	InvalidateRect(nullptr, false);
 
 	CPaintDC    dc(this);                    // device context for painting
 	CPalette *pPalOld = nullptr;
-	BOOL        bSuccess;
+	bool        bSuccess;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = dc.SelectPalette(m_pPalette, FALSE);
+		pPalOld = dc.SelectPalette(m_pPalette, false);
 		dc.RealizePalette();
 	}
 
@@ -229,11 +229,11 @@ void CBmpDialog::OnPaint() {
 	assert(bSuccess);
 
 	if (m_pPalette != nullptr)
-		dc.SelectPalette(pPalOld, FALSE);
+		dc.SelectPalette(pPalOld, false);
 }
 
 
-void CBmpDialog::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void CBmpDialog::OnShowWindow(bool bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 }
 

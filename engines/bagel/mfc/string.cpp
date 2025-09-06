@@ -26,14 +26,14 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CString::LoadString(unsigned int nID) {
+bool CString::LoadString(unsigned int nID) {
 	char szTemp[256];
 	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, sizeof(szTemp));
 	if (nLen == 0)
-		return FALSE;
+		return false;
 
 	*this = szTemp;
-	return TRUE;
+	return true;
 }
 
 } // namespace MFC

@@ -37,7 +37,7 @@ namespace Gtl {
 
 int CGtlData::Compile(const char *xpszPathName) {
 	int iError = 0 ;        // error code
-	BOOL bDone ;        // loop termination variable
+	bool bDone ;        // loop termination variable
 	char szOut[100] ;
 
 	JXENTER(CGtlData::Compile) ;
@@ -52,7 +52,7 @@ int CGtlData::Compile(const char *xpszPathName) {
 	}
 
 	m_xpGtlFile = f;
-	bDone = FALSE ;     // not done yet
+	bDone = false ;     // not done yet
 
 	while (!bDone) {
 
@@ -60,7 +60,7 @@ int CGtlData::Compile(const char *xpszPathName) {
 			(void)CGtlData::ParseLine();
 
 		if (m_bEof)     // if end of file
-			bDone = TRUE ;
+			bDone = true ;
 	}
 
 //  SizeBitmaps() ;
@@ -82,8 +82,8 @@ cleanup:
 
 
 //* CGtlData::ParseLine -- parse input line
-BOOL CGtlData::ParseLine(void)
-// returns: TRUE if error, FALSE otherwise
+bool CGtlData::ParseLine(void)
+// returns: true if error, false otherwise
 {
 	char szBuf[MAX_LABEL_LENGTH];
 	int iError = 0 ;        // error code
@@ -164,7 +164,7 @@ BOOL CGtlData::ParseLine(void)
 
 		xpLxel = ParseString(xpLxel, LXT_IDENT, lpMap->m_szFilename, nullptr) ;
 
-		lpMap->m_bRelocatable = TRUE ;  // default
+		lpMap->m_bRelocatable = true ;  // default
 		while (xpLxel->m_iType == LXT_IDENT) {
 
 			switch (xpLxel->m_iVal) {
@@ -183,7 +183,7 @@ BOOL CGtlData::ParseLine(void)
 					lpMap->m_iRelation = m_iMaps - 2 ;
 
 					// search for label, and test
-				} else if (GetLabel(xpLxel, FALSE, lpMap->m_iRelation)) {
+				} else if (GetLabel(xpLxel, false, lpMap->m_iRelation)) {
 					goto cleanup ;
 				}
 				++xpLxel ;
@@ -199,28 +199,28 @@ BOOL CGtlData::ParseLine(void)
 				lpMap->m_iRelationType = xpLxel->m_iVal ;
 
 				// search for label, and test
-				if (GetLabel(++xpLxel, TRUE, lpMap->m_iRelation))
+				if (GetLabel(++xpLxel, true, lpMap->m_iRelation))
 					goto cleanup ;
 				++xpLxel ;
 				break ;
 
 			case KT_PALETTE:
-				lpMap->m_bPalette = TRUE ;
+				lpMap->m_bPalette = true ;
 				++xpLxel ;
 				break ;
 
 			case KT_BORDER:
-				lpMap->m_bRelocatable = FALSE ;
+				lpMap->m_bRelocatable = false ;
 				++xpLxel ;
 				break ;
 
 			case KT_OVERLAY:
-				lpMap->m_bOverlay = TRUE ;
+				lpMap->m_bOverlay = true ;
 				++xpLxel ;
 				break ;
 
 			case KT_MASKED:
-				lpMap->m_bMasked = lpMap->m_lpcBgbObject->m_bMasked = TRUE;
+				lpMap->m_bMasked = lpMap->m_lpcBgbObject->m_bMasked = true;
 				++xpLxel ;
 				break ;
 
@@ -240,7 +240,7 @@ BOOL CGtlData::ParseLine(void)
 				break;
 
 			case KT_ANIMATED:
-				lpMap->m_lpcBgbObject->m_bAnimated = TRUE;
+				lpMap->m_lpcBgbObject->m_bAnimated = true;
 				xpLxel = ParseInteger(++xpLxel, LXT_LPR, lpMap->m_lpcBgbObject->m_nCels);
 				if (xpLxel->m_iType == LXT_RPR)
 					++xpLxel;
@@ -261,19 +261,19 @@ BOOL CGtlData::ParseLine(void)
 				break;
 
 			case KT_METAGAME:
-				lpMap->m_bMetaGame = TRUE ;
+				lpMap->m_bMetaGame = true ;
 				++xpLxel ;
 				break ;
 
 			case KT_SPRITE: // sprite implies overlay
-				lpMap->m_bSprite = lpMap->m_bOverlay = TRUE ;
+				lpMap->m_bSprite = lpMap->m_bOverlay = true ;
 				++xpLxel ;
 				break ;
 
 			case KT_POSITION:
-				lpMap->m_bPositionDetermined = TRUE ;
-				lpMap->m_bPositionSpecified = TRUE ;
-				lpMap->m_lpcBgbObject->m_bSpecial = TRUE;
+				lpMap->m_bPositionDetermined = true ;
+				lpMap->m_bPositionSpecified = true ;
+				lpMap->m_lpcBgbObject->m_bSpecial = true;
 				xpLxel = ParseInteger(++xpLxel, LXT_LPR, lpMap->m_lpcBgbObject->m_crPosition.x);
 				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_crPosition.y);
 				xpLxel = ParseInteger(xpLxel, LXT_COMMA, lpMap->m_lpcBgbObject->m_cSize.cx);
@@ -309,7 +309,7 @@ BOOL CGtlData::ParseLine(void)
 		}
 
 		++xpLxel ;
-		lpNode->m_bRelocatable = TRUE ; // default
+		lpNode->m_bRelocatable = true ; // default
 
 		while (xpLxel->m_iType == LXT_IDENT) {
 
@@ -321,8 +321,8 @@ BOOL CGtlData::ParseLine(void)
 					ErrorMsg(xpLxel, "Duplicate relative position") ;
 					goto cleanup ;
 				}
-				lpNode->m_bRelative = TRUE ;
-				if (GetLabel(++xpLxel, FALSE, lpNode->m_iBitmap)) {
+				lpNode->m_bRelative = true ;
+				if (GetLabel(++xpLxel, false, lpNode->m_iBitmap)) {
 					// search for label, and test
 					goto cleanup ;
 				}
@@ -352,24 +352,24 @@ BOOL CGtlData::ParseLine(void)
 				break ;
 
 			case KT_BORDER:
-				lpNode->m_bRelocatable = FALSE ;
+				lpNode->m_bRelocatable = false ;
 				++xpLxel ;
 				break ;
 
 			case KT_PASSTHRU:
-				lpNode->m_bWgtSpec = TRUE ;
+				lpNode->m_bWgtSpec = true ;
 				lpNode->m_iWeight = 0 ;
 				++xpLxel ;
 				break ;
 
 			case KT_WEIGHT:
-				lpNode->m_bWgtSpec = TRUE ;
+				lpNode->m_bWgtSpec = true ;
 				xpLxel = ParseInteger(xpLxel, LXT_IDENT, iTmp) ;
 				lpNode->m_iWeight = (byte)iTmp;
 				break ;
 
 			case KT_SENSITIVITY:
-				lpNode->m_bSenSpec = TRUE ;
+				lpNode->m_bSenSpec = true ;
 				xpLxel = ParseInteger(xpLxel, LXT_IDENT, iTmp);
 				lpNode->m_iSensitivity = (byte)iTmp;
 				break ;
@@ -416,7 +416,7 @@ BOOL CGtlData::ParseLine(void)
 			ErrorMsg(xpLxel, "Label ignored.") ;
 
 		// search for label, and test
-		if (GetLabel(++xpLxel, TRUE, iLink))
+		if (GetLabel(++xpLxel, true, iLink))
 			goto cleanup ;
 
 		++xpLxel ;
@@ -425,7 +425,7 @@ BOOL CGtlData::ParseLine(void)
 		break ;
 
 	case KT_EOF:
-		m_bEof = TRUE ;
+		m_bEof = true ;
 		++xpLxel ;
 		break ;
 
@@ -508,11 +508,11 @@ CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, char *lp
 }
 
 //* CGtlData::GetLabel -- get bitmap or node label
-BOOL CGtlData::GetLabel(CLexElement * xpLxel, BOOL bNode, int FAR& iIndex)
+bool CGtlData::GetLabel(CLexElement * xpLxel, bool bNode, int FAR& iIndex)
 // xpLxel -- pointer to lexeme being tested
-// bNode -- FALSE for bitmaps, TRUE for nodes
+// bNode -- false for bitmaps, true for nodes
 // iIndex -- output: index of bitmap or node for label
-// returns: TRUE if error (label not found), FALSE otherwise
+// returns: true if error (label not found), false otherwise
 {
 	JXENTER(CGtlData::GetLabel) ;
 	int iError = 0 ;        // error code
@@ -539,11 +539,11 @@ cleanup:
 
 
 //* CGtlData::GetLabel -- get bitmap or node label
-BOOL CGtlData::GetLabel(char *lpszLabel, BOOL bNode, int FAR& iIndex)
+bool CGtlData::GetLabel(char *lpszLabel, bool bNode, int FAR& iIndex)
 // lpszLabel -- pointer to label string for bitmap/node being sought
-// bNode -- FALSE for bitmaps, TRUE for nodes
+// bNode -- false for bitmaps, true for nodes
 // iIndex -- output: index of bitmap or node for label
-// returns: TRUE if error (label not found), FALSE otherwise
+// returns: true if error (label not found), false otherwise
 {
 	JXENTER(CGtlData::GetLabel) ;
 	int iError = 0 ;        // error code
@@ -582,9 +582,9 @@ cleanup:
 
 
 //* CGtlData::AddLink -- link together a pair of nodes
-BOOL CGtlData::AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
+bool CGtlData::AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
 // lpNode1, lpNode2 -- nodes to be linked
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::AddLink) ;
 	int iError = 0 ;        // error code
@@ -600,14 +600,14 @@ BOOL CGtlData::AddLink(CNode FAR * lpNode1, CNode FAR * lpNode2)
 
 
 //* CGtlData::AddLink -- add link to one node
-BOOL CGtlData::AddLink(CNode FAR * lpNode, int iLink)
+bool CGtlData::AddLink(CNode FAR * lpNode, int iLink)
 // lpNode -- node to add link to
 // int iLink -- index of linked node
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::AddLink) ;
 	int iError = 0 ;        // error code
-	BOOL bFound = FALSE ;   // if true, link already exists
+	bool bFound = false ;   // if true, link already exists
 	int iK ;        // loop variable
 
 	assert(iLink >= 0 && iLink < MAX_NODES);

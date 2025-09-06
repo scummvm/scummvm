@@ -39,9 +39,9 @@ namespace Frame {
 #pragma warning(disable: 4706)
 
 //static int      videoID;
-static BOOL     bPaintScroll;
+static bool     bPaintScroll;
 
-BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
+bool CMovieWindow::BlowWindow(CWnd *pParent, bool bScroll,
 		const char *AviMovee, int x, int y, int w, int h) {
 	m_pParent = pParent;
 	bPaintScroll = bScroll;
@@ -50,7 +50,7 @@ BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
 
 	if (!pParent) {
 		warning("null hwndParent");
-		return FALSE;
+		return false;
 	}
 
 	lpszAviMovie = AviMovee;
@@ -58,7 +58,7 @@ BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
 	return PlayMovie();
 }
 
-BOOL CMovieWindow::PlayMovie() {
+bool CMovieWindow::PlayMovie() {
 	Video::AVIDecoder decoder;
 	CWinApp *app = AfxGetApp();
 	Graphics::Screen *screen = app->getScreen();
@@ -106,7 +106,7 @@ BOOL CMovieWindow::PlayMovie() {
 	else
 		m_pParent->PostMessage(WM_COMMAND, MOVIE_OVER);
 
-	return TRUE;
+	return true;
 }
 
 } // namespace Frame

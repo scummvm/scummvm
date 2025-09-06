@@ -144,7 +144,7 @@ private:
 	CLife           *m_cLife = nullptr;
 	LPGAMESTRUCT    m_lpGameStruct = nullptr;
 	HWND            m_hCallAppWnd = nullptr;
-	BOOL            m_bGameActive = FALSE;
+	bool            m_bGameActive = false;
 	CSound          *m_pSound = nullptr;
 	CRect           m_rNewGameButton;
 
@@ -161,7 +161,7 @@ public:
 	void GameResume();
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
@@ -188,7 +188,7 @@ protected:
 //
 class CTheApp : public CWinApp {
 public:
-	BOOL InitInstance();
+	bool InitInstance();
 };
 
 /////////////////////////////////////////////////////////////////////////////

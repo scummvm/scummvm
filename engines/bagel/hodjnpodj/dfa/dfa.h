@@ -131,10 +131,10 @@ public:
 	int             m_nBeaverDuration;
 
 private:
-	BOOL            m_bPlaySounds;            // bool for am I playing a certain # of rounds
+	bool            m_bPlaySounds;            // bool for am I playing a certain # of rounds
 	HWND            m_hCallAppWnd;
 	LPGAMESTRUCT    m_lpGameStruct;
-	BOOL            m_bMouseCaptured;
+	bool            m_bMouseCaptured;
 	long            m_lScore;
 	CRect   MainRect;						// screen area spanned by the game window
 	CRect   ArtRect;						// screen area inside the border trim
@@ -162,8 +162,8 @@ private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	BOOL LoadBeaverSounds();
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
+	bool LoadBeaverSounds();
 	void ReleaseBeaverSounds(void);
 	//
 	// Sound as resource dudes:
@@ -184,8 +184,8 @@ protected:
 	afx_msg void OnMouseMove(unsigned int, CPoint);
 	afx_msg void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
-	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg bool OnEraseBkgnd(CDC *);
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) override;
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG

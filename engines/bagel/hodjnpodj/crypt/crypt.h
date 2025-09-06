@@ -46,13 +46,13 @@ public:
 	CCryptogram(CDC *pDC);
 	~CCryptogram();
 
-	BOOL        DrawGram(CDC *pDC);
-	BOOL        HandleUserUpdate(CDC *pDC, CPoint cpointClicked);
-	BOOL        HandleUserUpdate(CDC *pDC, unsigned int nChar);
+	bool        DrawGram(CDC *pDC);
+	bool        HandleUserUpdate(CDC *pDC, CPoint cpointClicked);
+	bool        HandleUserUpdate(CDC *pDC, unsigned int nChar);
 	void        Encrypt();
 	void        CreateCryptMap(int nLettersSolved);
 	int         UpdateCryptMap(int nOldType, int nNewType);
-	BOOL        IsSolved();
+	bool        IsSolved();
 	int         LettersSolved();
 	void        MarkSolvedLetters(CDC *pDC);
 	void        SolveCryptogram(CDC *pDC);
@@ -61,7 +61,7 @@ public:
 	char        m_chEncryptGram[MAX_GRAM_LEN];
 	CPaintGram  *m_cPaintGram = nullptr;
 	CStats      *m_cStats = nullptr;
-	BOOL        bIsGameOver = FALSE;
+	bool        bIsGameOver = false;
 };
 
 // Globals!

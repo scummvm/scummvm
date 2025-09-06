@@ -36,7 +36,7 @@ BEGIN_MESSAGE_MAP(CItemDialog, CBmpDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL bHodj, BOOL bGain, long lAmount)
+CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, bool bHodj, bool bGain, long lAmount)
 	: CBmpDialog(pParent, pPalette, IDD_ITEMMOVE, ".\\art\\msscroll.bmp") {
 	// Initialize all members
 	m_pPalette = pPalette;
@@ -86,8 +86,8 @@ void CItemDialog::DoDataExchange(CDataExchange *pDX) {
 /////////////////////////////////////////////////////////////////////////////
 // CItemDialog message handlers
 
-BOOL CItemDialog::OnInitDialog() {
-	BOOL    bSuccess;
+bool CItemDialog::OnInitDialog() {
+	bool    bSuccess;
 	CDC     *pDC;
 	CRect   textRect;                                               // game stats display
 	int     nText_col_offset;                                       // game stats placement
@@ -133,12 +133,12 @@ BOOL CItemDialog::OnInitDialog() {
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // Tie to the dialog control
 	ASSERT(bSuccess);
 
-	return TRUE;
+	return true;
 }
 
 void CItemDialog::OnPaint() {
 	CDC     *pDC;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	char    buf[64];
 	int     i = 0;
 
@@ -175,9 +175,9 @@ void CItemDialog::OnCancel() {
 	EndDialog(IDCANCEL);
 }
 
-BOOL CItemDialog::OnEraseBkgnd(CDC *) {
+bool CItemDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 } // namespace Gtl

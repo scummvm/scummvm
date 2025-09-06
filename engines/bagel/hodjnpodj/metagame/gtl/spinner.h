@@ -52,7 +52,7 @@ class CSpinner : public CObject {
 
 public:
 	CSpinner();
-	CSpinner(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, BOOL bHodj = TRUE);
+	CSpinner(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, bool bHodj = true);
 	~CSpinner();
 
 	int Animate(void) {
@@ -61,17 +61,17 @@ public:
 	int Animate(int nX, int nY);
 
 private:
-	BOOL Initialize(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, BOOL bHodj = TRUE);
+	bool Initialize(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, bool bHodj = true);
 	int Spin(void);
-	BOOL Hide(void);
-	BOOL Show(void) {
+	bool Hide(void);
+	bool Show(void) {
 		return (Show(m_nX, m_nY));
 	}
-	BOOL Show(int nX, int nY);
+	bool Show(int nX, int nY);
 
 	void SetupSpinner(void);
 
-	static BOOL HandleMessages(void);
+	static bool HandleMessages(void);
 
 private:
 	CWnd    *m_pWnd;            // window for messages
@@ -80,8 +80,8 @@ private:
 	int     m_nValue;           // current spinner value
 	int     m_nX;               // x location of sprite
 	int     m_nY;               // y location of sprite
-	BOOL    m_bVisible;         // whether spinner is visible
-	BOOL    m_bHodj;            // which character is active
+	bool    m_bVisible;         // whether spinner is visible
+	bool    m_bHodj;            // which character is active
 };
 
 } // namespace Gtl

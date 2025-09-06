@@ -49,8 +49,8 @@ typedef struct {
 typedef struct {
 	unsigned int     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
 	unsigned int     nShown;                // 1 to 9   as of 9/9/94 0 to 6
-	bool  bRandomLetters;         // TRUE if letter ordering shall be random
-	bool  bShowNames;            // TRUE if we are to display category names
+	bool  bRandomLetters;         // true if letter ordering shall be random
+	bool  bShowNames;            // true if we are to display category names
 } USERCFG;
 
 typedef struct {
@@ -269,11 +269,11 @@ void BuildRandomPhraseOrder() {
 		n = StrLenNoSpaces(curPhrase->text);
 		for (i = 0; i < n; i++) {
 			do {
-				use = TRUE;
+				use = true;
 				newIndex = brand() % n + 1;
 				for (j = 0; j < i; j++) {
 					if (curPhraseOrder[j] == newIndex) {
-						use = FALSE;
+						use = false;
 						break;
 					}
 				}
@@ -345,25 +345,25 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 
 					} else {
 
-						spriteList[i].bUsed = FALSE;
+						spriteList[i].bUsed = false;
 
 						/*
 						* load this letter's bitmap into the sprite
 						*/
-						if (pNewSprite->LoadResourceSprite(pDC, toupper(*pText) +36) == FALSE) {
+						if (pNewSprite->LoadResourceSprite(pDC, toupper(*pText) +36) == false) {
 							errCode = ERR_UNKNOWN;
 							break;
 
 						} else {
 
-							if (pNewSprite->SharePalette(pMyGamePalette) == FALSE) {
+							if (pNewSprite->SharePalette(pMyGamePalette) == false) {
 								errCode = ERR_UNKNOWN;
 								break;
 
 							} else {
 
-								pNewSprite->SetMasked(TRUE);
-								pNewSprite->SetMobile(TRUE);
+								pNewSprite->SetMasked(true);
+								pNewSprite->SetMobile(true);
 								i++;
 							}
 						}
@@ -420,7 +420,7 @@ void KillCurPhrase() {
 *  purpose   To display the next available letter from the sprite list
 *
 *
-*  returns   FALSE if this was the last letter to be revealed, else TRUE
+*  returns   false if this was the last letter to be revealed, else true
 *
 **/
 bool RevealNextLetter() {
@@ -428,7 +428,7 @@ bool RevealNextLetter() {
 	int index;
 	bool lastLetter;
 
-	lastLetter = FALSE;
+	lastLetter = false;
 	if (curPhrase != nullptr) {
 
 		/* get next valid letter to reveal */
@@ -439,18 +439,18 @@ bool RevealNextLetter() {
 
 		/* validate this sprite */
 		assert(spriteList[index].sprite != nullptr);
-		assert(spriteList[index].bUsed != TRUE);
+		assert(spriteList[index].bUsed != true);
 
 		/*
 		* add this letter to the list
 		*/
 		spriteList[index].sprite->LinkSprite();
-		spriteList[index].bUsed = TRUE;
+		spriteList[index].bUsed = true;
 		size = spriteList[index].sprite->GetSize();
 		nPhrasePixelLength += size.cx + LETTER_SPACING;
 
 		if (iNextLetter >= StrLenNoSpaces(curPhrase->text))
-			lastLetter = TRUE;
+			lastLetter = true;
 	}
 
 	return (lastLetter);
@@ -676,7 +676,7 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 void CALLBACK GameTimerHook(HWND hWnd, unsigned int, uintptr nEventID, uint32) {
 	CDC *pDC;
 	HDC hDC;
-	BOOL done;
+	bool done;
 	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
 
 	assert(nEventID == TIMER_ID);
@@ -711,7 +711,7 @@ void CALLBACK GameTimerHook(HWND hWnd, unsigned int, uintptr nEventID, uint32) {
 			GameGetScore(&nLeft, &nTotal, &nLeftAvg, &nTotalAvg);
 			UpdateScore(nLeft, nTotal, nLeftAvg, nTotalAvg);
 
-			bInGame = FALSE;
+			bInGame = false;
 			GameStopTimer();
 			if (pGameParams->bSoundEffectsEnabled)
 				sndPlaySound(WAV_GAMEOVER, SND_ASYNC);
@@ -765,11 +765,11 @@ ERROR_CODE GameStartTimer() {
 }
 
 void GamePauseTimer() {
-	bPause = TRUE;
+	bPause = true;
 }
 
 void GameResumeTimer() {
-	bPause = FALSE;
+	bPause = false;
 }
 
 
@@ -893,9 +893,9 @@ void LoadGameCfg() {
 
 		// set defaults
 		//
-		gGameCfg.bRandomLetters = FALSE;
+		gGameCfg.bRandomLetters = false;
 		gGameCfg.nShown = SHOWN_DEF;
-		gGameCfg.bShowNames = TRUE;
+		gGameCfg.bShowNames = true;
 
 		switch (pGameParams->nSkillLevel) {
 
@@ -924,9 +924,9 @@ void LoadGameCfg() {
 		*/
 		GetPrivateProfileString(INI_SECTION, "RandomLetters", "No", buf, 10, INI_FILENAME);
 		assert(strlen(buf) < 10);
-		gGameCfg.bRandomLetters = FALSE;
+		gGameCfg.bRandomLetters = false;
 		if (!scumm_stricmp(buf, "Yes"))
-			gGameCfg.bRandomLetters = TRUE;
+			gGameCfg.bRandomLetters = true;
 
 		/*
 		* get the number of letters that are intially displayed (default is SHOWN_DEF = 3)
@@ -948,9 +948,9 @@ void LoadGameCfg() {
 
 		GetPrivateProfileString(INI_SECTION, "ShowCategoryNames", "Yes", buf, 10, INI_FILENAME);
 		assert(strlen(buf) < 10);
-		gGameCfg.bShowNames = FALSE;
+		gGameCfg.bShowNames = false;
 		if (!scumm_stricmp(buf, "Yes"))
-			gGameCfg.bShowNames = TRUE;
+			gGameCfg.bShowNames = true;
 	}
 
 	timerInterval = (10 - gGameCfg.gameSpeed) * 500 + 500;
@@ -1037,7 +1037,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 
 	assert(phrase != nullptr);
 
-	/* set all entries to FALSE */
+	/* set all entries to false */
 	memset(bList, 0, sizeof(bool)*MAX_PLENGTH);
 
 	/* assume no error */
@@ -1081,7 +1081,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 						errCode = ERR_FTYPE;
 						break;
 					}
-					bList[order] = TRUE;
+					bList[order] = true;
 				}
 			}
 		}

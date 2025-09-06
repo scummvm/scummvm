@@ -48,7 +48,7 @@ namespace Frame {
 
 #define SAVEDLL         0
 
-#define CONTROL_PHYSICAL_MEMORY     TRUE
+#define CONTROL_PHYSICAL_MEMORY     true
 
 
 void InitBFCInfo(CBfcMgr *);
@@ -78,21 +78,21 @@ void FreeBFCInfo(CBfcMgr *);
 
 using GrandTour::LPGRANDTRSTRUCT;
 
-typedef HWND (FAR PASCAL *FPZOOMFUNCT)(HWND, BOOL);
+typedef HWND (FAR PASCAL *FPZOOMFUNCT)(HWND, bool);
 typedef HWND (FAR PASCAL *FPGTFUNCT)(HWND, LPGRANDTRSTRUCT);
-typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, BOOL);
+typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, bool);
 typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)(void);
 
 // Flags when a .dll in the original is loaded
 
-BOOL        bMetaLoaded = FALSE;
+bool        bMetaLoaded = false;
 
-BOOL            bAnimationsEnabled = TRUE;
-BOOL            bSoundEffectsEnabled = TRUE;
-BOOL            bMusicEnabled = TRUE;
-BOOL            bScrollingEnabled = TRUE;
-BOOL            bSlowCPU = FALSE;
-BOOL            bLowMemory = FALSE;
+bool            bAnimationsEnabled = true;
+bool            bSoundEffectsEnabled = true;
+bool            bMusicEnabled = true;
+bool            bScrollingEnabled = true;
+bool            bSlowCPU = false;
+bool            bLowMemory = false;
 
 uint32           dwFreeSpaceMargin;
 uint32           dwFreePhysicalMargin;
@@ -103,15 +103,15 @@ int                     nWaveVolume;
 const char *gpszSaveDLL = "HNPSAVE.DLL";
 const char *gpszSaveGameFile = "HODJPODJ.SAV";
 
-//static  BOOL        bScreenSaver;
+//static  bool        bScreenSaver;
 
 static  CPalette    *pGamePalette = nullptr;
 static  RECT        MainRect;                           // screen area spanned by the game window
 
 int                                     nInstallCode;
 
-BOOL                    bHomeWriteLocked = FALSE;
-BOOL                    bPathsDiffer = FALSE;
+bool                    bHomeWriteLocked = false;
+bool                    bPathsDiffer = false;
 static  char        chProfilePath[PATHSPECSIZE];
 char                    chHomePath[PATHSPECSIZE];
 char                    chMiniPath[PATHSPECSIZE];
@@ -120,11 +120,11 @@ char                    chCDPath[PATHSPECSIZE];
 //static  int         nMiniDrive = -1;
 //static  int         nCDDrive = -1;
 
-static  BOOL        bActiveWindow = FALSE;
+static  bool        bActiveWindow = false;
 
-static  BOOL        bReturnToZoom = FALSE;
-static  BOOL        bReturnToMeta = FALSE;
-static  BOOL        bReturnToGrandTour = FALSE;
+static  bool        bReturnToZoom = false;
+static  bool        bReturnToMeta = false;
+static  bool        bReturnToGrandTour = false;
 
 CBfcMgr             *lpMetaGame;
 const char          *pszTest = "Corruption Test";
@@ -246,11 +246,11 @@ END_MESSAGE_MAP()
  *
  ****************************************************************/
 CHodjPodjWindow::CHodjPodjWindow() {
-	BOOL    bSuccess;
+	bool    bSuccess;
 	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CSize   mySize;
-	BOOL    bTestDibDoc;
+	bool    bTestDibDoc;
 	CRect   rQuitRect;
 	CBitmap *pBitmap;
 
@@ -260,7 +260,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 	// Inits
 	m_pCurrentBmp = nullptr;
 	m_nFlags = 0;
-	m_bInCredits = FALSE;
+	m_bInCredits = false;
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC, nullptr, nullptr, nullptr);
 
@@ -289,9 +289,9 @@ CHodjPodjWindow::CHodjPodjWindow() {
 	delete pBitmap;
 	ReleaseDC(pDC);
 
-	bReturnToZoom = FALSE;
-	bReturnToMeta = FALSE;
-	bReturnToGrandTour = FALSE;
+	bReturnToZoom = false;
+	bReturnToMeta = false;
+	bReturnToGrandTour = false;
 
 	hExeInst = AfxGetInstanceHandle();
 
@@ -300,7 +300,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 	GetCDPath();
 
 	if (chHomePath[0] != chCDPath[0])
-		bPathsDiffer = TRUE;
+		bPathsDiffer = true;
 
 	GetProfileSettings();
 
@@ -324,14 +324,14 @@ void CHodjPodjWindow::GetProfileSettings(void) {
 
 	pMyApp = AfxGetApp();
 	nInstallCode = pMyApp->GetProfileInt("Meta", "InstallCode", INSTALL_NONE);
-	bAnimationsEnabled = pMyApp->GetProfileInt("Meta", "Animations", TRUE);
-	bScrollingEnabled = pMyApp->GetProfileInt("Meta", "MapScrolling", FALSE);
-	bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta", "SoundEffects", TRUE);
-	bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", TRUE);
+	bAnimationsEnabled = pMyApp->GetProfileInt("Meta", "Animations", true);
+	bScrollingEnabled = pMyApp->GetProfileInt("Meta", "MapScrolling", false);
+	bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta", "SoundEffects", true);
+	bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", true);
 	nMidiVolume = pMyApp->GetProfileInt("Meta", "MidiVolume", (VOLUME_INDEX_MAX * 3) >> 2);
 	nWaveVolume = pMyApp->GetProfileInt("Meta", "WaveVolume", (VOLUME_INDEX_MAX * 3) >> 2);
 
-	bSlowCPU = (GetWinFlags() & WF_CPU386) ? TRUE : FALSE;
+	bSlowCPU = (GetWinFlags() & WF_CPU386) ? true : false;
 
 	CSound::setVolume(nMidiVolume, nWaveVolume);
 }
@@ -355,7 +355,7 @@ void LoadFloatLib(void) {
 }
 
 
-BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
+bool CHodjPodjWindow::CheckConfig(CDC *pDC) {
 	int nDevCaps;
 
 	bLowMemory = CheckLowMemory();
@@ -373,11 +373,11 @@ BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
 }
 
 
-BOOL CHodjPodjWindow::CheckLowMemory(void) {
-	BOOL bMemoryProblem;
+bool CHodjPodjWindow::CheckLowMemory(void) {
+	bool bMemoryProblem;
 	uint32 dwFreeSpace;
 
-	bMemoryProblem = FALSE;
+	bMemoryProblem = false;
 
 	dwFreeSpace = GetFreeSpace(0);
 
@@ -388,7 +388,7 @@ BOOL CHodjPodjWindow::CheckLowMemory(void) {
 	dwFreePhysicalMargin = dwFreeSpaceMargin;
 
 	if (dwFreeSpace < 3145728L)
-		bMemoryProblem = TRUE;
+		bMemoryProblem = true;
 
 	return bMemoryProblem;
 }
@@ -435,7 +435,7 @@ void CHodjPodjWindow::OnPaint() {
 	if (dllLoaded) {
 		PAINTSTRUCT lpPaint;
 
-		Invalidate(FALSE);
+		Invalidate(false);
 		BeginPaint(&lpPaint);
 		EndPaint(&lpPaint);
 
@@ -486,7 +486,7 @@ void CHodjPodjWindow::OnPaint() {
  *
  ****************************************************************/
 
-BOOL CHodjPodjWindow::SetupNewMeta() {
+bool CHodjPodjWindow::SetupNewMeta() {
 	CMetaSetupDlg   cMetaSetupDlg((CWnd *)this, pGamePalette);
 	int             nMetaSetupReturn = 0;
 
@@ -496,12 +496,12 @@ BOOL CHodjPodjWindow::SetupNewMeta() {
 	nMetaSetupReturn = cMetaSetupDlg.DoModal();
 
 	if (nMetaSetupReturn == 0)
-		return FALSE;
+		return false;
 	else
-		return TRUE;
+		return true;
 }
 
-void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL bScroll) {
+void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, bool bScroll) {
 	POINT   ptMovie;
 
 	BlackScreen();
@@ -513,11 +513,11 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL b
 
 	PositionAtCDPath();
 
-	if (pMovie.BlowWindow((CWnd *)this, bScroll, pszMovie, ptMovie.x, ptMovie.y) == TRUE) {
+	if (pMovie.BlowWindow((CWnd *)this, bScroll, pszMovie, ptMovie.x, ptMovie.y) == true) {
 		if (nMovieId != MOVIE_ID_TITLE)
-			ShowCursor(FALSE);
+			ShowCursor(false);
 	} else {
-		ShowCursor(TRUE);
+		ShowCursor(true);
 
 		PositionAtHomePath();
 		PostMessage(WM_COMMAND, IDC_MAINDLG);
@@ -554,11 +554,11 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL b
  *  n/a
  *
  ****************************************************************/
-BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	// this must be before the CMainGameDlg constructor
 	PositionAtHomePath();
 
-	BOOL            bSuccess;
+	bool            bSuccess;
 	CMainGameDlg    cMainDlg((CWnd *)this, pGamePalette);
 	int             nMainDlgReturn = 0;
 	CDC            *pDC = nullptr;
@@ -580,19 +580,19 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		BlackScreen();
 
 		if (nMovieId == MOVIE_ID_LOGO) {
-			ShowCursor(TRUE);
+			ShowCursor(true);
 			StartBackgroundMidi();
-			ShowCursor(FALSE);
+			ShowCursor(false);
 			PostMessage(WM_COMMAND, IDC_PLAY_TITLE_MOVIE);
 
 		} else if (nMovieId == MOVIE_ID_ENDING) {
-			ShowCursor(TRUE);
+			ShowCursor(true);
 			ShowCredits();
 			BlackScreen();
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
 
 		} else {
-			ShowCursor(TRUE);
+			ShowCursor(true);
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
 		}
 		break;
@@ -610,11 +610,11 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			else
 				PostMessage(WM_COMMAND, IDC_MAINDLG);
 
-			return TRUE;
+			return true;
 
 		case IDC_PLAY_MINI:
 			PostMessage(WM_COMMAND, IDC_ZOOM);
-			return TRUE;
+			return true;
 
 		case IDC_RESTORE_GAME:
 			StopBackgroundMidi();
@@ -624,7 +624,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			else
 				PostMessage(WM_COMMAND, IDC_MAINDLG);
 
-			return TRUE;
+			return true;
 
 		case IDC_GRAND_TOUR:
 			PostMessage(WM_COMMAND, IDC_GRANDTOUR);
@@ -632,13 +632,13 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_RESTART_MOVIE:
 			StopBackgroundMidi();
-			PlayMovie(MOVIE_ID_INTRO, STARTUP_MOVIE, TRUE);
+			PlayMovie(MOVIE_ID_INTRO, STARTUP_MOVIE, true);
 			break;
 
 		case IDC_QUIT_GAME:
 			StopBackgroundMidi();
 			PostMessage(WM_CLOSE);
-			return TRUE;
+			return true;
 
 		default:
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
@@ -647,21 +647,21 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case IDC_PLAY_LOGO_MOVIE:
-		PlayMovie(MOVIE_ID_LOGO, LOGO_MOVIE, FALSE);
+		PlayMovie(MOVIE_ID_LOGO, LOGO_MOVIE, false);
 		break;
 
 	case IDC_PLAY_TITLE_MOVIE:
-		PlayMovie(MOVIE_ID_TITLE, TITLE_MOVIE, FALSE);
+		PlayMovie(MOVIE_ID_TITLE, TITLE_MOVIE, false);
 		break;
 
 	case IDC_PLAY_HODJ_MOVIE:
 		StopBackgroundMidi();
-		PlayMovie(MOVIE_ID_ENDING, HODJ_WIN_MOVIE, TRUE);
+		PlayMovie(MOVIE_ID_ENDING, HODJ_WIN_MOVIE, true);
 		break;
 
 	case IDC_PLAY_PODJ_MOVIE:
 		StopBackgroundMidi();
-		PlayMovie(MOVIE_ID_ENDING, PODJ_WIN_MOVIE, TRUE);
+		PlayMovie(MOVIE_ID_ENDING, PODJ_WIN_MOVIE, true);
 		break;
 
 	case IDC_ZOOM:
@@ -699,7 +699,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -767,8 +767,8 @@ void CHodjPodjWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
  *
  ****************************************************************/
 
-BOOL CHodjPodjWindow::OnEraseBkgnd(CDC *) {
-	return TRUE;
+bool CHodjPodjWindow::OnEraseBkgnd(CDC *) {
+	return true;
 }
 
 
@@ -783,28 +783,28 @@ void CHodjPodjWindow::BlackScreen(void) {
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pGamePalette != nullptr) {                                  // map in color palette to be used
-		pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(pGamePalette, false);
 		(void)(*pDC).RealizePalette();
 	}
 
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pPalOld != nullptr)                                 // relinquish the resources we built
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
 
 
-void CHodjPodjWindow::OnActivate(unsigned int nState, CWnd *, BOOL) {
+void CHodjPodjWindow::OnActivate(unsigned int nState, CWnd *, bool) {
 	switch (nState) {
 	case WA_INACTIVE:
-		bActiveWindow = FALSE;
+		bActiveWindow = false;
 		break;
 
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bActiveWindow = TRUE;
+		bActiveWindow = true;
 		break;
 
 	default:
@@ -859,9 +859,9 @@ LRESULT CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
  ****************************************************************/
 
 void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
-	BOOL    bSuccess = FALSE;
+	bool    bSuccess = false;
 	int     nWhichDLL;
-	BOOL    bLoadedDLL;
+	bool    bLoadedDLL;
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -883,7 +883,7 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 		if (bReturnToMeta) {
 			StopBackgroundMidi();
-			lpMetaGame->m_bRestart = TRUE;
+			lpMetaGame->m_bRestart = true;
 			bSuccess = LoadMetaDLL();
 		}
 
@@ -895,14 +895,14 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 		return;
 	}
 
-	bLoadedDLL = FALSE;
+	bLoadedDLL = false;
 
 	if (lParam == MG_GAME_CHALLENGE) {
 		StartBackgroundMidi();
 		bSuccess = LoadZoomDLL();
-		bReturnToZoom = FALSE;
-		if (bSuccess == FALSE) {
-			lpMetaGame->m_bRestart = TRUE;
+		bReturnToZoom = false;
+		if (bSuccess == false) {
+			lpMetaGame->m_bRestart = true;
 			bSuccess = LoadMetaDLL();
 		} else
 			StartBackgroundMidi();
@@ -924,12 +924,12 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 			lpGameStruct->lCrowns = 1000;
 			lpGameStruct->lScore = 0;
 			lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
-			bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta", "SoundEffects", TRUE);
-			bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", TRUE);
+			bSoundEffectsEnabled = pMyApp->GetProfileInt("Meta", "SoundEffects", true);
+			bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", true);
 			lpGameStruct->bSoundEffectsEnabled = bSoundEffectsEnabled;
 			lpGameStruct->bMusicEnabled = bMusicEnabled;
-			lpGameStruct->bPlayingMetagame = FALSE;
-			lpGameStruct->bPlayingHodj = TRUE;
+			lpGameStruct->bPlayingMetagame = false;
+			lpGameStruct->bPlayingHodj = true;
 		}
 
 		if (CMgStatic::cGameTable[nWhichDLL]._initFn) {
@@ -946,11 +946,11 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 						g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpMetaGame->m_stGameStruct));
 					}
 				}
-				bLoadedDLL = TRUE;
+				bLoadedDLL = true;
 			}
 		}
 
-		if (bLoadedDLL == FALSE) {
+		if (bLoadedDLL == false) {
 			CString     cTmp;
 
 			(void) PositionAtHomePath();
@@ -965,7 +965,7 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 				bSuccess = LoadZoomDLL();
 
 			if (bReturnToMeta) {
-				lpMetaGame->m_bRestart = TRUE;
+				lpMetaGame->m_bRestart = true;
 				bSuccess = LoadMetaDLL();
 			}
 		}
@@ -980,31 +980,31 @@ void CHodjPodjWindow::FreeCurrentDLL(void) {
 }
 
 
-BOOL CHodjPodjWindow::LoadMetaDLL(void) {
+bool CHodjPodjWindow::LoadMetaDLL(void) {
 	FreeCurrentDLL();
 	dllLoaded = true;
-	Metagame::Gtl::RunMeta(m_hWnd, lpMetaGame, FALSE);
+	Metagame::Gtl::RunMeta(m_hWnd, lpMetaGame, false);
 
-	bReturnToMeta = TRUE;
-	return TRUE;
+	bReturnToMeta = true;
+	return true;
 }
 
-BOOL CHodjPodjWindow::LoadZoomDLL(void) {
+bool CHodjPodjWindow::LoadZoomDLL(void) {
 	dllLoaded = true;
 	g_wndGame = CWnd::FromHandle(Metagame::Zoom::RunZoomMap(m_hWnd,
 		nChallengePhase == 0));
 
-	bReturnToZoom = TRUE;
-	return TRUE;
+	bReturnToZoom = true;
+	return true;
 }
 
 
-BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
+bool CHodjPodjWindow::LoadGrandTourDLL(void) {
 	if (lpGrandTour == nullptr) {
 		int i;
 
 		lpGrandTour = new GrandTour::GRANDTRSTRUCT();
-		lpGrandTour->bMidGrandTour = FALSE;
+		lpGrandTour->bMidGrandTour = false;
 		lpGrandTour->nHodjSkillLevel = SKILLLEVEL_LOW;
 		lpGrandTour->nPodjSkillLevel = NOPLAY;
 		lpGrandTour->nGameSelection = GAME_ALPHA;
@@ -1017,24 +1017,24 @@ BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
 		lpGrandTour->nPodjLastScore = 0;
 		lpGrandTour->bPlayMusic = bMusicEnabled;
 		lpGrandTour->bPlayFX = bSoundEffectsEnabled;
-		lpGrandTour->bPlayingHodj = TRUE;
+		lpGrandTour->bPlayingHodj = true;
 		for (i = 0; i < 18; i++) {
-			lpGrandTour->abHGamePlayed[i] = FALSE;
-			lpGrandTour->abPGamePlayed[i] = FALSE;
+			lpGrandTour->abHGamePlayed[i] = false;
+			lpGrandTour->abPGamePlayed[i] = false;
 		}
 		lpGrandTour->stMiniGame.lCrowns = 0;
 		lpGrandTour->stMiniGame.lScore = 0;
 		lpGrandTour->stMiniGame.nSkillLevel = SKILLLEVEL_LOW;
 		lpGrandTour->stMiniGame.bSoundEffectsEnabled = bSoundEffectsEnabled;
 		lpGrandTour->stMiniGame.bMusicEnabled = bMusicEnabled;
-		lpGrandTour->stMiniGame.bPlayingMetagame = TRUE;
-		lpGrandTour->stMiniGame.bPlayingHodj = TRUE;
+		lpGrandTour->stMiniGame.bPlayingMetagame = true;
+		lpGrandTour->stMiniGame.bPlayingHodj = true;
 	}
 
 	dllLoaded = true;
 	g_wndGame = CWnd::FromHandle(Metagame::GrandTour::RunGrandTour(m_hWnd, lpGrandTour));
-	bReturnToGrandTour = TRUE;
-	return TRUE;
+	bReturnToGrandTour = true;
+	return true;
 }
 
 
@@ -1093,7 +1093,7 @@ PHASE2:
 		nChallengeGame  = (LPARAM)nGameID;
 		nChallengePhase++;
 
-		if ((lpMetaGame->m_stGameStruct.bPlayingHodj == FALSE) && (lpMetaGame->m_cPodj.m_bComputer)) {
+		if ((lpMetaGame->m_stGameStruct.bPlayingHodj == false) && (lpMetaGame->m_cPodj.m_bComputer)) {
 			SetComputerScore();
 			goto PHASE3;
 		}
@@ -1111,11 +1111,11 @@ PHASE3:
 			}
 
 			if (lpMetaGame->m_stGameStruct.bPlayingHodj) {
-				lpMetaGame->m_stGameStruct.bPlayingHodj = FALSE;
+				lpMetaGame->m_stGameStruct.bPlayingHodj = false;
 				lpMetaGame->m_stGameStruct.nSkillLevel = lpMetaGame->m_cPodj.m_iSkillLevel;
 				lpMetaGame->m_stGameStruct.lCrowns = 50;
 			} else {
-				lpMetaGame->m_stGameStruct.bPlayingHodj = TRUE;
+				lpMetaGame->m_stGameStruct.bPlayingHodj = true;
 				lpMetaGame->m_stGameStruct.nSkillLevel = lpMetaGame->m_cHodj.m_iSkillLevel;
 				lpMetaGame->m_stGameStruct.lCrowns = 50;
 			}
@@ -1139,7 +1139,7 @@ PHASE3:
 		}
 		nChallengePhase++;
 
-		if ((lpMetaGame->m_stGameStruct.bPlayingHodj == FALSE) && (lpMetaGame->m_cPodj.m_bComputer) && (nChallengePhase < 10)) {
+		if ((lpMetaGame->m_stGameStruct.bPlayingHodj == false) && (lpMetaGame->m_cPodj.m_bComputer) && (nChallengePhase < 10)) {
 			SetComputerScore();
 			goto PHASE4;
 		}
@@ -1163,10 +1163,10 @@ PHASE4:
 				lpMetaGame->m_cHodj.m_pInventory->RemoveItem(pItem);
 				lpMetaGame->m_cPodj.m_pInventory->AddItem(pItem);
 				pItem = nullptr;
-				lpMetaGame->m_cHodj.m_bHaveMishMosh = FALSE;
-				lpMetaGame->m_cPodj.m_bHaveMishMosh = TRUE;
-				lpMetaGame->m_cHodj.m_bMoving = TRUE;
-				lpMetaGame->m_cPodj.m_bMoving = FALSE;
+				lpMetaGame->m_cHodj.m_bHaveMishMosh = false;
+				lpMetaGame->m_cPodj.m_bHaveMishMosh = true;
+				lpMetaGame->m_cHodj.m_bMoving = true;
+				lpMetaGame->m_cPodj.m_bMoving = false;
 			} else {
 				CItem   *pItem = nullptr;
 				{
@@ -1181,10 +1181,10 @@ PHASE4:
 				lpMetaGame->m_cPodj.m_pInventory->RemoveItem(pItem);
 				lpMetaGame->m_cHodj.m_pInventory->AddItem(pItem);
 				pItem = nullptr;
-				lpMetaGame->m_cPodj.m_bHaveMishMosh = FALSE;
-				lpMetaGame->m_cHodj.m_bHaveMishMosh = TRUE;
-				lpMetaGame->m_cPodj.m_bMoving = TRUE;
-				lpMetaGame->m_cHodj.m_bMoving = FALSE;
+				lpMetaGame->m_cPodj.m_bHaveMishMosh = false;
+				lpMetaGame->m_cHodj.m_bHaveMishMosh = true;
+				lpMetaGame->m_cPodj.m_bMoving = true;
+				lpMetaGame->m_cHodj.m_bMoving = false;
 			}
 		} else {
 			if (lpMetaGame->m_stGameStruct.bPlayingHodj) {
@@ -1217,20 +1217,20 @@ void CHodjPodjWindow::SetComputerScore() {
 	int nTopScore = 0;
 	int nBellScore = 0;
 	int i, j;
-	BOOL    bTemp;
+	bool    bTemp;
 
 	for (i = 0; i < BELLCURVE; i++)
 		anScrambledCurve[i] = 0;
 
 	for (i = 0; i < BELLCURVE; i++) {
-		bTemp = FALSE;
+		bTemp = false;
 		do {
 			j = brand() % BELLCURVE;
 			if (anScrambledCurve[j] == 0) {
 				anScrambledCurve[j] = (int)anBellCurve[i];
-				bTemp = TRUE;
+				bTemp = true;
 			}
-		} while (bTemp == FALSE);
+		} while (bTemp == false);
 	}
 
 	switch (nChallengeGame) {
@@ -1593,7 +1593,7 @@ long CHodjPodjWindow::DetermineChallengeScore() {
 
 
 void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
-	BOOL        bMainDlg = TRUE;
+	bool        bMainDlg = true;
 	LPARAM      nGameReturn;
 
 	// Ignore messages during app shutdown
@@ -1617,27 +1617,27 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 			(void) PositionAtHomePath();
 
 			if (nGameReturn < 0) {
-				bReturnToZoom = FALSE;
-				bReturnToMeta = FALSE;
-				bReturnToGrandTour = FALSE;
+				bReturnToZoom = false;
+				bReturnToMeta = false;
+				bReturnToGrandTour = false;
 				nChallengePhase = 0;
 
 			} else if (nGameReturn == MG_DLLX_HODJ_WINS) {
 
-				bReturnToZoom = FALSE;
-				bReturnToMeta = FALSE;
-				bReturnToGrandTour = FALSE;
-				bMainDlg = FALSE;
+				bReturnToZoom = false;
+				bReturnToMeta = false;
+				bReturnToGrandTour = false;
+				bMainDlg = false;
 				nGameReturn = -1;
 				nChallengePhase = 0;
 				PostMessage(WM_COMMAND, IDC_PLAY_HODJ_MOVIE);
 
 			} else if (nGameReturn == MG_DLLX_PODJ_WINS) {
 
-				bReturnToZoom = FALSE;
-				bReturnToMeta = FALSE;
-				bReturnToGrandTour = FALSE;
-				bMainDlg = FALSE;
+				bReturnToZoom = false;
+				bReturnToMeta = false;
+				bReturnToGrandTour = false;
+				bMainDlg = false;
 				nGameReturn = -1;
 				nChallengePhase = 0;
 				PostMessage(WM_COMMAND, IDC_PLAY_PODJ_MOVIE);
@@ -1678,41 +1678,41 @@ void CHodjPodjWindow::GetHomePath() {
 }
 
 
-BOOL CHodjPodjWindow::PositionAtHomePath() {
+bool CHodjPodjWindow::PositionAtHomePath() {
 	AfxGetApp()->setDirectory("meta");
 	return true;
 }
 
 
-BOOL CHodjPodjWindow::GetCDPath() {
+bool CHodjPodjWindow::GetCDPath() {
 	bPathsDiffer = false;
-	return TRUE;
+	return true;
 }
 
 
-BOOL CHodjPodjWindow::PositionAtCDPath() {
-	return TRUE;
+bool CHodjPodjWindow::PositionAtCDPath() {
+	return true;
 }
 
 
-BOOL CHodjPodjWindow::PositionAtMiniPath(int nWhichDLL) {
+bool CHodjPodjWindow::PositionAtMiniPath(int nWhichDLL) {
 	const auto &game = CMgStatic::cGameTable[nWhichDLL];
 
 	auto *app = AfxGetApp();
 	app->setDirectory(game._path);
 	app->addResources(game._dllName);
 
-	return TRUE;
+	return true;
 }
 
 
-BOOL CHodjPodjWindow::FindCDROM() {
+bool CHodjPodjWindow::FindCDROM() {
 	return false;
 }
 
 
-BOOL CHodjPodjWindow::DriveWriteLocked(void) {
-	return FALSE;
+bool CHodjPodjWindow::DriveWriteLocked(void) {
+	return false;
 }
 
 
@@ -1721,7 +1721,7 @@ void CHodjPodjWindow::StartBackgroundMidi(void) {
 
 	pMyApp = AfxGetApp();
 
-	bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", TRUE);
+	bMusicEnabled = pMyApp->GetProfileInt("Meta", "Music", true);
 
 	if (bMusicEnabled && (pBackgroundMidi == nullptr)) {
 		PositionAtHomePath();
@@ -1799,7 +1799,7 @@ void FreeBFCInfo(CBfcMgr *pBfcMgr) {
 
 	assert(pBfcMgr != nullptr);
 
-	pBfcMgr->m_bRestoredGame = FALSE;
+	pBfcMgr->m_bRestoredGame = false;
 
 	// delete any Mish/Mosh items
 	//
@@ -1868,22 +1868,22 @@ void InitBFCInfo(CBfcMgr *pBfcMgr) {
 	pPlayer = &pBfcMgr->m_cHodj;
 	for (k = 0; k < 2; k++) {
 
-		pPlayer->m_bComputer = FALSE;
-		pPlayer->m_bMoving = TRUE;
+		pPlayer->m_bComputer = false;
+		pPlayer->m_bMoving = true;
 		pPlayer->m_nTurns = 1;
 
 		// Podj Specific stuff
 		//
 		if (k == 1) {
 			pPlayer = &pBfcMgr->m_cPodj;
-			pPlayer->m_bComputer = TRUE;
-			pPlayer->m_bMoving = FALSE;
+			pPlayer->m_bComputer = true;
+			pPlayer->m_bMoving = false;
 			pPlayer->m_nTurns = 0;
 		}
 
 		pPlayer->m_iSkillLevel = SKILLLEVEL_LOW;
 
-		pPlayer->m_bHaveMishMosh = FALSE;
+		pPlayer->m_bHaveMishMosh = false;
 
 		pPlayer->m_pTradingPost = nullptr;
 		pPlayer->m_pBlackMarket = nullptr;
@@ -1935,30 +1935,30 @@ void InitBFCInfo(CBfcMgr *pBfcMgr) {
 			    pClueTable[i].m_iCluePicCode - MG_CLUEPIC_BASE + NOTE_ICON_BASE,
 			    pClueTable[i].m_iCluePicCount,
 			    -1, -1);
-			pPlayer->m_aClueArray[i].bUsed = FALSE;
+			pPlayer->m_aClueArray[i].bUsed = false;
 		}
 
 		pPlayer->m_iFurlongs = 0;
 	}
 
-	pBfcMgr->m_bInventories = TRUE;
+	pBfcMgr->m_bInventories = true;
 	pBfcMgr->m_stGameStruct.lCrowns = 20;
 	pBfcMgr->m_stGameStruct.lScore = 0;
 	pBfcMgr->m_stGameStruct.nSkillLevel = SKILLLEVEL_MEDIUM;
 	pBfcMgr->m_stGameStruct.bSoundEffectsEnabled = bSoundEffectsEnabled;
 	pBfcMgr->m_stGameStruct.bMusicEnabled = bMusicEnabled;
-	pBfcMgr->m_stGameStruct.bPlayingHodj = TRUE;
-	pBfcMgr->m_bRestart = FALSE;
+	pBfcMgr->m_stGameStruct.bPlayingHodj = true;
+	pBfcMgr->m_bRestart = false;
 
-	pBfcMgr->m_bRestoredGame = TRUE;
+	pBfcMgr->m_bRestoredGame = true;
 
-	pBfcMgr->m_stGameStruct.bPlayingMetagame = TRUE;
+	pBfcMgr->m_stGameStruct.bPlayingMetagame = true;
 	pBfcMgr->m_iGameTime = SHORT_GAME;
 	pBfcMgr->m_bScrolling = bScrollingEnabled;
 	pBfcMgr->m_bSlowCPU = bSlowCPU;
 	pBfcMgr->m_bLowMemory = bLowMemory;
-	pBfcMgr->m_bAnimations = ((bSlowCPU || bLowMemory) ? FALSE : bAnimationsEnabled);
-	pBfcMgr->m_bChanged = FALSE;
+	pBfcMgr->m_bAnimations = ((bSlowCPU || bLowMemory) ? false : bAnimationsEnabled);
+	pBfcMgr->m_bChanged = false;
 	pBfcMgr->m_dwFreeSpaceMargin = dwFreeSpaceMargin;
 	pBfcMgr->m_dwFreePhysicalMargin = dwFreePhysicalMargin;
 
@@ -2010,12 +2010,12 @@ void InitBFCInfo(CBfcMgr *pBfcMgr) {
 void CHodjPodjWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -2054,15 +2054,15 @@ void CHodjPodjWindow::HandleError(ERROR_CODE errCode) {
 *       ERROR_CODE = Error return code
 *
 ****************************************************************/
-BOOL CHodjPodjWindow::Restore() {
-	BOOL bSuccess;
+bool CHodjPodjWindow::Restore() {
+	bool bSuccess;
 	ERROR_CODE errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
 
 	// Assume Restore will work
-	bSuccess = TRUE;
+	bSuccess = true;
 
 	// Validate implicit input
 	assert(gpszSaveDLL != nullptr);
@@ -2075,7 +2075,7 @@ BOOL CHodjPodjWindow::Restore() {
 	lpMetaGame->m_bScrolling = bScrollingEnabled;
 	lpMetaGame->m_bSlowCPU = bSlowCPU;
 	lpMetaGame->m_bLowMemory = bLowMemory;
-	lpMetaGame->m_bAnimations = ((bSlowCPU || bLowMemory) ? FALSE : bAnimationsEnabled);
+	lpMetaGame->m_bAnimations = ((bSlowCPU || bLowMemory) ? false : bAnimationsEnabled);
 	lpMetaGame->m_dwFreeSpaceMargin = dwFreeSpaceMargin;
 	lpMetaGame->m_dwFreePhysicalMargin = dwFreePhysicalMargin;
 
@@ -2091,7 +2091,7 @@ BOOL CHodjPodjWindow::Restore() {
 
 	if (errCode != ERR_NONE) {
 		HandleError(errCode);
-		bSuccess = FALSE;
+		bSuccess = false;
 	}
 
 	return bSuccess;
@@ -2105,7 +2105,7 @@ void CHodjPodjWindow::ShowCredits(void) {
 	CDC *pDC;
 	int i;
 
-	m_bInCredits = TRUE;
+	m_bInCredits = true;
 
 	// Start theme music
 	StartBackgroundMidi();
@@ -2189,7 +2189,7 @@ void CHodjPodjWindow::ShowCredits(void) {
 	// stop theme music
 	StopBackgroundMidi();
 
-	m_bInCredits = FALSE;
+	m_bInCredits = false;
 }
 
 } // namespace Frame

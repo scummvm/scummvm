@@ -59,7 +59,7 @@ COptnDlg::COptnDlg(CWnd* pParent, CPalette* pPalette)
 	m_nNumParts = m_nColumns * m_nRows;
 	nCFacs = 14;
 	nRFacs = 11;
-	m_bFramed = FALSE;
+	m_bFramed = false;
 	pSubOptionsPalette = pPalette;
 	//}}AFX_DATA_INIT
 }
@@ -110,7 +110,7 @@ int COptnDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	return 0;
 }
 
-BOOL COptnDlg::OnInitDialog() {
+bool COptnDlg::OnInitDialog() {
 	CBmpDialog::OnInitDialog();
 	int i;
 
@@ -132,7 +132,7 @@ BOOL COptnDlg::OnInitDialog() {
 	m_ScrollColumns.SetScrollRange(0, nCFacs - 1, 0);   // Array starts at zero, so
 	for (i = 0; i < nCFacs; i++) {
 		if (m_nColumnFactors[i] == m_nColumns)
-			m_ScrollColumns.SetScrollPos(i, TRUE);
+			m_ScrollColumns.SetScrollPos(i, true);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 99, LEFT_SIDE + 100, 114);
@@ -143,7 +143,7 @@ BOOL COptnDlg::OnInitDialog() {
 	m_ScrollRows.SetScrollRange(0, nRFacs - 1, 0);       //...last element is Max - 1
 	for (i = 0; i < nRFacs; i++) {
 		if (m_nRowFactors[i] == m_nRows)
-			m_ScrollRows.SetScrollPos(i, TRUE);
+			m_ScrollRows.SetScrollPos(i, true);
 	}
 
 	m_nNumParts = m_nColumns * m_nRows;
@@ -157,7 +157,7 @@ BOOL COptnDlg::OnInitDialog() {
 	if (m_nTime == 0) m_nTime = m_nTimeScale[TIMER_MAX - 1];
 	for (i = 0; i < TIMER_MAX; i++) {
 		if (m_nTimeScale[i] == m_nTime)
-			m_ScrollTime.SetScrollPos(i, TRUE);
+			m_ScrollTime.SetScrollPos(i, true);
 	}
 
 	ReleaseDC(pDC);
@@ -180,12 +180,12 @@ BOOL COptnDlg::OnInitDialog() {
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_FRAMED, m_bFramed);           // Set the frame option box
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 
-BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void COptnDlg::OnDestroy(void) {
@@ -226,7 +226,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, TRUE);        //...only update when
+		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();

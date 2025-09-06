@@ -54,8 +54,8 @@ public:
 	int         m_iPenWidth, m_iBrushStyle;
 	CBrush *m_xpOldBrush;
 	CPen *m_xpOldPen;
-	BOOL        m_bCreatePen, m_bCreateBrush;
-	BOOL        m_bReleaseDc;               // flag: release DC when done
+	bool        m_bCreatePen, m_bCreateBrush;
+	bool        m_bReleaseDc;               // flag: release DC when done
 	int         m_iLockCount;               // if positive, don't release DC
 
 	CBsuSet *m_xpBsuSet;                 // scroll bar set, if any
@@ -67,12 +67,12 @@ public:
 
 	CLList *m_pFXList;                  // Special Effects list
 
-	BOOL        m_bInMenu;                  // within options menu
+	bool        m_bInMenu;                  // within options menu
 	char        m_szDataDirectory[100];     // directory for data files
 	char        m_cEndData;
 
 private:
-	BOOL        m_bAnimationsPaused;        // Animations Paused/UnPaused
+	bool        m_bAnimationsPaused;        // Animations Paused/UnPaused
 
 	// methods
 public:
@@ -81,26 +81,26 @@ public:
 
 	// bgb.cpp -- Boffo Game Objects handling routines
 	//
-	BOOL InitBitmapObject(CBgbObject *, XPSTR);
-	BOOL SetPosition(CBgbObject *, CRPoint);
-	BOOL PaintBitmapObject(CBgbObject *, BOOL bPaint PDFT(FALSE), CRect *p = nullptr);
-	BOOL AnimateSprite(CBgbObject *, CPoint, CPoint);
-	BOOL InitDc(CView *xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC *xpDc PDFT(nullptr));
-	BOOL ReInitDc(void);
-	BOOL AdjustLockCount(int iIncr);
-	BOOL SetBrush(COLORREF cBrushColor, int iBrushStyle PDFT(BS_SOLID));
-	BOOL SetPen(COLORREF cPenColor, int iPenWidth PDFT(0));
-	BOOL ReleaseDc(void);
-	BOOL ClearBitmapObject(CBgbObject *lpcBgbObject);
-	BOOL ReleaseResources(void);
+	bool InitBitmapObject(CBgbObject *, XPSTR);
+	bool SetPosition(CBgbObject *, CRPoint);
+	bool PaintBitmapObject(CBgbObject *, bool bPaint PDFT(false), CRect *p = nullptr);
+	bool AnimateSprite(CBgbObject *, CPoint, CPoint);
+	bool InitDc(CView *xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC *xpDc PDFT(nullptr));
+	bool ReInitDc(void);
+	bool AdjustLockCount(int iIncr);
+	bool SetBrush(COLORREF cBrushColor, int iBrushStyle PDFT(BS_SOLID));
+	bool SetPen(COLORREF cPenColor, int iPenWidth PDFT(0));
+	bool ReleaseDc(void);
+	bool ClearBitmapObject(CBgbObject *lpcBgbObject);
+	bool ReleaseResources(void);
 	void DoAnimations(void);
 	void PauseAnimations(void) {
-		m_bAnimationsPaused = TRUE;
+		m_bAnimationsPaused = true;
 	}
 	void ResumeAnimations(void) {
-		m_bAnimationsPaused = FALSE;
+		m_bAnimationsPaused = false;
 	}
-	BOOL AnimationsActive(void) const {
+	bool AnimationsActive(void) const {
 		return !m_bAnimationsPaused;
 	}
 
@@ -124,14 +124,14 @@ public:
 	bool        m_bChained : 1;          // on m_xBgbChain
 	bool        m_bNoDelete : 1;         // not allocated with "new"
 	bool        m_bMasked : 1;           // mask white areas of bitmap
-	bool        m_bInit : 1;             // TRUE if object is initialized
-	bool        m_bCleared : 1;          // FALSE if need a ClearBackground()
+	bool        m_bInit : 1;             // true if object is initialized
+	bool        m_bCleared : 1;          // false if need a ClearBackground()
 	bool        m_bVisible : 1;          // bitmap is at least visible
 	bool        m_bEdge : 1;             // bitmap is on edge of phys wnd
-	bool        m_bLoaded : 1;           // TRUE if currently in cache
-	bool        m_bAnimated : 1;         // TRUE if this sprite is animated
-	bool        m_bSpecial : 1;          // TRUE if Special Animation
-	bool        m_bLocked : 1;           // TRUE if object is locked in cache
+	bool        m_bLoaded : 1;           // true if currently in cache
+	bool        m_bAnimated : 1;         // true if this sprite is animated
+	bool        m_bSpecial : 1;          // true if Special Animation
+	bool        m_bLocked : 1;           // true if object is locked in cache
 	// (i.e. Cannot be released)
 
 	int         m_nCels;                // number of cels in this cel strip
@@ -153,7 +153,7 @@ public:
 	CRRect GetRect() {
 		return CRRect(m_crPosition, m_cSize);
 	}
-	BOOL IfRelocatable() {
+	bool IfRelocatable() {
 		return m_crPosition.m_bRelocatable;
 	}
 };

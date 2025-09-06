@@ -39,7 +39,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Peggle {
 
-#define SHOW_CURSOR TRUE
+#define SHOW_CURSOR true
 
 
 extern  LPGAMESTRUCT    pGameInfo;
@@ -57,7 +57,7 @@ CPalette        *pGamePalette = nullptr ;
 static CSound   *pGameSound = nullptr;                 // Game theme song
 
 // Board Selection stuff
-BOOL bRandomBoard = FALSE;
+bool bRandomBoard = false;
 
 int8 BoardSelected = CROSS;
 
@@ -85,8 +85,8 @@ CSprite *pInvalidSlot = nullptr;
 static int nBoard_DX = TRI_BOARD_DX,
            nBoard_DY = TRI_BOARD_DY;
 
-static BOOL bIgnoreScroll = FALSE;
-static BOOL bPegMoving = FALSE;
+static bool bIgnoreScroll = false;
+static bool bPegMoving = false;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -101,7 +101,7 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	CPalette    *pPalOld;
 	CDibDoc *pDibDoc;
 	CRect   MainRect;
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 
 	BeginWaitCursor();
@@ -145,7 +145,7 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	delete pDibDoc;
 
 	pDC = GetDC();
-	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);
+	pPalOld = (*pDC).SelectPalette(pGamePalette, false);
 
 	pScrollButton = new CBmpButton;             // build a bitmapped OKAY button for resetting
 	ASSERT(pScrollButton);                            // ... the sprites, again as an example
@@ -163,8 +163,8 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	(*pShotGlass).SharePalette(pGamePalette);
 	bSuccess = (*pShotGlass).LoadResourceSprite(pDC, "SHOTGLASS");
 	ASSERT(bSuccess);
-	(*pShotGlass).SetMasked(TRUE);
-	(*pShotGlass).SetMobile(TRUE);
+	(*pShotGlass).SetMasked(true);
+	(*pShotGlass).SetMobile(true);
 	(*pShotGlass).SetTypeCode(SPRITE_GLASS);
 
 	pTableSlot = new CSprite;
@@ -172,8 +172,8 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	(*pTableSlot).SharePalette(pGamePalette);
 	bSuccess = (*pTableSlot).LoadResourceSprite(pDC, "TABLESLOT");
 	ASSERT(bSuccess);
-	(*pTableSlot).SetMasked(TRUE);
-	(*pTableSlot).SetMobile(TRUE);
+	(*pTableSlot).SetMasked(true);
+	(*pTableSlot).SetMobile(true);
 	(*pTableSlot).SetTypeCode(SPRITE_HOLE);
 
 	pInvalidSlot = new CSprite;
@@ -181,8 +181,8 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	(*pInvalidSlot).SharePalette(pGamePalette);
 	bSuccess = (*pInvalidSlot).LoadResourceSprite(pDC, "INVALIDSLOT");
 	ASSERT(bSuccess);
-	(*pInvalidSlot).SetMasked(TRUE);
-	(*pInvalidSlot).SetMobile(TRUE);
+	(*pInvalidSlot).SetMasked(true);
+	(*pInvalidSlot).SetMobile(true);
 	(*pInvalidSlot).SetTypeCode(SPRITE_INVALID);
 
 	pCursorSprite = new CSprite;
@@ -190,18 +190,18 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	(*pCursorSprite).SharePalette(pGamePalette);
 	bSuccess = (*pCursorSprite).LoadResourceSprite(pDC, "SHOTGLASS");
 	ASSERT(bSuccess);
-	(*pCursorSprite).SetMasked(TRUE);
-	(*pCursorSprite).SetMobile(TRUE);
+	(*pCursorSprite).SetMasked(true);
+	(*pCursorSprite).SetMobile(true);
 
 	//srand((unsigned)time(nullptr));
 
 	if ((*pGameInfo).bPlayingMetagame)
-		bRandomBoard = TRUE;
+		bRandomBoard = true;
 //		BoardSelected = (brand() % BOARD_COUNT) + BOARD_BASE;
 
 	SetUpBoard(pDC);
 
-	(void)(*pDC).SelectPalette(pPalOld, FALSE);
+	(void)(*pDC).SelectPalette(pPalOld, false);
 	ReleaseDC(pDC);
 
 	if ((*pGameInfo).bMusicEnabled) {
@@ -211,12 +211,12 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 		} // end if pGameSound
 	}
 
-	if ((*pGameInfo).bPlayingMetagame == FALSE) {
+	if ((*pGameInfo).bPlayingMetagame == false) {
 		PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);
 	}
 
 	#ifndef SHOW_CURSOR
-	::ShowCursor(FALSE);
+	::ShowCursor(false);
 	#endif
 	EndWaitCursor();
 }
@@ -227,7 +227,7 @@ void CMainWindow::initStatics() {
 	pGamePalette = nullptr;
 	pGameSound = nullptr;
 
-	bRandomBoard = FALSE;
+	bRandomBoard = false;
 	BoardSelected = CROSS;
 	Common::fill(&fState[0][0], &fState[0][0] + GRID_SIZE * GRID_SIZE, 0);
 
@@ -242,11 +242,11 @@ void CMainWindow::initStatics() {
 	nBoard_DX = TRI_BOARD_DX;
 	nBoard_DY = TRI_BOARD_DY;
 
-	bIgnoreScroll = FALSE;
-	bPegMoving = FALSE;
+	bIgnoreScroll = false;
+	bPegMoving = false;
 }
 
-void CMainWindow::OnActivateApp(BOOL bActive, HTASK hTask) {
+void CMainWindow::OnActivateApp(bool bActive, HTASK hTask) {
 	m_bProgramActive = bActive;
 }
 
@@ -260,7 +260,7 @@ void CMainWindow::OnActivateApp(BOOL bActive, HTASK hTask) {
 void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	InvalidateRect(nullptr, FALSE);
+	InvalidateRect(nullptr, false);
 	BeginPaint(&lpPaint);
 	SplashScreen();
 	EndPaint(&lpPaint);
@@ -276,7 +276,7 @@ void CMainWindow::SplashScreen() {
 	CDibDoc myDoc;
 	HDIB    hDIB;
 	CSprite *pSprite;
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	bSuccess = myDoc.OpenDocument(BoardSpec[BoardSelected - BOARD_BASE]);
 	ASSERT(bSuccess);
@@ -393,7 +393,7 @@ void SetUpBoard(CDC *pDC) {
 // typically in order to process control related activities.
 //
 
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CDC         *pDC;
 	CPoint      sprite_loc;
 	CRules      RulesDlg((CWnd *)this, RULESSPEC, pGamePalette,
@@ -412,8 +412,8 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case IDC_RULES:
-			bIgnoreScroll = TRUE;
-			(*pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+			bIgnoreScroll = true;
+			(*pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 			(void) RulesDlg.DoModal();                          // invoke the help dialog box
 			break;
 
@@ -422,43 +422,43 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				pDC = GetDC();
 				SetUpBoard(pDC);
 				ReleaseDC(pDC);
-				InvalidateRect(nullptr, FALSE);
+				InvalidateRect(nullptr, false);
 			}
 			break;
 
 		case IDC_SCROLL:
 			if (bIgnoreScroll) {
-				(*pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
+				(*pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
-			bIgnoreScroll = TRUE;
-			(*pScrollButton).SendMessage(BM_SETSTATE, TRUE, 0L);
-			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, TRUE, 0L);
+			bIgnoreScroll = true;
+			(*pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_RETURN:
-				(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				bIgnoreScroll = FALSE;
+				(*pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				bIgnoreScroll = false;
 				break;
 
 			case IDC_RESTART:
 			case IDC_NEWGAME:
-				(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				bIgnoreScroll = FALSE;
+				(*pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				bIgnoreScroll = false;
 				pDC = GetDC();
 				SetUpBoard(pDC);
 				ReleaseDC(pDC);
-				InvalidateRect(nullptr, FALSE);
+				InvalidateRect(nullptr, false);
 				break;
 
 			case IDC_QUIT:
 				PostMessage(WM_CLOSE, 0, 0);
-				return FALSE;
+				return false;
 
 			default:
-				(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-				bIgnoreScroll = FALSE;
+				(*pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				bIgnoreScroll = false;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -483,7 +483,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 
@@ -513,12 +513,12 @@ void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned i
 void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);  // Activate the Options dialog
-		(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-		bIgnoreScroll = FALSE;
+		(*pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+		bIgnoreScroll = false;
 	} else if (nChar == VK_F2) {                                 // F2 key is hit
 		SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);     // Activate the Options dialog
-		(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
-		bIgnoreScroll = FALSE;
+		(*pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+		bIgnoreScroll = false;
 	}
 }
 
@@ -561,7 +561,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 	CSound  *pEffect = nullptr;
 	int newx, newy ;
 	int oldx, oldy, neighborx, neighbory;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	CRect   bottleRect,
 	        titleRect,
 	        dartRect,
@@ -587,7 +587,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 	candlefrRect.SetRect(CANDLEFR_X, CANDLEFR_Y, CANDLEFR_X + CANDLEFR_DX, CANDLEFR_Y + CANDLEFR_DY);
 
 
-	if (((*pGameInfo).bPlayingMetagame == FALSE) && titleRect.PtInRect(myPoint)) {
+	if (((*pGameInfo).bPlayingMetagame == false) && titleRect.PtInRect(myPoint)) {
 		if (!(counter & 0x01))
 			UndoTurn();
 		else {
@@ -596,7 +596,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 			ReleaseDC(pDC);
 		}
 		SendMessage(WM_COMMAND, IDC_NEWGAME, BN_CLICKED);
-	} else if (((*pGameInfo).bPlayingMetagame == FALSE) && bottleRect.PtInRect(myPoint)) {
+	} else if (((*pGameInfo).bPlayingMetagame == false) && bottleRect.PtInRect(myPoint)) {
 		if (!(counter & 0x01))
 			UndoTurn();
 		else {
@@ -616,8 +616,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, ".\\sound\\darts.wav",                // Load up the sound file as a
@@ -648,8 +648,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, ".\\sound\\barglass.wav",             // Load up the sound file as a
@@ -681,8 +681,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(FALSE);
-		(*pSprite).SetMobile(FALSE);
+		(*pSprite).SetMasked(false);
+		(*pSprite).SetMobile(false);
 
 		if ((*pGameInfo).bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, ".\\sound\\chrdance.wav",             // Load up the sound file as a
@@ -765,7 +765,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 				if (counter % 2)
 					(*pCursorSprite).PaintSprite(pDC, sprite_loc);
 				ReleaseDC(pDC);
-				bPegMoving = TRUE;
+				bPegMoving = true;
 			} else {             // illegal move
 //			    MessageBeep(-1);
 				if ((*pGameInfo).bSoundEffectsEnabled)
@@ -798,7 +798,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 						fState [neighborx][neighbory] = EMPTY;
 						fState [newx][newy] = PEGGED ;
 						counter += 1;
-						bPegMoving = FALSE;
+						bPegMoving = false;
 						Moves[counter].x = newx ;
 						Moves[counter].y = newy ;
 						pDC = GetDC();
@@ -848,7 +848,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 								        ((BoardSelected == TRIANGLE) && (fState [1][1] == PEGGED)) ||
 								        ((BoardSelected == TRIANGLE_PLUS) && (fState [2][2] == PEGGED))) {
 
-									// if both TRUE, then WIN!!!!
+									// if both true, then WIN!!!!
 									score = 25;
 								}
 								// one left but not in center
@@ -876,7 +876,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 							// display the score
 							// display two buttons, Quit or Again?
 							#ifndef SHOW_CURSOR
-							::ShowCursor(TRUE);
+							::ShowCursor(true);
 							#endif
 
 							if (score == 25) {
@@ -904,7 +904,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 
 							if ((*pGameInfo).bPlayingMetagame) {
 								#ifndef SHOW_CURSOR
-								::ShowCursor(FALSE);
+								::ShowCursor(false);
 								#endif
 								(*pGameInfo).lScore += score;
 								PostMessage(WM_CLOSE, 0, 0);
@@ -912,11 +912,11 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 								pDC = GetDC();
 								SetUpBoard(pDC);
 								ReleaseDC(pDC);
-								InvalidateRect(nullptr, FALSE);
+								InvalidateRect(nullptr, false);
 								// if Restart --> IDC_RESTART
 //		            PostMessage(WM_COMMAND, IDC_RESTART, BN_CLICKED);
 								#ifndef SHOW_CURSOR
-								::ShowCursor(FALSE);
+								::ShowCursor(false);
 								#endif
 							}
 						}
@@ -1064,7 +1064,7 @@ void CMainWindow::UndoTurn(void) {
 			sndPlaySound(nullptr, 0);
 			sndPlaySound(WAV_UNDO, SND_ASYNC);
 		}
-		bPegMoving = FALSE;
+		bPegMoving = false;
 		newx = Moves[counter].x;
 		newy = Moves[counter].y;
 		counter -= 1;
@@ -1099,7 +1099,7 @@ void CMainWindow::UndoMove(CDC *pDC) {
 	oldy = Moves[counter].y;
 
 	counter -= 1;
-	bPegMoving = FALSE;
+	bPegMoving = false;
 
 //MessageBeep(-1);
 	if ((*pGameInfo).bSoundEffectsEnabled)  {
@@ -1248,10 +1248,10 @@ END_MESSAGE_MAP()
 // called.  Any data may be set up at this point.
 //
 // Also, the main window of the application should be created and shown here.
-// Return TRUE if the initialization is successful.
+// Return true if the initialization is successful.
 //
 /*
-BOOL CTheApp::InitInstance()
+bool CTheApp::InitInstance()
 {
 CMainWindow *pMyMain;
 
@@ -1264,10 +1264,10 @@ m_pMainWnd->ShowWindow( m_nCmdShow );
 
 m_pMainWnd->UpdateWindow();
 
-return TRUE;
+return true;
 }
 
-BOOL CTheApp::ExitInstance()
+bool CTheApp::ExitInstance()
 {
 
 CSprite::FlushSpriteChain();
@@ -1292,10 +1292,10 @@ if (pGamePalette != nullptr ) {
 // don't forget to set the Cursor back to normal!
 
 #ifndef SHOW_CURSOR
-::ShowCursor(TRUE);
+::ShowCursor(true);
 #endif
 
-return(TRUE);
+return(true);
 }
 */
 

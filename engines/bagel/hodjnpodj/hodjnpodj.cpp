@@ -69,7 +69,7 @@ Common::Error HodjNPodjEngine::run() {
 		app.setStartupMinigame("mazedoom_demo");
 	} else if (ConfMan.getBool("metagame")) {
 		Metagame::Frame::InitBFCInfo(&_bfcMgr);
-		Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, FALSE);
+		Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, false);
 
 		return Common::kNoError;
 	} else {

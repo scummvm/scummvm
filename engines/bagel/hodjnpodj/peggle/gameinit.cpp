@@ -29,7 +29,7 @@ namespace Peggle {
 
 #define SYSCOLORS   19
 
-BOOL    bHasPalette = TRUE;             // whether the display is palette driven
+bool    bHasPalette = true;             // whether the display is palette driven
 int     nColorDepth = 8;                // display's bits per pixel
 int     nScreenWidth = 640,             // screen size
         nScreenHeight = 480;
@@ -73,7 +73,7 @@ void WINAPI WindowsInit() {
 	nScreenWidth = GetDeviceCaps(hDC, HORZRES);
 	nScreenHeight = GetDeviceCaps(hDC, VERTRES);
 
-	bHasPalette = ((GetDeviceCaps(hDC, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE);
+	bHasPalette = ((GetDeviceCaps(hDC, RASTERCAPS) & RC_PALETTE) ? true : false);
 	nColorDepth = GetDeviceCaps(hDC, PLANES) * GetDeviceCaps(hDC, BITSPIXEL);
 
 	ReleaseDC(nullptr, hDC);

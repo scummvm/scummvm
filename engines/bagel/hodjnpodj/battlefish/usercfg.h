@@ -37,7 +37,7 @@ namespace Battlefish {
 #define DIFF_MAX    2
 #define DIFF_DEF    2
 
-#define TURN_DEF    FALSE
+#define TURN_DEF    false
 
 class CUserCfgDlg : public CBmpDialog {
 public:
@@ -45,8 +45,8 @@ public:
 
 protected:
 
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(void) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnInitDialog(void) override;
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispLimit(void);
@@ -69,8 +69,8 @@ protected:
 	CText        *m_pTxtOrder;
 	CScrollBar   *m_pScrollBar;
 	unsigned int          m_nDifficultyLevel;       // Difficulty level for BattleFish
-	BOOL          m_bSave;                  // True if should save theses settings
-	BOOL          m_bUserGoesFirst;         // TRUE if Human player goes 1st
+	bool          m_bSave;                  // True if should save theses settings
+	bool          m_bUserGoesFirst;         // true if Human player goes 1st
 };
 
 } // namespace Battlefish

@@ -112,7 +112,7 @@ static const char *astrGames[21] = {       // set the display names for when the
 int             nLastRect;      // the last gaem rect passed over
 CText           *pText = nullptr;   // the game name display
 
-static  BOOL    bActiveWindow = FALSE;          // whether our window is activesho
+static  bool    bActiveWindow = false;          // whether our window is activesho
 CBitmap         *pSplashScreen = nullptr;
 
 CColorButton    *pReturnButton = nullptr;
@@ -148,11 +148,11 @@ CColorButton    *pReturnButton = nullptr;
  *
  ****************************************************************/
 
-CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) :
+CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
 		rText(0, 428, 640, 450) {
 	CDC         *pDC = nullptr;                     // device context for the screen
 	CString     WndClass;
-	BOOL        bSuccess = FALSE;
+	bool        bSuccess = false;
 
 	BeginWaitCursor();
 // Define a special window class which traps double-clicks, is byte aligned
@@ -275,7 +275,7 @@ void CMainZoomWindow::OnPaint() {
  ****************************************************************/
 void CMainZoomWindow::SplashScreen() {
 	CDC         *pDC = GetDC();                                                                          // get a device context for the window
-	CPalette    *pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);      // load game palette;
+	CPalette    *pOldPalette = pDC->SelectPalette(pGamePalette, false);      // load game palette;
 
 	ASSERT(pDC);
 
@@ -283,7 +283,7 @@ void CMainZoomWindow::SplashScreen() {
 
 	PaintBitmap(pDC, pGamePalette, pSplashScreen);
 
-	pDC->SelectPalette(pOldPalette, FALSE);     // replace old palette
+	pDC->SelectPalette(pOldPalette, false);     // replace old palette
 	ReleaseDC(pDC);                             // release the window's context
 
 }
@@ -326,7 +326,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 	return;
 }
 
-BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
 		if (wParam == IDC_LEAVE) {
 			nReturnValue = -1;
@@ -334,7 +334,7 @@ BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
@@ -342,7 +342,7 @@ void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	for (x = 0; x < 21; x++) {
 		if (PtInRect(&arGameRect[x], point)) {        // check to see if player clicked on a game
-			if ((anGameValues[x] == -1) && (m_bShowExit == FALSE)) {
+			if ((anGameValues[x] == -1) && (m_bShowExit == false)) {
 				CWnd::OnLButtonDown(nFlags, point);
 				return;
 			}
@@ -360,7 +360,7 @@ void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	for (x = 0; x < 21; x++) {
 		if (PtInRect(&arGameRect[x], point)) {      // if cursor passes over a game rect
-			if ((anGameValues[x] == -1) && (m_bShowExit == FALSE)) {
+			if ((anGameValues[x] == -1) && (m_bShowExit == false)) {
 				CWnd::OnMouseMove(nFlags, point);
 				return;
 			}
@@ -412,7 +412,7 @@ void CMainZoomWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsign
 
 	switch (nChar) {
 	case VK_ESCAPE:
-		if (m_bShowExit == TRUE) {
+		if (m_bShowExit == true) {
 			nReturnValue = -1;
 			PostMessage(WM_CLOSE);
 		}
@@ -457,25 +457,25 @@ void CMainZoomWindow::OnTimer(uintptr nWhichTimer) {
  *
  ****************************************************************/
 
-BOOL CMainZoomWindow::OnEraseBkgnd(CDC *pDC) {
+bool CMainZoomWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
-	return TRUE;
+	return true;
 }
 
 
-void CMainZoomWindow::OnActivate(unsigned int nState, CWnd  *pWndOther, BOOL bMinimized) {
-	BOOL    bUpdateNeeded;
+void CMainZoomWindow::OnActivate(unsigned int nState, CWnd  *pWndOther, bool bMinimized) {
+	bool    bUpdateNeeded;
 
 	switch (nState) {
 	case WA_INACTIVE:
-		bActiveWindow = FALSE;
+		bActiveWindow = false;
 		break;
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
+		bActiveWindow = true;
+		bUpdateNeeded = GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 	}
 }
 
@@ -631,12 +631,12 @@ void CMainZoomWindow::ReleaseResources(void) {
 void CMainZoomWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}

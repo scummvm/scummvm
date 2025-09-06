@@ -87,28 +87,28 @@ static  CText       *pTitleText = nullptr;             // title information fiel
 static  CFont       *pFont = nullptr;                  // font to use for displaying store text
 //static  char        chPathName[128];                // buffer to hold path name of the store file
 
-static  BOOL        bActiveWindow = FALSE;          // whether our window is active
-static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
+static  bool        bActiveWindow = false;          // whether our window is active
+static  bool        bFirstTime = true;              // flag for first time information is displayed
 static  int         nStore_DX, nStore_DY;           // size of useable store background
 static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
 static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
 static  int         nFirstSlot = 0;                 // first item in current inventory page
 
-static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or Podj
+static  bool        bPlayingHodj = true;            // whether playing Hodj or Podj
 
 /////////////////////////////////////////////////////////////////////////////
 // CGeneralStore dialog
 
 
 
-BOOL CGeneralStore::SetupKeyboardHook(void) {
+bool CGeneralStore::SetupKeyboardHook(void) {
 	pStoreDialog = this;                            // retain pointer to our dialog box
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, StoreHookProc, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -119,7 +119,7 @@ void CGeneralStore::RemoveKeyboardHook(void) {
 	pStoreDialog = nullptr;
 	lpfnKbdHook = nullptr;
 	hKbdHook = nullptr;
-	m_bKeyboardHook = FALSE;
+	m_bKeyboardHook = false;
 }
 
 
@@ -131,7 +131,7 @@ LRESULT StoreHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
-		return FALSE;
+		return false;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -169,10 +169,10 @@ LRESULT StoreHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CGeneralStore::UpdatePage(pDC);
 		(*pStoreDialog).ReleaseDC(pDC);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -229,7 +229,7 @@ void CGeneralStore::OnCancel(void) {
 
 
 void CGeneralStore::OnDestroy() {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 
 	if (pFont != nullptr)
 		delete pFont;                               // release the font file
@@ -245,7 +245,7 @@ void CGeneralStore::OnDestroy() {
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
+		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -265,7 +265,7 @@ void CGeneralStore::OnDestroy() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pBackgroundBitmap;
 		pBackgroundBitmap = nullptr;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*pParentWnd).ValidateRect(nullptr);
 	}
@@ -287,8 +287,8 @@ void CGeneralStore::OnDestroy() {
 }
 
 
-BOOL CGeneralStore::OnInitDialog() {
-	BOOL    bSuccess;
+bool CGeneralStore::OnInitDialog() {
+	bool    bSuccess;
 	CWnd    *pButton;                                               // pointer to the OKAY button
 	CRect   myRect;                                                 // rectangle that holds the button location
 	int     x, y, dx, dy;                                           // used for calculating positioning info
@@ -327,41 +327,41 @@ BOOL CGeneralStore::OnInitDialog() {
 
 	m_bKeyboardHook = SetupKeyboardHook();          // establish keyboard hook
 
-	bFirstTime = TRUE;
+	bFirstTime = true;
 	nFirstSlot = 0;
 
 	if ((*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK) != nullptr)   // see who is playing
-		bPlayingHodj = TRUE;
+		bPlayingHodj = true;
 	else
-		bPlayingHodj = FALSE;
+		bPlayingHodj = false;
 
-	return TRUE;                                              // return TRUE  unless focused on a control
+	return true;                                              // return true  unless focused on a control
 }
 
 
-void CGeneralStore::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
-	BOOL    bUpdateNeeded;
+void CGeneralStore::OnActivate(unsigned int nState, CWnd *, bool /*bMinimized*/) {
+	bool    bUpdateNeeded;
 
 	switch (nState) {
 	case WA_INACTIVE:
-		bActiveWindow = FALSE;
+		bActiveWindow = false;
 		break;
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
+		bActiveWindow = true;
+		bUpdateNeeded = GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 	}
 }
 
 
 void CGeneralStore::OnPaint() {
-	BOOL        bSuccess;
+	bool        bSuccess;
 	CPaintDC    dc(this);                                           // device context for painting
 
 	if (bFirstTime) {                                           // acquire resources and if first time
-		bFirstTime = FALSE;
+		bFirstTime = false;
 		bSuccess = CreateWorkAreas(&dc);
 		if (!bSuccess)
 			CDialog::OnCancel();
@@ -376,7 +376,7 @@ void CGeneralStore::UpdateStore(CDC *pDC) {
 
 	DoWaitCursor();                                             // put up the hourglass cursor
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);      // setup the proper palette
+	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
 
 	if (pWorkDC == nullptr) {                                      // if we don't have a work area
@@ -395,7 +395,7 @@ void CGeneralStore::UpdateStore(CDC *pDC) {
 		(*pDC).BitBlt(0, 0, STORE_DX, STORE_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
-	(*pDC).SelectPalette(pPalOld, FALSE);                       // reset the palette
+	(*pDC).SelectPalette(pPalOld, false);                       // reset the palette
 
 	DoArrowCursor();                                            // return to an arrow cursor
 }
@@ -405,10 +405,10 @@ void CGeneralStore::UpdatePage(CDC *pDC) {
 	CPalette    *pPalOld;
 
 	if (pWorkDC == nullptr)                                        // update everything if no work area
-		(*pStoreDialog).InvalidateRect(nullptr, FALSE);
+		(*pStoreDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
 		DoWaitCursor();                                         // put up the hourglass cursor
-		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // setup the proper palette
+		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		if (pBackgroundBitmap != nullptr)
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, STORE_DX, STORE_DY);
@@ -432,7 +432,7 @@ void CGeneralStore::UpdatePage(CDC *pDC) {
 		    STORE_DX - TEXT_MORE_DX,
 		    STORE_DY - STORE_CURL_DY,
 		    SRCCOPY);
-		(*pDC).SelectPalette(pPalOld, FALSE);                   // reset the palette
+		(*pDC).SelectPalette(pPalOld, false);                   // reset the palette
 		DoArrowCursor();
 	}                                                           // return to an arrow cursor
 }
@@ -451,7 +451,7 @@ void CGeneralStore::UpdateContent(CDC *pDC) {
 
 	nStore_DX = STORE_DX - (STORE_BORDER_DX << 1);              // calculate the horizontal space we have available
 	nItemsPerRow = nStore_DX / STORE_BITMAP_DX;               // estimate number of items that will fit
-	while (TRUE) {
+	while (true) {
 		nItem_DDX = (nStore_DX - (nItemsPerRow * STORE_BITMAP_DX)) / (nItemsPerRow - 1);    // now evaluate the distance that would occur between
 		if (nItem_DDX >= STORE_BITMAP_DDX)                       // ... items, and if is less than the minimum allowed
 			break;                                              // ... then reduce the count of items per row
@@ -460,7 +460,7 @@ void CGeneralStore::UpdateContent(CDC *pDC) {
 
 	nStore_DY = STORE_DY - STORE_TEXTZONE_DY - (STORE_BORDER_DY << 1) - STORE_TITLEZONE_DY; // calculate the vertical space we have available
 	nItemsPerColumn = nStore_DY / STORE_BITMAP_DY;            // estimate number of items that will fit
-	while (TRUE) {
+	while (true) {
 		nItem_DDY = (nStore_DY - (nItemsPerColumn * STORE_BITMAP_DY)) / (nItemsPerColumn - 1);    // now evaluate the distance that would occur between
 		if (nItem_DDY >= STORE_BITMAP_DDY)                       // ... items, and if is less than the minimum allowed
 			break;                                              // ... then reduce the count of items per column
@@ -503,7 +503,7 @@ void CGeneralStore::UpdateContent(CDC *pDC) {
 
 
 void CGeneralStore::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
-	BOOL bSuccess = TRUE;
+	bool bSuccess = true;
 	const char *pArtSpec;
 
 	pArtSpec = (*pItem).GetArtSpec();
@@ -535,8 +535,8 @@ void CGeneralStore::UpdateCrowns(CDC *pDC) {
 }
 
 
-BOOL CGeneralStore::OnEraseBkgnd(CDC *) {
-	return TRUE;                                                  // do not automatically erase background to white
+bool CGeneralStore::OnEraseBkgnd(CDC *) {
+	return true;                                                  // do not automatically erase background to white
 }
 
 
@@ -561,7 +561,7 @@ void CGeneralStore::RefreshBackground(void) {
 }
 
 
-void CGeneralStore::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void CGeneralStore::OnShowWindow(bool bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -578,7 +578,7 @@ void CGeneralStore::OnSize(unsigned int nType, int cx, int cy) {
 
 
 int CGeneralStore::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	AddFontResource("msserif.fon");
 	pFont = new CFont();
@@ -593,14 +593,14 @@ int CGeneralStore::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 
-BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
-	BOOL        bSuccess = FALSE;
+bool CGeneralStore::CreateWorkAreas(CDC *pDC) {
+	bool        bSuccess = false;
 	//CPalette    *pPalOld;
 	CRect       myRect;
 
 	pStoreBitmap = FetchBitmap(pDC, nullptr, STORE_SPEC);
 	if (pStoreBitmap == nullptr)
-		return FALSE;
+		return false;
 
 	if ((GetFreeSpace(0) >= (unsigned long) 500000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 400000))
@@ -608,7 +608,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	(*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	(*pDC).SelectPalette(pBackgroundPalette, false);
 	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
@@ -618,22 +618,22 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 			pWorkDC = new CDC();
 			if ((pWorkDC != nullptr) &&
 			        (*pWorkDC).CreateCompatibleDC(pDC)) {
-				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, FALSE);
+				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
 				(void)(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
-					bSuccess = TRUE;
+					bSuccess = true;
 			}
 		}
 	} else {
 		pWork = nullptr;
 		pWorkDC = nullptr;
-		bSuccess = TRUE;
+		bSuccess = true;
 	}
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, FALSE);
+			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -642,10 +642,10 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 		}
 		delete pWorkDC;
 		pWorkDC = nullptr;
-		bSuccess = TRUE;
+		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, FALSE);
+	(void)(*pDC).SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(STORE_TEXTZONE_DX,
 	               STORE_BORDER_DY + STORE_TITLEZONE_DDY,
@@ -664,7 +664,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 	               STORE_DY - STORE_BORDER_DY - STORE_COSTZONE_DY + STORE_COSTZONE_DDY + STORE_COSTZONE_DDDY);
 	pItemCost = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -743,7 +743,7 @@ void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC = nullptr;
 	CItem   *pItem;
 	CItem   *pCrowns;
-	BOOL    bUpdateNeeded = FALSE;
+	bool    bUpdateNeeded = false;
 	CSound  *pSound;
 
 	if (!bActiveWindow)                             // punt if window not active
@@ -754,12 +754,12 @@ void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 		if (nFirstSlot < 0)
 			nFirstSlot = 0;
-		bUpdateNeeded = TRUE;
+		bUpdateNeeded = true;
 	} else                                          // if click is in lower curl, then
 		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
 		        (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pGeneralStore).ItemCount())) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
-			bUpdateNeeded = TRUE;
+			bUpdateNeeded = true;
 		} else {                                        // see if cursor is on an inventory item
 			i = SelectedItem(point);                    // ... and if so, then show then dispatch
 			if ((i >= 0) &&                             // ... on its action code
@@ -790,7 +790,7 @@ void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 						} else {
 							(*pGeneralStore).RemoveItem(pItem);
 							(*pInventory).AddItem(pItem);
-							bUpdateNeeded = TRUE;
+							bUpdateNeeded = true;
 						}
 
 
@@ -837,11 +837,11 @@ int CGeneralStore::SelectedItem(CPoint point) {
 }
 
 
-BOOL CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
+bool CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 

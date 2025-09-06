@@ -55,10 +55,10 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CMainMenu)
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	afx_msg void OnClickedRules() ;

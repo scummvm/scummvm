@@ -55,12 +55,12 @@ public:
 	int     m_iPlayer1;
 	int     m_iStartStones;
 	int     m_iTableStones;
-	BOOL    m_bInitData;
+	bool    m_bInitData;
 	int     m_iMaxDepth0;
 	int     m_iMaxDepth1;
-	BOOL    m_bDumpMoves;
-	BOOL    m_bDumpPopulate;
-	BOOL    m_bDumpTree;
+	bool    m_bDumpMoves;
+	bool    m_bDumpPopulate;
+	bool    m_bDumpTree;
 	int     m_iCapDepth0;
 	int     m_iCapDepth1;
 	//}}AFX_DATA
@@ -102,14 +102,14 @@ public:
 // Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual BOOL OnCommand(WPARAM, LPARAM) override;
+	virtual bool OnCommand(WPARAM, LPARAM) override;
 	void ClearDialogImage(void);
 
 
 	// Generated message map functions
 	//{{AFX_MSG(CMnkUsr)
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnPaint();
 //	afx_msg void OnKillfocusUShells();
 //	afx_msg void OnKillfocusUStrength();

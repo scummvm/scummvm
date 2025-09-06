@@ -29,7 +29,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Zoom {
 
-extern HWND RunZoomMap(HWND hParentWnd, BOOL bShowExit);
+extern HWND RunZoomMap(HWND hParentWnd, bool bShowExit);
 
 } // namespace Zoom
 } // namespace Metagame

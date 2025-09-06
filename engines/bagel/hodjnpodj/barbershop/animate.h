@@ -121,11 +121,11 @@ public:     // functions
 	CAnimate(CSound*);
 	~CAnimate();
 
-	BOOL    Clown(CDC*, CPoint);
-	BOOL    UFO(CDC*, CPoint);
-	BOOL    Brat(CPoint);
-	BOOL    Lollipop(CPoint);
-	BOOL    Haircut(CPoint);
+	bool    Clown(CDC*, CPoint);
+	bool    UFO(CDC*, CPoint);
+	bool    Brat(CPoint);
+	bool    Lollipop(CPoint);
+	bool    Haircut(CPoint);
 };
 
 } // namespace Barbershop

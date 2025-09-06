@@ -64,9 +64,9 @@ int     anBeaverShown[NUM_BEAVERS];
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 int     nCurrentTimer;
-BOOL    bEndGame;
-BOOL    bResetGame;
-BOOL    bStart;
+bool    bEndGame;
+bool    bResetGame;
+bool    bStart;
 
 /*****************************************************************
  *
@@ -106,7 +106,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	CPalette    *pOldPal = nullptr;
 	CString     WndClass;
 	CSize       mySize;
-	BOOL        bTestCreate, bTestDibDoc;           // bool for testing the creation of each button
+	bool        bTestCreate, bTestDibDoc;           // bool for testing the creation of each button
 	CText       atxtDisplayRow[NUMBEROFROWS];
 	CDibDoc     *pDibDoc = nullptr;
 	int         x, i;
@@ -149,7 +149,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	MainRect.right = MainRect.left + GAME_WIDTH;    // determine where to place the game window
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
-	pDC->SelectPalette(pOldPal, FALSE);             // replace old palette
+	pDC->SelectPalette(pOldPal, false);             // replace old palette
 	ReleaseDC(pDC);                                 // release our window context
 
 
@@ -211,9 +211,9 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	pTimerSprite->SharePalette(pGamePalette);
 	bTestCreate = pTimerSprite->LoadCels(pDC, TIMERSPRITE, TIMERSPRITECELS);
 	ASSERT(bTestCreate);                    // test for sprite's creation
-	pTimerSprite->SetMasked(TRUE);
-	pTimerSprite->SetMobile(TRUE);
-	pTimerSprite->SetOptimizeSpeed(TRUE);
+	pTimerSprite->SetMasked(true);
+	pTimerSprite->SetMobile(true);
+	pTimerSprite->SetOptimizeSpeed(true);
 
 	//
 	//  Set up the Mallet
@@ -224,9 +224,9 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	bTestCreate = pMalletSprite->LoadCels(pDC, MALLET, MALLETCELS);
 	ASSERT(bTestCreate);                    // test for sprite's creation
 
-	pMalletSprite->SetMasked(TRUE);
-	pMalletSprite->SetMobile(TRUE);
-	pMalletSprite->SetOptimizeSpeed(TRUE);
+	pMalletSprite->SetMasked(true);
+	pMalletSprite->SetMobile(true);
+	pMalletSprite->SetOptimizeSpeed(true);
 	pMalletSprite->SetHotspot(0, 12);            // Set HotSpot to center of Sprite
 	pMalletSprite->LinkSprite();
 	pMalletSprite->SetZOrder(SPRITE_TOPMOST);
@@ -245,9 +245,9 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 		apBeaverSprite[x]->SharePalette(pGamePalette);
 		bTestCreate = apBeaverSprite[x]->LoadSprite(pDC, BeaverFiles[x]);
 		ASSERT(bTestCreate);                    // test for sprite's creation
-		apBeaverSprite[x]->SetMasked(TRUE);
-		apBeaverSprite[x]->SetMobile(TRUE);
-		apBeaverSprite[x]->SetOptimizeSpeed(TRUE);
+		apBeaverSprite[x]->SetMasked(true);
+		apBeaverSprite[x]->SetMobile(true);
+		apBeaverSprite[x]->SetOptimizeSpeed(true);
 		apBeaverSprite[x]->LinkSprite();
 		apBeaverSprite[x]->SetZOrder(SPRITE_BACKGROUND);
 		anBeaverShown[x] = 0;
@@ -266,11 +266,11 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	//
 	ArtRect.SetRect(0, TOP_BORDER, GAME_WIDTH,  GAME_HEIGHT - TOP_BORDER);
 
-	bResetGame = FALSE;
-	bEndGame = FALSE;
+	bResetGame = false;
+	bEndGame = false;
 	m_lScore = 0L;
 
-	if (m_lpGameStruct->bPlayingMetagame == TRUE) {
+	if (m_lpGameStruct->bPlayingMetagame == true) {
 		switch (m_lpGameStruct->nSkillLevel) {
 
 		case SKILLLEVEL_LOW:
@@ -288,15 +288,15 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 		}
 
 		nCurrentCel = -1;
-		bStart = TRUE;
+		bStart = true;
 	} else {
 		m_nTimeForGame = 30;
 		m_nBeaverDuration = 3;
 		nCurrentCel = -1;
-		bStart = FALSE;
+		bStart = false;
 	}
 
-	if (LoadBeaverSounds() == FALSE) {
+	if (LoadBeaverSounds() == false) {
 		MessageBox("Could not load sound files.", "Error in Dam Furry Animals", MB_ICONINFORMATION | MB_OK);
 	}
 
@@ -387,9 +387,9 @@ void CMainDFAWindow::OnPaint() {
  ****************************************************************/
 void CMainDFAWindow::SplashScreen() {
 	CDC         *pDC = GetDC();                                                                          // get a device context for the window
-	CPalette    *pOldPalette = pDC->SelectPalette(pGamePalette, FALSE);      // load game palette;
+	CPalette    *pOldPalette = pDC->SelectPalette(pGamePalette, false);      // load game palette;
 	CDibDoc     myDoc;
-	BOOL        bTestDibDoc;
+	bool        bTestDibDoc;
 	CRect       rcDest;         // defines where the art gets painted
 	CRect       rcDIB;          // defines where the art comes from
 	HDIB        hDIB;           // a handle to the DIB itself
@@ -422,7 +422,7 @@ void CMainDFAWindow::SplashScreen() {
 		pTimerSprite->PaintSprite(pDC, WATCH_X, WATCH_Y);
 	}
 
-	pDC->SelectPalette(pOldPalette, FALSE);                      // replace old palette
+	pDC->SelectPalette(pOldPalette, false);                      // replace old palette
 	ReleaseDC(pDC);                                                 // release the window's context
 
 }
@@ -466,7 +466,7 @@ void CMainDFAWindow::ResetGame() {
 		}
 	}
 	nCurrentTimer = 0;
-	bEndGame = FALSE;
+	bEndGame = false;
 	m_lScore = 0L;
 	ReleaseDC(pDC);
 	nCurrentCel = -1;
@@ -591,7 +591,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 	return;
 }
 
-BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	int nMainOption = 0;                        // return from the Options dialog
 
 	if (HIWORD(lParam) == BN_CLICKED)   {       // only want to look at button clicks
@@ -607,9 +607,9 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			SetCursor(LoadCursor(nullptr, IDC_ARROW));
 			ReleaseDC(pDC);
 
-			pOptionButton->EnableWindow(FALSE);
-			bResetGame = FALSE;
-			if (m_lpGameStruct->bPlayingMetagame == TRUE) {
+			pOptionButton->EnableWindow(false);
+			bResetGame = false;
+			if (m_lpGameStruct->bPlayingMetagame == true) {
 				CMainMenu       dlgMainOpts((CWnd *)this, pGamePalette, (NO_NEWGAME | NO_OPTIONS),
 				                            lpfnOptionCallback, RULESFILE,
 				                            (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
@@ -632,17 +632,17 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					break;
 				case IDC_OPTIONS_NEWGAME:
 					// reset the game and start a new hand
-					bResetGame = TRUE;
+					bResetGame = true;
 					break;
 				}
 			}
-			pOptionButton->EnableWindow(TRUE);
+			pOptionButton->EnableWindow(true);
 			SetFocus();
 
-			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
+			if ((m_lpGameStruct->bMusicEnabled == false) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
 					(*pGameSound).stop();
-			} else if (m_lpGameStruct->bMusicEnabled == TRUE) {
+			} else if (m_lpGameStruct->bMusicEnabled == true) {
 				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
@@ -670,12 +670,12 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return TRUE;
+	return true;
 }
 
 void CMainDFAWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (bStart) {
-		bStart = FALSE;
+		bStart = false;
 	}
 	CWnd::OnRButtonDown(nFlags, point);
 }
@@ -698,7 +698,7 @@ void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		ResetGame();
 		return;
 	} else if (bStart) {
-		bStart = FALSE;
+		bStart = false;
 		return;
 	}
 
@@ -901,7 +901,7 @@ void CMainDFAWindow::OnTimer(uintptr nWhichTimer) {
 			CMsgDlg msgBox((CWnd*)this, pGamePalette);
 
 			KillTimer(GAMETIMER);
-			bEndGame = TRUE;
+			bEndGame = true;
 			for (x = 0; x < NUM_BEAVERS; x++) {
 				apBeaverSprite[x]->EraseSprite(pDC);
 				anBeaverShown[x] = 0;
@@ -980,17 +980,17 @@ void CMainDFAWindow::OnTimer(uintptr nWhichTimer) {
  *
  ****************************************************************/
 
-BOOL CMainDFAWindow::OnEraseBkgnd(CDC *pDC) {
+bool CMainDFAWindow::OnEraseBkgnd(CDC *pDC) {
 // eat this
-	return TRUE;
+	return true;
 }
 
-void CMainDFAWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) {
+void CMainDFAWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, bool bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 			break;
 		}
 	return;
@@ -1169,12 +1169,12 @@ void CMainDFAWindow::ReleaseResources(void) {
 void CMainDFAWindow::FlushInputEvents(void) {
 	MSG msg;
 
-	while (TRUE) {                                      // find and remove all keyboard events
+	while (true) {                                      // find and remove all keyboard events
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
-	while (TRUE) {                                      // find and remove all mouse events
+	while (true) {                                      // find and remove all mouse events
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}
@@ -1208,13 +1208,13 @@ void CMainDFAWindow::OnSoundNotify(CSound *pSound) {
 	//
 }
 
-BOOL CMainDFAWindow::LoadBeaverSounds(void) {
+bool CMainDFAWindow::LoadBeaverSounds(void) {
 	HANDLE      hResInfo;
 	HINSTANCE   hInst;
-	BOOL        bSuccess;
+	bool        bSuccess;
 	int         i;
 	// assume no error
-	bSuccess = TRUE;
+	bSuccess = true;
 
 	hInst = (HINSTANCE)GetWindowWord(m_hWnd, GWW_HINSTANCE);
 
@@ -1225,9 +1225,9 @@ BOOL CMainDFAWindow::LoadBeaverSounds(void) {
 			if ((m_hHitRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 				if ((m_pHitSound[i] = (char *)LockResource((HGLOBAL)m_hHitRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
-				} else bSuccess = FALSE;
-			} else bSuccess = FALSE;
-		} else bSuccess = FALSE;
+				} else bSuccess = false;
+			} else bSuccess = false;
+		} else bSuccess = false;
 	}
 
 	for (i = 0; i < NUM_MISS_SOUNDS; i++) {
@@ -1237,9 +1237,9 @@ BOOL CMainDFAWindow::LoadBeaverSounds(void) {
 			if ((m_hMissRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 				if ((m_pMissSound[i] = (char *)LockResource((HGLOBAL)m_hMissRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
-				} else bSuccess = FALSE;
-			} else bSuccess = FALSE;
-		} else bSuccess = FALSE;
+				} else bSuccess = false;
+			} else bSuccess = false;
+		} else bSuccess = false;
 	}
 
 	return bSuccess;

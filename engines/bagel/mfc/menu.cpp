@@ -28,22 +28,22 @@ namespace MFC {
 CMenu::CMenu() {
 }
 
-BOOL CMenu::CreateMenu() {
+bool CMenu::CreateMenu() {
 	error("TODO: CMenu::CreateMenu");
 }
-BOOL CMenu::CreatePopupMenu() {
+bool CMenu::CreatePopupMenu() {
 	error("TODO: CMenu::CreatePopupMenu");
 }
-BOOL CMenu::LoadMenu(const char *lpszResourceName) {
+bool CMenu::LoadMenu(const char *lpszResourceName) {
 	error("TODO: CMenu::LoadMenu");
 }
-BOOL CMenu::LoadMenu(unsigned int nIDResource) {
+bool CMenu::LoadMenu(unsigned int nIDResource) {
 	error("TODO: CMenu::LoadMenu");
 }
-BOOL CMenu::LoadMenuIndirect(const void *lpMenuTemplate) {
+bool CMenu::LoadMenuIndirect(const void *lpMenuTemplate) {
 	error("TODO: CMenu::LoadMenuIndirect");
 }
-BOOL CMenu::DestroyMenu() {
+bool CMenu::DestroyMenu() {
 	error("TODO: CMenu::DestroyMenu");
 }
 

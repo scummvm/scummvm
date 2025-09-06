@@ -29,8 +29,8 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-#define BUILD_FOR_DLL       FALSE
-#define COLOR_BUTTONS       TRUE
+#define BUILD_FOR_DLL       false
+#define COLOR_BUTTONS       true
 
 #define SCROLL_PIECES       6                       // number of mid-scroll segments
 #define SCROLL_SPEC     ".\\art\\lscroll.bmp"       // path for scroll DIB on disk
@@ -115,16 +115,16 @@ static  CFile       *pHelpFile = nullptr;              // the rules file
 static  uint32       nHelpFileSize = 0;              // size of rules file
 static  int         nHelpPage = 0;                  // current page of rules text
 static  uint32       dwHelpPagePosition[100];        // position of each page (# chars from file start)
-static  BOOL        dwHelpPageEOL[100];             // whether page starts with enforced line break
-static  BOOL        bHelpEOF = FALSE;               // whether end-of-file has been reached
+static  bool        dwHelpPageEOL[100];             // whether page starts with enforced line break
+static  bool        bHelpEOF = false;               // whether end-of-file has been reached
 static  int         tabstop = 20 + TEXT_LEFT_MARGIN;// pixels per tab stop
 
 static  const char  *pSoundPath = nullptr;             // path spec for rules narration
 static  CSound      *pNarrative = nullptr;             // sound object
 
-static  BOOL        first_time = TRUE;
-static  BOOL        bActiveWindow = FALSE;          // whether our window is active
-static  BOOL        bBruteForce = FALSE;            // whether we can be clever
+static  bool        first_time = true;
+static  bool        bActiveWindow = false;          // whether our window is active
+static  bool        bBruteForce = false;            // whether we can be clever
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ BEGIN_MESSAGE_MAP(CRules, CDialog)
 END_MESSAGE_MAP()
 
 
-BOOL CRules::SetupKeyboardHook(void) {
+bool CRules::SetupKeyboardHook(void) {
 	HINSTANCE   hInst;
 
 	pRulesDialog = this;                            // retain pointer to our dialog box
@@ -157,9 +157,9 @@ BOOL CRules::SetupKeyboardHook(void) {
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, PrefHookProc, hInst, GetCurrentTask());
 
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -173,7 +173,7 @@ void CRules::RemoveKeyboardHook(void) {
 
 	pRulesDialog = nullptr;
 	hKbdHook = nullptr;
-	m_bKeyboardHook = FALSE;
+	m_bKeyboardHook = false;
 }
 
 LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
@@ -181,7 +181,7 @@ LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK) pKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                        // ignore ALT and key release
-		return FALSE;
+		return false;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -190,25 +190,25 @@ LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		case VK_PRIOR:                              // go to previous page of text
 			if (nHelpPage > 0)
 				(*pRulesDialog).UpdateScroll(nHelpPage - 1);
-			return TRUE;
+			return true;
 		case VK_DOWN:                               // go to next page of text
 		case VK_NUMPAD2:
 		case VK_NEXT:
 			if (!bHelpEOF)
 				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
-			return TRUE;
+			return true;
 		case VK_HOME:                               // go to first page of text
 			if (nHelpPage > 0)
 				(*pRulesDialog).UpdateScroll(0);
-			return TRUE;
+			return true;
 		case VK_END:                                // go to last page of text
 			while (!bHelpEOF) {
 				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
 			}
-			return TRUE;
+			return true;
 		}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -249,7 +249,7 @@ void CRules::OnCancel(void) {
 
 
 void CRules::OnDestroy() {
-	BOOL    bUpdateNeeded;
+	bool    bUpdateNeeded;
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
@@ -270,7 +270,7 @@ void CRules::OnDestroy() {
 	delete pHelpFile;
 
 	if (pBackgroundBitmap != nullptr) {
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, FALSE);
+		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			(*pParentWnd).ValidateRect(nullptr);
 	}
@@ -290,11 +290,11 @@ void CRules::OnDestroy() {
 }
 
 
-BOOL CRules::OnInitDialog() {
+bool CRules::OnInitDialog() {
 	CWnd    *pButton;                                   // pointer to the OKAY button
 	CRect   myRect;                                     // rectangle that holds the button location
 	int     x, y, dx, dy;                               // used for calculating positioning info
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	CDialog::OnInitDialog();                        // do basic dialog initialization
 
@@ -331,25 +331,25 @@ BOOL CRules::OnInitDialog() {
 
 	m_bKeyboardHook = SetupKeyboardHook();          // establish keyboard hook
 
-	first_time = TRUE;
+	first_time = true;
 
-	return TRUE;                                  // return TRUE  unless focused on a control
+	return true;                                  // return true  unless focused on a control
 }
 
 
-void CRules::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
-	BOOL    bUpdateNeeded;
+void CRules::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
+	bool    bUpdateNeeded;
 
 	switch (nState) {
 	case WA_INACTIVE:
-		bActiveWindow = FALSE;
+		bActiveWindow = false;
 		break;
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bActiveWindow = TRUE;
-		bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
+		bActiveWindow = true;
+		bUpdateNeeded = GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			InvalidateRect(nullptr, FALSE);
+			InvalidateRect(nullptr, false);
 	}
 }
 
@@ -362,12 +362,12 @@ void CRules::OnPaint() {
 	DoWaitCursor();                                 // put up the hourglass cursor
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
-		pPalOld = dc.SelectPalette(pScrollPalette, FALSE);
+		pPalOld = dc.SelectPalette(pScrollPalette, false);
 		(void) dc.RealizePalette();                 // .. and make the system use it
 	}
 
 	if (first_time) {                               // unfurl scroll visually
-		first_time = FALSE;                         // ... but only if this is the first time
+		first_time = false;                         // ... but only if this is the first time
 		UnfurlScroll(&dc);                          // ... we are updating the screen
 		ReleaseCompatibleContext(pScrollTopDC, pScrollTopBitmap, pScrollTopBitmapOld, pScrollTopPalOld);
 		ReleaseCompatibleContext(pScrollBotDC, pScrollBotBitmap, pScrollBotBitmapOld, pScrollBotPalOld);
@@ -395,14 +395,14 @@ void CRules::OnPaint() {
 		    SRCCOPY);
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void) dc.SelectPalette(pPalOld, FALSE);
+		(void) dc.SelectPalette(pPalOld, false);
 
 	DoArrowCursor();                                // return to an arrow cursor
 }
 
 
-BOOL CRules::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;                                      // do not automatically erase background to white
+bool CRules::OnEraseBkgnd(CDC *pDC) {
+	return true;                                      // do not automatically erase background to white
 }
 
 
@@ -425,7 +425,7 @@ void CRules::RefreshBackground(void) {
 	pDC = GetDC();                                  // get a context for our window
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
-		pPalOld = (*pDC).SelectPalette(pScrollPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
 		(void)(*pDC).RealizePalette();              // .. and make the system use it
 	}
 
@@ -440,7 +440,7 @@ void CRules::RefreshBackground(void) {
 	    SRCCOPY);
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);                                 // release the context
 }
@@ -799,14 +799,14 @@ void CRules::UpdateScroll(int nPage) {
 
 	if (bBruteForce) {
 		nHelpPage = nPage;
-		InvalidateRect(nullptr, FALSE);
+		InvalidateRect(nullptr, false);
 		return;
 	}
 
 	pDC = GetDC();
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
-		pPalOld = (*pDC).SelectPalette(pScrollPalette, FALSE);
+		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
 		(void)(*pDC).RealizePalette();              // .. and make the system use it
 	}
 
@@ -849,7 +849,7 @@ void CRules::UpdateScroll(int nPage) {
 	UpdateMore(pDC);                                // update the "more" indicator
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -862,17 +862,17 @@ void CRules::WritePage(CDC *pDC, int nPage) {
 	char        chInBuf[TEXT_BUFFER_SIZE];
 	CFont       *pFontOld = nullptr;
 	CSize       textInfo;
-	BOOL        bEOL, bEOF;
+	bool        bEOL, bEOF;
 	TEXTMETRIC  fontMetrics;
 
 	nHelpPage = nPage;
-	bEOF = bHelpEOF = FALSE;
+	bEOF = bHelpEOF = false;
 
 	(*pHelpFile).SeekToBegin();
 
 	if ((nHelpPage == 0) && (nPage == 0)) {
 		dwHelpPagePosition[nHelpPage] = (*pHelpFile).GetPosition();
-		bEOL = dwHelpPageEOL[nHelpPage] = TRUE;
+		bEOL = dwHelpPageEOL[nHelpPage] = true;
 	} else {
 		(*pHelpFile).Seek(dwHelpPagePosition[nPage], CFile::begin);
 		bEOL = dwHelpPageEOL[nHelpPage];
@@ -891,7 +891,7 @@ void CRules::WritePage(CDC *pDC, int nPage) {
 	x = TEXT_LEFT_MARGIN;
 	y = ScrollTopRect.bottom + TEXT_TOP_MARGIN;
 
-	while (TRUE) {
+	while (true) {
 try_again:
 		if (i >= (int) nCount) {
 			if (bEOF)
@@ -899,7 +899,7 @@ try_again:
 			dwHelpPagePosition[nHelpPage + 1] += i + nCropped;
 			nCount = (*pHelpFile).Read(&chInBuf, TEXT_BUFFER_SIZE);
 			if (nCount < TEXT_BUFFER_SIZE)
-				bEOF = TRUE;
+				bEOF = true;
 			i = 0;
 			n = 1;
 			nCropped = 0;
@@ -919,9 +919,9 @@ try_again:
 			goto try_again;
 		}
 
-		bEOL = FALSE;
+		bEOL = false;
 
-		while (TRUE) {
+		while (true) {
 			if (i + n > (int) nCount) {
 				n = nCount - i;
 				if (bEOF)
@@ -931,7 +931,7 @@ try_again:
 				nCount = (*pHelpFile).Read(&chInBuf[n], TEXT_BUFFER_SIZE - n);
 				nCount += n;
 				if (nCount < TEXT_BUFFER_SIZE)
-					bEOF = TRUE;
+					bEOF = true;
 				i = 0;
 				n = 1;
 				nCropped = 0;
@@ -956,7 +956,7 @@ crop_byte:
 			}
 
 			if (chInBuf[i + n - 1] == TEXT_NEWLINE) {
-				bEOL = TRUE;
+				bEOL = true;
 				n -= 1;
 				break;
 			}
@@ -992,13 +992,13 @@ crop_byte:
 	dwHelpPagePosition[nPage + 1] += i + nCropped;
 	dwHelpPageEOL[nPage + 1] = bEOL;
 
-	while (TRUE) {
+	while (true) {
 		if (i >= (int) nCount) {
 			if (bEOF)
 				break;
 			nCount = (*pHelpFile).Read(&chInBuf, TEXT_BUFFER_SIZE);
 			if (nCount < TEXT_BUFFER_SIZE)
-				bEOF = TRUE;
+				bEOF = true;
 			i = 0;
 			n = 1;
 		}
@@ -1014,7 +1014,7 @@ crop_byte:
 	}
 
 	if (bEOF && (i >= (int) nCount))
-		bHelpEOF = TRUE;
+		bHelpEOF = true;
 
 	(void)(*pDC).SelectObject(pFontOld);
 
@@ -1075,7 +1075,7 @@ void CRules::UpdateMore(CDC *pDC) {
 }
 
 
-void CRules::OnShowWindow(BOOL bShow, unsigned int nStatus) {
+void CRules::OnShowWindow(bool bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -1092,7 +1092,7 @@ void CRules::OnSize(unsigned int nType, int cx, int cy) {
 
 
 int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-	BOOL    bSuccess;
+	bool    bSuccess;
 	int     dxDIB, dyDIB;
 
 	pHelpFile = new CFile();
@@ -1117,9 +1117,9 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		if ((pScrollTopDIB == nullptr) ||
 		        (pScrollMidDIB == nullptr) ||
 		        (pScrollBotDIB == nullptr))
-			bBruteForce = TRUE;
+			bBruteForce = true;
 		else
-			bBruteForce = FALSE;
+			bBruteForce = false;
 		if (bBruteForce) {
 			if (pScrollTopDIB != nullptr)
 				delete pScrollTopDIB;
@@ -1132,7 +1132,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 			pScrollBotDIB = nullptr;
 		}
 	} else
-		bBruteForce = TRUE;
+		bBruteForce = true;
 
 	if (bBruteForce) {
 		dxDIB = 501;
@@ -1156,8 +1156,8 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 
-BOOL CRules::CreateWorkAreas(CDC *pDC) {
-	BOOL    bSuccess;
+bool CRules::CreateWorkAreas(CDC *pDC) {
+	bool    bSuccess;
 	CRect   WorkRect;
 
 	pScrollTopBitmap = CreateScrollBitmap(pDC, pScrollTopDIB, pScrollPalette);
@@ -1169,7 +1169,7 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopBitmap == nullptr) ||
 	        (pScrollMidBitmap == nullptr) ||
 	        (pScrollBotBitmap == nullptr))
-		return FALSE;
+		return false;
 
 	pScrollTopDC = SetupCompatibleContext(pDC, pScrollTopBitmap, pScrollTopBitmapOld, pScrollPalette, pScrollTopPalOld);
 	pScrollMidDC = SetupCompatibleContext(pDC, pScrollMidBitmap, pScrollMidBitmapOld, pScrollPalette, pScrollMidPalOld);
@@ -1177,27 +1177,27 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopDC == nullptr) ||
 	        (pScrollMidDC == nullptr) ||
 	        (pScrollBotDC == nullptr))
-		return FALSE;
+		return false;
 
 	pScrollBitmap = new CBitmap();
 	if (pScrollBitmap == nullptr)
-		return FALSE;
+		return false;
 	bSuccess = (*pScrollBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
-		return FALSE;
+		return false;
 	pScrollDC = SetupCompatibleContext(pDC, pScrollBitmap, pScrollBitmapOld, pScrollPalette, pScrollPalOld);
 	if (pScrollDC == nullptr)
-		return FALSE;
+		return false;
 
 	pBackgroundBitmap = new CBitmap();
 	if (pBackgroundBitmap == nullptr)
-		return FALSE;
+		return false;
 	bSuccess = (*pBackgroundBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
-		return FALSE;
+		return false;
 	pBackgroundDC = SetupCompatibleContext(pDC, pBackgroundBitmap, pBackgroundBitmapOld, pScrollPalette, pBackgroundPalOld);
 	if (pBackgroundDC == nullptr)
-		return FALSE;
+		return false;
 
 	WorkRect.UnionRect(&ScrollTopRect, &ScrollMidRect);
 	WorkRect.UnionRect(&WorkRect, &ScrollBotRect);
@@ -1205,13 +1205,13 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 
 	pWorkBitmap = new CBitmap();
 	if (pWorkBitmap == nullptr)
-		return FALSE;
+		return false;
 	bSuccess = (*pWorkBitmap).CreateCompatibleBitmap(pDC, WorkRect.right, WorkRect.bottom);
 	if (!bSuccess)
-		return FALSE;
+		return false;
 	pWorkDC = SetupCompatibleContext(pDC, pWorkBitmap, pWorkBitmapOld, pScrollPalette, pWorkPalOld);
 	if (pWorkDC == nullptr)
-		return FALSE;
+		return false;
 
 	pScrollTopMask = new CBitmap();
 	pScrollMidMask = new CBitmap();
@@ -1219,16 +1219,16 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopMask == nullptr) ||
 	        (pScrollMidMask == nullptr) ||
 	        (pScrollBotMask == nullptr))
-		return FALSE;
+		return false;
 	pScrollTopMaskDC = SetupMask(pDC, pScrollTopDC, pScrollTopMask, pScrollTopMaskOld, &ScrollTopRect);
 	pScrollMidMaskDC = SetupMask(pDC, pScrollMidDC, pScrollMidMask, pScrollMidMaskOld, &ScrollMidRect);
 	pScrollBotMaskDC = SetupMask(pDC, pScrollBotDC, pScrollBotMask, pScrollBotMaskOld, &ScrollBotRect);
 	if ((pScrollTopMaskDC == nullptr) ||
 	        (pScrollMidMaskDC == nullptr) ||
 	        (pScrollBotMaskDC == nullptr))
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -1268,7 +1268,7 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap,
 	        (pNewDC != nullptr) &&
 	        (*pNewDC).CreateCompatibleDC(pDC)) {
 		if (pPalette)
-			pPalOld = (*pNewDC).SelectPalette(pPalette, FALSE);
+			pPalOld = (*pNewDC).SelectPalette(pPalette, false);
 		else
 			pPalOld = nullptr;
 		(void)(*pNewDC).RealizePalette();
@@ -1288,7 +1288,7 @@ void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pB
 	}
 
 	if (pPalOld != nullptr) {
-		(void)(*pDC).SelectPalette(pPalOld, FALSE);
+		(void)(*pDC).SelectPalette(pPalOld, false);
 		pPalOld = nullptr;
 	}
 
@@ -1307,7 +1307,7 @@ void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pB
 
 
 CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
-	BOOL        bSuccess;
+	bool        bSuccess;
 	HDIB        hDIB;
 	int         dxDIB, dyDIB;
 	CDibDoc     *pDibDoc = nullptr;
@@ -1333,8 +1333,8 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 }
 
 
-BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
-	BOOL        bSuccess;
+bool CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
+	bool        bSuccess;
 	HDIB        hDIB;
 	int         dxDIB, dyDIB;
 	CRect       myRect;
@@ -1413,11 +1413,11 @@ void CRules::OnMouseMove(unsigned int nFlags, CPoint point) {
 }
 
 
-BOOL CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
+bool CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 

@@ -78,13 +78,13 @@ public:
 	static  void DoArrowCursor(void);
 
 private:
-	BOOL SetupKeyboardHook(void);
+	bool SetupKeyboardHook(void);
 	void RemoveKeyboardHook(void);
 
-	BOOL CreateWorkAreas(CDC *pDC);
+	bool CreateWorkAreas(CDC *pDC);
 
 private:
-	BOOL m_bKeyboardHook;		// whether keyboard hook present
+	bool m_bKeyboardHook;		// whether keyboard hook present
 	CRect OkayRect;				// rectangle bounding the OKAY button
 	CRect BackpackRect;			// x/y (left/right) and dx/dy (right/bottom) for the backpack window
 	CRect ScrollTopRect,		// area spanned by upper scroll curl
@@ -105,18 +105,18 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CBackpack)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual BOOL OnInitDialog(void) override;
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	virtual bool OnInitDialog(void) override;
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK(void) override;
 	virtual void OnCancel(void) override;
 	afx_msg void OnDestroy(void);
 	afx_msg void OnPaint(void);
-	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
+	afx_msg bool OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
 	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
-	afx_msg void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
+	afx_msg void OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -42,13 +42,13 @@ public:
 	char m_cStartData ;
 	char m_szIniFilename[100] ; // .INI file name
 	char m_szIniSectionname[15] ;   // .INI file section name
-	BOOL m_bDebug ;     // flag -- debugging mode
-	BOOL m_bDebugMessages ; // debugging messages
-	BOOL m_bTimeMessage ;   // time stamp message
-	BOOL m_bTrack, m_bTrace ;   // debugging -- track/trace flags
-	BOOL m_bTraceError ;    // debugging -- trace error exits
+	bool m_bDebug ;     // flag -- debugging mode
+	bool m_bDebugMessages ; // debugging messages
+	bool m_bTimeMessage ;   // time stamp message
+	bool m_bTrack, m_bTrace ;   // debugging -- track/trace flags
+	bool m_bTraceError ;    // debugging -- trace error exits
 	int  m_iConstructorMsgLevel ; // level of constructor messages
-	BOOL m_bVerifyDc ;      // verify device context is ok
+	bool m_bVerifyDc ;      // verify device context is ok
 	int  m_iDebugValues[100] ;  // misc debugging values
 	int  m_iTraceObjectCount ;  // max # objects to trace
 	void **m_lpTraceObjects ;  // trace object array
@@ -63,24 +63,24 @@ public:
 
 	CBdbgMgr(void) ;
 	~CBdbgMgr(void) ;
-	BOOL DebugInit(const char *lpszIniFilename,
+	bool DebugInit(const char *lpszIniFilename,
 	               const char *lpszIniSectionname) ;
 	int GetDebugInt(const char *lpszOption,
 	                int iDefault PDFT(0)) ;
-	BOOL GetDebugString(const char *lpszOption,
+	bool GetDebugString(const char *lpszOption,
 	                    char *lpszTarget, int iTargetSize,
 	                    const char *lpszDefault PDFT(nullptr)) ;
-	BOOL TraceConstructor(const char *lpszName, void *lpLoc) ;
-	BOOL TraceDestructor(const char *lpszName, void *lpLoc) ;
-	BOOL DebugMessageBox(const char *lpszPrompt,
+	bool TraceConstructor(const char *lpszName, void *lpLoc) ;
+	bool TraceDestructor(const char *lpszName, void *lpLoc) ;
+	bool DebugMessageBox(const char *lpszPrompt,
 	                     unsigned int nType, unsigned int nIDPrompt) ;
-	BOOL AddTraceObject(const char *lpszName, void *lpPtr) ;
-	BOOL TestTraceObject(const char *lpszName, void *lpPtr,
-	                     BOOL bMissing PDFT(FALSE)) ;
-	BOOL RemoveTraceObject(const char *lpszName, void *lpPtr) ;
-	BOOL ReportTraceObjects(void) ;
-	STATIC BOOL OutputWithTime(const char *lpszPattern) ;
-	STATIC BOOL OutputWithWordWrap(const char *lpStr1,
+	bool AddTraceObject(const char *lpszName, void *lpPtr) ;
+	bool TestTraceObject(const char *lpszName, void *lpPtr,
+	                     bool bMissing PDFT(false)) ;
+	bool RemoveTraceObject(const char *lpszName, void *lpPtr) ;
+	bool ReportTraceObjects(void) ;
+	STATIC bool OutputWithTime(const char *lpszPattern) ;
+	STATIC bool OutputWithWordWrap(const char *lpStr1,
 	                               const char *lpStr2, int iIndent) ;
 } ;
 

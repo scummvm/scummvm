@@ -51,7 +51,7 @@ CDialog::CDialog(unsigned int nIDTemplate, CWnd *pParentWnd) {
 	m_nIDHelp = nIDTemplate;
 }
 
-BOOL CDialog::Create(const char *lpszTemplateName,
+bool CDialog::Create(const char *lpszTemplateName,
         CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;  // used for help
 	SetParent(pParentWnd);
@@ -62,13 +62,13 @@ BOOL CDialog::Create(const char *lpszTemplateName,
 	HINSTANCE hInst = AfxFindResourceHandle(lpszTemplateName, RT_DIALOG);
 	HRSRC hResource = FindResource(hInst, lpszTemplateName, RT_DIALOG);
 	HGLOBAL hTemplate = LoadResource(hInst, hResource);
-	BOOL bResult = CreateIndirect(hTemplate, m_pParentWnd, hInst);
+	bool bResult = CreateIndirect(hTemplate, m_pParentWnd, hInst);
 	FreeResource(hTemplate);
 
 	return bResult;
 }
 
-BOOL CDialog::Create(unsigned int nIDTemplate, CWnd *pParentWnd) {
+bool CDialog::Create(unsigned int nIDTemplate, CWnd *pParentWnd) {
 	return Create(MAKEINTRESOURCE(nIDTemplate), pParentWnd);
 }
 
@@ -129,7 +129,7 @@ int CDialog::DoModal() {
 	return _modalResult;
 }
 
-BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+bool CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	CWnd *pParentWnd, HINSTANCE hInst) {
 	assert(lpDialogTemplate != nullptr);
 
@@ -142,7 +142,7 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 	// If no font specified, set the system font.
 	CString strFace;
 	uint16 wSize = 0;
-	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
+	bool bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
 		wSize);
 	if (bSetSysFont) {
 		CDialogTemplate dlgTemp(lpDialogTemplate);
@@ -165,7 +165,7 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		GlobalFree(hTemplate);
 	}
 
-	return TRUE;
+	return true;
 }
 
 void CDialog::SetParent(CWnd *wnd) {
@@ -218,7 +218,7 @@ LRESULT CDialog::HandleSetFont(WPARAM wParam, LPARAM) {
 	return 0;
 }
 
-BOOL CDialog::PreTranslateMessage(MSG *pMsg) {
+bool CDialog::PreTranslateMessage(MSG *pMsg) {
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) {
 		CWnd *pFocus = GetFocus();
 
@@ -236,7 +236,7 @@ BOOL CDialog::PreTranslateMessage(MSG *pMsg) {
 					OnOK();
 				}
 
-				return TRUE;
+				return true;
 			}
 		}
 	} else if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) {
@@ -294,7 +294,7 @@ void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, double &value) {
 }
 
 void CDialog::DDX_Check(CDataExchange *pDX,
-                        int nIDC, int &value) {
+                        int nIDC, bool value) {
 	error("CDialog::DDX_Check");
 }
 
@@ -307,17 +307,17 @@ void CDialog::EndDialog(int nResult) {
 	_modalResult = nResult;
 }
 
-BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {
+bool CDialog::UpdateData(bool bSaveAndValidate) {
 	if (bSaveAndValidate) {
-		CDataExchange exchange = { TRUE };
+		CDataExchange exchange = { true };
 		DoDataExchange(&exchange);
 	}
 
-	return TRUE;
+	return true;
 }
 
 void CDialog::OnOK() {
-	if (!UpdateData(TRUE))
+	if (!UpdateData(true))
 		return;
 
 	EndDialog(IDOK);
@@ -327,12 +327,12 @@ void CDialog::OnCancel() {
 	EndDialog(IDCANCEL);
 }
 
-BOOL CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
+bool CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		CWnd *pParentWnd, void *lpDialogInit, HINSTANCE hInst) {
 	error("TODO: CDialog::CreateIndirect");
 }
 
-BOOL CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
+bool CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
 		CWnd *pParentWnd, HINSTANCE hInst) {
 	error("TODO: CDialog::CreateIndirect");
 }
@@ -360,12 +360,12 @@ void CDialog::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int n
 	CWnd::OnSysChar(nChar, nRepCnt, nFlags);
 }
 
-void CDialog::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CDialog::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// Invalidate the dialog and its children
-		Invalidate(TRUE);
+		Invalidate(true);
 		for (auto child : _children)
-			child._value->Invalidate(TRUE);
+			child._value->Invalidate(true);
 	}
 
 	CWnd::OnActivate(nState, pWndOther, bMinimized);

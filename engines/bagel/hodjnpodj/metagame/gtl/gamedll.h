@@ -46,10 +46,10 @@ struct GAMESTRUCT {
 	long            lCrowns;
 	long            lScore;
 	int             nSkillLevel;
-	BOOL            bSoundEffectsEnabled;
-	BOOL            bMusicEnabled;
-	BOOL            bPlayingMetagame;
-	BOOL            bPlayingHodj;
+	bool            bSoundEffectsEnabled;
+	bool            bMusicEnabled;
+	bool            bPlayingMetagame;
+	bool            bPlayingHodj;
 	/*  For use later in Beta Test
 	        int             nInstallationCode;
 	        char            chHomePath[PATHSPECSIZE];

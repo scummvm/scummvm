@@ -51,7 +51,7 @@ static CRadioButton    *pPoPorButton = nullptr;
 static CRadioButton    *pKuwaitiButton = nullptr;
 static CRadioButton    *pMartianButton = nullptr;
 
-CSetPayoffsDlg::CSetPayoffsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID, int nOdds, BOOL bJustDisplay)
+CSetPayoffsDlg::CSetPayoffsDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID, int nOdds, bool bJustDisplay)
 	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\MSCROLL.BMP"),
 		crectRedraw(10, 140, 44, 290),
 		rectPair(10, 131, 80, 146),
@@ -86,8 +86,8 @@ void CSetPayoffsDlg::DoDataExchange(CDataExchange *pDX) {
 	CDialog::DoDataExchange(pDX);
 }
 
-BOOL CSetPayoffsDlg::OnInitDialog(void) {
-	BOOL    bSuccess = FALSE;
+bool CSetPayoffsDlg::OnInitDialog(void) {
+	bool    bSuccess = false;
 
 	CBmpDialog::OnInitDialog();
 
@@ -141,29 +141,29 @@ BOOL CSetPayoffsDlg::OnInitDialog(void) {
 
 	switch (m_nSetOfOdds) {
 	case IDC_KLINGON:
-		OnKlingon(FALSE);
+		OnKlingon(false);
 		break;
 	case IDC_VEGAS:
-		OnVegas(FALSE);
+		OnVegas(false);
 		break;
 	case IDC_MARTIAN:
-		OnMartian(FALSE);
+		OnMartian(false);
 		break;
 	case IDC_KUWAITI:
-		OnKuwaiti(FALSE);
+		OnKuwaiti(false);
 		break;
 	case IDC_POPO:
 	default:
-		OnPopo(FALSE);
+		OnPopo(false);
 		break;
 	}
 
 	if (m_bJustDisplay) {
-		pKlingonButton->EnableWindow(FALSE);
-		pVegasButton->EnableWindow(FALSE);
-		pPoPorButton->EnableWindow(FALSE);
-		pKuwaitiButton->EnableWindow(FALSE);
-		pMartianButton->EnableWindow(FALSE);
+		pKlingonButton->EnableWindow(false);
+		pVegasButton->EnableWindow(false);
+		pPoPorButton->EnableWindow(false);
+		pKuwaitiButton->EnableWindow(false);
+		pMartianButton->EnableWindow(false);
 		pSetPayButton->ShowWindow(SW_HIDE);
 		pCancelButton->ShowWindow(SW_HIDE);
 		pOKButton->SetFocus();
@@ -173,7 +173,7 @@ BOOL CSetPayoffsDlg::OnInitDialog(void) {
 	}
 
 //	SetDefID( ID_POPO );
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -205,7 +205,7 @@ BOOL CSetPayoffsDlg::OnInitDialog(void) {
  *      n/a
  *
  ****************************************************************/
-BOOL CSetPayoffsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CSetPayoffsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
@@ -241,7 +241,7 @@ BOOL CSetPayoffsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -344,7 +344,7 @@ void CSetPayoffsDlg::OnCancel() {
 	return;
 }
 
-void CSetPayoffsDlg::OnKlingon(BOOL bDisplay) {
+void CSetPayoffsDlg::OnKlingon(bool bDisplay) {
 	CDC             *pDC;
 	pDC = GetDC();
 
@@ -377,7 +377,7 @@ void CSetPayoffsDlg::OnKlingon(BOOL bDisplay) {
 	return;
 }
 
-void CSetPayoffsDlg::OnKuwaiti(BOOL bDisplay) {
+void CSetPayoffsDlg::OnKuwaiti(bool bDisplay) {
 	CDC             *pDC;
 	pDC = GetDC();
 
@@ -410,7 +410,7 @@ void CSetPayoffsDlg::OnKuwaiti(BOOL bDisplay) {
 	return;
 }
 
-void CSetPayoffsDlg::OnMartian(BOOL bDisplay) {
+void CSetPayoffsDlg::OnMartian(bool bDisplay) {
 	CDC             *pDC;
 	pDC = GetDC();
 
@@ -443,7 +443,7 @@ void CSetPayoffsDlg::OnMartian(BOOL bDisplay) {
 	return;
 }
 
-void CSetPayoffsDlg::OnPopo(BOOL bDisplay) {
+void CSetPayoffsDlg::OnPopo(bool bDisplay) {
 	CDC             *pDC;
 	pDC = GetDC();
 
@@ -476,7 +476,7 @@ void CSetPayoffsDlg::OnPopo(BOOL bDisplay) {
 	return;
 }
 
-void CSetPayoffsDlg::OnVegas(BOOL bDisplay) {
+void CSetPayoffsDlg::OnVegas(bool bDisplay) {
 	CDC             *pDC;
 	pDC = GetDC();
 
@@ -558,8 +558,8 @@ void CSetPayoffsDlg::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
-BOOL CSetPayoffsDlg::OnEraseBkgnd(CDC *pDC) {
-	return TRUE;
+bool CSetPayoffsDlg::OnEraseBkgnd(CDC *pDC) {
+	return true;
 }
 
 void CSetPayoffsDlg::ClearDialogImage(void) {

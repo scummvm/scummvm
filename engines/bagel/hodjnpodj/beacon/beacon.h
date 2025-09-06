@@ -134,18 +134,18 @@ public:
 	void CheckUnderBeam();
 	void SetBeamEntries(CDC *pDC);
 	static void DrawPart(CDC *pDC, CPoint Src, CPoint Dst, int nWidth, int nHeight);
-	static BOOL CompareColors(CDC *pDC, CPoint point);
-	static BOOL UnderLighthouse(CPoint point);
-	static BOOL InPictureSquare(CPoint point);
+	static bool CompareColors(CDC *pDC, CPoint point);
+	static bool UnderLighthouse(CPoint point);
+	static bool InPictureSquare(CPoint point);
 	static CPoint PointToGrid(CPoint point);
-	BOOL LoadArtWork(CDC *pDC);
+	bool LoadArtWork(CDC *pDC);
 
 //added data members:
 private:
 	void OnSoundNotify(CSound *pSound);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();

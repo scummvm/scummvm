@@ -34,11 +34,11 @@ CSingleDocTemplate::~CSingleDocTemplate() {
 }
 
 CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
-		BOOL bMakeVisible) {
+		bool bMakeVisible) {
 	CDocument *pDocument = nullptr;
 	CFrameWnd *pFrame = nullptr;
-	BOOL bCreated = FALSE;      // => doc and frame created
-	BOOL bWasModified = FALSE;
+	bool bCreated = false;      // => doc and frame created
+	bool bWasModified = false;
 
 	if (m_pOnlyDoc != nullptr) {
 		// already have a document - reinit it
@@ -54,7 +54,7 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
 		// create a new document
 		pDocument = CreateNewDocument();
 		assert(pFrame == nullptr);     // will be created below
-		bCreated = TRUE;
+		bCreated = true;
 	}
 
 	assert(pDocument == m_pOnlyDoc);
@@ -63,8 +63,8 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
 		assert(bCreated);
 
 		// Create frame - set as main document frame
-		BOOL bAutoDelete = pDocument->m_bAutoDelete;
-		pDocument->m_bAutoDelete = FALSE;
+		bool bAutoDelete = pDocument->m_bAutoDelete;
+		pDocument->m_bAutoDelete = false;
 		// don't destroy if something goes wrong
 		pFrame = CreateNewFrame(pDocument, nullptr);
 		pDocument->m_bAutoDelete = bAutoDelete;
@@ -77,10 +77,10 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
 
 		// Avoid creating temporary compound file when starting up invisible
 		if (!bMakeVisible)
-			pDocument->m_bEmbedded = TRUE;
+			pDocument->m_bEmbedded = true;
 
 		if (!pDocument->OnNewDocument()) {
-			warning("CDocument::OnNewDocument returned FALSE.");
+			warning("CDocument::OnNewDocument returned false.");
 			if (bCreated)
 				pFrame->DestroyWindow();	// Will destroy document
 			return nullptr;
@@ -88,10 +88,10 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
 	} else {
 		// open an existing document
 		bWasModified = pDocument->IsModified();
-		pDocument->SetModifiedFlag(FALSE);  // not dirty for open
+		pDocument->SetModifiedFlag(false);  // not dirty for open
 
 		if (!pDocument->OnOpenDocument(lpszPathName)) {
-			warning("CDocument::OnOpenDocument returned FALSE.");
+			warning("CDocument::OnOpenDocument returned false.");
 			if (bCreated) {
 				pFrame->DestroyWindow();    // will destroy document
 			} else if (!pDocument->IsModified()) {

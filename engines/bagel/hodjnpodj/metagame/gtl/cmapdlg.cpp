@@ -29,7 +29,7 @@ namespace Metagame {
 namespace Gtl {
 
 CMapDialog::CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT PodjLoc)
-	: CBmpDialog(pParent, pPalette, IDD_ZOOMMAP, ".\\art\\minimap.bmp", 0, 0, FALSE) {
+	: CBmpDialog(pParent, pPalette, IDD_ZOOMMAP, ".\\art\\minimap.bmp", 0, 0, false) {
 	// Initialize all members
 	//
 	m_pPalette = pPalette;
@@ -79,8 +79,8 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMapDialog message handlers
 
-BOOL CMapDialog::OnInitDialog() {
-	BOOL    bSuccess;
+bool CMapDialog::OnInitDialog() {
+	bool    bSuccess;
 	CDC     *pDC;
 	CRect   textRect;                                               // game stats display
 	int     nText_col_offset;                                       // game stats placement
@@ -112,12 +112,12 @@ BOOL CMapDialog::OnInitDialog() {
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CMapDialog::OnPaint() {
 	CDC     *pDC;
-	BOOL    bSuccess;
+	bool    bSuccess;
 	char    buf[64];
 
 	CBmpDialog::OnPaint();
@@ -165,9 +165,9 @@ void CMapDialog::OnCancel() {
 	EndDialog(IDCANCEL);
 }
 
-BOOL CMapDialog::OnEraseBkgnd(CDC *) {
+bool CMapDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return TRUE;
+	return true;
 }
 
 } // namespace Gtl

@@ -34,7 +34,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#define RETAIN_META_DLL             FALSE       // whether Meta DLL is kept in memory
+#define RETAIN_META_DLL             false       // whether Meta DLL is kept in memory
 #define ANIMATION_TIMER_ID          10          // animation timer identifier
 #define ANIMATION_TIMER_INTERVAL    200         // animation timer interval
 
@@ -45,7 +45,7 @@ namespace Metagame {
 
 struct NOTE_LIST {
 	CNote *pNote;
-	BOOL   bUsed;
+	bool   bUsed;
 };
 
 // CHodjPodj class -- information about Hodj or Podj
@@ -53,9 +53,9 @@ class CHodjPodj {
 public:
 	char m_cStartData ;
 
-	BOOL m_bMoving ;        // flag: this player moving
-	BOOL m_bComputer ;      // flag: played by computer
-	BOOL m_bHaveMishMosh;
+	bool m_bMoving ;        // flag: this player moving
+	bool m_bComputer ;      // flag: played by computer
+	bool m_bHaveMishMosh;
 
 	int m_iSectorCode ;     // MG_SECTOR_xxxx
 	int m_iNode ;           // node # location
@@ -88,8 +88,8 @@ public:
 	int m_nTurns;               // number of turns (not furlongs)
 
 	// inventory information
-	// these fields are valid if m_bInventories is TRUE, even if
-	// m_bRestart is FALSE
+	// these fields are valid if m_bInventories is true, even if
+	// m_bRestart is false
 	CInventory  *m_pInventory;  // inventory player owns
 	CInventory  *m_pGenStore;   // player's inventory in general store
 	CInventory  *m_pBlackMarket;   // player's inventory in pawn shop
@@ -110,37 +110,37 @@ class CBfcMgr {
 public:
 	char m_cStartData;
 
-	BOOL m_bTraps[240];     // used booby-trap/narration flags
+	bool m_bTraps[240];     // used booby-trap/narration flags
 
-	BOOL m_bLowMemory;      // low memory environment flag
+	bool m_bLowMemory;      // low memory environment flag
 
-	BOOL m_bSlowCPU;        // 80386 processor flag
+	bool m_bSlowCPU;        // 80386 processor flag
 
-	BOOL m_bInventories;    // use the inventory pointers even
-	// if m_bRestart is FALSE to indicate that some
+	bool m_bInventories;    // use the inventory pointers even
+	// if m_bRestart is false to indicate that some
 	// fields are still value (as noted)
 	int m_iGameTime;        // SHORT_GAME, MEDIUM_GAME or LONG_GAME
 	// Note: This value is valid if
-	// m_bInventories is TRUE
-	BOOL m_bRestart ;       // (set by EXE for DLL) restarting game
+	// m_bInventories is true
+	bool m_bRestart ;       // (set by EXE for DLL) restarting game
 	// (otherwise, remaining data is invalid, unless
 	// otherwise noted)
-	BOOL m_bGameOver ;      // if set, the meta-game is over (someone
+	bool m_bGameOver ;      // if set, the meta-game is over (someone
 	// has won MishMosh and is in castle)
-	BOOL m_bScrolling;      // TRUE if scrolling map while walking
+	bool m_bScrolling;      // true if scrolling map while walking
 
-	BOOL m_bAnimations;     // TRUE if showing animations
+	bool m_bAnimations;     // true if showing animations
 
-	BOOL m_bRestoredGame;   // TRUE if restoring a saved game
+	bool m_bRestoredGame;   // true if restoring a saved game
 
-	BOOL m_bVisitedStore;   // TRUE if computer Hodj/Podj visited a store
+	bool m_bVisitedStore;   // true if computer Hodj/Podj visited a store
 
 	int m_iFunctionCode ;   // (set by DLL for EXE) MG_GAME_xxxx to
 	// indicate that a game is to be played,
 	// or MG_DLLX_xxxx to indicate other DLL
 	// exit action
 
-	BOOL m_bChanged;        // Save Game check to determine if we need to
+	bool m_bChanged;        // Save Game check to determine if we need to
 	// ask about saving users game.
 	// This field does NOT need to be save in the
 	// .SAV file.

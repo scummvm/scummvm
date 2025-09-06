@@ -35,17 +35,17 @@ HMENU CFrameWnd::GetMenu() const {
 	return nullptr;
 }
 
-void CFrameWnd::RecalcLayout(BOOL bNotify) {
+void CFrameWnd::RecalcLayout(bool bNotify) {
 	// No implementation in ScummVM
 }
 
-BOOL CFrameWnd::RepositionBars(unsigned int nIDFirst, unsigned int nIDLast,
+bool CFrameWnd::RepositionBars(unsigned int nIDFirst, unsigned int nIDLast,
                                unsigned int nIDLeftOver, unsigned int nFlag, LPRECT lpRectParam,
-                               LPCRECT lpRectClient, BOOL bStretch) {
+                               LPCRECT lpRectClient, bool bStretch) {
 	error("TODO: CFrameWnd::RepositionBars");
 }
 
-void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
+void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, bool bMakeVisible) {
 	// if the frame does not have an active view, set to first pane
 	CView *pView = nullptr;
 	if (GetActiveView() == nullptr) {
@@ -54,13 +54,13 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 
 		if (pWnd != nullptr && pWnd->IsKindOf(RUNTIME_CLASS(CView))) {
 			pView = (CView *)pWnd;
-			SetActiveView(pView, FALSE);
+			SetActiveView(pView, false);
 		}
 	}
 
 	if (bMakeVisible) {
 		// send initial update to all views (and other controls) in the frame
-		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, TRUE, TRUE);
+		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, true, true);
 
 		// give view a chance to save the focus (CFormView needs this)
 		if (pView != nullptr)
@@ -78,17 +78,17 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 		ActivateFrame(nCmdShow);
 
 		if (pView != nullptr)
-			pView->OnActivateView(TRUE, pView, pView);
+			pView->OnActivateView(true, pView, pView);
 	}
 
 	// update frame counts and frame title (may already have been visible)
 	if (pDoc != nullptr)
 		pDoc->UpdateFrameCounts();
 
-	OnUpdateFrameTitle(TRUE);
+	OnUpdateFrameTitle(true);
 }
 
-BOOL CFrameWnd::LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
+bool CFrameWnd::LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 	CWnd *pParentWnd, CCreateContext *pContext) {
 	assert(m_nIDHelp == 0 || m_nIDHelp == nIDResource);
 	m_nIDHelp = nIDResource;    // ID for help context (+HID_BASE_RESOURCE)
@@ -105,7 +105,7 @@ BOOL CFrameWnd::LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 	CRect rectDefault;
 	if (!Create(lpszClass, lpszTitle, dwDefaultStyle, rectDefault,
 		pParentWnd, MAKEINTRESOURCE(nIDResource), 0L, pContext)) {
-		return FALSE;   // will self destruct on failure normally
+		return false;   // will self destruct on failure normally
 	}
 
 	ASSERT(m_hWnd != nullptr);
@@ -113,13 +113,13 @@ BOOL CFrameWnd::LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 	// TODO: Menu and accelerators if needed
 
 	if (pContext == nullptr)   // send initial update
-		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, TRUE, TRUE);
+		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, true, true);
 
-	return TRUE;
+	return true;
 }
 
 
-BOOL CFrameWnd::Create(const char *lpszClassName,
+bool CFrameWnd::Create(const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd,
 		const char *lpszMenuName, uint32 dwExStyle,
@@ -139,10 +139,10 @@ BOOL CFrameWnd::Create(const char *lpszClassName,
 
 		if (hMenu != nullptr)
 			DestroyMenu(hMenu);
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 int CFrameWnd::OnCreate(LPCREATESTRUCT lpcs) {
@@ -164,12 +164,12 @@ int CFrameWnd::OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
 	return 0;
 }
 
-BOOL CFrameWnd::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
+bool CFrameWnd::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
 	if (pContext != nullptr && pContext->m_pNewViewClass != nullptr) {
 		if (CreateView(pContext, AFX_IDW_PANE_FIRST) == nullptr)
-			return FALSE;
+			return false;
 	}
-	return TRUE;
+	return true;
 }
 
 CWnd *CFrameWnd::CreateView(CCreateContext *pContext, unsigned int nID) {
@@ -195,7 +195,7 @@ CView *CFrameWnd::GetActiveView() const {
 	return m_pViewActive;
 }
 
-void CFrameWnd::SetActiveView(CView *pViewNew, BOOL bNotify) {
+void CFrameWnd::SetActiveView(CView *pViewNew, bool bNotify) {
 	CView *pViewOld = m_pViewActive;
 	if (pViewNew == pViewOld)
 		return;     // do not re-activate if SetActiveView called more than once
@@ -204,7 +204,7 @@ void CFrameWnd::SetActiveView(CView *pViewNew, BOOL bNotify) {
 
 	// deactivate the old one
 	if (pViewOld != nullptr)
-		pViewOld->OnActivateView(FALSE, pViewNew, pViewOld);
+		pViewOld->OnActivateView(false, pViewNew, pViewOld);
 
 	// if the OnActivateView moves the active window,
 	//    that will veto this change
@@ -214,7 +214,7 @@ void CFrameWnd::SetActiveView(CView *pViewNew, BOOL bNotify) {
 
 	// activate
 	if (pViewNew != nullptr && bNotify)
-		pViewNew->OnActivateView(TRUE, pViewNew, pViewOld);
+		pViewNew->OnActivateView(true, pViewNew, pViewOld);
 }
 
 void CFrameWnd::OnSetFocus(CWnd *pOldWnd) {
@@ -236,16 +236,16 @@ void CFrameWnd::ActivateFrame(int nCmdShow) {
 	// TODO: CFrameWnd::ActivateFrame
 }
 
-void CFrameWnd::OnUpdateFrameTitle(BOOL bAddToTitle) {
+void CFrameWnd::OnUpdateFrameTitle(bool bAddToTitle) {
 	// TODO: CFrameWnd::OnUpdateFrameTitle
 }
 
-void CFrameWnd::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
+void CFrameWnd::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// Invalidate the dialog and its children
-		Invalidate(TRUE);
+		Invalidate(true);
 		for (auto child : _children)
-			child._value->Invalidate(TRUE);
+			child._value->Invalidate(true);
 	}
 
 	CWnd::OnActivate(nState, pWndOther, bMinimized);

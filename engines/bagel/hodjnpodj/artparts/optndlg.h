@@ -49,7 +49,7 @@ public:
 	int m_nMins;
 	int m_nSecs;
 	float   m_nScore;
-	BOOL    m_bFramed;
+	bool    m_bFramed;
 	int m_nNumParts;
 
 	int nCFacs;
@@ -69,10 +69,10 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(COptnDlg)
-	virtual BOOL OnInitDialog() override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnPaint();

@@ -42,7 +42,7 @@ HCURSOR         hGameCursor;
 /////////////////////////////////////////////////////////////////////////////
 // Public C interface
 
-HWND RunZoomMap(HWND hParentWnd, BOOL bShowExit) {
+HWND RunZoomMap(HWND hParentWnd, bool bShowExit) {
 
 // if the pointer has garbage in it, the clean it out
 	if (pMainGameWnd != nullptr) {

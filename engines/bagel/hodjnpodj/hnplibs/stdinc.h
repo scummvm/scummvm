@@ -66,9 +66,6 @@ enum {
 	NO = 0
 };
 
-#define TRUE  1
-#define FALSE 0
-
 #ifndef MAX_FNAME
 	#define MAX_FNAME 256
 #endif

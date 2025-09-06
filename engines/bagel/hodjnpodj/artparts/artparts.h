@@ -104,7 +104,7 @@ namespace ArtParts {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
-	BOOL LoadArtWork();
+	bool LoadArtWork();
 	void DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight);
 	void SwitchAreas(CRect Src, CRect Dst);
 	void InitValues();
@@ -113,9 +113,9 @@ public:
 	void ShowOutOfPlace();
 
 //added data members:
-	BOOL m_bPlaying;            // Flag True if playing, False if setting options
-	BOOL m_bNewGame;            // Flag to check if a new game is being played
-	BOOL m_bFirst;              // Flag to check if the first area is being selected
+	bool m_bPlaying;            // Flag True if playing, False if setting options
+	bool m_bNewGame;            // Flag to check if a new game is being played
+	bool m_bFirst;              // Flag to check if the first area is being selected
 	CPoint First;
 	CPoint Second;
 	CPoint Center;
@@ -146,12 +146,12 @@ private:
 	CBitmap *pLocaleBitmap = nullptr,          // Locale of game bitmap for title bar
 		*pBlankBitmap = nullptr;           // Blank area of locale for time display
 
-	BOOL bStartOkay = TRUE;
-	BOOL bGameStarted = FALSE;		// becomes TRUE at start time, FALSE at game end
-	BOOL bSwitched = FALSE;			// flag for undo -- only true after a part switch
-	BOOL bSuccess;
-	BOOL m_bIgnoreScrollClick;
-	BOOL m_bShowOutOfPlace = FALSE;
+	bool bStartOkay = true;
+	bool bGameStarted = false;		// becomes true at start time, false at game end
+	bool bSwitched = false;			// flag for undo -- only true after a part switch
+	bool bSuccess;
+	bool m_bIgnoreScrollClick;
+	bool m_bShowOutOfPlace = false;
 	char szCurrentArt[64];
 
 	static CPalette *pGamePalette;	// Palette of current artwork
@@ -164,24 +164,24 @@ private:
 	static int m_nWidth;			// The Width of each Part
 	static int m_nHeight;			// The Height of each Part
 	static float m_nScore;			// The current percentage of correctly placed parts
-	static BOOL bFramed;			// Framed (hint) mode is turned off by default
+	static bool bFramed;			// Framed (hint) mode is turned off by default
 
 	static int tempTime;			// temporary holding places
 	static int tempRows;			//...for options changes,
 	static int tempColumns;			//...which only get used
-	static BOOL tempFramed;			//...when NewGame is called.
+	static bool tempFramed;			//...when NewGame is called.
 
 	CSound *pGameSound = nullptr;	// Game theme song
 
 private:
 	void initStatics();
 	void OnSoundNotify(CSound *pSound);
-	static BOOL CopyPaletteContents(CPalette *pSource, CPalette *pDest);
+	static bool CopyPaletteContents(CPalette *pSource, CPalette *pDest);
 	void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
 	static void GetSubOptions(CWnd *pParentWind);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();

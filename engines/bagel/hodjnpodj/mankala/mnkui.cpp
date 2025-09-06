@@ -30,7 +30,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-extern  BOOL gbTurnSoundsOff;
+extern  bool gbTurnSoundsOff;
 extern LPGAMESTRUCT pGameParams;
 
 static int gCount;     //reset to 0 in StartGame() and incremented in AcceptClick to keep track of # of Turns.
@@ -38,8 +38,8 @@ static int gCount;     //reset to 0 in StartGame() and incremented in AcceptClic
 
 
 //* CMnkWindow::StartGame -- start a new game
-BOOL CMnkWindow::StartGame(void)
-// returns: TRUE if error, FALSE otherwise
+bool CMnkWindow::StartGame(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::StartGame) ;
 
@@ -52,13 +52,13 @@ BOOL CMnkWindow::StartGame(void)
 
 //    ((CMnk *)this)->InitMankala() ;   // initialize mankala game
 	CMnk::InitMankala() ;   // initialize mankala game logic
-	Invalidate(FALSE) ; // invalidate the entire window, so it
+	Invalidate(false) ; // invalidate the entire window, so it
 	// will be repainted
 
-	m_bStartGame = m_bGameOver = FALSE ;
-	m_bGameOverMusicPlayed = FALSE;
-	m_bScoresDisplayed = FALSE;
-	SetCrabSign(FALSE) ;
+	m_bStartGame = m_bGameOver = false ;
+	m_bGameOverMusicPlayed = false;
+	m_bScoresDisplayed = false;
+	SetCrabSign(false) ;
 	UpdateWindow();
 
 	if (!gbTurnSoundsOff && pGameParams->bSoundEffectsEnabled)
@@ -71,16 +71,16 @@ BOOL CMnkWindow::StartGame(void)
 }
 
 //* CMnkWindow::PaintBitmapObject -- paint bitmap
-BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
+bool CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
                                    int iBmpType, int iBmpArg)
 // xpcBmpObject -- pointer to bitmap object
 // iBmpType -- BMT_xxxx -- type of bitmap object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::PaintBitmapObject) ;
 
 	int iError = 0 ;        // error code
-	BOOL bNew = !xpcBmpObject->m_bInit ;    // needs to be initialized
+	bool bNew = !xpcBmpObject->m_bInit ;    // needs to be initialized
 	CRect cBmpRect, cDestRect ; // bitmap/destination rectangles
 	CDC *pDC ;
 
@@ -109,7 +109,7 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 	if (!xpcBmpObject->m_bChained) { // if not yet on chain to be freed
 		xpcBmpObject->m_xpcNextFree = m_xpcBmpFreeChain ;
 		m_xpcBmpFreeChain = xpcBmpObject ;
-		xpcBmpObject->m_bChained = TRUE ;
+		xpcBmpObject->m_bChained = true ;
 	}
 
 	if (iBmpArg)
@@ -156,7 +156,7 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 			         &cBmpRect, m_xpGamePalette) ;
 		// transfer the bitmap to the screen
 	}
-	xpcBmpObject->m_bInit = TRUE ;  // object is initialized
+	xpcBmpObject->m_bInit = true ;  // object is initialized
 
 cleanup:
 	if (pDC) {
@@ -169,9 +169,9 @@ cleanup:
 }
 
 //* CMnkWindow::InitBitmapObject -- set up DibDoc in bitmap object
-BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
+bool CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::InitBitmapObject) ;
 
@@ -196,11 +196,11 @@ BOOL CMnkWindow::InitBitmapObject(CBmpObject * xpcBmpObject)
 			goto cleanup ;
 
 
-		xpcSprite->SetMasked(TRUE) ;
+		xpcSprite->SetMasked(true) ;
 		// it is a masked image (white/transparent background)
-		xpcSprite->SetOptimizeSpeed(FALSE) ;
+		xpcSprite->SetOptimizeSpeed(false) ;
 		// keep its bitmap inside a device context
-		xpcSprite->SetMobile(TRUE) ;  // it will move around the screen
+		xpcSprite->SetMobile(true) ;  // it will move around the screen
 //  xpcSprite->LinkSprite() ;
 //              // link stone sprite into sprite chain
 		xpcBmpObject->m_cSize = xpcSprite->GetSize() ;
@@ -244,9 +244,9 @@ cleanup:
 }
 
 //* CMnkWindow::InitBitmapFilename -- set up filename bitmap object
-BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
+bool CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::InitBitmapFilename) ;
 
@@ -254,36 +254,36 @@ BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 	CDC *pDC = GetDC();
 
 	static class CBmpTable cBmpTable[] = {
-		{BMT_MAIN, -1, 1, "mankala.bmp", FALSE, FALSE},
-		{BMT_SCROLL, -1, 1, "scrollup.bmp", FALSE, TRUE},           //scrolbtn.bmp
-		{BMT_STONE, -1, 4, "mans%d.bmp", FALSE, TRUE},
-		{BMT_PIT, 0, 1, "manp%d%d.bmp", TRUE, TRUE},
-		{BMT_PIT, 1, 4, nullptr, TRUE, TRUE},
-		{BMT_PIT, 2, 6, nullptr, TRUE, TRUE},
-		{BMT_PIT, 3, 8, nullptr, TRUE, TRUE},
-		{BMT_PIT, 4, 8, nullptr, TRUE, TRUE},
-		{BMT_PIT, 5, 5, nullptr, TRUE, TRUE},
-		{BMT_PIT, 6, 4, nullptr, TRUE, TRUE},
-		{BMT_PIT, 7, 4, nullptr, TRUE, TRUE},
-		{BMT_PIT, 8, 4, nullptr, TRUE, TRUE},
-		{BMT_PIT, -1, 2, "manpm%d.bmp", FALSE, TRUE},
-		{BMT_LEFTBIN, 22, 1, "manl%02d.bmp", TRUE, TRUE},
-		{BMT_LEFTBIN, -1, 1, "manlm.bmp", FALSE, TRUE},
-		{BMT_RIGHTBIN, 22, 1, "manr%02d.bmp", TRUE, TRUE},
-		{BMT_RIGHTBIN, -1, 1, "manrm.bmp", FALSE, TRUE},
-		{BMT_HAND, -1, 0, nullptr, FALSE, TRUE},
-		{BMT_SIGN, SBT_CRAB, 1, "mancrab.bmp", FALSE, FALSE},
-		{BMT_SIGN, SBT_MYTURN, 1, "mancm.bmp", FALSE, TRUE},
-		{BMT_SIGN, SBT_YOURTURN, 1, "mancy.bmp", FALSE, TRUE},
-		{BMT_SIGN, SBT_TIE, 1, "manctie.bmp", FALSE, TRUE},
-		{BMT_SIGN, SBT_IWIN, 1, "manciwin.bmp", FALSE, TRUE},
-		{BMT_SIGN, SBT_YOUWIN, 1, "mancuwin.bmp", FALSE, TRUE},
-		{0, 0, 0, nullptr, FALSE, TRUE}
+		{BMT_MAIN, -1, 1, "mankala.bmp", false, false},
+		{BMT_SCROLL, -1, 1, "scrollup.bmp", false, true},           //scrolbtn.bmp
+		{BMT_STONE, -1, 4, "mans%d.bmp", false, true},
+		{BMT_PIT, 0, 1, "manp%d%d.bmp", true, true},
+		{BMT_PIT, 1, 4, nullptr, true, true},
+		{BMT_PIT, 2, 6, nullptr, true, true},
+		{BMT_PIT, 3, 8, nullptr, true, true},
+		{BMT_PIT, 4, 8, nullptr, true, true},
+		{BMT_PIT, 5, 5, nullptr, true, true},
+		{BMT_PIT, 6, 4, nullptr, true, true},
+		{BMT_PIT, 7, 4, nullptr, true, true},
+		{BMT_PIT, 8, 4, nullptr, true, true},
+		{BMT_PIT, -1, 2, "manpm%d.bmp", false, true},
+		{BMT_LEFTBIN, 22, 1, "manl%02d.bmp", true, true},
+		{BMT_LEFTBIN, -1, 1, "manlm.bmp", false, true},
+		{BMT_RIGHTBIN, 22, 1, "manr%02d.bmp", true, true},
+		{BMT_RIGHTBIN, -1, 1, "manrm.bmp", false, true},
+		{BMT_HAND, -1, 0, nullptr, false, true},
+		{BMT_SIGN, SBT_CRAB, 1, "mancrab.bmp", false, false},
+		{BMT_SIGN, SBT_MYTURN, 1, "mancm.bmp", false, true},
+		{BMT_SIGN, SBT_YOURTURN, 1, "mancy.bmp", false, true},
+		{BMT_SIGN, SBT_TIE, 1, "manctie.bmp", false, true},
+		{BMT_SIGN, SBT_IWIN, 1, "manciwin.bmp", false, true},
+		{BMT_SIGN, SBT_YOUWIN, 1, "mancuwin.bmp", false, true},
+		{0, 0, 0, nullptr, false, true}
 	} ;
 
 	int iError = 0 ;        // error code
 	CBmpTable * xpBmpTable ;
-	BOOL bFound = FALSE ;
+	bool bFound = false ;
 	const char *xpszFilenameString = nullptr ;
 	char szPath[200] = {0} ;    // bitmap file path
 	CPitWnd * xpcPit;
@@ -304,7 +304,7 @@ BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 				    xpBmpTable->m_xpszFilenameString ;
 			if (xpBmpTable->m_iNumStones < 0 ||
 			        iNumStones <= xpBmpTable->m_iNumStones)
-				bFound = TRUE ;
+				bFound = true ;
 		}
 
 	if (!bFound) {
@@ -353,9 +353,9 @@ cleanup:
 }
 
 //* CMnkWindow::SetBitmapCoordinates -- set coordinates of bitmap
-BOOL CMnkWindow::SetBitmapCoordinates(
+bool CMnkWindow::SetBitmapCoordinates(
     CBmpObject * xpcBmpObject)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 
 
@@ -451,9 +451,9 @@ cleanup:
 }
 
 //* CMnkWindow::AcceptClick -- process a mouse click by user
-BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
+bool CMnkWindow::AcceptClick(CPoint cClickPoint)
 // cClickPoint -- position of mouse when click (button up) occurred
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 
 	JXENTER(CMnkWindow::AcceptClick) ;
@@ -461,13 +461,13 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 
 
 	int iError = 0 ;        // error code
-	static BOOL bActive = FALSE ;   // prevent recursion
+	static bool bActive = false ;   // prevent recursion
 	int iPlayer, iPit ;
-	BOOL bFound = FALSE ;       // found pit clicked on
+	bool bFound = false ;       // found pit clicked on
 	CBmpObject * xpcBmpObject ;     // bitmap object clicked on
 	CPitWnd * xpcPit = nullptr;     // pit clicked on
 	CMove *xpcMove = &m_cCurrentMove ; // current move/position
-	//BOOL    bPlayerSwitched;
+	//bool    bPlayerSwitched;
 	MSG msg;
 
 
@@ -476,8 +476,8 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 
 	while (MFC::PeekMessage(&msg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE)); //flush out pending mouse clicks
 
-	bActive = TRUE ;
-	//bPlayerSwitched = FALSE;
+	bActive = true ;
+	//bPlayerSwitched = false;
 
 	if (CRect(m_cBmpScroll.m_cPosition,
 	          m_cBmpScroll.m_cSize).PtInRect(cClickPoint)) {
@@ -492,7 +492,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 			xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // point to pit
 			xpcBmpObject = &xpcPit->m_cBmpObject ;
 			if (CRect(xpcBmpObject->m_cPosition, xpcBmpObject->m_cSize).PtInRect(cClickPoint))
-				bFound = TRUE ;
+				bFound = true ;
 		}
 
 		if (bFound) {
@@ -507,9 +507,9 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 			if (!(gCount < 5 || (gCount % 4 == 0)) && (gCount < 15)) //Play Igo, YouGo,etc. crap only ...
 				// when for the first 4 turns of each player and
 				//thereafter every 4th turn until it's 28 turns in all and never thereafter.
-				gbTurnSoundsOff = TRUE;     // "Just Shut up, Crab".
+				gbTurnSoundsOff = true;     // "Just Shut up, Crab".
 			else
-				gbTurnSoundsOff = FALSE;
+				gbTurnSoundsOff = false;
 		}
 		SetCrabSign() ;
 
@@ -535,7 +535,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 	}// end else (if CRect(m_cBmpScroll...)
 
 cleanup:
-	bActive = FALSE ;
+	bActive = false ;
 
 exit:
 	JXELEAVE(CMnkWindow::AcceptClick) ;
@@ -543,11 +543,11 @@ exit:
 }
 
 //* CMnkWindow::MoveStoneDisplay -- move a stone from pit to another
-BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
+bool CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
                                   CPitWnd * xpcToPit)
 // xpcFromPit -- source pit (where stone comes from)
 // xpcToPit -- target pit (where stone goes)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::MoveStoneDisplay) ;
 	int iError = 0 ;        // error code
@@ -575,8 +575,8 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 		iError = 110 ;  // stone allocation failed
 		goto cleanup ;
 	} else {    // stone allocation succeeded
-		xpcStone->m_bHeap = TRUE ;  // stone is on the heap
-		xpcStone->m_bSprite = TRUE ;    // it's a sprite
+		xpcStone->m_bHeap = true ;  // stone is on the heap
+		xpcStone->m_bSprite = true ;    // it's a sprite
 //  OutputDebugString("New stone allocated.\n") ;
 	}
 
@@ -585,7 +585,7 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 	xpcStone->m_iStoneNum = --xpcFromPit->m_iNumStones ;
 	// store stone number
 
-	AdjustPitDisplay(xpcFromPit, TRUE) ;
+	AdjustPitDisplay(xpcFromPit, true) ;
 	// adjust the "from" pit
 
 	PaintBitmapObject(xpcStone, BMT_STONE) ;    // paint stone
@@ -634,7 +634,7 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 		// put stone on the free chain
 		m_xpFreeStoneChain = xpcStone ;
 
-		AdjustPitDisplay(xpcToPit, TRUE) ;
+		AdjustPitDisplay(xpcToPit, true) ;
 		// adjust the "to" pit
 	}
 
@@ -650,11 +650,11 @@ cleanup:
 
 //* CMnkWindow::AdjustPitDisplay -- adjust display of pit when
 //          number of stones changes
-BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
-                                  BOOL bForcePaint)
+bool CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
+                                  bool bForcePaint)
 // xpcPit -- pit whose display is to be adjusted
-// bForcePaint -- if TRUE, then always paint
-// returns: TRUE if error, FALSE otherwise
+// bForcePaint -- if true, then always paint
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::AdjustPitDisplay) ;
 	int iError = 0 ;        // error code
@@ -703,7 +703,7 @@ void CMnkWindow::PaintScreen(void)
 	// paint main screen bitmap
 
 	if (!m_bInMenu /*&& !m_bJustStarted*/) { // if not in scroll menu
-		m_cBmpScroll.m_bSprite = TRUE ; // scroll is a sprite
+		m_cBmpScroll.m_bSprite = true ; // scroll is a sprite
 		PaintBitmapObject(&m_cBmpScroll, BMT_SCROLL) ;
 	}
 
@@ -712,7 +712,7 @@ void CMnkWindow::PaintScreen(void)
 			xpcPit = m_xpcPits[iPlayer][iPit + 2] ;
 			// point to pit
 			if (xpcPit->m_iNumStones > 0)
-				AdjustPitDisplay(xpcPit, TRUE) ;
+				AdjustPitDisplay(xpcPit, true) ;
 
 //      if (xpcPit->m_cBmpObject.m_lpDib)
 //      PaintBitmap(xpcPit->m_cBmpObject) ;
@@ -732,8 +732,8 @@ void CMnkWindow::PaintScreen(void)
 
 
 //* CMnkWindow::AllocatePits -- allocate pits (including home bin/hand)
-BOOL CMnkWindow::AllocatePits(void)
-// returns: TRUE if error, FALSE otherwise
+bool CMnkWindow::AllocatePits(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::AllocatePits) ;
 	int iError = 0 ;        // error code
@@ -772,9 +772,9 @@ cleanup:
 }
 
 // CMnkWindow::SetCrabSign -- to my/your turn
-BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
+bool CMnkWindow::SetCrabSign(bool bPaint)
 // bPaint -- paint the new sign
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::SetCrabSign) ;
 	int iError = 0;        // error code
@@ -794,10 +794,10 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 		        == m_cCurrentMove.m_iNumStones[1][HOMEINDEX + 2]) {
 			iBmpSign = SBT_TIE ;
 			if (!m_bGameOverMusicPlayed) { //  so that FANFARE2/ SOSORRY is played just once.
-				m_bGameWon = FALSE;
+				m_bGameWon = false;
 				if (pGameParams->bSoundEffectsEnabled)
 					sndPlaySound(SOSORRY, SND_ASYNC);
-				m_bGameOverMusicPlayed = TRUE;
+				m_bGameOverMusicPlayed = true;
 			}
 		}
 
@@ -808,10 +808,10 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 		        > m_cCurrentMove.m_iNumStones[1][HOMEINDEX + 2]) {
 			iBmpSign = SBT_YOUWIN ;
 			if (!m_bGameOverMusicPlayed) { //  so that FANFARE2/ SOSORRY is played just once.
-				m_bGameWon = TRUE;
+				m_bGameWon = true;
 				if (pGameParams->bSoundEffectsEnabled)
 					sndPlaySound(FANFARE2, SND_SYNC);
-				m_bGameOverMusicPlayed = TRUE;
+				m_bGameOverMusicPlayed = true;
 			}
 		} else {
 			/*
@@ -819,10 +819,10 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 			 */
 			iBmpSign = SBT_IWIN ;
 			if (!m_bGameOverMusicPlayed) { //  so that FANFARE2/ SOSORRY is played just once.
-				m_bGameWon = FALSE;
+				m_bGameWon = false;
 				if (pGameParams->bSoundEffectsEnabled)
 					sndPlaySound(SOSORRY, SND_SYNC);
-				m_bGameOverMusicPlayed = TRUE;
+				m_bGameOverMusicPlayed = true;
 			}
 		}
 	}//end if m_hbGameOver // m_bStartGame
@@ -870,7 +870,7 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 			if (hlocHumanScore) LocalFree(hlocHumanScore);
 			if (hlocCrabScore) LocalFree(hlocCrabScore);
 
-			m_bScoresDisplayed = TRUE;
+			m_bScoresDisplayed = true;
 		}  // end if m_bScoredisplayed
 
 		if (pGameParams->bPlayingMetagame) {
@@ -890,9 +890,9 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 
 //* CMnkWindow::FreePitResources -- free (optionally delete) all pit
 //      resources -- stone sprites and pit bitmaps
-BOOL CMnkWindow::FreePitResources(BOOL bDelete)
-// bDelete -- if TRUE, then delete all stone sprites
-// returns: TRUE if error, FALSE otherwise
+bool CMnkWindow::FreePitResources(bool bDelete)
+// bDelete -- if true, then delete all stone sprites
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::FreePitResources) ;
 	int iError = 0 ;        // error code
@@ -937,9 +937,9 @@ BOOL CMnkWindow::FreePitResources(BOOL bDelete)
 }
 
 //* CMnkWindow::ClearBitmapObject -- release bitmap object
-BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
+bool CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 // xpcBmpObject -- pointer to bitmap object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::ClearBitmapObject) ;
 	int iError = 0 ;        // error code
@@ -960,7 +960,7 @@ BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 		delete xpcBmpObject->m_xpDibDoc ;
 		xpcBmpObject->m_xpDibDoc = nullptr ;
 	}
-	xpcBmpObject->m_bInit = FALSE ; // object no longer initialized
+	xpcBmpObject->m_bInit = false ; // object no longer initialized
 
 	JXELEAVE(CMnkWindow::ClearBitmapObject) ;
 	RETURN(iError != 0) ;
@@ -995,8 +995,8 @@ void CMnkWindow::ReleaseResources(void) {
 
 
 //* CMnkWindow::DebugDialog -- put up debugging dialog box
-BOOL CMnkWindow::DebugDialog(void)
-// returns: TRUE if error, FALSE otherwise
+bool CMnkWindow::DebugDialog(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::DebugDialog) ;
 	int iError = 0 ;        // error code
@@ -1042,8 +1042,8 @@ BOOL CMnkWindow::DebugDialog(void)
 }
 
 //* CMnkWindow::UserDialog -- put up user dialog box
-BOOL FAR PASCAL CMnkWindow::UserDialog(void)
-// returns: TRUE if error, FALSE otherwise
+bool FAR PASCAL CMnkWindow::UserDialog(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::UserDialog) ;
 	int iError = 0 ;        // error code
@@ -1066,7 +1066,7 @@ BOOL FAR PASCAL CMnkWindow::UserDialog(void)
 
 ////* CallUserDialog --
 void CALLBACK CallUserDialog(CWnd * xpcWindow) {
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 	JXENTER(CallUserDialog) ;
 
 	CMnkWindow * xpcMnkWindow = (CMnkWindow *)xpcWindow->GetParent();
@@ -1076,15 +1076,15 @@ void CALLBACK CallUserDialog(CWnd * xpcWindow) {
 }
 
 //* CMnkWindow::OptionsDialog -- call options dialog
-BOOL CMnkWindow::OptionsDialog(void) {
-// returns: TRUE if error, FALSE otherwise
+bool CMnkWindow::OptionsDialog(void) {
+// returns: true if error, false otherwise
 	JXENTER(CMnkWindow::OptionsDialog) ;
 	int iError = 0 ;        // error code
 
 	CDC *pDC = nullptr ;
 
 	if (!m_bInMenu) {   // prevent recursion
-		m_bInMenu = TRUE ;  // in the options menu now
+		m_bInMenu = true ;  // in the options menu now
 		if ((pDC = GetDC())) {
 			m_cBmpScroll.m_xpcSprite->EraseSprite(pDC) ;
 			// hide the command scroll
@@ -1098,7 +1098,7 @@ BOOL CMnkWindow::OptionsDialog(void) {
 		disable Continue button
 		*/
 		CMainMenu cOptionsDlg(this, m_xpGamePalette,
-		                      (pGameParams->bPlayingMetagame ? NO_NEWGAME | NO_OPTIONS : FALSE) | (m_bStartGame ? NO_RETURN : 0X0),
+		                      (pGameParams->bPlayingMetagame ? NO_NEWGAME | NO_OPTIONS : false) | (m_bStartGame ? NO_RETURN : 0X0),
 		                      CallUserDialog, RULES, pGameParams->bSoundEffectsEnabled ? RULES_NARRATION : nullptr, pGameParams) ;
 		switch (cOptionsDlg.DoModal()) {
 		case IDC_OPTIONS_NEWGAME:
@@ -1107,7 +1107,7 @@ BOOL CMnkWindow::OptionsDialog(void) {
 
 		case IDC_OPTIONS_QUIT:
 			pGameParams->lScore = (long)m_bGameWon;
-			m_bGameOver = TRUE ;
+			m_bGameOver = true ;
 			PostMessage(WM_CLOSE, 0, 0);
 			break ;
 
@@ -1120,7 +1120,7 @@ BOOL CMnkWindow::OptionsDialog(void) {
 		//
 		// Check to see if the music state was changed and adjust to match it
 		//
-		if ((pGameParams->bMusicEnabled == FALSE) && (m_pSound != nullptr)) {
+		if ((pGameParams->bMusicEnabled == false) && (m_pSound != nullptr)) {
 			if (m_pSound->playing())
 				m_pSound->stop();
 		} else if (pGameParams->bMusicEnabled) {
@@ -1133,7 +1133,7 @@ BOOL CMnkWindow::OptionsDialog(void) {
 			}
 		}
 
-		m_bInMenu = FALSE ;
+		m_bInMenu = false ;
 	}
 
 	/* cleanup */

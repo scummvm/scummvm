@@ -74,7 +74,7 @@ CWinApp::~CWinApp() {
 		_activeApp->_quitFlag = QUIT_QUITTING;
 }
 
-BOOL CWinApp::InitApplication() {
+bool CWinApp::InitApplication() {
 	_settings.load();
 
 	_defaultFont.CreateFont(8, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
@@ -138,7 +138,7 @@ BOOL CWinApp::InitApplication() {
 	return true;
 }
 
-BOOL CWinApp::InitInstance() {
+bool CWinApp::InitInstance() {
 	return true;
 }
 
@@ -146,7 +146,7 @@ int CWinApp::ExitInstance() {
 	return 0;
 }
 
-BOOL CWinApp::SaveAllModified() {
+bool CWinApp::SaveAllModified() {
 	_settings.save();
 	return true;
 }
@@ -253,7 +253,7 @@ void CWinApp::OnFileOpen() {
 	m_pDocManager->OnFileOpen();
 }
 
-void CWinApp::CloseAllDocuments(BOOL bEndSession) {
+void CWinApp::CloseAllDocuments(bool bEndSession) {
 	if (m_pDocManager != nullptr)
 		m_pDocManager->CloseAllDocuments(bEndSession);
 }
@@ -274,7 +274,7 @@ CString CWinApp::GetProfileString(const char *lpszSection,
 	return CString(str.c_str());
 }
 
-BOOL CWinApp::WriteProfileString(const char *lpszSection,
+bool CWinApp::WriteProfileString(const char *lpszSection,
 		const char *lpszEntry, const char *lpszValue) {
 	_settings[lpszSection].setString(lpszEntry, lpszValue);
 	return true;
@@ -330,26 +330,26 @@ void CWinApp::unlockResource(HGLOBAL hResData) {
 	GlobalUnlock(hResData);
 }
 
-BOOL CWinApp::freeResource(HGLOBAL hResData) {
+bool CWinApp::freeResource(HGLOBAL hResData) {
 	GlobalFree(hResData);
 	return true;
 }
 
-CHandleMap<CGdiObject> *CWinApp::afxMapHGDIOBJ(BOOL bCreate) {
+CHandleMap<CGdiObject> *CWinApp::afxMapHGDIOBJ(bool bCreate) {
 	if (m_pmapHGDIOBJ == nullptr && bCreate)
 		m_pmapHGDIOBJ = new CHandleMap<CGdiObject>();
 
 	return m_pmapHGDIOBJ;
 }
 
-CHandleMap<CDC> *CWinApp::afxMapHDC(BOOL bCreate) {
+CHandleMap<CDC> *CWinApp::afxMapHDC(bool bCreate) {
 	if (m_pmapHDC == nullptr && bCreate)
 		m_pmapHDC = new CHandleMap<CDC>();
 
 	return m_pmapHDC;
 }
 
-CHandleMap<CWnd> *CWinApp::afxMapWnd(BOOL bCreate) {
+CHandleMap<CWnd> *CWinApp::afxMapWnd(bool bCreate) {
 	if (m_pmapWnd == nullptr && bCreate)
 		m_pmapWnd = new CHandleMap<CWnd>();
 
@@ -368,7 +368,7 @@ const char *CWinApp::AfxRegisterWndClass(unsigned int nClassStyle,
 	return "ScummVMWindow";
 }
 
-BOOL CWinApp::GetClassInfo(HINSTANCE hInstance,
+bool CWinApp::GetClassInfo(HINSTANCE hInstance,
 		const char *lpClassName, LPWNDCLASS lpWndClass) {
 	assert(lpWndClass);
 
@@ -459,7 +459,7 @@ const char *AfxRegisterWndClass(unsigned int nClassStyle,
 		hCursor, hbrBackground, hIcon);
 }
 
-BOOL GetClassInfo(HINSTANCE hInstance,
+bool GetClassInfo(HINSTANCE hInstance,
 		const char *lpClassName, LPWNDCLASS lpWndClass) {
 	return AfxGetApp()->GetClassInfo(hInstance, lpClassName, lpWndClass);
 }

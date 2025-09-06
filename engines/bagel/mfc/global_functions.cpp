@@ -50,7 +50,7 @@ void *GlobalLock(HGLOBAL hMem) {
 	return ((MemBlock *)hMem)->_ptr;
 }
 
-BOOL GlobalUnlock(HGLOBAL hMem) {
+bool GlobalUnlock(HGLOBAL hMem) {
 	return true;
 }
 
@@ -99,7 +99,7 @@ extern uint32 GetPrivateProfileString(const char *lpAppName,
 }
 
 
-BOOL WritePrivateProfileString(
+bool WritePrivateProfileString(
 		const char *lpAppName, const char *lpKeyName,
 		const char *lpString, const char *lpFileName) {
 	AfxGetApp()->WriteProfileString(lpAppName,
@@ -128,7 +128,7 @@ HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn,
 	return AfxGetApp()->HookKeyboard(lpfn);
 }
 
-BOOL UnhookWindowsHookEx(HHOOK hhk) {
+bool UnhookWindowsHookEx(HHOOK hhk) {
 	AfxGetApp()->UnhookKeyboard(hhk);
 	return true;
 }
@@ -143,7 +143,7 @@ uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
 	return AfxGetApp()->SetTimer(hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
-BOOL KillTimer(HWND hWnd, uintptr nIDEvent) {
+bool KillTimer(HWND hWnd, uintptr nIDEvent) {
 	return AfxGetApp()->KillTimer(hWnd, nIDEvent);
 }
 
@@ -191,7 +191,7 @@ long FileLength(const char *filename) {
 	return result;
 }
 
-BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
+bool PeekMessage(LPMSG lpMsg, HWND hWnd,
                  unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
                  unsigned int wRemoveMsg) {
 	return AfxGetApp()->PeekMessage(lpMsg, hWnd,
@@ -206,7 +206,7 @@ void DispatchMessage(LPMSG lpMsg) {
 	AfxGetApp()->DispatchMessage(lpMsg);
 }
 
-BOOL PostMessage(HWND hWnd, unsigned int Msg,
+bool PostMessage(HWND hWnd, unsigned int Msg,
         WPARAM wParam, LPARAM lParam) {
 	return AfxGetApp()->PostMessage(hWnd, Msg, wParam, lParam);
 }
@@ -247,7 +247,7 @@ void UnlockResource(HGLOBAL hResData) {
 	return AfxGetApp()->unlockResource(hResData);
 }
 
-BOOL FreeResource(HGLOBAL hResData) {
+bool FreeResource(HGLOBAL hResData) {
 	return AfxGetApp()->freeResource(hResData);
 }
 
@@ -256,16 +256,16 @@ HFONT CreateFontIndirect(const LOGFONT *lf) {
 		lf->lfFaceName, lf->lfHeight);
 }
 
-BOOL AfxExtractSubString(CString &rString, const char *lpszFullString,
+bool AfxExtractSubString(CString &rString, const char *lpszFullString,
 		int iSubString, char chSep) {
 	if (lpszFullString == nullptr)
-		return FALSE;
+		return false;
 
 	while (iSubString--) {
 		lpszFullString = strchr(lpszFullString, chSep);
 		if (!lpszFullString) {
 			rString.Empty();
-			return FALSE;
+			return false;
 		}
 
 		lpszFullString++;	// Point past the separator
@@ -277,7 +277,7 @@ BOOL AfxExtractSubString(CString &rString, const char *lpszFullString,
 	ASSERT(nLen >= 0);
 
 	rString = CString(lpszFullString, nLen);
-	return TRUE;
+	return true;
 }
 
 } // namespace MFC

@@ -65,10 +65,10 @@ CBdbgMgr::~CBdbgMgr(void)
 
 
 //* CBdbgMgr::DebugInit -- Initialize
-BOOL CBdbgMgr::DebugInit(const char *lpszIniFilename, const char *lpszIniSectionname)
-// returns: TRUE if error, FALSE otherwise
+bool CBdbgMgr::DebugInit(const char *lpszIniFilename, const char *lpszIniSectionname)
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::GetDebugInt -- get debugging integer
@@ -83,96 +83,96 @@ int CBdbgMgr::GetDebugInt(const char *lpszOption, int iDefault)
 
 
 //* CBdbgMgr::GetDebugString --
-BOOL CBdbgMgr::GetDebugString(const char *lpszOption, char *lpszTarget, int iTargetSize, const char *lpszDefault)
+bool CBdbgMgr::GetDebugString(const char *lpszOption, char *lpszTarget, int iTargetSize, const char *lpszDefault)
 // lpszOption -- option name string
 // lpszDefault -- default value; if nullptr, then default is null string
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::TraceConstructor -- trace object constructor, if optioned
-BOOL CBdbgMgr::TraceConstructor(const char *lpszName, void *lpLoc)
+bool CBdbgMgr::TraceConstructor(const char *lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::TraceDestructor -- trace object destructor, if optioned
-BOOL CBdbgMgr::TraceDestructor(const char *lpszName, void *lpLoc)
+bool CBdbgMgr::TraceDestructor(const char *lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::DebugMessageBox --
-BOOL CBdbgMgr::DebugMessageBox(const char *lpszPrompt, unsigned int nType, unsigned int nIDPrompt)
+bool CBdbgMgr::DebugMessageBox(const char *lpszPrompt, unsigned int nType, unsigned int nIDPrompt)
 // lpszPrompt -- message string, starting with '~'
 // nType, nIDPrompt -- integer Common::sprintf_s substitutions
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::AddTraceObject -- add object to trace list
-BOOL CBdbgMgr::AddTraceObject(const char *lpszName, void *lpPtr)
+bool CBdbgMgr::AddTraceObject(const char *lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::TestTraceObject -- test
-BOOL CBdbgMgr::TestTraceObject(const char *lpszName, void *lpPtr, BOOL bMissing)
+bool CBdbgMgr::TestTraceObject(const char *lpszName, void *lpPtr, bool bMissing)
 // lpszName -- name of object
 // lpPtr -- pointer to object
-// bMissing -- if TRUE, then correct if pointer is missing;
-//		if FALSE, then correct if pointer is present -- in
+// bMissing -- if true, then correct if pointer is missing;
+//		if false, then correct if pointer is present -- in
 //		case of array overflow, this test can't be made
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::RemoveTraceObject -- add object to trace list
-BOOL CBdbgMgr::RemoveTraceObject(const char *lpszName, void *lpPtr)
+bool CBdbgMgr::RemoveTraceObject(const char *lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 //* CBdbgMgr::ReportTraceObjects -- final report at program end
-BOOL CBdbgMgr::ReportTraceObjects(void)
+bool CBdbgMgr::ReportTraceObjects(void)
 //// int FAR PASCAL CBdbgMgr::ReportTraceObjects(void)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 
 //* CBdbgMgr::OutputWithTime -- output debugging string with time
 // lpszPattern -- Common::sprintf_s string containing %s for time substitution
-// returns: TRUE if error, FALSE otherwise
-BOOL CBdbgMgr::OutputWithTime(const char *lpszPattern) {
-	return FALSE;
+// returns: true if error, false otherwise
+bool CBdbgMgr::OutputWithTime(const char *lpszPattern) {
+	return false;
 }
 
 
 //* CBdbgMgr::OutputWithWordWrap -- output debugging string with time
-BOOL CBdbgMgr::OutputWithWordWrap(const char *lpStr1, const char *lpStr2, int iIndent)
+bool CBdbgMgr::OutputWithWordWrap(const char *lpStr1, const char *lpStr2, int iIndent)
 // lpStr1, lpStr2 -- strings to be concatenated and outputted, with
 //		the second one (only) processed for word wrap
 // iIndent -- # blanks to indent after first line
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
-	return FALSE;
+	return false;
 }
 
 } // namespace Metagame

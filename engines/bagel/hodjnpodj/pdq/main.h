@@ -52,7 +52,7 @@ protected:
 	ERROR_CODE  LoadCategoryNames(void);
 	void        ReleaseCategoryNames(void);
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void HandleError(ERROR_CODE);
 	void OnSoundNotify(CSound *pSound);
 
@@ -63,7 +63,7 @@ protected:
 	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void OnMouseMove(unsigned int, CPoint);
 	void OnLButtonDown(unsigned int, CPoint);
-	void OnActivate(unsigned int, CWnd *, BOOL) override;
+	void OnActivate(unsigned int, CWnd *, bool) override;
 	void OnSetFocus(CWnd *);
 	void OnClose(void);
 	LRESULT OnMCINotify(WPARAM, LPARAM);
@@ -77,8 +77,8 @@ protected:
 	CGuessDlg   *m_pDlgGuess = nullptr;
 	CSound      *m_pSoundTrack = nullptr;
 	int          m_iLastType = 0;
-	BOOL         m_bInMenu = FALSE;
-	BOOL         m_bInGuess = FALSE;
+	bool         m_bInMenu = false;
+	bool         m_bInGuess = false;
 };
 
 } // namespace PDQ

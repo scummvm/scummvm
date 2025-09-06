@@ -30,15 +30,15 @@ namespace Mankala {
 
 extern LPGAMESTRUCT pGameParams;        // declared in mnk.cpp.
 
-BOOL gbTurnSoundsOff;         // used by mnkui.cpp too.
+bool gbTurnSoundsOff;         // used by mnkui.cpp too.
 ///DEFS mnk.h
 
 static inline void DebugBreak() {
 }
 
 //* CMnk::InitMankala -- initialize a new game of Mankala
-BOOL CMnk::InitMankala(void)
-// returns: TRUE if error, FALSE otherwise
+bool CMnk::InitMankala(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::InitMankala) ;
 	int iError = 0 ;        // error code
@@ -48,7 +48,7 @@ BOOL CMnk::InitMankala(void)
 	CPit * xpcPit ;     // pointer to pit object
 
 	xpcMove->Zero() ;   // clear all data fields in current move/pos object
-	xpcMove->m_bRealMove = TRUE ;   // but make this one the real one
+	xpcMove->m_bRealMove = true ;   // but make this one the real one
 //    m_iPlayer = m_iNumberMoves = 0 ;
 	for (iPlayer = 0 ; iPlayer < NUMPLAYERS ; ++iPlayer)
 		for (iPit = -2 ; iPit < NUMPITS ; ++iPit) {
@@ -76,19 +76,19 @@ BOOL CMnk::InitMankala(void)
 }
 
 //* CMnk::Move -- make a move
-BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
+bool CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 // xpcSowPit -- ptr to pit object whose stones are being sowed
 // xpcMove -- move object for position to start from; if nullptr,
 //      then use the move object for current position on
 //      the board, and make the actual moves on the board
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::Move) ;
 
 	int iError = 0 ;        // error code
 	int iNumStones ;        // number of stones to be sowed
 	int iStone ;        // loop variable
-	BOOL bStonesFound,
+	bool bStonesFound,
 	     bOtherStonesFound ;     // flag: stones found, game not over
 	int iTemp ;     // temp variable for swapping players
 	int iPlayer = xpcSowPit->m_iPlayer, iPit = xpcSowPit->m_iPit ;
@@ -97,7 +97,7 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	CPit * xpcHandPit = m_xpcPits[iPlayer][HANDINDEX + 2] ; // hand pit
 	CPit * xpcHomePit = m_xpcPits[iPlayer][HOMEINDEX + 2] ; // home bin
 	CPit * xpcPit ; // target pit
-//	BOOL B;
+//	bool B;
 	MSG msg;
 
 	//_asm int 3;                    //to track GPf
@@ -113,7 +113,7 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	}
 
 	xpcMove->m_xpcPit = xpcSowPit ; // save ptr to pit being sowed
-	xpcMove->m_bFreeTurn = xpcMove->m_bCapture = FALSE ;        //reset FreeTurn, Capture indicators.
+	xpcMove->m_bFreeTurn = xpcMove->m_bCapture = false ;        //reset FreeTurn, Capture indicators.
 
 	if (xpcMove->m_bRealMove && m_bDumpMoves)
 		DumpPosition(xpcMove) ;
@@ -158,7 +158,7 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	}
 
 	if (iPit < 0)   // if my last move was into my home bin
-		xpcMove->m_bFreeTurn = TRUE ;   // I get a free turn
+		xpcMove->m_bFreeTurn = true ;   // I get a free turn
 
 	else if (iPlayer == xpcMove->m_xpcPit->m_iPlayer &&
 	         xpcMove->m_iNumStones[iPlayer][iPit + 2] == 1) {
@@ -166,7 +166,7 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 
 		if (pGameParams->bSoundEffectsEnabled) sndPlaySound(PICKUP, SND_ASYNC);
 
-		xpcMove->m_bCapture = TRUE ;    // we have a capture
+		xpcMove->m_bCapture = true ;    // we have a capture
 		xpcMove->m_iCapturePit = NUMPITS - 1 - iPit ;
 		// number of opponent's pit being captured
 		xpcPit = m_xpcPits[iOtherPlayer][xpcMove->m_iCapturePit + 2] ;
@@ -191,8 +191,8 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 
 	// check whether there are any moves to be played now -- if not,
 	// the game is over
-	bStonesFound = FALSE ;  // no stones found yet
-	bOtherStonesFound = FALSE;
+	bStonesFound = false ;  // no stones found yet
+	bOtherStonesFound = false;
 	for (iPit = 0 ;  iPit < NUMPITS ; iPit++) {
 		bStonesFound = bStonesFound || (xpcMove->m_iNumStones[iPlayer][iPit + 2] > 0) ;
 
@@ -266,12 +266,12 @@ cleanup:
 
 
 //* CMnk::MoveStone -- move one stone for move
-BOOL CMnk::MoveStone(CMove * xpcMove,
+bool CMnk::MoveStone(CMove * xpcMove,
                      CPit * xpcFromPit, CPit * xpcToPit)
 // xpcMove -- position/move object in which move takes place
 // xpcFromPit -- source pit (where stone comes from)
 // xpcToPit -- target pit (where stone goes)
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::MoveStone) ;
 	int iError = 0 ;        // error code
@@ -298,9 +298,9 @@ BOOL CMnk::MoveStone(CMove * xpcMove,
 }
 
 //* CMnk::InitData -- initialize data class object
-BOOL CMnk::InitData(BOOL bInit)
-// bInit -- if FALSE, release data
-// returns: TRUE if error, FALSE otherwise
+bool CMnk::InitData(bool bInit)
+// bInit -- if false, release data
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::InitData) ;
 	int iError = 0 ;        // error code
@@ -398,8 +398,8 @@ cleanup:
 }
 
 //* CMnk::CountConfigurations -- set up Configurations table
-BOOL CMnk::CountConfigurations(void)
-// returns: TRUE if error, FALSE otherwise
+bool CMnk::CountConfigurations(void)
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::CountConfigurations) ;
 	int iError = 0 ;        // error code
@@ -432,7 +432,7 @@ BOOL CMnk::CountConfigurations(void)
 }
 
 //* CMnk::PopulateTable -- compute values for best win table
-BOOL CMnk::PopulateTable() {
+bool CMnk::PopulateTable() {
 	JXENTER(CMnk::PopulateTable) ;
 	int iError = 0 ;        // error code
 	long lConfigIndex ;     // loop variable
@@ -469,7 +469,7 @@ cleanup:
 	RETURN(iError != 0) ;
 }
 
-BOOL CMnk::WriteTableFile() {
+bool CMnk::WriteTableFile() {
 	int iError = 0;			// error code
 	JXENTER(CMnk::WriteTableFile);
 
@@ -497,7 +497,7 @@ BOOL CMnk::WriteTableFile() {
 	RETURN iError != 0;
 }
 
-BOOL CMnk::ReadTableFile() {
+bool CMnk::ReadTableFile() {
 	JXENTER(CMnk::ReadTableFile) ;
 	int iError = 0 ;        // error code
 
@@ -531,9 +531,9 @@ BOOL CMnk::ReadTableFile() {
 
 //* CMnk::MapConfiguration -- map a configuration to its integer index,
 //      store configuration index into Move object
-BOOL CMnk::MapConfiguration(CMove * xpcMove)
+bool CMnk::MapConfiguration(CMove * xpcMove)
 // xpcMove -- CMove object containing the configuration
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::MapConfiguration) ;
 	int iError = 0 ;        // error code
@@ -590,9 +590,9 @@ cleanup:
 
 //* CMnk::UnmapConfiguration -- map configuration index back
 //              to configuration
-BOOL CMnk::UnmapConfiguration(CMove * xpcMove)
+bool CMnk::UnmapConfiguration(CMove * xpcMove)
 // xpcMove -- CMove object containing the configuration / index
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::UnmapConfiguration) ;
 	int iError = 0 ;        // error code
@@ -674,18 +674,18 @@ cleanup:
 }
 
 //* CMnk::SearchMove -- search for best move
-BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
+bool CMnk::SearchMove(CMove * xpcMove, int &iMove)
 // xpcMove -- pointer to move/position to find move for
 // iMove (output) -- recommended pit number
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::SearchMove) ;
 
 	int iError = 0 ;        // error code
-	//BOOL bDone = FALSE ;    // flag: evaluations done
+	//bool bDone = false ;    // flag: evaluations done
 	//int iNumMoves = 0 ;     // number of legal moves
 	int iNumStones ;        // number of stones in pit
-//    BOOL bFree[NUMPITS], bCapture[NUMPITS] ;
+//    bool bFree[NUMPITS], bCapture[NUMPITS] ;
 //    int iValue[NUMPITS] ; // value of each pit
 	int iPit ;      // loop variable
 	//int iLastPit = -1 ; // for finding lowest/highest # pit
@@ -695,7 +695,7 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 //    CPit * xpcPit ;   // pit being processed
 	int iPlayer = xpcMove->m_iPlayer ;  // person on the move
 //    CMove * xpcMove = &m_cCurrentMove ; // current move/position object
-	BOOL bStonesFound;
+	bool bStonesFound;
 
 	m_iCurrentMaxDepth = m_iMaxDepth[iPlayer] ; // minimax depth
 	m_iCurrentCapDepth = m_iCapDepth[iPlayer] ; // capture depth
@@ -730,7 +730,7 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 		goto cleanup ;
 	}
 
-	for (iPit = 0, bStonesFound = FALSE ; iPit < NUMPITS ; ++iPit) {
+	for (iPit = 0, bStonesFound = false ; iPit < NUMPITS ; ++iPit) {
 		iNumStones =  xpcMove->m_iNumStones[iPlayer][iPit + 2];
 		bStonesFound = bStonesFound || iNumStones;
 
@@ -758,7 +758,7 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 	/*
 	if(!bStonesFound){
 	     iPit=-3;               //-3 is a good choice because iPit=-1, iPit=-2 represent the hand and home bins.
-	    return(FALSE);   //let the while loop in mnkui.cpp that calls SearchMove continue, so that moving stones is automatic.
+	    return(false);   //let the while loop in mnkui.cpp that calls SearchMove continue, so that moving stones is automatic.
 	}
 	*/
 
@@ -796,10 +796,10 @@ cleanup:
 }
 
 //* CMnk::Minimax -- find best move from supplied configuration
-BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
+bool CMnk::Minimax(CMove * xpcMove, int iDepth)
 // xpcMove -- CMove object containing the configuration
 // iDepth -- minimax tree depth so far
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::Minimax) ;
 
@@ -810,7 +810,7 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 	CPit * xpcSowPit ;  // ptr to CPit object being sowed
 	int iValue, iMaxValue = BESTWINUNDEF ;  // move value for this move
 	int iBestMove = -1 ;        // best move
-	BOOL bDone ;    // flag: processing this move is done
+	bool bDone ;    // flag: processing this move is done
 	int iPit, iP ;      // loop variable
 
 	for (iPit = 0 ; iPit < NUMPITS ; ++iPit)
@@ -821,14 +821,14 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 	cMoveBase.m_iNumStones[0][HOMEINDEX + 2]
 	    = cMoveBase.m_iNumStones[1][HOMEINDEX + 2] = 0 ;
 	// clear both players' home bins
-	cMoveBase.m_bRealMove = FALSE ;
+	cMoveBase.m_bRealMove = false ;
 
 	for (iPit = 0 ; iPit < NUMPITS ; ++iPit) {
-		bDone = FALSE ;         // not done yet
+		bDone = false ;         // not done yet
 		iValue = BESTWINUNDEF ;     // no value yet
 		if (xpcMove->m_iNumStones[iPlayer][iPit + 2] == 0)
 			// if this pit has no stones in it
-			bDone = TRUE ;      // nothing to do
+			bDone = true ;      // nothing to do
 		if (!bDone) {
 			++iLegalMoves ; // increment legal move count
 			memcpy(&cMove, &cMoveBase, sizeof(CMove)) ;
@@ -849,14 +849,14 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 				iValue = cMove.m_iBestWinValue ;
 				// get value of this move
 				if (iValue > BESTWINUNDEF)  // value was in table
-					bDone = TRUE ;
+					bDone = true ;
 			}
 			if (!bDone && (iDepth < m_iCurrentMaxDepth ||
 			               (iDepth < m_iCurrentMaxDepth + m_iCurrentCapDepth
 			                && (cMove.m_bCapture || cMove.m_bFreeTurn)))) {
 				Minimax(&cMove, iDepth + 1) ;
 				iValue = cMove.m_iBestWinValue ;
-				bDone = TRUE ;
+				bDone = true ;
 			}
 
 			if (!bDone) {
@@ -865,7 +865,7 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 					iValue += (cMove.m_iNumStones[cMove.m_iPlayer][iP + 2]
 					           - cMove.m_iNumStones
 					           [OTHERPLAYER(cMove.m_iPlayer)][iP + 2]) / 2 ;
-				bDone = TRUE ;
+				bDone = true ;
 			}
 
 //      if (!bDone)
@@ -904,22 +904,22 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 
 
 //* CMnk::StaticEvaluation -- determine static value of a position
-BOOL CMnk::StaticEvaluation(CMove * xpcMove)
+bool CMnk::StaticEvaluation(CMove * xpcMove)
 // xpcMove -- position to be evaluated
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::StaticEvaluation) ;
 
 	int iError = 0 ;        // error code
 	int iNumMoves = 0 ;     // number of legal moves
 	int iNumStones ;        // number of stones in pit
-	BOOL bFree[NUMPITS], bCapture[NUMPITS] ;
+	bool bFree[NUMPITS], bCapture[NUMPITS] ;
 	int iPit ;      // loop variable
 	//int iMaxValue = BESTWINUNDEF ;  // computing maximum value
 	//CPit * xpcPit ; // pit being processed
 	int iPlayer = xpcMove->m_iPlayer ;  // current player
 
-	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = FALSE ;
+	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = false ;
 
 	for (iPit = 0 ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
@@ -933,7 +933,7 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 		// test whether this pit yields a free turn
 
 		if (iNumStones == 2 * NUMPITS + 1)
-			bCapture[iPit] = TRUE ;
+			bCapture[iPit] = true ;
 
 		else if (iNumStones && iNumStones <= iPit)
 			bCapture[iPit] = (xpcMove->m_iNumStones[iPlayer]
@@ -944,13 +944,13 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 			                  [iPit - iNumStones + NUMPITS + 2] == 0) ;
 
 		else
-			bCapture[iPit] = FALSE ;
+			bCapture[iPit] = false ;
 
 		if (bFree[iPit])
-			xpcMove->m_bHasFree = TRUE ;
+			xpcMove->m_bHasFree = true ;
 
 		if (bCapture[iPit])
-			xpcMove->m_bHasCapture = TRUE ;
+			xpcMove->m_bHasCapture = true ;
 
 		// the following formula is really just a guess
 		xpcMove->m_iValues[iPit] = iNumStones
@@ -966,9 +966,9 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 
 
 //* CMnk::AggressiveStaticEvaluation -- determine static value of a position
-BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
+bool CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 // xpcMove -- position to be evaluated
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 
 /*
     For Simplicity: defensive moves are discussed from pt of view of crab
@@ -989,20 +989,20 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 	//int iMaxValue = BESTWINUNDEF ;  // computing maximum value
 	int iPlayer = xpcMove->m_iPlayer ;  // current player
 
-	BOOL bAFreePitExists,
+	bool bAFreePitExists,
 	     bACaptureExists,
 	     bDoFreePitFirst;
 	//CPit * xpcPit ; // pit being processed
 
 
 	/*INITIALIZE*/
-	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = FALSE ;
-	bDoFreePitFirst = FALSE;
-	bAFreePitExists = FALSE;
-	bACaptureExists = FALSE;
+	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = false ;
+	bDoFreePitFirst = false;
+	bAFreePitExists = false;
+	bACaptureExists = false;
 	maxCapture = 0;
 
-	for (iPit = 0, bAFreePitExists = FALSE, bACaptureExists = FALSE ; iPit < NUMPITS ; ++iPit) {
+	for (iPit = 0, bAFreePitExists = false, bACaptureExists = false ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
 		//xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
 
@@ -1028,19 +1028,19 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 			iCapture = 0;
 
 		if (iFree) {
-			xpcMove->m_bHasFree = TRUE ;
+			xpcMove->m_bHasFree = true ;
 			if (!bAFreePitExists) iFreePit = iPit;                              //so that you start w/ the closest  free Pit (ie. iPit with the lowest index),
-			if (iNumStones <= NUMPITS) bAFreePitExists = TRUE; //unless there's a "WRAP AROUND" in which case the farthest pit will be selected.
+			if (iNumStones <= NUMPITS) bAFreePitExists = true; //unless there's a "WRAP AROUND" in which case the farthest pit will be selected.
 		}
 
 		/* determine which pit yields the max capture      */
 		if (iCapture) {
-			xpcMove->m_bHasCapture = TRUE ;
+			xpcMove->m_bHasCapture = true ;
 			if (iCapture > maxCapture) {
 				maxCapture = iCapture;
 				iCapturePit = iPit;
 			}
-			bACaptureExists = TRUE;
+			bACaptureExists = true;
 		}
 	}//end- for
 
@@ -1050,7 +1050,7 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 		        (xpcMove->m_iNumStones[iPlayer][iCapturePit + 2] < NUMPITS + 1) &&  //i.e. No Wrap Around Capture
 		        ((iCapturePit - xpcMove->m_iNumStones[iPlayer][iCapturePit + 2])  > iFreePit)) {   //i.e. the landing pit in the capture case, ...
 			//  is  farther than the freePit.
-			bDoFreePitFirst = TRUE;
+			bDoFreePitFirst = true;
 		}
 	}
 
@@ -1071,9 +1071,9 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 }
 
 //* CMnk::StaticEvaluation -- determine static value of a position
-BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
+bool CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 // xpcMove -- position to be evaluated
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 
 /*
     For Simplicity: defensive moves are discussed from pt of view of crab
@@ -1122,7 +1122,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	    tmpValues,
 	    tmpCount;
 
-	BOOL bAFreePitExists,
+	bool bAFreePitExists,
 	     bACaptureExists,
 	     bAThreatExists,
 	     bDoFreePitFirst,
@@ -1135,15 +1135,15 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 
 
 	/*INITIALIZE*/
-	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = FALSE ;
-	bAThreatExists = FALSE;
-	bDoFreePitFirst = FALSE;
-	bAFreePitExists = FALSE;
-	bACaptureExists = FALSE;
-	bEndGamePlay = FALSE;
-	bConclusive = FALSE;
-	bSaveable = FALSE;
-	bUnSaveable = FALSE;
+	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = false ;
+	bAThreatExists = false;
+	bDoFreePitFirst = false;
+	bAFreePitExists = false;
+	bACaptureExists = false;
+	bEndGamePlay = false;
+	bConclusive = false;
+	bSaveable = false;
+	bUnSaveable = false;
 	tmpCount = 0;
 	maxCapture = 0;
 	maxThreat = 0;
@@ -1152,7 +1152,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	iMaxStones = 0;
 //	maxFree = 0;
 	maxTotalBenefit = 0;
-	bNearClustered = FALSE;
+	bNearClustered = false;
 
 	memset((void *)iEvasionNecessary, 0x0, NUMPITS * sizeof(int));
 	memset((void *)iPitUnderThreat, -1, NUMPITS * sizeof(int));
@@ -1175,7 +1175,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	}
 
 	if (((iEmptyPitCount > 2) && (iOtherEmptyPitCount > 2)) || (bNearClustered && ((iEmptyPitCount > 1) || (iOtherEmptyPitCount > 1))))
-		bEndGamePlay = TRUE;
+		bEndGamePlay = true;
 
 
 	/*
@@ -1207,7 +1207,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 
 		/* if there are stones in the pit under threat then set flags */
 		if (iCurrentPitUnderThreat != -1) {
-			bAThreatExists = TRUE;
+			bAThreatExists = true;
 			iPitUnderThreat[ThreatCount] = iCurrentPitUnderThreat;
 			iEvasionNecessary[iCurrentPitUnderThreat] = xpcMove->m_iNumStones[iPlayer][iCurrentPitUnderThreat + 2]; //the extent of threat to a given CRAB pit
 			iOtherOffensivePit[j] = iCurrentPitUnderThreat;                     // the j th HUMAN pit is offensive to iCurrentPitUnderThreat CRAB pit.
@@ -1230,7 +1230,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 
 
 
-	for (iPit = 0, bAFreePitExists = FALSE, bACaptureExists = FALSE ; iPit < NUMPITS ; ++iPit) {
+	for (iPit = 0, bAFreePitExists = false, bACaptureExists = false ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
 		//xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
 
@@ -1279,9 +1279,9 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 		     then start from the one closest to the home bin
 		*/
 		if (iFree) {
-			xpcMove->m_bHasFree = TRUE ;
+			xpcMove->m_bHasFree = true ;
 			if (!bAFreePitExists) iFreePit = iPit;                              //so that you start w/ the closest  free Pit (ie. iPit with the lowest index),
-			if (iNumStones <= NUMPITS) bAFreePitExists = TRUE; //unless there's a "WRAP AROUND" in which case the farthest pit will be selected.
+			if (iNumStones <= NUMPITS) bAFreePitExists = true; //unless there's a "WRAP AROUND" in which case the farthest pit will be selected.
 		}
 
 		/*
@@ -1289,12 +1289,12 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 		   (OTHER THINGS BEING THE SAME),   start with this pit
 		*/
 		if (iCapture) {
-			xpcMove->m_bHasCapture = TRUE ;
+			xpcMove->m_bHasCapture = true ;
 			if (iCapture > maxCapture) {
 				maxCapture = iCapture;
 				iCapturePit = iPit;
 			}
-			bACaptureExists = TRUE;
+			bACaptureExists = true;
 		}
 
 	}//end- for iPit
@@ -1310,7 +1310,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 		        (xpcMove->m_iNumStones[iPlayer][iCapturePit + 2] < NUMPITS + 1) &&  //i.e. No Wrap Around Capture
 		        ((iCapturePit - xpcMove->m_iNumStones[iPlayer][iCapturePit + 2])  > iFreePit)) {   //i.e. the landing pit in the capture case, ...
 			//  is  farther than the freePit.
-			bDoFreePitFirst = TRUE;
+			bDoFreePitFirst = true;
 		}
 	}
 
@@ -1359,12 +1359,12 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	//T C F     stands for....(threatExists, CaptureExists, FreePitExists)
 	if (!bAThreatExists && !bACaptureExists && bAFreePitExists) {                                                               // 0 0 1
 		xpcMove->m_iValues[iFreePit] = 5;
-		bConclusive = TRUE;
+		bConclusive = true;
 	}
 
 	if (!bAThreatExists && bACaptureExists && !bAFreePitExists) {                                                               // 0 1 0
 		xpcMove->m_iValues[iCapturePit] = 5;
-		bConclusive = TRUE;
+		bConclusive = true;
 	}
 
 	if (!bAThreatExists && bACaptureExists && bAFreePitExists) {                                                                // 0 1 1
@@ -1373,18 +1373,18 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 		else
 			xpcMove->m_iValues[iCapturePit] = 5;
 
-		bConclusive = TRUE;
+		bConclusive = true;
 	}
 
 
 	if (bAThreatExists && !bAFreePitExists && !bACaptureExists) {                                                              //1 0 0
 		xpcMove->m_iValues[iMaxThreatPit] = 5;
-		bConclusive = TRUE;
+		bConclusive = true;
 	}
 
 	if (bAThreatExists && !bACaptureExists && bAFreePitExists) {                                                                //1 0 1
 		xpcMove->m_iValues[iFreePit] = 5;
-		bConclusive = TRUE;                                                                           // if no capture do free pit ---> no contest from Threat.
+		bConclusive = true;                                                                           // if no capture do free pit ---> no contest from Threat.
 	}
 	if (bAThreatExists && bACaptureExists) {
 		if (!bAFreePitExists || (bAFreePitExists && !bDoFreePitFirst)) {                                                                //1 1 0 && 1 1 1
@@ -1415,10 +1415,10 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 					    to the maxThreatPit is uncapturable then go for the threat pit instead of the
 					    capture.
 					*/
-					for (kk = 0, tmpCount = 0, bUnSaveable = FALSE; kk < ThreatCount; kk++) {
+					for (kk = 0, tmpCount = 0, bUnSaveable = false; kk < ThreatCount; kk++) {
 						if (iPitUnderThreat[kk] == iMaxThreatPit) tmpCount++;
 						if (tmpCount > 1) {
-							bUnSaveable = TRUE;
+							bUnSaveable = true;
 							break;
 						}
 					}
@@ -1431,12 +1431,12 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 					                    stones saved (stones no longer threatened because of capture(s))
 					*/
 
-					for (ii = 0, bSaveable = FALSE; !bUnSaveable && ii < NUMPITS; ii++) {                         // ii for this side.
+					for (ii = 0, bSaveable = false; !bUnSaveable && ii < NUMPITS; ii++) {                         // ii for this side.
 						if (jYieldsACapture[ii] == -1) continue;            //skip the following lines if ii does not yield a capture.
 						if ((iSaved = iOtherOffensivePit[jYieldsACapture[ii]]) == -1) {     //iSaved lies on this side.
 							continue;                           //the captured pit is not offensive.
 						} else {
-							bSaveable = TRUE;
+							bSaveable = true;
 							StonesSaved = xpcMove->m_iNumStones[iPlayer][2 + iSaved];   // no. of stones saved via capture.
 							StonesGained = xpcMove->m_iNumStones[OtherPlayer][2 + jYieldsACapture[ii]]; //no. of stones gained via capture.
 							TotalBenefit = StonesGained + StonesSaved;
@@ -1457,7 +1457,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 		} else {                                                                             //if bdoFreePitFirst
 			xpcMove->m_iValues[iFreePit] = 5;
 		}
-		bConclusive = TRUE;
+		bConclusive = true;
 	} //end if (bAThreatExists&&baCaptureExists)
 
 	if ((!bAThreatExists && !bACaptureExists && !bAFreePitExists) || !bConclusive) {
@@ -1477,7 +1477,7 @@ cleanup:
 
 */
 
-BOOL  CMnk::TreeAlgo(CMove *xpcMove) {
+bool  CMnk::TreeAlgo(CMove *xpcMove) {
 	MOVE* pMoveArr[MAXMOVES],
 	      *pOrigMove;
 	HGLOBAL hMoveArr[MAXMOVES];
@@ -1490,7 +1490,7 @@ BOOL  CMnk::TreeAlgo(CMove *xpcMove) {
 			for (k = 0; k < j; k++) {
 				GlobalFree(hMoveArr[k]);
 			}
-		return TRUE;          //for error.
+		return true;          //for error.
 	}
 
 	pMoveArr[0] = (MOVE*) GlobalLock(hMoveArr[0]);
@@ -1501,13 +1501,13 @@ BOOL  CMnk::TreeAlgo(CMove *xpcMove) {
 	pOrigMove = pMoveArr[0];
 
 	ExtendedStaticEvaluation(pMoveArr[0], pOrigMove, 0, 0);
-	return FALSE;
+	return false;
 
 }
 
 
 int CMnk::ExtendedStaticEvaluation(MOVE *pMove, MOVE *pParentMove,  signed char cID, int iPlayer) {
-	BOOL bWrapsAroundOnTop,
+	bool bWrapsAroundOnTop,
 	     bWrapsAroundBehind;
 //	     bWrapsAroundAhead;
 
@@ -1632,8 +1632,8 @@ uint16 Type(byte pit, CONFIG* pStoneCfg){
 //returns F/C/T/N in the lowbyte    and the amount of gain/save in the high byte.
 }
 
-BOOL CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMoveChain){
-    static BOOL bLocked;
+bool CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMoveChain){
+    static bool bLocked;
     byte Pit;
 
     for(Pit=0; Pit<NUMPITS; Pit++){
@@ -1645,7 +1645,7 @@ BOOL CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMo
             case CAPTURE:
                 _wordstrcat(pwMoveChain,CreateMoveChainWord(HIBYTE(u),C, Pit));
                 len= _wordstrlen(pwMoveChain);
-                bLocked[m_iChainID++]=TRUE;
+                bLocked[m_iChainID++]=true;
                 ptmpMoveChain=pwMoveChain;
                 pwMoveChain=m_pwMoveChainList[m_iChainID];
                 _wordstrcpy(pwMoveChain, StepBackwards(ptmpMoveChain));
@@ -1674,9 +1674,9 @@ BOOL CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMo
 
 
 //* CMnk::CountStones -- count total stones in configuration
-BOOL CMnk::CountStones(CMove * xpcMove)
+bool CMnk::CountStones(CMove * xpcMove)
 // xpcMove -- CMove object containing the configuration
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::CountStones) ;
 	int iError = 0 ;        // error code
@@ -1697,9 +1697,9 @@ BOOL CMnk::CountStones(CMove * xpcMove)
 }
 
 //* CMnk::GetBestWinCount -- get position value in best win table
-BOOL CMnk::GetBestWinCount(CMove * xpcMove)
+bool CMnk::GetBestWinCount(CMove * xpcMove)
 // xpcMove -- CMove object for position to be evaluated
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::GetBestWinCount) ;
 	int iError = 0 ;        // error code
@@ -1773,16 +1773,16 @@ cleanup:
 }
 
 //* CMnk::SetBestWinCount -- set value in best win table
-BOOL CMnk::SetBestWinCount(CMove * xpcMove)
+bool CMnk::SetBestWinCount(CMove * xpcMove)
 // xpcMove -- pointer to CMove object where value is to be set
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::SetBestWinCount) ;
 	int iError = 0 ;        // error code
 	struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
 	long lIndex = xpcMove->m_lConfigIndex ;
 	int iValue = xpcMove->m_iBestWinValue ; // value from table
-	BOOL bTest = FALSE ;        // debugging test
+	bool bTest = false ;        // debugging test
 
 	if (lIndex < 0 || lIndex >= MAXCONFIGS) {
 		iError = 100 ;      // index out of range
@@ -1876,9 +1876,9 @@ cleanup:
 }
 
 //* CMnk::DumpPosition -- dump contents of CMove object
-BOOL CMnk::DumpPosition(CMove * xpcMove)
+bool CMnk::DumpPosition(CMove * xpcMove)
 // xpcMove -- CMove object containing the configuration
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CMnk::DumpPosition) ;
 	int iError = 0 ;        // error code
@@ -1916,11 +1916,11 @@ BOOL CMnk::DumpPosition(CMove * xpcMove)
 }
 
 //* CMnk::DumpBestWinTable -- dump fields of best win table
-BOOL CMnk::DumpBestWinTable(long lLow,
+bool CMnk::DumpBestWinTable(long lLow,
                             long lHigh) {
 // lLow -- low end of configuration range
 // lHigh -- high end of configuration range
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 	JXENTER(CMnk::DumpBestWinTable) ;
 	int iError = 0 ;        // error code
 	CMove cMove ;       // dummy move structure

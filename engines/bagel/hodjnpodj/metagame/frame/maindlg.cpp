@@ -31,7 +31,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
 
-extern  BOOL    bMetaLoaded;
+extern  bool    bMetaLoaded;
 
 extern const char *gpszSaveGameFile;
 
@@ -63,7 +63,7 @@ extern const char *gpszSaveGameFile;
  *
  ****************************************************************/
 CMainGameDlg::CMainGameDlg(CWnd *pParent, CPalette *pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_MAIN_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, FALSE) {
+	: CBmpDialog(pParent, pPalette, IDD_MAIN_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
 	// Inits
 	m_pPlayMetaButton = nullptr;
 	m_pPlayMiniButton = nullptr;
@@ -102,7 +102,7 @@ CMainGameDlg::CMainGameDlg(CWnd *pParent, CPalette *pPalette)
  *      n/a
  *
  ****************************************************************/
-BOOL CMainGameDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMainGameDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
@@ -116,7 +116,7 @@ BOOL CMainGameDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_QUIT_GAME:
 			ClearDialogImage();
 			EndDialog((int)wParam);
-			return TRUE;
+			return true;
 		}
 	}
 	return CBmpDialog::OnCommand(wParam, lParam);
@@ -194,8 +194,8 @@ void CMainGameDlg::ClearDialogImage(void) {
 }
 
 
-BOOL CMainGameDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CMainGameDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -219,7 +219,7 @@ BOOL CMainGameDlg::OnInitDialog() {
 	m_pRestoreButton->SetPalette(m_pPalette);
 	bSuccess = m_pRestoreButton->SetControl(IDC_RESTORE_GAME, this);
 	if (g_engine->listSaves().empty())
-		m_pRestoreButton->EnableWindow(FALSE);
+		m_pRestoreButton->EnableWindow(false);
 	ASSERT(bSuccess);
 
 	m_pGrandTourButton = new CColorButton();
@@ -280,7 +280,7 @@ BOOL CMainGameDlg::OnInitDialog() {
 	ASSERT(bSuccess);
 	bSuccess = m_pRestoreButton->SetControl(IDC_RESTORE_GAME, this);
 	if (!FileExists(gpszSaveGameFile)) {
-		m_pRestoreButton->EnableWindow(FALSE);
+		m_pRestoreButton->EnableWindow(false);
 	}
 	ASSERT(bSuccess);
 
@@ -364,7 +364,7 @@ BOOL CMainGameDlg::OnInitDialog() {
 
 	#endif
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************

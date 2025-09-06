@@ -25,7 +25,7 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
+bool CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
         int nOrientation, int nWeight, byte bItalic, byte bUnderline,
         byte cStrikeOut, byte nCharSet, byte nOutPrecision,
         byte nClipPrecision, byte nQuality, byte nPitchAndFamily,
@@ -42,17 +42,17 @@ BOOL CFont::CreateFont(int nHeight, int nWidth, int nEscapement,
 	return true;
 }
 
-BOOL CFont::CreateFontIndirect(const LOGFONT *lpLogFont) {
+bool CFont::CreateFontIndirect(const LOGFONT *lpLogFont) {
 	assert(lpLogFont != nullptr);
 
 	m_hObject = MFC::CreateFontIndirect(lpLogFont);
 
 	if (m_hObject == nullptr)
-		return FALSE;
+		return false;
 
 	// This is where it becomes permanent
 	AfxHookObject();
-	return TRUE;
+	return true;
 }
 
 } // namespace MFC

@@ -88,12 +88,12 @@ int ReleaseDC(HWND hWnd, HDC hDC) {
 	}
 }
 
-BOOL DeleteDC(HDC hDC) {
+bool DeleteDC(HDC hDC) {
 	delete (CDC::Impl *)hDC;
 	return true;
 }
 
-BOOL DeleteObject(HGDIOBJ ho) {
+bool DeleteObject(HGDIOBJ ho) {
 	delete (CGdiObjectImpl *)ho;
 	return true;
 }
@@ -107,7 +107,7 @@ HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint) {
 	return wnd->BeginPaint(lpPaint);
 }
 
-BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
+bool EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
 	CWnd *wnd = static_cast<CWnd *>(hWnd);
 	return wnd->EndPaint(lpPaint);
 }
@@ -118,11 +118,11 @@ intptr DialogBoxParam(HINSTANCE hInstance,
 	error("TODO: DialogBoxParam");
 }
 
-BOOL IsWindow(HWND hWnd) {
+bool IsWindow(HWND hWnd) {
 	error("TODO: IsWindow");
 }
 
-BOOL SetWindowText(HWND hWnd, const char *lpszString) {
+bool SetWindowText(HWND hWnd, const char *lpszString) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SetWindowText(lpszString);
 	return true;
@@ -133,7 +133,7 @@ int GetWindowText(HWND hWnd, char *lpszStringBuf, int nMaxCount) {
 	return wnd->GetWindowText(lpszStringBuf, nMaxCount);
 }
 
-BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
+bool ScreenToClient(HWND hWnd, LPPOINT lpPoint) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->ScreenToClient(lpPoint);
 	return true;
@@ -155,7 +155,7 @@ HGDIOBJ GetStockObject(int i) {
 	error("TODO: GetStockObject value");
 }
 
-HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
+HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, bool bForceBkgd) {
 	auto *surf = static_cast<CDC::Impl *>(hdc);
 	return surf->selectPalette(hPal, bForceBkgd);
 }
@@ -240,7 +240,7 @@ int GetDIBits(HDC hdc, HBITMAP hbm, unsigned int start, unsigned int cLines,
 	error("TODO: GetDIBits");
 }
 
-BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
+bool BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
         HDC hdcSrc, int xSrc, int ySrc, uint32 rop) {
 	CDC::Impl *srcDc = (CDC::Impl *)hdcSrc;
 	CDC::Impl *destDc = (CDC::Impl *)hdc;
@@ -255,7 +255,7 @@ BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 	return true;
 }
 
-BOOL StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
+bool StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
                 HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, uint32 rop) {
 	CDC *srcDC = CDC::FromHandle(hdcSrc);
 	CDC *destDC = CDC::FromHandle(hdcDest);
@@ -278,7 +278,7 @@ int GetTextExtent(HDC hdc, const char *text, size_t len) {
 	error("TODO: GetTextExtent");
 }
 
-BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm) {
+bool GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm) {
 	CDC *dc = CDC::FromHandle(hdc);
 	return dc->GetTextMetrics(lptm);
 }
@@ -297,40 +297,40 @@ bool RemoveFontResource(const char *fontName) {
 }
 
 int SetScrollPos(HWND hWnd, int /*nBar*/,
-		int nPos, BOOL bRedraw) {
+		int nPos, bool bRedraw) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	return wnd->SetScrollPos(nPos, bRedraw);
 }
 
 void SetScrollRange(HWND hWnd, int /*nBar*/,
-		int nMinPos, int nMaxPos, BOOL bRedraw) {
+		int nMinPos, int nMaxPos, bool bRedraw) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SetScrollRange(nMinPos, nMaxPos, bRedraw);
 }
 
-BOOL ClipCursor(const RECT *lpRect) {
+bool ClipCursor(const RECT *lpRect) {
 	// Ignored in ScummVM
 	return false;
 }
 
-BOOL GetCursorPos(LPPOINT lpPoint) {
+bool GetCursorPos(LPPOINT lpPoint) {
 	Common::Point mousePos = AfxGetApp()->getMousePos();
 	lpPoint->x = mousePos.x;
 	lpPoint->y = mousePos.y;
 	return true;
 }
 
-BOOL SetCursorPos(int x, int y) {
+bool SetCursorPos(int x, int y) {
 	AfxGetApp()->setMousePos(Common::Point(x, y));
 	return true;
 }
 
-BOOL SetCapture(HWND hWnd) {
+bool SetCapture(HWND hWnd) {
 	AfxGetApp()->SetCapture(hWnd);
 	return true;
 }
 
-BOOL ReleaseCapture() {
+bool ReleaseCapture() {
 	AfxGetApp()->ReleaseCapture();
 	return true;
 }
@@ -348,14 +348,14 @@ HCURSOR SetCursor(HCURSOR hCursor) {
 	return AfxGetApp()->SetCursor(hCursor);
 }
 
-int ShowCursor(BOOL bShow) {
+int ShowCursor(bool bShow) {
 	g_system->showMouse(bShow);
 	return 0;
 }
 
-BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, CDC *cdc) {
+bool LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, CDC *cdc) {
 	if (!lpProc)
-		return FALSE;
+		return false;
 
 	int dx = ABS(x1 - x0);
 	int dy = ABS(y1 - y0);
@@ -386,7 +386,7 @@ BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, CDC *cdc) {
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 byte GetRValue(COLORREF color) {
@@ -405,16 +405,16 @@ HWND GetDlgItem(HWND hDlg, int nIDDlgItem) {
 	error("TODO: GetDlgItem");
 }
 
-BOOL EndDialog(HWND hDlg, intptr nResult) {
+bool EndDialog(HWND hDlg, intptr nResult) {
 	error("TODO: EndDialog");
 }
 
-BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-                   unsigned int uValue, BOOL bSigned) {
+bool SetDlgItemInt(HWND hDlg, int nIDDlgItem,
+                   unsigned int uValue, bool bSigned) {
 	error("TODO: SetDlgItemInt");
 }
 
-BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
+bool CheckRadioButton(HWND hDlg, int nIDFirstButton,
                       int nIDLastButton, int nIDCheckButton) {
 	error("TODO: CheckRadioButton");
 }
@@ -447,7 +447,7 @@ HBRUSH GetSysColorBrush(int nIndex) {
 	}
 }
 
-BOOL DestroyMenu(HMENU hMenu) {
+bool DestroyMenu(HMENU hMenu) {
 	error("TODO: DestroyMenu");
 }
 

@@ -65,7 +65,7 @@ private:
 	CMovieWindow pMovie;
 	CBitmap *m_pCurrentBmp;
 	unsigned int m_nFlags;
-	BOOL m_bInCredits;
+	bool m_bInCredits;
 
 public:
 	CHodjPodjWindow();
@@ -73,22 +73,22 @@ public:
 	void BlackScreen(void);
 
 	void FreeCurrentDLL(void);
-	BOOL LoadMetaDLL(void);
-	BOOL LoadZoomDLL(void);
-	BOOL LoadGrandTourDLL(void);
+	bool LoadMetaDLL(void);
+	bool LoadZoomDLL(void);
+	bool LoadGrandTourDLL(void);
 
 	void HandleError(ERROR_CODE);
 
-	void PlayMovie(const int, const char *, BOOL);
+	void PlayMovie(const int, const char *, bool);
 
 	void GetProfilePath(void);
 	void GetHomePath(void);
-	BOOL GetCDPath(void);
-	BOOL PositionAtHomePath(void);
-	BOOL PositionAtMiniPath(int);
-	BOOL PositionAtCDPath(void);
-	BOOL FindCDROM(void);
-	BOOL DriveWriteLocked(void);
+	bool GetCDPath(void);
+	bool PositionAtHomePath(void);
+	bool PositionAtMiniPath(int);
+	bool PositionAtCDPath(void);
+	bool FindCDROM(void);
+	bool DriveWriteLocked(void);
 
 	long DetermineChallengeScore(void);
 	LPARAM UpdateChallengePhase(LPARAM);
@@ -97,24 +97,24 @@ public:
 	void GetProfileSettings(void);
 	void SaveProfileSettings(void);
 
-	BOOL CheckLowMemory(void);
+	bool CheckLowMemory(void);
 
-	BOOL Restore(void);
+	bool Restore(void);
 	void ShowCredits(void);
 
 	static  void ReleaseResources(void);
 	static  void FlushInputEvents(void);
 
 private:
-	BOOL CheckConfig(CDC *pDC);
-	BOOL SetupNewMeta(void);
+	bool CheckConfig(CDC *pDC);
+	bool SetupNewMeta(void);
 	void LoadNewDLL(LPARAM);
 	void UpdateDLLRouting(void);
 	void StartBackgroundMidi(void);
 	void StopBackgroundMidi(void);
 
 protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
+	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 
 	//{{AFX_MSG( CHodjPodjWindow )
 	afx_msg void OnPaint();
@@ -124,9 +124,9 @@ protected:
 	afx_msg void OnLButtonDown(unsigned int, CPoint);
 	afx_msg void OnRButtonDown(unsigned int, CPoint);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
-	afx_msg BOOL OnEraseBkgnd(CDC *);
+	afx_msg bool OnEraseBkgnd(CDC *);
 	afx_msg void OnParentNotify(unsigned int, LPARAM);
-	afx_msg void OnActivate(unsigned int, CWnd *, BOOL) override;
+	afx_msg void OnActivate(unsigned int, CWnd *, bool) override;
 	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	//}}AFX_MSG
 

@@ -290,7 +290,7 @@ CBFishWindow::CBFishWindow(void) {
 	CDC     *pDC;
 	CDibDoc *pDibDoc;
 	ERROR_CODE errCode;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -298,11 +298,11 @@ CBFishWindow::CBFishWindow(void) {
 	// Initialize members
 	//
 	m_pGamePalette = nullptr;
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
-	m_bMovingFish = FALSE;
-	m_bUserEditMode = FALSE;
-	m_bInMenu = FALSE;
+	m_bPause = false;
+	m_bGameActive = false;
+	m_bMovingFish = false;
+	m_bUserEditMode = false;
+	m_bInMenu = false;
 	m_pMasterHit = nullptr;
 	m_pMasterMiss = nullptr;
 	m_pDragFish = nullptr;
@@ -342,7 +342,7 @@ CBFishWindow::CBFishWindow(void) {
 		// Acquire the shared palette for our game from the splash screen art
 		//
 		if ((pDibDoc = new CDibDoc()) != nullptr) {
-			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != FALSE)
+			if (pDibDoc->OpenDocument(MINI_GAME_MAP) != false)
 				pGamePalette = m_pGamePalette = pDibDoc->DetachPalette();
 			else
 				errCode = ERR_UNKNOWN;
@@ -396,8 +396,8 @@ CBFishWindow::CBFishWindow(void) {
 			} else {
 				errCode = ERR_MEMORY;
 			}
-			m_pScrollSprite->SetMasked(TRUE);
-			m_pScrollSprite->SetMobile(TRUE);
+			m_pScrollSprite->SetMasked(true);
+			m_pScrollSprite->SetMobile(true);
 		} else {
 			errCode = ERR_MEMORY;
 		}
@@ -485,12 +485,12 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 			// this BMP uses the same palette as entire game
 			//
-			if (m_pMasterHit->SharePalette(m_pGamePalette) != FALSE) {
+			if (m_pMasterHit->SharePalette(m_pGamePalette) != false) {
 
-				if (m_pMasterHit->LoadResourceSprite(pDC, IDB_HIT) != FALSE) {
+				if (m_pMasterHit->LoadResourceSprite(pDC, IDB_HIT) != false) {
 
-					m_pMasterHit->SetMasked(TRUE);
-					m_pMasterHit->SetMobile(TRUE);
+					m_pMasterHit->SetMasked(true);
+					m_pMasterHit->SetMobile(true);
 					m_pMasterHit->SetZOrder(SPRITE_TOPMOST);
 				} else {
 					errCode = ERR_UNKNOWN;
@@ -509,12 +509,12 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 				// this BMP uses the same palette as entire game
 				//
-				if (m_pMasterMiss->SharePalette(m_pGamePalette) != FALSE) {
+				if (m_pMasterMiss->SharePalette(m_pGamePalette) != false) {
 
-					if (m_pMasterMiss->LoadResourceSprite(pDC, IDB_MISS) != FALSE) {
+					if (m_pMasterMiss->LoadResourceSprite(pDC, IDB_MISS) != false) {
 
-						m_pMasterMiss->SetMasked(TRUE);
-						m_pMasterMiss->SetMobile(TRUE);
+						m_pMasterMiss->SetMasked(true);
+						m_pMasterMiss->SetMobile(true);
 						m_pMasterMiss->SetZOrder(SPRITE_TOPMOST);
 					} else {
 						errCode = ERR_UNKNOWN;
@@ -534,12 +534,12 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 				// this BMP uses the same palette as entire game
 				//
-				if (m_pMasterHarpoon->SharePalette(m_pGamePalette) != FALSE) {
+				if (m_pMasterHarpoon->SharePalette(m_pGamePalette) != false) {
 
-					if (m_pMasterHarpoon->LoadResourceSprite(pDC, IDB_HARPOON) != FALSE) {
+					if (m_pMasterHarpoon->LoadResourceSprite(pDC, IDB_HARPOON) != false) {
 
-						m_pMasterHarpoon->SetMasked(TRUE);
-						m_pMasterHarpoon->SetMobile(TRUE);
+						m_pMasterHarpoon->SetMasked(true);
+						m_pMasterHarpoon->SetMobile(true);
 					} else {
 						errCode = ERR_UNKNOWN;
 					}
@@ -558,12 +558,12 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 				// this BMP uses the same palette as entire game
 				//
-				if (m_pOctopus->SharePalette(m_pGamePalette) != FALSE) {
+				if (m_pOctopus->SharePalette(m_pGamePalette) != false) {
 
-					if (m_pOctopus->LoadResourceSprite(pDC, IDB_OCTOPUS) != FALSE) {
+					if (m_pOctopus->LoadResourceSprite(pDC, IDB_OCTOPUS) != false) {
 						m_pOctopus->SetZOrder(SPRITE_BACKGROUND);
-						m_pOctopus->SetMasked(FALSE);
-						m_pOctopus->SetMobile(FALSE);
+						m_pOctopus->SetMasked(false);
+						m_pOctopus->SetMobile(false);
 						m_pOctopus->SetPosition(OCTOPUS_X, OCTOPUS_Y);
 					} else {
 						errCode = ERR_UNKNOWN;
@@ -585,13 +585,13 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 					// attach sprite to the Game Palette
 					//
-					if (m_pFish[i]->SharePalette(m_pGamePalette) != FALSE) {
+					if (m_pFish[i]->SharePalette(m_pGamePalette) != false) {
 
-						if (m_pFish[i]->LoadResourceSprite(pDC, IDB_FISH + i) != FALSE) {
+						if (m_pFish[i]->LoadResourceSprite(pDC, IDB_FISH + i) != false) {
 
-							m_pFish[i]->SetTypeCode(FALSE);
-							m_pFish[i]->SetMasked(TRUE);
-							m_pFish[i]->SetMobile(TRUE);
+							m_pFish[i]->SetTypeCode(false);
+							m_pFish[i]->SetMasked(true);
+							m_pFish[i]->SetMobile(true);
 							m_pFish[i]->SetZOrder(SPRITE_BACKGROUND);
 							//m_pFish[i]->SetPosition(ptFishBin[i]);
 							//m_pFish[i]->LinkSprite();
@@ -616,15 +616,15 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 					// attach good guy to the Game Palette
 					//
-					if (m_pEnemyFish[i]->SharePalette(m_pGamePalette) != FALSE) {
+					if (m_pEnemyFish[i]->SharePalette(m_pGamePalette) != false) {
 
-						if (m_pEnemyFish[i]->LoadResourceSprite(pDC, IDB_HOOK + i) != FALSE) {
+						if (m_pEnemyFish[i]->LoadResourceSprite(pDC, IDB_HOOK + i) != false) {
 
-							// TRUE if linked into chain, FALSE otherwise
-							m_pEnemyFish[i]->SetTypeCode(FALSE);
+							// true if linked into chain, false otherwise
+							m_pEnemyFish[i]->SetTypeCode(false);
 
-							m_pEnemyFish[i]->SetMasked(TRUE);
-							m_pEnemyFish[i]->SetMobile(TRUE);
+							m_pEnemyFish[i]->SetMasked(true);
+							m_pEnemyFish[i]->SetMobile(true);
 							m_pEnemyFish[i]->SetPosition(ptFishHooks[i]);
 						} else {
 							errCode = ERR_UNKNOWN;
@@ -721,7 +721,7 @@ void CBFishWindow::ReleaseMasterSprites(void) {
 void CBFishWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 	PaintScreen();
 	EndPaint(&lpPaint);
@@ -868,10 +868,10 @@ ERROR_CODE CBFishWindow::RepaintSpriteList(CDC *pDC) {
 *
 *  RETURN VALUE:
 *
-*       BOOL = TRUE if message was handled
+*       bool = true if message was handled
 *
 ****************************************************************/
-BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CMainMenu COptionsWind((CWnd *)this,
 	                       m_pGamePalette,
 	                       (pGameParams->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0) | (m_bGameActive || m_bUserEditMode ? 0 : NO_RETURN),
@@ -890,7 +890,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			GamePause();
 
-			m_bInMenu = TRUE;
+			m_bInMenu = true;
 
 			if ((pDC = GetDC()) != nullptr) {
 				m_pScrollSprite->EraseSprite(pDC);
@@ -923,7 +923,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				ReleaseDC(pDC);
 			}
 
-			m_bInMenu = FALSE;
+			m_bInMenu = false;
 
 			if (!pGameParams->bMusicEnabled && (m_pSoundTrack != nullptr)) {
 
@@ -941,7 +941,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			GameResume();
 
-			return TRUE;
+			return true;
 
 		case COMPUTERS_TURN:
 
@@ -981,7 +981,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 
 			m_nTurns = m_nUserFish;
-			m_bUsersTurn = TRUE;
+			m_bUsersTurn = true;
 
 			FlushInputEvents();
 
@@ -1025,7 +1025,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CBFishWindow::PlaceTurnHarpoons(void) {
@@ -1089,7 +1089,7 @@ void CBFishWindow::RemoveTurnHarpoon(void) {
 *
 ****************************************************************/
 void CBFishWindow::GamePause(void) {
-	m_bPause = TRUE;
+	m_bPause = true;
 };
 
 
@@ -1111,7 +1111,7 @@ void CBFishWindow::GamePause(void) {
 *
 ****************************************************************/
 void CBFishWindow::GameResume(void) {
-	m_bPause = FALSE;
+	m_bPause = false;
 };
 
 
@@ -1197,20 +1197,20 @@ void CBFishWindow::PlaceUserFish(void) {
 	//
 	// Initiate User-Edit-Mode (Allow user to drag and drop fish to grid)
 	//
-	m_bUserEditMode = TRUE;
+	m_bUserEditMode = true;
 }
 
 
 void CBFishWindow::PlaceEnemyFish(void) {
 	int i, j, k;
 	int row, col, rowTmp, colTmp;
-	BOOL bFound;
+	bool bFound;
 
 	// For each fish, randomly select a location in the grid (rotate if neccessary)
 	//
 	for (i = 0; i < MAX_FISH; i++) {
 
-		bFound = FALSE;
+		bFound = false;
 		do {
 
 			// select random starting square
@@ -1236,7 +1236,7 @@ void CBFishWindow::PlaceEnemyFish(void) {
 
 				// Does the fish fit at this location
 				//
-				bFound = TRUE;
+				bFound = true;
 				for (k = 0; k < MAX_FISH_SIZE; k++) {
 
 					// if there are no more squares for this fish, then done
@@ -1250,7 +1250,7 @@ void CBFishWindow::PlaceEnemyFish(void) {
 					colTmp = (m_aEnemyFishInfo[i].nLoc[k].y += col);
 
 					if ((rowTmp >= GRID_ROWS) || (colTmp >= GRID_COLS) || (m_nEnemyGrid[rowTmp][colTmp] != EMPTY)) {
-						bFound = FALSE;
+						bFound = false;
 						break;
 					}
 				}
@@ -1317,17 +1317,17 @@ void CBFishWindow::LoadIniSettings(void) {
 
 		case SKILLLEVEL_LOW:
 			m_nDifficultyLevel = 1;
-			m_bUsersTurn = TRUE;
+			m_bUsersTurn = true;
 			break;
 
 		case SKILLLEVEL_MEDIUM:
 			m_nDifficultyLevel = 1;
-			m_bUsersTurn = FALSE;
+			m_bUsersTurn = false;
 			break;
 
 		case SKILLLEVEL_HIGH:
 			m_nDifficultyLevel = 2;
-			m_bUsersTurn = FALSE;
+			m_bUsersTurn = false;
 			break;
 
 		default:
@@ -1345,9 +1345,9 @@ void CBFishWindow::LoadIniSettings(void) {
 			m_nDifficultyLevel = DIFF_DEF;
 
 		nVal = GetPrivateProfileInt(INI_SECTION, "UserGoesFirst", 0, INI_FILENAME);
-		m_bUsersTurn = FALSE;
+		m_bUsersTurn = false;
 		if (nVal != 0)
-			m_bUsersTurn = TRUE;
+			m_bUsersTurn = true;
 	}
 }
 
@@ -1399,13 +1399,13 @@ void CBFishWindow::GameReset(void) {
 	if (pGameParams->bSoundEffectsEnabled)
 		sndPlaySound(nullptr, SND_ASYNC);          // stop all sounds
 
-	m_bGameActive = FALSE;                      // there is no active game
+	m_bGameActive = false;                      // there is no active game
 
-	m_bPause = FALSE;                           // the game is not paused
+	m_bPause = false;                           // the game is not paused
 
-	m_bUserEditMode = FALSE;                    // user can't edit board
+	m_bUserEditMode = false;                    // user can't edit board
 
-	m_bMovingFish = FALSE;                      // user is not moving fish
+	m_bMovingFish = false;                      // user is not moving fish
 
 	if ((pDC = GetDC()) != nullptr) {              // erase all sprites from the screen
 		CSprite::EraseSprites(pDC);
@@ -1417,11 +1417,11 @@ void CBFishWindow::GameReset(void) {
 			assert(m_pEnemyFish[i] != nullptr);
 			if (m_pEnemyFish[i]->GetTypeCode()) {
 				m_pEnemyFish[i]->UnlinkSprite();
-				m_pEnemyFish[i]->SetTypeCode(FALSE);
+				m_pEnemyFish[i]->SetTypeCode(false);
 			}
 
 			if (m_pFish[i]->GetTypeCode()) {    // need to re-rotate this fish
-				m_pFish[i]->SetTypeCode(FALSE);
+				m_pFish[i]->SetTypeCode(false);
 				m_pFish[i]->LoadResourceSprite(pDC, IDB_FISH + i);
 			}
 		}
@@ -1460,7 +1460,7 @@ void CBFishWindow::GameReset(void) {
 
 	m_nTurns = 1;                               // User has first turn
 
-	m_bStillCheck = FALSE;                      // Computer AI starts fresh
+	m_bStillCheck = false;                      // Computer AI starts fresh
 }
 
 
@@ -1471,16 +1471,16 @@ void CBFishWindow::RotateFish(int nFishIndex) {
 	CSprite *pSprite;
 	CDC *pDC;
 	int nIDB;
-	BOOL bRotated, bPaintFish;
+	bool bRotated, bPaintFish;
 
 	// validate the index
 	assert((nFishIndex >= 0) && (nFishIndex < MAX_FISH));
 
 	// must be in User-Edit Mode to rotate a fish
-	assert(m_bUserEditMode == TRUE);
+	assert(m_bUserEditMode == true);
 
 	// game can not yet be active
-	assert(m_bGameActive == FALSE);
+	assert(m_bGameActive == false);
 
 	pSprite = m_pFish[nFishIndex];
 
@@ -1541,10 +1541,10 @@ void CBFishWindow::RotateFish(int nFishIndex) {
 			rect.SetRect(point.x, point.y, point.x + size.cy, point.y + size.cx);
 
 			// assume we can rotate
-			bPaintFish = TRUE;
+			bPaintFish = true;
 
-			if (!OkToPlaceFish(nFishIndex, m_pFish[nFishIndex]->GetPosition(), (m_pFish[nFishIndex]->GetTypeCode() ? FALSE : TRUE))) {
-				bPaintFish = FALSE;
+			if (!OkToPlaceFish(nFishIndex, m_pFish[nFishIndex]->GetPosition(), (m_pFish[nFishIndex]->GetTypeCode() ? false : true))) {
+				bPaintFish = false;
 			}
 
 			// Ok, it is safe to rotate
@@ -1635,16 +1635,16 @@ void CBFishWindow::AssignFishToGrid(int nFishIndex) {
 
 int CBFishWindow::GetUserGridIndex(CPoint point) {
 	int i, j, iVal, jVal, nGridIndex;
-	BOOL bEndLoop;
+	bool bEndLoop;
 
 	iVal = -1;
 	jVal = -1;
-	bEndLoop = FALSE;
+	bEndLoop = false;
 	for (i = 0; i < GRID_ROWS; i++) {
 		for (j = 0; j < GRID_COLS; j++) {
 			if ((point.x == gLeftGrid[i][j].x) && (point.y == gLeftGrid[i][j].y)) {
 				assert(iVal == -1 && jVal == -1);
-				bEndLoop = TRUE;
+				bEndLoop = true;
 				iVal = i;
 				jVal = j;
 				break;
@@ -1709,7 +1709,7 @@ void CBFishWindow::OnRButtonDown(unsigned int, CPoint point) {
 
 	if (m_bUserEditMode) {
 
-		assert(m_bGameActive != TRUE);
+		assert(m_bGameActive != true);
 
 		if (m_bMovingFish) {
 
@@ -1759,7 +1759,7 @@ void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 	CDC    *pDC;
 	int     i,
 	        nPick;
-	BOOL    bOkToPlay;
+	bool    bOkToPlay;
 
 	tmpRect = m_pScrollSprite->GetRect();
 
@@ -1813,11 +1813,11 @@ void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 
 			// Check to make sure all fish are correctly placed
 			//
-			bOkToPlay = TRUE;
+			bOkToPlay = true;
 			for (i = 0; i < MAX_FISH; i++) {
 				ptTmp = m_pFish[i]->GetPosition();
 				if (ptTmp.x == ptFishBin[i].x && ptTmp.y == ptFishBin[i].y) {
-					bOkToPlay = FALSE;
+					bOkToPlay = false;
 					break;
 				}
 			}
@@ -1833,8 +1833,8 @@ void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 					ReleaseDC(pDC);
 				}
 
-				m_bUserEditMode = FALSE;
-				m_bGameActive = TRUE;
+				m_bUserEditMode = false;
+				m_bGameActive = true;
 				m_nTurns = m_nUserFish;
 
 
@@ -1910,7 +1910,7 @@ void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 
 					if (tmpRect.PtInRect(point)) {
 
-						m_bMovingFish = TRUE;
+						m_bMovingFish = true;
 						m_pDragFish = m_pFish[i];
 						m_cLastPoint = m_pDragFish->GetPosition();
 						m_bLastRotated = m_pDragFish->GetTypeCode();
@@ -1944,7 +1944,7 @@ void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 				if (m_nTurns == 0) {
 					// Computers turn to shoot
 					//
-					m_bUsersTurn = FALSE;
+					m_bUsersTurn = false;
 					SendMessage(WM_COMMAND, COMPUTERS_TURN, BN_CLICKED);
 				}
 
@@ -1983,21 +1983,21 @@ void CBFishWindow::OnLButtonUp(unsigned int, CPoint point) {
 	CRect rect, tmpRect;
 	CDC *pDC;
 	int i;
-	BOOL bRevert;
+	bool bRevert;
 
 	if (m_bUserEditMode && m_bMovingFish) {
 
-		assert(m_bGameActive != TRUE);
+		assert(m_bGameActive != true);
 		assert(m_pDragFish != nullptr);
 
-		m_bMovingFish = FALSE;
+		m_bMovingFish = false;
 
 		size = m_pDragFish->GetSize();
 		point.x -= size.cx / 2;
 		point.y -= size.cy / 2;
 
 		point = SnapToGrid(point);
-		bRevert = FALSE;
+		bRevert = false;
 
 		// test for valid fish placement
 		//
@@ -2005,7 +2005,7 @@ void CBFishWindow::OnLButtonUp(unsigned int, CPoint point) {
 
 		if (!OkToPlaceFish(GetFishIndex(m_pDragFish), point, m_pDragFish->GetTypeCode())) {
 			point = m_cLastPoint;
-			bRevert = TRUE;
+			bRevert = true;
 		}
 
 		// drop fish
@@ -2039,20 +2039,20 @@ void CBFishWindow::OnLButtonUp(unsigned int, CPoint point) {
 	}
 }
 
-BOOL CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, BOOL bRotated) {
+bool CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, bool bRotated) {
 	int i, nRow, nCol, nGridIndex, nID;
-	BOOL bOk;
+	bool bOk;
 
 	nID = IndexToId(nFishIndex);
 	nGridIndex = GetUserGridIndex(point);
 
 	// assume the fish will fit
-	bOk = TRUE;
+	bOk = true;
 
 	// if point is not in the grid, then we can't put the fish here
 	//
 	if (nGridIndex == -1) {
-		bOk = FALSE;
+		bOk = false;
 
 	} else {
 
@@ -2073,14 +2073,14 @@ BOOL CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, BOOL bRotated) {
 			// do not exceed grid boundary
 			//
 			if (nRow < 0 || nRow >= GRID_ROWS || nCol < 0 || nCol >= GRID_COLS) {
-				bOk = FALSE;
+				bOk = false;
 				break;
 			}
 
 			// can't put the new fish into a non-empty square
 			//
 			if ((m_nUserGrid[nRow][nCol] != EMPTY) && (m_nUserGrid[nRow][nCol] != (byte)nID)) {
-				bOk = FALSE;
+				bOk = false;
 				break;
 			}
 		}
@@ -2360,7 +2360,7 @@ void CBFishWindow::SinkEnemyFish(int nFishIndex) {
 
 	assert(pSprite != nullptr);
 
-	pSprite->SetTypeCode(TRUE);
+	pSprite->SetTypeCode(true);
 	pSprite->LinkSprite();
 
 	if ((pDC = GetDC()) != nullptr) {
@@ -2415,8 +2415,8 @@ void CBFishWindow::ComputersTurn(void) {
 			// get index to fish
 			nFishIndex = IdToIndex(nSquare);
 
-			if ((m_bStillCheck == FALSE) || (m_nDifficultyLevel == DIFF_AVERAGE)) {
-				m_bStillCheck = TRUE;
+			if ((m_bStillCheck == false) || (m_nDifficultyLevel == DIFF_AVERAGE)) {
+				m_bStillCheck = true;
 				nLastRow = nRow;
 				nLastCol = nCol;
 			}
@@ -2437,7 +2437,7 @@ void CBFishWindow::ComputersTurn(void) {
 			//
 			if (--m_aUserFishInfo[nFishIndex].life == 0) {
 
-				m_bStillCheck = FALSE;
+				m_bStillCheck = false;
 
 				assert(m_nUserFish > 0);
 
@@ -2538,19 +2538,19 @@ int CBFishWindow::SelectRandomTarget(void) {
 
 int CBFishWindow::SelectBurningTarget(void) {
 	int i, nGridIndex, nRow, nCol;
-	BOOL bFound;
+	bool bFound;
 
 	nRow = nCol = 0;
 
 	// try to re-aquire a fish we have already damaged, but has not yet sank
 	//
-	bFound = FALSE;
+	bFound = false;
 	for (i = 0; i < GRID_ROWS * GRID_COLS; i++) {
 		nRow = i / GRID_ROWS;
 		nCol = i % GRID_COLS;
 
 		if ((m_nUserGrid[nRow][nCol] & SHOT) && (m_nUserGrid[nRow][nCol] != (EMPTY | SHOT))) {
-			bFound = TRUE;
+			bFound = true;
 			break;
 		}
 	}
@@ -2605,15 +2605,15 @@ int CBFishWindow::SelectBestFitTarget(void) {
 	return nGridIndex;
 }
 
-BOOL CBFishWindow::FishFits(int nFishIndex, int row, int col) {
+bool CBFishWindow::FishFits(int nFishIndex, int row, int col) {
 	FISH cFishInfo;
 	int nRow, nCol, colTmp, rowTmp;
 	int i, j, k, rotate;
-	BOOL bFound;
+	bool bFound;
 
 	// Try fish at both 0 and 90 degrees
 	//
-	bFound = FALSE;
+	bFound = false;
 	for (i = 0; i < 2; i++) {
 
 		rotate = brand() & 1;
@@ -2641,7 +2641,7 @@ BOOL CBFishWindow::FishFits(int nFishIndex, int row, int col) {
 
 				// Does the fish fit at this location
 				//
-				bFound = TRUE;
+				bFound = true;
 				for (k = 0; k < MAX_FISH_SIZE; k++) {
 
 					// if there are no more squares for this fish, then done
@@ -2655,7 +2655,7 @@ BOOL CBFishWindow::FishFits(int nFishIndex, int row, int col) {
 					colTmp = (cFishInfo.nLoc[k].y += nCol);
 
 					if ((rowTmp >= GRID_ROWS) || (colTmp >= GRID_COLS) || (m_nUserGrid[rowTmp][colTmp] == (EMPTY | SHOT))) {
-						bFound = FALSE;
+						bFound = false;
 						break;
 					}
 				}
@@ -2862,7 +2862,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 	int row, col, rowTmp, colTmp, nGridIndex;
 	int nUseRow, nUseCol;
 	int nHits, nBestHits;
-	BOOL bFound, bUse;
+	bool bFound, bUse;
 
 	rowTmp = colTmp = 0;
 	nBestRow = nBestCol = 0;
@@ -2890,11 +2890,11 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 
 	// Try to match a fish pattern onto the grid
 	//
-	bUse = FALSE;
-	bFound = FALSE;
+	bUse = false;
+	bFound = false;
 	for (i = MAX_FISH - 1; i >= 0; i--) {
 
-		bFound = FALSE;
+		bFound = false;
 		if (m_aUserFishInfo[i].life != 0) {
 
 			// Try fish at both 0 and 90 degrees
@@ -2902,7 +2902,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 			rotate = brand() & 1;
 			for (j = 0; j < 2; j++) {
 
-				bFound = FALSE;
+				bFound = false;
 				for (l = 0; l < MAX_FISH_SIZE; l++) {
 
 					// make a fresh copy of this fish
@@ -2927,7 +2927,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 
 						// Does the fish fit at this location
 						//
-						bFound = TRUE;
+						bFound = true;
 						for (k = 0; k < MAX_FISH_SIZE; k++) {
 
 							// if there are no more squares for this fish, then done
@@ -2941,7 +2941,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 							colTmp = (cFishInfo.nLoc[k].y += nCol);
 
 							if ((rowTmp < 0) || (rowTmp >= GRID_ROWS) || (colTmp < 0) || (colTmp >= GRID_COLS) || (m_nUserGrid[rowTmp][colTmp] == (EMPTY | SHOT))) {
-								bFound = FALSE;
+								bFound = false;
 								break;
 							}
 						}
@@ -2949,7 +2949,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 						// Check to see if we can shoot one of these spots
 						//
 						if (bFound) {
-							bFound = FALSE;
+							bFound = false;
 							nLast = -1;
 							nBestRow = row;
 							nBestCol = col;
@@ -2976,7 +2976,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 										nBestCol = colTmp;
 										nLast = n;
 									}
-									bFound = TRUE;
+									bFound = true;
 								} else if (m_nUserGrid[rowTmp][colTmp] & IndexToId(i)) {
 									nHits++;
 								}
@@ -2995,7 +2995,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 								nBestHits = nHits;
 								nUseRow = rowTmp = nBestRow;
 								nUseCol = colTmp = nBestCol;
-								bUse = TRUE;
+								bUse = true;
 							}
 						}
 					}
@@ -3026,7 +3026,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 	int nRow, nCol, nBestRow, nBestCol;
 	int n, nLast;
 	int row, col, rowTmp, colTmp, nGridIndex;
-	BOOL bFound;
+	bool bFound;
 
 	rowTmp = colTmp = 0;
 	nBestRow = nBestCol = 0;
@@ -3053,10 +3053,10 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 
 	// Try to match a fish pattern onto the grid
 	//
-	bFound = FALSE;
+	bFound = false;
 	for (i = MAX_FISH - 1; i >= 0; i--) {
 
-		bFound = FALSE;
+		bFound = false;
 		if (m_aUserFishInfo[i].life != 0) {
 
 			// Try fish at both 0 and 90 degrees
@@ -3064,7 +3064,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 			rotate = brand() & 1;
 			for (j = 0; j < 2; j++) {
 
-				bFound = FALSE;
+				bFound = false;
 				for (l = 0; l < MAX_FISH_SIZE; l++) {
 
 					// make a fresh copy of this fish
@@ -3089,7 +3089,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 
 						// Does the fish fit at this location
 						//
-						bFound = TRUE;
+						bFound = true;
 						for (k = 0; k < MAX_FISH_SIZE; k++) {
 
 							// if there are no more squares for this fish, then done
@@ -3103,7 +3103,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 							colTmp = (cFishInfo.nLoc[k].y += nCol);
 
 							if ((rowTmp < 0) || (rowTmp >= GRID_ROWS) || (colTmp < 0) || (colTmp >= GRID_COLS) || (m_nUserGrid[rowTmp][colTmp] == (EMPTY | SHOT))) {
-								bFound = FALSE;
+								bFound = false;
 								break;
 							}
 						}
@@ -3111,7 +3111,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 						// Check to see if we can shoot one of these spots
 						//
 						if (bFound) {
-							bFound = FALSE;
+							bFound = false;
 							nLast = -1;
 							nBestRow = row;
 							nBestCol = col;
@@ -3136,7 +3136,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 										nBestCol = colTmp;
 										nLast = n;
 									}
-									bFound = TRUE;
+									bFound = true;
 								}
 							}
 							if (bFound) {
@@ -3167,7 +3167,7 @@ int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 	assert(bFound);
 
 	if (!bFound) {
-		assert(m_bStillCheck == FALSE);
+		assert(m_bStillCheck == false);
 		rowTmp = row;
 		colTmp = col;
 	}
@@ -3200,14 +3200,14 @@ void CBFishWindow::CreatePlume(CPoint point) {
 
 			// attach good guy to the Game Palette
 			//
-			if (pSprite->SharePalette(m_pGamePalette) != FALSE) {
+			if (pSprite->SharePalette(m_pGamePalette) != false) {
 
-				if (pSprite->LoadResourceSprite(pDC, IDB_PLUME) != FALSE) {
+				if (pSprite->LoadResourceSprite(pDC, IDB_PLUME) != false) {
 
 					pSprite->LoadResourceCels(pDC, IDB_APLUME, N_PLUME_CELS);
 
-					pSprite->SetMasked(TRUE);
-					pSprite->SetMobile(TRUE);
+					pSprite->SetMasked(true);
+					pSprite->SetMobile(true);
 
 					for (i = 0; i < N_PLUME_CELS; i++) {
 						pSprite->PaintSprite(pDC, point);
@@ -3266,14 +3266,14 @@ void CBFishWindow::CreateHarpoon(CPoint point) {
 
 			// attach good guy to the Game Palette
 			//
-			if (pSprite->SharePalette(m_pGamePalette) != FALSE) {
+			if (pSprite->SharePalette(m_pGamePalette) != false) {
 
-				if (pSprite->LoadResourceSprite(pDC, IDB_HARP) != FALSE) {
+				if (pSprite->LoadResourceSprite(pDC, IDB_HARP) != false) {
 
 					pSprite->LoadResourceCels(pDC, IDB_AHARP, N_HARP_CELS);
 
-					pSprite->SetMasked(TRUE);
-					pSprite->SetMobile(TRUE);
+					pSprite->SetMasked(true);
+					pSprite->SetMobile(true);
 
 					for (i = 0; i < N_HARP_CELS; i++) {
 						pSprite->PaintSprite(pDC, point);
@@ -3542,20 +3542,20 @@ void CBFishWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned 
 *
 *       unsigned int nState = WA_ACTIVE, WA_CLICKACTIVE or WA_INACTIVE
 *       CWnd *pWnd  = Pointer to Window that is losing/gaining activation
-*       BOOL bMin   = TRUE if this app is minimized
+*       bool bMin   = true if this app is minimized
 *
 *  RETURN VALUE:
 *
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
+void CBFishWindow::OnActivate(unsigned int nState, CWnd *, bool bMinimized) {
 	if (!bMinimized) {
 
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			//InvalidateRect(nullptr, FALSE);
+			//InvalidateRect(nullptr, false);
 			break;
 
 		case WA_INACTIVE:
@@ -3572,14 +3572,14 @@ void CBFishWindow::FlushInputEvents(void) {
 
 	// find and remove all keyboard events
 	//
-	while (TRUE) {
+	while (true) {
 		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
 			break;
 	}
 
 	// find and remove all mouse events
 	//
-	while (TRUE) {
+	while (true) {
 		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
 			break;
 	}

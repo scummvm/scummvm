@@ -55,11 +55,11 @@ struct stInventoryInfo {
 static ERROR_CODE GetSaveGameDescriptions(void);
 static void WipeBFC(CBfcMgr *pBfcMgr);
 
-BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+bool SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	CWinApp *pMyApp;
 	HCURSOR hCursor;
 	int iGameNum;
-	BOOL bSaved;
+	bool bSaved;
 	ERROR_CODE errCode;
 
 	// Validate input
@@ -74,7 +74,7 @@ BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	*pErrCode = ERR_NONE;
 
 	// Assume the save will work
-	bSaved = TRUE;
+	bSaved = true;
 
 	if ((*pErrCode = GetSaveGameDescriptions()) == ERR_NONE) {
 		// Open the Save Game dialog box
@@ -105,18 +105,18 @@ BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 			MFC::SetCursor(hCursor);
 
 		} else {
-			bSaved = FALSE;
+			bSaved = false;
 		}
 	}
 
 	if (*pErrCode != ERR_NONE) {
-		bSaved = FALSE;
+		bSaved = false;
 		C1ButtonDialog dlgOk(pWnd, pPalette, "&OK", "An error occured", "while saving.");
 		dlgOk.DoModal();
 	}
 
 	if (bSaved) {
-		g_engine->_bfcMgr.m_bChanged = FALSE;
+		g_engine->_bfcMgr.m_bChanged = false;
 
 		// Show this dialog box 10% of the time
 		if (ProbableTrue(10)) {
@@ -128,9 +128,9 @@ BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	return bSaved;
 }
 
-BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+bool RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	int iGameNum;
-	BOOL bRestored;
+	bool bRestored;
 
 	// Validate input
 	assert(pWnd != nullptr);
@@ -141,7 +141,7 @@ BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	*pErrCode = ERR_NONE;
 
 	// Assume Restore will work
-	bRestored = TRUE;
+	bRestored = true;
 
 	*pErrCode = GetSaveGameDescriptions();
 
@@ -153,12 +153,12 @@ BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 			if (g_engine->loadGameState(iGameNum + 1).getCode() != Common::kNoError)
 				*pErrCode = ERR_FOPEN;
 		} else {
-			bRestored = FALSE;
+			bRestored = false;
 		}
 	}
 
 	if (*pErrCode != ERR_NONE) {
-		bRestored = FALSE;
+		bRestored = false;
 	}
 
 	return bRestored;
@@ -180,12 +180,12 @@ void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 
 	pSaveGameInfo->m_lBoffoGameID = BOFFO_GAME_ID;
 	pSaveGameInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);
-	pSaveGameInfo->m_bUsed = TRUE;
+	pSaveGameInfo->m_bUsed = true;
 
 	pSaveGameInfo->m_iGameTime = pBfcMgr->m_iGameTime;
 	pSaveGameInfo->m_iMishMoshLoc = pBfcMgr->m_iMishMoshLoc;
 
-	memcpy(&pSaveGameInfo->m_bTraps, &pBfcMgr->m_bTraps, sizeof(BOOL) * 240);
+	memcpy(&pSaveGameInfo->m_bTraps, &pBfcMgr->m_bTraps, sizeof(bool) * 240);
 
 	pSaveGameInfo->m_bSoundEffectsEnabled = pBfcMgr->m_stGameStruct.bSoundEffectsEnabled;
 	pSaveGameInfo->m_bMusicEnabled = pBfcMgr->m_stGameStruct.bMusicEnabled;
@@ -298,7 +298,7 @@ void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 }
 
 
-BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
+bool ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 	// can't acess a null pointer
 	assert(pSaveGameInfo != nullptr);
 
@@ -306,17 +306,17 @@ BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 	assert(pSaveGameInfo->m_bUsed);
 
 	if (pSaveGameInfo->m_lBoffoGameID != BOFFO_GAME_ID) {
-		return FALSE;
+		return false;
 	}
 
 	if (pSaveGameInfo->m_nFixedRecordSize != sizeof(SAVEGAME_INFO))
-		return FALSE;
+		return false;
 
 	/*if (pSaveGameInfo->m_stPlayerInfo[0].m_lCrowns < 0)
-		return(FALSE);
+		return(false);
 
 	if (pSaveGameInfo->m_stPlayerInfo[1].m_lCrowns < 0)
-		return(FALSE);*/
+		return(false);*/
 
 	switch (pSaveGameInfo->m_iGameTime) {
 
@@ -327,14 +327,14 @@ BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 
 		// not a valid game type
 	default:
-		return FALSE;
+		return false;
 	}
 
 	if (pSaveGameInfo->m_iMishMoshLoc < MG_LOC_BASE || pSaveGameInfo->m_iMishMoshLoc > MG_LOC_MAX) {
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
@@ -355,19 +355,19 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	// clean out any info currently in the CBfcMgr
 	WipeBFC(pBfcMgr);
 
-	pBfcMgr->m_bInventories = TRUE;
-	pBfcMgr->m_bRestart = TRUE;
-	pBfcMgr->m_bGameOver = FALSE;
+	pBfcMgr->m_bInventories = true;
+	pBfcMgr->m_bRestart = true;
+	pBfcMgr->m_bGameOver = false;
 
-	pBfcMgr->m_bChanged = FALSE;
+	pBfcMgr->m_bChanged = false;
 
-	memcpy(&pBfcMgr->m_bTraps, &pSaveGameInfo->m_bTraps, sizeof(BOOL) * 240);
+	memcpy(&pBfcMgr->m_bTraps, &pSaveGameInfo->m_bTraps, sizeof(bool) * 240);
 
 	pBfcMgr->m_iFunctionCode = 0;
 
 	pBfcMgr->m_stGameStruct.bSoundEffectsEnabled = pSaveGameInfo->m_bSoundEffectsEnabled;
 	pBfcMgr->m_stGameStruct.bMusicEnabled = pSaveGameInfo->m_bMusicEnabled;
-	pBfcMgr->m_stGameStruct.bPlayingMetagame = TRUE;
+	pBfcMgr->m_stGameStruct.bPlayingMetagame = true;
 	pBfcMgr->m_bScrolling = pSaveGameInfo->m_bScrolling;
 
 	// need to allocate new Mish/Mosh items
@@ -377,7 +377,7 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		pBfcMgr->m_pMoshItem = new CItem(MG_OBJ_MOSH);
 	}
 
-	pBfcMgr->m_bRestoredGame = TRUE;
+	pBfcMgr->m_bRestoredGame = true;
 
 	pBfcMgr->m_iGameTime = pSaveGameInfo->m_iGameTime;
 	pBfcMgr->m_iMishMoshLoc = pSaveGameInfo->m_iMishMoshLoc;
@@ -556,7 +556,7 @@ static void WipeBFC(CBfcMgr *pBfcMgr) {
 
 	assert(pBfcMgr != nullptr);
 
-	pBfcMgr->m_bRestoredGame = FALSE;
+	pBfcMgr->m_bRestoredGame = false;
 
 	// Delete any Mish/Mosh items
 	if (pBfcMgr->m_pMishItem != nullptr) {

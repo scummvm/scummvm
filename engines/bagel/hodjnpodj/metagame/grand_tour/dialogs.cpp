@@ -43,13 +43,13 @@ BEGIN_MESSAGE_MAP(CTop10Dlg, CBmpDialog)
 END_MESSAGE_MAP()
 
 CTop10Dlg::CTop10Dlg(CWnd *pParent, CPalette *pPalette)
-	: CBmpDialog(pParent, pPalette, IDD_TOP10_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, FALSE) {
+	: CBmpDialog(pParent, pPalette, IDD_TOP10_SCROLL, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
 	// Inits
 	m_pOKButton = NULL;
 	pTop10Palette = pPalette;
 }
 
-BOOL CTop10Dlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CTop10Dlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	// What ever button is clicked, end the dialog and send the ID of the button
 	// clicked as the return from the dialog
 	if (HIWORD(lParam) == BN_CLICKED) {
@@ -57,7 +57,7 @@ BOOL CTop10Dlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_TOP10_OK:
 			ClearDialogImage();
 			EndDialog(0);
-			return(TRUE);
+			return(true);
 		}
 	}
 
@@ -77,8 +77,8 @@ void CTop10Dlg::OnOK() {
 void CTop10Dlg::ClearDialogImage() {
 }
 
-BOOL CTop10Dlg::OnInitDialog() {
-	BOOL bSuccess;
+bool CTop10Dlg::OnInitDialog() {
+	bool bSuccess;
 	CDC *pDC = GetDC();
 
 	CBmpDialog::OnInitDialog();
@@ -92,7 +92,7 @@ BOOL CTop10Dlg::OnInitDialog() {
 	ASSERT(bSuccess);
 
 	ReleaseDC(pDC);
-	return(TRUE);
+	return(true);
 }
 
 void CTop10Dlg::OnPaint() {
@@ -110,7 +110,7 @@ void CTop10Dlg::OnPaint() {
 
 	pDC = GetDC();
 	ASSERT(pDC);
-	pOldPalette = pDC->SelectPalette(pTop10Palette, FALSE);
+	pOldPalette = pDC->SelectPalette(pTop10Palette, false);
 	pDC->RealizePalette();                      // realize game palette
 	nOldBkMode = pDC->SetBkMode(TRANSPARENT);
 
@@ -141,7 +141,7 @@ void CTop10Dlg::OnPaint() {
 	}
 
 	pDC->SetTextColor(rgbOldColorRef);
-	pDC->SelectPalette(pOldPalette, FALSE);
+	pDC->SelectPalette(pOldPalette, false);
 	pDC->SetBkMode(nOldBkMode);
 	ReleaseDC(pDC);
 }

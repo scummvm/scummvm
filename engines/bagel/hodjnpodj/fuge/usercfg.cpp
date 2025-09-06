@@ -86,14 +86,14 @@ void CUserCfgDlg::GetDlgData() {
 	m_nBallSpeed  = m_pScrollBar3->GetScrollPos();
 	m_nPaddleSize = m_pScrollBar4->GetScrollPos();
 
-	m_bOutterWall = FALSE;
+	m_bOutterWall = false;
 	if (m_pWallButton->GetCheck() == 1) {
-		m_bOutterWall = TRUE;
+		m_bOutterWall = true;
 	}
 }
 
 
-BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
 	*/
@@ -102,13 +102,13 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		switch (wParam) {
 
 		case IDOK:
-			m_bSave = TRUE;
+			m_bSave = true;
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return FALSE;
+			return false;
 
 		/*
 		* reset params to default
@@ -119,7 +119,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_nStartLevel = LEVEL_DEF;
 			m_nBallSpeed  = SPEED_DEF;
 			m_nPaddleSize = PSIZE_DEF;
-			m_bOutterWall = FALSE;
+			m_bOutterWall = false;
 
 			PutDlgData();
 
@@ -259,7 +259,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-BOOL CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -275,7 +275,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		tmpRect.SetRect(22, 35, 92, 53);
 		if ((m_pScrollBar1 = new CScrollBar) != nullptr) {
 			m_pScrollBar1->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL1);
-			m_pScrollBar1->SetScrollRange(BALLS_MIN, BALLS_MAX, TRUE);
+			m_pScrollBar1->SetScrollRange(BALLS_MIN, BALLS_MAX, true);
 		}
 
 		tmpRect.SetRect(22, 57, 135, 70);
@@ -286,7 +286,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		tmpRect.SetRect(22, 70, 92, 88);
 		if ((m_pScrollBar2 = new CScrollBar) != nullptr) {
 			m_pScrollBar2->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL2);
-			m_pScrollBar2->SetScrollRange(LEVEL_MIN, LEVEL_MAX, TRUE);
+			m_pScrollBar2->SetScrollRange(LEVEL_MIN, LEVEL_MAX, true);
 		}
 
 		tmpRect.SetRect(22, 92, 135, 105);
@@ -297,7 +297,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		tmpRect.SetRect(22, 105, 92, 123);
 		if ((m_pScrollBar3 = new CScrollBar) != nullptr) {
 			m_pScrollBar3->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL3);
-			m_pScrollBar3->SetScrollRange(SPEED_MIN, SPEED_MAX, TRUE);
+			m_pScrollBar3->SetScrollRange(SPEED_MIN, SPEED_MAX, true);
 		}
 
 		tmpRect.SetRect(22, 127, 110, 140);
@@ -308,7 +308,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		tmpRect.SetRect(22, 140, 92, 158);
 		if ((m_pScrollBar4 = new CScrollBar) != nullptr) {
 			m_pScrollBar4->Create(WS_VISIBLE | WS_CHILD | SBS_HORZ | SBS_BOTTOMALIGN, tmpRect, this, ID_SCROLL4);
-			m_pScrollBar4->SetScrollRange(PSIZE_MIN, PSIZE_MAX, TRUE);
+			m_pScrollBar4->SetScrollRange(PSIZE_MIN, PSIZE_MAX, true);
 		}
 
 		ReleaseDC(pDC);
@@ -334,13 +334,13 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		m_pWallButton->SetControl(ID_WALLS, this);
 	}
 
-	m_bSave = FALSE;
+	m_bSave = false;
 
 	LoadIniSettings();
 
 	PutDlgData();
 
-	return TRUE;
+	return true;
 }
 
 void CUserCfgDlg::OnPaint(void) {
@@ -379,8 +379,8 @@ void CUserCfgDlg::UpdateOptions(void) {
 	}
 }
 
-BOOL CUserCfgDlg::OnEraseBkgnd(CDC *) {
-	return TRUE;
+bool CUserCfgDlg::OnEraseBkgnd(CDC *) {
+	return true;
 }
 
 
@@ -501,7 +501,7 @@ void CUserCfgDlg::LoadIniSettings(void) {
 
 	m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
 	if (m_bOutterWall != 0)
-		m_bOutterWall = TRUE;
+		m_bOutterWall = true;
 }
 
 void CUserCfgDlg::SaveIniSettings(void) {

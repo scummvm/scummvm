@@ -46,43 +46,43 @@ public:
 	~CSprite();
 
 	CSprite *DuplicateSprite(CDC *pDC);
-	BOOL DuplicateSprite(CDC *pDC, CSprite *pSprite);
+	bool DuplicateSprite(CDC *pDC, CSprite *pSprite);
 
-	BOOL LoadSprite(CDC *pDC, const char* pszPathName);
-	BOOL LoadSprite(CBitmap *pBitmap, CPalette *pPalette = nullptr);
-	BOOL LoadResourceSprite(CDC *pDC, const int resId);
-	BOOL LoadResourceSprite(CDC *pDC, const char* pszName);
+	bool LoadSprite(CDC *pDC, const char* pszPathName);
+	bool LoadSprite(CBitmap *pBitmap, CPalette *pPalette = nullptr);
+	bool LoadResourceSprite(CDC *pDC, const int resId);
+	bool LoadResourceSprite(CDC *pDC, const char* pszName);
 
-	BOOL LoadCels(CDC *pDC, const char* pszPathName, const int nCels);
-	BOOL LoadCels(CBitmap *pBitmap, const int nCels, CPalette *pPalette = nullptr);
-	BOOL LoadResourceCels(CDC *pDC, const int resId, const int nCels);
-	BOOL LoadResourceCels(CDC *pDC, const char* pszName, const int nCels);
+	bool LoadCels(CDC *pDC, const char* pszPathName, const int nCels);
+	bool LoadCels(CBitmap *pBitmap, const int nCels, CPalette *pPalette = nullptr);
+	bool LoadResourceCels(CDC *pDC, const int resId, const int nCels);
+	bool LoadResourceCels(CDC *pDC, const char* pszName, const int nCels);
 
-	BOOL SetPalette(CPalette *pPalette);
-	BOOL SharePalette(CPalette *pPalette);
-	BOOL GetShared() {
+	bool SetPalette(CPalette *pPalette);
+	bool SharePalette(CPalette *pPalette);
+	bool GetShared() {
 		return (m_bSharedPalette);
 	}
 
-	BOOL PaintSprite(CDC *pDC, const int x, const int y);
-	BOOL PaintSprite(CDC *pDC, CPoint point) {
+	bool PaintSprite(CDC *pDC, const int x, const int y);
+	bool PaintSprite(CDC *pDC, CPoint point) {
 		return (PaintSprite(pDC, point.x, point.y));
 	}
 
-	BOOL SetupCels(const int nCels);
+	bool SetupCels(const int nCels);
 	void SetCel(const int nCelID);
 	void UpdateCel(void) {
 		SetCel(m_nCelID + 1);
 	}
 
-	BOOL CropImage(CDC *pDC, CRect *pRect);
+	bool CropImage(CDC *pDC, CRect *pRect);
 
-	BOOL RefreshSprite(CDC *pDC) {
+	bool RefreshSprite(CDC *pDC) {
 		return (PaintSprite(pDC, m_cPosition.x, m_cPosition.y));
 	}
-	BOOL RefreshBackground(CDC *pDC);
+	bool RefreshBackground(CDC *pDC);
 
-	BOOL EraseSprite(CDC *pDC);
+	bool EraseSprite(CDC *pDC);
 
 	void ClearBackground(void);
 
@@ -94,16 +94,16 @@ public:
 		return (Interception(newRect, m_pSpriteChain));
 	}
 	CSprite *Interception(CRect *newRect, CSprite * pSprite);
-	BOOL TestInterception(CDC *pDC, CSprite * pSprite, CPoint *pPoint = nullptr);
+	bool TestInterception(CDC *pDC, CSprite * pSprite, CPoint *pPoint = nullptr);
 
-	BOOL GetVisible(void) {
+	bool GetVisible(void) {
 		return (m_bVisible);
 	}
 
-	void SetIntercepts(BOOL bValue) {
+	void SetIntercepts(bool bValue) {
 		m_bIntercepts = bValue;
 	}
-	BOOL GetIntercepts(void) {
+	bool GetIntercepts(void) {
 		return (m_bIntercepts);
 	}
 
@@ -142,24 +142,24 @@ public:
 		return (m_cRect);
 	}
 
-	void SetMasked(BOOL bValue) {
+	void SetMasked(bool bValue) {
 		m_bMasked = bValue;
 	}
-	BOOL GetMasked(void) {
+	bool GetMasked(void) {
 		return (m_bMasked);
 	}
 
-	void SetMobile(BOOL bValue) {
+	void SetMobile(bool bValue) {
 		m_bMobile = bValue;
 	}
-	BOOL GetMobile(void) {
+	bool GetMobile(void) {
 		return (m_bMobile);
 	}
 
-	void SetOptimizeSpeed(BOOL bValue) {
-		m_bRetainContexts = FALSE & bValue;
+	void SetOptimizeSpeed(bool bValue) {
+		m_bRetainContexts = false & bValue;
 	}
-	BOOL GetOptimizeSpeed(void) {
+	bool GetOptimizeSpeed(void) {
 		return (m_bRetainContexts);
 	}
 
@@ -199,19 +199,19 @@ public:
 		return (m_nCelID);
 	}
 
-	void SetAnimated(BOOL bAnimated) {
+	void SetAnimated(bool bAnimated) {
 		m_bAnimated = bAnimated;
 	}
-	BOOL GetAnimated(void) {
+	bool GetAnimated(void) {
 		return (m_bAnimated);
 	}
 
-	void SetRetainBackground(BOOL bValue);
-	BOOL GetRetainBackground(void) {
+	void SetRetainBackground(bool bValue);
+	bool GetRetainBackground(void) {
 		return (m_bRetainBackground);
 	}
 
-	BOOL IsLinked(void) {
+	bool IsLinked(void) {
 		return (m_bLinked);
 	}
 	void LinkSprite(void);
@@ -223,13 +223,13 @@ public:
 		return (m_pPrev);
 	}
 
-	BOOL Touching(CPoint myPoint);
+	bool Touching(CPoint myPoint);
 
 	static  CSprite *Touched(CPoint myPoint) {
 		return (Touched(myPoint, m_pSpriteChain));
 	}
 	static  CSprite *Touched(CPoint myPoint, CSprite *pSprite);
-	static  BOOL InterceptOccurred(void) {
+	static  bool InterceptOccurred(void) {
 		return (m_bTouchedSprite);
 	}
 	static  CSprite *GetInterception(void) {
@@ -239,34 +239,34 @@ public:
 	static  CSprite *GetSpriteChain(void) {
 		return (m_pSpriteChain);
 	}
-	static  BOOL EraseSprites(CDC *pDC);
+	static  bool EraseSprites(CDC *pDC);
 	static  void ClearBackgrounds(void);
 	static  void FlushSpriteChain(void);
 
-	static  BOOL HaveBackdrop(void) {
+	static  bool HaveBackdrop(void) {
 		return (m_bHaveBackdrop);
 	}
 	static  CDC *GetBackdropDC(CDC *pDC);
 	static  void ReleaseBackdropDC(void);
-	static  BOOL SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap);
+	static  bool SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap);
 	static  void ClearBackdrop(void);
-	static  BOOL RefreshBackdrop(CDC *pDC, CPalette *pPalette);
+	static  bool RefreshBackdrop(CDC *pDC, CPalette *pPalette);
 
 private:
-	BOOL UpdateSprite(CDC *pDC);
+	bool UpdateSprite(CDC *pDC);
 
-	BOOL SaveBackground(CDC *pDC);
+	bool SaveBackground(CDC *pDC);
 
-	BOOL CreateBackground(CDC *pDC);
-	BOOL CreateMask(CDC *pDC);
+	bool CreateBackground(CDC *pDC);
+	bool CreateMask(CDC *pDC);
 
-	BOOL SetupImage(CDC *pDC);
-	BOOL SetupBackground(CDC *pDC);
-	BOOL SetupMask(CDC *pDC);
+	bool SetupImage(CDC *pDC);
+	bool SetupBackground(CDC *pDC);
+	bool SetupMask(CDC *pDC);
 
-	BOOL CreateImageContext(CDC *pDC);
-	BOOL CreateBackgroundContext(CDC *pDC);
-	BOOL CreateMaskContext(CDC *pDC);
+	bool CreateImageContext(CDC *pDC);
+	bool CreateBackgroundContext(CDC *pDC);
+	bool CreateMaskContext(CDC *pDC);
 
 	void ReleaseImageContext(void);
 	void ReleaseBackgroundContext(void);
@@ -276,12 +276,12 @@ private:
 	void ClearMask(void);
 	void ClearPalette(void);
 
-	BOOL SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint *pPoint = nullptr);
+	bool SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint *pPoint = nullptr);
 
-	BOOL DoSpritePainting(CDC *pDC, CPoint cPoint);
-	BOOL DoOptimizedPainting(CDC *pDC, CRect *pDst);
-	BOOL DoOverlapPainting(CDC *pDC, CRect *myRect);
-	BOOL ReconstructBackground(CDC *pDC, CRect *myRect);
+	bool DoSpritePainting(CDC *pDC, CPoint cPoint);
+	bool DoOptimizedPainting(CDC *pDC, CRect *pDst);
+	bool DoOverlapPainting(CDC *pDC, CRect *myRect);
+	bool ReconstructBackground(CDC *pDC, CRect *myRect);
 
 private:
 	CDC         *m_pImageDC;        // offscreen bitmap device context for image
@@ -302,20 +302,20 @@ private:
 	CSize       m_cSize;            // dx/dy size of the sprite bitmap
 	CRect       m_cRect;            // bounding rectangle on display
 	CRect       m_cImageRect;       // bounding rectangle within image bitmap
-	BOOL        m_bVisible;         // sprite has an image to be painted
-	BOOL        m_bIntercepts;      // sprite can be detected by interception
-	BOOL        m_bSharedPalette;   // palette is shared and not deleteable
-	BOOL        m_bMasked;          // sprite is to be masked (ignore white)
-	BOOL        m_bMobile;          // sprite is mobile or stationary
-	BOOL        m_bOverlaps;        // sprite covers other sprites
-	BOOL        m_bPaintOverlap;    // whether to paint sprite for overlaps
-	BOOL        m_bRetainBackground;// retain background for screen updates
-	BOOL        m_bRetainContexts;  // retain device contexts across calls
-	BOOL        m_bDuplicated;      // shares bitmaps with some other sprite
-	BOOL        m_bOverlapTest;     // used for positional testing
-	BOOL        m_bPositioned;      // whether sprite has been positioned yet
-	BOOL        m_bAnimated;        // whether cel advance occurs when painting
-	BOOL        m_bLinked;          // whether sprite is linked into the chain
+	bool        m_bVisible;         // sprite has an image to be painted
+	bool        m_bIntercepts;      // sprite can be detected by interception
+	bool        m_bSharedPalette;   // palette is shared and not deleteable
+	bool        m_bMasked;          // sprite is to be masked (ignore white)
+	bool        m_bMobile;          // sprite is mobile or stationary
+	bool        m_bOverlaps;        // sprite covers other sprites
+	bool        m_bPaintOverlap;    // whether to paint sprite for overlaps
+	bool        m_bRetainBackground;// retain background for screen updates
+	bool        m_bRetainContexts;  // retain device contexts across calls
+	bool        m_bDuplicated;      // shares bitmaps with some other sprite
+	bool        m_bOverlapTest;     // used for positional testing
+	bool        m_bPositioned;      // whether sprite has been positioned yet
+	bool        m_bAnimated;        // whether cel advance occurs when painting
+	bool        m_bLinked;          // whether sprite is linked into the chain
 	int         m_nId;              // unique sprite identifier
 	int         m_nType;            // user defined information
 	CObject     *m_pData;           // user defined data pointer
@@ -330,9 +330,9 @@ private:
 
 	static int      m_nIndex;           // generator of sprite identifiers
 	static CSprite  *m_pSpriteChain;    // pointer to linked chain of sprites
-	static BOOL     m_bTouchedSprite;   // set when sprite painting intercepts another
+	static bool     m_bTouchedSprite;   // set when sprite painting intercepts another
 	static CSprite  *m_pTouchedSprite;  // sprite touched during painting operation
-	static BOOL     m_bHaveBackdrop;    // whether we have a backdrop bitmap
+	static bool     m_bHaveBackdrop;    // whether we have a backdrop bitmap
 	static CDC      *m_pBackdropDC;     // context used for backdrop artwork
 	static CBitmap  *m_pBackdrop;       // pointer to backdrop bitmap for background
 	static CBitmap  *m_pBackdropOld;    // bitmap previously mapped to backdrop context

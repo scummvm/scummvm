@@ -247,10 +247,10 @@ typedef struct _SYSTEMTIME {
 
 typedef struct tagPAINTSTRUCT {
 	HDC         hdc;
-	BOOL        fErase;
+	bool        fErase;
 	RECT        rcPaint;
-	BOOL        fRestore;
-	BOOL        fIncUpdate;
+	bool        fRestore;
+	bool        fIncUpdate;
 	byte        rgbReserved[32];
 } PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
@@ -299,7 +299,7 @@ typedef struct tagWNDCLASS {
 } WNDCLASS, *PWNDCLASS, *NPWNDCLASS, *LPWNDCLASS;
 
 struct CDataExchange {
-	BOOL m_bSaveAndValidate;
+	bool m_bSaveAndValidate;
 };
 
 } // namespace MFC

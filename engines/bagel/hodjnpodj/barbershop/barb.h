@@ -68,16 +68,16 @@ public:
 	void    OnLButtonDblClk(CWnd*, CPalette*, CPoint);
 	void    OnMouseMove(CDC*, CPoint);
 	void    OnLButtonUp(CWnd*);
-	BOOL    IsInRect(CRect cStk, CRect cCrd);
-	BOOL    IsGameOver(CWnd*);
-	BOOL    IsNewBack(int);
+	bool    IsInRect(CRect cStk, CRect cCrd);
+	bool    IsGameOver(CWnd*);
+	bool    IsNewBack(int);
 	void    ChangeBack(CDC*, int);
 	int     Score();
 
 	CPaint  *m_cPnt;            // used to visually paint cards on screen
 	CCard   *m_pCrd;            // the card being moved
-	BOOL    m_bIsGameOver;      // tells if game has ended
-	BOOL    m_bIsWin;           // tells if game was won or lost
+	bool    m_bIsGameOver;      // tells if game has ended
+	bool    m_bIsWin;           // tells if game was won or lost
 };
 
 // Globals!

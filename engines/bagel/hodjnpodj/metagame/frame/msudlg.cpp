@@ -76,13 +76,13 @@ static CRadioButton *pPHButton = nullptr;   // Podj is Human High Radio Button
  *      n/a
  *
  ****************************************************************/
-CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP", -1, -1, FALSE) {
+CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pParent, pPalette, IDD_META_SETUP, ".\\ART\\MLSCROLL.BMP", -1, -1, false) {
 	pMainPalette = pPalette;
 	m_lpMetaGameStruct = nullptr;
 	m_nHodjSkillLevel = SKILLLEVEL_LOW;
 	m_nPodjSkillLevel = SKILLLEVEL_LOW;
 	m_nGameTime = MEDIUM_GAME;
-	m_bPodjIsComputer = TRUE;
+	m_bPodjIsComputer = true;
 }
 
 /*****************************************************************
@@ -114,7 +114,7 @@ CMetaSetupDlg::CMetaSetupDlg(CWnd *pParent, CPalette *pPalette) :  CBmpDialog(pP
  *      n/a
  *
  ****************************************************************/
-BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 // What ever button is clicked, end the dialog and send the ID of the button
 // clicked as the return from the dialog
@@ -165,14 +165,14 @@ BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			SetDlgItemText(IDC_PODJ_SKILL_HARD, "Tough Opponent");
 			SetDlgItemText(IDC_PODJ_SKILL_MEDIUM, "Average Opponent");
 			SetDlgItemText(IDC_PODJ_SKILL_EASY, "Unskilled Opponent");
-			m_bPodjIsComputer = TRUE;
+			m_bPodjIsComputer = true;
 			break;
 		case IDC_PODJ_HUMAN:
 			pPHButton->SetCheck(1);
 			SetDlgItemText(IDC_PODJ_SKILL_HARD, "Hard");
 			SetDlgItemText(IDC_PODJ_SKILL_MEDIUM, "Medium");
 			SetDlgItemText(IDC_PODJ_SKILL_EASY, "Easy");
-			m_bPodjIsComputer = FALSE;
+			m_bPodjIsComputer = false;
 			break;
 
 
@@ -180,17 +180,17 @@ BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 // fill in the appropriate settings for the game structure
 			m_lpMetaGameStruct->m_cHodj.m_iSkillLevel = m_nHodjSkillLevel;
 			m_lpMetaGameStruct->m_cPodj.m_iSkillLevel = m_nPodjSkillLevel;
-			m_lpMetaGameStruct->m_cHodj.m_bComputer = FALSE;
+			m_lpMetaGameStruct->m_cHodj.m_bComputer = false;
 			m_lpMetaGameStruct->m_cPodj.m_bComputer = m_bPodjIsComputer;
 			m_lpMetaGameStruct->m_iGameTime = m_nGameTime;
 			ClearDialogImage();
 			EndDialog(1);
-			return TRUE;
+			return true;
 
 		case IDC_CANCEL_PLAY:
 			ClearDialogImage();
 			EndDialog(0);
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -355,8 +355,8 @@ void CMetaSetupDlg::SetInitialOptions(CBfcMgr *lpMetaGameStruct) {
 }
 
 
-BOOL CMetaSetupDlg::OnInitDialog() {
-	BOOL    bSuccess;
+bool CMetaSetupDlg::OnInitDialog() {
+	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
 
@@ -445,7 +445,7 @@ BOOL CMetaSetupDlg::OnInitDialog() {
 	pGTLButton->SetStyle(BS_OWNERDRAW | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
 	pPCButton->SetStyle(BS_OWNERDRAW  | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
 
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************
@@ -489,7 +489,7 @@ void CMetaSetupDlg::OnPaint(void) {
 
 	// CPaintDC dc(this);
 	PAINTSTRUCT lpPaint;
-	Invalidate(FALSE);
+	Invalidate(false);
 	BeginPaint(&lpPaint);
 
 	CDC     *pDC = GetDC();
@@ -536,7 +536,7 @@ void CMetaSetupDlg::OnPaint(void) {
 		}
 	}
 
-	if (m_bPodjIsComputer == TRUE) {
+	if (m_bPodjIsComputer == true) {
 		pPCButton->SetCheck(1);
 	} else {
 		pPHButton->SetCheck(1);

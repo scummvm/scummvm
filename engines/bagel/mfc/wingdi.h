@@ -733,20 +733,20 @@ typedef struct tagLOGBRUSH {
 extern int GetDeviceCaps(HDC hdc, int index);
 extern HDC CreateCompatibleDC(HDC hdc);
 extern int ReleaseDC(HWND hWnd, HDC hDC);
-extern BOOL DeleteDC(HDC hdc);
-extern BOOL DeleteObject(HGDIOBJ ho);
+extern bool DeleteDC(HDC hdc);
+extern bool DeleteObject(HGDIOBJ ho);
 extern HDC GetDC(HWND hWnd);
 extern int GetObject(HANDLE h, int c, void *pv);
 extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
-extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
+extern bool EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
 
 extern intptr DialogBoxParam(HINSTANCE hInstance,
                               const char *lpTemplateName, HWND hWndParent,
                               DLGPROC lpDialogFunc, LPARAM dwInitParam);
-extern BOOL IsWindow(HWND hWnd);
-extern BOOL SetWindowText(HWND hWnd, const char *lpszString);
+extern bool IsWindow(HWND hWnd);
+extern bool SetWindowText(HWND hWnd, const char *lpszString);
 extern int GetWindowText(HWND hWnd, char *lpszStringBuf, int nMaxCount);
-extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
+extern bool ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
                        uint32 flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, unsigned int iUsage);
@@ -755,39 +755,39 @@ extern int GetDIBits(HDC hdc, HBITMAP hbm, unsigned int start, unsigned int cLin
 
 extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
 extern HGDIOBJ GetStockObject(int i);
-extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
+extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, bool bForceBkgd);
 extern unsigned int RealizePalette(HDC hdc);
-extern BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
+extern bool BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 	HDC hdcSrc, int xSrc, int ySrc, uint32 rop);
-extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
+extern bool StretchBlt(HDC hdcDest, int xDest, int yDest,
                        int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, uint32 rop);
 extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
                          CONST void *lpBits, CONST BITMAPINFO *lpbmi, unsigned int iUsage, uint32 rop);
 extern int GetTextExtent(HDC hdc, const char *text, size_t len);
-extern BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm);
+extern bool GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm);
 extern intptr GetWindowWord(HWND hWnd, int nIndex);
 extern int AddFontResource(const char *fontName);
 extern bool RemoveFontResource(const char *fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,
-    int nPos, BOOL bRedraw);
+    int nPos, bool bRedraw);
 extern void SetScrollRange(HWND hWnd, int nBar,
-    int nMinPos, int nMaxPos, BOOL bRedraw);
+    int nMinPos, int nMaxPos, bool bRedraw);
 
-extern BOOL ClipCursor(const RECT *lpRect);
-extern BOOL GetCursorPos(LPPOINT lpPoint);
-extern BOOL SetCursorPos(int x, int y);
-extern BOOL SetCapture(HWND hWnd);
-extern BOOL ReleaseCapture();
+extern bool ClipCursor(const RECT *lpRect);
+extern bool GetCursorPos(LPPOINT lpPoint);
+extern bool SetCursorPos(int x, int y);
+extern bool SetCapture(HWND hWnd);
+extern bool ReleaseCapture();
 extern HWND GetCapture();
 extern HCURSOR LoadCursor(HINSTANCE hInstance,
                           const char *lpCursorName);
 extern HCURSOR SetCursor(HCURSOR hCursor);
-extern int ShowCursor(BOOL bShow);
+extern int ShowCursor(bool bShow);
 
 typedef void (CALLBACK *LINEDDAPROC)(int x, int y, CDC *cdc);
-extern BOOL LineDDA(int x0, int y0, int x1, int y1,
+extern bool LineDDA(int x0, int y0, int x1, int y1,
 	LINEDDAPROC lpProc, CDC *cdc);
 
 extern byte GetRValue(COLORREF color);
@@ -795,15 +795,15 @@ extern byte GetGValue(COLORREF color);
 extern byte GetBValue(COLORREF color);
 
 extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
-extern BOOL EndDialog(HWND hDlg, intptr nResult);
-extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-                          unsigned int uValue, BOOL bSigned);
-extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
+extern bool EndDialog(HWND hDlg, intptr nResult);
+extern bool SetDlgItemInt(HWND hDlg, int nIDDlgItem,
+                          unsigned int uValue, bool bSigned);
+extern bool CheckRadioButton(HWND hDlg, int nIDFirstButton,
                              int nIDLastButton, int nIDCheckButton);
 
 extern uint32 GetSysColor(int nIndex);
 extern HBRUSH GetSysColorBrush(int nIndex);
-extern BOOL DestroyMenu(HMENU hMenu);
+extern bool DestroyMenu(HMENU hMenu);
 extern void SetActiveWindow(HWND hWnd);
 
 } // namespace MFC

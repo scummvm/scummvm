@@ -27,19 +27,19 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-BOOL bTimeDelayPassed = TRUE ;
+bool bTimeDelayPassed = true ;
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
-BOOL CTimeUtil::DelayMs(unsigned int uMs)
+bool CTimeUtil::DelayMs(unsigned int uMs)
 // uMs -- number of milliseconds to delay
-// returns: TRUE if error, FALSE otherwise
+// returns: true if error, false otherwise
 {
 	JXENTER(CTimeUtil::DelayMs) ;
 	int iError = 0 ;        // error code
 	unsigned int uTimerId ;     // timer id returned by SetTimer
 //    MSG FAR * lpMsg ;     // message area storage
 
-//    RETURN(FALSE) ;   // ***************
+//    RETURN(false) ;   // ***************
 
 	if (!(uTimerId = SetTimer(nullptr, 0, uMs, DelayMsCallback)))
 		// set timer, and test for success
@@ -48,7 +48,7 @@ BOOL CTimeUtil::DelayMs(unsigned int uMs)
 		goto cleanup ;
 	}
 
-	bTimeDelayPassed = FALSE ;  // time hasn't passed yet
+	bTimeDelayPassed = false ;  // time hasn't passed yet
 	while (!bTimeDelayPassed)   // loop until flag gets set again
 		DoPendingEvents() ;
 
@@ -68,7 +68,7 @@ void CTimeUtil::DelayMsCallback(HWND hWnd, unsigned int uMsg,
                                 uintptr uTimerId, uint32 dwTime) {
 	JXENTER(::DelayMsCallback) ;
 	//int iError = 0 ;      // error code
-	bTimeDelayPassed = TRUE ;   // elapsed time passed
+	bTimeDelayPassed = true ;   // elapsed time passed
 
 	JXELEAVE(::DelayMsCallback) ;
 }

@@ -31,7 +31,7 @@ namespace Saves {
 static const char *gpszTitle = "Restore Game";
 
 CRestoreDlg::CRestoreDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
-	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, ".\\ART\\MLSCROLL.BMP", -1, -1, TRUE) {
+	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, ".\\ART\\MLSCROLL.BMP", -1, -1, true) {
 	int i;
 
 	// Inits
@@ -53,7 +53,7 @@ CRestoreDlg::CRestoreDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette
 }
 
 
-BOOL CRestoreDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CRestoreDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
 
 		switch (wParam) {
@@ -66,12 +66,12 @@ BOOL CRestoreDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_RSLOT6:
 			ClearDialogImage();
 			EndDialog((int)wParam - IDC_RSLOT1);
-			return TRUE;
+			return true;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(-1);
-			return TRUE;
+			return true;
 		}
 	}
 	return CBmpDialog::OnCommand(wParam, lParam);
@@ -84,11 +84,11 @@ void CRestoreDlg::OnCancel(void) {
 }
 
 
-BOOL CRestoreDlg::OnInitDialog(void) {
+bool CRestoreDlg::OnInitDialog(void) {
 	CRect rect;
 	CDC *pDC;
 	int i;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
 
@@ -110,7 +110,7 @@ BOOL CRestoreDlg::OnInitDialog(void) {
 
 			// then disable the button
 			//
-			m_pSlotButtons[i]->EnableWindow(FALSE);
+			m_pSlotButtons[i]->EnableWindow(false);
 
 		} else {
 			m_pSlotButtons[i]->SetWindowText(m_pszDescriptions[i]);
@@ -131,7 +131,7 @@ BOOL CRestoreDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	return FALSE;
+	return false;
 }
 
 
