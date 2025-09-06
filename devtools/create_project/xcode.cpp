@@ -1170,7 +1170,6 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("LICENSES/COPYING.Apache");
 		files.push_back("LICENSES/COPYING.BSL");
 		files.push_back("LICENSES/COPYING.BSD");
-		files.push_back("LICENSES/COPYING.FREEFONT");
 		files.push_back("LICENSES/COPYING.GLAD");
 		files.push_back("LICENSES/COPYING.ISC");
 		files.push_back("LICENSES/COPYING.LGPL");

@@ -1988,7 +1988,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.Apache");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.BSD");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.BSL");
-			in.push_back(setup.srcDir + "/LICENSES/COPYING.FREEFONT");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.GLAD");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.ISC");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.LGPL");
