@@ -46,7 +46,7 @@ namespace Archeroids {
 // This mini-game's main screen bitmap
 //
 #define MINI_GAME_MAP  ".\\ART\\FIELD.BMP"
-const CHAR *INI_SECTION = "Archeroids";
+const char *INI_SECTION = "Archeroids";
 
 //
 // Button ID constants
@@ -2058,7 +2058,7 @@ BOOL CMainWindow::MainLoop() {
 
 
 BOOL CMainWindow::MoveArrows(CDC *pDC) {
-	CHAR buf1[40], buf2[40];
+	char buf1[40], buf2[40];
 	CLList *pList, *pNext, *pSearchList;
 	CSprite *pSprite, *pTmpSprite;
 	POINT point;
@@ -2566,7 +2566,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 
 
 void CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
-	CHAR szTmpBuf[40];
+	char szTmpBuf[40];
 	CSprite *pSprite;
 	//CSound *pSound;
 	CLList *pList, *pNext;

@@ -143,7 +143,7 @@ extern BOOL FreeResource(HGLOBAL hResData);
 extern HFONT CreateFontIndirect(const LOGFONT *lf);
 
 extern BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
-	int iSubString, CHAR chSep = '\n');
+	int iSubString, char chSep = '\n');
 
 inline char *strUpper(char *s) {
 	for (char *curr = s; *curr; ++curr)

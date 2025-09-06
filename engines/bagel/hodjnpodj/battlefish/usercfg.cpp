@@ -38,7 +38,7 @@ namespace Battlefish {
 
 #define PAGE_SIZE   1
 
-static const CHAR *pszDiffLevel[DIFF_MAX + 1] = {
+static const char *pszDiffLevel[DIFF_MAX + 1] = {
 	"Wimpy",
 	"Average",
 	"Hefty"

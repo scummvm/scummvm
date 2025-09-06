@@ -56,7 +56,7 @@ namespace HodjNPodj {
 #ifndef FAR
 	#define FAR
 #endif
-#define CHAR char
+#define char char
 typedef unsigned char UCHAR;
 typedef byte UBYTE;
 #define INT int
@@ -65,7 +65,7 @@ typedef uint16 USHORT;
 #define WORD USHORT
 #define LONG long
 typedef unsigned long ULONG;
-#define FLOAT float
+#define float float
 #define DOUBLE double
 #define void void
 #define CONST const

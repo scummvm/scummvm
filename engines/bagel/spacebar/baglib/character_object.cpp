@@ -74,7 +74,7 @@ ErrorCode CBagCharacterObject::attach() {
 	Video::SmackerDecoder *decoder = new Video::SmackerDecoder();
 	decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 	if (!decoder->loadFile(filename.getBuffer())) {
-		logError(buildString("CHAR SmackOpen failed: %s ", filename.getBuffer()));
+		logError(buildString("char SmackOpen failed: %s ", filename.getBuffer()));
 		delete decoder;
 		return ERR_FOPEN;
 	}

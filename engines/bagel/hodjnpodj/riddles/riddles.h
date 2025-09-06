@@ -129,7 +129,7 @@ public:
 	void        PlayGame(void);
 	void        PaintScreen(void);
 	void        LoadIniSettings(void);
-	void        ParseAnswer(const CHAR *);
+	void        ParseAnswer(const char *);
 	void        GamePause(void);
 	void        GameResume(void);
 
@@ -138,12 +138,12 @@ private:
 
 protected:
 	void        FlushInputEvents(void);
-	BOOL        CheckUserGuess(const CHAR *);
+	BOOL        CheckUserGuess(const char *);
 	ERROR_CODE  RepaintSpriteList(void);
 	ERROR_CODE  LoadRiddle(void);
 	ERROR_CODE  BuildSpriteList(void);
-	ERROR_CODE  DisplayLine(const CHAR *, INT, INT, INT);
-	INT         CharToIndex(CHAR);
+	ERROR_CODE  DisplayLine(const char *, INT, INT, INT);
+	INT         CharToIndex(char);
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
 	ERROR_CODE  LoadMasterSprites(void);
 	void        GameReset(void);

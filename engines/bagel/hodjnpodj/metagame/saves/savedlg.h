@@ -35,7 +35,7 @@ namespace Saves {
 
 class CSaveDlg: public CBmpDialog {
 public:
-	CSaveDlg(CHAR *[], CWnd *, CPalette *);
+	CSaveDlg(char *[], CWnd *, CPalette *);
 
 protected:
 	void ClearDialogImage(void);
@@ -57,7 +57,7 @@ private:
 	CColorButton *m_pQuitButton;
 	CColorButton *m_pOkButton;
 	CText        *m_pTxtSave;
-	CHAR         *m_pszDescriptions[MAX_SAVEGAMES];
+	char         *m_pszDescriptions[MAX_SAVEGAMES];
 	INT           m_nCurSlot;
 };
 

@@ -181,7 +181,7 @@ void ErrorLog(const char *logFile, const char *format, ...) {
 	// No implementation
 }
 
-INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
+INT StrFreqMatch(const char *mask, const char *test) {
 	static INT nCount[256];
 	INT i, divergence;
 
@@ -221,9 +221,9 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 }
 
 
-BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
-	CHAR *s1, *p, string1[256];   /* replace this stack hog with malloc */
-	CHAR *s2, *sp, string2[256];       /* replace this stack hog with malloc */
+BOOL StrCompare(const char *pszStr1, const char *pszStr2, UINT nSize) {
+	char *s1, *p, string1[256];   /* replace this stack hog with malloc */
+	char *s2, *sp, string2[256];       /* replace this stack hog with malloc */
 	INT i, n, inc;
 	BOOL bMatch;
 
@@ -354,7 +354,7 @@ BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2, UINT nSize) {
 *  RETURNS:  INT  = number of times character c occurs in string str
 *
 *****************************************************************************/
-INT StrCharCount(const CHAR *str, CHAR c) {
+INT StrCharCount(const char *str, char c) {
 	INT n;
 
 	assert(str != nullptr);
@@ -384,9 +384,9 @@ INT StrCharCount(const CHAR *str, CHAR c) {
 *
 **/
 
-CHAR *StriStr(CHAR *s1, const CHAR *s2) {
-	CHAR *p, str1[80];
-	CHAR str2[80];
+char *StriStr(char *s1, const char *s2) {
+	char *p, str1[80];
+	char str2[80];
 
 	/* can't access null pointers */
 	assert(s1 != nullptr);
@@ -415,8 +415,8 @@ CHAR *StriStr(CHAR *s1, const CHAR *s2) {
 	return (p);
 }
 
-void StrUprStr(CHAR *s1, const CHAR *s2) {
-	CHAR *p;
+void StrUprStr(char *s1, const char *s2) {
+	char *p;
 	INT i, n;
 
 	/* can't access null pointers */
@@ -427,7 +427,7 @@ void StrUprStr(CHAR *s1, const CHAR *s2) {
 	while ((p = StriStr(p, s2)) != nullptr) {
 		n = strlen(s2);
 		for (i = 0; i < n; i++) {
-			*p = (CHAR)toupper(*p);
+			*p = (char)toupper(*p);
 			p++;
 		}
 	}
@@ -439,9 +439,9 @@ void StrUprStr(CHAR *s1, const CHAR *s2) {
 *                              will be stripped from the destination string.
 *
 *  synopsis  StrCpyStripChar(dest, source, c)
-*            CHAR *dest                     destinaton string
-*            const CHAR *source             source string
-*            CHAR c                         character to strip from dest
+*            char *dest                     destinaton string
+*            const char *source             source string
+*            char c                         character to strip from dest
 *
 *  purpose   To strip out a specified character while copying 1 string to another
 *
@@ -449,7 +449,7 @@ void StrUprStr(CHAR *s1, const CHAR *s2) {
 *  returns   Nothing
 *
 **/
-void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
+void StrCpyStripChar(char *dest, const char *source, char c) {
 	/* can't access null pointers */
 	assert(dest != nullptr);
 	assert(source != nullptr);
@@ -464,8 +464,8 @@ void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
 }
 
 
-CHAR *StrStripChar(CHAR *str, CHAR c) {
-	CHAR *p = str;
+char *StrStripChar(char *str, char c) {
+	char *p = str;
 
 	/* can't acces a null pointer */
 	assert(str != nullptr);
@@ -485,8 +485,8 @@ CHAR *StrStripChar(CHAR *str, CHAR c) {
 }
 
 
-CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
-	CHAR *p = str;
+char *StrReplaceChar(char *str, char cOld, char cNew) {
+	char *p = str;
 
 	/* can't acces a null pointer */
 	assert(str != nullptr);

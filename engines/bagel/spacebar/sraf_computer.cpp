@@ -34,8 +34,8 @@ namespace Bagel {
 namespace SpaceBar {
 
 #define SRAF_DIR         "$SBARDIR\\SRAFFA\\CLOSEUP\\COMPUTER\\"
-#define SRAF_MALE_DIR    "$SBARDIR\\SRAFFA\\CHAR\\GMALE\\"
-#define SRAF_FEMALE_DIR  "$SBARDIR\\SRAFFA\\CHAR\\GFEMALE\\"
+#define SRAF_MALE_DIR    "$SBARDIR\\SRAFFA\\char\\GMALE\\"
+#define SRAF_FEMALE_DIR  "$SBARDIR\\SRAFFA\\char\\GFEMALE\\"
 #define SRAF_AUDIO_DIR   "$SBARDIR\\SRAFFA\\AUDIO\\EVENTS\\"
 #define SRAF_TIMEOUT     "SFTIMOUT.WAV"
 

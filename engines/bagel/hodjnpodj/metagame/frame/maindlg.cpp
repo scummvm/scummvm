@@ -33,7 +33,7 @@ namespace Frame {
 
 extern  BOOL    bMetaLoaded;
 
-extern const CHAR *gpszSaveGameFile;
+extern const char *gpszSaveGameFile;
 
 /*****************************************************************
  *

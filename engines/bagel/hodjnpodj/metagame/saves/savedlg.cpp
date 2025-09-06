@@ -44,10 +44,10 @@ namespace Saves {
 
 #define MAX_BUTTON_TEXT 25
 
-STATIC const CHAR *gpszTitle = "Save Game";
-extern CHAR szDescBuf[40];
+STATIC const char *gpszTitle = "Save Game";
+extern char szDescBuf[40];
 
-CSaveDlg::CSaveDlg(CHAR *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
+CSaveDlg::CSaveDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 	: CBmpDialog(pWnd, pPalette, 2000, ".\\ART\\MLSCROLL.BMP") {
 	INT i;
 
@@ -113,7 +113,7 @@ void CSaveDlg::OnCancel(void) {
 }
 
 void CSaveDlg::EditDescription(INT nNewSlot) {
-	CHAR szBuf[40];
+	char szBuf[40];
 
 	// abort any other edits the user was making
 	//

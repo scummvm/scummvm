@@ -42,7 +42,7 @@ namespace PDQ {
 *
 */
 typedef struct {
-	CHAR   text[MAX_PLENGTH_S + 1];
+	char   text[MAX_PLENGTH_S + 1];
 	UBYTE  order[MAX_PLENGTH];
 } PHRASES;
 
@@ -59,7 +59,7 @@ typedef struct {
 } SPRITE_LIST;
 
 
-STATIC const CHAR *pszCategorySounds[N_CATEGORIES] = {
+STATIC const char *pszCategorySounds[N_CATEGORIES] = {
 	".\\SOUND\\TGG5.WAV",
 	".\\SOUND\\TGG6.WAV",
 	".\\SOUND\\TGG7.WAV",
@@ -79,7 +79,7 @@ void        KillCurPhrase(void);
 void        BuildRandomPhraseOrder();
 bool     RevealNextLetter(void);
 void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, uint32);
-INT         StrLenNoSpaces(const CHAR *);
+INT         StrLenNoSpaces(const char *);
 INT         GetIndex(CSprite *);
 void        LoadGameCfg(void);
 void        SaveGameCfg(void);
@@ -122,7 +122,7 @@ INT         timerInterval;
 HWND        gGameWnd;
 bool     bPause;
 UINT        gLeftAvg, gTotalAvg;
-const CHAR *INI_SECTION = "ThGesngGme";
+const char *INI_SECTION = "ThGesngGme";
 INT         nPhrasePixelLength;
 
 
@@ -140,7 +140,7 @@ INT         nPhrasePixelLength;
 **/
 ERROR_CODE LoadNewPhrase(void) {
 	STATIC int nLast;
-	CHAR *p, buf[MAX_PLENGTH_S + 2];
+	char *p, buf[MAX_PLENGTH_S + 2];
 	INT i, n, nType;
 	ERROR_CODE errCode;
 
@@ -199,7 +199,7 @@ ERROR_CODE LoadNewPhrase(void) {
 
 		inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
 
-		inFile.read((CHAR *)curPhrase, sizeof(PHRASES));    // load that phrase
+		inFile.read((char *)curPhrase, sizeof(PHRASES));    // load that phrase
 		if (inFile.gcount() != sizeof(PHRASES))
 			errCode = ERR_FREAD;
 		inFile.close();                                     // close the data store
@@ -300,7 +300,7 @@ void BuildRandomPhraseOrder() {
 **/
 ERROR_CODE BuildSpriteList(CDC *pDC) {
 	CSprite *pNewSprite;
-	CHAR *pText;
+	char *pText;
 	INT i;
 	ERROR_CODE errCode;
 
@@ -886,7 +886,7 @@ void CALLBACK GetGameParams(CWnd *pParentWnd) {
 *
 **/
 void LoadGameCfg() {
-	CHAR buf[10];
+	char buf[10];
 	INT n;
 
 	if (pGameParams->bPlayingMetagame) {
@@ -988,7 +988,7 @@ void SaveGameCfg() {
 *  name      CheckUserGuess - compares user's guess with current phrase
 *
 *  synopsis  winStatus = CheckUserGuess(guess)
-*            const CHAR *guess                  users guess to check vs phrase
+*            const char *guess                  users guess to check vs phrase
 *
 *  purpose
 *
@@ -996,7 +996,7 @@ void SaveGameCfg() {
 *  returns   match/unmatch condition (True if users guess matches the phrase)
 *
 **/
-bool CheckUserGuess(const CHAR *guess) {
+bool CheckUserGuess(const char *guess) {
 	return (StrCompare(curPhrase->text, guess, MAX_PLENGTH_S + 1));
 }
 
@@ -1005,7 +1005,7 @@ bool CheckUserGuess(const CHAR *guess) {
 *                             out any spaces.
 *
 *  synopsis  StrLenNoSpaces(string)
-*            const CHAR *string             string to get length of
+*            const char *string             string to get length of
 *
 *  purpose   To determine the length of a string while not counting spaces
 *
@@ -1013,7 +1013,7 @@ bool CheckUserGuess(const CHAR *guess) {
 *  returns   len = length of string without spaces
 *
 **/
-INT StrLenNoSpaces(const CHAR *str) {
+INT StrLenNoSpaces(const char *str) {
 	INT len;
 
 	/* can't access a null pointer */
@@ -1032,7 +1032,7 @@ INT StrLenNoSpaces(const CHAR *str) {
 ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	bool bList[MAX_PLENGTH];
 	INT i, n, order;
-	CHAR c;
+	char c;
 	ERROR_CODE errCode;
 
 	assert(phrase != nullptr);

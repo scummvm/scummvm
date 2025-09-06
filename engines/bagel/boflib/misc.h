@@ -110,14 +110,14 @@ extern bool ProbableTrue(int nProbability);
 
 extern void ErrorLog(const char *logFile, const char *format, ...);
 
-extern INT          StrFreqMatch(const CHAR *, const CHAR *);
-extern BOOL         StrCompare(const CHAR *, const CHAR *, UINT);
-extern INT          StrCharCount(const CHAR *, CHAR);
-extern CHAR *StriStr(CHAR *, const CHAR *);
-extern void         StrUprStr(CHAR *, const CHAR *);
-extern void         StrCpyStripChar(CHAR *, const CHAR *, CHAR);
-extern CHAR *StrStripChar(CHAR *, CHAR);
-extern CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
+extern INT          StrFreqMatch(const char *, const char *);
+extern BOOL         StrCompare(const char *, const char *, UINT);
+extern INT          StrCharCount(const char *, char);
+extern char *StriStr(char *, const char *);
+extern void         StrUprStr(char *, const char *);
+extern void         StrCpyStripChar(char *, const char *, char);
+extern char *StrStripChar(char *, char);
+extern char *StrReplaceChar(char *, char, char);
 
 } // namespace Bagel
 

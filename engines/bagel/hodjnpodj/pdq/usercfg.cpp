@@ -40,7 +40,7 @@ namespace PDQ {
 
 extern const char *INI_SECTION;
 
-static const CHAR *apszSpeeds[10] = {
+static const char *apszSpeeds[10] = {
 	"Molasses in Stasis",
 	"Frozen Molasses",
 	"Molasses",

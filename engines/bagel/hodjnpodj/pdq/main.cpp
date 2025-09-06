@@ -51,7 +51,7 @@ namespace PDQ {
 
 #define WAV_NARRATION   ".\\SOUND\\TGG.WAV"
 
-STATIC const CHAR *pszCategoryBitmaps[N_CATEGORIES] = {
+STATIC const char *pszCategoryBitmaps[N_CATEGORIES] = {
 	".\\ART\\PERSON.BMP",
 	".\\ART\\PLACE.BMP",
 	".\\ART\\PHRASE.BMP",

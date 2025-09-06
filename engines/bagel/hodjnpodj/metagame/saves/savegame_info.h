@@ -49,7 +49,7 @@ struct CLUE_ARRAY {
 };
 
 struct INVENTORY {
-	CHAR m_szTitle[40] = { '\0' };
+	char m_szTitle[40] = { '\0' };
 	INT m_aItemList[MG_OBJ_COUNT] = { 0 };
 	INT m_nItems = 0;
 
@@ -109,7 +109,7 @@ struct SAVEGAME_INFO {
 	ULONG   m_lBoffoGameID = 0;
 	USHORT  m_nFixedRecordSize = 0;
 	BOOL    m_bUsed = false;
-	//	CHAR    m_szSaveGameDescription[40];    // description of this saved game
+	//	char    m_szSaveGameDescription[40];    // description of this saved game
 
 	PLAYER_INFO m_stPlayerInfo[MAX_PLAYERS];
 

@@ -257,7 +257,7 @@ HFONT CreateFontIndirect(const LOGFONT *lf) {
 }
 
 BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
-		int iSubString, CHAR chSep) {
+		int iSubString, char chSep) {
 	if (lpszFullString == nullptr)
 		return FALSE;
 

@@ -140,7 +140,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
-	CHAR buf[40];
+	char buf[40];
 	INT nMin, nMax, nVal;
 	CDC *pDC;
 
@@ -350,7 +350,7 @@ void CUserCfgDlg::OnPaint(void) {
 }
 
 void CUserCfgDlg::UpdateOptions(void) {
-	CHAR buf[40];
+	char buf[40];
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {

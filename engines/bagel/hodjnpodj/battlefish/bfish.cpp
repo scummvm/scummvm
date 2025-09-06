@@ -219,7 +219,7 @@ STATIC POINT ptFishHooks[MAX_FISH] = {
 	{550, GAME_TOP_BORDER_WIDTH},
 };
 
-STATIC const CHAR *pszFishSound[MAX_FISH] = {
+STATIC const char *pszFishSound[MAX_FISH] = {
 	WAV_BADSINK8,
 	WAV_BADSINK4,
 	WAV_BADSINK7,
@@ -235,7 +235,7 @@ void CALLBACK GetGameParams(CWnd *);
 // Globals
 //
 CPalette    *pGamePalette;
-const CHAR  *INI_SECTION = "BattleFish";
+const char  *INI_SECTION = "BattleFish";
 LPGAMESTRUCT pGameParams;
 
 extern HWND ghParentWnd;

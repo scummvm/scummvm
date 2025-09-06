@@ -237,7 +237,7 @@ void CAudioCfgDlg::OnPaint(void) {
 
 
 void CAudioCfgDlg::UpdateOptions(void) {
-	CHAR buf[40];
+	char buf[40];
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {

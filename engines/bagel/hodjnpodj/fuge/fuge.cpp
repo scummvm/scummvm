@@ -142,7 +142,7 @@ extern CWnd *ghParentWnd;
 
 #define N_PADDLE_SIZES (PSIZE_MAX+1)
 
-STATIC const CHAR *pszPaddles[N_PADDLE_SIZES] = {
+STATIC const char *pszPaddles[N_PADDLE_SIZES] = {
 	".\\ART\\PADCEL45.BMP",
 	".\\ART\\PADCEL60.BMP",
 	".\\ART\\PADCEL90.BMP"
@@ -213,7 +213,7 @@ STATIC const DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
 //
 // Globals
 //
-STATIC const CHAR *pszFugeArt[N_ROWS + 1] = {
+STATIC const char *pszFugeArt[N_ROWS + 1] = {
 	".\\ART\\FUGE6.BMP",
 	".\\ART\\FUGE1.BMP",
 	".\\ART\\FUGE2.BMP",
@@ -224,7 +224,7 @@ STATIC const CHAR *pszFugeArt[N_ROWS + 1] = {
 };
 
 STATIC CPalette    *pGamePalette;
-const CHAR  *INI_SECTION = "Fuge";
+const char  *INI_SECTION = "Fuge";
 LPGAMESTRUCT pGameParams;
 
 extern HWND ghParentWnd;
@@ -1519,7 +1519,7 @@ void CFugeWindow::BallvsPaddle(void) {
 
 
 void CFugeWindow::BallvsBrick(DOUBLE length) {
-	CHAR buf1[32], buf2[32];
+	char buf1[32], buf2[32];
 	CVector vPoints[N_BRICK_POINTS];
 	CVector vBrick, vBallCenter, vOrigin, vTmp;
 	CDC *pDC;
@@ -1910,7 +1910,7 @@ void CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
 
 
 void CFugeWindow::LoseBall(void) {
-	CHAR buf1[32], buf2[32];
+	char buf1[32], buf2[32];
 	CDC *pDC;
 	ERROR_CODE errCode;
 

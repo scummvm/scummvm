@@ -137,7 +137,7 @@ void CALLBACK GetGameParams(CWnd *);
 //
 CRiddlesWindow *gMainWindow;
 CPalette    *pGamePalette;
-const CHAR  *INI_SECTION = "Riddles";
+const char  *INI_SECTION = "Riddles";
 LPGAMESTRUCT pGameParams;
 
 
@@ -544,7 +544,7 @@ void CRiddlesWindow::GameResume(void) {
 };
 
 void CRiddlesWindow::PlayGame() {
-	CHAR szBuf[40];
+	char szBuf[40];
 	ERROR_CODE errCode;
 	CSound  *pRiddleReading = nullptr;
 
@@ -737,7 +737,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle() {
 
 		inFile.seekg((long)m_nRiddleNumber * sizeof(RIDDLE));     // seek to the riddle we want
 
-		inFile.read((CHAR *)m_pRiddle, sizeof(RIDDLE));     // load that riddle
+		inFile.read((char *)m_pRiddle, sizeof(RIDDLE));     // load that riddle
 		if (inFile.gcount() != sizeof(RIDDLE))
 			errCode = ERR_FREAD;
 
@@ -765,7 +765,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle() {
 ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 	ERROR_CODE errCode;
 	INT i, n;
-	CHAR c;
+	char c;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -821,7 +821,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 
 
 ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
-	CHAR *pRiddle, *p;
+	char *pRiddle, *p;
 	INT x, y;
 	UINT nCharsPerLine;
 	ERROR_CODE errCode;
@@ -868,7 +868,7 @@ ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
 }
 
 
-ERROR_CODE CRiddlesWindow::DisplayLine(const CHAR *pszText, INT nChars, INT x, INT y) {
+ERROR_CODE CRiddlesWindow::DisplayLine(const char *pszText, INT nChars, INT x, INT y) {
 	CSprite *pSprite;
 	CDC *pDC;
 	INT nID, i;
@@ -926,7 +926,7 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const CHAR *pszText, INT nChars, INT x, I
 	return errCode;
 }
 
-INT CRiddlesWindow::CharToIndex(CHAR c) {
+INT CRiddlesWindow::CharToIndex(char c) {
 	INT nIndex = -1;
 
 	switch (c) {
@@ -1233,7 +1233,7 @@ void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMyEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	CHAR szBuf[MAX_ANSWER_LENGTH + 1];
+	char szBuf[MAX_ANSWER_LENGTH + 1];
 
 	//
 	// User is typing in his/her guess to the riddle
@@ -1278,7 +1278,7 @@ BEGIN_MESSAGE_MAP(CMyEdit, CEdit)
 	ON_WM_SYSKEYDOWN()
 END_MESSAGE_MAP()
 
-void CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
+void CRiddlesWindow::ParseAnswer(const char *pszAnswer) {
 	if (m_bGameActive && !m_bPause) {
 
 		GamePause();
@@ -1313,7 +1313,7 @@ void CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
 	}
 }
 
-BOOL CRiddlesWindow::CheckUserGuess(const CHAR *pszGuess) {
+BOOL CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
 	INT i;
 
 	assert(pszGuess != nullptr);

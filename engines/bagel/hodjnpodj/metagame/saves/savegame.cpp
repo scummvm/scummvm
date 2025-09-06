@@ -39,10 +39,10 @@ namespace Saves {
 
 #define IDC_SAVE_BUSY 2030
 
-STATIC CHAR szDescriptions[MAX_SAVEGAMES][40];
-STATIC CHAR *pszDesc[MAX_SAVEGAMES];
+STATIC char szDescriptions[MAX_SAVEGAMES][40];
+STATIC char *pszDesc[MAX_SAVEGAMES];
 
-CHAR szDescBuf[40];
+char szDescBuf[40];
 
 struct stInventoryInfo {
 	char m_szInventory[40];

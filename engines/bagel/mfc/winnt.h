@@ -28,7 +28,6 @@ namespace MFC {
 typedef int BOOL;
 typedef byte BYTE;
 typedef byte UBYTE;
-typedef char CHAR;
 typedef uint16 TCHAR;
 typedef uint16 SHORT;
 typedef uint16 WORD;
@@ -38,8 +37,7 @@ typedef unsigned long ULONG;
 typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
 typedef size_t SIZE_T;
-typedef float FLOAT;
-typedef FLOAT *PFLOAT;
+typedef float *PFLOAT;
 typedef BOOL *PBOOL;
 typedef BOOL *LPBOOL;
 typedef BYTE *PBYTE;

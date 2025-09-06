@@ -43,7 +43,7 @@ namespace Archeroids {
 
 extern const char *INI_SECTION;
 
-static const CHAR *apszSpeeds[10] = {
+static const char *apszSpeeds[10] = {
 	"Injured Snail",
 	"Snail",
 	"Turtle",
@@ -135,7 +135,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 
 void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
-	CHAR szBuf[40];
+	char szBuf[40];
 	CDC *pDC;
 
 	// can't access a null pointer

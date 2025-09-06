@@ -95,7 +95,7 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, const int x, const int y);
 
 CSize GetBitmapSize(CBitmap *pBitmap);
-CPalette *GetPalette(CDC *pDC, const CHAR *pszBmpName);
+CPalette *GetPalette(CDC *pDC, const char *pszBmpName);
 
 } // namespace HodjNPodj
 } // namespace Bagel

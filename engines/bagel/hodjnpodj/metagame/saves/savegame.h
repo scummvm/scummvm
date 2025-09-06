@@ -31,7 +31,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Saves {
 
-typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+typedef BOOL (CALLBACK *LPSAVEFUNC)(const char *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
 /**
  * Converts a CBfcMgr to a SAVEGAME_INFO

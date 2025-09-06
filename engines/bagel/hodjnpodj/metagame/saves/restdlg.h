@@ -35,7 +35,7 @@ namespace Saves {
 
 class CRestoreDlg: public CBmpDialog {
 public:
-	CRestoreDlg(CHAR *[], CWnd *, CPalette *);
+	CRestoreDlg(char *[], CWnd *, CPalette *);
 
 protected:
 	void ClearDialogImage(void);
@@ -54,7 +54,7 @@ private:
 	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
 	CColorButton *m_pQuitButton;
 	CText *m_pTxtRestore;
-	CHAR *m_pszDescriptions[MAX_SAVEGAMES];
+	char *m_pszDescriptions[MAX_SAVEGAMES];
 
 };
 

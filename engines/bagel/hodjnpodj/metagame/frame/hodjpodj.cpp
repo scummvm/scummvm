@@ -100,8 +100,8 @@ uint32           dwFreePhysicalMargin;
 int                     nMidiVolume;
 int                     nWaveVolume;
 
-const CHAR *gpszSaveDLL = "HNPSAVE.DLL";
-const CHAR *gpszSaveGameFile = "HODJPODJ.SAV";
+const char *gpszSaveDLL = "HNPSAVE.DLL";
+const char *gpszSaveGameFile = "HODJPODJ.SAV";
 
 //static  BOOL        bScreenSaver;
 
