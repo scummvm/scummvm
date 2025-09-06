@@ -217,6 +217,8 @@ struct GLTextureEnv {
 		combineRGB = TGL_REPLACE,
 		combineAlpha = TGL_REPLACE;
 	GLTextureEnvArgument arg0, arg1;
+
+	inline bool isDefault() const { return envMode == TGL_MODULATE; }
 };
 
 struct GLTexture {
