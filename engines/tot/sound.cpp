@@ -139,7 +139,8 @@ void SoundManager::toggleMusic() {
 void SoundManager::beep(int32 frequency, int32 ms) {
 	Audio::PCSpeakerStream *speaker = new Audio::PCSpeakerStream(_mixer->getOutputRate());
 	speaker->setVolume(255);
-	speaker->play(Audio::PCSpeaker::kWaveFormSine, frequency, ms);
+	speaker->play(Audio::PCSpeaker::kWaveFormSquare, frequency, ms);
+	_mixer->stopHandle(_speakerHandle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 					   speaker,
 					   -1,
