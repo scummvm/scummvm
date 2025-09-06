@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-06 18:50+0000\n"
+"PO-Revision-Date: 2025-09-06 18:55+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -9657,62 +9657,44 @@ msgid "Switch to main display"
 msgstr "Canvia a la pantalla principal"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Diàleg de desat / càrrega"
+msgstr "Obre el diàleg de desat / càrrega"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "Mira"
+msgstr "Mira l'escena"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Inventory"
 msgid "Previous inventory item"
-msgstr "Inventari"
+msgstr "Element d'inventari anterior"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Inventory"
 msgid "Next inventory item"
-msgstr "Inventari"
+msgstr "Element d'inventari següent"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
-msgstr "Nivell d'augment"
+msgstr "Puja un nivell"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
-msgstr "Nivell de disminució"
+msgstr "Baixa un nivell"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "Mostra el diari"
+msgstr "Torna al diari"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Show journal"
 msgid "Exit journal"
-msgstr "Mostra el diari"
+msgstr "Surt del diari"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "Mostra el diari"
+msgstr "Ves endavant al diari"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
