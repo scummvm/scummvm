@@ -1498,7 +1498,7 @@ protected:
 	int OnCreate(LPCREATESTRUCT lpcs);
 	int OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext);
 	BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext);
-	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
+	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) override;
 
 	enum RepositionFlags {
 		reposDefault = 0, reposQuery = 1, reposExtra = 2, reposNoPosLeftOver = 0x8000
@@ -1576,7 +1576,7 @@ protected:
 	}
 
 	void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
+	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) override;
 
 public:
 	CDialog() {}
