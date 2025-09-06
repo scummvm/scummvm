@@ -101,7 +101,7 @@ int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
 
 LONG CBitmap::GetBitmapBits(LONG dwCount, LPVOID lpBits) const {
 	const CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
-	dwCount = MIN((int)dwCount, src->pitch * src->h * src->format.bytesPerPixel);
+	dwCount = MIN<int32>((int32)dwCount, src->pitch * src->h * src->format.bytesPerPixel);
 
 	Common::copy((const byte *)src->getPixels(),
 		(const byte *)src->getPixels() + dwCount,
