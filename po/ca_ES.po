@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-06 18:55+0000\n"
+"PO-Revision-Date: 2025-09-06 19:31+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -10497,16 +10497,12 @@ msgid "<original>"
 msgstr ""
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Save file management menus keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles dels menús de fitxers de guardat"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Pause menu keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles del menú de pausa"
 
 #: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
 #: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
@@ -10519,17 +10515,13 @@ msgid "Move / Interact"
 msgstr "Mou / Interactua"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Pause / Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "Pausa / Omet l'escena"
+msgstr "Pausa / Surt del menú"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "Salta la seqüència de video"
+msgstr "Omet la secció de l'escena"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
@@ -10538,10 +10530,8 @@ msgstr ""
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "Crea una nova partida desada"
+msgstr "Confirmeu el nom seleccionat de desament / nou desat de partida"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -10618,28 +10608,20 @@ msgid "Toggle inventory tray"
 msgstr "Commuta la visualització de l'inventari"
 
 #: engines/pegasus/pegasus.cpp:2781
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle biochip tray"
-msgstr "Commuta l'alçada"
+msgstr "Commuta la safata del bioxip"
 
 #: engines/pegasus/pegasus.cpp:2789
-#, fuzzy
-#| msgid "Toggle Center Data Display"
 msgid "Toggle center data display"
-msgstr "Conmuta la visualització de dades central"
+msgstr "Commuta la visualització de les dades centrals"
 
 #: engines/pegasus/pegasus.cpp:2796
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle info screen"
-msgstr "Commuta la pantalla completa"
+msgstr "Commuta la pantalla d'informació"
 
 #: engines/pegasus/pegasus.cpp:2803
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pause menu"
-msgstr "Commuta el mode ràpid"
+msgstr "Commuta el menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
@@ -10650,24 +10632,18 @@ msgid "This menu item is not yet implemented"
 msgstr ""
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Interact / Select"
-msgstr "Mou / Interactua"
+msgstr "Interactua / selecciona"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Change action"
 msgid "Cancel interaction"
-msgstr "Canvia l'acció"
+msgstr "Cancel·la la interacció"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip walk"
-msgstr "Omet el diàleg"
+msgstr "Omet el desplaçament"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
@@ -10676,24 +10652,18 @@ msgstr ""
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip sequence"
-msgstr "Salta la seqüència de video"
+msgstr "Omet la seqüència"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip sub-sequence"
-msgstr "Salta la seqüència de video"
+msgstr "Omet la subseqüència"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
-#| msgid "Restart the Scene"
 msgid "Restart sequence"
-msgstr "Reinicia l'escena"
+msgstr "Reinicia la seqüència"
 
 #: engines/playground3d/metaengine.cpp:55
 msgid "Switch test"
@@ -10713,10 +10683,8 @@ msgid "3DO Plumbers requires RGB support."
 msgstr ""
 
 #: engines/prince/metaengine.cpp:237
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open interaction menu"
-msgstr "Obre el menú principal"
+msgstr "Obre el menú d'interacció"
 
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
@@ -10729,20 +10697,16 @@ msgid "X key"
 msgstr ""
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Display subtitles"
-msgstr "Commuta els subtítols"
+msgstr "Mostra els subtítols"
 
 #: engines/private/metaengine.cpp:38
 msgid "Use subtitles."
 msgstr "Utilitza subtítols."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Display SFX subtitles"
-msgstr "Commuta els subtítols"
+msgstr "Mostra els subtítols dels efectes de so"
 
 #: engines/private/metaengine.cpp:49
 msgid "Use SFX subtitles."
@@ -10787,58 +10751,40 @@ msgid "Toggle fast mode"
 msgstr "Commuta el mode ràpid"
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip Text"
 msgid "Skip text"
 msgstr "Omet el text"
 
 #: engines/queen/metaengine.cpp:203
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll inventory up"
-msgstr "Desplaça't cap amunt a l'inventari"
+msgstr "Desplaça l'inventari cap amunt"
 
 #: engines/queen/metaengine.cpp:209
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll inventory down"
-msgstr "Desplaça la llista avall"
+msgstr "Desplaça l'inventari cap avall"
 
 #: engines/queen/metaengine.cpp:215
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 1"
-msgstr "Inventari"
+msgstr "Element d'inventari 1"
 
 #: engines/queen/metaengine.cpp:220
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 2"
-msgstr "Inventari"
+msgstr "Element d'inventari 2"
 
 #: engines/queen/metaengine.cpp:225
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 3"
-msgstr "Inventari"
+msgstr "Element d'inventari 3"
 
 #: engines/queen/metaengine.cpp:230
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 4"
-msgstr "Inventari"
+msgstr "Element d'inventari 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip cutaway / dialog"
-msgstr "Omet el diàleg"
+msgstr "Omet tall / diàleg"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "Mostra el diari"
+msgstr "Utilitza el diari"
 
 #: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
@@ -10859,10 +10805,8 @@ msgid "Talk to"
 msgstr "Parla amb"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "Mostra el diari"
+msgstr "Tanca el diari"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -10942,8 +10886,6 @@ msgid "Abort speech"
 msgstr "Interromp la veu"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
 msgstr "Mostra el diàleg"
 
@@ -12230,28 +12172,20 @@ msgid "Enable ambience sounds."
 msgstr "Habilita els sons d'ambient."
 
 #: engines/scumm/metaengine.cpp:981
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
 msgstr "A baix a l'esquerra"
 
 #: engines/scumm/metaengine.cpp:994
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
 msgstr "A baix a la dreta"
 
 #: engines/scumm/metaengine.cpp:1014
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "Element superior esquerre"
+msgstr "Amunt a l'esquerra"
 
 #: engines/scumm/metaengine.cpp:1027
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
-msgstr "A dalt a la dreta"
+msgstr "Amunt a la dreta"
 
 #: engines/scumm/metaengine.cpp:1039
 msgid "Switch weapon"
@@ -12556,34 +12490,24 @@ msgid "Show windows with a partially transparent background"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Scroll keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de desplaçament"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Main user interface keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles de la interfície principal de l'usuari"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Darts minigame keymappings"
-msgstr "Assignació de minijocs"
+msgstr "Assignació de tecles del mini-joc Darts"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Talk keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles de conversa"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Files keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles de fitxers"
 
 #: engines/sherlock/metaengine.cpp:340
 #, fuzzy
