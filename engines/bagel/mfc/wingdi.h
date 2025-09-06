@@ -27,6 +27,8 @@
 namespace Bagel {
 namespace MFC {
 
+class CDC;
+
 #define PALETTEINDEX(i)     ((COLORREF)(0x01000000 | (uint32)(WORD)(i)))
 
 /*
@@ -784,9 +786,9 @@ extern HCURSOR LoadCursor(HINSTANCE hInstance,
 extern HCURSOR SetCursor(HCURSOR hCursor);
 extern int ShowCursor(BOOL bShow);
 
-typedef void (CALLBACK *LINEDDAPROC)(int x, int y, LPARAM lpData);
+typedef void (CALLBACK *LINEDDAPROC)(int x, int y, CDC *cdc);
 extern BOOL LineDDA(int x0, int y0, int x1, int y1,
-	LINEDDAPROC lpProc, LPARAM lpData);
+	LINEDDAPROC lpProc, CDC *cdc);
 
 extern BYTE GetRValue(COLORREF color);
 extern BYTE GetGValue(COLORREF color);

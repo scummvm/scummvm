@@ -353,7 +353,7 @@ int ShowCursor(BOOL bShow) {
 	return 0;
 }
 
-BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, LPARAM lpData) {
+BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, CDC *cdc) {
 	if (!lpProc)
 		return FALSE;
 
@@ -366,7 +366,7 @@ BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, LPARAM lpData) 
 	int err = dx - dy;
 
 	for (;;) {
-		lpProc(x0, y0, lpData);  // Call the callback for this pixel
+		lpProc(x0, y0, cdc);  // Call the callback for this pixel
 
 		if (x0 == x1 && y0 == y1)
 			break;

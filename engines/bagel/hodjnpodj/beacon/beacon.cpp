@@ -38,7 +38,7 @@ namespace HodjNPodj {
 namespace Beacon {
 
 void CALLBACK GetSubOptions(CWnd *pParentWind);
-void CALLBACK StepAlongLine(int xpos, int ypos, LPARAM lphdc);
+void CALLBACK StepAlongLine(int xpos, int ypos, CDC *cdc);
 BOOL InArtRegion(CPoint point);
 void MyFocusRect(CDC *pDC, CRect rect, BOOL bPressed);
 
@@ -988,11 +988,9 @@ void CMainWindow::CheckUnderBeam() {
 	ReleaseDC(pDC);
 } // end CheckUnderBeam
 
-void CALLBACK StepAlongLine(int xpos, int ypos, LPARAM lpData) {
-	CDC     *pDC;
+void CALLBACK StepAlongLine(int xpos, int ypos, CDC *cdc) {
+	CDC     *pDC = cdc;
 	CPoint point;
-
-	pDC = (CDC *)lpData;
 
 	if (bChanged) {
 		point.x = xpos;
