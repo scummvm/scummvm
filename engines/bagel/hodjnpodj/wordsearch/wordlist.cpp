@@ -144,7 +144,7 @@ char    acList[NUMBEROFLISTS][WORDSPERLIST][20] = {
 		{ "BUNT" },         //
 		{ "CATCHER" },      //
 		{ "DIAMOND" },      //
-		{ "DOUBLE" },       //
+		{ "double" },       //
 		{ "DUGOUT" },       //
 		{ "FOUL" },         //
 		{ "GLOVE" },        //

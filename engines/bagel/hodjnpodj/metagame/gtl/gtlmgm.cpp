@@ -722,7 +722,7 @@ void CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 
 	#else
 	CVector vector, vOrigin(0, -1);
-	DOUBLE angle;
+	double angle;
 	char chOldChar, chNewChar;
 
 	// can't access null pointers

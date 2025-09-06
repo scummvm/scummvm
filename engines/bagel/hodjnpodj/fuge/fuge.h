@@ -75,7 +75,7 @@ protected:
 	void        EraseBrick(CDC *, int);
 	void        LoseBall(void);
 	void        BallvsPaddle(void);
-	void        BallvsBrick(DOUBLE);
+	void        BallvsBrick(double);
 
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	long        OnJoyStick(unsigned int, long);
@@ -122,7 +122,7 @@ protected:
 	int         m_nInitPaddleSize;
 	int         m_nGForceFactor;
 
-	DOUBLE      m_fTurboBoost;
+	double      m_fTurboBoost;
 	long        m_lScore;
 	long        m_lExtraLifeScore;
 	long        m_nJoyOrgX;

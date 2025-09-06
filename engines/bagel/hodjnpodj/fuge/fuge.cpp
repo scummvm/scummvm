@@ -58,7 +58,7 @@ extern CWnd *ghParentWnd;
 #define PADDLE_START_X  285
 #define PADDLE_START_Y  205
 #define PADDLE_CEL_JUMP   1
-#define FACE_ANGLE      (DOUBLE)0.977322
+#define FACE_ANGLE      (double)0.977322
 #define PADDLE0_ANGLE   (PI/4)      // 45 degrees
 #define PADDLE1_ANGLE   (PI/3)      // 60 degrees
 #define PADDLE2_ANGLE   (PI/2)      // 90 degrees
@@ -148,7 +148,7 @@ STATIC const char *pszPaddles[N_PADDLE_SIZES] = {
 	".\\ART\\PADCEL90.BMP"
 };
 
-STATIC const DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
+STATIC const double fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE0_ANGLE,
 	PADDLE1_ANGLE,
 	PADDLE2_ANGLE
@@ -1069,7 +1069,7 @@ CVector CFugeWindow::BallOnPaddle(void) {
 void CFugeWindow::PaintBall(void) {
 	CPoint ptLast;
 	CVector vBall, vGravity;
-	DOUBLE length;
+	double length;
 	CDC *pDC;
 
 	if (m_bGameActive && !m_bPause && !m_bBallOnPaddle) {
@@ -1154,7 +1154,7 @@ void CFugeWindow::PaintBall(void) {
 					// randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
-					m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
+					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 					if (pGameParams->bSoundEffectsEnabled) {
 
@@ -1172,7 +1172,7 @@ void CFugeWindow::PaintBall(void) {
 					// randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
-					m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
+					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 
 					if (pGameParams->bSoundEffectsEnabled) {
@@ -1190,7 +1190,7 @@ void CFugeWindow::PaintBall(void) {
 					// randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
-					m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
+					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 
 					if (pGameParams->bSoundEffectsEnabled) {
@@ -1208,7 +1208,7 @@ void CFugeWindow::PaintBall(void) {
 					// randomly rotate 1 or -1 degrees
 					m_vBallVector.Rotate(Deg2Rad((brand() & 1) ? 0.125 : 0));
 
-					m_fTurboBoost = (DOUBLE)12 - m_nBallSpeed;
+					m_fTurboBoost = (double)12 - m_nBallSpeed;
 
 					if (pGameParams->bSoundEffectsEnabled) {
 						sndPlaySound(m_pWallSound, SND_MEMORY | SND_ASYNC | SND_NODEFAULT);
@@ -1257,8 +1257,8 @@ void CFugeWindow::PaintBall(void) {
 void CFugeWindow::BallvsPaddle(void) {
 	CVector vPoints[N_CRIT_POINTS];
 	CVector vTmp, vPaddle, vFace, vBallCenter, vBallEdge;
-	DOUBLE a1, a2;
-	DOUBLE fLen1, fLen2, fLen3, fLen4, fLen5, fLen6, fMin, length;
+	double a1, a2;
+	double fLen1, fLen2, fLen3, fLen4, fLen5, fLen6, fMin, length;
 	int i, j, k;
 	int nRollBack = 0;
 	bool bHit;
@@ -1518,15 +1518,15 @@ void CFugeWindow::BallvsPaddle(void) {
 #define MAX_BRICK_HITS 6
 
 
-void CFugeWindow::BallvsBrick(DOUBLE length) {
+void CFugeWindow::BallvsBrick(double length) {
 	char buf1[32], buf2[32];
 	CVector vPoints[N_BRICK_POINTS];
 	CVector vBrick, vBallCenter, vOrigin, vTmp;
 	CDC *pDC;
 	CRect rTmpRect, rBall, cRect;
 	CPoint ptTmp;
-	DOUBLE fMin, fLast, fLen[N_BRICK_POINTS];
-	DOUBLE angle;
+	double fMin, fLast, fLen[N_BRICK_POINTS];
+	double angle;
 	int i, j, nIndex, nLastIndex, nBrickIndex, nMaxHits;
 	int nBrick0, nBrick1, nRow0, nRow1, nRow2, nUse[MAX_BRICK_HITS];
 	bool bHit, bStillHit;
@@ -2141,7 +2141,7 @@ void CFugeWindow::PaintPaddle(bool bPaint) {
 					//
 					if (m_pPaddle->TestInterception(pDC, m_pBall)) {
 
-						DOUBLE angle;
+						double angle;
 
 						TRACE("Paddle Hit Ball\n");
 

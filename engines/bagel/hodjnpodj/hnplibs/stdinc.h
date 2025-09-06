@@ -48,18 +48,10 @@ namespace HodjNPodj {
 /*
 * normal types
 */
-#define VIRTUAL virtual
-#define STATIC static
 #define CDECL
-#define INLINE inline
-//define ASM __asm
 #ifndef FAR
 	#define FAR
 #endif
-typedef unsigned char UCHAR;
-typedef short SHORT;
-#define DOUBLE double
-#define CONST const
 
 enum {
 	YES = 1,
