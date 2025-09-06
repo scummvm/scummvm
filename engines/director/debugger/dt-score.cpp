@@ -567,8 +567,8 @@ void showScore() {
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
-		if (tableColumns > kMaxColumnsInTable - 2) // Current restriction of ImGui
-			tableColumns = kMaxColumnsInTable - 2;
+		if (tableColumns > kMaxColumnsInTable - 3) // Current restriction of ImGui
+			tableColumns = kMaxColumnsInTable - 3;
 
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
