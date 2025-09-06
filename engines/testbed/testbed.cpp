@@ -57,6 +57,9 @@
 #ifdef USE_IMGUI
 #include "testbed/imgui.h"
 #endif
+#if defined USE_TINYGL && defined USE_OPENGL_GAME
+#include "testbed/tinygl.h"
+#endif
 
 namespace Testbed {
 
@@ -192,6 +195,11 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	// Video decoder
 	ts = new VideoDecoderTestSuite();
 	testsuiteList.push_back(ts);
+#if defined USE_TINYGL && defined USE_OPENGL_GAME
+	// TinyGL
+	ts = new TinyGLTestSuite();
+	testsuiteList.push_back(ts);
+#endif
 }
 
 TestbedEngine::~TestbedEngine() {
