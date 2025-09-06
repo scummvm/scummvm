@@ -104,6 +104,10 @@ void RichTextCastMember::load() {
 	if (_loaded)
 		return;
 
+	// RichText casts consist of 3 files:
+	// RTE0: Editor data, used only by the Authoring Tool
+	// RTE1: Plain text data
+	// RTE2: Bitmap representation for rendering
 	uint rte0id = 0;
 	uint rte1id = 0;
 	uint rte2id = 0;
