@@ -57,7 +57,7 @@ install: build
 	install -m0644 -d debian/scummvm/usr/share/doc/scummvm
 	install -m0644 AUTHORS COPYING COPYRIGHT NEWS.md README.md debian/scummvm/usr/share/doc/scummvm
 	install -m0644 LICENSES/COPYING.Apache LICENSES/COPYING.BSD LICENSES/COPYING.BSL debian/scummvm/usr/share/doc/scummvm
-	install -m0644 LICENSES/COPYING.FREEFONT LICENSES/COPYING.GLAD LICENSES/COPYING.ISC debian/scummvm/usr/share/doc/scummvm
+	install -m0644 LICENSES/COPYING.GLAD LICENSES/COPYING.ISC debian/scummvm/usr/share/doc/scummvm
 	install -m0644 LICENSES/COPYING.LGPL LICENSES/COPYING.LUA LICENSES/COPYING.MIT debian/scummvm/usr/share/doc/scummvm
 	install -m0644 LICENSES/COPYING.MKV LICENSES/COPYING.MPL LICENSES/COPYING.OFL debian/scummvm/usr/share/doc/scummvm
 	install -m0644 LICENSES/COPYING.TINYGL LICENSES/CatharonLicense.txt debian/scummvm/usr/share/doc/scummvm

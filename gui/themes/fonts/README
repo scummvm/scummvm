@@ -1,6 +1,5 @@
 These are fonts used in ScummVM, and are included in the fonts.dat and fonts-cjk.dat packages.
 
-The GNU FreeFont (https://www.gnu.org/software/freefont/) files are distributed under the license in COPYING.FREEFONT.
 The Go Mono fonts (https://github.com/golang/image/blob/master/font/gofont/ttfs/README) are distributed under the license in COPYING.BSD.
 The Liberation fonts (https://github.com/liberationfonts) are distributed under the SIL Open Font License.
 The Material Design Icons (https://github.com/google/material-design-icons) files are distributed under the Apache 2.0 license.
