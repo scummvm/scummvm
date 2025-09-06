@@ -916,6 +916,7 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	if (flags == 18) {
 		warning("Backuping media to %d", _numEnvironments);
 		_environments.setMedia(_numEnvironments);
+		_vm->_inter->_variables = nullptr;
 	}
 
 	curBackupPos = _curEnvironment;
