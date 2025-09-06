@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-08-18 12:10+0000\n"
+"PO-Revision-Date: 2025-09-06 18:06+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -132,7 +132,7 @@ msgstr "Cancel·la"
 #: backends/dialogs/macosx/macosx-dialogs.mm:144
 #: backends/dialogs/win32/win32-dialogs.cpp:136
 msgid "Choose"
-msgstr "Tria"
+msgstr "Escolliu"
 
 #: gui/cloudconnectionwizard.cpp:198
 msgid "Cloud Connection Wizard"
@@ -6031,10 +6031,8 @@ msgid "Walk"
 msgstr "Camina"
 
 #: engines/access/metaengine.cpp:348
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Open save/load menu"
-msgstr "Pàgina amunt en el menú de desar/carregar"
+msgstr "Obre el menú de desar/carregar"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -6705,10 +6703,8 @@ msgid "High Quality"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggles some optional graphical effects"
-msgstr "Activa/desactiva l'efecte de so"
+msgstr "Commuta alguns efectes gràfics opcionals"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
@@ -6829,15 +6825,12 @@ msgid "Enable title and copy protection screens (if present)"
 msgstr ""
 
 #: engines/awe/metaengine.cpp:36
-#, fuzzy
-#| msgid ""
-#| "Enable any copy protection that would otherwise be bypassed by default."
 msgid ""
 "Displays title and copy protection screens that would otherwise be bypassed "
 "by default."
 msgstr ""
-"Habilita qualsevol sistema de protecció de còpia que d'altra manera seria "
-"ignorada per defecte."
+"Mostra les pantalles de títol i de protecció de còpia que s'ignoraren per "
+"defecte."
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
@@ -7515,10 +7508,8 @@ msgstr "Tanca el quadre de diàleg"
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Assignació de tecles del panell de sortida"
+msgstr "Assignacions de tecles del diàleg de sortida"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -7816,17 +7807,13 @@ msgstr ""
 "dissenyat per a aquest mode"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles de selecció de diàlegs"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle leader inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari de líder"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -7835,31 +7822,23 @@ msgstr ""
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle champion 1 inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari del campió 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle champion 2 inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari del campió 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle champion 3 inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari del campió 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle champion 4 inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari del campió 4"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7868,8 +7847,6 @@ msgstr "Desplaça't a l'esquerra"
 
 #: engines/dm/metaengine.cpp:226 engines/titanic/metaengine.cpp:343
 #: engines/titanic/metaengine.cpp:384
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backward"
 msgstr "Mou enrere"
 
@@ -7884,18 +7861,15 @@ msgid "Wake up champion"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "Habilita la conversió de text a veu per als subtítols"
+msgstr "Habilita el text a veu per a les veus en off que falten"
 
 #: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
 msgstr ""
-"Utilitza TextToSpeech per llegir els subtítols (si TTS està disponible)"
+"Utilitza el text a veu per llegir les veus en off que falten (si TTS està "
+"disponible)"
 
 #: engines/draci/metaengine.cpp:212
 msgid "Skip intro / Exit map or inventory"
@@ -7974,65 +7948,45 @@ msgid "Debug graphics"
 msgstr "Depura els gràfics"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Animation keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de les animacions"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Interact / Select"
-msgstr "Mou / Interactua"
+msgstr "Mou / Interactua / Selecciona"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
-msgstr "Agafa"
+msgstr "Tria"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Next action"
 msgid "Reset selected verb"
-msgstr "Acció següent"
+msgstr "Restableix el verb seleccionat"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Controls tàctils"
+msgstr "Controls de volum"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Jocs desats"
+msgstr "Desa / carrega partida"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Commuta els subtítols"
+msgstr "Habilita els subtítols"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Commuta els subtítols"
+msgstr "Inhabilita els subtítols"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "Silencia les veus"
+msgstr "Pausa la veu"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Confirma"
+msgstr "Confirma la sortida"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -8065,88 +8019,60 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Activa el text a veu per a objectes, opcions i la cita de la Bíblia"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 1"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select option 2"
-msgstr "Selecciona actor 2"
+msgstr "Selecciona l'opció 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select option 3"
-msgstr "Selecciona actor 3"
+msgstr "Selecciona l'opció 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select Actor 4"
 msgid "Select option 4"
-msgstr "Selecciona actor 4"
+msgstr "Selecciona l'opció 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select Actor 5"
 msgid "Select option 5"
-msgstr "Selecciona actor 5"
+msgstr "Selecciona l'opció 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "Selecciona actor 6"
+msgstr "Selecciona l'opció 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 7"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 8"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 9"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 10"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 11"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 12"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 13"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 14"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció 14"
 
 #: engines/efh/metaengine.cpp:257 engines/hypno/metaengine.cpp:312
 #: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
@@ -8154,70 +8080,48 @@ msgid "Menu keymappings"
 msgstr "Assignacions del menú"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Quit keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles de sortida"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "Assignació de tecles Desa/Carrega"
+msgstr "Assignació de tecles per ometre vídeos"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "Assignació de minijocs"
+msgstr "Assignació de per ometre cançons"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles de navegació del menú d'estat"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles del menú d'estat"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles del submenú del menú d'estat"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Interaction keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles d'interacció"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Fight keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles de lluita"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles de selecció de personatges"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Enemy selection keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de selecció d'enemics"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles del menú de mort"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
@@ -8235,22 +8139,16 @@ msgid "Character 3 status"
 msgstr "Estat del personatge 3"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip song"
-msgstr "Salta la seqüència de video"
+msgstr "Omet la cançó"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "Omet la introducció"
+msgstr "Omet la cançó i la introducció"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "Actiu"
+msgstr "Habilitats actives"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8272,10 +8170,8 @@ msgid "Give"
 msgstr "Dóna"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "Menú d'informació"
+msgstr "Informació"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
@@ -8286,16 +8182,12 @@ msgid "Trade"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "Surt al menú"
+msgstr "Surt del menú d'estat"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "Surt del joc"
+msgstr "Surt del submenú"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
@@ -8320,73 +8212,51 @@ msgstr "Còrrer"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "View terrain"
-msgstr "Surt de la conversa"
+msgstr "Visualitza el terreny"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select character 1"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona el personatge 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select character 2"
-msgstr "Selecciona actor 2"
+msgstr "Selecciona el personatge 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select character 3"
-msgstr "Selecciona actor 3"
+msgstr "Selecciona el personatge 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Change action"
 msgid "Cancel character selection"
-msgstr "Canvia l'acció"
+msgstr "Cancel·la la selecció de personatge"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona l'enemic 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona l'enemic 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona l'enemic 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona l'enemic 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Seleccioneu un índex"
+msgstr "Selecciona l'enemic 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Change action"
 msgid "Cancel enemy selection"
-msgstr "Canvia l'acció"
+msgstr "Cancel·la la selecció d'enemig"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8394,44 +8264,32 @@ msgid "Restart game"
 msgstr "Reinicia la partida"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "Toqueu la nota 1: La"
+msgstr "Reprodueix el tipus de so 13"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "Toqueu la nota 1: La"
+msgstr "Reprodueix el tipus de so 14"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "Toqueu la nota 1: La"
+msgstr "Reprodueix el tipus de so 15"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "Toqueu la nota 5: Mi"
+msgstr "Reprodueix el tipus de so 5"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "Toqueu la nota 1: La"
+msgstr "Reprodueix el tipus de so 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "Toqueu la nota 1: La"
+msgstr "Reprodueix el tipus de so 16"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -10935,10 +10793,8 @@ msgid "Display subtitles"
 msgstr "Commuta els subtítols"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Use subtitles."
-msgstr "Commuta els subtítols"
+msgstr "Utilitza subtítols."
 
 #: engines/private/metaengine.cpp:48
 #, fuzzy
@@ -10947,10 +10803,8 @@ msgid "Display SFX subtitles"
 msgstr "Commuta els subtítols"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Use SFX subtitles."
-msgstr "Commuta els subtítols"
+msgstr "Utilitza subtítols per als efectes de so."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -11052,7 +10906,7 @@ msgstr "Mostra el diari"
 #: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
-msgstr "Agafa"
+msgstr "Recull"
 
 #: engines/queen/metaengine.cpp:289 engines/saga/metaengine.cpp:364
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:215
