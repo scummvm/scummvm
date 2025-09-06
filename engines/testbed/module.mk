@@ -37,6 +37,13 @@ MODULE_OBJS += \
 	imgui.o
 endif
 
+ifdef USE_TINYGL
+ifdef USE_OPENGL_GAME # Currently only direct comparisons are implemented
+MODULE_OBJS += \
+    tinygl.o
+endif
+endif
+
 MODULE_DIRS += \
 	engines/testbed
 
