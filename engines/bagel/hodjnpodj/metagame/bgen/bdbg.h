@@ -51,7 +51,7 @@ public:
 	BOOL m_bVerifyDc ;      // verify device context is ok
 	int  m_iDebugValues[100] ;  // misc debugging values
 	int  m_iTraceObjectCount ;  // max # objects to trace
-	LPVOID *m_lpTraceObjects ;  // trace object array
+	void **m_lpTraceObjects ;  // trace object array
 	int  m_iTraceObjectCurrent ;    // # of array elements in use
 	int  m_iErrorCount ;    // number of errors encountered
 	char m_cEndData ;
@@ -70,14 +70,14 @@ public:
 	BOOL GetDebugString(LPCSTR lpszOption,
 	                    LPSTR lpszTarget, int iTargetSize,
 	                    LPCSTR lpszDefault PDFT(nullptr)) ;
-	BOOL TraceConstructor(LPCSTR lpszName, LPVOID lpLoc) ;
-	BOOL TraceDestructor(LPCSTR lpszName, LPVOID lpLoc) ;
+	BOOL TraceConstructor(LPCSTR lpszName, void *lpLoc) ;
+	BOOL TraceDestructor(LPCSTR lpszName, void *lpLoc) ;
 	BOOL DebugMessageBox(LPCSTR lpszPrompt,
 	                     UINT nType, UINT nIDPrompt) ;
-	BOOL AddTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
-	BOOL TestTraceObject(LPCSTR lpszName, LPVOID lpPtr,
+	BOOL AddTraceObject(LPCSTR lpszName, void *lpPtr) ;
+	BOOL TestTraceObject(LPCSTR lpszName, void *lpPtr,
 	                     BOOL bMissing PDFT(FALSE)) ;
-	BOOL RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr) ;
+	BOOL RemoveTraceObject(LPCSTR lpszName, void *lpPtr) ;
 	BOOL ReportTraceObjects(void) ;
 	STATIC BOOL OutputWithTime(LPCSTR lpszPattern) ;
 	STATIC BOOL OutputWithWordWrap(LPCSTR lpStr1,

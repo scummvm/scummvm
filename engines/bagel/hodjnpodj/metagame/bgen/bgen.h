@@ -41,9 +41,6 @@ namespace Metagame {
 #define DIMENSION(a) (sizeof(a) / sizeof(a[0]))
 #define UPPERBOUND(a) (DIMENSION(a) - 1)
 
-// #define HIWORD(lParm) (*((unsigned int huge *)&lParm + 1) )
-// #define LOWORD(lParm) ((unsigned int)lParm )
-
 typedef int BOOL ;
 typedef char *XPSTR ;
 typedef char *XPSTR;
@@ -52,10 +49,6 @@ typedef LPSTR *LPLPSTR ;
 typedef int *XPINT ;
 typedef char *XPCHAR ;
 typedef void *XPVOID ;
-typedef void *LPVOID ;
-//typedef unsigned int WORD ;
-//typedef WORD * XPWORD ;
-//typedef WORD * LPWORD ;
 
 typedef unsigned long ULONG ;
 

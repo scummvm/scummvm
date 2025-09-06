@@ -322,7 +322,7 @@ HGLOBAL CWinApp::loadResource(HRSRC hResInfo) {
 	return _resources.loadResource(hResInfo);
 }
 
-LPVOID CWinApp::lockResource(HGLOBAL hResData) {
+void *CWinApp::lockResource(HGLOBAL hResData) {
 	return GlobalLock(hResData);
 }
 

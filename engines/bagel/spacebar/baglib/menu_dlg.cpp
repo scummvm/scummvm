@@ -494,7 +494,7 @@ bool CBagMenu::trackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	return bReturn;
 }
 
-bool CBagMenu::addItem(CBagObject *pObj, void *(* /*func*/)(int, void *), void * /*info*/) {
+bool CBagMenu::addItem(CBagObject *pObj, void *(* /*func*/)(int, void *), void */*info*/) {
 	pObj->setPosition(CBofPoint(0, _nY));
 
 	_nY = (int16)(_nY + (int16)(pObj->getRect().height() + 1));

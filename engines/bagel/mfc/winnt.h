@@ -40,8 +40,6 @@ typedef WORD *LPWORD;
 typedef long *LPLONG;
 typedef uint32 *PDWORD;
 typedef uint32 *LPDWORD;
-typedef void *LPVOID;
-typedef const void *LPCVOID;
 
 typedef const char *LPCSTR;
 typedef const char *LPCTSTR;

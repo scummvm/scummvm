@@ -118,7 +118,7 @@ bool CBagExam::rotateStop() {
 
 }
 
-void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void * /* extraInfo, unused */) {
+void CBagExam::onMouseMove(uint32 /* flags, unused */, CBofPoint *point, void */* extraInfo, unused */) {
 	assert(isValidObject(this));
 	assert(point != nullptr);
 

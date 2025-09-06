@@ -98,7 +98,7 @@ BOOL DeleteObject(HGDIOBJ ho) {
 	return true;
 }
 
-int GetObject(HANDLE h, int c, LPVOID pv) {
+int GetObject(HANDLE h, int c, void *pv) {
 	error("TODO: GetObject");
 }
 
@@ -236,7 +236,7 @@ HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, uint32 flInit,
 }
 
 int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-              LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage) {
+              void *lpvBits, LPBITMAPINFO lpbmi, UINT usage) {
 	error("TODO: GetDIBits");
 }
 

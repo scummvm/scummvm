@@ -35,7 +35,7 @@ BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 	return true;
 }
 
-int CPalette::GetObject(int nCount, LPVOID lpObject) const {
+int CPalette::GetObject(int nCount, void *lpObject) const {
 	LOGPALETTE *pal = (LOGPALETTE *)lpObject;
 	const Impl *src = static_cast<const Impl *>(m_hObject);
 	assert(nCount >= 4);

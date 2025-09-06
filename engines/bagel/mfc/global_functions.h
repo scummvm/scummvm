@@ -77,7 +77,7 @@ extern BOOL GetClassInfo(HINSTANCE hInstance,
 extern int GetSystemMetrics(int nIndex);
 
 extern HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes);
-extern LPVOID GlobalLock(HGLOBAL hMem);
+extern void *GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
 extern size_t GlobalSize(HGLOBAL hMem);
@@ -137,7 +137,7 @@ extern HRSRC FindResource(HMODULE hModule,
     LPCSTR lpName, LPCSTR lpType);
 extern size_t SizeofResource(HMODULE hModule, HRSRC hResInfo);
 extern HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
-extern LPVOID LockResource(HGLOBAL hResData);
+extern void *LockResource(HGLOBAL hResData);
 extern void UnlockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
 extern HFONT CreateFontIndirect(const LOGFONT *lf);

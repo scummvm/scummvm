@@ -92,7 +92,7 @@ BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSi
 }
 
 //* CBdbgMgr::TraceConstructor -- trace object constructor, if optioned
-BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc)
+BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
 // returns: TRUE if error, FALSE otherwise
@@ -101,7 +101,7 @@ BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, LPVOID lpLoc)
 }
 
 //* CBdbgMgr::TraceDestructor -- trace object destructor, if optioned
-BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, LPVOID lpLoc)
+BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
 // returns: TRUE if error, FALSE otherwise
@@ -119,7 +119,7 @@ BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 }
 
 //* CBdbgMgr::AddTraceObject -- add object to trace list
-BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
+BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // returns: TRUE if error, FALSE otherwise
@@ -128,7 +128,7 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, LPVOID lpPtr)
 }
 
 //* CBdbgMgr::TestTraceObject -- test
-BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
+BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, void *lpPtr, BOOL bMissing)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // bMissing -- if TRUE, then correct if pointer is missing;
@@ -140,7 +140,7 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, LPVOID lpPtr, BOOL bMissing)
 }
 
 //* CBdbgMgr::RemoveTraceObject -- add object to trace list
-BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, LPVOID lpPtr)
+BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // returns: TRUE if error, FALSE otherwise

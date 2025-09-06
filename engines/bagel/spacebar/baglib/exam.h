@@ -58,7 +58,7 @@ public:
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
 	 */
-	void onMouseMove(uint32 /* flags */, CBofPoint *point, void * /* extraInfo */ = nullptr) override;
+	void onMouseMove(uint32 /* flags */, CBofPoint *point, void */* extraInfo */ = nullptr) override;
 
 	/**
 	 * Resize the examination window

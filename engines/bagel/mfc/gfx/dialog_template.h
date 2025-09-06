@@ -47,7 +47,7 @@ namespace Gfx {
 #define DS_SETFOREGROUND    0x200L  /* not in win3.1 */
 
 // Template data pointers. Note that they're
-// void * because in ScummVM we do endian-safe
+// void *because in ScummVM we do endian-safe
 // loading of the data being pointed to
 typedef const void *LPCDLGTEMPLATE;
 typedef void *LPDLGTEMPLATE;

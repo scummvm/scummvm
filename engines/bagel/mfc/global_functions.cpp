@@ -46,7 +46,7 @@ HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes) {
 		uFlags == GMEM_ZEROINIT);
 }
 
-LPVOID GlobalLock(HGLOBAL hMem) {
+void *GlobalLock(HGLOBAL hMem) {
 	return ((MemBlock *)hMem)->_ptr;
 }
 
@@ -239,7 +239,7 @@ HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo) {
 	return AfxGetApp()->loadResource(hResInfo);
 }
 
-LPVOID LockResource(HGLOBAL hResData) {
+void *LockResource(HGLOBAL hResData) {
 	return AfxGetApp()->lockResource(hResData);
 }
 

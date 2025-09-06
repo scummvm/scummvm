@@ -660,7 +660,7 @@ typedef struct tagBITMAP {
 	long        bmWidthBytes;
 	WORD        bmPlanes;
 	WORD        bmBitsPixel;
-	LPVOID      bmBits;
+	void *     bmBits;
 } BITMAP, *PBITMAP, NEAR *NPBITMAP, FAR *LPBITMAP;
 
 typedef struct tagBITMAPCOREHEADER {
@@ -736,7 +736,7 @@ extern int ReleaseDC(HWND hWnd, HDC hDC);
 extern BOOL DeleteDC(HDC hdc);
 extern BOOL DeleteObject(HGDIOBJ ho);
 extern HDC GetDC(HWND hWnd);
-extern int GetObject(HANDLE h, int c, LPVOID pv);
+extern int GetObject(HANDLE h, int c, void *pv);
 extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
 
@@ -751,7 +751,7 @@ extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
                        uint32 flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
 extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-                     LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
+                     void *lpvBits, LPBITMAPINFO lpbmi, UINT usage);
 
 extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
 extern HGDIOBJ GetStockObject(int i);

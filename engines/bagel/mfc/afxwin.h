@@ -615,8 +615,8 @@ public:
 	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
 	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 	    UINT nBitcount, const void *lpBits);
-	int GetObject(int nCount, LPVOID lpObject) const;
-	long GetBitmapBits(long dwCount, LPVOID lpBits) const;
+	int GetObject(int nCount, void *lpObject) const;
+	long GetBitmapBits(long dwCount, void *lpBits) const;
 	BOOL GetBitmap(BITMAP *pBitMap) const {
 		return GetObject(sizeof(BITMAP), pBitMap);
 	}
@@ -642,7 +642,7 @@ public:
 	}
 
 	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
-	int GetObject(int nCount, LPVOID lpObject) const;
+	int GetObject(int nCount, void *lpObject) const;
 	UINT GetEntryCount() const;
 	UINT GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors) const;
@@ -1066,7 +1066,7 @@ public:
 
 
 typedef struct tagCREATESTRUCTA {
-	LPVOID      lpCreateParams = nullptr;
+	void *     lpCreateParams = nullptr;
 	HINSTANCE   hInstance = 0;
 	HMENU       hMenu = 0;
 	HWND        hwndParent = 0;
@@ -1350,11 +1350,11 @@ public:
 	BOOL CreateEx(uint32 dwExStyle, LPCTSTR lpszClassName,
 		LPCTSTR lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
-		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam = nullptr);
+		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam = nullptr);
 	BOOL CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
-		LPVOID lpParam = nullptr);
+		void *lpParam = nullptr);
 
 	/**
 	 * Gets a list of CWnd pointers for parent controls
@@ -2012,7 +2012,7 @@ public:
 	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
 	size_t sizeofResource(HRSRC hResInfo);
 	HGLOBAL loadResource(HRSRC hResInfo);
-	LPVOID lockResource(HGLOBAL hResData);
+	void *lockResource(HGLOBAL hResData);
 	void unlockResource(HGLOBAL hResData);
 	BOOL freeResource(HGLOBAL hResData);
 	const Libs::Resources &getResources() const {

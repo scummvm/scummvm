@@ -136,7 +136,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
-		LPVOID lpParam /* = nullptr */) {
+		void *lpParam /* = nullptr */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 		pParentWnd->GetSafeHwnd(), nID, lpParam);
@@ -145,7 +145,7 @@ BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
 BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
-		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam) {
+		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam) {
 	// Set up create structure
 	CREATESTRUCT cs;
 	cs.x = x;

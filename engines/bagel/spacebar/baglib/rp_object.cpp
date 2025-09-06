@@ -951,7 +951,7 @@ void CBagRPObject::deactivateResiduePrintedReview() {
 	}
 }
 
-void CBagRPObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * /*pv*/) {
+void CBagRPObject::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void */*pv*/) {
 	// Deactivate everything in the rp list
 	hideResiduePrintedReview();
 

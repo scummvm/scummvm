@@ -324,7 +324,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 
 HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {
 	BITMAPINFO *info = getDIBInfo(hDib);
-	LPVOID lpbihBits = FindDIBBits(hDib);
+	void *lpbihBits = FindDIBBits(hDib);
 	HBITMAP hBitmap = CreateDIBitmap(hDC,
 		&info->bmiHeader,
 	    CBM_INIT,

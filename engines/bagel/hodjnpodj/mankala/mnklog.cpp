@@ -1154,9 +1154,9 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	maxTotalBenefit = 0;
 	bNearClustered = FALSE;
 
-	memset((LPVOID)iEvasionNecessary, 0x0, NUMPITS * sizeof(int));
-	memset((LPVOID)iPitUnderThreat, -1, NUMPITS * sizeof(int));
-	memset((LPVOID)iOtherOffensivePit, -1, NUMPITS * sizeof(int));
+	memset((void *)iEvasionNecessary, 0x0, NUMPITS * sizeof(int));
+	memset((void *)iPitUnderThreat, -1, NUMPITS * sizeof(int));
+	memset((void *)iOtherOffensivePit, -1, NUMPITS * sizeof(int));
 
 
 	/*

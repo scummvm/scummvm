@@ -83,7 +83,7 @@ BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 	return true;
 }
 
-int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
+int CBitmap::GetObject(int nCount, void *lpObject) const {
 	CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
 	BITMAP *dest = (BITMAP *)lpObject;
 	assert(src && nCount == sizeof(BITMAP));
@@ -99,7 +99,7 @@ int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
 	return sizeof(BITMAP);
 }
 
-long CBitmap::GetBitmapBits(long dwCount, LPVOID lpBits) const {
+long CBitmap::GetBitmapBits(long dwCount, void *lpBits) const {
 	const CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
 	dwCount = MIN<int32>((int32)dwCount, src->pitch * src->h * src->format.bytesPerPixel);
 

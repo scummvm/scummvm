@@ -122,11 +122,11 @@ public:
 
 	void SetPermanent(HANDLE h, T *permOb) {
 		assert(!LookupPermanent(h));
-		_permanentMap[(LPVOID)h] = permOb;
+		_permanentMap[(void *)h] = permOb;
 	}
 
 	void RemoveHandle(HANDLE h) {
-		_permanentMap.erase((LPVOID)h);
+		_permanentMap.erase((void *)h);
 	}
 
 	inline T *LookupPermanent(HANDLE h) const {
