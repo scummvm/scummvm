@@ -86,7 +86,7 @@ bool CBagExam::markBegEnd() {
 	return true;
 }
 
-void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint * /* point, unused */) {
+void  CBagExam::onButtonUp(uint32 /*n flags, unused */, CBofPoint */* point, unused */) {
 	// Clean up and exit
 	_bLoop = false;
 

@@ -618,7 +618,7 @@ private:
 	int EstimatePathDistance(CNode FAR * lpNode1,
 	                         CNode FAR * lpNode2) ;
 	//- FindShortestPath -- between two nodes
-	LPINT FindShortestPath(CNode FAR * lpNode1,
+	int *FindShortestPath(CNode FAR * lpNode1,
 	                       CNode FAR * lpNode2) ;
 
 public:

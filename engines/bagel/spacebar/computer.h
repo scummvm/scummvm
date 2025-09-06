@@ -137,8 +137,8 @@ public:
 	void onPaint(CBofRect *pRect);
 	void eraseBackdrop();
 
-	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void * = nullptr) {}
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void * = nullptr) {}
 
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };

@@ -766,25 +766,25 @@ public:
 		int setBkMode(int nBkMode);
 		COLORREF setTextColor(COLORREF crColor);
 		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount,
-			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		BOOL textOut(int x, int y, const CString &str,
-			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-			LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
+			LPCSTR lpszString, UINT nCount, int *lpDxWidths);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-			const CString &str, LPINT lpDxWidths);
+			const CString &str, int *lpDxWidths);
 		CSize tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-			int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin);
+			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 		CSize tabbedTextOut(int x, int y, const CString &str,
-			int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin);
+			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 
 		int drawText(LPCSTR lpszString, int nCount, LPRECT lpRect, UINT nFormat,
-			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		int drawText(const CString &str, LPRECT lpRect, UINT nFormat,
-			int nTabPositions = 0, const LPINT lpnTabStopPositions = nullptr,
+			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 
 		CSize getTextExtent(LPCSTR lpszString, int nCount) const;
@@ -792,13 +792,13 @@ public:
 		CSize getOutputTextExtent(LPCSTR lpszString, int nCount) const;
 		CSize getOutputTextExtent(const CString &str) const;
 		CSize getTabbedTextExtent(LPCSTR lpszString, int nCount,
-			int nTabPositions, LPINT lpnTabStopPositions) const;
+			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getTabbedTextExtent(const CString &str,
-			int nTabPositions, LPINT lpnTabStopPositions) const;
+			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-			int nTabPositions, LPINT lpnTabStopPositions) const;
+			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getOutputTabbedTextExtent(const CString &str,
-			int nTabPositions, LPINT lpnTabStopPositions) const;
+			int nTabPositions, int *lpnTabStopPositions) const;
 		BOOL grayString(CBrush *pBrush,
 			BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 			int nCount, int x, int y, int nWidth, int nHeight);
@@ -921,13 +921,13 @@ public:
 	virtual BOOL TextOut(int x, int y, LPCSTR lpszString, int nCount);
 	BOOL TextOut(int x, int y, const CString &str);
 	virtual BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	                        LPCSTR lpszString, UINT nCount, LPINT lpDxWidths);
+	                        LPCSTR lpszString, UINT nCount, int *lpDxWidths);
 	BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	                const CString &str, LPINT lpDxWidths);
+	                const CString &str, int *lpDxWidths);
 	virtual CSize TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-	                            int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+	                            int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
 	CSize TabbedTextOut(int x, int y, const CString &str,
-	                    int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
+	                    int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
 	int DrawText(LPCSTR lpszString, int nCount,
 	             LPRECT lpRect, UINT nFormat);
 	int DrawText(const CString &str, LPRECT lpRect, UINT nFormat);
@@ -938,13 +938,13 @@ public:
 	CSize GetOutputTextExtent(LPCSTR lpszString, int nCount) const;
 	CSize GetOutputTextExtent(const CString &str) const;
 	CSize GetTabbedTextExtent(LPCSTR lpszString, int nCount,
-	                          int nTabPositions, LPINT lpnTabStopPositions) const;
+	                          int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetTabbedTextExtent(const CString &str,
-	                          int nTabPositions, LPINT lpnTabStopPositions) const;
+	                          int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-	                                int nTabPositions, LPINT lpnTabStopPositions) const;
+	                                int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(const CString &str,
-	                                int nTabPositions, LPINT lpnTabStopPositions) const;
+	                                int nTabPositions, int *lpnTabStopPositions) const;
 	virtual BOOL GrayString(CBrush *pBrush,
 	                        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 	                        int nCount, int x, int y, int nWidth, int nHeight);
@@ -1455,8 +1455,8 @@ public:
 	virtual int SetScrollPos(int nPos, BOOL bRedraw = true) {
 		return 0;
 	}
-	virtual void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const {}
-	void GetScrollRange(int /*nBar*/, LPINT lpMinPos, LPINT lpMaxPos) const {
+	virtual void GetScrollRange(int *lpMinPos, int *lpMaxPos) const {}
+	void GetScrollRange(int /*nBar*/, int *lpMinPos, int *lpMaxPos) const {
 		GetScrollRange(lpMinPos, lpMaxPos);
 	}
 	virtual void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {}
@@ -1735,7 +1735,7 @@ public:
 
 	int GetScrollPos() const override;
 	int SetScrollPos(int nPos, BOOL bRedraw = true) override;
-	void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const override;
+	void GetScrollRange(int *lpMinPos, int *lpMaxPos) const override;
 	void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) override;
 	void ShowScrollBar(BOOL bShow);
 	BOOL SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw);

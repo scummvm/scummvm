@@ -64,7 +64,7 @@ public:
 	 * Resize the examination window
 	 */
 	void onReSize(CBofSize *size) override;
-	void onButtonUp(uint32 /* flags */, CBofPoint * /* point */) override;
+	void onButtonUp(uint32 /* flags */, CBofPoint */* point */) override;
 
 	/**
 	 * Set the rectangles that determine "hot" mouse locations

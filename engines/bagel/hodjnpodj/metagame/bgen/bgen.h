@@ -50,9 +50,7 @@ typedef char *XPSTR;
 typedef char *LPSTR ;
 typedef LPSTR *LPLPSTR ;
 typedef int *XPINT ;
-typedef int *LPINT ;
 typedef char *XPCHAR ;
-#define void void
 typedef void *XPVOID ;
 typedef void *LPVOID ;
 //typedef unsigned int WORD ;

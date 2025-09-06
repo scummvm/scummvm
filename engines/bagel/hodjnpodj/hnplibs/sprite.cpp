@@ -2068,7 +2068,7 @@ BOOL CSprite::EraseSprite(CDC *pDC) {
  * Parameters:
  *  CDC *pDC                pointer to device context where the sprite gets painted
  *  CSprite * pTestSprite   pointer to a lone test sprite for testing
- *  CPoint * pPoint         optional address of place to store estimated pixel overlap
+ *  CPoint *pPoint         optional address of place to store estimated pixel overlap
  *
  * Return Value:
  *  CSprite *               pointer to sprite touched, or nullptr
@@ -2188,7 +2188,7 @@ CSprite *CSprite::Interception(CDC *pDC, CSprite * pTestSprite) {
  * Parameters:
  *  CDC *pDC            pointer to device context where the sprite gets painted
  *  CSprite * pSprite   pointer to a lone test sprite
- *  CPoint * pPoint     optional address of place to store estimated pixel overlap
+ *  CPoint *pPoint     optional address of place to store estimated pixel overlap
  *
  * Return Value:
  *  BOOL                success/failure condition
@@ -2198,7 +2198,7 @@ CSprite *CSprite::Interception(CDC *pDC, CSprite * pTestSprite) {
  *
  ************************************************************************/
 
-BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
+BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 	BOOL    bSuccess = FALSE;                           // success/failure return status
 	CRect   unionRect;                                  // rectangle enclosing old and new sprite locations
 	CDC     *cDC1 = nullptr,                               // device context for sprite 1

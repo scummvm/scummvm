@@ -50,7 +50,7 @@ int CScrollBar::SetScrollPos(int nPos, BOOL bRedraw) {
 	return oldPos;
 }
 
-void CScrollBar::GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const {
+void CScrollBar::GetScrollRange(int *lpMinPos, int *lpMaxPos) const {
 	if (lpMinPos)
 		*lpMinPos = _minValue;
 	if (lpMaxPos)

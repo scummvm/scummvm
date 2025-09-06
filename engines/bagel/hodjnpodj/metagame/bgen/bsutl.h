@@ -152,7 +152,7 @@ private:
 	// SB_HORZ (=0) or SB_VERT (=1)
 	int m_iId = 0;         // control id
 	int m_iMin = 0, m_iMax = 0, m_iPosition = 0;   // scroll bar values
-	LPINT m_lpiVariable = 0;   // ptr to integer variable
+	int *m_lpiVariable = 0;   // ptr to integer variable
 	int m_iDocSize = 0;        // document size (logical units)
 	int m_iDevWndSize = 0;     // window size (device units)
 	int m_iWndSize = 0;        // window size (logical units)

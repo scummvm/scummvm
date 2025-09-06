@@ -126,7 +126,7 @@ BOOL CGenUtil::NormalizeCRect(CRect& cRect)
 
 
 //* CGenUtil::RandomSelection -- random selection of integer array
-void CGenUtil::RandomSelection(int * xpiArray, int iNum,
+void CGenUtil::RandomSelection(int *xpiArray, int iNum,
                                int iSize)
 // xpiArray (input/output) -- array of integers to make selection from
 // iNum -- number of numbers in array

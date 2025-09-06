@@ -562,23 +562,23 @@ BOOL CDC::TextOut(int x, int y, const CString &str) {
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-        LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+        LPCSTR lpszString, UINT nCount, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-        const CString &str, LPINT lpDxWidths) {
+        const CString &str, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, str, lpDxWidths);
 }
 
 CSize CDC::TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-        int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+        int nTabPositions, int *lpnTabStopPositions, int nTabOrigin) {
 	return impl()->tabbedTextOut(x, y, lpszString, nCount,
 		nTabPositions, lpnTabStopPositions, nTabOrigin);
 }
 
 CSize CDC::TabbedTextOut(int x, int y, const CString &str,
-        int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+        int nTabPositions, int *lpnTabStopPositions, int nTabOrigin) {
 	return impl()->tabbedTextOut(x, y, str, nTabPositions,
 		lpnTabStopPositions, nTabOrigin);
 }
@@ -609,25 +609,25 @@ CSize CDC::GetOutputTextExtent(const CString &str) const {
 }
 
 CSize CDC::GetTabbedTextExtent(LPCSTR lpszString, int nCount,
-        int nTabPositions, LPINT lpnTabStopPositions) const {
+        int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getTabbedTextExtent(lpszString, nCount,
 		nTabPositions, lpnTabStopPositions);
 }
 
 CSize CDC::GetTabbedTextExtent(const CString &str,
-        int nTabPositions, LPINT lpnTabStopPositions) const {
+        int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getTabbedTextExtent(str, nTabPositions,
 		lpnTabStopPositions);
 }
 
 CSize CDC::GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+		int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getOutputTabbedTextExtent(lpszString, nCount,
 		nTabPositions, lpnTabStopPositions);
 }
 
 CSize CDC::GetOutputTabbedTextExtent(const CString &str,
-        int nTabPositions, LPINT lpnTabStopPositions) const {
+        int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getOutputTabbedTextExtent(str,
 		nTabPositions, lpnTabStopPositions);
 }
@@ -1078,7 +1078,7 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 }
 
 BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
-		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Gfx::Surface *dest = getSurface();
 	RECT r;
@@ -1111,7 +1111,7 @@ BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
 }
 
 BOOL CDC::Impl::textOut(int x, int y, const CString &str,
-		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Gfx::Surface *dest = getSurface();
 	RECT r;
@@ -1127,17 +1127,17 @@ BOOL CDC::Impl::textOut(int x, int y, const CString &str,
 }
 
 BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		LPCSTR lpszString, UINT nCount, LPINT lpDxWidths) {
+		LPCSTR lpszString, UINT nCount, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
 
 BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		const CString &str, LPINT lpDxWidths) {
+		const CString &str, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
-		int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin) {
+		int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin) {
 	CString str(lpszString, nCount);
 
 	CSize size;
@@ -1148,7 +1148,7 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
-		int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin) {
+		int nTabPositions, int *lpnTabStopPositions, int nTabOrigin) {
 	CSize size;
 	textOut(x, y, str, nTabPositions, lpnTabStopPositions, nTabOrigin, &size);
 	return size;
@@ -1156,7 +1156,7 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
 
 int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
 		LPRECT lpRect, UINT nFormat, int nTabPositions,
-		const LPINT lpnTabStopPositions, int nTabOrigin,
+		const int *lpnTabStopPositions, int nTabOrigin,
 		CSize *size) {
 	return drawText(CString(lpszString, nCount),
 		lpRect, nFormat, nTabPositions,
@@ -1164,7 +1164,7 @@ int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
 }
 
 int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
-		int nTabPositions, const LPINT lpnTabStopPositions,
+		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Graphics::Font *font = *(CFont::Impl *)_font;
 	Gfx::Surface *dest = getSurface();
@@ -1215,23 +1215,23 @@ CSize CDC::Impl::getOutputTextExtent(const CString &str) const {
 }
 
 CSize CDC::Impl::getTabbedTextExtent(LPCSTR lpszString, int nCount,
-		int nTabPositions, LPINT lpnTabStopPositions) const {
+		int nTabPositions, int *lpnTabStopPositions) const {
 	// TODO: Proper implementation that handles tabs, etc.
 	return getTextExtent(lpszString, nCount);
 }
 
 CSize CDC::Impl::getTabbedTextExtent(const CString &str,
-	int nTabPositions, LPINT lpnTabStopPositions) const {
+	int nTabPositions, int *lpnTabStopPositions) const {
 	error("TODO");
 }
 
 CSize CDC::Impl::getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
-	int nTabPositions, LPINT lpnTabStopPositions) const {
+	int nTabPositions, int *lpnTabStopPositions) const {
 	error("TODO");
 }
 
 CSize CDC::Impl::getOutputTabbedTextExtent(const CString &str,
-	int nTabPositions, LPINT lpnTabStopPositions) const {
+	int nTabPositions, int *lpnTabStopPositions) const {
 	error("TODO");
 }
 

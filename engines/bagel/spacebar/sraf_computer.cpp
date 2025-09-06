@@ -995,10 +995,10 @@ ErrorCode SrafComputer::detach() {
 }
 
 
-void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void *) {
 }
 
-void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void *) {
 }
 
 void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {

@@ -94,7 +94,7 @@ public:
 		return (Interception(newRect, m_pSpriteChain));
 	}
 	CSprite *Interception(CRect *newRect, CSprite * pSprite);
-	BOOL TestInterception(CDC *pDC, CSprite * pSprite, CPoint * pPoint = nullptr);
+	BOOL TestInterception(CDC *pDC, CSprite * pSprite, CPoint *pPoint = nullptr);
 
 	BOOL GetVisible(void) {
 		return (m_bVisible);
@@ -276,7 +276,7 @@ private:
 	void ClearMask(void);
 	void ClearPalette(void);
 
-	BOOL SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint * pPoint = nullptr);
+	BOOL SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint *pPoint = nullptr);
 
 	BOOL DoSpritePainting(CDC *pDC, CPoint cPoint);
 	BOOL DoOptimizedPainting(CDC *pDC, CRect *pDst);

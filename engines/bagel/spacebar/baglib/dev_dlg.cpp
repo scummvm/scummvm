@@ -85,10 +85,10 @@ ErrorCode CDevDlg::createWindow(const char *bmp, CBofWindow *wnd, CBofPalette *p
 	return _errCode;
 }
 
-void CDevDlg::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void *) {
 }
 
-void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::onMouseMove(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void *) {
 }
 
 void CDevDlg::onClose() {

@@ -1040,7 +1040,7 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void *) {
 	assert(isValidObject(this));
 }
 

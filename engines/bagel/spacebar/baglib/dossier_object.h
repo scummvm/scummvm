@@ -59,7 +59,7 @@ public:
 
 	ErrorCode update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1) override;
 
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) override; // run menu if available
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr) override; // run menu if available
 
 	CBofRect getRect() override;
 

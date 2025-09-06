@@ -236,7 +236,7 @@ void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
 	xpScrollBar->GetScrollRange(&iValMin, &iValMax) ;
 	iValCur = xpScrollBar->GetScrollPos() ;
 
-//    int * xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
+//    int *xpiVariable = (iId == IDC_USCRSHELL) ? &m_iUShells
 //		: (iId == IDC_USCRSTRENGTH) ? &m_iUStrength : nullptr ;
 
 	switch (nSBCode) {

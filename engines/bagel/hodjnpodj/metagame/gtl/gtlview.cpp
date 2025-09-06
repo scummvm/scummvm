@@ -112,7 +112,7 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 //    dbgtrc = TRUE ;   // debugging code
 
 	JXENTER(CGtlView::OnUpdate) ;
-	CGtlHint * xpcGtlHint = (CGtlHint *)xpHint ;
+	CGtlHint *xpcGtlHint = (CGtlHint *)xpHint ;
 	//BOOL bDone = FALSE ;    // TRUE when hint is fully identified
 
 	TRACE("Enter OnUpdate\n");

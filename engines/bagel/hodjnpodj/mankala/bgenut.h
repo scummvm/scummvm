@@ -60,7 +60,7 @@ public:
 	BOOL PASCAL NormalizeCRect(CRect& cRect) ;
 //- RandomSelection -- random selection of integer array
 public:
-	void RandomSelection(int * xpiArray, int iNum,
+	void RandomSelection(int *xpiArray, int iNum,
 	                     int iSize) ;
 
 

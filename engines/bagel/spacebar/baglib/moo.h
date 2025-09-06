@@ -45,9 +45,9 @@ public:
 	ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1) override;
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*info*/) override {
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * /*info*/) override {
 	}
-	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) override {
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr) override {
 	}
 
 	// For public access to our movie object

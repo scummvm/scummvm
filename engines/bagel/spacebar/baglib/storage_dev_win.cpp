@@ -451,7 +451,7 @@ ErrorCode CBagStorageDev::paintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	return ERR_NONE;
 }
 
-ErrorCode CBagStorageDev::onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
+ErrorCode CBagStorageDev::onLActiveObject(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * /*vpInfo*/) {
 	return ERR_NONE;
 }
 
@@ -469,7 +469,7 @@ void CBagStorageDev::onMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 }
 
 
-ErrorCode CBagStorageDev::onMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+ErrorCode CBagStorageDev::onMouseOver(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void *) {
 	return ERR_NONE;
 }
 

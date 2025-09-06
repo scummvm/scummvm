@@ -269,7 +269,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	int iK ;            // loop variable
 	BOOL bDone = FALSE ;        // flag: done with move
 
-	LPINT lpiShortPath = nullptr ; // shortest path between nodes
+	int *lpiShortPath = nullptr ; // shortest path between nodes
 
 	gnFurlongs = 0;
 
@@ -855,7 +855,7 @@ int CGtlData::EstimatePathDistance(CNode FAR * lpNode1, CNode FAR * lpNode2)
 }
 
 //* CGtlData::FindShortestPath -- between two nodes
-LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
+int *CGtlData::FindShortestPath(CNode FAR * lpNode1,
                                  CNode FAR * lpNode2)
 // lpNode1, lpNode2 -- nodes for which path is to be found
 // returns: pointer to integer array, first element is length,
@@ -873,7 +873,7 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	int iLink ; // , iTest ;    // current link number
 	CNode FAR * lpNode ;        // current node
 	CNode FAR * lpTestNode ;    // current node
-	LPINT lpiPath = nullptr ;      // pointer to result path array
+	int *lpiPath = nullptr ;      // pointer to result path array
 	BOOL        bClipBounds = TRUE;
 	CPoint      cStartPoint, cTargetPoint, cThisPoint;
 	CRect       cBoundingRect;

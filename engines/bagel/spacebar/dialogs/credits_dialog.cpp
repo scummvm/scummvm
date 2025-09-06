@@ -210,7 +210,7 @@ void CBagCreditsDialog::onPaint(CBofRect *pRect) {
 	validateAnscestors();
 }
 
-void CBagCreditsDialog::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBagCreditsDialog::onLButtonDown(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void *) {
 	assert(isValidObject(this));
 
 	nextScreen();

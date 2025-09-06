@@ -356,7 +356,7 @@ bool CBofMovie::centerRect() {
 	return true;
 }
 
-void CBofMovie::onButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void CBofMovie::onButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/) {
 }
 
 

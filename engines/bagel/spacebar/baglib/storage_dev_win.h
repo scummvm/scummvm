@@ -276,7 +276,7 @@ public:
 		return ERR_NONE;
 	}
 
-	virtual ErrorCode onLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ErrorCode onLActiveObject(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr);
 
 	MouseActivity getLActivity() const {
 		return _nCurrMouseActivity;
@@ -323,10 +323,10 @@ public:
 	virtual ErrorCode loadFile(const CBofString &sWldName);
 	virtual ErrorCode loadFileFromStream(CBagIfstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
-	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ErrorCode onMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void onMouseMove(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr);
+	virtual ErrorCode onMouseOver(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr);
+	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr);
+	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr);
 
 	virtual ErrorCode onCursorUpdate(int /*nCurrObj*/) {
 		return ERR_NONE;

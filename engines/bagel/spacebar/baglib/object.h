@@ -347,9 +347,9 @@ public:
 
 	virtual ErrorCode update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 	virtual bool onObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/);
-	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {
+	virtual void onLButtonDown(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr) {
 	}
-	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); // run menu if available
+	virtual void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void * = nullptr); // run menu if available
 	virtual bool onMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 	virtual bool onMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);
 };
