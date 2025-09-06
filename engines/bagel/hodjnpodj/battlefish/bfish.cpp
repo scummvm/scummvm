@@ -43,8 +43,8 @@ namespace Battlefish {
 
 #define CSOUND 0
 
-//INT bob[5] = { 27, 56, 7, 63, 31 };
-//INT fred;
+//int bob[5] = { 27, 56, 7, 63, 31 };
+//int fred;
 
 //
 // This mini-game's main screen bitmap
@@ -473,7 +473,7 @@ void CBFishWindow::HandleError(ERROR_CODE errCode) {
 
 ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -650,7 +650,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 
 
 void CBFishWindow::ReleaseMasterSprites(void) {
-	INT i;
+	int i;
 
 	// free the hooked fish, and the users fish
 	//
@@ -774,8 +774,8 @@ void CBFishWindow::PaintScreen() {
 				GetClientRect(rcDest);
 
 				rcDIB.top = rcDIB.left = 0;
-				rcDIB.right = (INT) DIBWidth(hDIB);
-				rcDIB.bottom = (INT) DIBHeight(hDIB);
+				rcDIB.right = (int) DIBWidth(hDIB);
+				rcDIB.bottom = (int) DIBHeight(hDIB);
 
 				PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 			}
@@ -864,7 +864,7 @@ ERROR_CODE CBFishWindow::RepaintSpriteList(CDC *pDC) {
 *  FORMAL PARAMETERS:
 *
 *       WPARAM = WORD parameter for this message
-*       LPARAM = LONG parameter for this message
+*       LPARAM = long parameter for this message
 *
 *  RETURN VALUE:
 *
@@ -878,7 +878,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	                       GetGameParams, "bfish.txt", (pGameParams->bSoundEffectsEnabled ? WAV_NARRATION : nullptr), pGameParams);
 	CDC *pDC;
 	//CSound *pSound;
-	INT nPick = 0;
+	int nPick = 0;
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
@@ -1031,7 +1031,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 void CBFishWindow::PlaceTurnHarpoons(void) {
 	CSprite *pSprite;
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1135,7 +1135,7 @@ void CBFishWindow::GameResume(void) {
 void CBFishWindow::PlayGame(void) {
 	CRect rTmpRect;
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1202,8 +1202,8 @@ void CBFishWindow::PlaceUserFish(void) {
 
 
 void CBFishWindow::PlaceEnemyFish(void) {
-	INT i, j, k;
-	INT row, col, rowTmp, colTmp;
+	int i, j, k;
+	int row, col, rowTmp, colTmp;
 	BOOL bFound;
 
 	// For each fish, randomly select a location in the grid (rotate if neccessary)
@@ -1309,7 +1309,7 @@ void CBFishWindow::PlaceEnemyFish(void) {
 *
 ****************************************************************/
 void CBFishWindow::LoadIniSettings(void) {
-	INT nVal;
+	int nVal;
 
 	if (pGameParams->bPlayingMetagame) {
 
@@ -1392,7 +1392,7 @@ void CBFishWindow::SaveIniSettings(void) {
 ****************************************************************/
 void CBFishWindow::GameReset(void) {
 	CDC *pDC;
-	INT i;
+	int i;
 
 	//fred = 0;
 
@@ -1464,13 +1464,13 @@ void CBFishWindow::GameReset(void) {
 }
 
 
-void CBFishWindow::RotateFish(INT nFishIndex) {
+void CBFishWindow::RotateFish(int nFishIndex) {
 	CSize size;
 	CRect rect, tmpRect;
 	POINT point;
 	CSprite *pSprite;
 	CDC *pDC;
-	INT nIDB;
+	int nIDB;
 	BOOL bRotated, bPaintFish;
 
 	// validate the index
@@ -1577,9 +1577,9 @@ void CBFishWindow::RotateFish(INT nFishIndex) {
 	}
 }
 
-void CBFishWindow::AssignFishToGrid(INT nFishIndex) {
+void CBFishWindow::AssignFishToGrid(int nFishIndex) {
 	CPoint point;
-	INT i, nRow, nCol, nRowTmp, nColTmp;
+	int i, nRow, nCol, nRowTmp, nColTmp;
 
 	assert(nFishIndex >= 0 && nFishIndex < MAX_FISH);
 
@@ -1633,8 +1633,8 @@ void CBFishWindow::AssignFishToGrid(INT nFishIndex) {
 }
 
 
-INT CBFishWindow::GetUserGridIndex(CPoint point) {
-	INT i, j, iVal, jVal, nGridIndex;
+int CBFishWindow::GetUserGridIndex(CPoint point) {
+	int i, j, iVal, jVal, nGridIndex;
 	BOOL bEndLoop;
 
 	iVal = -1;
@@ -1666,8 +1666,8 @@ INT CBFishWindow::GetUserGridIndex(CPoint point) {
 }
 
 
-INT CBFishWindow::GetFishIndex(CSprite *pSprite) {
-	INT i, nIndex;
+int CBFishWindow::GetFishIndex(CSprite *pSprite) {
+	int i, nIndex;
 
 	assert(pSprite != nullptr);
 
@@ -1705,7 +1705,7 @@ INT CBFishWindow::GetFishIndex(CSprite *pSprite) {
 ****************************************************************/
 void CBFishWindow::OnRButtonDown(UINT, CPoint point) {
 	CRect tmpRect;
-	INT i;
+	int i;
 
 	if (m_bUserEditMode) {
 
@@ -1757,7 +1757,7 @@ void CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 	CPoint  ptTmp;
 	//CSound *pSound;
 	CDC    *pDC;
-	INT     i,
+	int     i,
 	        nPick;
 	BOOL    bOkToPlay;
 
@@ -1982,7 +1982,7 @@ void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
 	CSize size;
 	CRect rect, tmpRect;
 	CDC *pDC;
-	INT i;
+	int i;
 	BOOL bRevert;
 
 	if (m_bUserEditMode && m_bMovingFish) {
@@ -2039,8 +2039,8 @@ void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
 	}
 }
 
-BOOL CBFishWindow::OkToPlaceFish(INT nFishIndex, CPoint point, BOOL bRotated) {
-	INT i, nRow, nCol, nGridIndex, nID;
+BOOL CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, BOOL bRotated) {
+	int i, nRow, nCol, nGridIndex, nID;
 	BOOL bOk;
 
 	nID = IndexToId(nFishIndex);
@@ -2089,8 +2089,8 @@ BOOL CBFishWindow::OkToPlaceFish(INT nFishIndex, CPoint point, BOOL bRotated) {
 	return bOk;
 }
 
-void CBFishWindow::PlaceFish(INT nFishIndex, CPoint point) {
-	INT i, nRow, nCol, nGridIndex, nID;
+void CBFishWindow::PlaceFish(int nFishIndex, CPoint point) {
+	int i, nRow, nCol, nGridIndex, nID;
 
 	nID = IndexToId(nFishIndex);
 	nGridIndex = GetUserGridIndex(point);
@@ -2126,9 +2126,9 @@ void CBFishWindow::PlaceFish(INT nFishIndex, CPoint point) {
 }
 
 CPoint CBFishWindow::SnapToGrid(CPoint point) {
-	INT i, j;
-	INT iMin, jMin;
-	INT nVal, nMin;
+	int i, j;
+	int iMin, jMin;
+	int nVal, nMin;
 
 	// Inits
 	nMin = INT_MAX;
@@ -2216,11 +2216,11 @@ void CBFishWindow::OnMouseMove(UINT, CPoint point) {
 }
 
 
-void CBFishWindow::UsersTurn(INT nGridIndex) {
+void CBFishWindow::UsersTurn(int nGridIndex) {
 	//CSound *pSound;
-	INT nRow, nCol, nSquare;
-	INT nFishIndex;
-	//INT nPick = 0;
+	int nRow, nCol, nSquare;
+	int nFishIndex;
+	//int nPick = 0;
 
 	// validate the grid index
 
@@ -2347,7 +2347,7 @@ void CBFishWindow::UsersTurn(INT nGridIndex) {
 	}
 }
 
-void CBFishWindow::SinkEnemyFish(INT nFishIndex) {
+void CBFishWindow::SinkEnemyFish(int nFishIndex) {
 	CSprite *pSprite;
 	CDC *pDC;
 
@@ -2371,10 +2371,10 @@ void CBFishWindow::SinkEnemyFish(INT nFishIndex) {
 
 
 void CBFishWindow::ComputersTurn(void) {
-	STATIC INT nLastRow, nLastCol;
+	STATIC int nLastRow, nLastCol;
 	//CSound *pSound;
-	INT nRow, nCol, nFishIndex, nGridIndex;
-	INT nSquare;
+	int nRow, nCol, nFishIndex, nGridIndex;
+	int nSquare;
 
 	if (m_bGameActive && !m_bPause) {
 
@@ -2494,8 +2494,8 @@ void CBFishWindow::ComputersTurn(void) {
 }
 
 
-void CBFishWindow::SinkUserFish(INT nFishIndex) {
-	INT i, nRow, nCol;
+void CBFishWindow::SinkUserFish(int nFishIndex) {
+	int i, nRow, nCol;
 
 	for (i = 0; i < GRID_ROWS * GRID_COLS; i++) {
 
@@ -2509,9 +2509,9 @@ void CBFishWindow::SinkUserFish(INT nFishIndex) {
 }
 
 
-INT CBFishWindow::SelectRandomTarget(void) {
-	INT  n;
-	INT nRow, nCol;
+int CBFishWindow::SelectRandomTarget(void) {
+	int  n;
+	int nRow, nCol;
 
 	//
 	// choose a random target, but favor targets
@@ -2536,8 +2536,8 @@ INT CBFishWindow::SelectRandomTarget(void) {
 }
 
 
-INT CBFishWindow::SelectBurningTarget(void) {
-	INT i, nGridIndex, nRow, nCol;
+int CBFishWindow::SelectBurningTarget(void) {
+	int i, nGridIndex, nRow, nCol;
 	BOOL bFound;
 
 	nRow = nCol = 0;
@@ -2565,9 +2565,9 @@ INT CBFishWindow::SelectBurningTarget(void) {
 	return nGridIndex;
 }
 
-INT CBFishWindow::SelectBestFitTarget(void) {
-	INT nRow, nCol, nFishIndex, nGridIndex;
-	INT counter, i;
+int CBFishWindow::SelectBestFitTarget(void) {
+	int nRow, nCol, nFishIndex, nGridIndex;
+	int counter, i;
 
 	nFishIndex = MAX_FISH;
 	while (m_aUserFishInfo[--nFishIndex].life == 0) {
@@ -2605,10 +2605,10 @@ INT CBFishWindow::SelectBestFitTarget(void) {
 	return nGridIndex;
 }
 
-BOOL CBFishWindow::FishFits(INT nFishIndex, INT row, INT col) {
+BOOL CBFishWindow::FishFits(int nFishIndex, int row, int col) {
 	FISH cFishInfo;
-	INT nRow, nCol, colTmp, rowTmp;
-	INT i, j, k, rotate;
+	int nRow, nCol, colTmp, rowTmp;
+	int i, j, k, rotate;
 	BOOL bFound;
 
 	// Try fish at both 0 and 90 degrees
@@ -2669,8 +2669,8 @@ BOOL CBFishWindow::FishFits(INT nFishIndex, INT row, INT col) {
 }
 
 
-INT CBFishWindow::GetNeighbors(INT nRow, INT nCol) {
-	INT n;
+int CBFishWindow::GetNeighbors(int nRow, int nCol) {
+	int n;
 
 	// validate the input
 	//
@@ -2724,8 +2724,8 @@ INT CBFishWindow::GetNeighbors(INT nRow, INT nCol) {
 }
 
 
-INT CBFishWindow::FindTarget(INT nLastHitRow, INT nLastHitCol) {
-	INT nGridIndex;
+int CBFishWindow::FindTarget(int nLastHitRow, int nLastHitCol) {
+	int nGridIndex;
 
 	assert(nLastHitRow >= 0 && nLastHitRow < GRID_ROWS);
 	assert(nLastHitCol >= 0 && nLastHitCol < GRID_COLS);
@@ -2769,9 +2769,9 @@ INT CBFishWindow::FindTarget(INT nLastHitRow, INT nLastHitCol) {
 }
 
 
-INT CBFishWindow::FindNeighborTarget(INT nLastHitRow, INT nLastHitCol) {
-	INT nRow, nCol, nGridIndex;
-	INT nState, nDisplacement;
+int CBFishWindow::FindNeighborTarget(int nLastHitRow, int nLastHitCol) {
+	int nRow, nCol, nGridIndex;
+	int nState, nDisplacement;
 
 	nState = 0;
 	nRow = nCol = 0;
@@ -2854,14 +2854,14 @@ INT CBFishWindow::FindNeighborTarget(INT nLastHitRow, INT nLastHitCol) {
 
 #if 1
 
-INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
+int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 	FISH cFishInfo;
-	INT i, j, k, l, rotate;
-	INT nRow, nCol, nBestRow, nBestCol;
-	INT n, nLast;
-	INT row, col, rowTmp, colTmp, nGridIndex;
-	INT nUseRow, nUseCol;
-	INT nHits, nBestHits;
+	int i, j, k, l, rotate;
+	int nRow, nCol, nBestRow, nBestCol;
+	int n, nLast;
+	int row, col, rowTmp, colTmp, nGridIndex;
+	int nUseRow, nUseCol;
+	int nHits, nBestHits;
 	BOOL bFound, bUse;
 
 	rowTmp = colTmp = 0;
@@ -3020,12 +3020,12 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
 }
 #else
 
-INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
+int CBFishWindow::FindMatch(int nLastHitRow, int nLastHitCol) {
 	FISH cFishInfo;
-	INT i, j, k, l, rotate;
-	INT nRow, nCol, nBestRow, nBestCol;
-	INT n, nLast;
-	INT row, col, rowTmp, colTmp, nGridIndex;
+	int i, j, k, l, rotate;
+	int nRow, nCol, nBestRow, nBestCol;
+	int n, nLast;
+	int row, col, rowTmp, colTmp, nGridIndex;
 	BOOL bFound;
 
 	rowTmp = colTmp = 0;
@@ -3186,7 +3186,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
 void CBFishWindow::CreatePlume(CPoint point) {
 	CDC *pDC;
 	CSprite *pSprite;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -3252,7 +3252,7 @@ void CBFishWindow::CreatePlume(CPoint point) {
 void CBFishWindow::CreateHarpoon(CPoint point) {
 	CDC *pDC;
 	CSprite *pSprite;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -3316,13 +3316,13 @@ void CBFishWindow::CreateHarpoon(CPoint point) {
 }
 
 
-INT CBFishWindow::IndexToId(INT nFishIndex) {
+int CBFishWindow::IndexToId(int nFishIndex) {
 	return 2 << nFishIndex;
 }
 
 
-INT CBFishWindow::IdToIndex(INT nId) {
-	INT i;
+int CBFishWindow::IdToIndex(int nId) {
+	int i;
 
 	assert(iseven(nId));
 
@@ -3336,11 +3336,11 @@ INT CBFishWindow::IdToIndex(INT nId) {
 }
 
 
-INT CBFishWindow::GetEnemyGridIndex(CPoint point) {
+int CBFishWindow::GetEnemyGridIndex(CPoint point) {
 	CRect rect;
-	INT nIndex;
-	INT i, j;
-	INT iVal, jVal;
+	int nIndex;
+	int i, j;
+	int iVal, jVal;
 
 	nIndex = -1;
 	rect.SetRect(RGRID_MIN_X, RGRID_MIN_Y, RGRID_MAX_X, RGRID_MAX_Y);

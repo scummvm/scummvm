@@ -625,14 +625,14 @@ enum {
 
 typedef struct tagBITMAPINFOHEADER {
 	uint32      biSize;
-	LONG       biWidth;
-	LONG       biHeight;
+	long       biWidth;
+	long       biHeight;
 	WORD       biPlanes;
 	WORD       biBitCount;
 	uint32      biCompression;
 	uint32      biSizeImage;
-	LONG       biXPelsPerMeter;
-	LONG       biYPelsPerMeter;
+	long       biXPelsPerMeter;
+	long       biYPelsPerMeter;
 	uint32      biClrUsed;
 	uint32      biClrImportant;
 } BITMAPINFOHEADER, FAR *LPBITMAPINFOHEADER,
@@ -652,10 +652,10 @@ typedef struct tagBITMAPINFO {
 
 /* Bitmap Header Definition */
 typedef struct tagBITMAP {
-	LONG        bmType;
-	LONG        bmWidth;
-	LONG        bmHeight;
-	LONG        bmWidthBytes;
+	long        bmType;
+	long        bmWidth;
+	long        bmHeight;
+	long        bmWidthBytes;
 	WORD        bmPlanes;
 	WORD        bmBitsPixel;
 	LPVOID      bmBits;

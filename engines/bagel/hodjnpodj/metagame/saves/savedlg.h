@@ -39,7 +39,7 @@ public:
 
 protected:
 	void ClearDialogImage(void);
-	void EditDescription(INT);
+	void EditDescription(int);
 
 	//{{AFX_MSG(COptions)
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
@@ -58,7 +58,7 @@ private:
 	CColorButton *m_pOkButton;
 	CText        *m_pTxtSave;
 	char         *m_pszDescriptions[MAX_SAVEGAMES];
-	INT           m_nCurSlot;
+	int           m_nCurSlot;
 };
 
 } // namespace Saves

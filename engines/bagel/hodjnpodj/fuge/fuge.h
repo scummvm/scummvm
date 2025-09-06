@@ -58,7 +58,7 @@ protected:
 	void        ReleaseMasterSprites(void);
 	ERROR_CODE  LoadMasterSounds(void);
 	void        ReleaseMasterSounds(void);
-	ERROR_CODE  LoadNewPaddle(INT);
+	ERROR_CODE  LoadNewPaddle(int);
 	void        InitializeJoystick(void);
 	void        RepaintSpriteList(CDC *);
 	void        PaintBricks(CDC *);
@@ -72,13 +72,13 @@ protected:
 	CVector     BallOnPaddle(void);
 	void        StartBricks(void);
 	void        EndBricks(void);
-	void        EraseBrick(CDC *, INT);
+	void        EraseBrick(CDC *, int);
 	void        LoseBall(void);
 	void        BallvsPaddle(void);
 	void        BallvsBrick(DOUBLE);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	LONG        OnJoyStick(UINT, LONG);
+	long        OnJoyStick(UINT, long);
 	void        OnPaint(void);
 	void        OnTimer(UINT_PTR);
 	void        OnMouseMove(UINT, CPoint);
@@ -116,23 +116,23 @@ protected:
 	HANDLE      m_hPaddleRes;
 	HANDLE      m_hExtraLifeRes;
 
-	INT         m_nInitNumBalls;
-	INT         m_nInitStartLevel;
-	INT         m_nInitBallSpeed;
-	INT         m_nInitPaddleSize;
-	INT         m_nGForceFactor;
+	int         m_nInitNumBalls;
+	int         m_nInitStartLevel;
+	int         m_nInitBallSpeed;
+	int         m_nInitPaddleSize;
+	int         m_nGForceFactor;
 
 	DOUBLE      m_fTurboBoost;
-	LONG        m_lScore;
-	LONG        m_lExtraLifeScore;
-	LONG        m_nJoyOrgX;
-	LONG        m_nJoyOrgY;
-	INT         m_nBricks;
-	INT         m_nBalls;
-	INT         m_nBallSpeed;
-	INT         m_nNumRows;
-	INT         m_nPaddleCelIndex;
-	INT			m_nOldSize = -1;
+	long        m_lScore;
+	long        m_lExtraLifeScore;
+	long        m_nJoyOrgX;
+	long        m_nJoyOrgY;
+	int         m_nBricks;
+	int         m_nBalls;
+	int         m_nBallSpeed;
+	int         m_nNumRows;
+	int         m_nPaddleCelIndex;
+	int			m_nOldSize = -1;
 
 	BOOL        m_bMovingPaddle;
 	BOOL        m_bGameActive;

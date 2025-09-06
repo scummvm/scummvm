@@ -207,8 +207,8 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	);
 
 	// WORKAROUND: For Hodj n Podj Boardgame dialog
-	bounds.right = MIN<LONG>(bounds.right, 640);
-	bounds.bottom = MIN<LONG>(bounds.bottom, 480);
+	bounds.right = MIN<long>(bounds.right, 640);
+	bounds.bottom = MIN<long>(bounds.bottom, 480);
 
 	CWnd *wndDialog = static_cast<CWnd *>(dialog);
 	wndDialog->Create(_header._className.c_str(),

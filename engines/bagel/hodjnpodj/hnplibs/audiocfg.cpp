@@ -111,7 +111,7 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 void CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
-	INT nMin = 0, nMax = 0, nVal = 0;
+	int nMin = 0, nMax = 0, nVal = 0;
 
 	if (pScroll == m_pScrollBar1) {
 

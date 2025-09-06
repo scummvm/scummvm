@@ -616,7 +616,7 @@ public:
 	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 	    UINT nBitcount, const void *lpBits);
 	int GetObject(int nCount, LPVOID lpObject) const;
-	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
+	long GetBitmapBits(long dwCount, LPVOID lpBits) const;
 	BOOL GetBitmap(BITMAP *pBitMap) const {
 		return GetObject(sizeof(BITMAP), pBitMap);
 	}
@@ -1074,7 +1074,7 @@ typedef struct tagCREATESTRUCTA {
 	int         cx = 0;
 	int         y = 0;
 	int         x = 0;
-	LONG        style = 0;
+	long        style = 0;
 	LPCSTR      lpszName = nullptr;
 	LPCSTR      lpszClass = nullptr;
 	uint32       dwExStyle = 0;

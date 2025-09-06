@@ -59,11 +59,11 @@ namespace HodjNPodj {
 #define char char
 typedef unsigned char UCHAR;
 typedef byte UBYTE;
-#define INT int
+#define int int
 typedef short SHORT;
 typedef uint16 USHORT;
 #define WORD USHORT
-#define LONG long
+#define long long
 typedef unsigned long ULONG;
 #define float float
 #define DOUBLE double

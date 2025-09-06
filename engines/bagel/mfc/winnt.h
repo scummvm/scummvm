@@ -32,11 +32,9 @@ typedef uint16 TCHAR;
 typedef uint16 SHORT;
 typedef uint16 WORD;
 typedef uint16 USHORT;
-typedef long LONG;
 typedef unsigned long ULONG;
 typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
-typedef size_t SIZE_T;
 typedef float *PFLOAT;
 typedef BOOL *PBOOL;
 typedef BOOL *LPBOOL;
@@ -61,7 +59,6 @@ typedef char *LPSTR;
 typedef char *NPSTR;
 typedef LPWSTR BSTR;
 
-typedef int INT;
 typedef unsigned int UINT;
 typedef unsigned int *PUINT;
 
@@ -705,17 +702,17 @@ typedef struct _GUID {
 #define AFX_WS_DEFAULT_VIEW		(WS_CHILD | WS_VISIBLE)
 
 typedef struct tagTEXTMETRICA {
-	LONG        tmHeight = 0;
-	LONG        tmAscent = 0;
-	LONG        tmDescent = 0;
-	LONG        tmInternalLeading = 0;
-	LONG        tmExternalLeading = 0;
-	LONG        tmAveCharWidth = 0;
-	LONG        tmMaxCharWidth = 0;
-	LONG        tmWeight = 0;
-	LONG        tmOverhang = 0;
-	LONG        tmDigitizedAspectX = 0;
-	LONG        tmDigitizedAspectY = 0;
+	long        tmHeight = 0;
+	long        tmAscent = 0;
+	long        tmDescent = 0;
+	long        tmInternalLeading = 0;
+	long        tmExternalLeading = 0;
+	long        tmAveCharWidth = 0;
+	long        tmMaxCharWidth = 0;
+	long        tmWeight = 0;
+	long        tmOverhang = 0;
+	long        tmDigitizedAspectX = 0;
+	long        tmDigitizedAspectY = 0;
 	BYTE        tmFirstChar = 0;
 	BYTE        tmLastChar = 0;
 	BYTE        tmDefaultChar = 0;

@@ -447,7 +447,7 @@ void CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
 void CBgbMgr::CacheOptimize(ULONG lReqSpace) {
 	CBgbObject  *pBgbObject;
 	ULONG       lAvgAge;
-	INT         nObjects;
+	int         nObjects;
 	ULONG       lSpace;
 
 	// There are no objects to flush
@@ -714,7 +714,7 @@ ULONG Sqrt(ULONG x) {
 		} else {
 			break;
 		}
-		if (abs((LONG)(lHigh - lLow)) <= 2)
+		if (abs((long)(lHigh - lLow)) <= 2)
 			break;
 	}
 

@@ -534,7 +534,7 @@ inline void CRect::SwapLeftRight() {
 }
 
 inline void WINAPI CRect::SwapLeftRight(LPRECT lpRect) {
-	LONG temp = lpRect->left;
+	long temp = lpRect->left;
 	lpRect->left = lpRect->right;
 	lpRect->right = temp;
 }

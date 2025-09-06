@@ -265,7 +265,7 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 *
 ****************************************************************/
 void CUserCfgDlg::LoadIniSettings(void) {
-	INT nVal;
+	int nVal;
 
 	// Get the Difficulty level  (0..2)
 	//

@@ -32,7 +32,7 @@ static const char *gpszTitle = "Restore Game";
 
 CRestoreDlg::CRestoreDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, ".\\ART\\MLSCROLL.BMP", -1, -1, TRUE) {
-	INT i;
+	int i;
 
 	// Inits
 	m_pTxtRestore = nullptr;
@@ -87,7 +87,7 @@ void CRestoreDlg::OnCancel(void) {
 BOOL CRestoreDlg::OnInitDialog(void) {
 	CRect rect;
 	CDC *pDC;
-	INT i;
+	int i;
 	BOOL bSuccess;
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
@@ -149,7 +149,7 @@ void CRestoreDlg::OnPaint(void) {
 
 
 void CRestoreDlg::ClearDialogImage(void) {
-	INT i;
+	int i;
 	if (m_pTxtRestore != nullptr) {
 		delete m_pTxtRestore;
 		m_pTxtRestore = nullptr;
@@ -170,7 +170,7 @@ void CRestoreDlg::ClearDialogImage(void) {
 
 
 void CRestoreDlg::OnDestroy(void) {
-	INT i;
+	int i;
 
 	if (m_pTxtRestore != nullptr) {
 		delete m_pTxtRestore;

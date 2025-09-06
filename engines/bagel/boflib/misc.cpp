@@ -181,9 +181,9 @@ void ErrorLog(const char *logFile, const char *format, ...) {
 	// No implementation
 }
 
-INT StrFreqMatch(const char *mask, const char *test) {
-	static INT nCount[256];
-	INT i, divergence;
+int StrFreqMatch(const char *mask, const char *test) {
+	static int nCount[256];
+	int i, divergence;
 
 	/* can't access null pointers */
 	assert(mask != nullptr);
@@ -198,7 +198,7 @@ INT StrFreqMatch(const char *mask, const char *test) {
 	if (*mask == *test) {
 
 		/* reset the frequency count */
-		memset(nCount, 0, sizeof(INT) * 256);
+		memset(nCount, 0, sizeof(int) * 256);
 
 		/* count the frequency of the chars in 'mask' */
 		while (*mask != '\0')
@@ -224,7 +224,7 @@ INT StrFreqMatch(const char *mask, const char *test) {
 BOOL StrCompare(const char *pszStr1, const char *pszStr2, UINT nSize) {
 	char *s1, *p, string1[256];   /* replace this stack hog with malloc */
 	char *s2, *sp, string2[256];       /* replace this stack hog with malloc */
-	INT i, n, inc;
+	int i, n, inc;
 	BOOL bMatch;
 
 	/* can't access null pointers */
@@ -351,11 +351,11 @@ BOOL StrCompare(const char *pszStr1, const char *pszStr2, UINT nSize) {
 *  const char *str;                         pointer to string to parse
 *  char c;                                  character to count in str
 *
-*  RETURNS:  INT  = number of times character c occurs in string str
+*  RETURNS:  int  = number of times character c occurs in string str
 *
 *****************************************************************************/
-INT StrCharCount(const char *str, char c) {
-	INT n;
+int StrCharCount(const char *str, char c) {
+	int n;
 
 	assert(str != nullptr);
 	assert(strlen(str) <= 255);
@@ -417,7 +417,7 @@ char *StriStr(char *s1, const char *s2) {
 
 void StrUprStr(char *s1, const char *s2) {
 	char *p;
-	INT i, n;
+	int i, n;
 
 	/* can't access null pointers */
 	assert(s1 != nullptr);

@@ -141,7 +141,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	char buf[40];
-	INT nMin, nMax, nVal;
+	int nMin, nMax, nVal;
 	CDC *pDC;
 
 	// can't access a null pointer

@@ -188,7 +188,7 @@ int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 	RETURN(iRetval) ;
 }
 
-BOOL CGtlApp::OnIdle(LONG lCount) {
+BOOL CGtlApp::OnIdle(long lCount) {
 	if (bExitMetaDLL) {
 		PostMessage(nullptr, WM_QUIT, 0, 0);
 		return false;
@@ -270,7 +270,7 @@ BOOL CGtlMDIChildWnd::PreCreateWindow(CREATESTRUCT& cs) {
 	// the framework will use first string in the document template
 	// STRINGTABLE resource instead of the document name.
 
-//      cs.style &= ~(LONG)FWS_ADDTOTITLE;
+//      cs.style &= ~(long)FWS_ADDTOTITLE;
 //      cs.style = WS_POPUP ;
 	return CMDIChildWnd::PreCreateWindow(cs);
 }

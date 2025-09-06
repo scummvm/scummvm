@@ -2100,10 +2100,10 @@ BOOL CHodjPodjWindow::Restore() {
 
 void CHodjPodjWindow::ShowCredits(void) {
 	MSG msg;
-	LONG lTimeElapsed, lStart;
+	long lTimeElapsed, lStart;
 	ULONG lGoal, lWait;
 	CDC *pDC;
-	INT i;
+	int i;
 
 	m_bInCredits = TRUE;
 
@@ -2156,7 +2156,7 @@ void CHodjPodjWindow::ShowCredits(void) {
 			// pause for specified ammount of time less ammount used to pre-load
 			// next bitmap
 			//
-			lWait = (ULONG)max((LONG)stCredits[i].m_nDuration - lTimeElapsed, 0L);
+			lWait = (ULONG)max((long)stCredits[i].m_nDuration - lTimeElapsed, 0L);
 
 			lGoal = lWait + GetTickCount();
 			while (lGoal > GetTickCount()) {

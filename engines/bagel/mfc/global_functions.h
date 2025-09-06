@@ -76,12 +76,12 @@ extern BOOL GetClassInfo(HINSTANCE hInstance,
 	LPCSTR lpClassName, LPWNDCLASS lpWndClass);
 extern int GetSystemMetrics(int nIndex);
 
-extern HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes);
+extern HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes);
 extern LPVOID GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
-extern SIZE_T GlobalSize(HGLOBAL hMem);
-extern SIZE_T GlobalCompact(uint32 dwMinFree);
+extern size_t GlobalSize(HGLOBAL hMem);
+extern size_t GlobalCompact(uint32 dwMinFree);
 #define LocalAlloc          GlobalAlloc
 #define LocalLock           GlobalLock
 #define LocalUnlock         GlobalUnlock
@@ -94,7 +94,7 @@ extern int MessageBox(HWND hWnd, LPCSTR lpText,
 extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType = 0);
 extern int MessageBox(LPCSTR lpText);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
-                                 LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
+                                 LPCSTR lpKeyName, int nDefault, LPCSTR lpFileName);
 extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
                                      LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
                                      uint32  nSize, LPCSTR lpFileName);

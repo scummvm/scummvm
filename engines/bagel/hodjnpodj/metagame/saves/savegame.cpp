@@ -58,7 +58,7 @@ static void WipeBFC(CBfcMgr *pBfcMgr);
 BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	CWinApp *pMyApp;
 	HCURSOR hCursor;
-	INT iGameNum;
+	int iGameNum;
 	BOOL bSaved;
 	ERROR_CODE errCode;
 
@@ -129,7 +129,7 @@ BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 }
 
 BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
-	INT iGameNum;
+	int iGameNum;
 	BOOL bRestored;
 
 	// Validate input
@@ -170,7 +170,7 @@ void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	CItem *pItem;
 	PLAYER_INFO *pSavePlayer;
 	INVENTORY *pSaveInv;
-	INT i, j, k;
+	int i, j, k;
 
 	assert(pBfcMgr != nullptr);
 	assert(pSaveGameInfo != nullptr);
@@ -212,22 +212,22 @@ void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		pSavePlayer->m_iWinInfoWon = pPlayer->m_iWinInfoWon;
 		pSavePlayer->m_iWinInfoNeed = pPlayer->m_iWinInfoNeed;
 
-		memcpy(&pSavePlayer->m_iWinInfoTable, &pPlayer->m_iWinInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iWinInfoTable, &pPlayer->m_iWinInfoTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pSavePlayer->m_iSecondaryInfoWon = pPlayer->m_iSecondaryInfoWon;
 		pSavePlayer->m_iSecondaryInfoNeed = pPlayer->m_iSecondaryInfoNeed;
 
-		memcpy(&pSavePlayer->m_iSecondaryInfoTable, &pPlayer->m_iSecondaryInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iSecondaryInfoTable, &pPlayer->m_iSecondaryInfoTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pSavePlayer->m_iRequiredObjectsCount = pPlayer->m_iRequiredObjectsCount;
 
-		memcpy(&pSavePlayer->m_iRequiredObjectsTable, &pPlayer->m_iRequiredObjectsTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iRequiredObjectsTable, &pPlayer->m_iRequiredObjectsTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pSavePlayer->m_iRequiredMoney = pPlayer->m_iRequiredMoney;
 
-		memcpy(&pSavePlayer->m_iSecondaryLoc, &pPlayer->m_iSecondaryLoc, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pSavePlayer->m_iSecondaryLoc, &pPlayer->m_iSecondaryLoc, sizeof(int) * MAX_GAME_TABLE);
 
-		memcpy(&pSavePlayer->m_iGameHistory, &pPlayer->m_iGameHistory, sizeof(INT) * 20);
+		memcpy(&pSavePlayer->m_iGameHistory, &pPlayer->m_iGameHistory, sizeof(int) * 20);
 
 		pSavePlayer->m_iTargetLocation = pPlayer->m_iTargetLocation;
 		pSavePlayer->m_iSpecialTravelCode = pPlayer->m_iSpecialTravelCode;
@@ -343,7 +343,7 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	CItem *pItem;
 	PLAYER_INFO *pSavePlayer;
 	INVENTORY *pSaveInv;
-	INT i, j, k;
+	int i, j, k;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -403,22 +403,22 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		pPlayer->m_iWinInfoWon = pSavePlayer->m_iWinInfoWon;
 		pPlayer->m_iWinInfoNeed = pSavePlayer->m_iWinInfoNeed;
 
-		memcpy(&pPlayer->m_iWinInfoTable, &pSavePlayer->m_iWinInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pPlayer->m_iWinInfoTable, &pSavePlayer->m_iWinInfoTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pPlayer->m_iSecondaryInfoWon = pSavePlayer->m_iSecondaryInfoWon;
 		pPlayer->m_iSecondaryInfoNeed = pSavePlayer->m_iSecondaryInfoNeed;
 
-		memcpy(&pPlayer->m_iSecondaryInfoTable, &pSavePlayer->m_iSecondaryInfoTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pPlayer->m_iSecondaryInfoTable, &pSavePlayer->m_iSecondaryInfoTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pPlayer->m_iRequiredObjectsCount = pSavePlayer->m_iRequiredObjectsCount;
 
-		memcpy(&pPlayer->m_iRequiredObjectsTable, &pSavePlayer->m_iRequiredObjectsTable, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pPlayer->m_iRequiredObjectsTable, &pSavePlayer->m_iRequiredObjectsTable, sizeof(int) * MAX_GAME_TABLE);
 
 		pPlayer->m_iRequiredMoney = pSavePlayer->m_iRequiredMoney;
 
-		memcpy(&pPlayer->m_iSecondaryLoc, &pSavePlayer->m_iSecondaryLoc, sizeof(INT) * MAX_GAME_TABLE);
+		memcpy(&pPlayer->m_iSecondaryLoc, &pSavePlayer->m_iSecondaryLoc, sizeof(int) * MAX_GAME_TABLE);
 
-		memcpy(&pPlayer->m_iGameHistory, &pSavePlayer->m_iGameHistory, sizeof(INT) * 20);
+		memcpy(&pPlayer->m_iGameHistory, &pSavePlayer->m_iGameHistory, sizeof(int) * 20);
 
 		pPlayer->m_iTargetLocation = pSavePlayer->m_iTargetLocation;
 		pPlayer->m_iSpecialTravelCode = pSavePlayer->m_iSpecialTravelCode;

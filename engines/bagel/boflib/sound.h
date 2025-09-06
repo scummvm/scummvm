@@ -238,7 +238,7 @@ private:
 
 extern bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
 extern bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
-extern BOOL MessageBeep(INT uType);
+extern BOOL MessageBeep(int uType);
 
 #define sndPlaySound BofPlaySound
 

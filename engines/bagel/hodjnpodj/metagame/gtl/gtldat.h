@@ -702,7 +702,7 @@ private:
 	//  grab Mish and Mosh from current location
 	BOOL DetermineMishMoshEligibility(CXodj *, int);
 
-	void DoTransport(CXodj *, INT);
+	void DoTransport(CXodj *, int);
 
 
 	// gtlcmp.cpp -- meta game computer play

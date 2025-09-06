@@ -110,9 +110,9 @@ extern bool ProbableTrue(int nProbability);
 
 extern void ErrorLog(const char *logFile, const char *format, ...);
 
-extern INT          StrFreqMatch(const char *, const char *);
+extern int          StrFreqMatch(const char *, const char *);
 extern BOOL         StrCompare(const char *, const char *, UINT);
-extern INT          StrCharCount(const char *, char);
+extern int          StrCharCount(const char *, char);
 extern char *StriStr(char *, const char *);
 extern void         StrUprStr(char *, const char *);
 extern void         StrCpyStripChar(char *, const char *, char);

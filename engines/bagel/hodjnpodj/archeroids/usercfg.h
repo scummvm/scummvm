@@ -72,10 +72,10 @@ protected:
 	CText       *m_pTxtSpeedSetting;
 	CText       *m_pTxtLevel;
 	CText       *m_pTxtLives;
-	INT          m_nInitGameSpeed;
-	INT          m_nInitArcherLevel;
-	INT          m_nInitNumLives;
-	INT          m_nInitNumBadGuys;
+	int          m_nInitGameSpeed;
+	int          m_nInitArcherLevel;
+	int          m_nInitNumLives;
+	int          m_nInitNumBadGuys;
 	BOOL         m_bShouldSave;           // True if we should save theses settings
 };
 

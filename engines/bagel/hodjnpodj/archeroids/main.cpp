@@ -148,7 +148,7 @@ LPGAMESTRUCT pGameParams;
 
 extern HWND ghParentWnd;
 
-STATIC INT aBales[N_HAY];
+STATIC int aBales[N_HAY];
 
 STATIC const POINT aHayPosition[N_HAY][N_SECTIONS_PER_HAY] = {
 	{	{100,  60}, {108,  60}, {116,  60}, {124,  60}, {132,  60},
@@ -1082,7 +1082,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return FALSE;
 }
 
-CSprite *CMainWindow::NewLife(INT iLifeIndex) {
+CSprite *CMainWindow::NewLife(int iLifeIndex) {
 	CSize size;
 	CDC *pDC;
 	CSprite *pSprite;
@@ -1111,7 +1111,7 @@ CSprite *CMainWindow::NewLife(INT iLifeIndex) {
 
 
 ERROR_CODE CMainWindow::CreateLives() {
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1199,7 +1199,7 @@ ERROR_CODE CMainWindow::CreateHay() {
 	CLList *pList;
 	CSprite *pSprite;
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1378,7 +1378,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 				//
 				#if 0
 				if ((pSprite = m_pMasterBadShoot->DuplicateSprite(pDC)) != nullptr) {
-					INT i;
+					int i;
 
 					pSprite->LinkSprite();
 					pSprite->PaintSprite(pDC, pBadGuy->GetPosition());
@@ -1536,7 +1536,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 				#if 0
 				if ((pSprite = m_pMasterGoodShoot->DuplicateSprite(pDC)) != nullptr) {
 
-					INT i;
+					int i;
 					pSprite->LinkSprite();
 					pSprite->PaintSprite(pDC, m_pHodj->GetPosition());
 					m_pHodj->EraseSprite(pDC);
@@ -1612,7 +1612,7 @@ ERROR_CODE CMainWindow::CreateBadGuys() {
 	CSprite *pSprite;
 	CDC *pDC;
 	POINT point;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1747,7 +1747,7 @@ void CMainWindow::PlayNextWave(void) {
 
 void CMainWindow::WaveReset(void) {
 	CDC *pDC;
-	INT i;
+	int i;
 
 	m_nBadGuys = m_nInitNumBadGuys;                 // reset # badguys
 
@@ -1893,7 +1893,7 @@ void CMainWindow::KillAnimation(void) {
 
 
 void CMainWindow::LoadIniSettings() {
-	INT nVal;
+	int nVal;
 
 	if (pGameParams->bPlayingMetagame) {
 
@@ -2259,7 +2259,7 @@ BOOL CMainWindow::CheckMessages(void) {
 	//
 	if (m_bJoyActive) {
 		joyGetPos(JOYSTICKID1, &joyInfo);
-		OnJoyStick(joyInfo.wButtons, (LONG)joyInfo.wYpos << 16);
+		OnJoyStick(joyInfo.wButtons, (long)joyInfo.wYpos << 16);
 	}
 
 	if (PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
@@ -2287,7 +2287,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 	POINT point;
 	CLList *pList, *pSearchList, *pSearchNext;
 	CSprite *pSprite;
-	INT i, n;
+	int i, n;
 
 	// can't access a null pointer
 	assert(pDC != nullptr);
@@ -2571,7 +2571,7 @@ void CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 	//CSound *pSound;
 	CLList *pList, *pNext;
 	POINT point;
-	INT i;
+	int i;
 
 	// validate the device context
 	assert(pDC != nullptr);
@@ -2711,7 +2711,7 @@ void CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 	CSprite *pSprite, *pNewSprite;
 	CLList *pNewList;
 	POINT point;
-	INT i;
+	int i;
 
 	// can't access null pointers
 	assert(pList != nullptr);
@@ -2807,7 +2807,7 @@ void CMainWindow::DestroyHay(CLList *pList, CRect rect, CDC *pDC, BOOL bAnimate)
 	CSprite *pSprite;
 	CRect tmpRect, overlappedRect;
 	POINT ptTmp, point;
-	INT i, nID;
+	int i, nID;
 
 	// can't access null pointers
 	assert(pList != nullptr);
@@ -3048,7 +3048,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::MoveHodj(INT y) {
+void CMainWindow::MoveHodj(int y) {
 	POINT point;
 	CDC *pDC;
 
@@ -3165,8 +3165,8 @@ void CMainWindow::OnClose() {
 }
 
 
-LONG CMainWindow::OnJoyStick(UINT wParam, LONG lParam) {
-	LONG nThreshold;
+long CMainWindow::OnJoyStick(UINT wParam, long lParam) {
+	long nThreshold;
 
 	if (m_bGameActive) {
 

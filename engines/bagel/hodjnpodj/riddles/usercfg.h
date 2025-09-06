@@ -54,7 +54,7 @@ protected:
 	void GetDlgData(void);
 	void DispLimit(void);
 	void DispLevel(void);
-	INT GetIndex(INT);
+	int GetIndex(int);
 
 	void OnHScroll(UINT, UINT, CScrollBar *);
 	void OnClose();
@@ -68,7 +68,7 @@ protected:
 	CScrollBar *m_pScrollBar;
 	CScrollBar *m_pLevelScroll;
 	UINT        m_nTimeLimit;
-	INT         m_nDifficultyLevel;
+	int         m_nDifficultyLevel;
 	BOOL        m_bSave;                    // True if should save theses values
 };
 

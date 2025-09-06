@@ -308,8 +308,8 @@ void CMainWindow::PaintScreen() {
 
 				GetClientRect(rcDest);
 				rcDIB.top = rcDIB.left = 0;
-				rcDIB.right = (INT) DIBWidth(hDIB);
-				rcDIB.bottom = (INT) DIBHeight(hDIB);
+				rcDIB.right = (int) DIBWidth(hDIB);
+				rcDIB.bottom = (int) DIBHeight(hDIB);
 				PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 			}
 

@@ -85,7 +85,7 @@ public:
 	//              display message box messages
 	virtual int DoMessageBox(LPCSTR lpszPrompt,
 	                         UINT nType, UINT nIDPrompt) ;
-	BOOL OnIdle(LONG lCount) override;
+	BOOL OnIdle(long lCount) override;
 
 private:
 	static void focusChange(CWnd *oldFocus, CWnd *newFocus);

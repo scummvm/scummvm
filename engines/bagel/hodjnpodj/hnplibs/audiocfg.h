@@ -65,7 +65,7 @@ protected:
 
 	CText        *m_pTxtVolume;
 
-	INT          m_nVolume;
+	int          m_nVolume;
 	BOOL         m_bMusic;
 	BOOL         m_bSound;
 };

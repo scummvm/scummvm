@@ -85,10 +85,10 @@ protected:
 	CScrollBar   *m_pScrollBar4;
 	CCheckButton *m_pWallButton;
 
-	INT           m_nNumBalls;
-	INT           m_nStartLevel;
-	INT           m_nBallSpeed;
-	INT           m_nPaddleSize;
+	int           m_nNumBalls;
+	int           m_nStartLevel;
+	int           m_nBallSpeed;
+	int           m_nPaddleSize;
 	BOOL          m_bOutterWall;
 
 	BOOL        m_bSave;                    // True if should save theses values

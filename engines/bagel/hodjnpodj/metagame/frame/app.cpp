@@ -131,7 +131,7 @@ void CTheApp::selectMinigame() {
 	game->_initFn(nullptr, lpGameStruct);
 }
 
-BOOL CTheApp::OnIdle(LONG lCount) {
+BOOL CTheApp::OnIdle(long lCount) {
 	CBofSound::audioTask();
 	return true;
 }

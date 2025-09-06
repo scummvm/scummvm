@@ -73,7 +73,7 @@ static const char *pTimeLimit[MAX_TIME_LIMITS] = {
 	"None"
 };
 
-static const INT nTimeLimit[MAX_TIME_LIMITS] = {
+static const int nTimeLimit[MAX_TIME_LIMITS] = {
 	10, 15, 20, 25, 30, 40, 50, 60, 75, 90, 120, 180, 240, 300, 301
 };
 
@@ -96,8 +96,8 @@ void CUserCfgDlg::PutDlgData() {
 	m_pLevelScroll->SetScrollPos(m_nDifficultyLevel);
 }
 
-INT CUserCfgDlg::GetIndex(INT nVal) {
-	INT i, nIndex;
+int CUserCfgDlg::GetIndex(int nVal) {
+	int i, nIndex;
 
 	nIndex = SCROLL_DEF;
 	for (i = 0; i < MAX_TIME_LIMITS; i++) {

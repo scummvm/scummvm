@@ -566,7 +566,7 @@ void CFugeWindow::InitializeJoystick(void) {
 
 void CFugeWindow::RealignVectors(void) {
 	CVector vTmp;
-	INT i, j;
+	int i, j;
 
 	for (i = 0; i < N_ROWS; i++) {
 
@@ -856,7 +856,7 @@ void CFugeWindow::PlayGame(void) {
 	HandleError(errCode);
 }
 
-ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
+ERROR_CODE CFugeWindow::LoadNewPaddle(int nNewSize) {
 	CDC *pDC;
 	ERROR_CODE errCode;
 
@@ -1045,7 +1045,7 @@ void CFugeWindow::StartBall(void) {
 
 	m_pBall->LinkSprite();
 	if ((pDC = GetDC()) != nullptr) {
-		m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
+		m_pBall->PaintSprite(pDC, (int)m_ptBallLocation.x, (int)m_ptBallLocation.y);
 		ReleaseDC(pDC);
 	}
 }
@@ -1076,8 +1076,8 @@ void CFugeWindow::PaintBall(void) {
 
 		assert(m_pBall != nullptr);
 
-		ptLast.x = (INT)m_ptBallLocation.x;
-		ptLast.y = (INT)m_ptBallLocation.y;
+		ptLast.x = (int)m_ptBallLocation.x;
+		ptLast.y = (int)m_ptBallLocation.y;
 
 		vGravity = gvCenter - (m_ptBallLocation + BALL_RADIUS);
 		vGravity.Unitize();
@@ -1236,14 +1236,14 @@ void CFugeWindow::PaintBall(void) {
 
 		// only paint the ball if it actually moved
 		//
-		if ((ptLast.x != (INT)m_ptBallLocation.x) || (ptLast.y != (INT)m_ptBallLocation.y)) {
+		if ((ptLast.x != (int)m_ptBallLocation.x) || (ptLast.y != (int)m_ptBallLocation.y)) {
 
 			if (m_pBall->IsLinked()) {
 
 				// paint the ball to it's new location
 				//
 				if ((pDC = GetDC()) != nullptr) {
-					m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
+					m_pBall->PaintSprite(pDC, (int)m_ptBallLocation.x, (int)m_ptBallLocation.y);
 					ReleaseDC(pDC);
 				}
 			}
@@ -1259,8 +1259,8 @@ void CFugeWindow::BallvsPaddle(void) {
 	CVector vTmp, vPaddle, vFace, vBallCenter, vBallEdge;
 	DOUBLE a1, a2;
 	DOUBLE fLen1, fLen2, fLen3, fLen4, fLen5, fLen6, fMin, length;
-	INT i, j, k;
-	INT nRollBack = 0;
+	int i, j, k;
+	int nRollBack = 0;
 	BOOL bHit;
 
 	// calculate the 7 critical points for the paddle
@@ -1357,15 +1357,15 @@ void CFugeWindow::BallvsPaddle(void) {
 
 		nRollBack = 0;
 		if (fLen1 <= BALL_RADIUS) {
-			nRollBack = BALL_RADIUS - (INT)fLen1;
+			nRollBack = BALL_RADIUS - (int)fLen1;
 			bHit = TRUE;
 			break;
 		} else if (fLen2 <= BALL_RADIUS) {
-			nRollBack = (BALL_RADIUS - (INT)fLen2);
+			nRollBack = (BALL_RADIUS - (int)fLen2);
 			bHit = TRUE;
 			break;
 		} else if (fLen1 + fLen2 <= length) {
-			nRollBack = (INT)(length - (fLen1 + fLen2)) + 2;
+			nRollBack = (int)(length - (fLen1 + fLen2)) + 2;
 			bHit = TRUE;
 			break;
 		}
@@ -1527,13 +1527,13 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 	CPoint ptTmp;
 	DOUBLE fMin, fLast, fLen[N_BRICK_POINTS];
 	DOUBLE angle;
-	INT i, j, nIndex, nLastIndex, nBrickIndex, nMaxHits;
-	INT nBrick0, nBrick1, nRow0, nRow1, nRow2, nUse[MAX_BRICK_HITS];
+	int i, j, nIndex, nLastIndex, nBrickIndex, nMaxHits;
+	int nBrick0, nBrick1, nRow0, nRow1, nRow2, nUse[MAX_BRICK_HITS];
 	BOOL bHit, bStillHit;
 
 	// get bounding rectangle of the ball
 	//
-	rBall.SetRect((INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y, (INT)m_ptBallLocation.x + BALL_SIZE_X, (INT)m_ptBallLocation.y + BALL_SIZE_Y);
+	rBall.SetRect((int)m_ptBallLocation.x, (int)m_ptBallLocation.y, (int)m_ptBallLocation.x + BALL_SIZE_X, (int)m_ptBallLocation.y + BALL_SIZE_Y);
 
 	// get center of the ball
 	vBallCenter.SetVector(m_ptBallLocation.x + BALL_RADIUS, m_ptBallLocation.y + BALL_RADIUS);
@@ -1896,7 +1896,7 @@ void CFugeWindow::BallvsBrick(DOUBLE length) {
 }
 
 
-void CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
+void CFugeWindow::EraseBrick(CDC *pDC, int nBrickIndex) {
 	assert(pDC != nullptr);
 
 	assert((nBrickIndex >= 0) && (nBrickIndex < N_BRICKS));
@@ -1944,7 +1944,7 @@ void CFugeWindow::LoseBall(void) {
 		}
 		/* BLACK HOLE ANIMATION REMOVED DUE TO LACK OF ARTWORK
 		        CSprite *pSprite;
-		        INT i;
+		        int i;
 
 		        // start the black hole animation
 		        //
@@ -2080,7 +2080,7 @@ void CFugeWindow::LaunchBall(void) {
 void CFugeWindow::PaintPaddle(BOOL bPaint) {
 	CVector vPaddle;
 	CDC *pDC;
-	INT nOldIndex;
+	int nOldIndex;
 	BOOL bSuccess;
 
 	// verify that the input was not tainted
@@ -2127,7 +2127,7 @@ void CFugeWindow::PaintPaddle(BOOL bPaint) {
 
 				// paint the ball to it's new location
 				//
-				m_pBall->PaintSprite(pDC, (INT)m_ptBallLocation.x, (INT)m_ptBallLocation.y);
+				m_pBall->PaintSprite(pDC, (int)m_ptBallLocation.x, (int)m_ptBallLocation.y);
 
 			} else {
 
@@ -2177,7 +2177,7 @@ void CFugeWindow::PaintPaddle(BOOL bPaint) {
 
 void CFugeWindow::StartBricks(void) {
 	CDC *pDC;
-	INT i, nBricks;
+	int i, nBricks;
 
 	nBricks = m_nNumRows * BRICKS_PER_ROW;
 
@@ -2201,7 +2201,7 @@ void CFugeWindow::PaintBricks(CDC *pDC) {
 	CBitmap  *pBmp, *pMemBmp;
 	CPalette *pPalOld, *pScreenPalOld;
 	HBITMAP   hOldBitmap;
-	INT i;
+	int i;
 
 	assert(pDC != nullptr);
 	assert((m_nNumRows >= 0) && (m_nNumRows <= N_ROWS));
@@ -2397,7 +2397,7 @@ void CFugeWindow::OnTimer(UINT_PTR nEvent) {
 		if (m_bJoyActive) {
 			JOYINFO joyInfo;
 			joyGetPos(JOYSTICKID1, &joyInfo);
-			OnJoyStick(joyInfo.wButtons, ((LONG)joyInfo.wYpos << 16) | joyInfo.wXpos);
+			OnJoyStick(joyInfo.wButtons, ((long)joyInfo.wYpos << 16) | joyInfo.wXpos);
 		}
 
 		if (!m_bPause) {
@@ -2407,8 +2407,8 @@ void CFugeWindow::OnTimer(UINT_PTR nEvent) {
 	}
 }
 
-LONG CFugeWindow::OnJoyStick(UINT wParam, LONG lParam) {
-	LONG nThresholdX, nThresholdY;
+long CFugeWindow::OnJoyStick(UINT wParam, long lParam) {
+	long nThresholdX, nThresholdY;
 
 	if (m_bGameActive) {
 
@@ -2473,7 +2473,7 @@ LONG CFugeWindow::OnJoyStick(UINT wParam, LONG lParam) {
 
 
 void CFugeWindow::OnMouseMove(UINT, CPoint point) {
-	INT nMove;
+	int nMove;
 
 	if (m_bGameActive && m_bMovingPaddle) {
 
@@ -2546,7 +2546,7 @@ void CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	        car8Rect,
 	        car9Rect,
 	        car10Rect;
-	INT     nPick = 0;
+	int     nPick = 0;
 
 	boothRect.SetRect(BOOTH_X, BOOTH_Y, BOOTH_X + BOOTH_DX, BOOTH_Y + BOOTH_DY);
 	tentRect.SetRect(TENT_X, TENT_Y, TENT_X + TENT_DX, TENT_Y + TENT_DY);

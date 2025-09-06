@@ -217,7 +217,7 @@ CMainWindow::CMainWindow() {
 
 ERROR_CODE CMainWindow::LoadCategoryNames(void) {
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -251,7 +251,7 @@ ERROR_CODE CMainWindow::LoadCategoryNames(void) {
 }
 
 void CMainWindow::ReleaseCategoryNames(void) {
-	INT i;
+	int i;
 
 	for (i = N_CATEGORIES - 1; i >= 0; i--) {
 		if (m_pCategories[i] != nullptr) {
@@ -262,7 +262,7 @@ void CMainWindow::ReleaseCategoryNames(void) {
 }
 
 
-void CMainWindow::PaintCategory(INT iType) {
+void CMainWindow::PaintCategory(int iType) {
 	CDC *pDC;
 
 	assert((iType >= 0) && (iType < N_CATEGORIES));

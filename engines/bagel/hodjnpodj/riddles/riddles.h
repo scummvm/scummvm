@@ -142,8 +142,8 @@ protected:
 	ERROR_CODE  RepaintSpriteList(void);
 	ERROR_CODE  LoadRiddle(void);
 	ERROR_CODE  BuildSpriteList(void);
-	ERROR_CODE  DisplayLine(const char *, INT, INT, INT);
-	INT         CharToIndex(char);
+	ERROR_CODE  DisplayLine(const char *, int, int, int);
+	int         CharToIndex(char);
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
 	ERROR_CODE  LoadMasterSprites(void);
 	void        GameReset(void);
@@ -170,10 +170,10 @@ protected:
 	RIDDLE     *m_pRiddle;
 	CSprite    *m_pSunDial;
 	CSound     *m_pSoundTrack;
-	INT         m_nTimeLimit;
-	INT         m_nInitTimeLimit;
-	INT         m_nTimer;
-	INT         m_nDifficultyLevel;
+	int         m_nTimeLimit;
+	int         m_nInitTimeLimit;
+	int         m_nTimer;
+	int         m_nDifficultyLevel;
 	UINT        m_nRiddleNumber;
 	BOOL        m_bGameActive;
 	BOOL        m_bPause;

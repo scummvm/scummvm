@@ -335,7 +335,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
 	CBitmap *pBmp, *pFontBmp;
 	CSprite *pSprite;
 	CDC *pDC;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	// assume no erorr
@@ -433,8 +433,8 @@ void CRiddlesWindow::PaintScreen() {
 				GetClientRect(rcDest);
 
 				rcDIB.top = rcDIB.left = 0;
-				rcDIB.right = (INT) DIBWidth(hDIB);
-				rcDIB.bottom = (INT) DIBHeight(hDIB);
+				rcDIB.right = (int) DIBWidth(hDIB);
+				rcDIB.bottom = (int) DIBHeight(hDIB);
 				
 				PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, m_pGamePalette);
 			}
@@ -591,7 +591,7 @@ void CRiddlesWindow::PlayGame() {
 }
 
 void CRiddlesWindow::LoadIniSettings() {
-	INT nVal;
+	int nVal;
 
 	if (pGameParams->bPlayingMetagame) {
 
@@ -680,7 +680,7 @@ void CRiddlesWindow::GameReset(void) {
 
 ERROR_CODE CRiddlesWindow::LoadRiddle() {
 	STATIC UINT nLast;
-	INT n, nMin, nMax;
+	int n, nMin, nMax;
 	ERROR_CODE errCode;
 
 	errCode = ERR_NONE;                                     // assume no error
@@ -689,7 +689,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle() {
 
 		m_pRiddle = &curRiddle;                             // get a suitable storage area for this riddle
 
-		n = (INT)(FileLength(DATA_FILE) / sizeof(RIDDLE));  // determine number of riddles in the data store
+		n = (int)(FileLength(DATA_FILE) / sizeof(RIDDLE));  // determine number of riddles in the data store
 
 		assert(n > 0 && n <= MAX_RIDDLES);                   // verify # of riddles
 
@@ -764,7 +764,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle() {
 
 ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 	ERROR_CODE errCode;
-	INT i, n;
+	int i, n;
 	char c;
 
 	// assume no error
@@ -822,7 +822,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 
 ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
 	char *pRiddle, *p;
-	INT x, y;
+	int x, y;
 	UINT nCharsPerLine;
 	ERROR_CODE errCode;
 
@@ -868,10 +868,10 @@ ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
 }
 
 
-ERROR_CODE CRiddlesWindow::DisplayLine(const char *pszText, INT nChars, INT x, INT y) {
+ERROR_CODE CRiddlesWindow::DisplayLine(const char *pszText, int nChars, int x, int y) {
 	CSprite *pSprite;
 	CDC *pDC;
-	INT nID, i;
+	int nID, i;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -926,8 +926,8 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const char *pszText, INT nChars, INT x, I
 	return errCode;
 }
 
-INT CRiddlesWindow::CharToIndex(char c) {
-	INT nIndex = -1;
+int CRiddlesWindow::CharToIndex(char c) {
+	int nIndex = -1;
 
 	switch (c) {
 
@@ -1314,7 +1314,7 @@ void CRiddlesWindow::ParseAnswer(const char *pszAnswer) {
 }
 
 BOOL CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
-	INT i;
+	int i;
 
 	assert(pszGuess != nullptr);
 	assert(strlen(pszGuess) <= MAX_ANSWER_LENGTH);
@@ -1484,7 +1484,7 @@ void CRiddlesWindow::OnClose() {
 	CBrush myBrush;
 	CRect myRect;
 	CDC *pDC;
-	INT i;
+	int i;
 
 	// perform cleanup
 	//

@@ -121,7 +121,7 @@ typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 #endif
 
 #define MAKEWORD(a, b)      ((WORD)(((BYTE)(((DWORD_PTR)(a)) & 0xff)) | ((WORD)((BYTE)(((DWORD_PTR)(b)) & 0xff))) << 8))
-#define MAKELONG(a, b)      ((LONG)(((WORD)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((WORD)(((DWORD_PTR)(b)) & 0xffff))) << 16))
+#define MAKELONG(a, b)      ((long)(((WORD)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((WORD)(((DWORD_PTR)(b)) & 0xffff))) << 16))
 #define LOWORD(l)           ((WORD)(((DWORD_PTR)(l)) & 0xffff))
 #define HIWORD(l)           ((((DWORD_PTR)(l)) >> 16))
 #define LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) & 0xff))
@@ -163,8 +163,8 @@ typedef struct tagPOINT {
 } POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
 
 typedef struct _POINTL {    /* ptl  */
-	LONG  x;
-	LONG  y;
+	long  x;
+	long  y;
 } POINTL, *PPOINTL;
 
 typedef struct tagSIZE {
@@ -186,10 +186,10 @@ typedef struct tagPOINTS {
 } POINTS, *PPOINTS, *LPPOINTS;
 
 typedef struct tagRECT {
-	LONG    left;
-	LONG    top;
-	LONG    right;
-	LONG    bottom;
+	long    left;
+	long    top;
+	long    right;
+	long    bottom;
 
 	operator Common::Rect() const {
 		return Common::Rect(left, top, right, bottom);

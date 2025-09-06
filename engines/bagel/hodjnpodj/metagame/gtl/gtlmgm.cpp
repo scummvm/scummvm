@@ -633,7 +633,7 @@ int CGtlData::FindNodeId(const char *pszLabel) {
 void CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint ptNew) {
 	#if 1
 	char chOldChar, chNewChar = '1';
-	INT x, y;
+	int x, y;
 
 	// can't access null pointers
 	assert(pBgbSprite != nullptr);

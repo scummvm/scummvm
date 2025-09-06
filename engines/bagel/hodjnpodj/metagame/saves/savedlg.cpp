@@ -49,7 +49,7 @@ extern char szDescBuf[40];
 
 CSaveDlg::CSaveDlg(char *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 	: CBmpDialog(pWnd, pPalette, 2000, ".\\ART\\MLSCROLL.BMP") {
-	INT i;
+	int i;
 
 	// Inits
 	m_pTxtSave = nullptr;
@@ -112,7 +112,7 @@ void CSaveDlg::OnCancel(void) {
 	EndDialog(-1);
 }
 
-void CSaveDlg::EditDescription(INT nNewSlot) {
+void CSaveDlg::EditDescription(int nNewSlot) {
 	char szBuf[40];
 
 	// abort any other edits the user was making
@@ -156,7 +156,7 @@ void CSaveDlg::EditDescription(INT nNewSlot) {
 BOOL CSaveDlg::OnInitDialog(void) {
 	CRect rect;
 	CDC *pDC;
-	INT i;
+	int i;
 	BOOL bSuccess;
 
 	CBmpDialog::OnInitDialog();            // do basic dialog initialization
@@ -228,7 +228,7 @@ void CSaveDlg::OnPaint(void) {
 
 
 void CSaveDlg::ClearDialogImage(void) {
-	INT i;
+	int i;
 
 	if (m_pTxtSave != nullptr) {
 		delete m_pTxtSave;

@@ -79,13 +79,13 @@ void        KillCurPhrase(void);
 void        BuildRandomPhraseOrder();
 bool     RevealNextLetter(void);
 void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, uint32);
-INT         StrLenNoSpaces(const char *);
-INT         GetIndex(CSprite *);
+int         StrLenNoSpaces(const char *);
+int         GetIndex(CSprite *);
 void        LoadGameCfg(void);
 void        SaveGameCfg(void);
 ERROR_CODE  ValidatePhrase(PHRASES *);
 void        UpdateScore(UINT, UINT, UINT, UINT);
-INT         NumLinkedSprites(void);
+int         NumLinkedSprites(void);
 
 #define TIMER_ID        50
 #define START_X_ODD     318
@@ -117,13 +117,13 @@ extern LPGAMESTRUCT pGameParams;
 USERCFG     gGameCfg;
 PHRASES    *curPhrase, gPhrase;
 SPRITE_LIST spriteList[MAX_PLENGTH];
-INT         iNextLetter;
-INT         timerInterval;
+int         iNextLetter;
+int         timerInterval;
 HWND        gGameWnd;
 bool     bPause;
 UINT        gLeftAvg, gTotalAvg;
 const char *INI_SECTION = "ThGesngGme";
-INT         nPhrasePixelLength;
+int         nPhrasePixelLength;
 
 
 /**
@@ -141,7 +141,7 @@ INT         nPhrasePixelLength;
 ERROR_CODE LoadNewPhrase(void) {
 	STATIC int nLast;
 	char *p, buf[MAX_PLENGTH_S + 2];
-	INT i, n, nType;
+	int i, n, nType;
 	ERROR_CODE errCode;
 
 	/* assume no error */
@@ -157,7 +157,7 @@ ERROR_CODE LoadNewPhrase(void) {
 	*/
 
 	/* determine the number of phrases in the data store */
-	n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
+	n = (int)(FileLength(DATA_FILE) / sizeof(PHRASES));
 
 	if (n > 0) {
 
@@ -251,7 +251,7 @@ ERROR_CODE LoadNewPhrase(void) {
 **/
 void BuildRandomPhraseOrder() {
 	UBYTE *curPhraseOrder;
-	INT i, j, n, newIndex;
+	int i, j, n, newIndex;
 	bool use;
 
 	/*
@@ -301,7 +301,7 @@ void BuildRandomPhraseOrder() {
 ERROR_CODE BuildSpriteList(CDC *pDC) {
 	CSprite *pNewSprite;
 	char *pText;
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	/* can't access null pointers */
@@ -392,7 +392,7 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 *
 **/
 void KillCurPhrase() {
-	INT i, n;
+	int i, n;
 
 	if (curPhrase != nullptr) {
 
@@ -425,7 +425,7 @@ void KillCurPhrase() {
 **/
 bool RevealNextLetter() {
 	CSize size;
-	INT index;
+	int index;
 	bool lastLetter;
 
 	lastLetter = FALSE;
@@ -471,7 +471,7 @@ bool RevealNextLetter() {
 **/
 ERROR_CODE RecalcDisplay(CDC *pDC) {
 	CSize size;
-	INT i, gap, last, n;
+	int i, gap, last, n;
 	ERROR_CODE errCode;
 
 	/* can't use a null pointer */
@@ -546,8 +546,8 @@ ERROR_CODE RepaintSpriteList(CDC *pDC) {
 	return errCode;
 }
 
-INT GetIndex(CSprite *pSprite) {
-	INT i;
+int GetIndex(CSprite *pSprite) {
+	int i;
 
 	assert(pSprite != nullptr);
 
@@ -580,7 +580,7 @@ INT GetIndex(CSprite *pSprite) {
 *
 **/
 ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
-	INT i;
+	int i;
 	ERROR_CODE errCode;
 
 	assert(pDC != nullptr);
@@ -613,7 +613,7 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 					gMain->EraseCategory();
 
 				/* reveal 1st 3 letters */
-				for (i = 0; i < (INT)gGameCfg.nShown; i++) {
+				for (i = 0; i < (int)gGameCfg.nShown; i++) {
 					RevealNextLetter();
 				}
 			}
@@ -887,7 +887,7 @@ void CALLBACK GetGameParams(CWnd *pParentWnd) {
 **/
 void LoadGameCfg() {
 	char buf[10];
-	INT n;
+	int n;
 
 	if (pGameParams->bPlayingMetagame) {
 
@@ -1013,8 +1013,8 @@ bool CheckUserGuess(const char *guess) {
 *  returns   len = length of string without spaces
 *
 **/
-INT StrLenNoSpaces(const char *str) {
-	INT len;
+int StrLenNoSpaces(const char *str) {
+	int len;
 
 	/* can't access a null pointer */
 	assert(str != nullptr);
@@ -1031,7 +1031,7 @@ INT StrLenNoSpaces(const char *str) {
 
 ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	bool bList[MAX_PLENGTH];
-	INT i, n, order;
+	int i, n, order;
 	char c;
 	ERROR_CODE errCode;
 
@@ -1074,7 +1074,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 				* check to make sure that the indexing order values are valid
 				*/
 				for (i = 0; i < n; i++) {
-					order = (INT)phrase->order[i] - 1;
+					order = (int)phrase->order[i] - 1;
 
 					if ((order >= n) || (order < 0) || bList[order]) {
 
@@ -1121,9 +1121,9 @@ void GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
 *  returns   nSprites = number of sprites in linked list
 *
 **/
-INT NumLinkedSprites(void) {
+int NumLinkedSprites(void) {
 	CSprite *pSprite;
-	INT i = 0;
+	int i = 0;
 
 	pSprite = CSprite::GetSpriteChain();
 	while (pSprite) {

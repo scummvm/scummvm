@@ -43,7 +43,7 @@ public:
 
 	void        PlayGame(void);
 	void        PaintScreen(void);
-	void        PaintCategory(INT);
+	void        PaintCategory(int);
 	void        EraseCategory(void);
 
 	int         m_nTurnCount = 0;
@@ -76,7 +76,7 @@ protected:
 	CSprite     *m_pScrollSprite = nullptr;
 	CGuessDlg   *m_pDlgGuess = nullptr;
 	CSound      *m_pSoundTrack = nullptr;
-	INT          m_iLastType = 0;
+	int          m_iLastType = 0;
 	BOOL         m_bInMenu = FALSE;
 	BOOL         m_bInGuess = FALSE;
 };

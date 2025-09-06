@@ -55,7 +55,7 @@ protected:
 	void        InitializeJoystick(void);
 	void        GameReset(void);
 	void        WaveReset(void);
-	CSprite    *NewLife(INT);
+	CSprite    *NewLife(int);
 	ERROR_CODE  CreateLives(void);
 	ERROR_CODE  CreateGoodGuy(void);
 	ERROR_CODE  CreateBadGuys(void);
@@ -74,7 +74,7 @@ protected:
 	void        DeleteSprite(CSprite *);
 	BOOL        MoveArrows(CDC *);
 	BOOL        MoveBadGuys(CDC *);
-	void        MoveHodj(INT);
+	void        MoveHodj(int);
 	void        LoseLife(CDC *, BOOL);
 	void        HandleError(ERROR_CODE);
 	void        KillAnimation(void);
@@ -88,7 +88,7 @@ protected:
 	void OnSysChar(UINT, UINT, UINT);
 	void OnTimer(UINT_PTR);
 	void OnClose(void);
-	LONG OnJoyStick(UINT, LONG);
+	long OnJoyStick(UINT, long);
 	void OnActivate(UINT, CWnd *, BOOL) override;
 	void OnLButtonDown(UINT, CPoint);
 	void OnRButtonUp(UINT, CPoint);
@@ -137,16 +137,16 @@ protected:
 	POINT        m_ptAnchor;
 	ULONG        m_lScore;
 	ULONG        m_lNewLifeScore;
-	INT          m_nGoodArrows, m_nBadArrows;
-	INT          m_nGameSpeed;
+	int          m_nGoodArrows, m_nBadArrows;
+	int          m_nGameSpeed;
 	UINT         m_nBadGuySpeed;
 	UINT         m_nArrowSpeed;
 	UINT         m_nState;
-	INT          m_nMoveArrows;
-	INT          m_nBadGuys;
-	INT          m_nLives;
-	INT          m_nLevel;
-	INT          m_nWave;
+	int          m_nMoveArrows;
+	int          m_nBadGuys;
+	int          m_nLives;
+	int          m_nLevel;
+	int          m_nWave;
 	UINT         m_nJoyLast;
 	BOOL         m_bPause;
 	BOOL         m_bGameActive;
@@ -160,10 +160,10 @@ protected:
 
 	// User Setup variables
 	//
-	INT          m_nInitGameSpeed;
-	INT          m_nInitArcherLevel;
-	INT          m_nInitNumLives;
-	INT          m_nInitNumBadGuys;
+	int          m_nInitGameSpeed;
+	int          m_nInitArcherLevel;
+	int          m_nInitNumLives;
+	int          m_nInitNumBadGuys;
 };
 
 ////

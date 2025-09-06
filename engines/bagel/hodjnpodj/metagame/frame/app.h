@@ -62,7 +62,7 @@ public:
 	 */
 	int ExitInstance() override;
 
-	BOOL OnIdle(LONG lCount) override;
+	BOOL OnIdle(long lCount) override;
 };
 
 extern bool dllLoaded;

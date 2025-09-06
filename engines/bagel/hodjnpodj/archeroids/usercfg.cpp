@@ -283,7 +283,7 @@ void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 BOOL CUserCfgDlg::OnInitDialog(void) {
 	CRect tmpRect;
 	CDC *pDC;
-	INT nVal;
+	int nVal;
 
 	CBmpDialog::OnInitDialog();
 

@@ -41,7 +41,7 @@ struct MemBlock {
 	}
 };
 
-HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) {
+HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes) {
 	return new MemBlock(dwBytes,
 		uFlags == GMEM_ZEROINIT);
 }
@@ -59,11 +59,11 @@ HGLOBAL GlobalFree(HGLOBAL hMem) {
 	return nullptr;
 }
 
-SIZE_T GlobalSize(HGLOBAL hMem) {
+size_t GlobalSize(HGLOBAL hMem) {
 	return ((MemBlock *)hMem)->_size;
 }
 
-SIZE_T GlobalCompact(uint32 dwMinFree) {
+size_t GlobalCompact(uint32 dwMinFree) {
 	// No implementation
 	return 999999;
 }
@@ -85,7 +85,7 @@ int MessageBox(LPCSTR lpText) {
 }
 
 UINT GetPrivateProfileInt(LPCSTR lpAppName,
-                          LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName) {
+                          LPCSTR lpKeyName, int nDefault, LPCSTR lpFileName) {
 	return AfxGetApp()->GetProfileInt(lpAppName, lpKeyName, nDefault);
 }
 

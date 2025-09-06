@@ -35,18 +35,18 @@ public:
 	CTimeSpan();
 	CTimeSpan(int64 time);
 	CTimeSpan(
-	    LONG lDays,
+	    long lDays,
 	    int nHours,
 	    int nMins,
 	    int nSecs);
 
 	LONGLONG GetDays() const;
 	LONGLONG GetTotalHours() const;
-	LONG GetHours() const;
+	long GetHours() const;
 	LONGLONG GetTotalMinutes() const;
-	LONG GetMinutes() const;
+	long GetMinutes() const;
 	LONGLONG GetTotalSeconds() const;
-	LONG GetSeconds() const;
+	long GetSeconds() const;
 
 	int64 GetTimeSpan() const;
 

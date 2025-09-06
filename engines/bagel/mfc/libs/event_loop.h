@@ -262,7 +262,7 @@ public:
 		return _updateWnds;
 	}
 
-	virtual BOOL OnIdle(LONG lCount) {
+	virtual BOOL OnIdle(long lCount) {
 		return false;
 	}
 
