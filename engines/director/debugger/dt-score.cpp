@@ -576,7 +576,7 @@ void showScore() {
 
 		if (ImGui::BeginTable("Score", tableColumns + 2,
 					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
-					ImGuiTableFlags_SizingStretchProp | addonFlags)) {
+					addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupScrollFreeze(2, 2);
