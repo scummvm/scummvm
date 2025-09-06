@@ -261,6 +261,9 @@ BOOL CWnd::EnableWindow(BOOL bEnable) {
 	else
 		_itemState |= ODS_DISABLED;
 
+	// Flag the control to be redrawn
+	Invalidate();
+
 	return oldEnabled;
 }
 
