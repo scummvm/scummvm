@@ -616,7 +616,7 @@ void TotEngine::originalSaveLoadScreen() {
 		bar(61, 15, 122, 23, 253);
 		bar(201, 15, 259, 23, 253);
 	}
-	Common::String pattern = isLanguageSpanish ? "tot-es.###" : "tot.###";
+	Common::String pattern = g_engine->getMetaEngine()->getSavegameFilePattern(_targetName.c_str());
 	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(pattern);
 	saveName = drawAndSelectSaves(saves, selectedGame);
 	if (_cpCounter2 > 17)
