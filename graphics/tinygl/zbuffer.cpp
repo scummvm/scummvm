@@ -289,19 +289,23 @@ void FrameBuffer::applyTextureEnvironment(
 	// texARGB is both input and output
 	// GL_RGB/GL_RGBA might be identical as TexelBuffer returns As=1
 
-	// Fixed-point multiplication helpers:
-	// e.g. fpMul16_8_16 is multiplying a 16bit by a 8bit factor resulting in a 16bit output
-	const auto fpMul16_8_16 = [](uint32 a, uint32 b) -> uint32 {
-		return (a >> 8) * b;
+	const auto satAdd = [](byte a, byte b) -> byte {
+		// from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+		byte r = a + b;
+		return (byte)(r | -(r < a));
 	};
-	const auto fpMul16_8_8 = [](uint32 a, uint32 b) -> uint32 {
-		return ((a >> 8) * b) >> 8;
+
+	const auto sat16_to_8 = [](uint32 x) -> byte {
+		x = (x + 128) >> 8; // rounding 16 to 8 
+		return (byte)(x | -!!(x >> 8)); // branchfree saturation
 	};
-	const auto fpMul8_8_8 = [](uint32 a, uint32 b) -> uint32 {
-		return (a * b) >> 8;
-	};
-	const auto fpMul8_8_16 = [](uint32 a, uint32 b) -> uint32 {
-		return a * b;
+
+	const auto fpMul = [](byte a, byte b) -> byte {
+		// from: https://community.khronos.org/t/precision-curiosity-1-255-or-1-256/40539/11
+		// correct would be (a*b)/255 but that is slow, instead we use (a*b) * 257/256 / 256
+		// this also implicitly saturates
+		uint32 r = a * b;
+		return (byte)((r + (r >> 8) + 127) >> 8);
 	};
 
 	struct Arg {
@@ -318,9 +322,9 @@ void FrameBuffer::applyTextureEnvironment(
 			op.b = texB;
 			break;
 		case TGL_PRIMARY_COLOR:
-			op.r = previousR >> ZB_POINT_ALPHA_FRAC_BITS;
-			op.g = previousG >> ZB_POINT_ALPHA_FRAC_BITS;
-			op.b = previousB >> ZB_POINT_ALPHA_FRAC_BITS;
+			op.r = sat16_to_8(previousR);
+			op.g = sat16_to_8(previousG);
+			op.b = sat16_to_8(previousB);
 			break;
 		default:
 			assert(false && "Invalid texture environment arg color source");
@@ -331,7 +335,7 @@ void FrameBuffer::applyTextureEnvironment(
 			op.a = texA;
 			break;
 		case TGL_PRIMARY_COLOR:
-			op.a = previousA >> ZB_POINT_ALPHA_FRAC_BITS;
+			op.a = sat16_to_8(previousA);
 			break;
 		default:
 			assert(false && "Invalid texture environment arg alpha source");
@@ -372,36 +376,36 @@ void FrameBuffer::applyTextureEnvironment(
 	case TGL_REPLACE:
 		// GL_RGB:  Cs | Ap
 		// GL_RGBA: Cs | As
-		texA = internalformat == TGL_RGBA ? texA : previousA >> ZB_POINT_ALPHA_FRAC_BITS;
+		texA = internalformat == TGL_RGBA ? texA : sat16_to_8(previousA);
 		break;
 	case TGL_MODULATE:
 	{
 		// GL_RGB:  CpCs | Ap 
 		// GL_RGBA: CpCs | ApAs
-		texA = fpMul16_8_8(previousA, texA);
-		texR = fpMul16_8_8(previousR, texR);
-		texG = fpMul16_8_8(previousG, texG);
-		texB = fpMul16_8_8(previousB, texB);
+		texA = fpMul(sat16_to_8(previousA), texA);
+		texR = fpMul(sat16_to_8(previousR), texR);
+		texG = fpMul(sat16_to_8(previousG), texG);
+		texB = fpMul(sat16_to_8(previousB), texB);
 		break;
 	}
 	case TGL_DECAL:
 	{
 		// GL_RGB:  Cs              | Ap
 		// GL_RGBA: Cp(1-As) + CsAs | Ap
-		texA = previousA >> ZB_POINT_ALPHA_FRAC_BITS;
-		texR = (fpMul16_8_16(previousR, 255 - texA) + fpMul8_8_16(texR, texA)) >> 8;
-		texG = (fpMul16_8_16(previousG, 255 - texA) + fpMul8_8_16(texG, texA)) >> 8;
-		texB = (fpMul16_8_16(previousB, 255 - texA) + fpMul8_8_16(texB, texA)) >> 8;
+		texR = satAdd(fpMul(sat16_to_8(previousR), 255 - texA), fpMul(texR, texA));
+		texG = satAdd(fpMul(sat16_to_8(previousG), 255 - texA), fpMul(texG, texA));
+		texB = satAdd(fpMul(sat16_to_8(previousB), 255 - texA), fpMul(texB, texA));
+		texA = sat16_to_8(previousA);
 		break;
 	}
 	case TGL_ADD:
 	{
 		// GL_RGB: Cp + Cs | Ap
 		// GL_RGB: Cp + Cs | ApAs
-		texA = fpMul16_8_8(previousA, texA);
-		texR = (previousR >> ZB_POINT_ALPHA_FRAC_BITS) + texR;
-		texG = (previousG >> ZB_POINT_ALPHA_FRAC_BITS) + texG;
-		texB = (previousB >> ZB_POINT_ALPHA_FRAC_BITS) + texB;
+		texA = fpMul(sat16_to_8(previousA), texA);
+		texR = satAdd(sat16_to_8(previousR), texR);
+		texG = satAdd(sat16_to_8(previousG), texG);
+		texB = satAdd(sat16_to_8(previousB), texB);
 		break;
 	}
 	case TGL_COMBINE:
@@ -415,14 +419,14 @@ void FrameBuffer::applyTextureEnvironment(
 			texB = arg0.b;
 			break;
 		case TGL_MODULATE:
-			texR = fpMul8_8_8(arg0.r, arg1.r);
-			texG = fpMul8_8_8(arg0.g, arg1.g);
-			texB = fpMul8_8_8(arg0.b, arg1.b);
+			texR = fpMul(arg0.r, arg1.r);
+			texG = fpMul(arg0.g, arg1.g);
+			texB = fpMul(arg0.b, arg1.b);
 			break;
 		case TGL_ADD:
-			texR = arg0.r + arg1.r;
-			texG = arg0.g + arg1.g;
-			texB = arg0.b + arg1.b;
+			texR = satAdd(arg0.r, arg1.r);
+			texG = satAdd(arg0.g, arg1.g);
+			texB = satAdd(arg0.b, arg1.b);
 			break;
 		default:
 			assert(false && "Invalid texture environment color combine");
@@ -434,10 +438,10 @@ void FrameBuffer::applyTextureEnvironment(
 			texA = arg0.a;
 			break;
 		case TGL_MODULATE:
-			texA = fpMul8_8_8(arg0.a, arg1.a);
+			texA = fpMul(arg0.a, arg1.a);
 			break;
 		case TGL_ADD:
-			texA = arg0.a + arg1.a;
+			texA = satAdd(arg0.a, arg1.a);
 			break;
 		default:
 			assert(false && "Invalid texture environment alpha combine");

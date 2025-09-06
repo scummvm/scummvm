@@ -34,7 +34,7 @@ public:
 	// these two functions use RGBA order instead of ARGB to make it consistent with tglColor4ub which we also call
 
     void drawPixel(byte texR, byte texG, byte texB, byte texA) {
-		const float S = 1.0f;
+		const float S = 10.0f;
         const byte texData[] = { texR, texG, texB, texA };
         TGLuint texture;
         tglGenTextures(1, &texture);
@@ -64,30 +64,30 @@ public:
 
     void testModulate() {
         // no tglTexEnvi setup because TGL_MODULATE should be the default
-        tglColor4ub(255, 255, 255, 128);
-        drawPixel(255, 128, 0, 255);
-        checkOutput(255, 128, 0, 128);
+        tglColor4ub(255, 255, 255, 127);
+        drawPixel(255, 127, 0, 255);
+        checkOutput(255, 127, 0, 127);
     }
 
     void testReplace() {
         tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_REPLACE);
-        tglColor4ub(255, 255, 255, 128);
-        drawPixel(255, 128, 0, 255);
-        checkOutput(255, 128, 0, 255);
+        tglColor4ub(255, 255, 255, 127);
+        drawPixel(255, 127, 0, 255);
+        checkOutput(255, 127, 0, 255);
     }
 
     void testDecal() {
         tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_DECAL);
         tglColor4ub(100, 200, 255, 123);
         drawPixel(200, 100, 0, 192);
-        checkOutput(175, 125, 67, 123);
+        checkOutput(176, 125, 63, 123);
     }
 
     void testAdd() {
         tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_ADD);
-        tglColor4ub(50, 100, 150, 100);
+        tglColor4ub(50, 100, 150, 127);
         drawPixel(25, 50, 150, 200);
-        checkOutput(75, 150, 255, (100 + 200) >> 8);
+        checkOutput(75, 150, 255, 100);
         // attention: TGL_ADD still modulates alpha
     }
 
@@ -147,9 +147,9 @@ public:
         setCombineMode(TGL_MODULATE, TGL_MODULATE);
         setCombineArg(0, TGL_TEXTURE, TGL_SRC_COLOR, TGL_TEXTURE, TGL_SRC_ALPHA);
         setCombineArg(1, TGL_PRIMARY_COLOR, TGL_SRC_COLOR, TGL_PRIMARY_COLOR, TGL_SRC_ALPHA);
-        tglColor4ub(255, 255, 255, 128);
-        drawPixel(255, 128, 0, 255);
-        checkOutput(255, 128, 0, 128);
+        tglColor4ub(255, 255, 255, 127);
+        drawPixel(255, 127, 0, 255);
+        checkOutput(255, 127, 0, 127);
     }
 
     void testCombineAdd() {
