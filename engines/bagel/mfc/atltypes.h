@@ -49,8 +49,8 @@ public:
 	CSize(SIZE initSize);
 	// create from a point
 	CSize(POINT initPt);
-	// create from a DWORD: cx = LOWORD(dw) cy = HIWORD(dw)
-	CSize(DWORD dwSize);
+	// create from a uint32: cx = LOWORD(dw) cy = HIWORD(dw)
+	CSize(uint32 dwSize);
 
 	// Operations
 	BOOL operator==(SIZE size) const;
@@ -310,7 +310,7 @@ inline CSize::CSize(POINT initPt) {
 	*(POINT *)this = initPt;
 }
 
-inline CSize::CSize(DWORD dwSize) {
+inline CSize::CSize(uint32 dwSize) {
 	cx = (short)LOWORD(dwSize);
 	cy = (short)HIWORD(dwSize);
 }

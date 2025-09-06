@@ -37,7 +37,7 @@ ON_WM_KILLFOCUS()
 ON_WM_TIMER()
 END_MESSAGE_MAP()
 
-BOOL CEdit::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
+BOOL CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
 	return CWnd::Create("EDIT", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }

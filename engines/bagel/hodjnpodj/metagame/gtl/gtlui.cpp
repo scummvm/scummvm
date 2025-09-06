@@ -45,7 +45,7 @@ namespace Gtl {
 #define PODJ_SOUND_END      64000
 #define PODJS_STARS_FILE    ".\\ART\\PSTAR.BMP"
 
-extern DWORD GetPhysicalMemory(void);
+extern uint32 GetPhysicalMemory(void);
 
 
 CNode::CNode() {

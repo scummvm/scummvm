@@ -81,7 +81,7 @@ using GrandTour::LPGRANDTRSTRUCT;
 typedef HWND (FAR PASCAL *FPZOOMFUNCT)(HWND, BOOL);
 typedef HWND (FAR PASCAL *FPGTFUNCT)(HWND, LPGRANDTRSTRUCT);
 typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, BOOL);
-typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
+typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)(void);
 
 // Flags when a .dll in the original is loaded
 
@@ -94,8 +94,8 @@ BOOL            bScrollingEnabled = TRUE;
 BOOL            bSlowCPU = FALSE;
 BOOL            bLowMemory = FALSE;
 
-DWORD           dwFreeSpaceMargin;
-DWORD           dwFreePhysicalMargin;
+uint32           dwFreeSpaceMargin;
+uint32           dwFreePhysicalMargin;
 
 int                     nMidiVolume;
 int                     nWaveVolume;
@@ -375,7 +375,7 @@ BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
 
 BOOL CHodjPodjWindow::CheckLowMemory(void) {
 	BOOL bMemoryProblem;
-	DWORD dwFreeSpace;
+	uint32 dwFreeSpace;
 
 	bMemoryProblem = FALSE;
 

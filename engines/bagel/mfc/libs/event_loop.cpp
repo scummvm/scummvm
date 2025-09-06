@@ -490,7 +490,7 @@ MMRESULT EventLoop::joyReleaseCapture(UINT uJoyID) {
 }
 
 UINT_PTR EventLoop::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
 	if (!nIDEvent)
 		nIDEvent = ++_timerIdCtr;
 
@@ -538,7 +538,7 @@ void EventLoop::triggerTimers() {
 }
 
 EventLoop::TimerEntry::TimerEntry(HWND hWnd, UINT_PTR idEvent,
-		DWORD interval, TimerProc callback) :
+		uint32 interval, TimerProc callback) :
 		_hWnd(hWnd), _idEvent(idEvent),
 		_interval(interval), _callback(callback) {
 	_nextTriggerTime = g_system->getMillis() + interval;

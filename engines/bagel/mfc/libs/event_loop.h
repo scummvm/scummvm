@@ -37,7 +37,7 @@ typedef void(*TimerProc)(
 	HWND hwnd,       // handle of window associated with the timer (can be NULL)
 	UINT uMsg,       // WM_TIMER message (always WM_TIMER)
 	UINT_PTR idEvent,// timer identifier (from SetTimer or returned value)
-	DWORD dwTime     // system time when the callback was called (in milliseconds)
+	uint32 dwTime     // system time when the callback was called (in milliseconds)
 );
 
 typedef Common::KeyCode(*KeybindProc)(int key);
@@ -71,13 +71,13 @@ class EventLoop {
 	struct TimerEntry {
 		HWND _hWnd = nullptr;
 		UINT_PTR _idEvent = 0;
-		DWORD _interval = 0;
-		DWORD _nextTriggerTime = 0;
+		uint32 _interval = 0;
+		uint32 _nextTriggerTime = 0;
 		TimerProc _callback = nullptr;
 
 		TimerEntry() {}
 		TimerEntry(HWND hWnd, UINT_PTR idEvent,
-			DWORD interval, TimerProc callback);
+			uint32 interval, TimerProc callback);
 	};
 	typedef Common::List<TimerEntry> TimerList;
 
@@ -253,7 +253,7 @@ public:
 	}
 
 	UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD));
+		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32));
 	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 
 	void pause();

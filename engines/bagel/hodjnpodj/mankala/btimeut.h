@@ -52,7 +52,7 @@ private:
 	BOOL DelayMs(UINT uMs) ;
 
 	static void DelayMsCallback(HWND /* hWnd */,
-		UINT /* uMsg */, UINT_PTR /* uTimerId */, DWORD /* dwTime */) ;
+		UINT /* uMsg */, UINT_PTR /* uTimerId */, uint32 /* dwTime */) ;
 };
 
 

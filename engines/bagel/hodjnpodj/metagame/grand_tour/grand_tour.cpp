@@ -1067,7 +1067,7 @@ void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CRect   rTempRect;
 	char    cAlpha[27];
 	int     i;
-	DWORD       dwTextWidth;
+	uint32       dwTextWidth;
 	int         nLeft = SCROLL_LEFT;
 	int         nTop = SCROLL_TOP;
 	CDC *pDC = nullptr;

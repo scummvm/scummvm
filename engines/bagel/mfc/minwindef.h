@@ -121,16 +121,16 @@ typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 #endif
 
 #define MAKEWORD(a, b)      ((WORD)(((BYTE)(((DWORD_PTR)(a)) & 0xff)) | ((WORD)((BYTE)(((DWORD_PTR)(b)) & 0xff))) << 8))
-#define MAKELONG(a, b)      ((LONG)(((WORD)(((DWORD_PTR)(a)) & 0xffff)) | ((DWORD)((WORD)(((DWORD_PTR)(b)) & 0xffff))) << 16))
+#define MAKELONG(a, b)      ((LONG)(((WORD)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((WORD)(((DWORD_PTR)(b)) & 0xffff))) << 16))
 #define LOWORD(l)           ((WORD)(((DWORD_PTR)(l)) & 0xffff))
 #define HIWORD(l)           ((((DWORD_PTR)(l)) >> 16))
 #define LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) & 0xff))
 #define HIBYTE(w)           ((BYTE)((((DWORD_PTR)(w)) >> 8) & 0xff))
 
 #define POINTTOPOINTS(pt)      (MAKELONG((short)((pt).x), (short)((pt).y)))
-#define MAKEWPARAM(l, h)      ((WPARAM)(DWORD)MAKELONG(l, h))
-#define MAKELPARAM(l, h)      ((LPARAM)(DWORD)MAKELONG(l, h))
-#define MAKELRESULT(l, h)     ((LRESULT)(DWORD)MAKELONG(l, h))
+#define MAKEWPARAM(l, h)      ((WPARAM)(uint32)MAKELONG(l, h))
+#define MAKELPARAM(l, h)      ((LPARAM)(uint32)MAKELONG(l, h))
+#define MAKELRESULT(l, h)     ((LRESULT)(uint32)MAKELONG(l, h))
 
 typedef void *HANDLE;
 typedef HANDLE NEAR *SPHANDLE;
@@ -230,8 +230,8 @@ inline bool RectsIntersect(const RECT &r1, const RECT &r2) {
 }
 
 typedef struct _FILETIME {
-	DWORD dwLowDateTime;
-	DWORD dwHighDateTime;
+	uint32 dwLowDateTime;
+	uint32 dwHighDateTime;
 } FILETIME, *PFILETIME, *LPFILETIME;
 
 typedef struct _SYSTEMTIME {
@@ -262,7 +262,7 @@ typedef struct tagMSG {
 	UINT        message = 0;
 	WPARAM      wParam = 0;
 	LPARAM      lParam = 0;
-	DWORD       time = 0;
+	uint32       time = 0;
 	POINT       pt;
 
 	// Extra fields for TranslateMessage convenience

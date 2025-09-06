@@ -252,7 +252,7 @@ CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int
  *
  ************************************************************************/
 
-BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, DWORD dwMode) {
+BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, uint32 dwMode) {
 	BOOL        bSuccess = FALSE;
 	CDC         *pWorkDC = nullptr;
 	CPalette    *pPalOld = nullptr,
@@ -396,7 +396,7 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 			pWorkOld = (*pWorkDC).SelectObject(pWork);  // ... their contexts
 
 			dstRect.SetRect(0, 0, dx, dy);
-			BltBitmap(pImageDC, pPalette, pBitmap, pSrcRect, &dstRect, (DWORD) SRCCOPY);
+			BltBitmap(pImageDC, pPalette, pBitmap, pSrcRect, &dstRect, (uint32) SRCCOPY);
 
 			if ((pMaskOld != nullptr) &&                   // verify so far so good
 			        (pWorkOld != nullptr)) {

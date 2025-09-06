@@ -30,7 +30,7 @@ namespace Metagame {
 BOOL bTimeDelayPassed = TRUE ;
 
 void CALLBACK DelayMsCallback(HWND /* hWnd */,
-                              UINT /* uMsg */, UINT /* uTimerId */, DWORD /* dwTime */);
+                              UINT /* uMsg */, UINT /* uTimerId */, uint32 /* dwTime */);
 
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
@@ -66,7 +66,7 @@ cleanup:
 
 ///* DelayMsCallback -- SetTimer callback routine for DelayMs
 void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
-                                UINT /* uMsg */, UINT_PTR /* uTimerId */, DWORD /* dwTime */)
+                                UINT /* uMsg */, UINT_PTR /* uTimerId */, uint32 /* dwTime */)
 // hWnd -- handle of window (always nullptr in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier

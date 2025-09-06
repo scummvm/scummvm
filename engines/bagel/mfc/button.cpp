@@ -35,7 +35,7 @@ ON_MESSAGE(BM_CLICK, CButton::OnBnClicked)
 ON_MESSAGE(BM_SETCHECK, CButton::OnBnSetCheck)
 END_MESSAGE_MAP()
 
-BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
+BOOL CButton::Create(LPCTSTR lpszCaption, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID) {
 	return CWnd::Create("BUTTON", lpszCaption, dwStyle, rect,
 		pParentWnd, nID);

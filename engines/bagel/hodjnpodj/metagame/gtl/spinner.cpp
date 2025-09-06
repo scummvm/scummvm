@@ -272,7 +272,7 @@ void CSpinner::SetupSpinner(void) {
 
 int CSpinner::Animate(int nX, int nY) {
 	int     nValue = -1;
-	DWORD   goal;
+	uint32   goal;
 
 	m_nX = nX;                                      // establish position
 	m_nY = nY;
@@ -410,11 +410,11 @@ int CSpinner::Spin(void) {
 
 	i = nValue / 10;                                    // update spinner with actual value
 	srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-	bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstARect, (DWORD) SRCCOPY);
+	bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstARect, (uint32) SRCCOPY);
 	if (bSuccess) {
 		j = nValue % 10;
 		srcRect.SetRect(j * SPINNER_SLOT_DDX, 0, (j + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-		bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD) SRCCOPY);
+		bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (uint32) SRCCOPY);
 	}
 
 	app->pause();

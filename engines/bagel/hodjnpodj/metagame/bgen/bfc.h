@@ -145,8 +145,8 @@ public:
 	// This field does NOT need to be save in the
 	// .SAV file.
 
-	DWORD   m_dwFreeSpaceMargin;
-	DWORD   m_dwFreePhysicalMargin;
+	uint32   m_dwFreeSpaceMargin;
+	uint32   m_dwFreePhysicalMargin;
 
 	int m_nInstallationCode;
 	char m_chHomePath[PATHSPECSIZE];

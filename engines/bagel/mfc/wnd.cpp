@@ -86,7 +86,7 @@ CWnd::~CWnd() {
 }
 
 BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-	DWORD dwStyle, const RECT &rect, CWnd *pParentWnd,
+	uint32 dwStyle, const RECT &rect, CWnd *pParentWnd,
 	UINT nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
 	m_nStyle = dwStyle;
@@ -133,8 +133,8 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	return true;
 }
 
-BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, DWORD dwStyle,
+BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
 		LPVOID lpParam /* = nullptr */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
@@ -142,8 +142,8 @@ BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 		pParentWnd->GetSafeHwnd(), nID, lpParam);
 }
 
-BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, DWORD dwStyle,
+BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam) {
 	// Set up create structure
@@ -407,7 +407,7 @@ UINT CWnd::GetState() const {
 	return _itemState;
 }
 
-void CWnd::SetStyle(DWORD nStyle) {
+void CWnd::SetStyle(uint32 nStyle) {
 	m_nStyle = nStyle;
 	Invalidate();
 }
@@ -670,7 +670,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vWp:
 	{
-		CPoint point((DWORD)lParam);
+		CPoint point((uint32)lParam);
 		(this->*mmf.pfn_vWp)(CWnd::FromHandle((HWND)wParam), point);
 	}
 	break;
@@ -724,7 +724,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_wp:
 	{
-		CPoint point((DWORD)lParam);
+		CPoint point((uint32)lParam);
 		lResult = (this->*mmf.pfn_wp)(point);
 	}
 	break;
@@ -747,7 +747,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 
 	case AfxSig_vwp:
 	{
-		CPoint point((DWORD)lParam);
+		CPoint point((uint32)lParam);
 		(this->*mmf.pfn_vwp)(wParam, point);
 		break;
 	}
@@ -1102,7 +1102,7 @@ LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
 }
 
 UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
 	return MFC::SetTimer(m_hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 

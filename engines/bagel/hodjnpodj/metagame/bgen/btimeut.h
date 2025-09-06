@@ -56,7 +56,7 @@ private:
 	 * @param dwTime    current system time
 	 */
 	static void DelayMsCallback(HWND hWnd, UINT uMsg,
-	    UINT_PTR uTimerId, DWORD dwTime);
+	    UINT_PTR uTimerId, uint32 dwTime);
 };
 
 } // namespace Metagame

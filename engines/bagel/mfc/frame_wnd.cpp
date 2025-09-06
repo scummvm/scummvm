@@ -88,7 +88,7 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 	OnUpdateFrameTitle(TRUE);
 }
 
-BOOL CFrameWnd::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
+BOOL CFrameWnd::LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
 	CWnd *pParentWnd, CCreateContext *pContext) {
 	assert(m_nIDHelp == 0 || m_nIDHelp == nIDResource);
 	m_nIDHelp = nIDResource;    // ID for help context (+HID_BASE_RESOURCE)
@@ -120,9 +120,9 @@ BOOL CFrameWnd::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
 
 
 BOOL CFrameWnd::Create(LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, DWORD dwStyle,
+		LPCSTR lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd,
-		LPCSTR lpszMenuName, DWORD dwExStyle,
+		LPCSTR lpszMenuName, uint32 dwExStyle,
 		CCreateContext *pContext) {
 	HMENU hMenu = nullptr;
 	if (lpszMenuName != nullptr) {

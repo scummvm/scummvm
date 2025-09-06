@@ -1114,7 +1114,7 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 
 
 BOOL CMainWindow::wait_awhile(int nHundSecs) {                      // Given time is in hundreths of sec
-	DWORD   goal;
+	uint32   goal;
 	MSG     msg;
 
 	goal = (nHundSecs * 10) + GetTickCount();                                // time is in millisecs

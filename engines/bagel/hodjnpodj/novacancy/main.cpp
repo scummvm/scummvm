@@ -552,8 +552,8 @@ void CMainWindow::PlayGame() {
 
 		AnimateDice();
 #pragma warning(disable: 4135)
-		m_LDie = (BYTE)(((DWORD)(UINT)brand() * 6L) / ((DWORD)(UINT)RAND_MAX + 1L)) + 1;
-		m_RDie = (BYTE)(((DWORD)(UINT)brand() * 6L) / ((DWORD)(UINT)RAND_MAX + 1L)) + 1;
+		m_LDie = (BYTE)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
+		m_RDie = (BYTE)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
 #pragma warning(default: 4135)
 		PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie], \
 		                  m_rRDie.left, m_rRDie.top, (int) m_rRDie.Width(), (int) m_rRDie.Height());
@@ -669,7 +669,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	short jj;
 	BOOL AllFxd,                       //flag to indicate all fixed (locked) doors.
 	     AllClosed;                //flag to indicate all closed doors.
-	DWORD V;
+	uint32 V;
 	CDC* pDC;
 	short int cel;
 	CSprite* pBottleSprite,
@@ -800,9 +800,9 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 				/* randomise throws */
 #pragma warning(disable: 4135)
-				V = (DWORD)((UINT)RAND_MAX + 1);
-				m_LDie = (BYTE)(((DWORD)(UINT)brand() * 6L) / V) +1;                                    //  left Die
-				m_RDie = m_bOneDieCase ? 0 : (BYTE)(((DWORD)(UINT)brand() * 6) / V) +1;       //    right Die
+				V = (uint32)((UINT)RAND_MAX + 1);
+				m_LDie = (BYTE)(((uint32)(UINT)brand() * 6L) / V) +1;                                    //  left Die
+				m_RDie = m_bOneDieCase ? 0 : (BYTE)(((uint32)(UINT)brand() * 6) / V) +1;       //    right Die
 #pragma warning(default: 4135)
 
 				pDC = GetDC();

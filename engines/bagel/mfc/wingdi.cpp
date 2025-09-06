@@ -166,7 +166,7 @@ UINT RealizePalette(HDC hdc) {
 	return 256;
 }
 
-HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
+HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, uint32 flInit,
 		CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
 	CBitmap::Impl *bitmap = new CBitmap::Impl();
 
@@ -241,7 +241,7 @@ int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
 }
 
 BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
-        HDC hdcSrc, int xSrc, int ySrc, DWORD rop) {
+        HDC hdcSrc, int xSrc, int ySrc, uint32 rop) {
 	CDC::Impl *srcDc = (CDC::Impl *)hdcSrc;
 	CDC::Impl *destDc = (CDC::Impl *)hdc;
 	CBitmap::Impl *src = (CBitmap::Impl *)srcDc->_bitmap;
@@ -256,7 +256,7 @@ BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 }
 
 BOOL StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
-                HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop) {
+                HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, uint32 rop) {
 	CDC *srcDC = CDC::FromHandle(hdcSrc);
 	CDC *destDC = CDC::FromHandle(hdcDest);
 	return destDC->StretchBlt(xDest, yDest, wDest, hDest,
@@ -270,7 +270,7 @@ int SetStretchBltMode(HDC hdc, int mode) {
 
 int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
         int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-        CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop) {
+        CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, uint32 rop) {
 	error("TODO: StretchDIBits");
 }
 
@@ -419,7 +419,7 @@ BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
 	error("TODO: CheckRadioButton");
 }
 
-DWORD GetSysColor(int nIndex) {
+uint32 GetSysColor(int nIndex) {
 	switch (nIndex) {
 	case COLOR_3DHIGHLIGHT:
 		return RGB(255, 255, 255);

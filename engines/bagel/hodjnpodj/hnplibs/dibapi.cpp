@@ -270,11 +270,11 @@ LPSTR FindDIBBits(HDIB hDIB) {
 	return (LPSTR)hDIB->getPixels();
 }
 
-DWORD DIBWidth(HDIB hDIB) {
+uint32 DIBWidth(HDIB hDIB) {
 	return hDIB->w;
 }
 
-DWORD DIBHeight(HDIB hDIB) {
+uint32 DIBHeight(HDIB hDIB) {
 	return hDIB->h;
 }
 
@@ -370,8 +370,8 @@ HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {
 //---------------------------------------------------------------------
 
 void WINAPI InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
-                                 DWORD dwWidth,
-                                 DWORD dwHeight,
+                                 uint32 dwWidth,
+                                 uint32 dwHeight,
                                  int nBPP) {
 	memset(lpBmInfoHdr, 0, sizeof(BITMAPINFOHEADER));
 
@@ -416,7 +416,7 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 	BYTE *lpCopy;
 	BYTE *lp;
 	HANDLE hCopy;
-	DWORD dwLen;
+	uint32 dwLen;
 
 	if (h == nullptr)
 		return nullptr;

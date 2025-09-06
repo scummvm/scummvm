@@ -65,7 +65,7 @@ cleanup:
 }
 
 void CTimeUtil::DelayMsCallback(HWND hWnd, UINT uMsg,
-                                UINT_PTR uTimerId, DWORD dwTime) {
+                                UINT_PTR uTimerId, uint32 dwTime) {
 	JXENTER(::DelayMsCallback) ;
 	//int iError = 0 ;      // error code
 	bTimeDelayPassed = TRUE ;   // elapsed time passed

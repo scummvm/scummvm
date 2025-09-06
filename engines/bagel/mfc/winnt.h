@@ -35,7 +35,6 @@ typedef uint16 WORD;
 typedef uint16 USHORT;
 typedef long LONG;
 typedef unsigned long ULONG;
-typedef uint32 DWORD;
 typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
 typedef size_t SIZE_T;
@@ -50,8 +49,8 @@ typedef int *LPINT;
 typedef WORD *PWORD;
 typedef WORD *LPWORD;
 typedef long *LPLONG;
-typedef DWORD *PDWORD;
-typedef DWORD *LPDWORD;
+typedef uint32 *PDWORD;
+typedef uint32 *LPDWORD;
 typedef void *LPVOID;
 typedef const void *LPCVOID;
 
@@ -77,7 +76,7 @@ typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;
 
-#define RGB_COL(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
+#define RGB_COL(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((uint32)(BYTE)(b))<<16)))
 #define PALETTERGB(r,g,b)   (0x02000000 | RGB_COL(r,g,b))
 #define RGB(r,g,b) PALETTERGB(r,g,b)
 #define IS_RGB(VAL) ((VAL & 0x02000000) != 0)
@@ -107,11 +106,11 @@ typedef HANDLE *PHANDLE;
 typedef long HRESULT;
 
 typedef char CCHAR;
-typedef DWORD LCID;
+typedef uint32 LCID;
 typedef PDWORD PLCID;
 typedef WORD   LANGID;
 
-typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
+typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 
 #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
@@ -231,8 +230,8 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define FILE_ACTION_MODIFIED                0x00000003
 #define FILE_ACTION_RENAMED_OLD_NAME        0x00000004
 #define FILE_ACTION_RENAMED_NEW_NAME        0x00000005
-#define MAILSLOT_NO_MESSAGE             ((DWORD)-1)
-#define MAILSLOT_WAIT_FOREVER           ((DWORD)-1)
+#define MAILSLOT_NO_MESSAGE             ((uint32)-1)
+#define MAILSLOT_WAIT_FOREVER           ((uint32)-1)
 #define FILE_CASE_SENSITIVE_SEARCH          0x00000001
 #define FILE_CASE_PRESERVED_NAMES           0x00000002
 #define FILE_UNICODE_ON_DISK                0x00000004

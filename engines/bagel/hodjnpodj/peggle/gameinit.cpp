@@ -44,11 +44,11 @@ int syscolorelements[SYSCOLORS] = {
 
 
 // Place to save Windows colors being altered
-DWORD oldsyscolorvalues[SYSCOLORS];
+uint32 oldsyscolorvalues[SYSCOLORS];
 
 
 // 8-Bit 256 color parameter values for Windows
-DWORD syscolorvalues_8bit[SYSCOLORS] = {
+uint32 syscolorvalues_8bit[SYSCOLORS] = {
 	RGB(207, 103, 123),
 	RGB(187, 147, 107),
 	RGB(147, 99, 79),
@@ -56,7 +56,7 @@ DWORD syscolorvalues_8bit[SYSCOLORS] = {
 };
 
 // Non-Palette oriented color parameter values for Windows
-DWORD syscolorvalues_moby[SYSCOLORS] = {
+uint32 syscolorvalues_moby[SYSCOLORS] = {
 	RGB(207, 103, 123),
 	RGB(187, 147, 107),
 	RGB(147, 99, 79),

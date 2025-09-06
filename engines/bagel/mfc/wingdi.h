@@ -27,7 +27,7 @@
 namespace Bagel {
 namespace MFC {
 
-#define PALETTEINDEX(i)     ((COLORREF)(0x01000000 | (DWORD)(WORD)(i)))
+#define PALETTEINDEX(i)     ((COLORREF)(0x01000000 | (uint32)(WORD)(i)))
 
 /*
  * Class styles
@@ -118,23 +118,23 @@ namespace MFC {
 #define RC_DEVBITS          0x8000
 
 /* Ternary raster operations */
-#define SRCCOPY             (DWORD)0x00CC0020 /* dest = source                   */
-#define SRCPAINT            (DWORD)0x00EE0086 /* dest = source OR dest           */
-#define SRCAND              (DWORD)0x008800C6 /* dest = source AND dest          */
-#define SRCINVERT           (DWORD)0x00660046 /* dest = source XOR dest          */
-#define SRCERASE            (DWORD)0x00440328 /* dest = source AND (NOT dest )   */
-#define NOTSRCCOPY          (DWORD)0x00330008 /* dest = (NOT source)             */
-#define NOTSRCERASE         (DWORD)0x001100A6 /* dest = (NOT src) AND (NOT dest) */
-#define MERGECOPY           (DWORD)0x00C000CA /* dest = (source AND pattern)     */
-#define MERGEPAINT          (DWORD)0x00BB0226 /* dest = (NOT source) OR dest     */
-#define PATCOPY             (DWORD)0x00F00021 /* dest = pattern                  */
-#define PATPAINT            (DWORD)0x00FB0A09 /* dest = DPSnoo                   */
-#define PATINVERT           (DWORD)0x005A0049 /* dest = pattern XOR dest         */
-#define DSTINVERT           (DWORD)0x00550009 /* dest = (NOT dest)               */
-#define BLACKNESS           (DWORD)0x00000042 /* dest = BLACK                    */
-#define WHITENESS           (DWORD)0x00FF0062 /* dest = WHITE                    */
-#define NOMIRRORBITMAP      (DWORD)0x80000000 /* Do not Mirror the bitmap in this call */
-#define CAPTUREBLT          (DWORD)0x40000000 /* Include layered windows */
+#define SRCCOPY             (uint32)0x00CC0020 /* dest = source                   */
+#define SRCPAINT            (uint32)0x00EE0086 /* dest = source OR dest           */
+#define SRCAND              (uint32)0x008800C6 /* dest = source AND dest          */
+#define SRCINVERT           (uint32)0x00660046 /* dest = source XOR dest          */
+#define SRCERASE            (uint32)0x00440328 /* dest = source AND (NOT dest )   */
+#define NOTSRCCOPY          (uint32)0x00330008 /* dest = (NOT source)             */
+#define NOTSRCERASE         (uint32)0x001100A6 /* dest = (NOT src) AND (NOT dest) */
+#define MERGECOPY           (uint32)0x00C000CA /* dest = (source AND pattern)     */
+#define MERGEPAINT          (uint32)0x00BB0226 /* dest = (NOT source) OR dest     */
+#define PATCOPY             (uint32)0x00F00021 /* dest = pattern                  */
+#define PATPAINT            (uint32)0x00FB0A09 /* dest = DPSnoo                   */
+#define PATINVERT           (uint32)0x005A0049 /* dest = pattern XOR dest         */
+#define DSTINVERT           (uint32)0x00550009 /* dest = (NOT dest)               */
+#define BLACKNESS           (uint32)0x00000042 /* dest = BLACK                    */
+#define WHITENESS           (uint32)0x00FF0062 /* dest = WHITE                    */
+#define NOMIRRORBITMAP      (uint32)0x80000000 /* Do not Mirror the bitmap in this call */
+#define CAPTUREBLT          (uint32)0x40000000 /* Include layered windows */
 
 /* StretchBlt() Modes */
 #define BLACKONWHITE                 1
@@ -624,17 +624,17 @@ enum {
 
 
 typedef struct tagBITMAPINFOHEADER {
-	DWORD      biSize;
+	uint32      biSize;
 	LONG       biWidth;
 	LONG       biHeight;
 	WORD       biPlanes;
 	WORD       biBitCount;
-	DWORD      biCompression;
-	DWORD      biSizeImage;
+	uint32      biCompression;
+	uint32      biSizeImage;
 	LONG       biXPelsPerMeter;
 	LONG       biYPelsPerMeter;
-	DWORD      biClrUsed;
-	DWORD      biClrImportant;
+	uint32      biClrUsed;
+	uint32      biClrImportant;
 } BITMAPINFOHEADER, FAR *LPBITMAPINFOHEADER,
 *PBITMAPINFOHEADER;
 
@@ -662,7 +662,7 @@ typedef struct tagBITMAP {
 } BITMAP, *PBITMAP, NEAR *NPBITMAP, FAR *LPBITMAP;
 
 typedef struct tagBITMAPCOREHEADER {
-	DWORD   bcSize;                 /* used to get to color table */
+	uint32   bcSize;                 /* used to get to color table */
 	WORD    bcWidth;
 	WORD    bcHeight;
 	WORD    bcPlanes;
@@ -747,7 +747,7 @@ extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
 extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-                       DWORD flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
+                       uint32 flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
 extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
                      LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
 
@@ -756,13 +756,13 @@ extern HGDIOBJ GetStockObject(int i);
 extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
 extern UINT RealizePalette(HDC hdc);
 extern BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
-	HDC hdcSrc, int xSrc, int ySrc, DWORD rop);
+	HDC hdcSrc, int xSrc, int ySrc, uint32 rop);
 extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
-                       int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop);
+                       int wDest, int hDest, HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, uint32 rop);
 extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-                         CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, DWORD rop);
+                         CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, uint32 rop);
 extern int GetTextExtent(HDC hdc, LPCSTR text, size_t len);
 extern BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm);
 extern intptr GetWindowWord(HWND hWnd, int nIndex);
@@ -799,7 +799,7 @@ extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
 extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
                              int nIDLastButton, int nIDCheckButton);
 
-extern DWORD GetSysColor(int nIndex);
+extern uint32 GetSysColor(int nIndex);
 extern HBRUSH GetSysColorBrush(int nIndex);
 extern BOOL DestroyMenu(HMENU hMenu);
 extern void SetActiveWindow(HWND hWnd);

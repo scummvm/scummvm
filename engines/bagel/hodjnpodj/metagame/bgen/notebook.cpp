@@ -82,7 +82,7 @@ static  const char *lpsPlaceSoundSpec = nullptr;      // spec for place sound fi
 static  CFont *pNoteFont = nullptr;              // font to use for displaying notebook text
 //static  char        chPathName[128];                // buffer to hold path name of the notebook file
 //static  CFile *pInfoFile = nullptr;              // the notebook file
-//static  DWORD       nInfoFileSize = 0;              // size of notebook file
+//static  uint32       nInfoFileSize = 0;              // size of notebook file
 //static  BOOL        bInfoEOF = FALSE;               // whether end-of-file has been reached
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active

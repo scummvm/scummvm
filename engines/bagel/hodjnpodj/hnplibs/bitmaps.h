@@ -91,7 +91,7 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, int nBlock
 BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette *pPalette, int nBlockSize);
 BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette *pPalette, int nBlockSize, int nX, int nY, int nWidth, int nHeight);
 
-BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, DWORD nMode);
+BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, CRect *pDstRect, uint32 nMode);
 BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, const int x, const int y);
 
 CSize GetBitmapSize(CBitmap *pBitmap);

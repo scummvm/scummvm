@@ -115,9 +115,9 @@ static  CDC *pScrollDC = nullptr,              // device context for the scroll 
 static  CFont       *pFont = nullptr;                  // font to use for displaying rules text
 static  char        chPathName[128];                // buffer to hold path name of the rules file
 static  CFile       *pHelpFile = nullptr;              // the rules file
-static  DWORD       nHelpFileSize = 0;              // size of rules file
+static  uint32       nHelpFileSize = 0;              // size of rules file
 static  int         nHelpPage = 0;                  // current page of rules text
-static  DWORD       dwHelpPagePosition[100];        // position of each page (# chars from file start)
+static  uint32       dwHelpPagePosition[100];        // position of each page (# chars from file start)
 static  BOOL        dwHelpPageEOL[100];             // whether page starts with enforced line break
 static  BOOL        bHelpEOF = FALSE;               // whether end-of-file has been reached
 static  int         tabstop = 20 + TEXT_LEFT_MARGIN;// pixels per tab stop

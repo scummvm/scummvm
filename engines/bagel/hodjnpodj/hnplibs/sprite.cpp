@@ -2211,7 +2211,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	int     dx, dy,                                     // dimensions of context bitmaps
 	        i, j;
 	size_t  stN;
-	DWORD   dwN; //, dwByte;                               // delta sizes of work area's bitmap
+	uint32   dwN; //, dwByte;                               // delta sizes of work area's bitmap
 	BITMAP  cBitmapData;
 	int     bx, by, bdx, bdy;
 

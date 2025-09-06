@@ -172,7 +172,7 @@ void CDialog::SetParent(CWnd *wnd) {
 	m_pParentWnd = wnd;
 }
 
-DWORD CDialog::GetDefID() const {
+uint32 CDialog::GetDefID() const {
 	return _defaultId;
 }
 
@@ -180,7 +180,7 @@ void CDialog::SetDefID(UINT nID) {
 	CWnd *oldBtn;
 
 	if (_defaultId && (oldBtn = GetDlgItem(_defaultId)) != nullptr) {
-		DWORD style = oldBtn->GetStyle();
+		uint32 style = oldBtn->GetStyle();
 
 		if ((style & 0xf) != BS_OWNERDRAW) {
 			style &= ~BS_DEFPUSHBUTTON;
@@ -193,7 +193,7 @@ void CDialog::SetDefID(UINT nID) {
 	// Set new default
 	CWnd *newBtn = GetDlgItem(nID);
 	if (newBtn) {
-		DWORD style = newBtn->GetStyle();
+		uint32 style = newBtn->GetStyle();
 
 		if ((style & 0xf) != BS_OWNERDRAW) {
 			style = (style & ~0xF) | BS_DEFPUSHBUTTON;
@@ -224,7 +224,7 @@ BOOL CDialog::PreTranslateMessage(MSG *pMsg) {
 
 		// Special case: prevent multi-line edit controls from handling Enter
 		if (pFocus && pFocus->IsKindOf(RUNTIME_CLASS(CEdit))) {
-			DWORD style = pFocus->GetStyle();
+			uint32 style = pFocus->GetStyle();
 			if ((style & ES_MULTILINE) == 0) {
 				// Not a multi-line edit box - simulate default pushbutton
 				CWnd *pDefault = GetDefaultPushButton();
@@ -250,7 +250,7 @@ BOOL CDialog::PreTranslateMessage(MSG *pMsg) {
 CWnd *CDialog::GetDefaultPushButton() const {
 	for (auto &child : _children) {
 		CWnd *pChild = child._value;
-		DWORD style = pChild->GetStyle();
+		uint32 style = pChild->GetStyle();
 		if ((style & BS_DEFPUSHBUTTON) && pChild->GetDlgCtrlID() == IDOK) {
 			return pChild;
 		}

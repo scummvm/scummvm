@@ -63,7 +63,7 @@ SIZE_T GlobalSize(HGLOBAL hMem) {
 	return ((MemBlock *)hMem)->_size;
 }
 
-SIZE_T GlobalCompact(DWORD dwMinFree) {
+SIZE_T GlobalCompact(uint32 dwMinFree) {
 	// No implementation
 	return 999999;
 }
@@ -89,9 +89,9 @@ UINT GetPrivateProfileInt(LPCSTR lpAppName,
 	return AfxGetApp()->GetProfileInt(lpAppName, lpKeyName, nDefault);
 }
 
-extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
+extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
         LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR lpReturnedString,
-        DWORD  nSize, LPCSTR lpFileName) {
+        uint32  nSize, LPCSTR lpFileName) {
 	CString str = AfxGetApp()->GetProfileString(lpAppName,
 		lpKeyName, lpDefault);
 	Common::strcpy_s(lpReturnedString, nSize, str.c_str());
@@ -139,7 +139,7 @@ LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 }
 
 UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK * lpfnTimer)(HWND, UINT, UINT_PTR, DWORD)) {
+		void (CALLBACK * lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
 	return AfxGetApp()->SetTimer(hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
@@ -151,7 +151,7 @@ void Sleep(UINT milli) {
 	g_system->delayMillis(milli);
 }
 
-DWORD GetTickCount() {
+uint32 GetTickCount() {
 	return g_system->getMillis();
 }
 

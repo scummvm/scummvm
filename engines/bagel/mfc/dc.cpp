@@ -322,13 +322,13 @@ BOOL CDC::LPtoDP(RECT *lpRect) {
 }
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-        int xSrc, int ySrc, DWORD dwRop) {
+        int xSrc, int ySrc, uint32 dwRop) {
 	impl()->bitBlt(x, y, nWidth, nHeight, pSrcDC, xSrc, ySrc, dwRop);
 	return true;
 }
 
 BOOL CDC::StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-        int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+        int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop) {
 	impl()->stretchBlt(x, y, nWidth, nHeight, pSrcDC,
 		xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
 	return true;
@@ -972,7 +972,7 @@ void CDC::Impl::ellipse(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-		int xSrc, int ySrc, DWORD dwRop) {
+		int xSrc, int ySrc, uint32 dwRop) {
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
 
 	Gfx::Surface dummySrc;
@@ -991,7 +991,7 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 }
 
 void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
+	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop) {
 	Gfx::Surface *src = pSrcDC->impl()->getSurface();
 	Gfx::Surface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);

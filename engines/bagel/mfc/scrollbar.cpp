@@ -34,7 +34,7 @@ ON_WM_MOUSEMOVE()
 ON_WM_MOUSELEAVE()
 END_MESSAGE_MAP()
 
-BOOL CScrollBar::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
+BOOL CScrollBar::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
 	return CWnd::Create("SCROLLBAR", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }

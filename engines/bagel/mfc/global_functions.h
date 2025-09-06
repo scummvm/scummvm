@@ -81,7 +81,7 @@ extern LPVOID GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
 extern SIZE_T GlobalSize(HGLOBAL hMem);
-extern SIZE_T GlobalCompact(DWORD dwMinFree);
+extern SIZE_T GlobalCompact(uint32 dwMinFree);
 #define LocalAlloc          GlobalAlloc
 #define LocalLock           GlobalLock
 #define LocalUnlock         GlobalUnlock
@@ -95,9 +95,9 @@ extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType = 0);
 extern int MessageBox(LPCSTR lpText);
 extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
                                  LPCSTR lpKeyName, INT nDefault, LPCSTR lpFileName);
-extern DWORD GetPrivateProfileString(LPCSTR lpAppName,
+extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
                                      LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
-                                     DWORD  nSize, LPCSTR lpFileName);
+                                     uint32  nSize, LPCSTR lpFileName);
 
 extern BOOL WritePrivateProfileString(
     LPCSTR lpAppName, LPCSTR lpKeyName,
@@ -112,10 +112,10 @@ extern BOOL UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
                               WPARAM wParam, LPARAM lParam);
 extern UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
+    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32) = nullptr);
 extern BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 extern void Sleep(UINT milli);
-extern DWORD GetTickCount();
+extern uint32 GetTickCount();
 
 extern Common::SeekableReadStream *OpenFile(const char *filename);
 extern bool FileExists(const char *filename);

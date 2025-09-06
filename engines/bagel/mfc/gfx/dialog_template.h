@@ -103,7 +103,7 @@ private:
 
 public:
 	HGLOBAL m_hTemplate;
-	DWORD m_dwTemplateSize;
+	uint32 m_dwTemplateSize;
 	BOOL m_bSystemFont;
 
 public:

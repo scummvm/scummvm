@@ -844,7 +844,7 @@ namespace MFC {
 #define ON_WM_TCARD() \
 	{ WM_TCARD, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, DWORD) > ( &ThisClass::OnTCard)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, uint32) > ( &ThisClass::OnTCard)) },
 
 #define ON_WM_TIMER() \
 	{ WM_TIMER, 0, 0, 0, AfxSig_vw, \
@@ -1209,7 +1209,7 @@ namespace MFC {
 #define ON_WM_DWMCOLORIZATIONCOLORCHANGED() \
 	{ WM_DWMCOLORIZATIONCOLORCHANGED, 0, 0, 0, AfxSig_vww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(DWORD, BOOL) > ( &ThisClass::OnColorizationColorChanged)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(uint32, BOOL) > ( &ThisClass::OnColorizationColorChanged)) },
 
 #define ON_WM_DWMWINDOWMAXIMIZEDCHANGE() \
 	{ WM_DWMWINDOWMAXIMIZEDCHANGE, 0, 0, 0, AfxSig_vb, \

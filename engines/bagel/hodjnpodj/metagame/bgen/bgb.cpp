@@ -36,10 +36,10 @@ namespace Gtl {
 #define CONTROL_PHYSICAL_MEMORY     TRUE
 
 
-typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
+typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)(void);
 FPGETFREEMEMINFO    lpfnGetFreeMemInfo;
-BOOL    CheckLowMemory(DWORD);
-DWORD   GetPhysicalMemory(void);
+BOOL    CheckLowMemory(uint32);
+uint32   GetPhysicalMemory(void);
 
 extern  CBfcMgr *lpMetaGameStruct;
 
@@ -1079,9 +1079,9 @@ void CBgbMgr::DoAnimations(void) {
 	}
 }
 
-BOOL CheckLowMemory(DWORD dwSpace) {
+BOOL CheckLowMemory(uint32 dwSpace) {
 	BOOL    bMemoryProblem;
-	DWORD   dwFreeSpace;
+	uint32   dwFreeSpace;
 	bMemoryProblem = FALSE;
 
 	dwFreeSpace = GetFreeSpace(0);
@@ -1091,7 +1091,7 @@ BOOL CheckLowMemory(DWORD dwSpace) {
 	return bMemoryProblem;
 }
 
-DWORD GetPhysicalMemory() {
+uint32 GetPhysicalMemory() {
 	return GetFreeSpace(0);
 }
 

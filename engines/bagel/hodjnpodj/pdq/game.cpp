@@ -78,7 +78,7 @@ ERROR_CODE  BuildSpriteList(CDC *);
 void        KillCurPhrase(void);
 void        BuildRandomPhraseOrder();
 bool     RevealNextLetter(void);
-void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, DWORD);
+void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, uint32);
 INT         StrLenNoSpaces(const CHAR *);
 INT         GetIndex(CSprite *);
 void        LoadGameCfg(void);
@@ -664,7 +664,7 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 *            HWND  hWnd                 Handle of window that received WM_TIMER
 *            UINT  nMsg                 WM_TIMER
 *            UINT  nEventID             TIMER_ID
-*            DWORD dwTime               time that event occured
+*            uint32 dwTime               time that event occured
 *
 *  purpose   To provide a callback routine for hooking the WM_TIMER.
 *            Usage: SetTimer(hWnd, tID, time, GameTimerHook);
@@ -673,7 +673,7 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 *  returns   Nothing
 *
 **/
-void CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
+void CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, uint32) {
 	CDC *pDC;
 	HDC hDC;
 	BOOL done;

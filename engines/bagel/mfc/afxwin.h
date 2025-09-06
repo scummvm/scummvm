@@ -750,9 +750,9 @@ public:
 		void ellipse(int x1, int y1, int x2, int y2);
 
 		void bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-			int xSrc, int ySrc, DWORD dwRop);
+			int xSrc, int ySrc, uint32 dwRop);
 		void stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-			int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+			int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop);
 
 		void moveTo(int x, int y);
 		void lineTo(int x, int y);
@@ -863,9 +863,9 @@ public:
 	BOOL LPtoDP(LPPOINT lpPoints, int nCount = 1);
 	BOOL LPtoDP(RECT *lpRect);
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-	            int xSrc, int ySrc, DWORD dwRop);
+	            int xSrc, int ySrc, uint32 dwRop);
 	BOOL StretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
-	                int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop);
+	                int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop);
 	void Ellipse(LPCRECT lpRect);
 	void Ellipse(int x1, int y1, int x2, int y2);
 	void FrameRect(LPCRECT lpRect, CBrush *pBrush);
@@ -1077,7 +1077,7 @@ typedef struct tagCREATESTRUCTA {
 	LONG        style = 0;
 	LPCSTR      lpszName = nullptr;
 	LPCSTR      lpszClass = nullptr;
-	DWORD       dwExStyle = 0;
+	uint32       dwExStyle = 0;
 } CREATESTRUCT, *LPCREATESTRUCT;
 
 
@@ -1127,7 +1127,7 @@ protected:
 
 	BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID) {}
+	afx_msg void OnActivateApp(BOOL bActive, uint32 dwThreadID) {}
 	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM) {
 		return 0;
 	}
@@ -1175,7 +1175,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnSize(UINT nType, int cx, int cy) {}
-	afx_msg void OnTCard(UINT idAction, DWORD dwActionData) {}
+	afx_msg void OnTCard(UINT idAction, uint32 dwActionData) {}
 	afx_msg void OnSessionChange(UINT nSessionState, UINT nId) {}
 
 	afx_msg void OnChangeUIState(UINT nAction, UINT nUIElement) {}
@@ -1345,14 +1345,14 @@ public:
 	~CWnd() override;
 
 	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-	    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+	    uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 	    CCreateContext *pContext = nullptr);
-	BOOL CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName,
-		LPCTSTR lpszWindowName, DWORD dwStyle,
+	BOOL CreateEx(uint32 dwExStyle, LPCTSTR lpszClassName,
+		LPCTSTR lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam = nullptr);
-	BOOL CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, DWORD dwStyle,
+	BOOL CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
 		LPVOID lpParam = nullptr);
 
@@ -1389,10 +1389,10 @@ public:
 	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
 	BOOL SetWindowText(LPCSTR lpszString);
 	UINT GetState() const;
-	DWORD GetStyle() const {
+	uint32 GetStyle() const {
 		return m_nStyle;
 	}
-	void SetStyle(DWORD nStyle);
+	void SetStyle(uint32 nStyle);
 	bool IsWindowEnabled() const {
 		return (_itemState & ODS_DISABLED) == 0;
 	}
@@ -1440,7 +1440,7 @@ public:
 	                           WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
+	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32) = nullptr);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 
 	virtual BOOL PreTranslateMessage(MSG *pMsg) {
@@ -1521,14 +1521,14 @@ public:
 
 	BOOL Create(LPCSTR lpszClassName,
 		LPCSTR lpszWindowName,
-		DWORD dwStyle,
+		uint32 dwStyle,
 		const RECT &rect,
 		CWnd *pParentWnd = nullptr,
 		LPCSTR lpszMenuName = nullptr,
-		DWORD dwExStyle = 0,
+		uint32 dwExStyle = 0,
 		CCreateContext *pContext = nullptr);
 	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-			DWORD dwStyle = WS_OVERLAPPEDWINDOW) {
+			uint32 dwStyle = WS_OVERLAPPEDWINDOW) {
 		CRect rectDefault;
 		return Create(lpszClassName, lpszWindowName, dwStyle, rectDefault);
 	}
@@ -1537,7 +1537,7 @@ public:
 	void RecalcLayout(BOOL bNotify = TRUE);
 	void InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible);
 
-	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
+	BOOL LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
 		CWnd *pParentWnd, CCreateContext *pContext);
 
 	CView *GetActiveView() const;
@@ -1597,7 +1597,7 @@ public:
 	}
 	BOOL PreTranslateMessage(MSG *pMsg) override;
 
-	DWORD GetDefID() const;
+	uint32 GetDefID() const;
 	void SetDefID(UINT nID);
 	LRESULT HandleInitDialog(WPARAM, LPARAM);
 	LRESULT HandleSetFont(WPARAM, LPARAM);
@@ -1655,7 +1655,7 @@ protected:
 public:
 	~CButton() override {
 	}
-	CVIRTUAL BOOL Create(LPCTSTR lpszCaption, DWORD dwStyle,
+	CVIRTUAL BOOL Create(LPCTSTR lpszCaption, uint32 dwStyle,
 	                     const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetCheck() const;
@@ -1695,7 +1695,7 @@ protected:
 public:
 	~CEdit() override {
 	}
-	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 	void LimitText(int nChars);
 	void SetSel(int nStartChar, int nEndChar, BOOL bNoScroll = FALSE);
 
@@ -1731,7 +1731,7 @@ protected:
 
 public:
 	~CScrollBar() override { }
-	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetScrollPos() const override;
 	int SetScrollPos(int nPos, BOOL bRedraw = true) override;

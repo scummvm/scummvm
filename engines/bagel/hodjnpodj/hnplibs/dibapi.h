@@ -42,9 +42,9 @@ typedef Graphics::ManagedSurface *HDIB;
 #define DeleteBitmap(hbm)       DeleteObject((HGDIOBJ)(HBITMAP)(hbm))
 #define SelectBitmap(hdc, hbm)  ((HBITMAP)SelectObject((hdc),(HGDIOBJ)(HBITMAP)(hbm)))
 
-// WIDTHBYTES performs DWORD-aligning of DIB scanlines.  The "bits"
+// WIDTHBYTES performs uint32-aligning of DIB scanlines.  The "bits"
 // parameter is the bit count for the scanline (biWidth * biBitCount),
-// and this macro returns the number of DWORD-aligned bytes needed
+// and this macro returns the number of uint32-aligned bytes needed
 // to hold those bits.
 
 #define WIDTHBYTES(bits)    (((bits) + 31) / 32 * 4)
@@ -78,14 +78,14 @@ extern LPSTR FindDIBBits(HDIB lpbi);
  * @param lpbi		Bitmap pointer
  * @return			Width
  */
-extern DWORD DIBWidth(HDIB lpDIB);
+extern uint32 DIBWidth(HDIB lpDIB);
 
 /**
  * This function gets the height of the bitmap.
  * @param lpbi		Bitmap pointer
  * @return			Height
  */
-extern DWORD DIBHeight(HDIB lpDIB);
+extern uint32 DIBHeight(HDIB lpDIB);
 
 /**
  * Gets the size required to store the DIB's palette
@@ -137,8 +137,8 @@ extern HDIB ReadDIBFile(CFile &file);
 extern HDIB ReadDIBResource(const char *pszPathName);
 
 void      InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
-                                       DWORD dwWidth,
-                                       DWORD dwHeight,
+                                       uint32 dwWidth,
+                                       uint32 dwHeight,
                                        int nBPP);
 
 void      ShowMemoryInfo(const char *chMessage, const char *chTitle);
