@@ -60,10 +60,8 @@ typedef void *POSITION;
 #define S_FALSE                                ((HRESULT)1L)
 
 typedef void *HANDLE;
-typedef HANDLE *PHANDLE;
 typedef long HRESULT;
 
-typedef char CCHAR;
 typedef uint32 LCID;
 typedef uint32 *PLCID;
 typedef uint16   LANGID;
