@@ -379,6 +379,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 1 (Russian)
 	GAME_LPS("kq1", "", "973f5830ed5e1c919354dfbcd5036c53", 315, Common::RU_RUS, 0x2440, GID_KQ1, Common::kPlatformDOS),
 
+	// King's Quest 1 (Hebrew)
+	GAME_LVFPN("kq1", "", "logdir", "9812020c1ff9b86b97976c3e85e29ec8", 315, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// King's Quest 2 (Apple II) 1.0G [AGI 1.08]
 	A2("kq2", "1.0G", "8e8d562e50233c939112c89bba55d249", 0x1120, GID_KQ2),
 
