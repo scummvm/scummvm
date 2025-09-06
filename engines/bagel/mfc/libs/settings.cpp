@@ -49,6 +49,8 @@ void Settings::load() {
 			_domains[domainName].load(src);
 		}
 	}
+
+	delete src;
 }
 
 void Settings::save() {
