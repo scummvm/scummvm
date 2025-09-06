@@ -73,19 +73,19 @@ STATIC const CHAR *pszCategorySounds[N_CATEGORIES] = {
 *
 */
 ERROR_CODE  CleanScreen(CDC *);
-ERROR_CODE  LoadNewPhrase(VOID);
+ERROR_CODE  LoadNewPhrase(void);
 ERROR_CODE  BuildSpriteList(CDC *);
-VOID        KillCurPhrase(VOID);
-VOID        BuildRandomPhraseOrder();
-bool     RevealNextLetter(VOID);
-VOID CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, DWORD);
+void        KillCurPhrase(void);
+void        BuildRandomPhraseOrder();
+bool     RevealNextLetter(void);
+void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, DWORD);
 INT         StrLenNoSpaces(const CHAR *);
 INT         GetIndex(CSprite *);
-VOID        LoadGameCfg(VOID);
-VOID        SaveGameCfg(VOID);
+void        LoadGameCfg(void);
+void        SaveGameCfg(void);
 ERROR_CODE  ValidatePhrase(PHRASES *);
-VOID        UpdateScore(UINT, UINT, UINT, UINT);
-INT         NumLinkedSprites(VOID);
+void        UpdateScore(UINT, UINT, UINT, UINT);
+INT         NumLinkedSprites(void);
 
 #define TIMER_ID        50
 #define START_X_ODD     318
@@ -138,7 +138,7 @@ INT         nPhrasePixelLength;
 *  returns   errCode - Error return code
 *
 **/
-ERROR_CODE LoadNewPhrase(VOID) {
+ERROR_CODE LoadNewPhrase(void) {
 	STATIC int nLast;
 	CHAR *p, buf[MAX_PLENGTH_S + 2];
 	INT i, n, nType;
@@ -249,7 +249,7 @@ ERROR_CODE LoadNewPhrase(VOID) {
 *  returns   Nothing
 *
 **/
-VOID BuildRandomPhraseOrder() {
+void BuildRandomPhraseOrder() {
 	UBYTE *curPhraseOrder;
 	INT i, j, n, newIndex;
 	bool use;
@@ -391,7 +391,7 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 *  returns   Nothing
 *
 **/
-VOID KillCurPhrase() {
+void KillCurPhrase() {
 	INT i, n;
 
 	if (curPhrase != nullptr) {
@@ -673,7 +673,7 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 *  returns   Nothing
 *
 **/
-VOID CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
+void CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
 	CDC *pDC;
 	HDC hDC;
 	BOOL done;
@@ -748,7 +748,7 @@ VOID CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, DWORD) {
 *  returns   Nothing
 *
 **/
-VOID GameStopTimer() {
+void GameStopTimer() {
 	KillTimer(gGameWnd, TIMER_ID);
 }
 
@@ -764,11 +764,11 @@ ERROR_CODE GameStartTimer() {
 	return errCode;
 }
 
-VOID GamePauseTimer() {
+void GamePauseTimer() {
 	bPause = TRUE;
 }
 
-VOID GameResumeTimer() {
+void GameResumeTimer() {
 	bPause = FALSE;
 }
 
@@ -841,7 +841,7 @@ ERROR_CODE EndGame(CDC *pDC) {
 	return errCode;
 }
 
-VOID WinGame() {
+void WinGame() {
 	UINT n;
 
 	// update the final score
@@ -863,7 +863,7 @@ VOID WinGame() {
 *  returns   Nothing
 *
 **/
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	/*
 	* Our user preference dialog box is self contained in this object
 	*/
@@ -885,7 +885,7 @@ VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
 *  returns   Nothing
 *
 **/
-VOID LoadGameCfg() {
+void LoadGameCfg() {
 	CHAR buf[10];
 	INT n;
 
@@ -969,7 +969,7 @@ VOID LoadGameCfg() {
 *  returns   Nothing
 *
 **/
-VOID SaveGameCfg() {
+void SaveGameCfg() {
 	WritePrivateProfileString(INI_SECTION, "RandomLetters",
 	                          gGameCfg.bRandomLetters ? "Yes" : "No", INI_FILENAME);
 	WritePrivateProfileString(INI_SECTION, "NumStartingLetters",
@@ -1091,7 +1091,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 }
 
 
-VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
+void GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
 	/* can't write to null pointers */
 	assert(nLeft != nullptr);
 	assert(nTotal != nullptr);
@@ -1121,7 +1121,7 @@ VOID GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
 *  returns   nSprites = number of sprites in linked list
 *
 **/
-INT NumLinkedSprites(VOID) {
+INT NumLinkedSprites(void) {
 	CSprite *pSprite;
 	INT i = 0;
 

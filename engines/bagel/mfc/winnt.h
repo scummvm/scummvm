@@ -40,7 +40,6 @@ typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
 typedef size_t SIZE_T;
 typedef float FLOAT;
-typedef void VOID;
 typedef FLOAT *PFLOAT;
 typedef BOOL *PBOOL;
 typedef BOOL *LPBOOL;

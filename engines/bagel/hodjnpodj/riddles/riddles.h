@@ -112,10 +112,10 @@ struct RIDDLE {
 
 class CMyEdit: public CEdit {
 protected:
-	VOID OnChar(UINT, UINT, UINT);
-	VOID OnSysChar(UINT, UINT, UINT);
-	VOID OnKeyDown(UINT, UINT, UINT);
-	VOID OnSysKeyDown(UINT, UINT, UINT);
+	void OnChar(UINT, UINT, UINT);
+	void OnSysChar(UINT, UINT, UINT);
+	void OnKeyDown(UINT, UINT, UINT);
+	void OnSysKeyDown(UINT, UINT, UINT);
 
 	DECLARE_MESSAGE_MAP()
 };
@@ -125,38 +125,38 @@ private:
 	CBrush cBrush;
 
 public:
-	CRiddlesWindow(VOID);
-	VOID        PlayGame(VOID);
-	VOID        PaintScreen(VOID);
-	VOID        LoadIniSettings(VOID);
-	VOID        ParseAnswer(const CHAR *);
-	VOID        GamePause(VOID);
-	VOID        GameResume(VOID);
+	CRiddlesWindow(void);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        LoadIniSettings(void);
+	void        ParseAnswer(const CHAR *);
+	void        GamePause(void);
+	void        GameResume(void);
 
 private:
-	VOID        OnSoundNotify(CSound *pSound);
+	void        OnSoundNotify(CSound *pSound);
 
 protected:
-	VOID        FlushInputEvents(VOID);
+	void        FlushInputEvents(void);
 	BOOL        CheckUserGuess(const CHAR *);
-	ERROR_CODE  RepaintSpriteList(VOID);
-	ERROR_CODE  LoadRiddle(VOID);
-	ERROR_CODE  BuildSpriteList(VOID);
+	ERROR_CODE  RepaintSpriteList(void);
+	ERROR_CODE  LoadRiddle(void);
+	ERROR_CODE  BuildSpriteList(void);
 	ERROR_CODE  DisplayLine(const CHAR *, INT, INT, INT);
 	INT         CharToIndex(CHAR);
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
-	ERROR_CODE  LoadMasterSprites(VOID);
-	VOID        GameReset(VOID);
+	ERROR_CODE  LoadMasterSprites(void);
+	void        GameReset(void);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	VOID        HandleError(ERROR_CODE);
-	VOID        DeleteSprite(CSprite *);
+	void        HandleError(ERROR_CODE);
+	void        DeleteSprite(CSprite *);
 
-	VOID        OnPaint();
-	VOID        OnMouseMove(UINT, CPoint);
-	VOID        OnLButtonDown(UINT, CPoint);
-	VOID        OnClose();
-	VOID        OnSetFocus(CWnd *);
-	VOID        OnTimer(UINT_PTR);
+	void        OnPaint();
+	void        OnMouseMove(UINT, CPoint);
+	void        OnLButtonDown(UINT, CPoint);
+	void        OnClose();
+	void        OnSetFocus(CWnd *);
+	void        OnTimer(UINT_PTR);
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);

@@ -58,21 +58,21 @@ public:
 
 protected:
 
-	virtual VOID DoDataExchange(CDataExchange *) override;
+	virtual void DoDataExchange(CDataExchange *) override;
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	virtual BOOL OnInitDialog(VOID) override;
-	VOID PutDlgData(VOID);
-	VOID GetDlgData(VOID);
-	VOID LoadIniSettings(VOID);
-	VOID SaveIniSettings(VOID);
-	VOID UpdateOptions(VOID);
-	VOID ClearDialogImage(VOID);
+	virtual BOOL OnInitDialog(void) override;
+	void PutDlgData(void);
+	void GetDlgData(void);
+	void LoadIniSettings(void);
+	void SaveIniSettings(void);
+	void UpdateOptions(void);
+	void ClearDialogImage(void);
 
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	VOID OnHScroll(UINT, UINT, CScrollBar *);
-	VOID OnClose();
-	VOID OnDestroy();
-	VOID OnPaint();
+	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnClose();
+	void OnDestroy();
+	void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
 	CText        *m_pTxtNumBalls;

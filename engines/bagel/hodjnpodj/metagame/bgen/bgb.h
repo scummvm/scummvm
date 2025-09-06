@@ -93,21 +93,21 @@ public:
 	BOOL ReleaseDc(void);
 	BOOL ClearBitmapObject(CBgbObject *lpcBgbObject);
 	BOOL ReleaseResources(void);
-	VOID DoAnimations(VOID);
-	VOID PauseAnimations(VOID) {
+	void DoAnimations(void);
+	void PauseAnimations(void) {
 		m_bAnimationsPaused = TRUE;
 	}
-	VOID ResumeAnimations(VOID) {
+	void ResumeAnimations(void) {
 		m_bAnimationsPaused = FALSE;
 	}
-	BOOL AnimationsActive(VOID) const {
+	BOOL AnimationsActive(void) const {
 		return !m_bAnimationsPaused;
 	}
 
-	VOID CacheLoadObject(CBgbObject *);
-	VOID CacheReleaseObject(CBgbObject *);
-	VOID CacheFlush(VOID);
-	VOID CacheOptimize(ULONG);
+	void CacheLoadObject(CBgbObject *);
+	void CacheReleaseObject(CBgbObject *);
+	void CacheFlush(void);
+	void CacheOptimize(ULONG);
 };
 
 

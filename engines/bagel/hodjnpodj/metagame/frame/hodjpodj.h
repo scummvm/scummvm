@@ -52,7 +52,7 @@ namespace Frame {
 
 extern CBfcMgr *lpMetaGame;
 
-extern VOID InitBFCInfo(CBfcMgr *pBfcMgr);
+extern void InitBFCInfo(CBfcMgr *pBfcMgr);
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -99,8 +99,8 @@ public:
 
 	BOOL CheckLowMemory(void);
 
-	BOOL Restore(VOID);
-	VOID ShowCredits(VOID);
+	BOOL Restore(void);
+	void ShowCredits(void);
 
 	static  void ReleaseResources(void);
 	static  void FlushInputEvents(void);

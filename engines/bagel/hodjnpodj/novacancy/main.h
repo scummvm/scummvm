@@ -38,31 +38,31 @@ char *GetStringFromResource(UINT);
 
 class CMainWindow : public CFrameWnd {
 public:
-	CMainWindow(VOID);
-	VOID        PlayGame(VOID);
-	VOID        PaintScreen(VOID);
-	VOID        LoadIniSettings(VOID);
-	VOID        SaveIniSettings(VOID);
+	CMainWindow(void);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        LoadIniSettings(void);
+	void        SaveIniSettings(void);
 
 
 protected:
-	VOID        GameReset(VOID);
-	VOID        GamePause(VOID);
-	VOID        GameResume(VOID);
+	void        GameReset(void);
+	void        GamePause(void);
+	void        GameResume(void);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	VOID        HandleError(ERROR_CODE);
-	VOID        DeleteSprite(CSprite *);
+	void        HandleError(ERROR_CODE);
+	void        DeleteSprite(CSprite *);
 
-	VOID        OnPaint(VOID);
-	VOID        OnTimer(UINT_PTR);
-	VOID        OnMouseMove(UINT, CPoint);
-	virtual VOID        OnLButtonDown(UINT, CPoint);
-	virtual VOID        OnRButtonDown(UINT, CPoint);
-	VOID        OnSysChar(UINT, UINT, UINT);
-	virtual  VOID        OnSysKeyDown(UINT, UINT, UINT);
-	virtual VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL) override;
-	VOID        OnClose(VOID);
+	void        OnPaint(void);
+	void        OnTimer(UINT_PTR);
+	void        OnMouseMove(UINT, CPoint);
+	virtual void        OnLButtonDown(UINT, CPoint);
+	virtual void        OnRButtonDown(UINT, CPoint);
+	void        OnSysChar(UINT, UINT, UINT);
+	virtual  void        OnSysKeyDown(UINT, UINT, UINT);
+	virtual void        OnKeyDown(UINT, UINT, UINT);
+	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnClose(void);
 	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
 	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);
 

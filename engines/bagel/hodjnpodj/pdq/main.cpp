@@ -72,7 +72,7 @@ STATIC const CHAR *pszCategoryBitmaps[N_CATEGORIES] = {
 /*
 * Local prototypes
 */
-VOID UpdateScore(UINT, UINT, UINT, UINT);
+void UpdateScore(UINT, UINT, UINT, UINT);
 
 /*
 * Globals
@@ -215,7 +215,7 @@ CMainWindow::CMainWindow() {
 	HandleError(errCode);
 }
 
-ERROR_CODE CMainWindow::LoadCategoryNames(VOID) {
+ERROR_CODE CMainWindow::LoadCategoryNames(void) {
 	CDC *pDC;
 	INT i;
 	ERROR_CODE errCode;
@@ -250,7 +250,7 @@ ERROR_CODE CMainWindow::LoadCategoryNames(VOID) {
 	return errCode;
 }
 
-VOID CMainWindow::ReleaseCategoryNames(VOID) {
+void CMainWindow::ReleaseCategoryNames(void) {
 	INT i;
 
 	for (i = N_CATEGORIES - 1; i >= 0; i--) {
@@ -262,7 +262,7 @@ VOID CMainWindow::ReleaseCategoryNames(VOID) {
 }
 
 
-VOID CMainWindow::PaintCategory(INT iType) {
+void CMainWindow::PaintCategory(INT iType) {
 	CDC *pDC;
 
 	assert((iType >= 0) && (iType < N_CATEGORIES));
@@ -278,7 +278,7 @@ VOID CMainWindow::PaintCategory(INT iType) {
 }
 
 
-VOID CMainWindow::EraseCategory(VOID) {
+void CMainWindow::EraseCategory(void) {
 	CDC *pDC;
 
 	assert((m_iLastType >= 0) && (m_iLastType < N_CATEGORIES));
@@ -292,7 +292,7 @@ VOID CMainWindow::EraseCategory(VOID) {
 }
 
 
-VOID CMainWindow::HandleError(ERROR_CODE errCode) {
+void CMainWindow::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -705,7 +705,7 @@ void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CWnd::OnChar(nChar, nRepCnt, nFlags);
 }
 
-VOID UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg) {
+void UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg) {
 	char buf[40];
 	CDC *pDC;
 

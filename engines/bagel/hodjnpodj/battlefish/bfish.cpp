@@ -229,7 +229,7 @@ STATIC const CHAR *pszFishSound[MAX_FISH] = {
 
 // Local Prototypes
 //
-VOID CALLBACK GetGameParams(CWnd *);
+void CALLBACK GetGameParams(CWnd *);
 
 //
 // Globals
@@ -284,7 +284,7 @@ POINT gRightGrid[GRID_ROWS][GRID_COLS] = {
 *       None
 *
 ****************************************************************/
-CBFishWindow::CBFishWindow(VOID) {
+CBFishWindow::CBFishWindow(void) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC;
@@ -451,7 +451,7 @@ CBFishWindow::CBFishWindow(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::HandleError(ERROR_CODE errCode) {
+void CBFishWindow::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -471,7 +471,7 @@ VOID CBFishWindow::HandleError(ERROR_CODE errCode) {
 	}
 }
 
-ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
+ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 	CDC *pDC;
 	INT i;
 	ERROR_CODE errCode;
@@ -649,7 +649,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 }
 
 
-VOID CBFishWindow::ReleaseMasterSprites(VOID) {
+void CBFishWindow::ReleaseMasterSprites(void) {
 	INT i;
 
 	// free the hooked fish, and the users fish
@@ -718,7 +718,7 @@ VOID CBFishWindow::ReleaseMasterSprites(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::OnPaint() {
+void CBFishWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	Invalidate(FALSE);
@@ -745,7 +745,7 @@ VOID CBFishWindow::OnPaint() {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::PaintScreen() {
+void CBFishWindow::PaintScreen() {
 	CDibDoc myDoc;
 	CRect   rcDest;
 	CRect   rcDIB;
@@ -1028,7 +1028,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return FALSE;
 }
 
-VOID CBFishWindow::PlaceTurnHarpoons(VOID) {
+void CBFishWindow::PlaceTurnHarpoons(void) {
 	CSprite *pSprite;
 	CDC *pDC;
 	INT i;
@@ -1062,7 +1062,7 @@ VOID CBFishWindow::PlaceTurnHarpoons(VOID) {
 	HandleError(errCode);
 }
 
-VOID CBFishWindow::RemoveTurnHarpoon(VOID) {
+void CBFishWindow::RemoveTurnHarpoon(void) {
 	assert(m_nTurns >= 0 && m_nTurns < MAX_TURNS);
 	assert(m_pHarpoons[m_nTurns] != nullptr);
 
@@ -1088,7 +1088,7 @@ VOID CBFishWindow::RemoveTurnHarpoon(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::GamePause(VOID) {
+void CBFishWindow::GamePause(void) {
 	m_bPause = TRUE;
 };
 
@@ -1110,7 +1110,7 @@ VOID CBFishWindow::GamePause(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::GameResume(VOID) {
+void CBFishWindow::GameResume(void) {
 	m_bPause = FALSE;
 };
 
@@ -1132,7 +1132,7 @@ VOID CBFishWindow::GameResume(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::PlayGame(VOID) {
+void CBFishWindow::PlayGame(void) {
 	CRect rTmpRect;
 	CDC *pDC;
 	INT i;
@@ -1193,7 +1193,7 @@ VOID CBFishWindow::PlayGame(VOID) {
 }
 
 
-VOID CBFishWindow::PlaceUserFish(VOID) {
+void CBFishWindow::PlaceUserFish(void) {
 	//
 	// Initiate User-Edit-Mode (Allow user to drag and drop fish to grid)
 	//
@@ -1201,7 +1201,7 @@ VOID CBFishWindow::PlaceUserFish(VOID) {
 }
 
 
-VOID CBFishWindow::PlaceEnemyFish(VOID) {
+void CBFishWindow::PlaceEnemyFish(void) {
 	INT i, j, k;
 	INT row, col, rowTmp, colTmp;
 	BOOL bFound;
@@ -1308,7 +1308,7 @@ VOID CBFishWindow::PlaceEnemyFish(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::LoadIniSettings(VOID) {
+void CBFishWindow::LoadIniSettings(void) {
 	INT nVal;
 
 	if (pGameParams->bPlayingMetagame) {
@@ -1369,7 +1369,7 @@ VOID CBFishWindow::LoadIniSettings(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::SaveIniSettings(VOID) {
+void CBFishWindow::SaveIniSettings(void) {
 }
 
 
@@ -1390,7 +1390,7 @@ VOID CBFishWindow::SaveIniSettings(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::GameReset(VOID) {
+void CBFishWindow::GameReset(void) {
 	CDC *pDC;
 	INT i;
 
@@ -1577,7 +1577,7 @@ void CBFishWindow::RotateFish(INT nFishIndex) {
 	}
 }
 
-VOID CBFishWindow::AssignFishToGrid(INT nFishIndex) {
+void CBFishWindow::AssignFishToGrid(INT nFishIndex) {
 	CPoint point;
 	INT i, nRow, nCol, nRowTmp, nColTmp;
 
@@ -1703,7 +1703,7 @@ INT CBFishWindow::GetFishIndex(CSprite *pSprite) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::OnRButtonDown(UINT, CPoint point) {
+void CBFishWindow::OnRButtonDown(UINT, CPoint point) {
 	CRect tmpRect;
 	INT i;
 
@@ -1748,7 +1748,7 @@ VOID CBFishWindow::OnRButtonDown(UINT, CPoint point) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::OnLButtonDown(UINT, CPoint point) {
+void CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 	CRect   tmpRect,
 	        winRect,
 	        trawlerRect,
@@ -2089,7 +2089,7 @@ BOOL CBFishWindow::OkToPlaceFish(INT nFishIndex, CPoint point, BOOL bRotated) {
 	return bOk;
 }
 
-VOID CBFishWindow::PlaceFish(INT nFishIndex, CPoint point) {
+void CBFishWindow::PlaceFish(INT nFishIndex, CPoint point) {
 	INT i, nRow, nCol, nGridIndex, nID;
 
 	nID = IndexToId(nFishIndex);
@@ -2189,7 +2189,7 @@ CPoint CBFishWindow::SnapToGrid(CPoint point) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::OnMouseMove(UINT, CPoint point) {
+void CBFishWindow::OnMouseMove(UINT, CPoint point) {
 	CSize size;
 	HCURSOR hCursor;
 	CDC *pDC;
@@ -2216,7 +2216,7 @@ VOID CBFishWindow::OnMouseMove(UINT, CPoint point) {
 }
 
 
-VOID CBFishWindow::UsersTurn(INT nGridIndex) {
+void CBFishWindow::UsersTurn(INT nGridIndex) {
 	//CSound *pSound;
 	INT nRow, nCol, nSquare;
 	INT nFishIndex;
@@ -2347,7 +2347,7 @@ VOID CBFishWindow::UsersTurn(INT nGridIndex) {
 	}
 }
 
-VOID CBFishWindow::SinkEnemyFish(INT nFishIndex) {
+void CBFishWindow::SinkEnemyFish(INT nFishIndex) {
 	CSprite *pSprite;
 	CDC *pDC;
 
@@ -2370,7 +2370,7 @@ VOID CBFishWindow::SinkEnemyFish(INT nFishIndex) {
 }
 
 
-VOID CBFishWindow::ComputersTurn(VOID) {
+void CBFishWindow::ComputersTurn(void) {
 	STATIC INT nLastRow, nLastCol;
 	//CSound *pSound;
 	INT nRow, nCol, nFishIndex, nGridIndex;
@@ -2494,7 +2494,7 @@ VOID CBFishWindow::ComputersTurn(VOID) {
 }
 
 
-VOID CBFishWindow::SinkUserFish(INT nFishIndex) {
+void CBFishWindow::SinkUserFish(INT nFishIndex) {
 	INT i, nRow, nCol;
 
 	for (i = 0; i < GRID_ROWS * GRID_COLS; i++) {
@@ -2509,7 +2509,7 @@ VOID CBFishWindow::SinkUserFish(INT nFishIndex) {
 }
 
 
-INT CBFishWindow::SelectRandomTarget(VOID) {
+INT CBFishWindow::SelectRandomTarget(void) {
 	INT  n;
 	INT nRow, nCol;
 
@@ -2536,7 +2536,7 @@ INT CBFishWindow::SelectRandomTarget(VOID) {
 }
 
 
-INT CBFishWindow::SelectBurningTarget(VOID) {
+INT CBFishWindow::SelectBurningTarget(void) {
 	INT i, nGridIndex, nRow, nCol;
 	BOOL bFound;
 
@@ -2565,7 +2565,7 @@ INT CBFishWindow::SelectBurningTarget(VOID) {
 	return nGridIndex;
 }
 
-INT CBFishWindow::SelectBestFitTarget(VOID) {
+INT CBFishWindow::SelectBestFitTarget(void) {
 	INT nRow, nCol, nFishIndex, nGridIndex;
 	INT counter, i;
 
@@ -3183,7 +3183,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
 #endif
 
 
-VOID CBFishWindow::CreatePlume(CPoint point) {
+void CBFishWindow::CreatePlume(CPoint point) {
 	CDC *pDC;
 	CSprite *pSprite;
 	INT i;
@@ -3249,7 +3249,7 @@ VOID CBFishWindow::CreatePlume(CPoint point) {
 }
 
 
-VOID CBFishWindow::CreateHarpoon(CPoint point) {
+void CBFishWindow::CreateHarpoon(CPoint point) {
 	CDC *pDC;
 	CSprite *pSprite;
 	INT i;
@@ -3394,7 +3394,7 @@ INT CBFishWindow::GetEnemyGridIndex(CPoint point) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::DeleteSprite(CSprite *pSprite) {
+void CBFishWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
@@ -3567,7 +3567,7 @@ void CBFishWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 	}
 }
 
-VOID CBFishWindow::FlushInputEvents(VOID) {
+void CBFishWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	// find and remove all keyboard events
@@ -3603,7 +3603,7 @@ VOID CBFishWindow::FlushInputEvents(VOID) {
 *       None
 *
 ****************************************************************/
-VOID CBFishWindow::OnClose() {
+void CBFishWindow::OnClose() {
 	CBrush myBrush;
 	CRect rMyRect;
 	CDC *pDC;
@@ -3707,7 +3707,7 @@ BEGIN_MESSAGE_MAP(CBFishWindow, CFrameWnd)
 	ON_MESSAGE(MM_WOM_DONE, CBFishWindow::OnMMIONotify)
 END_MESSAGE_MAP()
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	//
 	// Our user preference dialog box is self contained in this object
 	//

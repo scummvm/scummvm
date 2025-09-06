@@ -512,7 +512,7 @@ public: BOOL MoveStoneDisplay(CPitWnd * xpcFromPit,
 private: BOOL AdjustPitDisplay(CPitWnd * xpcPit,
 	                               BOOL bForcePaint PDFT(FALSE)) ;
 //- PaintScreen -- paint screen for mankala game
-private: VOID PaintScreen(void) ;
+private: void PaintScreen(void) ;
 //- ProcessDc -- handle processing of device context
 private: BOOL ProcessDc(BOOL bAlloc PDFT(TRUE)) ;
 //- AllocatePits -- allocate pits (including home bin/hand)

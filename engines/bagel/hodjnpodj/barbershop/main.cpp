@@ -67,7 +67,7 @@ namespace Barbershop {
 
 // Local Prototypes
 //
-VOID CALLBACK GetGameParams(CWnd *);
+void CALLBACK GetGameParams(CWnd *);
 
 //
 // Globals
@@ -78,7 +78,7 @@ int         g_nCardBack;
 extern HWND ghParentWnd;
 
 
-CMainWindow::CMainWindow(VOID) {
+CMainWindow::CMainWindow(void) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC = nullptr;
@@ -251,7 +251,7 @@ CMainWindow::CMainWindow(VOID) {
 	HandleError(errCode);
 }
 
-VOID CMainWindow::HandleError(ERROR_CODE errCode) {
+void CMainWindow::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -272,7 +272,7 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 }
 
 
-VOID CMainWindow::OnPaint() {
+void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	Invalidate(FALSE);
@@ -282,7 +282,7 @@ VOID CMainWindow::OnPaint() {
 }
 
 
-VOID CMainWindow::PaintScreen() {
+void CMainWindow::PaintScreen() {
 	//CSprite *pSprite;
 	CDibDoc myDoc;
 	CRect   rcDest;
@@ -432,15 +432,15 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-VOID CMainWindow::GamePause(VOID) {
+void CMainWindow::GamePause(void) {
 	m_bPause = TRUE;
 }
 
-VOID CMainWindow::GameResume(VOID) {
+void CMainWindow::GameResume(void) {
 	m_bPause = FALSE;
 }
 
-VOID CMainWindow::PlayGame() {
+void CMainWindow::PlayGame() {
 	CDC         *pDC;
 	ERROR_CODE  errCode;
 
@@ -480,20 +480,20 @@ VOID CMainWindow::PlayGame() {
 	HandleError(errCode);
 }
 
-VOID CMainWindow::LoadIniSettings(VOID) {
+void CMainWindow::LoadIniSettings(void) {
 }
 
-VOID CMainWindow::SaveIniSettings(VOID) {
+void CMainWindow::SaveIniSettings(void) {
 }
 
 
-VOID CMainWindow::GameReset(VOID) {
+void CMainWindow::GameReset(void) {
 	//sndPlaySound(nullptr, SND_SYNC);               // stop all sounds
 }
 
 
 
-VOID CMainWindow::OnTimer(UINT_PTR nEvent) {
+void CMainWindow::OnTimer(UINT_PTR nEvent) {
 	//CDC *pDC;
 
 	// continue as long as there is a currently active non-paused game
@@ -504,7 +504,7 @@ VOID CMainWindow::OnTimer(UINT_PTR nEvent) {
 }
 
 
-VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CDC *pDC;
 
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
@@ -517,7 +517,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-VOID CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	CPoint  UndoPoint(UNDO_LEF + (UNDO_RIG - UNDO_LEF) / 2, UNDO_TOP + (UNDO_BOT - UNDO_TOP) / 2);
 
 	if (m_pBarb->m_pCrd != nullptr)        // r we currently moving a card?
@@ -532,7 +532,7 @@ VOID CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CDC     *pDC;
 	char    buf[32];
 	CRect   tmpRect;
@@ -636,7 +636,7 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-VOID CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
 	char    buf[32];
 	CRect   tmpRect;
 
@@ -744,7 +744,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	point   = CPoint(0, 0);
 }
 
-VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
+void CMainWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
@@ -878,7 +878,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-VOID CMainWindow::OnClose() {
+void CMainWindow::OnClose() {
 	CDC     *pDC = GetDC();
 	CRect   rctFillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	CBrush  Brush(RGB(0, 0, 0));
@@ -947,7 +947,7 @@ BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	ON_MESSAGE(MM_WOM_DONE, CMainWindow::OnMMIONotify)
 END_MESSAGE_MAP()
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	//
 	// Our user preference dialog box is self contained in this object
 	//

@@ -143,8 +143,8 @@ class CGtlView;
 
 class CMemDC {
 public:
-	CMemDC(VOID);
-	~CMemDC(VOID);
+	CMemDC(void);
+	~CMemDC(void);
 
 	CDC      *m_pDC;
 	CPalette *m_pPalOld;
@@ -496,11 +496,11 @@ public:
 	CGtlData(void) ;
 	~CGtlData(void) ;
 
-	VOID    CreateOffScreenBmp(VOID);
-	VOID    DeleteOffScreenBmp(VOID);
-	VOID    PaintOffScreenBmp(VOID);
-	CMemDC *GetMemDC(VOID);
-	VOID    ReleaseMemDC(CMemDC *);
+	void    CreateOffScreenBmp(void);
+	void    DeleteOffScreenBmp(void);
+	void    PaintOffScreenBmp(void);
+	CMemDC *GetMemDC(void);
+	void    ReleaseMemDC(CMemDC *);
 
 
 	BOOL SetColors(void) ;
@@ -592,7 +592,7 @@ private:
 	BOOL MoveNode(CNode FAR * lpNode, CRPoint crPosition) ;
 
 	int DoSpecialTravel(int, BOOL);
-	VOID LoadCharDirection(CBgbObject *, CPoint, CPoint);
+	void LoadCharDirection(CBgbObject *, CPoint, CPoint);
 
 	//- CreateLink -- create link between two nodes
 	BOOL CreateLink(CNode FAR * lpNode1, CNode FAR * lpNode2) ;
@@ -702,7 +702,7 @@ private:
 	//  grab Mish and Mosh from current location
 	BOOL DetermineMishMoshEligibility(CXodj *, int);
 
-	VOID DoTransport(CXodj *, INT);
+	void DoTransport(CXodj *, INT);
 
 
 	// gtlcmp.cpp -- meta game computer play

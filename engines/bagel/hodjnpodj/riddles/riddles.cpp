@@ -130,7 +130,7 @@ namespace Riddles {
 
 // local prototypes
 //
-VOID CALLBACK GetGameParams(CWnd *);
+void CALLBACK GetGameParams(CWnd *);
 
 //
 // Globals
@@ -148,7 +148,7 @@ STATIC RIDDLE curRiddle;
 STATIC CSprite *aMasterSpriteList[N_SPRITECHARS];
 
 
-CRiddlesWindow::CRiddlesWindow(VOID) :
+CRiddlesWindow::CRiddlesWindow(void) :
 		cBrush(PALETTEINDEX(11)) {
 	CString  WndClass;
 	CRect    tmpRect;
@@ -310,7 +310,7 @@ CRiddlesWindow::CRiddlesWindow(VOID) :
 	HandleError(errCode);
 }
 
-VOID CRiddlesWindow::HandleError(ERROR_CODE errCode) {
+void CRiddlesWindow::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -331,7 +331,7 @@ VOID CRiddlesWindow::HandleError(ERROR_CODE errCode) {
 }
 
 
-ERROR_CODE CRiddlesWindow::LoadMasterSprites(VOID) {
+ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
 	CBitmap *pBmp, *pFontBmp;
 	CSprite *pSprite;
 	CDC *pDC;
@@ -397,7 +397,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(VOID) {
 }
 
 
-VOID CRiddlesWindow::OnPaint() {
+void CRiddlesWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	Invalidate(FALSE);
@@ -407,7 +407,7 @@ VOID CRiddlesWindow::OnPaint() {
 }
 
 
-VOID CRiddlesWindow::PaintScreen() {
+void CRiddlesWindow::PaintScreen() {
 	CDibDoc myDoc;
 	CRect   rcDest;
 	CRect   rcDIB;
@@ -534,16 +534,16 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-VOID CRiddlesWindow::GamePause(VOID) {
+void CRiddlesWindow::GamePause(void) {
 	m_bPause = TRUE;
 };
 
 
-VOID CRiddlesWindow::GameResume(VOID) {
+void CRiddlesWindow::GameResume(void) {
 	m_bPause = FALSE;
 };
 
-VOID CRiddlesWindow::PlayGame() {
+void CRiddlesWindow::PlayGame() {
 	CHAR szBuf[40];
 	ERROR_CODE errCode;
 	CSound  *pRiddleReading = nullptr;
@@ -590,7 +590,7 @@ VOID CRiddlesWindow::PlayGame() {
 	HandleError(errCode);
 }
 
-VOID CRiddlesWindow::LoadIniSettings() {
+void CRiddlesWindow::LoadIniSettings() {
 	INT nVal;
 
 	if (pGameParams->bPlayingMetagame) {
@@ -634,7 +634,7 @@ VOID CRiddlesWindow::LoadIniSettings() {
 }
 
 
-VOID CRiddlesWindow::GameReset(VOID) {
+void CRiddlesWindow::GameReset(void) {
 	CDC *pDC;
 
 	pDC = GetDC();                              // get the current device context
@@ -820,7 +820,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 }
 
 
-ERROR_CODE CRiddlesWindow::BuildSpriteList(VOID) {
+ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
 	CHAR *pRiddle, *p;
 	INT x, y;
 	UINT nCharsPerLine;
@@ -1075,7 +1075,7 @@ ERROR_CODE CRiddlesWindow::RepaintSpriteList() {
 }
 
 
-VOID CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
+void CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 	CDC *pDC;
 
 	// there should be only one timer
@@ -1147,7 +1147,7 @@ VOID CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 }
 
 
-VOID CRiddlesWindow::OnMouseMove(UINT, CPoint) {
+void CRiddlesWindow::OnMouseMove(UINT, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
@@ -1232,7 +1232,7 @@ void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-VOID CMyEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMyEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CHAR szBuf[MAX_ANSWER_LENGTH + 1];
 
 	//
@@ -1278,7 +1278,7 @@ BEGIN_MESSAGE_MAP(CMyEdit, CEdit)
 	ON_WM_SYSKEYDOWN()
 END_MESSAGE_MAP()
 
-VOID CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
+void CRiddlesWindow::ParseAnswer(const CHAR *pszAnswer) {
 	if (m_bGameActive && !m_bPause) {
 
 		GamePause();
@@ -1334,7 +1334,7 @@ BOOL CRiddlesWindow::CheckUserGuess(const CHAR *pszGuess) {
 	return FALSE;
 }
 
-VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   animRect;                   // All three Easter Egg animations are in the same place
 	CRect   col1Rect,
@@ -1442,12 +1442,12 @@ VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-VOID CRiddlesWindow::OnSetFocus(CWnd *) {
+void CRiddlesWindow::OnSetFocus(CWnd *) {
 	if (m_pEditText != nullptr)
 		m_pEditText->SetFocus();
 }
 
-VOID CRiddlesWindow::DeleteSprite(CSprite *pSprite) {
+void CRiddlesWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
@@ -1462,7 +1462,7 @@ VOID CRiddlesWindow::DeleteSprite(CSprite *pSprite) {
 	delete pSprite;                                 // delete it
 }
 
-VOID CRiddlesWindow::FlushInputEvents(VOID) {
+void CRiddlesWindow::FlushInputEvents(void) {
 	MSG msg;
 
 	// find and remove all keyboard events
@@ -1480,7 +1480,7 @@ VOID CRiddlesWindow::FlushInputEvents(VOID) {
 	}
 }
 
-VOID CRiddlesWindow::OnClose() {
+void CRiddlesWindow::OnClose() {
 	CBrush myBrush;
 	CRect myRect;
 	CDC *pDC;
@@ -1597,7 +1597,7 @@ BEGIN_MESSAGE_MAP(CRiddlesWindow, CFrameWnd)
 	ON_MESSAGE(MM_WOM_DONE, CRiddlesWindow::OnMMIONotify)
 END_MESSAGE_MAP()
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	//
 	// Our user preference dialog box is self contained in this object
 	//

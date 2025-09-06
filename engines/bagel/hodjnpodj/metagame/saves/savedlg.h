@@ -38,8 +38,8 @@ public:
 	CSaveDlg(CHAR *[], CWnd *, CPalette *);
 
 protected:
-	VOID ClearDialogImage(VOID);
-	VOID EditDescription(INT);
+	void ClearDialogImage(void);
+	void EditDescription(INT);
 
 	//{{AFX_MSG(COptions)
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;

@@ -1208,7 +1208,7 @@ void CMainDFAWindow::OnSoundNotify(CSound *pSound) {
 	//
 }
 
-BOOL CMainDFAWindow::LoadBeaverSounds(VOID) {
+BOOL CMainDFAWindow::LoadBeaverSounds(void) {
 	HANDLE      hResInfo;
 	HINSTANCE   hInst;
 	BOOL        bSuccess;

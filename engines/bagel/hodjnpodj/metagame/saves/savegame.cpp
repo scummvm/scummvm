@@ -52,7 +52,7 @@ struct stInventoryInfo {
 } stPlayerBuf[MAX_PLAYERS];
 
 // Local prototypes
-static ERROR_CODE GetSaveGameDescriptions(VOID);
+static ERROR_CODE GetSaveGameDescriptions(void);
 static void WipeBFC(CBfcMgr *pBfcMgr);
 
 BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
@@ -164,7 +164,7 @@ BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	return bRestored;
 }
 
-VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
+void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	CHodjPodj *pPlayer;
 	CInventory *pInv;
 	CItem *pItem;

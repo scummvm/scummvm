@@ -167,7 +167,7 @@ UINT RealizePalette(HDC hdc) {
 }
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
-		CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
+		CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
 	CBitmap::Impl *bitmap = new CBitmap::Impl();
 
 	// Figure out the pixel format

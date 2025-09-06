@@ -352,7 +352,7 @@ STATIC const SIZE ptBrickSize[N_BRICKS] = {
 
 // Local Prototypes
 //
-VOID CALLBACK GetGameParams(CWnd *);
+void CALLBACK GetGameParams(CWnd *);
 
 CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 	CString  WndClass;
@@ -545,7 +545,7 @@ void CFugeWindow::initStatics() {
 		&vBrickCritPoints[0][0]);
 }
 
-VOID CFugeWindow::InitializeJoystick(VOID) {
+void CFugeWindow::InitializeJoystick(void) {
 	JOYINFO     joyInfo;
 
 	if (joySetCapture(m_hWnd, JOYSTICKID1, 10000, TRUE) == JOYERR_NOERROR) {
@@ -564,7 +564,7 @@ VOID CFugeWindow::InitializeJoystick(VOID) {
 }
 
 
-VOID CFugeWindow::RealignVectors(VOID) {
+void CFugeWindow::RealignVectors(void) {
 	CVector vTmp;
 	INT i, j;
 
@@ -579,7 +579,7 @@ VOID CFugeWindow::RealignVectors(VOID) {
 }
 
 
-ERROR_CODE CFugeWindow::LoadMasterSprites(VOID) {
+ERROR_CODE CFugeWindow::LoadMasterSprites(void) {
 	CDC *pDC;
 	ERROR_CODE errCode;
 
@@ -627,7 +627,7 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(VOID) {
 	return errCode;
 }
 
-VOID CFugeWindow::ReleaseMasterSprites(VOID) {
+void CFugeWindow::ReleaseMasterSprites(void) {
 	assert(m_pBall != nullptr);
 	if (m_pBall != nullptr) {
 		delete m_pBall;
@@ -641,7 +641,7 @@ VOID CFugeWindow::ReleaseMasterSprites(VOID) {
 	}
 }
 
-VOID CFugeWindow::HandleError(ERROR_CODE errCode) {
+void CFugeWindow::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -662,7 +662,7 @@ VOID CFugeWindow::HandleError(ERROR_CODE errCode) {
 }
 
 
-VOID CFugeWindow::OnPaint() {
+void CFugeWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	Invalidate(FALSE);
@@ -672,7 +672,7 @@ VOID CFugeWindow::OnPaint() {
 }
 
 
-VOID CFugeWindow::PaintScreen() {
+void CFugeWindow::PaintScreen() {
 	CDC      *pDC;
 
 	//
@@ -706,7 +706,7 @@ VOID CFugeWindow::PaintScreen() {
 *  RETURNS:  ERROR_CODE = error return code
 *
 *****************************************************************************/
-VOID CFugeWindow::RepaintSpriteList(CDC *pDC) {
+void CFugeWindow::RepaintSpriteList(CDC *pDC) {
 	CSprite *pSprite;
 
 	// can't use a null pointer
@@ -809,18 +809,18 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-VOID CFugeWindow::GamePause(VOID) {
+void CFugeWindow::GamePause(void) {
 	m_bPause = TRUE;
 };
 
 
-VOID CFugeWindow::GameResume(VOID) {
+void CFugeWindow::GameResume(void) {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
 		m_bPause = FALSE;
 };
 
 
-VOID CFugeWindow::PlayGame(VOID) {
+void CFugeWindow::PlayGame(void) {
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -911,7 +911,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
 }
 
 
-ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
+ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 	HANDLE hResInfo;
 	HINSTANCE hInst;
 	ERROR_CODE errCode;
@@ -999,7 +999,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 }
 
 
-VOID CFugeWindow::ReleaseMasterSounds(VOID) {
+void CFugeWindow::ReleaseMasterSounds(void) {
 	if (m_hExtraLifeRes != nullptr) {
 		FreeResource(m_hExtraLifeRes);
 		m_hExtraLifeRes = nullptr;
@@ -1019,7 +1019,7 @@ VOID CFugeWindow::ReleaseMasterSounds(VOID) {
 }
 
 
-VOID CFugeWindow::EndBall(VOID) {
+void CFugeWindow::EndBall(void) {
 	CDC *pDC;
 	assert(m_pBall != nullptr);
 
@@ -1033,7 +1033,7 @@ VOID CFugeWindow::EndBall(VOID) {
 }
 
 
-VOID CFugeWindow::StartBall(VOID) {
+void CFugeWindow::StartBall(void) {
 	CDC *pDC;
 
 	assert(m_pBall != nullptr);
@@ -1051,7 +1051,7 @@ VOID CFugeWindow::StartBall(VOID) {
 }
 
 
-CVector CFugeWindow::BallOnPaddle(VOID) {
+CVector CFugeWindow::BallOnPaddle(void) {
 	CVector vBall(0, -(PADDLE_RADIUS + BALL_RADIUS));
 
 	vBall.Rotate(fPaddleAngles[m_nInitPaddleSize] / 2);
@@ -1066,7 +1066,7 @@ CVector CFugeWindow::BallOnPaddle(VOID) {
 }
 
 
-VOID CFugeWindow::PaintBall(VOID) {
+void CFugeWindow::PaintBall(void) {
 	CPoint ptLast;
 	CVector vBall, vGravity;
 	DOUBLE length;
@@ -1254,7 +1254,7 @@ VOID CFugeWindow::PaintBall(VOID) {
 
 #define N_CRIT_POINTS 7
 
-VOID CFugeWindow::BallvsPaddle(VOID) {
+void CFugeWindow::BallvsPaddle(void) {
 	CVector vPoints[N_CRIT_POINTS];
 	CVector vTmp, vPaddle, vFace, vBallCenter, vBallEdge;
 	DOUBLE a1, a2;
@@ -1518,7 +1518,7 @@ VOID CFugeWindow::BallvsPaddle(VOID) {
 #define MAX_BRICK_HITS 6
 
 
-VOID CFugeWindow::BallvsBrick(DOUBLE length) {
+void CFugeWindow::BallvsBrick(DOUBLE length) {
 	CHAR buf1[32], buf2[32];
 	CVector vPoints[N_BRICK_POINTS];
 	CVector vBrick, vBallCenter, vOrigin, vTmp;
@@ -1896,7 +1896,7 @@ VOID CFugeWindow::BallvsBrick(DOUBLE length) {
 }
 
 
-VOID CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
+void CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
 	assert(pDC != nullptr);
 
 	assert((nBrickIndex >= 0) && (nBrickIndex < N_BRICKS));
@@ -1909,7 +1909,7 @@ VOID CFugeWindow::EraseBrick(CDC *pDC, INT nBrickIndex) {
 }
 
 
-VOID CFugeWindow::LoseBall(VOID) {
+void CFugeWindow::LoseBall(void) {
 	CHAR buf1[32], buf2[32];
 	CDC *pDC;
 	ERROR_CODE errCode;
@@ -2032,7 +2032,7 @@ VOID CFugeWindow::LoseBall(VOID) {
 }
 
 
-VOID CFugeWindow::StartPaddle(VOID) {
+void CFugeWindow::StartPaddle(void) {
 	assert(m_pPaddle != nullptr);
 
 	if (m_pPaddle != nullptr)
@@ -2044,7 +2044,7 @@ VOID CFugeWindow::StartPaddle(VOID) {
 }
 
 
-VOID CFugeWindow::EndPaddle(VOID) {
+void CFugeWindow::EndPaddle(void) {
 	CDC *pDC;
 
 	assert(m_pPaddle != nullptr);
@@ -2058,7 +2058,7 @@ VOID CFugeWindow::EndPaddle(VOID) {
 	}
 }
 
-VOID CFugeWindow::LaunchBall(VOID) {
+void CFugeWindow::LaunchBall(void) {
 	assert(m_bGameActive);
 	assert(m_bBallOnPaddle);
 
@@ -2077,7 +2077,7 @@ VOID CFugeWindow::LaunchBall(VOID) {
 }
 
 
-VOID CFugeWindow::PaintPaddle(BOOL bPaint) {
+void CFugeWindow::PaintPaddle(BOOL bPaint) {
 	CVector vPaddle;
 	CDC *pDC;
 	INT nOldIndex;
@@ -2175,7 +2175,7 @@ VOID CFugeWindow::PaintPaddle(BOOL bPaint) {
 }
 
 
-VOID CFugeWindow::StartBricks(VOID) {
+void CFugeWindow::StartBricks(void) {
 	CDC *pDC;
 	INT i, nBricks;
 
@@ -2195,7 +2195,7 @@ VOID CFugeWindow::StartBricks(VOID) {
 }
 
 
-VOID CFugeWindow::PaintBricks(CDC *pDC) {
+void CFugeWindow::PaintBricks(CDC *pDC) {
 	CSize     size;
 	CDC      *pMemDC;
 	CBitmap  *pBmp, *pMemBmp;
@@ -2283,13 +2283,13 @@ VOID CFugeWindow::PaintBricks(CDC *pDC) {
 }
 
 
-VOID CFugeWindow::EndBricks(VOID) {
+void CFugeWindow::EndBricks(void) {
 	memset(m_bBrickVisible, 0, sizeof(BOOL) * N_BRICKS);
 }
 
 
 
-VOID CFugeWindow::LoadIniSettings(VOID) {
+void CFugeWindow::LoadIniSettings(void) {
 	if (pGameParams->bPlayingMetagame) {
 
 		m_bOutterWall = FALSE;
@@ -2343,7 +2343,7 @@ VOID CFugeWindow::LoadIniSettings(VOID) {
 }
 
 
-VOID CFugeWindow::GameReset(VOID) {
+void CFugeWindow::GameReset(void) {
 	KillTimer(TIMER_ID);                        // stop the timer
 
 	if (pGameParams->bSoundEffectsEnabled) {
@@ -2383,7 +2383,7 @@ VOID CFugeWindow::GameReset(VOID) {
 }
 
 
-VOID CFugeWindow::OnTimer(UINT_PTR nEvent) {
+void CFugeWindow::OnTimer(UINT_PTR nEvent) {
 	// there should be only one timer
 	assert(nEvent == TIMER_ID);
 
@@ -2472,7 +2472,7 @@ LONG CFugeWindow::OnJoyStick(UINT wParam, LONG lParam) {
 }
 
 
-VOID CFugeWindow::OnMouseMove(UINT, CPoint point) {
+void CFugeWindow::OnMouseMove(UINT, CPoint point) {
 	INT nMove;
 
 	if (m_bGameActive && m_bMovingPaddle) {
@@ -2508,7 +2508,7 @@ VOID CFugeWindow::OnMouseMove(UINT, CPoint point) {
 
 
 
-VOID CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 	if (m_bGameActive) {
 
 		// toggle move paddle mode
@@ -2532,7 +2532,7 @@ VOID CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 }
 
 
-VOID CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CRect   boothRect,
 	        tentRect,
 	        peopRect,
@@ -2794,7 +2794,7 @@ LRESULT CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 }
 
 
-VOID CFugeWindow::OnSoundNotify(CSound *) {
+void CFugeWindow::OnSoundNotify(CSound *) {
 	//
 	// Add your code to process explicit notification of a sound "done" event here.
 	// pSound is a pointer to a CSound object for which you requested SOUND_NOTIFY.
@@ -2802,7 +2802,7 @@ VOID CFugeWindow::OnSoundNotify(CSound *) {
 }
 
 
-VOID CFugeWindow::OnClose() {
+void CFugeWindow::OnClose() {
 	CBrush myBrush;
 	CRect myRect;
 	CDC *pDC;
@@ -2884,7 +2884,7 @@ END_MESSAGE_MAP()
 
 
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	//
 	// Our user preference dialog box is self contained in this object
 	//

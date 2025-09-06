@@ -46,7 +46,7 @@ CBdbgMgr::CBdbgMgr(void) {
 
 //* CBdbgMgr::~CBdbgMgr -- destructor
 CBdbgMgr::~CBdbgMgr(void)
-// returns: VOID
+// returns: void
 {
 	JXENTER(CBdbgMgr::~CBdbgMgr) ;
 

@@ -41,20 +41,20 @@ public:
 	CMainWindow();
 	~CMainWindow() override {}
 
-	VOID        PlayGame(void);
-	VOID        PaintScreen(VOID);
-	VOID        PaintCategory(INT);
-	VOID        EraseCategory(VOID);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        PaintCategory(INT);
+	void        EraseCategory(void);
 
 	int         m_nTurnCount = 0;
 
 protected:
-	ERROR_CODE  LoadCategoryNames(VOID);
-	VOID        ReleaseCategoryNames(VOID);
+	ERROR_CODE  LoadCategoryNames(void);
+	void        ReleaseCategoryNames(void);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	VOID HandleError(ERROR_CODE);
-	VOID OnSoundNotify(CSound *pSound);
+	void HandleError(ERROR_CODE);
+	void OnSoundNotify(CSound *pSound);
 
 	void OnPaint(void);
 	void OnChar(UINT, UINT, UINT);

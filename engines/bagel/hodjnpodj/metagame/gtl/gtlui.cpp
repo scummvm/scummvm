@@ -109,7 +109,7 @@ CGtlData::~CGtlData(void) {
 	RETURN_VOID ;
 }
 
-VOID CGtlData::CreateOffScreenBmp(VOID) {
+void CGtlData::CreateOffScreenBmp(void) {
 	CDC *pScreenDC;
 	CGtlApp *xpGtlApp = (CGtlApp *)AfxGetApp();
 
@@ -132,14 +132,14 @@ VOID CGtlData::CreateOffScreenBmp(VOID) {
 	}
 }
 
-VOID CGtlData::DeleteOffScreenBmp(VOID) {
+void CGtlData::DeleteOffScreenBmp(void) {
 	if (m_pOffScreenBmp != nullptr) {
 		delete m_pOffScreenBmp;
 		m_pOffScreenBmp = nullptr;
 	}
 }
 
-VOID CGtlData::PaintOffScreenBmp(VOID) {
+void CGtlData::PaintOffScreenBmp(void) {
 	CDC *pScreenDC;
 	CMemDC *pMemDC;
 	CPalette *pScreenPalOld;
@@ -159,19 +159,19 @@ VOID CGtlData::PaintOffScreenBmp(VOID) {
 		}
 	}
 }
-CMemDC::CMemDC(VOID) {
+CMemDC::CMemDC(void) {
 	m_pDC = new CDC;
 	assert(m_pDC != nullptr);
 }
 
-CMemDC::~CMemDC(VOID) {
+CMemDC::~CMemDC(void) {
 	if (m_pDC != nullptr) {
 		delete m_pDC;
 		m_pDC = nullptr;
 	}
 }
 
-CMemDC *CGtlData::GetMemDC(VOID) {
+CMemDC *CGtlData::GetMemDC(void) {
 	CMemDC *pMemDC;
 
 	if ((pMemDC = new CMemDC) != nullptr) {
@@ -186,7 +186,7 @@ CMemDC *CGtlData::GetMemDC(VOID) {
 	return (pMemDC);
 }
 
-VOID CGtlData::ReleaseMemDC(CMemDC *pMemDC) {
+void CGtlData::ReleaseMemDC(CMemDC *pMemDC) {
 	assert(pMemDC != nullptr);
 
 	if (pMemDC != nullptr) {

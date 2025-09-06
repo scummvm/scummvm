@@ -71,7 +71,7 @@ CSprite     *pScrollSprite = nullptr;  // Commands button
 CSprite     *pCalendarSprite = nullptr;    // Blank calendar
 HWND        hWndParent;
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd);
+void CALLBACK GetGameParams(CWnd *pParentWnd);
 
 /*****************************************************************
  *
@@ -1493,7 +1493,7 @@ END_MESSAGE_MAP()
 *      [Discuss return value]
 *
 ****************************************************************/
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	gbNewGame = FALSE;
 	CUserCfgDlg dlgUserCfg(pParentWnd, pGamePalette, IDD_USERCFG);
 

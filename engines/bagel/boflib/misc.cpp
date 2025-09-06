@@ -415,7 +415,7 @@ CHAR *StriStr(CHAR *s1, const CHAR *s2) {
 	return (p);
 }
 
-VOID StrUprStr(CHAR *s1, const CHAR *s2) {
+void StrUprStr(CHAR *s1, const CHAR *s2) {
 	CHAR *p;
 	INT i, n;
 
@@ -449,7 +449,7 @@ VOID StrUprStr(CHAR *s1, const CHAR *s2) {
 *  returns   Nothing
 *
 **/
-VOID StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
+void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
 	/* can't access null pointers */
 	assert(dest != nullptr);
 	assert(source != nullptr);

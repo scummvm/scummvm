@@ -747,7 +747,7 @@ extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
 extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-                       DWORD flInit, CONST VOID *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
+                       DWORD flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
 extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
                      LPVOID lpvBits, LPBITMAPINFO lpbmi, UINT usage);
 

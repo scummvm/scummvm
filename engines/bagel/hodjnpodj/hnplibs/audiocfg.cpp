@@ -110,7 +110,7 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-VOID CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	INT nMin = 0, nMax = 0, nVal = 0;
 
 	if (pScroll == m_pScrollBar1) {
@@ -236,7 +236,7 @@ void CAudioCfgDlg::OnPaint(void) {
 }
 
 
-VOID CAudioCfgDlg::UpdateOptions(VOID) {
+void CAudioCfgDlg::UpdateOptions(void) {
 	CHAR buf[40];
 	CDC *pDC;
 
@@ -308,7 +308,7 @@ void CAudioCfgDlg::ClearDialogImage(void) {
 }
 
 
-VOID CAudioCfgDlg::LoadIniSettings(VOID) {
+void CAudioCfgDlg::LoadIniSettings(void) {
 	int nMidiVolume, nWaveVolume;
 
 	m_bMusic = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
@@ -328,7 +328,7 @@ VOID CAudioCfgDlg::LoadIniSettings(VOID) {
 	CSound::setVolume(m_nVolume, m_nVolume);
 }
 
-VOID CAudioCfgDlg::SaveIniSettings() {
+void CAudioCfgDlg::SaveIniSettings() {
 	WritePrivateProfileString("Meta", "Music", Common::String::format("%d", m_bMusic ? 1 : 0).c_str(), "HODJPODJ.INI");
 	WritePrivateProfileString("Meta", "SoundEffects", Common::String::format("%d", m_bSound ? 1 : 0).c_str(), "HODJPODJ.INI");
 	WritePrivateProfileString("Meta", "WaveVolume", Common::String::format("%d", m_nVolume).c_str(), "HODJPODJ.INI");

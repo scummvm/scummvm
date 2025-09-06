@@ -232,7 +232,7 @@ BOOL CGtlFrame::PreCreateWindow(CREATESTRUCT& cCs)
 
 //* CGtlFrame::RecalcLayout -- override CFrameWnd::RecalcLayout
 void CGtlFrame::RecalcLayout(BOOL bNotify)
-// returns: VOID
+// returns: void
 {
 	JXENTER(CGtlFrame::RecalcLayout) ;
 	CRect cParamRect, cClientRect(0, 0, 200, 200) ;

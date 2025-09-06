@@ -685,7 +685,7 @@ void CGtlData::CheckForTransport(CXodj *pXodj, int nNewSector)
 }
 
 
-VOID CGtlData::DoTransport(CXodj *pXodj, INT iNode) {
+void CGtlData::DoTransport(CXodj *pXodj, INT iNode) {
 	CHAR szOldFileName[128];
 	CBgbObject *pCurPlayer;
 	CPoint point;

@@ -112,7 +112,7 @@ void CSaveDlg::OnCancel(void) {
 	EndDialog(-1);
 }
 
-VOID CSaveDlg::EditDescription(INT nNewSlot) {
+void CSaveDlg::EditDescription(INT nNewSlot) {
 	CHAR szBuf[40];
 
 	// abort any other edits the user was making

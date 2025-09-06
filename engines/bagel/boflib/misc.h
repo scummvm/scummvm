@@ -114,8 +114,8 @@ extern INT          StrFreqMatch(const CHAR *, const CHAR *);
 extern BOOL         StrCompare(const CHAR *, const CHAR *, UINT);
 extern INT          StrCharCount(const CHAR *, CHAR);
 extern CHAR *StriStr(CHAR *, const CHAR *);
-extern VOID         StrUprStr(CHAR *, const CHAR *);
-extern VOID         StrCpyStripChar(CHAR *, const CHAR *, CHAR);
+extern void         StrUprStr(CHAR *, const CHAR *);
+extern void         StrCpyStripChar(CHAR *, const CHAR *, CHAR);
 extern CHAR *StrStripChar(CHAR *, CHAR);
 extern CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
 

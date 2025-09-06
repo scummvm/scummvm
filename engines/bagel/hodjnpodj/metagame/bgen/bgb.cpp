@@ -230,7 +230,7 @@ BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName) {
 *
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject) {
+void CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject) {
 	CSprite *pSprite;
 	BOOL    bSuccess;
 
@@ -374,7 +374,7 @@ VOID CBgbMgr::CacheLoadObject(CBgbObject *pBgbObject) {
 *
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
+void CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
 	// can't access a null pointer
 	assert(pBgbObject != nullptr);
 
@@ -444,7 +444,7 @@ VOID CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
 *  ULONG lReqSpace;                     Ammount of requested free space
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheOptimize(ULONG lReqSpace) {
+void CBgbMgr::CacheOptimize(ULONG lReqSpace) {
 	CBgbObject  *pBgbObject;
 	ULONG       lAvgAge;
 	INT         nObjects;
@@ -507,7 +507,7 @@ VOID CBgbMgr::CacheOptimize(ULONG lReqSpace) {
 *  SAMPLE USAGE:    CacheFlush();
 *
 *****************************************************************************/
-VOID CBgbMgr::CacheFlush(VOID) {
+void CBgbMgr::CacheFlush(void) {
 	CBgbObject *pBgbObject;
 
 	//ErrorLog("DEBUG.LOG", "CBgbMgr::CacheFlush");

@@ -85,16 +85,16 @@ namespace PDQ {
 */
 extern ERROR_CODE  InitGame(HWND, CDC *);
 extern ERROR_CODE  StartGame(CDC *);
-extern VOID        GameStopTimer(VOID);
-extern ERROR_CODE  GameStartTimer(VOID);
-extern VOID        GamePauseTimer(VOID);
-extern VOID        GameResumeTimer(VOID);
+extern void        GameStopTimer(void);
+extern ERROR_CODE  GameStartTimer(void);
+extern void        GamePauseTimer(void);
+extern void        GameResumeTimer(void);
 extern ERROR_CODE  EndGame(CDC *);
-extern VOID        WinGame(VOID);
+extern void        WinGame(void);
 extern ERROR_CODE  RepaintSpriteList(CDC *);
 extern bool     CheckUserGuess(const CHAR *);
-extern VOID CALLBACK GetGameParams(CWnd *);
-extern VOID        GameGetScore(UINT *, UINT *, UINT *, UINT *);
+extern void CALLBACK GetGameParams(CWnd *);
+extern void        GameGetScore(UINT *, UINT *, UINT *, UINT *);
 
 } // namespace PDQ
 } // namespace HodjNPodj

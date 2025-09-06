@@ -51,8 +51,8 @@ namespace Frame {
 #define CONTROL_PHYSICAL_MEMORY     TRUE
 
 
-VOID InitBFCInfo(CBfcMgr *);
-VOID FreeBFCInfo(CBfcMgr *);
+void InitBFCInfo(CBfcMgr *);
+void FreeBFCInfo(CBfcMgr *);
 
 // Movie Identifiers
 #define MOVIE_ID_NONE   0
@@ -1793,7 +1793,7 @@ void CHodjPodjWindow::ReleaseResources(void) {
 	}
 }
 
-VOID FreeBFCInfo(CBfcMgr *pBfcMgr) {
+void FreeBFCInfo(CBfcMgr *pBfcMgr) {
 	CHodjPodj *pPlayer;
 	int i, k;
 
@@ -1855,7 +1855,7 @@ VOID FreeBFCInfo(CBfcMgr *pBfcMgr) {
 }
 
 
-VOID InitBFCInfo(CBfcMgr *pBfcMgr) {
+void InitBFCInfo(CBfcMgr *pBfcMgr) {
 	const CClueTable *pClueTable;
 	CHodjPodj *pPlayer;
 	CItem *pItem;
@@ -2098,7 +2098,7 @@ BOOL CHodjPodjWindow::Restore() {
 }
 
 
-VOID CHodjPodjWindow::ShowCredits(VOID) {
+void CHodjPodjWindow::ShowCredits(void) {
 	MSG msg;
 	LONG lTimeElapsed, lStart;
 	ULONG lGoal, lWait;

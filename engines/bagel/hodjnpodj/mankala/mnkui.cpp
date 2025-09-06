@@ -691,8 +691,8 @@ BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
 }
 
 //* CMnkWindow::PaintScreen -- paint screen for mankala game
-VOID CMnkWindow::PaintScreen(void)
-// returns: VOID
+void CMnkWindow::PaintScreen(void)
+// returns: void
 {
 	JXENTER(CMnkWindow::PaintScreen) ;
 	int iPlayer, iPit ;     // loop variables
@@ -1064,7 +1064,7 @@ BOOL FAR PASCAL CMnkWindow::UserDialog(void)
 }
 
 ////* CallUserDialog --
-VOID CALLBACK CallUserDialog(CWnd * xpcWindow) {
+void CALLBACK CallUserDialog(CWnd * xpcWindow) {
 // returns: TRUE if error, FALSE otherwise
 	JXENTER(CallUserDialog) ;
 

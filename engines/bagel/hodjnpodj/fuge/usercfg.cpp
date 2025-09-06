@@ -139,7 +139,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	CHAR buf[40];
 	INT nMin, nMax, nVal;
 	CDC *pDC;
@@ -349,7 +349,7 @@ void CUserCfgDlg::OnPaint(void) {
 	UpdateOptions();
 }
 
-VOID CUserCfgDlg::UpdateOptions(VOID) {
+void CUserCfgDlg::UpdateOptions(void) {
 	CHAR buf[40];
 	CDC *pDC;
 
@@ -482,7 +482,7 @@ void CUserCfgDlg::ClearDialogImage(void) {
 }
 
 
-VOID CUserCfgDlg::LoadIniSettings(VOID) {
+void CUserCfgDlg::LoadIniSettings(void) {
 	m_nNumBalls = GetPrivateProfileInt(INI_SECTION, "NumberOfBalls", BALLS_DEF, INI_FILENAME);
 	if ((m_nNumBalls < BALLS_MIN) || (m_nNumBalls > BALLS_MAX))
 		m_nNumBalls = BALLS_DEF;
@@ -504,7 +504,7 @@ VOID CUserCfgDlg::LoadIniSettings(VOID) {
 		m_bOutterWall = TRUE;
 }
 
-VOID CUserCfgDlg::SaveIniSettings(VOID) {
+void CUserCfgDlg::SaveIniSettings(void) {
 	WritePrivateProfileString(INI_SECTION, "NumberOfBalls", Common::String::format("%d", m_nNumBalls).c_str(), INI_FILENAME);
 	WritePrivateProfileString(INI_SECTION, "StartingLevel", Common::String::format("%d", m_nStartLevel).c_str(), INI_FILENAME);
 	WritePrivateProfileString(INI_SECTION, "BallSpeed", Common::String::format("%d", m_nBallSpeed).c_str(), INI_FILENAME);

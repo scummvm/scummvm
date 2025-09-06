@@ -630,7 +630,7 @@ int CGtlData::FindNodeId(const char *pszLabel) {
 	return (iNodeID);
 }
 
-VOID CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint ptNew) {
+void CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint ptNew) {
 	#if 1
 	CHAR chOldChar, chNewChar = '1';
 	INT x, y;
@@ -1153,7 +1153,7 @@ CNode FAR *CGtlData::LocationToNode(int iLocationCode)
 
 
 // HACK-O-RAMA
-VOID CGtlData::SetFurlongs(CXodj *pXodj) {
+void CGtlData::SetFurlongs(CXodj *pXodj) {
 	assert(pXodj != nullptr);
 
 	if (pXodj->m_bHodj) {

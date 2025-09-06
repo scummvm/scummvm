@@ -44,35 +44,35 @@ private:
 	BOOL         m_bMIDIPlaying;
 
 public:
-	CMainWindow(VOID);
-	VOID        PlayGame(VOID);
-	VOID        PaintScreen(VOID);
-	VOID        LoadIniSettings(VOID);
-	VOID        SaveIniSettings(VOID);
+	CMainWindow(void);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        LoadIniSettings(void);
+	void        SaveIniSettings(void);
 	void        FlushInputEvents();
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 
 protected:
-	VOID        GameReset(VOID);
-	VOID        GamePause(VOID);
-	VOID        GameResume(VOID);
+	void        GameReset(void);
+	void        GamePause(void);
+	void        GameResume(void);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	VOID        HandleError(ERROR_CODE);
-	VOID        DeleteSprite(CSprite *);
+	void        HandleError(ERROR_CODE);
+	void        DeleteSprite(CSprite *);
 
-	VOID        OnPaint(VOID);
-	VOID        OnTimer(UINT_PTR);
-	VOID        OnMouseMove(UINT, CPoint);
-	VOID        OnLButtonDown(UINT, CPoint);
-	VOID        OnLButtonDblClk(UINT, CPoint);
-	VOID        OnRButtonDown(UINT, CPoint);
-	VOID        OnSysChar(UINT, UINT, UINT);
-	VOID        OnSysKeyDown(UINT, UINT, UINT);
-	VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL) override;
-	VOID        OnClose(VOID);
-	VOID        OnLButtonUp(UINT, CPoint);
+	void        OnPaint(void);
+	void        OnTimer(UINT_PTR);
+	void        OnMouseMove(UINT, CPoint);
+	void        OnLButtonDown(UINT, CPoint);
+	void        OnLButtonDblClk(UINT, CPoint);
+	void        OnRButtonDown(UINT, CPoint);
+	void        OnSysChar(UINT, UINT, UINT);
+	void        OnSysKeyDown(UINT, UINT, UINT);
+	void        OnKeyDown(UINT, UINT, UINT);
+	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnClose(void);
+	void        OnLButtonUp(UINT, CPoint);
 
 	DECLARE_MESSAGE_MAP()
 

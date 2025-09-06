@@ -67,7 +67,7 @@ typedef uint16 USHORT;
 typedef unsigned long ULONG;
 #define FLOAT float
 #define DOUBLE double
-#define VOID void
+#define void void
 #define CONST const
 
 enum {

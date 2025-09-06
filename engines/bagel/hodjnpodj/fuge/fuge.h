@@ -41,57 +41,57 @@ namespace Fuge {
 
 class CFugeWindow : public CFrameWnd {
 public:
-	CFugeWindow(VOID);
-	VOID        PlayGame(VOID);
-	VOID        PaintScreen(VOID);
-	VOID        LoadIniSettings(VOID);
+	CFugeWindow(void);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        LoadIniSettings(void);
 
 protected:
 	void initMembers();
 	void initStatics();
-	VOID        GameReset(VOID);
-	VOID        GamePause(VOID);
-	VOID        GameResume(VOID);
-	VOID        HandleError(ERROR_CODE);
-	VOID        RealignVectors(VOID);
-	ERROR_CODE  LoadMasterSprites(VOID);
-	VOID        ReleaseMasterSprites(VOID);
-	ERROR_CODE  LoadMasterSounds(VOID);
-	VOID        ReleaseMasterSounds(VOID);
+	void        GameReset(void);
+	void        GamePause(void);
+	void        GameResume(void);
+	void        HandleError(ERROR_CODE);
+	void        RealignVectors(void);
+	ERROR_CODE  LoadMasterSprites(void);
+	void        ReleaseMasterSprites(void);
+	ERROR_CODE  LoadMasterSounds(void);
+	void        ReleaseMasterSounds(void);
 	ERROR_CODE  LoadNewPaddle(INT);
-	VOID        InitializeJoystick(VOID);
-	VOID        RepaintSpriteList(CDC *);
-	VOID        PaintBricks(CDC *);
-	VOID        StartBall(VOID);
-	VOID        EndBall(VOID);
-	VOID        PaintBall(VOID);
-	VOID        LaunchBall(VOID);
-	VOID        StartPaddle(VOID);
-	VOID        EndPaddle(VOID);
-	VOID        PaintPaddle(BOOL);
-	CVector     BallOnPaddle(VOID);
-	VOID        StartBricks(VOID);
-	VOID        EndBricks(VOID);
-	VOID        EraseBrick(CDC *, INT);
-	VOID        LoseBall(VOID);
-	VOID        BallvsPaddle(VOID);
-	VOID        BallvsBrick(DOUBLE);
+	void        InitializeJoystick(void);
+	void        RepaintSpriteList(CDC *);
+	void        PaintBricks(CDC *);
+	void        StartBall(void);
+	void        EndBall(void);
+	void        PaintBall(void);
+	void        LaunchBall(void);
+	void        StartPaddle(void);
+	void        EndPaddle(void);
+	void        PaintPaddle(BOOL);
+	CVector     BallOnPaddle(void);
+	void        StartBricks(void);
+	void        EndBricks(void);
+	void        EraseBrick(CDC *, INT);
+	void        LoseBall(void);
+	void        BallvsPaddle(void);
+	void        BallvsBrick(DOUBLE);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LONG        OnJoyStick(UINT, LONG);
-	VOID        OnPaint(VOID);
-	VOID        OnTimer(UINT_PTR);
-	VOID        OnMouseMove(UINT, CPoint);
-	VOID        OnRButtonUp(UINT, CPoint);
-	VOID        OnLButtonDown(UINT, CPoint);
-	VOID        OnSysChar(UINT, UINT, UINT);
-	VOID        OnSysKeyDown(UINT, UINT, UINT);
-	VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnPaint(void);
+	void        OnTimer(UINT_PTR);
+	void        OnMouseMove(UINT, CPoint);
+	void        OnRButtonUp(UINT, CPoint);
+	void        OnLButtonDown(UINT, CPoint);
+	void        OnSysChar(UINT, UINT, UINT);
+	void        OnSysKeyDown(UINT, UINT, UINT);
+	void        OnKeyDown(UINT, UINT, UINT);
+	void        OnActivate(UINT, CWnd *, BOOL) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
-	VOID        OnSoundNotify(CSound *);
-	VOID        OnClose(VOID);
+	void        OnSoundNotify(CSound *);
+	void        OnClose(void);
 
 	DECLARE_MESSAGE_MAP()
 

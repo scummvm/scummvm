@@ -195,7 +195,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	switch (nSBCode) {
 
 	case SB_LEFT:
@@ -264,7 +264,7 @@ VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 *       None
 *
 ****************************************************************/
-VOID CUserCfgDlg::LoadIniSettings(VOID) {
+void CUserCfgDlg::LoadIniSettings(void) {
 	INT nVal;
 
 	// Get the Difficulty level  (0..2)
@@ -280,7 +280,7 @@ VOID CUserCfgDlg::LoadIniSettings(VOID) {
 	m_bUserGoesFirst = (nVal == 0 ? FALSE : TRUE);
 }
 
-VOID CUserCfgDlg::SaveIniSettings() {
+void CUserCfgDlg::SaveIniSettings() {
 	WritePrivateProfileString(INI_SECTION,
 	                          "DifficultyLevel",
 	                          Common::String::format("%d", m_nDifficultyLevel).c_str(),

@@ -86,7 +86,7 @@ void CGtlDoc::DeleteContents() {
 //* CGtlDoc::InitDocument -- initialize document to specified file
 void CGtlDoc::InitDocument(const char *xpszPathName)
 // xpszPathName -- filename to be opened
-// returns: Void
+// returns: void
 {
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
@@ -149,7 +149,7 @@ void CGtlDoc::Serialize(CArchive& ar) {
 
 //* CGtlDoc::OnChangedViewList -- called by MFC when a view is
 //		added or deleted
-VOID CGtlDoc::OnChangedViewList() {
+void CGtlDoc::OnChangedViewList() {
 	JXENTER(CGtlDoc::OnChangedViewList) ;
 	POSITION nViewPosition = GetFirstViewPosition() ;
 	CGtlView *xpGtlView ;

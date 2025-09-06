@@ -169,7 +169,7 @@ private:
 //	BOOL     m_bPause;
 
 private:
-	VOID        OnSoundNotify(CSound *pSound);
+	void        OnSoundNotify(CSound *pSound);
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;

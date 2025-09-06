@@ -41,7 +41,7 @@ namespace Crypt {
 
 #define IDB_HOUR        301
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd);
+void CALLBACK GetGameParams(CWnd *pParentWnd);
 
 /***********
 * Globals! *
@@ -1332,7 +1332,7 @@ BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-VOID CALLBACK GetGameParams(CWnd *pParentWnd) {
+void CALLBACK GetGameParams(CWnd *pParentWnd) {
 	//
 	// Our user preference dialog box is self contained in this object
 	//

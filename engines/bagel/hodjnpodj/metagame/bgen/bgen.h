@@ -52,7 +52,7 @@ typedef LPSTR *LPLPSTR ;
 typedef int *XPINT ;
 typedef int *LPINT ;
 typedef char *XPCHAR ;
-#define VOID void
+#define void void
 typedef void *XPVOID ;
 typedef void *LPVOID ;
 //typedef unsigned int WORD ;

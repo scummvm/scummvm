@@ -154,7 +154,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
 	UINT nCurPos;
 
 	// can't access a null pointer
@@ -341,7 +341,7 @@ void CUserCfgDlg::OnPaint(void) {
 	DispLevel();
 }
 
-VOID CUserCfgDlg::OnLButtonDown(UINT nFlags, CPoint point) {
+void CUserCfgDlg::OnLButtonDown(UINT nFlags, CPoint point) {
 	CBmpDialog::OnLButtonDown(nFlags, point);
 }
 
@@ -441,7 +441,7 @@ void CUserCfgDlg::ClearDialogImage(void) {
 	ValidateRect(nullptr);
 }
 
-VOID CUserCfgDlg::DispLimit(VOID) {
+void CUserCfgDlg::DispLimit(void) {
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {
@@ -451,7 +451,7 @@ VOID CUserCfgDlg::DispLimit(VOID) {
 	}
 }
 
-VOID CUserCfgDlg::DispLevel(VOID) {
+void CUserCfgDlg::DispLevel(void) {
 	Common::String szBuf;
 	CDC *pDC;
 

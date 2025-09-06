@@ -175,7 +175,7 @@ private:
 
 private:
 	void initStatics();
-	VOID OnSoundNotify(CSound *pSound);
+	void OnSoundNotify(CSound *pSound);
 	static BOOL CopyPaletteContents(CPalette *pSource, CPalette *pDest);
 	void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
 	static void GetSubOptions(CWnd *pParentWind);

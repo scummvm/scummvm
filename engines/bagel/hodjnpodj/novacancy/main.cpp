@@ -68,7 +68,7 @@ static int gnLDieLeftFinal,    // final positions of dice.
 
 extern HWND ghParentWnd;
 
-CMainWindow::CMainWindow(VOID) {
+CMainWindow::CMainWindow(void) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDibDoc *pDibDoc;
@@ -240,7 +240,7 @@ CMainWindow::CMainWindow(VOID) {
 	HandleError(errCode);
 }
 
-VOID CMainWindow::HandleError(ERROR_CODE errCode) {
+void CMainWindow::HandleError(ERROR_CODE errCode) {
 	// Exit this application on fatal errors
 	if (errCode != ERR_NONE) {
 		// pause the current game (if any)
@@ -258,7 +258,7 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 }
 
 
-VOID CMainWindow::OnPaint() {
+void CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	Invalidate(FALSE);
@@ -269,7 +269,7 @@ VOID CMainWindow::OnPaint() {
 }
 
 
-VOID CMainWindow::PaintScreen() {
+void CMainWindow::PaintScreen() {
 	CDibDoc myDoc;
 	CRect   rcDest;
 	char szMapFile[256];
@@ -427,16 +427,16 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-VOID CMainWindow::GamePause(VOID) {
+void CMainWindow::GamePause(void) {
 	m_bPause = TRUE;
 };
 
 
-VOID CMainWindow::GameResume(VOID) {
+void CMainWindow::GameResume(void) {
 	m_bPause = FALSE;
 };
 
-VOID CMainWindow::PlayGame() {
+void CMainWindow::PlayGame() {
 	ERROR_CODE errCode;
 	CDibDoc myDoc;
 	CRect   rcDest;
@@ -572,7 +572,7 @@ VOID CMainWindow::PlayGame() {
 
 
 
-VOID CMainWindow::GameReset(VOID) {
+void CMainWindow::GameReset(void) {
 	m_bGameActive = FALSE;                      // there is no currently active game
 
 	for (short i = 0; i < 10; i++) {
@@ -621,7 +621,7 @@ VOID CMainWindow::GameReset(VOID) {
 *
 ***********************************************************************************************************************************
 */
-VOID CMainWindow::OnMouseMove(UINT, CPoint) {
+void CMainWindow::OnMouseMove(UINT, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
@@ -663,7 +663,7 @@ VOID CMainWindow::OnMouseMove(UINT, CPoint) {
 ***********************************************************************************************************************************
 */
 
-VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	short i,
 	      iDoor;
 	short jj;
@@ -1148,7 +1148,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 *
 ***********************************************************************************************************************************
 */
-VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
+void CMainWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
 	// can't delete a null pointer
@@ -1602,7 +1602,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 #pragma warning(default: 4135)
 
 
-VOID CMainWindow::OnClose() {
+void CMainWindow::OnClose() {
 	CBrush cbrBlack;
 	CRect crectSplashScr;
 	CDC *pDC;

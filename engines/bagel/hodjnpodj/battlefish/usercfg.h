@@ -50,8 +50,8 @@ protected:
 	void PutDlgData(void);
 	void GetDlgData(void);
 	void DispLimit(void);
-	VOID LoadIniSettings(VOID);
-	VOID SaveIniSettings(VOID);
+	void LoadIniSettings(void);
+	void SaveIniSettings(void);
 
 	void OnHScroll(UINT, UINT, CScrollBar *);
 	void OnDestroy();

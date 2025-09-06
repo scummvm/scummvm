@@ -47,65 +47,65 @@ typedef struct {
 
 class CBFishWindow : public CFrameWnd {
 public:
-	CBFishWindow(VOID);
-	VOID        PlayGame(VOID);
-	VOID        PaintScreen(VOID);
-	VOID        LoadIniSettings(VOID);
-	VOID        SaveIniSettings(VOID);
+	CBFishWindow(void);
+	void        PlayGame(void);
+	void        PaintScreen(void);
+	void        LoadIniSettings(void);
+	void        SaveIniSettings(void);
 
 protected:
-	VOID        FlushInputEvents(VOID);
-	VOID        GameReset(VOID);
-	VOID        GamePause(VOID);
-	VOID        GameResume(VOID);
-	VOID        HandleError(ERROR_CODE);
-	VOID        DeleteSprite(CSprite *);
+	void        FlushInputEvents(void);
+	void        GameReset(void);
+	void        GamePause(void);
+	void        GameResume(void);
+	void        HandleError(ERROR_CODE);
+	void        DeleteSprite(CSprite *);
 	ERROR_CODE  RepaintSpriteList(CDC *);
-	ERROR_CODE  LoadMasterSprites(VOID);
-	VOID        ReleaseMasterSprites(VOID);
-	VOID        PlaceUserFish(VOID);
-	VOID        PlaceEnemyFish(VOID);
-	VOID        RotateFish(INT);
-	VOID        AssignFishToGrid(INT);
+	ERROR_CODE  LoadMasterSprites(void);
+	void        ReleaseMasterSprites(void);
+	void        PlaceUserFish(void);
+	void        PlaceEnemyFish(void);
+	void        RotateFish(INT);
+	void        AssignFishToGrid(INT);
 	INT         GetEnemyGridIndex(CPoint);
 	INT         GetUserGridIndex(CPoint);
 	INT         GetFishIndex(CSprite *);
 	BOOL        OkToPlaceFish(INT, CPoint, BOOL);
-	VOID        PlaceFish(INT, CPoint);
+	void        PlaceFish(INT, CPoint);
 	INT         IndexToId(INT);
 	INT         IdToIndex(INT);
 	CPoint      SnapToGrid(CPoint);
-	VOID        UsersTurn(INT);
-	VOID        ComputersTurn(VOID);
-	INT         SelectRandomTarget(VOID);
-	INT         SelectBurningTarget(VOID);
-	INT         SelectBestFitTarget(VOID);
+	void        UsersTurn(INT);
+	void        ComputersTurn(void);
+	INT         SelectRandomTarget(void);
+	INT         SelectBurningTarget(void);
+	INT         SelectBestFitTarget(void);
 	INT         FindNeighborTarget(INT, INT);
 	INT         FindTarget(INT, INT);
 	INT         FindMatch(INT, INT);
 	BOOL        FishFits(INT, INT, INT);
 	INT         GetNeighbors(INT, INT);
-	VOID        CreatePlume(CPoint);
-	VOID        CreateHarpoon(CPoint);
-	VOID        SinkUserFish(INT);
-	VOID        SinkEnemyFish(INT);
-	VOID        PlaceTurnHarpoons(VOID);
-	VOID        RemoveTurnHarpoon(VOID);
+	void        CreatePlume(CPoint);
+	void        CreateHarpoon(CPoint);
+	void        SinkUserFish(INT);
+	void        SinkEnemyFish(INT);
+	void        PlaceTurnHarpoons(void);
+	void        RemoveTurnHarpoon(void);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
-	VOID        OnSoundNotify(CSound *);
-	VOID        OnPaint(VOID);
-	VOID        OnMouseMove(UINT, CPoint);
-	VOID        OnRButtonDown(UINT, CPoint);
-	VOID        OnLButtonDown(UINT, CPoint);
-	VOID        OnLButtonUp(UINT, CPoint);
-	VOID        OnSysChar(UINT, UINT, UINT);
-	VOID        OnSysKeyDown(UINT, UINT, UINT);
-	VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL) override;
-	VOID        OnClose(VOID);
+	void        OnSoundNotify(CSound *);
+	void        OnPaint(void);
+	void        OnMouseMove(UINT, CPoint);
+	void        OnRButtonDown(UINT, CPoint);
+	void        OnLButtonDown(UINT, CPoint);
+	void        OnLButtonUp(UINT, CPoint);
+	void        OnSysChar(UINT, UINT, UINT);
+	void        OnSysKeyDown(UINT, UINT, UINT);
+	void        OnKeyDown(UINT, UINT, UINT);
+	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnClose(void);
 
 	DECLARE_MESSAGE_MAP()
 
