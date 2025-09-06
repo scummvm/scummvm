@@ -1263,8 +1263,8 @@ BOOL CMainWindow::CopyPaletteContents(CPalette *pSource, CPalette *pDest) {
 		return FALSE;
 
 	// Use C++-isms to copy palette contents from src to dest
-	Graphics::Palette *src = pSource->_palette;
-	Graphics::Palette *dest = pDest->_palette;
+	Graphics::Palette *src = pSource->palette();
+	Graphics::Palette *dest = pDest->palette();
 	*dest = *src;
 
 	return TRUE;

@@ -27,7 +27,7 @@ namespace MFC {
 
 BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 	DeleteObject();
-	_palette = new Impl(lpLogPalette);
+	m_hObject = new Impl(lpLogPalette);
 
 	// This is where it becomes permanent
 	AfxHookObject();
@@ -111,7 +111,7 @@ BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
 }
 
 UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
-	return _palette->findBestColor(
+	return palette()->findBestColor(
 		GetRValue(crColor),
 		GetGValue(crColor),
 		GetBValue(crColor)

@@ -30,7 +30,7 @@ CPen::CPen(int nPenStyle, int nWidth, COLORREF crColor) {
 }
 
 BOOL CPen::CreatePen(int nPenStyle, int nWidth, COLORREF crColor) {
-	_pen = new Impl(nPenStyle, nWidth, crColor);
+	m_hObject = new Impl(nPenStyle, nWidth, crColor);
 	AfxHookObject();
 	return true;
 }

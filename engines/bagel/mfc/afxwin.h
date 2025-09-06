@@ -516,7 +516,9 @@ public:
 		}
 	};
 
-	Impl *&_pen = *(Impl **)&m_hObject;
+	Impl *pen() const {
+		return (Impl *)m_hObject;
+	}
 
 public:
 	CPen() {}
@@ -541,7 +543,9 @@ public:
 		byte getColor() const;
 	};
 
-	Impl *&_brush = *(Impl **)&m_hObject;
+	Impl *brush() const {
+		return (Impl *)m_hObject;
+	}
 
 public:
 	static CBrush *FromHandle(HGDIOBJ h) {
@@ -574,7 +578,9 @@ public:
 		}
 	};
 
-	Impl *&_font = *(Impl **)&m_hObject;
+	Impl *font() const {
+		return (Impl *)m_hObject;
+	}
 
 public:
 	static CFont *FromHandle(HGDIOBJ h) {
@@ -599,7 +605,9 @@ public:
 		~Impl() override {}
 	};
 
-	Impl *&_bitmap = *(Impl **)&m_hObject;
+	Impl *bitmap() const {
+		return (Impl *)m_hObject;
+	}
 
 public:
 	static CBitmap *FromHandle(HGDIOBJ h) {
@@ -630,7 +638,9 @@ public:
 		~Impl() override {}
 	};
 
-	Impl *&_palette = *(Impl **)&m_hObject;
+	Impl *palette() const {
+		return (Impl *)m_hObject;
+	}
 
 public:
 	static CPalette *FromHandle(HGDIOBJ h) {
@@ -653,7 +663,7 @@ public:
 	                    const PALETTEENTRY *lpPaletteColors);
 	UINT GetNearestPaletteIndex(COLORREF crColor);
 	bool isEmpty() const {
-		return !_palette || _palette->empty();
+		return !palette() || palette()->empty();
 	}
 };
 
@@ -2039,8 +2049,8 @@ public:
 	}
 	HFONT getFont(const char *lpszFacename, int nHeight);
 	HFONT getDefaultFont() {
-		assert(_defaultFont._font);
-		return (HFONT)_defaultFont._font;
+		assert(_defaultFont.m_hObject);
+		return (HFONT)_defaultFont.m_hObject;
 	}
 	HPEN getDefaultPen() const {
 		assert(_defaultPen.m_hObject);
@@ -2051,8 +2061,8 @@ public:
 		return (HBRUSH)_defaultBrush.m_hObject;
 	}
 	HPALETTE getSystemPalette() {
-		assert(_systemPalette._palette);
-		return _systemPalette._palette;
+		assert(_systemPalette.m_hObject);
+		return (HPALETTE)_systemPalette.m_hObject;
 	}
 
 	LPCSTR AfxRegisterWndClass(UINT nClassStyle,

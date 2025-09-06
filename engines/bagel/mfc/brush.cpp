@@ -29,7 +29,7 @@ CBrush::CBrush() {
 }
 
 CBrush::CBrush(CBitmap *pBitmap) {
-	_brush = new Impl(pBitmap);
+	m_hObject = new Impl(pBitmap);
 }
 
 CBrush::CBrush(COLORREF crColor) {
@@ -37,12 +37,12 @@ CBrush::CBrush(COLORREF crColor) {
 }
 
 CBrush::CBrush(int nIndex, COLORREF crColor) {
-	_brush = new Impl(nIndex, crColor);
+	m_hObject = new Impl(nIndex, crColor);
 }
 
 BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 	DeleteObject();
-	_brush = new Impl(crColor);
+	m_hObject = new Impl(crColor);
 
 	AfxHookObject();
 	return true;
@@ -50,7 +50,7 @@ BOOL CBrush::CreateSolidBrush(COLORREF crColor) {
 
 BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 	DeleteObject();
-	_brush = new Impl(lpLogBrush->lbStyle,
+	m_hObject = new Impl(lpLogBrush->lbStyle,
 	    lpLogBrush->lbColor);
 
 	AfxHookObject();

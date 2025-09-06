@@ -153,7 +153,7 @@ BOOL CWinApp::SaveAllModified() {
 
 int CWinApp::Run() {
 	// Ensure app has been initialized
-	assert(_defaultFont._font);
+	assert(_defaultFont.font());
 
 	SetCursor(LoadCursor(IDC_ARROW));
 
@@ -303,7 +303,7 @@ byte CWinApp::getColor(COLORREF color) const {
 	if (color <= 0xff || (color >> 24) == 1)
 		return (byte)(color & 0xff);
 
-	return _currentPalette._palette->findBestColor(
+	return _currentPalette.palette()->findBestColor(
 		GetRValue(color),
 		GetGValue(color),
 		GetBValue(color)

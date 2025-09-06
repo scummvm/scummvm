@@ -657,7 +657,7 @@ CDC::Impl::Impl(CWnd *wndOwner) : m_pWnd(wndOwner), _drawMode(R2_COPYPEN) {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
 	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
-	_bitmap = _defaultBitmap._bitmap;
+	_bitmap = _defaultBitmap.bitmap();
 
 	// Defaults
 	CWinApp *app = AfxGetApp();
@@ -673,7 +673,7 @@ CDC::Impl::Impl(HDC srcDc) {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
 	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
-	_bitmap = _defaultBitmap._bitmap;
+	_bitmap = _defaultBitmap.bitmap();
 
 	if (src) {
 		_font = src->_font;
@@ -736,14 +736,14 @@ const Graphics::PixelFormat &CDC::Impl::getFormat() const {
 }
 
 void CDC::Impl::setFormat(const Graphics::PixelFormat &format) {
-	_defaultBitmap._bitmap->create(1, 1, format);
-	_bitmap = _defaultBitmap._bitmap;
+	_defaultBitmap.bitmap()->create(1, 1, format);
+	_bitmap = _defaultBitmap.bitmap();
 }
 
 void CDC::Impl::setScreenRect() {
 	Graphics::Screen *scr = AfxGetApp()->getScreen();
-	_defaultBitmap._bitmap->create(*scr, Common::Rect(0, 0, scr->w, scr->h));
-	_bitmap = _defaultBitmap._bitmap;
+	_defaultBitmap.bitmap()->create(*scr, Common::Rect(0, 0, scr->w, scr->h));
+	_bitmap = _defaultBitmap.bitmap();
 }
 
 void CDC::Impl::setScreenRect(const Common::Rect &r) {
@@ -751,8 +751,8 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 	assert(r.left >= 0 && r.top >= 0 &&
 		r.right <= scr->w && r.bottom <= scr->h);
 
-	_defaultBitmap._bitmap->create(*scr, r);
-	_bitmap = _defaultBitmap._bitmap;
+	_defaultBitmap.bitmap()->create(*scr, r);
+	_bitmap = _defaultBitmap.bitmap();
 }
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal, BOOL bForceBackground) {
@@ -827,11 +827,11 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
 	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
 	CPen::Impl *pen = (CPen::Impl *)_pen;
-	byte brushColor = brush->_brush->getColor();
+	byte brushColor = brush->brush()->getColor();
 	uint penColor = getPenColor();
 
 	if (pen->_penStyle == PS_INSIDEFRAME &&
-			brush->_brush->_type != BS_HOLLOW) {
+			brush->brush()->_type != BS_HOLLOW) {
 		Common::Rect rInner(r.left + 1, r.top + 1,
 			r.right - 1, r.bottom - 1);
 		bitmap->fillRect(rInner, brushColor);
@@ -842,7 +842,7 @@ void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
 
 void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
 	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
-	byte brushColor = brush->_brush->getColor();
+	byte brushColor = brush->brush()->getColor();
 
 	bitmap->frameRect(r, brushColor);
 }
