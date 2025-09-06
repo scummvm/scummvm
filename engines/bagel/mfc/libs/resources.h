@@ -82,7 +82,7 @@ public:
 	/**
 	 * Find a resource
 	 */
-	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
+	HRSRC findResource(const char *lpName, const char *lpType);
 
 	/**
 	 * Return the size of a resource

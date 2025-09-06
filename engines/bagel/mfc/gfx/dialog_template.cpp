@@ -54,7 +54,7 @@ BOOL CDialogTemplate::HasFont() const {
 	return false;
 }
 
-BOOL CDialogTemplate::SetFont(LPCSTR lpFaceName, WORD nFontSize) {
+BOOL CDialogTemplate::SetFont(const char *lpFaceName, WORD nFontSize) {
 	return false;
 }
 

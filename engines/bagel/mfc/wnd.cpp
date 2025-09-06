@@ -85,7 +85,7 @@ CWnd::~CWnd() {
 	pMap->RemoveHandle(m_hWnd);
 }
 
-BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+BOOL CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
 	uint32 dwStyle, const RECT &rect, CWnd *pParentWnd,
 	UINT nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
@@ -133,8 +133,8 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	return true;
 }
 
-BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, uint32 dwStyle,
+BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
+		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
 		void *lpParam /* = nullptr */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
@@ -142,8 +142,8 @@ BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
 		pParentWnd->GetSafeHwnd(), nID, lpParam);
 }
 
-BOOL CWnd::CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, uint32 dwStyle,
+BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
+		const char *lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam) {
 	// Set up create structure
@@ -392,12 +392,12 @@ int CWnd::GetWindowText(CString &rString) const {
 	return rString.size();
 }
 
-int CWnd::GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const {
+int CWnd::GetWindowText(char *lpszStringBuf, int nMaxCount) const {
 	Common::strcpy_s(lpszStringBuf, nMaxCount, _windowText.c_str());
 	return strlen(lpszStringBuf);
 }
 
-BOOL CWnd::SetWindowText(LPCSTR lpszString) {
+BOOL CWnd::SetWindowText(const char *lpszString) {
 	_windowText = lpszString;
 	Invalidate();
 	return true;
@@ -710,7 +710,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		break;
 
 	case AfxSig_vws:
-		(this->*mmf.pfn_vws)((UINT)wParam, (LPCTSTR)lParam);
+		(this->*mmf.pfn_vws)((UINT)wParam, (const char *)lParam);
 		break;
 
 	case AfxSig_vOWNER:
@@ -1073,7 +1073,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	return true;
 }
 
-BOOL CWnd::SetDlgItemText(int nIDDlgItem, LPCSTR lpString) {
+BOOL CWnd::SetDlgItemText(int nIDDlgItem, const char *lpString) {
 	CWnd *wnd = GetDlgItem(nIDDlgItem);
 
 	if (wnd) {

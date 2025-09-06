@@ -44,8 +44,6 @@ namespace Metagame {
 typedef int BOOL ;
 typedef char *XPSTR ;
 typedef char *XPSTR;
-typedef char *LPSTR ;
-typedef LPSTR *LPLPSTR ;
 typedef int *XPINT ;
 typedef char *XPCHAR ;
 typedef void *XPVOID ;

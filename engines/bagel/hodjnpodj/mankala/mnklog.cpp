@@ -1857,11 +1857,11 @@ cleanup:
 //
 //  if (lIndex == THRESHHOLD)
 //  {
-//      _fmemcpy(cBuffer, (LPSTR)m_lpCMnkData->m_hpcBestWin, BUFSIZE) ;
+//      _fmemcpy(cBuffer, (char *)m_lpCMnkData->m_hpcBestWin, BUFSIZE) ;
 //      DumpBestWinTable() ;
 //  }
 /////   else if (lIndex >= 104856   // error detected at 104858
-//  else if (_fmemcmp(cBuffer, (LPSTR)m_lpCMnkData->m_hpcBestWin,
+//  else if (_fmemcmp(cBuffer, (char *)m_lpCMnkData->m_hpcBestWin,
 //          BUFSIZE))   // if first BUFSIZE bytes changed
 //  {
 //      DumpPosition(xpcMove) ;

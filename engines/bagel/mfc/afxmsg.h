@@ -409,7 +409,7 @@ namespace MFC {
 #define ON_WM_SETTEXT() \
 	{ WM_SETTEXT, 0, 0, 0, AfxSig_i_v_S, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(LPCTSTR) > ( &ThisClass::OnSetText)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(const char *) > ( &ThisClass::OnSetText)) },
 
 #define ON_WM_GETTEXT() \
 	{ WM_GETTEXT, 0, 0, 0, AfxSig_i_i_s, \
@@ -519,12 +519,12 @@ namespace MFC {
 #define ON_WM_SETTINGCHANGE() \
 	{ WM_SETTINGCHANGE, 0, 0, 0, AfxSig_vws, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPCTSTR) > ( &ThisClass::OnSettingChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, const char *) > ( &ThisClass::OnSettingChange)) },
 
 #define ON_WM_WININICHANGE() \
 	{ WM_WININICHANGE, 0, 0, 0, AfxSig_vs, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(LPCTSTR) > ( &ThisClass::OnWinIniChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(const char *) > ( &ThisClass::OnWinIniChange)) },
 
 #define ON_WM_DEVMODECHANGE() \
 	{ WM_DEVMODECHANGE, 0, 0, 0, AfxSig_vs, \

@@ -530,7 +530,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 				NOTE_TEXT_DX + NOTE_TEXT_DDX,
 				NOTE_TEXT_DY + NOTE_TEXT_DDY);
 		(*pDC).DrawText(                              // zap the text to the work area
-			(LPCSTR)(*pNote).GetDescription(),
+			(const char *)(*pNote).GetDescription(),
 			-1,
 			&myRect,
 			DT_CENTER | DT_WORDBREAK);

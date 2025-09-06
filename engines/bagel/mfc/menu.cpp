@@ -34,7 +34,7 @@ BOOL CMenu::CreateMenu() {
 BOOL CMenu::CreatePopupMenu() {
 	error("TODO: CMenu::CreatePopupMenu");
 }
-BOOL CMenu::LoadMenu(LPCTSTR lpszResourceName) {
+BOOL CMenu::LoadMenu(const char *lpszResourceName) {
 	error("TODO: CMenu::LoadMenu");
 }
 BOOL CMenu::LoadMenu(UINT nIDResource) {

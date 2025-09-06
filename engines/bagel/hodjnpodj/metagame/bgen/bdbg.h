@@ -63,25 +63,25 @@ public:
 
 	CBdbgMgr(void) ;
 	~CBdbgMgr(void) ;
-	BOOL DebugInit(LPCSTR lpszIniFilename,
-	               LPCSTR lpszIniSectionname) ;
-	int GetDebugInt(LPCSTR lpszOption,
+	BOOL DebugInit(const char *lpszIniFilename,
+	               const char *lpszIniSectionname) ;
+	int GetDebugInt(const char *lpszOption,
 	                int iDefault PDFT(0)) ;
-	BOOL GetDebugString(LPCSTR lpszOption,
-	                    LPSTR lpszTarget, int iTargetSize,
-	                    LPCSTR lpszDefault PDFT(nullptr)) ;
-	BOOL TraceConstructor(LPCSTR lpszName, void *lpLoc) ;
-	BOOL TraceDestructor(LPCSTR lpszName, void *lpLoc) ;
-	BOOL DebugMessageBox(LPCSTR lpszPrompt,
+	BOOL GetDebugString(const char *lpszOption,
+	                    char *lpszTarget, int iTargetSize,
+	                    const char *lpszDefault PDFT(nullptr)) ;
+	BOOL TraceConstructor(const char *lpszName, void *lpLoc) ;
+	BOOL TraceDestructor(const char *lpszName, void *lpLoc) ;
+	BOOL DebugMessageBox(const char *lpszPrompt,
 	                     UINT nType, UINT nIDPrompt) ;
-	BOOL AddTraceObject(LPCSTR lpszName, void *lpPtr) ;
-	BOOL TestTraceObject(LPCSTR lpszName, void *lpPtr,
+	BOOL AddTraceObject(const char *lpszName, void *lpPtr) ;
+	BOOL TestTraceObject(const char *lpszName, void *lpPtr,
 	                     BOOL bMissing PDFT(FALSE)) ;
-	BOOL RemoveTraceObject(LPCSTR lpszName, void *lpPtr) ;
+	BOOL RemoveTraceObject(const char *lpszName, void *lpPtr) ;
 	BOOL ReportTraceObjects(void) ;
-	STATIC BOOL OutputWithTime(LPCSTR lpszPattern) ;
-	STATIC BOOL OutputWithWordWrap(LPCSTR lpStr1,
-	                               LPCSTR lpStr2, int iIndent) ;
+	STATIC BOOL OutputWithTime(const char *lpszPattern) ;
+	STATIC BOOL OutputWithWordWrap(const char *lpStr1,
+	                               const char *lpStr2, int iIndent) ;
 } ;
 
 #ifndef JXENTER

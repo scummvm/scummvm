@@ -137,7 +137,7 @@ public:
 	//- GetInfo -- get information about scroll set
 	BOOL GetInfo(CBsuInfo *xpBsuInfo);
 	//- DumpInfo -- dump information about scroll set
-	BOOL DumpInfo(LPSTR lpStart PDFT(nullptr));
+	BOOL DumpInfo(char *lpStart PDFT(nullptr));
 };
 
 

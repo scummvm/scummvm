@@ -79,7 +79,7 @@ char    acAlpha[26] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', '
                         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
                       };
 
-extern LPCSTR astrWLCat[NUMBEROFLISTS];
+extern const char *astrWLCat[NUMBEROFLISTS];
 extern char acList[NUMBEROFLISTS][WORDSPERLIST][20];
 
 /*****************************************************************

@@ -100,8 +100,8 @@ BOOL CFrameWnd::LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
 	//VERIFY(AfxDeferRegisterClass(AFX_WNDFRAMEORVIEW_REG));
 
 	// Create the window
-	LPCSTR lpszClass = nullptr; //GetIconWndClass(dwDefaultStyle, nIDResource);
-	LPCSTR lpszTitle = m_strTitle.c_str();
+	const char *lpszClass = nullptr; //GetIconWndClass(dwDefaultStyle, nIDResource);
+	const char *lpszTitle = m_strTitle.c_str();
 	CRect rectDefault;
 	if (!Create(lpszClass, lpszTitle, dwDefaultStyle, rectDefault,
 		pParentWnd, MAKEINTRESOURCE(nIDResource), 0L, pContext)) {
@@ -119,10 +119,10 @@ BOOL CFrameWnd::LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
 }
 
 
-BOOL CFrameWnd::Create(LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, uint32 dwStyle,
+BOOL CFrameWnd::Create(const char *lpszClassName,
+		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd,
-		LPCSTR lpszMenuName, uint32 dwExStyle,
+		const char *lpszMenuName, uint32 dwExStyle,
 		CCreateContext *pContext) {
 	HMENU hMenu = nullptr;
 	if (lpszMenuName != nullptr) {

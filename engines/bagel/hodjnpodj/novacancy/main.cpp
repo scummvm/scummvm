@@ -675,7 +675,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CSprite* pBottleSprite,
 	         *pCatSprite;
 	HLOCAL hlocScore;
-	NPSTR npszScore;            //to display score in case of SA mode
+	char *npszScore;            //to display score in case of SA mode
 	const int iMaxScore = 45; //1+2+3+4+5+6+7+8+9       to be used for score computation.
 	ERROR_CODE errCode = ERR_NONE;
 
@@ -861,7 +861,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 						*/
 						//if(!pGameParams->bPlayingMetagame){
 						if ((hlocScore = LocalAlloc(LHND, 32)) != nullptr) {
-							npszScore = (NPSTR)LocalLock(hlocScore);
+							npszScore = (char *)LocalLock(hlocScore);
 							Common::sprintf_s(npszScore, 32, "%lu point%c out of 45.", iMaxScore - pGameParams->lScore, ((iMaxScore - pGameParams->lScore) == 1) ? ' ' : 's'); //imaxScore is 45.
 							CMessageBox(this, m_pGamePalette, "Your score is", npszScore);
 							LocalUnlock(hlocScore);
@@ -875,18 +875,18 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 					case 1:
 					case 2:
-						NPSTR npszInfo;
+						char *npszInfo;
 						HLOCAL hInfo;
 
 						if ((hInfo = LocalAlloc(LHND, 32)) == nullptr)
 							error("TODO: Memory alloc");
 
-						npszInfo = (NPSTR)LocalLock(hInfo);
+						npszInfo = (char *)LocalLock(hInfo);
 						Common::sprintf_s(npszInfo, 32, "Only %d throw%c left.", (3 - m_cUnDoableThrows), (m_cUnDoableThrows == 1) ? 's' : ' ');
 
 						GamePause();
 						sndPlaySound(GetStringFromResource(IDS_SORRY), SND_ASYNC);
-						CMessageBox(this, m_pGamePalette, "Undoable throw!", npszInfo ? (LPSTR)npszInfo : "");
+						CMessageBox(this, m_pGamePalette, "Undoable throw!", npszInfo ? (char *)npszInfo : "");
 
 						LocalUnlock(hInfo);
 						LocalFree(hInfo);

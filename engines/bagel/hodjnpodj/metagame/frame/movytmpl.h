@@ -51,7 +51,7 @@ public:
 	 * @param h	Height
 	 * @return		True if movie's playable, else FALSE.
 	 */
-	BOOL BlowWindow(CWnd *pParentWnd, BOOL bScroll, LPCSTR lpszAviMovie,
+	BOOL BlowWindow(CWnd *pParentWnd, BOOL bScroll, const char *lpszAviMovie,
 		int x = 0, int y = 0, int w = MOVIE_WIDTH, int h = MOVIE_HEIGHT);
 
 protected:
@@ -63,7 +63,7 @@ protected:
 
 	CRect MovieRect;
 	CWnd *m_pParent = nullptr;
-	LPCSTR lpszAviMovie = nullptr;	// The name of movie.
+	const char *lpszAviMovie = nullptr;	// The name of movie.
 
 public:
 	int nMovieId = -1;

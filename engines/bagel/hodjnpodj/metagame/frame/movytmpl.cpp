@@ -42,7 +42,7 @@ namespace Frame {
 static BOOL     bPaintScroll;
 
 BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
-		LPCSTR AviMovee, int x, int y, int w, int h) {
+		const char *AviMovee, int x, int y, int w, int h) {
 	m_pParent = pParent;
 	bPaintScroll = bScroll;
 

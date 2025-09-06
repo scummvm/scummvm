@@ -39,7 +39,7 @@ constexpr int CURSOR_H = 20;
 
 struct ResourceString_Hash {
 	uint operator()(const intptr s) const {
-		return s <= 0xffff ? s : Common::hashit((LPCSTR)s);
+		return s <= 0xffff ? s : Common::hashit((const char *)s);
 	}
 };
 
@@ -50,7 +50,7 @@ struct ResourceString_EqualTo {
 
 		return (xNum == yNum) && (
 		           (xNum && x == y) ||
-		           (!xNum && !strcmp((LPCSTR)x, (LPCSTR)y))
+		           (!xNum && !strcmp((const char *)x, (const char *)y))
 		       );
 	}
 };

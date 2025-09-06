@@ -264,7 +264,7 @@ enum FontWeight {
 /*
  * Standard Cursor IDs
  */
-#define MAKEINTRESOURCE(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((WORD)(i))))
 #define IDC_NONE            0
 
 #define IDC_ARROW           MAKEINTRESOURCE(32512)
@@ -741,11 +741,11 @@ extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
 
 extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
-                              LPCTSTR lpTemplateName, HWND hWndParent,
+                              const char *lpTemplateName, HWND hWndParent,
                               DLGPROC lpDialogFunc, LPARAM dwInitParam);
 extern BOOL IsWindow(HWND hWnd);
-extern BOOL SetWindowText(HWND hWnd, LPCSTR lpszString);
-extern int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount);
+extern BOOL SetWindowText(HWND hWnd, const char *lpszString);
+extern int GetWindowText(HWND hWnd, char *lpszStringBuf, int nMaxCount);
 extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
@@ -765,11 +765,11 @@ extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
                          CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, uint32 rop);
-extern int GetTextExtent(HDC hdc, LPCSTR text, size_t len);
+extern int GetTextExtent(HDC hdc, const char *text, size_t len);
 extern BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm);
 extern intptr GetWindowWord(HWND hWnd, int nIndex);
-extern int AddFontResource(LPCSTR fontName);
-extern bool RemoveFontResource(LPCSTR fontName);
+extern int AddFontResource(const char *fontName);
+extern bool RemoveFontResource(const char *fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,
     int nPos, BOOL bRedraw);
 extern void SetScrollRange(HWND hWnd, int nBar,
@@ -782,7 +782,7 @@ extern BOOL SetCapture(HWND hWnd);
 extern BOOL ReleaseCapture();
 extern HWND GetCapture();
 extern HCURSOR LoadCursor(HINSTANCE hInstance,
-                          LPCSTR lpCursorName);
+                          const char *lpCursorName);
 extern HCURSOR SetCursor(HCURSOR hCursor);
 extern int ShowCursor(BOOL bShow);
 

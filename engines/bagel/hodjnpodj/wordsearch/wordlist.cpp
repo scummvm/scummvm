@@ -25,7 +25,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace WordSearch {
 
-LPCSTR astrWLCat[NUMBEROFLISTS] = {
+const char *astrWLCat[NUMBEROFLISTS] = {
 	"Parts of an Airplane",     //0
 	"Animals",
 	"Baseball Terms",

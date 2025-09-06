@@ -168,9 +168,9 @@ protected:
 	//
 	// Sound as resource dudes:
 	//
-	LPSTR       m_pHitSound[NUM_HIT_SOUNDS];
+	char *      m_pHitSound[NUM_HIT_SOUNDS];
 	HANDLE      m_hHitRes[NUM_HIT_SOUNDS];
-	LPSTR       m_pMissSound[NUM_MISS_SOUNDS];
+	char *      m_pMissSound[NUM_MISS_SOUNDS];
 	HANDLE      m_hMissRes[NUM_MISS_SOUNDS];
 
 	//{{AFX_MSG( CMainPackRatWindow )

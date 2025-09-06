@@ -113,7 +113,7 @@ CBmpButton          *pDrawButton = nullptr;  // Button for drawing cards not hel
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 
-static LPCSTR sBitmaps[53] = {
+static const char *sBitmaps[53] = {
 	"ART\\PKR1.BMP",
 	"ART\\PKR2.BMP",
 	"ART\\PKR3.BMP",
@@ -673,11 +673,11 @@ void CMainPokerWindow::SplashScreen() {
 	ptxtBetDisplay = new CText;
 
 // create the display strings for the bet and user amount
-	Common::sprintf_s((LPSTR)cBet, 10, "%li", m_lUserBet);
-	Common::sprintf_s((LPSTR)cUser, 10, "%li", m_lUserAmount);
+	Common::sprintf_s((char *)cBet, 10, "%li", m_lUserBet);
+	Common::sprintf_s((char *)cUser, 10, "%li", m_lUserAmount);
 
 	j = 0;
-	for (nCharIndex = strlen((LPSTR)cUser) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
+	for (nCharIndex = strlen((char *)cUser) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
 	        nCharIndex >= 0;
 	        nCharIndex--, nDisplayIndex--, nCounter1++) {
 
@@ -689,13 +689,13 @@ void CMainPokerWindow::SplashScreen() {
 			cUserDisplay[nDisplayIndex] = cUser[nCharIndex];
 		}
 	}
-	nDisplayIndex = strlen((LPSTR)cUser);
+	nDisplayIndex = strlen((char *)cUser);
 	cUserDisplay[nDisplayIndex + j] = 0;
 
 	ptxtUserDisplay->SetupText(pDC, pGamePalette, &rectDisplayUser, JUSTIFY_CENTER);
 	ptxtUserDisplay->DisplayString(pDC, cUserDisplay, 16, FW_BOLD, (COLORREF)RGB(0, 0, 255));
 
-	for (nCharIndex = strlen((LPSTR)cBet) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
+	for (nCharIndex = strlen((char *)cBet) - 1, nDisplayIndex = nCharIndex + (nCharIndex / 3), nCounter1 = 1;
 	        nCharIndex >= 0;
 	        nCharIndex--, nDisplayIndex--, nCounter1++) {
 
@@ -706,7 +706,7 @@ void CMainPokerWindow::SplashScreen() {
 			cBetDisplay[nDisplayIndex] = cBet[nCharIndex];
 		}
 	}
-	nDisplayIndex = strlen((LPSTR)cBet);
+	nDisplayIndex = strlen((char *)cBet);
 	cBetDisplay[nDisplayIndex + (nDisplayIndex / 4)] = 0;
 
 	ptxtBetDisplay->SetupText(pDC, pGamePalette, &rectDisplayBet, JUSTIFY_CENTER);

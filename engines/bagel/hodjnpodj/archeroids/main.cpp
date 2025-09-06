@@ -819,7 +819,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 
 		if ((m_hBadDieRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-			if ((m_pBadDieSound = (LPSTR)LockResource((HGLOBAL)m_hBadDieRes)) != nullptr) {
+			if ((m_pBadDieSound = (char *)LockResource((HGLOBAL)m_hBadDieRes)) != nullptr) {
 
 				// we have now loaded at least one of the master sounds
 
@@ -841,7 +841,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 
 			if ((m_hBoltRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pBoltSound = (LPSTR)LockResource((HGLOBAL)m_hBoltRes)) == nullptr)
+				if ((m_pBoltSound = (char *)LockResource((HGLOBAL)m_hBoltRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -859,7 +859,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 
 			if ((m_hArrowRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pArrowSound = (LPSTR)LockResource((HGLOBAL)m_hArrowRes)) == nullptr)
+				if ((m_pArrowSound = (char *)LockResource((HGLOBAL)m_hArrowRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -877,7 +877,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 
 			if ((m_hBurnRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pBurnSound = (LPSTR)LockResource((HGLOBAL)m_hBurnRes)) == nullptr)
+				if ((m_pBurnSound = (char *)LockResource((HGLOBAL)m_hBurnRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -895,7 +895,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 
 			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
+				if ((m_pExtraLifeSound = (char *)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;

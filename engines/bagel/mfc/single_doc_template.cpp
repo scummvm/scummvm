@@ -33,7 +33,7 @@ CSingleDocTemplate::~CSingleDocTemplate() {
 	assert(!m_pOnlyDoc);
 }
 
-CDocument *CSingleDocTemplate::OpenDocumentFile(LPCSTR lpszPathName,
+CDocument *CSingleDocTemplate::OpenDocumentFile(const char *lpszPathName,
 		BOOL bMakeVisible) {
 	CDocument *pDocument = nullptr;
 	CFrameWnd *pFrame = nullptr;

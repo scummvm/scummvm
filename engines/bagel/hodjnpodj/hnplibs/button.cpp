@@ -367,10 +367,10 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
  * LoadBitmaps()
  *
  * Parameters:
- *  LPCSTR lpszBase         pointer to resource name string for UP state
- *  LPCSTR lpszSelected     pointer to resource name string for SELECTED state
- *  LPCSTR lpszFocus        pointer to resource name string for FOCUS state
- *  LPCSTR lpszDisabled     pointer to resource name string for DISABLED state
+ *  const char *lpszBase         pointer to resource name string for UP state
+ *  const char *lpszSelected     pointer to resource name string for SELECTED state
+ *  const char *lpszFocus        pointer to resource name string for FOCUS state
+ *  const char *lpszDisabled     pointer to resource name string for DISABLED state
  *
  * Return Value:
  *  BOOL            success / failure condition
@@ -379,7 +379,7 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
  *
  ************************************************************************/
 
-BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFocus, LPCSTR lpszDisabled) {
+BOOL CBmpButton::LoadBitmaps(const char *lpszBase, const char *lpszSelected, const char *lpszFocus, const char *lpszDisabled) {
 	CDC         *pDC = nullptr;
 	CBitmap     *pBitmap = nullptr;
 	HBITMAP     hBitmap = nullptr;
@@ -456,10 +456,10 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
  * LoadBmpBitmaps()
  *
  * Parameters:
- *  LPCSTR lpszBase         pointer to .BMP path string for UP state
- *  LPCSTR lpszSelected     pointer to .BMP path string for SELECTED state
- *  LPCSTR lpszFocus        pointer to .BMP path string for FOCUS state
- *  LPCSTR lpszDisabled     pointer to .BMP path string for DISABLED state
+ *  const char *lpszBase         pointer to .BMP path string for UP state
+ *  const char *lpszSelected     pointer to .BMP path string for SELECTED state
+ *  const char *lpszFocus        pointer to .BMP path string for FOCUS state
+ *  const char *lpszDisabled     pointer to .BMP path string for DISABLED state
  *
  * Return Value:
  *  BOOL            success / failure condition
@@ -468,7 +468,7 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
  *
  ************************************************************************/
 
-BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFocus, LPCSTR lpszDisabled) {
+BOOL CBmpButton::LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected, const char *lpszFocus, const char *lpszDisabled) {
 	CDC         *pDC = nullptr;
 	CBitmap     *pBitmap = nullptr;
 	HBITMAP     hBitmap = nullptr;
@@ -892,7 +892,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
-	nMyTextLength = GetWindowText((LPSTR) &chMyText, 127);
+	nMyTextLength = GetWindowText((char *) &chMyText, 127);
 	chMyText[nMyTextLength] = '\0';                 // fetch the button label and strip
 	for (i = 0, j = 0; i <= nMyTextLength; i++) {   // ... out any apersand characters
 		if (chMyText[i] == '&')                     // ... which are used to force underscoring
@@ -962,15 +962,15 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
 	oldTextColor = (*pDC).SetTextColor(myTextColor);         // set the color of the text
 
-	(*pDC).TextOut(x, y, (LPCSTR) &chMyText, nMyTextLength);
+	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {
 		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
 		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((LPCSTR) "_", 1);
+		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (LPCSTR) "_", 1);
+		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
 	(void)(*pDC).SetTextColor(oldTextColor);                // set the color of the text
@@ -1180,7 +1180,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
-	nMyTextLength = GetWindowText((LPSTR) &chMyText, 127);
+	nMyTextLength = GetWindowText((char *) &chMyText, 127);
 	chMyText[nMyTextLength] = '\0';                 // fetch the button label and strip
 	for (i = 0, j = 0; i <= nMyTextLength; i++) {   // ... out any apersand characters
 		if (chMyText[i] == '&')                     // ... which are used to force underscoring
@@ -1254,15 +1254,15 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	(*pDC).SetBkMode(TRANSPARENT);                      // make the text overlay transparently
 	oldTextColor = (*pDC).SetTextColor(myTextColor);    // set the color of the text
 
-	(*pDC).TextOut(x, y, (LPCSTR) &chMyText, nMyTextLength);
+	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {                         // put the underscore where it belongs
 		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
 		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((LPCSTR) "_", 1);
+		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (LPCSTR) "_", 1);
+		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
 	(void)(*pDC).SetTextColor(oldTextColor);
@@ -1526,7 +1526,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	        !(*pParentWnd).IsWindowVisible())
 		return;
 
-	nMyTextLength = GetWindowText((LPSTR) &chMyText, 127);
+	nMyTextLength = GetWindowText((char *) &chMyText, 127);
 	chMyText[nMyTextLength] = '\0';                 // fetch the button label and strip
 	for (i = 0, j = 0; i <= nMyTextLength; i++) {   // ... out any apersand characters
 		if (chMyText[i] == '&')                     // ... which are used to force underscoring
@@ -1603,15 +1603,15 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	(*pDC).SetBkMode(TRANSPARENT);                      // make the text overlay transparently
 	oldTextColor = (*pDC).SetTextColor(myTextColor);    // set the color of the text
 
-	(*pDC).TextOut(x, y, (LPCSTR) &chMyText, nMyTextLength);
+	(*pDC).TextOut(x, y, (const char *) &chMyText, nMyTextLength);
 
 	if (nUnderscore >= 0) {                         // put the underscore where it belongs
 		underscoreInfo = (*pDC).GetTextExtent(chMyText, nUnderscore);
 		dx = x + underscoreInfo.cx;
 		letterInfo = (*pDC).GetTextExtent(&chMyText[nUnderscore], 1);
-		underscoreInfo = (*pDC).GetTextExtent((LPCSTR) "_", 1);
+		underscoreInfo = (*pDC).GetTextExtent((const char *) "_", 1);
 		dx += (letterInfo.cx - underscoreInfo.cx) >> 1;
-		(*pDC).TextOut(dx, y, (LPCSTR) "_", 1);
+		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
 	(void)(*pDC).SetTextColor(oldTextColor);

@@ -62,7 +62,7 @@ public:
 	bool operator>=(CTimeSpan span) const;
 
 public:
-	CString Format(LPCTSTR pszFormat) const;
+	CString Format(const char *pszFormat) const;
 	CString Format(UINT nID) const;
 
 private:
@@ -122,8 +122,8 @@ public:
 	int GetDayOfWeek() const;
 
 	// formatting using "C" strftime
-	CString Format(LPCTSTR pszFormat) const;
-	CString FormatGmt(LPCTSTR pszFormat) const;
+	CString Format(const char *pszFormat) const;
+	CString FormatGmt(const char *pszFormat) const;
 	CString Format(UINT nFormatID) const;
 	CString FormatGmt(UINT nFormatID) const;
 

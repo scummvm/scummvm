@@ -481,7 +481,7 @@ CLexElement *CGtlData::ParseInteger(CLexElement * xpLxel, int iPrevType, int FAR
 
 //* CGtlData::ParseString -- parse string, store into node structure
 //	Note: Accepts identifier as well as string
-CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, LPSTR lpszValue, XPINT xpiValue)
+CLexElement *CGtlData::ParseString(CLexElement * xpLxel, int iPrevType, char *lpszValue, XPINT xpiValue)
 // xpLxel -- pointer to previous lexeme
 // iPrevType -- type of previous lexeme
 // lpszValue -- where string is to be stored, or nullptr if not stored
@@ -539,7 +539,7 @@ cleanup:
 
 
 //* CGtlData::GetLabel -- get bitmap or node label
-BOOL CGtlData::GetLabel(LPSTR lpszLabel, BOOL bNode, int FAR& iIndex)
+BOOL CGtlData::GetLabel(char *lpszLabel, BOOL bNode, int FAR& iIndex)
 // lpszLabel -- pointer to label string for bitmap/node being sought
 // bNode -- FALSE for bitmaps, TRUE for nodes
 // iIndex -- output: index of bitmap or node for label

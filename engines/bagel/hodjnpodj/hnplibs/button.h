@@ -79,9 +79,9 @@ public:
 	BOOL AutoLoad(UINT nID, CWnd * pParent);
 
 	BOOL LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelected, CBitmap *pFocus, CBitmap *pDisabled);
-	BOOL LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected = nullptr, LPCSTR lpszFocus = nullptr, LPCSTR lpszDisabled = nullptr);
+	BOOL LoadBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
 	BOOL LoadBitmaps(const int nBase, const int nSelected = 0, const int nFocus = 0, const int nDisabled = 0);
-	BOOL LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected = nullptr, LPCSTR lpszFocus = nullptr, LPCSTR lpszDisabled = nullptr);
+	BOOL LoadBmpBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
 
 private:
 	CPalette    *m_pPalette;

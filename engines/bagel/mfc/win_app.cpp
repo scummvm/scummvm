@@ -176,11 +176,11 @@ int CWinApp::Run() {
 void CWinApp::SetDialogBkColor() {
 }
 
-HCURSOR CWinApp::LoadStandardCursor(LPCSTR lpszCursorName) {
+HCURSOR CWinApp::LoadStandardCursor(const char *lpszCursorName) {
 	return _cursors.loadCursor((intptr)lpszCursorName);
 }
 
-HCURSOR CWinApp::LoadCursor(LPCSTR lpszResourceName) {
+HCURSOR CWinApp::LoadCursor(const char *lpszResourceName) {
 	return _cursors.loadCursor((intptr)lpszResourceName);
 }
 
@@ -258,24 +258,24 @@ void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 		m_pDocManager->CloseAllDocuments(bEndSession);
 }
 
-UINT CWinApp::GetProfileInt(LPCSTR lpszSection,
-        LPCSTR lpszEntry, int nDefault) {
+UINT CWinApp::GetProfileInt(const char *lpszSection,
+        const char *lpszEntry, int nDefault) {
 	return _settings[lpszSection].getInt(lpszEntry, nDefault);
 }
 
-void CWinApp::WriteProfileInt(LPCSTR lpszSection,
-        LPCSTR lpszEntry, int nValue) {
+void CWinApp::WriteProfileInt(const char *lpszSection,
+        const char *lpszEntry, int nValue) {
 	_settings[lpszSection].setInt(lpszEntry, nValue);
 }
 
-CString CWinApp::GetProfileString(LPCSTR lpszSection,
-		LPCSTR lpszEntry, LPCSTR lpszDefault) {
+CString CWinApp::GetProfileString(const char *lpszSection,
+		const char *lpszEntry, const char *lpszDefault) {
 	Common::String str = _settings[lpszSection].getString(lpszEntry, lpszDefault);
 	return CString(str.c_str());
 }
 
-BOOL CWinApp::WriteProfileString(LPCSTR lpszSection,
-		LPCSTR lpszEntry, LPCSTR lpszValue) {
+BOOL CWinApp::WriteProfileString(const char *lpszSection,
+		const char *lpszEntry, const char *lpszValue) {
 	_settings[lpszSection].setString(lpszEntry, lpszValue);
 	return true;
 }
@@ -310,7 +310,7 @@ byte CWinApp::getColor(COLORREF color) const {
 	);
 }
 
-HRSRC CWinApp::findResource(LPCSTR lpName, LPCSTR lpType) {
+HRSRC CWinApp::findResource(const char *lpName, const char *lpType) {
 	return _resources.findResource(lpName, lpType);
 }
 
@@ -363,13 +363,13 @@ void CWinApp::AfxUnlockTempMaps() {
 		m_pmapHGDIOBJ->DeleteTemp();
 }
 
-LPCSTR CWinApp::AfxRegisterWndClass(UINT nClassStyle,
+const char *CWinApp::AfxRegisterWndClass(UINT nClassStyle,
 		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	return "ScummVMWindow";
 }
 
 BOOL CWinApp::GetClassInfo(HINSTANCE hInstance,
-		LPCSTR lpClassName, LPWNDCLASS lpWndClass) {
+		const char *lpClassName, LPWNDCLASS lpWndClass) {
 	assert(lpWndClass);
 
 	WNDCLASS &wc = *lpWndClass;
@@ -395,7 +395,7 @@ HINSTANCE AfxGetInstanceHandle() {
 }
 
 int LoadString(HINSTANCE hInstance, UINT uID,
-		LPSTR lpBuffer, int cchBufferMax) {
+		char *lpBuffer, int cchBufferMax) {
 	if (lpBuffer == nullptr || cchBufferMax <= 0)
 		return 0;
 
@@ -435,7 +435,7 @@ int LoadString(HINSTANCE hInstance, UINT uID,
 	return 0;
 }
 
-HMODULE LoadLibrary(LPCSTR lpLibFileName) {
+HMODULE LoadLibrary(const char *lpLibFileName) {
 	error("LoadLibrary is unsupported");
 }
 
@@ -445,22 +445,22 @@ void FreeLibrary(HMODULE hModule) {
 
 
 FARPROC GetProcAddress(HMODULE hModule,
-                       LPCSTR lpProcName) {
+                       const char *lpProcName) {
 	error("TODO: GetProcAddress");
 }
 
-HMODULE GetModuleHandle(LPCSTR lpModuleName) {
+HMODULE GetModuleHandle(const char *lpModuleName) {
 	error("TODO: GetModuleHandle");
 }
 
-LPCSTR AfxRegisterWndClass(UINT nClassStyle,
+const char *AfxRegisterWndClass(UINT nClassStyle,
         HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	return AfxGetApp()->AfxRegisterWndClass(nClassStyle,
 		hCursor, hbrBackground, hIcon);
 }
 
 BOOL GetClassInfo(HINSTANCE hInstance,
-		LPCSTR lpClassName, LPWNDCLASS lpWndClass) {
+		const char *lpClassName, LPWNDCLASS lpWndClass) {
 	return AfxGetApp()->GetClassInfo(hInstance, lpClassName, lpWndClass);
 }
 

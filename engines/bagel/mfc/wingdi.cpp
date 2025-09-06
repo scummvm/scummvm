@@ -113,7 +113,7 @@ BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
 }
 
 INT_PTR DialogBoxParam(HINSTANCE hInstance,
-                       LPCTSTR lpTemplateName, HWND hWndParent,
+                       const char *lpTemplateName, HWND hWndParent,
                        DLGPROC lpDialogFunc, LPARAM dwInitParam) {
 	error("TODO: DialogBoxParam");
 }
@@ -122,13 +122,13 @@ BOOL IsWindow(HWND hWnd) {
 	error("TODO: IsWindow");
 }
 
-BOOL SetWindowText(HWND hWnd, LPCSTR lpszString) {
+BOOL SetWindowText(HWND hWnd, const char *lpszString) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SetWindowText(lpszString);
 	return true;
 }
 
-int GetWindowText(HWND hWnd, LPSTR lpszStringBuf, int nMaxCount) {
+int GetWindowText(HWND hWnd, char *lpszStringBuf, int nMaxCount) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	return wnd->GetWindowText(lpszStringBuf, nMaxCount);
 }
@@ -274,7 +274,7 @@ int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
 	error("TODO: StretchDIBits");
 }
 
-int GetTextExtent(HDC hdc, LPCSTR text, size_t len) {
+int GetTextExtent(HDC hdc, const char *text, size_t len) {
 	error("TODO: GetTextExtent");
 }
 
@@ -288,11 +288,11 @@ intptr GetWindowWord(HWND hWnd, int nIndex) {
 	return 0;
 }
 
-int AddFontResource(LPCSTR fontName) {
+int AddFontResource(const char *fontName) {
 	return AfxGetApp()->addFontResource(fontName);
 }
 
-bool RemoveFontResource(LPCSTR fontName) {
+bool RemoveFontResource(const char *fontName) {
 	return AfxGetApp()->removeFontResource(fontName);
 }
 
@@ -340,7 +340,7 @@ HWND GetCapture() {
 }
 
 HCURSOR LoadCursor(HINSTANCE hInstance,
-                   LPCSTR lpCursorName) {
+                   const char *lpCursorName) {
 	return AfxGetApp()->LoadCursor(lpCursorName);
 }
 

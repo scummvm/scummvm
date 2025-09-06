@@ -50,7 +50,7 @@ void Resources::removeResources(const Common::Path &file) {
 	_cache.clear();
 }
 
-HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
+HRSRC Resources::findResource(const char *lpName, const char *lpType) {
 	if (empty())
 		error("Use CWinApp::addResources to register "
 			"an .exe or .dll file containing the resources");

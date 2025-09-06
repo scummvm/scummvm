@@ -65,14 +65,14 @@ CBdbgMgr::~CBdbgMgr(void)
 
 
 //* CBdbgMgr::DebugInit -- Initialize
-BOOL CBdbgMgr::DebugInit(LPCSTR lpszIniFilename, LPCSTR lpszIniSectionname)
+BOOL CBdbgMgr::DebugInit(const char *lpszIniFilename, const char *lpszIniSectionname)
 // returns: TRUE if error, FALSE otherwise
 {
 	return FALSE;
 }
 
 //* CBdbgMgr::GetDebugInt -- get debugging integer
-int CBdbgMgr::GetDebugInt(LPCSTR lpszOption, int iDefault)
+int CBdbgMgr::GetDebugInt(const char *lpszOption, int iDefault)
 // lpszOption -- option name string
 // iDefault -- default value
 // returns: debugging integer value
@@ -83,7 +83,7 @@ int CBdbgMgr::GetDebugInt(LPCSTR lpszOption, int iDefault)
 
 
 //* CBdbgMgr::GetDebugString --
-BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSize, LPCSTR lpszDefault)
+BOOL CBdbgMgr::GetDebugString(const char *lpszOption, char *lpszTarget, int iTargetSize, const char *lpszDefault)
 // lpszOption -- option name string
 // lpszDefault -- default value; if nullptr, then default is null string
 // returns: TRUE if error, FALSE otherwise
@@ -92,7 +92,7 @@ BOOL CBdbgMgr::GetDebugString(LPCSTR lpszOption, LPSTR lpszTarget, int iTargetSi
 }
 
 //* CBdbgMgr::TraceConstructor -- trace object constructor, if optioned
-BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, void *lpLoc)
+BOOL CBdbgMgr::TraceConstructor(const char *lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
 // returns: TRUE if error, FALSE otherwise
@@ -101,7 +101,7 @@ BOOL CBdbgMgr::TraceConstructor(LPCSTR lpszName, void *lpLoc)
 }
 
 //* CBdbgMgr::TraceDestructor -- trace object destructor, if optioned
-BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, void *lpLoc)
+BOOL CBdbgMgr::TraceDestructor(const char *lpszName, void *lpLoc)
 // lpszName -- name of object
 // lpLoc -- location of object
 // returns: TRUE if error, FALSE otherwise
@@ -110,7 +110,7 @@ BOOL CBdbgMgr::TraceDestructor(LPCSTR lpszName, void *lpLoc)
 }
 
 //* CBdbgMgr::DebugMessageBox --
-BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
+BOOL CBdbgMgr::DebugMessageBox(const char *lpszPrompt, UINT nType, UINT nIDPrompt)
 // lpszPrompt -- message string, starting with '~'
 // nType, nIDPrompt -- integer Common::sprintf_s substitutions
 // returns: TRUE if error, FALSE otherwise
@@ -119,7 +119,7 @@ BOOL CBdbgMgr::DebugMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 }
 
 //* CBdbgMgr::AddTraceObject -- add object to trace list
-BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, void *lpPtr)
+BOOL CBdbgMgr::AddTraceObject(const char *lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // returns: TRUE if error, FALSE otherwise
@@ -128,7 +128,7 @@ BOOL CBdbgMgr::AddTraceObject(LPCSTR lpszName, void *lpPtr)
 }
 
 //* CBdbgMgr::TestTraceObject -- test
-BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, void *lpPtr, BOOL bMissing)
+BOOL CBdbgMgr::TestTraceObject(const char *lpszName, void *lpPtr, BOOL bMissing)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // bMissing -- if TRUE, then correct if pointer is missing;
@@ -140,7 +140,7 @@ BOOL CBdbgMgr::TestTraceObject(LPCSTR lpszName, void *lpPtr, BOOL bMissing)
 }
 
 //* CBdbgMgr::RemoveTraceObject -- add object to trace list
-BOOL CBdbgMgr::RemoveTraceObject(LPCSTR lpszName, void *lpPtr)
+BOOL CBdbgMgr::RemoveTraceObject(const char *lpszName, void *lpPtr)
 // lpszName -- name of object
 // lpPtr -- pointer to object
 // returns: TRUE if error, FALSE otherwise
@@ -160,13 +160,13 @@ BOOL CBdbgMgr::ReportTraceObjects(void)
 //* CBdbgMgr::OutputWithTime -- output debugging string with time
 // lpszPattern -- Common::sprintf_s string containing %s for time substitution
 // returns: TRUE if error, FALSE otherwise
-BOOL CBdbgMgr::OutputWithTime(LPCSTR lpszPattern) {
+BOOL CBdbgMgr::OutputWithTime(const char *lpszPattern) {
 	return FALSE;
 }
 
 
 //* CBdbgMgr::OutputWithWordWrap -- output debugging string with time
-BOOL CBdbgMgr::OutputWithWordWrap(LPCSTR lpStr1, LPCSTR lpStr2, int iIndent)
+BOOL CBdbgMgr::OutputWithWordWrap(const char *lpStr1, const char *lpStr2, int iIndent)
 // lpStr1, lpStr2 -- strings to be concatenated and outputted, with
 //		the second one (only) processed for word wrap
 // iIndent -- # blanks to indent after first line

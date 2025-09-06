@@ -86,7 +86,7 @@ const int16 anGameValues[21] = {
 	-1
 };
 
-static const LPCSTR astrGames[21] = {       // set the display names for when the cursor passes over a game rect
+static const char *astrGames[21] = {       // set the display names for when the cursor passes over a game rect
 	"Click Here To Play Archeroids",
 	"Click Here To Play Art Parts",
 	"Click Here To Play Barbershop Quintet",

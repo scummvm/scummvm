@@ -63,17 +63,17 @@ extern CWinApp *AfxGetApp();
 extern CWnd *AfxGetMainWnd();
 extern HINSTANCE AfxGetInstanceHandle();
 extern int LoadString(HINSTANCE hInstance,
-                      UINT uID, LPSTR lpBuffer, int cchBufferMax);
-extern HMODULE LoadLibrary(LPCSTR lpLibFileName);
+                      UINT uID, char *lpBuffer, int cchBufferMax);
+extern HMODULE LoadLibrary(const char *lpLibFileName);
 extern void FreeLibrary(HMODULE hModule);
 extern FARPROC GetProcAddress(HMODULE hModule,
-                              LPCSTR  lpProcName);
-extern HMODULE GetModuleHandle(LPCSTR lpModuleName);
+                              const char * lpProcName);
+extern HMODULE GetModuleHandle(const char *lpModuleName);
 
-extern LPCSTR AFXAPI AfxRegisterWndClass(UINT nClassStyle,
+extern const char *AFXAPI AfxRegisterWndClass(UINT nClassStyle,
         HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
 extern BOOL GetClassInfo(HINSTANCE hInstance,
-	LPCSTR lpClassName, LPWNDCLASS lpWndClass);
+	const char *lpClassName, LPWNDCLASS lpWndClass);
 extern int GetSystemMetrics(int nIndex);
 
 extern HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes);
@@ -89,19 +89,19 @@ extern size_t GlobalCompact(uint32 dwMinFree);
 #define LocalCompact        GlobalCompact
 #define GetFreeSpace(w)     (0x100000L)
 
-extern int MessageBox(HWND hWnd, LPCSTR lpText,
-                      LPCSTR lpCaption, UINT uType);
-extern int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType = 0);
-extern int MessageBox(LPCSTR lpText);
-extern UINT GetPrivateProfileInt(LPCSTR lpAppName,
-                                 LPCSTR lpKeyName, int nDefault, LPCSTR lpFileName);
-extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
-                                     LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR  lpReturnedString,
-                                     uint32  nSize, LPCSTR lpFileName);
+extern int MessageBox(HWND hWnd, const char *lpText,
+                      const char *lpCaption, UINT uType);
+extern int MessageBox(const char *lpText, const char *lpCaption, UINT uType = 0);
+extern int MessageBox(const char *lpText);
+extern UINT GetPrivateProfileInt(const char *lpAppName,
+                                 const char *lpKeyName, int nDefault, const char *lpFileName);
+extern uint32 GetPrivateProfileString(const char *lpAppName,
+                                     const char *lpKeyName, const char *lpDefault, char * lpReturnedString,
+                                     uint32  nSize, const char *lpFileName);
 
 extern BOOL WritePrivateProfileString(
-    LPCSTR lpAppName, LPCSTR lpKeyName,
-    LPCSTR lpString, LPCSTR lpFileName);
+    const char *lpAppName, const char *lpKeyName,
+    const char *lpString, const char *lpFileName);
 
 extern HTASK GetCurrentTask();
 extern FARPROC MakeProcInstance(FARPROC lpProc, HINSTANCE hInstance);
@@ -132,9 +132,9 @@ extern LRESULT SendMessage(HWND hWnd, UINT Msg,
                            WPARAM wParam, LPARAM lParam);
 
 extern HINSTANCE AfxGetResourceHandle();
-extern HINSTANCE AfxFindResourceHandle(LPCSTR lpszName, LPCSTR lpszType);
+extern HINSTANCE AfxFindResourceHandle(const char *lpszName, const char *lpszType);
 extern HRSRC FindResource(HMODULE hModule,
-    LPCSTR lpName, LPCSTR lpType);
+    const char *lpName, const char *lpType);
 extern size_t SizeofResource(HMODULE hModule, HRSRC hResInfo);
 extern HGLOBAL LoadResource(HMODULE hModule, HRSRC hResInfo);
 extern void *LockResource(HGLOBAL hResData);
@@ -142,7 +142,7 @@ extern void UnlockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
 extern HFONT CreateFontIndirect(const LOGFONT *lf);
 
-extern BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
+extern BOOL AfxExtractSubString(CString &rString, const char *lpszFullString,
 	int iSubString, char chSep = '\n');
 
 inline char *strUpper(char *s) {

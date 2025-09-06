@@ -37,7 +37,7 @@ ON_WM_CLOSE()
 ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
-CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
+CDialog::CDialog(const char *lpszTemplateName, CWnd *pParentWnd) {
 	SetParent(pParentWnd);
 	m_lpszTemplateName = lpszTemplateName;
 
@@ -51,7 +51,7 @@ CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
 	m_nIDHelp = nIDTemplate;
 }
 
-BOOL CDialog::Create(LPCSTR lpszTemplateName,
+BOOL CDialog::Create(const char *lpszTemplateName,
         CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;  // used for help
 	SetParent(pParentWnd);

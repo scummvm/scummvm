@@ -1223,7 +1223,7 @@ BOOL CMainDFAWindow::LoadBeaverSounds(void) {
 		//
 		if ((hResInfo = FindResource(hInst, aHitFile[i], "WAVE")) != nullptr) {
 			if ((m_hHitRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
-				if ((m_pHitSound[i] = (LPSTR)LockResource((HGLOBAL)m_hHitRes[i])) != nullptr) {
+				if ((m_pHitSound[i] = (char *)LockResource((HGLOBAL)m_hHitRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
 				} else bSuccess = FALSE;
 			} else bSuccess = FALSE;
@@ -1235,7 +1235,7 @@ BOOL CMainDFAWindow::LoadBeaverSounds(void) {
 		//
 		if ((hResInfo = FindResource(hInst, aMissFile[i], "WAVE")) != nullptr) {
 			if ((m_hMissRes[i] = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
-				if ((m_pMissSound[i] = (LPSTR)LockResource((HGLOBAL)m_hMissRes[i])) != nullptr) {
+				if ((m_pMissSound[i] = (char *)LockResource((HGLOBAL)m_hMissRes[i])) != nullptr) {
 					// we have now loaded at least one of the master sounds
 				} else bSuccess = FALSE;
 			} else bSuccess = FALSE;

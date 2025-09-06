@@ -58,7 +58,7 @@ public:
 		clear();
 	}
 
-	operator LPCSTR() const {
+	operator const char *() const {
 		return c_str();
 	}
 

@@ -164,7 +164,7 @@ class CLexElement {
 class CKeyTab {
 public:
 	int m_iKeyValue ;   // keyword value
-	LPCSTR m_xpszKeyString ;     // string
+	const char *m_xpszKeyString ;     // string
 } ;
 
 // CMap -- bit map
@@ -440,7 +440,7 @@ public:
 	// gtldcp.cpp -- decompiler for meta game
 
 	//- Decompile -- output data to .GTL file
-	int Decompile(const char * xpszPathName) ;
+	int Decompile(const char *xpszPathName) ;
 	//- AsciiOutput -- ascii output
 	int AsciiOutput(int iIndent, XPSTR lpszOut) ;
 	//- ListingOutput -- listing output
@@ -464,12 +464,12 @@ public:
 	//- ParseString -- parse string, store into node structure
 	//      Note: Accepts identifier as well as string
 	CLexElement *ParseString(CLexElement * xpLxel,
-	                         int iPrevType, LPSTR lpszValue, XPINT xpiValue) ;
+	                         int iPrevType, char *lpszValue, XPINT xpiValue) ;
 	//- GetLabel -- get bitmap or node label
 	BOOL GetLabel(CLexElement * xpLxel,
 	              BOOL bNode, int FAR& iIndex) ;
 	//- GetLabel -- get bitmap or node label
-	BOOL GetLabel(LPSTR lpszLabel,
+	BOOL GetLabel(char *lpszLabel,
 	              BOOL bNode, int FAR& iIndex) ;
 
 private:
@@ -482,11 +482,11 @@ private:
 	// gtllex -- lexical analysis for graphics utility
 
 	//- FindKeyword -- find keyword, given tree node type
-	LPCSTR FindKeyword(int iType) ;
+	const char *FindKeyword(int iType) ;
 	//- ReadLine -- read input line
 	BOOL ReadLine(void) ;
 	//- ErrorMsg -- publish error message
-	BOOL ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage) ;
+	BOOL ErrorMsg(CLexElement * xpLxel, const char *szMessage) ;
 
 	// gtlui.cpp -- data interface to Windows
 

@@ -517,7 +517,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CDC *pDC;
 	CRect crctPitBounds, crctTxt;
 	HLOCAL hlocShells;
-	NPSTR npszShells;
+	char *npszShells;
 	CBmpObject *pcBmpObject;
 
 	/*
@@ -538,7 +538,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
 		if ((pDC = GetDC())) {
 			if ((hlocShells = MFC::LocalAlloc(GHND, 16))) {
-				npszShells = (NPSTR)MFC::LocalLock(hlocShells);
+				npszShells = (char *)MFC::LocalLock(hlocShells);
 				Common::sprintf_s(npszShells, 16, "%2d shell%c", m_cCurrentMove.m_iNumStones[iPlayer][iPit + 2], (m_cCurrentMove.m_iNumStones[iPlayer][iPit + 2] > 1) ? 's' : 0x0);
 
 				if (m_pText) {
@@ -901,7 +901,7 @@ void CMnkWindow::OnClose() {
 	CBrush Brush;
 	CDC *pDC = nullptr;
 	CRect rctTmp;
-	NPSTR npszTmp;
+	char *npszTmp;
 	HLOCAL hlocTmp;
 	int level;
 
@@ -917,7 +917,7 @@ void CMnkWindow::OnClose() {
 	}
 
 	hlocTmp = MFC::LocalAlloc(LHND, 16);
-	npszTmp = (NPSTR)MFC::LocalLock(hlocTmp);
+	npszTmp = (char *)MFC::LocalLock(hlocTmp);
 
 	Common::sprintf_s(npszTmp, 16, "%d", m_iStartStones);
 	WritePrivateProfileString("Mankala", "StartStones", npszTmp, INI_FILENAME);

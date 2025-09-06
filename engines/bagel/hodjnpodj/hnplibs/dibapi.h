@@ -71,7 +71,7 @@ extern BOOL CreateDIBPalette(HDIB hDIB, CPalette *cPal);
  * @param hDIB		Pointer to packed-DIB memory block
  * @return		Pointer to the DIB bits
  */
-extern LPSTR FindDIBBits(HDIB lpbi);
+extern char *FindDIBBits(HDIB lpbi);
 
 /**
  * This function gets the width of the bitmap.

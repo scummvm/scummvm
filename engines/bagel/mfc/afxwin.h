@@ -79,7 +79,7 @@ public:
 
 	BOOL CreateMenu();
 	BOOL CreatePopupMenu();
-	BOOL LoadMenu(LPCTSTR lpszResourceName);
+	BOOL LoadMenu(const char *lpszResourceName);
 	BOOL LoadMenu(UINT nIDResource);
 	BOOL LoadMenuIndirect(const void *lpMenuTemplate);
 	BOOL DestroyMenu();
@@ -141,7 +141,7 @@ enum AfxSig {
 	AfxSig_SCROLL,              // void (UINT, UINT, CWnd*)
 	AfxSig_SCROLL_REFLECT,      // void (UINT, UINT)
 	AfxSig_v_v_s,               // void (LPTSTR)
-	AfxSig_v_u_cs,              // void (UINT, LPCTSTR)
+	AfxSig_v_u_cs,              // void (UINT, const char *)
 	AfxSig_OWNERDRAW,           // void (int, LPTSTR) force return TRUE
 	AfxSig_i_i_s,               // int (int, LPTSTR)
 	AfxSig_u_v_p,               // UINT (CPoint)
@@ -182,7 +182,7 @@ enum AfxSig {
 	AfxSig_v_u_hkl,                 // void (UINT, HKL)
 	AfxSig_INPUTDEVICECHANGE,       // void (unsigned short, HANDLE)
 	AfxSig_l_D_u,                   // LRESULT (CDC*, UINT)
-	AfxSig_i_v_S,               // int (LPCTSTR)
+	AfxSig_i_v_S,               // int (const char *)
 	AfxSig_vwpb,                // void (HFONT, BOOL)
 	AfxSig_h_v_v,               // HANDLE ()
 	AfxSig_h_b_h,               // HANDLE (BOOL, HANDLE)
@@ -418,7 +418,7 @@ union MessageMapFunctions {
 	void (AFX_MSG_CALL CWnd:: *pfn_vwp)(UINT, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwwh)(UINT, UINT, HANDLE);
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(UINT, short, CPoint);
-	void (AFX_MSG_CALL CWnd:: *pfn_vws)(UINT, LPCTSTR);
+	void (AFX_MSG_CALL CWnd:: *pfn_vws)(UINT, const char *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vFb)(HFONT, BOOL);
 };
 
@@ -594,7 +594,7 @@ public:
 	    int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
 	    BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
 	    BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
-	    LPCSTR lpszFacename);
+	    const char *lpszFacename);
 	BOOL CreateFontIndirect(const LOGFONT *lpLogFont);
 };
 
@@ -775,37 +775,37 @@ public:
 		COLORREF getBkPixel() const;
 		int setBkMode(int nBkMode);
 		COLORREF setTextColor(COLORREF crColor);
-		BOOL textOut(int x, int y, LPCSTR lpszString, int nCount,
+		BOOL textOut(int x, int y, const char *lpszString, int nCount,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		BOOL textOut(int x, int y, const CString &str,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-			LPCSTR lpszString, UINT nCount, int *lpDxWidths);
+			const char *lpszString, UINT nCount, int *lpDxWidths);
 		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 			const CString &str, int *lpDxWidths);
-		CSize tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+		CSize tabbedTextOut(int x, int y, const char *lpszString, int nCount,
 			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 		CSize tabbedTextOut(int x, int y, const CString &str,
 			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 
-		int drawText(LPCSTR lpszString, int nCount, LPRECT lpRect, UINT nFormat,
+		int drawText(const char *lpszString, int nCount, LPRECT lpRect, UINT nFormat,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 		int drawText(const CString &str, LPRECT lpRect, UINT nFormat,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 
-		CSize getTextExtent(LPCSTR lpszString, int nCount) const;
+		CSize getTextExtent(const char *lpszString, int nCount) const;
 		CSize getTextExtent(const CString &str) const;
-		CSize getOutputTextExtent(LPCSTR lpszString, int nCount) const;
+		CSize getOutputTextExtent(const char *lpszString, int nCount) const;
 		CSize getOutputTextExtent(const CString &str) const;
-		CSize getTabbedTextExtent(LPCSTR lpszString, int nCount,
+		CSize getTabbedTextExtent(const char *lpszString, int nCount,
 			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getTabbedTextExtent(const CString &str,
 			int nTabPositions, int *lpnTabStopPositions) const;
-		CSize getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+		CSize getOutputTabbedTextExtent(const char *lpszString, int nCount,
 			int nTabPositions, int *lpnTabStopPositions) const;
 		CSize getOutputTabbedTextExtent(const CString &str,
 			int nTabPositions, int *lpnTabStopPositions) const;
@@ -832,8 +832,8 @@ public:
 		return static_cast<Impl *>(m_hDC);
 	}
 
-	BOOL CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
-	              LPCSTR lpszOutput, const void *lpInitData);
+	BOOL CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
+	              const char *lpszOutput, const void *lpInitData);
 	BOOL CreateCompatibleDC(CDC *pDC);
 	BOOL DeleteDC();
 	BOOL Attach(HDC hDC);
@@ -928,30 +928,30 @@ public:
 
 	// Text Functions
 	virtual COLORREF SetTextColor(COLORREF crColor);
-	virtual BOOL TextOut(int x, int y, LPCSTR lpszString, int nCount);
+	virtual BOOL TextOut(int x, int y, const char *lpszString, int nCount);
 	BOOL TextOut(int x, int y, const CString &str);
 	virtual BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	                        LPCSTR lpszString, UINT nCount, int *lpDxWidths);
+	                        const char *lpszString, UINT nCount, int *lpDxWidths);
 	BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 	                const CString &str, int *lpDxWidths);
-	virtual CSize TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+	virtual CSize TabbedTextOut(int x, int y, const char *lpszString, int nCount,
 	                            int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
 	CSize TabbedTextOut(int x, int y, const CString &str,
 	                    int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
-	int DrawText(LPCSTR lpszString, int nCount,
+	int DrawText(const char *lpszString, int nCount,
 	             LPRECT lpRect, UINT nFormat);
 	int DrawText(const CString &str, LPRECT lpRect, UINT nFormat);
 
 
-	CSize GetTextExtent(LPCSTR lpszString, int nCount) const;
+	CSize GetTextExtent(const char *lpszString, int nCount) const;
 	CSize GetTextExtent(const CString &str) const;
-	CSize GetOutputTextExtent(LPCSTR lpszString, int nCount) const;
+	CSize GetOutputTextExtent(const char *lpszString, int nCount) const;
 	CSize GetOutputTextExtent(const CString &str) const;
-	CSize GetTabbedTextExtent(LPCSTR lpszString, int nCount,
+	CSize GetTabbedTextExtent(const char *lpszString, int nCount,
 	                          int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetTabbedTextExtent(const CString &str,
 	                          int nTabPositions, int *lpnTabStopPositions) const;
-	CSize GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+	CSize GetOutputTabbedTextExtent(const char *lpszString, int nCount,
 	                                int nTabPositions, int *lpnTabStopPositions) const;
 	CSize GetOutputTabbedTextExtent(const CString &str,
 	                                int nTabPositions, int *lpnTabStopPositions) const;
@@ -1042,14 +1042,14 @@ public:
 	CView *GetNextView(POSITION &rPosition) const;
 
 	const CString &GetTitle() const;
-	virtual void SetTitle(LPCSTR lpszTitle);
+	virtual void SetTitle(const char *lpszTitle);
 	const CString &GetPathName() const;
-	virtual void SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU = TRUE);
+	virtual void SetPathName(const char *lpszPathName, BOOL bAddToMRU = TRUE);
 	virtual void ClearPathName();
 
 	virtual BOOL IsModified();
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
-	virtual void ReportSaveLoadException(LPCSTR lpszPathName,
+	virtual void ReportSaveLoadException(const char *lpszPathName,
 		CException *e, BOOL bSaving, UINT nIDPDefault);
 	bool SaveModified();
 
@@ -1062,7 +1062,7 @@ public:
 	virtual BOOL OnNewDocument() {
 		return true;
 	}
-	virtual BOOL OnOpenDocument(LPCSTR lpszPathName) {
+	virtual BOOL OnOpenDocument(const char *lpszPathName) {
 		return true;
 	}
 	virtual void OnFileSaveAs() {}
@@ -1085,8 +1085,8 @@ typedef struct tagCREATESTRUCTA {
 	int         y = 0;
 	int         x = 0;
 	long        style = 0;
-	LPCSTR      lpszName = nullptr;
-	LPCSTR      lpszClass = nullptr;
+	const char *     lpszName = nullptr;
+	const char *     lpszClass = nullptr;
 	uint32       dwExStyle = 0;
 } CREATESTRUCT, *LPCREATESTRUCT;
 
@@ -1242,8 +1242,8 @@ protected:
 	afx_msg void OnSpoolerStatus(UINT nStatus, UINT nJobs) {}
 	afx_msg void OnSysColorChange() {}
 	afx_msg void OnTimeChange() {}
-	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection) {}
-	afx_msg void OnWinIniChange(LPCTSTR lpszSection) {}
+	afx_msg void OnSettingChange(UINT uFlags, const char *lpszSection) {}
+	afx_msg void OnWinIniChange(const char *lpszSection) {}
 	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM lEventData) {
 		return 0;
 	}
@@ -1354,15 +1354,15 @@ public:
 	CWnd();
 	~CWnd() override;
 
-	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+	BOOL Create(const char *lpszClassName, const char *lpszWindowName,
 	    uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
 	    CCreateContext *pContext = nullptr);
-	BOOL CreateEx(uint32 dwExStyle, LPCTSTR lpszClassName,
-		LPCTSTR lpszWindowName, uint32 dwStyle,
+	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
+		const char *lpszWindowName, uint32 dwStyle,
 		int x, int y, int nWidth, int nHeight,
 		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam = nullptr);
-	BOOL CreateEx(uint32 dwExStyle, LPCSTR lpszClassName,
-		LPCSTR lpszWindowName, uint32 dwStyle,
+	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
+		const char *lpszWindowName, uint32 dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
 		void *lpParam = nullptr);
 
@@ -1396,8 +1396,8 @@ public:
 	void DestroyWindow();
 	void Invalidate(BOOL bErase = TRUE);
 	int GetWindowText(CString &rString) const;
-	int GetWindowText(LPSTR lpszStringBuf, int nMaxCount) const;
-	BOOL SetWindowText(LPCSTR lpszString);
+	int GetWindowText(char *lpszStringBuf, int nMaxCount) const;
+	BOOL SetWindowText(const char *lpszString);
 	UINT GetState() const;
 	uint32 GetStyle() const {
 		return m_nStyle;
@@ -1443,7 +1443,7 @@ public:
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
 	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
-	BOOL SetDlgItemText(int nIDDlgItem, LPCSTR lpString);
+	BOOL SetDlgItemText(int nIDDlgItem, const char *lpString);
 	int GetDlgCtrlID() const;
 	void CheckDlgButton(int nIDButton, UINT nCheck);
 	LRESULT SendDlgItemMessage(int nID, UINT message,
@@ -1529,15 +1529,15 @@ public:
 	~CFrameWnd() override {
 	}
 
-	BOOL Create(LPCSTR lpszClassName,
-		LPCSTR lpszWindowName,
+	BOOL Create(const char *lpszClassName,
+		const char *lpszWindowName,
 		uint32 dwStyle,
 		const RECT &rect,
 		CWnd *pParentWnd = nullptr,
-		LPCSTR lpszMenuName = nullptr,
+		const char *lpszMenuName = nullptr,
 		uint32 dwExStyle = 0,
 		CCreateContext *pContext = nullptr);
-	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+	BOOL Create(const char *lpszClassName, const char *lpszWindowName,
 			uint32 dwStyle = WS_OVERLAPPEDWINDOW) {
 		CRect rectDefault;
 		return Create(lpszClassName, lpszWindowName, dwStyle, rectDefault);
@@ -1561,7 +1561,7 @@ class CDialog : public CWnd {
 	friend class CDialogTemplate;
 
 private:
-	LPCSTR m_lpszTemplateName = nullptr;
+	const char *m_lpszTemplateName = nullptr;
 	UINT m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
@@ -1590,12 +1590,12 @@ protected:
 
 public:
 	CDialog() {}
-	explicit CDialog(LPCSTR lpszTemplateName,
+	explicit CDialog(const char *lpszTemplateName,
 	                 CWnd *pParentWnd = nullptr);
 	explicit CDialog(UINT nIDTemplate,
 	                 CWnd *pParentWnd = nullptr);
 	~CDialog() override {}
-	BOOL Create(LPCSTR lpszTemplateName,
+	BOOL Create(const char *lpszTemplateName,
 	            CWnd *pParentWnd = nullptr);
 	BOOL Create(UINT nIDTemplate,
 	            CWnd *pParentWnd = nullptr);
@@ -1665,7 +1665,7 @@ protected:
 public:
 	~CButton() override {
 	}
-	CVIRTUAL BOOL Create(LPCTSTR lpszCaption, uint32 dwStyle,
+	CVIRTUAL BOOL Create(const char *lpszCaption, uint32 dwStyle,
 	                     const RECT &rect, CWnd *pParentWnd, UINT nID);
 
 	int GetCheck() const;
@@ -1838,7 +1838,7 @@ public:
 	 * @param lpszPathName	Path name. If null,
 	 * then create new file with this type
 	 */
-	virtual CDocument *OpenDocumentFile(LPCSTR lpszPathName,
+	virtual CDocument *OpenDocumentFile(const char *lpszPathName,
 		BOOL bMakeVisible = TRUE) = 0;
 	virtual CDocument *CreateNewDocument();
 	virtual CFrameWnd *CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther);
@@ -1879,7 +1879,7 @@ public:
 	 * @param lpszPathName	Path name. If null,
 	 * then create new file with this type
 	 */
-	CDocument *OpenDocumentFile(LPCSTR lpszPathName,
+	CDocument *OpenDocumentFile(const char *lpszPathName,
 		BOOL bMakeVisible = TRUE) override;
 	void AddDocument(CDocument *pDoc) override;
 
@@ -1966,8 +1966,8 @@ public:
 	virtual BOOL SaveAllModified();
 
 	void SetDialogBkColor();
-	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName);
-	HCURSOR LoadCursor(LPCSTR lpszResourceName);
+	HCURSOR LoadStandardCursor(const char *lpszCursorName);
+	HCURSOR LoadCursor(const char *lpszResourceName);
 	HCURSOR LoadCursor(UINT nIDResource);
 	HCURSOR SetCursor(HCURSOR hCursor);
 	void BeginWaitCursor();
@@ -1982,14 +1982,14 @@ public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void CloseAllDocuments(BOOL bEndSession);
 
-	UINT GetProfileInt(LPCSTR lpszSection,
-	    LPCSTR lpszEntry, int nDefault);
-	void WriteProfileInt(LPCSTR lpszSection,
-	    LPCSTR lpszEntry, int nValue);
-	CString GetProfileString(LPCSTR lpszSection,
-		LPCSTR lpszEntry, LPCSTR lpszDefault = nullptr) ;
-	BOOL WriteProfileString(LPCSTR lpszSection,
-		LPCSTR lpszEntry, LPCSTR lpszValue);
+	UINT GetProfileInt(const char *lpszSection,
+	    const char *lpszEntry, int nDefault);
+	void WriteProfileInt(const char *lpszSection,
+	    const char *lpszEntry, int nValue);
+	CString GetProfileString(const char *lpszSection,
+		const char *lpszEntry, const char *lpszDefault = nullptr) ;
+	BOOL WriteProfileString(const char *lpszSection,
+		const char *lpszEntry, const char *lpszValue);
 
 
 	virtual void OnFileNew();
@@ -2019,7 +2019,7 @@ public:
 	void removeResources(const Common::Path &file) {
 		_resources.removeResources(file);
 	}
-	HRSRC findResource(LPCSTR lpName, LPCSTR lpType);
+	HRSRC findResource(const char *lpName, const char *lpType);
 	size_t sizeofResource(HRSRC hResInfo);
 	HGLOBAL loadResource(HRSRC hResInfo);
 	void *lockResource(HGLOBAL hResData);
@@ -2030,17 +2030,17 @@ public:
 	}
 
 	// Fonts
-	int addFontResource(LPCSTR fontName) {
+	int addFontResource(const char *fontName) {
 		return _fonts.addFontResource(fontName);
 	}
-	bool removeFontResource(LPCSTR fontName) {
+	bool removeFontResource(const char *fontName) {
 		return _fonts.removeFontResource(fontName);
 	}
 	HFONT createFont(int nHeight, int nWidth, int nEscapement,
 			int nOrientation, int nWeight, BYTE bItalic, BYTE bUnderline,
 			BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
 			BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily,
-			LPCSTR lpszFacename) {
+			const char *lpszFacename) {
 		return _fonts.createFont(nHeight, nWidth,
 			nEscapement, nOrientation, nWeight, bItalic,
 			bUnderline, cStrikeOut, nCharSet, nOutPrecision,
@@ -2065,10 +2065,10 @@ public:
 		return (HPALETTE)_systemPalette.m_hObject;
 	}
 
-	LPCSTR AfxRegisterWndClass(UINT nClassStyle,
+	const char *AfxRegisterWndClass(UINT nClassStyle,
 		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon);
 	BOOL GetClassInfo(HINSTANCE hInstance,
-		LPCSTR   lpClassName, LPWNDCLASS lpWndClass);
+		const char *  lpClassName, LPWNDCLASS lpWndClass);
 };
 
 extern CWinApp *AfxGetApp();

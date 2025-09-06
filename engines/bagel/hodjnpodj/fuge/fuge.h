@@ -107,10 +107,10 @@ protected:
 	CSprite    *m_pPaddle;
 	CSound     *m_pSoundTrack;
 
-	LPSTR       m_pBrickSound;
-	LPSTR       m_pWallSound;
-	LPSTR       m_pPaddleSound;
-	LPSTR       m_pExtraLifeSound;
+	char *      m_pBrickSound;
+	char *      m_pWallSound;
+	char *      m_pPaddleSound;
+	char *      m_pExtraLifeSound;
 	HANDLE      m_hBrickRes;
 	HANDLE      m_hWallRes;
 	HANDLE      m_hPaddleRes;

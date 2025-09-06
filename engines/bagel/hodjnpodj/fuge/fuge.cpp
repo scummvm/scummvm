@@ -927,7 +927,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 
 		if ((m_hBrickRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-			if ((m_pBrickSound = (LPSTR)LockResource((HGLOBAL)m_hBrickRes)) != nullptr) {
+			if ((m_pBrickSound = (char *)LockResource((HGLOBAL)m_hBrickRes)) != nullptr) {
 
 				// we have now loaded at least one of the master sounds
 
@@ -949,7 +949,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 
 			if ((m_hWallRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pWallSound = (LPSTR)LockResource((HGLOBAL)m_hWallRes)) == nullptr)
+				if ((m_pWallSound = (char *)LockResource((HGLOBAL)m_hWallRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -967,7 +967,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 
 			if ((m_hPaddleRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pPaddleSound = (LPSTR)LockResource((HGLOBAL)m_hPaddleRes)) == nullptr)
+				if ((m_pPaddleSound = (char *)LockResource((HGLOBAL)m_hPaddleRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;
@@ -985,7 +985,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 
 			if ((m_hExtraLifeRes = LoadResource(hInst, (HRSRC)hResInfo)) != nullptr) {
 
-				if ((m_pExtraLifeSound = (LPSTR)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
+				if ((m_pExtraLifeSound = (char *)LockResource((HGLOBAL)m_hExtraLifeRes)) == nullptr)
 					errCode = ERR_UNKNOWN;
 			} else {
 				errCode = ERR_UNKNOWN;

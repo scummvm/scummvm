@@ -117,7 +117,7 @@ int     anGameValues[18] = {        // set the game values to return
 	MG_GAME_THGESNGGME, MG_GAME_WORDSEARCH
 };
 
-static LPCSTR aszGames[18] = {      // set the display names for when the cursor passes over a game rect
+static const char *aszGames[18] = {      // set the display names for when the cursor passes over a game rect
 	"Archeroids", "Art Parts", "Barbershop Quintet", "Battlefish", "Beacon", "Cryptograms",
 	"Dam Furry Animals", "Fuge", "Garfunkel", "Life", "Mankala", "Maze O' Doom",
 	"No Vacancy", "Pack-Rat", "Peggleboz", "Riddles", "TH GESNG GAM", "Word Search"

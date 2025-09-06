@@ -41,13 +41,9 @@ typedef long *LPLONG;
 typedef uint32 *PDWORD;
 typedef uint32 *LPDWORD;
 
-typedef const char *LPCSTR;
-typedef const char *LPCTSTR;
 typedef const uint16 *LPCWSTR;
 typedef uint16 *LPWSTR;
 typedef uint16 *LPTSTR;
-typedef char *LPSTR;
-typedef char *NPSTR;
 typedef LPWSTR BSTR;
 
 typedef unsigned int UINT;
@@ -638,7 +634,7 @@ typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
  /*
   * Predefined Resource Types
   */
-#define MAKEINTRESOURCE(i) ((LPSTR)((ULONG_PTR)((WORD)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((WORD)(i))))
 #define RT_CURSOR           MAKEINTRESOURCE(1)
 #define RT_BITMAP           MAKEINTRESOURCE(2)
 #define RT_ICON             MAKEINTRESOURCE(3)

@@ -282,7 +282,7 @@ CItem::~CItem() {
  *  int nID;        item identifier
  *
  * Return Value:
- *  LPSTR           pointer to item's descriptive text
+ *  char *          pointer to item's descriptive text
  *
  * Description:     return a pointer to the descriptive text for an item.
  *

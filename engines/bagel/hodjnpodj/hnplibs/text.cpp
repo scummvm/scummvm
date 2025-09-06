@@ -403,7 +403,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 		(*m_pWorkDC).TabbedTextOut(                     // zap the shadow to the work area
 		    m_cPosition.x + m_nShadow_DX,
 		    m_cPosition.y + m_nShadow_DY,
-		    (LPCSTR)pszText,
+		    (const char *)pszText,
 		    strlen(pszText),
 		    1, &m_nTabStop, 0);
 	}
@@ -412,7 +412,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	(*m_pWorkDC).TabbedTextOut(                         // zap the text to the work area
 	    m_cPosition.x,
 	    m_cPosition.y,
-	    (LPCSTR)pszText,
+	    (const char *)pszText,
 	    strlen(pszText),
 	    1, &m_nTabStop, 0);
 

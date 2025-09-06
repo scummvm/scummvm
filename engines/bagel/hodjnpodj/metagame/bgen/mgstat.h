@@ -443,16 +443,16 @@ public:
 	int m_iLocCode ;            // MG_LOC_xxxx
 	int m_iFunctionCode ;       // MG_GAME_xxxx or MG_VISIT_xxxx
 	int m_iCost ;               // Amount of money for MG_VISIT_INFO
-	LPCSTR m_lpszLabel ;         // node label for location
-	LPCSTR m_lpszName ;          // full name of location
+	const char *m_lpszLabel ;         // node label for location
+	const char *m_lpszName ;          // full name of location
 } ;
 
 // CSectorTable
 class CSectorTable {
 public:
 	int m_iSectorCode ;         // MG_SECTOR_xxxx
-	LPCSTR m_lpszLabel ;         // node label for sector
-	LPCSTR m_lpszName ;          // full name of sector
+	const char *m_lpszLabel ;         // node label for sector
+	const char *m_lpszName ;          // full name of sector
 } ;
 
 // CGameTable
@@ -462,9 +462,9 @@ class CGameTable {
 public:
 	int m_iGameCode;		// MG_GAME_xxxx
 	int m_iWinCode;			// MG_WIN_xxxx (win money, object, info)
-	LPCSTR m_lpszGameName;	// full name of game
-	LPCSTR _path;			// game subfolder path
-	LPCSTR _dllName;		// dll filename
+	const char *m_lpszGameName;	// full name of game
+	const char *_path;			// game subfolder path
+	const char *_dllName;		// dll filename
 	FPDLLFUNCT _initFn;
 } ;
 
@@ -473,8 +473,8 @@ class CNoteTable {
 public:
 	int m_iCode ;       // game or location code
 	int m_iCost ;       // cost of information
-	LPSTR m_lpszWavFile ;  // sound file
-	LPSTR m_lpszText ; // text of message
+	char *m_lpszWavFile ;  // sound file
+	char *m_lpszText ; // text of message
 } ;
 
 // CClueTable

@@ -501,7 +501,7 @@ void CBackpack::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 		(*pDC).TextOut(                             // zap the text to the work area
 			nX,
 			nY,
-			(LPCSTR)chBuffer,
+			(const char *)chBuffer,
 			strlen(chBuffer));
 		(void)(*pDC).SelectObject(pFontOld);                     // map out the font
 	}

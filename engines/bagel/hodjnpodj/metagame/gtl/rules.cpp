@@ -990,8 +990,8 @@ crop_byte:
 			}
 			n += 1;
 		}
-//		(*pDC).TextOut(x,y,(LPCSTR) &chInBuf[i],n);
-		(*pDC).TabbedTextOut(x, y, (LPCSTR) &chInBuf[i], n, 1, &tabstop, 0);
+//		(*pDC).TextOut(x,y,(const char *) &chInBuf[i],n);
+		(*pDC).TabbedTextOut(x, y, (const char *) &chInBuf[i], n, 1, &tabstop, 0);
 		if (chInBuf[i + n] == '\r')
 			i += 2;
 		else if (chInBuf[i + n] == TEXT_NEWLINE)

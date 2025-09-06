@@ -68,30 +68,30 @@ size_t GlobalCompact(uint32 dwMinFree) {
 	return 999999;
 }
 
-int MessageBox(HWND hWnd, LPCSTR lpText,
-               LPCSTR lpCaption, UINT uType) {
+int MessageBox(HWND hWnd, const char *lpText,
+               const char *lpCaption, UINT uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
 
-int MessageBox(LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
+int MessageBox(const char *lpText, const char *lpCaption, UINT uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
 
-int MessageBox(LPCSTR lpText) {
+int MessageBox(const char *lpText) {
 	error("%s", lpText);
 	return 0;
 }
 
-UINT GetPrivateProfileInt(LPCSTR lpAppName,
-                          LPCSTR lpKeyName, int nDefault, LPCSTR lpFileName) {
+UINT GetPrivateProfileInt(const char *lpAppName,
+                          const char *lpKeyName, int nDefault, const char *lpFileName) {
 	return AfxGetApp()->GetProfileInt(lpAppName, lpKeyName, nDefault);
 }
 
-extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
-        LPCSTR lpKeyName, LPCSTR lpDefault, LPSTR lpReturnedString,
-        uint32  nSize, LPCSTR lpFileName) {
+extern uint32 GetPrivateProfileString(const char *lpAppName,
+        const char *lpKeyName, const char *lpDefault, char *lpReturnedString,
+        uint32  nSize, const char *lpFileName) {
 	CString str = AfxGetApp()->GetProfileString(lpAppName,
 		lpKeyName, lpDefault);
 	Common::strcpy_s(lpReturnedString, nSize, str.c_str());
@@ -100,8 +100,8 @@ extern uint32 GetPrivateProfileString(LPCSTR lpAppName,
 
 
 BOOL WritePrivateProfileString(
-		LPCSTR lpAppName, LPCSTR lpKeyName,
-		LPCSTR lpString, LPCSTR lpFileName) {
+		const char *lpAppName, const char *lpKeyName,
+		const char *lpString, const char *lpFileName) {
 	AfxGetApp()->WriteProfileString(lpAppName,
 		lpKeyName, lpString);
 	return true;
@@ -222,12 +222,12 @@ HINSTANCE AfxGetResourceHandle() {
 	return nullptr;
 }
 
-HINSTANCE AfxFindResourceHandle(LPCSTR lpszName, LPCSTR lpszType) {
+HINSTANCE AfxFindResourceHandle(const char *lpszName, const char *lpszType) {
 	return AfxGetResourceHandle();
 }
 
 HRSRC FindResource(HMODULE hModule,
-        LPCSTR lpName, LPCSTR lpType) {
+        const char *lpName, const char *lpType) {
 	return AfxGetApp()->findResource(lpName, lpType);
 }
 
@@ -256,7 +256,7 @@ HFONT CreateFontIndirect(const LOGFONT *lf) {
 		lf->lfFaceName, lf->lfHeight);
 }
 
-BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
+BOOL AfxExtractSubString(CString &rString, const char *lpszFullString,
 		int iSubString, char chSep) {
 	if (lpszFullString == nullptr)
 		return FALSE;
@@ -271,7 +271,7 @@ BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
 		lpszFullString++;	// Point past the separator
 	}
 
-	LPCSTR lpchEnd = strchr(lpszFullString, chSep);
+	const char *lpchEnd = strchr(lpszFullString, chSep);
 	int nLen = !lpchEnd ? strlen(lpszFullString) :
 		(int)(lpchEnd - lpszFullString);
 	ASSERT(nLen >= 0);

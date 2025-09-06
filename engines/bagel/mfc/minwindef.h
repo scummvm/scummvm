@@ -294,8 +294,8 @@ typedef struct tagWNDCLASS {
 	HICON       hIcon;
 	HCURSOR     hCursor;
 	HBRUSH      hbrBackground;
-	LPCSTR      lpszMenuName;
-	LPCSTR      lpszClassName;
+	const char *     lpszMenuName;
+	const char *     lpszClassName;
 } WNDCLASS, *PWNDCLASS, *NPWNDCLASS, *LPWNDCLASS;
 
 struct CDataExchange {

@@ -68,7 +68,7 @@ static const CKeyTab st_cKytbs[] = {
 } ;
 
 //* CGtlData::FindKeyword -- find keyword, given tree node type
-LPCSTR CGtlData::FindKeyword(int iType)
+const char *CGtlData::FindKeyword(int iType)
 // iType -- KT_xxxx -- tree node type
 // returns: string pointer to keyword, or to "????"
 {
@@ -248,7 +248,7 @@ cleanup:
 
 
 //* CGtlData::ErrorMsg -- publish error message
-BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, LPCSTR szMessage)
+BOOL CGtlData::ErrorMsg(CLexElement * xpLxel, const char *szMessage)
 // returns: TRUE if error, FALSE otherwise
 {
 	int iError = 0 ;        // error code

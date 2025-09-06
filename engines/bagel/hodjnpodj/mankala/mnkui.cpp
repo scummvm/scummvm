@@ -777,9 +777,10 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnkWindow::SetCrabSign) ;
-	int iError = 0 ;        // error code
-	int iBmpSign ;      // SBT_xxxx -- sign to display
-	NPSTR npszHumanScore, npszCrabScore;
+	int iError = 0;        // error code
+	int iBmpSign;      // SBT_xxxx -- sign to display
+	char *npszHumanScore;
+	char *npszCrabScore;
 	HLOCAL hlocHumanScore, hlocCrabScore;
 
 	if (m_bStartGame) {
@@ -854,8 +855,8 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 			hlocCrabScore = LocalAlloc(LHND, 32);
 
 			if (hlocHumanScore && hlocCrabScore) {
-				npszHumanScore = (NPSTR)LocalLock(hlocHumanScore);
-				npszCrabScore = (NPSTR)LocalLock(hlocCrabScore);
+				npszHumanScore = (char *)LocalLock(hlocHumanScore);
+				npszCrabScore = (char *)LocalLock(hlocCrabScore);
 
 				Common::sprintf_s(npszHumanScore, 32, "Your Score: %d shell%c",   m_cCurrentMove.m_iNumStones[0][HOMEINDEX + 2], (m_cCurrentMove.m_iNumStones[0][HOMEINDEX + 2] > 1) ? 's' : 0);
 				Common::sprintf_s(npszCrabScore, 32, "My Score: %d shell%c",  m_cCurrentMove.m_iNumStones[1][HOMEINDEX + 2], (m_cCurrentMove.m_iNumStones[1][HOMEINDEX + 2] > 1) ? 's' : 0);

@@ -446,7 +446,7 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
  *  CDC *pDC                pointer to device context to be used in creating
  *                          a compatible context for the sprite's bitmap
  *
- *  char * pszPathName      pointer to text string with the fully qualified file
+ *  char *pszPathName      pointer to text string with the fully qualified file
  *                          specification for the DIB bitmap file
  *
  * Return Value:
@@ -708,7 +708,7 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
  * Parameters:
  *  CDC *pDC                pointer to device context to be used in creating
  *                          a compatible context for the sprite's cel bitmap
- *  char * pszPathName      pointer to text string with the fully qualified file
+ *  char *pszPathName      pointer to text string with the fully qualified file
  *                          specification for the DIB bitmap file
  *  int nCels               number of cels in strip
  *

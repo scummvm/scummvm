@@ -71,7 +71,7 @@ public:
 	void DeleteContents() override;
 protected:
 	//- InitDocument -- initialize document to specified file
-	void InitDocument(const char * xpszPathName);
+	void InitDocument(const char *xpszPathName);
 	virtual BOOL OnOpenDocument(const char* xpszPathName) override;
 	virtual BOOL OnSaveDocument(const char* xpszPathName);
 

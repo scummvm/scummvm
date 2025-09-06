@@ -178,7 +178,7 @@ BOOL CGtlApp::CallOnFileSave(void)
 
 //* CGtlApp::DoMessageBox -- override of CWinApp function to
 //              display message box messages
-int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
+int CGtlApp::DoMessageBox(const char *lpszPrompt, UINT nType, UINT nIDPrompt)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlApp::DoMessageBox) ;

@@ -68,8 +68,8 @@ void CDC::AfxUnhookObject() {
 	}
 }
 
-BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
-                   LPCSTR lpszOutput, const void *lpInitData) {
+BOOL CDC::CreateDC(const char *lpszDriverName, const char *lpszDeviceName,
+                   const char *lpszOutput, const void *lpInitData) {
 	error("TODO: CDC::CreateDC");
 }
 
@@ -553,7 +553,7 @@ COLORREF CDC::SetTextColor(COLORREF crColor) {
 	return impl()->setTextColor(crColor);
 }
 
-BOOL CDC::TextOut(int x, int y, LPCSTR lpszString, int nCount) {
+BOOL CDC::TextOut(int x, int y, const char *lpszString, int nCount) {
 	return impl()->textOut(x, y, lpszString, nCount);
 }
 
@@ -562,7 +562,7 @@ BOOL CDC::TextOut(int x, int y, const CString &str) {
 }
 
 BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-        LPCSTR lpszString, UINT nCount, int *lpDxWidths) {
+        const char *lpszString, UINT nCount, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
 }
 
@@ -571,7 +571,7 @@ BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 	return impl()->extTextOut(x, y, nOptions, lpRect, str, lpDxWidths);
 }
 
-CSize CDC::TabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+CSize CDC::TabbedTextOut(int x, int y, const char *lpszString, int nCount,
         int nTabPositions, int *lpnTabStopPositions, int nTabOrigin) {
 	return impl()->tabbedTextOut(x, y, lpszString, nCount,
 		nTabPositions, lpnTabStopPositions, nTabOrigin);
@@ -583,7 +583,7 @@ CSize CDC::TabbedTextOut(int x, int y, const CString &str,
 		lpnTabStopPositions, nTabOrigin);
 }
 
-int CDC::DrawText(LPCSTR lpszString, int nCount,
+int CDC::DrawText(const char *lpszString, int nCount,
         LPRECT lpRect, UINT nFormat) {
 	return impl()->drawText(lpszString, nCount, lpRect, nFormat);
 }
@@ -592,7 +592,7 @@ int CDC::DrawText(const CString &str, LPRECT lpRect, UINT nFormat) {
 	return impl()->drawText(str, lpRect, nFormat);
 }
 
-CSize CDC::GetTextExtent(LPCSTR lpszString, int nCount) const {
+CSize CDC::GetTextExtent(const char *lpszString, int nCount) const {
 	return impl()->getTextExtent(lpszString, nCount);
 }
 
@@ -600,7 +600,7 @@ CSize CDC::GetTextExtent(const CString &str) const {
 	return impl()->getTextExtent(str);
 }
 
-CSize CDC::GetOutputTextExtent(LPCSTR lpszString, int nCount) const {
+CSize CDC::GetOutputTextExtent(const char *lpszString, int nCount) const {
 	return impl()->getOutputTextExtent(lpszString, nCount);
 }
 
@@ -608,7 +608,7 @@ CSize CDC::GetOutputTextExtent(const CString &str) const {
 	return impl()->getOutputTextExtent(str);
 }
 
-CSize CDC::GetTabbedTextExtent(LPCSTR lpszString, int nCount,
+CSize CDC::GetTabbedTextExtent(const char *lpszString, int nCount,
         int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getTabbedTextExtent(lpszString, nCount,
 		nTabPositions, lpnTabStopPositions);
@@ -620,7 +620,7 @@ CSize CDC::GetTabbedTextExtent(const CString &str,
 		lpnTabStopPositions);
 }
 
-CSize CDC::GetOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+CSize CDC::GetOutputTabbedTextExtent(const char *lpszString, int nCount,
 		int nTabPositions, int *lpnTabStopPositions) const {
 	return impl()->getOutputTabbedTextExtent(lpszString, nCount,
 		nTabPositions, lpnTabStopPositions);
@@ -1077,7 +1077,7 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 	return oldColor;
 }
 
-BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
+BOOL CDC::Impl::textOut(int x, int y, const char *lpszString, int nCount,
 		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Gfx::Surface *dest = getSurface();
@@ -1127,7 +1127,7 @@ BOOL CDC::Impl::textOut(int x, int y, const CString &str,
 }
 
 BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		LPCSTR lpszString, UINT nCount, int *lpDxWidths) {
+		const char *lpszString, UINT nCount, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
 
@@ -1136,7 +1136,7 @@ BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 	error("TODO: extTextOut");
 }
 
-CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
+CSize CDC::Impl::tabbedTextOut(int x, int y, const char *lpszString, int nCount,
 		int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin) {
 	CString str(lpszString, nCount);
 
@@ -1154,7 +1154,7 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
 	return size;
 }
 
-int CDC::Impl::drawText(LPCSTR lpszString, int nCount,
+int CDC::Impl::drawText(const char *lpszString, int nCount,
 		LPRECT lpRect, UINT nFormat, int nTabPositions,
 		const int *lpnTabStopPositions, int nTabOrigin,
 		CSize *size) {
@@ -1185,7 +1185,7 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
 	return size->cy;
 }
 
-CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
+CSize CDC::Impl::getTextExtent(const char *lpszString, int nCount) const {
 	CString str(lpszString, nCount);
 	Graphics::Font *font = *(CFont::Impl *)_font;
 
@@ -1204,7 +1204,7 @@ CSize CDC::Impl::getTextExtent(const CString &str) const {
 	return s;
 }
 
-CSize CDC::Impl::getOutputTextExtent(LPCSTR lpszString, int nCount) const {
+CSize CDC::Impl::getOutputTextExtent(const char *lpszString, int nCount) const {
 	// TODO: Proper implementation that handles tabs, etc.
 	return getTextExtent(lpszString, nCount);
 }
@@ -1214,7 +1214,7 @@ CSize CDC::Impl::getOutputTextExtent(const CString &str) const {
 	return getTextExtent(str);
 }
 
-CSize CDC::Impl::getTabbedTextExtent(LPCSTR lpszString, int nCount,
+CSize CDC::Impl::getTabbedTextExtent(const char *lpszString, int nCount,
 		int nTabPositions, int *lpnTabStopPositions) const {
 	// TODO: Proper implementation that handles tabs, etc.
 	return getTextExtent(lpszString, nCount);
@@ -1225,7 +1225,7 @@ CSize CDC::Impl::getTabbedTextExtent(const CString &str,
 	error("TODO");
 }
 
-CSize CDC::Impl::getOutputTabbedTextExtent(LPCSTR lpszString, int nCount,
+CSize CDC::Impl::getOutputTabbedTextExtent(const char *lpszString, int nCount,
 	int nTabPositions, int *lpnTabStopPositions) const {
 	error("TODO");
 }

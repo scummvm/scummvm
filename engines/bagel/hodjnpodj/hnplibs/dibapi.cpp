@@ -266,8 +266,8 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	return pPal;
 }
 
-LPSTR FindDIBBits(HDIB hDIB) {
-	return (LPSTR)hDIB->getPixels();
+char *FindDIBBits(HDIB hDIB) {
+	return (char *)hDIB->getPixels();
 }
 
 uint32 DIBWidth(HDIB hDIB) {

@@ -83,7 +83,7 @@ public:
 	BOOL CallOnFileSave(void) ;
 	//- DoMessageBox -- override of CWinApp function to
 	//              display message box messages
-	virtual int DoMessageBox(LPCSTR lpszPrompt,
+	virtual int DoMessageBox(const char *lpszPrompt,
 	                         UINT nType, UINT nIDPrompt) ;
 	BOOL OnIdle(long lCount) override;
 

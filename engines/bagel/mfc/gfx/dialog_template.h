@@ -116,7 +116,7 @@ public:
 	void loadTemplate(CDialog *dialog);
 
 	BOOL HasFont() const;
-	BOOL SetFont(LPCSTR lpFaceName, WORD nFontSize);
+	BOOL SetFont(const char *lpFaceName, WORD nFontSize);
 	BOOL SetSystemFont(WORD nFontSize = 0);
 	BOOL GetFont(CString &strFaceName, WORD &nFontSize) const;
 	void GetSizeInDialogUnits(SIZE *pSize) const;

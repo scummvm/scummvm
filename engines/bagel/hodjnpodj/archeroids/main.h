@@ -123,11 +123,11 @@ protected:
 	CLList      *m_pFXList;
 	CSound      *m_pSoundTrack;
 
-	LPSTR        m_pBadDieSound;
-	LPSTR        m_pBoltSound;
-	LPSTR        m_pArrowSound;
-	LPSTR        m_pBurnSound;
-	LPSTR        m_pExtraLifeSound;
+	char *       m_pBadDieSound;
+	char *       m_pBoltSound;
+	char *       m_pArrowSound;
+	char *       m_pBurnSound;
+	char *       m_pExtraLifeSound;
 	HANDLE       m_hBadDieRes;
 	HANDLE       m_hBoltRes;
 	HANDLE       m_hArrowRes;

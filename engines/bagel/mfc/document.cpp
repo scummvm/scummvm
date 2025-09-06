@@ -34,7 +34,7 @@ const CString &CDocument::GetTitle() const {
 	return _title;
 }
 
-void CDocument::SetTitle(LPCSTR lpszTitle) {
+void CDocument::SetTitle(const char *lpszTitle) {
 	_title = CString(lpszTitle);
 }
 
@@ -42,7 +42,7 @@ const CString &CDocument::GetPathName() const {
 	return _unusedPathName;
 }
 
-void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
+void CDocument::SetPathName(const char *lpszPathName, BOOL bAddToMRU) {
 }
 
 void CDocument::ClearPathName() {
@@ -82,7 +82,7 @@ void CDocument::RemoveView(CView *pView) {
 void CDocument::DeleteContents() {
 }
 
-void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
+void CDocument::ReportSaveLoadException(const char *lpszPathName,
         CException *e, BOOL bSaving, UINT nIDPDefault) {
 	error("Save/load error");
 }
