@@ -68,8 +68,8 @@ private:
 	ShadowVolume *_shadowVolume;
 	BaseArray<char *> _ignoredLights;
 	void clearIgnoredLights();
-	bool addIgnoredLight(char *lightName);
-	bool removeIgnoredLight(char *lightName);
+	bool addIgnoredLight(const char *lightName);
+	bool removeIgnoredLight(const char *lightName);
 };
 
 } // namespace Wintermute

@@ -46,14 +46,7 @@ PartForce::~PartForce() {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartForce::persist(BasePersistenceManager *persistMgr) {
-	if (persistMgr->getIsSaving()) {
-		const char *name = _name;
-		persistMgr->transferConstChar(TMEMBER(name));
-	} else {
-		const char *name;
-		persistMgr->transferConstChar(TMEMBER(name));
-		setName(name);
-	}
+	persistMgr->transferCharPtr(TMEMBER(_name));
 	persistMgr->transferVector2(TMEMBER(_pos));
 	persistMgr->transferVector2(TMEMBER(_direction));
 	persistMgr->transferSint32(TMEMBER_INT(_type));

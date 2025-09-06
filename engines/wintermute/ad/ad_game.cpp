@@ -181,6 +181,7 @@ bool AdGame::cleanup() {
 	SAFE_DELETE_ARRAY(_prevSceneFilename);
 	SAFE_DELETE_ARRAY(_scheduledScene);
 	SAFE_DELETE_ARRAY(_debugStartupScene);
+	SAFE_DELETE_ARRAY(_startupScene);
 	SAFE_DELETE_ARRAY(_itemsFile);
 
 	SAFE_DELETE(_sceneViewport);
@@ -1367,6 +1368,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(INVENTORY_BOX)
 	TOKEN_TABLE(ITEMS)
 	TOKEN_TABLE(TALK_SKIP_BUTTON)
+	TOKEN_TABLE(VIDEO_SKIP_BUTTON)
 	TOKEN_TABLE(SCENE_VIEWPORT)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(STARTUP_SCENE)
@@ -2275,6 +2277,7 @@ CBObject *CAdGame::GetPrevAccessObject(CBObject *CurrObject) {
 bool AdGame::validMouse() {
 	Common::Point32 pos;
 	BasePlatform::getCursorPos(&pos);
+	//CBPlatform::ScreenToClient(Game->m_Renderer->m_Window, &Pos);
 
 	return _renderer->pointInViewport(&pos);
 }

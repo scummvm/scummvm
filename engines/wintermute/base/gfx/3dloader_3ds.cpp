@@ -502,8 +502,8 @@ char *Loader3DS::getCameraName(int index) {
 
 //////////////////////////////////////////////////////////////////////////
 bool Loader3DS::loadCamera(int index, Camera3D *camera) {
-	if (!camera) return
-		false;
+	if (!camera)
+		return false;
 
 	int pos = -1;
 	for (int32 i = 0; i < _objects.getSize(); i++) {

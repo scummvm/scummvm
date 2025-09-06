@@ -79,19 +79,21 @@ void AdObject3D::clearIgnoredLights() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::addIgnoredLight(char *lightName) {
+bool AdObject3D::addIgnoredLight(const char *lightName) {
 	for (int32 i = 0; i < _ignoredLights.getSize(); i++) {
 		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			return true;
 		}
 	}
-
-	_ignoredLights.add(lightName);
+	size_t tempSize = strlen(lightName) + 1;
+	char *temp = new char[tempSize];
+	Common::strcpy_s(temp, tempSize, lightName);
+	_ignoredLights.add(temp);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::removeIgnoredLight(char *lightName) {
+bool AdObject3D::removeIgnoredLight(const char *lightName) {
 	for (int32 i = 0; i < _ignoredLights.getSize(); i++) {
 		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			delete[] _ignoredLights[i];
@@ -228,8 +230,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddIgnoredLight") == 0) {
 		stack->correctParams(1);
-		char *lightName = nullptr;
-		BaseUtils::setString(&lightName, stack->pop()->getString());
+		const char *lightName = stack->pop()->getString();
 		stack->pushBool(addIgnoredLight(lightName));
 		return true;
 	}
@@ -238,8 +239,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveIgnoredLight") == 0) {
 		stack->correctParams(1);
-		char *lightName = nullptr;
-		BaseUtils::setString(&lightName, stack->pop()->getString());
+		const char *lightName = stack->pop()->getString();
 		stack->pushBool(removeIgnoredLight(lightName));
 		return true;
 	}

@@ -245,6 +245,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_musicCrossfadeChannel1 = -1;
 	_musicCrossfadeChannel2 = -1;
 	_musicCrossfadeSwap = false;
+	// FoxTail:
 	_musicCrossfadeVolume1 = 0;
 	_musicCrossfadeVolume2 = 100;
 
@@ -332,7 +333,9 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
+	SAFE_DELETE_ARRAY(_localSaveDir);
 	SAFE_DELETE_ARRAY(_settingsGameFile);
+	SAFE_DELETE_ARRAY(_savedGameExt);
 	SAFE_DELETE(_cachedThumbnail);
 
 	SAFE_DELETE(_saveLoadImage);
@@ -1090,7 +1093,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			_localSaveDir = params;
+			BaseUtils::setString(&_localSaveDir, (char *)params);
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
@@ -4538,7 +4541,7 @@ bool BaseGame::loadSettings(const char *filename) {
 				break;
 
 			case TOKEN_SAVED_GAME_EXT:
-				_savedGameExt = params;
+				BaseUtils::setString(&_savedGameExt, (char *)params);
 				break;
 
 			case TOKEN_GUID:
@@ -5259,95 +5262,6 @@ bool BaseGame::setWaitCursor(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-/*HRESULT CBGame::BindDirectX() {
-	memset(&m_DirectX, 0, sizeof(TDirectXBindings));
-
-	// load libraries
-	m_DirectX.hDDraw = CBPlatform::LoadLibrary("ddraw.dll");
-#ifdef WME_D3D9
-	m_DirectX.hD3D = CBPlatform::LoadLibrary("d3d9.dll");
-#else
-	m_DirectX.hD3D = CBPlatform::LoadLibrary("d3d8.dll");
-	m_DirectX.hDXof = CBPlatform::LoadLibrary("d3dxof.dll");
-#endif
-	m_DirectX.hDSound = CBPlatform::LoadLibrary("dsound.dll");
-
-	// bind DirectDraw
-	if (m_DirectX.hDDraw) {
-		m_DirectX.DirectDrawCreateEx = (DLL_DirectDrawCreateEx)CBPlatform::GetProcAddress(m_DirectX.hDDraw, "DirectDrawCreateEx");
-		m_DirectX.DirectDrawEnumerateEx = (DLL_DirectDrawEnumerateEx)CBPlatform::GetProcAddress(m_DirectX.hDDraw, "DirectDrawEnumerateExA");
-	}
-
-	// bind Direct3D
-	if (m_DirectX.hD3D) {
-#ifdef WME_D3D9
-		m_DirectX.Direct3DCreate = (DLL_Direct3DCreate)CBPlatform::GetProcAddress(m_DirectX.hD3D, "Direct3DCreate9");
-#else
-		m_DirectX.Direct3DCreate = (DLL_Direct3DCreate)CBPlatform::GetProcAddress(m_DirectX.hD3D, "Direct3DCreate8");
-#endif
-	}
-
-	// bind DirectSound
-	if (m_DirectX.hDSound) {
-		m_DirectX.DirectSoundCreate8 = (DLL_DirectSoundCreate8)CBPlatform::GetProcAddress(m_DirectX.hDSound, "DirectSoundCreate8");
-		m_DirectX.DirectSoundEnumerate = (DLL_DirectSoundEnumerate)CBPlatform::GetProcAddress(m_DirectX.hDSound, "DirectSoundEnumerateA");
-	}
-
-#ifndef WME_D3D9
-	// bind DirectXFile
-	if (m_DirectX.hDXof) {
-		m_DirectX.DirectXFileCreate = (DLL_DirectXFileCreate)CBPlatform::GetProcAddress(m_DirectX.hDXof, "DirectXFileCreate");
-	}
-#endif
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-HRESULT CBGame::UnBindDirectX() {
-	if (m_DirectX.hDDraw)
-		CBPlatform::FreeLibrary(m_DirectX.hDDraw);
-	if (m_DirectX.hD3D)
-		CBPlatform::FreeLibrary(m_DirectX.hD3D);
-	if (m_DirectX.hDSound)
-		CBPlatform::FreeLibrary(m_DirectX.hDSound);
-#ifndef WME_D3D9
-	if (m_DirectX.hDXof)
-		CBPlatform::FreeLibrary(m_DirectX.hDXof);
-#endif
-	memset(&m_DirectX, 0, sizeof(TDirectXBindings));
-	return S_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::IsDirectXBound() {
-	if (!m_DirectX.hDDraw)
-		return false;
-	if (!m_DirectX.hD3D)
-		return false;
-	if (!m_DirectX.hDSound)
-		return false;
-
-	if (!m_DirectX.Direct3DCreate)
-		return false;
-	if (!m_DirectX.DirectDrawCreateEx)
-		return false;
-	if (!m_DirectX.DirectDrawEnumerateEx)
-		return false;
-	if (!m_DirectX.DirectSoundCreate8)
-		return false;
-	if (!m_DirectX.DirectSoundEnumerate)
-		return false;
-
-#ifndef WME_D3D9
-	if (!m_DirectX.hDXof)
-		return false;
-	if (!m_DirectX.DirectXFileCreate)
-		return false;
-#endif
-
-	return true;
-}*/
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::isVideoPlaying() {
@@ -5387,161 +5301,6 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 bool BaseGame::renderShadowGeometry() {
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-// IWmeGame
-//////////////////////////////////////////////////////////////////////////
-/*IWmeValue *CBGame::CreateValue() {
-	return new CScValue(this);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::DeleteValue(IWmeValue *Value) {
-	if (Value)
-		delete (CScValue *)Value;
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeParamSet *CBGame::CreateParamSet() {
-	return new CBParamSet(this);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::DeleteParamSet(IWmeParamSet *ParamSet) {
-	if (ParamSet)
-		delete (CBParamSet *)ParamSet;
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SubscribeEvent(IWmeObject *Object, EWmeEvent Event) {
-	return m_PluginMgr->SubscribeEvent(Object, Event);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::UnsubscribeEvent(IWmeObject *Object, EWmeEvent Event) {
-	return m_PluginMgr->UnsubscribeEvent(Object, Event);
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeFile *CBGame::OpenFile(const char *Filename) {
-	return (IWmeFile *)m_FileManager->OpenFile((char *)Filename);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::CloseFile(IWmeFile *File) {
-	return SUCCEEDED(m_FileManager->CloseFile((CBFile *)File));
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeObject *CBGame::CreateObject(const char *ClassName, IWmeParamSet *Params) {
-	// CScValue* Ret = new CScValue(Game);
-	IWmeObject *Ret = NULL;
-
-	CScStack *Stack = new CScStack(Game);
-	if (Params)
-		((CBParamSet *)Params)->PushToStack(Stack);
-	else
-		Stack->PushInt(0);
-
-	CScStack *ThisStack = new CScStack(Game);
-	ThisStack->PushNULL();
-
-	CScScript *Script = new CScScript(Game, Game->m_ScEngine);
-	CBUtils::SetString(&Script->m_Filename, "<temp script>");
-
-	if (SUCCEEDED(ExternalCall(Script, Stack, ThisStack, (char *)ClassName))) {
-		CBScriptable *Obj = ThisStack->Pop()->GetNative();
-		if (Obj) {
-			// Ret->SetNative(Obj);
-			Obj->m_RefCount++;
-			Ret = Obj;
-		}
-	}
-
-	delete Stack;
-	delete ThisStack;
-	delete Script;
-
-	if (Ret)
-		((CBScriptable *)Ret)->m_RefCount--;
-	return Ret;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// IWmeObject
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SendEvent(const char *EventName) {
-	return CBScriptHolder::SendEvent(EventName);
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeValue *CBGame::CallMethod(const char *MethodName, IWmeParamSet *Params) {
-	return CBScriptHolder::CallMethod(MethodName, Params);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, IWmeValue *Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, int Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, const char *Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, double Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, bool Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName, IWmeObject *Value) {
-	return CBScriptHolder::SetProperty(PropName, Value);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool CBGame::SetProperty(const char *PropName) {
-	return CBScriptHolder::SetProperty(PropName);
-}
-
-//////////////////////////////////////////////////////////////////////////
-IWmeValue *CBGame::GetProperty(const char *PropName) {
-	return CBScriptHolder::GetProperty(PropName);
-}
-
-//////////////////////////////////////////////////////////////////////////
-void *CBGame::GetInterface(const char *ClassName) {
-	return CBScriptHolder::GetInterface(ClassName);
-}*/
-
-//////////////////////////////////////////////////////////////////////////
-/*CBObject *CBGame::GetNextAccessObject(CBObject *CurrObject) {
-	if (m_FocusedWindow) {
-		return m_FocusedWindow->GetNextAccessObject(CurrObject);
-	} else
-		return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-CBObject *CBGame::GetPrevAccessObject(CBObject *CurrObject) {
-	if (m_FocusedWindow) {
-		return m_FocusedWindow->GetPrevAccessObject(CurrObject);
-	} else
-		return NULL;
-}*/
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////

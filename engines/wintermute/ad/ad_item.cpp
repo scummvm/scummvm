@@ -409,7 +409,7 @@ bool AdItem::display(int x, int y) {
 	if (_currentSprite) {
 		Common::Rect32 rc;
 		_currentSprite->getBoundingRect(&rc, 0, 0);
-		width = rc.width();
+		width = rc.right - rc.left;
 	}
 
 	_posX = x + width / 2;

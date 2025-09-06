@@ -523,7 +523,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool res;
 		AdEntity *ent = new AdEntity(_game);
 		if (DID_FAIL(res = ent->loadFile(filename))) {
-			delete ent;
+			SAFE_DELETE(ent);
 			script->runtimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {

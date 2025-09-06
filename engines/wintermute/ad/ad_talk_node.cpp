@@ -113,7 +113,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPRITESET: {
-			delete _spriteSet;
+			SAFE_DELETE(_spriteSet);
 			_spriteSet = new AdSpriteSet(_game);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
 				SAFE_DELETE(_spriteSet);

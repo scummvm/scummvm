@@ -589,6 +589,7 @@ bool AdScene::loadFile(const char *filename) {
 
 	bool ret;
 
+	SAFE_DELETE_ARRAY(_filename);
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
@@ -1630,7 +1631,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			addObject(act);
 			stack->pushNative(act, true);
 		} else {
-			delete act;
+			SAFE_DELETE(act);
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1663,7 +1664,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			addObject(ent);
 			stack->pushNative(ent, true);
 		} else {
-			delete ent;
+			SAFE_DELETE(ent);
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -3591,7 +3592,17 @@ bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) 
 }
 
 //////////////////////////////////////////////////////////////////////////
+Light3D *AdScene::getActiveLight() {
+	if (_geom && _geom->_activeLight >= 0 && _geom->_activeLight < _geom->_lights.getSize())
+		return _geom->_lights[_geom->_activeLight];
+	else
+		return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool AdScene::restoreDeviceObjects() {
+	if (_geom)
+		_geom->createLights();
 	return STATUS_OK;
 }
 

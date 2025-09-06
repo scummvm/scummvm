@@ -57,6 +57,7 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 		_capacity = MAX(0, val->getInt());
 		if (_capacity > 0) {
 			_string = new char[_capacity]();
+			memset(_string, 0, _capacity);
 		}
 	} else {
 		setStringVal(val->getString());
@@ -83,6 +84,7 @@ void SXString::setStringVal(const char *val) {
 		_capacity = len + 1;
 		SAFE_DELETE_ARRAY(_string);
 		_string = new char[_capacity]();
+		memset(_string, 0, _capacity);
 	}
 	Common::strcpy_s(_string, _capacity, val);
 }

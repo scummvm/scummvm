@@ -38,6 +38,7 @@ class AdRegion;
 class BaseViewport;
 class AdLayer;
 class BasePoint;
+class Light3D;
 class AdWaypointGroup;
 class AdPath;
 class AdScaleLevel;
@@ -79,6 +80,7 @@ public:
 	float _fov;
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
+	Light3D *getActiveLight();
 #endif
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
 	bool handleItemAssociations(const char *itemName, bool show);

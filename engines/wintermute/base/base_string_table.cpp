@@ -108,7 +108,7 @@ char *BaseStringTable::getKey(const char *str) const {
 }
 
 void BaseStringTable::replaceExpand(char *key, char *newStr, size_t newStrSize) const {
-	// W/A: Remove accented chars as input text in Polish version of Alpha Polaris
+	// W/A: Remove accented chars like input text in Polish version of Alpha Polaris
 	if (BaseEngine::instance().getGameId() == "alphapolaris" &&
 	    BaseEngine::instance().getLanguage() == Common::PL_POL) {
 		if (strcmp(key, "hotspot0360") == 0)
