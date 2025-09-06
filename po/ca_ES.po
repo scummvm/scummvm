@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-06 18:06+0000\n"
+"PO-Revision-Date: 2025-09-06 18:50+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -8768,12 +8768,12 @@ msgstr ""
 "proporciona suport per utilitzar aquests pedaços."
 
 #: engines/grim/metaengine.cpp:87
-#, fuzzy
-#| msgid "Escape from Monkey Island support is not compiled in"
 msgid ""
 "Escape from Monkey Island PS2 support required MPEG2 support, which is not "
 "compiled in"
-msgstr "No s'ha compilat el suport per a Escape from Monkey Island"
+msgstr ""
+"No s'ha compilat el suport de MPEG2 requerit per a Escape from Monkey Island "
+"per a PS2"
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
@@ -9111,20 +9111,16 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
 #: engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles d'introducció"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Segons"
+msgstr "Tret secundari"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
@@ -9133,29 +9129,21 @@ msgid "Skip intro"
 msgstr "Omet la introducció"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Exit menu keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles del menú de sortida"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles del menú de selecció de dificultat"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles del menú de reintent"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "Omet les veus"
+msgstr "Omet el nivell (truc)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9182,33 +9170,25 @@ msgstr ""
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retro Verbs"
 msgid "Retry sector"
-msgstr "Verbs retro"
+msgstr "Reintenta el sector"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Reprèn animació"
+msgstr "Reinicia el territori"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Pause keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de pausa"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Direction keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de direcció"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -9595,24 +9575,18 @@ msgid ""
 msgstr ""
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Exit keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles de sortida"
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Map keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles de mapa"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Journal keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles del diari"
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
@@ -9627,10 +9601,8 @@ msgid "Exit"
 msgstr "Surt"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "Habilita el so del joc"
+msgstr "Apuja el volum del so"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
@@ -9641,22 +9613,16 @@ msgid "Interact with object with chosen action"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "Objecte següent"
+msgstr "Agafa l'objecte"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "Ves al següent objecte"
+msgstr "Mou o manipula l'objecte"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open door or object"
-msgstr "Obre l'Holomapa"
+msgstr "Obre la porta o l'objecte"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
@@ -9667,16 +9633,12 @@ msgid "Look at object close-up"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Switch to inventory display"
-msgstr "Desplaça't cap amunt a l'inventari"
+msgstr "Canvia a la visualització de l'inventari"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "Ves al següent objecte"
+msgstr "Mou el focus a l'objecte interactiu"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
@@ -9691,10 +9653,8 @@ msgid "Run while following virtual bread crumbs"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to Grimwall"
 msgid "Switch to main display"
-msgstr "Canvia a Grimwall"
+msgstr "Canvia a la pantalla principal"
 
 #: engines/lab/metaengine.cpp:317
 #, fuzzy
