@@ -977,7 +977,7 @@ void CMainWindow::CheckUnderBeam() {
 		End.y = Start.y + (int)(y * radius);
 
 		bChanged = TRUE;
-		LineDDA(Start.x, Start.y, End.x, End.y, StepAlongLine, (long)pDC);
+		LineDDA(Start.x, Start.y, End.x, End.y, StepAlongLine, (LPARAM)pDC);
 
 		degrees += 1.0F;
 	} // end while
