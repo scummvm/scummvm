@@ -48,6 +48,7 @@
 #include "backends/taskbar/win32/win32-taskbar.h"
 #include "backends/updates/win32/win32-updates.h"
 #include "backends/dialogs/win32/win32-dialogs.h"
+#include "backends/printing/win32/win32-printman.h"
 
 #include "common/memstream.h"
 #include "common/ustr.h"
@@ -83,6 +84,11 @@ void OSystem_Win32::init() {
 #if defined(USE_JPEG)
 	initializeJpegLibraryForWin95();
 #endif
+
+#if defined(USE_PRINTING)
+	_printingManager = createWin32PrintingManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -149,6 +155,11 @@ bool OSystem_Win32::hasFeature(Feature f) {
 
 #ifdef USE_SYSDIALOGS
 	if (f == kFeatureSystemBrowserDialog)
+		return true;
+#endif
+
+#ifdef USE_PRINTING
+	if (f == kFeaturePrinting)
 		return true;
 #endif
 
