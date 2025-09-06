@@ -1090,7 +1090,7 @@ PHASE2:
 			cMsgBox.DoModal();
 		}
 
-		nChallengeGame  = (int)nGameID;
+		nChallengeGame  = (LPARAM)nGameID;
 		nChallengePhase++;
 
 		if ((lpMetaGame->m_stGameStruct.bPlayingHodj == FALSE) && (lpMetaGame->m_cPodj.m_bComputer)) {
@@ -1134,7 +1134,7 @@ PHASE3:
 
 			lpMetaGame->m_cHodj.m_iFurlongs = 0;
 			lpMetaGame->m_cPodj.m_iFurlongs = 0;
-			nGameID = (long)lpMetaGame;
+			nGameID = (LPARAM)lpMetaGame;
 			nChallengePhase = 10;
 		}
 		nChallengePhase++;
@@ -1199,7 +1199,7 @@ PHASE4:
 		lpMetaGame->m_cPodj.m_iFurlongs = 0;
 
 		nChallengePhase++;
-		nGameID = (long)lpMetaGame;
+		nGameID = (LPARAM)lpMetaGame;
 		break;
 
 	default:
@@ -1207,7 +1207,8 @@ PHASE4:
 		nChallengePhase = 0;
 		break;
 	}
-	return (nGameID);
+
+	return nGameID;
 }
 
 void CHodjPodjWindow::SetComputerScore() {
