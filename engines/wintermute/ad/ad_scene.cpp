@@ -3591,6 +3591,7 @@ bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) 
 	return STATUS_OK;
 }
 
+#ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
 Light3D *AdScene::getActiveLight() {
 	if (_geom && _geom->_activeLight >= 0 && _geom->_activeLight < _geom->_lights.getSize())
@@ -3598,11 +3599,14 @@ Light3D *AdScene::getActiveLight() {
 	else
 		return nullptr;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::restoreDeviceObjects() {
+#ifdef ENABLE_WME3D
 	if (_geom)
 		_geom->createLights();
+#endif
 	return STATUS_OK;
 }
 
