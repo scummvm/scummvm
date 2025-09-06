@@ -27,7 +27,6 @@
 namespace Bagel {
 namespace MFC {
 
-typedef uint16 TCHAR;
 typedef uint16 SHORT;
 
 typedef uint32 COLORREF;
