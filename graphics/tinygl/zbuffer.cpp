@@ -279,6 +279,25 @@ Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat) {
 	return c->fb->copyFromFrameBuffer(dstFormat);
 }
 
+static byte satAdd(byte a, byte b) {
+	// from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+	byte r = a + b;
+	return (byte)(r | -(r < a));
+};
+
+static byte sat16_to_8(uint32 x) {
+	x = (x + 128) >> 8; // rounding 16 to 8 
+	return (byte)(x | -!!(x >> 8)); // branchfree saturation
+};
+
+static byte fpMul(byte a, byte b) {
+	// from: https://community.khronos.org/t/precision-curiosity-1-255-or-1-256/40539/11
+	// correct would be (a*b)/255 but that is slow, instead we use (a*b) * 257/256 / 256
+	// this also implicitly saturates
+	uint32 r = a * b;
+	return (byte)((r + (r >> 8) + 127) >> 8);
+};
+
 void FrameBuffer::applyTextureEnvironment(
 	int internalformat,
 	uint previousA, uint previousR, uint previousG, uint previousB,
@@ -288,25 +307,6 @@ void FrameBuffer::applyTextureEnvironment(
 	// previousARGB is still in 16bit fixed-point format
 	// texARGB is both input and output
 	// GL_RGB/GL_RGBA might be identical as TexelBuffer returns As=1
-
-	const auto satAdd = [](byte a, byte b) -> byte {
-		// from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
-		byte r = a + b;
-		return (byte)(r | -(r < a));
-	};
-
-	const auto sat16_to_8 = [](uint32 x) -> byte {
-		x = (x + 128) >> 8; // rounding 16 to 8 
-		return (byte)(x | -!!(x >> 8)); // branchfree saturation
-	};
-
-	const auto fpMul = [](byte a, byte b) -> byte {
-		// from: https://community.khronos.org/t/precision-curiosity-1-255-or-1-256/40539/11
-		// correct would be (a*b)/255 but that is slow, instead we use (a*b) * 257/256 / 256
-		// this also implicitly saturates
-		uint32 r = a * b;
-		return (byte)((r + (r >> 8) + 127) >> 8);
-	};
 
 	struct Arg {
 		byte a, r, g, b;
@@ -387,10 +387,7 @@ void FrameBuffer::applyTextureEnvironment(
 	{
 		// GL_RGB:  CpCs | Ap 
 		// GL_RGBA: CpCs | ApAs
-		texA = fpMul(sat16_to_8(previousA), texA);
-		texR = fpMul(sat16_to_8(previousR), texR);
-		texG = fpMul(sat16_to_8(previousG), texG);
-		texB = fpMul(sat16_to_8(previousB), texB);
+		applyModulation(previousA, previousR, previousG, previousB, texA, texR, texG, texB);
 		break;
 	}
 	case TGL_DECAL:
@@ -457,6 +454,15 @@ void FrameBuffer::applyTextureEnvironment(
 		assert(false && "Invalid texture environment mode");
 		break;
 	}
+}
+
+void FrameBuffer::applyModulation(
+	uint previousA, uint previousR, uint previousG, uint previousB,
+	byte &texA, byte &texR, byte &texG, byte &texB) {
+	texA = fpMul(sat16_to_8(previousA), texA);
+	texR = fpMul(sat16_to_8(previousR), texR);
+	texG = fpMul(sat16_to_8(previousG), texG);
+	texB = fpMul(sat16_to_8(previousB), texB);
 }
 
 } // end of namespace TinyGL

@@ -364,7 +364,13 @@ private:
 	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
 	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	enum class ColorMode {
+		NoInterpolation,
+		Default, // GL_TEXTURE_ENV_MODE == GL_MODULATE
+		CustomTexEnv
+	};
+
+	template <bool kDepthWrite, ColorMode kColorMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 	void putPixelTexture(int fbOffset, const TexelBuffer *texture,
 	                     uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
 	                     int x, int y, uint &z, int &t, int &s,
@@ -707,43 +713,46 @@ private:
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
 	          bool kBlendingEnabled, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
 	          bool kBlendingEnabled, bool kStencilEnabled, bool kStippleEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
 	          bool kBlendingEnabled, bool kStencilEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite, bool kFogMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
 	          bool kDepthWrite>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode>
+	template <ColorMode kColorMode, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode, bool kDepthWrite>
+	void fillTriangleTextureMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 public:
 
@@ -781,6 +790,11 @@ private:
 
 	void applyTextureEnvironment(
 		int internalformat,
+		uint previousA, uint previousR, uint previousG, uint previousB,
+		byte &texA, byte &texR, byte &texG, byte &texB);
+
+	// the same as GL_TEXTURE_ENV_MODE == GL_MODULATE as fast-path for the default mode
+	void applyModulation(
 		uint previousA, uint previousR, uint previousG, uint previousB,
 		byte &texA, byte &texR, byte &texG, byte &texB);
 
