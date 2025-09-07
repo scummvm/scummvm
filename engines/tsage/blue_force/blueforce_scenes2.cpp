@@ -450,7 +450,7 @@ void Scene225::Action1::signal() {
 		owner->setStrip(4);
 		owner->setFrame(1);
 		owner->fixPriority(116);
-		owner->animate(ANIM_MODE_1, NULL);
+		owner->animate(ANIM_MODE_1, this);
 
 		Common::Point destPos(138, 117);
 		NpcMover *mover = new NpcMover();
@@ -468,6 +468,7 @@ void Scene225::Action1::signal() {
 		owner->addMover(mover2, &destPos, this);
 
 		BF_GLOBALS._player.setPosition(Common::Point(owner->_position.x, 0));
+		BF_GLOBALS._player._moveDiff.x = 10;
 		ADD_MOVER_NULL(BF_GLOBALS._player, 500, 0);
 		break;
 	}
@@ -624,9 +625,9 @@ void Scene225::Action6::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene225::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(1225);
 	loadBackground(-320, 0);
+	SceneExt::postInit();
 
 	_object8.postInit();
 	_object8.setVisage(1225);
