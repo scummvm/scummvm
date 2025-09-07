@@ -214,11 +214,11 @@ static const LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x06, 0x23, kTheSprite,			kTheMemberNum,		true, kTEAItemId }, // D5
 	{ 0x06, 0x24, kTheSprite, 			kTheCastLibNum, 	true, kTEAItemId }, // D5
 	{ 0x06, 0x25, kTheSprite,			kTheMember,			true, kTEAItemId }, // D5
-	// scriptInstanceList
-	// currentTime
-	// mostRecentCuePoint
-	// tweened
-	// name
+	{ 0x06, 0x26, kTheSprite,			kTheScriptInstanceList,	true, kTEAItemId }, // D6
+	{ 0x06, 0x27, kTheSprite,			kTheCurrentTime,	true, kTEAItemId }, // D6
+	{ 0x06, 0x28, kTheSprite,			kTheMostRecentCuePoint,	true, kTEAItemId }, // D6
+	{ 0x06, 0x29, kTheSprite,			kTheTweened,		true, kTEAItemId }, // D6
+	{ 0x06, 0x2a, kTheSprite,			kTheName,			true, kTEAItemId }, // D6
 
 	{ 0x07, 0x01, kTheBeepOn,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x02, kTheButtonStyle,		kTheNOField,		true, kTEANOArgs },

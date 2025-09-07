@@ -192,6 +192,7 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"castNum",		kTheCastNum,	200 },// D2 p
 	{ kTheSprite,	"castLibNum",	kTheCastLibNum,	500 },//					D5 p
 	{ kTheSprite,	"constraint",	kTheConstraint, 200 },// D2 p
+	{ kTheSprite,	"currentTime",	kTheCurrentTime,600 },//							D6 p
 	{ kTheSprite,	"cursor",		kTheCursor,		200 },// D2 p
 	{ kTheSprite,	"editableText", kTheEditableText,400 },//				D4 p
 	{ kTheSprite,	"foreColor",	kTheForeColor,	200 },// D2 p
@@ -203,17 +204,22 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"loc",			kTheLoc,		400 },//				D4 p ???
 	{ kTheSprite,	"locH",			kTheLocH,		200 },// D2 p
 	{ kTheSprite,	"locV",			kTheLocV,		200 },// D2 p
+	{ kTheSprite,	"member",		kTheMember,		500 },//					D5 p
 	{ kTheSprite,	"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,400 },//			D4 p
+	{ kTheSprite,	"mostRecentCuePoint",kTheMostRecentCuePoint,600 },//				D6 p
+	{ kTheSprite,	"name",			kTheName,		600 },//							D6 p
 	{ kTheSprite,	"pattern",		kThePattern,	200 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		200 },// D2 p
 	{ kTheSprite,	"rect",			kTheRect,		400 },//				D4 p ???
 	{ kTheSprite,	"right",		kTheRight,		200 },// D2 p
 	{ kTheSprite,	"scoreColor",	kTheScoreColor,	400 },//				D4 p
+	{ kTheSprite,	"scriptInstanceList",kTheScriptInstanceList,600 },//				D6 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum,	400 },//				D4 p
-	{ kTheSprite,	"stretch",		kTheStretch,		200 },// D2 p
+	{ kTheSprite,	"stretch",		kTheStretch,	200 },// D2 p
 	{ kTheSprite,	"top",			kTheTop,		200 },// D2 p
 	{ kTheSprite,	"trails",		kTheTrails,		300 },//		D3.1 p
+	{ kTheSprite,	"tweened",		kTheTweened,	600 },//							D6 p
 	{ kTheSprite,	"type",			kTheType,		200 },// D2 p
 	{ kTheSprite,	"visibility",	kTheVisibility,	300 },//		D3.1 p
 	{ kTheSprite,	"visible",		kTheVisible,	400 },//				D4 p
