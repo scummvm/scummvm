@@ -142,7 +142,7 @@ public:
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible) override;
 	Datum getStageRect();
-	bool setStageRect(Datum datum);
+	void setStageRect(Datum datum);
 	void setModal(bool modal);
 	bool getModal() { return _isModal; };
 	void setFileName(Common::String filename);
@@ -193,10 +193,10 @@ public:
 	Common::String asString() override;
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 	bool hasField(int field) override;
 	Datum getField(int field) override;
-	bool setField(int field, const Datum &value) override;
+	void setField(int field, const Datum &value) override;
 
 	Common::Path _fileName;
 

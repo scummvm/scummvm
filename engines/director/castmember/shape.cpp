@@ -162,17 +162,17 @@ Datum ShapeCastMember::getField(int field) {
 	return d;
 }
 
-bool ShapeCastMember::setField(int field, const Datum &d) {
+void ShapeCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheFilled:
 		_fillType = d.asInt() ? 1 : 0;
-		return true;
+		return;
 	case kTheLineSize:
 		_lineThickness = d.asInt();
-		return true;
+		return;
 	case kThePattern:
 		_pattern = d.asInt();
-		return true;
+		return;
 	case kTheShapeType:
 		if (d.type == SYMBOL) {
 			Common::String name = *d.u.s;
@@ -185,14 +185,13 @@ bool ShapeCastMember::setField(int field, const Datum &d) {
 			} else if (name.equalsIgnoreCase("line")) {
 				_shapeType = kShapeLine;
 			}
-			return true;
 		}
 		break;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 

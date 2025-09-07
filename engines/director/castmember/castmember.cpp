@@ -130,14 +130,14 @@ Datum CastMember::getProp(const Common::String &propName) {
 	return Datum();
 }
 
-bool CastMember::setProp(const Common::String &propName, const Datum &value, bool force) {
+void CastMember::setProp(const Common::String &propName, const Datum &value, bool force) {
 	Common::String fieldName = Common::String::format("%d%s", kTheCast, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
-		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
+		setField(g_lingo->_theEntityFields[fieldName]->field, value);
+		return;
 	}
 
 	warning("CastMember::setProp: unknown property '%s'", propName.c_str());
-	return false;
 }
 
 bool CastMember::hasField(int field) {
@@ -248,65 +248,63 @@ Datum CastMember::getField(int field) {
 	return d;
 }
 
-bool CastMember::setField(int field, const Datum &d) {
+void CastMember::setField(int field, const Datum &d) {
 	CastMemberInfo *castInfo = _cast->getCastMemberInfo(_castId);
 
 	switch (field) {
 	case kTheBackColor:
 		_cast->getCastMember(_castId)->setBackColor(d.asInt());
-		return true;
+		return;
 	case kTheCastType:
 	case kTheType:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
-		return false;
+		return;
 	case kTheFileName:
 		if (!castInfo) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
-			return false;
+			return;
 		}
 		castInfo->fileName = d.asString();
 		_needsReload = true;
-		return true;
+		return;
 	case kTheForeColor:
 		_cast->getCastMember(_castId)->setForeColor(d.asInt());
-		return true;
+		return;
 	case kTheHeight:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		return;
 	case kTheHilite:
 		_hilite = (bool)d.asInt();
 		_modified = true;
-		return true;
+		return;
 	case kTheName:
 		if (!castInfo) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
-			return false;
+			return;
 		}
 		castInfo->name = d.asString();
 		_cast->rebuildCastNameCache();
-		return true;
+		return;
 	case kTheRect:
 		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		return;
 	case kThePurgePriority:
 		_purgePriority = CLIP<int>(d.asInt(), 0, 3);
-		return true;
+		return;
 	case kTheScriptText:
 		if (!castInfo) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
-			return false;
+			return;
 		}
 		_cast->_lingoArchive->replaceCode(*d.u.s, kCastScript, _castId);
 		castInfo->script = d.asString();
-		return true;
+		return;
 	case kTheWidth:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		return;
 	default:
 		warning("CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 	}
-
-	return false;
 }
 
 CastMemberInfo *CastMember::getInfo() {

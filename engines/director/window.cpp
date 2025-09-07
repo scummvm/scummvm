@@ -292,18 +292,16 @@ Datum Window::getStageRect() {
 	return d;
 }
 
-bool Window::setStageRect(Datum datum) {
+void Window::setStageRect(Datum datum) {
 	if (datum.type != RECT) {
 		warning("Window::setStageRect(): bad argument passed to rect field");
-		return false;
+		return;
 	}
 
 	// Unpack rect from datum
 	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
 
 	setInnerDimensions(rect);
-
-	return true;
 }
 
 void Window::setModal(bool modal) {

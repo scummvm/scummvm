@@ -78,10 +78,10 @@ public:
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 	bool hasField(int field) override;
 	Datum getField(int field) override;
-	bool setField(int field, const Datum &value) override;
+	void setField(int field, const Datum &value) override;
 
 	// release the control to widget, this happens when we are changing sprites. Because we are having the new cast member and the old one shall leave
 	void releaseWidget() { _widget = nullptr; }

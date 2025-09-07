@@ -61,10 +61,10 @@ public:
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual Common::String getPropAt(uint32 index) = 0;
 	virtual uint32 getPropCount() = 0;
-	virtual bool setProp(const Common::String &propName, const Datum &value, bool force = false) = 0;
+	virtual void setProp(const Common::String &propName, const Datum &value, bool force = false) = 0;
 	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
-	virtual bool setField(int field, const Datum &value) = 0;
+	virtual void setField(int field, const Datum &value) = 0;
 };
 
 template <typename Derived>
@@ -186,8 +186,8 @@ public:
 	uint32 getPropCount() override {
 		return 0;
 	};
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override {
-		return false;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override {
+		return;
 	};
 	bool hasField(int field) override {
 		return false;
@@ -195,8 +195,8 @@ public:
 	Datum getField(int field) override {
 		return Datum();
 	};
-	bool setField(int field, const Datum &value) override {
-		return false;
+	void setField(int field, const Datum &value) override {
+		return;
 	};
 
 protected:
@@ -248,7 +248,7 @@ public:
 	Datum getProp(const Common::String &propName) override;
 	Common::String getPropAt(uint32 index) override;
 	uint32 getPropCount() override;
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 
 	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 

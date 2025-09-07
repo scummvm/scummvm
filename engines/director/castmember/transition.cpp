@@ -100,25 +100,25 @@ Datum TransitionCastMember::getField(int field) {
 	return d;
 }
 
-bool TransitionCastMember::setField(int field, const Datum &d) {
+void TransitionCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheChangeArea:
 		_area = (bool)d.asInt();
-		break;
+		return;
 	case kTheChunkSize:
 		_chunkSize = d.asInt();
-		return true;
+		return;
 	case kTheDuration:
 		_durationMillis = d.asInt();
-		return true;
+		return;
 	case kTheTransitionType:
 		_transType = (TransitionType)d.asInt();
-		return true;
+		return;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 Common::String TransitionCastMember::formatInfo() {

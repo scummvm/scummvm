@@ -973,11 +973,11 @@ Datum BitmapCastMember::getField(int field) {
 	return d;
 }
 
-bool BitmapCastMember::setField(int field, const Datum &d) {
+void BitmapCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheDepth:
 		warning("BitmapCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		return;
 	case kTheRegPoint:
 		if (d.type == POINT || (d.type == ARRAY && d.u.farr->arr.size() >= 2)) {
 			Score *score = g_director->getCurrentMovie()->getScore();
@@ -987,9 +987,8 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 			_modified = true;
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kTheRegPoint", d.type);
-			return false;
 		}
-		return true;
+		return;
 	case kThePalette:
 		{
 			CastMemberID newClut;
@@ -1013,7 +1012,7 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 				_clut = newClut;
 				_modified = true;
 			}
-			return true;
+			return;
 		}
 	case kThePaletteRef:
 		{
@@ -1047,7 +1046,7 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 				_modified = true;
 			}
 		}
-		return true;
+		return;
 	case kThePicture:
 		if (d.type == PICTUREREF && d.u.picture != nullptr) {
 			setPicture(*d.u.picture);
@@ -1058,16 +1057,15 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 			_regX -= _initialRect.left;
 			_regY -= _initialRect.top;
 			_initialRect = Common::Rect(_picture->_surface.w, _picture->_surface.h);
-			return true;
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kThePicture (or nullptr)", d.type);
 		}
-		return false;
+		return;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 uint32 BitmapCastMember::getCastDataSize() {

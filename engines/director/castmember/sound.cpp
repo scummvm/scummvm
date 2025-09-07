@@ -185,18 +185,18 @@ Datum SoundCastMember::getField(int field) {
 	return d;
 }
 
-bool SoundCastMember::setField(int field, const Datum &d) {
+void SoundCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheChannelCount:
 	case kTheSampleRate:
 	case kTheSampleSize:
 		warning("SoundCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		return;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 // Similar to PaletteCastMember, SoundCastMember has no data in the 'CASt' resource or is ignored

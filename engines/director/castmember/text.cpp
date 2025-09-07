@@ -768,23 +768,23 @@ Datum TextCastMember::getField(int field) {
 	return d;
 }
 
-bool TextCastMember::setField(int field, const Datum &d) {
+void TextCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheBackColor:
 		{
 			uint32 color = g_director->transformColor(d.asInt());
 			setColors(nullptr, &color);
 		}
-		return true;
+		return;
 	case kTheForeColor:
 		{
 			uint32 color = g_director->transformColor(d.asInt());
 			setColors(&color, nullptr);
 		}
-		return true;
+		return;
 	case kTheText:
 		setRawText(d.asString());
-		return true;
+		return;
 	case kTheTextAlign:
 		{
 			Common::String select = d.asString();
@@ -803,79 +803,79 @@ bool TextCastMember::setField(int field, const Datum &d) {
 			_textAlign = align;
 			_modified = true;
 		}
-		return true;
+		return;
 	case kTheTextFont:
 		setTextFont(d.asString());
-		return true;
+		return;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
 		_modified = true;
-		return false;
+		return;
 	case kTheTextSize:
 		setTextSize(d.asInt());
-		return true;
+		return;
 	case kTheTextStyle:
 		setTextStyle(d.asString());
-		return true;
+		return;
 	case kTheAutoTab:
 		warning("STUB: TextCastMember::setField(): autoTab not implemented");
-		return false;
+		return;
 	case kTheBorder:
 		_borderSize = d.asInt();
 		setModified(true);
-		return true;
+		return;
 	case kTheBoxDropShadow:
 		warning("STUB: TextCastMember::setField(): boxDropShadow not implemented");
-		return false;
+		return;
 	case kTheBoxType:
 		warning("STUB: TextCastMember::setField(): boxType not implemented");
-		return false;
+		return;
 	case kTheDropShadow:
 		warning("STUB: TextCastMember::setField(): dropShadow not implemented");
-		return false;
+		return;
 	case kTheEditable:
 		_editable = d.asInt();
 		setModified(true);
-		return true;
+		return;
 	case kTheLineCount:
 		warning("BUILDBOT: TextCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
-		return false;
+		return;
 	case kTheMargin:
 		warning("STUB: TextCastMember::setField(): margin not implemented");
-		return false;
+		return;
 	case kThePageHeight:
 		warning("BUILDBOT: TextCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
-		return false;
+		return;
 	case kTheScrollTop:
 		_scroll = d.asInt();
 		setModified(true);
-		return true;
+		return;
 	case kTheWordWrap:
 		warning("STUB: TextCastMember::setField(): wordWrap not implemented");
-		return false;
+		return;
 	case kTheButtonType:
 		if (d.type == SYMBOL) {
 			if (d.u.s->equalsIgnoreCase("pushButton")) {
 				_buttonType = kTypeButton;
 				setModified(true);
-				return true;
+				return;
 			} else if (d.u.s->equalsIgnoreCase("radioButton")) {
 				_buttonType = kTypeRadio;
 				setModified(true);
-				return true;
+				return;
 			} else if (d.u.s->equalsIgnoreCase("checkBox")) {
 				_buttonType = kTypeCheckBox;
 				setModified(true);
-				return true;
+				return;
 			}
 		}
 		warning("TextCastMember: invalid button type %s", d.asString(true).c_str());
-		return false;
+		return;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 // This isn't documented particularly well by the Lingo Dictionary;

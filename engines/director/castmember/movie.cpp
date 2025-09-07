@@ -118,34 +118,34 @@ Datum MovieCastMember::getField(int field) {
 	return d;
 }
 
-bool MovieCastMember::setField(int field, const Datum &d) {
+void MovieCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheCenter:
 		_center = (bool)d.asInt();
-		return true;
+		return;
 	case kTheIdleHandlerPeriod:
 		warning("STUB: MovieCastMember::setField(): idleHandlerPeriod not implemented");
-		return false;
+		return;
 	case kThePaletteMapping:
 		warning("STUB: MovieCastMember::setField(): paletteMapping not implemented");
-		return false;
+		return;
 	case kTheScoreSelection:
 		warning("STUB: MovieCastMember::setField(): scoreSelection not implemented");
-		return false;
+		return;
 	case kTheScriptsEnabled:
 		_enableScripts = (bool)d.asInt();
-		return true;
+		return;
 	case kTheSound:
 		_enableSound = (bool)d.asInt();
-		return true;
+		return;
 	case kTheUpdateLock:
 		warning("STUB: MovieCastMember::setField(): updateLock not implemented");
-		return false;
+		return;
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 Common::String MovieCastMember::formatInfo() {

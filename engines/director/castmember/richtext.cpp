@@ -220,19 +220,19 @@ Datum RichTextCastMember::getField(int field) {
 	return d;
 }
 
-bool RichTextCastMember::setField(int field, const Datum &d) {
+void RichTextCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheText:
 		_plainText = Common::U32String(d.asString());
 		warning("STUB: RichTextCastMember::setField: text set to \"%s\", but won't rerender!", d.asString().c_str());
-		break;
+		return;
 	case kThePageHeight:
 	case kTheScrollTop:
 	default:
 		break;
 	}
 
-	return CastMember::setField(field, d);
+	CastMember::setField(field, d);
 }
 
 Common::String RichTextCastMember::formatInfo() {

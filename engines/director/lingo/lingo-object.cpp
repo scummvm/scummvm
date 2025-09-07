@@ -610,32 +610,29 @@ uint32 ScriptContext::getPropCount() {
 	return _propertyNames.size();
 }
 
-bool ScriptContext::setProp(const Common::String &propName, const Datum &value, bool force) {
+void ScriptContext::setProp(const Common::String &propName, const Datum &value, bool force) {
 	if (_disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
 	}
 	if (_properties.contains(propName)) {
 		_properties[propName] = value;
-		return true;
+		return;
 	}
 	if (force) {
 		// used by e.g. the script compiler to add properties
 		_propertyNames.push_back(propName);
 		_properties[propName] = value;
-		return true;
 	} else if (_objType == kScriptObj) {
 		if (_properties.contains("ancestor") && _properties["ancestor"].type == OBJECT
 				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
-			return _properties["ancestor"].u.obj->setProp(propName, value, force);
+			_properties["ancestor"].u.obj->setProp(propName, value, force);
 		}
 	} else if (_objType == kFactoryObj) {
 		// D3 style anonymous objects/factories, set whatever properties you like
 		_propertyNames.push_back(propName);
 		_properties[propName] = value;
-		return true;
 	}
-	return false;
 }
 
 Common::String ScriptContext::formatFunctionList(const char *prefix) {
@@ -751,14 +748,14 @@ Datum Window::getProp(const Common::String &propName) {
 	return Datum();
 }
 
-bool Window::setProp(const Common::String &propName, const Datum &value, bool force) {
+void Window::setProp(const Common::String &propName, const Datum &value, bool force) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	if (g_lingo->_theEntityFields.contains(fieldName)) {
-		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
+		setField(g_lingo->_theEntityFields[fieldName]->field, value);
+		return;
 	}
 
 	warning("Window::setProp: unknown property '%s'", propName.c_str());
-	return false;
 }
 
 bool Window::hasField(int field) {
@@ -812,34 +809,35 @@ Datum Window::getField(int field) {
 	}
 }
 
-bool Window::setField(int field, const Datum &value) {
+void Window::setField(int field, const Datum &value) {
 	switch (field) {
 	case kTheTitle:
 		setTitle(value.asString());
-		return true;
+		break;
 	case kTheTitleVisible:
 		setTitleVisible((bool)value.asInt());
-		return true;
+		break;
 	case kTheVisible:
 		setVisible((bool)value.asInt());
-		return true;
+		break;
 	case kTheWindowType:
 		setWindowType(value.asInt());
-		return true;
+		break;
 	case kTheDrawRect:
 		warning("Window::setField: poorly handled setting field 'drawRect'");
 		// fallthrough
 	case kTheRect:
-		return setStageRect(value);
+		setStageRect(value);
+		break;
 	case kTheModal:
 		setModal((bool)value.asInt());
-		return true;
+		break;
 	case kTheFileName:
 		setFileName(value.asString());
-		return true;
+		break;
 	default:
 		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));
-		return false;
+		break;
 	}
 }
 
