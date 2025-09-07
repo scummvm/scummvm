@@ -22,7 +22,7 @@
 #define GRAPHICS_FONTS_BGIFONT_H
 
 #include "common/file.h"
-#include "common/std/vector.h"
+#include "common/array.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 

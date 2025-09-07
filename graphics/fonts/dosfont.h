@@ -26,7 +26,6 @@
 
 namespace Graphics {
 
-// For now just a holder for static data. May become a child of Font if needed.
 class DosFont : public Graphics::Font {
 public:
 	DosFont();
