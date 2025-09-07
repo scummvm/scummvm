@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-07 05:30+0000\n"
+"PO-Revision-Date: 2025-09-07 09:19+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -7908,10 +7908,8 @@ msgstr "Stäng dialogrutan"
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Tangentmappning för avslutningspanel"
+msgstr "Kortkommandon för avslutningsdialog"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
