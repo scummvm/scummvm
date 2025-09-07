@@ -3102,9 +3102,18 @@ void SceneObjectList::draw() {
 		}
 
 		if (g_globals->_sceneManager._sceneLoadCount > 0) {
-			--g_globals->_sceneManager._sceneLoadCount;
-			g_globals->_sceneManager._scene->loadBackground(g_globals->_sceneManager._sceneBgOffset.x,
-				g_globals->_sceneManager._sceneBgOffset.y);
+			// HACK Checking the value of g_globals->_paneRefreshFlag[1] is done so that
+			// the _sceneBounds are not updated faster than the scroller is "moving" resulting in stutters while scrolling
+			// The g_globals->_paneRefreshFlag[1] is unused by ScummVM otherwise, so it's safe to make use of it here.
+			// However, there's a broader issue with the engine doing things faster than it should eg. for fading as well,
+			// and resolving that issue could render this hack unnecessary.
+			if (g_globals->_paneRefreshFlag[1] <= 0) {
+				--g_globals->_sceneManager._sceneLoadCount;
+				g_globals->_sceneManager._scene->loadBackground(g_globals->_sceneManager._sceneBgOffset.x,
+					g_globals->_sceneManager._sceneBgOffset.y);
+			} else {
+				--g_globals->_paneRefreshFlag[1];
+			}
 		}
 
 		// Set up the flag mask. Currently, paneNum is always set to 0, so the check is meaningless
