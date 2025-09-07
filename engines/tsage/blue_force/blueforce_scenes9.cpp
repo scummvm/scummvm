@@ -566,7 +566,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene900::signal() {
-	static uint32 v50E8B = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode++) {
 	case 1:
@@ -616,7 +616,7 @@ void Scene900::signal() {
 			PlayerMover *mover = new PlayerMover();
 			_lyle.addMover(mover, &pt, NULL);
 			_sceneMode = 1;
-			addFader((const byte *)&v50E8B, 5, this);
+			addFader(black, 5, this);
 		} else
 			BF_GLOBALS._sceneManager.changeScene(910);
 		break;
@@ -1250,7 +1250,8 @@ void Scene910::Object13::synchronize(Serializer &s) {
 }
 
 bool Scene910::Object13::startAction(CursorType action, Event &event) {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	int8 xDiff;
@@ -1333,7 +1334,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 						BF_GLOBALS._player.setVisage(911);
 						scene->_lyle.setVisage(912);
 					}
-					scene->transition((const byte *)&black, 25, 910, NULL, 0, 111, 112, 255, 0);
+					scene->transition(black, 25, 910, NULL, 0, 111, 112, 255, 0);
 					BF_GLOBALS._scenePalette.signalListeners();
 					// _objectList.draw();
 				} else {
@@ -1345,7 +1346,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 						BF_GLOBALS._player.disableControl();
 						BF_GLOBALS._v4CEC8 = 0;
 						scene->_sceneMode = 2;
-						scene->transition((const byte *)&black, 30, 910, scene, 0, 111, 112, 255, 0);
+						scene->transition(black2, 30, 910, scene, 0, 111, 112, 255, 0);
 					}
 				}
 			} else
@@ -1958,8 +1959,10 @@ void Scene910::synchronize(Serializer &s) {
 }
 
 void Scene910::postInit(SceneObjectList *OwnerList) {
-	uint32 unk_50E94 = 0, unk_50E90 = 0;
-	uint32 unk_50E98 = 0, unk_50E9C = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
+	static byte black3[3] = { 0, 0, 0 };
+	static byte black4[3] = { 0, 0, 0 };
 
 	PalettedScene::postInit(OwnerList);
 	loadScene(910);
@@ -2156,9 +2159,9 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 			_yellowCord.setPosition(Common::Point(291, -30));
 		_sceneMode = 11;
 		if (BF_GLOBALS._v4CEC8 == 0)
-			add2Faders((const byte *)&unk_50E94, 2, 913, this);
+			add2Faders(black, 2, 913, this);
 		else
-			add2Faders((const byte *)&unk_50E90, 2, 911, this);
+			add2Faders(black2, 2, 911, this);
 	} else {
 		BF_GLOBALS.clearFlag(gunDrawn);
 		BF_GLOBALS._player.disableControl();
@@ -2227,14 +2230,20 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._sceneManager._previousScene != 935) {
 		_sceneMode = 11;
 		if (BF_GLOBALS._v4CEC8 == 0)
-			add2Faders((const byte *)&unk_50E9C, 10, 910, this);
+			add2Faders(black3, 10, 910, this);
 		else
-			add2Faders((const byte *)&unk_50E98, 10, 911, this);
+			add2Faders(black4, 10, 911, this);
 	}
 }
 
 void Scene910::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
+	static byte black3[3] = { 0, 0, 0 };
+	static byte black4[3] = { 0, 0, 0 };
+	static byte black5[3] = { 0, 0, 0 };
+	static byte black6[3] = { 0, 0, 0 };
+	static byte black7[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 2:
@@ -2243,7 +2252,7 @@ void Scene910::signal() {
 		break;
 	case 3:
 		_sceneMode = 4;
-		transition((const byte *)&black, 35, 910, this, 0, 111, 112, 255, false);
+		transition(black, 35, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 4:
 		_sceneMode = 5;
@@ -2251,7 +2260,7 @@ void Scene910::signal() {
 		break;
 	case 5:
 		_sceneMode = 6;
-		transition((const byte *)&black, 40, 910, this, 0, 111, 112, 255, false);
+		transition(black2, 40, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 6:
 		_sceneMode = 7;
@@ -2262,7 +2271,7 @@ void Scene910::signal() {
 		_lyle.setVisage(811);
 		_object5.hide();
 		_sceneMode = 8;
-		transition((const byte *)&black, 95, 910, this, 0, 111, 112, 255, false);
+		transition(black3, 95, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 8:
 		_sceneMode = 9;
@@ -2270,7 +2279,7 @@ void Scene910::signal() {
 		break;
 	case 9:
 		_sceneMode = 0;
-		transition((const byte *)&black, 100, 910, this, 0, 111, 112, 255, false);
+		transition(black4, 100, 910, this, 0, 111, 112, 255, false);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 10:
@@ -2280,7 +2289,7 @@ void Scene910::signal() {
 	case 11:
 		if (BF_GLOBALS._sceneManager._previousScene == 900) {
 			if (BF_GLOBALS._v4CEC8 != 0)
-				transition((const byte *)&black, 25, 910, NULL, 0, 111, 112, 255, false);
+				transition(black5, 25, 910, NULL, 0, 111, 112, 255, false);
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
 				NpcMover *mover = new NpcMover();
 				Common::Point destPos(22, 157);
@@ -2318,7 +2327,7 @@ void Scene910::signal() {
 	case 16:
 		_lyle._field90 = 1;
 		_sceneMode = 10;
-		addFader((const byte *)&black, 2, this);
+		addFader(black6, 2, this);
 		BF_GLOBALS._nico910State = 1;
 		BF_GLOBALS._walkRegions.disableRegion(16);
 		BF_GLOBALS._walkRegions.disableRegion(14);
@@ -2660,7 +2669,7 @@ void Scene910::signal() {
 		break;
 	case 9140:
 		_sceneMode = 14;
-		addFader((const byte *)&black, 2, this);
+		addFader(black7, 2, this);
 		break;
 	case 9141:
 		BF_INVENTORY.setObjectScene(INV_22_SNUB, 1);
@@ -3417,7 +3426,7 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene930::signal() {
-	static uint32 v50EC4 = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode++) {
 	case 1:
@@ -3434,7 +3443,7 @@ void Scene930::signal() {
 		break;
 	case 3:
 		_sceneMode = 4;
-		addFader((const byte *)&v50EC4, 5, this);
+		addFader(black, 5, this);
 		break;
 	case 4:
 		BF_GLOBALS._sceneManager.changeScene(935);
@@ -3501,11 +3510,18 @@ void Scene930::synchronize(Serializer &s) {
 
 void Scene935::Action1::signal() {
 	Scene935 *scene = (Scene935 *)BF_GLOBALS._sceneManager._scene;
-	static uint32 v50ECC = 0, v50EEA = 0, v50EEE = 0, v50F26 = 0, v50F2A = 0, v50F62 = 0, v50F66 = 0, v50F6A = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
+	static byte black3[3] = { 0, 0, 0 };
+	static byte black4[3] = { 0, 0, 0 };
+	static byte black5[3] = { 0, 0, 0 };
+	static byte black6[3] = { 0, 0, 0 };
+	static byte black7[3] = { 0, 0, 0 };
+	static byte black8[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->addFader((const byte *)&v50ECC, 100, this);
+		scene->addFader(black, 100, this);
 		break;
 	case 1:
 		if (g_vm->getLanguage() == Common::RU_RUS) {
@@ -3514,11 +3530,11 @@ void Scene935::Action1::signal() {
 			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		}
 		for (int i = 1; i < 21; i++)
-			scene->transition((const byte *)&v50EEA, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition(black2, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 2:
-		scene->addFader((const byte *)&v50EEE, 5, this);
+		scene->addFader(black3, 5, this);
 		break;
 	case 3:
 		scene->_visualSpeaker.removeText();
@@ -3539,11 +3555,11 @@ void Scene935::Action1::signal() {
 			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		}
 		for (int i = 1; i < 21; i++)
-			scene->transition((const byte *)&v50F26, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition(black4, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 5:
-		scene->addFader((const byte *)&v50F2A, 5, this);
+		scene->addFader(black5, 5, this);
 		break;
 	case 6:
 		scene->_visualSpeaker.removeText();
@@ -3564,11 +3580,11 @@ void Scene935::Action1::signal() {
 			scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		}
 		for (int i = 1; i < 21; i++)
-			scene->transition((const byte *)&v50F62, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition(black6, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 8:
-		scene->addFader((const byte *)&v50F66, 5, this);
+		scene->addFader(black7, 5, this);
 		break;
 	case 9:
 		scene->_visualSpeaker.removeText();
@@ -3576,7 +3592,7 @@ void Scene935::Action1::signal() {
 		break;
 	case 10:
 		scene->_sceneMode = 1;
-		scene->add2Faders((const byte *)&v50F6A, 5, 935, scene);
+		scene->add2Faders(black8, 5, 935, scene);
 		remove();
 		break;
 	default:
@@ -3608,7 +3624,7 @@ void Scene935::remove() {
 }
 
 void Scene935::signal() {
-	static uint32 v50EC8 = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 1:
@@ -3633,7 +3649,7 @@ void Scene935::signal() {
 	case 2:
 		BF_GLOBALS._sound1.play(68);
 		_sceneMode = 0;
-		addFader((const byte *)&v50EC8, 5, this);
+		addFader(black, 5, this);
 		break;
 	case 3:
 		_sceneMode = 2;

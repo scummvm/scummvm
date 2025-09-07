@@ -1562,12 +1562,13 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 
 	_sceneMode = 11;
 
-	static uint32 black = 0;
-	add2Faders((const byte *)&black, 2, 270, this);
+	static byte black[3] = { 0, 0, 0 };
+	add2Faders(black, 2, 270, this);
 }
 
 void Scene271::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 10:
@@ -1644,7 +1645,7 @@ void Scene271::signal() {
 	case 2709:
 		BF_GLOBALS._sound1.play(68);
 		_sceneMode = 12;
-		addFader((const byte *)&black, 2, this);
+		addFader(black, 2, this);
 		break;
 	case 2712:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -1661,7 +1662,7 @@ void Scene271::signal() {
 	case 2716:
 		BF_GLOBALS._deathReason = 24;
 		_sceneMode = 13;
-		addFader((const byte *)&black, 2, this);
+		addFader(black2, 2, this);
 		break;
 	default:
 		break;
@@ -1734,7 +1735,7 @@ void Scene271::dispatch() {
 
 void Scene280::Action1::signal() {
 	Scene280 *scene = (Scene280 *)BF_GLOBALS._sceneManager._scene;
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -1807,7 +1808,7 @@ void Scene280::Action1::signal() {
 	case 9:
 		scene->_sceneMode = 2;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
-		scene->addFader((const byte *)&black, 2, scene);
+		scene->addFader(black, 2, scene);
 
 		scene->_jake.remove();
 		scene->_mum.animate(ANIM_MODE_5, NULL);
@@ -1835,8 +1836,8 @@ void Scene280::postInit(SceneObjectList *OwnerList) {
 	_object4.setVisage(280);
 	_object4.setPosition(Common::Point(139, 141));
 
-	const uint32 black = 0;
-	add2Faders((const byte *)&black, 2, 280, this);
+	static byte black[3] = { 0, 0, 0 };
+	add2Faders(black, 2, 280, this);
 	_sceneMode = 1;
 	setAction(&_action1);
 }

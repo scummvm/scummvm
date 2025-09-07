@@ -1799,18 +1799,20 @@ void Scene830::remove() {
 }
 
 void Scene830::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
+	static byte black3[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 11:
 		_sceneMode = 832;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black, 5, this);
 		break;
 	case 12:
 		_sceneMode = 831;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black2, 5, this);
 		break;
 	case 13:
 		BF_GLOBALS._sceneManager.changeScene(850);
@@ -1856,7 +1858,7 @@ void Scene830::signal() {
 	case 8300:
 		_sceneMode = 13;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black3, 5, this);
 		break;
 	case 8305:
 		_object6.remove();

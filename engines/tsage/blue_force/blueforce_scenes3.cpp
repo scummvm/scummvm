@@ -3714,7 +3714,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene355::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 12:
@@ -3849,7 +3849,7 @@ void Scene355::signal() {
 	case 9981:
 		_sceneMode = 9994;
 		_green.animate(ANIM_MODE_5, NULL);
-		addFader((const byte *)&black, 10, this);
+		addFader(black, 10, this);
 		break;
 	case 9982:
 		_sceneMode = 9983;

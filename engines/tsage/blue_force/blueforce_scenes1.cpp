@@ -131,6 +131,7 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 void Scene100::Action2::signal() {
 	Scene100 *scene = (Scene100 *)g_globals->_sceneManager._scene;
 	static byte black[3] = {0, 0, 0};
+	static byte black2[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -168,7 +169,7 @@ void Scene100::Action2::signal() {
 		}
 
 		// At this point the introduction needs to start
-		g_globals->_scenePalette.addFader(black, 1, 2, this);
+		g_globals->_scenePalette.addFader(black2, 1, 2, this);
 		break;
 	}
 	case 3:
@@ -2374,7 +2375,7 @@ void Scene140::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 void Scene150::Action1::signal() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	static uint32 v50B96 = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2423,7 +2424,7 @@ void Scene150::Action1::signal() {
 		setDelay(30);
 		break;
 	case 10:
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50B96, 1, 2, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 2, this);
 		break;
 	case 11:
 		BF_GLOBALS._sound1.play(9);
@@ -2511,8 +2512,8 @@ void Scene160::Action1::signal() {
 void Scene160::Action2::signal() {
 	Scene160 *scene = (Scene160 *)BF_GLOBALS._sceneManager._scene;
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	static uint32 v50BAB = 0;
-	static uint32 v50BC3 = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2632,7 +2633,7 @@ void Scene160::Action2::signal() {
 		break;
 	case 20:
 		BF_GLOBALS._sound1.changeSound(10);
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BAB, 1, 2, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 2, this);
 		break;
 	case 21:
 		BF_GLOBALS._scenePalette.loadPalette(2);
@@ -2652,7 +2653,7 @@ void Scene160::Action2::signal() {
 	case 23:
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		scene->loadScene(165);
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BC3, 1, -5, this);
+		BF_GLOBALS._scenePalette.addFader(black2, 1, -5, this);
 		break;
 	case 24:
 		setDelay(900);
