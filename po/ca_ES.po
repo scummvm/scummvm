@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-06 19:31+0000\n"
+"PO-Revision-Date: 2025-09-07 16:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -12510,32 +12510,24 @@ msgid "Files keymappings"
 msgstr "Assignació de tecles de fitxers"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Settings keymappings"
-msgstr "Assignació de minijocs"
+msgstr "Assignació de tecles de la configuració"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Movie keymappings"
-msgstr "Assignacions del menú"
+msgstr "Assignacions de tecles de la pel·lícula"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Next action"
 msgid "Skip / Deselect verb"
-msgstr "Acció següent"
+msgstr "Omet / Desselecciona el verb"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "Conjunt de mosaics"
+msgstr "Fitxers"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -12562,22 +12554,16 @@ msgstr "Última pàgina"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back a page"
-msgstr "Mostra el diari"
+msgstr "Torna enrere una pàgina"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Roll left"
 msgid "Scroll left"
-msgstr "Roda cap a l'esquerra"
+msgstr "Desplaça a l'esquerra"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Roll right"
 msgid "Scroll Right"
-msgstr "Roda cap a la dreta"
+msgstr "Desplaça a la dreta"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
@@ -12585,53 +12571,37 @@ msgid "Go ahead a page"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'opció"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle music"
-msgstr "Commuta el silenci"
+msgstr "Commuta la música"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle combat"
 msgid "Toggle portraits"
-msgstr "Activa / desactiva el combat"
+msgstr "Commuta els retrats"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "Canvia la mida del tipus de lletra"
+msgstr "Canvia l'estil del tipus de lletra"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
-msgstr "Activa/desactiva l'efecte de so"
+msgstr "Commuta els efectes de so"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle fight mode"
 msgid "Toggle windows mode"
-msgstr "Commuta el mode de lluita"
+msgstr "Commuta el mode de finestres"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change action"
 msgid "Change auto-help location"
-msgstr "Canvia l'acció"
+msgstr "Canvia la ubicació de l'ajuda automàtica"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Toggle voices"
-msgstr "Habilita els trucs (cheats)"
+msgstr "Commuta les veus"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
@@ -12640,53 +12610,37 @@ msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "Crea un directori"
+msgstr "Esvaeix directament"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "Canvia el mode"
+msgstr "Canvia el mode d'esvaïment"
 
 #: engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Journal search keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles de cerca del diari"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "Assignacions del menú"
+msgstr "Assignacions de tecles de desplaçament del menú"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "Assignació de tecles Desa/Carrega"
+msgstr "Assignació de tecles del menú Desa / Carrega"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Save files name editing keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles d'edició de noms de fitxers desats"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles del trencaclosques Foolscap"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Options menu keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles del menú d'opcions"
 
 #: engines/sherlock/metaengine.cpp:785
 #, fuzzy
