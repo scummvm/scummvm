@@ -480,6 +480,18 @@ LRESULT CWnd::SendMessage(unsigned int message, WPARAM wParam, LPARAM lParam) {
 	if (!OnWndMsg(message, wParam, lParam, &lResult))
 		lResult = DefWindowProc(message, wParam, lParam);
 
+	// FIXME: In a properly emulated control painting,
+	// painting a window background should exclude drawing on
+	// any area covered by child controls. Technically each
+	// control has it's own window, unlike here in ScummVM,
+	// where all the DCs are sharing the single physical screen.
+	// As a hack to fix issues with controls getting drawn over,
+	// any paint to a wnd will redraw any child controls
+	if (message == WM_PAINT) {
+		for (auto &child : _children)
+			child._value->RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW);
+	}
+
 	// Handle messages that get sent to child controls
 	if (isRecursiveMessage(message)) {
 		for (auto &ctl : _children)
