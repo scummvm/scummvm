@@ -1895,9 +1895,6 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 	bTestLoadBmp = apHold[nIndex]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, nullptr, pDsBmp);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
 
-	apHold[nIndex]->Invalidate();
-	apHold[nIndex]->UpdateWindow();
-
 	pUpBmp = nullptr;
 	pDnBmp = nullptr;
 	pDsBmp = nullptr;
