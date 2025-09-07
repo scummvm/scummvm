@@ -2089,7 +2089,7 @@ void Scene125::Action4::signal() {
 		setDelay(180);
 		break;
 	case 1: {
-		owner->setPriority(scene->_object2._priority - 1);
+		owner->fixPriority(scene->_object2._priority + 1);
 		Common::Point destPos(66, 168);
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
