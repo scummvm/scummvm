@@ -2708,11 +2708,20 @@ void Scene160::Action3::signal() {
 }
 
 void Scene160::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(160);
 	_sceneBounds.moveTo(0, 0);
+	loadScene(160);
 
 	BF_GLOBALS._scenePalette.loadPalette(2);
+	// ORIGINAL BUG FIX
+	// A Palette refresh is required because the fader (to black) from Scene 150 wrongly set
+	// the BF_GLOBALS._scenePalette._colors.background to index 255 (instead index 19 that is expected for palette 2)
+	// The fix allows the intro scene text "Three Days Later" to become visible as intended.
+	BF_GLOBALS._scenePalette.refresh();
+
+	SceneExt::postInit();
+
+	// FIXME: This fixes an obvious glitch during scene transition.
+	clearScreen();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
