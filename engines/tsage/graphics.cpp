@@ -487,6 +487,11 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 	if (srcBounds.isEmpty())
 		return;
 
+	// Show an error if the source surface has no pixel data to copy (otherwise the app would crash with segmentation fault)
+	if (src.getPixels() == nullptr) {
+		error("GfxSurface::copyFrom() - source surface has no pixel data to copy to destination");
+	}
+
 	if (srcBounds == src.getBounds())
 		srcImage = src;
 	else {
