@@ -51,6 +51,16 @@ enum AutoPuppetProperty {
 	kAPMoveable,
 	kAPRect,
 	kAPWidth,
+	kAPThickness,
+};
+
+enum ThicknessFlags {
+	kTThickness = 0x0F,
+	kTHasBlend  = 0x10,
+	kTFlipH     = 0x20,
+	kTFlipV     = 0x40,
+	kTFlip      = (kTFlipH | kTFlipV),
+	kTTweened   = 0x80,
 };
 
 class Sprite {
@@ -134,8 +144,6 @@ public:
 	bool _immediate;
 	uint32 _backColor;
 	uint32 _foreColor;
-
-	byte _blend;
 
 	byte _volume;
 	bool _stretch;

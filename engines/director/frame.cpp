@@ -688,7 +688,7 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte() & 0x7f;
+				sprite._thickness = stream.readByte();
 			}
 			break;
 		case 5:
@@ -1142,7 +1142,7 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte() & 0x7f;
+				sprite._thickness = stream.readByte();
 			}
 			break;
 		case 23:
@@ -1601,7 +1601,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte() & 0x7f;
+				sprite._thickness = stream.readByte();
 			}
 			break;
 		case 23:
@@ -2054,7 +2054,7 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte() & 0x7f;
+				sprite._thickness = stream.readByte();
 			}
 			break;
 		case 23:
@@ -2160,13 +2160,13 @@ Common::String Frame::formatChannelInfo() {
 	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 		if (sprite._castId.member) {
-			result += Common::String::format("CH: %-3d castId: %s, [inkData: 0x%02x [ink: %d, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %d bg: %d], script: %s, colorcode: 0x%x, blendAmount: 0x%x, blend: 0x%x, unk3: 0x%x\n",
+			result += Common::String::format("CH: %-3d castId: %s, [inkData: 0x%02x [ink: %d, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %d bg: %d], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x\n",
 				i + 1, sprite._castId.asString().c_str(), sprite._inkData,
 				sprite._ink, sprite._trails, sprite._stretch, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
 				sprite._spriteType, spriteType2str(sprite._spriteType), sprite._foreColor,
 				sprite._backColor, sprite._scriptId.asString().c_str(), sprite._colorcode,
-				sprite._blendAmount, sprite._blend, sprite._unk3);
+				sprite._blendAmount, sprite._unk3);
 		} else {
 			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
 		}

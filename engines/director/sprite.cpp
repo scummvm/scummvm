@@ -71,8 +71,6 @@ void Sprite::reset() {
 	_backColor = g_director->_wm->_colorWhite;
 	_foreColor = g_director->_wm->_colorWhite;
 
-	_blend = 0;
-
 	_volume = 0;
 	_stretch = false;
 
@@ -126,8 +124,6 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_backColor = sprite._backColor;
 	_foreColor = sprite._foreColor;
 
-	_blend = sprite._blend;
-
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
 
@@ -155,7 +151,7 @@ bool Sprite::operator==(const Sprite &sprite) {
 		_backColor == sprite._backColor &&
 		_blendAmount == sprite._blendAmount &&
 		_ink == sprite._ink &&
-		_thickness == sprite._thickness;
+		(_thickness | kTTweened) == (sprite._thickness | kTTweened);
 }
 
 Sprite::Sprite(const Sprite &sprite) {
@@ -253,7 +249,7 @@ MacShape *Sprite::getShape() {
 	shape->spriteType = _spriteType;
 	shape->foreColor = _foreColor;
 	shape->backColor = _backColor;
-	shape->lineSize = _thickness & 0x3;
+	shape->lineSize = _thickness & kTThickness;
 	shape->pattern = getPattern();
 	shape->tile = nullptr;
 	shape->tileRect = nullptr;

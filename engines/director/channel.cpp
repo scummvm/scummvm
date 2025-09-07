@@ -107,7 +107,8 @@ Channel::~Channel() {
 }
 
 DirectorPlotData Channel::getPlotData() {
-	DirectorPlotData pd(g_director, _sprite->_spriteType, _sprite->_ink, _sprite->_blendAmount, _sprite->getBackColor(), _sprite->getForeColor());
+	int blend = (_sprite->_thickness & kTHasBlend) || _sprite->_ink == kInkTypeBlend ? _sprite->_blendAmount : 0;
+	DirectorPlotData pd(g_director, _sprite->_spriteType, _sprite->_ink, blend, _sprite->getBackColor(), _sprite->getForeColor());
 	pd.colorWhite = g_director->getColorWhite();
 	pd.colorBlack = g_director->getColorBlack();
 	pd.dst = nullptr;
@@ -154,7 +155,7 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeLight ||
 		_sprite->_ink == kInkTypeSub ||
 		_sprite->_ink == kInkTypeDark ||
-		_sprite->_blendAmount > 0;
+		(((_sprite->_thickness & kTHasBlend) || _sprite->_ink == kInkTypeBlend) && _sprite->_blendAmount > 0);
 
 	Common::Rect bbox(getBbox());
 
@@ -253,7 +254,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 		// modified.
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
 			_sprite->_ink != nextSprite->_ink || _sprite->_backColor != nextSprite->_backColor ||
-			_sprite->_foreColor != nextSprite->_foreColor || _sprite->_blend != nextSprite->_blend ||
+			_sprite->_foreColor != nextSprite->_foreColor ||
 			_sprite->_blendAmount != nextSprite->_blendAmount || _sprite->_thickness != nextSprite->_thickness;
 		if (!_sprite->_moveable)
 			isDirtyFlag |= _sprite->getPosition() != nextSprite->getPosition();

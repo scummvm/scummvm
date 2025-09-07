@@ -1548,7 +1548,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = channel->getBbox().left;
 		break;
 	case kTheLineSize:
-		d = sprite->_thickness & 0x3;
+		d = (sprite->_thickness & kTThickness) - 1;
 		break;
 	case kTheLoc:
 		{
@@ -1690,8 +1690,14 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				channel->_dirty = true;
 			}
 
+			if (d.asInt() == 0)
+				sprite->_thickness &= ~kTHasBlend;
+			else
+				sprite->_thickness |= kTHasBlend;
+
 			// Based on Director in a Nutshell, page 15
 			sprite->setAutoPuppet(kAPBlend, true);
+			sprite->setAutoPuppet(kAPThickness, true);
 		}
 		break;
 	case kTheMember:
@@ -1816,10 +1822,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 		break;
 	case kTheLineSize:
-		if (d.asInt() != sprite->_thickness) {
-			sprite->_thickness = d.asInt();
-			channel->_dirty = true;
-		}
+		sprite->_thickness = (sprite->_thickness & ~kTThickness) | ((d.asInt() + 1) & kTThickness);
+		channel->_dirty = true;
+
+		sprite->setAutoPuppet(kAPThickness, true);
 		break;
 	case kTheLoc:
 		if (channel->getPosition() != d.asPoint()) {
