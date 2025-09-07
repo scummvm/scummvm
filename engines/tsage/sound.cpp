@@ -799,7 +799,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 	// Main processing loop
 	int priorityOffset = 0;
-	for (Common::List<Sound *>::iterator i = sfManager()._playList.begin(); i != sfManager()._playList.end(); ++i, priorityOffset += 16) {
+	for (Common::List<Sound *>::iterator i = sfManager()._playList.reverse_begin(); i != sfManager()._playList.end(); --i, priorityOffset += 16) {
 		Sound *sound = *i;
 		if ((sound->_mutedCount != 0) || (sound->_pausedCount != 0))
 			continue;
@@ -811,7 +811,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 			// Scan for sub priority
 			int foundIndex = -1, foundPriority = 0;
 			for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
-				if (!(sound->_chFlags[idx] & 0x8000) & !sound->_chWork[idx]) {
+				if (((sound->_chFlags[idx] & 0x8000) == 0) && !sound->_chWork[idx]) {
 					int subPriority = sound->_chSubPriority[idx];
 					if (subPriority)
 						subPriority = 16 - subPriority + priorityOffset;
@@ -861,7 +861,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 					vtStruct->_numVoices -= chNumVoices;
 					continue;
-				} else if (!foundPriority) {
+				} else if (foundPriority == 0) {
 					do {
 						int maxPriority = 0;
 						for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx)
@@ -897,7 +897,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					numVoices -= chNumVoices;
 					vtStruct->_numVoices = numVoices;
 					continue;
-				} else if (!numVoices) {
+				} else if (numVoices == 0) {
 					break;
 				}
 				continue;
@@ -1063,7 +1063,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						continue;
 					}
 
-					if (!foundPriority)
+					if (foundPriority == 0)
 						continue;
 					if (priorityIndex == -1) {
 						sfUpdateVoiceStructs2();
@@ -1443,12 +1443,12 @@ void SoundManager::sfDoUpdateVolume(Sound *sound) {
 			SoundDriver *driver = vse._driver;
 
 			if (vs->_voiceType == VOICETYPE_0) {
-				if (vse._type0._sound) {
+				if (vse._type0._sound && vse._type0._sound == sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type0._channelNum] / 127;
-					driver->proc24(voiceIndex, vse._voiceNum, sound, 7, vol);
+					driver->proc24(vse._voiceNum, voiceIndex, sound, 7, vol);
 				}
 			} else {
-				if (vse._type1._sound) {
+				if (vse._type1._sound && vse._type1._sound == sound ) {
 					int vol = sound->_volume * sound->_chVolume[vse._type1._channelNum] / 127;
 					driver->proc38(vse._voiceNum, 7, vol);
 				}
@@ -1961,7 +1961,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 		voiceType = VOICETYPE_0;
 	} else {
 		chVoiceType = (VoiceType)_chVoiceType[channelNum];
-		vtStruct = _soundManager->_voiceTypeStructPtrs[(int)chVoiceType];
+		vtStruct = _soundManager->_voiceTypeStructPtrs[_chVoiceType[channelNum]];
 
 		if (vtStruct) {
 			voiceType = vtStruct->_voiceType;
@@ -2241,7 +2241,7 @@ void Sound::soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceT
 		for (uint entryIndex = 0; entryIndex < vtStruct->_entries.size(); ++entryIndex) {
 			VoiceStructEntry &vte = vtStruct->_entries[entryIndex];
 
-			if ((vte._type1._sound == this) && (vte._type1._channelNum == channelNum)) {
+			if (vte._type1._sound && (vte._type1._sound == this) && (vte._type1._channelNum == channelNum)) {
 				SoundDriver *driver = vte._driver;
 				assert(driver);
 
