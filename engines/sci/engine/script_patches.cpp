@@ -1666,8 +1666,71 @@ static const uint16 ecoquest1PatchBleachPumpTest[] = {
 	PATCH_END
 };
 
+// When Flesh-Eater appears in room 120, the inset of Adam's face animates too
+//  quickly because the animation interval is in unthrottled game cycles.
+//
+// We fix this by using ticks instead of game cycles.
+//
+// Applies to: All versions
+// Responsible method: fleshEater:changeState(7)
+// Fixes bug: #15732
+static const uint16 ecoquest1SignatureFleshEaterInsetSpeed[] = {
+	0x35, 0x02,                         // ldi 02
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles [ cycles = 2 ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x08,                         // ldi 08
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchFleshEaterInsetSpeed[] = {
+	0x35, 0x08,                               // ldi 08
+	0x65, PATCH_GETORIGINALBYTEADJUST(3, +6), // aTop ticks [ ticks = 8 ]
+	PATCH_END
+};
+
+// When Flesh-Eater appears in room 120, Delphineus knocks Adam across the
+//  screen to safety inside an urn, but the script sets ego's animation speed
+//  to fastest (unthrottled) without setting the movement speed. This means that
+//  the tumble effect depends on both CPU speed and the game's speed setting in
+//  the control panel, and many combinations look wrong. For example, at a slow
+//  speed setting, Adam spins very fast (unless the CPU is slow) while moving
+//  across the screen very slowly.
+//
+// We fix this by setting ego:moveSpeed to a fast speed for consistent results
+//  that match the fastest cycleSpeed as limited by our speed throttler.
+//
+// Applies to: All versions
+// Responsible method: fleshEater:changeState(17)
+// Fixes bug: #15732
+static const uint16 ecoquest1SignatureFleshEaterEgoSpeed[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(cycleSpeed),   // pushi cycleSpeed
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa delphi
+	0x4a, 0x04,                         // send 04 [ delphi cycleSpeed: (6) ]
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+10),
+	0x4a, 0x0e,                         // send 0e [ ego cycleSpeed: (delphi cycleSpeed:) ... ]
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
+	0x38, PATCH_UINT16(0x0006),         // pushi 0006
+	0x38, PATCH_SELECTOR16(moveSpeed),  // pushi moveSpeed
+	0x39, 0x01,                         // pushi 01
+	0x39, 0x03,                         // pushi 03
+	PATCH_ADDTOOFFSET(+10),
+	0x4a, 0x14,                         // send 14 [ ego cycleSpeed: 6 moveSpeed: 3 ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
+	{  true,   123, "flesh-eater inset speed",                     1, ecoquest1SignatureFleshEaterInsetSpeed,   ecoquest1PatchFleshEaterInsetSpeed },
+	{  true,   123, "flesh-eater ego speed",                       1, ecoquest1SignatureFleshEaterEgoSpeed,     ecoquest1PatchFleshEaterEgoSpeed },
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,        ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,          ecoquest1PatchGiveOilyShell },
 	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,        ecoquest1PatchColumnPuzzleFix },
