@@ -56,7 +56,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 { // Found in french ADI 2 Francais-Maths CE2. Exact version not specified.
@@ -69,7 +69,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -82,7 +82,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -95,7 +95,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -108,7 +108,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -124,7 +124,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -137,7 +137,7 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -150,7 +150,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -163,7 +163,7 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -176,7 +176,7 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -189,7 +189,7 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -202,7 +202,7 @@
 		ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -218,7 +218,7 @@
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -247,7 +247,7 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -260,7 +260,7 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeatures640x400,
+	kFeaturesAdLib | kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
