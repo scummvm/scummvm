@@ -37,6 +37,10 @@
 #include "hypno/grammar.h"
 #include "hypno/libfile.h"
 
+namespace Audio {
+class SeekableAudioStream;
+}
+
 namespace Image {
 class ImageDecoder;
 }
@@ -148,7 +152,7 @@ public:
 	bool _unlockAllLevels;
 	bool _restoredContentEnabled;
 
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle _soundHandle, _musicHandle;
 	Common::InstallShieldV3 _installerArchive;
 	Common::List<LibFile*> _archive;
 
@@ -289,12 +293,12 @@ public:
 
 	// Sounds
 	Filename _soundPath;
-	Filename _music;
-	int _musicRate;
-	bool _musicStereo;
-	bool _doNotStopSounds;
+	Audio::SeekableAudioStream *loadAudioStream(const Filename &filename, uint32 sampleRate = 22050, bool stereo = false);
 	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050, bool stereo = false);
+	void playMusic(const Filename &filename, uint32 sampleRate = 22050, bool stereo = false);
 	void stopSound();
+	void stopMusic();
+	bool isMusicActive();
 
 	// Arcade
 	Common::String _arcadeMode;
