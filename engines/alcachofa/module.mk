@@ -33,6 +33,11 @@ MODULE_OBJS += \
 	graphics-opengl-shaders.o
 endif
 
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	graphics-tinygl.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_ALCACHOFA), DYNAMIC_PLUGIN)
 PLUGIN := 1

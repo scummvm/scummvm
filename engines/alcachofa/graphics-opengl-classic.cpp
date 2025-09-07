@@ -40,6 +40,7 @@ public:
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
 		resetState();
+		_currentTexture = nullptr;
 	}
 
 	void setTexture(ITexture *texture) override {

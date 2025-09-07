@@ -45,24 +45,15 @@ static bool isCompatibleFormat(const PixelFormat &format) {
 		areComponentsInOrder(format, 3, 2, 1, 0);
 }
 
-OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
+//
+// Base classes, no calls to gl* or tgl* in this area
+//
+
+OpenGLTextureBase::OpenGLTextureBase(int32 w, int32 h, bool withMipmaps)
 	: ITexture({ (int16)w, (int16)h })
-	, _withMipmaps(withMipmaps) {
-	glEnable(GL_TEXTURE_2D); // will error on GLES2, but that is okay
-	OpenGL::clearGLError(); // we will just ignore it
-	GL_CALL(glGenTextures(1, &_handle));
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	setMirrorWrap(false);
-}
+	, _withMipmaps(withMipmaps) { }
 
-OpenGLTexture::~OpenGLTexture() {
-	if (_handle != 0)
-		GL_CALL(glDeleteTextures(1, &_handle));
-}
-
-void OpenGLTexture::update(const Surface &surface) {
+void OpenGLTextureBase::update(const Surface &surface) {
 	assert(isCompatibleFormat(surface.format));
 	assert(surface.w == size().x && surface.h == size().y);
 
@@ -83,23 +74,90 @@ void OpenGLTexture::update(const Surface &surface) {
 			surface.format);
 		pixels = _tmpSurface.getPixels();
 	} else {
-		glEnable(GL_TEXTURE_2D);
-		OpenGL::clearGLError();
 		pixels = surface.getPixels();
 	}
 
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
-	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface.w, surface.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
-	if (_withMipmaps)
-		GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
-	else
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0));
+	updateInner(pixels);
 
 	if (!_tmpSurface.empty()) {
 		if (!_didConvertOnce)
 			_tmpSurface.free();
 		_didConvertOnce = true;
 	}
+}
+
+OpenGLRendererBase::OpenGLRendererBase(Point resolution) : _resolution(resolution) {}
+
+bool OpenGLRendererBase::hasOutput() const {
+	return _currentOutput != nullptr;
+}
+
+void OpenGLRendererBase::resetState() {
+	setViewportToScreen();
+	_currentOutput = nullptr;
+	_currentLodBias = -1000.0f;
+	_currentBlendMode = (BlendMode)-1;
+	_isFirstDrawCommand = true;
+}
+
+void OpenGLRendererBase::setViewportToScreen() {
+	int32 screenWidth = g_system->getWidth();
+	int32 screenHeight = g_system->getHeight();
+	Rect viewport(
+		MIN<int32>(screenWidth, screenHeight * (float)_resolution.x / _resolution.y),
+		MIN<int32>(screenHeight, screenWidth * (float)_resolution.y / _resolution.x));
+	viewport.translate(
+		(screenWidth - viewport.width()) / 2,
+		(screenHeight - viewport.height()) / 2);
+
+	setViewportInner(viewport.left, viewport.top, viewport.width(), viewport.height());
+	setMatrices(true);
+}
+
+void OpenGLRendererBase::setViewportToRect(int16 outputWidth, int16 outputHeight) {
+	_outputSize.x = MIN(outputWidth, g_system->getWidth());
+	_outputSize.y = MIN(outputHeight, g_system->getHeight());
+	setViewportInner(0, 0, _outputSize.x, _outputSize.y);
+	setMatrices(false);
+}
+
+void OpenGLRendererBase::getQuadPositions(Vector2d topLeft, Vector2d size, Angle rotation, Vector2d positions[]) const {
+	positions[0] = topLeft + Vector2d(0, 0);
+	positions[1] = topLeft + Vector2d(0, +size.getY());
+	positions[2] = topLeft + Vector2d(+size.getX(), +size.getY());
+	positions[3] = topLeft + Vector2d(+size.getX(), 0);
+	if (abs(rotation.getDegrees()) > epsilon) {
+		const Vector2d zero(0, 0);
+		for (int i = 0; i < 4; i++)
+			positions[i].rotateAround(zero, rotation);
+	}
+}
+
+void OpenGLRendererBase::getQuadTexCoords(Vector2d texMin, Vector2d texMax, Vector2d texCoords[]) const {
+	texCoords[0] = { texMin.getX(), texMin.getY() };
+	texCoords[1] = { texMin.getX(), texMax.getY() };
+	texCoords[2] = { texMax.getX(), texMax.getY() };
+	texCoords[3] = { texMax.getX(), texMin.getY() };
+}
+
+OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
+	: OpenGLTextureBase(w, h, withMipmaps) {
+	glEnable(GL_TEXTURE_2D); // will error on GLES2, but that is okay
+	OpenGL::clearGLError(); // we will just ignore it
+	GL_CALL(glGenTextures(1, &_handle));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	setMirrorWrap(false);
+}
+
+//
+// OpenGL classes, calls to gl* are allowed here
+//
+
+OpenGLTexture::~OpenGLTexture() {
+	if (_handle != 0)
+		GL_CALL(glDeleteTextures(1, &_handle));
 }
 
 void OpenGLTexture::setMirrorWrap(bool wrap) {
@@ -110,14 +168,29 @@ void OpenGLTexture::setMirrorWrap(bool wrap) {
 	if (wrap)
 		wrapMode = OpenGLContext.textureMirrorRepeatSupported ? GL_MIRRORED_REPEAT : GL_REPEAT;
 	else
+#if USE_FORCED_GLES2 // GLES2 does not define GL_CLAMP
+		wrapMode = GL_CLAMP_TO_EDGE;
+#else
 		wrapMode = OpenGLContext.textureEdgeClampSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
+#endif
 
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode));
 }
 
-OpenGLRenderer::OpenGLRenderer(Point resolution) : _resolution(resolution) {
+void OpenGLTexture::updateInner(const void *pixels) {
+	glEnable(GL_TEXTURE_2D);
+	OpenGL::clearGLError();
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size().x, size().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+	if (_withMipmaps)
+		GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
+	else
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0));
+}
+
+OpenGLRenderer::OpenGLRenderer(Point resolution) : OpenGLRendererBase(resolution) {
 	initGraphics3d(resolution.x, resolution.y);
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_SCISSOR_TEST));
@@ -134,15 +207,6 @@ OpenGLRenderer::OpenGLRenderer(Point resolution) : _resolution(resolution) {
 ScopedPtr<ITexture> OpenGLRenderer::createTexture(int32 w, int32 h, bool withMipmaps) {
 	assert(w >= 0 && h >= 0);
 	return ScopedPtr<ITexture>(new OpenGLTexture(w, h, withMipmaps));
-}
-
-void OpenGLRenderer::resetState() {
-	setViewportToScreen();
-	_currentOutput = nullptr;
-	_currentLodBias = -1000.0f;
-	_currentTexture = nullptr;
-	_currentBlendMode = (BlendMode)-1;
-	_isFirstDrawCommand = true;
 }
 
 void OpenGLRenderer::end() {
@@ -214,34 +278,13 @@ void OpenGLRenderer::setOutput(Surface &output) {
 	}
 }
 
-bool OpenGLRenderer::hasOutput() const {
-	return _currentOutput != nullptr;
-}
-
-void OpenGLRenderer::setViewportToScreen() {
-	int32 screenWidth = g_system->getWidth();
-	int32 screenHeight = g_system->getHeight();
-	Rect viewport(
-		MIN<int32>(screenWidth, screenHeight * (float)_resolution.x / _resolution.y),
-		MIN<int32>(screenHeight, screenWidth * (float)_resolution.y / _resolution.x));
-	viewport.translate(
-		(screenWidth - viewport.width()) / 2,
-		(screenHeight - viewport.height()) / 2);
-
-	GL_CALL(glViewport(viewport.left, viewport.top, viewport.width(), viewport.height()));
-	setMatrices(true);
-}
-
-void OpenGLRenderer::setViewportToRect(int16 outputWidth, int16 outputHeight) {
-	_outputSize.x = MIN(outputWidth, g_system->getWidth());
-	_outputSize.y = MIN(outputHeight, g_system->getHeight());
-	GL_CALL(glViewport(0, 0, _outputSize.x, _outputSize.y));
-	setMatrices(false);
+void OpenGLRenderer::setViewportInner(int x, int y, int width, int height) {
+	GL_CALL(glViewport(x, y, width, height));
 }
 
 void OpenGLRenderer::checkFirstDrawCommand() {
 	// We delay clearing the screen. It is much easier for the game
-		// to switch to a framebuffer before
+	// to switch to a framebuffer before
 	if (!_isFirstDrawCommand)
 		return;
 	_isFirstDrawCommand = false;
@@ -249,27 +292,8 @@ void OpenGLRenderer::checkFirstDrawCommand() {
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void OpenGLRenderer::getQuadPositions(Vector2d topLeft, Vector2d size, Angle rotation, Vector2d positions[]) const {
-	positions[0] = topLeft + Vector2d(0, 0);
-	positions[1] = topLeft + Vector2d(0, +size.getY());
-	positions[2] = topLeft + Vector2d(+size.getX(), +size.getY());
-	positions[3] = topLeft + Vector2d(+size.getX(), 0);
-	if (abs(rotation.getDegrees()) > epsilon) {
-		const Vector2d zero(0, 0);
-		for (int i = 0; i < 4; i++)
-			positions[i].rotateAround(zero, rotation);
-	}
-}
-
-void OpenGLRenderer::getQuadTexCoords(Vector2d texMin, Vector2d texMax, Vector2d texCoords[]) const {
-	texCoords[0] = { texMin.getX(), texMin.getY() };
-	texCoords[1] = { texMin.getX(), texMax.getY() };
-	texCoords[2] = { texMax.getX(), texMax.getY() };
-	texCoords[3] = { texMax.getX(), texMin.getY() };
-}
-
 IRenderer *IRenderer::createOpenGLRenderer(Point resolution) {
-	const auto available = Renderer::getAvailableTypes() & ~kRendererTypeTinyGL;
+	const auto available = Renderer::getAvailableTypes();
 	const auto &rendererCode = ConfMan.get("renderer");
 	RendererType rendererType = Renderer::parseTypeCode(rendererCode);
 	rendererType = (RendererType)(rendererType & available);
@@ -282,11 +306,16 @@ IRenderer *IRenderer::createOpenGLRenderer(Point resolution) {
 	case kRendererTypeOpenGL:
 		renderer = createOpenGLRendererClassic(resolution);
 		break;
+	case kRendererTypeTinyGL:
+		renderer = createTinyGLRenderer(resolution);
+		break;
 	default:
 		if (available & kRendererTypeOpenGLShaders)
 			renderer = createOpenGLRendererShaders(resolution);
 		else if (available & kRendererTypeOpenGL)
 			renderer = createOpenGLRendererClassic(resolution);
+		else if (available & kRendererTypeTinyGL)
+			renderer = createTinyGLRenderer(resolution);
 		break;
 	}
 
@@ -304,6 +333,13 @@ IRenderer *createOpenGLRendererShaders(Point _) {
 
 #ifndef USE_OPENGL_GAME
 IRenderer *createOpenGLRendererClassic(Point _) {
+	(void)_;
+	return nullptr;
+}
+#endif
+
+#ifndef USE_TINYGL
+IRenderer *createTinyGLRenderer(Point _) {
 	(void)_;
 	return nullptr;
 }
