@@ -335,7 +335,7 @@ void ObjectMover::dispatch() {
 	}
 
 	_sceneObject->_regionIndex = _sceneObject->checkRegion(currPos);
-	if (!_sceneObject->_regionIndex) {
+	if (_sceneObject->_regionIndex == 0) {
 		_sceneObject->setPosition(currPos, yDiff);
 		_sceneObject->getHorizBounds();
 
@@ -3555,6 +3555,9 @@ void Player::enableControl() {
 	case GType_BlueForce:
 	case GType_Ringworld2:
 		cursor = g_globals->_events.getCursor();
+		// Avoid keeping a CURSOR_NONE cursor (which is an issue mainly when jumping to scenes via debugger)
+		if (cursor == CURSOR_NONE)
+			g_globals->_events.setCursor(CURSOR_WALK);
 		g_globals->_events.setCursor(cursor);
 
 		if (g_vm->getGameID() == GType_BlueForce && T2_GLOBALS._uiElements._active)
@@ -4442,19 +4445,24 @@ void SceneHandler::process(Event &event) {
 			g_globals->_events.setCursorFromFlag();
 	}
 
-	// Check for displaying right-click dialog
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
-			g_globals->_player._uiEnabled &&
-			((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
-		g_globals->_game->rightClick();
+	if (!event.handled) {
+		// Check for displaying right-click dialog
+		if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
+				g_globals->_player._uiEnabled &&
+				((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330)) &&
+				((g_vm->getGameID() != GType_BlueForce) || (R2_GLOBALS._sceneManager._sceneNumber != 100))) {
+			g_globals->_game->rightClick();
 
-		event.handled = true;
-		return;
+			event.handled = true;
+			return;
+		}
 	}
 
-	// If there is an active scene, pass the event to it
-	if (g_globals->_sceneManager._scene)
-		g_globals->_sceneManager._scene->process(event);
+	if (!event.handled) {
+		// If there is an active scene, pass the event to it
+		if (g_globals->_sceneManager._scene)
+			g_globals->_sceneManager._scene->process(event);
+	}
 
 	if (!event.handled) {
 		// Separate check for F5 - Save key

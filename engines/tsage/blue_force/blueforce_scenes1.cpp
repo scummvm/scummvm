@@ -148,7 +148,8 @@ void Scene100::Action2::signal() {
 		} else {
 			// Prompt user for whether to start play or watch introduction
 			g_globals->_player.enableControl();
-			g_globals->_events.setCursor(CURSOR_WALK);
+			// Set Arrow cursor for this popup prompt
+			g_globals->_events.setCursor(CURSOR_ARROW);
 
 			int rc;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
