@@ -265,6 +265,9 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 	g_globals->_sceneManager._scrollerRect.synchronize(s);
 	SYNC_POINTER(g_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
+	if (s.isLoading()) {
+		_loadMode = 1;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

@@ -3052,13 +3052,17 @@ void SceneObjectList::draw() {
 	if (_objList.size() == 0) {
 		// Alternate draw mode
 
-		if (g_globals->_paneRefreshFlag[paneNum] == 1) {
+		if (g_globals->_paneRefreshFlag[paneNum] != 0) {
 			// Load the background
-			g_globals->_sceneManager._scene->refreshBackground(0, 0);
+			if (g_globals->_sceneManager._loadMode == 1) {
+				g_globals->_sceneManager._scene->refreshBackground(0, 0);
+				g_globals->_sceneManager._loadMode = 0;
+			}
 
 			Rect tempRect = g_globals->_sceneManager._scene->_sceneBounds;
 			tempRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
 			ScenePalette::changeBackground(tempRect, g_globals->_sceneManager._fadeMode);
+			g_globals->_paneRefreshFlag[paneNum] = 0;
 		} else {
 			g_globals->_paneRegions[CURRENT_PANENUM].draw();
 		}
@@ -3134,7 +3138,7 @@ void SceneObjectList::draw() {
 		checkIntersection(objList, objList.size(), CURRENT_PANENUM);
 		sortList(objList);
 
-		if (g_globals->_paneRefreshFlag[paneNum] == 1) {
+		if (g_globals->_sceneManager._loadMode == 1) {
 			// Load the background
 			g_globals->_sceneManager._scene->refreshBackground(0, 0);
 		}
@@ -3203,6 +3207,7 @@ void SceneObjectList::draw() {
 					redrawFlag = true;
 				}
 			}
+			g_globals->_sceneManager._loadMode = 0;
 		}
 	}
 }
