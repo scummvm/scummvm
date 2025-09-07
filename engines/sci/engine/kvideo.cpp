@@ -204,6 +204,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			// the calculation of the scaled x/y coordinates works slightly differently compared to the normal gfx rendering.
 			g_sci->_gfxScreen->gfxDriver()->setFlags(GfxDriver::kMovieMode);
 			videoDecoder.reset(new Video::AVIDecoder());
+			videoDecoder->setSoundType(Audio::Mixer::kSFXSoundType);
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
 				videoDecoder.reset();
