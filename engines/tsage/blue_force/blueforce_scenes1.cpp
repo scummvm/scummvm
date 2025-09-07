@@ -2436,8 +2436,8 @@ void Scene150::Action1::signal() {
 }
 
 void Scene150::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(150);
+	SceneExt::postInit();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
@@ -2623,7 +2623,7 @@ void Scene160::Action2::signal() {
 		owner->animate(ANIM_MODE_5, this);
 		break;
 	case 17:
-		setDelay(70);
+		setDelay(60);
 		break;
 	case 18:
 		owner->animate(ANIM_MODE_6, this);
