@@ -103,10 +103,9 @@ void Scene200::Action2::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene200::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(200);
-	setZoomPercents(0, 100, 200, 100);
 	BF_GLOBALS._sound1.play(3);
+	loadScene(200);
+	SceneExt::postInit();
 
 	_object10.postInit();
 	_object10.setVisage(200);
