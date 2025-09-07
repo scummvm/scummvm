@@ -10143,6 +10143,36 @@ static const uint16 larry6HiresPhoneOperatorPatch[] = {
 	PATCH_END
 };
 
+// When entering Larry's room (620) from the bathroom (630), the door sound is
+//  abruptly cut off. This also occurs in the original, because the script
+//  quickly disposes of the sound object before it can finish playing.
+//
+// We fix this by removing the dispose call so that the sound completely plays.
+//  There does not appear to be any benefit to this call, as the same local
+//  sound object is used for many other purposes in this room without explicit
+//  disposal. The local sound is automatically disposed of when cleaning up the
+//  global Sounds collection when changing rooms.
+//
+// Applies to: All versions
+// Responsible method: enterFromBathroomScr:changeState(9)
+// Fixes bug: #15880
+static const uint16 larry6HiresBathroomDoorSoundSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(number),        // pushi number
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sfx
+	0x4a, SIG_UINT16(0x000a),           // send 0a [ sfx number: 0 dispose: ]
+	SIG_END
+};
+
+static const uint16 larry6HiresBathroomDoorSoundPatch[] = {
+	0x33, 0x0c,                         // jmp 0c [ skip ]
+	PATCH_END
+};
+
 // The Interface Help feature does not display its help cursor, but it instructs
 //  the player to expect this. The script attempts to set the cursor, but it is
 //  immediately reverted by the narration script. This is a script bug that
@@ -10295,6 +10325,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
+	{  true,   620, "bathroom door sound",                         1, larry6HiresBathroomDoorSoundSignature,larry6HiresBathroomDoorSoundPatch },
 	{  true,   680, "room 680 exits",                              1, larry6HiresRoom680ExitsSignature,     larry6HiresRoom680ExitsPatch },
 	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
 	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
