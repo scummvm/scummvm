@@ -150,8 +150,9 @@ void Window::drawChannelBox(Director::Movie *currentMovie, Graphics::ManagedSurf
 }
 
 bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
-	if (!_currentMovie)
+	if (!_currentMovie) {
 		return false;
+	}
 
 	if (!blitTo)
 		blitTo = _composeSurface;
@@ -426,6 +427,15 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 	_nextMovie.movie = _fileName.toString(g_director->_dirSeparator);
 
 	return true;
+}
+
+void Window::setAsCurrent() {
+	_vm->setCurrentWindow(this);
+}
+
+
+void Window::setCurrentMovie(Movie *movie) {
+	_currentMovie = movie;
 }
 
 void Window::updateBorderType() {

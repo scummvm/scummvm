@@ -79,6 +79,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugPaused, "paused", "Pause first movie right after start"},
 	{Director::kDebugPauseOnLoad, "pauseonload", "Pause every movie right after loading"},
 	{Director::kDebugSaving, "saving", "Show Debug output while saving movies"},
+	{Director::kDebugMovieCast, "moviecast", "Show Debug output while rendering movie cast members"},
 	DEBUG_CHANNEL_END
 };
 

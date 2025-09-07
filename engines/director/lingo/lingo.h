@@ -405,7 +405,7 @@ public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	void processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent);
+	void processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent, Movie *movie = nullptr);
 
 public:
 	bool execute(int targetFrame = -1);
