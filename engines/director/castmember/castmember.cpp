@@ -155,6 +155,7 @@ bool CastMember::hasField(int field) {
 	case kTheName:
 	case kTheNumber:
 	case kTheRect:
+	case kThePreLoad:
 	case kThePurgePriority:
 	case kTheScriptText:
 	case kTheSize:
@@ -227,6 +228,15 @@ Datum CastMember::getField(int field) {
 		// not sure get the initial rect would be fine to castmember
 		d = Datum(_cast->getCastMember(_castId)->_initialRect);
 		break;
+	/*
+	ScummVM does not do preloading so we will always return false here.
+
+	simpsonscartoonstudio checks this flag and if set to true does an updateStage
+	in a loop which causes performance issues loading cartoons.
+	*/
+	case kThePreLoad:
+		d = 0;
+		break;
 	case kThePurgePriority:
 		d = _purgePriority;
 		break;
@@ -287,6 +297,11 @@ void CastMember::setField(int field, const Datum &d) {
 		return;
 	case kTheRect:
 		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		return;
+	/*
+	ScummVM does not do preloading so we will make this a no-op.
+	*/
+	case kThePreLoad:
 		return;
 	case kThePurgePriority:
 		_purgePriority = CLIP<int>(d.asInt(), 0, 3);
