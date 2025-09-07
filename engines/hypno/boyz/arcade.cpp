@@ -390,8 +390,6 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 
 			_background->decoder->pauseVideo(false);
 			_masks->decoder->pauseVideo(false);
-			if (!_music.empty())
-				playSound(_music, 0, _musicRate, _musicStereo); // restore music
 			drawPlayer();
 			updateScreen(*_background);
 			drawScreen();
@@ -639,8 +637,6 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 					_shootsDestroyed[_shoots[i].name] = true;
 					updateScreen(*_background);
 					drawScreen();
-					if (!_music.empty())
-						playSound(_music, 0, _musicRate, _musicStereo); // restore music
 				}
 			} else if (_shoots[i].interactionFrame > 0) {
 				incFriendliesEncountered();
@@ -685,9 +681,6 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				_background->decoder->pauseVideo(false);
 				updateScreen(*_background);
 				drawScreen();
-				if (!_music.empty())
-					playSound(_music, 0, _musicRate, _musicStereo); // restore music
-
 				hitPlayer();
 			}
 			if (_shoots[i].explosionFrames.size() == 0)

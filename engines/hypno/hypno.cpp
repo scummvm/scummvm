@@ -58,9 +58,9 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
 	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
-	  _background(nullptr), _masks(nullptr), _musicRate(0), _musicStereo(false),
+	  _background(nullptr), _masks(nullptr),
 	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
-	  _doNotStopSounds(false), _screenW(0), _screenH(0), // Every games initializes its own resolution
+	  _screenW(0), _screenH(0), // Every games initializes its own resolution
 	  _keepTimerDuringScenes(false), _subtitles(nullptr) {
 	_rnd = new Common::RandomSource("hypno");
 	_checkpoint = "";
@@ -192,14 +192,13 @@ void HypnoEngine::runLevel(Common::String &name) {
 
 	_prefixDir = _levels[name]->prefix;
 	stopSound();
-	_music.clear();
+	stopMusic();
 
 	// Play intros
 	disableCursor();
 
 	if (_levels[name]->playMusicDuringIntro && !_levels[name]->music.empty()) {
-		playSound(_levels[name]->music, 0, _levels[name]->musicRate);
-		_doNotStopSounds = true;
+		playMusic(_levels[name]->music, _levels[name]->musicRate);
 	}
 
 	debug("Number of videos to play: %d", _levels[name]->intros.size());
@@ -207,8 +206,6 @@ void HypnoEngine::runLevel(Common::String &name) {
 		MVideo v(*it, Common::Point(0, 0), false, true, false);
 		runIntro(v);
 	}
-
-	_doNotStopSounds = false;
 
 	if (_levels[name]->type == TransitionLevel) {
 		debugC(1, kHypnoDebugScene, "Executing transition level %s", name.c_str());
@@ -235,8 +232,6 @@ void HypnoEngine::runLevel(Common::String &name) {
 void HypnoEngine::runIntros(Videos &videos) {
 	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
-	if (!_doNotStopSounds)
-		stopSound();
 	bool skip = false;
 	int clicked[3] = {-1, -1, -1};
 	int clicks = 0;
@@ -644,12 +639,10 @@ void HypnoEngine::skipVideo(MVideo &video) {
 }
 
 // Sound handling
-
-void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate, bool stereo) {
-	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d)", __FUNCTION__, filename.c_str(), loops, sampleRate);
+Audio::SeekableAudioStream *HypnoEngine::loadAudioStream(const Common::String &filename, uint32 sampleRate, bool stereo) {
+	debugC(1, kHypnoDebugMedia, "%s(%s, %d)", __FUNCTION__, filename.c_str(), sampleRate);
 	Common::Path name = convertPath(filename);
 
-	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
 		uint32 flags = Audio::FLAG_UNSIGNED;
@@ -662,25 +655,50 @@ void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32
 			sub = new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::YES);
 		}
 
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(sub, sampleRate, flags, DisposeAfterUse::YES), loops);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+		return Audio::makeRawStream(sub, sampleRate, flags, DisposeAfterUse::YES);
 	} else {
 		if (!_prefixDir.empty())
 			name = _prefixDir.join(name);
 		if (file->open(name)) {
-			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+			return Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		} else {
 			debugC(1, kHypnoDebugMedia, "%s not found!", name.toString().c_str());
 			delete file;
+			return nullptr;
 		}
 	}
 }
 
+void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate, bool stereo) {
+	Audio::SeekableAudioStream *stream = loadAudioStream(filename, sampleRate, stereo);
+	if (!stream)
+		return;
+	_mixer->stopHandle(_soundHandle);
+	Audio::LoopingAudioStream *loopstream = new Audio::LoopingAudioStream(stream, loops);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, loopstream, -1, Audio::Mixer::kMaxChannelVolume);
+}
+
+void HypnoEngine::playMusic(const Common::String &filename, uint32 sampleRate, bool stereo) {
+	Audio::SeekableAudioStream *stream = loadAudioStream(filename, sampleRate, stereo);
+	if (!stream)
+		return;
+	_mixer->stopHandle(_musicHandle);
+	Audio::LoopingAudioStream *loopstream = new Audio::LoopingAudioStream(stream, 0);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopstream, -1, Audio::Mixer::kMaxChannelVolume);
+}
+
 void HypnoEngine::stopSound() {
 	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
-	_mixer->stopAll();
-	//_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(_soundHandle);
+}
+
+void HypnoEngine::stopMusic() {
+	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
+	_mixer->stopHandle(_musicHandle);
+}
+
+bool HypnoEngine::isMusicActive() {
+	return _mixer->isSoundHandleActive(_musicHandle);
 }
 
 // Path handling

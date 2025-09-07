@@ -136,7 +136,6 @@ void HypnoEngine::runIntro(Intro *a) {
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
 	defaultCursor();
-	_music.clear();
 	MVideo v(a->path, Common::Point(0, 0), false, true, false);
 	disableCursor();
 	runIntro(v);
