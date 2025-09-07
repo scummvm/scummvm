@@ -35,6 +35,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
+#define FONT_SIZE			16
 #define TEXT_MORE_DX        120                     // offset of "more" indicator from right margin
 #define TEXT_MORE_DY        5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB     "[ More ]"              // actual text to display for "more" indicator
@@ -531,7 +532,7 @@ void CGeneralStore::UpdateCrowns(CDC *pDC) {
 		else
 			Common::sprintf_s(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
 	}
-	(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
+	(*pItemCost).DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, STORE_TEXT_COLOR);
 }
 
 
@@ -713,8 +714,8 @@ void CGeneralStore::OnMouseMove(unsigned int nFlags, CPoint point) {
 					Common::strcpy_s(chBuffer, "One can be bought for 1 Crown");
 				else
 					Common::sprintf_s(chBuffer, "One can be bought for %d Crowns", nPrice);
-				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), 18, TEXT_BOLD, STORE_TEXT_COLOR);
-				(*pItemCost).DisplayString(pDC, chBuffer, 18, TEXT_BOLD, STORE_TEXT_COLOR);
+				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), FONT_SIZE, TEXT_BOLD, STORE_TEXT_COLOR);
+				(*pItemCost).DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, STORE_TEXT_COLOR);
 				ReleaseDC(pDC);
 				hNewCursor = (*pMyApp).LoadCursor(IDC_STORE_DOLLAR);
 			}
@@ -724,7 +725,7 @@ void CGeneralStore::OnMouseMove(unsigned int nFlags, CPoint point) {
 	if (hNewCursor == nullptr) {                       // use default cursor if not specified
 		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 		pDC = GetDC();
-		(*pItemText).DisplayString(pDC, "", 18, TEXT_BOLD, STORE_TEXT_COLOR);
+		(*pItemText).DisplayString(pDC, "", FONT_SIZE, TEXT_BOLD, STORE_TEXT_COLOR);
 		(*pItemText).RestoreBackground(pDC);        // clear any extant item text
 		UpdateCrowns(pDC);                          // clear any extant item text
 		ReleaseDC(pDC);
@@ -771,12 +772,12 @@ void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 					pCrowns = (*pInventory).FindItem(MG_OBJ_CROWN);
 					if ((pCrowns == nullptr) ||
 					        ((*pCrowns).GetQuantity() < nPrice)) {
-						(*pItemText).DisplayString(pDC, "Not have enough crowns to buy that!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
+						(*pItemText).DisplayString(pDC, "Not have enough crowns to buy that!", FONT_SIZE, TEXT_BOLD, STORE_BLURB_COLOR);
 						pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps5.wav" : ".\\sound\\gsps6.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
 						(*pSound).play();
 					} else {
-						(*pItemText).DisplayString(pDC, "Thanks for the purchase!", 18, TEXT_BOLD, STORE_BLURB_COLOR);
+						(*pItemText).DisplayString(pDC, "Thanks for the purchase!", FONT_SIZE, TEXT_BOLD, STORE_BLURB_COLOR);
 						if (brand() & 1)
 							pSound = new CSound(this, (bPlayingHodj ? ".\\sound\\gsps1.wav" : ".\\sound\\gsps2.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
 						else
