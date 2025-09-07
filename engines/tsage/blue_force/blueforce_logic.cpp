@@ -781,6 +781,9 @@ void SceneExt::dispatch() {
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
 
+	BF_GLOBALS._sceneManager._scrollerRect.top = 0;
+	BF_GLOBALS._sceneManager._scrollerRect.bottom = 300;
+
 	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 

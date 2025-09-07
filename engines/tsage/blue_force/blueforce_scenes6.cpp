@@ -95,13 +95,15 @@ void Scene600::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene600::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(600);
-	setZoomPercents(0, 100, 200, 100);
 	_sceneBounds.moveTo(320, 0);
+	BF_GLOBALS._sceneManager._scrollerRect.setRect(20, 0, 300, 200);
 
 	_sound1.play(58);
 	_sound1.holdAt(1);
+
+	loadScene(600);
+	setZoomPercents(0, 100, 200, 100);
+	SceneExt::postInit();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.hide();
