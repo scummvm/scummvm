@@ -3034,6 +3034,21 @@ void SceneObjectList::draw() {
 	Common::Array<SceneObject *> objList;
 	int paneNum = 0;
 
+	// This code ensures that palette entry 0 is set to the black color
+	// and entry 255 is set to the white.
+	// This fixes a graphical artifact glitch in BlueForce intro scene 210 (Credits - Car Training)
+	// where the car would leave black spots on the screen. The bug was caused by the earlier scene (160)
+	// which uses a fader. Faders leave the game palette in a state that simply loading another palette does not fix.
+	BF_GLOBALS._scenePalette.setEntry(0, 0, 0, 0); // Black
+	BF_GLOBALS._scenePalette.setPalette(0, 1);
+
+	BF_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);  // White
+	BF_GLOBALS._scenePalette.setPalette(255, 1);
+
+	g_globals->_sceneManager._scene->_sceneBounds.left &= ~3;
+	g_globals->_sceneManager._scene->_sceneBounds.right &= ~3;
+	g_globals->_sceneOffset.x &= ~3;
+
 	if (_objList.size() == 0) {
 		// Alternate draw mode
 
