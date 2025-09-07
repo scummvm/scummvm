@@ -1594,7 +1594,8 @@ void Scene271::signal() {
 		default:
 			_object11.postInit();
 			_object11.setPosition(Common::Point(340, 100));
-			BF_GLOBALS._sound1.play(36);
+			// Door knock sound
+			_sound1.play(36);
 
 			_sceneMode = 2709;
 			setAction(&_sequenceManager1, this, 2709, &BF_GLOBALS._player, &_object1, &_object12, &_object11, NULL);

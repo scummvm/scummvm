@@ -2658,16 +2658,8 @@ void Scene160::Action2::signal() {
 		break;
 	case 25:
 		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
-// FIXME: Currently, fade() doesn't end properly with this song,
-//        thus never returns here. This hack skips the wait and changes
-//        directly to the next scene
-// Start of hack
-//		break;
-//	case 26:
-		setDelay(5);
-		BF_GLOBALS._sound1.stop();
-// End of hack
-
+		break;
+	case 26:
 		BF_GLOBALS._sceneManager.changeScene(200);
 		break;
 	default:

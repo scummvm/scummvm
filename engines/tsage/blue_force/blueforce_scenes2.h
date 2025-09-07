@@ -68,10 +68,6 @@ class Scene210: public SceneExt {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
-	public:
-		void signal() override;
-	};
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -266,6 +262,7 @@ public:
 	Rect _rect1;
 	int _field796, _field2E16;
 	Common::Point _tempPos;
+	ASound _sound1;
 
 	Scene271();
 	void synchronize(Serializer &s) override;
