@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-04 19:24+0000\n"
+"PO-Revision-Date: 2025-09-07 05:30+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -6256,7 +6256,7 @@ msgstr "Leta efter uppdateringar..."
 #: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
 #: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
-msgstr "Standardtangentmappningar"
+msgstr "Standardkortkommandon"
 
 #: engines/access/metaengine.cpp:202
 msgid "Move / Interact / Skip"
@@ -6383,7 +6383,7 @@ msgstr "Använd"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "Gå till"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6839,7 +6839,7 @@ msgstr "Huvudsakliga för AGOS"
 #: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
 #: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Kortkommandon för spel"
 
 #: engines/agos/metaengine.cpp:229
 msgid "Yes/No keymapping"
@@ -7267,7 +7267,7 @@ msgstr "Allmänna tangenter"
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
 msgid "Escape keymappings"
-msgstr "Escape-tangentmappningar"
+msgstr "Escape-kortkommandon"
 
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
@@ -7649,7 +7649,7 @@ msgstr "Tillåt att mellansekvenser hoppas över"
 #: engines/buried/metaengine.cpp:134 engines/hypno/metaengine.cpp:130
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 msgid "Cutscene keymappings"
-msgstr "Tangentmappningar för mellansekvens"
+msgstr "Kortkommandon för mellansekvens"
 
 #: engines/buried/metaengine.cpp:135
 msgid "Main menu keymappings"
@@ -7790,7 +7790,7 @@ msgstr "Aktivera färgblint läge som standard"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
 msgid "Game Keymappings"
-msgstr "Tangentmappningar för spel"
+msgstr "Kortkommandon för spel"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
@@ -7939,11 +7939,11 @@ msgstr "Tom autosparning"
 
 #: engines/cine/metaengine.cpp:272
 msgid "Key to mouse keymappings"
-msgstr "Tangentmappningar för tangent till mus"
+msgstr "Kortkommandon för tangent till mus"
 
 #: engines/cine/metaengine.cpp:273
 msgid "Exit screen keymappings"
-msgstr "Avsluta skärm för tangentmappningar"
+msgstr "Kortkommandon för avslutningsskärm"
 
 #: engines/cine/metaengine.cpp:289
 msgid "Exit Sony intro screen"
@@ -8208,10 +8208,8 @@ msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr "Använd true color-grafikläge, även om spelet inte är utformat för det"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för dialogval"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
@@ -8223,7 +8221,7 @@ msgstr "Växla inventarier"
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Välj dialogval (fungerar endast om det finns ett enda val)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
@@ -8363,10 +8361,8 @@ msgid "Debug graphics"
 msgstr "Felsök grafik"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för animering"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
@@ -8494,47 +8490,35 @@ msgstr "Välj alternativ 14"
 #: engines/efh/metaengine.cpp:257 engines/hypno/metaengine.cpp:312
 #: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
 msgid "Menu keymappings"
-msgstr "Tangentmappningar för meny"
+msgstr "Kortkommandon för meny"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
 msgid "Quit keymappings"
-msgstr "Avsluta tangentmappningar"
+msgstr "Avsluta kortkommandon"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "Spara/Läs in tangentmappningar"
+msgstr "Kortkommandon för att hoppa över video"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "Tangentmappningar för minispel"
+msgstr "Kortkommandon för att hoppa över låt"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för statusmenynavigering"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för statusmeny"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för undermeny i statusmeny"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Interaction keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för interagering"
 
 #: engines/efh/metaengine.cpp:265
 #, fuzzy
@@ -8549,16 +8533,12 @@ msgid "Character selection keymappings"
 msgstr "Tangentmappningar för startmeny"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Enemy selection keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för fiendeval"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för dödsmeny"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
@@ -9547,17 +9527,15 @@ msgstr ""
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
 #: engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för intro"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "Primärt skott"
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Sekunder"
+msgstr "Sekundärt skott"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
@@ -9566,29 +9544,21 @@ msgid "Skip intro"
 msgstr "Hoppa över intro"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Exit keymappings"
 msgid "Exit menu keymappings"
-msgstr "Avsluta tangentmappningar"
+msgstr "Kortkommandon för avslutningsmeny"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för svårighetsgradsmeny"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för omförsöksmeny"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "Hoppa över tal"
+msgstr "Hoppa över nivå (fusk)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9596,7 +9566,7 @@ msgstr "Hoppa över tal"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "Döda spelare"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
@@ -9630,16 +9600,12 @@ msgid "Begin new mission"
 msgstr "Påbörja nytt uppdrag"
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "Kortkommandon för pausmeny"
+msgstr "Kortkommandon för paus"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Direction keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för riktning"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -10024,17 +9990,17 @@ msgstr ""
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
 msgid "Exit keymappings"
-msgstr "Avsluta tangentmappningar"
+msgstr "Avsluta kortkommandon"
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
 msgid "Map keymappings"
-msgstr "Tangentmappningar för karta"
+msgstr "Kortkommandon för karta"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
 msgid "Journal keymappings"
-msgstr "Tangentmappningar för dagbok"
+msgstr "Kortkommandon för dagbok"
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
@@ -10163,15 +10129,15 @@ msgstr "TTT-berättare"
 
 #: engines/lure/metaengine.cpp:170
 msgid "Fight sequence keymappings"
-msgstr "Tangentmappningar för slåssekvens"
+msgstr "Kortkommandon för slåssekvens"
 
 #: engines/lure/metaengine.cpp:171
 msgid "Index keymappings"
-msgstr "Tangentmappningar för index"
+msgstr "Kortkommandon för index"
 
 #: engines/lure/metaengine.cpp:172
 msgid "Yes/No keymappings"
-msgstr "Tangentmappningar för Ja/Nej"
+msgstr "Kortkommandon för Ja/Nej"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -10273,7 +10239,7 @@ msgstr "\"Busigt\" spelläge"
 
 #: engines/mads/metaengine.cpp:276
 msgid "Start menu keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Kortkommandon för startmeny"
 
 #: engines/mads/metaengine.cpp:299
 msgid "Open game menu"
@@ -13170,35 +13136,31 @@ msgstr "Visar fönster med en delvis genomskinlig bakgrund"
 
 #: engines/sherlock/metaengine.cpp:331
 msgid "Scroll keymappings"
-msgstr "Tangentmappningar för rullning"
+msgstr "Kortkommandon för rullning"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Main user interface keymappings"
-msgstr "Kortkommandon för huvudmeny"
+msgstr "Kortkommandon för huvudmenyns gränssnitt"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Darts minigame keymappings"
-msgstr "Tangentmappningar för minispel"
+msgstr "Kortkommandon för Darts-minispel"
 
 #: engines/sherlock/metaengine.cpp:335
 msgid "Talk keymappings"
-msgstr "Tangentmappningar för tal"
+msgstr "Kortkommandon för tal"
 
 #: engines/sherlock/metaengine.cpp:337
 msgid "Files keymappings"
-msgstr "Tangentmappningar för filer"
+msgstr "Kortkommandon för filer"
 
 #: engines/sherlock/metaengine.cpp:340
 msgid "Settings keymappings"
-msgstr "Tangentmappningar för inställningar"
+msgstr "Kortkommandon för inställningar"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
 msgid "Movie keymappings"
-msgstr "Tangentmappningar för filmer"
+msgstr "Kortkommandon för filmer"
 
 #: engines/sherlock/metaengine.cpp:349
 msgid "Skip / Deselect verb"
@@ -13305,15 +13267,15 @@ msgstr "Ändra uttoningsläge"
 
 #: engines/sherlock/metaengine.cpp:776
 msgid "Journal search keymappings"
-msgstr "Tangentmappningar för dagbokssökning"
+msgstr "Kortkommandon för dagbokssökning"
 
 #: engines/sherlock/metaengine.cpp:779
 msgid "Menu scrolling keymappings"
-msgstr "Tangentmappningar för menyrullning"
+msgstr "Kortkommandon för menyrullning"
 
 #: engines/sherlock/metaengine.cpp:780
 msgid "save / load menu keymappings"
-msgstr "spara / läs in tangentmappningar för meny"
+msgstr "spara / läs in kortkommandon för meny"
 
 #: engines/sherlock/metaengine.cpp:781
 #, fuzzy
@@ -13322,10 +13284,8 @@ msgid "Save files name editing keymappings"
 msgstr "Kortkommandon för filhanteringsmeny"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Escape-tangentmappningar"
+msgstr "Kortkommandon för Foolscap-pussel"
 
 #: engines/sherlock/metaengine.cpp:784
 msgid "Options menu keymappings"
@@ -13336,10 +13296,8 @@ msgid "Password entry keymappings"
 msgstr "Kortkommandon för lösenordsinmatning"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Talk options keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för talalternativ"
 
 #: engines/sherlock/metaengine.cpp:789
 msgid "Move / Examine / Select"
@@ -13527,11 +13485,11 @@ msgstr "VARNING: Att ta bort autosparposter stöds inte av denna motor"
 
 #: engines/sludge/keymapper_tables.h:34
 msgid "Debug keymappings"
-msgstr "Felsök tangentmappningar"
+msgstr "Felsök kortkommandon"
 
 #: engines/sludge/keymapper_tables.h:36
 msgid "Minigame keymappings"
-msgstr "Tangentmappningar för minispel"
+msgstr "Kortkommandon för minispel"
 
 #: engines/sludge/keymapper_tables.h:46
 msgid "Change action"
@@ -13795,15 +13753,15 @@ msgstr ""
 
 #: engines/supernova/metaengine.cpp:220
 msgid "Improved mode keymappings"
-msgstr "Tangentmappningar för förbättrat läge"
+msgstr "Kortkommandon för förbättrat läge"
 
 #: engines/supernova/metaengine.cpp:221
 msgid "Text reader keymappings"
-msgstr "Tangentmappningar för textläsare"
+msgstr "Kortkommandon för textläsare"
 
 #: engines/supernova/metaengine.cpp:222
 msgid "Computer keymappings"
-msgstr "Tangentmappningar för dator"
+msgstr "Kortkommandon för dator"
 
 #: engines/supernova/metaengine.cpp:232
 msgid "Perform default action"
@@ -14033,7 +13991,7 @@ msgstr ""
 
 #: engines/tinsel/metaengine.cpp:242
 msgid "Save/Load keymappings"
-msgstr "Spara/Läs in tangentmappningar"
+msgstr "Spara/Läs in kortkommandon"
 
 #: engines/tinsel/metaengine.cpp:341
 msgid "Page up in save / load menu"
@@ -14057,11 +14015,11 @@ msgstr "Discworld Noir kräver ScummVM med TinyGL aktiverat"
 
 #: engines/titanic/metaengine.cpp:173
 msgid "PET keymappings"
-msgstr "PET-tangentmappningar"
+msgstr "PET-kortkommandon"
 
 #: engines/titanic/metaengine.cpp:174
 msgid "Real Life keymappings"
-msgstr "Tangentmappningar för verkliga livet"
+msgstr "Kortkommandon för verkliga livet"
 
 #: engines/titanic/metaengine.cpp:175
 msgid "Inventory shortcut"
@@ -14069,15 +14027,15 @@ msgstr "Genväg för inventarier"
 
 #: engines/titanic/metaengine.cpp:176
 msgid "Continue game dialogue keymappings"
-msgstr "Tangentmappningar för fortsätt speldialog"
+msgstr "Kortkommandon för fortsätt speldialog"
 
 #: engines/titanic/metaengine.cpp:177
 msgid "Star Map keymappings"
-msgstr "Tangentmappningar för Star Map"
+msgstr "Kortkommandon för Star Map"
 
 #: engines/titanic/metaengine.cpp:178
 msgid "Movement keymappings"
-msgstr "Tangentmappningar för förflyttning"
+msgstr "Kortkommandon för förflyttning"
 
 #: engines/titanic/metaengine.cpp:182
 msgid "Select / Interact / Move"
@@ -15669,11 +15627,11 @@ msgstr "Kräv en låskod för att starta spelet."
 
 #: engines/voyeur/metaengine.cpp:186
 msgid "Room keymappings"
-msgstr "Tangentmappningar för rum"
+msgstr "Kortkommandon för rum"
 
 #: engines/voyeur/metaengine.cpp:187
 msgid "Camera keymappings"
-msgstr "Tangentmappningar för kamera"
+msgstr "Kortkommandon för kamera"
 
 #: engines/voyeur/metaengine.cpp:204
 msgid "Skip scene"
