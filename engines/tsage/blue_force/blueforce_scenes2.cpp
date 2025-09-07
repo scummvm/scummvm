@@ -503,6 +503,7 @@ void Scene225::Action1::signal() {
 		owner->animate(ANIM_MODE_4, 4, -1, this);
 		break;
 	case 20:
+		scene->_object21.show();
 		PaletteRotation *rot;
 		rot = BF_GLOBALS._scenePalette.addRotation(64, 79, 1);
 		rot->setDelay(10);
