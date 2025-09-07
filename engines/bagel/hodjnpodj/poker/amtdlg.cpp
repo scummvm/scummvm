@@ -67,7 +67,7 @@ CSetAmountDlg::CSetAmountDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID
 	CDC *pDC = GetDC();
 
 	pSetAmountPalette = pPalette;
-	rectDisplayAmount.SetRect(95, 65, 150, 80);
+	rectDisplayAmount.SetRect(95, 65, 150, 81);
 	m_nCurrentAmount = 1000;
 
 	ptxtAmount = new CText(pDC, pSetAmountPalette, &rectDisplayAmount, JUSTIFY_LEFT);
