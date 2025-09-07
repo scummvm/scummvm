@@ -29,6 +29,7 @@
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/globals.h"
+#include "bagel/hodjnpodj/metagame/demo/app.h"
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/gtl/init.h"
@@ -60,25 +61,34 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 	BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 
-	Metagame::Frame::CTheApp app;
-	app.InitApplication();
-	app.InitInstance();
-	app.setKeybinder(KeybindToKeycode);
+	if (getGameId() == "hodjnpodj" && isDemo()) {
+		Metagame::Demo::CTheApp app;
+		app.InitApplication();
+		app.InitInstance();
+		app.setKeybinder(KeybindToKeycode);
+		app.Run();
 
-	if (getGameId() == "mazeodoom") {
-		app.setStartupMinigame("mazedoom_demo");
-	} else if (ConfMan.getBool("metagame")) {
-		Metagame::Frame::InitBFCInfo(&_bfcMgr);
-		Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, false);
-
-		return Common::kNoError;
 	} else {
-		Common::String minigame = ConfMan.get("minigame");
-		if (!minigame.empty())
-			app.setStartupMinigame(minigame);
-	}
+		Metagame::Frame::CTheApp app;
+		app.InitApplication();
+		app.InitInstance();
+		app.setKeybinder(KeybindToKeycode);
 
-	app.Run();
+		if (getGameId() == "mazeodoom") {
+			app.setStartupMinigame("mazedoom_demo");
+		} else if (ConfMan.getBool("metagame")) {
+			Metagame::Frame::InitBFCInfo(&_bfcMgr);
+			Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, false);
+
+			return Common::kNoError;
+		} else {
+			Common::String minigame = ConfMan.get("minigame");
+			if (!minigame.empty())
+				app.setStartupMinigame(minigame);
+		}
+
+		app.Run();
+	}
 
 	return Common::kNoError;
 }

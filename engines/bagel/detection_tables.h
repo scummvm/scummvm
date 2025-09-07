@@ -117,6 +117,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{
+		"hodjnpodj",
+		"Demo",
+		AD_ENTRY1s("hnpdemo.exe", "5200631d37e258651ee0037f32262b49", 147040),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
