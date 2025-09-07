@@ -553,6 +553,9 @@ void CBmpButton::ensureSize() {
 		m_pParentWnd->ScreenToClient(&clientRect);
 		MoveWindow(&clientRect);
 	}
+
+	// Flag for the control to redraw itself
+	Invalidate();
 }
 
 // CBmpButton message map:
