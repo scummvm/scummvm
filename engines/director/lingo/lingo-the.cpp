@@ -195,6 +195,8 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"currentTime",	kTheCurrentTime,600 },//							D6 p
 	{ kTheSprite,	"cursor",		kTheCursor,		200 },// D2 p
 	{ kTheSprite,	"editableText", kTheEditableText,400 },//				D4 p
+	{ kTheSprite,	"flipH",		kTheFlipH,		700 },// 								D7 p
+	{ kTheSprite,	"flipV",		kTheFlipV,		700 },// 								D7 p
 	{ kTheSprite,	"foreColor",	kTheForeColor,	200 },// D2 p
 	{ kTheSprite,	"height",		kTheHeight,		200 },// D2 p
 	{ kTheSprite,	"immediate",	kTheImmediate,	200 },// D2 p
@@ -1537,6 +1539,12 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheEditableText:
 		d = sprite->_editable;
 		break;
+	case kTheFlipH: // D7
+		d = (sprite->_thickness & kTFlipH) ? 1 : 0;
+		break;
+	case kTheFlipV: // D7
+		d = (sprite->_thickness & kTFlipV) ? 1 : 0;
+		break;
 	case kTheForeColor:
 		// TODO: Provide proper reverse transform for non-indexed color
 		d = (int)g_director->transformColor(sprite->_foreColor);
@@ -1627,6 +1635,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheType:
 		d = sprite->_spriteType;
+		break;
+	case kTheTweened:	// D6
+		d = (sprite->_thickness & kTTweened) ? 1 : 0;
 		break;
 	case kTheVisibility:
 	case kTheVisible:
@@ -1791,6 +1802,22 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheEditableText:
 		channel->_sprite->_editable = d.asInt();
 		break;
+	case kTheFlipH: // D7
+		sprite->_thickness = (sprite->_thickness & ~kTFlipH) | ((d.asInt() ? kTFlipH : 0));
+		channel->_dirty = true;
+
+		sprite->setAutoPuppet(kAPThickness, true);
+
+		warning("STUB: Sprite flipH was set to %d", d.asInt());
+		break;
+	case kTheFlipV: // D7
+		sprite->_thickness = (sprite->_thickness & ~kTFlipV) | ((d.asInt() ? kTFlipV : 0));
+		channel->_dirty = true;
+
+		sprite->setAutoPuppet(kAPThickness, true);
+
+		warning("STUB: Sprite flipV was set to %d", d.asInt());
+		break;
 	case kTheForeColor:
 		{
 			uint32 newColor = g_director->transformColor(d.asInt());
@@ -1941,6 +1968,14 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			sprite->_spriteType = static_cast<SpriteType>(d.asInt());
 			channel->_dirty = true;
 		}
+		break;
+	case kTheTweened: // D6
+		sprite->_thickness = (sprite->_thickness & ~kTTweened) | ((d.asInt() ? kTTweened : 0));
+		channel->_dirty = true;
+
+		sprite->setAutoPuppet(kAPThickness, true);
+
+		warning("STUB: Sprite tweened was set to %d", d.asInt());
 		break;
 	case kTheVisibility:
 	case kTheVisible:

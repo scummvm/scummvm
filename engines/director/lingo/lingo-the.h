@@ -206,6 +206,8 @@ enum TheFieldType {
 	kTheEnabled,
 	kTheFileName,
 	kTheFilled,
+	kTheFlipH,
+	kTheFlipV,
 	kTheForeColor,
 	kTheFrameRate,
 	kTheHeight,
