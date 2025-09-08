@@ -1717,6 +1717,7 @@ static const uint16 ecoquest1SignatureFleshEaterEgoSpeed[] = {
 	SIG_END
 };
 
+#if 0
 static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
 	0x38, PATCH_UINT16(0x0006),         // pushi 0006
 	0x38, PATCH_SELECTOR16(moveSpeed),  // pushi moveSpeed
@@ -1726,11 +1727,12 @@ static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
 	0x4a, 0x14,                         // send 14 [ ego cycleSpeed: 6 moveSpeed: 3 ... ]
 	PATCH_END
 };
+#endif
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   123, "flesh-eater inset speed",                     1, ecoquest1SignatureFleshEaterInsetSpeed,   ecoquest1PatchFleshEaterInsetSpeed },
-	{  true,   123, "flesh-eater ego speed",                       1, ecoquest1SignatureFleshEaterEgoSpeed,     ecoquest1PatchFleshEaterEgoSpeed },
+//	{  true,   123, "flesh-eater ego speed",                       1, ecoquest1SignatureFleshEaterEgoSpeed,     ecoquest1PatchFleshEaterEgoSpeed },
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,        ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,          ecoquest1PatchGiveOilyShell },
 	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,        ecoquest1PatchColumnPuzzleFix },
