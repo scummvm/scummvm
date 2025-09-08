@@ -33,6 +33,12 @@ const int OPCODE_DOSCAN = 1;
 const int OPCODE_MOVE = 2;
 const int OPCODE_DRAW = 3;
 
+/**
+ * Parser for Borland's BGI fonts
+ *
+ * Fonts used in:
+ * - tot
+ */
 class BgiFont : public Font {
 public:
 	BgiFont();
