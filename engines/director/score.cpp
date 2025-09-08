@@ -322,6 +322,9 @@ void Score::startPlay() {
 		return;
 	}
 
+	if (_vm->getVersion() >= 300)
+		_movie->processEvent(kEventStartMovie);
+
 	// load first frame (either 1 or _nextFrame)
 	updateCurrentFrame();
 
@@ -334,9 +337,6 @@ void Score::startPlay() {
 
 	_soundManager->disablePuppetSound(1);
 	_soundManager->disablePuppetSound(2);
-
-	if (_vm->getVersion() >= 300)
-		_movie->processEvent(kEventStartMovie);
 }
 
 void Score::step() {
