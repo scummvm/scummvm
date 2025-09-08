@@ -646,7 +646,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	BaseFont *font = 0;
 
 	//RECT rect;
-	//rect.setRect(OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
+	//BasePlatform::setRect(&rect, offsetX + _posX, offsetY + _posY, offsetX+_posX+_width, offsetY+_posY+_height);
 	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _game->_mousePos)!=FALSE);
 	_hover = (!_disable && _game->_activeObject == this && (_game->_interactive || _game->_state == GAME_SEMI_FROZEN));
 

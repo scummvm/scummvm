@@ -72,7 +72,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 
 	_soundEvent = nullptr;
 
-	_iD = _game->getSequence();
+	_id = _game->getSequence();
 
 	BasePlatform::setRectEmpty(&_rect);
 	_rectSet = false;
@@ -188,12 +188,14 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseObject::getCaption(int caseVal) {
-	if (caseVal == 0)
+	if (caseVal == 0) {
 		caseVal = 1;
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr)
+	}
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr) {
 		return "";
-	else
+	} else {
 		return _caption[caseVal - 1];
+	}
 }
 
 
@@ -1071,7 +1073,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_editorAlwaysRegister));
 	persistMgr->transferBool(TMEMBER(_editorOnly));
 	persistMgr->transferBool(TMEMBER(_editorSelected));
-	persistMgr->transferSint32(TMEMBER(_iD));
+	persistMgr->transferSint32(TMEMBER(_id));
 	persistMgr->transferBool(TMEMBER(_is3D));
 	persistMgr->transferBool(TMEMBER(_movable));
 	persistMgr->transferSint32(TMEMBER(_posX));

@@ -76,7 +76,7 @@ bool BaseSurfaceStorage::initLoop() {
 			}
 
 			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_game->_liveTimer - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
-				//_game->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
+				//_game->quickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}
 		}
@@ -111,7 +111,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 	}
 
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
-		if (!filename) {
+		if (filename) {
 			BaseEngine::LOG(0, "Missing image: '%s'", filename);
 		}
 		if (_game->_debugMode) {
@@ -184,25 +184,26 @@ int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
 	BaseSurface *s2 = *((BaseSurface **)o2);
 
 	// sort by life time
-	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0)
+	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {
 		return 1;
-	else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0)
+	} else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) {
 		return -1;
-
+	}
 
 	// sort by validity
-	if (s1->_valid && !s2->_valid)
+	if (s1->_valid && !s2->_valid) {
 		return -1;
-	else if (!s1->_valid && s2->_valid)
+	} else if (!s1->_valid && s2->_valid) {
 		return 1;
 
 	// sort by time
-	else if (s1->_lastUsedTime > s2->_lastUsedTime)
+	} else if (s1->_lastUsedTime > s2->_lastUsedTime) {
 		return 1;
-	else if (s1->_lastUsedTime < s2->_lastUsedTime)
+	} else if (s1->_lastUsedTime < s2->_lastUsedTime) {
 		return -1;
-	else
+	} else {
 		return 0;
+	}
 }
 
 } // End of namespace Wintermute

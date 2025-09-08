@@ -4465,7 +4465,7 @@ bool BaseGame::loadSettings(const char *filename) {
 
 	char *origBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == nullptr) {
-		BaseEngine::LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
+		BaseEngine::LOG(0, "BaseGame::loadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -4887,10 +4887,12 @@ bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *
 		*verMinor = DCGF_VER_MINOR;
 	}
 
-	if (extMajor)
+	if (extMajor) {
 		*extMajor = 0;
-	if (extMinor)
+	}
+	if (extMinor) {
 		*extMinor = 0;
+	}
 
 	return STATUS_OK;
 }
@@ -4900,8 +4902,9 @@ void BaseGame::setWindowTitle() {
 	if (_renderer) {
 		char title[512];
 		Common::strlcpy(title, _caption[0], 512);
-		if (title[0] != '\0')
+		if (title[0] != '\0') {
 			Common::strlcat(title, " - ", 512);
+		}
 		Common::strlcat(title, "Wintermute Engine", 512);
 
 		// ignoring setting window title
@@ -5009,8 +5012,9 @@ bool BaseGame::pushViewport(BaseViewport *viewport) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::popViewport() {
 	_viewportSP--;
-	if (_viewportSP < -1)
+	if (_viewportSP < -1) {
 		_game->LOG(0, "Fatal: Viewport stack underflow!");
+	}
 
 	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize())
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
@@ -5055,10 +5059,12 @@ bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
 		if (offsetY)
 			*offsetY = _viewportStack[_viewportSP]->_offsetY;
 	} else {
-		if (offsetX)
+		if (offsetX) {
 			*offsetX = 0;
-		if (offsetY)
+		}
+		if (offsetY) {
 			*offsetY = 0;
+		}
 	}
 
 	return STATUS_OK;
@@ -5077,8 +5083,9 @@ bool BaseGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setInteractive(bool state) {
 	_interactive = state;
-	if (_transMgr)
+	if (_transMgr) {
 		_transMgr->_origInteractive = state;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -5356,8 +5363,9 @@ bool BaseGame::onMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseLeftUp() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
@@ -5378,8 +5386,9 @@ bool BaseGame::onMouseLeftUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseLeftDblClick() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
@@ -5400,8 +5409,9 @@ bool BaseGame::onMouseLeftDblClick() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightDblClick() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
@@ -5422,8 +5432,9 @@ bool BaseGame::onMouseRightDblClick() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightDown() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
@@ -5440,8 +5451,9 @@ bool BaseGame::onMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightUp() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
@@ -5458,8 +5470,9 @@ bool BaseGame::onMouseRightUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseMiddleDown() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
@@ -5480,8 +5493,9 @@ bool BaseGame::onMouseMiddleDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseMiddleUp() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);

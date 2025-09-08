@@ -114,7 +114,7 @@ public:
 	bool _shadowable;
 	Common::Rect32 _rect;
 	bool _rectSet;
-	int32 _iD;
+	int32 _id;
 	bool _movable;
 	BaseObject(BaseGame *inGame);
 	~BaseObject() override;

@@ -60,7 +60,7 @@ UIEntity::~UIEntity() {
 bool UIEntity::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEntity::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 

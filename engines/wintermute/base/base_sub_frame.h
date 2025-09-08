@@ -66,10 +66,10 @@ private:
 	bool _wantsDefaultRect;
 	Common::Rect32 _rect;
 public:
-	bool _cKDefault;
-	byte _cKRed;
-	byte _cKGreen;
-	byte _cKBlue;
+	bool _ckDefault;
+	byte _ckRed;
+	byte _ckGreen;
+	byte _ckBlue;
 	int32 _lifeTime;
 	bool _keepLoaded;
 	char *_surfaceFilename;

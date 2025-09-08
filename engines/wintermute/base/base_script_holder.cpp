@@ -306,7 +306,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 		}
 	}
 
-	ScScript *scr =  _game->_scEngine->runScript(filename, this);
+	ScScript *scr = _game->_scEngine->runScript(filename, this);
 	if (!scr) {
 		if (_game->_editorForceScripts) {
 			// editor hack

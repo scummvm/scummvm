@@ -30,8 +30,7 @@
 
 
 #define TOKEN_DEF_START         \
-	enum                  \
-	{                 \
+	enum {                      \
 		TOKEN_NONE = 0,
 #define TOKEN_DEF(name)         \
 	TOKEN_ ## name,

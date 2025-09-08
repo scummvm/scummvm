@@ -236,7 +236,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 bool UIWindow::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIWindow::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -374,7 +374,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK_INACTIVE:
-			delete _backInactive;
+			SAFE_DELETE(_backInactive);
 			_backInactive = new UITiledImage(_game);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile(params))) {
 				SAFE_DELETE(_backInactive);

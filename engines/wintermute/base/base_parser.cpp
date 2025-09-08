@@ -216,11 +216,11 @@ char *BaseParser::getToken(char **buf) {
 		while (*b && (*b == ' ' || *b == '\n' || *b == 13 || *b == 10 || *b == '\t')) {
 			b++;
 		}
-		if (*b == ';')
+		if (*b == ';') {
 			while (*b && *b != '\n' && *b != 13 && *b != 10) {
 				b++;
 			}
-		else {
+		} else {
 			break;
 		}
 	}
