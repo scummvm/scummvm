@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-08-30 16:10+0000\n"
+"PO-Revision-Date: 2025-09-08 17:01+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -6316,7 +6316,7 @@ msgstr "사용하기"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "가다"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6368,10 +6368,8 @@ msgid "Walk"
 msgstr "걷기"
 
 #: engines/access/metaengine.cpp:348
-#, fuzzy
-#| msgid "Page up in save / load menu"
 msgid "Open save/load menu"
-msgstr "저장 / 로드 메뉴에서 페이지 위로 이동"
+msgstr "저장/로드 메뉴 열기"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -7024,24 +7022,20 @@ msgstr ""
 "2. QfG2 리메이크 게임 디렉터리 내의 모든 .sav 파일"
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "음악 품질:"
+msgstr "고품질"
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effects"
 msgid "Toggles some optional graphical effects"
-msgstr "사운드 효과 전환"
+msgstr "일부 선택적 그래픽 효과 전환"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32 비트"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
-msgstr ""
+msgstr "16비트 텍스처 대신 32비트 텍스처 사용 (현재 구현되지 않음)"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 msgid "Activate"
@@ -8120,50 +8114,38 @@ msgstr ""
 "게임이 실제 색상 그래픽 모드로 설계되지 않았더라도 실제 색상 그래픽 모드 사용"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Character selection keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "캐릭터 선택 키맵핑"
+msgstr "대화 선택 키맵핑"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle leader inventory"
-msgstr "인벤토리 전환"
+msgstr "리더 인벤토리 전환"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "대화 선택 항목 선택 (단일 선택 항목이 있는 경우에만 작동)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 1 inventory"
-msgstr "인벤토리 전환"
+msgstr "챔피언 1 인벤토리 전환"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 2 inventory"
-msgstr "인벤토리 전환"
+msgstr "챔피언 2 인벤토리 전환"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 3 inventory"
-msgstr "인벤토리 전환"
+msgstr "챔피언 3 인벤토리 전환"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 4 inventory"
-msgstr "인벤토리 전환"
+msgstr "챔피언 4 인벤토리 전환"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8182,10 +8164,8 @@ msgstr "오른쪽 폭격"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
-#, fuzzy
-#| msgid "Hole up & camp"
 msgid "Wake up champion"
-msgstr "숨기 & 야영"
+msgstr "일어나 챔피언"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -9428,13 +9408,11 @@ msgstr "인트로 키맵핑"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "1차 촬영"
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "초"
+msgstr "2차 촬영"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
@@ -9443,29 +9421,21 @@ msgid "Skip intro"
 msgstr "인트로 건너뛰기"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Exit keymappings"
 msgid "Exit menu keymappings"
-msgstr "키맵핑 나가기"
+msgstr "나가기 메뉴 키맵핑"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Enemy selection keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "적 선택 키맵핑"
+msgstr "난이도 선택 메뉴 키맵핑"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Death menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "죽음 메뉴 키맵핑"
+msgstr "메뉴 키맵핑 재시도"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "말 건너뛰기"
+msgstr "레벨 건너뛰기 (치트)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9473,52 +9443,44 @@ msgstr "말 건너뛰기"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "플레이어 죽이기"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "바보"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "멍청이"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "악동"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "철수"
+msgstr "재시도 섹터"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "애니메이션 재시작"
+msgstr "영토 재시작"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "새로운 미션 시작"
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "일시 정지 메뉴 키맵핑"
+msgstr "일시 정지 키맵핑"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Interaction keymappings"
 msgid "Direction keymappings"
-msgstr "상호작용 키맵핑"
+msgstr "방향 키맵핑"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -11071,28 +11033,20 @@ msgid "X key"
 msgstr "X 키"
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display subtitles"
-msgstr "자막 비활성화"
+msgstr "자막 표시"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use subtitles."
-msgstr "자막 비활성화"
+msgstr "자막을 사용하세요."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display SFX subtitles"
-msgstr "자막 비활성화"
+msgstr "SFX 자막 표시"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use SFX subtitles."
-msgstr "자막 비활성화"
+msgstr "SFX 자막을 사용하세요."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
