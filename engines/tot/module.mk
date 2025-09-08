@@ -1,13 +1,12 @@
 MODULE := engines/tot
 
 MODULE_OBJS = \
-	decoder/TotFlicDecoder.o \
-	font/biosfont.o \
 	anims.o \
 	chrono.o \
 	console.o \
 	cutscenes.o \
 	debug.o \
+	decoder/TotFlicDecoder.o \
 	dialog.o \
 	engine.o \
 	forest.o \
