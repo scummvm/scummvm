@@ -166,6 +166,8 @@ public:
 
 	static const uint8 MT32_PITCH_BEND_SENSITIVITY_DEFAULT = 0x0C;
 	static const uint8 GM_PITCH_BEND_SENSITIVITY_DEFAULT = 0x02;
+	// Default reverb value on the Roland SC-55
+	static const uint8 GM_REVERB_DEFAULT = 0x28;
 
 	static const uint8 GS_RHYTHM_FIRST_NOTE = 0x1B;
 	static const uint8 GS_RHYTHM_LAST_NOTE = 0x58;

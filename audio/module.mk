@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	mac_plugin.o \
 	mididrv.o \
 	mididrv_ms.o \
+	midiparser_hmp.o \
 	midiparser_qt.o \
 	midiparser_smf.o \
 	midiparser_xmidi.o \

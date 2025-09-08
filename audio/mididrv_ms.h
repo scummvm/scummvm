@@ -156,7 +156,9 @@ public:
 		CONTROLLER_DEFAULT_EXPRESSION,
 		CONTROLLER_DEFAULT_SUSTAIN,
 		CONTROLLER_DEFAULT_RPN,
-		CONTROLLER_DEFAULT_PITCH_BEND_SENSITIVITY
+		CONTROLLER_DEFAULT_PITCH_BEND_SENSITIVITY,
+		CONTROLLER_DEFAULT_REVERB,
+		CONTROLLER_DEFAULT_CHORUS
 	};
 
 protected:
@@ -201,6 +203,8 @@ protected:
 		int8 panning;
 		int8 expression;
 		int8 sustain;
+		int8 reverb;
+		int8 chorus;
 		int16 rpn;
 
 		int8 pitchBendSensitivity;

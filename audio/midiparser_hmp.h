@@ -19,28 +19,44 @@
  *
  */
 
-#ifndef AUDIO_MIDIPARSER_SMF_H
-#define AUDIO_MIDIPARSER_SMF_H
 
-#include "audio/midiparser.h"
+#ifndef AUDIO_MIDIPARSER_HMP_H
+#define AUDIO_MIDIPARSER_HMP_H
 
-/**
- * The Standard MIDI File version of MidiParser.
- */
-class MidiParser_SMF : public MidiParser {
+#include "audio/midiparser_smf.h"
 
+class MidiParser_HMP : public MidiParser_SMF {
 protected:
-	// Reads a delta between events.
-	virtual uint32 readDelta(byte *&data);
+	enum class HmpVersion {
+		VERSION_1,
+		VERSION_013195
+	};
 
-	void parseNextEvent(EventInfo &info) override;
+	static const char HMP_HEADER[];
+	static const char HMP_HEADER_VERSION_1[];
+	static const char HMP_HEADER_VERSION_013195[];
+
+	uint32 readDelta(byte *&data) override;
+
+	HmpVersion determineVersion(byte *pos);
 
 public:
-	MidiParser_SMF(int8 source = -1);
+	MidiParser_HMP(int8 source = -1);
 
-	bool loadMusic(const byte *data, uint32 size) override;
+	bool loadMusic(byte *data, uint32 size) override;
 
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
+
+protected:
+	HmpVersion _version;
+	uint32 _branchOffset;
+	// Total track length in seconds
+	uint32 _songLength;
+	uint32 _channelPriorities[16];
+	uint32 _deviceTrackMappings[32][5];
+	uint8 _restoreControllers[128];
+	uint32 _callbackPointer;
+	uint32 _callbackSegment;
 };
 
 #endif
