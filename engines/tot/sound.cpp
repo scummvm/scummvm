@@ -32,6 +32,8 @@ namespace Tot {
 SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 
 	_midiPlayer = new MidiPlayer();
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 	_midiPlayer->open();
 
 	g_engine->syncSoundSettings();
@@ -46,6 +48,7 @@ SoundManager::~SoundManager() {
 		delete _midiPlayer;
 	free(_lastSrcStream);
 	free(_audioStream);
+	delete(_speaker);
 }
 
 void SoundManager::init() {
@@ -137,17 +140,8 @@ void SoundManager::toggleMusic() {
 }
 
 void SoundManager::beep(int32 frequency, int32 ms) {
-	Audio::PCSpeakerStream *speaker = new Audio::PCSpeakerStream(_mixer->getOutputRate());
-	speaker->setVolume(255);
-	speaker->play(Audio::PCSpeaker::kWaveFormSquare, frequency, ms);
-	_mixer->stopHandle(_speakerHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-					   speaker,
-					   -1,
-					   Audio::Mixer::kMaxChannelVolume,
-					   0,
-					   DisposeAfterUse::NO,
-					   true);
+	_speaker->stop();
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, frequency, ms);
 }
 
 void SoundManager::setSfxVolume(byte voll, byte volr) {
