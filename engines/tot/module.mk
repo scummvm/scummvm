@@ -2,7 +2,6 @@ MODULE := engines/tot
 
 MODULE_OBJS = \
 	decoder/TotFlicDecoder.o \
-	font/bgifont.o \
 	font/biosfont.o \
 	anims.o \
 	chrono.o \
