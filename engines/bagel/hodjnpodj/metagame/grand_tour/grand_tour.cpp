@@ -109,7 +109,7 @@ static  bool        bActiveWindow = false;          // whether our window is act
 int     nReturnValue = -1;       // the values to return to the main EXE to tell it what
 // DLL to dispatch to
 
-int     anGameValues[18] = {        // set the game values to return
+int     GAME_VALUES[18] = {        // set the game values to return
 	MG_GAME_ARCHEROIDS, MG_GAME_ARTPARTS, MG_GAME_BARBERSHOP, MG_GAME_BATTLEFISH,
 	MG_GAME_BEACON, MG_GAME_CRYPTOGRAMS, MG_GAME_DAMFURRY, MG_GAME_FUGE,
 	MG_GAME_GARFUNKEL, MG_GAME_LIFE, MG_GAME_MANKALA, MG_GAME_MAZEODOOM,
@@ -805,7 +805,7 @@ void CMainGTWindow::SplashScreen() {
 		Common::strcpy_s(cNextGame, "RANDOM");
 		nGameCode = GetNextGameCode(false);
 		for (i = 0; i < 18; i++) {
-			if ((m_pgtGTStruct->nGameSelection != GAME_RAND) && (anGameValues[i] == nGameCode)) {
+			if ((m_pgtGTStruct->nGameSelection != GAME_RAND) && (GAME_VALUES[i] == nGameCode)) {
 				Common::strcpy_s(cNextGame, aszGames[i]);
 				break;
 			}
@@ -822,7 +822,7 @@ void CMainGTWindow::SplashScreen() {
 			Common::sprintf_s(cTemp, "%i", m_pgtGTStruct->nHodjLastScore);
 			Common::strcpy_s(cLastGame, "NONE");
 			for (i = 0; i < 18; i++) {
-				if (anGameValues[i] == m_pgtGTStruct->nHodjLastGame) {
+				if (GAME_VALUES[i] == m_pgtGTStruct->nHodjLastGame) {
 					Common::strcpy_s(cLastGame, aszGames[i]);
 				}
 				if (m_pgtGTStruct->abHGamePlayed[i])
@@ -847,7 +847,7 @@ void CMainGTWindow::SplashScreen() {
 			Common::sprintf_s(cTemp, "%i", m_pgtGTStruct->nPodjLastScore);
 			Common::strcpy_s(cLastGame, "NONE");
 			for (i = 0; i < 18; i++) {
-				if (anGameValues[i] == m_pgtGTStruct->nPodjLastGame) {
+				if (GAME_VALUES[i] == m_pgtGTStruct->nPodjLastGame) {
 					Common::strcpy_s(cLastGame, aszGames[i]);
 				}
 				if (m_pgtGTStruct->abPGamePlayed[i])
@@ -1362,19 +1362,19 @@ int CMainGTWindow::GetNextGameCode(bool bExecute) {
 			if (m_pgtGTStruct->bPlayingHodj) {
 				if (m_pgtGTStruct->abHGamePlayed[i] == false) {
 					if (bExecute) {
-						m_pgtGTStruct->nHodjLastGame = anGameValues[i];
+						m_pgtGTStruct->nHodjLastGame = GAME_VALUES[i];
 						m_pgtGTStruct->abHGamePlayed[i] = true;
 					}
-					result = anGameValues[i];
+					result = GAME_VALUES[i];
 					break;
 				}
 			} else {
 				if (m_pgtGTStruct->abPGamePlayed[i] == false) {
 					if (bExecute) {
-						m_pgtGTStruct->nPodjLastGame = anGameValues[i];
+						m_pgtGTStruct->nPodjLastGame = GAME_VALUES[i];
 						m_pgtGTStruct->abPGamePlayed[i] = true;
 					}
-					result = anGameValues[i];
+					result = GAME_VALUES[i];
 					break;
 				}
 			}
@@ -1385,19 +1385,19 @@ int CMainGTWindow::GetNextGameCode(bool bExecute) {
 				if (m_pgtGTStruct->bPlayingHodj) {
 					if (m_pgtGTStruct->abHGamePlayed[anGeoOrder[i]] == false) {
 						if (bExecute) {
-							m_pgtGTStruct->nHodjLastGame = anGameValues[anGeoOrder[i]];
+							m_pgtGTStruct->nHodjLastGame = GAME_VALUES[anGeoOrder[i]];
 							m_pgtGTStruct->abHGamePlayed[anGeoOrder[i]] = true;
 						}
-						result = anGameValues[anGeoOrder[i]];
+						result = GAME_VALUES[anGeoOrder[i]];
 						break;
 					}
 				} else {
 					if (m_pgtGTStruct->abPGamePlayed[anGeoOrder[i]] == false) {
 						if (bExecute) {
-							m_pgtGTStruct->nPodjLastGame = anGameValues[anGeoOrder[i]];
+							m_pgtGTStruct->nPodjLastGame = GAME_VALUES[anGeoOrder[i]];
 							m_pgtGTStruct->abPGamePlayed[anGeoOrder[i]] = true;
 						}
-						result = anGameValues[anGeoOrder[i]];
+						result = GAME_VALUES[anGeoOrder[i]];
 						break;
 					}
 				}
@@ -1406,11 +1406,11 @@ int CMainGTWindow::GetNextGameCode(bool bExecute) {
 			if ((m_pgtGTStruct->bPlayingHodj == false) && (m_pgtGTStruct->nHodjSkillLevel != NOPLAY)) {
 				i = 0;
 				result = m_pgtGTStruct->nCurrGameCode;
-				while (anGameValues[i] != result) {
+				while (GAME_VALUES[i] != result) {
 					i++;
 				};
 				if (bExecute) {
-					m_pgtGTStruct->nPodjLastGame = anGameValues[i];
+					m_pgtGTStruct->nPodjLastGame = GAME_VALUES[i];
 					m_pgtGTStruct->abPGamePlayed[i] = true;
 				}
 			} else {
@@ -1433,18 +1433,18 @@ int CMainGTWindow::GetNextGameCode(bool bExecute) {
 						if (m_pgtGTStruct->bPlayingHodj) {
 							if (m_pgtGTStruct->abHGamePlayed[i] == false) {
 								if (bExecute) {
-									m_pgtGTStruct->nHodjLastGame = anGameValues[i];
+									m_pgtGTStruct->nHodjLastGame = GAME_VALUES[i];
 									m_pgtGTStruct->abHGamePlayed[i] = true;
 								}
-								result = anGameValues[i];
+								result = GAME_VALUES[i];
 							}
 						} else {
 							if (m_pgtGTStruct->abPGamePlayed[i] == false) {
 								if (bExecute) {
-									m_pgtGTStruct->nPodjLastGame = anGameValues[i];
+									m_pgtGTStruct->nPodjLastGame = GAME_VALUES[i];
 									m_pgtGTStruct->abPGamePlayed[i] = true;
 								}
-								result = anGameValues[i];
+								result = GAME_VALUES[i];
 							}
 						}
 					} while (result == -1);

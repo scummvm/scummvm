@@ -280,7 +280,7 @@ typedef struct tagMSG {
 	}
 } MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;
 
-inline bool PtInRect(const RECT *lprc, POINT &pt) {
+inline bool PtInRect(const RECT *lprc, const POINT &pt) {
 	return pt.x >= lprc->left && pt.x < lprc->right &&
 	       pt.y >= lprc->top && pt.y < lprc->bottom;
 }

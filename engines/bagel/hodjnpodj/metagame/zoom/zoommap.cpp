@@ -20,8 +20,9 @@
  */
 
 #include "bagel/hodjnpodj/metagame/zoom/zoommap.h"
-#include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+#include "bagel/boflib/misc.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -37,9 +38,8 @@ extern HCURSOR          hGameCursor;
 CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 
 int     nReturnValue = -1;       // the values to return to the main EXE to tell it what
-// DLL to dispatch to
-// set the game rects
-static const RECT arGameRect[21] = {
+
+static const RECT MINIGAME_RECTS[21] = {
 	{  24, 243,  63, 263 },
 	{ 495, 373, 529, 406 },
 	{ 412, 185, 432, 201 },
@@ -62,7 +62,7 @@ static const RECT arGameRect[21] = {
 	{ 402, 203, 433, 250 }
 };
 
-const int16 anGameValues[21] = {
+static const int16 GAME_VALUES[21] = {
 	// set the game values to return
 	MG_GAME_ARCHEROIDS,
 	MG_GAME_ARTPARTS,
@@ -86,7 +86,7 @@ const int16 anGameValues[21] = {
 	-1
 };
 
-static const char *astrGames[21] = {       // set the display names for when the cursor passes over a game rect
+static const char *MINIGAME_DESC[21] = {       // set the display names for when the cursor passes over a game rect
 	"Click Here To Play Archeroids",
 	"Click Here To Play Art Parts",
 	"Click Here To Play Barbershop Quintet",
@@ -109,6 +109,72 @@ static const char *astrGames[21] = {       // set the display names for when the
 	"Click Here To Go To Main Menu"
 };
 
+static const RECT DEMO_RECTS[30] = {
+	{  24,    243,     63,    263 },
+	{ 495,    373,    529,    406 },
+	{ 412,    185,    432,    201 },
+	{ 526,    310,    597,    342 },
+	{ 568,    376,    590,    417 },
+	{ 201,    329,    254,    357 },
+	{ 375,    136,    405,    153 },
+	{  77,    253,    114,    302 },
+	{ 314,    181,    337,    203 },
+	{ 450,      6,    479,     34 },
+	{ 482,    300,    505,    329 },
+	{ 171,     75,    203,     94 },
+	{ 255,     50,    271,     72 },
+	{ 126,    254,    191,    278 },
+	{ 467,    334,    519,    360 },
+	{ 510,    189,    555,    226 },
+	{ 292,    315,    341,    335 },
+	{ 278,     70,    296,     88 },
+	{ 349,    301,    382,    338 },
+	{ 402,    203,    433,    250 },
+	{  33,     17,     87,     56 },
+	{  29,    403,     79,    441 },
+	{ 244,    385,    303,    430 },
+	{ 425,    412,    455,    432 },
+	{ 581,      7,    612,     40 },
+	{ 336,     56,    385,     91 },
+	{ 142,    293,    198,    337 },
+	{ 315,    346,    347,    379 },
+	{ 368,    195,    392,    222 },
+	{ 572,     85,    611,    121 },
+};
+
+static const char *DEMO_DESC[30] = {
+	"Archeroids Would Be Here",
+	"Click Here To Try Art Parts",
+	"Barbershop Quintet Would Be Here",
+	"Battlefish Would Be Here",
+	"Beacon Would Be Here",
+	"Click Here To Try Cryptograms",
+	"Dam Furry Animals Would Be Here",
+	"Fuge Would Be Here",
+	"Garfunkel Would Be Here",
+	"Life Would Be Here",
+	"Mankala Would Be Here",
+	"Click Here To Try Maze O' Doom",
+	"No Vacancy Would Be Here",
+	"Pack-Rat Would Be Here",
+	"Click Here To Try Peggleboz",
+	"Click Here To Try Riddles",
+	"TH GESNG GAM Would Be Here",
+	"Poker Would Be Here",
+	"Word Search Would Be Here",
+	"Click Here To See the Slide Show",
+	"Tell me more about these mini-games.",
+	"How does this board-game work?",
+	"What's the story of Hodj 'n' Podj?",
+	"Would my children like this game?",
+	"How long does it take to play Hodj 'n' Podj?",
+	"Who wrote Hodj 'n' Podj?",
+	"Is this game gonna make me laugh, or what?",
+	"Will Hodj 'n' Podj run on my computer?",
+	"What have reviewers said about it?",
+	"I'm convinced!  Where can I buy Hodj 'n Podj"
+};
+
 int             nLastRect;      // the last gaem rect passed over
 CText           *pText = nullptr;   // the game name display
 
@@ -116,6 +182,21 @@ static  bool    bActiveWindow = false;          // whether our window is actives
 CBitmap         *pSplashScreen = nullptr;
 
 CColorButton    *pReturnButton = nullptr;
+
+BEGIN_MESSAGE_MAP(CMainZoomWindow, CFrameWnd)
+	//{{AFX_MSG_MAP( CMainZoomWindow )
+	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_CLOSE()
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
+	ON_WM_ERASEBKGND()
+	ON_WM_KEYDOWN()
+	ON_WM_ACTIVATE()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
 /*****************************************************************
  *
@@ -199,6 +280,7 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
 	}
 
 	nLastRect = -1; // contains the number of the last rect that the mouse ran thru
+	_isDemo = g_engine->isDemo();
 
 	EndWaitCursor();
 }
@@ -338,69 +420,73 @@ bool CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
-	int x; // counter
+	int x = rectIndexOf(point);
 
-	for (x = 0; x < 21; x++) {
-		if (PtInRect(&arGameRect[x], point)) {        // check to see if player clicked on a game
-			if ((anGameValues[x] == -1) && (m_bShowExit == false)) {
-				CWnd::OnLButtonDown(nFlags, point);
-				return;
-			}
-			nReturnValue = anGameValues[x];         // if so then dispatch to game
-			PostMessage(WM_CLOSE);
+	if (x != -1) {
+		// Check to see if player clicked on a game
+		if (_isDemo || ((GAME_VALUES[x] == -1) && (m_bShowExit == false))) {
+			CWnd::OnLButtonDown(nFlags, point);
 			return;
 		}
+		nReturnValue = GAME_VALUES[x];	// if so then dispatch to game
+		PostMessage(WM_CLOSE);
+		return;
 	}
 
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
 void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
-	int x;
+	int x = rectIndexOf(point);
 
-	for (x = 0; x < 21; x++) {
-		if (PtInRect(&arGameRect[x], point)) {      // if cursor passes over a game rect
-			if ((anGameValues[x] == -1) && (m_bShowExit == false)) {
-				CWnd::OnMouseMove(nFlags, point);
-				return;
-			}
-
-			if (x != nLastRect) {
-				// then highlight it
-				CDC *pDC = GetDC();
-				CBrush brshCyanBrush(RGB(0, 255, 255));
-				CBrush brshBlackBrush(RGB(0, 0, 0));
-				CRect rTemp1((arGameRect[x].left - 5 + 2), (arGameRect[x].top - 5 + 2),
-				    (arGameRect[x].right + 5 + 2), (arGameRect[x].bottom + 5 + 2));
-				CRect rTemp2((arGameRect[x].left - 5), (arGameRect[x].top - 5),
-				    (arGameRect[x].right + 5), (arGameRect[x].bottom + 5));
-
-				if (nLastRect != -1) {
-					CRect rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
-						arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
-					RedrawWindow(&rTemp);
-				}
-
-				pDC->FrameRect(&rTemp1, &brshBlackBrush);
-				pDC->FrameRect(&rTemp2, &brshCyanBrush);
-
-				pText->DisplayShadowedString(pDC, astrGames[x], 16, FW_BOLD, RGB(0, 255, 255));
-				nLastRect = x;
-				ReleaseDC(pDC);
-			}
+	// If cursor passes over a game rect
+	if (x != -1) {
+		if (!_isDemo && (GAME_VALUES[x] == -1) && (m_bShowExit == false)) {
+			CWnd::OnMouseMove(nFlags, point);
 			return;
 		}
+
+		if (x != nLastRect) {
+			// then highlight it
+			CDC *pDC = GetDC();
+			CBrush brshCyanBrush(RGB(0, 255, 255));
+			CBrush brshBlackBrush(RGB(0, 0, 0));
+			const RECT &oldRect = (_isDemo ? DEMO_RECTS : MINIGAME_RECTS)[nLastRect];
+			const RECT &newRect = (_isDemo ? DEMO_RECTS : MINIGAME_RECTS)[x];
+
+			CRect rTemp1((newRect.left - 5 + 2), (newRect.top - 5 + 2),
+				(newRect.right + 5 + 2), (newRect.bottom + 5 + 2));
+			CRect rTemp2((newRect.left - 5), (newRect.top - 5),
+				(newRect.right + 5), (newRect.bottom + 5));
+
+			if (nLastRect != -1) {
+				CRect rTemp(oldRect.left - 10, oldRect.top - 10,
+					oldRect.right + 10, oldRect.bottom + 10);
+				RedrawWindow(&rTemp);
+			}
+
+			pDC->FrameRect(&rTemp1, &brshBlackBrush);
+			pDC->FrameRect(&rTemp2, &brshCyanBrush);
+
+			const char *desc = (_isDemo ? DEMO_DESC : MINIGAME_DESC)[x];
+			pText->DisplayShadowedString(pDC, desc, 16, FW_BOLD, RGB(0, 255, 255));
+			nLastRect = x;
+			ReleaseDC(pDC);
+		}
+
+		return;
 	}
 
-
 	if (nLastRect != -1) {
-		CRect   rTemp(arGameRect[nLastRect].left - 10, arGameRect[nLastRect].top - 10,
-		              arGameRect[nLastRect].right + 10, arGameRect[nLastRect].bottom + 10);
+		const RECT &oldRect = (_isDemo ? DEMO_RECTS : MINIGAME_RECTS)[nLastRect];
+		CRect rTemp(oldRect.left - 10, MAX<int>(oldRect.top - 10, 0),
+			oldRect.right + 10, oldRect.bottom + 10);
 
 		RedrawWindow(&rTemp);
 		RedrawWindow(&rText);
 		nLastRect = -1;
 	}
+
 	CWnd::OnMouseMove(nFlags, point);
 }
 
@@ -642,23 +728,17 @@ void CMainZoomWindow::FlushInputEvents() {
 	}
 }
 
-// CMainZoomWindow message map:
-// Associate messages with member functions.
-//
-BEGIN_MESSAGE_MAP(CMainZoomWindow, CFrameWnd)
-	//{{AFX_MSG_MAP( CMainZoomWindow )
-	ON_WM_PAINT()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEMOVE()
-	ON_WM_CLOSE()
-	ON_WM_DESTROY()
-	ON_WM_TIMER()
-	ON_WM_ERASEBKGND()
-	ON_WM_KEYDOWN()
-	ON_WM_ACTIVATE()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+int CMainZoomWindow::rectIndexOf(const CPoint &pt) {
+	const RECT *r = _isDemo ? DEMO_RECTS : MINIGAME_RECTS;
+	const int count = _isDemo ? 30 : 21;
+
+	for (int i = 0; i < count; ++i, ++r) {
+		if (PtInRect(r, pt))
+			return i;
+	}
+
+	return -1;
+}
 
 } // namespace Zoom
 } // namespace Metagame

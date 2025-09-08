@@ -53,11 +53,14 @@ class CMainZoomWindow : public CFrameWnd {
 private:
 	HWND m_hCallAppWnd = (HWND)0;
 	bool m_bShowExit = false;
+	bool _isDemo = false;
 	CRect MainRect;                           // screen area spanned by the game window
 	CRect OptionRect;                         // screen area spanned by the option button
 
 	CRect rText;
 	CRect rLeaveRect;
+
+	int rectIndexOf(const CPoint &pt);
 
 public:
 	CMainZoomWindow(HWND, bool);
