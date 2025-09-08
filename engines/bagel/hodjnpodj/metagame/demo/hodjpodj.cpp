@@ -222,6 +222,8 @@ void CHodjPodjWindow::OnClose() {
 
 	KillTimer(TIMER_SPLASH1);
 	KillTimer(TIMER_SPLASH2);
+
+	CFrameWnd::OnClose();
 }
 
 } // namespace Demo
