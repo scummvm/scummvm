@@ -44,16 +44,14 @@ CTheApp::CTheApp() {
 }
 
 bool CTheApp::InitApplication() {
-	if (_startupMinigame == "mazedoom_demo") {
-		addResources("mod.exe");
-	} else if (g_engine->isDemo()) {
-		addResources("hnpdemo.exe");
-	} else if (_startupMinigame.empty()) {
+	if (_startupMinigame.empty()) {
 		// Main game
 		addResources("meta/hodjpodj.exe");
 		addResources("meta/hnpmeta.dll");
 		setDirectory("meta");
-	} else 
+	} else if (_startupMinigame == "mazedoom_demo") {
+		addResources("mod.exe");
+	}
 
 	addFontResource("msserif.fon");
 	setFocusChangeProc(focusChange);
