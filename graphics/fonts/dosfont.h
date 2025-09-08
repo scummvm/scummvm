@@ -26,8 +26,14 @@
 
 namespace Graphics {
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont {
+class DosFont : public Graphics::Font {
+public:
+	DosFont();
+
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 public:
 // 8x8 font patterns
 

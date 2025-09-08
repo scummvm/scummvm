@@ -20,8 +20,42 @@
  */
 
 #include "graphics/fonts/dosfont.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
+
+DosFont::DosFont() {}
+
+int DosFont::getFontHeight() const {
+	return 8;
+}
+
+int DosFont::getMaxCharWidth() const {
+	return 8;
+}
+
+int DosFont::getCharWidth(uint32 chr) const {
+	return 8;
+}
+
+void DosFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	int srcPixel = chr * 8;
+	for (int sy = 0; sy < 8; sy++) {
+		for (int sx = 0; sx < 8; sx++) {
+			if (Graphics::DosFont::fontData_PCBIOS[srcPixel] & 1 << (7 - sx)) {
+				if (dst->format.bytesPerPixel == 1)
+					*((byte *)dst->getBasePtr(x + sx, y + sy)) = color;
+				else if (dst->format.bytesPerPixel == 2)
+					*((uint16 *)dst->getBasePtr(x + sx, y + sy)) = color;
+				else if (dst->format.bytesPerPixel == 4)
+					*((uint32 *)dst->getBasePtr(x + sx, y + sy)) = color;
+			}
+		}
+		srcPixel++;
+	}
+}
+
+
 // 8x8 font patterns
 
 // this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
