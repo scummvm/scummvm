@@ -23,16 +23,8 @@
 #define BAGEL_METAGAME_DEMO_HODJPODJ_H
 
 #include "bagel/hodjnpodj/globals.h"
-#include "bagel/boflib/error.h"
-#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
-#include "bagel/hodjnpodj/hnplibs/dibapi.h"
-#include "bagel/hodjnpodj/hnplibs/gamedll.h"
-#include "bagel/hodjnpodj/hnplibs/stdinc.h"
-#include "bagel/hodjnpodj/hnplibs/text.h"
-#include "bagel/hodjnpodj/metagame/frame/resource.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
-#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -43,17 +35,25 @@ class CHodjPodjWindow : public CFrameWnd {
 private:
 	Frame::CMovieWindow pMovie;
 	CPalette *pGamePalette = nullptr;
+	CSound *pBackgroundMidi = nullptr;
+	int _currentCommand = -1;
+
+	void drawBitmap(const char *filename);
+	void startBackgroundMidi();
+	void stopBackgroundMidi();
 
 public:
 	CHodjPodjWindow();
 
-	void BlackScreen();
+	void blackScreen();
 
-	void PlayMovie(const int, const char *, bool);
+	void playMovie(const int, const char *, bool);
 
 protected:
 	bool OnCommand(WPARAM wParam, LPARAM lParam) override;
-	void OnPaint();
+	void OnTimer(uintptr nEventID);
+	void OnLButtonDown(uint nFlags, CPoint point);
+	void OnClose();
 
 	DECLARE_MESSAGE_MAP()
 };

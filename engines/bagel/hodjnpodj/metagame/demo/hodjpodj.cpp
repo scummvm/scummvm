@@ -21,6 +21,7 @@
 
 #include "bagel/hodjnpodj/metagame/demo/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/zoom/init.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/boflib/sound.h"
 
@@ -29,12 +30,26 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Demo {
 
-#define IDC_PLAY_DEMO_MOVIE		9999
+#define IDC_SPLASH1				1001
+#define IDC_SPLASH2				1002
+#define IDC_PLAY_DEMO_MOVIE		1003
 #define IDC_ZOOM				888
+
+#define TIMER_SPLASH1			1
+#define TIMER_SPLASH2			2
+#define SPLASH_DURATION			5000
+
 #define MOVIE_ID_INTRO			1
 #define MOVIE_INTRO				"art/demovid.avi"
+#define BITMAP_VIRGIN			"art/virgin.bmp"
+#define BITMAP_BOFFO			"art/boffo.bmp"
+
+#define LOGO_MIDI				"sound/maintitl.mid"
 
 BEGIN_MESSAGE_MAP(CHodjPodjWindow, CFrameWnd)
+ON_WM_TIMER()
+ON_WM_LBUTTONDOWN()
+ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 CHodjPodjWindow::CHodjPodjWindow() {
@@ -55,7 +70,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 
 	BeginWaitCursor();
 	ShowWindow(SW_SHOWNORMAL);
-	BlackScreen();
+	blackScreen();
 	EndWaitCursor();
 
 	pDC = GetDC();                                  // get a device context for our window
@@ -64,25 +79,39 @@ CHodjPodjWindow::CHodjPodjWindow() {
 	delete pBitmap;
 	ReleaseDC(pDC);
 
-	// Play the demo intro movie
-	PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
+	// Show the Virgin splash screen
+	PostMessage(WM_COMMAND, IDC_SPLASH1);
 }
 
 bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+	_currentCommand = wParam;
+
 	switch (wParam) {
+	case IDC_SPLASH1:
+		drawBitmap(BITMAP_VIRGIN);
+		startBackgroundMidi();
+		CWnd::SetTimer(TIMER_SPLASH1, SPLASH_DURATION, nullptr);
+		break;
+
+	case IDC_SPLASH2:
+		drawBitmap(BITMAP_BOFFO);
+		CWnd::SetTimer(TIMER_SPLASH2, SPLASH_DURATION, nullptr);
+		break;
+
 	case IDC_PLAY_DEMO_MOVIE:
-		PlayMovie(MOVIE_ID_INTRO, MOVIE_INTRO, false);
+		playMovie(MOVIE_ID_INTRO, MOVIE_INTRO, false);
 		break;
 
 	case MOVIE_OVER:
 		// Switch to Zoom map
 		ShowCursor(true);
-		BlackScreen();
+		blackScreen();
 		PostMessage(WM_COMMAND, IDC_ZOOM);
 		break;
 
 	case IDC_ZOOM:
-		BlackScreen();
+		blackScreen();
+		stopBackgroundMidi();
 
 		Metagame::Zoom::RunZoomMap(m_hWnd, true);
 		break;
@@ -94,7 +123,7 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return true;
 }
 
-void CHodjPodjWindow::BlackScreen() {
+void CHodjPodjWindow::blackScreen() {
 	CDC *pDC;
 	CBrush Brush(RGB(0, 0, 0));
 	CPalette *pPalOld = nullptr;
@@ -121,11 +150,20 @@ void CHodjPodjWindow::BlackScreen() {
 	ReleaseDC(pDC);
 }
 
+void CHodjPodjWindow::drawBitmap(const char *filename) {
+	CDC *dc = GetDC();
+	CBitmap *bitmap = FetchBitmap(dc, &pGamePalette, filename);
 
-void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, bool bScroll) {
+	PaintBitmap(dc, nullptr, bitmap, 0, 0);
+
+	delete bitmap;
+	ReleaseDC(dc);
+}
+
+void CHodjPodjWindow::playMovie(const int nMovieId, const char *pszMovie, bool bScroll) {
 	POINT   ptMovie;
 
-	BlackScreen();
+	blackScreen();
 
 	pMovie.nMovieId = nMovieId;
 
@@ -133,6 +171,57 @@ void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, bool b
 	ptMovie.y = (GAME_HEIGHT / 2) - (MOVIE_HEIGHT / 2);
 
 	pMovie.BlowWindow((CWnd *)this, bScroll, pszMovie, ptMovie.x, ptMovie.y);
+}
+
+
+void CHodjPodjWindow::startBackgroundMidi() {
+	if (pBackgroundMidi == nullptr) {
+		pBackgroundMidi = new CSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
+		(*pBackgroundMidi).play();
+	}
+}
+
+void CHodjPodjWindow::stopBackgroundMidi() {
+	if (pBackgroundMidi != nullptr) {
+		(*pBackgroundMidi).stop();
+		delete pBackgroundMidi;
+		pBackgroundMidi = nullptr;
+	}
+}
+
+void CHodjPodjWindow::OnTimer(uintptr nEventID) {
+	switch (nEventID) {
+	case TIMER_SPLASH1:
+		KillTimer(TIMER_SPLASH1);
+		PostMessage(WM_COMMAND, IDC_SPLASH2);
+		break;
+	case TIMER_SPLASH2:
+		KillTimer(TIMER_SPLASH2);
+		PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
+		break;
+	default:
+		break;
+	}
+}
+
+void CHodjPodjWindow::OnLButtonDown(uint nFlags, CPoint point) {
+	switch (_currentCommand) {
+	case IDC_SPLASH1:
+		OnTimer(TIMER_SPLASH1);
+		break;
+	case IDC_SPLASH2:
+		OnTimer(TIMER_SPLASH2);
+		break;
+	default:
+		break;
+	}
+}
+
+void CHodjPodjWindow::OnClose() {
+	stopBackgroundMidi();
+
+	KillTimer(TIMER_SPLASH1);
+	KillTimer(TIMER_SPLASH2);
 }
 
 } // namespace Demo
