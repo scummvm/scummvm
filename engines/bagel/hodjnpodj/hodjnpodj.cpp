@@ -70,9 +70,6 @@ Common::Error HodjNPodjEngine::run() {
 
 	} else {
 		Metagame::Frame::CTheApp app;
-		app.InitApplication();
-		app.InitInstance();
-		app.setKeybinder(KeybindToKeycode);
 
 		if (getGameId() == "mazeodoom") {
 			app.setStartupMinigame("mazedoom_demo");
@@ -86,6 +83,9 @@ Common::Error HodjNPodjEngine::run() {
 			if (!minigame.empty())
 				app.setStartupMinigame(minigame);
 		}
+		app.InitApplication();
+		app.InitInstance();
+		app.setKeybinder(KeybindToKeycode);
 
 		app.Run();
 	}
