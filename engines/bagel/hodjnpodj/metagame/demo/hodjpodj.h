@@ -19,45 +19,48 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/demo/app.h"
-#include "bagel/hodjnpodj/metagame/demo/hodjpodj.h"
-#include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
-#include "bagel/boflib/sound.h"
+#ifndef BAGEL_METAGAME_DEMO_HODJPODJ_H
+#define BAGEL_METAGAME_DEMO_HODJPODJ_H
+
+#include "bagel/hodjnpodj/globals.h"
+#include "bagel/boflib/error.h"
+#include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/hodjnpodj/hnplibs/dibdoc.h"
+#include "bagel/hodjnpodj/hnplibs/dibapi.h"
+#include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/hnplibs/stdinc.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
+#include "bagel/hodjnpodj/metagame/frame/resource.h"
+#include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace Demo {
 
-CTheApp::CTheApp() {
-}
+class CHodjPodjWindow : public CFrameWnd {
+private:
+	Frame::CMovieWindow pMovie;
+	CPalette *pGamePalette = nullptr;
 
-bool CTheApp::InitApplication() {
-	addResources("hnpdemo.exe");
-	addFontResource("msserif.fon");
+public:
+	CHodjPodjWindow();
 
-	return CWinApp::InitApplication();
-}
+	void BlackScreen();
 
-bool CTheApp::InitInstance() {
-	// Main demo
-	m_pMainWnd = new CHodjPodjWindow();
-	m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
-	m_pMainWnd->UpdateWindow();
+	void PlayMovie(const int, const char *, bool);
 
-	return true;
-}
+protected:
+	bool OnCommand(WPARAM wParam, LPARAM lParam) override;
+	void OnPaint();
 
-int CTheApp::ExitInstance() {
-	return 0;
-}
-
-bool CTheApp::OnIdle(long lCount) {
-	CBofSound::audioTask();
-	return true;
-}
+	DECLARE_MESSAGE_MAP()
+};
 
 } // namespace Demo
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
+
+#endif
