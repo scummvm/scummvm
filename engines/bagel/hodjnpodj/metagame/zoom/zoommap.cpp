@@ -62,7 +62,7 @@ static const RECT MINIGAME_RECTS[21] = {
 	{ 402, 203, 433, 250 }
 };
 
-static const int16 GAME_VALUES[21] = {
+static const int16 MINIGAME_VALUES[21] = {
 	// set the game values to return
 	MG_GAME_ARCHEROIDS,
 	MG_GAME_ARTPARTS,
@@ -84,6 +84,12 @@ static const int16 GAME_VALUES[21] = {
 	MG_GAME_VIDEOPOKER,
 	MG_GAME_WORDSEARCH,
 	-1
+};
+
+static const int16 DEMO_VALUES[30] = {
+	-1, 110, -1, -1, -1, MG_GAME_ARCHEROIDS, -1, -1, -1, -1, -1,
+	MG_GAME_ARTPARTS, MG_GAME_BARBERSHOP,
+	-1, -1, -1, -3, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
 };
 
 static const char *MINIGAME_DESC[21] = {       // set the display names for when the cursor passes over a game rect
@@ -424,11 +430,13 @@ void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (x != -1) {
 		// Check to see if player clicked on a game
-		if (_isDemo || ((GAME_VALUES[x] == -1) && (m_bShowExit == false))) {
+		int game = (_isDemo ? DEMO_VALUES : MINIGAME_VALUES)[x];
+		if (game == -1 && m_bShowExit == false) {
 			CWnd::OnLButtonDown(nFlags, point);
 			return;
 		}
-		nReturnValue = GAME_VALUES[x];	// if so then dispatch to game
+
+		nReturnValue = game;	// if so then dispatch to game
 		PostMessage(WM_CLOSE);
 		return;
 	}
@@ -441,7 +449,8 @@ void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	// If cursor passes over a game rect
 	if (x != -1) {
-		if (!_isDemo && (GAME_VALUES[x] == -1) && (m_bShowExit == false)) {
+		int game = (_isDemo ? DEMO_VALUES : MINIGAME_VALUES)[x];
+		if (game == -1 && m_bShowExit == false) {
 			CWnd::OnMouseMove(nFlags, point);
 			return;
 		}
