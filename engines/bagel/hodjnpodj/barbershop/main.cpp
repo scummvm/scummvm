@@ -842,9 +842,6 @@ void CMainWindow::FlushInputEvents() {
 }
 
 void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) {
-	if (pWndOther)      // bullshit to rid warnings
-		true;
-
 	if (!bMinimized) {
 
 		switch (nState) {
