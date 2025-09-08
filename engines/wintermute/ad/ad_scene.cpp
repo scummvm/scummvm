@@ -227,7 +227,7 @@ void AdScene::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester) {
+bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester) {
 	if (!_pfReady) {
 		return false;
 	} else {
@@ -311,7 +311,7 @@ void AdScene::pfAddWaypointGroup(AdWaypointGroup *wpt, BaseObject *requester) {
 			continue;
 		}
 
-		//_pfPath.add(new AdPathPoint(Wpt->_points[i]->x, Wpt->_points[i]->y, INT_MAX));
+		//_pfPath.add(new AdPathPoint(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX));
 		pfPointsAdd(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX_VALUE);
 	}
 }
@@ -397,7 +397,7 @@ bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *reque
 		for (int32 i = 0; i < _mainLayer->_nodes.getSize(); i++) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
 			/*
-			if (Node->_type == OBJECT_REGION && Node->_region->_active && Node->_region->_blocked && Node->_region->PointInRegion(X, Y))
+			if(node->_type == OBJECT_REGION && node->_region->_active && node->_region->_blocked && node->_region->pointInRegion(x, y))
 			{
 			    ret = true;
 			    break;
@@ -458,7 +458,7 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdScene::getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester) {
+int AdScene::getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
@@ -513,11 +513,12 @@ void AdScene::pathFinderStep() {
 	int lowestDist = INT_MAX_VALUE;
 	AdPathPoint *lowestPt = nullptr;
 
-	for (i = 0; i < _pfPointsNum; i++)
+	for (i = 0; i < _pfPointsNum; i++) {
 		if (!_pfPath[i]->_marked && _pfPath[i]->_distance < lowestDist) {
 			lowestDist = _pfPath[i]->_distance;
 			lowestPt = _pfPath[i];
 		}
+	}
 
 	if (lowestPt == nullptr) { // no path -> terminate PathFinder
 		_pfReady = true;
@@ -540,7 +541,7 @@ void AdScene::pathFinderStep() {
 	}
 
 	// otherwise keep on searching
-	for (i = 0; i < _pfPointsNum; i++)
+	for (i = 0; i < _pfPointsNum; i++) {
 		if (!_pfPath[i]->_marked) {
 			int j = getPointsDist(*lowestPt, *_pfPath[i], _pfRequester);
 			if (j != -1 && lowestPt->_distance + j < _pfPath[i]->_distance) {
@@ -548,6 +549,7 @@ void AdScene::pathFinderStep() {
 				_pfPath[i]->_origin = lowestPt;
 			}
 		}
+	}
 }
 
 
@@ -3456,7 +3458,7 @@ bool AdScene::persistState(bool saving) {
 				nodeState = state->getNodeState(node->_entity->_name, saving);
 				if (nodeState) {
 					nodeState->transferEntity(node->_entity, _persistentStateSprites, saving);
-					//if (Saving) NodeState->_active = node->_entity->_active;
+					//if (saving) NodeState->_active = node->_entity->_active;
 					//else node->_entity->_active = NodeState->_active;
 				}
 				break;
@@ -3489,7 +3491,7 @@ bool AdScene::persistState(bool saving) {
 			nodeState = state->getNodeState(_objects[i]->_name, saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
-				//if (Saving) NodeState->_active = _objects[i]->_active;
+				//if (saving) NodeState->_active = _objects[i]->_active;
 				//else _objects[i]->_active = NodeState->_active;
 			}
 		}

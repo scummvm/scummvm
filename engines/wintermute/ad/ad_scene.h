@@ -149,7 +149,7 @@ public:
 	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	AdLayer *_mainLayer;
 	float getZoomAt(int x, int y);
-	bool getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester = nullptr);
+	bool getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester = nullptr);
 	AdScene(BaseGame *inGame);
 	~AdScene() override;
 	BaseArray<AdLayer *> _layers;
@@ -186,7 +186,7 @@ public:
 
 	bool restoreDeviceObjects() override;
 	void setMaxShadowType(TShadowType shadowType);
-	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
+	int getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester = nullptr);
 
 	void onLayerResized(AdLayer *layer);
 
