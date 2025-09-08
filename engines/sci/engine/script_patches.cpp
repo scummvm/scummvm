@@ -102,6 +102,7 @@ static const char *const selectorNameTable[] = {
 	"setCycle",     // system selector
 	"setStep",      // system selector
 	"cycleSpeed",   // system selector
+	"moveSpeed",    // system selector
 	"handsOff",     // system selector
 	"handsOn",      // system selector
 	"type",         // system selector
@@ -213,7 +214,6 @@ static const char *const selectorNameTable[] = {
 	"drop",         // QFG4
 	"getCursor",    // QFG4
 	"heading",      // QFG4
-	"moveSpeed",    // QFG4
 	"retreat",      // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
@@ -248,6 +248,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setCycle,
 	SELECTOR_setStep,
 	SELECTOR_cycleSpeed,
+	SELECTOR_moveSpeed,
 	SELECTOR_handsOff,
 	SELECTOR_handsOn,
 	SELECTOR_type,
@@ -360,7 +361,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_drop,
 	SELECTOR_getCursor,
 	SELECTOR_heading,
-	SELECTOR_moveSpeed,
 	SELECTOR_retreat,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
@@ -1717,7 +1717,6 @@ static const uint16 ecoquest1SignatureFleshEaterEgoSpeed[] = {
 	SIG_END
 };
 
-#if 0
 static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
 	0x38, PATCH_UINT16(0x0006),         // pushi 0006
 	0x38, PATCH_SELECTOR16(moveSpeed),  // pushi moveSpeed
@@ -1727,12 +1726,11 @@ static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
 	0x4a, 0x14,                         // send 14 [ ego cycleSpeed: 6 moveSpeed: 3 ... ]
 	PATCH_END
 };
-#endif
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   123, "flesh-eater inset speed",                     1, ecoquest1SignatureFleshEaterInsetSpeed,   ecoquest1PatchFleshEaterInsetSpeed },
-//	{  true,   123, "flesh-eater ego speed",                       1, ecoquest1SignatureFleshEaterEgoSpeed,     ecoquest1PatchFleshEaterEgoSpeed },
+	{  true,   123, "flesh-eater ego speed",                       1, ecoquest1SignatureFleshEaterEgoSpeed,     ecoquest1PatchFleshEaterEgoSpeed },
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,        ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,          ecoquest1PatchGiveOilyShell },
 	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,        ecoquest1PatchColumnPuzzleFix },
