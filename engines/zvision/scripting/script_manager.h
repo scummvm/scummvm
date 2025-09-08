@@ -83,7 +83,7 @@ enum StateKey {
 	StateKey_ShowErrorDlg = 73,
 	StateKey_DebugCheats = 74,
 	StateKey_JapanFonts = 75,
-	StateKey_ExecScopeStyle = 76,
+	StateKey_ExecScopeStyle = 76,	// 0 = ZGI, 1 = Nemesis
 	StateKey_Brightness = 77,
 	StateKey_MPEGMovies = 78,
 	StateKey_EF9_R = 91,

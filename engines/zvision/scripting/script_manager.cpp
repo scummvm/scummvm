@@ -66,8 +66,8 @@ void ScriptManager::initialize(bool restarted) {
 
 	_changeLocationDelayCycles = 0;
 	if (restarted) {
-		for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
-			delete (*iter);
+		for (auto &fx : _activeSideFx)
+			delete fx;
 		_activeSideFx.clear();
 		_referenceTable.clear();
 		switch (_engine->getGameId()) {
@@ -108,25 +108,20 @@ void ScriptManager::process(uint deltaTimeMillis) {
 		// in the exec queues, but that could cause this to hang
 		// indefinitely.
 		// TODO - this causes noticeable pauses on location change; see if these can be reduced by improving this functionality.
-		if (_changeLocationDelayCycles-- <= 0) {
+		if (_changeLocationDelayCycles-- <= 0)
 			ChangeLocationReal(false);
-		}
 	}
 
 	updateNodes(deltaTimeMillis);
 	debugC(5, kDebugLoop, "Script nodes updated");
-	if (!execScope(_nodeview)) {
+	if (!execScope(_nodeview))
 		return;
-	}
-	if (!execScope(_room)) {
+	if (!execScope(_room))
 		return;
-	}
-	if (!execScope(_world)) {
+	if (!execScope(_world))
 		return;
-	}
-	if (!execScope(_universe)) {
+	if (!execScope(_universe))
 		return;
-	}
 	updateControls(deltaTimeMillis);
 }
 
@@ -137,27 +132,33 @@ bool ScriptManager::execScope(ScriptScope &scope) {
 	scope.scopeQueue = tmp;
 	scope.scopeQueue->clear();
 
-	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
-		(*PuzzleIter)->addedBySetState = false;
+	for (auto &puzzle : scope.puzzles)
+		puzzle->addedBySetState = false;
+
+	switch (getStateValue(StateKey_ExecScopeStyle)) {
+	case 0:	// ZGI
+		if (scope.procCount < 2)
+			for (auto &puzzle : scope.puzzles) {
+				if (!checkPuzzleCriteria(puzzle, scope.procCount))
+					return false;
+			}
+		else
+			for (auto &puzzle : (*scope.execQueue)) {
+				if (!checkPuzzleCriteria(puzzle, scope.procCount))
+					return false;
+			}
+		break;
+	case 1:	// Nemesis
+	default:
+		for (auto &puzzle : scope.puzzles) {
+			if (!checkPuzzleCriteria(puzzle, scope.procCount))
+				return false;
+		}
+		break;
 	}
 
-	if (scope.procCount < 2 || getStateValue(StateKey_ExecScopeStyle)) {
-		for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount)) {
-				return false;
-			}
-		}
-	} else {
-		for (PuzzleList::iterator PuzzleIter = scope.execQueue->begin(); PuzzleIter != scope.execQueue->end(); ++PuzzleIter) {
-			if (!checkPuzzleCriteria(*PuzzleIter, scope.procCount)) {
-				return false;
-			}
-		}
-	}
-
-	if (scope.procCount < 2) {
+	if (scope.procCount < 2)
 		scope.procCount++;
-	}
 	return true;
 }
 
@@ -165,19 +166,17 @@ void ScriptManager::referenceTableAddPuzzle(uint32 key, PuzzleRef ref) {
 	if (_referenceTable.contains(key)) {
 		Common::Array<PuzzleRef> *arr = &_referenceTable[key];
 		for (uint32 i = 0; i < arr->size(); i++) {
-			if ((*arr)[i].puz == ref.puz) {
+			if ((*arr)[i].puz == ref.puz)
 				return;
-			}
 		}
 	}
-
 	_referenceTable[key].push_back(ref);
 }
 
 void ScriptManager::addPuzzlesToReferenceTable(ScriptScope &scope) {
 	// Iterate through each local Puzzle
-	for (PuzzleList::iterator PuzzleIter = scope.puzzles.begin(); PuzzleIter != scope.puzzles.end(); ++PuzzleIter) {
-		Puzzle *puzzlePtr = (*PuzzleIter);
+	for (auto &puzzle : scope.puzzles) {
+		Puzzle *puzzlePtr = puzzle;
 
 		PuzzleRef ref;
 		ref.scope = &scope;
@@ -186,31 +185,29 @@ void ScriptManager::addPuzzlesToReferenceTable(ScriptScope &scope) {
 		referenceTableAddPuzzle(puzzlePtr->key, ref);
 
 		// Iterate through each CriteriaEntry and add a reference from the criteria key to the Puzzle
-		for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = (*PuzzleIter)->criteriaList.begin(); criteriaIter != (*PuzzleIter)->criteriaList.end(); ++criteriaIter) {
-			for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
-				referenceTableAddPuzzle(entryIter->key, ref);
-			}
+		for (auto &criteria : puzzle->criteriaList) {
+			for (auto &entry : criteria)
+				referenceTableAddPuzzle(entry.key, ref);
 		}
 	}
 }
 
 void ScriptManager::updateNodes(uint deltaTimeMillis) {
 	// If process() returns true, it means the node can be deleted
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
-		if ((*iter)->process(deltaTimeMillis)) {
-			delete(*iter);
+	for (auto fx = _activeSideFx.begin(); fx != _activeSideFx.end();) {
+		if ((*fx)->process(deltaTimeMillis)) {
+			delete(*fx);
 			// Remove the node
-			iter = _activeSideFx.erase(iter);
-		} else {
-			++iter;
+			fx = _activeSideFx.erase(fx);
 		}
+		else
+			++fx;
 	}
 }
 
 void ScriptManager::updateControls(uint deltaTimeMillis) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
 
 	// Process only one event
 	if (!_controlEvents.empty()) {
@@ -237,24 +234,21 @@ void ScriptManager::updateControls(uint deltaTimeMillis) {
 		_controlEvents.pop_front();
 	}
 
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); iter++) {
-		if ((*iter)->process(deltaTimeMillis)) {
+	for (auto &control : (*_activeControls)) {
+		if (control->process(deltaTimeMillis))
 			break;
-		}
 	}
 }
 
 bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	// Check if the puzzle is already finished
 	// Also check that the puzzle isn't disabled
-	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED)) {
+	if (getStateValue(puzzle->key) == 1 || (getStateFlag(puzzle->key) & Puzzle::DISABLED))
 		return true;
-	}
 
 	// Check each Criteria
-	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0) {
+	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0)
 		return true;
-	}
 
 	// WORKAROUNDS:
 	switch (_engine->getGameId()) {
@@ -276,46 +270,43 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	}
 
 	bool criteriaMet = false;
-	for (Common::List<Common::List<Puzzle::CriteriaEntry> >::iterator criteriaIter = puzzle->criteriaList.begin(); criteriaIter != puzzle->criteriaList.end(); ++criteriaIter) {
+	for (auto &criteria : puzzle->criteriaList) {
 		criteriaMet = false;
 
-		for (Common::List<Puzzle::CriteriaEntry>::iterator entryIter = criteriaIter->begin(); entryIter != criteriaIter->end(); ++entryIter) {
+		for (auto &entry : criteria) {
 			// Get the value to compare against
 			int argumentValue;
-			if (entryIter->argumentIsAKey) {
-				argumentValue = getStateValue(entryIter->argument);
-			} else {
-				argumentValue = entryIter->argument;
-			}
+			if (entry.argumentIsAKey)
+				argumentValue = getStateValue(entry.argument);
+			else
+				argumentValue = entry.argument;
 
 			// Do the comparison
-			switch (entryIter->criteriaOperator) {
+			switch (entry.criteriaOperator) {
 			case Puzzle::EQUAL_TO:
-				criteriaMet = getStateValue(entryIter->key) == argumentValue;
+				criteriaMet = getStateValue(entry.key) == argumentValue;
 				break;
 			case Puzzle::NOT_EQUAL_TO:
-				criteriaMet = getStateValue(entryIter->key) != argumentValue;
+				criteriaMet = getStateValue(entry.key) != argumentValue;
 				break;
 			case Puzzle::GREATER_THAN:
-				criteriaMet = getStateValue(entryIter->key) > argumentValue;
+				criteriaMet = getStateValue(entry.key) > argumentValue;
 				break;
 			case Puzzle::LESS_THAN:
-				criteriaMet = getStateValue(entryIter->key) < argumentValue;
+				criteriaMet = getStateValue(entry.key) < argumentValue;
 				break;
 			default:
 				break;
 			}
 
 			// If one check returns false, don't keep checking
-			if (!criteriaMet) {
+			if (!criteriaMet)
 				break;
-			}
 		}
 
 		// If any of the Criteria are *fully* met, then execute the results
-		if (criteriaMet) {
+		if (criteriaMet)
 			break;
-		}
 	}
 
 	// criteriaList can be empty. Aka, the puzzle should be executed immediately
@@ -325,10 +316,9 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 		// Set the puzzle as completed
 		setStateValue(puzzle->key, 1);
 
-		for (Common::List<ResultAction *>::iterator resultIter = puzzle->resultActions.begin(); resultIter != puzzle->resultActions.end(); ++resultIter) {
-			if (!(*resultIter)->execute()) {
+		for (auto &result : puzzle->resultActions) {
+			if (!result->execute())
 				return false;
-			}
 		}
 	}
 
@@ -336,12 +326,12 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 }
 
 void ScriptManager::cleanStateTable() {
-	for (StateMap::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
+	for (auto entry = _globalState.begin(); entry != _globalState.end(); ++entry) {
 		// If the value is equal to zero, we can purge it since getStateValue()
 		// will return zero if _globalState doesn't contain a key
-		if (iter->_value == 0) {
+		if (entry->_value == 0) {
 			// Remove the node
-			_globalState.erase(iter);
+			_globalState.erase(entry);
 		}
 	}
 }
@@ -351,15 +341,13 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 	scope.privQueueTwo.clear();
 	scope.scopeQueue = &scope.privQueueOne;
 	scope.execQueue = &scope.privQueueTwo;
-	for (PuzzleList::iterator iter = scope.puzzles.begin(); iter != scope.puzzles.end(); ++iter) {
-		delete(*iter);
-	}
+	for (auto &puzzle : scope.puzzles)
+		delete(puzzle);
 
 	scope.puzzles.clear();
 
-	for (ControlList::iterator iter = scope.controls.begin(); iter != scope.controls.end(); ++iter) {
-		delete(*iter);
-	}
+	for (auto &control : scope.controls)
+		delete(control);
 
 	scope.controls.clear();
 
@@ -367,11 +355,10 @@ void ScriptManager::cleanScriptScope(ScriptScope &scope) {
 }
 
 int ScriptManager::getStateValue(uint32 key) {
-	if (_globalState.contains(key)) {
+	if (_globalState.contains(key))
 		return _globalState[key];
-	} else {
+	else
 		return 0;
-	}
 }
 
 void ScriptManager::queuePuzzles(uint32 key) {
@@ -387,29 +374,26 @@ void ScriptManager::queuePuzzles(uint32 key) {
 }
 
 void ScriptManager::setStateValue(uint32 key, int value) {
-	if (value == 0) {
+	if (value == 0)
 		_globalState.erase(key);
-	} else {
+	else
 		_globalState[key] = value;
-	}
 
 	queuePuzzles(key);
 }
 
 void ScriptManager::setStateValueSilent(uint32 key, int value) {
-	if (value == 0) {
+	if (value == 0)
 		_globalState.erase(key);
-	} else {
+	else
 		_globalState[key] = value;
-	}
 }
 
 uint ScriptManager::getStateFlag(uint32 key) {
-	if (_globalStateFlags.contains(key)) {
+	if (_globalStateFlags.contains(key))
 		return _globalStateFlags[key];
-	} else {
+	else
 		return 0;
-	}
 }
 
 void ScriptManager::setStateFlag(uint32 key, uint value) {
@@ -419,11 +403,10 @@ void ScriptManager::setStateFlag(uint32 key, uint value) {
 }
 
 void ScriptManager::setStateFlagSilent(uint32 key, uint value) {
-	if (value == 0) {
+	if (value == 0)
 		_globalStateFlags.erase(key);
-	} else {
+	else
 		_globalStateFlags[key] = value;
-	}
 }
 
 void ScriptManager::unsetStateFlag(uint32 key, uint value) {
@@ -431,40 +414,34 @@ void ScriptManager::unsetStateFlag(uint32 key, uint value) {
 
 	if (_globalStateFlags.contains(key)) {
 		_globalStateFlags[key] &= ~value;
-
-		if (_globalStateFlags[key] == 0) {
+		if (_globalStateFlags[key] == 0)
 			_globalStateFlags.erase(key);
-		}
 	}
 }
 
 Control *ScriptManager::getControl(uint32 key) {
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			return *iter;
-		}
+	for (auto &control : (*_activeControls)) {
+		if (control->getKey() == key)
+			return control;
 	}
 
 	return nullptr;
 }
 
 void ScriptManager::focusControl(uint32 key) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
-	if (_currentlyFocusedControl == key) {
+
+	if (_currentlyFocusedControl == key)
 		return;
-	}
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		uint32 controlKey = (*iter)->getKey();
 
-		if (controlKey == key) {
-			(*iter)->focus();
-		} else if (controlKey == _currentlyFocusedControl) {
-			(*iter)->unfocus();
-		}
+	for (auto &control : (*_activeControls)) {
+		uint32 controlKey = control->getKey();
+		if (controlKey == key)
+			control->focus();
+		else if (controlKey == _currentlyFocusedControl)
+			control->unfocus();
 	}
-
 	_currentlyFocusedControl = key;
 }
 
@@ -477,32 +454,30 @@ void ScriptManager::addSideFX(ScriptingEffect *fx) {
 }
 
 ScriptingEffect *ScriptManager::getSideFX(uint32 key) {
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			return (*iter);
-		}
+	for (auto &fx : _activeSideFx) {
+		if (fx->getKey() == key)
+			return fx;
 	}
-
 	return nullptr;
 }
 
 void ScriptManager::deleteSideFx(uint32 key) {
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			delete(*iter);
-			_activeSideFx.erase(iter);
+	for (auto fx = _activeSideFx.begin(); fx != _activeSideFx.end(); ++fx) {
+		if ((*fx)->getKey() == key) {
+			delete(*fx);
+			_activeSideFx.erase(fx);
 			break;
 		}
 	}
 }
 
 void ScriptManager::stopSideFx(uint32 key) {
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			bool ret = (*iter)->stop();
+	for (auto fx = _activeSideFx.begin(); fx != _activeSideFx.end(); ++fx) {
+		if ((*fx)->getKey() == key) {
+			bool ret = (*fx)->stop();
 			if (ret) {
-				delete(*iter);
-				_activeSideFx.erase(iter);
+				delete(*fx);
+				_activeSideFx.erase(fx);
 			}
 			break;
 		}
@@ -510,84 +485,77 @@ void ScriptManager::stopSideFx(uint32 key) {
 }
 
 void ScriptManager::killSideFx(uint32 key) {
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
-		if ((*iter)->getKey() == key) {
-			(*iter)->kill();
-			delete(*iter);
-			_activeSideFx.erase(iter);
+	for (auto fx = _activeSideFx.begin(); fx != _activeSideFx.end(); ++fx) {
+		if ((*fx)->getKey() == key) {
+			(*fx)->kill();
+			delete(*fx);
+			_activeSideFx.erase(fx);
 			break;
 		}
 	}
 }
 
 void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
-		if ((*iter)->getType() & type) {
-			(*iter)->kill();
-			delete(*iter);
-			iter = _activeSideFx.erase(iter);
+	for (auto fx = _activeSideFx.begin(); fx != _activeSideFx.end();) {
+		if ((*fx)->getType() & type) {
+			(*fx)->kill();
+			delete(*fx);
+			fx = _activeSideFx.erase(fx);
 		} else {
-			++iter;
+			++fx;
 		}
 	}
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
 	debugC(1, kDebugMouse, "Mouse screen coordinates: %d, %d, background/script coordinates: %d, %d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y);
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos)) {
+
+	for (auto control = _activeControls->reverse_begin(); control != _activeControls->end(); control--) {
+		if ((*control)->onMouseDown(screenSpacePos, backgroundImageSpacePos))
 			return;
-		}
 	}
 }
 
 void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos)) {
+
+	for (auto control = _activeControls->reverse_begin(); control != _activeControls->end(); control--) {
+		if ((*control)->onMouseUp(screenSpacePos, backgroundImageSpacePos))
 			return;
-		}
 	}
 }
 
 bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return false;
-	}
 
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
-		if ((*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos)) {
+	for (auto control = _activeControls->reverse_begin(); control != _activeControls->end(); control--) {
+		if ((*control)->onMouseMove(screenSpacePos, backgroundImageSpacePos))
 			return true;
-		}
 	}
-
 	return false;
 }
 
 void ScriptManager::onKeyDown(Common::KeyState keyState) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		if ((*iter)->onKeyDown(keyState)) {
+
+	for (auto &control : (*_activeControls)) {
+		if (control->onKeyDown(keyState))
 			return;
-		}
 	}
 }
 
 void ScriptManager::onKeyUp(Common::KeyState keyState) {
-	if (!_activeControls) {
+	if (!_activeControls)
 		return;
-	}
-	for (ControlList::iterator iter = _activeControls->begin(); iter != _activeControls->end(); ++iter) {
-		if ((*iter)->onKeyUp(keyState)) {
+
+	for (auto &control : (*_activeControls)) {
+		if (control->onKeyUp(keyState))
 			return;
-		}
 	}
 }
 
@@ -779,9 +747,8 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 	stream->writeByte(getStateValue(StateKey_View));
 	stream->writeUint32LE(getStateValue(StateKey_ViewPos));
 
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
-		(*iter)->serialize(stream);
-	}
+	for (auto &fx : _activeSideFx)
+		fx->serialize(stream);
 
 	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
 
@@ -791,17 +758,14 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 
 	stream->writeUint32LE(slots * 2);
 
-	for (int32 i = 0; i < slots; i++) {
+	for (int32 i = 0; i < slots; i++)
 		stream->writeUint16LE(getStateFlag(i));
-	}
 
 	stream->writeUint32BE(MKTAG('P', 'U', 'Z', 'Z'));
-
 	stream->writeUint32LE(slots * 2);
 
-	for (int32 i = 0; i < slots; i++) {
+	for (int32 i = 0; i < slots; i++)
 		stream->writeSint16LE(getStateValue(i));
-	}
 }
 
 void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
@@ -818,12 +782,10 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 
-	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++) {
-		delete(*iter);
-	}
+	for (auto &fx : _activeSideFx)
+		delete fx;
 
 	_activeSideFx.clear();
-
 	_referenceTable.clear();
 
 	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
@@ -853,23 +815,20 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		case MKTAG('T', 'I', 'M', 'R'): {
 			uint32 key = stream->readUint32LE();
 			uint32 time = stream->readUint32LE();
-			if (_engine->getGameId() == GID_GRANDINQUISITOR) {
+			if (_engine->getGameId() == GID_GRANDINQUISITOR)
 				time /= 100;
-			} else if (_engine->getGameId() == GID_NEMESIS) {
+			else if (_engine->getGameId() == GID_NEMESIS)
 				time /= 1000;
-			}
 			addSideFX(new TimerNode(_engine, key, time));
 		}
 		break;
 		case MKTAG('F', 'L', 'A', 'G'):
-			for (uint32 i = 0; i < tagSize / 2; i++) {
+			for (uint32 i = 0; i < tagSize / 2; i++)
 				setStateFlagSilent(i, stream->readUint16LE());
-			}
 			break;
 		case MKTAG('P', 'U', 'Z', 'Z'):
-			for (uint32 i = 0; i < tagSize / 2; i++) {
+			for (uint32 i = 0; i < tagSize / 2; i++)
 				setStateValueSilent(i, stream->readUint16LE());
-			}
 			break;
 		default:
 			stream->seek(tagSize, SEEK_CUR);
@@ -920,24 +879,20 @@ void ScriptManager::addEvent(Common::Event event) {
 }
 
 void ScriptManager::flushEvent(Common::EventType type) {
-	EventList::iterator it = _controlEvents.begin();
-	while (it != _controlEvents.end()) {
-
-		if ((*it).type == type) {
-			it = _controlEvents.erase(it);
-		} else {
-			it++;
-		}
+	auto event = _controlEvents.begin();
+	while (event != _controlEvents.end()) {
+		if ((*event).type == type)
+			event = _controlEvents.erase(event);
+		else
+			event++;
 	}
 }
 
 void ScriptManager::trimCommentsAndWhiteSpace(Common::String *string) const {
 	for (int i = string->size() - 1; i >= 0; i--) {
-		if ((*string)[i] == '#') {
+		if ((*string)[i] == '#')
 			string->erase(i);
-		}
 	}
-
 	string->trim();
 }
 
@@ -954,17 +909,16 @@ ValueSlot::ValueSlot(ScriptManager *scriptManager, const char *slotValue):
 		_value = atoi(slotValue);
 	}
 }
+
 int16 ValueSlot::getValue() {
 	if (_slot) {
-		if (_value >= 0) {
+		if (_value >= 0)
 			return _scriptManager->getStateValue(_value);
-		}
-		else {
+		else
 			return 0;
-		}
-	} else {
-		return _value;
 	}
+	else
+		return _value;
 }
 
 } // End of namespace ZVision

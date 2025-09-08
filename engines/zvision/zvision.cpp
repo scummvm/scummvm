@@ -412,7 +412,7 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "addon");
 	Common::ArchiveMemberList listAddon;
 	SearchMan.listMatchingMembers(listAddon,"*.zfs");
-	for (auto member : listAddon) {
+	for (auto &member : listAddon) {
 		Common::Path path(member->getPathInArchive());
 		ZfsArchive *archive = new ZfsArchive(path);
 		SearchMan.add(path.toString(), archive);

@@ -32,9 +32,8 @@ struct Puzzle {
 	Puzzle() : key(0), addedBySetState(false) {}
 
 	~Puzzle() {
-		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {
-			delete *iter;
-		}
+		for (auto & action : resultActions)
+			delete action;
 	}
 
 	/** How criteria should be decided */
