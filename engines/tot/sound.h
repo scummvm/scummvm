@@ -22,6 +22,7 @@
 #define TOT_SOUND_H
 
 #include "audio/decoders/raw.h"
+#include "audio/softsynth/pcspk.h"
 #include "audio/mixer.h"
 #include "common/file.h"
 
@@ -61,9 +62,9 @@ private:
 	void setMusicVolume(byte volume);
 
 	Audio::SoundHandle _soundHandle;
-	Audio::SoundHandle _speakerHandle;
 	Audio::Mixer *_mixer;
 	MidiPlayer *_midiPlayer;
+	Audio::PCSpeaker *_speaker;
 
 	Common::SeekableReadStream *_lastSrcStream = nullptr;
 	Audio::SeekableAudioStream *_audioStream = nullptr;
