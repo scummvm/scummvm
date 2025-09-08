@@ -90,6 +90,9 @@ void saveCurrentState() {
 	}
 	json["Log"] = new Common::JSONValue(log);
 
+	// Other settings
+	json["ScoreWindow"] = new Common::JSONValue(_state->_scoreWindow);
+
 	// Save the JSON
 	Common::JSONValue save(json);
 	debugC(7, kDebugImGui, "ImGui::Saved state: %s", save.stringify().c_str());
@@ -167,6 +170,9 @@ void loadSavedState() {
 	for (auto iter : log) {
 		_state->_logger->addLog(iter->asString().c_str());
 	}
+
+	// Load other settings
+	_state->_scoreWindow = saved->asObject()["ScoreWindow"]->asString();
 
 	free(data);
 	delete saved;

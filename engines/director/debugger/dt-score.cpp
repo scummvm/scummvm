@@ -350,6 +350,50 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	ImGui::PopFont();
 }
 
+void windowList(Common::String *target) {
+	const Common::Array<Window *> *windowList = g_director->getWindowList();
+	const Common::String selWin = *target;
+
+	Common::String stage = g_director->getStage()->getCurrentMovie()->getMacName();
+
+	// Check if the relevant window is gone
+	bool found = false;
+	for (auto window : (*windowList)) {
+		if (window->getCurrentMovie()->getMacName() == selWin) {
+			// Found the selected window
+			found = true;
+			break;
+		}
+	}
+
+	// Our default is Stage
+	if (selWin.empty() || windowList->empty() || !found)
+		*target = stage;
+
+	ImGui::Text("Window:");
+	ImGui::SameLine();
+
+	if (ImGui::BeginCombo("##window", selWin.c_str())) {
+		bool selected = (*target == stage);
+		if (ImGui::Selectable(stage.c_str(), selected))
+			*target = stage;
+
+		if (selected)
+			ImGui::SetItemDefaultFocus();
+
+		for (auto window : (*windowList)) {
+			Common::String winName = window->getCurrentMovie()->getMacName();
+			selected = (*target == winName);
+			if (ImGui::Selectable(winName.c_str(), selected))
+				*target = winName;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+}
+
 void showScore() {
 	if (!_state->_w.score)
 		return;
@@ -363,6 +407,8 @@ void showScore() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Score", &_state->_w.score)) {
+		windowList(&_state->_scoreWindow);
+
 		Score *score = g_director->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
 		Cast *cast = g_director->getCurrentMovie()->getCast();

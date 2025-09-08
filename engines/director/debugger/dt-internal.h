@@ -205,6 +205,7 @@ typedef struct ImGuiState {
 	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
 	bool _loadedContinuationData = false;
 
+	Common::String _scoreWindow;
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
 	int _scorePageSlider = 0;
