@@ -777,6 +777,10 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 				_kernelNames[0x84] = "ShowMovie";
 		} else if (g_sci->getGameId() == GID_QFG4DEMO) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
+		} else if (g_sci->getGameId() == GID_SLATER && g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			// SLATER Macintosh has an empty kDoAudio. Scripts rely on this, as
+			// they contain calls to play non-existent audio from the PC version.
+			_kernelNames[0x75] = "Empty";
 		} else if (_resMan->testResource(ResourceId(kResourceTypeVocab, 184))) {
 			_kernelNames[0x7b] = "RemapColorsKawa";
 			_kernelNames[0x88] = "KawaDbugStr";

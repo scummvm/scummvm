@@ -385,8 +385,15 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 3) {
 			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
 		} else if (argc == 7) {
-			id = ResourceId(kResourceTypeSync36, argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(),
-							argv[5].toUint16(), argv[6].toUint16());
+			if (g_sci->getGameId() == GID_SLATER && g_sci->getPlatform() == Common::kPlatformMacintosh) {
+				// SLATER Macintosh does not support sync36 tuples, but the scripts
+				// still pass 7 parameters because it was modified from the PC
+				// version. Ignore the extra parameters as the Mac interpreter does.
+				id = ResourceId(kResourceTypeSync, argv[2].toUint16());
+			} else {
+				id = ResourceId(kResourceTypeSync36, argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(),
+				                argv[5].toUint16(), argv[6].toUint16());
+			}
 		} else {
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
 			return s->r_acc;
