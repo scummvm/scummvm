@@ -887,7 +887,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetDisabledImage") == 0) {
 		stack->correctParams(1);
 
-		delete _imageDisable;
+		SAFE_DELETE(_imageDisable);
 		_imageDisable = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {

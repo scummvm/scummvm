@@ -69,7 +69,7 @@ void AdResponse::setText(const char *text) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
-	delete _icon;
+	SAFE_DELETE(_icon);
 	_icon = new BaseSprite(_game);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
 		_game->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);

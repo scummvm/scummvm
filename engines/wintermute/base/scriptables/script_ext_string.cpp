@@ -339,8 +339,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 
 			array->push(val);
-			delete val;
-			val = nullptr;
+			SAFE_DELETE(val);
 		}
 
 		stack->pushNative(array, false);

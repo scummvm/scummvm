@@ -2316,6 +2316,7 @@ bool AdGame::onMouseLeftDown() {
 		_game->_capturedObject = _game->_activeObject;
 	}
 	_mouseLeftDown = true;
+	//BasePlatform::setCapture(_renderer->_window);
 
 	return STATUS_OK;
 }

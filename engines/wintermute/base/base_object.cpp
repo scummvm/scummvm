@@ -1228,7 +1228,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 	}
 
 	// create new sound
-	delete _sFX;
+	SAFE_DELETE(_sFX);
 
 	_sFX = new BaseSound(_game);
 	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, Audio::Mixer::kSFXSoundType, true))) {

@@ -409,8 +409,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 			if (layer && DID_SUCCEED(parseLayer(layer, params))) {
 				_layers.add(layer);
 			} else {
-				delete layer;
-				layer = nullptr;
+				SAFE_DELETE(layer);
 				cmd = PARSERR_TOKENNOTFOUND;
 			}
 		}

@@ -3174,17 +3174,6 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 		return _scValue;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// MostRecentSaveSlot (RO)
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
-		if (!ConfMan.hasKey("most_recent_saveslot")) {
-			_scValue->setInt(-1);
-		} else {
-			_scValue->setInt(ConfMan.getInt("most_recent_saveslot"));
-		}
-		return _scValue;
-	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// AutoSaveOnExit
@@ -3344,6 +3333,18 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeviceType") == 0) {
 		_scValue->setString(getDeviceType().c_str());
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// MostRecentSaveSlot (RO)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "MostRecentSaveSlot") == 0) {
+		if (!ConfMan.hasKey("most_recent_saveslot")) {
+			_scValue->setInt(-1);
+		} else {
+			_scValue->setInt(ConfMan.getInt("most_recent_saveslot"));
+		}
 		return _scValue;
 	}
 
