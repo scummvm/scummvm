@@ -108,6 +108,12 @@ void RichTextCastMember::load() {
 	// RTE0: Editor data, used only by the Authoring Tool
 	// RTE1: Plain text data
 	// RTE2: Bitmap representation for rendering
+	//
+	// RTE0 is using Paige editor by Hermes, which was recently
+	// open sourced. So, if anyone wants to look into internals,
+	// https://github.com/nmatavka/Hermes-Paige/tree/main
+	// the pgReadDoc() is the code entry:
+	// https://github.com/nmatavka/Hermes-Paige/blob/main/PGSOURCE/PGREAD.C#L767
 	uint rte0id = 0;
 	uint rte1id = 0;
 	uint rte2id = 0;
