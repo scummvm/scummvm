@@ -50,7 +50,7 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
 	BaseGame *_game;
-	BaseClass(BaseGame *GameOwner);
+	BaseClass(BaseGame *gameOwner);
 	virtual ~BaseClass();
 
 	virtual const char *getClassName() { return ""; }

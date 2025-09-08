@@ -72,18 +72,18 @@ public:
 	SystemInstance *addInstance(void *instance, int id, int savedId = -1);
 	bool removeAllInstances();
 
-	int getInstanceID(void *pointer);
-	void *idToPointer(int savedID);
+	int getInstanceId(void *pointer);
+	void *idToPointer(int savedId);
 
-	void setID(int id) {
-		_iD = id;
+	void setId(int id) {
+		_id = id;
 	}
-	int getID() const {
-		return _iD;
+	int getId() const {
+		return _id;
 	}
 
-	int getSavedID() const {
-		return _savedID;
+	int getSavedId() const {
+		return _savedId;
 	}
 
 	bool isPersistent() const {
@@ -94,11 +94,11 @@ public:
 		return _name;
 	}
 
-	void saveTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
-	void loadTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
+	void saveTable(BaseGame *game, BasePersistenceManager *persistMgr);
+	void loadTable(BaseGame *game, BasePersistenceManager *persistMgr);
 
-	void saveInstances(BaseGame *Game, BasePersistenceManager *PersistMgr);
-	void loadInstance(void *instance, BasePersistenceManager *PersistMgr);
+	void saveInstances(BaseGame *game, BasePersistenceManager *persistMgr);
+	void loadInstance(void *instance, BasePersistenceManager *persistMgr);
 
 	void instanceCallback(SYS_INSTANCE_CALLBACK lpCallback, void *lpData);
 
@@ -110,8 +110,8 @@ private:
 	int _numInst;
 	bool _persistent;
 	SystemClass *_next;
-	int _iD{};
-	int _savedID;
+	int _id{};
+	int _savedId;
 	AnsiString _name;
 	PERSISTBUILD _build;
 	PERSISTLOAD _load;

@@ -126,7 +126,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_directoryClass = nullptr;
 
 	_debugLogFile = nullptr;
-	_debugDebugMode = false;
+	_debugMode = false;
 	_debugShowFPS = false;
 
 	_systemFont = nullptr;
@@ -360,7 +360,7 @@ BaseGame::~BaseGame() {
 	SAFE_DELETE(_rndHc);
 #endif
 
-	DEBUG_DebugDisable();
+	debugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
 }
 
@@ -446,7 +446,7 @@ bool BaseGame::cleanup() {
 bool BaseGame::initConfManSettings() {
 	if (ConfMan.hasKey("debug_mode")) {
 		if (ConfMan.getBool("debug_mode")) {
-			DEBUG_DebugEnable("./wme.log");
+			debugEnable("./wme.log");
 		}
 	}
 
@@ -657,8 +657,8 @@ bool BaseGame::initialize3() { // renderer is initialized
 }
 
 //////////////////////////////////////////////////////////////////////
-void BaseGame::DEBUG_DebugEnable(const char *filename) {
-	_debugDebugMode = true;
+void BaseGame::debugEnable(const char *filename) {
+	_debugMode = true;
 
 	int secs = g_system->getMillis() / 1000;
 	int hours = secs / 3600;
@@ -680,13 +680,13 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////
-void BaseGame::DEBUG_DebugDisable() {
+void BaseGame::debugDisable() {
 	if (_debugLogFile != nullptr) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
 		//fclose((FILE *)_debugLogFile);
 		_debugLogFile = nullptr;
 	}
-	_debugDebugMode = false;
+	_debugMode = false;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2859,7 +2859,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// DebugMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DebugMode") == 0) {
-		_scValue->setBool(_debugDebugMode);
+		_scValue->setBool(_debugMode);
 		return _scValue;
 	}
 
@@ -4981,7 +4981,7 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 	if (_activeObject) {
 		_activeObject->applyEvent("MouseLeave");
 	}
-	// if (ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
+	// if (validObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
 	_activeObject = obj;
 	if (_activeObject) {
 		//m_AccessMgr->Speak(m_ActiveObject->GetAccessCaption(), TTS_CAPTION);
@@ -5348,7 +5348,7 @@ bool BaseGame::onMouseLeftDown() {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
-	//CBPlatform::SetCapture(m_Renderer->m_Window);
+	//BasePlatform::setCapture(_renderer->_window);
 
 	return STATUS_OK;
 }
@@ -5362,7 +5362,7 @@ bool BaseGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
-	//ReleaseCapture();
+	//BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
@@ -5528,7 +5528,7 @@ bool BaseGame::displayDebugInfo() {
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
-	if (_game->_debugDebugMode) {
+	if (_game->_debugMode) {
 		if (!_game->_renderer->isWindowed()) {
 			Common::sprintf_s(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
 		} else {

@@ -113,7 +113,7 @@ public:
 		char *dll_name;
 		TCallType call_type;
 		TExternalType returns;
-		int32 nu_params;
+		int32 numParams;
 		TExternalType *params;
 	} TExternalFunction;
 

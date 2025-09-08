@@ -59,8 +59,8 @@ namespace Wintermute {
 		return ::new className(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 	}\
 	\
-	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr) {\
-		return ((className*)instance)->persist(persistMgr);\
+	bool className::persistLoad(void *Instance, BasePersistenceManager *persistMgr) {\
+		return ((className*)Instance)->persist(persistMgr);\
 	}\
 	\
 	const char *className::getClassName() {\

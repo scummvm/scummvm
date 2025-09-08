@@ -268,7 +268,7 @@ bool AdScene::getPath(const BasePoint &source, const BasePoint &target, AdPath *
 
 		pfPointsAdd(startX, startY, 0);
 
-		//CorrectTargetPoint(&target.x, &target.y);
+		// correctTargetPoint(&target.x, &target.y);
 
 		// last point
 		//_pfPath.add(new AdPathPoint(target.x, target.y, INT_MAX));
@@ -344,7 +344,7 @@ float AdScene::getZoomAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
-	if (!_game->_debugDebugMode) {
+	if (!_game->_debugMode) {
 		colorCheck = false;
 	}
 
@@ -557,7 +557,7 @@ bool AdScene::initLoop() {
 	int nu_steps = 0;
 	uint32 start = _game->_currentTime;
 	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) {
-		PathFinderStep();
+		pathFinderStep();
 		nu_steps++;
 	}
 	if (nu_steps > 0) {
@@ -1086,7 +1086,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		/*
 		if (_autoScroll && _game->_mainObject != nullptr)
 		{
-		    ScrollToObject(_game->_mainObject);
+		    scrollToObject(_game->_mainObject);
 		}
 		*/
 
@@ -1196,7 +1196,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			_game->_offsetPercentX = (float)offsetX / ((float)_layers[j]->_width - viewportWidth) * 100.0f;
 			_game->_offsetPercentY = (float)offsetY / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
 
-			//_game->QuickMessageForm("%d %f", OffsetX+ViewportX, _game->_offsetPercentX);
+			// _game->quickMessageForm("%d %f", offsetX+ViewportX, _game->_offsetPercentX);
 		} else {
 			_game->setOffset(_offsetLeft - viewportX, _offsetTop - viewportY);
 
@@ -3695,7 +3695,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 						objects.add(regionObj[newIndex]);
 					}
 				}
-				//if (regionObj.size() > 0) Objects.Append(RegionObj);
+				// if(regionObj.getSize() > 0) objects.append(regionObj);
 			}
 			break;
 
@@ -3708,7 +3708,7 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 
 	// objects outside any region
 	BaseArray<AdObject *> regionObj;
-	getRegionObjects(NULL, regionObj, interactiveOnly);
+	getRegionObjects(nullptr, regionObj, interactiveOnly);
 	for (int32 newIndex = 0; newIndex < regionObj.getSize(); newIndex++) {
 		bool found = false;
 		for (int32 old = 0; old < objects.getSize(); old++) {

@@ -90,12 +90,12 @@ public:
 	char *_debugStartupScene;
 	char *_startupScene;
 	bool _initialScene;
-	bool gameResponseUsed(int ID) const;
-	bool addGameResponse(int ID);
-	bool resetResponse(int ID);
+	bool gameResponseUsed(int id) const;
+	bool addGameResponse(int id);
+	bool resetResponse(int id);
 
-	bool branchResponseUsed(int ID) const;
-	bool addBranchResponse(int ID);
+	bool branchResponseUsed(int id) const;
+	bool addBranchResponse(int id);
 	bool clearBranchResponses(char *name);
 	bool startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
 	bool endDlgBranch(const char *branchName, const char *scriptName, const char *eventName);

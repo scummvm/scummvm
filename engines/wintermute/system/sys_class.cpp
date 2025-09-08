@@ -41,7 +41,7 @@ SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD
 	_build = build;
 	_load = load;
 	_next = nullptr;
-	_savedID = -1;
+	_savedId = -1;
 	_persistent = persistentClass;
 	_numInst = 0;
 
@@ -70,7 +70,7 @@ bool SystemClass::removeAllInstances() {
 //////////////////////////////////////////////////////////////////////////
 SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
 	SystemInstance *inst = new SystemInstance(instance, id, this);
-	inst->setSavedID(savedId);
+	inst->setSavedId(savedId);
 	_instances[inst] = (inst);
 
 	_instanceMap[instance] = inst;
@@ -100,12 +100,12 @@ bool SystemClass::removeInstance(void *instance) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int SystemClass::getInstanceID(void *pointer) {
+int SystemClass::getInstanceId(void *pointer) {
 	InstanceMap::iterator mapIt = _instanceMap.find(pointer);
 	if (mapIt == _instanceMap.end()) {
 		return -1;
 	} else {
-		return (mapIt->_value)->getID();
+		return (mapIt->_value)->getId();
 	}
 }
 
@@ -114,7 +114,7 @@ void *SystemClass::idToPointer(int savedID) {
 	//slow
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		if ((it->_value)->getSavedID() == savedID) {
+		if ((it->_value)->getSavedId() == savedID) {
 			return (it->_value)->getInstance();
 		}
 	}
@@ -129,42 +129,42 @@ int SystemClass::getNumInstances() {
 //////////////////////////////////////////////////////////////////////////
 void SystemClass::dump(Common::WriteStream *stream) {
 	Common::String str;
-	str = Common::String::format("%03d %c %-20s instances: %d\n", _iD, _persistent ? 'p' : ' ', _name.c_str(), getNumInstances());
+	str = Common::String::format("%03d %c %-20s instances: %d\n", _id, _persistent ? 'p' : ' ', _name.c_str(), getNumInstances());
 	stream->write(str.c_str(), str.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
-void SystemClass::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
+void SystemClass::saveTable(BaseGame *game, BasePersistenceManager *persistMgr) {
 	persistMgr->putString(_name.c_str());
-	persistMgr->putDWORD(_iD);
+	persistMgr->putDWORD(_id);
 	persistMgr->putDWORD(_instances.size());
 
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		persistMgr->putDWORD((it->_value)->getID());
+		persistMgr->putDWORD((it->_value)->getId());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
-	_savedID = persistMgr->getDWORD();
+void SystemClass::loadTable(BaseGame *game, BasePersistenceManager *persistMgr) {
+	_savedId = persistMgr->getDWORD();
 	int numInstances = persistMgr->getDWORD();
 
 	for (int i = 0; i < numInstances; i++) {
-		int instID = persistMgr->getDWORD();
+		int instId = persistMgr->getDWORD();
 		if (_persistent) {
 
 			if (i > 0) {
-				gameRef->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", _name.c_str(), numInstances);
+				game->LOG(0, "Warning: attempting to load multiple instances of persistent class %s (%d)", _name.c_str(), numInstances);
 				continue;
 			}
 
 			Instances::iterator it = _instances.begin();
 			if (it != _instances.end()) {
-				(it->_value)->setSavedID(instID);
+				(it->_value)->setSavedId(instId);
 				SystemClassRegistry::getInstance()->addInstanceToTable((it->_value), (it->_value)->getInstance());
 			} else {
-				gameRef->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
+				game->LOG(0, "Warning: instance %d of persistent class %s not found", i, _name.c_str());
 			}
 		}
 		// normal instances, create empty objects
@@ -174,20 +174,20 @@ void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMg
 				warning("HALT");
 			}
 
-			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextID(), instID);
+			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextID(), instId);
 		}
 
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void SystemClass::saveInstances(BaseGame *Game, BasePersistenceManager *persistMgr) {
+void SystemClass::saveInstances(BaseGame *game, BasePersistenceManager *persistMgr) {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
 		// write instace header
 		persistMgr->putString("<INSTANCE_HEAD>");
-		persistMgr->putDWORD(_iD);
-		persistMgr->putDWORD((it->_value)->getID());
+		persistMgr->putDWORD(_id);
+		persistMgr->putDWORD((it->_value)->getId());
 		persistMgr->putString("</INSTANCE_HEAD>");
 		_load((it->_value)->getInstance(), persistMgr);
 		persistMgr->putString("</INSTANCE>");
@@ -204,7 +204,7 @@ void SystemClass::loadInstance(void *instance, BasePersistenceManager *persistMg
 void SystemClass::resetSavedIDs() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		(it->_value)->setSavedID(-1);
+		(it->_value)->setSavedId(-1);
 	}
 }
 

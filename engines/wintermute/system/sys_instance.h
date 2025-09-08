@@ -37,11 +37,11 @@ public:
 	SystemInstance(void *instance, int id, SystemClass *sysClass);
 	virtual ~SystemInstance();
 
-	int getID() const {
+	int getId() const {
 		return _id;
 	}
-	int getSavedID() const {
-		return _savedID;
+	int getSavedId() const {
+		return _savedId;
 	}
 	void *getInstance() const {
 		return _instance;
@@ -50,14 +50,14 @@ public:
 		return _class;
 	}
 
-	void setSavedID(int id) {
-		_savedID = id;
+	void setSavedId(int id) {
+		_savedId = id;
 	}
 
 private:
 	bool _used;
 	int _id;
-	int _savedID;
+	int _savedId;
 	void *_instance;
 	SystemClass *_class;
 };

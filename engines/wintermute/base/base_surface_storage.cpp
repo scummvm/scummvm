@@ -114,7 +114,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 		if (!filename) {
 			BaseEngine::LOG(0, "Missing image: '%s'", filename);
 		}
-		if (_game->_debugDebugMode) {
+		if (_game->_debugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		} else {
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);

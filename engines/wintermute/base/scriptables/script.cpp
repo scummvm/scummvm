@@ -227,10 +227,10 @@ bool ScScript::initTables() {
 			_externals[i].name = getString();
 			_externals[i].call_type = (TCallType)getDWORD();
 			_externals[i].returns = (TExternalType)getDWORD();
-			_externals[i].nu_params = getDWORD();
-			if (_externals[i].nu_params > 0) {
-				_externals[i].params = new TExternalType[_externals[i].nu_params];
-				for (int j = 0; j < _externals[i].nu_params; j++) {
+			_externals[i].numParams = getDWORD();
+			if (_externals[i].numParams > 0) {
+				_externals[i].params = new TExternalType[_externals[i].numParams];
+				for (int j = 0; j < _externals[i].numParams; j++) {
 					_externals[i].params[j] = (TExternalType)getDWORD();
 				}
 			}
@@ -438,7 +438,7 @@ void ScScript::cleanup() {
 
 	if (_externals) {
 		for (uint32 i = 0; i < _numExternals; i++) {
-			if (_externals[i].nu_params > 0) {
+			if (_externals[i].numParams > 0) {
 				delete[] _externals[i].params;
 			}
 		}

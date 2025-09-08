@@ -336,7 +336,7 @@ void BaseArrayBase<TYPE>::removeAt(int32 nIndex, int32 nCount) {
 template<class TYPE>
 void BaseArrayBase<TYPE>::insertAt(int32 nStartIndex, BaseArrayBase *pNewArray) {
 	if (pNewArray->getSize() > 0) {
-		InsertAt(nStartIndex, pNewArray->getAt(0), pNewArray->getSize());
+		insertAt(nStartIndex, pNewArray->getAt(0), pNewArray->getSize());
 		for (int32 i = 0; i < pNewArray->getSize(); i++)
 			setAt(nStartIndex + i, pNewArray->getAt(i));
 	}

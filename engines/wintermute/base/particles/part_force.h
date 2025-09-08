@@ -49,7 +49,7 @@ public:
 	DXVector2 _direction;
 	TForceType _type;
 
-	bool persist(BasePersistenceManager *PersistMgr) override;
+	bool persist(BasePersistenceManager *persistMgr) override;
 };
 
 } // End of namespace Wintermute

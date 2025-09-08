@@ -40,7 +40,7 @@ class UIWindow : public UIObject {
 public:
 	//CBObject *GetPrevAccessObject(CBObject *CurrObject);
 	//CBObject *GetNextAccessObject(CBObject *CurrObject);
-	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
+	bool getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
 	bool _pauseMusic;
 	void cleanup();
@@ -59,7 +59,7 @@ public:
 	bool goExclusive();
 	TWindowMode _mode;
 	bool moveFocus(bool forward = true);
-	bool handleMouse(TMouseEvent Event, TMouseButton Button) override;
+	bool handleMouse(TMouseEvent event, TMouseButton button) override;
 	Common::Point32 _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(UIWindow, UIObject)

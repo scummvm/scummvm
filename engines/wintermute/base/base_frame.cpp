@@ -102,7 +102,7 @@ bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 		_sound->play();
 		/*
 		if (_game->_state == GAME_FROZEN) {
-		    _sound->Pause(true);
+		    _sound->pause(true);
 		}
 		*/
 	}

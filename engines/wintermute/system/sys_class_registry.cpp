@@ -63,12 +63,12 @@ void SystemClassRegistry::unregisterClasses() {
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::registerClass(SystemClass *classObj) {
-	classObj->setID(_count++);
+	classObj->setId(_count++);
 	//_classes.insert(classObj);
 	_classes[classObj] = classObj;
 
 	_nameMap[classObj->getName()] = classObj;
-	_idMap[classObj->getID()] = classObj;
+	_idMap[classObj->getId()] = classObj;
 
 	return true;
 }
@@ -92,7 +92,7 @@ bool SystemClassRegistry::unregisterClass(SystemClass *classObj) {
 		_nameMap.erase(mapIt);
 	}
 
-	IdMap::iterator idIt = _idMap.find(classObj->getID());
+	IdMap::iterator idIt = _idMap.find(classObj->getId());
 	if (idIt != _idMap.end()) {
 		_idMap.erase(idIt);
 	}
@@ -121,8 +121,8 @@ bool SystemClassRegistry::registerInstance(const char *className, void *instance
 void SystemClassRegistry::addInstanceToTable(SystemInstance *instance, void *pointer) {
 	_instanceMap[pointer] = instance;
 
-	if (instance->getSavedID() >= 0) {
-		_savedInstanceMap[instance->getSavedID()] = instance;
+	if (instance->getSavedId() >= 0) {
+		_savedInstanceMap[instance->getSavedId()] = instance;
 	}
 }
 
@@ -162,8 +162,8 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 
 
 	SystemInstance *inst = (*it)._value;
-	*instanceID = inst->getID();
-	*classID = inst->getClass()->getID();
+	*instanceID = inst->getId();
+	*classID = inst->getClass()->getId();
 
 	return true;
 }
@@ -190,7 +190,7 @@ bool checkHeader(const char *tag, BasePersistenceManager *pm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
+bool SystemClassRegistry::saveTable(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave) {
 	persistMgr->putString("<CLASS_REGISTRY_TABLE>");
 	persistMgr->putDWORD(_classes.size());
 
@@ -201,10 +201,10 @@ bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *p
 		counter++;
 
 		if (!quickSave) {
-			gameRef->setIndicatorVal((int)(50.0f / (float)((float)_classes.size() / (float)counter)));
+			game->setIndicatorVal((int)(50.0f / (float)((float)_classes.size() / (float)counter)));
 		}
 
-		(it->_value)->saveTable(gameRef,  persistMgr);
+		(it->_value)->saveTable(game, persistMgr);
 	}
 	persistMgr->putString("</CLASS_REGISTRY_TABLE>");
 	return STATUS_OK;
@@ -212,7 +212,7 @@ bool SystemClassRegistry::saveTable(BaseGame *gameRef, BasePersistenceManager *p
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
+bool SystemClassRegistry::loadTable(BaseGame *game, BasePersistenceManager *persistMgr) {
 	checkHeader("<CLASS_REGISTRY_TABLE>", persistMgr);
 
 	// reset SavedID of current instances
@@ -233,13 +233,13 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 	uint32 numClasses = persistMgr->getDWORD();
 
 	for (uint32 i = 0; i < numClasses; i++) {
-		gameRef->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)(i + 1))));
+		game->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)(i + 1))));
 
 		Common::String className = persistMgr->getStringObj();
 
 		// WA to be removed later
 		// This allow load save games from 2D games where SXVlink class reference is stored
-		if (!gameRef->_is3D && className == "SXVlink") {
+		if (!game->_is3D && className == "SXVlink") {
 			persistMgr->getDWORD(); // saveId
 			persistMgr->getDWORD(); // numInstances
 			continue;
@@ -247,7 +247,7 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end()) {
-			(*mapIt)._value->loadTable(gameRef,  persistMgr);
+			(*mapIt)._value->loadTable(game,  persistMgr);
 		}
 	}
 
@@ -258,7 +258,7 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 
 
 //////////////////////////////////////////////////////////////////////////
-bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr, bool quickSave) {
+bool SystemClassRegistry::saveInstances(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave) {
 
 	Classes::iterator it;
 
@@ -276,25 +276,25 @@ bool SystemClassRegistry::saveInstances(BaseGame *gameRef, BasePersistenceManage
 
 		if (!quickSave) {
 			if (counter % 20 == 0) {
-				gameRef->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter)));
+				game->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)_classes.size() / (float)counter)));
 			}
 		}
-		gameRef->miniUpdate();
+		game->miniUpdate();
 
-		(it->_value)->saveInstances(gameRef,  persistMgr);
+		(it->_value)->saveInstances(game,  persistMgr);
 	}
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManager *persistMgr) {
+bool SystemClassRegistry::loadInstances(BaseGame *game, BasePersistenceManager *persistMgr) {
 	// get total instances
 	int numInstances = persistMgr->getDWORD();
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			gameRef->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)(i + 1))));
+			game->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)(i + 1))));
 		}
 
 		checkHeader("<INSTANCE_HEAD>", persistMgr);
@@ -307,7 +307,7 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 
 		Classes::iterator it;
 		for (it = _classes.begin(); it != _classes.end(); ++it) {
-			if ((it->_value)->getSavedID() == classID) {
+			if ((it->_value)->getSavedId() == classID) {
 				(it->_value)->loadInstance(instance, persistMgr);
 				break;
 			}

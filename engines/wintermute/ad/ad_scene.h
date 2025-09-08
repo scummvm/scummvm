@@ -159,8 +159,8 @@ public:
 	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width{};
 	int32 _height{};
-	bool addObject(AdObject *Object);
-	bool removeObject(AdObject *Object);
+	bool addObject(AdObject *object);
+	bool removeObject(AdObject *object);
 	int32 _editorMarginH;
 	int32 _editorMarginV;
 	uint32 _editorColFrame;

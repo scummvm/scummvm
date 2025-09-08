@@ -299,7 +299,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 		}
 
 		bool ret;
-		if (_initialScene && _debugDebugMode && _debugStartupScene) {
+		if (_initialScene && _debugMode && _debugStartupScene) {
 			_initialScene = false;
 			ret = _scene->loadFile(_debugStartupScene);
 		} else {
@@ -1818,7 +1818,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 	}
 	if (startIndex >= 0) {
 		for (int32 i = startIndex; i < _dlgPendingBranches.getSize(); i++) {
-			//ClearBranchResponses(_dlgPendingBranches[i]);
+			// clearBranchResponses(_dlgPendingBranches[i]);
 			delete[] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = nullptr;
 		}
@@ -2437,7 +2437,7 @@ bool AdGame::onMouseRightUp() {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::displayDebugInfo() {
 	char str[100];
-	if (_game->_debugDebugMode) {
+	if (_game->_debugMode) {
 		Common::sprintf_s(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 

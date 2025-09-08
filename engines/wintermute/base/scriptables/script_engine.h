@@ -79,7 +79,7 @@ public:
 	bool resumeAll();
 	bool pauseAll();
 	void editorCleanup();
-	bool resetObject(BaseObject *Object);
+	bool resetObject(BaseObject *object);
 	bool resetScript(ScScript *script);
 	bool emptyScriptCache();
 	byte *getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache = false);
@@ -106,7 +106,7 @@ public:
 		return _isProfiling;
 	}
 
-	void addScriptTime(const char *filename, uint32 Time);
+	void addScriptTime(const char *filename, uint32 time);
 	void dumpStats();
 
 private:

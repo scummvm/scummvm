@@ -582,7 +582,7 @@ bool ScEngine::isValidScript(ScScript *script) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::clearGlobals(bool includingNatives) {
-	_globals->CleanProps(includingNatives);
+	_globals->cleanProps(includingNatives);
 	return STATUS_OK;
 }
 

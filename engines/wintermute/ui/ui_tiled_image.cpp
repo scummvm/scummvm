@@ -71,38 +71,38 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
-	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
+	int numColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int numRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
 	_game->_renderer->startSpriteBatch();
 
 	// top left/right
-	_image->_surface->displayTrans(x,                                                       y, _upLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
+	_image->_surface->displayTrans(x, y, _upLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + numColumns * tileWidth, y, _upRight);
 
 	// bottom left/right
-	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
+	_image->_surface->displayTrans(x, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + numColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downRight);
 
 	// left/right
-	if (nuRows > 0) {
+	if (numRows > 0) {
 		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
-		_image->_surface->displayTiled(x, yyy, _middleLeft, 1, nuRows);
-		_image->_surface->displayTiled(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight, 1, nuRows);
+		_image->_surface->displayTiled(x, yyy, _middleLeft, 1, numRows);
+		_image->_surface->displayTiled(x + (_middleLeft.right - _middleLeft.left) + numColumns * tileWidth, yyy, _middleRight, 1, numRows);
 	}
 
 	// top/bottom
-	if (nuColumns > 0) {
+	if (numColumns > 0) {
 		int xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTiled(xxx, y, _upMiddle, nuColumns, 1);
-		_image->_surface->displayTiled(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle, nuColumns, 1);
+		_image->_surface->displayTiled(xxx, y, _upMiddle, numColumns, 1);
+		_image->_surface->displayTiled(xxx, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downMiddle, numColumns, 1);
 	}
 
 	// tiles
-	if (nuRows > 0 && nuColumns > 0) {
+	if (numRows > 0 && numColumns > 0) {
 		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
 		int xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, nuColumns, nuRows);
+		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, numColumns, numRows);
 	}
 
 	_game->_renderer->endSpriteBatch();
@@ -358,11 +358,11 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nuColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
-	int nuRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
+	int numColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int numRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	*width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nuColumns * tileWidth;
-	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nuRows * tileHeight;
+	*width = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + numColumns * tileWidth;
+	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + numRows * tileHeight;
 }
 
 

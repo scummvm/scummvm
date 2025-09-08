@@ -48,9 +48,9 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
+BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *owner) : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
-	_owner = Owner;
+	_owner = owner;
 	setDefaults();
 }
 
@@ -126,7 +126,7 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename);
-		if (_game->_debugDebugMode) {
+		if (_game->_debugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
 			return loadFile("invalid.bmp", lifeTime, cacheType);

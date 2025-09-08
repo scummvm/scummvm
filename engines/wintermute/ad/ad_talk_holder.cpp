@@ -77,7 +77,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_game->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_game->LOG(res, "AdTalkHolder::getTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
@@ -378,7 +378,7 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Item")==0) {
-	    SetItem(value->getString());
+		setItem(value->getString());
 	    return STATUS_OK;
 	}
 

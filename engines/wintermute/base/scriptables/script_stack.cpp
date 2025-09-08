@@ -113,23 +113,23 @@ ScValue *ScStack::getAt(int index) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::correctParams(uint32 expectedParams) {
-	uint32 nuParams = (uint32)pop()->getInt();
+	uint32 numParams = (uint32)pop()->getInt();
 
-	if (expectedParams < nuParams) { // too many params
-		while (expectedParams < nuParams) {
-			//Pop();
+	if (expectedParams < numParams) { // too many params
+		while (expectedParams < numParams) {
+			//pop();
 			delete _values[_sP - expectedParams];
 			_values.removeAt(_sP - expectedParams);
-			nuParams--;
+			numParams--;
 			_sP--;
 		}
-	} else if (expectedParams > nuParams) { // need more params
-		while (expectedParams > nuParams) {
-			//Push(null_val);
+	} else if (expectedParams > numParams) { // need more params
+		while (expectedParams > numParams) {
+			//push(nullVal);
 			ScValue *nullVal = new ScValue(_game);
 			nullVal->setNULL();
-			_values.insertAt(_sP - nuParams + 1, nullVal);
-			nuParams++;
+			_values.insertAt(_sP - numParams + 1, nullVal);
+			numParams++;
 			_sP++;
 
 			if (_values.getSize() > _sP + 1) {

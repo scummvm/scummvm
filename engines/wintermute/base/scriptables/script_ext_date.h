@@ -35,9 +35,9 @@ namespace Wintermute {
 
 class SXDate : public BaseScriptable {
 public:
-	int scCompare(BaseScriptable *Value) override;
+	int scCompare(BaseScriptable *value) override;
 	DECLARE_PERSISTENT(SXDate, BaseScriptable)
-	SXDate(BaseGame *inGame, ScStack *Stack);
+	SXDate(BaseGame *inGame, ScStack *stack);
 	~SXDate() override;
 	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;

@@ -605,7 +605,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	_selStart = (int32)MIN((size_t)_selStart, strlen(_text));
 	_selEnd   = (int32)MIN((size_t)_selEnd,   strlen(_text));
 
-	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
+	//int cursorWidth = font->getCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
 
 	int32 s1, s2;

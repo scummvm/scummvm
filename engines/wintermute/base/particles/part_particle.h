@@ -77,7 +77,7 @@ public:
 	bool fadeIn(uint32 currentTime, int fadeTime);
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
-	bool persist(BasePersistenceManager *PersistMgr) override;
+	bool persist(BasePersistenceManager *persistMgr) override;
 
 private:
 	uint32 _fadeStart;

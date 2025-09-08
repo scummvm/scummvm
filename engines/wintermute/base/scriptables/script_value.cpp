@@ -279,7 +279,7 @@ void ScValue::deleteProps() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void ScValue::CleanProps(bool includingNatives) {
+void ScValue::cleanProps(bool includingNatives) {
 	_valIter = _valObject.begin();
 	while (_valIter != _valObject.end()) {
 		if (!_valIter->_value->_isConstVar && (!_valIter->_value->isNative() || includingNatives)) {
@@ -621,7 +621,7 @@ void *ScValue::getMemBuffer() {
 	if (_type == VAL_NATIVE) {
 		return _valNative->scToMemBuffer();
 	} else {
-		return (void *)NULL;
+		return (void *)nullptr;
 	}
 }
 

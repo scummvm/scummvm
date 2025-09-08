@@ -38,7 +38,7 @@ class AdTalkDef : public BaseObject {
 public:
 	char *_defaultSpriteSetFilename;
 	AdSpriteSet *_defaultSpriteSet;
-	BaseSprite *getDefaultSprite(TDirection Dir);
+	BaseSprite *getDefaultSprite(TDirection dir);
 	bool loadDefaultSprite();
 	DECLARE_PERSISTENT(AdTalkDef, BaseObject)
 
