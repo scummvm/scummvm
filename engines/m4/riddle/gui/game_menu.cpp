@@ -32,6 +32,7 @@
 #include "m4/mem/mem.h"
 #include "m4/platform/keys.h"
 #include "m4/m4.h"
+#include "common/config-manager.h"
 
 #include "m4/burger/gui/game_menu.h"
 
@@ -243,7 +244,7 @@ void OptionsMenu::show() {
 	assert(_GM(opMenu));
 
 	const int digiPercent = digi_get_overall_volume();
-	const int midiPercent = midi_get_overall_volume();
+	const int midiPercent = ConfMan.getInt("music_volume") * 100 / 255;
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
 		OM_GAMEMENU_X, OM_GAMEMENU_Y, OM_GAMEMENU_W, OM_GAMEMENU_H,
@@ -291,7 +292,7 @@ void OptionsMenu::cbSetDigi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *
 }
 
 void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *) {
-	midi_set_overall_volume(myItem->percent);
+	ConfMan.setInt("music_volume", myItem->percent * 255 / 100);
 }
 
 /*------------------- SAVE/LOAD METHODS ------------------*/

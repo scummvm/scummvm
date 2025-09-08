@@ -84,12 +84,12 @@ int M4Engine::isDemo() const {
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
-	syncSoundSettings();
 
 	_subtitles.load();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
+	syncSoundSettings();
 
 	if (vars->init()) {
 		// Set the console
@@ -143,6 +143,8 @@ void M4Engine::syncSoundSettings() {
 
 	const int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+
+	_G(midi).syncSoundSettings();
 }
 
 bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -266,7 +268,9 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	} else {
 		s.syncAsByte(_G(kernel).restore_game);
 		s.syncAsSint32LE(_G(game).digi_overall_volume_percent);
-		s.syncAsSint32LE(_G(game).midi_overall_volume_percent);
+		int32 midi_volume_percent = ConfMan.getInt("music_volume") * 100 / 255;
+		s.syncAsSint32LE(midi_volume_percent);
+		ConfMan.setInt("music_volume", midi_volume_percent * 255 / 100);
 		s.syncAsByte(_G(kernel).camera_pan_instant);
 	}
 
@@ -292,7 +296,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
 		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
-		midi_set_overall_volume(_G(game).midi_overall_volume_percent);
+		syncSoundSettings();
 		interface_show();
 	}
 

@@ -38,7 +38,6 @@ struct GameControl {
 	int16 previous_room = 0;
 
 	int32 digi_overall_volume_percent = 100;
-	int32 midi_overall_volume_percent = 100;
 	bool camera_pan_instant = false;
 
 	/**

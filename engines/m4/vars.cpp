@@ -41,7 +41,7 @@ namespace M4 {
 
 Vars *g_vars;
 
-Vars::Vars() : _digi(g_engine->_mixer), _midi(g_engine->_mixer) {
+Vars::Vars() : _digi(g_engine->_mixer), _midi() {
 	g_vars = this;
 
 	Common::fill(_sizeMem, _sizeMem + _MEMTYPE_LIMIT, 0);
@@ -134,7 +134,9 @@ void Vars::game_systems_initialize(byte flags) {
 	fire_up_gui();
 
 	if (flags & INSTALL_SOUND_DRIVERS) {
-		// No implementation
+		int result = _midi.open();
+		if (result > 0)
+			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(result));
 	} else {
 		term_message("Sound driver installation skipped");
 	}

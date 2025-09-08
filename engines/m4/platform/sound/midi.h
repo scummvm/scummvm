@@ -23,24 +23,51 @@
 #ifndef M4_SOUND_PLATFORM_MIDI_H
 #define M4_SOUND_PLATFORM_MIDI_H
 
-#include "audio/midiplayer.h"
 #include "m4/m4_types.h"
+
+#include "audio/mididrv_ms.h"
+#include "audio/midiparser.h"
 
 namespace M4 {
 namespace Sound {
 
-class Midi : public Audio::MidiPlayer {
+class Midi {
 private:
 	static int _midiEndTrigger;
-	Audio::Mixer *_mixer;
+
+	Common::Mutex _mutex;
+
+	MusicType _deviceType;
+
+	MidiDriver_Multisource *_driver;
+	MidiParser *_midiParser;
+	byte *_midiData;
+
+	bool _paused;
+
+protected:
+	static void onTimer(void *data);
+
 public:
-	Midi(Audio::Mixer *mixer);
+	Midi();
+	~Midi();
+
+	int open();
+
+	void load(byte *in, int32 size);
+	void play();
+	void pause(bool pause);
+	void stop();
+	bool isPlaying();
+	void startFade(uint16 duration, uint16 targetVolume);
+	bool isFading();
+
+	void syncSoundSettings();
 
 	void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 	void task();
 	void loop();
-	void set_overall_volume(int vol);
-	int get_overall_volume() const;
+	void midi_fade_volume(int targetVolume, int duration);
 };
 
 } // namespace Sound
@@ -48,9 +75,7 @@ public:
 void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 void midi_loop();
 void midi_stop();
-void midi_set_overall_volume(int vol);
-int midi_get_overall_volume();
-void midi_fade_volume(int val1, int val2);
+void midi_fade_volume(int targetVolume, int duration);
 
 } // namespace M4
 

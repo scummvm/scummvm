@@ -19,31 +19,182 @@
  *
  */
 
-#include "audio/midiparser.h"
 #include "m4/platform/sound/midi.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/vars.h"
+
+#include "common/config-manager.h"
+#include "audio/adlib_ms.h"
+#include "audio/fmopl.h"
+#include "audio/midiparser.h"
+#include "audio/midiparser_hmp.h"
+#include "audio/mt32gm.h"
 
 namespace M4 {
 namespace Sound {
 
 int Midi::_midiEndTrigger;
 
-Midi::Midi(Audio::Mixer *mixer) : _mixer(mixer) {
-	Midi::createDriver();
+Midi::Midi() {
+	_driver = nullptr;
+	_paused = false;
+	_deviceType = MT_NULL;
+	_midiParser = nullptr;
+	_midiData = nullptr;
+}
 
-	int ret = _driver->open();
-	if (ret == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
+Midi::~Midi() {
+	stop();
 
-		_driver->setTimerCallback(this, &timerCallback);
+	if (_driver != nullptr) {
+		_driver->setTimerCallback(nullptr, nullptr);
+		_driver->close();
+	}
+
+	Common::StackLock lock(_mutex);
+
+	if (_midiParser != nullptr)
+		delete _midiParser;
+	if (_midiData != nullptr)
+		delete[] _midiData;
+	if (_driver != nullptr) {
+		delete _driver;
+		_driver = nullptr;
 	}
 }
 
+int Midi::open() {
+	assert(_driver == nullptr);
+
+	// Check the type of device that the user has configured.
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_deviceType = MidiDriver::getMusicType(dev);
+	if (_deviceType == MT_GM && ConfMan.getBool("native_mt32"))
+		_deviceType = MT_MT32;
+
+	OPL::Config::OplType oplType;
+	switch (_deviceType) {
+	case MT_ADLIB:
+		oplType = MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+		_driver = new MidiDriver_ADLIB_Multisource(oplType);
+		break;
+	case MT_GM:
+	case MT_MT32:
+		_driver = new MidiDriver_MT32GM(MusicType::MT_GM);
+		break;
+	default:
+		_driver = new MidiDriver_NULL_Multisource();
+		break;
+	}
+
+	_midiParser = new MidiParser_HMP(0);
+
+	_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+	// Riddle's MIDI data does not consistently set values for every controller
+	// at the start of every track
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PITCH_BEND);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_MODULATION);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PANNING);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_REVERB);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_CHORUS);
+
+	_midiParser->property(MidiParser::mpDisableAutoStartPlayback, true);
+	// Riddle's MIDI data uses sustain
+	_midiParser->property(MidiParser::mpSendSustainOffOnNotesOff, true);
+
+	// Open the MIDI driver.
+	int returnCode = _driver->open();
+	if (returnCode != 0)
+		error("Midi::open - Failed to open MIDI music driver - error code %d.", returnCode);
+
+	syncSoundSettings();
+
+	// Connect the driver and the parser.
+	_midiParser->setMidiDriver(_driver);
+	_midiParser->setTimerRate(_driver->getBaseTempo());
+	_driver->setTimerCallback(this, &onTimer);
+
+	return 0;
+}
+
+void Midi::load(byte* in, int32 size) {
+	Common::StackLock lock(_mutex);
+
+	if (_midiParser == nullptr)
+		return;
+
+	_midiParser->unloadMusic();
+
+	if (_midiData != nullptr)
+		delete[] _midiData;
+	_midiData = new byte[size];
+
+	Common::copy(in, in + size, _midiData);
+
+	_midiParser->loadMusic(_midiData, size);
+}
+
+void Midi::play() {
+	Common::StackLock lock(_mutex);
+
+	if (_midiParser == nullptr || _driver == nullptr)
+		return;
+
+	_midiParser->startPlaying();
+}
+
+void Midi::pause(bool pause) {
+	if (_paused == pause || _driver == nullptr)
+		return;
+
+	_paused = pause;
+
+	if (_midiParser != nullptr) {
+		Common::StackLock lock(_mutex);
+		if (_paused) {
+			_midiParser->pausePlaying();
+		} else {
+			_midiParser->resumePlaying();
+		}
+	}
+}
+
+void Midi::stop() {
+	Common::StackLock lock(_mutex);
+
+	if (_midiParser != nullptr) {
+		_midiParser->stopPlaying();
+		if (_driver != nullptr)
+			_driver->deinitSource(0);
+	}
+}
+
+bool Midi::isPlaying() {
+	Common::StackLock lock(_mutex);
+
+	return _midiParser->isPlaying();
+}
+
+void Midi::startFade(uint16 duration, uint16 targetVolume) {
+	if (_driver == nullptr || _midiParser == nullptr || !_midiParser->isPlaying())
+		return;
+
+	_driver->startFade(0, duration, targetVolume);
+}
+
+bool Midi::isFading() {
+	return _driver->isFading(0);
+}
+
+void Midi::syncSoundSettings() {
+	if (_driver != nullptr)
+		_driver->syncSoundSettings();
+}
+
 void Midi::midi_play(const char *name, int volume, bool loop, int trigger, int roomNum) {
+	if (_driver == nullptr || _midiParser == nullptr)
+		return;
+
 	_midiEndTrigger = trigger;
 
 	// Load in the resource
@@ -54,14 +205,22 @@ void Midi::midi_play(const char *name, int volume, bool loop, int trigger, int r
 		error("Could not find music - %s", fileName.c_str());
 
 	HLock(workHandle);
-#if 0
-// Dump the midi file for analysis purposes
+	/*
 	Common::DumpFile dump;
 	dump.open(fileName.c_str());
 	dump.write(*workHandle, assetSize);
 	dump.close();
-#endif
+	*/
 
+	load((byte *)*workHandle, assetSize);
+	_midiParser->setTrack(0);
+	_midiParser->property(MidiParser::mpAutoLoop, loop ? 1 : 0);
+	// TODO Some calls use volume 0? What is that supposed to do?
+	_driver->setSourceVolume(0, volume);
+
+	play();
+
+	/*
 #ifdef TODO
 	byte *pSrc = (byte *)*workHandle;
 
@@ -84,6 +243,7 @@ void Midi::midi_play(const char *name, int volume, bool loop, int trigger, int r
 	if (trigger != -1)
 		kernel_timing_trigger(10, trigger);
 #endif
+	*/
 
 	HUnLock(workHandle);
 	rtoss(fileName);
@@ -97,12 +257,25 @@ void Midi::loop() {
 	// No implementation
 }
 
-void Midi::set_overall_volume(int vol) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol * 255 / 100);
+void Midi::midi_fade_volume(int targetVolume, int duration) {
+	uint16 durationMsec = duration * 1000 / 30;
+	startFade(durationMsec, targetVolume);
+	// TODO Should this stop playback when fade is completed?
+	// Should this call return after the fade has completed?
 }
 
-int Midi::get_overall_volume() const {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 100 / 255;
+void Midi::onTimer(void* data) {
+	Midi *m = (Midi *)data;
+	Common::StackLock lock(m->_mutex);
+
+	if (m->_midiParser != nullptr) {
+		m->_midiParser->onTimer();
+		if (!m->_midiParser->isPlaying() && _midiEndTrigger >= 0) {
+			// FIXME Can this trigger a deadlock on the mutex?
+			kernel_timing_trigger(10, _midiEndTrigger);
+			_midiEndTrigger = -1;
+		}
+	}
 }
 
 } // namespace Sound
@@ -119,16 +292,8 @@ void midi_stop() {
 	_G(midi).stop();
 }
 
-void midi_set_overall_volume(int vol) {
-	_G(midi).set_overall_volume(vol);
-}
-
-int midi_get_overall_volume() {
-	return _G(midi).get_overall_volume();
-}
-
-void midi_fade_volume(int val1, int val2) {
-	warning("TODO: midi_fade_volume");
+void midi_fade_volume(int targetVolume, int duration) {
+	_G(midi).midi_fade_volume(targetVolume, duration);
 }
 
 } // namespace M4
