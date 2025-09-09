@@ -882,6 +882,9 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 			compData.boundsRect = _clipOverride;
 			compData.boundsRect.right += 1;
 			compData.boundsRect.bottom += 1;
+
+			compData.boundsRect.right = CLIP<int16>(compData.boundsRect.right, 0, _vm->_screenWidth);
+			compData.boundsRect.bottom = CLIP<int16>(compData.boundsRect.bottom, 0, _vm->_screenHeight);
 		}
 	}
 
@@ -930,7 +933,7 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 			skipCelLines(compData, linesToSkip)	;
 			compData.x = compData.boundsRect.right - 1;
 		} else {
-			linesToSkip = (compData.boundsRect.left -1) - rect.left;
+			linesToSkip = (compData.boundsRect.left - 1) - rect.left;
 
 			if (linesToSkip <= 0)
 				drawFlag = 2;
