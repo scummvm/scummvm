@@ -32,6 +32,7 @@
 #include "director/castmember/script.h"
 #include "director/movie.h"
 #include "director/types.h"
+#include "director/window.h"
 
 namespace Director {
 namespace DT {
@@ -116,6 +117,8 @@ void showCast() {
 	ImGui::SetNextWindowSize(ImVec2(480, 480), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
+		Window *selectedWindow = windowListCombo(&_state->_castWindow);
+
 		// display a toolbar with: grid/list/filters buttons + name filter
 		ImGuiEx::toggleButton(ICON_MS_LIST, &_state->_cast._listView);
 		ImGui::SetItemTooltip("List");
@@ -146,7 +149,7 @@ void showCast() {
 		// display a list or a grid
 		const float sliderHeight = _state->_cast._listView ? 0.f : 38.f;
 		const ImVec2 childsize = ImGui::GetContentRegionAvail();
-		Movie *movie = g_director->getCurrentMovie();
+		Movie *movie = selectedWindow->getCurrentMovie();
 		ImGui::BeginChild("##cast", ImVec2(childsize.x, childsize.y - sliderHeight));
 		if (_state->_cast._listView) {
 			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {

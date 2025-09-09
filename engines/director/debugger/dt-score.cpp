@@ -353,63 +353,6 @@ static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
 	ImGui::PopFont();
 }
 
-Window *windowListCombo(Common::String *target) {
-	const Common::Array<Window *> *windowList = g_director->getWindowList();
-	const Common::String selWin = *target;
-	Window *res = nullptr;
-
-	Common::String stage = g_director->getStage()->getCurrentMovie()->getMacName();
-
-	// Check if the relevant window is gone
-	bool found = false;
-	for (auto window : (*windowList)) {
-		if (window->getCurrentMovie()->getMacName() == selWin) {
-			// Found the selected window
-			found = true;
-			res = window;
-			break;
-		}
-	}
-
-	// Our default is Stage
-	if (selWin.empty() || windowList->empty() || !found) {
-		*target = stage;
-		res = g_director->getStage();
-	}
-
-	ImGui::Text("Window:");
-	ImGui::SameLine();
-
-	if (ImGui::BeginCombo("##window", selWin.c_str())) {
-		bool selected = (*target == stage);
-		if (ImGui::Selectable(stage.c_str(), selected))
-			*target = stage;
-
-		if (selected) {
-			ImGui::SetItemDefaultFocus();
-			res = g_director->getStage();
-		}
-
-		for (auto window : (*windowList)) {
-			Common::String winName = window->getCurrentMovie()->getMacName();
-			selected = (*target == winName);
-			if (ImGui::Selectable(winName.c_str(), selected)) {
-				*target = winName;
-				res = window;
-			}
-
-			if (selected) {
-				ImGui::SetItemDefaultFocus();
-				res = window;
-			}
-
-		}
-		ImGui::EndCombo();
-	}
-
-	return res;
-}
-
 void showScore() {
 	if (!_state->_w.score)
 		return;
