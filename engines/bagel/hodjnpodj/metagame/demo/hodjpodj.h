@@ -48,11 +48,14 @@ public:
 	void blackScreen();
 
 	void playMovie(const int, const char *, bool);
+	void skipSplash();
 
 protected:
 	bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void OnTimer(uintptr nEventID);
 	void OnLButtonDown(uint nFlags, CPoint point);
+	void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	void OnClose();
 
 	DECLARE_MESSAGE_MAP()

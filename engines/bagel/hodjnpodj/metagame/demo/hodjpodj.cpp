@@ -50,6 +50,8 @@ BEGIN_MESSAGE_MAP(CHodjPodjWindow, CFrameWnd)
 ON_WM_TIMER()
 ON_WM_LBUTTONDOWN()
 ON_WM_CLOSE()
+ON_WM_KEYDOWN()
+ON_WM_SYSCHAR()
 END_MESSAGE_MAP()
 
 CHodjPodjWindow::CHodjPodjWindow() {
@@ -205,6 +207,19 @@ void CHodjPodjWindow::OnTimer(uintptr nEventID) {
 }
 
 void CHodjPodjWindow::OnLButtonDown(uint nFlags, CPoint point) {
+	skipSplash();
+}
+
+
+void CHodjPodjWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
+	skipSplash();
+}
+
+void CHodjPodjWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
+	skipSplash();
+}
+
+void CHodjPodjWindow::skipSplash() {
 	switch (_currentCommand) {
 	case IDC_SPLASH1:
 		OnTimer(TIMER_SPLASH1);
