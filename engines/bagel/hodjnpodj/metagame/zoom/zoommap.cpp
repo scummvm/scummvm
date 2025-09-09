@@ -433,15 +433,20 @@ void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		int game = (_isDemo ? DEMO_VALUES : MINIGAME_VALUES)[x];
 		if (game == -1 && m_bShowExit == false) {
 			CWnd::OnLButtonDown(nFlags, point);
-			return;
+		} else if (game == -2) {
+			// Demo Hype dialog
+			Common::String txtName = Common::String::format("hype%02d.txt", x - 19);
+			Common::String wavName = Common::String::format("sound/q%02d.wav", x - 19);
+			CRules textDialog(this, txtName.c_str(), pGamePalette, wavName.c_str());
+			textDialog.DoModal();
+
+		} else {
+			nReturnValue = game;	// if so then dispatch to game
+			PostMessage(WM_CLOSE);
 		}
-
-		nReturnValue = game;	// if so then dispatch to game
-		PostMessage(WM_CLOSE);
-		return;
+	} else {
+		CWnd::OnLButtonDown(nFlags, point);
 	}
-
-	CWnd::OnLButtonDown(nFlags, point);
 }
 
 void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {

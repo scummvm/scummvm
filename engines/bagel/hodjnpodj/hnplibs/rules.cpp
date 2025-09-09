@@ -43,7 +43,7 @@ namespace HodjNPodj {
 #define SCROLL_STRIP_WIDTH  10                      // width of scroll middle to reveal per interval 
 #define SCROLL_STRIP_DELAY  1000                    // delay to wait after each partial scroll unfurling
 
-#define TEXT_BUFFER_SIZE    512                     // # characters in the text input buffer
+#define TEXT_BUFFER_SIZE    1024                    // # characters in the text input buffer
 #define TEXT_LEFT_MARGIN    55                      // left margin offset for display of text
 #define TEXT_TOP_MARGIN     5                       // top margin offset for display of text
 #define TEXT_BOTTOM_MARGIN  20                      // bottom margin offset for display of text
@@ -939,8 +939,7 @@ try_again:
 
 			if (chInBuf[i + n - 1] == '\r') {
 crop_byte:
-				Common::strcpy_s(&chInBuf[i + n - 1], 512 - (i + n - 1),
-					&chInBuf[i + n]);
+				Common::copy(&chInBuf[i + n], chInBuf + nCount, &chInBuf[i + n - 1]);
 				nCount -= 1;
 				nCropped += 1;
 				continue;

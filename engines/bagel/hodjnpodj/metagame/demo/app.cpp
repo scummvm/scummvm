@@ -34,6 +34,7 @@ CTheApp::CTheApp() {
 
 bool CTheApp::InitApplication() {
 	addResources("hnpdemo.exe");
+	addResources("hnpzm.dll");
 	addFontResource("msserif.fon");
 
 	return CWinApp::InitApplication();
