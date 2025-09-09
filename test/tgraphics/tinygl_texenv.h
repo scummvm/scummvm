@@ -31,7 +31,12 @@ public:
         }
     }
 
-	// these two functions use RGBA order instead of ARGB to make it consistent with tglColor4ub which we also call
+	// these three functions use RGBA order instead of ARGB to make it consistent with tglColor4ub which we also call
+
+    void setConstant(byte r, byte g, byte b, byte a) {
+        const float values[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+        tglTexEnvfv(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_COLOR, values);
+    }
 
     void drawPixel(byte texR, byte texG, byte texB, byte texA) {
 		const float S = 10.0f;
@@ -91,6 +96,15 @@ public:
         // attention: TGL_ADD still modulates alpha
     }
 
+    void testBlend() {
+        tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_BLEND);
+        tglColor4ub(210, 210, 200, 127);
+        setConstant(123, 123, 100, 42);
+        drawPixel(0, 255, 128, 200);
+        checkOutput(211, 123, 150, 100);
+		// the 211 is an unfortunate rounding problem
+    }
+
     void setCombineMode(TGLuint combineRGB, TGLuint combineAlpha) {
         tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_COMBINE);
         tglTexEnvi(TGL_TEXTURE_ENV, TGL_COMBINE_RGB, combineRGB);
@@ -116,6 +130,14 @@ public:
         setCombineMode(TGL_REPLACE, TGL_REPLACE);
         setCombineArg(0, TGL_PRIMARY_COLOR, TGL_SRC_COLOR, TGL_PRIMARY_COLOR, TGL_SRC_ALPHA);
         tglColor4ub(12, 34, 56, 78);
+        drawPixel(13, 37, 42, 24);
+        checkOutput(12, 34, 56, 78);
+    }
+
+    void testCombineArgConstant() {
+        setCombineMode(TGL_REPLACE, TGL_REPLACE);
+        setCombineArg(0, TGL_CONSTANT, TGL_SRC_COLOR, TGL_CONSTANT, TGL_SRC_ALPHA);
+        setConstant(12, 34, 56, 78);
         drawPixel(13, 37, 42, 24);
         checkOutput(12, 34, 56, 78);
     }

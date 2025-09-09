@@ -53,6 +53,7 @@ struct GLTextureEnv {
 	bool isDefault() const;
 
 	uint envMode, combineRGB, combineAlpha;
+	byte constA, constR, constG, constB;
 	GLTextureEnvArgument arg0, arg1;
 };
 

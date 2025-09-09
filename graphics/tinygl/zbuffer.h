@@ -76,7 +76,7 @@ static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
 
-struct GLTextureEnv; // defined in zgl.h
+struct GLTextureEnv; // defined in zdirtyrect.h
 
 struct Buffer {
 	byte *pbuf;
