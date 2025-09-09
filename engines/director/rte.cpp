@@ -31,8 +31,8 @@
 namespace Director {
 
 RTE0::RTE0(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
-	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "RTE0:");
+	if (debugChannelSet(9, kDebugLoading)) {
+		debugC(9, kDebugLoading, "RTE0:");
 		stream.hexdump(stream.size());
 	}
 	data.resize(stream.size(), 0);
@@ -41,8 +41,8 @@ RTE0::RTE0(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 }
 
 RTE1::RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
-	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "RTE1:");
+	if (debugChannelSet(9, kDebugLoading)) {
+		debugC(9, kDebugLoading, "RTE1:");
 		stream.hexdump(stream.size());
 	}
 	data.resize(stream.size(), 0);
@@ -51,8 +51,8 @@ RTE1::RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 }
 
 RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
-	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "RTE2:");
+	if (debugChannelSet(9, kDebugLoading)) {
+		debugC(9, kDebugLoading, "RTE2:");
 		stream.hexdump(stream.size());
 	}
 	_width = 0;
