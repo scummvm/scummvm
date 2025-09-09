@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-07 16:36+0000\n"
+"PO-Revision-Date: 2025-09-10 04:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -12643,59 +12643,41 @@ msgid "Options menu keymappings"
 msgstr "Assignacions de tecles del menú d'opcions"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Password entry keymappings"
-msgstr "Assignacions del menú principal"
+msgstr "Assignacions de tecles per entrar contrasenyes"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Talk options keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de les opcions de conversa"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Examine / Select"
-msgstr "Mou / Interactua"
+msgstr "Mou / Examina / Selecciona"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "Obre el menú d'acció / Tanca el menú"
+msgstr "Obre el menú de verbs / tanca el menú"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "Canvia el so"
+msgstr "Canvia la velocitat"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Show journal"
 msgid "Open journal"
-msgstr "Mostra el diari"
+msgstr "Obre el diari"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "Obre el menú d'opcions"
+msgstr "Obre les opcions"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "Ajusta a la finestra"
+msgstr "Surt / Tanca la finestra"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "Omet el diàleg"
+msgstr "Omet el pròleg"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
@@ -12707,154 +12689,111 @@ msgstr ""
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "Mostra el diari"
+msgstr "Avança 10 pàgines"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 1 page"
-msgstr "Mostra el diari"
+msgstr "Avança 1 pàgina"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back 1 page"
-msgstr "Mostra el diari"
+msgstr "Torna enrere 1 pàgina"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of journal"
-msgstr "Ves al començament de la línia"
+msgstr "Ves a l'inici del diari"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of journal"
-msgstr "Ves al final de la línia"
+msgstr "Ves al final del diari"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
 msgid "Skip darts minigame"
-msgstr "Salta la línia"
+msgstr "Omet el minijoc dels dards"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to top left"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaça a la part superior esquerra"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Move to bottom"
 msgid "Scroll to bottom right"
-msgstr "Mou a la part inferior"
+msgstr "Desplaça a la part inferior dreta"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "Desplaça la barra cap amunt"
+msgstr "Desplaça la pàgina cap amunt"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "Desplaça la barra cap avall"
+msgstr "Desplaça la pàgina cap avall"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to end"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaça fins al final"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to start"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaça fins al començament"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next save file slot"
-msgstr "Ves al diàleg següent"
+msgstr "Ves a la següent ranura de desament"
 
 #: engines/sherlock/metaengine.cpp:1074
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to next page of save files"
-msgstr "Ves a l'inici del menú de desar/carregar"
+msgstr "Ves a la pàgina següent de fitxers desats"
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "Seleccioneu el fitxer de còpia de seguretat"
+msgstr "Selecciona el fitxer de desament"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "Ves al final de la línia"
+msgstr "Ves a l'inici de la línia"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line end"
 msgstr "Ves al final de la línia"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "Commuta el mode ràpid"
+msgstr "Commuta el mode d'inserció"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "Tanca la finestra emergent"
+msgstr "Tanca el trencaclosques"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select next option"
-msgstr "Selecciona l'actor següent"
+msgstr "Selecciona l'opció següent"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next talk option"
-msgstr "Ves al diàleg següent"
+msgstr "Ves a la següent opció de discussió"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous talk option"
-msgstr "Ves als diàlegs anteriors"
+msgstr "Ves a l'anterior opció de discussió"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -12873,10 +12812,8 @@ msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on/off"
 msgid "Toggle really fast mode on / off"
-msgstr "Activa/desactiva el mode realment ràpid"
+msgstr "Activa / desactiva el mode realment ràpid"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12904,14 +12841,10 @@ msgid "Change action"
 msgstr "Canvia l'acció"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Speed up dialogue"
 msgid "Speed up dialog"
 msgstr "Accelera el diàleg"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down dialogue"
 msgid "Slow down dialog"
 msgstr "Alenteix el diàleg"
 
@@ -12938,8 +12871,6 @@ msgid "Inventory / Examine"
 msgstr "Inventari / Examina"
 
 #: engines/sludge/keymapper_tables.h:281 engines/sword25/metaengine.cpp:118
-#, fuzzy
-#| msgid "Examine / Skip dialogue"
 msgid "Examine / Skip dialog"
 msgstr "Examina / Omet el diàleg"
 
@@ -12974,16 +12905,12 @@ msgstr "Llança encanteri d'aigua"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
 #: engines/sword25/metaengine.cpp:112
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Move / Interact / Skip dialog"
 msgstr "Mou / Interactua / Omet el diàleg"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialog"
-msgstr "Omet la línia de diàleg"
+msgstr "Inventari / Omet el diàleg"
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
@@ -13065,32 +12992,22 @@ msgid "Scroll down in inventory"
 msgstr "Desplaça't cap avall en l'inventari"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll up in your dialogs"
-msgstr "Desplaça't cap amunt a l'inventari"
+msgstr "Desplaça cap amunt en els vostres diàlegs"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll down in inventory"
 msgid "Scroll down in your dialogs"
-msgstr "Desplaça't cap avall en l'inventari"
+msgstr "Desplaça cap avall en els vostres diàlegs"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next dialog"
-msgstr "Ves al diàleg següent"
+msgstr "Ves al següent diàleg"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous dialogs"
 msgstr "Ves als diàlegs anteriors"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Select dialog"
 msgstr "Seleccioneu un diàleg"
 
@@ -13172,60 +13089,44 @@ msgid "Improved mode keymappings"
 msgstr "Assignació de tecles del mode millorat"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "Assignació de tecles de la pantalla de sortida"
+msgstr "Assignació de tecles del lector de text"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles de l'ordinador"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Look at"
 msgid "Perform default action"
-msgstr "Mira"
+msgstr "Realitza l'acció predeterminada"
 
 #: engines/supernova/metaengine.cpp:244
 msgid "Instructions"
 msgstr "Instruccions"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "Informació general"
+msgstr "Informació"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "Velocitat del text - Ràpida"
+msgstr "Velocitat del text"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "Rota cap amunt"
+msgstr "Pàgina amunt"
 
 #: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page down"
-msgstr "Rota cap avall"
+msgstr "Pàgina avall"
 
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr ""
 
 #: engines/supernova/metaengine.cpp:379
-#, fuzzy
-#| msgid "Open Files manager"
 msgid "Office manager"
-msgstr "Obre el gestor de fitxers"
+msgstr "Gestor de l'oficina"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
@@ -13342,8 +13243,6 @@ msgid "Additional options:"
 msgstr "Opcions addicionals:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main menu"
 msgstr "Menú principal"
 
@@ -13375,22 +13274,16 @@ msgid "Reveal all interactive hotspots (hold the key)"
 msgstr ""
 
 #: engines/teenagent/metaengine.cpp:201
-#, fuzzy
-#| msgid "Inventory / Examine"
 msgid "Move / Examine"
-msgstr "Inventari / Examina"
+msgstr "Mou / Examina"
 
 #: engines/teenagent/metaengine.cpp:221
-#, fuzzy
-#| msgid "Open / Close inventory"
 msgid "Close inventory"
-msgstr "Obre / Tanca l'inventari"
+msgstr "Tanca l'inventari"
 
 #: engines/teenagent/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle inventory"
-msgstr "Commuta la visualització de l'inventari"
+msgstr "Commuta l'inventari"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -13428,98 +13321,68 @@ msgid "Save/Load keymappings"
 msgstr "Assignació de tecles Desa/Carrega"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Page up in save / load menu"
-msgstr "Pàgina amunt en el menú de desar/carregar"
+msgstr "Pàgina amunt en el menú de desar / carregar"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Page down in save/load menu"
 msgid "Page down in save / load menu"
-msgstr "Pàgina avall en el menú de desar/carregar"
+msgstr "Pàgina avall en el menú de desar / carregar"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to start of save / load menu"
-msgstr "Ves a l'inici del menú de desar/carregar"
+msgstr "Ves a l'inici del menú de desar / carregar"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to end of save/load menu"
 msgid "Go to end of save / load menu"
-msgstr "Ves al final del menú de desar/carregar"
+msgstr "Ves al final del menú de desar / carregar"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 
 #: engines/titanic/metaengine.cpp:173
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "PET keymappings"
-msgstr "Assignació de tecles d'escapament"
+msgstr "Assignació de tecles del PET"
 
 #: engines/titanic/metaengine.cpp:174
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Real Life keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles de la vida real"
 
 #: engines/titanic/metaengine.cpp:175
-#, fuzzy
-#| msgid "KIA only shortcuts"
 msgid "Inventory shortcut"
-msgstr "només dreceres del KIA"
+msgstr "Drecera de l'inventari"
 
 #: engines/titanic/metaengine.cpp:176
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Continue game dialogue keymappings"
-msgstr "Assignació de minijocs"
+msgstr "Assignacions de tecles del diàleg de Continua el joc"
 
 #: engines/titanic/metaengine.cpp:177
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Star Map keymappings"
-msgstr "Assignació de tecles del menú d'inici"
+msgstr "Assignació de tecles del mapa estel·lar"
 
 #: engines/titanic/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Movement keymappings"
-msgstr "Assignacions del menú"
+msgstr "Assignacions de tecles de moviment"
 
 #: engines/titanic/metaengine.cpp:182
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact / Move"
-msgstr "Mode d'interacció"
+msgstr "Selecciona / Interactua / Mou"
 
 #: engines/titanic/metaengine.cpp:188
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Select / Interact / Quick move"
-msgstr "Mou / Interactua / Omet el diàleg"
+msgstr "Selecciona / Interactua / Moviment ràpid"
 
 #: engines/titanic/metaengine.cpp:194
-#, fuzzy
-#| msgid "Game menu"
 msgid "Cheat menu"
-msgstr "Menú del joc"
+msgstr "Menú de trucs"
 
 #: engines/titanic/metaengine.cpp:239
-#, fuzzy
-#| msgid "Conversation log"
 msgid "Conversation"
-msgstr "Registre de converses"
+msgstr "Conversa"
 
 #: engines/titanic/metaengine.cpp:249
-#, fuzzy
-#| msgid "Remove"
 msgid "Remote"
-msgstr "Suprimeix"
+msgstr "Remot"
 
 #: engines/titanic/metaengine.cpp:254
 msgid "Rooms"
@@ -13530,28 +13393,20 @@ msgid "Real life"
 msgstr ""
 
 #: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll up page"
-msgstr "Desplaçament amunt"
+msgstr "Desplaça la pàgina amunt"
 
 #: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll down page"
-msgstr "Desplaçament avall"
+msgstr "Desplaça la pàgina avall"
 
 #: engines/titanic/metaengine.cpp:278
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to top"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaça a la part superior"
 
 #: engines/titanic/metaengine.cpp:284
-#, fuzzy
-#| msgid "Move to bottom"
 msgid "Scroll to bottom"
-msgstr "Mou a la part inferior"
+msgstr "Desplaça a la part inferior"
 
 #: engines/titanic/metaengine.cpp:291
 msgid "Translation"
@@ -13574,10 +13429,8 @@ msgid "Unlock coordinate"
 msgstr ""
 
 #: engines/titanic/metaengine.cpp:368
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "View constellations"
-msgstr "Surt de la conversa"
+msgstr "Mostra les constel·lacions"
 
 #: engines/titanic/metaengine.cpp:373
 msgid "View boundaries"
