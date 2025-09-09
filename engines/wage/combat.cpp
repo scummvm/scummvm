@@ -296,20 +296,20 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 	}
 
 	if (causesPhysicalDamage) {
-		victim->_context._userVariables[PHYS_HIT_CUR] -= weapon->_damage;
+		victim->_context._statVariables[PHYS_HIT_CUR] -= weapon->_damage;
 
 		/* Do it here to get the right order of messages in case of death. */
 		decrementUses(weapon);
 		usesDecremented = true;
 
-		if (victim->_context._userVariables[PHYS_HIT_CUR] < 0) {
+		if (victim->_context._statVariables[PHYS_HIT_CUR] < 0) {
 			playSound(victim->_dyingSound);
 			appendText(victim->_dyingWords.c_str());
 			snprintf(buf, 512, "%s%s is dead!", victim->getDefiniteArticle(true), victim->_name.c_str());
 			appendText(buf);
 
 			attacker->_context._kills++;
-			attacker->_context._experience += victim->_context._userVariables[SPIR_HIT_CUR] + victim->_context._userVariables[PHYS_HIT_CUR];
+			attacker->_context._experience += victim->_context._statVariables[SPIR_HIT_CUR] + victim->_context._statVariables[PHYS_HIT_CUR];
 
 			if (!victim->_playerCharacter && !victim->_inventory.empty()) {
 				Scene *currentScene = victim->_currentScene;
@@ -324,8 +324,8 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 			}
 			_world->move(victim, _world->_storageScene);
 		} else if (attacker->_playerCharacter && !receivedHitTextPrinted) {
-			double physicalPercent = (double)victim->_context._userVariables[SPIR_HIT_CUR] /
-					victim->_context._userVariables[SPIR_HIT_BAS];
+			double physicalPercent = (double)victim->_context._statVariables[SPIR_HIT_CUR] /
+					victim->_context._statVariables[SPIR_HIT_BAS];
 			snprintf(buf, 512, "%s%s's condition appears to be %s.",
 				victim->getDefiniteArticle(true), victim->_name.c_str(),
 				getPercentMessage(physicalPercent));
