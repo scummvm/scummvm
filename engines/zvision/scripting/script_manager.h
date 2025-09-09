@@ -197,6 +197,14 @@ private:
 	uint32 _currentlyFocusedControl;
 
 public:
+	enum TransitionLevel {
+		NONE,
+		VIEW,
+		NODE,
+		ROOM,
+		WORLD
+	};
+
 	void initialize(bool restarted = false);
 	void process(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
@@ -290,9 +298,20 @@ private:
 	void addPuzzlesToReferenceTable(ScriptScope &scope);
 	void updateNodes(uint deltaTimeMillis);
 	void updateControls(uint deltaTimeMillis);
+	/**
+	 * Check a puzzle's criteria; execute its actions and set its state to 1 if these critera are met.
+	 * Will not check or execute if:
+	 *  Puzzle is disabled
+	 *  Puzzle has already triggered and has a state value of 1
+	 *  procCount has reached zero AND do_me_now is not set
+	 *
+	 * @param puzzle    puzzle to check
+	 * @param counter   procCount from this puzzle's scope container
+	 * Returns true if OK to keep calling this function this frame; false if we should break and start next frame (only used by RestoreGame action)
+	 */
 	bool checkPuzzleCriteria(Puzzle *puzzle, uint counter);
-	void cleanStateTable();
-	void cleanScriptScope(ScriptScope &scope);
+	void cleanStateTable();	// Set all global state values to zero
+	void cleanScriptScope(ScriptScope &scope);	// Resets everything in this scope, all lists empty, procCount to zero.
 	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */

@@ -641,14 +641,11 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	}
 
 	if (enteringMenu) {
-		if (isSaveScreen && !leavingMenu) {
+		if (isSaveScreen && !leavingMenu)
 			_engine->getSaveManager()->prepareSaveBuffer();
-		}
-	} else {
-		if (leavingMenu) {
-			_engine->getSaveManager()->flushSaveBuffer();
-		}
 	}
+	else if (leavingMenu)
+		_engine->getSaveManager()->flushSaveBuffer();
 
 	setStateValue(StateKey_World, _nextLocation.world);
 	setStateValue(StateKey_Room, _nextLocation.room);
@@ -661,45 +658,40 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 
 	_engine->getMenuManager()->setEnable(0xFFFF);
 
-	if (_nextLocation.world != _currentLocation.world) {
-		cleanScriptScope(_nodeview);
-		cleanScriptScope(_room);
+	TransitionLevel level = NONE;
+	Common::Path filePath;
+	if (_nextLocation.world != _currentLocation.world)
+		level = WORLD;
+	else if (_nextLocation.room != _currentLocation.room)
+		level = ROOM;
+	else if (_nextLocation.node != _currentLocation.node)
+		level = NODE;
+	else if (_nextLocation.view != _currentLocation.view)
+		level = VIEW;
+
+	switch (level) {
+	case WORLD:
 		cleanScriptScope(_world);
-
-		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, _nodeview);
-		addPuzzlesToReferenceTable(_nodeview);
-
-		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, _room);
-		addPuzzlesToReferenceTable(_room);
-
-		fileName = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
-		parseScrFile(fileName, _world);
-		addPuzzlesToReferenceTable(_world);
-	} else if (_nextLocation.room != _currentLocation.room) {
-		cleanScriptScope(_nodeview);
+		filePath = Common::Path(Common::String::format("%c.scr", _nextLocation.world));
+		parseScrFile(filePath, _world);
+		// fall through
+	case ROOM:
 		cleanScriptScope(_room);
-
-		addPuzzlesToReferenceTable(_world);
-
-		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, _nodeview);
-		addPuzzlesToReferenceTable(_nodeview);
-
-		fileName = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
-		parseScrFile(fileName, _room);
-		addPuzzlesToReferenceTable(_room);
-
-	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
+		filePath = Common::Path(Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room));
+		parseScrFile(filePath, _room);
+		// fall through
+	case NODE:
+	case VIEW:
 		cleanScriptScope(_nodeview);
-
-		addPuzzlesToReferenceTable(_room);
+		filePath = Common::Path(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
+		parseScrFile(filePath, _nodeview);
 		addPuzzlesToReferenceTable(_world);
-
-		Common::Path fileName(Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view));
-		parseScrFile(fileName, _nodeview);
+		addPuzzlesToReferenceTable(_room);
 		addPuzzlesToReferenceTable(_nodeview);
+		break;
+	case NONE:
+	default:
+		break;
 	}
 
 	_activeControls = &_nodeview.controls;
@@ -710,22 +702,24 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	if (_currentLocation == "0000") {
+	if (_currentLocation == "0000")
+		level = WORLD;
+	if (level != NONE)
 		_currentLocation = _nextLocation;
+	switch (level) {
+	case WORLD:
 		execScope(_world);
+		// fall through
+	case ROOM:
 		execScope(_room);
+		// fall through
+	case NODE:
+	case VIEW:
 		execScope(_nodeview);
-	} else if (_nextLocation.world != _currentLocation.world) {
-		_currentLocation = _nextLocation;
-		execScope(_room);
-		execScope(_nodeview);
-	} else if (_nextLocation.room != _currentLocation.room) {
-		_currentLocation = _nextLocation;
-		execScope(_room);
-		execScope(_nodeview);
-	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
-		_currentLocation = _nextLocation;
-		execScope(_nodeview);
+		break;
+	case NONE:
+	default:
+		break;
 	}
 
 	_engine->getRenderManager()->checkBorders();
