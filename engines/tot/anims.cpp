@@ -168,8 +168,10 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				if (isEnglish) {
 					clearCharacterText();
 				}
+				break;
 			case 74:
 				if (isEnglish) {
+					debug(3, "Showing character text in English: %s\n", messages[35]);
 					drawCharacterText(
 						messages[35],
 						messages[36],
@@ -177,6 +179,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 						messages[38],
 						messages[39]);
 				}
+				break;
 			case 75:
 				if (isSpanish) {
 					clearCharacterText();
