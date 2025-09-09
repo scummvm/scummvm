@@ -51,8 +51,8 @@ HWND RunZoomMap(HWND hParentWnd, bool bShowExit) {
 // create a my poker window and show it
 	pMainGameWnd = new CMainZoomWindow(hParentWnd, bShowExit);
 	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
-	pMainGameWnd->UpdateWindow();
 	pMainGameWnd->SetActiveWindow();
+	pMainGameWnd->UpdateWindow();
 
 // return the handle to this window
 	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);

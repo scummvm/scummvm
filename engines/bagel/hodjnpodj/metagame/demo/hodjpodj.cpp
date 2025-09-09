@@ -107,7 +107,6 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	case MOVIE_OVER:
 		// Switch to Zoom map
 		ShowCursor(true);
-		blackScreen();
 		PostMessage(WM_COMMAND, IDC_ZOOM);
 		break;
 
