@@ -328,6 +328,12 @@ void FrameBuffer::applyTextureEnvironment(
 			opColor.g = sat16_to_8(previousG);
 			opColor.b = sat16_to_8(previousB);
 			break;
+		case TGL_CONSTANT:
+			opColor.a = _textureEnv->constA;
+			opColor.r = _textureEnv->constR;
+			opColor.g = _textureEnv->constG;
+			opColor.b = _textureEnv->constB;
+			break;
 		default:
 			assert(false && "Invalid texture environment arg color source");
 			break;
@@ -338,6 +344,9 @@ void FrameBuffer::applyTextureEnvironment(
 			break;
 		case TGL_PRIMARY_COLOR:
 			op.a = sat16_to_8(previousA);
+			break;
+		case TGL_CONSTANT:
+			op.a = _textureEnv->constA;
 			break;
 		default:
 			assert(false && "Invalid texture environment arg alpha source");
@@ -402,12 +411,22 @@ void FrameBuffer::applyTextureEnvironment(
 	}
 	case TGL_ADD:
 	{
-		// GL_RGB: Cp + Cs | Ap
-		// GL_RGB: Cp + Cs | ApAs
+		// GL_RGB:  Cp + Cs | Ap
+		// GL_RGBA: Cp + Cs | ApAs
 		texA = fpMul(sat16_to_8(previousA), texA);
 		texR = satAdd(sat16_to_8(previousR), texR);
 		texG = satAdd(sat16_to_8(previousG), texG);
 		texB = satAdd(sat16_to_8(previousB), texB);
+		break;
+	}
+	case TGL_BLEND:
+	{
+		// GL_RGB:  Cp(1-Cs) + CcCs | Ap
+		// GL_RGBA: Cp(1-Cs) + CcCs | ApAs
+		texA = fpMul(sat16_to_8(previousA), texA);
+		texR = satAdd(fpMul(sat16_to_8(previousR), 255 - texR), fpMul(_textureEnv->constR, texR));
+		texG = satAdd(fpMul(sat16_to_8(previousG), 255 - texG), fpMul(_textureEnv->constG, texG));
+		texB = satAdd(fpMul(sat16_to_8(previousB), 255 - texB), fpMul(_textureEnv->constB, texB));
 		break;
 	}
 	case TGL_COMBINE:

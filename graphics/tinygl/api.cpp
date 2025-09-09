@@ -742,6 +742,24 @@ void tglTexEnvi(TGLenum target, TGLenum pname, TGLint param) {
 	c->gl_add_op(p);
 }
 
+void tglTexEnvfv(TGLenum target, TGLenum pname, const TGLfloat *params) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[8];
+	
+	p[0].op = TinyGL::OP_TexEnv;
+	p[1].i = target;
+	p[2].i = pname;
+	p[3].i = 0;
+
+	int n = 0;
+	if (target == TGL_TEXTURE_ENV && pname == TGL_TEXTURE_ENV_COLOR)
+		n = 4;
+	for (int i = 0; i < n; i++)
+		p[4 + i].f = params[i];
+
+	c->gl_add_op(p);
+}
+
 void tglTexParameteri(TGLenum target, TGLenum pname, TGLint param) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[8];

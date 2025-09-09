@@ -36,7 +36,8 @@ GLTextureEnvArgument::GLTextureEnvArgument()
 GLTextureEnv::GLTextureEnv()
 	: envMode(TGL_MODULATE)
 	, combineRGB(TGL_REPLACE)
-	, combineAlpha(TGL_REPLACE) {}
+	, combineAlpha(TGL_REPLACE)
+	, constA(255), constR(255), constG(255), constB(255) {}
 
 bool GLTextureEnv::isDefault() const {
 	return envMode == TGL_MODULATE;

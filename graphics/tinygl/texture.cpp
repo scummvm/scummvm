@@ -190,7 +190,7 @@ void GLContext::glopTexEnv(GLParam *p) {
 
 	if (target != TGL_TEXTURE_ENV) {
 error:
-		error("tglTexParameter: unsupported option");
+		error("tglTexEnv: unsupported option");
 	}
 
 	switch (pname) {
@@ -198,7 +198,7 @@ error:
 		if (param == TGL_REPLACE ||
 			param == TGL_MODULATE ||
 			param == TGL_DECAL ||
-			//param == TGL_BLEND || // no tex env constants yet
+			param == TGL_BLEND ||
 			param == TGL_ADD ||
 			param == TGL_COMBINE)
 			_texEnv.envMode = param;
@@ -226,7 +226,8 @@ error:
 	{
 		GLTextureEnvArgument *op = pname == TGL_SOURCE0_RGB ? &_texEnv.arg0 : &_texEnv.arg1;
 		if (param == TGL_TEXTURE ||
-			param == TGL_PRIMARY_COLOR)
+			param == TGL_PRIMARY_COLOR ||
+			param == TGL_CONSTANT)
 			op->sourceRGB = param;
 		else
 			goto error;
@@ -237,7 +238,8 @@ error:
 	{
 		GLTextureEnvArgument *op = pname == TGL_SOURCE0_ALPHA ? &_texEnv.arg0 : &_texEnv.arg1;
 		if (param == TGL_TEXTURE ||
-			param == TGL_PRIMARY_COLOR)
+			param == TGL_PRIMARY_COLOR ||
+			param == TGL_CONSTANT)
 			op->sourceAlpha = param;
 		else
 			goto error;
@@ -264,6 +266,14 @@ error:
 			op->operandAlpha = param;
 		else
 			goto error;
+		break;
+	}
+	case TGL_TEXTURE_ENV_COLOR:
+	{
+		_texEnv.constR = (byte)clampf(p[4].f * 255.0f, 0, 255.0f);
+		_texEnv.constG = (byte)clampf(p[5].f * 255.0f, 0, 255.0f);
+		_texEnv.constB = (byte)clampf(p[6].f * 255.0f, 0, 255.0f);
+		_texEnv.constA = (byte)clampf(p[7].f * 255.0f, 0, 255.0f);
 		break;
 	}
 	default:
