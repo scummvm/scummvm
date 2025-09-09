@@ -353,7 +353,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
 	ImGui::PopFont();
 }
 
-Window *windowList(Common::String *target) {
+Window *windowListCombo(Common::String *target) {
 	const Common::Array<Window *> *windowList = g_director->getWindowList();
 	const Common::String selWin = *target;
 	Window *res = nullptr;
@@ -421,7 +421,7 @@ void showScore() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Score", &_state->_w.score)) {
-		Window *selectedWindow = windowList(&_state->_scoreWindow);
+		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
 
 		buildContinuationData(selectedWindow);
 
@@ -788,10 +788,12 @@ void showChannels() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Channels", &_state->_w.channels)) {
-		Score *score = g_director->getCurrentMovie()->getScore();
+		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
+
+		Score *score = selectedWindow->getCurrentMovie()->getScore();
 		const Frame &frame = *score->_currentFrame;
 
-		CastMemberID defaultPalette = g_director->getCurrentMovie()->_defaultPalette;
+		CastMemberID defaultPalette = selectedWindow->getCurrentMovie()->_defaultPalette;
 		ImGui::Text("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d",
 			frame._mainChannels.tempo, frame._mainChannels.skipFrameFlag, frame._mainChannels.blend, score->_currentFrameRate);
 		if (!frame._mainChannels.palette.paletteId.isNull()) {
@@ -854,7 +856,7 @@ void showChannels() {
 					if (ImGui::IsItemClicked(0)) {
 						score->_channels[i]->_visible = !score->_channels[i]->_visible;
 
-						g_director->getCurrentWindow()->render(true);
+						selectedWindow->render(true);
 					}
 
 					if (score->_channels[i]->_visible)
@@ -875,7 +877,7 @@ void showChannels() {
 						_state->_selectedChannel = i + 1;
 					 }
 
-					g_director->getCurrentWindow()->render(true);
+					selectedWindow->render(true);
 				}
 
 				ImGui::TableNextColumn();
