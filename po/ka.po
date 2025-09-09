@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-08-24 07:36+0000\n"
+"PO-Revision-Date: 2025-09-09 04:16+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -1501,7 +1501,7 @@ msgstr "თ~ა~მაშის პარამეტრები..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
-msgstr ""
+msgstr "დამატების მოდული"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1244 gui/launcher.cpp:1446
@@ -5823,10 +5823,8 @@ msgid "Walk"
 msgstr "გასეირნება"
 
 #: engines/access/metaengine.cpp:348
-#, fuzzy
-#| msgid "Open game menu"
 msgid "Open save/load menu"
-msgstr "თამაშის მენიუს გახსნა"
+msgstr "შენახვის/ჩატვირთვის მენიუს გახსნა"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -6426,16 +6424,12 @@ msgid ""
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "მუსიკის ხარისხი:"
+msgstr "მაღალი ხარისხი"
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effects"
 msgid "Toggles some optional graphical effects"
-msgstr "ხმის ეფექტების გადართვა"
+msgstr "გადართავს ზოგიერთ არასავალდებულო გრაფიკულ ეფექტს"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
@@ -7495,17 +7489,13 @@ msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Character selection keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "პერსონაჟის არჩევნის კლავიატურის მალსახმობები"
+msgstr "კლავიატურის ასახვების არჩევნის დიალოგი"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle leader inventory"
-msgstr "ინვენტარის გადართვა"
+msgstr "ლიდერი ინვენტარის გადართვა"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -7514,31 +7504,23 @@ msgstr ""
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 1 inventory"
-msgstr "ინვენტარის გადართვა"
+msgstr "ჩემპიონი 1 ინვენტარის გადართვა"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 2 inventory"
-msgstr "ინვენტარის გადართვა"
+msgstr "ჩემპიონი 2 ინვენტარის გადართვა"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 3 inventory"
-msgstr "ინვენტარის გადართვა"
+msgstr "ჩემპიონი 3 ინვენტარის გადართვა"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 4 inventory"
-msgstr "ინვენტარის გადართვა"
+msgstr "ჩემპიონი 4 ინვენტარის გადართვა"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7839,7 +7821,7 @@ msgstr "გადაგდება"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "ჩაცმა"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -7860,7 +7842,7 @@ msgstr ""
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "გაცვლა"
 
 #: engines/efh/metaengine.cpp:467
 msgid "Exit status menu"
@@ -7872,7 +7854,7 @@ msgstr "ქვემენიუდან გასვლა"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "გასვლა"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 msgid "Status"
@@ -7880,7 +7862,7 @@ msgstr "სტატუსი"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "თავდაცვა"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8764,29 +8746,21 @@ msgid "Skip intro"
 msgstr "შესავლის გამოტოვება"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Exit keymappings"
 msgid "Exit menu keymappings"
-msgstr "კლავიატურის მალსახმობებიდან გასვლა"
+msgstr "მენიუს კლავიატურის მალსახმობებიდან გასვლა"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Enemy selection keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "მტრის არჩევნის კლავიატურის მალსახმობები"
+msgstr "სიძნელის არჩევნის მენიუს კლავიატურის მალსახმობები"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Death menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "სიკვდილის მენიუს კლავიატურის მალსახმობები"
+msgstr "თავიდან ცდის მენიუს კლავიატურის მალსახმობები"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "საუბრის გამოტოვება"
+msgstr "დონის გამოტოვება (ჩიტი)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -8813,33 +8787,25 @@ msgstr ""
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "უკან დახევა"
+msgstr "სექტორის თავიდან ცდა"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "ანიმაციის თავიდადნ დაწყება"
+msgstr "ტერიტორიის თავიდადნ დაწყება"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობების შეჩერება"
+msgstr "კლავიატურის მალსახმობების შეჩერება"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Interaction keymappings"
 msgid "Direction keymappings"
-msgstr "ურთიერთობის კლავიატურის მალსახმობები"
+msgstr "მიმართულების კლავიატურის მალსახმობები"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -10274,28 +10240,20 @@ msgid "X key"
 msgstr "ღილაკი X"
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display subtitles"
-msgstr "სუბტიტრების გამორთვა"
+msgstr "სუბტიტრების ჩვენება"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use subtitles."
-msgstr "სუბტიტრების გამორთვა"
+msgstr "სუბტიტრების გამოყენება."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display SFX subtitles"
-msgstr "სუბტიტრების გამორთვა"
+msgstr "SFX სუბტიტრების ჩვენება"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use SFX subtitles."
-msgstr "სუბტიტრების გამორთვა"
+msgstr "SFX სუბტიტრების გამოყენება."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -12089,7 +12047,7 @@ msgstr "ზმნის მონიშვნა / მონიშვნის �
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
-msgstr ""
+msgstr "მორგება"
 
 #: engines/sherlock/metaengine.cpp:472
 msgid "Files"
