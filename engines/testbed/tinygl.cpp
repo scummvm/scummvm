@@ -50,6 +50,7 @@ namespace TinyGLTests {
 	struct TextureEnvironment {
 		GLuint _mode, _combineRGB, _combineAlpha;
 		TextureEnvironmentArg _arg0, _arg1;
+		byte _constantR = 255, _constantG = 255, _constantB = 255, _constantA = 255;
 
 		TextureEnvironment(
 			GLuint mode = GL_REPLACE,
@@ -59,21 +60,29 @@ namespace TinyGLTests {
 			, _combineRGB(combineRGB)
 			, _combineAlpha(combineAlpha) { }
 
-		template<typename TexEnvFunc>
-		void apply(TexEnvFunc func) const {
-			func(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, _mode);
-			func(GL_TEXTURE_ENV, GL_COMBINE_RGB, _combineRGB);
-			func(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, _combineAlpha);
+		template<typename TexEnvFunci, typename TexEnvFuncfv>
+		void apply(TexEnvFunci funci, TexEnvFuncfv funcfv) const {
+			funci(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, _mode);
+			funci(GL_TEXTURE_ENV, GL_COMBINE_RGB, _combineRGB);
+			funci(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, _combineAlpha);
 
-			func(GL_TEXTURE_ENV, GL_SOURCE0_RGB, _arg0._sourceRGB);
-			func(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, _arg0._sourceAlpha);
-			func(GL_TEXTURE_ENV, GL_SOURCE1_RGB, _arg1._sourceRGB);
-			func(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, _arg1._sourceAlpha);
+			funci(GL_TEXTURE_ENV, GL_SOURCE0_RGB, _arg0._sourceRGB);
+			funci(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, _arg0._sourceAlpha);
+			funci(GL_TEXTURE_ENV, GL_SOURCE1_RGB, _arg1._sourceRGB);
+			funci(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, _arg1._sourceAlpha);
 
-			func(GL_TEXTURE_ENV, GL_OPERAND0_RGB, _arg0._operandRGB);
-			func(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, _arg0._operandAlpha);
-			func(GL_TEXTURE_ENV, GL_OPERAND1_RGB, _arg1._operandRGB);
-			func(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, _arg1._operandAlpha);
+			funci(GL_TEXTURE_ENV, GL_OPERAND0_RGB, _arg0._operandRGB);
+			funci(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, _arg0._operandAlpha);
+			funci(GL_TEXTURE_ENV, GL_OPERAND1_RGB, _arg1._operandRGB);
+			funci(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, _arg1._operandAlpha);
+
+			const float values[] = {
+				_constantR / 255.0f,
+				_constantG / 255.0f,
+				_constantB / 255.0f,
+				_constantA / 255.0f
+			};
+			funcfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, values);
 		}
 	};
 
@@ -85,6 +94,7 @@ namespace TinyGLTests {
 	TestExitStatus testTexEnvModulate();
 	TestExitStatus testTexEnvDecal();
 	TestExitStatus testTexEnvAdd();
+	TestExitStatus testTexEnvBlend();
 	TestExitStatus testTexEnvCombineOpNormal();
 	TestExitStatus testTexEnvCombineOpInverse();
 	TestExitStatus testTexEnvCombineOpAlphaToColor();
@@ -99,6 +109,7 @@ TinyGLTestSuite::TinyGLTestSuite() {
 	addTest("Modulate", &TinyGLTests::testTexEnvModulate);
 	addTest("Decal", &TinyGLTests::testTexEnvDecal);
 	addTest("Add", &TinyGLTests::testTexEnvAdd);
+	addTest("Blend", &TinyGLTests::testTexEnvBlend);
 	addTest("CombineOpNormal", &TinyGLTests::testTexEnvCombineOpNormal);
 	addTest("CombineOpInverse", &TinyGLTests::testTexEnvCombineOpInverse);
 	addTest("CombineOpAlphaToColor", &TinyGLTests::testTexEnvCombineOpAlphaToColor);
@@ -126,6 +137,15 @@ TestExitStatus TinyGLTests::testTexEnvDecal() {
 TestExitStatus TinyGLTests::testTexEnvAdd() {
 	TextureEnvironment env(GL_ADD);
 	return runTexEnvTest("Add", env, 50, 111, 222, 255);
+}
+
+TestExitStatus TinyGLTests::testTexEnvBlend() {
+	TextureEnvironment env(GL_BLEND);
+	env._constantR = 250;
+	env._constantG = 150;
+	env._constantB = 100;
+	env._constantA = 50;
+	return runTexEnvTest("Blend", env, 50, 111, 222, 255);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineOpNormal() {
@@ -181,6 +201,10 @@ struct TinyGLContextDeleter {
 // using cdecl calling convention so we can use a function pointer
 static void classicGLTexEnvi(GLenum target, GLenum param, GLint value) {
 	glTexEnvi(target, param, value);
+}
+
+static void classicGLTexEnvfv(GLenum target, GLenum param, const GLfloat *values) {
+	glTexEnvfv(target, param, values);
 }
 
 static void copyAlphaIntoColorChannels(Graphics::ManagedSurface &surface) {
@@ -310,7 +334,7 @@ TestExitStatus TinyGLTests::runTexEnvTest(
 	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, kTextureSize, kTextureSize, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, testImage.getPixels());
 
 	// Render classic OpenGL
-	env.apply(classicGLTexEnvi);
+	env.apply(classicGLTexEnvi, classicGLTexEnvfv);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor4ub(colorR, colorG, colorB, colorA);
 	renderClassicQuad(classicTestTexture, 0, 0);
@@ -331,7 +355,7 @@ TestExitStatus TinyGLTests::runTexEnvTest(
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTextureSize, kTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, readBack.getPixels());
 
 	// Render TinyGL
-	env.apply(tglTexEnvi);
+	env.apply(tglTexEnvi, tglTexEnvfv);
 	tglClear(TGL_COLOR_BUFFER_BIT);
 	tglColor4ub(colorR, colorG, colorB, colorA);
 	tglBegin(TGL_TRIANGLE_STRIP);
