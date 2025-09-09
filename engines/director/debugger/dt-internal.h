@@ -203,7 +203,7 @@ typedef struct ImGuiState {
 	} _hoveredScoreCast;
 
 	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
-	bool _loadedContinuationData = false;
+	Common::String _loadedContinuationData;
 
 	Common::String _scoreWindow;
 	int _scoreMode = 0;

@@ -49,12 +49,15 @@ const char *modes2[] = {
 
 #define FRAME_PAGE_SIZE 100
 
-static void buildContinuationData() {
-	if (_state->_loadedContinuationData) {
+static void buildContinuationData(Window *window) {
+	if (_state->_loadedContinuationData == window->getCurrentMovie()->getMacName()) {
 		return;
 	}
 
-	Score *score = g_director->getCurrentMovie()->getScore();
+	_state->_scorePageSlider = 0;
+	_state->_continuationData.clear();
+
+	Score *score = window->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
 
 	uint numChannels = score->_scoreCache[0]->_sprites.size();
@@ -120,11 +123,11 @@ static void buildContinuationData() {
 		}
 	}
 
-	_state->_loadedContinuationData = true;
+	_state->_loadedContinuationData = window->getCurrentMovie()->getMacName();
 }
 
-static void displayScoreChannel(int ch, int mode, int modeSel) {
-	Score *score = g_director->getCurrentMovie()->getScore();
+static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
+	Score *score = window->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
 
 	const uint currentFrameNum = score->getCurrentFrameNum();
@@ -152,7 +155,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			if (mode == kModeMember) {
 				score->_channels[ch]->_visible = !score->_channels[ch]->_visible;
 
-				g_director->getCurrentWindow()->render(true);
+				window->render(true);
 			}
 		}
 
@@ -337,7 +340,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 				else
 					_state->_selectedChannel = ch;
 
-				g_director->getCurrentWindow()->render(true);
+					window->render(true);
 			}
 		}
 
@@ -350,9 +353,10 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	ImGui::PopFont();
 }
 
-void windowList(Common::String *target) {
+Window *windowList(Common::String *target) {
 	const Common::Array<Window *> *windowList = g_director->getWindowList();
 	const Common::String selWin = *target;
+	Window *res = nullptr;
 
 	Common::String stage = g_director->getStage()->getCurrentMovie()->getMacName();
 
@@ -362,13 +366,16 @@ void windowList(Common::String *target) {
 		if (window->getCurrentMovie()->getMacName() == selWin) {
 			// Found the selected window
 			found = true;
+			res = window;
 			break;
 		}
 	}
 
 	// Our default is Stage
-	if (selWin.empty() || windowList->empty() || !found)
+	if (selWin.empty() || windowList->empty() || !found) {
 		*target = stage;
+		res = g_director->getStage();
+	}
 
 	ImGui::Text("Window:");
 	ImGui::SameLine();
@@ -378,27 +385,34 @@ void windowList(Common::String *target) {
 		if (ImGui::Selectable(stage.c_str(), selected))
 			*target = stage;
 
-		if (selected)
+		if (selected) {
 			ImGui::SetItemDefaultFocus();
+			res = g_director->getStage();
+		}
 
 		for (auto window : (*windowList)) {
 			Common::String winName = window->getCurrentMovie()->getMacName();
 			selected = (*target == winName);
-			if (ImGui::Selectable(winName.c_str(), selected))
+			if (ImGui::Selectable(winName.c_str(), selected)) {
 				*target = winName;
+				res = window;
+			}
 
-			if (selected)
+			if (selected) {
 				ImGui::SetItemDefaultFocus();
+				res = window;
+			}
+
 		}
 		ImGui::EndCombo();
 	}
+
+	return res;
 }
 
 void showScore() {
 	if (!_state->_w.score)
 		return;
-
-	buildContinuationData();
 
 	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
@@ -407,11 +421,13 @@ void showScore() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Score", &_state->_w.score)) {
-		windowList(&_state->_scoreWindow);
+		Window *selectedWindow = windowList(&_state->_scoreWindow);
 
-		Score *score = g_director->getCurrentMovie()->getScore();
+		buildContinuationData(selectedWindow);
+
+		Score *score = selectedWindow->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
-		Cast *cast = g_director->getCurrentMovie()->getCast();
+		Cast *cast = selectedWindow->getCurrentMovie()->getCast();
 
 		if (!numFrames) {
 			ImGui::Text("No frames");
@@ -709,12 +725,12 @@ void showScore() {
 			}
 
 			{
-				displayScoreChannel(0, kChTempo, 0);
-				displayScoreChannel(0, kChPalette, 0);
-				displayScoreChannel(0, kChTransition, 0);
-				displayScoreChannel(0, kChSound1, 0);
-				displayScoreChannel(0, kChSound2, 0);
-				displayScoreChannel(0, kChScript, 0);
+				displayScoreChannel(0, kChTempo, 0, selectedWindow);
+				displayScoreChannel(0, kChPalette, 0, selectedWindow);
+				displayScoreChannel(0, kChTransition, 0, selectedWindow);
+				displayScoreChannel(0, kChSound1, 0, selectedWindow);
+				displayScoreChannel(0, kChSound2, 0, selectedWindow);
+				displayScoreChannel(0, kChScript, 0, selectedWindow);
 			}
 			ImGui::TableNextRow();
 
@@ -722,22 +738,22 @@ void showScore() {
 
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				if (mode == kModeExtended) // This will render empty row
-					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode, selectedWindow);
 
 				if (mode == kModeMember || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeMember, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeMember, _state->_scoreMode, selectedWindow);
 
 				if (mode == kModeBehavior || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeBehavior, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeBehavior, _state->_scoreMode, selectedWindow);
 
 				if (mode == kModeInk || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeInk, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeInk, _state->_scoreMode, selectedWindow);
 
 				if (mode == kModeBlend || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeBlend, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeBlend, _state->_scoreMode, selectedWindow);
 
 				if (mode == kModeLocation || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeLocation, _state->_scoreMode);
+					displayScoreChannel(ch + 1, kModeLocation, _state->_scoreMode, selectedWindow);
 			}
 			ImGui::EndTable();
 		}
