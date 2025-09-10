@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-10 04:36+0000\n"
+"PO-Revision-Date: 2025-09-10 18:15+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -13558,16 +13558,12 @@ msgid "Crawl South"
 msgstr "Arrossegueu-vos cap al sud"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn Left/Crawl West"
 msgid "Turn left / Crawl West"
-msgstr "Gireu a l'esquerra/arrossegueu-vos cap a l'oest"
+msgstr "Gireu a l'esquerra / arrossegueu-vos cap a l'oest"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn Right/Crawl East"
 msgid "Turn right / Crawl East"
-msgstr "Gireu a la dreta/arrossegueu-vos cap a l'est"
+msgstr "Gireu a la dreta / arrossegueu-vos cap a l'est"
 
 #: engines/tsage/metaengine.cpp:292
 msgid "Increase speed"
@@ -13721,22 +13717,16 @@ msgid "Discreet behavior"
 msgstr "Comportament discret"
 
 #: engines/twine/metaengine.cpp:289
-#, fuzzy
-#| msgid "Behaviour Action"
 msgid "Behavior action"
 msgstr "Acció de comportament"
 
 #: engines/twine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Change action"
 msgid "Change behavior"
-msgstr "Canvia l'acció"
+msgstr "Canvia el comportament"
 
 #: engines/twine/metaengine.cpp:319
-#, fuzzy
-#| msgid "Next action"
 msgid "Use selected object"
-msgstr "Acció següent"
+msgstr "Utilitza l'objecte seleccionat"
 
 #: engines/twine/metaengine.cpp:325
 msgid "Throw magic ball"
@@ -13751,14 +13741,10 @@ msgid "Open Holomap"
 msgstr "Obre l'Holomapa"
 
 #: engines/twine/metaengine.cpp:378
-#, fuzzy
-#| msgid "Special Action"
 msgid "Special action"
 msgstr "Acció especial"
 
 #: engines/twine/metaengine.cpp:384
-#, fuzzy
-#| msgid "Scenery Zoom"
 msgid "Scenery zoom"
 msgstr "Amplia l'escenari"
 
@@ -13840,104 +13826,70 @@ msgid "Go to next object"
 msgstr "Ves al següent objecte"
 
 #: engines/twp/metaengine.cpp:158
-#, fuzzy
-#| msgid "Select verb/item Left"
 msgid "Select verb / item left"
-msgstr "Selecciona un verb/element a l'esquerra"
+msgstr "Selecciona un verb / element a l'esquerra"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Select verb/item Right"
 msgid "Select verb / item right"
-msgstr "Selecciona verb/element a la dreta"
+msgstr "Selecciona un verb / element a la dreta"
 
 #: engines/twp/metaengine.cpp:160
-#, fuzzy
-#| msgid "Select verb/item Up"
 msgid "Select verb / item up"
-msgstr "Selecciona un verb/element amunt"
+msgstr "Selecciona un verb / element amunt"
 
 #: engines/twp/metaengine.cpp:161
-#, fuzzy
-#| msgid "Select verb/item Down"
 msgid "Select verb / item down"
-msgstr "Selecciona un verb/element avall"
+msgstr "Selecciona un verb / element avall"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select actor 1"
-msgstr "Selecciona actor 1"
+msgstr "Selecciona l'actor 1"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select actor 2"
-msgstr "Selecciona actor 2"
+msgstr "Selecciona l'actor 2"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select actor 3"
-msgstr "Selecciona actor 3"
+msgstr "Selecciona l'actor 3"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Actor 4"
 msgid "Select actor 4"
-msgstr "Selecciona actor 4"
+msgstr "Selecciona l'actor 4"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Actor 5"
 msgid "Select actor 5"
-msgstr "Selecciona actor 5"
+msgstr "Selecciona l'actor 5"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Select Choice 1"
 msgid "Select choice 1"
 msgstr "Selecciona l'opció 1"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Select Choice 2"
 msgid "Select choice 2"
 msgstr "Selecciona l'opció 2"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Select Choice 3"
 msgid "Select choice 3"
 msgstr "Selecciona l'opció 3"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Select Choice 4"
 msgid "Select choice 4"
 msgstr "Selecciona l'opció 4"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Select Choice 5"
 msgid "Select choice 5"
 msgstr "Selecciona l'opció 5"
 
 #: engines/twp/metaengine.cpp:173
-#, fuzzy
-#| msgid "Select Choice 6"
 msgid "Select choice 6"
 msgstr "Selecciona l'opció 6"
 
 #: engines/twp/metaengine.cpp:174
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select next Actor"
 msgstr "Selecciona l'actor següent"
 
 #: engines/twp/metaengine.cpp:175
-#, fuzzy
-#| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "Selecciona l'actor anterior"
 
@@ -14030,16 +13982,12 @@ msgstr "No s'ha pogut trobar el fitxer de dades ultima.dat correcte"
 #: engines/ultima/ultima4/metaengine.cpp:130
 #: engines/ultima/ultima4/metaengine.cpp:135
 #: engines/ultima/ultima4/metaengine.cpp:145
-#, fuzzy
-#| msgid "Next action"
 msgid "Abort action"
-msgstr "Acció següent"
+msgstr "Interromp l'acció"
 
 #: engines/ultima/ultima4/metaengine.cpp:49
-#, fuzzy
-#| msgid "Keyboard"
 msgid "Board"
-msgstr "Teclat"
+msgstr "Puja"
 
 #: engines/ultima/ultima4/metaengine.cpp:52
 #: engines/ultima/ultima8/metaengine.cpp:108
