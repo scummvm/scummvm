@@ -61,6 +61,11 @@ struct Label {
 	Label(Common::String name1, uint16 number1, Common::String comment1) { name = name1; number = number1; comment = comment1;}
 };
 
+struct BehaviorElement {
+	CastMemberID memberID;
+	int32 initOffset;
+};
+
 class Score {
 public:
 	Score(Movie *movie);
