@@ -352,6 +352,9 @@ bool QuickTimeDecoder::setFOV(float fov) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 	bool success = true;
 
+	if (fov == 0.0f)	// This is reference to default FOV
+		fov = _panoTrack->panoInfo.defZoom;
+
 	if (fov <= desc->_minimumZoom) {
 		fov = desc->_minimumZoom;
 		success = false;
@@ -362,6 +365,8 @@ bool QuickTimeDecoder::setFOV(float fov) {
 
 	if (_fov != fov) {
 		PanoTrackHandler *track = (PanoTrackHandler *)getTrack(_panoTrack->targetTrack);
+
+		debugC(3, kDebugLevelGVideo, "QuickTimeDecoder::setFOV: fov: %f (was %f)", fov, _fov);
 
 		track->_currentFOV = _fov;
 		_fov = fov;
@@ -484,6 +489,8 @@ void QuickTimeDecoder::goToNode(uint32 nodeID) {
 	}
 
 	_currentSample = idx;
+
+	debugC(3, kDebugLevelGVideo, "QuickTimeDecoder::goToNode(): Moving to nodeID: %d (index: %d)", nodeID, idx);
 
 	setPanAngle(_panoTrack->panoSamples[_currentSample].hdr.defHPan);
 	setTiltAngle(_panoTrack->panoSamples[_currentSample].hdr.defVPan);
