@@ -142,7 +142,7 @@ BgiFont::CachedFont *BgiFont::drawCachedFont(int size) {
 		cachedFont->offsets[i] = offsetCount;
 		cachedFont->widths[i] = _glyphs[i].charWidth;
 
-		for (int j = 0; j < _glyphs[i].insts.size(); j++) {
+		for (uint j = 0; j < _glyphs[i].insts.size(); j++) {
 			int opCode = _glyphs[i].insts[j]->opCode;
 			// Need to normalize Y coord because the stroke instructions start at origin and extend upwards up to originAscender, downwards to originToDescender
 			int adjustedY = _originToAscender - _glyphs[i].insts[j]->yCoord;
@@ -201,10 +201,13 @@ void BgiFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 }
 
 uint16 BgiFont::characterToIndex(uint32 character) const {
-	if (character - _firstChar >= 0 && character - _firstChar < _charCount) {
-		return character - _firstChar;
-	} else
-		return _firstChar;
+	uint16 index = _firstChar;
+	if (character >= _firstChar) {
+		if ((character - _firstChar) < _charCount) {
+			index = character - _firstChar;
+		}
+	}
+	return index;
 }
 
 } // End of namespace Graphics
