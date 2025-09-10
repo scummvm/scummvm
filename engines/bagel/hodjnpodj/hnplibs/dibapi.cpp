@@ -333,7 +333,7 @@ HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {
 	    DIB_RGB_COLORS);
 	assert(hBitmap);
 
-	delete info;
+	free(info);
 	return hBitmap;
 }
 
