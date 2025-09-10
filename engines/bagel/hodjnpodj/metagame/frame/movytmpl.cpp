@@ -72,6 +72,13 @@ bool CMovieWindow::PlayMovie() {
 	if (!decoder.loadStream(file.detach()))
 		return false;
 
+	// Reset palette to black initially
+	Graphics::Palette blackPal(Graphics::PALETTE_COUNT);
+	for (int i = 0; i < Graphics::PALETTE_COUNT; ++i)
+		blackPal.set(i, 0, 0, 0);
+	app->setPalette(blackPal);
+
+	// Start playback
 	decoder.start();
 
 	while (!decoder.endOfVideo()) {
