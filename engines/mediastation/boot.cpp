@@ -182,10 +182,10 @@ BootSectionType Boot::getSectionType(Chunk &chunk) {
 
 Boot::~Boot() {
 	_contextDeclarations.clear();
-	_subfileDeclarations.clear();
+	_streamMap.clear();
 	_engineResourceDeclarations.clear();
 	_screenDeclarations.clear();
-	_fileDeclarations.clear();
+	_fileMap.clear();
 }
 
 void Boot::readDocumentDef(Chunk &chunk) {
@@ -269,7 +269,7 @@ void Boot::readAndAddFileMaps(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
 		FileDeclaration fileDeclaration(chunk);
-		_fileDeclarations.setVal(fileDeclaration._id, fileDeclaration);
+		_fileMap.setVal(fileDeclaration._id, fileDeclaration);
 		flag = chunk.readTypedUint16();
 	}
 }
@@ -278,7 +278,7 @@ void Boot::readAndAddStreamMaps(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
 		SubfileDeclaration subfileDeclaration(chunk);
-		_subfileDeclarations.setVal(subfileDeclaration._actorId, subfileDeclaration);
+		_streamMap.setVal(subfileDeclaration._actorId, subfileDeclaration);
 		flag = chunk.readTypedUint16();
 	}
 }

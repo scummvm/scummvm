@@ -335,7 +335,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 
 	// Get the file ID.
-	const SubfileDeclaration &subfileDeclaration = _boot->_subfileDeclarations.getVal(contextId);
+	const SubfileDeclaration &subfileDeclaration = _boot->_streamMap.getVal(contextId);
 	// There are other actors in a subfile too, so we need to make sure we're
 	// referencing the screen actor, at the start of the file.
 	if (subfileDeclaration._startOffsetInFile != 16) {
@@ -345,7 +345,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	uint fileId = subfileDeclaration._fileId;
 
 	// Get the filename.
-	const FileDeclaration &fileDeclaration = _boot->_fileDeclarations.getVal(fileId);
+	const FileDeclaration &fileDeclaration = _boot->_fileMap.getVal(fileId);
 	Common::Path entryCxtFilepath(fileDeclaration._name);
 
 	// Load any child contexts before we actually load this one. The child

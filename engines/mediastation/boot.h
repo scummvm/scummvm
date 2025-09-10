@@ -172,8 +172,8 @@ public:
 	Common::String _sourceString;
 	Common::HashMap<uint32, ContextDeclaration> _contextDeclarations;
 	Common::HashMap<uint32, ScreenDeclaration> _screenDeclarations;
-	Common::HashMap<uint32, FileDeclaration> _fileDeclarations;
-	Common::HashMap<uint32, SubfileDeclaration> _subfileDeclarations;
+	Common::HashMap<uint32, FileDeclaration> _fileMap;
+	Common::HashMap<uint32, SubfileDeclaration> _streamMap;
 	Common::HashMap<uint32, EngineResourceDeclaration> _engineResourceDeclarations;
 	uint _unk1 = 0;
 	uint _functionTableSize = 0;
