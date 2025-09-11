@@ -237,7 +237,6 @@ private:
 	float _fov = 56.0f;
 	float _hfov = 56.0f;
 	int _zoomState = kZoomNone;
-	bool _repeatTimerActive = false;
 
 	const PanoHotSpot *_rolloverHotspot = nullptr;
 	int _rolloverHotspotID = 0;
@@ -250,6 +249,9 @@ private:
 			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
 
 	bool _enableEditListBoundsCheckQuirk;
+
+	bool _cursorDirty;
+	Common::Point _cursorPos;
 
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
@@ -426,7 +428,7 @@ private:
 
 		// Current upscale level (0 or 1 or 2) of _upscaledConstructedPanorama compared to _constructedPano
 		// level 0 means that constructedPano was just contructed and hasn't been upscaled yet
-		// level 1 means only upscaled height (2x pixels) 
+		// level 1 means only upscaled height (2x pixels)
 		// level 2 means upscaled height and width (4x pixels)
 		uint8 _upscaleLevel = 0;
 
