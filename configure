@@ -2900,8 +2900,8 @@ case $_host_os in
 		append_var LDFLAGS "-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft"
 		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
-		append_var LDFLAGS "-specs=3dsx.specs -lctru"
-		append_var LIBS "-lcitro3d"
+		append_var LDFLAGS "-specs=3dsx.specs"
+		append_var LIBS "-lcitro3d -lctru"
 		;;
 	amigaos*)
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
