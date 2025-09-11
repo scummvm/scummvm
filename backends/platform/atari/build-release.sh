@@ -81,8 +81,8 @@ cp ../backends/platform/atari/readme.txt dist-generic/scummvm
 unix2dos dist-generic/scummvm/readme.txt
 
 cd dist-generic
-mv scummvm scummvm-2.10.0git-atari-full
-zip -r -9 scummvm-2.10.0git-atari-full.zip scummvm-2.10.0git-atari-full
+mv scummvm scummvm-3.0.0git-atari-full
+zip -r -9 scummvm-3.0.0git-atari-full.zip scummvm-3.0.0git-atari-full
 cd -
 
-mv dist-generic/scummvm-2.10.0git-atari-full.zip ..
+mv dist-generic/scummvm-3.0.0git-atari-full.zip ..

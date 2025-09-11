@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.10.0 (XXXX-XX-XX)
+#### 3.0.0 (XXXX-XX-XX)
 
  New games:
    - Added support for Dark Seed.
