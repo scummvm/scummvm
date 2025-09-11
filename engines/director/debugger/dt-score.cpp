@@ -755,7 +755,13 @@ void showChannels() {
 		ImGui::Text("SND: 2  sound2: %d, soundType2: %d", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
 		ImGui::Text("LSCR:   actionId: %s", frame._mainChannels.actionId.asString().c_str());
 
-		if (ImGui::BeginTable("Channels", 22, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
+		int columns = 22;
+
+		if (score->_version >= kFileVer600) {
+			columns += 1; // sprite name
+		}
+
+		if (ImGui::BeginTable("Channels", columns, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader;
 			ImGui::TableSetupColumn("##toggle", flags);
 			ImGui::TableSetupColumn("CH", flags);
@@ -775,6 +781,8 @@ void showChannels() {
 			} else {
 				ImGui::TableSetupColumn("script", flags);
 			}
+			if (score->_version >= kFileVer600)
+				ImGui::TableSetupColumn("name", flags);
 			ImGui::TableSetupColumn("colorcode", flags);
 			ImGui::TableSetupColumn("blendAmount", flags);
 			ImGui::TableSetupColumn("unk3", flags);
@@ -869,7 +877,6 @@ void showChannels() {
 					ImGui::TableNextColumn();
 
 					if (score->_version >= kFileVer600) {
-						// Check early for non integer script ids
 						if (sprite._spriteListIdx) {
 							Common::MemoryReadStreamEndian *stream = score->getSpriteDetailsStream(sprite._spriteListIdx + 1);
 
@@ -900,6 +907,20 @@ void showChannels() {
 							ImGui::PopID();
 						}
 					}
+
+					if (score->_version >= kFileVer600) {
+						ImGui::TableNextColumn();
+						if (sprite._spriteListIdx) {
+							Common::MemoryReadStreamEndian *stream = score->getSpriteDetailsStream(sprite._spriteListIdx + 2);
+							Common::String name;
+							if (stream)
+								name = stream->readPascalString();
+							ImGui::Text("%s", name.c_str());
+						} else {
+							ImGui::Text(" ");
+						}
+					}
+
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);
 					ImGui::TableNextColumn();
