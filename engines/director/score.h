@@ -63,7 +63,13 @@ struct Label {
 
 struct BehaviorElement {
 	CastMemberID memberID;
-	int32 initOffset;
+	int32 initOffset = 0;
+
+	void read(Common::ReadStreamEndian &stream) {
+		memberID.member = (int16)stream.readUint16();
+		memberID.castLib = (int16)stream.readUint16();
+		initOffset = (int32)stream.readUint32();
+	}
 };
 
 class Score {
@@ -147,6 +153,8 @@ public:
 	Common::String formatChannelInfo();
 	bool processFrozenPlayScript();
 
+	Common::MemoryReadStreamEndian *getSpriteDetailsStream(int spriteIdx);
+
 private:
 	bool isWaitingForNextFrame();
 	void updateCurrentFrame();
@@ -217,6 +225,8 @@ public:
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
+
+	Common::Array<uint32> _spriteDetailOffsets;
 
 private:
 	DirectorEngine *_vm;

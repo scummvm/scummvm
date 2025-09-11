@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "backends/imgui/IconsMaterialSymbols.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
@@ -768,7 +770,11 @@ void showChannels() {
 			ImGui::TableSetupColumn("type", flags);
 			ImGui::TableSetupColumn("fg", flags);
 			ImGui::TableSetupColumn("bg", flags);
-			ImGui::TableSetupColumn("script", flags);
+			if (score->_version >= kFileVer600) {
+				ImGui::TableSetupColumn("behaviors", flags);
+			} else {
+				ImGui::TableSetupColumn("script", flags);
+			}
 			ImGui::TableSetupColumn("colorcode", flags);
 			ImGui::TableSetupColumn("blendAmount", flags);
 			ImGui::TableSetupColumn("unk3", flags);
@@ -861,13 +867,38 @@ void showChannels() {
 					ImGui::ColorButton("backColor", convertColor(sprite._backColor));
 					ImGui::PopID();
 					ImGui::TableNextColumn();
-					// Check early for non integer script ids
-					if (sprite._scriptId.member) {
-						displayScriptRef(sprite._scriptId);
+
+					if (score->_version >= kFileVer600) {
+						// Check early for non integer script ids
+						if (sprite._spriteListIdx) {
+							Common::MemoryReadStreamEndian *stream = score->getSpriteDetailsStream(sprite._spriteListIdx + 1);
+
+							if (stream) {
+								BehaviorElement behavior;
+								while (stream->pos() < stream->size()) {
+									behavior.read(*stream);
+									displayScriptRef(behavior.memberID);
+									ImGui::SameLine();
+									ImGui::Text(",%d", behavior.initOffset);
+								}
+							} else {
+								ImGui::Text(" ");
+							}
+							delete stream;
+						} else {
+							ImGui::PushID(i + 1);
+							ImGui::TextUnformatted("  ");
+							ImGui::PopID();
+						}
 					} else {
-						ImGui::PushID(i + 1);
-						ImGui::TextUnformatted("  ");
-						ImGui::PopID();
+						// Check early for non integer script ids
+						if (sprite._scriptId.member) {
+							displayScriptRef(sprite._scriptId);
+						} else {
+							ImGui::PushID(i + 1);
+							ImGui::TextUnformatted("  ");
+							ImGui::PopID();
+						}
 					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%x", sprite._colorcode);

@@ -1770,18 +1770,22 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		int32 listSize = (int32)_framesStream->readUint32();
 		int32 maxDataLen = (int32)_framesStream->readUint32();
 
-		debugC(1, kDebugLoading, "Score::loadFrames(): numEntries: %d, maxVar: %d, maxDataLen: 0x%x",
+		debugC(1, kDebugLoading, "Score::loadFrames(): Sprite Details: numEntries: %d, maxVar: %d, maxDataLen: 0x%x",
 			numEntries, listSize, maxDataLen);
 
 		// 3 * 4 = 3 int32 from above
 		_indexStart = listStart + 3 * 4;
 		_frameDataOffset = _indexStart + listSize * 4;
 
+		_spriteDetailOffsets.resize(numEntries);
+
 		int prevOff = 0;
 		for (int i = 0; i < numEntries; i++) {
 			uint32 off = _framesStream->readUint32();
+			_spriteDetailOffsets[i] = _frameDataOffset + off;
+
 			if (i > 0) {
-				debugC(2, kDebugLoading, "  Score::loadFrames(): entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
+				debugC(2, kDebugLoading, "  Detail entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
 					i - 1, prevOff, prevOff, _frameDataOffset + prevOff, off - prevOff);
 			}
 			prevOff = off;
@@ -2246,6 +2250,27 @@ uint32 Score::getVWSCResourceSize() {
 	// _firstFramePosition is the header size
 	// header + frames (main channel + sprite channels) (20 bytes)
 	return _firstFramePosition + framesSize;
+}
+
+Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
+	Common::MemoryReadStreamEndian *stream = nullptr;
+
+	if (!_framesStream || _spriteDetailOffsets.size() == 0)
+		return nullptr;
+
+	if (spriteIdx >= 0 && spriteIdx < _spriteDetailOffsets.size() - 1) {
+		uint32 size = _spriteDetailOffsets[spriteIdx + 1] - _spriteDetailOffsets[spriteIdx];
+
+		if (!size)
+			return nullptr;
+
+		byte *data = new byte[size];
+		_framesStream->seek(_spriteDetailOffsets[spriteIdx], SEEK_SET);
+		_framesStream->read(data, size);
+		stream = new Common::MemoryReadStreamEndian(data, size, _framesStream->isBE(), DisposeAfterUse::YES);
+	}
+
+	return stream;
 }
 
 } // End of namespace Director
