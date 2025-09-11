@@ -52,6 +52,7 @@ wwwroot:
 fonts.dat:
 	$(srcdir)/devtools/make-fonts-archive.py $(srcdir)/gui/themes/fonts $(srcdir)/dists/engine-data/fonts.dat
 	$(srcdir)/devtools/make-fonts-archive.py $(srcdir)/gui/themes/fonts-cjk $(srcdir)/dists/engine-data/fonts-cjk.dat
+	$(srcdir)/devtools/make-fonts-archive.py $(srcdir)/gui/themes/fonts-imgui $(srcdir)/dists/engine-data/fonts-imgui.dat
 
 #
 # Rules to explicitly rebuild the credits / MD5 tables.

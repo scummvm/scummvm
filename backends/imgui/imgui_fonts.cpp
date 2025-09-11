@@ -80,11 +80,14 @@ ImFont *addTTFFontFromArchive(const char *filename, float size_pixels, const ImF
 	FontArchive archive;
 	FontReader reader(archive);
 
-	archive.openArchive("fonts.dat");
+	archive.openArchive("fonts-imgui.dat");
 	if (!reader.openFile(f, filename)) {
-		archive.openArchive("fonts-cjk.dat");
+		archive.openArchive("fonts.dat");
 		if (!reader.openFile(f, filename)) {
-			return nullptr;
+			archive.openArchive("fonts-cjk.dat");
+			if (!reader.openFile(f, filename)) {
+				return nullptr;
+			}
 		}
 	}
 

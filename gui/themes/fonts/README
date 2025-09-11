@@ -1,4 +1,4 @@
-These are fonts used in ScummVM, and are included in the fonts.dat and fonts-cjk.dat packages.
+These are fonts used in ScummVM, and are included in the fonts.dat, fonts-cjk.dat and fonts-imgui.dat packages.
 
 The Go Mono fonts (https://github.com/golang/image/blob/master/font/gofont/ttfs/README) are distributed under the license in COPYING.BSD.
 The Liberation fonts (https://github.com/liberationfonts) are distributed under the SIL Open Font License.

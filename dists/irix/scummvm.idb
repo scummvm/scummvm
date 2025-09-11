@@ -28,6 +28,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.e
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts-cjk.dat fonts-cjk.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/fonts-imgui.dat fonts-imgui.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/got.aud got.aud scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/got.gfx got.gfx scummvm.sw.eoe
