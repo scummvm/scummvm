@@ -649,7 +649,7 @@ uint16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 		_vm->_game->_script->skip(dimCount);
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
-			temp2 = parseValExpr(OP_END_MARKER);
+			temp2 = CLIP<int>(parseValExpr(OP_END_MARKER), 0, arrDesc[dim] - 1);
 			offset = arrDesc[dim] * offset + temp2;
 		}
 		if (operation == OP_ARRAY_INT8)
@@ -720,7 +720,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 		_vm->_game->_script->skip(dimCount);
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
-			temp2 = parseValExpr(OP_END_MARKER);
+			temp2 = CLIP<int>(parseValExpr(OP_END_MARKER), 0, arrDescPtr[dim] - 1);
 			offset = offset * arrDescPtr[dim] + temp2;
 		}
 		if (operation == OP_ARRAY_INT8)
