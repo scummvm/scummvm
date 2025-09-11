@@ -72,6 +72,47 @@ struct BehaviorElement {
 	}
 };
 
+struct TweenInfo{
+    int32 curvature;
+    int32 flags;
+    int32 easeIn;
+    int32 easeOut;
+    int32 padding;
+
+	void read(Common::ReadStreamEndian &stream) {
+		curvature = (int32)stream.readUint32();
+		flags = (int32)stream.readUint32();
+		easeIn = (int32)stream.readUint32();
+		easeOut = (int32)stream.readUint32();
+		padding = (int32)stream.readUint32();
+	}
+};
+
+struct SpriteInfo {
+    int32 startFrame;
+    int32 endFrame;
+    int32 xtraInfo;
+    int32 flags;
+    int32 channelNum;
+    TweenInfo tweenInfo;
+
+    Common::Array<int32> keyFrames;
+
+	void read(Common::ReadStreamEndian &stream) {
+		startFrame = (int32)stream.readUint32();
+		endFrame = (int32)stream.readUint32();
+		xtraInfo = (int32)stream.readUint32();
+		flags = (int32)stream.readUint32();
+		channelNum = (int32)stream.readUint32();
+		tweenInfo.read(stream);
+
+		keyFrames.clear();
+		while (!stream.eos()) {
+			keyFrames.push_back((int32)stream.readUint32());
+		}
+	}
+};
+
 class Score {
 public:
 	Score(Movie *movie);
