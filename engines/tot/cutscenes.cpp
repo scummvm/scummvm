@@ -369,10 +369,10 @@ void TotEngine::introduction() {
 	_screen->clear();
 	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	_graphics->totalFadeOut(0);
 	_screen->clear();
 	if (isSpanish) {
@@ -406,7 +406,7 @@ void TotEngine::introduction() {
 		Common::Event e;
 		g_system->getEventManager()->pollEvent(e);
 		if (e.type == Common::EVENT_KEYDOWN || e.type == Common::EVENT_LBUTTONUP) {
-			goto Lsalirpres;
+			goto LexitIntro;
 		}
 
 		if (g_engine->_chrono->_gameTick) {
@@ -419,64 +419,63 @@ void TotEngine::introduction() {
 	_screen->clear();
 	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[5], 2, 9, 4, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[6], 3, 9, 5, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[7], 0, 9, 0, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[8], isSpanish ? 4 : 8, 9, 6, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[9], 3, 9, 7, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[8], isSpanish ? 3 : 8, 9, 8, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(110, 30, offsets[9], 2, 9, 9, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(0, 0, offsets[10], 0, 9, 0, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(235, 100, offsets[11], 3, 9, 10, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(150, 40, offsets[12], 0, 9, 11, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(235, 100, offsets[11], 3, 9, 12, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(150, 40, offsets[12], isSpanish ? 0 : 2, 9, 13, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(235, 100, offsets[11], isSpanish ? 3 : 8, 9, 14, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(150, 40, offsets[12], 0, 9, 15, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(173, 98, offsets[13], 0, 9, 0, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(224, 100, offsets[14], 2, 9, 16, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(0, 0, offsets[15], 0, 18, 17, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	drawFlc(150, 40, offsets[16], 0, 9, 18, false, true, false, exitPressed);
 	if (exitPressed)
-		goto Lsalirpres;
+		goto LexitIntro;
 	delay(1000);
-Lsalirpres:
-	debug("Exiting intro!");
+LexitIntro:
 	_graphics->totalFadeOut(0);
 	_screen->clear();
 	_mouse->show();

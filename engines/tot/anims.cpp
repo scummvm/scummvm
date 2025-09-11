@@ -83,7 +83,7 @@ void drawTvText(const Common::String &str1, const Common::String &str2, const Co
 }
 
 void clearTvText() {
-	removeText(80, 0, 319, 53, 0);
+	removeText(80, 0, 319, 54, 0);
 }
 
 void drawCharacterText(const Common::String &str1, const Common::String &str2, const Common::String &str3, const Common::String &str4, const Common::String &str5) {
@@ -834,10 +834,6 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 	}
 }
 
-void drawFlc(uint x, uint y, int32 fliOffset, uint loop,
-			 byte speed, byte eventNumber, bool fullPalette, bool isSkipAllowed,
-			 bool doscientos, bool &salidaflis);
-
 static void exitProcedure(bool &exitLoop, bool isSkipAllowed) {
 	exitLoop = false;
 	Common::Event e;
@@ -917,9 +913,6 @@ void drawFlc(
 	TotFlicDecoder *flic = new TotFlicDecoder();
 
 	flic->loadStream(thisFlic);
-	if(speed == 9) {
-		debug("Playing at half speed!");
-	}
 	flic->start();
 	bool skipFrame = false;
 	do {
