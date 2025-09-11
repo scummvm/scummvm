@@ -84,6 +84,9 @@ endif
 ifdef USE_FREETYPE2
 DIST_FILES_LIST += dists/engine-data/fonts.dat
 endif
+ifdef USE_IMGUI
+DIST_FILES_LIST += dists/engine-data/fonts-imgui.dat
+endif
 ifdef ENABLE_GRIM
 DIST_FILES_LIST += dists/engine-data/grim-patch.lab
 endif
