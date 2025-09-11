@@ -657,6 +657,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fusion",				"Harnessing the Energy of the Stars" },
 	{ "futureview",			"FutureView: The 1990s and Beyond" },
 	{ "ghetto",				"Stories from the Warsaw Ghetto" },
+	{ "girltechhomepage",	"Girl Tech's Home Page Builder" },
 	{ "golfcd",				"The Great Golf CD: Links, Legends & Lore" },
 	{ "gondwana",			"We're Not On The Internet - So What!" }, // Gondwana Project 1996 disc
 	{ "gp2006",				"Grand Prix 2006 & Auto Directory" },
@@ -5989,6 +5990,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("teamxtreme2", "", "Copy to HD/TX2", "r:f47c738636947451579473d9fe36041c", 507980, 404),
 	WINGAME1("teamxtreme2", "", "COPY2HD/TX2.EXE", "50c80bd2add25e574494838772973beb", 2585471, 404),
 
+	MACGAME1("tenchijukebox", "8-bit",	"Tenchi Muyo Jukebox 8 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
+	MACGAME1("tenchijukebox", "16-bit", "Tenchi Muyo Jukebox 16 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
+	WINGAME1("tenchijukebox", "8-bit",	"TEN8.EXE",	 "t:e5dc70d28dc9e67f60670a20f2f5319e", 4356061, 404),
+	WINGAME1("tenchijukebox", "16-bit", "TEN16.EXE", "t:c852d86aff7011765be102ce5dad95c8", 5323255, 404),
+
 	// Found on World of Whales
 	MACGAME1("terapreviews", "", "TeraMedia Previews", 	 "rt:9e4c0af102f40d2ae8ec4a131b5d9c3a",  483490, 404),
 	WINGAME2("terapreviews", "", "PREVIEWS.EXE",	  	 "t:9289cacef6dcea38e69554ac27ff59f1",   866108,
@@ -7916,10 +7922,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("teazle", "",		"TEAZLE.EXE",	"t:b6d3a1d0f44fa23f544569cf97d98126", 1420271, 500),
 	MACGAME1("teazle", "",		"TZPL01",		"tr:50b6f06b9dfad624252d34f5ee8cd877", 112402, 500),
 
-	MACGAME1("tenchijukebox", "8-bit",	"Tenchi Muyo Jukebox 8 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
-	MACGAME1("tenchijukebox", "16-bit", "Tenchi Muyo Jukebox 16 bit", "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 482610, 404),
-	WINGAME1("tenchijukebox", "8-bit",	"TEN8.EXE",	 "t:e5dc70d28dc9e67f60670a20f2f5319e", 4356061, 404),
-	WINGAME1("tenchijukebox", "16-bit", "TEN16.EXE", "t:c852d86aff7011765be102ce5dad95c8", 5323255, 404),
+	WINGAME1("girltechhomepage", "",	"MYHOMEPG.EXE", "t:1d74092e20738ed5661ea5d68c0c0c36", 1410487, 501),
+	MACGAME1("girltechhomepage", "",	"My Home Page", "r:6b82167b30f99bdfa6ee64fbde0b83fd", 718097, 501),
 
 	// Original Mac filename is "天楼都市フォルダ/天楼都市 for Mac"
 	// "0_tenrou.exe" doesn't add "Opning" to the search path, Readme.txt says to use "tenrou.exe"
