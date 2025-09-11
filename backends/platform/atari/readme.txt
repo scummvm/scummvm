@@ -1,5 +1,5 @@
 ScummVM 3.0.0git
-==============
+=============
 
 This is a port of ScummVM (https://www.scummvm.org), a program which allows you
 to run certain classic graphical adventure and role-playing games, provided you
