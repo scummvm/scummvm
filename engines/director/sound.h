@@ -289,6 +289,46 @@ private:
 	Common::MacResManager *_macresman;
 };
 
+// Source: mixsnd.h in the Director 7 XDK
+struct MoaSoundFormat {
+	int32 offset;
+	int32 size;
+	int32 playbackStart;
+	int32 playbackStartFrame;
+	int32 loopStart;
+	int32 loopStartFrame;
+	int32 loopEnd;
+	int32 loopEndFrame;
+	int32 playbackEnd;
+	int32 playbackEndFrame;
+	int32 numFrames;
+	int32 frameRate;
+	int32 byteRate;
+	byte compressionType[16];
+	int32 bitsPerSample;
+	int32 bytesPerSample;
+	int32 numChannels;
+	int32 bytesPerFrame;
+	byte soundHeaderType[16];
+	uint32 platformData[63];
+	int32 bytesPerBlock;
+};
+
+class MoaSoundFormatDecoder : public AudioDecoder {
+public:
+	MoaSoundFormatDecoder();
+	~MoaSoundFormatDecoder();
+
+	bool loadHeaderStream(Common::SeekableReadStreamEndian &stream);
+	bool loadSampleStream(Common::SeekableReadStreamEndian &stream);
+
+	MoaSoundFormat _format;
+	byte *_data = nullptr;
+	uint32 _size = 0;
+
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+};
+
 } // End of namespace Director
 
 #endif
