@@ -886,7 +886,19 @@ void showChannels() {
 									behavior.read(*stream);
 									displayScriptRef(behavior.memberID);
 									ImGui::SameLine();
-									ImGui::Text(",%d", behavior.initOffset);
+
+									if (behavior.initializerIndex) {
+										Common::MemoryReadStreamEndian *stream1 = score->getSpriteDetailsStream(behavior.initializerIndex);
+
+										if (stream1) {
+											Common::String init = stream1->readString();
+											ImGui::Text("(%s)", init.c_str());
+
+											delete stream1;
+										} else {
+											ImGui::Text("(\"\")");
+										}
+									}
 								}
 								delete stream;
 							} else {

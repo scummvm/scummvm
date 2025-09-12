@@ -63,12 +63,12 @@ struct Label {
 
 struct BehaviorElement {
 	CastMemberID memberID;
-	int32 initOffset = 0;
+	int32 initializerIndex = 0;
 
 	void read(Common::ReadStreamEndian &stream) {
 		memberID.castLib = (int16)stream.readUint16();
 		memberID.member = (int16)stream.readUint16();
-		initOffset = (int32)stream.readUint32();
+		initializerIndex = (int32)stream.readUint32();
 	}
 };
 
