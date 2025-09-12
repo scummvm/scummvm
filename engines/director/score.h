@@ -108,8 +108,24 @@ struct SpriteInfo {
 
 		keyFrames.clear();
 		while (!stream.eos()) {
-			keyFrames.push_back((int32)stream.readUint32());
+			int32 frame = (int32)stream.readUint32();
+			if (stream.eos())
+				break;
+			keyFrames.push_back(frame);
 		}
+	}
+
+	Common::String toString() const {
+		Common::String s;
+		s += Common::String::format("startFrame: %d, endFrame: %d, xtraInfo: %d, flags: 0x%x, channelNum: %d\n",
+			startFrame, endFrame, xtraInfo, flags, channelNum);
+		s += Common::String::format("  tweenInfo: curvature: %d, flags: 0x%x, easeIn: %d, easeOut: %d\n",
+			tweenInfo.curvature, tweenInfo.flags, tweenInfo.easeIn, tweenInfo.easeOut);
+		s += "  keyFrames: ";
+		for (size_t i = 0; i < keyFrames.size(); i++) {
+			s += Common::String::format("%d ", keyFrames[i]);
+		}
+		return s;
 	}
 };
 

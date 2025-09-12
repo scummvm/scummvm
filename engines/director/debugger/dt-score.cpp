@@ -888,10 +888,10 @@ void showChannels() {
 									ImGui::SameLine();
 									ImGui::Text(",%d", behavior.initOffset);
 								}
+								delete stream;
 							} else {
 								ImGui::Text(" ");
 							}
-							delete stream;
 						} else {
 							ImGui::PushID(i + 1);
 							ImGui::TextUnformatted("  ");
