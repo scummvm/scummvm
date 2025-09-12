@@ -32,6 +32,7 @@
 
 #include "common/config-manager.h"
 
+#include "graphics/wincursor.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
@@ -632,11 +633,16 @@ int16 ScriptFunctions::sfSetFontOutline(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfLoadMouseCursor(int16 argc, int16 *argv) {
-	PictureResource *flex = _vm->_res->getPicture(argv[2]);
-	if (flex) {
-		Graphics::Surface *surf = flex->getPicture();
-		CursorMan.replaceCursor(*surf, argv[1], argv[0], 0);
-		_vm->_res->freeResource(flex);
+
+	if (_vm->_useWinCursors) {
+		debug(4, "sfLoadMouseCursor: Not replacing mouse cursor, hand already active");
+	} else {
+		PictureResource *flex = _vm->_res->getPicture(argv[2]);
+		if (flex) {
+			Graphics::Surface *surf = flex->getPicture();
+			CursorMan.replaceCursor(*surf, argv[1], argv[0], 0);
+			_vm->_res->freeResource(flex);
+		}
 	}
 	return 0;
 }

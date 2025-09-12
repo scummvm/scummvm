@@ -979,6 +979,10 @@ void Screen::clearSpriteList() {
 	_spriteList.clear();
 }
 
+void Screen::setMouseCursor(const Graphics::Cursor *cursor) {
+	CursorMan.replaceCursor(cursor, true);
+}
+
 void Screen::setDefaultMouseCursor() {
 	CursorMan.replaceCursor(defaultMouseCursor, 16, 16, 9, 2, 0);
 }
