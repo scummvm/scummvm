@@ -90,7 +90,9 @@ Process::Process(ProcessId pid, MainCharacterKind characterKind)
 	, _character(characterKind)
 	, _name("Unnamed process") {}
 
-Process::Process(Serializer &s) {
+Process::Process(Serializer &s)
+	: _pid(0)
+	, _character(MainCharacterKind::None) {
 	syncGame(s);
 }
 

@@ -184,7 +184,7 @@ enum class StackEntryType {
 struct StackEntry {
 	StackEntry(StackEntryType type, int32 number) : _type(type), _number(number) {}
 	StackEntry(StackEntryType type, uint32 index) : _type(type), _index(index) {}
-	StackEntry(Serializer &s) { syncGame(s); }
+	StackEntry(Serializer &s) : _type(), _number(0) { syncGame(s); }
 
 	void syncGame(Serializer &s) {
 		syncEnum(s, _type);

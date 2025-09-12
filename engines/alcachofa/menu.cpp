@@ -147,7 +147,7 @@ bool Menu::tryReadOldSavefile() {
 		return false;
 
 	ExtendedSavegameHeader header;
-	if (!g_engine->getMetaEngine()->readSavegameHeader(savefile.get(), &header, false))
+	if (!g_engine->getMetaEngine()->readSavegameHeader(savefile.get(), &header, true))
 		return false;
 	_selectedSavefileDescription = header.description;
 

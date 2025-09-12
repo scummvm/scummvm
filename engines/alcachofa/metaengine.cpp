@@ -115,10 +115,9 @@ void AlcachofaMetaEngine::getSavegameThumbnail(Surface &surf) {
 	if (Alcachofa::g_engine != nullptr) {
 		Surface bigThumbnail;
 		Alcachofa::g_engine->getSavegameThumbnail(bigThumbnail);
-		if (bigThumbnail.getPixels() != nullptr) {
+		if (bigThumbnail.getPixels() != nullptr)
 			surf = *bigThumbnail.scale(kSmallThumbnailWidth, kSmallThumbnailHeight, true);
-			bigThumbnail.free();
-		}
+		bigThumbnail.free();
 	}
 	// if not, ScummVM will output an appropriate warning
 }

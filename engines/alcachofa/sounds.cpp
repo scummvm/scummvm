@@ -106,7 +106,7 @@ static AudioStream *loadSND(File *file) {
 	else if (format == 17 && channels <= 2)
 		return makeADPCMStream(subStream, DisposeAfterUse::YES, 0, kADPCMMSIma, (int)freq, (int)channels, (uint32)bytesPerBlock);
 	else {
-		delete file;
+		delete subStream;
 		g_engine->game().invalidSNDFormat(format, channels, freq, bitsPerSample);
 		return nullptr;
 	}
@@ -186,13 +186,15 @@ SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::
 		}
 	}
 
+	SoundHandle handle;
+	_mixer->playStream(type, &handle, stream, -1, volume);
 	Playback playback;
-	_mixer->playStream(type, &playback._handle, stream, -1, volume);
+	playback._handle = handle;
 	playback._type = type;
 	playback._inputRate = stream->getRate();
 	playback._samples = Common::move(samples);
 	_playbacks.push_back(Common::move(playback));
-	return playback._handle;
+	return handle;
 }
 
 SoundHandle Sounds::playVoice(const String &fileName, byte volume) {

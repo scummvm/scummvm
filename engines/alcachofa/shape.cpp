@@ -155,7 +155,8 @@ static float depthAtForConvex(const PathFindingPolygon &p, Point q) {
 		sumDepths += 1 / distances._toEdge * depthOnEdge;
 		sumDistances += 1 / distances._toEdge;
 	}
-	return sumDepths / sumDistances * 0.01f;
+	return sumDistances < epsilon ? 0
+		: sumDepths / sumDistances * 0.01f;
 }
 
 float PathFindingPolygon::depthAt(Point query) const {

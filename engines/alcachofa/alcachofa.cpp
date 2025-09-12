@@ -297,10 +297,11 @@ Common::Error AlcachofaEngine::syncGame(MySerializer &s) {
 		thumbnail = new Graphics::ManagedSurface();
 		getSavegameThumbnail(*thumbnail->surfacePtr());
 	}
-	if (!syncThumbnail(s, thumbnail))
-		return { kUnknownError, "Could not read thumbnail" };
+	bool couldSyncThumbnail = syncThumbnail(s, thumbnail);
 	if (thumbnail != nullptr)
 		delete thumbnail;
+	if (!couldSyncThumbnail)
+		return { kUnknownError, "Could not read thumbnail" };
 
 	uint32 millis = menu().isOpen()
 		? menu().millisBeforeMenu()

@@ -215,7 +215,9 @@ struct DoorTask : public Task {
 		, _targetObject(nullptr)
 		, _targetDirection(Direction::Invalid) {
 		findTarget();
-		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetObject->name().c_str());
+		process.name() = String::format("Door to %s %s",
+			_targetRoom == nullptr ? "<null>" : _targetRoom->name().c_str(),
+			_targetObject == nullptr ? "<null>" : _targetObject->name().c_str());
 	}
 
 	DoorTask(Process &process, Serializer &s)

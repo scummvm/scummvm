@@ -101,7 +101,7 @@ public:
 private:
 	ShapeObject *_lastSelectedObject = nullptr;
 	ObjectBase *_idleArm = nullptr;
-	SlideButton *_currentSlideButton;
+	SlideButton *_currentSlideButton = nullptr;
 };
 
 class ConnectMenu final : public Room {
