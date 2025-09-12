@@ -116,6 +116,7 @@ static void openFromBundle(NSString *file) {
 - (void) openLicenseApache;
 - (void) openLicenseBSD;
 - (void) openLicenseBSL;
+- (void) openLicenseFreefont;
 - (void) openLicenseGLAD;
 - (void) openLicenseISC;
 - (void) openLicenseLGPL;
@@ -150,6 +151,10 @@ static void openFromBundle(NSString *file) {
 
 - (void)openLicenseBSL {
 	openFromBundle(@"COPYING-BSL");
+}
+
+- (void)openLicenseFreefont {
+	openFromBundle(@"COPYING-FREEFONT");
 }
 
 - (void)openLicenseGLAD {
@@ -317,6 +322,7 @@ void replaceApplicationMenuItems() {
 		addMenuItem(_("Credits"), delegate, @selector(openCredits), @"", helpMenu);
 		addMenuItem(_("GPL License"), delegate, @selector(openLicenseGPL), @"", helpMenu);
 		addMenuItem(_("LGPL License"), delegate, @selector(openLicenseLGPL), @"", helpMenu);
+		addMenuItem(_("Freefont License"), delegate, @selector(openLicenseFreefont), @"", helpMenu);
 		addMenuItem(_("OFL License"), delegate, @selector(openLicenseOFL), @"", helpMenu);
 		addMenuItem(_("BSD License"), delegate, @selector(openLicenseBSD), @"", helpMenu);
 
