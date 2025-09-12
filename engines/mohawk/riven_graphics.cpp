@@ -808,7 +808,7 @@ void RivenGraphics::loadMenuFont() {
 	const char *fontName;
 
 	if (_vm->getLanguage() != Common::JA_JPN) {
-		fontName = "FreeSans.ttf";
+		fontName = "NotoSansJP-Regular.otf";
 	} else {
 		fontName = "mplus-2c-regular.ttf";
 	}
