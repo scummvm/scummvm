@@ -26,6 +26,8 @@
 
 #include "common/rect.h"
 
+#include "graphics/cursor.h"
+
 namespace Made {
 
 struct SpriteChannel {
@@ -189,6 +191,7 @@ public:
 	SpriteListItem getFromSpriteList(int16 index);
 	void clearSpriteList();
 
+	void setMouseCursor(const Graphics::Cursor *cursor);
 	void setDefaultMouseCursor();
 
 protected:

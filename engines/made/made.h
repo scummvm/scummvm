@@ -95,6 +95,8 @@ public:
 	ScriptInterpreter *_script;
 	MusicPlayer *_music;
 
+	bool _useWinCursors;
+
 	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;
 	uint16 _eventKey;

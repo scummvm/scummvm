@@ -30,10 +30,13 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/formats/winexe_ne.h"
 #include "common/system.h"
 #include "common/error.h"
 
 #include "engines/util.h"
+
+#include "graphics/wincursor.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -44,6 +47,9 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_eventNum = 0;
 	_eventMouseX = _eventMouseY = 0;
 	_eventKey = 0;
+
+	_useWinCursors = false;
+
 	_autoStopSound = false;
 	_soundEnergyIndex = 0;
 	_soundEnergyArray = nullptr;
@@ -439,6 +445,26 @@ Common::Error MadeEngine::run() {
 	} else if (getGameID() == GID_RODNEY) {
 		_dat->open("rodneys.dat");
 		_res->open("rodneys.prj");
+
+		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors")) {
+			// Try to open the EXE and get the hand cursor out
+			Common::WinResources *exe = Common::WinResources::createFromEXE("rodneysw.exe"); // Win16 executable
+			if (!exe)
+				exe = Common::WinResources::createFromEXE("rodneysv.exe"); // Tandy VIS executable
+
+			if (exe) {
+				Graphics::WinCursorGroup *_winCursor = Graphics::WinCursorGroup::createCursorGroup(exe, Common::WinResourceID("HANDCURSOR"));
+				if (_winCursor) {
+					if (_winCursor->cursors.size() > 0) {
+						_screen->setMouseCursor(_winCursor->cursors[0].cursor);
+						_useWinCursors = true;
+					}
+					delete _winCursor;
+				}
+
+				delete exe;
+			}
+		}
 	} else {
 		error ("Unknown MADE game");
 	}
@@ -456,7 +482,9 @@ Common::Error MadeEngine::run() {
 #ifdef DUMP_SCRIPTS
 	_script->dumpAllScripts();
 #else
-	_screen->setDefaultMouseCursor();
+	if (! _useWinCursors)
+		_screen->setDefaultMouseCursor();
+
 	_script->runScript(_dat->getMainCodeObjectIndex());
 #endif
 
