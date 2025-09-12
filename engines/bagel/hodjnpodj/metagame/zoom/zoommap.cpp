@@ -182,10 +182,10 @@ static const char *DEMO_DESC[30] = {
 };
 
 static const char *DEMO_INTRO1_STR = "Move your cursor around the screen to locate";
-static const RECT DEMO_INTRO1_RECT = { 100, 425, 540, 440 };
+static const RECT DEMO_INTRO1_RECT = { 100, 425, 540, 444 };
 static const char *DEMO_INTRO2_STR = "the mini-games and shameless marketing hype.";
-static const RECT DEMO_INTRO2_RECT = { 100, 440, 540, 455 };
-
+static const RECT DEMO_INTRO2_RECT = { 100, 444, 540, 463 };
+static const char *DEMO_SOUND = "sound/dm1.wav";
 
 int             nLastRect;      // the last gaem rect passed over
 CText           *pText = nullptr;   // the game name display
@@ -194,7 +194,7 @@ static  bool bActiveWindow = false;          // whether our window is activesho
 static CBitmap *pSplashScreen = nullptr;
 
 static CColorButton *pReturnButton = nullptr;
-static CColorButton *pSlideshowBUtton = nullptr;
+static CColorButton *pSlideshowButton = nullptr;
 static CText *pDemoMsg1 = nullptr;
 static CText *pDemoMsg2 = nullptr;
 
@@ -273,8 +273,6 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
 
 	rLeaveRect.SetRect((GAME_WIDTH / 2) - 50, 450, (GAME_WIDTH / 2) + 50, 470);
 
-	pText = new CText(pDC, pGamePalette, &rText, JUSTIFY_CENTER);    // Set up the Text Object to show the game names
-
 	ReleaseDC(pDC);                                 // release our window context
 	pDC = nullptr;
 
@@ -286,7 +284,23 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
 	pSplashScreen = FetchBitmap(pDC, &pGamePalette, SPLASHSPEC);
 	ReleaseDC(pDC);
 
-	if (bShowExit) {
+	_isDemo = g_engine->isDemo();
+	if (_isDemo) {
+		// Create the two lines of intro text
+		pDemoMsg1 = new CText();
+		CRect rect1(DEMO_INTRO1_RECT);
+		pDemoMsg1->SetupText(pDC, pGamePalette, &rect1, JUSTIFY_CENTER);
+		pDemoMsg2 = new CText();
+		CRect rect2(DEMO_INTRO2_RECT);
+		pDemoMsg2->SetupText(pDC, pGamePalette, &rect2, JUSTIFY_CENTER);
+
+		// Set up a timer for hiding the text
+		SetTimer(1, 5000);
+
+		// Play the intro message wav
+		sndPlaySound(DEMO_SOUND, SND_ASYNC);
+
+	} else if (bShowExit) {
 		pReturnButton = new CColorButton();
 		ASSERT(pReturnButton);
 		bSuccess = pReturnButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, rLeaveRect, this, IDC_LEAVE);
@@ -294,8 +308,9 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
 		pReturnButton->SetPalette(pGamePalette);
 	}
 
+	pText = new CText(pDC, pGamePalette, &rText, JUSTIFY_CENTER);    // Set up the Text Object to show the game names
+
 	nLastRect = -1; // contains the number of the last rect that the mouse ran thru
-	_isDemo = g_engine->isDemo();
 
 	EndWaitCursor();
 }
@@ -335,11 +350,13 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, bool bShowExit) :
  *
  ****************************************************************/
 void CMainZoomWindow::OnPaint() {
-	PAINTSTRUCT lpPaint;
+	CPaintDC dc(this);
+	SplashScreen();		// Repaint our window's content
 
-	BeginPaint(&lpPaint);                           // bracket start of window update
-	SplashScreen();                                 // repaint our window's content
-	EndPaint(&lpPaint);                             // bracket end of window update
+	if (pDemoMsg1) {
+		pDemoMsg1->DisplayShadowedString(&dc, DEMO_INTRO1_STR, 16, FW_BOLD, RGB(0, 255, 255));
+		pDemoMsg2->DisplayShadowedString(&dc, DEMO_INTRO2_STR, 16, FW_BOLD, RGB(0, 255, 255));
+	}
 }
 
 /*****************************************************************
@@ -435,6 +452,8 @@ bool CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
+	if (pDemoMsg1)
+		return;
 	int x = rectIndexOf(point);
 
 	if (x != -1) {
@@ -459,6 +478,8 @@ void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 }
 
 void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
+	if (pDemoMsg1)
+		return;
 	int x = rectIndexOf(point);
 
 	// If cursor passes over a game rect
@@ -533,8 +554,19 @@ void CMainZoomWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsign
 	return;
 }
 
-void CMainZoomWindow::OnTimer(uintptr nWhichTimer) {
-	return;
+
+void CMainZoomWindow::OnTimer(uintptr nEventID) {
+	KillTimer(nEventID);
+
+	// Called to hide the demo intro text
+	delete pDemoMsg1;
+	pDemoMsg1 = nullptr;
+	delete pDemoMsg2;
+	pDemoMsg2 = nullptr;
+
+	// TODO: Add display of Quit and Slide Show buttons
+
+	Invalidate();
 }
 
 /*****************************************************************
@@ -706,6 +738,12 @@ void CMainZoomWindow::ReleaseResources() {
 
 	delete pReturnButton;                                       // release the buttons we used
 	pReturnButton = nullptr;
+	delete pSlideshowButton;
+	pSlideshowButton = nullptr;
+	delete pDemoMsg1;
+	pDemoMsg1 = nullptr;
+	delete pDemoMsg2;
+	pDemoMsg2 = nullptr;
 }
 
 
