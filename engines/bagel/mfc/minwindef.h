@@ -157,32 +157,39 @@ DECLARE_HANDLE(HTASK);
 DECLARE_HANDLE(HWINSTA);
 DECLARE_HANDLE(HKL);
 
-#include "common/pack-start.h"  // START STRUCT PACKING
+typedef struct tagPOINT {
+	int  x;
+	int  y;
+} POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
 
-struct tagPOINT {
-	int x;
-	int y;
-} PACKED_STRUCT;
-typedef tagPOINT POINT, *PPOINT, NEAR *NPPOINT, FAR *LPPOINT;
+typedef struct _POINTL {    /* ptl  */
+	long  x;
+	long  y;
+} POINTL, *PPOINTL;
 
 typedef struct tagSIZE {
-	int cx;
-	int cy;
+	int        cx;
+	int        cy;
 } SIZE, *PSIZE, *LPSIZE;
 
-typedef SIZE SIZEL;
+typedef SIZE               SIZEL;
 typedef SIZE *PSIZEL, *LPSIZEL;
 
 typedef struct tagPOINTS {
-	SHORT x;
-	SHORT y;
+	#ifndef _MAC
+	SHORT   x;
+	SHORT   y;
+	#else
+	SHORT   y;
+	SHORT   x;
+	#endif
 } POINTS, *PPOINTS, *LPPOINTS;
 
-struct tagRECT {
-	int left;
-	int top;
-	int right;
-	int bottom;
+typedef struct tagRECT {
+	long    left;
+	long    top;
+	long    right;
+	long    bottom;
 
 	operator Common::Rect() const {
 		return Common::Rect(left, top, right, bottom);
@@ -195,11 +202,8 @@ struct tagRECT {
 		Common::Rect r = *this;
 		return r.contains(pt.x, pt.y);
 	}
-} PACKED_STRUCT;
-typedef tagRECT RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
+} RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
 typedef const RECT FAR *LPCRECT;
-
-#include "common/pack-end.h"    // END STRUCT PACKING
 
 inline Common::Rect RECTtoRect(const RECT &src) {
 	return src;
