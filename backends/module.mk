@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	midi/sndio.o \
 	midi/stmidi.o \
 	midi/timidity.o \
+	printing/printman.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
@@ -318,6 +319,7 @@ MODULE_OBJS += \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
 	plugins/win32/win32-provider.o \
+	printing/win32/win32-printman.o \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
 	taskbar/win32/win32-taskbar.o
