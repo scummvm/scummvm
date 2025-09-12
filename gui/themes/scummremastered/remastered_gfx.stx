@@ -149,7 +149,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Bold.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Bold.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Bold.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Bold.ttf'/>
 		</font>
 		<font	id = 'text_default'
 				file = 'clR6x12.bdf'
@@ -161,7 +161,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Regular.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Regular.ttf'/>
 		</font>
 		<font	resolution = 'y>=H'
 				id = 'text_button'
@@ -173,7 +173,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Bold.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Bold.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Bold.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Bold.ttf'/>
 		</font>
 		<font	id = 'text_button'
 				file = 'clR6x12.bdf'
@@ -185,7 +185,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Regular.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Regular.ttf'/>
 		</font>
 		<font	resolution = 'y>=H'
 				id = 'text_normal'
@@ -197,7 +197,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Regular.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Regular.ttf'/>
 		</font>
 		<font	id = 'text_normal'
 				file = 'clR6x12.bdf'
@@ -209,7 +209,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Regular.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Regular.ttf'/>
 		</font>
 		<font	id = 'tooltip_normal'
 				file = 'clR6x12.bdf'
@@ -221,7 +221,7 @@
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
 				<language id = 'ka'  scalable_file = 'NotoSansGeorgian-Regular.ttf'/>
-				<language id = '*'   scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = '*'   scalable_file = 'LiberationSans-Regular.ttf'/>
 		</font>
 		<font	resolution = 'y>799'
 				id = 'console'
