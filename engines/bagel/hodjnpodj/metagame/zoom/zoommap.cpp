@@ -181,13 +181,22 @@ static const char *DEMO_DESC[30] = {
 	"I'm convinced!  Where can I buy Hodj 'n Podj"
 };
 
+static const char *DEMO_INTRO1_STR = "Move your cursor around the screen to locate";
+static const RECT DEMO_INTRO1_RECT = { 100, 425, 540, 440 };
+static const char *DEMO_INTRO2_STR = "the mini-games and shameless marketing hype.";
+static const RECT DEMO_INTRO2_RECT = { 100, 440, 540, 455 };
+
+
 int             nLastRect;      // the last gaem rect passed over
 CText           *pText = nullptr;   // the game name display
 
-static  bool    bActiveWindow = false;          // whether our window is activesho
-CBitmap         *pSplashScreen = nullptr;
+static  bool bActiveWindow = false;          // whether our window is activesho
+static CBitmap *pSplashScreen = nullptr;
 
-CColorButton    *pReturnButton = nullptr;
+static CColorButton *pReturnButton = nullptr;
+static CColorButton *pSlideshowBUtton = nullptr;
+static CText *pDemoMsg1 = nullptr;
+static CText *pDemoMsg2 = nullptr;
 
 BEGIN_MESSAGE_MAP(CMainZoomWindow, CFrameWnd)
 	//{{AFX_MSG_MAP( CMainZoomWindow )
