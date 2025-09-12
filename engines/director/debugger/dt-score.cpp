@@ -342,7 +342,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
 				else
 					_state->_selectedChannel = ch;
 
-					window->render(true);
+				window->render(true);
 			}
 		}
 
