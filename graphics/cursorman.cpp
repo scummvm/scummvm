@@ -206,9 +206,9 @@ void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspot
 	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
 }
 
-void CursorManager::replaceCursor(const Graphics::Cursor *cursor) {
+void CursorManager::replaceCursor(const Graphics::Cursor *cursor, bool dontScale) {
 	replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
-				  cursor->getHotspotY(), cursor->getKeyColor(), false, nullptr, cursor->getMask());
+				  cursor->getHotspotY(), cursor->getKeyColor(), dontScale, nullptr, cursor->getMask());
 
 	if (cursor->getPalette())
 		replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());

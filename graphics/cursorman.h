@@ -166,8 +166,10 @@ public:
 	 * more optimized way of popping the old cursor before pushing the new one.
 	 *
 	 * @param cursor	New cursor.
+	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
+	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
 	 */
-	void replaceCursor(const Graphics::Cursor *cursor);
+	void replaceCursor(const Graphics::Cursor *cursor, bool dontScale = false);
 
 	/**
 	 * Pop all cursors and cursor palettes from their respective stacks.
