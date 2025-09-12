@@ -78,7 +78,8 @@ public:
 	}
 
 	void end() override {
-		checkFirstDrawCommand();
+		if (!_vertices.empty()) // submit last batch
+			checkFirstDrawCommand();
 		OpenGLRenderer::end();
 	}
 
