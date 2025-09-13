@@ -62,6 +62,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Penumbra: Overture (Steam v1.1.1 - Mac Intel only)
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.app/Contents/MacOS/Penumbra", "18d91c220e3461f2f7cf257009068416", 8468352),
+		Common::Language::EN_ANY,
+		Common::Platform::kPlatformMacintosh,
+		ADGF_TESTING,
+		GUIO0()
+	},
+
 	// Penumbra: Overture (v1.0.3 - Mac PPC + Intel)
 	{
 		"penumbraoverture",
