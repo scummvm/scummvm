@@ -256,6 +256,12 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 			// Restart intro video
 			PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
 
+		} else if (nGameReturn == 0) {
+			// Finished a minigame
+			const auto &game = CMgStatic::cGameTable[_minigame];
+			AfxGetApp()->removeResources(game._dllName);
+			PostMessage(WM_COMMAND, IDC_ZOOM);
+
 		} else {
 			loadNewDLL(nGameReturn);
 		}
@@ -275,6 +281,7 @@ void CHodjPodjWindow::loadNewDLL(LPARAM lParam) {
 	pMyApp = AfxGetApp();
 	nWhichDLL = lParam - MG_GAME_BASE;
 	assert(nWhichDLL < MG_GAME_COUNT);
+	_minigame = nWhichDLL;
 
 	blackScreen();
 

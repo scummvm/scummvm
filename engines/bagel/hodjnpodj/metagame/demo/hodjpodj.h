@@ -37,6 +37,7 @@ private:
 	CPalette *pGamePalette = nullptr;
 	CSound *pBackgroundMidi = nullptr;
 	int _currentCommand = -1;
+	int _minigame = -1;
 
 	void drawBitmap(const char *filename);
 	void startBackgroundMidi();
