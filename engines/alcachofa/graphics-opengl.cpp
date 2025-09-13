@@ -24,9 +24,11 @@
 #include "alcachofa/graphics-opengl.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
 #include "graphics/renderer.h"
+#include "gui/error.h"
 
 using namespace Common;
 using namespace Math;
@@ -125,7 +127,7 @@ OpenGLRenderer::OpenGLRenderer(Point resolution) : _resolution(resolution) {
 	GL_CALL(glDepthMask(GL_FALSE));
 
 	if (!OpenGLContext.NPOTSupported || !OpenGLContext.textureMirrorRepeatSupported) {
-		g_system->messageBox(LogMessageType::kWarning, "Old OpenGL detected, some graphical errors will occur.");
+		GUI::displayErrorDialog(_("Old OpenGL detected, some graphical errors will occur."));
 	}
 }
 
