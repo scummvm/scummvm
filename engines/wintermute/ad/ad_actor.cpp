@@ -812,6 +812,7 @@ bool AdActor::update() {
 		}
 		break;
 	default:
+		break;
 	}
 
 	// Below condition code is not present in Lite up to (Feb 8, 2012) (SVN repo)
