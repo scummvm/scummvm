@@ -228,7 +228,7 @@ void CMainWindow::initStatics() {
 	pGameSound = nullptr;
 
 	bRandomBoard = false;
-	BoardSelected = CROSS;
+	BoardSelected = g_engine->isDemo() ? TRIANGLE_PLUS : CROSS;
 	Common::fill(&fState[0][0], &fState[0][0] + GRID_SIZE * GRID_SIZE, 0);
 
 	for (POINT &pt : Moves)
