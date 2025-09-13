@@ -488,11 +488,11 @@ void AdActor::turnTo(TDirection dir) {
 	delta2 = dir + NUM_DIRECTIONS - _dir;
 	delta3 = dir - NUM_DIRECTIONS - _dir;
 
-	delta1 = (abs(delta1) <= abs(delta2)) ? delta1 : delta2;
-	delta = (abs(delta1) <= abs(delta3)) ? delta1 : delta3;
+	delta1 = (ABS(delta1) <= ABS(delta2)) ? delta1 : delta2;
+	delta = (ABS(delta1) <= ABS(delta3)) ? delta1 : delta3;
 
 	// already there?
-	if (abs(delta) < 2) {
+	if (ABS(delta) < 2) {
 		_dir = dir;
 		_targetDir = dir;
 		_state = _nextState;
@@ -906,8 +906,8 @@ void AdActor::getNextStep() {
 
 
 	int maxStepX, maxStepY;
-	maxStepX = abs(_currentSprite->_moveX);
-	maxStepY = abs(_currentSprite->_moveY);
+	maxStepX = ABS(_currentSprite->_moveX);
+	maxStepY = ABS(_currentSprite->_moveY);
 
 	maxStepX = MAX(maxStepX, maxStepY);
 	maxStepX = MAX(maxStepX, 1);
@@ -958,7 +958,7 @@ void AdActor::getNextStep() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
-	_pFCount = MAX((abs(endPt.x - startPt.x)), (abs(endPt.y - startPt.y)));
+	_pFCount = MAX((ABS(endPt.x - startPt.x)), (ABS(endPt.y - startPt.y)));
 
 	_pFStepX = (double)(endPt.x - startPt.x) / _pFCount;
 	_pFStepY = (double)(endPt.y - startPt.y) / _pFCount;

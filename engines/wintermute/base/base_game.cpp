@@ -5716,8 +5716,8 @@ bool BaseGame::isDoubleClick(int32 buttonIndex) {
 	Common::Point32 pos;
 	BasePlatform::getCursorPos(&pos);
 
-	int moveX = abs(pos.x - _lastClick[buttonIndex].posX);
-	int moveY = abs(pos.y - _lastClick[buttonIndex].posY);
+	int moveX = ABS(pos.x - _lastClick[buttonIndex].posX);
+	int moveY = ABS(pos.y - _lastClick[buttonIndex].posY);
 
 
 	if (_lastClick[buttonIndex].time == 0 || g_system->getMillis() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {

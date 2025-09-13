@@ -254,7 +254,7 @@ bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObje
 			for (int xxx = startX - tolerance; xxx <= startX + tolerance; xxx++) {
 				for (int yyy = startY - tolerance; yyy <= startY + tolerance; yyy++) {
 					if (isWalkableAt(xxx, yyy, true, requester)) {
-						int distance = abs(xxx - source.x) + abs(yyy - source.y);
+						int distance = ABS(xxx - source.x) + ABS(yyy - source.y);
 						if (distance < bestDistance) {
 							startX = xxx;
 							startY = yyy;
@@ -468,8 +468,8 @@ int AdScene::getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester) {
 	x2 = p2.x;
 	y2 = p2.y;
 
-	xLength = abs(x2 - x1);
-	yLength = abs(y2 - y1);
+	xLength = ABS(x2 - x1);
+	yLength = ABS(y2 - y1);
 
 	if (xLength > yLength) {
 		if (x1 > x2) {
@@ -1573,10 +1573,10 @@ void AdScene::scrollTo(int offsetX, int offsetY) {
 
 
 	if (_game->_mainObject && _game->_mainObject->_is3D) {
-		if (abs(origOffsetLeft - _targetOffsetLeft) < 5) {
+		if (ABS(origOffsetLeft - _targetOffsetLeft) < 5) {
 			_targetOffsetLeft = origOffsetLeft;
 		}
-		if (abs(origOffsetTop - _targetOffsetTop) < 5) {
+		if (ABS(origOffsetTop - _targetOffsetTop) < 5) {
 			_targetOffsetTop = origOffsetTop;
 		}
 		//_targetOffsetTop = 0;
@@ -3131,8 +3131,8 @@ bool AdScene::correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, in
 	x2 = startX;
 	y2 = startY;
 
-	xLength = abs(x2 - x1);
-	yLength = abs(y2 - y1);
+	xLength = ABS(x2 - x1);
+	yLength = ABS(y2 - y1);
 
 	if (xLength > yLength) {
 
@@ -3221,7 +3221,7 @@ bool AdScene::correctTargetPoint(int32 startX, int32 startY, int32 *argX, int32 
 	int offsetX = INT_MAX_VALUE, offsetY = INT_MAX_VALUE;
 
 	if (foundLeft && foundRight) {
-		if (abs(lengthLeft) < abs(lengthRight)) {
+		if (ABS(lengthLeft) < ABS(lengthRight)) {
 			offsetX = lengthLeft;
 		} else {
 			offsetX = lengthRight;
@@ -3233,7 +3233,7 @@ bool AdScene::correctTargetPoint(int32 startX, int32 startY, int32 *argX, int32 
 	}
 
 	if (foundUp && foundDown) {
-		if (abs(lengthUp) < abs(lengthDown)) {
+		if (ABS(lengthUp) < ABS(lengthDown)) {
 			offsetY = lengthUp;
 		} else {
 			offsetY = lengthDown;
@@ -3244,7 +3244,7 @@ bool AdScene::correctTargetPoint(int32 startX, int32 startY, int32 *argX, int32 
 		offsetY = lengthDown;
 	}
 
-	if (abs(offsetX) < abs(offsetY)) {
+	if (ABS(offsetX) < ABS(offsetY)) {
 		*argX = *argX + offsetX;
 	} else {
 		*argY = *argY + offsetY;

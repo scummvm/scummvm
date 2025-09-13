@@ -699,7 +699,7 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length")==0) {
 	    int origLength = _length;
-	    _length = max(value->getInt(0), 0);
+	    _length = MAX(value->getInt(0), 0);
 
 	    char propName[20];
 	    if (_length < OrigLength) {
