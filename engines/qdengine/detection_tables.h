@@ -65,7 +65,9 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("karliknos", "a3f1b86c07bf72f688e7f2b5f20aa7f9", 3225385,
 			"qd_game.exe", "fcc99749c0ec55d4b112450755ae97b8", 1808636),
 	// Nykštukas Nosis
-	//GAMEl("karliknos", "???", 3225385, Common::LT_LIT),
+	// 2004/04/19 Akelote
+	GAMEl("karliknos", "89077e9322d92b080406d3807f548fe2", 3225327,
+			"qd_game.exe", "607fa1a3b2c2b7810a5de49b5e7c1521", 917504, Common::LT_LTU),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_NO_FLAGS
