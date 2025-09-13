@@ -252,15 +252,17 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	case WM_DESTROY:
 		nGameReturn = lParam;
 
-		if (nGameReturn < 0) {
-			// Restart intro video
-			PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
-
-		} else if (nGameReturn == 0) {
+		if (_minigame != -1) {
 			// Finished a minigame
 			const auto &game = CMgStatic::cGameTable[_minigame];
+			_minigame = -1;
+
 			AfxGetApp()->removeResources(game._dllName);
 			PostMessage(WM_COMMAND, IDC_ZOOM);
+
+		} else if (nGameReturn < 0) {
+			// Restart intro video
+			PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
 
 		} else {
 			loadNewDLL(nGameReturn);
