@@ -98,6 +98,10 @@ void SoundCastMember::load() {
 					sndFormat = new MoaSoundFormatDecoder();
 				sndFormat->loadSampleStream(*sndData);
 				delete sndData;
+			} else if (it.tag == MKTAG('e', 'd', 'i', 'M')) {
+				Common::SeekableReadStreamEndian *sndData = _cast->getResource(it.tag, it.index);
+				warning("SoundCastMember::load(): STUB: ediM resource in sound cast member %d", _castId);
+				delete sndData;
 			}
 		}
 
