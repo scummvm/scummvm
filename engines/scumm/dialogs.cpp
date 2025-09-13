@@ -493,6 +493,7 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 	static const mapping mapES[] = { { '\0', '\0' } };
 	static const mapping mapRU[] = { { '\0', '\0' } };
 	static const mapping mapSE[] = { { '\0', '\0' } };
+	static const mapping mapCA[] = { { '\0', '\0' } };
 
 	const mapping *map = 0;
 	switch (lang) {
@@ -513,6 +514,9 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 		break;
 	case Common::SV_SWE:
 		map = mapSE;
+		break;
+	case Common::CA_ESP:
+		map = mapCA;
 		break;
 	default:
 		break;
@@ -639,6 +643,22 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{4, "Spelet pausat. Tryck MELLANSLAG f""\x94""r att forts""\x84""tta."},
 			{5, """\x8e""r du s""\x84""ker p""\x86"" att du vill starta om? (J/N)J"},
 			{6, """\x8e""r du s""\x84""ker p""\x86"" att du vill avsluta? (J/N)J"}
+		},
+		{	// Japanese
+			{1, "Insert Disk %c and Press Button to Continue."}, //Placeholder
+			{2, "Unable to Find %s, (%c%d) Press Button."}, //Placeholder
+			{3, "Error reading disk %c, (%c%d) Press Button."}, //Placeholder
+			{4, "Game paused, press SPACE to continue.  "}, //Placeholder
+			{5, "Are you sure you want to restart? (y/n)y"}, //Placeholder
+			{6, "Are you sure you want to quit? (y/n)y"} //Placeholder
+		},
+		{	// Catalan
+			{1, "Insereix el disc n. Prem ENTER."},
+			{2, "No es troba l'arxiu nn.lfl. Prem ENTER."},
+			{3, "ERROR. Prem una tecla per reintentar."},
+			{4, "Joc en pausa. Prem ESPAI per continuar."},
+			{5, "Segur que vols reiniciar? (S o N)S"},
+			{6, "Segur que vols sortir? (S o N)S"}
 		}
 	};
 
@@ -704,7 +724,8 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, """\xc2\xa8""Est""\xc2\xa0""s seguro de querer abandonar? (S/N)S"}, // ES
 		{0, "(Y/N)Y"}, // RU - Placeholder: I don't know of any RU version of v3 games
 		{0, "(Y/N)Y"}, // SE - Placeholder: I don't know of any SE version of v3 games
-		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"} // JA
+		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"}, // JA
+		{0, "Segur que vols sortir? (S/N)S"} // CA
 	};
 
 	// DOTT (CD) doesn't have translations for some menu options, but this was
@@ -785,6 +806,9 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	case Common::JA_JPN:
 		langIndex = useHardcodedV3QuitPrompt ? 7 : 0;
 		break;
+	case Common::CA_ESP:
+		langIndex = useFixedDottMenuStrings ? 0 : 8;
+		break;
 	default:
 		// Just stick with English.
 		break;
@@ -802,8 +826,8 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		return fixedDottMenuStrings[langIndex][stringno];
 	}
 
-	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1) - 1;
+	if (stringno >= ARRAYSIZE(strMap1[0])) {
+		stringno -= ARRAYSIZE(strMap1[0]);
 		assert(stringno < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}

@@ -88,6 +88,11 @@ maniac	Maniac Mansion
 	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	Fan translation?, sev
 	06865ea0fae1aeef2d6b96d8ae7ecc41	1988	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM 1.0
 	7c731228dc1cdc33ed426313d89d07e7	1988	he	DOS	V2	V2	-	Hebrew fan translation
+	
+	7f7595394bf236c3c803ad283b8535f7	1972	ca	DOS	V1	V1	Fan translation v1.0	Ce Trencada
+	bea8f1b2466375099948801380ae5560	1972	ca	DOS	V1	V1	Fan translation v1.1	Ce Trencada
+	210982c683b979d3cf42db3c84f20a0f	1988	ca	DOS	V2	V2	Fan translation v1.0	Ce Trencada
+	7a73651b127460c07e0bdf3631508152	1988	ca	DOS	V2	V2	Fan translation v1.1	Ce Trencada
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	1914	en	C64	V1	-	-
@@ -164,6 +169,13 @@ indy3	Indiana Jones and the Last Crusade
 	e893df6788fc63fef936dd531f9712ec	6295	it	DOS	VGA	VGA	Fan translation	OldGamesItalia (2007)
 	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
 	b27efc535df2bc2db998947c15ce57fb	7552	it	FM-TOWNS	FM-TOWNS	-	Fan translation	Glorifindel at OldGamesItalia/IAGTG (2007), v1.0
+	
+	11aa9496368c171096c8daf5a748df49	5361	ca	DOS	EGA	EGA	Fan translation v1.0	Ce Trencada
+	bd54798acec7af5775cadd79f2042b1e	7552	ca	FM-TOWNS	FM-TOWNS	FM-TOWNS	Fan translation v1.0	Ce Trencada
+	58678c123e29c59338cde17fb5dc5753	6295	ca	DOS	VGA	VGA	Fan translation v1.0	Ce Trencada
+	bf7f24990d700329194d375aecc4d853	5361	ca	DOS	EGA	EGA	Fan translation v1.1	Ce Trencada
+	18f13138589306482a6553dec3a5ca7f	7552	ca	FM-TOWNS	FM-TOWNS	FM-TOWNS	Fan translation v1.1	Ce Trencada
+	9f063c54a4119056333d99d38b48e41f	6295	ca	DOS	VGA	VGA	Fan translation v1.1	Ce Trencada
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -271,6 +283,8 @@ monkey	The Secret of Monkey Island
 	60c7b33000059b44465b2ce104a52285	-1	ko	DOS	CD	CD	Fan translation	ScummVM-Kor
 	261cd0da05b12917458d1c816a9d2ec9	8955	pl	DOS	CD	CD	Fan translation	SCUMMPL
 	e222c2020a6e6a93bc13d01224ab73df	8357	ru	DOS	VGA	VGA	Fan translation	PRCA RuSCUMM v1.01 24/10/2021
+	
+	f27dc913b7fb3eb5b48bde1e4a687102	9135	ca	DOS	SE Talkie	Unofficial SE Talkie	Fan translation v1.0	Ce Trencada
 
 pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	v1.0 9/14/90	Fingolfin
@@ -351,6 +365,8 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	32765851cd5ed099f8da36a4a6144c7e	-1	ko	DOS	-	CD	Fan translation	ScummVM-Kor
 	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	Fan translation	PRCA RuSCUMM v1.00 23/12/2007
 	b7479cd302cd82f1cd2b5a12186d1401	12030	ru	DOS	-	Floppy	Fan translation	PRCA RuSCUMM v1.00 23/12/2007
+	
+	e0b46640e2aeff477b8d6e98e65113f3	12035	ca	DOS	-	CD	Fan translation v1.0	Ce Trencada
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?
