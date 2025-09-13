@@ -52,6 +52,10 @@ bool BagelEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
+bool BagelEngine::isMazeODoomDemo() const {
+	return !strcmp(_gameDescription->gameId, "mazeodoom");
+}
+
 SaveStateList BagelEngine::listSaves() const {
 	return getMetaEngine()->listSaves(_targetName.c_str());
 }

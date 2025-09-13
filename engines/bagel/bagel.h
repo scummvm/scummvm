@@ -72,6 +72,7 @@ public:
 	 * Return whether it's a demo
 	 */
 	bool isDemo() const;
+	bool isMazeODoomDemo() const;
 
 	/**
 	 * Gets a random number

@@ -149,8 +149,8 @@ bool CMainMenu::OnInitDialog() {
 	_quitButton->SetPalette(m_pPalette);
 	_quitButton->SetControl(IDC_OPTIONS_QUIT, this);
 
-	// Add the Hype Button if running the demo
-	if (g_engine->isDemo()) {
+	// Add the Hype Button if running the Maze O' Doom demo
+	if (g_engine->isMazeODoomDemo()) {
 		CRect optionsRect, audioRect;
 		_optionsButton->GetWindowRect(&optionsRect);
 		_audioButton->GetWindowRect(&audioRect);
