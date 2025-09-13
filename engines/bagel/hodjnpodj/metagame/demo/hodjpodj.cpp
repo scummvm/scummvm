@@ -280,9 +280,8 @@ void CHodjPodjWindow::loadNewDLL(LPARAM lParam) {
 
 	stopBackgroundMidi();
 
-	assert(CMgStatic::cGameTable[nWhichDLL]._initFn != nullptr);
-
-	FPDLLFUNCT  lpfnGame;
+	const auto &game = CMgStatic::cGameTable[nWhichDLL];
+	assert(game._initFn != nullptr);
 
 	GAMESTRUCT *lpGameStruct = new GAMESTRUCT;
 	lpGameStruct->lCrowns = 1000;
@@ -293,8 +292,9 @@ void CHodjPodjWindow::loadNewDLL(LPARAM lParam) {
 	lpGameStruct->bPlayingMetagame = false;
 	lpGameStruct->bPlayingHodj = true;
 
-	lpfnGame = CMgStatic::cGameTable[nWhichDLL]._initFn;
-	(void)lpfnGame(m_hWnd, lpGameStruct);
+	// Load the minigame's dll for resources, and launch it
+	pMyApp->addResources(game._dllName);
+	(*game._initFn)(m_hWnd, lpGameStruct);
 }
 
 } // namespace Demo
