@@ -851,11 +851,13 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bonest", "Beneath Our Next Establishment" },
 	{ "bonnieball", "Bonnie's Ball Quest" },
 	{ "boogiebum", "Boogie Bum's Roger Quest" },
+	{ "bookertail", "Booker Tail" },
 	{ "bookofdestiny", "Book of Destiny" },
 	{ "bookofknowledge", "The Books of Knowledge" },
 	{ "bookofspells4", "The Book of Spells (A funtasy Adventure) - Chapter 4" },
 	{ "bookofspellscomplete", "The Book of Spells (A funtasy Adventure)" },
 	{ "bookunfinished", "The Book Unfinished" },
+	{ "bordercafe", "Border Cafe" },
 	{ "botosdiabo", "Botos do Diabo" },
 	{ "bovinebyproduct", "Bovine By-Product" },
 	{ "bowanddork", "Bow and Dork" },
@@ -1031,6 +1033,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "colourwise", "ColourWise" },
 	{ "colourwiseleveleditor", "ColourWise - Level Editor" },
 	{ "columbuslander", "Columbus Lander" },
+	{ "comedyeternal", "The Comedy of an Eternal Life" },
 	{ "comedyquest", "Comedy Quest" },
 	{ "cometcollision", "Comet Collision" },
 	{ "comiclassic", "The Curse of Monkey Island: Classic Edition" },
@@ -2834,6 +2837,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ronbeforethelegacy", "Reality-on-the-Norm: Before the Legacy" },
 	{ "ronendgame", "End Game" },
 	{ "rongyptian", "RoNgyptian" },
+	{ "rononice", "RoN on ICE" },
 	{ "ronoutbreak", "The Outbreak (Day of Comet)" },
 	{ "ronsixteen", "Sixteen" },
 	{ "rontimeouttrailer", "Time Out Trailer" },
@@ -2844,6 +2848,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "rotla", "Riders of the Lost Ark" },
 	{ "roughdiamond", "Rough Diamond" },
 	{ "rowengoestowork", "Rowen Goes To Work" },
+	{ "rowengrandadv", "Rowen's Grand Adventure" },
 	{ "rtmi", "Return to Monkey Island" },
 	{ "rudeawakening", "Rude Awakening" },
 	{ "rufusstory", "Rufus' Story" },
@@ -3732,10 +3737,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "badcoral", "Bad to the Coral" },
 	{ "beachbelly", "Beach Belly Bloodbath" },
 	{ "burncloset", "Burn Down The Closet: a game about being agender" },
+	{ "magentaspacech12", "Magenta: IN SPACE (Chapter 1 & 2)" },
 	{ "pqpn1", "Police Quest: Panama Nights - Part 1" },
+	{ "snarl", "Snarl" },
+	{ "theescapeags", "The Escape" },
 	{ "weightgravity", "Weight of Gravity" },
 
 	// AGS 4.0 games. not currently supported
+	{ "boundedrealms", "Bounded Realms" },
 	{ "castleescapech2", "Castle Escape - Chapter 2" },
 	{ "centralstandard", "Central Standard" },
 	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
@@ -3743,6 +3752,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dustrust", "Dust 'n' Rust" },
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
+	{ "hexapucchu", "Hexapucchu Remake" },
 	{ "paintedhills", "Painted Hills" },
 	{ "paintedhills2", "Big Trouble in Little River" },
 	{ "reddad", "Red Dad Redemption" },
@@ -4281,19 +4291,26 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "4792bc8c90ba9d08dfe32394af61420b", 25562809),
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "08d7ab12e0844b2217171b9f16f87062", 11267330),  // Post-Jam
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "b9e0b0bbbb82a04d9c83efa455610eda", 11728709),  // Post-Jam v11
+	UNSUPPORTED_DEMO_ENTRY_EN("bookertail", "Bookertail.ags", "036588310f7c60c40ae97be9f2ea641c", 8593198),
 	UNSUPPORTED_GAME_ENTRY_EN("brownieadv1", "Brownie1.exe", "a3a797d0ea4bacd17e75d06edc5a7c4b", 166779573),  // GOG v8.0
 	UNSUPPORTED_GAME_ENTRY_EN("burncloset", "BurnDownTheCLoset.ags", "adfdd31c0cfa9ae131da1f1071e75a7a", 4734045),
 	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.exe", "2587f046d5f079359e6aec043519fa70", 7264253),  // v1.0.1
 	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.ags", "e0fcd3d59fb160e504700ab8a0101e2f", 4147230),
 	UNSUPPORTED_GAME_ENTRY_EN("carnivalags", "Carnival.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 312099935),
+	UNSUPPORTED_DEMO_ENTRY("chuckisland", "Chuck et l'ile aux Geants.ags", "d72d0f45296f9085690d244da1e73d22", 43544604),  // En-Fr
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
+	UNSUPPORTED_GAME_ENTRY_EN("magentaspacech12", "Magenta.exe", "d1fb19834d10cd56b763669b320ec6fd", 100972135),
 	UNSUPPORTED_GAME_ENTRY_EN("pqpn1", "PQPN.ags", "a48d4e2cb25c1fd8c8d48a2832120801", 3266124),
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
+	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75839830),  // v1.0.2
+	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.exe", "6dc8f0aedfd55a47f81323f0a412bc15", 19623142),
+	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.ags", "e5e26631bf6a375ab722f9588e2f82a1", 16513746),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
 	UNSUPPORTED_GAME_ENTRY_EN("weightgravity", "Weight of Gravity.ags", "d5532595b86ca80fb656d4343063ab15", 245545607),
 
 	// AGS 4 games
 	AGS4_ENTRY("achristmasnightmare", "xmasnightmare.exe", "53db6ba4864b17a28b8176d92459c7bc", 49689828),  // v1.3 Windows En-Es-It
+	AGS4_ENTRY_EN("boundedrealms", "Bounded Realms.ags", "8cca72a48049bef9d9ecc104665a2335", 1515607),
 	AGS4_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.exe", "124753417c6ccda01c93f9935eb5a87d", 4527841),  // Windows
 	AGS4_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.ags", "3a1136db0175eb81b499bc4c755ecbee", 1549005),  // Linux
 	AGS4_ENTRY_EN("centralstandard", "Dunning-Kruger 2.ags", "db56a79e4a2472521e20cb441d7dc94b", 48001719),
@@ -4305,6 +4322,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	AGS4_ENTRY_EN("gloriouswolfcomicsep1", "Glorious Wolf.ags", "578f34ce108225b7b03091b424655f6e", 1592100251),
 	AGS4_ENTRY_EN("gloriouswolfcomicsep2", "Glorious Wolf 2.ags", "e22aacb6016af866f7b241db47a290f4", 1283086429),
 	AGS4_ENTRY_EN("gloriouswolfcomicsep2", "Glorious Wolf 2.ags", "92d78970f88789f12275970126aa83f2", 1279399200),
+	AGS4_ENTRY_EN("hexapucchu", "Hexapucchu.ags", "9345c00d78bf14b4fa4cb4080599c644", 13151974),
 	AGS4_ENTRY_EN("paintedhills", "Painted Hills.ags", "95becb7b83df4e176aa307223d0b7181", 32864460),
 	AGS4_ENTRY_EN("paintedhills2", "Painted Hills 2.ags", "b332b0acdbe998142aa019075f21ac82", 203373406),
 	AGS4_ENTRY_EN("paintedhills2", "Painted Hills 2.ags", "6837c43e8ad038be9bd3c0eed267f82a", 724921454),
@@ -5408,6 +5426,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("clownatthecircus", "circus.exe", "f120690b506dd63cd7d1112ea6af2f77", 1073547),
 	DEMO_ENTRY_EN("clubmidget", "midget2.exe", "4d17844029d8910fbaae1bdc99e250f2", 1593937),
 	DEMO_ENTRY_EN("coelldeckaflight", "coell deca.exe", "a524cbb1c51589903c4043b98917f1d9", 5497572),
+	DEMO_ENTRY_EN("comedyeternal", "Eternal Life.ags", "b125795f13d9143d9816a52c46ea2421", 135192603),
 	DEMO_ENTRY_EN("comiclassic", "CMIOE.exe", "9beac9a36669407526f1c34018e443d4", 29284874),
 	DEMO_ENTRY("comiclassic", "CMIOE.exe", "c361f4d93e1a802ea7908a1b95d81757", 36990562),  //Eng-Ita
 	DEMO_ENTRY_EN("cosmosquest1", "tfas1.exe", "0710e2ec71042617f565c01824f0cf3c", 4571793),
@@ -5778,6 +5797,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY("rotla", "ROTLA.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 7789189, Common::ES_ESP, "Tanis Demo", ADGF_DEMO, 0),
 	DEMO_ENTRY_EN("rotla", "ROTLA.exe", "82da2565c456dcfb265ded6fe3189c0b", 12126185),  // Eng-Esp
 	DEMO_ENTRY_EN("roughdiamond", "game.exe", "06a03fe35791b0578068ab1873455463", 4419666),
+	DEMO_ENTRY_EN("rowengrandadv", "Cactus Quest.exe", "18038ea5dea4a3d774e5e55bd1fa8477", 17086012),
 	DEMO_ENTRY_LANG("rtmi", "RMI.exe", "465f972675db2da6040518221af5b0ba", 26481971, Common::IT_ITA),  //v1
 	DEMO_ENTRY_LANG("rtmi", "RMI v2.0.exe", "b8df5e3b23c15292f7f37f1c06fa78a2", 32304300, Common::IT_ITA),  //v2
 	DETECTION_ENTRY("samaritan", "samaritan.exe", "615e73fc1874e92d60a1996c2330ea36", 8714007, Common::EN_ANY, "Prototype Demo", ADGF_DEMO, 0),
@@ -6442,6 +6462,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bookofspells4", "BOS4.exe", "db4d303868b86e28a8eca1a4181ea288", 4537869),
 	GAME_ENTRY_EN_PLATFORM("bookofspellscomplete", "bos2.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 5724377, "Beta"),
 	GAME_ENTRY_EN("bookunfinished", "bookunfinished.exe", "9cb3c8dc7a8ab9c44815955696be2677", 4662400),
+	GAME_ENTRY_EN("bordercafe", "bordercafe.ags", "ea0122dc9200dd49b7646e9dcaa28342", 9310818),
 	GAME_ENTRY_EN("botosdiabo", "Botos.ags", "1ce17c43c311e190397d03844152dba1", 28365535),
 	GAME_ENTRY_EN("bovinebyproduct", "cow.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 134670383),
 	GAME_ENTRY_EN("bowserquirkquest", "bowser quirk quest.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3046623),
@@ -6475,6 +6496,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bruises", "Bruises.ags", "95cf2968736e75a32c2f35921887cec0", 5562384),  //Linux
 	GAME_ENTRY_EN_PLATFORM("bruises", "Bruises.exe", "45ab64eb8ef455f82fa27fae73ca0785", 8058295, "Post-Jam Fixes"),  //Windows
 	GAME_ENTRY_EN_PLATFORM("bruises", "Bruises.ags", "0fda16c094a6d1deafd8dd27aa98c287", 5567399, "Post-Jam Fixes"),  //Linux
+	GAME_ENTRY_EN("bsg78", "bsg-e01.exe", "cf1ff01dfb8261f791ac95a7f5f05c1c", 401027178),
 	GAME_ENTRY("bsg78", "bsg-e01.exe", "cf1ff01dfb8261f791ac95a7f5f05c1c", 401029955),  // Eng-Tur
 	GAME_ENTRY("bubblewrap", "bubble wrap popping simulator 2013.exe", "24275d3b085f0e6f3834311994eb1018", 3166059),  //Multilang
 	GAME_ENTRY_EN("bubbygod", "Bubby's adventure.ags", "4466d8b8cbc0f20904f4d7989c2ed5d7", 69402382),
@@ -8854,6 +8876,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("romanian", "Beginner.ags", "cff2e109cc5f5363db4ba43b2868a628", 296534681),
 	GAME_ENTRY_EN("ronbeforethelegacy", "RONlegacy.exe", "0b7529a76f38283d6e850b8d56526fc1", 4792872),
 	GAME_ENTRY_EN("ronendgame", "ron-5.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2444579),
+	GAME_ENTRY_EN_PLATFORM("rononice", "myRon.ags", "e512c78f06e288ac732ce17439c2ddf3", 79774569, "Beta"),
 	GAME_ENTRY_EN("ronoutbreak", "RoN-DayOfComet.exe", "465f972675db2da6040518221af5b0ba", 10497989),
 	GAME_ENTRY_EN("ronsixteen", "16c.exe", "06a03fe35791b0578068ab1873455463", 2467851),
 	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698912),
