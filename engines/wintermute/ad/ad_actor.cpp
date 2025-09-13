@@ -69,6 +69,9 @@ AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 	_animSprite2 = nullptr;
 
+	_stopOnBlocked = false;
+	_actorIsBlocked = false;
+
 	setDefaultAnimNames();
 }
 
@@ -187,6 +190,7 @@ TOKEN_DEF(RELATIVE_SCALE)
 TOKEN_DEF(ALPHA)
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(ANIMATION)
+TOKEN_DEF(STOP_ON_BLOCKED)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::loadBuffer(char *buffer, bool complete) {
@@ -227,6 +231,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(ALPHA)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE(ANIMATION)
+	TOKEN_TABLE(STOP_ON_BLOCKED)
 	TOKEN_TABLE_END
 
 	char *params;
@@ -511,6 +516,7 @@ void AdActor::turnTo(TDirection dir) {
 //////////////////////////////////////////////////////////////////////////
 void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_afterWalkDir = afterWalkDir;
+	_actorIsBlocked = false;
 	if (x == _targetPoint->x && y == _targetPoint->y && _state == STATE_FOLLOWING_PATH) {
 		return;
 	}
@@ -921,12 +927,26 @@ void AdActor::getNextStep() {
 		maxStepX--;
 	}
 
-	if (((AdGame *)_game)->_scene->isBlockedAt((int)_pFX, (int)_pFY, true, this)) {
+	if (((AdGame *)_game)->_scene->isBlockedAt((int)_pFX, (int)_pFY, true, this, false)) {
+		// is the actor already at its final position? this is not a block
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;
 			return;
 		}
+
+		// scripts can be informed if the actor is blocked right now
+		applyEvent("ActorIsBlocked");
+
+		// stop and set the block flag
+		if (_stopOnBlocked == true) {
+			_actorIsBlocked = true;
+			_state = _nextState;
+			_nextState = STATE_READY;
+			return;
+		}
+
+		// try to find a new path to the target
 		goTo(_targetPoint->x, _targetPoint->y);
 		return;
 	}
@@ -1159,6 +1179,25 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *animName = stack->pop()->getString();
 		stack->pushBool(getAnimByName(animName) != nullptr);
 		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetStopOnBlocked
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetStopOnBlocked") == 0) {
+		stack->correctParams(1);
+		_stopOnBlocked = stack->pop()->getBool();
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetStopOnBlocked
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetStopOnBlocked") == 0) {
+		stack->correctParams(0);
+		stack->pushBool(_stopOnBlocked);
+		return STATUS_OK;
 	} else {
 		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
 	}
@@ -1220,6 +1259,14 @@ ScValue *AdActor::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		_scValue->setString(_turnRightAnimName);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ActorIsBlocked
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ActorIsBlocked") == 0) {
+		_scValue->setBool(_actorIsBlocked);
 		return _scValue;
 	} else {
 		return AdTalkHolder::scGetProperty(name);
@@ -1432,6 +1479,14 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferCharPtr(TMEMBER(_walkAnimName));
 	persistMgr->transferCharPtr(TMEMBER(_turnLeftAnimName));
 	persistMgr->transferCharPtr(TMEMBER(_turnRightAnimName));
+
+	// TODO: add at next save game version bump
+	//persistMgr->transferBool(TMEMBER(_stopOnBlocked));
+	//persistMgr->transferBool(TMEMBER(_actorIsBlocked));
+	if (!persistMgr->getIsSaving()) {
+		_stopOnBlocked = false;
+		_actorIsBlocked = false;
+	}
 
 	_anims.persist(persistMgr);
 

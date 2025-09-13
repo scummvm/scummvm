@@ -371,8 +371,8 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *requester) {
-	bool ret = true;
+bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *requester, bool defaultBlock) {
+	bool ret = defaultBlock;
 
 	if (checkFreeObjects) {
 		for (int32 i = 0; i < _objects.getSize(); i++) {

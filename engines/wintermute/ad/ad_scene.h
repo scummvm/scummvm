@@ -145,7 +145,13 @@ public:
 	uint32 _pfMaxTime;
 	bool initLoop();
 	void pathFinderStep();
-	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
+	/*
+	 * Added the possibility to configure the default behaviour of this function. If neither free objects nor a main layer
+	 * exist, the function used to return "blocked". This results in all actors being "blocked" shortly after load.
+	 * The default behaviour is unchanged to avoid strange side effects. The actor class is now able to override this default.
+	 *
+	 */
+	bool isBlockedAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr, bool defaultBlock = true);
 	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	AdLayer *_mainLayer;
 	float getZoomAt(int x, int y);

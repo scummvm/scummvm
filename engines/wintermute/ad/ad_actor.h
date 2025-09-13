@@ -78,6 +78,10 @@ public:
 	bool playAnim(const char *filename) override;
 	AdSpriteSet *getAnimByName(const char *animName);
 
+	// alternative behaviour when actor is blocked
+	bool _stopOnBlocked;
+	bool _actorIsBlocked;
+
 	// scripting interface
 	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
