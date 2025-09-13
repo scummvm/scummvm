@@ -31,7 +31,8 @@ namespace Zoom {
 
 #define SPLASHSPEC  ".\\ART\\ZOOMMAP.BMP"
 
-#define IDC_LEAVE   999
+#define IDC_SLIDESHOW	998
+#define IDC_LEAVE		999
 
 extern HCURSOR          hGameCursor;
 
@@ -567,7 +568,7 @@ void CMainZoomWindow::OnTimer(uintptr nEventID) {
 	// Add Quit and Slide Show buttons
 	CRect ssRect((GAME_WIDTH / 2) - 120, 450, (GAME_WIDTH / 2) - 20, 470);
 	pSlideshowButton = new CColorButton();
-	pSlideshowButton->Create("Slide Show", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ssRect, this, IDC_LEAVE);
+	pSlideshowButton->Create("Slide Show", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ssRect, this, IDC_SLIDESHOW);
 	pSlideshowButton->SetPalette(pGamePalette);
 
 	CRect quitRect((GAME_WIDTH / 2) + 20, 450, (GAME_WIDTH / 2) + 120, 470);

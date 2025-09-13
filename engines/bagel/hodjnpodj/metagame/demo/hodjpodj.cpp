@@ -113,6 +113,7 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	case IDC_ZOOM:
 		blackScreen();
 		stopBackgroundMidi();
+		SendMessage(WM_CLOSE);
 
 		Metagame::Zoom::RunZoomMap(m_hWnd, true);
 		break;
