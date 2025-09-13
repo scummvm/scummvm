@@ -176,7 +176,7 @@ void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
+bool BaseScriptable::canHandleMethod(const char *eventMethod) {
 	return false;
 }
 

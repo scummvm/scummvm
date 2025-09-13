@@ -38,21 +38,21 @@ class BasePersistenceManager;
 
 class BaseStringTable : public BaseClass {
 public:
-	const char *expandStatic(const char *string) const;
+	const char *expandStatic(const char *string);
 	bool loadFile(const char *filename, bool deleteAll = true);
-	void expand(char **str) const;
-	void expand(Common::String &str) const;
+	void expand(char **str);
+	void expand(Common::String &str);
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	~BaseStringTable() override;
 	Common::HashMap<Common::String, Common::String> _strings;
-	char *getKey(const char *str) const;
+	char *getKey(const char *str);
 	bool persist(BasePersistenceManager *persistMgr) override;
 private:
 	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
 
-	void replaceExpand(char *key, char *newStr, size_t newStrSize) const;
+	void replaceExpand(char *key, char *newStr, size_t newStrSize);
 };
 
 } // End of namespace Wintermute

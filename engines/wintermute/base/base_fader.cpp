@@ -97,7 +97,7 @@ bool BaseFader::display() {
 	}
 
 	if (_currentAlpha > 0x00) {
-		BaseEngine::getRenderer()->fadeToColor(_red, _green, _blue, _currentAlpha);
+		return _game->_renderer->fadeToColor(_red, _green, _blue, _currentAlpha);
 	}
 	return STATUS_OK;
 }
@@ -163,7 +163,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseFader::getCurrentColor() const {
+uint32 BaseFader::getCurrentColor() {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 

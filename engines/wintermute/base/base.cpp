@@ -106,7 +106,7 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_EDITOR_PROPERTY) {
-			BaseEngine::LOG(0, "'EDITOR_PROPERTY' keyword expected.");
+			_game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -139,13 +139,13 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		SAFE_DELETE_ARRAY(propName);
 		SAFE_DELETE_ARRAY(propValue);
-		BaseEngine::LOG(0, "Syntax error in EDITOR_PROPERTY definition");
+		_game->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		SAFE_DELETE_ARRAY(propName);
 		SAFE_DELETE_ARRAY(propValue);
-		BaseEngine::LOG(0, "Error loading EDITOR_PROPERTY definition");
+		_game->LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 

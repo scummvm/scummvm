@@ -183,7 +183,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in SUBFRAME definition");
+		_game->LOG(0, "Syntax error in SUBFRAME definition");
 		return STATUS_FAILED;
 	}
 

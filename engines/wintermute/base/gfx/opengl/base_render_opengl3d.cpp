@@ -582,7 +582,7 @@ bool BaseRenderOpenGL3D::fillRect(int x, int y, int w, int h, uint32 color) {
 	return true;
 }
 
-void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
+bool BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	float left, right, bottom, top;
 
 	left = _viewportRect.left;
@@ -628,6 +628,8 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	setup2D(true);
+
+	return true;
 }
 
 BaseImage *BaseRenderOpenGL3D::takeScreenshot(int newWidth, int newHeight) {

@@ -25,16 +25,18 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_quick_msg.h"
+#include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseQuickMsg::BaseQuickMsg(uint32 startTime, const char *text) {
+BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) : BaseClass(inGame) {
 	size_t textSize = strlen(text) + 1;
 	_text = new char[textSize];
 	Common::strcpy_s(_text, textSize, text);
-	_startTime = startTime;
+	_startTime = _game->_currentTime;
 }
 
 
@@ -45,7 +47,7 @@ BaseQuickMsg::~BaseQuickMsg() {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseQuickMsg::getText() const {
+const char *BaseQuickMsg::getText() {
 	return _text;
 }
 

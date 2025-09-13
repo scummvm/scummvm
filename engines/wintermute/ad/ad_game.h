@@ -112,7 +112,7 @@ public:
 	TTalkSkipButton _talkSkipButton;
 	TVideoSkipButton _videoSkipButton;
 
-	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;
+	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) override;
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
 	char *_scheduledScene;
 	bool _scheduledFadeIn;
@@ -144,8 +144,8 @@ public:
 	BaseArray<AdSceneState *> _sceneStates;
 	BaseArray<char *> _dlgPendingBranches;
 
-	BaseArray<const AdResponseContext *> _responsesBranch;
-	BaseArray<const AdResponseContext *> _responsesGame;
+	BaseArray<AdResponseContext *> _responsesBranch;
+	BaseArray<AdResponseContext *> _responsesGame;
 
 	bool loadFile(const char *filename) override;
 	bool loadBuffer(char *buffer, bool complete = true) override;

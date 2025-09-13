@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
@@ -104,7 +105,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 bool BaseRegion::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		BaseEngine::LOG(0, "BaseRegion::loadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseRegion::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -113,7 +114,7 @@ bool BaseRegion::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		BaseEngine::LOG(0, "Error parsing REGION file '%s'", filename);
+		_game->LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
 
@@ -154,7 +155,7 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_REGION) {
-			BaseEngine::LOG(0, "'REGION' keyword expected.");
+			_game->LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -209,7 +210,7 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in REGION definition");
+		_game->LOG(0, "Syntax error in REGION definition");
 		return STATUS_FAILED;
 	}
 

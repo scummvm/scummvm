@@ -130,7 +130,7 @@ bool PartEmitter::addSprite(const char *filename) {
 
 	// check if file exists
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
-		BaseEngine::LOG(0, "Sprite '%s' not found", filename);
+		_game->LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
 	}
 
@@ -319,7 +319,7 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
 	if (_sprites.getSize() <= 1) {
-		BaseEngine::getRenderer()->startSpriteBatch();
+		_game->_renderer->startSpriteBatch();
 	}
 
 	for (int32 i = 0; i < _particles.getSize(); i++) {
@@ -333,7 +333,7 @@ bool PartEmitter::display(BaseRegion *region) {
 	}
 
 	if (_sprites.getSize() <= 1) {
-		BaseEngine::getRenderer()->endSpriteBatch();
+		_game->_renderer->endSpriteBatch();
 	}
 
 	return STATUS_OK;

@@ -125,7 +125,7 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
-		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseSprite::loadFile failed for file '%s'", filename);
 		if (_game->_debugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
@@ -144,7 +144,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		BaseSubFrame *subframe = new BaseSubFrame(_game);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == nullptr) {
-			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename);
+			_game->LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
@@ -159,7 +159,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
-				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename);
+				_game->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			} else {
 				ret = STATUS_OK;
 			}
@@ -220,7 +220,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITE) {
-			BaseEngine::LOG(0, "'SPRITE' keyword expected.");
+			_game->LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -299,7 +299,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 			if (DID_FAIL(frame->loadBuffer(params, frameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
-				BaseEngine::LOG(0, "Error parsing frame %d", frameCount);
+				_game->LOG(0, "Error parsing frame %d", frameCount);
 				return STATUS_FAILED;
 			}
 
@@ -321,7 +321,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in SPRITE definition");
+		_game->LOG(0, "Syntax error in SPRITE definition");
 		return STATUS_FAILED;
 	}
 	_canBreak = !_continuous;

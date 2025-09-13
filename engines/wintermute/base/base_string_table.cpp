@@ -62,7 +62,7 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 
 	StringsIter it = _strings.find(finalKey);
 	if (it != _strings.end() && reportDuplicities) {
-		BaseEngine::LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
+		_game->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
 	}
 
 	_strings[finalKey] = val;
@@ -71,7 +71,7 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *BaseStringTable::getKey(const char *str) const {
+char *BaseStringTable::getKey(const char *str) {
 	if (str == nullptr || str[0] != '/') {
 		return nullptr;
 	}
@@ -107,7 +107,7 @@ char *BaseStringTable::getKey(const char *str) const {
 	}
 }
 
-void BaseStringTable::replaceExpand(char *key, char *newStr, size_t newStrSize) const {
+void BaseStringTable::replaceExpand(char *key, char *newStr, size_t newStrSize) {
 	// W/A: Remove accented chars like input text in Polish version of Alpha Polaris
 	if (BaseEngine::instance().getGameId() == "alphapolaris" &&
 	    BaseEngine::instance().getLanguage() == Common::PL_POL) {
@@ -133,7 +133,7 @@ void BaseStringTable::replaceExpand(char *key, char *newStr, size_t newStrSize) 
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseStringTable::expand(char **str) const {
+void BaseStringTable::expand(char **str) {
 	if (str == nullptr || *str == nullptr || *str[0] != '/') {
 		return;
 	}
@@ -174,7 +174,7 @@ void BaseStringTable::expand(char **str) const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseStringTable::expand(Common::String &str) const {
+void BaseStringTable::expand(Common::String &str) {
 	size_t tmpSize = str.size() + 1;
 	char *tmp = new char[tmpSize];
 	Common::strcpy_s(tmp, tmpSize, str.c_str());
@@ -185,7 +185,7 @@ void BaseStringTable::expand(Common::String &str) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-const char *BaseStringTable::expandStatic(const char *string) const {
+const char *BaseStringTable::expandStatic(const char *string) {
 	if (string == nullptr || string[0] == '\0' || string[0] != '/') {
 		return string;
 	}
@@ -233,7 +233,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	uint32 size;
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
 	if (buffer == nullptr) {
-		BaseEngine::LOG(0, "BaseStringTable::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseStringTable::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -244,7 +244,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 		if (_game->_textEncoding != TEXT_UTF8) {
 			_game->_textEncoding = TEXT_UTF8;
 			//_game->_textEncoding = TEXT_ANSI;
-			BaseEngine::LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
+			_game->LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
 		}
 	} else {
 		_game->_textEncoding = TEXT_ANSI;
@@ -286,7 +286,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 	delete[] buffer;
 
-	BaseEngine::LOG(0, "  %d strings loaded", _strings.size());
+	_game->LOG(0, "  %d strings loaded", _strings.size());
 
 	return STATUS_OK;
 }

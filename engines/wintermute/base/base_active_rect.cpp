@@ -116,7 +116,7 @@ void BaseActiveRect::clipRect() {
 	Common::Rect32 rc;
 	bool customViewport;
 	_game->getCurrentViewportRect(&rc, &customViewport);
-	BaseRenderer *rend = BaseEngine::getRenderer();
+	BaseRenderer *rend = _game->_renderer;
 
 	if (!customViewport) {
 		rc.left -= rend->_drawOffsetX;

@@ -94,8 +94,10 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error WintermuteEngine::run() {
+#if EXTENDED_DEBUGGER_ENABLED
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
+#endif
 	_debugger = new Console(this);
 	setDebugger(_debugger);
 
@@ -266,8 +268,10 @@ int WintermuteEngine::init() {
 		}
 	}
 
+#if EXTENDED_DEBUGGER_ENABLED
 	_game->_scEngine->attachMonitor(_dbgController);
-
+#endif
+	
 	// all set, ready to go
 	return 0;
 }

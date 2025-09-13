@@ -73,8 +73,8 @@ public:
 	bool forcedFlip() override;
 	bool clear() override;
 	Graphics::PixelFormat getPixelFormat() const override;
-	void fade(uint16 alpha) override;
-	void fadeToColor(byte r, byte g, byte b, byte a) override;
+	bool fade(uint16 alpha) override;
+	bool fadeToColor(byte r, byte g, byte b, byte a) override;
 
 	bool fillRect(int x, int y, int w, int h, uint32 color) override;
 

@@ -224,13 +224,13 @@ bool BaseRenderOSystem::clear() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::fade(uint16 alpha) {
+bool BaseRenderOSystem::fade(uint16 alpha) {
 	byte dwAlpha = (byte)(255 - alpha);
 	return fadeToColor(0, 0, 0, dwAlpha);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
+bool BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect fillRect;
 
 	Common::Rect32 rc;
@@ -247,6 +247,8 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	temp._rgbaMod = MS_ARGB(a, r, g, b);
 	temp._alphaDisable = (a == 0xff);
 	drawSurface(nullptr, nullptr, &sizeRect, &fillRect, temp);
+
+	return true;
 }
 
 Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {

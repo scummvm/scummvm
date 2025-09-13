@@ -642,7 +642,7 @@ void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) 
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdResponseBox::handleResponse(const AdResponse *response) {
+bool AdResponseBox::handleResponse(AdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
 	AdGame *adGame = (AdGame *)_game;

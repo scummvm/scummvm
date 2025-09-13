@@ -102,6 +102,9 @@ public:
 	virtual bool onPaint();
 	virtual bool onWindowClose();
 
+	bool isLeftDoubleClick();
+	bool isRightDoubleClick();
+
 	bool _autorunDisabled;
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
@@ -289,7 +292,7 @@ public:
 	void setWindowTitle();
 	bool handleMouseWheel(int32 delta) override;
 	bool _quitting;
-	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
 	//bool HandleAccessKey(bool Printable, DWORD CharCode, DWORD KeyData);
@@ -392,8 +395,8 @@ public:
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
-	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr) const;
-	bool getCurrentViewportRect(Common::Rect32 *rect, bool *custom = nullptr) const;
+	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
+	bool getCurrentViewportRect(Common::Rect32 *rect, bool *custom = nullptr);
 	bool popViewport();
 	bool pushViewport(BaseViewport *viewport);
 	bool setActiveObject(BaseObject *obj);
@@ -410,18 +413,9 @@ private:
 
 
 
-protected:
-	// WME Lite specific
-	bool _autoSaveOnExit;
-	uint32 _autoSaveSlot;
-	bool _cursorHidden;
-
 public:
 	BaseGameMusic *_musicSystem;
 	Common::String _targetName;
-
-	bool isLeftDoubleClick();
-	bool isRightDoubleClick();
 
 	void setIndicatorVal(int value);
 	bool getBilinearFiltering() { return _bilinearFiltering; }
@@ -449,6 +443,13 @@ public:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
+protected:
+	// WME Lite specific
+	bool _autoSaveOnExit;
+	uint32 _autoSaveSlot;
+	bool _cursorHidden;
+
+public:
 	void autoSaveOnExit();
 	PluginEvent &pluginEvents() { return _pluginEvents; }
 

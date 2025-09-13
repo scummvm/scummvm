@@ -1162,7 +1162,7 @@ uint32 ScScript::getFuncPos(const char *name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getMethodPos(const char *name) const {
+uint32 ScScript::getMethodPos(const char *name) {
 	for (uint32 i = 0; i < _numMethods; i++) {
 		if (strcmp(name, _methods[i].name) == 0) {
 			return _methods[i].pos;
@@ -1366,28 +1366,6 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-void ScScript::afterLoad() {
-	if (_buffer == nullptr) {
-		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
-		if (!buffer) {
-			_game->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
-			_state = SCRIPT_ERROR;
-			return;
-		}
-
-		_buffer = new byte[_bufferSize];
-		memcpy(_buffer, buffer, _bufferSize);
-
-		delete _scriptStream;
-		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
-
-		initTables();
-	}
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) {
 	//if (_state!=SCRIPT_PERSISTENT) return nullptr;
@@ -1423,7 +1401,7 @@ ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) 
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 ScScript::getEventPos(const char *name) const {
+uint32 ScScript::getEventPos(const char *name) {
 	for (int i = _numEvents - 1; i >= 0; i--) {
 		if (scumm_stricmp(name, _events[i].name) == 0) {
 			return _events[i].pos;
@@ -1434,13 +1412,13 @@ uint32 ScScript::getEventPos(const char *name) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleEvent(const char *eventName) const {
+bool ScScript::canHandleEvent(const char *eventName) {
 	return getEventPos(eventName) != 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScScript::canHandleMethod(const char *methodName) const {
+bool ScScript::canHandleMethod(const char *methodName) {
 	return getMethodPos(methodName) != 0;
 }
 
@@ -1528,6 +1506,26 @@ bool ScScript::finishThreads() {
 	return STATUS_OK;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+void ScScript::afterLoad() {
+	if (_buffer == nullptr) {
+		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
+		if (!buffer) {
+			_game->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
+			_state = SCRIPT_ERROR;
+			return;
+		}
+
+		_buffer = new byte[_bufferSize];
+		memcpy(_buffer, buffer, _bufferSize);
+
+		delete _scriptStream;
+		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
+
+		initTables();
+	}
+}
 
 void ScScript::preInstHook(uint32 inst) {}
 

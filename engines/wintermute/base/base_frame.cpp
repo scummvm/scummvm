@@ -263,7 +263,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			_sound = new BaseSound(_game);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
 				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
-					BaseEngine::LOG(0, "Error loading sound '%s'.", params);
+					_game->LOG(0, "Error loading sound '%s'.", params);
 				}
 				SAFE_DELETE(_sound);
 			}
@@ -295,12 +295,12 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in FRAME definition");
+		_game->LOG(0, "Syntax error in FRAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		BaseEngine::LOG(0, "Error loading FRAME definition");
+		_game->LOG(0, "Error loading FRAME definition");
 		return STATUS_FAILED;
 	}
 
@@ -315,7 +315,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		if (!sub->_surface) {
 			delete sub;
-			BaseEngine::LOG(0, "Error loading SUBFRAME");
+			_game->LOG(0, "Error loading SUBFRAME");
 			return STATUS_FAILED;
 		}
 

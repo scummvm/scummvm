@@ -675,7 +675,7 @@ bool BaseRenderOpenGL3DShader::fillRect(int x, int y, int w, int h, uint32 color
 	return true;
 }
 
-void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
+bool BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	float left, right, bottom, top;
 
 	left = _viewportRect.left;
@@ -726,6 +726,8 @@ void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	setup2D(true);
+
+	return true;
 }
 
 BaseImage *BaseRenderOpenGL3DShader::takeScreenshot(int newWidth, int newHeight) {

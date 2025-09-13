@@ -84,7 +84,7 @@ public:
 	virtual bool invalidateDeviceObjects() = 0;
 	virtual bool restoreDeviceObjects() = 0;
 	BaseSurfaceOpenGL3D *_lastTexture;
-	void fade(uint16 alpha) override;
+	bool fade(uint16 alpha) override;
 	bool drawSprite(BaseSurface *texture, const Common::Rect32 &rect, float zoomX, float zoomY, const DXVector2 &pos,
 	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	virtual bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const DXVector2 &pos, const DXVector2 &rot, const DXVector2 &scale,

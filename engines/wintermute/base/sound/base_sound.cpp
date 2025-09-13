@@ -97,7 +97,7 @@ bool BaseSound::setSoundSimple() {
 		_sound->setLooping(_soundLooping);
 		_sound->setPrivateVolume(_soundPrivateVolume);
 		_sound->setLoopStart(_soundLoopStart);
-		_sound->setFreezePaused(_soundFreezePaused);
+		_sound->_freezePaused = _soundFreezePaused;
 		if (_soundPlaying) {
 			return _sound->resume();
 		} else {
@@ -142,7 +142,7 @@ bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
 		if (freezePaused) {
-			_sound->setFreezePaused(true);
+			_sound->_freezePaused = true;
 		}
 		return _sound->pause();
 	} else {
@@ -231,20 +231,21 @@ uint32 BaseSound::getPositionTime() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::setVolumePercent(int percent) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		return _sound->setPrivateVolume(percent * 255 / 100);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
 	} else {
 		return _sound->setPrivateVolume(volume);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSound::setPrivateVolume(int volume) {
+	if (!_sound) {
+		return STATUS_FAILED;
+	} else {
+		_sound->setPrivateVolume(volume);
+		return STATUS_OK;
 	}
 }
 
@@ -268,21 +269,20 @@ bool BaseSound::setLoopStart(uint32 pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::setPrivateVolume(int volume) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		_sound->setPrivateVolume(volume);
-		return STATUS_OK;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 int BaseSound::getVolumePercent() {
 	if (!_sound) {
 		return 0;
 	} else {
 		return _sound->getPrivateVolume() * 100 / 255;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSound::setVolumePercent(int percent) {
+	if (!_sound) {
+		return STATUS_FAILED;
+	} else {
+		return _sound->setPrivateVolume(percent * 255 / 100);
 	}
 }
 

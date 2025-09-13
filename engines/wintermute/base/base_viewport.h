@@ -36,8 +36,8 @@ namespace Wintermute {
 class BaseObject;
 class BaseViewport : public BaseClass {
 public:
-	int getHeight() const;
-	int getWidth() const;
+	int getHeight();
+	int getWidth();
 	Common::Rect32 *getRect();
 	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(BaseViewport, BaseClass)

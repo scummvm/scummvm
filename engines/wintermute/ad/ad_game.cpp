@@ -1596,7 +1596,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
+bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
 	BaseGame::getVersion(verMajor, verMinor, nullptr, nullptr);
 
 	if (extMajor) {
@@ -1900,7 +1900,7 @@ bool AdGame::addGameResponse(int id) {
 bool AdGame::gameResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
 	for (int32 i = 0; i < _responsesGame.getSize(); i++) {
-		const AdResponseContext *respContext = _responsesGame[i];
+		AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
 			// make sure context != nullptr	
 			if ((context == nullptr && respContext->_context == nullptr) || ((context != nullptr && respContext->_context != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->_context) == 0))) {
@@ -1998,13 +1998,14 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 		if (_stateEx == GAME_WAITING_RESPONSE) {
 			_responseBox->display();
 		}
+		if (_indicatorDisplay) {
 #ifdef ENABLE_FOXTAIL
 		if (BaseEngine::instance().isFoxTail())
 			displayIndicatorFoxTail();
 		else
 #endif
-		displayIndicator();
-
+			displayIndicator();
+		}
 
 		if (doUpdate || displayAll) {
 			//m_AccessMgr->DisplayBeforeGUI();
@@ -2334,6 +2335,7 @@ bool AdGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
+	//BasePlatform::releaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 

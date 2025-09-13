@@ -56,6 +56,8 @@ struct TopEntry {
 	int breakpointInfo;
 };
 
+#if EXTENDED_DEBUGGER_ENABLED
+
 class DebuggerController : public ScriptMonitor {
 	SourceListingProvider *_sourceListingProvider;
 	const WintermuteEngine *_engine;
@@ -112,6 +114,9 @@ public:
 	void onWatch(const Watch *watch, DebuggableScript *script) override;
 	void notifyStep(DebuggableScript *script) override;
 };
+
+#endif
+
 }
 
 #endif // WINTERMUTE_DEBUGGER_H

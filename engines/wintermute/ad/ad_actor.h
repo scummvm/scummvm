@@ -84,12 +84,13 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 
+private:
 	bool setDefaultAnimNames();
 	BaseSprite *getTalkStanceOld(const char *stance);
 	bool mergeAnims(const char *animsFilename);
 	BaseSprite *_animSprite2;
 
-	void initLine(const BasePoint &startPt, const BasePoint &endPt);
+	void initLine(BasePoint startPt, BasePoint endPt);
 	void getNextStep();
 	void followPath();
 	double _pFStepX{};

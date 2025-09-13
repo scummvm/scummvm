@@ -43,7 +43,7 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
-	bool handleResponse(const AdResponse *response);
+	bool handleResponse(AdResponse *response);
 	void setLastResponseText(const char *text, const char *textOrig);
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
@@ -68,7 +68,7 @@ public:
 	void clearResponses();
 	AdResponseBox(BaseGame *inGame);
 	~AdResponseBox() override;
-	BaseArray<const AdResponse *> _responses;
+	BaseArray<AdResponse *> _responses;
 	BaseArray<UIButton *> _respButtons;
 	UIWindow *_window;
 	UIWindow *_shieldWindow;

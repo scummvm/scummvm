@@ -55,7 +55,7 @@ BaseSurfaceStorage::~BaseSurfaceStorage() {
 bool BaseSurfaceStorage::cleanup(bool warn) {
 	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		if (warn) {
-			BaseEngine::LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename.c_str(), _surfaces[i]->_referenceCount);
+			_game->LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->_filename.c_str(), _surfaces[i]->_referenceCount);
 		}
 		delete _surfaces[i];
 	}
@@ -112,7 +112,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		if (filename) {
-			BaseEngine::LOG(0, "Missing image: '%s'", filename);
+			_game->LOG(0, "Missing image: '%s'", filename);
 		}
 		if (_game->_debugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
@@ -145,7 +145,7 @@ bool BaseSurfaceStorage::restoreAll() {
 	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
-			BaseEngine::LOG(0, "BaseSurfaceStorage::RestoreAll failed");
+			_game->LOG(0, "BaseSurfaceStorage::restoreAll failed");
 			return ret;
 		}
 	}

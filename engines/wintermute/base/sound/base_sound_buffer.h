@@ -81,7 +81,6 @@ public:
 	//HSTREAM _stream;
 	//HSYNC _sync;
 
-private:
 	Audio::Mixer::SoundType _type;
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle *_handle;

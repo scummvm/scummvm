@@ -1253,7 +1253,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			registerObject(win);
 			stack->pushNative(win, true);
 		} else {
-			delete win;
+			SAFE_DELETE(win);
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1277,7 +1277,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// PlayMusic / PlayMusicChannel
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
+	else if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "PlayMusic") == 0) {
 			stack->correctParams(3);
@@ -1693,6 +1693,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			type = (int)VID_PLAY_STRETCH;
 		}
 
+		bool videoLoaded = false;
 		SAFE_DELETE(_theoraPlayer);
 		_theoraPlayer = new VideoTheoraPlayer(this);
 		if (_theoraPlayer && DID_SUCCEED(_theoraPlayer->initialize(filename, subtitleFile))) {
@@ -1700,11 +1701,15 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			if (DID_SUCCEED(_theoraPlayer->play((TVideoPlayback)type, xVal, yVal, true, freezeMusic))) {
 				stack->pushBool(true);
 				script->sleep(0);
+				videoLoaded = true;
 			} else {
 				stack->pushBool(false);
 			}
 		} else {
 			stack->pushBool(false);
+		}
+
+		if (!videoLoaded) {
 			SAFE_DELETE(_theoraPlayer);
 		}
 
@@ -3641,7 +3646,7 @@ void BaseGame::quickMessage(const char *text) {
 		delete _quickMessages[0];
 		_quickMessages.removeAt(0);
 	}
-	_quickMessages.add(new BaseQuickMsg(_currentTime,  text));
+	_quickMessages.add(new BaseQuickMsg(_game, text));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -4365,7 +4370,7 @@ bool BaseGame::displayWindows(bool inGame) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -4390,7 +4395,7 @@ bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -4406,7 +4411,7 @@ bool BaseGame::stopMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -4420,7 +4425,7 @@ bool BaseGame::pauseMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::resumeMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -4434,7 +4439,7 @@ bool BaseGame::resumeMusic(int channel) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
-		BaseEngine::LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
+		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
 	}
 
@@ -4469,7 +4474,7 @@ bool BaseGame::loadSettings(const char *filename) {
 
 	char *origBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (origBuffer == nullptr) {
-		BaseEngine::LOG(0, "BaseGame::loadSettings failed for file '%s'", filename);
+		_game->LOG(0, "BaseGame::loadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -4481,7 +4486,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_SETTINGS) {
-		BaseEngine::LOG(0, "'SETTINGS' keyword expected in game settings file.");
+		_game->LOG(0, "'SETTINGS' keyword expected in game settings file.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
@@ -4557,11 +4562,11 @@ bool BaseGame::loadSettings(const char *filename) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in game settings '%s'", filename);
+		_game->LOG(0, "Syntax error in game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		BaseEngine::LOG(0, "Error loading game settings '%s'", filename);
+		_game->LOG(0, "Error loading game settings '%s'", filename);
 		ret = STATUS_FAILED;
 	}
 
@@ -4883,7 +4888,7 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
+bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
 	if (verMajor) {
 		*verMajor = DCGF_VER_MAJOR;
 	}
@@ -5033,7 +5038,7 @@ bool BaseGame::popViewport() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) const {
+bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) {
 	if (rect == nullptr) {
 		return STATUS_FAILED;
 	} else {
@@ -5058,7 +5063,7 @@ bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) const 
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
+bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
 	if (_viewportSP >= 0) {
 		if (offsetX)
 			*offsetX = _viewportStack[_viewportSP]->_offsetX;

@@ -43,8 +43,8 @@ public:
 
 	ScScript *invokeMethodThread(const char *methodName) override;
 	virtual void makeFreezable(bool freezable);
-	bool canHandleEvent(const char *eventName) const;
-	bool canHandleMethod(const char *eventMethod) const override;
+	bool canHandleEvent(const char *eventName);
+	bool canHandleMethod(const char *eventMethod) override;
 	bool cleanup();
 	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);

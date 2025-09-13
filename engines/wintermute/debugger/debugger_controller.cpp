@@ -40,6 +40,8 @@
 
 namespace Wintermute {
 
+#if EXTENDED_DEBUGGER_ENABLED
+
 DebuggerController::~DebuggerController() {
 	delete _sourceListingProvider;
 }
@@ -323,5 +325,7 @@ Common::Array<TopEntry> DebuggerController::getTop() const {
 	}
 	return res;
 }
+
+#endif
 
 } // end of namespace Wintermute

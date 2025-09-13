@@ -27,6 +27,7 @@
 
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -68,8 +69,8 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 	if (!noCheck) {
 		left = MAX<int32>(left, 0);
 		top = MAX<int32>(top, 0);
-		right = MIN(right, BaseEngine::instance().getRenderer()->getWidth());
-		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
+		right = MIN(right, _game->_renderer->getWidth());
+		bottom = MIN(bottom, _game->_renderer->getHeight());
 	}
 
 	BasePlatform::setRect(&_rect, left, top, right, bottom);
@@ -86,13 +87,13 @@ Common::Rect32 *BaseViewport::getRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getWidth() const {
+int BaseViewport::getWidth() {
 	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getHeight() const {
+int BaseViewport::getHeight() {
 	return _rect.bottom - _rect.top;
 }
 

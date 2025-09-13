@@ -51,7 +51,7 @@ BaseTransitionMgr::~BaseTransitionMgr() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseTransitionMgr::isReady() const {
+bool BaseTransitionMgr::isReady() {
 	return (_state == TRANS_MGR_READY);
 }
 
@@ -72,7 +72,7 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 		_origInteractive = _game->_interactive;
 		_game->_interactive = false;
 	} else {
-		//_preserveInteractive;
+		_preserveInteractive = false;
 	}
 
 	_type = type;
@@ -104,7 +104,7 @@ bool BaseTransitionMgr::update() {
 		uint32 time = g_system->getMillis() - _lastTime;
 		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		BaseEngine::getRenderer()->fade((uint16)alpha);
+		_game->_renderer->fade((uint16)alpha);
 
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
@@ -116,7 +116,7 @@ bool BaseTransitionMgr::update() {
 		uint32 time = g_system->getMillis() - _lastTime;
 		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		BaseEngine::getRenderer()->fade((uint16)alpha);
+		_game->_renderer->fade((uint16)alpha);
 
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;

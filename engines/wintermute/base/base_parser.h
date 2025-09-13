@@ -76,7 +76,7 @@ public:
 	int32 getObject(char **buf, const TokenDesc *tokens, char **name, char **data);
 	int32 _parserLine = 0;
 	char _lastOffender[255];
-	BaseParser(BaseGame *inGame);
+	BaseParser(BaseGame *inGame = nullptr);
 	virtual ~BaseParser();
 	char *_whiteSpace;
 };

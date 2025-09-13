@@ -158,7 +158,7 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 
 	// now find the closing delimiter
 	char theChar;
-	long skip = 1;
+	int32 skip = 1;
 
 	if (open == close) { // we cant nest identical delimiters
 		open = 0;

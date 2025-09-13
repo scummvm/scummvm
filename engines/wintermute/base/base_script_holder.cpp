@@ -300,7 +300,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				BaseEngine::LOG(0, "BaseScriptHolder::addScript - trying to add script '%s' multiple times (obj: '%s')", filename, _name);
+				_game->LOG(0, "BaseScriptHolder::addScript - trying to add script '%s' mutiple times (obj: '%s')", filename, _name);
 				return STATUS_OK;
 			}
 		}
@@ -346,9 +346,9 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
+bool BaseScriptHolder::canHandleEvent(const char *eventName) {
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(eventName)) {
 			return true;
 		}
 	}
@@ -357,9 +357,9 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
+bool BaseScriptHolder::canHandleMethod(const char *methodName) {
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
-		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
+		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(methodName)) {
 			return true;
 		}
 	}
@@ -386,7 +386,7 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_PROPERTY) {
-			BaseEngine::LOG(0, "'PROPERTY' keyword expected.");
+			_game->LOG(0, "'PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -419,13 +419,13 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		SAFE_DELETE_ARRAY(propName);
 		SAFE_DELETE_ARRAY(propValue);
-		BaseEngine::LOG(0, "Syntax error in PROPERTY definition");
+		_game->LOG(0, "Syntax error in PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		SAFE_DELETE_ARRAY(propName);
 		SAFE_DELETE_ARRAY(propValue);
-		BaseEngine::LOG(0, "Error loading PROPERTY definition");
+		_game->LOG(0, "Error loading PROPERTY definition");
 		return STATUS_FAILED;
 	}
 

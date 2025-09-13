@@ -102,7 +102,7 @@ public:
 
 	void enableProfiling();
 	void disableProfiling();
-	bool getIsProfiling() {
+	bool isProfiling() {
 		return _isProfiling;
 	}
 

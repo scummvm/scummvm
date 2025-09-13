@@ -21,6 +21,7 @@
 
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 
 #include "common/config-manager.h"
 
@@ -30,7 +31,7 @@ BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGa
 	_camera = nullptr;
 
 	_state = RSTATE_NONE;
-	_fov = (float)M_PI / 4;
+	_fov = (float)DX_PI / 4;
 
 	_nearClipPlane = DEFAULT_NEAR_PLANE;
 	_farClipPlane = DEFAULT_FAR_PLANE;
@@ -96,8 +97,8 @@ bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, floa
 	return true;
 }
 
-void BaseRenderer3D::fade(uint16 alpha) {
-	fadeToColor(0, 0, 0, (byte)(255 - alpha));
+bool BaseRenderer3D::fade(uint16 alpha) {
+	return fadeToColor(0, 0, 0, (byte)(255 - alpha));
 }
 
 bool BaseRenderer3D::setAmbientLightColor(uint32 color) {

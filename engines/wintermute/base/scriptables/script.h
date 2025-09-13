@@ -56,8 +56,8 @@ public:
 	bool _freezable;
 	bool resume();
 	bool pause();
-	bool canHandleEvent(const char *eventName) const;
-	bool canHandleMethod(const char *methodName) const;
+	bool canHandleEvent(const char *eventName);
+	bool canHandleMethod(const char *methodName);
 	bool createThread(ScScript *original, uint32 initIP, const char *eventName);
 	bool createMethodThread(ScScript *original, const char *methodName);
 	ScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
@@ -78,8 +78,8 @@ public:
 	TScriptState _origState;
 	ScValue *getVar(char *name);
 	uint32 getFuncPos(const char *name);
-	uint32 getEventPos(const char *name) const;
-	uint32 getMethodPos(const char *name) const;
+	uint32 getEventPos(const char *name);
+	uint32 getMethodPos(const char *name);
 	typedef struct {
 		uint32 magic;
 		uint32 version;

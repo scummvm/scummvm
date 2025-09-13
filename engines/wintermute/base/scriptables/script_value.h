@@ -84,12 +84,10 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
-private:
 	bool _valBool;
 	int32 _valInt;
 	double _valFloat;
 	char *_valString;
-public:
 	TValType _type;
 	ScValue(BaseGame *inGame);
 	ScValue(BaseGame *inGame, bool val);
