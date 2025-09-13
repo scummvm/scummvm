@@ -92,10 +92,6 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 
 	_messageBannerActive = true;
 
-	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
-		_internalGUIControls[i].relativeCenterX = -1;
-	}
-
 	int oldScreenTop = _screenTop;
 
 	// There are a few instances in a non-zero _screenTop is not being reset
@@ -466,10 +462,6 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	int textXPos, textYPos;
 
 	_messageBannerActive = true;
-
-	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
-		_internalGUIControls[i].relativeCenterX = -1;
-	}
 
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
