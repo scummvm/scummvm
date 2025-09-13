@@ -285,7 +285,7 @@ public:
 		return *((CPoint *)this);
 	}
 	CPoint &BottomRight() {
-		return *((CPoint *)this + 1);
+		return *((CPoint *)&right);
 	}
 };
 

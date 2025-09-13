@@ -654,12 +654,12 @@ typedef struct tagBITMAPINFO {
 
 /* Bitmap Header Definition */
 typedef struct tagBITMAP {
-	long        bmType;
-	long        bmWidth;
-	long        bmHeight;
-	long        bmWidthBytes;
-	uint16        bmPlanes;
-	uint16        bmBitsPixel;
+	int bmType;
+	int bmWidth;
+	int bmHeight;
+	int bmWidthBytes;
+	uint16 bmPlanes;
+	uint16 bmBitsPixel;
 	void *     bmBits;
 } BITMAP, *PBITMAP, NEAR *NPBITMAP, FAR *LPBITMAP;
 
