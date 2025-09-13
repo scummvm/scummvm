@@ -101,7 +101,7 @@ int32 AdEntity::getHintY() const {
 bool AdEntity::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdEntity::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -494,7 +494,6 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 #endif
 		}
-		break;
 
 		default:
 			break;

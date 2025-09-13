@@ -96,7 +96,7 @@ UIEdit::~UIEdit() {
 bool UIEdit::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEdit::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -724,7 +724,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_game->_renderer->_rectList.add(new BaseActiveRect(_game,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 /*	if (Game->m_AccessMgr->GetActiveObject() == this) {
 		RECT rc;

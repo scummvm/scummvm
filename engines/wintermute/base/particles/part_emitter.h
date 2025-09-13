@@ -39,7 +39,7 @@ class PartEmitter : public BaseObject {
 public:
 	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
-	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
+	PartEmitter(BaseGame *inGame, BaseScriptHolder *owner);
 	~PartEmitter() override;
 
 	int32 _width;

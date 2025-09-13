@@ -377,12 +377,13 @@ int PartEmitter::compareZ(const void *obj1, const void *obj2) {
 	PartParticle *p1 = *(PartParticle **)o1;
 	PartParticle *p2 = *(PartParticle **)o2;
 
-	if (p1->_posZ < p2->_posZ)
+	if (p1->_posZ < p2->_posZ) {
 		return -1;
-	else if (p1->_posZ > p2->_posZ)
+	} else if (p1->_posZ > p2->_posZ) {
 		return 1;
-	else
+	} else {
 		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

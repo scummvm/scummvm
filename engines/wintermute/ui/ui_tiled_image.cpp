@@ -115,7 +115,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 bool UITiledImage::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UITiledImage::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 

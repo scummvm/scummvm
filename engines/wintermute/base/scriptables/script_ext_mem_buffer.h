@@ -35,7 +35,7 @@ namespace Wintermute {
 
 class SXMemBuffer : public BaseScriptable {
 public:
-	int scCompare(BaseScriptable *Val) override;
+	int scCompare(BaseScriptable *val) override;
 	DECLARE_PERSISTENT(SXMemBuffer, BaseScriptable)
 	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;

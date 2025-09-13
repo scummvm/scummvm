@@ -568,7 +568,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_responseBox) {
 			AdResponse *res = new AdResponse(_game);
 			if (res) {
-				res->_iD = id;
+				res->_id = id;
 				res->setText(text);
 				_stringTable->expand(&res->_text);
 
@@ -640,7 +640,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 			if (_responseBox->_responses.getSize() == 1 && autoSelectLast) {
-				stack->pushInt(_responseBox->_responses[0]->_iD);
+				stack->pushInt(_responseBox->_responses[0]->_id);
 				_responseBox->handleResponse(_responseBox->_responses[0]);
 				_responseBox->clearResponses();
 				return STATUS_OK;
@@ -1325,7 +1325,7 @@ bool AdGame::showCursor() {
 bool AdGame::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "AdGame::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdGame::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -1435,12 +1435,13 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 					break;
 
 				case TOKEN_VIDEO_SKIP_BUTTON:
-					if (scumm_stricmp(params2, "right") == 0)
+					if (scumm_stricmp(params2, "right") == 0) {
 						_videoSkipButton = VIDEO_SKIP_RIGHT;
-					else if (scumm_stricmp(params2, "both") == 0)
+					} else if (scumm_stricmp(params2, "both") == 0) {
 						_videoSkipButton = VIDEO_SKIP_BOTH;
-					else
+					} else {
 						_videoSkipButton = VIDEO_SKIP_LEFT;
+					}
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
@@ -1991,10 +1992,12 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 		// display in-game windows
 		displayWindows(true);
-		if (_inventoryBox)
+		if (_inventoryBox) {
 			_inventoryBox->display();
-		if (_stateEx == GAME_WAITING_RESPONSE)
+		}
+		if (_stateEx == GAME_WAITING_RESPONSE) {
 			_responseBox->display();
+		}
 #ifdef ENABLE_FOXTAIL
 		if (BaseEngine::instance().isFoxTail())
 			displayIndicatorFoxTail();
@@ -2323,8 +2326,9 @@ bool AdGame::onMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseLeftUp() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
@@ -2417,8 +2421,9 @@ bool AdGame::onMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseRightUp() {
-	if (isVideoPlaying())
+	if (isVideoPlaying()) {
 		return STATUS_OK;
+	}
 
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);

@@ -49,7 +49,7 @@ public:
 	bool setupTalkFile(const char *soundFilename);
 	DECLARE_PERSISTENT(AdSentence, BaseClass)
 	bool finish();
-	void setSound(BaseSound *Sound);
+	void setSound(BaseSound *sound);
 	bool _soundStarted;
 	BaseSound *_sound;
 	TTextAlign _align;

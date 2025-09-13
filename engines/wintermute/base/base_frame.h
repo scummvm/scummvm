@@ -38,7 +38,7 @@ class BaseSubFrame;
 class BaseObject;
 class ScScript;
 class ScStack;
-class BaseFrame: public BaseScriptable {
+class BaseFrame : public BaseScriptable {
 public:
 	bool _killSound;
 	bool _keyframe;

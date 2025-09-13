@@ -41,7 +41,7 @@ ScStack::ScStack(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 ScStack::~ScStack() {
-	//_game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.size(), _sP);
+	//_game->LOG(0, "STAT: Stack size: %d, SP=%d", _values.getSize(), _sP);
 
 	for (int32 i = 0; i < _values.getSize(); i++) {
 		delete _values[i];

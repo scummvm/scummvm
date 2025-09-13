@@ -281,7 +281,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 bool BaseFontBitmap::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseFontBitmap::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 

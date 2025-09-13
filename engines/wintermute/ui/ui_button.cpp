@@ -105,7 +105,7 @@ UIButton::~UIButton() {
 bool UIButton::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "UIButton::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIButton::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -615,10 +615,11 @@ void UIButton::correctSize() {
 
 	if (_text) {
 		int textHeight;
-		if (_font)
+		if (_font) {
 			textHeight = _font->getTextHeight((byte *)_text, _width);
-		else
+		} else {
 			textHeight = _game->_systemFont->getTextHeight((byte *)_text, _width);
+		}
 
 		if (textHeight > _height) {
 			_height = textHeight;

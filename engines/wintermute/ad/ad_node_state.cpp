@@ -104,10 +104,12 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
-	if (caseVal == 0)
+	if (caseVal == 0) {
 		caseVal = 1;
-	if (caseVal < 1 || caseVal > 7)
+	}
+	if (caseVal < 1 || caseVal > 7) {
 		return;
+	}
 
 	SAFE_DELETE_ARRAY(_caption[caseVal - 1]);
 	size_t captionSize = strlen(caption) + 1;

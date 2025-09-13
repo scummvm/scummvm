@@ -174,7 +174,7 @@ void SystemClass::loadTable(BaseGame *game, BasePersistenceManager *persistMgr) 
 				warning("HALT");
 			}
 
-			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextID(), instId);
+			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextId(), instId);
 		}
 
 	}

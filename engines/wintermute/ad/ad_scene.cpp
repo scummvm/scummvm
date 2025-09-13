@@ -556,14 +556,14 @@ void AdScene::pathFinderStep() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::initLoop() {
 #ifdef _DEBUGxxxx
-	int nu_steps = 0;
+	int numSteps = 0;
 	uint32 start = _game->_currentTime;
 	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) {
 		pathFinderStep();
-		nu_steps++;
+		numSteps++;
 	}
-	if (nu_steps > 0) {
-		_game->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", nu_steps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
+	if (numSteps > 0) {
+		_game->LOG(0, "STAT: PathFinder iterations in one loop: %d (%s)  _pfMaxTime=%d", numSteps, _pfReady ? "finished" : "not yet done", _pfMaxTime);
 	}
 #else
 	uint32 start = _game->_currentTime;

@@ -213,7 +213,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image) {
-		_game->_renderer->_rectList.add(new BaseActiveRect(_game,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
 	for (int32 i = 0; i < _widgets.getSize(); i++) {
@@ -995,9 +995,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	} else if DID_SUCCEED(_game->windowScriptMethodHook(this, script, stack, name)) {
 		return STATUS_OK;
-	}
-
-	else {
+	} else {
 		return UIObject::scCallMethod(script, stack, thisStack, name);
 	}
 }

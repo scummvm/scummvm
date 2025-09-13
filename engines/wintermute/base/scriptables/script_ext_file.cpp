@@ -129,7 +129,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_mode == 1) {
 			_readFile = BaseFileManager::getEngineInstance()->openFile(_filename);
 			if (!_readFile) {
-				//script->runtimeError("File.%s: Error opening file '%s' for reading.", Name, _filename);
+				//script->runtimeError("File.%s: Error opening file '%s' for reading.", name, _filename);
 				close();
 			} else {
 				_textMode = strcmp(name, "OpenAsText") == 0;
@@ -150,7 +150,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			}
 
 			if (!_writeFile) {
-				//script->runtimeError("File.%s: Error opening file '%s' for writing.", Name, _filename);
+				//script->runtimeError("File.%s: Error opening file '%s' for writing.", name, _filename);
 				close();
 			} else {
 				_textMode = strcmp(name, "OpenAsText") == 0;

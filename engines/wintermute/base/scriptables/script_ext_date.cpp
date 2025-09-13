@@ -274,9 +274,9 @@ bool SXDate::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int SXDate::scCompare(BaseScriptable *Value) {
+int SXDate::scCompare(BaseScriptable *value) {
 	TimeDate time1 = _tm;
-	TimeDate time2 = ((SXDate *)Value)->_tm;
+	TimeDate time2 = ((SXDate *)value)->_tm;
 
 	if (time1.tm_year < time2.tm_year) {
 		return -1;

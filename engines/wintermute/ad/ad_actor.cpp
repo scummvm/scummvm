@@ -848,7 +848,7 @@ bool AdActor::update() {
 		}
 	}
 
-	//_game->QuickMessageForm("%s", _currentSprite->_filename);
+	//_game->quickMessageForm("%s", _currentSprite->_filename);
 
 	updateBlockRegion();
 	_ready = (_state == STATE_READY);
@@ -1485,8 +1485,9 @@ int32 AdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const char *animName) {
-	if (!animName)
+	if (!animName) {
 		return nullptr;
+	}
 
 	for (int32 i = 0; i < _anims.getSize(); i++) {
 		if (scumm_stricmp(_anims[i]->_name, animName) == 0)

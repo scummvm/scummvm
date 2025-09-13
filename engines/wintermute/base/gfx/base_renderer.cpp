@@ -143,7 +143,7 @@ bool BaseRenderer::windowedBlt() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setup2D(bool Force) {
+bool BaseRenderer::setup2D(bool force) {
 	return STATUS_FAILED;
 }
 

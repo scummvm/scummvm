@@ -61,7 +61,7 @@ AdSpriteSet::~AdSpriteSet() {
 bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "AdSpriteSet::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdSpriteSet::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -135,7 +135,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_LEFT:
 			SAFE_DELETE(_sprites[DI_LEFT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -145,7 +145,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_RIGHT:
 			SAFE_DELETE(_sprites[DI_RIGHT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -155,7 +155,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP:
 			SAFE_DELETE(_sprites[DI_UP]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -165,7 +165,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN:
 			SAFE_DELETE(_sprites[DI_DOWN]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -175,7 +175,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP_LEFT:
 			SAFE_DELETE(_sprites[DI_UPLEFT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -185,7 +185,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP_RIGHT:
 			SAFE_DELETE(_sprites[DI_UPRIGHT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -195,7 +195,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN_LEFT:
 			SAFE_DELETE(_sprites[DI_DOWNLEFT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -205,7 +205,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN_RIGHT:
 			SAFE_DELETE(_sprites[DI_DOWNRIGHT]);
-			spr = new BaseSprite(_game,  _owner);
+			spr = new BaseSprite(_game, _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {

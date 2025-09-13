@@ -125,16 +125,16 @@ public:
 	bool _saveState;
 
 	// base
-	virtual bool update()  {
+	virtual bool update() {
 		return STATUS_FAILED;
 	};
 	virtual bool display() {
 		return STATUS_FAILED;
 	};
-	virtual bool invalidateDeviceObjects()  {
+	virtual bool invalidateDeviceObjects() {
 		return STATUS_OK;
 	};
-	virtual bool restoreDeviceObjects()     {
+	virtual bool restoreDeviceObjects() {
 		return STATUS_OK;
 	};
 	bool _nonIntMouseEvents;

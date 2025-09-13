@@ -1198,7 +1198,7 @@ ScValue *ScScript::getVar(char *name) {
 	}
 
 	if (ret == nullptr) {
-		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
+		//runtimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
 		_game->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
 		ScValue *val = new ScValue(_game);
 		ScValue *scope = _scopeStack->getTop();
@@ -1346,7 +1346,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_waitFrozen));
 
 	persistMgr->transferBool(TMEMBER(_methodThread));
-	persistMgr->transferBool(TMEMBER(_methodThread)); // TODO-SAVE: Deduplicate.
+	persistMgr->transferBool(TMEMBER(_methodThread));
 	persistMgr->transferBool(TMEMBER(_unbreakable));
 	persistMgr->transferPtr(TMEMBER_PTR(_parentScript));
 
@@ -1401,9 +1401,9 @@ ScScript *ScScript::invokeEventHandler(const char *eventName, bool unbreakable) 
 	DebuggableScEngine* debuggableEngine;
 	debuggableEngine = dynamic_cast<DebuggableScEngine*>(_engine);
 	assert(debuggableEngine);
-	ScScript *thread = new DebuggableScript(_game,  debuggableEngine);
+	ScScript *thread = new DebuggableScript(_game, debuggableEngine);
 #else
-	ScScript *thread = new ScScript(_game,  _engine);
+	ScScript *thread = new ScScript(_game, _engine);
 #endif
 	if (thread) {
 		bool ret = thread->createThread(this, pos, eventName);
@@ -1452,8 +1452,9 @@ bool ScScript::pause() {
 		return STATUS_FAILED;
 	}
 
-	if (!_freezable || _state == SCRIPT_PERSISTENT)
+	if (!_freezable || _state == SCRIPT_PERSISTENT) {
 		return STATUS_OK;
+	}
 
 	_origState = _state;
 	_state = SCRIPT_PAUSED;
@@ -1464,8 +1465,9 @@ bool ScScript::pause() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::resume() {
-	if (_state != SCRIPT_PAUSED)
+	if (_state != SCRIPT_PAUSED) {
 		return STATUS_OK;
+	}
 
 	_state = _origState;
 	return STATUS_OK;

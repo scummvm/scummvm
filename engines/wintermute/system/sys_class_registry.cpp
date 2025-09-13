@@ -127,7 +127,7 @@ void SystemClassRegistry::addInstanceToTable(SystemInstance *instance, void *poi
 }
 
 //////////////////////////////////////////////////////////////////////////
-int SystemClassRegistry::getNextID() {
+int SystemClassRegistry::getNextId() {
 	return _count++;
 }
 

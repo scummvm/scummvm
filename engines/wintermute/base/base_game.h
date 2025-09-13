@@ -74,7 +74,7 @@ struct FogParameters;
 
 #define NUM_MUSIC_CHANNELS 5
 
-class BaseGame: public BaseObject {
+class BaseGame : public BaseObject {
 public:
 
 
@@ -150,8 +150,8 @@ public:
 	int32 _indicatorWidth;
 	int32 _indicatorHeight;
 
-	char *_savedGameExt;
 	bool _richSavedGames;
+	char *_savedGameExt;
 
 #ifdef ENABLE_WME3D
 	int32 _editorResolutionWidth;

@@ -37,7 +37,7 @@ namespace Wintermute {
 class BaseFrame;
 class BaseSurface;
 class BaseObject;
-class BaseSprite: public BaseScriptHolder {
+class BaseSprite : public BaseScriptHolder {
 public:
 	bool killAllSounds();
 	BaseSurface *getSurface();

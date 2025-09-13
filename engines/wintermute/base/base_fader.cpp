@@ -102,7 +102,6 @@ bool BaseFader::display() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::deactivate() {
 	_active = false;

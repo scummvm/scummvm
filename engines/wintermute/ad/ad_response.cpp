@@ -42,7 +42,7 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_textOrig = nullptr;
 	_icon = _iconHover = _iconPressed = nullptr;
 	_font = nullptr;
-	_iD = 0;
+	_id = 0;
 	_responseType = RESPONSE_ALWAYS;
 }
 
@@ -126,7 +126,7 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_icon));
 	persistMgr->transferPtr(TMEMBER_PTR(_iconHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_iconPressed));
-	persistMgr->transferSint32(TMEMBER(_iD));
+	persistMgr->transferSint32(TMEMBER(_id));
 	persistMgr->transferCharPtr(TMEMBER(_text));
 	persistMgr->transferCharPtr(TMEMBER(_textOrig));
 	persistMgr->transferSint32(TMEMBER_INT(_responseType));

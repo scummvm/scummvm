@@ -38,7 +38,7 @@ class BaseObject;
 #ifdef ENABLE_WME3D
 class XModel;
 #endif
-class BaseActiveRect: BaseClass {
+class BaseActiveRect : BaseClass {
 public:
 	void clipRect();
 	bool _precise{};

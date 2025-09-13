@@ -84,7 +84,7 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 	_isProfiling = false;
 	_profilingStartTime = 0;
 
-	//EnableProfiling();
+	//enableProfiling();
 }
 
 
@@ -215,7 +215,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 	byte *buffer = BaseEngine::instance().getFileManager()->readWholeFile(filename, &size);
 	if (!buffer) {
-		_game->LOG(0, "ScEngine::GetCompiledScript - error opening script '%s'", filename);
+		_game->LOG(0, "ScEngine::getCompiledScript - error opening script '%s'", filename);
 		return nullptr;
 	}
 
@@ -225,7 +225,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 		compSize = size;
 	} else {
 		if (!_compilerAvailable) {
-			_game->LOG(0, "ScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
+			_game->LOG(0, "ScEngine::getCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
 			delete[] buffer;
 			return nullptr;
 		}
@@ -489,10 +489,10 @@ bool ScEngine::emptyScriptCache() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool ScEngine::resetObject(BaseObject *Object) {
+bool ScEngine::resetObject(BaseObject *object) {
 	// terminate all scripts waiting for this object
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
-		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
+		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == object) {
 			if (!_game->_compatKillMethodThreads) {
 				resetScript(_scripts[i]);
 			}

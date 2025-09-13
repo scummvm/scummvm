@@ -34,7 +34,7 @@
 
 namespace Wintermute {
 
-class BaseSurface: public BaseClass {
+class BaseSurface : public BaseClass {
 public:
 	virtual bool invalidate();
 	virtual bool prepareToDraw();

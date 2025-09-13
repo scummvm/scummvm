@@ -40,7 +40,7 @@ class BaseScriptable;
 
 class ScStack : public BaseClass {
 public:
-	ScValue *getAt(int Index);
+	ScValue *getAt(int index);
 	ScValue *getPushValue();
 	DECLARE_PERSISTENT(ScStack, BaseClass)
 	void pushNative(BaseScriptable *val, bool persistent);

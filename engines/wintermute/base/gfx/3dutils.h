@@ -34,7 +34,7 @@
 
 namespace Wintermute {
 
-#define DX_PI    ((float)3.141592654)
+#define DX_PI    ((float)3.141592654f)
 #define degToRad(_val) (_val * DX_PI * (1.0f / 180.0f))
 #define radToDeg(_val) (_val * (180.0f / DX_PI))
 

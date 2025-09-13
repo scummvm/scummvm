@@ -244,8 +244,8 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 		    _valIter->_value = nullptr;
 		}
 		ScValue* val = new ScValue(_game);
-		val->Copy(Val, CopyWhole);
-		val->_isConstVar = SetAsConst;
+		val->copy(Val, copyWhole);
+		val->_isConstVar = setAsConst;
 		_valObject[Name] = val;
 
 		if (_type!=VAL_NATIVE) _type = VAL_OBJECT;
@@ -830,8 +830,8 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 			_valString[0] = '\0';
 		}
 	}
-
-	/* // TODO: Convert to Debug-statements.
+	/*
+	// TODO: Convert to Debug-statements.
 	FILE* f = fopen("c:\\val.log", "a+");
 	switch(_type)
 	{
@@ -976,7 +976,7 @@ int ScValue::compareStrict(ScValue *val1, ScValue *val2, bool enableFloatCompare
 
 //////////////////////////////////////////////////////////////////////////
 bool ScValue::setProperty(const char *propName, int32 value) {
-	ScValue *val = new ScValue(_game,  value);
+	ScValue *val = new ScValue(_game, value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
@@ -984,7 +984,7 @@ bool ScValue::setProperty(const char *propName, int32 value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScValue::setProperty(const char *propName, const char *value) {
-	ScValue *val = new ScValue(_game,  value);
+	ScValue *val = new ScValue(_game, value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
@@ -992,7 +992,7 @@ bool ScValue::setProperty(const char *propName, const char *value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScValue::setProperty(const char *propName, double value) {
-	ScValue *val = new ScValue(_game,  value);
+	ScValue *val = new ScValue(_game, value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;
@@ -1001,7 +1001,7 @@ bool ScValue::setProperty(const char *propName, double value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScValue::setProperty(const char *propName, bool value) {
-	ScValue *val = new ScValue(_game,  value);
+	ScValue *val = new ScValue(_game, value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
 	return ret;

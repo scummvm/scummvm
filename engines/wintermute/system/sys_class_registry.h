@@ -70,14 +70,14 @@ public:
 	bool saveTable(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave);
 	bool loadInstances(BaseGame *game, BasePersistenceManager *persistMgr);
 	bool saveInstances(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave);
-	void *idToPointer(int classID, int instanceID);
-	bool getPointerID(void *pointer, int *classID, int *instanceID);
+	void *idToPointer(int classID, int instanceId);
+	bool getPointerID(void *pointer, int *classId, int *instanceId);
 	bool registerClass(SystemClass *classObj);
 	bool unregisterClass(SystemClass *classObj);
 	bool registerInstance(const char *className, void *instance);
 	bool unregisterInstance(const char *className, void *instance);
 	void dumpClasses(Common::WriteStream *stream);
-	int getNextID();
+	int getNextId();
 	void addInstanceToTable(SystemInstance *instance, void *pointer);
 
 	SystemClassRegistry();

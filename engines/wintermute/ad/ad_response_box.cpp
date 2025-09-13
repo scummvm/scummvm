@@ -184,7 +184,7 @@ bool AdResponseBox::createButtons() {
 
 			btn->setName("response");
 			btn->correctSize();
-			//btn->SetListener(this, btn, _responses[i]->_iD);
+			//btn->setListener(this, btn, _responses[i]->_id);
 			btn->setListener(this, btn, i);
 			btn->_visible = false;
 			_respButtons.add(btn);
@@ -205,7 +205,7 @@ bool AdResponseBox::createButtons() {
 bool AdResponseBox::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdResponseBox::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -560,7 +560,7 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_scrollOffset++;
 		} else if (scumm_stricmp(obj->_name, "response") == 0) {
 			if (_waitingScript) {
-				_waitingScript->_stack->pushInt(_responses[param2]->_iD);
+				_waitingScript->_stack->pushInt(_responses[param2]->_id);
 			}
 			handleResponse(_responses[param2]);
 			_waitingScript = nullptr;
@@ -613,7 +613,7 @@ bool AdResponseBox::weedResponses() {
 	for (int32 i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
-			if (adGame->branchResponseUsed(_responses[i]->_iD)) {
+			if (adGame->branchResponseUsed(_responses[i]->_id)) {
 				delete _responses[i];
 				_responses.removeAt(i);
 				i--;
@@ -621,7 +621,7 @@ bool AdResponseBox::weedResponses() {
 			break;
 
 		case RESPONSE_ONCE_GAME:
-			if (adGame->gameResponseUsed(_responses[i]->_iD)) {
+			if (adGame->gameResponseUsed(_responses[i]->_id)) {
 				delete _responses[i];
 				_responses.removeAt(i);
 				i--;
@@ -650,11 +650,11 @@ bool AdResponseBox::handleResponse(const AdResponse *response) {
 
 	switch (response->_responseType) {
 	case RESPONSE_ONCE:
-		adGame->addBranchResponse(response->_iD);
+		adGame->addBranchResponse(response->_id);
 		break;
 
 	case RESPONSE_ONCE_GAME:
-		adGame->addGameResponse(response->_iD);
+		adGame->addGameResponse(response->_id);
 		break;
 	default:
 		debugC(kWintermuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");

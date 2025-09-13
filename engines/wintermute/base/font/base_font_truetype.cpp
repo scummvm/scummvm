@@ -293,7 +293,7 @@ int BaseFontTT::getLetterHeight() {
 bool BaseFontTT::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseFontTT::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 

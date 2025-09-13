@@ -33,7 +33,7 @@
 
 namespace Wintermute {
 
-class BasePoint: public BaseClass {
+class BasePoint : public BaseClass {
 public:
 	DECLARE_PERSISTENT(BasePoint, BaseClass)
 	BasePoint();

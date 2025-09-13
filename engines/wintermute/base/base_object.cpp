@@ -173,10 +173,12 @@ bool BaseObject::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setCaption(const char *caption, int caseVal) {
-	if (caseVal == 0)
+	if (caseVal == 0) {
 		caseVal = 1;
-	if (caseVal < 1 || caseVal > 7)
+	}
+	if (caseVal < 1 || caseVal > 7) {
 		return;
+	}
 
 	SAFE_DELETE_ARRAY(_caption[caseVal - 1]);
 	size_t captionSize = strlen(caption) + 1;
@@ -360,7 +362,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			loopStart = val3->getInt();
 		}
 
-		if (DID_FAIL(playSFX(filename, looping, true, NULL, loopStart))) {
+		if (DID_FAIL(playSFX(filename, looping, true, nullptr, loopStart))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1334,7 +1336,7 @@ bool BaseObject::updateOneSound(BaseSound *sound) {
 
 	if (sound) {
 		if (_autoSoundPanning) {
-			ret = sound->setPan(_game->_soundMgr->posToPan(_posX  - _game->_offsetX, _posY - _game->_offsetY));
+			ret = sound->setPan(_game->_soundMgr->posToPan(_posX - _game->_offsetX, _posY - _game->_offsetY));
 		}
 
 		ret = sound->applyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);

@@ -200,7 +200,7 @@ public:
 
 private:
 	bool persistState(bool saving = true);
-	void pfAddWaypointGroup(AdWaypointGroup *Wpt, BaseObject *requester = nullptr);
+	void pfAddWaypointGroup(AdWaypointGroup *wpt, BaseObject *requester = nullptr);
 	bool _pfReady;
 	BasePoint *_pfTarget;
 	AdPath *_pfTargetPath;

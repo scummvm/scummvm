@@ -70,14 +70,14 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	// skip comment lines.
 	while (**buf == ';') {
 		*buf = strchr(*buf, '\n');
-		if (! *buf) {
+		if (!*buf) {
 			return PARSERR_EOF;
 		}
 		_parserLine++;
 		skipCharacters(buf, _whiteSpace);
 	}
 
-	if (! **buf) {                // at end of file
+	if (!**buf) { // at end of file
 		return PARSERR_EOF;
 	}
 
@@ -107,7 +107,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 	skipCharacters(buf, _whiteSpace);
 
 	// get optional name
-	*name = getSubText(buf, '\'', '\'');  // single quotes
+	*name = getSubText(buf, '\'', '\''); // single quotes
 	skipCharacters(buf, _whiteSpace);
 
 	// get optional data
@@ -142,7 +142,7 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 		if (strchr(toSkip, ch) == nullptr) {
 			return;
 		}
-		++*buf;                     // skip this character
+		++*buf; // skip this character
 	}
 	// we must be at the end of the buffer if we get here
 }
@@ -153,14 +153,14 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 	if (**buf == 0 || **buf != open) {
 		return 0;
 	}
-	++*buf;                       // skip opening delimiter
+	++*buf; // skip opening delimiter
 	char *result = *buf;
 
 	// now find the closing delimiter
 	char theChar;
 	long skip = 1;
 
-	if (open == close) {          // we can't nest identical delimiters
+	if (open == close) { // we cant nest identical delimiters
 		open = 0;
 	}
 	while ((theChar = **buf) != 0) {
@@ -169,12 +169,12 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 		}
 		if (theChar == close) {
 			if (--skip == 0) {
-				**buf = 0;              // null terminate the result string
-				++*buf;                 // move past the closing delimiter
+				**buf = 0; // null terminate the result string
+				++*buf;    // move past the closing delimiter
 				break;
 			}
 		}
-		++*buf;                     // try next character
+		++*buf; // try next character
 	}
 	return result;
 }
@@ -182,10 +182,9 @@ char *BaseParser::getSubText(char **buf, char open, char close) {
 
 //////////////////////////////////////////////////////////////////////
 char *BaseParser::getAssignmentText(char **buf) {
-	++*buf;                       // skip the '='
+	++*buf; // skip the '='
 	skipCharacters(buf, _whiteSpace);
 	char *result = *buf;
-
 
 	if (*result == '"') {
 		result = getSubText(buf, '"', '"');
@@ -194,13 +193,13 @@ char *BaseParser::getAssignmentText(char **buf) {
 		char theChar;
 
 		while ((theChar = **buf) != 0) {
-			if (theChar <= 0x20) {      // space and control chars
+			if (theChar <= 0x20) { // space and control chars
 				break;
 			}
 			++*buf;
 		}
-		**buf = 0;              // null terminate it
-		if (theChar) {                // skip the terminator
+		**buf = 0;   // null terminate it
+		if (theChar) { // skip the terminator
 			++*buf;
 		}
 	}
@@ -292,7 +291,7 @@ int32 BaseParser::getTokenInt(char **buf) {
 void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 	const char *t = getToken(buf);
 	if (strcmp(t, tok)) {
-		return;    // Error
+		return; // Error
 	}
 }
 

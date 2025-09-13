@@ -278,7 +278,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushNULL();
 		} else {
 			void *pointer = *(void **)((byte *)_buffer + start);
-			SXMemBuffer *buf = new SXMemBuffer(_game,  pointer);
+			SXMemBuffer *buf = new SXMemBuffer(_game, pointer);
 			stack->pushNative(buf, false);
 		}
 		return STATUS_OK;
