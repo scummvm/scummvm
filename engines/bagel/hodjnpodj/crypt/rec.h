@@ -30,7 +30,7 @@ namespace HodjNPodj {
 namespace Crypt {
 
 #define CRYPT_TXT_FILE      "Crypt.lz"
-#define CRYPT_RECS          200
+#define CRYPT_RECS          (g_engine->isDemo() ? 8 : 200)
 
 #define MAX_GRAM_LEN        512
 #define MAX_SOURCE_LEN      128
