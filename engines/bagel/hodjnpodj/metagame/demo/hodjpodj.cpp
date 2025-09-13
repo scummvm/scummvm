@@ -52,6 +52,7 @@ ON_WM_LBUTTONDOWN()
 ON_WM_CLOSE()
 ON_WM_KEYDOWN()
 ON_WM_SYSCHAR()
+ON_WM_PARENTNOTIFY()
 END_MESSAGE_MAP()
 
 CHodjPodjWindow::CHodjPodjWindow() {
@@ -113,7 +114,6 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	case IDC_ZOOM:
 		blackScreen();
 		stopBackgroundMidi();
-		SendMessage(WM_CLOSE);
 
 		Metagame::Zoom::RunZoomMap(m_hWnd, true);
 		break;
@@ -239,6 +239,62 @@ void CHodjPodjWindow::OnClose() {
 	KillTimer(TIMER_SPLASH2);
 
 	CFrameWnd::OnClose();
+}
+
+void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
+	LPARAM nGameReturn;
+
+	// Ignore messages during app shutdown
+	if (AfxGetApp()->isQuitting())
+		return;
+
+	switch (msg) {
+	case WM_DESTROY:
+		nGameReturn = lParam;
+
+		if (nGameReturn < 0) {
+			// Restart intro video
+			PostMessage(WM_COMMAND, IDC_PLAY_DEMO_MOVIE);
+
+		} else {
+			loadNewDLL(nGameReturn);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	CWnd::OnParentNotify(msg, lParam);
+}
+
+void CHodjPodjWindow::loadNewDLL(LPARAM lParam) {
+	uint nWhichDLL;
+	CWinApp *pMyApp;
+
+	pMyApp = AfxGetApp();
+	nWhichDLL = lParam - MG_GAME_BASE;
+	assert(nWhichDLL < MG_GAME_COUNT);
+
+	blackScreen();
+
+	stopBackgroundMidi();
+
+	assert(CMgStatic::cGameTable[nWhichDLL]._initFn != nullptr);
+
+	FPDLLFUNCT  lpfnGame;
+
+	GAMESTRUCT *lpGameStruct = new GAMESTRUCT;
+	lpGameStruct->lCrowns = 1000;
+	lpGameStruct->lScore = 0;
+	lpGameStruct->nSkillLevel = SKILLLEVEL_MEDIUM;
+	lpGameStruct->bSoundEffectsEnabled = true;
+	lpGameStruct->bMusicEnabled = true;
+	lpGameStruct->bPlayingMetagame = false;
+	lpGameStruct->bPlayingHodj = true;
+
+	lpfnGame = CMgStatic::cGameTable[nWhichDLL]._initFn;
+	(void)lpfnGame(m_hWnd, lpGameStruct);
 }
 
 } // namespace Demo

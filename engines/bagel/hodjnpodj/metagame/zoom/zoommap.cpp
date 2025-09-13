@@ -31,7 +31,6 @@ namespace Zoom {
 
 #define SPLASHSPEC  ".\\ART\\ZOOMMAP.BMP"
 
-#define IDC_SLIDESHOW	998
 #define IDC_LEAVE		999
 
 extern HCURSOR          hGameCursor;
@@ -88,9 +87,11 @@ static const int16 MINIGAME_VALUES[21] = {
 };
 
 static const int16 DEMO_VALUES[30] = {
-	-1, 110, -1, -1, -1, MG_GAME_ARCHEROIDS, -1, -1, -1, -1, -1,
-	MG_GAME_ARTPARTS, MG_GAME_BARBERSHOP,
-	-1, -1, -1, -3, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
+	-9, MG_GAME_ARTPARTS, -9, -9, -9,
+	MG_GAME_CRYPTOGRAMS, -9, -9, -9, -9, -9,
+	MG_GAME_MAZEODOOM, -9, -9, MG_GAME_PEGGLEBOZ,
+	MG_GAME_RIDDLES, -9, -9, -9, -1,
+	-2, -2, -2, -2, -2, -2, -2, -2, -2, -2
 };
 
 static const char *MINIGAME_DESC[21] = {       // set the display names for when the cursor passes over a game rect
@@ -443,9 +444,18 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 
 bool CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
-		if (wParam == IDC_LEAVE) {
+		switch (wParam) {
+		case IDC_LEAVE:
 			nReturnValue = -1;
 			PostMessage(WM_CLOSE);
+			break;
+
+		case IDC_QUIT:
+			AfxGetApp()->quit();
+			break;
+
+		default:
+			break;
 		}
 	}
 	(*this).SetFocus();                         // Reset focus back to the main window
@@ -460,7 +470,7 @@ void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	if (x != -1) {
 		// Check to see if player clicked on a game
 		int game = (_isDemo ? DEMO_VALUES : MINIGAME_VALUES)[x];
-		if (game == -1 && m_bShowExit == false) {
+		if (game == -9 || (game == -1 && !m_bShowExit)) {
 			CWnd::OnLButtonDown(nFlags, point);
 		} else if (game == -2) {
 			// Demo Hype dialog
@@ -568,12 +578,12 @@ void CMainZoomWindow::OnTimer(uintptr nEventID) {
 	// Add Quit and Slide Show buttons
 	CRect ssRect((GAME_WIDTH / 2) - 120, 450, (GAME_WIDTH / 2) - 20, 470);
 	pSlideshowButton = new CColorButton();
-	pSlideshowButton->Create("Slide Show", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ssRect, this, IDC_SLIDESHOW);
+	pSlideshowButton->Create("Slide Show", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ssRect, this, IDC_LEAVE);
 	pSlideshowButton->SetPalette(pGamePalette);
 
 	CRect quitRect((GAME_WIDTH / 2) + 20, 450, (GAME_WIDTH / 2) + 120, 470);
 	pReturnButton = new CColorButton();
-	pReturnButton->Create("Quit", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, quitRect, this, IDC_LEAVE);
+	pReturnButton->Create("Quit", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, quitRect, this, IDC_QUIT);
 	pReturnButton->SetPalette(pGamePalette);
 
 	// Set the screen to redraw
