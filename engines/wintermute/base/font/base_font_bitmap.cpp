@@ -192,7 +192,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 			if (end < 0) {
 				done = true;
 			}
-			int startX = 0;
+			int startX = x;
 			switch (align) {
 			case TAL_CENTER:
 				startX = x + (width - realLength) / 2;
