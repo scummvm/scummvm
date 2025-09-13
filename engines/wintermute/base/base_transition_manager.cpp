@@ -124,7 +124,7 @@ bool BaseTransitionMgr::update() {
 	}
 	break;
 	default:
-		error("BaseTransitionMgr::Update - unhandled enum NUM_TRANSITION_TYPES");
+		break;
 	}
 
 	if (isReady()) {

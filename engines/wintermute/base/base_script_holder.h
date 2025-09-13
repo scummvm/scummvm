@@ -56,7 +56,7 @@ public:
 
 	char *_filename;
 	bool _freezable;
-	bool _ready;
+	bool _ready{};
 	BaseArray<ScScript *> _scripts;
 
 	// scripting interface

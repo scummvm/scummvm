@@ -170,10 +170,6 @@ void SystemClass::loadTable(BaseGame *game, BasePersistenceManager *persistMgr) 
 		// normal instances, create empty objects
 		else {
 			void *emptyObject = _build();
-			if (!emptyObject) {
-				warning("HALT");
-			}
-
 			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextId(), instId);
 		}
 

@@ -107,7 +107,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 		textStr = StringUtil::ansiToWide((const char *)text, _charset);
 	}
 
-	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
+	if (maxLength >= 0 && (int)textStr.size() > maxLength) {
 		textStr = textStr.substr(0, (uint32)maxLength);
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove

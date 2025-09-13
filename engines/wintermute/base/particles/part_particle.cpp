@@ -97,7 +97,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 			_state = PARTICLE_NORMAL;
 			_currentAlpha = _alpha1;
 		} else {
-			_currentAlpha = (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
+			_currentAlpha = (int32)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
 		}
 
 		return STATUS_OK;
@@ -106,7 +106,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 			_isDead = true;
 			return STATUS_OK;
 		} else {
-			_currentAlpha = _fadeStartAlpha - (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
+			_currentAlpha = _fadeStartAlpha - (int32)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
 		}
 
 		return STATUS_OK;

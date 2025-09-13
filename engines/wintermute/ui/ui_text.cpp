@@ -355,7 +355,6 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("UIText::SaveAsText - Unhandled enum");
 		break;
 	}
 
@@ -370,7 +369,7 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("UIText::SaveAsText - Unhandled enum value: NUM_VERTICAL_ALIGN");
+		break;
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");

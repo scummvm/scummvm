@@ -92,7 +92,6 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 		}
 		break;
 	default:
-		error("AdInventoryBox::Listen - Unhandled enum");
 		break;
 	}
 

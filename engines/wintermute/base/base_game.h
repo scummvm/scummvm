@@ -175,7 +175,6 @@ public:
 	uint32 _thumbnailHeight;
 
 	bool _reportTextureFormat;
-	void setResourceModule(void *resModule);
 
 	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
 	ENGINE_LOG_CALLBACK _engineLogCallback;

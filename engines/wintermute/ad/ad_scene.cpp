@@ -271,7 +271,7 @@ bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObje
 		// correctTargetPoint(&target.x, &target.y);
 
 		// last point
-		//_pfPath.add(new AdPathPoint(target.x, target.y, INT_MAX));
+		//_pfPath.add(new AdPathPoint(target.x, target.y, INT_MAX_VALUE));
 		pfPointsAdd(target.x, target.y, INT_MAX_VALUE);
 
 		// active waypoints
@@ -311,7 +311,7 @@ void AdScene::pfAddWaypointGroup(AdWaypointGroup *wpt, BaseObject *requester) {
 			continue;
 		}
 
-		//_pfPath.add(new AdPathPoint(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX));
+		//_pfPath.add(new AdPathPoint(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX_VALUE));
 		pfPointsAdd(wpt->_points[i]->x, wpt->_points[i]->y, INT_MAX_VALUE);
 	}
 }
@@ -1266,7 +1266,6 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			break;
 
 			default:
-				error("AdScene::TraverseNodes - Unhandled enum");
 				break;
 			} // switch
 		} // each node
@@ -3476,7 +3475,6 @@ bool AdScene::persistState(bool saving) {
 				}
 				break;
 			default:
-				warning("AdScene::PersistState - unhandled enum");
 				break;
 			}
 		}
@@ -3624,7 +3622,7 @@ BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
 		if (currObject != nullptr) {
 			for (int32 i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
-					if (i < (int32)objects.getSize() - 1) {
+					if (i < objects.getSize() - 1) {
 						return objects[i + 1];
 					} else {
 						break;
@@ -3702,7 +3700,6 @@ bool AdScene::getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOn
 			break;
 
 			default:
-				debugC(kWintermuteDebugGeneral, "AdScene::GetSceneObjects - Unhandled enum");
 				break;
 			}
 		}

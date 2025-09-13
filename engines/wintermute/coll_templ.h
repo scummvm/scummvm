@@ -83,7 +83,7 @@ public:
 	// Accessing elements
 	TYPE getAt(int32 nIndex) const;
 	void setAt(int32 nIndex, TYPE newElement);
-	TYPE& elementAt(int32 nIndex);
+	TYPE &elementAt(int32 nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const TYPE *getData() const;
@@ -176,7 +176,7 @@ inline TYPE &BaseArrayBase<TYPE>::operator[](int32 nIndex) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// BaseArray<TYPE, ARG_TYPE> out-of-line functions
+// BaseArray<TYPE> out-of-line functions
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
 BaseArrayBase<TYPE>::BaseArrayBase() {
@@ -375,10 +375,10 @@ public:
 	bool persist(BasePersistenceManager *persistMgr) {
 		int32 i, j;
 		if (persistMgr->getIsSaving()) {
-			j = getSize();
+			j = BaseArray::getSize();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
-				char *obj = getAt(i);
+				char *obj = BaseArray::getAt(i);
 				persistMgr->transferCharPtr("", &obj);
 			}
 		} else {
@@ -401,19 +401,19 @@ public:
 	bool persist(BasePersistenceManager *persistMgr) {
 		int32 i, j;
 		if (persistMgr->getIsSaving()) {
-			j = getSize();
+			j = BaseArray::getSize();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
-				const char * obj = getAt(i);
+				const char * obj = BaseArray::getAt(i);
 				persistMgr->transferConstChar("", &obj);
 			}
 		} else {
-			setSize(0, -1);
+			BaseArray::setSize(0, -1);
 			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				const char * obj;
 				persistMgr->transferConstChar("", &obj);
-				add(obj);
+				BaseArray::add(obj);
 			}
 		}
 		return true;

@@ -589,7 +589,7 @@ bool AdActor::display() {
 		float ScaleX, ScaleY;
 		GetScale(&ScaleX, &ScaleY);
 
-		RECT rc;
+		Common::Rect32 rc;
 		SetRectEmpty(&rc);
 		if (m_CurrentSprite) {
 			m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
@@ -812,7 +812,6 @@ bool AdActor::update() {
 		}
 		break;
 	default:
-		error("AdActor::Update - Unhandled enum");
 	}
 
 	// Below condition code is not present in Lite up to (Feb 8, 2012) (SVN repo)

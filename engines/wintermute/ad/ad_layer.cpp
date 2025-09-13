@@ -536,7 +536,6 @@ bool AdLayer::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 			_nodes[i]->_region->saveAsText(buffer, indent + 2);
 			break;
 		default:
-			error("AdLayer::SaveAsText - Unhandled enum");
 			break;
 		}
 	}

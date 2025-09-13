@@ -403,13 +403,11 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("AdResponseBox::SaveAsText - Unhandled enum");
 		break;
 	}
 
 	switch (_verticalAlign) {
 	case VAL_TOP:
-	default:
 		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "top");
 		break;
 	case VAL_BOTTOM:
@@ -417,6 +415,8 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		break;
 	case VAL_CENTER:
 		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
+		break;
+	default:
 		break;
 	}
 
@@ -574,7 +574,7 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 		}
 		break;
 	default:
-		error("AdResponseBox::Listen - Unhandled enum");
+		break;
 	}
 
 	return STATUS_OK;
@@ -628,7 +628,6 @@ bool AdResponseBox::weedResponses() {
 			}
 			break;
 		default:
-			debugC(kWintermuteDebugGeneral, "AdResponseBox::WeedResponses - Unhandled enum");
 			break;
 		}
 	}
@@ -657,7 +656,7 @@ bool AdResponseBox::handleResponse(const AdResponse *response) {
 		adGame->addGameResponse(response->_id);
 		break;
 	default:
-		debugC(kWintermuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");
+		break;
 	}
 
 	return STATUS_OK;

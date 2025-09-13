@@ -103,7 +103,7 @@ ScValue *ScStack::getTop() {
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getAt(int index) {
 	index = _sP - index;
-	if (index < 0 || index >= (int32)_values.getSize()) {
+	if (index < 0 || index >= _values.getSize()) {
 		return nullptr;
 	} else {
 		return _values[index];

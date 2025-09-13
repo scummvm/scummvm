@@ -75,7 +75,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	point.x = x;
 	point.y = y;
 
-	for (int32 i = (int32)_rectList.getSize() - 1; i >= 0; i--) {
+	for (int32 i = _rectList.getSize() - 1; i >= 0; i--) {
 		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame

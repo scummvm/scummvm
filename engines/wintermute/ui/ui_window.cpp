@@ -664,7 +664,7 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TITLE_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
+		break;
 	}
 
 	if (!BasePlatform::isRectEmpty(&_titleRect)) {

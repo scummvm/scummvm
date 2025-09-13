@@ -2679,10 +2679,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			int bytesRead = 0;
 
 			while (bytesRead < file->size()) {
-				int bufSize = MIN((uint32)1024, (uint32)(file->size() - bytesRead));
+				uint32 bufSize = MIN((uint32)1024, (uint32)(file->size() - bytesRead));
 				bytesRead += file->read(buf, bufSize);
 
-				for (int i = 0; i < bufSize; i++) {
+				for (uint32 i = 0; i < bufSize; i++) {
 					remainder = crc_process_byte(buf[i], remainder);
 				}
 			}
@@ -5102,11 +5102,6 @@ void BaseGame::resetMousePos() {
 
 	//CBPlatform::ClientToScreen(Game->m_Renderer->m_Window, &p);
 	BasePlatform::setCursorPos(p.x, p.y);
-}
-
-//////////////////////////////////////////////////////////////////////////
-void BaseGame::setResourceModule(void *resModule) {
-	// empty
 }
 
 //////////////////////////////////////////////////////////////////////////

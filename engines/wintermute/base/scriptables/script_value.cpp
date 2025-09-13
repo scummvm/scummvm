@@ -769,7 +769,6 @@ void ScValue::setValue(ScValue *val) {
 			_valNative->scSetString(val->getString());
 			break;
 		default:
-			warning("ScValue::setValue - unhandled enum");
 			break;
 		}
 	}

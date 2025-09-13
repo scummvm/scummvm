@@ -67,11 +67,11 @@ Common::String BaseClass::getEditorProp(const Common::String &propName, const Co
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseClass::setEditorProp(const Common::String &propName, const Common::String &propValue) {
-	if (propName.size() == 0) {
+	if (propName.empty()) {
 		return STATUS_FAILED;
 	}
 
-	if (propValue.size() == 0) {
+	if (propValue.empty()) {
 		_editorProps.erase(propName);
 	} else {
 		_editorProps[propName] = propValue;

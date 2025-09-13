@@ -591,7 +591,7 @@ bool AdEntity::display() {
 			float ScaleX, ScaleY;
 			GetScale(&ScaleX, &ScaleY);
 
-			RECT rc;
+			Common::Rect32 rc;
 			SetRectEmpty(&rc);
 			if (m_CurrentSprite) {
 				m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
