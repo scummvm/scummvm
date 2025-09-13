@@ -2071,9 +2071,6 @@ public:
 		const char *  lpClassName, LPWNDCLASS lpWndClass);
 };
 
-extern CWinApp *AfxGetApp();
-HINSTANCE AfxGetInstanceHandle();
-
 } // namespace MFC
 } // namespace Bagel
 

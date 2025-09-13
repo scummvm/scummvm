@@ -564,8 +564,18 @@ void CMainZoomWindow::OnTimer(uintptr nEventID) {
 	delete pDemoMsg2;
 	pDemoMsg2 = nullptr;
 
-	// TODO: Add display of Quit and Slide Show buttons
+	// Add Quit and Slide Show buttons
+	CRect ssRect((GAME_WIDTH / 2) - 120, 450, (GAME_WIDTH / 2) - 20, 470);
+	pSlideshowButton = new CColorButton();
+	pSlideshowButton->Create("Slide Show", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ssRect, this, IDC_LEAVE);
+	pSlideshowButton->SetPalette(pGamePalette);
 
+	CRect quitRect((GAME_WIDTH / 2) + 20, 450, (GAME_WIDTH / 2) + 120, 470);
+	pReturnButton = new CColorButton();
+	pReturnButton->Create("Quit", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, quitRect, this, IDC_LEAVE);
+	pReturnButton->SetPalette(pGamePalette);
+
+	// Set the screen to redraw
 	Invalidate();
 }
 
