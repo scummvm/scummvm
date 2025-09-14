@@ -1004,7 +1004,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 			}
 		}
 
-		if (prevDraw != g_director->_debugDraw) {
+		if (prevDraw != (int)g_director->_debugDraw) {
 			g_director->getCurrentWindow()->render(true);
 		}
 	}

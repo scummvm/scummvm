@@ -2258,7 +2258,7 @@ Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
 	if (!_framesStream || _spriteDetailOffsets.size() == 0)
 		return nullptr;
 
-	if (spriteIdx >= 0 && spriteIdx < _spriteDetailOffsets.size() - 1) {
+	if (spriteIdx >= 0 && spriteIdx < (int)_spriteDetailOffsets.size() - 1) {
 		uint32 size = _spriteDetailOffsets[spriteIdx + 1] - _spriteDetailOffsets[spriteIdx];
 
 		if (!size)
