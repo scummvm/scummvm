@@ -142,7 +142,7 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 
 	_ui = new WeaselUIContainerGump();
-	_ui->SetDims(Rect(0, 0, mhFrame->_width,
+	_ui->SetDims(Common::Rect32(0, 0, mhFrame->_width,
 					  tFrame->_height + mhFrame->_height + mlFrame->_height + bFrame->_height));
 	_ui->InitGump(this, false);
 	_ui->setRelativePosition(CENTER);

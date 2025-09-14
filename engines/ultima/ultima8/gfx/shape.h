@@ -32,7 +32,6 @@ namespace Ultima8 {
 class ShapeFrame;
 class RawShapeFrame;
 class Palette;
-struct Rect;
 struct ConvertShapeFormat;
 
 class Shape {

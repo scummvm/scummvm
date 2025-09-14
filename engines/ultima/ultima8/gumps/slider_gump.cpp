@@ -114,7 +114,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 
 	// Create the SlidingWidget
 	FrameID frame(GameData::GUMPS, slidershape, sliderframe);
-	SlidingWidget *slider = new SlidingWidget(sliderminx, slidery, frame, Rect(sliderminx, slidery, slidermaxx, slidery));
+	SlidingWidget *slider = new SlidingWidget(sliderminx, slidery, frame, Common::Rect32(sliderminx, slidery, slidermaxx, slidery));
 	slider->SetIndex(SLIDER_INDEX);
 	slider->InitGump(this);
 	slider->setValueForRange(_value, _min, _max);

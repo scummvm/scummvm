@@ -72,7 +72,7 @@ ItemSorter::~ItemSorter() {
 	}
 }
 
-void ItemSorter::BeginDisplayList(const Rect &clipWindow, const Point3 &cam) {
+void ItemSorter::BeginDisplayList(const Common::Rect32 &clipWindow, const Point3 &cam) {
 	// Get the _shapes, if required
 	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 

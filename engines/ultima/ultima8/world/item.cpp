@@ -628,7 +628,7 @@ bool Item::isOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Rect game_map_dims;
+	Common::Rect32 game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
@@ -654,7 +654,7 @@ bool Item::isPartlyOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Rect game_map_dims;
+	Common::Rect32 game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);

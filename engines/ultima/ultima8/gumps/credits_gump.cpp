@@ -180,7 +180,7 @@ void CreditsGump::run() {
 		if (nextblock == -1)
 			nextblock = 0;
 		// time to render next block
-		Rect bounds;
+		Common::Rect32 bounds;
 		_scroll[nextblock]->GetSurfaceDims(bounds);
 
 		uint32 color = TEX32_PACK_RGB(0, 0, 0);

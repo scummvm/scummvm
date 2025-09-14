@@ -67,7 +67,7 @@ protected:
 
 	uint16 _bullet;
 
-	void addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Ultima::Ultima8::Rect &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor);
+	void addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Common::Rect32 &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor);
 };
 
 } // End of namespace Ultima8

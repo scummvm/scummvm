@@ -72,7 +72,7 @@ void CruEnergyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	if (!gamepal)
 		return;
 
-	Rect rect(34, 7, 34 + width, 21);
+	Common::Rect32 rect(34, 7, 34 + width, 21);
 	surf->fillRect(rect, gamepal->_native[ENERGY_BAR_COLOR]);
 }
 

@@ -92,8 +92,8 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	for (int i = 0; i < 3; ++i) {
-		Rect hprect(hpx + i, bary - hpheight + 1, hpx + i + 1, bary + 1);
-		Rect manarect(manax + i, bary - manaheight + 1, manax + i + 1, bary + 1);
+		Common::Rect32 hprect(hpx + i, bary - hpheight + 1, hpx + i + 1, bary + 1);
+		Common::Rect32 manarect(manax + i, bary - manaheight + 1, manax + i + 1, bary + 1);
 		surf->fillRect(hprect, pal->_native[hpcolour[i]]);
 		surf->fillRect(manarect, pal->_native[manacolour[i]]);
 	}

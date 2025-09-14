@@ -378,7 +378,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	}
 
 	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-	Rect res;
+	Common::Rect32 res;
 	desktopGump->GetDims(res);
 
 	int xoff, yoff, width, height;

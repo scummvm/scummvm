@@ -53,7 +53,7 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
-		Rect rect(_dims);
+		Common::Rect32 rect(_dims);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
 		_dims.moveTo(0, rect.top);
 	}
@@ -87,7 +87,7 @@ bool EditWidget::textFits(Std::string &t) {
 	int32 max_width = _multiLine ? _dims.width() : 0;
 	int32 max_height = _dims.height();
 	if (_gameFont && font->isHighRes()) {
-		Rect rect(0, 0, max_width, max_height);
+		Common::Rect32 rect(0, 0, max_width, max_height);
 		GumpRectToScreenSpace(rect, ROUND_INSIDE);
 
 		max_width = rect.width();
@@ -99,7 +99,7 @@ bool EditWidget::textFits(Std::string &t) {
 	                  Font::TEXT_LEFT, false);
 
 	if (_gameFont && font->isHighRes()) {
-		Rect rect(0, 0, width, height);
+		Common::Rect32 rect(0, 0, width, height);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
 
 		width = rect.width();
@@ -136,7 +136,7 @@ void EditWidget::renderText() {
 		int32 max_width = _multiLine ? _dims.width() : 0;
 		int32 max_height = _dims.height();
 		if (_gameFont && font->isHighRes()) {
-			Rect rect(0, 0, max_width, max_height);
+			Common::Rect32 rect(0, 0, max_width, max_height);
 			GumpRectToScreenSpace(rect, ROUND_INSIDE);
 
 			max_width = rect.width();
@@ -182,7 +182,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	_cachedText->draw(surf, x, y, true);
 
-	Rect rect(_dims);
+	Common::Rect32 rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
 }
 

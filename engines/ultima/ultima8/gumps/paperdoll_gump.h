@@ -86,7 +86,7 @@ protected:
 	uint32 _draggingWeight;
 
 private:
-	const Rect _backpackRect;
+	const Common::Rect32 _backpackRect;
 };
 
 } // End of namespace Ultima8

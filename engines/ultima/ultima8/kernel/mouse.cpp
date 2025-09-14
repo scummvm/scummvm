@@ -157,7 +157,7 @@ int Mouse::getMouseLength(int mx, int my) const {
 			return 2;
 	}
 
-	Rect dims;
+	Common::Rect32 dims;
 	RenderSurface *screen = engine->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
@@ -182,7 +182,7 @@ int Mouse::getMouseLength(int mx, int my) const {
 }
 
 Direction Mouse::getMouseDirectionWorld(int mx, int my) const {
-	Rect dims;
+	Common::Rect32 dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
@@ -289,7 +289,7 @@ int Mouse::mouseFrameForDir(Direction mousedir) const {
 }
 
 void Mouse::setMouseCoords(int mx, int my) {
-	Rect dims;
+	Common::Rect32 dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 

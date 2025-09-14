@@ -23,8 +23,8 @@
 #define ULTIMA8_WORLD_SORTITEM_H
 
 #include "common/str.h"
+#include "common/rect.h"
 #include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
 //#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
@@ -63,7 +63,7 @@ struct SortItem {
 	uint32                  _flags;     // Item flags
 	uint32                  _extFlags;  // Item extended flags
 
-	Rect                    _sr; // Screenspace rect for shape frame
+	Common::Rect32          _sr; // Screenspace rect for shape frame
 	/*
 	            Bounding Box layout
 

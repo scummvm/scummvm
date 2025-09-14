@@ -200,8 +200,8 @@ void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 		TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
 		if (subtitle) {
 			int32 x, y;
-			Rect textdims;
-			Rect screendims;
+			Common::Rect32 textdims;
+			Common::Rect32 screendims;
 			subtitle->getLocation(x, y);
 			subtitle->GetDims(textdims);
 			surf->GetSurfaceDims(screendims);

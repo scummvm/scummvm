@@ -425,7 +425,7 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 static inline void CalcFastAreaLimits(int32 &sx_limit,
 									  int32 &sy_limit,
 									  int32 &xy_limit,
-									  const Rect &dims,
+									  const Common::Rect32 &dims,
 									  int mapChunkSize) {
 	// By default the fastArea is the screensize rounded down to the nearest
 	// map chunk, plus 3 wide and 7 high.
@@ -449,7 +449,7 @@ void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
 	int z_max = MAX(from.z, to.z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
-	Rect dims;
+	Common::Rect32 dims;
 	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
 
 	int32 sleft  = ((x_min - y_min) / 4)         - (dims.width() / 2 + _mapChunkSize / 4);

@@ -105,7 +105,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		zlimit = roof->getZ();
 	}
 
-	Rect clipWindow;
+	Common::Rect32 clipWindow;
 	surf->GetClippingRect(clipWindow);
 	_displayList->BeginDisplayList(clipWindow, loc);
 
@@ -601,7 +601,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 
 void GameMapGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the parent
-	Rect new_dims;
+	Common::Rect32 new_dims;
 	_parent->GetDims(new_dims);
 	_dims.setWidth(new_dims.width());
 	_dims.setHeight(new_dims.height());

@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_WORLD_ITEMSORTER_H
 #define ULTIMA8_WORLD_ITEMSORTER_H
 
-#include "ultima/ultima8/misc/rect.h"
+#include "common/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,7 +35,7 @@ struct Point3;
 
 class ItemSorter {
 	MainShapeArchive    *_shapes;
-	Rect        _clipWindow;
+	Common::Rect32      _clipWindow;
 
 	SortItem    *_items;
 	SortItem    *_itemsTail;
@@ -55,7 +55,7 @@ public:
 	};
 
 	// Begin creating the display list
-	void BeginDisplayList(const Rect &clipWindow, const Point3 &cam);
+	void BeginDisplayList(const Common::Rect32 &clipWindow, const Point3 &cam);
 
 	void AddItem(const Point3 &pt, uint32 shape_num, uint32 frame_num, uint32 item_flags, uint32 ext_flags, uint16 item_num = 0);
 	void AddItem(const Item *);                   // Add an Item. SetupLerp() MUST have been called

@@ -123,7 +123,7 @@ void TTFont::getTextSize(const Std::string &text,
 }
 
 
-void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Ultima::Ultima8::Rect &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor) {
+void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Common::Rect32 &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor) {
 	uint8 bA, bR, bG, bB;
 	_PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
 

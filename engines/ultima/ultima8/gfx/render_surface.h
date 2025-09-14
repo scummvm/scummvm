@@ -23,14 +23,11 @@
 #define ULTIMA8_GFX_RENDERSURFACE_H
 
 #include "graphics/managed_surface.h"
-#include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class Shape;
-
-struct Rect;
 
 //
 // RenderSurface
@@ -93,13 +90,13 @@ public:
 	void GetOrigin(int32 &x, int32 &y) const;
 
 	//! Get the Surface Dimensions
-	void GetSurfaceDims(Rect &) const;
+	void GetSurfaceDims(Common::Rect32 &) const;
 
 	//! Get Clipping Rectangle
-	void GetClippingRect(Rect &) const;
+	void GetClippingRect(Common::Rect32 &) const;
 
 	//! Set Clipping Rectangle
-	void SetClippingRect(const Rect &);
+	void SetClippingRect(const Common::Rect32 &);
 
 	//! Flip the surface
 	void SetFlipped(bool flipped);
@@ -113,27 +110,27 @@ public:
 	};
 
 	//! Fill the region with a color in the pixel format
-	void fillRect(const Rect &r, uint32 color);
+	void fillRect(const Common::Rect32 &r, uint32 color);
 
 	//! Fill the region with a color in the pixel format
-	void frameRect(const Rect &r, uint32 color);
+	void frameRect(const Common::Rect32 &r, uint32 color);
 
 	// Draw a line with a color in the pixel format
 	void drawLine(int32 sx, int32 sy, int32 ex, int32 ey, uint32 color);
 
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-		fill32(rgb, Rect(sx, sy, sx + w, sy + h));
+		fill32(rgb, Common::Rect32(sx, sy, sx + w, sy + h));
 	}
 
 	//! Fill the region with a color in the TEX32_PACK_RGB format
-	void fill32(uint32 rgb, const Rect &r);
+	void fill32(uint32 rgb, const Common::Rect32 &r);
 
 	//! Fill the region doing alpha blending with a color in the TEX32_PACK_RGBA format
-	void fillBlended(uint32 rgba, const Rect &r);
+	void fillBlended(uint32 rgba, const Common::Rect32 &r);
 
 	//! Fill the region with a color in the TEX32_PACK_RGB format
-	void frameRect32(uint32 rgb, const Rect &r);
+	void frameRect32(uint32 rgb, const Common::Rect32 &r);
 
 	// Draw a line with a color in the TEX32_PACK_RGB format
 	void drawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
