@@ -95,9 +95,22 @@ struct PaletteInfo {
 	}
 };
 
+struct BehaviorElement {
+	CastMemberID memberID;
+	int32 initializerIndex = 0;
+	Common::String initializerParams;
+
+	void read(Common::ReadStreamEndian &stream) {
+		memberID.castLib = (int16)stream.readUint16();
+		memberID.member = (int16)stream.readUint16();
+		initializerIndex = (int32)stream.readUint32();
+	}
+};
+
 struct MainChannels {
 	CastMemberID actionId;
 	uint32 scriptSpriteListIdx; // D6+
+	BehaviorElement behavior; 	// D6+
 
 	uint16 transDuration;
 	uint8 transArea; // 1 - Whole Window, 0 - Changing Area

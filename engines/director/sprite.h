@@ -63,18 +63,7 @@ enum ThicknessFlags {
 	kTTweened   = 0x80,
 };
 
-struct BehaviorElement {
-	CastMemberID memberID;
-	int32 initializerIndex = 0;
-	Common::String initializerParams;
-
-	void read(Common::ReadStreamEndian &stream) {
-		memberID.castLib = (int16)stream.readUint16();
-		memberID.member = (int16)stream.readUint16();
-		initializerIndex = (int32)stream.readUint32();
-	}
-};
-
+struct BehaviorElement;
 class Sprite {
 public:
 	Sprite(Frame *frame = nullptr);

@@ -1887,6 +1887,23 @@ void Score::loadFrameSpriteDetails() {
 			}
 		}
 	}
+
+	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
+		Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.behavior.read(*stream);
+			delete stream;
+
+			if (_currentFrame->_mainChannels.behavior.initializerIndex) {
+				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(_currentFrame->_mainChannels.behavior.initializerIndex);
+
+				if (stream1) {
+					_currentFrame->_mainChannels.behavior.initializerParams = stream1->readString();
+					delete stream1;
+				}
+			}
+		}
+	}
 }
 
 
