@@ -2696,8 +2696,12 @@ void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootSc
 	if (filteredFiles.size() == 0)
 		error("Couldn't find any main segment files");
 
-	if (filteredFiles.size() != 1)
+	if (filteredFiles.size() != 1) {
+		for (const Common::ArchiveMemberPtr &archiveMember : filteredFiles)
+			warning("Possible main segment file: '%s'", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+
 		error("Found multiple main segment files");
+	}
 
 	resolvedPath = filteredFiles.front()->getPathInArchive();
 	resolvedIsV2 = !filteredFiles.front()->getFileName().hasSuffixIgnoreCase(".mpl");
