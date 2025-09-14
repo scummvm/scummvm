@@ -744,6 +744,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		keymaps.push_back(scalpelScrollKeymap);
 		keymaps.push_back(animationKeymap);
 		keymaps.push_back(scalpelKeymap);
+		keymaps.push_back(scalpelDartsKeymap);
 		keymaps.push_back(scalpelJournalKeymap);
 		keymaps.push_back(scalpelTalkKeymap);
 		keymaps.push_back(scalpelInvKeymap);
@@ -754,6 +755,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 
 		scalpelScrollKeymap->setEnabled(false);
 		animationKeymap->setEnabled(false);
+		scalpelDartsKeymap->setEnabled(false);
 		scalpelJournalKeymap->setEnabled(false);
 		scalpelTalkKeymap->setEnabled(false);
 		scalpelInvKeymap->setEnabled(false);
