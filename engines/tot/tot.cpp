@@ -1258,13 +1258,13 @@ void TotEngine::clearVars() {
 		free(_backgroundCopy);
 	}
 	if (_conversationData != nullptr) {
-		free(_conversationData);
+		delete _conversationData;
 	}
 	if (_rooms != nullptr) {
-		free(_rooms);
+		delete _rooms;
 	}
 	if (_sceneObjectsData != nullptr) {
-		free(_sceneObjectsData);
+		delete _sceneObjectsData;
 	}
 	for (int i = 0; i < kNumScreenOverlays; i++) {
 		if (_screenLayers[i] != nullptr) {

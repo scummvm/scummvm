@@ -46,9 +46,9 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 SoundManager::~SoundManager() {
 	if (_midiPlayer)
 		delete _midiPlayer;
-	free(_lastSrcStream);
-	free(_audioStream);
-	delete(_speaker);
+	delete _lastSrcStream;
+	delete _audioStream;
+	delete _speaker;
 }
 
 void SoundManager::init() {
