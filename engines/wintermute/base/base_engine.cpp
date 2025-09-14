@@ -30,7 +30,10 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/system/sys_class_registry.h"
+#include "engines/wintermute/platform_osystem.h"
+
 #include "common/system.h"
+
 namespace Common {
 DECLARE_SINGLETON(Wintermute::BaseEngine);
 }
@@ -72,7 +75,7 @@ void BaseEngine::createInstance(const Common::String &targetName, const Common::
 }
 
 void BaseEngine::LOG(bool res, const char *fmt, ...) {
-	uint32 secs = g_system->getMillis() / 1000;
+	uint32 secs = BasePlatform::getTime() / 1000;
 	uint32 hours = secs / 3600;
 	secs = secs % 3600;
 	uint32 mins = secs / 60;

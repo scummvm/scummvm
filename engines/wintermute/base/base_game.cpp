@@ -662,7 +662,7 @@ bool BaseGame::initialize3() { // renderer is initialized
 void BaseGame::debugEnable(const char *filename) {
 	_debugMode = true;
 
-	int secs = g_system->getMillis() / 1000;
+	int secs = BasePlatform::getTime() / 1000;
 	int hours = secs / 3600;
 	secs = secs % 3600;
 	int mins = secs / 60;
@@ -693,7 +693,7 @@ void BaseGame::debugDisable() {
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::LOG(bool res, const char *fmt, ...) {
-	uint32 secs = g_system->getMillis() / 1000;
+	uint32 secs = BasePlatform::getTime() / 1000;
 	uint32 hours = secs / 3600;
 	secs = secs % 3600;
 	uint32 mins = secs / 60;
@@ -729,7 +729,7 @@ void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 bool BaseGame::initLoop() {
 	_viewportSP = -1;
 
-	_currentTime = g_system->getMillis();
+	_currentTime = BasePlatform::getTime();
 
 	_renderer->initLoop();
 	updateMusicCrossfade();
@@ -2751,6 +2751,46 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushNULL();
 
 		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ShowURLInBrowser
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ShowURLInBrowser") == 0) {
+		stack->correctParams(1);
+
+		/*const char *URLToShow = */stack->pop()->getString();
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// advertisementPrepare
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "advertisementPrepare") == 0) {
+		stack->correctParams(2);
+
+		/*const char *key = */stack->pop()->getString();
+		/*int32 number = */stack->pop()->getInt();
+		int32 ret = 0;
+		stack->pushInt(ret);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// advertisementShow
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "advertisementShow") == 0) {
+		stack->correctParams(2);
+
+		/*const char *key = */stack->pop()->getString();
+		/*int32 number = */stack->pop()->getInt();
+		int32 ret = 0;
+		stack->pushInt(ret);
+
+		return STATUS_OK;
 	} else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
@@ -2795,7 +2835,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// WindowsTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WindowsTime") == 0) {
-		_scValue->setInt((int)g_system->getMillis());
+		_scValue->setInt((int)BasePlatform::getTime());
 		return _scValue;
 	}
 
@@ -4165,7 +4205,7 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	Common::String filename;
 	getSaveSlotFilename(slot, filename);
 
-	_game->LOG(0, "Saving game '%s'...", filename.c_str());
+	LOG(0, "Saving game '%s'...", filename.c_str());
 
 	pluginEvents().applyEvent(WME_EVENT_GAME_BEFORE_SAVE, nullptr);
 	applyEvent("BeforeSave", true);
@@ -4180,8 +4220,9 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		if (!quickSave) {
 			SAFE_DELETE(_saveLoadImage);
-			if (_saveImageName)
+			if (_saveImageName) {
 				_saveLoadImage = _game->_renderer->createSurface();
+			}
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				SAFE_DELETE(_saveLoadImage);
 			}
@@ -5683,8 +5724,8 @@ bool BaseGame::miniUpdate() {
 		return true;
 	}
 
-	if (g_system->getMillis() - _lastMiniUpdate > 200) {
-		_lastMiniUpdate = g_system->getMillis();
+	if (BasePlatform::getTime() - _lastMiniUpdate > 200) {
+		_lastMiniUpdate = BasePlatform::getTime();
 	}
 	return true;
 }
@@ -5724,9 +5765,8 @@ bool BaseGame::isDoubleClick(int32 buttonIndex) {
 	int moveX = ABS(pos.x - _lastClick[buttonIndex].posX);
 	int moveY = ABS(pos.y - _lastClick[buttonIndex].posY);
 
-
-	if (_lastClick[buttonIndex].time == 0 || g_system->getMillis() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
-		_lastClick[buttonIndex].time = g_system->getMillis();
+	if (_lastClick[buttonIndex].time == 0 || BasePlatform::getTime() - _lastClick[buttonIndex].time > maxDoubleCLickTime || moveX > maxMoveX || moveY > maxMoveY) {
+		_lastClick[buttonIndex].time = BasePlatform::getTime();
 		_lastClick[buttonIndex].posX = pos.x;
 		_lastClick[buttonIndex].posY = pos.y;
 		return false;

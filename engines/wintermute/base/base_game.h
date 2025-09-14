@@ -307,7 +307,6 @@ public:
 	bool _loadInProgress;
 	UIWindow *_focusedWindow;
 	bool _editorForceScripts;
-	static void afterLoadScene(void *scene, void *data);
 	static void afterLoadRegion(void *region, void *data);
 	static void afterLoadSubFrame(void *subframe, void *data);
 	static void afterLoadSound(void *sound, void *data);
@@ -316,6 +315,7 @@ public:
 	static void afterLoadXModel(void *model, void *data);
 #endif
 	static void afterLoadScript(void *script, void *data);
+	static void afterLoadScene(void *scene, void *data);
 	static void invalidateValues(void *value, void *data);
 	bool loadSettings(const char *filename);
 	bool resumeMusic(int channel);

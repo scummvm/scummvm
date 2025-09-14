@@ -40,6 +40,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -651,7 +652,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	_hover = (!_disable && _game->_activeObject == this && (_game->_interactive || _game->_state == GAME_SEMI_FROZEN));
 
 	if ((_press && _hover && !_game->_mouseLeftDown) ||
-			(_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
+			(_oneTimePress && BasePlatform::getTime() - _oneTimePressTime >= 100)) {
 		press();
 	}
 
@@ -1078,7 +1079,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_visible && !_disable) {
 			_oneTimePress = true;
-			_oneTimePressTime = g_system->getMillis();
+			_oneTimePressTime = BasePlatform::getTime();
 		}
 		stack->pushNULL();
 

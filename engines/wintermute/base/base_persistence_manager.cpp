@@ -304,7 +304,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 		g_system->getTimeAndDate(_savedTimestamp);
 		putTimeDate(_savedTimestamp);
-		_savedPlayTime = g_system->getMillis();
+		_savedPlayTime = BasePlatform::getTime();
 		_saveStream->writeUint32LE(_savedPlayTime);
 	}
 	return STATUS_OK;

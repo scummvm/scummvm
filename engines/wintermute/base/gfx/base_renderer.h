@@ -50,7 +50,7 @@ class Camera3D;
  * this interface is mainly intended to wrap away any differencies between
  * software-rendering/hardware-rendering.
  */
-class BaseRenderer: public BaseClass {
+class BaseRenderer : public BaseClass {
 public:
 	int _realWidth;
 	int _realHeight;

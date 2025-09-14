@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -200,7 +201,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	if (!ignoreCache) {
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename, filename) == 0) {
-				_cachedScripts[i]->_timestamp = g_system->getMillis();
+				_cachedScripts[i]->_timestamp = BasePlatform::getTime();
 				*outSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;
 			}
@@ -240,7 +241,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	CScCachedScript *cachedScript = new CScCachedScript(filename, compBuffer, compSize);
 	if (cachedScript) {
 		int index = 0;
-		uint32 minTime = g_system->getMillis();
+		uint32 minTime = BasePlatform::getTime();
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 			if (_cachedScripts[i] == nullptr) {
 				index = i;
@@ -306,7 +307,7 @@ bool ScEngine::tick() {
 
 		case SCRIPT_SLEEPING: {
 			if (_scripts[i]->_waitFrozen) {
-				if (_scripts[i]->_waitTime <= g_system->getMillis()) {
+				if (_scripts[i]->_waitTime <= BasePlatform::getTime()) {
 					_scripts[i]->run();
 				}
 			} else {
@@ -350,13 +351,13 @@ bool ScEngine::tick() {
 
 		// time sliced script
 		if (_scripts[i]->_timeSlice > 0) {
-			uint32 startTime = g_system->getMillis();
-			while (_scripts[i]->_state == SCRIPT_RUNNING && g_system->getMillis() - startTime < _scripts[i]->_timeSlice) {
+			uint32 startTime = BasePlatform::getTime();
+			while (_scripts[i]->_state == SCRIPT_RUNNING && BasePlatform::getTime() - startTime < _scripts[i]->_timeSlice) {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
 			if (_isProfiling && _scripts[i]->_filename) {
-				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
+				addScriptTime(_scripts[i]->_filename, BasePlatform::getTime() - startTime);
 			}
 		}
 
@@ -365,7 +366,7 @@ bool ScEngine::tick() {
 			uint32 startTime = 0;
 			bool isProfiling = _isProfiling;
 			if (isProfiling) {
-				startTime = g_system->getMillis();
+				startTime = BasePlatform::getTime();
 			}
 
 			while (_scripts[i]->_state == SCRIPT_RUNNING) {
@@ -373,7 +374,7 @@ bool ScEngine::tick() {
 				_scripts[i]->executeInstruction();
 			}
 			if (isProfiling && _scripts[i]->_filename) {
-				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
+				addScriptTime(_scripts[i]->_filename, BasePlatform::getTime() - startTime);
 			}
 		}
 		_currentScript = nullptr;
@@ -598,7 +599,7 @@ void ScEngine::enableProfiling() {
 	// destroy old data, if any
 	_scriptTimes.clear();
 
-	_profilingStartTime = g_system->getMillis();
+	_profilingStartTime = BasePlatform::getTime();
 	_isProfiling = true;
 }
 
@@ -617,7 +618,7 @@ void ScEngine::disableProfiling() {
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::dumpStats() {
 	error("DumpStats not ported to ScummVM yet");
-	/*  uint32 totalTime = g_system->getMillis() - _profilingStartTime;
+	/*  uint32 totalTime = BasePlatform::getTime() - _profilingStartTime;
 
 	    typedef std::vector <std::pair<uint32, std::string> > TimeVector;
 	    TimeVector times;

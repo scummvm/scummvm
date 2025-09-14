@@ -59,6 +59,7 @@
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
 
 #ifdef ENABLE_WME3D
@@ -558,7 +559,7 @@ bool AdScene::initLoop() {
 #ifdef _DEBUGxxxx
 	int numSteps = 0;
 	uint32 start = _game->_currentTime;
-	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) {
+	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) {
 		pathFinderStep();
 		numSteps++;
 	}
@@ -567,7 +568,7 @@ bool AdScene::initLoop() {
 	}
 #else
 	uint32 start = _game->_currentTime;
-	while (!_pfReady && g_system->getMillis() - start <= _pfMaxTime) {
+	while (!_pfReady && BasePlatform::getTime() - start <= _pfMaxTime) {
 		pathFinderStep();
 	}
 #endif

@@ -463,7 +463,7 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 			assert(debuggableEngine);
 			ScScript *thread = new DebuggableScript(_game,  debuggableEngine);
 #else
-			ScScript *thread = new ScScript(_game,  _scripts[i]->_engine);
+			ScScript *thread = new ScScript(_game, _scripts[i]->_engine);
 #endif
 			if (thread) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);

@@ -29,6 +29,8 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
+
 #include "common/util.h"
 
 namespace Wintermute {
@@ -69,7 +71,7 @@ bool BaseFader::update() {
 	uint32 time;
 
 	if (_system) {
-		time = g_system->getMillis() - _startTime;
+		time = BasePlatform::getTime() - _startTime;
 	} else {
 		time = _game->_timer - _startTime;
 	}
@@ -126,7 +128,7 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) {
-		_startTime = g_system->getMillis();
+		_startTime = BasePlatform::getTime();
 	} else {
 		_startTime = _game->_timer;
 	}
@@ -152,7 +154,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) {
-		_startTime = g_system->getMillis();
+		_startTime = BasePlatform::getTime();
 	} else {
 		_startTime = _game->_timer;
 	}

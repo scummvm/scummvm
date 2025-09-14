@@ -51,6 +51,8 @@ public:
 	bool finishThreads();
 	bool copyParameters(ScStack *stack);
 
+	void afterLoad();
+
 	ScValue *_operand;
 	ScValue *_reg1;
 	bool _freezable;
@@ -63,7 +65,6 @@ public:
 	ScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(ScScript, BaseClass)
-	void afterLoad();
 	void runtimeError(const char *fmt, ...);
 	bool run();
 	bool finish(bool includingThreads = false);
