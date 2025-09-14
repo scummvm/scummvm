@@ -246,6 +246,12 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
+		// For RTL languages, adjust the cursor position to right-align text
+		if (_vm->isLanguageRTL() && logicTextPtr) {
+			int textLength = strlen(logicTextPtr);
+			textColumn = MAX < int16>(0, 40 - textColumn - textLength);
+			charPos_Set(textRow, textColumn);
+		}
 		processedTextPtr = stringPrintf(logicTextPtr);
 		processedTextPtr = stringWordWrap(processedTextPtr, 40);
 
