@@ -90,9 +90,9 @@ Actor *MediaStationEngine::getActorByChunkReference(uint chunkReference) {
 	return nullptr;
 }
 
-Function *MediaStationEngine::getFunctionById(uint functionId) {
+ScriptFunction *MediaStationEngine::getFunctionById(uint functionId) {
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		Function *function = it->_value->getFunctionById(functionId);
+		ScriptFunction *function = it->_value->getFunctionById(functionId);
 		if (function != nullptr) {
 			return function;
 		}

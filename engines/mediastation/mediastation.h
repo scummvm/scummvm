@@ -88,7 +88,7 @@ public:
 
 	Actor *getActorById(uint actorId);
 	Actor *getActorByChunkReference(uint chunkReference);
-	Function *getFunctionById(uint functionId);
+	ScriptFunction *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
 

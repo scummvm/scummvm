@@ -465,7 +465,7 @@ ScriptValue CodeChunk::evaluateFunctionCall(uint functionId, uint paramCount) {
 	}
 
 	ScriptValue returnValue;
-	Function *function = g_engine->getFunctionById(functionId);
+	ScriptFunction *function = g_engine->getFunctionById(functionId);
 	if (function != nullptr) {
 		// This is a title-defined function.
 		returnValue = function->execute(args);

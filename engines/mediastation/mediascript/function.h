@@ -29,14 +29,14 @@
 
 namespace MediaStation {
 
-class Function {
+class ScriptFunction {
 public:
-	Function(Chunk &chunk);
-	~Function();
+	ScriptFunction(Chunk &chunk);
+	~ScriptFunction();
 
 	ScriptValue execute(Common::Array<ScriptValue> &args);
 
-	uint _fileId;
+	uint _contextId;
 	uint _id;
 
 private:

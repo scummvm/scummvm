@@ -68,7 +68,7 @@ public:
 
 	Actor *getActorById(uint actorId);
 	Actor *getActorByChunkReference(uint chunkReference);
-	Function *getFunctionById(uint functionId);
+	ScriptFunction *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 
 private:
@@ -79,7 +79,7 @@ private:
 	Common::String _contextName;
 
 	Common::HashMap<uint, Actor *> _actors;
-	Common::HashMap<uint, Function *> _functions;
+	Common::HashMap<uint, ScriptFunction *> _functions;
 	Common::HashMap<uint, Actor *> _actorsByChunkReference;
 	Common::HashMap<uint, ScriptValue *> _variables;
 

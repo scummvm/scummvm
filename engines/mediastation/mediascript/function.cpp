@@ -24,8 +24,8 @@
 
 namespace MediaStation {
 
-Function::Function(Chunk &chunk) {
-	_fileId = chunk.readTypedUint16();
+ScriptFunction::ScriptFunction(Chunk &chunk) {
+	_contextId = chunk.readTypedUint16();
 	// In PROFILE._ST (only present in some titles), the function ID is reported
 	// with 19900 added, so function 100 would be reported as 20000. But in
 	// bytecode, the zero-based ID is used, so that's what we'll store here.
@@ -33,12 +33,12 @@ Function::Function(Chunk &chunk) {
 	_code = new CodeChunk(chunk);
 }
 
-Function::~Function() {
+ScriptFunction::~ScriptFunction() {
 	delete _code;
 	_code = nullptr;
 }
 
-ScriptValue Function::execute(Common::Array<ScriptValue> &args) {
+ScriptValue ScriptFunction::execute(Common::Array<ScriptValue> &args) {
 	debugC(5, kDebugScript, "\n********** FUNCTION %d **********", _id);
 	ScriptValue returnValue = _code->execute(&args);
 	debugC(5, kDebugScript, "********** END FUNCTION **********");

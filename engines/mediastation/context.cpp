@@ -140,7 +140,7 @@ Actor *Context::getActorByChunkReference(uint chunkReference) {
 	return _actorsByChunkReference.getValOrDefault(chunkReference);
 }
 
-Function *Context::getFunctionById(uint functionId) {
+ScriptFunction *Context::getFunctionById(uint functionId) {
 	return _functions.getValOrDefault(functionId);
 }
 
@@ -180,7 +180,7 @@ void Context::readCreateContextData(Chunk &chunk) {
 		}
 
 		case kContextParametersBytecode: {
-			Function *function = new Function(chunk);
+			ScriptFunction *function = new ScriptFunction(chunk);
 			_functions.setVal(function->_id, function);
 			break;
 		}
@@ -403,7 +403,7 @@ bool Context::readHeaderSection(Chunk &chunk) {
 	}
 
 	case kContextFunctionSection: {
-		Function *function = new Function(chunk);
+		ScriptFunction *function = new ScriptFunction(chunk);
 		_functions.setVal(function->_id, function);
 		if (!g_engine->isFirstGenerationEngine()) {
 			uint endingFlag = chunk.readTypedUint16();
