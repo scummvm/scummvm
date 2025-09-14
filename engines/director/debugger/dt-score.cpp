@@ -571,7 +571,7 @@ void showScore() {
 			ImGui::EndChild();
 		}
 
-		uint numChannels = score->_scoreCache[0]->_sprites.size();
+		uint numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
 		if (tableColumns > kMaxColumnsInTable - 3) // Current restriction of ImGui
@@ -793,7 +793,8 @@ void showChannels() {
 			ImGui::TableSetupColumn("movieTime", flags);
 
 			ImGui::TableAngledHeadersRow();
-			for (int i = 0; i < frame._numChannels; i++) {
+
+			for (int i = 0; i < MIN<int>(frame._numChannels, score->_maxChannelsUsed + 10); i++) {
 				Channel &channel = *score->_channels[i + 1];
 				Sprite &sprite = *channel._sprite;
 

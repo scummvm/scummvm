@@ -332,7 +332,7 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 bool Debugger::cmdChannels(int argc, const char **argv) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 
-	int maxSize = (int)score->getFramesNum();
+	int maxSize = MIN<int>(score->_maxChannelsUsed + 3, score->_scoreCache[0]->_sprites.size());
 	int frameId = score->getCurrentFrameNum();
 	if (argc == 1) {
 		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxSize);
