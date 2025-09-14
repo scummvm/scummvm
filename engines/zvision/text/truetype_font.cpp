@@ -110,8 +110,8 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 
 	Common::File *file = new Common::File();
 	Graphics::Font *newFont;
-	if (!file->open(Common::Path(newFontName)) && !file->open(Common::Path(newFontName)) &&
-	        !file->open(Common::Path(liberationFontName)) && !file->open(Common::Path(liberationFontName))) {
+	if (!file->open(Common::Path(newFontName)) &&
+	        !file->open(Common::Path(liberationFontName))) {
 		newFont = Graphics::loadTTFFontFromArchive(liberationFontName, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 		delete file;
 	} else {
