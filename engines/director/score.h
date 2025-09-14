@@ -255,6 +255,8 @@ public:
 	int16 _numChannelsDisplayed;  // D7+, no-op in earlier versions
 	//  20 bytes in total
 
+	int16 _maxChannelsUsed; // max channel number used in the score, used to optimize rendering
+
 	uint _firstFramePosition;
 	uint _indexStart = 0;
 	uint _frameDataOffset = 0;

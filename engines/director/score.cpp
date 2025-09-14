@@ -1751,6 +1751,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	}
 
 	_frameDataOffset = 0;
+	_maxChannelsUsed = 0;
 
 	if (version < kFileVer400) {
 		_framesStreamSize = _framesStream->readUint32();
@@ -1844,6 +1845,11 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// numOfFrames in the header is often incorrect
 	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
 		_scoreCache.push_back(new Frame(*_currentFrame));
+
+		for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
+			if (_currentFrame->_sprites[i]->_castId.member && i > _maxChannelsUsed)
+				_maxChannelsUsed = i;
+		}
 	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
