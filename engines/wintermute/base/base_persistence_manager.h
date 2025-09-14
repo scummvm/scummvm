@@ -37,20 +37,8 @@
 #include "common/system.h"
 #include "common/rect.h"
 
-#ifdef ENABLE_WME3D
-namespace Math {
-
-class Angle;
-template<int rows, int cols> class Matrix;
-typedef Matrix<4, 4> Matrix4;
-typedef Matrix<3, 1> Vector3d;
-
-} // namespace Math
-#endif
-
 namespace Wintermute {
 
-class Vector2;
 class BaseGame;
 class BasePersistenceManager {
 public:
