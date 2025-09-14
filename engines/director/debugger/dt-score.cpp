@@ -878,32 +878,15 @@ void showChannels() {
 					ImGui::TableNextColumn();
 
 					if (score->_version >= kFileVer600) {
-						if (sprite._spriteListIdx) {
-							Common::MemoryReadStreamEndian *stream = score->getSpriteDetailsStream(sprite._spriteListIdx + 1);
-
-							if (stream) {
-								BehaviorElement behavior;
-								while (stream->pos() < stream->size()) {
-									behavior.read(*stream);
-									displayScriptRef(behavior.memberID);
-									ImGui::SameLine();
-
-									if (behavior.initializerIndex) {
-										Common::MemoryReadStreamEndian *stream1 = score->getSpriteDetailsStream(behavior.initializerIndex);
-
-										if (stream1) {
-											Common::String init = stream1->readString();
-											ImGui::Text("(%s)", init.c_str());
-
-											delete stream1;
-										} else {
-											ImGui::Text("(\"\")");
-										}
-									}
+						if (sprite._behaviors.size() > 0) {
+							for (uint j = 0; j < sprite._behaviors.size(); j++) {
+								displayScriptRef(sprite._behaviors[j].memberID);
+								ImGui::SameLine();
+								if (sprite._behaviors[j].initializerIndex) {
+									ImGui::Text("(%s)", sprite._behaviors[j].initializerParams.c_str());
+								} else {
+									ImGui::Text("(\"\")");
 								}
-								delete stream;
-							} else {
-								ImGui::Text(" ");
 							}
 						} else {
 							ImGui::PushID(i + 1);
