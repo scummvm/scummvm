@@ -397,10 +397,12 @@ OSystem::TransactionError OSystem_DS::endGFXTransaction() {
 	}
 
 	bool bannerChanged = false;
+#ifdef DISABLE_TEXT_CONSOLE
 	if (  (!_engineRunning && (_banner == NULL))
 	    || (_engineRunning && (_banner != NULL))) {
 		bannerChanged = true;
 	}
+#endif
 
 	if (setupNewGameScreen) {
 		bool swScale = ((_currentState.graphicsMode == GFX_SWSCALE) && (_currentState.width == 320));
