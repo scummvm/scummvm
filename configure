@@ -4098,7 +4098,6 @@ case $_backend in
 	3ds)
 		;;
 	android)
-		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var DEFINES "-DNONSTANDARD_PORT"
 		append_var DEFINES "-DANDROID_BACKEND"
 		append_var INCLUDES '-I$(srcdir)/backends/platform/'$_backend
