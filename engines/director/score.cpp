@@ -1861,6 +1861,35 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
+void Score::loadFrameSpriteDetails() {
+	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
+		Sprite *sprite = _currentFrame->_sprites[i];
+		if (sprite->_spriteListIdx) {
+			Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
+			if (stream) {
+				BehaviorElement behavior;
+
+				while (stream->pos() < stream->size()) {
+					behavior.read(*stream);
+
+					if (behavior.initializerIndex) {
+						Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(behavior.initializerIndex);
+
+						if (stream1) {
+							behavior.initializerParams = stream1->readString();
+							delete stream1;
+						}
+					}
+
+					sprite->_behaviors.push_back(behavior);
+				}
+				delete stream;
+			}
+		}
+	}
+}
+
+
 void Score::seekToMemberInList(int frameNum) {
 	if (frameNum < 1 || frameNum >= _numOfFrames) {
 		warning("Score::seekToMemberInList(): frameNum %d out of bounds [1, %d)", frameNum, _numOfFrames);
@@ -1906,6 +1935,9 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	bool isFrameRead = readOneFrame();
 	if (!isFrameRead)
 		return false;
+
+	if (_version >= kFileVer600)
+		loadFrameSpriteDetails();
 
 	// We have read the frame, now update current frame number
 	_curFrameNumber = targetFrame;

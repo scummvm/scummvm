@@ -137,6 +137,8 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_angleRot = sprite._angleRot;
 	_angleSkew = sprite._angleSkew;
 
+	_behaviors = sprite._behaviors;
+
 	return *this;
 }
 

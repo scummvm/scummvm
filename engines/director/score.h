@@ -61,17 +61,6 @@ struct Label {
 	Label(Common::String name1, uint16 number1, Common::String comment1) { name = name1; number = number1; comment = comment1;}
 };
 
-struct BehaviorElement {
-	CastMemberID memberID;
-	int32 initializerIndex = 0;
-
-	void read(Common::ReadStreamEndian &stream) {
-		memberID.castLib = (int16)stream.readUint16();
-		memberID.member = (int16)stream.readUint16();
-		initializerIndex = (int32)stream.readUint32();
-	}
-};
-
 struct TweenInfo{
     int32 curvature;
     int32 flags;
@@ -228,6 +217,8 @@ private:
 	void writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize);
 
 	void seekToMemberInList(int frame);
+
+	void loadFrameSpriteDetails();
 
 public:
 	Common::Array<Channel *> _channels;
