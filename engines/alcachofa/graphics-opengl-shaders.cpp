@@ -248,7 +248,7 @@ private:
 		})";
 };
 
-IRenderer *createOpenGLRendererShaders(Point resolution) {
+IRenderer *IRenderer::createOpenGLRendererShaders(Point resolution) {
 	debug("Use OpenGL shaders renderer");
 	return new OpenGLRendererShaders(resolution);
 }

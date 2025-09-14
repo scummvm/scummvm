@@ -93,6 +93,9 @@ public:
 	virtual void end() = 0;
 
 	static IRenderer *createOpenGLRenderer(Common::Point resolution);
+	static IRenderer *createOpenGLRendererClassic(Common::Point resolution);
+	static IRenderer *createOpenGLRendererShaders(Common::Point resolution);
+	static IRenderer *createTinyGLRenderer(Common::Point resolution);
 };
 
 class IDebugRenderer : public virtual IRenderer {

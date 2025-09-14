@@ -21,7 +21,7 @@
 
 #include "alcachofa/graphics.h"
 #include "alcachofa/detection.h"
-#include "alcachofa/graphics-opengl.h"
+#include "alcachofa/graphics-opengl-base.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -52,6 +52,8 @@ public:
 			tglDeleteTextures(1, &_handle);
 	}
 
+	inline TGLuint handle() const { return _handle; }
+
 protected:
 	void updateInner(const void *pixels) override {
 		tglEnable(TGL_TEXTURE_2D);
@@ -62,6 +64,8 @@ protected:
 		else
 			tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAX_LEVEL, 0);
 	}
+
+	TGLuint _handle;
 };
 
 class TinyGLRenderer : public OpenGLRendererBase {
@@ -282,7 +286,7 @@ private:
 	TinyGLTexture *_currentTexture = nullptr;
 };
 
-IRenderer *createTinyGLRenderer(Point resolution) {
+IRenderer *IRenderer::createTinyGLRenderer(Point resolution) {
 	debug("Use TinyGL renderer");
 	return new TinyGLRenderer(resolution);
 }

@@ -217,7 +217,7 @@ public:
 	}
 };
 
-IRenderer *createOpenGLRendererClassic(Point resolution) {
+IRenderer *IRenderer::createOpenGLRendererClassic(Point resolution) {
 	debug("Use OpenGL classic renderer");
 	return new OpenGLRendererClassic(resolution);
 }
