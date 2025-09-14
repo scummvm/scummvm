@@ -749,36 +749,37 @@ void CNotebook::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		((*pNoteList).m_pPrev != nullptr)) {            // ... scroll up if not at first item
 		pNoteList = (*pNoteList).m_pPrev;
 		pDC = GetDC();
-	} else                                          // if click is in lower curl, then
-		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
-			(pKeyNote == nullptr) &&
-			(pNoteList != nullptr) &&
-			((*pNoteList).m_pNext != nullptr)) {
-			pNoteList = (*pNoteList).m_pNext;
-			pDC = GetDC();
-		} else if (PersonRect.PtInRect(point)) {            // play the person sound file
-			if (lpsPersonSoundSpec != nullptr) {
-				pSound = new CSound(this, lpsPersonSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-				(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).play();
-			}
-		} else if (PlaceRect.PtInRect(point)) {             // play the place sound file
-			if (lpsPlaceSoundSpec != nullptr) {
-				pSound = new CSound(this, lpsPlaceSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-				(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
-				(*pSound).play();
-			}
+	}
+	// if click is in lower curl, then
+	// ... scroll down if not show last item
+	else if (ScrollBotRect.PtInRect(point) &&
+		(pKeyNote == nullptr) &&
+		(pNoteList != nullptr) &&
+		((*pNoteList).m_pNext != nullptr)) {
+		pNoteList = (*pNoteList).m_pNext;
+		pDC = GetDC();
+	} else if (PersonRect.PtInRect(point)) {            // play the person sound file
+		if (lpsPersonSoundSpec != nullptr) {
+			pSound = new CSound(this, lpsPersonSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+			(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+			(*pSound).play();
 		}
-
-
-		if (pDC != nullptr) {                              // update the noteboook entry if required
-			UpdateNote(pDC);
-			ReleaseDC(pDC);
+	} else if (PlaceRect.PtInRect(point)) {             // play the place sound file
+		if (lpsPlaceSoundSpec != nullptr) {
+			pSound = new CSound(this, lpsPlaceSoundSpec, SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
+			(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
+			(*pSound).play();
 		}
+	}
 
-		OnMouseMove(nFlags, point);                     // do standard mouse movement
+	if (pDC != nullptr) {                              // update the noteboook entry if required
+		UpdateNote(pDC);
+		ReleaseDC(pDC);
+	}
 
-		CDialog::OnLButtonDown(nFlags, point);          // do standard mouse clicking
+	OnMouseMove(nFlags, point);                     // do standard mouse movement
+
+	CDialog::OnLButtonDown(nFlags, point);          // do standard mouse clicking
 }
 
 

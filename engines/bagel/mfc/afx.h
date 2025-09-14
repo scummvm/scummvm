@@ -59,7 +59,7 @@ class CFileException;
 
 #define ASSERT_KINDOF(class_name, object) \
 	assert((object)->IsKindOf(RUNTIME_CLASS(class_name)))
-#define ASSERT_VALID(X) ((X) != nullptr)
+#define ASSERT_VALID(X) assert((X) != nullptr)
 
 struct CRuntimeClass {
 	const char *m_lpszClassName;
