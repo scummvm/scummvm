@@ -364,7 +364,6 @@ void CWnd::DestroyWindow() {
 	for (auto &node : _children) {
 		CWnd *child = node._value;
 		child->DestroyWindow();
-		child->m_pParentWnd = nullptr;
 	}
 	_children.clear();
 
@@ -380,6 +379,13 @@ void CWnd::DestroyWindow() {
 	}
 
 	SendMessage(WM_DESTROY);
+
+	// Null the m_pParentWnd field, just in case
+	m_pParentWnd = nullptr;
+
+	// Send NCDESTROY. Warning: for at least view classes,
+	// the default PostNcDestroy deletes the view.
+	// So no class fields can be accessed beyond this point
 	SendMessage(WM_NCDESTROY);
 
 	// If it's the active window, pop it
