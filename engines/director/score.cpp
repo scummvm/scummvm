@@ -322,7 +322,7 @@ void Score::startPlay() {
 		return;
 	}
 
-	if (_vm->getVersion() >= 300)
+	if (_version >= kFileVer300)
 		_movie->processEvent(kEventStartMovie);
 
 	// load first frame (either 1 or _nextFrame)
@@ -349,7 +349,7 @@ void Score::step() {
 	if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
 		_lingo->processEvents(_movie->_inputEventQueue, true);
 	}
-	if (_vm->getVersion() >= 300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
+	if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
 		_movie->processEvent(kEventIdle);
 	}
 
@@ -374,7 +374,7 @@ void Score::stopPlay() {
 	if (_stopPlayCalled)
 		return;
 	_stopPlayCalled = true;
-	if (_vm->getVersion() >= 300)
+	if (_version >= kFileVer300)
 		_movie->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);
 }
@@ -482,7 +482,7 @@ void Score::updateCurrentFrame() {
 		// Cache the previous bounding box for the purposes of rollOver.
 		// If the sprite is blank, D4 and below will use whatever the previous valid bounding
 		// box was for rollOver testing.
-		if (g_director->getVersion() < 500) {
+		if (_version < kFileVer500) {
 			for (uint ch = 0; ch < _channels.size(); ch++) {
 				if (_channels[ch]->_sprite->_castId.member != 0) {
 					_channels[ch]->_rollOverBbox = _channels[ch]->getBbox();
@@ -524,11 +524,11 @@ void Score::updateNextFrameTime() {
 	}
 
 	if (tempo) {
-		const bool waitForClickOnly = _vm->getVersion() < 300;
+		const bool waitForClickOnly = _version < kFileVer300;
 		int maxDelay = 60;
-		if (_vm->getVersion() < 300) {
+		if (_version < kFileVer300) {
 			maxDelay = 120;
-		} else if (_vm->getVersion() < 400) {
+		} else if (_version < kFileVer400) {
 			// Director 3 has a slider that goes up to 120, but any value
 			// beyond 95 gets converted into a video wait instruction.
 			maxDelay = 95;
@@ -650,7 +650,7 @@ void Score::update() {
 	uint32 count = _window->frozenLingoStateCount();
 
 	// Director 4 and below will allow infinite recursion via the perFrameHook.
-	if (_vm->getVersion() < 500) {
+	if (_version < kFileVer500) {
 		// new frame, first call the perFrameHook (if one exists)
 		if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
 			// Call the perFrameHook as soon as a frame switch is done.
@@ -665,7 +665,7 @@ void Score::update() {
 	}
 
 	// Check to see if we've hit the recursion limit
-	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
+	if (_version >= kFileVer400 && _window->frozenLingoRecursionCount() >= 2) {
 		debugC(1, kDebugEvents, "Score::update(): hitting D4 recursion depth limit, defrosting");
 		processFrozenScripts(true);
 		return;
@@ -676,7 +676,7 @@ void Score::update() {
 	}
 
 	// Director 5 and above actually check for recursion for the perFrameHook.
-	if (_vm->getVersion() >= 500) {
+	if (_version >= kFileVer500) {
 		// new frame, first call the perFrameHook (if one exists)
 		if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
 			// Call the perFrameHook as soon as a frame switch is done.
@@ -690,7 +690,7 @@ void Score::update() {
 			return;
 	}
 
-	if (_vm->getVersion() >= 600) {
+	if (_version >= kFileVer600) {
 		// _movie->processEvent(kEventBeginSprite);
 		// TODO: Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 		// _movie->processEvent(kEventPrepareFrame);
@@ -704,7 +704,7 @@ void Score::update() {
 	// then call the stepMovie hook (if one exists)
 	// D4 and above only call it if _allowOutdatedLingo is enabled.
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused && (_vm->getVersion() < 400 || _movie->_allowOutdatedLingo)) {
+	if (!_vm->_playbackPaused && (_version < kFileVer400 || _movie->_allowOutdatedLingo)) {
 		_movie->processEvent(kEventStepMovie);
 	}
 	// If this stepMovie call is frozen, drop the next enterFrame event
@@ -712,7 +712,7 @@ void Score::update() {
 		return;
 
 	// If we've hit the recursion limit, don't enterFrame
-	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
+	if (_version >= kFileVer400 && _window->frozenLingoRecursionCount() >= 2) {
 		debugC(1, kDebugEvents, "Score::update: exiting early due to recursion depth limit");
 		return;
 	}
@@ -721,7 +721,7 @@ void Score::update() {
 	count = _window->frozenLingoStateCount();
 	if (!_vm->_playbackPaused) {
 		_exitFrameCalled = false;
-		if (_vm->getVersion() >= 400) {
+		if (_version >= kFileVer400) {
 			_movie->processEvent(kEventEnterFrame);
 		}
 	}
@@ -930,7 +930,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 
 		int frameDelay = 1000 / 60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
-		if (_vm->getVersion() >= 500)
+		if (_version >= kFileVer500)
 			fadeFrames = kFadeColorFramesD5[frameRate - 1];
 		byte calcPal[768];
 
@@ -1260,7 +1260,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 
 				int frameDelay = 1000 / 60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
-				if (_vm->getVersion() >= 500)
+				if (_version >= kFileVer500)
 					fadeFrames = kFadeColorFramesD5[frameRate - 1];
 
 				// Wait for a fixed time
@@ -1725,7 +1725,7 @@ void Score::playSoundChannel(bool puppetOnly) {
 	}
 
 	// Channels above 2 are only usable by Lingo.
-	if (g_director->getVersion() >= 300) {
+	if (_version >= kFileVer300) {
 		sound->playPuppetSound(3);
 		sound->playPuppetSound(4);
 	}
@@ -1932,7 +1932,7 @@ bool Score::readOneFrame() {
 
 		while (frameSize != 0) {
 
-			if (_vm->getVersion() < 400) {
+			if (_version < kFileVer400) {
 				channelSize = _framesStream->readByte() * 2;
 				channelOffset = _framesStream->readByte() * 2;
 				frameSize -= channelSize + 2;
