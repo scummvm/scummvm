@@ -276,6 +276,8 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		}
 
 		if (_wFlags & SOUND_MIDI) {
+			if (_wFlags & SOUND_LOOP)
+				_wLoops = 0;
 
 			g_engine->_midi->play(this);
 			_bPlaying = true;
@@ -326,6 +328,7 @@ bool CBofSound::midiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 	assert(isValidObject(this));
 
 	_wFlags |= SOUND_LOOP;
+	_wLoops = 0;
 	_dwRePlayStart = dwLoopFrom;
 	_dwRePlayEnd = dwLoopTo;
 	_bExtensionsUsed = true;
