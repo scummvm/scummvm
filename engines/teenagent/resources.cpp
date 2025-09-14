@@ -338,7 +338,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 		const char *msg = _s("Incorrect version of the '%s' engine data file found. Expected %d but got %d.");
 		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str(), TEENAGENT_DAT_VERSION, version);
 		GUIErrorMessage(errorMessage);
-		warning(msg, filename.c_str());
+		warning(msg, filename.c_str(), TEENAGENT_DAT_VERSION, version);
 		return false;
 	}
 
