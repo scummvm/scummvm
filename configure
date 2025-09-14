@@ -3241,7 +3241,7 @@ EOF
 	ds)
 		_optimization_level=-Os
 		append_var DEFINES "-D__DS__"
-		append_var DEFINES "-DNDS"
+		append_var DEFINES "-D__NDS__"
 		append_var DEFINES "-DARM9"
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DNONSTANDARD_PORT"
