@@ -1,7 +1,5 @@
 #!/usr/bin/make -f
 
-#include /usr/share/quilt/quilt.make
-
 build: scummvm
 
 scummvm:
