@@ -24,6 +24,20 @@
 
 #include "common/events.h"
 
+#include "backends/events/default/default-events.h"
+
+/**
+ * The Nintendo DS event manager.
+ * Used to handle power events and force quitting.
+ */
+class DSEventManager : public DefaultEventManager {
+	bool _dsReset;
+public:
+	DSEventManager(Common::EventSource *boss) : DefaultEventManager(boss), _dsReset(false) {}
+	bool pollEvent(Common::Event &event) override;
+	int shouldQuit() const override { return _dsReset || DefaultEventManager::shouldQuit(); }
+};
+
 /**
  * The Nintendo DS event source.
  */

@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 #include <filesystem.h>
 
@@ -83,7 +84,7 @@ void OSystem_DS::initBackend() {
 	ConfMan.setBool("FM_medium_quality", true);
 
 	_eventSource = new DSEventSource();
-	_eventManager = new DefaultEventManager(_eventSource);
+	_eventManager = new DSEventManager(_eventSource);
 
 	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();

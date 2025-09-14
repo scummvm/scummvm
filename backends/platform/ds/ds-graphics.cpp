@@ -19,6 +19,7 @@
  *
  */
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/platform/ds/osystem_ds.h"
@@ -146,7 +147,7 @@ void VBlankHandler(void) {
 }
 
 void initHardware() {
-	powerOn(POWER_ALL);
+	pmPowerOn(POWCNT_ALL);
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -186,6 +187,7 @@ void OSystem_DS::initGraphics() {
 
 	_overlay.create(256, 192, _pfABGR1555);
 	_overlayScreen = new DS::Background(&_overlay, 2, false, 0, false);
+	_overlayScreen->reset();
 	_screen = nullptr;
 #ifdef DISABLE_TEXT_CONSOLE
 	_subScreen = nullptr;
@@ -199,7 +201,6 @@ void OSystem_DS::initGraphics() {
 
 	// Setup VBlank IRQ only when we are ready to handle it
 	irqSet(IRQ_VBLANK, DS::VBlankHandler);
-	irqEnable(IRQ_VBLANK);
 }
 
 void OSystem_DS::setMainScreen(int32 x, int32 y, int32 sx, int32 sy) {

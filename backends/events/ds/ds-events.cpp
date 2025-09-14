@@ -19,10 +19,25 @@
  *
  */
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/events/ds/ds-events.h"
 #include "backends/platform/ds/osystem_ds.h"
+
+bool DSEventManager::pollEvent(Common::Event &event) {
+	// Power events
+	if (!pmMainLoop() && !_dsReset) {
+		_dsReset = true;
+
+		event = Common::Event();
+		event.type = Common::EVENT_QUIT;
+
+		return true;
+	}
+
+	return DefaultEventManager::pollEvent(event);
+}
 
 bool DSEventSource::pollEvent(Common::Event &event) {
 	// Ensure the mixer and timers are updated frequently
