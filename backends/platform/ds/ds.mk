@@ -28,7 +28,7 @@ dsdist: scummvm.nds $(DIST_FILES_DOCS)
 .PHONY: dsclean dsdist
 
 %.nds: %.elf romfs
-	$(NDSTOOL) -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);$(DESCRIPTION)" -d romfs
+	$(NDSTOOL) -c $@ -9 $< -7 $(DEVKITPRO)/calico/bin/ds7_maine.elf -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM calico $(VERSION);$(DESCRIPTION)" -d romfs
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs
