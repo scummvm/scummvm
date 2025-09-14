@@ -82,6 +82,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		Common::File *file = new Common::File();
 		if (!file->open(argv[1])) {
 			warning("File not found: %s", argv[1]);
+			delete file;
 			return true;
 		}
 
