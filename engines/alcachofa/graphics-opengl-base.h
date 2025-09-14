@@ -33,7 +33,7 @@ bool isCompatibleFormat(const Graphics::PixelFormat &format);
 class OpenGLTextureBase : public ITexture {
 public:
 	OpenGLTextureBase(int32 w, int32 h, bool withMipmaps);
-	~OpenGLTextureBase() override = default;
+	~OpenGLTextureBase() override {}
 	void update(const Graphics::Surface &surface) override;
 
 protected:

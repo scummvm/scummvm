@@ -67,7 +67,7 @@ static constexpr SaveVersion kCurrentSaveVersion = SaveVersion::Initial;
 
 class MySerializer : public Common::Serializer {
 public:
-	using Common::Serializer::Serializer;
+	MySerializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
 
 	Common::SeekableReadStream &readStream() {
 		assert(isLoading() && _loadStream != nullptr);

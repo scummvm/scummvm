@@ -38,7 +38,7 @@ public:
 	static constexpr const char *kClassName = "CObjetoBase";
 	ObjectBase(Room *room, const char *name);
 	ObjectBase(Room *room, Common::ReadStream &stream);
-	virtual ~ObjectBase() = default;
+	virtual ~ObjectBase() {}
 
 	inline const Common::String &name() const { return _name; }
 	inline Room *&room() { return _room; }
@@ -86,7 +86,7 @@ class GraphicObject : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CObjetoGrafico";
 	GraphicObject(Room *room, Common::ReadStream &stream);
-	~GraphicObject() override = default;
+	~GraphicObject() override {}
 
 	void draw() override;
 	void drawDebug() override;
@@ -123,7 +123,7 @@ private:
 class ShapeObject : public ObjectBase {
 public:
 	ShapeObject(Room *room, Common::ReadStream &stream);
-	~ShapeObject() override = default;
+	~ShapeObject() override {}
 
 	inline int8 order() const { return _order; }
 	inline bool isNewlySelected() const { return _isNewlySelected; }
@@ -162,7 +162,7 @@ class MenuButton : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CBotonMenu";
 	MenuButton(Room *room, Common::ReadStream &stream);
-	~MenuButton() override = default;
+	~MenuButton() override {}
 
 	inline int32 actionId() const { return _actionId; }
 	inline bool &isInteractable() { return _isInteractable; }
@@ -254,7 +254,7 @@ class CheckBox : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CCheckBox";
 	CheckBox(Room *room, Common::ReadStream &stream);
-	~CheckBox() override = default;
+	~CheckBox() override {}
 
 	inline bool &isChecked() { return _isChecked; }
 	inline int32 actionId() const { return _actionId; }
@@ -285,7 +285,7 @@ class SlideButton final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CSlideButton";
 	SlideButton(Room *room, Common::ReadStream &stream);
-	~SlideButton() override = default;
+	~SlideButton() override {}
 
 	inline float &value() { return _value; }
 
@@ -330,7 +330,7 @@ class MessageBox final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CMessageBox";
 	MessageBox(Room *room, Common::ReadStream &stream);
-	~MessageBox() override = default;
+	~MessageBox() override {}
 
 	const char *typeName() const override;
 
@@ -365,7 +365,7 @@ public:
 class ITriggerableObject {
 public:
 	ITriggerableObject(Common::ReadStream &stream);
-	virtual ~ITriggerableObject() = default;
+	virtual ~ITriggerableObject() {}
 
 	inline Direction interactionDirection() const { return _interactionDirection; }
 	inline Common::Point interactionPoint() const { return _interactionPoint; }
@@ -383,7 +383,7 @@ class InteractableObject : public PhysicalObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CObjetoTipico";
 	InteractableObject(Room *room, Common::ReadStream &stream);
-	~InteractableObject() override = default;
+	~InteractableObject() override {}
 
 	void drawDebug() override;
 	void onClick() override;
@@ -419,7 +419,7 @@ class Character : public ShapeObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CPersonaje";
 	Character(Room *room, Common::ReadStream &stream);
-	~Character() override = default;
+	~Character() override {}
 
 	void update() override;
 	void draw() override;
@@ -462,7 +462,7 @@ class WalkingCharacter : public Character {
 public:
 	static constexpr const char *kClassName = "CPersonajeAnda";
 	WalkingCharacter(Room *room, Common::ReadStream &stream);
-	~WalkingCharacter() override = default;
+	~WalkingCharacter() override {}
 
 	inline bool isWalking() const { return _isWalking; }
 	inline Common::Point position() const { return _currentPos; }
@@ -589,7 +589,7 @@ class FloorColor final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CSueloColor";
 	FloorColor(Room *room, Common::ReadStream &stream);
-	~FloorColor() override = default;
+	~FloorColor() override {}
 
 	void update() override;
 	void drawDebug() override;

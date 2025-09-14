@@ -45,7 +45,7 @@ class Game {
 	typedef void (*Message)(const char *s, ...);
 public:
 	Game();
-	virtual ~Game() = default;
+	virtual ~Game() {}
 
 	virtual void onLoadedGameFiles();
 

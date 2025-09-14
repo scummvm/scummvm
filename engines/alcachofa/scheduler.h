@@ -83,7 +83,7 @@ private:
 
 struct Task {
 	Task(Process &process);
-	virtual ~Task() = default;
+	virtual ~Task() {}
 	virtual TaskReturn run() = 0;
 	virtual void debugPrint() = 0;
 	virtual void syncGame(Common::Serializer &s);

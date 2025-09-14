@@ -30,7 +30,7 @@ namespace Alcachofa {
 
 class IDebugHandler {
 public:
-	virtual ~IDebugHandler() = default;
+	virtual ~IDebugHandler() {}
 
 	virtual void update() = 0;
 };
