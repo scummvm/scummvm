@@ -50,10 +50,6 @@ namespace Frame {
 
 #define CONTROL_PHYSICAL_MEMORY     true
 
-
-void InitBFCInfo(CBfcMgr *);
-void FreeBFCInfo(CBfcMgr *);
-
 // Movie Identifiers
 #define MOVIE_ID_NONE   0
 #define MOVIE_ID_LOGO   1

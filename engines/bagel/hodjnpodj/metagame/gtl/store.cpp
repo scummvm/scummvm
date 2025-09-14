@@ -523,7 +523,7 @@ void CGeneralStore::UpdateCrowns(CDC *pDC) {
 	if ((pItem == nullptr) ||
 	        ((*pItem).GetQuantity() < 1)) {
 		if (bPlayingHodj)
-			Common::strcpy_s(chBuffer, "Podj has no Crowns");
+			Common::strcpy_s(chBuffer, "Hodj has no Crowns");
 		else
 			Common::strcpy_s(chBuffer, "Podj has no Crowns");
 	} else {

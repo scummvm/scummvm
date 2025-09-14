@@ -259,47 +259,7 @@ void CGtlFrame::RecalcLayout(bool bNotify)
 	RETURN_VOID ;
 }
 
-#if OLD_CODE
-
-////* CGtlFrame::CallOnFileNew --
-void CGtlFrame::CallOnFileNew()
-// returns: true if error, false otherwise
-{
-	JXENTER(CGtlFrame::CallOnFileNew) ;
-	int iError = 0 ;        // error code
-	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-
-	xpGtlApp->CallOnFileNew() ;
-
-//cleanup:
-
-	JXELEAVE(CGtlFrame::CallOnFileNew) ;
-	RETURN_VOID ;
-}
-
-////* CGtlFrame::CallOnFileOpen --
-void CGtlFrame::CallOnFileOpen()
-// returns: true if error, false otherwise
-{
-	JXENTER(CGtlFrame::CallOnFileOpen) ;
-	int iError = 0 ;        // error code
-	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-
-	xpGtlApp->CallOnFileOpen() ;
-
-//cleanup:
-
-	JXELEAVE(CGtlFrame::CallOnFileOpen) ;
-	RETURN_VOID ;
-}
-
-#endif /* OLD_CODE */
-
 void CGtlFrame::ProcessMiniGameReturn() {
-	//
-	// Obsolete function
-	//
-	assert(0);
 }
 
 void CGtlFrame::ShowOptions(CPalette *pPalette) {

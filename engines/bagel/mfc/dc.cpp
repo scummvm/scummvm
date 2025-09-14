@@ -1255,8 +1255,6 @@ bool CDC::Impl::getTextMetrics(LPTEXTMETRIC lpMetrics) const {
 	TEXTMETRIC &tm = *lpMetrics;
 	Gfx::Font *font = *(CFont::Impl *)_font;
 
-	memset(&tm, 0, sizeof(TEXTMETRIC)); // Initialize to zero
-
 	tm.tmInternalLeading = 0;
 	tm.tmExternalLeading = 0;
 

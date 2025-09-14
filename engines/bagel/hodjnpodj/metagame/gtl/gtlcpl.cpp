@@ -616,7 +616,7 @@ bool CGtlData::AddLink(CNode FAR * lpNode, int iLink)
 		bFound = lpNode->m_iLinks[iK] == iLink ;
 
 	if (!bFound) {
-		if (lpNode->m_iNumLinks >= DIMENSION(lpNode->m_iLinks)) {
+		if ((uint)lpNode->m_iNumLinks >= DIMENSION(lpNode->m_iLinks)) {
 			iError = 100 ;
 			ErrorMsg(nullptr, "Too many links for node.") ;
 			goto cleanup ;

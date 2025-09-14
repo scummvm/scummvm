@@ -69,7 +69,7 @@ bool CCmdTarget::OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
 	const AFX_MSGMAP_ENTRY *lpEntry;
 	unsigned int nMsg = 0;
 
-	if (nCode != CN_UPDATE_COMMAND_UI) {
+	if ((uint)nCode != CN_UPDATE_COMMAND_UI) {
 		nMsg = HIWORD(nCode);
 		nCode = LOWORD(nCode);
 	}
@@ -189,7 +189,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int n
 	case AfxSig_cmdui: {
 		// ON_UPDATE_COMMAND_UI or ON_UPDATE_COMMAND_UI_REFLECT case
 		assert(CN_UPDATE_COMMAND_UI == (unsigned int)-1);
-		assert(nCode == CN_UPDATE_COMMAND_UI || nCode == 0xFFFF);
+		assert((uint)nCode == CN_UPDATE_COMMAND_UI || nCode == 0xFFFF);
 		assert(pExtra != nullptr);
 		CCmdUI *pCmdUI = (CCmdUI *)pExtra;
 		assert(!pCmdUI->m_bContinueRouting);    // idle - not set
@@ -201,7 +201,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int n
 
 	case AfxSig_cmduiw: {
 		// ON_UPDATE_COMMAND_UI case
-		assert(nCode == CN_UPDATE_COMMAND_UI);
+		assert((uint)nCode == CN_UPDATE_COMMAND_UI);
 		assert(pExtra != nullptr);
 		CCmdUI *pCmdUI = (CCmdUI *)pExtra;
 		assert(pCmdUI->m_nID == (int)nID);           // sanity assert

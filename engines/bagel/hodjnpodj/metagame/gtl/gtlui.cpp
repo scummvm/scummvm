@@ -667,7 +667,7 @@ bool CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 				int iFurlong = 10 * lpMap->m_szLabel[1] + lpMap->m_szLabel[2] - 11 * '0' ;
 
-				if (iFurlong >= 0 && iFurlong < DIMENSION(m_lpFurlongMaps))
+				if (iFurlong >= 0 && (uint)iFurlong < DIMENSION(m_lpFurlongMaps))
 					m_lpFurlongMaps[iFurlong] = lpMap ;
 
 				lpMap->m_bSpecialPaint = true ;

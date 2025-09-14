@@ -286,7 +286,7 @@ bool CGtlData::InitProblem()
 		iSecondaryInfo = 0 ;
 
 	int iObjectClues[MAX_CLUES], iSecondaryClues[MAX_CLUES],
-	    iMishMoshClues[MAX_CLUES], iMoneyClues[MAX_CLUES] ;
+	    iMishMoshClues[MAX_CLUES];
 	int iObjectCount, iSecondaryCount, iMishMoshCount, iMoneyCount ;
 	//int iMoneyClue = 0 ;        // number of chosen money clue
 	const CClueTable * xpClueTable, *xpClueEntry ;
@@ -362,7 +362,8 @@ bool CGtlData::InitProblem()
 				break ;
 
 			case MG_CLUE_CROWNS:    /* need some crowns */
-				iMoneyClues[iMoneyCount++] = iIndex ;
+				//iMoneyClues[iMoneyCount++] = iIndex ;
+				break;
 
 			default:
 				break ;
@@ -376,21 +377,8 @@ bool CGtlData::InitProblem()
 			goto cleanup ;
 		}
 
-		//iMoneyClue = iMoneyClues[m_cGenUtil.RandomInteger(1,
-		//                         iMoneyCount) - 1] ;
-
-		// if money clue is option
-		// add a money clue to the list of objects
-//        if (!bMoneyRequired)
-//            iObjectClues[iObjectCount++] = iMoneyClue ;
-
 		m_cGenUtil.RandomSelection(iObjectClues, iObjectCount,
 		                           iNumObjects) ;
-
-		// if money clue is required, then replace first clue with
-		// money clue.  (Clues will be re-permuted below.)
-//        if (bMoneyRequired)
-//            iObjectClues[0] = iMoneyClue ;
 
 		for (iK = 0 ; iK < iNumObjects ; ++iK) {
 			xpClueEntry = xpClueTable + iObjectClues[iK] ;
@@ -979,7 +967,7 @@ bool CGtlData::SwitchPlayers()
 
 	SetFurlongs(m_xpCurXodj);
 
-	if (!bExitDll && m_xpCurXodj->m_iFurlongs >= 0 && m_xpCurXodj->m_iFurlongs < DIMENSION(m_lpFurlongMaps) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
+	if (!bExitDll && m_xpCurXodj->m_iFurlongs >= 0 && (uint)m_xpCurXodj->m_iFurlongs < DIMENSION(m_lpFurlongMaps) && ((lpMap = m_lpFurlongMaps[m_xpCurXodj->m_iFurlongs]) != nullptr) && lpMap->m_lpcBgbObject)
 		DrawABitmap(nullptr, lpMap->m_lpcBgbObject);
 
 	return (bAgain);
@@ -1240,7 +1228,7 @@ bool CGtlData::InitInterface(int iCode, bool & bExitDll)
 				                m_xpCurXodj->m_pBlackMarket, m_xpCurXodj->m_pGenStore,
 				                ENC_BOOBYTRAP, m_xpCurXodj->m_iFurlongs,
 				                nPSector, nOSector,
-				                m_xpCurXodj->m_bHodj ? lpMetaGameStruct->m_bTraps : lpMetaGameStruct->m_bTraps);
+				                lpMetaGameStruct->m_bTraps);
 
 				// if this is a transport code
 				//
@@ -1932,7 +1920,7 @@ bool CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 			break;
 
 		case MG_LOC_CORRAL:
-			iSoundCode = (xpXodj->m_bHodj ? MG_SOUND_OLN9 : MG_SOUND_OLN9);
+			iSoundCode = MG_SOUND_OLN9;
 			break;
 
 		case MG_LOC_BEAVER:
@@ -3232,7 +3220,7 @@ bool CGtlData::DetermineGameEligibility(CXodj *xpXodj, int iGameCode, bool bExec
 
 	if (iGameCode >= MG_GAME_BASE && iGameCode <= MG_GAME_MAX) {
 
-		for (iK = 0 ; iLast < 0 && iK < DIMENSION(xpXodj->m_iGameHistory) && ((iGame = xpXodj->m_iGameHistory[iK]) != 0); ++iK)
+		for (iK = 0 ; iLast < 0 && (uint)iK < DIMENSION(xpXodj->m_iGameHistory) && ((iGame = xpXodj->m_iGameHistory[iK]) != 0); ++iK)
 			if (iGame == iGameCode)
 				iLast = iK ;
 
@@ -3354,7 +3342,7 @@ bool CGtlData::DetermineInfoEligibility(CXodj * xpXodj, int iLocationCode, bool 
 		// table -- which means that I've received a clue telling me
 		// to go there to get information
 
-		for (iK = 0; iFound < 0 && iK < DIMENSION(xpXodj->m_iSecondaryLoc) && ((iLoc = xpXodj->m_iSecondaryLoc[iK]) != 0); ++iK)
+		for (iK = 0; iFound < 0 && (uint)iK < DIMENSION(xpXodj->m_iSecondaryLoc) && ((iLoc = xpXodj->m_iSecondaryLoc[iK]) != 0); ++iK)
 			if (iLoc == iLocationCode)
 				iFound = iK ;
 
@@ -3367,7 +3355,7 @@ bool CGtlData::DetermineInfoEligibility(CXodj * xpXodj, int iLocationCode, bool 
 				bEligibility = true ;   // then we're indeed eligible
 				// to get information from this location
 				if (bExecute)   // if we want to execute on eligibility
-					for (iK = iFound ; iK < DIMENSION(xpXodj->m_iSecondaryLoc)
+					for (iK = iFound ; (uint)iK < DIMENSION(xpXodj->m_iSecondaryLoc)
 					        ; ++iK)
 						xpXodj->m_iSecondaryLoc[iK] =
 						    xpXodj->m_iSecondaryLoc[iK + 1] ;

@@ -53,6 +53,7 @@ namespace Frame {
 extern CBfcMgr *lpMetaGame;
 
 extern void InitBFCInfo(CBfcMgr *pBfcMgr);
+extern void FreeBFCInfo(CBfcMgr *pBfcMgr);
 
 /////////////////////////////////////////////////////////////////////////////
 
