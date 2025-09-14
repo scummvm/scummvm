@@ -78,7 +78,7 @@ FakeLock::FakeLock(const FakeLock &other)
 	debug("copy");
 }
 
-FakeLock::FakeLock(FakeLock &&other) noexcept
+FakeLock::FakeLock(FakeLock &&other)
 	: _name(other._name)
 	, _semaphore(other._semaphore) {
 	other._name = "<moved>";
@@ -91,7 +91,7 @@ FakeLock::~FakeLock() {
 	release();
 }
 
-void FakeLock::operator= (FakeLock &&other) noexcept {
+void FakeLock::operator= (FakeLock &&other) {
 	release();
 	_name = other._name;
 	_semaphore = other._semaphore;

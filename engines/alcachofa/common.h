@@ -99,9 +99,9 @@ struct FakeLock {
 	FakeLock();
 	FakeLock(const char *name, FakeSemaphore &semaphore);
 	FakeLock(const FakeLock &other);
-	FakeLock(FakeLock &&other) noexcept;
+	FakeLock(FakeLock &&other);
 	~FakeLock();
-	void operator = (FakeLock &&other) noexcept;
+	void operator = (FakeLock &&other);
 	void release();
 
 	inline bool isReleased() const { return _semaphore == nullptr; }
