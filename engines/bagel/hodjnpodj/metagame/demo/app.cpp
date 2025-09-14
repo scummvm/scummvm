@@ -20,7 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/metagame/demo/app.h"
-#include "bagel/hodjnpodj/metagame/demo/hodjpodj.h"
+#include "bagel/hodjnpodj/metagame/demo/hodjpodj_demo.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/boflib/sound.h"
 
@@ -42,7 +42,7 @@ bool CTheApp::InitApplication() {
 
 bool CTheApp::InitInstance() {
 	// Main demo
-	m_pMainWnd = new CHodjPodjWindow();
+	m_pMainWnd = new CHodjPodjDemoWindow();
 	m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
 	m_pMainWnd->UpdateWindow();
 

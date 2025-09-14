@@ -61,7 +61,7 @@ bool CTheApp::InitApplication() {
 bool CTheApp::InitInstance() {
 	if (_startupMinigame.empty()) {
 		// Main game
-		m_pMainWnd = new CHodjPodjWindow();
+		m_pMainWnd = new Frame::CHodjPodjWindow();
 		m_pMainWnd->ShowWindow(SW_SHOWNORMAL);
 		m_pMainWnd->UpdateWindow();
 

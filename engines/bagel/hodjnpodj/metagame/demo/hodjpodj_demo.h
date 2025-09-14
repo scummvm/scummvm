@@ -31,7 +31,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Demo {
 
-class CHodjPodjWindow : public CFrameWnd {
+class CHodjPodjDemoWindow : public CFrameWnd {
 private:
 	Frame::CMovieWindow pMovie;
 	CPalette *pGamePalette = nullptr;
@@ -44,7 +44,7 @@ private:
 	void stopBackgroundMidi();
 
 public:
-	CHodjPodjWindow();
+	CHodjPodjDemoWindow();
 
 	void blackScreen();
 

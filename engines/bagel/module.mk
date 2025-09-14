@@ -184,7 +184,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/note.o \
 	hodjnpodj/metagame/bgen/notebook.o \
 	hodjnpodj/metagame/demo/app.o \
-	hodjnpodj/metagame/demo/hodjpodj.o \
+	hodjnpodj/metagame/demo/hodjpodj_demo.o \
 	hodjnpodj/metagame/frame/app.o \
 	hodjnpodj/metagame/frame/hodjpodj.o \
 	hodjnpodj/metagame/frame/maindlg.o \

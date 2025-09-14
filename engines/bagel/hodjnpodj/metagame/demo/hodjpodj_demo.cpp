@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/hodjnpodj/metagame/demo/hodjpodj.h"
+#include "bagel/hodjnpodj/metagame/demo/hodjpodj_demo.h"
 #include "bagel/hodjnpodj/metagame/zoom/init.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
@@ -46,7 +46,7 @@ namespace Demo {
 
 #define LOGO_MIDI				"sound/maintitl.mid"
 
-BEGIN_MESSAGE_MAP(CHodjPodjWindow, CFrameWnd)
+BEGIN_MESSAGE_MAP(CHodjPodjDemoWindow, CFrameWnd)
 ON_WM_TIMER()
 ON_WM_LBUTTONDOWN()
 ON_WM_CLOSE()
@@ -55,7 +55,7 @@ ON_WM_SYSCHAR()
 ON_WM_PARENTNOTIFY()
 END_MESSAGE_MAP()
 
-CHodjPodjWindow::CHodjPodjWindow() {
+CHodjPodjDemoWindow::CHodjPodjDemoWindow() {
 	CString WndClass;
 	CRect MainRect;
 	bool bTestDibDoc;
@@ -86,7 +86,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 	PostMessage(WM_COMMAND, IDC_SPLASH1);
 }
 
-bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
+bool CHodjPodjDemoWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	_currentCommand = wParam;
 
 	switch (wParam) {
@@ -125,7 +125,7 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return true;
 }
 
-void CHodjPodjWindow::blackScreen() {
+void CHodjPodjDemoWindow::blackScreen() {
 	CDC *pDC;
 	CBrush Brush(RGB(0, 0, 0));
 	CPalette *pPalOld = nullptr;
@@ -152,7 +152,7 @@ void CHodjPodjWindow::blackScreen() {
 	ReleaseDC(pDC);
 }
 
-void CHodjPodjWindow::drawBitmap(const char *filename) {
+void CHodjPodjDemoWindow::drawBitmap(const char *filename) {
 	CDC *dc = GetDC();
 	CBitmap *bitmap = FetchBitmap(dc, &pGamePalette, filename);
 
@@ -162,7 +162,7 @@ void CHodjPodjWindow::drawBitmap(const char *filename) {
 	ReleaseDC(dc);
 }
 
-void CHodjPodjWindow::playMovie(const int nMovieId, const char *pszMovie, bool bScroll) {
+void CHodjPodjDemoWindow::playMovie(const int nMovieId, const char *pszMovie, bool bScroll) {
 	POINT   ptMovie;
 
 	blackScreen();
@@ -176,14 +176,14 @@ void CHodjPodjWindow::playMovie(const int nMovieId, const char *pszMovie, bool b
 }
 
 
-void CHodjPodjWindow::startBackgroundMidi() {
+void CHodjPodjDemoWindow::startBackgroundMidi() {
 	if (pBackgroundMidi == nullptr) {
 		pBackgroundMidi = new CSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
 		(*pBackgroundMidi).play();
 	}
 }
 
-void CHodjPodjWindow::stopBackgroundMidi() {
+void CHodjPodjDemoWindow::stopBackgroundMidi() {
 	if (pBackgroundMidi != nullptr) {
 		(*pBackgroundMidi).stop();
 		delete pBackgroundMidi;
@@ -191,7 +191,7 @@ void CHodjPodjWindow::stopBackgroundMidi() {
 	}
 }
 
-void CHodjPodjWindow::OnTimer(uintptr nEventID) {
+void CHodjPodjDemoWindow::OnTimer(uintptr nEventID) {
 	switch (nEventID) {
 	case TIMER_SPLASH1:
 		KillTimer(TIMER_SPLASH1);
@@ -206,20 +206,20 @@ void CHodjPodjWindow::OnTimer(uintptr nEventID) {
 	}
 }
 
-void CHodjPodjWindow::OnLButtonDown(uint nFlags, CPoint point) {
+void CHodjPodjDemoWindow::OnLButtonDown(uint nFlags, CPoint point) {
 	skipSplash();
 }
 
 
-void CHodjPodjWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
+void CHodjPodjDemoWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	skipSplash();
 }
 
-void CHodjPodjWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
+void CHodjPodjDemoWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	skipSplash();
 }
 
-void CHodjPodjWindow::skipSplash() {
+void CHodjPodjDemoWindow::skipSplash() {
 	switch (_currentCommand) {
 	case IDC_SPLASH1:
 		OnTimer(TIMER_SPLASH1);
@@ -232,7 +232,7 @@ void CHodjPodjWindow::skipSplash() {
 	}
 }
 
-void CHodjPodjWindow::OnClose() {
+void CHodjPodjDemoWindow::OnClose() {
 	stopBackgroundMidi();
 
 	KillTimer(TIMER_SPLASH1);
@@ -241,7 +241,7 @@ void CHodjPodjWindow::OnClose() {
 	CFrameWnd::OnClose();
 }
 
-void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
+void CHodjPodjDemoWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	LPARAM nGameReturn;
 
 	// Ignore messages during app shutdown
@@ -276,7 +276,7 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	CWnd::OnParentNotify(msg, lParam);
 }
 
-void CHodjPodjWindow::loadNewDLL(LPARAM lParam) {
+void CHodjPodjDemoWindow::loadNewDLL(LPARAM lParam) {
 	uint nWhichDLL;
 	CWinApp *pMyApp;
 
