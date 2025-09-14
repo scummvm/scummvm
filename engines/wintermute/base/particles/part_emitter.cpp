@@ -129,7 +129,7 @@ bool PartEmitter::addSprite(const char *filename) {
 	}
 
 	// check if file exists
-	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
+	if (!_game->_fileManager->hasFile(filename)) {
 		_game->LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
 	}

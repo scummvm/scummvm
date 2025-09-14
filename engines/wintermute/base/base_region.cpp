@@ -103,7 +103,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_game->LOG(0, "BaseRegion::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;

@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/font/base_font_truetype.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {
 
@@ -117,7 +118,7 @@ bool BaseFont::isTrueType(BaseGame *game, const char *filename) {
 	TOKEN_TABLE_END
 
 
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		return false;
 	}

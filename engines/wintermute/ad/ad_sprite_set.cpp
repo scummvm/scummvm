@@ -59,7 +59,7 @@ AdSpriteSet::~AdSpriteSet() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_game->LOG(0, "AdSpriteSet::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;

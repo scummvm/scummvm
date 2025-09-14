@@ -234,7 +234,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_game->LOG(0, "UIWindow::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;

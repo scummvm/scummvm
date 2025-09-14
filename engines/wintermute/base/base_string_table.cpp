@@ -231,7 +231,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 	_filenames.push_back(Common::String(filename));
 
 	uint32 size;
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename, &size);
 	if (buffer == nullptr) {
 		_game->LOG(0, "BaseStringTable::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;

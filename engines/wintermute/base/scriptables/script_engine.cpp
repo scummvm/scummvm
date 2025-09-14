@@ -124,7 +124,8 @@ bool ScEngine::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 byte *ScEngine::loadFile(void *data, char *filename, uint32 *size) {
-	return BaseFileManager::getEngineInstance()->readWholeFile(filename, size);
+	BaseGame *game = (BaseGame *)data;
+	return game->_fileManager->readWholeFile(filename, size);
 }
 
 
@@ -214,7 +215,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 
 	uint32 size;
 
-	byte *buffer = BaseEngine::instance().getFileManager()->readWholeFile(filename, &size);
+	byte *buffer = _game->_fileManager->readWholeFile(filename, &size);
 	if (!buffer) {
 		_game->LOG(0, "ScEngine::getCompiledScript - error opening script '%s'", filename);
 		return nullptr;

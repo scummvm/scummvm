@@ -124,7 +124,7 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
-	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
+	if (!_game->_fileManager->hasFile(filename)) {
 		_game->LOG(0, "BaseSprite::loadFile failed for file '%s'", filename);
 		if (_game->_debugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
@@ -156,7 +156,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 			ret = STATUS_OK;
 		}
 	} else {
-		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+		char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
 				_game->LOG(0, "Error parsing SPRITE file '%s'", filename);

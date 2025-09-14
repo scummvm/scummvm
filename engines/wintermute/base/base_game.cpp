@@ -118,6 +118,8 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_renderer3D = nullptr;
 #endif
 	_soundMgr = nullptr;
+	_videoPlayer = nullptr;
+	_fileManager = nullptr;
 	_transMgr = nullptr;
 	_scEngine = nullptr;
 	_keyboardState = nullptr;
@@ -132,7 +134,6 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_systemFont = nullptr;
 	_videoFont = nullptr;
 
-	_videoPlayer = nullptr;
 	_theoraPlayer = nullptr;
 
 	_mainObject = nullptr;
@@ -346,12 +347,13 @@ BaseGame::~BaseGame() {
 	SAFE_DELETE(_scEngine);
 	SAFE_DELETE(_fontStorage);
 	SAFE_DELETE(_surfaceStorage);
-	SAFE_DELETE(_videoPlayer);
 	SAFE_DELETE(_theoraPlayer);
+	SAFE_DELETE(_videoPlayer);
 	SAFE_DELETE(_soundMgr);
 	//SAFE_DELETE(_keyboardState);
 
 	SAFE_DELETE(_renderer);
+	_fileManager = nullptr;
 	//SAFE_DELETE(m_AccessMgr);
 
 	SAFE_DELETE(_stringTable);
@@ -502,6 +504,11 @@ bool BaseGame::initialize1() {
 		if (_fontStorage == nullptr) {
 			break;
 		}
+		_fileManager = BaseFileManager::getEngineInstance();
+		if (_fileManager == nullptr) {
+			break;
+		}
+
 		//m_AccessMgr = new CBAccessMgr(this);
 		//if(m_AccessMgr == nullptr) {
 		//	break;
@@ -509,6 +516,11 @@ bool BaseGame::initialize1() {
 
 		_soundMgr = new BaseSoundMgr(this);
 		if (_soundMgr == nullptr) {
+			break;
+		}
+
+		_videoPlayer = new VideoPlayer(this);
+		if (_videoPlayer == nullptr) {
 			break;
 		}
 
@@ -528,11 +540,6 @@ bool BaseGame::initialize1() {
 		_scEngine = new ScEngine(this);
 #endif
 		if (_scEngine == nullptr) {
-			break;
-		}
-
-		_videoPlayer = new VideoPlayer(this);
-		if (_videoPlayer == nullptr) {
 			break;
 		}
 
@@ -565,10 +572,11 @@ bool BaseGame::initialize1() {
 		delete _transMgr;
 		delete _surfaceStorage;
 		delete _fontStorage;
+		delete _videoPlayer;
 		delete _soundMgr;
 		//delete m_AccessMgr;
+		_fileManager = nullptr;
 		delete _scEngine;
-		delete _videoPlayer;
 		return STATUS_FAILED;
 	}
 }
@@ -816,7 +824,7 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_game->LOG(0, "BaseGame::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -2268,7 +2276,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		bool exists = BaseFileManager::getEngineInstance()->hasFile(filename); // Had absPathWarning = false
+		bool exists = _fileManager->hasFile(filename); // Had absPathWarning = false
 
 		// Used for screenshot files in "Stroke of Fate" duology
 		if (!exists)
@@ -2677,7 +2685,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *filename = stack->pop()->getString();
 		bool asHex = stack->pop()->getBool(false);
 
-		Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, false);
+		Common::SeekableReadStream *file = _fileManager->openFile(filename, false);
 		if (file) {
 			crc remainder = crc_initialize();
 			byte buf[1024];
@@ -2701,7 +2709,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				stack->pushInt(checksum);
 			}
 
-			BaseFileManager::getEngineInstance()->closeFile(file);
+			_fileManager->closeFile(file);
 			file = nullptr;
 		} else {
 			stack->pushNULL();
@@ -4513,7 +4521,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	TOKEN_TABLE(GUID)
 	TOKEN_TABLE_END
 
-	char *origBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *origBuffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (origBuffer == nullptr) {
 		_game->LOG(0, "BaseGame::loadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;

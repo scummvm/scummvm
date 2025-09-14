@@ -35,11 +35,12 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/debugger.h"
-#include "common/events.h"
-#include "common/random.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
+
+#include "common/events.h"
+#include "common/random.h"
 
 namespace Wintermute {
 
@@ -204,6 +205,7 @@ public:
 	bool initialize2();
 	bool initialize3();
 	//CBAccessMgr *m_AccessMgr;
+	BaseFileManager *_fileManager;
 	BaseTransitionMgr *_transMgr;
 
 	void LOG(bool res, const char *fmt, ...);

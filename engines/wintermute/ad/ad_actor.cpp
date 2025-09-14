@@ -132,7 +132,7 @@ AdActor::~AdActor() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		_game->LOG(0, "AdActor::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
@@ -1558,7 +1558,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_END
 
 
-	char *fileBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
+	char *fileBuffer = (char *)_game->_fileManager->readWholeFile(animsFilename);
 	if (fileBuffer == nullptr) {
 		_game->LOG(0, "AdActor::MergeAnims failed for file '%s'", animsFilename);
 		return STATUS_FAILED;
