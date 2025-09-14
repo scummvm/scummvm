@@ -183,6 +183,8 @@ shaders/hpl1_Fog_Trans.vertex                          FILE   "engines/hpl1/engi
 shaders/hpl1_Fog_Trans_Alpha.fragment                  FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_Alpha.fragment"
 shaders/hpl1_Fog_Trans_Mod.fragment                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_Mod.fragment"
 shaders/hpl1_Fog_Trans_ModX2.fragment                  FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_ModX2.fragment"
+shaders/hpl1_gamma_correction.fragment                 FILE   "engines/hpl1/engine/impl/shaders/hpl1_gamma_correction.fragment"
+shaders/hpl1_gamma_correction.vertex                   FILE   "engines/hpl1/engine/impl/shaders/hpl1_gamma_correction.vertex"
 shaders/hpl1_PostEffect_Bloom.fragment                 FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Bloom.fragment"
 shaders/hpl1_PostEffect_Bloom.vertex                   FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Bloom.vertex"
 shaders/hpl1_PostEffect_Blur.vertex                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Blur.vertex"
