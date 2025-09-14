@@ -319,6 +319,8 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 #ifdef ENABLE_HEROCRAFT
 	_rndHc = new Common::RandomSource("HeroCraft");
 #endif
+
+	_touchInterface = false;
 }
 
 
@@ -1530,7 +1532,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		_musicCrossfadeRunning = true;
 
-		 // FoxTail:
 		_musicCrossfadeVolume1 = 0;
 		_musicCrossfadeVolume2 = 100;
 

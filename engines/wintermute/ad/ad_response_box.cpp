@@ -161,6 +161,10 @@ bool AdResponseBox::createButtons() {
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
+				if (_game->_touchInterface) {
+					btn->_fontHover = btn->_font;
+				}
+
 				if (_responses[i]->_font) {
 					btn->_font = _responses[i]->_font;
 				}
@@ -184,6 +188,12 @@ bool AdResponseBox::createButtons() {
 
 			btn->setName("response");
 			btn->correctSize();
+
+			// make the responses touchable
+			if (_game->_touchInterface) {
+				btn->_height = MAX(btn->_height, 50);
+			}
+
 			//btn->setListener(this, btn, _responses[i]->_id);
 			btn->setListener(this, btn, i);
 			btn->_visible = false;

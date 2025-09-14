@@ -944,7 +944,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	if (_subtitlesWidth > 0) {
 		width = _subtitlesWidth;
 	} else {
-		if ((x < _game->_renderer->getWidth() / 4 || x > _game->_renderer->getWidth() * 0.75)) {
+		if ((x < _game->_renderer->getWidth() / 4 || x > _game->_renderer->getWidth() * 0.75) && !_game->_touchInterface) {
 			width = MAX(_game->_renderer->getWidth() / 4, MIN(x * 2, (_game->_renderer->getWidth() - x) * 2));
 		} else {
 			width = _game->_renderer->getWidth() / 2;

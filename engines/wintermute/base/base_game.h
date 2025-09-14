@@ -423,6 +423,7 @@ public:
 	bool getBilinearFiltering() { return _bilinearFiltering; }
 	void addMem(int32 bytes);
 
+	bool _touchInterface;
 	bool _bilinearFiltering{};
 #ifdef ENABLE_WME3D
 	bool _force2dRenderer{};
