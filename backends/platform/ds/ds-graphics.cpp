@@ -170,6 +170,7 @@ void initHardware() {
 
 	/* The extended palette data can only be accessed in LCD mode. */
 	vramSetBankH(VRAM_H_LCD);
+	// bannerPal comes from code memory: it doesn't need to be flushed
 	dmaCopy(bannerPal, &VRAM_H_EXT_PALETTE[1][0], bannerPalLen);
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 #endif
@@ -529,6 +530,7 @@ void OSystem_DS::updateScreen() {
 	oamUpdate(&oamMain);
 
 	if (_paletteDirty) {
+		DC_FlushRange(_palette, 256 * 2);
 		dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
 #ifdef DISABLE_TEXT_CONSOLE
 		if (_subScreen && _subScreenActive)
