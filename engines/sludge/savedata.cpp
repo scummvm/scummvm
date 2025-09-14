@@ -104,7 +104,6 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 
 	if (fp == NULL) {
 		// Try looking inside game folder
-		delete fp;
 		Common::File *f = new Common::File();
 		if (!f->open(Common::Path(filename)))
 			return fatal("No such file", filename); //TODO: false value
