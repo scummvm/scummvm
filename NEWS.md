@@ -140,7 +140,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      remastered version of Day of the Tentacle.
    - Added speech support in the SE versions of MI1 and MI2.
    - Improved graphics support for Macintosh DOTT, Sam & Max, The Dig, Full
-     Throttle, Maniac Mansion, and the PowerPC version of Fate of Atlantis.
+     Throttle, and the PowerPC version of Fate of Atlantis.
    - Added an option to render Sega CD MI1 with the "Shadow Mode" palette
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
