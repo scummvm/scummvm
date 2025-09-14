@@ -162,10 +162,6 @@ void initHardware() {
 	subScTargetX = 0;
 	subScTargetY = 0;
 
-	//irqs are nice
-	irqSet(IRQ_VBLANK, VBlankHandler);
-	irqEnable(IRQ_VBLANK);
-
 #ifdef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
@@ -200,6 +196,10 @@ void OSystem_DS::initGraphics() {
 #ifndef DISABLE_TEXT_CONSOLE
 	_keyboard->init(0, 21, 1, false);
 #endif
+
+	// Setup VBlank IRQ only when we are ready to handle it
+	irqSet(IRQ_VBLANK, DS::VBlankHandler);
+	irqEnable(IRQ_VBLANK);
 }
 
 void OSystem_DS::setMainScreen(int32 x, int32 y, int32 sx, int32 sy) {
