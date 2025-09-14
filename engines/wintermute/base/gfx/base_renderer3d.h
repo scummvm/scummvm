@@ -149,6 +149,8 @@ public:
 	bool forcedFlip() override;
 	virtual bool setViewport3D(DXViewport *viewport) = 0;
 
+	void endSaveLoad() override;
+
 	// ScummVM specific methods <--
 
 protected:

@@ -168,4 +168,8 @@ void BaseRenderer3D::setWindowed(bool windowed) {
 	g_system->endGFXTransaction();
 }
 
+void BaseRenderer3D::endSaveLoad() {
+	BaseRenderer::endSaveLoad();
+}
+
 } // namespace Wintermute
