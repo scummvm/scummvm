@@ -191,7 +191,7 @@ bool AdResponseBox::createButtons() {
 
 			// make the responses touchable
 			if (_game->_touchInterface) {
-				btn->_height = MAX(btn->_height, 50);
+				btn->_height = MAX<int32>(btn->_height, 50);
 			}
 
 			//btn->setListener(this, btn, _responses[i]->_id);
