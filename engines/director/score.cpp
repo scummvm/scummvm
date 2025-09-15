@@ -1874,6 +1874,7 @@ BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream
 		}
 	}
 
+	debugC(2, kDebugLoading, "    Behavior: %s", behavior.toString().c_str());
 	return behavior;
 }
 
@@ -1892,6 +1893,8 @@ SpriteInfo Score::loadSpriteInfo(int spriteId) {
 		delete stream;
 	}
 
+	debugC(2, kDebugLoading, "  SpriteInfo: %s", info.toString().c_str());
+
 	return info;
 }
 
@@ -1900,6 +1903,10 @@ void Score::loadFrameSpriteDetails() {
 	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
 		if (sprite->_spriteListIdx) {
+			debugC(2, kDebugLoading, "Sprite %d", i);
+
+			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx);
+
 			stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
 			if (stream) {
 				while (stream->pos() < stream->size()) {
@@ -1909,42 +1916,51 @@ void Score::loadFrameSpriteDetails() {
 				}
 				delete stream;
 			}
-
-			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx);
 		}
 	}
 
 	// Script channel
 	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
+		debugC(2, kDebugLoading, "Script channel");
+
+		_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx);
+
 		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
 		if (stream) {
 			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream);
 			delete stream;
 		}
-
-		if (_currentFrame->_mainChannels.scriptSpriteListIdx)
-			_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx);
 	}
 
 	// Tempo channel
-	if (_currentFrame->_mainChannels.tempoSpriteListIdx)
+	if (_currentFrame->_mainChannels.tempoSpriteListIdx) {
+		debugC(2, kDebugLoading, "Tempo channel");
 		_currentFrame->_mainChannels.tempoSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.tempoSpriteListIdx);
+	}
 
 	// Transition channel
-	if (_currentFrame->_mainChannels.transSpriteListIdx)
+	if (_currentFrame->_mainChannels.transSpriteListIdx) {
+		debugC(2, kDebugLoading, "Transition channel");
 		_currentFrame->_mainChannels.transSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.transSpriteListIdx);
+	}
 
 	// Sound2 channel
-	if (_currentFrame->_mainChannels.sound2SpriteListIdx)
+	if (_currentFrame->_mainChannels.sound2SpriteListIdx) {
+		debugC(2, kDebugLoading, "Sound2 channel");
 		_currentFrame->_mainChannels.sound2SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound2SpriteListIdx);
+	}
 
 	// Sound1 channel
-	if (_currentFrame->_mainChannels.sound1SpriteListIdx)
+	if (_currentFrame->_mainChannels.sound1SpriteListIdx) {
+		debugC(2, kDebugLoading, "Sound1 channel");
 		_currentFrame->_mainChannels.sound1SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound1SpriteListIdx);
+	}
 
 	// Palette channel
-	if (_currentFrame->_mainChannels.palette.spriteListIdx)
+	if (_currentFrame->_mainChannels.palette.spriteListIdx) {
+		debugC(2, kDebugLoading, "Palette channel");
 		_currentFrame->_mainChannels.palette.spriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.palette.spriteListIdx);
+	}
 }
 
 
