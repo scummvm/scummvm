@@ -74,29 +74,29 @@ enum {
 // In SnowLeopard, this workaround is unnecessary and should not be used. Under SnowLeopard, the first menu
 // is always identified as the application menu.
 
-static void openFromBundle(NSString *file) {
-	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"rtf"];
-	if (!path) {
-		path = [[NSBundle mainBundle] pathForResource:file ofType:@"html"];
-		if (!path) {
-			path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
-			if (!path)
-				path = [[NSBundle mainBundle] pathForResource:file ofType:@"md"];
-		}
+static void openFromBundle(NSString *file, NSString *subdir = nil) {
+	NSString *path = nil;
+	for (NSString *type in @[@"rtf", @"html", @"txt", @"", @"md"]) {
+		if (subdir)
+			path = [[NSBundle mainBundle] pathForResource:file ofType:type inDirectory:subdir];
+		else
+			path = [[NSBundle mainBundle] pathForResource:file ofType:type];
+		if (path)
+			break;
 	}
 
-	// RTF and HTML files are widely recognized and we can rely on the default
+	// RTF, TXT, and HTML files are widely recognized and we can rely on the default
 	// file association working for those. For the other ones this might not be
 	// the case so we explicitly indicate they should be open with TextEdit.
 	if (path) {
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
-		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"] || [path hasSuffix:@".txt"])
 			[[NSWorkspace sharedWorkspace] openFile:path];
 		else
 			[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"TextEdit"];
 #else
 		NSURL *pathUrl = [NSURL fileURLWithPath:path isDirectory:NO];
-		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"]) {
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"] || [path hasSuffix:@".txt"]) {
 			[[NSWorkspace sharedWorkspace] openURL:pathUrl];
 		} else {
 			[[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObjects:pathUrl, nil]
@@ -137,59 +137,59 @@ static void openFromBundle(NSString *file) {
 }
 
 - (void)openLicenseGPL {
-	openFromBundle(@"COPYING");
+	openFromBundle(@"COPYING", @"licenses");
 }
 
 - (void)openLicenseApache {
-	openFromBundle(@"COPYING-Apache");
+	openFromBundle(@"COPYING-Apache", @"licenses");
 }
 
 - (void)openLicenseBSD {
-	openFromBundle(@"COPYING-BSD");
+	openFromBundle(@"COPYING-BSD", @"licenses");
 }
 
 - (void)openLicenseBSL {
-	openFromBundle(@"COPYING-BSL");
+	openFromBundle(@"COPYING-BSL", @"licenses");
 }
 
 - (void)openLicenseGLAD {
-	openFromBundle(@"COPYING-GLAD");
+	openFromBundle(@"COPYING-GLAD", @"licenses");
 }
 
 - (void)openLicenseISC {
-	openFromBundle(@"COPYING-ISC");
+	openFromBundle(@"COPYING-ISC", @"licenses");
 }
 
 - (void)openLicenseLGPL {
-	openFromBundle(@"COPYING-LGPL");
+	openFromBundle(@"COPYING-LGPL", @"licenses");
 }
 
 - (void)openLicenseLUA {
-	openFromBundle(@"COPYING-LUA");
+	openFromBundle(@"COPYING-LUA", @"licenses");
 }
 
 - (void)openLicenseMIT {
-	openFromBundle(@"COPYING-MIT");
+	openFromBundle(@"COPYING-MIT", @"licenses");
 }
 
 - (void)openLicenseMKV {
-	openFromBundle(@"COPYING-MKV");
+	openFromBundle(@"COPYING-MKV", @"licenses");
 }
 
 - (void)openLicenseMPL {
-	openFromBundle(@"COPYING-MPL");
+	openFromBundle(@"COPYING-MPL", @"licenses");
 }
 
 - (void)openLicenseOFL {
-	openFromBundle(@"COPYING-OFL");
+	openFromBundle(@"COPYING-OFL", @"licenses");
 }
 
 - (void)openLicenseTinyGL {
-	openFromBundle(@"COPYING-TINYGL");
+	openFromBundle(@"COPYING-TINYGL", @"licenses");
 }
 
 - (void)openLicenseCatharon {
-	openFromBundle(@"CatharonLicense-txt");
+	openFromBundle(@"CatharonLicense", @"licenses");
 }
 
 - (void)openNews {
