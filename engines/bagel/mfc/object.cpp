@@ -33,10 +33,6 @@ const CRuntimeClass CObject::classCObject = {
 CObject::CObject() {
 }
 
-CObject::CObject(const CObject &objectSrc) {
-	*this = objectSrc;
-}
-
 CObject::~CObject() {
 }
 
