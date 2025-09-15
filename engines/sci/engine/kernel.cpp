@@ -418,7 +418,8 @@ uint16 Kernel::findRegType(reg_t reg) {
 		result |= SIG_TYPE_NODE;
 		break;
 	default:
-		return SIG_TYPE_ERROR;
+		result = SIG_TYPE_ERROR;
+		break;
 	}
 	return result;
 }
@@ -473,11 +474,8 @@ void Kernel::signatureDebug(Common::String &signatureDetailsStr, const uint16 *s
 		if (argc) {
 			reg_t parameter = *argv;
 			signatureDetailsStr += signatureDetailsStr.format("%04x:%04x (", PRINT_REG(parameter));
-			int regType = findRegType(parameter);
-			if (regType)
-				kernelSignatureDebugType(signatureDetailsStr, regType);
-			else
-				signatureDetailsStr += signatureDetailsStr.format("unknown type of %04x:%04x", PRINT_REG(parameter));
+			uint16 regType = findRegType(parameter);
+			kernelSignatureDebugType(signatureDetailsStr, regType);
 			signatureDetailsStr += ")";
 			argv++;
 			argc--;
