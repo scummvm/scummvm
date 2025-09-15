@@ -1877,6 +1877,24 @@ BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream
 	return behavior;
 }
 
+SpriteInfo Score::loadSpriteInfo(int spriteId) {
+	SpriteInfo info;
+
+	Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(spriteId);
+	if (stream) {
+		info.read(*stream);
+		delete stream;
+	}
+
+	stream = getSpriteDetailsStream(spriteId + 2);
+	if (stream) {
+		info.name = stream->readString();
+		delete stream;
+	}
+
+	return info;
+}
+
 void Score::loadFrameSpriteDetails() {
 	Common::MemoryReadStreamEndian *stream = nullptr;
 	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
@@ -1892,11 +1910,7 @@ void Score::loadFrameSpriteDetails() {
 				delete stream;
 			}
 
-			stream = getSpriteDetailsStream(sprite->_spriteListIdx);
-			if (stream) {
-				sprite->_spriteInfo.read(*stream);
-				delete stream;
-			}
+			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx);
 		}
 	}
 
@@ -1908,57 +1922,29 @@ void Score::loadFrameSpriteDetails() {
 			delete stream;
 		}
 
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.scriptSpriteInfo.read(*stream);
-			delete stream;
-		}
+		if (_currentFrame->_mainChannels.scriptSpriteListIdx)
+			_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx);
 	}
 
 	// Tempo channel
-	if (_currentFrame->_mainChannels.tempoSpriteListIdx) {
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.tempoSpriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.tempoSpriteInfo.read(*stream);
-			delete stream;
-		}
-	}
+	if (_currentFrame->_mainChannels.tempoSpriteListIdx)
+		_currentFrame->_mainChannels.tempoSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.tempoSpriteListIdx);
 
 	// Transition channel
-	if (_currentFrame->_mainChannels.transSpriteListIdx) {
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.transSpriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.transSpriteInfo.read(*stream);
-			delete stream;
-		}
-	}
+	if (_currentFrame->_mainChannels.transSpriteListIdx)
+		_currentFrame->_mainChannels.transSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.transSpriteListIdx);
 
 	// Sound2 channel
-	if (_currentFrame->_mainChannels.sound2SpriteListIdx) {
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.sound2SpriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.sound2SpriteInfo.read(*stream);
-			delete stream;
-		}
-	}
+	if (_currentFrame->_mainChannels.sound2SpriteListIdx)
+		_currentFrame->_mainChannels.sound2SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound2SpriteListIdx);
 
 	// Sound1 channel
-	if (_currentFrame->_mainChannels.sound1SpriteListIdx) {
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.sound1SpriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.sound1SpriteInfo.read(*stream);
-			delete stream;
-		}
-	}
+	if (_currentFrame->_mainChannels.sound1SpriteListIdx)
+		_currentFrame->_mainChannels.sound1SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound1SpriteListIdx);
 
 	// Palette channel
-	if (_currentFrame->_mainChannels.palette.spriteListIdx) {
-		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.palette.spriteListIdx);
-		if (stream) {
-			_currentFrame->_mainChannels.palette.spriteInfo.read(*stream);
-			delete stream;
-		}
-	}
+	if (_currentFrame->_mainChannels.palette.spriteListIdx)
+		_currentFrame->_mainChannels.palette.spriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.palette.spriteListIdx);
 }
 
 

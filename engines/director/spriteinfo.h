@@ -50,6 +50,8 @@ struct SpriteInfo {
 
     Common::Array<int32> keyFrames;
 
+	Common::String name; // Sits in a separate item
+
 	void read(Common::ReadStreamEndian &stream) {
 		startFrame = (int32)stream.readUint32();
 		endFrame = (int32)stream.readUint32();
@@ -73,6 +75,7 @@ struct SpriteInfo {
 			startFrame, endFrame, xtraInfo, flags, channelNum);
 		s += Common::String::format("  tweenInfo: curvature: %d, flags: 0x%x, easeIn: %d, easeOut: %d\n",
 			tweenInfo.curvature, tweenInfo.flags, tweenInfo.easeIn, tweenInfo.easeOut);
+		s += Common::String::format("  name: '%s'\n", name.c_str());
 		s += "  keyFrames: ";
 		for (size_t i = 0; i < keyFrames.size(); i++) {
 			s += Common::String::format("%d ", keyFrames[i]);
@@ -90,6 +93,13 @@ struct BehaviorElement {
 		memberID.castLib = (int16)stream.readUint16();
 		memberID.member = (int16)stream.readUint16();
 		initializerIndex = (int32)stream.readUint32();
+	}
+
+	Common::String toString() const {
+		Common::String s;
+		s += Common::String::format("memberID: %s, initializerIndex: %d, initializerParams: '%s'\n",
+			memberID.asString().c_str(), initializerIndex, initializerParams.c_str());
+		return s;
 	}
 };
 

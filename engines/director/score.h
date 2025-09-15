@@ -54,6 +54,7 @@ class Sprite;
 class CastMember;
 class AudioDecoder;
 struct BehaviorElement;
+struct SpriteInfo;
 
 struct Label {
 	Common::String comment;
@@ -165,6 +166,7 @@ private:
 	void loadFrameSpriteDetails();
 
 	BehaviorElement loadSpriteBehavior(Common::MemoryReadStreamEndian *stream);
+	SpriteInfo loadSpriteInfo(int spriteId);
 
 public:
 	Common::Array<Channel *> _channels;
