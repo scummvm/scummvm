@@ -1237,19 +1237,23 @@ void SetUpMaze() {
 	for (x = 0; x < NUM_COLUMNS; x++) {         // Now go through  mazeTile and fix up loose ends, as it were
 		for (y = 0; y < NUM_ROWS; y++) {
 			_mazeTile[x][y].m_bHidden = false;
-			if (_mazeTile[x][y].m_nWall == PATH) {
-				if (_mazeTile[x + 1][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y].m_nWall == PATH &&
+
+			if (x > 0 && y > 0 && x < (NUM_COLUMNS - 1) && y < (NUM_ROWS - 1) && _mazeTile[x][y].m_nWall == PATH) {
+				if (_mazeTile[x + 1][y + 1].m_nWall == PATH &&
+					(_mazeTile[x + 1][y].m_nWall == PATH &&
 				        (_mazeTile[x][y + 1].m_nWall == PATH &&
 				         (_mazeTile[x - 1][y].m_nWall == WALL && _mazeTile[x][y - 1].m_nWall == WALL))))
 					_mazeTile[x][y].m_nWall = WALL;              // If it's a right-hand corner
 
-				if (_mazeTile[x][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y - 1].m_nWall == PATH &&
+				if (_mazeTile[x][y + 1].m_nWall == PATH &&
+					(_mazeTile[x + 1][y - 1].m_nWall == PATH &&
 				        (_mazeTile[x - 1][y - 1].m_nWall == PATH &&
 				         (_mazeTile[x - 1][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y + 1].m_nWall == PATH &&
 				                 (_mazeTile[x - 1][y].m_nWall == PATH && _mazeTile[x + 1][y].m_nWall == PATH))))))
 					_mazeTile[x][y].m_nWall = WALL;              // If it's two wide vertically from the top
 
-				if (_mazeTile[x][y - 1].m_nWall == PATH && (_mazeTile[x - 1][y - 1].m_nWall == PATH &&
+				if (_mazeTile[x][y - 1].m_nWall == PATH &&
+					(_mazeTile[x - 1][y - 1].m_nWall == PATH &&
 				        (_mazeTile[x - 1][y + 1].m_nWall == PATH &&
 				         (_mazeTile[x][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y - 1].m_nWall == PATH &&
 				                 (_mazeTile[x + 1][y].m_nWall == PATH && _mazeTile[x + 1][y + 1].m_nWall == PATH))))))
@@ -1717,8 +1721,11 @@ donewall:
 
 int backup() {                                                /* back up a move */
 	_sqNum--;
-	_curSqX = _moveList[_sqNum].x;
-	_curSqY = _moveList[_sqNum].y;
+	if (_sqNum > 0) {
+		_curSqX = _moveList[_sqNum].x;
+		_curSqY = _moveList[_sqNum].y;
+	}
+
 	return _sqNum;
 }
 
