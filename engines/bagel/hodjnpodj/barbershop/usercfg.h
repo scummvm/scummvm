@@ -36,13 +36,13 @@ namespace Barbershop {
 #define RGBCOLOR_BLACK      RGB(0, 0, 0)
 #define RGBCOLOR_WHITE      RGB(255, 255, 255)
 
-#define FONT_SIZE       18              // CText object font size
+#define FONT_SIZE       16              // CText object font size
 
 // CText message
 #define TEXT_LEFT           20
 #define TEXT_TOP            25
 #define TEXT_RIG            220
-#define TEXT_BOT            45
+#define TEXT_BOT            46
 
 // card back rect 1
 #define CBCK_RECT1_LEFT     40
