@@ -2053,8 +2053,12 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	if (!isFrameRead)
 		return false;
 
+	int64 pos = _framesStream->pos();
+
 	if (_version >= kFileVer600)
 		loadFrameSpriteDetails(loadCast);
+
+	_framesStream->seek(pos, SEEK_SET);
 
 	// We have read the frame, now update current frame number
 	_curFrameNumber = targetFrame;
