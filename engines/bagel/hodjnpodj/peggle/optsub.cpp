@@ -26,6 +26,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/peggle/options.h"
 #include "bagel/hodjnpodj/peggle/resource.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -187,24 +188,24 @@ bool COptions::OnInitDialog() {
 		bSuccess = (*pCancelButton).SetControl(IDC_SUB_CANCEL, this);
 	}
 
-	#if DEMO_FLAG
-	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
-		pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
-		ASSERT(pButton != nullptr);                        // ... and verify we have it
-		(*pButton).EnableWindow(false);
-	}
-	#else
-	if ((*pGameInfo).bPlayingMetagame) {
+	if (g_engine->isDemo()) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 			pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
 			ASSERT(pButton != nullptr);                        // ... and verify we have it
 			(*pButton).EnableWindow(false);
-			pButton = GetDlgItem(IDC_OPTIONS_NEWGAME);      // get the window for the options button
-			ASSERT(pButton != nullptr);                        // ... and verify we have it
-			(*pButton).EnableWindow(false);
+		}
+	} else {
+		if ((*pGameInfo).bPlayingMetagame) {
+			if (m_iDlgId == IDD_OPTIONS_DIALOG) {
+				pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
+				ASSERT(pButton != nullptr);                        // ... and verify we have it
+				(*pButton).EnableWindow(false);
+				pButton = GetDlgItem(IDC_OPTIONS_NEWGAME);      // get the window for the options button
+				ASSERT(pButton != nullptr);                        // ... and verify we have it
+				(*pButton).EnableWindow(false);
+			}
 		}
 	}
-	#endif
 
 	(void)bSuccess;  // suppress unused variable warning
 
