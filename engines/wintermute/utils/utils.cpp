@@ -34,6 +34,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -78,13 +79,13 @@ void BaseUtils::createPath(const char *path, bool pathOnly) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseUtils::debugMessage(const char *text) {
-	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
+	//MessageBox(hWnd, text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *BaseUtils::setString(char **string, const char *value) {
-	delete[] *string;
+	SAFE_DELETE_ARRAY(*string);
 	size_t stringSize = strlen(value) + 1;
 	*string = new char[stringSize];
 	Common::strcpy_s(*string, stringSize, value);
@@ -148,49 +149,56 @@ float BaseUtils::randomAngle(float from, float to) {
 bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
 	char stringc, patternc;
 
-	for (; ; ++string) {
+	for (;; ++string) {
 		stringc = toupper(*string);
 		patternc = toupper(*pattern++);
 
 		switch (patternc) {
-			case 0:
-				return (stringc == 0);
+		case 0:
+			return (stringc == 0);
 
-			case '?':
-				if (stringc == 0)
-					return false;
+		case '?':
+			if (stringc == 0) {
+				return false;
+			}
 			break;
 
-			case '*':
-				if (!*pattern)
-					return true;
+		case '*':
+			if (!*pattern) {
+				return true;
+			}
 
-				if (*pattern=='.') {
-					char *dot;
-					if (pattern[1] == '*' && pattern[2] == 0)
-						return true;
-					dot = const_cast<char *>(strchr(string, '.'));
-					if (pattern[1] == 0)
-						return (dot == nullptr || dot[1] == 0);
-					if (dot != nullptr) {
-						string = dot;
-						if (strpbrk(pattern, "*?[") == nullptr && strchr(string + 1, '.') == nullptr)
-							return (scumm_stricmp(pattern + 1, string + 1) == 0);
+			if (*pattern == '.') {
+				char *dot;
+				if (pattern[1] == '*' && pattern[2] == 0) {
+					return true;
+				}
+				dot = const_cast<char *>(strchr(string, '.'));
+				if (pattern[1] == 0)
+					return (dot == nullptr || dot[1] == 0);
+				if (dot != nullptr) {
+					string = dot;
+					if (strpbrk(pattern, "*?[") == nullptr && strchr(string + 1, '.') == nullptr) {
+						return (scumm_stricmp(pattern + 1, string + 1) == 0);
 					}
 				}
+			}
 
-				while (*string)
-					if (BaseUtils::matchesPattern(pattern, string++))
-						return true;
-				return false;
-
-			default:
-				if (patternc != stringc) {
-					if (patternc == '.' && stringc == 0)
-						return (BaseUtils::matchesPattern(pattern, string));
-					else
-						return false;
+			while (*string) {
+				if (BaseUtils::matchesPattern(pattern, string++)) {
+					return true;
 				}
+			}
+			return false;
+
+		default:
+			if (patternc != stringc) {
+				if (patternc == '.' && stringc == 0) {
+					return (BaseUtils::matchesPattern(pattern, string));
+				} else {
+					return false;
+				}
+			}
 			break;
 		}
 	}
@@ -257,7 +265,7 @@ void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
+uint32 BaseUtils::HSLtoRGB(byte InH, byte InS, byte InL) {
 	float H = InH / 255.0f;
 	float S = InS / 255.0f;
 	float L = InL / 255.0f;
