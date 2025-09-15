@@ -1878,10 +1878,11 @@ BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream
 }
 
 void Score::loadFrameSpriteDetails() {
+	Common::MemoryReadStreamEndian *stream = nullptr;
 	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
 		if (sprite->_spriteListIdx) {
-			Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
+			stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
 			if (stream) {
 				while (stream->pos() < stream->size()) {
 					BehaviorElement behavior = loadSpriteBehavior(stream);
@@ -1895,9 +1896,60 @@ void Score::loadFrameSpriteDetails() {
 
 	// Script channel
 	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
-		Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
 		if (stream) {
 			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream);
+			delete stream;
+		}
+
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.scriptSpriteInfo.read(*stream);
+			delete stream;
+		}
+	}
+
+	// Tempo channel
+	if (_currentFrame->_mainChannels.tempoSpriteListIdx) {
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.tempoSpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.tempoSpriteInfo.read(*stream);
+			delete stream;
+		}
+	}
+
+	// Transition channel
+	if (_currentFrame->_mainChannels.transSpriteListIdx) {
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.transSpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.transSpriteInfo.read(*stream);
+			delete stream;
+		}
+	}
+
+	// Sound2 channel
+	if (_currentFrame->_mainChannels.sound2SpriteListIdx) {
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.sound2SpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.sound2SpriteInfo.read(*stream);
+			delete stream;
+		}
+	}
+
+	// Sound1 channel
+	if (_currentFrame->_mainChannels.sound1SpriteListIdx) {
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.sound1SpriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.sound1SpriteInfo.read(*stream);
+			delete stream;
+		}
+	}
+
+	// Palette channel
+	if (_currentFrame->_mainChannels.palette.spriteListIdx) {
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.palette.spriteListIdx);
+		if (stream) {
+			_currentFrame->_mainChannels.palette.spriteInfo.read(*stream);
 			delete stream;
 		}
 	}

@@ -60,53 +60,6 @@ enum {
 	kSprChannelSizeD7 = 48,
 };
 
-struct PaletteInfo {
-	CastMemberID paletteId;
-
-	byte firstColor;
-	byte lastColor;
-	byte flags;
-	bool colorCycling;
-	bool normal;
-	bool fadeToWhite;
-	bool fadeToBlack;
-	bool autoReverse;
-	bool overTime;
-	byte speed;
-	uint16 frameCount;
-	uint16 cycleCount;
-	byte fade;
-	byte delay;
-	byte style;
-	byte colorCode;
-
-	uint32 spriteListIdx; // D6+
-
-	PaletteInfo() {
-		paletteId = CastMemberID(0, 0);
-		firstColor = lastColor = 0;
-		flags = 0; colorCycling = false;
-		normal = false; fadeToWhite = false;
-		fadeToBlack = false; autoReverse = false;
-		overTime = false; speed = 0;
-		frameCount = cycleCount = 0;
-		fade = delay = style = colorCode = 0;
-		spriteListIdx = 0;
-	}
-};
-
-struct BehaviorElement {
-	CastMemberID memberID;
-	int32 initializerIndex = 0;
-	Common::String initializerParams;
-
-	void read(Common::ReadStreamEndian &stream) {
-		memberID.castLib = (int16)stream.readUint16();
-		memberID.member = (int16)stream.readUint16();
-		initializerIndex = (int32)stream.readUint32();
-	}
-};
-
 struct TweenInfo {
 	int32 curvature;
 	int32 flags;
@@ -164,6 +117,53 @@ struct SpriteInfo {
 	}
 };
 
+struct PaletteInfo {
+	CastMemberID paletteId;
+
+	byte firstColor;
+	byte lastColor;
+	byte flags;
+	bool colorCycling;
+	bool normal;
+	bool fadeToWhite;
+	bool fadeToBlack;
+	bool autoReverse;
+	bool overTime;
+	byte speed;
+	uint16 frameCount;
+	uint16 cycleCount;
+	byte fade;
+	byte delay;
+	byte style;
+	byte colorCode;
+
+	uint32 spriteListIdx; // D6+
+	SpriteInfo spriteInfo; // D6+
+
+	PaletteInfo() {
+		paletteId = CastMemberID(0, 0);
+		firstColor = lastColor = 0;
+		flags = 0; colorCycling = false;
+		normal = false; fadeToWhite = false;
+		fadeToBlack = false; autoReverse = false;
+		overTime = false; speed = 0;
+		frameCount = cycleCount = 0;
+		fade = delay = style = colorCode = 0;
+		spriteListIdx = 0;
+	}
+};
+
+struct BehaviorElement {
+	CastMemberID memberID;
+	int32 initializerIndex = 0;
+	Common::String initializerParams;
+
+	void read(Common::ReadStreamEndian &stream) {
+		memberID.castLib = (int16)stream.readUint16();
+		memberID.member = (int16)stream.readUint16();
+		initializerIndex = (int32)stream.readUint32();
+	}
+};
 
 struct MainChannels {
 	CastMemberID actionId;
@@ -177,6 +177,8 @@ struct MainChannels {
 	TransitionType transType;
 	CastMemberID trans;
 	uint32 transSpriteListIdx; // D6+
+	SpriteInfo transSpriteInfo; // D6+
+
 	PaletteInfo palette;
 	uint8 tempo;
 	uint32 tempoSpriteListIdx; // D6+
