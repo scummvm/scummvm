@@ -29,10 +29,12 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/wintermute.h"
+
 #include "common/config-manager.h"
 #include "audio/mixer.h"
 
@@ -91,6 +93,15 @@ bool BaseSoundMgr::initialize() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseSoundMgr::initLoop() {
+	if (!_soundAvailable) {
+		return STATUS_OK;
+	}
+
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable) {
 		return nullptr;
@@ -126,7 +137,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	bool res = sound->loadFromFile(useFilename);
 	if (DID_FAIL(res)) {
-		BaseEngine::LOG(res, "Error loading sound '%s'", useFilename.c_str());
+		_game->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
 		return nullptr;
 	}
@@ -213,7 +224,6 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 		volume = g_system->getMixer()->getVolumeForSoundType(type);
 		break;
 	default:
-		error("Sound-type not set");
 		break;
 	}
 
@@ -284,10 +294,29 @@ bool BaseSoundMgr::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseSoundMgr::posToPan(int x, int y) {
-	float relPos = (float)x / ((float)BaseEngine::getRenderer()->getWidth());
+	/*
+	 * This is tricky to do right. Scenes could be scrolling (thus bigger than rendering width)
+	 * and even then objects that emit sound could be "outside" the scene.
+	 *
+	 * As a compromise, the range where panning is applied is defined from
+	 * (-0.5 * width) .. 0 .. (+1.5 * width).
+	 *
+	 * Because the sound library might simply ignore values out of range, extreme
+	 * values are truncated.
+	 */
+	float width = (float)_game->_renderer->getWidth();
+	float relPos = ((float)x + (0.5f * width)) / (width * 2.0f);
 
-	float minPan = -0.7f;
-	float maxPan = 0.7f;
+	// saturate
+	if (relPos < 0.0f) {
+		relPos = 0.0f;
+	}
+	if (relPos > 1.0f) {
+		relPos = 1.0f;
+	}
+
+	float minPan = -1.0f;
+	float maxPan = 1.0f;
 
 	return minPan + relPos * (maxPan - minPan);
 }

@@ -741,6 +741,7 @@ bool BaseGame::initLoop() {
 	_currentTime = BasePlatform::getTime();
 
 	_renderer->initLoop();
+	_soundMgr->initLoop();
 	updateMusicCrossfade();
 
 	_surfaceStorage->initLoop();

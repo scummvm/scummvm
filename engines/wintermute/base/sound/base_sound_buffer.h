@@ -85,13 +85,13 @@ public:
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle *_handle;
 	bool _freezePaused;
-	bool _looping;
-	int32 _privateVolume;
 	uint32 _loopStart;
-	uint32 _startPos;
+	bool _looping;
 	Common::String _filename;
 	bool _streamed;
+	int32 _privateVolume;
 	int32 _volume;
+	uint32 _startPos;
 	int8 _pan;
 };
 
