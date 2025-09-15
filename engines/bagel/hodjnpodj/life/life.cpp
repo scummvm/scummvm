@@ -31,6 +31,29 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Life {
 
+static const char *curly[5] = {
+	".\\art\\Colony1.BMP",
+	".\\art\\Colony2.BMP",
+	".\\art\\Colony3.BMP",
+	".\\art\\Colony4.BMP",
+	".\\art\\Colony5.BMP"
+};
+
+static const char *months[12] = {
+	".\\art\\jan.BMP",
+	".\\art\\feb.BMP",
+	".\\art\\mar.BMP",
+	".\\art\\apr.BMP",
+	".\\art\\may.BMP",
+	".\\art\\jun.BMP",
+	".\\art\\jul.BMP",
+	".\\art\\aug.BMP",
+	".\\art\\sep.BMP",
+	".\\art\\oct.BMP",
+	".\\art\\nov.BMP",
+	".\\art\\dec.BMP"
+};
+
 // Globals!
 extern int nSpeed, nCountDown, nLife;
 extern int nTurnCounter, nLifeCounter;

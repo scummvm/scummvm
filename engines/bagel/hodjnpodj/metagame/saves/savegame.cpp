@@ -176,7 +176,7 @@ void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 	assert(pSaveGameInfo != nullptr);
 
 	// reset entire info structure
-	memset(pSaveGameInfo, 0, sizeof(SAVEGAME_INFO));
+	*pSaveGameInfo = SAVEGAME_INFO();
 
 	pSaveGameInfo->m_lBoffoGameID = BOFFO_GAME_ID;
 	pSaveGameInfo->m_nFixedRecordSize = sizeof(SAVEGAME_INFO);

@@ -31,13 +31,6 @@ namespace Life {
 
 #define SPLASHSPEC          ".\\art\\backgrnd.BMP"
 
-static const char *curly[5] = {
-	".\\art\\Colony1.BMP",
-	".\\art\\Colony2.BMP",
-	".\\art\\Colony3.BMP",
-	".\\art\\Colony4.BMP",
-	".\\art\\Colony5.BMP"
-};
 
 #define CURLY_X         25      // Colony dimensions
 #define CURLY_Y         24
@@ -47,21 +40,6 @@ static const char *curly[5] = {
 #define PLACE_ROWS      10
 #define OFFSET_X         6
 #define OFFSET_Y         4
-
-static const char *months[12] = {
-	".\\art\\jan.BMP",
-	".\\art\\feb.BMP",
-	".\\art\\mar.BMP",
-	".\\art\\apr.BMP",
-	".\\art\\may.BMP",
-	".\\art\\jun.BMP",
-	".\\art\\jul.BMP",
-	".\\art\\aug.BMP",
-	".\\art\\sep.BMP",
-	".\\art\\oct.BMP",
-	".\\art\\nov.BMP",
-	".\\art\\dec.BMP"
-};
 
 #define SCROLL_BUTTON   ".\\art\\SCROLBTN.BMP"  // scroll commands button bmp
 #define CALENDAR_BMP    ".\\ART\\CALENDAR.BMP"  // the blank calendar artwork

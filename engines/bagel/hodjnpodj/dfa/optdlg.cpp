@@ -27,13 +27,13 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace DFA {
 
-#define GAMETIMEMAX         5
-#define GAMETIMEMIN         1
-#define GAMESTEP            1
+constexpr int GAMETIMEMAX         = 5;
+constexpr int GAMETIMEMIN         = 1;
+constexpr int GAMESTEP            = 1;
 
-#define BEAVERTIMEMAX       4
-#define BEAVERTIMEMIN       1
-#define BEAVERSTEP          1
+constexpr int BEAVERTIMEMAX       = 4;
+constexpr int BEAVERTIMEMIN       = 1;
+constexpr int BEAVERSTEP = 1;
 
 static CPalette     *pPackRatOptPalette;
 CText               *ptxtGTime;
@@ -360,11 +360,8 @@ void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* 
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;
-	//int     nJunk = 0;
 	char    cGDisplay[12];
 	char    cBDisplay[12];
-
-	//nJunk = pScrollBar->GetDlgCtrlID();
 
 // first set the range of the scoll bar
 	if (pScrollBar->GetDlgCtrlID() == IDC_GAMETIME)

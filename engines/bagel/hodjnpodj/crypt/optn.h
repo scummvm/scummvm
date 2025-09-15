@@ -53,14 +53,14 @@ namespace Crypt {
 class COptn : public CBmpDialog {
 private:
 	CString     m_chTime[TIME_TABLE];
-	int         m_nTimeIndex[TIME_TABLE];
-	CText       *m_pLttrsSlvd, *m_pTime;
-	CPalette    *pGamePalette;
+	int         m_nTimeIndex[TIME_TABLE] = {};
+	CText       *m_pLttrsSlvd = nullptr, *m_pTime = nullptr;
+	CPalette    *pGamePalette = nullptr;
 
 	int         TimeToIndex(int nTime);
 
 public:
-	COptn(CWnd* pParent = nullptr, CPalette *pGamePalette = nullptr, int nLttrsSolvd = false, int nTime = false); // standard constructor
+	COptn(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, int nLttrsSolvd = false, int nTime = false); // standard constructor
 	~COptn();
 	void ClearDialogImage();
 

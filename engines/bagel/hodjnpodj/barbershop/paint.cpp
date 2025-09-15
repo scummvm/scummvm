@@ -28,6 +28,17 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Barbershop {
 
+static const char *DECKS[] = {           // bitmap loading
+	"art\\deck0.bmp",
+	"art\\deck1.bmp",
+	"art\\deck2.bmp",
+	"art\\deck3.bmp",
+	"art\\deck4.bmp",
+	"art\\deck5.bmp",
+	"art\\deck6.bmp",
+	"art\\deck7.bmp"
+};
+
 /*****************************************************************
  *
  * CPaint
@@ -60,7 +71,7 @@ CPaint::CPaint(CDC *pDC) {
 	int     i, j;
 
 	for (i = 0; i < CARDS_PER_COL; i++) {    // Initialize master alphabet list
-		pBmpCardSet = FetchBitmap(pDC, (CPalette**) nullptr, lpszDeck[i]);
+		pBmpCardSet = FetchBitmap(pDC, (CPalette**) nullptr, DECKS[i]);
 		ASSERT(pBmpCardSet);
 
 		for (j = 0; j < CARDS_PER_ROW; j ++) {

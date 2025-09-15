@@ -270,12 +270,7 @@ void CMainWindow::SplashScratch() {
 	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
 	(*pDC).RealizePalette();                                                        // Use it
 
-	if (bFramed) {                                                                   // In framed mode
-		pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);     // Draw Scratch2
-	} else {
-		pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);     // Draw Scratch2
-
-	}                                                                                               //...on screen
+	pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);     // Draw Scratch2
 
 	(*pDC).SelectPalette(pPalOld, false);                                                // Select back old palette
 	ReleaseDC(pDC);                                                                     // Release the DC

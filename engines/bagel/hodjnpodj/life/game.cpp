@@ -1340,7 +1340,7 @@ void CMainWindow::RefreshStats() {
 		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	} else {
-		Common::sprintf_s(buf, "");
+		Common::strcat_s(buf, "");
 
 		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
@@ -1359,7 +1359,7 @@ void CMainWindow::RefreshStats() {
 		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
-		Common::sprintf_s(buf, "");
+		Common::strcat_s(buf, "");
 		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	} else {

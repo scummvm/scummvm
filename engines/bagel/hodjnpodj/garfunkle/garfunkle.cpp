@@ -958,7 +958,7 @@ void CMainWindow::NewGame() {
 		(*m_pSignText).DisplayString(pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 	} else {
 		m_bPlaying = true;                                  // Make sure we can play music
-		Common::sprintf_s(msg, "");
+		Common::strcpy_s(msg, "");
 		(*m_pSignText).DisplayString(pDC, msg, 32, FW_NORMAL, SIGN_COLOR);
 	}
 

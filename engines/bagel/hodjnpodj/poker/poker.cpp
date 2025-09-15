@@ -63,10 +63,6 @@ namespace Poker {
 
 #define     MAXBET               10000
 
-void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
-                   const char *pszAnimFile, const char *pszSoundFile,
-                   int nNumCels, int nXLoc, int nYLoc, int nSleep, bool bPlaySound);
-
 extern CMainPokerWindow *pcwndPoker;
 
 CPalette        *pGamePalette = nullptr;           // Palette to be used throughout the game

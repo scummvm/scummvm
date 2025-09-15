@@ -86,17 +86,6 @@ namespace Barbershop {
 #define CARD_BACK1B_BMP "art\\card-bk3.bmp"     // card back option #1
 #define CARD_BACK2B_BMP "art\\card-bk4.bmp"     // card back option #2
 
-static const char *lpszDeck[] = {           // bitmap loading
-	"art\\deck0.bmp",
-	"art\\deck1.bmp",
-	"art\\deck2.bmp",
-	"art\\deck3.bmp",
-	"art\\deck4.bmp",
-	"art\\deck5.bmp",
-	"art\\deck6.bmp",
-	"art\\deck7.bmp"
-};
-
 class CPaint {
 private:    // vars
 	OSpr    *m_cCardSet[CARD_SET];

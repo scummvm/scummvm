@@ -435,7 +435,7 @@ bool CMnk::CountConfigurations()
 bool CMnk::PopulateTable() {
 	JXENTER(CMnk::PopulateTable) ;
 	int iError = 0 ;        // error code
-	long lConfigIndex ;     // loop variable
+	uint lConfigIndex ;     // loop variable
 	CMove cMove ;       // move structure
 
 	m_iCurrentMaxDepth = 3 ; // minimax depth is 3 for table populate
@@ -606,7 +606,7 @@ bool CMnk::UnmapConfiguration(CMove * xpcMove)
 	long lValue = 0L, lValueNew ;   // table values
 	char szDebugStr[200] ;  // debugging string
 
-	if (lConfigIndex < 0 || lConfigIndex >= MAXCONFIGS) {
+	if (lConfigIndex < 0 || (uint)lConfigIndex >= MAXCONFIGS) {
 		iError = 100 ;  // config index is out of range
 		goto cleanup ;
 	}
@@ -1703,7 +1703,7 @@ bool CMnk::GetBestWinCount(CMove * xpcMove)
 {
 	JXENTER(CMnk::GetBestWinCount) ;
 	int iError = 0 ;        // error code
-	long lIndex = xpcMove->m_lConfigIndex ;
+	uint lIndex = xpcMove->m_lConfigIndex;
 	int iValue = 0;        // value from table
 	struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
 
@@ -1780,7 +1780,7 @@ bool CMnk::SetBestWinCount(CMove * xpcMove)
 	JXENTER(CMnk::SetBestWinCount) ;
 	int iError = 0 ;        // error code
 	struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
-	long lIndex = xpcMove->m_lConfigIndex ;
+	uint lIndex = xpcMove->m_lConfigIndex;
 	int iValue = xpcMove->m_iBestWinValue ; // value from table
 	bool bTest = false ;        // debugging test
 
