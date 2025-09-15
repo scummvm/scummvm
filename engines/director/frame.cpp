@@ -60,18 +60,32 @@ Frame::Frame(const Frame &frame) {
 	_mainChannels.scriptSpriteListIdx = frame._mainChannels.scriptSpriteListIdx;
 	_mainChannels.behavior = frame._mainChannels.behavior;
 	_mainChannels.scriptSpriteInfo = frame._mainChannels.scriptSpriteInfo;
-	_mainChannels.transArea = frame._mainChannels.transArea;
+
 	_mainChannels.transDuration = frame._mainChannels.transDuration;
-	_mainChannels.transType = frame._mainChannels.transType;
+	_mainChannels.transArea = frame._mainChannels.transArea;
 	_mainChannels.transChunkSize = frame._mainChannels.transChunkSize;
+	_mainChannels.transType = frame._mainChannels.transType;
+	_mainChannels.trans = frame._mainChannels.trans;
+	_mainChannels.transSpriteListIdx = frame._mainChannels.transSpriteListIdx;
+	_mainChannels.transSpriteInfo = frame._mainChannels.transSpriteInfo;
+
+	_mainChannels.palette = frame._mainChannels.palette;
 	_mainChannels.tempo = frame._mainChannels.tempo;
+	_mainChannels.tempoSpriteListIdx = frame._mainChannels.tempoSpriteListIdx;
+	_mainChannels.tempoD6Flags = frame._mainChannels.tempoD6Flags;
+	_mainChannels.tempoSpriteInfo = frame._mainChannels.tempoSpriteInfo;
+
 	_mainChannels.scoreCachedTempo = frame._mainChannels.scoreCachedTempo;
+	_mainChannels.scoreCachedPaletteId = frame._mainChannels.scoreCachedPaletteId;
+
 	_mainChannels.sound1 = frame._mainChannels.sound1;
-	_mainChannels.sound2 = frame._mainChannels.sound2;
 	_mainChannels.soundType1 = frame._mainChannels.soundType1;
+	_mainChannels.sound1SpriteListIdx = frame._mainChannels.sound1SpriteListIdx;
+	_mainChannels.sound1SpriteInfo = frame._mainChannels.sound1SpriteInfo;
+	_mainChannels.sound2 = frame._mainChannels.sound2;
 	_mainChannels.soundType2 = frame._mainChannels.soundType2;
-	_mainChannels.skipFrameFlag = frame._mainChannels.skipFrameFlag;
-	_mainChannels.blend = frame._mainChannels.blend;
+	_mainChannels.sound2SpriteListIdx = frame._mainChannels.sound2SpriteListIdx;
+	_mainChannels.sound2SpriteInfo = frame._mainChannels.sound2SpriteInfo;
 
 	_mainChannels.colorTempo = frame._mainChannels.colorTempo;
 	_mainChannels.colorSound1 = frame._mainChannels.colorSound1;
@@ -79,7 +93,8 @@ Frame::Frame(const Frame &frame) {
 	_mainChannels.colorScript = frame._mainChannels.colorScript;
 	_mainChannels.colorTrans = frame._mainChannels.colorTrans;
 
-	_mainChannels.palette = frame._mainChannels.palette;
+	_mainChannels.skipFrameFlag = frame._mainChannels.skipFrameFlag;
+	_mainChannels.blend = frame._mainChannels.blend;
 
 	_score = frame._score;
 
