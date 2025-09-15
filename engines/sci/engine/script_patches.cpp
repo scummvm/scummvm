@@ -1727,6 +1727,49 @@ static const uint16 ecoquest1PatchFleshEaterEgoSpeed[] = {
 	PATCH_END
 };
 
+// Two rooms contain unrelated pieces of garbage that use the same garbage flag,
+//  causing one to disappear after cleaning up the other. This appears to be a
+//  copy/paste mistake, as both objects are named `book` even though one is a
+//  sheet of metal.
+//
+// We fix this by patching the sheet of metal in room 180 to use flag 26 instead
+//  of flag 8. The book in room 200 uses flag 8, and flag 26 is the next in the
+//  sequence that isn't used. Either room could be patched, but it's better to
+//  not patch 200 because it's garbage is dynamic. Changing that flag could
+//  confuse existing save games.
+//
+// Applies to: All versions
+// Responsible method: Heap in script 180
+static const uint16 ecoquest1SignatureGarbageFlagFloppy[] = {
+	SIG_MAGICDWORD,                     // `book` [ sheet of metal ]
+	SIG_UINT16(0x008a),                 // x: 138
+	SIG_UINT16(0x0083),                 // y: 131
+	SIG_ADDTOOFFSET(+64),
+	SIG_UINT16(0x0008),                 // flag: 8
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchGarbageFlagFloppy[] = {
+	PATCH_ADDTOOFFSET(+68),
+	PATCH_UINT16(0x001a),               // flag: 26
+	PATCH_END
+};
+
+static const uint16 ecoquest1SignatureGarbageFlagCD[] = {
+	SIG_MAGICDWORD,                     // `book` [ sheet of metal ]
+	SIG_UINT16(0x008a),                 // x: 138
+	SIG_UINT16(0x0083),                 // y: 131
+	SIG_ADDTOOFFSET(+70),
+	SIG_UINT16(0x0008),                 // flag: 8
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchGarbageFlagCD[] = {
+	PATCH_ADDTOOFFSET(+74),
+	PATCH_UINT16(0x001a),               // flag: 26
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   123, "flesh-eater inset speed",                     1, ecoquest1SignatureFleshEaterInsetSpeed,   ecoquest1PatchFleshEaterInsetSpeed },
@@ -1734,6 +1777,8 @@ static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,        ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,          ecoquest1PatchGiveOilyShell },
 	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,        ecoquest1PatchColumnPuzzleFix },
+	{  true,   180, "garbage flag fix",                            1, ecoquest1SignatureGarbageFlagFloppy,      ecoquest1PatchGarbageFlagFloppy },
+	{  true,   180, "garbage flag fix",                            1, ecoquest1SignatureGarbageFlagCD,          ecoquest1PatchGarbageFlagCD },
 	{  true,   220, "CD: empty apartment messages",                1, ecoquest1SignatureEmptyApartmentMessages, ecoquest1PatchEmptyApartmentMessages },
 	{  true,   226, "Spanish: disable bleach pump test",           1, ecoquest1SignatureBleachPumpTest,         ecoquest1PatchBleachPumpTest },
 	{  true,   320, "CD: south cliffs position",                   1, ecoquest1SignatureSouthCliffsPosition,    ecoquest1PatchSouthCliffsPosition },
