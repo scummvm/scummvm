@@ -1089,6 +1089,7 @@ protected:
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
 	void askForDisk(const Common::Path &filename, int disknum);
+	byte getEncByte(int room);
 	bool openResourceFile(const Common::Path &filename, byte encByte);
 
 	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);

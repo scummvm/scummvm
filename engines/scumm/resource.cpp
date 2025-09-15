@@ -65,7 +65,6 @@ static bool checkTryMedia(BaseScummFile *handle);
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
 	bool result;
-	byte encByte = 0;
 
 	debugC(DEBUG_GENERAL, "openRoom(%d)", room);
 	assert(room >= 0);
@@ -102,22 +101,11 @@ void ScummEngine::openRoom(const int room) {
 
 		Common::Path filename(generateFilename(room));
 
-		// Determine the encryption, if any.
-		if (_game.features & GF_USE_KEY) {
-			if (_game.version <= 3)
-				encByte = 0xFF;
-			else if ((_game.version == 4) && (room == 0 || room >= 900))
-				encByte = 0;
-			else
-				encByte = 0x69;
-		} else
-			encByte = 0;
-
 		if (room > 0 && (_game.version == 8))
 			VAR(VAR_CURRENTDISK) = diskNumber;
 
 		// Try to open the file
-		result = openResourceFile(filename, encByte);
+		result = openResourceFile(filename, getEncByte(room));
 
 		if (result) {
 			if (room == 0)
@@ -138,7 +126,7 @@ void ScummEngine::openRoom(const int room) {
 	do {
 		char buf[16];
 		snprintf(buf, sizeof(buf), "%.3d.lfl", room);
-		encByte = 0;
+		byte encByte = 0;
 		if (openResourceFile(buf, encByte))
 			break;
 		askForDisk(buf, diskNumber);
@@ -203,6 +191,19 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bo
 	}
 
 	return result;
+}
+
+byte ScummEngine::getEncByte(int room) {
+	// Determine the encryption, if any.
+	if (_game.features & GF_USE_KEY) {
+		if (_game.version <= 3)
+			return 0xFF;
+		else if ((_game.version == 4) && (room == 0 || room >= 900))
+			return 0;
+		else
+			return 0x69;
+	} else
+		return 0;
 }
 
 bool ScummEngine::openResourceFile(const Common::Path &filename, byte encByte) {
