@@ -1861,25 +1861,30 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
+BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream) {
+	BehaviorElement behavior;
+	behavior.read(*stream);
+
+	if (behavior.initializerIndex) {
+		Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(behavior.initializerIndex);
+
+		if (stream1) {
+			behavior.initializerParams = stream1->readString();
+			delete stream1;
+		}
+	}
+
+	return behavior;
+}
+
 void Score::loadFrameSpriteDetails() {
 	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
 		if (sprite->_spriteListIdx) {
 			Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
 			if (stream) {
-				BehaviorElement behavior;
-
 				while (stream->pos() < stream->size()) {
-					behavior.read(*stream);
-
-					if (behavior.initializerIndex) {
-						Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(behavior.initializerIndex);
-
-						if (stream1) {
-							behavior.initializerParams = stream1->readString();
-							delete stream1;
-						}
-					}
+					BehaviorElement behavior = loadSpriteBehavior(stream);
 
 					sprite->_behaviors.push_back(behavior);
 				}
@@ -1888,20 +1893,12 @@ void Score::loadFrameSpriteDetails() {
 		}
 	}
 
+	// Script channel
 	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
-		Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx);
+		Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
 		if (stream) {
-			_currentFrame->_mainChannels.behavior.read(*stream);
+			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream);
 			delete stream;
-
-			if (_currentFrame->_mainChannels.behavior.initializerIndex) {
-				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(_currentFrame->_mainChannels.behavior.initializerIndex);
-
-				if (stream1) {
-					_currentFrame->_mainChannels.behavior.initializerParams = stream1->readString();
-					delete stream1;
-				}
-			}
 		}
 	}
 }

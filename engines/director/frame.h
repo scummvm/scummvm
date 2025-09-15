@@ -107,10 +107,69 @@ struct BehaviorElement {
 	}
 };
 
+struct TweenInfo {
+	int32 curvature;
+	int32 flags;
+	int32 easeIn;
+	int32 easeOut;
+	int32 padding;
+
+	void read(Common::ReadStreamEndian &stream) {
+		curvature = (int32)stream.readUint32();
+		flags = (int32)stream.readUint32();
+		easeIn = (int32)stream.readUint32();
+		easeOut = (int32)stream.readUint32();
+		padding = (int32)stream.readUint32();
+	}
+};
+
+struct SpriteInfo {
+	int32 startFrame;
+	int32 endFrame;
+	int32 xtraInfo;
+	int32 flags;
+	int32 channelNum;
+	TweenInfo tweenInfo;
+
+    Common::Array<int32> keyFrames;
+
+	void read(Common::ReadStreamEndian &stream) {
+		startFrame = (int32)stream.readUint32();
+		endFrame = (int32)stream.readUint32();
+		xtraInfo = (int32)stream.readUint32();
+		flags = (int32)stream.readUint32();
+		channelNum = (int32)stream.readUint32();
+		tweenInfo.read(stream);
+
+		keyFrames.clear();
+		while (!stream.eos()) {
+			int32 frame = (int32)stream.readUint32();
+			if (stream.eos())
+				break;
+			keyFrames.push_back(frame);
+		}
+	}
+
+	Common::String toString() const {
+		Common::String s;
+		s += Common::String::format("startFrame: %d, endFrame: %d, xtraInfo: %d, flags: 0x%x, channelNum: %d\n",
+			startFrame, endFrame, xtraInfo, flags, channelNum);
+		s += Common::String::format("  tweenInfo: curvature: %d, flags: 0x%x, easeIn: %d, easeOut: %d\n",
+			tweenInfo.curvature, tweenInfo.flags, tweenInfo.easeIn, tweenInfo.easeOut);
+		s += "  keyFrames: ";
+		for (size_t i = 0; i < keyFrames.size(); i++) {
+			s += Common::String::format("%d ", keyFrames[i]);
+		}
+		return s;
+	}
+};
+
+
 struct MainChannels {
 	CastMemberID actionId;
 	uint32 scriptSpriteListIdx; // D6+
 	BehaviorElement behavior; 	// D6+
+	SpriteInfo scriptSpriteInfo; // D6+
 
 	uint16 transDuration;
 	uint8 transArea; // 1 - Whole Window, 0 - Changing Area
@@ -122,6 +181,7 @@ struct MainChannels {
 	uint8 tempo;
 	uint32 tempoSpriteListIdx; // D6+
 	uint16 tempoD6Flags;
+	SpriteInfo tempoSpriteInfo; // D6+
 
 	uint8 scoreCachedTempo;
 	CastMemberID scoreCachedPaletteId;
@@ -129,9 +189,11 @@ struct MainChannels {
 	CastMemberID sound1;
 	uint8 soundType1;
 	uint32 sound1SpriteListIdx; // D6+
+	SpriteInfo sound1SpriteInfo; // D6+
 	CastMemberID sound2;
 	uint8 soundType2;
 	uint32 sound2SpriteListIdx; // D6+
+	SpriteInfo sound2SpriteInfo; // D6+
 
 	byte colorTempo;
 	byte colorSound1;
