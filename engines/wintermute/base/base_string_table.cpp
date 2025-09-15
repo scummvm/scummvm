@@ -222,7 +222,7 @@ const char *BaseStringTable::expandStatic(const char *string) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
-	BaseEngine::LOG(0, "Loading string table...");
+	_game->LOG(0, "Loading string table...");
 
 	if (clearOld) {
 		_filenames.clear();

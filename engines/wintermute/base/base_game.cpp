@@ -2690,13 +2690,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (file) {
 			crc remainder = crc_initialize();
 			byte buf[1024];
-			int bytesRead = 0;
+			int32 bytesRead = 0;
 
 			while (bytesRead < file->size()) {
-				uint32 bufSize = MIN((uint32)1024, (uint32)(file->size() - bytesRead));
+				int32 bufSize = MIN<int32>(1024, (int32)file->size() - bytesRead);
 				bytesRead += file->read(buf, bufSize);
 
-				for (uint32 i = 0; i < bufSize; i++) {
+				for (int32 i = 0; i < bufSize; i++) {
 					remainder = crc_process_byte(buf[i], remainder);
 				}
 			}
