@@ -140,34 +140,34 @@ struct MainChannels {
 	uint8 blend;
 
 	MainChannels() {
+		scriptSpriteListIdx = 0;
+
 		transDuration = 0;
-		transType = kTransNone;
 		transArea = 0;
 		transChunkSize = 0;
+		transType = kTransNone;
+		transSpriteListIdx = 0;
+
 		tempo = 0;
 		tempoSpriteListIdx = 0;
 		tempoD6Flags = 0;
 
 		scoreCachedTempo = 0;
-		scoreCachedPaletteId = CastMemberID(0, 0);
 
-		sound1 = CastMemberID(0, 0);
-		sound2 = CastMemberID(0, 0);
 		soundType1 = 0;
-		soundType2 = 0;
 		sound1SpriteListIdx = 0;
-		sound2SpriteListIdx = 0;
 
-		actionId = CastMemberID(0, 0);
-		scriptSpriteListIdx = 0;
-		skipFrameFlag = 0;
-		blend = 0;
+		soundType2 = 0;
+		sound2SpriteListIdx = 0;
 
 		colorTempo = 0;
 		colorSound1 = 0;
 		colorSound2 = 0;
 		colorScript = 0;
 		colorTrans = 0;
+
+		skipFrameFlag = 0;
+		blend = 0;
 	}
 };
 
