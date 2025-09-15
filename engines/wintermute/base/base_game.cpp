@@ -246,7 +246,6 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_musicCrossfadeChannel1 = -1;
 	_musicCrossfadeChannel2 = -1;
 	_musicCrossfadeSwap = false;
-	// FoxTail:
 	_musicCrossfadeVolume1 = 0;
 	_musicCrossfadeVolume2 = 100;
 
