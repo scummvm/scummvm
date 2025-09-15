@@ -28,6 +28,7 @@
 #include "engines/wintermute/base/particles/part_particle.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
@@ -78,7 +79,7 @@ bool PartParticle::setSprite(const char *filename) {
 	SAFE_DELETE(_sprite);
 
 	SystemClassRegistry::getInstance()->_disabled = true;
-	_sprite = new BaseSprite(_game, (BaseObject *)_game);
+	_sprite = new BaseSprite(_game, _game);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;
