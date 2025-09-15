@@ -42,7 +42,7 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-//IMPLEMENT_PERSISTENT(BaseSoundMgr, true);
+//IMPLEMENT_PERSISTENT(BaseSoundMgr, true)
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {

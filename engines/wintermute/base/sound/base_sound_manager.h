@@ -41,7 +41,7 @@ public:
 	bool resumeAll();
 	bool pauseAll(bool includingMusic = true);
 	bool cleanup();
-	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass);
+	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass)
 	byte getMasterVolumePercent();
 	byte getMasterVolume();
 	bool setMasterVolumePercent(byte percent);

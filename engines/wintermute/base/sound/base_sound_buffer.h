@@ -68,7 +68,7 @@ public:
 	bool setVolume(int colume);
 	void updateVolume();
 
-	void setType(Audio::Mixer::SoundType Type);
+	void setType(Audio::Mixer::SoundType type);
 	Audio::Mixer::SoundType getType() const;
 
 	bool loadFromFile(const Common::String &filename, bool forceReload = false);
