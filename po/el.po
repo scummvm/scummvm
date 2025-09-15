@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-08-18 16:54+0000\n"
+"PO-Revision-Date: 2025-09-15 15:01+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -877,6 +877,8 @@ msgstr "Εκκίνηση προγράμματος e-mail"
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
 msgstr ""
+"Το παιχνίδι αυτό περιλαμβάνει πρόσθετα. Επιλέξτε σε ποιο κομμάτι θα γίνει η "
+"επαλήθευση ακεραιότητας:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -1656,7 +1658,7 @@ msgstr "~Ρ~υθμ Παιχν..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
-msgstr ""
+msgstr "Πρόσθετο"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1244 gui/launcher.cpp:1446
@@ -3886,6 +3888,10 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"Το παιχνίδι \"%s\" που επιχειρείτε να προσθέσετε αποτελεί πρόσθετο για το "
+"παιχνίδι \"%s\" και δεν μπορεί να εκτελεστεί αυτόνομα. Παρακαλούμε να "
+"αντιγράψετε τα περιεχόμενα του πρόσθετου σε έναν υποκατάλογο του βασικού "
+"παιχνιδιού, κι έπειτα να εκκινήσετε το βασικό παιχνίδι."
 
 #: engines/engine.cpp:869
 msgid "This game is not supported."
@@ -3913,11 +3919,15 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
+"Ο κατάλογος '%s' δείχνει να είναι πιθανό πρόσθετο για το παιχνίδι '%s', αλλά "
+"το ScummVM δεν μπόρεσε να βρει μέσα κάποιο πρόσθετο που να ταιριάζει."
 
 #: engines/engine.cpp:1243
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""
+"Ο κατάλογος '%s' ταιριάζει με πολλά πιθανά πρόσθετα. Παρακαλούμε να "
+"επιλέξετε ένα."
 
 #: engines/game.cpp:199
 #, c-format
@@ -6567,7 +6577,7 @@ msgstr "Χρήση"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "Πάνε προς"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6610,7 +6620,7 @@ msgstr "Υπάρχοντα"
 
 #: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "Σκαρφάλωσε"
 
 #: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:284 engines/scumm/help.cpp:225
@@ -6855,7 +6865,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "Χρήση του PCjr τσιπ ήχου σε κατάσταση μετακύλισης 16-bit"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -6864,6 +6874,11 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"Σε κατάσταση ήχου PCjr, θα γίνει εξομοίωσει ενός μη-συμβατικού SN76496 τσιπ "
+"ήχου, παρόμοιου με τσιπ που υπάρχουν σε κονσόλες SEGA Master System. Αυτό "
+"επιτρέπει την εκτέλεση κάποιων μουσικών εφέ, ειδικά σε ανεπίσημα fan-made "
+"παιχνίδια, ωστόσο η πρωτότυπη μουσική από Sierra που σχεδιάστηκε αυστηρά για "
+"το PCjr μπορεί να ακούγεται λάθος."
 
 #: engines/agi/metaengine.cpp:447 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -7310,10 +7325,8 @@ msgstr ""
 "2. Όποιο αρχείο .sav βρίσκεται εντός του φακέλου του παιχνιδιού QfG2 Remake"
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "Ποιότητα Μουσικής:"
+msgstr "Υψηλή Ποιότητα"
 
 #: engines/alcachofa/metaengine.cpp:41
 #, fuzzy
@@ -7322,12 +7335,13 @@ msgid "Toggles some optional graphical effects"
 msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
 #: engines/alcachofa/metaengine.cpp:51
+#, fuzzy
 msgid "32 Bits"
-msgstr ""
+msgstr "32 bit"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
-msgstr ""
+msgstr "Χρησιμοποιεί υφές 32bit αντί για 16bit (δεν έχει υλοποιηθεί ακόμα)"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 msgid "Activate"
@@ -7441,7 +7455,7 @@ msgstr "Φόρτωση όπως και να 'χει"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "Χρήση οθονών τίτλου και προστασίας αντιγράφων (αν είναι διαθέσιμες)"
 
 #: engines/awe/metaengine.cpp:36
 #, fuzzy
@@ -11866,10 +11880,8 @@ msgid "Display subtitles"
 msgstr "Εναλλαγή υπότιτλων"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Use subtitles."
-msgstr "Εναλλαγή υπότιτλων"
+msgstr "Χρήση υπότιτλων."
 
 #: engines/private/metaengine.cpp:48
 #, fuzzy
@@ -11878,10 +11890,8 @@ msgid "Display SFX subtitles"
 msgstr "Εναλλαγή υπότιτλων"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Use SFX subtitles."
-msgstr "Εναλλαγή υπότιτλων"
+msgstr "Χρήση υπότιτλων για ηχητικά εφέ."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
