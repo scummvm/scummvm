@@ -63,7 +63,10 @@ void SoundManager::init() {
 
 void SoundManager::loadVoc(Common::String vocFile, int32 startPos, int16 size) {
 	Common::File vocResource;
-
+	if(_lastSrcStream) {
+		delete _lastSrcStream;
+		_lastSrcStream = nullptr;
+	}
 	if (size == 0) {
 		if (!vocResource.open(Common::Path(vocFile + ".VOC"))) {
 			showError(266);

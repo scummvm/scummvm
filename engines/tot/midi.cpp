@@ -189,6 +189,7 @@ void MidiDriver_AdLib::loadInstrumentBankFromDriver(int32 offset) {
 	uint8 *data = (uint8 *)malloc(128 * (11 + 21));
 	driverFile.read(data, 128 * (11 + 21));
 	loadInstrumentBank(data);
+	free(data);
 	driverFile.close();
 
 	_instrumentBank = _dsfInstrumentBank;

@@ -296,7 +296,11 @@ void TotEngine::sprites(bool drawMainCharachter) {
 			if (_isPeterCoughing && !_sound->isVocPlaying()) {
 				_iframe2 = 0;
 			}
-			_curSecondaryAnimationFrame = _secondaryAnimation.bitmap[_secondaryAnimation.dir][_iframe2];
+			if(_curSecondaryAnimationFrame != nullptr) {
+				free(_curSecondaryAnimationFrame);
+			}
+			_curSecondaryAnimationFrame = (byte *)malloc(_secondaryAnimFrameSize);
+			Common::copy(_secondaryAnimation.bitmap[_secondaryAnimation.dir][_iframe2], _secondaryAnimation.bitmap[_secondaryAnimation.dir][_iframe2] + _secondaryAnimFrameSize,  _curSecondaryAnimationFrame);
 		}
 		uint16 curCharFrameW = READ_LE_UINT16(_curCharacterAnimationFrame);
 		uint16 curCharFrameH = READ_LE_UINT16(_curCharacterAnimationFrame + 2);
@@ -350,6 +354,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 				_curDepth += 1;
 			}
 			_graphics->putImg(_dirtyMainSpriteX, _dirtyMainSpriteY, _characterDirtyRect);
+			free(_characterDirtyRect);
 		} else { // character and animation are in different parts of the screen
 
 			if (drawMainCharachter) {
@@ -383,6 +388,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 				_curDepth += 1;
 			}
 			_graphics->putImg(_dirtyMainSpriteX, _dirtyMainSpriteY, _characterDirtyRect);
+			free(_characterDirtyRect);
 		}
 	} else if (drawMainCharachter) {
 		drawMainCharacter();

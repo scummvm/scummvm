@@ -56,6 +56,7 @@ TotEngine::~TotEngine() {
 	delete _graphics;
 	delete _sound;
 	delete _chrono;
+	delete _mouse;
 }
 
 uint32 TotEngine::getFeatures() const {
@@ -1219,6 +1220,9 @@ void TotEngine::initVars() {
 		}
 	}
 
+	_curSecondaryAnimationFrame = nullptr;
+	_characterDirtyRect = nullptr;
+
 	resetGameState();
 	_chrono->_gameTick = false;
 	for (int i = 0; i < kNumScreenOverlays; i++) {
@@ -1282,6 +1286,10 @@ void TotEngine::clearVars() {
 				free(_mainCharAnimation.bitmap[i][j]);
 			}
 		}
+	}
+
+	if(_curSecondaryAnimationFrame != nullptr) {
+		free(_curSecondaryAnimationFrame);
 	}
 
 	for (int i = 0; i < _secondaryAnimDirCount; i++) {
