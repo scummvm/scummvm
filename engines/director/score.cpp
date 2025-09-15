@@ -1798,6 +1798,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_framesStream->seek(_indexStart, SEEK_SET);
 		uint32 off = _framesStream->readUint32();
 		_framesStream->seek(_frameDataOffset + off, SEEK_SET);
+		_spriteDetailAccessed[0] = true;
 	}
 
 	if (version >= kFileVer400 && version < kFileVer1100) {
@@ -1843,6 +1844,19 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: 0x%x",
 			_firstFramePosition);
 
+	// Index 1 in the list contains the sprite order. We are not using it,
+	if (_version >= kFileVer600) {
+		Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(1);
+		int numSprites = stream1->readUint32();
+		debugCN(2, kDebugLoading, "Sprites order: ");
+		for (int i = 0; i < numSprites; i++) {
+			int spriteId = stream1->readUint32();
+			debugCN(2, kDebugLoading, "%d ", spriteId);
+		}
+		debugC(2, kDebugLoading, "");
+		delete stream1;
+	}
+
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
 	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
@@ -1854,13 +1868,21 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		}
 	}
 
-	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
+	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d", _numFrames);
 
 	if (_version >= kFileVer600) {
 		for (int i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
 			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
 			if (!_spriteDetailAccessed[i] && size > 0) {
-				debugC(2, kDebugLoading, "Sprite detail %d not accessed, size: %d", i, size);
+				int type = i % 3;
+				const char *purpose = (type == 0) ? "spriteInfo" : (type == 1) ? "behavior" : "name";
+				debugC(2, kDebugLoading, "Sprite detail %d not accessed, size: %d (%s)", i, size, purpose);
+
+				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(i);
+				if (stream1) {
+					stream1->hexdump(stream1->size());
+					delete stream1;
+				}
 			}
 		}
 	}
