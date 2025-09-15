@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_FRAME_H
 #define DIRECTOR_FRAME_H
 
+#include "director/spriteinfo.h"
+
 namespace Image {
 class ImageDecoder;
 }
@@ -60,63 +62,6 @@ enum {
 	kSprChannelSizeD7 = 48,
 };
 
-struct TweenInfo {
-	int32 curvature;
-	int32 flags;
-	int32 easeIn;
-	int32 easeOut;
-	int32 padding;
-
-	void read(Common::ReadStreamEndian &stream) {
-		curvature = (int32)stream.readUint32();
-		flags = (int32)stream.readUint32();
-		easeIn = (int32)stream.readUint32();
-		easeOut = (int32)stream.readUint32();
-		padding = (int32)stream.readUint32();
-	}
-};
-
-struct SpriteInfo {
-	int32 startFrame;
-	int32 endFrame;
-	int32 xtraInfo;
-	int32 flags;
-	int32 channelNum;
-	TweenInfo tweenInfo;
-
-    Common::Array<int32> keyFrames;
-
-	void read(Common::ReadStreamEndian &stream) {
-		startFrame = (int32)stream.readUint32();
-		endFrame = (int32)stream.readUint32();
-		xtraInfo = (int32)stream.readUint32();
-		flags = (int32)stream.readUint32();
-		channelNum = (int32)stream.readUint32();
-		tweenInfo.read(stream);
-
-		keyFrames.clear();
-		while (!stream.eos()) {
-			int32 frame = (int32)stream.readUint32();
-			if (stream.eos())
-				break;
-			keyFrames.push_back(frame);
-		}
-	}
-
-	Common::String toString() const {
-		Common::String s;
-		s += Common::String::format("startFrame: %d, endFrame: %d, xtraInfo: %d, flags: 0x%x, channelNum: %d\n",
-			startFrame, endFrame, xtraInfo, flags, channelNum);
-		s += Common::String::format("  tweenInfo: curvature: %d, flags: 0x%x, easeIn: %d, easeOut: %d\n",
-			tweenInfo.curvature, tweenInfo.flags, tweenInfo.easeIn, tweenInfo.easeOut);
-		s += "  keyFrames: ";
-		for (size_t i = 0; i < keyFrames.size(); i++) {
-			s += Common::String::format("%d ", keyFrames[i]);
-		}
-		return s;
-	}
-};
-
 struct PaletteInfo {
 	CastMemberID paletteId;
 
@@ -150,18 +95,6 @@ struct PaletteInfo {
 		frameCount = cycleCount = 0;
 		fade = delay = style = colorCode = 0;
 		spriteListIdx = 0;
-	}
-};
-
-struct BehaviorElement {
-	CastMemberID memberID;
-	int32 initializerIndex = 0;
-	Common::String initializerParams;
-
-	void read(Common::ReadStreamEndian &stream) {
-		memberID.castLib = (int16)stream.readUint16();
-		memberID.member = (int16)stream.readUint16();
-		initializerIndex = (int32)stream.readUint32();
 	}
 };
 

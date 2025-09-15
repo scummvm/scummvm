@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_SPRITE_H
 #define DIRECTOR_SPRITE_H
 
+#include "director/spriteinfo.h"
+
 namespace Director {
 
 class Frame;
@@ -63,7 +65,6 @@ enum ThicknessFlags {
 	kTTweened   = 0x80,
 };
 
-struct BehaviorElement;
 class Sprite {
 public:
 	Sprite(Frame *frame = nullptr);
@@ -150,6 +151,7 @@ public:
 	bool _stretch;
 
 	uint32 _spriteListIdx;	 // D6+
+	SpriteInfo _spriteInfo; // D6+
 
 	// D7+
 	byte _flags;
@@ -158,7 +160,7 @@ public:
 	int32 _angleRot;
 	int32 _angleSkew;
 
-	Common::Array<BehaviorElement> _behaviors;
+	Common::Array<BehaviorElement> _behaviors; // D6+
 };
 
 } // End of namespace Director

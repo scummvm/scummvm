@@ -1891,6 +1891,12 @@ void Score::loadFrameSpriteDetails() {
 				}
 				delete stream;
 			}
+
+			stream = getSpriteDetailsStream(sprite->_spriteListIdx);
+			if (stream) {
+				sprite->_spriteInfo.read(*stream);
+				delete stream;
+			}
 		}
 	}
 
