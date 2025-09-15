@@ -38,7 +38,7 @@ namespace Crypt {
 #define MAX_INDEX_TIME      18
 
 #define OPTIONS_COLOR       RGB(0, 0, 0)    // Color of the stats info CText
-#define FONT_SIZE           18
+#define FONT_SIZE           16
 
 #define STAT_BOX_COL        20
 #define STAT_BOX_ROW        20
