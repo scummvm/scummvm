@@ -163,10 +163,10 @@ private:
 
 	void seekToMemberInList(int frame);
 
-	void loadFrameSpriteDetails();
+	void loadFrameSpriteDetails(bool skipLog);
 
-	BehaviorElement loadSpriteBehavior(Common::MemoryReadStreamEndian *stream);
-	SpriteInfo loadSpriteInfo(int spriteId);
+	BehaviorElement loadSpriteBehavior(Common::MemoryReadStreamEndian *stream, bool skipLog);
+	SpriteInfo loadSpriteInfo(int spriteId, bool skipLog);
 
 public:
 	Common::Array<Channel *> _channels;
@@ -225,6 +225,7 @@ public:
 	bool _skipTransition;
 
 	Common::Array<uint32> _spriteDetailOffsets;
+	Common::Array<bool> _spriteDetailAccessed;
 
 private:
 	DirectorEngine *_vm;

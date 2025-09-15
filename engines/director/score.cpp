@@ -1779,11 +1779,13 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_frameDataOffset = _indexStart + listSize * 4;
 
 		_spriteDetailOffsets.resize(numEntries);
+		_spriteDetailAccessed.resize(numEntries);
 
 		int prevOff = 0;
 		for (int i = 0; i < numEntries; i++) {
 			uint32 off = _framesStream->readUint32();
 			_spriteDetailOffsets[i] = _frameDataOffset + off;
+			_spriteDetailAccessed[i] = false;
 
 			if (i > 0) {
 				debugC(2, kDebugLoading, "  Detail entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
@@ -1854,6 +1856,15 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
 
+	if (_version >= kFileVer600) {
+		for (int i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
+			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
+			if (!_spriteDetailAccessed[i] && size > 0) {
+				debugC(2, kDebugLoading, "Sprite detail %d not accessed, size: %d", i, size);
+			}
+		}
+	}
+
 	_currentFrame->reset();
 
 	loadFrame(1, true);
@@ -1861,7 +1872,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
-BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream) {
+BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream, bool skipLog) {
 	BehaviorElement behavior;
 	behavior.read(*stream);
 
@@ -1874,11 +1885,13 @@ BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream
 		}
 	}
 
-	debugC(2, kDebugLoading, "    Behavior: %s", behavior.toString().c_str());
+	if (!skipLog)
+		debugC(2, kDebugLoading, "    Behavior: %s", behavior.toString().c_str());
+
 	return behavior;
 }
 
-SpriteInfo Score::loadSpriteInfo(int spriteId) {
+SpriteInfo Score::loadSpriteInfo(int spriteId, bool skipLog) {
 	SpriteInfo info;
 
 	Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(spriteId);
@@ -1893,24 +1906,26 @@ SpriteInfo Score::loadSpriteInfo(int spriteId) {
 		delete stream;
 	}
 
-	debugC(2, kDebugLoading, "  SpriteInfo: %s", info.toString().c_str());
+	if (!skipLog)
+		debugC(2, kDebugLoading, "  SpriteInfo: %s", info.toString().c_str());
 
 	return info;
 }
 
-void Score::loadFrameSpriteDetails() {
+void Score::loadFrameSpriteDetails(bool skipLog) {
 	Common::MemoryReadStreamEndian *stream = nullptr;
 	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
 		if (sprite->_spriteListIdx) {
-			debugC(2, kDebugLoading, "Sprite %d", i);
+			if (!skipLog)
+				debugC(2, kDebugLoading, "Sprite %d", i);
 
-			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx);
+			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx, skipLog);
 
 			stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
 			if (stream) {
 				while (stream->pos() < stream->size()) {
-					BehaviorElement behavior = loadSpriteBehavior(stream);
+					BehaviorElement behavior = loadSpriteBehavior(stream, skipLog);
 
 					sprite->_behaviors.push_back(behavior);
 				}
@@ -1921,45 +1936,51 @@ void Score::loadFrameSpriteDetails() {
 
 	// Script channel
 	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
-		debugC(2, kDebugLoading, "Script channel");
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Script channel");
 
-		_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx);
+		_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx, skipLog);
 
 		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
 		if (stream) {
-			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream);
+			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream, skipLog);
 			delete stream;
 		}
 	}
 
 	// Tempo channel
 	if (_currentFrame->_mainChannels.tempoSpriteListIdx) {
-		debugC(2, kDebugLoading, "Tempo channel");
-		_currentFrame->_mainChannels.tempoSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.tempoSpriteListIdx);
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Tempo channel");
+		_currentFrame->_mainChannels.tempoSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.tempoSpriteListIdx, skipLog);
 	}
 
 	// Transition channel
 	if (_currentFrame->_mainChannels.transSpriteListIdx) {
-		debugC(2, kDebugLoading, "Transition channel");
-		_currentFrame->_mainChannels.transSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.transSpriteListIdx);
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Transition channel");
+		_currentFrame->_mainChannels.transSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.transSpriteListIdx, skipLog);
 	}
 
 	// Sound2 channel
 	if (_currentFrame->_mainChannels.sound2SpriteListIdx) {
-		debugC(2, kDebugLoading, "Sound2 channel");
-		_currentFrame->_mainChannels.sound2SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound2SpriteListIdx);
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Sound2 channel");
+		_currentFrame->_mainChannels.sound2SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound2SpriteListIdx, skipLog);
 	}
 
 	// Sound1 channel
 	if (_currentFrame->_mainChannels.sound1SpriteListIdx) {
-		debugC(2, kDebugLoading, "Sound1 channel");
-		_currentFrame->_mainChannels.sound1SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound1SpriteListIdx);
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Sound1 channel");
+		_currentFrame->_mainChannels.sound1SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound1SpriteListIdx, skipLog);
 	}
 
 	// Palette channel
 	if (_currentFrame->_mainChannels.palette.spriteListIdx) {
-		debugC(2, kDebugLoading, "Palette channel");
-		_currentFrame->_mainChannels.palette.spriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.palette.spriteListIdx);
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Palette channel");
+		_currentFrame->_mainChannels.palette.spriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.palette.spriteListIdx, skipLog);
 	}
 }
 
@@ -2011,7 +2032,7 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 		return false;
 
 	if (_version >= kFileVer600)
-		loadFrameSpriteDetails();
+		loadFrameSpriteDetails(loadCast);
 
 	// We have read the frame, now update current frame number
 	_curFrameNumber = targetFrame;
@@ -2372,6 +2393,8 @@ Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
 
 	if (spriteIdx >= 0 && spriteIdx < (int)_spriteDetailOffsets.size() - 1) {
 		uint32 size = _spriteDetailOffsets[spriteIdx + 1] - _spriteDetailOffsets[spriteIdx];
+
+		_spriteDetailAccessed[spriteIdx] = true;
 
 		if (!size)
 			return nullptr;
