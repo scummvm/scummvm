@@ -50,8 +50,8 @@ public:
 	bool setVolume(TSoundType type, int volume);
 	int32 _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
-	BaseSoundBuffer *addSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
-	bool addSound(BaseSoundBuffer *sound, TSoundType type = SOUND_SFX);
+	BaseSoundBuffer *addSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false);
+	bool addSound(BaseSoundBuffer *sound, TSoundType type = TSoundType::SOUND_SFX);
 	bool initLoop();
 	bool initialize();
 	bool _soundAvailable;

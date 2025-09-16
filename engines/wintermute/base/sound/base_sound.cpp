@@ -40,7 +40,7 @@ BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = nullptr;
 	_soundFilename = nullptr;
 
-	_soundType = SOUND_SFX;
+	_soundType = TSoundType::SOUND_SFX;
 	_soundStreamed = false;
 	_soundLooping = false;
 	_soundPlaying = false;

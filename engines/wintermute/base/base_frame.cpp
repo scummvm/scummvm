@@ -262,7 +262,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			}
 			_sound = new BaseSound(_game);
 			if (!_sound || DID_FAIL(_sound->setSound(params, TSoundType::SOUND_SFX, false))) {
-				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
+				if (_game->_soundMgr->_soundAvailable) {
 					_game->LOG(0, "Error loading sound '%s'.", params);
 				}
 				SAFE_DELETE(_sound);

@@ -187,13 +187,13 @@ bool BaseSoundMgr::setVolume(TSoundType type, int volume) {
 	}
 
 	switch (type) {
-	case SOUND_SFX:
+	case TSoundType::SOUND_SFX:
 		ConfMan.setInt("sfx_volume", volume);
 		break;
-	case SOUND_SPEECH:
+	case TSoundType::SOUND_SPEECH:
 		ConfMan.setInt("speech_volume", volume);
 		break;
-	case SOUND_MUSIC:
+	case TSoundType::SOUND_MUSIC:
 		ConfMan.setInt("music_volume", volume);
 		break;
 	default:
@@ -216,11 +216,11 @@ byte BaseSoundMgr::getVolumePercent(TSoundType type) {
 	int volume = 0;
 
 	switch (type) {
-	case SOUND_SFX:
+	case TSoundType::SOUND_SFX:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-	case SOUND_SPEECH:
+	case TSoundType::SOUND_SPEECH:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-	case SOUND_MUSIC:
+	case TSoundType::SOUND_MUSIC:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		break;
 	default:
@@ -250,7 +250,7 @@ byte BaseSoundMgr::getMasterVolumePercent() {
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int32 i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != SOUND_MUSIC || includingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != TSoundType::SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->setFreezePaused(true);
 		}

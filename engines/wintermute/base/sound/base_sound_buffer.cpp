@@ -66,7 +66,7 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 	_loopStart = 0;
 	_startPos = 0;
 
-	_type = SOUND_SFX;
+	_type = TSoundType::SOUND_SFX;
 
 	_freezePaused = false;
 }

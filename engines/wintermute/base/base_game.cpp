@@ -505,6 +505,7 @@ bool BaseGame::initialize1() {
 		if (_fontStorage == nullptr) {
 			break;
 		}
+
 		_fileManager = BaseFileManager::getEngineInstance();
 		if (_fileManager == nullptr) {
 			break;
@@ -5738,6 +5739,9 @@ bool BaseGame::miniUpdate() {
 	}
 
 	if (BasePlatform::getTime() - _lastMiniUpdate > 200) {
+		if (_soundMgr) {
+			_soundMgr->initLoop();
+		}
 		_lastMiniUpdate = BasePlatform::getTime();
 	}
 	return true;

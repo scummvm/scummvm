@@ -66,7 +66,7 @@ public:
 	TSoundType _soundType;
 	char *_soundFilename;
 	bool setSoundSimple();
-	bool setSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
+	bool setSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false);
 	BaseSound(BaseGame *inGame);
 	~BaseSound() override;
 
