@@ -40,7 +40,7 @@ BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = nullptr;
 	_soundFilename = nullptr;
 
-	_soundType = Audio::Mixer::kSFXSoundType;
+	_soundType = SOUND_SFX;
 	_soundStreamed = false;
 	_soundLooping = false;
 	_soundPlaying = false;
@@ -65,7 +65,7 @@ BaseSound::~BaseSound() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
+bool BaseSound::setSound(const char *filename, TSoundType type, bool streamed) {
 	if (_sound) {
 		_game->_soundMgr->removeSound(_sound);
 		_sound = nullptr;
@@ -269,24 +269,6 @@ bool BaseSound::setLoopStart(uint32 pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int BaseSound::getVolumePercent() {
-	if (!_sound) {
-		return 0;
-	} else {
-		return _sound->getPrivateVolume() * 100 / 255;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSound::setVolumePercent(int percent) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		return _sound->setPrivateVolume(percent * 255 / 100);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPan(float pan) {
 	if (_sound) {
 		return _sound->setPan(pan);
@@ -314,5 +296,24 @@ bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3,
 	}
 	return STATUS_OK;
 }
+
+//////////////////////////////////////////////////////////////////////////
+int BaseSound::getVolumePercent() {
+	if (!_sound) {
+		return 0;
+	} else {
+		return _sound->getPrivateVolume() * 100 / 255;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSound::setVolumePercent(int percent) {
+	if (!_sound) {
+		return STATUS_FAILED;
+	} else {
+		return _sound->setPrivateVolume(percent * 255 / 100);
+	}
+}
+
 
 } // End of namespace Wintermute

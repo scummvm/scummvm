@@ -1235,7 +1235,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 	SAFE_DELETE(_sFX);
 
 	_sFX = new BaseSound(_game);
-	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, Audio::Mixer::kSFXSoundType, true))) {
+	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, TSoundType::SOUND_SFX, true))) {
 		_sFX->setVolumePercent(_sFXVolume);
 		if (_sFXStart) {
 			_sFX->setPositionTime(_sFXStart);

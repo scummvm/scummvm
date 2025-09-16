@@ -911,7 +911,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	// load sound and set duration appropriately
 	if (sound) {
 		BaseSound *snd = new BaseSound(_game);
-		if (snd && DID_SUCCEED(snd->setSound(sound, Audio::Mixer::kSpeechSoundType, true))) {
+		if (snd && DID_SUCCEED(snd->setSound(sound, TSoundType::SOUND_SPEECH, true))) {
 			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
 				uint32 length = snd->getLength();

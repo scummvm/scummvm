@@ -187,7 +187,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		forceZoom = 100.0f;
 	}
 	if (volume < 0) {
-		_volume = _game->_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType);
+		_volume = _game->_soundMgr->getVolumePercent(TSoundType::SOUND_SFX);
 	} else {
 		_volume = volume;
 	}

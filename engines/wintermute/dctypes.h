@@ -130,6 +130,12 @@ enum TDynamicConstructor {
 };
 
 
+typedef enum {
+	SOUND_SFX,
+	SOUND_MUSIC,
+	SOUND_SPEECH
+} TSoundType;
+
 enum TVideoMode {
 	VIDEO_WINDOW,
 	VIDEO_FULLSCREEN,

@@ -102,12 +102,12 @@ bool BaseSoundMgr::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
+BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, TSoundType type, bool streamed) {
 	if (!_soundAvailable) {
 		return nullptr;
 	}
 
-	if (filename.empty()) {
+	if (!filename || filename[0] == '\0') {
 		// At least one game, Bickadoodle, calls playSound with an empty filename, see #6594
 		BaseEngine::LOG(0, "addSound called with empty filename");
 	}
@@ -121,7 +121,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 		Common::String oggFilename = useFilename;
 		oggFilename.erase(oggFilename.size() - 4);
 		oggFilename = oggFilename + ".ogg";
-		if (BaseFileManager::getEngineInstance()->hasFile(oggFilename)) {
+		if (_game->_fileManager->hasFile(oggFilename)) {
 			useFilename = oggFilename;
 		}
 	}
@@ -135,7 +135,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	sound->setType(type);
 
 
-	bool res = sound->loadFromFile(useFilename);
+	bool res = sound->loadFromFile(useFilename.c_str());
 	if (DID_FAIL(res)) {
 		_game->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
@@ -152,7 +152,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type) {
+bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, TSoundType type) {
 	if (!sound) {
 		return STATUS_FAILED;
 	}
@@ -181,47 +181,47 @@ bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
+bool BaseSoundMgr::setVolume(TSoundType type, int volume) {
 	if (!_soundAvailable) {
 		return STATUS_OK;
 	}
 
 	switch (type) {
-	case Audio::Mixer::kSFXSoundType:
+	case SOUND_SFX:
 		ConfMan.setInt("sfx_volume", volume);
 		break;
-	case Audio::Mixer::kSpeechSoundType:
+	case SOUND_SPEECH:
 		ConfMan.setInt("speech_volume", volume);
 		break;
-	case Audio::Mixer::kMusicSoundType:
+	case SOUND_MUSIC:
 		ConfMan.setInt("music_volume", volume);
-		break;
-	case Audio::Mixer::kPlainSoundType:
-		error("Plain sound type shouldn't be used in WME");
 		break;
 	default:
 		break;
 	}
+
 	g_engine->syncSoundSettings();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
+bool BaseSoundMgr::setVolumePercent(TSoundType type, byte percent) {
 	return setVolume(type, percent * 255 / 100);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
+byte BaseSoundMgr::getVolumePercent(TSoundType type) {
 	int volume = 0;
 
 	switch (type) {
-	case Audio::Mixer::kSFXSoundType:
-	case Audio::Mixer::kSpeechSoundType:
-	case Audio::Mixer::kMusicSoundType:
-		volume = g_system->getMixer()->getVolumeForSoundType(type);
+	case SOUND_SFX:
+		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+	case SOUND_SPEECH:
+		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+	case SOUND_MUSIC:
+		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		break;
 	default:
 		break;
@@ -230,20 +230,6 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 	return (byte)(volume * 100 / 255);
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setMasterVolume(byte value) {
-	// This function intentionally doesn't touch _volumeMasterPercent,
-	// as that variable keeps track of what the game actually wanted,
-	// and this gives a close approximation, while letting the game
-	// be none the wiser about round-off-errors. This function should thus
-	// ONLY be called by setMasterVolumePercent.
-	_volumeMaster = value;
-	for (int32 i = 0; i < _sounds.getSize(); i++) {
-		_sounds[i]->updateVolume();
-	}
-	return STATUS_OK;
-}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
@@ -258,17 +244,13 @@ byte BaseSoundMgr::getMasterVolumePercent() {
 	return _volumeMasterPercent;
 }
 
-//////////////////////////////////////////////////////////////////////////
-byte BaseSoundMgr::getMasterVolume() {
-	return (byte)_volumeMaster;
-}
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
 	for (int32 i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != Audio::Mixer::kMusicSoundType || includingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->setFreezePaused(true);
 		}
@@ -319,6 +301,25 @@ float BaseSoundMgr::posToPan(int x, int y) {
 	float maxPan = 1.0f;
 
 	return minPan + relPos * (maxPan - minPan);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSoundMgr::setMasterVolume(byte value) {
+	// This function intentionally doesn't touch _volumeMasterPercent,
+	// as that variable keeps track of what the game actually wanted,
+	// and this gives a close approximation, while letting the game
+	// be none the wiser about round-off-errors. This function should thus
+	// ONLY be called by setMasterVolumePercent.
+	_volumeMaster = value;
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
+		_sounds[i]->updateVolume();
+	}
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+byte BaseSoundMgr::getMasterVolume() {
+	return (byte)_volumeMaster;
 }
 
 } // End of namespace Wintermute

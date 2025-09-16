@@ -1582,7 +1582,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *filename = stack->pop()->getString();
 
 		BaseSound *sound = new BaseSound(_game);
-		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
+		if (sound && DID_SUCCEED(sound->setSound(filename, TSoundType::SOUND_MUSIC, true))) {
 			length = sound->getLength();
 			SAFE_DELETE(sound);
 		}
@@ -2131,7 +2131,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSFXVolume") == 0) {
 		stack->correctParams(1);
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)stack->pop()->getInt());
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_SFX, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2141,7 +2141,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalSpeechVolume") == 0) {
 		stack->correctParams(1);
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)stack->pop()->getInt());
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_SPEECH, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2151,7 +2151,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetGlobalMusicVolume") == 0) {
 		stack->correctParams(1);
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)stack->pop()->getInt());
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_MUSIC, (byte)stack->pop()->getInt());
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2171,7 +2171,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalSFXVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
+		stack->pushInt(_soundMgr->getVolumePercent(TSoundType::SOUND_SFX));
 		return STATUS_OK;
 	}
 
@@ -2180,7 +2180,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalSpeechVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
+		stack->pushInt(_soundMgr->getVolumePercent(TSoundType::SOUND_SPEECH));
 		return STATUS_OK;
 	}
 
@@ -2189,7 +2189,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetGlobalMusicVolume") == 0) {
 		stack->correctParams(0);
-		stack->pushInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
+		stack->pushInt(_soundMgr->getVolumePercent(TSoundType::SOUND_MUSIC));
 		return STATUS_OK;
 	}
 
@@ -2936,8 +2936,8 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// SFXVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
-		_game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSFXSoundType));
+		//_game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
+		_scValue->setInt(_soundMgr->getVolumePercent(TSoundType::SOUND_SFX));
 		return _scValue;
 	}
 
@@ -2945,8 +2945,8 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// SpeechVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
-		_game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kSpeechSoundType));
+		//_game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
+		_scValue->setInt(_soundMgr->getVolumePercent(TSoundType::SOUND_SPEECH));
 		return _scValue;
 	}
 
@@ -2954,8 +2954,8 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// MusicVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
-		_game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		_scValue->setInt(_soundMgr->getVolumePercent(Audio::Mixer::kMusicSoundType));
+		//_game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
+		_scValue->setInt(_soundMgr->getVolumePercent(TSoundType::SOUND_MUSIC));
 		return _scValue;
 	}
 
@@ -2963,7 +2963,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// MasterVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
-		_game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
+		//_game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
 		_scValue->setInt(_soundMgr->getMasterVolumePercent());
 		return _scValue;
 	}
@@ -3485,8 +3485,8 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// SFXVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SFXVolume") == 0) {
-		_game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kSFXSoundType, (byte)value->getInt());
+		//_game->LOG(0, "**Warning** The SFXVolume attribute is obsolete");
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_SFX, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -3494,8 +3494,8 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// SpeechVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SpeechVolume") == 0) {
-		_game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kSpeechSoundType, (byte)value->getInt());
+		//_game->LOG(0, "**Warning** The SpeechVolume attribute is obsolete");
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_SPEECH, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -3503,8 +3503,8 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// MusicVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MusicVolume") == 0) {
-		_game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
-		_game->_soundMgr->setVolumePercent(Audio::Mixer::kMusicSoundType, (byte)value->getInt());
+		//_game->LOG(0, "**Warning** The MusicVolume attribute is obsolete");
+		_game->_soundMgr->setVolumePercent(TSoundType::SOUND_MUSIC, (byte)value->getInt());
 		return STATUS_OK;
 	}
 
@@ -3512,7 +3512,7 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	// MasterVolume
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MasterVolume") == 0) {
-		_game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
+		//_game->LOG(0, "**Warning** The MasterVolume attribute is obsolete");
 		_game->_soundMgr->setMasterVolumePercent((byte)value->getInt());
 		return STATUS_OK;
 	}
@@ -4431,7 +4431,7 @@ bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32
 	SAFE_DELETE(_music[channel]);
 
 	_music[channel] = new BaseSound(_game);
-	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
+	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, TSoundType::SOUND_MUSIC, true))) {
 		if (_musicStartTime[channel]) {
 			_music[channel]->setPositionTime(_musicStartTime[channel]);
 			_musicStartTime[channel] = 0;

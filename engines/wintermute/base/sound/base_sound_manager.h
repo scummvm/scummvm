@@ -45,13 +45,13 @@ public:
 	byte getMasterVolumePercent();
 	byte getMasterVolume();
 	bool setMasterVolumePercent(byte percent);
-	byte getVolumePercent(Audio::Mixer::SoundType type);
-	bool setVolumePercent(Audio::Mixer::SoundType type, byte percent);
-	bool setVolume(Audio::Mixer::SoundType type, int volume);
+	byte getVolumePercent(TSoundType type);
+	bool setVolumePercent(TSoundType type, byte percent);
+	bool setVolume(TSoundType type, int volume);
 	int32 _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
-	BaseSoundBuffer *addSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
-	bool addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
+	BaseSoundBuffer *addSound(const char *filename, TSoundType type = SOUND_SFX, bool streamed = false);
+	bool addSound(BaseSoundBuffer *sound, TSoundType type = SOUND_SFX);
 	bool initLoop();
 	bool initialize();
 	bool _soundAvailable;
