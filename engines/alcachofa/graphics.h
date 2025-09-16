@@ -168,7 +168,7 @@ protected:
 	bool _isLoaded = false;
 	uint32 _totalDuration = 0;
 
-	int32 _spriteIndexMapping[kMaxSpriteIDs] = { -1 };
+	int32 _spriteIndexMapping[kMaxSpriteIDs] = { 0 };
 	Common::Array<uint32>
 		_spriteOffsets, ///< index offset per sprite and animation frame
 		_spriteBases; ///< base index per sprite

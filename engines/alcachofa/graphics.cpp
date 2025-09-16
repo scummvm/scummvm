@@ -564,7 +564,8 @@ void Graphic::update() {
 			curTime %= totalDuration;
 		else {
 			pause();
-			curTime = _lastTime = totalDuration ? totalDuration - 1 : 0;
+			curTime = totalDuration ? totalDuration - 1 : 0;
+			_lastTime = curTime;
 		}
 	}
 

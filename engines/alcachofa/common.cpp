@@ -167,7 +167,7 @@ String readVarString(ReadStream &stream) {
 		return Common::String();
 
 	char *buffer = new char[length];
-	if (buffer == nullptr)
+	if (buffer == nullptr) //-V668
 		error("Out of memory in readVarString");
 	if (stream.read(buffer, length) != length)
 		error("Could not read all %u bytes in readVarString", length);

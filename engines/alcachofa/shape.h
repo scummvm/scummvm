@@ -89,7 +89,7 @@ struct PolygonIterator {
 		return *this;
 	}
 
-	inline my_type &operator++(int) {
+	inline my_type operator++(int) {
 		assert(_index < _shape.polygonCount());
 		auto tmp = *this;
 		++*this;

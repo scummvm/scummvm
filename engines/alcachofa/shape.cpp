@@ -40,12 +40,12 @@ static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
 	// rather than using common Math:: code
 	if (a2.x > b2.x) {
 		if (a1.x > b1.x)
-			return lineIntersects(b1, a1, b2, a2) && lineIntersects(b2, a2, b1, a1);
+			return lineIntersects(b1, a1, b2, a2) && lineIntersects(b2, a2, b1, a1); //-V764
 		else
-			return lineIntersects(a1, b1, b2, a2) && lineIntersects(b2, a2, a1, b1);
+			return lineIntersects(a1, b1, b2, a2) && lineIntersects(b2, a2, a1, b1); //-V764
 	} else {
 		if (a1.x > b1.x)
-			return lineIntersects(b1, a1, a2, b2) && lineIntersects(a2, b2, b1, a1);
+			return lineIntersects(b1, a1, a2, b2) && lineIntersects(a2, b2, b1, a1); //-V764
 		else
 			return lineIntersects(a1, b1, a2, b2) && lineIntersects(a2, b2, a1, b1);
 	}

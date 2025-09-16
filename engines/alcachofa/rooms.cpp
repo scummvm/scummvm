@@ -566,7 +566,7 @@ Room *World::getRoomByName(const char *name) const {
 
 ObjectBase *World::getObjectByName(const char *name) const {
 	ObjectBase *result = nullptr;
-	if (result == nullptr && g_engine->player().currentRoom() != nullptr)
+	if (g_engine->player().currentRoom() != nullptr)
 		result = g_engine->player().currentRoom()->getObjectByName(name);
 	if (result == nullptr)
 		result = globalRoom().getObjectByName(name);

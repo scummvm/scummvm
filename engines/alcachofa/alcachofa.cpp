@@ -61,6 +61,8 @@ AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 AlcachofaEngine::~AlcachofaEngine() {
+	// do not delete, this is done by `Engine::~Engine` with `delete _debugger;`
+	_console = nullptr;
 }
 
 uint32 AlcachofaEngine::getFeatures() const {
@@ -108,8 +110,9 @@ Common::Error AlcachofaEngine::run() {
 		_drawQueue->clear();
 		_camera.shake() = Vector2d();
 		_player->preUpdate();
-		_player->currentRoom()->update();
 		if (_player->currentRoom() != nullptr)
+			_player->currentRoom()->update();
+		if (_player->currentRoom() != nullptr) // update() might clear currentRoom
 			_player->currentRoom()->draw();
 		_player->postUpdate();
 		if (_debugHandler != nullptr)

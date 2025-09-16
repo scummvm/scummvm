@@ -127,6 +127,7 @@ public:
 			return;
 		switch (blendMode) {
 		case BlendMode::AdditiveAlpha:
+		case BlendMode::Tinted:
 			tglBlendFunc(TGL_ONE, TGL_ONE_MINUS_SRC_ALPHA);
 			break;
 		case BlendMode::Additive:
@@ -137,9 +138,6 @@ public:
 			break;
 		case BlendMode::Alpha:
 			tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-			break;
-		case BlendMode::Tinted:
-			tglBlendFunc(TGL_ONE, TGL_ONE_MINUS_SRC_ALPHA);
 			break;
 		default: assert(false && "Invalid blend mode"); break;
 		}
