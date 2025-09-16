@@ -101,7 +101,8 @@ struct FakeLock {
 	FakeLock(const FakeLock &other);
 	FakeLock(FakeLock &&other);
 	~FakeLock();
-	void operator = (FakeLock &&other);
+	void operator= (FakeLock &&other);
+	FakeLock &operator= (const FakeLock &other);
 	void release();
 
 	inline bool isReleased() const { return _semaphore == nullptr; }

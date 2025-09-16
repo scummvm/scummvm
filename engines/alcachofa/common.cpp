@@ -100,6 +100,16 @@ void FakeLock::operator= (FakeLock &&other) {
 	debug("move-assign");
 }
 
+FakeLock &FakeLock::operator= (const FakeLock &other) {
+	release();
+	_name = other._name;
+	_semaphore = other._semaphore;
+	if (_semaphore != nullptr)
+		_semaphore->_counter++;
+	debug("copy-assign");
+	return *this;
+}
+
 void FakeLock::release() {
 	if (_semaphore == nullptr)
 		return;

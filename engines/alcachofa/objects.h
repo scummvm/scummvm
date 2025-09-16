@@ -351,11 +351,12 @@ public:
 	const char *typeName() const override;
 };
 
-class Item : public GraphicObject {
+class Item : public GraphicObject { //-V690
 public:
 	static constexpr const char *kClassName = "CObjetoInventario";
 	Item(Room *room, Common::ReadStream &stream);
 	Item(const Item &other);
+	// no copy-assign operator as it is non-sensical, the copy ctor is a special case for item-handling
 
 	void draw() override;
 	const char *typeName() const override;

@@ -259,6 +259,7 @@ public:
 	Graphic();
 	Graphic(Common::ReadStream &stream);
 	Graphic(const Graphic &other); // animation reference is taken, so keep other alive
+	Graphic &operator= (const Graphic &other);
 
 	inline Common::Point &topLeft() { return _topLeft; }
 	inline int8 &order() { return _order; }

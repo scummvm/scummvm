@@ -522,6 +522,21 @@ Graphic::Graphic(const Graphic &other)
 	, _frameI(other._frameI)
 	, _depthScale(other._depthScale) {}
 
+Graphic &Graphic::operator= (const Graphic &other) {
+	_ownedAnimation.reset();
+	_animation = other._animation;
+	_topLeft = other._topLeft;
+	_scale = other._scale;
+	_order = other._order;
+	_color = other._color;
+	_isPaused = other._isPaused;
+	_isLooping = other._isLooping;
+	_lastTime = other._lastTime;
+	_frameI = other._frameI;
+	_depthScale = other._depthScale;
+	return *this;
+}
+
 void Graphic::loadResources() {
 	if (_animation != nullptr)
 		_animation->load();
