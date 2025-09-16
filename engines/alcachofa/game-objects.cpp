@@ -330,7 +330,7 @@ struct SayTextTask final : public Task {
 			if (!_character->_isTalking) {
 				g_engine->sounds().fadeOut(_soundHandle, 100);
 				TASK_WAIT(1, delay(200));
-				TASK_RETURN(0);
+				TASK_RETURN(0); //-V779
 			}
 
 			_character->isSpeaking() = !isSoundStillPlaying ||
@@ -406,7 +406,7 @@ struct AnimateCharacterTask final : public Task {
 			_graphic->update();
 		do {
 			TASK_YIELD(2);
-			if (process().isActiveForPlayer() && g_engine->input().wasAnyMouseReleased())
+			if (process().isActiveForPlayer() && g_engine->input().wasAnyMouseReleased()) //-V779
 				_graphic->pause();
 		} while (!_graphic->isPaused());
 
@@ -1042,7 +1042,7 @@ struct DialogMenuTask final : public Task {
 		layoutLines();
 		while (true) {
 			TASK_YIELD(1);
-			if (g_engine->player().activeCharacter() != _character)
+			if (g_engine->player().activeCharacter() != _character) //-V779
 				continue;
 			g_engine->globalUI().updateChangingCharacter();
 			g_engine->player().heldItem() = nullptr;

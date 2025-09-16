@@ -171,7 +171,7 @@ struct AnimateTask final : public Task {
 		_object->toggle(true);
 		_graphic->start(false);
 		TASK_WAIT(1, delay(_duration));
-		_object->toggle(false);
+		_object->toggle(false); //-V779
 		TASK_END;
 	}
 

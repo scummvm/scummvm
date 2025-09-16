@@ -235,7 +235,7 @@ struct DoorTask final : public Task {
 		if (g_engine->sounds().musicID() != _targetRoom->musicID())
 			g_engine->sounds().fadeMusic();
 		TASK_WAIT(1, fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
-		_player.changeRoom(_targetRoom->name(), true);
+		_player.changeRoom(_targetRoom->name(), true); //-V779
 
 		if (_targetRoom->fixedCameraOnEntering())
 			g_engine->camera().setPosition(as2D(_targetObject->interactionPoint()));

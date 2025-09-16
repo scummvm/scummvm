@@ -152,7 +152,7 @@ struct ScriptTimerTask final : public Task {
 			g_engine->player().drawCursor();
 		}
 		TASK_YIELD(1); // Wait a frame to not produce an endless loop
-		TASK_RETURN(_result);
+		TASK_RETURN(_result); //-V779
 		TASK_END;
 	}
 
@@ -337,28 +337,28 @@ struct ScriptTask final : public Task {
 				pushNumber(-popNumber() + popNumber());
 				break;
 			case ScriptOp::Less:
-				pushNumber(popNumber() > popNumber());
+				pushNumber(popNumber() > popNumber()); //-V501
 				break;
 			case ScriptOp::Greater:
-				pushNumber(popNumber() < popNumber());
+				pushNumber(popNumber() < popNumber()); //-V501
 				break;
 			case ScriptOp::LessEquals:
-				pushNumber(popNumber() >= popNumber());
+				pushNumber(popNumber() >= popNumber()); //-V501
 				break;
 			case ScriptOp::GreaterEquals:
-				pushNumber(popNumber() <= popNumber());
+				pushNumber(popNumber() <= popNumber()); //-V501
 				break;
 			case ScriptOp::Equals:
-				pushNumber(popNumber() == popNumber());
+				pushNumber(popNumber() == popNumber()); //-V501
 				break;
 			case ScriptOp::NotEquals:
-				pushNumber(popNumber() != popNumber());
+				pushNumber(popNumber() != popNumber()); //-V501
 				break;
 			case ScriptOp::BitAnd:
-				pushNumber(popNumber() & popNumber());
+				pushNumber(popNumber() & popNumber()); //-V501
 				break;
 			case ScriptOp::BitOr:
-				pushNumber(popNumber() | popNumber());
+				pushNumber(popNumber() | popNumber()); //-V501
 				break;
 			case ScriptOp::Return: {
 				int32 returnValue = popNumber();
