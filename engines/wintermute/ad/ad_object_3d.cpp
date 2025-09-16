@@ -626,8 +626,8 @@ bool AdObject3D::getBonePosition3D(const char *boneName, DXVector3 *pos, DXVecto
 		return false;
 	}
 
+	DXVector3 vz(0, 0, 0);
 	if (!offset) {
-		DXVector3 vz(0, 0, 0);
 		offset = &vz;
 	}
 
