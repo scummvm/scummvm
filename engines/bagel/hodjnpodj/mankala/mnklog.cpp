@@ -1707,7 +1707,7 @@ bool CMnk::GetBestWinCount(CMove * xpcMove)
 	int iValue = 0;        // value from table
 	struct FIVE * hpFive ; // ptr to structure of 8 5-bit values
 
-	if (lIndex < 0 || lIndex >= MAXCONFIGS) {
+	if (/*lIndex < 0 ||*/ lIndex >= MAXCONFIGS) {
 		iError = 100 ;      // index out of range
 		goto cleanup ;
 	}
@@ -1784,7 +1784,7 @@ bool CMnk::SetBestWinCount(CMove * xpcMove)
 	int iValue = xpcMove->m_iBestWinValue ; // value from table
 	bool bTest = false ;        // debugging test
 
-	if (lIndex < 0 || lIndex >= MAXCONFIGS) {
+	if (/*lIndex < 0 ||*/ lIndex >= MAXCONFIGS) {
 		iError = 100 ;      // index out of range
 		goto cleanup ;
 	}
