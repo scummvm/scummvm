@@ -2375,8 +2375,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool ret = false;
 		BaseImage *image = _game->_renderer->takeScreenshot();
 		if (image) {
-			ret = image->saveBMPFile(filename);
+			ret = DID_SUCCEED(image->saveBMPFile(filename));
 			delete image;
+		} else {
+			ret = false;
 		}
 
 		stack->pushBool(ret);
@@ -2398,8 +2400,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool ret = false;
 		BaseImage *image = _game->_renderer->takeScreenshot(sizeX, sizeY);
 		if (image) {
-			ret = image->saveBMPFile(filename);
+			ret = DID_SUCCEED(image->saveBMPFile(filename));
 			delete image;
+		} else {
+			ret = false;
 		}
 
 		stack->pushBool(ret);

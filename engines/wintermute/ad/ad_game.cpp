@@ -2230,12 +2230,12 @@ char *AdGame::findSpeechFile(char *stringID) {
 
 	for (int32 i = 0; i < _speechDirs.getSize(); i++) {
 		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.ogg", _speechDirs[i], stringID);
-		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
+		if (_game->_fileManager->hasFile(ret)) {
 			return ret;
 		}
 
 		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.wav", _speechDirs[i], stringID);
-		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
+		if (_game->_fileManager->hasFile(ret)) {
 			return ret;
 		}
 	}

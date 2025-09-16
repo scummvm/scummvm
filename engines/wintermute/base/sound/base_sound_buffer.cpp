@@ -48,7 +48,7 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#define MAX_NONSTREAMED_FILE_SIZE 1024*1024
+#define MAX_NONSTREAMED_FILE_SIZE (1024 * 1024)
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
