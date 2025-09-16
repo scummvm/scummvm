@@ -447,7 +447,6 @@ protected:
 	void syncObjectAsString(Common::Serializer &serializer, ObjectBase *&object);
 	void updateTalkingAnimation();
 
-	Direction _direction = Direction::Right;
 	Graphic _graphicNormal, _graphicTalking;
 
 	bool _isTalking = false; ///< as in "in the process of saying a line"
