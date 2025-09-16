@@ -57,7 +57,7 @@ public:
 			}
 			auto glTexture = dynamic_cast<OpenGLTexture *>(texture);
 			assert(glTexture != nullptr);
-			GL_CALL(glBindTexture(GL_TEXTURE_2D, glTexture->handle()));
+			GL_CALL(glBindTexture(GL_TEXTURE_2D, glTexture->handle())); //-V522
 			_currentTexture = glTexture;
 		}
 	}

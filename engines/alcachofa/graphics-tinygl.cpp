@@ -117,7 +117,7 @@ public:
 			}
 			auto glTexture = dynamic_cast<TinyGLTexture *>(texture);
 			assert(glTexture != nullptr);
-			tglBindTexture(TGL_TEXTURE_2D, glTexture->handle());
+			tglBindTexture(TGL_TEXTURE_2D, glTexture->handle()); //-V522
 			_currentTexture = glTexture;
 		}
 	}

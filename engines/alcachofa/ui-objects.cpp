@@ -248,7 +248,7 @@ SlideButton::SlideButton(Room *room, ReadStream &stream)
 
 void SlideButton::draw() {
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
-	assert(optionsMenu != nullptr);
+	scumm_assert(optionsMenu != nullptr);
 
 	Graphic *activeGraphic;
 	if (optionsMenu->currentSlideButton() == this && g_engine->input().isMouseLeftDown())
@@ -262,7 +262,7 @@ void SlideButton::draw() {
 void SlideButton::update() {
 	const auto mousePos = g_engine->input().mousePos2D();
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
-	assert(optionsMenu != nullptr);
+	scumm_assert(optionsMenu != nullptr);
 
 	if (optionsMenu->currentSlideButton() == this) {
 		if (!g_engine->input().isMouseLeftDown()) {
