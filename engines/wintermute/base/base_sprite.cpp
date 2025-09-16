@@ -139,7 +139,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 	AnsiString ext = PathUtil::getExtension(filename);
 	ext.toLowercase();
 	filePrefix.toLowercase();
-	if (filePrefix.hasPrefix("savegame:") || (ext == "bmp") || (ext == "tga") || (ext == "png") || (ext == "jpg")) {
+	if (filePrefix.hasPrefix("savegame:") || (ext == ".bmp") || (ext == ".tga") || (ext == ".png") || (ext == ".jpg")) {
 		BaseFrame *frame = new BaseFrame(_game);
 		BaseSubFrame *subframe = new BaseSubFrame(_game);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);

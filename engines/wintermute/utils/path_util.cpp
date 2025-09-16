@@ -62,47 +62,59 @@ Common::String PathUtil::combine(const Common::String &path1, const Common::Stri
 	return newPath1 + newPath2;
 }
 
-bool PathUtil::hasTrailingSlash(const Common::String &path) {
-	return (path.size() > 0 && path[path.size() - 1 ] == '/');
-}
 
 //////////////////////////////////////////////////////////////////////////
 Common::String PathUtil::getDirectoryName(const Common::String &path) {
 	Common::String newPath = unifySeparators(path);
-	Common::String filename = getFileName(path);
-	if (hasTrailingSlash(newPath)) {
-		return path;
+
+	size_t pos = newPath.findLastOf('/');
+
+	if (pos == AnsiString::npos) {
+		return "";
 	} else {
-		return Common::String(path.c_str(), path.size() - filename.size());
+		return newPath.substr(0, pos + 1);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 Common::String PathUtil::getFileName(const Common::String &path) {
 	Common::String newPath = unifySeparators(path);
-	Common::String lastPart = Common::lastPathComponent(newPath, '/');
-	if (hasTrailingSlash(newPath)) {
-		return Common::String("");
+
+	size_t pos = newPath.findLastOf('/');
+
+	if (pos == Common::String::npos) {
+		return path;
 	} else {
-		return lastPart;
+		return newPath.substr(pos + 1);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 Common::String PathUtil::getFileNameWithoutExtension(const Common::String &path) {
 	Common::String fileName = getFileName(path);
-	// TODO: Prettify this.
-	Common::String extension = Common::lastPathComponent(fileName, '.');
-	for (uint32 i = 0; i < extension.size() + 1; i++) {
-		fileName.deleteLastChar();
+
+	size_t pos = fileName.findLastOf('.');
+
+	if (pos == Common::String::npos) {
+		return fileName;
+	} else {
+		return fileName.substr(0, pos);
 	}
-	return fileName;
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 Common::String PathUtil::getExtension(const Common::String &path) {
 	Common::String fileName = getFileName(path);
-	return Common::lastPathComponent(path, '.');
+
+	size_t pos = fileName.findLastOf('.');
+
+	if (pos == Common::String::npos) {
+		return "";
+	} else {
+		return fileName.substr(pos);
+	}
 }
+
 
 } // End of namespace Wintermute
