@@ -1616,7 +1616,14 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (int)(sprite->_colorcode & 0x7);
 		break;
 	case kTheScriptNum:
-		d = sprite->_scriptId.member;
+		if (g_director->getVersion() >= 600) {
+			if (sprite->_behaviors.size() > 0)
+				d = sprite->_behaviors[0].memberID.toMultiplex();	// Return the first script in the list
+			else
+				d = 0;
+		} else {
+			d = sprite->_scriptId.member;
+		}
 		break;
 	case kTheStartTime:
 		d = channel->_startTime;
