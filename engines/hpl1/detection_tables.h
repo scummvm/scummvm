@@ -162,6 +162,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Penumbra: Black Plague (Mac GOG v1.1.1)
+	{
+		"penumbrablackplague",
+		nullptr,
+		AD_ENTRY1s("BlackPlague.app/Contents/MacOS/BlackPlague", "867ea67dd189ad4c191e0a9664d2f065", 8856992),
+		Common::Language::EN_ANY,
+		Common::Platform::kPlatformMacintosh,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+
 	// Penumbra: Black Plague (CD)
 	{
 		"penumbrablackplague",
