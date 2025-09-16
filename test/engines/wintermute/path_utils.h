@@ -176,28 +176,24 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(windowsPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(windowsPath),
-				windowsPath
+				Common::String("C:/some/file.ext")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsCapPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(windowsCapPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(windowsCapPath),
-				windowsCapPath
+				Common::String("C:/SOME/FILE.EXT")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(unixCapPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(unixCapPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(unixCapPath),
 				unixCapPath
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(manyExtPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(manyExtPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(manyExtPath),
 				manyExtPath
 				);
