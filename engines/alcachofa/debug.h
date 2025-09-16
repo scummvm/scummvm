@@ -160,7 +160,7 @@ class FloorColorDebugHandler final : public IDebugHandler {
 	Color _curColor = kDebugGreen;
 	bool _isOnFloor = false;
 	static constexpr size_t kBufferSize = 64;
-	char _buffer[kBufferSize];
+	char _buffer[kBufferSize] = { 0 };
 
 	FloorColorDebugHandler(const FloorColorShape &shape, bool useColor)
 		: _shape(shape)

@@ -68,7 +68,7 @@ private:
 		Audio::Mixer::SoundType _type = Audio::Mixer::SoundType::kPlainSoundType;
 		uint32 _fadeStart = 0,
 			_fadeDuration = 0;
-		int _inputRate;
+		int _inputRate = 0;
 		Common::Array<int16> _samples; ///< might not be filled, only voice samples are preloaded for lip-sync
 	};
 	Playback *getPlaybackById(SoundHandle id);

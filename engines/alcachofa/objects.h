@@ -520,7 +520,7 @@ protected:
 };
 
 struct DialogMenuLine {
-	int32 _dialogId;
+	int32 _dialogId = -1;
 	int32 _yPosition = 0;
 	int32 _returnValue = 0;
 };
