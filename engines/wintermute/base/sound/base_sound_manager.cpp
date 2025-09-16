@@ -218,8 +218,10 @@ byte BaseSoundMgr::getVolumePercent(TSoundType type) {
 	switch (type) {
 	case TSoundType::SOUND_SFX:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+		break;
 	case TSoundType::SOUND_SPEECH:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+		break;
 	case TSoundType::SOUND_MUSIC:
 		volume = g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		break;
