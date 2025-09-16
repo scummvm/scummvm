@@ -1853,7 +1853,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			int spriteId = stream1->readUint32();
 			debugCN(2, kDebugLoading, "%d ", spriteId);
 		}
-		debugC(2, kDebugLoading, "");
+		debugC(2, kDebugLoading, "%s", "");
 		delete stream1;
 	}
 
@@ -1862,7 +1862,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
 		_scoreCache.push_back(new Frame(*_currentFrame));
 
-		for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
+		for (int i = 0; i < (int)_currentFrame->_sprites.size(); i++) {
 			if (_currentFrame->_sprites[i]->_castId.member && i > _maxChannelsUsed)
 				_maxChannelsUsed = i;
 		}
@@ -1871,7 +1871,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d", _numFrames);
 
 	if (_version >= kFileVer600) {
-		for (int i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
+		for (uint i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
 			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
 			if (!_spriteDetailAccessed[i] && size > 0) {
 				int type = i % 3;
@@ -1936,7 +1936,7 @@ SpriteInfo Score::loadSpriteInfo(int spriteId, bool skipLog) {
 
 void Score::loadFrameSpriteDetails(bool skipLog) {
 	Common::MemoryReadStreamEndian *stream = nullptr;
-	for (int i = 0; i < _currentFrame->_sprites.size(); i++) {
+	for (uint i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
 		if (sprite->_spriteListIdx) {
 			if (!skipLog)
