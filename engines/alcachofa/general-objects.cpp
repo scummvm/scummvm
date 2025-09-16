@@ -151,7 +151,7 @@ Graphic *GraphicObject::graphic() {
 	return &_graphic;
 }
 
-struct AnimateTask : public Task {
+struct AnimateTask final : public Task {
 	AnimateTask(Process &process, GraphicObject *object)
 		: Task(process)
 		, _object(object) {
@@ -163,7 +163,7 @@ struct AnimateTask : public Task {
 
 	AnimateTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);
+		AnimateTask::syncGame(s);
 	}
 
 	TaskReturn run() override {

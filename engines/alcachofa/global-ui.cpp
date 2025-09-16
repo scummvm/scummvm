@@ -190,7 +190,7 @@ void GlobalUI::drawChangingButton() {
 	g_engine->drawQueue().add<AnimationDrawRequest>(_changeButton, false, BlendMode::AdditiveAlpha);
 }
 
-struct CenterBottomTextTask : public Task {
+struct CenterBottomTextTask final : public Task {
 	CenterBottomTextTask(Process &process, int32 dialogId, uint32 durationMs)
 		: Task(process)
 		, _dialogId(dialogId)
@@ -198,7 +198,7 @@ struct CenterBottomTextTask : public Task {
 
 	CenterBottomTextTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);
+		CenterBottomTextTask::syncGame(s);
 	}
 
 	TaskReturn run() override {

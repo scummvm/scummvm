@@ -115,7 +115,7 @@ private:
 
 // implemented in alcachofa.cpp to prevent a compiler warning when
 // the declaration of the construct function comes after the definition
-struct DelayTask : public Task {
+struct DelayTask final : public Task {
 	DelayTask(Process &process, uint32 millis);
 	DelayTask(Process &process, Common::Serializer &s);
 	TaskReturn run() override;

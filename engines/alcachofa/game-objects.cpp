@@ -767,14 +767,14 @@ void WalkingCharacter::syncGame(Serializer &serializer) {
 	syncEnum(serializer, _direction);
 }
 
-struct ArriveTask : public Task {
+struct ArriveTask final : public Task {
 	ArriveTask(Process &process, const WalkingCharacter *character)
 		: Task(process)
 		, _character(character) {}
 
 	ArriveTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);
+		ArriveTask::syncGame(s);
 	}
 
 	TaskReturn run() override {
@@ -1025,7 +1025,7 @@ bool MainCharacter::clearTargetIf(const ITriggerableObject *target) {
 	return false;
 }
 
-struct DialogMenuTask : public Task {
+struct DialogMenuTask final : public Task {
 	DialogMenuTask(Process &process, MainCharacter *character)
 		: Task(process)
 		, _input(g_engine->input())
@@ -1034,7 +1034,7 @@ struct DialogMenuTask : public Task {
 	DialogMenuTask(Process &process, Serializer &s)
 		: Task(process)
 		, _input(g_engine->input()) {
-		syncGame(s);
+		DialogMenuTask::syncGame(s);
 	}
 
 	TaskReturn run() override {

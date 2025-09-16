@@ -795,7 +795,7 @@ void FadeDrawRequest::draw() {
 	g_engine->renderer().quad(Vector2d(0, 0), as2D(Point(g_system->getWidth(), g_system->getHeight())), color);
 }
 
-struct FadeTask : public Task {
+struct FadeTask final : public Task {
 	FadeTask(Process &process, FadeType fadeType,
 		float from, float to,
 		uint32 duration, EasingType easingType,
@@ -812,7 +812,7 @@ struct FadeTask : public Task {
 
 	FadeTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);
+		FadeTask::syncGame(s);
 	}
 
 	TaskReturn run() override {

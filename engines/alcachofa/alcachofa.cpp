@@ -435,7 +435,7 @@ DelayTask::DelayTask(Process &process, uint32 millis)
 
 DelayTask::DelayTask(Process &process, Serializer &s)
 	: Task(process) {
-	syncGame(s);
+	DelayTask::syncGame(s);
 }
 
 TaskReturn DelayTask::run() {

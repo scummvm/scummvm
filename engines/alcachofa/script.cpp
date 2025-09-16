@@ -130,14 +130,14 @@ bool Script::hasProcedure(const Common::String &procedure) const {
 	return _procedures.contains(procedure);
 }
 
-struct ScriptTimerTask : public Task {
+struct ScriptTimerTask final : public Task {
 	ScriptTimerTask(Process &process, int32 durationSec)
 		: Task(process)
 		, _durationSec(durationSec) {}
 
 	ScriptTimerTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);
+		ScriptTimerTask::syncGame(s);
 	}
 
 	TaskReturn run() override {
@@ -201,7 +201,7 @@ struct StackEntry {
 	};
 };
 
-struct ScriptTask : public Task {
+struct ScriptTask final : public Task {
 	ScriptTask(Process &process, const String &name, uint32 pc, FakeLock &&lock)
 		: Task(process)
 		, _script(g_engine->script())
@@ -227,7 +227,7 @@ struct ScriptTask : public Task {
 	ScriptTask(Process &process, Serializer &s)
 		: Task(process)
 		, _script(g_engine->script()) {
-		syncGame(s);
+		ScriptTask::syncGame(s);
 	}
 
 	TaskReturn run() override {

@@ -205,7 +205,7 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 		script.createProcess(activeCharacterKind(), "DefectoUsar");
 }
 
-struct DoorTask : public Task {
+struct DoorTask final : public Task {
 	DoorTask(Process &process, const Door *door, FakeLock &&lock)
 		: Task(process)
 		, _lock(move(lock))
@@ -223,7 +223,7 @@ struct DoorTask : public Task {
 	DoorTask(Process &process, Serializer &s)
 		: Task(process)
 		, _player(g_engine->player()) {
-		syncGame(s);
+		DoorTask::syncGame(s);
 	}
 
 	TaskReturn run() override {
