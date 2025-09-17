@@ -120,15 +120,17 @@ bool RenderSurface::EndPainting() {
 }
 
 //
-// void RenderSurface::GetSurfaceDims(Rect &r)
+// Common::Rect32 RenderSurface::GetSurfaceDims()
 //
 // Desc: Get the Surface Dimensions (and logical origin)
 // r: Rect object to fill
 //
-void RenderSurface::GetSurfaceDims(Common::Rect32 &r) const {
+Common::Rect32 RenderSurface::getSurfaceDims() const {
+	Common::Rect32 r;
 	r.moveTo(_ox, _oy);
 	r.setWidth(_surface->w);
 	r.setHeight(_surface->h);
+	return r;
 }
 
 //
@@ -160,22 +162,22 @@ void RenderSurface::GetOrigin(int32 &x, int32 &y) const {
 }
 
 //
-// void RenderSurface::GetClippingRect(Rect &r)
+// Common::Rect32 RenderSurface::getClippingRect()
 //
 // Desc: Get the Clipping Rectangle
 // r: Rect object to fill
 //
-void RenderSurface::GetClippingRect(Common::Rect32 &r) const {
-	r = Common::Rect32(_clipWindow.left, _clipWindow.top, _clipWindow.right, _clipWindow.bottom);
+Common::Rect32 RenderSurface::getClippingRect() const {
+	return Common::Rect32(_clipWindow.left, _clipWindow.top, _clipWindow.right, _clipWindow.bottom);
 }
 
 //
-// void RenderSurface::GetClippingRect(Rect &r)
+// void RenderSurface::setClippingRect(const Common::Rect32 &r)
 //
 // Desc: Set the Clipping Rectangle
 // r: Rect object that contains new Clipping Rectangle
 //
-void RenderSurface::SetClippingRect(const Common::Rect32 &r) {
+void RenderSurface::setClippingRect(const Common::Rect32 &r) {
 	// What we need to do is to clip the clipping rect to the phyiscal screen
 	_clipWindow = Common::Rect(r.left, r.top, r.right, r.bottom);
 	_clipWindow.clip(Common::Rect(-_ox, -_oy, -_ox + _surface->w, -_oy + _surface->h));

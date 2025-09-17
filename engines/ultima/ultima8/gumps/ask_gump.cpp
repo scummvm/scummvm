@@ -65,8 +65,7 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 		child->InitGump(this);
 		child->SetIndex(i);
 
-		Common::Rect32 cd;
-		child->GetDims(cd);
+		Common::Rect32 cd = child->getDims();
 		if (i + 1 < _answers->getSize())
 			cd.setHeight(cd.height() + child->getVlead());
 
@@ -134,8 +133,7 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 
 		if (!child) return false;
 
-		Common::Rect32 cd;
-		child->GetDims(cd);
+		Common::Rect32 cd = child->getDims();
 
 		if (px + cd.width() > 160 && px != 0) {
 			py = _dims.height();

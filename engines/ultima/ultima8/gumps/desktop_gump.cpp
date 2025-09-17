@@ -65,8 +65,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 void DesktopGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the parent
 	if (_parent) {
-		Common::Rect32 new_dims;
-		_parent->GetDims(new_dims);
+		Common::Rect32 new_dims = _parent->getDims();
 		_dims.setWidth(new_dims.width());
 		_dims.setHeight(new_dims.height());
 	}

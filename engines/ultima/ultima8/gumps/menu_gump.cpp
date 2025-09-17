@@ -151,10 +151,9 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			name = av->getName();
 
 		if (!name.empty()) {
-			Common::Rect32 rect;
 			Gump *widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
-			widget->GetDims(rect);
+			Common::Rect32 rect = widget->getDims();
 			widget->Move(90 - rect.width() / 2, _dims.height() - 40);
 		}
 	} else {
@@ -163,8 +162,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		widget->InitGump(this, false);
 		widget->Move(_dims.width() / 2 + 6, 10);
 
-		Common::Rect32 textdims;
-		widget->GetDims(textdims);
+		Common::Rect32 textdims = widget->getDims();
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);

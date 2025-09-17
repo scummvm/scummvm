@@ -628,11 +628,10 @@ bool Item::isOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Common::Rect32 game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
-	game_map->GetDims(game_map_dims);
+	Common::Rect32 game_map_dims = game_map->getDims();
 	const Shape *shape = getShapeObject();
 	if (!shape)
 		return false;
@@ -654,11 +653,10 @@ bool Item::isPartlyOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Common::Rect32 game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
-	game_map->GetDims(game_map_dims);
+	Common::Rect32 game_map_dims = game_map->getDims();
 	const Shape *shape = getShapeObject();
 	if (!shape)
 		return false;

@@ -720,8 +720,7 @@ void Ultima8Engine::paint() {
 	tpaint -= g_system->getMillis();
 #endif
 
-	Common::Rect32 r;
-	_screen->GetSurfaceDims(r);
+	Common::Rect32 r = _screen->getSurfaceDims();
 	if (_highRes)
 		_screen->fill32(TEX32_PACK_RGB(0, 0, 0), r);
 
@@ -749,8 +748,7 @@ void Ultima8Engine::paint() {
 
 void Ultima8Engine::changeVideoMode(int width, int height) {
 	if (_screen) {
-		Common::Rect32 old_dims;
-		_screen->GetSurfaceDims(old_dims);
+		Common::Rect32 old_dims = _screen->getSurfaceDims();
 		if (width == old_dims.width() && height == old_dims.height())
 			return;
 
@@ -789,7 +787,7 @@ void Ultima8Engine::changeVideoMode(int width, int height) {
 		_desktopGump->InitGump(0);
 		_desktopGump->MakeFocus();
 	} else {
-		_desktopGump->SetDims(Common::Rect32(0, 0, width, height));
+		_desktopGump->setDims(Common::Rect32(0, 0, width, height));
 		_desktopGump->RenderSurfaceChanged();
 	}
 
@@ -1347,8 +1345,7 @@ void Ultima8Engine::resetEngine() {
 void Ultima8Engine::setupCoreGumps() {
 	debug(1, "Setting up core game gumps...");
 
-	Common::Rect32 dims;
-	_screen->GetSurfaceDims(dims);
+	Common::Rect32 dims = _screen->getSurfaceDims();
 
 	debug(1, "Creating Desktop...");
 	_desktopGump = new DesktopGump(0, 0, dims.width(), dims.height());

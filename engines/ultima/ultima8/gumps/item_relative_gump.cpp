@@ -51,8 +51,7 @@ void ItemRelativeGump::InitGump(Gump *newparent, bool take_focus) {
 
 void ItemRelativeGump::MoveOnScreen() {
 	assert(_parent);
-	Common::Rect32 sd;
-	_parent->GetDims(sd);
+	Common::Rect32 sd = _parent->getDims();
 
 	// first move back to our desired location
 	_x = 0;
@@ -148,8 +147,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		gy = gy - it->getShapeInfo()->_z * 8 - 16;
 	} else {
 		// If location not found show near bottom center
-		Common::Rect32 r;
-		gump->GetDims(r);
+		Common::Rect32 r = gump->getDims();
 		gx = (r.left + r.right) / 2;
 		gy = r.bottom - 8;
 	}

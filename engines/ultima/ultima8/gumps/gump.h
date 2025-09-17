@@ -241,12 +241,12 @@ public:
 	//
 
 	//! Get the _dims
-	virtual void GetDims(Common::Rect32 &d) const {
-		d = _dims;
+	const Common::Rect32 &getDims() const {
+		return _dims;
 	}
 
 	//! Set the _dims
-	virtual void SetDims(const Common::Rect32 &d) {
+	void setDims(const Common::Rect32 &d) {
 		_dims = d;
 	}
 

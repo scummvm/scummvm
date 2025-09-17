@@ -449,8 +449,7 @@ void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
 	int z_max = MAX(from.z, to.z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
-	Common::Rect32 dims;
-	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
+	Common::Rect32 dims = Ultima8Engine::get_instance()->getGameMapGump()->getDims();
 
 	int32 sleft  = ((x_min - y_min) / 4)         - (dims.width() / 2 + _mapChunkSize / 4);
 	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.height() / 2 + _mapChunkSize / 8);

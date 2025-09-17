@@ -107,8 +107,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 	}
 
-	Common::Rect32 d;
-	widget->GetDims(d);
+	Common::Rect32 d = widget->getDims();
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
 	_counter = calculateTicks();
@@ -130,8 +129,7 @@ bool BarkGump::NextText() {
 	TextWidget *widget = dynamic_cast<TextWidget *>(getGump(_textWidget));
 	assert(widget);
 	if (widget->setupNextText()) {
-		Common::Rect32 d;
-		widget->GetDims(d);
+		Common::Rect32 d = widget->getDims();
 		_dims.setHeight(d.height());
 		_dims.setWidth(d.width());
 		_counter = calculateTicks();
@@ -239,8 +237,7 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!widget)
 		return false;
 
-	Common::Rect32 d;
-	widget->GetDims(d);
+	Common::Rect32 d = widget->getDims();
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
 

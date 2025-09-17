@@ -111,10 +111,9 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 		if (index % 10 == 9) {
 			// HACK: There is no frame for '0', so we re-use part of the
 			// frame for '10', cutting off the first 6 pixels.
-			Common::Rect32 rect;
-			gump->GetDims(rect);
+			Common::Rect32 rect = gump->getDims();
 			rect.translate(6, 0);
-			gump->SetDims(rect);
+			gump->setDims(rect);
 		}
 		gump->InitGump(this, false);
 

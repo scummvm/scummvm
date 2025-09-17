@@ -90,13 +90,13 @@ public:
 	void GetOrigin(int32 &x, int32 &y) const;
 
 	//! Get the Surface Dimensions
-	void GetSurfaceDims(Common::Rect32 &) const;
+	Common::Rect32 getSurfaceDims() const;
 
 	//! Get Clipping Rectangle
-	void GetClippingRect(Common::Rect32 &) const;
+	Common::Rect32 getClippingRect() const;
 
 	//! Set Clipping Rectangle
-	void SetClippingRect(const Common::Rect32 &);
+	void setClippingRect(const Common::Rect32 &);
 
 	//! Flip the surface
 	void SetFlipped(bool flipped);
