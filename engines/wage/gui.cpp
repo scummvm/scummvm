@@ -285,7 +285,7 @@ bool Gui::processEvent(Common::Event &event) {
 					_engine->sayText(menuItem->text, Common::TextToSpeechManager::INTERRUPT);
 					_selectedMenuItem = i;
 				}
-				
+
 				mouseOnItem = true;
 				break;
 			}
@@ -474,6 +474,7 @@ void Gui::enableNewGameMenus() {
 
 void Gui::enableSave() {
 	_menu->enableCommand(kMenuFile, kMenuActionSave, true);
+	_menu->enableCommand(kMenuFile, kMenuActionSaveAs, true);
 }
 
 void Gui::enableRevert() {
