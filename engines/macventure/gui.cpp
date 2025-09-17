@@ -592,11 +592,10 @@ void Gui::loadDiploma() {
 	quitButton->setAction(kDAQuit);
 
 	// Image
-	Common::Path diplomaFilePath = _engine->getDiplomaFileName();
-	_resourceManager->open(diplomaFilePath);
-	Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
-
 	if (!_diplomaImage) {
+		Common::Path diplomaFilePath = _engine->getDiplomaFileName();
+		_resourceManager->open(diplomaFilePath);
+		Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
 		_diplomaImage = new ImageAsset(stream);
 	}
 
