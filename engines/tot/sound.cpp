@@ -81,6 +81,10 @@ void SoundManager::loadVoc(Common::String vocFile, int32 startPos, int16 size) {
 		vocResource.seek(startPos);
 		_lastSrcStream = vocResource.readStream((uint32)size);
 	}
+	if(_audioStream) {
+		delete _audioStream;
+		_audioStream = nullptr;
+	}
 	_audioStream = Audio::makeVOCStream(_lastSrcStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 }
 

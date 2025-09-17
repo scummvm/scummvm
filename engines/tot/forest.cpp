@@ -24,7 +24,7 @@
 namespace Tot {
 
 void initTree(Tree &a, nodeElement data) {
-	a = new treeDef;
+	a = new TreeDef;
 	a->element = data;
 	a->parent = nullptr;
 	a->sibling = nullptr;
@@ -77,7 +77,7 @@ void expandNode(Tree &node, nodeElement data) {
 		while (aux->sibling != nullptr)
 			aux = rightSibling(aux);
 		;
-		aux->sibling = new treeDef;
+		aux->sibling = new TreeDef;
 		aux = aux->sibling;
 		aux->element = data;
 		aux->sibling = nullptr;
@@ -85,7 +85,7 @@ void expandNode(Tree &node, nodeElement data) {
 		aux->parent = node;
 	} else {
 
-		aux->child = new treeDef;
+		aux->child = new TreeDef;
 		aux = aux->child;
 		aux->element = data;
 		aux->sibling = nullptr;

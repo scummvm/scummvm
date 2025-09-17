@@ -30,11 +30,16 @@ struct nodeElement {
 	uint index;
 };
 
-typedef struct treeDef *Tree;
+typedef struct TreeDef *Tree;
 
-struct treeDef {
+struct TreeDef {
 	nodeElement element;
 	Tree parent, sibling, child;
+
+	~TreeDef() {
+		delete sibling;
+		delete child;
+	}
 };
 
 void initTree(Tree &a, nodeElement data);

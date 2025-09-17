@@ -988,9 +988,9 @@ void drawFlc(
 		}
 	} while (loopNumber <= loop && !g_engine->shouldQuit());
 	flic->stop();
-	delete flic;
 Lexit_proc:
 	animationsFile.close();
+	delete flic;
 }
 
 void clearAnims() {
