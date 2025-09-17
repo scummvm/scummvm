@@ -271,8 +271,9 @@ struct LingoEvent {
 	uint16 channelId;
 	CastMemberID scriptId;
 	Common::Point mousePos;
+	int behaviorIndex = -1;
 
-	LingoEvent (LEvent e, int ei, ScriptType st, bool pass, CastMemberID si = CastMemberID(), Common::Point mp = Common::Point(-1, -1)) {
+	LingoEvent(LEvent e, int ei, ScriptType st, bool pass, CastMemberID si = CastMemberID(), Common::Point mp = Common::Point(-1, -1), int bi = -1) {
 		event = e;
 		eventId = ei;
 		eventHandlerSourceType = kNoneHandler;
@@ -281,9 +282,10 @@ struct LingoEvent {
 		channelId = 0;
 		scriptId = si;
 		mousePos = mp;
+		behaviorIndex = bi;
 	}
 
-	LingoEvent (LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1), uint16 ci = 0) {
+	LingoEvent(LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1), uint16 ci = 0, int bi = -1) {
 		event = e;
 		eventId = ei;
 		eventHandlerSourceType = ehst;
@@ -292,6 +294,7 @@ struct LingoEvent {
 		channelId = ci;
 		scriptId = CastMemberID();
 		mousePos = mp;
+		behaviorIndex = bi;
 	}
 };
 
