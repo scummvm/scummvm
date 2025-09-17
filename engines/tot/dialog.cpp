@@ -25,7 +25,7 @@
 namespace Tot {
 
 Common::String decrypt(Common::String encryptedText) {
-	for (int i = 0; i < encryptedText.size(); i++) {
+	for (uint i = 0; i < encryptedText.size(); i++) {
 		encryptedText.setChar(g_engine->_decryptionKey[i] ^ (char)encryptedText[i], i);
 	}
 	return encryptedText;
@@ -368,7 +368,7 @@ void showDialogueLine(
 			if (g_engine->_mouse->mouseClickY < 143)
 				selectedConv = 0;
 			else {
-				if (g_engine->_mouse->mouseClickX >= 0 && g_engine->_mouse->mouseClickX <= 280) {
+				if (g_engine->_mouse->mouseClickX <= 280) {
 					if (g_engine->_mouse->mouseClickY >= 143 && g_engine->_mouse->mouseClickY <= 155) {
 						selectedConv = firstChat;
 					} else if (g_engine->_mouse->mouseClickY >= 156 && g_engine->_mouse->mouseClickY <= 166) {
@@ -450,7 +450,7 @@ void talk(byte characterIndex) {
 			insertName = 0;
 			conversationMatrix[conversationIndex] = decrypt(text.text);
 
-			for (int i = 0; i < conversationMatrix[conversationIndex].size(); i++) {
+			for (uint i = 0; i < conversationMatrix[conversationIndex].size(); i++) {
 				if (conversationMatrix[conversationIndex][i] == '@')
 					insertName = i;
 			}

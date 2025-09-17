@@ -293,7 +293,7 @@ public:
 	/**
 	 * Current position of the main character
 	 */
-	int _characterPosX = 0, _characterPosY = 0;
+	uint16 _characterPosX = 0, _characterPosY = 0;
 	/**
 	 * Target position of the main character?
 	 */
@@ -447,7 +447,7 @@ public:
 	 * Point of origin of the area surrounding the main character.
 	 * Calculated using the position of the character.
 	 */
-	uint _dirtyMainSpriteX = 0, _dirtyMainSpriteY = 0;
+	uint16 _dirtyMainSpriteX = 0, _dirtyMainSpriteY = 0;
 	/**
 	 * End point of origin of the area surrounding the main character.
 	 * Calculated using the position of the character + dimension

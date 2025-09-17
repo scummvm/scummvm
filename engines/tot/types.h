@@ -171,14 +171,14 @@ struct RoomObjectListEntry {
 };
 
 struct RoomBitmapRegister {
-	int32 bitmapPointer;
+	uint32 bitmapPointer;
 	uint16 bitmapSize;
 	uint16 coordx, coordy, depth;
 };
 
 struct RoomFileRegister {
 	uint16 code;
-	int32 roomImagePointer;
+	uint32 roomImagePointer;
 	uint16 roomImageSize;
 	byte walkAreasGrid[40][28]; /* movement grid */
 	byte mouseGrid[40][28];    /* mousegrid with index to indexadoObjetos */

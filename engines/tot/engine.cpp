@@ -95,7 +95,7 @@ void TotEngine::runaroundRed() {
 				_iframe2++;
 			_secondaryAnimation.posx = devilTrajectory[secTrajIndex][0] - 15;
 			_secondaryAnimation.posy = devilTrajectory[secTrajIndex][1] - 42;
-			if (secTrajIndex >= 0 && secTrajIndex <= 8) {
+			if (secTrajIndex <= 8) {
 				_secondaryAnimation.dir = 2;
 				_secondaryAnimation.depth = 1;
 			} else if (secTrajIndex >= 9 && secTrajIndex <= 33) {
@@ -221,8 +221,8 @@ static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 			incy = g_engine->_dirtyMainSpriteY + hBg - y;
 	} // end of region calculating overlapping area
 
-	for (int j = 0; j < incy; j++) {
-		for (int i = 0; i < incx; i++) {
+	for (uint j = 0; j < incy; j++) {
+		for (uint i = 0; i < incx; i++) {
 			int bgOffset = 4 + ((y - g_engine->_dirtyMainSpriteY) + j) * wBg + i + (x - g_engine->_dirtyMainSpriteX);
 			int imgOffset = 4 + (y - imgPosY + j) * wImg + i + (x - imgPosX);
 			if (img[imgOffset] != 0) {
@@ -1039,7 +1039,7 @@ void TotEngine::goToObject(byte zone1, byte zone2) {
 
 void TotEngine::updateSecondaryAnimationDepth() {
 	uint animationPos = _secondaryAnimation.posy + _secondaryAnimHeight - 1;
-	if (animationPos >= 0 && animationPos <= 56) {
+	if (animationPos && animationPos <= 56) {
 		_secondaryAnimation.depth = 0;
 	} else if (animationPos >= 57 && animationPos <= 66) {
 		_secondaryAnimation.depth = 1;
@@ -1063,7 +1063,7 @@ void TotEngine::updateSecondaryAnimationDepth() {
 }
 
 void TotEngine::updateMainCharacterDepth() {
-	if (_characterPosY >= 0 && _characterPosY <= 7) {
+	if (_characterPosY && _characterPosY <= 7) {
 		_mainCharAnimation.depth = 0;
 	} else if (_characterPosY >= 8 && _characterPosY <= 17) {
 		_mainCharAnimation.depth = 1;
@@ -1832,8 +1832,7 @@ void TotEngine::pickupScreenObject() {
 			break;
 		default: {
 			for (int i = 0; i < 15; i++)
-				if (_currentRoomData->screenLayers[i].bitmapPointer ==
-					_curObject.bitmapPointer) {
+				if (_currentRoomData->screenLayers[i].bitmapPointer == _curObject.bitmapPointer) {
 					_currentRoomData->screenLayers[i].bitmapPointer = 0;
 					_currentRoomData->screenLayers[i].bitmapSize = 0;
 					_currentRoomData->screenLayers[i].coordx = 0;
@@ -3643,7 +3642,7 @@ static void blit(byte *srcImage, byte *dstImage) { // Near;
 	uint size = w * h;
 	byte *dst = dstImage + 4;
 	byte *src = srcImage + 4;
-	for (int i = 0; i < size; i++) {
+	for (uint i = 0; i < size; i++) {
 		if (dst[i] == 0) {
 			dst[i] = src[i];
 		}
@@ -3666,7 +3665,7 @@ void TotEngine::scrollRight(uint horizontalPos) {
 	byte *assembledCharacterFrame = (byte *)malloc(_mainCharFrameSize);
 	// Number of bytes to move
 	size_t numBytes = 44796;
-	for (int i = 0; i < stepCount; i++) {
+	for (uint i = 0; i < stepCount; i++) {
 		// move everything to the left
 		memmove(_sceneBackground + 4, _sceneBackground + 8, numBytes);
 
@@ -3830,7 +3829,8 @@ void TotEngine::sayLine(
 	bool isWithinConversation) {
 	TextEntry text;
 
-	byte insertName, charCounter, lineBreakCount, width;
+	uint charCounter;
+	byte insertName, lineBreakCount, width;
 	byte characterFacingDir;
 
 	uint talkAnimIndex, bgSize, posx, posy;
@@ -3914,7 +3914,7 @@ void TotEngine::sayLine(
 
 		insertName = 0;
 
-		for (int i = 0; i < text.text.size(); i++) {
+		for (uint i = 0; i < text.text.size(); i++) {
 			text.text.setChar(_decryptionKey[i] ^ text.text[i], i);
 			if (text.text[i] == '@')
 				insertName = i;
@@ -4621,7 +4621,7 @@ void TotEngine::checkMouseGrid() {
 	Common::String invObject;
 	if (_cpCounter2 > 120)
 		showError(274);
-	if (_mouse->mouseY >= 0 && _mouse->mouseY <= 131) {
+	if (_mouse->mouseY <= 131) {
 		xGrid = _mouse->getMouseCoordsWithinGrid().x;
 		yGrid = _mouse->getMouseCoordsWithinGrid().y;
 		if (_currentRoomData->mouseGrid[xGrid][yGrid] != _currentRoomData->mouseGrid[_oldGridX][_oldGridY] || _oldInventoryObjectName != "") {
@@ -4887,7 +4887,8 @@ void TotEngine::displayObjectDescription(const Common::String &textString) {
 	byte maxWidth = 33;
 	byte textColor = 255;
 	byte shadowColor = 0;
-	byte ihc, lineCounter;
+	uint ihc;
+	byte lineCounter;
 	byte newLineMatrix[10];
 
 	if (textString.size() < maxWidth) {

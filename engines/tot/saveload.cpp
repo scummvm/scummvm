@@ -566,11 +566,11 @@ void TotEngine::loadGame(SavedGame game) {
 	_graphics->sceneTransition(false, _sceneBackground);
 }
 
-Common::String drawAndSelectSaves(Common::StringArray saves, int selectedGame) {
+Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) {
 	g_engine->_mouse->hide();
 	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
-	int size = saves.size();
-	for (int i = 0; i < 6; i++) {
+	uint size = saves.size();
+	for (uint i = 0; i < 6; i++) {
 
 		int color = i == selectedGame ? 255 : 253;
 		if (i < size) {
@@ -594,7 +594,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, int selectedGame) {
 
 void TotEngine::originalSaveLoadScreen() {
 	uint oldMouseX, oldMouseY;
-	int selectedGame = -1;
+	uint selectedGame = -1;
 	bool modified = false;
 	Common::String saveName = "";
 
@@ -661,7 +661,7 @@ void TotEngine::originalSaveLoadScreen() {
 		if (mouseClicked) {
 			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
 				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) {
-					if (selectedGame >= 0 && _saveAllowed && saveName != "") {
+					if (selectedGame && _saveAllowed && saveName != "") {
 						saveGameState(selectedGame, saveName, false);
 						_graphics->putImg(50, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
@@ -670,7 +670,7 @@ void TotEngine::originalSaveLoadScreen() {
 						_sound->beep(100, 300);
 					}
 				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
-					if (selectedGame >= 0 && !modified) {
+					if (selectedGame && !modified) {
 						if (selectedGame < saves.size()) {
 							_mouse->hide();
 							_graphics->putImg(50, 10, menuBgPointer);
@@ -740,7 +740,7 @@ void TotEngine::originalSaveLoadScreen() {
 			}
 		}
 
-		if (selectedGame >= 0 && keyPressed && _saveAllowed) {
+		if (selectedGame && keyPressed && _saveAllowed) {
 			_mouse->hide();
 			byte ytext = 29 + (selectedGame * 15);
 			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastInputChar);

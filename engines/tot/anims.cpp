@@ -70,8 +70,8 @@ void drawText(uint x, uint y, const Common::String &str1, const Common::String &
 
 void removeText(uint xTextLine1, uint yTextLine1, uint xTextLine2, uint yTextLine2, byte fillColor) {
 
-	for (int j = yTextLine1; j < yTextLine2 + 1; j++) {
-		for (int i = xTextLine1; i < xTextLine2 + 1; i++) {
+	for (uint j = yTextLine1; j < yTextLine2 + 1; j++) {
+		for (uint i = xTextLine1; i < xTextLine2 + 1; i++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
 		}
 	}

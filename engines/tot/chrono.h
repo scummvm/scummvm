@@ -40,7 +40,7 @@ public:
 	ChronoManager();
 	~ChronoManager();
 	void updateChrono();
-	void delay(int ms);
+	void delay(uint32 ms);
 	void changeSpeed();
 
 	bool _gameTick = false;

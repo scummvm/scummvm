@@ -57,7 +57,7 @@ void ChronoManager::changeSpeed() {
 		_speedMultiplier = 1;
 }
 
-void ChronoManager::delay(int ms) {
+void ChronoManager::delay(uint32 ms) {
 	uint32 delayStart = g_system->getMillis();
 	Common::Event e;
 	ms = ms / _speedMultiplier;
