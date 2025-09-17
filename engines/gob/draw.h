@@ -313,6 +313,7 @@ class Draw_Playtoons: public Draw_v2 {
 public:
 	Draw_Playtoons(GobEngine *vm);
 	~Draw_Playtoons() override {}
+	void printTotText(int16 id) override;
 	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 };
 
