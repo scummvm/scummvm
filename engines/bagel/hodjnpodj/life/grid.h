@@ -44,10 +44,12 @@ public:
 
 	//creator
 	colony(int r, int c);
+	colony(const colony &) = default;
+
 	//destroy construct
 	~colony();
 	//copy operator
-	colony &operator=(const colony& c);
+	colony &operator=(const colony &c);
 	//equality operators: assuming equal dims
 	bool operator==(const colony &c);
 	bool operator!=(const colony &c);
@@ -62,7 +64,7 @@ public:
 	int islife(int r, int c) {
 		return grid[r][c];
 	};
-	void evolve(colony c);
+	void evolve(const colony &c);
 	void flip(int r, int c);
 	//void print();
 public:

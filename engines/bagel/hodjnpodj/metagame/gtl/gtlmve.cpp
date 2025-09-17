@@ -1581,7 +1581,7 @@ bool CGtlData::InitInterface(int iCode, bool & bExitDll)
 					            m_xpCurXodj->m_pGenStore,
 					            ENC_NARRATION, m_xpCurXodj->m_iFurlongs,
 					            nPSector, nOSector,
-					            m_xpCurXodj->m_bHodj ? lpMetaGameStruct->m_bTraps : lpMetaGameStruct->m_bTraps);
+					            lpMetaGameStruct->m_bTraps);
 				}
 			}
 

@@ -74,7 +74,7 @@ bool colony::operator!=(const colony& c) {
 	return !(*this == c);
 }
 
-void colony::evolve(colony clny) {
+void colony::evolve(const colony &clny) {
 	int r, c;           // for local cell check
 	int neighbors;      // # of neighbors in local area
 	int pos_r, pos_c; // will step across every part of board

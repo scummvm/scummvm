@@ -384,8 +384,7 @@ void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* 
 			if (newAmnt < BEAVERTIMEMIN)
 				newAmnt = BEAVERTIMEMIN;
 		} else {
-			if (newAmnt < GAMETIMEMIN)
-				newAmnt = GAMETIMEMIN;
+			newAmnt = MAX<int>(newAmnt, GAMETIMEMIN);
 		}
 		break;
 	case SB_LINERIGHT:
