@@ -19,6 +19,7 @@
  *
  */
 
+#include "alcachofa/alcachofa.h"
 #include "alcachofa/graphics-opengl.h"
 #include "alcachofa/detection.h"
 
@@ -188,6 +189,7 @@ private:
 		setBlendFunc(_currentBlendMode);
 		_shader.setUniform("projection", _projection);
 		_shader.setUniform("blendMode", _currentTexture == nullptr ? 5 : (int)_currentBlendMode);
+		_shader.setUniform("posterize", g_engine->config().highQuality() ? 1 : 0);
 		_shader.setUniform1f("lodBias", _currentLodBias);
 		_shader.setUniform("texture", 0);
 		_batchTexture = _currentTexture;
@@ -198,7 +200,6 @@ private:
 	Array<VBO> _vbos;
 	Array<Vertex> _vertices;
 	uint _curVBO = 0;
-//	uint _usedTextureUnits = 0;
 	bool _needsNewBatch = false;
 	OpenGLTexture *_batchTexture = nullptr;
 	ScopedPtr<OpenGLTexture> _whiteTexture;
@@ -226,6 +227,7 @@ private:
 
 		uniform sampler2D texture;
 		uniform int blendMode;
+		uniform int posterize;
 		uniform float lodBias;
 
 		varying vec2 var_uv;
@@ -244,6 +246,11 @@ private:
 				gl_FragColor.a = tex_color.a;
 			} else { // Disabled texture
 				gl_FragColor = var_color;
+			}
+
+			if (posterize == 0) {
+				// shave off 3 bits for that 16-bit look
+				gl_FragColor = floor(gl_FragColor * (256 / 8)) / (256 / 8);
 			}
 		})";
 };

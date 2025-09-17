@@ -49,7 +49,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_32BITS,
 		{
 			_s("32 Bits"),
-			_s("Uses 32bit textures instead of 16bit ones (currently not implemented)"),
+			_s("Whether to render the game in 16-bit color"),
 			"32_bits",
 			true,
 			0,

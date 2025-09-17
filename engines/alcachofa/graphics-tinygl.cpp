@@ -19,6 +19,7 @@
  *
  */
 
+#include "alcachofa/alcachofa.h"
 #include "alcachofa/graphics.h"
 #include "alcachofa/detection.h"
 #include "alcachofa/graphics-opengl-base.h"
@@ -71,7 +72,23 @@ protected:
 class TinyGLRenderer : public OpenGLRendererBase {
 public:
 	TinyGLRenderer(Point resolution) : OpenGLRendererBase(resolution) {
-		initGraphics(resolution.x, resolution.y, nullptr);
+		if (g_engine->config().bits32())
+			initGraphics(resolution.x, resolution.y, nullptr);
+		else {
+			// we try to take some 16-bit format and fallback
+			auto formats = g_system->getSupportedFormats();
+			for (auto it = formats.begin(); it != formats.end();) {
+				if (it->bytesPerPixel == 2)
+					++it;
+				else
+					it = formats.erase(it);
+			}
+			if (formats.empty())
+				initGraphics(resolution.x, resolution.y, nullptr);
+			else
+				initGraphics(resolution.x, resolution.y, formats);
+		}
+
 		debug("Using framebuffer format: %s", g_system->getScreenFormat().toString().c_str());
 		if (g_system->getScreenFormat().bytesPerPixel < 2)
 			error("Alcachofa needs at least 16bit colors"); 
