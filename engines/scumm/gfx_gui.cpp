@@ -556,6 +556,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 			_virtscr[kBannerVirtScreen].setDirtyRange(0, _virtscr[kBannerVirtScreen].h);
 			updateDirtyScreen(kBannerVirtScreen);
 			_virtscr[kMainVirtScreen].setDirtyRange(startingPointY - _virtscr[kMainVirtScreen].topline, startingPointY - _virtscr[kMainVirtScreen].topline + _virtscr[kBannerVirtScreen].h);
+			updateDirtyScreen(kMainVirtScreen);
 		}
 	}
 
