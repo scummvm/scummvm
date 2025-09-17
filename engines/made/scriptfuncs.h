@@ -70,7 +70,6 @@ protected:
 	uint8 _gameAudioVolume;
 
 	// PlayNote/StopNote and PlayTele/StopTele wave generators
-	Audio::SoundHandle _pcSpeakerHandle1, _pcSpeakerHandle2;
 	Audio::PCSpeaker *_pcSpeaker1, *_pcSpeaker2;
 
 	Common::Array<const ExternalFunc *> _externalFuncs;

@@ -50,10 +50,10 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 
 ScriptFunctions::~ScriptFunctions() {
 	for (uint i = 0; i < _externalFuncs.size(); ++i)
-			delete _externalFuncs[i];
+		delete _externalFuncs[i];
 
-	_vm->_system->getMixer()->stopHandle(_pcSpeakerHandle1);
-	_vm->_system->getMixer()->stopHandle(_pcSpeakerHandle2);
+	delete _pcSpeaker1;
+	delete _pcSpeaker2;
 }
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
