@@ -80,6 +80,8 @@ const char *const *getHardcodedTextsByCurrentLanguage();
 
 const int32 *getOffsetsByCurrentLanguage();
 
+void newSecondaryAnimationFrame();
+
 inline bool isLanguageSpanish() {
 	return g_engine->_lang == Common::ES_ESP;
 };

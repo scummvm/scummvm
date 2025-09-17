@@ -577,6 +577,7 @@ void loadTalkAnimations() {
 	animFile.seek(offset);
 	// Will load talking anim always in the upwards direction of the walk cycle array
 	for (int i = 0; i < 16; i++) {
+		free(g_engine->_mainCharAnimation.bitmap[0][i]);
 		g_engine->_mainCharAnimation.bitmap[0][i] = (byte *)malloc(g_engine->_mainCharFrameSize);
 		animFile.read(g_engine->_mainCharAnimation.bitmap[0][i], g_engine->_mainCharFrameSize);
 	}
@@ -584,7 +585,6 @@ void loadTalkAnimations() {
 
 	if ((g_engine->_currentRoomData->animationName != "PETER") && (g_engine->_currentRoomData->animationName != "ARZCAEL")) {
 		g_engine->_iframe2 = 0;
-		free(g_engine->_curSecondaryAnimationFrame);
 		bool result;
 		switch (g_engine->_curObject.speaking) {
 		case 1:
@@ -603,10 +603,10 @@ void loadTalkAnimations() {
 		g_engine->_secondaryAnimationFrameCount = animFile.readByte();
 		g_engine->_secondaryAnimDirCount = animFile.readByte();
 
-		g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
+		newSecondaryAnimationFrame();
 		if (g_engine->_secondaryAnimDirCount != 0) {
 			g_engine->_secondaryAnimationFrameCount = g_engine->_secondaryAnimationFrameCount / 4;
-			for (int i = 0; i <= 3; i++) {
+			for (int i = 0; i < 4; i++) {
 				g_engine->loadAnimationForDirection(&animFile, i);
 			}
 		} else {
@@ -625,6 +625,7 @@ void unloadTalkAnimations() {
 	g_engine->_mainCharFrameSize = animFile.readUint16LE();
 
 	for (int i = 0; i < kWalkFrameCount; i++) {
+		free(g_engine->_mainCharAnimation.bitmap[0][i]);
 		g_engine->_mainCharAnimation.bitmap[0][i] = (byte *)malloc(g_engine->_mainCharFrameSize);
 		animFile.read(g_engine->_mainCharAnimation.bitmap[0][i], g_engine->_mainCharFrameSize);
 	}
@@ -637,7 +638,7 @@ void unloadTalkAnimations() {
 		g_engine->_secondaryAnimFrameSize = animFile.readUint16LE();
 		g_engine->_secondaryAnimationFrameCount = animFile.readByte();
 		g_engine->_secondaryAnimDirCount = animFile.readByte();
-		g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
+		newSecondaryAnimationFrame();
 		if (g_engine->_secondaryAnimDirCount != 0) {
 
 			g_engine->_secondaryAnimationFrameCount = g_engine->_secondaryAnimationFrameCount / 4;

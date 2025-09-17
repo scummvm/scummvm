@@ -207,6 +207,12 @@ struct RoomFileRegister {
 	Common::Point secondaryAnimTrajectory[300];					/* trajectory of the secondary animation */
 	uint16 secondaryAnimDirections[300];						/* directions of the secondary trajectory. Pos 300 reflects object code. */
 	uint16 secondaryTrajectoryLength;							/* length of the trajectory of the secondary animation */
+	~RoomFileRegister() {
+		for (int i = 0; i < 51; i++) {
+			delete screenObjectIndex[i];
+			screenObjectIndex[i] = nullptr;
+		}
+	}
 };
 
 struct SavedGame {

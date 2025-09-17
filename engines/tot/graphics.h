@@ -74,7 +74,6 @@ public:
 	void sceneTransition(bool fadeToBlack, byte *screen);
 
 	void advancePaletteAnim();
-	void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
 	void printColor(int x, int y, int color);
 	void updateSceneArea(int speed = 1);
 

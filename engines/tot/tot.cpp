@@ -624,6 +624,10 @@ void TotEngine::changeRoom() {
 	saveRoomData(_currentRoomData, _rooms);
 	_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 
+	if (_currentRoomData->doors[_doorIndex].nextScene != 255) {
+		clearAnimation();
+		clearScreenLayers();
+	}
 	switch (_currentRoomData->doors[_doorIndex].nextScene) {
 	case 2: {
 		_iframe = 0;
@@ -632,8 +636,6 @@ void TotEngine::changeRoom() {
 		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 
 		_graphics->sceneTransition(true, nullptr);
@@ -649,8 +651,6 @@ void TotEngine::changeRoom() {
 		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		_oldGridX = 0;
-		_oldGridY = 0;
 	} break;
 	case 5: {
 		if (_currentRoomData->code != 6) {
@@ -660,8 +660,6 @@ void TotEngine::changeRoom() {
 			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY + 15;
 			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
@@ -670,42 +668,26 @@ void TotEngine::changeRoom() {
 			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} else {
-
 			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 			_targetZone = 21;
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 22, -2);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		}
 	} break;
 	case 6: {
 		_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 		_targetZone = 27;
 		goToObject(_currentZone, _targetZone);
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 22, 2);
 		_mouse->show();
-		_oldGridX = 0;
-		_oldGridY = 0;
-		checkMouseGrid();
 	} break;
 	case 9: {
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 		_graphics->sceneTransition(true, nullptr);
 		_iframe = 0;
@@ -718,9 +700,6 @@ void TotEngine::changeRoom() {
 		_graphics->sceneTransition(false, _sceneBackground);
 		_mouse->show();
 		if (getRandom(2) == 0) copyProtection();
-		_oldGridX = 0;
-		_oldGridY = 0;
-		checkMouseGrid();
 	} break;
 	case 12: {
 		if (_currentRoomData->code != 13) {
@@ -730,28 +709,17 @@ void TotEngine::changeRoom() {
 			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			_mouse->show();
 		} else {
-
 			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 64, 0);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		}
 	} break;
 	case 13: {
@@ -759,26 +727,16 @@ void TotEngine::changeRoom() {
 		case 12: {
 			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 64, 0);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} break;
 		case 14: {
 			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 56, 0);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} break;
 		}
 	} break;
@@ -790,28 +748,17 @@ void TotEngine::changeRoom() {
 			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} else {
-
 			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 56, 0);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		}
 	} break;
 	case 17: {
@@ -821,8 +768,6 @@ void TotEngine::changeRoom() {
 		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
@@ -835,9 +780,6 @@ void TotEngine::changeRoom() {
 		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		_oldGridX = 0;
-		_oldGridY = 0;
-		checkMouseGrid();
 	} break;
 	case 18: {
 		if (_currentRoomData->code != 19) {
@@ -847,28 +789,18 @@ void TotEngine::changeRoom() {
 			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} else {
 
 			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 131, -1);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		}
 	} break;
 	case 19: {
@@ -879,28 +811,17 @@ void TotEngine::changeRoom() {
 			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		} else {
-
 			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
 			goToObject(_currentZone, _targetZone);
-			clearAnimation();
-			clearScreenLayers();
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 131, 1);
 			_mouse->show();
-			_oldGridX = 0;
-			_oldGridY = 0;
-			checkMouseGrid();
 		}
 	} break;
 	case 20: {
@@ -910,8 +831,6 @@ void TotEngine::changeRoom() {
 		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
@@ -938,9 +857,6 @@ void TotEngine::changeRoom() {
 		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		_oldGridX = 0;
-		_oldGridY = 0;
-		checkMouseGrid();
 	} break;
 	case 24: {
 		_iframe = 0;
@@ -949,8 +865,6 @@ void TotEngine::changeRoom() {
 		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-		clearAnimation();
-		clearScreenLayers();
 		_mouse->hide();
 		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
@@ -1002,9 +916,6 @@ void TotEngine::changeRoom() {
 			runaroundRed();
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		_oldGridX = 0;
-		_oldGridY = 0;
-		checkMouseGrid();
 	} break;
 	case 255:
 		wcScene();
@@ -1016,8 +927,7 @@ void TotEngine::changeRoom() {
 		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
-		clearAnimation();
-		clearScreenLayers();
+
 		_mouse->hide();
 		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
@@ -1036,10 +946,13 @@ void TotEngine::changeRoom() {
 		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
+	}
+	}
+	
+	if (_currentRoomData->doors[_doorIndex].nextScene != 255) {
 		_oldGridX = 0;
 		_oldGridY = 0;
 		checkMouseGrid();
-	}
 	}
 	_oldTargetZone = 0;
 }
@@ -1270,11 +1183,13 @@ void TotEngine::clearVars() {
 	if (_sceneObjectsData != nullptr) {
 		delete _sceneObjectsData;
 	}
-	for (int i = 0; i < kNumScreenOverlays; i++) {
-		if (_screenLayers[i] != nullptr) {
-			free(_screenLayers[i]);
-		}
+
+	if (_currentRoomData) {
+		delete _currentRoomData;
 	}
+	
+	clearScreenLayers();
+
 	for (int i = 0; i < kInventoryIconCount; i++) {
 		if (_inventoryIconBitmaps[i] != nullptr) {
 			free(_inventoryIconBitmaps[i]);

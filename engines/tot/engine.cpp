@@ -296,10 +296,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 			if (_isPeterCoughing && !_sound->isVocPlaying()) {
 				_iframe2 = 0;
 			}
-			if(_curSecondaryAnimationFrame != nullptr) {
-				free(_curSecondaryAnimationFrame);
-			}
-			_curSecondaryAnimationFrame = (byte *)malloc(_secondaryAnimFrameSize);
+			newSecondaryAnimationFrame();
 			Common::copy(_secondaryAnimation.bitmap[_secondaryAnimation.dir][_iframe2], _secondaryAnimation.bitmap[_secondaryAnimation.dir][_iframe2] + _secondaryAnimFrameSize,  _curSecondaryAnimationFrame);
 		}
 		uint16 curCharFrameW = READ_LE_UINT16(_curCharacterAnimationFrame);
@@ -706,6 +703,9 @@ void TotEngine::loadScreenData(uint screenNumber) {
 	_currentRoomNumber = screenNumber;
 
 	_rooms->seek(screenNumber * kRoomRegSize, SEEK_SET);
+	if (_currentRoomData) {
+		delete _currentRoomData;
+	}
 	_currentRoomData = readScreenDataFile(_rooms);
 	loadScreen();
 	for (int i = 0; i < 15; i++) {
@@ -3778,6 +3778,9 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 	// Start screen 2
 
 	_rooms->seek(roomCode * kRoomRegSize, SEEK_SET);
+	if (_currentRoomData) {
+		delete _currentRoomData;
+	}
 	_currentRoomData = readScreenDataFile(_rooms);
 
 	loadScreen();
@@ -4069,8 +4072,14 @@ void TotEngine::initScreenPointers() {
 }
 
 void TotEngine::loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
+	uint size = _secondaryAnimFrameSize;
 	for (int j = 0; j < _secondaryAnimationFrameCount; j++) {
-		_graphics->loadAnimationIntoBuffer(stream, _secondaryAnimation.bitmap[direction][j], _secondaryAnimFrameSize);
+		if (_secondaryAnimation.bitmap[direction][j]) {
+			free(_secondaryAnimation.bitmap[direction][j]);
+		}
+		_secondaryAnimation.bitmap[direction][j] = (byte *)malloc(size);
+		stream->read(_secondaryAnimation.bitmap[direction][j], size);
+		Common::copy(_secondaryAnimation.bitmap[direction][j], _secondaryAnimation.bitmap[direction][j] + size, g_engine->_curSecondaryAnimationFrame);
 	}
 }
 
@@ -4090,11 +4099,11 @@ void TotEngine::loadAnimation(const Common::String &animationName) {
 	_secondaryAnimFrameSize = animFile.readUint16LE();
 	_secondaryAnimationFrameCount = animFile.readByte();
 	_secondaryAnimDirCount = animFile.readByte();
-	_curSecondaryAnimationFrame = (byte *)malloc(_secondaryAnimFrameSize);
+	newSecondaryAnimationFrame();
 	if (_secondaryAnimDirCount != 0) {
 
 		_secondaryAnimationFrameCount = _secondaryAnimationFrameCount / 4;
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < 4; i++) {
 			loadAnimationForDirection(&animFile, i);
 		}
 	} else {
@@ -4144,6 +4153,9 @@ void TotEngine::updateAltScreen(byte otherScreenNumber) {
 
 	// Load other screen
 	_rooms->seek(otherScreenNumber * kRoomRegSize, SEEK_SET);
+	if (_currentRoomData) {
+		delete _currentRoomData;
+	}
 	_currentRoomData = readScreenDataFile(_rooms);
 
 	switch (otherScreenNumber) {
@@ -4220,6 +4232,9 @@ void TotEngine::updateAltScreen(byte otherScreenNumber) {
 
 	// Restore current room again
 	_rooms->seek(currentScreen * kRoomRegSize, SEEK_SET);
+	if (_currentRoomData) {
+		delete _currentRoomData;
+	}
 	_currentRoomData = readScreenDataFile(_rooms);
 
 	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, SET_WITH_ANIM);
@@ -4296,10 +4311,13 @@ void TotEngine::clearScreenLayers() {
 void TotEngine::clearAnimation() {
 	if (_isSecondaryAnimationEnabled) {
 		_isSecondaryAnimationEnabled = false;
+		if (_curSecondaryAnimationFrame != nullptr) {
+			free(_curSecondaryAnimationFrame);
+		}
 		_curSecondaryAnimationFrame = nullptr;
-		for(int j = 0; j < _secondaryAnimDirCount; j++){
-			for(int i = 0; i < _secondaryAnimationFrameCount; i++){
-				if(_secondaryAnimation.bitmap[j][i] != nullptr && _secondaryAnimation.bitmap[j][i] != _curSecondaryAnimationFrame) {
+		for (int j = 0; j < _secondaryAnimDirCount; j++) {
+			for (int i = 0; i < _secondaryAnimationFrameCount; i++) {
+				if (_secondaryAnimation.bitmap[j][i] != nullptr && _secondaryAnimation.bitmap[j][i] != _curSecondaryAnimationFrame) {
 					free(_secondaryAnimation.bitmap[j][i]);
 				}
 				_secondaryAnimation.bitmap[j][i] = nullptr;
@@ -5397,7 +5415,7 @@ void TotEngine::loadBat() {
 	_secondaryAnimFrameSize = animFile.readUint16LE();
 	_secondaryAnimationFrameCount = animFile.readByte();
 	_secondaryAnimDirCount = animFile.readByte();
-	_curSecondaryAnimationFrame = (byte *)malloc(_secondaryAnimFrameSize);
+	newSecondaryAnimationFrame();
 	loadAnimationForDirection(&animFile, 0);
 	animFile.close();
 }
@@ -5412,7 +5430,7 @@ void TotEngine::loadDevil() {
 	_secondaryAnimFrameSize = animFile.readUint16LE();
 	_secondaryAnimationFrameCount = animFile.readByte();
 	_secondaryAnimDirCount = animFile.readByte();
-	_curSecondaryAnimationFrame = (byte *)malloc(_secondaryAnimFrameSize);
+	newSecondaryAnimationFrame();
 	if (_secondaryAnimDirCount != 0) {
 		_secondaryAnimationFrameCount = _secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {

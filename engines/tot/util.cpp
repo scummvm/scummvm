@@ -24,6 +24,7 @@
 #include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
+#include "util.h"
 
 namespace Tot {
 
@@ -526,5 +527,10 @@ const int32 *getOffsetsByCurrentLanguage() {
 	return (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 }
 
-
+void newSecondaryAnimationFrame() {
+	if (g_engine->_curSecondaryAnimationFrame != nullptr) {
+		free(g_engine->_curSecondaryAnimationFrame);
+	}
+	g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
+}
 } // End of namespace Tot
