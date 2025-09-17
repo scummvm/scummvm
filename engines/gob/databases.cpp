@@ -26,6 +26,7 @@
  */
 
 #include "common/file.h"
+#include "common/ptr.h"
 #include "common/textconsole.h"
 
 #include "gob/databases.h"
@@ -194,7 +195,7 @@ bool Database::openTable(const Common::String &id, const Common::Path &file) {
 		return false;
 	}
 
-	dBase *db = new dBase();
+	Common::ScopedPtr<dBase> db(new dBase());
 	if (!db->load(dbFile)) {
 		warning("Database::open(): Failed loading database file \"%s\"", file.toString().c_str());
 		return false;
@@ -232,7 +233,7 @@ bool Database::openTable(const Common::String &id, const Common::Path &file) {
 		db->loadMultipleIndex(mdxFile);
 	}
 
-	_tables.setVal(id, db);
+	_tables.setVal(id, db.release());
 	return true;
 }
 
