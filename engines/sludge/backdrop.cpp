@@ -421,8 +421,10 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 
 	// resize backdrop
 	if (reserve) {
-		if (!resizeBackdrop(realPicWidth, realPicHeight))
+		if (!resizeBackdrop(realPicWidth, realPicHeight)) {
+			tmp.free();
 			return false;
+		}
 	}
 
 	if (x == IN_THE_CENTRE)
@@ -431,6 +433,7 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 		y = (_sceneHeight - realPicHeight) >> 1;
 	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight) {
 		debugC(0, kSludgeDebugGraphics, "Illegal back drop size");
+		tmp.free();
 		return false;
 	}
 
@@ -462,8 +465,10 @@ bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x,
 		x = (_sceneWidth - realPicWidth) >> 1;
 	if (y == IN_THE_CENTRE)
 		y = (_sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight)
+	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight) {
+		mixSurface.free();
 		return false;
+	}
 
 	Graphics::ManagedSurface tmp;
 	tmp.copyFrom(mixSurface);
