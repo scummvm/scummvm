@@ -35,6 +35,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  AGI:
    - Added Text-to-Speech support.
+   - Fixed Mickey's Space Adventure sound on PS3, Wii, and other big-endian
+     ports.
 
  Buried:
    - Added keymapper support.
@@ -144,10 +146,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added an option to render Sega CD MI1 with the "Shadow Mode" palette
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
+   - Added Text-to-Speech support.
+   - Added support for Catalan fan translations of Maniac Mansion, Indy3,
+     Monkey1 and Indy4.
    - Fixed game detection for the Macintosh version of MI1 from the first
      first LucasArts Mac CD Game Pack. Previously you had to make sure to
      only copy the data fork, not the (empty) resource fork.
-   - Added Text-to-Speech support.
+   - Fixed various crashes when loading some old/special saves.
+   - Fixed a bug with background layers, which could cause some small
+     glitches in The Dig.
+   - Fixed an edge case when decoding SMUSH videos. This would cause some
+     gray artifacts/pixels to appear in the ending video of The Dig.
+   - Fixed minor visual issues in Backyard Baseball (1997) and Pajama Sam 3.
 
  Sherlock:
    - Added keymapper support.
