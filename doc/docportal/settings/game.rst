@@ -182,6 +182,28 @@ Disable fade-out effects
 
 ,,,,,,
 
+.. _ALCACHOFA:
+
+Alcachofa
+******************
+
+.. _high_quality:
+
+High Quality
+	Toggles some optional graphical effects.
+
+	*high_quality*
+
+.. _32_bits:
+
+32-Bit Mode
+	Toggles between full 32-bit colors or reduced 16-bit color.
+	Might need a restart to take effect.
+
+	*32_bits*
+
+,,,,,,
+
 .. _BLADERUNNER:
 
 Bladerunner
