@@ -502,6 +502,7 @@ bool Ultima8Engine::setupGame() {
 
 	if (info->_type == GameInfo::GAME_UNKNOWN) {
 		warning("%s: unknown, skipping", info->_name.c_str());
+		delete info;
 		return false;
 	}
 
