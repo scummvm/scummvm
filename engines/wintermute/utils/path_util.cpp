@@ -69,7 +69,7 @@ Common::String PathUtil::getDirectoryName(const Common::String &path) {
 
 	size_t pos = newPath.findLastOf('/');
 
-	if (pos == AnsiString::npos) {
+	if (pos == Common::String::npos) {
 		return "";
 	} else {
 		return newPath.substr(0, pos + 1);
