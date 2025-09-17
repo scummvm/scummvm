@@ -233,6 +233,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 		{
 			CastMemberID scriptId;
 			bool immediate = false;
+			Common::String initializerParams;
 			// mouseUp events seem to check the frame script ID from the original mouseDown event
 			if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
 				scriptId = _currentMouseDownSpriteScriptID;
@@ -243,9 +244,27 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				Frame *currentFrame = _score->_currentFrame;
 				assert(currentFrame != nullptr);
 				Sprite *sprite = _score->getSpriteById(event.channelId);
-				if (!sprite || !sprite->_scriptId.member)
+				if (!sprite)
 					return;
-				scriptId = sprite->_scriptId;
+
+				if (_vm->getVersion() >= 600) {
+					if (event.behaviorIndex >= 0) {
+						scriptId = sprite->_behaviors[event.behaviorIndex].memberID;
+						initializerParams = sprite->_behaviors[event.behaviorIndex].initializerParams;
+						warning("ID: %s, initializerParams: '%s'", scriptId.asString().c_str(), initializerParams.c_str());
+
+						// TODO: instantiate the behavior script as a child and set its properties
+						// according to the list in initializerParams
+					} else {
+						return;
+					}
+				} else {
+					if (!sprite->_scriptId.member)
+						return;
+
+					scriptId = sprite->_scriptId;
+				}
+
 				immediate = sprite->_immediate;
 			}
 
@@ -387,10 +406,11 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 
 	// In D6+ there are multiple behavors per sprite, find the sprite
 	if (g_director->getVersion() >= 600) {
-		if (targetId == 0)
-			pointedSpriteId = _score->getActiveSpriteIDFromPos(pos);
-		else
+		if (targetId == 0) {
+			pointedSpriteId = _score->getMouseSpriteIDFromPos(pos);
+		} else {
 			pointedSpriteId = targetId;
+		}
 	}
 
 	/* When an event occurs the message [...] is first sent to a

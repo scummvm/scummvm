@@ -335,6 +335,12 @@ bool Sprite::respondsToMouse() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
+	// TODO: Check if we need to check against individual events like below
+	if (g_director->getVersion() >= 600) {
+		if (_behaviors.size() > 0)
+			return true;
+	}
+
 	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
 	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
 					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
