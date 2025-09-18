@@ -2013,7 +2013,6 @@ void Score::loadFrameSpriteDetails(bool skipLog) {
 	}
 }
 
-
 void Score::seekToMemberInList(int frameNum) {
 	if (frameNum < 1 || frameNum >= _numOfFrames) {
 		warning("Score::seekToMemberInList(): frameNum %d out of bounds [1, %d)", frameNum, _numOfFrames);
@@ -2073,6 +2072,8 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	if (loadCast) {
 		// Load frame cast
 		setSpriteCasts();
+
+		createScriptInstances(_curFrameNumber);
 	}
 
 	return true;
@@ -2446,11 +2447,40 @@ void Score::killScriptInstances(int frameNum) {
 		return;
 
 	for (int i = 0; i < (int)_channels.size(); i++) {
-		if (frameNum < _channels[i]->_startFrame || frameNum > _channels[i]->_endFrame) {
-			_channels[i]->_scriptInstanceList.clear();
-			_channels[i]->_startFrame = _channels[i]->_endFrame = -1;
+		Channel *channel = _channels[i];
 
-			debugC(4, kDebugLingoExec, "Score::killBehaviors(): Killed behaviors for channel %d", i + 1);
+		if (channel->_scriptInstanceList.size() == 0)
+			continue;
+
+		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
+			channel->_scriptInstanceList.clear();
+			channel->_startFrame = channel->_endFrame = -1;
+
+			debugC(1, kDebugLingoExec, "Score::killBehaviors(): Killed behaviors for channel %d", i + 1);
+		}
+	}
+}
+
+void Score::createScriptInstances(int frameNum) {
+	if (_version < kFileVer600) // No-op for early Directors
+		return;
+
+	for (int i = 0; i < (int)_channels.size(); i++) {
+		Channel *channel = _channels[i];
+		Sprite *sprite = channel->_sprite;
+
+		if (frameNum >= channel->_startFrame && frameNum <= channel->_endFrame) {
+			// We create scriptInstance only for new sprites
+			if (channel->_scriptInstanceList.size() == 0) {
+				if (sprite->_behaviors.size() > 0) {
+					for (uint j = 0; j < sprite->_behaviors.size(); j++) {
+						// TODO: Here we should do proper instantiation
+						channel->_scriptInstanceList.push_back(sprite->_behaviors[j]);
+						debugC(1, kDebugLingoExec, "Score::createBehaviors(): Created behavior %s for channel %d",
+							sprite->_behaviors[j].toString().c_str(), i + 1);
+					}
+				}
+			}
 		}
 	}
 }

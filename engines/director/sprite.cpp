@@ -127,6 +127,7 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
 
+	_spriteInfo = sprite._spriteInfo;
 	_spriteListIdx = sprite._spriteListIdx;
 
 	_flags = sprite._flags;

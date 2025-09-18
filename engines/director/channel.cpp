@@ -62,6 +62,9 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 
 	_visible = true;
 	_dirty = true;
+
+	_startFrame = -1;
+	_endFrame = -1;
 }
 
 Channel::Channel(const Channel &channel) {
@@ -87,6 +90,9 @@ Channel& Channel::operator=(const Channel &channel) {
 
 	_visible = channel._visible;
 	_dirty = channel._dirty;
+
+	_startFrame = channel._startFrame;
+	_endFrame = channel._endFrame;
 
 	return *this;
 }
@@ -605,8 +611,8 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	}
 
 	if (g_director->getVersion() >= 600) {
-		_startFrame = nextSprite->_spriteInfo.startFrame;
-		_endFrame = nextSprite->_spriteInfo.endFrame;
+		_startFrame = _sprite->_spriteInfo.startFrame;
+		_endFrame = _sprite->_spriteInfo.endFrame;
 	}
 }
 
