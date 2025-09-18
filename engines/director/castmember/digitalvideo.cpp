@@ -401,6 +401,15 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
+	// If the video gets stopped, for whatever reason, _video->getPalette() will not work.
+	// Cache it when possible.
+	if (g_director->_pixelformat.bytesPerPixel == 4) {
+		const byte *videoPalette = _video->getPalette();
+		if (videoPalette) {
+			memcpy(_ditheringPalette, videoPalette, 256*3);
+		}
+	}
+
 	debugC(1, kDebugImages, "Video time: %d  rate: %f frame: %p dims: %d x %d", _channel->_movieTime, _channel->_movieRate, (const void *)frame, bbox.width(), bbox.height());
 
 	if (frame) {
@@ -411,13 +420,8 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		}
 
 		if (frame->getPixels()) {
-			if (g_director->_pixelformat.bytesPerPixel == 1) {
-				// Video should have the dithering palette set, decode using whatever palette we have now
-				_lastFrame = frame->convertTo(g_director->_pixelformat, _ditheringPalette);
-			} else {
-				// 32-bit mode, use the palette bundled with the movie
-				_lastFrame = frame->convertTo(g_director->_pixelformat, _video->getPalette());
-			}
+			// Video should have the dithering palette set, decode using whatever palette we have now
+			_lastFrame = frame->convertTo(g_director->_pixelformat, _ditheringPalette);
 		} else {
 			warning("DigitalVideoCastMember::createWidget(): frame has no pixel data");
 		}
