@@ -121,6 +121,10 @@ public:
 
 	Common::Rect _rollOverBbox;
 
+	int _startFrame;
+	int _endFrame;
+	Common::Array<BehaviorElement> _scriptInstanceList;  // FIXME: Need to be true instantiations
+
 private:
 	Graphics::ManagedSurface *getSurface();
 	Score *_score;

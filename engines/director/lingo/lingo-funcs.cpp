@@ -105,6 +105,10 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame %d", frame.asInt());
 		score->setCurrentFrame(frame.asInt());
 	}
+
+	// Since the frames are not going to be consecutive, we might run into
+	// an endge case, so better kill behaviors proactively.
+	score->killScriptInstances(score->getNextFrame());
 }
 
 void Lingo::func_gotoloop() {

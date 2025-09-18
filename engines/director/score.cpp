@@ -439,8 +439,7 @@ void Score::updateCurrentFrame() {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
 			nextFrameNumberToLoad = _nextFrame;
-		}
-		else if (!_window->_newMovieStarted)
+		} else if (!_window->_newMovieStarted)
 			nextFrameNumberToLoad = (_curFrameNumber+1);
 	}
 
@@ -631,6 +630,10 @@ void Score::update() {
 	if (_playState == kPlayStopped) {
 		return;
 	}
+
+	// Kill behaviors if they are going to expire next frame
+	if (!_vm->_playbackPaused)
+		killScriptInstances(_curFrameNumber + 1);
 
 	// change current frame and load frame data, if required
 	updateCurrentFrame();
@@ -2436,6 +2439,20 @@ Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
 	}
 
 	return stream;
+}
+
+void Score::killScriptInstances(int frameNum) {
+	if (_version < kFileVer600) // No-op for early Directors
+		return;
+
+	for (int i = 0; i < (int)_channels.size(); i++) {
+		if (frameNum < _channels[i]->_startFrame || frameNum > _channels[i]->_endFrame) {
+			_channels[i]->_scriptInstanceList.clear();
+			_channels[i]->_startFrame = _channels[i]->_endFrame = -1;
+
+			debugC(4, kDebugLingoExec, "Score::killBehaviors(): Killed behaviors for channel %d", i + 1);
+		}
+	}
 }
 
 } // End of namespace Director

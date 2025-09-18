@@ -146,6 +146,8 @@ public:
 
 	Common::MemoryReadStreamEndian *getSpriteDetailsStream(int spriteIdx);
 
+	void killScriptInstances(int frameNumber);
+
 private:
 	bool isWaitingForNextFrame();
 	void updateCurrentFrame();

@@ -603,6 +603,11 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		_sprite->_width = width;
 		_sprite->_height = height;
 	}
+
+	if (g_director->getVersion() >= 600) {
+		_startFrame = nextSprite->_spriteInfo.startFrame;
+		_endFrame = nextSprite->_spriteInfo.endFrame;
+	}
 }
 
 void Channel::setPosition(int x, int y, bool force) {
