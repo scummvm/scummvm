@@ -5146,7 +5146,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("maxissampler", "", "SAMPLER.EXE", "t:5d0ee796571b99d402a06438ae2f3d56", 696815,
 								 "HOMECRE.DIR", "t:c01c5736dd1a49f52169c01e8d39a998", 1313276, 404),
 
-	WINGAME1("mckenzie", "", "MCKFRAME.EXE", "581608fa7224b0b62e11e397d2aa76c1", 3217950, 404),
+	WINGAME1f("mckenzie", "", "INTRO/MCKFRAME.EXE", "t:b249056048f105f5e33e541914958eb8", 3217950, 404, GF_32BPP),
 	WINDEMO1("mckenzie", "November 16 Demo", "MCKDEMO.EXE", "f2bc8c75f8df853780619583ba216beb", 8634631, 404),
 	WINDEMO1t("mckenzie", "30 Megs Demo", "MCKDEMO.EXE", "7f524fed018d3455c0a9358b34543123", 7212177, 404),
 
