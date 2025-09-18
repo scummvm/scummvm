@@ -92,6 +92,8 @@ public:
 	FrameRateType _frameRateType;
 	DigitalVideoType _videoType;
 
+	byte _ditheringPalette[256*3];
+
 	uint16 _frameRate;
 	bool _getFirstFrame;
 	int _duration;

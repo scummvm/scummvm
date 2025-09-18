@@ -20,6 +20,7 @@
  */
 
 #include "audio/decoders/aiff.h"
+#include "common/platform.h"
 #include "common/stream.h"
 #include "common/macresman.h"
 
@@ -114,6 +115,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_center = _vflags & 0x01;
 	_dirty = false;
 	_emptyFile = false;
+
+	memset(_ditheringPalette, 0, 256*3);
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
@@ -266,7 +269,24 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
 		// Director supports playing back RGB and paletted video in 256 colour mode.
 		// In both cases they are dithered to match the Director palette.
-		_video->setDitheringPalette(g_director->getPalette());
+		memcpy(_ditheringPalette, g_director->getPalette(), 256*3);
+		// In Windows, the first 8 and last 8 colors are reserved for the system palette.
+		// Generally you don't want these as part of the video, and Video for Windows
+		// seems to deliberately exclude them.
+		// Keep colour 0 and 255 as they are pure white and pure black, respectively.
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
+			for (int i = 1; i < 8; i++) {
+				_ditheringPalette[i*3+0] = _ditheringPalette[0];
+				_ditheringPalette[i*3+1] = _ditheringPalette[1];
+				_ditheringPalette[i*3+2] = _ditheringPalette[2];
+			}
+			for (int i = 248; i < 255; i++) {
+				_ditheringPalette[i*3+0] = _ditheringPalette[0];
+				_ditheringPalette[i*3+1] = _ditheringPalette[1];
+				_ditheringPalette[i*3+2] = _ditheringPalette[2];
+			}
+		}
+		_video->setDitheringPalette(_ditheringPalette);
 	}
 
 	_duration = getMovieTotalTime();
@@ -393,7 +413,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		if (frame->getPixels()) {
 			if (g_director->_pixelformat.bytesPerPixel == 1) {
 				// Video should have the dithering palette set, decode using whatever palette we have now
-				_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+				_lastFrame = frame->convertTo(g_director->_pixelformat, _ditheringPalette);
 			} else {
 				// 32-bit mode, use the palette bundled with the movie
 				_lastFrame = frame->convertTo(g_director->_pixelformat, _video->getPalette());
