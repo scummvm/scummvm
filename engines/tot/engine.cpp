@@ -2506,6 +2506,7 @@ void TotEngine::useScreenObject() {
 				_sound->playVoc("PUERTA", 186429, 4754);
 				animatePickup1(0, 1);
 				animateOpen2(0, 1);
+				_sound->waitForSoundEnd();
 				_sound->loadVoc("GOTA", 140972, 1029);
 				_mouse->show();
 				drawText(_curObject.useTextRef);
