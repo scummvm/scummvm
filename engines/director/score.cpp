@@ -1847,14 +1847,18 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// Index 1 in the list contains the sprite order. We are not using it,
 	if (_version >= kFileVer600) {
 		Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(1);
-		int numSprites = stream1->readUint32();
-		debugCN(2, kDebugLoading, "Sprites order: ");
-		for (int i = 0; i < numSprites; i++) {
-			int spriteId = stream1->readUint32();
-			debugCN(2, kDebugLoading, "%d ", spriteId);
+		if (!stream1) {
+			warning("Score::loadFrames: could not fetch sprite details stream");
+		} else {
+			int numSprites = stream1->readUint32();
+			debugCN(2, kDebugLoading, "Sprites order: ");
+			for (int i = 0; i < numSprites; i++) {
+				int spriteId = stream1->readUint32();
+				debugCN(2, kDebugLoading, "%d ", spriteId);
+			}
+			debugC(2, kDebugLoading, "%s", "");
+			delete stream1;
 		}
-		debugC(2, kDebugLoading, "%s", "");
-		delete stream1;
 	}
 
 	// Calculate number of frames and their positions
@@ -2425,7 +2429,7 @@ Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
 		if (!size)
 			return nullptr;
 
-		byte *data = new byte[size];
+		byte *data = (byte *)malloc(size);
 		_framesStream->seek(_spriteDetailOffsets[spriteIdx], SEEK_SET);
 		_framesStream->read(data, size);
 		stream = new Common::MemoryReadStreamEndian(data, size, _framesStream->isBE(), DisposeAfterUse::YES);
