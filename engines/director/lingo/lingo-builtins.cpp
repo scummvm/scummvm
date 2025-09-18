@@ -1530,14 +1530,16 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 }
 
 void LB::b_open(int nargs) {
-	Datum d = g_lingo->pop();
+
+	Datum ex = g_lingo->pop();
+	Datum d;
 	if (nargs == 2)
-		g_lingo->pop();
-	warning("LB::b_open(): Unsupported command open encountered -> The movie tried to open %s", d.asString().c_str());
+		d = g_lingo->pop();
+	warning("LB::b_open(): Unsupported command open encountered -> The movie tried to open %s %s", ex.asString().c_str(), d.type != VOID ? d.asString().c_str() : "");
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly) &&
 		!(g_director->getGameGID() == GID_TEST || g_director->getGameGID() == GID_TESTALL)) {
-		Common::U32String message = Common::String::format("Unsupported command open encountered -> The movie tried to execute open %s!", d.asString().c_str());
+		Common::U32String message = Common::String::format("Unsupported command open encountered -> The movie tried to execute open %s %s!", ex.asString().c_str(), d.type != VOID ? d.asString().c_str() : "");
 		GUI::MessageDialog dialog(message, _("Ok"));
 		dialog.runModal();
 	}

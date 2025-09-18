@@ -306,11 +306,13 @@ BitmapCastMember::~BitmapCastMember() {
 	if (_ditheredImg) {
 		_ditheredImg->free();
 		delete _ditheredImg;
+		_ditheredImg = nullptr;
 	}
 
 	if (_matte) {
 		_matte->free();
 		delete _matte;
+		_matte = nullptr;
 	}
 }
 
@@ -467,7 +469,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 		// If we're in 32-bit mode, and not in puppet palette mode, then "redither" as well.
 		if (targetBpp == 4 && score->_puppetPalette && !_external)
 			break;
-		if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
+		if (_external || (targetBpp == 4) || (castPaletteId != currentPaletteId && !isColorCycling)) {
 			const auto pals = g_director->getLoadedPalettes();
 			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
 			const PaletteV4 &srcPal = pals.getVal(palIndex);
@@ -580,6 +582,7 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 		if (_matte) {
 			_matte->free();
 			delete _matte;
+			_matte = nullptr;
 		}
 
 		Graphics::FloodFill matteFill(&tmp, whiteColor, 0, true);
@@ -653,6 +656,12 @@ Common::String BitmapCastMember::formatInfo() {
 void BitmapCastMember::load() {
 	if (_loaded && !_needsReload)
 		return;
+
+	if (_ditheredImg) {
+		_ditheredImg->free();
+		delete _ditheredImg;
+		_ditheredImg = nullptr;
+	}
 
 	_needsReload = false;
 
@@ -819,8 +828,11 @@ void BitmapCastMember::unload() {
 	delete _picture;
 	_picture = new Picture();
 
-	delete _ditheredImg;
-	_ditheredImg = nullptr;
+	if (_ditheredImg) {
+		_ditheredImg->free();
+		delete _ditheredImg;
+		_ditheredImg = nullptr;
+	}
 
 	_loaded = false;
 }
@@ -841,8 +853,11 @@ void BitmapCastMember::setPicture(PictureReference &picture) {
 	_picture = new Picture(*picture._picture);
 
 	// Force redither
-	delete _ditheredImg;
-	_ditheredImg = nullptr;
+	if (_ditheredImg) {
+		_ditheredImg->free();
+		delete _ditheredImg;
+		_ditheredImg = nullptr;
+	}
 
 	// Make sure we get redrawn
 	setModified(true);
