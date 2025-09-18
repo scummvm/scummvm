@@ -661,6 +661,10 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 		// if the type don't match, then we will set it as transparent. i.e. don't create widget
 		if (!_sprite->checkSpriteType())
 			return;
+
+		if (_sprite->_cast->needsReload()) {
+			_sprite->_cast->load();
+		}
 		// always use the unstretched dims.
 		// because only the stretched sprite will have different channel size and sprite size
 		// we need the original image to scale the sprite.

@@ -27,6 +27,7 @@
 #include "director/movie.h"
 #include "director/castmember/castmember.h"
 #include "director/lingo/lingo-the.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -273,9 +274,14 @@ void CastMember::setField(int field, const Datum &d) {
 		if (!castInfo) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
 			return;
+		} else {
+			Common::String rawPath = d.asString();
+			Common::String filename = getFileName(rawPath);
+			castInfo->fileName = filename;
+			castInfo->directory = rawPath.substr(0, MAX((uint)0, rawPath.size() - filename.size() - 1));
+			_needsReload = true;
+			_modified = true;
 		}
-		castInfo->fileName = d.asString();
-		_needsReload = true;
 		return;
 	case kTheForeColor:
 		_cast->getCastMember(_castId)->setForeColor(d.asInt());
