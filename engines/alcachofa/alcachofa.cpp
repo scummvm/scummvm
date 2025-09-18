@@ -62,7 +62,7 @@ AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDes
 
 AlcachofaEngine::~AlcachofaEngine() {
 	// do not delete, this is done by `Engine::~Engine` with `delete _debugger;`
-	_console = nullptr;
+	_console = nullptr; //-V773
 }
 
 uint32 AlcachofaEngine::getFeatures() const {
