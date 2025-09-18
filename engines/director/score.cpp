@@ -591,7 +591,7 @@ void Score::update() {
 
 			// Don't process frozen script if we use jump instructions
 			// like "go to frame", or open a new movie.
-			if (!_nextFrame) {
+			if (!_nextFrame && _window->_nextMovie.movie.empty()) {
 				processFrozenScripts();
 			}
 			return;
@@ -619,7 +619,7 @@ void Score::update() {
 
 		// Don't process frozen script if we use jump instructions
 		// like "go to frame", or open a new movie.
-		if (!_nextFrame || _nextFrame == _curFrameNumber) {
+		if ((!_nextFrame && _window->_nextMovie.movie.empty()) || _nextFrame == _curFrameNumber) {
 			processFrozenScripts();
 		}
 
@@ -737,7 +737,7 @@ void Score::update() {
 	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame.
 	// If they don't complete (i.e. another freezing event like a "go to frame"),
 	// force another cycle of Score::update().
-	if (!_nextFrame && !processFrozenScripts())
+	if (!_nextFrame && _window->_nextMovie.movie.empty() && !processFrozenScripts())
 		return;
 
 	if (!_vm->_playbackPaused) {

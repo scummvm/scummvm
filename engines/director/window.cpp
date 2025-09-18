@@ -541,7 +541,9 @@ bool Window::step() {
 	// finish last movie
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		// attempt to thaw the lingo play state, if required
-		_currentMovie->getScore()->processFrozenPlayScript();
+		// For movie switches, we want to run it in the context of the new movie.
+		if (_nextMovie.movie.empty())
+			_currentMovie->getScore()->processFrozenPlayScript();
 		debugC(5, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debugC(5, kDebugEvents, "@@@@   Finishing movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 		debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
