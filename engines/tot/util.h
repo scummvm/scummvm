@@ -82,6 +82,8 @@ const int32 *getOffsetsByCurrentLanguage();
 
 void newSecondaryAnimationFrame();
 
+void clearScreenLayer(uint pos);
+
 inline bool isLanguageSpanish() {
 	return g_engine->_lang == Common::ES_ESP;
 };

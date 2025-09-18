@@ -533,4 +533,12 @@ void newSecondaryAnimationFrame() {
 	}
 	g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
 }
+
+void clearScreenLayer(uint pos) {
+	if (g_engine->_screenLayers[pos]) {
+		free(g_engine->_screenLayers[pos]);
+	}
+	g_engine->_screenLayers[pos] = nullptr;
+}
+
 } // End of namespace Tot

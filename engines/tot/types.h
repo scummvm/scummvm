@@ -107,9 +107,9 @@ struct SecondaryAnim {
 };
 
 struct InventoryEntry {
-	uint16 bitmapIndex;
-	uint16 code;
-	Common::String objectName;
+	uint16 bitmapIndex = -1;
+	uint16 code = -1;
+	Common::String objectName = "";
 };
 
 /**

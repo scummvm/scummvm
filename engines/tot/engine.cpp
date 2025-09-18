@@ -591,16 +591,21 @@ void TotEngine::animatedSequence(uint numSequence) {
 			_graphics->advancePaletteAnim();
 			_graphics->putShape(animX, animY, animptr);
 		}
-		_screenLayers[_curObject.depth - 1] = nullptr;
+
+		clearScreenLayer(_curObject.depth - 1);
 		_graphics->restoreBackground();
 		animIndex = _mainCharAnimation.depth;
 		_mainCharAnimation.depth = 30;
+		if (g_engine->_screenLayers[13]) {
+			free(g_engine->_screenLayers[13]);
+		}
 		_screenLayers[13] = animptr;
 		_depthMap[13].posx = animX;
 		_depthMap[13].posy = animY;
 		assembleScreen();
 		_graphics->drawScreen(_sceneBackground);
-		_screenLayers[13] = nullptr;
+
+		clearScreenLayer(13);
 		_mainCharAnimation.depth = animIndex;
 		drawInventory();
 		for (animIndex = 32; animIndex <= secFrameCount; animIndex++) {
@@ -637,12 +642,15 @@ void TotEngine::animatedSequence(uint numSequence) {
 			}
 		}
 		animIndex = _mainCharAnimation.depth;
-		_mainCharAnimation.depth = 30;
+		_mainCharAnimation.depth = 30;		
+		if (g_engine->_screenLayers[12]) {
+			free(g_engine->_screenLayers[12]);
+		}
 		_screenLayers[12] = animptr;
 		_depthMap[12].posx = animX;
 		_depthMap[12].posy = animY;
 		disableSecondAnimation();
-		_screenLayers[12] = nullptr;
+		clearScreenLayer(12);
 		_mainCharAnimation.depth = animIndex;
 		_graphics->drawScreen(_sceneBackground);
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
@@ -672,6 +680,9 @@ void TotEngine::animatedSequence(uint numSequence) {
 		animFrameSize = animationFile.readUint16LE();
 		secFrameCount = animationFile.readByte();
 		animationFile.readByte();
+		if (g_engine->_screenLayers[6]) {
+			free(g_engine->_screenLayers[6]);
+		}
 		_screenLayers[6] = (byte *)malloc(animFrameSize);
 		_depthMap[6].posx = _secondaryAnimation.posx + 5;
 		_depthMap[6].posy = _secondaryAnimation.posy - 6;
@@ -693,7 +704,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		} while (animIndex != secFrameCount && !shouldQuit());
 		animationFile.close();
 		_sound->stopVoc();
-		_screenLayers[6] = nullptr;
+		clearScreenLayer(6);
 		_currentRoomData->animationFlag = true;
 	} break;
 	}
@@ -1360,6 +1371,9 @@ void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
 
 	// Room with Red
 	if (_currentRoomData->code == 24) {
+		if (g_engine->_screenLayers[1]) {
+			free(g_engine->_screenLayers[1]);
+		}
 		_screenLayers[1] = (byte *)malloc(3660);
 		readBitmap(1382874, _screenLayers[1], 3652, 319);
 		uint16 object1Width = READ_LE_UINT16(_screenLayers[1]);
@@ -1412,8 +1426,7 @@ void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
 	_graphics->drawScreen(_sceneBackground);
 
 	if (_currentRoomData->code == 24) {
-		free(_screenLayers[1]);
-		_screenLayers[1] = nullptr;
+		clearScreenLayer(1);
 	}
 }
 
@@ -1466,7 +1479,7 @@ void TotEngine::pickupScreenObject() {
 			} break;
 			default: {
 				animatePickup1(_charFacingDirection, 0);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -1525,7 +1538,8 @@ void TotEngine::pickupScreenObject() {
 					with.depth = 1;
 					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				_screenLayers[_curObject.depth - 1] = nullptr;
+
+				clearScreenLayer(_curObject.depth -1);
 				_graphics->restoreBackground();
 
 				assembleScreen();
@@ -1685,7 +1699,7 @@ void TotEngine::pickupScreenObject() {
 					with.coordy = 0;
 					with.depth = 0;
 				}
-				_screenLayers[3] = nullptr;
+				clearScreenLayer(3);
 				disableSecondAnimation();
 				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(2, 1);
@@ -1694,7 +1708,7 @@ void TotEngine::pickupScreenObject() {
 			} break;
 			default: {
 				animatePickup1(_charFacingDirection, 1);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -1726,7 +1740,7 @@ void TotEngine::pickupScreenObject() {
 			} break;
 			case 659: { // spider web, puts bird and ring on the floor
 				animatePickup1(3, 2);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				{ // bird
 					RoomBitmapRegister &with = _currentRoomData->screenLayers[2];
 
@@ -1754,7 +1768,7 @@ void TotEngine::pickupScreenObject() {
 			} break;
 			default: {
 				animatePickup1(_charFacingDirection, 2);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(_charFacingDirection, 2);
@@ -2865,7 +2879,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[4].coordx = 0;
 				_currentRoomData->screenLayers[4].coordy = 0;
 				_currentRoomData->screenLayers[4].depth = 0;
-				_screenLayers[7] = nullptr;
+				clearScreenLayer(7);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -2923,7 +2937,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[4].coordx = 0;
 				_currentRoomData->screenLayers[4].coordy = 0;
 				_currentRoomData->screenLayers[4].depth = 0;
-				_screenLayers[7] = nullptr;
+				clearScreenLayer(7);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -3034,7 +3048,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[0].coordx = 0;
 				_currentRoomData->screenLayers[0].coordy = 0;
 				_currentRoomData->screenLayers[0].depth = 0;
-				_screenLayers[2] = nullptr;
+				clearScreenLayer(2);
 				for (invIndex = 6; invIndex <= 9; invIndex++)
 					_currentRoomData->mouseGrid[26][invIndex] = 3;
 				for (invIndex = 3; invIndex <= 5; invIndex++)
@@ -3283,7 +3297,7 @@ void TotEngine::openScreenObject() {
 			else {
 				_mouse->hide();
 				animatePickup1(0, 1);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				yIndex = 0;
 				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex != 15) {
 					yIndex++;
@@ -3319,7 +3333,7 @@ void TotEngine::openScreenObject() {
 			else {
 				_mouse->hide();
 				animatePickup1(1, 1);
-				_screenLayers[_curObject.depth - 1] = nullptr;
+				clearScreenLayer(_curObject.depth - 1);
 				yIndex = 0;
 				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex != 14) {
 					yIndex++;
@@ -4303,9 +4317,7 @@ void TotEngine::loadScreen() {
 
 void TotEngine::clearScreenLayers() {
 	for (int i = 0; i < kNumScreenOverlays; i++) {
-		if (_screenLayers[i] != nullptr)
-			free(_screenLayers[i]);
-		_screenLayers[i] = nullptr;
+		clearScreenLayer(i);
 	}
 }
 
@@ -4334,6 +4346,9 @@ void TotEngine::freeInventory() {
 }
 
 void TotEngine::loadScreenLayerWithDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
+	if (g_engine->_screenLayers[depth]) {
+		free(g_engine->_screenLayers[depth]);
+	}
 	_screenLayers[depth] = (byte *)malloc(bitmapSize);
 	readBitmap(bitmapIndex, _screenLayers[depth], bitmapSize, 319);
 

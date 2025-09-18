@@ -43,13 +43,17 @@ void TotEngine::loadCharAnimation() {
 
 	_mainCharFrameSize = characterFile.readUint16LE();
 
-	for (int i = 0; i <= 3; i++)
+	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < kWalkFrameCount; j++) {
+			if (g_engine->_mainCharAnimation.bitmap[i][j])
+				free(g_engine->_mainCharAnimation.bitmap[i][j]);
 			_mainCharAnimation.bitmap[i][j] = (byte *)malloc(_mainCharFrameSize);
 			characterFile.read(_mainCharAnimation.bitmap[i][j], _mainCharFrameSize);
 		}
 	for (int i = 0; i < 4; i++)
 		for (int j = kWalkFrameCount; j < (kWalkFrameCount + 10 * 3); j++) {
+			if (g_engine->_mainCharAnimation.bitmap[i][j])
+				free(g_engine->_mainCharAnimation.bitmap[i][j]);
 			_mainCharAnimation.bitmap[i][j] = (byte *)malloc(_mainCharFrameSize);
 			characterFile.read(_mainCharAnimation.bitmap[i][j], _mainCharFrameSize);
 		}
@@ -91,7 +95,7 @@ void TotEngine::readConversationFile() {
 	byte *buf = (byte *)malloc(fileSize);
 	conversationFile.read(buf, fileSize);
 
-	_conversationData = new Common::MemorySeekableReadWriteStream(buf, fileSize, DisposeAfterUse::NO);
+	_conversationData = new Common::MemorySeekableReadWriteStream(buf, fileSize, DisposeAfterUse::YES);
 	conversationFile.close();
 }
 
