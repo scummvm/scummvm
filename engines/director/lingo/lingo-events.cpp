@@ -251,7 +251,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 					if (event.behaviorIndex >= 0) {
 						scriptId = sprite->_behaviors[event.behaviorIndex].memberID;
 						initializerParams = sprite->_behaviors[event.behaviorIndex].initializerParams;
-						warning("ID: %s, initializerParams: '%s'", scriptId.asString().c_str(), initializerParams.c_str());
+						warning("event: %d, ID: %s, initializerParams: '%s'", event.event, scriptId.asString().c_str(), initializerParams.c_str());
 
 						// TODO: instantiate the behavior script as a child and set its properties
 						// according to the list in initializerParams
