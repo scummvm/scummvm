@@ -71,6 +71,9 @@ private:
 		int widths[256];
 		int offsets[256];
 		Graphics::Surface *surface;
+		~CachedFont() {
+			delete surface;
+		}
 	};
 
 	uint16 _charCount;
