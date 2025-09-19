@@ -110,7 +110,7 @@ void MacButton::invertInner() {
 		case kCBNormal:
 			primitives.drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, _wm->_colorWhite, &_pd);
 			primitives.drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, _wm->_colorWhite, &_pd);
-			(_wm->getDrawInvertPrimitives()).drawPoint(5, 7, _wm->_colorWhite, &_pd);
+			primitives.drawPoint(5, 7, _wm->_colorWhite, &_pd);
 			break;
 		case kCBInsetBlack:
 			checkbox = Common::Rect(r.left + 2, r.top + 4, r.left + 2 + 6, r.top + 4 + 6);
