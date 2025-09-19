@@ -49,6 +49,7 @@
 #include "director/castmember/castmember.h"
 #include "director/castmember/filmloop.h"
 #include "director/castmember/transition.h"
+#include "director/lingo/lingo-code.h"
 
 namespace Director {
 
@@ -2453,6 +2454,9 @@ void Score::killScriptInstances(int frameNum) {
 			continue;
 
 		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
+			for (auto &inst : channel->_scriptInstanceList) {
+				delete inst;
+			}
 			channel->_scriptInstanceList.clear();
 			channel->_startFrame = channel->_endFrame = -1;
 
@@ -2474,8 +2478,21 @@ void Score::createScriptInstances(int frameNum) {
 			if (channel->_scriptInstanceList.size() == 0) {
 				if (sprite->_behaviors.size() > 0) {
 					for (uint j = 0; j < sprite->_behaviors.size(); j++) {
-						// TODO: Here we should do proper instantiation
-						channel->_scriptInstanceList.push_back(sprite->_behaviors[j]);
+
+						// Instantiate the behavior
+						// TODO: Initialize property list
+						g_lingo->push(_movie->getScriptContext(kScoreScript, sprite->_behaviors[j].memberID));
+						LC::call("new", 1, true);
+						Datum result = g_lingo->pop();
+
+						if (result.type != OBJECT) {
+							warning("Score::createScriptInstances(): Could not instantiate behavior %s for channel %d",
+								sprite->_behaviors[j].toString().c_str(), i + 1);
+							continue;
+						}
+
+						channel->_scriptInstanceList.push_back(result.u.obj);
+
 						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiating behavior %s for channel %d",
 							sprite->_behaviors[j].toString().c_str(), i + 1);
 					}

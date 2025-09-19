@@ -123,7 +123,7 @@ public:
 
 	int _startFrame;
 	int _endFrame;
-	Common::Array<BehaviorElement> _scriptInstanceList;  // FIXME: Need to be true instantiations
+	Common::Array<AbstractObject *> _scriptInstanceList;
 
 private:
 	Graphics::ManagedSurface *getSurface();
