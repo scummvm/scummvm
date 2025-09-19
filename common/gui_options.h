@@ -83,13 +83,15 @@
 
 #define GUIO_NOLANG          "\x33"
 
+// GUIO flags in range "\x80" - "\xbf" are reserved for prefixed lists of options
+
 // Helper macros to get string for the platform
 // Extra level of indirection required to force macro expansion on some compilers
 #define GET_PLAT_STR_IMPL(val, hex) hex
 #define GET_PLAT_STR_EXPAND(x) GET_PLAT_STR_IMPL x
 #define GET_PLAT_STR(name) GET_PLAT_STR_EXPAND((name))
 
-#define GUIO_PLATFORM_PREFIX "\x40"
+#define GUIO_PLATFORM_PREFIX "\xc0"
 
 // Get hex string literal for the given platform
 #define GUIO_PLATFORM(p) GUIO_PLATFORM_PREFIX GET_PLAT_STR(p##_VAL)
