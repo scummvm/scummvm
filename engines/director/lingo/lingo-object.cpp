@@ -244,7 +244,7 @@ static const struct XLibProto {
 	XLIBDEF(DPWAVIXObj,			kXObj,			300),	// D3
 	XLIBDEF(DPWQTWXObj,			kXObj,			300),	// D3
 	XLIBDEF(DarkenScreen,		kXObj,			300),	// D3
-	XLIBDEF(DateUtilXObj,			kXObj,					400),	// D4
+	XLIBDEF(DateUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(DeveloperStack,		kXObj,			300),	// D3
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
@@ -255,13 +255,13 @@ static const struct XLibProto {
 	XLIBDEF(FEDraculXObj,		kXObj,			400),	// D4
 	XLIBDEF(FEIMasksXObj,		kXObj,			400),	// D4
 	XLIBDEF(FEIPrefsXObj,		kXObj,			400),	// D4
-	XLIBDEF(FSUtilXObj,			kXObj,					400),	// D4
+	XLIBDEF(FSUtilXObj,			kXObj,			400),	// D4
 	XLIBDEF(FadeGammaDownXCMD,	kXObj,			400),	// D4
 	XLIBDEF(FadeGammaUpXCMD,	kXObj,			400),	// D4
 	XLIBDEF(FadeGammaXCMD,		kXObj,			400),	// D4
 	XLIBDEF(FileExists,			kXObj,			300),	// D3
 	XLIBDEF(FileIO,				kXObj | kXtraObj,200),	// D2
-	XLIBDEF(FileXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(FileXtra,			kXtraObj,		500),	// D5
 	XLIBDEF(FindFolder,			kXObj,			300),	// D3
 	XLIBDEF(FindSys,			kXObj,			400),	// D4
 	XLIBDEF(FindWin,			kXObj,			400),	// D4
@@ -271,9 +271,9 @@ static const struct XLibProto {
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
-	XLIBDEF(GetSoundInLevelXObj,			kXObj,					400),	// D4
+	XLIBDEF(GetSoundInLevelXObj,kXObj,			400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
-	XLIBDEF(HenryXObj,			kXObj,					400),	// D4
+	XLIBDEF(HenryXObj,			kXObj,			400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
 	XLIBDEF(IniXObj,			kXObj,			400),	// D4
 	XLIBDEF(InstObjXObj,		kXObj,			400),	// D4
@@ -283,30 +283,30 @@ static const struct XLibProto {
 	XLIBDEF(JourneyWareXINIXObj,kXObj,			400),	// D4
 	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
-	XLIBDEF(ListDevXObj,			kXObj,					500),	// D5
+	XLIBDEF(ListDevXObj,		kXObj,			500),	// D5
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
 	XLIBDEF(MapNavigatorXObj,	kXObj,			400),	// D4
-	XLIBDEF(MasterAppXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(MasterAppXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(MemCheckXObj,		kXObj,			400),	// D4
 	XLIBDEF(MemoryXObj,			kXObj,			300),	// D3
 	XLIBDEF(Misc,				kXObj,			400),	// D4
 	XLIBDEF(MiscX,				kXObj,			400),	// D4
 	XLIBDEF(MMaskXObj,			kXObj,			400),	// D4
 	XLIBDEF(MoovXObj,			kXObj,			300),	// D3
-	XLIBDEF(MoveMouseJPXObj,			kXObj,					400),	// D4
+	XLIBDEF(MoveMouseJPXObj,	kXObj,			400),	// D4
 	XLIBDEF(MoveMouseXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovieIdxXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MSFile,             kXObj,          400),   // D4
-	XLIBDEF(MystIsleXObj,			kXObj,					400),	// D4
+	XLIBDEF(MystIsleXObj,		kXObj,			400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
-	XLIBDEF(OpenURLXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(OpenURLXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(OrthoPlayXObj,		kXObj,			400),	// D4
 	XLIBDEF(PACoXObj,			kXObj,			300),	// D3
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
 	XLIBDEF(PanelXObj,			kXObj,			200),	// D2
-	XLIBDEF(PharaohsXObj,			kXObj,					400),	// D4
+	XLIBDEF(PharaohsXObj,		kXObj,			400),	// D4
 	XLIBDEF(PopUpMenuXObj,		kXObj,			200),	// D2
 	XLIBDEF(Porta,				kXObj,			300),	// D3
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
@@ -320,33 +320,33 @@ static const struct XLibProto {
 	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3
-	XLIBDEF(RolloverToolkitXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(RolloverToolkitXtra,kXtraObj,		500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
-	XLIBDEF(SmallUtilXObj,			kXObj,					400),	// D4
+	XLIBDEF(SmallUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
-	XLIBDEF(SysColorXObj,			kXObj,					400),	// D4
-	XLIBDEF(TenguXObj,			kXObj,					400),	// D4
+	XLIBDEF(SysColorXObj,		kXObj,			400),	// D4
+	XLIBDEF(TenguXObj,			kXObj,			400),	// D4
 	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(UnitTestXObj,		kXObj,			400),	// D4
-	XLIBDEF(VMPresentXObj,			kXObj,					400),	// D4
+	XLIBDEF(VMPresentXObj,		kXObj,			400),	// D4
 	XLIBDEF(VMisOnXFCN,			kXObj,			400),	// D4
 	XLIBDEF(ValkyrieXObj,		kXObj,			400),	// D4
 	XLIBDEF(VideodiscXObj,		kXObj,			200),	// D2
 	XLIBDEF(VolumeList,			kXObj,			300),	// D3
-	XLIBDEF(VoyagerXSoundXObj,			kXObj,					400),	// D4
+	XLIBDEF(VoyagerXSoundXObj,	kXObj,			400),	// D4
 	XLIBDEF(WinInfoXObj,		kXObj,			400),	// D4
 	XLIBDEF(WidgetXObj, 		kXObj,			400),	// D4
 	XLIBDEF(WindowXObj,			kXObj,			200),	// D2
 	XLIBDEF(XCMDGlueXObj,		kXObj,			200),	// D2
-	XLIBDEF(XPlayPACoXFCN,			kXObj,					300),	// D3
+	XLIBDEF(XPlayPACoXFCN,		kXObj,			300),	// D3
 	XLIBDEF(XSoundXFCN,			kXObj,			400),	// D4
 	XLIBDEF(XWINXObj,			kXObj,			300),	// D3
 	XLIBDEF(XioXObj,			kXObj,			400),	// D3
 	XLIBDEF(XPlayAnim,			kXObj,			300),	// D3
-	XLIBDEF(XsoundXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(XsoundXtra,			kXtraObj,		500),	// D5
 	XLIBDEF(Yasix,				kXObj,			300),	// D3
 	{ nullptr, nullptr, nullptr, nullptr, 0, 0 }
 };
