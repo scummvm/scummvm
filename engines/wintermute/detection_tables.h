@@ -5497,7 +5497,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Strange Change
 	WME_WINENTRY("strangechange", "",
-		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, GF_3D, WME_1_8_6),
 
 	// Sunny (Demo)
 	WME_WINENTRY("sunny", "Demo",
