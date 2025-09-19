@@ -411,14 +411,16 @@ bool AdActor3DX::display() {
 	TShadowType shadowType = _game->getMaxShadowType(this);
 	if (shadowType == SHADOW_STENCIL) {
 		displayShadowVolume();
-	} else if (_game->_maxShadowType > SHADOW_NONE) {
-		bool simpleShadow = shadowType <= SHADOW_SIMPLE;
-		if (!_game->_supportsRealTimeShadows)
-			simpleShadow = true;
-		if (simpleShadow)
-			_game->_renderer3D->displaySimpleShadow(this);
-		else
-			displayFlatShadow();
+	} else if (shadowType > SHADOW_NONE) {
+		if (_game->_maxShadowType > SHADOW_NONE) {
+			bool simpleShadow = shadowType <= SHADOW_SIMPLE;
+			if (!_game->_supportsRealTimeShadows)
+				simpleShadow = true;
+			if (simpleShadow)
+				_game->_renderer3D->displaySimpleShadow(this);
+			else
+				displayFlatShadow();
+		}
 	}
 
 	_game->_renderer3D->setSpriteBlendMode(_blendMode, true);
