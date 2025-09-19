@@ -2456,7 +2456,7 @@ void Score::killScriptInstances(int frameNum) {
 			channel->_scriptInstanceList.clear();
 			channel->_startFrame = channel->_endFrame = -1;
 
-			debugC(1, kDebugLingoExec, "Score::killBehaviors(): Killed behaviors for channel %d", i + 1);
+			debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for channel %d", i + 1);
 		}
 	}
 }
@@ -2476,7 +2476,7 @@ void Score::createScriptInstances(int frameNum) {
 					for (uint j = 0; j < sprite->_behaviors.size(); j++) {
 						// TODO: Here we should do proper instantiation
 						channel->_scriptInstanceList.push_back(sprite->_behaviors[j]);
-						debugC(1, kDebugLingoExec, "Score::createBehaviors(): Created behavior %s for channel %d",
+						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiating behavior %s for channel %d",
 							sprite->_behaviors[j].toString().c_str(), i + 1);
 					}
 				}

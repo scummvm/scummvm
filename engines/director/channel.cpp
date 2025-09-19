@@ -63,8 +63,13 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 	_visible = true;
 	_dirty = true;
 
-	_startFrame = -1;
-	_endFrame = -1;
+	if (sp) {
+		_startFrame = sp->_spriteInfo.startFrame;
+		_endFrame = sp->_spriteInfo.endFrame;
+	} else {
+		_startFrame = -1;
+		_endFrame = -1;
+	}
 }
 
 Channel::Channel(const Channel &channel) {

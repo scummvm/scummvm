@@ -25,11 +25,11 @@
 namespace Director {
 
 struct TweenInfo {
-	int32 curvature;
-	int32 flags;
-	int32 easeIn;
-	int32 easeOut;
-	int32 padding;
+	int32 curvature = 0;
+	int32 flags = 0;
+	int32 easeIn = 0;
+	int32 easeOut = 0;
+	int32 padding = 0;
 
 	void read(Common::ReadStreamEndian &stream) {
 		curvature = (int32)stream.readUint32();
@@ -41,11 +41,11 @@ struct TweenInfo {
 };
 
 struct SpriteInfo {
-	int32 startFrame;
-	int32 endFrame;
-	int32 xtraInfo;
-	int32 flags;
-	int32 channelNum;
+	int32 startFrame = -1;
+	int32 endFrame = -1;
+	int32 xtraInfo = 0;
+	int32 flags = 0;
+	int32 channelNum = 0;
 	TweenInfo tweenInfo;
 
     Common::Array<int32> keyFrames;
