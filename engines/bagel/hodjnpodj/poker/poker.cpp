@@ -850,7 +850,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 		nSetPayOff = dlgPayOff.DoModal();
 		nPayOff = nSetPayOff;
 		pcwndPoker->SetPayOffs(nSetPayOff);              // the return is what set of payoffs was selected was clicked
-		pcwndPoker->ResetGame();
+		pcwndPoker->FlagResetGame();
 		break;
 
 	case ID_SETUSERAMT:                     // if Set Amount button was hit, popup the Set Amount dialog
@@ -861,7 +861,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 			pcwndPoker->m_lUserAmount = nSetAmount;
 			pcwndPoker->m_lStartingAmount = nSetAmount;
 		}
-		pcwndPoker->ResetGame();
+		pcwndPoker->FlagResetGame();
 		break;
 	}
 	return;
@@ -886,7 +886,15 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			pOptionButton->ShowWindow(SW_HIDE);
 			CSound::waitWaveSounds();
 			sndPlaySound(nullptr, 0);
+			_flagResetGame = false;
+
 			nMainOption = dlgMainOpts.DoModal();
+
+			// If the minigame options were changed, we need to reset the game
+			if (_flagResetGame && nMainOption == IDC_OPTIONS_RETURN)
+				nMainOption = IDC_OPTIONS_NEWGAME;
+			_flagResetGame = false;
+
 			switch (nMainOption) {
 			case IDC_OPTIONS_QUIT:                      // if Quit buttons was hit, quit
 				PostMessage(WM_CLOSE, 0, 0);
@@ -898,7 +906,10 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 				break;
 
+			default:
+				break;
 			}
+
 			m_bPlaySounds = m_lpGameStruct->bSoundEffectsEnabled;
 			if (m_lpGameStruct->bMusicEnabled) {
 				if (pGameSound == nullptr) {

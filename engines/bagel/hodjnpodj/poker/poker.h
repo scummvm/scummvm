@@ -250,6 +250,7 @@ private:
 	LPGAMESTRUCT    m_lpGameStruct = nullptr;
 	bool            m_bMouseCaptured = false;
 	bool            m_bEndHand = false;
+	bool            _flagResetGame = false;
 
 	CRect   MainRect;			// screen area spanned by the game window
 	CRect   BetRect1,			// window area spanned by the Bet1 button
@@ -274,6 +275,9 @@ public:
 
 	void    SplashScreen();
 	void    SetPayOffs(int);
+	void    FlagResetGame() {
+		_flagResetGame = true;
+	}
 	void    ResetGame(long = 0L);
 	void    SetBet(long);
 
