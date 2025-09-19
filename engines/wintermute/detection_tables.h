@@ -1627,7 +1627,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Lov Mamuta
 	WME_WINENTRY("lovmamuta", "",
-		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, GF_3D, WME_1_9_1),
 
 	// J.U.L.I.A. (English)
 	WME_WINENTRY("julia", "",
