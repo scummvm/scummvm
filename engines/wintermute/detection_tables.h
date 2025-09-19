@@ -485,7 +485,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Basis Octavus
 	WME_WINENTRY("basisoctavus", "",
-		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "021ef97f8f49ec33f83beae0d6e38f08", 49336909), Common::CS_CZE, GF_3D, WME_1_9_1),
 
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
