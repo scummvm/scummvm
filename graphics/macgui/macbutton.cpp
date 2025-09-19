@@ -33,7 +33,7 @@
 namespace Graphics {
 
 MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor) :
-	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, bgcolor, true)) {
 
 	_buttonType = buttonType;
 	init();
@@ -79,14 +79,14 @@ void MacButton::invertOuter() {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left + 1, r.top + 3, r.left + 9, r.top + 11);
-		primitives.drawRect1(c, 0, &_pd);
-	}
+		primitives.drawRect1(c, _wm->_colorWhite, &_pd);
 		break;
+	}
 	case kRound:
-		primitives.drawRoundRect1(r, 4, 0, true, &_pd);
+		primitives.drawRoundRect1(r, 4, _wm->_colorWhite, true, &_pd);
 		break;
 	case kRadio:
-		primitives.drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, &_pd);
+		primitives.drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, _wm->_colorWhite, false, &_pd);
 		break;
 	}
 }
@@ -108,17 +108,17 @@ void MacButton::invertInner() {
 	case kCheckBox:
 		switch (_checkBoxType) {
 		case kCBNormal:
-			primitives.drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, &_pd);
-			primitives.drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, &_pd);
-			(_wm->getDrawInvertPrimitives()).drawPoint(5, 7, 0, &_pd);
+			primitives.drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, _wm->_colorWhite, &_pd);
+			primitives.drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, _wm->_colorWhite, &_pd);
+			(_wm->getDrawInvertPrimitives()).drawPoint(5, 7, _wm->_colorWhite, &_pd);
 			break;
 		case kCBInsetBlack:
 			checkbox = Common::Rect(r.left + 2, r.top + 4, r.left + 2 + 6, r.top + 4 + 6);
-			primitives.drawFilledRect1(checkbox, 0, &_pd);
+			primitives.drawFilledRect1(checkbox, _wm->_colorWhite, &_pd);
 			break;
 		case kCBFilledBlack:
 			checkbox = Common::Rect(r.left + 1, r.top + 3, r.left + 1 + 8, r.top + 3 + 8);
-			primitives.drawFilledRect1(checkbox, 0, &_pd);
+			primitives.drawFilledRect1(checkbox, _wm->_colorWhite, &_pd);
 			break;
 		}
 		break;
@@ -142,7 +142,6 @@ bool MacButton::draw(bool forceRedraw) {
 		return false;
 
 	MacText::draw();
-
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
 	Graphics::MacPlotData pd(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0);
 
@@ -151,14 +150,14 @@ bool MacButton::draw(bool forceRedraw) {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left, r.top + 2, r.left + 10, r.top + 2 + 10);
-		primitives.drawRect1(c, 0xff, &pd);
+		primitives.drawRect1(c, _wm->_colorBlack, &pd);
 		break;
 	}
 	case kRound:
-		primitives.drawRoundRect1(r, 4, 0xff, false, &pd);
+		primitives.drawRoundRect1(r, 4, _wm->_colorBlack, false, &pd);
 		break;
 	case kRadio:
-		primitives.drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0xff, false, &pd);
+		primitives.drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, _wm->_colorBlack, false, &pd);
 		break;
 	}
 

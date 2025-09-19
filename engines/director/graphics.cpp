@@ -567,7 +567,7 @@ uint32 DirectorPlotData::preprocessColor(uint32 src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.
-	if (sprite == kTextSprite) {
+	if (sprite == kTextSprite || sprite == kButtonSprite || sprite == kCheckboxSprite || sprite == kRadioButtonSprite) {
 		switch(ink) {
 		case kInkTypeMask:
 			src = (src == backColor ? foreColor : 0xff);
@@ -706,7 +706,7 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 		return;
 
 	// TODO: Determine why colourization causes problems in Warlock
-	if (sprite == kTextSprite)
+	if (sprite == kTextSprite || sprite == kButtonSprite || sprite == kCheckboxSprite || sprite == kRadioButtonSprite)
 		applyColor = false;
 
 	Common::Rect srfClip = srf->getBounds();
