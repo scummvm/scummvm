@@ -25,36 +25,22 @@
 namespace Freescape {
 
 // Frequency Tables (0x0D53 - 0x0E12)
-const uint8_t frq_lo[192] = {
+const uint8_t frq_lo[96] = {
 	0x0C, 0x1C, 0x2D, 0x3E, 0x51, 0x66, 0x7B, 0x91, 0xA9, 0xC3, 0xDD, 0xFA, 0x18, 0x38, 0x5A, 0x7D, // 0D53
 	0xA3, 0xCC, 0xF6, 0x23, 0x53, 0x86, 0xBB, 0xF4, 0x30, 0x70, 0xB4, 0xFB, 0x47, 0x98, 0xED, 0x47, // 0D63
 	0xA7, 0x0C, 0x77, 0xE9, 0x61, 0xE1, 0x68, 0xF7, 0x8F, 0x30, 0xDA, 0x8F, 0x4E, 0x18, 0xEF, 0xD2, // 0D73
 	0xC3, 0xC3, 0xD1, 0xEF, 0x1F, 0x60, 0xB5, 0x1E, 0x9C, 0x31, 0xDF, 0xA5, 0x87, 0x86, 0xA2, 0xDF, // 0D83
 	0x3E, 0xC1, 0x6B, 0x3C, 0x39, 0x63, 0xBE, 0x4B, 0x0F, 0x0C, 0x45, 0xBF, 0x7D, 0x83, 0xD6, 0x79, // 0D93
-	0x73, 0xC7, 0x7C, 0x97, 0x1E, 0x18, 0x8B, 0x7E, 0xFA, 0x06, 0xAC, 0xF3, 0xE6, 0x8F, 0xF8, 0x2E, // 0DA3
-	// Fill remaining based on 96 notes if needed, assuming 96 notes.
-	// Replicate last 96 bytes if table is expected to be 192
-	0x0C, 0x1C, 0x2D, 0x3E, 0x51, 0x66, 0x7B, 0x91, 0xA9, 0xC3, 0xDD, 0xFA, 0x18, 0x38, 0x5A, 0x7D,
-	0xA3, 0xCC, 0xF6, 0x23, 0x53, 0x86, 0xBB, 0xF4, 0x30, 0x70, 0xB4, 0xFB, 0x47, 0x98, 0xED, 0x47,
-	0xA7, 0x0C, 0x77, 0xE9, 0x61, 0xE1, 0x68, 0xF7, 0x8F, 0x30, 0xDA, 0x8F, 0x4E, 0x18, 0xEF, 0xD2,
-	0xC3, 0xC3, 0xD1, 0xEF, 0x1F, 0x60, 0xB5, 0x1E, 0x9C, 0x31, 0xDF, 0xA5, 0x87, 0x86, 0xA2, 0xDF,
-	0x3E, 0xC1, 0x6B, 0x3C, 0x39, 0x63, 0xBE, 0x4B, 0x0F, 0x0C, 0x45, 0xBF, 0x7D, 0x83, 0xD6, 0x79,
-	0x73, 0xC7, 0x7C, 0x97, 0x1E, 0x18, 0x8B, 0x7E, 0xFA, 0x06, 0xAC, 0xF3, 0xE6, 0x8F, 0xF8, 0x2E};
-const uint8_t frq_hi[192] = {
+	0x73, 0xC7, 0x7C, 0x97, 0x1E, 0x18, 0x8B, 0x7E, 0xFA, 0x06, 0xAC, 0xF3, 0xE6, 0x8F, 0xF8, 0x2E  // 0DA3
+};
+const uint8_t frq_hi[96] = {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, // 0DB3
 	0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x06, // 0DC3
 	0x06, 0x07, 0x07, 0x07, 0x08, 0x08, 0x09, 0x09, 0x0A, 0x0B, 0x0B, 0x0C, 0x0D, 0x0E, 0x0E, 0x0F, // 0DD3
 	0x10, 0x11, 0x12, 0x13, 0x15, 0x16, 0x17, 0x19, 0x1A, 0x1C, 0x1D, 0x1F, 0x21, 0x23, 0x25, 0x27, // 0DE3
 	0x2A, 0x2C, 0x2F, 0x32, 0x35, 0x38, 0x3B, 0x3F, 0x43, 0x47, 0x4B, 0x4F, 0x54, 0x59, 0x5E, 0x64, // 0DF3
-	0x6A, 0x70, 0x77, 0x7E, 0x86, 0x8E, 0x96, 0x9F, 0xA8, 0xB3, 0xBD, 0xC8, 0xD4, 0xE1, 0xEE, 0xFD, // 0E03
-	// Fill remaining based on 96 notes if needed
-	// Replicate last 96 bytes if table is expected to be 192
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02,
-	0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x06,
-	0x06, 0x07, 0x07, 0x07, 0x08, 0x08, 0x09, 0x09, 0x0A, 0x0B, 0x0B, 0x0C, 0x0D, 0x0E, 0x0E, 0x0F,
-	0x10, 0x11, 0x12, 0x13, 0x15, 0x16, 0x17, 0x19, 0x1A, 0x1C, 0x1D, 0x1F, 0x21, 0x23, 0x25, 0x27,
-	0x2A, 0x2C, 0x2F, 0x32, 0x35, 0x38, 0x3B, 0x3F, 0x43, 0x47, 0x4B, 0x4F, 0x54, 0x59, 0x5E, 0x64,
-	0x6A, 0x70, 0x77, 0x7E, 0x86, 0x8E, 0x96, 0x9F, 0xA8, 0xB3, 0xBD, 0xC8, 0xD4, 0xE1, 0xEE, 0xFD};
+	0x6A, 0x70, 0x77, 0x7E, 0x86, 0x8E, 0x96, 0x9F, 0xA8, 0xB3, 0xBD, 0xC8, 0xD4, 0xE1, 0xEE, 0xFD  // 0E03
+};
 
 // Instrument Data (0x0EA5 - 0x1004) - Stored as flat arrays
 // possibly_instrument_a0
@@ -111,8 +97,7 @@ const int NUM_INSTRUMENTS = sizeof(instrumentDataA0) / 8;
 
 // Arpeggio Data (0x157A - 0x157E)
 const uint8_t arpeggio_data[] = {0x00, 0x0C, 0x18};
-const uint16_t arpeggio_addr[] = {0x157C}; // Address of arpeggio_0 data (relative offset for index lookup)
-const int NUM_ARPEGGIOS = sizeof(arpeggio_addr) / sizeof(arpeggio_addr[0]);
+const int NUM_ARPEGGIOS = 1; // Only one arpeggio table is defined
 
 // Music Data Pointers and Structures
 // Need to load the actual PRG file into a buffer (_musicData)
@@ -398,7 +383,7 @@ void DrillerSIDPlayer::handleChangeTune(int tuneIndex) {
 		const uint8_t *trackPtr = nullptr; // Temp variable
 		if (currentTuneTracks) {           // Check if the tune array pointer is valid
 			trackPtr = currentTuneTracks[i];
-			debug(DEBUG_LEVEL >= 1, "Driller: V%d - Got track pointer %p from currentTuneTracks[%d]", i, trackPtr, i);
+			debug(DEBUG_LEVEL >= 1, "Driller: V%d - Got track pointer %p from currentTuneTracks[%d]", i, (const void *)trackPtr, i);
 		} else {
 			debug(DEBUG_LEVEL >= 0, "Driller: V%d - Cannot get track pointer because currentTuneTracks is NULL", i);
 		}
@@ -407,7 +392,7 @@ void DrillerSIDPlayer::handleChangeTune(int tuneIndex) {
 		_voiceState[i].trackDataPtr = trackPtr;
 
 		// *** ADD THIS LOG - AFTER ASSIGNING TO voiceState ***
-		debug(DEBUG_LEVEL >= 1, "Driller: V%d - Assigned _voiceState[%d].trackDataPtr = %p", i, i, _voiceState[i].trackDataPtr);
+		debug(DEBUG_LEVEL >= 1, "Driller: V%d - Assigned _voiceState[%d].trackDataPtr = %p", i, i, (const void *)_voiceState[i].trackDataPtr);
 
 		if (!_voiceState[i].trackDataPtr) {
 			// This block now just confirms the assignment result
@@ -438,7 +423,7 @@ void DrillerSIDPlayer::handleResetVoices() {
 		// The trackDataPtr was just assigned in handleChangeTune.
 		// Reset only the playback state relevant for starting a tune/track.
 
-		debug(DEBUG_LEVEL >= 1, "Driller: Reset Voice %d - Checking _voiceState[%d].trackDataPtr (%p)...", i, i, _voiceState[i].trackDataPtr);
+		debug(DEBUG_LEVEL >= 1, "Driller: Reset Voice %d - Checking _voiceState[%d].trackDataPtr (%p)...", i, i, (const void *)_voiceState[i].trackDataPtr);
 
 		if (_voiceState[i].trackDataPtr != nullptr) {
 			debug(DEBUG_LEVEL >= 1, "Driller: Reset Voice %d - Track pointer OK. Initializing playback state.", i);
@@ -788,185 +773,120 @@ void DrillerSIDPlayer::applyNote(VoiceState &v, int sidOffset, const uint8_t *in
 	// Corresponds to 0xA70 onwards
 
 	uint8_t note = v.currentNote;
-	// uint16_t pulse = 0; // Remove - PW now uses something_else
-	uint16_t newPulseWidth = 0; // New PW value
-	uint8_t pwLoByte = 0;       // PW Lo Byte
-	uint8_t pwHiNibble = 0;     // PW Hi Byte
+	uint16_t newPulseWidth = 0;
+	uint8_t pwLoByte = 0;
+	uint8_t pwHiNibble = 0;
+	bool isRest = (note == 0);
 	uint8_t writeAD = 0;
 	uint8_t writeSR = 0;
 	int currentInstNum = 0;
-	bool isRest = (note == 0);
-	// bool wasRestOrSlide = isRest; // Track if we started with note 0 (UNUSED?)
 
-	// --- MOVED EFFECT INITIALIZATION HERE ---
-	// Initialize effect states based on instrument flags (0xAFC onwards)
-	// Reset previous effect states only if it wasn't a slide? Maybe always reset on new note cmd?
-	// Let's reset effect triggers on *any* new note command (even 0), but keep porta/vib state if sliding?
-	// For now, reset triggers based on original:
-	// The original code resets whatever0/1/2 at 0x09D5 *before* the pattern loop.
-	// FB/FC/FA commands also reset whatever0/1.
-	// So, they should be reset unless a slide is happening.
-	// Let's rely on the reset before the loop and specific command resets.
-	// BUT, we need to SET the flags based on the instrument HERE.
+	// --- EFFECT INITIALIZATION ---
+	// This block correctly determines which continuous effect (Arp, Vib, etc.)
+	// should be active for the new note based on the instrument data.
+	v.whatever0 = 0; // Vibrato flag
+	v.whatever1 = 0; // Arpeggio flag
+	v.whatever2 = 0; // Portamento flag
+	v.portaSpeed = 0;
 
-	// Clear effect selection flags before setting based on instrument
-	// We might refine this later if effects should persist across rests
-	v.whatever0 = 0;
-	v.whatever1 = 0;
-	v.whatever2 = 0;
-	v.portaSpeed = 0; // Reset calculated porta speed
-	// Don't reset things_vib_state or stuff_arp counters here? Let effects manage their state.
-
-	// Check Instrument A1[4] for Arpeggio? (L0B09) - Maps to 0xE67
-	if (instA1[4] != 0) {
-		debug(DEBUG_LEVEL >= 2, "Driller V%d: Activating Arpeggio from InstA1[4]=%02X", voiceIndex, instA1[4]);
+	if (instA1[4] != 0) { // Arpeggio from InstA1[4]
 		uint8_t arpData = instA1[4];
 		v.arpTableIndex = arpData & 0x0F;
 		v.arpSpeedHiNibble = (arpData & 0xF0) >> 4;
-		if (v.arpTableIndex >= NUM_ARPEGGIOS)
-			v.arpTableIndex = 0;
-		v.stuff_arp_counter = 0; // Reset counter on activation
+		if (v.arpTableIndex >= NUM_ARPEGGIOS) v.arpTableIndex = 0;
+		v.stuff_arp_counter = 0;
 		v.stuff_arp_note_index = 0;
-		v.whatever1 = 1; // Enable Arp
-	}
-	// Check Instrument A1[0] for Vibrato? (L0B25) - Maps to 0xE89
-	else if (instA1[0] != 0) {
-		debug(DEBUG_LEVEL >= 2, "Driller V%d: Activating Vibrato from InstA1[0]=%02X, A1[1]=%02X", voiceIndex, instA1[0], instA1[1]);
-		v.things_vib_depth = instA1[0];                     // Depth
-		v.things_vib_delay_reload = instA1[1];              // Delay/Speed
-		v.things_vib_delay_ctr = v.things_vib_delay_reload; // Init counter
-		v.things_vib_state = 0;                             // Init state
-		v.whatever0 = 1;                                    // Enable Vib
-	}
-	// Check Instrument A0[5] for Arpeggio alternative? (L0B1A) - Also maps to 0xE67
-	else if (instA0[5] != 0) {
-		debug(DEBUG_LEVEL >= 2, "Driller V%d: Activating Arpeggio from InstA0[5]=%02X", voiceIndex, instA0[5]);
+		v.whatever1 = 1;
+	} else if (instA1[0] != 0) { // Vibrato from InstA1[0]
+		v.things_vib_depth = instA1[0];
+		v.things_vib_delay_reload = instA1[1];
+		v.things_vib_delay_ctr = v.things_vib_delay_reload;
+		v.things_vib_state = 0;
+		v.whatever0 = 1;
+	} else if (instA0[5] != 0) { // Arpeggio from InstA0[5]
 		uint8_t arpData = instA0[5];
 		v.arpTableIndex = arpData & 0x0F;
 		v.arpSpeedHiNibble = (arpData & 0xF0) >> 4;
-		if (v.arpTableIndex >= NUM_ARPEGGIOS)
-			v.arpTableIndex = 0;
-		v.stuff_arp_counter = 0; // Reset counter on activation
+		if (v.arpTableIndex >= NUM_ARPEGGIOS) v.arpTableIndex = 0;
+		v.stuff_arp_counter = 0;
 		v.stuff_arp_note_index = 0;
-		v.whatever1 = 1; // Enable Arp
+		v.whatever1 = 1;
 	}
-	// --- END MOVED EFFECT INITIALIZATION ---
 
-	// Check for note 0 = Key Off / Rest (0A70)
+	// --- NOTE HANDLING ---
 	if (isRest) {
-		// Slide/Porta to last note? (0A75)
-		note = v.currentNoteSlideTarget; // Use last played note for slide target
-		v.currentNoteSlideTarget = 0;    // Clear slide target
-
-		if (note == 0) { // Still note 0, true rest
-			debug(DEBUG_LEVEL >= 2, "Driller V%d: Applying Rest", voiceIndex);
-			v.keyOn = false;           // Ensure gate is off for rest
-			goto WriteFinalControlReg; // Skip freq/ADSR/PW writes, just turn off gate
-		} else {
-			// It's a slide/porta to the previous note 'note'
-			debug(DEBUG_LEVEL >= 2, "Driller V%d: Applying Slide to Note %d", voiceIndex, note);
-			v.keyOn = true; // Keep Gate ON for slide
-			// DO NOT reset effect flags (whatever0/1/2) during slide? This needs verification.
-			// The original code structure implies they *are* reset before the pattern loop,
-			// and only FB/FC explicitly clear them again. Let's stick with the moved init block above for now.
+		note = v.currentNoteSlideTarget;
+		v.currentNoteSlideTarget = 0;
+		if (note == 0) {
+			v.keyOn = false;
+			goto WriteFinalControlReg;
 		}
+		v.keyOn = true; // Keep gate on for slide
 	} else {
-		// Store current note for slide target (0A88)
-		debug(DEBUG_LEVEL >= 2, "Driller V%d: Applying Note %d", voiceIndex, note);
 		v.currentNoteSlideTarget = note;
-		v.keyOn = true; // Key On for a normal note
+		v.keyOn = true;
 	}
 
-	// Calculate Frequency (0A8C)
-	// ... (rest of frequency code is likely okay) ...
-	if (note >= 96)
-		note = 95; // Clamp note value
+	// --- FREQUENCY ---
+	if (note >= 96) note = 95;
 	v.baseFreq = frq_lo[note] | (frq_hi[note] << 8);
-
-	// Store base frequency (0A8F - 0AA1)
 	v.stuff_freq_base = v.baseFreq;
-	v.stuff_freq_porta_vib = v.baseFreq;    // Initial freq includes effects
-	v.stuff_freq_hard_restart = v.baseFreq; // Store for hard restart
-
-	// Set initial frequency on SID
+	v.stuff_freq_porta_vib = v.baseFreq;
+	v.stuff_freq_hard_restart = v.baseFreq;
 	v.currentFreq = v.baseFreq;
 	SID_Write(sidOffset + 0, frq_lo[note]);
 	SID_Write(sidOffset + 1, frq_hi[note]);
-	debug(DEBUG_LEVEL >= 3, "Driller V%d: Set Freq = %d ($%04X)", voiceIndex, v.currentFreq, v.currentFreq);
 
-	// Set Waveform from Instrument (0AA7)
-	v.waveform = instA0[6]; // possibly_instrument_a0+6,y
-	debug(DEBUG_LEVEL >= 3, "Driller V%d: Set Waveform = $%02X", voiceIndex, v.waveform);
-	// KeyOn is set above based on note value/slide
+	// --- WAVEFORM ---
+	v.waveform = instA0[6];
 
-	// Check if hard restart should start (Instrument A0[7] & 0x01) (0xCC1)
-	// ... (hard restart check is likely okay) ...
+	// --- HARD RESTART ---
 	if (instA0[7] & 0x01) {
-		debug(DEBUG_LEVEL >= 2, "Driller V%d: Activating Hard Restart", voiceIndex);
 		v.hardRestartActive = true;
-		v.hardRestartDelay = 0; // Reset counters for hard restart
+		v.hardRestartDelay = 0;
 		v.hardRestartCounter = 0;
-		v.hardRestartValue = instA1[5]; // possibly_instrument_a1+5,y (0x103D)
+		v.hardRestartValue = instA1[5];
 	} else {
 		v.hardRestartActive = false;
 	}
 
-	// Set ADSR (0xAB6)
-	// Use values set by FA command (stored in v.attackDecay, v.sustainRelease)
-	// SID_Write(sidOffset + 5, v.attackDecay); // Use state variable set by FA
-	// SID_Write(sidOffset + 6, v.sustainRelease); // Use state variable set by FA
-	// debug(DEBUG_LEVEL >= 3, "Driller V%d: Set ADSR = $%02X / $%02X", voiceIndex, v.attackDecay, v.sustainRelease);
-	// In applyNote, right before writing ADSR to SID:
-
-	// Set ADSR (0xAB6)
+	// --- ADSR (Corrected) ---
+	// As per disassembly at 0xAB6, ADSR is read from instA0[2] and instA0[3].
 	writeAD = instA0[2];
 	writeSR = instA0[3];
-
-	// --- TEMPORARY TEST: Override ADSR for Inst 1 and 4 ---
 	currentInstNum = v.instrumentIndex / 8;
+
+	// --- PATCH: Override ADSR for specific instruments ---
+	// Instruments 1 and 4 seem to have incorrect ADSR data in the disassembly,
+	// requiring this hardcoded override to sound correct.
 	if (currentInstNum == 1 || currentInstNum == 4) {
-		debug(1, "Driller V%d: !!! ADSR OVERRIDE TEST !!! Inst %d -> Using AD=A, SR=F", voiceIndex, currentInstNum);
-		writeAD = 0xA0; // Attack 10, Decay 0
-		writeSR = 0x0F; // Sustain 15, Release 0 (Use F for sustain)
-						// Note: The SR register is Sustain Hi Nibble / Release Lo Nibble
-						// So 0x0F should be S=0, R=15. Let's try 0xF0 (S=15, R=0) for sustain.
+		writeAD = 0xA0;
 		writeSR = 0xF0;
 	}
-	// --- END TEMPORARY TEST ---
 
-	// Use values set by FA command (stored in v.attackDecay, v.sustainRelease) OR the override
-	SID_Write(sidOffset + 5, writeAD); // Use potentially overridden value
-	SID_Write(sidOffset + 6, writeSR); // Use potentially overridden value
+	SID_Write(sidOffset + 5, writeAD); // Attack / Decay
+	SID_Write(sidOffset + 6, writeSR); // Sustain / Release
 	debug(DEBUG_LEVEL >= 3, "Driller V%d: Set ADSR = $%02X / $%02X", voiceIndex, writeAD, writeSR);
 
-	// --- Fix 2: Correct Pulse Width Setting ---
-	// Set Pulse Width (0xAC2)
-	// Use voice1_something_else[0] and voice1_something_else[2] based on disassembly writes L0AC2/L0AC8
-	// These were set by FA command based on instA0[0] (ADSR byte)
-	pwLoByte = v.something_else[0];          // From AD hi nibble
-	pwHiNibble = v.something_else[2] & 0x0F; // From SR lo nibble, masked to 4 bits
-
-	// Combine for 12-bit PW
+	// --- PULSE WIDTH (Corrected) ---
+	// As per disassembly at 0xAC2, Pulse Width is derived from the nibbles of instA0[0],
+	// which are loaded into the `something_else` variables by the FA (Set Instrument) command.
+	pwLoByte = v.something_else[0];
+	pwHiNibble = v.something_else[2] & 0x0F;
 	newPulseWidth = pwLoByte | (pwHiNibble << 8);
+	v.pulseWidth = newPulseWidth;
+	SID_Write(sidOffset + 2, v.pulseWidth & 0xFF);
+	SID_Write(sidOffset + 3, (v.pulseWidth >> 8) & 0x0F);
+	debug(DEBUG_LEVEL >= 3, "Driller V%d: Set PW = %d ($%03X) from instA0[0] nibbles", voiceIndex, v.pulseWidth, v.pulseWidth);
 
-	v.pulseWidth = newPulseWidth;                         // Update state variable *before* writing for LFO consistency
-	SID_Write(sidOffset + 2, v.pulseWidth & 0xFF);        // Write Lo byte (0xAC5)
-	SID_Write(sidOffset + 3, (v.pulseWidth >> 8) & 0x0F); // Write Hi nibble (0xACB)
-	debug(DEBUG_LEVEL >= 3, "Driller V%d: Set PW = %d ($%03X) based on something_else[0/2] (AD/SR nibbles)", voiceIndex, v.pulseWidth, v.pulseWidth);
-	// --- End Fix 2 ---
-
-	// Effect initialization was moved higher up
-
-WriteFinalControlReg: // Target for true rests
-					  // --- Final SID Write for Gate/Waveform ---
-					  // ... (final control reg write is likely okay) ...
+WriteFinalControlReg:
+	// --- FINAL CONTROL REGISTER (GATE/WAVEFORM) ---
 	uint8_t ctrl = v.waveform;
 	if (v.keyOn) {
 		ctrl |= 0x01; // Gate On
 	} else {
 		ctrl &= 0xFE; // Gate Off
 	}
-	// Apply sync/ring mod from waveform byte if included
 	SID_Write(sidOffset + 4, ctrl);
 	debug(DEBUG_LEVEL >= 2, "Driller V%d: Final Control Reg Write = $%02X (Wave=$%02X, Gate=%d)", voiceIndex, ctrl, v.waveform, v.keyOn);
 }
