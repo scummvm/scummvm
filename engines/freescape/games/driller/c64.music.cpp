@@ -187,7 +187,8 @@ DrillerSIDPlayer::DrillerSIDPlayer(Audio::Mixer *mixer) : _sid(nullptr),
 														  _playState(STOPPED),
 														  _targetTuneIndex(0),
 														  _globalTempo(3),       // Default tempo
-														  _globalTempoCounter(1) // Start immediately
+														  _globalTempoCounter(1), // Start immediately
+														  _framePhase(0)
 {
 	initSID();
 
@@ -331,28 +332,29 @@ void DrillerSIDPlayer::playFrame() {
 	// cmp #$AB; beq continue_playing
 	// We are now in the PLAYING state
 
-	// Update global tempo counter (0x09A5)
-	bool tempoTick = false;
-	if (_globalTempoCounter > 0) { // Only decrement if positive
-		_globalTempoCounter--;
-	}
-
-	if (_globalTempoCounter == 0) {
-		tempoTick = true;
-		_globalTempoCounter = _globalTempo; // Reload counter (0x09AA)
-		if (_globalTempoCounter == 0)
-			_globalTempoCounter = 1; // Avoid getting stuck if tempo is 0
-		debug(DEBUG_LEVEL >= 2, "Driller: Tempo Tick! Reloading counter to %d", _globalTempoCounter);
-	}
-
 	// Process each voice (0x0E46 - 0x0E55)
 	for (int voiceIndex = 0; voiceIndex < 3; ++voiceIndex) {
-		playVoice(voiceIndex, tempoTick);
+		playVoice(voiceIndex);
 	}
 
-	// Update master volume after processing voices (Maybe not needed if set elsewhere)
-	// The original sets it in reset_voices and potentially instrument data
-	// SID_Write(0x18, 0x0F); // Ensure volume is max - Done in init/reset
+	// Corresponds to voice_done (0x09A1)
+	// The original code increments x by 7 for each voice, so the third voice call has x=14 (0x0E)
+	// This check ensures the tempo counter is handled only once after all voices are processed.
+	// cpx #$0E ; bne @done
+	_framePhase += 7;
+	if (_framePhase >= 14) { // In practice, this will be 21, but we just need to check it's the third voice's turn
+		_framePhase = 0;
+
+		// dec tempo_ctr (0x09A5)
+		_globalTempoCounter--;
+
+		// bpl @done (0x09A8)
+		if (_globalTempoCounter < 0) {
+			// lda tempo; sta tempo_ctr (0x09AA)
+			_globalTempoCounter = _globalTempo;
+			debug(DEBUG_LEVEL >= 2, "Driller: Tempo Tick! Reloading counter to %d", _globalTempoCounter);
+		}
+	}
 }
 
 // --- Tune Loading ---
@@ -487,8 +489,8 @@ void DrillerSIDPlayer::handleResetVoices() {
 }
 
 // --- Voice Processing ---
-void DrillerSIDPlayer::playVoice(int voiceIndex, bool tempoTick) {
-	// debug(DEBUG_LEVEL >= 2, "Driller: Processing Voice %d (Tempo Tick: %d)", voiceIndex, tempoTick);
+void DrillerSIDPlayer::playVoice(int voiceIndex) {
+	// debug(DEBUG_LEVEL >= 2, "Driller: Processing Voice %d", voiceIndex);
 	VoiceState &v = _voiceState[voiceIndex];
 	int sidOffset = voice_sid_offset[voiceIndex];
 
@@ -532,7 +534,10 @@ void DrillerSIDPlayer::playVoice(int voiceIndex, bool tempoTick) {
 		}
 	}
 
-	if (tempoTick) {
+	// Corresponds to lda tempo_ctr; bne L096E (0x0964)
+	// The per-voice processing is gated by the global tempo counter being zero.
+	if (_globalTempoCounter == 0) {
+		// dec voice1_ctrl2,x (0x0969)
 		if (v.delayCounter >= 0) {
 			v.delayCounter--;
 		}
