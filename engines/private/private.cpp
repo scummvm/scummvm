@@ -1506,8 +1506,8 @@ void PrivateEngine::adjustSubtitleSize() {
 		}
 		int fontSize = MAX(8, int(50 * scale));
 		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, "regular");
-		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+		_subtitles->setFont("LiberationSans-Regular.ttf", fontSize, "regular");
+		_subtitles->setFont("LiberationSans-Italic.ttf", fontSize, "italic");
 	}
 }
 
