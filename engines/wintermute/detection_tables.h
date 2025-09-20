@@ -2017,17 +2017,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	// On the Tracks of Dinosaurs (Beta 2.5) (English)
 	WME_WINENTRY("reptilesquest", "Beta 2.5",
 		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
-					"english.dcp", "42188d46ee079b555d578ea2b406fa19", 3897), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"english.dcp", "42188d46ee079b555d578ea2b406fa19", 3897), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// On the Tracks of Dinosaurs (Beta 2.5) (Italian)
 	WME_WINENTRY("reptilesquest", "Beta 2.5",
 		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
-					"italian.dcp", "361f41b1151119f66de851f07b78b7cc", 4132), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"italian.dcp", "361f41b1151119f66de851f07b78b7cc", 4132), Common::IT_ITA, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// On the Tracks of Dinosaurs (Beta 2.5) (Russian)
 	WME_WINENTRY("reptilesquest", "Beta 2.5",
 		WME_ENTRY2s("data.dcp", "b624d3b19e37c094801a28d817bc3d76", 27345755,
-					"russian.dcp", "90d2bf541ba381bbb3375aa7d31613fb", 42175), Common::RU_RUS, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"russian.dcp", "90d2bf541ba381bbb3375aa7d31613fb", 42175), Common::RU_RUS, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// Reversion: The Escape Version 1.0
 	WME_WINENTRY("reversion1", "Version 1.0",
