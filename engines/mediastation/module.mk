@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	audio.o \
 	bitmap.o \
 	boot.o \
+	clients.o \
 	context.o \
 	cursors.o \
 	datafile.o \

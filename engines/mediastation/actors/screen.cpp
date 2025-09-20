@@ -21,6 +21,7 @@
 
 #include "mediastation/actors/screen.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
@@ -28,6 +29,9 @@ void ScreenActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) 
 	switch (paramType) {
 	case kActorHeaderCursorResourceId:
 		_cursorResourceId = chunk.readTypedUint16();
+		if (_cursorResourceId != 0) {
+			g_engine->getCursorManager()->registerAsPermanent(_cursorResourceId);
+		}
 		break;
 
 	default:

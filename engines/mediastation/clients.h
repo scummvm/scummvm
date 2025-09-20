@@ -19,45 +19,46 @@
  *
  */
 
-#ifndef MEDIASTATION_MEDIASCRIPT_FUNCTION_H
-#define MEDIASTATION_MEDIASCRIPT_FUNCTION_H
+#ifndef MEDIASTATION_CLIENTS_H
+#define MEDIASTATION_CLIENTS_H
 
-#include "common/array.h"
-#include "common/hashmap.h"
-
-#include "mediastation/clients.h"
 #include "mediastation/datafile.h"
-#include "mediastation/mediascript/codechunk.h"
 
 namespace MediaStation {
 
-class ScriptFunction {
+class ParameterClient {
 public:
-	ScriptFunction(Chunk &chunk);
-	~ScriptFunction();
+	ParameterClient() {};
+	virtual ~ParameterClient() {};
 
-	ScriptValue execute(Common::Array<ScriptValue> &args);
-
-	uint _contextId = 0;
-	uint _id = 0;
-
-private:
-	CodeChunk *_code = nullptr;
+	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) = 0;
 };
 
-class FunctionManager : public ParameterClient {
+enum DeviceOwnerSectionType {
+	kDeviceOwnerAllowMultipleSounds = 0x35,
+	kDeviceOwnerAllowMultipleStreams = 0x36,
+};
+
+class DeviceOwner : public ParameterClient {
 public:
-	FunctionManager() {};
-	virtual ~FunctionManager();
-
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
-	ScriptValue call(uint functionId, Common::Array<ScriptValue> &args);
-	void deleteFunctionsForContext(uint contextId);
 
-	ScriptValue script_Random(Common::Array<ScriptValue> &args);
+	bool _allowMultipleSounds = false;
+	bool _allowMultipleStreams = false;
+};
 
-private:
-	Common::HashMap<uint, ScriptFunction *> _functions;
+enum DocumentSectionType {
+	kDocumentContextLoadComplete = 0x10,
+	kDocumentStartupInformation = 0x2e,
+	kDocumentEntryScreen = 0x2f,
+};
+
+class Document : public ParameterClient {
+public:
+	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
+	void readStartupInformation(Chunk &chunk);
+
+	uint _entryScreenId = 0;
 };
 
 } // End of namespace MediaStation

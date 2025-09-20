@@ -27,6 +27,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 
+#include "mediastation/clients.h"
 #include "mediastation/mediascript/scriptvalue.h"
 
 namespace MediaStation {
@@ -61,10 +62,20 @@ enum TransitionType {
 	kTransitionCircleOut = 328
 };
 
-class VideoDisplayManager {
+enum VideoDisplayManagerSectionType {
+	kVideoDisplayManagerUpdateDirty = 0x578,
+	kVideoDisplayManagerUpdateAll = 0x579,
+	kVideoDisplayManagerEffectTransition = 0x57a,
+	kVideoDisplayManagerSetTime = 0x57b,
+	kVideoDisplayManagerLoadPalette = 0x5aa,
+};
+
+class VideoDisplayManager : public ParameterClient {
 public:
 	VideoDisplayManager(MediaStationEngine *vm);
 	~VideoDisplayManager();
+
+	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
 
 	void updateScreen() { _screen->update(); }
 	Graphics::Palette *getRegisteredPalette() { return _registeredPalette; }
@@ -97,6 +108,10 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::Palette *_registeredPalette = nullptr;
 	Common::Array<ScriptValue> _scheduledTransitionOnSync;
+	double _defaultTransitionTime = 0.0;
+
+	void readAndEffectTransition(Chunk &chunk);
+	void readAndRegisterPalette(Chunk &chunk);
 
 	// Blitting methods.
 	// blitRectsClip encompasses the functionality of both opaqueBlitRectsClip

@@ -21,9 +21,9 @@
 
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
-
 ScriptFunction::ScriptFunction(Chunk &chunk) {
 	_contextId = chunk.readTypedUint16();
 	// In PROFILE._ST (only present in some titles), the function ID is reported
@@ -39,10 +39,88 @@ ScriptFunction::~ScriptFunction() {
 }
 
 ScriptValue ScriptFunction::execute(Common::Array<ScriptValue> &args) {
-	debugC(5, kDebugScript, "\n********** FUNCTION %d **********", _id);
+	debugC(5, kDebugScript, "\n********** SCRIPT FUNCTION %d **********", _id);
 	ScriptValue returnValue = _code->execute(&args);
-	debugC(5, kDebugScript, "********** END FUNCTION **********");
+	debugC(5, kDebugScript, "********** END SCRIPT FUNCTION **********");
 	return returnValue;
+}
+
+FunctionManager::~FunctionManager() {
+	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
+		delete it->_value;
+	}
+	_functions.clear();
+}
+
+bool FunctionManager::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
+	bool handledParam = true;
+	switch (sectionType) {
+	case 0x31: {
+		ScriptFunction *function = new ScriptFunction(chunk);
+		_functions.setVal(function->_id, function);
+		break;
+	}
+
+	default:
+		handledParam = false;
+	}
+
+	return handledParam;
+}
+
+ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
+
+	// The original had a complex function registration system that I deemed too uselessly complex to
+	// reimplement. Here, we get basically the same behaviour by checking for default functions first,
+	// then falling through to title-defined functions.
+	switch (functionId) {
+	case kEffectTransitionFunction:
+		g_engine->getDisplayManager()->effectTransition(args);
+		break;
+
+	case kEffectTransitionOnSyncFunction:
+		g_engine->getDisplayManager()->setTransitionOnSync(args);
+		break;
+
+	case kDrawingFunction:
+		warning("STUB: %s", builtInFunctionToStr(static_cast<BuiltInFunction>(functionId)));
+		break;
+
+	case kUnk1Function:
+		warning("%s: Function Unk1 Not implemented", __func__);
+		returnValue.setToFloat(1.0);
+		break;
+
+	default: {
+		// Execute the title-defined function here.
+		ScriptFunction *scriptFunction = _functions.getValOrDefault(functionId);
+		if (scriptFunction != nullptr) {
+			returnValue = scriptFunction->execute(args);
+		} else {
+			error("%s: Unimplemented function 0x%02x", __func__, functionId);
+		}
+	}
+	}
+
+	return returnValue;
+}
+
+void FunctionManager::deleteFunctionsForContext(uint contextId) {
+	// Collect function IDs to delete first.
+	Common::Array<ScriptFunction *> functionsToDelete;
+	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
+		ScriptFunction *scriptFunction = it->_value;
+		if (scriptFunction->_contextId == contextId) {
+			functionsToDelete.push_back(scriptFunction);
+		}
+	}
+
+	// Now delete them.
+	for (ScriptFunction *scriptFunction : functionsToDelete) {
+		_functions.erase(scriptFunction->_id);
+		delete scriptFunction;
+	}
 }
 
 } // End of namespace MediaStation

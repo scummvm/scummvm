@@ -56,8 +56,17 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _displayManager;
 	_displayManager = nullptr;
 
-	delete _cursor;
-	_cursor = nullptr;
+	delete _cursorManager;
+	_cursorManager = nullptr;
+
+	delete _functionManager;
+	_functionManager = nullptr;
+
+	delete _document;
+	_document = nullptr;
+
+	delete _deviceOwner;
+	_deviceOwner = nullptr;
 
 	delete _boot;
 	_boot = nullptr;
@@ -85,16 +94,6 @@ Actor *MediaStationEngine::getActorByChunkReference(uint chunkReference) {
 		Actor *actor = it->_value->getActorByChunkReference(chunkReference);
 		if (actor != nullptr) {
 			return actor;
-		}
-	}
-	return nullptr;
-}
-
-ScriptFunction *MediaStationEngine::getFunctionById(uint functionId) {
-	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		ScriptFunction *function = it->_value->getFunctionById(functionId);
-		if (function != nullptr) {
-			return function;
 		}
 	}
 	return nullptr;
@@ -135,22 +134,14 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 }
 
 Common::Error MediaStationEngine::run() {
-	_displayManager = new VideoDisplayManager(this);
+	initDisplayManager();
+	initCursorManager();
+	initFunctionManager();
+	initDocument();
+	initDeviceOwner();
 
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
-
-	if (getPlatform() == Common::kPlatformWindows) {
-		_cursor = new WindowsCursorManager(getAppName());
-	} else if (getPlatform() == Common::kPlatformMacintosh) {
-		_cursor = new MacCursorManager(getAppName());
-	} else {
-		error("%s: Attempted to use unsupported platform %s", __func__, Common::getPlatformDescription(getPlatform()));
-	}
-	_cursor->showCursor();
-
-	DocumentActor *document = new DocumentActor;
-	_actors.push_back(document);
 
 	if (ConfMan.hasKey("entry_context")) {
 		// For development purposes, we can choose to start at an arbitrary context
@@ -159,7 +150,7 @@ Common::Error MediaStationEngine::run() {
 		warning("%s: Starting at user-requested context %d", __func__, entryContextId);
 		_requestedScreenBranchId = entryContextId;
 	} else {
-		_requestedScreenBranchId = _boot->_entryContextId;
+		_requestedScreenBranchId = _document->_entryScreenId;
 	}
 	doBranchToScreen();
 
@@ -197,6 +188,41 @@ Common::Error MediaStationEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void MediaStationEngine::initDisplayManager() {
+	_displayManager = new VideoDisplayManager(this);
+	_parameterClients.push_back(_displayManager);
+}
+
+void MediaStationEngine::initCursorManager() {
+	if (getPlatform() == Common::kPlatformWindows) {
+		_cursorManager = new WindowsCursorManager(getAppName());
+	} else if (getPlatform() == Common::kPlatformMacintosh) {
+		_cursorManager = new MacCursorManager(getAppName());
+	} else {
+		error("%s: Attempted to use unsupported platform %s", __func__, Common::getPlatformDescription(getPlatform()));
+	}
+	_parameterClients.push_back(_cursorManager);
+	_cursorManager->showCursor();
+}
+
+void MediaStationEngine::initFunctionManager() {
+	_functionManager = new FunctionManager();
+	_parameterClients.push_back(_functionManager);
+}
+
+void MediaStationEngine::initDocument() {
+	_document = new Document();
+	_parameterClients.push_back(_document);
+
+	DocumentActor *documentActor = new DocumentActor;
+	_actors.push_back(documentActor);
+}
+
+void MediaStationEngine::initDeviceOwner() {
+	_deviceOwner = new DeviceOwner();
+	_parameterClients.push_back(_deviceOwner);
 }
 
 void MediaStationEngine::processEvents() {
@@ -252,16 +278,6 @@ void MediaStationEngine::processEvents() {
 	}
 }
 
-void MediaStationEngine::setCursor(uint id) {
-	// The cursor ID is not a resource ID in the executable, but a numeric ID
-	// that's a lookup into BOOT.STM, which gives actual name the name of the
-	// resource in the executable.
-	if (id != 0) {
-		const CursorDeclaration &cursorDeclaration = _boot->_cursorDeclarations.getVal(id);
-		_cursor->setCursor(cursorDeclaration._name);
-	}
-}
-
 void MediaStationEngine::refreshActiveHotspot() {
 	Actor *actor = findActorToAcceptMouseEvents();
 	if (actor != nullptr && actor->type() != kActorTypeHotspot) {
@@ -276,11 +292,11 @@ void MediaStationEngine::refreshActiveHotspot() {
 		_currentHotspot = hotspot;
 		if (hotspot != nullptr) {
 			debugC(5, kDebugEvents, "refreshActiveHotspot(): (%d, %d): Entered hotspot %d", _mousePos.x, _mousePos.y, hotspot->id());
-			setCursor(hotspot->_cursorResourceId);
+			_cursorManager->setAsTemporary(hotspot->_cursorResourceId);
 			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
 		} else {
 			// There is no hotspot, so set the default cursor for this screen instead.
-			setCursor(_currentContext->_screenActor->_cursorResourceId);
+			_cursorManager->unsetTemporary();
 		}
 	}
 
@@ -376,7 +392,6 @@ void MediaStationEngine::doBranchToScreen() {
 
 	_currentContext = loadContext(_requestedScreenBranchId);
 	_currentHotspot = nullptr;
-	_displayManager->setRegisteredPalette(_currentContext->_palette);
 
 	if (_currentContext->_screenActor != nullptr) {
 		_currentContext->_screenActor->runEventHandlerIfExists(kEntryEvent);
@@ -421,6 +436,8 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 		}
 	}
 
+	_functionManager->deleteFunctionsForContext(contextId);
+
 	delete context;
 	_loadedContexts.erase(contextId);
 }
@@ -446,36 +463,6 @@ Actor *MediaStationEngine::findActorToAcceptMouseEvents() {
 	return intersectingActor;
 }
 
-ScriptValue MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args) {
-	ScriptValue returnValue;
-
-	switch (function) {
-	case kEffectTransitionFunction:
-		_displayManager->effectTransition(args);
-		return returnValue;
-
-	case kEffectTransitionOnSyncFunction:
-		_displayManager->setTransitionOnSync(args);
-		return returnValue;
-
-	case kDrawingFunction: {
-		// Not entirely sure what this function does, but it seems like a way to
-		// call into some drawing functions built into the IBM/Crayola executable.
-		warning("%s: Built-in drawing function not implemented", __func__);
-		return returnValue;
-	}
-
-	case kUnk1Function: {
-		warning("%s: Function 10 not implemented", __func__);
-		returnValue.setToFloat(1.0);
-		return returnValue;
-	}
-
-	default:
-		error("%s: Got unknown built-in function %s (%d)", __func__, builtInFunctionToStr(function), static_cast<uint>(function));
-	}
-}
-
 int MediaStationEngine::compareActorByZIndex(const SpatialEntity *a, const SpatialEntity *b) {
 	int diff = b->zIndex() - a->zIndex();
 	if (diff < 0)
@@ -485,6 +472,20 @@ int MediaStationEngine::compareActorByZIndex(const SpatialEntity *a, const Spati
 	else {
 		// If z-indices are equal, compare pointers for stable sort
 		return (a < b) ? -1 : 1;
+	}
+}
+
+void MediaStationEngine::readUnrecognizedFromStream(Chunk &chunk, uint sectionType) {
+	bool paramHandled = false;
+	for (ParameterClient *client : g_engine->_parameterClients) {
+		if (client->attemptToReadFromStream(chunk, sectionType)) {
+			paramHandled = true;
+			break;
+		}
+	}
+
+	if (!paramHandled) {
+		error("%s: Unhandled section type 0x%x", __func__, static_cast<uint>(sectionType));
 	}
 }
 

@@ -22,28 +22,69 @@
 #ifndef MEDIASTATION_CURSORS_H
 #define MEDIASTATION_CURSORS_H
 
+#include "common/platform.h"
 #include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/str.h"
 #include "common/macresman.h"
 #include "common/formats/winexe.h"
 #include "graphics/wincursor.h"
+#include "graphics/maccursor.h"
+
+#include "mediastation/clients.h"
+#include "mediastation/datafile.h"
 
 namespace MediaStation {
 
+enum CursorManagerCommandType {
+	kCursorManagerInit = 0x0c,
+	kCursorManagerNewCursor = 0x15,
+	kCursorManagerDisposeCursor = 0x16,
+};
+
+enum CursorType {
+	kPlatformCursor = 0,
+	kResourceCursor = 1,
+};
+
 // Media Station stores cursors in the executable as named resources.
-class CursorManager {
+class CursorManager : public ParameterClient {
 public:
-	CursorManager() {}
-	virtual ~CursorManager() {}
+	CursorManager(const Common::Path &appName) : _appName(appName) {}
+	virtual ~CursorManager();
 
-	virtual void showCursor();
-	virtual void hideCursor();
+	virtual bool attemptToReadFromStream(Chunk &chunk, uint param) override;
+	void init(Chunk &chunk);
+	void newCursor(Chunk &chunk);
+	void disposeCursor(Chunk &chunk);
 
-	virtual void setCursor(const Common::String &name) = 0;
+	void newPlatformCursor(uint16 platformCursorId, uint16 cursorId);
+	void newResourceCursor(uint16 cursorId, const Common::String &resourceName);
+	// Some engine versions also have newBufferCursor that seems to be unused.
+
+	void showCursor();
+	void hideCursor();
+
+	virtual void resetCurrent();
+	void registerAsPermanent(uint16 id);
+	void setAsPermanent(uint16 id);
+	void setAsTemporary(uint16 id);
+	void unsetPermanent();
+	void unsetTemporary();
 
 protected:
-	virtual void setDefaultCursor();
+	Common::Path _appName;
+
+	uint16 _baseCursorId = 0;
+	uint16 _maxCursorId = 0;
+	uint16 _currentCursorId = 0;
+	uint16 _permanentCursorId = 0;
+
+	// The original used an array with computed indices, but we use a hashmap for simplicity.
+	Common::HashMap<uint16, Graphics::Cursor *> _cursors;
+
+	virtual Graphics::Cursor *loadResourceCursor(const Common::String &name) = 0;
+	void setDefaultCursor();
 };
 
 class WindowsCursorManager : public CursorManager {
@@ -51,13 +92,10 @@ public:
 	WindowsCursorManager(const Common::Path &appName);
 	~WindowsCursorManager() override;
 
-	virtual void setCursor(const Common::String &name) override;
-
-protected:
-	void loadCursors(const Common::Path &appName);
+	virtual Graphics::Cursor *loadResourceCursor(const Common::String &name) override;
 
 private:
-	Common::HashMap<Common::String, Graphics::WinCursorGroup *> _cursors;
+	Common::HashMap<Common::String, Graphics::WinCursorGroup *> _cursorGroups;
 };
 
 class MacCursorManager : public CursorManager {
@@ -65,7 +103,7 @@ public:
 	explicit MacCursorManager(const Common::Path &appName);
 	~MacCursorManager() override;
 
-	virtual void setCursor(const Common::String &name) override;
+	virtual Graphics::Cursor *loadResourceCursor(const Common::String &name) override;
 
 private:
 	Common::MacResManager *_resFork;

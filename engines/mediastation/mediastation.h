@@ -35,6 +35,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
+#include "mediastation/clients.h"
 #include "mediastation/detection.h"
 #include "mediastation/datafile.h"
 #include "mediastation/boot.h"
@@ -42,6 +43,7 @@
 #include "mediastation/actor.h"
 #include "mediastation/cursors.h"
 #include "mediastation/graphics.h"
+#include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
 
@@ -85,14 +87,18 @@ public:
 	void registerActor(Actor *actorToAdd);
 	void scheduleScreenBranch(uint screenId);
 	void scheduleContextRelease(uint contextId);
+	void readUnrecognizedFromStream(Chunk &chunk, uint sectionType);
+	void releaseContext(uint32 contextId);
 
 	Actor *getActorById(uint actorId);
 	Actor *getActorByChunkReference(uint chunkReference);
-	ScriptFunction *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
+	CursorManager *getCursorManager() { return _cursorManager; }
+	FunctionManager *getFunctionManager() { return _functionManager; }
 
-	ScriptValue callBuiltInFunction(BuiltInFunction function, Common::Array<ScriptValue> &args);
+	Common::Array<ParameterClient *> _parameterClients;
+
 	Common::RandomSource _randomSource;
 
 	Context *_currentContext = nullptr;
@@ -109,12 +115,11 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::Array<Common::Rect> _dirtyRects;
 
-	// In Media Station, only the cursors are stored in the executable; everything
-	// else is in the Context (*.CXT) data files.
-	CursorManager *_cursor;
-	void setCursor(uint id);
-
 	VideoDisplayManager *_displayManager = nullptr;
+	CursorManager *_cursorManager = nullptr;
+	FunctionManager *_functionManager = nullptr;
+	Document *_document = nullptr;
+	DeviceOwner *_deviceOwner = nullptr;
 
 	Boot *_boot = nullptr;
 	Common::Array<Actor *> _actors;
@@ -124,9 +129,14 @@ private:
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
 
+	void initDisplayManager();
+	void initCursorManager();
+	void initFunctionManager();
+	void initDocument();
+	void initDeviceOwner();
+
 	void doBranchToScreen();
 	Context *loadContext(uint32 contextId);
-	void releaseContext(uint32 contextId);
 	Actor *findActorToAcceptMouseEvents();
 
 	static int compareActorByZIndex(const SpatialEntity *a, const SpatialEntity *b);

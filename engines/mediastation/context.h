@@ -29,28 +29,25 @@
 
 #include "mediastation/datafile.h"
 #include "mediastation/actor.h"
-#include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
 
-enum ContextParametersSectionType {
-	kContextParametersEmptySection = 0x0000,
-	kContextParametersVariable = 0x0014,
-	kContextParametersName = 0x0bb9,
-	kContextParametersFileNumber = 0x0011,
-	kContextParametersBytecode = 0x0017
+enum StreamType {
+	kDocumentDefStream = 0x01,
+	kControlCommandsStream = 0x0D,
 };
 
 enum ContextSectionType {
-	kContextEmptySection = 0x0000,
-	kContextOldStyleSection = 0x000d,
-	kContextParametersSection = 0x000e,
-	kContextPaletteSection = 0x05aa,
-	kContextUnkAtEndSection = 0x0010,
-	kContextActorHeaderSection = 0x0011,
-	kContextPoohSection = 0x057a,
-	kContextActorLinkSection = 0x0013,
-	kContextFunctionSection = 0x0031
+	kEndOfContextData = 0x00,
+	kContextCreateData = 0x0e,
+	kContextDestroyData = 0x0f,
+	kContextLoadCompleteSection = 0x10,
+	kContextCreateActorData = 0x11,
+	kContextDestroyActorData = 0x12,
+	kContextActorLoadComplete = 0x13,
+	kContextCreateVariableData = 0x14,
+	kContextFunctionSection = 0x31,
+	kContextNameData = 0xbb8
 };
 
 class ScreenActor;
@@ -63,12 +60,10 @@ public:
 	uint32 _unk1;
 	uint32 _subfileCount;
 	uint32 _fileSize;
-	Graphics::Palette *_palette = nullptr;
 	ScreenActor *_screenActor = nullptr;
 
 	Actor *getActorById(uint actorId);
 	Actor *getActorByChunkReference(uint chunkReference);
-	ScriptFunction *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 
 private:
@@ -79,19 +74,21 @@ private:
 	Common::String _contextName;
 
 	Common::HashMap<uint, Actor *> _actors;
-	Common::HashMap<uint, ScriptFunction *> _functions;
 	Common::HashMap<uint, Actor *> _actorsByChunkReference;
 	Common::HashMap<uint, ScriptValue *> _variables;
 
-	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
-	void readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk);
+	void readHeaderSections(Subfile &subfile, Chunk &chunk);
 
-	bool readHeaderSection(Chunk &chunk);
+	void readControlCommands(Chunk &chunk);
+	void readCommandFromStream(ContextSectionType sectionType, Chunk &chunk);
 	void readCreateContextData(Chunk &chunk);
-	Actor *readCreateActorData(Chunk &chunk);
+	void readDestroyContextData(Chunk &chunk);
+	void readCreateActorData(Chunk &chunk);
+	void readDestroyActorData(Chunk &chunk);
+	void readActorLoadComplete(Chunk &chunk);
 	void readCreateVariableData(Chunk &chunk);
+	void readContextNameData(Chunk &chunk);
 
-	void readActorInFirstSubfile(Chunk &chunk);
 	void readActorFromLaterSubfile(Subfile &subfile);
 };
 

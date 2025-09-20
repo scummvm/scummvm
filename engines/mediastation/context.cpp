@@ -25,6 +25,7 @@
 
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/collection.h"
+#include "mediastation/mediascript/function.h"
 #include "mediastation/actors/canvas.h"
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/image.h"
@@ -51,22 +52,10 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 	_fileSize = _handle->readUint32LE();
 	debugC(5, kDebugLoading, "Context::Context(): _unk1 = 0x%x", _unk1);
 
+	// Read headers and actors in the first subfile.
 	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
-
-	if (g_engine->isFirstGenerationEngine()) {
-		readOldStyleHeaderSections(subfile, chunk);
-	} else {
-		readNewStyleHeaderSections(subfile, chunk);
-	}
-
-	chunk = subfile._currentChunk;
-	while (!subfile.atEnd()) {
-		readActorInFirstSubfile(chunk);
-		if (!subfile.atEnd()) {
-			chunk = subfile.nextChunk();
-		}
-	}
+	readHeaderSections(subfile, chunk);
 
 	// Read actors in the rest of the subfiles.
 	for (uint i = 1; i < _subfileCount; i++) {
@@ -111,20 +100,12 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 }
 
 Context::~Context() {
-	delete _palette;
-	_palette = nullptr;
-
 	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
 		delete it->_value;
 	}
 	_actors.clear();
 	// The same actor pointers are in here, so don't delete again.
 	_actorsByChunkReference.clear();
-
-	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
-		delete it->_value;
-	}
-	_functions.clear();
 
 	for (auto it = _variables.begin(); it != _variables.end(); ++it) {
 		delete it->_value;
@@ -140,60 +121,46 @@ Actor *Context::getActorByChunkReference(uint chunkReference) {
 	return _actorsByChunkReference.getValOrDefault(chunkReference);
 }
 
-ScriptFunction *Context::getFunctionById(uint functionId) {
-	return _functions.getValOrDefault(functionId);
-}
-
 ScriptValue *Context::getVariable(uint variableId) {
 	return _variables.getValOrDefault(variableId);
 }
 
-void Context::readCreateContextData(Chunk &chunk) {
-	_fileNumber = chunk.readTypedUint16();
-
-	ContextParametersSectionType sectionType = static_cast<ContextParametersSectionType>(chunk.readTypedUint16());
-	while (sectionType != kContextParametersEmptySection) {
-		debugC(5, kDebugLoading, "ContextParameters::ContextParameters: sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-		switch (sectionType) {
-		case kContextParametersName: {
-			uint repeatedFileNumber = chunk.readTypedUint16();
-			if (repeatedFileNumber != _fileNumber) {
-				warning("%s: Repeated file number didn't match: %d != %d", __func__, repeatedFileNumber, _fileNumber);
-			}
-			_contextName = chunk.readTypedString();
-
-			uint endingFlag = chunk.readTypedUint16();
-			if (endingFlag != 0) {
-				warning("%s: Got non-zero ending flag 0x%x", __func__, endingFlag);
-			}
-			break;
+void Context::readControlCommands(Chunk &chunk) {
+	ContextSectionType command = kEndOfContextData;
+	do {
+		command = static_cast<ContextSectionType>(chunk.readTypedUint16());
+		if (command != kEndOfContextData) {
+			readCommandFromStream(command, chunk);
 		}
-
-		case kContextParametersFileNumber: {
-			error("%s: Section type FILE_NUMBER not implemented yet", __func__);
-			break;
-		}
-
-		case kContextParametersVariable: {
-			readCreateVariableData(chunk);
-			break;
-		}
-
-		case kContextParametersBytecode: {
-			ScriptFunction *function = new ScriptFunction(chunk);
-			_functions.setVal(function->_id, function);
-			break;
-		}
-
-		default:
-			error("%s: Unknown section type 0x%x", __func__, static_cast<uint>(sectionType));
-		}
-
-		sectionType = static_cast<ContextParametersSectionType>(chunk.readTypedUint16());
-	}
+	} while (command != kEndOfContextData);
 }
 
-Actor *Context::readCreateActorData(Chunk &chunk) {
+void Context::readCreateContextData(Chunk &chunk) {
+	// The original had contexts created from the base engine class,
+	// but things are currently structured a bit differently, so this
+	// is a no-op for now.
+	_fileNumber = chunk.readTypedUint16();
+}
+
+void Context::readDestroyContextData(Chunk &chunk) {
+	uint contextId = chunk.readTypedUint16();
+	g_engine->releaseContext(contextId);
+}
+
+void Context::readDestroyActorData(Chunk &chunk) {
+	uint actorId = chunk.readTypedUint16();
+	// TODO: This really can't be done until we have this reading be part of the
+	// engine class, as it was in the original.
+	warning("%s: STUB: destroyActor %d", __func__, actorId);
+}
+
+void Context::readActorLoadComplete(Chunk &chunk) {
+	uint actorId = chunk.readTypedUint16();
+	Actor *actor = g_engine->getActorById(actorId);
+	actor->loadIsComplete();
+}
+
+void Context::readCreateActorData(Chunk &chunk) {
 	uint contextId = chunk.readTypedUint16();
 	ActorType type = static_cast<ActorType>(chunk.readTypedUint16());
 	uint id = chunk.readTypedUint16();
@@ -256,7 +223,23 @@ Actor *Context::readCreateActorData(Chunk &chunk) {
 	actor->setId(id);
 	actor->setContextId(contextId);
 	actor->initFromParameterStream(chunk);
-	return actor;
+
+	_actors.setVal(actor->id(), actor);
+	g_engine->registerActor(actor);
+	if (actor->_chunkReference != 0) {
+		debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing actor with chunk ID \"%s\" (0x%x)", tag2str(actor->_chunkReference), actor->_chunkReference);
+		_actorsByChunkReference.setVal(actor->_chunkReference, actor);
+	}
+
+	if (actor->type() == kActorTypeMovie) {
+		StreamMovieActor *movie = static_cast<StreamMovieActor *>(actor);
+		if (movie->_audioChunkReference != 0) {
+			_actorsByChunkReference.setVal(movie->_audioChunkReference, actor);
+		}
+		if (movie->_animationChunkReference != 0) {
+			_actorsByChunkReference.setVal(movie->_animationChunkReference, actor);
+		}
+	}
 }
 
 void Context::readCreateVariableData(Chunk &chunk) {
@@ -276,58 +259,36 @@ void Context::readCreateVariableData(Chunk &chunk) {
 		id, scriptValueTypeToStr(value->getType()));
 }
 
-void Context::readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
-	error("%s: Not implemented yet", __func__);
-}
+void Context::readHeaderSections(Subfile &subfile, Chunk &chunk) {
+	do {
+		if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
+			StreamType streamType = static_cast<StreamType>(chunk.readTypedUint16());
+			if (streamType != kControlCommandsStream) {
+				error("%s: Expected header chunk, got %s (@0x%llx)", __func__, tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
+			}
 
-void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
-	bool moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
-	if (!moreSectionsToRead) {
-		warning("%s: Got no header sections (@0x%llx)", __func__, static_cast<long long int>(chunk.pos()));
-	}
-
-	while (moreSectionsToRead) {
-		// Verify this chunk is a header.
-		// TODO: What are the situations when it's not?
-		uint16 sectionType = chunk.readTypedUint16();
-		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-		bool chunkIsHeader = (sectionType == 0x000d);
-		if (!chunkIsHeader) {
-			error("%s: Expected header chunk, got %s (@0x%llx)", __func__, tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
-		}
-
-		// Read this header section.
-		moreSectionsToRead = readHeaderSection(chunk);
-		if (subfile.atEnd()) {
-			break;
+			readControlCommands(chunk);
 		} else {
-			debugC(5, kDebugLoading, "\nContext::readNewStyleHeaderSections(): Getting next chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));
+			Actor *actor = getActorByChunkReference(chunk._id);
+			if (actor == nullptr) {
+				// We should only need to look in the global scope when there is an
+				// install cache (INSTALL.CXT).
+				actor = g_engine->getActorByChunkReference(chunk._id);
+				if (actor == nullptr) {
+					error("%s: Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", __func__, tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+				}
+			}
+			actor->readChunk(chunk);
+		}
+
+		if (chunk.bytesRemaining() != 0) {
+			warning("%s: %d bytes remaining at end of chunk", __func__, chunk.bytesRemaining());
+		}
+
+		if (!subfile.atEnd()) {
 			chunk = subfile.nextChunk();
-			moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
 		}
-	}
-	debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): Finished reading sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
-}
-
-void Context::readActorInFirstSubfile(Chunk &chunk) {
-	if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
-		warning("%s: Skippping \"igod\" actor link chunk", __func__);
-		chunk.skip(chunk.bytesRemaining());
-		return;
-	}
-
-	// TODO: Make sure this is not an actor link.
-	Actor *actor = getActorByChunkReference(chunk._id);
-	if (actor == nullptr) {
-		// We should only need to look in the global scope when there is an
-		// install cache (INSTALL.CXT).
-		actor = g_engine->getActorByChunkReference(chunk._id);
-		if (actor == nullptr) {
-			error("%s: Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", __func__, tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
-		}
-	}
-	debugC(5, kDebugLoading, "\nContext::readActorInFirstSubfile(): Got actor with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(actor->type()), static_cast<long long int>(chunk.pos()));
-	actor->readChunk(chunk);
+	} while (!subfile.atEnd());
 }
 
 void Context::readActorFromLaterSubfile(Subfile &subfile) {
@@ -345,97 +306,49 @@ void Context::readActorFromLaterSubfile(Subfile &subfile) {
 	actor->readSubfile(subfile, chunk);
 }
 
-bool Context::readHeaderSection(Chunk &chunk) {
-	uint16 sectionType = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "Context::readHeaderSection(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+void Context::readContextNameData(Chunk &chunk) {
+	uint contextId = chunk.readTypedUint16();
+	if (contextId != _fileNumber) {
+		warning("%s: Repeated context ID didn't match: %d != %d", __func__, contextId, _fileNumber);
+	}
+
+	_name = chunk.readTypedString();
+}
+
+void Context::readCommandFromStream(ContextSectionType sectionType, Chunk &chunk) {
+	debugC(5, kDebugLoading, "%s: %d", __func__, static_cast<uint>(sectionType));
 	switch (sectionType) {
-	case kContextParametersSection: {
+	case kContextCreateData:
 		readCreateContextData(chunk);
 		break;
-	}
 
-	case kContextActorLinkSection: {
-		warning("%s: ACTOR_LINK not implemented yet", __func__);
-		chunk.skip(chunk.bytesRemaining());
+	case kContextDestroyData:
+		readDestroyContextData(chunk);
 		break;
-	}
 
-	case kContextPaletteSection: {
-		if (_palette != nullptr) {
-			error("%s: Got multiple palettes (@0x%llx)", __func__, static_cast<long long int>(chunk.pos()));
-		}
-
-		byte *buffer = new byte[Graphics::PALETTE_SIZE];
-		chunk.read(buffer, Graphics::PALETTE_SIZE);
-		_palette = new Graphics::Palette(buffer, Graphics::PALETTE_COUNT, DisposeAfterUse::YES);
-		debugC(5, kDebugLoading, "Context::readHeaderSection(): Read palette");
-
-		// This is likely just an ending flag that we expect to be zero.
-		uint endingFlag = chunk.readTypedUint16();
-		if (endingFlag != 0) {
-			warning("%s: Got non-zero ending flag 0x%x", __func__, endingFlag);
-		}
+	case kContextCreateActorData:
+		readCreateActorData(chunk);
 		break;
-	}
 
-	case kContextActorHeaderSection: {
-		Actor *actor = readCreateActorData(chunk);
-		_actors.setVal(actor->id(), actor);
-		g_engine->registerActor(actor);
-		if (actor->_chunkReference != 0) {
-			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing actor with chunk ID \"%s\" (0x%x)", tag2str(actor->_chunkReference), actor->_chunkReference);
-			_actorsByChunkReference.setVal(actor->_chunkReference, actor);
-		}
-
-		if (actor->type() == kActorTypeMovie) {
-			StreamMovieActor *movie = static_cast<StreamMovieActor *>(actor);
-			if (movie->_audioChunkReference != 0) {
-				_actorsByChunkReference.setVal(movie->_audioChunkReference, actor);
-			}
-			if (movie->_animationChunkReference != 0) {
-				_actorsByChunkReference.setVal(movie->_animationChunkReference, actor);
-			}
-		}
-		// TODO: This datum only appears sometimes.
-		uint unk2 = chunk.readTypedUint16();
-		debugC(5, kDebugLoading, "Context::readHeaderSection(): Got unknown value at end of actor header section 0x%x", unk2);
+	case kContextDestroyActorData:
+		readDestroyActorData(chunk);
 		break;
-	}
 
-	case kContextFunctionSection: {
-		ScriptFunction *function = new ScriptFunction(chunk);
-		_functions.setVal(function->_id, function);
-		if (!g_engine->isFirstGenerationEngine()) {
-			uint endingFlag = chunk.readTypedUint16();
-			if (endingFlag != 0) {
-				warning("%s: Got non-zero ending flag 0x%x in function section", __func__, endingFlag);
-			}
-		}
+	case kContextActorLoadComplete:
+		readActorLoadComplete(chunk);
 		break;
-	}
 
-	case kContextUnkAtEndSection: {
-		int unk1 = chunk.readTypedUint16();
-		int unk2 = chunk.readTypedUint16();
-		debugC(5, kDebugLoading, "Context::readHeaderSection(): unk1 = %d, unk2 = %d", unk1, unk2);
-		return false;
-	}
-
-	case kContextEmptySection: {
-		error("%s: EMPTY Not implemented yet", __func__);
+	case kContextCreateVariableData:
+		readCreateVariableData(chunk);
 		break;
-	}
 
-	case kContextPoohSection: {
-		error("%s: POOH Not implemented yet", __func__);
+	case kContextNameData:
+		readContextNameData(chunk);
 		break;
-	}
 
 	default:
-		error("%s: Unknown section type 0x%x (@0x%llx)", __func__, static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+		g_engine->readUnrecognizedFromStream(chunk, static_cast<uint>(sectionType));
 	}
-
-	return true;
 }
 
 } // End of namespace MediaStation

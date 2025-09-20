@@ -68,7 +68,6 @@ enum DatumType {
 	kDatumTypeVersion = 0x13,
 	kDatumTypeChunkReference = 0x1b,
 	kDatumTypePolygon = 0x1d,
-	kDatumTypePalette = 0x05aa
 };
 
 class ParameterReadStream : public Common::SeekableReadStream {

@@ -464,18 +464,7 @@ ScriptValue CodeChunk::evaluateFunctionCall(uint functionId, uint paramCount) {
 		args.push_back(arg);
 	}
 
-	ScriptValue returnValue;
-	ScriptFunction *function = g_engine->getFunctionById(functionId);
-	if (function != nullptr) {
-		// This is a title-defined function.
-		returnValue = function->execute(args);
-	} else {
-		// This is a function built in (and global to) the engine.
-		BuiltInFunction builtInFunctionId = static_cast<BuiltInFunction>(functionId);
-		debugC(5, kDebugScript, "  Function Name: %s ", builtInFunctionToStr(builtInFunctionId));
-		returnValue = g_engine->callBuiltInFunction(builtInFunctionId, args);
-	}
-
+	ScriptValue returnValue = g_engine->getFunctionManager()->call(functionId, args);
 	return returnValue;
 }
 

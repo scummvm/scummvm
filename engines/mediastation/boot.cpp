@@ -21,6 +21,7 @@
 
 #include "mediastation/boot.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
@@ -158,137 +159,20 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 	Subfile subfile = getNextSubfile();
 	Chunk chunk = subfile.nextChunk();
 
-	uint32 beforeSectionTypeUnk = chunk.readTypedUint16(); // Usually 0x0001
-	debugC(5, kDebugLoading, "Boot::Boot(): unk1 = 0x%x", beforeSectionTypeUnk);
-
-	BootSectionType sectionType = getSectionType(chunk);
-	bool notLastSection = (kBootLastSection != sectionType);
-	while (notLastSection) {
-		debugC(5, kDebugLoading, "Boot::Boot(): sectionType = 0x%x", static_cast<uint>(sectionType));
-		switch (sectionType) {
-		case kBootVersionInformation: {
-			_gameTitle = chunk.readTypedString();
-			debugC(5, kDebugLoading, " - gameTitle = %s", _gameTitle.c_str());
-			_versionInfo = chunk.readTypedVersion();
-			_engineInfo = chunk.readTypedString();
-			debugC(5, kDebugLoading, " - versionInfo = %d.%d.%d (%s)",
-				_versionInfo.major, _versionInfo.minor, _versionInfo.patch, _engineInfo.c_str());
-			_sourceString = chunk.readTypedString();
-			debugC(5, kDebugLoading, " - sourceString = %s", _sourceString.c_str());
+	// TODO: This is really analogous to RT_ImtGod::notifyBufferFilled.
+	// But we are currently only handling the DocumentDef part of it.
+	BootStreamType streamType = static_cast<BootStreamType>(chunk.readTypedUint16());
+	switch (streamType) {
+		case kBootDocumentDef:
+			readDocumentDef(chunk);
 			break;
-		}
 
-		case kBootUnk1:
-		case kBootUnk2:
-		case kBootUnk3: {
-			uint unk = chunk.readTypedUint16();
-			debugC(5, kDebugLoading, " - unk = 0x%x", unk);
+		case kBootControlCommands:
+			error("%s: STUB: readControlComments", __func__);
 			break;
-		}
-
-		case kBootUnk4: {
-			double unk = chunk.readTypedTime();
-			debugC(5, kDebugLoading, " - unk = %f", unk);
-			break;
-		}
-
-		case kBootEngineResource: {
-			Common::String resourceName = chunk.readTypedString();
-			sectionType = getSectionType(chunk);
-			if (sectionType == kBootEngineResourceId) {
-				int resourceId = chunk.readTypedUint16();
-				EngineResourceDeclaration resourceDeclaration = EngineResourceDeclaration(resourceName, resourceId);
-				_engineResourceDeclarations.setVal(resourceId, resourceDeclaration);
-			} else {
-				error("%s: Got section type 0x%x when expecting ENGINE_RESOURCE_ID", __func__, static_cast<uint>(sectionType));
-			}
-			break;
-		}
-
-		case kBootContextDeclaration: {
-			uint flag = chunk.readTypedUint16();
-			while (flag != 0) {
-				ContextDeclaration contextDeclaration = ContextDeclaration(chunk);
-				_contextDeclarations.setVal(contextDeclaration._contextId, contextDeclaration);
-				flag = chunk.readTypedUint16();
-			}
-			break;
-		}
-
-		case kBootScreenDeclaration: {
-			uint flag = chunk.readTypedUint16();
-			while (flag != 0) {
-				ScreenDeclaration screenDeclaration = ScreenDeclaration(chunk);
-				_screenDeclarations.setVal(screenDeclaration._actorId, screenDeclaration);
-				flag = chunk.readTypedUint16();
-			}
-			break;
-		}
-
-		case kBootFileDeclaration: {
-			uint flag = chunk.readTypedUint16();
-			while (flag != 0) {
-				FileDeclaration fileDeclaration = FileDeclaration(chunk);
-				_fileDeclarations.setVal(fileDeclaration._id, fileDeclaration);
-				flag = chunk.readTypedUint16();
-			};
-			break;
-		}
-
-		case kBootSubfileDeclaration: {
-			uint flag = chunk.readTypedUint16();
-			while (flag != 0) {
-				SubfileDeclaration subfileDeclaration = SubfileDeclaration(chunk);
-				_subfileDeclarations.setVal(subfileDeclaration._actorId, subfileDeclaration);
-				flag = chunk.readTypedUint16();
-			}
-			break;
-		}
-
-		case kBootCursorDeclaration: {
-			CursorDeclaration cursorDeclaration = CursorDeclaration(chunk);
-			_cursorDeclarations.setVal(cursorDeclaration._id, cursorDeclaration);
-			break;
-		}
-
-		case kBootEmptySection: {
-			// This semems to separate the cursor declarations from whatever comes
-			// after it (what I formerly called the "footer"), but it has no data
-			// itself.
-			break;
-		}
-
-		case kBootEntryScreen: {
-			_entryContextId = chunk.readTypedUint16();
-			debugC(5, kDebugLoading, " - _entryContextId = %d", _entryContextId);
-			break;
-		}
-
-		case kBootAllowMultipleSounds: {
-			_allowMultipleSounds = (chunk.readTypedByte() == 1);
-			debugC(5, kDebugLoading, " - _allowMultipleSounds = %d", _allowMultipleSounds);
-			break;
-		}
-
-		case kBootAllowMultipleStreams: {
-			_allowMultipleStreams = (chunk.readTypedByte() == 1);
-			debugC(5, kDebugLoading, " - _allowMultipleStreams = %d", _allowMultipleStreams);
-			break;
-		}
-
-		case kBootUnk5: {
-			uint32 unk1 = chunk.readTypedUint16();
-			uint32 unk2 = chunk.readTypedUint16();
-			debugC(5, kDebugLoading, " - unk1 = 0x%x, unk2 = 0x%x", unk1, unk2);
-			break;
-		}
 
 		default:
-			warning("%s: Unknown section type %d", __func__, static_cast<uint>(sectionType));
-		}
-
-		sectionType = getSectionType(chunk);
-		notLastSection = kBootLastSection != sectionType;
+			error("%s: Unhandled section type 0x%x", __func__, static_cast<uint>(streamType));
 	}
 }
 
@@ -299,11 +183,106 @@ BootSectionType Boot::getSectionType(Chunk &chunk) {
 Boot::~Boot() {
 	_contextDeclarations.clear();
 	_subfileDeclarations.clear();
-	_cursorDeclarations.clear();
 	_engineResourceDeclarations.clear();
 	_screenDeclarations.clear();
 	_fileDeclarations.clear();
 }
+
+void Boot::readDocumentDef(Chunk &chunk) {
+	BootSectionType sectionType = kBootLastSection;
+	while (true) {
+		sectionType = getSectionType(chunk);
+		if (sectionType == kBootLastSection) {
+			break;
+		}
+		readDocumentInfoFromStream(chunk, sectionType);
+	}
+}
+
+void Boot::readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType) {
+	switch (sectionType) {
+	case kBootVersionInformation:
+		readVersionInfoFromStream(chunk);
+		break;
+
+	case kBootContextDeclaration:
+		readContextReferencesFromStream(chunk);
+		break;
+
+	case kBootScreenDeclaration:
+		readScreenDeclarationsFromStream(chunk);
+		break;
+
+	case kBootFileDeclaration:
+		readAndAddFileMaps(chunk);
+		break;
+
+	case kBootSubfileDeclaration:
+		readAndAddStreamMaps(chunk);
+		break;
+
+	case kBootUnk1:
+		_unk1 = chunk.readTypedUint16();
+		break;
+
+	case kBootFunctionTableSize:
+		_functionTableSize = chunk.readTypedUint16();
+		break;
+
+	case kBootUnk3:
+		_unk3 = chunk.readTypedUint16();
+		break;
+
+	default:
+		// See if any registered parameter clients know how to
+		// handle this parameter.
+		g_engine->readUnrecognizedFromStream(chunk, static_cast<uint>(sectionType));
+	}
+}
+
+void Boot::readVersionInfoFromStream(Chunk &chunk) {
+	_gameTitle = chunk.readTypedString();
+	_versionInfo = chunk.readTypedVersion();
+	_engineInfo = chunk.readTypedString();
+	_sourceString = chunk.readTypedString();
+}
+
+void Boot::readContextReferencesFromStream(Chunk &chunk) {
+	uint flag = chunk.readTypedUint16();
+	while (flag != 0) {
+		ContextDeclaration contextDeclaration(chunk);
+		_contextDeclarations.setVal(contextDeclaration._contextId, contextDeclaration);
+		flag = chunk.readTypedUint16();
+	}
+}
+
+void Boot::readScreenDeclarationsFromStream(Chunk &chunk) {
+	uint flag = chunk.readTypedUint16();
+	while (flag != 0) {
+		ScreenDeclaration screenDeclaration(chunk);
+		_screenDeclarations.setVal(screenDeclaration._screenId, screenDeclaration);
+		flag = chunk.readTypedUint16();
+	}
+}
+
+void Boot::readAndAddFileMaps(Chunk &chunk) {
+	uint flag = chunk.readTypedUint16();
+	while (flag != 0) {
+		FileDeclaration fileDeclaration(chunk);
+		_fileDeclarations.setVal(fileDeclaration._id, fileDeclaration);
+		flag = chunk.readTypedUint16();
+	}
+}
+
+void Boot::readAndAddStreamMaps(Chunk &chunk) {
+	uint flag = chunk.readTypedUint16();
+	while (flag != 0) {
+		SubfileDeclaration subfileDeclaration(chunk);
+		_subfileDeclarations.setVal(subfileDeclaration._actorId, subfileDeclaration);
+		flag = chunk.readTypedUint16();
+	}
+}
+
 #pragma endregion
 
 } // End of namespace MediaStation

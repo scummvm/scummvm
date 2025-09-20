@@ -32,7 +32,6 @@
 namespace MediaStation {
 
 enum ContextDeclarationSectionType {
-	kContextDeclarationEmptySection = 0x0000,
 	kContextDeclarationPlaceholder = 0x0003,
 	kContextDeclarationContextId = 0x0004,
 	kContextDeclarationStreamId = 0x0005,
@@ -55,7 +54,6 @@ private:
 };
 
 enum ScreenDeclarationSectionType {
-	kScreenDeclarationEmpty = 0x0000,
 	kScreenDeclarationActorId = 0x0009,
 	kScreenDeclarationScreenId = 0x0004
 };
@@ -144,25 +142,23 @@ public:
 	int _id = 0;
 };
 
+enum BootStreamType {
+	kBootDocumentDef = 0x01,
+	kBootControlCommands = 0x0d,
+};
+
 enum BootSectionType {
 	kBootLastSection = 0x0000,
-	kBootEmptySection = 0x002e,
 	kBootContextDeclaration = 0x0002,
 	kBootVersionInformation = 0x0190,
 	kBootUnk1 = 0x0191,
-	kBootUnk2 = 0x0192,
+	kBootFunctionTableSize = 0x0192,
 	kBootUnk3 = 0x0193,
 	kBootEngineResource = 0x0bba,
 	kBootEngineResourceId = 0x0bbb,
 	kBootScreenDeclaration = 0x0007,
 	kBootFileDeclaration = 0x000a,
 	kBootSubfileDeclaration = 0x000b,
-	kBootUnk5 = 0x000c,
-	kBootCursorDeclaration = 0x0015,
-	kBootEntryScreen = 0x002f,
-	kBootAllowMultipleSounds = 0x0035,
-	kBootAllowMultipleStreams = 0x0036,
-	kBootUnk4 = 0x057b
 };
 
 class Boot : Datafile {
@@ -178,12 +174,20 @@ public:
 	Common::HashMap<uint32, ScreenDeclaration> _screenDeclarations;
 	Common::HashMap<uint32, FileDeclaration> _fileDeclarations;
 	Common::HashMap<uint32, SubfileDeclaration> _subfileDeclarations;
-	Common::HashMap<uint32, CursorDeclaration> _cursorDeclarations;
 	Common::HashMap<uint32, EngineResourceDeclaration> _engineResourceDeclarations;
+	uint _unk1 = 0;
+	uint _functionTableSize = 0;
+	uint _unk3 = 0;
 
-	uint32 _entryContextId = 0;
-	bool _allowMultipleSounds = false;
-	bool _allowMultipleStreams = false;
+	void readDocumentDef(Chunk &chunk);
+	void readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType);
+	void readVersionInfoFromStream(Chunk &chunk);
+	void readContextReferencesFromStream(Chunk &chunk);
+	void readScreenDeclarationsFromStream(Chunk &chunk);
+	void readAndAddFileMaps(Chunk &chunk);
+	void readAndAddStreamMaps(Chunk &chunk);
+
+	void readStartupInformation(Chunk &chunk);
 
 	Boot(const Common::Path &path);
 	~Boot();

@@ -40,7 +40,58 @@ VideoDisplayManager::VideoDisplayManager(MediaStationEngine *vm) : _vm(vm) {
 VideoDisplayManager::~VideoDisplayManager() {
 	delete _screen;
 	_screen = nullptr;
+	delete _registeredPalette;
+	_registeredPalette = nullptr;
 	_vm = nullptr;
+}
+
+bool VideoDisplayManager::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
+	bool handledParam = true;
+	switch (sectionType) {
+	case kVideoDisplayManagerUpdateDirty:
+		// TODO: Call RT_DisplayUpdateManager::performUpdateDirty();
+		break;
+
+	case kVideoDisplayManagerUpdateAll:
+		// TODO: Call RT_DisplayUpdateManager::performUpdateAll();
+		break;
+
+	case kVideoDisplayManagerEffectTransition:
+		readAndEffectTransition(chunk);
+		break;
+
+	case kVideoDisplayManagerSetTime:
+		_defaultTransitionTime = chunk.readTypedTime();
+		break;
+
+	case kVideoDisplayManagerLoadPalette:
+		readAndRegisterPalette(chunk);
+		break;
+
+	default:
+		handledParam = false;
+	}
+
+	return handledParam;
+}
+
+void VideoDisplayManager::readAndEffectTransition(Chunk &chunk) {
+	uint argCount = chunk.readTypedUint16();
+	Common::Array<ScriptValue> args;
+	for (uint i = 0; i < argCount; i++) {
+		ScriptValue scriptValue(&chunk);
+		args.push_back(scriptValue);
+	}
+	effectTransition(args);
+}
+
+void VideoDisplayManager::readAndRegisterPalette(Chunk &chunk) {
+	byte *buffer = new byte[Graphics::PALETTE_SIZE];
+	chunk.read(buffer, Graphics::PALETTE_SIZE);
+	if (_registeredPalette != nullptr) {
+		delete _registeredPalette;
+	}
+	_registeredPalette = new Graphics::Palette(buffer, Graphics::PALETTE_COUNT, DisposeAfterUse::YES);
 }
 
 void VideoDisplayManager::effectTransition(Common::Array<ScriptValue> &args) {

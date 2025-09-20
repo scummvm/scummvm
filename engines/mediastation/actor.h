@@ -134,6 +134,7 @@ public:
 
 	virtual void initFromParameterStream(Chunk &chunk);
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType);
+	virtual void loadIsComplete() { _loadIsComplete = true; };
 
 	// These are not pure virtual so if an actor doesnʻt read any chunks or
 	// subfiles it doesnʻt need to just implement these with an error message.
@@ -155,6 +156,7 @@ public:
 
 protected:
 	ActorType _type = kActorTypeEmpty;
+	bool _loadIsComplete = false;
 	uint _id = 0;
 	uint _contextId = 0;
 
