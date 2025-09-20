@@ -185,6 +185,17 @@ const String getGameGUIOptionsDescription(const String &options) {
 
 		for (int j = 0; g_gameOptions[j].desc; j++) {
 			if (options[i] == g_gameOptions[j].option[0]) {
+				if (options[i] & 0x80) {
+					// 2-bytes option
+					// Make sure this is a leading option byte
+					assert((options[i] & 0xe0) == 0xc0);
+					if (options[i+1] != g_gameOptions[j].option[1]) {
+						continue;
+					}
+					// Skip the byte now we found our option
+					// The 2nd byte will be skipped at the end of loop
+					i++;
+				}
 				res += String(g_gameOptions[j].desc) + " ";
 				break;
 			}

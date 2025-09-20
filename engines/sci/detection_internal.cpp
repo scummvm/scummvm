@@ -166,7 +166,7 @@ Common::String customizeGuiOptions(Common::Path gamePath, Common::String guiOpti
 				if (i->getFileName().equalsIgnoreCase(rmodes[ii].gfxDriverName)) {
 					// Make sure that the Windows 16 colors mode is only ever added to the above mentioned
 					// windows versions and the other modes only get added to the other versions.
-					if (isWindows != (strncmp(rmodes[ii].guio, GUIO_RENDERWIN_16C, 1) != 0))
+					if (isWindows != (strncmp(rmodes[ii].guio, GUIO_RENDERWIN_16C, sizeof(GUIO_RENDERWIN_16C) - 1) != 0))
 						guiOptions += rmodes[ii].guio;
 				}
 			}

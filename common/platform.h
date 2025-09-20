@@ -43,7 +43,7 @@ class String;
 #define GET_ENUM_VAL(name) GET_ENUM_VAL_EXPAND((name))
 
 // List of platforms values as int and string literals, to be used in platform enum and gui options
-// Starting from 0x80 to avoid collision with existing GUIO options
+// Starting GUI options at 0x80 to fit the numbering plan
 #define kPlatformApple2GS_VAL          0x00, "\x80"
 #define kPlatformApple2_VAL            0x01, "\x81"
 #define kPlatform3DO_VAL               0x02, "\x82"
