@@ -5712,11 +5712,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
-		WME_ENTRY1s("data.dcp", "0898412c1d7c5b759089b2408a9591fe", 2779976), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+		WME_ENTRY1s("data.dcp", "0898412c1d7c5b759089b2408a9591fe", 2779976), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_1_39),
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
-		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_1_39),
 
 	// WME 3D characters technology demo
 	WME_WINENTRY("wmedemo3d", "Demo",
@@ -5724,7 +5724,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
-		WME_ENTRY1s("wtetris.exe", "fb89ec8c4fa2279120a8939449c0bda9", 3918669), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
+		WME_ENTRY1s("wtetris.exe", "fb89ec8c4fa2279120a8939449c0bda9", 3918669), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_1_39),
 
 	// Zilm: A Game of Reflex
 	WME_WINENTRY("zilm", "",
