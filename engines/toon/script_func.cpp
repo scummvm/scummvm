@@ -890,7 +890,7 @@ int32 ScriptFunc::sys_Cmd_Set_Scene_Anim_Wait(EMCState *state) {
 	if (_vm->state()->_currentScene == 24) {
 		if (_vm->getCurrentUpdatingSceneAnimation() == 6) {
 			if (waitTicks == 1) {
-				waitTicks = 10;
+				waitTicks = 2;
 				_vm->setSceneAnimationScriptUpdate(false);
 			}
 		}
