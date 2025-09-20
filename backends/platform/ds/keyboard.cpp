@@ -19,6 +19,7 @@
  *
  */
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/platform/ds/keyboard.h"

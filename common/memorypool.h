@@ -125,9 +125,13 @@ public:
 	}
 };
 
-// Ensure NUM_INTERNAL_CHUNKS == 0 results in a compile error
+/*
+ * This is the degenerate case of FixedSizeMemoryPool with 0 chunks.
+ * It's a MemoryPool with static chunk size.
+ * This is useful for ObjectPool users (HashMap)
+ */
 template<size_t CHUNK_SIZE>
-class FixedSizeMemoryPool<CHUNK_SIZE,0> : public MemoryPool {
+class FixedSizeMemoryPool<CHUNK_SIZE, 0> : public MemoryPool {
 public:
 	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {}
 };
