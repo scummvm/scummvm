@@ -5580,7 +5580,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// TeTRIks
 	WME_WINENTRY("tetriks", "",
-		WME_ENTRY1s("data.dcp", "94040eb5ae132ac2ef1d40888934f9fa", 2289693), Common::CS_CZE, ADGF_UNSTABLE, WME_1_1_38),
+		WME_ENTRY1s("data.dcp", "94040eb5ae132ac2ef1d40888934f9fa", 2289693), Common::CS_CZE, ADGF_NO_FLAGS, WME_1_1_38),
 
 	// The Box
 	WME_WINENTRY("thebox", "",
