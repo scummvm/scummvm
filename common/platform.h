@@ -44,45 +44,45 @@ class String;
 
 // List of platforms values as int and string literals, to be used in platform enum and gui options
 // Starting from 0x80 to avoid collision with existing GUIO options
-#define kPlatformApple2GS_VAL          0x80, "\x80"
-#define kPlatformApple2_VAL            0x81, "\x81"
-#define kPlatform3DO_VAL               0x82, "\x82"
-#define kPlatformAcorn_VAL             0x83, "\x83"
-#define kPlatformAmiga_VAL             0x84, "\x84"
-#define kPlatformAtari8Bit_VAL         0x85, "\x85"
-#define kPlatformAtariST_VAL           0x86, "\x86"
-#define kPlatformC64_VAL               0x87, "\x87"
-#define kPlatformAmstradCPC_VAL        0x88, "\x88"
-#define kPlatformDOS_VAL               0x89, "\x89"
-#define kPlatformPC98_VAL              0x8A, "\x8A"
-#define kPlatformWii_VAL               0x8B, "\x8B"
-#define kPlatformCoCo_VAL              0x8C, "\x8C"
-#define kPlatformCoCo3_VAL             0x8D, "\x8D"
-#define kPlatformFMTowns_VAL           0x8E, "\x8E"
-#define kPlatformLinux_VAL             0x8F, "\x8F"
-#define kPlatformMacintosh_VAL         0x90, "\x90"
-#define kPlatformPCEngine_VAL          0x91, "\x91"
-#define kPlatformNES_VAL               0x92, "\x92"
-#define kPlatformSegaCD_VAL            0x93, "\x93"
-#define kPlatformWindows_VAL           0x94, "\x94"
-#define kPlatformPSX_VAL               0x95, "\x95"
-#define kPlatformPS2_VAL               0x96, "\x96"
-#define kPlatformPS3_VAL               0x97, "\x97"
-#define kPlatformXbox_VAL              0x98, "\x98"
-#define kPlatformCDi_VAL               0x99, "\x99"
-#define kPlatformIOS_VAL               0x9A, "\x9A"
-#define kPlatformAndroid_VAL           0x9B, "\x9B"
-#define kPlatformOS2_VAL               0x9C, "\x9C"
-#define kPlatformBeOS_VAL              0x9D, "\x9D"
-#define kPlatformPocketPC_VAL          0x9E, "\x9E"
-#define kPlatformMegaDrive_VAL         0x9F, "\x9F"
-#define kPlatformSaturn_VAL            0xA0, "\xA0"
-#define kPlatformPippin_VAL            0xA1, "\xA1"
-#define kPlatformMacintoshII_VAL       0xA2, "\xA2"
-#define kPlatformShockwave_VAL         0xA3, "\xA3"
-#define kPlatformZX_VAL                0xA4, "\xA4"
-#define kPlatformTI994_VAL             0xA5, "\xA5"
-#define kPlatformNintendoSwitch_VAL    0xA6, "\xA6"
+#define kPlatformApple2GS_VAL          0x00, "\x80"
+#define kPlatformApple2_VAL            0x01, "\x81"
+#define kPlatform3DO_VAL               0x02, "\x82"
+#define kPlatformAcorn_VAL             0x03, "\x83"
+#define kPlatformAmiga_VAL             0x04, "\x84"
+#define kPlatformAtari8Bit_VAL         0x05, "\x85"
+#define kPlatformAtariST_VAL           0x06, "\x86"
+#define kPlatformC64_VAL               0x07, "\x87"
+#define kPlatformAmstradCPC_VAL        0x08, "\x88"
+#define kPlatformDOS_VAL               0x09, "\x89"
+#define kPlatformPC98_VAL              0x0A, "\x8A"
+#define kPlatformWii_VAL               0x0B, "\x8B"
+#define kPlatformCoCo_VAL              0x0C, "\x8C"
+#define kPlatformCoCo3_VAL             0x0D, "\x8D"
+#define kPlatformFMTowns_VAL           0x0E, "\x8E"
+#define kPlatformLinux_VAL             0x0F, "\x8F"
+#define kPlatformMacintosh_VAL         0x10, "\x90"
+#define kPlatformPCEngine_VAL          0x11, "\x91"
+#define kPlatformNES_VAL               0x12, "\x92"
+#define kPlatformSegaCD_VAL            0x13, "\x93"
+#define kPlatformWindows_VAL           0x14, "\x94"
+#define kPlatformPSX_VAL               0x15, "\x95"
+#define kPlatformPS2_VAL               0x16, "\x96"
+#define kPlatformPS3_VAL               0x17, "\x97"
+#define kPlatformXbox_VAL              0x18, "\x98"
+#define kPlatformCDi_VAL               0x19, "\x99"
+#define kPlatformIOS_VAL               0x1A, "\x9A"
+#define kPlatformAndroid_VAL           0x1B, "\x9B"
+#define kPlatformOS2_VAL               0x1C, "\x9C"
+#define kPlatformBeOS_VAL              0x1D, "\x9D"
+#define kPlatformPocketPC_VAL          0x1E, "\x9E"
+#define kPlatformMegaDrive_VAL         0x1F, "\x9F"
+#define kPlatformSaturn_VAL            0x20, "\xA0"
+#define kPlatformPippin_VAL            0x21, "\xA1"
+#define kPlatformMacintoshII_VAL       0x22, "\xA2"
+#define kPlatformShockwave_VAL         0x23, "\xA3"
+#define kPlatformZX_VAL                0x24, "\xA4"
+#define kPlatformTI994_VAL             0x25, "\xA5"
+#define kPlatformNintendoSwitch_VAL    0x26, "\xA6"
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
@@ -90,7 +90,7 @@ class String;
  * This may be optional or required, depending on the game engine and the
  * game in question.
  */
-enum Platform : uint8 {
+enum Platform : int8 {
 	kPlatformDOS = GET_ENUM_VAL(kPlatformDOS_VAL),
 	kPlatformAmiga = GET_ENUM_VAL(kPlatformAmiga_VAL),
 	kPlatformAmstradCPC = GET_ENUM_VAL(kPlatformAmstradCPC_VAL),
@@ -132,7 +132,7 @@ enum Platform : uint8 {
 	kPlatformNintendoSwitch = GET_ENUM_VAL(kPlatformNintendoSwitch_VAL),
 
 	// This is a special case, unknown platform won't be added to gui options string
-	kPlatformUnknown = 0xFF
+	kPlatformUnknown = -1
 };
 
 // Do not pollute namespace

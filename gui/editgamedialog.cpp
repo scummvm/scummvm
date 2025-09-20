@@ -467,7 +467,7 @@ void EditGameDialog::open() {
 	if (ConfMan.hasKey("platform", _domain)) {
 		_platformPopUp->setSelectedTag(platform);
 	} else {
-		_platformPopUp->setSelectedTag(UINT32_MAX);
+		_platformPopUp->setSelectedTag((uint32)Common::kPlatformUnknown);
 	}
 
 	// First entry is <default>
