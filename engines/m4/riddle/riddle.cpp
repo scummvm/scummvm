@@ -47,7 +47,7 @@ RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 
 void RiddleEngine::initializePath(const Common::FSNode &gamePath) {
 	M4Engine::initializePath(gamePath);
-	SearchMan.addDirectory(gamePath.getChild("option1"));
+	SearchMan.addSubDirectoryMatching(gamePath, "option1");
 }
 
 M4::Vars *RiddleEngine::createVars() {
