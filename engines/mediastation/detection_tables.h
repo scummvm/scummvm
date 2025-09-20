@@ -85,9 +85,9 @@ const ADGameDescription gameDescriptions[] = {
 		"lionking",
 		"v2.0/GB",
 		AD_ENTRY3s(
-			"LIONKING.EXE", "9cc25600be13c402f4edf15772989393", 358368,
-			"BOOT.STM", "72e9211eb97b968e8db20c0fec919eb4", 23610,
-			"100.CXT", "069b86f0912627bc1fffb1dee9b68afa", 1455740
+			"LIONKING.EXE", "3239451c477eaa16015110502be031a5", 363232,
+			"BOOT.STM", "dd83fd1fb899b680f00c586404cc7b7c", 23610,
+			"100.CXT", "d5dc4d49df2ea6f2ff0aa33a3f385506", 1455740
 		),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
