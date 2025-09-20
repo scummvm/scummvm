@@ -999,6 +999,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dieveteranen",		"Die Veteranen: So nutzlos wie eine Fuge von Bach" },
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
+	{ "flugmaschinen",		"Fliegen, Flattern, Flugmaschinen" },
 	{ "frankiekaraoke",		"Frankie Tierwelt Karaoke" },
 	{ "funquiz",			"FunQuiz" },
 	{ "geograficus",		"Geograficus ... und Geografie wird zum Abenteuer" },
@@ -1024,6 +1025,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "loewe7",				"Löwenzahn 7" },
 	{ "loewe8",				"Löwenzahn 8" },
 	{ "loewecalendar",		"Löwenzahn Adventskalender" },
+	{ "loewesteinzeit",		"Peter endeckt die Steinzeit"},
 	{ "loewespielebox",		"Löwenzahn Spielebox" },
 	{ "lulu",				"Das Buch von Lulu" },
 	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
@@ -6943,6 +6945,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2f("flipper", "", "FLIP32.EXE",		 "t:f5f0b26a2506fadac19f66cc2ae235f9", 1398201,
 							"FLIPPER/CPA24.DXR", "d:fcfd7c09d92797fa42f4a38a301b8c13", 2780110, 500, GF_32BPP),
 
+	// German: Fliegen, Flattern, Flugmaschinen
+	WINGAME1("flugmaschinen", "Windows 95",  "FFF95.EXE", "t:d5023dc439d6050cdff67b9daf8cc606", 1668305, 500),
+	WINGAME1("flugmaschinen", "Windows 3.1", "FFF31.EXE", "t:d0aaeb6a7c7fc2de55613cb456450adc", 1189887, 500),
+
+	MACGAME1("flugmaschinen", "", "xn--Floating Fluttering Flying...-", "r:06ed90580400cd9e263525f84c8075fd", 705417, 500),
+
 	MACGAME1("fplit", "", "Toyland",			  "r:7fc35c7129cb027987528b027c6cc27c", 705445, 500),
 	WINGAME2("fplit", "", "PIR32BIT/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437,
 						  "FILES/BLOCKS.DIR",	  "d:74388b29ce10d83bbad48c664d87eab3", 7363670, 500),
@@ -9385,6 +9393,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is Löwenzahn 4
 	MACGAME1_l("loewe4", "", "xn--Lwenzahn 4-ecb",		"rt:6f75666ef42bcd1d34bd120d011b42b1",  114029, Common::DE_DEU, 702),
 	WINGAME1_l("loewe4", "", "SETUP/WIN95/LOEWE4.exe",	"t:4766360be9f3067a9f314b3b3a454fa7",  1818036, Common::DE_DEU, 702),
+
+	WINGAME2_l("loewesteinzeit", "","START.EXE",	  "t:13918e51d2093b5cdc92795b36454112", 1960654,
+									"data/131Koch.dxr", "80b7913156e36d8806b2dcdcbcd7d288", 817625, Common::DE_DEU, 702),
 
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
