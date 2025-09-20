@@ -5736,7 +5736,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Zbang! The Game (Demo)
 	WME_WINENTRY("zbang", "0.89",
-		WME_ENTRY1s("data.dcp", "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_7_1),
+		WME_ENTRY1s("data.dcp", "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_7_1),
 	{
 		AD_TABLE_END_MARKER,
 		LATEST_VERSION
