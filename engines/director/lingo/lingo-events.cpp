@@ -275,6 +275,10 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 					// D4-style event handler
 					event.scriptType = kScoreScript;
 					event.scriptId = scriptId;
+
+					if (_vm->getVersion() >= 600)
+						event.scriptInstance = _score->_channels[event.channelId]->_scriptInstanceList[event.behaviorIndex];
+
 				} else if (script->_eventHandlers.contains(kEventGeneric)) {
 					// D3-style sprite script, not contained in a handler
 					// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
