@@ -32,17 +32,18 @@ MovieFrameHeader::MovieFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
 }
 
 MovieFrame::MovieFrame(Chunk &chunk) {
-	layerId = chunk.readTypedUint32();
 	if (g_engine->isFirstGenerationEngine()) {
+		blitType = static_cast<MovieBlitType>(chunk.readTypedUint16());
 		startInMilliseconds = chunk.readTypedUint32();
 		endInMilliseconds = chunk.readTypedUint32();
 		// These are unsigned in the data files but ScummVM expects signed.
 		leftTop.x = static_cast<int16>(chunk.readTypedUint16());
 		leftTop.y = static_cast<int16>(chunk.readTypedUint16());
-		unk3 = chunk.readTypedUint16();
-		unk4 = chunk.readTypedUint16();
-		index = chunk.readTypedUint16();
+		index = chunk.readTypedUint32();
+		keyframeIndex = chunk.readTypedUint32();
+		keepAfterEnd = chunk.readTypedByte();
 	} else {
+		layerId = chunk.readTypedUint32();
 		blitType = static_cast<MovieBlitType>(chunk.readTypedUint16());
 		startInMilliseconds = chunk.readTypedUint32();
 		endInMilliseconds = chunk.readTypedUint32();

@@ -335,7 +335,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	}
 
 	// Get the file ID.
-	const SubfileDeclaration &subfileDeclaration = _boot->_streamMap.getVal(contextId);
+	const SubfileDeclaration &subfileDeclaration = _boot->_streamMap.getValOrDefault(contextId);
 	// There are other actors in a subfile too, so we need to make sure we're
 	// referencing the screen actor, at the start of the file.
 	if (subfileDeclaration._startOffsetInFile != 16) {
