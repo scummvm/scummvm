@@ -817,7 +817,8 @@ Common::WriteStream *SXFile::openForWrite(const Common::String &filename, bool b
 
 // Should replace fopen(..., "ab+") and fopen(..., "a+")
 Common::WriteStream *SXFile::openForAppend(const Common::String &filename, bool binary) {
-	error("SXFile::openForAppend - WriteFiles not supported");
+	warning("SXFile::openForAppend - WriteFiles with limited support as non-append mode");
+	return BaseFileManager::getEngineInstance()->openFileForWrite(_filename);
 }
 
 } // End of namespace Wintermute
