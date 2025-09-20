@@ -316,6 +316,25 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)();
 	static const AFX_MSGMAP *GetThisMessageMap(); \
 	const AFX_MSGMAP *GetMessageMap() const override; \
 
+/**
+ * GCC complains rightfully about invalid casts with the pointer-to-member-functions used
+ * by MFC to handle the message handling functions.
+ * In practice, casting between these seems safe.
+ *
+ * With C++20, it may be possible to use the MessageMapFunctions enum and
+ * avoid casting by using a designated initializer.
+ */
+#ifdef __GNUC__
+#define BEGIN_SILENCE_CAST \
+    _Pragma("GCC diagnostic push") \
+    _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
+#define END_SILENCE_CAST \
+    _Pragma("GCC diagnostic pop")
+#else
+#define BEGIN_SILENCE_CAST
+#define END_SILENCE_CAST
+#endif
+
 #define BEGIN_TEMPLATE_MESSAGE_MAP(theClass, type_name, baseClass)          \
 	template < typename type_name >                                         \
 	const AFX_MSGMAP *theClass< type_name >::GetMessageMap() const          \
@@ -324,6 +343,7 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)();
 	const AFX_MSGMAP *theClass< type_name >::GetThisMessageMap() {      \
 		typedef theClass< type_name > ThisClass;                            \
 		typedef baseClass TheBaseClass;                                     \
+		BEGIN_SILENCE_CAST \
 		static const AFX_MSGMAP_ENTRY _messageEntries[] =                   \
 		{
 
@@ -334,12 +354,14 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)();
 			typedef theClass ThisClass;                        \
 			typedef baseClass TheBaseClass;                    \
 			{ ThisClass *dummy; (void)dummy; }              \
+			BEGIN_SILENCE_CAST \
 			static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
 			{
 
 #define END_MESSAGE_MAP() \
 	{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)nullptr } \
 	}; \
+	END_SILENCE_CAST \
 	static const AFX_MSGMAP messageMap = \
 	{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
 	return &messageMap; \
