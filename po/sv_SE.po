@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-07 09:19+0000\n"
+"PO-Revision-Date: 2025-09-20 05:14+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -8211,10 +8211,8 @@ msgstr "Kortkommandon för dialogval"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle leader inventory"
-msgstr "Växla inventarier"
+msgstr "Växla inventarier för ledare"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -8223,31 +8221,23 @@ msgstr "Välj dialogval (fungerar endast om det finns ett enda val)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 1 inventory"
-msgstr "Växla inventarier"
+msgstr "Växla inventarier för champion 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 2 inventory"
-msgstr "Växla inventarier"
+msgstr "Växla inventarier för champion 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 3 inventory"
-msgstr "Växla inventarier"
+msgstr "Växla inventarier för champion 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 4 inventory"
-msgstr "Växla inventarier"
+msgstr "Växla inventarier för champion 4"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8266,10 +8256,8 @@ msgstr "Gå höger och sikta"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
-#, fuzzy
-#| msgid "Hole up & camp"
 msgid "Wake up champion"
-msgstr "Göm dig och slå läger"
+msgstr "Väck champion"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -8519,16 +8507,12 @@ msgid "Interaction keymappings"
 msgstr "Kortkommandon för interagering"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Fight keymappings"
-msgstr "PET-tangentmappningar"
+msgstr "Tangentmappningar för strider"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Tangentmappningar för startmeny"
+msgstr "Tangentmappningar för karaktärsval"
 
 #: engines/efh/metaengine.cpp:267
 msgid "Enemy selection keymappings"
@@ -9569,24 +9553,22 @@ msgstr "Döda spelare"
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "Tönt"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "Slyngel"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "Tuffing"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "Retirera"
+msgstr "Försök igen"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
@@ -13239,10 +13221,8 @@ msgstr "Växla fönsterläge"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change action"
 msgid "Change auto-help location"
-msgstr "Byt åtgärd"
+msgstr "Byt plats för automatisk hjälp"
 
 #: engines/sherlock/metaengine.cpp:716
 msgid "Toggle voices"
@@ -13276,10 +13256,8 @@ msgid "save / load menu keymappings"
 msgstr "spara / läs in kortkommandon för meny"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Save file management menus keymappings"
 msgid "Save files name editing keymappings"
-msgstr "Kortkommandon för filhanteringsmeny"
+msgstr "Kortkommandon för redigeringsmeny för sparade filnamn"
 
 #: engines/sherlock/metaengine.cpp:782
 msgid "Foolscap puzzle keymappings"
@@ -13392,10 +13370,8 @@ msgid "Scroll to start"
 msgstr "Rulla till början"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next save file slot"
-msgstr "Gå till nästa dialog"
+msgstr "Gå till nästa plats för sparad fil"
 
 #: engines/sherlock/metaengine.cpp:1074
 msgid "Go to next page of save files"
@@ -13438,16 +13414,12 @@ msgid "Select next option"
 msgstr "Välj nästa alternativ"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next talk option"
-msgstr "Gå till nästa dialog"
+msgstr "Gå till nästa dialogalternativ"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogs"
 msgid "Go to previous talk option"
-msgstr "Gå till föregående dialoger"
+msgstr "Gå till föregående dialogalternativ"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
