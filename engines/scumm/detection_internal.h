@@ -624,7 +624,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 			// Detect if there are speech files in this unknown game.
 			if (detectSpeech(fslist, g)) {
-				if (strchr(dr.game.guioptions, GUIO_NOSPEECH[0]) != NULL) {
+				if (strstr(dr.game.guioptions, GUIO_NOSPEECH) != NULL) {
 					if (g->id == GID_MONKEY || g->id == GID_MONKEY2)
 						// TODO: This may need to be updated if something important gets added
 						// in the top detection table for these game ids.
