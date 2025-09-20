@@ -1943,7 +1943,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Palladion (Alpha6h)
 	WME_WINENTRY("palladion", "Alpha6h",
-		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_6),
+		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_DEMO | GF_3D, WME_1_8_6),
 
 	// Pangea 1/2
 	WME_WINENTRY("pangea", "",
