@@ -405,7 +405,7 @@ public:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	bool processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId = -1);
+	bool processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId = -1, AbstractObject *obj = nullptr);
 
 public:
 	ScriptType event2script(LEvent ev);
