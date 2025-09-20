@@ -139,7 +139,7 @@ void Context::readCreateContextData(Chunk &chunk) {
 	// The original had contexts created from the base engine class,
 	// but things are currently structured a bit differently, so this
 	// is a no-op for now.
-	_fileNumber = chunk.readTypedUint16();
+	_id = chunk.readTypedUint16();
 }
 
 void Context::readDestroyContextData(Chunk &chunk) {
@@ -243,9 +243,9 @@ void Context::readCreateActorData(Chunk &chunk) {
 }
 
 void Context::readCreateVariableData(Chunk &chunk) {
-	uint repeatedFileNumber = chunk.readTypedUint16();
-	if (repeatedFileNumber != _fileNumber) {
-		warning("%s: Repeated file number didn't match: %d != %d", __func__, repeatedFileNumber, _fileNumber);
+	uint contextId = chunk.readTypedUint16();
+	if (contextId != _id) {
+		warning("%s: Repeated context ID didn't match: %d != %d", __func__, contextId, _id);
 	}
 
 	uint id = chunk.readTypedUint16();
@@ -308,8 +308,8 @@ void Context::readActorFromLaterSubfile(Subfile &subfile) {
 
 void Context::readContextNameData(Chunk &chunk) {
 	uint contextId = chunk.readTypedUint16();
-	if (contextId != _fileNumber) {
-		warning("%s: Repeated context ID didn't match: %d != %d", __func__, contextId, _fileNumber);
+	if (contextId != _id) {
+		warning("%s: Repeated context ID didn't match: %d != %d", __func__, contextId, _id);
 	}
 
 	_name = chunk.readTypedString();

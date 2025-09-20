@@ -70,7 +70,7 @@ private:
 	// This is not an internal file ID, but the number of the file
 	// as it appears in the filename. For instance, the context in
 	// "100.cxt" would have file number 100.
-	uint _fileNumber = 0;
+	uint _id = 0;
 	Common::String _contextName;
 
 	Common::HashMap<uint, Actor *> _actors;
