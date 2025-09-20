@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // Demo from the US release v1.0.0.23
@@ -58,7 +58,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye",  // EU release (UK)
@@ -68,7 +68,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // Demo from the EU release
@@ -78,7 +78,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_GRB,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // Demo from PCGamer Disc 2.6 JULY 1996 v1.0.0.12
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // Another demo
@@ -98,7 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // EU release (ES)
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // Demo from the EU release (ES)
@@ -118,7 +118,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GAMEOPTION_SUBTITLES, GAMEOPTION_SFX_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // EU release (FR)
@@ -198,7 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // MacOS release (US) uninstalled
@@ -226,7 +226,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_DEMO,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_SUBTITLES)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_SFX_SUBTITLES)
 	},
 	{
 		"private-eye", // MacOS demo (US) uninstalled

@@ -226,6 +226,7 @@ public:
 	void loadSubtitles(const Common::Path &path);
 	void adjustSubtitleSize();
 	Video::Subtitles *_subtitles;
+	bool _useSubtitles;
 	bool _sfxSubtitles;
 
 	Graphics::Surface *decodeImage(const Common::String &file, byte **palette);

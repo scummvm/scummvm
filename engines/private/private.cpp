@@ -52,7 +52,8 @@ extern int parse(const char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), _subtitles(nullptr), _sfxSubtitles(false),
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -201,14 +202,13 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 Common::Error PrivateEngine::run() {
 
 	// Only enable if subtitles are available
-	bool useSubtitles = false;
-	if (!Common::parseBool(ConfMan.get("subtitles"), useSubtitles))
+	if (!Common::parseBool(ConfMan.get("subtitles"), _useSubtitles))
 		warning("Failed to parse bool from subtitles options");
 
 	if (!Common::parseBool(ConfMan.get("sfxSubtitles"), _sfxSubtitles))
 		warning("Failed to parse bool from sfxSubtitles options");
 
-	if (useSubtitles) {
+	if (_useSubtitles) {
 		g_system->showOverlay(false);
 	} else if (_sfxSubtitles) {
 		warning("SFX subtitles are enabled, but no subtitles will be shown");
@@ -1513,6 +1513,9 @@ void PrivateEngine::adjustSubtitleSize() {
 
 void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
+	if (!_useSubtitles)
+		return;
+
 	Common::String subPathStr = path.toString() + ".srt";
 	subPathStr.toLowercase();
 	subPathStr.replace('/', '_');

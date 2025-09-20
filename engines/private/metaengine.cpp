@@ -32,21 +32,10 @@
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_SUBTITLES,
-		{
-			_s("Display subtitles"),
-			_s("Use subtitles."),
-			"subtitles",
-			true,
-			0,
-			0
-		}
-	},
-	{
 		GAMEOPTION_SFX_SUBTITLES,
 		{
 			_s("Display SFX subtitles"),
-			_s("Use SFX subtitles."),
+			_s("Use SFX subtitles (if subtitles are enabled)."),
 			"sfxSubtitles",
 			false,
 			0,
