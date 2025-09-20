@@ -1800,17 +1800,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Mental Repairs Inc (English)
 	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
-					"english.dcp", "7573eb584e662adbc5fa3b1448e56106", 3160232), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+					"english.dcp", "7573eb584e662adbc5fa3b1448e56106", 3160232), Common::EN_ANY, GF_3D, WME_1_8_6),
 
 	// Mental Repairs Inc (German)
 	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
-					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, GF_3D, WME_1_8_6),
 
 	// Mental Repairs Inc (Polish)
 	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
-					"string.tab", "d3393ba2445fc7e6a1cdf8fe95c59659", 72143), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+					"string.tab", "d3393ba2445fc7e6a1cdf8fe95c59659", 72143), Common::PL_POL, GF_3D, WME_1_8_6),
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
