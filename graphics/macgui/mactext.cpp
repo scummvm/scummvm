@@ -355,6 +355,8 @@ int getStringWidth(MacFontRun &format, const Common::U32String &str) {
 }
 
 void MacText::setMaxWidth(int maxWidth) {
+	maxWidth = maxWidth - _border * 2 - _gutter * 2 - _shadow;
+
 	if (maxWidth == _canvas._maxWidth)
 		return;
 
