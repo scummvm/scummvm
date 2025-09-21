@@ -265,6 +265,8 @@ void MidiDriver_M_AdLib::metaEvent(int8 source, byte type, const byte* data, uin
 		instrument->operator1.waveformSelect = data[10];
 
 		instrument->connectionFeedback0 = data[11];
+
+		instrument->transpose = 0;
 	}
 }
 

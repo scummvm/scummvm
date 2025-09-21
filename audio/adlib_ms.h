@@ -119,7 +119,7 @@ struct OplInstrumentDefinition {
 	 * Number of semitones the notes played by this instrument should be
 	 * transposed up or down.
 	 */
-	int8 transpose = 0;
+	int8 transpose;
 
 	/**
 	 * Check if this instrument definition contains any data.

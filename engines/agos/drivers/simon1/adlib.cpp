@@ -125,6 +125,7 @@ void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
 		instrumentBank[i].connectionFeedback1 = 0;
 		instrumentBank[i].rhythmNote = 0;
 		instrumentBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
+		instrumentBank[i].transpose = 0;
 
 		// Remaining bytes seem to be unused.
 		dataPtr += 5;
@@ -151,6 +152,7 @@ void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
 			// 15 - hi-hat
 			rhythmBank[i].rhythmType = static_cast<OplInstrumentRhythmType>(6 - (RHYTHM_MAP[i].channel - 10));
 			rhythmBank[i].rhythmNote = RHYTHM_MAP[i].note;
+			rhythmBank[i].transpose = 0;
 		}
 	}
 

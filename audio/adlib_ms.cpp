@@ -96,6 +96,7 @@ void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefini
 	// TODO Figure out if this is the same as rhythmVoiceNumber
 	instrumentDef.rhythmNote = 0;
 	instrumentDef.rhythmType = RHYTHM_TYPE_UNDEFINED;
+	instrumentDef.transpose = 0;
 }
 
 void AdLibIbkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const {

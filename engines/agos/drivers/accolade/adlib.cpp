@@ -476,6 +476,7 @@ void MidiDriver_Accolade_AdLib::loadInstrumentData(OplInstrumentDefinition &defi
 
 	definition.rhythmType = rhythmType;
 	definition.rhythmNote = rhythmNote;
+	definition.transpose = 0;
 }
 
 void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDataSize, bool newVersion) {
