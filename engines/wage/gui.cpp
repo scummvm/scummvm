@@ -222,6 +222,10 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 		return true;
 	}
 
+	if (event.type == Common::EVENT_KEYDOWN) {
+		return _consoleWindow->processEvent(event);
+	}
+
 	return false;
 }
 
