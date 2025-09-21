@@ -829,7 +829,7 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	if (_editable) {
 		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height());
 
-		_cursorRow = getLineCount();
+		_cursorRow = MAX<int>(getLineCount() - 1, 0);
 		_cursorCol = _canvas.getLineCharWidth(_cursorRow);
 
 		updateCursorPos();

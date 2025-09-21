@@ -29,8 +29,8 @@ namespace Graphics {
 
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true, int padding = 0);
-	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true, int padding = 0);
+	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding = 0);
+	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding = 0);
 	virtual ~MacTextWindow();
 
 	virtual void resize(int w, int h) override;
@@ -53,8 +53,6 @@ public:
 	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setActive(bool active) override { MacWindow::setActive(active); if (_editable) _mactext->setActive(active); }
 	void setSelectable(bool selectable) { _selectable = selectable; }
-
-	void undrawCursor();
 
 	const Common::U32String &getInput() { return _inputText; }
 	void clearInput();
@@ -98,7 +96,7 @@ public:
 	void setTextColorRGB (uint32 rgb) { _textColorRGB = rgb; }
 
 private:
-	void init(bool cursorHandler);
+	void init();
 	bool isCutAllowed();
 
 	void scroll(int delta);
@@ -107,18 +105,11 @@ private:
 	void undrawInput();
 	void drawInput();
 	void drawSelection();
-	void updateCursorPos();
 
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
 
 public:
-	int _cursorX, _cursorY;
-	bool _cursorState;
-
-	bool _cursorDirty;
-	Common::Rect *_cursorRect;
-	bool _cursorOff;
 	bool _editable;
 	bool _selectable;
 
@@ -128,8 +119,6 @@ private:
 	MacText *_mactext;
 	const MacFont *_font;
 	const Font *_fontRef;
-
-	ManagedSurface *_cursorSurface;
 
 	bool _inTextSelection;
 	SelectedText _selectedText;

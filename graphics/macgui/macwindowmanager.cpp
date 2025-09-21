@@ -400,7 +400,7 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 }
 
 MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding) {
-	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, false, padding);
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, padding);
 
 	addWindowInitialized(w);
 
@@ -410,7 +410,7 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 }
 
 MacTextWindow *MacWindowManager::addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding) {
-	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, false, padding);
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, padding);
 
 	addWindowInitialized(w);
 
