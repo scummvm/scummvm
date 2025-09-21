@@ -47,6 +47,8 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 
 	_active = false;
 	_editable = false;
+
+	_borderColor = 0xff;
 }
 
 MacWidget::~MacWidget() {

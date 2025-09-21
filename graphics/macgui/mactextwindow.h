@@ -89,6 +89,7 @@ public:
 
 	int getMouseLine(int x, int y);
 
+	virtual void setBorderColor(uint32 color) override { _mactext->setBorderColor(color); }
 	/**
 	 * if we want to draw the text which color is not black, then we need to set _textColorRGB
 	 * @param rgb text color you want to draw

@@ -954,7 +954,7 @@ bool MacText::draw(bool forceRedraw) {
 
 	for (int bb = 0; bb < _border; bb++) {
 		Common::Rect borderRect(bb, bb, _composeSurface->w - bb, _composeSurface->h - bb);
-		_composeSurface->frameRect(borderRect, 0xff);
+		_composeSurface->frameRect(borderRect, _borderColor);
 	}
 
 	if (_selectedText.endY != -1)
