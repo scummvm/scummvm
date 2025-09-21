@@ -1802,11 +1802,11 @@ bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrum
 		if (instrumentDef.rhythmType == RHYTHM_TYPE_BASS_DRUM) {
 			// Only apply volume to operator 1, or to both operators
 			// if connection is additive.
-			applyVolume = operatorNum == 1 || (_scaleAdditiveOperatorLevel && (instrumentDef.connectionFeedback0 & 0x01) == 0x01);
+			applyVolume = ((operatorNum == 1) || (_scaleAdditiveOperatorLevel && (instrumentDef.connectionFeedback0 & 0x01) == 0x01));
 		}
 		else {
 			// Always apply volume to other rhythm instruments
-			applyVolume == true;
+			applyVolume = true;
 		}
 	} else if (instrumentDef.fourOperator) {
 		// 4 operator instruments have 4 different operator connections.

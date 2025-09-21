@@ -5295,8 +5295,8 @@ void TotEngine::soundControls() {
 	_graphics->getImg(86, 31, 234, 44, sliderBackground1);
 	_graphics->getImg(86, 76, 234, 89, sliderBackground2);
 
-	sfxVol = round(((_sound->_rightSfxVol + _sound->_leftSfxVol) / 2) * 20);
-	musicVol = round(((_sound->_musicVolRight + _sound->_musicVolLeft) / 2) * 20);
+	sfxVol = MIN(256, ConfMan.getInt("sfx_volume")) * 140 / 256;
+	musicVol = MIN(256, ConfMan.getInt("music_volume")) * 140 / 256;
 	_graphics->putImg(sfxVol + 86, 31, slider);
 	_graphics->putImg(musicVol + 86, 76, slider);
 
@@ -5355,9 +5355,8 @@ void TotEngine::soundControls() {
 						sfxVol = xfade - 86;
 
 						debug("volumefx=%d", sfxVol);
-						_sound->_rightSfxVol = round((float)sfxVol / 20);
-						_sound->_leftSfxVol = round((float)sfxVol / 20);
-						_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+						ConfMan.setInt("sfx_volume", sfxVol * 256 / 140);
+						g_engine->syncSoundSettings();
 					}
 					_screen->update();
 				} while (!mouseReleased);
@@ -5388,9 +5387,8 @@ void TotEngine::soundControls() {
 						_graphics->putImg(xfade, 76, slider);
 						musicVol = xfade - 86;
 						debug("musicvol=%d", musicVol);
-						_sound->_musicVolRight = round((float)(musicVol) / 20);
-						_sound->_musicVolLeft = round((float)(musicVol) / 20);
-						_sound->setMidiVolume(_sound->_musicVolLeft, _sound->_musicVolRight);
+						ConfMan.setInt("music_volume", musicVol * 256 / 140);
+						g_engine->syncSoundSettings();
 					}
 					_screen->update();
 				} while (!mouseReleased);

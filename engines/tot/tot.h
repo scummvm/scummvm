@@ -167,6 +167,7 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	void syncSoundSettings() override;
 
 public:
 	Graphics::Screen *_screen = nullptr;

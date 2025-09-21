@@ -20,7 +20,8 @@
  */
 
 #include "audio/midiparser.h"
-#include "common/file.h"
+#include "audio/adlib_ctmidi.h"
+#include "common/config-manager.h"
 
 #include "tot/midi.h"
 
@@ -28,7 +29,6 @@ namespace Tot {
 
 MidiPlayer::MidiPlayer() {
 	_driver = nullptr;
-	_driverMsMusic = nullptr;
 
 	_paused = false;
 	_musicData = nullptr;
@@ -38,19 +38,13 @@ MidiPlayer::MidiPlayer() {
 MidiPlayer::~MidiPlayer() {
 	stop();
 
-	if (_driverMsMusic) {
-		_driverMsMusic->setTimerCallback(nullptr, nullptr);
-		_driverMsMusic->close();
-	} else if (_driver) {
+	if (_driver) {
 		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 	}
 	if (_parserMusic)
 		delete _parserMusic;
-	if (_driverMsMusic) {
-		delete _driverMsMusic;
-		_driverMsMusic = nullptr;
-	} else if (_driver) {
+	if (_driver) {
 		delete _driver;
 		_driver = nullptr;
 	}
@@ -61,15 +55,17 @@ int MidiPlayer::open() {
 	assert(!_driver);
 
 	OPL::Config::OplType oplType =
-		MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+		(MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) && ConfMan.getBool("opl3_mode")) ?
+			OPL::Config::kOpl3 : OPL::Config::kOpl2;
 
-	_driverMsMusic = new MidiDriver_AdLib(oplType);
+	_driver = new MidiDriver_ADLIB_CTMIDI(oplType);
 
-	_parserMusic = MidiParser::createParser_SMF();
-	_driver = _driverMsMusic;
+	_parserMusic = MidiParser::createParser_SMF(0);
 
-	if (_driverMsMusic)
-		_driverMsMusic->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+	_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PITCH_BEND);
+	_driver->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PANNING);
+
 	int returnCode = _driver->open();
 	if (returnCode != 0)
 		error("MidiPlayer::open - Failed to open MIDI music driver - error code %d.", returnCode);
@@ -96,8 +92,8 @@ bool MidiPlayer::isPlaying() {
 void MidiPlayer::stop() {
 	if (_parserMusic) {
 		_parserMusic->stopPlaying();
-		if (_driverMsMusic)
-			_driverMsMusic->deinitSource(0);
+		if (_driver)
+			_driver->deinitSource(0);
 	}
 }
 
@@ -116,13 +112,35 @@ void MidiPlayer::pause(bool b) {
 }
 
 void MidiPlayer::syncSoundSettings() {
-	if (_driverMsMusic)
-		_driverMsMusic->syncSoundSettings();
+	if (_driver)
+		_driver->syncSoundSettings();
 }
+
 void MidiPlayer::setLoop(bool loop) {
 	if (_parserMusic)
 		_parserMusic->property(MidiParser::mpAutoLoop, loop);
 }
+
+void MidiPlayer::setSourceVolume(uint8 volume) {
+	if (_driver)
+		_driver->setSourceVolume(0, volume);
+}
+
+void MidiPlayer::startFadeOut() {
+	if (_driver)
+		// Note: 40 ms is almost imperceptibly short
+		_driver->startFade(40, 0);
+}
+
+void MidiPlayer::startFadeIn() {
+	if (_driver)
+		_driver->startFade(40, 255);
+}
+
+bool MidiPlayer::isFading() {
+	return _driver ? _driver->isFading() : false;
+}
+
 void MidiPlayer::load(Common::SeekableReadStream *in, int32 size) {
 
 	MidiParser *parser = _parserMusic;
@@ -142,6 +160,8 @@ void MidiPlayer::load(Common::SeekableReadStream *in, int32 size) {
 		in->seek(startPos);
 	}
 
+	if (isPlaying())
+		stop();
 	parser->unloadMusic();
 
 	byte **dataPtr = &_musicData;
@@ -160,69 +180,14 @@ void MidiPlayer::play(int track) {
 	if (!parser)
 		return;
 	if (parser->setTrack(track)) {
-		if (_driverMsMusic)
-			// Reset the volume to neutral (in case the previous track was
-			// faded out).
-			_driverMsMusic->resetSourceVolume(0);
+		if (_driver)
+			// Reset the source volume to neutral (in case the previous track
+			// was faded out).
+			_driver->resetSourceVolume(0);
 		parser->startPlaying();
 	} else {
 		parser->stopPlaying();
 		warning("MidiPlayer::play - Could not play %s track %i", "music", track);
-	}
-}
-
-MidiDriver_AdLib::MidiDriver_AdLib(OPL::Config::OplType oplType, int timerFrequency) : MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
-	_dsfInstrumentBank = new OplInstrumentDefinition[128];
-	loadInstrumentBankFromDriver(11048);
-}
-
-MidiDriver_AdLib::~MidiDriver_AdLib() {
-	delete[] _dsfInstrumentBank;
-}
-
-void MidiDriver_AdLib::loadInstrumentBankFromDriver(int32 offset) {
-	Common::File driverFile;
-	if (!driverFile.open("CTMIDI.DRV")) {
-		error("Couldnt find midi file!");
-	}
-	driverFile.seek(offset, SEEK_SET);
-	uint8 *data = (uint8 *)malloc(128 * (11 + 21));
-	driverFile.read(data, 128 * (11 + 21));
-	loadInstrumentBank(data);
-	free(data);
-	driverFile.close();
-
-	_instrumentBank = _dsfInstrumentBank;
-	_rhythmBank = _dsfInstrumentBank;
-}
-
-void MidiDriver_AdLib::loadInstrumentBank(uint8 *instrumentBankData) {
-	for (int i = 0; i < 128; i++) {
-		AdLibIbkInstrumentDefinition instrument;
-
-		instrument.o0FreqMultMisc = *instrumentBankData++;
-		instrument.o1FreqMultMisc = *instrumentBankData++;
-
-		instrument.o0Level = *instrumentBankData++;
-		instrument.o1Level = *instrumentBankData++;
-
-		instrument.o0DecayAttack = *instrumentBankData++;
-		instrument.o1DecayAttack = *instrumentBankData++;
-
-		instrument.o0ReleaseSustain = *instrumentBankData++;
-		instrument.o1ReleaseSustain = *instrumentBankData++;
-
-		instrument.o0WaveformSelect = *instrumentBankData++;
-		instrument.o1WaveformSelect = *instrumentBankData++;
-
-		instrument.connectionFeedback = *instrumentBankData++;
-
-		instrument.rhythmType = *instrumentBankData++;
-		instrument.transpose = *instrumentBankData++;
-		instrument.rhythmNote = *instrumentBankData++;
-		instrument.padding1 = *instrumentBankData++;
-		instrument.padding2 = *instrumentBankData++;
-		instrument.toOplInstrumentDefinition(_dsfInstrumentBank[i]);
 	}
 }
 

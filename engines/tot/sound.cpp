@@ -30,17 +30,13 @@
 namespace Tot {
 
 SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
+	_rightSfxVol = 6;
+	_leftSfxVol = 6;
+	_musicVolRight = 3;
+	_musicVolLeft = 3;
 
 	_midiPlayer = new MidiPlayer();
 	_speaker = new Audio::PCSpeaker();
-	_speaker->init();
-	_midiPlayer->open();
-
-	g_engine->syncSoundSettings();
-	_midiPlayer->syncSoundSettings();
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, 100);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 100);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, 100);
 }
 
 SoundManager::~SoundManager() {
@@ -52,13 +48,21 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::init() {
-	setMidiVolume(3, 3);
-	playMidi("SILENT", false);
-	setSfxVolume(6, 6);
 	_rightSfxVol = 6;
 	_leftSfxVol = 6;
 	_musicVolRight = 3;
 	_musicVolLeft = 3;
+
+	_speaker->init();
+	_midiPlayer->open();
+
+	setMidiVolume(3, 3);
+	//playMidi("SILENT", false);
+	setSfxVolume(6, 6);
+}
+
+void SoundManager::syncSoundSettings() {
+	_midiPlayer->syncSoundSettings();
 }
 
 void SoundManager::loadVoc(Common::String vocFile, int32 startPos, int16 size) {
@@ -167,23 +171,23 @@ void SoundManager::setSfxVolume(byte voll, byte volr) {
 }
 
 void SoundManager::setMidiVolume(byte voll, byte volr) {
-	int volume = (voll) / (float)7 * 255;
-	setMusicVolume(volume);
+	if (voll != _musicVolLeft || volr != _musicVolRight) {
+		_musicVolLeft = voll;
+		_musicVolRight = volr;
+		setMusicVolume(voll == 0 ? 0 : 255);
+	}
 }
 
 void SoundManager::fadeOutMusic() {
-	byte stepVol = (_musicVolLeft + _musicVolRight) / 2;
-	for (int i = stepVol; i >= 0; i--) {
-		setMidiVolume(i, i);
+	_midiPlayer->startFadeOut();
+	while (_midiPlayer->isFading()) {
 		delay(10);
 	}
 }
 
 void SoundManager::fadeInMusic() {
-
-	byte stepVol = (_musicVolLeft + _musicVolRight) / 2;
-	for (int i = 0; i <= stepVol; i++) {
-		setMidiVolume(i, i);
+	_midiPlayer->startFadeIn();
+	while (_midiPlayer->isFading()) {
 		delay(10);
 	}
 }
@@ -192,9 +196,7 @@ void SoundManager::setMasterVolume(byte voll, byte volr) {
 }
 
 void SoundManager::setSfxVolume(byte volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-	ConfMan.setInt("sfx_volume", volume);
-	ConfMan.flushToDisk();
+	_mixer->setChannelVolume(_soundHandle, volume);
 }
 
 void SoundManager::setSfxBalance(bool left, bool right) {
@@ -203,10 +205,7 @@ void SoundManager::setSfxBalance(bool left, bool right) {
 }
 
 void SoundManager::setMusicVolume(byte volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	ConfMan.setInt("music_volume", volume);
-	ConfMan.flushToDisk();
-	_midiPlayer->syncSoundSettings();
+	_midiPlayer->setSourceVolume(volume);
 }
 
 } // End of namespace Tot

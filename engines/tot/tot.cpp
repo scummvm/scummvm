@@ -81,6 +81,7 @@ Common::Error TotEngine::run() {
 	_mouse = new MouseManager();
 
 	_sound->init();
+	syncSoundSettings();
 	_graphics->init();
 	initVars();
 
@@ -97,6 +98,12 @@ Common::Error TotEngine::run() {
 	return Common::kNoError;
 }
 
+void TotEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_sound->syncSoundSettings();
+}
+
 int TotEngine::engineStart() {
 	if (ConfMan.hasKey("save_slot")) {
 		return startGame();
@@ -106,11 +113,14 @@ int TotEngine::engineStart() {
 
 	loadCharAnimation();
 	loadInventory();
-	_sound->setMidiVolume(0, 0);
-	_sound->playMidi("SILENT", false);
+	// The track "SILENT" (a short fanfare) plays at 0 volume in the original code.
+	// Not sure if this is intended or a bug... It is called "SILENT", but why play
+	// it at all? It can be played at normal volume by uncommenting the playMidi line.
+	//_sound->setMidiVolume(0, 0);
+	//_sound->playMidi("SILENT", false);
 
 	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
-	_sound->playMidi("SILENT", true);
+	//_sound->playMidi("SILENT", true);
 
 	_graphics->totalFadeOut(0);
 	_graphics->clear();
@@ -119,7 +129,7 @@ int TotEngine::engineStart() {
 	initScreenPointers();
 	initialLogo();
 	_sound->playMidi("INTRODUC", true);
-	_sound->setMidiVolume(3, 3);
+	//_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
 	mainMenu(_firstTimeDone);

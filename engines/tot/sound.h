@@ -37,6 +37,7 @@ public:
 	~SoundManager();
 
 	void init();
+	void syncSoundSettings();
 	void loadVoc(Common::String vocFile, int32 startPos, int16 vocSize);
 	void autoPlayVoc(Common::String vocFile, int32 startPos, int16 vocSize);
 	void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
@@ -48,16 +49,19 @@ public:
 	void toggleMusic();
 	void beep(int32 frequency, int32 ms);
 	void waitForSoundEnd();
+	// Set game logic volume levels
 	void setSfxVolume(byte leftVol, byte rightVol);
 	void setMidiVolume(byte leftVol, byte rightVol);
 	void fadeOutMusic();
 	void fadeInMusic();
 	void setMasterVolume(byte leftVol, byte rightVol);
 	void setSfxBalance(bool left, bool right);
- 	uint _rightSfxVol, _leftSfxVol;
+	// Game logic volume settings
+	uint _rightSfxVol, _leftSfxVol;
  	uint _musicVolRight, _musicVolLeft;
 
 private:
+	// Apply game logic volume levels
 	void setSfxVolume(byte volume);
 	void setMusicVolume(byte volume);
 

@@ -22,54 +22,28 @@
 #ifndef TOT_MIDI_H
 #define TOT_MIDI_H
 
-#include "audio/adlib_ms.h"
 #include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
 
 namespace Tot {
 
-class MidiDriver_AdLib : public MidiDriver_ADLIB_Multisource {
-public:
-	MidiDriver_AdLib(OPL::Config::OplType oplType, int timerFrequency = OPL::OPL::kDefaultCallbackFrequency);
-	~MidiDriver_AdLib();
-
-	void loadInstrumentBank(uint8 *instrumentBankData);
-	void loadInstrumentBankFromDriver(int32 offset);
-
-protected:
-	OplInstrumentDefinition *_dsfInstrumentBank;
-	OplInstrumentDefinition *_rhythmBank;
-};
-
 class MidiPlayer {
 protected:
-	// Driver used for music. This points to the same object as _driverMsMusic,
-	// except if a PC-98 driver is used (these do not implement the Multisource
-	// interface).
-	MidiDriver *_driver;
-	// Multisource driver used for music. Provides access to multisource
-	// methods without casting. If this is not nullptr, it points to the same
-	// object as _driver.
-	MidiDriver_AdLib *_driverMsMusic;
-	// MIDI parser and data used for music.
+	MidiDriver_Multisource *_driver;
 	MidiParser *_parserMusic;
 	byte *_musicData;
 
 	bool _paused;
 
-protected:
 	static void onTimer(void *data);
 
 public:
 	MidiPlayer();
 	~MidiPlayer();
 
-	// Creates and opens the relevant parsers and drivers for the game version
-	// and selected sound device.
+	// Creates and opens the relevant parsers and drivers
 	int open();
-	// Loads music or SFX data supported by the MidiParser or SfxParser used
-	// for the detected version of the game. Specify sfx to indicate that this
-	// is a synthesized sound effect.
+	// Loads music or SFX data supported by the MidiParser
 	void load(Common::SeekableReadStream *in, int32 size = -1);
 
 	void play(int track);
@@ -81,7 +55,10 @@ public:
 	void pause(bool b);
 	void syncSoundSettings();
 
-private:
+	void setSourceVolume(uint8 volume);
+	void startFadeOut();
+	void startFadeIn();
+	bool isFading();
 };
 
 } // End of namespace Tot
