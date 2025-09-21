@@ -35,7 +35,6 @@
 #include "director/castmember/movie.h"
 
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macbutton.h"
 
 namespace Director {
@@ -766,10 +765,6 @@ int Channel::getMouseLine(int x, int y) {
 		warning("Channel::getMouseLine getting mouse line on a non-existing widget");
 		return -1;
 	}
-
-	// If widget is type textWindow, then we need to get the line from the window
-	if (dynamic_cast<Graphics::MacTextWindow *>(_widget))
-		return ((Graphics::MacTextWindow *)_widget)->getMouseLine(x, y);
 
 	return ((Graphics::MacText *)_widget)->getMouseLine(x, y);
 }
