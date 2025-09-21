@@ -64,7 +64,6 @@ void MacTextWindow::init() {
 	_inputTextHeight = 0;
 
 	_inputIsDirty = true;
-	_inTextSelection = false;
 
 	_scrollPos = 0;
 	_editable = true;
@@ -223,119 +222,8 @@ void MacTextWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, _wm->_colorGreen2);
 }
 
-void MacTextWindow::drawSelection() {
-	if (_selectedText.endY == -1)
-		return;
-
-	SelectedText s = _selectedText;
-
-	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
-		SWAP(s.startX, s.endX);
-		SWAP(s.startY, s.endY);
-		SWAP(s.startRow, s.endRow);
-		SWAP(s.startCol, s.endCol);
-	}
-
-	int lastLineStart = s.endY;
-	s.endY += _mactext->getLineHeight(s.endRow);
-
-	int start = s.startY - _scrollPos;
-	start = MAX(0, start);
-
-	if (start > getInnerDimensions().height())
-		return;
-
-	int end = s.endY - _scrollPos;
-
-	if (end < 0)
-		return;
-
-	end = MIN((int)getInnerDimensions().height(), end);
-
-	int numLines = 0;
-	int x1 = 0, x2 = 0;
-
-	for (int y = start; y < end; y++) {
-		if (!numLines) {
-			x1 = 0;
-			x2 = getInnerDimensions().width() - 1;
-
-			if (y + _scrollPos == s.startY && s.startX > 0) {
-				numLines = _mactext->getLineHeight(s.startRow);
-				x1 = s.startX;
-			}
-			if (y + _scrollPos >= lastLineStart) {
-				numLines = _mactext->getLineHeight(s.endRow);
-				x2 = s.endX;
-			}
-		} else {
-			numLines--;
-		}
-
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + 1, y + 1);
-
-		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == _wm->_colorBlack)
-				*ptr = _wm->_colorWhite;
-			else
-				*ptr = _wm->_colorBlack;
-	}
-}
-
 Common::U32String MacTextWindow::getSelection(bool formatted, bool newlines) {
-	if (_selectedText.endY == -1)
-		return Common::U32String();
-
-	SelectedText s = _selectedText;
-
-	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
-		SWAP(s.startRow, s.endRow);
-		SWAP(s.startCol, s.endCol);
-	}
-
-	return _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
-}
-
-void MacTextWindow::clearSelection() {
-	_selectedText.endY = _selectedText.startY = -1;
-}
-
-bool MacTextWindow::isCutAllowed() {
-	if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) &&
-			_selectedText.endRow  >= (int)(_mactext->getLineCount() - _inputTextHeight))
-		return true;
-
-	return false;
-}
-
-Common::U32String MacTextWindow::cutSelection() {
-	if (!isCutAllowed())
-		return Common::U32String();
-
-	SelectedText s = _selectedText;
-
-	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
-		SWAP(s.startRow, s.endRow);
-		SWAP(s.startCol, s.endCol);
-	}
-
-	Common::U32String selection = _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
-
-	uint32 selPos = _inputText.find(selection);
-
-	if (selPos == Common::U32String::npos) {
-		//warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str()); // Needed encode method
-
-		return Common::U32String();
-	}
-
-	Common::U32String newInput = _inputText.substr(0, selPos) + _inputText.substr(selPos + selection.size());
-
-	clearSelection();
-	clearInput();
-	appendInput(newInput);
-
-	return selection;
+	return _mactext->getSelection(formatted, newlines);
 }
 
 int MacTextWindow::getMouseLine(int x, int y) {
@@ -382,32 +270,14 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		_wm->setActiveWindow(getId());
 
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_x:
-				_wm->setTextInClipboard(cutSelection());
-				return true;
-			case Common::KEYCODE_c:
-				_wm->setTextInClipboard(getSelection(true, false));
-				return true;
-			case Common::KEYCODE_v:
-				if (g_system->hasTextInClipboard()) {
-					if (_selectedText.endY != -1)
-						cutSelection();
-					appendInput(_wm->getTextFromClipboard());
-					_inputIsDirty = true;
-				}
-				return true;
-			default:
-				break;
-			}
-			return false;
+			return _mactext->processEvent(event);
 		}
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (!_inputText.empty()) {
-				if (_selectedText.endY != -1) {
-					cutSelection();
+				if (_mactext->hasSelection()) {
+					_mactext->cutSelection();
 				} else {
 					_inputText.deleteLastChar();
 				}
@@ -425,8 +295,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 				return false;
 
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-				if (_selectedText.endY != -1)
-					cutSelection();
+				if (_mactext->hasSelection())
+					_mactext->cutSelection();
 				_inputText += (char)event.kbd.ascii;
 				_inputIsDirty = true;
 
@@ -437,7 +307,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		}
 	}
 
-	if (hasAllFocus())
+	if (hasAllFocus())	// We are being dragged or resized
 		return MacWindow::processEvent(event);	// Pass it to upstream
 
 	if (event.type == Common::EVENT_WHEELUP) {
@@ -485,38 +355,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		if (!_selectable)
 			return false;
 
-		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			startMarking(event.mouse.x, event.mouse.y);
-
-			return true;
-		} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
-			if (_inTextSelection) {
-				_inTextSelection = false;
-
-				if (_selectedText.endY == -1 ||
-						(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
-					_selectedText.startY = _selectedText.endY = -1;
-					_contentIsDirty = true;
-					_menu->enableCommand("Edit", "Copy", false);
-				} else {
-					_menu->enableCommand("Edit", "Copy", true);
-
-					bool cutAllowed = isCutAllowed();
-
-					_menu->enableCommand("Edit", "Cut", cutAllowed);
-					_menu->enableCommand("Edit", "Clear", cutAllowed);
-				}
-			}
-
-			return true;
-		} else if (event.type == Common::EVENT_MOUSEMOVE) {
-			if (_inTextSelection) {
-				updateTextSelection(event.mouse.x, event.mouse.y);
-				return true;
-			}
-		}
-
-		return false;
+		return _mactext->processEvent(event);
 	}
 
 	return MacWindow::processEvent(event);
@@ -534,34 +373,6 @@ void MacTextWindow::scroll(int delta) {
 	_borderIsDirty = true;
 
 	_mactext->scroll(delta);
-}
-
-void MacTextWindow::startMarking(int x, int y) {
-	x -= getInnerDimensions().left - 2;
-	y -= getInnerDimensions().top;
-
-	y += _scrollPos;
-
-	_mactext->getRowCol(x, y, &_selectedText.startX, &_selectedText.startY, &_selectedText.startRow, &_selectedText.startCol);
-
-	_selectedText.endY = -1;
-
-	_inTextSelection = true;
-}
-
-void MacTextWindow::updateTextSelection(int x, int y) {
-	x -= getInnerDimensions().left - 2;
-	y -= getInnerDimensions().top;
-
-	y += _scrollPos;
-
-	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
-
-	debug(3, "s: %d,%d (%d, %d) e: %d,%d (%d, %d)", _selectedText.startX, _selectedText.startY,
-			_selectedText.startRow, _selectedText.startCol, _selectedText.endX,
-			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
-
-	_contentIsDirty = true;
 }
 
 void MacTextWindow::undrawInput() {

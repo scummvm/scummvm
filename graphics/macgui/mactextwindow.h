@@ -60,9 +60,9 @@ public:
 	void appendInput(const Common::String &str);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
-	void clearSelection();
-	Common::U32String cutSelection();
-	const SelectedText *getSelectedText() { return &_selectedText; }
+	void clearSelection() { _mactext->clearSelection(); }
+	Common::U32String cutSelection() { return _mactext->cutSelection(); }
+	const SelectedText *getSelectedText() { return _mactext->getSelectedText(); }
 	uint32 getTextColor() { return _mactext->getTextColor(); }
 	uint32 getTextColor(int start, int end) { return _mactext->getTextColor(start, end); }
 	void setTextColor(uint32 color, int start, int end) { return _mactext->setTextColor(color, start, end); }
@@ -97,7 +97,6 @@ public:
 
 private:
 	void init();
-	bool isCutAllowed();
 
 	void scroll(int delta);
 	void calcScrollBar();
@@ -105,9 +104,6 @@ private:
 	void undrawInput();
 	void drawInput();
 	void drawSelection();
-
-	void startMarking(int x, int y);
-	void updateTextSelection(int x, int y);
 
 public:
 	bool _editable;
@@ -119,9 +115,6 @@ private:
 	MacText *_mactext;
 	const MacFont *_font;
 	const Font *_fontRef;
-
-	bool _inTextSelection;
-	SelectedText _selectedText;
 
 	int _maxWidth;
 	Common::U32String _inputText;
