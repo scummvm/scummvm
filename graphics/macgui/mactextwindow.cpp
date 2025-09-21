@@ -42,22 +42,22 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler, int padding) :
 		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = font;
-	_mactext = new MacText(this, 0, 0, 0, 0, _wm, Common::U32String(""), font, fgcolor, bgcolor, maxWidth, textAlignment);
+	_mactext = new MacText(this, 0, 0, 0, 0, _wm, Common::U32String(""), font, fgcolor, bgcolor, maxWidth, textAlignment, 0, padding);
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
 	init(cursorHandler);
 }
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler, int padding) :
 		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = nullptr;
-	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment, 0, padding);
 
 	_fontRef = font;
 
@@ -374,7 +374,7 @@ int MacTextWindow::getMouseLine(int x, int y) {
 	// sometimes error of +2 rows
 	x -= getInnerDimensions().left;
 	y -= getInnerDimensions().top + kConScrollStep;
-	return _mactext->getMouseLine(x, y); 
+	return _mactext->getMouseLine(x, y);
 }
 
 void MacTextWindow::calcScrollBar() {
