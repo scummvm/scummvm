@@ -2,6 +2,7 @@ MODULE := audio
 
 MODULE_OBJS := \
 	adlib.o \
+	adlib_ctmidi.o \
 	adlib_ms.o \
 	audiostream.o \
 	casio.o \

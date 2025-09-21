@@ -116,6 +116,12 @@ struct OplInstrumentDefinition {
 	OplInstrumentRhythmType rhythmType;
 
 	/**
+	 * Number of semitones the notes played by this instrument should be
+	 * transposed up or down.
+	 */
+	int8 transpose = 0;
+
+	/**
 	 * Check if this instrument definition contains any data.
 	 *
 	 * @return True if this instrument is empty; false otherwise.
@@ -482,7 +488,7 @@ public:
 	static const uint8 OPL_MASK_LEVEL = 0x3F;
 	static const uint8 OPL_MASK_FNUMHIGH_BLOCK = 0x1F;
 	static const uint8 OPL_MASK_KEYON = 0x20;
-	static const uint8 OPL_MASK_PANNING = 0x30;
+	static const uint8 OPL_MASK_PANNING = 0xF0;
 
 	/**
 	 * Settings for the panning bits in the OPL Cx registers.
@@ -996,7 +1002,8 @@ protected:
 	 * @param channel The MIDI channel on which the note is played.
 	 * @param source The source playing the note.
 	 * @param note The MIDI note which is played.
-	 * @return The F-num and block to play the note on the OPL chip.
+	 * @return The F-num and block to play the note on the OPL chip, or 0xFFFF
+	 * if the frequency cannot be calculated and the note should not be played.
 	 */
 	virtual uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note);
 	/**
@@ -1223,6 +1230,8 @@ protected:
 	ChannelAllocationMode _allocationMode;
 	// Controls when the instrument definitions are written.
 	InstrumentWriteMode _instrumentWriteMode;
+	// Controls if the level of additive operators should be scaled by volume or not.
+	bool _scaleAdditiveOperatorLevel;
 	// In instrument write mode First Note On or Program Change, this flag controls if the Cx register,
 	// which is shared between rhythm mode instrument definitions (except bass drum), is rewritten
 	// before each note on.
