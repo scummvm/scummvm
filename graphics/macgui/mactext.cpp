@@ -278,6 +278,8 @@ MacText::~MacText() {
 	if (_wm->getActiveWidget() == this)
 		_wm->setActiveWidget(nullptr);
 
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+
 	_borderSurface.free();
 
 	delete _cursorRect;
