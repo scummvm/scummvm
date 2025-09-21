@@ -437,6 +437,7 @@ struct chapterEntry {
 class WetEngine : public HypnoEngine {
 public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
+	~WetEngine();
 	Common::HashMap<int, const struct chapterEntry*> _chapterTable;
 	Common::Array<int> _ids;
 	int _lastLevel;
@@ -533,6 +534,7 @@ private:
 class SpiderEngine : public HypnoEngine {
 public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
+	~SpiderEngine();
 	void loadAssets() override;
 	void loadAssetsDemo();
 	void loadAssetsFullGame();

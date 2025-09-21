@@ -96,6 +96,9 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_enterNameString = getLocalizedString("name");
 }
 
+WetEngine::~WetEngine() {
+}
+
 void WetEngine::loadAssets() {
 	if (!isDemo()) {
 		_difficulty = "1"; // Medium difficulty by default
