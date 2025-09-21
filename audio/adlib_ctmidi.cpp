@@ -368,6 +368,9 @@ const int8 MidiDriver_ADLIB_CTMIDI::NOTE_VOLUME_MODIFIER_VALUES[18] = {
 
 MidiDriver_ADLIB_CTMIDI::MidiDriver_ADLIB_CTMIDI(OPL::Config::OplType oplType, int timerFrequency) :
 		MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
+	memset(_ctmidiInstrumentBank, 0, sizeof(_ctmidiInstrumentBank));
+	memset(_ctmidiRhythmBank, 0, sizeof(_ctmidiRhythmBank));
+
 	_instrumentWriteMode = INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON;
 	_modulationDepth = MODULATION_DEPTH_LOW;
 	_vibratoDepth = VIBRATO_DEPTH_LOW;

@@ -54,9 +54,9 @@ public:
 
 protected:
 	// Instrument bank after conversion
-	OplInstrumentDefinition _ctmidiInstrumentBank[128] = { 0 };
+	OplInstrumentDefinition _ctmidiInstrumentBank[128];
 	// Rhythm bank after conversion
-	OplInstrumentDefinition _ctmidiRhythmBank[47] = { 0 };
+	OplInstrumentDefinition _ctmidiRhythmBank[47];
 
 	/**
 	 * Sets the block / F-num registers for the rhythm instruments to default
