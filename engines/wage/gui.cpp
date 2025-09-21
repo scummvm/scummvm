@@ -133,6 +133,7 @@ Gui::Gui(WageEngine *engine) {
 
 	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
+	_consoleWindow->setBorderColor(kColorWhite);
 	_consoleWindow->setEditable(true);
 
 	_selectedMenuItem = -1;
