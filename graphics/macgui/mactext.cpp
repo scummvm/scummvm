@@ -241,8 +241,8 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 
 	_menu = nullptr;
 
-	_cursorX = _border;
-	_cursorY = _border;
+	_cursorX = 0;
+	_cursorY = 0;
 	_cursorState = false;
 	_cursorOff = false;
 
@@ -1527,8 +1527,8 @@ void MacText::startMarking(int x, int y) {
 		return;
 
 	Common::Point offset = calculateOffset();
-	x -= getDimensions().left - offset.x;
-	y -= getDimensions().top - offset.y;
+	x -= getDimensions().left + offset.x;
+	y -= getDimensions().top + offset.y;
 
 	y += _scrollPos;
 
@@ -1542,8 +1542,8 @@ void MacText::startMarking(int x, int y) {
 
 void MacText::updateTextSelection(int x, int y) {
 	Common::Point offset = calculateOffset();
-	x -= getDimensions().left - offset.x;
-	y -= getDimensions().top - offset.y;
+	x -= getDimensions().left + offset.x;
+	y -= getDimensions().top + offset.y;
 
 	y += _scrollPos;
 
@@ -2143,7 +2143,7 @@ static void cursorTimerHandler(void *refCon) {
 
 void MacText::updateCursorPos() {
 	if (_canvas._text.empty()) {
-		_cursorX = _cursorY = _border;
+		_cursorX = _cursorY = 0;
 	} else {
 		undrawCursor();
 
@@ -2151,8 +2151,8 @@ void MacText::updateCursorPos() {
 
 		int alignOffset = _canvas.getAlignOffset(_cursorRow);
 
-		_cursorY = _canvas._text[_cursorRow].y - _scrollPos + _border;
-		_cursorX = _canvas.getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + _border;
+		_cursorY = _canvas._text[_cursorRow].y - _scrollPos;
+		_cursorX = _canvas.getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
 	}
 
 	int cursorHeight = getLineHeight(_cursorRow);
