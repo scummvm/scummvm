@@ -74,8 +74,8 @@ void MacTextWindow::init(bool cursorHandler) {
 	_editable = true;
 	_selectable = true;
 
-	_cursorX = 0;
-	_cursorY = 0;
+	_cursorX = _border;
+	_cursorY = _border;
 	_cursorState = false;
 	_cursorOff = false;
 
@@ -209,7 +209,7 @@ const MacFont *MacTextWindow::getTextWindowFont() {
 }
 
 bool MacTextWindow::draw(bool forceRedraw) {
-	if (!_borderIsDirty && !_contentIsDirty && !_cursorDirty && !_inputIsDirty && !forceRedraw)
+	if (!_borderIsDirty && !_contentIsDirty && !_mactext->needsRedraw() && !_inputIsDirty && !forceRedraw)
 		return false;
 
 	if (_borderIsDirty || forceRedraw) {
@@ -618,7 +618,7 @@ void MacTextWindow::drawInput() {
 	// Now recalc new text height
 	int newLen = _mactext->getLineCount();
 	_inputTextHeight = newLen - oldLen;
-	_cursorX = _inputText.empty() ? 0 : _mactext->getLastLineWidth();
+	_cursorX = _inputText.empty() ? _border : _mactext->getLastLineWidth() + _border;
 
 	updateCursorPos();
 
@@ -628,7 +628,7 @@ void MacTextWindow::drawInput() {
 void MacTextWindow::clearInput() {
 	undrawCursor();
 
-	_cursorX = 0;
+	_cursorX = _border;
 	_inputText.clear();
 }
 
@@ -654,7 +654,7 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 void MacTextWindow::updateCursorPos() {
-	_cursorY = _mactext->getTextHeight() - _scrollPos - kCursorHeight;
+	_cursorY = _mactext->getTextHeight() - _scrollPos - kCursorHeight + _border;
 	_cursorY += _inputText.empty() ? 3 : 0;
 	_cursorDirty = true;
 }

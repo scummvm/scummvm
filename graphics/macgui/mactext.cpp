@@ -198,7 +198,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow, bool macFontMode) {
 	_fullRefresh = true;
 
-	_canvas._maxWidth = maxWidth;
+	_canvas._maxWidth = maxWidth - _border * 2 - _gutter * 2 - _shadow;
 	_canvas._textAlignment = textAlignment;
 	_canvas._textShadow = textShadow;
 	_canvas._interLinear = interlinear;
@@ -240,8 +240,8 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 
 	_menu = nullptr;
 
-	_cursorX = 0;
-	_cursorY = 0;
+	_cursorX = _border;
+	_cursorY = _border;
 	_cursorState = false;
 	_cursorOff = false;
 
@@ -2135,7 +2135,7 @@ static void cursorTimerHandler(void *refCon) {
 
 void MacText::updateCursorPos() {
 	if (_canvas._text.empty()) {
-		_cursorX = _cursorY = 0;
+		_cursorX = _cursorY = _border;
 	} else {
 		undrawCursor();
 
@@ -2143,8 +2143,8 @@ void MacText::updateCursorPos() {
 
 		int alignOffset = _canvas.getAlignOffset(_cursorRow);
 
-		_cursorY = _canvas._text[_cursorRow].y - _scrollPos;
-		_cursorX = _canvas.getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
+		_cursorY = _canvas._text[_cursorRow].y - _scrollPos + _border;
+		_cursorX = _canvas.getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + _border;
 	}
 
 	int cursorHeight = getLineHeight(_cursorRow);
