@@ -2454,9 +2454,6 @@ void Score::killScriptInstances(int frameNum) {
 			continue;
 
 		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
-			for (auto &inst : channel->_scriptInstanceList) {
-				delete inst;
-			}
 			channel->_scriptInstanceList.clear();
 			channel->_startFrame = channel->_endFrame = -1;
 
@@ -2491,7 +2488,7 @@ void Score::createScriptInstances(int frameNum) {
 							continue;
 						}
 
-						channel->_scriptInstanceList.push_back(result.u.obj);
+						channel->_scriptInstanceList.push_back(result);
 
 						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiating behavior %s for channel %d",
 							sprite->_behaviors[j].toString().c_str(), i + 1);

@@ -123,7 +123,7 @@ public:
 
 	int _startFrame;
 	int _endFrame;
-	Common::Array<AbstractObject *> _scriptInstanceList;
+	Common::Array<Datum> _scriptInstanceList;
 
 private:
 	Graphics::ManagedSurface *getSurface();

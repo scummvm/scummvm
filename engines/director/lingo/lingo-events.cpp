@@ -271,7 +271,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			if (_vm->getVersion() >= 600) {
 				event.scriptType = kScoreScript;
 				event.scriptId = scriptId;
-				event.scriptInstance = _score->_channels[event.channelId]->_scriptInstanceList[event.behaviorIndex];
+				event.scriptInstance = _score->_channels[event.channelId]->_scriptInstanceList[event.behaviorIndex].u.obj;
 				return;
 			}
 
