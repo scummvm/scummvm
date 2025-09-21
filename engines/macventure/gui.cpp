@@ -364,7 +364,7 @@ void Gui::initWindows() {
 	bounds = getWindowData(kOutConsoleWindow).bounds;
 	bbs = borderBounds(findWindowData(kOutConsoleWindow).type);
 	_outConsoleWindow = _wm.addTextWindow(&getCurrentFont(), kColorBlack, kColorWhite,
-										  bounds.width() - bbs.rightScrollbarWidth, Graphics::kTextAlignLeft, _menu, false);
+										  bounds.width() - bbs.rightScrollbarWidth, Graphics::kTextAlignLeft, _menu);
 	_outConsoleWindow->enableScrollbar(true);
 	_outConsoleWindow->setEditable(false);
 	loadBorders(_outConsoleWindow, findWindowData(kOutConsoleWindow).type);

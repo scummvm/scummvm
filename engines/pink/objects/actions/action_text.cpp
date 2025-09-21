@@ -153,7 +153,7 @@ void ActionText::start() {
 
 	if (_scrollBar) {
 		_txtWnd = screen->getWndManager().addTextWindow(screen->getTextFont(), _textColorIndex, _backgroundColorIndex,
-														  _xRight - _xLeft, align, nullptr, false);
+														  _xRight - _xLeft, align, nullptr);
 		_txtWnd->setTextColorRGB(_textRGB);
 		_txtWnd->enableScrollbar(true);
 		// it will hide the scrollbar when the text height is smaller than the window height
