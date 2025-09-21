@@ -355,6 +355,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		if (!_selectable)
 			return false;
 
+		event.mouse.x -= _innerDims.left;
+		event.mouse.y -= _innerDims.top;
 		return _mactext->processEvent(event);
 	}
 
