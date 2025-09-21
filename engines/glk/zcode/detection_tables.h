@@ -3735,7 +3735,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	{ nullptr, nullptr }
 };
-#if defined (hSE_TTS)
+#if defined (USE_TTS)
 #define NONE GUIO3(GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES)
 #define ENTRYS(ID, VERSION, MD5, FILESIZE) { ID, VERSION, MD5, FILESIZE, Common::EN_ANY, GUIO2(GUIO_NOMUSIC, GUIO_NOSUBTITLES) }
 #else
