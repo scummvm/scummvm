@@ -1,7 +1,6 @@
 package org.scummvm.scummvm;
 
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioFormat;
 import android.media.AudioManager;
