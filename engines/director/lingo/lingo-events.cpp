@@ -271,7 +271,10 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			if (_vm->getVersion() >= 600) {
 				event.scriptType = kScoreScript;
 				event.scriptId = scriptId;
-				event.scriptInstance = _score->_channels[event.channelId]->_scriptInstanceList[event.behaviorIndex].u.obj;
+				if (event.behaviorIndex >= 0 && event.behaviorIndex < (int)_score->_channels[event.channelId]->_scriptInstanceList.size())
+					event.scriptInstance = _score->_channels[event.channelId]->_scriptInstanceList[event.behaviorIndex].u.obj;
+				else
+					warning("resolveScriptEvent: behaviorIndex %d out of range", event.behaviorIndex);
 				return;
 			}
 
