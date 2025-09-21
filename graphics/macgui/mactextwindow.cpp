@@ -202,7 +202,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_contentIsDirty = false;
 
 	// Compose
-	_mactext->draw(_composeSurface, true);
+	_mactext->draw(_composeSurface, _inputIsDirty || forceRedraw);
 
 	return true;
 }
