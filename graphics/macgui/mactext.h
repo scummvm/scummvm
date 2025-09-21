@@ -246,6 +246,7 @@ private:
 
 	bool _inTextSelection;
 	SelectedText _selectedText;
+	bool _selectionIsDirty;
 
 	MacMenu *_menu;
 };

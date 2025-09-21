@@ -231,6 +231,7 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 
 	_fullRefresh = true;
 	_inTextSelection = false;
+	_selectionIsDirty = false;
 
 	_scrollPos = 0;
 	_editable = false;
@@ -1012,8 +1013,10 @@ uint getNewlinesInString(const Common::U32String &str) {
 }
 
 void MacText::drawSelection(int xoff, int yoff) {
-	if (_selectedText.endY == -1)
+	if (_selectedText.endY == -1 || !_selectionIsDirty)
 		return;
+
+	_selectionIsDirty = false;
 
 	// we check if the selection size is 0, then we don't draw it anymore, and we set the cursor here
 	// it's a small optimize, but can bring us correct behavior
@@ -1144,6 +1147,7 @@ Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 
 void MacText::clearSelection() {
 	_selectedText.endY = _selectedText.startY = -1;
+	_selectionIsDirty = true;
 }
 
 uint MacText::getSelectionIndex(bool start) {
@@ -1232,6 +1236,7 @@ void MacText::setSelection(int pos, bool start) {
 	}
 
 	_contentIsDirty = true;
+	_selectionIsDirty = true;
 }
 
 bool MacText::isCutAllowed() {
@@ -1463,6 +1468,7 @@ bool MacText::processEvent(Common::Event &event) {
 					(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
 				_selectedText.startY = _selectedText.endY = -1;
 				_contentIsDirty = true;
+				_selectionIsDirty = true;
 
 				if (_menu)
 					_menu->enableCommand("Edit", "Copy", false);
@@ -1531,6 +1537,7 @@ void MacText::startMarking(int x, int y) {
 	_selectedText.endY = -1;
 
 	_inTextSelection = true;
+	_selectionIsDirty = true;
 }
 
 void MacText::updateTextSelection(int x, int y) {
@@ -1547,6 +1554,7 @@ void MacText::updateTextSelection(int x, int y) {
 			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
 
 	_contentIsDirty = true;
+	_selectionIsDirty = true;
 }
 
 int MacText::getMouseChar(int x, int y) {
