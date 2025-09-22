@@ -2225,8 +2225,9 @@ bool CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 	dx = unionRect.right - unionRect.left;              // ... contains the bitmap area where the sprite was
 	dy = unionRect.bottom - unionRect.top;              // ... and the bitmap area where it will be next
 
-	dwN = stN = ((dx + 15) >> 3) * dy;                    // calculate the amount of memory that a bitmap mask
-	chPixels = (byte *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
+	// Allocate a pixel buffer
+	dwN = stN = dx * dy;
+	chPixels = (byte *) calloc((size_t) 1, stN);
 	if (!chPixels)
 		return false;
 
@@ -2274,7 +2275,7 @@ bool CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 							if (chPixels[(i * cBitmapData.bmWidthBytes) + j] != 0) {
 								bSuccess = true;
 								if (pPoint != nullptr) {                   // estimate point of intersection
-									(*pPoint).x = (j * 8) - (m_cPosition.x - unionRect.left);
+									(*pPoint).x = j - (m_cPosition.x - unionRect.left);
 									(*pPoint).y = i - (m_cPosition.y - unionRect.top);
 									if ((*pPoint).x < 0)
 										(*pPoint).x = 0;
