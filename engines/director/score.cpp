@@ -910,6 +910,8 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
 	}
+
+	createScriptInstances(_curFrameNumber);
 }
 
 bool Score::renderPrePaletteCycle(RenderMode mode) {
@@ -2073,8 +2075,6 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	if (loadCast) {
 		// Load frame cast
 		setSpriteCasts();
-
-		createScriptInstances(_curFrameNumber);
 	}
 
 	return true;
