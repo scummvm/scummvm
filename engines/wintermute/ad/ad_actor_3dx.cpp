@@ -432,6 +432,8 @@ bool AdActor3DX::display() {
 		_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
 	}
 
+	_game->_renderer3D->invalidateLastTexture();
+
 	displayAttachments(true);
 
 	if (_hasAmbientLightColor) {

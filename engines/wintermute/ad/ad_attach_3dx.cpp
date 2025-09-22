@@ -98,6 +98,8 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 		}
 	}
 
+	_game->_renderer3D->invalidateLastTexture();
+
 	return true;
 }
 
