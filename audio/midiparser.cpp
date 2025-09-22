@@ -45,6 +45,10 @@ _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
 _disableAllNotesOffMidiEvents(false),
 _disableAutoStartPlayback(false),
+_loopStartPoint(0xFFFFFFFF),
+_loopEndPoint(0xFFFFFFFF),
+_loopStartPointMs(0xFFFFFFFF),
+_loopEndPointMs(0xFFFFFFFF),
 _numTracks(0),
 _activeTrack(255),
 _abortParse(false),
@@ -229,6 +233,23 @@ void MidiParser::onTimer() {
 
 		eventTick = _position._subtracks[subtrack]._lastEventTick + info.delta;
 		eventTime = _position._lastEventTime + (eventTick - _position._lastEventTick) * _psecPerTick;
+
+		if (_loopStartPoint == 0xFFFFFFFF && _loopStartPointMs != 0xFFFFFFFF && eventTime >= _loopStartPointMs) {
+			_loopStartPoint = eventTick;
+		}
+
+		if (_loopStartPoint != 0xFFFFFFFF && _loopEndPoint != 0) {
+			uint32 endTick = (endTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
+
+			if ((_loopEndPoint != 0xFFFFFFFF && eventTick > _loopEndPoint && endTick > _loopEndPoint) ||
+					(eventTime > _loopEndPointMs && endTime > _loopEndPointMs)) {
+				// Loop
+				jumpToTick(_loopStartPoint);
+				_abortParse = true;
+				break;
+			}
+		}
+
 		if (eventTime > endTime)
 			break;
 
@@ -373,9 +394,13 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			_position.stopTracking(info.subtrack);
 			if (!_position.isTracking()) {
 				// All subtracks have finished playing
-				if (_autoLoop) {
+				if (_loopStartPoint != 0xFFFFFFFF && _loopEndPoint == 0) {
+					jumpToTick(_loopStartPoint);
+				}
+				else if (_autoLoop) {
 					jumpToTick(0);
-				} else {
+				}
+				else {
 					stopPlaying();
 					if (fireEvents)
 						sendMetaEventToDriver(info.ext.type, info.ext.data, (uint16)info.length);
@@ -436,6 +461,18 @@ void MidiParser::allNotesOff() {
 
 void MidiParser::resetTracking() {
 	_position.clear();
+}
+
+void MidiParser::setLoopSection(uint32 startPoint, uint32 endPoint) {
+	_loopStartPoint = startPoint;
+	_loopEndPoint = endPoint;
+}
+
+void MidiParser::setLoopSectionMicroseconds(uint32 startPoint, uint32 endPoint) {
+	_loopStartPointMs = startPoint;
+	_loopEndPointMs = endPoint;
+	_loopStartPoint = (startPoint == 0 ? 0 : 0xFFFFFFFF);
+	_loopEndPoint = (endPoint == 0 ? 0 : 0xFFFFFFFF);
 }
 
 bool MidiParser::setTrack(int track) {

@@ -368,6 +368,10 @@ protected:
 	uint32 _psecPerTick;  ///< Microseconds per tick (_tempo / _ppqn).
 	uint32 _sysExDelay;     ///< Number of microseconds until the next SysEx event can be sent.
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
+	uint32 _loopStartPoint;   ///< Start point (in ticks) of the looping section of the track.
+	uint32 _loopEndPoint;     ///< End point (in ticks) of the looping section of the track.
+	uint32 _loopStartPointMs; ///< Start point (in microseconds) of the looping section of the track.
+	uint32 _loopEndPointMs;   ///< End point (in microseconds) of the looping section of the track.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
@@ -578,6 +582,9 @@ public:
 	 * points.
 	 */
 	virtual bool jumpToIndex(uint8 index, bool stopNotes = true) { return false; }
+
+	void setLoopSection(uint32 startPoint, uint32 endPoint = 0);
+	void setLoopSectionMicroseconds(uint32 startPoint, uint32 endPoint = 0);
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._playTick; }
