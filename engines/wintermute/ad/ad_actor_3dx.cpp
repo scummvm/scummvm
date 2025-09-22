@@ -772,7 +772,7 @@ void AdActor3DX::getNextStep2D() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdActor3DX::followPath2D() {
-	AdGame *adGameRef = (AdGame *)_game;
+	AdGame *adGame = (AdGame *)_game;
 
 	// skip current position
 	_path2D->getFirst();
@@ -790,7 +790,7 @@ void AdActor3DX::followPath2D() {
 		_state = STATE_FOLLOWING_PATH;
 
 		DXVector3 currentPoint;
-		adGameRef->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
+		adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
 
 		initLine3D(_posVector, currentPoint, true);
 	} else {

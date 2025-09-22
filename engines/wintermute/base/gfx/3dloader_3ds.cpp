@@ -348,6 +348,8 @@ bool Loader3DS::parseFile(const char *filename) {
 			fileStream.seek(chunkLength - 6, SEEK_CUR);
 	}
 
+	SAFE_DELETE_ARRAY(keyframerObject);
+
 	delete[] buffer;
 
 	return true;
