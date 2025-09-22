@@ -639,7 +639,7 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 
 	if (g_director->getVersion() >= 600 && st == kScoreScript && obj) {
 		push(Datum(obj));
-		LC::call(_eventHandlerTypes[event], 1, true);
+		LC::call(_eventHandlerTypes[event], 1, false);
 		return execute();
 	}
 
