@@ -22,6 +22,7 @@
 #include "director/director.h"
 #include "director/debugger.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/cast.h"
@@ -713,21 +714,47 @@ void Score::createScriptInstances(int frameNum) {
 					for (uint j = 0; j < sprite->_behaviors.size(); j++) {
 
 						// Instantiate the behavior
-						// TODO: Initialize property list
 						g_lingo->push(_movie->getScriptContext(kScoreScript, sprite->_behaviors[j].memberID));
 						LC::call("new", 1, true);
-						Datum result = g_lingo->pop();
+						Datum inst = g_lingo->pop();
 
-						if (result.type != OBJECT) {
+						if (inst.type != OBJECT) {
 							warning("Score::createScriptInstances(): Could not instantiate behavior %s for channel %d",
 								sprite->_behaviors[j].toString().c_str(), i + 1);
 							continue;
 						}
 
-						channel->_scriptInstanceList.push_back(result);
+						channel->_scriptInstanceList.push_back(inst);
 
-						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiating behavior %s for channel %d",
+						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiated behavior %s for channel %d",
 							sprite->_behaviors[j].toString().c_str(), i + 1);
+
+						if (sprite->_behaviors[j].initializerIndex) {
+							// Evaluate the params
+							g_lingo->push(sprite->_behaviors[j].initializerParams);
+							if (debugChannelSet(2, kDebugLingoExec)) {
+								g_lingo->printStack("Stack before:", 0);
+							}
+							LB::b_value(1);
+
+							if (debugChannelSet(2, kDebugLingoExec)) {
+								g_lingo->printStack("Stack after", 0);
+							}
+
+							if (g_lingo->_state->stack.size() == 0) {
+								warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s for channel %d",
+									sprite->_behaviors[j].initializerParams.c_str(), sprite->_behaviors[j].toString().c_str(), i + 1);
+								continue;
+							}
+
+							Datum proplist = _lingo->pop();
+
+							if (proplist.type != PARRAY) {
+								warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s for channel %d",
+									sprite->_behaviors[j].initializerParams.c_str(), sprite->_behaviors[j].toString().c_str(), i + 1);
+								continue;
+							}
+						}
 					}
 				}
 			}
