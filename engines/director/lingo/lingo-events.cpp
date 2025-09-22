@@ -679,4 +679,60 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 	return true;
 }
 
+void Score::killScriptInstances(int frameNum) {
+	if (_version < kFileVer600) // No-op for early Directors
+		return;
+
+	for (int i = 0; i < (int)_channels.size(); i++) {
+		Channel *channel = _channels[i];
+
+		if (channel->_scriptInstanceList.size() == 0)
+			continue;
+
+		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
+			channel->_scriptInstanceList.clear();
+			channel->_startFrame = channel->_endFrame = -1;
+
+			debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for channel %d", i + 1);
+		}
+	}
+}
+
+void Score::createScriptInstances(int frameNum) {
+	if (_version < kFileVer600) // No-op for early Directors
+		return;
+
+	for (int i = 0; i < (int)_channels.size(); i++) {
+		Channel *channel = _channels[i];
+		Sprite *sprite = channel->_sprite;
+
+		if (frameNum >= channel->_startFrame && frameNum <= channel->_endFrame) {
+			// We create scriptInstance only for new sprites
+			if (channel->_scriptInstanceList.size() == 0) {
+				if (sprite->_behaviors.size() > 0) {
+					for (uint j = 0; j < sprite->_behaviors.size(); j++) {
+
+						// Instantiate the behavior
+						// TODO: Initialize property list
+						g_lingo->push(_movie->getScriptContext(kScoreScript, sprite->_behaviors[j].memberID));
+						LC::call("new", 1, true);
+						Datum result = g_lingo->pop();
+
+						if (result.type != OBJECT) {
+							warning("Score::createScriptInstances(): Could not instantiate behavior %s for channel %d",
+								sprite->_behaviors[j].toString().c_str(), i + 1);
+							continue;
+						}
+
+						channel->_scriptInstanceList.push_back(result);
+
+						debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiating behavior %s for channel %d",
+							sprite->_behaviors[j].toString().c_str(), i + 1);
+					}
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Director
