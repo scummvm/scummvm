@@ -1531,6 +1531,28 @@ Common::Error ScummEngine::init() {
 	}
 #endif
 
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].xPos = 0;
+		_internalGUIControls[i].relativeCenterX = -1;
+		_internalGUIControls[i].relativeCenterY = 0;
+		_internalGUIControls[i].xPos = 0;
+		_internalGUIControls[i].yPos = 0;
+		_internalGUIControls[i].normalFillColor = 0;
+		_internalGUIControls[i].topLineColor = 0;
+		_internalGUIControls[i].bottomLineColor = 0;
+		_internalGUIControls[i].leftLineColor = 0;
+		_internalGUIControls[i].rightLineColor = 0;
+		_internalGUIControls[i].normalTextColor = 0;
+		_internalGUIControls[i].highlightedTextColor = 0;
+		_internalGUIControls[i].highlightedFillColor = 0;
+		_internalGUIControls[i].centerText = false;
+		_internalGUIControls[i].label = "";
+#ifdef USE_TTS
+		_internalGUIControls[i].alternateTTSLabel = "";
+#endif
+		_internalGUIControls[i].doubleLinesFlag = false;
+	}
+
 	_setupIsComplete = true;
 
 	syncSoundSettings();
