@@ -94,6 +94,7 @@ Gui::Gui(WageEngine *engine) {
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	_wm = new Graphics::MacWindowManager(Graphics::kWMNoScummVMWallpaper);
+	_wm->_fontMan->loadFonts(Common::Path(engine->getGameFile()));
 	_wm->setScreen(&_screen);
 
 	_menu = _wm->addMenu();
@@ -131,7 +132,7 @@ Gui::Gui(WageEngine *engine) {
 
 	uint maxWidth = _screen.w;
 
-	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu, 1);
+	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu, 4);
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 	_consoleWindow->setBorderColor(kColorWhite);
 	_consoleWindow->setEditable(true);
