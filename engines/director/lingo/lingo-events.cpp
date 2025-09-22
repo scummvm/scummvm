@@ -586,6 +586,8 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
+	bool behavioursCompleted = false;
+
 	while (!queue.empty()) {
 		LingoEvent el = queue.pop();
 
@@ -617,6 +619,17 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		);
 		bool completed = processEvent(el.event, el.scriptType, el.scriptId, el.channelId, el.scriptInstance);
 		movie->_lastEventId[el.event] = el.eventId;
+
+		if (_vm->getVersion() >= 600) {
+			// We need to execute all behaviours before deciding if we pass
+			// through or not
+			if (el.scriptType == kScoreScript && el.passByDefault == true) {
+				behavioursCompleted |= completed;
+				completed = true;
+			} else {
+				completed |= behavioursCompleted;
+			}
+		}
 
 		if (isInputEvent && !completed) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: context frozen on an input event, stopping");
