@@ -163,7 +163,7 @@ void BaseSurface::sPlotB(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, true);
 }
 
-void BaseSurface::copyBlock(BaseSurface *src, const Common::Rect &bounds) {
+void BaseSurface::copyBlock(const BaseSurface *src, const Common::Rect &bounds) {
 	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
 }
 

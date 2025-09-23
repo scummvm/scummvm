@@ -90,7 +90,7 @@ public:
 	 */
 	void plotB(const SpriteFrame *frame, const Common::Point &pt);
 
-	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
+	virtual void copyBlock(const BaseSurface *src, const Common::Rect &bounds);
 
 	virtual void restoreBlock();
 

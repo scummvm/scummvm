@@ -86,7 +86,7 @@ public:
 	 */
 	void update() override;
 
-	void copyBlock(BaseSurface *src, const Common::Rect &bounds) override;
+	void copyBlock(const BaseSurface *src, const Common::Rect &bounds) override;
 
 	void restoreBlock() override;
 

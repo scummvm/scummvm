@@ -282,7 +282,7 @@ void Screen::restoreScreen() {
 	_screenYOff = _screenSave._screenYOff;
 }
 
-void Screen::copyBlock(BaseSurface *src, const Common::Rect &bounds) {
+void Screen::copyBlock(const BaseSurface *src, const Common::Rect &bounds) {
 	Common::Rect destBounds = bounds;
 	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);
 
