@@ -93,7 +93,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r01.ap", "c081daca9b0cfd710157cf946e343df6", 39352),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		kGameMartianMemorandum,
