@@ -464,15 +464,32 @@ void MidiParser::resetTracking() {
 }
 
 void MidiParser::setLoopSection(uint32 startPoint, uint32 endPoint) {
+	if (endPoint != 0 && endPoint <= startPoint) {
+		warning("MidiParser::setLoopSection - Attempt to set loop end point before start point");
+		return;
+	}
+
 	_loopStartPoint = startPoint;
 	_loopEndPoint = endPoint;
 }
 
 void MidiParser::setLoopSectionMicroseconds(uint32 startPoint, uint32 endPoint) {
+	if (endPoint != 0 && endPoint <= startPoint) {
+		warning("MidiParser::setLoopSectionMicroseconds - Attempt to set loop end point before start point");
+		return;
+	}
+
 	_loopStartPointMs = startPoint;
 	_loopEndPointMs = endPoint;
 	_loopStartPoint = (startPoint == 0 ? 0 : 0xFFFFFFFF);
 	_loopEndPoint = (endPoint == 0 ? 0 : 0xFFFFFFFF);
+}
+
+void MidiParser::clearLoopSection() {
+	_loopStartPoint = 0xFFFFFFFF;
+	_loopEndPoint = 0xFFFFFFFF;
+	_loopStartPointMs = 0xFFFFFFFF;
+	_loopEndPointMs = 0xFFFFFFFF;
 }
 
 bool MidiParser::setTrack(int track) {
@@ -720,6 +737,7 @@ void MidiParser::unloadMusic() {
 		_nextSubtrackEvents[i].subtrack = i;
 	}
 	_nextEvent = &_nextSubtrackEvents[0];
+	clearLoopSection();
 
 	if (_centerPitchWheelOnUnload) {
 		// Center the pitch wheels in preparation for the next piece of

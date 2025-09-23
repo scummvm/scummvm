@@ -585,6 +585,7 @@ public:
 
 	void setLoopSection(uint32 startPoint, uint32 endPoint = 0);
 	void setLoopSectionMicroseconds(uint32 startPoint, uint32 endPoint = 0);
+	void clearLoopSection();
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._playTick; }
