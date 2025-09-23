@@ -1145,42 +1145,45 @@ static const char *const hardcodedTexts_EN[] = {
 	"Search in row %d and column %d"
 };
 
-static const Common::KeyCode hotkeys[2][8]{
+static const char *const keys[2][8]{
 	// Spanish
 	{// TALK
-	 Common::KEYCODE_h,
+	 "h",
 	 // PICKUP
-	 Common::KEYCODE_c,
+	 "c",
 	 // LOOKAT
-	 Common::KEYCODE_m,
+	 "m",
 	 // USE
-	 Common::KEYCODE_u,
+	 "u",
 	 // OPEN
-	 Common::KEYCODE_a,
+	 "a",
 	 // CLOSE
-	 Common::KEYCODE_e,
+	 "e",
 	 // YES
-	 Common::KEYCODE_s,
+	 "s",
 	 // NO
-	 Common::KEYCODE_n},
+	 "n"
+	},
 
 	// English
 	{// TALK
-	 Common::KEYCODE_t,
+	 "t",
 	 // PICKUP
-	 Common::KEYCODE_a,
+	 "a",
 	 // LOOKAT
-	 Common::KEYCODE_l,
+	 "l",
 	 // USE
-	 Common::KEYCODE_u,
+	 "u",
 	 // OPEN
-	 Common::KEYCODE_o,
+	 "o",
 	 // CLOSE
-	 Common::KEYCODE_c,
+	 "c",
 	 // YES
-	 Common::KEYCODE_y,
+	 "y",
 	 // NO
-	 Common::KEYCODE_n}};
+	 "n"
+	}
+	};
 
 const int FONT_LITT_OFFSET_ES = 153584;
 const int FONT_EURO_OFFSET_ES = 159681;

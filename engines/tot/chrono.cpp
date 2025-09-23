@@ -59,11 +59,10 @@ void ChronoManager::changeSpeed() {
 
 void ChronoManager::delay(uint32 ms) {
 	uint32 delayStart = g_system->getMillis();
-	Common::Event e;
+
 	ms = ms / _speedMultiplier;
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-		}
+		g_engine->_events->pollEvent();
 		g_engine->_screen->update();
 	}
 }

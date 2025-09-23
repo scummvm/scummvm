@@ -113,9 +113,8 @@ void SoundManager::stopVoc() {
 }
 
 void SoundManager::waitForSoundEnd() {
-	Common::Event e;
 	do {
-		while (g_system->getEventManager()->pollEvent(e)) { }
+		g_engine->_events->pollEvent();
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
 		g_system->delayMillis(10);

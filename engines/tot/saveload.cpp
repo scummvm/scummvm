@@ -571,7 +571,6 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
 	uint size = saves.size();
 	for (uint i = 0; i < 6; i++) {
-
 		int color = i == selectedGame ? 255 : 253;
 		if (i < size) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[i]);
@@ -594,7 +593,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 
 void TotEngine::originalSaveLoadScreen() {
 	uint oldMouseX, oldMouseY;
-	uint selectedGame = -1;
+	uint selectedGame = 0;
 	bool modified = false;
 	Common::String saveName = "";
 
@@ -628,7 +627,6 @@ void TotEngine::originalSaveLoadScreen() {
 	_mouse->warpMouse(1, 150, 60);
 
 	do {
-		Common::Event e;
 		bool mouseClicked = false;
 		bool keyPressed = false;
 		char lastInputChar = '\0';
@@ -637,21 +635,12 @@ void TotEngine::originalSaveLoadScreen() {
 			if (_chrono->_gameTick) {
 				_mouse->animateMouseIfNeeded();
 			}
-			while (g_system->getEventManager()->pollEvent(e)) {
-				if (isMouseEvent(e)) {
-					_mouse->warpMouse(e.mouse);
-					_mouse->mouseX = e.mouse.x;
-					_mouse->mouseY = e.mouse.y;
-				}
-
-				if (e.type == Common::EVENT_LBUTTONUP || e.type == Common::EVENT_RBUTTONUP) {
-					mouseClicked = true;
-					_mouse->mouseClickX = e.mouse.x;
-					_mouse->mouseClickY = e.mouse.y;
-				} else if (e.type == Common::EVENT_KEYDOWN) {
-					keyPressed = true;
-					lastInputChar = e.kbd.ascii;
-				}
+			g_engine->_events->pollEvent();
+			if (g_engine->_events->_leftMouseButton || g_engine->_events->_rightMouseButton) {
+				mouseClicked = true;
+			} else if (g_engine->_events->_keyPressed) {
+				keyPressed = true;
+				lastInputChar = g_engine->_events->_lastChar;
 			}
 
 			g_engine->_screen->update();
@@ -740,7 +729,7 @@ void TotEngine::originalSaveLoadScreen() {
 			}
 		}
 
-		if (selectedGame && keyPressed && _saveAllowed) {
+		if (keyPressed && _saveAllowed) {
 			_mouse->hide();
 			byte ytext = 29 + (selectedGame * 15);
 			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastInputChar);

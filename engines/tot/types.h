@@ -285,17 +285,6 @@ struct SavedGame {
 
 typedef byte Palette[768];
 
-enum HOTKEYS {
-    TALK = 0,
-    PICKUP = 1,
-    LOOKAT = 2,
-    USE = 3,
-    OPEN = 4,
-    CLOSE = 5,
-    YES = 6,
-    NO = 7
-};
-
 } // End of namespace Tot
 
 #endif

@@ -836,12 +836,9 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 
 static void exitProcedure(bool &exitLoop, bool isSkipAllowed) {
 	exitLoop = false;
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
-		changeGameSpeed(e);
-		if (isSkipAllowed && (e.type == Common::EVENT_KEYDOWN || (e.type == Common::EVENT_LBUTTONUP))) {
-			exitLoop = true;
-		}
+	g_engine->_events->pollEvent();
+	if (isSkipAllowed && (g_engine->_events->_keyPressed || g_engine->_events->_leftMouseButton)) {
+		exitLoop = true;
 	}
 }
 

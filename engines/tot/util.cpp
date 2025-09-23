@@ -480,32 +480,11 @@ void emptyLoop2() {
 	} while (!g_engine->_chrono->_gameTickHalfSpeed);
 }
 
-void waitForKey() {
-	bool waitForKey = false;
-	Common::Event e;
-	debug("Waiting for key!");
-	while (!waitForKey && !g_engine->shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN) {
-				waitForKey = true;
-			}
-		}
-
-		g_engine->_screen->update();
-		g_system->delayMillis(10);
-	}
-}
-
 int getRandom(int range) { return g_engine->getRandomNumber(range - 1); }
 
 Common::String getObjectName(int idx) {
 	return g_engine->_lang == Common::ES_ESP ? hardcodedTexts_ES[idx] : hardcodedTexts_EN[idx];
 }
-
-Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
-	const Common::KeyCode *selectedHotkeys = (g_engine->_lang == Common::ES_ESP)? hotkeys[0]: hotkeys[1];
-	return selectedHotkeys[hotkey];
-};
 
 Common::String getActionLineText(int idx) {
 	return g_engine->_lang == Common::ES_ESP ? actionLine_ES[idx] : actionLine_EN[idx];

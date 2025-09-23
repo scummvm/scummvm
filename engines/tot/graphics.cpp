@@ -480,9 +480,7 @@ void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene) {
 }
 
 void updateScreenIfNeeded(uint32 &targetTime) {
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
-	}
+	g_engine->_events->pollEvent();
 	if (g_system->getMillis() > targetTime) {
 		g_engine->_graphics->updateSceneArea();
 		targetTime = g_system->getMillis() + 10;

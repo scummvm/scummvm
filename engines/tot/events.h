@@ -18,26 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TOT_EVENTS_H
+#define TOT_EVENTS_H
 
-#ifndef TOT_METAENGINE_H
-#define TOT_METAENGINE_H
+#include "common/events.h"
+#include "common/scummsys.h"
 
-#include "engines/advancedDetector.h"
+namespace Tot {
 
-class TotMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
-public:
-	const char *getName() const override;
-
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * Used by e.g. the launcher to determine whether to enable the Load button.
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
-	Common::KeymapArray initKeymaps(const char *target) const override;
+enum GAME_KEY {
+	KEY_TALK = 0,
+	KEY_PICKUP = 1,
+	KEY_LOOKAT = 2,
+	KEY_USE = 3,
+	KEY_OPEN = 4,
+	KEY_CLOSE = 5,
+	KEY_YES = 6,
+	KEY_NO = 7,
+	KEY_SAVELOAD = 8,
+	KEY_VOLUME = 9,
+	KEY_ESCAPE = 10,
+	KEY_NONE = -1
 };
 
-#endif // TOT_METAENGINE_H
+class TotEventManager {
+private:
+	Common::Event _event;
+
+    void handleKey(const Common::Event &event);
+public:
+	bool _escKeyFl = false;
+	bool _keyPressed = false;
+	GAME_KEY _gameKey = KEY_NONE;
+    bool _leftMouseButton = 0;
+    bool _rightMouseButton = 0;
+    int16 _mouseX = 0;
+    int16 _mouseY = 0;
+	uint16 _lastChar = '\0';
+
+	TotEventManager();
+
+	void pollEvent(bool allowDrag = false);
+	void zeroEvents(bool allowDrag = false);
+	void waitForPress();
+
+};
+
+} // End of namespace Tot
+#endif

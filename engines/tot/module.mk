@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	decoder/TotFlicDecoder.o \
 	dialog.o \
 	engine.o \
+	events.o \
 	forest.o \
 	graphics.o \
 	metaengine.o \

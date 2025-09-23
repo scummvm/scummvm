@@ -642,7 +642,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 			}
 		}
 		animIndex = _mainCharAnimation.depth;
-		_mainCharAnimation.depth = 30;		
+		_mainCharAnimation.depth = 30;
 		if (g_engine->_screenLayers[12]) {
 			free(g_engine->_screenLayers[12]);
 		}
@@ -1031,12 +1031,10 @@ void TotEngine::goToObject(byte zone1, byte zone2) {
 
 		_mouse->hide();
 		calculateRoute(zone1, zone2, true, barredZone);
-		Common::Event e;
+
 		do {
 			_chrono->updateChrono();
-			while (g_system->getEventManager()->pollEvent(e)) {
-				changeGameSpeed(e);
-			}
+			g_engine->_events->pollEvent();
 			advanceAnimations(barredZone, false);
 			_screen->update();
 			g_system->delayMillis(10);
@@ -4013,17 +4011,13 @@ void TotEngine::sayLine(
 
 		talkAnimIndex = 0;
 		bool mouseClicked = false;
-		Common::Event e;
+
 		// Plays talk cycle if needed
 		do {
 			_chrono->updateChrono();
-			while (g_system->getEventManager()->pollEvent(e)) {
-				if (isMouseEvent(e)) {
-					if (e.type == Common::EVENT_LBUTTONUP || e.type == Common::EVENT_RBUTTONUP) {
-						mouseClicked = true;
-					}
-				}
-				changeGameSpeed(e);
+			g_engine->_events->pollEvent();
+			if (g_engine->_events->_leftMouseButton || g_engine->_events->_rightMouseButton) {
+				mouseClicked = true;
 			}
 			if (_chrono->_gameTick) {
 				_chrono->_gameTick = false;
@@ -4635,17 +4629,11 @@ void TotEngine::generateDiploma(Common::String &photoName) {
 	_graphics->totalFadeOut(0);
 	loadDiploma(photoName, key);
 
-	Common::Event e;
-	bool keyPressed = false;
 	do {
 		_screen->update();
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN) {
-				keyPressed = true;
-			}
-		}
+		g_engine->_events->pollEvent();
 		g_system->delayMillis(10);
-	} while (!keyPressed && !shouldQuit());
+	} while (!g_engine->_events->_keyPressed && !shouldQuit());
 	saveDiploma(photoName, key);
 	_mouse->show();
 }
@@ -5266,7 +5254,7 @@ void TotEngine::soundControls() {
 	_mouse->hide();
 
 	soundControlsSize = imagesize(50, 10, 270, 120);
-	//What was on the screen before blitting sound controls
+	// What was on the screen before blitting sound controls
 	byte *soundControlsBackground = (byte *)malloc(soundControlsSize);
 	_graphics->getImg(50, 10, 270, 120, soundControlsBackground);
 
@@ -5303,22 +5291,23 @@ void TotEngine::soundControls() {
 	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
 	bool keyPressed = false;
 	bool mouseClicked = false;
-	Common::Event e;
 	do {
 		_chrono->updateChrono();
 		do {
 			_chrono->updateChrono();
 			_mouse->animateMouseIfNeeded();
-			while (g_system->getEventManager()->pollEvent(e)) {
-				if (e.type == Common::EVENT_KEYDOWN) {
-					keyPressed = true;
-				}
-				if (e.type == Common::EVENT_LBUTTONDOWN) {
-					mouseClicked = true;
-					_mouse->mouseClickX = e.mouse.x;
-					_mouse->mouseClickY = e.mouse.y;
-				}
+			g_engine->_events->pollEvent(true);
+
+			if (g_engine->_events->_keyPressed) {
+				keyPressed = true;
 			}
+			if (g_engine->_events->_leftMouseButton) {
+				debug("Mouse clicked!");
+				mouseClicked = true;
+				_mouse->mouseClickX = g_engine->_events->_mouseX;
+				_mouse->mouseClickY = g_engine->_events->_mouseY;
+			}
+
 			_screen->update();
 		} while ((!keyPressed && !mouseClicked) && !shouldQuit());
 
@@ -5328,20 +5317,20 @@ void TotEngine::soundControls() {
 			exitSoundControls = true;
 		}
 		if (mouseClicked) {
+
 			if (_mouse->mouseClickY >= 22 && _mouse->mouseClickY <= 37) {
 				_mouse->hide();
 				xfade = 86 + sfxVol;
 				bool mouseReleased = false;
 				do {
-
 					oldxfade = xfade;
-					while (g_system->getEventManager()->pollEvent(e)) {
-						if (e.type == Common::EVENT_LBUTTONUP) {
-							mouseReleased = true;
-						} else if (e.type == Common::EVENT_MOUSEMOVE) {
-							xfade = e.mouse.x;
-						}
+					g_engine->_events->pollEvent(true);
+					if (g_engine->_events->_leftMouseButton == 0) {
+						mouseReleased = true;
+					} else {
+						xfade = g_engine->_events->_mouseX;
 					}
+
 					if (xfade < 86) {
 						xfade = 86;
 					} else if (xfade > 226) {
@@ -5354,7 +5343,6 @@ void TotEngine::soundControls() {
 						// This yields a volume between 0 and 140
 						sfxVol = xfade - 86;
 
-						debug("volumefx=%d", sfxVol);
 						ConfMan.setInt("sfx_volume", sfxVol * 256 / 140);
 						g_engine->syncSoundSettings();
 					}
@@ -5369,12 +5357,12 @@ void TotEngine::soundControls() {
 				do {
 
 					oldxfade = xfade;
-					while (g_system->getEventManager()->pollEvent(e)) {
-						if (e.type == Common::EVENT_LBUTTONUP) {
-							mouseReleased = true;
-						} else if (e.type == Common::EVENT_MOUSEMOVE) {
-							xfade = e.mouse.x;
-						}
+					g_engine->_events->pollEvent(true);
+
+					if (g_engine->_events->_leftMouseButton == 0) {
+						mouseReleased = true;
+					} else {
+						xfade = g_engine->_events->_mouseX;
 					}
 					if (xfade < 86) {
 						xfade = 86;
@@ -5386,7 +5374,6 @@ void TotEngine::soundControls() {
 						_graphics->putImg(86, 76, sliderBackground2);
 						_graphics->putImg(xfade, 76, slider);
 						musicVol = xfade - 86;
-						debug("musicvol=%d", musicVol);
 						ConfMan.setInt("music_volume", musicVol * 256 / 140);
 						g_engine->syncSoundSettings();
 					}
@@ -5415,7 +5402,6 @@ void TotEngine::soundControls() {
 
 	if (_cpCounter > 7)
 		showError(274);
-
 	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 

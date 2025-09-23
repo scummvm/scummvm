@@ -33,6 +33,7 @@
 #include "tot/detection.h"
 #include "tot/debug.h"
 #include "tot/dialog.h"
+#include "tot/events.h"
 #include "tot/sound.h"
 #include "tot/tot.h"
 #include "tot/util.h"
@@ -57,6 +58,7 @@ TotEngine::~TotEngine() {
 	delete _sound;
 	delete _chrono;
 	delete _mouse;
+	delete _events;
 }
 
 uint32 TotEngine::getFeatures() const {
@@ -79,6 +81,7 @@ Common::Error TotEngine::run() {
 	_sound = new SoundManager(_mixer);
 	_chrono = new ChronoManager();
 	_mouse = new MouseManager();
+	_events = new TotEventManager();
 
 	_sound->init();
 	syncSoundSettings();
@@ -146,6 +149,257 @@ void TotEngine::resumeGame() {
 	loadGameState(getMetaEngine()->getAutosaveSlot());
 }
 
+void TotEngine::processEvents(bool &escapePressed) {
+	_events->pollEvent();
+	if (_events->_escKeyFl) {
+		escapePressed = true;
+	} else if (_events->_gameKey == KEY_VOLUME) {
+		soundControls();
+		g_engine->_events->zeroEvents();
+	} else if (_events->_gameKey == KEY_SAVELOAD) {
+		if (ConfMan.getBool("original_save_load_screen"))
+			originalSaveLoadScreen();
+		else
+			openMainMenuDialog();
+
+		g_engine->_events->zeroEvents();
+	} else if (_events->_gameKey == KEY_OPEN) {
+		_actionCode = 5;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_CLOSE) {
+		_actionCode = 6;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_PICKUP) {
+		_actionCode = 2;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_TALK) {
+		_actionCode = 1;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_LOOKAT) {
+		_actionCode = 3;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_USE) {
+		_actionCode = 4;
+		action();
+		_oldGridX = 0;
+		_oldGridY = 0;
+	} else if (_events->_gameKey == KEY_NONE && _events->_keyPressed) {
+		_actionCode = 0; // go to
+		action();
+	}
+
+	if (_events->_leftMouseButton == 1) {
+		_mouse->mouseClickX = _events->_mouseX;
+		_mouse->mouseClickY = _events->_mouseY;
+		if (_mouse->mouseClickY > 0 && _mouse->mouseClickY < 131) {
+			switch (_actionCode) {
+			case 0: // go to
+				_cpCounter2 = _cpCounter;
+				// gets the zone where the character is now standing. Zone is calculated using xframe,yframe plus some adjustments to get the center of the feet
+				_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+				if (_currentZone < 10) {
+					_xframe2 = _mouse->mouseClickX + 7;
+					_yframe2 = _mouse->mouseClickY + 7;
+					// obtains the target zone from the clicked coordinates
+					_targetZone = _currentRoomData->walkAreasGrid[_xframe2 / kXGridCount][_yframe2 / kYGridCount];
+					if (_currentRoomData->code == 21 && _currentRoomData->animationFlag) {
+						if ((_targetZone >= 1 && _targetZone <= 5) ||
+							(_targetZone >= 9 && _targetZone <= 13) ||
+							(_targetZone >= 18 && _targetZone <= 21) ||
+							_targetZone == 24 || _targetZone == 25) {
+
+							_targetZone = 7;
+							_mouse->mouseClickX = 232;
+							_mouse->mouseClickY = 75;
+
+							_xframe2 = _mouse->mouseClickX + 7;
+							_yframe2 = _mouse->mouseClickY + 7;
+						}
+					}
+
+					if (_oldTargetZone != _targetZone || _targetZone < 10) {
+						_oldTargetZone = _targetZone;
+						// Resets the entire route
+						calculateRoute(_currentZone, _targetZone);
+
+						_doorIndex = 0;
+						_roomChange = false;
+
+						for (_doorIndex = 0; _doorIndex < 5; _doorIndex++) {
+							if (_currentRoomData->doors[_doorIndex].doorcode == _targetZone) {
+
+								if (_currentRoomData->doors[_doorIndex].openclosed == 1) {
+									_roomChange = true;
+									break;
+								} else if ((_currentRoomData->code == 5 && _targetZone == 27) || (_currentRoomData->code == 6 && _targetZone == 21)) {
+									;
+								} else {
+									_trajectorySteps -= 1;
+								}
+							}
+						}
+						// Sets xframe2 again due to the substraction when closed doors
+						_xframe2 = _trajectorySteps;
+					} else
+						_xframe2 = 0;
+				}
+				break;
+			case 1: // talk
+				_roomChange = false;
+				_actionCode = 0;
+				talkToSceneObject();
+				_cpCounter2 = _cpCounter;
+				break;
+			case 2: // pick up
+				_roomChange = false;
+				_actionCode = 0;
+				pickupScreenObject();
+				_cpCounter = _cpCounter2;
+				break;
+			case 3: // look at
+				_roomChange = false;
+				_destinationX = _mouse->getClickCoordsWithinGrid().x;
+				_destinationY = _mouse->getClickCoordsWithinGrid().y;
+				if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex > 0) {
+					goToObject(
+						_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount],
+						_currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
+					if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex == 562)
+
+						switch (_currentRoomData->code) {
+						case 20:
+							if (_niche[0][_niche[0][3]] > 0)
+								readObject(_niche[0][_niche[0][3]]);
+							else
+								readObject(562);
+							break;
+						case 24:
+							if (_niche[1][_niche[1][3]] > 0)
+								readObject(_niche[1][_niche[1][3]]);
+							else
+								readObject(562);
+							break;
+						}
+					else
+						readObject(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
+					if (_curObject.lookAtTextRef > 0)
+						drawText(_curObject.lookAtTextRef);
+					_actionCode = 0;
+				}
+				break;
+			case 4: // use
+				_roomChange = false;
+				_actionCode = 0;
+				useScreenObject();
+				_cpCounter = _cpCounter2;
+				break;
+			case 5: // open
+				_roomChange = false;
+				_actionCode = 0;
+				openScreenObject();
+				break;
+			case 6: { // close
+				_roomChange = false;
+				_actionCode = 0;
+				closeScreenObject();
+				_cpCounter = _cpCounter2;
+			} break;
+			}
+		} else if (_mouse->mouseClickY > 148 && _mouse->mouseClickY < 158) {
+			if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 53) {
+				_actionCode = 1;
+				action();
+			} else if (_mouse->mouseClickX >= 58 && _mouse->mouseClickX <= 103) {
+				_actionCode = 2;
+				action();
+			} else if (_mouse->mouseClickX >= 108 && _mouse->mouseClickX <= 153) {
+				_actionCode = 3;
+				action();
+			} else if (_mouse->mouseClickX >= 158 && _mouse->mouseClickX <= 198) {
+				_actionCode = 4;
+				action();
+			} else if (_mouse->mouseClickX >= 203 && _mouse->mouseClickX <= 248) {
+				_actionCode = 5;
+				action();
+			} else if (_mouse->mouseClickX >= 253 && _mouse->mouseClickX <= 311) {
+				_actionCode = 6;
+				action();
+			} else {
+				_actionCode = 0;
+				action();
+				_cpCounter2 = _cpCounter;
+			}
+		} else if (_mouse->mouseClickY > 166 && _mouse->mouseClickY < 199) {
+			if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 19) {
+				drawInventory(0, 33);
+			} else if (_mouse->mouseClickX >= 26 && _mouse->mouseClickX <= 65) {
+				handleAction(_inventoryPosition);
+			} else if (_mouse->mouseClickX >= 70 && _mouse->mouseClickX <= 108) {
+				handleAction(_inventoryPosition + 1);
+			} else if (_mouse->mouseClickX >= 113 && _mouse->mouseClickX <= 151) {
+				handleAction(_inventoryPosition + 2);
+			} else if (_mouse->mouseClickX >= 156 && _mouse->mouseClickX <= 194) {
+				handleAction(_inventoryPosition + 3);
+			} else if (_mouse->mouseClickX >= 199 && _mouse->mouseClickX <= 237) {
+				handleAction(_inventoryPosition + 4);
+			} else if (_mouse->mouseClickX >= 242 && _mouse->mouseClickX <= 280) {
+				handleAction(_inventoryPosition + 5);
+			} else if (_mouse->mouseClickX >= 290 && _mouse->mouseClickX <= 311) {
+				drawInventory(1, 33);
+			} else {
+				_actionCode = 0;
+				action();
+			}
+		}
+	} else if (_events->_rightMouseButton) {
+		_mouse->mouseClickX = _events->_mouseX;
+		_mouse->mouseClickY = _events->_mouseY;
+		Common::Point p = _mouse->getClickCoordsWithinGrid();
+		_destinationX = p.x;
+		_destinationY = p.y;
+		_cpCounter2 = _cpCounter;
+		if (_destinationY < 28) {
+			RoomObjectListEntry obj = *_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]];
+			if (obj.fileIndex > 0) {
+
+				drawLookAtItem(obj);
+				goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], _currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
+				if (obj.fileIndex == 562)
+
+					switch (_currentRoomData->code) {
+					case 20:
+						if (_niche[0][_niche[0][3]] > 0)
+							readObject(_niche[0][_niche[0][3]]);
+						else
+							readObject(562);
+						break;
+					case 24:
+						if (_niche[1][_niche[1][3]] > 0)
+							readObject(_niche[1][_niche[1][3]]);
+						else
+							readObject(562);
+						break;
+					}
+				else
+					readObject(obj.fileIndex);
+				if (_curObject.lookAtTextRef > 0)
+					drawText(_curObject.lookAtTextRef);
+				_actionCode = 0;
+			}
+		}
+	}
+}
+
 int TotEngine::startGame() {
 	_sound->fadeOutMusic();
 	switch (_gamePart) {
@@ -160,301 +414,12 @@ int TotEngine::startGame() {
 	_sound->fadeInMusic();
 	_inGame = true;
 
-	Common::Event e;
-	const char hotKeyOpen = hotKeyFor(OPEN);
-	const char hotKeyClose = hotKeyFor(CLOSE);
-	const char hotKeyPickup = hotKeyFor(PICKUP);
-	const char hotKeyTalk = hotKeyFor(TALK);
-	const char hotKeyLook = hotKeyFor(LOOKAT);
-	const char hotKeyUse = hotKeyFor(USE);
-
 	while (!_shouldQuitGame && !shouldQuit()) {
 		bool escapePressed = false;
 		_chrono->updateChrono();
 		_mouse->animateMouseIfNeeded();
-		// debug
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (isMouseEvent(e)) {
-				_mouse->warpMouse(e.mouse);
-				_mouse->mouseX = e.mouse.x;
-				_mouse->mouseY = e.mouse.y;
-			}
-			if (e.type == Common::EVENT_KEYDOWN) {
-				changeGameSpeed(e);
 
-				switch (e.kbd.keycode) {
-
-				case Common::KEYCODE_UP:
-					_sound->fadeInMusic();
-					break;
-
-				case Common::KEYCODE_DOWN:
-					_sound->fadeOutMusic();
-					break;
-
-				case Common::KEYCODE_ESCAPE:
-					escapePressed = true;
-					break;
-				case Common::KEYCODE_F1:
-					soundControls();
-					break;
-				case Common::KEYCODE_F2:
-					if(ConfMan.getBool("original_save_load_screen"))
-						originalSaveLoadScreen();
-					else
-						openMainMenuDialog();
-					break;
-				default:
-					if (e.kbd.keycode == hotKeyOpen) {
-						_actionCode = 5;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else if (e.kbd.keycode == hotKeyClose) {
-						_actionCode = 6;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else if (e.kbd.keycode == hotKeyPickup) {
-						_actionCode = 2;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else if (e.kbd.keycode == hotKeyTalk) {
-						_actionCode = 1;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else if (e.kbd.keycode == hotKeyLook) {
-						_actionCode = 3;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else if (e.kbd.keycode == hotKeyUse) {
-						_actionCode = 4;
-						action();
-						_oldGridX = 0;
-						_oldGridY = 0;
-					} else {
-						_actionCode = 0; // go to
-					}
-				}
-			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				_mouse->mouseClickX = e.mouse.x;
-				_mouse->mouseClickY = e.mouse.y;
-				if (_mouse->mouseClickY > 0 && _mouse->mouseClickY < 131) {
-					switch (_actionCode) {
-					case 0: // go to
-						_cpCounter2 = _cpCounter;
-						// gets the zone where the character is now standing. Zone is calculated using xframe,yframe plus some adjustments to get the center of the feet
-						_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
-						if (_currentZone < 10) {
-							_xframe2 = _mouse->mouseClickX + 7;
-							_yframe2 = _mouse->mouseClickY + 7;
-							// obtains the target zone from the clicked coordinates
-							_targetZone = _currentRoomData->walkAreasGrid[_xframe2 / kXGridCount][_yframe2 / kYGridCount];
-							if (_currentRoomData->code == 21 && _currentRoomData->animationFlag) {
-								if ((_targetZone >= 1 && _targetZone <= 5) ||
-									(_targetZone >= 9 && _targetZone <= 13) ||
-									(_targetZone >= 18 && _targetZone <= 21) ||
-									_targetZone == 24 || _targetZone == 25) {
-
-									_targetZone = 7;
-									_mouse->mouseClickX = 232;
-									_mouse->mouseClickY = 75;
-
-									_xframe2 = _mouse->mouseClickX + 7;
-									_yframe2 = _mouse->mouseClickY + 7;
-								}
-							}
-
-							if (_oldTargetZone != _targetZone || _targetZone < 10) {
-								_oldTargetZone = _targetZone;
-								// Resets the entire route
-								calculateRoute(_currentZone, _targetZone);
-
-								_doorIndex = 0;
-								_roomChange = false;
-
-								for (_doorIndex = 0; _doorIndex < 5; _doorIndex++) {
-									if (_currentRoomData->doors[_doorIndex].doorcode == _targetZone) {
-
-										if (_currentRoomData->doors[_doorIndex].openclosed == 1) {
-											_roomChange = true;
-											break;
-										} else if ((_currentRoomData->code == 5 && _targetZone == 27) || (_currentRoomData->code == 6 && _targetZone == 21)) {
-											;
-										} else {
-											_trajectorySteps -= 1;
-										}
-									}
-								}
-								// Sets xframe2 again due to the substraction when closed doors
-								_xframe2 = _trajectorySteps;
-							} else
-								_xframe2 = 0;
-						}
-						break;
-					case 1: // talk
-						_roomChange = false;
-						_actionCode = 0;
-						talkToSceneObject();
-						_cpCounter2 = _cpCounter;
-						break;
-					case 2: // pick up
-						_roomChange = false;
-						_actionCode = 0;
-						pickupScreenObject();
-						_cpCounter = _cpCounter2;
-						break;
-					case 3: // look at
-						_roomChange = false;
-						_destinationX = _mouse->getClickCoordsWithinGrid().x;
-						_destinationY =  _mouse->getClickCoordsWithinGrid().y;
-						if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex > 0) {
-							goToObject(
-								_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount],
-								_currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
-							if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex == 562)
-
-								switch (_currentRoomData->code) {
-								case 20:
-									if (_niche[0][_niche[0][3]] > 0)
-										readObject(_niche[0][_niche[0][3]]);
-									else
-										readObject(562);
-									break;
-								case 24:
-									if (_niche[1][_niche[1][3]] > 0)
-										readObject(_niche[1][_niche[1][3]]);
-									else
-										readObject(562);
-									break;
-								}
-							else
-								readObject(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
-							if (_curObject.lookAtTextRef > 0)
-								drawText(_curObject.lookAtTextRef);
-							_actionCode = 0;
-						}
-						break;
-					case 4: // use
-						_roomChange = false;
-						_actionCode = 0;
-						useScreenObject();
-						_cpCounter = _cpCounter2;
-						break;
-					case 5: // open
-						_roomChange = false;
-						_actionCode = 0;
-						openScreenObject();
-						break;
-					case 6: { // close
-						_roomChange = false;
-						_actionCode = 0;
-						closeScreenObject();
-						_cpCounter = _cpCounter2;
-					} break;
-					}
-				} else if (_mouse->mouseClickY > 148 && _mouse->mouseClickY < 158) {
-					if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 53) {
-						_actionCode = 1;
-						action();
-						break;
-					} else if (_mouse->mouseClickX >= 58 && _mouse->mouseClickX <= 103) {
-						_actionCode = 2;
-						action();
-						break;
-					} else if (_mouse->mouseClickX >= 108 && _mouse->mouseClickX <= 153) {
-						_actionCode = 3;
-						action();
-						break;
-					} else if (_mouse->mouseClickX >= 158 && _mouse->mouseClickX <= 198) {
-						_actionCode = 4;
-						action();
-						break;
-					} else if (_mouse->mouseClickX >= 203 && _mouse->mouseClickX <= 248) {
-						_actionCode = 5;
-						action();
-						break;
-					} else if (_mouse->mouseClickX >= 253 && _mouse->mouseClickX <= 311) {
-						_actionCode = 6;
-						action();
-						break;
-					} else {
-						_actionCode = 0;
-						action();
-						_cpCounter2 = _cpCounter;
-					}
-				} else if (_mouse->mouseClickY > 166 && _mouse->mouseClickY < 199) {
-					if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 19) {
-						drawInventory(0, 33);
-						break;
-					} else if (_mouse->mouseClickX >= 26 && _mouse->mouseClickX <= 65) {
-						handleAction(_inventoryPosition);
-						break;
-					} else if (_mouse->mouseClickX >= 70 && _mouse->mouseClickX <= 108) {
-						handleAction(_inventoryPosition + 1);
-						break;
-					} else if (_mouse->mouseClickX >= 113 && _mouse->mouseClickX <= 151) {
-						handleAction(_inventoryPosition + 2);
-						break;
-					} else if (_mouse->mouseClickX >= 156 && _mouse->mouseClickX <= 194) {
-						handleAction(_inventoryPosition + 3);
-						break;
-					} else if (_mouse->mouseClickX >= 199 && _mouse->mouseClickX <= 237) {
-						handleAction(_inventoryPosition + 4);
-						break;
-					} else if (_mouse->mouseClickX >= 242 && _mouse->mouseClickX <= 280) {
-						handleAction(_inventoryPosition + 5);
-						break;
-					} else if (_mouse->mouseClickX >= 290 && _mouse->mouseClickX <= 311) {
-						drawInventory(1, 33);
-						break;
-					} else {
-						_actionCode = 0;
-						action();
-					}
-				}
-			} else if (e.type == Common::EVENT_RBUTTONUP) {
-				_mouse->mouseClickX = e.mouse.x;
-				_mouse->mouseClickY = e.mouse.y;
-				Common::Point p = _mouse->getClickCoordsWithinGrid();
-				_destinationX = p.x;
-				_destinationY = p.y;
-				_cpCounter2 = _cpCounter;
-				if (_destinationY < 28) {
-					RoomObjectListEntry obj = *_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]];
-					if (obj.fileIndex > 0) {
-
-						drawLookAtItem(obj);
-						goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], _currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
-						if (obj.fileIndex == 562)
-
-							switch (_currentRoomData->code) {
-							case 20:
-								if (_niche[0][_niche[0][3]] > 0)
-									readObject(_niche[0][_niche[0][3]]);
-								else
-									readObject(562);
-								break;
-							case 24:
-								if (_niche[1][_niche[1][3]] > 0)
-									readObject(_niche[1][_niche[1][3]]);
-								else
-									readObject(562);
-								break;
-							}
-						else
-							readObject(obj.fileIndex);
-						if (_curObject.lookAtTextRef > 0)
-							drawText(_curObject.lookAtTextRef);
-						_actionCode = 0;
-					}
-				}
-			}
-		}
-
+		processEvents(escapePressed);
 		checkMouseGrid();
 		advanceAnimations(false, true);
 
@@ -958,7 +923,7 @@ void TotEngine::changeRoom() {
 		_mouse->show();
 	}
 	}
-	
+
 	if (_currentRoomData->doors[_doorIndex].nextScene != 255) {
 		_oldGridX = 0;
 		_oldGridY = 0;
@@ -1197,7 +1162,7 @@ void TotEngine::clearVars() {
 	if (_currentRoomData) {
 		delete _currentRoomData;
 	}
-	
+
 	clearScreenLayers();
 
 	for (int i = 0; i < kInventoryIconCount; i++) {
@@ -1245,65 +1210,58 @@ void TotEngine::mainMenu(bool fade) {
 	_mouse->mouseMaskIndex = 1;
 	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
 	_mouse->show();
-	Common::Event e;
 	do {
 		_chrono->updateChrono();
 		_mouse->animateMouseIfNeeded();
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (isMouseEvent(e)) {
-				_mouse->warpMouse(e.mouse);
-			}
-			if (e.type == Common::EVENT_KEYDOWN) {
-				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					exitToDOS();
-				}
-			}
-			if (e.type == Common::EVENT_LBUTTONUP) {
-				uint x = e.mouse.x + 7;
-				uint y = e.mouse.y + 7;
-				if (y > 105 && y < 120) {
-					if (x > 46 && x < 145) {
-						_startNewGame = true;
-						_continueGame = false;
-						validOption = true;
-					} else if (x > 173 && x < 267) {
-						credits();
-						if(!g_engine->shouldQuit()) {
-							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
-						}
+		_events->pollEvent();
+
+		if (_events->_escKeyFl) {
+			exitToDOS();
+		}
+		if (_events->_leftMouseButton) {
+			uint x = _events->_mouseX + 7;
+			uint y = _events->_mouseY + 7;
+			if (y > 105 && y < 120) {
+				if (x > 46 && x < 145) {
+					_startNewGame = true;
+					_continueGame = false;
+					validOption = true;
+				} else if (x > 173 && x < 267) {
+					credits();
+					if (!g_engine->shouldQuit()) {
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 					}
-				} else if (y > 140 && y < 155) {
-					if (x > 173 && x < 292) {
-						_graphics->totalFadeOut(0);
-						_screen->clear();
-						introduction();
-						if(!g_engine->shouldQuit()) {
-							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
-						}
-					} else if (x >= 18 && x <= 145) {
-						_isSavingDisabled = true;
-						if(ConfMan.getBool("original_save_load_screen")) {
-							originalSaveLoadScreen();
+				}
+			} else if (y > 140 && y < 155) {
+				if (x > 173 && x < 292) {
+					_graphics->totalFadeOut(0);
+					_screen->clear();
+					introduction();
+					if (!g_engine->shouldQuit()) {
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+					}
+				} else if (x >= 18 && x <= 145) {
+					_isSavingDisabled = true;
+					if (ConfMan.getBool("original_save_load_screen")) {
+						originalSaveLoadScreen();
+						validOption = true;
+					} else {
+						bool result = loadGameDialog();
+						if (result) {
 							validOption = true;
 						}
-						else {
-							bool result = loadGameDialog();
-							if(result) {
-								validOption = true;
-							}
-						}
-						_startNewGame = false;
-						_continueGame = false;
-						_isSavingDisabled = false;
 					}
-				} else if (y > 174 && y < 190) {
-					if (x > 20 && x < 145) {
-						_startNewGame = false;
-						validOption = true;
-						_continueGame = true;
-					} else if (x > 173 && y < 288) {
-						exitToDOS();
-					}
+					_startNewGame = false;
+					_continueGame = false;
+					_isSavingDisabled = false;
+				}
+			} else if (y > 174 && y < 190) {
+				if (x > 20 && x < 145) {
+					_startNewGame = false;
+					validOption = true;
+					_continueGame = true;
+				} else if (x > 173 && y < 288) {
+					exitToDOS();
 				}
 			}
 		}
@@ -1324,7 +1282,6 @@ void TotEngine::clearGame() {
 }
 
 void TotEngine::exitToDOS() {
-	debug("Exit to dos!");
 	uint oldMousePosX, oldMousePosY, dialogSize;
 	byte oldMouseMask;
 	char exitChar;
@@ -1344,36 +1301,28 @@ void TotEngine::exitToDOS() {
 
 	_mouse->setMouseArea(Common::Rect(115, 80, 190, 100));
 	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
-	Common::Event e;
-	const char hotKeyYes = hotKeyFor(YES);
-	const char hotKeyNo = hotKeyFor(NO);
 	exitChar = '@';
 	do {
 		_chrono->updateChrono();
 		_mouse->animateMouseIfNeeded();
+		_events->pollEvent();
+		if (_events->_escKeyFl) {
+			exitChar = '\33';
+		} else if (_events->_gameKey == KEY_YES) {
+			debug("would exit game now");
+			free(dialogBackground);
+			exitGame();
+		} else if (_events->_gameKey == KEY_NO) {
+			exitChar = '\33';
+		}
 
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (isMouseEvent(e)) {
-				_mouse->warpMouse(e.mouse);
-			}
-			if (e.type == Common::EVENT_KEYDOWN) {
-				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					exitChar = '\33';
-				} else if (e.kbd.keycode == hotKeyYes) {
-					debug("would exit game now");
-					free(dialogBackground);
-					exitGame();
-				} else if (e.kbd.keycode == hotKeyNo) {
-					exitChar = '\33';
-				}
-			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				uint x = e.mouse.x;
-				if (x < 145) {
-					free(dialogBackground);
-					g_system->quit();
-				} else if (x > 160) {
-					exitChar = '\33';
-				}
+		if (_events->_leftMouseButton) {
+			uint x = g_engine->_mouse->mouseClickX;
+			if (x < 145) {
+				free(dialogBackground);
+				g_system->quit();
+			} else if (x > 160) {
+				exitChar = '\33';
 			}
 		}
 		_screen->update();

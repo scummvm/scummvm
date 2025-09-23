@@ -58,8 +58,6 @@ void emptyLoop();
 
 void emptyLoop2();
 
-void waitForKey();
-
 void changeGameSpeed(Common::Event e);
 
 inline bool odd(int32 i) { return i % 2 != 0; }
@@ -67,8 +65,6 @@ inline bool odd(int32 i) { return i % 2 != 0; }
 int getRandom(int range);
 
 Common::String getObjectName(int idx);
-
-Common::KeyCode hotKeyFor(HOTKEYS hotkey);
 
 Common::String getActionLineText(int idx);
 

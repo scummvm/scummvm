@@ -180,18 +180,12 @@ void scrollCredit(
 	}
 
 	g_engine->_graphics->setPalette(&g_engine->_graphics->_pal[16 * 3 + 0], 16, 240);
-	Common::Event e;
-	bool keyPressed = false;
-
 	// Loops an image from the bottom of the screen to the top
 	for (int i = 199; i >= minHeight; i--) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN) {
-				keyPressed = true;
-			}
-		}
+		g_engine->_events->pollEvent();
+
 		putCreditsImg(85, i, g_engine->_sceneBackground, background, !withFade);
-		if (keyPressed) {
+		if (g_engine->_events->_keyPressed) {
 			exit = true;
 			break;
 		}
@@ -224,10 +218,8 @@ void scrollSingleCredit(
 
 void removeTitle(byte *&background2) {
 	uint i2, j2;
-	Common::Event e;
 	for (int i1 = 1; i1 <= 15000; i1++) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-		}
+		g_engine->_events->pollEvent();
 		i2 = g_engine->getRandomNumber(318);
 		j2 = getRandom(58);
 		byte *src = background2 + 4 + (j2 * 320) + i2;
@@ -258,9 +250,9 @@ void removeTitle(byte *&background2) {
 }
 
 inline bool keyPressed() {
-	Common::Event e;
-	g_system->getEventManager()->pollEvent(e);
-	return e.type == Common::EVENT_KEYDOWN;
+
+	g_engine->_events->pollEvent();
+	return g_engine->_events->_keyPressed;
 }
 
 void TotEngine::credits() {
@@ -403,9 +395,8 @@ void TotEngine::introduction() {
 
 	do {
 		_chrono->updateChrono();
-		Common::Event e;
-		g_system->getEventManager()->pollEvent(e);
-		if (e.type == Common::EVENT_KEYDOWN || e.type == Common::EVENT_LBUTTONUP) {
+		g_engine->_events->pollEvent();
+		if (g_engine->_events->_keyPressed || g_engine->_events->_leftMouseButton) {
 			goto LexitIntro;
 		}
 

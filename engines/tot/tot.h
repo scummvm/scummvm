@@ -38,6 +38,7 @@
 
 #include "tot/chrono.h"
 #include "tot/detection.h"
+#include "tot/events.h"
 #include "tot/graphics.h"
 #include "tot/mouse.h"
 #include "tot/sound.h"
@@ -46,6 +47,20 @@
 namespace Tot {
 
 struct TotGameDescription;
+
+enum TotAction {
+	kActionEscape,
+	kActionVolume,
+	kActionSaveLoad,
+	kActionTalk,
+	kActionPickup,
+	kActionLookAt,
+	kActionUse,
+	kActionOpen,
+	kActionClose,
+	kActionYes,
+	kActionNo
+};
 
 class TotEngine : public Engine {
 
@@ -164,6 +179,8 @@ private:
 	void resetGameState();
 	void clearVars();
 
+	void processEvents(bool &escapePressed);
+	void oldProcessEvents(bool &escapePressed);
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -171,10 +188,11 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	Tot::GraphicsManager *_graphics = nullptr;
+	GraphicsManager *_graphics = nullptr;
 	SoundManager *_sound = nullptr;
 	MouseManager *_mouse = nullptr;
 	ChronoManager *_chrono = nullptr;
+	Tot::TotEventManager *_events = nullptr;
 
 	bool _showMouseGrid = false;
 	bool _showScreenGrid = false;

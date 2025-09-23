@@ -18,10 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/translation.h"
 
 #include "tot/metaengine.h"
 #include "tot/detection.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -87,8 +92,100 @@ bool TotMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 const ADExtraGuiOptionsMap *TotMetaEngine::getAdvancedExtraGuiOptions() const {
-		return optionsList;
-	}
+	return optionsList;
+}
+
+Common::KeymapArray TotMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Tot;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tot-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *quitDialogKeyMap = new Keymap(Keymap::kKeymapTypeGame, "quit-dialog", _("Quit dialog keymappings"));
+
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language", target));
+
+	static const char *const *defaultTotKeys = (lang == ES_ESP) ? keys[0] : keys[1];
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Default action"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionTalk);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_TALK]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("PICK", _("Pick"));
+	act->setCustomEngineActionEvent(kActionPickup);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_PICKUP]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLookAt);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_LOOKAT]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionUse);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_USE]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("OPEN", _("Open"));
+	act->setCustomEngineActionEvent(kActionOpen);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_OPEN]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("CLOSE", _("Close"));
+	act->setCustomEngineActionEvent(kActionClose);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_CLOSE]);
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVELOAD", _("Save and load game"));
+	act->setCustomEngineActionEvent(kActionSaveLoad);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+
+	act = new Action("VOLCONTROLS", _("Volume controls"));
+	act->setCustomEngineActionEvent(kActionVolume);
+	act->addDefaultInputMapping("F1");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MAINMENU", _("Main menu/Exit"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUITCONFIRM", _("Confirm quit"));
+	act->setCustomEngineActionEvent(kActionYes);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_YES]);
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	quitDialogKeyMap->addAction(act);
+
+	act = new Action("QUITCANCEL", _("Cancel quit"));
+	act->setCustomEngineActionEvent(kActionNo);
+	act->addDefaultInputMapping(defaultTotKeys[KEY_NO]);
+	act->addDefaultInputMapping("JOY_KEFT_TRIGGER");
+	quitDialogKeyMap->addAction(act);
+
+	KeymapArray keymaps(3);
+
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = quitDialogKeyMap;
+
+	return keymaps;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(TOT)
 REGISTER_PLUGIN_DYNAMIC(TOT, PLUGIN_TYPE_ENGINE, TotMetaEngine);
