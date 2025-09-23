@@ -336,9 +336,6 @@ void BubbleBox::doBox(int item, int box) {
 void BubbleBox::setCursorPos(int posX, int posY) {
 	Common::Point newPt =  Common::Point(posX * 8, posY * 8 + _rowOff);
 	_vm->_screen->_printStart = _vm->_screen->_printOrg = newPt;
-	// This function (at 0x6803) calculates something from a lookup table, but
-	// never does anything with it.
-	debug("Skipping call to setCursorPos");
 }
 
 void BubbleBox::printString(Common::String msg) {
