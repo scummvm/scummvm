@@ -80,7 +80,7 @@ void MusicPlayer::play(CBofSound *sound) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-		parser->setLoopSection(sound->_dwRePlayStart, sound->_dwRePlayEnd);
+		parser->setLoopSectionMicroseconds(sound->_dwRePlayStart * 1000, sound->_dwRePlayEnd * 1000);
 		_parser = parser;
 
 		// TODO: Set channel volume
