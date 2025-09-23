@@ -504,7 +504,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 }
 
 void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 bottom,
-		char *paramStr, int16 fontIndex, int16 var4, int16 shortId) {
+		char *paramStr, int16 fontIndex, int16 color, int16 shortId) {
 
 	int16 width;
 	char tmpStr[128];
@@ -523,9 +523,9 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 		WRITE_VAR(20, (uint32) (right - left + 1));
 		WRITE_VAR(21, (uint32) (bottom - top + 1));
 
-		if (_vm->_game->_script->peekUint16(41) >= '4') {
+		if (_vm->_game->_script->getVersionMinor() >= 4) {
 			WRITE_VAR(22, (uint32) fontIndex);
-			WRITE_VAR(23, (uint32) var4);
+			WRITE_VAR(23, (uint32) color);
 			if (id & 0x8000)
 				WRITE_VAR(24, (uint32) 1);
 			else
@@ -551,8 +551,8 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 	if (*paramStr) {
 		_transparency = 1;
 		_fontIndex = fontIndex;
-		_frontColor = var4;
-		if (_vm->_game->_script->peekUint16(41) >= '4' && strchr(paramStr, 92)) {
+		_frontColor = color;
+		if (_vm->_game->_script->getVersionMinor() >= 4 && strchr(paramStr, '\\')) {
 			char str[80];
 			char *str2;
 			int16 strLen= 0;
@@ -562,7 +562,7 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 			do {
 				strLen++;
 				str2++;
-				str2 = strchr(str2, 92);
+				str2 = strchr(str2, '\\');
 			} while (str2);
 			deltaY = (bottom - right + 1 - (strLen * _fonts[fontIndex]->getCharHeight())) / (strLen + 1);
 			offY = right + deltaY;
@@ -582,14 +582,14 @@ void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 botto
 			}
 		} else {
 			_destSpriteX = left;
-			if (_vm->_game->_script->peekUint16(41) >= '4')
-				_destSpriteY = right + (bottom - right + 1 - _fonts[fontIndex]->getCharHeight()) / 2;
+			if (_vm->_game->_script->getVersionMinor() >= 4)
+				_destSpriteY = top + (bottom - top + 1 - _fonts[fontIndex]->getCharHeight()) / 2;
 			else
-				_destSpriteY = right;
+				_destSpriteY = top;
 			_textToPrint = paramStr;
 			width = stringLength(paramStr, fontIndex);
 			adjustCoords(1, &width, nullptr);
-			_destSpriteX += (top - left + 1 - width) / 2;
+			_destSpriteX += (right - left + 1 - width) / 2;
 			spriteOperation(DRAW_PRINTTEXT);
 		}
 	}
