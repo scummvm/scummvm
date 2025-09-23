@@ -321,22 +321,6 @@ bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float p
 	return STATUS_OK;
 }
 
-bool BaseSoundBuffer::isLooping() const {
-	return _looping;
-}
-
-bool BaseSoundBuffer::isFreezePaused() const {
-	return _freezePaused;
-}
-
-void BaseSoundBuffer::setFreezePaused(bool freezePaused) {
-	_freezePaused = freezePaused;
-}
-
-TSoundType BaseSoundBuffer::getType() const {
-	return _type;
-}
-
 int32 BaseSoundBuffer::getPrivateVolume() const {
 	return _privateVolume;
 }

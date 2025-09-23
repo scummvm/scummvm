@@ -247,14 +247,12 @@ byte BaseSoundMgr::getMasterVolumePercent() {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
-
 	for (int32 i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != TSoundType::SOUND_MUSIC || includingMusic)) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != TSoundType::SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
-			_sounds[i]->setFreezePaused(true);
+			_sounds[i]->_freezePaused = true;
 		}
 	}
 
@@ -266,9 +264,9 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 bool BaseSoundMgr::resumeAll() {
 
 	for (int32 i = 0; i < _sounds.getSize(); i++) {
-		if (_sounds[i]->isFreezePaused()) {
+		if (_sounds[i]->_freezePaused) {
 			_sounds[i]->resume();
-			_sounds[i]->setFreezePaused(false);
+			_sounds[i]->_freezePaused = false;
 		}
 	}
 

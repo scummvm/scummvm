@@ -69,15 +69,11 @@ public:
 	void updateVolume();
 
 	void setType(TSoundType type);
-	TSoundType getType() const;
 
 	bool loadFromFile(const char *filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
 	bool applyFX(TSFXType type, float param1, float param2, float param3, float param4);
 	int32 getPrivateVolume() const;
-	void setFreezePaused(bool freezePaused);
-	bool isFreezePaused() const;
-	bool isLooping() const;
 
 	bool _freezePaused;
 	uint32 _loopStart;
