@@ -91,10 +91,10 @@ void Room::takePicture() {
 	}
 
 	Common::Array<Common::Rect> pictureCoords;
-	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
-		// PICTURERANGE is min/max X, min/max Y
-		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
-			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
+	for (int i = 0; Martian::PICTURE_RANGE[i][0] != -1; i += 2) {
+		// PICTURE_RANGE is min/max X, min/max Y
+		pictureCoords.push_back(Common::Rect(Martian::PICTURE_RANGE[i][0], Martian::PICTURE_RANGE[i + 1][0],
+			                                 Martian::PICTURE_RANGE[i][1], Martian::PICTURE_RANGE[i + 1][1]));
 	}
 
 	int result = _vm->_events->checkMouseBox1(pictureCoords);

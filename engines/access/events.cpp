@@ -130,6 +130,12 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
+void EventsManager::delayUntilNextFrame() {
+	while (!checkForNextFrameCounter())
+		delay();
+	nextFrame();
+}
+
 void EventsManager::pollEvents(bool skipTimers) {
 	if (checkForNextFrameCounter()) {
 		nextFrame();
@@ -311,6 +317,7 @@ bool EventsManager::getAction(Common::CustomEventType &action) {
 		return true;
 	}
 }
+
 
 bool EventsManager::isKeyActionPending() const {
 	return (_keyCode != Common::KEYCODE_INVALID || _action != kActionNone);

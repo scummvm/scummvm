@@ -23,7 +23,7 @@
 #include "access/access.h"
 #include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
-#include "access/martian/martian_tunnel.h"
+#include "access/martian/martian_duct.h"
 #include "access/martian/martian_scripts.h"
 
 namespace Access {
@@ -32,11 +32,11 @@ namespace Martian {
 
 MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
-	_tunnel = new MartianTunnel(_game);
+	_duct = new MartianDuct(_game);
 }
 
 MartianScripts::~MartianScripts() {
-	delete _tunnel;
+	delete _duct;
 }
 
 void MartianScripts::cmdSpecial0() {
@@ -113,7 +113,7 @@ void MartianScripts::cmdSpecial1(int param1, int param2) {
 }
 
 void MartianScripts::cmdSpecial2() {
-	_tunnel->tunnel2();
+	_duct->duct2();
 };
 
 void MartianScripts::cmdSpecial3() {
@@ -128,7 +128,7 @@ void MartianScripts::cmdSpecial3() {
 }
 
 void MartianScripts::cmdSpecial4() {
-	_tunnel->tunnel4();
+	_duct->duct4();
 }
 
 void MartianScripts::doIntro(int param1) {

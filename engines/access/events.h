@@ -131,9 +131,15 @@ public:
 
 	bool getAction(Common::CustomEventType &action);
 
+	Common::CustomEventType peekAction() const { return _action; }
+
+	Common::KeyCode peekKeyCode() const { return _keyCode; }
+
 	bool isKeyActionPending() const;
 
 	void delay(int time = 5);
+
+	void delayUntilNextFrame();
 
 	void debounceLeft();
 

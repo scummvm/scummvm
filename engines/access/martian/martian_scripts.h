@@ -30,12 +30,12 @@ namespace Access {
 namespace Martian {
 
 class MartianEngine;
-class MartianTunnel;
+class MartianDuct;
 
 class MartianScripts : public Scripts {
 private:
 	MartianEngine *_game;
-	MartianTunnel *_tunnel;
+	MartianDuct *_duct;
 
 	void cmdSpecial0();
 	void cmdSpecial1(int param1, int param2);

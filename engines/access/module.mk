@@ -30,7 +30,7 @@ MODULE_OBJS := \
 	martian/martian_game.o \
 	martian/martian_player.o \
 	martian/martian_resources.o \
-	martian/martian_tunnel.o \
+	martian/martian_duct.o \
 	martian/martian_room.o \
 	martian/martian_scripts.o \
 	martian/midiparser_bemd.o \
