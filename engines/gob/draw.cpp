@@ -54,6 +54,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_destSpriteY = 0;
 	_backColor = 0;
 	_frontColor = 0;
+	_colorOffset = 0;
 	_transparency = 0;
 
 	_sourceSurface = 0;

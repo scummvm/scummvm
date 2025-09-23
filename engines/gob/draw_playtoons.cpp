@@ -110,8 +110,6 @@ void Draw_Playtoons::printTotText(int16 id) {
 		}
 	}
 
-	ptr += 8;
-
 	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {
 		_vm->_game->capturePush(destX, destY,
 				spriteRight - destX + 1, spriteBottom - destY + 1);
@@ -124,13 +122,15 @@ void Draw_Playtoons::printTotText(int16 id) {
 	_spriteBottom = spriteBottom;
 	_destSurface = kBackSurface;
 
-	_backColor = *ptr++;
-	_transparency = 1;
+	ptrEnd = ptr + 8;
+	ptr += 9;
 
-	if ((_vm->getGameType() == kGameTypeAdibou2 ||
-		 _vm->getGameType() == kGameTypeAdi4) &&
-		_backColor == 16)
+	if (*ptrEnd == 16)
 		_backColor = -1;
+	else
+		_backColor = *ptr + _colorOffset;
+
+	_transparency = 1;
 
 	spriteOperation(DRAW_CLEARRECT);
 
@@ -148,15 +148,15 @@ void Draw_Playtoons::printTotText(int16 id) {
 		cmd = *ptr++;
 		switch ((cmd & 0xF0) >> 4) {
 		case 0:
-			_frontColor = cmd & 0xF;
+			_frontColor = (cmd & 0xF) + _colorOffset;
 			spriteOperation(DRAW_DRAWLINE);
 			break;
 		case 1:
-			_frontColor = cmd & 0xF;
+			_frontColor = (cmd & 0xF) + _colorOffset;
 			spriteOperation(DRAW_DRAWBAR);
 			break;
 		case 2:
-			_backColor = cmd & 0xF;
+			_backColor = (cmd & 0xF) + _colorOffset;
 			spriteOperation(DRAW_FILLRECTABS);
 			break;
 		default:
@@ -168,8 +168,8 @@ void Draw_Playtoons::printTotText(int16 id) {
 	ptrEnd = ptr;
 	while (((ptrEnd - dataPtr) < size) && (*ptrEnd != 1)) {
 		// Converting to unknown commands/characters to spaces
-		if ((_vm->_game->_script->getVersionMinor() < 2) && (*ptrEnd > 3) && (*ptrEnd < 32))
-			*ptrEnd = 32;
+		if ((_vm->_game->_script->getVersionMinor() < 2) && (*ptrEnd > 3) && (*ptrEnd < ' '))
+			*ptrEnd = ' ';
 
 		switch (*ptrEnd) {
 		case 1:
@@ -177,17 +177,22 @@ void Draw_Playtoons::printTotText(int16 id) {
 
 		case 2:
 		case 5:
+		case 12:
 			ptrEnd += 5;
 			break;
 
 		case 3:
 		case 4:
+		case 15:
 			ptrEnd += 2;
 			break;
 
 		case 6:
 			ptrEnd++;
 			switch (*ptrEnd & 0xC0) {
+			case 0:
+				ptrEnd++;
+				break;
 			case 0x40:
 				ptrEnd += 9;
 				break;
@@ -197,14 +202,16 @@ void Draw_Playtoons::printTotText(int16 id) {
 			case 0xC0:
 				ptrEnd += 11;
 				break;
-			default:
-				ptrEnd++;
-				break;
 			}
 			break;
 
 		case 10:
 			ptrEnd += (ptrEnd[1] * 2) + 2;
+			break;
+
+		case 11:
+			do { ptrEnd++; } while (*ptrEnd != 0);
+			ptrEnd += 2;
 			break;
 
 		default:
@@ -221,12 +228,16 @@ void Draw_Playtoons::printTotText(int16 id) {
 	int16 colCmd = 0;
 	int16 width;
 	int16 maskChar = 0;
-	char mask[80], str[80], buf[50];
+	char mask[200], str[200], buf[50];
 
-	memset(mask, 0, 80);
-	memset(str, ' ', 80);
+	memset(mask, 0, 200);
+	memset(str, ' ', 200);
 	_backColor = 0;
 	_transparency = 1;
+
+	Common::Array<TotTextInfo> totTextInfos;
+	if (_vm->_game->_script->getVersionMinor() >= 4)
+		totTextInfos.resize(32);
 
 #ifdef USE_TTS
 	Common::String ttsMessage;
@@ -235,7 +246,7 @@ void Draw_Playtoons::printTotText(int16 id) {
 		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
 			str[MAX(strPos, strPos2)] = 0;
 			strPosBak = strPos;
-			width = strlen(str) * _fonts[fontIndex]->getCharWidth();
+			width = stringLength(str, fontIndex);
 			adjustCoords(1, &width, nullptr);
 
 			if (colCmd & 0x0F) {
@@ -248,22 +259,49 @@ void Draw_Playtoons::printTotText(int16 id) {
 				adjustCoords(0, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
 
-				if (colId != -1)
-					_vm->_game->_hotspots->add(colId + 0xD000, rectLeft, rectTop,
-							rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
+				if (_vm->_game->_script->getVersionMinor() < 4 || colId < 1 || colId > 32) {
+					if (colId != -1) {
+						uint16 hotspotIdOff = (colCmd & 0x80) ? 0xD000 : 0x4000;
+						_vm->_game->_hotspots->add(colId + hotspotIdOff, rectLeft, rectTop,
+												   rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
+					}
 
-				if (_needAdjust != 2)
-					printTextCentered(colCmd & 0x0F, rectLeft + 4, rectTop + 4,
-							rectRight - 4, rectBottom - 4, str, fontIndex, frontColor);
-				else
-					printTextCentered(colCmd & 0x0F, rectLeft + 2, rectTop + 2,
-							rectRight - 2, rectBottom - 2, str, fontIndex, frontColor);
+					if (_needAdjust != 2 && _needAdjust < 10)
+						drawButton(colCmd & 0x0F, rectLeft + 4, rectTop + 4,
+								   rectRight - 4, rectBottom - 4, str, fontIndex, frontColor, colId);
+					else
+						drawButton(colCmd & 0x0F, rectLeft + 2, rectTop + 2,
+								   rectRight - 2, rectBottom - 2, str, fontIndex, frontColor, colId);
+				} else if (totTextInfos[colId - 1].str.empty()) {
+					totTextInfos[colId - 1].str = str;
+					totTextInfos[colId - 1].rectLeft = rectLeft;
+					totTextInfos[colId - 1].rectTop = rectTop;
+					totTextInfos[colId - 1].rectRight = rectRight;
+					totTextInfos[colId - 1].rectBottom = rectBottom;
+					totTextInfos[colId - 1].colCmd = colCmd;
+					totTextInfos[colId - 1].fontIndex = fontIndex;
+					totTextInfos[colId - 1].color = frontColor;
+				} else {
+					if (rectLeft < totTextInfos[colId - 1].rectLeft)
+						totTextInfos[colId - 1].rectLeft = rectLeft;
 
+					if (rectTop < totTextInfos[colId - 1].rectTop)
+						totTextInfos[colId - 1].rectTop = rectTop;
+
+					if (rectRight > totTextInfos[colId - 1].rectRight)
+						totTextInfos[colId - 1].rectRight = rectRight;
+
+					if (rectBottom > totTextInfos[colId - 1].rectBottom)
+						totTextInfos[colId - 1].rectBottom = rectBottom;
+
+					totTextInfos[colId - 1].str += '\\';
+					totTextInfos[colId - 1].str += str;
+				}
 			} else {
 				_destSpriteX = offX;
 				_destSpriteY = offY;
 				_fontIndex   = fontIndex;
-				_frontColor  = frontColor;
+				_frontColor  = frontColor + _colorOffset;
 				_textToPrint = str;
 #ifdef USE_TTS
 				ttsMessage += _textToPrint;
@@ -288,14 +326,26 @@ void Draw_Playtoons::printTotText(int16 id) {
 					spriteOperation(DRAW_PRINTTEXT, false);
 
 				width = strlen(str);
+				rectLeft = offX;
 				for (strPos = 0; strPos < width; strPos++) {
-					if (mask[strPos] == '\0')
-						continue;
+					char charStrAtPos[2];
+					charStrAtPos[0] = str[strPos];
+					charStrAtPos[1] = '\0';
 
-					rectLeft = _fonts[fontIndex]->getCharWidth();
+					int16 charWidth = stringLength(charStrAtPos, fontIndex);
+					adjustCoords(1, &charWidth, nullptr);
+
+					if (mask[strPos] == '\0') {
+						rectLeft += charWidth;
+						continue;
+					}
+
+					_destSpriteX = rectLeft;
+					rectLeft += charWidth;
+
 					rectTop = _fonts[fontIndex]->getCharHeight();
-					adjustCoords(1, &rectLeft, &rectTop);
-					_destSpriteX = strPos * rectLeft + offX;
+					adjustCoords(1, nullptr, &rectTop);
+
 					_spriteRight = _destSpriteX + rectLeft - 1;
 					_spriteBottom = offY + rectTop;
 					_destSpriteY = _spriteBottom;
@@ -304,24 +354,28 @@ void Draw_Playtoons::printTotText(int16 id) {
 			}
 
 			rectLeft = 0;
-			for (int i = 0; i < strPosBak; i++)
-				rectLeft += _fonts[_fontIndex]->getCharWidth(str[i]);
+			if (_vm->_game->_script->getVersionMinor() < 4) {
+				rectLeft += strPosBak * _fonts[_fontIndex]->getCharWidth();
+			} else {
+				rectLeft += stringLength(str, fontIndex);
+			}
 
 			adjustCoords(1, &rectLeft, nullptr);
 			offX += rectLeft;
 			strPos = 0;
 			strPos2 = -1;
-			memset(mask, 0, 80);
-			memset(str, ' ', 80);
+			memset(mask, 0, 200);
+			memset(str, ' ', 200);
 		}
 
 		if (*ptr == 1)
 			break;
 
 		cmd = *ptr;
+
 		switch ((uint8) cmd) {
 		case 2:
-		case 5:
+		case 5: // Set dest coordinates
 			ptr++;
 			offX = destX + (int16)READ_LE_UINT16(ptr);
 			offY = destY + (int16)READ_LE_UINT16(ptr + 2);
@@ -329,10 +383,11 @@ void Draw_Playtoons::printTotText(int16 id) {
 				offX += (int16)READ_LE_UINT16(ptr);
 				offY += (int16)READ_LE_UINT16(ptr + 2);
 			}
+
 			ptr += 4;
 			break;
 
-		case 3:
+		case 3: // Set font and color
 			ptr++;
 			fontIndex = ((*ptr & 0xF0) >> 4) & 7;
 			frontColor = *ptr & 0x0F;
@@ -353,13 +408,14 @@ void Draw_Playtoons::printTotText(int16 id) {
 			break;
 
 		case 6:
-			ptr++;
-			colCmd = *ptr++;
+			colCmd = ptr[1];
 			colId = -1;
-			if (colCmd & 0x80) {
-				colId = (int16)READ_LE_UINT16(ptr);
-				ptr += 2;
+			if ((colCmd & 0x80) || (colCmd & 0x20)) {
+				colId = (int16)READ_LE_UINT16(ptr + 2);
+				ptrEnd = ptr + 4;
 			}
+			ptr = ptrEnd;
+
 			if (colCmd & 0x40) {
 				rectLeft = destX + (int16)READ_LE_UINT16(ptr);
 				rectRight = destX + (int16)READ_LE_UINT16(ptr + 2);
@@ -399,68 +455,136 @@ void Draw_Playtoons::printTotText(int16 id) {
 			}
 			break;
 
-		default:
-			str[strPos] = (char) cmd;
-			// fall through
-		case 32:
-			mask[strPos++] = maskChar;
+		case 11:
+			do {
+				ptrEnd = ptr;
+				ptr++;
+			} while (*ptr);
+			break;
+
+		case 12:
+			warning("STUB: DrawPlaytoons:printTotText, case 12");
+			break;
+
+		case 13:
+		case 14:
 			ptr++;
 			break;
 
-		case 186:
-			cmd = ptrEnd[17] & 0x7F;
-			if (cmd == 0) {
-				val = READ_LE_UINT16(ptrEnd + 18) * 4;
-				Common::sprintf_s(buf, "%d", (int32)VAR_OFFSET(val));
-			} else if (cmd == 1) {
-				val = READ_LE_UINT16(ptrEnd + 18) * 4;
-				Common::strlcpy(buf, GET_VARO_STR(val), 20);
-			} else {
-				val = READ_LE_UINT16(ptrEnd + 18) * 4;
-				Common::sprintf_s(buf, "%d", (int32)VAR_OFFSET(val));
-				if (buf[0] == '-') {
-					while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
-						_vm->_util->insertStr("0", buf, 1);
-					}
+		case 15:
+			ptr += 2;
+			break;
+
+		default:
+			if (*ptr == 186 && _vm->_game->_script->getVersionMinor() < 3) {
+				cmd = ptrEnd[17] & 0x7F;
+				if (cmd == 0) {
+					val = READ_LE_UINT16(ptrEnd + 18) * 4;
+					Common::sprintf_s(buf, "%d", (int32)VAR_OFFSET(val));
+				} else if (cmd == 1) {
+					val = READ_LE_UINT16(ptrEnd + 18) * 4;
+					Common::strlcpy(buf, GET_VARO_STR(val), 20);
 				} else {
-					while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
-						_vm->_util->insertStr("0", buf, 0);
+					val = READ_LE_UINT16(ptrEnd + 18) * 4;
+					Common::sprintf_s(buf, "%d", (int32)VAR_OFFSET(val));
+					if (buf[0] == '-') {
+						while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
+							_vm->_util->insertStr("0", buf, 1);
+						}
+					} else {
+						while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
+							_vm->_util->insertStr("0", buf, 0);
+						}
 					}
+					if (_vm->_global->_language == 2)
+						_vm->_util->insertStr(".", buf, strlen(buf) + 1 - ptrEnd[17]);
+					else
+						_vm->_util->insertStr(",", buf, strlen(buf) + 1 - ptrEnd[17]);
 				}
-				if (_vm->_global->_language == 2)
-					_vm->_util->insertStr(".", buf, strlen(buf) + 1 - ptrEnd[17]);
-				else
-					_vm->_util->insertStr(",", buf, strlen(buf) + 1 - ptrEnd[17]);
-			}
-			memcpy(str + strPos, buf, strlen(buf));
-			memset(mask, maskChar, strlen(buf));
-			if (ptrEnd[17] & 0x80) {
-				strPos2 = strPos + strlen(buf);
-				strPos++;
-				ptrEnd += 23;
-				ptr++;
-			} else {
-				strPos += strlen(buf);
-				if (ptr[1] != ' ') {
-					if ((ptr[1] == 2) &&
+				memcpy(str + strPos, buf, strlen(buf));
+				memset(mask, maskChar, strlen(buf));
+				if (ptrEnd[17] & 0x80) {
+					strPos2 = strPos + strlen(buf);
+					strPos++;
+					ptrEnd += 23;
+					ptr++;
+				} else {
+					strPos += strlen(buf);
+					if (ptr[1] != ' ') {
+						if ((ptr[1] == 2) &&
 							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY)) {
-						ptr += 5;
+							ptr += 5;
+							str[strPos] = ' ';
+							mask[strPos++] = maskChar;
+						}
+					} else {
 						str[strPos] = ' ';
 						mask[strPos++] = maskChar;
-					}
-				} else {
-					str[strPos] = ' ';
-					mask[strPos++] = maskChar;
-					while (ptr[1] == ' ')
-						ptr++;
-					if ((ptr[1] == 2) &&
+						while (ptr[1] == ' ')
+							ptr++;
+						if ((ptr[1] == 2) &&
 							(((int16)READ_LE_UINT16(ptr + 4)) == _destSpriteY))
-						ptr += 5;
+							ptr += 5;
+					}
+					ptrEnd += 23;
+					ptr++;
 				}
-				ptrEnd += 23;
-				ptr++;
+			} else {
+				if (*ptr != ' ') {
+					str[strPos] = *ptr;
+				}
+
+				mask[strPos] = maskChar;
+				strPos++;
 			}
-			break;
+
+			ptr++;
+		}
+	}
+
+	ptrEnd = ptr + 2;
+	if (_vm->_game->_script->getVersionMinor() >= 4 && ptr + 4 < dataPtr + size) {
+		int16 cmd2 = *ptrEnd;
+		if (cmd2 & 0x80)
+			cmd = (cmd2 & 0x7F) * 24;
+		else
+			cmd = (cmd2 & 0x7F) * 22;
+
+		ptr += cmd + 3;
+		int16 len = *ptr++;
+		if (len > 0)
+			warning("STUB: DrawPlaytoons:printTotText, len=%d", len);
+		ptrEnd = ptr;
+		for (strPos = 0; strPos < len; strPos++) {
+			byte *ptr2 = ptr + strPos * 0x4C;
+			int16 textIndex = (*ptr2 + 0x4A);
+			if (textIndex) {
+				warning("STUB: DrawPlaytoons:printTotText, strPos = %d, update tot text %d", strPos, textIndex);
+			} else {
+				warning("STUB: DrawPlaytoons:printTotText, strPos = %d, BLITSURF case", strPos);
+			}
+		}
+	}
+
+	ptr = ptrEnd;
+	if (_vm->_game->_script->getVersionMinor() >= 4) {
+		for (strPos = 0; strPos < (int16)totTextInfos.size(); strPos++) {
+			TotTextInfo &totTextInfo = totTextInfos[strPos];
+			if (totTextInfo.str.empty())
+				continue;
+
+			int hotspotIdOff = (totTextInfo.colCmd & 0x80) ? 0xD001 : 0x4001;
+			_vm->_game->_hotspots->add(strPos + hotspotIdOff, totTextInfo.rectLeft, totTextInfo.rectTop,
+									   totTextInfo.rectRight, totTextInfo.rectBottom, Hotspots::kTypeClick, 0, 0, 0, 0);
+
+			if (_needAdjust != 2 && _needAdjust < 10)
+				drawButton(totTextInfo.colCmd & 0x0F, totTextInfo.rectLeft + 4, totTextInfo.rectTop + 4,
+						   totTextInfo.rectRight - 4, totTextInfo.rectBottom - 4, totTextInfo.str.begin(),
+						   totTextInfo.fontIndex, totTextInfo.color, strPos + 1);
+			else
+				drawButton(totTextInfo.colCmd & 0x0F, totTextInfo.rectLeft + 2, totTextInfo.rectTop + 2,
+						   totTextInfo.rectRight - 2, totTextInfo.rectBottom - 2, totTextInfo.str.begin(),
+						   totTextInfo.fontIndex, totTextInfo.color, strPos + 1);
 		}
 	}
 

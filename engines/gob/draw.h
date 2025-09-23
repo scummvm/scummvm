@@ -88,6 +88,7 @@ public:
 	int16 _destSpriteY;
 	int16 _backColor;
 	int16 _frontColor;
+	int16 _colorOffset;
 	int16 _transparency;
 
 	int16 _sourceSurface;
@@ -310,6 +311,18 @@ public:
 };
 
 class Draw_Playtoons: public Draw_v2 {
+private:
+	struct TotTextInfo {
+		Common::String str;
+		int16 rectLeft = 0;
+		int16 rectRight = 0;
+		int16 rectTop = 0;
+		int16 rectBottom = 0;
+		int16 colCmd = 0;
+		int16 fontIndex = 0;
+		int16 color = 0;
+	};
+
 public:
 	Draw_Playtoons(GobEngine *vm);
 	~Draw_Playtoons() override {}

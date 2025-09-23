@@ -2163,7 +2163,9 @@ void Inter_v7::o7_startAdi4Application(OpGobParams &params) {
 		_vm->_dataIO->openArchive(appliStkFile, false);
 
 		Common::String appliIntroTotFile = appliAbbreviation + "INTRO";
+		_vm->_draw->_colorOffset = 10;
 		_vm->_game->totSub(1, appliIntroTotFile);
+		_vm->_draw->_colorOffset = 0;
 
 		_vm->_dataIO->closeArchive(false);
 	}
