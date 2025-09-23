@@ -26,9 +26,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Adibou 2: Nature & Sciences.
    - Added support for WAGE-based game. More than 160 titles so far.
    - Added support for Penumbra: Overture.
+   - Added support for Tex Murphy: Martian Memorandum
 
  Access:
    - Added keymapper support.
+   - Fixed foodstep sounds.
 
  ADL:
    - Added Text-to-Speech support.
