@@ -732,13 +732,11 @@ void Score::createScriptInstances(int frameNum) {
 						if (sprite->_behaviors[j].initializerIndex) {
 							// Evaluate the params
 							g_lingo->push(sprite->_behaviors[j].initializerParams);
-							if (debugChannelSet(2, kDebugLingoExec)) {
-								g_lingo->printStack("Stack before:", 0);
-							}
 							LB::b_value(1);
+							g_lingo->execute();
 
-							if (debugChannelSet(2, kDebugLingoExec)) {
-								g_lingo->printStack("Stack after", 0);
+							if (debugChannelSet(5, kDebugLingoExec)) {
+								g_lingo->printStack("  Parsed behavior parameters: ", 0);
 							}
 
 							if (g_lingo->_state->stack.size() == 0) {
@@ -753,6 +751,15 @@ void Score::createScriptInstances(int frameNum) {
 								warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s for channel %d",
 									sprite->_behaviors[j].initializerParams.c_str(), sprite->_behaviors[j].toString().c_str(), i + 1);
 								continue;
+							}
+
+							debugC(2, kDebugLingoExec, "   Setting %d properties", proplist.u.parr->arr.size());
+
+							for (uint k = 0; k < proplist.u.parr->arr.size(); k++) {
+								Datum key = proplist.u.parr->arr[k].p;
+								Datum val = proplist.u.parr->arr[k].v;
+
+								channel->_scriptInstanceList[j].u.obj->setProp(key.asString(), val);
 							}
 						}
 					}
