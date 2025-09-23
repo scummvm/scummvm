@@ -114,7 +114,7 @@ void MartianScripts::cmdSpecial1(int param1, int param2) {
 
 void MartianScripts::cmdSpecial2() {
 	_duct->duct2();
-};
+}
 
 void MartianScripts::cmdSpecial3() {
 	_vm->_screen->forceFadeOut();
