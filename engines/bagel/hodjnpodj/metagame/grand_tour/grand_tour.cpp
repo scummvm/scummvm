@@ -135,8 +135,6 @@ int         tmHeight = 0;
 bool        bDonePodj = false;
 CText       *pText = nullptr;
 
-int         nHLastScore;
-int         nPLastScore;
 /*****************************************************************
  *
  * CMainGTWindow
