@@ -22580,27 +22580,27 @@ static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
 	PATCH_END
 };
 
-// During the SQ4 introduction logo, EGA versions increase the number of calls
+// During the SQ4 introduction logo, non-VGA games increase the number of calls
 //  to kPaletteAnimate by 40x. This was probably to achieve the same delay as
 //  VGA even though no palette animation occurred. This adjustment interferes
 //  with our kPaletteAnimate speed throttling for SQ4 scripts such as this, bug
-//  #6057. We remove the EGA delay, making all versions consistent, otherwise
-//  the logo is displayed for over 3 minutes instead of 5 seconds.
+//  #6057. We use the VGA delay to make all versions consistent, otherwise the
+//  logo is displayed for over 3 minutes instead of 5 seconds.
 //
-// Applies to: English PC EGA Floppy, Japanese PC-98
+// Applies to: English PC EGA Floppy, Japanese PC-98, English and German Amiga
 // Responsible method: rmScript:changeState
-// Fixes bug #6193
-static const uint16 sq4SignatureEgaIntroDelay[] = {
-	SIG_MAGICDWORD,
+// Fixes bugs: #6193, #16219
+static const uint16 sq4SignatureEgaAmigaIntroDelay[] = {
 	0x89, 0x69,                         // lsg 69 [ system colors ]
-	0x35, 0x10,                         // ldi 10
-	0x1e,                               // gt?    [ system colors > 16 ]
-	0x30,                               // bnt    [ use EGA delay ]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi    [ EGA: 16, Amiga: 32 ]
+	SIG_MAGICDWORD,
+	0x1e,                               // gt?    [ system colors > 16 or 32 ]
+	0x30, SIG_UINT16(0x0006),           // bnt    [ use EGA/Amiga delay ]
 	SIG_END
 };
 
-static const uint16 sq4PatchEgaIntroDelay[] = {
-	0x33, 0x06,                         // jmp 06 [ don't use EGA delay ]
+static const uint16 sq4PatchEgaAmigaIntroDelay[] = {
+	0x33, 0x06,                         // jmp 06 [ don't use EGA/Amiga delay ]
 	PATCH_END
 };
 
@@ -23919,7 +23919,7 @@ static const uint16 sq4PatchSkateORamaChaseWestExit[] = {
 
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
-	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
+	{  true,     1, "Floppy: EGA/Amiga intro delay fix",              2, sq4SignatureEgaAmigaIntroDelay,                sq4PatchEgaAmigaIntroDelay },
 	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   376, "Floppy: set sequel police description",          1, sq4FloppySignatureSequelPoliceDescription,     sq4FloppyPatchSequelPoliceDescription },
 	{  true,   376, "Floppy: click atm card on sequel police fix",    1, sq4FloppySignatureClickAtmCardOnSequelPolice,  sq4FloppyPatchClickAtmCardOnSequelPolice },
