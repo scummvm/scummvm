@@ -74,7 +74,7 @@ void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 }
 
 ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	error("Got unimplemented method call %d (%s)", static_cast<uint>(methodId), builtInMethodToStr(methodId));
+	error("%s: Got unimplemented method call 0x%x (%s)", __func__, static_cast<uint>(methodId), builtInMethodToStr(methodId));
 }
 
 void Actor::readChunk(Chunk &chunk) {
