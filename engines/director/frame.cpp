@@ -58,7 +58,7 @@ Frame::Frame(const Frame &frame) {
 	_numChannels = frame._numChannels;
 	_mainChannels.actionId = frame._mainChannels.actionId;
 	_mainChannels.scriptSpriteListIdx = frame._mainChannels.scriptSpriteListIdx;
-	_mainChannels.behavior = frame._mainChannels.behavior;
+	_mainChannels.behaviors = frame._mainChannels.behaviors;
 	_mainChannels.scriptSpriteInfo = frame._mainChannels.scriptSpriteInfo;
 
 	_mainChannels.transDuration = frame._mainChannels.transDuration;

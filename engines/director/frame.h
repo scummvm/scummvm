@@ -101,8 +101,8 @@ struct PaletteInfo {
 struct MainChannels {
 	CastMemberID actionId;
 	uint32 scriptSpriteListIdx; // D6+
-	BehaviorElement behavior; 	// D6+
 	SpriteInfo scriptSpriteInfo; // D6+
+	Common::Array<BehaviorElement> behaviors; // D6+
 
 	uint16 transDuration;
 	uint8 transArea; // 1 - Whole Window, 0 - Changing Area

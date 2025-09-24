@@ -1973,8 +1973,9 @@ void Score::loadFrameSpriteDetails(bool skipLog) {
 		_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx, skipLog);
 
 		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
+		// We can have only one behavior here
 		if (stream) {
-			_currentFrame->_mainChannels.behavior = loadSpriteBehavior(stream, skipLog);
+			_currentFrame->_mainChannels.behaviors.push_back(loadSpriteBehavior(stream, skipLog));
 			delete stream;
 		}
 	}
