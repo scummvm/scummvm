@@ -24,6 +24,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 
 /*************************************
@@ -45,6 +46,7 @@ const XlibFileDesc MoveMouseXObj::fileNames[] = {
 	{ "MoveMouse",		nullptr },
 	{ "MoveMouse.XObj",	nullptr },
 	{ "MOVEWIN",		nullptr },
+	{ "SMXTRA",			nullptr },
 	{ nullptr,			nullptr },
 };
 
@@ -52,6 +54,11 @@ static const MethodProto xlibMethods[] = {
 	{ "new",					MoveMouseXObj::m_new,			 0, 0,	400 },	// D4
 	{ "setMouseLoc",			MoveMouseXObj::m_setMouseLoc,	 2, 2,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
+};
+
+static BuiltinProto xlibBuiltins[] = {
+	{ "SetMouse",				MoveMouseXObj::m_setMouseLoc,	 2, 2,	500, HBLTIN },	// D5
+	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
 MoveMouseXObject::MoveMouseXObject(ObjectType ObjectType) :Object<MoveMouseXObject>("MoveMouse") {
@@ -63,6 +70,7 @@ void MoveMouseXObj::open(ObjectType type, const Common::Path &path) {
 		MoveMouseXObject::initMethods(xlibMethods);
 		MoveMouseXObject *xobj = new MoveMouseXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
+		g_lingo->initBuiltIns(xlibBuiltins);
 	}
 }
 
@@ -80,11 +88,7 @@ void MoveMouseXObj::m_new(int nargs) {
 }
 
 void MoveMouseXObj::m_setMouseLoc(int nargs) {
-	if (nargs != 2) {
-		warning("MoveMouseXObj::m_setMouseLoc: expected 2 arguments");
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(2);
 	int y = g_lingo->pop().asInt();
 	int x = g_lingo->pop().asInt();
 	g_system->warpMouse(x, y);
