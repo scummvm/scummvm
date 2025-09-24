@@ -41,19 +41,18 @@ struct EventHandlerType {
 	LEvent handler;
 	const char *name;
 } static const eventHandlerDescs[] = {
-	{ kEventPrepareMovie,		"prepareMovie" },
+	{ kEventPrepareMovie,		"prepareMovie" },		//					D6
 	{ kEventStartMovie,			"startMovie" },			//		D3
 	{ kEventStepMovie,			"stepMovie" },			//		D3
 	{ kEventStopMovie,			"stopMovie" },			//		D3
 
-	{ kEventNew,				"newSprite" },
-	{ kEventBeginSprite,		"beginSprite" },
-	{ kEventEndSprite,			"endSprite" },
+	{ kEventBeginSprite,		"beginSprite" },		//					D6
+	{ kEventEndSprite,			"endSprite" },			//					D6
 
 	{ kEventEnterFrame,			"enterFrame" },			//			D4
-	{ kEventPrepareFrame,		"prepareFrame" },
+	{ kEventPrepareFrame,		"prepareFrame" },		//					D6
 	{ kEventIdle,				"idle" },				//		D3
-	{ kEventStepFrame,			"stepFrame"},
+	{ kEventStepFrame,			"stepFrame"},			//				D5
 	{ kEventExitFrame,			"exitFrame" },			//			D4
 
 	{ kEventActivateWindow,		"activateWindow" },		//				D5
@@ -70,10 +69,10 @@ struct EventHandlerType {
 	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3
 	{ kEventRightMouseDown,		"rightMouseDown" },		//				D5
 	{ kEventRightMouseUp,		"rightMouseUp" },		//				D5
-	{ kEventMouseEnter,			"mouseEnter" },
-	{ kEventMouseLeave,			"mouseLeave" },
-	{ kEventMouseUpOutSide,		"mouseUpOutSide" },
-	{ kEventMouseWithin,		"mouseWithin" },
+	{ kEventMouseEnter,			"mouseEnter" },			//				D5
+	{ kEventMouseLeave,			"mouseLeave" },			//				D5
+	{ kEventMouseUpOutSide,		"mouseUpOutSide" },		// 					D6-D7
+	{ kEventMouseWithin,		"mouseWithin" },		//				D5-D7
 
 	{ kEventTimeout,			"timeout" },			// D2 as when
 
