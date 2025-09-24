@@ -695,11 +695,13 @@ void Score::killScriptInstances(int frameNum) {
 
 	if (frameNum < _currentFrame->_mainChannels.scriptSpriteInfo.startFrame ||
 	    frameNum > _currentFrame->_mainChannels.scriptSpriteInfo.endFrame) {
-		_scriptChannelScriptInstance = Datum();
-		debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for script channel. frame %d [%d-%d]",
-			frameNum,
-			_currentFrame->_mainChannels.scriptSpriteInfo.startFrame,
-			_currentFrame->_mainChannels.scriptSpriteInfo.endFrame);
+		if (_scriptChannelScriptInstance.type == OBJECT) {
+			_scriptChannelScriptInstance = Datum();
+			debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for script channel. frame %d [%d-%d]",
+				frameNum,
+				_currentFrame->_mainChannels.scriptSpriteInfo.startFrame,
+				_currentFrame->_mainChannels.scriptSpriteInfo.endFrame);
+		}
 	}
 
 	for (int i = 0; i < (int)_channels.size(); i++) {
