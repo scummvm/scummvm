@@ -252,10 +252,6 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 					if (event.behaviorIndex >= 0) {
 						scriptId = sprite->_behaviors[event.behaviorIndex].memberID;
 						initializerParams = sprite->_behaviors[event.behaviorIndex].initializerParams;
-						warning("event: %d, ID: %s, initializerParams: '%s'", event.event, scriptId.asString().c_str(), initializerParams.c_str());
-
-						// TODO: instantiate the behavior script as a child and set its properties
-						// according to the list in initializerParams
 					} else {
 						return;
 					}
@@ -342,6 +338,16 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			if (_score->_currentFrame == nullptr)
 				return;
 
+			if (_vm->getVersion() >= 600) {
+				if (_score->_scriptChannelScriptInstance.type == OBJECT) {
+					event.scriptType = kScoreScript;
+					event.scriptId = CastMemberID(); // No ID for the script channel script
+					event.scriptInstance = _score->_scriptChannelScriptInstance.u.obj;
+				}
+				return;
+			}
+
+			// Pre D6
 			CastMemberID scriptId = _score->_currentFrame->_mainChannels.actionId;
 			if (!scriptId.member)
 				return;
