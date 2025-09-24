@@ -41,8 +41,6 @@ public:
 	bool setPan(float pan);
 	int32 _soundPrivateVolume;
 	int getVolume();
-	int getVolumePercent();
-	bool setVolumePercent(int percent);
 	bool setVolume(int volume);
 	bool setPrivateVolume(int volume);
 	bool setLoopStart(uint32 pos);
@@ -66,7 +64,7 @@ public:
 	TSoundType _soundType;
 	char *_soundFilename;
 	bool setSoundSimple();
-	bool setSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false);
+	bool setSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false, uint32 initialPrivateVolume = 100);
 	BaseSound(BaseGame *inGame);
 	~BaseSound() override;
 

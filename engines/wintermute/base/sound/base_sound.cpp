@@ -65,14 +65,14 @@ BaseSound::~BaseSound() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::setSound(const char *filename, TSoundType type, bool streamed) {
+bool BaseSound::setSound(const char *filename, TSoundType type, bool streamed, uint32 initialPrivateVolume) {
 	if (_sound) {
 		_game->_soundMgr->removeSound(_sound);
 		_sound = nullptr;
 	}
 	SAFE_DELETE_ARRAY(_soundFilename);
 
-	_sound = _game->_soundMgr->addSound(filename, type, streamed);
+	_sound = _game->_soundMgr->addSound(filename, type, streamed, initialPrivateVolume);
 	if (_sound) {
 		size_t nameSize = strlen(filename) + 1;
 		_soundFilename = new char[nameSize];
@@ -244,7 +244,7 @@ bool BaseSound::setPrivateVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
 	} else {
-		return _sound->_privateVolume = volume;
+		_sound->_privateVolume = volume;
 		return STATUS_OK;
 	}
 }
@@ -296,24 +296,5 @@ bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3,
 	}
 	return STATUS_OK;
 }
-
-//////////////////////////////////////////////////////////////////////////
-int BaseSound::getVolumePercent() {
-	if (!_sound) {
-		return 0;
-	} else {
-		return _sound->getPrivateVolume() * 100 / 255;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSound::setVolumePercent(int percent) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		return _sound->setPrivateVolume(percent * 255 / 100);
-	}
-}
-
 
 } // End of namespace Wintermute

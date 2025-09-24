@@ -507,7 +507,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		if (!_sFX) {
 			stack->pushInt(_sFXVolume);
 		} else {
-			stack->pushInt(_sFX->getVolumePercent());
+			stack->pushInt(_sFX->getVolume());
 		}
 		return STATUS_OK;
 	}
@@ -1210,7 +1210,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 	// just play loaded sound
 	if (filename == nullptr && _sFX) {
 		if (_game->_editorMode || _sFXStart) {
-			_sFX->setVolumePercent(_sFXVolume);
+			_sFX->setVolume(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
 			if (!_game->_editorMode) {
 				_sFXStart = 0;
@@ -1236,7 +1236,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 
 	_sFX = new BaseSound(_game);
 	if (_sFX && DID_SUCCEED(_sFX->setSound(filename, TSoundType::SOUND_SFX, true))) {
-		_sFX->setVolumePercent(_sFXVolume);
+		_sFX->setVolume(_sFXVolume);
 		if (_sFXStart) {
 			_sFX->setPositionTime(_sFXStart);
 			_sFXStart = 0;
@@ -1307,7 +1307,7 @@ bool BaseObject::setSFXTime(uint32 time) {
 bool BaseObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
 	if (_sFX) {
-		return _sFX->setVolumePercent(volume);
+		return _sFX->setVolume(volume);
 	} else {
 		return STATUS_OK;
 	}

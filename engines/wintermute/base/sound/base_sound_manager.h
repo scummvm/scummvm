@@ -50,7 +50,7 @@ public:
 	bool setVolume(TSoundType type, int volume);
 	int32 _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
-	BaseSoundBuffer *addSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false);
+	BaseSoundBuffer *addSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false, uint32 initialPrivateVolume = 100);
 	bool addSound(BaseSoundBuffer *sound, TSoundType type = TSoundType::SOUND_SFX);
 	bool initLoop();
 	bool initialize();
@@ -59,9 +59,6 @@ public:
 	~BaseSoundMgr() override;
 	BaseArray<BaseSoundBuffer *> _sounds;
 	void saveSettings();
-private:
-	int32 _volumeMasterPercent; // Necessary to avoid round-offs.
-	bool setMasterVolume(byte percent);
 };
 
 } // End of namespace Wintermute

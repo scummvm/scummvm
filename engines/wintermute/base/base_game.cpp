@@ -1479,7 +1479,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
 			stack->pushBool(false);
 		} else {
-			if (DID_FAIL(_music[channel]->setVolumePercent(volume))) {
+			if (DID_FAIL(_music[channel]->setVolume(volume))) {
 				stack->pushBool(false);
 			} else {
 				stack->pushBool(true);
@@ -1503,7 +1503,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
 			stack->pushInt(0);
 		} else {
-			stack->pushInt(_music[channel]->getVolumePercent());
+			stack->pushInt(_music[channel]->getVolume());
 		}
 
 		return STATUS_OK;
@@ -5242,17 +5242,17 @@ bool BaseGame::updateMusicCrossfade() {
 
 		if (_musicCrossfadeVolume2 == 0) {
 			_music[_musicCrossfadeChannel2]->stop();
-			_music[_musicCrossfadeChannel2]->setVolumePercent(100);
+			_music[_musicCrossfadeChannel2]->setVolume(100);
 		} else {
-			_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume2);
+			_music[_musicCrossfadeChannel2]->setVolume(_musicCrossfadeVolume2);
 		}
 
 		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
 			if (_musicCrossfadeVolume1 == 0) {
 				_music[_musicCrossfadeChannel1]->stop();
-				_music[_musicCrossfadeChannel1]->setVolumePercent(100);
+				_music[_musicCrossfadeChannel1]->setVolume(100);
 			} else {
-				_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume1);
+				_music[_musicCrossfadeChannel1]->setVolume(_musicCrossfadeVolume1);
 			}
 		}
 
@@ -5270,11 +5270,11 @@ bool BaseGame::updateMusicCrossfade() {
 	} else {
 		float progress = (float)currentTime / (float)_musicCrossfadeLength;
 		int volumeDelta = (int)((_musicCrossfadeVolume1 - _musicCrossfadeVolume2)*progress);
-		_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume1 - volumeDelta);
+		_music[_musicCrossfadeChannel2]->setVolume(_musicCrossfadeVolume1 - volumeDelta);
 		BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel2, _musicCrossfadeVolume1 - volumeDelta);
 
 		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
-			_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume2 + volumeDelta);
+			_music[_musicCrossfadeChannel1]->setVolume(_musicCrossfadeVolume2 + volumeDelta);
 			BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel1, _musicCrossfadeVolume2 + volumeDelta);
 		}
 	}

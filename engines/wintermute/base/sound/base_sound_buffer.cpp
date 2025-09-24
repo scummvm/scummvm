@@ -49,8 +49,6 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#define MAX_NONSTREAMED_FILE_SIZE (1024 * 1024)
-
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 	_stream = nullptr;
@@ -58,7 +56,7 @@ BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
 
 	_streamed = false;
 	_filename = nullptr;
-	_privateVolume = 255;
+	_privateVolume = 100;
 	_volume = 255;
 	_pan = 0;
 
@@ -236,10 +234,10 @@ void BaseSoundBuffer::setType(TSoundType type) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setVolume(int volume) {
-	_volume = volume * _game->_soundMgr->getMasterVolume() / 255;
+	volume = (float)volume / 100.0f * _privateVolume;
+	_volume = (volume * Audio::Mixer::kMaxChannelVolume) / 100;
 	if (_stream && _handle) {
-		byte vol = (byte)(_volume);
-		g_system->getMixer()->setChannelVolume(*_handle, vol);
+		g_system->getMixer()->setChannelVolume(*_handle, (byte)(_volume));
 	}
 	return STATUS_OK;
 }
@@ -248,7 +246,7 @@ bool BaseSoundBuffer::setVolume(int volume) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setPrivateVolume(int volume) {
 	_privateVolume = volume;
-	return setVolume(_privateVolume);
+	return setVolume(volume);
 }
 
 
@@ -319,14 +317,6 @@ bool BaseSoundBuffer::applyFX(TSFXType type, float param1, float param2, float p
 		break;
 	}
 	return STATUS_OK;
-}
-
-int32 BaseSoundBuffer::getPrivateVolume() const {
-	return _privateVolume;
-}
-
-void BaseSoundBuffer::updateVolume() {
-	setVolume(_privateVolume);
 }
 
 } // End of namespace Wintermute
