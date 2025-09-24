@@ -149,6 +149,7 @@ public:
 	// They live in lingo/lingo-events.cpp
 	void killScriptInstances(int frameNum);
 	void createScriptInstances(int frameNum);
+	Datum createScriptInstance(BehaviorElement *behavior);
 
 private:
 	bool isWaitingForNextFrame();

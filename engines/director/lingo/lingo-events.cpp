@@ -699,6 +699,59 @@ void Score::killScriptInstances(int frameNum) {
 	}
 }
 
+Datum Score::createScriptInstance(BehaviorElement *behavior) {
+	// Instantiate the behavior
+	g_lingo->push(_movie->getScriptContext(kScoreScript, behavior->memberID));
+	LC::call("new", 1, true);
+	Datum inst = g_lingo->pop();
+
+	if (inst.type != OBJECT) {
+		warning("Score::createScriptInstances(): Could not instantiate behavior %s", behavior->toString().c_str());
+		return Datum();
+	}
+
+	debugC(1, kDebugLingoExec, "   Instantiated behavior %s", behavior->toString().c_str());
+
+	// No initializer, we are done
+	if (behavior->initializerIndex == 0)
+		return inst;
+
+	// Evaluate the params
+	g_lingo->push(behavior->initializerParams);
+	LB::b_value(1);
+	g_lingo->execute();
+
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		g_lingo->printStack("  Parsed behavior parameters: ", 0);
+	}
+
+	if (g_lingo->_state->stack.size() == 0) {
+		warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s",
+			behavior->initializerParams.c_str(), behavior->toString().c_str());
+		return inst;
+	}
+
+	Datum proplist = _lingo->pop();
+
+	if (proplist.type != PARRAY) {
+		warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s",
+			behavior->initializerParams.c_str(), behavior->toString().c_str());
+		return inst;
+	}
+
+	debugC(2, kDebugLingoExec, "   Setting %d properties", proplist.u.parr->arr.size());
+
+	for (uint k = 0; k < proplist.u.parr->arr.size(); k++) {
+		Datum key = proplist.u.parr->arr[k].p;
+		Datum val = proplist.u.parr->arr[k].v;
+
+		inst.u.obj->setProp(key.asString(), val);
+	}
+
+	return inst;
+}
+
+
 void Score::createScriptInstances(int frameNum) {
 	if (_version < kFileVer600) // No-op for early Directors
 		return;
@@ -719,58 +772,17 @@ void Score::createScriptInstances(int frameNum) {
 		if (sprite->_behaviors.size() == 0)
 			continue;
 
+		debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Creating script instances for channel %d, %d behaviors", i + 1, sprite->_behaviors.size());
+
 		for (uint j = 0; j < sprite->_behaviors.size(); j++) {
-			// Instantiate the behavior
-			g_lingo->push(_movie->getScriptContext(kScoreScript, sprite->_behaviors[j].memberID));
-			LC::call("new", 1, true);
-			Datum inst = g_lingo->pop();
+			Datum inst = createScriptInstance(&sprite->_behaviors[j]);
 
 			if (inst.type != OBJECT) {
-				warning("Score::createScriptInstances(): Could not instantiate behavior %s for channel %d",
-					sprite->_behaviors[j].toString().c_str(), i + 1);
+				warning("Score::createScriptInstances(): Could not instantiate behavior %s", sprite->_behaviors[j].toString().c_str());
 				continue;
 			}
 
 			channel->_scriptInstanceList.push_back(inst);
-
-			debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Instantiated behavior %s for channel %d",
-				sprite->_behaviors[j].toString().c_str(), i + 1);
-
-			// No initializer, continue
-			if (sprite->_behaviors[j].initializerIndex == 0)
-				continue;
-
-			// Evaluate the params
-			g_lingo->push(sprite->_behaviors[j].initializerParams);
-			LB::b_value(1);
-			g_lingo->execute();
-
-			if (debugChannelSet(5, kDebugLingoExec)) {
-				g_lingo->printStack("  Parsed behavior parameters: ", 0);
-			}
-
-			if (g_lingo->_state->stack.size() == 0) {
-				warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s for channel %d",
-					sprite->_behaviors[j].initializerParams.c_str(), sprite->_behaviors[j].toString().c_str(), i + 1);
-				continue;
-			}
-
-			Datum proplist = _lingo->pop();
-
-			if (proplist.type != PARRAY) {
-				warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s for channel %d",
-					sprite->_behaviors[j].initializerParams.c_str(), sprite->_behaviors[j].toString().c_str(), i + 1);
-				continue;
-			}
-
-			debugC(2, kDebugLingoExec, "   Setting %d properties", proplist.u.parr->arr.size());
-
-			for (uint k = 0; k < proplist.u.parr->arr.size(); k++) {
-				Datum key = proplist.u.parr->arr[k].p;
-				Datum val = proplist.u.parr->arr[k].v;
-
-				channel->_scriptInstanceList[j].u.obj->setProp(key.asString(), val);
-			}
 		}
 	}
 }
