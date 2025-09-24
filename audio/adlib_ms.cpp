@@ -453,7 +453,6 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_accuracyMode(ACCURACY_MODE_SB16_WIN95),
 		_allocationMode(ALLOCATION_MODE_DYNAMIC),
 		_instrumentWriteMode(INSTRUMENT_WRITE_MODE_NOTE_ON),
-		_scaleAdditiveOperatorLevel(true),
 		_rhythmModeIgnoreNoteOffs(false),
 		_rhythmInstrumentMode(RHYTHM_INSTRUMENT_MODE_CHANNEL_10),
 		_defaultChannelVolume(0),
@@ -1724,15 +1723,13 @@ int32 MidiDriver_ADLIB_Multisource::calculatePitchBend(uint8 channel, uint8 sour
 }
 
 uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
-	// Get the volume (level) for this operator from the instrument definition.
-	uint8 operatorDefVolume = instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
-
 	// Determine if volume settings should be applied to this operator.
-	if (!isVolumeApplicableToOperator(instrumentDef, operatorNum))
+	if (!isVolumeApplicableToOperator(instrumentDef, operatorNum)) {
 		// No need to apply volume settings; just use the instrument definition
 		// operator volume.
-		return operatorDefVolume;
-
+		return instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
+	}
+	
 	// Calculate the volume based on note velocity, channel volume and
 	// expression.
 	uint8 unscaledVolume = calculateUnscaledVolume(channel, source, velocity, instrumentDef, operatorNum);
@@ -1800,15 +1797,7 @@ bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrum
 	// instrument definition volume.
 	bool applyVolume = false;
 	if (instrumentDef.rhythmType != RHYTHM_TYPE_UNDEFINED) {
-		if (instrumentDef.rhythmType == RHYTHM_TYPE_BASS_DRUM) {
-			// Only apply volume to operator 1, or to both operators
-			// if connection is additive.
-			applyVolume = ((operatorNum == 1) || (_scaleAdditiveOperatorLevel && (instrumentDef.connectionFeedback0 & 0x01) == 0x01));
-		}
-		else {
-			// Always apply volume to other rhythm instruments
-			applyVolume = true;
-		}
+		applyVolume = (instrumentDef.rhythmType != RHYTHM_TYPE_BASS_DRUM || operatorNum == 1);
 	} else if (instrumentDef.fourOperator) {
 		// 4 operator instruments have 4 different operator connections.
 		uint8 connection = (instrumentDef.connectionFeedback0 & 0x01) | ((instrumentDef.connectionFeedback1 & 0x01) << 1);
@@ -1821,7 +1810,7 @@ bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrum
 		case 0x01:
 			// 1ADD+3FM
 			// Operator 0 is additive and operator 3 is a carrier.
-			applyVolume = ((_scaleAdditiveOperatorLevel && operatorNum == 0) || operatorNum == 3);
+			applyVolume = (operatorNum == 0 || operatorNum == 3);
 			break;
 		case 0x10:
 			// 2FM+2FM
@@ -1831,7 +1820,7 @@ bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrum
 		case 0x11:
 			// 1ADD+2FM+1ADD
 			// Operators 0 and 3 are additive and operator 2 is a carrier.
-			applyVolume = ((_scaleAdditiveOperatorLevel && (operatorNum == 0 || operatorNum == 3)) || operatorNum == 2);
+			applyVolume = (operatorNum == 0 || operatorNum == 2 || operatorNum == 3);
 			break;
 		default:
 			// Should not happen.
@@ -1844,7 +1833,7 @@ bool MidiDriver_ADLIB_Multisource::isVolumeApplicableToOperator(const OplInstrum
 		// volume settings applied; modulator operators just use the instrument
 		// definition volume. In FM synthesis connection, operator 1 is a
 		// carrier.
-		applyVolume = (_scaleAdditiveOperatorLevel && (instrumentDef.connectionFeedback0 & 0x01) == 0x01) || operatorNum == 1;
+		applyVolume = (instrumentDef.connectionFeedback0 & 0x01) == 0x01 || operatorNum == 1;
 	}
 	return applyVolume;
 }

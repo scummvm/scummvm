@@ -1230,8 +1230,6 @@ protected:
 	ChannelAllocationMode _allocationMode;
 	// Controls when the instrument definitions are written.
 	InstrumentWriteMode _instrumentWriteMode;
-	// Controls if the level of additive operators should be scaled by volume or not.
-	bool _scaleAdditiveOperatorLevel;
 	// In instrument write mode First Note On or Program Change, this flag controls if the Cx register,
 	// which is shared between rhythm mode instrument definitions (except bass drum), is rewritten
 	// before each note on.

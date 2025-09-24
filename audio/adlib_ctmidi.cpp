@@ -375,7 +375,6 @@ MidiDriver_ADLIB_CTMIDI::MidiDriver_ADLIB_CTMIDI(OPL::Config::OplType oplType, i
 	_modulationDepth = MODULATION_DEPTH_LOW;
 	_vibratoDepth = VIBRATO_DEPTH_LOW;
 	_rhythmModeRewriteSharedRegister = true;
-	_scaleAdditiveOperatorLevel = false;
 	// CTMIDI.DRV actually uses default volume 0x80, which is not a valid MIDI value.
 	// This might cause marginally lower volumes in this implementation if a track
 	// does not set volume controller values.
@@ -555,6 +554,13 @@ uint16 MidiDriver_ADLIB_CTMIDI::calculateFrequency(uint8 channel, uint8 source, 
 
 uint8 MidiDriver_ADLIB_CTMIDI::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity,
 		const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	if ((instrumentDef.rhythmType == RHYTHM_TYPE_UNDEFINED || instrumentDef.rhythmType == RHYTHM_TYPE_BASS_DRUM) &&
+			operatorNum == 0) {
+		// Original code does not apply velocity and channel volume to additive operators,
+		// which is probably a bug.
+		return instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
+	}
+
 	// Determine a modifier value for the instrument definition operator volume
 	// based on the note velocity and MIDI channel volume
 	uint16 volumeModifierIndex = (((velocity << 1) | 1) * (_controlData[source][channel].volume << 1)) >> 11;
