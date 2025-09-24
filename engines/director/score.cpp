@@ -633,7 +633,7 @@ void Score::update() {
 
 	// Kill behaviors if they are going to expire next frame
 	if (!_vm->_playbackPaused)
-		killScriptInstances(_curFrameNumber + 1);
+		killScriptInstances(_nextFrame ? _nextFrame : _curFrameNumber + 1);
 
 	// change current frame and load frame data, if required
 	updateCurrentFrame();
