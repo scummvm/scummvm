@@ -2058,6 +2058,8 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	}
 
 	// Finally read the target frame!
+	debugC(2, kDebugLoading, "Loading target frame %d", targetFrame);
+
 	bool isFrameRead = readOneFrame();
 	if (!isFrameRead)
 		return false;
