@@ -4236,9 +4236,9 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 			SAFE_DELETE(_saveLoadImage);
 			if (_saveImageName) {
 				_saveLoadImage = _game->_renderer->createSurface();
-			}
-			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
-				SAFE_DELETE(_saveLoadImage);
+				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
+					SAFE_DELETE(_saveLoadImage);
+				}
 			}
 		}
 		if (DID_SUCCEED(ret = SystemClassRegistry::getInstance()->saveTable(_game, pm, quickSave))) {
