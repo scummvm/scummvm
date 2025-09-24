@@ -684,6 +684,12 @@ void Score::killScriptInstances(int frameNum) {
 	if (_version < kFileVer600) // No-op for early Directors
 		return;
 
+	if (frameNum < _currentFrame->_mainChannels.scriptSpriteInfo.startFrame ||
+	    frameNum > _currentFrame->_mainChannels.scriptSpriteInfo.endFrame) {
+		_scriptChannelScriptInstance = Datum();
+		debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for script channel");
+	}
+
 	for (int i = 0; i < (int)_channels.size(); i++) {
 		Channel *channel = _channels[i];
 
@@ -756,6 +762,20 @@ void Score::createScriptInstances(int frameNum) {
 	if (_version < kFileVer600) // No-op for early Directors
 		return;
 
+	if (frameNum >= _currentFrame->_mainChannels.scriptSpriteInfo.startFrame &&
+	    frameNum <= _currentFrame->_mainChannels.scriptSpriteInfo.endFrame) {
+
+		// We have no instantiated script
+		if (_scriptChannelScriptInstance.type != OBJECT) {
+			if (_currentFrame->_mainChannels.behaviors.size() > 0) {
+				debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Creating script instances for script channel, frames [%d-%d]",
+					_currentFrame->_mainChannels.scriptSpriteInfo.startFrame,
+					_currentFrame->_mainChannels.scriptSpriteInfo.endFrame);
+				_scriptChannelScriptInstance = createScriptInstance(&_currentFrame->_mainChannels.behaviors[0]);
+			}
+		}
+	}
+
 	for (int i = 0; i < (int)_channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *sprite = channel->_sprite;
@@ -772,7 +792,8 @@ void Score::createScriptInstances(int frameNum) {
 		if (sprite->_behaviors.size() == 0)
 			continue;
 
-		debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Creating script instances for channel %d, %d behaviors", i + 1, sprite->_behaviors.size());
+		debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Creating script instances for channel %d, %d behaviors, frames [%d-%d]",
+			i + 1, sprite->_behaviors.size(), channel->_startFrame, channel->_endFrame);
 
 		for (uint j = 0; j < sprite->_behaviors.size(); j++) {
 			Datum inst = createScriptInstance(&sprite->_behaviors[j]);
