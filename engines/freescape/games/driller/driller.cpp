@@ -95,10 +95,10 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_endEntrance = 0;
 
 	_soundIndexShoot = 1;
-	_soundIndexCollide = -1;
+	_soundIndexCollide = 2;
 	_soundIndexFall = 3;
-	_soundIndexClimb = -1;
-	_soundIndexMenu = -1;
+	_soundIndexClimb = 4;
+	_soundIndexMenu = 2;
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;
 

@@ -544,6 +544,10 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 			stopMovement();
 	}
 
+	if (isSteppingUp && (newPosition - _lastPosition).length() <= 1) {
+		isCollidingWithWall = true;
+		isSteppingUp = false;
+	}
 
 	if (isSteppingUp)  {
 		debug("Stepping up sound!");
