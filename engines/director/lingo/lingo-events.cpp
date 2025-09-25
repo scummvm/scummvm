@@ -657,8 +657,8 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 
 
 	if (g_director->getVersion() >= 600 && st == kScoreScript && obj) {
-		push(Datum(obj));
 		if (obj->getMethod(_eventHandlerTypes[event]).type != VOIDSYM) {
+			push(Datum(obj));
 			LC::call(_eventHandlerTypes[event], 1, false);
 			return execute();
 		} else {
@@ -712,7 +712,7 @@ void Score::killScriptInstances(int frameNum) {
 
 		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
 			channel->_scriptInstanceList.clear();
-
+			channel->_sprite->_behaviors.clear();
 			debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for channel %d. frame %d [%d-%d]",
 					i + 1, frameNum, channel->_startFrame, channel->_endFrame);
 
