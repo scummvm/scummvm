@@ -1947,10 +1947,10 @@ void Score::loadFrameSpriteDetails(bool skipLog) {
 	Common::MemoryReadStreamEndian *stream = nullptr;
 	for (uint i = 0; i < _currentFrame->_sprites.size(); i++) {
 		Sprite *sprite = _currentFrame->_sprites[i];
+		sprite->_behaviors.clear();
 		if (sprite->_spriteListIdx) {
 			if (!skipLog)
 				debugC(2, kDebugLoading, "Sprite %d", i);
-
 			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx, skipLog);
 
 			stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
@@ -1966,6 +1966,7 @@ void Score::loadFrameSpriteDetails(bool skipLog) {
 	}
 
 	// Script channel
+	_currentFrame->_mainChannels.behaviors.clear();
 	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
 		if (!skipLog)
 			debugC(2, kDebugLoading, "Script channel");
@@ -2308,6 +2309,13 @@ Common::String Score::formatChannelInfo() {
 				sprite._spriteType, spriteType2str(sprite._spriteType), sprite._foreColor, sprite._backColor,
 				sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3,
 				channel._constraint, sprite._puppet, sprite._moveable, channel._movieRate, channel._movieTime, (float)(channel._movieTime/60.0f), channel._filmLoopFrame);
+			if (!sprite._behaviors.empty()) {
+				result += Common::String::format("        behaviours: ");
+				for (auto &it : sprite._behaviors) {
+					result += Common::String::format("(%s), ", it.toString().c_str());
+				}
+				result += Common::String::format("\n");
+			}
 		} else {
 			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
 		}

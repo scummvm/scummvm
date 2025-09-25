@@ -332,10 +332,10 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 bool Debugger::cmdChannels(int argc, const char **argv) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 
-	int maxSize = MIN<int>(score->_maxChannelsUsed + 3, score->_scoreCache[0]->_sprites.size());
 	int frameId = score->getCurrentFrameNum();
+	int maxFrames = score->getFramesNum();
 	if (argc == 1) {
-		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxSize);
+		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxFrames);
 		debugPrintf("%s\n", score->formatChannelInfo().c_str());
 		return true;
 	}
@@ -343,8 +343,8 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 	if (argc == 2)
 		frameId = atoi(argv[1]);
 
-	if (frameId >= 1 && frameId <= maxSize) {
-		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
+	if (frameId >= 1 && frameId <= maxFrames) {
+		debugPrintf("Channel info for frame %d of %d\n", frameId, maxFrames);
 		Frame *frame = score->_scoreCache[frameId - 1];
 		if (frame) {
 			debugPrintf("%s\n", frame->formatChannelInfo().c_str());
@@ -352,7 +352,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 			debugPrintf("  not found\n");
 		}
 	} else {
-		debugPrintf("Must specify a frame number between 1 and %d.\n", maxSize);
+		debugPrintf("Must specify a frame number between 1 and %d.\n", maxFrames);
 	}
 	return true;
 }
@@ -493,8 +493,24 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 			}
 		}
 	}
+	if (g_director->getVersion() >= 600) {
+		debugPrintf("Sprite behaviors:\n");
+		for (int i = 0; i < (int)score->_scoreCache.size(); i++) {
+			Frame *frame = score->_scoreCache[i];
+			if (frame) {
+				for (int j = 0; j < (int)frame->_sprites.size(); j++) {
+					Sprite *sprite = frame->_sprites[j];
+					if (!sprite->_behaviors.empty()) {
+						debugPrintf("  %d, sprite %d:\n", i + 1, j);
+						for (auto &it : sprite->_behaviors) {
+							debugPrintf("    %s\n", it.toString().c_str());
+						}
+					}
+				}
+			}
+		}
 
-
+	}
 	return true;
 }
 
