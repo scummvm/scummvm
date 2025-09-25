@@ -122,8 +122,10 @@ Datum FileXtraObject::getProp(const Common::String &propName) {
 void FileXtra::open(ObjectType type, const Common::Path &path) {
     FileXtraObject::initMethods(xlibMethods);
     FileXtraObject *xobj = new FileXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
+	if (type == kXtraObj) {
+		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

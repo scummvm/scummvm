@@ -176,8 +176,10 @@ Datum DirectsoundXtraObject::getProp(const Common::String &propName) {
 void DirectsoundXtra::open(ObjectType type, const Common::Path &path) {
 	DirectsoundXtraObject::initMethods(xlibMethods);
 	DirectsoundXtraObject *xobj = new DirectsoundXtraObject(type);
-	if (type == kXtraObj)
+	if (type == kXtraObj) {
 		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
 	g_lingo->exposeXObject(xlibName, xobj);
 	g_lingo->initBuiltIns(xlibBuiltins);
 }

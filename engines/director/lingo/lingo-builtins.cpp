@@ -1670,16 +1670,16 @@ void LB::b_xtra(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == INT) {
 		int i = d.asInt() -1; // Lingo index for XTRAs start at 1
-		if (i >=0 && (uint)i < g_lingo->_openXtras.size()) {
-			Datum var = g_lingo->_globalvars[g_lingo->_openXtras[i]];
+		if (i >=0 && (uint)i < g_lingo->_openXtraObjects.size()) {
+			Datum var = g_lingo->_openXtraObjects[i];
 			g_lingo->push(var);
 			return;
 		}
 	} else {
 		Common::String name = d.asString();
-		if (g_lingo->_globalvars.contains(name)) {
-			Datum var = g_lingo->_globalvars[name];
-			if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+		for (int i = 0; i < g_lingo->_openXtras.size(); i++) {
+			if (name.equalsIgnoreCase(g_lingo->_openXtras[i])) {
+				Datum var = g_lingo->_openXtraObjects[i];
 				g_lingo->push(var);
 				return;
 			}

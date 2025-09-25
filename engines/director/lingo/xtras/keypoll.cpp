@@ -88,8 +88,10 @@ Datum KeypollXtraObject::getProp(const Common::String &propName) {
 void KeypollXtra::open(ObjectType type, const Common::Path &path) {
     KeypollXtraObject::initMethods(xlibMethods);
     KeypollXtraObject *xobj = new KeypollXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
+	if (type == kXtraObj) {
+		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }
