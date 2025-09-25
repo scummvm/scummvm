@@ -99,6 +99,9 @@ namespace Director {
 const char *SmackerXtra::xlibName = "Smacker";
 const XlibFileDesc SmackerXtra::fileNames[] = {
 	{ "smacker",   nullptr },
+	{ "smackx16",   nullptr },
+	{ "smackx24",   nullptr },
+	{ "smackx32",   nullptr },
 	{ nullptr,        nullptr },
 };
 
@@ -219,5 +222,6 @@ XOBJSTUB(SmackerXtra::m_SmackGetSummary, 0)
 XOBJSTUB(SmackerXtra::m_SmackScreenMethod, 0)
 
 }
+
 
 
