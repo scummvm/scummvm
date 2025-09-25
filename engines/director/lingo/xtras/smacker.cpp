@@ -30,7 +30,12 @@
 /**************************************************
  *
  * USED IN:
- * [insert game here]
+ * A Day With The Wiggles
+ * Fisher-Price Big Action: Construction
+ * Fisher-Price Big Action: Garage
+ * Fisher-Price Little People: Christmas Activity Center
+ * Fisher-Price Outdoor Adventures: Ranger Trai
+ * Fisher Price Time to Play: Dollhouse
  *
  **************************************************/
 
@@ -214,3 +219,4 @@ XOBJSTUB(SmackerXtra::m_SmackGetSummary, 0)
 XOBJSTUB(SmackerXtra::m_SmackScreenMethod, 0)
 
 }
+
