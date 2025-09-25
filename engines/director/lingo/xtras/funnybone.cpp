@@ -30,7 +30,9 @@
 /**************************************************
  *
  * USED IN:
- * [insert game here]
+ * Fisher Price: Learning in Toyland
+ * Fisher Price - Great Adventures: Pirate Ship
+ * Fisher Price - Ready For School: Preschool
  *
  **************************************************/
 
@@ -99,3 +101,4 @@ void FunnyboneXtra::m_new(int nargs) {
 XOBJSTUB(FunnyboneXtra::m_MakeStageCastMem, 0)
 
 }
+
