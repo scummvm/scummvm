@@ -264,6 +264,8 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		} else {
 			_videoType = kDVVideoForWindows;
 		}
+	} else {
+		warning("DigitalVideoCastMember::loadVideo: Unknown file format for video '%s', skipping", path.c_str());
 	}
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
@@ -274,7 +276,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		// Generally you don't want these as part of the video, and Video for Windows
 		// seems to deliberately exclude them.
 		// Keep colour 0 and 255 as they are pure white and pure black, respectively.
-		if (g_director->getPlatform() == Common::kPlatformWindows) {
+		if (g_director->_vfwPaletteHack && g_director->getPlatform() == Common::kPlatformWindows) {
 			for (int i = 1; i < 8; i++) {
 				_ditheringPalette[i*3+0] = _ditheringPalette[0];
 				_ditheringPalette[i*3+1] = _ditheringPalette[1];

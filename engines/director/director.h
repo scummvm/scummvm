@@ -303,6 +303,7 @@ public:
 	uint32 _loadSlowdownFactor;
 	uint32 _loadSlowdownCooldownTime;
 	int _fileIOType;
+	bool _vfwPaletteHack;
 
 private:
 	byte _currentPalette[768];

@@ -107,6 +107,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_loadSlowdownFactor = 0;
 	_loadSlowdownCooldownTime = 0;
 	_fileIOType = 0;
+	_vfwPaletteHack = false;
 
 	_wm = nullptr;
 
