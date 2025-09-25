@@ -60,6 +60,12 @@ struct Breakpoint {
 	reg_t _regAddress; ///< Breakpoints on addresses
 	Common::String _name; ///< Breakpoints on selector names
 	BreakpointAction _action;
+
+	Breakpoint(BreakpointType type) :
+		_type(type),
+		_address(0),
+		_regAddress(NULL_REG),
+		_action(BREAK_NONE) { }
 };
 
 enum DebugSeeking {

@@ -70,13 +70,12 @@ const char *opcodeNames[] = {
 #endif	// REDUCE_MEMORY_USAGE
 
 void DebugState::updateActiveBreakpointTypes() {
-	int type = 0;
+	_activeBreakpointTypes = 0;
 	for (Common::List<Breakpoint>::iterator bp = _breakpoints.begin(); bp != _breakpoints.end(); ++bp) {
-		if (bp->_action != BREAK_NONE)
-			type |= bp->_type;
+		if (bp->_action != BREAK_NONE) {
+			_activeBreakpointTypes |= bp->_type;
+		}
 	}
-
-	_activeBreakpointTypes = type;
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
@@ -449,7 +448,6 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 	}
 }
 
-
 void SciEngine::scriptDebug() {
 	EngineState *s = _gamestate;
 	if (_debugState.seeking && !_debugState.breakpointWasHit) { // Are we looking for something special?
@@ -719,7 +717,6 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			debugN("Unsupported!\n");
 			return;
 		}
-
 	}
 
 	debugN("Script ends without terminator\n");
@@ -890,7 +887,6 @@ bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
 
 	return found;
 }
-
 
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
@@ -1264,10 +1260,5 @@ bool printObject(reg_t pos) {
 
 	return true;
 }
-
-
-
-
-
 
 } // End of namespace Sci

@@ -4263,8 +4263,7 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint bp;
-	bp._type = BREAK_SELECTOREXEC;
+	Breakpoint bp(BREAK_SELECTOREXEC);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4297,8 +4296,7 @@ bool Console::cmdBreakpointRead(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_SELECTORREAD;
+	Breakpoint bp(BREAK_SELECTORREAD);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4331,8 +4329,7 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_SELECTORWRITE;
+	Breakpoint bp(BREAK_SELECTORWRITE);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4397,8 +4394,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 		return true;
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_KERNEL;
+	Breakpoint bp(BREAK_KERNEL);
 	bp._name = pattern;
 	bp._action = action;
 
@@ -4429,11 +4425,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 		}
 	}
 
-	/* Note: We can set a breakpoint on a method that has not been loaded yet.
-	   Thus, we can't check whether the command argument is a valid method name.
-	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint bp;
-	bp._type = BREAK_EXPORT;
+	Breakpoint bp(BREAK_EXPORT);
 	// script number, export number
 	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 	bp._action = action;
@@ -4471,8 +4463,7 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_ADDRESS;
+	Breakpoint bp(BREAK_ADDRESS);
 	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
 	bp._action = action;
 
