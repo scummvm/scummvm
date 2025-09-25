@@ -438,7 +438,7 @@ int BaseFileManager::listMatchingFiles(Common::StringArray &list, const Common::
 
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
-	if (strcmp(filename.c_str(), "") == 0) {
+	if (filename.empty()) {
 		return nullptr;
 	}
 	debugC(kWintermuteDebugFileAccess, "Open file %s", filename.c_str());
@@ -453,7 +453,7 @@ Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &file
 
 //////////////////////////////////////////////////////////////////////////
 Common::WriteStream *BaseFileManager::openFileForWrite(const Common::String &filename) {
-	if (strcmp(filename.c_str(), "") == 0) {
+	if (filename.empty()) {
 		return nullptr;
 	}
 	debugC(kWintermuteDebugFileAccess, "Open file %s for write", filename.c_str());
