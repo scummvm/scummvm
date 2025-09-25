@@ -559,7 +559,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventStartMovie:
 		case kEventStepMovie:
 		case kEventStopMovie:
-		case kEventPrepareMovie:
+		case kEventPrepareMovie:	// D6+
 			queue.push(LingoEvent(event, eventId, kMovieHandler, false, pos, channelId));
 			break;
 

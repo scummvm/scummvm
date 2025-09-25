@@ -615,6 +615,13 @@ bool Window::step() {
 		case kPlayLoaded:
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
+
+				if (_vm->getVersion() >= 600) {
+					// We need to call this before behavior scripts are instantiated
+					// or cast loaded
+					_currentMovie->processEvent(kEventPrepareMovie);
+				}
+
 				_currentMovie->getScore()->startPlay();
 				if (_startFrame != -1) {
 					_currentMovie->getScore()->setCurrentFrame(_startFrame);
