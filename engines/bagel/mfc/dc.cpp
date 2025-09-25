@@ -893,40 +893,76 @@ void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
 		return;
 
 	uint color = GetNearestColor(crColor);
-	byte *pixel = (byte *)bitmap->getBasePtr(x, y);
-	const byte oldColor = *pixel;
-	int cx, cy;
-	int minX = 9999, maxX = -1, minY = 9999, maxY = -1;
+	byte *startPixel = (byte *)bitmap->getBasePtr(x, y);
+	const byte oldColor = *startPixel;
 
-	Common::Queue<Common::Pair<int, int>> queue;
+	if (color == oldColor)
+		return;
+
+	struct Point {
+		int x, y;
+	};
+
+	// Set up queue with initial point
+	Common::Queue<Point> queue;
 	queue.push({ x, y });
+	byte *pixelP;
+
+	int minX = x, maxX = x, minY = y, maxY = y;
 
 	while (!queue.empty()) {
-		cx = queue.front().first;
-		cy = queue.front().second;
+		Point startPt = queue.front();
 		queue.pop();
 
-		// Check bounds and color match
-		if (cx < 0 || cx >= bitmap->w || cy < 0 || cy >= bitmap->h)
-			continue;
-		pixel = (byte *)bitmap->getBasePtr(cx, cy);
-		if (*pixel != oldColor)
-			continue;
+		int curY = startPt.y;
+		int xStart = startPt.x;
+		int xEnd = startPt.x;
 
-		// Set new color
-		*pixel = color;
+		// Find the left edge, changing pixels as it goes 
+		pixelP = (byte *)bitmap->getBasePtr(xStart, curY);
+		*pixelP = color;
+		for (; xStart > 0 && *(pixelP - 1) == oldColor; --xStart, --pixelP)
+			*(pixelP - 1) = color;
 
-		// Keep track of the modified area
-		minX = MIN(minX, cx);
-		maxX = MAX(maxX, cx);
-		minY = MIN(minY, cy);
-		maxY = MAX(maxY, cy);
+		// Find the right edge, changing pixels as it goes
+		pixelP = (byte *)bitmap->getBasePtr(xEnd, curY);
+		for (; xEnd < (bitmap->w - 1) && *(pixelP + 1) == oldColor; ++xEnd, ++pixelP)
+			*(pixelP + 1) = color;
 
-		// Push neighboring pixels
-		queue.push({ cx + 1, cy });
-		queue.push({ cx - 1, cy });
-		queue.push({ cx, cy + 1 });
-		queue.push({ cx, cy - 1 });
+		// Track modified area
+		minX = MIN(minX, xStart);
+		maxX = MAX(maxX, xEnd);
+		minY = MIN(minY, curY);
+		maxY = MAX(maxY, curY);
+
+		// Scan for line segments above or below
+		for (int deltaY = -1; deltaY <= 1; deltaY += 2) {
+			int lineY = curY + deltaY;
+			if (lineY < 0 || lineY >= bitmap->h)
+				continue;
+
+			// Loop looking for line segments
+			pixelP = (byte *)bitmap->getBasePtr(xStart, lineY);
+			int curX = xStart;
+
+			while (curX <= xEnd) {
+				// Find the start of any line segment
+				if (*pixelP == oldColor) {
+					// Add new line starting point to queue
+					queue.push({ curX, lineY });
+
+					// Move beyond it
+					do {
+						++curX;
+						++pixelP;
+					} while (curX <= xEnd && *pixelP == oldColor);
+				} else {
+					// Move to next pixel, looking for new line segment
+					++curX;
+					++pixelP;
+				}
+			}
+		}
 	}
 
 	bitmap->addDirtyRect(Common::Rect(minX, minY, maxX + 1, maxY + 1));
