@@ -233,6 +233,8 @@ public:
 	Common::Array<uint32> _spriteDetailOffsets;
 	Common::Array<bool> _spriteDetailAccessed;
 
+	bool _disableGoPlayUpdateStage;
+
 private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;

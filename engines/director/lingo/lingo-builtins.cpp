@@ -3220,6 +3220,11 @@ void LB::b_updateStage(int nargs) {
 	Score *score = movie->getScore();
 	Window *window = movie->getWindow();
 
+	if (score->_disableGoPlayUpdateStage) {
+		warning("Lingo::b_updateStage(): ignoring updateStage due to disableGoPlayUpdateStage flag");
+		return;
+	}
+
 	score->updateWidgets(movie->_videoPlayback);
 	if (window->_puppetTransition) {
 		window->playTransition(score->getCurrentFrameNum(), kRenderModeNormal, window->_puppetTransition->duration, window->_puppetTransition->area, window->_puppetTransition->chunkSize, window->_puppetTransition->type, score->_currentFrame->_mainChannels.scoreCachedPaletteId);

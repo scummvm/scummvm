@@ -619,7 +619,9 @@ bool Window::step() {
 				if (_vm->getVersion() >= 600) {
 					// We need to call this before behavior scripts are instantiated
 					// or cast loaded
+					_currentMovie->getScore()->_disableGoPlayUpdateStage = true;
 					_currentMovie->processEvent(kEventPrepareMovie);
+					_currentMovie->getScore()->_disableGoPlayUpdateStage = false;
 				}
 
 				_currentMovie->getScore()->startPlay();

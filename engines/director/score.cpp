@@ -91,6 +91,8 @@ Score::Score(Movie *movie) {
 	_curFrameNumber = 1;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
+
+	_disableGoPlayUpdateStage = false;
 }
 
 Score::~Score() {

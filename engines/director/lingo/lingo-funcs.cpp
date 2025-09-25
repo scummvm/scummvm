@@ -51,6 +51,11 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	Window *stage = _vm->getCurrentWindow();
 	Score *score = stage->getCurrentMovie()->getScore();
 
+	if (score->_disableGoPlayUpdateStage) {
+		warning("Lingo::func_goto(): ignoring goto due to disableGoPlayUpdateStage flag");
+		return;
+	}
+
 	stage->_skipFrameAdvance = true;
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
@@ -151,6 +156,10 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
 	Window *stage = _vm->getCurrentWindow();
 
+	if (stage->getCurrentMovie()->getScore()->_disableGoPlayUpdateStage) {
+		warning("Lingo::func_play(): ignoring play due to disableGoPlayUpdateStage flag");
+		return;
+	}
 
 	// play #done
 	if (frame.type == SYMBOL) {
