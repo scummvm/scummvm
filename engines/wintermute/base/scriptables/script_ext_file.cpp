@@ -33,6 +33,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/file/base_savefile_manager_file.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/scriptables/script_ext_file.h"
 #include "engines/wintermute/dcgf.h"
@@ -197,9 +198,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "Delete") == 0) {
 		stack->correctParams(0);
 		close();
-		warning("SXFile-Method: \"Delete\" not supported");
-		//stack->pushBool(BasePlatform::deleteFile(_filename) != false);
-		stack->pushBool(false);
+		stack->pushBool(sfmFileRemove(_filename));
 		return STATUS_OK;
 	}
 
