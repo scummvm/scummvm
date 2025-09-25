@@ -1258,10 +1258,10 @@ void SetUpMaze() {
 				         (_mazeTile[x][y + 1].m_nWall == PATH && (_mazeTile[x + 1][y - 1].m_nWall == PATH &&
 				                 (_mazeTile[x + 1][y].m_nWall == PATH && _mazeTile[x + 1][y + 1].m_nWall == PATH))))))
 					_mazeTile[x][y].m_nWall = WALL;              // If it's two wide horizontally from the left
-
-				if (y == NUM_ROWS - 1)
-					_mazeTile[x][y].m_nWall = WALL;              // Make bottom wall
 			}
+
+			if (y == NUM_ROWS - 1)
+				_mazeTile[x][y].m_nWall = WALL;              // Make bottom wall
 		}
 	}
 
