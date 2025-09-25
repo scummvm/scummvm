@@ -30,7 +30,8 @@
 /**************************************************
  *
  * USED IN:
- * [insert game here]
+ * Fisher Price - Great Adventures: Castle
+ * Fisher-Price - Little People: Christmas Activity Center 
  *
  **************************************************/
 
@@ -140,3 +141,4 @@ XOBJSTUB(ScrnxtraXtra::m_ScreenToFile, 0)
 XOBJSTUB(ScrnxtraXtra::m_ScreenResizeToFile, 0)
 
 }
+
