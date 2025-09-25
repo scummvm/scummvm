@@ -728,7 +728,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	Datum inst = g_lingo->pop();
 
 	if (inst.type != OBJECT) {
-		warning("Score::createScriptInstances(): Could not instantiate behavior %s", behavior->toString().c_str());
+		warning("Score::createScriptInstance(): Could not instantiate behavior %s", behavior->toString().c_str());
 		return Datum();
 	}
 
@@ -748,7 +748,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	}
 
 	if (g_lingo->_state->stack.size() == 0) {
-		warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s",
+		warning("Score::createScriptInstance(): Could not evaluate initializer params '%s' for behavior %s",
 			behavior->initializerParams.c_str(), behavior->toString().c_str());
 		return inst;
 	}
@@ -756,7 +756,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	Datum proplist = _lingo->pop();
 
 	if (proplist.type != PARRAY) {
-		warning("Score::createScriptInstances(): Could not evaluate initializer params '%s' for behavior %s",
+		warning("Score::createScriptInstance(): Could not evaluate initializer params '%s' for behavior %s",
 			behavior->initializerParams.c_str(), behavior->toString().c_str());
 		return inst;
 	}

@@ -78,8 +78,10 @@ Datum OSCheckXtraObject::getProp(const Common::String &propName) {
 void OSCheckXtra::open(ObjectType type, const Common::Path &path) {
     OSCheckXtraObject::initMethods(xlibMethods);
     OSCheckXtraObject *xobj = new OSCheckXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
+	if (type == kXtraObj) {
+		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

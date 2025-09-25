@@ -89,8 +89,10 @@ Datum TimextraXtraObject::getProp(const Common::String &propName) {
 void TimextraXtra::open(ObjectType type, const Common::Path &path) {
     TimextraXtraObject::initMethods(xlibMethods);
     TimextraXtraObject *xobj = new TimextraXtraObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
+	if (type == kXtraObj) {
+		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

@@ -140,8 +140,10 @@ Datum RolloverToolkitXtraObject::getProp(const Common::String &propName) {
 void RolloverToolkitXtra::open(ObjectType type, const Common::Path &path) {
 	RolloverToolkitXtraObject::initMethods(xlibMethods);
 	RolloverToolkitXtraObject *xobj = new RolloverToolkitXtraObject(type);
-	if (type == kXtraObj)
+	if (type == kXtraObj) {
 		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
 	g_lingo->exposeXObject(xlibName, xobj);
 	g_lingo->initBuiltIns(xlibBuiltins);
 	if (!g_lingo->_openXtrasState.contains("Rollover_Toolkit")) {

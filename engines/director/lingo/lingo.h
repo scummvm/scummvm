@@ -536,6 +536,7 @@ public:
 	OpenXLibsHash _openXLibs;
 	OpenXLibsStateHash _openXLibsState;
 	Common::StringArray _openXtras;
+	Common::Array<Datum> _openXtraObjects;
 	OpenXLibsStateHash _openXtrasState;
 
 	Common::String _floatPrecisionFormat;
