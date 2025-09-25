@@ -525,6 +525,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventRightMouseUp:
 		case kEventRightMouseDown:
 		case kEventBeginSprite:
+		case kEventEndSprite:
 		case kEventMouseEnter:
 		case kEventMouseLeave:
 			if (_vm->getVersion() >= 600) {
@@ -538,6 +539,11 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 							bool passThrough = (i != sprite->_behaviors.size() - 1);
 							queue.push(LingoEvent(event, eventId, kSpriteHandler, passThrough, pos, channelId, i));
 						}
+					}
+
+					if (event == kEventBeginSprite || event == kEventEndSprite) {
+						// beginSprite and endSprite do not go any further than the sprite behaviors
+						break;
 					}
 				} else {
 					// We have no sprite under the mouse, no SpriteHandler to queue.
@@ -711,6 +717,11 @@ void Score::killScriptInstances(int frameNum) {
 			continue;
 
 		if (frameNum < channel->_startFrame || frameNum > channel->_endFrame) {
+			bool prevDis = _disableGoPlayUpdateStage;
+			_disableGoPlayUpdateStage = true;
+			_movie->processEvent(kEventEndSprite, i);
+			_disableGoPlayUpdateStage = prevDis;
+
 			channel->_scriptInstanceList.clear();
 			channel->_sprite->_behaviors.clear();
 			debugC(1, kDebugLingoExec, "Score::killScriptInstances(): Killed script instances for channel %d. frame %d [%d-%d]",
@@ -821,6 +832,11 @@ void Score::createScriptInstances(int frameNum) {
 
 			channel->_scriptInstanceList.push_back(inst);
 		}
+
+		bool prevDis = _disableGoPlayUpdateStage;
+		_disableGoPlayUpdateStage = true;
+		_movie->processEvent(kEventBeginSprite, i);
+		_disableGoPlayUpdateStage = prevDis;
 	}
 }
 
