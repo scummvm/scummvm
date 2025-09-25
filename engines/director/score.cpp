@@ -696,10 +696,12 @@ void Score::update() {
 	}
 
 	if (_version >= kFileVer600) {
-		// _movie->processEvent(kEventBeginSprite);
-		// TODO: Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-		// _movie->processEvent(kEventPrepareFrame);
-		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+		bool prevDis = _disableGoPlayUpdateStage;
+		_disableGoPlayUpdateStage = true;
+
+		_movie->broadcastEvent(kEventPrepareFrame);
+
+		_disableGoPlayUpdateStage = prevDis;
 	}
 
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)

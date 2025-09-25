@@ -528,6 +528,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventEndSprite:
 		case kEventMouseEnter:
 		case kEventMouseLeave:
+		case kEventPrepareFrame:	// D6+
 			if (_vm->getVersion() >= 600) {
 				if (pointedSpriteId != 0) {
 					Sprite *sprite = _score->getSpriteById(pointedSpriteId);
@@ -586,6 +587,18 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
+	_vm->setCurrentWindow(this->getWindow());
+	_lingo->processEvents(queue, false);
+}
+
+void Movie::broadcastEvent(LEvent event) {
+	Common::Queue<LingoEvent> queue;
+
+	for (int i = 1; i < _score->_channels.size(); i++) {
+		if (_score->_channels[i] && _score->_channels[i]->_sprite && _score->_channels[i]->_sprite->_behaviors.size()) {
+			queueEvent(queue, event, i);
+		}
+	}
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
 }

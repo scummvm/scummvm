@@ -134,8 +134,9 @@ public:
 	ScriptContext *getScriptContext(ScriptType type, CastMemberID id);
 	Symbol getHandler(const Common::String &name, uint16 castLibHint = 0);
 
-	// events.cpp
+	// lingo/lingo-events.cpp
 	bool processEvent(Common::Event &event);
+	void broadcastEvent(LEvent event);
 
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
