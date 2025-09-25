@@ -22,6 +22,7 @@
 #include "common/compression/vise.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "common/platform.h"
 #include "common/savefile.h"
 #include "director/director.h"
 
@@ -174,6 +175,10 @@ static void quirkForceFileIOXtra() {
 	g_director->_fileIOType = kXtraObj;
 }
 
+static void quirkVideoForWindowsPalette() {
+	g_director->_vfwPaletteHack = true;
+}
+
 static void quirkHollywoodHigh() {
 	// Hollywood High demo has a killswitch that stops playback
 	// if the year is after 1996.
@@ -300,6 +305,10 @@ const struct Quirk {
 	// version to be available.
 	{ "ingenious", Common::kPlatformWindows, &quirkForceFileIOXObj },
 	{ "ingenious", Common::kPlatformMacintosh, &quirkForceFileIOXObj },
+
+	// McKenzie & Co. uses a greyscale palette in 8-bit mode, along with the standard 16 colour Windows palette.
+	// Remove the 16-colours from the video decoder.
+	{"mckenzie", Common::kPlatformWindows, &quirkVideoForWindowsPalette },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
