@@ -42,6 +42,7 @@ namespace HodjNPodj {
 namespace Battlefish {
 
 #define CSOUND 0
+#define FONT_SIZE 8
 
 //int bob[5] = { 27, 56, 7, 63, 31 };
 //int fred;
@@ -790,7 +791,7 @@ void CBFishWindow::PaintScreen() {
 
 			// redisplay the "click here" text
 			if (m_pTxtClickHere != nullptr) {
-				m_pTxtClickHere->DisplayString(pDC, "Click here when done", 12, TEXT_NORMAL, RGB(0, 0, 0));
+				m_pTxtClickHere->DisplayString(pDC, "Click here when done", FONT_SIZE, TEXT_NORMAL, RGB(0, 0, 0));
 			}
 
 			ReleaseDC(pDC);
@@ -1170,10 +1171,10 @@ void CBFishWindow::PlayGame() {
 			delete m_pTxtClickHere;
 			m_pTxtClickHere = nullptr;
 		}
-		rTmpRect.SetRect(380, 180, 490, 200);
+		rTmpRect.SetRect(380, 180, 510, 200);
 		if ((m_pTxtClickHere = new CText) != nullptr) {
 			m_pTxtClickHere->SetupText(pDC, m_pGamePalette, &rTmpRect, JUSTIFY_LEFT);
-			m_pTxtClickHere->DisplayString(pDC, "Click here when done", 12, TEXT_NORMAL, RGB(0, 0, 0));
+			m_pTxtClickHere->DisplayString(pDC, "Click here when done", FONT_SIZE, TEXT_NORMAL, RGB(0, 0, 0));
 		} else {
 			errCode = ERR_MEMORY;
 		}
