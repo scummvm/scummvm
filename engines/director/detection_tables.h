@@ -7781,10 +7781,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// French version from covermount of PC Fun Nº38 from PressImage, 10ᵉ Paris
 	// Mac filename is ' Sinkha '
 	MACGAME1("sinkha", "",	 "xn-- Sinkha -", "cb91232ecece0045461d236d5914c03d", 719033, 501),
-	WINGAME2("sinkha", "",	 "SINKHA.EXE",	  "3460ad87d2ba57104e2810a77b53c220", 1393825,
-							 "SINKHA.DXR",	  "b8516633b5124711a8c550a2ed539255", 745484, 500),
-	WINGAME2_l("sinkha", "", "SINKHA.EXE",	  "3460ad87d2ba57104e2810a77b53c220", 1393825,
-							 "SINKHA.DXR",	  "363580346c873a70fe1098175b99aa81", 709524, Common::FR_FRA, 500),
+	WINGAME2tf("sinkha", "",	 "SINKHA.EXE",	  "t:b7c21569f21e9b7e8e9e996264e41827", 1393825,
+							 "SINKHA.DXR",	  "t:206c7f91d9dd1593e90e468c4e80c36d", 745484, 500, GF_32BPP),
+	WINGAME2f_l("sinkha", "", "SINKHA.EXE",	  "t:b7c21569f21e9b7e8e9e996264e41827", 1393825,
+							 "SINKHA.DXR",	  "t:206c7f91d9dd1593e90e468c4e80c36d", 709524, Common::FR_FRA, 500, GF_32BPP),
 
 	MACGAME1("sinkha", "Music and Animation", "Music&Animation", "08d6f6e39fbd8388faf57f602acaebcc", 705445, 500),
 	WINGAME2("sinkha", "Music and Animation", "MUSIC.EXE",		 "3460ad87d2ba57104e2810a77b53c220", 1393827,

@@ -157,6 +157,7 @@ MODULE_OBJS = \
 	lingo/xlibs/tengu.o \
 	lingo/xlibs/unittest.o \
 	lingo/xlibs/valkyrie.o \
+	lingo/xlibs/versions.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/vmisonxfcn.o \
 	lingo/xlibs/vmpresent.o \
@@ -178,6 +179,7 @@ MODULE_OBJS = \
 	lingo/xtras/keypoll.o \
 	lingo/xtras/masterapp.o \
 	lingo/xtras/openurl.o \
+	lingo/xtras/oscheck.o \
 	lingo/xtras/qtvrxtra.o \
 	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
