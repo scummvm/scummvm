@@ -126,6 +126,9 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	}
 
 	BaseImage img = BaseImage();
+	if (!img.getImageInfo(filename, _width, _height)) {
+		return false;
+	}
 
 	if (lifeTime != -1 && _lifeTime == 0) {
 		_valid = false;

@@ -85,6 +85,11 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 		ckBlue  = 255;
 	}
 
+	BaseImage img = BaseImage();
+	if (!img.getImageInfo(filename, _width, _height)) {
+		return false;
+	}
+	
 	if (lifeTime != -1 && _lifeTime == 0) {
 		_valid = false;
 	}

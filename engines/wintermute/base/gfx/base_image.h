@@ -48,6 +48,7 @@ public:
 	BaseImage();
 	~BaseImage();
 
+	bool getImageInfo(const Common::String &filename, int32 &width, int32 &height);
 	bool loadFile(const Common::String &filename);
 	const Graphics::Surface *getSurface() const {
 		return _surface;
@@ -69,6 +70,11 @@ private:
 	const byte *_palette;
 	uint16 _paletteCount;
 	BaseFileManager *_fileManager;
+	
+	bool getImageInfoBMP(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoTGA(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoPNG(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoJPG(const Common::String &filename, int32 &width, int32 &height);
 };
 
 } // End of namespace Wintermute

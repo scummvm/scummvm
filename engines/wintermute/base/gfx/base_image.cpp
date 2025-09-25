@@ -64,6 +64,154 @@ BaseImage::~BaseImage() {
 	delete _deletableSurface;
 }
 
+bool BaseImage::getImageInfo(const Common::String &filename, int32 &width, int32 &height) {
+	bool ret = false;
+	Common::String file = filename;
+	file.toLowercase();
+	if (file.hasPrefix("savegame:") || file.hasSuffix(".bmp")) {
+		ret = getImageInfoBMP(filename, width, height);
+	} else if (file.hasSuffix(".tga")) {
+		ret = getImageInfoTGA(filename, width, height);
+	} else if (file.hasSuffix(".png")) {
+		ret = getImageInfoPNG(filename, width, height);
+	} else if (file.hasSuffix(".jpg")) {
+		ret = getImageInfoJPG(filename, width, height);
+	} else {
+		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+	}
+
+	return ret;
+}
+
+bool BaseImage::getImageInfoBMP(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	uint16 fileType = stream->readUint16BE();
+	if (fileType != MKTAG16('B', 'M')) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	stream->skip(16);
+
+	width = stream->readSint32LE();
+	height = stream->readSint32LE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+
+bool BaseImage::getImageInfoTGA(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	stream->skip(12);
+
+	width = stream->readSint16LE();
+	height = stream->readSint16LE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+bool BaseImage::getImageInfoPNG(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	if (stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+	stream->skip(4);
+
+	uint32 headerLen = stream->readUint32BE();
+	uint32 headerType = stream->readUint32BE();
+	if (headerType != MKTAG('I', 'H', 'D', 'R') || headerLen != 13) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	width = stream->readSint32BE();
+	height = stream->readSint32BE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+bool BaseImage::getImageInfoJPG(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	uint16 fileType = stream->readSint16BE();
+	if (fileType != 0xFFD8) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	while (1) {
+		byte markerPrefix = stream->readByte();
+		if (stream->eos() || stream->err()) {
+			break;
+		}
+		if (markerPrefix != 0xff) {
+			continue;
+		}
+
+		byte marker = stream->readByte();
+		while (marker == 0xff) {
+			marker = stream->readByte();
+			if (stream->eos() || stream->err()) {
+				_fileManager->closeFile(stream);
+				return false;
+			}
+		}
+
+		if (marker == 0xd9 || marker == 0xda) {
+			break;
+		}
+
+		uint16 segLength = stream->readUint16BE();
+		if (segLength < 2) {
+			break;
+		}
+
+		if ((marker >= 0xc0 && marker <= 0xc3) ||
+			(marker >= 0xc9 && marker <= 0xcb)) {
+
+			stream->skip(1);
+
+			height = stream->readUint16BE();
+			width = stream->readUint16BE();
+
+			_fileManager->closeFile(stream);
+
+			return true;
+		} else {
+			stream->skip(segLength - 2);
+			if (stream->eos() || stream->err()) {
+				break;
+			}
+		}
+	}
+
+	_fileManager->closeFile(stream);
+
+	return false;
+}
+
 bool BaseImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
