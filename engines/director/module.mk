@@ -173,14 +173,23 @@ MODULE_OBJS = \
 	lingo/xlibs/xsoundxfcn.o \
 	lingo/xlibs/xwin.o \
 	lingo/xlibs/yasix.o \
+	lingo/xtras/capslockxtra.o \
 	lingo/xtras/directsound.o \
 	lingo/xtras/filextra.o \
+	lingo/xtras/funcolorbucket.o \
+	lingo/xtras/funnybone.o \
+	lingo/xtras/getdate.o \
 	lingo/xtras/keypoll.o \
 	lingo/xtras/masterapp.o \
+	lingo/xtras/miles.o \
 	lingo/xtras/openurl.o \
 	lingo/xtras/qtvrxtra.o \
 	lingo/xtras/rtk.o \
+	lingo/xtras/scriptingskeleton.o \
 	lingo/xtras/scrnutil.o \
+	lingo/xtras/scrnxtra.o \
+	lingo/xtras/setmousextra.o \
+	lingo/xtras/smacker.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o
 
