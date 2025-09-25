@@ -79,12 +79,14 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	_filename = filename;
-
 	if (defaultCK) {
 		ckRed   = 255;
 		ckGreen = 0;
 		ckBlue  = 255;
+	}
+
+	if (lifeTime != -1 && _lifeTime == 0) {
+		_valid = false;
 	}
 
 	_ckDefault = defaultCK;
@@ -92,6 +94,8 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 	_ckGreen = ckGreen;
 	_ckBlue = ckBlue;
 
+	_filename = filename;
+	
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
 	}
