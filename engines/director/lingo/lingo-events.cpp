@@ -471,6 +471,9 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	// For mouseEnter/mouseLeave events, we want to specify exactly what sprite channel to resolve to.
 	case kEventMouseEnter:
 	case kEventMouseLeave:
+	case kEventPrepareFrame:
+	case kEventBeginSprite:
+	case kEventEndSprite:
 		if (targetId != 0) {
 			channelId = targetId;
 		}
@@ -707,6 +710,10 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 	}
 	return true;
 }
+
+/***********************
+ * Script Instances
+ ***********************/
 
 void Score::killScriptInstances(int frameNum) {
 	if (_version < kFileVer600) // No-op for early Directors
