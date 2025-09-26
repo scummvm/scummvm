@@ -58,12 +58,18 @@ enum class StartMusicId : uint8 {
 };
 
 class Sound {
+	// Floppy speech filenames from TOS1.DIG
+	char _sfxFloppyDigFilenameTbl[120][14];
+
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _speechHandle;
 	Audio::SoundHandle _sfxHandle;
 	MusicPlayer *_musicPlayer;
 	Common::Array<uint8> _didSpeech;
 	bool _useFloppyMusic;
+	bool _useCdSfx;
+	bool _useFloppySfx;
+	uint8 _lastPlayedDigitalSfx;
 
 public:
 	explicit Sound(Audio::Mixer *mixer);
@@ -78,6 +84,7 @@ public:
 	void stopSpeech();
 	bool isPlayingSpeech() const;
 	bool isPlayingSfx() const;
+	bool isPlayingSfx(uint8 sfxId) const;
 	bool isPlayingMusic();
 	void resetSpeech();
 	void playMusic(MusicId musicId, bool loop = true);
@@ -85,16 +92,21 @@ public:
 	void playMusic(Common::String const &filename, Common::String const *instrBankFilename = nullptr, uint8 priority = 0xFF, bool loop = false);
 	void stopMusic();
 	void pauseMusic(bool pause);
-	void playSfx(uint8 sfxId, int unk1, int unk2);
+	void playSfx(uint8 sfxId, uint8 priority, int unk2);
+	void playDosFloppySfx(byte sfxId, uint8 priority);
 	void stopSfx();
+	bool isUsingCdSfx() const;
+	bool isUsingFloppySfx() const;
 	void syncSoundSettings();
 	void killAllSound();
 	void startFadeOut();
 	bool isFading();
 
 private:
+	void loadTosDigData(Common::SeekableReadStream *in, int32 size);
 	void playDosCDSfx(int sfxId);
 	void playFloppySpeech(int tosIdx);
+	int convertCdSpeechToFloppySfxId(int cdSfxId);
 };
 
 } // namespace Darkseed

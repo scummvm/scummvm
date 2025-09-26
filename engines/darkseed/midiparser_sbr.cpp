@@ -294,4 +294,10 @@ bool MidiParser_SBR::loadMusic(const byte *data, uint32 size) {
 	return true;
 }
 
+bool MidiParser_SBR::isSampleSfx(uint8 sfxId) {
+	if (!_sfx || sfxId >= _numTracks)
+		return false;
+	return _tracks[sfxId][0] != nullptr && _tracks[sfxId][0][0] == 0x03;
+}
+
 } // End of namespace Darkseed

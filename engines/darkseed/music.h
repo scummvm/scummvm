@@ -24,6 +24,7 @@
 
 #include "darkseed/adlib_dsf.h"
 #include "darkseed/adlib_worx.h"
+#include "darkseed/midiparser_sbr.h"
 
 #include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
@@ -35,24 +36,32 @@ class DarkseedEngine;
 
 class MusicPlayer {
 protected:
+	static const uint8 NUM_SFX_PARSERS = 5;
+
 	DarkseedEngine *_vm;
 
 	Common::Mutex _mutex;
 	MidiDriver_Multisource *_driver;
 	MidiDriver_DarkSeedFloppy_AdLib *_floppyAdLibDriver;
 
-	MidiParser *_parser;
+	MidiParser *_musicParser;
+	MidiParser *_sfxParsers[NUM_SFX_PARSERS];
+	MidiParser_SBR *_sfxParserSbr;
+	// The type of the music device selected for playback.
+	MusicType _deviceType;
 	byte *_musicData;
+	byte *_sfxData;
 	byte *_tosInstrumentBankData;
 	bool _tosInstrumentBankLoaded;
 	bool _useFloppyMusic;
+	bool _useFloppySfx;
 
 	bool _paused;
 
 	static void onTimer(void *data);
 
 public:
-	MusicPlayer(DarkseedEngine *vm, bool useFloppyMusic);
+	MusicPlayer(DarkseedEngine *vm, bool useFloppyMusic, bool useFloppySfx);
 	~MusicPlayer();
 
 	int open();
@@ -61,21 +70,26 @@ public:
 	void loadTosInstrumentBankData(Common::SeekableReadStream *in, int32 size = -1);
 	void loadTosInstrumentBank();
 	void loadInstrumentBank(Common::SeekableReadStream *in, int32 size = -1);
+	bool isSampleSfx(uint8 sfxId);
 
-	void play(uint8 priority = 0xFF, bool loop = false);
-	void setLoop(bool loop);
-	bool isPlaying();
-	void stop();
-	void pause(bool pause);
+	void playMusic(uint8 priority = 0xFF, bool loop = false);
+	void setLoopMusic(bool loop);
+	bool isPlayingMusic();
+	void stopMusic();
+	void pauseMusic(bool pause);
+	void playSfx(uint8 sfxId, uint8 priority = 0xFF);
+	bool isPlayingSfx();
+	bool isPlayingSfx(uint8 sfxId);
+	void stopAllSfx();
+	bool stopSfx(uint8 sfxId);
 
-	void startFadeOut();
-	bool isFading();
+	void startFadeOutMusic();
+	bool isFadingMusic();
 
 	void syncSoundSettings();
 
-private:
-	// The type of the music device selected for playback.
-	MusicType _deviceType;
+protected:
+	uint8 assignSfxParser();
 };
 
 } // namespace Darkseed

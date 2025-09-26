@@ -23,6 +23,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "common/config-manager.h"
+#include "common/util.h"
 #include "darkseed/sound.h"
 #include "darkseed/darkseed.h"
 
@@ -132,10 +133,130 @@ static constexpr char sfxCDFilenameTbl[][14] = {
 	"beaming.sfx"
 };
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+// Maps CD SFX IDs to floppy SFX IDs
+static constexpr int sfxCdFloppyMapping[60] = {
+	//  0
+	 -1,	// Unused
+	 10,	// House front door
+	 11,	// Shower
+	 -1,	// Delbert's dog (not present in floppy version)
+	 13,	// Stairs
+	 14,	// Press button
+	 15,	// Pick up item
+	 16,	// Unused (energizing hammer head?)
+	 17,	// Lever
+	 18,	// Spaceship
+	// 10
+	 19,	// Leech
+	 20,	// Car engine start
+	 21,	// Mausoleum sigils (only used by floppy version)
+	 22,	// Mausoleum door (only used by CD version)
+	 23,	// Shovel
+	 24,	// Car door
+	 25,	// Car engine start failure
+	 26,	// Assembling hammer
+	 27,	// Lock picking
+	 28,	// Guardian
+	// 20
+	 29,	// Alien dog
+	 30,	// Alien cop gun
+	 12,	// Cup
+	 32,	// Cocoon
+	 90,	// Phone (loud)
+	 91,	// Phone (quiet)
+	118,	// Fixing mirror
+	 93,	// Doorbell (loud)
+	 94,	// Destroying mirror
+	 95,	// Doorbell (quiet)
+	// 30
+	 96,	// Electricity
+	 97,	// Car trunk / trunk (attic)
+	 98,	// Drinking / pouring
+	 99,	// Unused (tuning radio?)
+	100,	// Bathroom cabinet
+	101,	// Bathroom faucet
+	 -1,	// Unused
+	 -1,	// Unused (running water?)
+	 -1,	// Unused (press button alternate?)
+	111,	// Car horn
+	// 40
+	 -1,	// Unused
+	116,	// Secret door
+	115,	// Kitchen doors
+	107,	// Clock tick (only used by floppy version)
+	108,	// Clock tock (only used by floppy version)
+	104,	// Clock chime (loud)
+	106,	// Clock chime (quiet)
+	113,	// Urn
+	114,	// Teleporter
+	 -1,	// Unused
+	// 50	Floppy-only sound effects
+	 35,	// Recruitment center
+	 51,	// Car engine running (original code uses 50 here, which sounds wrong)
+	 92,	// Footstep
+	105,	// Mosquito (upstairs hallway)
+	109,	// Book stamp
+	110,	// Kitchen faucet / fountain
+	112,	// Phone dial tone
+	 -1,
+	 -1,
+	 -1
+};
+
+// Maps DOS CD speech IDs to DOS floppy SFX IDs
+static Common::Pair<int, int> speechCdFloppyMapping[] = {
+				  // 59: ralph1 (unused & invalid)
+	{ 904,  60 }, // m1-1   Librarian (phone): "Hello?" "Hello Mike. This is Sue at the library. ..."
+	{ 927,  61 }, // cl1    Store clerk: "Serve yourself, Mr. Dawson."
+	{ 905,  62 }, // cl2    Store clerk: "That's the last bottle of Scotch. ..."
+	{ 907,  63 }, // d4a-1  Delbert: "Hi you must be Mike. ..."
+	{ 908,  64 }, // d6c-2  Delbert: "You're a writer, huh? ..."
+	{ 909,  65 }, // d5a-1  Delbert: "Good to see you, Dawson. ..."
+	{ 910,  66 }, // d6a-2  Delbert: "Boy, that's smooth. ..."
+	{ 906,  67 }, // cl3    Store clerk: "I'm sorry, Mr. Dawson, ..."
+				  // CD ID 925 includes both this line and the next. These are 2 separate IDs in the floppy version. CD ID 926 is unused.
+	{ 925,  68 }, // gl0a   Librarian: "I'm not really sure why I'm here, ..."
+	{ 926,  69 }, // gl1b   Librarian: "I know it sounds strange, ..."
+	{ 924,  70 }, // gl2a   Librarian: "This card really should be kept with the book. ..."
+				  // 71: s7a-1 (invalid)
+	{ 912,  72 }, // s8a-2  Cop: "You're under arrest, Dawson. ..."
+	{ 913,  73 }, // k9a-3  Keeper: "Greetings Michael. ..."
+	{ 914,  74 }, // k9c-3  Keeper: "If born, this creature will destroy you..."
+	{ 915,  75 }, // k9e-3  Keeper: "Also, the Police in your world..."
+	{ 928,  76 }, // gl3a   Librarian: "Hi Mike. Here's the book that was put on hold for you."
+				  // 77: k9e-3 (duplicate of 75)
+				  // 78: k9f-3 (invalid)
+	{ 916,  79 }, // g10a-1 Sargo: "Greetings, human. ..."
+	{ 917,  80 }, // g10b-1 Sargo: "I am prepared to give you the gift..."
+	{ 918,  81 }, // m11a-1 Mike: "I'm just beginning to understand."
+	{ 919,  82 }, // o12a-1 Keeper (radio): "Steal from those who protect you..."
+	{ 920,  83 }, // o13a-1 Keeper (radio): "What you do in the light..."
+				  // 84: o13b-1 (invalid)
+	{ 921,  85 }, // o14a-1 Keeper (radio): "Turn yourself in and leave behind the key..."
+	{ 922,  86 }, // k15a-1 Keeper (phone): "Remember, anything seen in the mirror..."
+	{ 923,  87 }, // s16a-1 Alien cop: "So that's where my gun went! ..."
+				  // 88: l17a-1 (invalid)
+				  // 89: l18a-1 (invalid)
+	{  -1,  -1 }
+};
+
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _lastPlayedDigitalSfx(0) {
+	memset(_sfxFloppyDigFilenameTbl, 0, 120 * 14);
+
 	bool floppyMusicSetting = ConfMan.hasKey("use_floppy_music") ? ConfMan.getBool("use_floppy_music") : false;
-	_useFloppyMusic = !g_engine->isCdVersion() || floppyMusicSetting;
-	_musicPlayer = new MusicPlayer(g_engine, _useFloppyMusic);
+	_useFloppyMusic = g_engine->isDosFloppy() || floppyMusicSetting;
+
+	// SFX mode 0: CD SFX only
+	// SFX mode 1: CD SFX + additional floppy SFX
+	// SFX mode 2: floppy SFX only
+	// CD SFX are only available when using the CD version
+	// Floppy SFX are only available when using floppy music
+	int sfxMode = ConfMan.hasKey("sfx_mode") ? ConfMan.getInt("sfx_mode") : -1;
+	_useCdSfx = g_engine->isCdVersion() && (!_useFloppyMusic || sfxMode != 2);
+	_useFloppySfx = _useFloppyMusic && (g_engine->isDosFloppy() || sfxMode == 1 || sfxMode == 2);
+
+	_musicPlayer = new MusicPlayer(g_engine, _useFloppyMusic, _useFloppySfx);
+
 	_didSpeech.resize(978);
 	resetSpeech();
 }
@@ -145,23 +266,89 @@ Sound::~Sound() {
 }
 
 int Sound::init() {
-	if (_useFloppyMusic) {
+	int returnCode = _musicPlayer->open();
+	if (returnCode != 0)
+		return returnCode;
+
+	if (_useFloppyMusic || _useFloppySfx) {
 		Common::File file;
 		Common::Path path = g_engine->isCdVersion() ? Common::Path("sound").join("tos1.sit") : Common::Path("tos1.sit");
 		if (file.open(path)) {
 			_musicPlayer->loadTosInstrumentBankData(&file, (int32)file.size());
 		} else {
-			debug("Failed to load TOS instrument bank data %s", path.toString().c_str());
+			warning("Failed to load TOS floppy instrument bank data %s", path.toString().c_str());
 		}
 		file.close();
 	}
 
-	return _musicPlayer->open();
+	if (_useFloppySfx) {
+		Common::File file;
+		Common::Path path = g_engine->isCdVersion() ? Common::Path("sound").join("tos1.sbr") : Common::Path("tos1.sbr");
+		if (file.open(path)) {
+			_musicPlayer->load(&file, (int32)file.size(), true);
+		} else {
+			warning("Failed to load TOS floppy sound effects data %s", path.toString().c_str());
+		}
+		file.close();
+	}
+
+	if (g_engine->isDosFloppy()) {
+		Common::File file;
+		Common::Path path = Common::Path("tos1.dig");
+		if (file.open(path)) {
+			loadTosDigData(&file, (int32)file.size());
+		} else {
+			warning("Failed to load TOS floppy speech data %s", path.toString().c_str());
+		}
+		file.close();
+	}
+
+	return 0;
+}
+
+void Sound::loadTosDigData(Common::SeekableReadStream* in, int32 size) {
+	int32 bytesRead = 0;
+	int entriesRead = 0;
+	while (bytesRead < size && entriesRead < 120) {
+		byte type = in->readByte();
+		if (type == 3) {
+			// VOC filename entry
+			uint32 entryBytesRead = in->read(_sfxFloppyDigFilenameTbl[entriesRead], 14);
+			if (entryBytesRead != 14) {
+				warning("Failed to read all bytes from DIG filename entry %i", entriesRead);
+				return;
+			}
+			bytesRead += 15;
+		}
+		else if (type == 0) {
+			// Unknown what this entry type contains. It is ignored by the original code.
+			uint16 entrySize = in->readUint16LE();
+			if (!in->skip(entrySize - 3)) {
+				warning("Failed to read all bytes from DIG type 0 entry %i", entriesRead);
+				return;
+			}
+			bytesRead += entrySize;
+		}
+		else {
+			// Unknown entry type.
+			warning("Unknown DIG entry type %X in entry %i", type, entriesRead);
+			return;
+		}
+		entriesRead++;
+	}
+	if (entriesRead < 100) {
+		// DIG files typically contain at least 100 entries
+		warning("DIG file only contained %i entries", entriesRead);
+	}
 }
 
 void Sound::playTosSpeech(int tosIdx) {
 	if (g_engine->isDosFloppy()) {
-		playFloppySpeech(tosIdx);
+		int floppySfxId = convertCdSpeechToFloppySfxId(tosIdx);
+		if (floppySfxId == -1)
+			return;
+
+		playDosFloppySfx(floppySfxId, 5);
 		return;
 	}
 
@@ -190,11 +377,23 @@ bool Sound::isPlayingSpeech() const {
 }
 
 bool Sound::isPlayingSfx() const {
-	return _mixer->isSoundHandleActive(_sfxHandle);
+	return _mixer->isSoundHandleActive(_sfxHandle) || _musicPlayer->isPlayingSfx();
+}
+
+bool Sound::isPlayingSfx(uint8 sfxId) const {
+	if (_useFloppySfx) {
+		int floppySfxId = sfxCdFloppyMapping[sfxId];
+		if (floppySfxId == -1)
+			return false;
+
+		return _musicPlayer->isPlayingSfx(floppySfxId);
+	}
+
+	return _lastPlayedDigitalSfx == sfxId && _mixer->isSoundHandleActive(_sfxHandle);
 }
 
 bool Sound::isPlayingMusic() {
-	return _musicPlayer->isPlaying();
+	return _musicPlayer->isPlayingMusic();
 }
 
 void Sound::resetSpeech() {
@@ -255,15 +454,15 @@ void Sound::playMusic(Common::String const &musicFilename, Common::String const 
 	_musicPlayer->load(&file, (int32)file.size());
 	file.close();
 
-	_musicPlayer->play(priority, loop);
+	_musicPlayer->playMusic(priority, loop);
 }
 
 void Sound::stopMusic() {
-	_musicPlayer->stop();
+	_musicPlayer->stopMusic();
 }
 
 void Sound::pauseMusic(bool pause) {
-	_musicPlayer->pause(pause);
+	_musicPlayer->pauseMusic(pause);
 }
 
 void Sound::killAllSound() {
@@ -289,23 +488,28 @@ bool Sound::isMuted() const {
 	return soundIsMuted;
 }
 
-void Sound::playSfx(uint8 sfxId, int unk1, int unk2) {
-	if (g_engine->isCdVersion()) {
+void Sound::playSfx(uint8 sfxId, uint8 priority, int unk2) {
+	// Do not play floppy-only SFX using the CD SFX playing code
+	if (_useCdSfx && sfxId <= 48 && sfxId != 43 && sfxId != 44) {
 		playDosCDSfx(sfxId);
+	}
+	else if (_useFloppySfx && sfxId < 60) {
+		int floppySfxId = sfxCdFloppyMapping[sfxId];
+		if (floppySfxId == -1)
+			return;
+
+		playDosFloppySfx(floppySfxId, priority);
 	}
 }
 
 void Sound::stopSfx() {
 	_mixer->stopHandle(_sfxHandle);
+	_musicPlayer->stopAllSfx();
 }
 
 void Sound::playDosCDSfx(int sfxId) {
-	if (sfxId == 0) {
-		// TODO midi SFX
+	if (sfxId == 0 || sfxId > 48) {
 		return;
-	}
-	if (sfxId > 48) {
-		error("playDosCDSfx: Invalid sfxId %d", sfxId);
 	}
 	if (isPlayingSfx()) {
 		return;
@@ -319,43 +523,27 @@ void Sound::playDosCDSfx(int sfxId) {
 	Common::SeekableReadStream *srcStream = f.readStream((uint32)f.size());
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 															  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_sfxHandle, stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
+	_lastPlayedDigitalSfx = sfxId;
 }
 
-void Sound::playFloppySpeech(int tosIdx) {
-	Common::String filename;
-
-	switch (tosIdx) {
-	case 927 : filename = "CL1.VOC"; break;
-	case 905 : filename = "CL2.VOC"; break;
-	case 906 : filename = "CL3.VOC"; break;
-	case 907 : filename = "D4A-1.VOC"; break;
-	case 909 : filename = "D5A-1.VOC"; break;
-	case 910 : filename = "D6A-2.VOC"; break;
-	case 908 : filename = "D6C-2.VOC"; break;
-	case 916 : filename = "G10A-1.VOC"; break;
-	case 917 : filename = "G10B-1.VOC"; break;
-	case 925 : filename = "GL0A.VOC"; break;
-	case 926 : filename = "GL1B.VOC"; break;
-	case 924 : filename = "GL2A.VOC"; break;
-	case 928 : filename = "GL3A.VOC"; break; // TODO is this correct?
-	case 922 : filename = "K15A-1.VOC"; break;
-	case 913 : filename = "K9A-3.VOC"; break;
-	case 914 : filename = "K9C-3.VOC"; break;
-	case 915 : filename = "K9E-3.VOC"; break;
-	case 904 : filename = "M1-1.VOC"; break;
-	case 918 : filename = "M11A-1.VOC"; break;
-	case 919 : filename = "O12A-1.VOC"; break;
-	case 920 : filename = "O13A-1.VOC"; break;
-	case 921 : filename = "O14A-1.VOC"; break;
-	case 923 : filename = "S16A-1.VOC"; break;
-	case 912 : filename = "S8A-2.VOC"; break;
-	default : return;
+void Sound::playDosFloppySfx(byte floppySfxId, uint8 priority) {
+	if (_musicPlayer->isSampleSfx(floppySfxId)) {
+		playFloppySpeech(floppySfxId);
+	} else if (floppySfxId >= 10 && floppySfxId < 120) {
+		_musicPlayer->playSfx(floppySfxId, priority);
 	}
+}
 
-	Common::Path path = Common::Path(filename);
+void Sound::playFloppySpeech(int floppySfxId) {
+	Common::String filename = _sfxFloppyDigFilenameTbl[floppySfxId];
+	if (filename.size() == 0)
+		return;
+
+	Common::Path path = Common::Path(filename + ".voc");
 	Common::File f;
 	if (!f.open(path)) {
+		warning("Failed to load speech file %s", path.toString().c_str());
 		return;
 	}
 
@@ -366,11 +554,31 @@ void Sound::playFloppySpeech(int tosIdx) {
 }
 
 void Sound::startFadeOut() {
-	_musicPlayer->startFadeOut();
+	_musicPlayer->startFadeOutMusic();
 }
 
 bool Sound::isFading() {
-	return _musicPlayer->isFading();
+	return _musicPlayer->isFadingMusic();
+}
+
+int Sound::convertCdSpeechToFloppySfxId(int cdSfxId) {
+	int i = 0;
+	while (true) {
+		int entryCdSfxId = speechCdFloppyMapping[i].first;
+		if (entryCdSfxId == -1)
+			return -1;
+		if (entryCdSfxId == cdSfxId)
+			return speechCdFloppyMapping[i].second;
+		i++;
+	}
+}
+
+bool Sound::isUsingCdSfx() const {
+	return _useCdSfx;
+}
+
+bool Sound::isUsingFloppySfx() const {
+	return _useFloppySfx;
 }
 
 } // End of namespace Darkseed

@@ -21,25 +21,31 @@
 
 #include "darkseed/music.h"
 #include "darkseed/darkseed.h"
-#include "darkseed/midiparser_sbr.h"
 
 namespace Darkseed {
 
-MusicPlayer::MusicPlayer(DarkseedEngine* vm, bool useFloppyMusic) :
-	_vm(vm),
-	_driver(nullptr),
-	_floppyAdLibDriver(nullptr),
-	_paused(false),
-	_deviceType(MT_NULL),
-	_parser(nullptr),
-	_musicData(nullptr),
-	_tosInstrumentBankData(nullptr),
-	_tosInstrumentBankLoaded(false),
-	_useFloppyMusic(useFloppyMusic) {
+MusicPlayer::MusicPlayer(DarkseedEngine* vm, bool useFloppyMusic, bool useFloppySfx) :
+		_vm(vm),
+		_driver(nullptr),
+		_floppyAdLibDriver(nullptr),
+		_paused(false),
+		_deviceType(MT_NULL),
+		_musicParser(nullptr),
+		_musicData(nullptr),
+		_sfxParserSbr(nullptr),
+		_sfxData(nullptr),
+		_tosInstrumentBankData(nullptr),
+		_tosInstrumentBankLoaded(false),
+		_useFloppyMusic(useFloppyMusic),
+		_useFloppySfx(useFloppySfx) {
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		_sfxParsers[i] = nullptr;
+	}
 }
 
 MusicPlayer::~MusicPlayer() {
-	stop();
+	stopMusic();
+	stopAllSfx();
 	if (_driver != nullptr) {
 		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
@@ -47,10 +53,16 @@ MusicPlayer::~MusicPlayer() {
 
 	Common::StackLock lock(_mutex);
 
-	if (_parser != nullptr)
-		delete _parser;
+	if (_musicParser != nullptr)
+		delete _musicParser;
 	if (_musicData != nullptr)
 		delete[] _musicData;
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr)
+			delete _sfxParsers[i];
+	}
+	if (_sfxData != nullptr)
+		delete _sfxData;
 	if (_tosInstrumentBankData != nullptr)
 		delete[] _tosInstrumentBankData;
 	if (_driver != nullptr) {
@@ -79,7 +91,18 @@ int MusicPlayer::open() {
 				break;
 		}
 
-		_parser = new MidiParser_SBR(0);
+		_musicParser = new MidiParser_SBR(0);
+		if (_useFloppySfx) {
+			for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+				if (_sfxParserSbr == nullptr) {
+					_sfxParserSbr = new MidiParser_SBR(i + 1, true);
+					_sfxParsers[i] = _sfxParserSbr;
+				}
+				else {
+					_sfxParsers[i] = new MidiParser_SBR(i + 1, true);
+				}
+			}
+		}
 	} else {
 		switch (_deviceType) {
 			case MT_ADLIB:
@@ -97,12 +120,17 @@ int MusicPlayer::open() {
 		}
 
 		// CD version uses SMF data
-		_parser = MidiParser::createParser_SMF(0);
+		_musicParser = MidiParser::createParser_SMF(0);
 	}
 
 	_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
-	if (_parser)
-		_parser->property(MidiParser::mpDisableAutoStartPlayback, true);
+	if (_musicParser != nullptr)
+		_musicParser->property(MidiParser::mpDisableAutoStartPlayback, true);
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr) {
+			_sfxParsers[i]->property(MidiParser::mpDisableAutoStartPlayback, true);
+		}
+	}
 
 	int returnCode = _driver->open();
 	if (returnCode != 0) {
@@ -112,11 +140,17 @@ int MusicPlayer::open() {
 
 	syncSoundSettings();
 
-	if (_parser) {
-		_parser->setMidiDriver(_driver);
-		_parser->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback(_parser, &_parser->timerCallback);
+	if (_musicParser != nullptr) {
+		_musicParser->setMidiDriver(_driver);
+		_musicParser->setTimerRate(_driver->getBaseTempo());
 	}
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr) {
+			_sfxParsers[i]->setMidiDriver(_driver);
+			_sfxParsers[i]->setTimerRate(_driver->getBaseTempo());
+		}
+	}
+	_driver->setTimerCallback(this, &onTimer);
 
 	return 0;
 }
@@ -126,41 +160,147 @@ void MusicPlayer::onTimer(void *data) {
 
 	Common::StackLock lock(p->_mutex);
 
-	if (p->_parser) {
-		p->_parser->onTimer();
+	if (p->_musicParser != nullptr)
+		p->_musicParser->onTimer();
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (p->_sfxParsers[i] != nullptr) {
+			p->_sfxParsers[i]->onTimer();
+		}
 	}
 }
 
-bool MusicPlayer::isPlaying() {
+bool MusicPlayer::isPlayingMusic() {
 	Common::StackLock lock(_mutex);
 
-	return _parser && _parser->isPlaying();
+	return _musicParser != nullptr && _musicParser->isPlaying();
 }
 
-void MusicPlayer::stop() {
+void MusicPlayer::stopMusic() {
 	Common::StackLock lock(_mutex);
 
-	if (_parser) {
-		_parser->stopPlaying();
-		if (_driver) {
+	if (_musicParser != nullptr) {
+		_musicParser->stopPlaying();
+		if (_driver != nullptr) {
 			_driver->deinitSource(0);
 		}
 	}
 }
 
-void MusicPlayer::pause(bool pause) {
+void MusicPlayer::pauseMusic(bool pause) {
 	Common::StackLock lock(_mutex);
 
-	if (_paused == pause || !_parser)
+	if (_paused == pause || _musicParser == nullptr)
 		return;
 
 	_paused = pause;
 
 	if (_paused) {
-		_parser->pausePlaying();
+		_musicParser->pausePlaying();
 	} else {
-		_parser->resumePlaying();
+		_musicParser->resumePlaying();
 	}
+}
+
+bool MusicPlayer::isPlayingSfx() {
+	Common::StackLock lock(_mutex);
+
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr && _sfxParsers[i]->isPlaying()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool MusicPlayer::isPlayingSfx(uint8 sfxId) {
+	Common::StackLock lock(_mutex);
+
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr && _sfxParsers[i]->isPlaying() && _sfxParsers[i]->getActiveTrack() == sfxId) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void MusicPlayer::playSfx(uint8 sfxId, uint8 priority) {
+	Common::StackLock lock(_mutex);
+
+	if (_sfxParsers[0] == nullptr)
+		return;
+
+	if (!_tosInstrumentBankLoaded) {
+		warning("Attempt to play floppy sound effect %i while TOS instrument bank is not loaded", sfxId);
+		return;
+	}
+
+	uint8 sfxParserIdx = assignSfxParser();
+	if (sfxParserIdx == 0xFF) {
+		warning("All SFX parsers in use when trying to play SFX %i", sfxId);
+		return;
+	}
+
+	if (_driver != nullptr) {
+		_driver->resetSourceVolume(sfxParserIdx + 1);
+	}
+	if (_floppyAdLibDriver != nullptr)
+		_floppyAdLibDriver->setSourcePriority(sfxParserIdx + 1, priority);
+
+	_sfxParsers[sfxParserIdx]->setTrack(sfxId);
+	_sfxParsers[sfxParserIdx]->startPlaying();
+}
+
+uint8 MusicPlayer::assignSfxParser() {
+	Common::StackLock lock(_mutex);
+
+	int parserIdx = 0xFF;
+
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr && !_sfxParsers[i]->isPlaying()) {
+			// Make sure all inactive SFX parsers have released their resources
+			if (_driver != nullptr)
+				_driver->deinitSource(i + 1);
+
+			if (parserIdx == 0xFF)
+				parserIdx = i;
+		}
+	}
+	// If all SFX parsers are already playing, parserIdx is still 0xFF
+
+	return parserIdx;
+}
+
+void MusicPlayer::stopAllSfx() {
+	Common::StackLock lock(_mutex);
+
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr) {
+			_sfxParsers[i]->stopPlaying();
+			if (_driver != nullptr) {
+				_driver->deinitSource(i + 1);
+			}
+		}
+	}
+}
+
+bool MusicPlayer::stopSfx(uint8 sfxId) {
+	Common::StackLock lock(_mutex);
+
+	bool stoppedSfx = false;
+
+	for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+		if (_sfxParsers[i] != nullptr && _sfxParsers[i]->getActiveTrack() == sfxId) {
+			_sfxParsers[i]->stopPlaying();
+			if (_driver != nullptr) {
+				_driver->deinitSource(i + 1);
+			}
+			stoppedSfx = true;
+		}
+	}
+
+	return stoppedSfx;
 }
 
 void MusicPlayer::syncSoundSettings() {
@@ -168,23 +308,26 @@ void MusicPlayer::syncSoundSettings() {
 		_driver->syncSoundSettings();
 }
 
-void MusicPlayer::setLoop(bool loop) {
+void MusicPlayer::setLoopMusic(bool loop) {
 	Common::StackLock lock(_mutex);
 
-	if (_parser)
-		_parser->property(MidiParser::mpAutoLoop, loop);
+	if (_musicParser)
+		_musicParser->property(MidiParser::mpAutoLoop, loop);
 }
 
 void MusicPlayer::load(Common::SeekableReadStream *in, int32 size, bool sfx) {
 	Common::StackLock lock(_mutex);
 
-	if (!_parser)
+	MidiParser *parser = sfx ? _sfxParsers[0] : _musicParser;
+	byte **dataPtr = sfx ? &_sfxData : &_musicData;
+
+	if (parser == nullptr)
 		return;
 
 	if (size < 0) {
 		// Use the parser to determine the size of the MIDI data.
 		int64 startPos = in->pos();
-		size = _parser->determineDataSize(in);
+		size = parser->determineDataSize(in);
 		if (size < 0) {
 			warning("MusicPlayer::load - Could not determine size of music data");
 			return;
@@ -194,17 +337,31 @@ void MusicPlayer::load(Common::SeekableReadStream *in, int32 size, bool sfx) {
 		in->seek(startPos);
 	}
 
-	if (isPlaying())
-		stop();
-	_parser->unloadMusic();
-	if (_musicData) {
-		delete[] _musicData;
+	if (!sfx && isPlayingMusic()) {
+		stopMusic();
+		_musicParser->unloadMusic();
+	}
+	if (sfx && isPlayingSfx()) {
+		stopAllSfx();
+		for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+			_sfxParsers[i]->unloadMusic();
+		}
+	}
+	if (*dataPtr != nullptr) {
+		delete[] *dataPtr;
 	}
 
-	_musicData = new byte[size];
-	in->read(_musicData, size);
+	*dataPtr = new byte[size];
+	in->read(*dataPtr, size);
 
-	_parser->loadMusic(_musicData, size);
+	if (!sfx) {
+		_musicParser->loadMusic(*dataPtr, size);
+	}
+	else {
+		for (int i = 0; i < NUM_SFX_PARSERS; i++) {
+			_sfxParsers[i]->loadMusic(*dataPtr, size);
+		}
+	}
 }
 
 void MusicPlayer::loadTosInstrumentBankData(Common::SeekableReadStream* in, int32 size) {
@@ -231,8 +388,8 @@ void MusicPlayer::loadTosInstrumentBank() {
 	}
 
 	if (!_tosInstrumentBankLoaded) {
-		if (isPlaying())
-			stop();
+		if (isPlayingMusic())
+			stopMusic();
 		_floppyAdLibDriver->loadInstrumentBank(_tosInstrumentBankData);
 		_tosInstrumentBankLoaded = true;
 	}
@@ -251,20 +408,26 @@ void MusicPlayer::loadInstrumentBank(Common::SeekableReadStream *in, int32 size)
 	byte *instrumentBankData = new byte[size];
 	in->read(instrumentBankData, size);
 
-	if (isPlaying())
-		stop();
+	if (isPlayingMusic())
+		stopMusic();
 	_floppyAdLibDriver->loadInstrumentBank(instrumentBankData);
 	_tosInstrumentBankLoaded = false;
 }
 
-void MusicPlayer::play(uint8 priority, bool loop) {
+bool MusicPlayer::isSampleSfx(uint8 sfxId) {
+	if (_sfxParserSbr == nullptr)
+		return false;
+	return _sfxParserSbr->isSampleSfx(sfxId);
+}
+
+void MusicPlayer::playMusic(uint8 priority, bool loop) {
 	Common::StackLock lock(_mutex);
 
-	if (!_parser)
+	if (_musicParser == nullptr || _driver == nullptr)
 		return;
 
 	if (!_useFloppyMusic)
-		_parser->property(MidiParser::mpAutoLoop, loop);
+		_musicParser->property(MidiParser::mpAutoLoop, loop);
 	if (_floppyAdLibDriver != nullptr)
 		_floppyAdLibDriver->setSourcePriority(0, priority);
 
@@ -272,14 +435,14 @@ void MusicPlayer::play(uint8 priority, bool loop) {
 		_driver->abortFade();
 	_driver->resetSourceVolume(0);
 
-	_parser->startPlaying();
+	_musicParser->startPlaying();
 }
 
-void MusicPlayer::startFadeOut() {
+void MusicPlayer::startFadeOutMusic() {
 	_driver->startFade(0, 1100, 0);
 }
 
-bool MusicPlayer::isFading() {
+bool MusicPlayer::isFadingMusic() {
 	return _driver->isFading();
 }
 
