@@ -212,6 +212,16 @@ bool Movie::processEvent(Common::Event &event) {
 			if ((g_director->getVersion() >= 500) && event.type == Common::EVENT_RBUTTONDOWN)
 				ev = kEventRightMouseDown;
 
+			if (g_director->getVersion() >= 500 && event.type == Common::EVENT_LBUTTONDOWN && _vm->_emulateMultiButtonMouse) {
+				if (g_director->getPlatform() == Common::kPlatformMacintosh) {
+					// On Mac, when the mouse button and Control key are pressed
+					// at the same time, this simulates right button click
+					if (_keyFlags & Common::KBD_CTRL) {
+						ev = kEventRightMouseDown;
+					}
+				}
+			}
+
 			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
 			queueInputEvent(ev, 0, pos);
 		}
@@ -230,6 +240,16 @@ bool Movie::processEvent(Common::Event &event) {
 			// They are caught by the rightMouseUp handler only.
 			if ((g_director->getVersion() >= 500) && event.type == Common::EVENT_RBUTTONUP)
 				ev = kEventRightMouseUp;
+
+			if (g_director->getVersion() >= 500 && event.type == Common::EVENT_LBUTTONUP && _vm->_emulateMultiButtonMouse) {
+				if (g_director->getPlatform() == Common::kPlatformMacintosh) {
+					// On Mac, when the mouse button and Control key are pressed
+					// at the same time, this simulates right button click
+					if (_keyFlags & Common::KBD_CTRL) {
+						ev = kEventRightMouseUp;
+					}
+				}
+			}
 
 			queueInputEvent(ev, 0, pos);
 			sc->renderCursor(pos);

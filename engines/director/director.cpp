@@ -162,6 +162,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_surface = nullptr;
 	_tickBaseline = 0;
+
+	_emulateMultiButtonMouse = false;
 }
 
 DirectorEngine::~DirectorEngine() {

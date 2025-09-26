@@ -273,6 +273,7 @@ public:
 	Archive *_mainArchive;
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
+	bool _emulateMultiButtonMouse;
 
 	// Owner of all Archive objects.
 	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> _allSeenResFiles;

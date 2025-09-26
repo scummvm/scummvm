@@ -566,6 +566,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// 25 ticks seems to be the threshold for a double click.
 		d = (movie->_lastClickTime - movie->_lastClickTime2) <= 25 ? 1 : 0;
 		break;
+	case kTheEmulateMultiButtonMouse:
+		d = g_director->_emulateMultiButtonMouse ? 1 : 0;
+		break;
 	case kTheExitLock:
 		d = g_lingo->_exitLock;
 		break;
@@ -1156,6 +1159,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheExitLock:
 		g_lingo->_exitLock = bool(d.asInt());
+		break;
+	case kTheEmulateMultiButtonMouse:
+		g_director->_emulateMultiButtonMouse = (bool)d.asInt();
 		break;
 	case kTheFixStageSize:
 		g_director->_fixStageSize = (bool)d.u.i;
