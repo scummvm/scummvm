@@ -41,6 +41,11 @@ class DebugConsole : public GUI::Debugger {
 	bool Cmd_invRemove(int argc, const char **argv);
 	bool Cmd_changeDay(int argc, const char **argv);
 	bool Cmd_searchTos(int argc, const char **argv);
+	bool Cmd_playMusic(int argc, const char **argv);
+	bool Cmd_stopMusic(int argc, const char **argv);
+	bool Cmd_playSfx(int argc, const char **argv);
+	bool Cmd_playFloppySfx(int argc, const char **argv);
+	bool Cmd_playSpeech(int argc, const char **argv);
 	bool validateObjVarIndex(int16 varIdx);
 	void printDayAndTime();
 

@@ -36,6 +36,11 @@ DebugConsole::DebugConsole(TosText *tosText) : _tosText(tosText) {
 	registerCmd("invRemove",   WRAP_METHOD(DebugConsole, Cmd_invRemove));
 	registerCmd("changeDay",   WRAP_METHOD(DebugConsole, Cmd_changeDay));
 	registerCmd("searchTos",   WRAP_METHOD(DebugConsole, Cmd_searchTos));
+	registerCmd("playMusic",   WRAP_METHOD(DebugConsole, Cmd_playMusic));
+	registerCmd("stopMusic",   WRAP_METHOD(DebugConsole, Cmd_stopMusic));
+	registerCmd("playSfx",   WRAP_METHOD(DebugConsole, Cmd_playSfx));
+	registerCmd("playFloppySfx",   WRAP_METHOD(DebugConsole, Cmd_playFloppySfx));
+	registerCmd("playSpeech", WRAP_METHOD(DebugConsole, Cmd_playSpeech));
 }
 
 DebugConsole::~DebugConsole() {
@@ -197,6 +202,80 @@ bool DebugConsole::Cmd_searchTos(int argc, const char **argv) {
 			debugPrintf("% 3d: %s\n", i, entry.c_str());
 		}
 	}
+	return true;
+}
+
+bool DebugConsole::Cmd_playMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: playMusic <trackNumber>\n");
+		return true;
+	}
+
+	uint8 trackNumber = (uint8)atoi(argv[1]);
+	if (trackNumber > 19) {
+		debugPrintf("Error: track number must be in range of 0 .. 19\n");
+		return true;
+	}
+
+	if (trackNumber < 8) {
+		g_engine->_sound->playMusic(static_cast<StartMusicId>(trackNumber));
+	}
+	else {
+		g_engine->_sound->playMusic(static_cast<MusicId>(trackNumber - 7), false);
+	}
+	return true;
+}
+
+bool DebugConsole::Cmd_stopMusic(int argc, const char** argv) {
+	g_engine->_sound->stopMusic();
+	return true;
+}
+
+bool DebugConsole::Cmd_playSfx(int argc, const char** argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: playSfx <sfxNumber>\n");
+		return true;
+	}
+
+	uint8 sfxId = (uint8)atoi(argv[1]);
+	if (sfxId > 59) {
+		debugPrintf("Error: SFX number must be in range of 0 .. 59\n");
+		return true;
+	}
+
+	g_engine->_sound->playSfx(sfxId, 1, -1);
+	return true;
+}
+
+bool DebugConsole::Cmd_playFloppySfx(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: playFloppySfx <sfxNumber>\n");
+		return true;
+	}
+
+	uint8 sfxId = (uint8)atoi(argv[1]);
+	if (sfxId < 10 || sfxId > 119) {
+		debugPrintf("Error: SFX number must be in range of 10 .. 119\n");
+		return true;
+	}
+
+	g_engine->_sound->playDosFloppySfx(sfxId, 1);
+	return true;
+}
+
+bool DebugConsole::Cmd_playSpeech(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: playSpeech <speechNumber>\n");
+		return true;
+	}
+
+	int speechId = atoi(argv[1]);
+	if (speechId < 0 || speechId > 998) {
+		debugPrintf("Error: speech number must be in range of 0 .. 998\n");
+		return true;
+	}
+
+	g_engine->_sound->playTosSpeech(speechId);
 	return true;
 }
 
