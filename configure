@@ -3648,6 +3648,7 @@ if test -n "$_host"; then
 			_build_aspect=no
 			_seq_midi=no
 			_timidity=no
+			_libcurl=no # Android backend uses Java HTTP client
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
@@ -6002,6 +6003,10 @@ if test "$_backend" = "emscripten" && test "$_cloud" = "yes"; then
 	_basicnet=no
 	_http=yes
 	echo "Emscripten (HTTP only)"
+elif test "$_backend" = "android"; then
+	_basicnet=yes
+	_http=yes
+	echo "Android"
 elif test "$_libcurl" = "yes"; then
 	_basicnet=yes
 	_http=yes
