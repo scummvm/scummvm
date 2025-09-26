@@ -633,7 +633,7 @@ void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	byte val = _data->readByte();
 
-	if (idx < 0 || idx >= ARRAYSIZE(_vm->_ask))
+	if (idx >= ARRAYSIZE(_vm->_ask))
 		error("Invalid index %d in cmdSetAbout", idx);
 
 	debugC(1, kDebugScripts, "cmdSetAbout(idx=%d, val=%d)", idx, val);

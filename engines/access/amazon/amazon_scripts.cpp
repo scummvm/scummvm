@@ -459,7 +459,7 @@ void AmazonScripts::cmdHelp_v2() {
 			break;
 		} else {
 			// More button selected
-			if ((_game->_moreHelp == 0) || (choice != 0))
+			if (_game->_moreHelp == 0)
 				continue;
 			++_game->_helpLevel;
 			_game->_useItem = 1;
