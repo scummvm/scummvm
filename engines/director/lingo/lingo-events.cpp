@@ -569,7 +569,16 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventStartMovie:
 		case kEventStepMovie:
 		case kEventStopMovie:
-		case kEventPrepareMovie:	// D6+
+
+		case kEventPrepareMovie:		// D6
+
+		case kEventActivateWindow:		// D5
+		case kEventDeactivateWindow:	// D5
+		case kEventMoveWindow:  		// D5
+		case kEventResizeWindow:  		// D5
+		case kEventOpenWindow:  		// D5
+		case kEventCloseWindow:  		// D5
+		case kEventZoomWindow:  		// D5
 			queue.push(LingoEvent(event, eventId, kMovieHandler, false, pos, channelId));
 			break;
 
