@@ -18,35 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_ANDROID_URL_H
+#define BACKENDS_NETWORKING_BASIC_ANDROID_URL_H
 
-#include "backends/networking/basic/curl/cacert.h"
+#include <jni.h>
 
-#include "common/fs.h"
+#include "backends/networking/basic/url.h"
 
 namespace Networking {
 
-Common::String getCaCertPath() {
-#if defined(DATA_PATH)
-	static enum {
-		kNotInitialized,
-		kFileNotFound,
-		kFileExists
-	} state = kNotInitialized;
+class AndroidURL : public URL {
+public:
+	static URL *parseURL(const Common::String &url);
 
-	if (state == kNotInitialized) {
-		Common::FSNode node(DATA_PATH "/cacert.pem");
-		state = node.exists() ? kFileExists : kFileNotFound;
-	}
+	AndroidURL(JNIEnv *env, jobject url);
 
-	if (state == kFileExists) {
-		return DATA_PATH "/cacert.pem";
-	} else {
-		return "";
-	}
-#else
-	return "";
+	~AndroidURL() override;
+
+	Common::String getScheme() const override;
+	Common::String getHost() const override;
+	int getPort(bool returnDefault = false) const override;
+private:
+	jobject _url;
+};
+
+} // End of Namespace Networking
+
 #endif
-}
-
-
-} // End of namespace Networking

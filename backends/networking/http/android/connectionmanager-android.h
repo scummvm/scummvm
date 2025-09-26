@@ -19,34 +19,28 @@
  *
  */
 
-#include "backends/networking/basic/curl/cacert.h"
+#ifndef BACKENDS_NETWORKING_HTTP_ANDROID_CONNECTIONMANAGER_ANDROID_H
+#define BACKENDS_NETWORKING_HTTP_ANDROID_CONNECTIONMANAGER_ANDROID_H
 
-#include "common/fs.h"
+#include <jni.h>
+
+#include "backends/networking/http/connectionmanager.h"
 
 namespace Networking {
 
-Common::String getCaCertPath() {
-#if defined(DATA_PATH)
-	static enum {
-		kNotInitialized,
-		kFileNotFound,
-		kFileExists
-	} state = kNotInitialized;
+class ConnectionManagerAndroid : public ConnectionManager {
+private:
+	jobject _manager;
 
-	if (state == kNotInitialized) {
-		Common::FSNode node(DATA_PATH "/cacert.pem");
-		state = node.exists() ? kFileExists : kFileNotFound;
-	}
+	void processTransfers() override;
 
-	if (state == kFileExists) {
-		return DATA_PATH "/cacert.pem";
-	} else {
-		return "";
-	}
-#else
-	return "";
-#endif
-}
+public:
+	ConnectionManagerAndroid();
+	~ConnectionManagerAndroid() override;
 
+	void registerRequest(JNIEnv *env, jobject request) const;
+};
 
 } // End of namespace Networking
+
+#endif
