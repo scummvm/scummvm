@@ -2507,13 +2507,11 @@ void CMainPackRatWindow::MoveBadGuys() {
 				apBadGuySprite[nWhichBadGuy]->PaintSprite(pDC, m_aptCurrentBPos[nWhichBadGuy]);
 				break;
 			}
-			if (CheckMessages() == true) {
-				PostMessage(WM_CLOSE);
-				bEndGame = true;
-			}
+
 			anBadGuyMove[nWhichBadGuy]++;
 		}
 	}
+
 	ReleaseDC(pDC);
 	return;
 }
