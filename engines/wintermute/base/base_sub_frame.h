@@ -58,14 +58,8 @@ public:
 	int32 _hotspotX;
 	int32 _hotspotY;
 	uint32 _alpha;
-	// These two setters and getters are rather useful, as they allow _rect to be lazily defined
-	// Thus we don't need to load the actual graphics before the rect is actually needed.
-	Common::Rect32 &getRect();
-	void setRect(Common::Rect32 rect);
-private:
-	bool _wantsDefaultRect;
 	Common::Rect32 _rect;
-public:
+
 	bool _ckDefault;
 	byte _ckRed;
 	byte _ckGreen;

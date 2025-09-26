@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -51,7 +52,6 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 	_alpha = Graphics::kDefaultRgbaMod;
 	_transparent = 0xFFFF00FF;
 
-	_wantsDefaultRect = false;
 	BasePlatform::setRectEmpty(&_rect);
 
 	_editorSelected = false;
@@ -210,23 +210,10 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	if (BasePlatform::isRectEmpty(&rect)) {
 		setDefaultRect();
 	} else {
-		setRect(rect);
+		_rect = rect;
 	}
 
 	return STATUS_OK;
-}
-
-Common::Rect32 &BaseSubFrame::getRect() {
-	if (_wantsDefaultRect && _surface) {
-		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
-		_wantsDefaultRect = false;
-	}
-	return _rect;
-}
-
-void BaseSubFrame::setRect(Common::Rect32 rect) {
-	_wantsDefaultRect = false;
-	_rect = rect;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -243,9 +230,9 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	if (registerOwner != nullptr && !_decoration) {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
-			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_game,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
+			_game->_renderer->_rectList.add(new BaseActiveRect(_game, registerOwner, this, x - _hotspotX + _rect.left, y - _hotspotY + _rect.top, _rect.right - _rect.left, _rect.bottom - _rect.top, zoomX, zoomY, precise));
 		} else {
-			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_game,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
+			_game->_renderer->_rectList.add(new BaseActiveRect(_game, registerOwner, this, (int)(x - (_hotspotX + _rect.left) * (zoomX / 100)), (int)(y - (_hotspotY + _rect.top) * (zoomY / 100)), (int)((_rect.right - _rect.left) * (zoomX / 100)), (int)((_rect.bottom - _rect.top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
 	if (_game->_suspendedRendering) {
@@ -260,12 +247,12 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (rotate != Graphics::kDefaultAngle) {
-		res = _surface->displayTransRotate(x, y, rotate, _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+		res = _surface->displayTransRotate(x, y, rotate, _hotspotX, _hotspotY, _rect, zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 	} else {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
-			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, _rect, alpha, blendMode, _mirrorX, _mirrorY);
 		} else {
-			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / Graphics::kDefaultZoomX)), (int)(y - _hotspotY * (zoomY / Graphics::kDefaultZoomY)), getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
+			res = _surface->displayTransZoom((int)(x - _hotspotX * (zoomX / Graphics::kDefaultZoomX)), (int)(y - _hotspotY * (zoomY / Graphics::kDefaultZoomY)), _rect, zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 		}
 	}
 
@@ -283,10 +270,10 @@ bool BaseSubFrame::getBoundingRect(Common::Rect32 *rect, int x, int y, float sca
 	float ratioY = scaleY / 100.0f;
 
 	BasePlatform::setRect(rect,
-				  (int)(x - _hotspotX * ratioX),
-				  (int)(y - _hotspotY * ratioY),
-				  (int)(x - _hotspotX * ratioX + (getRect().right - getRect().left) * ratioX),
-				  (int)(y - _hotspotY * ratioY + (getRect().bottom - getRect().top) * ratioY));
+	                      (int)(x - _hotspotX * ratioX),
+	                      (int)(y - _hotspotY * ratioY),
+	                      (int)(x - _hotspotX * ratioX + (_rect.right - _rect.left) * ratioX),
+	                      (int)(y - _hotspotY * ratioY + (_rect.bottom - _rect.top) * ratioY));
 	return true;
 }
 
@@ -310,8 +297,8 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 	if (_surface) {
 		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	}
-	if (!BasePlatform::equalRect(&rect, &getRect())) {
-		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", getRect().left, getRect().top, getRect().right, getRect().bottom);
+	if (!BasePlatform::equalRect(&rect, &_rect)) {
+		buffer->putTextIndent(indent + 2, "RECT { %d,%d,%d,%d }\n", _rect.left, _rect.top, _rect.right, _rect.bottom);
 	}
 
 	if (_hotspotX != 0 || _hotspotY != 0) {
@@ -361,9 +348,8 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 //////////////////////////////////////////////////////////////////////////
 void BaseSubFrame::setDefaultRect() {
 	if (_surface) {
-		_wantsDefaultRect = true;
+		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 	} else {
-		_wantsDefaultRect = false;
 		BasePlatform::setRectEmpty(&_rect);
 	}
 }
@@ -382,7 +368,11 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_hotspotX));
 	persistMgr->transferSint32(TMEMBER(_hotspotY));
 	persistMgr->transferRect32(TMEMBER(_rect));
-	persistMgr->transferBool(TMEMBER(_wantsDefaultRect));
+
+	bool wantsDefaultRect = false;
+	if (!persistMgr->checkVersion(1, 9, 1)) {
+		persistMgr->transferBool(TMEMBER(wantsDefaultRect));
+	}
 
 	persistMgr->transferCharPtr(TMEMBER(_surfaceFilename));
 	persistMgr->transferBool(TMEMBER(_ckDefault));
@@ -399,6 +389,15 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	// initialise to default
 	if (!persistMgr->getIsSaving()) {
 		_surface = nullptr;
+	}
+
+	// restore proper _rect values for older saves
+	if (!persistMgr->getIsSaving() && wantsDefaultRect) {
+		BaseImage img = BaseImage();
+		int32 width, height;
+		if (img.getImageInfo(_surfaceFilename, width, height)) {
+			BasePlatform::setRect(&_rect, 0, 0, width, height);
+		}
 	}
 
 	return STATUS_OK;
