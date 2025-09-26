@@ -149,7 +149,7 @@ bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType c
 			delete frame;
 			delete subframe;
 		} else {
-			subframe->setDefaultRect();
+			BasePlatform::setRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
 			frame->_subframes.add(subframe);
 			_frames.add(frame);
 			_currentFrame = 0;
