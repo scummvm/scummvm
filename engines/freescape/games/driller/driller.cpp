@@ -94,23 +94,6 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_endArea = 127;
 	_endEntrance = 0;
 
-	_soundIndexShoot = 1;
-	_soundIndexCollide = 2;
-	_soundIndexStepDown = 3;
-	_soundIndexStepUp = 4;
-	_soundIndexMenu = 2;
-	_soundIndexStart = 9;
-	_soundIndexAreaChange = 5;
-	_soundIndexHit = 2;
-
-	_soundIndexFall = 14;
-	_soundIndexNoShield = 20;
-	_soundIndexNoEnergy = 20;
-	_soundIndexFallen = 20;
-	_soundIndexTimeout = 20;
-	_soundIndexForceEndGame = 20;
-	_soundIndexCrushed = 20;
-
 	_borderExtra = nullptr;
 	_borderExtraTexture = nullptr;
 	_playerSid = nullptr;

@@ -30,6 +30,7 @@ namespace Freescape {
 struct soundFx {
 	int size;
 	float sampleRate;
+	int repetitions;
 	byte *data;
 };
 

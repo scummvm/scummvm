@@ -432,19 +432,15 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 
 	int size = _soundsFx[index]->size;
 	int sampleRate = _soundsFx[index]->sampleRate;
+	int repetitions = _soundsFx[index]->repetitions;
 	byte *data = _soundsFx[index]->data;
-	int loops = 1;
-
-	if (index == 10)
-		loops = 5;
-	else if (index == 15)
-		loops = 50;
 
 	if (size > 4) {
 		Audio::SeekableAudioStream *s = Audio::makeRawStream(data, size, sampleRate, Audio::FLAG_16BITS, DisposeAfterUse::NO);
-		Audio::AudioStream *stream = new Audio::LoopingAudioStream(s, loops);
+		Audio::AudioStream *stream = new Audio::LoopingAudioStream(s, repetitions);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
-	}
+	} else
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is empty", index);
 }
 
 void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
@@ -556,13 +552,14 @@ void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset,
 		int zero = file->readUint16BE();
 		assert(zero == 0);
 		int size = file->readUint16BE();
-		int sampleRate = file->readUint16BE();
-		debugC(1, kFreescapeDebugParser, "Loading sound: %d (size: %d, sample rate: %d) at %" PRIx64, i, size, sampleRate, file->pos());
+		float sampleRate = float(file->readUint16BE()) / 2;
+		debugC(1, kFreescapeDebugParser, "Loading sound: %d (size: %d, sample rate: %f) at %" PRIx64, i, size, sampleRate, file->pos());
 		byte *data = (byte *)malloc(size * sizeof(byte));
 		file->read(data, size);
 		sound->sampleRate = sampleRate;
 		sound->size = size;
 		sound->data = (byte *)data;
+		sound->repetitions = 1;
 		_soundsFx[i] = sound;
 	}
 }

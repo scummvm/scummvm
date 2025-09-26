@@ -50,6 +50,23 @@ void DrillerEngine::initDOS() {
 	_moveDownArea = Common::Rect(219, 157, 243, 167);
 	_deployDrillArea = Common::Rect(140, 175, 179, 191);
 	_infoScreenArea = Common::Rect(130, 125, 188, 144);
+
+	_soundIndexShoot = 1;
+	_soundIndexCollide = 2;
+	_soundIndexStepDown = 3;
+	_soundIndexStepUp = 4;
+	_soundIndexMenu = 2;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+	_soundIndexHit = 2;
+
+	_soundIndexFall = 14;
+	_soundIndexNoShield = 20;
+	_soundIndexNoEnergy = 20;
+	_soundIndexFallen = 20;
+	_soundIndexTimeout = 20;
+	_soundIndexForceEndGame = 20;
+	_soundIndexCrushed = 20;
 }
 
 /*
