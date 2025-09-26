@@ -26,7 +26,7 @@
 
 namespace Tot {
 
-    // Debug methods
+	// Debug methods
 	void drawMouseGrid(RoomFileRegister *screen);
 	void drawScreenGrid(RoomFileRegister *screen);
 	void drawCharacterPosition();

@@ -75,7 +75,7 @@ TextEntry TotEngine::readTextRegister() {
 	TextEntry regmht;
 	// Since the text is encrypted it's safer to save the size as reported by
 	// the pascal string, because the encrypter character might be the termination
-    // character
+	// character
 	byte size = _verbFile.readByte();
 	_verbFile.seek(-1, SEEK_CUR);
 	regmht.text = _verbFile.readPascalString(false);

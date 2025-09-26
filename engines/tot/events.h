@@ -45,15 +45,15 @@ class TotEventManager {
 private:
 	Common::Event _event;
 
-    void handleKey(const Common::Event &event);
+	void handleKey(const Common::Event &event);
 public:
 	bool _escKeyFl = false;
 	bool _keyPressed = false;
 	GAME_KEY _gameKey = KEY_NONE;
-    bool _leftMouseButton = 0;
-    bool _rightMouseButton = 0;
-    int16 _mouseX = 0;
-    int16 _mouseY = 0;
+	bool _leftMouseButton = 0;
+	bool _rightMouseButton = 0;
+	int16 _mouseX = 0;
+	int16 _mouseY = 0;
 	uint16 _lastChar = '\0';
 
 	TotEventManager();

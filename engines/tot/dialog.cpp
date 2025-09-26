@@ -320,7 +320,7 @@ void fixTree(Tree tree) {
 	}
 }
 
-void showDialogueLine(
+void showDialogOptions(
 	Common::String conversationMatrix[16],
 	uint &chosenTopic,
 	byte conversationIndex,
@@ -464,7 +464,7 @@ void talk(byte characterIndex) {
 			l1++;
 		};
 		l1 = linkedList->begin();
-		showDialogueLine(conversationMatrix, newNode, conversationIndex, l1, endOfConversation);
+		showDialogOptions(conversationMatrix, newNode, conversationIndex, l1, endOfConversation);
 		delete linkedList;
 		g_engine->sayLine(newNode, 255, 0, response, true);
 		stringAux = 0;

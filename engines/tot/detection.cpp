@@ -32,7 +32,7 @@ const DebugChannelDef TotMetaEngineDetection::debugFlagList[] = {
 };
 
 TotMetaEngineDetection::TotMetaEngineDetection() : AdvancedMetaEngineDetection(
-	    Tot::gameDescriptions, Tot::totGames) {
+		Tot::gameDescriptions, Tot::totGames) {
 }
 
 REGISTER_PLUGIN_STATIC(TOT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TotMetaEngineDetection);
