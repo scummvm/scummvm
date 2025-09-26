@@ -597,6 +597,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		} else
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 		executeMovementConditions();
+		if (isDOS())
+			playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	} else if (keycode == kActionCollectDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
@@ -638,6 +640,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		assert(scoreToRemove <= uint32(_gameStateVars[k8bitVariableScore]));
 		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
 		executeMovementConditions();
+		if (isDOS())
+			playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	}
 }
 

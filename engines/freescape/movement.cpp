@@ -579,7 +579,9 @@ void FreescapeEngine::stopMovement() {
 }
 
 bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
-	bool executed = false;
+	bool floorExecuted = false;
+	bool wallExecuted = false;
+
 	GeometricObject *gobj = nullptr;
 	Object *collided = nullptr;
 	_gotoExecuted = false;
@@ -591,7 +593,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	if (collided) {
 		gobj = (GeometricObject *)collided;
 		debugC(1, kFreescapeDebugMove, "Collided down with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		executed |= executeObjectConditions(gobj, false, true, false);
+		floorExecuted |= executeObjectConditions(gobj, false, true, false);
 	}
 
 	if (_gotoExecuted) {
@@ -616,16 +618,17 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 		if (collided) {
 			gobj = (GeometricObject *)collided;
 			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-			executed |= executeObjectConditions(gobj, false, true, false);
-			//break;
+			wallExecuted |= executeObjectConditions(gobj, false, true, false);
 		}
 		if (_gotoExecuted) {
 			executeMovementConditions();
 			return true;
 		}
+		if (wallExecuted)
+			break;
 	}
 
-	return executed;
+	return floorExecuted || wallExecuted;
 }
 
 } // namespace Freescape
