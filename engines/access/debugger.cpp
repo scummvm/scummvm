@@ -393,6 +393,8 @@ bool AmazonDebugger::Cmd_StartChapter(int argc, const char **argv) {
 
 	// Build up a simple one line script to start the given chapter
 	byte *chapterScript = (byte *)malloc(5);
+	if (!chapterScript)
+		error("malloc failed");
 	chapterScript[0] = SCRIPT_START_BYTE;
 	chapterScript[1] = ROOM_SCRIPT % 256;
 	chapterScript[2] = ROOM_SCRIPT / 256;
