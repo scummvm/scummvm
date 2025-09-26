@@ -36,8 +36,8 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	// These sounds can be overriden by the class of each platform
 	_soundIndexShoot = 8;
 	_soundIndexCollide = 1;
-	_soundIndexFall = 3;
-	_soundIndexClimb = 3;
+	_soundIndexStepDown = 3;
+	_soundIndexStepUp = 3;
 	_soundIndexMenu = -1;
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;

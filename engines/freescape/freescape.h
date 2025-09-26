@@ -495,8 +495,9 @@ public:
 	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
 	int _soundIndexShoot;
 	int _soundIndexCollide;
+	int _soundIndexStepDown;
+	int _soundIndexStepUp;
 	int _soundIndexFall;
-	int _soundIndexClimb;
 	int _soundIndexMenu;
 	int _soundIndexStart;
 	int _soundIndexAreaChange;

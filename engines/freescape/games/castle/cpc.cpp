@@ -32,8 +32,9 @@ void CastleEngine::initCPC() {
 	_viewArea = Common::Rect(40, 33 - 2, 280, 152);
 	_soundIndexShoot = 5;
 	_soundIndexCollide = -1;
-	_soundIndexFall = -1;
-	_soundIndexClimb = -1;
+	_soundIndexFallen = -1;
+	_soundIndexStepUp = -1;
+	_soundIndexStepDown = -1;
 	_soundIndexMenu = -1;
 	_soundIndexStart = 6;
 	_soundIndexAreaChange = 7;

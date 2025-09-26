@@ -532,6 +532,8 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		_endGameDelayTicks = 60 * 5;
 		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
+		else 
+			playSound(_soundIndexFall, false, _movementSoundHandle);
 
 		if (_hasFallen)
 			stopMovement();
@@ -552,11 +554,11 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (isSteppingUp)  {
 		debug("Stepping up sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
-			playSound(_soundIndexClimb, false, _movementSoundHandle);
+			playSound(_soundIndexStepUp, false, _movementSoundHandle);
 	} else if (isSteppingDown) {
 		debug("Stepping down sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
-			playSound(_soundIndexFall, false, _movementSoundHandle);
+			playSound(_soundIndexStepDown, false, _movementSoundHandle);
 	} else if (isCollidingWithWall) {
 		debug("Colliding with wall sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
@@ -581,6 +583,8 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	GeometricObject *gobj = nullptr;
 	Object *collided = nullptr;
 	_gotoExecuted = false;
+
+	_speaker->stop();
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);

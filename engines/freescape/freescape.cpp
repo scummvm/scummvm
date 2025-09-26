@@ -175,7 +175,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_soundIndexShoot = 1;
 	_soundIndexCollide = -1;
 	_soundIndexFall = -1;
-	_soundIndexClimb = -1;
+	_soundIndexStepUp = -1;
+	_soundIndexStepDown = -1;
 	_soundIndexMenu = -1;
 	_soundIndexStart = -1;
 	_soundIndexAreaChange = -1;
@@ -616,6 +617,7 @@ void FreescapeEngine::processInput() {
 				_savedScreen = nullptr;
 				break;
 			case kActionChangeMode:
+				playSound(_soundIndexCollide, false, _movementSoundHandle);
 				_shootMode = !_shootMode;
 				centerCrossair();
 				if (!_shootMode) {

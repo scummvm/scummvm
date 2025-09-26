@@ -96,12 +96,14 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_soundIndexShoot = 1;
 	_soundIndexCollide = 2;
-	_soundIndexFall = 3;
-	_soundIndexClimb = 4;
+	_soundIndexStepDown = 3;
+	_soundIndexStepUp = 4;
 	_soundIndexMenu = 2;
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;
+	_soundIndexHit = 2;
 
+	_soundIndexFall = 14;
 	_soundIndexNoShield = 20;
 	_soundIndexNoEnergy = 20;
 	_soundIndexFallen = 20;
@@ -965,7 +967,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 }
 
 void DrillerEngine::drawSensorShoot(Sensor *sensor) {
-	if (_gameStateControl == kFreescapeGameStatePlaying) {
+	if (_underFireFrames == 1 && _gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
 		playSound(_soundIndexHit, true, _soundFxHandle);
 	}
