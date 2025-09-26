@@ -649,6 +649,9 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		movie->_lastEventId[el.event] = el.eventId;
 
 		if (_vm->getVersion() >= 600) {
+			// Reset it for further event processing
+			g_director->getCurrentMovie()->_currentSpriteNum = 0;
+
 			// We need to execute all behaviours before deciding if we pass
 			// through or not
 			if (el.scriptType == kScoreScript && el.passByDefault == true) {
@@ -680,6 +683,7 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 
 	if (g_director->getVersion() >= 600 && st == kScoreScript && obj) {
 		if (obj->getMethod(_eventHandlerTypes[event]).type != VOIDSYM) {
+			g_director->getCurrentMovie()->_currentSpriteNum = channelId;
 			push(Datum(obj));
 			LC::call(_eventHandlerTypes[event], 1, false);
 			return execute();

@@ -65,6 +65,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheColorQD,			"colorQD",			false, 200, true },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false, 200, true },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 200, true },	// D2 f
+	{ kTheCurrentSpriteNum,	"currentSpriteNum",	false, 600, true },	//						D6 p
 	{ kTheDate,				"date",				false, 300, true },	//		D3 f
 	{ kTheDeskTopRectList,	"deskTopRectList",	false, 500, true },	//					D5 p
 	{ kTheDigitalVideoTimeScale,"digitalVideoTimeScale",false, 500, false },//			D5 p
@@ -550,6 +551,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheControlDown:
 		d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		break;
+	case kTheCurrentSpriteNum:
+		d = (int)movie->_currentSpriteNum;
 		break;
 	case kTheDate:
 		d = getTheDate(field);

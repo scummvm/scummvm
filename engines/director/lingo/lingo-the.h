@@ -46,6 +46,7 @@ enum TheEntityType {
 	kTheColorQD,
 	kTheCommandDown,
 	kTheControlDown,
+	kTheCurrentSpriteNum,
 	kTheDate,
 	kTheDeskTopRectList,
 	kTheDigitalVideoTimeScale,
