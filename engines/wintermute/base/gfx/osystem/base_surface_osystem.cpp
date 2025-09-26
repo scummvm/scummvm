@@ -115,8 +115,12 @@ bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed
 	return STATUS_OK;
 }
 
-bool BaseSurfaceOSystem::finishLoad() {
+bool BaseSurfaceOSystem::loadImage() {
+	if (!_filename) {
+		return false;
+	}
 	Common::String filename = _filename;
+
 	BaseImage *image = new BaseImage();
 	if (!image->loadFile(filename)) {
 		delete image;
@@ -274,7 +278,7 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) const {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::startPixelOp() {
 	if (!_valid) {
-		if (DID_FAIL(finishLoad())) {
+		if (DID_FAIL(loadImage())) {
 			return STATUS_FAILED;
 		}
 	}
@@ -347,7 +351,7 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Common::Rect32 *rect, Common::
 
 	// TODO: Skip this check if we can reuse an existing ticket?
 	if (!_valid) {
-		finishLoad();
+		loadImage();
 	}
 
 	if (renderer->_forceAlphaColor != 0) {

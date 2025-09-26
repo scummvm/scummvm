@@ -39,6 +39,7 @@ public:
 	~BaseSurfaceOpenGL3D();
 
 	bool invalidate() override;
+	bool prepareToDraw() override;
 
 	bool displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
 	bool displayTransZoom(int x, int y, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
@@ -56,6 +57,14 @@ public:
 	bool isTransparentAtLite(int x, int y) const override;
 
 	void setTexture();
+
+	int getWidth() override {
+		return _width;
+	}
+
+	int getHeight() override {
+		return _height;
+	}
 
 	GLuint getTextureName() {
 		return _tex;
@@ -79,6 +88,7 @@ private:
 	bool _pixelOpReady;
 	bool _surfaceModified;
 
+	bool loadImage();
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 };
 
