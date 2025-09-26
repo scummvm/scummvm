@@ -224,9 +224,9 @@ void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
 			switch (ev.type) {
 			case Common::EVENT_JOYAXIS_MOTION:
 				if (ev.joystick.axis == 0)
-					_joystickPos.x = ev.joystick.position;
+					_joystickPos.x = ev.joystick.position + JOYSTICK_REST_POS;
 				else
-					_joystickPos.y = ev.joystick.position;
+					_joystickPos.y = ev.joystick.position + JOYSTICK_REST_POS;
 
 				joystickWin->SendMessage(MM_JOY1MOVE, JOYSTICKID1,
 					MAKELPARAM(_joystickPos.x, _joystickPos.y));
