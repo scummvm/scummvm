@@ -687,6 +687,8 @@ void Score::update() {
 			// Call the perFrameHook as soon as a frame switch is done.
 			// If there is a transition, the perFrameHook is called
 			// after each transition subframe instead of here.
+			//
+			// This also sends stepFrame message to actorList
 			if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
 				_lingo->executePerFrameHook(_curFrameNumber, 0);
 			}
