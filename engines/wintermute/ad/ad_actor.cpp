@@ -1480,10 +1480,10 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferCharPtr(TMEMBER(_turnLeftAnimName));
 	persistMgr->transferCharPtr(TMEMBER(_turnRightAnimName));
 
-	// TODO: add at next save game version bump
-	//persistMgr->transferBool(TMEMBER(_stopOnBlocked));
-	//persistMgr->transferBool(TMEMBER(_actorIsBlocked));
-	if (!persistMgr->getIsSaving()) {
+	if (persistMgr->checkVersion(1, 9, 1)) {
+		persistMgr->transferBool(TMEMBER(_stopOnBlocked));
+		persistMgr->transferBool(TMEMBER(_actorIsBlocked));
+	} else if (!persistMgr->getIsSaving()) {
 		_stopOnBlocked = false;
 		_actorIsBlocked = false;
 	}
