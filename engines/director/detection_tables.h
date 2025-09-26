@@ -5122,6 +5122,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("max2", "", "Max and Marie Go Shopping", "r:9e6da4abedede80452f2b67cb8e03441", 484101, 404),
 	WINGAME2("max2", "", "MARIE.EXE",		  		  "t:3e3f8477d36f47953b7bfaa0f94c4f2b", 700909,
 						 "DATEN/ABSPANNE.DXR",		  "f:075f6c1ebecde0c63708cc77da0356d1", 408652, 404),
+
+	WINGAME2_l("max2", "", "MARIE.EXE",      "t:2c82e7da7e5b61e3c2af87d60a445629", 700907,
+						 "DATEN/ABSPANNE.DXR", "f:e8e889025af9a4d9c90f0537094496d8", 410398, Common::DE_DEU, 404),
+
 	MACDEMO1_l("max2", "Demo", "Max en Merel... DEMO", "r:a2f5930615493c2358b2ad07e731c475", 502534, Common::NL_NLD, 404),
 	WINDEMO1_l("max2", "Demo", "MAX2DEMO.EXE",		   "t:e4a961e789ce970e3d23356d327b9f31", 700837, Common::DE_DEU, 404),
 	WINDEMO1_l("max2", "Demo", "MAX2DMA.EXE",		   "t:81b27347cb5daf92882725129f8aa688", 752991, Common::NL_NLD, 404),
