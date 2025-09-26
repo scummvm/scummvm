@@ -49,7 +49,7 @@ AccessVIDMovieDecoder::AccessVIDMovieDecoder()
 }
 
 AccessVIDMovieDecoder::~AccessVIDMovieDecoder() {
-	close();
+	AccessVIDMovieDecoder::close();
 }
 
 bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {

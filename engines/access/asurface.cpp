@@ -61,7 +61,7 @@ SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *str
 		if (size != frameSize)
 			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);
 	}
-	create(xSize, ySize);
+	Graphics::Screen::create(xSize, ySize);
 
 	// Empty surface
 	byte *data = (byte *)getPixels();
@@ -79,7 +79,7 @@ SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *str
 }
 
 SpriteFrame::~SpriteFrame() {
-	free();
+	Graphics::Screen::free();
 }
 
 /*------------------------------------------------------------------------*/
@@ -111,7 +111,7 @@ int BaseSurface::_lastBoundsW;
 int BaseSurface::_lastBoundsH;
 
 BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
-	free();		// Free the 0x0 surface allocated by Graphics::Screen
+	Graphics::Screen::free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
 	_orgX1 = _orgY1 = 0;

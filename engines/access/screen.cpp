@@ -48,7 +48,7 @@ ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windo
 }
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
-	create(320, 200);
+	Graphics::Screen::create(320, 200);
 	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 	Common::fill(&_manPal[0], &_manPal[0x60], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
