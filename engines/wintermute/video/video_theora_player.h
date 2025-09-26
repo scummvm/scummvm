@@ -85,8 +85,8 @@ public:
 	BaseSurface *getTexture() const;
 
 	// alpha related
-	Common::String _alphaFilename;
-	bool setAlphaImage(const Common::String &filename);
+	char *_alphaFilename;
+	bool setAlphaImage(const char *filename);
 
 	bool seekToTime(uint32 Time);
 

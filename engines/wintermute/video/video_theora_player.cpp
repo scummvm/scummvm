@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/dcgf.h"
 
 #include "video/theora_decoder.h"
@@ -68,7 +69,7 @@ void VideoTheoraPlayer::setDefaults() {
 	_dontDropFrames = false;
 
 	_texture = nullptr;
-	_alphaFilename = "";
+	_alphaFilename = nullptr;
 
 	_frameRendered = false;
 
@@ -376,15 +377,15 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
+bool VideoTheoraPlayer::setAlphaImage(const char *filename) {
 	assert(_texture);
-	if (filename == "" || !_texture || DID_FAIL(_texture->setAlphaImage(filename))) {
-		_alphaFilename = "";
+	if (!filename || !_texture || DID_FAIL(_texture->setAlphaImage(filename))) {
+		SAFE_DELETE_ARRAY(_alphaFilename);
 		return STATUS_FAILED;
 	}
 
 	if (_alphaFilename != filename) {
-		_alphaFilename = filename;
+		BaseUtils::setString(&_alphaFilename, filename);
 	}
 	return STATUS_OK;
 }
@@ -443,7 +444,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_savedPos));
 	persistMgr->transferSint32(TMEMBER(_savedState));
 	persistMgr->transferString(TMEMBER(_filename));
-	persistMgr->transferString(TMEMBER(_alphaFilename));
+	persistMgr->transferCharPtr(TMEMBER(_alphaFilename));
 	persistMgr->transferSint32(TMEMBER(_posX));
 	persistMgr->transferSint32(TMEMBER(_posY));
 	persistMgr->transferFloat(TMEMBER(_playZoom));
@@ -461,7 +462,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::initializeSimple() {
 	if (DID_SUCCEED(initialize(_filename))) {
-		if (_alphaFilename != "") {
+		if (_alphaFilename) {
 			setAlphaImage(_alphaFilename);
 		}
 		play(_playbackType, _posX, _posY, false, false, _looping, _savedPos, _playZoom);

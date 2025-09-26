@@ -324,7 +324,7 @@ public:
 	bool setMusicStartTime(int channel, uint32 time);
 	bool pauseMusic(int channel);
 	bool stopMusic(int channel);
-	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
+	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0, uint32 privVolume = 100);
 	BaseSound *_music[NUM_MUSIC_CHANNELS];
 	bool _musicCrossfadeRunning;
 	bool _musicCrossfadeSwap;

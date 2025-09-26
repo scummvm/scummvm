@@ -78,7 +78,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (defaultCK) {
 		ckRed   = 255;
 		ckGreen = 0;
@@ -89,7 +89,7 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 	if (!img.getImageInfo(filename, _width, _height)) {
 		return false;
 	}
-	
+
 	if (lifeTime != -1 && _lifeTime == 0) {
 		_valid = false;
 	}
@@ -99,8 +99,10 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 	_ckGreen = ckGreen;
 	_ckBlue = ckBlue;
 
-	_filename = filename;
-	
+	if (!_filename || scumm_stricmp(_filename, filename) != 0) {
+		setFilename(filename);
+	}
+
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
 	}
@@ -114,8 +116,9 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 }
 
 bool BaseSurfaceOSystem::finishLoad() {
+	Common::String filename = _filename;
 	BaseImage *image = new BaseImage();
-	if (!image->loadFile(_filename)) {
+	if (!image->loadFile(filename)) {
 		delete image;
 		return false;
 	}
@@ -135,7 +138,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	bool replaceAlpha = true;
 	if (image->getSurface()->format.bytesPerPixel == 1) {
 		if (!image->getPalette()) {
-			error("Missing palette while loading 8bit image %s", _filename.c_str());
+			error("Missing palette while loading 8bit image %s", _filename);
 		}
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette(), image->getPaletteCount());
 	} else if (image->getSurface()->format != g_system->getScreenFormat()) {
@@ -147,7 +150,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 
 	_game->addMem(_width * _height * 4);
 
-	if (_filename.matchString("savegame:*g", true)) {
+	if (filename.matchString("savegame:*g", true)) {
 		uint8 r, g, b, a;
 		for (int x = 0; x < _surface->w; x++) {
 			for (int y = 0; y < _surface->h; y++) {
@@ -158,10 +161,10 @@ bool BaseSurfaceOSystem::finishLoad() {
 		}
 	}
 
-	if (_filename.hasSuffix(".bmp")) {
+	if (filename.hasSuffix(".bmp")) {
 		// Ignores alpha channel for BMPs
 		needsColorKey = true;
-	} else if (_filename.hasSuffix(".jpg")) {
+	} else if (filename.hasSuffix(".jpg")) {
 		// Ignores alpha channel for JPEGs
 		needsColorKey = true;
 	} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
@@ -197,7 +200,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	// Some Rosemary sprites have non-fully transparent pixels
 	// In original WME it wasn't seen because sprites were downscaled
 	// Let's set alpha to 0 if it is smaller then some treshold
-	if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") &&
+	if (BaseEngine::instance().getGameId() == "rosemary" && filename.hasPrefix("actors") &&
 	    _alphaType == Graphics::ALPHA_FULL && _surface->format.aBits() > 4) {
 		uint32 mask = _surface->format.ARGBToColor(255, 0, 0, 0);
 		uint32 treshold = _surface->format.ARGBToColor(16, 0, 0, 0);
@@ -212,7 +215,6 @@ bool BaseSurfaceOSystem::finishLoad() {
 			}
 		}
 	}
-
 
 	return true;
 }
@@ -414,7 +416,7 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::setAlphaImage(const Common::String &filename) {
+bool BaseSurfaceOSystem::setAlphaImage(const char *filename) {
 	BaseImage *alphaImage = new BaseImage();
 	if (!alphaImage->loadFile(filename)) {
 		delete alphaImage;

@@ -1291,9 +1291,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
 		int channel = 0;
 		if (strcmp(name, "PlayMusic") == 0) {
-			stack->correctParams(3);
-		} else {
 			stack->correctParams(4);
+		} else {
+			stack->correctParams(5);
 			channel = stack->pop()->getInt();
 		}
 
@@ -1304,10 +1304,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *valLoopStart = stack->pop();
 		uint32 loopStart = (uint32)(valLoopStart->isNULL() ? 0 : valLoopStart->getInt());
 
-		//CScValue* ValPrivVolume = Stack->Pop();
-		//DWORD PrivVolume = (DWORD)(ValPrivVolume->IsNULL()?100:ValPrivVolume->GetInt());
+		ScValue *valPrivVolume = stack->pop();
+		uint32 privVolume = (uint32)(valPrivVolume->isNULL() ? 100 : valPrivVolume->getInt());
 
-		if (DID_FAIL(playMusic(channel, filename, looping, loopStart))) {
+		if (DID_FAIL(playMusic(channel, filename, looping, loopStart, privVolume))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -4423,7 +4423,7 @@ bool BaseGame::displayWindows(bool inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
+bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart, uint32 privVolume) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
 		_game->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
 		return STATUS_FAILED;
@@ -4432,7 +4432,7 @@ bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32
 	SAFE_DELETE(_music[channel]);
 
 	_music[channel] = new BaseSound(_game);
-	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, TSoundType::SOUND_MUSIC, true))) {
+	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, TSoundType::SOUND_MUSIC, true, privVolume))) {
 		if (_musicStartTime[channel]) {
 			_music[channel]->setPositionTime(_musicStartTime[channel]);
 			_musicStartTime[channel] = 0;

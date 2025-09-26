@@ -118,31 +118,32 @@ bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Common::Rect32 rect, int nu
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOpenGL3D::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (defaultCK) {
 		ckRed = 255;
 		ckGreen = 0;
 		ckBlue = 255;
 	}
 
+	Common::String surfacefilename = filename;
 	BaseImage img = BaseImage();
-	if (!img.getImageInfo(filename, _width, _height)) {
+	if (!img.getImageInfo(surfacefilename, _width, _height)) {
 		return false;
 	}
 
 	if (lifeTime != -1 && _lifeTime == 0) {
 		_valid = false;
 	} else {
-		if (!img.loadFile(filename)) {
+		if (!img.loadFile(surfacefilename)) {
 			return false;
 		}
-		
+
 		if (img.getSurface()->format.bytesPerPixel == 1 && img.getPalette() == nullptr) {
 			return false;
 		}
+
 		bool needsColorKey = false;
 		bool replaceAlpha = true;
-
 
 		if (_imageData) {
 			_imageData->free();
@@ -152,7 +153,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 
 		_imageData = img.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32(), img.getPalette(), img.getPaletteCount());
 
-		if (_filename.matchString("savegame:*g", true)) {
+		if (surfacefilename.matchString("savegame:*g", true)) {
 			uint8 r, g, b, a;
 			for (int x = 0; x < _imageData->w; x++) {
 				for (int y = 0; y < _imageData->h; y++) {
@@ -163,10 +164,10 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 			}
 		}
 
-		if (_filename.hasSuffix(".bmp")) {
+		if (surfacefilename.hasSuffix(".bmp")) {
 			// Ignores alpha channel for BMPs
 			needsColorKey = true;
-		} else if (_filename.hasSuffix(".jpg")) {
+		} else if (surfacefilename.hasSuffix(".jpg")) {
 			// Ignores alpha channel for JPEGs
 			needsColorKey = true;
 		} else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
@@ -191,11 +192,11 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		// Some Rosemary sprites have non-fully transparent pixels
 		// In original WME it wasn't seen because sprites were downscaled
 		// Let's set alpha to 0 if it is smaller then some treshold
-		if (BaseEngine::instance().getGameId() == "rosemary" && _filename.hasPrefix("actors") && _imageData->format.bytesPerPixel == 4) {
+		if (BaseEngine::instance().getGameId() == "rosemary" && surfacefilename.hasPrefix("actors") && _imageData->format.bytesPerPixel == 4) {
 			uint32 mask = _imageData->format.ARGBToColor(255, 0, 0, 0);
 			uint32 treshold = _imageData->format.ARGBToColor(16, 0, 0, 0);
 			uint32 blank = _imageData->format.ARGBToColor(0, 0, 0, 0);
-			
+
 			for (int x = 0; x < _imageData->w; x++) {
 				for (int y = 0; y < _imageData->h; y++) {
 					uint32 pixel = _imageData->getPixel(x, y);
@@ -218,7 +219,9 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	_ckGreen = ckGreen;
 	_ckBlue = ckBlue;
 
-	_filename = filename;
+	if (!_filename || scumm_stricmp(_filename, filename) != 0) {
+		setFilename(filename);
+	}
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
@@ -365,7 +368,7 @@ void BaseSurfaceOpenGL3D::setTexture() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL3D::setAlphaImage(const Common::String &filename) {
+bool BaseSurfaceOpenGL3D::setAlphaImage(const char *filename) {
 	BaseImage *alphaImage = new BaseImage();
 	if (!alphaImage->loadFile(filename)) {
 		delete alphaImage;

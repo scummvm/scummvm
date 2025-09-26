@@ -59,9 +59,9 @@ public:
 	virtual bool display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual bool displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) = 0;
 	virtual bool restore();
-	virtual bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
+	virtual bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual bool create(int width, int height);
-	virtual bool setAlphaImage(const Common::String &filename) {
+	virtual bool setAlphaImage(const char *filename) {
 		return STATUS_FAILED;
 	}
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
@@ -72,10 +72,11 @@ public:
 	virtual bool putPixel(int x, int y, byte r, byte g, byte b, byte a) = 0;
 	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) const = 0;
 	virtual bool isTransparentAtLite(int x, int y) const = 0;
+	void setFilename(const char *filename);
 	void setSize(int width, int height);
 
 	int _referenceCount;
-	Common::String _filename;
+	char *_filename;
 
 	virtual int getWidth() {
 		return _width;

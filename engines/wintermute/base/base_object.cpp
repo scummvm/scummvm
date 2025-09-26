@@ -542,7 +542,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(0);
 
 		if (_shadowImage) {
-			stack->pushString(_shadowImage->_filename.c_str());
+			stack->pushString(_shadowImage->_filename);
 		} else {
 			stack->pushNULL();
 		}
@@ -1126,7 +1126,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 		Common::String tempString;
 		if (persistMgr->getIsSaving()) {
 			if (_shadowImage) {
-				tempString = _shadowImage->_filename.c_str();
+				tempString = _shadowImage->_filename;
 			}
 			persistMgr->transferString(TMEMBER(tempString));
 		} else {

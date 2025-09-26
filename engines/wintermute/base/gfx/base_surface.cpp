@@ -28,6 +28,9 @@
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/dcgf.h"
+
+#include "common/str.h"
 
 namespace Wintermute {
 
@@ -37,7 +40,7 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 	_width = _height = 0;
 
-	_filename = "";
+	_filename = nullptr;
 
 	_ckDefault = true;
 	_ckRed = _ckGreen = _ckBlue = 0;
@@ -50,6 +53,9 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
+	if (_filename) {
+		SAFE_DELETE_ARRAY(_filename);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -89,12 +95,23 @@ bool BaseSurface::prepareToDraw() {
 
 	if (!_valid) {
 		//_game->LOG(0, "Reviving: %s", _filename);
-		return create(_filename.c_str(), _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
+		return create(_filename, _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
 	} else {
 		return STATUS_OK;
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseSurface::setFilename(const char *filename) {
+	SAFE_DELETE_ARRAY(_filename);
+	if (!filename) {
+		return;
+	}
+
+	size_t nameSize = strlen(filename) + 1;
+	_filename = new char[nameSize];
+	Common::strcpy_s(_filename, nameSize, filename);
+}
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSurface::setSize(int width, int height) {
