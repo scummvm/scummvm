@@ -3802,6 +3802,7 @@ if test -n "$_host"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
 				append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
+				append_var DEFINES  "-DREDUCE_MEMORY_USAGE"
 			fi
 
 			append_var LDFLAGS "-Wl,--msuper-memory"
