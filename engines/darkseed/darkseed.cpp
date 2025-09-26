@@ -278,10 +278,10 @@ void DarkseedEngine::gameLoop() {
 			if ((_room->_roomNumber < 10 || _room->_roomNumber == 61 || _room->_roomNumber == 62) && _currentTimeInSeconds % 3600 == 0) {
 				if (_room->_roomNumber == 7) {
 					if (!_sound->isPlayingSfx(45))
-					playSound(45, 5, -1);
+						playSound(45, 5, -1);
 				} else {
 					if (!_sound->isPlayingSfx(46))
-					playSound(46, 5, -1);
+						playSound(46, 5, -1);
 				}
 			}
 			_room->darkenSky();
@@ -550,11 +550,11 @@ void DarkseedEngine::handleInput() {
 			_counter_2c85_888b = 0;
 			_player->_playerWalkFrameIdx = (_player->_playerWalkFrameIdx + 1) % 8;
 			if ((_player->_playerWalkFrameIdx == 0 || _player->_playerWalkFrameIdx == 4)
-				&& currentRoomNumber != 0x22 && currentRoomNumber != 0x13
-				&& currentRoomNumber != 0x14 && currentRoomNumber != 0x15
-				&& currentRoomNumber != 16) {
-				//TODO
-			//							FUN_1208_0dac_sound_related(0x5c,CONCAT11((char)(uVar7 >> 8),5));
+					&& currentRoomNumber != 0x22 && currentRoomNumber != 0x13
+					&& currentRoomNumber != 0x14 && currentRoomNumber != 0x15
+					&& currentRoomNumber != 16) {
+				// Footstep
+				playSound(52, 5, -1);
 			}
 		}
 		_player->updateSprite();
@@ -785,7 +785,6 @@ void DarkseedEngine::handleInput() {
 						) {
 						_player->loadAnimations("opendoor.nsp");
 						_animation->setupOtherNspAnimation(0, 14);
-						// FUN_1208_0dac_sound_related(10,CONCAT11(extraout_AH,5));
 						playSound(1, 5, -1);
 						return;
 					}
@@ -799,7 +798,6 @@ void DarkseedEngine::handleInput() {
 					if (currentRoomNumber == 33 && roomExit.roomNumber == 34 && bVar) {
 						_player->loadAnimations("opendoor.nsp");
 						_animation->setupOtherNspAnimation(0, 25);
-						// FUN_1208_0dac_sound_related(24,CONCAT11(extraout_AH,5));
 						playSound(15, 5, -1); //open car door
 						return;
 					}
@@ -2006,9 +2004,9 @@ void DarkseedEngine::getPackageObj(int packageType) {
 	}
 }
 
-void DarkseedEngine::playSound(uint8 sfxId, uint8 unk1, int16 unk2) {
+void DarkseedEngine::playSound(uint8 sfxId, uint8 priority, int16 unk2) {
 	debug("Play SFX: %d", sfxId);
-	_sound->playSfx(sfxId, unk1, unk2);
+	_sound->playSfx(sfxId, priority, unk2);
 }
 
 void DarkseedEngine::nextFrame(int nspAminIdx) {
@@ -2118,6 +2116,9 @@ void DarkseedEngine::throwmikeinjail() {
 }
 
 void DarkseedEngine::runObjects() {
+	// FIXME This was missing; not sure where it is supposed to go
+	_soundTimer++;
+
 	if (((g_engine->_objectVar[44] != 0) && (g_engine->_objectVar[71] == 2))) {
 		g_engine->_objectVar[44] -= 2;
 		if (g_engine->_objectVar[44] == 0) {
@@ -2130,19 +2131,33 @@ void DarkseedEngine::runObjects() {
 	}
 	if (((_room->_roomNumber == 46) || (_room->_roomNumber == 60)) &&
 		(((_soundTimer & 15) == 0 && (g_engine->_objectVar[57] == 1)))) {
+		// Spaceship engine
 		playSound(9, 5, -1);
 	}
-	if ((_room->_roomNumber == 12) && (_soundTimer > 5)) {
+	// FIXME Changed the timer value from 5 to 4 because it more closely matches
+	// how the floppy version sounds. Maybe soundTimer is increased too slowly?
+	if ((_room->_roomNumber == 12) && (_soundTimer > 4)) {
+		// Library fountain
+		playSound(55, 5, -1);
 		_soundTimer = 0;
 	}
-	if (((_room->_roomNumber == 8) && (_soundTimer > 5)) && (g_engine->_objectVar[110] != 0)) {
+	if (((_room->_roomNumber == 8) && (_soundTimer > 4)) && (g_engine->_objectVar[110] != 0)) {
+		// Kitchen faucet
+		playSound(55, 5, -1);
 		_soundTimer = 0;
 	}
 	if ((_room->_roomNumber == 38) && ((_soundTimer & 31) == 0)) {
+		// Cocoon
 		playSound(23, 5, -1);
 	}
 	if ((_room->_roomNumber == 45) && ((_soundTimer & 63) == 0)) {
+		// Leech
 		playSound(10, 5, -1);
+	}
+	if ((_room->_roomNumber == 33 || _room->_roomNumber == 34) && _objectVar[71] == 2 && _soundTimer > 11) {
+		// Car engine running
+		playSound(51, 5, -1);
+		_soundTimer = 0;
 	}
 
 	int16 delbertSpriteIdx = 0;
@@ -2503,11 +2518,11 @@ void DarkseedEngine::runObjects() {
 		case 721:
 			if (((_room->_roomNumber < 10) || (_room->_roomNumber == 61)) || (_room->_roomNumber == 62)) {
 				if (_room->_roomNumber == 6) {
-//					FUN_1208_0dac_sound_related(93,5); TODO floppy sound
+					// Doorbell (loud)
 					playSound(27, 5, -1);
 				} else {
+					// Doorbell (quiet)
 					playSound(29, 5, -1);
-//					FUN_1208_0dac_sound_related(95,5); TODO floppy sound
 				}
 				_console->addI18NText(kI18N_TheDoorbellIsRingingText);
 			}

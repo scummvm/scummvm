@@ -305,6 +305,9 @@ void Animation::updateAnimation() {
 			if (_otherNspAnimationType_maybe == 8) {
 				_player->_frameIdx = _player->_animations.getAnimAt(0)._frameNo[_animIndexTbl[0]];
 			} else {
+				if (_player->_frameIdx == 3)
+					// Phone dial tone
+					g_engine->playSound(56, 5, -1);
 				_player->_frameIdx = _player->_animations.getAnimAt(2)._frameNo[_animIndexTbl[2]];
 			}
 		} else {

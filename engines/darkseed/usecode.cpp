@@ -639,7 +639,9 @@ void Darkseed::UseCode::useCode(int objNum) {
 		} else if ((objNum == 68) && (_objectVar[68] == 0)) {
 			if (_objectVar[12] == 2) {
 				if ((_objectVar[66] == 1) && (_objectVar[67] == 1)) {
-					g_engine->playSound(13, 5, -1);
+					// When opening the mausoleum door, the floppy version plays the sigils sound effect.
+					// The CD version plays the door sound effect. (Both sound effects are present in both versions.)
+					g_engine->playSound(g_engine->_sound->isUsingCdSfx() ? 13 : 12, 5, -1);
 					_objectVar[68] = 1;
 					g_engine->_animation->setupOtherNspAnimation(0, 23);
 				} else {
@@ -1146,9 +1148,11 @@ void UseCode::useCodeKeys(int16 actionObjNum, int16 targetObjNum) {
 	} else if (targetObjNum == 71) {
 		if (actionObjNum == 26) {
 			if (_objectVar[44] == 0) {
+				// Car engine start failure
 				g_engine->playSound(16, 5, -1);
 				_console->printTosText(708);
 			} else if (_objectVar[71] == 0) {
+				// Car engine start
 				g_engine->playSound(11, 5, -1);
 				_objectVar[71] = 2;
 				_console->printTosText(709);
