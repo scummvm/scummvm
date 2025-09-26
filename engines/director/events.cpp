@@ -187,6 +187,26 @@ bool Movie::processEvent(Common::Event &event) {
 				_currentDraggedChannel = nullptr;
 			}
 		}
+
+		if (g_director->getVersion() >= 600) {
+			spriteId = sc->getMouseSpriteIDFromPos(pos);
+
+			if (spriteId > 0) {
+				if (spriteId != _lastEnteredChannelId) {
+					if (_lastEnteredChannelId) {
+						processEvent(kEventMouseLeave, _lastEnteredChannelId);
+					}
+
+					_lastEnteredChannelId = spriteId;
+					processEvent(kEventMouseEnter, spriteId);
+				}
+			} else {
+				if (_lastEnteredChannelId) {
+					processEvent(kEventMouseLeave, _lastEnteredChannelId);
+					_lastEnteredChannelId = 0;
+				}
+			}
+		}
 		return true;
 
 	case Common::EVENT_LBUTTONDOWN:

@@ -194,6 +194,7 @@ public:
 	int _checkBoxAccess;
 
 	uint16 _currentHiliteChannelId;
+	uint16 _lastEnteredChannelId;
 
 	int _lastTimeOut;
 	int _timeOutLength;

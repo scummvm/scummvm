@@ -69,10 +69,10 @@ struct EventHandlerType {
 	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3
 	{ kEventRightMouseDown,		"rightMouseDown" },		//				D5
 	{ kEventRightMouseUp,		"rightMouseUp" },		//				D5
-	{ kEventMouseEnter,			"mouseEnter" },			//				D5
-	{ kEventMouseLeave,			"mouseLeave" },			//				D5
+	{ kEventMouseEnter,			"mouseEnter" },			//					D6
+	{ kEventMouseLeave,			"mouseLeave" },			//					D6
 	{ kEventMouseUpOutSide,		"mouseUpOutSide" },		// 					D6
-	{ kEventMouseWithin,		"mouseWithin" },		//				D5
+	{ kEventMouseWithin,		"mouseWithin" },		//					D6
 
 	{ kEventTimeout,			"timeout" },			// D2 as when
 
