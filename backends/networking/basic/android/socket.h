@@ -18,35 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
+#define BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
 
-#include "backends/networking/basic/curl/cacert.h"
+#include <jni.h>
 
-#include "common/fs.h"
+#include "backends/networking/basic/socket.h"
 
 namespace Networking {
 
-Common::String getCaCertPath() {
-#if defined(DATA_PATH)
-	static enum {
-		kNotInitialized,
-		kFileNotFound,
-		kFileExists
-	} state = kNotInitialized;
+class AndroidSocket : public Socket {
+public:
+	static Socket *connect(const Common::String &url);
 
-	if (state == kNotInitialized) {
-		Common::FSNode node(DATA_PATH "/cacert.pem");
-		state = node.exists() ? kFileExists : kFileNotFound;
-	}
+	AndroidSocket(JNIEnv *env, jobject socket);
+	~AndroidSocket() override;
 
-	if (state == kFileExists) {
-		return DATA_PATH "/cacert.pem";
-	} else {
-		return "";
-	}
-#else
-	return "";
-#endif
-}
+	int ready() override;
 
+	size_t send(const char *data, int len) override;
+	size_t recv(void *data, int maxLen) override;
+private:
+	jobject _socket;
+};
 
 } // End of namespace Networking
+
+#endif
