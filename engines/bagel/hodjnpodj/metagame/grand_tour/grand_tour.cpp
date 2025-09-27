@@ -27,6 +27,7 @@
 #include "bagel/hodjnpodj/metagame/grand_tour/dialogs.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/grand_tour.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -1725,13 +1726,21 @@ void CMainGTWindow::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinim
 	switch (nState) {
 	case WA_INACTIVE:
 		bActiveWindow = false;
+		BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 		break;
+
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		bActiveWindow = true;
 		bUpdateNeeded = GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
 			InvalidateRect(nullptr, false);
+
+		BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+		break;
+
+	default:
+		break;
 	}
 }
 
