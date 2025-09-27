@@ -861,12 +861,12 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 						for (i = 0; i < GRID_SIZE; i++) {
 							for (j = 0; j < GRID_SIZE; j++) {
 								if (fState[i][j] == PEGGED) {
-									if (((fState [i + 1][j] == PEGGED) && (fState [i + 2][j] == EMPTY) && (i <= 4)) ||
-									        ((fState [i - 1][j] == PEGGED) && (fState [i - 2][j] == EMPTY) && (i >= 2)) ||
-									        ((fState [i][j + 1] == PEGGED) && (fState [i][j + 2] == EMPTY) && (j <= 4)) ||
-									        ((fState [i - 1][j + 1] == PEGGED) && (fState [i - 2][j + 2] == EMPTY) && (j <= 4) && (i >= 2) && (BoardSelected == TRIANGLE || BoardSelected == TRIANGLE_PLUS)) ||
-									        ((fState [i + 1][j - 1] == PEGGED) && (fState [i + 2][j - 2] == EMPTY) && (i <= 4) && (j >= 2) && (BoardSelected == TRIANGLE || BoardSelected == TRIANGLE_PLUS)) ||
-									        ((fState [i][j - 1] == PEGGED) && (fState [i][j - 2] == EMPTY) && (j >= 2))) {
+									if (((i <= 4) && (fState [i + 1][j] == PEGGED) && (fState [i + 2][j] == EMPTY)) ||
+									        ((i >= 2) && (fState [i - 1][j] == PEGGED) && (fState [i - 2][j] == EMPTY)) ||
+									        ((j <= 4) && (fState [i][j + 1] == PEGGED) && (fState [i][j + 2] == EMPTY)) ||
+									        ((j <= 4) && (i >= 2) && (fState [i - 1][j + 1] == PEGGED) && (fState [i - 2][j + 2] == EMPTY) && (BoardSelected == TRIANGLE || BoardSelected == TRIANGLE_PLUS)) ||
+									        ((i <= 4) && (j >= 2) && (fState [i + 1][j - 1] == PEGGED) && (fState [i + 2][j - 2] == EMPTY) && (BoardSelected == TRIANGLE || BoardSelected == TRIANGLE_PLUS)) ||
+									        ((j >= 2) && (fState [i][j - 1] == PEGGED) && (fState [i][j - 2] == EMPTY))) {
 										moves_left++;
 									}
 								}
