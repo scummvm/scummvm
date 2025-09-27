@@ -460,7 +460,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_XORSEQ2) {
 		loadXorSeq(data, dataSize, 2);
 	} else {
-		warning("Unk Res %x at %x sz %x", tp, _loadedDataSize, dataSize);
+		warning("Unk Res %x at %x sz %zx", tp, _loadedDataSize, dataSize);
 	}
 	return true;
 }
@@ -1010,7 +1010,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 					       (_thing2[c[0]].field_0[(fb >> 3) & 0xff] & (1 << fb & 7)) != 0) {
 
 					if (!_thing2[c[0]].field_2.empty()) {
-						c[1] = c[1] & 0xf | _thing2[c[0]].field_2[lb];
+						c[1] = (c[1] & 0xf) | _thing2[c[0]].field_2[lb];
 						preprocessData(fnc + 8, c);
 					}
 
@@ -1019,7 +1019,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 					}
 				}
 
-				if (c[1] & 2 == cval) {
+				if ((c[1] & 2) == cval) {
 					if ((c[1] & 0xc) == 0) {
 						rstream.skip((sz - read) * 4);
 						break;
@@ -1684,10 +1684,11 @@ bool GamosEngine::FUN_00402fb4()
 				}
 			}
 		} else {
-			if (!PTR_00417388 && (pobj->flags & 0x83) == 0x81 && pobj->pos == -1 && pobj->blk == -1)
+			if (!PTR_00417388 && (pobj->flags & 0x83) == 0x81 && pobj->pos == 0xff && pobj->blk == 0xff)
 				FUN_00402f34(true, false, pobj);
 		}
 continue_to_next_object:
+		;
 	}
 
 exit:
