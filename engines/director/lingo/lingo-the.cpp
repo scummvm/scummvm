@@ -488,6 +488,16 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	Score *score = movie->getScore();
 
 	switch (entity) {
+	case kTheActiveWindow:
+		{
+			Window *win = (Window *)g_director->_wm->getWindow(g_director->_wm->getActiveWindow());
+			if (win) {
+				d = Datum(win);
+			} else {
+				d.type = VOID;
+			}
+		}
+		break;
 	case kTheActorList:
 		d = g_lingo->_actorList;
 		break;
