@@ -475,6 +475,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	case kEventPrepareFrame:
 	case kEventBeginSprite:
 	case kEventEndSprite:
+	case kEventMouseUpOutSide:  // D6+
 		if (targetId != 0) {
 			channelId = targetId;
 		}
@@ -533,6 +534,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventMouseEnter:
 		case kEventMouseLeave:
 		case kEventPrepareFrame:	// D6+
+		case kEventMouseUpOutSide:	// D6+
 			if (_vm->getVersion() >= 600) {
 				if (pointedSpriteId != 0) {
 					Sprite *sprite = _score->getSpriteById(pointedSpriteId);
@@ -546,8 +548,8 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 						}
 					}
 
-					if (event == kEventBeginSprite || event == kEventEndSprite) {
-						// beginSprite and endSprite do not go any further than the sprite behaviors
+					if (event == kEventBeginSprite || event == kEventEndSprite || event == kEventMouseUpOutSide) {
+						// These events do not go any further than the sprite behaviors
 						break;
 					}
 				} else {

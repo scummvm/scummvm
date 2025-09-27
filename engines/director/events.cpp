@@ -218,6 +218,12 @@ bool Movie::processEvent(Common::Event &event) {
 		} else {
 			pos = event.mouse;
 
+			if (g_director->getVersion() >= 600) {
+				if (_lastClickedSpriteId && _lastClickedSpriteId != spriteId) {
+					queueInputEvent(kEventMouseUpOutSide, _lastClickedSpriteId, pos);
+				}
+			}
+
 			_lastClickedSpriteId = spriteId; // for 'the clickOn'
 
 			// FIXME: Check if these are tracked with the right mouse button
