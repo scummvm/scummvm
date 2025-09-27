@@ -128,7 +128,8 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			spriteId = _score->getActiveSpriteIDFromPos(event.mousePos);
 		else
 			spriteId = _score->getMouseSpriteIDFromPos(event.mousePos);
-		_currentActiveSpriteId = _score->getActiveSpriteIDFromPos(event.mousePos); // the clickOn
+
+		_lastClickedSpriteId = _score->getActiveSpriteIDFromPos(event.mousePos); // the clickOn
 	}
 	// Very occasionally, we want to specify an event with a channel ID
 	// rather than infer it from the position. Allow it to override.
@@ -251,11 +252,14 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 						scriptId = sprite->_behaviors[event.behaviorIndex].memberID;
 						initializerParams = sprite->_behaviors[event.behaviorIndex].initializerParams;
 					} else {
+						_lastClickedSpriteId = 0;
 						return;
 					}
 				} else {
-					if (!sprite->_scriptId.member)
+					if (!sprite->_scriptId.member) {
+						_lastClickedSpriteId = 0;
 						return;
+					}
 
 					scriptId = sprite->_scriptId;
 				}

@@ -534,7 +534,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheClickOn:
 		// Even in D4, `the clickOn` uses the old "active" sprite instead of mouse sprite.
-		d = (int)movie->_currentActiveSpriteId;
+		d = (int)movie->_lastClickedSpriteId;
 		break;
 	case kTheColorDepth:
 		// bpp. 1, 2, 4, 8, 32
