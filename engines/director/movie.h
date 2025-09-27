@@ -156,7 +156,6 @@ public:
 	Common::Platform _platform;
 	Common::Rect _movieRect;
 	uint16 _currentActiveSpriteId;
-	uint16 _currentMouseSpriteId;
 	uint _currentSpriteNum;
 	CastMemberID _currentMouseDownCastID;
 	CastMemberID _currentMouseDownSpriteScriptID;
