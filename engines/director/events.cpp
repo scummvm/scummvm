@@ -325,10 +325,6 @@ bool Movie::processEvent(Common::Event &event) {
 }
 
 bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
-	// kEventMoveWindow
-	// kEventResizeWindow
-	// kEventZoomWindow
-
 	switch (click) {
 	case Graphics::kBorderCloseButton:
 		if (_currentMovie && event.type == Common::EVENT_LBUTTONUP) {
@@ -347,6 +343,21 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 		sendWindowEvent(kEventDeactivateWindow);
 		return true;
 
+	case Graphics::kBorderDragged:
+		sendWindowEvent(kEventMoveWindow);
+		return true;
+
+	case Graphics::kBorderResized:
+		sendWindowEvent(kEventResizeWindow);
+		return true;
+
+	case Graphics::kBorderMaximizeButton:
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			sendWindowEvent(kEventZoomWindow);
+
+			return true;
+		}
+		break;
 	default:
 		break;
 	}
