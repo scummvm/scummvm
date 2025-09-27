@@ -2374,6 +2374,15 @@ bool GamosEngine::FUN_00402bc4() {
 	return true;
 }
 
+bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
+	if (obj->y == -1)
+		return false;
+
+	Object &robj = _drawElements[obj->y];
+	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
+		return true;
+	return false;
+}
 
 
 } // End of namespace Gamos
