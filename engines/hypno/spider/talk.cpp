@@ -135,7 +135,6 @@ void SpiderEngine::showConversation() {
 		}
 
 		endConversation();
-		_music.clear();
 
 		if (shouldEscape) {
 			runIntros(_escapeSequentialVideoToPlay);

@@ -86,6 +86,7 @@ void WetEngine::runLevelMenu(Code *code) {
 	loadPalette((byte *) &lime, 192+currentLevel, 1);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	// TODO: Should this be played as music instead?
 	playSound("sound/bub01.raw", 0, 22050);
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
