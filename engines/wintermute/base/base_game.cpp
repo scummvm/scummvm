@@ -4234,7 +4234,7 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		if (!quickSave) {
 			SAFE_DELETE(_saveLoadImage);
-			if (_saveImageName) {
+			if (_saveImageName && _saveImageName[0] != '\0') {
 				_saveLoadImage = _game->_renderer->createSurface();
 				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 					SAFE_DELETE(_saveLoadImage);
@@ -4286,7 +4286,7 @@ bool BaseGame::loadGame(const char *filename) {
 	stopVideo();
 
 	SAFE_DELETE(_saveLoadImage);
-	if (_loadImageName) {
+	if (_loadImageName && _loadImageName[0] != '\0') {
 		_saveLoadImage = _game->_renderer->createSurface();
 
 		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
