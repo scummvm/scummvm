@@ -280,7 +280,6 @@ public:
 	int _boxSelectY;
 	int _boxSelectYOld;
 	int _numLines;
-	byte _byte26CB5;
 	int _bcnt;
 
 	bool _vidEnd;
@@ -334,6 +333,9 @@ public:
 	void copyBF2Vid();
 
 	void freeChar();
+	
+	virtual int16 getScreenWidth() const { return 320; }
+	virtual int16 getScreenHeight() const { return 200; }
 
 	/**
 	 * Draw a string on a given surface and update text positioning

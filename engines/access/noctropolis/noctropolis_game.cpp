@@ -20,6 +20,7 @@
  */
 
 #include "access/noctropolis/noctropolis_game.h"
+#include "access/noctropolis/noctropolis_room.h"
 
 namespace Access {
 
@@ -32,6 +33,22 @@ AccessEngine(syst, gameDesc)
 }
 
 NoctropolisEngine::~NoctropolisEngine() {
+}
+
+void NoctropolisEngine::initObjects() {
+	_room = new NoctropolisRoom(this);
+}
+
+void NoctropolisEngine::setupGame() {
+	_timers.clear();
+	for (int i = 0; i < 32; ++i) {
+		TimerEntry te;
+		te._initTm = 1;
+		te._timer = 1;
+		te._flag = false;
+		_timers.push_back(te);
+	}
+	
 }
 
 void NoctropolisEngine::playGame() {
@@ -55,17 +72,20 @@ void NoctropolisEngine::doIntro() {
 	_timers[27]._initTm = 7;
 	_timers[28]._initTm = 240;
 
-	// TODO: Music 98, 1
-	Resource *sceneRes = _files->loadSubFile("scene01.ap", 0);
-	
-	//_room->loadRoom();
+	_screen->clearScreen();
+	_screen->forceFadeOut();
 
-	Resource *spriteRes = _files->loadSubFile("scene01.ap", 1);
+	// TODO: midi files have been split into MUSIC/Mxx.MID files
+	//_midi->loadMusic(98, 1);
+	_room->loadPlayField(1, 0);
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+
+	Resource *spriteRes = _files->loadFile(1, 1);
 	SpriteResource *sprites = new SpriteResource(this, spriteRes);
 	delete spriteRes;
 
 	// TODO: Check these fades
-	_screen->fadeOut();
 	_screen->setPalette();
 	_screen->fadeIn();
 	copyBF1BF2();
@@ -78,7 +98,7 @@ void NoctropolisEngine::doIntro() {
 
 		if (!_timers[27].isActive()) {
 			_timers[27].reset();
-			if (_scrollX == _room->_playFieldWidth - _screen->w || _events->_leftButton || _events->_rightButton)
+			if (_screen->_vWindowWidth + _scrollCol == _room->_playFieldWidth || _events->_leftButton || _events->_rightButton)
 				break;
 
 			_scrollX += 2;

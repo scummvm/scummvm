@@ -63,8 +63,6 @@ class Room : public Manager {
 private:
 	void roomLoop();
 
-	void loadPlayField(int fileNum, int subfile);
-
 	void commandOff();
 
 	void swapOrg();
@@ -173,6 +171,8 @@ public:
 	* Switch to a given command mode
 	*/
 	void handleCommand(int commandId);
+
+	void loadPlayField(int fileNum, int subfile);
 };
 
 class RoomInfo {

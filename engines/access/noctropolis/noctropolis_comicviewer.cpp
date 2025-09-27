@@ -60,7 +60,6 @@ void ComicViewer::run(ComicResource *comic) {
 }
 
 PageResult ComicViewer::runPage(ComicPage *page) {
-
 	PageResult result = kPageResultNone;
 
 	_vm->_files->loadScreen(Common::Path(page->filename.baseName()));
@@ -70,7 +69,7 @@ PageResult ComicViewer::runPage(ComicPage *page) {
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
 
-	// TODO: Copy the palette else the fade out will be wrong
+	// TODO: Copy the palette else the fade out will be wrong?
 	//_vm->_screen->palPaletteRange(pagePicture->getPalette(), 0, 256);
 	//_vm->copySystemPalette();
 	//_vm->setMainPalette();

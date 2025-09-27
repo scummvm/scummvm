@@ -19,34 +19,31 @@
  *
  */
 
-#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
-#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H
+#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H
 
-#include "access/access.h"
+#include "access/room.h"
 
 namespace Access {
 
 namespace Noctropolis {
 
-class NoctropolisEngine : public AccessEngine {
+class NoctropolisRoom : public Room {
 public:
-	NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+	NoctropolisRoom(AccessEngine *vm);
 
-	~NoctropolisEngine();
+	void loadRoom(int roomNumber) override {};
 
-	void playGame() override;
-	void dead(int deathId) override {};
-	void establish(int esatabIndex, int sub) override {};
+	void roomMenu() override {};
 
-	virtual int16 getScreenWidth() const { return 640; }
-	virtual int16 getScreenHeight() const { return 400; }
+	void init4Quads() override {};
 
 protected:
-	void setupGame() override;
-	void initObjects() override;
+	void reloadRoom() override {};
+	
+	void reloadRoom1() override {};
 
-private:
-	void doIntro();
+	void mainAreaClick() override {}
 
 };
 
@@ -54,4 +51,4 @@ private:
 
 } // end namespace Access
 
-#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H

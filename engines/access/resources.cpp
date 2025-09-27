@@ -23,6 +23,7 @@
 #include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_resources.h"
 #include "common/translation.h"
 
 namespace Access {
@@ -32,6 +33,8 @@ Resources *Resources::init(AccessEngine *vm) {
 		return new Amazon::AmazonResources(vm);
 	else if (vm->getGameID() == kGameMartianMemorandum)
 		return new Martian::MartianResources(vm);
+	else if (vm->getGameID() == kGameNoctropolis)
+		return new Noctropolis::NoctropolisResources(vm);
 
 	error("Unknown game");
 }
@@ -97,6 +100,8 @@ bool Resources::load(Common::U32String &errorMessage) {
 
 void Resources::load(Common::SeekableReadStream &s) {
 	uint count;
+	
+	assert(_vm->getGameID() != kGameNoctropolis);
 
 	// Get the offset of the data for the game
 	uint entryOffset = findEntry(_vm->getGameID(), _vm->isCD() ? 1 : 0,

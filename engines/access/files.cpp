@@ -94,12 +94,8 @@ FileManager::~FileManager() {
 }
 
 Resource *FileManager::loadFile(int fileNum, int subfile) {
-	return loadSubFile(_vm->_res->FILENAMES[fileNum], subfile);
-}
-
-Resource *FileManager::loadSubFile(const Common::Path &filename, int subfile) {
 	Resource *res = new Resource();
-	setAppended(res, filename);
+	setAppended(res, _vm->_res->FILENAMES[fileNum]);
 	gotoAppended(res, subfile);
 
 	handleFile(res);

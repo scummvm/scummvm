@@ -135,7 +135,7 @@ static const AccessGameDescription gameDescriptions[] = {
 		{
 			"noctropolis",
 			nullptr,
-			AD_ENTRY1s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954),
+			AD_ENTRY1s("scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
