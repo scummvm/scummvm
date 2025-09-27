@@ -329,7 +329,6 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 	// kEventDeactivateWindow
 	// kEventMoveWindow
 	// kEventResizeWindow
-	// kEventOpenWindow
 	// kEventZoomWindow
 
 	switch (click) {
@@ -348,5 +347,15 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 
 	return false;
 }
+
+void Window::sendOpenWindowEvent() {
+	if (_currentMovie && _visible && !_isStage) {
+		// We cannot call processEvent here directly because it might
+		// be called from within another event processing (like 'on startMovie'	)
+		// which would mess up the Lingo state.
+		_currentMovie->queueInputEvent(kEventOpenWindow, 0, Common::Point(-1, -1));
+	}
+}
+
 
 } // End of namespace Director

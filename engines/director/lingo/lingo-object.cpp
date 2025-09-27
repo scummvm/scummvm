@@ -889,7 +889,11 @@ void LM::m_forget(int nargs) {
 
 void LM::m_open(int nargs) {
 	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
+	bool wasVisible = me->isVisible();
 	me->setVisible(true);
+
+	if (!wasVisible)
+		me->sendOpenWindowEvent();
 }
 
 void LM::m_moveToBack(int nargs) {
@@ -901,7 +905,11 @@ void LM::m_moveToFront(int nargs) {
 	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->ensureMovieIsLoaded();
 
+	bool wasActive = me->_active;
 	g_director->_wm->setActiveWindow(me->getId());
+
+	if (!wasActive)
+		me->sendOpenWindowEvent();
 }
 
 } // End of namespace Director
