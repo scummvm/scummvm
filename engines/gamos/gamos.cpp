@@ -1371,9 +1371,9 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 		Unknown1 &unk1 = _thing2[ oid ];
 		uint8 index = rndRange16( unk1.field_1[0] );
 		if (!unk1.field_2.empty()) {
-			byte id = td[1];
+			byte id1 = td[1];
 			td[1] = unk1.field_2[ unk1.field_1[ index + 1 ] ];
-			preprocessData(8 + (id >> 4), td);
+			preprocessData(8 + (id1 >> 4), td);
 		}
 	}
 
