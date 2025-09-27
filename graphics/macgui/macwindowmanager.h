@@ -233,6 +233,8 @@ public:
 	 */
 	void setActiveWindow(int id);
 
+	int getActiveWindow() { return _activeWindow; }
+
 	/**
 	 * Return Top Window containing a point
 	 * @param x x coordinate of point
