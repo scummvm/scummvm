@@ -38,6 +38,11 @@ public:
 
 	void init4Quads() override {};
 
+	/**
+	 * Like Room::buildScreen, but adds vm->_scrollX for sub-tile scrolling.
+	 */
+	void buildScreenXScroll();
+
 protected:
 	void reloadRoom() override {};
 	
@@ -45,6 +50,10 @@ protected:
 
 	void mainAreaClick() override {}
 
+private:
+	// Like buildColumn but can handle negative playX.
+	// TODO: Can we just replace Room::buildColumn with this one?
+	void buildColumnXScroll(int playX, int screenX);
 };
 
 } // end namespace Noctropolis

@@ -446,14 +446,15 @@ void Room::buildColumn(int playX, int screenX) {
 	if (playX < 0 || playX >= _playFieldWidth)
 		return;
 
-	const byte *pSrc = _playField + _vm->_scrollRow *
+	const uint16 *pSrc = _playField + _vm->_scrollRow *
 		_playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight - _vm->_scrollRow);
 
 	for (int y = 0; y < h; ++y) {
-		byte *pTile = _tile + (*pSrc << 8);
+		uint16 tileNum = *pSrc;
+		const byte *pTile = _tile + tileNum * TILE_WIDTH * TILE_HEIGHT;
 		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(screenX, y * TILE_HEIGHT);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
@@ -471,13 +472,14 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + playY * _playFieldWidth + _vm->_scrollCol;
+	const uint16 *pSrc = _playField + playY * _playFieldWidth + _vm->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth - _vm->_scrollCol);
 
 	for (int x = 0; x < w; ++x) {
-		byte *pTile = _tile + (*pSrc << 8);
+		uint16 tileNum = *pSrc;
+		byte *pTile = _tile + tileNum * TILE_WIDTH * TILE_HEIGHT;
 		byte *pDest = (byte *)_vm->_buffer1.getBasePtr(x * TILE_WIDTH, screenY);
 
 		for (int tileY = 0; tileY < TILE_HEIGHT; ++tileY) {
@@ -513,7 +515,7 @@ static void loadHeader(RoomHeader &hdr, Common::SeekableReadStream *stream, uint
 		hdr._blockCount = stream->readUint16LE();
 		stream->skip(8);
 	} else {
-		hdr._tilesCount = (int16)stream->readByte() << 8;
+		hdr._tilesCount = stream->readByte();
 		hdr._tilesDisplayWidth = stream->readByte();
 		hdr._tilesDisplayHeight = stream->readByte();
 		hdr._unused1 = stream->readByte();
@@ -534,14 +536,22 @@ void Room::loadPlayField(int fileNum, int subfile) {
 	screen.loadRawPalette(playData->_stream);
 
 	// Copy off the tile data
-	int tileSize = header._tilesCount;
+	int tileSize = (int)header._tilesCount * TILE_WIDTH * TILE_HEIGHT;
 	_tile = new byte[tileSize];
 	playData->_stream->read(_tile, tileSize);
 
 	// Copy off the playfield data
 	_matrixSize = (int)header._tilesWidth * header._tilesHeight;
-	_playField = new byte[_matrixSize];
-	playData->_stream->read(_playField, _matrixSize);
+	_playField = new uint16[_matrixSize];
+	if (_vm->getGameID() == kGameNoctropolis) {
+		for (int i = 0; i < _matrixSize; i++) {
+			_playField[i] = playData->_stream->readUint16LE();
+		}
+	} else {
+		for (int i = 0; i < _matrixSize; i++) {
+			_playField[i] = playData->_stream->readByte();
+		}
+	}
 
 	// Load the plotter data
 	int numWalls = header._wallCount;

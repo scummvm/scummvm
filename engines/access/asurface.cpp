@@ -226,7 +226,7 @@ void BaseSurface::flipHorizontal(BaseSurface &dest) {
 
 void BaseSurface::moveBufferLeft() {
 	byte *p = (byte *)getPixels();
-	Common::copy(p + TILE_WIDTH, p + (w * h), p);
+	Common::copy(p + TILE_WIDTH, p + (pitch * h), p);
 }
 
 void BaseSurface::moveBufferRight() {
