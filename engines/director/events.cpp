@@ -135,6 +135,13 @@ bool Movie::processEvent(Common::Event &event) {
 	}
 	uint16 spriteId = 0;
 
+	if (event.mouse != Common::Point(-1, -1)) {
+		if (g_director->getVersion() < 400)
+			spriteId = _score->getActiveSpriteIDFromPos(event.mouse);
+		else
+			spriteId = _score->getMouseSpriteIDFromPos(event.mouse);
+	}
+
 	Common::Point pos;
 
 	switch (event.type) {
@@ -162,11 +169,6 @@ bool Movie::processEvent(Common::Event &event) {
 
 		// for the list style button, we still have chance to trigger events though button.
 		if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle) && g_director->_wm->_mouseDown && g_director->_wm->_hilitingWidget) {
-			if (g_director->getVersion() < 400)
-				spriteId = sc->getActiveSpriteIDFromPos(pos);
-			else
-				spriteId = sc->getMouseSpriteIDFromPos(pos);
-
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
 				g_director->getCurrentWindow()->setDirty(true);
@@ -189,8 +191,6 @@ bool Movie::processEvent(Common::Event &event) {
 		}
 
 		if (g_director->getVersion() >= 600) {
-			spriteId = sc->getMouseSpriteIDFromPos(pos);
-
 			if (spriteId > 0) {
 				if (spriteId != _lastEnteredChannelId) {
 					if (_lastEnteredChannelId) {
@@ -217,6 +217,8 @@ bool Movie::processEvent(Common::Event &event) {
 			sc->renderCursor(pos, true);
 		} else {
 			pos = event.mouse;
+
+			_lastClickedSpriteId = spriteId; // for 'the clickOn'
 
 			// FIXME: Check if these are tracked with the right mouse button
 			_lastEventTime = g_director->getMacTicks();
