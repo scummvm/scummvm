@@ -275,7 +275,9 @@ int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
 }
 
 int GetTextExtent(HDC hdc, const char *text, size_t len) {
-	error("TODO: GetTextExtent");
+	CDC *dc = CDC::FromHandle(hdc);
+	CSize size = dc->GetTextExtent(CString(text, len));
+	return size.cx;
 }
 
 bool GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm) {
