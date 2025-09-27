@@ -38,8 +38,8 @@ public:
 	void dead(int deathId) override {};
 	void establish(int esatabIndex, int sub) override {};
 
-	virtual int16 getScreenWidth() const { return 640; }
-	virtual int16 getScreenHeight() const { return 400; }
+	virtual int16 getScreenWidth() const override { return 640; }
+	virtual int16 getScreenHeight() const override { return 400; }
 
 protected:
 	void setupGame() override;

@@ -493,7 +493,7 @@ void Room::buildRow(int playY, int screenY) {
 struct RoomHeader {
 	byte _tilesWidth;
 	byte _tilesHeight;
-	int16 _tilesCount;
+	uint16 _tilesCount;
 	byte _tilesDisplayWidth;
 	byte _tilesDisplayHeight;
 	byte _unused1;

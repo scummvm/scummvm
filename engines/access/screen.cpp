@@ -239,10 +239,18 @@ void Screen::copyBuffer(const byte *data) {
 }
 
 void Screen::setBufferScan() {
+	int16 scanBottom;
+	switch (_vm->getGameID()) {
+	case kGameMartianMemorandum: 	scanBottom = 184; break;
+	case kGameAmazon:				scanBottom = 176; break;
+	case kGameNoctropolis:			scanBottom = 400; break;
+	default:						error("Unsupported game");
+	}
+
 	_clipWidth = _vWindowBytesWide - 1;
-	_windowXAdd = (320 - _clipWidth) >> 1;
+	_windowXAdd = (w - _clipWidth) >> 1;
 	_clipHeight = _vWindowLinesTall - 1;
-	_windowYAdd = (176 - _clipHeight) >> 1;
+	_windowYAdd = (scanBottom - _clipHeight) >> 1;
 }
 
 void Screen::setScaleTable(int scale) {
