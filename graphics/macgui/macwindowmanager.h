@@ -282,7 +282,11 @@ public:
 	 * @param id The id of the desired window.
 	 * @return Pointer to the requested window, if it exists.
 	 */
-	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+	BaseMacWindow *getWindow(int id) {
+		if (id >= 0 && id < _windows.size())
+			return _windows[id];
+		return nullptr;
+	}
 
 	/**
 	 * Retrieve the patterns used to fill surfaces.
