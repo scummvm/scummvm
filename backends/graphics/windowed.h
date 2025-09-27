@@ -357,9 +357,6 @@ protected:
 				getWidth() * getGameRenderScale(), getHeight() * getGameRenderScale(),
 				safeArea, _gameDrawRect);
 
-		// Move the game draw rect in the safe area
-		_gameDrawRect.constrain(safeArea);
-
 		if (getOverlayHeight()) {
 			const int16 overlayWidth = getOverlayWidth(),
 			            overlayHeight = getOverlayHeight();
