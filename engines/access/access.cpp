@@ -104,7 +104,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startTravelItem = _startTravelBox = 0;
 	ARRAYCLEAR(_ask);
 	_startAboutItem = _startAboutBox = 0;
-	_byte26CB5 = 0;
 	_bcnt = 0;
 	_boxDataStart = 0;
 	_boxDataEnd = false;
@@ -146,7 +145,7 @@ AccessEngine::~AccessEngine() {
 }
 
 void AccessEngine::setVGA() {
-	initGraphics(320, 200);
+	initGraphics(getScreenWidth(), getScreenHeight());
 }
 
 void AccessEngine::initialize() {

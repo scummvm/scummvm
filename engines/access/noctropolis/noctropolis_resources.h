@@ -19,34 +19,34 @@
  *
  */
 
-#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
-#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
+#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
 
-#include "access/access.h"
+#include "access/resources.h"
 
 namespace Access {
 
 namespace Noctropolis {
 
-class NoctropolisEngine : public AccessEngine {
+class NoctropolisEngine;
+
+class NoctropolisResources : public Resources {
 public:
-	NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+	NoctropolisResources(AccessEngine *_vm);
 
-	~NoctropolisEngine();
+	// TODO implement these for real.
+	const byte *getCursor(int num) const override { return nullptr; }
+	const char *getEgoName() const override;
+	int getRMouse(int i, int j) const override { return 0; };
+	int inButtonXRange(int x) const override { return 0; };
 
-	void playGame() override;
-	void dead(int deathId) override {};
-	void establish(int esatabIndex, int sub) override {};
-
-	virtual int16 getScreenWidth() const { return 640; }
-	virtual int16 getScreenHeight() const { return 400; }
-
-protected:
-	void setupGame() override;
-	void initObjects() override;
+	/**
+	 * Load data from the access.dat file
+	 */
+	void load(Common::SeekableReadStream &s) override;
 
 private:
-	void doIntro();
+	// TODO add private members
 
 };
 
@@ -54,4 +54,4 @@ private:
 
 } // end namespace Access
 
-#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H

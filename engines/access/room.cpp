@@ -490,36 +490,70 @@ void Room::buildRow(int playY, int screenY) {
 	}
 }
 
+struct RoomHeader {
+	byte _tilesWidth;
+	byte _tilesHeight;
+	int16 _tilesCount;
+	byte _tilesDisplayWidth;
+	byte _tilesDisplayHeight;
+	byte _unused1;
+	int16 _wallCount;
+	int16 _blockCount;
+};
+
+static void loadHeader(RoomHeader &hdr, Common::SeekableReadStream *stream, uint32 gameId) {
+	hdr._tilesWidth = stream->readByte();
+	hdr._tilesHeight = stream->readByte();
+	if (gameId == kGameNoctropolis) {
+		hdr._tilesCount = stream->readUint16LE();
+		hdr._tilesDisplayWidth = stream->readByte();
+		hdr._tilesDisplayHeight = stream->readByte();
+		hdr._unused1 = stream->readByte();
+		hdr._wallCount = stream->readUint16LE();
+		hdr._blockCount = stream->readUint16LE();
+		stream->skip(8);
+	} else {
+		hdr._tilesCount = (int16)stream->readByte() << 8;
+		hdr._tilesDisplayWidth = stream->readByte();
+		hdr._tilesDisplayHeight = stream->readByte();
+		hdr._unused1 = stream->readByte();
+		hdr._wallCount = stream->readUint16LE();
+		hdr._blockCount = stream->readUint16LE();
+		stream->skip(6);
+	}
+}
+
 void Room::loadPlayField(int fileNum, int subfile) {
 	Resource *playData = _vm->_files->loadFile(fileNum, subfile);
-	byte header[16];
-	playData->_stream->read(&header[0], 16);
+
+	RoomHeader header;
+	loadHeader(header, playData->_stream, _vm->getGameID());
 	Screen &screen = *_vm->_screen;
 
 	// Copy the new palette
 	screen.loadRawPalette(playData->_stream);
 
 	// Copy off the tile data
-	int tileSize = (int)header[2] << 8;
+	int tileSize = header._tilesCount;
 	_tile = new byte[tileSize];
 	playData->_stream->read(_tile, tileSize);
 
 	// Copy off the playfield data
-	_matrixSize = header[0] * header[1];
+	_matrixSize = (int)header._tilesWidth * header._tilesHeight;
 	_playField = new byte[_matrixSize];
 	playData->_stream->read(_playField, _matrixSize);
 
 	// Load the plotter data
-	int numWalls = READ_LE_UINT16(&header[6]);
-	int numBlocks = header[8];
+	int numWalls = header._wallCount;
+	int numBlocks = header._blockCount;
 	_plotter.load(playData->_stream, numWalls, numBlocks);
 
-	_playFieldWidth = header[0];
-	_playFieldHeight = header[1];
-	screen._vWindowWidth = header[3];
+	_playFieldWidth = header._tilesWidth;
+	_playFieldHeight = header._tilesHeight;
+	screen._vWindowWidth = header._tilesDisplayWidth;
 	screen._vWindowBytesWide = screen._vWindowWidth << 4;
 	screen._bufferBytesWide = screen._vWindowBytesWide + 16;
-	screen._vWindowHeight = header[4];
+	screen._vWindowHeight = header._tilesDisplayHeight;
 	screen._vWindowLinesTall = screen._vWindowHeight << 4;
 
 	_vm->_screen->setBufferScan();

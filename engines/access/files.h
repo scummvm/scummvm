@@ -126,11 +126,6 @@ public:
 	Resource *loadFile(const FileIdent &fileIdent);
 
 	/**
-	 * Load a given subfile from a container file by name.
-	 */
-	Resource *loadSubFile(const Common::Path &containerFile, int subfile);
-
-	/**
 	 * Load a given *non-container* file by name directly.
 	 */
 	Resource *loadRawFile(const Common::Path &filename);
