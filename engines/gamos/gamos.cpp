@@ -31,7 +31,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
 
-#include "gamos/gamos.h" 
+#include "gamos/gamos.h"
 #include "graphics/framelimiter.h"
 #include "gamos/detection.h"
 #include "gamos/console.h"
@@ -55,9 +55,9 @@ namespace Gamos {
 GamosEngine *g_engine;
 
 
-const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x84, 0x2c, 
-										 0xfd, 0x81, 0x38, 0xac, 0x73, 0xd2, 0x22, 0x47, 
-										 0xa0, 0x12, 0xb8, 0x19, 0x20, 0x6a, 0x26, 0x7c, 
+const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x84, 0x2c,
+										 0xfd, 0x81, 0x38, 0xac, 0x73, 0xd2, 0x22, 0x47,
+										 0xa0, 0x12, 0xb8, 0x19, 0x20, 0x6a, 0x26, 0x7c,
 										 0x32, 0x57, 0xdd, 0xb2, 0x38, 0xa7, 0x95, 0x7a};
 
 GamosEngine::GamosEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -88,7 +88,7 @@ Common::Error GamosEngine::run() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
-	
+
 	g_system->showMouse(true);
 
 	Common::String mname("solgamer.exe");
@@ -116,11 +116,11 @@ Common::Error GamosEngine::run() {
 
 			if (!result)
 				break;
-			
+
 			_messageProc._act2 = ACT_NONE;
 			_messageProc._act1 = ACT_NONE;
 			_messageProc._rawKeyCode = ACT_NONE;
-			
+
 			doDraw();
 		}
 
@@ -147,7 +147,7 @@ bool GamosEngine::loader2() {
 
 	if (_arch.readByte() != 7)
 		return false;
-	
+
 	RawData data;
 	if (!_arch.readCompressedData(&data))
 		return false;
@@ -161,7 +161,7 @@ bool GamosEngine::loader2() {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
 	while (!dataStream.eos()) {
 		byte curByte = dataStream.readByte();
-		
+
 		if (curByte == 0) {
 			break;
 		} else if (curByte == 0x80) {
@@ -180,25 +180,25 @@ bool GamosEngine::loader2() {
 			resType = 0x40;
 			if (!loadResHandler(resType, pid, p1, p2, 0, data.data() + dataStream.pos(), resSize))
 				return false;
-			
+
 			dataStream.skip(resSize);
 		} else if (curByte == 0x41 || curByte == 0x42) {
 			resSize = dataStream.readSint32LE();
 			resType = curByte;
 			if (!loadResHandler(resType, pid, p1, p2, 0, data.data() + dataStream.pos(), resSize))
 				return false;
-			
+
 			_loadedDataSize += (resSize + 3) & (~3);
-			
+
 			dataStream.skip(resSize);
 		} else if (curByte == 0x43) {
 			resSize = 0x10;
 			resType = 0x43;
 			if (!loadResHandler(resType, pid, p1, p2, 0, data.data() + dataStream.pos(), resSize))
 				return false;
-			
+
 			_loadedDataSize += (resSize + 3) & (~3);
-			
+
 			dataStream.skip(resSize);
 		} else if (curByte == 0xff) {
 			//printf("0xFF  %d %d %d \n", pid, p1, p2);
@@ -235,7 +235,7 @@ bool GamosEngine::loadModule(uint id) {
 	int32 p2 = 0;
 	int32 p3 = 0;
 	int32 pid = 0;
-	
+
 	while(doLoad) {
 		byte curByte = _arch.readByte();
 
@@ -297,11 +297,11 @@ bool GamosEngine::loadModule(uint id) {
 
 					if (!loadResHandler(prevByte, pid, p1, p2, p3, data))
 						return false;
-					
+
 				}
 
 				uint32 datasz = (data.size() + 3) & (~3);
-				
+
 				switch (prevByte) {
 					case RESTP_11:
 					case RESTP_18:
@@ -310,7 +310,7 @@ bool GamosEngine::loadModule(uint id) {
 					case RESTP_40:
 					case RESTP_50:
 						break;
-					
+
 					case RESTP_43:
 						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
 						if (_onlyScanImage)
@@ -318,28 +318,28 @@ bool GamosEngine::loadModule(uint id) {
 						else
 							_loadedDataSize += datasz;
 						break;
-					
+
 					default:
 						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
 						_loadedDataSize += datasz;
 						break;
 				}
-				
+
 				break;
 			}
 			case 5: {
 				byte t = _arch.readByte();
 				if (t == 0 || (t & 0xec) != 0xec)
 					return false;
-				
+
 				byte sz = (t & 3) + 1;
 				int32 movieSize = 0;
 				for(uint i = 0; i < sz; ++i)
 					movieSize |= _arch.readByte() << (i * 8);
-				
+
 				if (prevByte == 0x14)
 					_movieOffsets[pid] = _arch.pos();
-				
+
 				_arch.skip(movieSize);
 				break;
 			}
@@ -373,13 +373,13 @@ bool GamosEngine::loadModule(uint id) {
 		if (_readingBkgMainId == -1)
 			_screen->setPalette(_bkgImages[0].palette);
 			//FUN_00405ebc(0, false);
-		else 
+		else
 			_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
 			//FUN_00405ebc(0, false);
-		
+
 		addDirtyRect(Common::Rect(Common::Point(), _bkgUpdateSizes ));
 	} else {
-		
+
 	}
 	_screen->update();
 
@@ -397,7 +397,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		if (BYTE_004177f7 == 0) {
 			for (int i = 0; i < _thing1.size(); i++)
 				_thing1[i] = 0xf0fe;
-			
+
 			DAT_004177f8 = 1;
 			ProcessScript(true, data, dataSize);
 			if (_needReload)
@@ -406,7 +406,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 			FUN_00404fcc(pid);
 		}
 	} else if (tp == RESTP_20) {
-		if (dataSize != 4) 
+		if (dataSize != 4)
 			return false;
 		_someActsArr[pid].unk1 = getU32(data);
 	} else if (tp == RESTP_21) {
@@ -440,7 +440,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_3A) {
 		_thing2[pid].field_2.assign(data, data + dataSize);
 	} else if (tp == RESTP_40) {
-		return loadRes40(pid, data, dataSize);		
+		return loadRes40(pid, data, dataSize);
 	} else if (tp == RESTP_41) {
 		return loadRes41(pid, data, dataSize);
 	} else if (tp == RESTP_42) {
@@ -489,9 +489,9 @@ bool GamosEngine::initMainDatas() {
 
 	if (!_arch.readCompressedData(&rawdata))
 		return false;
-	
+
 	Common::MemoryReadStream dataStream(rawdata.data(), rawdata.size(), DisposeAfterUse::NO);
-	
+
 	_magic = dataStream.readUint32LE();
 	_pages1kbCount = dataStream.readUint32LE();
 	_readBufSize = dataStream.readUint32LE();
@@ -541,7 +541,7 @@ bool GamosEngine::init(const Common::String &moduleName) {
 
 	if (!loadInitModule())
 		return false;
-	
+
 
 	if (!playIntro())
 		return false;
@@ -608,7 +608,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	_bkgImages.clear();
 	_bkgImages.resize(bkgnum1 * bkgnum2);
-	
+
 	_sprites.clear();
 	_sprites.resize(imageCount);
 
@@ -620,7 +620,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	_someActsArr.clear();
 	_someActsArr.resize(actsCount);
-	
+
 	_loadedDataSize = 0;
 	_vm.clearMemory();
 }
@@ -645,7 +645,7 @@ bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 
 	if (dataSize % 4)
 		printf("dataSize > 4\n");
-	
+
 	_sprites[id].field_0 = data[0];
 	_sprites[id].field_1 = data[1];
 	_sprites[id].field_2 = data[2];
@@ -738,12 +738,12 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 	bimg.palette = nullptr;
 
 	bimg.rawData.assign(data, data + dataSize);
-	
+
 	Common::MemoryReadStream strm(data, dataSize);
-	
+
 	if (_readingBkgMainId == -1 && (strm.readUint32LE() & 0x80000000) )
 		_readingBkgMainId = id;
-	
+
 	//printf("res 18 id %d 4: %x\n", id, strm.readUint32LE());
 
 	strm.seek(8);
@@ -774,7 +774,7 @@ bool GamosEngine::playMovie(int id) {
 	bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
 	if (_readingBkgMainId == -1)
 		_screen->setPalette(_bkgImages[0].palette);
-	else 
+	else
 		_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
 	return res;
 }
@@ -809,7 +809,7 @@ void GamosEngine::stopSounds() {
 void GamosEngine::setErrMessage(const Common::String &msg) {
 	if (_errSet)
 		return;
-	
+
 	_errMessage = msg;
 	_errSet = true;
 }
@@ -824,13 +824,13 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 	}
 
 	static const Common::Point checkerCoords[16] = {
-		{0, 0}, {16, 32}, {48, 16}, {16, 48}, 
+		{0, 0}, {16, 32}, {48, 16}, {16, 48},
 		{0, 32}, {32, 48}, {16, 16}, {48, 0},
 		{32, 32}, {0, 48}, {32, 16}, {16, 0},
 		{48, 32}, {32, 0}, {0, 16}, {48, 48}};
-	
+
 	const int16 maxDelay = (500 / 10) - 1;
-	
+
 	for (int16 p = 0; p < 16; p++) {
 		uint32 val = g_system->getMillis();
 		const Common::Point point = checkerCoords[p];
@@ -842,7 +842,7 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 		_screen->update();
 		val = g_system->getMillis() - val;
 
-		if (val > maxDelay) 
+		if (val > maxDelay)
 			g_system->delayMillis(maxDelay - val);
 	}
 }
@@ -884,10 +884,10 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 			loop = FUN_00402fb4();
 		/*else
 			loop = FUN_00403314(_messageProc._act2);*/
-		
+
 		if (_needReload)
 			return 2;  // rerun update after loadModule
-		
+
 		while (loop) {
 			if (!PTR_00417388) {
 				if (FUN_004033a8(mouseMove) && FUN_004038b8())
@@ -900,7 +900,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 			if (!FUN_00402bc4())
 				return 0;
-			
+
 			if (!DAT_00417802)
 				loop = FUN_00402fb4();
 			/*else
@@ -970,7 +970,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 					break;
 				continue;
 			}
-			
+
 			if (t == 4) {
 				spos++;
 				if (spos == 0) {
@@ -992,7 +992,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 
 				uint16 fb = 0;
 				if (!p1) {
-					fb = _thing1[ ((int8)c[2] + DAT_00417220 + _thing1Size) % _thing1Size  +  
+					fb = _thing1[ ((int8)c[2] + DAT_00417220 + _thing1Size) % _thing1Size  +
 				                  ((((int8)c[3] + DAT_00417224 + _thing1Count) % _thing1Count) << _thing1Shift) ];
 				} else {
 					fb = _thing1[(c[3] << _thing1Shift) + c[2]];
@@ -1007,9 +1007,9 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 					if (c[0] == lb && (c[1] & hb & 0xf0)) {
 						cval = 2;
 					}
-				} else if (lb != 0xfe && 
+				} else if (lb != 0xfe &&
 					       (_thing2[c[0]].field_0[(fb >> 3) & 0xff] & (1 << fb & 7)) != 0) {
-					
+
 					if (!_thing2[c[0]].field_2.empty()) {
 						c[1] = c[1] & 0xf | _thing2[c[0]].field_2[lb];
 						preprocessData(fnc + 8, c);
@@ -1112,7 +1112,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 					if (_needReload)
 						return 0;
 				}
-				
+
 				return retval + 1;
 			} break;
 
@@ -1166,7 +1166,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 				/* Seems it's has a error in original
 				   think it's must be:
 				   min + rnd(max-min) */
-				
+
 				uint32 lb = rnd() >> 0x10;
 				uint32 idx = ((sbuf[ivar5 * 2 + 1] - sbuf[ivar5 * 2]) * lb + sbuf[ivar5 * 2]) >> 0x10;
 				uint16 tval = ARR_00412208[ idx ];
@@ -1188,10 +1188,10 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 
 			rstream.seek(nextpos);
 
-			if (dbits & 1) 
+			if (dbits & 1)
 				break;
 		}
-		
+
 	}
 	return retval + 1;
 }
@@ -1271,14 +1271,14 @@ void GamosEngine::preprocessDataB1(int id, byte *data) {
 		default:
 		case 0:
 			break;
-	
+
 		case 1:
 		case 2:
 		case 4:
 		case 8:
 			data[1] &= 0xf0;
 			break;
-	
+
 		case 3: {
 			static const uint8 lookup[2] = {0x10, 0x20};
 			data[1] = lookup[rndRange16(2)];
@@ -1386,7 +1386,7 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 	Object *obj = nullptr;
 	int index = 0;
 	byte *odat = nullptr;
-		
+
 	SomeAction &act = _someActsArr[oid];
 	if ((act.unk1 & 0xff) == 0) {
 		FUN_00402654(1, id, pos);
@@ -1411,7 +1411,7 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 		obj->fld_2 = *pv1;
 		if (PTR_00417218 && obj->index > PTR_00417218->index)
 			obj->fld_2 |= 0x100;
-		
+
 		int storageSize = ((act.unk1 >> 24) & 0xff) + 1;
 		// if (storageSize < 5) {
 		// 	obj->pImg = nullptr;
@@ -1446,7 +1446,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 
 	if (actid == 0xfe)
 		return;
-	
+
 	SomeAction &act = _someActsArr[actid];
 	Object *povar4 = nullptr;
 	bool multidel = false;
@@ -1466,13 +1466,13 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 					povar4 = &obj;
 					if (!mode || multidel)
 						break;
-					
+
 					multidel = true;
 				}
 			} else {
-				if (mode && obj.fld_4 == pos && obj.fld_5 == id && 
+				if (mode && obj.fld_4 == pos && obj.fld_5 == id &&
 					obj.pos == 0xff && obj.blk == 0xff && (obj.flags & 0x40) == 0) {
-					
+
 					removeObjectMarkDirty(&obj);
 					if (multidel)
 						break;
@@ -1485,7 +1485,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 
 	if (povar4)
 		*pth1 = povar4->fld_2 & 0xf0ff;
-	
+
 	executeScript((*pth1) >> 8, id, pos, nullptr, -1, nullptr, &act, act.script2);
 }
 
@@ -1528,7 +1528,7 @@ void GamosEngine::removeObjectMarkDirty(Object *obj) {
 void GamosEngine::executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, SomeAction *act, int32 scriptAddr) {
 	if (scriptAddr == -1)
 		return;
-	
+
 	uint8 sv1 = BYTE_004177f6;
 	byte *sv2 = PTR_004173e8;
 	int32 sv3 = DAT_0041722c;
@@ -1573,7 +1573,7 @@ bool GamosEngine::FUN_00402fb4()
 
 	for (int32 objIdx = pobj->index; objIdx < _drawElements.size(); objIdx++) {
 		pobj = &_drawElements[objIdx];
-	
+
 		if ((pobj->flags & 3) == 3) {
 			if (!PTR_00417388 || (PTR_00417388[ pobj->actID >> 3 ] & (1 << (pobj->actID & 7))) ) {
 				if (pobj->fld_2 & 0x100) {
@@ -1619,7 +1619,7 @@ bool GamosEngine::FUN_00402fb4()
 					//DAT_00417804 = 0;
 					for ( ScriptS &scr: PTR_00417214->scriptS ) {
 						BYTE_004177f6 = PTR_00417218->flags & 0xf0;
-						
+
 						int ivr8 = 0;
 						if (BYTE_004177f6 == 0x20)
 							ivr8 = 1;
@@ -1627,7 +1627,7 @@ bool GamosEngine::FUN_00402fb4()
 							ivr8 = 2;
 						else if (BYTE_004177f6 == 0x80)
 							ivr8 = 3;
-						
+
 						bool tmp = false;
 						for (int i = 0; i < 8; i++) {
 							if ((PTR_00417214->unk1 >> 8) & (1 << i)) {
@@ -1635,7 +1635,7 @@ bool GamosEngine::FUN_00402fb4()
 								int fncid = ((i & 3) + ivr8) & 3;
 								if (i > 3)
 									fncid += 4;
-								
+
 								DAT_004177ff = false;
 								_preprocDataId = fncid;
 								int32 res = ProcessScript(false, scr.data.data(), scr.data.size(), scr.codes1, scr.codes2);
@@ -1721,7 +1721,7 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 
 		if ((obj->flags & 0x40) == 0)
 			FUN_0040921c(obj);
-		
+
 		addDirtRectOnObject(obj);
 	}
 	return 0;
@@ -1731,8 +1731,8 @@ void GamosEngine::FUN_0040921c(Object *obj) {
 	ImagePos *imgPos = obj->pImg;
 	Image *img = imgPos->image;
 
-	int32 x = obj->fld_4 * _unk2; 
-	int32 y = obj->fld_5 * _unk3; 
+	int32 x = obj->fld_4 * _unk2;
+	int32 y = obj->fld_5 * _unk3;
 
 	if (obj->pos != 255 && obj->blk != 255) {
 		Object *o = &_drawElements[(obj->blk * 0x100) + obj->pos];
@@ -1743,12 +1743,12 @@ void GamosEngine::FUN_0040921c(Object *obj) {
 		}
 	}
 
-	if (obj->flags & 8) 
+	if (obj->flags & 8)
 		obj->x = x - (img->surface.w - _unk2 - imgPos->xoffset);
 	else
 		obj->x = x - imgPos->xoffset;
-	
-	if (obj->flags & 0x10) 
+
+	if (obj->flags & 0x10)
 		obj->y = y - (img->surface.h - _unk3 - imgPos->yoffset);
 	else
 		obj->y = y - imgPos->yoffset;
@@ -1781,9 +1781,9 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 		Common::Rect &r = _dirtyRects[i];
 		if (!rect.intersects(r))
 			continue;
-		
+
 		flags |= 1;
-		
+
 		if (rect.left < r.left) {
 			r.left = rect.left;
 			flags |= 2;
@@ -1807,10 +1807,10 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 		_dirtyRects.push_back(rect);
 		return;
 	}
-	
+
 	if ( !(flags & 2) )
 		return;
-	
+
 	rerunCheck:
 	for(int i = _dirtyRects.size() - 2; i > 0; i--) {
 		for (int j = _dirtyRects.size() - 1; j > i; j--) {
@@ -1818,7 +1818,7 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 			Common::Rect &r2 = _dirtyRects[j];
 			if (!r1.intersects(r2))
 				continue;
-			
+
 			r1.extend(r2);
 			_dirtyRects.remove_at(j);
 			goto rerunCheck;
@@ -1833,9 +1833,9 @@ void GamosEngine::doDraw() {
 	int32 bkg = _readingBkgMainId;
 	if (bkg == -1)
 		bkg = 0;
-	
+
 	Common::Array<Object *> drawList( 1024 );//_drawElements.size(), 1024) );
-	
+
 	int cnt = 0;
 	for (int i = 0; i < _drawElements.size(); i++) {
 		Object &obj = _drawElements[i];
@@ -1849,7 +1849,7 @@ void GamosEngine::doDraw() {
 		/*drawList[cnt] = &_cursorObject;
 		cnt++;*/
 	}
-	
+
 	drawList.resize(cnt);
 
 	if (cnt) {
@@ -1887,12 +1887,12 @@ void GamosEngine::doDraw() {
 bool GamosEngine::loadImage(Image *img) {
 	if (img->loaded)
 		return true;
-	
+
 	if (img->offset < 0)
 		return false;
-	
+
 	_arch.seek(img->offset, 0);
-	
+
 	img->rawData.resize((img->surface.w * img->surface.h + 16) & ~0xf);
 
 	if (img->cSize == 0) {
@@ -1920,7 +1920,7 @@ uint32 GamosEngine::vmCallDispatcher(void *engine, VM *vm, uint32 funcID) {
 	GamosEngine *gamos = (GamosEngine *)engine;
 
 	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
-	
+
 	switch (funcID)
 	{
 	case 0:
@@ -1946,7 +1946,7 @@ uint32 GamosEngine::vmCallDispatcher(void *engine, VM *vm, uint32 funcID) {
 		printf("CallDispatcher 13 keycode %s\n", str.c_str());
 		return 0;
 	}
-	
+
 	case 14:
 		arg1 = vm->pop32();
 		gamos->loadModule(arg1);
@@ -1969,7 +1969,7 @@ uint32 GamosEngine::vmCallDispatcher(void *engine, VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		gamos->setCursor(arg1, true);
 		return 1;
-	
+
 	default:
 		break;
 	}
@@ -2007,12 +2007,12 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 
 	if (spr.field_1 & 1)
 		pobj->flags |= 4;
-	
+
 	pobj->fld_2 = (pobj->fld_2 & 0xFF00) | spr.field_3;
 	int32 idx = 0xffff;
 	if (!p)
 		idx = _curObjIndex;
-	
+
 	pobj->pos = idx & 0xff;
 	pobj->blk = (idx >> 8) & 0xff;
 	pobj->x = x;
@@ -2061,7 +2061,7 @@ void GamosEngine::FUN_00409378(Sprite *spr, Object *obj, bool p) {
 	if (spr->field_2 == 1) {
 		obj->pImg = &spr->sequences[0][0];
 		if (BYTE_004177f6 == 0x80) {
-			if (spr->field_1 & 2) 
+			if (spr->field_1 & 2)
 				obj->flags |= 8;
 		} else if (BYTE_004177f6 == 0x40 && (spr->field_1 & 4)) {
 			obj->flags |= 0x10;
@@ -2107,7 +2107,7 @@ void GamosEngine::FUN_00409378(Sprite *spr, Object *obj, bool p) {
 					if (spr->field_1 & 2) {
 						frm = 2;
 						obj->flags |= 8;
-					} 
+					}
 				} else {
 					frm = 6;
 					if (spr->field_1 & 4) {
@@ -2117,7 +2117,7 @@ void GamosEngine::FUN_00409378(Sprite *spr, Object *obj, bool p) {
 						if (spr->field_1 & 2) {
 							frm = 2;
 							obj->flags |= 8;
-						} 
+						}
 					} else if (spr->field_1 & 2) {
 						frm = 4;
 						obj->flags |= 8;
@@ -2168,10 +2168,10 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 		int32 n = 0;
 		for (int32 i = 0; i < _drawElements.size(); i++) {
 			Object &robj = _drawElements[i];
-			
+
 			if (robj.index > obj->index)
 				n++;
-			
+
 			if ( (robj.flags & 3) == 3 && (_someActsArr[robj.actID].unk1 & 0xff) == 3 ) {
 				if (n) {
 					PTR_004121b4 = &robj;
@@ -2188,7 +2188,7 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 	if (_unk9 == 0) {
 		if (dirtRect && _cursorObject.spr)
 			addDirtRectOnObject(&_cursorObject);
-		
+
 		_mouseCursorImgId = id;
 
 		_cursorObject.spr = &_sprites[id];
@@ -2199,7 +2199,7 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 		_cursorObject.y = 0;
 		_cursorObject.pImg = &_sprites[id].sequences[0][0];
 
-		g_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(), 
+		g_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(),
 								 _cursorObject.pImg->image->surface.w,
 								 _cursorObject.pImg->image->surface.h,
 								 _cursorObject.pImg->xoffset,
@@ -2217,10 +2217,10 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 		tmpb = 0xa0;
 	else if (act2 == ACT_NONE)
 		actPos = move;
-	
+
 	if (act1 != 0xe)
 		tmpb |= act1 | 0x40;
-	
+
 	//actPos +=
 	printf("Not full FUN_00402c2c\n");
 
@@ -2312,7 +2312,7 @@ bool GamosEngine::FUN_00402bc4() {
 bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
 	if (obj->y == -1)
 		return false;
-	
+
 	Object &robj = _drawElements[obj->y];
 	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
 		return true;
