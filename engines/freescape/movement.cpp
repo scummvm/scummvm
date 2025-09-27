@@ -515,10 +515,11 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	}
 
 	// Check for falling
-	lastPosition = newPosition;
-	newPosition.y() = -8192;
-	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
-	int fallen = lastPosition.y() - newPosition.y();
+	Math::Vector3d fallStart = newPosition;   // current standing point
+	Math::Vector3d fallEnd   = fallStart;     // copy for downward probe
+	fallEnd.y() = -8192;                      // probe way down below
+	newPosition = _currentArea->resolveCollisions(fallStart, fallEnd, _playerHeight);
+	int fallen = _lastPosition.y() - newPosition.y();
 
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
@@ -542,7 +543,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (!_hasFallen && fallen > 0) {
 		isSteppingDown = true;
 		// Position in Y was changed, let's re-run effects
-		if (runCollisionConditions(lastPosition, newPosition))
+		if (runCollisionConditions(_lastPosition, newPosition))
 			stopMovement();
 	}
 
