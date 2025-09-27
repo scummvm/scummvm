@@ -324,4 +324,25 @@ bool Movie::processEvent(Common::Event &event) {
 	return false;
 }
 
+bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
+	// kEventActivateWindow
+	// kEventDeactivateWindow
+	// kEventMoveWindow
+	// kEventResizeWindow
+	// kEventOpenWindow
+	// kEventZoomWindow
+
+	switch (click) {
+	case Graphics::kBorderCloseButton:
+		if (_currentMovie && event.type == Common::EVENT_LBUTTONUP)
+			_currentMovie->processEvent(kEventCloseWindow, 0);
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
 } // End of namespace Director

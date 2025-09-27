@@ -42,6 +42,11 @@
 
 namespace Director {
 
+bool commandsWindowCallback(Graphics::WindowClick click, Common::Event &event, void *window) {
+	Window *w = (Window*)window;
+	return w->processWMEvent(click, event);
+}
+
 Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage)
 	: MacWindow(id, scrollable, resizable, editable, wm), Object<Window>("Window") {
 	_vm = vm;
@@ -66,6 +71,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	updateBorderType();
 
 	_draggable = !_isStage;
+
+	setCallback(commandsWindowCallback, this);
 }
 
 Window::~Window() {
