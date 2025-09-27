@@ -78,8 +78,8 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 		}
 
 		if (vidSurface == _vm->_screen) {
-			assert(pt.x >= 0 && pt.y >= 0 && pt.x < 320 && pt.y < 200 &&
-				_xCount > 0 && _xCount <= 320 && _scanCount > 0 && _scanCount <= 200);
+			assert(pt.x >= 0 && pt.y >= 0 && pt.x < _vm->_screen->w && pt.y < _vm->_screen->h &&
+				_xCount > 0 && _xCount <= _vm->_screen->w && _scanCount > 0 && _scanCount <= _vm->_screen->h);
 			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
 		}
 
@@ -184,8 +184,8 @@ void VideoPlayer::copyVideo() {
 		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
 	if (_vm->_screen->clip(r))
 		return;
-	assert(r.left >= 0 && r.left < 320 && r.top >= 0 && r.top < 200 &&
-		r.right > 0 && r.right <= 320 && r.bottom > 0 && r.bottom <= 200);
+	assert(r.left >= 0 && r.left < _vm->_screen->w && r.top >= 0 && r.top < _vm->_screen->h &&
+		r.right > 0 && r.right <= _vm->_screen->w && r.bottom > 0 && r.bottom <= _vm->_screen->h);
 	_vm->_newRects.push_back(r);
 
 	// Draw the clipped video to the buffer
