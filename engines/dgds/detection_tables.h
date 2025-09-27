@@ -237,6 +237,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish (PC FDD EGA German 720k 3.5" v1.0)
+	// reported by ns394 (#16232)
+	{
+		"beamish",
+		"EGA",
+		{
+			{"volume.rmf", 0, "1dee2f11e2a9a07e938953e2819550e3", 8837},
+			{"volume.001", 0, "9b1c60ab33b3515a6330a5aa49d8e99f", 686125},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DGDS_EGA,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Adventures of Willy Beamish (Macintosh)
 	{
 		"beamish",
