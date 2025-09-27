@@ -24,7 +24,7 @@
 
 namespace Gamos {
 
-class Sprite;
+struct Sprite;
 
 class VM {
 public:
