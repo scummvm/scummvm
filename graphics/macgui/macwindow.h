@@ -60,6 +60,9 @@ enum WindowClick {
 	kBorderResizeButton,
 	kBorderActivate,
 	kBorderDeactivate,
+	kBorderDragged,
+	kBorderResized,
+	kBorderMaximizeButton,
 };
 
 enum {

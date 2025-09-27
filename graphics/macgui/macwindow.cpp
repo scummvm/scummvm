@@ -598,6 +598,12 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 		break;
 	case Common::EVENT_LBUTTONUP:
+		if (_beingDragged || _beingResized) {
+			WindowClick click1 = _beingDragged ? kBorderDragged : kBorderResized;
+			if (_callback)
+				_callback(click1, event, _dataPtr);
+		}
+
 		_beingDragged = false;
 		_beingResized = false;
 
