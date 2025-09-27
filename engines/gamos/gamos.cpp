@@ -45,10 +45,9 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "common/keyboard.h"
-#include "endian.h"
+#include "common/endian.h"
 #include "audio/mididrv.h"
 #include "audio/midiplayer.h"
-#include <cstdio>
 
 namespace Gamos {
 
