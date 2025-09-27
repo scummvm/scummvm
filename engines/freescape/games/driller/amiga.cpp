@@ -340,6 +340,10 @@ void DrillerEngine::initAmigaAtari() {
 	_soundIndexFall = 25;
 	_soundIndexFallen = 11;
 	_soundIndexForceEndGame = 11;
+	_soundIndexNoShield = 11;
+	_soundIndexNoEnergy = 11;
+	_soundIndexTimeout = 11;
+	_soundIndexCrushed = 11;
 }
 
 } // End of namespace Freescape
