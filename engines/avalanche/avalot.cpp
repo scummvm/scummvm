@@ -216,7 +216,7 @@ void AvalancheEngine::setup() {
 		MainMenu *mainmenu = new MainMenu(this);
 		mainmenu->run();
 		delete mainmenu;
-		if (_letMeOut)
+		if (_letMeOut || shouldQuit())
 			return;
 
 		newGame();
