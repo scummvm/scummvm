@@ -99,7 +99,7 @@ public:
         byte ref = REF_UNK;
     };
 
-    typedef uint32 (* CallDispatcher)(void *object, VM *state, uint32 funcID); 
+    typedef uint32 (* CallDispatcher)(void *object, VM *state, uint32 funcID);
 
     struct DataSlice {
         uint32 address = 0;
@@ -112,7 +112,7 @@ public:
 
         MemoryBlock() {
             address = 0;
-            memset(data, sizeof(data), 0);
+            memset(data, 0, sizeof(data));
         }
     };
 
