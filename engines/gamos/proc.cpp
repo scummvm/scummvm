@@ -28,6 +28,8 @@ void SystemProc::processMessage(const Common::Event &ev) {
 	case Common::EVENT_KEYDOWN:
 		if ((_gd2flags & 1) == 0)
 			return;
+		
+		_ascii = ev.kbd.ascii;
 
 		if (ev.kbd.keycode == _keyCodes[0])
 			_act1 = 0;
@@ -54,22 +56,52 @@ void SystemProc::processMessage(const Common::Event &ev) {
 				_act2 = ACT2_8f;
 			else if (ev.kbd.keycode == _keyCodes[11])
 				_act2 = ACT2_84;
+			else 
+				return;
 
+			_rawKeyCode = ev.kbd.keycode;
 			return;
 		}
 
 		if ((_act1 < 8) && (ev.kbd.flags & Common::KBD_SHIFT))
 			_act1 |= 8;
 
-		_mouseAct = _mouseReported;
+		_mouseActPos = _mouseReportedPos;
 		break;
 	
 	case Common::EVENT_MOUSEMOVE:
-		if ((_gd2flags & 1) == 0)
+		if ((_gd2flags & 2) == 0)
 			return;
 
-		_mouseReported = ev.mouse;
+		_mouseReportedPos = ev.mouse;
 		
+		break;
+	
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+		if ((_gd2flags & 2) == 0)
+			return;
+		
+		_mouseActPos = ev.mouse;
+		_act2 = ACT2_81;		
+		break;
+	
+	case Common::EVENT_LBUTTONUP:
+		if ((_gd2flags & 2) == 0)
+			return;
+		
+		_mouseActPos = ev.mouse;
+		_act2 = ACT2_82;
+		_rawKeyCode = _keyCodes[8];
+		break;
+	
+	case Common::EVENT_RBUTTONUP:
+		if ((_gd2flags & 2) == 0)
+			return;
+		
+		_mouseActPos = ev.mouse;
+		_act2 = ACT2_83;
+		_rawKeyCode = _keyCodes[9];
 		break;
 	
 	default:

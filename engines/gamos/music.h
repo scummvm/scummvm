@@ -55,7 +55,7 @@ public:
   ~MidiMusic();
 
   void stopMusic();
-  void playMusic(Common::Array<byte> *midiData);
+  bool playMusic(Common::Array<byte> *midiData);
   void update();
   int16 midi2low();
 

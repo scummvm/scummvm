@@ -27,6 +27,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_setbuf
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
 
 #include "gamos/gamos.h" 
@@ -39,6 +41,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/rect.h"
+#include "common/util.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "common/keyboard.h"
@@ -78,26 +81,50 @@ Common::Error GamosEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	_vm._callFuncs = vmCallDispatcher;
+	_vm._callingObject = this;
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
+	
+	g_system->showMouse(true);
 
 	Common::String mname("solgamer.exe");
 	init(mname);
 
 	Common::Event e;
 
-	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+			_messageProc.processMessage(e);
 		}
-		
-		// g_system->getPaletteManager()->setPalette(pal, 0, 256);
 
-		limiter.delayBeforeSwap();
-		_screen->update();
-		limiter.startFrame();
+		uint32 curTime = g_system->getMillis();
+		if (curTime > _lastTimeStamp + _delayTime) {
+			_lastTimeStamp = curTime;
+
+			if (_messageProc._gd2flags & 2) {
+
+			}
+
+			uint8 result = 2;
+			while (result == 2) {
+				result = update({}, _messageProc._mouseReportedPos, _messageProc._mouseActPos, _messageProc._act2, _messageProc._act1, _messageProc._rawKeyCode, true);
+			}
+
+			if (!result)
+				break;
+			
+			_messageProc._act2 = ACT_NONE;
+			_messageProc._act1 = ACT_NONE;
+			_messageProc._rawKeyCode = ACT_NONE;
+			
+			doDraw();
+		}
+
+		//if (_delayTime)
 	}
 
 	return Common::kNoError;
@@ -147,7 +174,7 @@ bool GamosEngine::loader2() {
 			p2 = dataStream.readSint32LE();
 		} else if (curByte == 7) {
 			int32 needsz = dataStream.readSint32LE(); // check free mem ?
-			printf("7777 want %d\n", needsz);
+			//printf("7777 want %d\n", needsz);
 		} else if (curByte == 0x40) {
 			resSize = 4;
 			resType = 0x40;
@@ -161,6 +188,8 @@ bool GamosEngine::loader2() {
 			if (!loadResHandler(resType, pid, p1, p2, 0, data.data() + dataStream.pos(), resSize))
 				return false;
 			
+			_loadedDataSize += (resSize + 3) & (~3);
+			
 			dataStream.skip(resSize);
 		} else if (curByte == 0x43) {
 			resSize = 0x10;
@@ -168,9 +197,11 @@ bool GamosEngine::loader2() {
 			if (!loadResHandler(resType, pid, p1, p2, 0, data.data() + dataStream.pos(), resSize))
 				return false;
 			
+			_loadedDataSize += (resSize + 3) & (~3);
+			
 			dataStream.skip(resSize);
 		} else if (curByte == 0xff) {
-			printf("0xFF  %d %d %d  ", pid, p1, p2);
+			//printf("0xFF  %d %d %d \n", pid, p1, p2);
 			if (!reuseLastResource(resType, pid, p1, p2, 0))
 				return false;
 		} else {
@@ -189,6 +220,12 @@ bool GamosEngine::loadModule(uint id) {
 
 	_currentModuleID = id;
 	const byte targetDir = 2 + id;
+
+	_readingBkgMainId = -1;
+
+	/* Complete me */
+
+	setbuf(stdout, 0);
 
 	bool prefixLoaded = false;
 	byte prevByte = 0;
@@ -250,25 +287,43 @@ bool GamosEngine::loadModule(uint id) {
 					isResource = false; /* do not loadResHandler */
 				} else if (prevByte == RESTP_18) {
 					/* free elements ? */
+					_readingBkgOffset = _arch.pos();
 				}
 
+				RawData data;
 				if (isResource) {
-					RawData data;
 					if (!_arch.readCompressedData(&data))
 						return false;
 
 					if (!loadResHandler(prevByte, pid, p1, p2, p3, data))
 						return false;
+					
 				}
-				
-				
-				/* memory management
-				if (prevByte == RESTP_43) {
 
-				} else if (prevByte != RESTP_11 && prevByte != RESTP_20) {
-					// grow used space
+				uint32 datasz = (data.size() + 3) & (~3);
+				
+				switch (prevByte) {
+					case RESTP_11:
+					case RESTP_18:
+					case RESTP_19:
+					case RESTP_20:
+					case RESTP_40:
+					case RESTP_50:
+						break;
+					
+					case RESTP_43:
+						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
+						if (_onlyScanImage)
+							_loadedDataSize += 0x10;
+						else
+							_loadedDataSize += datasz;
+						break;
+					
+					default:
+						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
+						_loadedDataSize += datasz;
+						break;
 				}
-				*/
 				
 				break;
 			}
@@ -309,7 +364,23 @@ bool GamosEngine::loadModule(uint id) {
 		}
 	}
 
-	_screen->addDirtyRect(_screen->getBounds());
+	//FUN_00404a28();
+	if (BYTE_004177f7 == 0) {
+		// Reverse Here
+
+		setCursor(0, false);
+
+		if (_readingBkgMainId == -1)
+			_screen->setPalette(_bkgImages[0].palette);
+			//FUN_00405ebc(0, false);
+		else 
+			_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
+			//FUN_00405ebc(0, false);
+		
+		addDirtyRect(Common::Rect(Common::Point(), _bkgUpdateSizes ));
+	} else {
+		
+	}
 	_screen->update();
 
 	return true;
@@ -318,8 +389,56 @@ bool GamosEngine::loadModule(uint id) {
 bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, size_t dataSize) {
 	if (tp == RESTP_12) {
 		setFPS(_fps);
+	} else if (tp == RESTP_13) {
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 	} else if (tp == RESTP_18) {
-		printf("18 size %d\n", dataSize);
+		loadRes18(pid, data, dataSize);
+	} else if (tp == RESTP_19) {
+		if (BYTE_004177f7 == 0) {
+			for (int i = 0; i < _thing1.size(); i++)
+				_thing1[i] = 0xf0fe;
+			
+			DAT_004177f8 = 1;
+			ProcessScript(true, data, dataSize);
+			if (_needReload)
+				printf(" need reload from loadResHandler, CANT HAPPEN! \n ");
+			DAT_004177f8 = 0;
+			FUN_00404fcc(pid);
+		}
+	} else if (tp == RESTP_20) {
+		if (dataSize != 4) 
+			return false;
+		_someActsArr[pid].unk1 = getU32(data);
+	} else if (tp == RESTP_21) {
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		_someActsArr[pid].script1 = _loadedDataSize + p3;
+		//printf("RESTP_21 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
+	} else if (tp == RESTP_22) {
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		_someActsArr[pid].script2 = _loadedDataSize + p3;
+		//printf("RESTP_22 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
+	} else if (tp == RESTP_23) {
+		if (dataSize % 4 != 0 || dataSize < 4)
+			return false;
+		_someActsArr[pid].scriptS.resize(dataSize / 4);
+	} else if (tp == RESTP_2A) {
+		ScriptS &scr = _someActsArr[pid].scriptS[p1];
+		scr.data.assign(data, data + dataSize);
+	} else if (tp == RESTP_2B) {
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		_someActsArr[pid].scriptS[p1].codes1 = _loadedDataSize + p3;
+		//printf("RESTP_2B %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
+	} else if (tp == RESTP_2C) {
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		_someActsArr[pid].scriptS[p1].codes2 = _loadedDataSize + p3;
+		//printf("RESTP_2C %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
+	} else if (tp == RESTP_38) {
+		printf("Data 38 size %d\n", dataSize);
+		_thing2[pid].field_0.assign(data, data + dataSize);
+	} else if (tp == RESTP_39) {
+		_thing2[pid].field_1.assign(data, data + dataSize);
+	} else if (tp == RESTP_3A) {
+		_thing2[pid].field_2.assign(data, data + dataSize);
 	} else if (tp == RESTP_40) {
 		return loadRes40(pid, data, dataSize);		
 	} else if (tp == RESTP_41) {
@@ -342,7 +461,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_XORSEQ2) {
 		loadXorSeq(data, dataSize, 2);
 	} else {
-		//printf("Unk Res %x\n", tp);
+		printf("Unk Res %x at %x sz %x\n", tp, _loadedDataSize, dataSize);
 	}
 	return true;
 }
@@ -409,6 +528,8 @@ bool GamosEngine::initMainDatas() {
 	_movieOffsets.clear();
 	_movieOffsets.resize(_movieCount, 0);
 
+	_drawElements.clear();
+
 	return true;
 }
 
@@ -429,8 +550,24 @@ bool GamosEngine::init(const Common::String &moduleName) {
 }
 
 bool GamosEngine::loadInitModule() {
-
+	rndSeed(g_system->getMillis());
+	//DAT_0041723c = -1;
+	_curObjIndex = -1;
+	PTR_00417218 = nullptr;
+    PTR_00417214 = nullptr;
+	//DAT_00417238 = 0;
+	_xorSeq[2].clear();
+	_xorSeq[1].clear();
+	_xorSeq[0].clear();
+	_isMoviePlay = 0;
+	DAT_00417802 = false;
+	//DAT_00417808 = 0;
 	_runReadDataMod = true;
+	//DAT_00417807 = 0;
+	//DAT_00417806 = 0;
+	//DAT_004177fa = 0;
+	//DAT_004177fb = 0;
+	//_mouseInWindow = false;
 
 	return loadModule(0);
 }
@@ -446,17 +583,28 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	uint32 bkgnum1 = dataStream.readUint32LE(); // 0
 	uint32 bkgnum2 = dataStream.readUint32LE(); // 4
-	dataStream.readUint32LE(); // 8
-	dataStream.readUint32LE(); // c
-	dataStream.readUint32LE(); // 10
-	dataStream.readUint32LE(); // 14
+	_thing1Size = dataStream.readUint32LE(); // 8
+	_thing1Count = dataStream.readUint32LE(); // c
+	_bkgUpdateSizes.x = dataStream.readUint32LE(); // 10
+	_bkgUpdateSizes.y = dataStream.readUint32LE(); // 14
 	dataStream.readUint32LE(); // 18
-	dataStream.readUint32LE(); // 1c
-	dataStream.readUint32LE(); // 20
+	uint32 actsCount = dataStream.readUint32LE(); // 1c
+	uint32 unk1Count = dataStream.readUint32LE(); // 20
 	uint32 imageCount = dataStream.readUint32LE(); // 24
 	dataStream.readUint32LE(); // 28
 	uint32 midiCount = dataStream.readUint32LE(); // 2c
 	dataStream.readUint32LE(); // 30
+
+	_thing1Shift = 2;
+	for(int i = 2; i < 9; i++) {
+		if (_thing1Size <= (1 << i)) {
+			_thing1Shift = i;
+			break;
+		}
+	}
+
+	_thing1.clear();
+	_thing1.resize(_thing1Count << _thing1Shift);
 
 	_bkgImages.clear();
 	_bkgImages.resize(bkgnum1 * bkgnum2);
@@ -466,6 +614,15 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	_midiTracks.clear();
 	_midiTracks.resize(midiCount);
+
+	_thing2.clear();
+	_thing2.resize(unk1Count);
+
+	_someActsArr.clear();
+	_someActsArr.resize(actsCount);
+	
+	_loadedDataSize = 0;
+	_vm.clearMemory();
 }
 
 void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
@@ -485,11 +642,16 @@ void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
 bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 	if (dataSize < 4)
 		return false;
+
+	if (dataSize % 4)
+		printf("dataSize > 4\n");
 	
 	_sprites[id].field_0 = data[0];
 	_sprites[id].field_1 = data[1];
 	_sprites[id].field_2 = data[2];
 	_sprites[id].field_3 = data[3];
+
+	_onlyScanImage = data[1] & 0x80;
 
 	return true;
 }
@@ -499,6 +661,8 @@ bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
 		printf("41 not null!!!\n");
 		exit(0);
 	}
+	if (dataSize % 4)
+		printf("loadRes41 datasize > 4 \n");
 	_sprites[id].sequences.resize(dataSize / 4);
 	return true;
 }
@@ -537,6 +701,7 @@ bool GamosEngine::loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size
 	img->surface.pitch = img->surface.w = s.readSint16LE();
 	img->surface.h = s.readSint16LE();
 	img->loaded = false;
+	img->offset = -1;
 
 	uint32 token = s.readUint32LE();
 
@@ -564,6 +729,40 @@ bool GamosEngine::loadRes52(int32 id, const byte *data, size_t dataSize) {
 	return true;
 }
 
+bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
+	BkgImage &bimg = _bkgImages[id];
+	bimg.loaded = true;
+	bimg.offset = _readingBkgOffset;
+	bimg.field2_0x8 = 0;
+	bimg.field3_0xc = 0;
+	bimg.palette = nullptr;
+
+	bimg.rawData.assign(data, data + dataSize);
+	
+	Common::MemoryReadStream strm(data, dataSize);
+	
+	if (_readingBkgMainId == -1 && (strm.readUint32LE() & 0x80000000) )
+		_readingBkgMainId = id;
+	
+	//printf("res 18 id %d 4: %x\n", id, strm.readUint32LE());
+
+	strm.seek(8);
+
+	bimg.surface.pitch = bimg.surface.w = strm.readUint32LE();
+	bimg.surface.h = strm.readUint32LE();
+
+	uint32 imgsize = strm.readUint32LE();
+
+	//printf("res 18 id %d 14: %x\n", id, strm.readUint32LE());
+
+	bimg.surface.setPixels(bimg.rawData.data() + 0x18);
+	bimg.surface.format = Graphics::PixelFormat::createFormatCLUT8();
+
+	bimg.palette = bimg.rawData.data() + 0x18 + imgsize;
+
+	return true;
+}
+
 
 bool GamosEngine::playIntro() {
 	if (_movieCount != 0 && _unk11 == 1)
@@ -571,11 +770,20 @@ bool GamosEngine::playIntro() {
 	return true;
 }
 
+bool GamosEngine::playMovie(int id) {
+	bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
+	if (_readingBkgMainId == -1)
+		_screen->setPalette(_bkgImages[0].palette);
+	else 
+		_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
+	return res;
+}
 
-bool GamosEngine::scriptFunc18(int id) {
+
+bool GamosEngine::scriptFunc18(uint32 id) {
 	if (true) {
 		_isMoviePlay++;
-		bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
+		bool res = playMovie(id);
 		_isMoviePlay--;
 		return res;
 	}
@@ -589,11 +797,11 @@ void GamosEngine::stopMidi() {
 }
 
 void GamosEngine::stopMCI() {
-
+	printf("Not implemented stopMCI\n");
 }
 
 void GamosEngine::stopSounds() {
-
+	printf("Not implemented stopSounds\n");
 }
 
 
@@ -642,19 +850,1474 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 
 void GamosEngine::readData2(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
-	dataStream.skip(4); // FIX ME
-	_messageProc._gd2flags = dataStream.readByte();
-	dataStream.skip(0x40 - 5); // FIX ME
+	dataStream.seek(4); // FIX ME
+	_messageProc._gd2flags = dataStream.readByte(); //4
+	//5
+	//x15
+	dataStream.seek(0x15);
+	_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
+	//x16
+	dataStream.seek(0x38);
+	_midiTrack = dataStream.readUint32LE(); //0x38
+	_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
+	//0x40
 	for (int i = 0; i < 12; i++) {
 		_messageProc._keyCodes[i] = _winkeyMap[dataStream.readByte()];
 	}
 }
 
 
-void GamosEngine::playMidi(Common::Array<byte> *buffer) {
+bool GamosEngine::playMidi(Common::Array<byte> *buffer) {
 	_musicPlayer.stopMusic();
-	_musicPlayer.playMusic(buffer);
-	_midiStarted = true;
+	_midiStarted = _musicPlayer.playMusic(buffer);
+	return _midiStarted;
 }
+
+uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
+	_needReload = false;
+
+	FUN_00402c2c(mouseMove, actPos, act2, act1);
+
+	/*if ()*/{
+		bool loop = false;
+		if (!DAT_00417802)
+			loop = FUN_00402fb4();
+		/*else
+			loop = FUN_00403314(_messageProc._act2);*/
+		
+		if (_needReload)
+			return 2;  // rerun update after loadModule
+		
+		while (loop) {
+			if (!PTR_00417388) {
+				if (FUN_004033a8(mouseMove) && FUN_004038b8())
+					return 1;
+				else
+					return 0;
+			}
+
+			RawKeyCode = ACT_NONE;
+
+			if (!FUN_00402bc4())
+				return 0;
+			
+			if (!DAT_00417802)
+				loop = FUN_00402fb4();
+			/*else
+				loop = FUN_00403314(_messageProc._act2);*/
+
+			if (_needReload)
+				return 2; // rerun update after loadModule
+		}
+	}
+	return 1;
+}
+
+
+int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int32 code1, int32 code2) {
+
+	Common::Array<uint16> ARR_00412208(512);
+
+	Common::MemoryReadStream rstream(data, dataSize);
+
+	if (!p1) {
+		DAT_00417228 = PTR_00417218->pos;
+		DAT_0041722c = PTR_00417218->blk;
+	} else {
+		PTR_00417218 = nullptr;
+		_curObjIndex = -1;
+		PTR_00417214 = nullptr;
+		//DAT_00417238 = 0;
+		//DAT_0041723c = -1;
+		DAT_0041722c = 0;
+		DAT_00417228 = 0;
+		BYTE_004177f6 = 0x10;
+		_preprocDataId = 0;
+		PTR_004173e8 = nullptr;
+	}
+
+	DAT_00417220 = DAT_00417228;
+	DAT_00417224 = DAT_0041722c;
+
+	int32 spos = -1;
+	int32 sbuf[6];
+
+	uint8 b[4];
+	rstream.read(b, 4);
+
+	//printf("FLAGS %x\n", b[0]);
+
+	if (b[0] & 1) {
+		if (code1 != -1) {
+			if (!doScript(code1))
+				return 0;
+			if (_needReload)
+				return 0;
+		}
+		rstream.skip(4);
+	}
+
+	if (b[0] & 2) {
+		bool fastSkipAll = false;
+		while (true) {
+			uint16 sz = rstream.readUint16LE();
+			uint8 f = rstream.readByte();
+			uint8 t = rstream.readByte();
+
+			if (fastSkipAll) {
+				rstream.skip(sz * 4);
+				if (f & 1)
+					break;
+				continue;
+			}
+			
+			if (t == 4) {
+				spos++;
+				if (spos == 0) {
+					sbuf[0] = 0;
+					sbuf[1] = 0;
+				} else {
+					int32 p = sbuf[spos * 2 - 1];
+					sbuf[spos * 2 + 1] = p;
+					sbuf[spos * 2] = p;
+				}
+			} else {
+				spos = -1;
+			}
+			int32 ps = spos * 2 + 1;
+			for (int read = 0; read < sz; read++) {
+				byte c[4];
+				rstream.read(c, 4);
+				preprocessData(_preprocDataId, c);
+
+				uint16 fb = 0;
+				if (!p1) {
+					fb = _thing1[ ((int8)c[2] + DAT_00417220 + _thing1Size) % _thing1Size  +  
+				                  ((((int8)c[3] + DAT_00417224 + _thing1Count) % _thing1Count) << _thing1Shift) ];
+				} else {
+					fb = _thing1[(c[3] << _thing1Shift) + c[2]];
+				}
+
+				uint8 lb = fb & 0xff;
+				uint8 hb = (fb >> 8) & 0xff;
+
+				int cval = 0;
+				int fnc = c[1] >> 4;
+				if ((c[1] & 1) == 0) {
+					if (c[0] == lb && (c[1] & hb & 0xf0)) {
+						cval = 2;
+					}
+				} else if (lb != 0xfe && 
+					       (_thing2[c[0]].field_0[(fb >> 3) & 0xff] & (1 << fb & 7)) != 0) {
+					
+					if (!_thing2[c[0]].field_2.empty()) {
+						c[1] = c[1] & 0xf | _thing2[c[0]].field_2[lb];
+						preprocessData(fnc + 8, c);
+					}
+
+					if (hb & c[1] & 0xf0) {
+						cval = 2;
+					}
+				}
+
+				if (c[1] & 2 == cval) {
+					if ((c[1] & 0xc) == 0) {
+						rstream.skip((sz - read) * 4);
+						break;
+					}
+					if ((c[1] & 0xc) == 4)
+						return 0;
+					if ((c[1] & 0xc) == 8) {
+						fastSkipAll = true;
+						rstream.skip((sz - read) * 4);
+						break;
+					}
+					ARR_00412208[ sbuf[ps] ] = (c[3] << 8) | c[2];
+					sbuf[ps]++;
+				} else if ((sz - read) == 1 && spos > -1 && sbuf[spos * 2] == sbuf[ps]) {
+					return 0;
+				}
+			}
+
+			if (f & 1)
+				break;
+		}
+	}
+
+	BYTE_00412200 = 0;
+
+	if (b[0] & 4) {
+		byte s = b[1];
+		preprocessData(_preprocDataId, b);
+		preprocessDataB1(b[1] >> 4, b);
+		rnd();
+		b[1] = (b[1] & 0xf0) | (s & 0xf);
+		//FUN_00402a68(b);
+		if (_needReload)
+			return 0;
+	}
+
+	BYTE_004177fc = 0;
+	if (b[0] & 8) {
+		uint32 fldsv;
+		if (PTR_00417218)
+			fldsv = PTR_00417218->fld_5;
+		if (code2 != -1)
+			doScript(code2);
+		if (_needReload)
+			return 0;
+		rstream.skip(4);
+		if (BYTE_004177fc == 0 && BYTE_00412200 == 0 && PTR_00417218 && PTR_00417218->fld_5 != fldsv && PTR_00417218->y != -1)
+			addDirtRectOnObject( &_drawElements[PTR_00417218->y] );
+	}
+
+	if (BYTE_004177fc == 0 && BYTE_00412200 != 0)
+		FUN_004095a0(PTR_00417218);
+
+	int32 retval = 0;
+
+	if (b[0] & 0x10) {
+		int ivar5 = -1;
+		while (true) {
+			uint16 dcount = rstream.readUint16LE();
+			uint8 dbits = rstream.readByte();
+			uint8 dtype = rstream.readByte();
+
+			/* set next pos before next iteration */
+			uint32 nextpos = rstream.pos() + (dcount * 4);
+
+			switch (dtype) {
+			case 0: {
+				uint16 rndval = rndRange16(b[1] & 3);
+
+				if (rndval == 2) {
+					rstream.skip(dcount * 4);
+					dcount = rstream.readUint16LE();
+					rstream.skip(2 + dcount * 4);
+					dcount = rstream.readUint16LE();
+					rstream.skip(2);
+				} else if (rndval == 1) {
+					rstream.skip(dcount * 4);
+					dcount = rstream.readUint16LE();
+					rstream.skip(2);
+				}
+
+				rnd();
+
+				for (int i = 0; i < dcount; i++) {
+					byte d[4];
+					rstream.read(d, 4);
+					retval += processData(p1, d);
+
+					if (_needReload)
+						return 0;
+				}
+				
+				return retval + 1;
+			} break;
+
+			case 1: {
+				int32 num = rndRange16(dcount);
+
+				for (int i = 0; i < dcount; i++) {
+					byte d[4];
+					rstream.read(d, 4);
+
+					if (num != 0) {
+						retval += processData(p1, d);
+						if (_needReload)
+							return 0;
+					}
+
+					num--;
+				}
+
+			} break;
+
+			case 2: {
+				rstream.skip(4 * rndRange16(dcount));
+
+				byte d[4];
+				rstream.read(d, 4);
+
+				retval += processData(p1, d);
+				if (_needReload)
+						return 0;
+			} break;
+
+			case 3: {
+				for (int i = 0; i < dcount; i++) {
+					uint16 doproc = rndRange16(2);
+
+					byte d[4];
+					rstream.read(d, 4);
+
+					if (doproc != 0) {
+						retval += processData(p1, d);
+
+						if (_needReload)
+							return 0;
+					}
+				}
+			} break;
+
+			default: {
+				ivar5++;
+				/* Seems it's has a error in original
+				   think it's must be:
+				   min + rnd(max-min) */
+				
+				uint32 lb = rnd() >> 0x10;
+				uint32 idx = ((sbuf[ivar5 * 2 + 1] - sbuf[ivar5 * 2]) * lb + sbuf[ivar5 * 2]) >> 0x10;
+				uint16 tval = ARR_00412208[ idx ];
+
+				for (int i = 0; i < dcount; i++) {
+					byte d[4];
+					rstream.read(d, 4);
+
+					if ( ((d[3] << 8) | d[2]) == tval ) {
+						retval += processData(p1, d);
+						if (_needReload)
+							return 0;
+						break;
+					}
+				}
+			} break;
+
+			}
+
+			rstream.seek(nextpos);
+
+			if (dbits & 1) 
+				break;
+		}
+		
+	}
+	return retval + 1;
+}
+
+uint32 GamosEngine::getU32(const void *ptr) {
+	const uint8 *p = (const uint8 *)ptr;
+	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
+}
+
+
+void GamosEngine::preprocessData(int id, byte *data) {
+	switch (id) {
+
+	default:
+	case 0:
+		break;
+
+	case 1:
+	case 10: {
+		static const uint8 lookup[16] = {0, 0x20, 0x40, 0x60, 0x80, 0xA0, 0xC0, 0xE0, 0x10, 0x30, 0x50, 0x70, 0x90, 0xB0, 0xD0, 0xF0};
+		int8 tmp = (int8)data[3];
+		data[3] = data[2];
+		data[2] = -tmp;
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 2:
+	case 12: {
+		static const uint8 lookup[16] = {0, 0x40, 0x80, 0xC0, 0x10, 0x50, 0x90, 0xD0, 0x20, 0x60, 0xA0, 0xE0, 0x30, 0x70, 0xB0, 0xF0};
+		data[3] = -((int8)data[3]);
+		data[2] = -((int8)data[2]);
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 3:
+	case 16: {
+		static const uint8 lookup[16] = {0, 0x80, 0x10, 0x90, 0x20, 0xA0, 0x30, 0xB0, 0x40, 0xC0, 0x50, 0xD0, 0x60, 0xE0, 0x70, 0xF0};
+		int8 tmp = (int8)data[2];
+		data[2] = data[3];
+		data[3] = -tmp;
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 4: {
+		static const uint8 lookup[16] = {0, 0x10, 0x80, 0x90, 0x40, 0x50, 0xC0, 0xD0, 0x20, 0x30, 0xA0, 0xB0, 0x60, 0x70, 0xE0, 0xF0};
+		data[2] = -((int8)data[2]);
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 5: {
+		static const uint8 lookup[16] = {0, 0x20, 0x10, 0x30, 0x80, 0xA0, 0x90, 0xB0, 0x40, 0x60, 0x50, 0x70, 0xC0, 0xE0, 0xD0, 0xF0};
+		int8 tmp = (int8)data[2];
+		data[2] = -((int8)data[3]);
+		data[3] = -tmp;
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 6: {
+		static const uint8 lookup[16] = {0, 0x40, 0x20, 0x60, 0x10, 0x50, 0x30, 0x70, 0x80, 0xC0, 0xA0, 0xE0, 0x90, 0xD0, 0xB0, 0xF0};
+		data[3] = -((int8)data[3]);
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+
+	case 7: {
+		static const uint8 lookup[16] = {0, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0};
+		uint8 tmp = data[2];
+		data[2] = data[3];
+		data[3] = tmp;
+		data[1] = (data[1] & 0xf) | lookup[ (data[1] >> 4) & 0xf ];
+	} break;
+	}
+}
+
+void GamosEngine::preprocessDataB1(int id, byte *data) {
+	switch (id) {
+
+		default:
+		case 0:
+			break;
+	
+		case 1:
+		case 2:
+		case 4:
+		case 8:
+			data[1] &= 0xf0;
+			break;
+	
+		case 3: {
+			static const uint8 lookup[2] = {0x10, 0x20};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 5: {
+			static const uint8 lookup[2] = {0x10, 0x40};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 6: {
+			static const uint8 lookup[2] = {0x20, 0x40};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 7: {
+			static const uint8 lookup[3] = {0x10, 0x20, 0x40};
+			data[1] = lookup[rndRange16(3)];
+		} break;
+
+		case 9: {
+			static const uint8 lookup[2] = {0x10, 0x80};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 0xa: {
+			static const uint8 lookup[2] = {0x20, 0x80};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 0xb: {
+			static const uint8 lookup[3] = {0x10, 0x20, 0x80};
+			data[1] = lookup[rndRange16(3)];
+		} break;
+
+		case 0xc: {
+			static const uint8 lookup[2] = {0x40, 0x80};
+			data[1] = lookup[rndRange16(2)];
+		} break;
+
+		case 0xd: {
+			static const uint8 lookup[3] = {0x10, 0x40, 0x80};
+			data[1] = lookup[rndRange16(3)];
+		} break;
+
+		case 0xe: {
+			static const uint8 lookup[3] = {0x20, 0x40, 0x80};
+			data[1] = lookup[rndRange16(3)];
+		} break;
+
+		case 0xf: {
+			static const uint8 lookup[4] = {0x10, 0x20, 0x40, 0x80};
+			data[1] = lookup[rndRange16(4)];
+		} break;
+	}
+}
+
+int GamosEngine::processData(int id, byte *data) {
+	preprocessData(_preprocDataId, data);
+	if (id == 0) {
+		FUN_0040283c( ((int8)data[3] + DAT_00417224 + _thing1Count) % _thing1Count,
+		              ((int8)data[2] + DAT_00417220 + _thing1Size) % _thing1Size,
+					  data );
+		if (_needReload)
+			return 0;
+		return data[2] == 0 && data[3] == 0;
+	} else {
+		FUN_0040283c( (int8)data[3], (int8)data[2],	data);
+		return 0;
+	}
+}
+
+void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
+	byte td[4];
+	memcpy(td, data, 4);
+
+	uint16 *pv1 = _thing1.data() + (id << _thing1Shift) + pos;
+
+	uint8 oid = td[0];
+
+	if ((td[1] & 1) == 0) {
+		if (oid == 0xfe) {
+			FUN_00402654(1, id, pos);
+			if (_needReload)
+				return;
+
+			*pv1 = (td[1] << 8) | td[0];
+			return;
+		}
+	} else {
+		Unknown1 &unk1 = _thing2[ oid ];
+		uint8 index = rndRange16( unk1.field_1[0] );
+		if (!unk1.field_2.empty()) {
+			byte id = td[1];
+			td[1] = unk1.field_2[ unk1.field_1[ index + 1 ] ];
+			preprocessData(8 + (id >> 4), td);
+		}
+	}
+
+	preprocessDataB1(td[1] >> 4, td);
+	rnd(); // needed?
+
+	td[0] = oid;
+
+	Object *obj = nullptr;
+	int index = 0;
+	byte *odat = nullptr;
+		
+	SomeAction &act = _someActsArr[oid];
+	if ((act.unk1 & 0xff) == 0) {
+		FUN_00402654(1, id, pos);
+		if (_needReload)
+			return;
+		obj = nullptr;
+		index = -1;
+		odat = nullptr;
+	} else {
+		FUN_00402654(0, id, pos);
+		if (_needReload)
+			return;
+		obj = getFreeObject();
+		obj->flags = (td[1] & 0xf0) | 3;
+		obj->actID = oid;
+		obj->fld_4 = 0;
+		obj->fld_5 = (act.unk1 >> 16) & 0xff;
+		obj->pos = pos;
+		obj->blk = id;
+		obj->x = -1;
+		obj->y = -1;
+		obj->fld_2 = *pv1;
+		if (PTR_00417218 && obj->index > PTR_00417218->index)
+			obj->fld_2 |= 0x100;
+		
+		int storageSize = ((act.unk1 >> 24) & 0xff) + 1;
+		// if (storageSize < 5) {
+		// 	obj->pImg = nullptr;
+		// 	odat = &obj->pImg;
+		// } else {
+		// 	odat = malloc(storageSize);
+		// 	obj->pImg = (Sprite *)odat;
+		// 	obj->flags |= 8;
+		// }
+		obj->storage.clear();
+		obj->storage.resize(storageSize, 0);
+		odat = obj->storage.data();
+		index = obj->index;
+		if ((act.unk1 & 0xff) == 3 && PTR_004121b4 == nullptr)
+			PTR_004121b4 = obj;
+	}
+
+	*pv1 = (td[1] << 8) | td[0];
+	executeScript(td[1], id, pos, odat, index, obj, &act, act.script1);
+}
+
+void GamosEngine::removeObjectByIDMarkDirty(int32 id) {
+	if (id != -1)
+		removeObjectMarkDirty(&_drawElements[id]);
+}
+
+
+void GamosEngine::FUN_00402654(int mode, int id, int pos) {
+	uint16 *pth1 = &_thing1[pos + (id << _thing1Shift)];
+
+	uint8 actid = (*pth1 & 0xff);
+
+	if (actid == 0xfe)
+		return;
+	
+	SomeAction &act = _someActsArr[actid];
+	Object *povar4 = nullptr;
+	bool multidel = false;
+
+	for(Object &obj : _drawElements) {
+		if (obj.flags & 1) {
+			if (obj.flags & 2) {
+				if (obj.pos == pos && obj.blk == id) {
+					removeObjectByIDMarkDirty(obj.y);
+					if (obj.y != obj.x)
+						removeObjectByIDMarkDirty(obj.x);
+					/* if (obj.flags & 8)
+						obj.storage.clear(); */
+					FUN_004023d8(&obj);
+					removeObject(&obj);
+					FUN_0040255c(&obj);
+					povar4 = &obj;
+					if (!mode || multidel)
+						break;
+					
+					multidel = true;
+				}
+			} else {
+				if (mode && obj.fld_4 == pos && obj.fld_5 == id && 
+					obj.pos == 0xff && obj.blk == 0xff && (obj.flags & 0x40) == 0) {
+					
+					removeObjectMarkDirty(&obj);
+					if (multidel)
+						break;
+
+					multidel = true;
+				}
+			}
+		}
+	}
+
+	if (povar4)
+		*pth1 = povar4->fld_2 & 0xf0ff;
+	
+	executeScript((*pth1) >> 8, id, pos, nullptr, -1, nullptr, &act, act.script2);
+}
+
+Object *GamosEngine::getFreeObject() {
+	for (Object &rObj : _drawElements) {
+		if ( (rObj.flags & 1) == 0 ) {
+			rObj.flags = 1;
+			return &rObj;
+		}
+	}
+
+	_drawElements.emplace_back();
+	Object &rObj = _drawElements.back();
+	rObj.flags = 1;
+	rObj.index = _drawElements.size() - 1;
+	return &rObj;
+}
+
+void GamosEngine::removeObject(Object *obj) {
+	obj->flags = 0;
+	/*if (&(_drawElements.back()) == obj) {
+		int32 lastindex = _drawElements.size() - 1;
+		for (int32 i = lastindex - 1; i >= 0; i--) {
+			if ( _drawElements[i].flags & 1 ) {
+				lastindex = i;
+				break;
+			}
+		}
+		_drawElements.resize(lastindex);
+	}*/
+}
+
+void GamosEngine::removeObjectMarkDirty(Object *obj) {
+	if (obj->flags & 0x80)
+		addDirtRectOnObject(obj);
+	removeObject(obj);
+}
+
+
+void GamosEngine::executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, SomeAction *act, int32 scriptAddr) {
+	if (scriptAddr == -1)
+		return;
+	
+	uint8 sv1 = BYTE_004177f6;
+	byte *sv2 = PTR_004173e8;
+	int32 sv3 = DAT_0041722c;
+	int32 sv4 = DAT_00417228;
+	int32 sv5 = DAT_00417224;
+	int32 sv6 = DAT_00417220;
+	int32 sv7 = _curObjIndex;
+	Object *sv8 = PTR_00417218;
+	SomeAction *sv9 = PTR_00417214;
+
+	BYTE_004177f6 = p1;
+	PTR_004173e8 = storage;
+	DAT_0041722c = id;
+	DAT_00417228 = pos;
+	DAT_00417224 = id;
+	DAT_00417220 = pos;
+	_curObjIndex = index;
+	PTR_00417218 = pobj;
+	PTR_00417214 = act;
+
+	doScript(scriptAddr);
+
+	BYTE_004177f6 = sv1;
+	PTR_004173e8 = sv2;
+	DAT_0041722c = sv3;
+	DAT_00417228 = sv4 ;
+	DAT_00417224 = sv5;
+	DAT_00417220 = sv6;
+	_curObjIndex = sv7;
+	PTR_00417218 = sv8;
+	PTR_00417214 = sv9;
+}
+
+bool GamosEngine::FUN_00402fb4()
+{
+	if (_drawElements.empty())
+		return true;
+
+	Object *pobj = DAT_00412204;
+	if (!pobj)
+		pobj = &(_drawElements.front());
+
+	for (int32 objIdx = pobj->index; objIdx < _drawElements.size(); objIdx++) {
+		pobj = &_drawElements[objIdx];
+	
+		if ((pobj->flags & 3) == 3) {
+			if (!PTR_00417388 || (PTR_00417388[ pobj->actID >> 3 ] & (1 << (pobj->actID & 7))) ) {
+				if (pobj->fld_2 & 0x100) {
+					pobj->fld_2 &= ~0x100;
+				} else {
+					if ((pobj->flags & 4) == 0) {
+						if (pobj->y != -1 && FUN_00402f34(true, false, &_drawElements[pobj->y])) {
+							pobj->y = pobj->x;
+							if (pobj->x != -1) {
+								Object &o = _drawElements[pobj->x];
+								o.flags |= 0x80;
+								o.fld_4 = pobj->pos;
+								o.fld_5 = pobj->blk;
+								FUN_0040921c(&o);
+								addDirtRectOnObject(&o);
+							}
+						}
+					} else {
+						if (FUN_00402f34(pobj->y != pobj->x, true, &_drawElements[pobj->y])) {
+							pobj->y = pobj->x;
+							if (pobj->x != -1) {
+								Object &o = _drawElements[pobj->x];
+								o.flags |= 0x80;
+								o.fld_4 = pobj->pos;
+								o.fld_5 = pobj->blk;
+								FUN_0040921c(&o);
+								addDirtRectOnObject(&o);
+							}
+							pobj->flags &= ~4;
+						} else {
+							if (pobj == DAT_00412204) {
+								goto exit;
+							}
+							goto continue_to_next_object;
+						}
+					}
+
+					PTR_00417218 = pobj;
+					_curObjIndex = pobj->index;
+					PTR_00417214 = &_someActsArr[pobj->actID];
+					PTR_004173e8 = pobj->storage.data();
+
+					//DAT_00417804 = 0;
+					for ( ScriptS &scr: PTR_00417214->scriptS ) {
+						BYTE_004177f6 = PTR_00417218->flags & 0xf0;
+						
+						int ivr8 = 0;
+						if (BYTE_004177f6 == 0x20)
+							ivr8 = 1;
+						else if (BYTE_004177f6 == 0x40)
+							ivr8 = 2;
+						else if (BYTE_004177f6 == 0x80)
+							ivr8 = 3;
+						
+						bool tmp = false;
+						for (int i = 0; i < 8; i++) {
+							if ((PTR_00417214->unk1 >> 8) & (1 << i)) {
+								//DAT_004173ec = (i & 3) + ivr8;
+								int fncid = ((i & 3) + ivr8) & 3;
+								if (i > 3)
+									fncid += 4;
+								
+								DAT_004177ff = false;
+								_preprocDataId = fncid;
+								int32 res = ProcessScript(false, scr.data.data(), scr.data.size(), scr.codes1, scr.codes2);
+
+								if (_needReload)
+									return false;
+
+								if (res != 0) {
+									if (res != 1) {
+										if (DAT_00412204) {
+											DAT_00412204 = nullptr;
+											goto exit;
+										}
+										FUN_0040255c(pobj);
+										goto continue_to_next_object;
+									}
+									if (!DAT_004177ff) {
+										if (DAT_00412204) {
+											DAT_00412204 = nullptr;
+											goto exit;
+										}
+										goto continue_to_next_object;
+									}
+									tmp = true;
+									break;
+								}
+							}
+						}
+
+						if (scr.data[0] & 0x80) {
+							if (tmp) {
+								DAT_00412204 = pobj;
+								goto exit;
+							}
+
+							if (DAT_00412204) {
+								DAT_00412204 = nullptr;
+								goto exit;
+							}
+
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			if (!PTR_00417388 && (pobj->flags & 0x83) == 0x81 && pobj->pos == -1 && pobj->blk == -1)
+				FUN_00402f34(true, false, pobj);
+		}
+continue_to_next_object:
+	}
+
+exit:
+	PTR_00417218 = nullptr;
+	_curObjIndex = -1;
+	return true;
+}
+
+bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
+	uint8 v = obj->fld_2 & 0xff;
+	if (v < 2) {
+		if (p2 || (obj->flags & 4)) {
+			addDirtRectOnObject(obj);
+			if (p1)
+				removeObject(obj);
+			return true;
+		}
+	} else {
+		addDirtRectOnObject(obj);
+		obj->actID++;
+		if (obj->actID == v) {
+			obj->actID = 0;
+			obj->pImg = obj->pImg - (v - 1);
+			if (p2 || (obj->flags & 4)) {
+				addDirtRectOnObject(obj);
+				if (p1)
+					removeObject(obj);
+				return true;
+			}
+		} else {
+			obj->pImg++;
+		}
+
+		if ((obj->flags & 0x40) == 0)
+			FUN_0040921c(obj);
+		
+		addDirtRectOnObject(obj);
+	}
+	return 0;
+}
+
+void GamosEngine::FUN_0040921c(Object *obj) {
+	ImagePos *imgPos = obj->pImg;
+	Image *img = imgPos->image;
+
+	int32 x = obj->fld_4 * _unk2; 
+	int32 y = obj->fld_5 * _unk3; 
+
+	if (obj->pos != 255 && obj->blk != 255) {
+		Object *o = &_drawElements[(obj->blk * 0x100) + obj->pos];
+		if (o->flags & 4) {
+			int t = obj->actID + 1;
+			x += (o->pos - obj->fld_4) * _unk2 * t / (obj->fld_2 & 0xFF);
+			y += (o->blk - obj->fld_5) * _unk3 * t / (obj->fld_2 & 0xFF);
+		}
+	}
+
+	if (obj->flags & 8) 
+		obj->x = x - (img->surface.w - _unk2 - imgPos->xoffset);
+	else
+		obj->x = x - imgPos->xoffset;
+	
+	if (obj->flags & 0x10) 
+		obj->y = y - (img->surface.h - _unk3 - imgPos->yoffset);
+	else
+		obj->y = y - imgPos->yoffset;
+}
+
+void GamosEngine::addDirtRectOnObject(Object *obj) {
+	ImagePos *imgPos = obj->pImg;
+	Common::Rect rect;
+	rect.left = obj->x;
+	rect.top = obj->y;
+	if (obj->flags & 0x40) {
+		rect.left -= imgPos->xoffset;
+		rect.top -= imgPos->yoffset;
+	}
+	rect.right = rect.left + imgPos->image->surface.w;
+	rect.bottom = rect.top + imgPos->image->surface.h;
+
+	addDirtyRect(rect);
+}
+
+void GamosEngine::addDirtyRect(const Common::Rect &rect) {
+	if (_dirtyRects.empty()) {
+		_dirtyRects.push_back(rect);
+		return;
+	}
+
+	int flags = 0;
+
+	for(int i = 0; i < _dirtyRects.size(); i++) {
+		Common::Rect &r = _dirtyRects[i];
+		if (!rect.intersects(r))
+			continue;
+		
+		flags |= 1;
+		
+		if (rect.left < r.left) {
+			r.left = rect.left;
+			flags |= 2;
+		}
+		if (rect.right > r.right) {
+			r.right = rect.right;
+			flags |= 2;
+		}
+		if (rect.top < r.top) {
+			r.top = rect.top;
+			flags |= 2;
+		}
+		if (rect.bottom > r.bottom) {
+			r.bottom = rect.bottom;
+			flags |= 2;
+		}
+		break;
+	}
+
+	if (flags == 0) {
+		_dirtyRects.push_back(rect);
+		return;
+	}
+	
+	if ( !(flags & 2) )
+		return;
+	
+	rerunCheck:
+	for(int i = _dirtyRects.size() - 2; i > 0; i--) {
+		for (int j = _dirtyRects.size() - 1; j > i; j--) {
+			Common::Rect &r1 = _dirtyRects[i];
+			Common::Rect &r2 = _dirtyRects[j];
+			if (!r1.intersects(r2))
+				continue;
+			
+			r1.extend(r2);
+			_dirtyRects.remove_at(j);
+			goto rerunCheck;
+		}
+	}
+}
+
+void GamosEngine::doDraw() {
+	if (_dirtyRects.empty())
+		return;
+
+	int32 bkg = _readingBkgMainId;
+	if (bkg == -1)
+		bkg = 0;
+	
+	Common::Array<Object *> drawList( 1024 );//_drawElements.size(), 1024) );
+	
+	int cnt = 0;
+	for (int i = 0; i < _drawElements.size(); i++) {
+		Object &obj = _drawElements[i];
+		if ((obj.flags & 0x83) == 0x81) {
+			drawList[cnt] = &obj;
+			cnt++;
+		}
+	}
+
+	if (_unk9 == 0 /*&& */) {
+		/*drawList[cnt] = &_cursorObject;
+		cnt++;*/
+	}
+	
+	drawList.resize(cnt);
+
+	if (cnt) {
+		for (int i = 0; i < drawList.size() - 1; i++) {
+			for (int j = i + 1; j < drawList.size(); j++) {
+				Object *o1 = drawList[i];
+				Object *o2 = drawList[j];
+				if ((o1->fld_2 & 0xff00) < (o2->fld_2 & 0xff00)) {
+					drawList[i] = o2;
+					drawList[j] = o1;
+				}
+			}
+		}
+	}
+
+	/* add mouse cursor here*/
+
+	for (int i = 0; i < _dirtyRects.size(); i++) {
+		Common::Rect &r = _dirtyRects[i];
+
+		if (_bkgImages[bkg].loaded) {
+			_screen->blitFrom(_bkgImages[bkg].surface, r, r);
+		}
+		_screen->addDirtyRect(r);
+	}
+
+	for(Object *o: drawList) {
+		if (o->pImg && loadImage(o->pImg->image))
+			_screen->blitFrom(o->pImg->image->surface, Common::Point(o->x, o->y));
+	}
+
+	_screen->update();
+}
+
+bool GamosEngine::loadImage(Image *img) {
+	if (img->loaded)
+		return true;
+	
+	if (img->offset < 0)
+		return false;
+	
+	_arch.seek(img->offset, 0);
+	
+	img->rawData.resize((img->surface.w * img->surface.h + 16) & ~0xf);
+
+	if (img->cSize == 0) {
+		_arch.read(img->rawData.data(), img->surface.w * img->surface.h);
+		img->surface.setPixels(img->rawData.data());
+	} else {
+		RawData tmp(img->cSize);
+		_arch.read(tmp.data(), tmp.size());
+		_arch.decompress(&tmp, &img->rawData);
+		img->surface.setPixels(img->rawData.data() + 4);
+	}
+
+	img->surface.format = Graphics::PixelFormat::createFormatCLUT8();
+	img->loaded = true;
+	return true;
+}
+
+uint32 GamosEngine::doScript(uint32 scriptAddress) {
+	_vm.EBX = PTR_004173e8;
+	return _vm.doScript(scriptAddress);
+}
+
+
+uint32 GamosEngine::vmCallDispatcher(void *engine, VM *vm, uint32 funcID) {
+	GamosEngine *gamos = (GamosEngine *)engine;
+
+	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
+	
+	switch (funcID)
+	{
+	case 0:
+		gamos->DAT_004177ff = true;
+		return 1;
+	case 3:
+		printf("func 3 %x check 0x10 \n", gamos->PTR_00417218->fld_4 & 0x90);
+		return (gamos->PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
+	case 4:
+		printf("func 4 %x check 0x20 \n", gamos->PTR_00417218->fld_4 & 0xa0);
+		return (gamos->PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
+	case 5:
+		arg1 = vm->pop32();
+		//printf("func 5 %x check %x \n", gamos->PTR_00417218->fld_4 & 0xb0, arg1);
+		return (gamos->PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0;
+	case 6:
+		arg1 = vm->pop32();
+		printf("func 6 %x check %x \n", gamos->PTR_00417218->fld_4 & 0x4f, arg1);
+		return (gamos->PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
+	case 13: {
+		VM::Reg regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef.ref, regRef.val);
+		printf("CallDispatcher 13 keycode %s\n", str.c_str());
+		return 0;
+	}
+	
+	case 14:
+		arg1 = vm->pop32();
+		gamos->loadModule(arg1);
+		gamos->setNeedReload();
+		return 1;
+
+	case 15:
+		arg1 = vm->pop32(); //implement
+		break;
+
+	case 16:
+		arg1 = vm->pop32();
+		return gamos->scriptFunc16(arg1);
+
+	case 19:
+		arg1 = vm->pop32();
+		return gamos->scriptFunc19(arg1);
+
+	case 31:
+		arg1 = vm->pop32();
+		gamos->setCursor(arg1, true);
+		return 1;
+	
+	default:
+		break;
+	}
+	printf("Call Dispatcher %d\n", funcID);
+	return 0;
+}
+
+uint32 GamosEngine::scriptFunc19(uint32 id) {
+	BYTE_004177fc = 1;
+	FUN_0040738c(id, DAT_00417220 * _unk2, DAT_00417224 * _unk3, false);
+
+	return 1;
+}
+
+uint32 GamosEngine::scriptFunc16(uint32 id) {
+	if (DAT_004177f8 == 0) {
+		stopMidi();
+		if (_enableMidi) {
+			_midiTrack = id;
+			if (id >= _midiTracks.size())
+				return 0;
+
+			return playMidi(&_midiTracks[id]) ? 1 : 0;
+		}
+	}
+	return 1;
+}
+
+
+bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
+	Sprite &spr = _sprites[id];
+	Object *pobj = getFreeObject();
+
+	pobj->flags |= 0x80;
+
+	if (spr.field_1 & 1)
+		pobj->flags |= 4;
+	
+	pobj->fld_2 = (pobj->fld_2 & 0xFF00) | spr.field_3;
+	int32 idx = 0xffff;
+	if (!p)
+		idx = _curObjIndex;
+	
+	pobj->pos = idx & 0xff;
+	pobj->blk = (idx >> 8) & 0xff;
+	pobj->x = x;
+	pobj->y = y;
+
+	if (!p) {
+		if (!PTR_00417218) {
+			pobj->fld_2 = (pobj->fld_2 & 0xff) | (((PTR_00417214->unk1 >> 2) & 0xFF) << 8);
+		} else {
+			int32 index = pobj->index;
+			if (PTR_00417218->y != -1) {
+				Object *oobj = &_drawElements[PTR_00417218->y];
+				addDirtRectOnObject(oobj);
+				oobj->flags &= 0x7f;
+				if (PTR_00417218->x != PTR_00417218->y)
+					removeObject(oobj);
+			}
+
+			PTR_00417218->y = index;
+			if (!(pobj->flags & 4)) {
+				if (PTR_00417218->x != -1)
+					removeObject(&_drawElements[PTR_00417218->x]);
+				PTR_00417218->x = index;
+			}
+
+			pobj->fld_2 = (pobj->fld_2 & 0xff) | ((PTR_00417218->fld_5) << 8);
+			if (DAT_00417220 != DAT_00417228 || DAT_00417224 != DAT_0041722c) {
+				PTR_00417218->flags |= 4;
+			}
+		}
+	} else {
+		pobj->fld_4 = 0xff;
+		pobj->fld_5 = 0xff;
+		pobj->fld_2 = (pobj->fld_2 & 0xff) | ((PTR_00417218->fld_5) << 8);
+	}
+
+	FUN_00409378(&spr, pobj, p);
+	return true;
+}
+
+void GamosEngine::FUN_00409378(Sprite *spr, Object *obj, bool p) {
+	obj->flags &= ~0x18;
+	obj->actID = 0;
+	obj->spr = spr;
+
+	if (spr->field_2 == 1) {
+		obj->pImg = &spr->sequences[0][0];
+		if (BYTE_004177f6 == 0x80) {
+			if (spr->field_1 & 2) 
+				obj->flags |= 8;
+		} else if (BYTE_004177f6 == 0x40 && (spr->field_1 & 4)) {
+			obj->flags |= 0x10;
+		}
+	} else {
+		int frm = 0;
+		if (BYTE_004177f6 == 0x10) {
+			frm = 1;
+			if (DAT_00417224 == DAT_0041722c && (spr->field_1 & 8))
+				frm = 0;
+		} else if (BYTE_004177f6 == 0x20) {
+			frm = 3;
+			if (DAT_0041722c < DAT_00417224)
+				frm = 2;
+			else if (DAT_0041722c > DAT_00417224) {
+				frm = 4;
+				if (spr->field_1 & 4) {
+					frm = 2;
+					obj->flags |= 0x10;
+				}
+			} else if (DAT_00417220 == DAT_00417228 && (spr->field_1 & 8))
+				frm = 0;
+		} else if (BYTE_004177f6 == 0x40) {
+			frm = 5;
+			if (DAT_00417224 == DAT_0041722c && (spr->field_1 & 8))
+				frm = 0;
+			else if (spr->field_1 & 4) {
+				frm = 1;
+				obj->flags |= 0x10;
+			}
+		} else {
+			frm = 7;
+			if (DAT_00417224 == DAT_0041722c) {
+				if ((spr->field_1 & 8) && DAT_00417220 == DAT_00417228)
+					frm = 0;
+				else if (spr->field_1 & 2) {
+					frm = 3;
+					obj->flags |= 8;
+				}
+			} else {
+				if (DAT_0041722c < DAT_00417224) {
+					frm = 8;
+					if (spr->field_1 & 2) {
+						frm = 2;
+						obj->flags |= 8;
+					} 
+				} else {
+					frm = 6;
+					if (spr->field_1 & 4) {
+						frm = 8;
+						obj->flags |= 0x10;
+
+						if (spr->field_1 & 2) {
+							frm = 2;
+							obj->flags |= 8;
+						} 
+					} else if (spr->field_1 & 2) {
+						frm = 4;
+						obj->flags |= 8;
+					}
+				}
+			}
+		}
+
+		obj->pImg = &spr->sequences[frm][0];
+	}
+	if (!p) {
+		obj->fld_4 = DAT_00417228;
+		obj->fld_5 = DAT_0041722c;
+		FUN_0040921c(obj);
+	} else {
+		obj->flags |= 0x40;
+	}
+
+	addDirtRectOnObject(obj);
+}
+
+void GamosEngine::FUN_004095a0(Object *obj) {
+	if (obj->y != -1) {
+		Object &yobj = _drawElements[obj->y];
+		Sprite *spr = yobj.spr; //FUN_00409568
+		addDirtRectOnObject(&yobj);
+		if (DAT_00417228 != DAT_00417220 || DAT_0041722c != DAT_00417224)
+			obj->flags |= 4;
+		FUN_00409378(spr, &yobj, false);
+	}
+}
+
+void GamosEngine::FUN_004023d8(Object *obj) {
+	if (obj->fld_2 & 0x200) {
+		obj->fld_2 &= ~0x200;
+		int32 index = obj->index;
+		for (int index = obj->index; index < _drawElements.size(); index++) {
+			Object *pobj = &_drawElements[index];
+			if ((pobj->flags & 0xe3) == 0xe1 && ((pobj->blk << 8) | pobj->pos) == obj->index)
+				removeObjectMarkDirty(pobj);
+		}
+	}
+}
+
+void GamosEngine::FUN_0040255c(Object *obj) {
+	if (obj == PTR_004121b4) {
+		PTR_004121b4 = nullptr;
+		int32 n = 0;
+		for (int32 i = 0; i < _drawElements.size(); i++) {
+			Object &robj = _drawElements[i];
+			
+			if (robj.index > obj->index)
+				n++;
+			
+			if ( (robj.flags & 3) == 3 && (_someActsArr[robj.actID].unk1 & 0xff) == 3 ) {
+				if (n) {
+					PTR_004121b4 = &robj;
+					break;
+				}
+				if (!PTR_004121b4)
+					PTR_004121b4 = &robj;
+			}
+		}
+	}
+}
+
+void GamosEngine::setCursor(int id, bool dirtRect) {
+	if (_unk9 == 0) {
+		if (dirtRect && _cursorObject.spr)
+			addDirtRectOnObject(&_cursorObject);
+		
+		_mouseCursorImgId = id;
+
+		_cursorObject.spr = &_sprites[id];
+		_cursorObject.flags = 0xc1;
+		_cursorObject.fld_2 = _sprites[id].field_3; // max frames
+		_cursorObject.actID = 0; //frame
+		_cursorObject.x = 0;
+		_cursorObject.y = 0;
+		_cursorObject.pImg = &_sprites[id].sequences[0][0];
+
+		g_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(), 
+								 _cursorObject.pImg->image->surface.w,
+								 _cursorObject.pImg->image->surface.h,
+								 _cursorObject.pImg->xoffset,
+								 _cursorObject.pImg->yoffset, 0);
+	}
+}
+
+void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1) {
+	uint8 tmpb = 0;
+	if (act2 == ACT2_8f)
+		FUN_0040255c(PTR_004121b4);
+	else if (act2 == ACT2_82)
+		tmpb = 0x90;
+	else if (act2 == ACT2_83)
+		tmpb = 0xa0;
+	else if (act2 == ACT_NONE)
+		actPos = move;
+	
+	if (act1 != 0xe)
+		tmpb |= act1 | 0x40;
+	
+	//actPos +=
+	printf("Not full FUN_00402c2c\n");
+
+	Object *pobj = nullptr;
+	uint8 actT = 0;
+	uint8 pobjF5 = 0xff;
+
+	for(int i = 0; i < _drawElements.size(); i++) {
+		Object &obj = _drawElements[i];
+		if ((obj.flags & 3) == 3) {
+			SomeAction &action = _someActsArr[obj.actID];
+			uint8 tp = action.unk1 & 0xff;
+			if (tp == 1)
+				obj.fld_4 = tmpb;
+			else if (tp == 2)
+				obj.fld_4 = tmpb & 0x4f;
+			else if (tp == 3) {
+				if (&obj == PTR_004121b4)
+					obj.fld_4 = tmpb & 0x4f;
+				else
+					obj.fld_4 = 0;
+			}
+
+			if (!pobj || ((obj.fld_5 <= pobjF5) && FUN_00409600(&obj, actPos))) {
+				actT = tp;
+				pobjF5 = obj.fld_5;
+				pobj = &obj;
+			}
+		}
+	}
+
+	if (!pobj) {
+		DAT_004173f4 = actPos.x / _unk2;
+		DAT_004173f0 = actPos.y / _unk3;
+		DAT_00417803 = _thing1[DAT_004173f4 + (DAT_004173f0 << _thing1Shift)] & 0xff;
+	} else {
+		DAT_00417803 = actT;
+		if (actT == 2) {
+			if (act2 == ACT_NONE)
+				tmpb |= 0x10;
+			else if (act2 == ACT2_81)
+				tmpb |= 0x20;
+
+			pobj->fld_4 = tmpb;
+		} else if (actT == 3 && (tmpb == 0x90 || tmpb == 0xa0)) {
+			PTR_004121b4 = pobj;
+			pobj->fld_4 = tmpb;
+		}
+
+		DAT_004173f4 = pobj->pos;
+		DAT_004173f0 = pobj->blk;
+	}
+
+	DAT_00417805 = act2;
+	if (act2 == ACT2_82 || act2 == ACT2_83) {
+		DAT_004177fe = act2;
+		DAT_004177fd = DAT_00417803;
+		DAT_004173fc = DAT_004173f4;
+		DAT_004173f8 = DAT_004173f0;
+	} else {
+		if (act2 == ACT2_81)
+			DAT_004177fe = 14;
+		DAT_00417805 = 14;
+	}
+
+}
+
+void GamosEngine::FUN_00404fcc(int32 id) {
+	printf("Not implemented FUN_00404fcc\n");
+}
+
+bool GamosEngine::FUN_004033a8(Common::Point mouseMove) {
+	_cursorObject.x = mouseMove.x;
+	_cursorObject.y = mouseMove.y;
+	printf("Not implemented FUN_004033a8\n");
+	return true;
+}
+
+bool GamosEngine::FUN_004038b8() {
+	printf("Not implemented FUN_004038b8\n");
+	return true;
+}
+
+bool GamosEngine::FUN_00402bc4() {
+	printf("Not implemented FUN_00402bc4\n");
+	return true;
+}
+
+bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
+	if (obj->y == -1)
+		return false;
+	
+	Object &robj = _drawElements[obj->y];
+	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
+		return true;
+	return false;
+}
+
 
 } // End of namespace Gamos

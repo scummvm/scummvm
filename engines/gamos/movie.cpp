@@ -392,8 +392,7 @@ int MoviePlayer::proccessMidiChunk() {
         return 0;
     }
 
-    _gamos->playMidi(&_midiBuffer);
-    _midiStarted = true;
+    _midiStarted = _gamos->playMidi(&_midiBuffer);
 
     return 1;
 }

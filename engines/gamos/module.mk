@@ -8,7 +8,8 @@ MODULE_OBJS = \
 	keycodes.o \
 	music.o \
 	proc.o \
-	movie.o 
+	movie.o \
+	vm.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GAMOS), DYNAMIC_PLUGIN)

@@ -33,6 +33,8 @@ MidiMusic::MidiMusic() {
 }
 
 MidiMusic::~MidiMusic() {
+    g_system->getTimerManager()->removeTimerProc(_timerProc);
+
     if (_driver) {
         _driver->stopAllNotes(true);
         _driver->close();
@@ -50,30 +52,33 @@ void MidiMusic::stopMusic() {
     }
 }
 
-void MidiMusic::playMusic(Common::Array<byte> *midiData) {
+bool MidiMusic::playMusic(Common::Array<byte> *midiData) {
     stopMusic();
 
     if (!midiData || midiData->size() <= 4)
-        return;
+        return false;
 
-    if (_mutex.lock()) {
-        _pMidiData.clear();
-        _pMidiData.swap(*midiData);
+    if (!_mutex.lock())
+        return false;
 
-        _dataPos = 4;
-        _midiDelayTicks = 1;
-        _midiDelayCount = 1;
+    _pMidiData.clear();
+    _pMidiData.swap(*midiData);
 
-        if (_pMidiData[_dataPos] == 0xf8) {
-            _dataPos++;
-            midi2low();
-            _dataPos++;
-        }
+    _dataStart = 4;
+    _dataPos = _dataStart;
+    _midiDelayTicks = 1;
+    _midiDelayCount = 1;
 
-        g_system->getTimerManager()->installTimerProc(_timerProc, 10 * 1000, this, "Gamos::Music");
-
-        _mutex.unlock();
+    if (_pMidiData[_dataPos] == 0xf8) {
+        _dataPos++;
+        midi2low();
+        _dataPos++;
     }
+
+    g_system->getTimerManager()->installTimerProc(_timerProc, 10 * 1000, this, "Gamos::Music");
+
+    _mutex.unlock();
+    return true;
 }
 
 void MidiMusic::update() {

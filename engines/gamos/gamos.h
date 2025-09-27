@@ -41,7 +41,7 @@
 #include "gamos/proc.h"
 #include "gamos/music.h"
 #include "gamos/movie.h"
-
+#include "gamos/vm.h"
 
 #include "gamos/detection.h"
 #include "gamos/file.h"
@@ -59,23 +59,25 @@ enum CONFTYPE {
 
 };
 
-enum ACT2 {
-	ACT_NONE = 0xe,
-	ACT2_81 = 0x81,
-	ACT2_82 = 0x82,
-	ACT2_83 = 0x83,
-	ACT2_84 = 0x84,
-	ACT2_8f = 0x8f,
-};
 
 enum RESTYPE {
 	RESTP_F = 0xf,
 	RESTP_10 = 0x10,
 	RESTP_11 = 0x11,
 	RESTP_12 = 0x12,
+	RESTP_13 = 0x13,
 	RESTP_18 = 0x18,
 	RESTP_19 = 0x19,
 	RESTP_20 = 0x20,
+	RESTP_21 = 0x21,
+	RESTP_22 = 0x22,
+	RESTP_23 = 0x23,
+	RESTP_2A = 0x2a,
+	RESTP_2B = 0x2b,
+	RESTP_2C = 0x2c,
+	RESTP_38 = 0x38,
+	RESTP_39 = 0x39,
+	RESTP_3A = 0x3a,
 	RESTP_40 = 0x40,
 	RESTP_41 = 0x41,
 	RESTP_42 = 0x42,
@@ -92,13 +94,17 @@ struct BkgImage {
 	bool loaded = false;
 	uint32 offset = 0;
 	Graphics::Surface surface;
+	byte *palette = nullptr;
+
+	uint32 field2_0x8 = 0;
+	uint32 field3_0xc = 0;
 
 	RawData rawData;
 };
 
 struct Image {
 	bool loaded = false;
-	int32 offset = 0;
+	int32 offset = -1;
 	int32 size = 0;
 	int32 cSize = 0;
 
@@ -130,6 +136,53 @@ struct XorArg {
 	uint32 pos;
 	uint32 len;
 };
+
+struct Unknown1 {
+	Common::Array<byte> field_0;
+	Common::Array<byte> field_1;
+	Common::Array<byte> field_2;
+	uint32 field_3;
+};
+
+struct ScriptS {
+	Common::Array<byte> data;
+	int32 codes1 = -1;
+	int32 codes2 = -1;
+};
+
+struct SomeAction {
+	uint32 unk1;
+	int32 script1 = -1;
+	Common::Array< ScriptS > scriptS;
+	int32 script2 = -1;
+};
+
+struct Object {
+	/* additional data */
+	int16 index;
+	Sprite *spr = nullptr;
+
+	/* 80 - drawable
+	   40 -
+	   20 - 
+	   10 -
+	   8 - has storage
+	   4 - 
+	   2 - 
+	   1 - used */
+	uint8 flags = 0;
+	uint8 actID = 0;
+	uint16 fld_2 = 0;
+	uint8 fld_4 = 0;
+	uint8 fld_5 = 0;
+	uint8 pos = 0xff;
+	uint8 blk = 0xff;
+	int16 x = 0;
+	int16 y = 0;
+	ImagePos *pImg = nullptr;
+	Common::Array<byte> storage;
+};
+
 
 class GamosEngine : public Engine {
 friend class MoviePlayer;
@@ -179,6 +232,8 @@ private:
 
 	Common::Array<Image *> _images;
 
+	Common::Point _bkgUpdateSizes;
+
 	Common::Array<BkgImage> _bkgImages;
 
 	Common::Array<Sprite> _sprites;
@@ -186,24 +241,98 @@ private:
 	Common::Array< Common::Array<byte> >  _midiTracks;
 
 	uint32 _delayTime = 0;
+	uint32 _lastTimeStamp = 0;
 
 	Common::Array<XorArg> _xorSeq[3];
 
 	static const byte _xorKeys[32];
 
+	uint32 _seed = 1;
+
+	Object _cursorObject;
+	uint32 _mouseCursorImgId = 0;
+
 
 
 	uint8 BYTE_004177f7 = 0;
+	uint8 DAT_004177f8 = 0;
+
+
+	uint8 DAT_004177fd = 0;
+	uint8 DAT_004177fe = 0;
 
 	bool _midiStarted = false;
 
 	/* Data2 */
+
+	bool _enableMidi = false;
+	int32 _midiTrack = 0;
+
+	uint32 _readingBkgOffset = 0;
+	int32 _readingBkgMainId = -1;
+	int32 _loadedDataSize = -1;
 
 
 
 	MidiMusic _musicPlayer;
 	SystemProc _messageProc;
 	MoviePlayer _moviePlayer;
+
+	VM _vm;
+
+	uint32 _thing1Size = 0;
+	uint32 _thing1Count = 0;
+	uint32 _thing1Shift = 0;
+	Common::Array<uint16> _thing1;
+
+
+	uint8 _preprocDataId = 0;
+
+	Common::Array<Unknown1> _thing2;
+	Common::Array<SomeAction> _someActsArr;
+
+	Common::Array<Object> _drawElements;
+
+	uint8 BYTE_00412200 = 0;
+
+	Object *DAT_00412204 = nullptr;
+
+	SomeAction *PTR_00417214 = nullptr;
+	Object *PTR_00417218 = nullptr;
+	Object *PTR_004121b4 = nullptr;
+
+	uint8 BYTE_004177f6 = 0;
+	uint8 BYTE_004177fc = 0;
+	bool DAT_004177ff = false;
+	
+
+	byte *PTR_004173e8 = nullptr;	
+
+	int32 DAT_00417220 = 0;
+	int32 DAT_00417224 = 0;
+	int32 DAT_00417228 = 0;
+	int32 DAT_0041722c = 0;
+
+	byte *PTR_00417388 = nullptr;
+
+	int32 _curObjIndex = 0;
+
+	bool DAT_00417802 = false;
+
+
+	int32 DAT_004173f0 = 0;
+	int32 DAT_004173f4 = 0;
+	int32 DAT_004173f8 = 0;
+	int32 DAT_004173fc = 0;
+	uint8 DAT_00417803 = 0;
+
+	uint8 DAT_00417805 = 0;
+
+	uint16 RawKeyCode = 0;
+
+	Common::Array<Common::Rect> _dirtyRects;
+
+	bool _needReload = false;
 
 private:
 	static const uint16 _winkeyMap[256];
@@ -244,8 +373,10 @@ protected:
 
 	bool loadRes52(int32 id, const byte *data, size_t dataSize);
 
+	bool loadRes18(int32 id, const byte *data, size_t dataSize);
 
-	void playMidi(Common::Array<byte> *buffer);
+
+	bool playMidi(Common::Array<byte> *buffer);
 
 	void stopMidi();
 	void stopMCI();
@@ -253,7 +384,9 @@ protected:
 
 	bool playIntro();
 
-	bool scriptFunc18(int id);
+	bool scriptFunc18(uint32 id);
+	uint32 scriptFunc19(uint32 id);
+	uint32 scriptFunc16(uint32 id);
 
 	void setErrMessage(const Common::String &msg);
 
@@ -261,6 +394,86 @@ protected:
 
 	void readData2(const RawData &data);
 
+	uint8 update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow);
+
+	int32 ProcessScript(bool p1, const byte *data, size_t dataSize, int32 code1 = -1, int32 code2 = -1);
+
+	void FUN_00404fcc(int32 id);
+
+	uint32 getU32(const void *ptr);
+
+	void preprocessData(int id, byte *data);
+	void preprocessDataB1(int id, byte *data);
+	int processData(int id, byte *data);
+
+	void executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, SomeAction *act, int32 scriptAddr);
+
+	void FUN_0040283c(int id, int pos, const byte *data);
+
+	void FUN_00402654(int mode, int id, int pos);
+
+	Object *getFreeObject();
+	void removeObject(Object *obj);
+	void removeObjectMarkDirty(Object *obj);
+	void removeObjectByIDMarkDirty(int32 id);
+
+	void FUN_004023d8(Object *obj);
+	void FUN_0040255c(Object *obj);
+
+	bool FUN_00402fb4();
+
+	bool FUN_004033a8(Common::Point mouseMove);
+	bool FUN_004038b8();
+	bool FUN_00402bc4();
+	bool FUN_00402f34(bool p1, bool p2, Object *obj);
+
+	void FUN_0040921c(Object *obj);
+	void addDirtRectOnObject(Object *obj);
+	void addDirtyRect(const Common::Rect &rect);
+
+	void doDraw();
+
+	bool loadImage(Image *img);
+
+	uint32 doScript(uint32 scriptAddress);
+
+	bool FUN_0040738c(uint32 id, int32 x, int32 y, bool p);
+
+	void FUN_00409378(Sprite *spr, Object *obj, bool p);
+
+	void FUN_004095a0(Object *obj);
+
+	bool playMovie(int id);
+
+	void setCursor(int id, bool dirtRect);
+
+	void FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
+	bool FUN_00409600(Object *obj, Common::Point pos);
+
+	void setNeedReload() {
+		_needReload = true;
+		_vm._interrupt = true;
+	};
+
+	static uint32 vmCallDispatcher(void *engine, VM *vm, uint32 funcID);
+	
+public:
+
+	inline void rndSeed(uint32 seed) {
+		_seed = seed * 0x41c64e6d + 0x3039;
+	}
+
+	inline uint32 rnd() {
+		uint32 val = _seed;
+		_seed = _seed * 0x41c64e6d + 0x3039;
+		return val;
+	}
+
+	inline uint16 rndRange16(uint32 range) {
+		uint16 percent = _seed >> 16;
+		_seed = _seed * 0x41c64e6d + 0x3039;
+		return (percent * range) >> 16;
+	}
 
 public:
 	Graphics::Screen *_screen = nullptr;

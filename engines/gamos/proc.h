@@ -27,6 +27,15 @@
 
 namespace Gamos {
 
+enum ACT2 {
+    ACT_NONE = 0xe,
+    ACT2_81 = 0x81,
+    ACT2_82 = 0x82,
+    ACT2_83 = 0x83,
+    ACT2_84 = 0x84,
+    ACT2_8f = 0x8f,
+};
+
 class SystemProc {
 public:
 
@@ -36,8 +45,12 @@ public:
     uint8 _act1 = 0;
     uint8 _act2 = 0;
 
-    Common::Point _mouseReported;
-    Common::Point _mouseAct;
+    uint16 _rawKeyCode = 0;
+    uint16 _ascii = 0;
+    
+
+    Common::Point _mouseReportedPos;
+    Common::Point _mouseActPos;
 
     uint8 _gd2flags = 0; /* 0x4 */
     uint16 _keyCodes[12]; /* 0x40 */
