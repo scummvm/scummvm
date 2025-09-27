@@ -87,14 +87,14 @@ void NoctropolisEngine::doIntro() {
 
 	// TODO: Check these fades
 	_screen->setPalette();
-	_screen->fadeIn();
-	copyBF1BF2();
+	((NoctropolisRoom *)_room)->buildScreenXScroll();
 	copyBF2Vid();
+	_screen->fadeIn();
 
 	_timers[26].reset();
 	_timers[27].reset();
 
-	while (true) {
+	while (!shouldQuit()) {
 
 		if (!_timers[27].isActive()) {
 			_timers[27].reset();
@@ -102,9 +102,17 @@ void NoctropolisEngine::doIntro() {
 				break;
 
 			_scrollX += 2;
-			
-			copyBF1BF2();
-			
+
+			if (_scrollX >= TILE_WIDTH) {
+				_scrollX -= TILE_WIDTH;
+				++_scrollCol;
+			}
+
+			((NoctropolisRoom *)_room)->buildScreenXScroll();
+
+			// Don't use copyBF1BF2() here as we want to do sub-tile scrolling.
+			_buffer2.copyFrom(_buffer1);
+
 			for (int i = 0; i < lettersMax; i++) {
 				_buffer2.plotImage(sprites, i + 8, Common::Point(lettersX[i], 40));
 			}
@@ -115,7 +123,7 @@ void NoctropolisEngine::doIntro() {
 						_timers[28].reset();
 					_timers[26].reset();
 					lettersMax++;
-				} else if (titlesSpriteIndex < 25) {
+				} else if (titlesSpriteIndex < ARRAYSIZE(titlesSpriteX)) {
 					_buffer2.plotImage(sprites, titlesSpriteIndex + 19, Common::Point(titlesSpriteX[titlesSpriteIndex], titlesSpriteY[titlesSpriteIndex]));
 					if (!_timers[28].isActive()) {
 						titlesSpriteIndex++;
