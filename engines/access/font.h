@@ -67,6 +67,11 @@ public:
 	int stringWidth(const Common::String &msg) const;
 
 	/**
+	 * Get the height of a given string
+	 */
+	virtual int stringHeight(const Common::String &msg) const { return _height; };
+
+	/**
 	 * Type of line wrapping - Martian wraps based on chars, Amazon based on px.
 	 *
 	 * Since the fonts are variable width we need to support both types to

@@ -329,6 +329,12 @@ void EventsManager::debounceLeft() {
 	}
 }
 
+void EventsManager::debounceRight() {
+	while (_rightButton && !_vm->shouldQuit()) {
+		pollEventsAndWait();
+	}
+}
+
 void EventsManager::clearEvents() {
 	_leftButton = _rightButton = false;
 	zeroKeysActions();

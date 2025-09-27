@@ -185,6 +185,16 @@ protected:
 	* Synchronize savegame data
 	*/
 	virtual Common::Error synchronize(Common::Serializer &s);
+	
+	/**
+	 * Create game-specific objects, called just before setupGame.
+	 */
+	virtual void initObjects() = 0;
+
+	/**
+	 * Set up the game game-specific objects, called just before playGame.
+	 */
+	virtual void setupGame() = 0;
 
 public:
 	AnimationManager *_animation;

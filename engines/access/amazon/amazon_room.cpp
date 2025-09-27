@@ -76,7 +76,7 @@ void AmazonRoom::reloadRoom() {
 void AmazonRoom::reloadRoom1() {
 	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31
 			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
-		Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
+		Resource *spriteData = _vm->_files->loadRawFile("MAYA.LZ");
 		_game->_inactive._altSpritesPtr = new SpriteResource(_vm, spriteData);
 		delete spriteData;
 		_vm->_currentCharFlag = false;

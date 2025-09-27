@@ -209,7 +209,7 @@ void AccessEngine::initialize() {
 
 const SpriteResource *AccessEngine::getIcons() {
 	if (!_icons) {
-		Resource *iconData = _files->loadFile("ICONS.LZ");
+		Resource *iconData = _files->loadRawFile("ICONS.LZ");
 		_icons = new SpriteResource(this, iconData);
 		delete iconData;
 	}
@@ -226,6 +226,9 @@ Common::Error AccessEngine::run() {
 
 	setVGA();
 	initialize();
+	
+	initObjects();
+	setupGame();
 
 	playGame();
 

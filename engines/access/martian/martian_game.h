@@ -43,9 +43,9 @@ private:
 	/**
 	 * Setup variables for the game
 	 */
-	void setupGame();
+	void setupGame() override;
 
-	void initObjects();
+	void initObjects() override;
 	void configSelect();
 	void initVariables();
 	void setupTimers();

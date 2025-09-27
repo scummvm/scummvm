@@ -87,7 +87,6 @@ byte *Resource::data() {
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(AccessEngine *vm) : _vm(vm) {
-	_fileNumber = -1;
 	_setPaletteFlag = true;
 }
 
@@ -95,8 +94,12 @@ FileManager::~FileManager() {
 }
 
 Resource *FileManager::loadFile(int fileNum, int subfile) {
+	return loadSubFile(_vm->_res->FILENAMES[fileNum], subfile);
+}
+
+Resource *FileManager::loadSubFile(const Common::Path &filename, int subfile) {
 	Resource *res = new Resource();
-	setAppended(res, fileNum);
+	setAppended(res, filename);
 	gotoAppended(res, subfile);
 
 	handleFile(res);
@@ -107,7 +110,7 @@ Resource *FileManager::loadFile(const FileIdent &fileIdent) {
 	return loadFile(fileIdent._fileNum, fileIdent._subfile);
 }
 
-Resource *FileManager::loadFile(const Common::Path &filename) {
+Resource *FileManager::loadRawFile(const Common::Path &filename) {
 	Resource *res = new Resource();
 
 	// Open the file
@@ -127,7 +130,7 @@ bool FileManager::existFile(const Common::Path &filename) {
 
 void FileManager::openFile(Resource *res, const Common::Path &filename) {
 	// Open up the file
-	_fileNumber = -1;
+	_indexedFilename.clear();
 	if (!res->_file.open(filename))
 		error("Could not open file - %s", filename.toString().c_str());
 }
@@ -167,7 +170,7 @@ void FileManager::loadScreen(int fileNum, int subfile) {
 }
 
 void FileManager::loadScreen(const Common::Path &filename) {
-	Resource *res = loadFile(filename);
+	Resource *res = loadRawFile(filename);
 	handleScreen(_vm->_screen, res);
 	delete res;
 }
@@ -198,22 +201,25 @@ void FileManager::handleFile(Resource *res) {
 	}
 }
 
-void FileManager::setAppended(Resource *res, int fileNum) {
+void FileManager::setAppended(Resource *res, const Common::Path &fileName) {
 	// Open the file for access
-	if (!res->_file.open(_vm->_res->FILENAMES[fileNum]))
-		error("Could not open file %s", _vm->_res->FILENAMES[fileNum].toString().c_str());
+	if (!res->_file.open(fileName))
+		error("Could not open file %s", fileName.toString().c_str());
 
 	// If a different file has been opened then previously, load its index
-	if (_fileNumber != fileNum) {
-		_fileNumber = fileNum;
-
-		// Read in the file index
-		int count = res->_file.readUint16LE();
-		assert(count <= 100);
-		_fileIndex.resize(count);
-		for (int i = 0; i < count; ++i)
-			_fileIndex[i] = res->_file.readUint32LE();
+	if (_indexedFilename != fileName) {
+		_indexedFilename = fileName;
+		readIndex(res);
 	}
+}
+
+void FileManager::readIndex(Resource *res) {
+	// Read in the file index
+	int count = res->_file.readUint16LE();
+	assert(count <= 100);
+	_fileIndex.resize(count);
+	for (int i = 0; i < count; ++i)
+		_fileIndex[i] = res->_file.readUint32LE();
 }
 
 void FileManager::gotoAppended(Resource *res, int subfile) {

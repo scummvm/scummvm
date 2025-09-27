@@ -72,6 +72,9 @@ class FileManager {
 private:
 	AccessEngine *_vm;
 
+	/**
+	 * Open a raw file, no index data is read.
+	 */
 	void openFile(Resource *res, const Common::Path &filename);
 
 	/**
@@ -85,16 +88,22 @@ private:
 	void handleScreen(Graphics::ManagedSurface *dest, Resource *res);
 
 	/**
-	* Open up a sub-file container file
-	*/
-	void setAppended(Resource *file, int fileNum);
+	 * Open up a sub-file container file
+	 */
+	void setAppended(Resource *file, const Common::Path &fileName);
 
 	/**
-	* Open up a sub-file resource within an alrady opened container file.
-	*/
+	 * Open up a sub-file resource within an alrady opened container file.
+	 */
 	void gotoAppended(Resource *file, int subfile);
+	
+	/**
+	 * Read index data from the container file
+	 */
+	void readIndex(Resource *res);
+
 public:
-	int _fileNumber;
+	Common::Path _indexedFilename;
 	Common::Array<uint32> _fileIndex;
 	bool _setPaletteFlag;
 public:
@@ -117,9 +126,14 @@ public:
 	Resource *loadFile(const FileIdent &fileIdent);
 
 	/**
-	 * Load a given file by name
+	 * Load a given subfile from a container file by name.
 	 */
-	Resource *loadFile(const Common::Path &filename);
+	Resource *loadSubFile(const Common::Path &containerFile, int subfile);
+
+	/**
+	 * Load a given *non-container* file by name directly.
+	 */
+	Resource *loadRawFile(const Common::Path &filename);
 
 	/**
 	 * Load a given scren from a container file

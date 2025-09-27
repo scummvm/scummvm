@@ -138,12 +138,12 @@ void MartianEngine::doSpecial5(int param1) {
 	_screen->setIconPalette();
 	_screen->forceFadeIn();
 
-	Resource *cellsRes = _files->loadFile("CELLS00.LZ");
+	Resource *cellsRes = _files->loadRawFile("CELLS00.LZ");
 	_objectsTable[0] = new SpriteResource(this, cellsRes);
 	delete cellsRes;
 
 	_timers[20]._timer = _timers[20]._initTm = 30;
-	Resource *notesRes = _files->loadFile("NOTES.DAT");
+	Resource *notesRes = _files->loadRawFile("NOTES.DAT");
 	notesRes->_stream->skip(param1 * 2);
 	int pos = notesRes->_stream->readUint16LE();
 	notesRes->_stream->seek(pos);
@@ -158,11 +158,7 @@ void MartianEngine::doSpecial5(int param1) {
 }
 
 void MartianEngine::playGame() {
-	// Initialize Martian Memorandum game-specific objects
-	initObjects();
-
 	// Setup the game
-	setupGame();
 	configSelect();
 
 	if (_loadSaveSlot == -1) {
@@ -372,7 +368,7 @@ void MartianEngine::establish(int estabIndex, int sub) {
 
 	// TODO: Original has a small delay here.
 
-	Resource *notesRes = _files->loadFile("ETEXT.DAT");
+	Resource *notesRes = _files->loadRawFile("ETEXT.DAT");
 	notesRes->_stream->seek(2 * sub);
 	uint16 msgOffset = notesRes->_stream->readUint16LE();
 	if (msgOffset == 0 || msgOffset >= notesRes->_stream->size()) {

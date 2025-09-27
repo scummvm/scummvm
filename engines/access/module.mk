@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	inventory.o \
 	metaengine.o \
 	player.o \
+	polygon.o \
 	resources.o \
 	room.o \
 	screen.o \
@@ -27,12 +28,14 @@ MODULE_OBJS := \
 	amazon/amazon_resources.o \
 	amazon/amazon_room.o \
 	amazon/amazon_scripts.o \
+	martian/martian_duct.o \
 	martian/martian_game.o \
 	martian/martian_player.o \
 	martian/martian_resources.o \
-	martian/martian_duct.o \
 	martian/martian_room.o \
 	martian/martian_scripts.o \
+	noctropolis/noctropolis_comicviewer.o \
+	noctropolis/noctropolis_game.o \
 	martian/midiparser_bemd.o \
 	video/movie_decoder.o
 

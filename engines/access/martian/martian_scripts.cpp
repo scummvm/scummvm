@@ -148,7 +148,7 @@ void MartianScripts::cmdSpecial6() {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 
-	Resource *cellsRes = _vm->_files->loadFile("CELLS00.LZ");
+	Resource *cellsRes = _vm->_files->loadRawFile("CELLS00.LZ");
 	_vm->_objectsTable[0] = new SpriteResource(_vm, cellsRes);
 	delete cellsRes;
 
@@ -161,7 +161,7 @@ void MartianScripts::cmdSpecial6() {
 	_vm->_screen->_maxChars = 50;
 	_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(24, 18);
 
-	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
+	Resource *notesRes = _vm->_files->loadRawFile("ETEXT.DAT");
 	notesRes->_stream->seek(72);
 	uint16 offset = notesRes->_stream->readUint16LE();
 	notesRes->_stream->seek(offset);
