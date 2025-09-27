@@ -348,12 +348,12 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 	return false;
 }
 
-void Window::sendOpenWindowEvent() {
+void Window::sendWindowEvent(LEvent event) {
 	if (_currentMovie && _visible && !_isStage) {
 		// We cannot call processEvent here directly because it might
 		// be called from within another event processing (like 'on startMovie'	)
 		// which would mess up the Lingo state.
-		_currentMovie->queueInputEvent(kEventOpenWindow, 0, Common::Point(-1, -1));
+		_currentMovie->queueInputEvent(event, 0, Common::Point(-1, -1));
 	}
 }
 

@@ -893,7 +893,7 @@ void LM::m_open(int nargs) {
 	me->setVisible(true);
 
 	if (!wasVisible)
-		me->sendOpenWindowEvent();
+		me->sendWindowEvent(kEventOpenWindow);
 }
 
 void LM::m_moveToBack(int nargs) {
@@ -909,7 +909,7 @@ void LM::m_moveToFront(int nargs) {
 	g_director->_wm->setActiveWindow(me->getId());
 
 	if (!wasActive)
-		me->sendOpenWindowEvent();
+		me->sendWindowEvent(kEventOpenWindow);
 }
 
 } // End of namespace Director
