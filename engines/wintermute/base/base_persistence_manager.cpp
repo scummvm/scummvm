@@ -502,11 +502,6 @@ char *BasePersistenceManager::getString() {
 		_loadStream->read(ret, len - 1);
 		ret[len - 1] = '\0';
 
-		if (ret[0] == '\0') {
-			delete[] ret;
-			return nullptr;
-		}
-
 		return ret;
 
 	} else {
