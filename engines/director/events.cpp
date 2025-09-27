@@ -334,8 +334,12 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 
 	switch (click) {
 	case Graphics::kBorderCloseButton:
-		if (_currentMovie && event.type == Common::EVENT_LBUTTONUP)
+		if (_currentMovie && event.type == Common::EVENT_LBUTTONUP) {
 			_currentMovie->processEvent(kEventCloseWindow, 0);
+			setVisible(false);
+
+			return true;
+		}
 		break;
 
 	default:
