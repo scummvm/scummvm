@@ -19,6 +19,7 @@
  *
  */
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/platform/ds/osystem_ds.h"
@@ -146,7 +147,7 @@ void VBlankHandler(void) {
 }
 
 void initHardware() {
-	powerOn(POWER_ALL);
+	pmPowerOn(POWCNT_ALL);
 
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -162,10 +163,6 @@ void initHardware() {
 	subScTargetX = 0;
 	subScTargetY = 0;
 
-	//irqs are nice
-	irqSet(IRQ_VBLANK, VBlankHandler);
-	irqEnable(IRQ_VBLANK);
-
 #ifdef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
@@ -173,6 +170,7 @@ void initHardware() {
 
 	/* The extended palette data can only be accessed in LCD mode. */
 	vramSetBankH(VRAM_H_LCD);
+	// bannerPal comes from code memory: it doesn't need to be flushed
 	dmaCopy(bannerPal, &VRAM_H_EXT_PALETTE[1][0], bannerPalLen);
 	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 #endif
@@ -190,6 +188,7 @@ void OSystem_DS::initGraphics() {
 
 	_overlay.create(256, 192, _pfABGR1555);
 	_overlayScreen = new DS::Background(&_overlay, 2, false, 0, false);
+	_overlayScreen->reset();
 	_screen = nullptr;
 #ifdef DISABLE_TEXT_CONSOLE
 	_subScreen = nullptr;
@@ -200,6 +199,9 @@ void OSystem_DS::initGraphics() {
 #ifndef DISABLE_TEXT_CONSOLE
 	_keyboard->init(0, 21, 1, false);
 #endif
+
+	// Setup VBlank IRQ only when we are ready to handle it
+	irqSet(IRQ_VBLANK, DS::VBlankHandler);
 }
 
 void OSystem_DS::setMainScreen(int32 x, int32 y, int32 sx, int32 sy) {
@@ -397,10 +399,12 @@ OSystem::TransactionError OSystem_DS::endGFXTransaction() {
 	}
 
 	bool bannerChanged = false;
+#ifdef DISABLE_TEXT_CONSOLE
 	if (  (!_engineRunning && (_banner == NULL))
 	    || (_engineRunning && (_banner != NULL))) {
 		bannerChanged = true;
 	}
+#endif
 
 	if (setupNewGameScreen) {
 		bool swScale = ((_currentState.graphicsMode == GFX_SWSCALE) && (_currentState.width == 320));
@@ -526,6 +530,7 @@ void OSystem_DS::updateScreen() {
 	oamUpdate(&oamMain);
 
 	if (_paletteDirty) {
+		DC_FlushRange(_palette, 256 * 2);
 		dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
 #ifdef DISABLE_TEXT_CONSOLE
 		if (_subScreen && _subScreenActive)

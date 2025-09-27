@@ -19,6 +19,7 @@
  *
  */
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/platform/ds/background.h"
@@ -113,6 +114,7 @@ Background::Background(Graphics::Surface *surface, int layer, bool isSub, int ma
 static void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
 					const uint w, const uint h, const uint bytesPerPixel) {
 	if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
+		DC_FlushRange(src, dstPitch * h);
 		dmaCopy(src, dst, dstPitch * h);
 		return;
 	}
@@ -229,6 +231,7 @@ void TiledBackground::update() {
 	if (_bg < 0)
 		return;
 
+	// Tiles come from code memory: they don't need to be flushed
 	dmaCopy(_tiles, bgGetGfxPtr(_bg), _tilesLen);
 	dmaCopy(_map, bgGetMapPtr(_bg), _mapLen);
 }

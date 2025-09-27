@@ -64,6 +64,7 @@
 // - Memory size for ite
 // - Try discworld?
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 
 #include "backends/platform/ds/osystem_ds.h"
@@ -105,6 +106,7 @@ void fastRamReset() {
 int main(int argc, char **argv) {
 #ifndef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_0_2D);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	consoleInit(NULL, 1, BgType_Text4bpp, BgSize_T_256x256, 30, 0, false, true);
 #endif
 

@@ -63,15 +63,15 @@ void MaxModMixerManager::init() {
 	sys.mod_count 			= 0;
 	sys.samp_count			= 0;
 	sys.mem_bank			= 0;
-	sys.fifo_channel		= FIFO_MAXMOD;
 	mmInit( &sys );
 
 	_stream.sampling_rate = _freq;
 	_stream.buffer_length = _bufSize / 4;
 	_stream.callback = on_stream_request;
 	_stream.format = MM_STREAM_16BIT_STEREO;
-	_stream.timer = MM_TIMER2;
-	_stream.manual = 1;
+	_stream.thread_stack_size = 0;
+	// Don't create a thread
+	_stream.minus_thread_prio = 1;
 
 	mmStreamOpen( &_stream );
 
