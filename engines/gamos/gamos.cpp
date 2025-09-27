@@ -432,7 +432,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		_someActsArr[pid].scriptS[p1].codes2 = _loadedDataSize + p3;
 		//printf("RESTP_2C %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
-		printf("Data 38 size %d\n", dataSize);
+		warning("Data 38 size %zu", dataSize);
 		_thing2[pid].field_0.assign(data, data + dataSize);
 	} else if (tp == RESTP_39) {
 		_thing2[pid].field_1.assign(data, data + dataSize);
@@ -460,7 +460,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_XORSEQ2) {
 		loadXorSeq(data, dataSize, 2);
 	} else {
-		printf("Unk Res %x at %x sz %x\n", tp, _loadedDataSize, dataSize);
+		warning("Unk Res %x at %x sz %x", tp, _loadedDataSize, dataSize);
 	}
 	return true;
 }
@@ -643,7 +643,7 @@ bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 		return false;
 
 	if (dataSize % 4)
-		printf("dataSize > 4\n");
+		warning("dataSize > 4");
 
 	_sprites[id].field_0 = data[0];
 	_sprites[id].field_1 = data[1];
@@ -657,11 +657,11 @@ bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 
 bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
 	if (*(const uint32 *)data != 0) {
-		printf("41 not null!!!\n");
+		warning("41 not null!!!");
 		exit(0);
 	}
 	if (dataSize % 4)
-		printf("loadRes41 datasize > 4 \n");
+		warning("loadRes41 datasize > 4");
 	_sprites[id].sequences.resize(dataSize / 4);
 	return true;
 }
@@ -679,7 +679,7 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 	for(int i = 0; i < count; ++i) {
 		int32 dataz = strm.readSint32LE();
 		if (dataz != 0) {
-			printf("42    nut null \n");
+			warning("42    nut null");
 			exit(0);
 		}
 
@@ -796,11 +796,11 @@ void GamosEngine::stopMidi() {
 }
 
 void GamosEngine::stopMCI() {
-	printf("Not implemented stopMCI\n");
+	warning("Not implemented stopMCI");
 }
 
 void GamosEngine::stopSounds() {
-	printf("Not implemented stopSounds\n");
+	warning("Not implemented stopSounds");
 }
 
 
@@ -1927,11 +1927,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.val = 1;
 		break;
 	case 3:
-		printf("func 3 %x check 0x10 \n", PTR_00417218->fld_4 & 0x90);
+		warning("func 3 %x check 0x10 \n", PTR_00417218->fld_4 & 0x90);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
 		break;
 	case 4:
-		printf("func 4 %x check 0x20 \n", PTR_00417218->fld_4 & 0xa0);
+		warning("func 4 %x check 0x20 \n", PTR_00417218->fld_4 & 0xa0);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
 		break;
 	case 5:
@@ -1941,13 +1941,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		break;
 	case 6:
 		arg1 = vm->pop32();
-		printf("func 6 %x check %x \n", PTR_00417218->fld_4 & 0x4f, arg1);
+		warning("func 6 %x check %x \n", PTR_00417218->fld_4 & 0x4f, arg1);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
 		break;
 	case 13: {
 		VM::Reg regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef.ref, regRef.val);
-		printf("CallDispatcher 13 keycode %s\n", str.c_str());
+		warning("CallDispatcher 13 keycode %s\n", str.c_str());
 		vm->EAX.val = 0;
 		break;
 	}
@@ -2018,7 +2018,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		break;
 
 	default:
-		printf("Call Dispatcher %d\n", funcID);
+		warning("Call Dispatcher %d", funcID);
 		vm->EAX.val = 0;
 		break;
 	}
@@ -2285,7 +2285,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 		tmpb |= act1 | 0x40;
 
 	//actPos +=
-	printf("Not full FUN_00402c2c\n");
+	warning("Not full FUN_00402c2c");
 
 	Object *pobj = nullptr;
 	uint8 actT = 0;
@@ -2354,23 +2354,23 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 
 
 void GamosEngine::FUN_00404fcc(int32 id) {
-	printf("Not implemented FUN_00404fcc\n");
+	warning("Not implemented FUN_00404fcc");
 }
 
 bool GamosEngine::FUN_004033a8(Common::Point mouseMove) {
 	_cursorObject.x = mouseMove.x;
 	_cursorObject.y = mouseMove.y;
-	printf("Not implemented FUN_004033a8\n");
+	warning("Not implemented FUN_004033a8");
 	return true;
 }
 
 bool GamosEngine::FUN_004038b8() {
-	printf("Not implemented FUN_004038b8\n");
+	warning("Not implemented FUN_004038b8");
 	return true;
 }
 
 bool GamosEngine::FUN_00402bc4() {
-	printf("Not implemented FUN_00402bc4\n");
+	warning("Not implemented FUN_00402bc4");
 	return true;
 }
 
