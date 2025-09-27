@@ -100,6 +100,8 @@ private:
 	const CRect   PSHRect, PSMRect, PSLRect, PSNPRect;
 	const CRect   GARect, GGRect, GRRect;
 
+	void initStatics();
+
 public:
 	CMainGTWindow(HWND, LPGRANDTRSTRUCT);
 	~CMainGTWindow();
