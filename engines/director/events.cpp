@@ -325,8 +325,6 @@ bool Movie::processEvent(Common::Event &event) {
 }
 
 bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
-	// kEventActivateWindow
-	// kEventDeactivateWindow
 	// kEventMoveWindow
 	// kEventResizeWindow
 	// kEventZoomWindow
@@ -340,6 +338,14 @@ bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
 			return true;
 		}
 		break;
+
+	case Graphics::kBorderActivate:
+		sendWindowEvent(kEventActivateWindow);
+		return true;
+
+	case Graphics::kBorderDeactivate:
+		sendWindowEvent(kEventDeactivateWindow);
+		return true;
 
 	default:
 		break;
