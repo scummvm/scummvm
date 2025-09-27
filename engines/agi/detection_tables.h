@@ -381,7 +381,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (Hebrew) [DOS 2.0F 1987]
 	// Fan made translation by SegMash, based on the English GoG version
-	GAME_LVFPN("kq1", "", "logdir", "cf421deebd7378ea35cddc3e7725b68f", 315, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("kq1", "", "logdir", "28954efaa2dd118cb3a6b672e03d806b", 315, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// King's Quest 2 (Apple II) 1.0G [AGI 1.08]
 	A2("kq2", "1.0G", "8e8d562e50233c939112c89bba55d249", 0x1120, GID_KQ2),
