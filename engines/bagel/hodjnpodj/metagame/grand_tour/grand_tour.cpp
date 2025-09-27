@@ -286,7 +286,7 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 				int j;
 
 				nNewRank = i;
-				for (j = 10; j > i; j--) {
+				for (j = 9; j > i; j--) {
 					Common::strcpy_s(astTopTenScores[j].acName, astTopTenScores[j - 1].acName);
 					astTopTenScores[j].nScore = astTopTenScores[j - 1].nScore;
 					astTopTenScores[j].nSkillLevel = astTopTenScores[j - 1].nSkillLevel;
