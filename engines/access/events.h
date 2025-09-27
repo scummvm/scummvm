@@ -143,6 +143,8 @@ public:
 
 	void debounceLeft();
 
+	void debounceRight();
+
 	void clearEvents();
 
 	void waitKeyActionMouse();

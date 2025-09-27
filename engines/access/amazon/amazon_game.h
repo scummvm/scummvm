@@ -39,7 +39,7 @@ private:
 	/**
 	 * Setup variables for the game
 	 */
-	void setupGame();
+	void setupGame() override;
 
 	/**
 	 * Initialize variables found in the config file
@@ -47,7 +47,7 @@ private:
 	void configSelect();
 
 	void initVariables();
-	void initObjects();
+	void initObjects() override;
 	void calcIQ();
 	void helpTitle();
 	void drawHelpText(const Common::String &msg);

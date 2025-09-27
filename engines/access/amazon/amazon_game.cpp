@@ -216,7 +216,7 @@ void AmazonEngine::loadEstablish(int estabIndex) {
 		int oldGroup = _establishGroup;
 		_establishGroup = 0;
 
-		_establish = _files->loadFile(EST_TABLE[oldGroup]);
+		_establish = _files->loadRawFile(EST_TABLE[oldGroup]);
 		_establishCtrlTblOfs = READ_LE_UINT16(_establish->data());
 
 		int ofs = _establishCtrlTblOfs + (estabIndex * 2);
@@ -235,7 +235,7 @@ void AmazonEngine::loadEstablish(int estabIndex) {
 		_narateFile = 0;
 		_txtPages = 0;
 		_sndSubFile = 0;
-		_establish = _files->loadFile("ETEXT.DAT");
+		_establish = _files->loadRawFile("ETEXT.DAT");
 	}
 }
 
@@ -307,7 +307,7 @@ void AmazonEngine::tileScreen() {
 	if (!_files->existFile(_tileFiles[idx]))
 		return;
 
-	Resource *res = _files->loadFile(_tileFiles[idx]);
+	Resource *res = _files->loadRawFile(_tileFiles[idx]);
 	int x = res->_stream->readSint16LE();
 	int y = res->_stream->readSint16LE();
 	int size = ((x + 2) * y) + 10;

@@ -140,7 +140,7 @@ void Player::load() {
 }
 
 void Player::loadTexPalette() {
-	Resource *texPal = _vm->_files->loadFile("TEXPAL.COL");
+	Resource *texPal = _vm->_files->loadRawFile("TEXPAL.COL");
 	int size = texPal->_size;
 	assert(size == 768);
 	_manPal1 = new byte[size];
@@ -150,7 +150,7 @@ void Player::loadTexPalette() {
 void Player::loadSprites(const Common::Path &name) {
 	freeSprites();
 
-	Resource *data = _vm->_files->loadFile(name);
+	Resource *data = _vm->_files->loadRawFile(name);
 
 #if 0
 	Common::DumpFile *outFile = new Common::DumpFile();

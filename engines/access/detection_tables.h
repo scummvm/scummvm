@@ -129,6 +129,21 @@ static const AccessGameDescription gameDescriptions[] = {
 		kGameMartianMemorandum,
 		0
 	},
+	
+	{
+		// Noctropolis (sum from GOG macOS version)
+		{
+			"noctropolis",
+			nullptr,
+			AD_ENTRY1s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		kGameNoctropolis,
+		0
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };

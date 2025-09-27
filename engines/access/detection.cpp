@@ -27,6 +27,7 @@
 static const PlainGameDescriptor AccessGames[] = {
 	{"amazon", "Amazon: Guardians of Eden"},
 	{"martian", "Martian Memorandum"},
+	{"noctropolis", "Noctropolis"},
 	{nullptr, nullptr}
 };
 
