@@ -57,7 +57,9 @@ enum WindowClick {
 	kBorderCloseButton,
 	kBorderInner,
 	kBorderBorder,
-	kBorderResizeButton
+	kBorderResizeButton,
+	kBorderActivate,
+	kBorderDeactivate,
 };
 
 enum {

@@ -121,9 +121,18 @@ const Font *MacWindow::getTitleFont() {
 }
 
 void MacWindow::setActive(bool active) {
+	bool changed = (active != _active);
+
 	MacWidget::setActive(active);
 
 	_borderIsDirty = true;
+
+	if (changed) {
+		WindowClick click = active ? kBorderActivate : kBorderDeactivate;
+		Common::Event event;
+		if (_callback)
+			_callback(click, event, _dataPtr);
+	}
 }
 
 bool MacWindow::isActive() const { return _active; }
