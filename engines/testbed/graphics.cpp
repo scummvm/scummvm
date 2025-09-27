@@ -1621,7 +1621,7 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 			showPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), iter->aLoss);
 
 			Common::Point pt(0, 170);
-			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, false);
+			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, kWriteNoFlag);
 
 			Common::String tutorial;
 			tutorial = Common::String::format("Testing a group of Pixel Formats with %d-bit alpha channel.\nPlease, memorize the pattern displayed in the frame above.", 8 - iter->aLoss);
@@ -1645,7 +1645,7 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 		Common::Point pt(0, 170);
 		Common::String msg;
 		msg = Common::String::format("Testing Pixel Format %s, %d of %d", iter->toString().c_str(), numFormatsTested, pfList.size());
-		Testsuite::writeOnScreen(msg, pt, true);
+		Testsuite::writeOnScreen(msg, pt, kWriteRGBColors);
 
 		g_system->delayMillis(500);
 
