@@ -69,6 +69,7 @@ Movie::Movie(Window *window) {
 	_currentHiliteChannelId = 0;
 	_mouseDownWasInButton = false;
 	_lastEnteredChannelId = 0;
+	_currentHoveredSpriteId = 0;
 
 	_version = 0;
 	_platform = Common::kPlatformMacintosh;

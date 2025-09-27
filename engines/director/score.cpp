@@ -353,6 +353,12 @@ void Score::step() {
 	}
 	if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
 		_movie->processEvent(kEventIdle);
+
+		if (_version >= kFileVer600) {
+			if (_movie->_currentHoveredSpriteId) {
+				_movie->processEvent(kEventMouseWithin, _movie->_currentHoveredSpriteId);
+			}
+		}
 	}
 
 	update();

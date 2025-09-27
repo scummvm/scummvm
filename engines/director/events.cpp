@@ -140,6 +140,8 @@ bool Movie::processEvent(Common::Event &event) {
 			spriteId = _score->getActiveSpriteIDFromPos(event.mouse);
 		else
 			spriteId = _score->getMouseSpriteIDFromPos(event.mouse);
+
+		_currentHoveredSpriteId = spriteId;
 	}
 
 	Common::Point pos;
@@ -190,6 +192,8 @@ bool Movie::processEvent(Common::Event &event) {
 			}
 		}
 
+		// TODO: In the original, these events are generated only
+		// along with the kEventIdle event which depends on the idleHandlerPeriod property
 		if (g_director->getVersion() >= 600) {
 			if (spriteId > 0) {
 				if (spriteId != _lastEnteredChannelId) {
