@@ -65,7 +65,7 @@ GFXTestSuite::GFXTestSuite() {
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 
 	// Effects
-	addTest("shakingEffect", &GFXtests::shakingEffect);
+	addTest("ShakingEffect", &GFXtests::shakingEffect);
 	// addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// Overlay
@@ -1324,14 +1324,14 @@ TestExitStatus GFXtests::shakingEffect() {
 			break;
 		}
 
-		Testsuite::writeOnScreen(Common::String::format("If Shaking Effect works, this should shake %s", direction.c_str()), pt);
-		int times = 15;
+		Testsuite::writeOnScreen(Common::String::format("If Shaking Effect works, this should shake %s", direction.c_str()), pt, kWriteDrawFrame);
+		int times = 8;
 		while (times--) {
 			g_system->setShakePos(shakeXOffset, shakeYOffset);
-			g_system->delayMillis(50);
+			g_system->delayMillis(100);
 			g_system->updateScreen();
 			g_system->setShakePos(0, 0);
-			g_system->delayMillis(50);
+			g_system->delayMillis(100);
 			g_system->updateScreen();
 			shakeXOffset = -shakeXOffset;
 			shakeYOffset = -shakeYOffset;
@@ -1340,10 +1340,12 @@ TestExitStatus GFXtests::shakingEffect() {
 
 		if (Testsuite::handleInteractiveInput("Did the Shaking test work as you were expecting?", "Yes", "No", kOptionRight)) {
 			Testsuite::logDetailedPrintf("Shaking Effect didn't work");
+			Testsuite::clearEntireScreen();
 			return kTestFailed;
 		}
 	}
 
+	Testsuite::clearEntireScreen();
 	return kTestPassed;
 }
 
