@@ -131,7 +131,7 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 	
 	{
-		// Noctropolis (sum from GOG macOS version)
+		// Noctropolis (Sum from GOG Windows and macOS versions)
 		{
 			"noctropolis",
 			nullptr,

@@ -21,6 +21,8 @@
 
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
+#include "image/png.h"
+#include "graphics/color_quantizer.h"
 
 namespace Access {
 
@@ -52,7 +54,89 @@ void NoctropolisEngine::setupGame() {
 }
 
 void NoctropolisEngine::playGame() {
-	doIntro();
+	if (_loadSaveSlot == -1) {
+		doFlashLogo();
+		if (shouldQuit())
+			return;
+
+		doPublisherLogo();
+		if (shouldQuit())
+			return;
+
+		doIntro();
+		if (shouldQuit())
+			return;
+
+		_screen->forceFadeOut();
+	}
+
+}
+
+void NoctropolisEngine::doFlashLogo() {
+	_events->hideCursor();
+
+	// TODO: should be "DARK/FLASH.SCN".
+	_files->loadScreen(Common::Path("FLASH.SCN"));
+	_screen->fadeIn();
+	if (shouldQuit())
+		return;
+
+	_events->_vbCount = 0x7e;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
+	if (shouldQuit())
+		return;
+	_screen->fadeOut();
+}
+
+void NoctropolisEngine::doPublisherLogo() {
+	Common::File pngFile;
+	// TODO: should be "DARK/nds.png".
+	pngFile.open(Common::Path("nds.png"));
+
+	// TODO: Original has a movie here instead of PNG, will need an update.
+	// The version on GOG has PNG for both windows and mac.
+	Image::PNGDecoder decoder;
+	decoder.loadStream(pngFile);
+
+	// Find the best 8-bit palette for this logo as the png is 24-bit and we're
+	// not changing the output surface format for this one logo at the start!
+	Graphics::ColorQuantizer quant(256);
+	const Graphics::Surface *pngSurf = decoder.getSurface();
+	// The image comes in a bit big too
+	Graphics::Surface *scaledPng = pngSurf->scale(640, 360, true);
+	Graphics::PixelFormat format = scaledPng->format;
+	assert(format.bytesPerPixel == 3);
+	for (int y = 0; y < scaledPng->h; y++) {
+		for (int x = 0; x < scaledPng->w; x++) {
+			byte r,g,b;
+			format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
+			quant.addColor(r, g, b);
+		}
+	}
+	Graphics::Palette *bestPal = quant.getPalette();
+	_screen->clearScreen();
+	_screen->setRawPalette(*bestPal);
+	_screen->setPalette();
+	for (int y = 0; y < MIN(scaledPng->h, _screen->h); y++) {
+		for (int x = 0; x < MIN(scaledPng->w, _screen->w); x++) {
+			byte r,g,b;
+			format.colorToRGB(scaledPng->getPixel(x, y), r, g, b);
+			byte col = bestPal->findBestColor(r, g, b);
+			_screen->setPixel(x, y, col);
+		}
+	}
+	delete bestPal;
+	_screen->fadeIn();
+
+	_events->_vbCount = 0x7e;
+	while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
+		_events->pollEventsAndWait();
+	}
+	if (shouldQuit())
+		return;
+	_screen->fadeOut();
 }
 
 void NoctropolisEngine::doIntro() {
@@ -94,7 +178,7 @@ void NoctropolisEngine::doIntro() {
 	_timers[26].reset();
 	_timers[27].reset();
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_events->isKeyActionMousePressed()) {
 
 		if (!_timers[27].isActive()) {
 			_timers[27].reset();
@@ -165,7 +249,6 @@ void NoctropolisEngine::doIntro() {
 	_screen->fadeOut();
 
 	delete sprites;
-
 }
 
 } // end namespace Noctropolis
