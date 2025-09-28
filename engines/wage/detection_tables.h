@@ -86,7 +86,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Alien Clutch", "Alien Clutch 2.0", "5c783f6b7f4a7d8d49e138be94e00f5a", 514976),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1842848),
 	FANGAMEN("The Adventures of Steve Reeve", "TAoSR", "e8b8ab3a838382125594aae17d53a4e7", 843323),
-	FANGAMEN("The Ashland Revolution", "Ashland 1.0", "f6ff38b24953ae818a000f88998e938d", 150220),
+	FANGAMEND("The Ashland Revolution", "Ashland 1.0", "f6ff38b24953ae818a000f88998e938d", 150220),
 	FANGAMEND("The Ashland Revolution", "xn--The Ashland Revolution Demo-uc9p", "18f1f5d1081b9a5676ccfb0c3b857059", 144767), // Original file name "The Ashland Revolution Demo†"
 	FANGAMEND("The Ashland Revolution", "Ashland Demo", "7a340e5ea03f7468717de408fb5b13fb", 149828), // alt version
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "de6fdfe2b9d9efc0ea842e2bde68673a", 144753), // alt version
