@@ -106,7 +106,6 @@ MODULE_OBJS := \
 	ext/wme_galaxy.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \
-	ext/wme_vlink.o \
 	debugger/breakpoint.o \
 	debugger/debugger_controller.o \
 	debugger/error.o \
@@ -158,6 +157,7 @@ MODULE_OBJS += \
 	ad/ad_scene_geometry.o \
 	ad/ad_walkplane.o \
 	ad/ad_waypoint_group3d.o \
+	base/base_animation_transition_time.o \
 	base/gfx/3dcamera.o \
 	base/gfx/3dlight.o \
 	base/gfx/3deffect.o \
@@ -190,9 +190,9 @@ MODULE_OBJS += \
 	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/shadow_volume_opengl.o \
 	base/gfx/opengl/shadow_volume_opengl_shader.o \
-	base/base_animation_transition_time.o \
 	ext/wme_blackandwhite.o \
-	ext/wme_shadowmanager.o
+	ext/wme_shadowmanager.o \
+	ext/wme_vlink.o
 endif
 
 MODULE_DIRS += \
