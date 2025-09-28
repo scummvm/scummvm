@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	cutscene.o \
 	darkseed.o \
 	debugconsole.o \
+	dialogs.o \
 	gamefont.o \
 	img.o \
 	inventory.o \

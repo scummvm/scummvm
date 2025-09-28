@@ -1,2 +1,3 @@
 engines/darkseed/darkseed.cpp
+engines/darkseed/dialogs.h
 engines/darkseed/metaengine.cpp

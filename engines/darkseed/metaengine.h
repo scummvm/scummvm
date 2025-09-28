@@ -38,8 +38,8 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 #endif // DARKSEED_METAENGINE_H

@@ -40,6 +40,7 @@ extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 #define GAMEOPTION_FLOPPY_MUSIC GUIO_GAMEOPTIONS2
+#define GAMEOPTION_SFX_MODE GUIO_GAMEOPTIONS3
 
 } // End of namespace Darkseed
 
@@ -65,6 +66,12 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+};
+
+enum DarkseedSfxMode {
+	SFX_MODE_CD_ONLY,
+	SFX_MODE_CD_PLUS_FLOPPY,
+	SFX_MODE_FLOPPY_ONLY
 };
 
 #endif // DARKSEED_DETECTION_H
