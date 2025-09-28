@@ -544,7 +544,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 						// Generate event for each behavior, and pass through for all but the last one.
 						// This is to allow multiple behaviors on a single sprite to each have a
 						// chance to handle the event.
-						for (int i = 0; i < sprite->_behaviors.size(); i++) {
+						for (uint i = 0; i < sprite->_behaviors.size(); i++) {
 							bool passThrough = (i != sprite->_behaviors.size() - 1);
 							queue.push(LingoEvent(event, eventId, kSpriteHandler, passThrough, pos, channelId, i));
 						}
@@ -611,7 +611,7 @@ void Movie::processEvent(LEvent event, int targetId) {
 void Movie::broadcastEvent(LEvent event) {
 	Common::Queue<LingoEvent> queue;
 
-	for (int i = 1; i < _score->_channels.size(); i++) {
+	for (uint i = 1; i < _score->_channels.size(); i++) {
 		if (_score->_channels[i] && _score->_channels[i]->_sprite && _score->_channels[i]->_sprite->_behaviors.size()) {
 			queueEvent(queue, event, i);
 		}
