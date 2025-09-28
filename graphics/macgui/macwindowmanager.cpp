@@ -98,6 +98,27 @@ static const byte macCursorBeam[] = {
 	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
+
+static const byte macCursorBeamMask[] = {
+	2, 2, 0, 0, 0, 2, 2, 0, 0, 0, 0,
+	0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0,
+	2, 2, 0, 0, 0, 2, 2, 0, 0, 0, 0,
+};
+
+
 static const byte macCursorCrossHair[] = {
 	3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3,
@@ -1284,7 +1305,7 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.pushCursor(macCursorBeam, 11, 16, 3, 8, 3);
+		CursorMan.pushCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
@@ -1322,7 +1343,7 @@ void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
