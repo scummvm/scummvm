@@ -52,10 +52,6 @@ BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame) : BaseRenderer3D(inGame) {
-	setDefaultAmbientLightColor();
-
-	_lightPositions.resize(getMaxActiveLights());
-	_lightDirections.resize(getMaxActiveLights());
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -121,6 +117,10 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_active = true;
 
 	_game->_supportsRealTimeShadows = true;
+
+	setDefaultAmbientLightColor();
+	_lightPositions.resize(getMaxActiveLights());
+	_lightDirections.resize(getMaxActiveLights());
 
 	return true;
 }
@@ -774,7 +774,7 @@ int BaseRenderOpenGL3D::getMaxActiveLights() {
 	return maxLightCount;
 }
 
-bool BaseRenderOpenGL3D::invalidateTexture(BaseSurfaceOpenGL3D *texture) {
+bool BaseRenderOpenGL3D::invalidateTexture(BaseSurface *texture) {
 	if (_lastTexture == texture)
 		_lastTexture = nullptr;
 

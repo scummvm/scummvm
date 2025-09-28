@@ -35,7 +35,7 @@ class BaseRenderer3D;
 
 class BaseSurfaceOpenGL3D : public BaseSurface {
 public:
-	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderer3D* renderer);
+	BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer);
 	~BaseSurfaceOpenGL3D();
 
 	bool invalidate() override;

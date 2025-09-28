@@ -74,7 +74,7 @@ public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;
 
-	bool invalidateTexture(BaseSurfaceOpenGL3D *texture) override;
+	bool invalidateTexture(BaseSurface *texture) override;
 
 	bool invalidateDeviceObjects() override;
 	bool restoreDeviceObjects() override;

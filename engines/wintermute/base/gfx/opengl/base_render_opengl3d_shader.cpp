@@ -52,7 +52,6 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame) : BaseRenderer3D(inGame) {
-	setDefaultAmbientLightColor();
 	_alphaRef = 0;
 }
 
@@ -205,6 +204,8 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_active = true;
 
 	_game->_supportsRealTimeShadows = true;
+
+	setDefaultAmbientLightColor();
 
 	return true;
 }
@@ -869,7 +870,7 @@ int BaseRenderOpenGL3DShader::getMaxActiveLights() {
 	return 8;
 }
 
-bool BaseRenderOpenGL3DShader::invalidateTexture(BaseSurfaceOpenGL3D *texture) {
+bool BaseRenderOpenGL3DShader::invalidateTexture(BaseSurface *texture) {
 	if (_lastTexture == texture)
 		_lastTexture = nullptr;
 
