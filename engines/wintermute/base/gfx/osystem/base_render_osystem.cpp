@@ -450,6 +450,13 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+#if 0
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+	byte a = RGBCOLGetA(color);
+#endif
+
 	Common::Point32 point1, point2;
 	point1.x = x1;
 	point1.y = y1;
@@ -461,10 +468,6 @@ bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 
 	// TODO
 #if 0
-	byte r = RGBCOLGetR(color);
-	byte g = RGBCOLGetG(color);
-	byte b = RGBCOLGetB(color);
-	byte a = RGBCOLGetA(color);
 	uint32 colorVal = _renderSurface->format.ARGBToColor(a, r, g, b);
 	_renderSurface->drawLine(point1.x, point1.y, point2.x + 1, point2.y + 1, colorVal);
 #endif
