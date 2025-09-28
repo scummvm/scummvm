@@ -1284,19 +1284,19 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.pushCursor(macCursorBeam, 11, 16, 1, 1, 3);
+		CursorMan.pushCursor(macCursorBeam, 11, 16, 3, 8, 3);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
-		CursorMan.pushCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+		CursorMan.pushCursor(macCursorCrossHair, 11, 16, 5, 5, 3);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossBar:
-		CursorMan.pushCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+		CursorMan.pushCursor(macCursorCrossBar, 11, 16, 4, 4, 3);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorWatch:
-		CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
+		CursorMan.pushCursor(macCursorWatch, 11, 16, 5, 8, 3);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCustom:
@@ -1322,19 +1322,19 @@ void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.replaceCursor(macCursorBeam, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
-		CursorMan.replaceCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursor(macCursorCrossHair, 11, 16, 5, 5, 3);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossBar:
-		CursorMan.replaceCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursor(macCursorCrossBar, 11, 16, 4, 4, 3);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorWatch:
-		CursorMan.replaceCursor(macCursorWatch, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursor(macCursorWatch, 11, 16, 5, 8, 3);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCustom:
