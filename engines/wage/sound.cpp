@@ -80,7 +80,7 @@ Sound::~Sound() {
 	free(_data);
 }
 
-void WageEngine::playSound(Common::String soundName) {
+void WageEngine::playSound(Common::String soundName, bool blocking) {
 	soundName.toLowercase();
 
 	if (!_world->_sounds.contains(soundName)) {
@@ -95,7 +95,7 @@ void WageEngine::playSound(Common::String soundName) {
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
 		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit) {
+	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit && blocking) {
 		Common::Event event;
 
 		if (_eventMan->pollEvent(event)) {

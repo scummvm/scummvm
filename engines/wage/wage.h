@@ -216,7 +216,7 @@ public:
 	Common::List<int> _soundQueue;
 	Common::String _soundToPlay;
 
-	void playSound(Common::String soundName);
+	void playSound(Common::String soundName, bool blocking = true);
 	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);

@@ -174,7 +174,7 @@ Common::Error WageEngine::run() {
 		g_system->delayMillis(50);
 
 		if (!_soundToPlay.empty()) {
-			playSound(_soundToPlay);
+			playSound(_soundToPlay, false); // Do not block input
 			_soundToPlay.clear();
 		}
 	}
