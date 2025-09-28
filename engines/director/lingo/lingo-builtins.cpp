@@ -1677,7 +1677,7 @@ void LB::b_xtra(int nargs) {
 		}
 	} else {
 		Common::String name = d.asString();
-		for (int i = 0; i < g_lingo->_openXtras.size(); i++) {
+		for (uint i = 0; i < g_lingo->_openXtras.size(); i++) {
 			if (name.equalsIgnoreCase(g_lingo->_openXtras[i])) {
 				Datum var = g_lingo->_openXtraObjects[i];
 				g_lingo->push(var);
