@@ -214,12 +214,12 @@ bool IntegrityDialog::progressUpdate(int bytesProcessed) {
 	}
 
 	return true;
-};
+}
 
 static bool progressUpdateCallback(void *param, int bytesProcessed) {
 	IntegrityDialog *dialog = (IntegrityDialog *)param;
 	return dialog->progressUpdate(bytesProcessed);
-};
+}
 
 
 void IntegrityDialog::open() {
