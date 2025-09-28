@@ -120,10 +120,10 @@ bool BaseAccessMgr::displayInternal() {
 			p.x += _game->_renderer->_drawOffsetX;
 			p.y += _game->_renderer->_drawOffsetY;
 
-			p.x = MAX(0, p.x);
-			p.y = MAX(0, p.y);
-			p.x = MIN(_game->_renderer->_width - 1, p.x);
-			p.y = MIN(_game->_renderer->_height - 1, p.y);
+			p.x = MAX<int32>(0, p.x);
+			p.y = MAX<int32>(0, p.y);
+			p.x = MIN<int32>(_game->_renderer->_width - 1, p.x);
+			p.y = MIN<int32>(_game->_renderer->_height - 1, p.y);
 
 			//ClientToScreen(Game->m_Renderer->m_Window, &p);
 			BasePlatform::setCursorPos(p.x, p.y);
