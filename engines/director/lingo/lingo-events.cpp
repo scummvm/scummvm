@@ -774,9 +774,9 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	// Instantiate the behavior
 	g_lingo->push(_movie->getScriptContext(kScoreScript, behavior->memberID));
 	LC::call("new", 1, true);
-	Datum inst = g_lingo->pop();
+	Datum instance = g_lingo->pop();
 
-	if (inst.type != OBJECT) {
+	if (instance.type != OBJECT) {
 		warning("Score::createScriptInstance(): Could not instantiate behavior %s", behavior->toString().c_str());
 		return Datum();
 	}
@@ -785,7 +785,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 
 	// No initializer, we are done
 	if (behavior->initializerIndex == 0)
-		return inst;
+		return instance;
 
 	// Evaluate the params
 	g_lingo->push(behavior->initializerParams);
@@ -799,7 +799,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	if (g_lingo->_state->stack.size() == 0) {
 		warning("Score::createScriptInstance(): Could not evaluate initializer params '%s' for behavior %s",
 			behavior->initializerParams.c_str(), behavior->toString().c_str());
-		return inst;
+		return instance;
 	}
 
 	Datum proplist = _lingo->pop();
@@ -807,7 +807,7 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	if (proplist.type != PARRAY) {
 		warning("Score::createScriptInstance(): Could not evaluate initializer params '%s' for behavior %s",
 			behavior->initializerParams.c_str(), behavior->toString().c_str());
-		return inst;
+		return instance;
 	}
 
 	debugC(2, kDebugLingoExec, "   Setting %d properties", proplist.u.parr->arr.size());
@@ -816,10 +816,10 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 		Datum key = proplist.u.parr->arr[k].p;
 		Datum val = proplist.u.parr->arr[k].v;
 
-		inst.u.obj->setProp(key.asString(), val);
+		instance.u.obj->setProp(key.asString(), val);
 	}
 
-	return inst;
+	return instance;
 }
 
 
@@ -861,14 +861,14 @@ void Score::createScriptInstances(int frameNum) {
 			i + 1, sprite->_behaviors.size(), channel->_startFrame, channel->_endFrame);
 
 		for (uint j = 0; j < sprite->_behaviors.size(); j++) {
-			Datum inst = createScriptInstance(&sprite->_behaviors[j]);
+			Datum instance = createScriptInstance(&sprite->_behaviors[j]);
 
-			if (inst.type != OBJECT) {
+			if (instance.type != OBJECT) {
 				warning("Score::createScriptInstances(): Could not instantiate behavior %s", sprite->_behaviors[j].toString().c_str());
 				continue;
 			}
 
-			channel->_scriptInstanceList.push_back(inst);
+			channel->_scriptInstanceList.push_back(instance);
 		}
 
 		bool prevDis = _disableGoPlayUpdateStage;
