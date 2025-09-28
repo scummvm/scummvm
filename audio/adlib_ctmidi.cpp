@@ -379,7 +379,7 @@ MidiDriver_ADLIB_CTMIDI::MidiDriver_ADLIB_CTMIDI(OPL::Config::OplType oplType, i
 	// This might cause marginally lower volumes in this implementation if a track
 	// does not set volume controller values.
 	setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_VOLUME, 0x7F);
-};
+}
 
 int MidiDriver_ADLIB_CTMIDI::open() {
 	// Initialize instrument banks
