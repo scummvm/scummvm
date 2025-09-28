@@ -1674,11 +1674,11 @@ recurse:
 		for (;;) {
 			do {
 				++loguy;
-			} while (loguy <= hi && compareSpriteCombinedPriority((const SpriteInfo **)loguy, (const SpriteInfo **)lo) <= 0);
+			} while (loguy <= hi && compareSpriteCombinedPriority(const_cast<SpriteInfo **>(loguy), const_cast<SpriteInfo **>(lo)) <= 0);
 
 			do {
 				--higuy;
-			} while (higuy > lo && compareSpriteCombinedPriority((const SpriteInfo **)higuy, (const SpriteInfo **)lo) >= 0);
+			} while (higuy > lo && compareSpriteCombinedPriority(const_cast<SpriteInfo **>(higuy), const_cast<SpriteInfo **>(lo)) >= 0);
 
 			if (higuy < loguy)
 				break;
@@ -1731,7 +1731,7 @@ void Sprite::shortsortSpriteArray(SpriteInfo **lo, SpriteInfo **hi) {
 		max = lo;
 
 		for (p = lo + 1; p <= hi; p++) {
-			if (compareSpriteCombinedPriority((const SpriteInfo **)p, (const SpriteInfo **)max) > 0) {
+			if (compareSpriteCombinedPriority(const_cast<SpriteInfo **>(p), const_cast<SpriteInfo **>(max)) > 0) {
 				max = p;
 			}
 		}
