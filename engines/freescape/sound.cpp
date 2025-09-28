@@ -148,7 +148,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 				} while (soundSize != 0);
 			} else if ((soundType & 0x7f) == 2) {
 				repetitions = SFXtempStruct[1] | (SFXtempStruct[0] << 8);
-				debugC(1, kFreescapeDebugParser, "Repetitions: %x", repetitions);
+				debugC(1, kFreescapeDebugParser, "Raw sound, repetitions: %x", repetitions);
 				uint16 sVar7 = SFXtempStruct[3];
 				soundType = 0;
 				soundSize = SFXtempStruct[2];
@@ -162,7 +162,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 					soundUnitZX soundUnit;
 					soundUnit.isRaw = true;
 					int totalSize = soundSize + sVar7;
-					soundUnit.rawFreq = 1.0;
+					soundUnit.rawFreq = 0.1;
 					soundUnit.rawLengthus = totalSize;
 					_soundsSpeakerFxZX[i]->push_back(soundUnit);
 					//debugN("%x ", silenceSize);
@@ -503,12 +503,12 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::Sound
 		soundUnitZX value = it;
 
 		if (value.isRaw) {
-			debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %d", value.rawFreq, value.rawLengthus);
+			debugC(1, kFreescapeDebugMedia, "raw hz: %f, duration: %d", value.rawFreq, value.rawLengthus);
 			if (value.rawFreq == 0) {
-				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, value.rawLengthus);
+				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 5 * value.rawLengthus);
 				continue;
 			}
-			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, value.rawFreq, value.rawLengthus);
+			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, value.rawFreq, 5 * value.rawLengthus);
 		} else {
 			if (value.freqTimesSeconds == 0 && value.tStates == 0) {
 				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 1000 * value.multiplier);
@@ -518,7 +518,7 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::Sound
 			float hzFreq = 1 / ((value.tStates + 30.125) / 437500.0);
 			float waveDuration = value.freqTimesSeconds / hzFreq;
 			waveDuration = value.multiplier * 1000 * (waveDuration + 1);
-			debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %f", hzFreq, waveDuration);
+			debugC(1, kFreescapeDebugMedia, "non raw hz: %f, duration: %f", hzFreq, waveDuration);
 			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
 		}
 	}
