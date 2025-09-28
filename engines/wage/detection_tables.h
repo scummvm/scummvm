@@ -113,7 +113,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Castle of Ert", "289d1f944d7c30b257587a7a49579d0f", 198713), // alt version
 	FANGAMEN("Castle of Ert", "Castle of Ert V1.2", "bc1c119b4a95ea6891a6e22c35e6c2d8", 201984),
 	FANGAMEN("City Adventure", "City Adventure 1.1", "0c9415ea525ffeedb346f7a62ebe6cd3", 285789),
-	FANGAME("Color by Number", "8fc77e5976ca25d05cf74db3ec3e5ef2", 528306),
 	FANGAME("Crystal Adventure", "d9e82fc3a58217a0ea4d6fddcb7fbc2a", 477918),
 	FANGAMEN("Crystal Search", "Crystal Search 1.5", "a9dda0422c6424e915363745ad2ecc41", 517019),
 	FANGAMEN("Dash Hansen and the Search for the Black Orchid", "Dash Hansen", "555e07344506720c8e4a29e1b5ba3578", 257129),
@@ -175,7 +174,6 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAMED("grailquest", "Demo", "GrailQuest.demo", "c0ef30ef7e4119fe76c5fbe2f930e7b1", 190810),
 	FANGAME("Haikook", "405d383b273a0252645962e0e664be20", 419636),
 	FANGAME("Grendel-Dazz", "968addd863d8e5c90f73d029c9240ded", 267156),
-	FANGAME("Grey Tower", "02d0bb7a8c278d3789616129d47f15c1", 397248), // v1.5.2
 	FANGAMEN("Haunted House", "The haunted house 1.4", "655ff082160909beb83b99979cdfc2c6", 107959),
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5e34e9fa13f4c90876f10a40ea1d1c79", 177244),
 	FANGAMEN("Haunted University", "Haunted U. v2.04", "d9511905bb908a0c3ea13c996e053aec", 1674435),
