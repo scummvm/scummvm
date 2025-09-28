@@ -60,7 +60,7 @@ private:
 };
 
 void qsort_msvc(void *base, uint32 nmemb, uint32 size,
-                int (*compare)(const void *, const void *));
+                int32 (*compare)(const void *, const void *));
 
 } // End of namespace Wintermute
 

@@ -371,7 +371,7 @@ bool PartEmitter::sortParticlesByZ() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int PartEmitter::compareZ(const void *obj1, const void *obj2) {
+int32 PartEmitter::compareZ(const void *obj1, const void *obj2) {
 	void *o1 = const_cast<void *>(obj1);
 	void *o2 = const_cast<void *>(obj2);
 	PartParticle *p1 = *(PartParticle **)o1;

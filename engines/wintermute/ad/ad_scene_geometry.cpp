@@ -998,7 +998,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 }
 
 //////////////////////////////////////////////////////////////////////////
-int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
+int32 AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
 	void *o1 = const_cast<void *>(obj1);
 	void *o2 = const_cast<void *>(obj2);
 	Light3D *light1 = *(Light3D **)o1;

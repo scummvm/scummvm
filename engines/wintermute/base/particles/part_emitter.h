@@ -124,7 +124,7 @@ public:
 
 private:
 	PartForce *addForceByName(const char *name);
-	int static compareZ(const void *obj1, const void *obj2);
+	static int32 compareZ(const void *obj1, const void *obj2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;

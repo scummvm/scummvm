@@ -177,7 +177,7 @@ bool BaseSurfaceStorage::sortSurfaces() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
+int32 BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
 	void *o1 = const_cast<void *>(arg1);
 	void *o2 = const_cast<void *>(arg2);
 	BaseSurface *s1 = *((BaseSurface **)o1);
