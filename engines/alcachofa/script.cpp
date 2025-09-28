@@ -826,11 +826,13 @@ private:
 		// Camera tasks
 		case ScriptKernelTask::WaitCamStopping:
 			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
-		case ScriptKernelTask::CamFollow:
-			g_engine->camera().setFollow(
-				&g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(0)),
-				getNumberArg(1) != 0);
+		case ScriptKernelTask::CamFollow: {
+			WalkingCharacter *target = nullptr;
+			if (getNumberArg(0) != 0)
+				target = &g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(0));
+			g_engine->camera().setFollow(target, getNumberArg(1) != 0);
 			return TaskReturn::finish(1);
+		}
 		case ScriptKernelTask::CamShake:
 			return TaskReturn::waitFor(g_engine->camera().shake(process(),
 				Vector2d(getNumberArg(1), getNumberArg(2)),
@@ -990,19 +992,12 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 	return process;
 }
 
-void Script::updateCommonVariables() {
-	if (g_engine->input().wasAnyMousePressed()) // yes, this variable is never reset by the engine (only by script)
-		variable("SeHaPulsadoRaton") = 1;
-
-	if (variable("CalcularTiempoSinPulsarRaton")) {
-		if (_scriptTimer == 0)
-			_scriptTimer = g_engine->getMillis();
-	} else
+void Script::setScriptTimer(bool reset) {
+	// Used for the V3 exclusive kernel task HadNoMousePressFor
+	if (reset)
 		_scriptTimer = 0;
-
-	variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
-	variable("textoson") = g_engine->config().subtitles() ? 1 : 0;
-	variable("modored") = 0; // this is signalling whether a network connection is established
+	else if (_scriptTimer == 0)
+		_scriptTimer = g_engine->getMillis();
 }
 
 }

@@ -37,6 +37,8 @@ Game::Game()
 
 void Game::onLoadedGameFiles() {}
 
+void Game::drawScreenStates() {}
+
 bool Game::doesRoomHaveBackground(const Room *room) {
 	return true;
 }

@@ -113,7 +113,7 @@ void minmax(Vector3d &min, Vector3d &max, Vector3d val) {
 
 Vector3d Camera::setAppliedCenter(Vector3d center) {
 	setupMatricesAround(center);
-	if (g_engine->script().variable("EncuadrarCamara")) {
+	if (g_engine->game().shouldClipCamera()) {
 		const float screenW = g_system->getWidth(), screenH = g_system->getHeight();
 		Vector3d min, max;
 		min = max = transform2Dto3D(Vector3d(0, 0, _roomScale));

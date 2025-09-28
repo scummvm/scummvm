@@ -211,6 +211,15 @@ public:
 		return { kScriptOpMap, ARRAYSIZE(kScriptOpMap) };
 	}
 
+	void updateScriptVariables() override {
+		Script &script = g_engine->script();
+		if (g_engine->input().wasAnyMousePressed()) // yes, this variable is never reset by the engine (only by script)
+			script.variable("SeHaPulsadoRaton") = 1;
+
+		script.variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
+		script.variable("textoson") = g_engine->config().subtitles() ? 1 : 0;
+	}
+
 	void onLoadedGameFiles() override {
 		// this notifies the script whether we are a demo
 		if (g_engine->world().loadedMapCount() == 2)
@@ -300,6 +309,17 @@ public:
 		return { kScriptKernelTaskMapV30, ARRAYSIZE(kScriptKernelTaskMapV30) };
 	}
 
+	void updateScriptVariables() override {
+		GameWithVersion3::updateScriptVariables();
+
+		// in V3.0 there is no CalcularTiempoSinPulsarRaton variable to reset the timer
+		g_engine->script().setScriptTimer(g_engine->input().wasAnyMousePressed());
+	}
+
+	bool shouldClipCamera() override {
+		return true;
+	}
+
 	void missingAnimation(const String &fileName) override {
 		static const char *exemptions[] = {
 			"ANIMACION.AN0",
@@ -329,6 +349,27 @@ class GameMovieAdventureSpecialV31 : public GameWithVersion3 {
 public:
 	Span<const ScriptKernelTask> getScriptKernelTaskMap() override {
 		return { kScriptKernelTaskMapV31, ARRAYSIZE(kScriptKernelTaskMapV31) };
+	}
+
+	void updateScriptVariables() override {
+		GameWithVersion3::updateScriptVariables();
+
+		Script &script = g_engine->script();
+		script.setScriptTimer(!script.variable("CalcularTiempoSinPulsarRaton"));
+		script.variable("modored") = 0; // this is signalling whether a network connection is established
+	}
+
+	bool shouldClipCamera() override {
+		return g_engine->script().variable("EncuadrarCamara") != 0;
+	}
+
+	void drawScreenStates() override {
+		if (int32 borderWidth = g_engine->script().variable("BordesNegros")) {
+			int16 width = g_system->getWidth();
+			int16 height = g_system->getHeight();
+			g_engine->drawQueue().add<BorderDrawRequest>(Rect(0, 0, width, borderWidth), kBlack);
+			g_engine->drawQueue().add<BorderDrawRequest>(Rect(0, height - borderWidth, width, height), kBlack);
+		}
 	}
 
 	bool shouldTriggerDoor(const Door *door) override {

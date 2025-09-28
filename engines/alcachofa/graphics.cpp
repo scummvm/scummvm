@@ -60,7 +60,7 @@ void IDebugRenderer::debugShape(const Shape &shape, Color color) {
 }
 
 AnimationBase::AnimationBase(String fileName, AnimationFolder folder)
-	: _fileName(move(fileName))
+	: _fileName(reencode(fileName))
 	, _folder(folder) {}
 
 AnimationBase::~AnimationBase() {
@@ -88,7 +88,6 @@ void AnimationBase::load() {
 	}
 	if (_fileName.size() < 4 || scumm_strnicmp(_fileName.end() - 4, ".AN0", 4) != 0)
 		_fileName += ".AN0";
-	_fileName = reencode(_fileName);
 	fullPath += _fileName;
 
 	File file;

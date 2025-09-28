@@ -155,7 +155,6 @@ public:
 	Script();
 
 	void syncGame(Common::Serializer &s);
-	void updateCommonVariables();
 	int32 variable(const char *name) const;
 	int32 &variable(const char *name);
 	Process *createProcess(
@@ -175,6 +174,7 @@ public:
 	inline VariableNameIterator endVariables() const { return _variableNames.end(); }
 	inline bool hasVariable(const char *name) const { return _variableNames.contains(name); }
 
+	void setScriptTimer(bool reset);
 private:
 	friend struct ScriptTask;
 	friend struct ScriptTimerTask;

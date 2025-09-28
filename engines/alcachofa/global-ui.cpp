@@ -254,12 +254,8 @@ void GlobalUI::drawScreenStates() {
 	auto &drawQueue = g_engine->drawQueue();
 	if (_isPermanentFaded)
 		drawQueue.add<FadeDrawRequest>(FadeType::ToBlack, 1.0f, -9);
-	else if (int32 borderWidth = g_engine->script().variable("BordesNegros")) {
-		int16 width = g_system->getWidth();
-		int16 height = g_system->getHeight();
-		drawQueue.add<BorderDrawRequest>(Rect(0, 0, width, borderWidth), kBlack);
-		drawQueue.add<BorderDrawRequest>(Rect(0, height - borderWidth, width, height), kBlack);
-	}
+	else
+		g_engine->game().drawScreenStates();
 }
 
 void GlobalUI::syncGame(Serializer &s) {

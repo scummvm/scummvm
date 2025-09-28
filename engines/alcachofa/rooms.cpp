@@ -164,7 +164,7 @@ void Room::draw() {
 }
 
 void Room::updateScripts() {
-	g_engine->script().updateCommonVariables();
+	g_engine->game().updateScriptVariables();
 	if (!g_engine->scheduler().hasProcessWithName("ACTUALIZAR_" + _name))
 		g_engine->script().createProcess(MainCharacterKind::None, "ACTUALIZAR_" + _name, ScriptFlags::AllowMissing | ScriptFlags::IsBackground);
 	g_engine->scheduler().run();
