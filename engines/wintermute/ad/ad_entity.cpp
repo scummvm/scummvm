@@ -42,6 +42,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -587,20 +588,19 @@ bool AdEntity::display() {
 		}
 
 		// accessibility
-		/*if (Game->m_AccessMgr->GetActiveObject() == this) {
-			float ScaleX, ScaleY;
-			GetScale(&ScaleX, &ScaleY);
+		if (_game->_accessMgr->getActiveObject() == this) {
+			getScale(&scaleX, &scaleY);
 
 			Common::Rect32 rc;
-			SetRectEmpty(&rc);
-			if (m_CurrentSprite) {
-				m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
-			} else if (m_Region) {
-				m_Region->GetBoundingRect(&rc);
-				OffsetRect(&rc, -Game->m_OffsetX, -Game->m_OffsetY);
+			BasePlatform::setRectEmpty(&rc);
+			if (_currentSprite) {
+				_currentSprite->getBoundingRect(&rc, _posX - _game->_offsetX, _posY - _game->_offsetY, scaleX, scaleY);
+			} else if (_region) {
+				_region->getBoundingRect(&rc);
+				BasePlatform::offsetRect(&rc, -_game->_offsetX, -_game->_offsetY);
 			}
-			Game->m_AccessMgr->SetHintRect(&rc);
-		}*/
+			_game->_accessMgr->setHintRect(&rc);
+		}
 	}
 	return STATUS_OK;
 }

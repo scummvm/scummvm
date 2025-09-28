@@ -53,8 +53,8 @@ public:
 
 	bool displayDebugInfo() override;
 
-	//virtual CBObject *GetNextAccessObject(CBObject *CurrObject);
-	//virtual CBObject *GetPrevAccessObject(CBObject *CurrObject);
+	virtual BaseObject *getNextAccessObject(BaseObject *currObject) override;
+	virtual BaseObject *getPrevAccessObject(BaseObject *currObject) override;
 
 	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *viewport, bool *customViewport) override;
 #ifdef ENABLE_WME3D

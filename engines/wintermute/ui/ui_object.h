@@ -38,7 +38,7 @@ class UITiledImage;
 class BaseFont;
 class UIObject : public BaseObject {
 public:
-	//virtual char *GetAccessCaption();
+	const char *getAccessCaption() override;
 
 	bool getTotalOffset(int *offsetX, int *offsetY);
 	bool _canFocus;

@@ -36,6 +36,7 @@
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -755,12 +756,11 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}
 	if (_imageHover && _imageHover != image) {
 		_imageHover->reset();
-
-/*	if (Game->m_AccessMgr->GetActiveObject() == this) {
+	}
+	if (_game->_accessMgr->getActiveObject() == this) {
 		Common::Rect32 rc;
-		SetRect(&rc, OffsetX + m_PosX, OffsetY + m_PosY, OffsetX + m_PosX + m_Width, OffsetY + m_PosY + m_Height);
-		Game->m_AccessMgr->SetHintRect(&rc, true);
-	}*/
+		BasePlatform::setRect(&rc, offsetX + _posX, offsetY + _posY, offsetX + _posX + _width, offsetY + _posY + _height);
+		_game->_accessMgr->setHintRect(&rc, true);
 	}
 
 	_press = _hover && _game->_mouseLeftDown && _game->_capturedObject == this;

@@ -140,6 +140,7 @@ struct WMEGameDescription {
 #ifdef ENABLE_WME3D
 #define GAMEOPTION_FORCE_2D_RENDERER GUIO_GAMEOPTIONS3
 #endif
+#define GAMEOPTION_TTS               GUIO_GAMEOPTIONS4
 
 } // End of namespace Wintermute
 

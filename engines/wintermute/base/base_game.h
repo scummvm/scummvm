@@ -60,6 +60,7 @@ class BaseRegistry;
 class BaseSurfaceStorage;
 class BaseKeyboardState;
 class BaseGameSettings;
+class BaseAccessMgr;
 class ScEngine;
 class SXMath;
 class SXDirectory;
@@ -88,8 +89,8 @@ public:
 	virtual uint32 getAmbientLightColor();
 	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
 #endif
-	//virtual CBObject *GetNextAccessObject(CBObject *CurrObject);
-	//virtual CBObject *GetPrevAccessObject(CBObject *CurrObject);
+	virtual BaseObject *getNextAccessObject(BaseObject *currObject);
+	virtual BaseObject *getPrevAccessObject(BaseObject *currObject);
 
 	virtual bool onActivate(bool activate, bool refreshMouse);
 	virtual bool onMouseLeftDown();
@@ -204,7 +205,7 @@ public:
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
-	//CBAccessMgr *m_AccessMgr;
+	BaseAccessMgr *_accessMgr;
 	BaseFileManager *_fileManager;
 	BaseTransitionMgr *_transMgr;
 
@@ -297,7 +298,7 @@ public:
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
-	//bool HandleAccessKey(bool Printable, DWORD CharCode, DWORD KeyData);
+	bool handleAccessKey(Common::Event *event, bool printable);
 	virtual bool handleCustomActionStart(BaseGameCustomAction action);
 	virtual bool handleCustomActionEnd(BaseGameCustomAction action);
 	int32 _freezeLevel;
@@ -374,19 +375,19 @@ public:
 	BaseArray<BaseObject *> _regObjects;
 
 	// accessibility flags
-/*	bool m_AccessTTSEnabled;
-	bool m_AccessTTSTalk;
-	bool m_AccessTTSCaptions;
-	bool m_AccessTTSKeypress;
-	bool m_AccessKeyboardEnabled;
-	bool m_AccessKeyboardCursorSkip;
-	bool m_AccessKeyboardPause;
+	bool _accessTTSEnabled;
+	bool _accessTTSTalk;
+	bool _accessTTSCaptions;
+	bool _accessTTSKeypress;
+	bool _accessKeyboardEnabled;
+	bool _accessKeyboardCursorSkip;
+	bool _accessKeyboardPause;
 
-	bool m_AccessGlobalPaused;
+	bool _accessGlobalPaused;
 
-	CUIWindow *m_AccessShieldWin;
-	HRESULT AccessPause();
-	HRESULT AccessUnpause();*/
+	UIWindow *_accessShieldWin;
+	bool accessPause();
+	bool accessUnpause();
 
 public:
 	virtual bool displayContent(bool update = true, bool displayAll = false);

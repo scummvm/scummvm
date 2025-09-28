@@ -53,6 +53,7 @@
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_viewport.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -355,7 +356,7 @@ void AdGame::finishSentences() {
 			}
 		}
 	}
-	//Game->m_AccessMgr->Stop();
+	_game->_accessMgr->stop();
 }
 
 
@@ -2008,20 +2009,20 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 		}
 
 		if (doUpdate || displayAll) {
-			//m_AccessMgr->DisplayBeforeGUI();
+			_accessMgr->displayBeforeGUI();
 
 			// display normal windows
 			displayWindows(false);
 
-			//m_AccessMgr->DisplayAfterGUI();
+			_accessMgr->displayAfterGUI();
 
 			setActiveObject(_game->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
-			//if (m_AccessGlobalPaused)
-			//	DisplaySentences(false);
-			//else
-			displaySentences(_state == GAME_FROZEN);
+			if (_accessGlobalPaused)
+				displaySentences(false);
+			else
+				displaySentences(_state == GAME_FROZEN);
 
 			showCursor();
 
@@ -2254,28 +2255,28 @@ bool AdGame::renderShadowGeometry() {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-/*CBObject *CAdGame::GetNextAccessObject(CBObject *CurrObject) {
-	CBObject *Ret = CBGame::GetNextAccessObject(CurrObject);
-	if (!Ret) {
-		if (m_ResponseBox && m_StateEx == GAME_WAITING_RESPONSE)
-			return m_ResponseBox->GetNextAccessObject(CurrObject);
-		if (m_Scene)
-			return m_Scene->GetNextAccessObject(CurrObject);
+BaseObject *AdGame::getNextAccessObject(BaseObject *currObject) {
+	BaseObject *ret = BaseGame::getNextAccessObject(currObject);
+	if (!ret) {
+		if (_responseBox && _stateEx == GAME_WAITING_RESPONSE)
+			return _responseBox->getNextAccessObject(currObject);
+		if (_scene)
+			return _scene->getNextAccessObject(currObject);
 	}
-	return Ret;
+	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
-CBObject *CAdGame::GetPrevAccessObject(CBObject *CurrObject) {
-	CBObject *Ret = CBGame::GetPrevAccessObject(CurrObject);
-	if (!Ret) {
-		if (m_ResponseBox && m_StateEx == GAME_WAITING_RESPONSE)
-			return m_ResponseBox->GetPrevAccessObject(CurrObject);
-		if (m_Scene)
-			return m_Scene->GetPrevAccessObject(CurrObject);
+BaseObject *AdGame::getPrevAccessObject(BaseObject *currObject) {
+	BaseObject *ret = BaseGame::getPrevAccessObject(currObject);
+	if (!ret) {
+		if (_responseBox && _stateEx == GAME_WAITING_RESPONSE)
+			return _responseBox->getPrevAccessObject(currObject);
+		if (_scene)
+			return _scene->getPrevAccessObject(currObject);
 	}
-	return Ret;
-}*/
+	return ret;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::validMouse() {

@@ -49,7 +49,7 @@ class XModel;
 class BaseObject : public BaseScriptHolder {
 public:
 	char *_accessCaption;
-	//virtual char *GetAccessCaption();
+	virtual const char *getAccessCaption();
 
 	Graphics::TSpriteBlendMode _blendMode;
 #ifdef ENABLE_WME3D

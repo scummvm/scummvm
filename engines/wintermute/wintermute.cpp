@@ -193,6 +193,8 @@ int WintermuteEngine::init() {
 
 	_game->initConfManSettings();
 
+	_game->_accessTTSEnabled = ConfMan.getBool("tts_enabled");
+
 	// load general game settings
 	_game->initialize1();
 

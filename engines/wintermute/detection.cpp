@@ -58,9 +58,9 @@ public:
 		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;
 #ifdef ENABLE_WME3D
-		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR, GAMEOPTION_FORCE_2D_RENDERER);
+		_guiOptions = GUIO5(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR, GAMEOPTION_TTS, GAMEOPTION_FORCE_2D_RENDERER);
 #else
-		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR);
+		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR, GAMEOPTION_TTS);
 #endif
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

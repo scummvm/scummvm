@@ -46,6 +46,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
 
@@ -1349,7 +1350,7 @@ bool UIWindow::goSystemExclusive() {
 
 	makeFreezable(false);
 
-	//Game->m_AccessMgr->SetActiveObject();
+	_game->_accessMgr->setActiveObject();
 	_mode = WINDOW_SYSTEM_EXCLUSIVE;
 	_ready = false;
 	_visible = true;
@@ -1405,50 +1406,50 @@ void UIWindow::makeFreezable(bool freezable) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*CBObject *CUIWindow::GetNextAccessObject(CBObject *CurrObject) {
-	CBArray<CUIObject *, CUIObject *> Objects;
-	GetWindowObjects(Objects, true);
+BaseObject *UIWindow::getNextAccessObject(BaseObject *currObject) {
+	BaseArray<UIObject *>objects;
+	getWindowObjects(objects, true);
 
-	if (Objects.GetSize() == 0)
-		return NULL;
+	if (objects.getSize() == 0)
+		return nullptr;
 	else {
-		if (CurrObject != NULL) {
-			for (int i = 0; i < Objects.GetSize(); i++) {
-				if (Objects[i] == CurrObject) {
-					if (i < Objects.GetSize() - 1)
-						return Objects[i + 1];
+		if (currObject != nullptr) {
+			for (int32 i = 0; i < objects.getSize(); i++) {
+				if (objects[i] == currObject) {
+					if (i < objects.getSize() - 1)
+						return objects[i + 1];
 					else
 						break;
 				}
 			}
 		}
-		return Objects[0];
+		return objects[0];
 	}
-	return NULL;
-}*/
+	return nullptr;
+}
 
 //////////////////////////////////////////////////////////////////////////
-/*CBObject *CUIWindow::GetPrevAccessObject(CBObject *CurrObject) {
-	CBArray<CUIObject *, CUIObject *> Objects;
-	GetWindowObjects(Objects, true);
+BaseObject *UIWindow::getPrevAccessObject(BaseObject *currObject) {
+	BaseArray<UIObject *>objects;
+	getWindowObjects(objects, true);
 
-	if (Objects.GetSize() == 0)
+	if (objects.getSize() == 0)
 		return NULL;
 	else {
-		if (CurrObject != NULL) {
-			for (int i = Objects.GetSize() - 1; i >= 0; i--) {
-				if (Objects[i] == CurrObject) {
+		if (currObject != nullptr) {
+			for (int32 i = objects.getSize() - 1; i >= 0; i--) {
+				if (objects[i] == currObject) {
 					if (i > 0)
-						return Objects[i - 1];
+						return objects[i - 1];
 					else
 						break;
 				}
 			}
 		}
-		return Objects[Objects.GetSize() - 1];
+		return objects[objects.getSize() - 1];
 	}
-	return NULL;
-}*/
+	return nullptr;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {

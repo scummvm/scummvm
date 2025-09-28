@@ -39,11 +39,13 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/dcgf.h"
 
@@ -589,19 +591,18 @@ bool AdActor::display() {
 	if (_active && _partEmitter) {
 		_partEmitter->display();
 	}
-/*
+
 	// accessibility
-	if (Game->m_AccessMgr->GetActiveObject() == this) {
-		float ScaleX, ScaleY;
-		GetScale(&ScaleX, &ScaleY);
+	if (_game->_accessMgr->getActiveObject() == this) {
+		getScale(&scaleX, &scaleY);
 
 		Common::Rect32 rc;
-		SetRectEmpty(&rc);
-		if (m_CurrentSprite) {
-			m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
+		BasePlatform::setRectEmpty(&rc);
+		if (_currentSprite) {
+			_currentSprite->getBoundingRect(&rc, _posX - _game->_offsetX, _posY - _game->_offsetY, scaleX, scaleY);
 		}
-		Game->m_AccessMgr->SetHintRect(&rc);
-	}*/
+		_game->_accessMgr->setHintRect(&rc);
+	}
 
 	return STATUS_OK;
 }

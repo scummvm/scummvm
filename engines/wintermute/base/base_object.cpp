@@ -165,7 +165,7 @@ bool BaseObject::cleanup() {
 	_sFXType = SFX_NONE;
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
-	//SAFE_DELETE_ARRAY(m_AccessCaption);
+	SAFE_DELETE_ARRAY(_accessCaption);
 
 	return STATUS_OK;
 }
@@ -830,9 +830,9 @@ ScValue *BaseObject::scGetProperty(const char *name) {
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccCaption") == 0) {
-/*		if (m_AccessCaption)
-			m_ScValue->SetString(m_AccessCaption);
-		else*/
+		if (_accessCaption)
+			_scValue->setString(_accessCaption);
+		else
 			_scValue->setNULL();
 		return _scValue;
 	} else {
@@ -1026,11 +1026,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccCaption") == 0) {
-		/*if (Value->IsNULL()) {
-			SAFE_DELETE_ARRAY(m_AccessCaption);
+		if (value->isNULL()) {
+			SAFE_DELETE_ARRAY(_accessCaption);
 		} else {
-			CBUtils::SetString(&m_AccessCaption, Value->GetString());
-		}*/
+			BaseUtils::setString(&_accessCaption, value->getString());
+		}
 		return STATUS_OK;
 	} else {
 		return BaseScriptHolder::scSetProperty(name, value);
@@ -1145,7 +1145,13 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 #endif
 
 	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
-	//persistMgr->Transfer(TMEMBER(m_AccessCaption));
+	if (persistMgr->checkVersion(1, 10, 1)) {
+		persistMgr->transferPtr(TMEMBER(_accessCaption));
+	} else {
+		if (!persistMgr->getIsSaving()) {
+			_accessCaption = nullptr;
+		}
+	}
 
 	return STATUS_OK;
 }
@@ -1413,10 +1419,12 @@ bool BaseObject::renderModel() {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-/*char *CBObject::GetAccessCaption() {
-	if (m_AccessCaption)
-		return m_AccessCaption;
-	else
-		return GetCaption();
-}*/
+const char *BaseObject::getAccessCaption() {
+	if (_accessCaption) {
+		return _accessCaption;
+	} else {
+		return getCaption();
+	}
+}
+
 } // End of namespace Wintermute

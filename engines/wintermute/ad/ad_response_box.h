@@ -39,8 +39,8 @@ class UIObject;
 class AdResponse;
 class AdResponseBox : public BaseObject {
 public:
-	BaseObject *getNextAccessObject(BaseObject *CurrObject);
-	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
+	BaseObject *getNextAccessObject(BaseObject *currObject);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
 	bool handleResponse(AdResponse *response);

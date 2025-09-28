@@ -38,8 +38,8 @@ class UIButton;
 class BaseViewport;
 class UIWindow : public UIObject {
 public:
-	//CBObject *GetPrevAccessObject(CBObject *CurrObject);
-	//CBObject *GetNextAccessObject(CBObject *CurrObject);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
+	BaseObject *getNextAccessObject(BaseObject *currObject);
 	bool getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
 	bool _pauseMusic;
