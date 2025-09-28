@@ -46,7 +46,6 @@
 
 #include "common/timer.h"
 #include "common/system.h"
-#include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
