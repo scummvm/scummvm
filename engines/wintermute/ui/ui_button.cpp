@@ -475,62 +475,62 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->_filename) {
+	if (_back && _back->_filename && _back->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
-	if (_backHover && _backHover->_filename) {
+	if (_backHover && _backHover->_filename && _backHover->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK_HOVER=\"%s\"\n", _backHover->_filename);
 	}
-	if (_backPress && _backPress->_filename) {
+	if (_backPress && _backPress->_filename && _backPress->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK_PRESS=\"%s\"\n", _backPress->_filename);
 	}
-	if (_backDisable && _backDisable->_filename) {
+	if (_backDisable && _backDisable->_filename && _backDisable->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK_DISABLE=\"%s\"\n", _backDisable->_filename);
 	}
-	if (_backFocus && _backFocus->_filename) {
+	if (_backFocus && _backFocus->_filename && _backFocus->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK_FOCUS=\"%s\"\n", _backFocus->_filename);
 	}
 
-	if (_image && _image->_filename) {
+	if (_image && _image->_filename && _image->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
-	if (_imageHover && _imageHover->_filename) {
+	if (_imageHover && _imageHover->_filename && _imageHover->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE_HOVER=\"%s\"\n", _imageHover->_filename);
 	}
-	if (_imagePress && _imagePress->_filename) {
+	if (_imagePress && _imagePress->_filename && _imagePress->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE_PRESS=\"%s\"\n", _imagePress->_filename);
 	}
-	if (_imageDisable && _imageDisable->_filename) {
+	if (_imageDisable && _imageDisable->_filename && _imageDisable->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE_DISABLE=\"%s\"\n", _imageDisable->_filename);
 	}
-	if (_imageFocus && _imageFocus->_filename) {
+	if (_imageFocus && _imageFocus->_filename && _imageFocus->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE_FOCUS=\"%s\"\n", _imageFocus->_filename);
 	}
 
-	if (_font && _font->_filename) {
+	if (_font && _font->_filename && _font->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontHover && _fontHover->_filename) {
+	if (_fontHover && _fontHover->_filename && _fontHover->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 	}
-	if (_fontPress && _fontPress->_filename) {
+	if (_fontPress && _fontPress->_filename && _fontPress->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_PRESS=\"%s\"\n", _fontPress->_filename);
 	}
-	if (_fontDisable && _fontDisable->_filename) {
+	if (_fontDisable && _fontDisable->_filename && _fontDisable->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_DISABLE=\"%s\"\n", _fontDisable->_filename);
 	}
-	if (_fontFocus && _fontFocus->_filename) {
+	if (_fontFocus && _fontFocus->_filename && _fontFocus->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_FOCUS=\"%s\"\n", _fontFocus->_filename);
 	}
 
-	if (_cursor && _cursor->_filename) {
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text) {
+	if (_text && _text[0]) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
 	}
 
@@ -613,7 +613,7 @@ void UIButton::correctSize() {
 		}
 	}
 
-	if (_text) {
+	if (_text && _text[0]) {
 		int textHeight;
 		if (_font) {
 			textHeight = _font->getTextHeight((byte *)_text, _width);
@@ -664,7 +664,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_imageDisable) {
 			image = _imageDisable;
 		}
-		if (_text && _fontDisable) {
+		if (_text && _text[0] && _fontDisable) {
 			font = _fontDisable;
 		}
 	} else if (_press || _oneTimePress || _stayPressed) {
@@ -674,7 +674,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_imagePress) {
 			image = _imagePress;
 		}
-		if (_text && _fontPress) {
+		if (_text && _text[0] && _fontPress) {
 			font = _fontPress;
 		}
 	} else if (_hover) {
@@ -684,7 +684,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_imageHover) {
 			image = _imageHover;
 		}
-		if (_text && _fontHover) {
+		if (_text && _text[0] && _fontHover) {
 			font = _fontHover;
 		}
 	} else if (_canFocus && isFocused()) {
@@ -694,7 +694,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_imageFocus) {
 			image = _imageFocus;
 		}
-		if (_text && _fontFocus) {
+		if (_text && _text[0] && _fontFocus) {
 			font = _fontFocus;
 		}
 	}
@@ -705,7 +705,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	if (!image && _image) {
 		image = _image;
 	}
-	if (_text && !font) {
+	if (_text && _text[0] && !font) {
 		if (_font) {
 			font = _font;
 		} else {
@@ -731,7 +731,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		image->draw(imageX + ((_press || _oneTimePress) && back ? 1 : 0), imageY + ((_press || _oneTimePress) && back ? 1 : 0), _pixelPerfect ? this : nullptr);
 	}
 
-	if (font && _text) {
+	if (font && _text && _text[0]) {
 		int text_offset = (_height - font->getTextHeight((byte *)_text, _width)) / 2;
 		font->drawText((byte *)_text, offsetX + _posX + ((_press || _oneTimePress) ? 1 : 0), offsetY + _posY + text_offset + ((_press || _oneTimePress) ? 1 : 0), _width, _align);
 	}
@@ -906,7 +906,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetDisabledImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageDisable || !_imageDisable->_filename) {
+		if (!_imageDisable || !_imageDisable->_filename|| !_imageDisable->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_imageDisable->_filename);
@@ -954,7 +954,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetHoverImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageHover || !_imageHover->_filename) {
+		if (!_imageHover || !_imageHover->_filename || !_imageHover->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_imageHover->_filename);
@@ -1001,7 +1001,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetPressedImage") == 0) {
 		stack->correctParams(0);
-		if (!_imagePress || !_imagePress->_filename) {
+		if (!_imagePress || !_imagePress->_filename || !_imagePress->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_imagePress->_filename);
@@ -1048,7 +1048,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFocusedImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageFocus || !_imageFocus->_filename) {
+		if (!_imageFocus || !_imageFocus->_filename || !_imageFocus->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_imageFocus->_filename);

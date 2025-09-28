@@ -122,7 +122,7 @@ char *AdSentence::getNextStance() {
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getStance(int stance) {
-	if (_stances == nullptr) {
+	if (_stances == nullptr || !_stances[0]) {
 		return nullptr;
 	}
 
@@ -184,7 +184,7 @@ char *AdSentence::getStance(int stance) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::display() {
-	if (!_font || !_text) {
+	if (!_font || !_text || !_text[0]) {
 		return STATUS_FAILED;
 	}
 

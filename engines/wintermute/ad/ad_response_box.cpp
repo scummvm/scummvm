@@ -389,14 +389,14 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _responseArea.left, _responseArea.top, _responseArea.right, _responseArea.bottom);
 
-	if (_font && _font->_filename) {
+	if (_font && _font->_filename && _font->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontHover && _fontHover->_filename) {
+	if (_fontHover && _fontHover->_filename && _fontHover->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_HOVER=\"%s\"\n", _fontHover->_filename);
 	}
 
-	if (_cursor && _cursor->_filename) {
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 

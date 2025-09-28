@@ -94,7 +94,7 @@ void SXFile::close() {
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXFile::scToString() {
-	if (_filename) {
+	if (_filename && _filename[0]) {
 		return _filename;
 	} else {
 		return "[file object]";

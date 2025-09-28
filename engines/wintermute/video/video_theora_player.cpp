@@ -462,7 +462,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::initializeSimple() {
 	if (DID_SUCCEED(initialize(_filename))) {
-		if (_alphaFilename) {
+		if (_alphaFilename && _alphaFilename[0]) {
 			setAlphaImage(_alphaFilename);
 		}
 		play(_playbackType, _posX, _posY, false, false, _looping, _savedPos, _playZoom);

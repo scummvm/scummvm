@@ -270,7 +270,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursor") == 0) {
 		stack->correctParams(0);
-		if (!_cursor || !_cursor->_filename) {
+		if (!_cursor || !_cursor->_filename || !_cursor->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_cursor->_filename);
@@ -1316,7 +1316,7 @@ bool BaseObject::setSFXVolume(int volume) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::updateSounds() {
-	if (_soundEvent) {
+	if (_soundEvent && _soundEvent[0]) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
 			setSoundEvent(nullptr);

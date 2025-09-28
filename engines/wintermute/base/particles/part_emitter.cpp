@@ -307,7 +307,7 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 		// we actually generated some particles and we're not in fast-forward mode
 		if (needsSort && _overheadTime == 0) {
-			if (_owner && _emitEvent) {
+			if (_owner && _emitEvent && _emitEvent[0]) {
 				_owner->applyEvent(_emitEvent);
 			}
 		}
@@ -868,7 +868,7 @@ ScValue *PartEmitter::scGetProperty(const char *name) {
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmitEvent") == 0) {
-		if (!_emitEvent) {
+		if (!_emitEvent || !_emitEvent[0]) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setString(_emitEvent);

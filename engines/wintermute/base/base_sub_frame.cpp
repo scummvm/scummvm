@@ -284,7 +284,7 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
 	}
 
-	if (_surface && _surface->_filename != nullptr) {
+	if (_surface && _surface->_filename && _surface->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE = \"%s\"\n", _surface->_filename);
 	}
 
@@ -415,7 +415,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	if (strcmp(name, "GetImage") == 0) {
 		stack->correctParams(0);
 
-		if (!_surfaceFilename) {
+		if (!_surfaceFilename && _surfaceFilename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_surfaceFilename);
@@ -708,7 +708,7 @@ bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {
-	if (!_surfaceFilename) {
+	if (!_surfaceFilename && _surfaceFilename[0]) {
 		_surface = nullptr;
 		return STATUS_OK;
 	}

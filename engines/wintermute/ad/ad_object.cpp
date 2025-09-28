@@ -353,7 +353,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFont") == 0) {
 		stack->correctParams(0);
-		if (_font && _font->_filename) {
+		if (_font && _font->_filename && _font->_filename[0]) {
 			stack->pushString(_font->_filename);
 		} else {
 			stack->pushNULL();
@@ -877,7 +877,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		return;
 	}
 
-	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
+	if (_forcedTalkAnimName && _forcedTalkAnimName[0] && _forcedTalkAnimUsed) {
 		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 		_forcedTalkAnimUsed = false;
 	}

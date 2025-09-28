@@ -1360,7 +1360,7 @@ const char *AdActor::scToString() {
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// forced stance?
-	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
+	if (_forcedTalkAnimName && _forcedTalkAnimName[0] && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		SAFE_DELETE(_animSprite);
 		_animSprite = new BaseSprite(_game, this);
@@ -1540,7 +1540,7 @@ int32 AdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const char *animName) {
-	if (!animName) {
+	if (!animName || !animName[0]) {
 		return nullptr;
 	}
 

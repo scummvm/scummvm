@@ -322,28 +322,28 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->_filename) {
+	if (_back && _back->_filename && _back->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
 
-	if (_image && _image->_filename) {
+	if (_image && _image->_filename && _image->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
 
-	if (_font && _font->_filename) {
+	if (_font && _font->_filename && _font->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontSelected && _fontSelected->_filename) {
+	if (_fontSelected && _fontSelected->_filename && _fontSelected->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
 	}
 
-	if (_cursor && _cursor->_filename) {
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text) {
+	if (_text && _text[0]) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
 	}
 

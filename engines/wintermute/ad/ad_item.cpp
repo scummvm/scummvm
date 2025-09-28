@@ -434,7 +434,7 @@ bool AdItem::display(int x, int y) {
 
 		BaseFont *font = _font ? _font : _game->_systemFont;
 		if (font) {
-			if (_amountString) {
+			if (_amountString && _amountString[0]) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			} else {
 				char str[256];
@@ -486,7 +486,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_spriteHover || !_spriteHover->_filename) {
+		if (!_spriteHover || !_spriteHover->_filename || !_spriteHover->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_spriteHover->_filename);
@@ -550,7 +550,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetNormalCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorNormal || !_cursorNormal->_filename) {
+		if (!_cursorNormal || !_cursorNormal->_filename || !_cursorNormal->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_cursorNormal->_filename);
@@ -615,7 +615,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetHoverCursor") == 0) {
 		stack->correctParams(0);
 
-		if (!_cursorHover || !_cursorHover->_filename) {
+		if (!_cursorHover || !_cursorHover->_filename || !_cursorHover->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_cursorHover->_filename);
@@ -705,7 +705,7 @@ ScValue *AdItem::scGetProperty(const char *name) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (!_amountString) {
+		if (!_amountString || _amountString[0]) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setString(_amountString);

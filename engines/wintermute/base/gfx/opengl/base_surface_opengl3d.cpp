@@ -168,7 +168,7 @@ bool BaseSurfaceOpenGL3D::create(const char *filename, bool defaultCK, byte ckRe
 }
 
 bool BaseSurfaceOpenGL3D::loadImage() {
-	if (!_filename) {
+	if (!_filename || !_filename[0]) {
 		return false;
 	}
 	Common::String filename = _filename;

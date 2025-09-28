@@ -116,7 +116,7 @@ bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed
 }
 
 bool BaseSurfaceOSystem::loadImage() {
-	if (!_filename) {
+	if (!_filename || !_filename[0]) {
 		return false;
 	}
 	Common::String filename = _filename;

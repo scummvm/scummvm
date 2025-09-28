@@ -622,34 +622,34 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->_filename) {
+	if (_back && _back->_filename && _back->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
-	if (_backInactive && _backInactive->_filename) {
+	if (_backInactive && _backInactive->_filename && _backInactive->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "BACK_INACTIVE=\"%s\"\n", _backInactive->_filename);
 	}
 
-	if (_image && _image->_filename) {
+	if (_image && _image->_filename && _image->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
-	if (_imageInactive && _imageInactive->_filename) {
+	if (_imageInactive && _imageInactive->_filename && _imageInactive->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "IMAGE_INACTIVE=\"%s\"\n", _imageInactive->_filename);
 	}
 
-	if (_font && _font->_filename) {
+	if (_font && _font->_filename && _font->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontInactive && _fontInactive->_filename) {
+	if (_fontInactive && _fontInactive->_filename && _fontInactive->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT_INACTIVE=\"%s\"\n", _fontInactive->_filename);
 	}
 
-	if (_cursor && _cursor->_filename) {
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text) {
+	if (_text && _text[0]) {
 		buffer->putTextIndent(indent + 2, "TITLE=\"%s\"\n", _text);
 	}
 
@@ -815,7 +815,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetInactiveImage") == 0) {
 		stack->correctParams(0);
-		if (!_imageInactive || !_imageInactive->_filename) {
+		if (!_imageInactive || !_imageInactive->_filename || !_imageInactive->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_imageInactive->_filename);

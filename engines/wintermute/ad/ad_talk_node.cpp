@@ -164,7 +164,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 		_playToEnd = false;
 	}
 
-	if (_preCache && _spriteFilename) {
+	if (_preCache && _spriteFilename && _spriteFilename[0]) {
 		SAFE_DELETE(_sprite);
 		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
@@ -172,7 +172,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 
-	if (_preCache && _spriteSetFilename) {
+	if (_preCache && _spriteSetFilename && _spriteSetFilename[0]) {
 		SAFE_DELETE(_spriteSet);
 		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
@@ -208,17 +208,17 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
-	if (_comment) {
+	if (_comment && _comment[0]) {
 		buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
 	}
 	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
 	if (!_playToEnd) {
 		buffer->putTextIndent(indent + 2, "END_TIME=%d\n", _endTime);
 	}
-	if (_spriteFilename) {
+	if (_spriteFilename && _spriteFilename[0]) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
 	}
-	if (_spriteSetFilename) {
+	if (_spriteSetFilename && _spriteSetFilename[0]) {
 		buffer->putTextIndent(indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
 	} else if (_spriteSet) {
 		_spriteSet->saveAsText(buffer, indent + 2);
@@ -237,7 +237,7 @@ bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadSprite() {
-	if (_spriteFilename && !_sprite) {
+	if (_spriteFilename && _spriteFilename[0] && !_sprite) {
 		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			SAFE_DELETE(_sprite);
@@ -245,7 +245,7 @@ bool AdTalkNode::loadSprite() {
 		} else {
 			return STATUS_OK;
 		}
-	} else if (_spriteSetFilename && !_spriteSet) {
+	} else if (_spriteSetFilename && _spriteSetFilename[0] && !_spriteSet) {
 		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			SAFE_DELETE(_spriteSet);
@@ -263,9 +263,9 @@ bool AdTalkNode::loadSprite() {
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
-			if ((_spriteFilename && _sprite == nullptr) || (_sprite && _sprite->_finished == false)) {
+			if ((_spriteFilename && _spriteFilename[0] && _sprite == nullptr) || (_sprite && _sprite->_finished == false)) {
 				return true;
-			} else if ((_spriteSetFilename && _spriteSet == nullptr) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) {
+			} else if ((_spriteSetFilename && _spriteSetFilename[0] && _spriteSet == nullptr) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) {
 				return true;
 			} else {
 				return false;

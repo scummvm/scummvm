@@ -1391,7 +1391,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS) {
 			stack->pushNULL();
 		} else {
-			if (!_music[channel] || !_music[channel]->_soundFilename) {
+			if (!_music[channel] || !_music[channel]->_soundFilename || !_music[channel]->_soundFilename[0]) {
 				stack->pushNULL();
 			} else {
 				stack->pushString(_music[channel]->_soundFilename);
@@ -2222,7 +2222,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetActiveCursor") == 0) {
 		stack->correctParams(0);
-		if (!_activeCursor || !_activeCursor->_filename) {
+		if (!_activeCursor || !_activeCursor->_filename || !_activeCursor->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_activeCursor->_filename);

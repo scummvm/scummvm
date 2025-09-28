@@ -205,7 +205,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetImage") == 0) {
 		stack->correctParams(0);
-		if (!_image || !_image->_filename) {
+		if (!_image || !_image->_filename || !_image->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_image->_filename);

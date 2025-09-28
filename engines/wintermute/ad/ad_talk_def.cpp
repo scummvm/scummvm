@@ -179,14 +179,14 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 	SAFE_DELETE(_defaultSprite);
 	SAFE_DELETE(_defaultSpriteSet);
 
-	if (_defaultSpriteFilename) {
+	if (_defaultSpriteFilename && _defaultSpriteFilename[0]) {
 		_defaultSprite = new BaseSprite(_game);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			return STATUS_FAILED;
 		}
 	}
 
-	if (_defaultSpriteSetFilename) {
+	if (_defaultSpriteSetFilename && _defaultSpriteSetFilename[0]) {
 		_defaultSpriteSet = new AdSpriteSet(_game);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			return STATUS_FAILED;
@@ -217,11 +217,11 @@ bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TALK {\n");
-	if (_defaultSpriteFilename) {
+	if (_defaultSpriteFilename && _defaultSpriteFilename[0]) {
 		buffer->putTextIndent(indent + 2, "DEFAULT_SPRITE=\"%s\"\n", _defaultSpriteFilename);
 	}
 
-	if (_defaultSpriteSetFilename) {
+	if (_defaultSpriteSetFilename && _defaultSpriteSetFilename[0]) {
 		buffer->putTextIndent(indent + 2, "DEFAULT_SPRITESET_FILE=\"%s\"\n", _defaultSpriteSetFilename);
 	} else if (_defaultSpriteSet) {
 		_defaultSpriteSet->saveAsText(buffer, indent + 2);
@@ -241,7 +241,7 @@ bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadDefaultSprite() {
-	if (_defaultSpriteFilename && !_defaultSprite) {
+	if (_defaultSpriteFilename && _defaultSpriteFilename[0] && !_defaultSprite) {
 		_defaultSprite = new BaseSprite(_game);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			SAFE_DELETE(_defaultSprite);
@@ -249,7 +249,7 @@ bool AdTalkDef::loadDefaultSprite() {
 		} else {
 			return STATUS_OK;
 		}
-	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
+	} else if (_defaultSpriteSetFilename && _defaultSpriteSetFilename[0] && !_defaultSpriteSet) {
 		_defaultSpriteSet = new AdSpriteSet(_game);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			SAFE_DELETE(_defaultSpriteSet);

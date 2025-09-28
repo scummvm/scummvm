@@ -198,7 +198,7 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
-	if (_entity && _entity->_filename) {
+	if (_entity && _entity->_filename && _entity->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
 	}
 

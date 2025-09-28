@@ -70,7 +70,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 
 	// forced stance?
-	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
+	if (_forcedTalkAnimName && _forcedTalkAnimName[0] && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		SAFE_DELETE(_animSprite);
 		_animSprite = new BaseSprite(_game, this);
@@ -168,7 +168,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	else if (strcmp(name, "GetSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_sprite || !_sprite->_filename) {
+		if (!_sprite || !_sprite->_filename || !_sprite->_filename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_sprite->_filename);
@@ -395,13 +395,13 @@ const char *AdTalkHolder::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	for (int32 i = 0; i < _talkSprites.getSize(); i++) {
-		if (_talkSprites[i]->_filename) {
+		if (_talkSprites[i]->_filename && _talkSprites[i]->_filename[0]) {
 			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
 		}
 	}
 
 	for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
-		if (_talkSpritesEx[i]->_filename) {
+		if (_talkSpritesEx[i]->_filename && _talkSpritesEx[i]->_filename[0]) {
 			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
 		}
 	}

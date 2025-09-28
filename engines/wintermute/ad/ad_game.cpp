@@ -207,7 +207,7 @@ bool AdGame::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::initLoop() {
-	if (_scheduledScene && _transMgr->isReady()) {
+	if (_scheduledScene && _scheduledScene[0] && _transMgr->isReady()) {
 		changeScene(_scheduledScene, _scheduledFadeIn);
 		SAFE_DELETE_ARRAY(_scheduledScene);
 
@@ -299,7 +299,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 		}
 
 		bool ret;
-		if (_initialScene && _debugMode && _debugStartupScene) {
+		if (_initialScene && _debugMode && _debugStartupScene && _debugStartupScene[0]) {
 			_initialScene = false;
 			ret = _scene->loadFile(_debugStartupScene);
 		} else {
@@ -1031,7 +1031,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// PrevSceneFilename / PreviousSceneFilename (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PrevSceneFilename") == 0 || strcmp(name, "PreviousSceneFilename") == 0) {
-		if (!_prevSceneFilename) {
+		if (!_prevSceneFilename || !_prevSceneFilename[0]) {
 			_scValue->setString("");
 		} else {
 			_scValue->setString(_prevSceneFilename);
@@ -1043,7 +1043,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// LastResponse (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LastResponse") == 0) {
-		if (!_responseBox || !_responseBox->_lastResponseText) {
+		if (!_responseBox || !_responseBox->_lastResponseText|| !_responseBox->_lastResponseText[0]) {
 			_scValue->setString("");
 		} else {
 			_scValue->setString(_responseBox->_lastResponseText);
@@ -1055,7 +1055,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// LastResponseOrig (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LastResponseOrig") == 0) {
-		if (!_responseBox || !_responseBox->_lastResponseTextOrig) {
+		if (!_responseBox || !_responseBox->_lastResponseTextOrig || !_responseBox->_lastResponseTextOrig[0]) {
 			_scValue->setString("");
 		} else {
 			_scValue->setString(_responseBox->_lastResponseTextOrig);
@@ -1112,7 +1112,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartupScene") == 0) {
-		if (!_startupScene) {
+		if (!_startupScene && !_startupScene[0]) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setString(_startupScene);
@@ -2132,7 +2132,7 @@ bool AdGame::resetContent() {
 	_responsesGame.removeAll();
 
 	// reload inventory items
-	if (_itemsFile) {
+	if (_itemsFile && _itemsFile[0]) {
 		loadItemsFile(_itemsFile);
 	}
 
@@ -2449,7 +2449,7 @@ bool AdGame::displayDebugInfo() {
 		Common::sprintf_s(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 
-		Common::sprintf_s(str, "Scene: %s (prev: %s)", (_scene && _scene->_name) ? _scene->_name : "???", _prevSceneName ? _prevSceneName : "???");
+		Common::sprintf_s(str, "Scene: %s (prev: %s)", (_scene && _scene->_name && _scene->_name[0]) ? _scene->_name : "???", (_prevSceneName && _prevSceneName[0]) ? _prevSceneName : "???");
 		_systemFont->drawText((byte *)str, 0, 110, _renderer->getWidth(), TAL_RIGHT);
 	}
 	return BaseGame::displayDebugInfo();

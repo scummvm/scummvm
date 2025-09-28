@@ -523,7 +523,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((AdGame *)_game)->isItemTaken(_item)) {
+	if (_item && _item[0] && ((AdGame *)_game)->isItemTaken(_item)) {
 		_active = false;
 	}
 
@@ -959,7 +959,7 @@ ScValue *AdEntity::scGetProperty(const char *name) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Item") == 0) {
-		if (_item) {
+		if (_item && _item[0]) {
 			_scValue->setString(_item);
 		} else {
 			_scValue->setNULL();
@@ -1135,7 +1135,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
 	}
 
-	if (_item && _item[0] != '\0') {
+	if (_item && _item[0]) {
 		buffer->putTextIndent(indent + 2, "ITEM=\"%s\"\n", _item);
 	}
 
@@ -1158,7 +1158,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 	}
 
-	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename) {
+	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename && _sFX->_soundFilename[0]) {
 		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
 		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
@@ -1180,11 +1180,11 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
 	}
 
-	if (_font && _font->_filename) {
+	if (_font && _font->_filename && _font->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
 
-	if (_cursor && _cursor->_filename) {
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
 		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 

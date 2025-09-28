@@ -179,7 +179,7 @@ bool AdActor3DX::update() {
 			if (_directWalkMode != DIRECT_WALK_NONE) {
 				// disabled in original code
 			} else if (_directTurnMode != DIRECT_TURN_NONE) {
-				if (_directTurnAnim) {
+				if (_directTurnAnim && _directTurnAnim[0]) {
 					_xmodel->playAnim(0, _directTurnAnim, _defaultTransTime, false, _defaultStopTransTime);
 				} else {
 					_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
@@ -228,7 +228,7 @@ bool AdActor3DX::update() {
 				}
 
 				if (canWalk) {
-					if (_directWalkAnim != nullptr) {
+					if (_directWalkAnim && _directWalkAnim[0]) {
 						_xmodel->playAnim(0, _directWalkAnim, _defaultTransTime, false, _defaultStopTransTime);
 					} else {
 						_xmodel->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
@@ -304,7 +304,7 @@ bool AdActor3DX::update() {
 
 		_sentence->update();
 
-		if (_sentence->_currentSkelAnim) {
+		if (_sentence->_currentSkelAnim && _sentence->_currentSkelAnim[0]) {
 			_tempSkelAnim = _sentence->_currentSkelAnim;
 		}
 

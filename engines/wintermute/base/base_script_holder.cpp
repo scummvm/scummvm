@@ -483,11 +483,11 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
 	Common::strcpy_s(buf, bufSize, scToString());
-	if (_name && strcmp(_name, "<unnamed>") != 0) {
+	if (_name && _name[0] && strcmp(_name, "<unnamed>") != 0) {
 		Common::strcat_s(buf, bufSize, "  Name: ");
 		Common::strcat_s(buf, bufSize, _name);
 	}
-	if (_filename) {
+	if (_filename && _filename[0]) {
 		Common::strcat_s(buf, bufSize, "  File: ");
 		Common::strcat_s(buf, bufSize, _filename);
 	}

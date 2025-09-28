@@ -1014,7 +1014,7 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 		}
 		_rootFrame = nullptr;
 
-		if (_filename) {
+		if (_filename && _filename[0]) {
 			loadFromFile(_filename);
 		}
 

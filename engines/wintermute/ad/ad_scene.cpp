@@ -2526,7 +2526,7 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	// GeometryFile
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GeometryFile") == 0) {
-		if (_geom && _geom->_filename) {
+		if (_geom && _geom->_filename && _geom->_filename[0]) {
 			_scValue->setString(_geom->_filename);
 		} else {
 			_scValue->setNULL();
@@ -2799,7 +2799,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 #ifdef ENABLE_WME3D
 	if (_geom) {
-		if (_geom->_filename)
+		if (_geom->_filename && _geom->_filename[0])
 			buffer->putTextIndent(indent + 2, "GEOMETRY=\"%s\"\n", _geom->_filename);
 		if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
 			buffer->putTextIndent(indent + 2, "CAMERA=\"%s\"\n", _geom->_cameras[_geom->_activeCamera]->_name);

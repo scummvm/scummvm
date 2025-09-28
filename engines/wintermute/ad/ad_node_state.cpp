@@ -149,30 +149,30 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 				setCaption(entity->_caption[i], i);
 			}
 		}
-		if (!entity->_region && entity->_sprite && entity->_sprite->_filename) {
+		if (!entity->_region && entity->_sprite && entity->_sprite->_filename && entity->_sprite->_filename[0]) {
 			if (includingSprites) {
 				setFilename(entity->_sprite->_filename);
 			} else {
 				setFilename("");
 			}
 		}
-		if (entity->_cursor && entity->_cursor->_filename) {
+		if (entity->_cursor && entity->_cursor->_filename && entity->_cursor->_filename[0]) {
 			setCursor(entity->_cursor->_filename);
 		}
 		_alphaColor = entity->_alphaColor;
 		_active = entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (_caption[i]) {
+			if (_caption[i] && _caption[i][0]) {
 				entity->setCaption(_caption[i], i);
 			}
 		}
-		if (_filename && !entity->_region && includingSprites && strcmp(_filename, "") != 0) {
+		if (_filename && _filename[0] && !entity->_region && includingSprites) {
 			if (!entity->_sprite || !entity->_sprite->_filename || scumm_stricmp(entity->_sprite->_filename, _filename) != 0) {
 				entity->setSprite(_filename);
 			}
 		}
-		if (_cursor) {
+		if (_cursor && _cursor[0]) {
 			if (!entity->_cursor || !entity->_cursor->_filename || scumm_stricmp(entity->_cursor->_filename, _cursor) != 0) {
 				entity->setCursor(_cursor);
 			}

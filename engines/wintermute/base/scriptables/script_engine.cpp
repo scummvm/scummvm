@@ -357,7 +357,7 @@ bool ScEngine::tick() {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (_isProfiling && _scripts[i]->_filename) {
+			if (_isProfiling && _scripts[i]->_filename && _scripts[i]->_filename[0]) {
 				addScriptTime(_scripts[i]->_filename, BasePlatform::getTime() - startTime);
 			}
 		}
@@ -374,7 +374,7 @@ bool ScEngine::tick() {
 				_currentScript = _scripts[i];
 				_scripts[i]->executeInstruction();
 			}
-			if (isProfiling && _scripts[i]->_filename) {
+			if (isProfiling && _scripts[i]->_filename && _scripts[i]->_filename[0]) {
 				addScriptTime(_scripts[i]->_filename, BasePlatform::getTime() - startTime);
 			}
 		}

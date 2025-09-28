@@ -292,7 +292,7 @@ BaseSprite *AdSpriteSet::getSprite(TDirection direction) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITESET {\n");
-	if (_name) {
+	if (_name && _name[0]) {
 		buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	}
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {

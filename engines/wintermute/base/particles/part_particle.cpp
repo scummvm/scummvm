@@ -71,7 +71,7 @@ PartParticle::~PartParticle() {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::setSprite(const char *filename) {
-	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
+	if (_sprite && _sprite->_filename && _sprite->_filename[0] && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
 	}
