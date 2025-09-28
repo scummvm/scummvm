@@ -257,7 +257,7 @@ void OpenGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 
 	useColor(255, 255, 255);
 
-	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
+	glLineWidth(MAX(2, g_system->getWidth() / 640)); // It will not work in every OpenGL implementation since the
 	                                                 // spec doesn't require support for line widths other than 1
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(crossairPosition.x - 3, crossairPosition.y, 0));
@@ -458,7 +458,7 @@ void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		copyToVertexArray(0, v0);
 		copyToVertexArray(1, v1);
 		glVertexPointer(3, GL_FLOAT, 0, _verts);
-		glLineWidth(MAX(1, g_system->getWidth() / 192));
+		glLineWidth(MAX(1, g_system->getWidth() / 640));
 		glDrawArrays(GL_LINES, 0, 2);
 		glLineWidth(1);
 		glDisableClientState(GL_VERTEX_ARRAY);

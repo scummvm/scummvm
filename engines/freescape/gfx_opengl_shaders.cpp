@@ -421,7 +421,7 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition)
 
 	useColor(255, 255, 255);
 
-	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
+	glLineWidth(MAX(2, g_system->getWidth() / 640)); // It will not work in every OpenGL implementation since the
 	                                                 // spec doesn't require support for line widths other than 1
 
 	copyToVertexArray(0, Math::Vector3d(remap(crossairPosition.x - 3, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
@@ -462,7 +462,7 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 		copyToVertexArray(0, v0);
 		copyToVertexArray(1, v1);
 
-		glLineWidth(MAX(1, g_system->getWidth() / 192));
+		glLineWidth(MAX(1, g_system->getWidth() / 640));
 
 		glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
 		glBufferData(GL_ARRAY_BUFFER, 2 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
