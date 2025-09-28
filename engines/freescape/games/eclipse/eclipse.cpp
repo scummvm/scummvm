@@ -34,14 +34,6 @@ namespace Freescape {
 
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	// These sounds can be overriden by the class of each platform
-	_soundIndexShoot = 8;
-	_soundIndexCollide = 1;
-	_soundIndexStepDown = 3;
-	_soundIndexStepUp = 3;
-	_soundIndexMenu = -1;
-	_soundIndexStart = 9;
-	_soundIndexAreaChange = 5;
-
 	_soundIndexStartFalling = -1;
 	_soundIndexEndFalling = -1;
 

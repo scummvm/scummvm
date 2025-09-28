@@ -35,6 +35,12 @@ extern byte kCGAPalettePinkBlue[4][3];
 void EclipseEngine::initDOS() {
 	_viewArea = Common::Rect(40, 33, 280, 133);
 	_soundIndexShoot = 18;
+	_soundIndexCollide = 1;
+	_soundIndexStepDown = 3;
+	_soundIndexStepUp = 3;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
 }
 
 void EclipseEngine::loadAssetsDOSFullGame() {

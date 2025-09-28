@@ -312,7 +312,7 @@ bool FreescapeEngine::rise() {
 			if (_currentArea->getAreaID() == previousAreaID) {
 				_playerHeightNumber--;
 				changePlayerHeight(_playerHeightNumber);
-
+				setGameBit(31);
 			}
 		} else
 			result = true;
@@ -592,7 +592,8 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Object *collided = nullptr;
 	_gotoExecuted = false;
 
-	_speaker->stop();
+	if (!_smoothMovement)
+		_speaker->stop();
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);
