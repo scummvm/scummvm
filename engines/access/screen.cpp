@@ -158,6 +158,10 @@ void Screen::setPalette() {
 	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, Graphics::PALETTE_COUNT);
 }
 
+void Screen::setRawPalette(const Graphics::Palette &p) {
+	p.grab(_rawPalette, 0, 256);
+}
+
 void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
 	stream->read(&_rawPalette[0], Graphics::PALETTE_SIZE);
 	for (byte *p = &_rawPalette[0]; p < &_rawPalette[Graphics::PALETTE_SIZE]; ++p)

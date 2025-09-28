@@ -47,7 +47,8 @@ protected:
 
 private:
 	void doIntro();
-
+	void doFlashLogo();
+	void doPublisherLogo();
 };
 
 } // end namespace Noctropolis

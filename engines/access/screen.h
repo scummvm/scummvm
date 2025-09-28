@@ -137,6 +137,8 @@ public:
 
 	void setPalette();
 
+	void setRawPalette(const Graphics::Palette &p);
+
 	void loadRawPalette(Common::SeekableReadStream *stream);
 
 	void savePalette();
