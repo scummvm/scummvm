@@ -811,13 +811,13 @@ bool CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 void CFugeWindow::GamePause() {
 	m_bPause = true;
-};
+}
 
 
 void CFugeWindow::GameResume() {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
 		m_bPause = false;
-};
+}
 
 
 void CFugeWindow::PlayGame() {

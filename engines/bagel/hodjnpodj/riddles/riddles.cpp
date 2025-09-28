@@ -536,12 +536,12 @@ bool CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 void CRiddlesWindow::GamePause() {
 	m_bPause = true;
-};
+}
 
 
 void CRiddlesWindow::GameResume() {
 	m_bPause = false;
-};
+}
 
 void CRiddlesWindow::PlayGame() {
 	char szBuf[40];
