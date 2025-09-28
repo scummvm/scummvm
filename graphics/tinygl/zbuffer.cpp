@@ -283,12 +283,12 @@ static byte satAdd(byte a, byte b) {
 	// from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
 	byte r = a + b;
 	return (byte)(r | -(r < a));
-};
+}
 
 static byte sat16_to_8(uint32 x) {
 	x = (x + 128) >> 8; // rounding 16 to 8 
 	return (byte)(x | -!!(x >> 8)); // branchfree saturation
-};
+}
 
 static byte fpMul(byte a, byte b) {
 	// from: https://community.khronos.org/t/precision-curiosity-1-255-or-1-256/40539/11
@@ -296,7 +296,7 @@ static byte fpMul(byte a, byte b) {
 	// this also implicitly saturates
 	uint32 r = a * b;
 	return (byte)((r + (r >> 8) + 127) >> 8);
-};
+}
 
 void FrameBuffer::applyTextureEnvironment(
 	int internalformat,
