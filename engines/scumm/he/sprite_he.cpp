@@ -1633,6 +1633,118 @@ static int compareSpritePriority(const void *a, const void *b) {
 	return spr1->priority - spr2->priority;
 }
 
+#define SWAP_SPRITE_PTRS(e1, e2, te) { \
+	te = *e1;                          \
+	*e1 = *e2;                         \
+	*e2 = te;                          \
+}
+
+#define SPRITE_QSORT_CUTOFF 8
+
+void Sprite::qsortSpriteArray(SpriteInfo **base, uint num) {
+	SpriteInfo **lostk[30], **histk[30];
+	SpriteInfo **loguy, **higuy;
+	SpriteInfo **lo, **hi;
+	SpriteInfo **mid;
+	SpriteInfo *t;
+
+	uint size;
+	int stkptr;
+
+	if (num < 2)
+		return;
+
+	stkptr = 0;
+
+	lo = base;
+	hi = base + (num - 1);
+
+recurse:
+	size = (hi - lo) + 1;
+
+	if (size <= SPRITE_QSORT_CUTOFF) {
+		shortsortSpriteArray(lo, hi);
+	} else {
+		mid = lo + (size / 2);
+		SWAP_SPRITE_PTRS(mid, lo, t);
+
+		loguy = lo;
+		higuy = hi + 1;
+
+		for (;;) {
+			do {
+				++loguy;
+			} while (loguy <= hi && compareSpriteCombinedPriority((const SpriteInfo **)loguy, (const SpriteInfo **)lo) <= 0);
+
+			do {
+				--higuy;
+			} while (higuy > lo && compareSpriteCombinedPriority((const SpriteInfo **)higuy, (const SpriteInfo **)lo) >= 0);
+
+			if (higuy < loguy)
+				break;
+
+			SWAP_SPRITE_PTRS(loguy, higuy, t);
+		}
+
+		SWAP_SPRITE_PTRS(lo, higuy, t);
+
+		if (higuy - 1 - lo >= hi - loguy) {
+			if (lo + 1 < higuy) {
+				lostk[stkptr] = lo;
+				histk[stkptr] = higuy - 1;
+				++stkptr;
+			}
+
+			if (loguy < hi) {
+				lo = loguy;
+				goto recurse;
+			}
+		} else {
+			if (loguy < hi) {
+				lostk[stkptr] = loguy;
+				histk[stkptr] = hi;
+				++stkptr;
+			}
+
+			if (lo + 1 < higuy) {
+				hi = higuy - 1;
+				goto recurse;
+			}
+		}
+	}
+
+	--stkptr;
+
+	if (stkptr >= 0) {
+		lo = lostk[stkptr];
+		hi = histk[stkptr];
+		goto recurse;
+	} else {
+		return;
+	}
+}
+
+void Sprite::shortsortSpriteArray(SpriteInfo **lo, SpriteInfo **hi) {
+	SpriteInfo **p, **max, *t;
+
+	while (hi > lo) {
+		max = lo;
+
+		for (p = lo + 1; p <= hi; p++) {
+			if (compareSpriteCombinedPriority((const SpriteInfo **)p, (const SpriteInfo **)max) > 0) {
+				max = p;
+			}
+		}
+
+		SWAP_SPRITE_PTRS(max, hi, t);
+		hi--;
+	}
+}
+
+#undef SPRITE_QSORT_CUTOFF
+
+#undef SWAP_SPRITE_PTRS
+
 void Sprite::buildActiveSpriteList() {
 	SpriteInfo **spritePtr;
 
@@ -1666,7 +1778,7 @@ void Sprite::buildActiveSpriteList() {
 	// Sort the list of active sprites...
 	if (_activeSpriteCount) {
 		if (_vm->_game.heversion > 95) {
-			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpriteCombinedPriority);
+			qsortSpriteArray(_activeSprites, _activeSpriteCount);
 		} else {
 			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
 		}

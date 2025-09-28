@@ -236,6 +236,8 @@ public:
 	void eraseSprites();
 	bool doesRectIntersectUpdateAreas(const Common::Rect *rectPtr);
 	void checkForForcedRedraws(bool checkOnlyPositivePriority);
+	void qsortSpriteArray(SpriteInfo **base, uint num);
+	void shortsortSpriteArray(SpriteInfo **lo, SpriteInfo **hi);
 	void buildActiveSpriteList();
 	void renderSprites(bool negativeOrPositiveRender);
 	void runSpriteEngines();
