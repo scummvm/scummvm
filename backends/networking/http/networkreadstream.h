@@ -149,15 +149,6 @@ public:
 	virtual Common::String currentLocation() const = 0;
 
 	/**
-	 * Return response headers.
-	 *
-	 * @note This method should be called when eos() == true.
-	 */
-	Common::String responseHeaders() const {
-		return _responseHeaders;
-	}
-
-	/**
 	 * Return response headers as HashMap. All header names in
 	 * it are lowercase.
 	 *
