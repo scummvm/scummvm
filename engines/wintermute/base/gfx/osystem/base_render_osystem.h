@@ -76,6 +76,7 @@ public:
 	bool fade(uint16 alpha) override;
 	bool fadeToColor(byte r, byte g, byte b, byte a) override;
 
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 	bool fillRect(int x, int y, int w, int h, uint32 color) override;
 
 	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;

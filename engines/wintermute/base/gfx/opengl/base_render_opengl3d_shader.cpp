@@ -625,6 +625,51 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	return setProjectionTransform(matProj);
 }
 
+bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	setupLines();
+	
+	x1 += _drawOffsetX;
+	x2 += _drawOffsetX;
+	y1 += _drawOffsetY;
+	y2 += _drawOffsetY;
+
+	// position coords
+	RectangleVertex vertices[2];
+	vertices[0].x = x1;
+	vertices[0].y = y1;
+	vertices[0].z = 0.9f;
+	vertices[1].x = x2;
+	vertices[1].y = y2;
+	vertices[1].z = 0.9f;
+
+	glBindBuffer(GL_ARRAY_BUFFER, _rectangleVBO);
+
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * sizeof(RectangleVertex), vertices);
+
+	byte a = RGBCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+
+	Math::Vector4d colorValue;
+	colorValue.x() = r / 255.0f;
+	colorValue.y() = g / 255.0f;
+	colorValue.z() = b / 255.0f;
+	colorValue.w() = a / 255.0f;
+
+	_lineShader->use();
+	_lineShader->setUniform("color", colorValue);
+
+	glViewport(0, 0, _width, _height);
+
+	setProjection2D(_lineShader);
+
+	glDrawArrays(GL_LINES, 0, 2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	return true;
+}
+
 bool BaseRenderOpenGL3DShader::fillRect(int x, int y, int w, int h, uint32 color) {
 	setupLines();
 

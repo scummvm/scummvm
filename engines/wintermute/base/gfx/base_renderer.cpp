@@ -155,6 +155,23 @@ bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	return STATUS_FAILED;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+	for (int i = 0; i < width; i++) {
+		drawLine(x1 + i, y1 + i, x2 - i,     y1 + i, color); // up
+		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
+		
+		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,     color); // left
+		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
+	}
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::fillRect(int x, int y, int w, int h, uint32 color) {
 	return STATUS_FAILED;
 }

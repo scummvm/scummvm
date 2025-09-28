@@ -87,6 +87,8 @@ public:
 	 */
 	virtual bool fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
 	virtual bool fillRect(int x, int y, int w, int h, uint32 color); // Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
 	~BaseRenderer() override;

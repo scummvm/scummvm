@@ -449,6 +449,28 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+	byte a = RGBCOLGetA(color);
+
+	Common::Point32 point1, point2;
+	point1.x = x1;
+	point1.y = y1;
+	pointToScreen(&point1);
+
+	point2.x = x2;
+	point2.y = y2;
+	pointToScreen(&point2);
+
+	// TODO
+	//uint32 colorVal = _renderSurface->format.ARGBToColor(a, r, g, b);
+	//_renderSurface->drawLine(point1.x, point1.y, point2.x + 1, point2.y + 1, colorVal);
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fillRect(int x, int y, int w, int h, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOSystem when dirty-rects are enabled.
@@ -460,8 +482,6 @@ bool BaseRenderOSystem::fillRect(int x, int y, int w, int h, uint32 color) {
 	byte g = RGBCOLGetG(color);
 	byte b = RGBCOLGetB(color);
 	byte a = RGBCOLGetA(color);
-
-	//SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 
 	Common::Rect fillRect(x, y, x + w, y + w);
 	modTargetRect(&fillRect);
