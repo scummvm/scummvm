@@ -152,7 +152,7 @@ void Inter_v7::setupOpcodesFunc() {
 void Inter_v7::setupOpcodesGob() {
 	OPCODEGOB(55, o7_writeUnknownChildDataToGameVariables);
 	OPCODEGOB(64, o7_writeUnknownAppChildDataToGameVariables);
-	OPCODEGOB(74, o7_writeUnknownChildUin16ToGameVariables);
+	OPCODEGOB(74, o7_writeUnknownChildUint16ToGameVariables);
 
 	OPCODEGOB(406, o7_startAdi4Application);
 	OPCODEGOB(407, o7_xorDeobfuscate);
@@ -2097,7 +2097,7 @@ void Inter_v7::o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params) {
 	}
 }
 
-void Inter_v7::o7_writeUnknownChildUin16ToGameVariables(OpGobParams &params) {
+void Inter_v7::o7_writeUnknownChildUint16ToGameVariables(OpGobParams &params) {
 	uint16 varIndex = _vm->_game->_script->readUint16();
 	if (_adi4GeneralChildData.empty())
 		return;

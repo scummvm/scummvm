@@ -798,7 +798,7 @@ protected:
 
 	void o7_writeUnknownChildDataToGameVariables(OpGobParams &params);
 	void o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params);
-	void o7_writeUnknownChildUin16ToGameVariables(OpGobParams &params);
+	void o7_writeUnknownChildUint16ToGameVariables(OpGobParams &params);
 
 	void o7_startAdi4Application(OpGobParams &params);
 
