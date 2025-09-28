@@ -191,8 +191,8 @@ bool EventLoop::GetMessage(MSG &msg) {
 
 		if (msg.hwnd) {
 			if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&
-					_kbdHookProc) {
-				if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
+					!_kbdHookProc.empty()) {
+				if (_kbdHookProc.front()(HC_ACTION, msg.wParam, msg.lParam))
 					msg.message = WM_NULL;
 			}
 		} else if (msg.message != WM_QUIT) {
