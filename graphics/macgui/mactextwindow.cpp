@@ -71,6 +71,9 @@ void MacTextWindow::init() {
 
 	_textColorRGB = 0;
 
+	// Disable autoselect on activation
+	_mactext->setAutoSelect(false);
+
 	if (_wm->_mode & kWMModeWin95) {
 		// in win95 mode, we set scrollbar as default
 		_hasScrollBar = true;

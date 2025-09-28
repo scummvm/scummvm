@@ -238,6 +238,7 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 	_selectable = false;
 
 	_editableRow = 0;
+	_autoSelect = true;
 
 	_menu = nullptr;
 
@@ -715,7 +716,7 @@ void MacText::setActive(bool active) {
 	MacWidget::setActive(active);
 
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-	if (_active) {
+	if (_active && _autoSelect) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 		// inactive -> active, we reset the selection
 		setSelection(_selStart, true);

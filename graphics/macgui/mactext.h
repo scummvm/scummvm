@@ -64,6 +64,8 @@ public:
 	void setScrollBar(bool enable);
 	void resizeScrollBar(int w, int h);
 
+	void setAutoSelect(bool enable) { _autoSelect = enable; }
+
 	void render();
 	void undrawCursor();
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
@@ -249,6 +251,8 @@ private:
 	bool _selectionIsDirty;
 
 	MacMenu *_menu;
+
+	bool _autoSelect;
 };
 
 int getStringWidth(MacFontRun &format, const Common::U32String &str);
