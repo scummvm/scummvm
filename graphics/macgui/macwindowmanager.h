@@ -283,7 +283,7 @@ public:
 	 * @return Pointer to the requested window, if it exists.
 	 */
 	BaseMacWindow *getWindow(int id) {
-		if (id >= 0 && id < _windows.size())
+		if (id >= 0 && id < (int)_windows.size())
 			return _windows[id];
 		return nullptr;
 	}
