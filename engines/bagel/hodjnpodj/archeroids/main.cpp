@@ -3201,7 +3201,7 @@ void CMainWindow::GamePause() {
 		m_bMoveMode = false;
 		MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 	}
-};
+}
 
 
 void CMainWindow::GameResume() {
@@ -3209,7 +3209,7 @@ void CMainWindow::GameResume() {
 
 	if (m_bMoveMode)
 		SetCursor(nullptr);
-};
+}
 
 void CMainWindow::OnActivate(unsigned int nState, CWnd *, bool) {
 	if (nState == WA_ACTIVE || nState == WA_CLICKACTIVE)

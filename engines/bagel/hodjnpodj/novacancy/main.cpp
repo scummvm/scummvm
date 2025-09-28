@@ -429,12 +429,12 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 void CMainWindow::GamePause() {
 	m_bPause = true;
-};
+}
 
 
 void CMainWindow::GameResume() {
 	m_bPause = false;
-};
+}
 
 void CMainWindow::PlayGame() {
 	ERROR_CODE errCode;

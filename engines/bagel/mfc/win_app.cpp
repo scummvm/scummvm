@@ -40,7 +40,7 @@ namespace MFC {
 class CTempGdiObject : public CGdiObject {
 	DECLARE_DYNCREATE(CTempGdiObject)
 };
-IMPLEMENT_DYNCREATE(CTempGdiObject, CGdiObject);
+IMPLEMENT_DYNCREATE(CTempGdiObject, CGdiObject)
 
 IMPLEMENT_DYNAMIC(CWinApp, CWinThread)
 
