@@ -1054,6 +1054,6 @@ Audio::AudioStream *MoaSoundFormatDecoder::getAudioStream(bool looping, bool for
 		}
 	}
 	return stream;
-};
+}
 
 } // End of namespace Director
