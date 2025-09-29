@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-29 20:52+0000\n"
+"PO-Revision-Date: 2025-09-29 20:59+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -8171,7 +8171,7 @@ msgstr "Dóna"
 
 #: engines/efh/metaengine.cpp:447
 msgid "Info"
-msgstr "Informació"
+msgstr "Info"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
@@ -13863,27 +13863,27 @@ msgstr "Selecciona l'actor 5"
 
 #: engines/twp/metaengine.cpp:168
 msgid "Select choice 1"
-msgstr "Selecciona l'opció 1"
+msgstr "Selecciona la selecció 1"
 
 #: engines/twp/metaengine.cpp:169
 msgid "Select choice 2"
-msgstr "Selecciona l'opció 2"
+msgstr "Selecciona la selecció 2"
 
 #: engines/twp/metaengine.cpp:170
 msgid "Select choice 3"
-msgstr "Selecciona l'opció 3"
+msgstr "Selecciona la selecció 3"
 
 #: engines/twp/metaengine.cpp:171
 msgid "Select choice 4"
-msgstr "Selecciona l'opció 4"
+msgstr "Selecciona la selecció 4"
 
 #: engines/twp/metaengine.cpp:172
 msgid "Select choice 5"
-msgstr "Selecciona l'opció 5"
+msgstr "Selecciona la selecció 5"
 
 #: engines/twp/metaengine.cpp:173
 msgid "Select choice 6"
-msgstr "Selecciona l'opció 6"
+msgstr "Selecciona la selecció 6"
 
 #: engines/twp/metaengine.cpp:174
 msgid "Select next Actor"
