@@ -947,6 +947,7 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool 
 	const char *extsD3[] = { ".MMM", nullptr };
 	const char *extsD4[] = { ".DIR", ".DXR", ".EXE", nullptr };
 	const char *extsD5[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", nullptr };
+	const char *extsD6[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", ".DCR", ".DCT", nullptr };
 
 	const char **exts = nullptr;
 	if (g_director->getVersion() < 400) {
@@ -956,8 +957,7 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool 
 	} else if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
 		exts = extsD5;
 	} else {
-		warning("findMoviePath(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
-		exts = extsD5;
+		exts = extsD6;
 	}
 
 	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
@@ -971,10 +971,7 @@ Common::Path findXLibPath(const Common::String &path, bool currentFolder, bool s
 	const char **exts = nullptr;
 	if (g_director->getVersion() < 500) {
 		exts = extsD3;
-	} else if (g_director->getVersion() < 600) {
-		exts = extsD5;
 	} else {
-		warning("findXLibPath(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
 		exts = extsD5;
 	}
 
