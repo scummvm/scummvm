@@ -1305,7 +1305,10 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.pushCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
+		if (g_system->getFeatureState(OSystem::kFeatureCursorMaskInvert))
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
+		else
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
@@ -1343,7 +1346,10 @@ void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
+		if (g_system->getFeatureState(OSystem::kFeatureCursorMaskInvert))
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3, false, NULL, macCursorBeamMask);
+		else
+			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
