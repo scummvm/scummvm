@@ -36,7 +36,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 	{
@@ -45,7 +45,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "8dce25494470209d4882bf12f1a5ea42", 19208),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_DEMO,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_DEMO,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 
@@ -57,7 +57,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "ad3cb78ad7a51cfe63ee6f84768c7e66", 15895),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 	{
@@ -66,7 +66,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "93331e4cc8d2f8f8a0007bfb5140dff5", 16403),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 
