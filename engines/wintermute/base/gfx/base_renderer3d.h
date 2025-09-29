@@ -167,6 +167,7 @@ protected:
 	float _farClipPlane;
 	TRendererState _state;
 	PostFilter _postFilterMode;
+	bool _flipInProgress;
 
 	virtual void setAmbientLightRenderState() = 0;
 };

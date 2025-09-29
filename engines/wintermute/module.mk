@@ -193,7 +193,18 @@ MODULE_OBJS += \
 	ext/wme_blackandwhite.o \
 	ext/wme_shadowmanager.o \
 	ext/wme_vlink.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	base/gfx/tinygl/base_render_tinygl.o \
+	base/gfx/tinygl/base_surface_tinygl.o \
+	base/gfx/tinygl/mesh3ds_tinygl.o \
+	base/gfx/tinygl/meshx_tinygl.o \
+	base/gfx/tinygl/shadow_volume_tinygl.o
 endif
+
+endif
+
 
 MODULE_DIRS += \
 	engines/wintermute

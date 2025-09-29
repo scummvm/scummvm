@@ -628,12 +628,13 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
 #endif // defined(USE_OPENGL)
+#if defined(USE_TINYGL)
 	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (_playing3DGame) {
-			_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
-			warning("3D software renderer is not supported yet");
+			_renderer3D = nullptr;//makeTinyGL3DRenderer(this);
 		}
 	}
+#endif // defined(USE_TINYGL)
 	_useD3D = _renderer3D != nullptr;
 	_renderer = _renderer3D;
 
