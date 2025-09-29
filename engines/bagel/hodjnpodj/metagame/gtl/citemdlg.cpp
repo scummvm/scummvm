@@ -30,6 +30,7 @@ namespace Gtl {
 
 BEGIN_MESSAGE_MAP(CItemDialog, CBmpDialog)
 	//{{AFX_MSG_MAP(CItemDialog)
+	ON_WM_ACTIVATE()
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
@@ -134,6 +135,14 @@ bool CItemDialog::OnInitDialog() {
 	ASSERT(bSuccess);
 
 	return true;
+}
+
+void CItemDialog::OnActivate(unsigned int nState, CWnd *, bool) {
+	// FIXME: Hack realize palette so button background draws correctly
+	if (nState == WA_ACTIVE) {
+		Graphics::Palette *pal = m_pPalette->palette();
+		AfxGetApp()->setPalette(*pal);
+	}
 }
 
 void CItemDialog::OnPaint() {
