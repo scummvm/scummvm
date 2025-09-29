@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
+	dialogs.o \
 	draw.o \
 	event.o \
 	gfx.o \
