@@ -27,6 +27,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for WAGE-based game. More than 160 titles so far.
    - Added support for Penumbra: Overture.
    - Added support for Tex Murphy: Martian Memorandum
+   - Added support for Mort&Phil: A Movie Adventure (Special Edition).
 
  Access:
    - Added keymapper support.
