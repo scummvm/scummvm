@@ -85,6 +85,38 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
+bool CursorManager::systemSupportsCursorMask(const byte *mask, uint width, uint height) {
+	if (!mask)
+		return true;
+
+	bool supportsCursorMask = g_system->hasFeature(OSystem::kFeatureCursorMask);
+	bool supportsCursorMaskInvert = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
+	bool supportsCursorMaskPaletteXorColorXnor = g_system->hasFeature(OSystem::kFeatureCursorMaskPaletteXorColorXnor);
+
+	for (uint i = 0; i < width * height; i++) {
+		switch (mask[i]) {
+		case kCursorMaskTransparent:
+		case kCursorMaskOpaque:
+			if (!supportsCursorMask)
+				return false;
+			break;
+		case kCursorMaskInvert:
+			if (!supportsCursorMaskInvert)
+				return false;
+			break;
+		case kCursorMaskPaletteXorColorXnor:
+			if (!supportsCursorMaskPaletteXorColorXnor)
+				return false;
+			break;
+		default:
+			warning("Unknown cursor mask value %d", mask[i]);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	PixelFormat pixelFormat;
 	if (format)
@@ -100,7 +132,7 @@ void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, in
 }
 
 void CursorManager::pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
+	if (!systemSupportsCursorMask(mask, surf.w, surf.h))
 		mask = nullptr;
 
 	Cursor *cur = new Cursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
@@ -161,7 +193,7 @@ void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX,
 }
 
 void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
+	if (!systemSupportsCursorMask(mask, surf.w, surf.h))
 		mask = nullptr;
 
 	if (_cursorStack.empty()) {

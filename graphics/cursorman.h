@@ -302,6 +302,8 @@ private:
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
 	bool _locked;
+
+	bool systemSupportsCursorMask(const byte *mask, uint width, uint height);
 };
 /** @} */
 } // End of namespace Graphics
