@@ -200,8 +200,8 @@ public:
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void syncPalette();
 	void clearPalettes();
-	PaletteV4 *getPalette(const CastMemberID &id);
-	bool hasPalette(const CastMemberID &id);
+	PaletteV4 *getPalette(CastMemberID id);
+	bool hasPalette(CastMemberID id);
 	void loadDefaultPalettes();
 
 	const Common::HashMap<CastMemberID, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
