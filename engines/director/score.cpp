@@ -649,7 +649,9 @@ void Score::update() {
 	// set the delay time/condition until the next frame
 	updateNextFrameTime();
 
-	debugC(1, kDebugEvents, "******************************  Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
+	debugC(1, kDebugEvents, "##############################");
+	debugC(1, kDebugEvents, "###### Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
+	debugC(1, kDebugEvents, "##############################");
 	g_debugger->frameHook();
 
 	// movie could have been stopped by a window switch or a debug flag
