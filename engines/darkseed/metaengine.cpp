@@ -80,6 +80,14 @@ bool DarkseedMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
+void DarkseedMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	for (const ADExtraGuiOptionsMap *entry = Darkseed::optionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->option.configOption, entry->option.defaultState);
+
+	for (const Darkseed::PopUpOptionsMap *entry = Darkseed::popUpOptionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->configOption, entry->defaultState);
+}
+
 GUI::OptionsContainerWidget *DarkseedMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new Darkseed::OptionsWidget(boss, name, target);
 }
