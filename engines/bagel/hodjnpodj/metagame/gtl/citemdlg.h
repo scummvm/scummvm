@@ -89,7 +89,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CItemDialog)
-	afx_msg void OnActivate(unsigned int nState, CWnd *, bool);
+	afx_msg void OnActivate(unsigned int nState, CWnd *, bool) override;
 	afx_msg void OnPaint();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
