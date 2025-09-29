@@ -128,8 +128,9 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		bounds.setWidth((_vm->_fonts._printMaxX / 16 + 2) * 16 + 2 + 1);
 		bounds.bottom = screen._printOrg.y + 4 + 1;
 	} else {
+		// TODO: Check this maths if we implement original file boxes.
 		if (_type == kBoxTypeFileDialog)
-			(++screen._printOrg.y) += 6;
+			screen._printOrg.y += 6;
 
 		// Determine the width for the area
 		width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
