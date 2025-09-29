@@ -1205,7 +1205,7 @@ bool MartianDuct::checkMove10() {
 		if (_moveAngle != kMoveAngleNorth && _moveAngle != kMoveAngleWest)
 			return true;
 
-		_moveAngle = (MoveAngle)(_moveAngle - kMoveAngleEast);
+		_moveAngle = (MoveAngle)((_moveAngle - kMoveAngleEast) & 0xff);
 	}
 	_playerY = _nextPlayerY;
 	_playerX = _nextPlayerX;
@@ -1263,7 +1263,7 @@ bool MartianDuct::checkMove12() {
 		if (_moveAngle != kMoveAngleEast && _moveAngle != kMoveAngleNorth)
 			return true;
 
-		_moveAngle = (MoveAngle)(_moveAngle - kMoveAngleEast);
+		_moveAngle = (MoveAngle)((_moveAngle - kMoveAngleEast) & 0xff);
 	}
 	_playerY = _nextPlayerY;
 	_playerX = _nextPlayerX;
