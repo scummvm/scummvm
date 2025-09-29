@@ -108,6 +108,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
 
+	g_system->showMouse(false);
+
 	setViewport(0, 0, width, height);
 
 	setProjection();
