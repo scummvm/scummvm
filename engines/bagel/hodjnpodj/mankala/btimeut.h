@@ -34,19 +34,6 @@ void DoPendingEvents() ;
 
 // class CTimeUtil -- general utilities
 class CTimeUtil {
-
-	char m_cStartData ;
-	//bool m_bTimeDelayPassed ;   // flag: DelayMs function time expired
-
-
-	char m_cEndData ;
-
-public:
-	// constructor zeroes out all fields
-	CTimeUtil() {
-		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
-	}
-
 private:
 	//- DelayMs -- delay for specified # of milliseconds
 	bool DelayMs(unsigned int uMs) ;
@@ -54,8 +41,6 @@ private:
 	static void DelayMsCallback(HWND /* hWnd */,
 		unsigned int /* uMsg */, uintptr /* uTimerId */, uint32 /* dwTime */) ;
 };
-
-
 
 } // namespace Mankala
 } // namespace HodjNPodj

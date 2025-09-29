@@ -33,17 +33,9 @@ extern void DoPendingEvents();
 // class CTimeUtil -- general utilities
 class CTimeUtil {
 public:
-	char m_cStartData ;
-	bool m_bTimeDelayPassed ;   // flag: DelayMs function time expired
-
-	char m_cEndData ;
+	bool m_bTimeDelayPassed = false;   // flag: DelayMs function time expired
 
 public:
-	// constructor zeroes out all fields
-	CTimeUtil() {
-		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
-	}
-
 //- DelayMs -- delay for specified # of milliseconds
 	bool DelayMs(unsigned int uMs) ;
 

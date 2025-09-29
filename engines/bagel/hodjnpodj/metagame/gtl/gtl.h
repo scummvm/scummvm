@@ -46,22 +46,20 @@ namespace Gtl {
 
 class CGtlApp : public CWinApp {
 public:
-	char m_cStartData ;
-	CBdbgMgr m_cBdbgMgr ;       // Boffo games debug manager object
-	bool m_bTitle ;             // flag -- use window with title bar
-	int  m_iNumOpens ;          // number of document opens (including "New")
-	char m_szFilename[60] ;     // input file name
-	int  m_iX, m_iY ;           // position of screen
-	int  m_iHeight, m_iWidth ;  // height/width of screen
-	bool m_bControlDialog ;     // display control dialog box
-	bool m_bMenuDialog ;        // display menu dialog box
-	bool m_bInfoDialog ;        // display info dialog box
-	bool m_bNodeDialog ;        // display node dialog box
-	bool m_bShowNodes ;         // show nodes on map
-	bool m_bPaintBackground ;   // paint background on map paint
-	bool m_bStartMetaGame ;     // start meta game automatically
-	bool m_bDumpGamePlay ;      // dump game play
-	char m_cEndData ;
+	CBdbgMgr m_cBdbgMgr;				// Boffo games debug manager object
+	bool m_bTitle = false;				// flag -- use window with title bar
+	int  m_iNumOpens = 0;				// number of document opens (including "New")
+	char m_szFilename[60] = {};			// input file name
+	int  m_iX = 0, m_iY = 0;			// position of screen
+	int  m_iHeight = 0, m_iWidth = 0;	// height/width of screen
+	bool m_bControlDialog = false;		// display control dialog box
+	bool m_bMenuDialog = false;			// display menu dialog box
+	bool m_bInfoDialog = false;			// display info dialog box
+	bool m_bNodeDialog = false;			// display node dialog box
+	bool m_bShowNodes = false;			// show nodes on map
+	bool m_bPaintBackground = false;	// paint background on map paint
+	bool m_bStartMetaGame = false;		// start meta game automatically
+	bool m_bDumpGamePlay = false;		// dump game play
 
 	virtual bool InitInstance() override;
 

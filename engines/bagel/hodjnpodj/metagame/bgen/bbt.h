@@ -37,16 +37,12 @@ class CBbutton;
 // CBbtMgr -- boffo games button manager
 class CBbtMgr {
 public:
-	char m_cStartData;
-	CBgbMgr FAR *m_lpBgbMgr;
-	CBbutton FAR *m_lpBbtChain;  // chain of bbt objects
-	CBbutton FAR *m_lpDownBbt;
-	char m_cEndData;
+	CBgbMgr FAR *m_lpBgbMgr = nullptr;
+	CBbutton FAR *m_lpBbtChain = nullptr;  // chain of bbt objects
+	CBbutton FAR *m_lpDownBbt = nullptr;
 
 public:
 	CBbtMgr(CBgbMgr FAR *lpBgbMgr = nullptr) {
-		memset(&m_cStartData, 0,
-			&m_cEndData - &m_cStartData);
 		m_lpBgbMgr = lpBgbMgr;
 	}
 
@@ -68,21 +64,18 @@ public:
 class FAR CBbutton {
 	friend class CBbtMgr;
 public:
-	char m_cStartData;
-	int m_iBbtId;      // button id
-	CBbutton FAR *m_lpBbtNext;     // pointer to next in chain
+	int m_iBbtId = 0;						// button id
+	CBbutton FAR *m_lpBbtNext = nullptr;	// pointer to next in chain
 	bool m_bChained : 1;    // on m_xBbtChain
-	bool m_bNoDelete;      // not allocated with "new"
+	bool m_bNoDelete = false;      // not allocated with "new"
 	bool m_bDummy : 1;      // dummy object -- no bitmap
 	bool m_bInit : 1;       // flag: object is initialized
-	CBgbObject FAR *m_lpcBgbObject1, FAR *m_lpcBgbObject2;
+	CBgbObject *m_lpcBgbObject1 = nullptr, *m_lpcBgbObject2 = nullptr;
 	// graphics objects for on/off
-	char m_cEndData;
 
 public:
 	CBbutton(int iId = 0) {
-		memset(&m_cStartData, 0,
-			&m_cEndData - &m_cStartData);
+		m_bChained = m_bDummy = m_bInit = false;
 		m_iBbtId = iId;
 	}
 	bool PtInButton(const CRPoint &crPoint) const {

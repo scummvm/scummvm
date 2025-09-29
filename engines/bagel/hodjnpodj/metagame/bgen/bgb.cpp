@@ -63,13 +63,8 @@ CBgbMgr *gpBgbMgr;
 *
 *****************************************************************************/
 CBgbMgr::CBgbMgr() {
-	// Initialize all member variables to 0
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
-
 	gpBgbMgr = this;
 	m_bAnimationsPaused = true;
-
-	//ErrorLog("DEBUG.LOG", "Free Space: %ld", GetFreeSpace(0));
 }
 
 

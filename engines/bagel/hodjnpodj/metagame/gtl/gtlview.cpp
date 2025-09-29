@@ -70,7 +70,6 @@ END_MESSAGE_MAP()
 
 CGtlView::CGtlView() {
 	TRACECONSTRUCTOR(CGtlView) ;
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 
 	if (GetDocument())
 		GetDocument()->FixChecks() ;

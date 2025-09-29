@@ -34,8 +34,6 @@ CBdbgMgr FAR *CBdbgMgr::lpBdbgMgr = nullptr ;
 CBdbgMgr::CBdbgMgr() {
 	JXENTER(CBdbgMgr::CBdbgMgr) ;
 
-	// zero out all data
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	lpBdbgMgr = this ;
 
 // cleanup:

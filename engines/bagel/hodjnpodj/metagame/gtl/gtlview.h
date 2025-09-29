@@ -51,13 +51,11 @@ protected: // create from serialization only
 	DECLARE_DYNCREATE(CGtlView)
 
 public:
-	CBsuSet m_cViewBsuSet ; // boffo scroll bar set for windows
+	CBsuSet m_cViewBsuSet;					// boffo scroll bar set for windows
 
-	char m_cStartData ;
-	CPoint m_cCurrentPosition ; // current mouse position
-	bool m_bBsuInit ;
-	class CGtlFrame *m_xpFrame ;    // pointer to frame window
-	char m_cEndData ;
+	CPoint m_cCurrentPosition;				// current mouse position
+	bool m_bBsuInit = false;
+	class CGtlFrame *m_xpFrame = nullptr;	// pointer to frame window
 
 	class CGtlDoc *GetDocument();
 	void UpdateDialogs() ;

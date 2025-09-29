@@ -71,26 +71,18 @@ class CRRect;
 // CBsuSet -- boffo scroll utility set
 class CBsuSet {
 public:
-	char m_cStartData;
-	class CBsuBar *m_xpBarChain;   // chain of scroll bar objects
-	bool m_bInUpdateBars;  // prevent UpdateBars recursion
-	CDialog *m_xpDlg;      // dialog to be updated
-	CWnd *m_xpWnd;     // window to be scrolled
+	class CBsuBar *m_xpBarChain = nullptr;	// chain of scroll bar objects
+	bool m_bInUpdateBars = false;			// prevent UpdateBars recursion
+	CDialog *m_xpDlg = nullptr;				// dialog to be updated
+	CWnd *m_xpWnd = nullptr;				// window to be scrolled
 
-	bool m_bDebugMessages;
-	bool m_bPrimary;   // primary in linked sets
-	bool m_bScrollView;    // window uses CScrollView
-	bool m_bScrollBars;    // window to have windows scroll bars
-	CBsuSet *m_xpSetLink;  // one alternate set of scroll bars
-	char m_cEndData;
+	bool m_bDebugMessages = false;
+	bool m_bPrimary = false;				// primary in linked sets
+	bool m_bScrollView = false;				// window uses CScrollView
+	bool m_bScrollBars = false;				// window to have windows scroll bars
+	CBsuSet *m_xpSetLink = nullptr;			// one alternate set of scroll bars
 
 public:
-	CBsuSet() {
-		TRACECONSTRUCTOR(CBsuSet);
-		memset(&m_cStartData, 0,
-			&m_cEndData - &m_cStartData);
-	}
-
 	~CBsuSet();
 	//- InitWndBsuSet -- initialize bsu set for a window
 	bool InitWndBsuSet(CWnd *xpWnd,
@@ -241,17 +233,8 @@ public:
 //		to CView::OnUpdate
 class CGtlHint : public CObject {
 public:
-	char m_cStartData;
-	//    bool m_bFull ;    // full screen invalidate
-	bool m_bWmPaint;   // update with WM_PAINT message
+	bool m_bWmPaint = false;	// update with WM_PAINT message
 	CRect cHintRect;
-	char m_cEndData;
-
-	CGtlHint() {
-		memset(&m_cStartData,
-			0, &m_cEndData - &m_cStartData);
-	}
-	//    DECLARE_SERIAL(CGtlHint) ;
 };
 
 } // namespace Gtl

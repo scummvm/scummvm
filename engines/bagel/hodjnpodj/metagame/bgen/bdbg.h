@@ -38,25 +38,24 @@ namespace Metagame {
 // CBdbgMgr -- boffo games debugging manager
 class CBdbgMgr {
 public:
-	static CBdbgMgr FAR *lpBdbgMgr ;    // pointer to this block
-	char m_cStartData ;
-	char m_szIniFilename[100] ; // .INI file name
-	char m_szIniSectionname[15] ;   // .INI file section name
-	bool m_bDebug ;     // flag -- debugging mode
-	bool m_bDebugMessages ; // debugging messages
-	bool m_bTimeMessage ;   // time stamp message
-	bool m_bTrack, m_bTrace ;   // debugging -- track/trace flags
-	bool m_bTraceError ;    // debugging -- trace error exits
-	int  m_iConstructorMsgLevel ; // level of constructor messages
-	bool m_bVerifyDc ;      // verify device context is ok
-	int  m_iDebugValues[100] ;  // misc debugging values
-	int  m_iTraceObjectCount ;  // max # objects to trace
-	void **m_lpTraceObjects ;  // trace object array
-	int  m_iTraceObjectCurrent ;    // # of array elements in use
-	int  m_iErrorCount ;    // number of errors encountered
-	char m_cEndData ;
+	static CBdbgMgr FAR *lpBdbgMgr;			// pointer to this block
+	char m_cStartData = 0;
+	char m_szIniFilename[100] = {};			// .INI file name
+	char m_szIniSectionname[15] = {};		// .INI file section name
+	bool m_bDebug = false;					// flag -- debugging mode
+	bool m_bDebugMessages = false;			// debugging messages
+	bool m_bTimeMessage = false;			// time stamp message
+	bool m_bTrack = false, m_bTrace = false; // debugging -- track/trace flags
+	bool m_bTraceError = false;				// debugging -- trace error exits
+	int  m_iConstructorMsgLevel = 0;		// level of constructor messages
+	bool m_bVerifyDc = false;				// verify device context is ok
+	int  m_iDebugValues[100] = {};			// misc debugging values
+	int  m_iTraceObjectCount = 0;			// max # objects to trace
+	void **m_lpTraceObjects = nullptr;		// trace object array
+	int  m_iTraceObjectCurrent = 0;			// # of array elements in use
+	int  m_iErrorCount = 0;					// number of errors encountered
 
-// methods
+	// methods
 	static CBdbgMgr FAR *GetPointer() {
 		return lpBdbgMgr;
 	}

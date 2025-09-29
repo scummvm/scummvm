@@ -45,9 +45,6 @@ END_MESSAGE_MAP()
 
 CGtlDoc::CGtlDoc() {
 	TRACECONSTRUCTOR(CGtlDoc) ;
-
-	// clear all data
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 }
 
 CGtlDoc::~CGtlDoc() {
@@ -80,7 +77,10 @@ void CGtlDoc::DeleteContents() {
 		delete m_xpGtlData ;
 
 	// clear all data
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
+	m_xpGtlData = nullptr;
+	m_xpcLastFocusView = nullptr;
+	m_xpcLastMouseView = nullptr;
+	m_xpGtlFrame = nullptr;
 }
 
 //* CGtlDoc::InitDocument -- initialize document to specified file
@@ -89,9 +89,13 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 // returns: void
 {
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 
-//  dbgtrc = true ;
+	// clear all data
+	m_xpGtlData = nullptr;
+	m_xpcLastFocusView = nullptr;
+	m_xpcLastMouseView = nullptr;
+	m_xpGtlFrame = nullptr;
+
 	m_xpGtlData = new CGtlData ;
 	m_xpGtlData->m_xpcGtlDoc = this ;
 	m_xpGtlData->m_bShowNodes = xpGtlApp->m_bShowNodes ;

@@ -158,22 +158,21 @@ class CLexElement {
 	int m_iVal ;          // integer or char or keyword code
 	int m_iStringListPos ;      // string position
 	int m_iLineNumber, m_iColumn ;      // for error messages
-} ;
+};
 
 // CKeyTab -- keyword table element
 class CKeyTab {
 public:
 	int m_iKeyValue ;   // keyword value
 	const char *m_xpszKeyString ;     // string
-} ;
+};
 
 // CMap -- bit map
 class CMap {
 	friend class CGtlData ;
 
-	char m_cStartData ;
-	char m_szLabel[MAX_LABEL_LENGTH] ;  // bitmap label
-	char m_szFilename[MAX_FILENAME_LENGTH] ;    // file name of BMP file
+	char m_szLabel[MAX_LABEL_LENGTH] = {};  // bitmap label
+	char m_szFilename[MAX_FILENAME_LENGTH] = {};    // file name of BMP file
 	bool m_bPositionDetermined: 1 ;
 	bool m_bSprite : 1 ;
 	bool m_bPalette : 1 ;               // game palette from this bitmap
@@ -183,18 +182,24 @@ class CMap {
 	bool m_bRelocatable : 1 ;           // relocatable
 	bool m_bPositionSpecified : 1 ;     // position specified on input
 	bool m_bSpecialPaint: 1 ;           // don't automatically paint
-	CBgbObject FAR *m_lpcBgbObject ;    // Boffo game object for bitmap file
+	CBgbObject FAR *m_lpcBgbObject = nullptr;    // Boffo game object for bitmap file
 
-	int m_iRelationType ;       // KT_ABOVE, KT_BELOW, KT_LEFT, KT_RIGHT,
+	int m_iRelationType = 0;       // KT_ABOVE, KT_BELOW, KT_LEFT, KT_RIGHT,
 	// KT_NODE
-	int m_iRelation ;           // index of relation bitmap or node
-	char m_cEndData ;
+	int m_iRelation = 0;           // index of relation bitmap or node
 
 	CMap() {
-		memset(&m_cStartData,
-		       0, &m_cEndData - &m_cStartData);
+		m_bPositionDetermined = false;
+		m_bSprite = false;
+		m_bPalette = false;
+		m_bOverlay = false;
+		m_bMasked = false;
+		m_bMetaGame = false;
+		m_bRelocatable = false;
+		m_bPositionSpecified = false;
+		m_bSpecialPaint = false;
 	}
-} ;
+};
 
 /**
  * Node on the map
@@ -230,47 +235,41 @@ class CStratLocInfo {
 	friend class CGtlData ;
 	friend class CStrategyInfo ;
 
-	char m_cStartData ;
-	int m_iLocCode ;            // MG_LOC_xxxx -- location code
-	CNode FAR *m_lpNode ;       // node pointer for location
-	int m_iValueCode ;          // MG_VISIT_xxxx or MG_WIN_xxxx
+	int m_iLocCode = 0;				// MG_LOC_xxxx -- location code
+	CNode FAR *m_lpNode = nullptr;	// node pointer for location
+	int m_iValueCode = 0;			// MG_VISIT_xxxx or MG_WIN_xxxx
 	// or 0 if not eligible
-	int m_iDistance ;           // distance to location
-	int m_iWeight ;             // weight of location
-	int m_iAdjustedWeight ;     // weight adjusted by distance
+	int m_iDistance = 0;			// distance to location
+	int m_iWeight = 0;				// weight of location
+	int m_iAdjustedWeight = 0;		// weight adjusted by distance
 
-	char m_cEndData ;
-	CStratLocInfo() {
-		memset(&m_cStartData,
-		       0, &m_cEndData - &m_cStartData) ;
+	void clear() {
+		m_iLocCode = 0;
+		m_lpNode = nullptr;
+		m_iValueCode = 0;
+		m_iDistance = 0;
+		m_iWeight = 0;
+		m_iAdjustedWeight = 0;
 	}
-} ;
+};
 
 
 // CStrategyInfo -- strategy information for determining best move
 class CStrategyInfo {
 	friend class CGtlData ;
 
-	char m_cStartData ;
-	CStratLocInfo *xpTargetLocInfo ;    // target location (best move)
+	CStratLocInfo *xpTargetLocInfo = nullptr;		// target location (best move)
 
-	int m_iRequiredObjectsCount ;   // total number of objects I need
-	int m_iRequiredObjectsTable[MAX_GAME_TABLE] ; // objects I need
+	int m_iRequiredObjectsCount = 0;				// total number of objects I need
+	int m_iRequiredObjectsTable[MAX_GAME_TABLE] = {};	// objects I need
 
-	int m_iMaximumDistance ;    // max distance to eligible location
-	int m_iMaxAdjustedWeight ;  // maximum adjusted weight
-	int m_iTopLocCount ;        // number of top locations
-	int m_iTopLocTable[MG_LOC_MAX] ;    // table of top locations
-
-	char m_cEndData ;
+	int m_iMaximumDistance = 0;						// max distance to eligible location
+	int m_iMaxAdjustedWeight = 0;					// maximum adjusted weight
+	int m_iTopLocCount = 0;							// number of top locations
+	int m_iTopLocTable[MG_LOC_MAX] = {};			// table of top locations
 
 	CStratLocInfo m_cStratLocInfo[MG_LOC_MAX + 1] ;
-
-	CStrategyInfo() {
-		memset(&m_cStartData,
-		       0, &m_cEndData - &m_cStartData) ;
-	}
-} ;
+};
 
 // CXodj -- structure for Hodj Podj
 class CXodj {
@@ -337,7 +336,7 @@ public:
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
 	~CXodj();
-} ;
+};
 
 // CGtlData -- data class for graphics utility
 class CGtlData {
@@ -728,7 +727,7 @@ private:
 
 	void CheckForTransport(CXodj *, int);
 	void SetFurlongs(CXodj *);
-} ;
+};
 
 } // namespace Gtl
 } // namespace Metagame

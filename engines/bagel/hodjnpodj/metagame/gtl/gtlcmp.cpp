@@ -132,9 +132,8 @@ bool CGtlData::GatherInformation(CXodj * xpXodj)
 	// zeroed except for the location code
 	for (iK = 0 ; iK < MG_LOC_MAX + 1 ; ++iK) {
 		xpStratLocInfo = &xpStrategyInfo->m_cStratLocInfo[iK] ;
-		memset(&xpStratLocInfo->m_cStartData, 0,
-		       &xpStratLocInfo->m_cEndData
-		       - &xpStratLocInfo->m_cStartData) ;
+		xpStratLocInfo->clear();
+
 		if (iK < MG_LOC_MAX) {
 			xpStratLocInfo->m_iLocCode = MG_LOC_BASE + iK ;
 			xpStratLocInfo->m_lpNode = LocationToNode(

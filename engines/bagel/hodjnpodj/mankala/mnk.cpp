@@ -104,9 +104,6 @@ CMnkWindow::CMnkWindow() {
 	CSize   cMySize ;
 	HCURSOR hOldCursor;
 
-	memset((char *)&m_cStartData2, 0, (size_t)((char *)&m_cEndData2 - (char *)&m_cStartData2)) ;
-	// zero out all my fields
-
 	m_bJustStarted = true;
 	m_bStartGame = true ;   // set flag - game just starting
 	m_bRulesActive = false; //flag to indicate the rules scroll is unfurled.

@@ -31,15 +31,10 @@ namespace Mankala {
 
 // class CGenUtil -- general utilities
 class CGenUtil {
-	char m_cStartData ;
-	bool m_bRandomInit ;      // random number seed initialized
-	char m_cEndData ;
+	bool m_bRandomInit = 0;      // random number seed initialized
 
 public:
-	// constructor zeroes out all fields
-	CGenUtil() {
-		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
-	}
+	CGenUtil() {}
 
 // bgenut.cpp -- Boffo Games general utilities
 

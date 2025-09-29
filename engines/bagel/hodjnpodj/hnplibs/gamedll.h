@@ -42,19 +42,13 @@ namespace HodjNPodj {
 
 
 struct GAMESTRUCT {
-	long            lCrowns;
-	long            lScore;
-	int             nSkillLevel;
-	bool            bSoundEffectsEnabled;
-	bool            bMusicEnabled;
-	bool            bPlayingMetagame;
-	bool            bPlayingHodj;
-	/*  For use later in Beta Test
-	        int             nInstallationCode;
-	        char            chHomePath[PATHSPECSIZE];
-	        char            chCDPath[PATHSPECSIZE];
-	        char            chMiniPath[PATHSPECSIZE];
-	*/
+	long            lCrowns = 0;
+	long            lScore = 0;
+	int             nSkillLevel = 0;
+	bool            bSoundEffectsEnabled = false;
+	bool            bMusicEnabled = false;
+	bool            bPlayingMetagame = false;
+	bool            bPlayingHodj = false;
 };
 
 typedef GAMESTRUCT FAR *LPGAMESTRUCT;

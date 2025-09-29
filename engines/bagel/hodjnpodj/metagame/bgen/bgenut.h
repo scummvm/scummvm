@@ -31,18 +31,9 @@ namespace Metagame {
 
 // class CGenUtil -- general utilities
 class CGenUtil {
-
-	char m_cStartData ;
-	bool m_bRandomInit ;          // random number seed initialized
-	char m_cEndData ;
+	bool m_bRandomInit = false;		// random number seed initialized
 
 public:
-
-	// constructor zeroes out all fields
-	CGenUtil() {
-		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
-	}
-
 	// bgenut.cpp -- Boffo Games general utilities
 
 	int RandomInteger(int iLow, int iHigh) ;

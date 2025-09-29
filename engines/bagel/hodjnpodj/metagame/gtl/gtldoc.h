@@ -36,17 +36,11 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	char m_cStartData ;
-	class CGtlData *m_xpGtlData ;   // data pointer
-	class CGtlView *m_xpcLastFocusView ;    // last view with focus
-	class CGtlView *m_xpcLastMouseView ;    // last view touched by mouse
+	class CGtlData *m_xpGtlData = nullptr;			// data pointer
+	class CGtlView *m_xpcLastFocusView = nullptr;	// last view with focus
+	class CGtlView *m_xpcLastMouseView = nullptr;	// last view touched by mouse
 
-	class CGtlFrame *m_xpGtlFrame ;     // ptr to frame window
-	char m_cEndData ;
-
-
-// Operations
-
+	class CGtlFrame *m_xpGtlFrame = nullptr;		// ptr to frame window
 
 // Implementation
 public:
