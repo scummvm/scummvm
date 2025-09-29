@@ -219,6 +219,7 @@ public:
 	uint32 _nextFrameDelay;
 	int _lastTempo;
 	int _waitForChannel;
+	int _waitForChannelCue;
 	int _waitForVideoChannel;
 	bool _waitForClick;
 	bool _waitForClickCursor;

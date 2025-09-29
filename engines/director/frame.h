@@ -115,7 +115,7 @@ struct MainChannels {
 	PaletteInfo palette;
 	uint8 tempo;
 	uint32 tempoSpriteListIdx; // D6+
-	uint16 tempoD6Flags;
+	uint16 tempoCuePoint;
 	SpriteInfo tempoSpriteInfo; // D6+
 
 	uint8 scoreCachedTempo;
@@ -150,7 +150,7 @@ struct MainChannels {
 
 		tempo = 0;
 		tempoSpriteListIdx = 0;
-		tempoD6Flags = 0;
+		tempoCuePoint = 0;
 
 		scoreCachedTempo = 0;
 

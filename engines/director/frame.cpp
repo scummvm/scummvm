@@ -72,7 +72,7 @@ Frame::Frame(const Frame &frame) {
 	_mainChannels.palette = frame._mainChannels.palette;
 	_mainChannels.tempo = frame._mainChannels.tempo;
 	_mainChannels.tempoSpriteListIdx = frame._mainChannels.tempoSpriteListIdx;
-	_mainChannels.tempoD6Flags = frame._mainChannels.tempoD6Flags;
+	_mainChannels.tempoCuePoint = frame._mainChannels.tempoCuePoint;
 	_mainChannels.tempoSpriteInfo = frame._mainChannels.tempoSpriteInfo;
 
 	_mainChannels.scoreCachedTempo = frame._mainChannels.scoreCachedTempo;
@@ -1262,7 +1262,7 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			_mainChannels.tempoSpriteListIdx = stream.readUint16();
 			break;
 		case 24+4:
-			_mainChannels.tempoD6Flags = stream.readUint16();
+			_mainChannels.tempoCuePoint = stream.readUint16();
 			break;
 		case 24+6:
 			_mainChannels.tempo = stream.readByte();
@@ -1427,7 +1427,7 @@ void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 
 	// Tempo
 	writeStream->writeUint32BE(_mainChannels.tempoSpriteListIdx);			// 24+0
-	writeStream->writeUint16BE(_mainChannels.tempoD6Flags);					// 24+4
+	writeStream->writeUint16BE(_mainChannels.tempoCuePoint);					// 24+4
 	writeStream->writeByte(_mainChannels.tempo);							// 24+6
 	writeStream->writeByte(_mainChannels.colorTempo);						// 24+7
 	writePadding(writeStream, 16);											// 24+8
@@ -1720,7 +1720,7 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 			_mainChannels.tempoSpriteListIdx = stream.readUint16();
 			break;
 		case 48+4:
-			_mainChannels.tempoD6Flags = stream.readUint16();
+			_mainChannels.tempoCuePoint = stream.readUint16();
 			break;
 		case 48+6:
 			_mainChannels.tempo = stream.readByte();
@@ -1878,7 +1878,7 @@ void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {
 
 	// Tempo
 	writeStream->writeUint32BE(_mainChannels.tempoSpriteListIdx);			// 48+0
-	writeStream->writeUint16BE(_mainChannels.tempoD6Flags);					// 48+4
+	writeStream->writeUint16BE(_mainChannels.tempoCuePoint);					// 48+4
 	writeStream->writeByte(_mainChannels.tempo);							// 48+6
 	writeStream->writeByte(_mainChannels.colorTempo);						// 48+7
 	writePadding(writeStream, 40);											// 48+8
