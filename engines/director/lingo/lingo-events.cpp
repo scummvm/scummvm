@@ -772,7 +772,15 @@ void Score::killScriptInstances(int frameNum) {
 
 Datum Score::createScriptInstance(BehaviorElement *behavior) {
 	// Instantiate the behavior
-	g_lingo->push(_movie->getScriptContext(kScoreScript, behavior->memberID));
+	ScriptContext *scr = _movie->getScriptContext(kScoreScript, behavior->memberID);
+
+	// Some movies have behaviors with missing scripts
+	if (scr == nullptr) {
+		debugC(7, kDebugLingoExec, "Score::createScriptInstance(): Missing script for behavior %s", behavior->toString().c_str());
+		return Datum();
+	}
+
+	g_lingo->push(scr);
 	LC::call("new", 1, true);
 	Datum instance = g_lingo->pop();
 
@@ -864,7 +872,9 @@ void Score::createScriptInstances(int frameNum) {
 			Datum instance = createScriptInstance(&sprite->_behaviors[j]);
 
 			if (instance.type != OBJECT) {
-				warning("Score::createScriptInstances(): Could not instantiate behavior %s", sprite->_behaviors[j].toString().c_str());
+				if (!instance.isVoid())
+					warning("Score::createScriptInstances(): Could not instantiate behavior %s", sprite->_behaviors[j].toString().c_str());
+
 				continue;
 			}
 
