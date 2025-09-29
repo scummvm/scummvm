@@ -19,47 +19,42 @@
  *
  */
 
-#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
-#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
+#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_FONT_H
+#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_FONT_H
 
-#include "access/resources.h"
+#include "access/font.h"
 
 namespace Access {
 
-class Font;
-
 namespace Noctropolis {
 
-class NoctropolisEngine;
+const extern uint16 CHALETEU_OFFSETS[];
+const extern byte CHALETEU_DATA[];
+const extern uint16 SYSTEMEU_OFFSETS[];
+const extern byte SYSTEMEU_DATA[];
+const extern uint16 SML3X5_OFFSETS[];
+const extern byte SML3X5_DATA[];
+const extern uint16 NAPLES12_OFFSETS[];
+const extern byte NAPLES12_DATA[];
+const extern uint16 GOTHICEU_OFFSETS[];
+const extern byte GOTHICEU_DATA[];
+const extern uint16 CHALETSE_OFFSETS[];
+const extern byte CHALETSE_DATA[];
+const extern uint16 COMICSEU_OFFSETS[];
+const extern byte COMICSEU_DATA[];
 
-class NoctropolisResources : public Resources {
+class NoctropolisFont : public Font {
 public:
-	NoctropolisResources(AccessEngine *_vm);
-	~NoctropolisResources();
-
-	// TODO implement these for real.
-	const byte *getCursor(int num) const override { return nullptr; }
-	const char *getEgoName() const override;
-	int getRMouse(int i, int j) const override { return 0; };
-	int inButtonXRange(int x) const override { return 0; };
-
-	/**
-	 * Load data from the access.dat file
-	 */
-	void load(Common::SeekableReadStream &s) override;
-
+	NoctropolisFont(int16 height, byte firstchar, byte numchars, const uint16 *offsets, const byte *data);
 private:
-	Font *_fontChaleteu;
-	Font *_fontSystemeu;
-	Font *_fontSml3x5;
-	Font *_fontNaples12;
-	Font *_fontGothiceu;
-	Font *_fontChaletse;
-	Font *_fontComicseu;
+	byte _numchars;
+	int16 _height;
+	const uint16 *_offsets;
+	const byte *_data;
 };
 
 } // end namespace Noctropolis
 
 } // end namespace Access
 
-#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
+#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_FONT_H

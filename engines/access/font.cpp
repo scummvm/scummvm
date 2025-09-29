@@ -256,7 +256,7 @@ FontManager::FontManager() : _font1(nullptr), _font2(nullptr), _bitFont(nullptr)
 	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
 
-void FontManager::load(Font *font1, Font *font2, Font *bitFont) {
+void FontManager::load(const Font *font1, const Font *font2, const Font *bitFont) {
 	_font1 = font1;
 	_font2 = font2;
 	_bitFont = bitFont;

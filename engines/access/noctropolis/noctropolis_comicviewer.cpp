@@ -178,9 +178,9 @@ void ComicViewer::drawBubble(const ComicPageBubble &bubble) {
 
 	// TODO: is this the right font choice?
 	if (bubble.style == 0) {
-		font = _vm->_fonts._font1;
+		font = _vm->_fonts.getFont(5);
 	} else {
-		font = _vm->_fonts._font2;
+		font = _vm->_fonts.getFont(6);
 	}
 
 	textWidth = font->stringWidth(bubble.text);

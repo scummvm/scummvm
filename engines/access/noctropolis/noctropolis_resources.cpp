@@ -21,6 +21,8 @@
 
 #include "access/noctropolis/noctropolis_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
+#include "access/noctropolis/noctropolis_font.h"
+#include "access/font.h"
 
 namespace Access {
 
@@ -55,8 +57,24 @@ static const char *NOCT_FILES[] = {
 	nullptr,
 };
 
-NoctropolisResources::NoctropolisResources(AccessEngine *_vm) : Resources(_vm) {
+///////////////////////////////////////////////////////////////
+
+
+NoctropolisResources::NoctropolisResources(AccessEngine *_vm) : Resources(_vm), _fontChaleteu(nullptr), _fontSystemeu(nullptr),
+_fontSml3x5(nullptr), _fontNaples12(nullptr), _fontGothiceu(nullptr), _fontChaletse(nullptr),_fontComicseu(nullptr)
+{
 }
+
+NoctropolisResources::~NoctropolisResources() {
+	delete _fontChaleteu;
+	delete _fontSystemeu;
+	delete _fontSml3x5;
+	delete _fontNaples12;
+	delete _fontGothiceu;
+	delete _fontChaletse;
+	delete _fontComicseu;
+}
+
 
 const char *NoctropolisResources::getEgoName() const {
 	return _vm->_flags[1] == 0 ? "PETER" : "DARKSHEER";
@@ -64,12 +82,29 @@ const char *NoctropolisResources::getEgoName() const {
 
 void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	// Note: *don't* call the base class here. Noctropolis doesn't have data in access.dat.
-	
+
 	// TODO: For non-EN variants we want to use something other than DARK/ as the path.
 	for (int i = 0; i < ARRAYSIZE(NOCT_FILES); i++) {
 		Common::Path filename = Common::Path(NOCT_FILES[i]).getLastComponent();
 		FILENAMES.push_back(filename);
 	}
+
+	_fontChaleteu = new NoctropolisFont(11, 1, 0xe2, CHALETEU_OFFSETS, CHALETEU_DATA);
+	_fontSystemeu = new NoctropolisFont(8, 0x20, 0xe2, SYSTEMEU_OFFSETS, SYSTEMEU_DATA);
+	_fontSml3x5 = new NoctropolisFont(6, 0x20, 0x61, SML3X5_OFFSETS, SML3X5_DATA);
+	_fontNaples12 = new NoctropolisFont(15, 0x20, 0x7f, NAPLES12_OFFSETS, NAPLES12_DATA);
+	_fontGothiceu = new NoctropolisFont(16, 0x20, 0xec, GOTHICEU_OFFSETS, GOTHICEU_DATA);
+	_fontChaletse = new NoctropolisFont(8, 1, 0xec, CHALETSE_OFFSETS, CHALETSE_DATA);
+	_fontComicseu = new NoctropolisFont(8, 1, 0xec, COMICSEU_OFFSETS, COMICSEU_DATA);
+
+	// Set up the fonts
+	_vm->_fonts.addFont(_fontChaleteu);
+	_vm->_fonts.addFont(_fontSystemeu);
+	_vm->_fonts.addFont(_fontSml3x5);
+	_vm->_fonts.addFont(_fontNaples12);
+	_vm->_fonts.addFont(_fontGothiceu);
+	_vm->_fonts.addFont(_fontChaletse);
+	_vm->_fonts.addFont(_fontComicseu);
 }
 
 
