@@ -156,13 +156,10 @@ private:
 // CBsuInfo -- information returned by GetInfo
 class CBsuInfo {
 public:
-	char m_cStartData;
 	CSize m_cWndSize, m_cTotalSize;
 	CSize m_cDevWndSize, cDevTotalSize;
 	CRect m_cScrollRangeRect;
 	CPoint m_cScrollPosition;
-
-	char m_cEndData;
 };
 
 // CRPoint -- relocatable point

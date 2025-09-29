@@ -64,7 +64,7 @@ CGtlData::CGtlData() {
 	JXENTER(CGtlData::CGtlData) ;
 
 	TRACECONSTRUCTOR(CGtlData) ;
-	ClearData() ;
+
 	m_cBbtMgr.m_lpBgbMgr = &m_cBgbMgr ;
 	m_cMiniButton.m_iBbtId = BUTTON_MINIMAP ;
 	m_cInvButton.m_iBbtId = BUTTON_INVENTORY ;
