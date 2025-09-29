@@ -62,6 +62,8 @@ Access
      -
    * - Paul Gilbert
      -
+   * - Matthew Duggan
+     -
 
 ADL
 ^^^
@@ -202,6 +204,15 @@ AGS
      - AGS
    * - Berian Williams
      - AgsCreditz
+
+Alcachofa
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Hermann Noll
+     -
 
 Asylum
 ^^^^^^
@@ -1396,6 +1407,15 @@ Toon
    :widths: 35 65
 
    * - Sylvain Dupont
+     -
+
+Tot
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gabriel Sanmartín
      -
 
 Touché
