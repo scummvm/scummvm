@@ -152,6 +152,9 @@ bool CWinApp::SaveAllModified() {
 }
 
 int CWinApp::Run() {
+	if (isQuitting())
+		return 0;
+
 	// Ensure app has been initialized
 	assert(_defaultFont.font());
 
