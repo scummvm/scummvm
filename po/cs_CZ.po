@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2023-12-14 14:27+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2025-09-29 20:43+0000\n"
+"Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 5.12.2\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Language-name: Český\n"
@@ -1376,7 +1376,7 @@ msgstr ""
 
 #: gui/launcher.cpp:230
 msgid "Select Group by"
-msgstr ""
+msgstr "Seskupit podle"
 
 #: gui/launcher.cpp:234 gui/launcher.cpp:919
 msgid "Group:"
@@ -1388,7 +1388,7 @@ msgstr ""
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Klikněte zde pro Nápovědu"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1411,19 +1411,17 @@ msgstr "O ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:273
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "~V~olby..."
+msgstr "Globální ~v~olby..."
 
 #: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
 msgstr "Změnit globální volby ScummVM"
 
 #: gui/launcher.cpp:273
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~V~olby..."
+msgstr "Globální ~v~olby..."
 
 #: gui/launcher.cpp:277
 #, fuzzy
@@ -1433,7 +1431,7 @@ msgstr "Stáhnout soubory hry"
 
 #: gui/launcher.cpp:277
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Stáhněte si bezplatné hry pro ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:284
@@ -1466,13 +1464,13 @@ msgstr "~O~dstranit hru"
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:291
 msgid "Mass Add..."
-msgstr "Hromadné Přidání..."
+msgstr "Hromadné přidání..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
 #: gui/launcher.cpp:294
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Hromadné Přidání..."
+msgstr "Hromadné přidání..."
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
@@ -1563,19 +1561,17 @@ msgid "Record..."
 msgstr "Nahrát..."
 
 #: gui/launcher.cpp:1110
-#, fuzzy
 msgid "~G~ame Options..."
-msgstr "~V~olby..."
+msgstr "Volby ~h~ry..."
 
 #: gui/launcher.cpp:1110
 msgid "Change game options"
 msgstr "Změnit volby hry"
 
 #: gui/launcher.cpp:1110
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~V~olby..."
+msgstr "Volby ~h~ry..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
@@ -2956,7 +2952,7 @@ msgstr ""
 
 #: gui/widget.cpp:459 gui/widget.cpp:461 gui/widget.cpp:466 gui/widget.cpp:468
 msgid "Clear value"
-msgstr "Vyčistit hodnotu"
+msgstr "Vymazat hodnotu"
 
 #: gui/widgets/grid.cpp:285
 msgid "Play"
@@ -3254,20 +3250,16 @@ msgid "Data File"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Ukončit ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM (debug)"
-msgstr "Ukončit ScummVM"
+msgstr "ScummVM (ladění)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Grafický engine pro hry žánru adventur"
 
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
@@ -3421,7 +3413,7 @@ msgstr ""
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Interpret pro řadu her žánru adventur a her na hrdiny"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:37
@@ -3432,6 +3424,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM je program, který vám umožní spustit širokou škálu klasických "
+"grafických point-and-click adventur a RPG her, pokud již máte jejich datové "
+"soubory. Chytré na tom je, že ScummVM pouze nahrazuje spustitelné soubory "
+"dodávané s hrou, což vám umožňuje hrát tyto hry na systémech, pro které "
+"nikdy nebyly navrženy!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:45
@@ -3441,6 +3438,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"ScummVM v současné době podporuje obrovskou knihovnu adventur s celkem více "
+"než 4000 hrami. Podporuje mnoho klasických her vydaných legendárními studii "
+"jako LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. a Westwood "
+"Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:51
@@ -3449,6 +3450,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Vedle průlomových titulů, jako je série Monkey Island, Broken Sword, Myst, "
+"Blade Runner a bezpočet dalších her, zde najdete i opravdu obskurní "
+"adventury a skutečně skryté poklady k prozkoumání."
 
 #: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
@@ -4134,9 +4138,8 @@ msgstr "Globální"
 
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:302
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Globální menu"
+msgstr "Globální hlavní menu"
 
 #: backends/events/default/default-events.cpp:345
 msgid "Display keyboard"
@@ -7240,9 +7243,8 @@ msgstr "Přeskočit řádek"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
 msgid "Game options"
-msgstr "~V~olby..."
+msgstr "Volby hry"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -9330,9 +9332,8 @@ msgstr "Povolit násilné scény, jsou-li dostupné"
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
 msgid "Options menu"
-msgstr "Volby"
+msgstr "Menu voleb"
 
 #: engines/hpl1/metaengine.cpp:76
 #, fuzzy
@@ -10316,9 +10317,8 @@ msgid "Start menu keymappings"
 msgstr "~V~olby..."
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
 msgid "Open game menu"
-msgstr "~N~ávrat do Spouštěče"
+msgstr "Otevřít menu hry"
 
 #: engines/mads/metaengine.cpp:317
 #, fuzzy
@@ -10686,9 +10686,8 @@ msgid "Save game state"
 msgstr "Uložit hru"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
-#, fuzzy
 msgid "Show options menu"
-msgstr "Volby"
+msgstr "Zobrazit menu voleb"
 
 #: engines/mohawk/myst.cpp:600
 #, fuzzy
@@ -11479,9 +11478,8 @@ msgid "Boss key"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
-#, fuzzy
 msgid "Show options"
-msgstr "Pouze Řeč"
+msgstr "Zobrazit volby"
 
 #: engines/saga/metaengine.cpp:311
 #, fuzzy
@@ -13004,9 +13002,8 @@ msgstr "Chcete hru nahrát nebo uložit?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
 msgid "Random Map Options"
-msgstr "~V~olby..."
+msgstr "Volby náhodné mapy"
 
 #. I18N: Map generator algorithms
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
@@ -13420,9 +13417,8 @@ msgid "Open journal"
 msgstr "Zobrazit Vše"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
 msgid "Open options"
-msgstr "~N~ávrat do Spouštěče"
+msgstr "Otevřít volby"
 
 #: engines/sherlock/metaengine.cpp:858
 #, fuzzy
@@ -13778,9 +13774,8 @@ msgid "Video replay"
 msgstr "Rychlé přehrávání"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
 msgid "Game settings"
-msgstr "~V~olby..."
+msgstr "Nastavení hry"
 
 #: engines/stark/metaengine.cpp:245 engines/toon/metaengine.cpp:124
 #: engines/wintermute/keymapper_tables.h:1345
@@ -14094,7 +14089,7 @@ msgstr ""
 
 #: engines/sword1/metaengine.cpp:127
 msgid "Additional options:"
-msgstr ""
+msgstr "Další volby:"
 
 #: engines/sword1/metaengine.cpp:301
 #, fuzzy
@@ -14408,9 +14403,8 @@ msgid "Skip sequence / open quit dialog"
 msgstr ""
 
 #: engines/touche/metaengine.cpp:147
-#, fuzzy
 msgid "Open options menu"
-msgstr "~N~ávrat do Spouštěče"
+msgstr "Otevřít menu voleb"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
@@ -14455,9 +14449,8 @@ msgid "View Help"
 msgstr ""
 
 #: engines/tsage/metaengine.cpp:226
-#, fuzzy
 msgid "Sound options"
-msgstr "Pouze Řeč"
+msgstr "Volby zvuku"
 
 #: engines/tsage/metaengine.cpp:264
 msgid "Crawl North"
