@@ -151,9 +151,14 @@ public:
 	FontVal _charSet;
 	FontVal _charFor;
 	int _printMaxX;
-	Font *_font1;
-	Font *_font2;
-	Font *_bitFont;
+
+	/** These fonts are used in Amazon/MM */
+	const Font *_font1;
+	const Font *_font2;
+	const Font *_bitFont;
+
+	/** Noctropolis has a list of fonts used by number */
+	Common::Array<const Font *> _fonts;
 public:
 	/**
 	 * Constructor
@@ -163,7 +168,15 @@ public:
 	/**
 	 * Set the fonts
 	 */
-	void load(Font *font1, Font *font2, Font *bitFont);
+	void load(const Font *font1, const Font *font2, const Font *bitFont);
+
+	void addFont(const Font *font) {
+		_fonts.push_back(font);
+	}
+
+	const Font *getFont(int num) {
+		return _fonts[num];
+	}
 };
 
 } // End of namespace Access

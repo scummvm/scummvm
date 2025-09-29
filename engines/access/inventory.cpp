@@ -410,7 +410,7 @@ void InventoryManager::outlineIcon(int itemIndex) {
 	screen.frameRect(_invCoords[itemIndex], 7);
 
 	Common::String s = _tempLOff[itemIndex];
-	Font &font = *_vm->_fonts._font2;
+	const Font &font = *_vm->_fonts._font2;
 	int strWidth = font.stringWidth(s);
 
 	font._fontColors[0] = 0;

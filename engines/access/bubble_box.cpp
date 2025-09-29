@@ -182,7 +182,7 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 	bool lastLine;
 	do {
 		// Get next line
-		Font &font1 = *_vm->_fonts._font1;
+		const Font &font1 = *_vm->_fonts._font1;
 		lastLine = font1.getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		printString(line);
@@ -204,7 +204,7 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 	bool lastLine;
 	do {
 		// Get next line
-		Font &font2 = *_vm->_fonts._font2;
+		const Font &font2 = *_vm->_fonts._font2;
 		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 
 		// Set font colors
@@ -316,7 +316,7 @@ void BubbleBox::doBox(int item, int box) {
 
 	// Handle drawing title
 	int titleWidth = _vm->_fonts._font2->stringWidth(_bubbleDisplStr);
-	Font &font2 = *_vm->_fonts._font2;
+	const Font &font2 = *_vm->_fonts._font2;
 	font2._fontColors[0] = 0;
 	font2._fontColors[1] = 3;
 	font2._fontColors[2] = 2;
