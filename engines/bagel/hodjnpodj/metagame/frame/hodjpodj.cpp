@@ -861,7 +861,6 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
-
 	nWhichDLL = (int)lParam;
 
 	BlackScreen();

@@ -89,43 +89,8 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, bool bMetaLoaded) {
 	theApp->InitInstance();
 	theApp->setKeybinder(KeybindToKeycode);
 
-	#if RETAIN_META_DLL
-	if (bMetaLoaded) {
-		CGtlView    *xpGtlFocusView, *xpGtlMouseView;
-		CGtlDoc     *xpGtlDoc = nullptr;
-
-		pMainWindow->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
-		xpGtlDoc->m_xpGtlData->m_xpGtlView->SetTimer(ANIMATION_TIMER_ID, ANIMATION_TIMER_INTERVAL, nullptr);
-		if (lpBfcMgr->m_bRestart == false) {
-			xpGtlDoc->m_xpGtlData->m_xpXodjChain = nullptr;
-			xpGtlDoc->m_xpGtlData->m_xpCurXodj = nullptr;
-			xpGtlDoc->m_xpGtlData->m_iMishMoshLoc = 0;
-			pMainWindow->m_lpBfcMgr = nullptr;
-			pMainWindow->m_lpBfcMgr = lpBfcMgr;
-			xpGtlDoc->m_xpGtlData->m_bGameOver = false;
-		}
-		pMainWindow->ShowWindow(SW_SHOWNORMAL);
-		// if restoring a saved game
-		//
-		bJustReturned = true;
-		if (lpBfcMgr->m_bRestoredGame) {
-
-			// Re-init the game using the restored info (i.e. lpBfcMgr)
-			//
-			xpGtlDoc->m_xpGtlData->m_bInitMetaGame = true;
-			xpGtlDoc->m_xpGtlData->InitMetaGame(xpGtlDoc->m_xpGtlData->m_xpGtlView, true);
-
-		} else if (lpBfcMgr->m_iFunctionCode) {
-
-			xpGtlDoc->m_xpGtlData->ReturnFromInterface();
-			xpGtlDoc->m_xpGtlData->ProcessMove();
-		}
-	} else
-		SetupWindow(lpBfcMgr);
-	#else
 	bJustReturned = lpBfcMgr->m_bRestart;
 	SetupWindow(lpBfcMgr);
-	#endif
 
 	sndPlaySound(nullptr, 0);              // clear all rogue sounds
 
