@@ -1113,7 +1113,7 @@ ScValue *AdGame::scGetProperty(const char *name) {
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StartupScene") == 0) {
-		if (!_startupScene && !_startupScene[0]) {
+		if (!_startupScene || !_startupScene[0]) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setString(_startupScene);

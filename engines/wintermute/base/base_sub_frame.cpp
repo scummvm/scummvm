@@ -415,7 +415,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	if (strcmp(name, "GetImage") == 0) {
 		stack->correctParams(0);
 
-		if (!_surfaceFilename && _surfaceFilename[0]) {
+		if (!_surfaceFilename || !_surfaceFilename[0]) {
 			stack->pushNULL();
 		} else {
 			stack->pushString(_surfaceFilename);
@@ -708,7 +708,7 @@ bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {
-	if (!_surfaceFilename && _surfaceFilename[0]) {
+	if (!_surfaceFilename || !_surfaceFilename[0]) {
 		_surface = nullptr;
 		return STATUS_OK;
 	}
