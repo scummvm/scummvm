@@ -45,12 +45,17 @@ const extern byte COMICSEU_DATA[];
 
 class NoctropolisFont : public Font {
 public:
-	NoctropolisFont(int16 height, byte firstchar, byte numchars, const uint16 *offsets, const byte *data);
+	NoctropolisFont(uint16 bytes, int16 height, byte firstchar, byte lastchar, const uint16 *offsets, const byte *data);
+
 private:
-	byte _numchars;
-	int16 _height;
-	const uint16 *_offsets;
-	const byte *_data;
+    void load(const uint16 *offsets, const byte *data);
+	const byte *getCharDataPtr(byte ch, const uint16 *offsets, const byte *data) const;
+	uint getCharBitOffset(byte ch, const uint16 *offsets) const;
+	uint getCharWidth(byte ch, const uint16 *offsets) const;
+	void makeCharSurface(Graphics::Surface &surface, byte ch, const uint16 *offsets, const byte *data) const;
+
+	byte _lastChar;
+	uint16 _bytes;
 };
 
 } // end namespace Noctropolis

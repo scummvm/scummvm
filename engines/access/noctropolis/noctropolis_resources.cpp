@@ -89,13 +89,13 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 		FILENAMES.push_back(filename);
 	}
 
-	_fontChaleteu = new NoctropolisFont(11, 1, 0xe2, CHALETEU_OFFSETS, CHALETEU_DATA);
-	_fontSystemeu = new NoctropolisFont(8, 0x20, 0xe2, SYSTEMEU_OFFSETS, SYSTEMEU_DATA);
-	_fontSml3x5 = new NoctropolisFont(6, 0x20, 0x61, SML3X5_OFFSETS, SML3X5_DATA);
-	_fontNaples12 = new NoctropolisFont(15, 0x20, 0x7f, NAPLES12_OFFSETS, NAPLES12_DATA);
-	_fontGothiceu = new NoctropolisFont(16, 0x20, 0xec, GOTHICEU_OFFSETS, GOTHICEU_DATA);
-	_fontChaletse = new NoctropolisFont(8, 1, 0xec, CHALETSE_OFFSETS, CHALETSE_DATA);
-	_fontComicseu = new NoctropolisFont(8, 1, 0xec, COMICSEU_OFFSETS, COMICSEU_DATA);
+	_fontChaleteu = new NoctropolisFont(0x66, 11, 1, 0xe2, CHALETEU_OFFSETS, CHALETEU_DATA);
+	_fontSystemeu = new NoctropolisFont(0x48, 8, 0x20, 0xe2, SYSTEMEU_OFFSETS, SYSTEMEU_DATA);
+	_fontSml3x5 = new NoctropolisFont(0x1e, 6, 0x20, 0x61, SML3X5_OFFSETS, SML3X5_DATA);
+	_fontNaples12 = new NoctropolisFont(0x66, 15, 0x20, 0x7f, NAPLES12_OFFSETS, NAPLES12_DATA);
+	_fontGothiceu = new NoctropolisFont(0x74, 16, 0x20, 0xec, GOTHICEU_OFFSETS, GOTHICEU_DATA);
+	_fontChaletse = new NoctropolisFont(0x66, 8, 1, 0xec, CHALETSE_OFFSETS, CHALETSE_DATA);
+	_fontComicseu = new NoctropolisFont(0x58, 8, 1, 0xec, COMICSEU_OFFSETS, COMICSEU_DATA);
 
 	// Set up the fonts
 	_vm->_fonts.addFont(_fontChaleteu);
