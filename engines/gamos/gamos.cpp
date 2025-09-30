@@ -1450,7 +1450,8 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	Object *povar4 = nullptr;
 	bool multidel = false;
 
-	for(Object &obj : _drawElements) {
+	for(uint i = 0; i < _drawElements.size(); i++) {
+		Object &obj = _drawElements[i];
 		if (obj.flags & 1) {
 			if (obj.flags & 2) {
 				if (obj.pos == pos && obj.blk == id) {
@@ -1489,7 +1490,8 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 }
 
 Object *GamosEngine::getFreeObject() {
-	for (Object &rObj : _drawElements) {
+	for (uint i = 0; i < _drawElements.size(); i++) {
+		Object &rObj = _drawElements[i];
 		if ( (rObj.flags & 1) == 0 ) {
 			rObj.flags = 1;
 			return &rObj;

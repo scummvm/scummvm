@@ -38,6 +38,8 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
+#include "gamos/pool.h"
+
 #include "gamos/proc.h"
 #include "gamos/music.h"
 #include "gamos/movie.h"
@@ -291,7 +293,7 @@ private:
 	Common::Array<Unknown1> _thing2;
 	Common::Array<SomeAction> _someActsArr;
 
-	Common::Array<Object> _drawElements;
+	Pool<Object> _drawElements;
 
 	uint8 BYTE_00412200 = 0;
 
