@@ -739,9 +739,6 @@ void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 			} // end if
 		} // end if
 	} // end if
-
-	//nFlags  = 0x00;             // bull shit code to get rid of warning messages
-	point   = CPoint(0, 0);
 }
 
 void CMainWindow::DeleteSprite(CSprite *pSprite) {

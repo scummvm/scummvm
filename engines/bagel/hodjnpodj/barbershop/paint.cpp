@@ -96,10 +96,8 @@ CPaint::CPaint(CDC *pDC) {
 			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMasked(true);
 		}  // end for
 
-		if (pBmpCardSet != nullptr) {
-			delete pBmpCardSet;
-			pBmpCardSet = nullptr;
-		} // end if
+		delete pBmpCardSet;
+		pBmpCardSet = nullptr;
 	}  // end for
 
 	m_nCardBack = CARD_BACK1;

@@ -220,17 +220,12 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
 	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
 
-	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
-		pMyBrush->DeleteObject();
-		delete pMyBrush;
-	}
+	pMyBrush->DeleteObject();
+	delete pMyBrush;
 
-	if (pMyPen != nullptr) {                           // If the pen was constructed, delete it
-		pMyPen->DeleteObject();
-		delete pMyPen;
-	}
-
-} // End MyFocusRect()
+	pMyPen->DeleteObject();
+	delete pMyPen;
+}
 
 } // namespace Barbershop
 } // namespace HodjNPodj

@@ -85,13 +85,12 @@ bool CAnimate::Clown(CDC *pDC, CPoint point) {
 	} // end if
 
 	m_pSprite->EraseSprite(pDC);
-	if (m_pSprite != nullptr) {
-		delete m_pSprite;
-		m_pSprite = nullptr;
-	} // end if
+
+	delete m_pSprite;
+	m_pSprite = nullptr;
 
 	return true;
-} // clown
+}
 
 bool CAnimate::UFO(CDC *pDC, CPoint point) {
 	bool    bSuccess;
@@ -201,13 +200,12 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 	} // end if
 
 	m_pSprite->EraseSprite(pDC);
-	if (m_pSprite != nullptr) {
-		delete m_pSprite;
-		m_pSprite = nullptr;
-	} // end if
+
+	delete m_pSprite;
+	m_pSprite = nullptr;
 
 	return true;
-} // UFO
+}
 
 bool CAnimate::Brat(CPoint point) {
 	if (m_cBratRect.PtInRect(point) == false)

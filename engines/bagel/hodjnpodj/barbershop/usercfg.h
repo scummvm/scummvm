@@ -78,13 +78,12 @@ protected:
 	void MyFocusRect(CDC*, CRect, int nDrawMode, COLORREF);
 
 private:
-//	unsigned int            m_nTimeLimit;       //
-	bool            m_bSave;            // True if should save theses values
-	CRect           m_cRectCardBack1;
-	CRect           m_cRectCardBack2;
-	unsigned int            m_nCardBack;
-	CColorButton    *m_pOKButton;       // OKAY button on scroll
-	CText           *m_ctextBox;
+	bool m_bSave = false;					// True if should save theses values
+	CRect m_cRectCardBack1;
+	CRect m_cRectCardBack2;
+	unsigned int m_nCardBack = 0;
+	CColorButton *m_pOKButton = nullptr;	// OKAY button on scroll
+	CText *m_ctextBox = nullptr;
 };
 
 } // namespace Barbershop

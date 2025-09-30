@@ -88,7 +88,7 @@ namespace Barbershop {
 
 class CPaint {
 private:    // vars
-	OSpr    *m_cCardSet[CARD_SET];
+	OSpr *m_cCardSet[CARD_SET] = {};
 
 public:     // func
 	CPaint(CDC*);
@@ -105,13 +105,13 @@ public:     // func
 	void    ChangeBack(CDC*, CBoard*, int);
 
 public:     // vars
-	OSpr    *m_pSprite;
+	OSpr    *m_pSprite = nullptr;
 	CRect   m_cFound;
 	CRect   m_cTab[TAB_COUNT];
 	CRect   m_cStock;
 	CRect   m_cUsed;
-	int     m_nUsedInd;
-	int     m_nCardBack;
+	int     m_nUsedInd = 0;
+	int     m_nCardBack = 0;
 };
 
 } // namespace Barbershop
