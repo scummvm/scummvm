@@ -81,63 +81,6 @@ static void displayTGA() {
 	showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
 }
 
-void showArchives() {
-	if (!_state->_showArchives)
-		return;
-
-	// Calculate the viewport size
-	ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
-
-	// Calculate the window size
-	ImVec2 windowSize = ImVec2(
-		viewportSize.x * 0.9f,
-		viewportSize.y * 0.9f
-	);
-
-	// Calculate the centered position
-	ImVec2 centeredPosition = ImVec2(
-		(viewportSize.x - windowSize.x) * 0.5f,
-		(viewportSize.y - windowSize.y) * 0.5f
-	);
-
-	// Set the next window position and size
-	ImGui::SetNextWindowPos(centeredPosition, ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
-
-	if (ImGui::Begin("Archives", &_state->_showArchives)) {
-		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
-
-		ImGui::Button(ICON_MS_FILTER_ALT);
-		ImGui::SameLine();
-
-		_state->_nameFilter.Draw();
-		ImGui::Separator();
-
-		if (_state->_files.children.empty())
-			populateFileList();
-
-		displayTree(&_state->_files);
-
-		ImGui::EndChild();
-
-		ImGui::SameLine();
-
-		{ // Right pane
-			ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
-
-			if (_state->_displayMode == kDisplayQDA) {
-				displayQDA();
-			} else if (_state->_displayMode == kDisplayTGA) {
-				displayTGA();
-			}
-
-			ImGui::EndChild();
-		}
-
-	}
-	ImGui::End();
-}
-
 void showSceneObjects() {
 	if (!_state->_showSceneObjects)
 		return;
@@ -188,7 +131,7 @@ static void showWorld() {
 	if (ImGui::Begin("World", &_state->_showWorld)) {
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+		if (ImGui::BeginTabBar("MainTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Scenes")) {
 
 				{ // Left pane
@@ -210,10 +153,32 @@ static void showWorld() {
 					ImGui::EndChild();
 				}
 
+				ImGui::SameLine();
+
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					ImGui::Text("Resource");
+					if (ImGui::BeginTabBar("SceneTabBar", tab_bar_flags)) {
+						if (ImGui::BeginTabItem("Script")) {
+							if (g_wage->_world->_orderedScenes[_state->_selectedScene]->_script && g_wage->_world->_orderedScenes[_state->_selectedScene]->_script->_scriptText.size()) {
+								for (auto &t : g_wage->_world->_orderedScenes[_state->_selectedScene]->_script->_scriptText) {
+									ImGui::Text("[%4d]", t->offset);
+									ImGui::SameLine();
+									ImGui::Text("%s", t->line.c_str());
+								}
+							} else {
+								ImGui::Text("No script");
+							}
+							ImGui::EndTabItem();
+						}
+
+						if (ImGui::BeginTabItem("Design")) {
+							ImGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
+							ImGui::EndTabItem();
+						}
+
+						ImGui::EndTabBar();
+					}
 
 					ImGui::EndChild();
 				}
