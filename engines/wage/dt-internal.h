@@ -41,6 +41,9 @@ typedef struct ImGuiState {
 	ImGuiTextFilter _nameFilter;
 
 	int _selectedScene = 0;
+	int _selectedObj = 0;
+	int _selectedChr = 0;
+	int _selectedSound = 0;
 } ImGuiState;
 
 extern ImGuiState *_state;

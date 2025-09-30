@@ -33,6 +33,7 @@
 #include "wage/wage.h"
 #include "wage/dt-internal.h"
 #include "wage/script.h"
+#include "wage/sound.h"
 #include "wage/world.h"
 
 namespace Wage {
@@ -140,7 +141,8 @@ static void showWorld() {
 					if (ImGui::BeginListBox("##listbox scenes", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
 						for (int n = 0; n < g_wage->_world->_orderedScenes.size(); n++) {
 							const bool is_selected = (_state->_selectedScene == n);
-							if (ImGui::Selectable(g_wage->_world->_orderedScenes[n]->_name.c_str(), is_selected))
+							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedScenes[n]->_name.c_str(), n);
+							if (ImGui::Selectable(label.c_str(), is_selected))
 								_state->_selectedScene = n;
 
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -185,18 +187,108 @@ static void showWorld() {
 
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Objects")) {
-				ImGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
+				{ // Left pane
+					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+
+					if (ImGui::BeginListBox("##listbox objects", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
+						for (int n = 0; n < g_wage->_world->_orderedObjs.size(); n++) {
+							const bool is_selected = (_state->_selectedObj == n);
+							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedObjs[n]->_name.c_str(), n);
+							if (ImGui::Selectable(label.c_str(), is_selected))
+								_state->_selectedObj = n;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndChild();
+				}
+
+				ImGui::SameLine();
+
+				{ // Right pane
+					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+					ImGui::Text("Object design");
+
+					ImGui::EndChild();
+				}
+
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Characters")) {
-				ImGui::Text("This is the Cucumber tab!\nblah blah blah blah blah");
+				{ // Left pane
+					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+
+					if (ImGui::BeginListBox("##listbox characters", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
+						for (int n = 0; n < g_wage->_world->_orderedChrs.size(); n++) {
+							const bool is_selected = (_state->_selectedChr == n);
+							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedChrs[n]->_name.c_str(), n);
+							if (ImGui::Selectable(label.c_str(), is_selected))
+								_state->_selectedChr = n;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndChild();
+				}
+
+				ImGui::SameLine();
+
+				{ // Right pane
+					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+					ImGui::Text("Character design");
+
+					ImGui::EndChild();
+				}
+
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Sounds")) {
-				ImGui::Text("This is the Sounds tab!\nblah blah blah blah blah");
+				{ // Left pane
+					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+
+					if (ImGui::BeginListBox("##listbox sounds", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
+						for (int n = 0; n < g_wage->_world->_orderedSounds.size(); n++) {
+							const bool is_selected = (_state->_selectedSound == n);
+							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedSounds[n]->_name.c_str(), n);
+							if (ImGui::Selectable(label.c_str(), is_selected))
+								_state->_selectedSound = n;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndChild();
+				}
+
+				ImGui::SameLine();
+
+				{ // Right pane
+					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+					ImGui::Text("Sound playback");
+
+					ImGui::EndChild();
+				}
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Global Script")) {
 				for (auto &t : g_wage->_world->_globalScript->_scriptText) {
 					ImGui::Text("[%4d]", t->offset);
@@ -205,6 +297,7 @@ static void showWorld() {
 				}
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("World")) {
 				ImGui::Text("This is the Global Script tab!\nblah blah blah blah blah");
 				ImGui::EndTabItem();
