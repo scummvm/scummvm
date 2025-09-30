@@ -668,7 +668,7 @@ bool BaseRenderTinyGL::fadeToColor(byte r, byte g, byte b, byte a) {
 BaseImage *BaseRenderTinyGL::takeScreenshot(int newWidth, int newHeight) {
 	BaseImage *screenshot = new BaseImage();
 	Graphics::Surface *surface = TinyGL::copyFromFrameBuffer(Graphics::PixelFormat::createFormatRGBA32());
-	screenshot->copyFrom(surface, newWidth, newHeight, Graphics::FLIP_V);
+	screenshot->copyFrom(surface, newWidth, newHeight);
 	delete surface;
 	return screenshot;
 }
