@@ -903,7 +903,7 @@ void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 			}
 
 			else if (bSwitched) {                        // Switch back the two areas
-				SwitchAreas(DstRect, SrcRect);
+				SwitchAreas(SrcRect, DstRect);
 				bSwitched = false;                          // Don't allow second Undo
 			}
 
@@ -1313,6 +1313,8 @@ bool CMainWindow::LoadArtWork() {
 	}
 	inFile.getline(chNumEntries, sizeof(chNumEntries));     // read number of names in file
 	nNumEntries = atoi(chNumEntries);
+	assert(nNumEntries > 0);
+
 	pick = nLastPick;
 	while (pick == nLastPick) {
 		pick = (brand() % nNumEntries) + 1;
@@ -1741,17 +1743,12 @@ void CMainWindow::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
 	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
 
-	if (pMyBrush != nullptr) {                         // If the brush was constructed, delete it
-		pMyBrush->DeleteObject();
-		delete pMyBrush;
-	}
+	pMyBrush->DeleteObject();
+	delete pMyBrush;
 
-	if (pMyPen != nullptr) {                           // If the pen was constructed, delete it
-		pMyPen->DeleteObject();
-		delete pMyPen;
-	}
-
-} // End MyFocusRect()
+	pMyPen->DeleteObject();
+	delete pMyPen;
+}
 
 /*****************************************************************
  *

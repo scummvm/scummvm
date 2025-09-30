@@ -43,17 +43,17 @@ public:
 	void UpdateScrollbars();
 	void ClearDialogImage();
 
-	int m_nTime;
-	int m_nRows;
-	int m_nColumns;
-	int m_nMins;
-	int m_nSecs;
-	float   m_nScore;
-	bool    m_bFramed;
-	int m_nNumParts;
+	int m_nTime = 0;
+	int m_nRows = 0;
+	int m_nColumns = 0;
+	int m_nMins = 0;
+	int m_nSecs = 0;
+	float   m_nScore = 0.0;
+	bool    m_bFramed = false;
+	int m_nNumParts = 0;
 
-	int nCFacs;
-	int nRFacs;
+	int nCFacs = 0;
+	int nRFacs = 0;
 
 // Dialog Data
 	//{{AFX_DATA(COptnDlg)
