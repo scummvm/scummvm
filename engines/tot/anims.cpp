@@ -863,7 +863,7 @@ static FliHeader readHeader(Common::File *file) {
 	file->read(headerfile.reserved2, 19 * 2);
 	headerfile.ofsframe1 = file->readSint32LE();
 	headerfile.ofsframe2 = file->readSint32LE();
-	file->read(headerfile.reserved2, 20 * 2);
+	file->read(headerfile.reserved3, 20 * 2);
 	return headerfile;
 }
 

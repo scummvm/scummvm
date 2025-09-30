@@ -468,6 +468,7 @@ void changeGameSpeed(Common::Event e) {
 
 void emptyLoop() {
 	do {
+		g_engine->_events->pollEvent();
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
 	} while (!g_engine->_chrono->_gameTick && !g_engine->shouldQuit());
