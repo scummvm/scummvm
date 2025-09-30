@@ -246,11 +246,6 @@ static void overlayLayers() {
 
 void drawMainCharacter() {
 
-	bool debug = false;
-	if (debug) {
-		g_engine->_graphics->sceneTransition(false, g_engine->_sceneBackground, 13);
-	}
-
 	uint16 tempW;
 	uint16 tempH;
 	tempW = READ_LE_UINT16(g_engine->_curCharacterAnimationFrame);
@@ -274,11 +269,6 @@ void drawMainCharacter() {
 
 	g_engine->_graphics->putImg(g_engine->_dirtyMainSpriteX, g_engine->_dirtyMainSpriteY, g_engine->_characterDirtyRect);
 
-	if (debug) {
-		// draw background dirty area
-		drawRect(2, g_engine->_dirtyMainSpriteX, g_engine->_dirtyMainSpriteY, g_engine->_dirtyMainSpriteX + tempW, g_engine->_dirtyMainSpriteY + tempH);
-		drawPos(g_engine->_xframe2, g_engine->_yframe2, 218);
-	}
 	free(g_engine->_characterDirtyRect);
 }
 
@@ -1014,7 +1004,7 @@ void TotEngine::goToObject(byte zone1, byte zone2) {
 		if ((zone2 >= 1 && zone2 <= 5) ||
 			(zone2 >= 9 && zone2 <= 13) ||
 			(zone2 >= 18 && zone2 <= 21) ||
-			zone2 == 24 || zone2 == 25) {
+			zone2 == 25) {
 
 			_targetZone = 7;
 			_mouse->mouseClickX = 232;
@@ -1023,6 +1013,10 @@ void TotEngine::goToObject(byte zone1, byte zone2) {
 		}
 		if (zone2 == 24) {
 			barredZone = false;
+			_targetZone = 7;
+			_mouse->mouseClickX = 232;
+			_mouse->mouseClickY = 75;
+			zone2 = 7;
 		}
 	}
 	if (zone1 < 10) {
