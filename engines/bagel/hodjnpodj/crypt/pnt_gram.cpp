@@ -1181,6 +1181,8 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 			delete m_cDisplayLetters;
 
 			nIndexCode = CharToIndex(nNewType);
+			assert(nIndexCode < REVEAL_SYMBOLS);
+
 			if (IsRevealType(nNewType) == true) {
 				m_cDisplayLetters = (*m_cRevealAlphabet[nIndexCode]).DuplicateSprite(pDC);  // setup new sprite
 			} else if (IsUsedType(nNewType) == true) {

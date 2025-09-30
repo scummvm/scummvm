@@ -852,10 +852,10 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				Sleep(URN1_SLEEP);
 			}
 		}
-		if (pSprite != nullptr)
-			delete pSprite;
 
+		delete pSprite;
 		ReleaseDC(pDC);
+
 	} else if (urn2Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
