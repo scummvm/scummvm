@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef GAMOS_VM_H
+#define GAMOS_VM_H
 
 #include <common/array.h>
 #include <common/hashmap.h>
@@ -47,8 +49,8 @@ public:
         OP_MOV_EBX_ECX_AL = 15,
         OP_MOV_EDI_ECX_EAX = 16,
         OP_MOV_EBX_ECX_EAX = 17,
-        OP_POP_ESI = 18,
-        OP_POP_ESI_ADD_ESP = 19,
+        OP_RET = 18,
+        OP_RETX = 19,
         OP_MOV_EDX_EAX = 20,
         OP_ADD_EAX_EDX = 21,
         OP_MUL = 22,
@@ -85,6 +87,8 @@ public:
         OP_PUSH_ESI_ADD_EDI = 53,
         OP_CALL_FUNC = 54,
         OP_PUSH_ESI_SET_EDX_EDI = 55,
+
+        OP_MAX
     };
 
     enum MEMREF {
@@ -114,6 +118,12 @@ public:
             address = 0;
             memset(data, 0, sizeof(data));
         }
+    };
+
+    struct OpLog {
+        uint32 addr;
+        OP op;
+        uint32 sp;
     };
 
 public:
@@ -152,7 +162,10 @@ public:
     void setMem32(int memtype, uint32 offset, uint32 val);
     void setMem8(int memtype, uint32 offset, uint8 val);
 
+    Common::String decodeOp(uint32 address, int *size = nullptr);
     Common::String disassembly(uint32 address);
+
+    Common::String opLog(const Common::Array<OpLog> &log);
 
 public:
     uint32 ESI = 0;
@@ -177,3 +190,5 @@ private:
 
 
 }
+
+#endif

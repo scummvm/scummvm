@@ -80,7 +80,7 @@ Common::Error GamosEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	_vm._callFuncs = vmCallDispatcher;
+	_vm._callFuncs = callbackVMCallDispatcher;
 	_vm._callingObject = this;
 
 	// If a savegame was selected from the launcher, load it
@@ -1917,65 +1917,116 @@ uint32 GamosEngine::doScript(uint32 scriptAddress) {
 }
 
 
-uint32 GamosEngine::vmCallDispatcher(void *engine, VM *vm, uint32 funcID) {
-	GamosEngine *gamos = (GamosEngine *)engine;
-
+void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
 
 	switch (funcID)
 	{
 	case 0:
-		gamos->DAT_004177ff = true;
-		return 1;
+		DAT_004177ff = true;
+		vm->EAX.val = 1;
+		break;
 	case 3:
-		printf("func 3 %x check 0x10 \n", gamos->PTR_00417218->fld_4 & 0x90);
-		return (gamos->PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
+		printf("func 3 %x check 0x10 \n", PTR_00417218->fld_4 & 0x90);
+		vm->EAX.val = (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
+		break;
 	case 4:
-		printf("func 4 %x check 0x20 \n", gamos->PTR_00417218->fld_4 & 0xa0);
-		return (gamos->PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
+		printf("func 4 %x check 0x20 \n", PTR_00417218->fld_4 & 0xa0);
+		vm->EAX.val = (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
+		break;
 	case 5:
 		arg1 = vm->pop32();
-		//printf("func 5 %x check %x \n", gamos->PTR_00417218->fld_4 & 0xb0, arg1);
-		return (gamos->PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0;
+		//printf("func 5 %x check %x \n", PTR_00417218->fld_4 & 0xb0, arg1);
+		vm->EAX.val = (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0;
+		break;
 	case 6:
 		arg1 = vm->pop32();
-		printf("func 6 %x check %x \n", gamos->PTR_00417218->fld_4 & 0x4f, arg1);
-		return (gamos->PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
+		printf("func 6 %x check %x \n", PTR_00417218->fld_4 & 0x4f, arg1);
+		vm->EAX.val = (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
+		break;
 	case 13: {
 		VM::Reg regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef.ref, regRef.val);
 		printf("CallDispatcher 13 keycode %s\n", str.c_str());
-		return 0;
+		vm->EAX.val = 0;
+		break;
 	}
 
 	case 14:
 		arg1 = vm->pop32();
-		gamos->loadModule(arg1);
-		gamos->setNeedReload();
-		return 1;
-
-	case 15:
-		arg1 = vm->pop32(); //implement
+		loadModule(arg1);
+		setNeedReload();
+		vm->EAX.val = 1;
 		break;
 
 	case 16:
 		arg1 = vm->pop32();
-		return gamos->scriptFunc16(arg1);
+		vm->EAX.val = scriptFunc16(arg1);
+		break;
+
+	case 17:
+		arg1 = vm->pop32();
+		//playsound
+		vm->EAX.val = 1;
+		break;
 
 	case 19:
 		arg1 = vm->pop32();
-		return gamos->scriptFunc19(arg1);
+		vm->EAX.val = scriptFunc19(arg1);
+		break;
+
+	case 25: {
+		arg1 = vm->pop32();
+		if (PTR_00417218->fld_5 != arg1) {
+			PTR_00417218->fld_5 = arg1;
+			if (PTR_00417218->x != -1) {
+				Object &obj = _drawElements[PTR_00417218->x];
+				obj.fld_3 = arg1;
+			}
+			if (PTR_00417218->y != -1) {
+				Object &obj = _drawElements[PTR_00417218->y];
+				obj.fld_3 = arg1;
+				addDirtRectOnObject(&obj);
+			}
+		}
+		vm->EAX.val = 1;
+	} break;
+
+	case 30: {
+		if (PTR_00417218->y != -1) {
+			Object *obj = &_drawElements[PTR_00417218->y];
+			PTR_00417218->x = -1;
+			PTR_00417218->y = -1;
+			removeObjectMarkDirty(obj);
+		}
+	} break;
 
 	case 31:
 		arg1 = vm->pop32();
-		gamos->setCursor(arg1, true);
-		return 1;
+		setCursor(arg1, true);
+		vm->EAX.val = 1;
+		break;
+
+	case 32:
+		setCursor(0, false);
+		vm->EAX.val = 1;
+		break;
+
+	case 54:
+		arg1 = vm->pop32();
+		vm->EAX.val = rndRange16(arg1);
+		break;
 
 	default:
+		printf("Call Dispatcher %d\n", funcID);
+		vm->EAX.val = 0;
 		break;
 	}
-	printf("Call Dispatcher %d\n", funcID);
-	return 0;
+}
+
+void GamosEngine::callbackVMCallDispatcher(void *engine, VM *vm, uint32 funcID) {
+	GamosEngine *gamos = (GamosEngine *)engine;
+	gamos->vmCallDispatcher(vm, funcID);
 }
 
 uint32 GamosEngine::scriptFunc19(uint32 id) {
