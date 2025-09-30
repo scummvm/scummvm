@@ -87,6 +87,10 @@ typedef Common::List<Chr *> ChrList;
 
 #define STORAGESCENE "STORAGE@"
 
+enum {
+	kDebugImGui = 1,
+};
+
 enum OperandType {
 	OBJ = 0,
 	CHR = 1,
@@ -260,6 +264,8 @@ private:
 
 	Audio::SoundHandle _soundHandle;
 };
+
+extern WageEngine *g_wage;
 
 } // End of namespace Wage
 

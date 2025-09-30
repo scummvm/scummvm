@@ -58,12 +58,15 @@
 #include "graphics/macgui/macdialog.h"
 
 #include "wage/wage.h"
+#include "wage/debugtools.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
 namespace Wage {
+
+WageEngine *g_wage = nullptr;
 
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
@@ -89,6 +92,8 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 
 	_resManager = NULL;
 
+	g_wage = this;
+
 	debug("WageEngine::WageEngine()");
 }
 
@@ -101,6 +106,7 @@ WageEngine::~WageEngine() {
 	delete _rnd;
 
 	g_engine = nullptr;
+	g_wage = nullptr;
 }
 
 bool WageEngine::pollEvent(Common::Event &event) {
@@ -138,6 +144,15 @@ Common::Error WageEngine::run() {
 	_shouldQuit = false;
 
 	_gui = new Gui(this);
+
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = onImGuiInit;
+	callbacks.render = drawImGui ? onImGuiRender : nullptr;
+	callbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
 
 	_temporarilyHidden = true;
 	performInitialSetup();

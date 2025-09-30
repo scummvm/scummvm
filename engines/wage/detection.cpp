@@ -44,6 +44,11 @@ static const PlainGameDescriptor wageGames[] = {
 #include "wage/detection_tables.h"
 #include "wage/detection.h"
 
+static const DebugChannelDef debugFlagList[] = {
+	{Wage::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
+	DEBUG_CHANNEL_END
+};
+
 static ADGameDescription s_fallbackDesc = {
 	"wage",
 	"",
@@ -73,6 +78,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "World Builder (C) Silicon Beach Software";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;

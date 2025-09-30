@@ -3,6 +3,7 @@ MODULE := engines/wage
 MODULE_OBJS := \
 	combat.o \
 	debugger.o \
+	debugtools.o \
 	design.o \
 	entities.o \
 	gui.o \
