@@ -499,8 +499,9 @@ Script::Operand *Script::readStringOperand() {
 
 	while (true) {
 		byte c = _data->readByte();
-		if (c >= 0x20 && c < 0x80)
-			*str += c;
+
+		if (c < 0x80)
+			*str += (c < 0x20 ? ' ' : c);
 		else
 			break;
 		if ((c < '0' || c > '9') && !(c == '-' && str->empty()))
