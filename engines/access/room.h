@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "access/data.h"
+#include "access/detection.h"
 
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
@@ -181,8 +182,9 @@ public:
 		int _priority;
 	};
 public:
-	int _roomFlag;
+	byte _roomFlag;
 	int _estIndex;
+	byte _palIntensity;
 	FileIdent _musicFile;
 	int _scaleH1;
 	int _scaleH2;
@@ -199,7 +201,7 @@ public:
 	Common::Array<ExtraCell> _extraCells;
 	Common::Array<SoundIdent> _sounds;
 public:
-	RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo);
+	RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool isDemo);
 };
 
 } // End of namespace Access

@@ -32,9 +32,14 @@ FileIdent::FileIdent() {
 	_subfile = 0;
 }
 
-void FileIdent::load(Common::SeekableReadStream &s) {
-	_fileNum = s.readSint16LE();
-	_subfile = s.readUint16LE();
+void FileIdent::load(Common::SeekableReadStream &s, AccessGameType gameType) {
+	if (gameType == kGameNoctropolis) {
+		_fileNum = s.readSint16LE();
+		_subfile = s.readUint16LE();
+	} else {
+		_fileNum = s.readSint32LE();
+		_subfile = s.readUint32LE();
+	}
 }
 
 /*------------------------------------------------------------------------*/

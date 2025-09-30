@@ -299,6 +299,9 @@ void Room::loadRoomData(const byte *roomData) {
 
 	_roomFlag = roomInfo._roomFlag;
 
+	// TODO: If roomFlag & 2 and noctropolis, load pal files.
+	// (see LoadRoom in noctropolis.)
+
 	_vm->_establishFlag = false;
 	if (roomInfo._estIndex != -1) {
 		_vm->_establishFlag = true;
@@ -1002,34 +1005,40 @@ bool Room::checkCode(int v1, int v2) {
 
 /*------------------------------------------------------------------------*/
 
-RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
+RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool isDemo) {
 	Common::MemoryReadStream stream(data, 999);
 
 	_roomFlag = stream.readByte();
 
 	_estIndex = -1;
+	_palIntensity = 255;
 	if (gameType == kGameAmazon && isCD)
 		_estIndex = stream.readSint16LE();
+	else if (gameType == kGameNoctropolis)
+		_palIntensity = stream.readByte();
 
-	_musicFile.load(stream);
+	_musicFile.load(stream, gameType);
 	_scaleH1 = stream.readByte();
 	_scaleH2 = stream.readByte();
 	_scaleN1 = stream.readByte();
-	_playFieldFile.load(stream);
+	_playFieldFile.load(stream, gameType);
 
 	for (byte cell = stream.readByte(); cell != 0xff; cell = stream.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci.load(stream);
+		ci.load(stream, gameType);
 
 		_cells.push_back(ci);
 	}
 
-	_scriptFile.load(stream);
-	_animFile.load(stream);
+	_scriptFile.load(stream, gameType);
+	_animFile.load(stream, gameType);
 	_scaleI = stream.readByte();
 	_scrollThreshold = stream.readByte();
-	_paletteFile.load(stream);
+	if (gameType != kGameNoctropolis)
+		_paletteFile.load(stream, gameType);
+	else
+		stream.skip(8);
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
 	} else {

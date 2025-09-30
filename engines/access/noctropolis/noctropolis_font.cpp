@@ -54,7 +54,6 @@ uint NoctropolisFont::getCharBitOffset(byte ch, const uint16 *offsets) const {
 	return offsets[ch - _firstCharIndex];
 }
 
-
 void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const uint16 *offsets, const byte *data) const {
 	uint width = getCharWidth(ch, offsets);
 

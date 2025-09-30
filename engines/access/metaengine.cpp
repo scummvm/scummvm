@@ -44,8 +44,8 @@
 
 namespace Access {
 
-uint32 AccessEngine::getGameID() const {
-	return _gameDescription->gameID;
+AccessGameType AccessEngine::getGameID() const {
+	return (AccessGameType)(_gameDescription->gameID);
 }
 
 uint32 AccessEngine::getGameFeatures() const {

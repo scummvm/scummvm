@@ -304,7 +304,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
-	uint32 getGameID() const;
+	AccessGameType getGameID() const;
 	uint32 getGameFeatures() const;
 	bool shouldQuitOrRestart();
 
