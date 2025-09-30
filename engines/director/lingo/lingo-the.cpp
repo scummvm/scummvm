@@ -129,6 +129,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheMoviePath,		"moviePath",		false, 400, true },	//			D4 f
 	{ kTheMultiSound,		"multiSound",		false, 300, true },	//		D3.1 f
 	{ kTheOptionDown,		"optionDown",		false, 200, true },	// D2 f
+	{ kTheOrganizationName,	"organizationName",	false, 500, false },	//				D5 p
 	{ kTheParamCount,		"paramCount",		false, 400, true },	//			D4 f
 	{ kThePathName,			"pathName",			false, 200, true },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 200, true },	// D2 f
@@ -153,6 +154,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheSelection,		"selection",		false, 200, true },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false, 200, false },	// D2 p
 	{ kTheSelStart,			"selStart",			false, 200, false },	// D2 p
+	{ kTheSerialNumber,		"serialNumber",		false, 500, false },	//				D5 p
 	{ kTheShiftDown,		"shiftDown",		false, 200, true },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 200, false },	// D2 p
 	{ kTheSoundEntity,		"sound",			true,  300, false },	// 		D3 p
@@ -179,7 +181,8 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheTraceLoad,		"traceLoad",		false, 400, false },	//			D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false, 400, false },	//			D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,400, false },//			D4 p
-	{ kTheVideoForWindowsPresent,	"videoForWindowsPresent",	false, 400, true },	//		D4 f
+	{ kTheUserName,			"userName",			false, 500, false },	//				D5 p
+	{ kTheVideoForWindowsPresent,"videoForWindowsPresent",false, 400, true },//		D4 f
 	{ kTheWindow,			"window",			true,  400, false },	//			D4
 	{ kTheWindowList,		"windowList",		false, 400, false },	//			D4 p
 	{ kTheXtras,			"xtras",			false, 500, false },	//			D4 p
@@ -892,6 +895,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheOptionDown:
 		d = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
+	case kTheOrganizationName:
+		d = Common::String("ScummVM Team");
+		break;
 	case kTheParamCount:
 		d = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1]->paramCount;
 		break;
@@ -990,6 +996,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 				d = (int)((Graphics::MacText *)channel->_widget)->getSelectionIndex(entity == kTheSelStart);
 			}
 		}
+		break;
+	case kTheSerialNumber:
+		d = Common::String("DRW600-01234-56789-01234");
 		break;
 	case kTheShiftDown:
 		d = (movie->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
@@ -1096,6 +1105,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheUpdateMovieEnabled:
 		d = g_lingo->_updateMovieEnabled;
+		break;
+	case kTheUserName:
+		d = Common::String("ScummVM");
 		break;
 	case kTheVideoForWindowsPresent:
 		// Video For Windows is always present for ScummVM
