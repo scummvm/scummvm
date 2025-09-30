@@ -1407,9 +1407,10 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 		obj->blk = id;
 		obj->x = -1;
 		obj->y = -1;
-		obj->fld_2 = *pv1;
+		obj->fld_2 = (*pv1) & 0xff;
+		obj->fld_3 = ((*pv1) >> 8 ) & 0xff;
 		if (PTR_00417218 && obj->index > PTR_00417218->index)
-			obj->fld_2 |= 0x100;
+			obj->fld_3 |= 1;
 
 		int storageSize = ((act.unk1 >> 24) & 0xff) + 1;
 		// if (storageSize < 5) {
@@ -1484,8 +1485,13 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	}
 
 	if (povar4)
+<<<<<<< HEAD
 		*pth1 = povar4->fld_2 & 0xf0ff;
 
+=======
+		*pth1 = ((povar4->fld_3 & 0xf0) << 8) | (povar4->fld_2 & 0xff);
+
+>>>>>>> 04fdf49 (Split object field)
 	executeScript((*pth1) >> 8, id, pos, nullptr, -1, nullptr, &act, act.script2);
 }
 
@@ -1577,8 +1583,8 @@ bool GamosEngine::FUN_00402fb4()
 
 		if ((pobj->flags & 3) == 3) {
 			if (!PTR_00417388 || (PTR_00417388[ pobj->actID >> 3 ] & (1 << (pobj->actID & 7))) ) {
-				if (pobj->fld_2 & 0x100) {
-					pobj->fld_2 &= ~0x100;
+				if (pobj->fld_3 & 1) {
+					pobj->fld_3 &= ~1;
 				} else {
 					if ((pobj->flags & 4) == 0) {
 						if (pobj->y != -1 && FUN_00402f34(true, false, &_drawElements[pobj->y])) {
@@ -1696,8 +1702,7 @@ exit:
 }
 
 bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
-	uint8 v = obj->fld_2 & 0xff;
-	if (v < 2) {
+	if (obj->fld_2 < 2) {
 		if (p2 || (obj->flags & 4)) {
 			addDirtRectOnObject(obj);
 			if (p1)
@@ -1707,9 +1712,9 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 	} else {
 		addDirtRectOnObject(obj);
 		obj->actID++;
-		if (obj->actID == v) {
+		if (obj->actID == obj->fld_2) {
 			obj->actID = 0;
-			obj->pImg = obj->pImg - (v - 1);
+			obj->pImg = obj->pImg - (obj->fld_2 - 1);
 			if (p2 || (obj->flags & 4)) {
 				addDirtRectOnObject(obj);
 				if (p1)
@@ -1739,8 +1744,8 @@ void GamosEngine::FUN_0040921c(Object *obj) {
 		Object *o = &_drawElements[(obj->blk * 0x100) + obj->pos];
 		if (o->flags & 4) {
 			int t = obj->actID + 1;
-			x += (o->pos - obj->fld_4) * _unk2 * t / (obj->fld_2 & 0xFF);
-			y += (o->blk - obj->fld_5) * _unk3 * t / (obj->fld_2 & 0xFF);
+			x += (o->pos - obj->fld_4) * _unk2 * t / obj->fld_2;
+			y += (o->blk - obj->fld_5) * _unk3 * t / obj->fld_2;
 		}
 	}
 
@@ -1858,7 +1863,7 @@ void GamosEngine::doDraw() {
 			for (int j = i + 1; j < drawList.size(); j++) {
 				Object *o1 = drawList[i];
 				Object *o2 = drawList[j];
-				if ((o1->fld_2 & 0xff00) < (o2->fld_2 & 0xff00)) {
+				if (o1->fld_3 < o2->fld_3) {
 					drawList[i] = o2;
 					drawList[j] = o1;
 				}
@@ -2059,8 +2064,13 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 
 	if (spr.field_1 & 1)
 		pobj->flags |= 4;
+<<<<<<< HEAD
 
 	pobj->fld_2 = (pobj->fld_2 & 0xFF00) | spr.field_3;
+=======
+
+	pobj->fld_2 = spr.field_3;
+>>>>>>> 04fdf49 (Split object field)
 	int32 idx = 0xffff;
 	if (!p)
 		idx = _curObjIndex;
@@ -2072,7 +2082,7 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 
 	if (!p) {
 		if (!PTR_00417218) {
-			pobj->fld_2 = (pobj->fld_2 & 0xff) | (((PTR_00417214->unk1 >> 2) & 0xFF) << 8);
+			pobj->fld_3 = (PTR_00417214->unk1 >> 16) & 0xFF;
 		} else {
 			int32 index = pobj->index;
 			if (PTR_00417218->y != -1) {
@@ -2090,15 +2100,15 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 				PTR_00417218->x = index;
 			}
 
-			pobj->fld_2 = (pobj->fld_2 & 0xff) | ((PTR_00417218->fld_5) << 8);
+			pobj->fld_3 = PTR_00417218->fld_5;
 			if (DAT_00417220 != DAT_00417228 || DAT_00417224 != DAT_0041722c) {
 				PTR_00417218->flags |= 4;
 			}
 		}
 	} else {
+		pobj->fld_3 = PTR_00417218->fld_5;
 		pobj->fld_4 = 0xff;
 		pobj->fld_5 = 0xff;
-		pobj->fld_2 = (pobj->fld_2 & 0xff) | ((PTR_00417218->fld_5) << 8);
 	}
 
 	FUN_00409378(&spr, pobj, p);
@@ -2194,7 +2204,7 @@ void GamosEngine::FUN_00409378(Sprite *spr, Object *obj, bool p) {
 void GamosEngine::FUN_004095a0(Object *obj) {
 	if (obj->y != -1) {
 		Object &yobj = _drawElements[obj->y];
-		Sprite *spr = yobj.spr; //FUN_00409568
+		Sprite *spr = yobj.spr; //getSprite
 		addDirtRectOnObject(&yobj);
 		if (DAT_00417228 != DAT_00417220 || DAT_0041722c != DAT_00417224)
 			obj->flags |= 4;
@@ -2203,8 +2213,8 @@ void GamosEngine::FUN_004095a0(Object *obj) {
 }
 
 void GamosEngine::FUN_004023d8(Object *obj) {
-	if (obj->fld_2 & 0x200) {
-		obj->fld_2 &= ~0x200;
+	if (obj->fld_3 & 2) {
+		obj->fld_3 &= ~2;
 		int32 index = obj->index;
 		for (int index = obj->index; index < _drawElements.size(); index++) {
 			Object *pobj = &_drawElements[index];

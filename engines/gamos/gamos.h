@@ -174,7 +174,8 @@ struct Object {
 	   1 - used */
 	uint8 flags = 0;
 	uint8 actID = 0;
-	uint16 fld_2 = 0;
+	uint8 fld_2 = 0;
+	uint8 fld_3 = 0;
 	uint8 fld_4 = 0;
 	uint8 fld_5 = 0;
 	uint8 pos = 0xff;
