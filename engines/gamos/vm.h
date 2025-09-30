@@ -103,12 +103,7 @@ public:
         byte ref = REF_UNK;
     };
 
-    typedef uint32 (* CallDispatcher)(void *object, VM *state, uint32 funcID);
-
-    struct DataSlice {
-        uint32 address = 0;
-        Common::Array<byte> data;
-    };
+    typedef void (* CallDispatcher)(void *object, VM *state, uint32 funcID);
 
     struct MemoryBlock {
         uint32 address = 0;
