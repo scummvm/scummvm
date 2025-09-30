@@ -154,6 +154,11 @@ static void showWorld() {
 							ImGui::EndTabItem();
 						}
 
+						if (ImGui::BeginTabItem("Text")) {
+							ImGui::TextWrapped("%s", g_wage->_world->_orderedScenes[_state->_selectedScene]->_text.c_str());
+							ImGui::EndTabItem();
+						}
+
 						if (ImGui::BeginTabItem("Design")) {
 							ImGuiImage imgID = getImageID(g_wage->_world->_orderedScenes[_state->_selectedScene], "obj");
 
