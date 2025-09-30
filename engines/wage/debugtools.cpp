@@ -33,6 +33,7 @@
 #include "wage/wage.h"
 #include "wage/dt-internal.h"
 #include "wage/design.h"
+#include "wage/gui.h"
 #include "wage/script.h"
 #include "wage/sound.h"
 #include "wage/world.h"
@@ -47,12 +48,29 @@ ImGuiImage getImageID(Designed *d, const char *type) {
 	if (_state->_images.contains(key))
 		return _state->_images[key];
 
+	if (!d->_design)
+		return { 0, 0, 0 };
+
+	// We need to precompute dimensions
+	Graphics::ManagedSurface tmpsurf(1024, 768, Graphics::PixelFormat::createFormatCLUT8());
+	d->_design->paint(&tmpsurf, *g_wage->_world->_patterns, 0, 0);
+
 	int sx = d->_design->getBounds()->width(), sy = d->_design->getBounds()->height();
-	Graphics::ManagedSurface surface(sx, sy);
 
-	d->_design->paint(&surface, *g_wage->_world->_patterns, 0, 0);
+	if (!sx || !sy)
+		return { 0, 0, 0 };
 
-	_state->_images[key] = { (ImTextureID)g_system->getImGuiTexture(*surface.surfacePtr()), sx, sy };
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(sx, sy, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, sx, sy), 4); // white background
+
+	d->_design->paint(surface, *g_wage->_world->_patterns, 0, 0);
+
+	if (surface->surfacePtr()) {
+		_state->_images[key] = { (ImTextureID)g_system->getImGuiTexture(*surface->surfacePtr(), g_wage->_gui->_wm->getPalette(), g_wage->_gui->_wm->getPaletteSize()), sx, sy };
+	}
+
+	delete surface;
 
 	return _state->_images[key];
 }
@@ -67,43 +85,6 @@ void showImage(const ImGuiImage &image, float scale) {
 	ImGui::Image(image.id, size);
 	ImGui::EndGroup();
 }
-
-#if 0
-static void displayTGA() {
-	ImGuiImage imgID;
-
-	imgID = getImageID(_state->_fileToDisplay, 0);
-
-	ImGui::Text("TGA %s: [%d x %d]", transCyrillic(_state->_fileToDisplay.toString()), imgID.width, imgID.height);
-
-	ImGui::Separator();
-
-	showImage(imgID, (char *)transCyrillic(_state->_fileToDisplay.toString()), 1.0);
-}
-
-void showSceneObjects() {
-	if (!_state->_showSceneObjects)
-		return;
-
-	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
-
-	if (ImGui::Begin("Scene Objects", &_state->_showSceneObjects)) {
-		qdGameScene *scene;
-		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
-		if (dp && ((scene = dp->get_active_scene()))) {
-			if (!scene->object_list().empty()) {
-				for (auto &it : g_engine->_visible_objects) {
-					if (ImGui::Selectable((char *)transCyrillic(it->name()), _state->_objectToDisplay == it->name())) {
-						_state->_objectToDisplay = it->name();
-					}
-				}
-			}
-		}
-	}
-	ImGui::End();
-}
-#endif
 
 static void showWorld() {
 	if (!_state->_showWorld)
@@ -174,7 +155,9 @@ static void showWorld() {
 						}
 
 						if (ImGui::BeginTabItem("Design")) {
-							ImGui::Text("This is the Broccoli tab!\nblah blah blah blah blah");
+							ImGuiImage imgID = getImageID(g_wage->_world->_orderedScenes[_state->_selectedScene], "obj");
+
+							showImage(imgID, 1.0);
 							ImGui::EndTabItem();
 						}
 
@@ -213,9 +196,9 @@ static void showWorld() {
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					//ImGuiImage imgID = getImageID(g_wage->_world->_orderedObjs[_state->_selectedObj], "obj");
+					ImGuiImage imgID = getImageID(g_wage->_world->_orderedObjs[_state->_selectedObj], "obj");
 
-					//showImage(imgID, 1.0);
+					showImage(imgID, 1.0);
 
 					ImGui::EndChild();
 				}
@@ -249,7 +232,9 @@ static void showWorld() {
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					ImGui::Text("Character design");
+					ImGuiImage imgID = getImageID(g_wage->_world->_orderedChrs[_state->_selectedChr], "chr");
+
+					showImage(imgID, 1.0);
 
 					ImGui::EndChild();
 				}
