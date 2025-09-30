@@ -3,7 +3,6 @@ MODULE := engines/wage
 MODULE_OBJS := \
 	combat.o \
 	debugger.o \
-	debugtools.o \
 	design.o \
 	entities.o \
 	gui.o \
@@ -16,6 +15,11 @@ MODULE_OBJS := \
 	util.o \
 	wage.o \
 	world.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugtools.o
+endif
 
 MODULE_DIRS += \
 	engines/wage
