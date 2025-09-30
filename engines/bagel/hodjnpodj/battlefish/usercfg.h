@@ -59,18 +59,18 @@ protected:
 	void ClearDialogImage();
 	DECLARE_MESSAGE_MAP()
 
-	CColorButton *m_pOKButton;              // OKAY button on scroll
-	CColorButton *m_pCancelButton;          // Cancel button on scroll
-	CColorButton *m_pDefaultsButton;        // Defaults button on scroll
-	CRadioButton *m_pUserButton;
-	CRadioButton *m_pCompButton;
-	CText        *m_pTxtDifficulty;
-	CText        *m_pTxtLevel;
-	CText        *m_pTxtOrder;
-	CScrollBar   *m_pScrollBar;
-	unsigned int          m_nDifficultyLevel;       // Difficulty level for BattleFish
-	bool          m_bSave;                  // True if should save theses settings
-	bool          m_bUserGoesFirst;         // true if Human player goes 1st
+	CColorButton *m_pOKButton = nullptr;		// OKAY button on scroll
+	CColorButton *m_pCancelButton = nullptr;	// Cancel button on scroll
+	CColorButton *m_pDefaultsButton = nullptr;	// Defaults button on scroll
+	CRadioButton *m_pUserButton = nullptr;
+	CRadioButton *m_pCompButton = nullptr;
+	CText        *m_pTxtDifficulty = nullptr;
+	CText        *m_pTxtLevel = nullptr;
+	CText        *m_pTxtOrder = nullptr;
+	CScrollBar   *m_pScrollBar = nullptr;
+	unsigned int m_nDifficultyLevel = 0;		// Difficulty level for BattleFish
+	bool m_bSave = false;						// True if should save theses settings
+	bool m_bUserGoesFirst = false;				// true if Human player goes 1st
 };
 
 } // namespace Battlefish

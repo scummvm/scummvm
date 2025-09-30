@@ -418,16 +418,14 @@ CBFishWindow::CBFishWindow() {
 
 			// seed the random number generator
 			//srand((unsigned)time(nullptr));
+			if (errCode == ERR_NONE) {
+				errCode = LoadMasterSprites();
 
-			errCode = LoadMasterSprites();
-
-			// if we are not playing from the metagame
-			//
-			if (!pGameParams->bPlayingMetagame) {
-
-				// Automatically bring up the main menu
-				//
-				PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
+				// if we are not playing from the metagame
+				if (!pGameParams->bPlayingMetagame) {
+					// Automatically bring up the main menu
+					PostMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
+				}
 			}
 		}
 	}
@@ -1423,7 +1421,7 @@ void CBFishWindow::GameReset() {
 
 			if (m_pFish[i]->GetTypeCode()) {    // need to re-rotate this fish
 				m_pFish[i]->SetTypeCode(false);
-				m_pFish[i]->LoadResourceSprite(pDC, IDB_FISH + i);
+				(void)m_pFish[i]->LoadResourceSprite(pDC, IDB_FISH + i);
 			}
 		}
 
@@ -1567,7 +1565,7 @@ void CBFishWindow::RotateFish(int nFishIndex) {
 				pSprite->EraseSprite(pDC);
 
 				// load new rotated fish
-				pSprite->LoadResourceSprite(pDC, nIDB + nFishIndex);
+				(void)pSprite->LoadResourceSprite(pDC, nIDB + nFishIndex);
 
 				// paint him
 				pSprite->PaintSprite(pDC, point);
@@ -2024,7 +2022,7 @@ void CBFishWindow::OnLButtonUp(unsigned int, CPoint point) {
 				i = (m_bLastRotated ? IDB_FISHROT : IDB_FISH);
 
 				// re-load BMP of fish
-				m_pDragFish->LoadResourceSprite(pDC, i + GetFishIndex(m_pDragFish));
+				(void)m_pDragFish->LoadResourceSprite(pDC, i + GetFishIndex(m_pDragFish));
 
 				// FIX
 				m_pDragFish->SetTypeCode(m_bLastRotated);
@@ -2072,15 +2070,12 @@ bool CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, bool bRotated) {
 			}
 
 			// do not exceed grid boundary
-			//
 			if (nRow < 0 || nRow >= GRID_ROWS || nCol < 0 || nCol >= GRID_COLS) {
 				bOk = false;
 				break;
 			}
-
 			// can't put the new fish into a non-empty square
-			//
-			if ((m_nUserGrid[nRow][nCol] != EMPTY) && (m_nUserGrid[nRow][nCol] != (byte)nID)) {
+			else if ((m_nUserGrid[nRow][nCol] != EMPTY) && (m_nUserGrid[nRow][nCol] != (byte)nID)) {
 				bOk = false;
 				break;
 			}
@@ -2686,7 +2681,7 @@ int CBFishWindow::GetNeighbors(int nRow, int nCol) {
 	//
 	if ((nRow + 1 >= GRID_ROWS) || (m_nUserGrid[nRow + 1][nCol] != (EMPTY | SHOT))) {
 		n++;
-		if (isodd(m_nUserGrid[nRow + 1][nCol]))
+		if ((nRow + 1 < GRID_ROWS) && isodd(m_nUserGrid[nRow + 1][nCol]))
 			n++;
 	}
 
@@ -2695,7 +2690,7 @@ int CBFishWindow::GetNeighbors(int nRow, int nCol) {
 	//
 	if ((nRow - 1 < 0) || (m_nUserGrid[nRow - 1][nCol] != (EMPTY | SHOT))) {
 		n++;
-		if (isodd(m_nUserGrid[nRow - 1][nCol]))
+		if ((nRow - 1 >= 0) && isodd(m_nUserGrid[nRow - 1][nCol]))
 			n++;
 	}
 
@@ -2704,7 +2699,7 @@ int CBFishWindow::GetNeighbors(int nRow, int nCol) {
 	//
 	if ((nCol + 1 >= GRID_COLS) || (m_nUserGrid[nRow][nCol + 1] != (EMPTY | SHOT))) {
 		n++;
-		if (isodd(m_nUserGrid[nRow][nCol + 1]))
+		if ((nCol + 1 < GRID_COLS) && isodd(m_nUserGrid[nRow][nCol + 1]))
 			n++;
 	}
 
@@ -2713,7 +2708,7 @@ int CBFishWindow::GetNeighbors(int nRow, int nCol) {
 	//
 	if ((nCol - 1 < 0) || (m_nUserGrid[nRow][nCol - 1] != (EMPTY | SHOT))) {
 		n++;
-		if (isodd(m_nUserGrid[nRow][nCol - 1]))
+		if ((nCol - 1 >= 0) && isodd(m_nUserGrid[nRow][nCol - 1]))
 			n++;
 	}
 
