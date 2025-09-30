@@ -50,11 +50,9 @@ namespace Archeroids {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-
 	CUserCfgDlg(CWnd *, CPalette *, unsigned int);
 
 protected:
-
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	virtual bool OnInitDialog() override;
 	void PutDlgData();
@@ -68,15 +66,15 @@ protected:
 	//
 	// user preference data
 	//
-	CText       *m_pTxtSpeed;
-	CText       *m_pTxtSpeedSetting;
-	CText       *m_pTxtLevel;
-	CText       *m_pTxtLives;
-	int          m_nInitGameSpeed;
-	int          m_nInitArcherLevel;
-	int          m_nInitNumLives;
-	int          m_nInitNumBadGuys;
-	bool         m_bShouldSave;           // True if we should save theses settings
+	CText       *m_pTxtSpeed = nullptr;
+	CText       *m_pTxtSpeedSetting = nullptr;
+	CText       *m_pTxtLevel = nullptr;
+	CText       *m_pTxtLives = nullptr;
+	int          m_nInitGameSpeed = 0;
+	int          m_nInitArcherLevel = 0;
+	int          m_nInitNumLives = 0;
+	int          m_nInitNumBadGuys = 0;
+	bool         m_bShouldSave = false;           // True if we should save theses settings
 };
 
 } // namespace Archeroids

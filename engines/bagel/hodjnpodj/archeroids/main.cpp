@@ -1451,6 +1451,8 @@ POINT CMainWindow::GetLeftMostBadGuy() {
 	assert(m_pBadGuyList != nullptr);
 
 	ptBest.x = 9999;
+	ptBest.y = 0;
+
 	pList = m_pBadGuyList->getHead();
 	while (pList != nullptr) {
 		ptTmp = ((CSprite *)pList->getData())->GetPosition();
@@ -2787,8 +2789,7 @@ void CMainWindow::DestroyBadGuy(CLList *pList, CDC *pDC) {
 				m_pFXList->Insert(pNewList);
 		}
 
-	} else {
-
+	} else if (pNewSprite) {
 		KillAnimation();
 
 		//
