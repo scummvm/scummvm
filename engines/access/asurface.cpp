@@ -32,9 +32,15 @@ const int TRANSPARENCY = 0;
 SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
+	if (count > 4096)
+		error("Corrupt sprite resource: suspicious number of frames (%d)", count);
 
-	for (int i = 0; i < count; i++)
-		offsets.push_back(res->_stream->readUint32LE());
+	for (int i = 0; i < count; i++) {
+		uint32 offset = res->_stream->readUint32LE();
+		if ((int)offset > res->_size)
+			error("Corrupt sprite resource: offset %d (%d) is past end of file (%d)", i, offset, res->_size);
+		offsets.push_back(offset);
+	}
 	offsets.push_back(res->_size);	// For easier calculations of Noctropolis sizes
 
 	// Build up the frames

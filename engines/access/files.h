@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "graphics/managed_surface.h"
 #include "access/decompress.h"
+#include "access/detection.h"
 
 namespace Access {
 
@@ -39,7 +40,7 @@ struct FileIdent {
 	FileIdent();
 	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
 
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, AccessGameType gameType);
 };
 
 struct CellIdent : FileIdent {

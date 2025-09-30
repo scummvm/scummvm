@@ -19,43 +19,26 @@
  *
  */
 
-#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
-#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_SCRIPTS_H
+#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_SCRIPTS_H
 
-#include "access/access.h"
+#include "access/scripts.h"
 
 namespace Access {
 
 namespace Noctropolis {
 
-class NoctropolisEngine : public AccessEngine {
+class NoctropolisEngine;
+
+class NoctropolisScripts : public Scripts {
 public:
-	NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc);
+	NoctropolisScripts(NoctropolisEngine *vm);
 
-	~NoctropolisEngine();
-
-	void playGame() override;
-	void dead(int deathId) override {};
-	void establish(int esatabIndex, int sub) override {};
-
-	virtual int16 getScreenWidth() const override { return 640; }
-	virtual int16 getScreenHeight() const override { return 400; }
-
-protected:
-	void setupGame() override;
-	void initObjects() override;
-
-private:
-	void doIntro();
-	void doFlashLogo();
-	void doPublisherLogo();
-	void initVariables();
-	
-	Scripts *_invScript;
+	void executeSpecial(int commandIndex, int param1, int param2) override;
 };
 
 } // end namespace Noctropolis
 
 } // end namespace Access
 
-#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_GAME_H
+#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_SCRIPTS_H

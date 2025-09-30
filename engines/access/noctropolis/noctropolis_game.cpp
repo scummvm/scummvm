@@ -21,6 +21,7 @@
 
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
+#include "access/noctropolis/noctropolis_scripts.h"
 #include "image/png.h"
 #include "graphics/color_quantizer.h"
 
@@ -30,15 +31,18 @@ namespace Noctropolis {
 
 
 NoctropolisEngine::NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-AccessEngine(syst, gameDesc)
+AccessEngine(syst, gameDesc), _invScript(nullptr)
 {
 }
 
 NoctropolisEngine::~NoctropolisEngine() {
+	delete _invScript;
 }
 
 void NoctropolisEngine::initObjects() {
 	_room = new NoctropolisRoom(this);
+	_scripts = new NoctropolisScripts(this);
+	_invScript = new NoctropolisScripts(this);
 }
 
 void NoctropolisEngine::setupGame() {
@@ -50,26 +54,74 @@ void NoctropolisEngine::setupGame() {
 		te._flag = false;
 		_timers.push_back(te);
 	}
-	
+}
+
+void NoctropolisEngine::initVariables() {
+	// Set player room and position
+	_player->_roomNumber = 2;
+
+	_invScript->setScript(_files->loadRawFile("INVTEXT.AP"));
+
+	_converseMode = 0;
+	_inventory->_startInvItem = 0;
+	_inventory->_startInvBox = 0;
+	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
+	_player->_playerOff = false;
+	/*
+	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
+	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
+	*/
+	_room->_selectCommand = -1;
+	_events->setNormalCursor(CURSOR_ARROW);
+	_mouseMode = 0;
+	_animation->clearTimers();
 }
 
 void NoctropolisEngine::playGame() {
 	if (_loadSaveSlot == -1) {
+		bool keepGoing = true;
+		Common::CustomEventType action = kActionNone;
 		doFlashLogo();
 		if (shouldQuit())
 			return;
 
-		doPublisherLogo();
+		_events->getAction(action);
+		keepGoing &= (action != kActionSkip);
+		
+		if (keepGoing)
+			doPublisherLogo();
 		if (shouldQuit())
 			return;
 
-		doIntro();
+		_events->getAction(action);
+		keepGoing &= (action != kActionSkip);
+		
+		if (keepGoing)
+			doIntro();
 		if (shouldQuit())
 			return;
-
-		_screen->forceFadeOut();
 	}
 
+	do {
+		_restartFl = false;
+		_screen->clearScreen();
+		_screen->setPanel(0);
+		_screen->forceFadeOut();
+		_events->centerMousePos();
+		_events->showCursor();
+
+		initVariables();
+
+		// If there's a pending savegame to load, load it
+		if (_loadSaveSlot != -1) {
+			loadGameState(_loadSaveSlot);
+			_loadSaveSlot = -1;
+		}
+
+		// Execute the room
+		_room->doRoom();
+	} while (_restartFl);
+	
 }
 
 void NoctropolisEngine::doFlashLogo() {

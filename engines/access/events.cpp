@@ -380,7 +380,7 @@ bool EventsManager::isKeyActionMousePressed() {
 }
 
 void EventsManager::centerMousePos() {
-	_mousePos = Common::Point(160, 100);
+	_mousePos = Common::Point(_vm->getScreenWidth() / 2, _vm->getScreenHeight() / 2);
 }
 
 void EventsManager::restrictMouse() {

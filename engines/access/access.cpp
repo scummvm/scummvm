@@ -208,7 +208,8 @@ void AccessEngine::initialize() {
 
 const SpriteResource *AccessEngine::getIcons() {
 	if (!_icons) {
-		Resource *iconData = _files->loadRawFile("ICONS.LZ");
+		const char *fname = (getGameID() == kGameNoctropolis) ? "ICONS.AP" : "ICONS.LZ";
+		Resource *iconData = _files->loadRawFile(fname);
 		_icons = new SpriteResource(this, iconData);
 		delete iconData;
 	}

@@ -39,6 +39,7 @@ MODULE_OBJS := \
 	noctropolis/noctropolis_game.o \
 	noctropolis/noctropolis_resources.o \
 	noctropolis/noctropolis_room.o \
+	noctropolis/noctropolis_scripts.o \
 	martian/midiparser_bemd.o \
 	video/movie_decoder.o
 
