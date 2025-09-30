@@ -33,10 +33,7 @@ typedef struct ImGuiImage {
 typedef struct ImGuiState {
 	bool _showWorld = false;
 
-	Common::HashMap<Common::String, ImGuiImage> _frames;
-
-	Common::Path _fileToDisplay;
-	Common::String _objectToDisplay;
+	Common::HashMap<Common::String, ImGuiImage> _images;
 
 	ImGuiTextFilter _nameFilter;
 

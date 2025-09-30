@@ -32,6 +32,7 @@
 
 #include "wage/wage.h"
 #include "wage/dt-internal.h"
+#include "wage/design.h"
 #include "wage/script.h"
 #include "wage/sound.h"
 #include "wage/world.h"
@@ -40,25 +41,23 @@ namespace Wage {
 
 ImGuiState *_state = nullptr;
 
-ImGuiImage getImageID(Common::Path filename, int frameNum) {
-	Common::String key = Common::String::format("%s:%d", filename.toString().c_str(), frameNum);
+ImGuiImage getImageID(Designed *d, const char *type) {
+	Common::String key = Common::String::format("%s:%s", d->_name.c_str(), type);
 
-	if (_state->_frames.contains(key))
-		return _state->_frames[key];
+	if (_state->_images.contains(key))
+		return _state->_images[key];
 
-	int sx = 10, sy = 10;
-	Graphics::ManagedSurface *surface = nullptr;
+	int sx = d->_design->getBounds()->width(), sy = d->_design->getBounds()->height();
+	Graphics::ManagedSurface surface(sx, sy);
 
-	if (surface)
-		_state->_frames[key] = { (ImTextureID)g_system->getImGuiTexture(*surface->surfacePtr()), sx, sy };
+	d->_design->paint(&surface, *g_wage->_world->_patterns, 0, 0);
 
-	delete surface;
+	_state->_images[key] = { (ImTextureID)g_system->getImGuiTexture(*surface.surfacePtr()), sx, sy };
 
-	return _state->_frames[key];
+	return _state->_images[key];
 }
 
-#if 0
-void showImage(const ImGuiImage &image, const char *name, float scale) {
+void showImage(const ImGuiImage &image, float scale) {
 	ImVec2 size = { (float)image.width * scale, (float)image.height * scale };
 
 	ImGui::BeginGroup();
@@ -67,9 +66,9 @@ void showImage(const ImGuiImage &image, const char *name, float scale) {
 
 	ImGui::Image(image.id, size);
 	ImGui::EndGroup();
-	//setToolTipImage(image, name);
 }
 
+#if 0
 static void displayTGA() {
 	ImGuiImage imgID;
 
@@ -214,7 +213,9 @@ static void showWorld() {
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					ImGui::Text("Object design");
+					//ImGuiImage imgID = getImageID(g_wage->_world->_orderedObjs[_state->_selectedObj], "obj");
+
+					//showImage(imgID, 1.0);
 
 					ImGui::EndChild();
 				}
