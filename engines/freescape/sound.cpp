@@ -231,9 +231,9 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 	//assert(0);
 }
 
-void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetTable) {
+void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetTable, int numberSounds) {
 	debugC(1, kFreescapeDebugParser, "Reading PC speaker sound table for DOS");
-	for (int i = 1; i <= 20; i++) {
+	for (int i = 1; i <= numberSounds; i++) {
 		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
 		int soundIdx = (i - 1) * 4;
 		file->seek(offsetFreq + soundIdx);

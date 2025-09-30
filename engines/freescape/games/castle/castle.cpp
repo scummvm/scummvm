@@ -40,7 +40,11 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 		error("Failed to parse bool from rock_travel option");
 
 	_soundIndexStart = 9;
-	_soundIndexAreaChange = 5;
+	_soundIndexAreaChange = 24;
+	_soundIndexCollide = 4;
+	_soundIndexStepUp = 5;
+	_soundIndexStepDown = 6;
+
 	k8bitVariableShield = 29;
 
 	if (isDOS())

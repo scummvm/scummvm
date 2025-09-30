@@ -69,7 +69,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
 
-		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200);
+		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200, 20);
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadMessagesFixedSize(&file, 0x993f - 2, 308, 5);
 		loadFonts(&file, 0xa598);
@@ -98,7 +98,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEC.EXE");
 
-		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200);
+		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200, 20);
 		loadFonts(&file, 0x8907);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadMessagesFixedSize(&file, 0x7c3a, 308, 5);
@@ -126,7 +126,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
 
-		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200);
+		loadSpeakerFxDOS(&file, 0x4837 + 0x200, 0x46e8 + 0x200, 20);
 		loadFonts(&file, 0xa113);
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadGlobalObjects(&file, 0x3d04, 23);
@@ -154,7 +154,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEC.EXE");
 
-		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200);
+		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200, 20);
 		loadFonts(&file, 0x8497);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadGlobalObjects(&file, 0x2554, 23);

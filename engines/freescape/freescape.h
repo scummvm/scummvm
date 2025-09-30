@@ -487,7 +487,7 @@ public:
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;
-	void loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration);
+	void loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);
 	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
 

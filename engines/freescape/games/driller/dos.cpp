@@ -233,7 +233,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DRILLE.EXE");
 
-		loadSpeakerFxDOS(&file, 0x4397 + 0x200, 0x4324 + 0x200);
+		loadSpeakerFxDOS(&file, 0x4397 + 0x200, 0x4324 + 0x200, 20);
 		loadMessagesFixedSize(&file, 0x4135, 14, 20);
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42, 8);
@@ -258,7 +258,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DRILLC.EXE");
 
-		loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
+		loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200, 20);
 
 		loadFonts(&file, 0x07a4a);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
@@ -279,7 +279,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DRILLH.EXE");
 
-		//loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
+		//loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200, 20);
 
 		loadFonts(&file, 0x8871);
 		loadMessagesFixedSize(&file, 0x3411, 14, 20);
