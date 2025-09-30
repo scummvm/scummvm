@@ -2307,7 +2307,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 					obj.fld_4 = 0;
 			}
 
-			if (!pobj || ((obj.fld_5 <= pobjF5) && FUN_00409600(&obj, actPos))) {
+			if ((!pobj || obj.fld_5 <= pobjF5) && FUN_00409600(&obj, actPos)) {
 				actT = tp;
 				pobjF5 = obj.fld_5;
 				pobj = &obj;
