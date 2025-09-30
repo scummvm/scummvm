@@ -97,7 +97,7 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
 
-	Graphics::PixelFormat pixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat pixelFormat = getPixelFormat();
 	initGraphics(width, height, &pixelFormat);
 	if (g_system->getScreenFormat() != pixelFormat) {
 		warning("Couldn't setup GFX-backend for %dx%dx%d", width, height, pixelFormat.bytesPerPixel * 8);
