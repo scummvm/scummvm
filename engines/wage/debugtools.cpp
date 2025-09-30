@@ -166,14 +166,58 @@ static void showWorld() {
 	if (!_state->_showWorld)
 		return;
 
-	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
+	// Calculate the viewport size
+	ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
 
-	if (ImGui::Begin("Scene Objects", &_state->_showWorld)) {
+	// Calculate the window size
+	ImVec2 windowSize = ImVec2(
+		viewportSize.x * 0.9f,
+		viewportSize.y * 0.9f
+	);
+
+	// Calculate the centered position
+	ImVec2 centeredPosition = ImVec2(
+		(viewportSize.x - windowSize.x) * 0.5f,
+		(viewportSize.y - windowSize.y) * 0.5f
+	);
+
+	// Set the next window position and size
+	ImGui::SetNextWindowPos(centeredPosition, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("World", &_state->_showWorld)) {
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Scenes")) {
-				ImGui::Text("This is the Avocado tab!\nblah blah blah blah blah");
+
+				{ // Left pane
+					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
+
+					if (ImGui::BeginListBox("##listbox scenes", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
+						for (int n = 0; n < g_wage->_world->_orderedScenes.size(); n++) {
+							const bool is_selected = (_state->_selectedScene == n);
+							if (ImGui::Selectable(g_wage->_world->_orderedScenes[n]->_name.c_str(), is_selected))
+								_state->_selectedScene = n;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
+
+					ImGui::EndChild();
+				}
+
+				{ // Right pane
+					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+					ImGui::Text("Resource");
+
+					ImGui::EndChild();
+				}
+
 				ImGui::EndTabItem();
 			}
 			if (ImGui::BeginTabItem("Objects")) {

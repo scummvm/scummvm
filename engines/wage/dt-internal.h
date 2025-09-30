@@ -40,8 +40,7 @@ typedef struct ImGuiState {
 
 	ImGuiTextFilter _nameFilter;
 
-
-	int _displayMode = -1;
+	int _selectedScene = -1;
 } ImGuiState;
 
 extern ImGuiState *_state;
