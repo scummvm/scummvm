@@ -141,7 +141,6 @@ int TotEngine::engineStart() {
 	} else if (_continueGame && !shouldQuit()) {
 		resumeGame();
 	}
-
 	return startGame();
 }
 
@@ -401,6 +400,9 @@ void TotEngine::processEvents(bool &escapePressed) {
 }
 
 int TotEngine::startGame() {
+	if(shouldQuit()) {
+		return 0;
+	}
 	_sound->fadeOutMusic();
 	switch (_gamePart) {
 	case 1:
@@ -1272,7 +1274,7 @@ void TotEngine::mainMenu(bool fade) {
 
 void exitGame() {
 	g_engine->_graphics->clear();
-	g_system->quit();
+	g_engine->quitGame();
 }
 
 void TotEngine::clearGame() {
@@ -1309,25 +1311,20 @@ void TotEngine::exitToDOS() {
 		if (_events->_escKeyFl) {
 			exitChar = '\33';
 		} else if (_events->_gameKey == KEY_YES) {
-			debug("would exit game now");
-			free(dialogBackground);
 			exitGame();
 		} else if (_events->_gameKey == KEY_NO) {
 			exitChar = '\33';
 		}
-
-		if (_events->_leftMouseButton) {
+		else if (_events->_leftMouseButton) {
 			uint x = g_engine->_mouse->mouseClickX;
 			if (x < 145) {
-				free(dialogBackground);
-				g_system->quit();
+				exitGame();
 			} else if (x > 160) {
 				exitChar = '\33';
 			}
 		}
 		_screen->update();
 	} while (exitChar != '\33' && !shouldQuit());
-	debug("finished exitToDos");
 	_graphics->putImg(58, 48, dialogBackground);
 	_mouse->mouseX = oldMousePosX;
 	_mouse->mouseY = oldMousePosY;
