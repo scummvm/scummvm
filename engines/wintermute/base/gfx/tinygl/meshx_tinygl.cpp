@@ -108,7 +108,6 @@ bool XMeshTinyGL::render(XModel *model) {
 			static_cast<BaseSurfaceTinyGL *>(mat->getSurface())->setTexture();
 			tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 			tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR_MIPMAP_LINEAR);
-			//tglGenerateMipmap(TGL_TEXTURE_2D);
 		} else {
 			tglBindTexture(TGL_TEXTURE_2D, 0);
 			tglDisable(TGL_TEXTURE_2D);
