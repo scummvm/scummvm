@@ -86,16 +86,16 @@ public:
 	        CPalette *xpPalette = nullptr, unsigned int nID = IDD_MNK_USER) ;
 	~CMnkUsr();     // destructor
 
-	CPalette *m_xpGamePalette ;
+	CPalette *m_xpGamePalette = nullptr;
 
-	CScrollBar *m_xpUScrShell, *m_xpUScrStrength ;
+	CScrollBar *m_xpUScrShell = nullptr, *m_xpUScrStrength = nullptr;
 	void UpdateScrollbars();
 
 // Dialog Data
 	//{{AFX_DATA(CMnkUsr)
 	enum { IDD = IDD_MNK_USER };
-	int     m_iUShells;
-	int     m_iUStrength;
+	int     m_iUShells = 0;
+	int     m_iUStrength = 0;
 	CString mLevelTable [NUM_LEVELS];
 	//}}AFX_DATA
 

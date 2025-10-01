@@ -485,12 +485,12 @@ bool CMnk::WriteTableFile() {
 	if (ws) {
 		Common::Serializer s(nullptr, ws);
 		m_lpCMnkData->m_cFileHeader.sync(s);
+		ws->finalize();
 	} else {
 		// Can't create file
 		iError = 100;
 	}
 
-	ws->finalize();
 	delete ws;
 
 	JXELEAVE(CMnk::WriteTableFile) ;
@@ -865,11 +865,7 @@ bool CMnk::Minimax(CMove * xpcMove, int iDepth)
 					iValue += (cMove.m_iNumStones[cMove.m_iPlayer][iP + 2]
 					           - cMove.m_iNumStones
 					           [OTHERPLAYER(cMove.m_iPlayer)][iP + 2]) / 2 ;
-				bDone = true ;
 			}
-
-//      if (!bDone)
-//      StaticEvaluation(&cMove) ;  // do static analysis
 
 			iValue += cMove.m_iNumStones[cMove.m_iPlayer][HOMEINDEX + 2]
 			          - cMove.m_iNumStones[OTHERPLAYER(cMove.m_iPlayer)]
@@ -1575,8 +1571,9 @@ int CMnk::ExtendedStaticEvaluation(MOVE *pMove, MOVE *pParentMove,  signed char 
 
 			for (j = iStopPit; j < iPit; j++, pMove->iNumRocks[j]++);        //executed only if StopPit<jPit i.e. if NoWrapAround.
 
-			if (bWrapsAroundBehind) for (j = iStopPit; j < NUMPITS; j++, pMove->iNumRocks[j]++) ;
-
+			if (bWrapsAroundBehind)
+				for (j = iStopPit; j < NUMPITS; j++, pMove->iNumRocks[j]++) {
+				}
 
 			iNextID = ((iPit == (NUMPITS - 1)) && !iFreeTurn) ? -1 : (pMove->cMoveID + 1);  //returns the Next ID.
 			if (iNextID == -1) return -1;
@@ -1590,64 +1587,6 @@ int CMnk::ExtendedStaticEvaluation(MOVE *pMove, MOVE *pParentMove,  signed char 
 
 	RETURN(iError != 0) ;
 }
-/*
-
-#define FREE    (0x01<<4)
-#define CAPTURE (0x02<<4)
-#define THREAT  (0x03<<4)
-#define NEITHER (0x00<<4)
-#define F FREE
-#define C   CAPTURE
-#define T   THREAT
-#define N   NEITHER
-#define MAKEWORD(L, H)          ((L)||(H<<8))
-#define CreateMoveChainWord(Gain, Flag, Pit)    (MAKEWORD((Flag) ||(Pit), Gain))
-
-uint16 Type(byte pit, CONFIG* pStoneCfg){
-
-//returns F/C/T/N in the lowbyte    and the amount of gain/save in the high byte.
-}
-
-bool CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMoveChain){
-    static bool bLocked;
-    byte Pit;
-
-    for(Pit=0; Pit<NUMPITS; Pit++){
-        switch(LOBYTE(u=Type(iPit, pStoneConfig))){
-            case FREE:
-                _wordstrcat(pwMoveChain,CreateMoveChainWord(0x01,F, Pit));
-                LookAheadEvaluation(pStoneConfig, iPlayer, pwMoveChain);
-                break;
-            case CAPTURE:
-                _wordstrcat(pwMoveChain,CreateMoveChainWord(HIBYTE(u),C, Pit));
-                len= _wordstrlen(pwMoveChain);
-                bLocked[m_iChainID++]=true;
-                ptmpMoveChain=pwMoveChain;
-                pwMoveChain=m_pwMoveChainList[m_iChainID];
-                _wordstrcpy(pwMoveChain, StepBackwards(ptmpMoveChain));
-                LookAheadEvaluation(pStoneConfig,iPlayer, pwMoveChain);
-                break;
-            default:
-            case NEITHER:
-                break;
-        }
-    }
-}
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
 
 //* CMnk::CountStones -- count total stones in configuration
 bool CMnk::CountStones(CMove * xpcMove)
