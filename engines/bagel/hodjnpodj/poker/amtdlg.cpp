@@ -296,17 +296,11 @@ void CSetAmountDlg::OnPaint() {
 		break;
 	}
 
-	pSetAmountSB = new CScrollBar;
 	pSetAmountSB = (CScrollBar *)GetDlgItem(IDC_SETAMT_BAR);
 	pSetAmountSB->SetScrollRange(AMOUNTMIN, AMOUNTMAX, true);
 	pSetAmountSB->SetScrollPos(nScrollPos, true);
 
-	if (pSetAmountSB != nullptr) {
-		pSetAmountSB = nullptr;
-	}
-
 	ReleaseDC(pDC);
-	return;
 }
 
 /*****************************************************************

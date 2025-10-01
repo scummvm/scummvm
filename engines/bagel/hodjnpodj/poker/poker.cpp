@@ -1171,8 +1171,9 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			Sleep(BOOM_SLEEP);
 			i++;
 		}
-		if (pSprite != nullptr)
-			delete pSprite;
+
+		delete pSprite;
+
 	} else if (rPencil.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled)  {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
@@ -1399,12 +1400,9 @@ void CMainPokerWindow::CheckWinningHand() {
 	//when looking for a pair, two pair, .. four of a kind
 	int     nIndex, nLoop;      // looping variables
 	int     nCard = 0;          // card in a pair, used to tell if a pair is Jacks or higher
-	CRect   *pPotRect;  // a pointer to the rect of screen coordinates
+	CRect   potRect;  // a rect of screen coordinates
 	// that contain the pot and user amounts
 	CUserWonDlg dlgWon((CWnd *)this, pGamePalette);
-
-
-	pPotRect = new CRect;
 
 // find out what cards are currently shown
 	for (nLoop = 0; nLoop < 5; nLoop++) {
@@ -1448,9 +1446,8 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1472,9 +1469,8 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1512,9 +1508,8 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1534,9 +1529,8 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1556,13 +1550,14 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
-		} else
+		} else {
 			m_lUserAmount += m_lUserBet * m_nPayOffThreeofaKind;
+		}
+
 		return;
 	}
 	if (nPairMatch == 2) {
@@ -1578,9 +1573,9 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
+			
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1609,9 +1604,9 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
-				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, true);
-				delete pPotRect;
+				potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+				InvalidateRect(&potRect, true);
+				
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
 			} else
@@ -1637,9 +1632,9 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
-				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, true);
-				delete pPotRect;
+				potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+				InvalidateRect(&potRect, true);
+				
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
 			} else
@@ -1664,9 +1659,9 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 			if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 				m_lUserAmount = 2147483647;
-				pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-				InvalidateRect(pPotRect, true);
-				delete pPotRect;
+				potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+				InvalidateRect(&potRect, true);
+				
 				MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 				m_lUserAmount = 0L;
 			} else
@@ -1708,9 +1703,9 @@ void CMainPokerWindow::CheckWinningHand() {
 //	Check for overflow, if so then the user broken the bank, reset to zero
 		if (m_lUserAmount > m_lUserAmount + m_lUserBet * m_nPayOffRoyalFlush) {
 			m_lUserAmount = 2147483647;
-			pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-			InvalidateRect(pPotRect, true);
-			delete pPotRect;
+			potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+			InvalidateRect(&potRect, true);
+			
 			MessageBox("Congratulations! You just broke the bank", "YOU WIN!", MB_OK);
 			m_lUserAmount = 0L;
 		} else
@@ -1724,7 +1719,7 @@ void CMainPokerWindow::CheckWinningHand() {
 	dlgWon.DoModal();
 
 	sndPlaySound(nullptr, 0);
-	delete pPotRect;
+	
 
 	return;
 }
@@ -1755,10 +1750,8 @@ void CMainPokerWindow::CheckWinningHand() {
  *
  ****************************************************************/
 void CMainPokerWindow::SetBet(long lBet) {
-	CRect   *pPotRect;  // a pointer to the rect of screen coordinates
+	CRect   potRect;  // a pointer to the rect of screen coordinates
 	// that contain the pot and user amounts
-
-	pPotRect = new CRect;
 
 // if lBet = 0, then reset the bet to zero
 	if (lBet == 0) {
@@ -1787,9 +1780,9 @@ void CMainPokerWindow::SetBet(long lBet) {
 	}
 
 // redraw the pot and user amounts
-	pPotRect->SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
-	InvalidateRect(pPotRect, true);
-	delete pPotRect;
+	potRect.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + 137, POT_AMOUNT_Y + 101);
+	InvalidateRect(&potRect, true);
+	
 
 // adjust the bet buttons
 	EnableBets();
@@ -2374,10 +2367,9 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 		(*pSprite).PaintSprite(pDC, nXLoc, nYLoc);
 		Sleep(nSleep);
 	}
-	if (pSprite != nullptr)
-		delete pSprite;
 
-} // end PlayEasterEgg
+	delete pSprite;
+}
 
 } // namespace Poker
 } // namespace HodjNPodj
