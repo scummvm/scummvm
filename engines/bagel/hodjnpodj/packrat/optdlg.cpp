@@ -279,9 +279,6 @@ void CPackRatOptDlg::OnPaint() {
 
 	ReleaseDC(pDC);
 
-	pLevel = new CScrollBar;
-	pLives = new CScrollBar;
-
 	pLevel = (CScrollBar *)GetDlgItem(IDC_GAMELEVEL);
 	pLives = (CScrollBar *)GetDlgItem(IDC_NUMBEROFLIVES);
 
@@ -289,14 +286,6 @@ void CPackRatOptDlg::OnPaint() {
 	pLives->SetScrollRange(LIVESMIN, LIVESMAX, true);
 	pLevel->SetScrollPos(m_nLevel, true);
 	pLives->SetScrollPos(m_nLives, true);
-
-	if (pLevel != nullptr) {
-		pLevel = nullptr;
-	}
-	if (pLevel != nullptr) {
-		pLives = nullptr;
-	}
-	return;
 }
 
 /*****************************************************************

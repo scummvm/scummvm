@@ -39,8 +39,8 @@ namespace Packrat {
 //////////////////////////////////////////////////////////////////////////////
 class CPackRatOptDlg : public CBmpDialog {
 private:
-	int     m_nLives;
-	int     m_nLevel;
+	int     m_nLives = 0;
+	int     m_nLevel = 0;
 	CRect   rectDisplayLevel;
 	CRect   rectDisplayLives;
 
@@ -67,9 +67,9 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 class CMsgDlg : public CBmpDialog {
 private:
-	int     m_nWhichMsg;
-	long    m_lCurrentScore;
-	int     m_nLevel;
+	int     m_nWhichMsg = 0;
+	long    m_lCurrentScore = 0;
+	int     m_nLevel = 0;
 
 public:
 	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_MESSAGEBOX);

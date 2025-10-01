@@ -411,7 +411,6 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	Create(WndClass, "Boffo Games -- Packrat", WS_POPUP, MainRect, nullptr, 0);
 
 	pDC = GetDC();
-	pTempBMP = new CBitmap();
 	pTempBMP = FetchBitmap(pDC, &pGamePalette, MAZE1);
 
 	bTestBmp = CSprite::SetBackdrop(pDC, pGamePalette, pTempBMP);
@@ -543,7 +542,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		pPlayerDownSprite->SetMobile(true);
 		pPlayerDownSprite->SetOptimizeSpeed(true);
 	}
-	pPlayerSprite = new CSprite;
+
 	pPlayerSprite = pPlayerUpSprite->DuplicateSprite(pDC);
 	pPlayerSprite->LinkSprite();
 
@@ -876,8 +875,6 @@ void CMainPackRatWindow::SetMaze() {
 
 	pOldPal = pDC->SelectPalette(pGamePalette, false);
 	pDC->RealizePalette();
-
-	pTempBmp = new CBitmap();
 
 	switch (m_nMaze) {
 	case 2:
@@ -1753,7 +1750,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			if (m_anMazeArray[m_ptCurrPLocInGrid.x - 1 + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] != WALL) {
 
 				if (nOldDir != m_nPDirection) {
-					pTempSprite = new CSprite;
 					pTempSprite = pPlayerLeftSprite->DuplicateSprite(pDC);
 				}
 				m_ptCurrentPPos.x = (m_ptCurrPLocInGrid.x * MOVEPLAYER) + MAZELEFT;
@@ -1852,8 +1848,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 
 	pPlayerSprite->PaintSprite(pDC, m_ptCurrentPPos);
 
-	pTempSprite = nullptr;
-
 //	m_anMazeArray[m_ptCurrPLocInGrid.x + ( m_ptCurrPLocInGrid.y * NUMBEROFCOLS )]=0;
 
 	for (nWhichBadGuy = 0; nWhichBadGuy < 4; nWhichBadGuy++) {
@@ -1935,11 +1929,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 
 	if (m_nNumberOfObjectsLeft == 0)
 		m_nNumberOfObjectsLeft--;
-
-	if (pTempSprite != nullptr) {
-		delete pTempSprite;
-		pTempSprite = nullptr;
-	}
 
 	if (pDC != nullptr) {
 		ReleaseDC(pDC);
@@ -3060,14 +3049,10 @@ void CMainPackRatWindow::OnTimer(uintptr nWhichTimer) {
  ****************************************************************/
 void CMainPackRatWindow::MainLoop() {
 	int         nLoop1;
-	CSprite     *pTempSprite = nullptr;
-//long      lOldScore = 0;
 	int         nLoop2;
 	CDC         *pDC = nullptr;
 	POINT       ptLive;
 	bool        bRedrawLives = false;
-
-	pTempSprite = new CSprite;
 
 	(*this).SetFocus();
 	while (bEndGame == false) {
@@ -3080,11 +3065,6 @@ void CMainPackRatWindow::MainLoop() {
 				else
 					bFlashTurtle = false;
 			} else {
-				if (pTempSprite != nullptr) {
-					pTempSprite = nullptr;
-					delete pTempSprite;
-				}
-
 				if (nEatTurtle > 0)  {
 					nNumOfBGKilled = 0;
 					bChangeTurtle = true;
@@ -3194,7 +3174,6 @@ void CMainPackRatWindow::MainLoop() {
 						}
 					}
 					ReleaseDC(pDC);
-					pDC = nullptr;
 				}
 			}
 
