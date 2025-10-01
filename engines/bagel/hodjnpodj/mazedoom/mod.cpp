@@ -1645,7 +1645,7 @@ void create_maze() {           /* create a maze layout given the intiialized maz
 
 
 int choose_door() {                    /* pick a new path */
-	int candidates[3];
+	int candidates[4];
 	int num_candidates;
 
 	num_candidates = 0;
