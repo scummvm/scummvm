@@ -1478,31 +1478,7 @@ cleanup:
 */
 
 bool  CMnk::TreeAlgo(CMove *xpcMove) {
-	MOVE* pMoveArr[MAXMOVES],
-	      *pOrigMove;
-	HGLOBAL hMoveArr[MAXMOVES];
-//	char cFinalID;
-	short int   j,
-	      k;
-
-	for (j = 0; j < MAXMOVES; j++) {
-		if (!(hMoveArr[j] = GlobalAlloc(GHND, sizeof(MOVE))))
-			for (k = 0; k < j; k++) {
-				GlobalFree(hMoveArr[k]);
-			}
-		return true;          //for error.
-	}
-
-	pMoveArr[0] = (MOVE*) GlobalLock(hMoveArr[0]);
-
-	memcpy(&(pMoveArr[0]->iNumRocks[0]), &(xpcMove->m_iNumStones[0][2]), NUMPITS * sizeof(int));
-	pMoveArr[0]->iRocksInHomeBin = xpcMove->m_iNumStones[0][1];
-
-	pOrigMove = pMoveArr[0];
-
-	ExtendedStaticEvaluation(pMoveArr[0], pOrigMove, 0, 0);
-	return false;
-
+	return true;
 }
 
 
