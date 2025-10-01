@@ -412,6 +412,8 @@ protected:
 
 	void executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, SomeAction *act, int32 scriptAddr);
 
+	void FUN_00402a68(const byte *d);
+
 	void FUN_0040283c(int id, int pos, const byte *data);
 
 	void FUN_00402654(int mode, int id, int pos);
