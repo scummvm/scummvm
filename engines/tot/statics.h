@@ -788,7 +788,7 @@ static const char *const fullScreenMessages[2][59] = {
     "           If you fail... ETERNAL DEATH!!!",
     // 43
     "                   You did it!",
-    "               I""M FREEEEEEEEEEE!!!",
+    "               I'M FREEEEEEEEEEE!!!",
     // WC
     // 45
     "... MMPFFFF!! ...",
@@ -1136,10 +1136,10 @@ static const char *const hardcodedTexts_EN[] = {
     "LIGHT BULB",
     "NICHE",
     "DIVINE STATUE",
-    "POTTER""S HANDBOOK",
+    "POTTER'S HANDBOOK",
     "GROTESQUE STATUE",
     "WALL",
-    "POTTER""S WHEEL",
+    "POTTER'S WHEEL",
     "FREE",
 	"AVAILABLE",
 	"Search in row %d and column %d"
