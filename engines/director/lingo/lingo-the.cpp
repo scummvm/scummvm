@@ -146,6 +146,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheRollOver,			"rollOver",			false, 500, true },	//				D5 f, undocumented
 	{ kTheRomanLingo,		"romanLingo",		false, 300, false },//		D3.1 p
 	{ kTheRunMode, 			"runMode",			false, 500, false },//				D5 f, documented in D6
+	{ kTheSafePlayer,		"safePlayer",		false, 600, false },//					D6 p, documented in D7
 	{ kTheScore,			"score",			false, 500, false },//				D5 p
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//		D4 f
@@ -185,7 +186,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheVideoForWindowsPresent,"videoForWindowsPresent",false, 400, true },//	D4 f
 	{ kTheWindow,			"window",			true,  400, false },//			D4
 	{ kTheWindowList,		"windowList",		false, 400, false },//			D4 p
-	{ kTheXtras,			"xtras",			false, 500, false },//			D4 p
+	{ kTheXtras,			"xtras",			false, 500, false },//				D5 p
 	{ kTheNOEntity, nullptr, false, 0, false }
 };
 

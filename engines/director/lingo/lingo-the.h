@@ -130,6 +130,7 @@ enum TheEntityType {
 	kTheRollOver,
 	kTheRomanLingo,
 	kTheRunMode,
+	kTheSafePlayer,
 	kTheScore,
 	kTheScummvmVersion,			// set the Director version via lingo in tests
 	kTheSearchCurrentFolder,

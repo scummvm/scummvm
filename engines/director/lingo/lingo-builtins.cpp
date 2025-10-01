@@ -83,7 +83,7 @@ static const BuiltinProto builtins[] = {
 	{ "append",			LB::b_append,		2, 2, 400, HBLTIN_LIST },	//			D4 h
 	{ "count",			LB::b_count,		1, 1, 400, FBLTIN_LIST },	//			D4 f
 	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN_LIST },	//			D4 h
-	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN_LIST },	//			D4 h, undocumented?
+	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN_LIST },	//			D4 h, documented in D5
 	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN_LIST },	//			D4 h
 	{ "duplicate",		LB::b_duplicateList,1, 1, 500, FBLTIN_LIST },	//				D5 f
 	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN_LIST },	//			D4 f
@@ -243,12 +243,12 @@ static const BuiltinProto builtins[] = {
 	{ "windowPresent",	LB::b_windowPresent,1, 1, 500, FBLTIN },	//				D5 f
 	// Field operations
 	{ "charPosToLoc",	LB::b_charPosToLoc, 2, 2, 500, FBLTIN },	//				D5 f
+	{ "lineHeight",		LB::b_lineHeight,   2, 2, 500, FBLTIN },	//				D5 f
 	{ "linePosToLocV",	LB::b_linePosToLocV,2, 2, 500, FBLTIN },	//				D5 f
 	{ "locToCharPos",	LB::b_locToCharPos, 2, 2, 500, FBLTIN },	//				D5 f
 	{ "locVToLinePos",	LB::b_locVToLinePos, 2, 2, 500, FBLTIN },	//				D5 f
 	{ "scrollByLine",	LB::b_scrollByLine, 2, 2, 500, CBLTIN },	//				D5 c
 	{ "scrollByPage",	LB::b_scrollByPage, 2, 2, 500, CBLTIN },	//				D5 c
-	{ "lineHeight",		LB::b_lineHeight,   2, 2, 500, FBLTIN },	//				D5 f
 	// Chunk operations
 	{ "numberOfChars",	LB::b_numberofchars,1, 1, 300, FBLTIN },	//			D3 f
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, 300, FBLTIN },	//			D3 f
@@ -270,6 +270,138 @@ static const BuiltinProto builtins[] = {
 
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
+
+/* These are related to Director Serrvices API, used by Xtras
+   to talk to Director. Unused in ScummVM. Leaving here for reference.
+
+   Media Info:
+   composite			//	D5
+   editableMedia		//			D7
+   image				//	D5
+   palette				//	D5
+   sound				//	D5
+   score				//	D5
+   scriptStyles			//		D6
+   text					//	D5
+   textSyles			//	D5
+
+   Media Format:
+   macColorTable		//	D5
+   macGWorld			//	D5
+   macPICT				//	D5
+   macSnd				//	D5
+   macTEStyles			//	D5
+   moaHandle			//	D5
+   moaPixels			//	D5
+   moaSound				//	D5
+   moaTEStyles			//	D5
+   winDIB				//	D5
+   winPALETTE			//	D5
+   winPICT				//	D5
+   winWAVE				//	D5
+
+   Frame properties:
+   palette				//	D5
+   paletteFrames		//	D5
+   paletteOverTime		//	D5
+   paletteRef			//	D5
+   paletteSpeed			//	D5
+   paletteTransitionType//	D5
+   script				//	D5
+   tempo				//	D5
+   transition			//	D5
+   waitClick			//	D5
+   waitDigitalVideo		//	D5
+   waitSeconds			//	D5
+   waitSound			//	D5
+
+   Palette properties:
+   fadeToBlack			//	D5
+   fadeToWhite			//	D5
+   normal				//	D5
+
+   Sound properties:
+   member				//	D5
+   scoreColor			//	D5
+
+   Sprite properties:
+   member				//	D5
+   scoreColor			//	D5
+   script				//	D5
+   scriptNum			//	D5
+   size					//	D5
+   loc					//	D5
+   foreColor			//	D5
+   color				//	D5
+   backColor			//	D5
+   bgColor				//			D7
+   ink					//	D5
+   trails				//	D5
+   moveableSprite		//	D5
+   editableText			//	D5
+   blend				//	D5
+   stretch				//	D5
+   tweened				//		D6
+
+   General properties:
+   authorMode			//	D5
+   folderName			//	D5
+   maxMember			//	D5
+   minMember			//	D5
+   memberCount			//	D5
+   modified				//	D5
+   name					//	D5
+   pathName				//	D5
+   preloadMode			//				D8
+   selectiomn			//	D5
+   soundDevice			//			D7
+   version				//	D5
+
+   Movie properties:
+   active3dRenderer		//				D8.5
+   activeCast			//	D5
+   activeCastLib		//	D5
+   bgStageColor			//			D7
+   castCount			//	D5
+   createName			//	D5
+   defaultColorDepth	//	D5
+   defaultPalette		//	D5
+   defaultStageRect		//	D5
+   editShortcutsEnabled	//				D8
+   enableFlashLingo		//				D8.5
+   enableInkmodeLimitations//			D8
+   frame				//	D5
+   instance				//	D5
+   lastChannel			//			D7
+   modified				//	D5
+   modifyName			//	D5
+   movieAboutInfo		//			D7
+   movieCopyrightInfo	//			D7
+   movieFileVersion		//				D8
+   movieImageCompression//				D8
+   movieImageQuality	//				D8
+   name					//	D5
+   okToQueryKeyboard	//				D8.5
+   pathName				//	D5
+   playing				//	D5
+   preferred3dRenderer	//				D8.5
+   remapPalettes		//	D5
+   scriptExecutionStyle	//					D10
+   safePlayer			//		D6
+   scoreSelection		//	D5
+   stageColor			//	D5
+   tempo				//	D5
+   tempoScaleFactor		//			D7
+   urlAdmin				//			D7
+   version				//	D5
+
+   Time Frame Prop:
+   label				//	D5
+   palette				//	D5
+   script				//	D5
+   tempo				//	D5
+   transition			//	D5
+*/
 
 void Lingo::initBuiltIns() {
 	initBuiltIns(builtins);
