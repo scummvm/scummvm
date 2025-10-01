@@ -966,6 +966,14 @@ void Room::runRoomObjects() {
 					advanceLocAnimFrame(roomObjIdx);
 				}
 				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum)._frameNo[_locObjFrame[roomObjIdx]];
+				// TODO add more sfx here.
+				if (_roomNumber == 7 && g_engine->_animation->_frameAdvanced) {
+					if (spriteNum == 0) {
+						g_engine->playSound(43, 5, 0);
+					} else if (spriteNum == 5) {
+						g_engine->playSound(44, 5, 0);
+					}
+				}
 			}
 
 			if (_roomNumber == 16 && g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_otherNspAnimationType_maybe == 35) {
@@ -1369,8 +1377,10 @@ void Room::drawTrunk() {
 void Room::advanceLocAnimFrame(int roomObjIdx) {
 	const Obt &anim = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum);
 	g_engine->_animation->_objRestarted = false;
+	g_engine->_animation->_frameAdvanced = false;
 	_locObjFrameTimer[roomObjIdx]--;
 	if (_locObjFrameTimer[roomObjIdx] < 1) {
+		g_engine->_animation->_frameAdvanced = true;
 		_locObjFrame[roomObjIdx]++;
 		if (_locObjFrame[roomObjIdx] == anim._numFrames) {
 			_locObjFrame[roomObjIdx] = 0;
