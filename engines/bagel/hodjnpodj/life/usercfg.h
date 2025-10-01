@@ -63,17 +63,17 @@ namespace Life {
 
 class CUserCfgDlg : public CBmpDialog {
 private:
-	CString     mSpeedTable[SPEED];
-	int         m_nLife[LIFE_SETTINGS];
-	int         m_nTurns[TURNS_SETTINGS];
-	CText       *m_pVillages,
-	            *m_pSpeed,
-	            *m_pRounds;
+	CString mSpeedTable[SPEED];
+	int m_nLife[LIFE_SETTINGS] = {};
+	int m_nTurns[TURNS_SETTINGS] = {};
+	CText *m_pVillages = nullptr, *m_pSpeed = nullptr,
+		*m_pRounds = nullptr;
+
 public:
-	int         nSpeedTemp,             // remembers cur settings
-	            nTurnCounterTemp,
-	            nLifeTemp;
-	bool        bPrePlaceTemp;
+	int nSpeedTemp = 0,             // remembers cur settings
+		nTurnCounterTemp = 0,
+		nLifeTemp = 0;
+	bool bPrePlaceTemp = false;
 
 	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
@@ -84,9 +84,9 @@ public:
 	CString         m_DisplayRounds;
 	CString         m_DisplaySpeed;
 	CString         m_DisplayVillages;
-	CCheckButton    *m_pPrePlaceButton;                 // PrePlace check box
-	CColorButton    *m_pOKButton;                       // OKAY button on scroll
-	CColorButton    *m_pCancelButton;                   // Cancel button on scroll
+	CCheckButton    *m_pPrePlaceButton = nullptr;			// PrePlace check box
+	CColorButton    *m_pOKButton = nullptr;					// OKAY button on scroll
+	CColorButton    *m_pCancelButton = nullptr;				// Cancel button on scroll
 
 protected:
 	void ClearDialogImage();

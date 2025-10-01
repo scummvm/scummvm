@@ -66,19 +66,19 @@ public:
 	}
 
 public:
-	colony      *pColony;
-	double      m_dScore;
-	int         m_nCumLife;
-	int         m_nYears;
-	bool        m_bIsEvolving;
-	bool        m_bPrePlace;
+	colony *pColony = nullptr;
+	double m_dScore = 0.0;
+	int m_nCumLife = 0;
+	int m_nYears = 0;
+	bool m_bIsEvolving = false;
+	bool m_bPrePlace = false;
 
-	CText       *pYears, *pYearsText1, *pYearsText2,
-	            *pColonyStat, *pColonyStatText1,
-	            *pScore, *pColonyPlaced, *pTime;
+	CText *pYears = nullptr, *pYearsText1 = nullptr, *pYearsText2 = nullptr,
+		*pColonyStat = nullptr, *pColonyStatText1 = nullptr,
+		*pScore = nullptr, *pColonyPlaced = nullptr, *pTime = nullptr;
 
-	CSprite     *pBaseSprite[VILLAGES];
-	CCalendar   m_cCalendar;
+	CSprite *pBaseSprite[VILLAGES] = {};
+	CCalendar m_cCalendar;
 };
 
 } // namespace Life
