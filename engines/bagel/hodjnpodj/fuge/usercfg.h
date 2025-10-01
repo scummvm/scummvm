@@ -75,23 +75,23 @@ protected:
 	void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
-	CText        *m_pTxtNumBalls;
-	CText        *m_pTxtStartLevel;
-	CText        *m_pTxtBallSpeed;
-	CText        *m_pTxtPaddleSize;
-	CScrollBar   *m_pScrollBar1;
-	CScrollBar   *m_pScrollBar2;
-	CScrollBar   *m_pScrollBar3;
-	CScrollBar   *m_pScrollBar4;
-	CCheckButton *m_pWallButton;
+	CText        *m_pTxtNumBalls = nullptr;
+	CText        *m_pTxtStartLevel = nullptr;
+	CText        *m_pTxtBallSpeed = nullptr;
+	CText        *m_pTxtPaddleSize = nullptr;
+	CScrollBar   *m_pScrollBar1 = nullptr;
+	CScrollBar   *m_pScrollBar2 = nullptr;
+	CScrollBar   *m_pScrollBar3 = nullptr;
+	CScrollBar   *m_pScrollBar4 = nullptr;
+	CCheckButton *m_pWallButton = nullptr;
 
-	int           m_nNumBalls;
-	int           m_nStartLevel;
-	int           m_nBallSpeed;
-	int           m_nPaddleSize;
-	bool          m_bOutterWall;
+	int           m_nNumBalls = 0;
+	int           m_nStartLevel = 0;
+	int           m_nBallSpeed = 0;
+	int           m_nPaddleSize = 0;
+	bool          m_bOutterWall = false;
 
-	bool        m_bSave;                    // True if should save theses values
+	bool        m_bSave = false;			// True if should save theses values
 };
 
 } // namespace Fuge

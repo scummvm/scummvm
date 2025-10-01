@@ -477,7 +477,8 @@ CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 			//
 			RealignVectors();
 
-			errCode = LoadMasterSprites();
+			if (!errCode)
+				errCode = LoadMasterSprites();
 
 			if (!errCode)
 				errCode = LoadMasterSounds();
