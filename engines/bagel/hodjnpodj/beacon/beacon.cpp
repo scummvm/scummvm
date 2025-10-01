@@ -342,7 +342,7 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 	CPalette    *pPalOld = nullptr,                    // Pointer to old palette
 	             *pBigPalOld = nullptr;
 	CRect       rect;
-	CPoint      Start, End, Center;
+	CPoint      StartPt, EndPt, Center;
 	unsigned int    i;
 	int     radius;
 	float   degrees, x, y, radians, rads;
@@ -371,8 +371,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 	x = (float)cos(0.0);
 	y = (float)sin(0.0);
 
-	Start.x = Center.x + (int)(x * radius);     // + radius
-	Start.y = Center.y  + (int)(y * radius);    //- radius;
+	EndPt.x = Center.x + (int)(x * radius);     // + radius
+	EndPt.y = Center.y  + (int)(y * radius);    //- radius;
 
 	for (i = 0; i < NUM_BEAMS; i++) {
 		degrees = ((float)(i + 1)) * (float)(360 / NUM_BEAMS);
@@ -383,8 +383,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		x = (float)cos(rads);
 		y = (float)sin(rads);
 
-		End.x = Center.x + (int)(x * radius);
-		End.y = Center.y + (int)(y * radius);
+		StartPt.x = Center.x + (int)(x * radius);
+		StartPt.y = Center.y + (int)(y * radius);
 
 		pMyPen = new CPen();                            // Construct new pen
 		(*pMyPen).CreatePen(PS_SOLID, 1, PALETTEINDEX((uint16)(i + START_ENTRY)));
@@ -393,7 +393,7 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(i + START_ENTRY)));
 		pOldBrush = (*pBigDC).SelectObject(pMyBrush);
 
-		(*pBigDC).Pie(&rect, End, Start);
+		(*pBigDC).Pie(&rect, StartPt, EndPt);
 
 		(*pBigDC).SelectObject(pOldPen);
 
@@ -410,8 +410,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		x = (float)cos(radians);
 		y = (float)sin(radians);
 
-		Start.x = Center.x + (int)(x * radius);
-		Start.y = Center.y + (int)(y * radius);
+		EndPt.x = Center.x + (int)(x * radius);
+		EndPt.y = Center.y + (int)(y * radius);
 	}
 
 	(*pDC).BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pBigDC, ART_WIDTH / 2, ART_HEIGHT / 2, SRCCOPY);
