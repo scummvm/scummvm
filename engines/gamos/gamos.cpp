@@ -347,7 +347,8 @@ bool GamosEngine::loadModule(uint id) {
 					return false;
 				break;
 			case 0xFF:
-				return false;
+				if (!reuseLastResource(prevByte, pid, p1, p2, 0))
+					return false;
 				break;
 			default:
 				p1 = 0;
