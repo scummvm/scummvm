@@ -249,11 +249,19 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Donald Duck's Playground (PC 5.25" Booter) 1.0Q 06/09/1986
 	BOOTER("ddp", "1.0Q 1986-06-09 5.25\" Booter", "f0f35d60e3e3303480a6bd109d54248d", 0x2001, GID_DDP),
 
-	// Donald Duck's Playground (Amiga) 1.0C
+	// Donald Duck's Playground (ST) 1.0A 08/08/86
+	GAME_P("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP, Common::kPlatformAtariST),
+
+	// Donald Duck's Playground (Amiga) 1.0C 04/27/1987
 	GAME_PO("ddp", "1.0C 1987-04-27", "550971d196f65190a5c760d2479406ef", 0x2272, GID_DDP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// Donald Duck's Playground (ST) 1.0A 8/8/86
-	GAME("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP),
+	// Donald Duck's Playground ("DOS") 1.0C
+	// This version is hosted on Al Lowe's website but it is really the Amiga
+	// resource files packaged with a DOS interpreter they were not designed for.
+	GAME_PS("ddp", "1.0C", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
+
+	// Donald Duck's Playground (DOS) 1.50 06/22/1987
+	GAME("ddp", "1.50 1987-06-22", "268074cc8cb75aa2227c4398886d7acd", 0x2272, GID_DDP),
 
 	{
 		// Donald Duck's Playground (CoCo)
@@ -271,9 +279,6 @@ static const AGIGameDescription gameDescriptions[] = {
 		0,
 		0x2001 // unknown
 	},
-
-	// reported by Filippos (thebluegr) in bugreport #3048
-	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
 
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89  # 2.316
 	GAME3_PSO("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA_CP),
