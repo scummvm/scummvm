@@ -611,6 +611,9 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_sprites.clear();
 	_sprites.resize(imageCount);
 
+	for (uint i = 0; i < imageCount; i++)
+		_sprites[i].index = i;
+
 	_midiTracks.clear();
 	_midiTracks.resize(midiCount);
 
@@ -1927,6 +1930,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		DAT_004177ff = true;
 		vm->EAX.val = 1;
 		break;
+	case 2:
+		arg1 = vm->pop32();
+		if (PTR_00417218->x == -1)
+			vm->EAX.val = 0;
+		else
+			vm->EAX.val = _drawElements[ PTR_00417218->x ].spr->index == arg1 ? 1 : 0;
+		break;
 	case 3:
 		warning("func 3 %x check 0x10 \n", PTR_00417218->fld_4 & 0x90);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
@@ -2013,10 +2023,22 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.val = 1;
 		break;
 
+	case 33:
+		PTR_00417218->fld_5 = _thing1Count - PTR_00417218->blk;
+		vm->EAX.val = 1;
+		break;
+
 	case 54:
 		arg1 = vm->pop32();
 		vm->EAX.val = rndRange16(arg1);
 		break;
+
+	case 57: {
+		VM::Reg regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef.ref, regRef.val);
+		warning("CallDispatcher 57 keycode %s", str.c_str());
+		vm->EAX.val = 0;
+	} break;
 
 	default:
 		warning("Call Dispatcher %d", funcID);

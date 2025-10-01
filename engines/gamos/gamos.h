@@ -125,6 +125,7 @@ struct ImagePos {
 typedef Common::Array<ImagePos> ImageSeq;
 
 struct Sprite {
+	uint32 index = 0;
 	byte field_0;
 	byte field_1;
 	byte field_2;
@@ -161,7 +162,7 @@ struct SomeAction {
 
 struct Object {
 	/* additional data */
-	int16 index;
+	int16 index = 0;
 	Sprite *spr = nullptr;
 
 	/* 80 - drawable
