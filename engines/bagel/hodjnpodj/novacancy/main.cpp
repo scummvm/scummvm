@@ -523,7 +523,6 @@ void CMainWindow::PlayGame() {
 
 
 			ReleaseDC(pDC);
-			pDC = nullptr;
 
 		} else {  // pDC
 			errCode = ERR_MEMORY;
@@ -939,7 +938,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 					if (!m_bDoorBmpLoaded[i]) {
 						if (!pCDoorBmp[i])
 							pCDoorBmp[i] = new CSprite;     // the sprite might have been deleted in prev game if that door was locked @end of game.
-						if (pCDoorBmp[i]) pCDoorBmp[i]->LoadCels(pDC, GetStringFromResource(IDS_D1 + i - 1), NUM_DOOR_CELS);
+						if (pCDoorBmp[i]) (void)pCDoorBmp[i]->LoadCels(pDC, GetStringFromResource(IDS_D1 + i - 1), NUM_DOOR_CELS);
 						m_bDoorBmpLoaded[i] = true;
 					}
 
