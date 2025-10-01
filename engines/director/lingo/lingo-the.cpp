@@ -196,11 +196,11 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"castNum",		kTheCastNum,	200 },// D2 p
 	{ kTheSprite,	"castLibNum",	kTheCastLibNum,	500 },//					D5 p
 	{ kTheSprite,	"constraint",	kTheConstraint, 200 },// D2 p
-	{ kTheSprite,	"currentTime",	kTheCurrentTime,600 },//							D6 p
+	{ kTheSprite,	"currentTime",	kTheCurrentTime,600 },//						D6 p
 	{ kTheSprite,	"cursor",		kTheCursor,		200 },// D2 p
 	{ kTheSprite,	"editableText", kTheEditableText,400 },//				D4 p
-	{ kTheSprite,	"flipH",		kTheFlipH,		700 },// 								D7 p
-	{ kTheSprite,	"flipV",		kTheFlipV,		700 },// 								D7 p
+	{ kTheSprite,	"flipH",		kTheFlipH,		700 },// 							D7 p
+	{ kTheSprite,	"flipV",		kTheFlipV,		700 },// 							D7 p
 	{ kTheSprite,	"foreColor",	kTheForeColor,	200 },// D2 p
 	{ kTheSprite,	"height",		kTheHeight,		200 },// D2 p
 	{ kTheSprite,	"immediate",	kTheImmediate,	200 },// D2 p
@@ -213,19 +213,19 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"member",		kTheMember,		500 },//					D5 p
 	{ kTheSprite,	"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,400 },//			D4 p
-	{ kTheSprite,	"mostRecentCuePoint",kTheMostRecentCuePoint,600 },//				D6 p
-	{ kTheSprite,	"name",			kTheName,		600 },//							D6 p
+	{ kTheSprite,	"mostRecentCuePoint",kTheMostRecentCuePoint,600 },//			D6 p
+	{ kTheSprite,	"name",			kTheName,		600 },//						D6 p
 	{ kTheSprite,	"pattern",		kThePattern,	200 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		200 },// D2 p
 	{ kTheSprite,	"rect",			kTheRect,		400 },//				D4 p ???
 	{ kTheSprite,	"right",		kTheRight,		200 },// D2 p
 	{ kTheSprite,	"scoreColor",	kTheScoreColor,	400 },//				D4 p
-	{ kTheSprite,	"scriptInstanceList",kTheScriptInstanceList,600 },//				D6 p
+	{ kTheSprite,	"scriptInstanceList",kTheScriptInstanceList,600 },//			D6 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum,	400 },//				D4 p
 	{ kTheSprite,	"stretch",		kTheStretch,	200 },// D2 p
 	{ kTheSprite,	"top",			kTheTop,		200 },// D2 p
 	{ kTheSprite,	"trails",		kTheTrails,		300 },//		D3.1 p
-	{ kTheSprite,	"tweened",		kTheTweened,	600 },//							D6 p
+	{ kTheSprite,	"tweened",		kTheTweened,	600 },//						D6 p
 	{ kTheSprite,	"type",			kTheType,		200 },// D2 p
 	{ kTheSprite,	"visibility",	kTheVisibility,	300 },//		D3.1 p
 	{ kTheSprite,	"visible",		kTheVisible,	400 },//				D4 p
@@ -274,21 +274,21 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
-	{ kTheCast,		"timeScale",	kTheTimeScale,	500 },//						D5 p
-	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//						D5 p
-	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//				D5 p
-	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//		D5 p
-	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//		D5 p
-	{ kTheSprite,	"trackPreviousSampleTime",	kTheTrackPreviousKeyTime, 500 },//	D5 p
-	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//							D5 p
+	{ kTheCast,		"timeScale",	kTheTimeScale,	500 },//					D5 p
+	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//					D5 p
+	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//			D5 p
+	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//	D5 p
+	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//	D5 p
+	{ kTheSprite,	"trackPreviousSampleTime",	kTheTrackPreviousKeyTime, 500 },//D5 p
+	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//						D5 p
 	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
 
 	// Movie fields
-	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//				D5 p
-	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//				D5 p
-	{ kTheCast,		"scoreSelection",	kTheScoreSelection,	500 },//				D5 p
-	{ kTheCast,		"updateLock",		kTheUpdateLock,		500 },//				D5 p
+	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//			D5 p
+	{ kTheCast,		"scriptsEnabled",	kTheScriptsEnabled,	500 },//			D5 p
+	{ kTheCast,		"scoreSelection",	kTheScoreSelection,	500 },//			D5 p
+	{ kTheCast,		"updateLock",		kTheUpdateLock,		500 },//			D5 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		400 },//				D4 p
@@ -298,60 +298,60 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"picture",		kThePicture,	300 },//		D3 p
 
 	// TextCastMember fields
-	{ kTheCast,		"alignment",	kTheTextAlign,	500 },//						D5 p
-	{ kTheCast,		"autoTab",		kTheAutoTab,	500 },//						D5 p
-	{ kTheCast,		"border",		kTheBorder,		500 },//						D5 p
-	{ kTheCast,		"boxDropShadow",kTheBoxDropShadow,	500 },//					D5 p
-	{ kTheCast,		"boxType",		kTheBoxType,	500 },//						D5 p
-	{ kTheCast,		"dropShadow",	kTheDropShadow,	500 },//						D5 p
-	{ kTheCast,		"editable",		kTheEditable,	500 },//						D5 p
-	{ kTheCast,		"font",			kTheTextFont,	500 },//						D5 p
-	{ kTheCast,		"fontSize",		kTheTextSize,	500 },//						D5 p
-	{ kTheCast,		"fontStyle",	kTheTextStyle,	500 },//						D5 p
-	{ kTheCast,		"lineCount",	kTheLineCount,	500 },//						D5 p
-	{ kTheCast,		"lineHeight",	kTheTextHeight,	500 },//						D5 p
+	{ kTheCast,		"alignment",	kTheTextAlign,	500 },//					D5 p
+	{ kTheCast,		"autoTab",		kTheAutoTab,	500 },//					D5 p
+	{ kTheCast,		"border",		kTheBorder,		500 },//					D5 p
+	{ kTheCast,		"boxDropShadow",kTheBoxDropShadow,	500 },//				D5 p
+	{ kTheCast,		"boxType",		kTheBoxType,	500 },//					D5 p
+	{ kTheCast,		"dropShadow",	kTheDropShadow,	500 },//					D5 p
+	{ kTheCast,		"editable",		kTheEditable,	500 },//					D5 p
+	{ kTheCast,		"font",			kTheTextFont,	500 },//					D5 p
+	{ kTheCast,		"fontSize",		kTheTextSize,	500 },//					D5 p
+	{ kTheCast,		"fontStyle",	kTheTextStyle,	500 },//					D5 p
+	{ kTheCast,		"lineCount",	kTheLineCount,	500 },//					D5 p
+	{ kTheCast,		"lineHeight",	kTheTextHeight,	500 },//					D5 p
 	{ kTheCast,		"hilite",		kTheHilite,		200 },// D2 p
-	{ kTheCast,		"margin",		kTheMargin,		500 },//						D5 p
-	{ kTheCast,		"pageHeight",	kThePageHeight,	500 },//						D5 p
+	{ kTheCast,		"margin",		kTheMargin,		500 },//					D5 p
+	{ kTheCast,		"pageHeight",	kThePageHeight,	500 },//					D5 p
 	{ kTheCast,		"text",			kTheText,		200 },// D2 p
 	{ kTheCast,		"textAlign",	kTheTextAlign,	300 },//		D3 p
 	{ kTheCast,		"textFont",		kTheTextFont,	300 },//		D3 p
 	{ kTheCast,		"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
-	{ kTheCast,		"scrollTop",	kTheScrollTop,  500 },//						D5 p
-	{ kTheCast,		"wordWrap",		kTheWordWrap,	500 },//						D5 p
+	{ kTheCast,		"scrollTop",	kTheScrollTop,  500 },//					D5 p
+	{ kTheCast,		"wordWrap",		kTheWordWrap,	500 },//					D5 p
 
 	// ButtonCastMember fields
-	{ kTheCast,		"buttonType",	kTheButtonType,	500 },//						D5 p
+	{ kTheCast,		"buttonType",	kTheButtonType,	500 },//					D5 p
 
 	// ScriptCastMember fields
-	{ kTheCast,		"scriptType",	kTheScriptType,	500 },//						D5 p
+	{ kTheCast,		"scriptType",	kTheScriptType,	500 },//					D5 p
 
 	// ShapeCastMember fields
-	{ kTheCast,		"filled",		kTheFilled,		500 },//						D5 p
-	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//						D5 p
-	{ kTheCast,		"pattern",		kThePattern,	500 },//						D5 p
-	{ kTheCast,		"shapeType",	kTheShapeType,	500 },//						D5 p
+	{ kTheCast,		"filled",		kTheFilled,		500 },//					D5 p
+	{ kTheCast,		"lineSize",		kTheLineSize,	500 },//					D5 p
+	{ kTheCast,		"pattern",		kThePattern,	500 },//					D5 p
+	{ kTheCast,		"shapeType",	kTheShapeType,	500 },//					D5 p
 
 	// SoundCastMember fields
-	{ kTheCast,		"channelCount",	kTheChannelCount,500 },//						D5 p
-	{ kTheCast,		"sampleRate",	kTheSampleRate,	500 },//						D5 p
-	{ kTheCast,		"sampleSize",	kTheSampleSize,	500 },//						D5 p
+	{ kTheCast,		"channelCount",	kTheChannelCount,500 },//					D5 p
+	{ kTheCast,		"sampleRate",	kTheSampleRate,	500 },//					D5 p
+	{ kTheCast,		"sampleSize",	kTheSampleSize,	500 },//					D5 p
 
 	// TransitionCastMember fields
-	{ kTheCast,		"changeArea",	kTheChangeArea,	500 },//						D5 p
-	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//						D5 p
-	{ kTheCast,		"transitionType",kTheTransitionType,500 },//					D5 p
+	{ kTheCast,		"changeArea",	kTheChangeArea,	500 },//					D5 p
+	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//					D5 p
+	{ kTheCast,		"transitionType",kTheTransitionType,500 },//				D5 p
 
 	// Field fields
-	{ kTheField,	"alignment",	kTheTextAlign,	500 },//						D5 p
-	{ kTheField,	"font",			kTheTextFont,	500 },//						D5 p
-	{ kTheField,	"fontSize",		kTheTextSize,	500 },//						D5 p
-	{ kTheField,	"fontStyle",	kTheTextStyle,	500 },//						D5 p
+	{ kTheField,	"alignment",	kTheTextAlign,	500 },//					D5 p
+	{ kTheField,	"font",			kTheTextFont,	500 },//					D5 p
+	{ kTheField,	"fontSize",		kTheTextSize,	500 },//					D5 p
+	{ kTheField,	"fontStyle",	kTheTextStyle,	500 },//					D5 p
 	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheField,	"hilite",		kTheHilite,		200 },// D2 p
-	{ kTheField,	"lineHeight",	kTheTextHeight,	500 },//						D5 p
+	{ kTheField,	"lineHeight",	kTheTextHeight,	500 },//					D5 p
 	{ kTheField,	"name",			kTheName,		300 },//		D3 p
 	{ kTheField,	"text",			kTheText,		200 },// D2 p
 	{ kTheField,	"textAlign",	kTheTextAlign,	300 },//		D3 p
@@ -361,11 +361,11 @@ const TheEntityField fields[] = {
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
 
 	// Chunk fields
-	{ kTheChunk,	"font",			kTheTextFont,	500 },//						D5 p
-	{ kTheChunk,	"fontSize",		kTheTextSize,	500 },//						D5 p
-	{ kTheChunk,	"fontStyle",	kTheTextStyle,	500 },//						D5 p
+	{ kTheChunk,	"font",			kTheTextFont,	500 },//					D5 p
+	{ kTheChunk,	"fontSize",		kTheTextSize,	500 },//					D5 p
+	{ kTheChunk,	"fontStyle",	kTheTextStyle,	500 },//					D5 p
 	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
-	{ kTheChunk,	"lineHeight",	kTheTextHeight,	500 },//						D5 p
+	{ kTheChunk,	"lineHeight",	kTheTextHeight,	500 },//					D5 p
 	{ kTheChunk,	"textFont",		kTheTextFont,	300 },//		D3 p
 	{ kTheChunk,	"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheChunk,	"textSize",		kTheTextSize,	300 },//		D3 p
@@ -391,7 +391,7 @@ const TheEntityField fields[] = {
 
 	{ kTheCastMembers,	"number",	kTheNumber,		300 },// 		D3 p
 
-	{ kTheCastLibs,		"number",	kTheNumber,		500 },//						D5 p
+	{ kTheCastLibs,		"number",	kTheNumber,		500 },//					D5 p
 
 	{ kTheDate,		"short",		kTheShort,		300 },//		D3 f
 	{ kTheDate,		"long",			kTheLong,		300 },//		D3 f
