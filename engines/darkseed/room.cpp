@@ -966,7 +966,20 @@ void Room::runRoomObjects() {
 					advanceLocAnimFrame(roomObjIdx);
 				}
 				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum)._frameNo[_locObjFrame[roomObjIdx]];
-				// TODO add more sfx here.
+
+				// librarian stamping book
+				if (_roomNumber == 17 && !g_engine->_animation->_isPlayingAnimation_maybe && g_engine->_animation->_frameAdvanced && spriteNum == 6) {
+					g_engine->playSound(54, 5, 0);
+				}
+				// dark world barber
+				if (_roomNumber == 67 && g_engine->_animation->_frameAdvanced && spriteNum == 6) {
+					g_engine->playSound(50, 5, 0);
+				}
+				// hallway mosquito
+				if (_roomNumber == 5 && g_engine->_animation->_frameAdvanced && (spriteNum == 1 || spriteNum == 3)) {
+					g_engine->playSound(53, 5, 0);
+				}
+				// lounge room clock ticking
 				if (_roomNumber == 7 && g_engine->_animation->_frameAdvanced) {
 					if (spriteNum == 0) {
 						g_engine->playSound(43, 5, 0);
