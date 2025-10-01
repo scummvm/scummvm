@@ -34,8 +34,8 @@ namespace DFA {
 //////////////////////////////////////////////////////////////////////////////
 class CDFAOptDlg : public CBmpDialog {
 private:
-	int m_nGameTime;
-	int m_nBeaverTime;
+	int m_nGameTime = 0;
+	int m_nBeaverTime = 0;
 	CRect rDisplayGTime;
 	CRect rDisplayBTime;
 

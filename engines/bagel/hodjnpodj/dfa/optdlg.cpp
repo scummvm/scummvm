@@ -319,16 +319,9 @@ void CDFAOptDlg::OnPaint() {
 	pBTime->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, true);
 	pBTime->SetScrollPos(m_nBeaverTime, true);
 
-	if (pGTime != nullptr) {
-		pGTime = nullptr;
-	}
-
-	if (pBTime != nullptr) {
-		pBTime = nullptr;
-	}
-
+	pGTime = nullptr;
+	pBTime = nullptr;
 	ReleaseDC(pDC);
-	return;
 }
 
 /*****************************************************************
