@@ -4147,100 +4147,100 @@ void TotEngine::updateAltScreen(byte otherScreenNumber) {
 	uint i22;
 	uint i11;
 
-	byte currentScreen = _currentRoomData->code;
-
-	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
-
-	// Save current room
-	saveRoomData(_currentRoomData, _rooms);
-
-	// Load other screen
-	_rooms->seek(otherScreenNumber * kRoomRegSize, SEEK_SET);
 	if (_currentRoomData) {
-		delete _currentRoomData;
-	}
-	_currentRoomData = readScreenDataFile(_rooms);
+		byte currentScreen = _currentRoomData->code;
 
-	switch (otherScreenNumber) {
-	case 20: {
-		switch (_niche[0][_niche[0][3]]) {
-		case 0: {
-			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
-			_currentRoomData->screenLayers[1].bitmapPointer = 1190768;
+		setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
+
+		// Save current room
+		saveRoomData(_currentRoomData, _rooms);
+
+		// Load other screen
+		_rooms->seek(otherScreenNumber * kRoomRegSize, SEEK_SET);
+		delete _currentRoomData;
+		_currentRoomData = readScreenDataFile(_rooms);
+
+		switch (otherScreenNumber) {
+		case 20: {
+			switch (_niche[0][_niche[0][3]]) {
+			case 0: {
+				_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
+				_currentRoomData->screenLayers[1].bitmapPointer = 1190768;
+			} break;
+			case 561: {
+				_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
+				_currentRoomData->screenLayers[1].bitmapPointer = 1182652;
+			} break;
+			case 563: {
+				_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
+				_currentRoomData->screenLayers[1].bitmapPointer = 1186044;
+			} break;
+			case 615: {
+				_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
+				_currentRoomData->screenLayers[1].bitmapPointer = 1181760;
+			} break;
+			}
+			_currentRoomData->screenLayers[1].bitmapSize = 892;
+			_currentRoomData->screenLayers[1].coordx = 66;
+			_currentRoomData->screenLayers[1].coordy = 35;
+			_currentRoomData->screenLayers[1].depth = 1;
 		} break;
-		case 561: {
-			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
-			_currentRoomData->screenLayers[1].bitmapPointer = 1182652;
+		case 24: {
+			switch (_niche[1][_niche[1][3]]) {
+			case 0: {
+				_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
+				_currentRoomData->screenLayers[0].bitmapPointer = 1399610;
+			} break;
+			case 561: {
+				_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
+				_currentRoomData->screenLayers[0].bitmapPointer = 1381982;
+			} break;
+			case 615: {
+				_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
+				_currentRoomData->screenLayers[0].bitmapPointer = 1381090;
+			} break;
+			case 622: {
+				_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
+				_currentRoomData->screenLayers[0].bitmapPointer = 1400502;
+			} break;
+			case 623: {
+				_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
+				_currentRoomData->screenLayers[0].bitmapPointer = 1398718;
+			} break;
+			}
+			_currentRoomData->screenLayers[0].bitmapSize = 892;
+			_currentRoomData->screenLayers[0].coordx = 217;
+			_currentRoomData->screenLayers[0].coordy = 48;
+			_currentRoomData->screenLayers[0].depth = 1;
 		} break;
-		case 563: {
-			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
-			_currentRoomData->screenLayers[1].bitmapPointer = 1186044;
-		} break;
-		case 615: {
-			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
-			_currentRoomData->screenLayers[1].bitmapPointer = 1181760;
+		case 31: {
+			for (i11 = 23; i11 <= 25; i11++)
+				for (i22 = 4; i22 <= 9; i22++)
+					_currentRoomData->mouseGrid[i11][i22] = 4;
+			for (i11 = 23; i11 <= 25; i11++)
+				for (i22 = 10; i22 <= 11; i22++)
+					_currentRoomData->mouseGrid[i11][i22] = 3;
+
+			_currentRoomData->screenLayers[0].bitmapSize = 0;
+			_currentRoomData->screenLayers[0].bitmapPointer = 0;
+			_currentRoomData->screenLayers[0].coordx = 0;
+			_currentRoomData->screenLayers[0].coordy = 0;
+			_currentRoomData->screenLayers[0].depth = 0;
 		} break;
 		}
-		_currentRoomData->screenLayers[1].bitmapSize = 892;
-		_currentRoomData->screenLayers[1].coordx = 66;
-		_currentRoomData->screenLayers[1].coordy = 35;
-		_currentRoomData->screenLayers[1].depth = 1;
-	} break;
-	case 24: {
-		switch (_niche[1][_niche[1][3]]) {
-		case 0: {
-			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
-			_currentRoomData->screenLayers[0].bitmapPointer = 1399610;
-		} break;
-		case 561: {
-			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
-			_currentRoomData->screenLayers[0].bitmapPointer = 1381982;
-		} break;
-		case 615: {
-			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
-			_currentRoomData->screenLayers[0].bitmapPointer = 1381090;
-		} break;
-		case 622: {
-			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
-			_currentRoomData->screenLayers[0].bitmapPointer = 1400502;
-		} break;
-		case 623: {
-			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
-			_currentRoomData->screenLayers[0].bitmapPointer = 1398718;
-		} break;
+
+		// Save other screen
+		saveRoomData(_currentRoomData, _rooms);
+
+		// Restore current room again
+		_rooms->seek(currentScreen * kRoomRegSize, SEEK_SET);
+		if (_currentRoomData) {
+			delete _currentRoomData;
 		}
-		_currentRoomData->screenLayers[0].bitmapSize = 892;
-		_currentRoomData->screenLayers[0].coordx = 217;
-		_currentRoomData->screenLayers[0].coordy = 48;
-		_currentRoomData->screenLayers[0].depth = 1;
-	} break;
-	case 31: {
-		for (i11 = 23; i11 <= 25; i11++)
-			for (i22 = 4; i22 <= 9; i22++)
-				_currentRoomData->mouseGrid[i11][i22] = 4;
-		for (i11 = 23; i11 <= 25; i11++)
-			for (i22 = 10; i22 <= 11; i22++)
-				_currentRoomData->mouseGrid[i11][i22] = 3;
+		_currentRoomData = readScreenDataFile(_rooms);
 
-		_currentRoomData->screenLayers[0].bitmapSize = 0;
-		_currentRoomData->screenLayers[0].bitmapPointer = 0;
-		_currentRoomData->screenLayers[0].coordx = 0;
-		_currentRoomData->screenLayers[0].coordy = 0;
-		_currentRoomData->screenLayers[0].depth = 0;
-	} break;
+		setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, SET_WITH_ANIM);
 	}
-
-	// Save other screen
-	saveRoomData(_currentRoomData, _rooms);
-
-	// Restore current room again
-	_rooms->seek(currentScreen * kRoomRegSize, SEEK_SET);
-	if (_currentRoomData) {
-		delete _currentRoomData;
-	}
-	_currentRoomData = readScreenDataFile(_rooms);
-
-	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, SET_WITH_ANIM);
 }
 
 void TotEngine::loadTV() {
