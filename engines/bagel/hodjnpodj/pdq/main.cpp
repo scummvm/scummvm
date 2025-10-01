@@ -797,9 +797,8 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			CSound::handleMessages();
 			Sleep(BIRD_SLEEP);
 		}
-		if (pSprite != nullptr)
-			delete pSprite;
 
+		delete pSprite;
 		ReleaseDC(pDC);
 
 	} else if (horse1Rect.PtInRect(point)) {

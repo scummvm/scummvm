@@ -60,18 +60,18 @@ protected:
 	void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 
-	CScrollBar   *m_pSpeedScroll;
-	CScrollBar   *m_pShownScroll;
-	CCheckButton *m_pNamesButton;
+	CScrollBar   *m_pSpeedScroll = nullptr;
+	CScrollBar   *m_pShownScroll = nullptr;
+	CCheckButton *m_pNamesButton = nullptr;
 
 	/*
-	* user preference data
-	*/
-	unsigned int        m_nShown;               // initial number of letters to be revealed
-	unsigned int        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
-	bool        m_bRandomLetters;       // true if letters to be revealed in random order
-	bool        m_bShowNames;           // true if we shouldm show category names
-	bool        m_bShouldSave;          // true if we should save theses values
+	 * user preference data
+	 */
+	unsigned int m_nShown = 0;		// initial number of letters to be revealed
+	unsigned int m_nGameSpeed = 0;	// game speed 1..5 (1 = fast, 5 = slow)
+	bool m_bRandomLetters = false;	// true if letters to be revealed in random order
+	bool m_bShowNames = false;		// true if we should show category names
+	bool m_bShouldSave = false;		// true if we should save theses values
 };
 
 } // namespace PDQ
