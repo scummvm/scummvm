@@ -26,8 +26,6 @@
 
 namespace Gamos {
 
-struct Sprite;
-
 class VM {
 public:
     enum OP{

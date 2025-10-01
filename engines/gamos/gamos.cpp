@@ -1935,12 +1935,14 @@ bool GamosEngine::loadImage(Image *img) {
 
 	_arch.seek(img->offset, 0);
 
-	img->rawData.resize((img->surface.w * img->surface.h + 16) & ~0xf);
-
 	if (img->cSize == 0) {
+		img->rawData.resize((img->surface.w * img->surface.h + 16) & ~0xf);
+
 		_arch.read(img->rawData.data(), img->surface.w * img->surface.h);
 		img->surface.setPixels(img->rawData.data());
 	} else {
+		img->rawData.resize((img->surface.w * img->surface.h + 4 + 16) & ~0xf);
+
 		RawData tmp(img->cSize);
 		_arch.read(tmp.data(), tmp.size());
 		_arch.decompress(&tmp, &img->rawData);
