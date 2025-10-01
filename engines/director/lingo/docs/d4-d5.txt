@@ -5,13 +5,9 @@
 > antiAlias
 > appFileSpec
 > authorMode
-> autoTab
 > beginRecording
 > bitmap
 > bold
-> border
-> boxDropShadow
-> boxType
 > button
 > buttonType
 > byFrame
@@ -42,10 +38,8 @@
 > digitalVideoTimeScale
 > digitalVideoType
 > doEffects
-> dropShadow
 > duplicateFrame
 > duration
-> editable
 > editFocusSprite
 > endRecording
 > enterFrame
@@ -58,15 +52,11 @@
 > finishIdleLoad
 > fixed
 > folderName
-> font
-> fontSize
-> fontStyle
 > frameSound1
 > frameSound2
 > frameTransition
 > frontWindow
 > fullColorPermit
-> grayscale
 > hitTest
 > idleHandlerPeriod
 > idleLoadDone
@@ -85,8 +75,6 @@
 > keyPressed
 > limit
 > linearList
-> lineCount
-> lineHeight
 > linePosToLocV
 > loc
 > locToCharPos
@@ -99,7 +87,6 @@
 > macSnd
 > macTEStyles
 > mActivate
-> margin
 > maskMember
 > mAtTransition
 > maxMember
@@ -113,7 +100,6 @@
 > memberNum
 > members
 > messageLock
-> metallic
 > method
 > mEvent
 > mGetText
@@ -153,13 +139,11 @@
 > music
 > mverb
 > mVerbDispose
-> new
 > noclear
 > noflush
 > normal
 > nosound
 > noUpdate
-> NTSC
 > object
 > off
 > ole
@@ -167,7 +151,6 @@
 > otherwise
 > outline
 > oval
-> pageHeight
 > paletteFrames
 > paletteMapping
 > paletteOverTime
@@ -175,7 +158,6 @@
 > paletteSpeed
 > paletteTransitionType
 > parent
-> pastels
 > pattern
 > plain
 > platform
@@ -192,7 +174,6 @@
 > pushButton
 > quickTime
 > radioButton
-> rainbow
 > remapPalettes
 > resizeWindow
 > resource
@@ -211,7 +192,6 @@
 > scroll
 > scrollByLine
 > scrollByPage
-> scrollTop
 > searchPaths
 > send
 > sendAncestor
@@ -225,9 +205,6 @@
 > super
 > symbol
 > sync
-> systemMac
-> systemWin
-> systemWinDir4
 > tempo
 > textStyles
 > textWrap
@@ -242,12 +219,9 @@
 > trackPreviousKeyTime
 > trackPreviousSampleTime
 > tracks
-> trackStartTime
-> trackStopTime
 > trackText
 > trackType
 > transition
-> transitionType
 > underline
 > unloadMember
 > unloadMovie
@@ -271,7 +245,6 @@
 > winPALETTE
 > winPICT
 > winWAVE
-> wordWrap
 > xcmdglue
 > xtra
 > xtras
