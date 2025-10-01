@@ -737,10 +737,10 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 			(*pSprite).PaintSprite(pDC, STOOL_X, STOOL_Y);
 			Sleep(STOOL_SLEEP);
 		}
-		if (pSprite != nullptr)
-			delete pSprite;
 
+		delete pSprite;
 		ReleaseDC(pDC);
+
 	} else if (oarRect.PtInRect(myPoint) && (*pGameInfo).bSoundEffectsEnabled) {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);

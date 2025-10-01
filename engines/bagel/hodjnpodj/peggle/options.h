@@ -38,9 +38,9 @@ public:
 	void ClearDialogImage();
 	void RefreshBackground();
 
-	int     m_iDlgId ;  // dialog id
-	CWnd    *m_pDlgParentWnd;
-	CBitmap *m_pDlgBackground;
+	int m_iDlgId = 0;  // dialog id
+	CWnd *m_pDlgParentWnd = nullptr;
+	CBitmap *m_pDlgBackground = nullptr;
 
 private:
 	CRect OptionsRect, OkayRect;
