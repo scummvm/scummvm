@@ -90,7 +90,7 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 
 	Sound *s = _world->_sounds[soundName];
 
-	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, s->_size, 11000, Audio::FLAG_UNSIGNED);
+	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, 2 * s->_size, 11000, Audio::FLAG_UNSIGNED);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
 		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
