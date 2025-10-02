@@ -1276,6 +1276,8 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap,
 			return (pNewDC);
 	}
 
+	delete pNewDC;
+
 	return nullptr;
 }
 

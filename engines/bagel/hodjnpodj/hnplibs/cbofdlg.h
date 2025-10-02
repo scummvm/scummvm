@@ -61,13 +61,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	CBitmap    *m_pDlgBackground;
-	CPalette   *m_pPalette;
-	const char *m_pBmpFileName;
-	int         m_nBmpID;
-	int         m_nDx;
-	int         m_nDy;
-	bool        m_bSaveBackground;
+	CBitmap    *m_pDlgBackground = nullptr;
+	CPalette   *m_pPalette = nullptr;
+	const char *m_pBmpFileName = nullptr;
+	int         m_nBmpID = 0;
+	int         m_nDx = 0;
+	int         m_nDy = 0;
+	bool        m_bSaveBackground = false;
 };
 
 } // namespace HodjNPodj

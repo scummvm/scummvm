@@ -59,15 +59,15 @@ protected:
 	void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
-	CScrollBar   *m_pScrollBar1;
-	CCheckButton *m_pMusicButton;
-	CCheckButton *m_pSoundButton;
+	CScrollBar   *m_pScrollBar1 = nullptr;
+	CCheckButton *m_pMusicButton = nullptr;
+	CCheckButton *m_pSoundButton = nullptr;
 
-	CText        *m_pTxtVolume;
+	CText        *m_pTxtVolume = nullptr;
 
-	int          m_nVolume;
-	bool         m_bMusic;
-	bool         m_bSound;
+	int          m_nVolume = 0;
+	bool         m_bMusic = false;
+	bool         m_bSound = false;
 };
 
 } // namespace HodjNPodj

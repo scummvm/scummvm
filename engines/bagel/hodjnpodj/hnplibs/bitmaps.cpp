@@ -538,9 +538,7 @@ bool PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 
 	pWorkDC = new CDC();                                    // create the context and bitmap objects
 
-	if ((pWorkDC != nullptr) &&                                // verify we got what we asked for
-	        (pBitmap != nullptr) &&
-	        (*pWorkDC).CreateCompatibleDC(pDC)) {               // create a context for our bitmap
+	if ((*pWorkDC).CreateCompatibleDC(pDC)) {               // create a context for our bitmap
 		if (pPalette != nullptr) {                             // map the palette into the context
 			pPalOldWork = (*pWorkDC).SelectPalette(pPalette, false);
 			(*pWorkDC).RealizePalette();
