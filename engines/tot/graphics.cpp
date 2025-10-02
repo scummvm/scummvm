@@ -63,6 +63,7 @@ GraphicsManager::~GraphicsManager() {
 	delete (_dosFont);
 	delete (_litt);
 	delete (_euro);
+	free(_textAreaBackground);
 }
 
 void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {

@@ -1279,7 +1279,6 @@ void exitGame() {
 
 void TotEngine::clearGame() {
 	resetGameState();
-	clearAnims();
 	clearVars();
 }
 

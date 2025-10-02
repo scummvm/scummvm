@@ -990,7 +990,4 @@ Lexit_proc:
 	delete flic;
 }
 
-void clearAnims() {
-	free(g_engine->_graphics->_textAreaBackground);
-}
 } // End of namespace Tot

@@ -29,7 +29,6 @@ void drawFlc(uint x, uint y, int32 offset, uint loop,
 			 byte speed, byte eventNumber, bool fullPalette, bool isSkipAllowed,
 			 bool limitPaletteTo200, bool &exitAnim);
 
-void clearAnims();
 /**
  * Header of an Autodesk Animator FLIC file.
  */
