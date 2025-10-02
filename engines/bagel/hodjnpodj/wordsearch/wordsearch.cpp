@@ -554,7 +554,7 @@ void CMainWSWindow::CreateNewGrid() {
 			}
 			switch (nDirection) {
 			case 0: // going right
-				if (ptSPos.x + nWordLen > NUMBEROFCOLS)
+				if (ptSPos.x + nWordLen >= NUMBEROFCOLS)
 					continue;
 				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
@@ -571,9 +571,9 @@ void CMainWSWindow::CreateNewGrid() {
 				}
 				break;
 			case 1: // going down and right
-				if (ptSPos.x + nWordLen > NUMBEROFCOLS)
+				if (ptSPos.x + nWordLen >= NUMBEROFCOLS)
 					continue;
-				if (ptSPos.y + nWordLen > NUMBEROFROWS)
+				if (ptSPos.y + nWordLen >= NUMBEROFROWS)
 					continue;
 				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
@@ -590,7 +590,7 @@ void CMainWSWindow::CreateNewGrid() {
 				}
 				break;
 			case 2: // going down
-				if (ptSPos.y + nWordLen > NUMBEROFROWS)
+				if (ptSPos.y + nWordLen >= NUMBEROFROWS)
 					continue;
 				bTemp2 = true;
 				for (z = 0; z < nWordLen; z++) {
@@ -607,7 +607,7 @@ void CMainWSWindow::CreateNewGrid() {
 				}
 				break;
 			case 3: // going down and left
-				if (ptSPos.y + nWordLen > NUMBEROFROWS)
+				if (ptSPos.y + nWordLen >= NUMBEROFROWS)
 					continue;
 				if (ptSPos.x - nWordLen < 0)
 					continue;
@@ -679,7 +679,7 @@ void CMainWSWindow::CreateNewGrid() {
 				}
 				break;
 			case 7: // going up and right
-				if (ptSPos.x + nWordLen > NUMBEROFCOLS)
+				if (ptSPos.x + nWordLen >= NUMBEROFCOLS)
 					continue;
 				if (ptSPos.y - nWordLen < 0)
 					continue;
