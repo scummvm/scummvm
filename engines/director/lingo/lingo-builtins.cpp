@@ -3021,8 +3021,10 @@ void LB::b_puppetPalette(int nargs) {
 void LB::b_puppetSound(int nargs) {
 
 	if (nargs < 1 || nargs >= 3) {
-		warning("b_puppetSound(): needs 1 or 2 args");
-		return;
+		warning("b_puppetSound(): needs 1 or 2 args, got %d", nargs);
+		if (nargs < 1)
+			return;
+		g_lingo->dropStack(nargs - 2);
 	}
 
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
