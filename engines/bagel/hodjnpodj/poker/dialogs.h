@@ -131,7 +131,7 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 class CUserWonDlg : public CBmpDialog {
 private:
-	int m_nWinPhrase;
+	int m_nWinPhrase = 0;
 
 public:
 	CUserWonDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERWON);

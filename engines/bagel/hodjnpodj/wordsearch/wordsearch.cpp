@@ -157,7 +157,6 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	// load splash screen
 	pDC = GetDC();                                  // get a device context for our window
 
-	pbmpSplashScreen = new CBitmap();
 	pbmpSplashScreen = FetchBitmap(pDC, &pGamePalette, SPLASHSPEC);      // get splash screen and game palettte
 
 	pOldPal = pDC->SelectPalette(pGamePalette, false);   // load game palette
@@ -204,7 +203,6 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	pOldOffScreenBmp = pOffScreenDC->SelectObject(pOffScreenBmp);            // load in offscreen bitmap
 	pOffScreenDC->RealizePalette();                                         // realize palette
 
-	pbmpAllLetters = new CBitmap;
 	//pbmpAllLetters = FetchBitmap( pDC, nullptr, ALLLETTERS );
 	pbmpAllLetters = FetchBitmap(pOffScreenDC, nullptr, ALLLETTERS);
 	ASSERT(pbmpAllLetters != 0);

@@ -34,9 +34,9 @@ namespace WordSearch {
 //////////////////////////////////////////////////////////////////////////////
 class CWSOptDlg : public CBmpDialog {
 private:
-	int     m_nGameTime;
-	bool    m_bShowWord;
-	bool    m_bWordForwardOnly;
+	int     m_nGameTime = 0;
+	bool    m_bShowWord = false;
+	bool    m_bWordForwardOnly = false;
 	CRect   rDisplayTime;
 
 public:

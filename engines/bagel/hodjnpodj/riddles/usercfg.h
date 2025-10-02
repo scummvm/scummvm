@@ -62,14 +62,14 @@ protected:
 	void OnLButtonDown(unsigned int, CPoint);
 	DECLARE_MESSAGE_MAP()
 
-	CText *m_pTxtTimeLimit;
-	CText *m_pTxtLimit;
-	CText *m_pTxtLevel;
-	CScrollBar *m_pScrollBar;
-	CScrollBar *m_pLevelScroll;
-	unsigned int        m_nTimeLimit;
-	int         m_nDifficultyLevel;
-	bool        m_bSave;                    // True if should save theses values
+	CText *m_pTxtTimeLimit = nullptr;
+	CText *m_pTxtLimit = nullptr;
+	CText *m_pTxtLevel = nullptr;
+	CScrollBar *m_pScrollBar = nullptr;
+	CScrollBar *m_pLevelScroll = nullptr;
+	unsigned int m_nTimeLimit = 0;
+	int m_nDifficultyLevel = 0;
+	bool m_bSave = false;                    // True if should save theses values
 };
 
 } // namespace Riddles

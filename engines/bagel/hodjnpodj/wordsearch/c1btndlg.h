@@ -61,13 +61,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CText        *m_cTextMessage1;
-	CText        *m_cTextMessage2;
-	CText        *m_cWordList[WORDSPERLIST];
-	char         *m_pszMessage1;
-	char         *m_pszMessage2;
-	char         *m_pszButton1Text;
-	CColorButton *m_pButton1;
+	CText *m_cTextMessage1 = nullptr;
+	CText *m_cTextMessage2 = nullptr;
+	CText *m_cWordList[WORDSPERLIST] = {};
+	char *m_pszMessage1 = nullptr;
+	char *m_pszMessage2 = nullptr;
+	char *m_pszButton1Text = nullptr;
+	CColorButton *m_pButton1 = nullptr;
 };
 
 } // namespace Poker

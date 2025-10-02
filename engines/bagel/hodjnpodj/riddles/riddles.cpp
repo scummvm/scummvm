@@ -292,7 +292,8 @@ CRiddlesWindow::CRiddlesWindow() :
 
 		// load the 32 character sprites into masters
 		//
-		errCode = LoadMasterSprites();
+		if (!errCode)
+			errCode = LoadMasterSprites();
 
 		// if we are not playing from the metagame
 		//
@@ -353,7 +354,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites() {
 
 					pBmp = ExtractBitmap(pDC, pFontBmp, m_pGamePalette, i * LETTERSIZE_X, 0, LETTERSIZE_X, LETTERSIZE_Y);
 
-					pSprite->LoadSprite(pBmp, m_pGamePalette);
+					(void)pSprite->LoadSprite(pBmp, m_pGamePalette);
 
 					pSprite->SetMasked(true);
 					pSprite->SetMobile(true);
@@ -659,8 +660,7 @@ void CRiddlesWindow::GameReset() {
 
 	ReleaseDC(pDC);                             // release current device context
 
-	if (m_pEditText != nullptr)
-		m_pEditText->SetWindowText("");         // erase any text in edit ctrl
+	m_pEditText->SetWindowText("");         // erase any text in edit ctrl
 
 	m_bGameActive = false;                      // there is no current game
 
@@ -1423,10 +1423,9 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			}
 		} // end if bSuccess
 
-		if (pSprite != nullptr)
-			delete pSprite;
-
+		delete pSprite;
 		ReleaseDC(pDC);
+
 	} else if ((((((col1Rect.PtInRect(point) || col2Rect.PtInRect(point)) || col3Rect.PtInRect(point)) ||
 	              col4Rect.PtInRect(point)) || col5Rect.PtInRect(point)) || col6Rect.PtInRect(point)) ||
 	           col7Rect.PtInRect(point)) {
