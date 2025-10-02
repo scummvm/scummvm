@@ -2001,6 +2001,24 @@ void LB::b_play(int nargs) {
 void LB::b_playAccel(int nargs) {
 	g_lingo->printSTUBWithArglist("b_playAccel", nargs);
 
+/*
+	byFrame	Read one frame at a time from disk.
+	click		Stop and pass on mouse event.
+	clickStop	Stop and don't pass on mouse event.
+	loop		Play movie continuously.
+	noFlush		Prevents the current interactive movie from being
+				removed from memory when the Accelerator
+				document is loaded.
+	noSound		Don’t play sound.
+	noUpdate	Don’t update screen at end of movie.
+	playRect, l, t, r, b
+				Stop the movie when the pointer is moved outside the coordinates (left, top, right, bottom).
+	repeat, n 	Number of times to repeat.
+	sync		Attempt to play in sync with scan rate of monitor.
+	whatFits	Play only what fits into memory.
+	tempo, n	Set the tempo of the movie.
+*/
+
 	g_lingo->dropStack(nargs);
 }
 
