@@ -29,6 +29,7 @@
 namespace Access {
 
 enum CursorType {
+	// These names are for Amazon - Noctropolis uses a different order.
 	CURSOR_NONE = -1,
 	CURSOR_ARROW = 0, CURSOR_CROSSHAIRS, CURSOR_2, CURSOR_3, CURSOR_LOOK,
 	CURSOR_USE, CURSOR_TAKE, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP,

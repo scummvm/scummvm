@@ -43,10 +43,6 @@ MartianRoom::MartianRoom(AccessEngine *vm) : Room(vm) {
 MartianRoom::~MartianRoom() {
 }
 
-void MartianRoom::loadRoom(int roomNumber) {
-	loadRoomData(&MMRES.ROOMTBL[roomNumber]._data[0]);
-}
-
 void MartianRoom::reloadRoom() {
 //	_vm->_currentMan = _roomFlag;
 //	_vm->_currentManOld = _roomFlag;

@@ -64,6 +64,10 @@ void EventsManager::setNormalCursor(CursorType cursorId) {
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
+	if (_vm->getGameID() == kGameNoctropolis) {
+		warning("*** FIXME *** setCursor: Need data for Noctropolis cursors");
+		return;
+	}
 	if (cursorId == _cursorId)
 		return;
 	_cursorId = cursorId;

@@ -40,8 +40,6 @@ private:
 	const byte *_icon;
 
 protected:
-	void loadRoom(int roomNumber) override;
-
 	void reloadRoom() override;
 
 	void reloadRoom1() override;

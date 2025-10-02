@@ -39,10 +39,6 @@ AmazonRoom::AmazonRoom(AccessEngine *vm) : Room(vm) {
 AmazonRoom::~AmazonRoom() {
 }
 
-void AmazonRoom::loadRoom(int roomNumber) {
-	loadRoomData(&AMRES.ROOMTBL[roomNumber]._data[0]);
-}
-
 void AmazonRoom::reloadRoom() {
 	loadRoom(_vm->_player->_roomNumber);
 

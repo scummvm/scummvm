@@ -99,11 +99,24 @@ FileManager::~FileManager() {
 }
 
 Resource *FileManager::loadFile(int fileNum, int subfile) {
-	Resource *res = new Resource();
-	setAppended(res, _vm->_res->FILENAMES[fileNum]);
-	gotoAppended(res, subfile);
+	Resource *res = nullptr;
+	const Common::Path &filepath = _vm->_res->FILENAMES[fileNum];
+	Common::File file;
 
-	handleFile(res);
+	// Noctropolis remastered has music in OGG or MID format broken
+	// out into the individual files
+	if (_vm->getGameID() == kGameNoctropolis && fileNum == 98 && !file.exists(filepath)) {
+		Common::Path path = Common::Path(Common::String::format("MUSIC/M%02d.mid", subfile));
+		// TODO: Also check for OGG file here
+		if (file.exists(path))
+			res = loadRawFile(path);
+	} else {
+		res = new Resource();
+		setAppended(res, filepath);
+		gotoAppended(res, subfile);
+		handleFile(res);
+	}
+
 	return res;
 }
 
@@ -217,7 +230,7 @@ void FileManager::setAppended(Resource *res, const Common::Path &fileName) {
 void FileManager::readIndex(Resource *res) {
 	// Read in the file index
 	int count = res->_file.readUint16LE();
-	assert(count <= 100);
+	assert(count <= 200);
 	_fileIndex.resize(count);
 	for (int i = 0; i < count; ++i)
 		_fileIndex[i] = res->_file.readUint32LE();

@@ -32,8 +32,6 @@ class NoctropolisRoom : public Room {
 public:
 	NoctropolisRoom(AccessEngine *vm);
 
-	void loadRoom(int roomNumber) override {};
-
 	void roomMenu() override {};
 
 	void init4Quads() override {};
@@ -44,9 +42,9 @@ public:
 	void buildScreenXScroll();
 
 protected:
-	void reloadRoom() override {};
+	void reloadRoom() override;
 	
-	void reloadRoom1() override {};
+	void reloadRoom1() override;
 
 	void mainAreaClick() override {}
 

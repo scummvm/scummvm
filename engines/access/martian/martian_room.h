@@ -38,8 +38,6 @@ private:
 	MartianEngine *_game;
 
 protected:
-	void loadRoom(int roomNumber) override;
-
 	void roomInit() override;
 
 	void reloadRoom() override;
