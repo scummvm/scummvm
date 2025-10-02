@@ -139,6 +139,11 @@ struct CachedFile {
 	// Mission Code: Millennium expects the installer to have added an empty save file.
 	{"mcmillennium", Common::kPlatformWindows, "pc/players", (const byte *)"", 0},
 
+	// Pingu: A Barrel of Fun! expects a text file containing system paths to be written by InstallShield,
+	// and the placeholder text file in the archive will not work.
+	{ "pingu1", Common::kPlatformWindows, "PINGUDRV.PNG", (const byte *)"C:\\\r\nC:\\\r\nD:\\\r\n", -1},
+	{ "pingu1", Common::kPlatformWindows, "CHECKDRV.PNG", (const byte *)"D:\\\r\n", -1},
+
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
@@ -364,7 +369,11 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 			SearchMan.remove(kQuirksCacheArchive);
 		}
 
-		SearchMan.add(kQuirksCacheArchive, archive);
+		// The order of precedence for file loading should be:
+		// - Save system
+		// - Quirks list
+		// - File system
+		SearchMan.add(kQuirksCacheArchive, archive, 5);
 	}
 }
 

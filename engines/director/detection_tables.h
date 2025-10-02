@@ -7527,8 +7527,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// "Pingu Screen Saver Chooser", "35dbf55e70f69e00ca016e3663379970", 705445, 500
 	// "Remove Pingu", "35dbf55e70f69e00ca016e3663379970", 705445, 500
 	MACGAME1("pingu1", "",		"Pingu CD-ROM", "35dbf55e70f69e00ca016e3663379970", 705445, 500),
-	WINGAME2("pingu1", "1282A", "PINGU.EXE",	"2e62abdad839e42068afdcd0644d7dcf", 917473,
-								"PINTITLE.DXR", "2e604dfd80ce4189dc0162dbe47ca7e2", 478854, 500),
+	WINGAME2("pingu1", "1282A", "PINGU.EXE",	"t:828102166219aa43f00c7cd72c0a4fc9", 917473,
+								"PINTITLE.DXR", "d:2e604dfd80ce4189dc0162dbe47ca7e2", 478854, 500),
 	WINGAME2_l("pingu1", "",	"PINGU.EXE",	"2e62abdad839e42068afdcd0644d7dcf", 917473,
 								"PINTITLE.DXR", "e56af5ddd0750b8ec04cb4ea3d707066", 489234, Common::CA_ESP, 500),
 	WINGAME2_l("pingu1", "",	"PINGU.EXE",	"2e62abdad839e42068afdcd0644d7dcf", 917473,
