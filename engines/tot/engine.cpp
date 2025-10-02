@@ -1044,21 +1044,21 @@ void TotEngine::updateSecondaryAnimationDepth() {
 	uint animationPos = _secondaryAnimation.posy + _secondaryAnimHeight - 1;
 	if (animationPos && animationPos <= 56) {
 		_secondaryAnimation.depth = 0;
-	} else if (animationPos >= 57 && animationPos <= 66) {
+	} else if (animationPos >= 57 && animationPos <= 64) {
 		_secondaryAnimation.depth = 1;
-	} else if (animationPos >= 65 && animationPos <= 74) {
+	} else if (animationPos >= 65 && animationPos <= 72) {
 		_secondaryAnimation.depth = 2;
-	} else if (animationPos >= 73 && animationPos <= 82) {
+	} else if (animationPos >= 73 && animationPos <= 80) {
 		_secondaryAnimation.depth = 3;
-	} else if (animationPos >= 81 && animationPos <= 90) {
+	} else if (animationPos >= 81 && animationPos <= 88) {
 		_secondaryAnimation.depth = 4;
-	} else if (animationPos >= 89 && animationPos <= 98) {
+	} else if (animationPos >= 89 && animationPos <= 96) {
 		_secondaryAnimation.depth = 5;
-	} else if (animationPos >= 97 && animationPos <= 106) {
+	} else if (animationPos >= 97 && animationPos <= 104) {
 		_secondaryAnimation.depth = 6;
-	} else if (animationPos >= 105 && animationPos <= 114) {
+	} else if (animationPos >= 105 && animationPos <= 112) {
 		_secondaryAnimation.depth = 7;
-	} else if (animationPos >= 113 && animationPos <= 122) {
+	} else if (animationPos >= 113 && animationPos <= 120) {
 		_secondaryAnimation.depth = 8;
 	} else if (animationPos >= 121 && animationPos <= 140) {
 		_secondaryAnimation.depth = 9;
