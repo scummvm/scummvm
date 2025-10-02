@@ -50,6 +50,10 @@
 #include "common/str.h"
 #include "common/rect.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace Graphics {
 
 class Font;
@@ -83,6 +87,7 @@ public:
 	virtual ~MacDialog();
 
 	int run();
+	virtual bool processEvent(const Common::Event &event) { return false; }
 
 protected:
 	ManagedSurface *_screen;

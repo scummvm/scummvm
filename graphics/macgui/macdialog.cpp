@@ -172,6 +172,9 @@ int MacDialog::run() {
 		Common::Event event;
 
 		while (g_system->getEventManager()->pollEvent(event)) {
+			if (processEvent(event))
+				continue;
+
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				shouldQuitEngine = true;
