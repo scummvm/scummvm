@@ -390,10 +390,16 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		if (update_left) {
 			dy1 = l2->y - l1->y;
 			dx1 = l2->x - l1->x;
-			if (dy1 > 0)
-				tmp = (dx1 << 16) / dy1;
-			else
+			if (dy1 > 0) {
+				if (dx1 < 0) {
+					tmp = (-dx1 << 16) / dy1;
+					tmp = -tmp;
+				} else {
+					tmp = (dx1 << 16) / dy1;
+				}
+			} else {
 				tmp = 0;
+			}
 			x1 = l1->x;
 			error = 0;
 			derror = tmp & 0x0000ffff;
@@ -446,10 +452,16 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		if (update_right) {
 			dx2 = (pr2->x - pr1->x);
 			dy2 = (pr2->y - pr1->y);
-			if (dy2 > 0)
-				dx2dy2 = (dx2 << 16) / dy2;
-			else
+			if (dy2 > 0) {
+				if (dx2 < 0) {
+					dx2dy2 = (-dx2 << 16) / dy2;
+					dx2dy2 = -dx2dy2;
+				} else {
+					dx2dy2 = (dx2 << 16) / dy2;
+				}
+			} else {
 				dx2dy2 = 0;
+			}
 			x2 = pr1->x << 16;
 		}
 
