@@ -67,16 +67,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CText        *m_cTextMessage1;
-	CText        *m_cTextMessage2;
-	CText        *m_cTextMessage3;
-	const char   *m_pszMessage1;
-	const char   *m_pszMessage2;
-	const char   *m_pszMessage3;
-	const char   *m_pszButton1Text;
-	const char   *m_pszButton2Text;
-	CColorButton *m_pButton1;
-	CColorButton *m_pButton2;
+	CText        *m_cTextMessage1 = nullptr;
+	CText        *m_cTextMessage2 = nullptr;
+	CText        *m_cTextMessage3 = nullptr;
+	const char   *m_pszMessage1 = nullptr;
+	const char   *m_pszMessage2 = nullptr;
+	const char   *m_pszMessage3 = nullptr;
+	const char   *m_pszButton1Text = nullptr;
+	const char   *m_pszButton2Text = nullptr;
+	CColorButton *m_pButton1 = nullptr;
+	CColorButton *m_pButton2 = nullptr;
 };
 
 } // namespace Metagame

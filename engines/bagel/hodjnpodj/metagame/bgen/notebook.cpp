@@ -455,7 +455,6 @@ void CNotebook::UpdateContent(CDC *pDC) {
 
 	if (pNoteList == nullptr) {                                    // empty notebook
 		if (pKeyNote == nullptr) {                                 // ... so just say so and leave
-			pText = new CText();
 			myRect.SetRect(NOTE_TEXT_DX,                        // calculate where to put it
 				NOTE_TEXT_DY,
 				NOTE_TEXT_DX + NOTE_TEXT_DDX,

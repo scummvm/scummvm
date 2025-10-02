@@ -103,14 +103,14 @@ private:
 	bool CreateWorkAreas(CDC *pDC);
 
 private:
-	bool m_bKeyboardHook;		// whether keyboard hook present
-	CRect OkayRect;				// rectangle bounding the OKAY button
+	bool m_bKeyboardHook = false;	// whether keyboard hook present
+	CRect OkayRect;					// rectangle bounding the OKAY button
 
-	CRect NotebookRect;			// x/y (left/right) and dx/dy (right/bottom) for the notebook window
-	CRect PersonRect,			// bounding rectangle for person bitmap
-		PlaceRect;				// bounding rectangle for place bitmap
-	CRect ScrollTopRect,		// area spanned by upper scroll curl
-		ScrollBotRect;			// area spanned by lower scroll curl
+	CRect NotebookRect;				// x/y (left/right) and dx/dy (right/bottom) for the notebook window
+	CRect PersonRect,				// bounding rectangle for person bitmap
+		PlaceRect;					// bounding rectangle for place bitmap
+	CRect ScrollTopRect,			// area spanned by upper scroll curl
+		ScrollBotRect;				// area spanned by lower scroll curl
 
 	// Dialog Data
 		//{{AFX_DATA(CNotebook)

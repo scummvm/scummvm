@@ -709,7 +709,7 @@ unsigned long Sqrt(unsigned long x) {
 		} else {
 			break;
 		}
-		if (abs((long)(lHigh - lLow)) <= 2)
+		if (ABS((long)(lHigh - lLow)) <= 2)
 			break;
 	}
 
