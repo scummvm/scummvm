@@ -69,6 +69,10 @@ namespace Graphics {
 class MacDialog;
 }
 
+namespace Audio {
+class PCSpeaker;
+}
+
 namespace Wage {
 
 class Console;
@@ -219,6 +223,7 @@ public:
 
 	Common::List<int> _soundQueue;
 	Common::String _soundToPlay;
+	Audio::PCSpeaker *_speaker;
 
 	void playSound(Common::String soundName, bool blocking = true);
 	void updateSoundTimerForScene(Scene *scene, bool firstTime);

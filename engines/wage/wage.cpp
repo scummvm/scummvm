@@ -52,6 +52,8 @@
 #include "common/system.h"
 #include "common/text-to-speech.h"
 
+#include "audio/softsynth/pcspk.h"
+
 #include "engines/engine.h"
 #include "engines/util.h"
 
@@ -89,6 +91,8 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 	_offer = NULL;
 
 	_resManager = NULL;
+
+	_speaker = NULL;
 
 	g_wage = this;
 
@@ -152,6 +156,9 @@ Common::Error WageEngine::run() {
 	_system->setImGuiCallbacks(callbacks);
 #endif
 
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
+
 	_temporarilyHidden = true;
 	performInitialSetup();
 	if (ConfMan.hasKey("save_slot")) {
@@ -209,6 +216,8 @@ void WageEngine::resetState() {
 	_commandWasQuick = false;
 	_shouldQuit = false;
 	_offer = nullptr;
+
+	delete _speaker;
 }
 
 void WageEngine::restart() {

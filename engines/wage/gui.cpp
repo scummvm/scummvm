@@ -48,6 +48,8 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
+#include "audio/softsynth/pcspk.h"
+
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macdialog.h"
@@ -548,6 +550,8 @@ bool AboutDialog::processEvent(const Common::Event &event) {
 			_needsRedraw = true;
 
 			g_wage->syncSoundSettings();
+
+			g_wage->_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 
 			return true;
 		}
