@@ -70,15 +70,15 @@ private:
 	void Sleep(clock_t wait);
 
 private:
-	bool m_bKeyboardHook;		// whether keyboard hook present
-	CRect OkayRect;				// rectangle bounding the OKAY button
-	CRect ScrollRect,			// x/y (left/right) and dx/dy (right/bottom) for the scroll window
-		ScrollTopRect,			// rectangle bounding the scroll top section
-		ScrollBotRect,			// rectangle bounding the scroll bottom section
-		ScrollMidRect;			// rectangle bounding the scroll middle section
+	bool m_bKeyboardHook = false;	// whether keyboard hook present
+	CRect OkayRect;					// rectangle bounding the OKAY button
+	CRect ScrollRect,				// x/y (left/right) and dx/dy (right/bottom) for the scroll window
+		ScrollTopRect,				// rectangle bounding the scroll top section
+		ScrollBotRect,				// rectangle bounding the scroll bottom section
+		ScrollMidRect;				// rectangle bounding the scroll middle section
 
-	CRect ScrollTopCurlRect,	// current location of top curl for mouse clicks
-		ScrollBotCurlRect;		// current location of bottom curl for mouse clicks
+	CRect ScrollTopCurlRect,		// current location of top curl for mouse clicks
+		ScrollBotCurlRect;			// current location of bottom curl for mouse clicks
 
 	// Dialog Data
 	//{{AFX_DATA(CRules)

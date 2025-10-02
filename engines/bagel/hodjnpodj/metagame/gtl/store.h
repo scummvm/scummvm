@@ -91,11 +91,11 @@ private:
 	bool CreateWorkAreas(CDC *pDC);
 
 private:
-	bool m_bKeyboardHook;		// whether keyboard hook present
-	CRect OkayRect;				// rectangle bounding the OKAY button
-	CRect StoreRect;			// x/y (left/right) and dx/dy (right/bottom) for the store window
-	CRect ScrollTopRect,		// area spanned by upper scroll curl
-		ScrollBotRect;			// area spanned by lower scroll curl
+	bool m_bKeyboardHook = false;	// whether keyboard hook present
+	CRect OkayRect;					// rectangle bounding the OKAY button
+	CRect StoreRect;				// x/y (left/right) and dx/dy (right/bottom) for the store window
+	CRect ScrollTopRect,			// area spanned by upper scroll curl
+		ScrollBotRect;				// area spanned by lower scroll curl
 
 	// Dialog Data
 	//{{AFX_DATA(CGeneralStore)

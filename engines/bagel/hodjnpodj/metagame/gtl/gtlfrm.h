@@ -55,12 +55,12 @@ public:
 	void ShowOptions(CPalette *);
 	bool ShowClue(CPalette *, CNote *);
 
-	class CGtlView *m_xpcLastFocusView ;        // last view with focus
-	class CGtlView *m_xpcLastMouseView ;        // last view touched by mouse
-	class CGtlDoc *m_xpDocument ;
-	class CBfcMgr *m_lpBfcMgr ;         // interface class
-	bool m_bExitDll ;           // if turned on, exit meta game DLL
-	int         m_nReturnCode;
+	class CGtlView *m_xpcLastFocusView = nullptr;	// last view with focus
+	class CGtlView *m_xpcLastMouseView = nullptr;	// last view touched by mouse
+	class CGtlDoc *m_xpDocument = nullptr;
+	class CBfcMgr *m_lpBfcMgr = nullptr;			// interface class
+	bool m_bExitDll = false;						// if turned on, exit meta game DLL
+	int m_nReturnCode = 0;
 
 	virtual ~CGtlFrame();
 

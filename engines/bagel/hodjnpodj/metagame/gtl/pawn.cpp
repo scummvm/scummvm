@@ -296,6 +296,7 @@ bool CPawnShop::OnInitDialog() {
 
 	if (m_pParentWnd == nullptr)                                   // get our parent window
 		m_pParentWnd = ((CWnd *) this)->GetParent();            // ... as passed to us or inquired about
+	assert(m_pParentWnd);
 
 	(*m_pParentWnd).GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - PAWN_DX) >> 1);

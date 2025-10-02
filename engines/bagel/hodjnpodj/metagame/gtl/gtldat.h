@@ -146,9 +146,9 @@ public:
 	CMemDC();
 	~CMemDC();
 
-	CDC      *m_pDC;
-	CPalette *m_pPalOld;
-	HBITMAP   m_hBmpOld;
+	CDC      *m_pDC = nullptr;
+	CPalette *m_pPalOld = nullptr;
+	HBITMAP   m_hBmpOld = nullptr;
 };
 
 // CLexElement -- lexical element class

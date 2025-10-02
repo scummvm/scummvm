@@ -159,6 +159,7 @@ void CGtlData::PaintOffScreenBmp() {
 		}
 	}
 }
+
 CMemDC::CMemDC() {
 	m_pDC = new CDC;
 	assert(m_pDC != nullptr);

@@ -57,13 +57,13 @@ namespace Gtl {
 
 class CItemDialog : public CBmpDialog {
 private:
-	CText *m_pTextDescription;
-	CText *m_pTextMessage;
-	CColorButton *m_pOKButton;          // OKAY button on scroll
-	CItem *m_pItem;
-	bool            m_bHodj;
-	bool            m_bGain;
-	long            m_lAmount;
+	CText *m_pTextDescription = nullptr;
+	CText *m_pTextMessage = nullptr;
+	CColorButton *m_pOKButton = nullptr;          // OKAY button on scroll
+	CItem *m_pItem = nullptr;
+	bool m_bHodj = false;
+	bool m_bGain = false;
+	long m_lAmount = 0;
 
 public:
 

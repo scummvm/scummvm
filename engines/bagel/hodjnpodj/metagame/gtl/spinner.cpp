@@ -419,11 +419,9 @@ int CSpinner::Spin() {
 
 	app->pause();
 
-	if (pSound != nullptr) {                               // terminate the sound gracefully
-		(*pSound).stop();
-		delete pSound;
-		pSound = nullptr;
-	}
+	(*pSound).stop();
+	delete pSound;
+	pSound = nullptr;
 
 punt:
 	if (pBitmap != nullptr)                                // release the resources we used
@@ -431,8 +429,7 @@ punt:
 	if (pPalette != nullptr)
 		delete pPalette;
 
-	if (pSound != nullptr)
-		delete pSound;
+	delete pSound;
 
 	if (bSuccess)                                      // return value if all went well
 		return (nValue);

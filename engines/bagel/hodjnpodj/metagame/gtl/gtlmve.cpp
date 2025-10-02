@@ -714,7 +714,7 @@ void CGtlData::DoTransport(CXodj *pXodj, int iNode) {
 
 	// use stars animation bitmap
 	Common::strcpy_s(pCurPlayer->m_szFileName, pXodj->m_pszStarsFile);
-	((CSprite *)pCurPlayer->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pCurPlayer->m_szFileName, pCurPlayer->m_nCels);
+	(void)((CSprite *)pCurPlayer->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pCurPlayer->m_szFileName, pCurPlayer->m_nCels);
 
 	((CSprite *)pCurPlayer->m_pObject)->SetAnimated(true);
 
@@ -3355,10 +3355,8 @@ bool CGtlData::DetermineInfoEligibility(CXodj * xpXodj, int iLocationCode, bool 
 				bEligibility = true ;   // then we're indeed eligible
 				// to get information from this location
 				if (bExecute)   // if we want to execute on eligibility
-					for (iK = iFound ; (uint)iK < DIMENSION(xpXodj->m_iSecondaryLoc)
-					        ; ++iK)
-						xpXodj->m_iSecondaryLoc[iK] =
-						    xpXodj->m_iSecondaryLoc[iK + 1] ;
+					for (iK = iFound ; (uint)iK < DIMENSION(xpXodj->m_iSecondaryLoc) - 1; ++iK)
+						xpXodj->m_iSecondaryLoc[iK] = xpXodj->m_iSecondaryLoc[iK + 1];
 				// remove location from table
 			}
 		}

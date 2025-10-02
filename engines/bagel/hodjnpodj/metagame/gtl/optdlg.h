@@ -37,18 +37,18 @@ namespace Gtl {
 //////////////////////////////////////////////////////////////////////////////
 class CMetaOptDlg : public CBmpDialog {
 private:
-	CWnd         *m_pParent;
-	CPalette     *m_pPalette;
-	CBfcMgr      *m_pBfcMgr;
-	CColorButton *m_pRulesGameButton;
-	CColorButton *m_pSaveGameButton;
-	CColorButton *m_pLeaveGameButton;
-	CColorButton *m_pContinueGameButton;
-	CColorButton *m_pOptionsGameButton;
+	CWnd         *m_pParent = nullptr;
+	CPalette     *m_pPalette = nullptr;
+	CBfcMgr      *m_pBfcMgr = nullptr;
+	CColorButton *m_pRulesGameButton = nullptr;
+	CColorButton *m_pSaveGameButton = nullptr;
+	CColorButton *m_pLeaveGameButton = nullptr;
+	CColorButton *m_pContinueGameButton = nullptr;
+	CColorButton *m_pOptionsGameButton = nullptr;
 
-	bool         m_bMusic;
-	bool         m_bSoundFX;
-	bool         m_bScrolling;
+	bool         m_bMusic = false;
+	bool         m_bSoundFX = false;
+	bool         m_bScrolling = false;
 
 public:
 	CMetaOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);

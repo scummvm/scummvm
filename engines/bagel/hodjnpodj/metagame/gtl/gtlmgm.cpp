@@ -414,7 +414,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, bool bHodj) {
 		ErrorLog("ERROR.LOG", "File not found: %s", pCurPlayer->m_szFileName);
 
 	assert(FileExists(pCurPlayer->m_szFileName));
-	((CSprite *)pCurPlayer->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pCurPlayer->m_szFileName, pCurPlayer->m_nCels);
+	(void)((CSprite *)pCurPlayer->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pCurPlayer->m_szFileName, pCurPlayer->m_nCels);
 
 	// move from node to node
 	//
@@ -714,7 +714,7 @@ void CGtlData::LoadCharDirection(CBgbObject *pBgbSprite, CPoint ptOld, CPoint pt
 				pBgbSprite->m_szFileName[7] = chNewChar;
 
 				// load new pictures
-				((CSprite *)pBgbSprite->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pBgbSprite->m_szFileName, pBgbSprite->m_nCels);
+				(void)((CSprite *)pBgbSprite->m_pObject)->LoadCels(m_cBgbMgr.m_xpDc, pBgbSprite->m_szFileName, pBgbSprite->m_nCels);
 			}
 		}
 	}
@@ -882,6 +882,11 @@ int *CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	//long lTimeDiff ;            // time difference
 
 	struct DIST FAR * lpDist = new FAR struct DIST[m_iNodes] ;
+	for (i = 0; i < m_iNodes; ++i) {
+		auto &d = lpDist[i];
+		d.m_iDistance = d.m_iWeight = d.m_iLength = 0;
+		d.m_iFrom = d.m_iCount = 0;
+	}
 
 	cStartPoint = NodeToPoint(lpNode1, nullptr) ;
 	cTargetPoint = NodeToPoint(lpNode2, nullptr) ;
@@ -1024,18 +1029,15 @@ done:
 
 cleanup:
 
-	if (lpDist) {
-		delete [] lpDist ;
-		lpDist = nullptr ;
+	delete[] lpDist;
+
+	if (iError) {
+		delete[] lpiPath;
+		lpiPath = nullptr;
 	}
 
-	if (iError && lpiPath) {
-		delete [] lpiPath ;
-		lpiPath = nullptr ;
-	}
-
-	JXELEAVE(CGtlData::FindShortestPath) ;
-	RETURN(lpiPath) ;
+	JXELEAVE(CGtlData::FindShortestPath);
+	return lpiPath;
 }
 
 //* CGtlData::PositionCharacters -- set positions for Hodj and Podj

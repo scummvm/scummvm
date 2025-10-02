@@ -57,10 +57,10 @@ namespace Gtl {
 
 class CMapDialog : public CBmpDialog {
 private:
-	POINT         m_HodjLoc, m_PodjLoc;
-	POINT         m_ptZoomHodj, m_ptZoomPodj;
-	CText        *m_pTextMessage;
-	CColorButton *m_pOKButton;          // OKAY button on scroll
+	POINT         m_HodjLoc = { 0, 0 }, m_PodjLoc = { 0, 0 };
+	POINT         m_ptZoomHodj = { 0, 0 }, m_ptZoomPodj = { 0, 0 };
+	CText        *m_pTextMessage = nullptr;
+	CColorButton *m_pOKButton = nullptr;		// OKAY button on scroll
 
 public:
 

@@ -52,11 +52,11 @@ namespace Gtl {
 
 class CTurnDialog : public CBmpDialog {
 private:
-	CColorButton *m_pOKButton;      // OKAY button on scroll
-	CText        *m_pTextMessage;
-	bool          m_bHodj;
-	bool          m_bGain;
-	bool          m_bTurn;          // True: win/lose turn, False: win/lose Game
+	CColorButton *m_pOKButton = nullptr;      // OKAY button on scroll
+	CText        *m_pTextMessage = nullptr;
+	bool          m_bHodj = false;
+	bool          m_bGain = false;
+	bool          m_bTurn = false;          // True: win/lose turn, False: win/lose Game
 
 public:
 

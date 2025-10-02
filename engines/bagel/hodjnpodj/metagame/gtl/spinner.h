@@ -74,14 +74,14 @@ private:
 	static bool HandleMessages();
 
 private:
-	CWnd    *m_pWnd;            // window for messages
-	CDC     *m_pDC;             // context for display
-	CSprite *m_pSprite;         // sprite for spinner
-	int     m_nValue;           // current spinner value
-	int     m_nX;               // x location of sprite
-	int     m_nY;               // y location of sprite
-	bool    m_bVisible;         // whether spinner is visible
-	bool    m_bHodj;            // which character is active
+	CWnd    *m_pWnd = nullptr;		// window for messages
+	CDC     *m_pDC = nullptr;		// context for display
+	CSprite *m_pSprite = nullptr;	// sprite for spinner
+	int     m_nValue = 0;			// current spinner value
+	int     m_nX = 0;				// x location of sprite
+	int     m_nY = 0;				// y location of sprite
+	bool    m_bVisible = false;		// whether spinner is visible
+	bool    m_bHodj = false;		// which character is active
 };
 
 } // namespace Gtl
