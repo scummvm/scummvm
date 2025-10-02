@@ -260,6 +260,10 @@ static const BuiltinProto builtins[] = {
 	{ "trackStopTime",	LB::b_trackStopTime,1, 1, 500, FBLTIN },	//				D5 f
 	{ "trackType",		LB::b_trackType,	1, 1, 500, FBLTIN },	//				D5 f
 
+	// Save session
+	{ "beginRecording", LB::b_beginRecording,0, 1, 500, CBLTIN },	//				D5 c
+	{ "endRecording",	LB::b_endRecording,	 0, 0, 500, CBLTIN },	//				D5 c
+
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,200,HBLTIN },
@@ -401,6 +405,21 @@ static const BuiltinProto builtins[] = {
    script				//	D5
    tempo				//	D5
    transition			//	D5
+
+   Types:
+	bitmap
+	button
+	digitalVideo
+	field
+	filmLoop
+	movie
+	ole
+	palette
+	richText
+	shape
+	script
+	sound
+	transition
 */
 
 void Lingo::initBuiltIns() {
@@ -3027,6 +3046,18 @@ void LB::b_puppetSound(int nargs) {
 		g_lingo->dropStack(nargs - 2);
 	}
 
+	// TODO
+	// Midi variant is similar to playAccel
+	//
+	// and contains these commands:
+	//
+	// midiBeat
+	// midiContinue
+	// midiSong
+	// midiSongpointer
+	// midiStart
+	// midiStop
+
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	Score *score = g_director->getCurrentMovie()->getScore();
 
@@ -4104,6 +4135,18 @@ void LB::b_getVolumes(int nargs) {
 	d.u.farr->arr.push_back(Datum("Buried in Time\252 1"));
 
 	g_lingo->push(d);
+}
+
+void LB::b_beginRecording(int nargs) {
+	g_lingo->printSTUBWithArglist("b_beginRecording", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_endRecording(int nargs) {
+	g_lingo->printSTUBWithArglist("b_endRecording", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 } // End of namespace Director

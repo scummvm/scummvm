@@ -122,6 +122,8 @@ enum TheEntityType {
 	kThePlatform,
 	kThePreloadEventAbort,
 	kThePreLoadRAM,
+	kTheProductName,
+	kTheProductVersion,
 	kTheQuickTimePresent,
 	kTheRandomSeed,
 	kTheResult,

@@ -134,10 +134,12 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kThePathName,			"pathName",			false, 200, true },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 200, true },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false, 200, false },// D2 p
+	{ kThePi,				"pi",				false, 400, true },	//			D4 f
+	{ kThePlatform,			"platform",			false, 500, false },//				D5 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false, 400, false },//			D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false, 400, false },//			D4 p
-	{ kThePlatform,			"platform",			false, 500, false },//				D5 p
-	{ kThePi,				"pi",				false, 400, true },	//			D4 f
+	{ kTheProductName,		"productName",		false, 500, false },//				D5 p, undocumented
+	{ kTheProductVersion,	"productVersion",	false, 500, false },//				D5 p, documented in D8
 	{ kTheQuickTimePresent,	"quickTimePresent",	false, 300, true },	//		D3.1 f
 	{ kTheRandomSeed,		"randomSeed",		false, 400, false },//			D4 p
 	{ kTheResult,			"result",			false, 200, true },	// D2 f
@@ -935,6 +937,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kThePi:
 		d = M_PI;
+		break;
+	case kTheProductName:
+		d = Common::String("Director");
+		break;
+	case kTheProductVersion:
+		d = Common::String::format("%d.%d.%d",
+				g_director->getVersion() / 100, (g_director->getVersion() / 10) % 10, g_director->getVersion() % 10);
 		break;
 	case kTheQuickTimePresent:
 		// QuickTime is always present for ScummVM

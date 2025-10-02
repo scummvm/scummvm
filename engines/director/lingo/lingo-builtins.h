@@ -223,6 +223,9 @@ void b_trackStartTime(int nargs);
 void b_trackStopTime(int nargs);
 void b_trackType(int nargs);
 
+void b_beginRecording(int nargs);
+void b_endRecording(int nargs);
+
 void b_scummvmassert(int nargs);
 void b_scummvmassertequal(int nargs);
 void b_scummvmNoFatalError(int nargs);

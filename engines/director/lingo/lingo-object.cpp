@@ -912,4 +912,19 @@ void LM::m_moveToFront(int nargs) {
 		me->sendWindowEvent(kEventOpenWindow);
 }
 
+// Actor
+/*
+  collectChangeRects
+  getAProp
+  hitTest
+  ilk
+  mouseDown
+  mouseTrack
+  mouseUp
+  setAProp
+  stepFrame
+  updateRect
+*/
+
+
 } // End of namespace Director
