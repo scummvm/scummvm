@@ -24,7 +24,8 @@
 namespace Freescape {
 
 void FreescapeEngine::waitInLoop(int maxWait) {
-	for (int i = 0; i < maxWait; i++) {
+	long int startTick = _ticks;
+	while (_ticks <= startTick + maxWait) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			Common::Point mousePos;

@@ -444,6 +444,7 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 }
 
 void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
+	debugC(1, kFreescapeDebugMedia, "Stopping sound");
 	_mixer->stopHandle(handle);
 }
 

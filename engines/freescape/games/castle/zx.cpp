@@ -36,7 +36,7 @@ void CastleEngine::initZX() {
 	_soundIndexStepDown = -1;
 	_soundIndexMenu = -1;
 	_soundIndexStart = 6;
-	_soundIndexAreaChange = 7;
+	_soundIndexAreaChange = 6;
 }
 
 Graphics::ManagedSurface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back) {
@@ -247,6 +247,8 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	uint32 color = 5;
 	uint8 r, g, b;
 
+	drawLiftingGate(surface);
+
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
@@ -266,7 +268,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
-		if (_gameStateControl == kFreescapeGameStatePlaying) {
+		if (_gameStateControl != kFreescapeGameStateEnd) {
 			drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
 		}
 	}

@@ -49,6 +49,7 @@ public:
 	Graphics::ManagedSurface *_menuFxOffIndicator;
 	Graphics::ManagedSurface *_menu;
 
+	void beforeStarting() override;
 	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void endGame() override;
@@ -73,6 +74,7 @@ public:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 	void drawEnergyMeter(Graphics::Surface *surface, Common::Point origin);
+	void drawLiftingGate(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
 	void updateTimeVariables() override;

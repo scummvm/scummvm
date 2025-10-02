@@ -428,6 +428,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 color = 10;
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint8 r, g, b;
+	drawLiftingGate(surface);
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
@@ -448,7 +449,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
-		if (_gameStateControl == kFreescapeGameStatePlaying) {
+		if (_gameStateControl != kFreescapeGameStateEnd) {
 			if (ghostInArea())
 				drawStringInSurface(_messagesList[116], 97, 182, front, back, surface);
 			else

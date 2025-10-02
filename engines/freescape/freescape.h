@@ -193,6 +193,7 @@ public:
 	bool isCPC() { return _gameDescription->platform == Common::kPlatformAmstradCPC; }
 	bool isC64() { return _gameDescription->platform == Common::kPlatformC64; }
 
+	virtual void beforeStarting();
 	Common::Error run() override;
 
 	// UI
