@@ -102,9 +102,9 @@ private:
 	LOGFONT ParseFontFromTemplate();
 
 public:
-	HGLOBAL m_hTemplate;
-	uint32 m_dwTemplateSize;
-	bool m_bSystemFont;
+	HGLOBAL m_hTemplate = nullptr;
+	uint32 m_dwTemplateSize = 0;
+	bool m_bSystemFont = false;
 
 public:
 	CDialogTemplate(LPCDLGTEMPLATE pTemplate = NULL);

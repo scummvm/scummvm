@@ -47,7 +47,6 @@ int GetDeviceCaps(HDC hdc, int index) {
 			RC_BITMAP64 |
 			RC_DI_BITMAP |
 			RC_DIBTODEV |
-			RC_PALETTE |
 			RC_STRETCHBLT;
 
 	default:

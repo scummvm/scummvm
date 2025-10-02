@@ -427,6 +427,9 @@ int LoadString(HINSTANCE hInstance, unsigned int uID,
 			int copyLen = MIN((int)length, cchBufferMax - 1);
 			memcpy(lpBuffer, (const char *)pData, copyLen);
 			lpBuffer[copyLen] = '\0';
+
+			UnlockResource(hResData);
+			FreeResource(hResData);
 			return copyLen;
 		}
 
@@ -435,6 +438,8 @@ int LoadString(HINSTANCE hInstance, unsigned int uID,
 	}
 
 	// String ID not found (shouldn't happen if resource is valid)
+	UnlockResource(hResData);
+	FreeResource(hResData);
 	return 0;
 }
 
