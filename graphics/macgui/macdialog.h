@@ -80,11 +80,11 @@ typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 class MacDialog {
 public:
 	MacDialog(ManagedSurface *screen, MacWindowManager *wm,  int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
-	~MacDialog();
+	virtual ~MacDialog();
 
 	int run();
 
-private:
+protected:
 	ManagedSurface *_screen;
 	MacWindowManager *_wm;
 	ManagedSurface *_tempSurface;
@@ -108,7 +108,7 @@ private:
 	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
 
 public:
-	void paint();
+	virtual void paint();
 	void blit();
 	void mouseMove(int x, int y);
 	void mouseClick(int x, int y);
