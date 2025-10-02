@@ -850,10 +850,9 @@ LRESULT CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
  *
  ****************************************************************/
 
-void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
-	bool    bSuccess = false;
-	int     nWhichDLL;
-	bool    bLoadedDLL;
+void CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
+	int nWhichDLL;
+	bool bLoadedDLL;
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -869,18 +868,18 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 		if (bReturnToZoom) {
 			StartBackgroundMidi();
-			bSuccess = LoadZoomDLL();
+			LoadZoomDLL();
 		}
 
 		if (bReturnToMeta) {
 			StopBackgroundMidi();
 			lpMetaGame->m_bRestart = true;
-			bSuccess = LoadMetaDLL();
+			LoadMetaDLL();
 		}
 
 		if (bReturnToGrandTour) {
 			StartBackgroundMidi();
-			bSuccess = LoadGrandTourDLL();
+			LoadGrandTourDLL();
 		}
 
 		return;
@@ -890,7 +889,7 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 	if (lParam == MG_GAME_CHALLENGE) {
 		StartBackgroundMidi();
-		bSuccess = LoadZoomDLL();
+		bool bSuccess = LoadZoomDLL();
 		bReturnToZoom = false;
 		if (bSuccess == false) {
 			lpMetaGame->m_bRestart = true;
@@ -953,17 +952,14 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 			MessageBox("Verify proper game installation and try again.");
 
 			if (bReturnToZoom)
-				bSuccess = LoadZoomDLL();
+				LoadZoomDLL();
 
 			if (bReturnToMeta) {
 				lpMetaGame->m_bRestart = true;
-				bSuccess = LoadMetaDLL();
+				LoadMetaDLL();
 			}
 		}
 	}
-
-	if (!bSuccess)
-		error("LoadNewDLL call failed");
 }
 
 
