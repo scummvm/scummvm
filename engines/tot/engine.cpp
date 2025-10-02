@@ -2067,7 +2067,7 @@ void TotEngine::useScreenObject() {
 					if (verifyList) {
 						int completedListItems = 0;
 						for (listIndex = 0; listIndex < 5; listIndex++) {
-							for (invIndex = 0; invIndex <= kInventoryIconCount; invIndex++) {
+							for (invIndex = 0; invIndex < kInventoryIconCount; invIndex++) {
 								if (_inventory[invIndex].code == _secondList[listIndex]) {
 									completedListItems += 1;
 									break;
