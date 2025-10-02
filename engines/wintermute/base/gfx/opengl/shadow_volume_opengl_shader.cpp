@@ -106,7 +106,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
 	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
 	// renderstate is really not needed.
-	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
+	glStencilFunc(GL_ALWAYS, 0x1, (GLuint)~0);
 
 	// Make sure that no pixels get drawn to the frame buffer
 	glEnable(GL_BLEND);
@@ -144,7 +144,7 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Only write where stencil val >= 1 (count indicates # of shadows that overlap that pixel)
-	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
+	glStencilFunc(GL_LEQUAL, 0x1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
