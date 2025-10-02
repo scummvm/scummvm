@@ -539,14 +539,14 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventMouseWithin:		// D6+
 			if (_vm->getVersion() >= 600) {
 				if (pointedSpriteId != 0) {
-					Channel *channel = _score->_channels[channelId];
+					Channel *channel = _score->getChannelById(pointedSpriteId);
 
 					// Generate event for each behavior, and pass through for all but the last one.
 					// This is to allow multiple behaviors on a single sprite to each have a
 					// chance to handle the event.
 					for (uint i = 0; i < channel->_scriptInstanceList.size(); i++) {
 						bool passThrough = (i != channel->_scriptInstanceList.size() - 1);
-						queue.push(LingoEvent(event, eventId, kSpriteHandler, passThrough, pos, channelId, i));
+						queue.push(LingoEvent(event, eventId, kSpriteHandler, passThrough, pos, pointedSpriteId, i));
 					}
 
 					if (event == kEventBeginSprite || event == kEventEndSprite || event == kEventMouseUpOutSide) {
