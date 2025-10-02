@@ -747,6 +747,12 @@ void BitmapCastMember::load() {
 			} else {
 				warning("BitmapCastMember::load(): cannot open external picture '%s'", location.toString(Common::Path::kNativeSeparator).c_str());
 			}
+		} else if ((!pic || (pic->size() == 0)) && (_initialRect.width() == 0) && (_initialRect.height() == 0)) {
+			// If an image is 0x0, it doesn't matter if we don't have any data.
+			_picture->_surface.create(0, 0, g_director->_wm->_pixelformat);
+			delete pic;
+			_loaded = true;
+			return;
 		}
 	} else {
 		realId = imgId + _cast->_castIDoffset;
