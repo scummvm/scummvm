@@ -785,11 +785,11 @@ bool Window::hasField(int field) {
 Datum Window::getField(int field) {
 	switch (field) {
 	case kTheTitle:
-		return getTitle();
+		return _window->getTitle();
 	case kTheTitleVisible:
-		return isTitleVisible();
+		return _window->isTitleVisible();
 	case kTheVisible:
-		return isVisible();
+		return _window->isVisible();
 	case kTheWindowType:
 		return getWindowType();
 	case kTheRect:
@@ -889,7 +889,7 @@ void LM::m_forget(int nargs) {
 
 void LM::m_open(int nargs) {
 	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
-	bool wasVisible = me->isVisible();
+	bool wasVisible = me->_window->isVisible();
 	me->setVisible(true);
 
 	if (!wasVisible)

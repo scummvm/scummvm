@@ -345,7 +345,7 @@ void QTVR::m_openMovie(int nargs) {
 	me->_rect = Common::Rect(left, top, left + me->_video->getWidth(), top + me->_video->getHeight());
 
 
-	me->_widget = new QtvrWidget(me, g_director->getCurrentWindow(),
+	me->_widget = new QtvrWidget(me, g_director->getCurrentWindow()->getMacWindow(),
 			me->_rect.left, me->_rect.top, me->_rect.width(), me->_rect.height(),
 			g_director->getMacWindowManager());
 

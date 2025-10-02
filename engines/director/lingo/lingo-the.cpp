@@ -1032,7 +1032,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheStageBottom:
 		{
 			Window *window = _vm->getCurrentWindow();
-			d = window->getInnerDimensions().bottom;
+			d = window->_window->getInnerDimensions().bottom;
 		}
 		break;
 	case kTheStageColor:
@@ -1042,19 +1042,19 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheStageLeft:
 		{
 			Window *window = _vm->getCurrentWindow();
-			d = window->getInnerDimensions().left;
+			d = window->_window->getInnerDimensions().left;
 		}
 		break;
 	case kTheStageRight:
 		{
 			Window *window = _vm->getCurrentWindow();
-			d = window->getInnerDimensions().right;
+			d = window->_window->getInnerDimensions().right;
 		}
 		break;
 	case kTheStageTop:
 		{
 			Window *window = _vm->getCurrentWindow();
-			d = window->getInnerDimensions().top;
+			d = window->_window->getInnerDimensions().top;
 		}
 		break;
 	case kTheStillDown:

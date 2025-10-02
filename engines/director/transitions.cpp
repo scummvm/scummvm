@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -134,12 +135,13 @@ struct {
 };
 
 void Window::exitTransition(TransParams &t, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
-	_composeSurface->blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
+	composeSurface->blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
 	stepTransition(t, t.steps);
 }
 
 void Window::stepTransition(TransParams &t, int step) {
-	_contentIsDirty = true;
+	_window->setDirty(true);
 
 	if (t.sourcePal != t.targetPal) {
 		for (int i = 0; i < 768; i++) {
@@ -189,28 +191,24 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	}
 
 	// Cache a copy of the frame before the transition.
-	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
-	currentFrame.copyFrom(*_composeSurface);
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
+	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(composeSurface->w, composeSurface->h, g_director->_pixelformat));
+	currentFrame.copyFrom(*composeSurface);
 
 	// If a transition is being played, render the frame after the transition.
-	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
+	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(composeSurface->w, composeSurface->h, g_director->_pixelformat));
 
 	Common::Rect clipRect;
+	Common::Rect innerDims = _window->getInnerDimensions();
 	Score *score = g_director->getCurrentMovie()->getScore();
 	if (t.area) {
 		// Changed area transition
 		score->updateSprites(mode);
 
-		if (_dirtyRects.size() == 0)
-			return;
-
-		clipRect = *_dirtyRects.begin();
-
-		for (auto &i : _dirtyRects)
-			clipRect.extend(i);
+		clipRect = _window->getDirtyRectBounds();
 
 		// Ensure we redraw any other sprites intersecting the non-clip area.
-		_dirtyRects.clear();
+		_window->clearDirtyRects();
 
 		// Some transitions depend upon an even clipRect size
 		if (clipRect.width() % 2 == 1)
@@ -219,8 +217,8 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		if (clipRect.height() % 2 == 1)
 			clipRect.bottom += 1;
 
-		clipRect.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
-		_dirtyRects.push_back(clipRect);
+		clipRect.clip(Common::Rect(innerDims.width(), innerDims.height()));
+		_window->addDirtyRect(clipRect);
 
 		render(false, &nextFrame);
 	} else {
@@ -228,7 +226,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		score->updateSprites(mode);
 		render(true, &nextFrame);
 
-		clipRect = _innerDims;
+		clipRect = innerDims;
 		clipRect.moveTo(0, 0);
 	}
 
@@ -293,7 +291,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
  				transProps[t.type].algo == kTransAlgoEdgesIn) {
-			_composeSurface->copyRectToSurface(nextFrame, clipRect.left, clipRect.top, clipRect);
+			composeSurface->copyRectToSurface(nextFrame, clipRect.left, clipRect.top, clipRect);
 		}
 
 		switch (t.type) {
@@ -372,7 +370,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 			rto.translate(w - t.xStepSize * i / TSTEP_FRAC, 0);
 			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
 			rto.clip(clipRect);
-			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(t.xStepSize * i / TSTEP_FRAC, 0);
 			rfrom.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i / TSTEP_FRAC)));
@@ -382,7 +380,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		case kTransPushRight:								// 12
 			rfrom.translate(w - t.xStepSize * i / TSTEP_FRAC, 0);
 			rfrom.setWidth(MAX((int16)0, (int16)(t.xStepSize * i / TSTEP_FRAC)));
-			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i / TSTEP_FRAC)));
 			rto.translate(t.xStepSize * i / TSTEP_FRAC, 0);
@@ -393,7 +391,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		case kTransPushDown:								// 13
 			rfrom.translate(0, h - t.yStepSize * i / TSTEP_FRAC);
 			rfrom.setHeight(MAX((int16)0, (int16)(t.yStepSize * i / TSTEP_FRAC)));
-			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i / TSTEP_FRAC)));
 			rto.translate(0, t.yStepSize * i / TSTEP_FRAC);
@@ -405,7 +403,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 			rto.translate(0, h - t.yStepSize * i / TSTEP_FRAC);
 			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
 			rto.clip(clipRect);
-			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(0, t.yStepSize * i / TSTEP_FRAC);
 			rfrom.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i / TSTEP_FRAC)));
@@ -566,7 +564,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		if (stop)
 			break;
 
-		_composeSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
+		composeSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, &nextFrame, clipRect);
@@ -615,11 +613,11 @@ static uint32 randomSeed[33] = {
 };
 
 void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 	uint realw = w, realh = h;
 	byte pixmask[8];
-
 	memset(pixmask, 0, 8);
 
 	// This method treats xStepSize and yStepSize as pixel values, without TSTEP_FRAC.
@@ -746,7 +744,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 							r.clip(clipRect);
 
 							if (!r.isEmpty())
-								_composeSurface->copyRectToSurface(*nextFrame, x, y, r);
+								composeSurface->copyRectToSurface(*nextFrame, x, y, r);
 						}
 					} else {
 						mask = pixmask[x % -t.xStepSize];
@@ -756,12 +754,12 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 						y += clipRect.top;
 
 						if (g_director->_pixelformat.bytesPerPixel == 1) {
-							byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
+							byte *dst = (byte *)composeSurface->getBasePtr(x, y);
 							byte *src = (byte *)nextFrame->getBasePtr(x, y);
 
 							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
 						} else {
-							uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
+							uint32 *dst = (uint32 *)composeSurface->getBasePtr(x, y);
 							uint32 *src = (uint32 *)nextFrame->getBasePtr(x, y);
 
 							*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
@@ -863,6 +861,7 @@ static byte dissolvePatterns[][8] = {
 };
 
 void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
 	int patternSteps = 64;
 
 	for (int i = 0; i < t.steps; i++) {
@@ -872,7 +871,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 			byte pat = dissolvePatterns[patternIndex][y % 8];
 			if (g_director->_pixelformat.bytesPerPixel == 1) {
 
-				byte *dst = (byte *)_composeSurface->getBasePtr(clipRect.left, y);
+				byte *dst = (byte *)composeSurface->getBasePtr(clipRect.left, y);
 				byte *src = (byte *)nextFrame->getBasePtr(clipRect.left, y);
 
 				for (int x = clipRect.left; x < clipRect.right;) {
@@ -887,7 +886,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 					}
 				}
 			} else {
-				uint32 *dst = (uint32 *)_composeSurface->getBasePtr(clipRect.left, y);
+				uint32 *dst = (uint32 *)composeSurface->getBasePtr(clipRect.left, y);
 				uint32 *src = (uint32 *)nextFrame->getBasePtr(clipRect.left, y);
 
 				for (int x = clipRect.left; x < clipRect.right;) {
@@ -921,6 +920,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 }
 
 void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
 	Common::Rect rto;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -1079,7 +1079,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 			rto.clip(clipRect);
 
 			if (rto.height() > 0 && rto.width() > 0) {
-				_composeSurface->blitFrom(*nextFrame, rto, Common::Point(rto.left, rto.top));
+				composeSurface->blitFrom(*nextFrame, rto, Common::Point(rto.left, rto.top));
 			}
 		}
 		stepTransition(t, i);
@@ -1101,6 +1101,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 }
 
 void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *currentFrame, Graphics::ManagedSurface *nextFrame) {
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
 	Common::Rect r = clipRect;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -1111,7 +1112,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 
 	DirectorPlotData pd(g_director, kLineTopBottomSprite, kInkTypeReverse, 0, _wm->_colorWhite, _wm->_colorBlack);
 	pd.destRect = clipRect;
-	pd.dst = _composeSurface;
+	pd.dst = composeSurface;
 
 	Graphics::Primitives *primitives = g_director->getInkPrimitives();
 
@@ -1119,7 +1120,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		uint32 startTime = g_system->getMillis();
 
 		// FIXME: figure out the bounding box of the drawn bits
-		_composeSurface->copyRectToSurface(*currentFrame, clipRect.left, clipRect.top, clipRect);
+		composeSurface->copyRectToSurface(*currentFrame, clipRect.left, clipRect.top, clipRect);
 
 		for (int s = 2; s >= 0; s--) {
 			if (i - s < 0 || i - s > t.steps - 2)
@@ -1160,8 +1161,8 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		g_lingo->executePerFrameHook(t.frame, i, false);
 	}
 
-	render(true, _composeSurface);
-	_contentIsDirty = true;
+	render(true, composeSurface);
+	_window->setDirty(true);
 	g_director->draw();
 }
 

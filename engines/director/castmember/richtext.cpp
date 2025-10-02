@@ -170,7 +170,7 @@ Graphics::MacWidget *RichTextCastMember::createWidget(Common::Rect &bbox, Channe
 	// Check if we need to dither the image
 	int dstBpp = g_director->_wm->_pixelformat.bytesPerPixel;
 
-	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	Graphics::Surface *dithered = nullptr;
 

@@ -46,7 +46,7 @@ Movie::Movie(Window *window) {
 	_lingo = _vm->getLingo();
 
 	_flags = 0;
-	_stageColor = _window->_wm->_colorWhite;
+	_stageColor = _vm->_wm->_colorWhite;
 
 	_lastClickedSpriteId = 0;
 	_currentSpriteNum = 0;
