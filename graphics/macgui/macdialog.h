@@ -109,6 +109,7 @@ private:
 
 public:
 	void paint();
+	void blit();
 	void mouseMove(int x, int y);
 	void mouseClick(int x, int y);
 	int mouseRaise(int x, int y);

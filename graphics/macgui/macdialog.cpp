@@ -100,6 +100,9 @@ const Graphics::Font *MacDialog::getDialogFont() {
 }
 
 void MacDialog::paint() {
+	if (!_needsRedraw)
+		return;
+
 	Primitives &primitives = _wm->getDrawPrimitives();
 
 	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
@@ -136,17 +139,20 @@ void MacDialog::paint() {
 
 		drawOutline(button->bounds, buttonOutline, ARRAYSIZE(buttonOutline));
 	}
+	_needsRedraw = false;
+}
+
+void MacDialog::blit() {
+	paint();
 
 	g_system->copyRectToScreen(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
 							   _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
-
-	_needsRedraw = false;
 }
 
 void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	Primitives &primitives = _wm->getDrawPrimitives();
 
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0) {
 			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);
@@ -195,7 +201,7 @@ int MacDialog::run() {
 		}
 
 		if (_needsRedraw)
-			paint();
+			blit();
 
 		g_system->updateScreen();
 		g_system->delayMillis(50);
