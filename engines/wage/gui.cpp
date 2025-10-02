@@ -46,6 +46,8 @@
 
 #include "common/timer.h"
 #include "common/system.h"
+#include "common/config-manager.h"
+
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macdialog.h"
@@ -487,12 +489,39 @@ void Gui::enableRevert() {
 	_menu->enableCommand(kMenuFile, kMenuActionRevert, true);
 }
 
-class AboutDialog : Graphics::MacDialog {
-	void paint();
+class AboutDialog : public Graphics::MacDialog {
+public:
+	AboutDialog(Graphics::ManagedSurface *screen, Graphics::MacWindowManager *wm, int width, Graphics::MacText *mactext, int maxTextWidth, Graphics::MacDialogButtonArray *buttons, uint defaultButton)
+		: Graphics::MacDialog(screen, wm, width, mactext, maxTextWidth, buttons, defaultButton) {}
+
+	virtual ~AboutDialog() {}
+
+	virtual void paint() override;
 };
 
 void AboutDialog::paint() {
 	Graphics::MacDialog::paint();
+
+	const char *volumeText = "-     Volume     +";
+	int w = _font->getStringWidth(volumeText);
+	int x = _bbox.left + (_bbox.width() - w) / 2;
+	int y = _bbox.bottom - 52;
+
+	_font->drawString(_screen, volumeText, x, y, _bbox.width(), kColorBlack);
+
+	uint32 volume = ConfMan.getInt("sfx_volume");
+
+	Graphics::Primitives &primitives = _wm->getDrawPrimitives();
+
+	const int volWidth = 160;
+	Common::Rect volBox(0, 0, volume * volWidth / 256, 12);
+	Common::Rect volFull(0, 0, volWidth, 12);
+	volBox.moveTo(_bbox.left + (_bbox.width() - volWidth) / 2, _bbox.bottom - 32);
+	volFull.moveTo(_bbox.left + (_bbox.width() - volWidth) / 2, _bbox.bottom - 32);
+
+	Graphics::MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
+	primitives.drawFilledRect1(volBox, kColorBlack, &pd);
+	primitives.drawRect1(volFull, kColorBlack, &pd);
 }
 
 void Gui::aboutDialog() {
@@ -511,7 +540,7 @@ void Gui::aboutDialog() {
 
 	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
 
-	Graphics::MacDialog about(&_screen, _wm, 450, &aboutMessage, 400, &buttons, 0);
+	AboutDialog about(&_screen, _wm, 450, &aboutMessage, 400, &buttons, 0);
 
 	int button = about.run();
 
