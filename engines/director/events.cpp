@@ -113,7 +113,7 @@ void DirectorEngine::processEventQUIT() {
 }
 
 bool Window::processEvent(Common::Event &event) {
-	bool flag = MacWindow::processEvent(event);
+	bool flag = false;
 
 	if (_currentMovie && _currentMovie->processEvent(event))
 		flag = true;
@@ -325,48 +325,55 @@ bool Movie::processEvent(Common::Event &event) {
 }
 
 bool Window::processWMEvent(Graphics::WindowClick click, Common::Event &event) {
+	bool flag = false;
 	switch (click) {
 	case Graphics::kBorderCloseButton:
 		if (_currentMovie && event.type == Common::EVENT_LBUTTONUP) {
 			_currentMovie->processEvent(kEventCloseWindow, 0);
 			setVisible(false);
 
-			return true;
+			flag = true;
 		}
 		break;
 
 	case Graphics::kBorderActivate:
 		sendWindowEvent(kEventActivateWindow);
-		return true;
+		flag = true;
+		break;
 
 	case Graphics::kBorderDeactivate:
 		sendWindowEvent(kEventDeactivateWindow);
-		return true;
+		flag = true;
+		break;
 
 	case Graphics::kBorderDragged:
 		sendWindowEvent(kEventMoveWindow);
-		return true;
+		flag = true;
+		break;
 
 	case Graphics::kBorderResized:
 		sendWindowEvent(kEventResizeWindow);
-		return true;
+		flag = true;
+		break;
 
 	case Graphics::kBorderMaximizeButton:
 		if (event.type == Common::EVENT_LBUTTONUP) {
 			sendWindowEvent(kEventZoomWindow);
 
-			return true;
+			flag = true;
+			break;
 		}
 		break;
 	default:
 		break;
 	}
 
-	return false;
+	flag |= processEvent(event);
+	return flag;
 }
 
 void Window::sendWindowEvent(LEvent event) {
-	if (_currentMovie && _visible && !_isStage) {
+	if (_currentMovie && _window->isVisible() && !_isStage) {
 		// We cannot call processEvent here directly because it might
 		// be called from within another event processing (like 'on startMovie'	)
 		// which would mess up the Lingo state.

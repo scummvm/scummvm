@@ -176,7 +176,7 @@ void PopUpMenuXObj::m_popNum(int nargs) {
 	int left = g_lingo->pop().asInt();
 
 	// Convert window coordinates to screen coordinates
-	Common::Rect windowRect = g_director->getCurrentWindow()->getInnerDimensions();
+	Common::Rect windowRect = g_director->getCurrentWindow()->getMacWindow()->getInnerDimensions();
 	int screenTop = top + windowRect.top - 1;
 	int screenLeft = left + windowRect.left - 1;
 
@@ -193,7 +193,7 @@ void PopUpMenuXObj::m_popText(int nargs) {
 	int left = g_lingo->pop().asInt();
 
 	// Convert window coordinates to screen coordinates
-	Common::Rect windowRect = g_director->getCurrentWindow()->getInnerDimensions();
+	Common::Rect windowRect = g_director->getCurrentWindow()->getMacWindow()->getInnerDimensions();
 	int screenTop = top + windowRect.top - 1;
 	int screenLeft = left + windowRect.left - 1;
 

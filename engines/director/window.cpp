@@ -39,6 +39,7 @@
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
 #include "director/debugger/debugtools.h"
+#include "graphics/managed_surface.h"
 
 namespace Director {
 
@@ -48,8 +49,9 @@ bool commandsWindowCallback(Graphics::WindowClick click, Common::Event &event, v
 }
 
 Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage)
-	: MacWindow(id, scrollable, resizable, editable, wm), Object<Window>("Window") {
+: Object<Window>("Window") {
 	_vm = vm;
+	_wm = wm;
 	_isStage = isStage;
 	_stageColor = _wm->_colorBlack;
 	_puppetTransition = nullptr;
@@ -68,11 +70,13 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_isModal = false;
 	_skipFrameAdvance = false;
 
+	// Owned by the window manager
+	_window = new Graphics::MacWindow(id, scrollable, resizable, editable, wm);
+	_window->setDraggable(!_isStage);
+
+	_window->setCallback(commandsWindowCallback, this);
+
 	updateBorderType();
-
-	_draggable = !_isStage;
-
-	setCallback(commandsWindowCallback, this);
 }
 
 Window::~Window() {
@@ -90,7 +94,7 @@ Window::~Window() {
 void Window::decRefCount() {
 	*_refCount -= 1;
 	if (*_refCount <= 0) {
-		g_director->_wm->removeWindow(this);
+		g_director->_wm->removeWindow(_window);
 		g_director->_wm->removeMarked();
 	}
 }
@@ -111,9 +115,11 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	int xoff = srcRect.left - channel->getBbox().left;
 	int yoff = srcRect.top - channel->getBbox().top;
 
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
+
 	if (_wm->_pixelformat.bytesPerPixel == 1) {
 		for (int i = 0; i < srcRect.height(); i++) {
-			byte *src = (byte *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
+			byte *src = (byte *)composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
@@ -123,7 +129,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	} else {
 
 		for (int i = 0; i < srcRect.height(); i++) {
-			uint32 *src = (uint32 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
+			uint32 *src = (uint32 *)composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
@@ -161,36 +167,38 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		return false;
 
 	if (!blitTo)
-		blitTo = _composeSurface;
+		blitTo = _window->getSurface();
+
+	Common::List<Common::Rect> &dirtyRects = _window->getDirtyRectList();
 
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
-		markAllDirty();
+		_window->markAllDirty();
 	} else {
-		if (_dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false) {
+		if (dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false) {
 			if (g_director->_debugDraw & kDebugDrawFrame) {
 				drawFrameCounter(blitTo);
 
-				_contentIsDirty = true;
+				_window->setContentDirty(true);
 			}
 
 			return false;
 		}
 
-		mergeDirtyRects();
+		_window->mergeDirtyRects();
 	}
 
 	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
 
 	uint32 renderStartTime = g_system->getMillis();
-	debugC(7, kDebugImages, "Window::render(): Updating %d rects", _dirtyRects.size());
+	debugC(7, kDebugImages, "Window::render(): Updating %d rects", dirtyRects.size());
 
-	for (auto &i : _dirtyRects) {
+	for (auto &i : dirtyRects) {
 		Common::Rect r = i;
 		// The inner dimensions are relative to the virtual desktop while
 		// r isn't, so we need to move the window to be relative to the
 		// same sapce.
-		Common::Rect windowRect = getInnerDimensions();
+		Common::Rect windowRect = _window->getInnerDimensions();
 		windowRect.moveTo(r.left, r.top);
 		r.clip(windowRect);
 
@@ -264,8 +272,8 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (g_director->_debugDraw & kDebugDrawFrame)
 		drawFrameCounter(blitTo);
 
-	_dirtyRects.clear();
-	_contentIsDirty = true;
+	dirtyRects.clear();
+	_window->setContentDirty(true);
 	debugC(7, kDebugImages, "Window::render(): Draw finished in %d ms",  g_system->getMillis() - renderStartTime);
 
 	return true;
@@ -275,19 +283,59 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 	if (stageColor != _stageColor || forceReset) {
 		_stageColor = stageColor;
 		reset();
-		markAllDirty();
+		_window->markAllDirty();
 	}
 }
 
 void Window::setTitleVisible(bool titleVisible) {
-	MacWindow::setTitleVisible(titleVisible);
+	_window->setTitleVisible(titleVisible);
 	updateBorderType();
+}
+
+Graphics::ManagedSurface *Window::getSurface() {
+	return _window->getSurface();
+}
+
+void Window::addDirtyRect(const Common::Rect &r) {
+	_window->addDirtyRect(r);
+}
+
+void Window::resizeInner(int w, int h) {
+	_window->resizeInner(w, h);
+}
+
+int Window::getId() {
+	return _window->getId();
+}
+
+void Window::setDirty(bool dirty) {
+	_window->setDirty(dirty);
+}
+
+void Window::disableBorder() {
+	_window->disableBorder();
+}
+
+void Window::center(bool toCenter) {
+	_window->center(toCenter);
+}
+
+Common::Point Window::getAbsolutePos() {
+	return _window->getAbsolutePos();
+}
+
+void Window::setTitle(const Common::String &title) {
+	_window->setTitle(title);
+}
+
+void Window::move(int x, int y) {
+	_window->move(x, y);
 }
 
 Datum Window::getStageRect() {
 	ensureMovieIsLoaded();
 
-	Common::Rect rect = getInnerDimensions();
+	Common::Rect rect = _window->getInnerDimensions();
 	Datum d;
 	d.type = RECT;
 	d.u.farr = new FArray;
@@ -308,7 +356,7 @@ void Window::setStageRect(Datum datum) {
 	// Unpack rect from datum
 	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
 
-	setInnerDimensions(rect);
+	_window->setInnerDimensions(rect);
 }
 
 void Window::setModal(bool modal) {
@@ -316,7 +364,7 @@ void Window::setModal(bool modal) {
 		_wm->setLockedWidget(nullptr);
 		_isModal = false;
 	} else if (!_isModal && modal) {
-		_wm->setLockedWidget(this);
+		_wm->setLockedWidget(this->_window);
 		_isModal = true;
 	}
 }
@@ -327,8 +375,9 @@ void Window::setFileName(Common::String filename) {
 }
 
 void Window::reset() {
-	resizeInner(_composeSurface->w, _composeSurface->h);
-	_contentIsDirty = true;
+	Graphics::ManagedSurface *composeSurface = _window->getSurface();
+	resizeInner(composeSurface->w, composeSurface->h);
+	_window->setContentDirty(true);
 }
 
 void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
@@ -369,7 +418,8 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 }
 
 Common::Point Window::getMousePos() {
-	return g_system->getEventManager()->getMousePos() - Common::Point(_innerDims.left, _innerDims.top);
+	Common::Rect innerDims = _window->getInnerDimensions();
+	return g_system->getEventManager()->getMousePos() - Common::Point(innerDims.left, innerDims.top);
 }
 
 void Window::setVisible(bool visible, bool silent) {
@@ -377,10 +427,10 @@ void Window::setVisible(bool visible, bool silent) {
 	if (!_currentMovie && !silent)
 		ensureMovieIsLoaded();
 
-	BaseMacWindow::setVisible(visible);
+	_window->setVisible(visible);
 
 	if (visible)
-		_wm->setActiveWindow(_id);
+		_wm->setActiveWindow(getId());
 }
 
 void Window::ensureMovieIsLoaded() {
@@ -435,11 +485,11 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 
 void Window::updateBorderType() {
 	if (_isStage) {
-		setBorderType(3);
-	} else if (!isTitleVisible()) {
-		setBorderType(2);
+		_window->setBorderType(3);
+	} else if (!_window->isTitleVisible()) {
+		_window->setBorderType(2);
 	} else {
-		setBorderType(MAX(0, MIN(_windowType, 16)));
+		_window->setBorderType(MAX(0, MIN(_windowType, 16)));
 	}
 }
 
@@ -778,12 +828,14 @@ uint32 Window::frozenLingoRecursionCount() {
 }
 
 Common::String Window::formatWindowInfo() {
+	Common::Rect dims = _window->getDimensions();
+	Common::Rect innerDims = _window->getInnerDimensions();
 	return Common::String::format(
 			"name: \"%s\", movie: \"%s\", currentPath: \"%s\", dims: (%d,%d) %dx%d, innerDims: (%d, %d) %dx%d, visible: %d",
 			_name.c_str(), _currentMovie->getMacName().c_str(), _currentPath.c_str(),
-			_dims.left, _dims.top, _dims.width(), _dims.height(),
-			_innerDims.left, _innerDims.top, _innerDims.width(), _innerDims.height(),
-			_visible
+			dims.left, dims.top, dims.width(), dims.height(),
+			innerDims.left, innerDims.top, innerDims.width(), innerDims.height(),
+			_window->isVisible()
 	);
 }
 

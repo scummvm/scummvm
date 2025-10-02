@@ -56,12 +56,12 @@ void Window::testFontScaling() {
 
 	Graphics::ManagedSurface surface;
 
-	surface.create(w, h, _wm->_pixelformat);
-	surface.clear(_wm->_colorWhite);
+	surface.create(w, h, _vm->_wm->_pixelformat);
+	surface.clear(_vm->_wm->_colorWhite);
 
 	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
 
-	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
+	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_vm->_wm->_fontMan->getFont(origFont);
 
 	Graphics::MacFONTFont::testBlit(font1, &surface, 0xff, x, y + 200, 500);
 

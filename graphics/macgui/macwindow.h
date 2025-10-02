@@ -176,6 +176,12 @@ public:
 	 */
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
+	/**
+	 * Mutator to change the draggable state of the window.
+	 * @param draggable Target state.
+	 */
+	void setDraggable(bool draggable) { _draggable = draggable; }
+
 protected:
 	int _id;
 	WindowType _type;
@@ -380,10 +386,14 @@ public:
 	void addDirtyRect(const Common::Rect &r);
 	void markAllDirty();
 	void mergeDirtyRects();
+	Common::Rect getDirtyRectBounds();
+	void clearDirtyRects() { _dirtyRects.clear(); }
+	Common::List<Common::Rect> &getDirtyRectList() { return _dirtyRects; }
 
 	bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
 	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
+	void setContentDirty(bool dirty) { _contentIsDirty = true; }
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }

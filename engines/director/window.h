@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_STAGE_H
 #define DIRECTOR_STAGE_H
 
+#include "graphics/macgui/macwindow.h"
+
 #include "director/lingo/lingo-object.h"
 
 namespace Common {
@@ -38,6 +40,7 @@ namespace Director {
 
 class Channel;
 class MacArchive;
+class Window;
 struct MacShape;
 struct LingoState;
 
@@ -100,7 +103,7 @@ struct TransParams {
 	}
 };
 
-class Window : public Graphics::MacWindow, public Object<Window> {
+class Window : public Object<Window> {
 public:
 	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage);
 	~Window();
@@ -129,18 +132,30 @@ public:
 	Common::Point getMousePos();
 
 	DirectorEngine *getVM() const { return _vm; }
+	Graphics::MacWindow *getMacWindow() const { return _window; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 	DirectorSound *getSoundManager() const { return _soundManager; }
 
-	void setVisible(bool visible, bool silent = false) override;
+	void setVisible(bool visible, bool silent = false);
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
 	void ensureMovieIsLoaded();
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
-	void setTitleVisible(bool titleVisible) override;
+	void setTitleVisible(bool titleVisible);
+	Graphics::ManagedSurface *getSurface();
+	void addDirtyRect(const Common::Rect &r);
+	void resizeInner(int w, int h);
+	int getId();
+	void setDirty(bool dirty);
+	void disableBorder();
+	void center(bool toCenter = true);
+	Common::Point getAbsolutePos();
+	void setTitle(const Common::String &title);
+	void move(int x, int y);
+
 	Datum getStageRect();
 	void setStageRect(Datum datum);
 	void setModal(bool modal);
@@ -172,7 +187,7 @@ public:
 	static void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 
 	// events.cpp
-	bool processEvent(Common::Event &event) override;
+	bool processEvent(Common::Event &event);
 	bool processWMEvent(Graphics::WindowClick click, Common::Event &event);
 	void sendWindowEvent(LEvent event);
 
@@ -203,6 +218,9 @@ public:
 	Common::Path _fileName;
 
 public:
+	Graphics::MacWindow *_window;
+	Graphics::MacWindowManager *_wm;
+
 	Common::List<Channel *> _dirtyChannels;
 	TransParams *_puppetTransition;
 

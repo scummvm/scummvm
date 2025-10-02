@@ -210,7 +210,7 @@ Window *DirectorEngine::getOrCreateWindow(Common::String &name) {
 	window->setVisible(false, true);
 	window->move(0, 0);
 	window->incRefCount();
-	_wm->addWindowInitialized(window);
+	_wm->addWindowInitialized(window->getMacWindow());
 	_windowList.push_back(window);
 	return window;
 }
@@ -294,14 +294,14 @@ Common::Error DirectorEngine::run() {
 	*_stage->_refCount += 1;
 
 	// Set this as background so it doesn't come to foreground when multiple windows present
-	_wm->setBackgroundWindow(_stage);
+	_wm->setBackgroundWindow(_stage->getMacWindow());
 
 	if (!desktopEnabled())
 		_stage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface(1, 1);
 	_wm->setScreen(_surface);
-	_wm->addWindowInitialized(_stage);
+	_wm->addWindowInitialized(_stage->getMacWindow());
 	_wm->setActiveWindow(_stage->getId());
 	setPalette(CastMemberID(kClutSystemMac, -1));
 
@@ -368,6 +368,7 @@ Common::Error DirectorEngine::run() {
 			for (size_t i = 0; i < _windowList.size(); i++) {
 				if (_windowList[i] == window) {
 					_windowList.remove_at(i);
+					// FIXME: force window to be removed from WM
 					window->decRefCount();
 					break;
 				}
