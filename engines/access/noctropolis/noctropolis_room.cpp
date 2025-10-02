@@ -29,6 +29,14 @@ namespace Noctropolis {
 NoctropolisRoom::NoctropolisRoom(AccessEngine *vm): Room(vm) {
 }
 
+void NoctropolisRoom::reloadRoom() {
+	loadRoom(_vm->_player->_roomNumber);
+	reloadRoom1();
+}
+
+void NoctropolisRoom::reloadRoom1() {
+}
+
 void NoctropolisRoom::buildScreenXScroll() {
 	int drawCol = _vm->_scrollCol;
 	int offset = -_vm->_scrollX;

@@ -88,6 +88,7 @@ public:
 class ExtraCell {
 public:
 	FileIdent _vid;
+	Common::String _vidFilename;
 	FileIdent _vidSound;
 };
 

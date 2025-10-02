@@ -50,6 +50,10 @@ Room::~Room() {
 	delete[] _tile;
 }
 
+void Room::loadRoom(int roomNumber) {
+	loadRoomData(_vm->_res->ROOMTBL[roomNumber]._data.data());
+}
+
 void Room::freePlayField() {
 	delete[] _playField;
 	_playField = nullptr;
@@ -1035,10 +1039,11 @@ RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool is
 	_animFile.load(stream, gameType);
 	_scaleI = stream.readByte();
 	_scrollThreshold = stream.readByte();
-	if (gameType != kGameNoctropolis)
+
+	if (gameType != kGameNoctropolis) {
 		_paletteFile.load(stream, gameType);
-	else
-		stream.skip(8);
+	}
+
 	if (_paletteFile._fileNum == -1) {
 		_startColor = _numColors = 0;
 	} else {
@@ -1046,18 +1051,35 @@ RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool is
 		_numColors = stream.readUint16LE();
 	}
 
-	for (int16 v = stream.readSint16LE(); v != -1; v = stream.readSint16LE()) {
-		ExtraCell ec;
-		ec._vid._fileNum = v;
-		ec._vid._subfile = stream.readSint16LE();
+	if (gameType != kGameNoctropolis) {
+		for (int16 v = stream.readSint16LE(); v != -1; v = stream.readSint16LE()) {
+			ExtraCell ec;
+			ec._vid._fileNum = v;
+			ec._vid._subfile = stream.readSint16LE();
 
-		_extraCells.push_back(ec);
+			_extraCells.push_back(ec);
+		}
+	} else {
+		// Noctropolis has a null-terminated series of filenames
+		while (!stream.eos()) {
+			Common::String fname = stream.readString();
+			if (fname.empty())
+				break;
+			ExtraCell ec;
+			ec._vidFilename = fname;
+			_extraCells.push_back(ec);
+		}
 	}
 
 	for (int16 fileNum = stream.readSint16LE(); fileNum != -1; fileNum = stream.readSint16LE()) {
 		SoundIdent fi;
 		fi._fileNum = fileNum;
-		fi._subfile = stream.readUint16LE();
+		if (fileNum == 0xff) {
+			fi._fileNum = -1;
+			fi._soundFilename = stream.readString();
+		} else {
+			fi._subfile = stream.readUint16LE();
+		}
 		fi._priority = stream.readUint16LE();
 
 		_sounds.push_back(fi);

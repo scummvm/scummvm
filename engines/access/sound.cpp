@@ -26,8 +26,9 @@
 #include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
-// Miles Audio
 #include "audio/miles.h"
+#include "audio/midiparser_smf.h"
+
 #include "access/access.h"
 #include "access/sound.h"
 
@@ -109,7 +110,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 	Audio::RewindableAudioStream *audioStream;
 
 	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
-		// CD version uses WAVE-files
+		// Noctropolis and Amazon CD version use raw WAVE-files
 		Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(resourceData, res->_size, DisposeAfterUse::NO);
 		audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 	} else if (READ_BE_UINT32(resourceData) == MKTAG('S', 'T', 'E', 'V')) {
@@ -198,7 +199,19 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 	clearSounds();
 
 	for (const auto &sound : sounds) {
-		Resource *soundRes = loadSound(sound._fileNum, sound._subfile);
+		Resource *soundRes;
+		if (sound._soundFilename.empty()) {
+			soundRes = loadSound(sound._fileNum, sound._subfile);
+		} else {
+			// TODO: should be running from DARK parent directory
+			Common::Path origpath = Common::Path(sound._soundFilename);
+			Common::StringArray components = origpath.splitComponents();
+			assert(components.size() == 3);
+			Common::Path path (components[1]);
+			path.joinInPlace(components[2]);
+			debugC(1, kDebugSound, "loadRawSound(%s)", path.toString().c_str());
+			soundRes = _vm->_files->loadRawFile(path);
+		}
 		_soundTable.push_back(SoundEntry(soundRes, sound._priority));
 	}
 }
@@ -311,7 +324,19 @@ void MusicManager::midiPlay() {
 	stop();
 
 	uint32 magic = READ_BE_UINT32(_music->data());
-	if (magic == MKTAG('B', 'E', 'm', 'd')) {
+	if (magic == MKTAG('M', 'T', 'h', 'd')) {
+		_parser = new MidiParser_SMF();
+
+		if (!_parser->loadMusic(_music->data(), _music->_size))
+			error("midiPlay() couldn't load music resource");
+
+		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpAutoLoop, _isLooping);
+		setVolume(127);
+		_isPlaying = true;
+	} else if (magic == MKTAG('B', 'E', 'm', 'd')) {
 		_parser = new MidiParser_BEmd();
 
 		if (!_parser->loadMusic(_music->data(), _music->_size))

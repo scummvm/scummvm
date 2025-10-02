@@ -138,7 +138,7 @@ public:
 
 	void doRoom();
 
-	virtual void loadRoom(int roomNumber) = 0;
+	void loadRoom(int roomNumber);
 
 	virtual void roomMenu() = 0;
 
@@ -179,6 +179,7 @@ public:
 class RoomInfo {
 public:
 	struct SoundIdent : FileIdent {
+		Common::String _soundFilename;
 		int _priority;
 	};
 public:
