@@ -603,7 +603,7 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
-	_vm->setCurrentWindow(this->getWindow());
+	_vm->setWindowToBeActive(this->getWindow());
 	_lingo->processEvents(queue, false);
 }
 
