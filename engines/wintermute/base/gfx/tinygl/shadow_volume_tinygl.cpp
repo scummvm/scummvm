@@ -63,6 +63,7 @@ bool ShadowVolumeTinyGL::renderToStencilBuffer() {
 	// Disable z-buffer writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	tglDepthMask(TGL_FALSE);
+	tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
 	tglDisable(TGL_TEXTURE_2D);
 	tglDisable(TGL_LIGHTING);
 	tglEnable(TGL_STENCIL_TEST);
@@ -97,6 +98,7 @@ bool ShadowVolumeTinyGL::renderToStencilBuffer() {
 	tglFrontFace(TGL_CCW);
 	tglShadeModel(TGL_SMOOTH);
 	tglDepthMask(TGL_TRUE);
+	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 	tglDisable(TGL_STENCIL_TEST);
 	tglDisable(TGL_BLEND);
 

@@ -98,6 +98,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Disable z-buffer writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_CULL_FACE);
@@ -128,6 +129,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Restore render states
 	glFrontFace(GL_CCW);
 	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_BLEND);
 
