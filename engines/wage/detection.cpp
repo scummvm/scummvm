@@ -65,7 +65,7 @@ class WageMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescrip
 public:
 	WageMetaEngineDetection() : AdvancedMetaEngineDetection(Wage::gameDescriptions, wageGames) {
 		_md5Bytes = 2 * 1024 * 1024;
-		_guiOptions = GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS);
+		_guiOptions = GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS, GUIO_NOMUSIC);
 	}
 
 	const char *getName() const override {
