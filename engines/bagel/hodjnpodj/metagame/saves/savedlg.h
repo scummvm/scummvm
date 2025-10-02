@@ -52,13 +52,13 @@ protected:
 private:
 	bool OnInitDialog() override;
 
-	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
-	CEdit        *m_pSlotText[MAX_SAVEGAMES];
-	CColorButton *m_pQuitButton;
-	CColorButton *m_pOkButton;
-	CText        *m_pTxtSave;
-	char         *m_pszDescriptions[MAX_SAVEGAMES];
-	int           m_nCurSlot;
+	CColorButton *m_pSlotButtons[MAX_SAVEGAMES] = {};
+	CEdit *m_pSlotText[MAX_SAVEGAMES] = {};
+	CColorButton *m_pQuitButton = nullptr;
+	CColorButton *m_pOkButton = nullptr;
+	CText *m_pTxtSave = nullptr;
+	char *m_pszDescriptions[MAX_SAVEGAMES] = {};
+	int m_nCurSlot = 0;
 };
 
 } // namespace Saves
