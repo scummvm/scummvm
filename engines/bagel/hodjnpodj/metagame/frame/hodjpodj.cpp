@@ -554,12 +554,11 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	// this must be before the CMainGameDlg constructor
 	PositionAtHomePath();
 
-	bool            bSuccess;
-	CMainGameDlg    cMainDlg((CWnd *)this, pGamePalette);
-	int             nMainDlgReturn = 0;
-	CDC            *pDC = nullptr;
-	CWnd           *pWnd = nullptr;
-	int                         nMovieId;
+	bool bSuccess;
+	CMainGameDlg cMainDlg((CWnd *)this, pGamePalette);
+	int nMainDlgReturn = 0;
+	CWnd *pWnd = nullptr;
+	int nMovieId;
 
 	switch (wParam) {
 	case MOVIE_OVER:
@@ -691,9 +690,6 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
 		break;
 	}
-
-	if (pDC != nullptr)
-		ReleaseDC(pDC);
 
 	return true;
 }
@@ -965,6 +961,9 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 			}
 		}
 	}
+
+	if (!bSuccess)
+		error("LoadNewDLL call failed");
 }
 
 
