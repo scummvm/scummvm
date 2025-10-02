@@ -686,7 +686,7 @@ bool BaseSubFrame::setSurface(const char *filename, bool defaultCK, byte ckRed, 
 
 	SAFE_DELETE_ARRAY(_surfaceFilename);
 
-	_surface = _game->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+	_surface = _game->_surfaceStorage->addSurface(filename, true, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
 		size_t filenameSize = strlen(filename) + 1;
 		_surfaceFilename = new char[filenameSize];
@@ -712,7 +712,7 @@ bool BaseSubFrame::setSurfaceSimple() {
 		_surface = nullptr;
 		return STATUS_OK;
 	}
-	_surface = _game->_surfaceStorage->addSurface(_surfaceFilename, _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
+	_surface = _game->_surfaceStorage->addSurface(_surfaceFilename, true, _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
 	if (_surface) {
 		return STATUS_OK;
 	} else {

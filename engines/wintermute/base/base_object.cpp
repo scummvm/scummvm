@@ -527,7 +527,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		if (val->isString()) {
-			_shadowImage = _game->_surfaceStorage->addSurface(val->getString());
+			_shadowImage = _game->_surfaceStorage->addSurface(val->getString(), false);
 			stack->pushBool(_shadowImage != nullptr);
 		} else {
 			stack->pushBool(true);
@@ -1135,7 +1135,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 			if (persistMgr->checkVersion(1, 6, 1)) {
 				persistMgr->transferString(TMEMBER(tempString));
 				if (!tempString.empty()) {
-					_shadowImage = _game->_surfaceStorage->addSurface(tempString.c_str());
+					_shadowImage = _game->_surfaceStorage->addSurface(tempString.c_str(), false);
 				}
 			}
 		}

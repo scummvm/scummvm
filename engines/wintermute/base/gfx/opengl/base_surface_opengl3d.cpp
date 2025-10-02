@@ -40,9 +40,11 @@ BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *rendere
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
-	glDeleteTextures(1, &_tex);
 	_renderer->invalidateTexture(this);
-	_tex = 0;
+	if (_tex) {
+		glDeleteTextures(1, &_tex);
+		_tex = 0;
+	}
 
 	if (_imageData) {
 		_imageData->free();
@@ -58,9 +60,11 @@ BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
-	glDeleteTextures(1, &_tex);
 	_renderer->invalidateTexture(this);
-	_tex = 0;
+	if (_tex) {
+		glDeleteTextures(1, &_tex);
+		_tex = 0;
+	}
 
 	if (_imageData) {
 		_imageData->free();
@@ -129,7 +133,7 @@ bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Common::Rect32 rect, int nu
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOpenGL3D::create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (defaultCK) {
 		ckRed = 255;
 		ckGreen = 0;

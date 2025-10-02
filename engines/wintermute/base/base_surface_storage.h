@@ -43,7 +43,7 @@ public:
 	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass)
 
 	bool restoreAll();
-	BaseSurface *addSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
+	BaseSurface *addSurface(const char *filename, bool texture2D = true, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool removeSurface(BaseSurface *surface);
 	BaseSurfaceStorage(BaseGame *inGame);
 	~BaseSurfaceStorage() override;

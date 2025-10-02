@@ -36,12 +36,16 @@
 namespace Wintermute {
 
 BaseSurfaceTinyGL::BaseSurfaceTinyGL(BaseGame *game, BaseRenderer3D *renderer)
-: BaseSurface(game), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _pixelOpReady(false), _surfaceModified(false) {
+: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _pixelOpReady(false), _surfaceModified(false), _texture2D(true) {
 	_blitImage = tglGenBlitImage();
 }
 
 BaseSurfaceTinyGL::~BaseSurfaceTinyGL() {
 	_renderer->invalidateTexture(this);
+	if (_tex) {
+		tglDeleteTextures(1, &_tex);
+		_tex = 0;
+	}
 
 	if (_imageData) {
 		_imageData->free();
@@ -60,6 +64,10 @@ BaseSurfaceTinyGL::~BaseSurfaceTinyGL() {
 
 bool BaseSurfaceTinyGL::invalidate() {
 	_renderer->invalidateTexture(this);
+	if (_tex) {
+		tglDeleteTextures(1, &_tex);
+		_tex = 0;
+	}
 
 	if (_imageData) {
 		_imageData->free();
@@ -128,12 +136,14 @@ bool BaseSurfaceTinyGL::displayTiled(int x, int y, Common::Rect32 rect, int numT
 	return true;
 }
 
-bool BaseSurfaceTinyGL::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceTinyGL::create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (defaultCK) {
 		ckRed = 255;
 		ckGreen = 0;
 		ckBlue = 255;
 	}
+
+	_texture2D = texture2D;
 
 	Common::String surfacefilename = filename;
 	BaseImage img = BaseImage();
@@ -259,6 +269,14 @@ bool BaseSurfaceTinyGL::create(int width, int height) {
 	_width = width;
 	_height = height;
 
+	if (!_texture2D) {
+		if (!_valid) {
+			tglGenTextures(1, &_tex);
+		}
+		tglBindTexture(TGL_TEXTURE_2D, _tex);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, _texWidth, _texHeight, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, nullptr);
+		tglBindTexture(TGL_TEXTURE_2D, 0);
+	}
 	_valid = true;
 	return true;
 }
@@ -276,7 +294,22 @@ bool BaseSurfaceTinyGL::putSurface(const Graphics::Surface &surface, bool hasAlp
 	_width = surface.w;
 	_height = surface.h;
 
-	tglUploadBlitImage(_blitImage, *_imageData, 0, false);
+	if (_texture2D) {
+		tglUploadBlitImage(_blitImage, *_imageData, 0, false);
+	} else {
+		if (!_valid) {
+			tglGenTextures(1, &_tex);
+		}
+		_texWidth = Common::nextHigher2(_width);
+		_texHeight = Common::nextHigher2(_height);
+		tglBindTexture(TGL_TEXTURE_2D, _tex);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
+		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, _width, _height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, _imageData->getPixels());
+		tglBindTexture(TGL_TEXTURE_2D, 0);
+	}
 	_valid = true;
 
 	return true;
@@ -334,7 +367,13 @@ bool BaseSurfaceTinyGL::startPixelOp() {
 bool BaseSurfaceTinyGL::endPixelOp() {
 	_pixelOpReady = false;
 	if (_surfaceModified) {
-		tglUploadBlitImage(_blitImage, *_imageData, 0, false);
+		if (_texture2D) {
+			tglUploadBlitImage(_blitImage, *_imageData, 0, false);
+		} else {
+			tglBindTexture(TGL_TEXTURE_2D, _tex);
+			tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, _width, _height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, _imageData->getPixels());
+			tglBindTexture(TGL_TEXTURE_2D, 0);
+		}
 		_surfaceModified = false;
 	}
 	return true;
@@ -360,6 +399,10 @@ bool BaseSurfaceTinyGL::isTransparentAtLite(int x, int y) const {
 
 void BaseSurfaceTinyGL::setTexture() {
 	prepareToDraw();
+
+	if (!_texture2D) {
+		tglBindTexture(TGL_TEXTURE_2D, _tex);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

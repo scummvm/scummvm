@@ -102,7 +102,7 @@ bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		if (scumm_stricmp(_surfaces[i]->_filename, filename) == 0) {
 			_surfaces[i]->_referenceCount++;
@@ -115,9 +115,9 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 			_game->LOG(0, "Missing image: '%s'", filename);
 		}
 		if (_game->_debugMode) {
-			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+			return addSurface("invalid_debug.bmp", texture2D, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		} else {
-			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+			return addSurface("invalid.bmp", texture2D, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		}
 	}
 
@@ -128,7 +128,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const char *filename, bool defaultCK
 		return nullptr;
 	}
 
-	if (DID_FAIL(surface->create(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
+	if (DID_FAIL(surface->create(filename, texture2D, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
 		delete surface;
 		return nullptr;
 	} else {

@@ -42,7 +42,7 @@ public:
 	BaseSurfaceOSystem(BaseGame *inGame);
 	~BaseSurfaceOSystem() override;
 
-	bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
+	bool create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
 
 	bool setAlphaImage(const char *filename) override;

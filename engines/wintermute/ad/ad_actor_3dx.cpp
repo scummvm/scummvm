@@ -1166,7 +1166,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 				_game->_surfaceStorage->removeSurface(_shadowImage);
 			_shadowImage = nullptr;
 
-			_shadowImage = _game->_surfaceStorage->addSurface(params);
+			_shadowImage = _game->_surfaceStorage->addSurface(params, false);
 			break;
 
 		case TOKEN_BLOCKED_REGION: {

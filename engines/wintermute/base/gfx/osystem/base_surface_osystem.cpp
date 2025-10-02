@@ -78,7 +78,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOSystem::create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (defaultCK) {
 		ckRed   = 255;
 		ckGreen = 0;

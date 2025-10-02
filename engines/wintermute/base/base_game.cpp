@@ -631,7 +631,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #if defined(USE_TINYGL)
 	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (_playing3DGame) {
-			_renderer3D = nullptr;//makeTinyGL3DRenderer(this);
+			_renderer3D = makeTinyGL3DRenderer(this);
 		}
 	}
 #endif // defined(USE_TINYGL)
@@ -997,7 +997,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			}
 			_shadowImage = nullptr;
 
-			_shadowImage = _game->_surfaceStorage->addSurface(params);
+			_shadowImage = _game->_surfaceStorage->addSurface(params, false);
 			break;
 #endif
 
@@ -1129,7 +1129,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	}
 #ifdef ENABLE_WME3D
 	if (!_shadowImage) {
-		_shadowImage = _game->_surfaceStorage->addSurface("shadow.png");
+		_shadowImage = _game->_surfaceStorage->addSurface("shadow.png", false);
 	}
 #endif
 
@@ -4241,7 +4241,7 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 			SAFE_DELETE(_saveLoadImage);
 			if (_saveImageName && _saveImageName[0] != '\0') {
 				_saveLoadImage = _game->_renderer->createSurface();
-				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
+				if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, true, 0, 0, 0))) {
 					SAFE_DELETE(_saveLoadImage);
 				}
 			}
@@ -4294,7 +4294,7 @@ bool BaseGame::loadGame(const char *filename) {
 	if (_loadImageName && _loadImageName[0] != '\0') {
 		_saveLoadImage = _game->_renderer->createSurface();
 
-		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
+		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, true, 0, 0, 0))) {
 			SAFE_DELETE(_saveLoadImage);
 		}
 	}

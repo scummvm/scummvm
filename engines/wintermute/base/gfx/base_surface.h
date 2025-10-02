@@ -59,7 +59,7 @@ public:
 	virtual bool display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual bool displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) = 0;
 	virtual bool restore();
-	virtual bool create(const char *filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
+	virtual bool create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual bool create(int width, int height);
 	virtual bool setAlphaImage(const char *filename) {
 		return STATUS_FAILED;

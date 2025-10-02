@@ -94,7 +94,7 @@ bool Material::setTexture(const char *filename, bool adoptName) {
 		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
-	_surface = _game->_surfaceStorage->addSurface(_textureFilename);
+	_surface = _game->_surfaceStorage->addSurface(_textureFilename, false);
 	_ownedSurface = true;
 	_sprite = nullptr;
 
