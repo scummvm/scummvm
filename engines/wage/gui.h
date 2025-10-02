@@ -143,6 +143,10 @@ public:
 
 	void clearOutput();
 
+	void gameOver();
+	bool saveDialog();
+	void aboutDialog();
+
 private:
 	void drawScene();
 	const Graphics::MacFont *getConsoleMacFont();

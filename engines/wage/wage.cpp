@@ -55,8 +55,6 @@
 #include "engines/engine.h"
 #include "engines/util.h"
 
-#include "graphics/macgui/macdialog.h"
-
 #include "wage/wage.h"
 #include "wage/debugtools.h"
 #include "wage/entities.h"
@@ -254,7 +252,7 @@ void WageEngine::processEvents() {
 				if (!_shouldQuit) {
 					g_system->getEventManager()->resetQuit();
 					g_system->getEventManager()->resetReturnToLauncher();
-					if (saveDialog()) {
+					if (_gui->saveDialog()) {
 						_shouldQuit = true;
 						g_system->getEventManager()->pushEvent(event);
 					}
@@ -323,85 +321,6 @@ void WageEngine::sayText(const Common::U32String &str, Common::TextToSpeechManag
 
 void WageEngine::sayText(const Common::String &str, Common::TextToSpeechManager::Action action) const {
 	sayText(Common::U32String(str, Common::CodePage::kMacRoman), action);
-}
-
-void WageEngine::gameOver() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("OK", 66, 67, 68, 28));
-
-	Graphics::MacFont font;
-
-	Graphics::MacText gameOverMessage(*_world->_gameOverMessage, _gui->_wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
-
-	sayText(*_world->_gameOverMessage, Common::TextToSpeechManager::QUEUE);
-
-	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
-
-	int button = gameOverDialog.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
-
-	doClose();
-
-	_gui->disableAllMenus();
-	_gui->enableNewGameMenus();
-}
-
-bool WageEngine::saveDialog() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("No", 19, 67, 68, 28));
-	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
-	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
-
-	Graphics::MacFont font;
-
-	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
-
-	sayText(*_world->_saveBeforeCloseMessage);
-
-	Graphics::MacDialog save(&_gui->_screen, _gui->_wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
-
-	int button = save.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
-	else if (button == 2) // Cancel
-		return false;
-	else if (button == 1)
-		saveGame();
-
-	doClose();
-
-	return true;
-}
-
-void WageEngine::aboutDialog() {
-	Common::U32String messageText(_world->_aboutMessage, Common::kMacRoman);
-	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n\xA9 Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.", Common::kMacRoman);
-
-	sayText(_world->_aboutMessage);
-	sayText(disclaimer, Common::TextToSpeechManager::QUEUE);
-	messageText += disclaimer;
-
-	Graphics::MacFont font(Graphics::kMacFontGeneva, 9, 0);
-	Graphics::MacText aboutMessage(messageText, _gui->_wm, &font, Graphics::kColorBlack,
-											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
-
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
-
-	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
-
-	int button = about.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
 }
 
 void WageEngine::saveGame() {
@@ -506,7 +425,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 	if (currentScene == _world->_storageScene && !_temporarilyHidden) {
 		if (!_isGameOver) {
 			_isGameOver = true;
-			gameOver();
+			_gui->gameOver();
 		}
 		return;
 	}
@@ -618,7 +537,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		if (_world->_player->_currentScene == _world->_storageScene) {
 			if (!_isGameOver) {
 				_isGameOver = true;
-				gameOver();
+				_gui->gameOver();
 			}
 		}
 

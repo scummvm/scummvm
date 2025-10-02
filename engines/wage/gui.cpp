@@ -48,6 +48,7 @@
 #include "common/system.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macdialog.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
@@ -317,7 +318,7 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
 	case kMenuActionAbout:
-		_engine->aboutDialog();
+		aboutDialog();
 		break;
 
 	case kMenuActionNew:
@@ -484,6 +485,85 @@ void Gui::enableSave() {
 
 void Gui::enableRevert() {
 	_menu->enableCommand(kMenuFile, kMenuActionRevert, true);
+}
+
+void Gui::aboutDialog() {
+	Common::U32String messageText(_engine->_world->_aboutMessage, Common::kMacRoman);
+	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n\xA9 Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.", Common::kMacRoman);
+
+	_engine->sayText(_engine->_world->_aboutMessage);
+	_engine->sayText(disclaimer, Common::TextToSpeechManager::QUEUE);
+	messageText += disclaimer;
+
+	Graphics::MacFont font(Graphics::kMacFontGeneva, 9, 0);
+	Graphics::MacText aboutMessage(messageText, _wm, &font, Graphics::kColorBlack,
+											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
+
+	Graphics::MacDialogButtonArray buttons;
+
+	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
+
+	Graphics::MacDialog about(&_screen, _wm, 450, &aboutMessage, 400, &buttons, 0);
+
+	int button = about.run();
+
+	if (button == Graphics::kMacDialogQuitRequested)
+		_engine->_shouldQuit = true;
+}
+
+void Gui::gameOver() {
+	Graphics::MacDialogButtonArray buttons;
+
+	buttons.push_back(new Graphics::MacDialogButton("OK", 66, 67, 68, 28));
+
+	Graphics::MacFont font;
+
+	Graphics::MacText gameOverMessage(*_engine->_world->_gameOverMessage, _wm, &font, Graphics::kColorBlack,
+									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
+
+	_engine->sayText(*_engine->_world->_gameOverMessage, Common::TextToSpeechManager::QUEUE);
+
+	Graphics::MacDialog gameOverDialog(&_screen, _wm,  199, &gameOverMessage, 199, &buttons, 0);
+
+	int button = gameOverDialog.run();
+
+	if (button == Graphics::kMacDialogQuitRequested)
+		_engine->_shouldQuit = true;
+
+	_engine->doClose();
+
+	disableAllMenus();
+	enableNewGameMenus();
+}
+
+bool Gui::saveDialog() {
+	Graphics::MacDialogButtonArray buttons;
+
+	buttons.push_back(new Graphics::MacDialogButton("No", 19, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
+	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
+
+	Graphics::MacFont font;
+
+	Graphics::MacText saveBeforeCloseMessage(*_engine->_world->_saveBeforeCloseMessage, _wm, &font, Graphics::kColorBlack,
+									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
+
+	_engine->sayText(*_engine->_world->_saveBeforeCloseMessage);
+
+	Graphics::MacDialog save(&_screen, _wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
+
+	int button = save.run();
+
+	if (button == Graphics::kMacDialogQuitRequested)
+		_engine->_shouldQuit = true;
+	else if (button == 2) // Cancel
+		return false;
+	else if (button == 1)
+		_engine->saveGame();
+
+	_engine->doClose();
+
+	return true;
 }
 
 } // End of namespace Wage

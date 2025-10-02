@@ -164,8 +164,6 @@ private:
 	bool attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex);
 	void performHealingMagic(Chr *chr, Obj *magicalObject);
 
-	void doClose();
-
 public:
 	void takeObj(Obj *obj);
 
@@ -191,6 +189,8 @@ public:
 
 	void printPlayerCondition(Chr *player);
 	const char *getPercentMessage(double percent);
+
+	void doClose();
 
 public:
 	Common::RandomSource *_rnd;
@@ -226,9 +226,6 @@ public:
 	void appendText(const char *str);
 	void sayText(const Common::U32String &str, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
 	void sayText(const Common::String &str, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
-	void gameOver();
-	bool saveDialog();
-	void aboutDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();

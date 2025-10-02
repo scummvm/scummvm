@@ -53,6 +53,7 @@
 
 #include "wage/wage.h"
 #include "wage/entities.h"
+#include "wage/gui.h"
 #include "wage/sound.h"
 #include "wage/world.h"
 
@@ -104,7 +105,7 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 				if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
 					if (!_shouldQuit) {
 						g_system->getEventManager()->resetQuit();
-						if (saveDialog()) {
+						if (_gui->saveDialog()) {
 							_shouldQuit = true;
 							g_system->getEventManager()->pushEvent(event);
 						}
