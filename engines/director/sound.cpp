@@ -1044,7 +1044,12 @@ Audio::AudioStream *MoaSoundFormatDecoder::getAudioStream(bool looping, bool for
 	byte *buffer = (byte *)malloc(_size);
 	memcpy(buffer, _data, _size);
 
-	Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer, _size, _format.frameRate, ((_format.bitsPerSample == 16) ? Audio::RawFlags::FLAG_16BITS : 0) | ((_format.numChannels == 2) ? Audio::RawFlags::FLAG_STEREO : 0) | Audio::RawFlags::FLAG_UNSIGNED, disposeAfterUse);
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer,
+			_size, _format.frameRate,
+			((_format.bitsPerSample == 16) ? Audio::RawFlags::FLAG_16BITS : 0) |
+			((_format.numChannels == 2) ? Audio::RawFlags::FLAG_STEREO : 0) |
+			((_format.bitsPerSample == 8) ? Audio::RawFlags::FLAG_UNSIGNED : 0),
+			disposeAfterUse);
 
 	if (looping) {
 		if (_format.loopEndFrame < _format.loopStartFrame) {
