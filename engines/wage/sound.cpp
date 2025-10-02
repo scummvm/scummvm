@@ -93,7 +93,7 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 
 	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, 2 * s->_size, 11000, Audio::FLAG_UNSIGNED);
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream,
 		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit && blocking) {
