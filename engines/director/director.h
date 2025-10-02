@@ -181,6 +181,7 @@ public:
 	Window *getOrCreateWindow(Common::String &name);
 	void forgetWindow(Window *window);
 	void setCurrentWindow(Window *window);
+	void setWindowToBeActive(Window *window);
 	Window *getCursorWindow() const { return _cursorWindow; }
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
@@ -318,6 +319,7 @@ private:
 	Common::Array<Window *> _windowsToForget;
 	Window *_currentWindow;
 	Window *_cursorWindow;
+	Window *_windowToBeActive;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;

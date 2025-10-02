@@ -86,6 +86,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_mainArchive = nullptr;
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
+	_windowToBeActive = nullptr;
 	_lingo = nullptr;
 	_clipBoard = nullptr;
 	_fixStageSize = false;
@@ -170,6 +171,10 @@ DirectorEngine::~DirectorEngine() {
 	for (auto &it : _windowList) {
 		it->decRefCount();
 	}
+	if (_windowToBeActive) {
+		_windowToBeActive->decRefCount();
+		_windowToBeActive = nullptr;
+	}
 	delete _lingo;
 	delete _wm;
 	delete _surface;
@@ -231,6 +236,18 @@ void DirectorEngine::setCurrentWindow(Window *window) {
 		_currentWindow->decRefCount();
 	_currentWindow = window;
 	_currentWindow->incRefCount();
+}
+
+void DirectorEngine::setWindowToBeActive(Window *window) {
+	if (_windowToBeActive == window)
+		return;
+	if (window)
+		window->incRefCount();
+	if (_windowToBeActive) {
+		_windowToBeActive->decRefCount();
+		_windowToBeActive = nullptr;
+	}
+	_windowToBeActive = window;
 }
 
 void DirectorEngine::setVersion(uint16 version) {
@@ -362,6 +379,13 @@ Common::Error DirectorEngine::run() {
 		}
 
 		draw();
+
+		if (_windowToBeActive) {
+			setCurrentWindow(_windowToBeActive);
+			_windowToBeActive->decRefCount();
+			_windowToBeActive = nullptr;
+		}
+
 		while (!_windowsToForget.empty()) {
 			Window *window = _windowsToForget.back();
 			_windowsToForget.pop_back();
