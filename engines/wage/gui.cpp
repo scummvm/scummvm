@@ -491,13 +491,28 @@ void Gui::enableRevert() {
 
 class AboutDialog : public Graphics::MacDialog {
 public:
-	AboutDialog(Graphics::ManagedSurface *screen, Graphics::MacWindowManager *wm, int width, Graphics::MacText *mactext, int maxTextWidth, Graphics::MacDialogButtonArray *buttons, uint defaultButton)
-		: Graphics::MacDialog(screen, wm, width, mactext, maxTextWidth, buttons, defaultButton) {}
-
-	virtual ~AboutDialog() {}
+	AboutDialog(Graphics::ManagedSurface *screen, Graphics::MacWindowManager *wm, int width, Graphics::MacText *mactext, int maxTextWidth, Graphics::MacDialogButtonArray *buttons, uint defaultButton);
+	virtual ~AboutDialog() {
+		if (_volumeChanged)
+			ConfMan.flushToDisk();
+	}
 
 	virtual void paint() override;
+	virtual bool processEvent(const Common::Event &event) override;
+
+private:
+	Common::Rect _volBbox;
+
+	const int kVolWidth = 160;
+	bool _volumeChanged = false;
 };
+
+AboutDialog::AboutDialog(Graphics::ManagedSurface *screen, Graphics::MacWindowManager *wm, int width, Graphics::MacText *mactext, int maxTextWidth, Graphics::MacDialogButtonArray *buttons, uint defaultButton)
+		: Graphics::MacDialog(screen, wm, width, mactext, maxTextWidth, buttons, defaultButton) {
+	_volBbox = Common::Rect(0, 0, kVolWidth, 12);
+	_volBbox.moveTo(_bbox.left + (_bbox.width() - kVolWidth) / 2, _bbox.bottom - 32);
+}
+
 
 void AboutDialog::paint() {
 	Graphics::MacDialog::paint();
@@ -513,15 +528,32 @@ void AboutDialog::paint() {
 
 	Graphics::Primitives &primitives = _wm->getDrawPrimitives();
 
-	const int volWidth = 160;
-	Common::Rect volBox(0, 0, volume * volWidth / 256, 12);
-	Common::Rect volFull(0, 0, volWidth, 12);
-	volBox.moveTo(_bbox.left + (_bbox.width() - volWidth) / 2, _bbox.bottom - 32);
-	volFull.moveTo(_bbox.left + (_bbox.width() - volWidth) / 2, _bbox.bottom - 32);
+	Common::Rect volBox(0, 0, volume * kVolWidth / 256, 12);
+	volBox.moveTo(_bbox.left + (_bbox.width() - kVolWidth) / 2, _bbox.bottom - 32);
 
 	Graphics::MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
 	primitives.drawFilledRect1(volBox, kColorBlack, &pd);
-	primitives.drawRect1(volFull, kColorBlack, &pd);
+	primitives.drawRect1(_volBbox, kColorBlack, &pd);
+}
+
+bool AboutDialog::processEvent(const Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		if (_volBbox.contains(event.mouse.x, event.mouse.y)) {
+			int delta = event.mouse.x - _volBbox.left;
+
+			int volume = delta * 256 / kVolWidth;
+			ConfMan.setInt("sfx_volume", volume);
+			_volumeChanged = true;
+
+			_needsRedraw = true;
+
+			g_wage->syncSoundSettings();
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Gui::aboutDialog() {
