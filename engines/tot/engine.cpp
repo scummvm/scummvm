@@ -5002,9 +5002,7 @@ void TotEngine::copyProtection() {
 	byte numColumn = getRandom(38) + 1;
 
 	protectionFile.seek(1 * chunkSize);
-	protXor1 = 6543736;
 	protXor1 = protectionFile.readUint32LE();
-	protXor2 = 9873254;
 	protectionFile.seek((((numRow - 1) * 38) + numColumn + 1) * chunkSize);
 	protXor2 = protectionFile.readUint32LE();
 	inputPassword = 0;
