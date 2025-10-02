@@ -487,6 +487,14 @@ void Gui::enableRevert() {
 	_menu->enableCommand(kMenuFile, kMenuActionRevert, true);
 }
 
+class AboutDialog : Graphics::MacDialog {
+	void paint();
+};
+
+void AboutDialog::paint() {
+	Graphics::MacDialog::paint();
+}
+
 void Gui::aboutDialog() {
 	Common::U32String messageText(_engine->_world->_aboutMessage, Common::kMacRoman);
 	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n\xA9 Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.", Common::kMacRoman);
