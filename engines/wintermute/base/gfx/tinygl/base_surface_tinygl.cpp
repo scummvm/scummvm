@@ -274,7 +274,7 @@ bool BaseSurfaceTinyGL::create(int width, int height) {
 			tglGenTextures(1, &_tex);
 		}
 		tglBindTexture(TGL_TEXTURE_2D, _tex);
-		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, _texWidth, _texHeight, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, nullptr);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, _width, _height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, nullptr);
 		tglBindTexture(TGL_TEXTURE_2D, 0);
 	}
 	_valid = true;
