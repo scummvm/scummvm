@@ -69,7 +69,7 @@ public:
 	uint getGLTextureWidth() const {
 		return _texWidth;
 	}
-	
+
 	uint getGLTextureHeight() const {
 		return _texHeight;
 	}

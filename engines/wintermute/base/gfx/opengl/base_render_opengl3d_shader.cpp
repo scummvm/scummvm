@@ -630,7 +630,7 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 
 bool BaseRenderOpenGL3DShader::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	setupLines();
-	
+
 	x1 += _drawOffsetX;
 	x2 += _drawOffsetX;
 	y1 += _drawOffsetY;

@@ -127,16 +127,16 @@ public:
 	bool drawShaderQuad() override {
 		return STATUS_FAILED;
 	}
-	
+
 	float getScaleRatioX() const override {
 		return 1.0f;
 	}
 	float getScaleRatioY() const override {
 		return 1.0f;
 	}
-	
+
 	BaseSurface *createSurface() override;
-	
+
 	bool startSpriteBatch() override;
 	bool endSpriteBatch() override;
 	bool commitSpriteBatch() override;

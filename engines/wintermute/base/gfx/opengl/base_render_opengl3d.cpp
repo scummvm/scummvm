@@ -1062,7 +1062,7 @@ void BaseRenderOpenGL3D::postfilter() {
 		 1.0f,  1.0f,
 		-1.0f,  1.0f
 	};
-	
+
 	GLfloat texCoords[] = {
 		0.0f, 0.0f,
 		1.0f, 0.0f,
