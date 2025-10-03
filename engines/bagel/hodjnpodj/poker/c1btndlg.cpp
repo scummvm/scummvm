@@ -215,7 +215,7 @@ void C1ButtonDialog::OnOK() {
 
 void C1ButtonDialog::OnCancel() {
 	ClearDialogImage();
-	EndDialog(IDOK);
+	EndDialog(IDCANCEL);
 }
 
 bool C1ButtonDialog::OnEraseBkgnd(CDC *) {

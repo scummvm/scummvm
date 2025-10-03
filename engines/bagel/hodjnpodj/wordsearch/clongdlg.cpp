@@ -230,7 +230,7 @@ void CLongDialog::OnOK() {
 
 void CLongDialog::OnCancel() {
 	ClearDialogImage();
-	EndDialog(IDOK);
+	EndDialog(IDCANCEL);
 }
 
 bool CLongDialog::OnEraseBkgnd(CDC *) {
