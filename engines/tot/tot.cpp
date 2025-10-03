@@ -424,7 +424,7 @@ int TotEngine::startGame() {
 		processEvents(escapePressed);
 		checkMouseGrid();
 		advanceAnimations(false, true);
-
+		if(shouldQuit()) break;
 		// Scene changes
 		if (_xframe2 == 0 && _roomChange) {
 			changeRoom();

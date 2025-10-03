@@ -4835,7 +4835,7 @@ void TotEngine::readAlphaGraphSmall(
 	bool removeCaret = false;
 	if (startChar != 0) {
 		output.append(1, startChar);
-		output.toUppercase();
+
 		pun += 1;
 		bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
 		euroText(posx, posy, output, textColor);
@@ -4866,7 +4866,7 @@ void TotEngine::readAlphaGraphSmall(
 					bar((posx + (output.size()) * 6), (posy + 2), (posx + (output.size() + 1) * 6), (posy + 9), barColor);
 				} else if (asciiCode == 8 && pun > 1) {
 					output = output.substr(0, output.size() - 1);
-					output.toUppercase();
+
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
 					euroText(posx, posy, output, textColor);
 					euroText((posx + (output.size()) * 6), posy, "-", textColor);
@@ -4882,7 +4882,7 @@ void TotEngine::readAlphaGraphSmall(
 				} else {
 					pun += 1;
 					output = output + (char)e.kbd.ascii;
-					output.toUppercase();
+
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
 					euroText(posx, posy, output, textColor);
 					euroText((posx + (output.size()) * 6), posy, "-", textColor);

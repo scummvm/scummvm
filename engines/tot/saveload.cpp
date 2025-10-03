@@ -586,9 +586,15 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 			euroText(65, 29 + (i * 15), availableText, color);
 		}
 	}
+
+	ExtendedSavegameHeader header;
+
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[selectedGame]);
+	bool result = g_engine->getMetaEngine()->readSavegameHeader(in, &header, true);
+
 	g_engine->_mouse->show();
 	if (selectedGame < saves.size())
-		return saves[selectedGame];
+		return result ? header.description.c_str() : saves[selectedGame].c_str();
 	else
 		return "";
 }
@@ -651,7 +657,7 @@ void TotEngine::originalSaveLoadScreen() {
 
 		if (mouseClicked) {
 			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
-				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) {
+				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) { // Save
 					if (selectedGame && _saveAllowed && saveName != "") {
 						saveGameState(selectedGame, saveName, false);
 						_graphics->putImg(50, 10, menuBgPointer);
@@ -661,7 +667,7 @@ void TotEngine::originalSaveLoadScreen() {
 						_sound->beep(100, 300);
 					}
 				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
-					if (selectedGame && !modified) {
+					if (selectedGame >= 0 && !modified) { // Load
 						if (selectedGame < saves.size()) {
 							_mouse->hide();
 							_graphics->putImg(50, 10, menuBgPointer);
@@ -695,7 +701,7 @@ void TotEngine::originalSaveLoadScreen() {
 						saveName = drawAndSelectSaves(saves, selectedGame);
 						_mouse->show();
 					}
-				} else if (_mouse->mouseClickX >= 200 && _mouse->mouseClickX <= 250) {
+				} else if (_mouse->mouseClickX >= 200 && _mouse->mouseClickX <= 250) { // Exit
 					if (_inGame && _saveAllowed) {
 						_graphics->putImg(50, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
