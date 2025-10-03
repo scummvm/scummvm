@@ -300,34 +300,35 @@ private:
 
 	FORCEINLINE void stencilOp(bool stencilTestResult, bool depthTestResult, byte *sDst) {
 		int op = !stencilTestResult ? _stencilSfail : !depthTestResult ? _stencilDpfail : _stencilDppass;
-		byte value = *sDst;
+		byte oldValue = *sDst;
+		byte newValue = oldValue;
 		switch (op) {
 		case TGL_KEEP:
 			return;
 		case TGL_ZERO:
-			value = 0;
+			newValue = 0;
 			break;
 		case TGL_REPLACE:
-			value = _stencilRefVal;
+			newValue = _stencilRefVal;
 			break;
 		case TGL_INCR:
-			if (value < 255)
-				value++;
+			if (newValue < 255)
+				newValue++;
 			break;
 		case TGL_INCR_WRAP:
-			value++;
+			newValue++;
 			break;
 		case TGL_DECR:
-			if (value > 0)
-				value--;
+			if (newValue > 0)
+				newValue--;
 			break;
 		case TGL_DECR_WRAP:
-			value--;
+			newValue--;
 			break;
 		case TGL_INVERT:
-			value = ~value;
+			newValue = ~newValue;
 		}
-		*sDst = value & _stencilWriteMask;
+		*sDst = (newValue & _stencilWriteMask) | (oldValue & ~_stencilWriteMask);
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
