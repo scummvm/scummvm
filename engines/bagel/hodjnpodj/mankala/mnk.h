@@ -322,7 +322,6 @@ private: bool SetBestWinCount(CMove * xpcMove) ;
 
 	bool DefensiveStaticEvaluation(CMove*);
 	bool TreeAlgo(CMove*);
-	int ExtendedStaticEvaluation(MOVE*, MOVE*, signed char, int);
 
 } ; // CMnk
 
