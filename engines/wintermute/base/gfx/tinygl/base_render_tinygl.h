@@ -166,6 +166,7 @@ private:
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;
 	TGLuint _postfilterTexture;
+	bool _shadowVolumesSupported;
 };
 
 } // wintermute namespace

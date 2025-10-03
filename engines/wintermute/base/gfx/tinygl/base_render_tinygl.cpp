@@ -53,6 +53,7 @@ BaseRenderer3D *makeTinyGL3DRenderer(BaseGame *inGame) {
 
 BaseRenderTinyGL::BaseRenderTinyGL(BaseGame *inGame) : BaseRenderer3D(inGame) {
 	_flipInProgress = false;
+	_shadowVolumesSupported = false;
 }
 
 BaseRenderTinyGL::~BaseRenderTinyGL() {
@@ -96,6 +97,9 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].nz = 0.0f;
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
+
+	// Disable shadow rendering as it's slow and a bit glitching in precision
+	_shadowVolumesSupported = false;
 
 	Graphics::PixelFormat pixelFormat = getPixelFormat();
 	initGraphics(width, height, &pixelFormat);
@@ -753,8 +757,7 @@ void BaseRenderTinyGL::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, 
 }
 
 bool BaseRenderTinyGL::stencilSupported() {
-	// assume that we have a stencil buffer
-	return true;
+	return _shadowVolumesSupported;
 }
 
 int BaseRenderTinyGL::getMaxActiveLights() {
