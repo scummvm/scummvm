@@ -37,16 +37,15 @@ public:
 	NoctropolisResources(AccessEngine *_vm);
 	~NoctropolisResources();
 
-	// TODO implement these for real.
-	const byte *getCursor(int num) const override { return nullptr; }
+	const byte *getCursor(int num) const override;
 	const char *getEgoName() const override;
 	int getRMouse(int i, int j) const override { return 0; };
 	int inButtonXRange(int x) const override { return 0; };
 
-	/**
-	 * Load data from the access.dat file
-	 */
 	void load(Common::SeekableReadStream &s) override;
+
+	int getCursorWidth(int num) const override;
+	int getCursorHeight(int num) const override;
 
 private:
 	Font *_fontChaleteu;

@@ -286,6 +286,8 @@ public:
 	bool _clearSummaryFlag;
 	bool _cheatFl;
 	bool _restartFl;
+	bool _stilOff; // Used in Noctropolis walk
+
 	// Fields mapped into the flags array
 	int &_useItem;
 	int &_startup;

@@ -27,6 +27,7 @@ namespace Access {
 namespace Noctropolis {
 
 NoctropolisScripts::NoctropolisScripts(NoctropolisEngine *vm) : Scripts(vm) {
+	setOpcodes_v3();
 }
 
 void NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2) {

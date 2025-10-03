@@ -115,6 +115,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_vidEnd = false;
 
 	_icons = nullptr;
+	_stilOff = false;
 
 	ARRAYCLEAR(_countTbl);
 }
