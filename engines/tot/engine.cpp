@@ -589,13 +589,14 @@ void TotEngine::animatedSequence(uint numSequence) {
 		if (g_engine->_screenLayers[13]) {
 			free(g_engine->_screenLayers[13]);
 		}
+		clearScreenLayer(13);
 		_screenLayers[13] = animptr;
 		_depthMap[13].posx = animX;
 		_depthMap[13].posy = animY;
 		assembleScreen();
 		_graphics->drawScreen(_sceneBackground);
+		_screenLayers[13] = nullptr;
 
-		clearScreenLayer(13);
 		_mainCharAnimation.depth = animIndex;
 		drawInventory();
 		for (animIndex = 32; animIndex <= secFrameCount; animIndex++) {
@@ -636,13 +637,14 @@ void TotEngine::animatedSequence(uint numSequence) {
 		if (g_engine->_screenLayers[12]) {
 			free(g_engine->_screenLayers[12]);
 		}
+		clearScreenLayer(12);
 		_screenLayers[12] = animptr;
 		_depthMap[12].posx = animX;
 		_depthMap[12].posy = animY;
 		disableSecondAnimation();
-		clearScreenLayer(12);
 		_mainCharAnimation.depth = animIndex;
 		_graphics->drawScreen(_sceneBackground);
+		_screenLayers[13] = nullptr;
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();

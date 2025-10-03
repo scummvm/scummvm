@@ -564,6 +564,8 @@ void TotEngine::loadGame(SavedGame game) {
 	if (_isRedDevilCaptured == false && _currentRoomData->code == 24 && _isTrapSet == false)
 		runaroundRed();
 	_graphics->sceneTransition(false, _sceneBackground);
+
+	_saveAllowed = true;
 }
 
 Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) {
