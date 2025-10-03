@@ -104,6 +104,7 @@ void SoundManager::playVoc() {
 }
 
 void SoundManager::playVoc(Common::String vocFile, int32 startPos, uint vocSize) {
+	stopVoc();
 	loadVoc(vocFile, startPos, vocSize);
 	playVoc();
 }
