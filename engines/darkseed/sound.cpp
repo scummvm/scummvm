@@ -580,5 +580,8 @@ bool Sound::isUsingCdSfx() const {
 bool Sound::isUsingFloppySfx() const {
 	return _useFloppySfx;
 }
+void Sound::resetIndividualSpeech(int tosIdx) {
+	_didSpeech[tosIdx] = 0;
+}
 
 } // End of namespace Darkseed

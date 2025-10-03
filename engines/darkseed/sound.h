@@ -87,6 +87,7 @@ public:
 	bool isPlayingSfx(uint8 sfxId) const;
 	bool isPlayingMusic();
 	void resetSpeech();
+	void resetIndividualSpeech(int tosIdx);
 	void playMusic(MusicId musicId, bool loop = true);
 	void playMusic(StartMusicId musicId);
 	void playMusic(Common::String const &filename, Common::String const *instrBankFilename = nullptr, uint8 priority = 0xFF, bool loop = false);

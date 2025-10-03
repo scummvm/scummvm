@@ -962,6 +962,10 @@ void Animation::sargoAnim() {
 	_animIndexTbl[0] = 0;
 	_spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0)._frameDuration[0];
 
+	// always play Sargo speech
+	g_engine->_sound->resetIndividualSpeech(916);
+	g_engine->_sound->resetIndividualSpeech(917);
+
 	g_engine->_console->printTosText(916);
 
 	uint8 dialogIdx = 79;
