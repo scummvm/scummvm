@@ -1799,6 +1799,86 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Steam edition of "The Tortoise And The Hare" (English main language, German and French)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "537b920a621d60b99b4f6876ec145482", 4438),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Steam edition of "The Tortoise And The Hare" (French main language, German, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "b7e5d17312284f433cc8580735ec1ec2", 4429),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Steam edition of "The Tortoise And The Hare" ("La Tartaruga e la Lepre") (Italian main language, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "289a89feac274136ce5ea3aa4738a69e", 2905),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	//  Steam edition of  "The Tortoise And The Hare" (German main language, French, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "44c5a4af293d3df6e14b4239b16694d8", 4426),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	//  Steam edition of "The Tortoise And The Hare" (Japanese main language, English (US), English (BR))
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "ee0a0182b685d3e191af065c64e96fea", 4397),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
