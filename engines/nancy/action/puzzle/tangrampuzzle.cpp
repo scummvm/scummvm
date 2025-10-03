@@ -418,7 +418,7 @@ bool TangramPuzzle::checkBuffer(const Tile &tile) const {
 TangramPuzzle::Tile::Tile() : _mask(nullptr), _id(0), _rotation(0), _isHighlighted(false) {}
 
 TangramPuzzle::Tile::~Tile() {
-	delete _mask;
+	delete[] _mask;
 }
 
 void TangramPuzzle::Tile::drawMask() {
