@@ -37,29 +37,27 @@ void drawText(uint x, uint y, const Common::String &str1, const Common::String &
 	littText(x, (y + 23), str3, borderColor);
 	littText(x, (y + 33), str4, borderColor);
 	littText(x, (y + 43), str5, borderColor);
-	g_engine->_screen->update();
-	delay(kEnforcedTextAnimDelay);
+
 	littText(x, (y + 1), str1,  borderColor);
 	littText(x, (y + 11), str2, borderColor);
 	littText(x, (y + 21), str3, borderColor);
 	littText(x, (y + 31), str4, borderColor);
 	littText(x, (y + 41), str5, borderColor);
+
 	g_engine->_screen->update();
-	delay(kEnforcedTextAnimDelay);
+
 	littText(x + 1, (y + 2), str1,  borderColor);
 	littText(x + 1, (y + 12), str2, borderColor);
 	littText(x + 1, (y + 22), str3, borderColor);
 	littText(x + 1, (y + 32), str4, borderColor);
 	littText(x + 1, (y + 42), str5, borderColor);
-	g_engine->_screen->update();
-	delay(kEnforcedTextAnimDelay);
+
 	littText(x - 1, (y + 2), str1,  borderColor);
 	littText(x - 1, (y + 12), str2, borderColor);
 	littText(x - 1, (y + 22), str3, borderColor);
 	littText(x - 1, (y + 32), str4, borderColor);
 	littText(x - 1, (y + 42), str5, borderColor);
-	g_engine->_screen->update();
-	delay(kEnforcedTextAnimDelay);
+
 	littText(x, (y + 2), str1,  textColor);
 	littText(x, (y + 12), str2, textColor);
 	littText(x, (y + 22), str3, textColor);
