@@ -302,10 +302,10 @@ Subtitles::~Subtitles() {
 }
 
 void Subtitles::setFont(const char *fontname, int height, Common::String type) {
-	Graphics::Font *font = nullptr;
 	_fontHeight = height;
 
 #ifdef USE_FREETYPE2
+	Graphics::Font *font = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(fontname)) {
 		font = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
