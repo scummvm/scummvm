@@ -1,78 +1,34 @@
-> actor
-> adjust
-> antiAlias
-> appFileSpec
-> case
-> checkMark
-> cpuHogTicks
-> deleteAll
-> doEffects
-> duration
-> editFocusSprite
-> enterFrame
-> fileType
-> fixed
-> imageDirect
-> immediate
-> interface
-> is
-> limit
-> linearList
-> log10
-> macro
-> mActivate
-> maskMember
-> mAtTransition
-> mCanDoTrans
-> mciBusy
-> mCloseEditor
-> members
-> messageLock
-> method
-> mEvent
-> mGetText
-> mIdle
-> mKeyDown
-> mMouseDown
-> mMouseUp
-> mOpenEditor
-> mouseDoubleClick
-> mouseEnter
-> mouseHitTest
-> mouseSprite
-> mouseStillDown
-> mouseWithin
-> mPerformOther
-> mQuit
-> mSetHandler
-> mSetText
-> mStartUp
-> mTransDial
-> mUpdate
-> music
-> noclear
-> object
-> off
-> otherwise
-> parent
-> productName
-> productVersion
-> propList
-> quickTime
-> resource
-> scroll
-> searchPaths
-> send
-> sendAncestor
-> setTrackEnabled
-> startScript
-> super
-> symbol
-> textWrap
-> timeCode
-> timeout
-> track
-> tracks
-> vga
-> videoForWindows
-> visibility
+adjust
+antiAlias
+appFileSpec
+case
+editFocusSprite
+fileType
+fixed
+interface
+is
+limit
+maskMember
+members
+messageLock
+mOpenEditor
+mouseDoubleClick
+mouseEnter
+mouseHitTest
+mouseSprite
+mouseStillDown
+mouseWithin
+music
+otherwise
+parent
+productName
+productVersion
+quickTime
+scroll
+setTrackEnabled
+textWrap
+timeCode
+track
+tracks
+vga
+videoForWindows
