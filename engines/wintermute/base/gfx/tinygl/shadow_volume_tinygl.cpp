@@ -49,7 +49,6 @@ bool ShadowVolumeTinyGL::render() {
 	tglDisable(TGL_TEXTURE_2D);
 	_game->_renderer3D->_lastTexture = nullptr;
 
-	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	tglVertexPointer(3, TGL_FLOAT, 0, _vertices.getData());
 	tglDrawArrays(TGL_TRIANGLES, 0, _vertices.getSize());
@@ -124,7 +123,8 @@ bool ShadowVolumeTinyGL::renderToScene() {
 	BaseRenderTinyGL *renderer = dynamic_cast<BaseRenderTinyGL *>(_game->_renderer3D);
 	renderer->setProjection2D();
 
-	tglFrontFace(TGL_CW);
+	// FIXME: CW->CCW Why it differ from OpenGL?
+	tglFrontFace(TGL_CCW);
 
 	tglEnableClientState(TGL_COLOR_ARRAY);
 	tglEnableClientState(TGL_VERTEX_ARRAY);
