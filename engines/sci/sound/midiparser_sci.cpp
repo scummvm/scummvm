@@ -153,7 +153,7 @@ static inline bool validateNextRead(const SoundResource::Channel *channel) {
 }
 
 void MidiParser_SCI::midiMixChannels() {
-	int totalSize = 0;
+	size_t totalChannelDataSize = 0;
 
 	for (int i = 0; i < _track->channelCount; i++) {
 		_track->channels[i].time = 0;
@@ -162,27 +162,39 @@ void MidiParser_SCI::midiMixChannels() {
 		// Ignore the digital channel data, if it exists - it's not MIDI data
 		if (i == _track->digitalChannelNr)
 			continue;
-		totalSize += _track->channels[i].data.size();
+		totalChannelDataSize += _track->channels[i].data.size();
 	}
 
-	SciSpan<byte> outData = _mixedData->allocate(totalSize * 2, Common::String::format("mixed sound.%d", _pSnd ? _pSnd->resourceId : -1)); // FIXME: creates overhead and still may be not enough to hold all data
+	// Allocate twice the channel data to hold the mixed data. If there are
+	// no channels due to a truncated sound resource (Longbow Amiga sound 461)
+	// then allocate the five bytes for the stop event below.
+	int resourceId = _pSnd ? _pSnd->resourceId : -1;
+	size_t mixedDataSize;
+	if (totalChannelDataSize != 0) {
+		// FIXME: creates overhead and still may not be enough to hold all data.
+		mixedDataSize = totalChannelDataSize * 2;
+	} else {
+		warning("Sound %d has no channels to mix", resourceId);
+		mixedDataSize = 5;
+	}
+
+	Common::String mixedDataName = Common::String::format("mixed sound.%d", resourceId);
+	SciSpan<byte> outData = _mixedData->allocate(mixedDataSize, mixedDataName);
 
 	long ticker = 0;
 	byte channelNr;
 	byte midiCommand = 0, midiParam, globalPrev = 0;
-	long newDelta;
-	SoundResource::Channel *channel;
 	bool breakOut = false;
 
 	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
-		channel = &_track->channels[channelNr];
+		SoundResource::Channel *channel = &_track->channels[channelNr];
 		if (!validateNextRead(channel))
 			break;
 		byte curDelta = channel->data[channel->curPos++];
 		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
-		newDelta = channel->time - ticker;
+		long newDelta = channel->time - ticker;
 		ticker += newDelta;
 
 		if (channelNr == _track->digitalChannelNr)
