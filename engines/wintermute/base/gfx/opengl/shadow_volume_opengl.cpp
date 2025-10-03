@@ -62,7 +62,7 @@ bool ShadowVolumeOpenGL::render() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::renderToStencilBuffer() {
-	// Disable z-buffer writes (note: z-testing still occurs), and enable the
+	// Disable z-buffer/color writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -78,9 +78,6 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	glStencilFunc(GL_ALWAYS, 0x1, (GLuint)~0);
 
 	glShadeModel(GL_FLAT);
-	// Make sure that no pixels get drawn to the frame buffer
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 

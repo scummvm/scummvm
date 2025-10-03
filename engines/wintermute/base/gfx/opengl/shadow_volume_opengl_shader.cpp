@@ -95,7 +95,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	_volumeShader->enableVertexAttribute("position", _shadowVolumeVertexBuffer, 3, GL_FLOAT, false, 12, 0);
 	_volumeShader->use(true);
 
-	// Disable z-buffer writes (note: z-testing still occurs), and enable the
+	// Disable z-buffer/color writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -108,10 +108,6 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
 	// renderstate is really not needed.
 	glStencilFunc(GL_ALWAYS, 0x1, (GLuint)~0);
-
-	// Make sure that no pixels get drawn to the frame buffer
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
