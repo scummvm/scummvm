@@ -293,28 +293,22 @@ void GraphicsManager::updatePalette(byte paletteIndex) {
 	case 2: {
 		switch (paletteIndex) {
 		case 0:
+		case 4:
 			ip = 0;
 			break;
 		case 1:
+		case 3:
 			ip = 4;
 			break;
 		case 2:
 			ip = 8;
 			break;
-		case 3:
-			ip = 4;
-			break;
-		case 4:
-			ip = 0;
-			break;
 		case 5:
+		case 7:
 			ip = -4;
 			break;
 		case 6:
 			ip = -8;
-			break;
-		case 7:
-			ip = -4;
 			break;
 		}
 
