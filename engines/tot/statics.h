@@ -48,7 +48,7 @@ static const char *const animMessages[2][290] = {
 	"",
 	"",
 	// 15
-	"\xAD\xADPor un tornillo!!...",
+	"\xAD""\xAD""Por un tornillo!!...",
 	"Por un m\xA1sero y simple",
 	"tornillo  del  tr\xA1""fugo",
 	"del trapecio...",
@@ -60,7 +60,7 @@ static const char *const animMessages[2][290] = {
 	"",
 	"",
 	// 25
-	"\xAD\xADNoticia de \xA3ltima hora!!",
+	"\xAD""\xAD""Noticia de \xA3""ltima hora!!",
 	"",
 	"",
 	"",
@@ -102,7 +102,7 @@ static const char *const animMessages[2][290] = {
 	"perro  encuentra curro",
 	"antes que yo...",
 	// 60
-	"\xADHORROR!...una factura",
+	"\xAD""HORROR!...una factura",
 	"",
 	"",
 	"",
@@ -113,7 +113,7 @@ static const char *const animMessages[2][290] = {
 	"\xA8"
 	"y para m\xA1?...",
 	"",
-	"\xADSe habr\xA0n equivocado!", "",
+	"\xAD""Se habr\xA0""n equivocado!", "",
 	// 70
 	"\xA8Tan  pronto lograron",
 	"encontrarme  trabajo?",
@@ -139,7 +139,7 @@ static const char *const animMessages[2][290] = {
 	"mucho tiempo se despide:",
 	"    Leonor Scott.",
 	// 90
-	"\xAD\xADQue ilu!! encargado",
+	"\xAD""\xAD""Que ilu!! encargado",
 	"general...  si ya  me",
 	"lo decia  mi madre...",
 	"<<nene tienes cara de",
@@ -151,7 +151,7 @@ static const char *const animMessages[2][290] = {
 	"",
 	"Manos a la obra...",
 	// 100
-	"\xADV\xA0yase!... no queremos vendedores...",
+	"\xAD""V\xA0""yase!... no queremos vendedores...",
 	"y menos de planes de jubilaci\xA2n.",
 	"",
 	"",
@@ -163,7 +163,7 @@ static const char *const animMessages[2][290] = {
 	"",
 	"",
 	// 110
-	"\xADVaya! eres t\xA3...llegas con retraso. Los ancianos est\xA0n",
+	"\xAD""Vaya! eres t\xA3""...llegas con retraso. Los ancianos est\xA0""n",
 	"esper\xA0ndote en el sal\xA2n. Debes cuidarlos muy bien.",
 	"",
 	"",
@@ -282,9 +282,9 @@ static const char *const animMessages[2][290] = {
 	// 220
 	"Si rescatas a Jacob, el v\xA1nculo te traer\xA0 de regreso...", "", "", "", "",
 	// 225
-	"Ahora... \xADPrep\xA0rate!... Ha llegado tu hora...", "", "", "", "",
+	"Ahora... \xAD""Prep\xA0""rate!... Ha llegado tu hora...", "", "", "", "",
 	// 230
-	"\xADGracias ILUSO!...", "", "", "", "",
+	"\xAD""Gracias ILUSO!...", "", "", "", "",
 	// 235
 	"Ahora tendr\x82 un cuerpo nuevo y podr\x82",
 	"volver a la vida...",
@@ -660,7 +660,7 @@ static const char *const fullScreenMessages[2][59] = {
     "y  haber hecho  doscientos kil\xA2metros de m\xA0s",
     "llegas  a  una  casa  que se encuentra en un",
     "paraje muy tranquilo y apartado del mundanal",
-    "ruido. (\xAD\xADY TAN APARTADO!!) ...",
+    "ruido. (\xAD""\xAD""Y TAN APARTADO!!) ...",
     "Pero esto no tiene importancia ... ",
     "Hay que  encarar  el trabajo con una actitud",
     "optimista y positiva...",
@@ -708,7 +708,7 @@ static const char *const fullScreenMessages[2][59] = {
     "                  LA MUERTE ETERNA.",
     // 43
     "           Al fin lo has conseguido....",
-    "               \xAD\xAD\xADSoy LIBREEEEE!!!",
+    "               \xAD""\xAD""\xAD""Soy LIBREEEEE!!!",
     // WC
     // 45
     "... MMPFFFF!! ...",
