@@ -2639,21 +2639,28 @@ void DarkseedEngine::doCircles() {
 		updateDisplay();
 		_sprites.drawSprites();
 	} else {
-		_player->loadAnimations("bedsleep.nsp");
-		_player->_position.x = 0x87;
-		_player->_position.y = 0x5b;
-		_player->_frameIdx = 0;
-		_player->_direction = 1;
-		_animation->setupOtherNspAnimation(0, 1);
+		if (_room->_roomNumber == 0) {
+			_player->loadAnimations("bedsleep.nsp");
+			_player->_position.x = 0x87;
+			_player->_position.y = 0x5b;
+			_player->_frameIdx = 0;
+			_player->_direction = 1;
+			_animation->setupOtherNspAnimation(0, 1);
+		} else {
+			_player->_direction = 0;
+			updateDisplay();
+		}
 
 		_frame.draw();
 		_room->draw();
 		_console->draw(true);
 
-		// setup & draw Mike in bed.
-		_sprites.clearSpriteDrawList();
-		const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-		_sprites.addSpriteToDrawList(0x75, 0x71, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
+		if (_room->_roomNumber == 0) {
+			// setup & draw Mike in bed.
+			_sprites.clearSpriteDrawList();
+			const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+			_sprites.addSpriteToDrawList(0x75, 0x71, &animSprite, 240 - _player->_position.y, animSprite._width, animSprite._height, _player->_flipSprite);
+		}
 		_sprites.drawSprites();
 	}
 
