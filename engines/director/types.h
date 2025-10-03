@@ -308,6 +308,8 @@ enum PaletteType {
 	kClutVivid = -5,
 	kClutNTSC = -6,
 	kClutMetallic = -7,
+	kClutWeb216 = -8,		// D7
+	kClutVGA = -9,			// D7
 	kClutSystemWin = -101,
 	kClutSystemWinD5 = -102
 };

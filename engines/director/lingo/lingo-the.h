@@ -142,6 +142,7 @@ enum TheEntityType {
 	kTheSelEnd,
 	kTheSelStart,
 	kTheSerialNumber,
+	kTheSetTrackEnabled,
 	kTheShiftDown,
 	kTheSoundEntity,
 	kTheSoundEnabled,
@@ -181,6 +182,7 @@ enum TheEntityType {
 enum TheFieldType {
 	kTheNOField = 0,
 	kTheAbbr    = 1,
+	kTheAntiAlias,
 	kTheAutoTab,
 	kTheBackColor,
 	kTheBlend,
@@ -221,6 +223,7 @@ enum TheFieldType {
 	kTheHilite,
 	kTheImmediate,
 	kTheInk,
+	kTheInterface,
 	kTheLast,
 	kTheLeft,
 	kTheLineCount,

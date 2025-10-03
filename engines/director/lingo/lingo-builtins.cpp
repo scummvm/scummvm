@@ -406,6 +406,9 @@ static const BuiltinProto builtins[] = {
    tempo				//	D5
    transition			//	D5
 
+   Host Info:
+   appFileSpec			//	D5
+
    Types:
 	bitmap
 	button
@@ -4078,6 +4081,8 @@ void LB::b_trackStopTime(int nargs) {
 void LB::b_trackType(int nargs) {
 	g_lingo->printSTUBWithArglist("b_trackType", nargs);
 	g_lingo->dropStack(nargs);
+	// Possible values are #video, #sound, #text, and #music
+	// also #timeCode is present but seemingly not used
 	Datum result("video");
 	result.type = SYMBOL;
 	g_lingo->push(result);

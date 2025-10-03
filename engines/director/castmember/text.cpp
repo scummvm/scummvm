@@ -828,6 +828,7 @@ void TextCastMember::setField(int field, const Datum &d) {
 		warning("STUB: TextCastMember::setField(): boxDropShadow not implemented");
 		return;
 	case kTheBoxType:
+		// The possible values are #adjust, #scroll, #fixed, and #limit.
 		warning("STUB: TextCastMember::setField(): boxType not implemented");
 		return;
 	case kTheDropShadow:

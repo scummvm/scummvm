@@ -242,6 +242,7 @@ const TheEntityField fields[] = {
 	{ kTheCastLib,	"selection",	kTheSelectionField,500 },//					D5 p
 
 	// Common cast fields
+	{ kTheCast,		"antiAlias",	kTheAntiAlias,	500 },//					D5 p (?), documented in D7
 	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
 	{ kTheCast,		"castLibNum",	kTheCastLibNum,	500 },// 					D5 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
@@ -274,6 +275,7 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"movieTime",	kTheMovieTime,	300 },//		D3.1 P
 	{ kTheCast,		"pausedAtStart",kThePausedAtStart,400 },//				D4 p
 	{ kTheCast,		"preLoad",		kThePreLoad,	300 },//		D3.1 p
+	{ kTheSprite,	"setTrackEnabled",kTheSetTrackEnabled, 500 },//				D5 p
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
@@ -286,6 +288,8 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"trackText",	kTheTrackText, 500 },//						D5 p
 	{ kTheCast,		"video",		kTheVideo,		400 },//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume,		300 },//		D3.1 p
+	// track, scontains track type, seems to be unused
+	// tracks, number of track, seems to be unused
 
 	// Movie fields
 	{ kTheCast,		"paletteMapping",	kThePaletteMapping,	500 },//			D5 p
@@ -346,6 +350,9 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"changeArea",	kTheChangeArea,	500 },//					D5 p
 	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//					D5 p
 	{ kTheCast,		"transitionType",kTheTransitionType,500 },//				D5 p
+
+	// XtrsaCastMember fields
+	{ kTheCast,		"interface",	kTheInterface,	500 },//					D5 p
 
 	// Field fields
 	{ kTheField,	"alignment",	kTheTextAlign,	500 },//					D5 p

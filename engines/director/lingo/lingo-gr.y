@@ -149,6 +149,9 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
 
+// D5
+// %token tCASE tOTHERWISE
+
 %type<w> tWHEN
 
 // TOP-LEVEL STUFF

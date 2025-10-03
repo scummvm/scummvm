@@ -919,6 +919,7 @@ void LM::m_moveToFront(int nargs) {
   hitTest
   ilk
   mouseDown
+  mouseHitTest
   mouseTrack
   mouseUp
   setAProp
