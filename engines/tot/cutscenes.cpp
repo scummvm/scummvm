@@ -69,12 +69,11 @@ void putCreditsImg(uint x, uint y, const byte *img1, const byte *img2, bool dire
 
 	uint16 wImg1, hImg1;
 	uint horizontalAux;
-	byte *step;
 
 	wImg1 = READ_LE_UINT16(img1);
 	hImg1 = READ_LE_UINT16(img1 + 2);
 
-	step = (byte *)malloc((wImg1 + 1) * (hImg1 + 1) + 4);
+	byte * step = (byte *)malloc((wImg1 + 1) * (hImg1 + 1) + 4);
 
 	horizontalAux = wImg1 + 1;
 	uint yPos = hImg1 + y;

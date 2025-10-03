@@ -61,7 +61,7 @@ bool TotFlicDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 TotFlicDecoder::TotVideoTrack::TotVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height) : Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true) {
 
-	readHeader();
+	FlicDecoder::FlicVideoTrack::readHeader();
 }
 
 TotFlicDecoder::TotVideoTrack::~TotVideoTrack() {
