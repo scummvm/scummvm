@@ -51,7 +51,6 @@ bool ShadowVolumeOpenGL::render() {
 	glDisable(GL_TEXTURE_2D);
 	_game->_renderer3D->_lastTexture = nullptr;
 
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, _vertices.getData());
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.getSize());

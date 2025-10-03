@@ -69,13 +69,6 @@ bool ShadowVolumeOpenGLShader::render() {
 	glDisable(GL_TEXTURE_2D);
 	_game->_renderer3D->_lastTexture = nullptr;
 
-	Math::Vector4d colorValue;
-	colorValue.x() = 1.0f;
-	colorValue.y() = 1.0f;
-	colorValue.z() = 1.0f;
-	colorValue.w() = 1.0f;
-	_volumeShader->setUniform("color", colorValue);
-
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.getSize());
 
 	return true;
