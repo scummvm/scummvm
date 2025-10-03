@@ -90,6 +90,8 @@ private:
 
 	bool loadImage();
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
+	bool uploadTexture();
+	void freeImageData();
 };
 
 } // End of namespace Wintermute

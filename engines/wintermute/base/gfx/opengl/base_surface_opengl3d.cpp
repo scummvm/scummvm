@@ -47,9 +47,7 @@ BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 	}
 
 	if (_imageData) {
-		_imageData->free();
-		delete _imageData;
-		_imageData = nullptr;
+		freeImageData();
 	}
 
 	if (_maskData) {
@@ -81,7 +79,10 @@ bool BaseSurfaceOpenGL3D::prepareToDraw() {
 	_lastUsedTime = _game->_liveTimer;
 
 	if (!_valid) {
-		loadImage();
+		if (!loadImage()) {
+			return false;
+		}
+		uploadTexture();
 	}
 
 	return true;
@@ -251,10 +252,6 @@ bool BaseSurfaceOpenGL3D::loadImage() {
 		}
 	}
 
-	putSurface(*_imageData);
-
-	/* TODO: Delete _imageData if we no longer need to access the pixel data? */
-
 	_valid = true;
 
 	return true;
@@ -281,17 +278,38 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 		_imageData = new Graphics::Surface();
 	}
 
-	if (_imageData && _imageData != &surface) {
+	if (_imageData != &surface) {
 		_imageData->copyFrom(surface);
 		writeAlpha(_imageData, _maskData);
 	}
 
 	_width = surface.w;
 	_height = surface.h;
+
+	uploadTexture();
+
+	_valid = true;
+
+	return true;
+}
+
+void BaseSurfaceOpenGL3D::freeImageData() {
+	if (_imageData) {
+		_imageData->free();
+		delete _imageData;
+		_imageData = nullptr;
+	}
+}
+
+bool BaseSurfaceOpenGL3D::uploadTexture() {
+	if (!_imageData) {
+		return false;
+	}
+
 	_texWidth = Common::nextHigher2(_width);
 	_texHeight = Common::nextHigher2(_height);
 
-	if (!_valid) {
+	if (!_tex) {
 		glGenTextures(1, &_tex);
 	}
 	glBindTexture(GL_TEXTURE_2D, _tex);
@@ -302,7 +320,10 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _imageData->getPixels());
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 	_valid = true;
+
+	freeImageData();
 
 	return true;
 }
@@ -350,8 +371,18 @@ bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte
 }
 
 bool BaseSurfaceOpenGL3D::startPixelOp() {
-	if (!prepareToDraw())
+	if (_pixelOpReady) {
+		return true;
+	}
+	if (_valid && !_imageData) {
+		if (!loadImage()) {
+			return false;
+		}
+	}
+
+	if (!prepareToDraw()) {
 		return false;
+	}
 	_pixelOpReady = true;
 	return true;
 }
@@ -365,6 +396,7 @@ bool BaseSurfaceOpenGL3D::endPixelOp() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		_surfaceModified = false;
 	}
+	freeImageData();
 	return true;
 }
 
