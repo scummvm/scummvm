@@ -37,9 +37,7 @@ void drawMouseGrid(RoomFileRegister *screen) {
 				for (int j2 = 0; j2 < kYGridCount; j2++) {
 					int absPixel = startY + j2;
 					int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-					if (offsetX < startX + kXGridCount && color != 0) {
-						*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
-					}
+					*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 				}
 			}
 
@@ -61,9 +59,7 @@ void drawScreenGrid(RoomFileRegister *screen) {
 				for (int j2 = 0; j2 < kYGridCount; j2++) {
 					int absPixel = startY + j2;
 					int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-					if (offsetX < startX + kXGridCount && color != 0) {
-						*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
-					}
+					*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 				}
 			}
 		}

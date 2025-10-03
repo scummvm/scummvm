@@ -294,13 +294,13 @@ void TotEngine::credits() {
 	if (keyPressed() || shouldExit)
 		goto Lexit;
 	removeTitle(background2);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	_graphics->putImg(0, 0, background2);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	_graphics->copyFromScreen(background);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	scrollCredit(59904, 8004, pal2, background, shouldExit, 10, false, true);
 	if (keyPressed() || shouldExit)
@@ -324,13 +324,13 @@ void TotEngine::credits() {
 	if (keyPressed() || shouldExit)
 		goto Lexit;
 	removeTitle(background2);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	_graphics->putImg(0, 0, background2);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	_graphics->copyFromScreen(background);
-	if (keyPressed() || shouldExit)
+	if (keyPressed())
 		goto Lexit;
 	scrollCredit(121308, 8004, pal2, background, shouldExit, 80, false, true);
 Lexit:

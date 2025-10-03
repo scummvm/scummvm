@@ -364,17 +364,17 @@ void showDialogOptions(
 				selectedConv = 0;
 			else {
 				if (g_engine->_mouse->mouseClickX <= 280) {
-					if (g_engine->_mouse->mouseClickY >= 143 && g_engine->_mouse->mouseClickY <= 155) {
+					if (g_engine->_mouse->mouseClickY <= 155) {
 						selectedConv = firstChat;
-					} else if (g_engine->_mouse->mouseClickY >= 156 && g_engine->_mouse->mouseClickY <= 166) {
+					} else if (g_engine->_mouse->mouseClickY <= 166) {
 						selectedConv = firstChat + 1;
-					} else if (g_engine->_mouse->mouseClickY >= 167 && g_engine->_mouse->mouseClickY <= 177) {
+					} else if (g_engine->_mouse->mouseClickY <= 177) {
 						selectedConv = firstChat + 2;
-					} else if (g_engine->_mouse->mouseClickY >= 178 && g_engine->_mouse->mouseClickY <= 186) {
+					} else if (g_engine->_mouse->mouseClickY <= 186) {
 						selectedConv = firstChat + 3;
 					}
-				} else if (g_engine->_mouse->mouseClickX >= 281 && g_engine->_mouse->mouseClickX <= 319) {
-					if (g_engine->_mouse->mouseClickY >= 143 && g_engine->_mouse->mouseClickY <= 165) {
+				} else if (g_engine->_mouse->mouseClickX <= 319) {
+					if (g_engine->_mouse->mouseClickY <= 165) {
 						if (firstChat > 1) {
 							selectedConv = 0;
 							firstChat -= 1;

@@ -98,10 +98,10 @@ void TotEngine::runaroundRed() {
 			if (secTrajIndex <= 8) {
 				_secondaryAnimation.dir = 2;
 				_secondaryAnimation.depth = 1;
-			} else if (secTrajIndex >= 9 && secTrajIndex <= 33) {
+			} else if (secTrajIndex <= 33) {
 				_secondaryAnimation.dir = 2;
 				_secondaryAnimation.depth = 14;
-			} else if (secTrajIndex >= 34 && secTrajIndex <= 63) {
+			} else if (secTrajIndex <= 63) {
 				_secondaryAnimation.dir = 1;
 				_secondaryAnimation.depth = 14;
 			} else {
@@ -4318,7 +4318,7 @@ void TotEngine::clearAnimation() {
 		_curSecondaryAnimationFrame = nullptr;
 		for (int j = 0; j < _secondaryAnimDirCount; j++) {
 			for (int i = 0; i < _secondaryAnimationFrameCount; i++) {
-				if (_secondaryAnimation.bitmap[j][i] != nullptr && _secondaryAnimation.bitmap[j][i] != _curSecondaryAnimationFrame) {
+				if (_secondaryAnimation.bitmap[j][i] != nullptr) {
 					free(_secondaryAnimation.bitmap[j][i]);
 				}
 				_secondaryAnimation.bitmap[j][i] = nullptr;
@@ -4678,7 +4678,7 @@ void TotEngine::checkMouseGrid() {
 		}
 		_oldActionCode = 253;
 		_oldInventoryObjectName = "";
-	} else if (_mouse->mouseY >= 132 && _mouse->mouseY <= 165) {
+	} else if (_mouse->mouseY <= 165) {
 		if (_actionCode != _oldActionCode) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
@@ -4715,7 +4715,7 @@ void TotEngine::checkMouseGrid() {
 			_oldGridX = 0;
 			_oldGridY = 0;
 		}
-	} else if (_mouse->mouseY >= 166 && _mouse->mouseY <= 199) {
+	} else if (_mouse->mouseY <= 199) {
 		if (_mouse->mouseX >= 26 && _mouse->mouseX <= 65) {
 			invObject = _inventory[_inventoryPosition].objectName;
 		} else if (_mouse->mouseX >= 70 && _mouse->mouseX <= 108) {
@@ -5063,8 +5063,8 @@ void TotEngine::copyProtection() {
 		int correctedMouseY = _mouse->mouseClickY + 7;
 
 		if ((correctedMouseX > 59 && correctedMouseX < 180) && (correctedMouseY > 28 && correctedMouseY < 119)) {
-			if (correctedMouseY >= 29 && correctedMouseY <= 58) {
-				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+			if (correctedMouseY <= 58) {
+				if (correctedMouseX <= 89) {
 					if (cursorPos < 50) {
 						_sound->beep(200, beepDelay);
 						buttonPress(60, 29, 89, 58, true);
@@ -5075,7 +5075,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+				} else if (correctedMouseX <= 119) {
 					if (cursorPos < 50) {
 						_sound->beep(250, beepDelay);
 						buttonPress(90, 29, 119, 58, true);
@@ -5086,7 +5086,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+				} else if (correctedMouseX <= 149) {
 					if (cursorPos < 50) {
 						_sound->beep(300, beepDelay);
 						buttonPress(120, 29, 149, 58, true);
@@ -5097,7 +5097,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+				} else {
 					if (cursorPos < 50) {
 						_sound->beep(350, beepDelay);
 						buttonPress(150, 29, 179, 58, true);
@@ -5109,8 +5109,8 @@ void TotEngine::copyProtection() {
 						_sound->beep(70, 250);
 					}
 				}
-			} else if (correctedMouseY >= 59 && correctedMouseY <= 88) {
-				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+			} else if (correctedMouseY <= 88) {
+				if (correctedMouseX <= 89) {
 					if (cursorPos < 50) {
 						_sound->beep(400, beepDelay);
 						buttonPress(60, 59, 89, 88, true);
@@ -5121,7 +5121,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+				} else if (correctedMouseX <= 119) {
 					if (cursorPos < 50) {
 						_sound->beep(450, beepDelay);
 						buttonPress(90, 59, 119, 88, true);
@@ -5132,7 +5132,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+				} else if (correctedMouseX <= 149) {
 					if (cursorPos < 50) {
 						_sound->beep(500, beepDelay);
 						buttonPress(120, 59, 149, 88, true);
@@ -5143,7 +5143,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+				} else {
 					if (cursorPos < 50) {
 						_sound->beep(550, beepDelay);
 						buttonPress(150, 59, 179, 88, true);
@@ -5155,8 +5155,8 @@ void TotEngine::copyProtection() {
 						_sound->beep(70, 250);
 					}
 				}
-			} else if (correctedMouseY >= 89 && correctedMouseY <= 118) {
-				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+			} else {
+				if (correctedMouseX <= 89) {
 					if (cursorPos < 50) {
 						_sound->beep(600, beepDelay);
 						buttonPress(60, 89, 89, 118, true);
@@ -5167,7 +5167,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+				} else if (correctedMouseX <= 119) {
 					if (cursorPos < 50) {
 						_sound->beep(650, beepDelay);
 						buttonPress(90, 89, 119, 118, true);
@@ -5178,7 +5178,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+				} else if (correctedMouseX <= 149) {
 					if (cursorPos > 0) {
 						_sound->beep(700, beepDelay);
 						buttonPress(120, 89, 149, 118, true);
@@ -5189,7 +5189,7 @@ void TotEngine::copyProtection() {
 					} else {
 						_sound->beep(70, 250);
 					}
-				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+				} else {
 					if (cursorPos > 39) {
 						_sound->beep(750, beepDelay);
 						buttonPress(150, 89, 179, 118, true);

@@ -400,7 +400,7 @@ void TotEngine::processEvents(bool &escapePressed) {
 }
 
 int TotEngine::startGame() {
-	if(shouldQuit()) {
+	if (shouldQuit()) {
 		return 0;
 	}
 	_sound->fadeOutMusic();
@@ -1262,7 +1262,7 @@ void TotEngine::mainMenu(bool fade) {
 					_startNewGame = false;
 					validOption = true;
 					_continueGame = true;
-				} else if (x > 173 && y < 288) {
+				} else if (x > 173 && x < 288) {
 					exitToDOS();
 				}
 			}
