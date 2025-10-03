@@ -338,6 +338,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 					 255, 249);
 			delay(3500);
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
+			g_engine->_screen->update();
 			drawText(5, 1,
 					 messages[105],
 					 messages[106],
@@ -928,8 +929,8 @@ void drawFlc(
 				if(speed == 9) {
 					skipFrame = !skipFrame;
 				}
-				handleFlcEvent(eventNumber, loopNumber, frameCount);
 				if (!skipFrame) {
+					handleFlcEvent(eventNumber, loopNumber, frameCount);
 					const Graphics::Surface *frame = flic->decodeNextFrame();
 					if (frame) {
 						frameCount++;
