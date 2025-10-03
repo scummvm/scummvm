@@ -28,6 +28,9 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 	while (_ticks <= startTick + maxWait) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
+			if (_ticks > startTick + maxWait)
+				break;
+
 			Common::Point mousePos;
 			switch (event.type) {
 			case Common::EVENT_QUIT:
@@ -91,6 +94,8 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
 	_gfx->clear(0, 0, 0, true);
+	_eventManager->purgeMouseEvents();
+	_eventManager->purgeKeyboardEvents();
 }
 
 void FreescapeEngine::titleScreen() {

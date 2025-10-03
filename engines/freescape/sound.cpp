@@ -451,10 +451,10 @@ void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
 void FreescapeEngine::waitForSounds() {
 	if (_usePrerecordedSounds || isAmiga() || isAtariST())
 		while (_mixer->isSoundHandleActive(_soundFxHandle))
-			g_system->delayMillis(10);
+			waitInLoop(10);
 	else {
 		while (!_speaker->endOfStream())
-			g_system->delayMillis(10);
+			waitInLoop(10);
 	}
 }
 

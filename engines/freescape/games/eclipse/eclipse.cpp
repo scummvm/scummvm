@@ -307,7 +307,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (_pitch >= 180)
 			_pitch = 360 - _pitch;
-		playSound(_soundIndexStart, true, _soundFxHandle);
+		playSound(_soundIndexStart, false, _soundFxHandle);
 		if (isEclipse2()) {
 			_gameStateControl = kFreescapeGameStateStart;
 			_pitch = -10;
@@ -448,7 +448,7 @@ void EclipseEngine::drawInfoMenu() {
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
-					playSound(_soundIndexMenu, true, _soundFxHandle);
+					playSound(_soundIndexMenu, false, _soundFxHandle);
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
