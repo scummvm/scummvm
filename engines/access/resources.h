@@ -99,6 +99,18 @@ public:
 	virtual const byte *getCursor(int num) const = 0;
 
 	/**
+	 * Get the width of the cursor data for a given cursor num.
+	 * In Martian and Amazon this is always 16.
+	 */
+	virtual int getCursorWidth(int num) const { return 16; }
+
+	/**
+	 * Get the height of the cursor data for a given cursor num
+	 * In Martian and Amazon this is always 16.
+	 */
+	virtual int getCursorHeight(int num) const { return 16; }
+
+	/**
 	 * Get the name of the lead character
 	 */
 	virtual const char *getEgoName() const = 0;

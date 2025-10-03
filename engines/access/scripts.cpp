@@ -65,7 +65,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[15] = &Scripts::cmdAddScore;
 	COMMAND_LIST[16] = &Scripts::cmdSetInventory;
 	COMMAND_LIST[17] = &Scripts::cmdCheckInventory;
-	COMMAND_LIST[18] = &Scripts::cmdSetTex;
+	COMMAND_LIST[18] = &Scripts::cmdSetPlayerCoords;
 	COMMAND_LIST[19] = &Scripts::cmdNewRoom;
 	COMMAND_LIST[20] = &Scripts::cmdConverse;
 	COMMAND_LIST[21] = &Scripts::cmdCheckFrame;
@@ -88,7 +88,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[38] = &Scripts::cmdSetBuffer;
 	COMMAND_LIST[39] = &Scripts::cmdSetScroll;
 	COMMAND_LIST[40] = &Scripts::cmdSaveRect;
-	COMMAND_LIST[41] = &Scripts::cmdVideoEnded;
+	COMMAND_LIST[41] = &Scripts::cmdVideoEnded; // aka CheckVid
 	COMMAND_LIST[42] = &Scripts::cmdSetBufVid;
 	COMMAND_LIST[43] = &Scripts::cmdPlayBufVid;
 	COMMAND_LIST[44] = &Scripts::cmdRemoveLast;
@@ -124,6 +124,7 @@ void Scripts::setOpcodes() {
 }
 
 void Scripts::setOpcodes_v2() {
+	// Modify command list for Amazon
 	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
 	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
 	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
@@ -133,6 +134,36 @@ void Scripts::setOpcodes_v2() {
 	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
 	COMMAND_LIST[45] = COMMAND_LIST[46] = &Scripts::cmdSpecial;
 	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[65] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
+}
+
+void Scripts::setOpcodes_v3() {
+	COMMAND_LIST[57] = &Scripts::cmdDigitalPlay;
+	COMMAND_LIST[60] = &Scripts::cmdFillSound;
+	COMMAND_LIST[61] = &Scripts::cmdBD;
+	COMMAND_LIST[62] = &Scripts::cmdPlayVid1;
+	COMMAND_LIST[63] = &Scripts::cmdNull; // empty function CmdPRINTWITHOUT
+	COMMAND_LIST[74] = &Scripts::cmdCharWait;
+	COMMAND_LIST[75] = &Scripts::cmdUndoText;
+	COMMAND_LIST[76] = &Scripts::cmdResetAnim;
+	COMMAND_LIST[77] = &Scripts::cmdWalkTo;
+	COMMAND_LIST[78] = &Scripts::cmdWalkCheck;
+	COMMAND_LIST[79] = &Scripts::cmdSoundEnd;
+	COMMAND_LIST[80] = &Scripts::cmdFadeWhite;
+	COMMAND_LIST[81] = &Scripts::cmdGotoFrame;
+	COMMAND_LIST[82] = &Scripts::cmdPlayerScale;
+	COMMAND_LIST[83] = &Scripts::cmdRestoreBlock;
+	COMMAND_LIST[84] = &Scripts::cmdCopyScnBuf;
+	COMMAND_LIST[85] = &Scripts::cmdStilWalkTo;
+	COMMAND_LIST[86] = &Scripts::cmdStilWalkCheck;
+	COMMAND_LIST[87] = &Scripts::cmdStilOff;
+	COMMAND_LIST[88] = &Scripts::cmdStilOn;
+	COMMAND_LIST[89] = &Scripts::cmdReturnExit;
+	COMMAND_LIST[90] = &Scripts::cmdSetStilCoords;
+	COMMAND_LIST[91] = &Scripts::cmdSetPlayerDir;
+	COMMAND_LIST[92] = &Scripts::cmdSetStilDir;
+	COMMAND_LIST[93] = &Scripts::cmdStilScale;
+	COMMAND_LIST[94] = &Scripts::cmdLockInterface;
+	COMMAND_LIST[94] = &Scripts::cmdUnlockInterface;
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -483,7 +514,7 @@ void Scripts::cmdCheckInventory() {
 	}
 }
 
-void Scripts::cmdSetTex() {
+void Scripts::cmdSetPlayerCoords() {
 	const int xStart = _data->readSint16LE();
 	const int yStart = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdSetTex(xStart=%d, yStart=%d)", xStart, yStart);
@@ -592,6 +623,11 @@ void Scripts::cmdRetNeg() {
 	debugC(1, kDebugScripts, "cmdRetNeg()");
 	_endFlag = true;
 	_returnCode = -1;
+}
+
+void Scripts::cmdBD() {
+	debugC(1, kDebugScripts, "cmdBD()");
+	_endFlag = true;
 }
 
 void Scripts::cmdCheckLoc() {
@@ -854,6 +890,14 @@ void Scripts::cmdDoTravel() {
 
 		return;
 	}
+}
+
+void Scripts::cmdDoTravel_Noct() {
+	_vm->_events->setCursor(CURSOR_ARROW);
+	_vm->_player->_playerOff = true;
+	_vm->_stilOff = true;
+	cmdRetPos();
+	error("TODO: Finish Noct style cmdTravel");
 }
 
 void Scripts::cmdHelp_v1() {
@@ -1258,5 +1302,106 @@ void Scripts::cmdEndVideo() {
 	_vm->_video->closeVideo();
 	_vm->_video->_videoEnd = true;
 }
+
+void Scripts::cmdDigitalPlay() {
+    error("TODO: Implement Scripts::cmdDigitalPlay");
+}
+
+void Scripts::cmdFillSound() {
+    error("TODO: Implement Scripts::cmdFillSound");
+}
+
+void Scripts::cmdPlayVid1() {
+    error("TODO: Implement Scripts::cmdPlayVid1");
+}
+
+void Scripts::cmdCharWait() {
+    error("TODO: Implement Scripts::cmdCharWait");
+}
+
+void Scripts::cmdUndoText() {
+    error("TODO: Implement Scripts::cmdUndoText");
+}
+
+void Scripts::cmdResetAnim() {
+    error("TODO: Implement Scripts::cmdResetAnim");
+}
+
+void Scripts::cmdWalkTo() {
+    error("TODO: Implement Scripts::cmdWalkTo");
+}
+
+void Scripts::cmdWalkCheck() {
+    error("TODO: Implement Scripts::cmdWalkCheck");
+}
+
+void Scripts::cmdSoundEnd() {
+    error("TODO: Implement Scripts::cmdSoundEnd");
+}
+
+void Scripts::cmdFadeWhite() {
+    error("TODO: Implement Scripts::cmdFadeWhite");
+}
+
+void Scripts::cmdGotoFrame() {
+    error("TODO: Implement Scripts::cmdGotoFrame");
+}
+
+void Scripts::cmdPlayerScale() {
+    error("TODO: Implement Scripts::cmdPlayerScale");
+}
+
+void Scripts::cmdRestoreBlock() {
+    error("TODO: Implement Scripts::cmdRestoreBlock");
+}
+
+void Scripts::cmdCopyScnBuf() {
+    error("TODO: Implement Scripts::cmdCopyScnBuf");
+}
+
+void Scripts::cmdStilWalkTo() {
+    error("TODO: Implement Scripts::cmdStilWalkTo");
+}
+
+void Scripts::cmdStilWalkCheck() {
+    error("TODO: Implement Scripts::cmdStilWalkCheck");
+}
+
+void Scripts::cmdStilOff() {
+	_vm->_stilOff = true;
+}
+
+void Scripts::cmdStilOn() {
+	_vm->_stilOff = false;
+}
+
+void Scripts::cmdReturnExit() {
+    error("TODO: Implement Scripts::cmdReturnExit");
+}
+
+void Scripts::cmdSetStilCoords() {
+    error("TODO: Implement Scripts::cmdSetStilCoords");
+}
+
+void Scripts::cmdSetPlayerDir() {
+    error("TODO: Implement Scripts::cmdSetPlayerDir");
+}
+
+void Scripts::cmdSetStilDir() {
+    error("TODO: Implement Scripts::cmdSetStilDir");
+}
+
+void Scripts::cmdStilScale() {
+    error("TODO: Implement Scripts::cmdStilScale");
+}
+
+void Scripts::cmdLockInterface() {
+    error("TODO: Implement Scripts::cmdLockInterface");
+}
+
+void Scripts::cmdUnlockInterface() {
+    error("TODO: Implement Scripts::cmdUnlockInterface");
+}
+
 
 } // End of namespace Access

@@ -80,13 +80,14 @@ protected:
 	void cmdAddScore();
 	void cmdSetInventory();
 	void cmdCheckInventory();
-	void cmdSetTex();
+	void cmdSetPlayerCoords();
 	void cmdNewRoom();
 	void cmdConverse();
 	void cmdCheckFrame();
 	void cmdCheckAnim();
 	void cmdSnd();
 	void cmdRetNeg();
+	void cmdBD();
 	void cmdCheckLoc();
 	void cmdSetAnim();
 	void cmdDispInv_v1();
@@ -139,6 +140,33 @@ protected:
 	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdSetHelp();
+	void cmdDoTravel_Noct();
+	void cmdDigitalPlay();
+	void cmdFillSound();
+	void cmdPlayVid1();
+	void cmdCharWait();
+	void cmdUndoText();
+	void cmdResetAnim();
+	void cmdWalkTo();
+	void cmdWalkCheck();
+	void cmdSoundEnd();
+	void cmdFadeWhite();
+	void cmdGotoFrame();
+	void cmdPlayerScale();
+	void cmdRestoreBlock();
+	void cmdCopyScnBuf();
+	void cmdStilWalkTo();
+	void cmdStilWalkCheck();
+	void cmdStilOff();
+	void cmdStilOn();
+	void cmdReturnExit();
+	void cmdSetStilCoords();
+	void cmdSetPlayerDir();
+	void cmdSetStilDir();
+	void cmdStilScale();
+	void cmdLockInterface();
+	void cmdUnlockInterface();
+
 public:
 	int _sequence;
 	bool _endFlag;
@@ -155,6 +183,7 @@ public:
 
 	void setOpcodes();
 	void setOpcodes_v2();
+	void setOpcodes_v3();
 
 	void setScript(Resource *data, bool restartFlag = false);
 

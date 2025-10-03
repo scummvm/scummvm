@@ -29,9 +29,6 @@
 #include "access/player.h"
 #include "access/amazon/amazon_resources.h"
 
-#define CURSOR_WIDTH 16
-#define CURSOR_HEIGHT 16
-
 namespace Access {
 
 EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
@@ -64,10 +61,6 @@ void EventsManager::setNormalCursor(CursorType cursorId) {
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
-	if (_vm->getGameID() == kGameNoctropolis) {
-		warning("*** FIXME *** setCursor: Need data for Noctropolis cursors");
-		return;
-	}
 	if (cursorId == _cursorId)
 		return;
 	_cursorId = cursorId;
@@ -78,20 +71,22 @@ void EventsManager::setCursor(CursorType cursorId) {
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
 		const byte *srcP = _vm->_res->getCursor(cursorId);
-		int hotspotX = (int16)READ_LE_UINT16(srcP);
-		int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
+		const int width = _vm->_res->getCursorWidth(cursorId);
+		const int height = _vm->_res->getCursorHeight(cursorId);
+		const int hotspotX = (int16)READ_LE_UINT16(srcP);
+		const int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
 		srcP += 4;
 
 		// Create a surface to build up the cursor on
 		Graphics::Surface cursorSurface;
-		cursorSurface.create(CURSOR_WIDTH, CURSOR_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		cursorSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		byte *destP = (byte *)cursorSurface.getPixels();
-		Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
+		Common::fill(destP, destP + width * height, 0);
 
 		// Loop to build up the cursor
-		for (int y = 0; y < CURSOR_HEIGHT; ++y) {
+		for (int y = 0; y < height; ++y) {
 			destP = (byte *)cursorSurface.getBasePtr(0, y);
-			int width = CURSOR_WIDTH;
+			int w = width;
 			int skip = *srcP++;
 			int plot = *srcP++;
 			if (skip >= width)
@@ -99,13 +94,13 @@ void EventsManager::setCursor(CursorType cursorId) {
 
 			// Skip over pixels
 			destP += skip;
-			width -= skip;
+			w -= skip;
 
 			// Write out the pixels to plot
-			while (plot > 0 && width > 0) {
+			while (plot > 0 && w > 0) {
 				*destP++ = *srcP++;
 				--plot;
-				--width;
+				--w;
 			}
 		}
 

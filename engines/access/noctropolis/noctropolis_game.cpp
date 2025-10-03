@@ -212,7 +212,7 @@ void NoctropolisEngine::doIntro() {
 	_screen->forceFadeOut();
 
 	// TODO: midi files have been split into MUSIC/Mxx.MID files
-	//_midi->loadMusic(98, 1);
+	_midi->loadMusic(98, 1);
 	_room->loadPlayField(1, 0);
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
