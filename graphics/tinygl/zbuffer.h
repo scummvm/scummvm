@@ -651,7 +651,7 @@ public:
 		_polygonStipplePattern = stipple;
 	}
 
-	void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
+	void setStencilTestFunc(int stencilFunc, byte stencilValue, byte stencilMask) {
 		_stencilTestFunc = stencilFunc;
 		_stencilRefVal = stencilValue;
 		_stencilMask = stencilMask;
@@ -829,9 +829,9 @@ private:
 	bool _depthWrite;
 	bool _stencilTestEnabled;
 	int _stencilTestFunc;
-	int _stencilRefVal;
-	uint _stencilMask;
-	uint _stencilWriteMask;
+	byte _stencilRefVal;
+	byte _stencilMask;
+	byte _stencilWriteMask;
 	int _stencilSfail;
 	int _stencilDpfail;
 	int _stencilDppass;

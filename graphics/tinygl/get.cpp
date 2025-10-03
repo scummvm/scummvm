@@ -722,7 +722,8 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kIntType;
 		break;
 	case TGL_STENCIL_VALUE_MASK:
-		error("gl_get_pname: TGL_SCISSOR_BOX option not implemented");
+		data->_int = (TGLint)stencil_mask;
+		dataType = kIntType;
 		break;
 	case TGL_STENCIL_WRITEMASK:
 		data->_int = (TGLint)stencil_write_mask;

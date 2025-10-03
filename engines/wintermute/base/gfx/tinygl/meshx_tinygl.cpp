@@ -202,7 +202,7 @@ bool XMeshTinyGL::renderFlatShadowModel(uint32 shadowColor) {
 	tglDepthMask(TGL_FALSE);
 
 	tglEnable(TGL_STENCIL_TEST);
-	tglStencilFunc(TGL_ALWAYS, 1, (TGLuint)~0);
+	tglStencilFunc(TGL_ALWAYS, 1, 0xff);
 	tglStencilOp(TGL_REPLACE, TGL_REPLACE, TGL_REPLACE);
 
 	for (uint32 i = 0; i < numAttrs; i++) {
@@ -216,7 +216,7 @@ bool XMeshTinyGL::renderFlatShadowModel(uint32 shadowColor) {
 	}
 
 
-	tglStencilFunc(TGL_EQUAL, 1, (TGLuint)~0);
+	tglStencilFunc(TGL_EQUAL, 1, 0xff);
 	tglStencilOp(TGL_ZERO, TGL_ZERO, TGL_ZERO);
 
 	tglColor4ub(RGBCOLGetR(shadowColor), RGBCOLGetG(shadowColor), RGBCOLGetB(shadowColor), RGBCOLGetA(shadowColor));

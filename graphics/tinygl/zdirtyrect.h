@@ -168,9 +168,9 @@ private:
 		int alphaRefValue;
 		bool stencilTestEnabled;
 		int stencilTestFunc;
-		int stencilValue;
-		uint stencilMask;
-		uint stencilWriteMask;
+		byte stencilValue;
+		byte stencilMask;
+		byte stencilWriteMask;
 		int stencilSfail;
 		int stencilDpfail;
 		int stencilDppass;

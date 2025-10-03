@@ -73,7 +73,7 @@ bool ShadowVolumeTinyGL::renderToStencilBuffer() {
 	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
 	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
 	// renderstate is really not needed.
-	tglStencilFunc(TGL_ALWAYS, 0x1, (TGLuint)~0);
+	tglStencilFunc(TGL_ALWAYS, 0x1, 0xff);
 
 	tglShadeModel(TGL_FLAT);
 
@@ -112,7 +112,7 @@ bool ShadowVolumeTinyGL::renderToScene() {
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 	// Only write where stencil val >= 1 (count indicates # of shadows that overlap that pixel)
-	tglStencilFunc(TGL_LEQUAL, 0x1, (TGLuint)~0);
+	tglStencilFunc(TGL_LEQUAL, 0x1, 0xff);
 	tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_KEEP);
 
 	tglDisable(TGL_FOG);

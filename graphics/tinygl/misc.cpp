@@ -165,8 +165,8 @@ void GLContext::glopStencilFunc(GLParam *p) {
 	else if (ref > 255)
 		ref = 255;
 	stencil_test_func = func;
-	stencil_ref_val = ref;
-	stencil_mask = mask;
+	stencil_ref_val = (byte)ref;
+	stencil_mask = (byte)mask;
 }
 
 void GLContext::glopStencilOp(GLParam *p) {
