@@ -59,9 +59,6 @@ bool ShadowVolumeTinyGL::render() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeTinyGL::renderToStencilBuffer() {
-	if (!dynamic_cast<BaseRenderTinyGL *>(_game->_renderer3D)->stencilSupported()) {
-		return false;
-	}
 	// Disable z-buffer/color writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	tglDepthMask(TGL_FALSE);
@@ -106,9 +103,6 @@ bool ShadowVolumeTinyGL::renderToStencilBuffer() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeTinyGL::renderToScene() {
-	if (!dynamic_cast<BaseRenderTinyGL *>(_game->_renderer3D)->stencilSupported()) {
-		return false;
-	}
 	initMask();
 
 	tglDisable(TGL_DEPTH_TEST);

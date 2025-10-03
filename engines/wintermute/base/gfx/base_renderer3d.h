@@ -76,7 +76,7 @@ public:
 	bool setup3DCustom(DXMatrix &viewMat, DXMatrix &projMat);
 	virtual bool enableShadows() = 0;
 	virtual bool disableShadows() = 0;
-	virtual bool stencilSupported() = 0;
+	virtual bool shadowVolumeSupported() = 0;
 	virtual bool invalidateTexture(BaseSurface *texture) = 0;
 
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) = 0;

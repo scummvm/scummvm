@@ -410,7 +410,10 @@ bool AdActor3DX::display() {
 
 	TShadowType shadowType = _game->getMaxShadowType(this);
 	if (shadowType == SHADOW_STENCIL) {
-		displayShadowVolume();
+		// Skip shadow volume rendering if not supported
+		if (_game->_renderer3D->shadowVolumeSupported()) {
+			displayShadowVolume();
+		}
 	} else if (shadowType > SHADOW_NONE) {
 		if (_game->_maxShadowType > SHADOW_NONE) {
 			bool simpleShadow = shadowType <= SHADOW_SIMPLE;

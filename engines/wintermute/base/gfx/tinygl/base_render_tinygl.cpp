@@ -756,7 +756,7 @@ void BaseRenderTinyGL::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, 
 	}
 }
 
-bool BaseRenderTinyGL::stencilSupported() {
+bool BaseRenderTinyGL::shadowVolumeSupported() {
 	return _shadowVolumesSupported;
 }
 

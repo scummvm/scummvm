@@ -96,7 +96,7 @@ public:
 
 	bool enableShadows() override;
 	bool disableShadows() override;
-	bool stencilSupported() override;
+	bool shadowVolumeSupported() override;
 
 	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
 	bool fadeToColor(byte r, byte g, byte b, byte a) override;

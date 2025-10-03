@@ -765,8 +765,7 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 	}
 }
 
-bool BaseRenderOpenGL3D::stencilSupported() {
-	// assume that we have a stencil buffer
+bool BaseRenderOpenGL3D::shadowVolumeSupported() {
 	return true;
 }
 
