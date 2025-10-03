@@ -261,7 +261,7 @@ public class BackupManager {
 				ZipEntry entry = new ZipEntry(folderName + component);
 
 				zos.putNextEntry(entry);
-				copyStream(zos, new FileInputStream(pfd.getFileDescriptor()));
+				copyStream(zos, new ParcelFileDescriptor.AutoCloseInputStream(pfd));
 				zos.closeEntry();
 			} catch(FileNotFoundException ignored) {
 				return false;
