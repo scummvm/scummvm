@@ -109,7 +109,7 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	}
 
 	debug(2, "INFO: TinyGL front buffer pixel format: %s", pixelFormat.toString().c_str());
-	TinyGL::createContext(width, height, pixelFormat, 512, true, false/*ConfMan.getBool("dirtyrects")*/, 64 * 1024 * 1024);
+	TinyGL::createContext(width, height, pixelFormat, 512, true, ConfMan.getBool("dirtyrects"), 5 * 1024 * 1024);
 
 	setSpriteBlendMode(Graphics::BLEND_NORMAL, true);
 
