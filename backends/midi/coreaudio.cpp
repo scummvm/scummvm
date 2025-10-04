@@ -30,13 +30,10 @@
 
 // With the release of Mac OS X 10.5 in October 2007, Apple deprecated the
 // AUGraphNewNode & AUGraphGetNodeInfo APIs in favor of the new AUGraphAddNode &
-// AUGraphNodeInfo APIs. While it is easy to switch to those, it breaks
-// compatibility with 10.4, for which we need to use the older APIs.
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+// AUGraphNodeInfo APIs. The newer APIs are used by default, but we do need to
+// use the old ones when building for 10.4.
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
 	#define USE_DEPRECATED_COREAUDIO_API 1
-	// Try to silence warnings about use of deprecated APIs
-	#undef DEPRECATED_ATTRIBUTE
-	#define DEPRECATED_ATTRIBUTE
 #else
 	#define USE_DEPRECATED_COREAUDIO_API 0
 #endif
@@ -110,7 +107,7 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
 	ComponentDescription desc;
 #else
 	AudioComponentDescription desc;
@@ -188,7 +185,7 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 
 #if USE_DEPRECATED_COREAUDIO_API
 	FSRef fsref;
-	err = FSPathMakeRef((const byte *)soundfont, &fsref, NULL);
+	err = FSPathMakeRef((const UInt8 *)soundfont, &fsref, NULL);
 
 	if (err == noErr) {
 		err = AudioUnitSetProperty(
