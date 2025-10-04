@@ -123,4 +123,8 @@ bool EventManagerWrapper::isActionActive(const Common::CustomEventType &action) 
 	return _currentActionDown == action;
 }
 
+bool EventManagerWrapper::isKeyPressed() {
+	return _currentKeyDown.keycode != Common::KEYCODE_INVALID;
+}
+
 } // namespace Freescape

@@ -152,6 +152,7 @@ public:
 	void pushEvent(Common::Event &event);
 	void clearExitEvents();
 	bool isActionActive(const Common::CustomEventType &action);
+	bool isKeyPressed();
 
 private:
 	// for continuous events (keyDown)

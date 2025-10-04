@@ -425,6 +425,18 @@ void FreescapeEngine::updatePlayerMovementClassic(float deltaTime) {
 }
 
 void FreescapeEngine::updatePlayerMovementSmooth(float deltaTime) {
+	if (_moveForward && !_eventManager->isActionActive(kActionMoveUp))
+		_moveForward = false;
+
+	if (_moveBackward && !_eventManager->isActionActive(kActionMoveDown))
+		_moveBackward = false;
+
+	if (_strafeLeft && !_eventManager->isActionActive(kActionMoveLeft))
+		_strafeLeft = false;
+
+	if (_strafeRight && !_eventManager->isActionActive(kActionMoveRight))
+		_strafeRight = false;
+
 	if (!_moveForward && !_moveBackward && !_strafeLeft && !_strafeRight)
 		return;
 
@@ -471,8 +483,6 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	_gotoExecuted = false;
 	bool executed = runCollisionConditions(lastPosition, newPosition);
-	if (executed)
-		stopMovement();
 
 	if (_gotoExecuted) {
 		_gotoExecuted = false;
@@ -543,8 +553,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (!_hasFallen && fallen > 0) {
 		isSteppingDown = true;
 		// Position in Y was changed, let's re-run effects
-		if (runCollisionConditions(_lastPosition, newPosition))
-			stopMovement();
+		runCollisionConditions(_lastPosition, newPosition); 
 	}
 
 	if (isSteppingUp && (newPosition - _lastPosition).length() <= 1) {
@@ -592,8 +601,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Object *collided = nullptr;
 	_gotoExecuted = false;
 
-	if (!_smoothMovement)
-		_speaker->stop();
+	_speaker->stop();
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);
