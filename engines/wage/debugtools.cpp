@@ -119,7 +119,7 @@ static void showWorld() {
 					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 					if (ImGui::BeginListBox("##listbox scenes", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
-						for (int n = 0; n < g_wage->_world->_orderedScenes.size(); n++) {
+						for (int n = 0; n < (int)g_wage->_world->_orderedScenes.size(); n++) {
 							const bool is_selected = (_state->_selectedScene == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedScenes[n]->_name.c_str(), n);
 							if (ImGui::Selectable(label.c_str(), is_selected))
@@ -180,7 +180,7 @@ static void showWorld() {
 					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 					if (ImGui::BeginListBox("##listbox objects", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
-						for (int n = 0; n < g_wage->_world->_orderedObjs.size(); n++) {
+						for (int n = 0; n < (int)g_wage->_world->_orderedObjs.size(); n++) {
 							const bool is_selected = (_state->_selectedObj == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedObjs[n]->_name.c_str(), n);
 							if (ImGui::Selectable(label.c_str(), is_selected))
@@ -216,7 +216,7 @@ static void showWorld() {
 					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 					if (ImGui::BeginListBox("##listbox characters", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
-						for (int n = 0; n < g_wage->_world->_orderedChrs.size(); n++) {
+						for (int n = 0; n < (int)g_wage->_world->_orderedChrs.size(); n++) {
 							const bool is_selected = (_state->_selectedChr == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedChrs[n]->_name.c_str(), n);
 							if (ImGui::Selectable(label.c_str(), is_selected))
@@ -252,7 +252,7 @@ static void showWorld() {
 					ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.4f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
 					if (ImGui::BeginListBox("##listbox sounds", ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y))) {
-						for (int n = 0; n < g_wage->_world->_orderedSounds.size(); n++) {
+						for (int n = 0; n < (int)g_wage->_world->_orderedSounds.size(); n++) {
 							const bool is_selected = (_state->_selectedSound == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedSounds[n]->_name.c_str(), n);
 							if (ImGui::Selectable(label.c_str(), is_selected))
