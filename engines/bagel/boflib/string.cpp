@@ -241,11 +241,6 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 			_nLength = (uint16)(_nLength + (uint16)nSrcLen);
 
 		} else {
-			// Handle no buffer in place.
-			if (NORMALIZEBUFFERSIZE() == 0) {
-				allocBuffer(_nLength + nAllocAmount);
-			}
-
 			assert(_pszData != nullptr);
 
 			// We have to grow the buffer, use the concat in place routine
