@@ -140,7 +140,7 @@ static void soundTimer(void *refCon) {
 	if (engine->_world->_player->_currentScene != scene)
 		return;
 
-	if (engine->_soundQueue.empty()) {
+	if (engine->_soundQueue.empty() && engine->_soundToPlay.empty()) {
 		if (scene->_soundType == Scene::PERIODIC) {
 			engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
 
@@ -149,7 +149,7 @@ static void soundTimer(void *refCon) {
 
 			debugC(1, kDebugSound, "soundTimer: enqueuing next periodic sound in %d ms (%s)", nextRun, scene->_soundName.c_str());
 		} else if (scene->_soundType == Scene::RANDOM) {
-			for (int i = 0; i < scene->_soundFrequency * 5; i++) {
+			for (int i = 0; i < scene->_soundFrequency; i++) {
 				uint32 nextRun = g_system->getMillis() + engine->_rnd->getRandomNumber(60000);
 				engine->_soundQueue.push_back(nextRun);
 
@@ -166,6 +166,12 @@ static void soundTimer(void *refCon) {
 			warning("updateSoundTimerForScene: Unknown sound type %d", scene->_soundType);
 		}
 	} else {
+		// Do not play sound if another is still playing
+		if (!engine->_soundToPlay.empty()) {
+			g_system->getTimerManager()->installTimerProc(&soundTimer, g_system->getMillis() + 100, scene, "WageEngine::soundTimer");
+			return;
+		}
+
 		int nextRun = engine->_soundQueue.front();
 		engine->_soundQueue.pop_front();
 
