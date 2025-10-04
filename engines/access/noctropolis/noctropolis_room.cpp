@@ -35,6 +35,35 @@ void NoctropolisRoom::reloadRoom() {
 }
 
 void NoctropolisRoom::reloadRoom1() {
+	// TODO: Check this. Currently just copied from MartianRoom.
+	_selectCommand = -1;
+	_vm->_boxSelect = false; //-1
+	_vm->_player->_playerOff = false;
+
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
+	_vm->_screen->clearScreen();
+	_vm->_events->showCursor();
+	roomInit();
+	_vm->_player->load();
+
+	if (_vm->_player->_roomNumber != 47)
+		_vm->_player->calcManScale();
+
+	_vm->_events->hideCursor();
+	roomMenu();
+	_vm->_screen->setBufferScan();
+	setupRoom();
+	setWallCodes();
+	buildScreen();
+	_vm->copyBF2Vid();
+
+	_vm->_screen->setManPalette();
+	_vm->_events->showCursor();
+	_vm->_player->_frame = 0;
+	_vm->_oldRects.clear();
+	_vm->_newRects.clear();
+	_vm->_events->clearEvents();
 }
 
 void NoctropolisRoom::buildScreenXScroll() {
