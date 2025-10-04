@@ -98,7 +98,7 @@ void PaletteCastMember::load() {
 	if (_cast->_version < kFileVer400) {
 		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
 		paletteId = _castId + _cast->_castIDoffset;
-	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1100) {
 		for (auto &it : _children) {
 			if (it.tag == MKTAG('C', 'L', 'U', 'T')) {
 				paletteId = it.index;
