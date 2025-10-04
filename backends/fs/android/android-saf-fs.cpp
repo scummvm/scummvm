@@ -742,7 +742,6 @@ void AndroidSAFFilesystemNode::cacheData(JNIEnv *env, jobject node) {
 
 	if (!_safParent) {
 		jstring nameObj = (jstring)env->GetObjectField(_safTree, _FID__treeName);
-		debug("_FID__treeName: %p", nameObj);
 		const char *nameP = env->GetStringUTFChars(nameObj, 0);
 		if (nameP != 0) {
 			_newName = Common::String(nameP);
@@ -754,7 +753,6 @@ void AndroidSAFFilesystemNode::cacheData(JNIEnv *env, jobject node) {
 	Common::String workingPath;
 
 	jstring pathObj = (jstring)env->GetObjectField(node, _FID__path);
-	debug("_FID__path: %p", pathObj);
 	const char *path = env->GetStringUTFChars(pathObj, 0);
 	if (path == nullptr) {
 		env->DeleteLocalRef(pathObj);

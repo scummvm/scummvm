@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SAFFSTree {
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public interface IOBusyListener {
-		public void onIOBusy(float ratio);
+		void onIOBusy(float ratio);
 	}
 
 	private static class IOTime {
@@ -196,6 +196,9 @@ public class SAFFSTree {
 		}
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public static void addNodeRef(long nodeId) {
 		assert(nodeId != 0);
 		SAFFSNode node = _nodes.get(nodeId);
@@ -205,6 +208,9 @@ public class SAFFSTree {
 		assert(newId == nodeId);
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public static void decNodeRef(long nodeId) {
 		assert(nodeId != 0);
 		SAFFSNode node = _nodes.get(nodeId);
@@ -213,10 +219,12 @@ public class SAFFSTree {
 		node.decRef();
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public static SAFFSNode refToNode(long nodeId) {
 		assert(nodeId != 0);
-		SAFFSNode node = _nodes.get(nodeId);
-		return node;
+		return _nodes.get(nodeId);
 	}
 
 	public static class SAFFSNode implements Comparable<SAFFSNode> {
@@ -298,11 +306,11 @@ public class SAFFSTree {
 		}
 	}
 
-	private Context _context;
-	private Uri _treeUri;
+	private final Context _context;
+	private final Uri _treeUri;
 
-	private SAFFSNode _root;
-	private String _treeName;
+	private final SAFFSNode _root;
+	private final String _treeName;
 
 	public SAFFSTree(Context context, Uri treeUri) {
 		_context = context;
@@ -310,12 +318,13 @@ public class SAFFSTree {
 
 		_root = new SAFFSNode().reset(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
 		// Update flags and get name
-		_treeName = stat(_root);
-		if (_treeName == null) {
+		String treeName = stat(_root);
+		if (treeName == null) {
 			// The tree likely got deleted
 			// Use the document ID instead as this will let the user do some cleanup
-			_treeName = DocumentsContract.getTreeDocumentId(treeUri);
+			treeName = DocumentsContract.getTreeDocumentId(treeUri);
 		}
+		_treeName = treeName;
 	}
 
 	public String getTreeId() {
@@ -331,7 +340,7 @@ public class SAFFSTree {
 	private void clearCache() {
 		ArrayDeque<SAFFSNode> stack = new ArrayDeque<>();
 		stack.push(_root);
-		while (stack.size() > 0) {
+		while (!stack.isEmpty()) {
 			SAFFSNode node = stack.pop();
 			node._dirty = true;
 			if (node._children == null) {
@@ -403,7 +412,9 @@ public class SAFFSTree {
 		return results.toArray(new SAFFSNode[0]);
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public SAFFSNode[] getChildren(long nodeId) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -432,6 +443,9 @@ public class SAFFSTree {
 			c = resolver.query(searchUri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE,
 				DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
+			if (c == null) {
+				return results;
+			}
 			while (c.moveToNext()) {
 				final String displayName = c.getString(0);
 				final String documentId = c.getString(1);
@@ -441,7 +455,7 @@ public class SAFFSTree {
 				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
 
 				SAFFSNode newnode = null;
-				SoftReference<SAFFSNode> oldnodeRef = null;
+				SoftReference<SAFFSNode> oldnodeRef;
 				if (oldChildren != null) {
 					oldnodeRef = oldChildren.remove(displayName);
 					if (oldnodeRef != null) {
@@ -473,11 +487,13 @@ public class SAFFSTree {
 	}
 
 	public SAFFSNode getChild(SAFFSNode node, String name) {
-		// This variable is used to hold a strong reference on every children nodes
+		//This variable is used to hold a strong reference on every children nodes
+		//noinspection unused
 		Collection<SAFFSNode> children;
 
 		if (node._children == null || node._dirty) {
 			try {
+				//noinspection UnusedAssignment
 				children = fetchChildren(node);
 			} catch (Exception e) {
 				Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
@@ -497,6 +513,7 @@ public class SAFFSTree {
 
 		// Node reference was stale, force a refresh
 		try {
+			//noinspection UnusedAssignment
 			children = fetchChildren(node);
 		} catch (Exception e) {
 			Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
@@ -516,7 +533,9 @@ public class SAFFSTree {
 		return newnode;
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public SAFFSNode getChild(long nodeId, String name) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -528,7 +547,9 @@ public class SAFFSTree {
 		return createDocument(node, name, DocumentsContract.Document.MIME_TYPE_DIR);
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public SAFFSNode createDirectory(long nodeId, String name) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -540,7 +561,9 @@ public class SAFFSTree {
 		return createDocument(node, name, "application/octet-stream");
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public SAFFSNode createFile(long nodeId, String name) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -552,7 +575,9 @@ public class SAFFSTree {
 		return createStream(node, "r");
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public int createReadStream(long nodeId) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -564,7 +589,9 @@ public class SAFFSTree {
 		return createStream(node, "wt");
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public int createWriteStream(long nodeId) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -615,7 +642,9 @@ public class SAFFSTree {
 		return 0;
 	}
 
-	// This version is used by the C++ side
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public int removeNode(long nodeId) {
 		SAFFSNode node = _nodes.get(nodeId);
 		assert(node != null);
@@ -623,6 +652,9 @@ public class SAFFSTree {
 		return removeNode(node);
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
 	public void removeTree() {
 		final ContentResolver resolver = _context.getContentResolver();
 
@@ -733,7 +765,10 @@ public class SAFFSTree {
 		try {
 			c = resolver.query(uri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
-			while (c.moveToNext()) {
+			if (c == null) {
+				return null;
+			}
+			if (c.moveToNext()) {
 				final String displayName = c.getString(0);
 				final String mimeType = c.getString(1);
 				final int flags = c.getInt(2);
@@ -748,9 +783,7 @@ public class SAFFSTree {
 			if (c != null) {
 				try {
 					c.close();
-				} catch (RuntimeException e) {
-					throw e;
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 			}
 
