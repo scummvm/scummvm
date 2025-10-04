@@ -76,7 +76,11 @@ enum {
 
 static void openFromBundle(NSString *file, NSString *subdir = nil) {
 	NSString *path = nil;
-	for (NSString *type in @[@"rtf", @"html", @"txt", @"", @"md"]) {
+	NSArray *types = [NSArray arrayWithObjects:@"rtf", @"html", @"txt", @"", @"md", nil];
+	NSEnumerator *typeEnum = [types objectEnumerator];
+	NSString *type;
+
+	while ((type = [typeEnum nextObject])) {
 		if (subdir)
 			path = [[NSBundle mainBundle] pathForResource:file ofType:type inDirectory:subdir];
 		else
@@ -203,6 +207,7 @@ static void openFromBundle(NSString *file, NSString *subdir = nil) {
 		NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
 		NSEnumerator *dirEnum = [dirContents objectEnumerator];
 		NSString *file;
+
 		while ((file = [dirEnum nextObject])) {
 			if ([file hasPrefix:@"ScummVM Manual"] && [file hasSuffix:@".pdf"]) {
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
