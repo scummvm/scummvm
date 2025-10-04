@@ -323,6 +323,9 @@ public:
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		if (dataSize == 0) {
+			return 0;
+		}
 		ensureCapacity(_length + dataSize);
 		if (_writePos + dataSize < _capacity) {
 			memcpy(_data + _writePos, dataPtr, dataSize);
