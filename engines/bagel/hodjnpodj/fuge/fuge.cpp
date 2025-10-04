@@ -584,9 +584,6 @@ ERROR_CODE CFugeWindow::LoadMasterSprites() {
 	CDC *pDC;
 	ERROR_CODE errCode;
 
-	// assume no error
-	errCode = ERR_NONE;
-
 	errCode = LoadNewPaddle(m_nInitPaddleSize);
 
 	if (errCode == ERR_NONE) {
@@ -823,9 +820,6 @@ void CFugeWindow::GameResume() {
 
 void CFugeWindow::PlayGame() {
 	ERROR_CODE errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
 
 	// load the .INI settings
 	//
@@ -2333,9 +2327,8 @@ void CFugeWindow::LoadIniSettings() {
 		if ((m_nInitPaddleSize < PSIZE_MIN) || (m_nInitPaddleSize > PSIZE_MAX))
 			m_nInitPaddleSize = PSIZE_DEF;
 
-		m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
-		if (m_bOutterWall != 0)
-			m_bOutterWall = true;
+		int outerWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
+		m_bOutterWall = outerWall != 0;
 
 		m_nGForceFactor = GetPrivateProfileInt(INI_SECTION, "Gravity", GFORCE_DEF, INI_FILENAME);
 		if ((m_nGForceFactor < GFORCE_MIN) || (m_nGForceFactor > GFORCE_MAX))

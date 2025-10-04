@@ -289,7 +289,6 @@ void CDFAOptDlg::OnPaint() {
 	}
 	ptxtGTime->DisplayString(pDC, cGDisplay, 14, FW_BOLD, RGB(0, 0, 0));
 
-	pGTime = new CScrollBar;
 	pGTime = (CScrollBar *)GetDlgItem(IDC_GAMETIME);
 	pGTime->SetScrollRange(GAMETIMEMIN, GAMETIMEMAX, true);
 	if (m_nGameTime == 0)
@@ -314,7 +313,6 @@ void CDFAOptDlg::OnPaint() {
 	}
 	ptxtBTime->DisplayString(pDC, cBDisplay, 14, FW_BOLD, RGB(0, 0, 0));
 
-	pBTime = new CScrollBar;
 	pBTime = (CScrollBar *)GetDlgItem(IDC_BEAVERDUR);
 	pBTime->SetScrollRange(BEAVERTIMEMIN, BEAVERTIMEMAX, true);
 	pBTime->SetScrollPos(m_nBeaverTime, true);

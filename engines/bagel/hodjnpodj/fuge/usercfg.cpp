@@ -499,9 +499,8 @@ void CUserCfgDlg::LoadIniSettings() {
 	if ((m_nPaddleSize < PSIZE_MIN) || (m_nPaddleSize > PSIZE_MAX))
 		m_nPaddleSize = PSIZE_DEF;
 
-	m_bOutterWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
-	if (m_bOutterWall != 0)
-		m_bOutterWall = true;
+	int outerWall = GetPrivateProfileInt(INI_SECTION, "OutterWall", 0, INI_FILENAME);
+	m_bOutterWall = outerWall != 0;
 }
 
 void CUserCfgDlg::SaveIniSettings() {
