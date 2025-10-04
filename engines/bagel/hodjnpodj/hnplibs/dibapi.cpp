@@ -93,7 +93,6 @@ static BITMAPINFO *getDIBInfo(HDIB hDib) {
 bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		LPRECT lpDIBRect, CPalette *pPal) {
 	Graphics::ManagedSurface *surf;
-	void *lpDIBBits;			// Pointer to DIB bits
 	bool bSuccess = false;      // Success/fail flag
 	HPALETTE hPal = nullptr;		// Our DIB's palette
 	HPALETTE hOldPal = nullptr;		// Previous palette
@@ -108,7 +107,6 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 
 	// Lock down the DIB, and get a pointer to it
 	surf = (Graphics::ManagedSurface *)hDIB;
-	lpDIBBits = surf->getPixels();
 
 	// Get the palette, then select it into DC
 	if (pPal != nullptr) {
@@ -157,6 +155,7 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 	error("TODO: Populate binfo and enable below if this is ever needed");
 #if 0
 	BITMAPINFO bInfo;
+	void *lpDIBBits = surf->getPixels();
 
 	// Make sure to use the stretching mode best for color pictures
 	SetStretchBltMode(hDC, COLORONCOLOR);
