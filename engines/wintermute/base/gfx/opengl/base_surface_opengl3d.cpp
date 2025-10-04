@@ -36,7 +36,7 @@
 namespace Wintermute {
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer)
-	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _texWidth(0), _texHeight(0), _pixelOpReady(false), _surfaceModified(false) {
+	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _texWidth(0), _texHeight(0), _pixelOpReady(false) {
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
@@ -46,9 +46,7 @@ BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 		_tex = 0;
 	}
 
-	if (_imageData) {
-		freeImageData();
-	}
+	freeImageData();
 
 	if (_maskData) {
 		_maskData->free();
@@ -64,14 +62,9 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 		_tex = 0;
 	}
 
-	if (_imageData) {
-		_imageData->free();
-		delete _imageData;
-		_imageData = nullptr;
-	}
+	freeImageData();
 
 	_valid = false;
-	_surfaceModified = false;
 	return true;
 }
 
@@ -83,6 +76,7 @@ bool BaseSurfaceOpenGL3D::prepareToDraw() {
 			return false;
 		}
 		uploadTexture();
+		freeImageData();
 	}
 
 	return true;
@@ -187,15 +181,13 @@ bool BaseSurfaceOpenGL3D::loadImage() {
 		return false;
 	}
 
+	_width = img.getSurface()->w;
+	_height = img.getSurface()->h;
+
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
 
-	if (_imageData) {
-		_imageData->free();
-		delete _imageData;
-		_imageData = nullptr;
-	}
-
+	freeImageData();
 	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32(), img.getPalette(), img.getPaletteCount());
 
 	if (filename.matchString("savegame:*g", true)) {
@@ -263,7 +255,7 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 	_texWidth = Common::nextHigher2(width);
 	_texHeight = Common::nextHigher2(height);
 
-	if (!_valid) {
+	if (!_tex) {
 		glGenTextures(1, &_tex);
 	}
 	glBindTexture(GL_TEXTURE_2D, _tex);
@@ -287,6 +279,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	_height = surface.h;
 
 	uploadTexture();
+	freeImageData();
 
 	_valid = true;
 
@@ -321,10 +314,6 @@ bool BaseSurfaceOpenGL3D::uploadTexture() {
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _imageData->getPixels());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	_valid = true;
-
-	freeImageData();
-
 	return true;
 }
 
@@ -342,8 +331,6 @@ bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a)
 	}
 
 	_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, r, g, b));
-
-	_surfaceModified = true;
 
 	return true;
 }
@@ -374,29 +361,22 @@ bool BaseSurfaceOpenGL3D::startPixelOp() {
 	if (_pixelOpReady) {
 		return true;
 	}
-	if (_valid && !_imageData) {
+
+	if (!_valid) {
 		if (!loadImage()) {
 			return false;
 		}
 	}
 
-	if (!prepareToDraw()) {
-		return false;
-	}
+	_lastUsedTime = _game->_liveTimer;
+
 	_pixelOpReady = true;
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::endPixelOp() {
 	_pixelOpReady = false;
-	if (_surfaceModified) {
-		glBindTexture(GL_TEXTURE_2D, _tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _imageData->getPixels());
-		glBindTexture(GL_TEXTURE_2D, 0);
-		_surfaceModified = false;
-	}
-	freeImageData();
+	uploadTexture();
 	return true;
 }
 
