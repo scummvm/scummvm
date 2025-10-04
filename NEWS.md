@@ -34,6 +34,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Basis Octavus
      Beyond the Threshold
      Bickadoodle
+     The Box
      Corrosion: Cold Winter Waiting
      Dead City
      Dirty Split
