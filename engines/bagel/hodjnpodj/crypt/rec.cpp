@@ -46,9 +46,6 @@ bool CCryptRecord::GetRecord(int nID) {
 		chBuf = (char)cryptFile->readByte();
 		if (chBuf == '\\') {
 			chBuf = (char)cryptFile->readByte();
-
-			m_lpszGram[i] = toupper(chBuf);
-			i++;
 		} else if (chBuf == '\"') {
 			m_lpszGram[i] = '\0';
 			break;
@@ -68,7 +65,6 @@ bool CCryptRecord::GetRecord(int nID) {
 		chBuf = (char)cryptFile->readByte();
 		if (chBuf == '\\') {
 			chBuf = (char)cryptFile->readByte();
-			m_lpszSource[i] = toupper(chBuf);
 		} else if (chBuf == '\"') {
 			m_lpszSource[i] = '\0';
 			break;
