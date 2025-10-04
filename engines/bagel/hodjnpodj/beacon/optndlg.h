@@ -50,11 +50,11 @@ public:
 	enum { IDD = IDD_SUBOPTIONS };
 	CScrollBar m_ScrollSweeps;
 	CScrollBar m_ScrollSpeed;
-	bool    m_bAutomatic;
-	bool    m_bChangeAtTwelve;
-	unsigned int    m_nSweeps;
-	unsigned int    m_nSpeed;
-	unsigned int    nSweepSets;
+	bool    m_bAutomatic = false;
+	bool    m_bChangeAtTwelve = false;
+	unsigned int    m_nSweeps = 0;
+	unsigned int    m_nSpeed = 0;
+	unsigned int    nSweepSets = 0;
 	CString mSpeedTable [NUM_SPEEDS];
 	//}}AFX_DATA
 

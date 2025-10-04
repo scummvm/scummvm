@@ -164,20 +164,20 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CRect       m_rNewGameButton;
-	CMyEdit    *m_pEditText;
-	CPalette   *m_pGamePalette;
-	CBmpButton *m_pScrollButton;
-	RIDDLE     *m_pRiddle;
-	CSprite    *m_pSunDial;
-	CSound     *m_pSoundTrack;
-	int         m_nTimeLimit;
-	int         m_nInitTimeLimit;
-	int         m_nTimer;
-	int         m_nDifficultyLevel;
-	unsigned int        m_nRiddleNumber;
-	bool        m_bGameActive;
-	bool        m_bPause;
-	bool        m_bIgnoreScrollClick;
+	CMyEdit    *m_pEditText = nullptr;
+	CPalette   *m_pGamePalette = nullptr;
+	CBmpButton *m_pScrollButton = nullptr;
+	RIDDLE     *m_pRiddle = nullptr;
+	CSprite    *m_pSunDial = nullptr;
+	CSound     *m_pSoundTrack = nullptr;
+	int         m_nTimeLimit = 0;
+	int         m_nInitTimeLimit = 0;
+	int         m_nTimer = 0;
+	int         m_nDifficultyLevel = 0;
+	unsigned int        m_nRiddleNumber = 0;
+	bool        m_bGameActive = false;
+	bool        m_bPause = false;
+	bool        m_bIgnoreScrollClick = false;
 };
 
 } // namespace Riddles

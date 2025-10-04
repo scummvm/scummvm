@@ -127,15 +127,15 @@ namespace DFA {
 
 class CMainDFAWindow : public CFrameWnd {
 public:
-	unsigned int            m_nTimeForGame;
-	int             m_nBeaverDuration;
+	unsigned int m_nTimeForGame = 0;
+	int m_nBeaverDuration = 0;
 
 private:
-	bool            m_bPlaySounds;            // bool for am I playing a certain # of rounds
-	HWND            m_hCallAppWnd;
-	LPGAMESTRUCT    m_lpGameStruct;
-	bool            m_bMouseCaptured;
-	long            m_lScore;
+	bool m_bPlaySounds = false;				// bool for am I playing a certain # of rounds
+	HWND m_hCallAppWnd = nullptr;
+	LPGAMESTRUCT m_lpGameStruct = nullptr;
+	bool m_bMouseCaptured = false;
+	long m_lScore = 0;
 	CRect   MainRect;						// screen area spanned by the game window
 	CRect   ArtRect;						// screen area inside the border trim
 	CRect   OptionRect;						// screen area spanned by the option button
@@ -168,10 +168,10 @@ protected:
 	//
 	// Sound as resource dudes:
 	//
-	char *      m_pHitSound[NUM_HIT_SOUNDS];
-	HANDLE      m_hHitRes[NUM_HIT_SOUNDS];
-	char *      m_pMissSound[NUM_MISS_SOUNDS];
-	HANDLE      m_hMissRes[NUM_MISS_SOUNDS];
+	char *m_pHitSound[NUM_HIT_SOUNDS] = {};
+	HANDLE m_hHitRes[NUM_HIT_SOUNDS] = {};
+	char *m_pMissSound[NUM_MISS_SOUNDS] = {};
+	HANDLE m_hMissRes[NUM_MISS_SOUNDS] = {};
 
 	//{{AFX_MSG( CMainPackRatWindow )
 	afx_msg void OnPaint();

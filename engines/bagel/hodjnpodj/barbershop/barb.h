@@ -52,11 +52,11 @@ namespace Barbershop {
 
 class CBarber {
 private:
-	CDeck       *m_cDck;        // Handles card shuffling
-	CBoard      *m_cBrd;        // contains position info for all card stacks on screen
-	CLogic      *m_pLogic;      // determines whether a given move is valid or not
-	CUndo       *m_pUndo;       // records moves made by user and handles move undoing
-	CSound      *m_pSound;
+	CDeck       *m_cDck = nullptr;        // Handles card shuffling
+	CBoard      *m_cBrd = nullptr;        // contains position info for all card stacks on screen
+	CLogic      *m_pLogic = nullptr;      // determines whether a given move is valid or not
+	CUndo       *m_pUndo = nullptr;       // records moves made by user and handles move undoing
+	CSound      *m_pSound = nullptr;
 
 public:
 	CBarber(CDC*, CSound*);
@@ -74,10 +74,10 @@ public:
 	void    ChangeBack(CDC*, int);
 	int     Score();
 
-	CPaint  *m_cPnt;            // used to visually paint cards on screen
-	CCard   *m_pCrd;            // the card being moved
-	bool    m_bIsGameOver;      // tells if game has ended
-	bool    m_bIsWin;           // tells if game was won or lost
+	CPaint  *m_cPnt = nullptr;		// used to visually paint cards on screen
+	CCard   *m_pCrd = nullptr;		// the card being moved
+	bool    m_bIsGameOver = false;	// tells if game has ended
+	bool    m_bIsWin = false;		// tells if game was won or lost
 };
 
 // Globals!

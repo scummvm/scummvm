@@ -70,8 +70,8 @@ protected:
 
 	CRect       m_rNewGameButton,
 	            m_rectGameArea;
-	CPalette   *m_pGamePalette;
-	CBmpButton *m_pScrollButton;
+	CPalette   *m_pGamePalette = nullptr;
+	CBmpButton *m_pScrollButton = nullptr;
 
 	CRect m_rLDie;                  //the rectangles defined by the two dice.
 	CRect m_rRDie;
@@ -79,25 +79,25 @@ protected:
 	//assume all doors are equi-sized and equidistant.
 	CRect m_rDoor1;                //the first door
 	CRect m_rDoor[10];            //rectangles representing doors 0 thru 9  ; #0 is unused.
-	bool m_bDieUpdate;
-	byte m_iDoorStatus[10];        //status of every door.
-	bool m_bGameJustBegun;
-	bool m_bDiceJustThrown;
-	bool m_bDoorBmpLoaded[10];
-	bool m_bGameLoadUp;
+	bool m_bDieUpdate = false;
+	byte m_iDoorStatus[10] = {};        //status of every door.
+	bool m_bGameJustBegun = false;
+	bool m_bDiceJustThrown = false;
+	bool m_bDoorBmpLoaded[10] = {};
+	bool m_bGameLoadUp = false;
 
-	byte m_cDoorToOpen;
-	byte m_LDie;
-	byte m_RDie;
-	byte m_cUnDoableThrows;
+	byte m_cDoorToOpen = 0;
+	byte m_LDie = 0;
+	byte m_RDie = 0;
+	byte m_cUnDoableThrows = 0;
 
-	short m_iMoveValid;             //    flag to indicate the legal status of the last move. It is a ternary indicator :
+	short m_iMoveValid = 0;             //    flag to indicate the legal status of the last move. It is a ternary indicator :
 	//      1 => Perfectly legal move, and the dice van be rolled if desired.
 	//      0 => Legal move but not complete to roll the dice. The dice are disabled.
 	//      -1=> Illegal move; stop and correct yourself. The dice are disabled.
-	byte m_cDoorCount;            //    keeps track of all closed doors, irrespective of the  validity of  the move
-	byte m_cActiveDoor;           //    the door whose status has just been changed (as result of mouse action).
-	bool m_bOneDieCase;        //   this variable is always false unless doors 7, 8, and 9 are FIEXD.
+	byte m_cDoorCount = 0;            //    keeps track of all closed doors, irrespective of the  validity of  the move
+	byte m_cActiveDoor = 0;           //    the door whose status has just been changed (as result of mouse action).
+	bool m_bOneDieCase = false;       //   this variable is always false unless doors 7, 8, and 9 are FIEXD.
 
 	//other objects for animation...
 	CRect Paper,
@@ -110,18 +110,18 @@ protected:
 	      Hat6,
 	      UmbrStand;
 
-	bool        m_bGameActive;
-	bool        m_bPause;
-	bool        m_bIgnoreScrollClick;
-	bool        m_bSound;
-	CSound *m_psndBkgndMusic;
+	bool        m_bGameActive = false;
+	bool        m_bPause = false;
+	bool        m_bIgnoreScrollClick = false;
+	bool        m_bSound = false;
+	CSound *m_psndBkgndMusic = nullptr;
 
-	CSprite *m_pCLRollingDie;
-	CSprite *m_pCRRollingDie;
-	CSprite *m_pCSingleRollingDie;      //unused in v.1.5 or later.
+	CSprite *m_pCLRollingDie = nullptr;
+	CSprite *m_pCRRollingDie = nullptr;
+	CSprite *m_pCSingleRollingDie = nullptr;      //unused in v.1.5 or later.
 
 private:
-	bool m_bDiceBmpsLoaded;
+	bool m_bDiceBmpsLoaded = false;
 	CString gWndClass;
 
 	void AnimateDice();

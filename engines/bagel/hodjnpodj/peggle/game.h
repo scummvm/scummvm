@@ -70,8 +70,8 @@ public:
 	void UndoTurn();
 
 private:
-	bool    m_bProgramActive;
-	HWND    m_hCallAppWnd;
+	bool    m_bProgramActive = false;
+	HWND    m_hCallAppWnd = nullptr;
 	CRect   ScrollRect;
 
 	void    OnSoundNotify(CSound *pSound);

@@ -95,53 +95,53 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	bool        m_bBrickVisible[N_BRICKS];
+	bool        m_bBrickVisible[N_BRICKS] = {};
 	CPoint      m_ptOrigin;
 	CRect       m_rNewGameButton;
 	CRect       m_rBlackHole;
 	CVector     m_vBallVector;
 	CVector     m_ptBallLocation;
-	CPalette   *m_pGamePalette;
-	CBmpButton *m_pScrollButton;
-	CSprite    *m_pBall;
-	CSprite    *m_pPaddle;
-	CSound     *m_pSoundTrack;
+	CPalette   *m_pGamePalette = nullptr;
+	CBmpButton *m_pScrollButton = nullptr;
+	CSprite    *m_pBall = nullptr;
+	CSprite    *m_pPaddle = nullptr;
+	CSound     *m_pSoundTrack = nullptr;
 
-	char *      m_pBrickSound;
-	char *      m_pWallSound;
-	char *      m_pPaddleSound;
-	char *      m_pExtraLifeSound;
-	HANDLE      m_hBrickRes;
-	HANDLE      m_hWallRes;
-	HANDLE      m_hPaddleRes;
-	HANDLE      m_hExtraLifeRes;
+	char *      m_pBrickSound = nullptr;
+	char *      m_pWallSound = nullptr;
+	char *      m_pPaddleSound = nullptr;
+	char *      m_pExtraLifeSound = nullptr;
+	HANDLE      m_hBrickRes = nullptr;
+	HANDLE      m_hWallRes = nullptr;
+	HANDLE      m_hPaddleRes = nullptr;
+	HANDLE      m_hExtraLifeRes = nullptr;
 
-	int         m_nInitNumBalls;
-	int         m_nInitStartLevel;
-	int         m_nInitBallSpeed;
-	int         m_nInitPaddleSize;
-	int         m_nGForceFactor;
+	int         m_nInitNumBalls = 0;
+	int         m_nInitStartLevel = 0;
+	int         m_nInitBallSpeed = 0;
+	int         m_nInitPaddleSize = 0;
+	int         m_nGForceFactor = 0;
 
-	double      m_fTurboBoost;
-	long        m_lScore;
-	long        m_lExtraLifeScore;
-	long        m_nJoyOrgX;
-	long        m_nJoyOrgY;
-	int         m_nBricks;
-	int         m_nBalls;
-	int         m_nBallSpeed;
-	int         m_nNumRows;
-	int         m_nPaddleCelIndex;
+	double      m_fTurboBoost = 0;
+	long        m_lScore = 0;
+	long        m_lExtraLifeScore = 0;
+	long        m_nJoyOrgX = 0;
+	long        m_nJoyOrgY = 0;
+	int         m_nBricks = 0;
+	int         m_nBalls = 0;
+	int         m_nBallSpeed = 0;
+	int         m_nNumRows = 0;
+	int         m_nPaddleCelIndex = 0;
 	int			m_nOldSize = -1;
 
-	bool        m_bMovingPaddle;
-	bool        m_bGameActive;
-	bool        m_bPause;
-	bool        m_bIgnoreScrollClick;
-	bool        m_bPaddleHit;
-	bool        m_bOutterWall;
-	bool        m_bJoyActive;
-	bool        m_bBallOnPaddle;
+	bool        m_bMovingPaddle = false;
+	bool        m_bGameActive = false;
+	bool        m_bPause = false;
+	bool        m_bIgnoreScrollClick = false;
+	bool        m_bPaddleHit = false;
+	bool        m_bOutterWall = false;
+	bool        m_bJoyActive = false;
+	bool        m_bBallOnPaddle = false;
 
 	CVector gvCenter;
 };

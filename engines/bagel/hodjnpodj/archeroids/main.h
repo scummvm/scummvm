@@ -101,69 +101,69 @@ protected:
 	//
 	// protected data members
 	//
-	CRect        m_rNewGameButton;
-	CPalette    *m_pGamePalette;
-	CSprite     *m_pMasterBadArrow;
-	CSprite     *m_pMasterGoodArrow;
-	CSprite     *m_pMasterBurn;
-	CSprite     *m_pMasterBadWalk;
-	CSprite     *m_pMasterBadShoot;
-	CSprite     *m_pMasterBadDie;
-	CSprite     *m_pMasterGoodWalk;
-	CSprite     *m_pMasterGoodShoot;
-	CSprite     *m_pMasterGoodDie;
-	CSprite     *m_pMasterHeart;
-	CSprite     *m_pHodj;
-	CSprite     *m_pScrollSprite;
-	CSprite     *m_pLives[LIVES_MAX];
-	CLList      *m_pBadGuyList;
-	CLList      *m_pBadArrowList;
-	CLList      *m_pGoodArrowList;
-	CLList      *m_pHayList;
-	CLList      *m_pFXList;
-	CSound      *m_pSoundTrack;
+	CRect        m_rNewGameButton = nullptr;
+	CPalette    *m_pGamePalette = nullptr;
+	CSprite     *m_pMasterBadArrow = nullptr;
+	CSprite     *m_pMasterGoodArrow = nullptr;
+	CSprite     *m_pMasterBurn = nullptr;
+	CSprite     *m_pMasterBadWalk = nullptr;
+	CSprite     *m_pMasterBadShoot = nullptr;
+	CSprite     *m_pMasterBadDie = nullptr;
+	CSprite     *m_pMasterGoodWalk = nullptr;
+	CSprite     *m_pMasterGoodShoot = nullptr;
+	CSprite     *m_pMasterGoodDie = nullptr;
+	CSprite     *m_pMasterHeart = nullptr;
+	CSprite     *m_pHodj = nullptr;
+	CSprite     *m_pScrollSprite = nullptr;
+	CSprite     *m_pLives[LIVES_MAX] = {};
+	CLList      *m_pBadGuyList = nullptr;
+	CLList      *m_pBadArrowList = nullptr;
+	CLList      *m_pGoodArrowList = nullptr;
+	CLList      *m_pHayList = nullptr;
+	CLList      *m_pFXList = nullptr;
+	CSound      *m_pSoundTrack = nullptr;
 
-	char *       m_pBadDieSound;
-	char *       m_pBoltSound;
-	char *       m_pArrowSound;
-	char *       m_pBurnSound;
-	char *       m_pExtraLifeSound;
-	HANDLE       m_hBadDieRes;
-	HANDLE       m_hBoltRes;
-	HANDLE       m_hArrowRes;
-	HANDLE       m_hBurnRes;
-	HANDLE       m_hExtraLifeRes;
+	char *       m_pBadDieSound = nullptr;
+	char *       m_pBoltSound = nullptr;
+	char *       m_pArrowSound = nullptr;
+	char *       m_pBurnSound = nullptr;
+	char *       m_pExtraLifeSound = nullptr;
+	HANDLE       m_hBadDieRes = nullptr;
+	HANDLE       m_hBoltRes = nullptr;
+	HANDLE       m_hArrowRes = nullptr;
+	HANDLE       m_hBurnRes = nullptr;
+	HANDLE       m_hExtraLifeRes = nullptr;
 
 	POINT        m_ptAnchor;
-	unsigned long        m_lScore;
-	unsigned long        m_lNewLifeScore;
-	int          m_nGoodArrows, m_nBadArrows;
-	int          m_nGameSpeed;
-	unsigned int         m_nBadGuySpeed;
-	unsigned int         m_nArrowSpeed;
-	unsigned int         m_nState;
-	int          m_nMoveArrows;
-	int          m_nBadGuys;
-	int          m_nLives;
-	int          m_nLevel;
-	int          m_nWave;
-	unsigned int         m_nJoyLast;
-	bool         m_bPause;
-	bool         m_bGameActive;
-	bool         m_bJoyActive;
-	bool         m_bMoveMode;
-	bool         m_bInMenu;
-	bool         m_bNewGame;
-	bool         m_bAnimationsOn;
-	bool         m_bTimerActive;
+	unsigned long        m_lScore = 0;
+	unsigned long        m_lNewLifeScore = 0;
+	int          m_nGoodArrows, m_nBadArrows = 0;
+	int          m_nGameSpeed = 0;
+	unsigned int         m_nBadGuySpeed = 0;
+	unsigned int         m_nArrowSpeed = 0;
+	unsigned int         m_nState = 0;
+	int          m_nMoveArrows = 0;
+	int          m_nBadGuys = 0;
+	int          m_nLives = 0;
+	int          m_nLevel = 0;
+	int          m_nWave = 0;
+	unsigned int         m_nJoyLast = 0;
+	bool         m_bPause = false;
+	bool         m_bGameActive = false;
+	bool         m_bJoyActive = false;
+	bool         m_bMoveMode = false;
+	bool         m_bInMenu = false;
+	bool         m_bNewGame = false;
+	bool         m_bAnimationsOn = false;
+	bool         m_bTimerActive = false;
 
 
 	// User Setup variables
 	//
-	int          m_nInitGameSpeed;
-	int          m_nInitArcherLevel;
-	int          m_nInitNumLives;
-	int          m_nInitNumBadGuys;
+	int          m_nInitGameSpeed = 0;
+	int          m_nInitArcherLevel = 0;
+	int          m_nInitNumLives = 0;
+	int          m_nInitNumBadGuys = 0;
 };
 
 ////

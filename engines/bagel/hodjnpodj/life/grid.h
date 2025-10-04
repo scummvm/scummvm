@@ -38,8 +38,8 @@ namespace Life {
 
 
 class colony {
-	int grid[ROWS][COLS];
-	int rows, cols;
+	int grid[ROWS][COLS] = {};
+	int rows = 0, cols = 0;
 public:
 
 	//creator
@@ -55,20 +55,20 @@ public:
 	bool operator!=(const colony &c);
 
 	//accessors
-	int row() {
+	int row() const {
 		return rows;
 	};
-	int col() {
+	int col() const {
 		return cols;
 	};
-	int islife(int r, int c) {
+	int islife(int r, int c) const {
 		return grid[r][c];
 	};
 	void evolve(const colony &c);
 	void flip(int r, int c);
 	//void print();
 public:
-	int m_nColony_count;
+	int m_nColony_count = 0;
 };
 
 } // namespace Life

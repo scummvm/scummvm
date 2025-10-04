@@ -156,17 +156,14 @@ public:
 	void        GameLose();
 
 private:
-	HWND            m_hCallAppWnd;
-	LPGAMESTRUCT    m_lpGameStruct;
-	CRect       MainRect;               // screen area spanned by the game window
-	CRect       m_cNewGame;             // area spanned by new game rect
-//	CCryptogram  *m_cCryptograms;        // cryptogram game object
-	CBmpButton  *m_pScrollButton;       // scroll button
-	bool        m_bIgnoreScrollClick;   // scroll button
-	bool        m_bIsFirstTimeHack;
-	CSprite     *m_pHourGlass;
-//	int          m_nTimer;
-//	bool     m_bPause;
+	HWND            m_hCallAppWnd = nullptr;
+	LPGAMESTRUCT    m_lpGameStruct = nullptr;
+	CRect       MainRect;						// screen area spanned by the game window
+	CRect       m_cNewGame;						// area spanned by new game rect
+	CBmpButton  *m_pScrollButton = nullptr;		// scroll button
+	bool        m_bIgnoreScrollClick = false;	// scroll button
+	bool        m_bIsFirstTimeHack = false;
+	CSprite     *m_pHourGlass = nullptr;
 
 private:
 	void        OnSoundNotify(CSound *pSound);

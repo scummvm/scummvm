@@ -64,7 +64,7 @@ public:
 	~COptn();
 	void ClearDialogImage();
 
-	int         m_nLttrsSlvd, m_nTime;
+	int         m_nLttrsSlvd = 0, m_nTime = 0;
 // Dialog Data
 	//{{AFX_DATA(COptn)
 	enum { IDD = IDD_USER_OPTIONS };

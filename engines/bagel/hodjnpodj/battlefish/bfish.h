@@ -111,37 +111,37 @@ protected:
 
 	// Data Members
 	//
-	byte       m_nUserGrid[GRID_ROWS][GRID_COLS];
-	byte       m_nEnemyGrid[GRID_ROWS][GRID_COLS];
-	FISH        m_aEnemyFishInfo[MAX_FISH];
-	FISH        m_aUserFishInfo[MAX_FISH];
+	byte       m_nUserGrid[GRID_ROWS][GRID_COLS] = {};
+	byte       m_nEnemyGrid[GRID_ROWS][GRID_COLS] = {};
+	FISH        m_aEnemyFishInfo[MAX_FISH] = {};
+	FISH        m_aUserFishInfo[MAX_FISH] = {};
 	CRect       m_rNewGameButton;
 	CRect       m_rEndPlacement;
 	CPoint      m_cLastPoint;
-	CSprite    *m_pHarpoons[MAX_TURNS];
-	CSprite    *m_pFish[MAX_FISH];
-	CSprite    *m_pEnemyFish[MAX_FISH];
-	CSprite    *m_pMasterHit;
-	CSprite    *m_pMasterMiss;
-	CSprite    *m_pMasterHarpoon;
-	CSprite    *m_pDragFish;
-	CSprite    *m_pScrollSprite;
-	CSprite    *m_pOctopus;
-	CPalette   *m_pGamePalette;
-	CSound     *m_pSoundTrack;
-	CText      *m_pTxtClickHere;
-	int         m_nEnemyFish;
-	int         m_nUserFish;
-	int         m_nTurns;
-	int         m_nDifficultyLevel;
-	bool        m_bGameActive;
-	bool        m_bPause;
-	bool        m_bUserEditMode;
-	bool        m_bMovingFish;
-	bool        m_bLastRotated;
-	bool        m_bStillCheck;
-	bool        m_bUsersTurn;
-	bool        m_bInMenu;
+	CSprite    *m_pHarpoons[MAX_TURNS] = {};
+	CSprite    *m_pFish[MAX_FISH] = {};
+	CSprite    *m_pEnemyFish[MAX_FISH] = {};
+	CSprite    *m_pMasterHit = nullptr;
+	CSprite    *m_pMasterMiss = nullptr;
+	CSprite    *m_pMasterHarpoon = nullptr;
+	CSprite    *m_pDragFish = nullptr;
+	CSprite    *m_pScrollSprite = nullptr;
+	CSprite    *m_pOctopus = nullptr;
+	CPalette   *m_pGamePalette = nullptr;
+	CSound     *m_pSoundTrack = nullptr;
+	CText      *m_pTxtClickHere = nullptr;
+	int         m_nEnemyFish = 0;
+	int         m_nUserFish = 0;
+	int         m_nTurns = 0;
+	int         m_nDifficultyLevel = 0;
+	bool        m_bGameActive = false;
+	bool        m_bPause = false;
+	bool        m_bUserEditMode = false;
+	bool        m_bMovingFish = false;
+	bool        m_bLastRotated = false;
+	bool        m_bStillCheck = false;
+	bool        m_bUsersTurn = false;
+	bool        m_bInMenu = false;
 };
 
 } // namespace Battlefish

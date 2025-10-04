@@ -46,8 +46,8 @@ namespace Life {
 
 class CCalendar {
 public:
-	CSprite *pMonthSprite[MONTHS];
-	bool    bIsOn[MONTHS];
+	CSprite *pMonthSprite[MONTHS] = {};
+	bool    bIsOn[MONTHS] = {};
 };
 
 class CLife {

@@ -60,12 +60,12 @@ public:
 	static void FlushNoteList();
 
 private:
-	int         m_nValue;
-	CNote       *m_pNext;           // pointer to next note in chain
-	CNote       *m_pPrev;           // pointer to previous note in chain
+	int         m_nValue = 0;
+	CNote       *m_pNext = nullptr;		// pointer to next note in chain
+	CNote       *m_pPrev = nullptr;		// pointer to previous note in chain
 
-	static CNote    *m_pNoteHead;   // pointer to linked chain of notes
-	static CNote    *m_pNoteTail;   // pointer to tail of list of notes
+	static CNote    *m_pNoteHead;		// pointer to linked chain of notes
+	static CNote    *m_pNoteTail;		// pointer to tail of list of notes
 };
 
 } // namespace Garfunkle

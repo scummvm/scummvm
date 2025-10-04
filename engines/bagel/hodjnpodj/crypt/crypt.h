@@ -40,7 +40,7 @@ namespace Crypt {
 class CCryptogram {
 private:
 	CCryptRecord    *m_cRecordGram = nullptr;
-	int             m_nCryptMap[MAP][ALPHABET];
+	int             m_nCryptMap[MAP][ALPHABET] = {};
 
 public:
 	CCryptogram(CDC *pDC);

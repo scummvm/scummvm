@@ -37,8 +37,8 @@ namespace Poker {
 //////////////////////////////////////////////////////////////////////////////
 class COptionsDlg : public CBmpDialog {
 private:
-	bool    m_bSoundOn;                 // bool for telling me should I play sounds or not
-	bool    m_bDisableSets;             // bool for telling me should I disable the
+	bool    m_bSoundOn = false;			// bool for telling me should I play sounds or not
+	bool    m_bDisableSets = false;		// bool for telling me should I disable the
 	// "Set Amount" and "Set Payoffs" buttons
 
 public:
@@ -60,8 +60,8 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 class CSetAmountDlg : public CBmpDialog {
 private:
-	int     m_nCurrentAmount;   // contains the current amount set
-	char    m_cAmount [6];
+	int     m_nCurrentAmount = 0;   // contains the current amount set
+	char    m_cAmount[6] = {};
 	CRect   rectDisplayAmount;
 
 public:
@@ -85,18 +85,18 @@ protected:
 //////////////////////////////////////////////////////////////////////////////
 class CSetPayoffsDlg : public CBmpDialog {
 private:
-	char m_cPair[6];
-	char m_cPairJacksPlus[6];
-	char m_cTwoPair[6];
-	char m_cThreeOAK[6];
-	char m_cStriaght[6];
-	char m_cFlush[6];
-	char m_cFullHouse[6];
-	char m_cFourOAK[6];
-	char m_cStraightFlush[6];
-	char m_cRoyalFlush[6];
-	int  m_nSetOfOdds;
-	bool m_bJustDisplay;
+	char m_cPair[6] = {};
+	char m_cPairJacksPlus[6] = {};
+	char m_cTwoPair[6] = {};
+	char m_cThreeOAK[6] = {};
+	char m_cStriaght[6] = {};
+	char m_cFlush[6] = {};
+	char m_cFullHouse[6] = {};
+	char m_cFourOAK[6] = {};
+	char m_cStraightFlush[6] = {};
+	char m_cRoyalFlush[6] = {};
+	int  m_nSetOfOdds = 0;
+	bool m_bJustDisplay = false;
 	CRect crectRedraw;
 	CRect rectPair, rectPairJacks;
 	CRect rectTwoPair, rectThree;

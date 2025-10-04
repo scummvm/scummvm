@@ -101,10 +101,10 @@ private:    // functions
 	}
 
 private:    // vars
-	CSprite *m_cAlphabet[SYMBOLS];          // Crypt construct objects
-	CSprite *m_cUsedAlphabet[USED_SYMBOLS];
-	CSprite *m_cRevealAlphabet[REVEAL_SYMBOLS];
-	CSprite *m_cHiLite;
+	CSprite *m_cAlphabet[SYMBOLS] = {};          // Crypt construct objects
+	CSprite *m_cUsedAlphabet[USED_SYMBOLS] = {};
+	CSprite *m_cRevealAlphabet[REVEAL_SYMBOLS] = {};
+	CSprite *m_cHiLite = nullptr;
 
 	CSize   m_cPos;
 
@@ -161,7 +161,7 @@ public:
 		return nTypeCode &  ~LIMBO_TYPE;
 	}
 
-	CSprite *m_cDisplayLetters;
+	CSprite *m_cDisplayLetters = nullptr;
 };
 
 } // namespace Crypt

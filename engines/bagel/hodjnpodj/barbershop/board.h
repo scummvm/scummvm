@@ -38,10 +38,10 @@ public:     // functions
 	bool    IsTabStack(int);
 
 public:     // vars
-	CStack  *m_pFound;
-	CStack  *m_pTab[TAB_COUNT];
-	CStack  *m_pStock;
-	CStack  *m_pUsed;
+	CStack  *m_pFound = nullptr;
+	CStack *m_pTab[TAB_COUNT] = {};
+	CStack  *m_pStock = nullptr;
+	CStack  *m_pUsed = nullptr;
 };
 
 } // namespace Barbershop

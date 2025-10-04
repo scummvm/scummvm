@@ -123,18 +123,18 @@ namespace WordSearch {
 
 class CMainWSWindow : public CFrameWnd {
 public:
-	unsigned int            m_nTimeForGame;
-	bool            m_bShowWordList;
-	bool            m_bWordsForwardOnly;
+	unsigned int            m_nTimeForGame = 0;
+	bool            m_bShowWordList = false;
+	bool            m_bWordsForwardOnly = false;
 
 private:
-	bool            m_bPlaySounds;            // bool for am I playing a certain # of rounds
-	HWND            m_hCallAppWnd;
-	LPGAMESTRUCT    m_lpGameStruct;
-	bool            m_bMouseCaptured;
-	long            m_lScore;
+	bool            m_bPlaySounds = false;            // bool for am I playing a certain # of rounds
+	HWND            m_hCallAppWnd = nullptr;
+	LPGAMESTRUCT    m_lpGameStruct = nullptr;
+	bool            m_bMouseCaptured = false;
+	long            m_lScore = 0;
 	CString         m_alpszCurrectGrid[NUMBEROFROWS * NUMBEROFCOLS];
-	bool            m_bNoGrid;
+	bool            m_bNoGrid = false;
 	CRect   MainRect;                           // screen area spanned by the game window
 	CRect   OptionRect;                         // screen area spanned by the option button
 	CRect   rNewGame;
@@ -144,7 +144,7 @@ private:
 	CRect       rScore;
 	CString     astrCurrentDisplay[NUMBEROFROWS];
 
-	char    acGameGrid[NUMBEROFROWS][NUMBEROFCOLS];
+	char    acGameGrid[NUMBEROFROWS][NUMBEROFCOLS] = {};
 	CRect   arWordDisplay[WORDSPERLIST];
 
 	CString _strGameList[WORDSPERLIST];

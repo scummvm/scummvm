@@ -71,14 +71,14 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	CRect        m_rNewGameButton;
-	CSprite     *m_pCategories[N_CATEGORIES];
-	CSprite     *m_pScrollSprite = nullptr;
-	CGuessDlg   *m_pDlgGuess = nullptr;
-	CSound      *m_pSoundTrack = nullptr;
-	int          m_iLastType = 0;
-	bool         m_bInMenu = false;
-	bool         m_bInGuess = false;
+	CRect m_rNewGameButton;
+	CSprite *m_pCategories[N_CATEGORIES] = {};
+	CSprite *m_pScrollSprite = nullptr;
+	CGuessDlg *m_pDlgGuess = nullptr;
+	CSound *m_pSoundTrack = nullptr;
+	int m_iLastType = 0;
+	bool m_bInMenu = false;
+	bool m_bInGuess = false;
 };
 
 } // namespace PDQ

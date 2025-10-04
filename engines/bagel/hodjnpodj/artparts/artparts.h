@@ -113,18 +113,18 @@ public:
 	void ShowOutOfPlace();
 
 //added data members:
-	bool m_bPlaying;            // Flag True if playing, False if setting options
-	bool m_bNewGame;            // Flag to check if a new game is being played
-	bool m_bFirst;              // Flag to check if the first area is being selected
+	bool m_bPlaying = false;	// Flag True if playing, False if setting options
+	bool m_bNewGame = false;	// Flag to check if a new game is being played
+	bool m_bFirst = false;		// Flag to check if the first area is being selected
 	CPoint First;
 	CPoint Second;
 	CPoint Center;
 	CPoint UpLeft;
-	CRect BaseRect;             // The part that is the base of the select area
-	CRect OldRect;              // The last area highlighted
-	CRect HiLiteRect;           // The new area to highlight
-	CRect SrcRect;              // The area to be moved
-	CRect DstRect;              // The destination of the moving area
+	CRect BaseRect;				// The part that is the base of the select area
+	CRect OldRect;				// The last area highlighted
+	CRect HiLiteRect;			// The new area to highlight
+	CRect SrcRect;				// The area to be moved
+	CRect DstRect;				// The destination of the moving area
 
 	void SplashScreen();
 	void SplashScratch();
@@ -152,7 +152,7 @@ private:
 	bool bSuccess;
 	bool m_bIgnoreScrollClick;
 	bool m_bShowOutOfPlace = false;
-	char szCurrentArt[64];
+	char szCurrentArt[64] = {};
 
 	static CPalette *pGamePalette;	// Palette of current artwork
 	static int nSeconds;
