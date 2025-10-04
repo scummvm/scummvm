@@ -44,6 +44,7 @@ Graphics::ManagedSurface *CastleEngine::loadFrameWithHeader(Common::SeekableRead
 	file->seek(pos);
 	int16 width = file->readByte();
 	int16 height = file->readByte();
+	debugC(kFreescapeDebugParser, "Frame size: %d x %d", width, height);
 	surface->create(width * 8, height, _gfx->_texturePixelFormat);
 
 	/*byte mask =*/ file->readByte();
@@ -179,12 +180,12 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_strenghtBackgroundFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xee6 : 0xed7, yellow, black);
 	_strenghtBarFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xf72 : 0xf63, yellow, black);
 
-	Graphics::ManagedSurface *bar = new Graphics::ManagedSurface();
-	bar->create(_strenghtBarFrame->w - 4, _strenghtBarFrame->h, _gfx->_texturePixelFormat);
-	_strenghtBarFrame->copyRectToSurface(*bar, 4, 0, Common::Rect(4, 0, _strenghtBarFrame->w - 4, _strenghtBarFrame->h));
-	_strenghtBarFrame->free();
-	delete _strenghtBarFrame;
-	_strenghtBarFrame = bar;
+	//Graphics::ManagedSurface *bar = new Graphics::ManagedSurface();
+	//bar->create(_strenghtBarFrame->w, _strenghtBarFrame->h, _gfx->_texturePixelFormat);
+	//_strenghtBarFrame->copyRectToSurface(*bar, 2, 0, Common::Rect(2, 0, _strenghtBarFrame->w - 2, _strenghtBarFrame->h));
+	//_strenghtBarFrame->free();
+	//delete _strenghtBarFrame;
+	//_strenghtBarFrame = bar;
 
 	_strenghtWeightsFrames = loadFramesWithHeader(&file, _language == Common::ES_ESP ? 0xf92 : 0xf83, 4, yellow, black);
 
@@ -281,7 +282,9 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 
 	surface->fillRect(Common::Rect(152, 156, 216, 164), green);
 	surface->copyRectToSurface((const Graphics::Surface)*_spiritsMeterIndicatorFrame, 140 + _spiritsMeterPosition, 156, Common::Rect(0, 0, 15, 8));
-	drawEnergyMeter(surface, Common::Point(63, 154));
+
+	surface->fillRect(Common::Rect(64, 155, 64 + 72, 155 + 15), _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
+	drawEnergyMeter(surface, Common::Point(64, 155));
 
 	int ticks = g_system->getMillis() / 20;
 	int flagFrameIndex = (ticks / 10) % 4;

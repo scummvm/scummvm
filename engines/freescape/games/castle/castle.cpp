@@ -1174,7 +1174,15 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 
 	if (isDOS())
 		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtBarFrame, origin.x + 5, origin.y + 8, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h), black);
+
+	Common::Point barFrameOrigin = origin;
+
+	if (isDOS())
+		barFrameOrigin += Common::Point(5, 6);
+	else if (isSpectrum())
+		barFrameOrigin += Common::Point(0, 6);
+
+	surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_strenghtBarFrame, barFrameOrigin.x, barFrameOrigin.y, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h), black);
 
 	Common::Point weightPoint;
 	int frameIdx = -1;
