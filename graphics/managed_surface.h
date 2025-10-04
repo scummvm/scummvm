@@ -960,6 +960,13 @@ public:
 	}
 
 	/**
+	 * Return a read-only sub-area of the screen.
+	 */
+	const Surface getSubArea(const Common::Rect &area) const {
+		return _innerSurface.getSubArea(area);
+	}
+
+	/**
 	 * Convert the data to another pixel format.
 	 *
 	 * This works in-place. This means it does not create an additional buffer
