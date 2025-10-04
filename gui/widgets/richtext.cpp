@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/unicode-bidi.h"
+#include "common/translation.h"
 
 #include "graphics/macgui/mactext.h"
 
@@ -197,7 +198,11 @@ void RichTextWidget::createWidget() {
 
 	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
 
-	int newId = wm->_fontMan->registerTTFFont(ttfFamily);
+	int newId;
+	if (TransMan.currentIsBuiltinLanguage())
+		newId = Graphics::kMacFontNewYork;
+	else // MacFONTs do not contain diacritic marks or non-English characters, so we have to use TTF instead
+		newId = wm->_fontMan->registerTTFFont(ttfFamily);
 	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 
 	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
