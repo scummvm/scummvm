@@ -942,8 +942,6 @@ void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				ptCurrPosInGrid.y = y;
 				ptOrigPosInGrid.x = x;
 				ptOrigPosInGrid.y = y;
-				ptOrigPosInGrid.x = x;
-				ptOrigPosInGrid.y = y;
 				ptLastPosInGrid.x = x;
 				ptLastPosInGrid.y = y;
 				pDC->FrameRect(&arScreenGrid[y][x], &cBrush);
