@@ -280,7 +280,7 @@ _detection_features_full=yes
 # be modified otherwise. Consider them read-only.
 _3d=no
 _posix=no
-_has_posix_spawn=no
+_has_posix_spawn=auto
 _has_fseeko_offt_64=no
 _has_fseeko64=no
 _has_fopen64=no
@@ -3280,7 +3280,7 @@ EOF
 
 		# enable SDL3 and set it up correctly
 		if test "$_dynamic_modules" = "yes" ; then
-			embuilder build sdl3 --pic 
+			embuilder build sdl3 --pic
 		else
 			embuilder build sdl3
 		fi
@@ -3294,6 +3294,8 @@ EOF
 		else
 			append_var SDL_LIBS "`$_sdlconfig --libs`"
 		fi
+
+		_has_posix_spawn=no
 
 		# We explicitly disable optional libraries if not enabled. "auto" would depend
 		# on whether the port has been used before (and is detected) which is unpredictable.
@@ -4780,11 +4782,14 @@ if test "$_posix" = yes ; then
 	add_line_to_config_mk 'POSIX = 1'
 
 	echo_n "Checking if posix_spawn is supported... "
+	if test "$_has_posix_spawn" != no ; then
 		cat > $TMPC << EOF
 #include <spawn.h>
 int main(void) { return posix_spawn(0, 0, 0, 0, 0, 0); }
 EOF
-	cc_check && test "$_host_os" != "emscripten" && _has_posix_spawn=yes
+		cc_check && _has_posix_spawn=yes
+	fi
+
 	echo $_has_posix_spawn
 	if test "$_has_posix_spawn" = yes ; then
 		append_var DEFINES "-DHAS_POSIX_SPAWN"
