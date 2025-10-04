@@ -1955,13 +1955,16 @@ void DarkseedEngine::lookCode(int objNum) {
 
 void DarkseedEngine::printTime() {
 	_console->printTosText(958);
-	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
-
+	int hour = g_engine->_currentTimeInSeconds / 3600;
+	bool isAm = hour < 12;
+	if (hour > 12) {
+		hour -= 12;
+	}
 	if (g_engine->getLanguage() == Common::ZH_ANY) {
-		_console->addToCurrentLineU32(convertToU32String(hour < 12 ? "\xa4\x57\xa4\xc8" : "\xa4\x55\xa4\xc8", Common::ZH_ANY));
-		_console->addToCurrentLine(Common::String::format("%d:%02d", hour % 12, (g_engine->_currentTimeInSeconds / 60) % 60));
+		_console->addToCurrentLineU32(convertToU32String(isAm ? "\xa4\x57\xa4\xc8" : "\xa4\x55\xa4\xc8", Common::ZH_ANY));
+		_console->addToCurrentLine(Common::String::format("%d:%02d", hour, (g_engine->_currentTimeInSeconds / 60) % 60));
 	} else {
-		_console->addToCurrentLine(Common::String::format("%d: %02d %s", hour % 12, (g_engine->_currentTimeInSeconds / 60) % 60, hour < 12 ? "a.m." : "p.m."));
+		_console->addToCurrentLine(Common::String::format("%d: %02d %s", hour, (g_engine->_currentTimeInSeconds / 60) % 60, isAm ? "a.m." : "p.m."));
 	}
 }
 

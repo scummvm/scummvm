@@ -280,10 +280,10 @@ bool DebugConsole::Cmd_playSpeech(int argc, const char **argv) {
 }
 
 void DebugConsole::printDayAndTime() {
-	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
+	int hour = g_engine->_currentTimeInSeconds / 3600;
 	debugPrintf("Day %d at %d:%02d%s (%d seconds)\n",
 				g_engine->_currentDay,
-				hour % 12,
+				hour > 12 ? hour - 12 : hour,
 				(g_engine->_currentTimeInSeconds / 60) % 60,
 				hour < 12 ? "AM" : "PM", g_engine->_currentTimeInSeconds);
 }
