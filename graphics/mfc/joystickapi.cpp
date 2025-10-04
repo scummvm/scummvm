@@ -19,32 +19,29 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#include "common/textconsole.h"
+#include "graphics/mfc/joystickapi.h"
+#include "graphics/mfc/afxwin.h"
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+namespace Graphics {
+namespace MFC {
 
-#define ID_OPTIONS_CODES    450
+MMRESULT joySetCapture(HWND hwnd, unsigned int uJoyID,
+		unsigned int uPeriod, bool fChanged) {
+	return AfxGetApp()->joySetCapture(hwnd, uJoyID, uPeriod, fChanged);
+}
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold) {
+	return AfxGetApp()->joySetThreshold(uJoyID, uThreshold);
+}
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji) {
+	return AfxGetApp()->joyGetPos(uJoyID, pji);
+}
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+MMRESULT joyReleaseCapture(unsigned int uJoyID) {
+	return AfxGetApp()->joyReleaseCapture(uJoyID);
+}
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
-
-#endif
+} // namespace MFC
+} // namespace Graphics

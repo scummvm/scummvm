@@ -19,32 +19,42 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#include "common/textconsole.h"
+#include "graphics/mfc/afxwin.h"
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+namespace Graphics {
+namespace MFC {
 
-#define ID_OPTIONS_CODES    450
+CMenu::CMenu() {
+}
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+bool CMenu::CreateMenu() {
+	error("TODO: CMenu::CreateMenu");
+}
+bool CMenu::CreatePopupMenu() {
+	error("TODO: CMenu::CreatePopupMenu");
+}
+bool CMenu::LoadMenu(const char *lpszResourceName) {
+	error("TODO: CMenu::LoadMenu");
+}
+bool CMenu::LoadMenu(unsigned int nIDResource) {
+	error("TODO: CMenu::LoadMenu");
+}
+bool CMenu::LoadMenuIndirect(const void *lpMenuTemplate) {
+	error("TODO: CMenu::LoadMenuIndirect");
+}
+bool CMenu::DestroyMenu() {
+	error("TODO: CMenu::DestroyMenu");
+}
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+CMenu *CMenu::FromHandle(HMENU hMenu) {
+	error("TODO: CMenu::FromHandle");
+}
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+unsigned int CMenu::CheckMenuItem(unsigned int nIDCheckItem, unsigned int nCheck) {
+	error("TODO: CMenu::CheckMenuItem");
+}
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
 
-#define IDD_AUDIOCFG        463
-
-#endif
+} // namespace MFC
+} // namespace Graphics

@@ -19,32 +19,22 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#include "common/textconsole.h"
+#include "graphics/mfc/afxstr.h"
+#include "graphics/mfc/global_functions.h"
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+namespace Graphics {
+namespace MFC {
 
-#define ID_OPTIONS_CODES    450
+bool CString::LoadString(unsigned int nID) {
+	char szTemp[256];
+	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, sizeof(szTemp));
+	if (nLen == 0)
+		return false;
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+	*this = szTemp;
+	return true;
+}
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
-
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
-
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
-
-#endif
+} // namespace MFC
+} // namespace Graphics

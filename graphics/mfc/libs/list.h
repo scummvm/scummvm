@@ -19,32 +19,29 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#ifndef GRAPHICS_MFC_LIBS_LIST_H
+#define GRAPHICS_MFC_LIBS_LIST_H
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+#include "common/list.h"
 
-#define ID_OPTIONS_CODES    450
+namespace Graphics {
+namespace MFC {
+namespace Libs {
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+template<class T>
+class List : public Common::List<T> {
+public:
+	bool contains(const T &tmp) const {
+		for (auto it = this->begin(); it != this->end(); ++it) {
+			if (*it == tmp)
+				return true;
+		}
+		return false;
+	}
+};
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
-
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
-
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
+} // namespace Libs
+} // namespace MFC
+} // namespace Graphics
 
 #endif

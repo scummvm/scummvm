@@ -19,32 +19,27 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#include "common/textconsole.h"
+#include "graphics/mfc/afxwin.h"
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+namespace Graphics {
+namespace MFC {
 
-#define ID_OPTIONS_CODES    450
+CObject *CRuntimeClass::CreateObject() const {
+	return m_pfnCreateObject();
+}
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+bool CRuntimeClass::IsDerivedFrom(const CRuntimeClass *pBaseClass) const {
+	assert(pBaseClass != nullptr);
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+	for (const CRuntimeClass *rtClass = this;
+			rtClass; rtClass = rtClass->m_pBaseClass) {
+		if (rtClass == pBaseClass)
+			return true;
+	}
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+	return false;
+}
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
-
-#endif
+} // namespace MFC
+} // namespace Graphics

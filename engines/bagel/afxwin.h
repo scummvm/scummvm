@@ -22,11 +22,15 @@
 #ifndef BAGEL_AFXWIN_H
 #define BAGEL_AFXWIN_H
 
-#include "bagel/mfc/mfc.h"
+#include "graphics/mfc/mfc.h"
 
 namespace Bagel {
 
-using namespace Bagel::MFC;
+using namespace Graphics::MFC;
+
+namespace MFC {
+using namespace Graphics::MFC;
+} // namespace MFC
 
 } // namespace Bagel
 

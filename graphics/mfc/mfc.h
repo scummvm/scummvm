@@ -19,32 +19,22 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#ifndef GRAPHICS_MFC_MFC_H
+#define GRAPHICS_MFC_MFC_H
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
-
-#define ID_OPTIONS_CODES    450
-
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
-
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
-
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
-
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
+#include "graphics/mfc/minwindef.h"
+#include "graphics/mfc/winnt.h"
+#include "graphics/mfc/wingdi.h"
+#include "graphics/mfc/atltime.h"
+#include "graphics/mfc/atltypes.h"
+#include "graphics/mfc/afx.h"
+#include "graphics/mfc/afxwin.h"
+#include "graphics/mfc/afxmsg.h"
+#include "graphics/mfc/afxext.h"
+#include "graphics/mfc/afxres.h"
+#include "graphics/mfc/global_functions.h"
+#include "graphics/mfc/ifstream.h"
+#include "graphics/mfc/joystickapi.h"
+#include "graphics/mfc/keyboard.h"
 
 #endif

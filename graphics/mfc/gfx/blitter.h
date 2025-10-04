@@ -19,32 +19,28 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#ifndef GRAPHICS_MFC_GFX_BLITTER_H
+#define GRAPHICS_MFC_GFX_BLITTER_H
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+#include "graphics/mfc/gfx/surface.h"
 
-#define ID_OPTIONS_CODES    450
+namespace Graphics {
+namespace MFC {
+namespace Gfx {
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+extern void blit(Gfx::Surface *src, Gfx::Surface *dest,
+	const Common::Rect &srcRect, const Common::Point &destPos,
+	uint bgColor, int mode, const uint32 *paletteMap);
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+extern void stretchBlit(Gfx::Surface *src, Gfx::Surface *dest,
+	const Common::Rect &srcRect, const Common::Rect &destRect,
+	uint bgColor, int mode, const uint32 *paletteMap);
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+extern void frameRect(Gfx::Surface *dest,
+	const Common::Rect &r, byte color, int drawMode);
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
-
-#define IDD_AUDIOCFG        463
+} // namespace Gfx
+} // namespace MFC
+} // namespace Graphics
 
 #endif

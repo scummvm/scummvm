@@ -19,32 +19,31 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#include "graphics/mfc/mfc.h"
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+namespace Graphics {
+namespace MFC {
 
-#define ID_OPTIONS_CODES    450
+const CRuntimeClass CObject::classCObject = {
+	"CObject", sizeof(CObject), 0xFFFF,	// class name, size, schema
+	nullptr,							// (null if DECLARE_DYNAMIC only)
+	nullptr								// pointer to base class's CRuntimeClass
+};
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+CObject::CObject() {
+}
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+CObject::~CObject() {
+}
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+const CRuntimeClass *CObject::GetRuntimeClass() const {
+	return &CObject::classCObject;
+}
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
+bool CObject::IsKindOf(const CRuntimeClass *pClass) const {
+	const CRuntimeClass *pClassThis = GetRuntimeClass();
+	return pClassThis->IsDerivedFrom(pClass);
+}
 
-#define IDD_AUDIOCFG        463
-
-#endif
+} // namespace MFC
+} // namespace Graphics

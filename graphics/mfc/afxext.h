@@ -19,32 +19,34 @@
  *
  */
 
-#ifndef COMMON_MFC_GLOBAL_MENURES_H
-#define COMMON_MFC_GLOBAL_MENURES_H
+#ifndef GRAPHICS_MFC_AFXEXT_H
+#define GRAPHICS_MFC_AFXEXT_H
 
-#define IDC_OPTIONS_ARROWUP 503
-#define IDC_OPTIONS_ARROWDN 504
+#include "graphics/mfc/afxwin.h"
 
-#define ID_OPTIONS_CODES    450
+namespace Graphics {
+namespace MFC {
 
-// obsolete
-//#define IDR_BITMAP_SCROLL   451
+class CBitmapButton : public CButton {
+	DECLARE_DYNAMIC(CBitmapButton)
 
-#define IDR_OPTION_SCROLL   452
-#define IDD_OPTIONS_DIALOG  453
+protected:
+	DECLARE_MESSAGE_MAP()
 
-#define IDC_OPTIONS_RETURN  454
-#define IDC_OPTIONS_QUIT    455
-#define IDC_OPTIONS_RULES   456
-#define IDC_OPTIONS_NEWGAME 457
-#define IDC_OPTIONS_OPTIONS 458
-#define IDC_OPTIONS_AUDIO   459
-#define IDC_OPTIONS_HYPE    999
+public:
+	CBitmap m_bitmap;           // normal image (REQUIRED)
+	CBitmap m_bitmapSel;        // selected image (OPTIONAL)
+	CBitmap m_bitmapFocus;      // focused but not selected (OPTIONAL)
+	CBitmap m_bitmapDisabled;   // disabled bitmap (OPTIONAL)
 
-#define IDB_SCROLBTN        460
-#define SCROLLUP            461
-#define SCROLLDOWN          462
+public:
+	~CBitmapButton() override {
+	}
 
-#define IDD_AUDIOCFG        463
+	void SizeToContent();
+};
+
+} // namespace MFC
+} // namespace Graphics
 
 #endif
