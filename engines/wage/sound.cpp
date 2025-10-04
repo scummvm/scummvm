@@ -158,10 +158,13 @@ static void soundTimer(void *refCon) {
 
 			Common::sort(engine->_soundQueue.begin(), engine->_soundQueue.end());
 
-			int nextRun = engine->_soundQueue.front();
+			int nextRun = engine->_soundQueue.front() - g_system->getMillis();
 			engine->_soundQueue.pop_front();
 
-			g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
+			if (nextRun < 0)
+				nextRun = 1;
+
+			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
 		} else {
 			warning("updateSoundTimerForScene: Unknown sound type %d", scene->_soundType);
 		}
