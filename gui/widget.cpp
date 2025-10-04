@@ -213,10 +213,17 @@ bool Widget::isEnabled() const {
 }
 
 void Widget::setVisible(bool e) {
-	if (e)
-		clearFlags(WIDGET_INVISIBLE);
-	else
-		setFlags(WIDGET_INVISIBLE);
+	if (!(_flags & WIDGET_INVISIBLE) != e) {
+		if (e) {
+			clearFlags(WIDGET_INVISIBLE);
+			markAsDirty();
+		} else {
+			setFlags(WIDGET_INVISIBLE);
+			// When becoming invisible the whole dialog must be redrawn
+			// to hide the widgets
+			g_gui.scheduleTopDialogRedraw();
+		}
+	}
 }
 
 bool Widget::isVisible() const {
