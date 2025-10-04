@@ -209,15 +209,10 @@ CMainWindow::CMainWindow() {
 	}
 
 	/* preload dice cell sprites */
-#pragma warning(disable: 4706)
-
 	m_bDiceBmpsLoaded = false;
 
 	memset(m_bDoorBmpLoaded, false, 10 * sizeof(bool));
 	for (i = 1; i < 10; pCDoorBmp[i] = new CSprite(), i++);
-
-#pragma warning(default: 4706)
-
 
 	// only continue if there was no error
 	if (errCode == ERR_NONE) {
@@ -550,10 +545,10 @@ void CMainWindow::PlayGame() {
 		}//end if (hDIB)
 
 		AnimateDice();
-#pragma warning(disable: 4135)
+
 		m_LDie = (byte)(((uint32)(unsigned int)brand() * 6L) / ((uint32)(unsigned int)RAND_MAX + 1L)) + 1;
 		m_RDie = (byte)(((uint32)(unsigned int)brand() * 6L) / ((uint32)(unsigned int)RAND_MAX + 1L)) + 1;
-#pragma warning(default: 4135)
+
 		PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie], \
 		                  m_rRDie.left, m_rRDie.top, (int) m_rRDie.Width(), (int) m_rRDie.Height());
 
@@ -798,11 +793,11 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 				m_bOneDieCase = AllFxd;
 
 				/* randomise throws */
-#pragma warning(disable: 4135)
+
 				V = (uint32)((unsigned int)RAND_MAX + 1);
 				m_LDie = (byte)(((uint32)(unsigned int)brand() * 6L) / V) +1;                                    //  left Die
 				m_RDie = m_bOneDieCase ? 0 : (byte)(((uint32)(unsigned int)brand() * 6) / V) +1;       //    right Die
-#pragma warning(default: 4135)
+
 
 				pDC = GetDC();
 
@@ -1367,7 +1362,6 @@ bool CMainWindow::IsThrowDoable(byte DiceSum) {
 	****************************************************************************************************************
 	*/
 
-#pragma warning(disable: 4135)
 	byte s[9];                                                       //Open doors.
 	byte Count,                                               //# of open doors.
 	     i,
@@ -1598,7 +1592,6 @@ bool CMainWindow::IsThrowDoable(byte DiceSum) {
 	}//end for -k
 	return false;    //Undoable by default.
 }
-#pragma warning(default: 4135)
 
 
 void CMainWindow::OnClose() {
