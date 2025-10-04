@@ -117,7 +117,7 @@ public:
 
 //added data members:
 
-	virtual void SplashScreen();
+	void SplashScreen();
 
 private:
 	void OnSoundNotify(CSound *pSound);
