@@ -183,21 +183,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	* Life settings. These are global variables. *
 	*********************************************/
 	if (m_lpGameStruct->bPlayingMetagame == true) {      // playing meta game?
-		switch (m_lpGameStruct->nSkillLevel) {          // yes - what skill level?
-		case SKILLLEVEL_LOW:
-			nLife = VILLAGES_HI;                    // All levels start with 20
-			break;
-
-		case SKILLLEVEL_MEDIUM:
-			nLife = VILLAGES_HI;
-			break;
-
-		case SKILLLEVEL_HIGH:
-			nLife = VILLAGES_HI;
-			break;
-
-		} // end switch
-
+		nLife               = VILLAGES_HI;	// All levels start with 20
 		nTurnCounter        = ROUNDS_META;
 		nSpeed              = SPEED_DEF;
 		nCountDown          = nSpeed * MONTHS;
