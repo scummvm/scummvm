@@ -243,6 +243,11 @@ bool Room::load() {
 		if (roomObj.objNum == 41 && roomObj.type == 0) { // TODO hack. figure out why the tincup doesn't show in the jail cell normally.
 			roomObj.type = 1;
 		}
+		if (roomObj.objNum == 14 && _roomNumber == 34) { // TODO HACK. Figure out why we need to resize the hitbox for the gloves.
+			// originally it is 20x12 pixels not sure why.
+			roomObj.width = 52;
+			roomObj.height = 22;
+		}
 	}
 
 	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))), false);
@@ -374,7 +379,7 @@ int Room::checkCursorAndMoveableObjects() {
 			}
 
 			if (_roomObj[i].objNum == 14 && g_engine->_cursor.getY() > 40 && g_engine->_objectVar.getVar(86) == 0) {
-				hasObject = false;
+				hasObject = false; // don't return gloves if the glovebox is closed.
 			}
 
 			if (hasObject) {
