@@ -113,6 +113,7 @@ CMainWindow::CMainWindow() {
 
 	if (LoadArtWork() == false) {            // Load first artwork & display
 		PostMessage(WM_CLOSE, 0, 0);
+		EndWaitCursor();
 		return;
 	}
 
@@ -1572,6 +1573,7 @@ void CMainWindow::NewGame() {
 	m_bPlaying = true;
 
 	if (LoadArtWork() == false) {                                    // Load artwork to Scratch1
+		EndWaitCursor();
 		PostMessage(WM_CLOSE, 0, 0);
 		return;
 	}

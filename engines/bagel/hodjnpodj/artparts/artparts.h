@@ -126,9 +126,9 @@ public:
 	CRect SrcRect;              // The area to be moved
 	CRect DstRect;              // The destination of the moving area
 
-	virtual void SplashScreen();
-	virtual void SplashScratch();
-	virtual void SplashScratchPaint();
+	void SplashScreen();
+	void SplashScratch();
+	void SplashScratchPaint();
 
 private:
 	POINT Grid[MAX_COLUMNS][MAX_ROWS];          // Location of the art parts
