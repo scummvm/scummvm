@@ -201,7 +201,7 @@ public:
 	bool wait_awhile(int nHundSecs);
 
 //added data members:
-	virtual void SplashScreen();
+	void SplashScreen();
 
 private:
 	void initStatics();

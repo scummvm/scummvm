@@ -1071,7 +1071,6 @@ void add_note_to_series(int nNewValue) {
 	}
 	(*pNewNote).SetValue(nNewValue);
 	(*pNewNote).LinkNote();                 //Add the new note to the bottom of the list
-	pNewNote = nullptr;
 }//end add_note_to_series
 
 void CMainWindow::PlayBackSeries(int nNumNotes) {

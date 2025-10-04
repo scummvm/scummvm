@@ -214,19 +214,15 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 
 	switch (nSBCode) {
 	case SB_LINERIGHT:
-		NewPos++;
-		break;
 	case SB_PAGERIGHT:
-		NewPos ++;
+		NewPos++;
 		break;
 	case SB_RIGHT:
 		NewPos = pMax;
 		break;
 	case SB_LINELEFT:
-		NewPos--;
-		break;
 	case SB_PAGELEFT:
-		NewPos --;
+		NewPos--;
 		break;
 	case SB_LEFT:
 		NewPos = pMin;
