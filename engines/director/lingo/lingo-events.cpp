@@ -247,7 +247,7 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 
 				if (_vm->getVersion() >= 600) {
 					if (event.behaviorIndex >= 0) {
-						if (event.behaviorIndex >= sprite->_behaviors.size()) {
+						if (event.behaviorIndex >= (int)sprite->_behaviors.size()) {
 							warning("Movie::resolveScriptEvent: invalid behavior index %d, ignoring", event.behaviorIndex);
 						} else {
 							scriptId = sprite->_behaviors[event.behaviorIndex].memberID;
