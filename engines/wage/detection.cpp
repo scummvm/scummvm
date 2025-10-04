@@ -46,6 +46,7 @@ static const PlainGameDescriptor wageGames[] = {
 
 static const DebugChannelDef debugFlagList[] = {
 	{Wage::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
+	{Wage::kDebugSound, "sound", "Show sound debug information	"},
 	DEBUG_CHANNEL_END
 };
 

@@ -93,6 +93,7 @@ typedef Common::List<Chr *> ChrList;
 
 enum {
 	kDebugImGui = 1,
+	kDebugSound,
 };
 
 enum OperandType {
@@ -111,14 +112,6 @@ enum Directions {
 	SOUTH = 1,
 	EAST = 2,
 	WEST = 3
-};
-
-// our engine debug levels
-enum {
-	kWageDebugExample = 1 << 0,
-	kWageDebugExample2 = 1 << 1
-	// next new level must be 1 << 2 (4)
-	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
 enum Resolution {

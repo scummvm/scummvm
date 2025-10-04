@@ -194,6 +194,7 @@ Common::Error WageEngine::run() {
 		g_system->delayMillis(50);
 
 		if (!_soundToPlay.empty()) {
+			debugC(1, kDebugSound, "** Sound from queue: %s", _soundToPlay.c_str());
 			playSound(_soundToPlay, false); // Do not block input
 			_soundToPlay.clear();
 		}

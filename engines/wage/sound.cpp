@@ -65,6 +65,8 @@ Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name
 	_size = data->size() - 20;
 	_data = (byte *)calloc(2 * _size, 1);
 
+	debugC(1, kDebugSound, "Sound::Sound: loading sound '%s', size %d", name.c_str(), _size);
+
 	data->skip(20); // Skip header
 
 	byte value = 0x80;
@@ -88,6 +90,8 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 		warning("playSound: Sound '%s' does not exist", soundName.c_str());
 		return;
 	}
+
+	debugC(1, kDebugSound, "WageEngine::playSound: playing sound '%s'%s", soundName.c_str(), blocking ? " blocking" : "");
 
 	Sound *s = _world->_sounds[soundName];
 
@@ -142,9 +146,15 @@ static void soundTimer(void *refCon) {
 
 			uint32 nextRun = 60000 / scene->_soundFrequency;
 			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
+
+			debugC(1, kDebugSound, "soundTimer: enqueuing next periodic sound in %d ms (%s)", nextRun, scene->_soundName.c_str());
 		} else if (scene->_soundType == Scene::RANDOM) {
-			for (int i = 0; i < scene->_soundFrequency * 5; i++)
-				engine->_soundQueue.push_back(g_system->getMillis() + engine->_rnd->getRandomNumber(60000));
+			for (int i = 0; i < scene->_soundFrequency * 5; i++) {
+				uint32 nextRun = g_system->getMillis() + engine->_rnd->getRandomNumber(60000);
+				engine->_soundQueue.push_back(nextRun);
+
+				debugC(1, kDebugSound, "soundTimer: enqueuing next random sound in %d ms (%s)", nextRun, scene->_soundName.c_str());
+			}
 
 			Common::sort(engine->_soundQueue.begin(), engine->_soundQueue.end());
 
@@ -162,6 +172,8 @@ static void soundTimer(void *refCon) {
 		g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
 
 		engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
+
+		debugC(1, kDebugSound, "soundTimer: preparing next sound in %d ms (%s)", nextRun - g_system->getMillis(), scene->_soundName.c_str());
 	}
 }
 

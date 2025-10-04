@@ -243,6 +243,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 				Operand *op = readOperand();
 				// TODO check op type is string.
 				_handled = true;
+				debugC(2, kDebugSound, "** Script sound '%s'", op->toString().c_str());
 				_engine->playSound(op->toString());
 				delete op;
 				byte d = _data->readByte();
