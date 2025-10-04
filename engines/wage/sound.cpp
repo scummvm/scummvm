@@ -87,7 +87,9 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 	soundName.toLowercase();
 
 	if (!_world->_sounds.contains(soundName)) {
-		warning("playSound: Sound '%s' does not exist", soundName.c_str());
+		if (!soundName.empty())
+			warning("playSound: Sound '%s' does not exist", soundName.c_str());
+
 		return;
 	}
 
