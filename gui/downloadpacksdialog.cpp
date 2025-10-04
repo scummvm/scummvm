@@ -88,6 +88,7 @@ void DialogState::downloadList() {
 
 void DialogState::proceedDownload() {
 	startTime = lastUpdate = g_system->getMillis();
+	downloadedSize = 0;
 	g_system->taskStarted(OSystem::kDataPackDownload);
 	takeOneFile();
 }
