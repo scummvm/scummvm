@@ -1327,9 +1327,6 @@ void CMainPackRatWindow::KillPlayer(bool bFirstTime) {
 		m_ptCurrPLocInGrid.y = 15;
 		break;
 	case 3:
-		m_ptCurrPLocInGrid.x = 18;
-		m_ptCurrPLocInGrid.y = 13;
-		break;
 	case 4:
 		m_ptCurrPLocInGrid.x = 18;
 		m_ptCurrPLocInGrid.y = 13;
@@ -1541,7 +1538,6 @@ void CMainPackRatWindow::PickUpSuperObject() {
 		y = (m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] % 10);
 		m_anMazeArray[m_ptCurrPLocInGrid.x + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] = 0;
 		bEatTurtle = true;
-		nEatTurtle = 1;
 		nEatTurtle = 1;
 		nOldTSpeed = m_nBadGuySpeed;
 		m_nBadGuySpeed *= 2;
@@ -1772,7 +1768,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			if (m_anMazeArray[m_ptCurrPLocInGrid.x + 1 + (m_ptCurrPLocInGrid.y * NUMBEROFCOLS)] != WALL) {
 
 				if (nOldDir != m_nPDirection) {
-					pTempSprite = new CSprite;
 					pTempSprite = pPlayerRightSprite->DuplicateSprite(pDC);
 				}
 				m_ptCurrentPPos.x = (m_ptCurrPLocInGrid.x * MOVEPLAYER) + MAZELEFT;
@@ -1796,7 +1791,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			if (m_anMazeArray[m_ptCurrPLocInGrid.x + ((m_ptCurrPLocInGrid.y - 1) * NUMBEROFCOLS)] != WALL) {
 
 				if (nOldDir != m_nPDirection) {
-					pTempSprite = new CSprite;
 					pTempSprite = pPlayerUpSprite->DuplicateSprite(pDC);
 				}
 				m_ptCurrentPPos.x = (m_ptCurrPLocInGrid.x * MOVEPLAYER) + MAZELEFT;
@@ -1820,7 +1814,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 		} else {
 			if (m_anMazeArray[m_ptCurrPLocInGrid.x + ((m_ptCurrPLocInGrid.y + 1) * NUMBEROFCOLS)] != WALL) {
 				if (nOldDir != m_nPDirection) {
-					pTempSprite = new CSprite;
 					pTempSprite = pPlayerDownSprite->DuplicateSprite(pDC);
 				}
 				m_ptCurrentPPos.x = (m_ptCurrPLocInGrid.x * MOVEPLAYER) + MAZELEFT;
@@ -2236,8 +2229,6 @@ bool CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, bool bForceRepaint) {
 				m_aptCurrentBPos[nWhichBadGuy].y = (m_aptCurrBLocInGrid[nWhichBadGuy].y * MOVEBADGUY) + MAZETOP;
 
 				if (nOldDir != m_anBDirection[nWhichBadGuy]) {
-					pTempSprite = new CSprite;
-
 					if (bEatTurtle) {
 						if (bFlashTurtle)
 							pTempSprite = pFlashUpSprite->DuplicateSprite(pDC);
@@ -2247,7 +2238,6 @@ bool CMainPackRatWindow::SetNewBadGuyPos(int nWhichBadGuy, bool bForceRepaint) {
 						pTempSprite = pBadGuyUpSprite->DuplicateSprite(pDC);
 				} else {
 					if (bEatTurtle) {
-						pTempSprite = new CSprite;
 						if (bFlashTurtle)
 							pTempSprite = pFlashUpSprite->DuplicateSprite(pDC);
 						else
