@@ -622,7 +622,7 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 				}
 			}
 
-			if (numBytes <= 0) {
+			if (numBytes < 0 && (i + 1 < count) && (y < h)) {
 				warning("Design::drawBitmap(): Bitmap data ended prematurely");
 				break;
 			}
