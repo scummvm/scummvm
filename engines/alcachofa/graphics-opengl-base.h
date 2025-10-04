@@ -28,23 +28,6 @@
 
 namespace Alcachofa {
 
-bool isCompatibleFormat(const Graphics::PixelFormat &format);
-
-class OpenGLTextureBase : public ITexture {
-public:
-	OpenGLTextureBase(int32 w, int32 h, bool withMipmaps);
-	~OpenGLTextureBase() override {}
-	void update(const Graphics::Surface &surface) override;
-
-protected:
-	virtual void updateInner(const void *pixels) = 0; ///< expects pixels to be RGBA32
-
-	bool _withMipmaps;
-	bool _mirrorWrap = true;
-	bool _didConvertOnce = false;
-	Graphics::ManagedSurface _tmpSurface;
-};
-
 class OpenGLRendererBase : public virtual IRenderer {
 public:
 	OpenGLRendererBase(Common::Point resolution);
