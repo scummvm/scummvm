@@ -1526,11 +1526,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Hor v1.0
 	WME_WINENTRY("hor", "1.0",
-		WME_ENTRY1s("data.dcp", "ae94007f25a21143c028c1b7807dd907", 15077486), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "ae94007f25a21143c028c1b7807dd907", 15077486), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Hor v1.3
 	WME_WINENTRY("hor", "1.3",
-		WME_ENTRY1s("data.dcp", "37b0abeb8651b82b9e6327bd10a18185", 15077486), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "37b0abeb8651b82b9e6327bd10a18185", 15077486), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// The Idiot's Tale (Steam, April 2018)
 	WME_WINENTRY("idiotstale", "1.0.2",

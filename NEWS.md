@@ -42,6 +42,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Five Lethal Demons
      Hamlet
      Helga Deep In Trouble
+     Hor
      The Kite
      Lov Mamuta
      Mental Repairs Inc
