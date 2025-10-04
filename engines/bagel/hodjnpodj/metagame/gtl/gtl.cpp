@@ -94,15 +94,6 @@ bool CGtlApp::InitInstance() {
 
 	// Initialize
 	//
-	m_iWidth = GetSystemMetrics(SM_CXSCREEN);
-	m_iHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	m_iX = 0;
-	m_iY = 0;
-
-	// If we ever change Hodj 'n' Podj to live in entire screen
-	// then delete these next 4 lines of code
-	//
 	m_iWidth = GAME_WIDTH;
 	m_iHeight = GAME_HEIGHT;
 	m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;

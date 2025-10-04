@@ -651,10 +651,10 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInvento
 
 								nRandFactor = -(int)min((long)abs(nRandFactor), lCrowns);// can't remove more gold than the player has
 
-								nChangeAmount = brand() % nRandFactor + 1;           //...subtract from 1 to nRandFactor
+								nChangeAmount = brand() % (nRandFactor + 1);           //...subtract from 1 to nRandFactor
 								lCrowns -= nChangeAmount;
 							} else {
-								nChangeAmount = brand() % nRandFactor + 1;           // Add from 1 to nRandFactor
+								nChangeAmount = brand() % (nRandFactor + 1);           // Add from 1 to nRandFactor
 								lCrowns += nChangeAmount;
 							}
 							// our logic was wrong if we end up negative

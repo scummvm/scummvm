@@ -97,9 +97,6 @@ bool CBackpack::SetupKeyboardHook() {
 	pBackpackDialog = this;                         // retain pointer to our dialog box
 
 	lpfnKbdHook = &BackpackHookProc;
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return false;
-
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return false;
@@ -576,11 +573,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 	if (pBackpackBitmap == nullptr)
 		return false;
 
-	if ((GetFreeSpace(0) >= (unsigned long)500000) &&
-		(GlobalCompact((unsigned long)500000) >= (unsigned long)400000))
-		pBackgroundBitmap = FetchScreenBitmap(pDC, pBackgroundPalette, 0, 0, BACKPACK_DX, BACKPACK_DY);
-	else
-		pBackgroundBitmap = nullptr;
+	pBackgroundBitmap = FetchScreenBitmap(pDC, pBackgroundPalette, 0, 0, BACKPACK_DX, BACKPACK_DY);
 
 	(*pDC).SelectPalette(pBackgroundPalette, false);
 	(*pDC).RealizePalette();

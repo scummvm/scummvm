@@ -214,9 +214,6 @@ bool CGtlData::DetermineWeights(CXodj * xpXodj)
 		switch (xpStratLocInfo->m_iValueCode) {
 
 		case MG_VISIT_MISHMOSH:
-			xpStratLocInfo->m_iWeight = MAXPOSINT;
-			break ;
-
 		case MG_VISIT_CASTLE:
 			xpStratLocInfo->m_iWeight = MAXPOSINT;
 			break ;
