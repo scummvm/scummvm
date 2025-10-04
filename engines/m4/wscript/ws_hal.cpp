@@ -68,14 +68,14 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 			// Loop through the main set of registers, and dump out the contents
 			for (i = 0; i < IDX_COUNT; i++) {
 				tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-				logFile->writeString(Common::String::format("\t%d\t%s:\t\t%.2f\t\t0x%08" PRIx64 "\n", i, myRegLabels[i], tempFloat, (int64)myRegs[i]));
+				logFile->writeString(Common::String::format("\t%d\t%s:\t\t%.2f\t\t0x%08" PRIxPTR "\n", i, myRegLabels[i], tempFloat, myRegs[i]));
 			}
 
 			// If the anim8 has extra local regs
 			if (myAnim8->numLocalVars > 0) {
 				for (i = IDX_COUNT; i < IDX_COUNT + myAnim8->numLocalVars; i++) {
 					tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-					logFile->writeString(Common::String::format("\t%d\tlocal.%d:\t\t%.2f\t\t0x%08" PRIx64 "\n", i, i - IDX_COUNT, tempFloat, (int64)myRegs[i]));
+					logFile->writeString(Common::String::format("\t%d\tlocal.%d:\t\t%.2f\t\t0x%08" PRIxPTR "\n", i, i - IDX_COUNT, tempFloat, myRegs[i]));
 				}
 			}
 			logFile->writeString(Common::String::format("\n"));

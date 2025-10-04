@@ -1153,7 +1153,7 @@ void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 		uint32 machHash, machine *sendM, int32 msgCount) {
 	bool sendToAll;
 
-	debugC(1, kDebugMessages, "Message %xh, %lxh, %s, %xh, %s, %d",
+	debugC(1, kDebugMessages, "Message %xh, %" PRIxPTR "h, %s, %xh, %s, %d",
 	       msgHash, msgValue, recvM ? recvM->machName : "NONE",
 	       machHash, sendM ? sendM->machName : "NONE", msgCount);
 

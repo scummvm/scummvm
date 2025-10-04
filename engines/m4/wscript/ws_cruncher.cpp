@@ -483,7 +483,7 @@ static bool ExtractArg(Anim8 *myAnim8, int32 myFormat, int32 myData, frac16 **ar
 
 		// myArg1 will point to this location
 		*argPtr = argValue;
-		prefix += Common::String::format("%ld", *argValue);
+		prefix += Common::String::format("%" PRIdPTR, *argValue);
 		dbg_AddParamToCurrMachInstr(prefix.c_str());
 	}
 
