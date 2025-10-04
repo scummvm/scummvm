@@ -41,6 +41,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Five Lethal Demons
      Hamlet
      Helga Deep In Trouble
+     The Kite
      Lov Mamuta
      Mental Repairs Inc
      Reversion - The Escape
