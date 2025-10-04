@@ -388,13 +388,7 @@ void CPaint::Stack(CDC *pDC, CCard *pCard, int nSize) {
 	}
 
 	switch (pCard->m_pStack->GetID()) {          // Update card visual coordinates
-
 	case fnd:
-		pCard->m_cOrigin = pCard->m_pStack->m_cRect.TopLeft();
-		pCard->m_cOrigin.x += ((int) i / STACK_INDENT) * STACK_DX;
-		pCard->m_cOrigin.y += ((int) i / STACK_INDENT) * STACK_DY;
-		break;
-
 	case stock:
 		pCard->m_cOrigin = pCard->m_pStack->m_cRect.TopLeft();
 		pCard->m_cOrigin.x += ((int) i / STACK_INDENT) * STACK_DX;
