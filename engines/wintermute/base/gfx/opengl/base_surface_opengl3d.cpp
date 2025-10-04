@@ -362,7 +362,7 @@ bool BaseSurfaceOpenGL3D::startPixelOp() {
 		return true;
 	}
 
-	if (!_valid) {
+	if (!_valid || (_valid && !_imageData)) {
 		if (!loadImage()) {
 			return false;
 		}
