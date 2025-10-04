@@ -3293,7 +3293,7 @@ void TotEngine::openScreenObject() {
 				animatePickup1(0, 1);
 				clearScreenLayer(_curObject.depth - 1);
 				yIndex = 0;
-				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex != 15) {
+				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex < 14) {
 					yIndex++;
 				}
 				debug("changing bitmap at %d, with depth = %d", yIndex, _currentRoomData->screenLayers[yIndex].depth);

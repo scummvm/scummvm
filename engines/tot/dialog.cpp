@@ -438,7 +438,7 @@ void talk(byte characterIndex) {
 		Common::List<uint> *linkedList = findDialogue(tree, characterIndex);
 		byte conversationIndex = 0;
 		l1 = linkedList->begin();
-		while (l1 != linkedList->end() && !g_engine->shouldQuit()) {
+		while (l1 != linkedList->end() && !g_engine->shouldQuit() && conversationIndex < 15) {
 			g_engine->_verbFile.seek(kVerbRegSize * (*l1));
 			conversationIndex += 1;
 			text = g_engine->readTextRegister();
