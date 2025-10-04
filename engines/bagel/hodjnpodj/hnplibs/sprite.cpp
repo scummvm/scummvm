@@ -2292,8 +2292,7 @@ bool CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 		}
 	}
 
-	if (chPixels != nullptr)
-		free(chPixels);                                 // free up the work area's bitmap
+	free(chPixels);                                 // free up the work area's bitmap
 
 	if (pBitmap1Old != nullptr)                            // map out the bitmaps we used
 		(*cDC1).SelectObject(pBitmap1Old);

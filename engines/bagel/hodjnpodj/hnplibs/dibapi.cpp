@@ -101,7 +101,6 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 	HBITMAP hBitmap, hBitmapOld;
 	HDC hdcMem;                     // memory device context
 	int nDevCaps;
-	BITMAPINFO bInfo;
 
 	// Check for valid DIB handle
 	if (hDIB == nullptr)
@@ -155,10 +154,12 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		return bSuccess;
 	}
 
+	error("TODO: Populate binfo and enable below if this is ever needed");
+#if 0
+	BITMAPINFO bInfo;
+
 	// Make sure to use the stretching mode best for color pictures
 	SetStretchBltMode(hDC, COLORONCOLOR);
-
-	error("TODO: Populate binfo");
 
 	bSuccess = StretchDIBits(hDC,                          // hDC
 		lpDCRect->left,                 // DestX
@@ -178,6 +179,7 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 		SelectPalette(hDC, hOldPal, false);
 
 	return bSuccess;
+#endif
 }
 
 bool CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
