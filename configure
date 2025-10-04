@@ -3173,6 +3173,14 @@ EOF
 				fi
 			fi
 
+			# If one targets MacOS X 10.4, but uses a newer SDK, posix_spawn() may be
+			# found, but then it shouldn't be used, as the 10.4 libc doesn't have it.
+			# It's only used for openUrl(), and launching a web browser on such an old
+			# OS doesn't sound wise anyway.
+			if test "$_macos_min_version" -lt 1050 ; then
+				_has_posix_spawn=no
+			fi
+
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
 			# Assume the SDK version is the same as the min version.
 			if test "$_macos_min_version" -gt 101399 ; then
