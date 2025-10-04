@@ -418,6 +418,7 @@ void CastleEngine::initGameState() {
 	_countdown = INT_MAX - 8;
 	_keysCollected.clear();
 	_spiritsMeter = 32;
+	_spiritsMeterPosition = _spiritsMeter * _spiritsToKill / _spiritsToKill;
 
 	_exploredAreas[_startArea] = true;
 	if (_useRockTravel) // Enable cheat

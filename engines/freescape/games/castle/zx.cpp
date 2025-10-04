@@ -30,13 +30,13 @@ namespace Freescape {
 void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
 	_soundIndexShoot = 5;
-	_soundIndexCollide = -1;
-	_soundIndexFallen = -1;
-	_soundIndexStepUp = -1;
-	_soundIndexStepDown = -1;
-	_soundIndexMenu = -1;
-	_soundIndexStart = 6;
-	_soundIndexAreaChange = 6;
+	_soundIndexCollide = 3;
+	_soundIndexFallen = 6;
+	_soundIndexStepUp = 12;
+	_soundIndexStepDown = 12;
+	_soundIndexMenu = 3;
+	_soundIndexStart = 7;
+	_soundIndexAreaChange = 7;
 }
 
 Graphics::ManagedSurface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back) {
