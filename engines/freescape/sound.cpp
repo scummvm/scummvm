@@ -162,7 +162,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 					soundUnitZX soundUnit;
 					soundUnit.isRaw = true;
 					int totalSize = soundSize + sVar7;
-					soundUnit.rawFreq = 0.1;
+					soundUnit.rawFreq = 0.1f;
 					soundUnit.rawLengthus = totalSize;
 					_soundsSpeakerFxZX[i]->push_back(soundUnit);
 					//debugN("%x ", silenceSize);
