@@ -82,6 +82,7 @@ bool SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 
 		if ((iGameNum = dlgSave.DoModal()) != -1) {
 			// Save users description of this saved game
+			assert(iGameNum < MAX_SAVEGAMES);
 			Common::strcpy_s(szDescriptions[iGameNum], szDescBuf);
 
 			// Change cursor to a disk to indicate saving
@@ -95,7 +96,6 @@ bool SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 
 			// Do the actual save
 			Common::String desc = szDescriptions[iGameNum];
-			assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
 			if (g_engine->saveGameState(iGameNum + 1, desc).getCode() != Common::kNoError)
 				*pErrCode = ERR_FOPEN;
 

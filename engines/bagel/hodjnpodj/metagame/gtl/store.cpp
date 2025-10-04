@@ -703,7 +703,6 @@ void CGeneralStore::OnMouseMove(unsigned int nFlags, CPoint point) {
 		        ((i + nFirstSlot) < (*pGeneralStore).ItemCount())) {
 			pItem = (*pGeneralStore).FetchItem(i + nFirstSlot);
 			if (pItem != nullptr) {
-				hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
 				pDC = GetDC();
 				nPrice = (*pItem).GetValue();
 				if ((*pItem).GetQuantity() == 1) {
