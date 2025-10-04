@@ -601,7 +601,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 
 void TotEngine::originalSaveLoadScreen() {
 	uint oldMouseX, oldMouseY;
-	uint selectedGame = 0;
+	int selectedGame = 0;
 	bool modified = false;
 	Common::String saveName = "";
 
@@ -668,7 +668,7 @@ void TotEngine::originalSaveLoadScreen() {
 					}
 				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
 					if (selectedGame >= 0 && !modified) { // Load
-						if (selectedGame < saves.size()) {
+						if (selectedGame < (int)saves.size()) {
 							_mouse->hide();
 							_graphics->putImg(50, 10, menuBgPointer);
 							free(menuBgPointer);
