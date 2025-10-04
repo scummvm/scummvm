@@ -288,7 +288,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
-		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_11),
 
 	// Alavi Detective - Murder of Miss Rojan (Persian) (Beta version -old version-, between 1387/12 to 1392/6)
 	WME_WINENTRY("alavi", "Beta version",
@@ -2008,11 +2008,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps
 	WME_WINENTRY("rebeccacarlson1", "",
-		WME_ENTRY1s("data.dcp", "5fac4824b7ffdaee982dc18a45428182", 773144334), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "5fac4824b7ffdaee982dc18a45428182", 773144334), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps (Demo)
 	WME_WINENTRY("rebeccacarlson1", "Demo",
-		WME_ENTRY1s("data.dcp", "a46c41edb1ae5e19a3e0fc5cac3ce83b", 212698165), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "a46c41edb1ae5e19a3e0fc5cac3ce83b", 212698165), Common::EN_ANY, ADGF_DEMO, WME_1_9_3),
 
 	// On the Tracks of Dinosaurs (Beta 2.5) (English)
 	WME_WINENTRY("reptilesquest", "Beta 2.5",

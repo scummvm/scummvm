@@ -30,6 +30,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Mort&Phil: A Movie Adventure (Special Edition).
    - Added support for Wintermute games:
      1 1/2 Ritter
+     Actual Destination
      Alpha Polaris
      Basis Octavus
      Beyond the Threshold
@@ -52,6 +53,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Reversion - The Return
      Rhiannon: Curse of The Four Branches
      Rosemary
+     Silent Footsteps
      Strange Change
      TeTRIks
      The White Chamber
