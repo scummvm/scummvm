@@ -81,8 +81,12 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 
 	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		// filter out subframes unsupported by current renderer
+		//
+		// This is not present in original Lite version of WME.
+		// It's in assumption Lite support only 2D games.
+		// Our 3D renderer has full 2D capability, so not filter 2D only subframes.
 		if (!allFrames) {
-			if ((_subframes[i]->_2DOnly && _game->_useD3D) || (_subframes[i]->_3DOnly && !_game->_useD3D))
+			if (/*(_subframes[i]->_2DOnly && _game->_useD3D) || */(_subframes[i]->_3DOnly && !_game->_useD3D))
 				continue;
 		}
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
