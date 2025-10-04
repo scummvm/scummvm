@@ -111,7 +111,7 @@ public:
 	void SetPosition(CPoint point) {
 		SetPosition(point.x, point.y);
 	}
-	CPoint GetPosition() {
+	CPoint GetPosition() const {
 		return (m_cPosition);
 	}
 

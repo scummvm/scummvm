@@ -1339,8 +1339,6 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 	errCode = ERR_NONE;
 
 	if (ARROWS && (m_nBadArrows < MAX_BAD_ARROWS)) {
-
-		point = pBadGuy->GetPosition();
 		point = GetLeftMostBadGuy();
 		point.y = pBadGuy->GetPosition().y;
 		size = pBadGuy->GetSize();
