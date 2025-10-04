@@ -3008,6 +3008,8 @@ case $_host_os in
 		append_var LIBS "-framework Cocoa"
 		add_line_to_config_mk 'MACOSX = 1'
 		_seq_midi=no
+		# Custom openUrl() doesn't require it, and it's unavailable on 10.4 anyway
+		_has_posix_spawn=no
 
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
@@ -3163,14 +3165,6 @@ EOF
 					# as it does cause issues on (older) OSX with no DWARF-4.
 					append_var CXXFLAGS "-gdwarf-2 -fno-var-tracking-assignments"
 				fi
-			fi
-
-			# If one targets MacOS X 10.4, but uses a newer SDK, posix_spawn() may be
-			# found, but then it shouldn't be used, as the 10.4 libc doesn't have it.
-			# It's only used for openUrl(), and launching a web browser on such an old
-			# OS doesn't sound wise anyway.
-			if test "$_macos_min_version" -lt 1050 ; then
-				_has_posix_spawn=no
 			fi
 
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
@@ -4789,7 +4783,10 @@ if test "$_posix" = yes ; then
 	append_var DEFINES "-DPOSIX"
 	add_line_to_config_mk 'POSIX = 1'
 
-	echo_n "Checking if posix_spawn is supported... "
+	# So far, posix_spawn() is only used to provide openUrl() on POSIX
+	# systems. But some of them may already have their own openUrl()
+	# override, meaning that using posix_spawn() serves no purpose.
+	echo_n "Checking if posix_spawn is required and supported... "
 	if test "$_has_posix_spawn" != no ; then
 		cat > $TMPC << EOF
 #include <spawn.h>
