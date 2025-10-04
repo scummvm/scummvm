@@ -31,52 +31,6 @@ using namespace Math;
 
 namespace Alcachofa {
 
-static bool areComponentsInOrder(const PixelFormat &format, int r, int g, int b, int a) {
-	return format == PixelFormat(4, 8, 8, 8, 8, r * 8, g * 8, b * 8, a * 8);
-}
-
-bool isCompatibleFormat(const PixelFormat &format) {
-	return areComponentsInOrder(format, 0, 1, 2, 3) ||
-		areComponentsInOrder(format, 3, 2, 1, 0);
-}
-
-OpenGLTextureBase::OpenGLTextureBase(int32 w, int32 h, bool withMipmaps)
-	: ITexture({ (int16)w, (int16)h })
-	, _withMipmaps(withMipmaps) {}
-
-void OpenGLTextureBase::update(const Surface &surface) {
-	assert(isCompatibleFormat(surface.format));
-	assert(surface.w == size().x && surface.h == size().y);
-
-	// GLES2 only supports GL_RGBA but we need BlendBlit::getSupportedPixelFormat to use blendBlit
-	// We also do not want to keep surface memory for textures that are not updated repeatedly
-	const void *pixels;
-	if (!areComponentsInOrder(surface.format, 0, 1, 2, 3)) {
-		if (_tmpSurface.empty())
-			_tmpSurface.create(surface.w, surface.h, PixelFormat::createFormatRGBA32());
-		crossBlit(
-			(byte *)_tmpSurface.getPixels(),
-			(const byte *)surface.getPixels(),
-			_tmpSurface.pitch,
-			surface.pitch,
-			surface.w,
-			surface.h,
-			_tmpSurface.format,
-			surface.format);
-		pixels = _tmpSurface.getPixels();
-	} else {
-		pixels = surface.getPixels();
-	}
-
-	updateInner(pixels);
-
-	if (!_tmpSurface.empty()) {
-		if (!_didConvertOnce)
-			_tmpSurface.free();
-		_didConvertOnce = true;
-	}
-}
-
 OpenGLRendererBase::OpenGLRendererBase(Point resolution) : _resolution(resolution) {}
 
 bool OpenGLRendererBase::hasOutput() const {

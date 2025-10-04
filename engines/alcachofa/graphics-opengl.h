@@ -30,17 +30,18 @@
 
 namespace Alcachofa {
 
-class OpenGLTexture : public OpenGLTextureBase {
+class OpenGLTexture : public ITexture {
 public:
 	OpenGLTexture(int32 w, int32 h, bool withMipmaps);
 	~OpenGLTexture() override;
 
 	inline GLuint handle() const { return _handle; }
 	void setMirrorWrap(bool wrap);
+	void update(const Graphics::Surface &surface) override;
 
 protected:
-	void updateInner(const void *pixels) override;
-
+	bool _withMipmaps;
+	bool _mirrorWrap = true;
 	GLuint _handle = 0;
 };
 
@@ -49,6 +50,7 @@ public:
 	OpenGLRenderer(Common::Point resolution);
 
 	Common::ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 	void end() override;
 	void setOutput(Graphics::Surface &output) override;
 

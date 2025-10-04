@@ -383,7 +383,7 @@ void AlcachofaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
 	}
 
 	// otherwise we have to rerender
-	thumbnail.create(kBigThumbnailWidth, kBigThumbnailHeight, Graphics::PixelFormat::createFormatRGBA32());
+	thumbnail.create(kBigThumbnailWidth, kBigThumbnailHeight, g_engine->renderer().getPixelFormat());
 	if (g_engine->player().currentRoom() == nullptr)
 		return; // but without a room we would render only black anyway
 

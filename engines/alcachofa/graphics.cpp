@@ -192,7 +192,7 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 	const auto &palette = decoder.getPalette();
 	auto target = new ManagedSurface();
 	target->setPalette(palette.data(), 0, palette.size());
-	target->convertFrom(*source, BlendBlit::getSupportedPixelFormat());
+	target->convertFrom(*source, g_engine->renderer().getPixelFormat());
 	return target;
 }
 
@@ -214,8 +214,10 @@ void AnimationBase::loadMissingAnimation() {
 // unfortunately ScummVMs BLEND_NORMAL does not blend alpha
 // but this also bad, let's find/discuss a better solution later
 void AnimationBase::fullBlend(const ManagedSurface &source, ManagedSurface &destination, int offsetX, int offsetY) {
-	assert(source.format == BlendBlit::getSupportedPixelFormat());
-	assert(destination.format == BlendBlit::getSupportedPixelFormat());
+	// TODO: Support other pixel formats
+	assert(source.format == Graphics::PixelFormat::createFormatRGBA32() ||
+	       source.format == Graphics::PixelFormat::createFormatBGRA32());
+	assert(destination.format == source.format);
 	assert(offsetX >= 0 && offsetX + source.w <= destination.w);
 	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
 
@@ -225,10 +227,10 @@ void AnimationBase::fullBlend(const ManagedSurface &source, ManagedSurface &dest
 		const byte *sourcePixel = sourceLine;
 		byte *destPixel = destinationLine;
 		for (int x = 0; x < source.w; x++) {
-			byte alpha = (*(const uint32 *)sourcePixel) & 0xff;
-			for (int i = 1; i < 4; i++)
+			byte alpha = sourcePixel[3];
+			for (int i = 0; i < 3; i++)
 				destPixel[i] = ((byte)(alpha * sourcePixel[i] / 255)) + ((byte)((255 - alpha) * destPixel[i] / 255));
-			destPixel[0] = alpha + ((byte)((255 - alpha) * destPixel[0] / 255));
+			destPixel[3] = alpha + ((byte)((255 - alpha) * destPixel[3] / 255));
 			sourcePixel += 4;
 			destPixel += 4;
 		}
@@ -250,7 +252,7 @@ void Animation::load() {
 		return;
 	AnimationBase::load();
 	Rect maxBounds = maxFrameBounds();
-	_renderedSurface.create(maxBounds.width(), maxBounds.height(), BlendBlit::getSupportedPixelFormat());
+	_renderedSurface.create(maxBounds.width(), maxBounds.height(), g_engine->renderer().getPixelFormat());
 	_renderedTexture = g_engine->renderer().createTexture(maxBounds.width(), maxBounds.height(), true);
 
 	// We always create mipmaps, even for the backgrounds that usually do not scale much,
@@ -456,7 +458,7 @@ void Font::load() {
 
 	_texMins.resize(_images.size());
 	_texMaxs.resize(_images.size());
-	ManagedSurface atlasSurface(nextPowerOfTwo(cellSize.x * 16), nextPowerOfTwo(cellSize.y * 16), BlendBlit::getSupportedPixelFormat());
+	ManagedSurface atlasSurface(nextPowerOfTwo(cellSize.x * 16), nextPowerOfTwo(cellSize.y * 16), g_engine->renderer().getPixelFormat());
 	cellSize.x = atlasSurface.w / 16;
 	cellSize.y = atlasSurface.h / 16;
 	const float invWidth = 1.0f / atlasSurface.w;

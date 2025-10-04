@@ -34,10 +34,11 @@ using namespace Graphics;
 namespace Alcachofa {
 
 static void createThumbnail(ManagedSurface &surface) {
-	surface.create(kBigThumbnailWidth, kBigThumbnailHeight, PixelFormat::createFormatRGBA32());
+	surface.create(kBigThumbnailWidth, kBigThumbnailHeight, g_engine->renderer().getPixelFormat());
 }
 
 static void convertToGrayscale(ManagedSurface &surface) {
+	// TODO: Support other pixel formats
 	assert(!surface.empty());
 	assert(surface.format == PixelFormat::createFormatRGBA32());
 	uint32 rgbMask = ~(uint32(0xff) << surface.format.aShift);
