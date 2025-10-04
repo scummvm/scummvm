@@ -1376,7 +1376,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Framed (Beta)
 	WME_WINENTRY("framed", "Beta",
-		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
+		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_DEMO, WME_1_8_11),
 
 	// Fred (English) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
