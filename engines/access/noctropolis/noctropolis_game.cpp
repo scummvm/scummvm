@@ -51,9 +51,15 @@ void NoctropolisEngine::setupGame() {
 		TimerEntry te;
 		te._initTm = 1;
 		te._timer = 1;
-		te._flag = false;
+		te._flag = true;
 		_timers.push_back(te);
 	}
+	_timers[1]._initTm = _timers[1]._timer = 10;
+	_timers[2]._initTm = _timers[2]._timer = 8;
+	_timers[3]._initTm = _timers[3]._timer = 4;
+	_timers[4]._initTm = _timers[4]._timer = 2;
+	_timers[8]._initTm = _timers[8]._timer = 10;
+	_timers[25]._initTm = _timers[25]._timer = 3600;
 }
 
 void NoctropolisEngine::initVariables() {
