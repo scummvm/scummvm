@@ -3002,14 +3002,6 @@ case $_host_os in
 		fi
 		;;
 	darwin*)
-		case $_host_cpu in
-		powerpc*)
-			if test "$_dynamic_modules" = no ; then
-				echo "WARNING: Building static engines will probably fail at link time on Mac PowerPC"
-			fi
-			;;
-		esac
-
 		append_var DEFINES "-DMACOSX"
 		append_var LIBS "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		# SDL2 doesn't seem to add Cocoa for us.
@@ -3117,7 +3109,7 @@ case $_host_os in
 
 		echocheck "macOS deployment target"
 		cat > $TMPC << EOF
-#include "AvailabilityMacros.h"
+#include <AvailabilityMacros.h>
 
 #define _DIGIT(x) #x
 #define DIGIT(x) _DIGIT(x)
@@ -3151,24 +3143,24 @@ EOF
 
 		# Version-specific quirks
 		if test -n "$_macos_min_version" ; then
-			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
 				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
 
-				# OSX 10.4/10.5 has no native C++11 support, thus we need to
-				# embed an updated libstdc++ in the bundle, and fix its
-				# dynamic references with install_name_tool(1), which requires
-				# linking with a bit of padding for the updated references.
+				# OSX 10.4/10.5 has no native C++11 support, so we need to
+				# embed an updated libstdc++ in the bundle. This means that
+				# its path must be fixed with install_name_tool(1), and this
+				# requires padding the length of all library paths first.
 				append_var LDFLAGS "-Wl,-headerpad_max_install_names"
 
 				if test "$_debug_build" != no ; then
-					# Prefer DWARF over stabs on older OSX; this requires a
-					# newer GDB, but we need it for the updated toolchain
-					# anyway. This improves the debugging experience quite
+					# Prefer DWARF-2 over stabs on older OSX; this requires a
+					# newer GDB, but the updated C++11 toolchain already imposes
+					# it anyway. This improves the debugging experience quite
 					# a lot, and it still creates meaningful traces for the
-					# Crash Reporter of OSX 10.4. -fvar-tracking-assignments
-					# should be disabled then, as it seems to cause issues
-					# and we can't use the later DWARF version it recommends.
+					# Crash Reporter of OSX 10.4.
+					#
+					# -fvar-tracking-assignments should also be disabled,
+					# as it does cause issues on (older) OSX with no DWARF-4.
 					append_var CXXFLAGS "-gdwarf-2 -fno-var-tracking-assignments"
 				fi
 			fi
@@ -3193,6 +3185,14 @@ EOF
 			# We use -force_cpusubtype_ALL to ensure the binary runs on every
 			# PowerPC machine.
 			append_var LDFLAGS "-force_cpusubtype_ALL"
+
+			# The PPC linker hits internal errors when the main binary gets too
+			# large (even when upgrading to the latest cctools release through
+			# MacPorts). So, unless one just builds a small subset of engines,
+			# dynamic modules must be used.
+			if test "$_dynamic_modules" = no ; then
+				echo "WARNING: Building static engines will probably fail at link time on Mac PowerPC"
+			fi
 			;;
 		aarch64)
 			add_line_to_config_mk 'MACOSX_ARM64 = 1'
