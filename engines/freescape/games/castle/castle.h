@@ -145,6 +145,8 @@ private:
 	void tryToCollectKey();
 	void addGhosts();
 	bool ghostInArea();
+
+	Audio::SoundHandle _soundFxGhostHandle;
 	Texture *_optionTexture;
 	Font _fontRiddle;
 };

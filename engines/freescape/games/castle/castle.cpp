@@ -1298,12 +1298,18 @@ void CastleEngine::checkSensors() {
 
 
 	if (!ghostInArea()) {
+		_mixer->stopHandle(_soundFxGhostHandle);
 		_gfx->_shakeOffset = Common::Point();
 		return;
 	}
 
 	if (_disableSensors)
 		return;
+
+	if (!_mixer->isSoundHandleActive(_soundFxGhostHandle)) {
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 25.0f, -1);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
+	}
 
 	// This is the frequency to shake the screen
 	if (_ticks % 5 == 0) {
