@@ -1659,7 +1659,8 @@ NoctropolisResources::~NoctropolisResources() {
 
 
 const char *NoctropolisResources::getEgoName() const {
-	return _vm->_flags[1] == 0 ? "PETER" : "DARKSHEER";
+	return _vm->_flags[1] == 0 ? "PETER" :
+		_vm->getLanguage() == Common::ES_ESP ? "TENEBROSO" : "DARKSHEER";
 }
 
 void NoctropolisResources::load(Common::SeekableReadStream &s) {
