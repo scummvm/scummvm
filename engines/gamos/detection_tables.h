@@ -23,6 +23,7 @@ namespace Gamos {
 
 const PlainGameDescriptor gamosGames[] = {
 	{ "gamos", "Gamos" },
+	{ "solgamer", "21 Solitaire" },
 	{ 0, 0 }
 };
 
