@@ -3293,7 +3293,7 @@ void TotEngine::openScreenObject() {
 				animatePickup1(0, 1);
 				clearScreenLayer(_curObject.depth - 1);
 				yIndex = 0;
-				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex < 14) {
+				while (_currentRoomData->screenLayers[yIndex].depth != _curObject.depth && yIndex < 15) {
 					yIndex++;
 				}
 				debug("changing bitmap at %d, with depth = %d", yIndex, _currentRoomData->screenLayers[yIndex].depth);
@@ -4600,6 +4600,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	g_engine->_graphics->putShape(270, 159, stamp);
+	free(passArray);
 	free(stamp);
 }
 
