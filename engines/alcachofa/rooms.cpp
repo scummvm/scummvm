@@ -784,7 +784,7 @@ void World::loadDialogLines() {
 			if (cursor > dialogLineEnd)
 				g_engine->game().invalidDialogLine(_dialogLines.size());
 			cursor = lineStart; // store an empty string
-			dialogLineEnd = lineStart + 1;
+			dialogLineEnd = lineStart;
 		}
 
 		*dialogLineEnd = 0;
