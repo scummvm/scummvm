@@ -489,7 +489,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Boredom of Agustin Cordes
 	WME_WINENTRY("agustin", "",
-		WME_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Beyond the Threshold
 	WME_WINENTRY("bthreshold", "",
@@ -917,7 +917,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
-		WME_ENTRY1s("data.dcp", "5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
@@ -953,7 +953,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Des Reves Elastiques Avec Mille Insectes Nommes Georges / Elastic Dreams with a Thousand Insects Named George
 	WME_WINENTRY("dreaming", "",
-		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// The Driller Incident (English)
 	WME_WINENTRY("driller", "",
@@ -977,7 +977,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
-		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dreams (Demo)
 	WME_WINENTRY("dreams", "Demo",
