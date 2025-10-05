@@ -137,7 +137,7 @@ void MartianScripts::doIntro(int param1) {
 
 void MartianScripts::cmdSpecial6() {
 	// A special transition screen after the jetpack in the outpost.
-	warning("cmdSpecial6: TODO: Store current music");
+	debug("cmdSpecial6: TODO: Store current music?");
 	_vm->_midi->stopSong();
 	_vm->_screen->setDisplayScan();
 	_vm->_events->clearEvents();
@@ -181,7 +181,9 @@ void MartianScripts::cmdSpecial6() {
 	// (bug also present in original game)
 	_vm->_player->_flags &= ~IMGFLAG_UNSCALED;
 
-	warning("cmdSpecial6: TODO: Restore original music");
+	// We always go straight to another scene so this seems
+	// redundant..
+	debug("cmdSpecial6: TODO: Restore original music?");
 }
 
 void MartianScripts::cmdSpecial7() {
