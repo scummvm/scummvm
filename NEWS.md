@@ -28,42 +28,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Penumbra: Overture.
    - Added support for Tex Murphy: Martian Memorandum
    - Added support for Mort&Phil: A Movie Adventure (Special Edition).
-   - Added support for Wintermute games:
-     1 1/2 Ritter
-     Actual Destination
-     Alpha Polaris
-     Basis Octavus
-     Beyond the Threshold
-     Bickadoodle
-     Boredom of Agustin Cordes
-     The Box
-     Corrosion: Cold Winter Waiting
-     Dead City
-     DFAF Adventure
-     Dirty Split
-     The Dreamcat Adventure
-     Elastic Dreams with a Thousand Insects Named George
-     Escape from the Mansion
-     Five Lethal Demons
-     Hamlet
-     Helga Deep In Trouble
-     Hor
-     The Kite
-     Lov Mamuta
-     Mental Repairs Inc
-     Pigeons in the Park
-     Reversion - The Escape
-     Reversion - The Meeting
-     Reversion - The Return
-     Rhiannon: Curse of The Four Branches
-     Rosemary
-     Shaban
-     Silent Footsteps
-     Strange Change
-     TeTRIks
-     The White Chamber
-     Wilma Tetris
-     Zilm: A Game of Reflex
+   - Added support for Wintermute games such as Alpha Polaris,
+     Reversion, 1 1/2 Ritter.
 
  Access:
    - Added keymapper support.
