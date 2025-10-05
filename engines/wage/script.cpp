@@ -1264,7 +1264,7 @@ void Script::convertToText() {
 	ScriptText *scr = new ScriptText;
 	scr->offset = _data->pos();
 
-	while(true) {
+	while (true) {
 		int c = _data->readByte();
 
 		if (_data->eos())
@@ -1284,7 +1284,13 @@ void Script::convertToText() {
 					warning("convertToText: Unknown code 0x%02x at %d", c, (int)_data->pos());
 					c = ' ';
 				}
+
+				if (_data->eos())
+					break;
 			} while (c < 0x80);
+
+			if (_data->eos())
+				break;
 
 			_data->seek(-1, SEEK_CUR);
 		} else if (c == 0xff) {
