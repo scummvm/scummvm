@@ -146,7 +146,6 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion2",      "Reversion: The Meeting"},
 	{"reversion3",      "Reversion: The Return"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
-	{"rhiannonghosts",  "Rhiannon: Ghosts of the Past"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"roadsantiago",    "The Road to Santiago"},
 	{"rosemary",        "Rosemary"},
@@ -4248,6 +4247,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("rhiannon", "Premium Edition",
 		WME_ENTRY1s("data.dcp", "8debcadeda038f43d9ca9b97d827e7f3", 928484275), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
+	// Rhiannon: Curse of the four Branches (Premium Edition) (German)
+	// AKA Rhiannon: Ghosts of the Past (Rhiannon: Geister der Vergangenheit)
+	WME_WINENTRY("rhiannon", "Premium Edition",
+		WME_ENTRY1s("data.dcp", "785d2fcea73508ea40a5b00869b12b03", 946473152), Common::DE_DEU, ADGF_NO_FLAGS, WME_1_9_1),
+
 	// Rhiannon: Curse of The Four Branches (Demo: Chapter 1)
 	WME_WINENTRY("rhiannon", "Demo: Chapter 1",
 		WME_ENTRY1s("data.dcp", "d3b6ad94e9a8b29ca3cbda96c8857bd6", 72680676), Common::EN_ANY, ADGF_DEMO, WME_1_8_6),
@@ -4263,10 +4267,6 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Rhiannon: Curse of The Four Branches (Demo 2)
 	WME_WINENTRY("rhiannon", "Demo 2",
 		WME_ENTRY1s("data.dcp", "52f111205bf294e8630652981eb31c3d", 79687595), Common::EN_ANY, ADGF_DEMO, WME_1_8_6),
-
-	// Rhiannon: Ghosts of the Past (Premium Edition)
-	WME_WINENTRY("rhiannonghosts", "Premium Edition",
-		WME_ENTRY1s("data.dcp", "785d2fcea73508ea40a5b00869b12b03", 946473152), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German)
 	WME_WINENTRY("ritter", "",
