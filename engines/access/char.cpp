@@ -28,18 +28,17 @@ namespace Access {
 
 CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
-	AccessGameType gameType = vm->getGameID();
 
 	_charFlag = s.readByte();
 	if (vm->getGameID() != kGameAmazon || !vm->isCD()) {
-		_screenFile.load(s, gameType);
+		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
 		_estabIndex = s.readSint16LE();
-		_screenFile.load(s, gameType);
+		_screenFile.load(s);
 	}
 
-	_paletteFile.load(s, gameType);
+	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
 	if (vm->getGameID() == kGameMartianMemorandum) {
 		int lastColor = s.readUint16LE();
@@ -51,19 +50,19 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	for (byte cell = s.readByte(); cell != 0xff; cell = s.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci.load(s, gameType);
+		ci.load(s);
 
 		_cells.push_back(ci);
 	}
 
-	_animFile.load(s, gameType);
-	_scriptFile.load(s, gameType);
+	_animFile.load(s);
+	_scriptFile.load(s);
 
 	for (int16 v = s.readSint16LE(); v != -1; v = s.readSint16LE()) {
 		ExtraCell ec;
 		ec._vid._fileNum = v;
 		ec._vid._subfile = s.readSint16LE();
-		ec._vidSound.load(s, gameType);
+		ec._vidSound.load(s);
 
 		_extraCells.push_back(ec);
 	}

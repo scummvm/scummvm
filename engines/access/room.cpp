@@ -1021,27 +1021,27 @@ RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool is
 	else if (gameType == kGameNoctropolis)
 		_palIntensity = stream.readByte();
 
-	_musicFile.load(stream, gameType);
+	_musicFile.load(stream);
 	_scaleH1 = stream.readByte();
 	_scaleH2 = stream.readByte();
 	_scaleN1 = stream.readByte();
-	_playFieldFile.load(stream, gameType);
+	_playFieldFile.load(stream);
 
 	for (byte cell = stream.readByte(); cell != 0xff; cell = stream.readByte()) {
 		CellIdent ci;
 		ci._cell = cell;
-		ci.load(stream, gameType);
+		ci.load(stream);
 
 		_cells.push_back(ci);
 	}
 
-	_scriptFile.load(stream, gameType);
-	_animFile.load(stream, gameType);
+	_scriptFile.load(stream);
+	_animFile.load(stream);
 	_scaleI = stream.readByte();
 	_scrollThreshold = stream.readByte();
 
 	if (gameType != kGameNoctropolis) {
-		_paletteFile.load(stream, gameType);
+		_paletteFile.load(stream);
 	}
 
 	if (_paletteFile._fileNum == -1) {

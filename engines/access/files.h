@@ -40,7 +40,7 @@ struct FileIdent {
 	FileIdent();
 	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
 
-	void load(Common::SeekableReadStream &s, AccessGameType gameType);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct CellIdent : FileIdent {
