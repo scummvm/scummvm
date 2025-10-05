@@ -97,7 +97,7 @@
 #include "scumm/he/net/net_main.h"
 #include "scumm/dialog-sessionselector.h"
 #include "scumm/dialog-createsession.h"
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 #include "scumm/he/net/net_lobby.h"
 #endif
 #endif
@@ -807,7 +807,7 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 		_game.id == GID_MOONBASE) {
 		_net = new Net(this);
 	}
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	_lobby = 0;
 	if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001)
 		_lobby = new Lobby(this);
@@ -830,7 +830,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 
 #ifdef USE_ENET
 	delete _net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	delete _lobby;
 #endif
 #endif

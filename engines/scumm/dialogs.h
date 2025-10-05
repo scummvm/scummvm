@@ -439,7 +439,7 @@ private:
 
 	GUI::EditTextWidget *_lobbyServerAddr = nullptr;
 
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	GUI::CheckboxWidget *_enableCompetitiveMods = nullptr;
 #endif
 

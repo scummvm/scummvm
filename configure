@@ -5963,18 +5963,22 @@ echo "$_libcurl"
 
 define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 
-echocheck "HTTP client"
-if test "$_host_os" = "emscripten" &&  test "$_cloud" = "yes"; then
+echocheck "Network client"
+if test "$_backend" = "emscripten" && test "$_cloud" = "yes"; then
 	append_var LDFLAGS "-sFETCH"
+	_basicnet=no
 	_http=yes
-	echo "Emscripten"
+	echo "Emscripten (HTTP only)"
 elif test "$_libcurl" = "yes"; then
+	_basicnet=yes
 	_http=yes
 	echo "libcurl"
 else
+	_basicnet=no
 	_http=no
 	echo "no"
 fi
+define_in_config_if_yes $_basicnet 'USE_BASIC_NET'
 define_in_config_if_yes $_http 'USE_HTTP'
 
 #

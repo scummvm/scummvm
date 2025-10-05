@@ -18,40 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_NETWORKING_CURL_URL_H
-#define BACKENDS_NETWORKING_CURL_URL_H
-
-typedef struct Curl_URL CURLU;
+#ifndef BACKENDS_NETWORKING_BASIC_URL_H
+#define BACKENDS_NETWORKING_BASIC_URL_H
 
 #include "common/str.h"
 
 namespace Networking {
 
-class CurlURL {
+class URL {
 public:
-	CurlURL();
-	~CurlURL();
-
 	/**
-	 * Parses an URL string by calling curl_url_set  Must be used before using other methods.
+	 * Parses an URL string and creates a new URL object.
 	 * @param url is a string containing the URL. e.g. "https://scummvm.org".
-	 * @retval true if successful.
-	 * @retval false on failure or if using an older version of libcurl.
+	 * @retval An URL object from the url provided
 	 */
-	bool parseURL(const Common::String &url);
+	static URL *parseURL(const Common::String &url);
+
+	virtual ~URL() {}
 
 	/**
 	 * Extracts the scheme of an URL parsed previously by parseURL.
 	 * @retval String of the URL's scheme. e.g. "https".
 	 * @retval Empty string on failure.
 	 */
-	Common::String getScheme();
+	virtual Common::String getScheme() const = 0;
+
 	/**
 	 * Extracts the host name of an URL parsed previously by parseURL.
 	 * @retval String of the URL's host name. e.g. "scummvm.org".
 	 * @retval Empty string on failure.
 	 */
-	Common::String getHost();
+	virtual Common::String getHost() const = 0;
+
 	/**
 	 * Extracts the port of an URL parsed previously by parseURL.
 	 * @param returnDefault tells libcurl to return the default port according to the URL's scheme if not explicitly defined
@@ -60,11 +58,10 @@ public:
 	 * @retval default port if returnDefault is true.
 	 * @retval -1 on failure.
 	 */
-	int getPort(bool returnDefault = false);
-private:
-	CURLU *_url;
+	virtual int getPort(bool returnDefault = false) const = 0;
 };
 
 } // End of Namespace Networking
 
 #endif
+

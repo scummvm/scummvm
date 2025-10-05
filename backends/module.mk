@@ -89,9 +89,9 @@ endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	networking/curl/cacert.o \
-	networking/curl/socket.o \
-	networking/curl/url.o
+	networking/basic/curl/cacert.o \
+	networking/basic/curl/socket.o \
+	networking/basic/curl/url.o
 ifdef USE_HTTP
 MODULE_OBJS += \
 	networking/http/curl/connectionmanager-curl.o \
