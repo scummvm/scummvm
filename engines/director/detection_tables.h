@@ -409,7 +409,13 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "okayhenry",			"O!Kay! Henry in Love" },
 	{ "okaytruehero",		"O!Kay! A True Hero" },
 	{ "operafatal",			"Opera Fatal" },
-	{ "oscarballforest",	"Oscar the Balloonist and the Secrets of the Forest" },
+	{ "oscarsea"		,	"Oscar the Balloonist Discovers the Sea" },
+	{ "oscarworkshop",		"Oscar der Ballonfahrer Meine Bastelwerkstatt"},
+	{ "oscar1",				"Oscar the Balloonist and the Secrets of the Forest" },
+	{ "oscar2",				"Oscar the Balloonist Discovers the Farm" },
+	{ "oscar3",				"Oscar the Balloonist Dives into the Lake" },
+	{ "oscar4",				"Oscar the Balloonist Drops into the Countryside" },
+	{ "oscar5",				"Oscar the Balloonist Flies into the Mountains" },
 	{ "oslotg",				"Adventures with Oslo: Tools and Gadgets" },
 	{ "oztma",				"Oz: The Magical Adventure" },
 	{ "paparazzi",			"Paparazzi!: Tales of Tinseltown" },
@@ -947,9 +953,11 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fcdk",				"F.C. De Kampioenen: Op Zoek Naar Neroke" },
 	{ "griezelbus1",		"De Griezelbus 1" },
 	{ "kjoeties",			"Invasie van de Kjoeties" },
+	{ "klikker1", 			"Klikkerdeklik" },
 	{ "lannoo",				"Lannoo Nieuwe Media Demo" },
 	{ "moordspel",			"Moordspel: Moord in Huize Huiver" },
 	{ "samson",				"Op Reis Met Samson & Gert" },
+	{ "welkom",				"Welkom op the Wereld" },
 
 	// Finnish titles
 	{ "aapelin1",			"Aapelin ABC: Hurjistunut Pölynimuri" },
@@ -993,6 +1001,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "addybuschuzirkus",	"Addy Buschu: Im Zirkus" },
 	{ "bibi2",				"Bibi Blocksberg 2: Ein verhexter Schultag" },
 	{ "bibifilm",			"Bibi Blocksberg: Mein verhextes Filmstudio" },
+	{ "bibitina1",			"Bibi & Tina 1: Aufregung auf dem Martinshof" },
 	{ "braingames",			"Brain Games" },
 	{ "chemicus2",			"Chemicus 2: Die versunkene Stadt" },
 	{ "cklasse",			"Mercedes-Benz C-Class Information Booth" },
@@ -1051,6 +1060,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "schulerhilfemath2",	"Schülerhilfe Mathe: Klasse 2." },
 	{ "secretnumber",		"Secret Number" },
 	{ "shine",				"Shine: Die Angst hat einen Namen" },
+	{ "smurfsmother",		"Die Schlümpfe retten Mutter Natur"},
 	{ "suderhof",			"Geschichten vom Süderhof" },
 	{ "technicus",			"Technicus: Ten Hours Left" },
 	{ "tiefsee",			"S.O.S. Tiefsee" },
@@ -1555,6 +1565,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
 	{ "pettsonjk",			"Pettson o Findus julkalender" },
 	{ "pettson2",			"Pettson & Findus i trädgården" },
+	{ "pettson2dutchdemo",	"Pettson & Findus in de Tuin" },
 	{ "pettsonjs",			"Pettsons julspel" },
 	{ "pettson3",			"Pettson o Findus och mucklornas värld" },
 	{ "pettson4",			"Pettson & Findus Spökskrämmarmaskinen" },
@@ -1706,11 +1717,13 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
 	{ "terapreviews",		"TeraMedia Previews" },
+	{ "terziofall1999",		"Terzio Demo - Herbst/Winter '99" },
 	{ "tivolaspring1997",	"Tivola Demo - Frühjahr '97" },
 	{ "tivolasummer1997",	"Tivola Demo - Sommer '97" },
 	{ "tivolafall1998",		"Tivola Demo - Fall 1998" },   // Contains D4, D5 and D6 executables
 	{ "tivolaspring1999",	"Tivola Demo - Frühling 1999" }, // Contains D4, D5 and D6 executables
 	{ "tivolasummer2000",	"Tivola Demo - Sommer 2000" },
+	{ "tivolafall2004",		"Tivola Demo - Herbst 2004" },
 	{ "tlc",				"The Learning Company Sampler" },
 	{ "ubt",				"Under the Big Top" },
 	{ "vygrpresents",		"Voyager Presents" },
@@ -7327,6 +7340,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("kidsbiblepaul", "", "Startup.exe",		   "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
 								  "PAULDISC/DISCPAUL.DXR", "f:33e2ce00c9ff1dbcc7a7fd05809571ed", 6766086, 501),
 
+	// found on TKKG4 "Verraad bij TKKG" by Lannoo (Belgium)
+	WINDEMO1_l("klikker1", "", "klikkerdeklik1/start.exe", "t:2b8f3db3c94ebb395938ae2dc5bbb425", 1901292, Common::NL_NLD, 501),
+
 	WINGAME1tf_l("kosmopolska", "", "Kosmopol.exe", "0259a0a907883c8750d662d59fda1ef3", 1416549, Common::SV_SWE, 501, GF_32BPP),
 
 	MACGAME1("maccubed", "Disc 1", "Let's Go! Arcade", "5b3a7fa45ec7655c5f9b7fe39ae37a11", 705357, 500),
@@ -7590,11 +7606,36 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("osaka2", "Demo", "OSAKA2.EXE",		  	 "t:a1b15df3e663f99b015753bc82e22bcd", 1410110,
 								 "WINMOVIE/BARGAIN.DIR", "d:949640df6d4db94e85b466da5e5d8470", 1880116, Common::JA_JPN, 501),
 
+    WINDEMO1_l("oscar2", "Demo", "Oscar2/START.EXE", "a288605e511c815d7fcea9de6780d548", 1287391, Common::NL_NLD, 501),
+
+ 	WINGAME1("oscar2", "Windows 3.1", "oshof16.exe", "t:f7eee50cc1e538417a969f6a26b449a4", 1081413, 501),
+ 	WINGAME1("oscar2", "Windows 95",  "oshof32.exe", "t:c65ee08c70eab2ff6ef2ac32bd93031c", 1559831, 501),
+
+	WINGAME1("oscar2", "Windows 3.1", "oshof31.exe", "t:37fb31223fdc146a06a206b8c62c68b3", 1076653, 501),
+	WINGAME1("oscar2", "Windows 95",  "oshof95.exe", "t:9b4e0d0183360481230aecc35d2c554d", 1555071, 501),
+
+	MACGAME2("oscar2", "", "Oscar entdeckt den Bauernhof",  "rt:c30618d998cef75c9b7e02568750bdc9", 705445,
+									  "datas/REZEPT.Dxr", "d:d7ddf136e1b938743a88c1dc4a3c0814",  4189130, 501),
+
+	MACGAME2("oscar2", "", "xn--Oscar entdeckt den Bauernhof -",  "rt:d329cff2f46eaafd853423b25ad42160", 707319,
+									  "datas/REZEPT.Dxr", "d:d7ddf136e1b938743a88c1dc4a3c0814",  4189130, 501),
+
 	// Found on "A Case for Cap & Co"
-	MACGAME2("oscarballforest", "Demo", "Oscar Demo active",  "rt:1a0f4b8c982d1823a6953c1602e92d22", 705417,
+	MACGAME2("oscar1", "Demo", "Oscar Demo active",  "rt:1a0f4b8c982d1823a6953c1602e92d22", 705417,
 										"DACHS/DAFRUEHL.DIR", "d:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
-	WINDEMO2("oscarballforest", "Demo", "TIVOLA.EXE",		  "t:d13a9d569cd0b061ae572b8bea4e7966",  933683,
+	WINDEMO2("oscar1", "Demo", "TIVOLA.EXE",		  "t:d13a9d569cd0b061ae572b8bea4e7966",  933683,
 										"DACHS/DAFRUEHL.DIR", "f:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
+	// Found on TKKG4 "Verraad bij TKKG" by Lannoo (Belgium)
+	WINDEMO1_l("oscar1", "Demo", "Oscar1/start_pc.exe", "t:f9dca353f71a15a81a99cd44bb904147", 1346023, Common::NL_NLD, 501),
+
+	WINGAME1("oscar1", "Windows 3.1", "oswald31.exe", "t:e2ba218aaf12b971c56047d236f42d4e", 1081379, 501),
+	WINGAME1("oscar1", "Windows 95", "oswald95.exe", "t:0ee1c86a7ebc945efe301fdc91acd280", 1559797, 501),
+
+	MACGAME2("oscar1", "",   "Oscar - Geheimnisse des Waldes",	"t:d709705a84c27fc12e25948569247bca", 968893,
+									  "Datas/Specht/SpWinter.Dxr", "d:2f51ea184ff0f8be5f73fb0af1b6bc04",  340502, 501),
+
+	//found on TKKG2 Dodelijke Chocolade by Lannoo (Belgium)
+	WINDEMO1_l("oscar3", "Demo", "Oscar3/osc3demo.exe", "t:c81cd1df4c45bac0c2ffc46328d2406c", 1495856, Common::NL_NLD, 501),
 
 	WINGAME1("parliament", "", "PARL/GUIDE.EXE", "t:6ada9911cbb5aaa010fa4f4115603ce9", 918871, 500),
 
@@ -7636,6 +7677,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("petepilotti2", "", "ALOITA95.EXE", "t:deac65743764402a2a81b955fa0b0d07",  1410713, Common::FI_FIN, 500),
 
 	WINGAME1_l("pettson1", "", "ANNAT/PETT32.EXE", "t:99186d8de1156cabce545f66f413f9d0", 1430755, Common::SV_SWE, 501),
+
+	//found on TKKG4 Verraad bij TKKG by Lannoo (Belgium)
+	WINDEMO1_l("pettson2dutchdemo", "", "pettdemo.exe", "t:99186d8de1156cabce545f66f413f9d0", 1430755, Common::NL_NLD, 501),
+
 
 	// From Japanese Star Trek: Borg DVD (2000)
 	WINGAME1_l("picarddossier", "DVD", "OMNIBORG.EXE",	"t:312801acbcbedcb6825414dad03538e8", 1501528, Common::JA_JPN, 501),
@@ -8123,6 +8168,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"FILES/BIO_2.DIR", "f:401d34efc89a9fb0b4edc6c306e80f6c", 3102802, 500),
 
 	WINGAME1t("willywabbitmath", "US Version", "MATHAD32.EXE", "b8417f75139827f36d96c0c8cc0189d4", 2038701, 501),
+
+	//found on TKKG2 Dodelijke Chocolade by Lannoo (Belgium)
+	WINDEMO1_l("welkom", "",  "Welkom/demo.exe",	"t:39126441ec01512d70275280292d7028",  1309296, Common::NL_NLD, 500),
+
+	//found on TKKG1 De Schat van de Maya's by Lannoo (Belgium)
+	WINDEMO1_l("welkom", "",  "lannoo/welkom/DEMO.exe",	"t:39126441ec01512d70275280292d7028",  1309296, Common::NL_NLD, 500),
 
 	// Published by Arc Media (1998)
 	MACGAME1("wine", "", "double-click me!",	"rt:c0f42117931db25b431cf7918c774b6d", 719033, 501),
@@ -8894,6 +8945,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t_l("onsalakorv", "", "onsala.EXE", "41d87422d7c0f48886a99a7fe05ba1c0", 1713409, Common::SV_SWE, 650),
 
+	WINGAME1("oscar3", "",   "ossee32.exe", "t:c4953efef8d157b15a1220bb2984da4b", 1855956, 601),
+	WINGAME1("oscar3", "",   "ossee16.exe", "t:ea00ef6376eacdb8d2fce1beb4205443", 1394306, 601),
+
+	MACGAME1("oscar3", "",   "Oscar taucht unter",	"t:4288b31a968989b4918c8696e0a7324f", 1535536, 601),
+
+	WINGAME2("oscar4", "",  "start32.exe", "t:6eeb631d693362c48f73daf08fe03e1e", 1661334,
+							 "DATAS/REH/REHERBST.DXR", "abc08b5b1a82a4caf4f34f549cc70c83", 2793193, 601),
+
+	WINGAME2("oscar5", "Windows 95",  "InData/Oscar5.exe", 		"t:8f920690f8f05a4d57cd1a4b55525157", 1587521,
+									 	    "DATAS/Sz24.dxr", "f:4949b2eb63b9b2269bce4aed4c365b5f", 6110992, 650),
+	WINGAME2("oscar5", "Windows 3.1", "Oscar16.exe",	 		"t:ed548a3dc37da017bdeb9e2c2b27fb11", 1197056,
+											"DATAS/Sz24.dxr", "f:4949b2eb63b9b2269bce4aed4c365b5f", 6110992, 650),
+
+	MACGAME1("oscar5", "",   "Oscar/Oscar Berge",	"t:24aabd4922d55087b4a08cbbf88f235d", 1450454, 650),
+
 //	MACGAME1_l("ozawaken", "v1.2", "Ozawa-Ken1.2", "8d83064402198a909b0abcebc6b46d2b", 118562, Common::JA_JPN, 602),
 
 	MACGAME2_l("pantosstory", "", "START", "7d0c7ae431938c53e64d443b05bf19fd", 1035232,
@@ -9096,6 +9162,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("technik", "Exe 1", "Technik/Exe1/Techni00.exe", "t:5d018dbf7eb8157bb344aeebece996a1", 1615559, 650),
 	WINGAME1("technik", "Exe 2", "Technik/Exe2/Techni00.exe", "t:8f9433ba36b08f5333280c9dbea11a8e", 1617988, 650),
 
+	WINGAME2_l("terziofall1999", "Windows 3.1", "data/terzio31.exe",  "t:6838e113f61d1c3a96af08b1866a9ef9", 1161318,
+									  "data/main.dxr", "f:e7e851e0c527baebe52925eb3f4f141f", 3471497, Common::DE_DEU, 601),
+	WINGAME2_l("terziofall1999", "Windows 95", "data/terzio95.EXE",  "t:f808f4b3d526367fa8a1e32bf463dd64", 1512856,
+									   "data/main.dxr", "f:e7e851e0c527baebe52925eb3f4f141f", 3471497, Common::DE_DEU, 601),
+
 	WINGAME2("thesims", "", "maxis.exe",	 "t:a6734b7a04d0c3d8a64796fb314ce576",  1915533,
 							"dir/sims1.dir", "f:8c6ccc894cce347ddec675ebe56505c0", 11132824, 650),
 
@@ -9129,10 +9200,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
 	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
 						  "SCORE.DXR",  "4d3d5b66729e31d35828e40aee85fe39", 10849, 602),
-	WINGAME1t("tkkg2", "", "TKKG2_95.EX_", "913a935918698c299c30b96b6b696ba2", 1705034, 602),
+
+	WINGAME2_l("tkkg2", "Windows 95", "tkkg2_95.exe",	  "t:913a935918698c299c30b96b6b696ba2", 1705034,
+							"MEDIA/SZ01.DXR", "f:cbba7a84f4eda3a867a66f663ab55455", 2068193, Common::DE_DEU, 602),
+
+	WINGAME2_l("tkkg2", "Windows 95", "Tkkg2_95.ex_",	  "t:913a935918698c299c30b96b6b696ba2", 1705034,
+							"MEDIA/HME.DXR", "f:5813fd6a2b4c0988f36907536ce60a47", 895760, Common::DE_DEU, 602),
+	WINGAME2_l("tkkg2", "Windows 3.1", "Tkkg2_31.ex_",	  "t:574af0f9eba9eabd8ac812f0e935be0b", 1353098,
+							"MEDIA/HME.DXR", "f:5813fd6a2b4c0988f36907536ce60a47", 895760, Common::DE_DEU, 602),
 	// Dutch numbering is different from German originals
 	// Een zaak voor TKKG 2: dodelijke chocolade (bilingual NL/EN)
-	WINGAME1_l("tkkg2", "", "Tkkg2_95.exe", "t:913a935918698c299c30b96b6b696ba2", 1705034, Common::NL_NLD, 602),
+
+	WINGAME2_l("tkkg2", "", "Tkkg2_95.exe",	  "t:913a935918698c299c30b96b6b696ba2", 1705034,
+						   "lannoo16.ico", "f:9231efc69ee870ea63b58ddbf8db37f7", 766, Common::NL_NLD, 602),
 
 	// Ein Fall für TKKG: Der Schatz der Maya (bilingual DE/EN)
 	MACGAME2("tkkg3", "", "TKKG start", "017b653021b4e4896e6a50cc5fedb24c", 1032378,
@@ -9649,6 +9729,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("smartsteps3rd", "", "Smart Steps 3rd Grade", "0944b962ebb00f4b5d5149d220f8449b", 116042, 702),
 	WINGAME1("smartsteps3rd", "", "Smart Steps 3rd Grade.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820192, 702),
 
+	WINGAME2("smurfsmother", "", "Data/Schlumpf.exe", "t:bd2537e2c06784dd3dc1fdc8f2171bdf", 2229407,
+									"Atl.dir",  "6ef507757d788729ca8049060b69626b",  652686, 702),
+
+	MACGAME2("smurfsmother", "", "Data/Data/Nature", "t:95a421b63e595a52a2f2c6b7df283af0", 2672715,
+									"Data/Atl.dir",  "d:6ef507757d788729ca8049060b69626b",  652686, 702),
+
 	// Found on Solitudes Enhanced CDs
 	// 1999 version is on Natural Relaxation
 	// 2001 version is on Songbird Symphony, Stress Relief 2 and others
@@ -9851,6 +9937,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("bibifilm", "", "Filmstudio", "3ba983d2dd8c94d882c0de01ab920c43", 1249397, Common::DE_DEU, 850),
 	WINGAME1_l("bibifilm", "", "Filmstudio_start.exe", "c163f36141579ee374f7b4b2bddee95a", 148898, Common::DE_DEU, 850),
+
+	// Bibi & Tina 1: Aufregung auf dem Martinshof
+	WINGAME1_l("bibitina1", "", "Bibi und Tina 1.exe", "t:aefb73b3fb928cadf16fc597d942ae0b", 2958500, Common::DE_DEU, 800),
 
 	// Finnish title is Ville & Lilli: Ihan Pihalla
 	// Developer website calls this Double Trouble: Wacky Woods,
@@ -10166,6 +10255,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"esl_bil.dxr", "70e5dd0d083af6f150eec9f2587c91ec", 9763420, 800),
 	WINGAME2t("optimumrsrc", "", "sampler.exe", "1269bfae9866db2000a012ad4107efe4", 2323650,
 								 "esl_bil.dxr", "fa0a09ae0b5ecb47148708a30f28fd66", 9763420, 800),
+
+	WINGAME2("oscarsea", "", "oscar.exe",	 "t:6609b9e2ac642dd3558aab5b3bf4e99f", 53320,
+								"Media/sc40.dxr", "d:4e70b7a1e5207e90798852bff974db63", 3273092, 800),
+
+	WINGAME2t("oscarworkshop", "Windows 95",  "InData/Oscar.exe", "t:7b687a3aca980622d7add3bcdd8bbb37", 2253862,
+									 	    "Data/oscarP&P.dxr", "f:d1907801ae871f98837db8520ec61ff5", 774806, 800),
 
 	WINGAME1t_l("janoschpanama", "", "panama.exe", "25d1a9fb6c8067953888719e07dc29bd", 2384444, Common::DE_DEU, 800),
 	WINGAME1t_l("janoschverkehr", "", "verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
@@ -10600,6 +10695,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Most likely this is ES_MEX. Find more examples to justify a new language code.
 	WINGAME2_l("timmysafari", "", "safari.exe", 		"c612aa43e7ef55aa4fd2e1085fb1ef7a", 2891613,
 								  "menus/mainmenu.dxr", "61c019c326dae90c3ff7f53edf9c21b5", 95556, Common::ES_ESP, 900),
+
+	// Tivola demo/sampler disc, Fall 2004, released in Germany
+	MACGAME2_l("tivolafall2004", "Sampler-classic", "classic/Tivola Demo 2004",      "t:eceabdf21304a8cf2af8fb976fe3add8", 2677052,
+											"Data/sc020.dxr", "f:4c68ca3e18d69ecd69bd6ef4458209f1", 10466314, Common::DE_DEU, 900),
+	MACGAME2_l("tivolafall2004", "Sampler-OSX", "osx/Tivola Demo 2004",      "t:423f67734d8316b55e03aa915ea4bf6b", 2641084,
+											"Data/sc020.dxr", "f:4c68ca3e18d69ecd69bd6ef4458209f1", 10466314, Common::DE_DEU, 900),
+	WINGAME2_l("tivolafall2004", "Sampler", "START.EXE",         "t:1ab8d4662cbac5f5e2ace4f8aa4d3651", 93170,
+											  "Data/sc020.dxr", "f:4c68ca3e18d69ecd69bd6ef4458209f1", 10466314, Common::DE_DEU, 900),
 
 	// Classic Mac OS versions of these TKKG games are D8
 	// Ein Fall für TKKG: Film ab! (bilingual DE/EN)
