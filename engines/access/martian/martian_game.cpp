@@ -122,9 +122,11 @@ void MartianEngine::displayNote(const Common::String &msg) {
 }
 
 void MartianEngine::doSpecial5(int param1) {
-	warning("TODO: Push midi song");
+	// Seems redundant to store the song as this is
+	// only ever called from restart or load?
+	debug("TODO: Push midi song?");
 	_midi->stopSong();
-	_midi->_byte1F781 = false;
+	_midi->setLoop(false);
 	_midi->loadMusic(47, 4);
 	_midi->midiPlay();
 	_screen->setDisplayScan();
@@ -146,13 +148,13 @@ void MartianEngine::doSpecial5(int param1) {
 	int pos = notesRes->_stream->readUint16LE();
 	notesRes->_stream->seek(pos);
 	Common::String msg = notesRes->_stream->readString();
+	delete notesRes;
 	displayNote(msg);
 
 	_midi->stopSong();
 	_midi->freeMusic();
 
-	warning("TODO: Pop Midi");
-	// _midi->_byte1F781 = true;
+	_midi->setLoop(true);
 }
 
 void MartianEngine::playGame() {
@@ -236,7 +238,7 @@ bool MartianEngine::showCredits() {
 }
 
 void MartianEngine::doCredits() {
-	_midi->_byte1F781 = false;
+	_midi->setLoop(false);
 	_midi->loadMusic(47, 3);
 	_midi->midiPlay();
 	_screen->setDisplayScan();
@@ -268,6 +270,7 @@ void MartianEngine::doCredits() {
 		_objectsTable[41] = nullptr;
 		_midi->freeMusic();
 	}
+	_midi->setLoop(true);
 }
 
 void MartianEngine::setupTimers() {
