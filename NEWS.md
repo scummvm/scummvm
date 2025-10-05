@@ -35,10 +35,14 @@ For a more comprehensive changelog of the latest experimental code, see:
      Basis Octavus
      Beyond the Threshold
      Bickadoodle
+     Boredom of Agustin Cordes
      The Box
      Corrosion: Cold Winter Waiting
      Dead City
+     DFAF Adventure
      Dirty Split
+     The Dreamcat Adventure
+     Elastic Dreams with a Thousand Insects Named George
      Escape from the Mansion
      Five Lethal Demons
      Hamlet
