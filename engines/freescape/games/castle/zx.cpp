@@ -249,6 +249,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	uint8 r, g, b;
 
 	drawLiftingGate(surface);
+	drawDroppingGate(surface);
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);

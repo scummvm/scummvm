@@ -429,6 +429,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint8 r, g, b;
 	drawLiftingGate(surface);
+	drawDroppingGate(surface);
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);

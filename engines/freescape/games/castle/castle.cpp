@@ -435,6 +435,8 @@ void CastleEngine::initGameState() {
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastMinute = minutes;
 	_lastTenSeconds = seconds / 10;
+
+	_droppingGateStartTicks = 0;
 }
 
 bool CastleEngine::checkIfGameEnded() {
@@ -785,12 +787,6 @@ void CastleEngine::drawFullscreenEndGameAndWait() {
 }
 
 void CastleEngine::drawFullscreenGameOverAndWait() {
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	surface->fillRect(_fullscreenViewArea, _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00));
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x24, 0xA5);
-	surface->copyRectToSurfaceWithKey(*_gameOverBackgroundFrame, _viewArea.left, _viewArea.top, Common::Rect(0, 0, _gameOverBackgroundFrame->w, _gameOverBackgroundFrame->h), blue);
-
 	Common::Event event;
 	bool cont = true;
 
@@ -844,6 +840,13 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 
 	Common::replace(spiritsDestroyedString, "X", Common::String::format("%d", spiritsDestroyed));
 	spiritsDestroyedString = centerAndPadString(spiritsDestroyedString, 15);
+	_droppingGateStartTicks = _ticks;
+
+	if (isDOS()) {
+		// TODO: playSound(X, false, _soundFxHandle);
+	} else if (isSpectrum()) {
+		playSound(9, false, _soundFxHandle);
+	}
 
 	while (!shouldQuit() && cont) {
 		if (_temporaryMessageDeadlines.empty()) {
@@ -874,14 +877,10 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		_gfx->clear(0, 0, 0, true);
 		drawFrame();
 
-		drawFullscreenSurface(surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
-
-	surface->free();
-	delete surface;
 }
 
 // Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
@@ -1553,7 +1552,7 @@ void CastleEngine::drawLiftingGate(Graphics::Surface *surface) {
 	else if (isSpectrum())
 		duration = 100;
 
-	if ((_gameStateControl == kFreescapeGameStateStart || _gameStateControl == kFreescapeGameStateRestart)  && _ticks <= duration) { // Draw the _gameOverBackgroundFrame gate lifting up slowly
+	if ((_gameStateControl == kFreescapeGameStateStart || _gameStateControl == kFreescapeGameStateRestart) && _ticks <= duration) { // Draw the _gameOverBackgroundFrame gate lifting up slowly
 		int gate_w = _gameOverBackgroundFrame->w;
 		int gate_h = _gameOverBackgroundFrame->h;
 
@@ -1580,6 +1579,51 @@ void CastleEngine::drawLiftingGate(Graphics::Surface *surface) {
 			// Draw the clipped part
 			surface->copyRectToSurfaceWithKey(*_gameOverBackgroundFrame, clippedDest.left, clippedDest.top, clippedSrc, keyColor);
 		}
+	}
+}
+
+void CastleEngine::drawDroppingGate(Graphics::Surface *surface) {
+	if (_droppingGateStartTicks <= 0)
+		return;
+
+	uint32 keyColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x24, 0xA5);
+	int duration = 60;
+	int ticks = _ticks - _droppingGateStartTicks;
+
+	if (_gameStateControl == kFreescapeGameStateEnd && _ticks <= _droppingGateStartTicks + duration) { // Draw the _gameOverBackgroundFrame gate dropping down slowly
+		int gate_w = _gameOverBackgroundFrame->w;
+		int gate_h = _gameOverBackgroundFrame->h;
+
+		// The gate should move down by the height of the view area to appear.
+		int y_offset = (duration - ticks) * _viewArea.height() / duration;
+
+		// Initial position is with the gate bottom at the view area bottom.
+		int dx = _viewArea.left + (_viewArea.width() - gate_w) / 2;
+		int dy = (_viewArea.bottom - gate_h) - y_offset;
+
+		// Define destination rect for the full gate
+		Common::Rect destRect(dx, dy, dx + gate_w, dy + gate_h);
+
+		// Find intersection with view area to clip
+		Common::Rect clippedDest = destRect.findIntersectingRect(_viewArea);
+
+		// If there is something to draw
+		if (clippedDest.isValidRect() && clippedDest.width() > 0 && clippedDest.height() > 0) {
+			// Adjust source rect based on clipping
+			int src_x = clippedDest.left - destRect.left;
+			int src_y = clippedDest.top - destRect.top;
+			Common::Rect clippedSrc(src_x, src_y, src_x + clippedDest.width(), src_y + clippedDest.height());
+
+			// Draw the clipped part
+			surface->copyRectToSurfaceWithKey(*_gameOverBackgroundFrame, clippedDest.left, clippedDest.top, clippedSrc, keyColor);
+		}
+	} else {
+		// Draw the gate fully down
+		int gate_w = _gameOverBackgroundFrame->w;
+		int gate_h = _gameOverBackgroundFrame->h;
+		int dx = _viewArea.left + (_viewArea.width() - gate_w) / 2;
+		int dy = (_viewArea.bottom - gate_h);
+		surface->copyRectToSurfaceWithKey(*_gameOverBackgroundFrame, dx, dy, Common::Rect(0, 0, gate_w, gate_h), keyColor);
 	}
 }
 

@@ -75,6 +75,7 @@ public:
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 	void drawEnergyMeter(Graphics::Surface *surface, Common::Point origin);
 	void drawLiftingGate(Graphics::Surface *surface);
+	void drawDroppingGate(Graphics::Surface *surface);
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
 	void updateTimeVariables() override;
@@ -149,6 +150,7 @@ private:
 	Audio::SoundHandle _soundFxGhostHandle;
 	Texture *_optionTexture;
 	Font _fontRiddle;
+	int _droppingGateStartTicks;
 };
 
 }
