@@ -4342,9 +4342,9 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data.dcp", "7d945a8219af9bf306980f526f2a885f", 589685802), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Shaban (English)
-	// TODO: add checksum of localization.txt
 	WME_WINENTRY("shaban", "",
-		WME_ENTRY1s("data.dcp", "35f702ca9baabc5c620e0be230195c8a", 755388466), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+		WME_ENTRY2s("data.dcp", "35f702ca9baabc5c620e0be230195c8a", 755388466,
+					"localization.txt", "16b02da5787e433dd0461b0ad855380c", 5844), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_2),
 
 	// Shaban (Russian)
 	WME_WINENTRY("shaban", "",
@@ -4354,7 +4354,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Shaban (English) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "7586c35bc43d06553a10e18a5a576fcc", 338067285,
-					"localization.txt", "16b02da5787e433dd0461b0ad855380c", 5844), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "16b02da5787e433dd0461b0ad855380c", 5844), Common::EN_ANY, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (German) (Demo)
 	WME_WINENTRY("shaban", "Demo",
