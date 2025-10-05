@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-08-26 20:36+0000\n"
+"PO-Revision-Date: 2025-10-05 13:36+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6214,7 +6214,7 @@ msgstr "使用"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "移動"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6952,11 +6952,11 @@ msgstr "SE ON/OFFの切替"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32ビット"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
-msgstr ""
+msgstr "16bitの代わりに32bitテクスチャーを使用(未実装)"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 msgid "Activate"
@@ -7594,12 +7594,12 @@ msgstr "バイオチップブランク"
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "チップクローク"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
 msgid "Biochip evidence"
-msgstr ""
+msgstr "チップエビデンス"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
@@ -7611,17 +7611,17 @@ msgstr "隠しファイルを表示する"
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "チップインターフェイス"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "チップジャンプ"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "チップトランスレート"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
@@ -8142,7 +8142,7 @@ msgstr "インベントリー/IQポイント表示の切り替え"
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "選択肢が1つしかない場合にセレクト"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
@@ -8196,7 +8196,7 @@ msgstr "右ステップ"
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
 msgid "Wake up champion"
-msgstr ""
+msgstr "チャンピオンを起こす"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 #, fuzzy
@@ -8592,7 +8592,7 @@ msgstr "落とす"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "装備"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8611,11 +8611,11 @@ msgstr "インフォ"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "パッシブスキル"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "交換"
 
 #: engines/efh/metaengine.cpp:467
 #, fuzzy
@@ -8631,7 +8631,7 @@ msgstr "ゲーム終了"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "離脱"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 #, fuzzy
@@ -8641,7 +8641,7 @@ msgstr "ステータス："
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "防衛"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8761,7 +8761,7 @@ msgstr "音の再生：A"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "音声Type9を再生"
 
 #: engines/efh/metaengine.cpp:662
 #, fuzzy
@@ -8845,11 +8845,11 @@ msgstr "開始時に岩の射出を使用して移動"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "より滑らかな動き"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "離散的なステップではなく、より滑らかな動きを使用"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
@@ -9002,7 +9002,7 @@ msgstr "天井グリッドを適用"
 #. I18N: drilling rig is an in game item
 #: engines/freescape/games/driller/driller.cpp:222
 msgid "Collect drilling rig"
-msgstr ""
+msgstr "掘削リグを収集"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:269
@@ -9155,11 +9155,11 @@ msgstr "ショット"
 
 #: engines/got/metaengine.cpp:75
 msgid "Magic"
-msgstr ""
+msgstr "魔法"
 
 #: engines/got/metaengine.cpp:79
 msgid "Thor dies"
-msgstr ""
+msgstr "ソーの死"
 
 #: engines/got/got.cpp:196 engines/got/got.cpp:206
 #, fuzzy
@@ -9577,7 +9577,7 @@ msgstr "上"
 #. I18N: Move actor in the bottom direction
 #: engines/hugo/metaengine.cpp:201
 msgid "Move to bottom"
-msgstr ""
+msgstr "下方向へ移動"
 
 #. I18N: Move actor in the left direction
 #: engines/hugo/metaengine.cpp:209
@@ -9670,7 +9670,7 @@ msgstr "ゲームのキーマップ"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "1番目の射撃"
 
 #: engines/hypno/metaengine.cpp:140
 #, fuzzy
@@ -9717,22 +9717,22 @@ msgstr "音声"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "PKを実行"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "イージー"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "ノーマル"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "ハード"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
@@ -9750,7 +9750,7 @@ msgstr "アニメを高速化"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "新規ミッション"
 
 #: engines/hypno/metaengine.cpp:313
 #, fuzzy
@@ -9924,13 +9924,13 @@ msgstr "左ボタンで攻撃し、右ボタンでアイテムを拾う"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "AD&Dルールに忠実"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
-msgstr ""
+msgstr "AD&D第2版ハンドブックにより準拠させる形でルールを実装"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -10209,7 +10209,7 @@ msgstr "ゲームの音声を有効にする"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "音量を下げる"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
@@ -10845,12 +10845,12 @@ msgstr "良質"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "ポップ/クリックノイズを修正"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
-msgstr ""
+msgstr "一部SEの終了時に発生するノイズを低減します(Myst/Riven以外の作品）。"
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -11286,7 +11286,7 @@ msgstr "ムービーをスキップ"
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "シーン全体をスキップ(一部シーンのみ有効)"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
@@ -11428,7 +11428,7 @@ msgstr "ダイアログをスキップ"
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "ターゲットへ瞬間移動"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
@@ -11483,12 +11483,12 @@ msgstr "メインメニューを開く"
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
 msgid "Z key"
-msgstr ""
+msgstr "Zキー"
 
 #. I18N: This refers to the X key on a keyboard.
 #: engines/prince/metaengine.cpp:263
 msgid "X key"
-msgstr ""
+msgstr "Xキー"
 
 #: engines/private/metaengine.cpp:37
 #, fuzzy
@@ -11528,7 +11528,7 @@ msgstr "デバッグモードを有効にする"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
-msgstr ""
+msgstr "バックエンドが32bpp非対応/グラフィックをデバッグする場合に設定"
 
 #: engines/queen/metaengine.cpp:41
 msgid "Alternative intro"
@@ -11548,7 +11548,7 @@ msgstr "読みやすいカスタムフォントを使用"
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
-msgstr ""
+msgstr "移動/スキップ/デフォルトアクション(アイテム使用)"
 
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
@@ -11682,7 +11682,7 @@ msgstr "会話パネルキーマップ"
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "ボスが来た"
 
 #: engines/saga/metaengine.cpp:303 engines/toon/metaengine.cpp:148
 #, fuzzy
@@ -11698,11 +11698,11 @@ msgstr "次の地点"
 
 #: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "会話位置 - 上"
 
 #: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "会話位置 - 下"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/sludge/keymapper_tables.h:573 engines/stark/metaengine.cpp:286
@@ -11900,13 +11900,14 @@ msgstr "法律上の理由で無効化されたグラフィックを有効化"
 
 #: engines/sci/detection_options.h:236
 msgid "Enable saving via the GMM"
-msgstr ""
+msgstr "GMM経由の保存を有効化"
 
 #: engines/sci/detection_options.h:237
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
-msgstr ""
+msgstr "GMM経由の保存を許可。警告：GMM経由の保存データは破損する可能性があります。自"
+"己責任でご利用ください!"
 
 #: engines/sci/detection_options.h:248
 #, fuzzy
@@ -11918,7 +11919,8 @@ msgstr "読み込み速度"
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
-msgstr ""
+msgstr "DPCM8オーディオのオーバーフローを検出し、修復を試みます。ポップ音やパチパチ音"
+"が顕著になります。"
 
 #: engines/sci/detection_options.h:263
 msgid "MIDI mode:"
@@ -12297,11 +12299,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:793
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "画像を明るくし、Macintoshのモニターをシミュレート。"
 
 #: engines/scumm/dialogs.cpp:1195
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "SEGAカラーを再現"
 
 #: engines/scumm/dialogs.cpp:1196
 msgid ""
