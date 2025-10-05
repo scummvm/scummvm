@@ -1688,6 +1688,10 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	_vm->_fonts.addFont(_fontGothiceu);
 	_vm->_fonts.addFont(_fontChaletse);
 	_vm->_fonts.addFont(_fontComicseu);
+	
+	// Set some default fonts
+	_vm->_fonts._font1 = _fontChaleteu;
+	_vm->_fonts._font2 = _fontSystemeu;
 
 	// Set up the room data
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));

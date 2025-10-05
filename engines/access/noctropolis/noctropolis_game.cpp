@@ -24,6 +24,7 @@
 #include "access/noctropolis/noctropolis_scripts.h"
 #include "image/png.h"
 #include "graphics/color_quantizer.h"
+#include "common/config-manager.h"
 
 namespace Access {
 
@@ -84,7 +85,8 @@ void NoctropolisEngine::initVariables() {
 }
 
 void NoctropolisEngine::playGame() {
-	if (_loadSaveSlot == -1) {
+	bool skipIntro = ConfMan.getBool("skip_intro");
+	if (_loadSaveSlot == -1 && !skipIntro) {
 		bool keepGoing = true;
 		Common::CustomEventType action = kActionNone;
 		doFlashLogo();

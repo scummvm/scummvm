@@ -137,6 +137,7 @@ void Scripts::setOpcodes_v2() {
 }
 
 void Scripts::setOpcodes_v3() {
+	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
 	COMMAND_LIST[57] = &Scripts::cmdDigitalPlay;
 	COMMAND_LIST[60] = &Scripts::cmdFillSound;
 	COMMAND_LIST[61] = &Scripts::cmdBD;
@@ -996,6 +997,21 @@ void Scripts::cmdCharSpeak() {
 	findNull();
 }
 
+void Scripts::cmdCharSpeak_v3() {
+	int16 x = _data->readUint16LE();
+	int16 y = _data->readUint16LE();
+	_charsOrg = Common::Point(x, y);
+	_vm->_screen->_printOrg = _charsOrg;
+	_vm->_screen->_printStart = _charsOrg;
+
+	// TODO: Duck (reduce) music volume to 50%
+
+	Common::String str = _data->readString();
+	debugC(1, kDebugScripts, "cmdCharSpeak(str=\"%s\")", str.c_str());
+	_vm->_bubbleBox->placeBubble(str);
+	findNull();
+}
+
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
@@ -1308,7 +1324,16 @@ void Scripts::cmdDigitalPlay() {
 }
 
 void Scripts::cmdFillSound() {
-    error("TODO: Implement Scripts::cmdFillSound");
+	debugCN(1, kDebugScripts, "cmdFillSound()");
+	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
+		_vm->_events->pollEventsAndWait();
+		Common::CustomEventType action;
+		if (_vm->_events->getAction(action) && action == kActionSkip) {
+			_vm->_sound->stopSound();
+			_vm->_events->zeroKeysActions();
+			break;
+		}
+	}
 }
 
 void Scripts::cmdPlayVid1() {
@@ -1320,7 +1345,11 @@ void Scripts::cmdCharWait() {
 }
 
 void Scripts::cmdUndoText() {
-    error("TODO: Implement Scripts::cmdUndoText");
+	debugCN(1, kDebugScripts, "cmdUndoText()");
+
+	// TODO: Restore music volume to 100%
+
+	_vm->_bubbleBox->clearBubbles();
 }
 
 void Scripts::cmdResetAnim() {
@@ -1336,7 +1365,14 @@ void Scripts::cmdWalkCheck() {
 }
 
 void Scripts::cmdSoundEnd() {
-    error("TODO: Implement Scripts::cmdSoundEnd");
+	debugCN(1, kDebugScripts, "cmdSoundEnd()");
+	if (!_vm->_sound->isSFXPlaying()) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
 }
 
 void Scripts::cmdFadeWhite() {
@@ -1368,10 +1404,12 @@ void Scripts::cmdStilWalkCheck() {
 }
 
 void Scripts::cmdStilOff() {
+	debugCN(1, kDebugScripts, "cmdStilOff()");
 	_vm->_stilOff = true;
 }
 
 void Scripts::cmdStilOn() {
+	debugCN(1, kDebugScripts, "cmdStilOn()");
 	_vm->_stilOff = false;
 }
 

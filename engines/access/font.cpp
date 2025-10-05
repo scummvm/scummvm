@@ -57,7 +57,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 	char c;
 
 	while ((c = *src) != '\0') {
-		if (c == '\r') {
+		if (c == '\r' || c == '\n') {
 			// End of line, so return calculated line
 			line = Common::String(s.c_str(), src);
 			s = Common::String(src + 1);
