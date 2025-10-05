@@ -136,7 +136,7 @@ void Path::process() {
 		// TODO: Actually step the path. It seems they mostly just use this for
 		// palette animation in the On Step event handler, so nothing is actually drawn on the screen now.
 
-		// We donʻt run a step event for the last step.
+		// We don't run a step event for the last step.
 		runEventHandlerIfExists(kStepEvent);
 		_nextPathStepTime = ++_currentStep * _stepDurationInMilliseconds;
 	} else {
