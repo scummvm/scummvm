@@ -192,7 +192,7 @@ private:
 
 	Location _currentLocation;
 	Location _nextLocation;
-	int _changeLocationDelayCycles;
+	const uint8 _changeLocationExtraCycles = 16;
 
 	uint32 _currentlyFocusedControl;
 

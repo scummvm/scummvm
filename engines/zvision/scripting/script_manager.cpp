@@ -63,8 +63,6 @@ void ScriptManager::initialize(bool restarted) {
 	_currentLocation.world = 0;
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
-
-	_changeLocationDelayCycles = 0;
 	if (restarted) {
 		for (auto &fx : _activeSideFx)
 			delete fx;
@@ -98,31 +96,29 @@ bool ScriptManager::changingLocation() const {
 }
 
 void ScriptManager::process(uint deltaTimeMillis) {
-	if (changingLocation()) {
-		// The location is changing. The script that did that may have
-		// triggered other scripts, so give them all one extra cycle to
-		// run. This fixes some missing scoring in ZGI, and quite
-		// possibly other minor glitches as well.
-		//
-		// Another idea would be to change if there are pending scripts
-		// in the exec queues, but that could cause this to hang
-		// indefinitely.
-		// TODO - this causes noticeable pauses on location change; see if these can be reduced by improving this functionality.
-		if (_changeLocationDelayCycles-- <= 0)
-			ChangeLocationReal(false);
+	// If the location is changing, the script that did that may have
+	// triggered other scripts, so we give them all a few extra cycles to
+	// run. This fixes some missing scoring in ZGI, and quite
+	// possibly other minor glitches as well.
+	//
+	// Another idea would be to change if there are pending scripts
+	// in the exec queues, but that could cause this to hang
+	// indefinitely.
+	for (uint8 pass = 0; pass <= changingLocation() ? _changeLocationExtraCycles : 0; pass++) {
+		updateNodes(pass == 0 ? deltaTimeMillis : 0);
+		debugC(5, kDebugLoop, "Script nodes updated");
+		if (!execScope(_nodeview))
+			break;
+		if (!execScope(_room))
+			break;
+		if (!execScope(_world))
+			break;
+		if (!execScope(_universe))
+			break;
 	}
-
-	updateNodes(deltaTimeMillis);
-	debugC(5, kDebugLoop, "Script nodes updated");
-	if (!execScope(_nodeview))
-		return;
-	if (!execScope(_room))
-		return;
-	if (!execScope(_world))
-		return;
-	if (!execScope(_universe))
-		return;
 	updateControls(deltaTimeMillis);
+	if (changingLocation())
+		ChangeLocationReal(false);
 }
 
 bool ScriptManager::execScope(ScriptScope &scope) {
@@ -565,8 +561,6 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 
 void ScriptManager::changeLocation(char world, char room, char node, char view, uint32 offset) {
 	debugC(1, kDebugScript, "\tPreparing to change location");
-	_changeLocationDelayCycles = 1;
-
 	_nextLocation.world = world;
 	_nextLocation.room = room;
 	_nextLocation.node = node;
