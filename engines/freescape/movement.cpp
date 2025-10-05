@@ -207,8 +207,10 @@ void FreescapeEngine::activate() {
 
 		executeObjectConditions(gobj, false, false, true);
 	} else {
-		if (!_outOfReachMessage.empty())
+		if (!_outOfReachMessage.empty()) {
+			clearTemporalMessages();
 			insertTemporaryMessage(_outOfReachMessage, _countdown - 2);
+		}
 	}
 	//executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }

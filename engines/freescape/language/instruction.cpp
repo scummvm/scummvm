@@ -112,9 +112,11 @@ bool FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
 		} else if (shot)
 			debugC(1, kFreescapeDebugCode, "Executing with shot flag: %s", obj->_conditionSource.c_str());
-		else if (activated)
+		else if (activated) {
+			if (isCastle()) // TODO: add a 3DCK check here
+				clearTemporalMessages();
 			debugC(1, kFreescapeDebugCode, "Executing with activated flag: %s", obj->_conditionSource.c_str());
-		else
+		} else
 			error("Neither shot or collided flag is set!");
 		executed = executeCode(obj->_condition, shot, collided, false, activated); // TODO: check this last parameter
 	}

@@ -72,6 +72,7 @@ enum FreescapeAction {
 	kActionMoveLeft,
 	kActionMoveRight,
 	kActionShoot,
+	kActionActivate,
 	kActionIncreaseAngle,
 	kActionDecreaseAngle,
 	kActionChangeStepSize,

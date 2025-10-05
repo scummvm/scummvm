@@ -301,6 +301,11 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->setCustomEngineActionEvent(kActionFaceForward);
 	act->addDefaultInputMapping("f");
 	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ACTIVATE", _("Activate"));
+	act->setCustomEngineActionEvent(kActionActivate);
+	act->addDefaultInputMapping("a");
+	engineKeyMap->addAction(act);
 }
 
 void CastleEngine::beforeStarting() {
@@ -511,7 +516,8 @@ void CastleEngine::pressedKey(const int keycode) {
 	} else if (keycode == kActionFaceForward) {
 		_pitch = 0;
 		updateCamera();
-	}
+	} else if (keycode == kActionActivate) 
+		activate();
 }
 
 void CastleEngine::drawInfoMenu() {
@@ -1306,10 +1312,10 @@ void CastleEngine::checkSensors() {
 	if (_disableSensors)
 		return;
 
-	if (!_mixer->isSoundHandleActive(_soundFxGhostHandle)) {
+	/*if (!_mixer->isSoundHandleActive(_soundFxGhostHandle)) {
 		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 25.0f, -1);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
-	}
+	}*/
 
 	// This is the frequency to shake the screen
 	if (_ticks % 5 == 0) {
