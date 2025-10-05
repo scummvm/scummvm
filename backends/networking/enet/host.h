@@ -40,6 +40,7 @@ typedef struct _ENetPacket ENetPacket;
 #include "common/debug.h"
 
 namespace Networking {
+namespace ENet {
 
 class Host {
 public:
@@ -170,6 +171,7 @@ private:
 	ENetPacket *_recentPacket;
 };
 
+} // End of namespace ENet
 } // End of namespace Networking
 
 #endif
