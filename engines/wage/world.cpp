@@ -404,6 +404,11 @@ void World::loadExternalSounds(const Common::Path &fname) {
 	resArray = resMan.getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan.getResource(MKTAG('A','S','N','D'), *iter);
+
+		if (!res) {
+			warning("Cannot load sound resource %d from file <%s>", *iter, fname.toString().c_str());
+			continue;
+		}
 		addSound(new Sound(resMan.getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 }
