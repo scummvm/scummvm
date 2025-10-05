@@ -23,7 +23,7 @@
 #include "backends/platform/android/jni-android.h"
 #endif
 
-#include "backends/networking/curl/cacert.h"
+#include "backends/networking/basic/curl/cacert.h"
 
 #include "common/fs.h"
 

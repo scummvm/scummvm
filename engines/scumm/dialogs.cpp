@@ -1841,7 +1841,7 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 
 	if (_gameid == "football" || _gameid == "baseball2001") {
 		// Lobby configuration (Do not include LAN settings)
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		text->setLabel(_("Online Server:"));
 		_lobbyServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.LobbyServerAddress", Common::U32String(""), _("Address of the server to connect to for online play.  It must start with either \"https://\" or \"http://\" schemas."));
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
@@ -1874,7 +1874,7 @@ void HENetworkGameOptionsWidget::load() {
 		_audioOverride->setState(audioOverride);
 	}
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		Common::String lobbyServerAddr = "https://multiplayer.scummvm.org:9130";
 		bool enableCompetitiveMods = false;
 
@@ -1916,7 +1916,7 @@ bool HENetworkGameOptionsWidget::save() {
 	if (_audioOverride)
 		ConfMan.setBool("audio_override", _audioOverride->getState(), _domain);
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		ConfMan.set("lobby_server", _lobbyServerAddr->getEditString(), _domain);
 		ConfMan.setBool("enable_competitive_mods", _enableCompetitiveMods->getState(), _domain);
 #endif
@@ -1932,7 +1932,7 @@ bool HENetworkGameOptionsWidget::save() {
 
 void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 				.addPadding(0, 0, 12, 0)

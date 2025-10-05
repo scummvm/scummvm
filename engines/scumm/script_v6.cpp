@@ -500,7 +500,7 @@ void ScummEngine_v6::o6_pushByteVar() {
 
 void ScummEngine_v6::o6_pushWordVar() {
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	if (_enableHECompetitiveOnlineMods) {
 		// Sprinting in competitive Backyard Baseball is considered too weak in its current state. This will increase how effective
 		// it is, limiting the highest speed characters enough to where they cannot go TOO fast.
@@ -585,7 +585,7 @@ void ScummEngine_v6::o6_byteArrayRead() {
 void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
 	int array = fetchScriptWord();
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	if (_enableHECompetitiveOnlineMods) {
 		// If we're pulling from the randomly selected teams for online play
 		// at Prince Rupert, read from variables 748 and 749 instead
@@ -635,7 +635,7 @@ void ScummEngine_v6::o6_eq() {
 	int b = pop();
 
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	// The player stat adjustments that should get applied in certain conditions (i.e. when two siblings are on the same team)
 	// don't get applied properly for the away (peer) team in online play. This results in each team's game using a different
 	// version of players' stats, leading to unfair play and potential desyncs. This hack ensures the away team's game doesn't
@@ -752,7 +752,7 @@ void ScummEngine_v6::o6_eq() {
 	}
 #endif
 
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	int offset = _scriptPointer - _scriptOrgPointer;
 	// WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
 	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
@@ -856,7 +856,7 @@ void ScummEngine_v6::o6_le() {
 void ScummEngine_v6::o6_ge() {
 	int a = pop();
 	int b = pop();
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
 	// required to reach top speed
 	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 &&
@@ -887,7 +887,7 @@ void ScummEngine_v6::o6_div() {
 	if (a == 0)
 		error("division by zero");
 	int b = pop();
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
 	// running half-speed on a popup
 	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
@@ -1144,7 +1144,7 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	// Mod for Backyard Baseball 2001 online competitive play: change effect of
 	// pitch location on hit quality
 	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
@@ -1715,7 +1715,7 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	int min = pop();
 	int rnd = _rnd.getRandomNumber(0x7fff);
 	rnd = min + (rnd % (max - min + 1));
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	if (_enableHECompetitiveOnlineMods) {
 		// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 		// let's pull from the variables that contain the teams
