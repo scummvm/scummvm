@@ -358,9 +358,6 @@ public:
 	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
 
-	void SPRINTCHR(char c, int fontNum);
-	void PRINTCHR(Common::String msg, int fontNum);
-
 	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 };
 
