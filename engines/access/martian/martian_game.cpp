@@ -359,8 +359,10 @@ void MartianEngine::dead(int deathId) {
 
 void MartianEngine::establish(int estabIndex, int sub) {
 	_fonts._charSet._hi = 10;
+	Font::_fontColors[0] = 0xff;
 	Font::_fontColors[1] = 0xf7;
 	Font::_fontColors[2] = 0xff;
+	Font::_fontColors[3] = 0xf7;
 
 	_screen->_maxChars = 50;
 	_screen->_printOrg = _screen->_printStart = Common::Point(24, 18);
