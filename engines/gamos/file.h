@@ -37,9 +37,9 @@ public:
 
     RawData *readCompressedData();
     bool readCompressedData(RawData *out);
-    
+
     static void decompress(RawData const *in, RawData *out);
-    
+
 public:
 
 uint32 _lastReadSize = 0;

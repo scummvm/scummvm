@@ -37,12 +37,12 @@ class MoviePlayer {
 
 
     private:
-    
+
     bool init(Common::File *file, uint32 offset, GamosEngine *gamos);
 	bool deinit();
 	bool error();
 
-	int processControlChunk();	
+	int processControlChunk();
 	int processImageChunk();
 	int processPaletteChunk();
 	int processSoundChunk();
@@ -57,7 +57,7 @@ class MoviePlayer {
 	static byte* blit1(Common::Rect rect, byte *in, Graphics::Surface *surface);
 	static byte* blit2(Common::Rect rect, byte *in, Graphics::Surface *surface);
 	static byte* blit3(Common::Rect rect, byte *in, Graphics::Surface *surface);
-        
+
 
 
     private:
@@ -103,6 +103,6 @@ class MoviePlayer {
 	int32_t _hdrValue2 = 0;
 };
 
-} 
+}
 
 #endif //GAMOS_MOVIE_H

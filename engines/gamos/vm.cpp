@@ -41,12 +41,12 @@ uint32 VM::doScript(uint32 scriptAddress) {
     _stackT.resize(0x480);
 
     Common::Array<OpLog> cmdlog;
-    
+
     bool loop = true;
     while (loop) {
         if (_interrupt)
             return 0;
-            
+
         byte op = getMemBlockU8(ESI);
         cmdlog.push_back({ESI, (OP)op, SP});
         ESI++;
@@ -56,28 +56,28 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_EXIT:
             loop = false;
             break;
-        
+
         case OP_CMP_EQ:
             if (EDX.val == EAX.val)
                 EAX.val = 1;
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_NE:
             if (EDX.val != EAX.val)
                 EAX.val = 1;
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_LE:
             if ((int32)EDX.val < (int32)EAX.val)
                 EAX.val = 1;
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_LEQ:
             if ((int32)EDX.val <= (int32)EAX.val)
                 EAX.val = 1;
@@ -91,14 +91,14 @@ uint32 VM::doScript(uint32 scriptAddress) {
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_GREQ:
             if ((int32)EDX.val >= (int32)EAX.val)
                 EAX.val = 1;
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_NAE:
             if (EDX.val < EAX.val)
                 EAX.val = 1;
@@ -112,7 +112,7 @@ uint32 VM::doScript(uint32 scriptAddress) {
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_CMP_A:
             if (EDX.val > EAX.val)
                 EAX.val = 1;
@@ -126,63 +126,63 @@ uint32 VM::doScript(uint32 scriptAddress) {
             else
                 EAX.val = 0;
             break;
-        
+
         case OP_BRANCH:
-            if (EAX.val != 0) 
+            if (EAX.val != 0)
                 ESI += 4;
             else
                 ESI += (int32)getMemBlockU32(ESI);
             break;
-        
+
         case OP_JMP:
             ESI += (int32)getMemBlockU32(ESI);
             break;
-        
+
         case OP_SP_ADD:
             SP += (int32)getMemBlockU32(ESI);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EDI_ECX_AL:
             ECX.val = getMemBlockU32(ESI);
             setMem8(REF_EDI, ECX.val, EAX.val & 0xff);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EBX_ECX_AL:
             ECX.val = getMemBlockU32(ESI);
             setMem8(REF_EBX, ECX.val, EAX.val & 0xff);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EDI_ECX_EAX:
             ECX.val = getMemBlockU32(ESI);
             setMem32(REF_EDI, ECX.val, EAX.val);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EBX_ECX_EAX:
             ECX.val = getMemBlockU32(ESI);
             setMem32(REF_EBX, ECX.val, EAX.val);
             ESI += 4;
             break;
-        
+
         case OP_RET:
             ESI = pop32();
             ESI += 4;
             break;
-        
+
         case OP_RETX:
             ECX = popReg();
             SP += getMemBlockU32(ESI);
             ESI = ECX.val;
             ESI += 4;
             break;
-        
+
         case OP_MOV_EDX_EAX:
             EDX = EAX;
             break;
-        
+
         case OP_ADD_EAX_EDX:
             EAX.val += EDX.val;
             if (EAX.ref == REF_UNK && EDX.ref != REF_UNK)
@@ -192,37 +192,37 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_MUL:
             EAX.val *= EDX.val;
             break;
-        
+
         case OP_OR:
             EAX.val |= EDX.val;
             break;
-        
+
         case OP_XOR:
             EAX.val ^= EDX.val;
             break;
-        
+
         case OP_AND:
             EAX.val &= EDX.val;
             break;
-        
+
         case OP_NEG:
             EAX.val = (uint32)(-((int32)EAX.val));
             break;
-        
+
         case OP_SAR:
             EAX.val = (uint32)(((int32)EDX.val) >> (EAX.val & 0xff)); /* must be arythmetic shift! */
             break;
-        
+
         case OP_SHL:
             EAX.val = EDX.val << (EAX.val & 0xff);
             break;
-        
+
         case OP_LOAD:
             EAX.val = getMemBlockU32(ESI);
             EAX.ref = REF_UNK;
             ESI += 4;
             break;
-        
+
         case OP_INC:
             EAX.val += 1;
             break;
@@ -230,7 +230,7 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_DEC:
             EAX.val -= 1;
             break;
-        
+
         case OP_XCHG:
             ECX = EAX;
             EAX = EDX;
@@ -240,7 +240,7 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_PUSH_EAX:
             pushReg(EAX);
             break;
-        
+
         case OP_POP_EDX:
             EDX = popReg();
             break;
@@ -251,19 +251,19 @@ uint32 VM::doScript(uint32 scriptAddress) {
             EAX.ref = REF_EDI;
             ESI += 4;
             break;
-        
+
         case OP_LOAD_OFFSET_EBX:
             EAX.val = getMemBlockU32(ESI);
             EAX.ref = REF_EBX;
             ESI += 4;
             break;
-        
+
         case OP_LOAD_OFFSET_ESP:
             EAX.val = getMemBlockU32(ESI) + SP;
             EAX.ref = REF_STACK;
             ESI += 4;
             break;
-        
+
         case OP_MOV_PTR_EDX_AL:
             setMem8(EDX.ref, EDX.val, EAX.val & 0xff);
             break;
@@ -275,11 +275,11 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_SHL_2:
             EAX.val <<= 2;
             break;
-        
+
         case OP_ADD_4:
             EAX.val += 4;
             break;
-        
+
         case OP_SUB_4:
             EAX.val -= 4;
             break;
@@ -293,31 +293,31 @@ uint32 VM::doScript(uint32 scriptAddress) {
         case OP_NEG_ADD:
             EAX.val = (uint32)(-((int32)EAX.val)) + EDX.val;
             break;
-        
+
         case OP_DIV:
             ECX = EAX;
             EAX.val = (int32)EDX.val / (int32)ECX.val;
             EDX.val = (int32)EDX.val % (int32)ECX.val;
             break;
-        
+
         case OP_MOV_EAX_BPTR_EDI:
             ECX.val = getMemBlockU32(ESI);
             EAX.val = (int8)getMem8(REF_EDI, ECX.val);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EAX_BPTR_EBX:
             ECX.val = getMemBlockU32(ESI);
             EAX.val = (int8)getMem8(REF_EBX, ECX.val);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EAX_DPTR_EDI:
             ECX.val = getMemBlockU32(ESI);
             EAX.val = getMem32(REF_EDI, ECX.val);
             ESI += 4;
             break;
-        
+
         case OP_MOV_EAX_DPTR_EBX:
             ECX.val = getMemBlockU32(ESI);
             EAX.val = getMem32(REF_EBX, ECX.val);
@@ -328,12 +328,12 @@ uint32 VM::doScript(uint32 scriptAddress) {
             EAX.val = (int8)getMem8(EAX.ref, EAX.val);
             EAX.ref = REF_UNK;
             break;
-        
+
         case OP_MOV_EAX_DPTR_EAX:
             EAX.val = getMem32(EAX.ref, EAX.val);
             EAX.ref = REF_UNK;
             break;
-        
+
         case OP_PUSH_ESI_ADD_EDI:
             push32(ESI);
             ESI = getMemBlockU32(ESI);
@@ -345,7 +345,7 @@ uint32 VM::doScript(uint32 scriptAddress) {
             if (_callFuncs)
                 _callFuncs(_callingObject, this, EAX.val);
             break;
-        
+
         case OP_PUSH_ESI_SET_EDX_EDI:
             push32(ESI);
             ESI = EDX.val;
@@ -404,13 +404,13 @@ uint32 VM::getMem32(int memtype, uint32 offset) {
     default:
     case REF_UNK:
         return 0;
-    
+
     case REF_STACK:
         return getU32(_stack.data() + offset);
-    
+
     case REF_EBX:
         return getU32(EBX + offset);
-    
+
     case REF_EDI:
         return getMemBlockU32(offset);
     }
@@ -421,13 +421,13 @@ uint8 VM::getMem8(int memtype, uint32 offset) {
     default:
     case REF_UNK:
         return 0;
-    
+
     case REF_STACK:
         return _stack[offset];
-    
+
     case REF_EBX:
         return EBX[offset];
-    
+
     case REF_EDI:
         return getMemBlockU8(offset);
     }
@@ -444,7 +444,7 @@ void VM::setMem32(int memtype, uint32 offset, uint32 val) {
     case REF_EBX:
         setU32(EBX + offset, val);
         break;
-    
+
     case REF_EDI:
         setMemBlockU32(offset, val);
         break;
@@ -462,7 +462,7 @@ void VM::setMem8(int memtype, uint32 offset, uint8 val) {
     case REF_EBX:
         EBX[offset] = val;
         break;
-    
+
     case REF_EDI:
         setMemBlockU8(offset, val);
         break;
@@ -482,13 +482,13 @@ void VM::writeMemory(uint32 address, const byte* data, uint32 dataSize) {
     uint32 remain = dataSize;
 
     printf("Write memory at %x sz %x\n", address, dataSize);
-    
+
     for (uint32 addr = blockAddr; addr < address + dataSize; addr += 0x100) {
         MemoryBlock &block = _memMap.getOrCreateVal(addr);
 
-        block.address = addr; // update it 
+        block.address = addr; // update it
 
-        uint32 copyCnt = (addr + 0x100) - (address + pos); 
+        uint32 copyCnt = (addr + 0x100) - (address + pos);
         if (copyCnt > remain)
             copyCnt = remain;
 
@@ -504,27 +504,27 @@ VM::MemoryBlock *VM::findMemoryBlock(uint32 address) {
     Common::HashMap<uint32, MemoryBlock>::iterator it = _memMap.find(address & (~0xff));
     if (it == _memMap.end())
         return nullptr;
-    
+
     return &it->_value;
 }
 
 uint8 VM::getMemBlockU8(uint32 address) {
     if (!_currentReadMemBlock || address < _currentReadMemBlock->address || address >= (_currentReadMemBlock->address + 0x100))
         _currentReadMemBlock = findMemoryBlock(address);
-    
+
     if (!_currentReadMemBlock)
         return 0; // ERROR!
-    
+
     return _currentReadMemBlock->data[ address - _currentReadMemBlock->address ];
 }
 
 uint32 VM::getMemBlockU32(uint32 address) {
     if (!_currentReadMemBlock || address < _currentReadMemBlock->address || address >= (_currentReadMemBlock->address + 0x100))
         _currentReadMemBlock = findMemoryBlock(address);
-    
+
     if (!_currentReadMemBlock)
         return 0; // ERROR!
-    
+
     uint32 pos = address - _currentReadMemBlock->address;
     if ((int32)0x100 - (int32)pos >= 4)
         return getU32(_currentReadMemBlock->data + pos); //easy
@@ -598,7 +598,7 @@ Common::Array<byte> VM::readMemBlocks(uint32 address, uint32 count) {
     MemoryBlock *blk = _currentReadMemBlock;
     if (!blk || address < blk->address || address >= (blk->address + 0x100))
         blk = findMemoryBlock(address);
-    
+
     uint32 pos = 0;
     uint32 blockAddr = address & (~0xff);
     uint32 remain = count;
@@ -612,7 +612,7 @@ Common::Array<byte> VM::readMemBlocks(uint32 address, uint32 count) {
         } else {
             memcpy(data.data() + pos, blk->data + (address + pos - blk->address), dataCpyCount);
         }
-        
+
         pos += dataCpyCount;
         remain -= dataCpyCount;
         blockAddr += 0x100;
@@ -627,10 +627,10 @@ Common::String VM::readMemString(uint32 address, uint32 maxLen) {
     MemoryBlock *blk = _currentReadMemBlock;
     if (!blk || address < blk->address || address >= (blk->address + 0x100))
         blk = findMemoryBlock(address);
-    
+
     if (!blk)
         return s;
-    
+
     uint32 pos = address - blk->address;
     char c = blk->data[pos];
 
@@ -645,7 +645,7 @@ Common::String VM::readMemString(uint32 address, uint32 maxLen) {
 
         if (!blk)
             break;
-        
+
         c = blk->data[pos];
     }
     return s;
@@ -669,7 +669,7 @@ Common::String VM::getString(int memtype, uint32 offset, uint32 maxLen) {
                 s.erase(maxLen);
             return s;
         }
-        
+
         case REF_EDI:
             return readMemString(offset, maxLen);
     }
@@ -689,19 +689,19 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_EXIT:
         tmp = Common::String("EXIT");
         break;
-    
+
     case OP_CMP_EQ:
         tmp = Common::String("EAX =  EDX == EAX (CMP_EQ)");
         break;
-    
+
     case OP_CMP_NE:
         tmp = Common::String("EAX =  EDX != EAX (CMP_NE)");
         break;
-    
+
     case OP_CMP_LE:
         tmp = Common::String("EAX =  EDX < EAX (CMP_LE) //signed");
         break;
-    
+
     case OP_CMP_LEQ:
         tmp = Common::String("EAX =  EDX <= EAX (CMP_LEQ) //signed");
         break;
@@ -709,11 +709,11 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_CMP_GR:
         tmp = Common::String("EAX =  EDX > EAX (CMP_GR) //signed");
         break;
-    
+
     case OP_CMP_GREQ:
         tmp = Common::String("EAX =  EDX >= EAX (CMP_GREQ) //signed");
         break;
-    
+
     case OP_CMP_NAE:
         tmp = Common::String("EAX =  EDX < EAX (CMP_NAE) //unsigned");
         break;
@@ -721,7 +721,7 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_CMP_NA:
         tmp = Common::String("EAX =  EDX <= EAX (CMP_NA) //unsigned");
         break;
-    
+
     case OP_CMP_A:
         tmp = Common::String("EAX =  EDX > EAX (CMP_A) //unsigned");
         break;
@@ -729,55 +729,55 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_CMP_AE:
         tmp = Common::String("EAX =  EDX >= EAX (CMP_AE) //unsigned");
         break;
-    
+
     case OP_BRANCH:
         tmp = Common::String::format("BR %x", address + (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_JMP:
         tmp = Common::String::format("JMP %x", address + (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_SP_ADD:
         tmp = Common::String::format("ADD SP, %x", (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EDI_ECX_AL:
         tmp = Common::String::format("MOV byte ptr[EDI + %x], AL", (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EBX_ECX_AL:
         tmp = Common::String::format("MOV byte ptr[EBX + %x], AL", (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EDI_ECX_EAX:
         tmp = Common::String::format("MOV dword ptr[EDI + %x], EAX", (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EBX_ECX_EAX:
         tmp = Common::String::format("MOV dword ptr[EBX + %x], EAX", (int32)getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_RET:
         tmp = Common::String("RET");
         break;
-    
+
     case OP_RETX:
         tmp = Common::String::format("RET%x", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EDX_EAX:
         tmp = Common::String("MOV EDX, EAX");
         break;
-    
+
     case OP_ADD_EAX_EDX:
         tmp = Common::String("ADD EAX, EDX");
         break;
@@ -785,36 +785,36 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_MUL:
         tmp = Common::String("MUL EDX");
         break;
-    
+
     case OP_OR:
         tmp = Common::String("OR EDX");
         break;
-    
+
     case OP_XOR:
         tmp = Common::String("XOR EDX");
         break;
-    
+
     case OP_AND:
         tmp = Common::String("AND EDX");
         break;
-    
+
     case OP_NEG:
         tmp = Common::String("NEG EAX");
         break;
-    
+
     case OP_SAR:
         tmp = Common::String("SAR EAX, EDX,EAX // edx>>eax");
         break;
-    
+
     case OP_SHL:
         tmp = Common::String("SHL EAX, EDX,EAX // edx<<eax");
         break;
-    
+
     case OP_LOAD:
         tmp = Common::String::format("MOV EAX, %x", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_INC:
         tmp = Common::String("INC EAX");
         break;
@@ -822,7 +822,7 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_DEC:
         tmp = Common::String("DEC EAX");
         break;
-    
+
     case OP_XCHG:
         tmp = Common::String("XCHG EAX,EDX");
         break;
@@ -830,7 +830,7 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_PUSH_EAX:
         tmp = Common::String("PUSH EAX");
         break;
-    
+
     case OP_POP_EDX:
         tmp = Common::String("POP EDX");
         break;
@@ -840,17 +840,17 @@ Common::String VM::decodeOp(uint32 address, int *size) {
         tmp = Common::String::format("LEA EAX, [EDI + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_LOAD_OFFSET_EBX:
         tmp = Common::String::format("LEA EAX, [EBX + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_LOAD_OFFSET_ESP:
         tmp = Common::String::format("LEA EAX, [SP + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_PTR_EDX_AL:
         tmp = Common::String("MOV byte ptr [EDX], AL");
         break;
@@ -862,11 +862,11 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_SHL_2:
         tmp = Common::String("SHL EAX, 2");
         break;
-    
+
     case OP_ADD_4:
         tmp = Common::String("ADD EAX, 4");
         break;
-    
+
     case OP_SUB_4:
         tmp = Common::String("SUB EAX, 4");
         break;
@@ -878,26 +878,26 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_NEG_ADD:
         tmp = Common::String("EAX = EDX - EAX (OP_NEG_ADD)");
         break;
-    
+
     case OP_DIV:
         tmp = Common::String("EAX = EDX / EAX  |   EDX = EDX %% EAX (DIV)");
         break;
-    
+
     case OP_MOV_EAX_BPTR_EDI:
         tmp = Common::String::format("MOV EAX, byte ptr [EDI + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EAX_BPTR_EBX:
         tmp = Common::String::format("MOV EAX, byte ptr [EBX + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EAX_DPTR_EDI:
         tmp = Common::String::format("MOV EAX, dword ptr [EDI + %x]", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_MOV_EAX_DPTR_EBX:
         tmp = Common::String::format("MOV EAX, dword ptr [EBX + %x]", getMemBlockU32(address));
         sz += 4;
@@ -906,11 +906,11 @@ Common::String VM::decodeOp(uint32 address, int *size) {
     case OP_MOV_EAX_BPTR_EAX:
         tmp = Common::String("MOV EAX, byte ptr [EAX]");
         break;
-    
+
     case OP_MOV_EAX_DPTR_EAX:
         tmp = Common::String("MOV EAX, dword ptr [EAX]");
         break;
-    
+
     case OP_PUSH_ESI_ADD_EDI:
         tmp = Common::String::format("CALL %x", getMemBlockU32(address));
         sz += 4;
@@ -920,7 +920,7 @@ Common::String VM::decodeOp(uint32 address, int *size) {
         tmp = Common::String::format("CALL FUNC %d", getMemBlockU32(address));
         sz += 4;
         break;
-    
+
     case OP_PUSH_ESI_SET_EDX_EDI:
         tmp = Common::String("CALL EDX");
         break;
@@ -937,7 +937,7 @@ Common::String VM::disassembly(uint32 address) {
     Common::String tmp;
 
     uint32 addr = address;
-    
+
     while (true) {
         tmp += Common::String::format("%08x: ", addr);
 

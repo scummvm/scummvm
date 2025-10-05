@@ -40,7 +40,7 @@ private:
     Common::Array<byte> _pMidiData;
 
     Common::Mutex _mutex;
-    
+
     uint32 _dataPos = 0;
     uint32 _dataStart = 0;
     int32 _midiDelayTicks = 0;
@@ -48,7 +48,7 @@ private:
     uint32 _midiTimeStamp = 0;
     uint32 _midiOp = 0; /* save midi event type between update cycles */
     bool _midiMute = false;
-	
+
 public:
 
 	MidiMusic();

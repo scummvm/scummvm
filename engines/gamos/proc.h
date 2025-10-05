@@ -47,14 +47,14 @@ public:
 
     uint16 _rawKeyCode = 0;
     uint16 _ascii = 0;
-    
+
 
     Common::Point _mouseReportedPos;
     Common::Point _mouseActPos;
 
     uint8 _gd2flags = 0; /* 0x4 */
     uint16 _keyCodes[12]; /* 0x40 */
-    
+
 };
 
 

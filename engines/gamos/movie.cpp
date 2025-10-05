@@ -70,7 +70,7 @@ bool MoviePlayer::deinit() {
 bool MoviePlayer::playMovie(Common::File *file, uint32 offset, GamosEngine *gamos) {
     if (!init(file, offset, gamos))
         return error();
-    
+
     while (true) {
         int status = 0;
 
@@ -145,25 +145,25 @@ int MoviePlayer::processControlChunk() {
             return 0;
         }
         return 3;
-    
+
     case 1:
         _loopCount = 1;
         _loopPoint = 0;
 
         if (_hdrBytes[2] != 0)
             _loopCount = _hdrValue1;
-        
+
         if (_hdrBytes[3] != 0)
             _frameTime = _hdrValue2;
         break;
-    
+
     case 2:
         if (_hdrBytes[2] != 0) {
             _packedBufferSize = _hdrValue1;
             _packedBuffer.resize(_hdrValue1);
         }
         break;
-    
+
     case 3:
         if (_hdrBytes[2] != 0) {
             _bufferSize = _hdrValue1;
@@ -174,7 +174,7 @@ int MoviePlayer::processControlChunk() {
             _paletteBuffer.resize(_hdrValue2);
         }
         break;
-    
+
     case 4:
         if (_hdrBytes[2] != 0) {
             _soundBufferSize = _hdrValue1;
@@ -185,7 +185,7 @@ int MoviePlayer::processControlChunk() {
             _midiBuffer.resize(_hdrValue2);
         }
         break;
-    
+
     case 5:
         if (_hdrBytes[2] != 0) {
             _pos.x = _hdrValue1;
@@ -194,7 +194,7 @@ int MoviePlayer::processControlChunk() {
             _pos.y = _hdrValue2; /* BUG? Originally here same _pos.x */
         }
         break;
-    
+
     case 6:
         if (_hdrBytes[2] != 0) {
             _frameSize.x = _hdrValue1;
@@ -230,7 +230,7 @@ int MoviePlayer::processImageChunk() {
         if (_loopCount != 0)
             _file->seek(_loopPoint, 0);
     }
-    
+
     if (_hdrValue1 != 0) {
         byte *pdata = _buffer.data();
         Common::Point xy;
@@ -277,12 +277,12 @@ int MoviePlayer::processImageChunk() {
             }
 
             printf("movie blit%d %d %d %d %d\n", val & 3, xy.x, xy.y, wh.x, wh.y);
-            static byte *(*blitters[4])(Common::Rect, byte *, Graphics::Surface *) = 
-               {&blit0, 
-                &blit1, 
-                &blit2, 
+            static byte *(*blitters[4])(Common::Rect, byte *, Graphics::Surface *) =
+               {&blit0,
+                &blit1,
+                &blit2,
                 &blit3};
-            
+
             pdata = blitters[val & 3](Common::Rect(xy, xy + wh), pdata, _screen->surfacePtr());
 
             if (_doUpdateScreen) {
@@ -292,7 +292,7 @@ int MoviePlayer::processImageChunk() {
             if (val & 0x80)
                 break;
         }
-        
+
     }
 
     if (_doUpdateScreen) {
@@ -331,10 +331,10 @@ int MoviePlayer::processImageChunk() {
                 act = processMessages(false, &tstamp);
                 if (act == ACT2_82)
                     return 2;
-                
+
                 if (act == ACT2_83)
                     return 3;
-                
+
                 if ((tstamp - _firstFrameTime) / _currentFrame >= _frameTime)
                     break;
 
@@ -348,7 +348,7 @@ int MoviePlayer::processImageChunk() {
 
     _screen->update();
     _currentFrame++;
-    
+
     return 1;
 }
 
@@ -356,10 +356,10 @@ int MoviePlayer::processPaletteChunk() {
     printf("%x movieProcessPaletteChunk\n", _file->pos());
     if (!readCompressed(_paletteBufferSize, &_paletteBuffer))
         return 0;
-    
+
     _screen->setPalette(_paletteBuffer.data());
     //g_system->getPaletteManager()->setPalette(PalColors.data(), 0, 256);
-    
+
     return 1;
 }
 
@@ -440,7 +440,7 @@ byte* MoviePlayer::blit1(Common::Rect rect, byte *in, Graphics::Surface *surface
     int16 y = rect.top;
     int16 x = rect.left;
     while (y < rect.bottom) {
-        
+
         byte b = *in;
         in++;
         if (b & 0x80) {
@@ -495,7 +495,7 @@ byte* MoviePlayer::blit2(Common::Rect rect, byte *in, Graphics::Surface *surface
     int16 y = rect.top;
     int16 x = rect.left;
     while (y < rect.bottom) {
-        
+
         byte b = *in;
         in++;
         if (b & 0x80) {
@@ -546,7 +546,7 @@ byte* MoviePlayer::blit3(Common::Rect rect, byte *in, Graphics::Surface *surface
     int16 y = rect.top;
     int16 x = rect.left;
     while (y < rect.bottom) {
-        
+
         byte b = *in;
         in++;
         if (b & 0x80) {

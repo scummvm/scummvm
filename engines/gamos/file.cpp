@@ -45,7 +45,7 @@ bool Archive::open(const Common::Path &name) {
 
     if (magic != 0x3d53563d) // =VS=
         return false;
-    
+
     seek(-_dirOffset, SEEK_END);
 
     _dirCount = readUint32LE();
@@ -69,12 +69,12 @@ bool Archive::seekDir(uint id) {
     int16 idx = findDirByID(id);
     if (idx < 0)
         return false;
-    
+
     const ArchiveDir &dir = _directories[idx];
 
     if ( !seek(_dataOffset + dir.offset, SEEK_SET) )
         return false;
-    
+
     return true;
 }
 
@@ -82,23 +82,23 @@ int32 Archive::readPackedInt() {
     byte b = readByte();
     if ( !(b & 0x80) )
         return b;
-    
+
     byte num = 0;
     byte skipsz = 0;
     if ( !(b & 0x20) )
         num = b & 0x1f;
     else
         num = 1 + ((b >> 2) & 3);
-    
+
     if (num > 4) {
         skipsz = num - 4;
         num = 4;
     }
-    
+
     int32 val = 0;
     for(int i = 0; i < num; ++i)
         val |= readByte() << (i << 3);
-    
+
     if (skipsz) {
         skip(skipsz);
         /* warning !!!! */
@@ -132,7 +132,7 @@ bool Archive::readCompressedData(RawData *out) {
     const byte t = readByte();
     if ((t & 0x80) == 0)
         return false;
-    
+
     _lastReadDecompressedSize = 0;
     _lastReadSize = 0;
 
@@ -146,7 +146,7 @@ bool Archive::readCompressedData(RawData *out) {
         /* big data size */
         for (uint i = 0; i < szsize; ++i)
             _lastReadSize |= readByte() << (i << 3);
-        
+
         /* is compressed */
         if (t & 0xC) {
             for (uint i = 0; i < szsize; ++i)
@@ -156,7 +156,7 @@ bool Archive::readCompressedData(RawData *out) {
 
     if (!_lastReadSize)
         return false;
-    
+
     _lastReadDataOffset = pos();
     out->resize(_lastReadSize);
     read(out->data(), _lastReadSize);

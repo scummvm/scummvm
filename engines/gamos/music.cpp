@@ -117,9 +117,9 @@ void MidiMusic::update() {
             bool doSend = true;
 
             uint8 cmd = _midiOp & 0xf0;
-            if (cmd != MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE && 
+            if (cmd != MidiDriver_BASE::MIDI_COMMAND_PROGRAM_CHANGE &&
                 cmd != MidiDriver_BASE::MIDI_COMMAND_CHANNEL_AFTERTOUCH) {
-                if (cmd == MidiDriver_BASE::MIDI_COMMAND_NOTE_OFF || 
+                if (cmd == MidiDriver_BASE::MIDI_COMMAND_NOTE_OFF ||
                     cmd == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON) {
                     if (_midiMute)
                         doSend = false;
@@ -150,7 +150,7 @@ void MidiMusic::update() {
 int16 MidiMusic::midi2low() {
     if (_dataPos >= _pMidiData.size())
         return -1;
-    
+
     int16 dat = _pMidiData[_dataPos];
     _dataPos++;
 
@@ -177,7 +177,7 @@ void MidiMusic::_timerProc(void *data) {
         _this->_midiDelayCount--;
         if (_this->_midiDelayCount != 0)
             return;
-        
+
         _this->_midiTimeStamp = g_system->getMillis();
     }
 
