@@ -2698,6 +2698,14 @@ set_flag_if_supported -Wno-pragma-pack
 
 set_flag_if_supported -Wno-address-of-packed-member
 
+# We still have (limited) support for MSVC 2015, but it's easy for it to
+# hit fatal C1004 errors, if some files are missing a final newline. Since
+# it's quite easy for this to happen, ask more modern compilers to help
+# our old friend.
+if test "$_release_build" != yes && test "$_werror_build" != no; then
+	set_flag_if_supported -Werror=newline-eof
+fi
+
 if test -n "$STRINGS"; then
 	_strings=$STRINGS
 else
