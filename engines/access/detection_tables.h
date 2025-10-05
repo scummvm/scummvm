@@ -101,6 +101,21 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Martian Memorandum from "Lasersoft Top Tracks Vol 1" CD
+		{
+			"martian",
+			nullptr,
+			AD_ENTRY1s("r01.ap", "1052fc0e5bd979ae2e18b03ed58fda8e", 39349),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kGameMartianMemorandum,
+		0
+	},
+
+	{
 		// Martian Memorandum
 		{
 			"martian",
