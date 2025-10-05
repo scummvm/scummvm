@@ -57,7 +57,11 @@ public:
 	 */
 	void readFromStream(Common::ReadStream *stream);
 
+#if defined(_MSC_VER) && _MSC_VER < 1910 // HACK: C2248 bug in MSVC 2015
+public:
+#else
 protected:
+#endif
 	MatrixType() : MatrixBase<dim, 1>() { }
 	MatrixType(const float *data) : MatrixBase<dim, 1>(data) { }
 	MatrixType(const MatrixBase<dim, 1> &m) : MatrixBase<dim, 1>(m) { }
