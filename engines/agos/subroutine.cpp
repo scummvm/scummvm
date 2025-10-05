@@ -222,7 +222,7 @@ void AGOSEngine::alignTableMem() {
 	size_t delta;
 
 	if (!IS_ALIGNED(uptrVal, sizeof(byte *))) {
-		delta = -uptrVal & (sizeof(byte *) - 1);
+		delta = (~uptrVal + 1) & (sizeof(byte *) - 1);
 		_tablesHeapPtr += delta;
 		_tablesHeapCurPos += delta;
 	}
