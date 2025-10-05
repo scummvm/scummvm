@@ -218,7 +218,6 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_tempMusic = nullptr;
 	_isLooping = false;
 	_driver = nullptr;
-	_byte1F781 = false;
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);

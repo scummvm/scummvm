@@ -94,7 +94,6 @@ private:
 
 public:
 	Resource *_music;
-	bool _byte1F781; // Maybe repeat flag?
 
 public:
 	MusicManager(AccessEngine *vm);
