@@ -1309,7 +1309,6 @@ bool MacText::processEvent(Common::Event &event) {
 			default:
 				break;
 			}
-			return false;
 		}
 
 		switch (event.kbd.keycode) {
