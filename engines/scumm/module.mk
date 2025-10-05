@@ -216,7 +216,7 @@ MODULE_OBJS += \
 	dialog-sessionselector.o \
 	he/net/net_main.o
 
-ifdef USE_LIBCURL
+ifdef USE_BASIC_NET
 MODULE_OBJS += \
 	he/net/net_lobby.o
 endif
