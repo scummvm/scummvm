@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#include <gamos/gamos.h>
+#include "gamos/gamos.h"
 
 namespace Gamos {
 

@@ -21,8 +21,8 @@
 #ifndef GAMOS_VM_H
 #define GAMOS_VM_H
 
-#include <common/array.h>
-#include <common/hashmap.h>
+#include "common/array.h"
+#include "common/hashmap.h"
 
 namespace Gamos {
 

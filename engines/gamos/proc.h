@@ -23,7 +23,7 @@
 #ifndef GAMOS_PROC_H
 #define GAMOS_PROC_H
 
-#include <common/events.h>
+#include "common/events.h"
 
 namespace Gamos {
 
