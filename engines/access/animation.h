@@ -97,11 +97,16 @@ private:
 	void anim4();
 	void animNone();
 	void anim7();
+	void anim8();
+	void anim9();
+	void anim10();
+	void anim11();
+	void anim12();
 
 	const AnimationFrame *calcFrame();
 	const AnimationFrame *calcFrame1();
 	void setFrame(const AnimationFrame *frame);
-	void setFrame1(const AnimationFrame *frame);
+	void setFrame1(const AnimationFrame *frame, int16 xoff = 0, int16 yoff = 0);
 public:
 	int _type;
 	int _scaling;

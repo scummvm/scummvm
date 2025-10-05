@@ -56,7 +56,7 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 	// WORKAROUND: In Amazon floppy English, there's an animation associated with
 	// the librarian that isn't used, and has junk data. Luckily, it's animation
 	// type is also invalid, so if the _type isn't in range, exit immediately
-	if (_type > 7) {
+	if (_type > 7 && _vm->getGameID() == kGameAmazon) {
 		_scaling = -1;
 		_frameNumber = -1;
 		_initialTicks = _countdownTicks = 0;
@@ -96,9 +96,11 @@ Animation::~Animation() {
 typedef void(Animation::*AnimationMethodPtr)();
 
 void Animation::animate() {
-	static const AnimationMethodPtr METHODS[8] = {
+	static const AnimationMethodPtr METHODS[13] = {
 	   &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
-	   &Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7
+	   &Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7,
+	   &Animation::anim8, &Animation::anim9, &Animation::anim10, &Animation::anim11,
+	   &Animation::anim12,
 	};
 
 	(this->*METHODS[_type])();
@@ -209,6 +211,30 @@ void Animation::anim7() {
 	setFrame(calcFrame1());
 }
 
+void Animation::anim8() {
+	debug("TODO: Animation::anim8");
+}
+
+void Animation::anim9() {
+	debug("TODO: Animation::anim9");
+}
+
+void Animation::anim10() {
+	debug("TODO: Animation::anim10");
+}
+
+void Animation::anim11() {
+     // Actor idle
+	const AnimationFrame *frame = calcFrame();
+	setFrame(frame);
+	_countdownTicks += frame->_frameDelay;
+	setFrame1(frame, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
+ }
+
+void Animation::anim12() {
+}
+
+
 const AnimationFrame *Animation::calcFrame() {
 	return (_frameNumber < (int)_frames.size()) ? _frames[_frameNumber] : nullptr;
 }
@@ -223,9 +249,9 @@ void Animation::setFrame(const AnimationFrame *frame) {
 	setFrame1(frame);
 }
 
-void Animation::setFrame1(const AnimationFrame *frame) {
-	_vm->_animation->_base.x = frame->_baseX;
-	_vm->_animation->_base.y = frame->_baseY;
+void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
+	_vm->_animation->_base.x = frame->_baseX + xoff;
+	_vm->_animation->_base.y = frame->_baseY + yoff;
 
 	// Loop to add image draw requests for the parts of the frame
 	for (const AnimationFramePart &part: frame->_parts) {

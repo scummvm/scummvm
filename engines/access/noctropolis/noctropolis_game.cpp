@@ -65,7 +65,7 @@ void NoctropolisEngine::setupGame() {
 
 void NoctropolisEngine::initVariables() {
 	// Set player room and position
-	_player->_roomNumber = 2;
+	_player->_roomNumber = 3;
 
 	_invScript->setScript(_files->loadRawFile("INVTEXT.AP"));
 
