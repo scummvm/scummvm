@@ -55,6 +55,7 @@ private:
 	 */
 	void printBubble_v1(const Common::String &msg);
 	void printBubble_v2(const Common::String &msg);
+	void printBubble_v3(const Common::String &msg);
 
 public:
 	BoxType _type;
@@ -99,7 +100,8 @@ public:
 	 */
 	void drawBubble(int index);
 
-	void doBox(int item, int box);
+	void doBox_v2(int item, int box);
+	void doBox_v3(int item, int box);
 
 	int doBox_v1(int item, int box, int &btnSelected);
 	void getList(const char *const data[], const byte *flags);

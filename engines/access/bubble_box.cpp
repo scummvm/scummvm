@@ -162,10 +162,19 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble(const Common::String &msg) {
-	if (_vm->getGameID() == kGameMartianMemorandum)
+	switch (_vm->getGameID()) {
+	case kGameMartianMemorandum:
 		printBubble_v1(msg);
-	else
+		break;
+	case kGameAmazon:
 		printBubble_v2(msg);
+		break;
+	case kGameNoctropolis:
+		printBubble_v3(msg);
+		break;
+	default:
+		error("BubbleBox::printBubble: Unsupported game");
+	}
 }
 
 void BubbleBox::printBubble_v1(const Common::String &msg) {
@@ -226,16 +235,60 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 	} while (!lastLine);
 }
 
-void BubbleBox::drawBubble(int index) {
-	_bounds = _bubbles[index];
-	if (_vm->getGameID() == kGameMartianMemorandum) {
-		int btnSelected = 0;
-		doBox_v1(0, 0, btnSelected);
-	} else
-		doBox(0, 0);
+void BubbleBox::printBubble_v3(const Common::String &msg) {
+	Font::_fontColors[1] = 255;
+
+	drawBubble(_bubbles.size() - 1);
+
+	Font::_fontColors[1] = 247;
+
+	// Loop through drawing the lines
+	Common::String s = msg;
+	Common::String line;
+	int width = 0;
+	bool lastLine;
+	do {
+		// Get next line
+		const Font *font = _vm->_fonts.getFont(4);
+		_vm->_fonts._font1 = font;
+		lastLine = font->getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
+		// Draw the text
+		printString(line);
+
+		// Move print position
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+	} while (!lastLine);
+
 }
 
-void BubbleBox::doBox(int item, int box) {
+
+void BubbleBox::drawBubble(int index) {
+	_bounds = _bubbles[index];
+	int btnSelected = 0;
+
+	switch (_vm->getGameID()) {
+	case kGameMartianMemorandum:
+		doBox_v1(0, 0, btnSelected);
+		break;
+	case kGameAmazon:
+		doBox_v2(0, 0);
+		break;
+	case kGameNoctropolis:
+		doBox_v3(0, 0);
+		break;
+	default:
+		error("BubbleBox::drawBubble: Unsupported game");
+	}
+}
+
+
+void BubbleBox::doBox_v3(int item, int box) {
+	const Font *font = _vm->_fonts.getFont(4);
+	int textWidth = font->stringWidth(_bubbleDisplStr);
+}
+
+void BubbleBox::doBox_v2(int item, int box) {
 	FontManager &fonts = _vm->_fonts;
 	Screen &screen = *_vm->_screen;
 

@@ -166,6 +166,7 @@ protected:
 	void cmdStilScale();
 	void cmdLockInterface();
 	void cmdUnlockInterface();
+	void cmdCharSpeak_v3();
 
 public:
 	int _sequence;
