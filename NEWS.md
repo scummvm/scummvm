@@ -53,6 +53,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Reversion - The Return
      Rhiannon: Curse of The Four Branches
      Rosemary
+     Shaban
      Silent Footsteps
      Strange Change
      TeTRIks

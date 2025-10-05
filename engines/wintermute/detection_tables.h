@@ -4334,12 +4334,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Shaban (Hayoola) (Persian)
 	WME_WINENTRY("shaban", "",
 		WME_ENTRY2s("data.dcp", "7d945a8219af9bf306980f526f2a885f", 589685802,
-					"persian.dcp", "395b6b13665f1afabaa51a4136c069e4", 12555497), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_2),
+					"persian.dcp", "395b6b13665f1afabaa51a4136c069e4", 12555497), Common::FA_IRN, ADGF_NO_FLAGS, WME_1_9_2),
 
 	// Shaban (Hayoola) (English)
 	WME_WINENTRY("shaban", "",
 		WME_ENTRY2s("data.dcp", "7d945a8219af9bf306980f526f2a885f", 589685802,
-					"data.dcp", "7d945a8219af9bf306980f526f2a885f", 589685802), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+					"data.dcp", "7d945a8219af9bf306980f526f2a885f", 589685802), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_2),
 
 	// Shaban (English)
 	WME_WINENTRY("shaban", "",
@@ -4349,7 +4349,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Shaban (Russian)
 	WME_WINENTRY("shaban", "",
 		WME_ENTRY2s("data.dcp", "e5636aa0244ed749eeaa5f820330e6e3", 755730897,
-					"localization.txt", "519f041b1ebf0c72c455d9747f9b12d2", 7412), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+					"localization.txt", "519f041b1ebf0c72c455d9747f9b12d2", 7412), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_9_2),
 
 	// Shaban (English) (Demo)
 	WME_WINENTRY("shaban", "Demo",
@@ -4359,37 +4359,37 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Shaban (German) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "2d20495860b7abd1c9190d425021ca5c", 6329), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "2d20495860b7abd1c9190d425021ca5c", 6329), Common::DE_DEU, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (Spanish) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "bb5ece9c042b031838549a2de215dc9c", 6233), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "bb5ece9c042b031838549a2de215dc9c", 6233), Common::ES_ESP, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (French) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "8f43b60d735ceee0fdb49cd86291596d", 6274), Common::FR_FRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "8f43b60d735ceee0fdb49cd86291596d", 6274), Common::FR_FRA, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (Italian) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "ffc7629568700d030602c9b065e27ce4", 5841), Common::IT_ITA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "ffc7629568700d030602c9b065e27ce4", 5841), Common::IT_ITA, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (Japanese) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "cc1e9eb0ed1e78ff84439a4fdfa9cbf5", 6816), Common::JA_JPN, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "cc1e9eb0ed1e78ff84439a4fdfa9cbf5", 6816), Common::JA_JPN, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (Dutch) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "ce2330fad0157b4ad247d72e812cb8a0", 5806), Common::NL_NLD, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "ce2330fad0157b4ad247d72e812cb8a0", 5806), Common::NL_NLD, ADGF_DEMO, WME_1_9_2),
 
 	// Shaban (Portuguese) (Demo)
 	WME_WINENTRY("shaban", "Demo",
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
-					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
+					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_DEMO, WME_1_9_2),
 
 	// Stroke of Fate: Operation Valkyrie (English)
 	WME_WINENTRY("sof1", "",
