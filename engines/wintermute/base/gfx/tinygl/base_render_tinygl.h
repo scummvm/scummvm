@@ -165,7 +165,7 @@ private:
 	SimpleShadowVertex _simpleShadow[4];
 	Common::Array<DXVector4> _lightPositions;
 	Common::Array<DXVector3> _lightDirections;
-	TGLuint _postfilterTexture;
+	//TGLuint _postfilterTexture;
 	bool _shadowVolumesSupported;
 };
 
