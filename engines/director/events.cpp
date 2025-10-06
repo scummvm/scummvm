@@ -194,7 +194,13 @@ bool Movie::processEvent(Common::Event &event) {
 
 		// TODO: In the original, these events are generated only
 		// along with the kEventIdle event which depends on the idleHandlerPeriod property
-		if (g_director->getVersion() >= 600) {
+		if (g_director->getVersion() >= 500) {
+
+			// In D5, these events are only generated if a mouse button is pressed
+			if (g_director->getVersion() < 600)
+				if (g_system->getEventManager()->getButtonState() == 0)
+					return true;
+
 			if (spriteId > 0) {
 				if (spriteId != _lastEnteredChannelId) {
 					if (_lastEnteredChannelId) {
@@ -256,6 +262,12 @@ bool Movie::processEvent(Common::Event &event) {
 
 			debugC(3, kDebugEvents, "Movie::processEvent(): Button Down @(%d, %d), movie '%s'", pos.x, pos.y, _macName.c_str());
 			queueInputEvent(ev, 0, pos);
+
+			// D5 has special behavior here
+			if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
+				if (_lastClickedSpriteId)
+					queueInputEvent(kEventMouseEnter, _lastClickedSpriteId, pos);
+			}
 		}
 
 		return true;
@@ -284,6 +296,13 @@ bool Movie::processEvent(Common::Event &event) {
 			}
 
 			queueInputEvent(ev, 0, pos);
+
+			// D5 has special behavior here
+			if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
+				if (spriteId)
+					queueInputEvent(kEventMouseLeave, spriteId, pos);
+			}
+
 			sc->renderCursor(pos);
 		}
 		return true;
