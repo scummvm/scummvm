@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_setbuf
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
@@ -2458,6 +2459,54 @@ bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
 	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
 		return true;
 	return false;
+}
+
+void GamosEngine::dumpActions() {
+	Common::String t = Common::String::format("actions_%d.txt", _currentModuleID);
+	FILE *f = fopen(t.c_str(), "wb");
+	int i = 0;
+	for (SomeAction &act : _someActsArr) {
+		fprintf(f, "Act %d : %x\n", i, act.unk1);
+		if (act.script1 != -1) {
+			Common::String t = _vm.disassembly(act.script1);
+			fprintf(f, "Script1 : \n");
+			fwrite(t.c_str(), t.size(), 1, f);
+			fprintf(f, "\n");
+		}
+
+		if (act.script2 != -1) {
+			Common::String t = _vm.disassembly(act.script2);
+			fprintf(f, "Script2 : \n");
+			fwrite(t.c_str(), t.size(), 1, f);
+			fprintf(f, "\n");
+		}
+
+		int j = 0;
+		for (ScriptS &sc : act.scriptS) {
+			fprintf(f, "subscript %d : \n", j);
+
+			if (sc.codes1 != -1) {
+				Common::String t = _vm.disassembly(sc.codes1);
+				fprintf(f, "condition : \n");
+				fwrite(t.c_str(), t.size(), 1, f);
+				fprintf(f, "\n");
+			}
+
+			if (sc.codes2 != -1) {
+				Common::String t = _vm.disassembly(sc.codes2);
+				fprintf(f, "action : \n");
+				fwrite(t.c_str(), t.size(), 1, f);
+				fprintf(f, "\n");
+			}
+
+			j++;
+		}
+
+
+		fprintf(f, "\n\n#############################################\n\n");
+
+		i++;
+	}
 }
 
 

@@ -971,4 +971,9 @@ Common::String VM::opLog(const Common::Array<OpLog> &log) {
     return tmp;
 }
 
+void VM::printDisassembly(uint32 address) {
+    Common::String tmp = disassembly(address);
+    warning(tmp.c_str());
+}
+
 }

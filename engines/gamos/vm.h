@@ -160,6 +160,8 @@ public:
 
     Common::String opLog(const Common::Array<OpLog> &log);
 
+    void printDisassembly(uint32 address);
+
 public:
     uint32 ESI = 0;
     byte *EBX = nullptr;
