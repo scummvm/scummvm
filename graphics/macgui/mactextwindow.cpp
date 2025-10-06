@@ -314,14 +314,14 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		return MacWindow::processEvent(event);	// Pass it to upstream
 
 	if (event.type == Common::EVENT_WHEELUP) {
-		setHighlight(kBorderScrollUp);
+		//setHighlight(kBorderScrollUp);
 		scroll(-2);
 		calcScrollBar();
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
-		setHighlight(kBorderScrollDown);
+		//setHighlight(kBorderScrollDown);
 		scroll(2);
 		calcScrollBar();
 		return true;
