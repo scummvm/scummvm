@@ -120,7 +120,7 @@ bool ShadowVolumeTinyGL::renderToScene() {
 
 	tglBindTexture(TGL_TEXTURE_2D, 0);
 
-	BaseRenderTinyGL *renderer = dynamic_cast<BaseRenderTinyGL *>(_game->_renderer3D);
+	BaseRenderTinyGL *renderer = (BaseRenderTinyGL *)_game->_renderer3D;
 	renderer->setProjection2D();
 
 	// FIXME: CW->CCW Why it differ from OpenGL?
