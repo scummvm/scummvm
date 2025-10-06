@@ -157,7 +157,7 @@ private:
 	void introduction();
 	void firstIntroduction();
 	void readAlphaGraph(Common::String &data, int length, int x, int y, byte barColor);
-	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor, char startChar = '\0');
+	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor, Common::Event startEvent);
 	void displayObjectDescription(const Common::String &text);
 	void copyProtection();
 	void initialLogo();

@@ -4823,6 +4823,15 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 	}
 }
 
+bool getEvent(Common::Event &e, Common::Event &firstEvent) {
+	if (firstEvent.type != Common::EVENT_INVALID) {
+		e = firstEvent;
+		firstEvent.type = Common::EVENT_INVALID;
+		return true;
+	}
+	return g_system->getEventManager()->pollEvent(e);
+}
+
 void TotEngine::readAlphaGraphSmall(
 	Common::String &output,
 	int length,
@@ -4830,26 +4839,17 @@ void TotEngine::readAlphaGraphSmall(
 	int posy,
 	byte barColor,
 	byte textColor,
-	char startChar) {
+	Common::Event event) {
 	int pun = 1;
 	bool removeCaret = false;
-	if (startChar != 0) {
-		output.append(1, startChar);
 
-		pun += 1;
-		bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
-		euroText(posx, posy, output, textColor);
-		euroText((posx + (output.size()) * 6), posy, "-", textColor);
-		removeCaret = true;
-	}
-	else {
-		bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
-		euroText(posx, posy, "-", textColor);
-	}
+	output = "";
+	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
+	euroText(posx, posy, "-", textColor);
 	Common::Event e;
 	bool done = false;
 	while (!done && !shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
+		while (getEvent(e, event)) {
 			if (e.type == Common::EVENT_KEYDOWN) {
 				int keycode = e.kbd.keycode;
 				int asciiCode = e.kbd.ascii;
@@ -4858,18 +4858,19 @@ void TotEngine::readAlphaGraphSmall(
 				if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_KP_ENTER) {
 					if (output.size() > 0) {
 						done = true;
+						removeCaret = true;
 						continue;
 					}
 				}
 				if (pun > length && asciiCode != 8) {
 					_sound->beep(750, 60);
-					bar((posx + (output.size()) * 6), (posy + 2), (posx + (output.size() + 1) * 6), (posy + 9), barColor);
+					bar((posx + (output.size()) * 6), (posy + 2), (posx + (output.size() + 1) * 6), (posy + 10), barColor);
 				} else if (asciiCode == 8 && pun > 1) {
 					output = output.substr(0, output.size() - 1);
 
-					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
+					bar(posx, (posy + 2), (posx + length * 6), (posy + 10), barColor);
 					euroText(posx, posy, output, textColor);
-					euroText((posx + (output.size()) * 6), posy, "-", textColor);
+					euroText(posx + _graphics->euroTextWidth(output), posy, "-", textColor);
 					pun -= 1;
 					removeCaret = true;
 				} else if (
@@ -4885,7 +4886,8 @@ void TotEngine::readAlphaGraphSmall(
 
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
 					euroText(posx, posy, output, textColor);
-					euroText((posx + (output.size()) * 6), posy, "-", textColor);
+
+					euroText(posx + _graphics->euroTextWidth(output), posy, "-", textColor);
 					removeCaret = true;
 				}
 			}
@@ -4895,8 +4897,9 @@ void TotEngine::readAlphaGraphSmall(
 		_screen->update();
 	}
 
-	if (removeCaret)
-		bar(posx + (output.size()) * 6, posy + 2, (posx + (output.size()) * 6) + 6, posy + 9, barColor);
+	if (removeCaret) {
+		bar(posx + _graphics->euroTextWidth(output), posy + 2, (posx + _graphics->euroTextWidth(output)) + 6, posy + 9, barColor);
+	}
 }
 
 void TotEngine::displayObjectDescription(const Common::String &textString) {

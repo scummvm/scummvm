@@ -57,6 +57,7 @@ public:
 
 	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
+	int euroTextWidth(const Common::String &str);
 	void biosText(const Common::String &str, int x, int y, uint32 color);
 
 	void clear();

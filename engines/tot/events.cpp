@@ -54,11 +54,9 @@ void TotEventManager::pollEvent(bool allowDrag) {
 		case Common::EVENT_KEYDOWN:
 			changeGameSpeed(_event);
 			_keyPressed = true;
-			_lastChar = _event.kbd.ascii;
-			// _keyState[(byte)toupper(_event.kbd.ascii)] = true;
+			_lastKeyEvent = _event;
 			return;
 		case Common::EVENT_KEYUP:
-			// _keyState[(byte)toupper(_event.kbd.ascii)] = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = _event.mouse.x;
@@ -94,7 +92,7 @@ void TotEventManager::zeroEvents(bool allowDrag) {
 	_escKeyFl = false;
 	_gameKey = KEY_NONE;
 	_keyPressed = 0;
-	_lastChar = '\0';
+	_lastKeyEvent = Common::Event();
 }
 
 void TotEventManager::waitForPress() {

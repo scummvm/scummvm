@@ -443,6 +443,10 @@ void GraphicsManager::euroText(const Common::String &str, int x, int y, uint32 c
 	_euro->drawString(g_engine->_screen, str, x, y, 320, color, align);
 }
 
+int GraphicsManager::euroTextWidth(const Common::String &str) {
+	return (int)_euro->getBoundingBox(str).width();
+}
+
 void GraphicsManager::biosText(const Common::String &str, int x, int y, uint32 color) {
 	_dosFont->drawString(g_engine->_screen, str, x, y, 320, color, Graphics::TextAlign::kTextAlignLeft);
 }

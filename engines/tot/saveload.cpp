@@ -635,7 +635,7 @@ void TotEngine::originalSaveLoadScreen() {
 	do {
 		bool mouseClicked = false;
 		bool keyPressed = false;
-		char lastInputChar = '\0';
+		Common::Event lastKeyboardEvent = Common::Event();
 		do {
 			_chrono->updateChrono();
 			if (_chrono->_gameTick) {
@@ -646,7 +646,7 @@ void TotEngine::originalSaveLoadScreen() {
 				mouseClicked = true;
 			} else if (g_engine->_events->_keyPressed) {
 				keyPressed = true;
-				lastInputChar = g_engine->_events->_lastChar;
+				lastKeyboardEvent = g_engine->_events->_lastKeyEvent;
 			}
 
 			g_engine->_screen->update();
@@ -738,7 +738,7 @@ void TotEngine::originalSaveLoadScreen() {
 		if (keyPressed && _saveAllowed) {
 			_mouse->hide();
 			byte ytext = 29 + (selectedGame * 15);
-			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastInputChar);
+			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastKeyboardEvent);
 			modified = true;
 			_mouse->show();
 			keyPressed = false;

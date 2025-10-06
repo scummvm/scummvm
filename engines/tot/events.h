@@ -54,7 +54,7 @@ public:
 	bool _rightMouseButton = 0;
 	int16 _mouseX = 0;
 	int16 _mouseY = 0;
-	uint16 _lastChar = '\0';
+	Common::Event _lastKeyEvent;
 
 	TotEventManager();
 
