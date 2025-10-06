@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "sci/sci.h"
 #include "sci/engine/workarounds.h" // for SciMedia
 #include "sci/resource/resource.h"
@@ -30,14 +31,12 @@ namespace Sci {
 
 // Start of internal resource patcher macros. Please do not use these directly
 // in resource patches.
-using int_c_array = int[];
-#define _NUMARGS(...) (sizeof(int_c_array{__VA_ARGS__})/sizeof(int))
 #ifdef SCUMM_LITTLE_ENDIAN
 #define _PACKINT32(n) (((uint32)n) & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 24 & 0xFF)
 #else
 #define _PACKINT32(n) (((uint32)n) >> 24 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) & 0xFF)
 #endif
-#define _BYTEOP(op, ...) op, _PACKINT32(_NUMARGS(__VA_ARGS__)), __VA_ARGS__
+#define _BYTEOP(op, ...) op, _PACKINT32(NUMARGS(__VA_ARGS__)), __VA_ARGS__
 #define _NUMBEROP(op, type, value) op, sizeof(type), _PACKINT32(value)
 #define _FILLOP(op, numBytes, value) op, _PACKINT32(numBytes), value
 // End of internal resource patcher macros
