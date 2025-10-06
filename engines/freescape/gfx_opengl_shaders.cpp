@@ -360,7 +360,7 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
-	Math::Vector3d baseColor(r1 / 255.0f, g1 / 255.0f, b1 / 255.0f);
+	useColor(r1, g1, b1);
 
 	// === Build circular vertex fan ===
 	const int triangleAmount = 20;
@@ -383,9 +383,6 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 		verts.push_back(y);
 		verts.push_back(z);
 	}
-
-	if (verts.empty())
-		return;
 
 	// === Apply billboard effect to MVP matrix ===
 	// Replicate the legacy code's matrix modification
@@ -415,7 +412,6 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	// === Shader uniforms ===
 	_triangleShader->use();
 	_triangleShader->setUniform("mvpMatrix", billboardMVP);
-	_triangleShader->setUniform("color", baseColor);
 	_triangleShader->setUniform("useStipple", false);
 
 	// === Render settings ===
@@ -424,6 +420,13 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 
 	// === Draw vertex fan ===
 	glDrawArrays(GL_TRIANGLE_FAN, 0, verts.size() / 3);
+
+	if (r1 != r2 || g1 != g2 || b1 != b2) {
+		useStipple(true);
+		useColor(r2, g2, b2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, verts.size() / 3);
+		useStipple(false);
+	}
 
 	// === Restore state ===
 	glEnable(GL_DEPTH_TEST);
