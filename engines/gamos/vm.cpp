@@ -296,8 +296,8 @@ uint32 VM::doScript(uint32 scriptAddress) {
         
         case OP_DIV:
             ECX = EAX;
-            EAX.val = EDX.val / ECX.val;
-            EDX.val = EDX.val % ECX.val;
+            EAX.val = (int32)EDX.val / (int32)ECX.val;
+            EDX.val = (int32)EDX.val % (int32)ECX.val;
             break;
         
         case OP_MOV_EAX_BPTR_EDI:
@@ -531,13 +531,13 @@ uint32 VM::getMemBlockU32(uint32 address) {
 
     MemoryBlock *block = _currentReadMemBlock;
     uint32 val = block->data[ pos ];
-    pos++;
     for (int i = 1; i < 4; i++) {
+        pos++;
         if (pos >= 0x100) {
             block = findMemoryBlock(address + i);
             if (!block)
                 break;
-            pos = (address + i) - block->address;
+            pos = 0;
         }
         val |= block->data[ pos ] << (i * 8);
     }
@@ -574,13 +574,13 @@ void VM::setMemBlockU32(uint32 address, uint32 val) {
         setU32(_currentWriteMemBlock->data + pos, val);
         return;
     }
-    
-    _currentWriteMemBlock->data[ pos ] = val & 0xff;
-    pos++;
 
     MemoryBlock *block = _currentWriteMemBlock;
 
+    _currentWriteMemBlock->data[ pos ] = val & 0xff;
+
     for (int i = 1; i < 4; i++) {
+        pos++;
         if (pos >= 0x100) {
             block = createBlock(address + i);
             if (!block)
@@ -736,7 +736,7 @@ Common::String VM::decodeOp(uint32 address, int *size) {
         break;
     
     case OP_JMP:
-        tmp = Common::String::format("JMP %x", (int32)getMemBlockU32(address));
+        tmp = Common::String::format("JMP %x", address + (int32)getMemBlockU32(address));
         sz += 4;
         break;
     

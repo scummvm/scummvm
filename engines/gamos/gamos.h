@@ -206,7 +206,7 @@ private:
 	byte _cmdByte;
 
 	bool _runReadDataMod;
-	bool _currentModuleID;
+	int _currentModuleID;
 
 	byte _saveLoadID;
 

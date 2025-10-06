@@ -1022,7 +1022,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 						cval = 2;
 					}
 				} else if (lb != 0xfe &&
-					       (_thing2[c[0]].field_0[(fb >> 3) & 0xff] & (1 << fb & 7)) != 0) {
+					       (_thing2[c[0]].field_0[(fb & 0xff) >> 3] & (1 << fb & 7)) != 0) {
 
 					if (!_thing2[c[0]].field_2.empty()) {
 						c[1] = (c[1] & 0xf) | _thing2[c[0]].field_2[lb];
@@ -1370,6 +1370,8 @@ void GamosEngine::FUN_00402a68(const byte *d) {
 		DAT_00417220 = ((int8)d[2] + DAT_00417220 + _thing1Size) % _thing1Size;
         DAT_00417224 = ((int8)d[3] + DAT_00417224 + _thing1Count) % _thing1Count;
 
+		uint8 t = PTR_00417218->fld_3;
+
         _thing1[(DAT_0041722c << _thing1Shift) + DAT_00417228] = ((PTR_00417218->fld_3 & 0xf0) << 8) | PTR_00417218->fld_2;
 
         FUN_00402654(0, DAT_00417224, DAT_00417220);
@@ -1377,12 +1379,10 @@ void GamosEngine::FUN_00402a68(const byte *d) {
         PTR_00417218->pos = DAT_00417220;
         PTR_00417218->blk = DAT_00417224;
 
-		uint8 t = PTR_00417218->fld_3;
-
         uint16 thing = _thing1[ (DAT_00417224 << _thing1Shift) + DAT_00417220 ];
 
         PTR_00417218->fld_2 = thing & 0xff;
-        PTR_00417218->fld_3 = (PTR_00417218->fld_3 & 0xf) | ((thing >> 8) & 0xf0);
+        PTR_00417218->fld_3 = (t & 0xf) | ((thing >> 8) & 0xf0);
 
         _thing1[ (DAT_00417224 << _thing1Shift) + DAT_00417220 ] = ((PTR_00417218->flags & 0xf0) << 8) | PTR_00417218->actID;
 
@@ -1966,8 +1966,11 @@ bool GamosEngine::loadImage(Image *img) {
 }
 
 uint32 GamosEngine::doScript(uint32 scriptAddress) {
+	byte *tmp = _vm.EBX;
 	_vm.EBX = PTR_004173e8;
-	return _vm.doScript(scriptAddress);
+	uint32 res = _vm.doScript(scriptAddress);
+	_vm.EBX = tmp;
+	return res;
 }
 
 
