@@ -706,9 +706,6 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 // more objects than are visible on screen.
 // ---------------------------------------------------------------------------
 
-// NB: This class makes several references to ARRAYSIZE(_slots), but accessing
-//     members of the enclosing class like that should be ok in C++11.
-
 MacIndy3Gui::Inventory::ScrollBar::ScrollBar(int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
 }
 
@@ -731,7 +728,7 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 		if (event.mouse.y <= pos + 4)
 			_invOffset = 0;
 		else if (event.mouse.y >= pos + 6)
-			_invOffset = _invCount - ARRAYSIZE(_slots);
+			_invOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 		_gui->setInventoryScrollOffset(_invOffset);
 		setRedraw(true);
@@ -744,7 +741,7 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 	if (invOffset != _invOffset)
 		setRedraw(true);
 
-	if (invCount != _invCount && _invCount >= ARRAYSIZE(_slots))
+	if (invCount != _invCount && _invCount >= INDY3_INVENTORY_SLOT_SIZE)
 		setRedraw(true);
 
 	_invCount = invCount;
@@ -753,7 +750,7 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 
 void MacIndy3Gui::Inventory::ScrollBar::scroll(ScrollDirection dir) {
 	int newOffset = _invOffset;
-	int maxOffset = _invCount - ARRAYSIZE(_slots);
+	int maxOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 	if (dir == kScrollUp)
 		newOffset--;
@@ -779,7 +776,7 @@ int MacIndy3Gui::Inventory::ScrollBar::getHandlePosition() {
 	// Hopefully this matches the original scroll handle position.
 
 	int maxPos = _bounds.height() - 8;
-	int maxOffset = _invCount - ARRAYSIZE(_slots);
+	int maxOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 	if (_invOffset >= maxOffset)
 		return maxPos;

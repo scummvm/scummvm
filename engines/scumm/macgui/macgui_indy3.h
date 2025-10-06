@@ -32,6 +32,8 @@
 
 namespace Scumm {
 
+#define INDY3_INVENTORY_SLOT_SIZE	6
+
 class MacGuiImpl;
 
 class MacIndy3Gui : public MacGuiImpl {
@@ -251,7 +253,7 @@ private:
 			void draw() override;
 		};
 
-		Slot *_slots[6];
+		Slot *_slots[INDY3_INVENTORY_SLOT_SIZE];
 		ScrollBar *_scrollBar;
 		ScrollButton *_scrollButtons[2];
 
