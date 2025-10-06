@@ -149,6 +149,49 @@ void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	tglFlush();
 }
 
+void TinyGLRenderer::drawThunder(Texture *texture, Math::Vector3d position, float size) {
+	TinyGL3DTexture *glTexture = static_cast<TinyGL3DTexture *>(texture);
+	tglPushMatrix();
+	{
+		tglTranslatef(position.x(), position.y(), position.z());
+
+		TGLfloat m[16];
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, m);
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				m[i * 4 + j] = (i == j) ? 1.0f : 0.0f;
+		tglLoadMatrixf(m);
+
+		tglRotatef(-90, 0.0f, 0.0f, 1.0f);
+
+		// === Texturing setup ===
+		tglEnable(TGL_TEXTURE_2D);
+		tglBindTexture(TGL_TEXTURE_2D, glTexture->_id);
+		//tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_CLAMP_TO_BORDER);
+		//tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_CLAMP_TO_BORDER);
+
+		// === Blending (thunder should glow) ===
+		tglEnable(TGL_BLEND);
+		tglBlendFunc(TGL_ONE, TGL_ONE);
+
+		// === Draw the billboarded quad ===
+		float half = size * 0.5f;
+		tglBegin(TGL_QUADS);
+			tglTexCoord2f(0.0f, 0.0f); tglVertex3f(-half, -half, 0.0f);
+			tglTexCoord2f(0.0f, 0.72f); tglVertex3f( half, -half, 0.0f);
+			tglTexCoord2f(1.0f, 0.72f); tglVertex3f( half,  half, 0.0f);
+			tglTexCoord2f(1.0f, 0.0f); tglVertex3f(-half,  half, 0.0f);
+		tglEnd();
+
+		// === Cleanup ===
+		tglDisable(TGL_BLEND);
+		tglBindTexture(TGL_TEXTURE_2D, 0);
+		tglDisable(TGL_TEXTURE_2D);
+	}
+	tglPopMatrix();
+}
+
+
 void TinyGLRenderer::updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
