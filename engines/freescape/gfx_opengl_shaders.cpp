@@ -351,55 +351,89 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	glDepthMask(GL_TRUE);
 }
 
-void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
+void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, float radius, byte color) {
+	// === Safety checks ===
+	if (!_triangleShader || radius <= 0.0f)
+		return;
+
+	// === Decode color from palette ===
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	getRGBAt(color, 0, r1, g1, b1, r2, g2, b2, stipple);
+	Math::Vector3d baseColor(r1 / 255.0f, g1 / 255.0f, b1 / 255.0f);
 
-	useColor(r1, g1, b1);
+	// === Build circular vertex fan ===
+	const int triangleAmount = 20;
+	const float twicePi = 2.0f * static_cast<float>(M_PI);
+	const float adj = 1.25f;
 
-	int triangleAmount = 20;
-	float twicePi = (float)(2.0 * M_PI);
-	float adj = 1.25; // Perspective correction
+	Common::Array<float> verts;
 
-	// Quick billboard effect inspired from this code:
-	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
-	/*Math::Matrix4 mvpMatrix = _mvpMatrix;
+	// Center vertex
+	verts.push_back(static_cast<float>(position.x()));
+	verts.push_back(static_cast<float>(position.y()));
+	verts.push_back(static_cast<float>(position.z()));
 
-	for(int i = 2; i < 4; i++)
-		for(int j = 2; j < 4; j++ ) {
+	// Circle vertices in YZ plane (same as legacy code)
+	for (int i = 0; i <= triangleAmount; i++) {
+		float x = static_cast<float>(position.x());
+		float y = static_cast<float>(position.y()) + radius * cosf(i * twicePi / triangleAmount);
+		float z = static_cast<float>(position.z()) + adj * radius * sinf(i * twicePi / triangleAmount);
+		verts.push_back(x);
+		verts.push_back(y);
+		verts.push_back(z);
+	}
+
+	if (verts.empty())
+		return;
+
+	// === Apply billboard effect to MVP matrix ===
+	// Replicate the legacy code's matrix modification
+	Math::Matrix4 billboardMVP = _mvpMatrix;
+
+	// Zero out rotation for rows 1, 3 (skip row 2), set diagonal to 1.0
+	// This matches: for (int i = 1; i < 4; i++) for (int j = 0; j < 4; j++)
+	for (int i = 1; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 			if (i == 2)
 				continue;
 			if (i == j)
-				_mvpMatrix.setValue(i, j, 1.0);
+				billboardMVP(i, j) = 2.5f;
 			else
-				_mvpMatrix.setValue(i, j, 0.0);
-		}*/
+				billboardMVP(i, j) = 0.0f;
+		}
+	}
 
+	// === Bind VBO ===
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), verts.data(), GL_DYNAMIC_DRAW);
+
+	// === Set vertex attribute 0 (position) ===
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
+	// === Shader uniforms ===
 	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", billboardMVP);
+	_triangleShader->setUniform("color", baseColor);
 	_triangleShader->setUniform("useStipple", false);
-	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
 
+	// === Render settings ===
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	copyToVertexArray(0, position);
+	// === Draw vertex fan ===
+	glDrawArrays(GL_TRIANGLE_FAN, 0, verts.size() / 3);
 
-	for (int i = 0; i <= triangleAmount; i++) {
-		float x = position.x();
-		float y = position.y() + (radius * cos(i *  twicePi / triangleAmount));
-		float z = position.z() + (adj * radius * sin(i * twicePi / triangleAmount));
-		copyToVertexArray(i + 1, Math::Vector3d(x, y, z));
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
-	glBufferData(GL_ARRAY_BUFFER, (triangleAmount + 2) * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, (triangleAmount + 2));
-
+	// === Restore state ===
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
-	//_mvpMatrix = mvpMatrix;
+
+	// === Cleanup binding ===
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	_triangleShader->unbind();
 }
 
 void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition) {
