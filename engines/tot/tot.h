@@ -108,7 +108,7 @@ private:
 	void updateMainCharacterDepth();
 	void actionLineText(const Common::String &actionLine);
 	void initializeObjectFile();
-	void saveObjectsData(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
+	void saveObjectsData(ScreenObject *object, Common::SeekableWriteStream *out);
 	void scrollLeft(uint horizontalPos);
 	void scrollRight(uint horizontalPos);
 	TextEntry readTextRegister(uint numRegister);
@@ -121,7 +121,7 @@ private:
 	void updateVideo();
 	void nicheAnimation(byte nicheDir, int32 bitmap);
 	void replaceBackpack(byte obj1, uint obj2);
-	void dropObjectInScreen(ScreenObject replacementObject);
+	void dropObjectInScreen(ScreenObject *replacementObject);
 	void calculateTrajectory(uint finalX, uint finalY);
 	void animatedSequence(uint numSequence);
 	void initScreenPointers();
@@ -143,8 +143,8 @@ private:
 	void freeInventory();
 	void updateInventory(byte index);
 	void updateObject(uint filePos);
-	void readObject(Common::SeekableReadStream *stream, uint objPos, ScreenObject &thisRegObj);
-	void saveObject(ScreenObject object, Common::SeekableWriteStream *stream);
+	void readObject(Common::SeekableReadStream *stream, uint objPos, ScreenObject *thisRegObj);
+	void saveObject(ScreenObject *object, Common::SeekableWriteStream *stream);
 	void saveItemRegister();
 
 	void saveTemporaryGame();
@@ -174,7 +174,6 @@ private:
 	void clearGame();
 
 	// vars
-	void clearCurrentInventoryObject();
 	void initVars();
 	void resetGameState();
 	void clearVars();
@@ -341,7 +340,7 @@ public:
 
 	RoomFileRegister *_currentRoomData = nullptr;
 
-	ScreenObject _curObject;
+	ScreenObject *_curObject = nullptr; // Currently selected object in the screen
 	/**
 	 * New movement to execute.
 	 */

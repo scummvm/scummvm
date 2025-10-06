@@ -544,8 +544,8 @@ void talkToSceneObject() {
 	g_engine->goToObject(g_engine->_currentRoomData->walkAreasGrid[(g_engine->_characterPosX + kCharacterCorrectionX) / kXGridCount][(g_engine->_characterPosY + kCharacerCorrectionY) / kYGridCount],
 			   g_engine->_currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 
-	if (g_engine->_curObject.speaking > 0) {
-		talk(g_engine->_curObject.speaking);
+	if (g_engine->_curObject->speaking > 0) {
+		talk(g_engine->_curObject->speaking);
 	} else {
 		g_engine->readTextFile();
 		uint foo = 0;
@@ -581,7 +581,7 @@ void loadTalkAnimations() {
 	if ((g_engine->_currentRoomData->animationName != "PETER") && (g_engine->_currentRoomData->animationName != "ARZCAEL")) {
 		g_engine->_iframe2 = 0;
 		bool result;
-		switch (g_engine->_curObject.speaking) {
+		switch (g_engine->_curObject->speaking) {
 		case 1:
 			result = animFile.open("JOHN.SEC");
 			break;

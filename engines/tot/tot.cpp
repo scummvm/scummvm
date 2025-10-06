@@ -302,8 +302,8 @@ void TotEngine::processEvents(bool &escapePressed) {
 						}
 					else
 						readObject(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
-					if (_curObject.lookAtTextRef > 0)
-						drawText(_curObject.lookAtTextRef);
+					if (_curObject->lookAtTextRef > 0)
+						drawText(_curObject->lookAtTextRef);
 					_actionCode = 0;
 				}
 				break;
@@ -402,8 +402,8 @@ void TotEngine::processEvents(bool &escapePressed) {
 					}
 				else
 					readObject(obj.fileIndex);
-				if (_curObject.lookAtTextRef > 0)
-					drawText(_curObject.lookAtTextRef);
+				if (_curObject->lookAtTextRef > 0)
+					drawText(_curObject->lookAtTextRef);
 				_actionCode = 0;
 			}
 		}
@@ -945,47 +945,6 @@ void TotEngine::changeRoom() {
 	_oldTargetZone = 0;
 }
 
-void TotEngine::clearCurrentInventoryObject() {
-
-	_curObject.code = 0;
-	_curObject.height = 0;
-	_curObject.name = "";
-	_curObject.lookAtTextRef = 0;
-	_curObject.beforeUseTextRef = 0;
-	_curObject.afterUseTextRef = 0;
-	_curObject.pickTextRef = 0;
-	_curObject.useTextRef = 0;
-	_curObject.speaking = 0;
-	_curObject.openable = false;
-	_curObject.closeable = false;
-	for (int i = 0; i <= 7; i++)
-		_curObject.used[i] = 0;
-	_curObject.pickupable = false;
-	_curObject.useWith = 0;
-	_curObject.replaceWith = 0;
-	_curObject.depth = 0;
-	_curObject.bitmapPointer = 0;
-	_curObject.bitmapSize = 0;
-	_curObject.rotatingObjectAnimation = 0;
-	_curObject.rotatingObjectPalette = 0;
-	_curObject.dropOverlayX = 0;
-	_curObject.dropOverlayY = 0;
-	_curObject.dropOverlay = 0;
-	_curObject.dropOverlaySize = 0;
-	_curObject.objectIconBitmap = 0;
-	_curObject.xgrid1 = 0;
-	_curObject.ygrid1 = 0;
-	_curObject.xgrid2 = 0;
-	_curObject.ygrid2 = 0;
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			_curObject.walkAreasPatch[i][j] = 0;
-			_curObject.mouseGridPatch[i][j] = 0;
-		}
-	}
-	_cpCounter2 = _cpCounter;
-}
-
 /**
  * Originally the Room file contains 8 copies of each room, one for every save plus the baseline (which is 0).
  * To put this into memory we need to get the baseline of each room and then put them continuously in a byte stream.addr
@@ -1170,6 +1129,11 @@ void TotEngine::clearVars() {
 	}
 	if (_sceneObjectsData != nullptr) {
 		delete _sceneObjectsData;
+	}
+
+	if(_curObject != nullptr) {
+		delete _curObject;
+		_curObject = nullptr;
 	}
 
 	if (_currentRoomData) {

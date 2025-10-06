@@ -187,54 +187,59 @@ void TotEngine::saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream
 	saveRoom(room, out);
 }
 
-void TotEngine::readObject(Common::SeekableReadStream *stream, uint itemPos, ScreenObject &thisRegObj) {
+void TotEngine::readObject(Common::SeekableReadStream *stream, uint itemPos, ScreenObject *thisRegObj) {
 	stream->seek(itemPos * kItemRegSize);
-	clearCurrentInventoryObject();
-	thisRegObj.code = stream->readUint16LE();
-	thisRegObj.height = stream->readByte();
+	thisRegObj->code = stream->readUint16LE();
+	thisRegObj->height = stream->readByte();
 
-	thisRegObj.name = stream->readPascalString();
+	thisRegObj->name = stream->readPascalString();
 
-	stream->skip(kObjectNameLength - thisRegObj.name.size());
+	stream->skip(kObjectNameLength - thisRegObj->name.size());
 
-	thisRegObj.lookAtTextRef = stream->readUint16LE();
-	thisRegObj.beforeUseTextRef = stream->readUint16LE();
-	thisRegObj.afterUseTextRef = stream->readUint16LE();
-	thisRegObj.pickTextRef = stream->readUint16LE();
-	thisRegObj.useTextRef = stream->readUint16LE();
-	thisRegObj.speaking = stream->readByte();
-	thisRegObj.openable = stream->readByte();
-	thisRegObj.closeable = stream->readByte();
+	thisRegObj->lookAtTextRef = stream->readUint16LE();
+	thisRegObj->beforeUseTextRef = stream->readUint16LE();
+	thisRegObj->afterUseTextRef = stream->readUint16LE();
+	thisRegObj->pickTextRef = stream->readUint16LE();
+	thisRegObj->useTextRef = stream->readUint16LE();
+	thisRegObj->speaking = stream->readByte();
+	thisRegObj->openable = stream->readByte();
+	thisRegObj->closeable = stream->readByte();
 
-	stream->read(thisRegObj.used, 8);
+	stream->read(thisRegObj->used, 8);
 
-	thisRegObj.pickupable = stream->readByte();
-	thisRegObj.useWith = stream->readUint16LE();
-	thisRegObj.replaceWith = stream->readUint16LE();
-	thisRegObj.depth = stream->readByte();
-	thisRegObj.bitmapPointer = stream->readUint32LE();
-	thisRegObj.bitmapSize = stream->readUint16LE();
-	thisRegObj.rotatingObjectAnimation = stream->readUint32LE();
-	thisRegObj.rotatingObjectPalette = stream->readUint16LE();
-	thisRegObj.dropOverlayX = stream->readUint16LE();
-	thisRegObj.dropOverlayY = stream->readUint16LE();
-	thisRegObj.dropOverlay = stream->readUint32LE();
-	thisRegObj.dropOverlaySize = stream->readUint16LE();
-	thisRegObj.objectIconBitmap = stream->readUint16LE();
-	thisRegObj.xgrid1 = stream->readByte();
-	thisRegObj.ygrid1 = stream->readByte();
-	thisRegObj.xgrid2 = stream->readByte();
-	thisRegObj.ygrid2 = stream->readByte();
-	stream->read(thisRegObj.walkAreasPatch, 100);
-	stream->read(thisRegObj.mouseGridPatch, 100);
+	thisRegObj->pickupable = stream->readByte();
+	thisRegObj->useWith = stream->readUint16LE();
+	thisRegObj->replaceWith = stream->readUint16LE();
+	thisRegObj->depth = stream->readByte();
+	thisRegObj->bitmapPointer = stream->readUint32LE();
+	thisRegObj->bitmapSize = stream->readUint16LE();
+	thisRegObj->rotatingObjectAnimation = stream->readUint32LE();
+	thisRegObj->rotatingObjectPalette = stream->readUint16LE();
+	thisRegObj->dropOverlayX = stream->readUint16LE();
+	thisRegObj->dropOverlayY = stream->readUint16LE();
+	thisRegObj->dropOverlay = stream->readUint32LE();
+	thisRegObj->dropOverlaySize = stream->readUint16LE();
+	thisRegObj->objectIconBitmap = stream->readUint16LE();
+	thisRegObj->xgrid1 = stream->readByte();
+	thisRegObj->ygrid1 = stream->readByte();
+	thisRegObj->xgrid2 = stream->readByte();
+	thisRegObj->ygrid2 = stream->readByte();
+	stream->read(thisRegObj->walkAreasPatch, 100);
+	stream->read(thisRegObj->mouseGridPatch, 100);
 }
 
 void TotEngine::readObject(uint itemPosition) {
+	if(_curObject != nullptr) {
+		delete _curObject;
+		_curObject = nullptr;
+	}
+	_curObject = new ScreenObject();
+
 	readObject(_sceneObjectsData, itemPosition, _curObject);
 }
 
 void TotEngine::updateObject(uint itemPosition) {
-	_curObject.used[0] = 9;
+	_curObject->used[0] = 9;
 	_sceneObjectsData->seek(itemPosition);
 	saveObject(_curObject, _sceneObjectsData);
 }
@@ -254,13 +259,13 @@ void TotEngine::initializeObjectFile() {
 	objFile.close();
 }
 
-void TotEngine::saveObjectsData(ScreenObject object, Common::SeekableWriteStream *out) {
-	out->writeUint16LE(object.code);
-	out->writeByte(object.height);
+void TotEngine::saveObjectsData(ScreenObject *object, Common::SeekableWriteStream *out) {
+	out->writeUint16LE(object->code);
+	out->writeByte(object->height);
 
-	out->writeByte(object.name.size());
-	out->writeString(object.name);
-	int paddingSize = kObjectNameLength - object.name.size();
+	out->writeByte(object->name.size());
+	out->writeString(object->name);
+	int paddingSize = kObjectNameLength - object->name.size();
 	if (paddingSize > 0) {
 		char *padding = (char *)calloc(paddingSize, 1);
 		// 8 max char name
@@ -268,44 +273,44 @@ void TotEngine::saveObjectsData(ScreenObject object, Common::SeekableWriteStream
 		free(padding);
 	}
 
-	out->writeUint16LE(object.lookAtTextRef);
-	out->writeUint16LE(object.beforeUseTextRef);
-	out->writeUint16LE(object.afterUseTextRef);
-	out->writeUint16LE(object.pickTextRef);
-	out->writeUint16LE(object.useTextRef);
+	out->writeUint16LE(object->lookAtTextRef);
+	out->writeUint16LE(object->beforeUseTextRef);
+	out->writeUint16LE(object->afterUseTextRef);
+	out->writeUint16LE(object->pickTextRef);
+	out->writeUint16LE(object->useTextRef);
 
-	out->writeByte(object.speaking);
-	out->writeByte(object.openable);
-	out->writeByte(object.closeable);
+	out->writeByte(object->speaking);
+	out->writeByte(object->openable);
+	out->writeByte(object->closeable);
 
-	out->write(object.used, 8);
+	out->write(object->used, 8);
 
-	out->writeByte(object.pickupable);
+	out->writeByte(object->pickupable);
 
-	out->writeUint16LE(object.useWith);
-	out->writeUint16LE(object.replaceWith);
-	out->writeByte(object.depth);
-	out->writeUint32LE(object.bitmapPointer);
-	out->writeUint16LE(object.bitmapSize);
-	out->writeUint16LE(object.rotatingObjectAnimation);
-	out->writeUint16LE(object.rotatingObjectPalette);
-	out->writeUint16LE(object.dropOverlayX);
-	out->writeUint16LE(object.dropOverlayY);
-	out->writeUint32LE(object.dropOverlay);
-	out->writeUint16LE(object.dropOverlaySize);
-	out->writeUint16LE(object.objectIconBitmap);
+	out->writeUint16LE(object->useWith);
+	out->writeUint16LE(object->replaceWith);
+	out->writeByte(object->depth);
+	out->writeUint32LE(object->bitmapPointer);
+	out->writeUint16LE(object->bitmapSize);
+	out->writeUint16LE(object->rotatingObjectAnimation);
+	out->writeUint16LE(object->rotatingObjectPalette);
+	out->writeUint16LE(object->dropOverlayX);
+	out->writeUint16LE(object->dropOverlayY);
+	out->writeUint32LE(object->dropOverlay);
+	out->writeUint16LE(object->dropOverlaySize);
+	out->writeUint16LE(object->objectIconBitmap);
 
-	out->writeByte(object.xgrid1);
-	out->writeByte(object.ygrid1);
-	out->writeByte(object.xgrid2);
-	out->writeByte(object.ygrid2);
+	out->writeByte(object->xgrid1);
+	out->writeByte(object->ygrid1);
+	out->writeByte(object->xgrid2);
+	out->writeByte(object->ygrid2);
 
-	out->write(object.walkAreasPatch, 100);
-	out->write(object.mouseGridPatch, 100);
+	out->write(object->walkAreasPatch, 100);
+	out->write(object->mouseGridPatch, 100);
 }
 
-void TotEngine::saveObject(ScreenObject object, Common::SeekableWriteStream *out) {
-	_sceneObjectsData->seek(object.code * kItemRegSize, SEEK_SET);
+void TotEngine::saveObject(ScreenObject *object, Common::SeekableWriteStream *out) {
+	_sceneObjectsData->seek(object->code * kItemRegSize, SEEK_SET);
 	saveObjectsData(object, out);
 }
 
