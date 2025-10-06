@@ -37,6 +37,9 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 #include "gamos/pool.h"
 
@@ -244,6 +247,8 @@ private:
 
 	Common::Array< Common::Array<byte> >  _midiTracks;
 
+	Common::Array< Common::Array<byte> > _soundSamples;
+
 	uint32 _delayTime = 0;
 	uint32 _lastTimeStamp = 0;
 
@@ -381,6 +386,8 @@ protected:
 
 
 	bool playMidi(Common::Array<byte> *buffer);
+
+	bool playSound(uint id);
 
 	void stopMidi();
 	void stopMCI();

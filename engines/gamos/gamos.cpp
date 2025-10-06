@@ -450,6 +450,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_50) {
 		//printf("data 50 size %d\n", dataSize);
 	} else if (tp == RESTP_51) {
+		_soundSamples[pid].assign(data, data + dataSize);
 		//printf("sound  size %d\n", dataSize);
 	} else if (tp == RESTP_52) {
 		return loadRes52(pid, data, dataSize);
@@ -591,7 +592,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	uint32 actsCount = dataStream.readUint32LE(); // 1c
 	uint32 unk1Count = dataStream.readUint32LE(); // 20
 	uint32 imageCount = dataStream.readUint32LE(); // 24
-	dataStream.readUint32LE(); // 28
+	uint32 soundCount = dataStream.readUint32LE(); // 28
 	uint32 midiCount = dataStream.readUint32LE(); // 2c
 	dataStream.readUint32LE(); // 30
 
@@ -617,6 +618,10 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	_midiTracks.clear();
 	_midiTracks.resize(midiCount);
+
+	_mixer->stopAll();
+	_soundSamples.clear();
+	_soundSamples.resize(soundCount);
 
 	_thing2.clear();
 	_thing2.resize(unk1Count);
@@ -874,6 +879,12 @@ bool GamosEngine::playMidi(Common::Array<byte> *buffer) {
 	_musicPlayer.stopMusic();
 	_midiStarted = _musicPlayer.playMusic(buffer);
 	return _midiStarted;
+}
+
+bool GamosEngine::playSound(uint id) {
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(_soundSamples[id].data(), _soundSamples[id].size(), 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, nullptr, stream, id);
+	return true;
 }
 
 uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
@@ -2016,7 +2027,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 	case 17:
 		arg1 = vm->pop32();
-		//playsound
+		playSound(arg1);
 		vm->EAX.val = 1;
 		break;
 
