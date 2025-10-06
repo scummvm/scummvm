@@ -233,7 +233,8 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			bool immediate = false;
 			Common::String initializerParams;
 			// mouseUp events seem to check the frame script ID from the original mouseDown event
-			if ((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) {
+			// In Director 5 and above, we always generate event for the actual sprite under the mouse
+			if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) && _vm->getVersion() < 500) {
 				scriptId = _currentMouseDownSpriteScriptID;
 				immediate = _currentMouseDownSpriteImmediate;
 			} else {
