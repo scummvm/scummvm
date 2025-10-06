@@ -151,6 +151,8 @@ void readTree(Common::SeekableReadStream &stream, Tree &a, uint position) {
 		} while (expresion[pos++] != '@');
 
 		int nIndex = tmpExpression.find('N');
+		if (nIndex < 0)
+			break;
 		strInd = tmpExpression.substr(0, nIndex - 1);
 
 		data.spoken = tmpExpression[nIndex - 1];

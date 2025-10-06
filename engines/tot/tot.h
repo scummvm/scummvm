@@ -235,7 +235,7 @@ public:
 	/**
 	 * Keeps an array of all inventory icon bitmaps
 	 */
-	byte *_inventoryIconBitmaps[kInventoryIconCount];
+	byte *_inventoryIconBitmaps[kInventoryIconCount] = { nullptr };
 	/**
 	 * Position within inventory
 	 */
@@ -244,9 +244,9 @@ public:
 	 * Animation sequences
 	 */
 	CharacterAnim _mainCharAnimation;
-	uint _mainCharFrameSize;
+	uint _mainCharFrameSize = 0;
 	SecondaryAnim _secondaryAnimation;
-	uint _secondaryAnimFrameSize;
+	uint _secondaryAnimFrameSize = 0;
 	/**
 	 * Currently selected action.
 	 */
@@ -424,29 +424,29 @@ public:
 	/**
 	 * Bitmaps of screenobjects
 	 */
-	byte *_screenLayers[kNumScreenOverlays];
+	byte *_screenLayers[kNumScreenOverlays] =  { nullptr };
 	/**
 	 * Current frame of main character
 	 */
-	byte *_curCharacterAnimationFrame;
+	byte *_curCharacterAnimationFrame = nullptr;
 	/**
 	 * Current frame of secondary animation
 	 */
-	byte *_curSecondaryAnimationFrame;
+	byte *_curSecondaryAnimationFrame = nullptr;
 
 	/**
 	 * Pointer storing the screen as it displays on the game
 	 */
-	byte *_sceneBackground;
+	byte *_sceneBackground = nullptr;
 
 	/**
 	 * Dirty patch of screen to repaint on every frame
 	 */
-	byte *_characterDirtyRect;
+	byte *_characterDirtyRect = nullptr;
 	/**
 	 * Stores a copy of the background bitmap
 	 */
-	byte *_backgroundCopy;
+	byte *_backgroundCopy = nullptr;
 
 	uint _currentRoomNumber = 0;
 
@@ -472,7 +472,7 @@ public:
 	 * Calculated using the position of the character + dimension
 	 */
 	uint _dirtyMainSpriteX2 = 0, _dirtyMainSpriteY2 = 0;
-	byte *_spriteBackground;
+	byte *_spriteBackground = nullptr;
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TotEngine() override;

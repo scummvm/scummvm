@@ -49,6 +49,17 @@ TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 	_rooms = nullptr;
 	_conversationData = nullptr;
 	_sceneObjectsData = nullptr;
+
+	for (uint dir = 0; dir < 4; dir++) {
+		for (uint frame = 0; frame < kWalkFrameCount + 30; frame++) {
+			_mainCharAnimation.bitmap[dir][frame] = nullptr;
+		}
+	}
+	for (uint dir = 0; dir < 4; dir++) {
+		for (uint frame = 0; frame < kWalkFrameCount + 30; frame++) {
+			_secondaryAnimation.bitmap[dir][frame] = nullptr;
+		}
+	}
 }
 
 TotEngine::~TotEngine() {

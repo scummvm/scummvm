@@ -93,16 +93,16 @@ enum TRAJECTORIES_OP {
 };
 
 struct ObjectInfo {
-	uint16 code, posx, posy, posx2, posy2;
+	uint16 code = 0, posx = 0, posy = 0, posx2 = 0, posy2 = 0;
 };
 
 struct CharacterAnim {
-	uint16 depth;
+	uint16 depth = 0;
 	byte *bitmap[4][kWalkFrameCount + 30]; // 30 = 3 actions * 10 frames each
 };
 
 struct SecondaryAnim {
-	uint16 depth, dir, posx, posy;
+	uint16 depth = 0, dir = 1, posx = 0, posy = 0;
 	byte *bitmap[4][kSecAnimationFrameCount];
 };
 

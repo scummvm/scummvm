@@ -572,6 +572,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 	g_engine->_mouse->hide();
 	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
 	uint size = saves.size();
+	ExtendedSavegameHeader header;
 	for (uint i = 0; i < 6; i++) {
 		int color = i == selectedGame ? 255 : 253;
 		if (i < size) {
@@ -579,15 +580,12 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 			if (!in) {
 				warning("Could not open save file: %s", saves[i].c_str());
 			}
-			ExtendedSavegameHeader header;
 			bool result = g_engine->getMetaEngine()->readSavegameHeader(in, &header, true);
 			euroText(65, 29 + (i * 15), result ? header.description.c_str() : saves[i].c_str(), color);
 		} else {
 			euroText(65, 29 + (i * 15), availableText, color);
 		}
 	}
-
-	ExtendedSavegameHeader header;
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[selectedGame]);
 	bool result = g_engine->getMetaEngine()->readSavegameHeader(in, &header, true);
