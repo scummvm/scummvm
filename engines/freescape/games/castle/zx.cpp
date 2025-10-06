@@ -191,12 +191,22 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	_flagFrames = loadFramesWithHeader(&file, (_language == Common::ES_ESP ? 0x10e4 + 15 : 0x10e4), 4, green, black);
 
+	file.skip(24);
 	int thunderWidth = 4;
-	int thunderHeight = 43;
-	_thunderFrame = new Graphics::ManagedSurface();
-	_thunderFrame->create(thunderWidth * 8, thunderHeight, _gfx->_texturePixelFormat);
-	_thunderFrame->fillRect(Common::Rect(0, 0, thunderWidth * 8, thunderHeight), 0);
-	_thunderFrame = loadFrame(&file, _thunderFrame, thunderWidth, thunderHeight, front);
+	int thunderHeight = 44;
+	Graphics::ManagedSurface *thunderFrame = new Graphics::ManagedSurface();
+	thunderFrame->create(thunderWidth * 8, thunderHeight, _gfx->_texturePixelFormat);
+	thunderFrame->fillRect(Common::Rect(0, 0, thunderWidth * 8, thunderHeight), 0);
+	thunderFrame = loadFrame(&file, thunderFrame, thunderWidth, thunderHeight, front);
+
+	_thunderFrames.push_back(new Graphics::ManagedSurface);
+	_thunderFrames.push_back(new Graphics::ManagedSurface);
+
+	_thunderFrames[0]->create(thunderWidth * 8 / 2, thunderHeight, _gfx->_texturePixelFormat);
+	_thunderFrames[1]->create(thunderWidth * 8 / 2, thunderHeight, _gfx->_texturePixelFormat);
+
+	_thunderFrames[0]->copyRectToSurface(*thunderFrame, 0, 0, Common::Rect(0, 0, thunderWidth * 8 / 2, thunderHeight));
+	_thunderFrames[1]->copyRectToSurface(*thunderFrame, 0, 0, Common::Rect(thunderWidth * 8 / 2, 0, thunderWidth * 8, thunderHeight));
 
 	Graphics::Surface *tmp;
 	tmp = loadBundledImage("castle_riddle_top_frame");

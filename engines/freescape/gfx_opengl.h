@@ -94,6 +94,7 @@ public:
 	virtual void drawFloor(uint8 color) override;
 	void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) override;
 	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
+	void drawThunder(Texture *texture, Math::Vector3d camera, float size) override;
 
 	virtual Graphics::Surface *getScreenshot() override;
 };

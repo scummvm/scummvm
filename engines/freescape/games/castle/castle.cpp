@@ -79,7 +79,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsMeterIndicatorSideFrame = nullptr;
 	_strenghtBackgroundFrame = nullptr;
 	_strenghtBarFrame = nullptr;
-	_thunderFrame = nullptr;
 	_menu = nullptr;
 	_menuButtons = nullptr;
 
@@ -101,6 +100,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsToKill = 26;
 	_spiritsMeterPosition = 0;
 	_spiritsMeterMax = 64;
+	_thunderTicks = 0;
+	_thunderFrameDuration = 0;
 }
 
 CastleEngine::~CastleEngine() {
@@ -162,9 +163,17 @@ CastleEngine::~CastleEngine() {
 		}
 	}
 
-	if (_thunderFrame) {
-		_thunderFrame->free();
-		delete _thunderFrame;
+	for (int i = 0; i < int(_thunderFrames.size()); i++) {
+		if (_thunderFrames[i]) {
+			_thunderFrames[i]->free();
+			delete _thunderFrames[i];
+		}
+	}
+
+	for (int i = 0; i < int(_thunderTextures.size()); i++) {
+		if (_thunderTextures[i]) {
+			delete _thunderTextures[i];
+		}
 	}
 
 	if (_riddleTopFrame) {
@@ -437,6 +446,7 @@ void CastleEngine::initGameState() {
 	_lastTenSeconds = seconds / 10;
 
 	_droppingGateStartTicks = 0;
+	_thunderFrameDuration = 0;
 }
 
 bool CastleEngine::checkIfGameEnded() {
@@ -1664,6 +1674,55 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 		it._value->resetAreaGroups();
 	}
 	return Common::kNoError;
+}
+
+
+void CastleEngine::drawBackground() {
+	clearBackground();
+	_gfx->drawBackground(_currentArea->_skyColor);
+
+	if (_background) {
+		if (!_skyTexture)
+			_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);
+		_gfx->drawSkybox(_skyTexture, _position);
+		if (_thunderTextures.empty()) {
+			_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[0]->surfacePtr(), true));
+			_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[1]->surfacePtr(), true));
+		}
+		updateThunder();
+	}
+}
+
+void CastleEngine::updateThunder() {
+	if (!_thunderFrames[0])
+		return;
+
+	if (_thunderFrameDuration > 0) {
+		//debug("Thunder frame duration: %d", _thunderFrameDuration);
+		//debug("Size: %f", 2 * _thunderOffset.length());
+		//debug("Offset: %.1f, %.1f, %.1f", _thunderOffset.x(), _thunderOffset.y(), _thunderOffset.z());
+		_gfx->drawThunder(_thunderTextures[(_thunderFrameDuration - 1) / 5], _position + _thunderOffset, 100);
+		_thunderFrameDuration--;
+		if (_thunderFrameDuration == 0)
+			if (isSpectrum())
+				playSound(8, false, _soundFxHandle);
+		return;
+	}
+
+	if (_thunderTicks > 0) {
+		//debug("Thunder ticks: %d", _thunderTicks);
+		_thunderTicks--;
+		if (_thunderTicks <= 0) {
+			_thunderFrameDuration = 10;
+		}
+	} else {
+		// Schedule next thunder, between 10 and 10 + 10 seconds
+		_thunderTicks = 50 * (10 + _rnd->getRandomNumber(10));
+		_thunderOffset = Math::Vector3d();
+		_thunderOffset.x() += (int(_rnd->getRandomNumber(100)) + 100);
+		_thunderOffset.y() += int(_rnd->getRandomNumber(100)) + 50.0f;
+		_thunderOffset.z() += (int(_rnd->getRandomNumber(100)) + 100);
+	}
 }
 
 } // End of namespace Freescape

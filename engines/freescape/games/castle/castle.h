@@ -79,6 +79,7 @@ public:
 	void pressedKey(const int keycode) override;
 	void checkSensors() override;
 	void updateTimeVariables() override;
+	void drawBackground() override;
 
 	bool checkIfGameEnded() override;
 	void drawSensorShoot(Sensor *sensor) override;
@@ -117,7 +118,8 @@ public:
 	Graphics::ManagedSurface *_strenghtBarFrame;
 	Common::Array<Graphics::ManagedSurface *> _strenghtWeightsFrames;
 	Common::Array<Graphics::ManagedSurface *> _flagFrames;
-	Graphics::ManagedSurface *_thunderFrame;
+	Common::Array<Graphics::ManagedSurface *> _thunderFrames;
+
 	Graphics::ManagedSurface *_riddleTopFrame;
 	Graphics::ManagedSurface *_riddleBackgroundFrame;
 	Graphics::ManagedSurface *_riddleBottomFrame;
@@ -146,11 +148,16 @@ private:
 	void tryToCollectKey();
 	void addGhosts();
 	bool ghostInArea();
+	void updateThunder();
 
 	Audio::SoundHandle _soundFxGhostHandle;
 	Texture *_optionTexture;
 	Font _fontRiddle;
 	int _droppingGateStartTicks;
+	int _thunderTicks;
+	int _thunderFrameDuration;
+	Math::Vector3d _thunderOffset;
+	Common::Array<Texture *>_thunderTextures;
 };
 
 }
