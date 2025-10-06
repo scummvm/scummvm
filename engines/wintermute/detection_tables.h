@@ -989,7 +989,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Death of Erin Myers (Steam)
 	WME_WINENTRY("erinmyers", "Steam",
-		WME_ENTRY1s("data.dcp", "beebf574c043ebeedf23ac8df6e1f988", 245235110), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "beebf574c043ebeedf23ac8df6e1f988", 245235110), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Escape from the Mansion
 	WME_WINENTRY("escapemansion", "Beta 1",
