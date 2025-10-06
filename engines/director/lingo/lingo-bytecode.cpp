@@ -1654,6 +1654,15 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			functionName = g_lingo->_eventHandlerTypes[kEventGeneric];
 		}
 
+		// We need to find if mouseEnter, mouseLeave or mouseWithin are ever present
+		if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
+			if (functionName.equalsIgnoreCase("mouseEnter") ||
+				functionName.equalsIgnoreCase("mouseLeave") ||
+				functionName.equalsIgnoreCase("mouseWithin")) {
+				error("D5 does have mouseEnter, mouseLeave or mouseWithin events, please talk to sev");
+			}
+		}
+
 		Symbol sym;
 		if (!functionName.empty()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, functionName.c_str());
