@@ -234,8 +234,6 @@ bool Movie::processEvent(Common::Event &event) {
 				}
 			}
 
-			_lastClickedSpriteId = spriteId; // for 'the clickOn'
-
 			// FIXME: Check if these are tracked with the right mouse button
 			_lastEventTime = g_director->getMacTicks();
 			_lastClickTime2 = _lastClickTime;
