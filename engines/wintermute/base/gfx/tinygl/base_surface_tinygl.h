@@ -83,8 +83,8 @@ private:
 	BaseRenderer3D *_renderer;
 	Graphics::Surface *_imageData;
 	Graphics::Surface *_maskData;
-	uint _texWidth;
-	uint _texHeight;
+	uint _texWidth{};
+	uint _texHeight{};
 	bool _pixelOpReady;
 	bool _surfaceModified;
 	TinyGL::BlitImage *_blitImage;
