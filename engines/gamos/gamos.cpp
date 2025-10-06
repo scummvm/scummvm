@@ -1023,7 +1023,7 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 						cval = 2;
 					}
 				} else if (lb != 0xfe &&
-					       (_thing2[c[0]].field_0[(fb & 0xff) >> 3] & (1 << fb & 7)) != 0) {
+					       (_thing2[c[0]].field_0[(fb & 0xff) >> 3] & (1 << (fb & 7))) != 0) {
 
 					if (!_thing2[c[0]].field_2.empty()) {
 						c[1] = (c[1] & 0xf) | _thing2[c[0]].field_2[lb];
