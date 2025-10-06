@@ -1909,7 +1909,7 @@ void ScummEngine_v6::o6_beginOverride() {
 	}
 
 	beginOverride();
-	_skipVideo = 0;
+	_skipVideo = false;
 }
 
 void ScummEngine_v6::o6_endOverride() {
@@ -2207,6 +2207,7 @@ void ScummEngine_v6::o6_actorOps() {
 	switch (subOp) {
 	case SO_COSTUME:
 		i = pop();
+
 		// WORKAROUND: There's a small continuity error in DOTT; the fire that
 		// makes Washington leave the room can only exist if he's wearing the
 		// chattering teeth, but yet when he comes back he's not wearing them
@@ -2215,6 +2216,26 @@ void ScummEngine_v6::o6_actorOps() {
 			a->_number == 8 && i == 53 && enhancementEnabled(kEnhVisualChanges)) {
 			i = 69;
 		}
+
+		// WORKAROUND bug #16258: In DOTT, if one skips the cutscene after
+		// Washington has opened the suggestion box but before he closes it
+		// again, the box stays open. But this is clearly unintended, as the
+		// box is then in an inconsistent state (Hoagie will say it's still
+		// closed, and in the Remaster it's also glitched). So, make sure
+		// it's always closed at the end of this cutscene.
+		if (_game.id == GID_TENTACLE && _currentRoom == 13 && currentScriptSlotIs(22) &&
+			a->_number == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
+			const bool vacuumSuggestionIsDone = (getState(540) == 1);
+			const bool suggestionBoxNotClosedYet = (whereIsObject(81) == WIO_ROOM && getState(81) == 1);
+			if (VAR(VAR_OVERRIDE) && vacuumSuggestionIsDone && suggestionBoxNotClosedYet) {
+				// Simulate the full o6_setState() call that closes it
+				putState(81, 0);
+				markObjectRectAsDirty(81);
+				if (_bgNeedsRedraw)
+					clearDrawObjectQueue();
+			}
+		}
+
 		a->setActorCostume(i);
 		break;
 	case SO_STEP_DIST:
