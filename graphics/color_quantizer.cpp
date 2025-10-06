@@ -111,6 +111,7 @@ private:
 		if (*node == nullptr) {
 			*node = allocateNode(level);
 			if (level != _leafLevel) {
+				assert(level < kOctreeDepth - 1);
 				(*node)->nextNode = _reduceList[level];
 				_reduceList[level] = *node;
 			}
