@@ -52,6 +52,7 @@
 #include "director/castmember/sound.h"
 #include "director/castmember/text.h"
 #include "director/castmember/transition.h"
+#include "director/castmember/xtra.h"
 #include "director/lingo/lingo-codegen.h"
 
 #include "director/lingo/lingodec/context.h"
@@ -1582,6 +1583,10 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	case kCastTransition:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
 		target = new TransitionCastMember(this, id, castStream, _version);
+		break;
+	case kCastXtra:
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastXtra (id=%d, %d children)",  id, res->children.size());
+		target = new XtraCastMember(this, id, castStream, _version);
 		break;
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());

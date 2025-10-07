@@ -40,6 +40,7 @@ MODULE_OBJS = \
 	castmember/sound.o \
 	castmember/text.o \
 	castmember/transition.o \
+	castmember/xtra.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \

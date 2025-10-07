@@ -134,7 +134,7 @@ uint32 TransitionCastMember::getCastDataSize() {
 		// _durationMiilis 2 bytes
 		return 6;
 	} else {
-		warning("RichTextCastMember()::getCastDataSize(): CastMember version invalid or not handled");
+		warning("TransitionCastMember()::getCastDataSize(): CastMember version invalid or not handled");
 		return 0;
 	}
 }
@@ -147,7 +147,7 @@ void TransitionCastMember::writeCastData(Common::SeekableWriteStream *writeStrea
 		writeStream->writeByte(_flags);
 		writeStream->writeUint16LE(_durationMillis);
 	} else {
-		warning("RichTextCastMember()::writeCastData(): CastMember version invalid or not handled");
+		warning("TransitionCastMember()::writeCastData(): CastMember version invalid or not handled");
 	}
 }
 
