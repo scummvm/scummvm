@@ -44,6 +44,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_soundIndexCollide = 4;
 	_soundIndexStepUp = 5;
 	_soundIndexStepDown = 6;
+	_soundIndexStartFalling = -1;
 
 	k8bitVariableShield = 29;
 
@@ -69,7 +70,6 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerWidth = 8;
 	_playerDepth = 8;
 	_stepUpDistance = 32;
-	_maxFallingDistance = 8192;
 	_maxShield = 24;
 
 	_option = nullptr;
@@ -338,6 +338,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
+	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2); 
 
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
@@ -449,8 +450,22 @@ void CastleEngine::initGameState() {
 }
 
 bool CastleEngine::checkIfGameEnded() {
-	if (_gameStateControl != kFreescapeGameStatePlaying)
-		return false;
+	if (_gameStateControl == kFreescapeGameStatePlaying) {
+		if (_hasFallen && _avoidRenderingFrames == 0) {
+			_hasFallen = false;
+			playSound(_soundIndexFallen, false, _soundFxHandle);
+
+			stopMovement();
+			// If shield is less than 11 after a fall, the game ends
+			if (_gameStateVars[k8bitVariableShield] > 5) {
+				_gameStateVars[k8bitVariableShield] -= 5;
+				return false; // Game can continue
+			}
+			if (!_fallenMessage.empty())
+				insertTemporaryMessage(_fallenMessage, _countdown - 4);
+			_gameStateControl = kFreescapeGameStateEnd;
+		}
+	}
 
 	if (getGameBit(31) || _currentArea->getAreaID() == 74) { // Escaped!
 		_gameStateControl = kFreescapeGameStateEnd;
@@ -1681,7 +1696,7 @@ void CastleEngine::drawBackground() {
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 
-	if (_currentArea->isOutside()) {
+	if (_avoidRenderingFrames == 0 && _currentArea->isOutside()) {
 		if (_background) {
 			if (!_skyTexture)
 				_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);

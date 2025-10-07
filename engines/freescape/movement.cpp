@@ -576,15 +576,15 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	}
 
 	if (isSteppingUp)  {
-		debug("Stepping up sound!");
+		//debug("Stepping up sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
 			playSound(_soundIndexStepUp, false, _movementSoundHandle);
 	} else if (isSteppingDown) {
-		debug("Stepping down sound!");
+		//debug("Stepping down sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
 			playSound(_soundIndexStepDown, false, _movementSoundHandle);
 	} else if (isCollidingWithWall) {
-		debug("Colliding with wall sound!");
+		//debug("Colliding with wall sound!");
 		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
 			playSound(_soundIndexCollide, false, _movementSoundHandle);
 	}

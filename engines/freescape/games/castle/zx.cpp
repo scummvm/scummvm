@@ -31,7 +31,9 @@ void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
 	_soundIndexShoot = 5;
 	_soundIndexCollide = 3;
-	_soundIndexFallen = 6;
+	_soundIndexStartFalling = -1;
+	_soundIndexFallen = 1;
+	_soundIndexFall = 6; 
 	_soundIndexStepUp = 12;
 	_soundIndexStepDown = 12;
 	_soundIndexMenu = 3;

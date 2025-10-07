@@ -136,6 +136,7 @@ public:
 	int _spiritsToKill;
 
 	int _lastTenSeconds;
+	int _soundIndexStartFalling;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
