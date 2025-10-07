@@ -351,7 +351,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 
 	_lastPosition = _position;
-	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (getGameBit(31))
@@ -1391,8 +1390,6 @@ void CastleEngine::updateTimeVariables() {
 	}
 
 	if (_lastTenSeconds != seconds / 10) {
-		//_gameStateVars[0x1e] += 1;
-		//_gameStateVars[0x1f] += 1;
 		_lastTenSeconds = seconds / 10;
 		executeLocalGlobalConditions(false, false, true);
 	}
