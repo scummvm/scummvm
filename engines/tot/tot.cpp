@@ -60,6 +60,19 @@ TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 			_secondaryAnimation.bitmap[dir][frame] = nullptr;
 		}
 	}
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 4; j++) {
+			_niche[i][j] = 0;
+		}
+	}
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			_movementGridForSecondaryAnim[i][j] = 0;
+			_mouseGridForSecondaryAnim[i][j] = 0;
+			_maskGridSecondaryAnim[i][j] = 0;
+			_maskMouseSecondaryAnim[i][j] = 0;
+		}
+	}
 }
 
 TotEngine::~TotEngine() {
