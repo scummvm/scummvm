@@ -1483,18 +1483,16 @@ void TotEngine::pickupScreenObject() {
 		} break;
 		case 1: { // Waist level
 			switch (_curObject->code) {
-			case 218: { // Necronomicon
+			case 218: // Necronomicon
+			case 308: // Mistletoe
+			case 517: // mints
 				animatePickup1(0, 1);
 				animatePickup2(0, 1);
-			} break;
+			 break;
 			case 223: { // table cloths
 				animatePickup1(0, 1);
 				_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[correctedMouseX][correctedMouseY]]->fileIndex = _curObject->replaceWith;
 				updateVideo();
-				animatePickup2(0, 1);
-			} break;
-			case 308: { // Mistletoe
-				animatePickup1(0, 1);
 				animatePickup2(0, 1);
 			} break;
 			case 402: { // Kitchen table
@@ -1505,10 +1503,6 @@ void TotEngine::pickupScreenObject() {
 			case 479: { // Scissors
 				animatePickup1(3, 1);
 				animatePickup2(3, 1);
-			} break;
-			case 517: { // mints
-				animatePickup1(0, 1);
-				animatePickup2(0, 1);
 			} break;
 			case 521: { // Puts plaster and key on the floor
 				animatePickup1(0, 1);
@@ -3860,11 +3854,12 @@ void TotEngine::sayLine(
 		posy = 2;
 		width = 30;
 	} break;
-	case 8: { // patch
+	case 8:  // patch
+	case 21: // p4
 		posx = 10;
 		posy = 100;
 		width = 50;
-	} break;
+		break;
 	case 10: { // well
 		posx = 10;
 		posy = 2;
@@ -3884,11 +3879,6 @@ void TotEngine::sayLine(
 		posx = 10;
 		posy = 2;
 		width = 30;
-	} break;
-	case 21: { // p4
-		posx = 10;
-		posy = 100;
-		width = 50;
 	} break;
 	case 23: { // fountain
 		posx = 10;
@@ -4475,14 +4465,12 @@ void TotEngine::drawMenu(byte menuNumber) {
 		xmenu = 0;
 		ymenu = 150;
 	} break;
-	case 2: {
+	case 2:
+	case 3:
+	case 6:
 		xmenu = 50;
 		ymenu = 10;
-	} break;
-	case 3: {
-		xmenu = 50;
-		ymenu = 10;
-	} break;
+		break;
 	case 4: {
 		if (_cpCounter2 > 20)
 			showError(274);
@@ -4494,10 +4482,6 @@ void TotEngine::drawMenu(byte menuNumber) {
 			showError(274);
 		xmenu = 0;
 		ymenu = 150;
-	} break;
-	case 6: {
-		xmenu = 50;
-		ymenu = 10;
 	} break;
 	case 7: {
 		xmenu = 58;

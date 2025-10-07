@@ -128,6 +128,8 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			// English only
 			case 40:
+			case 73:
+			case 82:
 				if (isEnglish) {
 					clearCharacterText();
 				}
@@ -138,13 +140,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				}
 				break;
 			case 47:
+			case 59:
+			case 102:
 				clearCharacterText();
 				break;
 			case 48:
 				drawCharacterText(messages[20], messages[21], messages[22], messages[23], messages[24]);
-				break;
-			case 59:
-				clearCharacterText();
 				break;
 			case 60:
 				drawTvText(messages[25], messages[26], messages[27], messages[28], messages[29]);
@@ -153,6 +154,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				drawCharacterText(messages[30], messages[31], messages[32], messages[33], messages[34]);
 				break;
 			case 70:
+			case 80:
 				if (isEnglish) {
 					clearTvText();
 				}
@@ -160,11 +162,6 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 			case 71:
 				if (isEnglish) {
 					drawTvText(messages[255], messages[256], messages[257], messages[258], messages[259]);
-				}
-				break;
-			case 73:
-				if (isEnglish) {
-					clearCharacterText();
 				}
 				break;
 			case 74:
@@ -179,6 +176,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				}
 				break;
 			case 75:
+			case 89:
 				if (isSpanish) {
 					clearCharacterText();
 				}
@@ -193,25 +191,9 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 					drawCharacterText(messages[35], messages[36], messages[37], messages[38], messages[39]);
 				}
 				break;
-
-			case 80:
-				if (isEnglish) {
-					clearTvText();
-				}
-				break;
-			case 82:
-				if (isEnglish) {
-					clearCharacterText();
-				}
-				break;
 			case 83:
 				if (isEnglish) {
 					drawCharacterText(messages[260], messages[261], messages[262], messages[263], messages[264]);
-				}
-				break;
-			case 89:
-				if (isSpanish) {
-					clearCharacterText();
 				}
 				break;
 			case 90:
@@ -225,10 +207,6 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				if (isEnglish) {
 					drawCharacterText(messages[40], messages[41], messages[42], messages[43], messages[44]);
 				}
-				break;
-
-			case 102:
-				clearCharacterText();
 				break;
 			case 103:
 				drawTvText(messages[45], messages[46], messages[47], messages[48], messages[49]);
