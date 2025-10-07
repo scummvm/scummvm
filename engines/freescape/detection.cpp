@@ -801,7 +801,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("castlemaster.zx.data", "e2ed83c30cd0ed7119e349d0f677ae91", 36096),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | GF_ZX_RETAIL,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX)
 	},
 	// Disc release
