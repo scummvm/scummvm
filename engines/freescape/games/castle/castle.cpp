@@ -828,7 +828,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		if (_language == Common::EN_ANY)
 			scoreString = "SCORE XXXXXXX";
 		else if (_language == Common::ES_ESP)
-			scoreString = "PUNTAJE XXXXXXX";
+			scoreString = "PUNTOS XXXXXXX";
 		else
 			error("Language not supported");
 	}
