@@ -924,7 +924,10 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 void CastleEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source;
 	_currentAreaMessages.clear();
-	if (index == 128 && isDemo()) {
+	if (index == 128 && isSpectrum()) {
+		drawFullscreenRiddleAndWait(8);
+		return;
+	} else if (index == 128 && isDemo()) {
 		drawFullscreenRiddleAndWait(18);
 		return;
 	} else if (index >= 129) {
