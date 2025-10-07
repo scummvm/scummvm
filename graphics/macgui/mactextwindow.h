@@ -98,7 +98,6 @@ public:
 private:
 	void init();
 
-	void scroll(int delta);
 	void calcScrollBar();
 
 	void undrawInput();
@@ -108,8 +107,6 @@ private:
 public:
 	bool _editable;
 	bool _selectable;
-
-	int _scrollPos;
 
 private:
 	MacText *_mactext;

@@ -65,7 +65,6 @@ void MacTextWindow::init() {
 
 	_inputIsDirty = true;
 
-	_scrollPos = 0;
 	_editable = true;
 	_selectable = true;
 
@@ -124,7 +123,7 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
-		_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
+		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
 	}
 
 	if (_wm->_mode & kWMModeWin95)
@@ -259,7 +258,7 @@ void MacTextWindow::calcScrollBar() {
 		maxText = MAX<int>(_mactext->getTextHeight(), displayHeight);
 
 	float scrollSize = (float)maxScrollbar * (float)displayHeight / (float)maxText;
-	float scrollPos = (float)_scrollPos * (float)maxScrollbar / (float)maxText;
+	float scrollPos = (float)_mactext->_scrollPos * (float)maxScrollbar / (float)maxText;
 	setScroll(scrollPos, scrollSize);
 }
 
@@ -315,14 +314,14 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 	if (event.type == Common::EVENT_WHEELUP) {
 		//setHighlight(kBorderScrollUp);
-		scroll(-2);
+		_mactext->scroll(-2);
 		calcScrollBar();
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
 		//setHighlight(kBorderScrollDown);
-		scroll(2);
+		_mactext->scroll(2);
 		calcScrollBar();
 		return true;
 	}
@@ -335,10 +334,10 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
 			switch (click) {
 			case kBorderScrollUp:
-				scroll(-1);
+				_mactext->scroll(-1);
 				break;
 			case kBorderScrollDown:
-				scroll(1);
+				_mactext->scroll(1);
 				break;
 			default:
 				return false;
@@ -364,20 +363,6 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	}
 
 	return MacWindow::processEvent(event);
-}
-
-void MacTextWindow::scroll(int delta) {
-	_scrollPos += delta * kConScrollStep;
-
-	if (_editable)
-		_scrollPos = CLIP<int>(_scrollPos, 0, _mactext->getTextHeight() - kConScrollStep);
-	else
-		_scrollPos = CLIP<int>(_scrollPos, 0, MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height()));
-
-	_contentIsDirty = true;
-	_borderIsDirty = true;
-
-	_mactext->scroll(delta);
 }
 
 void MacTextWindow::undrawInput() {
