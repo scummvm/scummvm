@@ -46,6 +46,7 @@ bool XtraCastMember::hasField(int field) {
 	switch (field) {
 	case kTheCuePointNames:		// D6
 	case kTheCuePointTimes:		// D6
+	case kTheCurrentTime:		// D6
 		return true;
 	default:
 		break;

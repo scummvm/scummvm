@@ -221,6 +221,7 @@ static const BuiltinProto builtins[] = {
 	{ "union",			LB::b_union,		2, 2, 400, FBLTIN },	//			D4 f
 	// Sound
 	{ "beep",	 		LB::b_beep,			0, 1, 200, CBLTIN },	// D2
+	{ "isPastCuePoint",LB::b_isPastCuePoint,2, 2, 600, FBLTIN },	// 					D6 f
 	{ "mci",	 		LB::b_mci,			1, 1, 300, CBLTIN },	//		D3.1 c
 	{ "mciwait",		LB::b_mciwait,		1, 1, 300, CBLTIN },	//		D3.1 c
 	{ "sound",			LB::b_sound,		2, 3, 300, CBLTIN },	//		D3 c
@@ -265,6 +266,13 @@ static const BuiltinProto builtins[] = {
 	// Save session
 	{ "beginRecording", LB::b_beginRecording,0, 1, 500, CBLTIN },	//				D5 c
 	{ "endRecording",	LB::b_endRecording,	 0, 0, 500, CBLTIN },	//				D5 c
+
+	// Shockwave
+	{ "externalParamCount", LB::b_externalParamCount, 0, 0, 600, FBLTIN }, //			D6 f
+	{ "externalParamName",  LB::b_externalParamName, 1, 1, 600, FBLTIN },  // 			D6 f
+	{ "externalParamValue", LB::b_externalParamValue, 1, 1, 600, FBLTIN },  // 			D6 f
+	{ "frameReady", LB::b_frameReady, 0, 2, 600, FBLTIN }, 			//					D6 f
+	{ "getPref", LB::b_getPref, 1, 1, 600, FBLTIN }, 				//					D6 f
 
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, 200, HBLTIN },
@@ -3700,6 +3708,12 @@ void LB::b_beep(int nargs) {
 	g_lingo->func_beep(repeat);
 }
 
+void LB::b_isPastCuePoint(int nargs) {
+	g_lingo->printSTUBWithArglist("b_isPastCuePoint", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
 void LB::b_mci(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -4156,14 +4170,43 @@ void LB::b_getVolumes(int nargs) {
 
 void LB::b_beginRecording(int nargs) {
 	g_lingo->printSTUBWithArglist("b_beginRecording", nargs);
-
 	g_lingo->dropStack(nargs);
 }
 
 void LB::b_endRecording(int nargs) {
 	g_lingo->printSTUBWithArglist("b_endRecording", nargs);
-
 	g_lingo->dropStack(nargs);
+}
+
+// Shockwave D6
+void LB::b_externalParamCount(int nargs) {
+	g_lingo->printSTUBWithArglist("b_externalParamCount", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void LB::b_externalParamName(int nargs) {
+	g_lingo->printSTUBWithArglist("b_externalParamName", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void LB::b_externalParamValue(int nargs) {
+	g_lingo->printSTUBWithArglist("b_externalParamValue", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void LB::b_frameReady(int nargs) {
+	g_lingo->printSTUBWithArglist("b_frameReady", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void LB::b_getPref(int nargs) {
+	g_lingo->printSTUBWithArglist("b_getPref", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
 }
 
 } // End of namespace Director

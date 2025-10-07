@@ -235,7 +235,10 @@ enum LEvent {
 
 	kEventStartUp, // 32
 
-	kEventMenuCallback // 33
+	kEventMenuCallback, // 33
+
+	kEventGetBehaviorDescription,
+	kEventGetPropertyDescriptionList,
 };
 
 enum TransitionType {

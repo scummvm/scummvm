@@ -225,6 +225,8 @@ void b_trackStartTime(int nargs);
 void b_trackStopTime(int nargs);
 void b_trackType(int nargs);
 
+void b_isPastCuePoint(int nargs);
+
 void b_beginRecording(int nargs);
 void b_endRecording(int nargs);
 
@@ -234,6 +236,12 @@ void b_scummvmNoFatalError(int nargs);
 
 // XCMD/XFCN (HyperCard), normally exposed
 void b_getVolumes(int nargs);
+
+void b_externalParamCount(int nargs); // Shockwave D6
+void b_externalParamName(int nargs);  // Shockwave D6
+void b_externalParamValue(int nargs); // Shockwave D6
+void b_frameReady(int nargs);        // Shockwave D6
+void b_getPref(int nargs);            // Shockwave D6
 
 } // End of namespace LB
 

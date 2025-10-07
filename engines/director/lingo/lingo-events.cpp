@@ -78,6 +78,9 @@ struct EventHandlerType {
 
 	{ kEventStartUp,			"startUp" },
 
+	{ kEventGetBehaviorDescription,	"getBehaviorDescription" }, //			D6
+	{ kEventGetPropertyDescriptionList,	"getPropertyDescriptionList" }, //	D6
+
 	{ kEventGeneric,			"scummvm_generic" },
 
 	{ kEventNone, nullptr }

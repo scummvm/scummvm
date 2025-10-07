@@ -552,6 +552,7 @@ bool DigitalVideoCastMember::hasField(int field) {
 	case kTheCrop:
 	case kTheCuePointNames:		// D6
 	case kTheCuePointTimes:		// D6
+	case kTheCurrentTime:		// D6
 	case kTheDigitalVideoType:
 	case kTheDirectToStage:
 	case kTheDuration:

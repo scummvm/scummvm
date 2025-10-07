@@ -186,6 +186,7 @@ bool SoundCastMember::hasField(int field) {
 	case kTheChannelCount:
 	case kTheCuePointNames:		// D6
 	case kTheCuePointTimes:		// D6
+	case kTheCurrentTime:		// D6
 	case kTheSampleRate:
 	case kTheSampleSize:
 		return true;
