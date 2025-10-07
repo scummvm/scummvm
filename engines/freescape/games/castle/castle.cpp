@@ -1681,15 +1681,17 @@ void CastleEngine::drawBackground() {
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 
-	if (_background) {
-		if (!_skyTexture)
-			_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);
-		_gfx->drawSkybox(_skyTexture, _position);
-		if (_thunderTextures.empty()) {
-			_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[0]->surfacePtr(), true));
-			_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[1]->surfacePtr(), true));
+	if (_currentArea->isOutside()) {
+		if (_background) {
+			if (!_skyTexture)
+				_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);
+			_gfx->drawSkybox(_skyTexture, _position);
+			if (_thunderTextures.empty()) {
+				_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[0]->surfacePtr(), true));
+				_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[1]->surfacePtr(), true));
+			}
+			updateThunder();
 		}
-		updateThunder();
 	}
 }
 
