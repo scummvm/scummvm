@@ -184,6 +184,8 @@ void SoundCastMember::unload() {
 bool SoundCastMember::hasField(int field) {
 	switch (field) {
 	case kTheChannelCount:
+	case kTheCuePointNames:		// D6
+	case kTheCuePointTimes:		// D6
 	case kTheSampleRate:
 	case kTheSampleSize:
 		return true;

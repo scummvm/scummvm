@@ -133,6 +133,8 @@ void b_insertFrame(int nargs);
 void b_updateFrame(int nargs);
 
 void b_abort(int nargs);
+void b_call(int nargs);
+void b_callAncestor(int nargs);
 void b_cancelIdleLoad(int nargs);
 void b_continue(int nargs);
 void b_dontPassEvent(int nargs);

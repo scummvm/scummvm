@@ -50,6 +50,8 @@ class Sprite;
 TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheActiveWindow,		"activeWindow",		false, 500, false },//				D5 property
 	{ kTheActorList,		"actorList",		false, 400, false },//			D4 p
+	{ kTheAlertHook,		"alertHook",		false, 600, true },	//					D6 p
+	{ kTheApplicationPath,	"applicationPath",	false, 600, true },	//					D6 f
 	{ kTheBeepOn,			"beepOn",			false, 200, false },// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false, 200, false },// D2 p
 	{ kTheCast,				"cast",				true,  200, false },// D2
@@ -246,6 +248,8 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"backColor",	kTheBackColor,	400 },//				D4 p
 	{ kTheCast,		"castLibNum",	kTheCastLibNum,	500 },// 					D5 p
 	{ kTheCast,		"castType",		kTheCastType,	400 },//				D4 p
+	{ kTheCast,		"cuePointNames",kTheCuePointNames,600 },//						D6 p
+	{ kTheCast,		"cuePointTimes",kTheCuePointTimes,600 },//						D6 p
 	{ kTheCast,		"filename",		kTheFileName,	400 },//				D4 p
 	{ kTheCast,		"foreColor",	kTheForeColor,	400 },//				D4 p
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
@@ -513,6 +517,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheActorList:
 		d = g_lingo->_actorList;
+		break;
+	case kTheAlertHook:
+		warning("STUB: the alertHook");
+		break;
+	case kTheApplicationPath:
+		warning("STUB: the applicationPath");
 		break;
 	case kTheBeepOn:
 		d = (int)movie->_isBeepOn;
@@ -1165,6 +1175,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	switch (entity) {
 	case kTheActorList:
 		g_lingo->_actorList = d;
+		break;
+	case kTheAlertHook:
+		warning("STUB: the alertHook");
 		break;
 	case kTheBeepOn:
 		movie->_isBeepOn = (bool)d.u.i;

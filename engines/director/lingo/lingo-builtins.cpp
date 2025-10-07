@@ -122,6 +122,8 @@ static const BuiltinProto builtins[] = {
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
 	{ "cancelIdleLoad",	LB::b_cancelIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
+	{ "call",			LB::b_call,			-1,0, 200, CBLTIN },	// 					D6 c
+	{ "callAncestor",	LB::b_callAncestor,	-1,0, 200, CBLTIN },	// 					D6 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
 	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, 200, CBLTIN },	// D2 c
 	{ "delay",	 		LB::b_delay,		1, 1, 200, CBLTIN },	// D2 c
@@ -1847,6 +1849,16 @@ void LB::b_xtra(int nargs) {
 ///////////////////
 void LB::b_abort(int nargs) {
 	g_lingo->_abort = true;
+}
+
+void LB::b_call(int nargs) {
+	g_lingo->printSTUBWithArglist("b_call", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_callAncestor(int nargs) {
+	g_lingo->printSTUBWithArglist("b_callAncestor", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_cancelIdleLoad(int nargs) {
