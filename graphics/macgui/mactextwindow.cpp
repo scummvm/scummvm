@@ -329,14 +329,17 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			setHighlight(click);
+			_mactext->scroll(0);
 			calcScrollBar();
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
 			switch (click) {
 			case kBorderScrollUp:
+				setHighlight(kBorderNone);
 				_mactext->scroll(-1);
 				break;
 			case kBorderScrollDown:
+				setHighlight(kBorderNone);
 				_mactext->scroll(1);
 				break;
 			default:

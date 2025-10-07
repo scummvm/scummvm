@@ -325,8 +325,13 @@ void MacWindow::drawBorder() {
 		return;
 	}
 
-	if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown)
+	if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown) {
+		_macBorder.drawScrollBar(g);
+
+		_highlightedPart = kBorderNone;
+
 		setHighlight(kBorderNone);
+	}
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g, uint32 flags) {
