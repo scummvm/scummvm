@@ -917,7 +917,7 @@ void drawFlc(
 						if (flic->hasDirtyPalette()) {
 
 							const byte *fliPalette = (const byte *)flic->getPalette();
-							byte *palette = (byte *)malloc(768);
+							byte *palette = new byte[768];
 							Common::copy(fliPalette, fliPalette + 768, palette);
 							// game fixes background to 0
 							palette[0] = 0;
@@ -943,7 +943,7 @@ void drawFlc(
 								g_engine->_graphics->setPalette(palette);
 								g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
 							}
-							free(palette);
+							delete[] palette;
 						}
 						g_engine->_chrono->_gameTick = false;
 					} else {

@@ -1312,6 +1312,9 @@ void TotEngine::exitToDOS() {
 		}
 		_screen->update();
 	} while (exitChar != '\33' && !shouldQuit());
+	if (shouldQuit()) {
+		return;
+	}
 	_graphics->putImg(58, 48, dialogBackground);
 	_mouse->mouseX = oldMousePosX;
 	_mouse->mouseY = oldMousePosY;

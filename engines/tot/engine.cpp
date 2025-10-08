@@ -4547,7 +4547,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
 
-	char *passArray = (char *)malloc(10);
+	char *passArray =  new char[10];
 	for (int i = 0; i < 10; i++)
 		passArray[i] = (char)(getRandom(10) + 48);
 
@@ -4582,7 +4582,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	g_engine->_graphics->putShape(270, 159, stamp);
-	free(passArray);
+	delete[] passArray;
 	free(stamp);
 }
 
