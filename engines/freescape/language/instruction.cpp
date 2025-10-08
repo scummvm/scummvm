@@ -152,6 +152,8 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	int skipDepth = 0;
 	int conditionalDepth = 0;
 	bool executed = false;
+	int loopIterations = 0;
+	int loopHead = -1;
 	int codeSize = code.size();
 
 	if (codeSize == 0) {
@@ -198,6 +200,25 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 		case Token::NOP:
 			debugC(1, kFreescapeDebugCode, "Executing NOP at ip: %d", ip);
+			break;
+
+		case Token::LOOP:
+			loopHead = ip;
+			loopIterations = instruction._source;
+			debugC(1, kFreescapeDebugCode, "Starting loop with %d iterations at ip: %d", loopIterations, ip);
+			break;
+
+		case Token::AGAIN:
+			if (loopIterations > 1) {
+				loopIterations--;
+				ip = loopHead;
+				debugC(1, kFreescapeDebugCode, "Looping again, %d iterations left, jumping to ip: %d", loopIterations, ip);
+			} else if (loopIterations == 1) {
+				loopIterations--;
+				debugC(1, kFreescapeDebugCode, "Loop finished");
+			} else {
+				error("AGAIN found without a matching LOOP!");
+			}
 			break;
 
 		case Token::CONDITIONAL:
