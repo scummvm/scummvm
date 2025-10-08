@@ -151,6 +151,7 @@ bool CastMember::hasField(int field) {
 	case kTheHeight:
 	case kTheHilite:
 	case kTheLoaded:
+	case kTheMediaReady:
 	case kTheModified:
 	case kTheMemberNum:
 	case kTheName:
@@ -207,6 +208,9 @@ Datum CastMember::getField(int field) {
 		break;
 	case kTheLoaded:
 		d = 1; // Not loaded handled in Lingo::getTheCast
+		break;
+	case kTheMediaReady:
+		d = 1;	// Media is always downloaded from internet in ScummVM
 		break;
 	case kTheModified:
 		d = (int)_isChanged;

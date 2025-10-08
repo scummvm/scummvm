@@ -120,6 +120,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheMouseH,			"mouseH",			false, 200, true },	// D2 f
 	{ kTheMouseItem,		"mouseItem",		false, 300, true },	//		D3 f
 	{ kTheMouseLine,		"mouseLine",		false, 300, true },	//		D3 f
+	{ kTheMouseMember,		"mouseMember",		false, 600, true },	//					D6 f
 	{ kTheMouseUp,			"mouseUp",			false, 200, true },	// D2 f
 	{ kTheMouseUpScript,  	"mouseUpScript",	false, 200, false },// D2 p
 	{ kTheMouseV,			"mouseV",			false, 200, true },	// D2 f
@@ -255,6 +256,7 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"height",		kTheHeight,		400 },//				D4 p
 	{ kTheCast,		"loaded",		kTheLoaded,		400 },//				D4 p
 	{ kTheCast,		"media",		kTheMedia,		500 },//					D5 p
+	{ kTheCast,		"mediaReady",	kTheMediaReady,	600 },//						D6 p
 	{ kTheCast,		"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheCast,		"modified",		kTheModified,	400 },//				D4 p
 	{ kTheCast,		"name",			kTheName,		300 },//		D3 p
@@ -868,6 +870,17 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			uint16 spriteId = score->getSpriteIDFromPos(pos);
 			Channel *ch = score->getChannelById(spriteId);
 			d = ch->getMouseLine(pos.x, pos.y);
+		}
+		break;
+	case kTheMouseMember:
+		{
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
+			if (spriteId) {
+				d = score->getSpriteById(spriteId)->_cast;
+			} else {
+				d = getVoid();
+			}
 		}
 		break;
 	case kTheMouseUp:
@@ -1640,6 +1653,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheLocV:
 		d = channel->getPosition().y;
+		break;
+	case kTheMostRecentCuePoint:
+		warning("STUB: the mostRecentCuePoint");
+		d = 0;
 		break;
 	case kTheMoveableSprite:
 		d = sprite->_moveable;
