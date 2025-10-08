@@ -70,8 +70,14 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 30 : 27;
-	placeBubble1(msg);
+	/*if (_vm->getGameID() == kGameNoctropolis) {
+		calcBubble_v3(msg);
+		_vm->_screen->saveBlock(_bubbles[0]);
+		printBubble(msg);
+	} else {*/
+		_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 30 : 27;
+		placeBubble1(msg);
+	//}
 }
 
 void BubbleBox::placeBubble1(const Common::String &msg) {
@@ -94,6 +100,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	Screen &screen = *_vm->_screen;
 	Common::Point printOrg = screen._printOrg;
 	Common::Point printStart = screen._printStart;
+	AccessGameType gameType = _vm->getGameID();
 
 	// Figure out maximum width allowed
 	if (_type == kBoxTypeFileDialog) {
@@ -111,11 +118,15 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		if (_vm->getGameID() == kGameMartianMemorandum) {
+		if (gameType == kGameMartianMemorandum) {
 			lastLine = _vm->_fonts._font1->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
 			width = _vm->_fonts._font1->stringWidth(line);
-		} else {
+		} else if (gameType == kGameAmazon){
 			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+		} else {
+			assert(gameType == kGameNoctropolis);
+			lastLine = _vm->_fonts.getFont(4)->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
+			width = _vm->_fonts.getFont(4)->stringWidth(line);
 		}
 
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
@@ -124,10 +135,10 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		screen._printOrg.x = screen._printStart.x;
 	} while (!lastLine);
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (gameType == kGameMartianMemorandum) {
 		bounds.setWidth((_vm->_fonts._printMaxX / 16 + 2) * 16 + 2 + 1);
 		bounds.bottom = screen._printOrg.y + 4 + 1;
-	} else {
+	} else if (gameType == kGameAmazon) {
 		// TODO: Check this maths if we implement original file boxes.
 		if (_type == kBoxTypeFileDialog)
 			screen._printOrg.y += 6;
@@ -148,6 +159,24 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
 		if (height >= 0)
 			bounds.setHeight(bounds.height() + 13 - (height % 13));
+	} else {
+		assert(gameType == kGameNoctropolis);/*
+		if (!_bubbleTitle.empty())
+			textHeight += _vm->_fonts.getFont(4)->stringHeight(_bubbleTitle) - 4;
+
+		if (_type & kTextBoxCenter) {
+			// Center the box
+			boxX -= (textWidth + 27) / 2;
+			boxY -= (textHeight + 23) / 2;
+		}
+
+		boxWidth = (textWidth + 13) / 16;
+		boxHeight = (textHeight + 13) / 16;
+
+		if (!(flags & kTextBoxPlain)) {
+			boxWidth = MAX<int16>(boxWidth, 3);
+			boxHeight = MAX<int16>(boxHeight, 3);
+		}*/
 	}
 
 	if (bounds.bottom > screen.h)
