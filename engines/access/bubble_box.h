@@ -90,6 +90,11 @@ public:
 	void calcBubble(const Common::String &msg);
 
 	/**
+	 * Noctropolis version of bubble calculation
+	 */
+	//void calcBubble_v3(const Common::String &msg);
+
+	/**
 	 * Prints a text bubble and it's contents
 	 */
 	void printBubble(const Common::String &msg);

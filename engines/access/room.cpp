@@ -747,7 +747,7 @@ void Room::executeCommand(int commandId) {
 			events.setCursor(CURSOR_CROSSHAIRS);
 			break;
 		}
-	} else {
+	} else if (_vm->getGameID() == kGameAmazon) {
 		switch (commandId) {
 		case 0:
 		case 1:
@@ -781,6 +781,9 @@ void Room::executeCommand(int commandId) {
 		default:
 			break;
 		}
+	} else {
+		assert(_vm->getGameID() == kGameNoctropolis);
+		warning("TODO: implement executeCommand for Noctropolis");
 	}
 	screen.saveScreen();
 	screen.setDisplayScan();
@@ -791,7 +794,7 @@ void Room::executeCommand(int commandId) {
 	if (_vm->getGameID() == kGameMartianMemorandum) {
 		screen.plotImage(icons, 0, Common::Point(5, 184));
 		screen.plotImage(icons, 1, Common::Point(155, 184));
-	} else {
+	} else if (_vm->getGameID() == kGameNoctropolis) {
 		screen.plotImage(icons, 0, Common::Point(0, 177));
 		screen.plotImage(icons, 1, Common::Point(143, 177));
 	}

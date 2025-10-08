@@ -1353,7 +1353,19 @@ void Scripts::cmdUndoText() {
 }
 
 void Scripts::cmdResetAnim() {
-    error("TODO: Implement Scripts::cmdResetAnim");
+	byte animNum = _data->readByte();
+	debugCN(1, kDebugScripts, "cmdResetAnim(%d)", animNum);
+	Animation *anim = _vm->_animation->findAnimation(animNum);
+	if (!anim)
+		error("cmdResetAnim: Invalid anim num %d", animNum);
+
+	anim->_countdownTicks = anim->_initialTicks;
+	anim->_frameNumber = 0;
+	if (anim->_type == 3 || anim->_type == 4) {
+		anim->_currentLoopCount = anim->_loopCount;
+	} else {
+		anim->_currentLoopCount = 0;
+	}
 }
 
 void Scripts::cmdWalkTo() {
@@ -1380,11 +1392,18 @@ void Scripts::cmdFadeWhite() {
 }
 
 void Scripts::cmdGotoFrame() {
-    error("TODO: Implement Scripts::cmdGotoFrame");
+	uint16 animNum = _data->readUint16LE();
+	uint16 frameNum = _data->readUint16LE();
+	debugCN(1, kDebugScripts, "cmdGotoFrame(%d, %d)", animNum, frameNum);
+	Animation *anim = _vm->_animation->findAnimation(animNum);
+	if (!anim)
+		error("cmdGotoFrame: Invalid anim num %d", animNum);
+	anim->_frameNumber = frameNum;
 }
 
 void Scripts::cmdPlayerScale() {
-    error("TODO: Implement Scripts::cmdPlayerScale");
+	_vm->_scale = _data->readUint16LE();
+    debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_scale);
 }
 
 void Scripts::cmdRestoreBlock() {
@@ -1414,6 +1433,10 @@ void Scripts::cmdStilOn() {
 }
 
 void Scripts::cmdReturnExit() {
+	debugCN(1, kDebugScripts, "cmdReturnExit()");
+	//_vm->_exitBox = true; -- work out what to do with this.
+	_endFlag = true;
+	_returnCode = 0;
     error("TODO: Implement Scripts::cmdReturnExit");
 }
 
@@ -1422,23 +1445,31 @@ void Scripts::cmdSetStilCoords() {
 }
 
 void Scripts::cmdSetPlayerDir() {
-    error("TODO: Implement Scripts::cmdSetPlayerDir");
+	debugCN(1, kDebugScripts, "cmdSetPlayerDir()");
+	_vm->_player->_playerDirection = (Direction)_data->readByte();
 }
 
 void Scripts::cmdSetStilDir() {
-    error("TODO: Implement Scripts::cmdSetStilDir");
+	debugCN(1, kDebugScripts, "cmdSetStilDir()");
+	_vm->_stilDir = _data->readByte();
 }
 
 void Scripts::cmdStilScale() {
-    error("TODO: Implement Scripts::cmdStilScale");
+	debugCN(1, kDebugScripts, "cmdStilScale()");
+	_vm->_stilScale = _data->readUint16LE();
 }
 
 void Scripts::cmdLockInterface() {
-    error("TODO: Implement Scripts::cmdLockInterface");
+	debugCN(1, kDebugScripts, "cmdLockInterface()");
+	_vm->_events->_interfaceOff = true;
+	_vm->_events->setCursor(CURSOR_DARK_ANKH);
 }
 
 void Scripts::cmdUnlockInterface() {
-    error("TODO: Implement Scripts::cmdUnlockInterface");
+	debugCN(1, kDebugScripts, "cmdUnlockInterface()");
+	_vm->_events->_interfaceOff = false;
+	warning("TODO: cmdUnlockInterface - restore cursor");
+	_vm->_events->setCursor(CURSOR_ARROW);
 }
 
 

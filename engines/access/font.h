@@ -62,7 +62,8 @@ public:
 	int charWidth(char c) const;
 
 	/**
-	 * Get the width of a given string
+	 * Get the width of a given string.
+	 * The string should already be broken into lines.
 	 */
 	int stringWidth(const Common::String &msg) const;
 
