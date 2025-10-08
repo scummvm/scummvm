@@ -582,6 +582,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[i]);
 			if (!in) {
 				warning("Could not open save file: %s", saves[i].c_str());
+				continue;
 			}
 			bool result = g_engine->getMetaEngine()->readSavegameHeader(in, &header, true);
 			euroText(65, 29 + (i * 15), result ? header.description.c_str() : saves[i].c_str(), color);
