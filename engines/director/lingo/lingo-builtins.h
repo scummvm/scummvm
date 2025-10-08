@@ -93,6 +93,7 @@ void b_HMStoFrames(int nargs);
 void b_param(int nargs);
 void b_printFrom(int nargs);
 void b_put(int nargs);
+void b_setPref(int nargs);
 void b_showGlobals(int nargs);
 void b_showLocals(int nargs);
 void b_value(int nargs);
@@ -118,6 +119,8 @@ void b_puppetTempo(int nargs);
 void b_puppetTransition(int nargs);
 void b_ramNeeded(int nargs);
 void b_rollOver(int nargs);
+void b_sendAllSprites(int nargs);
+void b_sendSprite(int nargs);
 void b_spriteBox(int nargs);
 void b_unLoad(int nargs);
 void b_unLoadCast(int nargs);
@@ -156,6 +159,7 @@ void b_quit(int nargs);
 void b_restart(int nargs);
 void b_shutDown(int nargs);
 void b_startTimer(int nargs);
+void b_stopEvent(int nargs);
 void b_return(int nargs);
 
 void b_closeDA(int nargs);
@@ -240,8 +244,9 @@ void b_getVolumes(int nargs);
 void b_externalParamCount(int nargs); // Shockwave D6
 void b_externalParamName(int nargs);  // Shockwave D6
 void b_externalParamValue(int nargs); // Shockwave D6
-void b_frameReady(int nargs);        // Shockwave D6
+void b_frameReady(int nargs);         // Shockwave D6
 void b_getPref(int nargs);            // Shockwave D6
+void b_netPresent(int nargs);         // Shockwave D6
 
 } // End of namespace LB
 

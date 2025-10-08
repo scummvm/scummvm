@@ -282,6 +282,7 @@ enum TheFieldType {
 	kTheSize,
 	kTheSound,
 	kTheSourceRect,
+	kTheSpriteNum,
 	kTheStartTime,
 	kTheStopTime,
 	kTheStrech,

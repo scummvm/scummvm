@@ -80,6 +80,7 @@ struct EventHandlerType {
 
 	{ kEventGetBehaviorDescription,	"getBehaviorDescription" }, //			D6
 	{ kEventGetPropertyDescriptionList,	"getPropertyDescriptionList" }, //	D6
+	{ kEventRunPropertyDialog,	"runPropertyDialog" },	 //					D6
 
 	{ kEventGeneric,			"scummvm_generic" },
 

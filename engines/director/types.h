@@ -239,6 +239,7 @@ enum LEvent {
 
 	kEventGetBehaviorDescription,
 	kEventGetPropertyDescriptionList,
+	kEventRunPropertyDialog,
 };
 
 enum TransitionType {

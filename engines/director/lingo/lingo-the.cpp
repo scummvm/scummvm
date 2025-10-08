@@ -360,6 +360,9 @@ const TheEntityField fields[] = {
 	// XtrsaCastMember fields
 	{ kTheCast,		"interface",	kTheInterface,	500 },//					D5 p
 
+	// Behavior (me) fields
+	{ kTheCast,		"spriteNum",	kTheSpriteNum,	600 },//						D6 p
+
 	// Field fields
 	{ kTheField,	"alignment",	kTheTextAlign,	500 },//					D5 p
 	{ kTheField,	"font",			kTheTextFont,	500 },//					D5 p
@@ -1694,6 +1697,11 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		//Check the last 3 bits of the _colorcode byte as value lies in 0 to 5
 		d = (int)(sprite->_colorcode & 0x7);
 		break;
+	case kTheScriptInstanceList:
+		warning("STUB: Getting the scriptInstanceList");
+		d.type = PARRAY;
+		d.u.parr = new PArray;
+		break;
 	case kTheScriptNum:
 		if (g_director->getVersion() >= 600) {
 			if (sprite->_behaviors.size() > 0)
@@ -1703,6 +1711,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		} else {
 			d = sprite->_scriptId.member;
 		}
+		break;
+	case kTheSpriteNum:
+		warning("STUB: Getting the spriteNum");
+		d = 0;
 		break;
 	case kTheStartTime:
 		d = channel->_startTime;
@@ -2028,6 +2040,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		// Based on Director in a Nutshell, page 15
 		sprite->setAutoPuppet(kAPRect, true);
 
+		break;
+	case kTheScriptInstanceList:
+		warning("STUB: Setting the scriptInstanceList");
 		break;
 	case kTheStartTime:
 		channel->_startTime = d.asInt();

@@ -147,6 +147,7 @@ static const BuiltinProto builtins[] = {
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
 	{ "shutDown",		LB::b_shutDown,		0, 0, 200, CBLTIN },	// D2 c
 	{ "startTimer",		LB::b_startTimer,	0, 0, 200, CBLTIN },	// D2 c
+	{ "stopEvent",		LB::b_stopEvent,	0, 0, 600, CBLTIN },	//						D6 c
 		// when keyDown													// D2
 		// when mouseDown												// D2
 		// when mouseUp													// D2
@@ -171,6 +172,7 @@ static const BuiltinProto builtins[] = {
 	{ "printFrom",	 	LB::b_printFrom,	-1,0, 200, CBLTIN },	// D2 c
 	{ "put",			LB::b_put,			-1,0, 200, CBLTIN },	// D2
 		// set															// D2
+	{ "setPref",		LB::b_setPref,		2, 2, 600, CBLTIN },	// 					D6 c
 	{ "showGlobals",	LB::b_showGlobals,	0, 0, 200, CBLTIN },	// D2 c
 	{ "showLocals",		LB::b_showLocals,	0, 0, 200, CBLTIN },	// D2 c
 	// Score
@@ -196,6 +198,8 @@ static const BuiltinProto builtins[] = {
 	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },// D2 c
 	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, 300, FBLTIN },	//		D3.1 f
 	{ "rollOver",		LB::b_rollOver,		1, 1, 200, FBLTIN },	// D2 f
+	{ "sendAllSprites",	LB::b_sendAllSprites,-1,0,600, CBLTIN },	// 					D6 c
+	{ "sendSprite",		LB::b_sendSprite,	-1,0, 600, CBLTIN },	// 					D6 c
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
@@ -2289,6 +2293,13 @@ void LB::b_startTimer(int nargs) {
 	g_director->getCurrentMovie()->_lastTimerReset = g_director->getMacTicks();
 }
 
+void LB::b_stopEvent(int nargs) {
+	warning("STUB: b_stopEvent");
+	// TEquivalent to the dontPassEvent command used in earlier
+	//versions of Director, this command also applies to sprite scripts.
+	g_lingo->_passEvent = false;
+}
+
 ///////////////////
 // Types
 ///////////////////
@@ -2455,6 +2466,11 @@ void LB::b_put(int nargs) {
 	} else {
 		debug("-- %s", output.c_str());
 	}
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_setPref(int nargs) {
+	g_lingo->printSTUBWithArglist("b_setPref", nargs);
 	g_lingo->dropStack(nargs);
 }
 
@@ -3291,6 +3307,16 @@ void LB::b_rollOver(int nargs) {
 		res.u.i = 1; // TRUE
 
 	g_lingo->push(res);
+}
+
+void LB::b_sendAllSprites(int nargs) {
+	g_lingo->printSTUBWithArglist("b_sendAllSprites", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void LB::b_sendSprite(int nargs) {
+	g_lingo->printSTUBWithArglist("b_sendSprite", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_spriteBox(int nargs) {
@@ -4205,6 +4231,13 @@ void LB::b_frameReady(int nargs) {
 
 void LB::b_getPref(int nargs) {
 	g_lingo->printSTUBWithArglist("b_getPref", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void LB::b_netPresent(int nargs) {
+	// Once NETLINGO.X32 is implmemented, this should return 1
+	g_lingo->printSTUBWithArglist("b_netPresent", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
