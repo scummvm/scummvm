@@ -234,7 +234,7 @@ void Area::resetArea() {
 }
 
 
-void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait) {
 	bool runAnimation = animationTicks != _lastTick;
 	assert(_drawableObjects.size() > 0);
 	ObjectArray planarObjects;
@@ -251,7 +251,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			}
 
 			if (obj->getType() == ObjectType::kGroupType) {
-				drawGroup(gfx, (Group *)obj, runAnimation);
+				drawGroup(gfx, (Group *)obj, runAnimation && !insideWait);
 				continue;
 			}
 

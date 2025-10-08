@@ -54,7 +54,7 @@ public:
 	uint8 getScale();
 	void remapColor(int index, int color);
 	void unremapColor(int index);
-	void draw(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction);
+	void draw(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait);
 	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 

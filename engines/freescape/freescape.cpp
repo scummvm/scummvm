@@ -456,7 +456,7 @@ void FreescapeEngine::drawFrame() {
 
 	drawBackground();
 	if (_avoidRenderingFrames == 0) { // Avoid rendering inside objects
-		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront);
+		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront, false);
 		if (_gameStateControl == kFreescapeGameStatePlaying &&
 		    _currentArea->hasActiveGroups() && _ticks % 50 == 0) {
 			executeMovementConditions();
