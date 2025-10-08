@@ -222,6 +222,9 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_riddleBottomFrame = loadFrameWithHeaderDOS(stream);
 			_endGameThroneFrame = loadFrameWithHeaderDOS(stream);
 			// No header
+			Graphics::ManagedSurface *thunderFrame = loadFrameFromPlanes(stream, 32, 128);
+			thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			_thunderFrames.push_back(thunderFrame);
 
 			stream->seek(0x29696);
 			Common::Array<Graphics::ManagedSurface *> chars;
@@ -243,9 +246,6 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			_fontRiddle = Font(charsRiddle);
 			_fontRiddle.setCharWidth(9);
 			_fontLoaded = true;
-
-			// No header
-			// Another thunder frame?
 		}
 
 		delete stream;
@@ -366,6 +366,10 @@ void CastleEngine::loadAssetsDOSDemo() {
 			_riddleBottomFrame = loadFrameWithHeaderDOS(stream);
 			_endGameThroneFrame = loadFrameWithHeaderDOS(stream);
 			// No header
+			Graphics::ManagedSurface *thunderFrame = loadFrameFromPlanes(stream, 32, 128);
+			thunderFrame->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			_thunderFrames.push_back(thunderFrame);
+
 			stream->seek(0x293f6); // TODO: check this
 			Common::Array<Graphics::ManagedSurface *> chars;
 			Common::Array<Graphics::ManagedSurface *> charsRiddle;

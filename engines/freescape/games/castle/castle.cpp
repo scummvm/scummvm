@@ -23,6 +23,7 @@
 #include "common/memstream.h"
 #include "common/config-manager.h"
 #include "common/random.h"
+#include "graphics/cursorman.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -570,8 +571,8 @@ void CastleEngine::drawInfoMenu() {
 	Common::Array<Common::Rect> keyRects;
 
 	if (isDOS()) {
-		g_system->lockMouse(false);
-		g_system->showMouse(true);
+		CursorMan.setDefaultArrowCursor();
+		CursorMan.showMouse(true);
 		surface->copyRectToSurface(*_menu, 47, 35, Common::Rect(0, 0, _menu->w, _menu->h));
 
 		_gfx->readFromPalette(10, r, g, b);
@@ -752,8 +753,7 @@ void CastleEngine::drawInfoMenu() {
 
 	delete menuTexture;
 	pauseToken.clear();
-	g_system->lockMouse(true);
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 }
 
 void CastleEngine::drawFullscreenEndGameAndWait() {
@@ -1702,8 +1702,9 @@ void CastleEngine::drawBackground() {
 				_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);
 			_gfx->drawSkybox(_skyTexture, _position);
 			if (_thunderTextures.empty()) {
-				_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[0]->surfacePtr(), true));
-				_thunderTextures.push_back(_gfx->createTexture(_thunderFrames[1]->surfacePtr(), true));
+				for (auto &it : _thunderFrames ) {
+					_thunderTextures.push_back(_gfx->createTexture(it->surfacePtr(), true));
+				}
 			}
 			updateThunder();
 		}
@@ -1718,7 +1719,7 @@ void CastleEngine::updateThunder() {
 		//debug("Thunder frame duration: %d", _thunderFrameDuration);
 		//debug("Size: %f", 2 * _thunderOffset.length());
 		//debug("Offset: %.1f, %.1f, %.1f", _thunderOffset.x(), _thunderOffset.y(), _thunderOffset.z());
-		_gfx->drawThunder(_thunderTextures[(_thunderFrameDuration - 1) / 5], _position + _thunderOffset, 100);
+		_gfx->drawThunder(_thunderTextures[0], _position + _thunderOffset, 100);
 		_thunderFrameDuration--;
 		if (_thunderFrameDuration == 0)
 			if (isSpectrum())
@@ -1736,9 +1737,9 @@ void CastleEngine::updateThunder() {
 		// Schedule next thunder, between 10 and 10 + 10 seconds
 		_thunderTicks = 50 * (10 + _rnd->getRandomNumber(10));
 		_thunderOffset = Math::Vector3d();
-		_thunderOffset.x() += (int(_rnd->getRandomNumber(100)) + 100);
+		_thunderOffset.x() += (int(_rnd->getRandomNumber(100)) + 300);
 		_thunderOffset.y() += int(_rnd->getRandomNumber(100)) + 50.0f;
-		_thunderOffset.z() += (int(_rnd->getRandomNumber(100)) + 100);
+		_thunderOffset.z() += (int(_rnd->getRandomNumber(100)) + 300);
 	}
 }
 
