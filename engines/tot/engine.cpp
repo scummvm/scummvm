@@ -3961,7 +3961,7 @@ void TotEngine::sayLine(
 					charCounter -= 1;
 				} while (text.text[charCounter] != ' ');
 				lineBreaks[lineBreakCount] = charCounter + 1;
-			} while (charCounter + 1 <= text.text.size() - width);
+			} while (charCounter + 1 <= ((int)text.text.size() - (int)width));
 
 			lineBreakCount += 1;
 			lineBreaks[lineBreakCount] = text.text.size();
