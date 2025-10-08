@@ -86,9 +86,9 @@ private:
 	void displayLoading();
 	void runaroundRed();
 	void sprites(bool drawCharacter);
-	void saveGameToRegister();
+	SavedGame *saveGameToRegister();
 	void originalSaveLoadScreen();
-	void loadGame(SavedGame game);
+	void loadGame(SavedGame *game);
 
 	RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
 	void lookAtObject(byte objectNumber);
@@ -457,8 +457,6 @@ public:
 	 * Previous positions of the mouse within the screen grid
 	 */
 	uint _oldGridX = 0, _oldGridY = 0;
-
-	SavedGame _savedGame;
 
 	uint _curDepth = 0;
 	/**
