@@ -629,6 +629,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cocktailhour",		"Cocktail Hour: A Guide to Bartending" },
 	{ "compconf",			"Computer Confluence: Exploring Tomorrow's Technology" },
 	{ "comusic",			"Computer Music: An Interactive Documentary" },
+	{ "cyberflesh",			"Cyberflesh Girlmonster" },
 	{ "cpnre",				"Canadian Practical Nurse Registration Exam Practice" },
 	{ "ctrain",				"Doing it in C++" },
 	{ "cts",				"Cooking to Seduce: The Art of Romantic Dining" },
@@ -757,6 +758,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trekshipaddon",		"Star Trek: Starship Creator Add-on Pack"},
 	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual" },
 	{ "truthsfictions",		"Truths & Fictions: A Journey from Documentary to Digital Photography" },
+	{ "typhoidmary",		"Typhoid Mary" },
 	{ "ugtmk",				"The Ultimate Guide to Mortal Kombat" },
 	{ "universe",			"Invisible Universe" },
 	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
@@ -1973,6 +1975,7 @@ namespace Director {
 #define MACDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t(t,e,f1,m1,s1,f2,m2,s2,v)	GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
+#define MACDEMO2f(t,e,f1,m1,s1,f2,m2,s2,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformMacintosh,((fl)|ADGF_DEMO),v)
 #define WINDEMO2f(t,e,f1,m1,s1,f2,m2,s2,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,Common::EN_ANY,Common::kPlatformWindows,((fl)|ADGF_DEMO),v)
 #define MACGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK),v)
 #define PIPGAME2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformPippin,(ADGF_MACRESFORK),v)
@@ -4047,6 +4050,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("curiocity", "Vol.1", "CURIO.EXE", "15a14209211895887d80e650984b9e32", 747389, Common::JA_JPN, 404),
 
 	WINGAME1_l("cyberfalsk", "", "FALSK.EXE", "t:5c9e7e9184f52f3d325bf5474d4ed34a", 692567, Common::NB_NOR, 404),
+
+	// Artwork by Linda Dement, 1995.
+	MACDEMO2f("cyberflesh", "", "CGDemo", "r:d35d3bb2e79e008e6bd9af62d099344f", 482610,
+								"CFGMdemo.dir", "t:f10e08bb72a8f084317a6cee671896ba", 4305924, 404, GF_32BPP),
+	MACGAME2f("cyberflesh", "", "CyberfleshGirlmonster", "r:78138a77207907642744d0960c14d9e5", 482610,
+								"Cyberflesh", "t:642ffb4527b29db584582e89297c004e", 12179694, 404, GF_32BPP),
 
 	WINDEMO1t("d", "Demo", "DDEMO.EXE", "66359d2e80ba536e34cb4f70772a80e1", 697001, 404),
 
@@ -6192,6 +6201,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("twistynight1", "", "to HD/xn--b9jvbwfx46n2kf6mx", "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
 	MACGAME1_l("twistynight2", "", "to HD#2/xn--hckzdwa4grb",	  "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
 	MACGAME1_l("twistynight3", "", "to HD#3/xn--n8ji8bydm4c",	  "r:8ea9e9a699c61edddffd79ddd0c994d7", 290426, Common::JA_JPN, 402),
+
+	// Artwork by Linda Dement, 1992.
+	// Re-released 1995 in D4 format as a bonus with Cyberflesh Girlmonster.
+	MACGAME2("typhoidmary", "1995 rerelease, 8-bit", "TyphoidMary(8bit)", "r:d35d3bb2e79e008e6bd9af62d099344f", 483518,
+			"ANIMATIONS", "t:5914dc31a3832afe83fbb34ff061f359", 22528, 404),
+	MACGAME2f("typhoidmary", "1995 rerelease", "TyphoidMary", "r:d35d3bb2e79e008e6bd9af62d099344f", 483518,
+			"ANIMATIONS", "t:2082210057256f67e5425fc044e7c2de", 21760, 404, GF_32BPP),
 
 	// Demos from Big Top Productions: Felix the Cat, Hello Kitty, Keroppi & The Groove Thing
 	WINGAME1("ubt", "", "BTDEMO.EXE", "dbe72b7dc91c72db5b4597857aecf5c6", 696813, 404),
