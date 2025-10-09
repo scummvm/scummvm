@@ -586,16 +586,14 @@ void TotEngine::animatedSequence(uint numSequence) {
 		_graphics->restoreBackground();
 		animIndex = _mainCharAnimation.depth;
 		_mainCharAnimation.depth = 30;
-		if (g_engine->_screenLayers[13]) {
-			free(g_engine->_screenLayers[13]);
-		}
-		clearScreenLayer(13);
-		_screenLayers[13] = animptr;
-		_depthMap[13].posx = animX;
-		_depthMap[13].posy = animY;
+		clearScreenLayer(12);
+		_screenLayers[12] = animptr;
+		_depthMap[12].posx = animX;
+		_depthMap[12].posy = animY;
 		assembleScreen();
 		_graphics->drawScreen(_sceneBackground);
-		_screenLayers[13] = nullptr;
+		// do not clear layer yet, needed for next frames
+		_screenLayers[12] = nullptr;
 
 		_mainCharAnimation.depth = animIndex;
 		drawInventory();
@@ -634,9 +632,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		}
 		animIndex = _mainCharAnimation.depth;
 		_mainCharAnimation.depth = 30;
-		if (g_engine->_screenLayers[12]) {
-			free(g_engine->_screenLayers[12]);
-		}
+
 		clearScreenLayer(12);
 		_screenLayers[12] = animptr;
 		_depthMap[12].posx = animX;
@@ -644,7 +640,8 @@ void TotEngine::animatedSequence(uint numSequence) {
 		disableSecondAnimation();
 		_mainCharAnimation.depth = animIndex;
 		_graphics->drawScreen(_sceneBackground);
-		_screenLayers[13] = nullptr;
+		// do not clear layer yet, needed for next frames
+		_screenLayers[12] = nullptr;
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
