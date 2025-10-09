@@ -28,6 +28,10 @@ namespace Gamos {
 
 class VM {
 public:
+    static constexpr const uint THREADS_COUNT = 2;
+    static constexpr const uint STACK_SIZE = 0x100;
+    static constexpr const uint STACK_POS = 0x80;
+
     enum OP{
         OP_EXIT = 0,
         OP_CMP_EQ = 1,
@@ -119,29 +123,41 @@ public:
         uint32 sp;
     };
 
+    struct MemAccess {
+        MemoryBlock *_currentBlock = nullptr;
+
+        uint8 getU8(uint32 address);
+        uint32 getU32(uint32 address);
+
+        void setU8(uint32 address, uint8 val);
+        void setU32(uint32 address, uint32 val);
+
+        void reset() { _currentBlock = nullptr; }
+    };
+
 public:
-    void clearMemory();
-    void writeMemory(uint32 address, const byte* data, uint32 dataSize);
-    MemoryBlock *findMemoryBlock(uint32 address);
-    uint8 getMemBlockU8(uint32 address);
-    uint32 getMemBlockU32(uint32 address);
+    inline static MemAccess& memory() {return _memAccess;};
 
-    MemoryBlock *createBlock(uint32 address);
+    static void clearMemory();
+    static void writeMemory(uint32 address, const byte* data, uint32 dataSize);
 
-    void setMemBlockU8(uint32 address, uint8 val);
-    void setMemBlockU32(uint32 address, uint32 val);
+    static MemoryBlock *findMemoryBlock(uint32 address);
 
-    Common::Array<byte> readMemBlocks(uint32 address, uint32 count);
+    static MemoryBlock *createBlock(uint32 address);
 
-    Common::String readMemString(uint32 address, uint32 maxLen = 256);
+    static Common::Array<byte> readMemBlocks(uint32 address, uint32 count);
+
+    static Common::String readMemString(uint32 address, uint32 maxLen = 256);
 
     Common::String getString(int memtype, uint32 offset, uint32 maxLen = 256);
 
-    uint32 doScript(uint32 scriptAddress);
+    uint32 execute(uint32 scriptAddress, byte *storage = nullptr);
 
-    int32 getS32(const void *);
-    uint32 getU32(const void *);
-    void setU32(void *, uint32 val);
+    static uint32 doScript(uint32 scriptAddress, byte *storage = nullptr);
+
+    static int32 getS32(const void *);
+    static uint32 getU32(const void *);
+    static void setU32(void *, uint32 val);
 
     void push32(uint32 val);
     uint32 pop32();
@@ -155,32 +171,40 @@ public:
     void setMem32(int memtype, uint32 offset, uint32 val);
     void setMem8(int memtype, uint32 offset, uint8 val);
 
-    Common::String decodeOp(uint32 address, int *size = nullptr);
-    Common::String disassembly(uint32 address);
+    static Common::String decodeOp(uint32 address, int *size = nullptr);
+    static Common::String disassembly(uint32 address);
 
-    Common::String opLog(const Common::Array<OpLog> &log);
+    static Common::String opLog(const Common::Array<OpLog> &log);
 
-    void printDisassembly(uint32 address);
+    static void printDisassembly(uint32 address);
+
+private:
 
 public:
+    bool _inUse = false;
+
     uint32 ESI = 0;
     byte *EBX = nullptr;
     Reg EAX;
     Reg EDX;
     Reg ECX;
     uint32 SP = 0;
-    Common::Array<byte> _stack;
-    Common::Array<byte> _stackT;
+    byte _stack[STACK_SIZE];
+    byte _stackT[STACK_SIZE];
 
-    CallDispatcher _callFuncs = nullptr;
-    void *_callingObject = nullptr;
-
-    Common::HashMap<uint32, MemoryBlock> _memMap;
-
-    bool _interrupt = false;
 private:
-    MemoryBlock *_currentReadMemBlock = nullptr;
-    MemoryBlock *_currentWriteMemBlock = nullptr;
+    MemAccess _readAccess;
+    MemAccess _writeAccess;
+
+public:
+    static CallDispatcher _callFuncs;
+    static void *_callingObject;
+
+    static Common::HashMap<uint32, MemoryBlock> _memMap;
+    static bool _interrupt;
+
+    static VM _threads[THREADS_COUNT];
+    static MemAccess _memAccess;
 };
 
 

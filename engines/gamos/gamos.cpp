@@ -81,8 +81,8 @@ Common::Error GamosEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	_vm._callFuncs = callbackVMCallDispatcher;
-	_vm._callingObject = this;
+	VM::_callFuncs = callbackVMCallDispatcher;
+	VM::_callingObject = this;
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -398,7 +398,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	if (tp == RESTP_12) {
 		setFPS(_fps);
 	} else if (tp == RESTP_13) {
-		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		VM::writeMemory(_loadedDataSize, data, dataSize);
 	} else if (tp == RESTP_18) {
 		loadRes18(pid, data, dataSize);
 	} else if (tp == RESTP_19) {
@@ -418,11 +418,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 			return false;
 		_someActsArr[pid].unk1 = getU32(data);
 	} else if (tp == RESTP_21) {
-		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_someActsArr[pid].script1 = _loadedDataSize + p3;
 		//printf("RESTP_21 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_22) {
-		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_someActsArr[pid].script2 = _loadedDataSize + p3;
 		//printf("RESTP_22 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_23) {
@@ -433,11 +433,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		ScriptS &scr = _someActsArr[pid].scriptS[p1];
 		scr.data.assign(data, data + dataSize);
 	} else if (tp == RESTP_2B) {
-		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_someActsArr[pid].scriptS[p1].codes1 = _loadedDataSize + p3;
 		//printf("RESTP_2B %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_2C) {
-		_vm.writeMemory(_loadedDataSize, data, dataSize);
+		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_someActsArr[pid].scriptS[p1].codes2 = _loadedDataSize + p3;
 		//printf("RESTP_2C %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
@@ -638,7 +638,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_someActsArr.resize(actsCount);
 
 	_loadedDataSize = 0;
-	_vm.clearMemory();
+	VM::clearMemory();
 }
 
 void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
@@ -897,6 +897,7 @@ bool GamosEngine::playSound(uint id) {
 
 uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
 	_needReload = false;
+	VM::_interrupt = false;
 
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
 
@@ -1974,10 +1975,7 @@ bool GamosEngine::loadImage(Image *img) {
 }
 
 uint32 GamosEngine::doScript(uint32 scriptAddress) {
-	byte *tmp = _vm.EBX;
-	_vm.EBX = PTR_004173e8;
-	uint32 res = _vm.doScript(scriptAddress);
-	_vm.EBX = tmp;
+	uint32 res = VM::doScript(scriptAddress, PTR_004173e8);
 	return res;
 }
 
@@ -2475,14 +2473,14 @@ void GamosEngine::dumpActions() {
 	for (SomeAction &act : _someActsArr) {
 		fprintf(f, "Act %d : %x\n", i, act.unk1);
 		if (act.script1 != -1) {
-			Common::String t = _vm.disassembly(act.script1);
+			t = VM::disassembly(act.script1);
 			fprintf(f, "Script1 : \n");
 			fwrite(t.c_str(), t.size(), 1, f);
 			fprintf(f, "\n");
 		}
 
 		if (act.script2 != -1) {
-			Common::String t = _vm.disassembly(act.script2);
+			t = VM::disassembly(act.script2);
 			fprintf(f, "Script2 : \n");
 			fwrite(t.c_str(), t.size(), 1, f);
 			fprintf(f, "\n");
@@ -2493,14 +2491,14 @@ void GamosEngine::dumpActions() {
 			fprintf(f, "subscript %d : \n", j);
 
 			if (sc.codes1 != -1) {
-				Common::String t = _vm.disassembly(sc.codes1);
+				t = VM::disassembly(sc.codes1);
 				fprintf(f, "condition : \n");
 				fwrite(t.c_str(), t.size(), 1, f);
 				fprintf(f, "\n");
 			}
 
 			if (sc.codes2 != -1) {
-				Common::String t = _vm.disassembly(sc.codes2);
+				t = VM::disassembly(sc.codes2);
 				fprintf(f, "action : \n");
 				fwrite(t.c_str(), t.size(), 1, f);
 				fprintf(f, "\n");

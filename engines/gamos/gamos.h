@@ -287,8 +287,6 @@ private:
 	SystemProc _messageProc;
 	MoviePlayer _moviePlayer;
 
-	VM _vm;
-
 	uint32 _thing1Size = 0;
 	uint32 _thing1Count = 0;
 	uint32 _thing1Shift = 0;
@@ -465,7 +463,7 @@ protected:
 
 	void setNeedReload() {
 		_needReload = true;
-		_vm._interrupt = true;
+		VM::_interrupt = true;
 	};
 
 	void vmCallDispatcher(VM *vm, uint32 funcID);
