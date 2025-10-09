@@ -24,6 +24,8 @@
 namespace Gamos {
 
 void SystemProc::processMessage(const Common::Event &ev) {
+	uint8 winKey;
+
 	switch(ev.type) {
 	case Common::EVENT_KEYDOWN:
 		if ((_gd2flags & 1) == 0)
@@ -31,35 +33,37 @@ void SystemProc::processMessage(const Common::Event &ev) {
 
 		_ascii = ev.kbd.ascii;
 
-		if (ev.kbd.keycode == _keyCodes[0])
+		winKey = KeyCodes::GetWinCode(ev.kbd.keycode);
+
+		if (winKey == _keyCodes[0])
 			_act1 = 0;
-		else if (ev.kbd.keycode == _keyCodes[1])
+		else if (winKey == _keyCodes[1])
 			_act1 = 1;
-		else if (ev.kbd.keycode == _keyCodes[2])
+		else if (winKey == _keyCodes[2])
 			_act1 = 2;
-		else if (ev.kbd.keycode == _keyCodes[3])
+		else if (winKey == _keyCodes[3])
 			_act1 = 3;
-		else if (ev.kbd.keycode == _keyCodes[4])
+		else if (winKey == _keyCodes[4])
 			_act1 = 4;
-		else if (ev.kbd.keycode == _keyCodes[5])
+		else if (winKey == _keyCodes[5])
 			_act1 = 5;
-		else if (ev.kbd.keycode == _keyCodes[6])
+		else if (winKey == _keyCodes[6])
 			_act1 = 6;
-		else if (ev.kbd.keycode == _keyCodes[7])
+		else if (winKey == _keyCodes[7])
 			_act1 = 7;
 		else {
-			if (ev.kbd.keycode == _keyCodes[8])
+			if (winKey == _keyCodes[8])
 				_act2 = ACT2_82;
-			else if (ev.kbd.keycode == _keyCodes[9])
+			else if (winKey == _keyCodes[9])
 				_act2 = ACT2_83;
-			else if (ev.kbd.keycode == _keyCodes[10])
+			else if (winKey == _keyCodes[10])
 				_act2 = ACT2_8f;
-			else if (ev.kbd.keycode == _keyCodes[11])
+			else if (winKey == _keyCodes[11])
 				_act2 = ACT2_84;
 			else
 				return;
 
-			_rawKeyCode = ev.kbd.keycode;
+			_rawKeyCode = winKey;
 			return;
 		}
 

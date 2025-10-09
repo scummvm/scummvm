@@ -897,7 +897,7 @@ void GamosEngine::readData2(const RawData &data) {
 	_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
 	//0x40
 	for (int i = 0; i < 12; i++) {
-		_messageProc._keyCodes[i] = _winkeyMap[dataStream.readByte()];
+		_messageProc._keyCodes[i] = dataStream.readByte();
 	}
 }
 

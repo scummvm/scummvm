@@ -43,6 +43,8 @@
 
 #include "gamos/pool.h"
 
+#include "gamos/keycodes.h"
+
 #include "gamos/proc.h"
 #include "gamos/music.h"
 #include "gamos/movie.h"
@@ -346,14 +348,11 @@ private:
 
 	uint8 DAT_00417805 = 0;
 
-	uint16 RawKeyCode = 0;
+	uint8 RawKeyCode = 0;
 
 	Common::Array<Common::Rect> _dirtyRects;
 
 	bool _needReload = false;
-
-private:
-	static const uint16 _winkeyMap[256];
 
 protected:
 	// Engine APIs

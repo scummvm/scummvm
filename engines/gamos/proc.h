@@ -45,7 +45,7 @@ public:
     uint8 _act1 = 0;
     uint8 _act2 = 0;
 
-    uint16 _rawKeyCode = 0;
+    uint8 _rawKeyCode = 0;
     uint16 _ascii = 0;
 
 
@@ -53,7 +53,7 @@ public:
     Common::Point _mouseActPos;
 
     uint8 _gd2flags = 0; /* 0x4 */
-    uint16 _keyCodes[12]; /* 0x40 */
+    uint8 _keyCodes[12]; /* 0x40 */
 
 };
 
