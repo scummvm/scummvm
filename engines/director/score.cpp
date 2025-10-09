@@ -2362,6 +2362,8 @@ Common::String Score::formatChannelInfo() {
 	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
 	result += Common::String::format("LSCR:   actionId: %s\n", frame._mainChannels.actionId.asString().c_str());
 
+	bool skipped = false;
+
 	for (int i = 0; (i < frame._numChannels && ((i + 1) < (int)_channels.size())); i++) {
 		Channel &channel = *_channels[i + 1];
 		Sprite &sprite = *channel._sprite;
@@ -2381,8 +2383,17 @@ Common::String Score::formatChannelInfo() {
 				}
 				result += Common::String::format("\n");
 			}
+
+			skipped = false;
 		} else {
-			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
+			if (i == frame._numChannels - 1 || (i > 0 && _channels[i]->_sprite->_castId.member)) {
+				result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
+			} else {
+				if (!skipped) {
+					result += "...\n";
+					skipped = true;
+				}
+			}
 		}
 	}
 
