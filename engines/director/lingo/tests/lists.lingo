@@ -253,9 +253,28 @@ scummvmAssertEqual(findPos(testList, 2), 0)
 scummvmAssertEqual(findPos(testList, 4), 0)
 
 -- findPosNear
-set testList to [#a: 1, #b: 2, #bb: 3, #d: 4, #e: 5]
-scummvmAssertEqual(findPosNear(testList, #f), 6)
-scummvmAssertEqual(findPosNear(testList, #d), 4)
+set testList to [#b: 2, #a: 1, #bb: 3, #d: 4, #e: 5]
+scummvmAssertEqual(findPosNear(testList, #b), 1)
+-- if the property list isn't sorted and the value isn't there, return the size of the list + 1
+scummvmAssertEqual(findPosNear(testList, #missing), 6)
+scummvmAssertEqual(findPosNear(testList, #bbb), 6)
+sort testList
+scummvmAssertEqual(findPosNear(testList, #bbb), 4)
+
+set testList to [1: 2, 4: 8, 16: 32]
+scummvmAssertEqual(findPosNear(testList, 4), 2)
+scummvmAssertEqual(findPosNear(testList, 10), 4)
+sort testList
+scummvmAssertEqual(findPosNear(testList, 10), 3)
+
+-- the manual claims that findPosNear throws an error if you give it a regular list. the manual is wrong.
+set testList to [62, 5, 33]
+scummvmAssertEqual(findPosNear(testList, 5), 2)
+-- if the property list isn't sorted and the value isn't there, return the value
+scummvmAssertEqual(findPosNear(testList, 44), 44)
+sort testList
+scummvmAssertEqual(findPosNear(testList, 5), 1)
+scummvmAssertEqual(findPosNear(testList, 44), 3)
 
 
 -- getaProp

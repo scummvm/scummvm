@@ -1054,26 +1054,25 @@ void LB::b_findPos(int nargs) {
 }
 
 void LB::b_findPosNear(int nargs) {
-	Common::String prop = g_lingo->pop().asString();
+	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	Datum res;
-	TYPECHECK(list, PARRAY);
-
-	// FIXME: Integrate with compareTo framework
-	prop.toLowercase();
+	TYPECHECK2(list, PARRAY, ARRAY);
 
 	// This requires more testing, but D4-D6 test show that it does not work as described.
 	// The example:
 	//   findPosNear([#Nile:2, #Pharaoh:4, #Raja:0], #Ni)  supposed to return 1, for #Nile, but it returns 4
-	res = Datum((int)list.u.parr->arr.size() + 1); // Set it to the end of array by default
-
-	for (uint i = 0; i < list.u.parr->arr.size(); i++) {
-		Datum p = list.u.parr->arr[i].p;
-		Common::String tgt = p.asString();
-		tgt.toLowercase();
-		if (tgt.find(prop.c_str()) == 0) {
-			res.u.i = i + 1;
-			break;
+	if (list.type == PARRAY) {
+		res = Datum((int)list.u.parr->arr.size() + 1); // Set it to the end of array by default
+		int index = LC::compareArrays(list.u.parr->_sorted ? LC::geData : LC::eqData, list, prop, true).u.i;
+		if (index != 0) {
+			res = index;
+		}
+	} else if (list.type == ARRAY) {
+		res = prop; // set it to the returned value
+		int index = LC::compareArrays(list.u.farr->_sorted ? LC::geData : LC::eqData, list, prop, true).u.i;
+		if (index != 0) {
+			res = index;
 		}
 	}
 
