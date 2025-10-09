@@ -20,6 +20,7 @@
  */
 
 #include "common/events.h"
+#include "common/keyboard.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -308,6 +309,24 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
 		_key = event.kbd.ascii;
+		// While most non-letter keys don't affect "the keyPress", there
+		// are some that do and (sadly) we have to account for that.
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_LEFT:
+			_key = 28;
+			break;
+		case Common::KEYCODE_RIGHT:
+			_key = 29;
+			break;
+		case Common::KEYCODE_UP:
+			_key = 30;
+			break;
+		case Common::KEYCODE_DOWN:
+			_key = 31;
+			break;
+		default:
+			break;
+		}
 		_keyFlags = event.kbd.flags;
 
 		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT ||
