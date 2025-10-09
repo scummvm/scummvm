@@ -250,6 +250,8 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 				} else {
 					_mainChannels.palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
 				}
+				if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+					_mainChannels.palette.paletteId = CastMemberID();
 				if (!_mainChannels.palette.paletteId.isNull())
 					_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			}
@@ -918,6 +920,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 26:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
@@ -1362,6 +1366,8 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 120+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
@@ -1837,6 +1843,8 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 240+2:
 			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!g_director->hasPalette(_mainChannels.palette.paletteId))
+				_mainChannels.palette.paletteId = CastMemberID();
 			if (!_mainChannels.palette.paletteId.isNull())
 				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
 			break;
