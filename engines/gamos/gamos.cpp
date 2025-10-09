@@ -460,6 +460,22 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_52) {
 		return loadRes52(pid, data, dataSize);
 		//printf("midi  size %d\n", dataSize);
+	} else if (tp == RESTP_60) {
+		_dat60[pid].assign(data, data + dataSize);
+	} else if (tp == RESTP_61) {
+		Common::MemoryReadStream dataStream(data, dataSize, DisposeAfterUse::NO);
+		const int count = dataSize / 8;
+		_dat61[pid].resize(count);
+
+		for (int i = 0; i < count; i++) {
+			Dat61 &d = _dat61[pid][i];
+
+			d.x = dataStream.readSint16LE();
+			d.y = dataStream.readSint16LE();
+			d.v = dataStream.readUint16LE();
+
+			dataStream.skip(2);
+		}
 	} else if (tp == RESTP_XORSEQ0) {
 		loadXorSeq(data, dataSize, 0);
 	} else if (tp == RESTP_XORSEQ1) {
@@ -599,7 +615,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	uint32 imageCount = dataStream.readUint32LE(); // 24
 	uint32 soundCount = dataStream.readUint32LE(); // 28
 	uint32 midiCount = dataStream.readUint32LE(); // 2c
-	dataStream.readUint32LE(); // 30
+	uint32 dat6xCount = dataStream.readUint32LE(); // 30
 
 	_thing1Shift = 2;
 	for(int i = 2; i < 9; i++) {
@@ -633,6 +649,12 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	_someActsArr.clear();
 	_someActsArr.resize(actsCount);
+
+	_dat60.clear();
+	_dat61.clear();
+
+	_dat60.resize(dat6xCount);
+	_dat61.resize(dat6xCount);
 
 	_loadedDataSize = 0;
 	VM::clearMemory();
@@ -2011,6 +2033,10 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		//warning("func 6 %x check %x", PTR_00417218->fld_4 & 0x4f, arg1);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
 		break;
+	case 9:
+		arg1 = vm->pop32();
+		vm->EAX.val = FUN_004070f8(_dat60[arg1].data(), _dat60[arg1].size());
+		break;
 	case 13: {
 		VM::Reg regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef.ref, regRef.val);
@@ -2041,6 +2067,23 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		vm->EAX.val = scriptFunc19(arg1);
 		break;
+
+	case 20: {
+		arg1 = vm->pop32();
+		for (const Dat61 &d : _dat61[arg1]) {
+			FUN_0040738c(d.v, d.x, d.y, true);
+		}
+		vm->EAX.val = FUN_004070f8(_dat60[arg1].data(), _dat60[arg1].size());
+	} break;
+
+	case 24: {
+		VM::Reg regRef = vm->popReg();
+		arg2 = vm->pop32();
+		const Dat61 &d = _dat61[arg2][0];
+		FUN_00407a68(vm, regRef.ref, regRef.val, d.v, d.x, d.y);
+
+		vm->EAX.val = 1;
+	} break;
 
 	case 25: {
 		arg1 = vm->pop32();
@@ -2430,6 +2473,129 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 
 }
 
+uint32 GamosEngine::FUN_004070f8(const byte *data, size_t dataSize) {
+	uint8 sv1 = BYTE_004177fc;
+	uint8 sv2 = BYTE_004177f6;
+	byte *sv3 = PTR_004173e8;
+	//uVar11 = DAT_0041723c;
+	//uVar10 = DAT_00417238;
+	uint8 sv6 = _preprocDataId;
+	int32 sv7 = DAT_0041722c;
+	int32 sv8 = DAT_00417228;
+	int32 sv9 = DAT_00417224;
+	int32 sv10 = DAT_00417220;
+	int sv11 = _curObjIndex;
+	Object *sv12 = PTR_00417218;
+	SomeAction *sv13 = PTR_00417214;
+
+	uint32 res = ProcessScript(true, data, dataSize);
+
+	BYTE_004177fc = sv1;
+	BYTE_004177f6 = sv2;
+	PTR_004173e8 = sv3;
+	//DAT_0041723c = uVar11;
+	//DAT_00417238 = uVar10;
+	_preprocDataId = sv6;
+	DAT_0041722c = sv7;
+	DAT_00417228 = sv8;
+	DAT_00417224 = sv9;
+	DAT_00417220 = sv10;
+	_curObjIndex = sv11;
+	PTR_00417218 = sv12;
+	PTR_00417214 = sv13;
+
+	return res;
+}
+
+void GamosEngine::FUN_00407a68(VM *vm, byte memtype, int32 offset, int32 val, int32 x, int32 y) {
+	FUN_004023d8(PTR_00417218);
+	PTR_00417218->fld_3 |= 2;
+
+	while (true) {
+		byte ib = vm->getMem8(memtype, offset);
+		offset++;
+
+		if (ib == 0)
+			break;
+
+		if (ib == 0xf) {
+			byte flg = vm->getMem8(memtype, offset);
+			offset++;
+			byte b2 = vm->getMem8(memtype, offset);
+			offset++;
+
+			if ((flg & 0x70) == 0x20) {
+				byte funcid = vm->getMem8(memtype, offset);
+				offset++;
+				warning("CHECKIT and write funcid %d", funcid);
+			} else {
+				if ((flg & 0x70) == 0 || (flg & 0x70) == 0x10) {
+					int32 boff = 0;
+					byte btp = VM::REF_EDI;
+
+					if ((flg & 0x70) == 0x10)
+						btp = VM::REF_EBX;
+
+					if ((flg & 0x80) == 0) {
+						boff = vm->getMem8(memtype, offset);
+						offset++;
+					} else {
+						boff = vm->getMem32(memtype, offset);
+						offset += 4;
+					}
+
+					warning("FUN_00407a68 unimplemented part");
+
+					switch( flg & 7 ) {
+					case 0:
+						break;
+
+					case 1:
+						break;
+
+					case 2:
+						break;
+
+					case 3:
+						break;
+
+					case 4:
+						break;
+
+					case 5:
+						break;
+					}
+				}
+			}
+		} else {
+			FUN_00407588(ib, val, &x, y);
+		}
+	}
+
+}
+
+Object *GamosEngine::FUN_00407588(int32 seq, int32 spr, int32 *pX, int32 y) {
+	Object *obj = getFreeObject();
+	obj->flags |= 0xe0;
+	obj->actID = 0;
+	obj->fld_2 = 1;
+	obj->fld_3 = PTR_00417218->fld_5;
+	obj->fld_4 = 0xff;
+	obj->fld_5 = 0xff;
+	obj->pos = _curObjIndex & 0xff;
+	obj->blk = (_curObjIndex >> 8) & 0xff;
+	obj->x = *pX;
+	obj->y = y;
+	obj->spr = &_sprites[spr];
+	obj->pImg = &_sprites[spr].sequences[0][seq - _sprites[spr].field_1];
+
+	*pX += obj->pImg->image->surface.w - obj->pImg->xoffset;
+
+	addDirtRectOnObject(obj);
+	return obj;
+}
+
+}
 
 
 void GamosEngine::FUN_00404fcc(int32 id) {

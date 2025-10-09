@@ -90,6 +90,8 @@ enum RESTYPE {
 	RESTP_50 = 0x50,
 	RESTP_51 = 0x51,
 	RESTP_52 = 0x52,
+	RESTP_60 = 0x60,
+	RESTP_61 = 0x61,
 	RESTP_XORSEQ0 = 0x7c,
 	RESTP_XORSEQ1 = 0x7d,
 	RESTP_XORSEQ2 = 0x7e,
@@ -190,6 +192,12 @@ struct Object {
 	Common::Array<byte> storage;
 };
 
+struct Dat61 {
+	int16 x = 0;
+	int16 y = 0;
+	uint16 v = 0;
+};
+
 
 class GamosEngine : public Engine {
 friend class MoviePlayer;
@@ -248,6 +256,9 @@ private:
 	Common::Array< Common::Array<byte> >  _midiTracks;
 
 	Common::Array< Common::Array<byte> > _soundSamples;
+
+	Common::Array< Common::Array<byte> > _dat60;
+	Common::Array< Common::Array<Dat61> > _dat61;
 
 	uint32 _delayTime = 0;
 	uint32 _lastTimeStamp = 0;
@@ -461,10 +472,16 @@ protected:
 	void FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
 	bool FUN_00409600(Object *obj, Common::Point pos);
 
+	uint32 FUN_004070f8(const byte *data, size_t dataSize);
+
 	void setNeedReload() {
 		_needReload = true;
 		VM::_interrupt = true;
 	};
+
+	Object *FUN_00407588(int32 seq, int32 spr, int32 *pX, int32 y);
+
+	void FUN_00407a68(VM *vm, byte memtype, int32 offset, int32 val, int32 x, int32 y);
 
 	void vmCallDispatcher(VM *vm, uint32 funcID);
 
