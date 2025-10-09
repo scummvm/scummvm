@@ -5548,6 +5548,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
+	// Tanya Grotter and the Disappearing Floor
+	// TRAC report #16239
+	WME_WINENTRY("tanya2", "",
+		WME_ENTRY1s("data.dcp", "67013dfc94e4bbdc10d903c8da641575", 937147812), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
+
 	// Tanya Grotter and the Disappearing Floor (Spanish fanmade)
 	// The same translation file is used for both games
 	WME_WINENTRY("tanya2", "",
