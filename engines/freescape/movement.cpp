@@ -190,12 +190,20 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 
 void FreescapeEngine::activate() {
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
-	float xoffset = _crossairPosition.x - center.x;
-	float yoffset = _crossairPosition.y - center.y;
-	xoffset = xoffset * 0.33;
-	yoffset = yoffset * 0.50;
+	// Convert to normalized coordinates [-1, 1]
+	float ndcX = (2.0f * (_crossairPosition.x - _viewArea.left) / _viewArea.width()) - 1.0f;
+	float ndcY = 1.0f - (2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height());
 
-	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
+	// Calculate angular offsets using perspective projection
+	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
+	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
+
+	// Convert NDC to angle offset
+	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetY = atan(ndcY * tan(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
+
+	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
 	Object *interacted = _currentArea->checkCollisionRay(ray, 1250.0 / _currentArea->getScale());
 	if (interacted) {
