@@ -578,6 +578,7 @@ Common::String drawAndSelectSaves(Common::StringArray saves, uint selectedGame) 
 	ExtendedSavegameHeader header;
 	for (uint i = 0; i < 6; i++) {
 		int color = i == selectedGame ? 255 : 253;
+		bar(61, 31 + (i * 15), 259, 39 + (i * 15), 251);
 		if (i < size) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[i]);
 			if (!in) {
@@ -660,7 +661,7 @@ void TotEngine::originalSaveLoadScreen() {
 		if (mouseClicked) {
 			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
 				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) { // Save
-					if (selectedGame && _saveAllowed && saveName != "") {
+					if (selectedGame >= 0 && _saveAllowed && saveName != "") {
 						saveGameState(selectedGame, saveName, false);
 						_graphics->putImg(50, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
