@@ -332,7 +332,6 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			currentInstruction = FCLInstruction(Token::AGAIN);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
-			bytePointer++;
 			numberOfArguments = 0;
 			break;
 
