@@ -1313,6 +1313,7 @@ void TotEngine::exitToDOS() {
 		_screen->update();
 	} while (exitChar != '\33' && !shouldQuit());
 	if (shouldQuit()) {
+		free(dialogBackground);
 		return;
 	}
 	_graphics->putImg(58, 48, dialogBackground);
