@@ -507,6 +507,8 @@ public:
 	void clearAnimation();
 	void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5);
 	void drawMenu(byte menuNumber);
+	void drawLeftArrow(uint x, uint y);
+	void drawRightArrow(uint x, uint y);
 	void readTextFile();
 	void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
 	void sayLine(uint textRef, byte textColor, byte shadowColor, uint &responseNumber, bool isWithinConversation);

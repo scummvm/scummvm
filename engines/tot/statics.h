@@ -1125,7 +1125,7 @@ static const char *const hardcodedTexts_ES[] = {
     "PARED", // 8
     "TORNO", // 9
     "VACIO",
-	"DISPONIBLE",
+	"DISPONIBLE %d",
 	"Mira en la fila %d y columna %d"
 };
 
@@ -1141,7 +1141,7 @@ static const char *const hardcodedTexts_EN[] = {
     "WALL",
     "POTTER'S WHEEL",
     "FREE",
-	"AVAILABLE",
+	"AVAILABLE %d",
 	"Search in row %d and column %d"
 };
 

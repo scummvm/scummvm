@@ -4426,6 +4426,7 @@ void TotEngine::drawInventory(byte dir, byte max) {
 		lightUpLeft();
 	else
 		turnOffLeft();
+
 	if (_inventory[_inventoryPosition + 6].code > 0)
 		lightUpRight();
 	else
@@ -4450,6 +4451,44 @@ void TotEngine::drawInventoryMask() {
 	else
 		turnOffRight();
 }
+
+byte *getArrow(uint x, uint y) {
+	Common::File menuFile;
+	if (!menuFile.open("MENUS.DAT")) {
+		showError(258);
+	}
+
+	int32 menuOffset = isLanguageSpanish() ? menuOffsets_ES[0][0] : menuOffsets_EN[0][0];
+	uint w = 20;
+	uint h = 18;
+	uint size = 4 + w * h;
+	byte *bitmap = (byte *)malloc(size);
+	WRITE_LE_UINT16(bitmap, w - 1);
+	WRITE_LE_UINT16(bitmap + 2, h - 1);
+	menuFile.seek(menuOffset);
+
+
+	uint originalW = menuFile.readUint16LE() + 1;
+	for(int i = 0; i < h; i++) {
+		menuFile.seek(menuOffset + 4 + + (y + i) * originalW + x);
+		menuFile.read(bitmap + 4 + i * w, w);
+	}
+	menuFile.close();
+	return bitmap;
+}
+
+void TotEngine::drawLeftArrow(uint x, uint y) {
+	byte *bitmap = getArrow(10, 23);
+	_graphics->putImg(x, y, bitmap);
+	free(bitmap);
+}
+
+void TotEngine::drawRightArrow(uint x, uint y) {
+	byte *bitmap = getArrow(291, 23);
+	_graphics->putImg(x, y, bitmap);
+	free(bitmap);
+}
+
 
 void TotEngine::drawMenu(byte menuNumber) {
 	byte *bitmap;

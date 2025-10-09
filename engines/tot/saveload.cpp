@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/hashmap.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
@@ -571,31 +572,43 @@ void TotEngine::loadGame(SavedGame *game) {
 	_saveAllowed = true;
 }
 
-Common::String drawAndSelectSaves(SaveStateList saves, uint selectedGame) {
+const int kMaxSaveSlots = 100;
+
+Common::String drawAndSelectSaves(int pageNumber, Common::HashMap<int, SaveStateDescriptor> saveMap, uint selectedSlot) {
 	g_engine->_mouse->hide();
 	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
 	ExtendedSavegameHeader header;
+	int selectedGame = selectedSlot + pageNumber * 6;
+	Common::String selectedGameDesc = "";
 	for (uint i = 0; i < 6; i++) {
-		int color = i == selectedGame ? 255 : 253;
+		int saveSlot = i + pageNumber * 6;
+		int color = saveSlot == selectedGame ? 255 : 253;
 		bar(60, 31 + (i * 15), 259, 39 + (i * 15), 251);
-		Common::String desc = saves[i].getDescription();
+		if (saveSlot >= kMaxSaveSlots) {
+			continue;
+			;
+		}
+		Common::String desc = "";
+		if (saveMap.contains(saveSlot)) {
+			desc = saveMap[saveSlot].getDescription();
+			if (saveSlot == selectedGame) {
+				selectedGameDesc = saveMap[saveSlot].getDescription();
+			}
+		}
 		if (desc.empty() == false) {
 			euroText(65, 29 + (i * 15), desc, color);
 		} else {
-			euroText(65, 29 + (i * 15), availableText, color);
+			euroText(65, 29 + (i * 15), Common::String::format(availableText, saveSlot), color);
 		}
 	}
 
 	g_engine->_mouse->show();
-	if (selectedGame < saves.size())
-		return saves[selectedGame].getDescription();
-	else
-		return "";
+	return selectedGameDesc;
 }
 
 void TotEngine::originalSaveLoadScreen() {
 	uint oldMouseX, oldMouseY;
-	int selectedGame = 0;
+	int selectedSlot = 1;
 	bool modified = false;
 	Common::String saveName = "";
 
@@ -604,29 +617,52 @@ void TotEngine::originalSaveLoadScreen() {
 	oldMouseY = _mouse->mouseY;
 	_mouse->hide();
 
-	uint menuBgSize = imagesize(50, 10, 270, 120);
+	uint menuBgSize = imagesize(20, 10, 300, 120);
 	byte *menuBgPointer = (byte *)malloc(menuBgSize);
-	_graphics->getImg(50, 10, 270, 120, menuBgPointer);
+	_graphics->getImg(20, 10, 300, 120, menuBgPointer);
 
 	for (int i = 0; i < 6; i++) {
 		uint textY = i + 1;
 		buttonBorder((120 - (textY * 10)), (80 - (textY * 10)), (200 + (textY * 10)), (60 + (textY * 10)), 251, 251, 251, 251, 0);
 	}
-	drawMenu(2);
+	drawMenu(2); // 220 x 110	at 	xmenu = 50;ymenu = 10;
+	// 50, 10, 270, 120
+	// Arrows are 20, 18
+	drawLeftArrow(20, 65);
+	line(20, 65, 39, 65, 255);
+	line(20, 65, 20, 80, 255);
+	line(40, 66, 40, 82, 249);
+	line(40, 82, 21, 82, 249);
+	drawRightArrow(280, 65);
+	line(280, 65, 299, 65, 255);
+	line(280, 65, 280, 80, 255);
+	line(300, 66, 300, 82, 249);
+	line(300, 82, 292, 82, 249);
+
 	if (!_saveAllowed) {
 		bar(61, 15, 122, 23, 253);
 		bar(201, 15, 259, 23, 253);
 	}
 
+	int pageNumber = 0;
 	SaveStateList listSaves = getMetaEngine()->listSaves(_targetName.c_str());
-	listSaves.remove_at(0); // Remove autosave
-	saveName = drawAndSelectSaves(listSaves, selectedGame);
+
+	Common::HashMap<int, SaveStateDescriptor> saveMap;
+
+	// Iterate and populate
+	for (const SaveStateDescriptor &desc : listSaves) {
+		int slot = desc.getSaveSlot();
+		saveMap[slot] = desc;
+	}
+
+	saveName = drawAndSelectSaves(pageNumber, saveMap, selectedSlot);
+
 	if (_cpCounter2 > 17)
 		showError(274);
 	_mouse->mouseX = 150;
 	_mouse->mouseY = 60;
 	_mouse->mouseMaskIndex = 1;
-	_mouse->setMouseArea(Common::Rect(55, 13, 250, 105));
+	_mouse->setMouseArea(Common::Rect(13, 13, 293, 105));
 	_mouse->warpMouse(1, 150, 60);
 
 	do {
@@ -651,34 +687,48 @@ void TotEngine::originalSaveLoadScreen() {
 		} while (!keyPressed && !mouseClicked && !shouldQuit());
 
 		if (mouseClicked) {
-			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
+			if (_mouse->mouseX > 13 && _mouse->mouseX < 33 && _mouse->mouseY >= 58 && _mouse->mouseY <= 73) { // Left arrow
+
+				if (pageNumber > 0)
+					pageNumber--;
+				else
+					_sound->beep(100, 300);
+				saveName = drawAndSelectSaves(pageNumber, saveMap, selectedSlot);
+			} else if (_mouse->mouseX > 273 && _mouse->mouseX < 293 && _mouse->mouseY >= 58 && _mouse->mouseY <= 73) { // Right arrow
+
+				if (pageNumber < kMaxSaveSlots / 6)
+					pageNumber++;
+				else
+					_sound->beep(100, 300);
+				saveName = drawAndSelectSaves(pageNumber, saveMap, selectedSlot);
+			} else if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
 				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) { // Save
-					if (selectedGame >= 0 && _saveAllowed && saveName != "") {
-						saveGameState(listSaves[selectedGame].getSaveSlot(), saveName, false);
-						_graphics->putImg(50, 10, menuBgPointer);
+					if (selectedSlot > 0 && _saveAllowed && saveName != "") {
+						saveGameState(selectedSlot + pageNumber * 6, saveName, false);
+						_graphics->putImg(20, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
-						selectedGame = -1;
+						selectedSlot = -1;
 					} else {
 						_sound->beep(100, 300);
 					}
 				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
-					if (selectedGame >= 0 && !modified) { // Load
-						if (selectedGame < (int)listSaves.size()) {
+					if (selectedSlot >= 0 && !modified) { // Load
+						if (selectedSlot < (int)listSaves.size()) {
 							_mouse->hide();
-							_graphics->putImg(50, 10, menuBgPointer);
+							_graphics->putImg(20, 10, menuBgPointer);
 							free(menuBgPointer);
 							if (_saveAllowed) {
 								clearAnimation();
 								clearScreenLayers();
 							}
-							loadGameState(listSaves[selectedGame].getSaveSlot());
+							loadGameState(selectedSlot + pageNumber * 6);
 							_mouse->mouseX = oldMouseX;
 							_mouse->mouseY = oldMouseY;
 
 							_mouse->show();
 							_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 							exitSaveLoadMenu = true;
-							selectedGame = -1;
+							selectedSlot = -1;
 
 							return;
 						} else {
@@ -686,48 +736,69 @@ void TotEngine::originalSaveLoadScreen() {
 						}
 					} else {
 						_sound->beep(100, 300);
-						saveName = drawAndSelectSaves(listSaves, selectedGame);
+						saveName = drawAndSelectSaves(pageNumber, saveMap, selectedSlot);
 						_mouse->show();
 					}
 				} else if (_mouse->mouseClickX >= 200 && _mouse->mouseClickX <= 250) { // Exit
 					if (_inGame && _saveAllowed) {
-						_graphics->putImg(50, 10, menuBgPointer);
+						_graphics->putImg(20, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
-						selectedGame = -1;
+						selectedSlot = -1;
 					} else {
 						_sound->beep(100, 300);
 					}
 				}
-			} else if (_mouse->mouseClickY >= 24 && _mouse->mouseClickY <= 32) {
-				selectedGame = 0;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 0);
-			} else if (_mouse->mouseClickY >= 39 && _mouse->mouseClickY <= 47) {
-				selectedGame = 1;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 1);
-			} else if (_mouse->mouseClickY >= 54 && _mouse->mouseClickY <= 62) {
-				selectedGame = 2;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 2);
-			} else if (_mouse->mouseClickY >= 69 && _mouse->mouseClickY <= 77) {
-				selectedGame = 3;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 3);
-			} else if (_mouse->mouseClickY >= 84 && _mouse->mouseClickY <= 92) {
-				selectedGame = 4;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 4);
-			} else if (_mouse->mouseClickY >= 99 && _mouse->mouseClickY <= 107) {
-				selectedGame = 5;
-				modified = false;
-				saveName = drawAndSelectSaves(listSaves, 5);
+			} else {
+				if (_mouse->mouseClickY >= 24 && _mouse->mouseClickY <= 32) {
+					if (0 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 0;
+						modified = false;
+					}
+				} else if (_mouse->mouseClickY >= 39 && _mouse->mouseClickY <= 47) {
+					if (1 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 1;
+						modified = false;
+					}
+				} else if (_mouse->mouseClickY >= 54 && _mouse->mouseClickY <= 62) {
+					if (2 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 2;
+						modified = false;
+					}
+				} else if (_mouse->mouseClickY >= 69 && _mouse->mouseClickY <= 77) {
+					if (3 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 3;
+						modified = false;
+					}
+				} else if (_mouse->mouseClickY >= 84 && _mouse->mouseClickY <= 92) {
+					if (4 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 4;
+						modified = false;
+					}
+				} else if (_mouse->mouseClickY >= 99 && _mouse->mouseClickY <= 107) {
+					if (5 + pageNumber * 6 >= kMaxSaveSlots) {
+						_sound->beep(100, 300);
+					} else {
+						selectedSlot = 5;
+						modified = false;
+					}
+				}
+				saveName = drawAndSelectSaves(pageNumber, saveMap, selectedSlot);
 			}
 		}
 
 		if (keyPressed && _saveAllowed) {
 			_mouse->hide();
-			byte ytext = 29 + (selectedGame * 15);
+			byte ytext = 29 + (selectedSlot * 15);
 			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastKeyboardEvent);
 			modified = true;
 			_mouse->show();
