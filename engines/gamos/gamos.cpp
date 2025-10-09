@@ -393,6 +393,21 @@ bool GamosEngine::loadModule(uint id) {
 
 bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, size_t dataSize) {
 	if (tp == RESTP_12) {
+		Common::MemoryReadStream dataStream(data, dataSize, DisposeAfterUse::NO);
+
+		_addrBlk12 = _loadedDataSize;
+		_addrFPS = _loadedDataSize + 1;
+		_addrKeyDown = _loadedDataSize + 2;
+		_addrKeyCode = _loadedDataSize + 3;
+		_addrCurrentFrame = _loadedDataSize + 4;
+
+		VM::memory().setU8( _addrBlk12, dataStream.readByte() );
+		dataStream.skip(1);
+		VM::memory().setU8( _addrFPS, _fps );
+		VM::memory().setU8( _addrKeyDown, dataStream.readByte() );
+		VM::memory().setU8( _addrKeyCode, dataStream.readByte() );
+		VM::memory().setU32( _addrCurrentFrame, dataStream.readUint32LE() );
+
 		setFPS(_fps);
 	} else if (tp == RESTP_13) {
 		VM::writeMemory(_loadedDataSize, data, dataSize);
@@ -920,7 +935,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
 
-	/*if ()*/{
+	if ( FUN_00402bc4() ) {
 		bool loop = false;
 		if (!DAT_00417802)
 			loop = FUN_00402fb4();
@@ -2595,6 +2610,37 @@ Object *GamosEngine::FUN_00407588(int32 seq, int32 spr, int32 *pX, int32 y) {
 	return obj;
 }
 
+bool GamosEngine::FUN_00402bc4() {
+	if (RawKeyCode == ACT_NONE) {
+		VM::memory().setU8(_addrKeyCode, 0);
+		VM::memory().setU8(_addrKeyDown, 0);
+	} else {
+		VM::memory().setU8(_addrKeyCode, RawKeyCode);
+		VM::memory().setU8(_addrKeyDown, 1);
+	}
+
+	if (VM::memory().getU8(_addrBlk12) != 0)
+		return false;
+
+	uint32 frameval = VM::memory().getU32(_addrCurrentFrame);
+	VM::memory().setU32(_addrCurrentFrame, frameval + 1);
+
+	uint8 fpsval = VM::memory().getU8(_addrFPS);
+
+	if (fpsval == 0) {
+		fpsval = 1;
+		VM::memory().setU8(_addrFPS, 1);
+	} else if (fpsval > 50) {
+		fpsval = 50;
+		VM::memory().setU8(_addrFPS, 50);
+	}
+
+	if (fpsval != _fps) {
+		_fps = fpsval;
+		setFPS(_fps);
+	}
+
+	return true;
 }
 
 
@@ -2612,21 +2658,6 @@ bool GamosEngine::FUN_004033a8(Common::Point mouseMove) {
 bool GamosEngine::FUN_004038b8() {
 	warning("Not implemented FUN_004038b8");
 	return true;
-}
-
-bool GamosEngine::FUN_00402bc4() {
-	warning("Not implemented FUN_00402bc4");
-	return true;
-}
-
-bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
-	if (obj->y == -1)
-		return false;
-
-	Object &robj = _drawElements[obj->y];
-	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
-		return true;
-	return false;
 }
 
 void GamosEngine::dumpActions() {

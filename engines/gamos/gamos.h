@@ -294,7 +294,11 @@ private:
 	int32 _readingBkgMainId = -1;
 	int32 _loadedDataSize = -1;
 
-
+	uint32 _addrBlk12 = 0;
+	uint32 _addrFPS = 1;
+	uint32 _addrKeyDown = 2;
+	uint32 _addrKeyCode = 3;
+	uint32 _addrCurrentFrame = 4;
 
 	MidiMusic _musicPlayer;
 	SystemProc _messageProc;
