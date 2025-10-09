@@ -232,6 +232,9 @@ Lingo::~Lingo() {
 	for (auto &it : _openXLibsState) {
 		delete it._value;
 	}
+	for (auto &it : _openXtrasState) {
+		delete it._value;
+	}
 }
 
 void Lingo::reloadBuiltIns() {

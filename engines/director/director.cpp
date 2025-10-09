@@ -86,7 +86,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_mainArchive = nullptr;
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
-	_windowToBeActive = nullptr;
 	_lingo = nullptr;
 	_clipBoard = nullptr;
 	_fixStageSize = false;
@@ -168,26 +167,28 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
+	delete _lingo;
+
+	clearPalettes();
+
 	for (auto &it : _windowList) {
 		it->decRefCount();
 	}
-	if (_windowToBeActive) {
-		_windowToBeActive->decRefCount();
-		_windowToBeActive = nullptr;
+	_stage->decRefCount();
+	_stage = nullptr;
+	if (_currentWindow) {
+		_currentWindow->decRefCount();
+		_currentWindow = nullptr;
 	}
-	delete _lingo;
 	delete _wm;
-	delete _surface;
-	delete _primitives;
-
 	for (auto &it : _allSeenResFiles) {
 		delete it._value;
 	}
-
 	for (uint i = 0; i < _winCursor.size(); i++)
 		delete _winCursor[i];
 
-	clearPalettes();
+	delete _surface;
+	delete _primitives;
 }
 
 Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
@@ -236,18 +237,6 @@ void DirectorEngine::setCurrentWindow(Window *window) {
 		_currentWindow->decRefCount();
 	_currentWindow = window;
 	_currentWindow->incRefCount();
-}
-
-void DirectorEngine::setWindowToBeActive(Window *window) {
-	if (_windowToBeActive == window)
-		return;
-	if (window)
-		window->incRefCount();
-	if (_windowToBeActive) {
-		_windowToBeActive->decRefCount();
-		_windowToBeActive = nullptr;
-	}
-	_windowToBeActive = window;
 }
 
 void DirectorEngine::setVersion(uint16 version) {
@@ -308,7 +297,7 @@ Common::Error DirectorEngine::run() {
 	debugC(1, kDebugImages, "Director pixelformat is: %s", _pixelformat.toString().c_str());
 
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
-	*_stage->_refCount += 1;
+	_stage->incRefCount();
 
 	// Set this as background so it doesn't come to foreground when multiple windows present
 	_wm->setBackgroundWindow(_stage->getMacWindow());
@@ -379,13 +368,6 @@ Common::Error DirectorEngine::run() {
 		}
 
 		draw();
-
-		if (_windowToBeActive) {
-			setCurrentWindow(_windowToBeActive);
-			_windowToBeActive->decRefCount();
-			_windowToBeActive = nullptr;
-		}
-
 		while (!_windowsToForget.empty()) {
 			Window *window = _windowsToForget.back();
 			_windowsToForget.pop_back();

@@ -108,7 +108,6 @@ public:
 	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage);
 	~Window();
 
-	void decRefCount() override;
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 	void invertChannel(Channel *channel, const Common::Rect &destRect);
 

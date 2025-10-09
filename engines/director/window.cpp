@@ -89,14 +89,9 @@ Window::~Window() {
 		delete _frozenLingoStates[i];
 	if (_puppetTransition)
 		delete _puppetTransition;
-}
-
-void Window::decRefCount() {
-	*_refCount -= 1;
-	if (*_refCount <= 0) {
-		g_director->_wm->removeWindow(_window);
-		g_director->_wm->removeMarked();
-	}
+	g_director->_wm->removeWindow(_window);
+	g_director->_wm->removeMarked();
+	_window = nullptr;
 }
 
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
