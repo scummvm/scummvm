@@ -406,57 +406,57 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Art of Murder: FBI Confidential (English)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
-					"us.dcp", "4a02b65edc45444ac69ff8a514e952b8", 176592548), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"us.dcp", "4a02b65edc45444ac69ff8a514e952b8", 176592548), Common::EN_ANY, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (French)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "bba4e56a66fd6406a26515cfc86ac125", 23782002,
-					"fr.dcp", "5665d84d70cb3e20472e1c3eb9d884c3", 125728694), Common::FR_FRA, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"fr.dcp", "5665d84d70cb3e20472e1c3eb9d884c3", 125728694), Common::FR_FRA, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (German)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "09e57d77b68dafa73a0924f11f61b059", 630742753,
-					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (Italian)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
-					"it.dcp", "c3c10399644a1e9f7e977df73fb017e0", 166794517), Common::IT_ITA, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"it.dcp", "c3c10399644a1e9f7e977df73fb017e0", 166794517), Common::IT_ITA, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (Spanish)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "340f04f9f66a0ab978b78d317544bbed", 23757600,
-					"es.dcp", "47b3a609993b3c18ce5bfb1af734ea3e", 148997124), Common::ES_ESP, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"es.dcp", "47b3a609993b3c18ce5bfb1af734ea3e", 148997124), Common::ES_ESP, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (Polish)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
-					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_8_1),
+					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (Russian)
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "4f383bd02fb0eea54e9b5825c3056b52", 23761530,
-					"ru.dcp", "57af214554547437c823a01f6cf51b24", 201702190), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_3),
+					"ru.dcp", "57af214554547437c823a01f6cf51b24", 201702190), Common::RU_RUS, GF_3D, WME_1_8_3),
 
 	// Art of Murder: FBI Confidential (English Demo)
 	WME_WINENTRY("artofmurder1", "Demo",
 		WME_ENTRY2s("data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670,
-					"data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_1),
+					"data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (Polish Demo)
 	WME_WINENTRY("artofmurder1", "Demo",
 		WME_ENTRY2s("data.dcp", "d0073ddf2b25527c83785ae7a0978867", 47676670,
-					"pl.dcp", "4dbc02aa9f67d22226d22dc0d837d20e", 49208405), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_1),
+					"pl.dcp", "4dbc02aa9f67d22226d22dc0d837d20e", 49208405), Common::PL_POL, ADGF_DEMO | GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (German Demo 1)
 	WME_WINENTRY("artofmurder1", "Demo",
 		WME_ENTRY2s("data.dcp", "d7f3dd0e87e4904292d19778b8af2ed1", 47662172,
-					"de.dcp", "c0bbfee40b79af1f837a9f3f8fcef78c", 42741523), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_1),
+					"de.dcp", "c0bbfee40b79af1f837a9f3f8fcef78c", 42741523), Common::DE_DEU, ADGF_DEMO | GF_3D, WME_1_8_1),
 
 	// Art of Murder: FBI Confidential (German Demo 2)
 	WME_WINENTRY("artofmurder1", "Demo",
 		WME_ENTRY2s("data.dcp", "99d63dfee4ea97d31530649c929bee45", 81127581,
-					"de.dcp", "e97e2e18b26e5eff916c73f720d5f4f2", 17737492), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_1),
+					"de.dcp", "e97e2e18b26e5eff916c73f720d5f4f2", 17737492), Common::DE_DEU, ADGF_DEMO | GF_3D, WME_1_8_1),
 
 	// Awakening: Burning Ashes (Hayoola) (Persian)
 	WME_WINENTRY("awakening", "",
