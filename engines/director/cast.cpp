@@ -29,6 +29,8 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "image/image_decoder.h"
+#include "image/pict.h"
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
@@ -2186,6 +2188,62 @@ void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadSord(): number of entries: %d", numEntries);
+}
+
+bool Cast::importFileInto(int castId, const Common::Path &path) {
+	// hold off on overwriting the target until we're sure it is loaded
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
+	if (!file) {
+		warning("Cast::importFileInto: file not found");
+		return false;
+	}
+	CastMember *member = nullptr;
+	uint32 magic1 = file->readUint32BE();
+	uint32 magic2 = file->readUint32BE();
+	uint32 magic3 = file->readUint32BE();
+	file->seek(528, SEEK_SET);
+	uint32 magic4 = file->readUint16BE();
+	file->seek(0, SEEK_SET);
+	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
+		magic3 == MKTAG('W', 'A', 'V', 'E')) {
+		// WAV file
+		member = new SoundCastMember(this, castId);
+	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
+		(magic3 == MKTAG('A', 'I', 'F', 'F') ||
+		 magic3 == MKTAG('A', 'I', 'F', 'C'))) {
+		// AIFF file
+		member = new SoundCastMember(this, castId);
+	} else if (magic2 == MKTAG('m', 'o', 'o', 'v') ||
+		magic2 == MKTAG('m', 'd', 'a', 't')) {
+		// QuickTime file
+		member = new DigitalVideoCastMember(this, castId);
+		((DigitalVideoCastMember *)member)->_qtmovie = true;
+	} else if (magic1 == MKTAG('R', 'I', 'F', 'F') && (magic3 == MKTAG('A', 'V', 'I', ' '))) {
+		// AVI file
+		member = new DigitalVideoCastMember(this, castId);
+		((DigitalVideoCastMember *)member)->_avimovie = true;
+	} else if ((magic1 >> 16) == MKTAG16('B', 'M')) {
+		// Windows Bitmap file
+		Image::ImageDecoder *img = new Image::BitmapDecoder();
+		img->loadStream(*file);
+		member = new BitmapCastMember(this, castId, img);
+	} else if ((magic4 == 0xffff) || (magic4 == 0xfffe)) {
+		// Apple PICT file
+		Image::ImageDecoder *img = new Image::PICTDecoder();
+		img->loadStream(*file);
+		member = new BitmapCastMember(this, castId, img);
+	}
+	delete file;
+
+	if (member) {
+		setCastMember(castId, member);
+		CastMemberInfo *info = new CastMemberInfo();
+		info->fileName = path.toString(g_director->_dirSeparator);
+		_castsInfo[castId] = info;
+		return true;
+	}
+
+	return false;
 }
 
 // Pattern tiles

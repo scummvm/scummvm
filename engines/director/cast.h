@@ -105,6 +105,7 @@ public:
 	void loadLingoContext(Common::SeekableReadStreamEndian &stream);
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
 	void loadSord(Common::SeekableReadStreamEndian &stream);
+	bool importFileInto(int castId, const Common::Path &path);
 
 	void saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset);
 	void saveCastData(Common::SeekableWriteStream *writeStream, Resource *res);

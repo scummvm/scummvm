@@ -2684,31 +2684,21 @@ void LB::b_importFileInto(int nargs) {
 
 	CastMemberID memberID = *dst.u.cast;
 
-	if (!(file.matchString("*.pic") || file.matchString("*.pict"))) {
-		warning("LB::b_importFileInto : %s is not a valid PICT file", file.c_str());
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+	Cast *cast = movie->getCast(memberID);
+	if (!cast) {
 		return;
 	}
 
 	Common::Path path = findPath(file);
-	Common::File in;
-	in.open(path);
-
-	if (!in.isOpen()) {
-		warning("b_importFileInto(): Cannot open file %s", path.toString().c_str());
+	if (path.empty()) {
+		warning("b_importFileInto(): couldn't find target file %s", file.c_str());
 		return;
 	}
 
-	Image::PICTDecoder *img = new Image::PICTDecoder();
-	img->loadStream(in);
-	in.close();
+	cast->importFileInto(memberID.member, path);
 
-	Movie *movie = g_director->getCurrentMovie();
-	Score *score = movie->getScore();
-	BitmapCastMember *bitmapCast = new BitmapCastMember(movie->getCast(), memberID.member, img);
-	movie->createOrReplaceCastMember(memberID, bitmapCast);
-	bitmapCast->setModified(true);
-	const Graphics::Surface *surf = img->getSurface();
-	bitmapCast->_size = surf->pitch * surf->h + img->getPalette().size() * 3;
 	score->refreshPointersForCastMemberID(dst.asMemberID());
 }
 
