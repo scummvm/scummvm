@@ -246,13 +246,13 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
+		processedTextPtr = stringPrintf(logicTextPtr);
 		// For RTL languages, adjust the cursor position to right-align text
 		if (_vm->isLanguageRTL()) {
-			int textLength = strlen(logicTextPtr);
-			textColumn = MAX < int16>(0, 40 - textColumn - textLength);
+			int textLength = strlen(processedTextPtr);
+			textColumn = MAX<int16>(0, 40 - textColumn - textLength);
 			charPos_Set(textRow, textColumn);
 		}
-		processedTextPtr = stringPrintf(logicTextPtr);
 		processedTextPtr = stringWordWrap(processedTextPtr, 40);
 
 #ifdef USE_TTS
@@ -1024,6 +1024,13 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
 
 	inputEditOn();
+	// Fix deletion of first letter after ENTER.
+	if (_vm->isLanguageRTL()) {
+		for (int i = 0; i < _inputStringCursorPos; i++)
+			displayCharacter(0x08);
+		displayCharacter(' ');
+		displayText((const char *)_inputString);
+	}	
 
 	// Forget non-blocking text, user was asked to enter something
 	_vm->nonBlockingText_Forget();
