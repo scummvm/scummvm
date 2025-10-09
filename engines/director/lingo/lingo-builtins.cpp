@@ -4004,7 +4004,15 @@ void LB::b_window(int nargs) {
 
 	Common::String windowName = d.asString();
 	Window *window = g_director->getOrCreateWindow(windowName);
-	windowList->arr.push_back(Datum(window));
+	bool isNewWindow = true;
+	for (auto &it : windowList->arr) {
+		if (it.type == OBJECT && it.u.obj == window) {
+			isNewWindow = false;
+			break;
+		}
+	}
+	if (isNewWindow)
+		windowList->arr.push_back(Datum(window));
 
 	g_lingo->push(window);
 }
