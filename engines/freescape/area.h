@@ -39,7 +39,7 @@ typedef Common::HashMap<uint16, Object *> ObjectMap;
 typedef Common::Array<Object *> ObjectArray;
 class Area {
 public:
-	Area(uint16 areaID, uint16 areaFlags, ObjectMap *objectsByID, ObjectMap *entrancesByID);
+	Area(uint16 areaID, uint16 areaFlags, ObjectMap *objectsByID, ObjectMap *entrancesByID, bool isCastle);
 	virtual ~Area();
 
 	Common::String _name;
@@ -85,6 +85,9 @@ public:
 	// Driller specific
 	Common::Point _gasPocketPosition;
 	uint32 _gasPocketRadius;
+
+	// Castle Master specific
+	bool _isCastle;
 
 	uint8 _scale;
 	uint8 _skyColor;

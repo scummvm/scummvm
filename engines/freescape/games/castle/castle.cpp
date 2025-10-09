@@ -468,7 +468,7 @@ bool CastleEngine::checkIfGameEnded() {
 		}
 	}
 
-	if (getGameBit(31) || _currentArea->getAreaID() == 74) { // Escaped!
+	if (getGameBit(31) && _currentArea->getAreaID() == 74) { // Escaped!
 		_gameStateControl = kFreescapeGameStateEnd;
 		return true;
 	} else

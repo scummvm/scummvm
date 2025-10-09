@@ -270,6 +270,8 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			case Common::ES_ESP:
 				stream = decryptFile("CMLS");
 				loadRiddles(stream, 0xaae - 2 - 22 * 2, 22);
+				// Fixes for incorrect or wrong translations
+				Common::replace(_riddleList[16]._lines[5]._text, "IN", "EN");
 				break;
 			case Common::FR_FRA:
 				stream = decryptFile("CMLF");

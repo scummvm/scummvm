@@ -365,6 +365,10 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, boo
 		obj = _areaMap[255]->objectWithID(objId);
 		if (!obj) {
 			obj = _areaMap[255]->entranceWithID(objId);
+			if (!obj) {
+				debugC(1, kFreescapeDebugCode, "WARNING: executing instructions from a non-existent object %d", objId);
+				return;
+			} 
 			assert(obj);
 			FCLInstructionVector &condition = ((Entrance *)obj)->_condition;
 			executeCode(condition, shot, collided, false, activated);

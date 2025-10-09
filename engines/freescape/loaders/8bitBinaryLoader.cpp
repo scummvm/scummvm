@@ -785,7 +785,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
-	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
+	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID, isCastle());
 	area->_name = name;
 	area->_scale = scale;
 	area->_skyColor = skyColor;
@@ -1112,7 +1112,7 @@ void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int of
 		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
 	}
 
-	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr, isCastle());
 }
 
 void FreescapeEngine::parseAmigaAtariHeader(Common::SeekableReadStream *stream) {

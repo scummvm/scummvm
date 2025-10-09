@@ -60,11 +60,12 @@ uint8 Area::getScale() {
 	return _scale;
 }
 
-Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap *entrancesByID_) {
+Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap *entrancesByID_, bool isCastle_) {
 	_areaID = areaID_;
 	_areaFlags = areaFlags_;
 	_objectsByID = objectsByID_;
 	_entrancesByID = entrancesByID_;
+	_isCastle = isCastle_;
 
 	_scale = 0;
 	_skyColor = 255;
@@ -491,9 +492,9 @@ Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, cons
 	float reductionHeight = 0.0;
 	// Ugly hack to fix the collisions in tight spaces in the stores and junk room
 	// for Castle Master
-	if (_name == "    STORES     " && _areaID == 62) {
+	if (_isCastle && _areaID == 62) {
 		reductionHeight = 0.3f;
-	} else if (_name == "   JUNK ROOM   " && _areaID == 61) {
+	} else if (_isCastle && _areaID == 61) {
 		reductionHeight = 0.3f;
 	}
 
