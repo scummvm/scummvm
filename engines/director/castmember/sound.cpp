@@ -27,6 +27,13 @@
 
 namespace Director {
 
+SoundCastMember::SoundCastMember(Cast *cast, uint16 castId)
+		: CastMember(cast, castId) {
+	_type = kCastSound;
+	_audio = nullptr;
+	_looping = 0;
+}
+
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastSound;

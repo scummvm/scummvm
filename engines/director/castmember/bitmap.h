@@ -32,6 +32,7 @@ namespace Director {
 
 class BitmapCastMember : public CastMember {
 public:
+	BitmapCastMember(Cast *cast, uint16 castId);
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecoder *img, uint8 flags1 = 0);
 	BitmapCastMember(Cast *cast, uint16 castId, BitmapCastMember &source);
