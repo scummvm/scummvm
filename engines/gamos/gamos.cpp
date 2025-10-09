@@ -28,7 +28,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_setbuf
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
 
@@ -232,8 +231,6 @@ bool GamosEngine::loadModule(uint id) {
 
 	/* Complete me */
 
-	setbuf(stdout, 0);
-
 	bool prefixLoaded = false;
 	byte prevByte = 0;
 	bool doLoad = true;
@@ -409,7 +406,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 			DAT_004177f8 = 1;
 			ProcessScript(true, data, dataSize);
 			if (_needReload)
-				printf(" need reload from loadResHandler, CANT HAPPEN! \n ");
+				warning("needs reload from loadResHandler, CANT HAPPEN!");
 			DAT_004177f8 = 0;
 			FUN_00404fcc(pid);
 		}
@@ -456,7 +453,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_43) {
 		return loadRes43(pid, p1, p2, data, dataSize);
 	} else if (tp == RESTP_50) {
-		//printf("data 50 size %d\n", dataSize);
+		/* just ignore it? */
 	} else if (tp == RESTP_51) {
 		_soundSamples[pid].assign(data, data + dataSize);
 		//printf("sound  size %d\n", dataSize);
@@ -596,7 +593,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_thing1Count = dataStream.readUint32LE(); // c
 	_bkgUpdateSizes.x = dataStream.readUint32LE(); // 10
 	_bkgUpdateSizes.y = dataStream.readUint32LE(); // 14
-	dataStream.readUint32LE(); // 18
+	/* bkgbufferSize */ dataStream.readUint32LE(); // 18
 	uint32 actsCount = dataStream.readUint32LE(); // 1c
 	uint32 unk1Count = dataStream.readUint32LE(); // 20
 	uint32 imageCount = dataStream.readUint32LE(); // 24
@@ -1997,11 +1994,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			vm->EAX.val = _drawElements[ PTR_00417218->x ].spr->index == arg1 ? 1 : 0;
 		break;
 	case 3:
-		warning("func 3 %x check 0x10 \n", PTR_00417218->fld_4 & 0x90);
+		//warning("func 3 %x check 0x10", PTR_00417218->fld_4 & 0x90);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
 		break;
 	case 4:
-		warning("func 4 %x check 0x20 \n", PTR_00417218->fld_4 & 0xa0);
+		//warning("func 4 %x check 0x20", PTR_00417218->fld_4 & 0xa0);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
 		break;
 	case 5:
@@ -2011,13 +2008,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		break;
 	case 6:
 		arg1 = vm->pop32();
-		warning("func 6 %x check %x \n", PTR_00417218->fld_4 & 0x4f, arg1);
+		//warning("func 6 %x check %x", PTR_00417218->fld_4 & 0x4f, arg1);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
 		break;
 	case 13: {
 		VM::Reg regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef.ref, regRef.val);
-		warning("CallDispatcher 13 keycode %s\n", str.c_str());
+		//warning("CallDispatcher 13 keycode %s", str.c_str());
 		vm->EAX.val = 0;
 		break;
 	}
