@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "backends/keymapper/keymapper.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "image/png.h"
@@ -4760,6 +4761,8 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 
 	Common::Event e;
 	bool done = false;
+
+	g_system->getEventManager()->getKeymapper()->setEnabled(false);
 	while (!done && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 
@@ -4801,6 +4804,8 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 		g_system->delayMillis(10);
 		_screen->update();
 	}
+
+	g_system->getEventManager()->getKeymapper()->setEnabled(true);
 }
 
 bool getEvent(Common::Event &e, Common::Event &firstEvent) {
@@ -4822,7 +4827,7 @@ void TotEngine::readAlphaGraphSmall(
 	Common::Event event) {
 	int pun = 1;
 	bool removeCaret = false;
-
+	g_system->getEventManager()->getKeymapper()->setEnabled(false);
 	output = "";
 	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
 	euroText(posx, posy, "-", textColor);
@@ -4880,6 +4885,7 @@ void TotEngine::readAlphaGraphSmall(
 	if (removeCaret) {
 		bar(posx + _graphics->euroTextWidth(output), posy + 2, (posx + _graphics->euroTextWidth(output)) + 6, posy + 9, barColor);
 	}
+	g_system->getEventManager()->getKeymapper()->setEnabled(true);
 }
 
 void TotEngine::displayObjectDescription(const Common::String &textString) {
