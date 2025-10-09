@@ -254,6 +254,14 @@ void drawMainCharacter() {
 	tempW += 6;
 	tempH += 6;
 
+	if (g_engine->_dirtyMainSpriteY + tempH > 140) {
+		tempH -= (g_engine->_dirtyMainSpriteY + tempH) - 140;
+	}
+
+	if (g_engine->_dirtyMainSpriteX + tempW > 320) {
+		tempW -= (g_engine->_dirtyMainSpriteX + tempW) - 320;
+	}
+
 	g_engine->_characterDirtyRect = (byte *)malloc((tempW + 1) * (tempH + 1) + 4);
 
 	WRITE_LE_UINT16(g_engine->_characterDirtyRect, tempW);
