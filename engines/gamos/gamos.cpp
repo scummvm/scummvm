@@ -91,7 +91,14 @@ Common::Error GamosEngine::run() {
 
 	g_system->showMouse(true);
 
-	Common::String mname("solgamer.exe");
+	Common::String mname;
+	if (Common::String(_gameDescription->gameId) == Common::String("solgamer"))
+		mname = "solgamer.exe";
+	else if (Common::String(_gameDescription->gameId) == Common::String("pilots"))
+		mname = "pilots.exe";
+	else if (Common::String(_gameDescription->gameId) == Common::String("pilots2"))
+		mname = "pilots2.exe";
+
 	init(mname);
 
 	Common::Event e;

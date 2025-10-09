@@ -24,6 +24,8 @@ namespace Gamos {
 const PlainGameDescriptor gamosGames[] = {
 	{ "gamos", "Gamos" },
 	{ "solgamer", "21 Solitaire" },
+	{ "pilots", "Pilots 1" },
+	{ "pilots2", "Pilots 2" },
 	{ 0, 0 }
 };
 
@@ -37,7 +39,24 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
-
+	{
+		"pilots",
+		0,
+		AD_ENTRY1s("pilots.exe", "152f751d3c1b325e91411dd75de54e95", 48357155),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"pilots2",
+		0,
+		AD_ENTRY1s("pilots2.exe", "a0353dfb46043d1b2d1ef8ab6c204b33", 582283983),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 	AD_TABLE_END_MARKER
 };
 
