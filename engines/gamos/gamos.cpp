@@ -903,10 +903,15 @@ void GamosEngine::readData2(const RawData &data) {
 	dataStream.seek(4); // FIX ME
 	_messageProc._gd2flags = dataStream.readByte(); //4
 	//5
-	//x15
-	dataStream.seek(0x15);
+	//x14
+	dataStream.seek(0x14);
+	_d2_fld14 = dataStream.readByte(); // x14
 	_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
-	//x16
+	_d2_fld16 = dataStream.readByte(); // x16
+	_d2_fld17 = dataStream.readByte(); // x17
+	_d2_fld18 = dataStream.readByte(); // x18
+	//x19
+
 	dataStream.seek(0x38);
 	_midiTrack = dataStream.readUint32LE(); //0x38
 	_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
@@ -2117,6 +2122,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.val = 1;
 	} break;
 
+	case 26:
+		FUN_004023d8(PTR_00417218);
+		vm->EAX.val = 1;
+		break;
+
 	case 30: {
 		if (PTR_00417218->y != -1) {
 			Object *obj = &_drawElements[PTR_00417218->y];
@@ -2142,10 +2152,53 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.val = 1;
 		break;
 
+	case 47: {
+		arg1 = vm->pop32();
+
+		switch (arg1) {
+		case 0:
+			vm->EAX.val = _d2_fld16 != 0 ? 1 : 0;
+			break;
+
+		case 1:
+			vm->EAX.val = _d2_fld14 != 0 ? 1 : 0;
+			break;
+
+		case 2:
+			vm->EAX.val = 1; //BYTE_004177fb != 0 ? 1 : 0;
+			break;
+
+		case 3:
+			vm->EAX.val = _d2_fld17 != 0 ? 1 : 0;
+			break;
+
+		case 4:
+			vm->EAX.val = _d2_fld18 != 0 ? 1 : 0;
+			break;
+
+		default:
+			break;
+		}
+	} break;
+
+	case 49: {
+		arg1 = vm->pop32();
+		arg2 = vm->pop32();
+
+		warning("Do save-load %d %d", arg1, arg2);
+	} break;
+
 	case 54:
 		arg1 = vm->pop32();
 		vm->EAX.val = rndRange16(arg1);
 		break;
+
+	case 55: {
+		VM::Reg regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef.ref, regRef.val);
+		warning("PlayMovie 55: %s", str.c_str());
+		vm->EAX.val = 1;
+	} break;
 
 	case 57: {
 		VM::Reg regRef = vm->popReg(); //implement

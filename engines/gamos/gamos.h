@@ -287,6 +287,11 @@ private:
 
 	/* Data2 */
 
+	uint8 _d2_fld14 = 0;
+	uint8 _d2_fld16 = 0;
+	uint8 _d2_fld17 = 0;
+	uint8 _d2_fld18 = 0;
+
 	bool _enableMidi = false;
 	int32 _midiTrack = 0;
 
