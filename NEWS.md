@@ -28,6 +28,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Penumbra: Overture.
    - Added support for Tex Murphy: Martian Memorandum
    - Added support for Mort&Phil: A Movie Adventure (Special Edition).
+   - Added support for Trick or Treat
 
  Access:
    - Added keymapper support.
