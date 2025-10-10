@@ -289,6 +289,18 @@ private:
 	Common::MacResManager *_macresman;
 };
 
+class MoaStreamDecoder : public AudioDecoder {
+public:
+	MoaStreamDecoder(Common::String &format, Common::SeekableReadStreamEndian *stream);
+	~MoaStreamDecoder();
+
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+
+private:
+	Common::String _format;
+	Common::SeekableReadStreamEndian *_stream;
+};
+
 // Source: mixsnd.h in the Director 7 XDK
 struct MoaSoundFormat {
 	int32 offset;

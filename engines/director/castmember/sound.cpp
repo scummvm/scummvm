@@ -107,7 +107,19 @@ void SoundCastMember::load() {
 				delete sndData;
 			} else if (it.tag == MKTAG('e', 'd', 'i', 'M')) {
 				Common::SeekableReadStreamEndian *sndData = _cast->getResource(it.tag, it.index);
-				warning("SoundCastMember::load(): STUB: ediM resource in sound cast member %d", _castId);
+				Common::String format =  _cast->getCastMemberInfo(_castId)->mediaFormatName.c_str();
+
+				if (!_audio) {
+					if (format.equalsIgnoreCase("kMoaCfFormat_AIFF")) {
+						_audio = new MoaStreamDecoder(format, sndData);
+						_loaded = true;
+						return;
+					} else {
+						warning("SoundCastMember::load(): Unsupported ediM format '%s' in sound cast member %d", format.c_str(), _castId);
+					}
+				} else {
+					warning("SoundCastMember::load(): Multiple ediM resources in sound cast member %d", _castId);
+				}
 				delete sndData;
 			}
 		}
