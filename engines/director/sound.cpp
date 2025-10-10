@@ -1052,7 +1052,7 @@ Audio::AudioStream *MoaSoundFormatDecoder::getAudioStream(bool looping, bool for
 			disposeAfterUse);
 
 	if (looping) {
-		if (_format.loopEndFrame < _format.loopStartFrame) {
+		if (_format.loopEndFrame <= _format.loopStartFrame) {
 			return new Audio::LoopingAudioStream(stream, 0);
 		} else {
 			return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _format.loopStartFrame, _format.frameRate), Audio::Timestamp(0, _format.loopEndFrame, _format.frameRate));
