@@ -57,7 +57,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Original save/load dialog"),
 			_s("Use original save and load dialogs"),
-			"original_save_load_screen",
+			"originalsaveload",
 			false,
 			0,
 			0

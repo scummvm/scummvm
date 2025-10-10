@@ -180,7 +180,7 @@ void TotEngine::processEvents(bool &escapePressed) {
 		soundControls();
 		g_engine->_events->zeroEvents();
 	} else if (_events->_gameKey == KEY_SAVELOAD) {
-		if (ConfMan.getBool("original_save_load_screen"))
+		if (ConfMan.getBool("originalsaveload"))
 			originalSaveLoadScreen();
 		else
 			openMainMenuDialog();
@@ -1232,7 +1232,7 @@ void TotEngine::mainMenu(bool fade) {
 					}
 				} else if (x >= 18 && x <= 145) {
 					_isSavingDisabled = true;
-					if (ConfMan.getBool("original_save_load_screen")) {
+					if (ConfMan.getBool("originalsaveload")) {
 						originalSaveLoadScreen();
 						validOption = true;
 					} else {
