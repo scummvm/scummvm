@@ -49,7 +49,6 @@ GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuste
 	_priority(0),
 	_EGAdrawingVisualize(EGAdrawingVisualize) {
 
-	assert(resourceId != -1);
 	initData(resourceId);
 }
 
@@ -72,14 +71,12 @@ GuiResourceId GfxPicture::getResourceId() {
 //  Games like PQ1 use the "old" vector data picture format, but are actually SCI1.1
 //  We should leave this that way to decide the format on-the-fly instead of hardcoding it in any way
 void GfxPicture::draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	uint16 headerSize;
-
 	_mirroredFlag = mirroredFlag;
 	_addToFlag = addToFlag;
 	_EGApaletteNo = EGApaletteNo;
 	_priority = 0;
 
-	headerSize = _resource->getUint16LEAt(0);
+	uint16 headerSize = _resource->getUint16LEAt(0);
 	switch (headerSize) {
 	case 0x26: // SCI 1.1 VGA picture
 		_resourceType = SCI_PICTURE_TYPE_SCI11;
@@ -92,23 +89,9 @@ void GfxPicture::draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	}
 }
 
-#if 0
-void GfxPicture::reset() {
-	int16 startY = _ports->getPort()->top;
-	int16 startX = 0;
-	int16 x, y;
-	_screen->vectorAdjustCoordinate(&startX, &startY);
-	for (y = startY; y < _screen->getHeight(); y++) {
-		for (x = startX; x < _screen->getWidth(); x++) {
-			_screen->vectorPutPixel(x, y, GFX_SCREEN_MASK_ALL, 255, 0, 0);
-		}
-	}
-}
-#endif
-
 void GfxPicture::drawSci11Vga() {
 	SciSpan<const byte> inbuffer(*_resource);
-	int priorityBandsCount = inbuffer[3];
+	int priorityBandCount = inbuffer[3];
 	int has_cel = inbuffer[4];
 	int vector_dataPos = inbuffer.getUint32LEAt(16);
 	int vector_size = _resource->size() - vector_dataPos;
@@ -129,10 +112,12 @@ void GfxPicture::drawSci11Vga() {
 	// [priority:BYTE] [unknown:BYTE]
 
 	// priority bands are supposed to be 14 for sci1.1 pictures
-	assert(priorityBandsCount == 14);
+	if (priorityBandCount != 14) {
+		error("invalid priorityBandCount for sci1.1 pic: %d", priorityBandCount);
+	}
 
 	if (_addToFlag) {
-		_priority = inbuffer[40 + priorityBandsCount * 2] & 0xF;
+		_priority = inbuffer[40 + priorityBandCount * 2] & 0xF;
 	}
 
 	// display Cel-data
@@ -873,7 +858,6 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	// Translate coordinates, if required (needed for Macintosh 480x300)
 	_screen->vectorAdjustCoordinate(&borderLeft, &borderTop);
 	_screen->vectorAdjustCoordinate(&borderRight, &borderBottom);
-	//return;
 
 	stack.push(p);
 
