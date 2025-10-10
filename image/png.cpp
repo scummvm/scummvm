@@ -293,7 +293,11 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette) {
+	return writePNG(out, input, palette.data(), palette.size());
+}
+
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette, uint paletteCount) {
 #ifdef USE_PNG
 	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatRGB24();
 	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
@@ -309,7 +313,7 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 		if (input.format == requiredFormat_4byte) {
 			surface = &input;
 		} else {
-			surface = tmp = input.convertTo(requiredFormat_4byte, palette);
+			surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
 		}
 		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
 	}

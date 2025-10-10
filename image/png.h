@@ -85,12 +85,22 @@ private:
 
 /**
  * Outputs a compressed PNG stream of the given input surface.
-  *
+ *
  *  @param out  Stream to which to write the PNG image.
  *  @param input The surface to save as a PNG image..
  *  @param palette    The palette (in RGB888), if the source format has a bpp of 1.
+ *  @param paletteCount Number of colors in the palette (default: 256).
  */
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr);
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr, uint paletteCount = 256);
+
+/**
+ * Outputs a compressed PNG stream of the given input surface.
+ *
+ *  @param out  Stream to which to write the PNG image.
+ *  @param input The surface to save as a PNG image..
+ *  @param palette    The palette if the source format has a bpp of 1.
+ */
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette);
 /** @} */
 } // End of namespace Image
 
