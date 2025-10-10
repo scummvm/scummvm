@@ -674,6 +674,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "iptr",				"I Photograph to Remember" },
 	{ "isscommerce",		"International Space Station: Space Commercialization" },
 	{ "itc",				"Internet the City: A Guided Tour Through the Internet" },
+	{ "inyourface",			"In Your Face: The Best of Interactive Interface Design" },
 	{ "journey2life",		"The Journey to Life" },
 	{ "journey2source",		"Journey to the Source: An Expedition along the Yangtze River" },
 	{ "kingsice",			"Kings of the Ice: A History of World Hockey" },
@@ -4778,6 +4779,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is チュートリアル
 	MACDEMO1_l("inposition", "Tutorial", "Tutorial", "r:77f4098988d5386794d1530065f514cd", 305277, Common::JA_JPN, 400),
+
+	MACGAME1("inyourface", "", "IYF PPC", "rt:255a3cecc2eea769a22f8d48cb00e173", 60102, 404),
+	WINGAME1("inyourface", "", "IYF.EXE", "t:8d27be686a5f9425d044c7c0ed96c0c4", 1196107, 404),
 
 	// Original filename is 'いぬちゃんのうたＣＤデモ'
 	MACGAME1_l("inuchancd", "", "xn--n8jyc6a7frd6opgo41v280bt08wva9a", "8ea9e9a699c61edddffd79ddd0c994d7", 290398, Common::JA_JPN, 402),
