@@ -283,7 +283,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Eight Squares in The Garden
 	WME_WINENTRY("8squares", "",
-		WME_ENTRY1s("data.dcp", "8788577bffe33ae059e13aa862dabd31", 29931982), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+		WME_ENTRY1s("data.dcp", "8788577bffe33ae059e13aa862dabd31", 29931982), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_6),
 
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
@@ -516,7 +516,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Book of Gron Part One
 	WME_WINENTRY("bookofgron", "",
-		WME_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "e61b2ebee044a82fa0f8ca0fce2c8946", 83129531), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Carol Reed 4 - East Side Story (English)
 	WME_WINENTRY("carolreed4", "",
@@ -1938,7 +1938,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
-		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Palladion (Alpha6h)
 	WME_WINENTRY("palladion", "Alpha6h",
@@ -2003,7 +2003,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Qajary Cat (Steam, November 2017) (English)
 	WME_WINENTRY("qajarycat", "",
-		WME_ENTRY1s("data.dcp", "3e47e3cd94133bdd5facf30ee84389ea", 447760816), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "3e47e3cd94133bdd5facf30ee84389ea", 447760816), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps
 	WME_WINENTRY("rebeccacarlson1", "",
