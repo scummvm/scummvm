@@ -998,7 +998,7 @@ Audio::AudioStream *MoaStreamDecoder::getAudioStream(bool looping, bool forPuppe
 
 	Audio::RewindableAudioStream *stream = nullptr;
 	if (_format.equalsIgnoreCase("kMoaCfFormat_AIFF")) {
-		stream = Audio::makeAIFFStream(_stream, disposeAfterUse);
+		stream = Audio::makeAIFFStream(_stream, DisposeAfterUse::NO);
 	} else {
 		warning("Unsupported Moa stream type '%s'", _format.c_str());
 		delete _stream;
