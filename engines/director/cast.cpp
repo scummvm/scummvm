@@ -1934,7 +1934,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 		// fallthrough
 	case 16:
-		ci->mediaFormatName = castInfo.strings[2].readString();
+		ci->mediaFormatName = castInfo.strings[16].readString();
 		dumpS = Common::String::format("mediaFormatName: '%s', ", ci->mediaFormatName.c_str()) + dumpS;
 		// fallthrough
 	case 15:
