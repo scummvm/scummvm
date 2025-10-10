@@ -694,6 +694,9 @@ void Score::update() {
 	if (!_vm->_playbackPaused)
 		killScriptInstances(_nextFrame ? _nextFrame : _curFrameNumber + 1);
 
+	CastMemberID oldSound1 = _currentFrame->_mainChannels.sound1;
+	CastMemberID oldSound2 = _currentFrame->_mainChannels.sound2;
+
 	// change current frame and load frame data, if required
 	updateCurrentFrame();
 
@@ -765,8 +768,23 @@ void Score::update() {
 		_disableGoPlayUpdateStage = prevDis;
 	}
 
+	bool sound1Changed = true;
+	bool sound2Changed = true;
+
+	if (_version >= kFileVer600 && !_firstRun) {
+		// We check if the sound channels have changed, and only restart
+		// the sound if they have. Even if the sound was stopped
+		//
+		// We need to check _firstRun, because we come here with the
+		// first frame already loaded.
+		sound1Changed = oldSound1 != _currentFrame->_mainChannels.sound1;
+		sound2Changed = oldSound2 != _currentFrame->_mainChannels.sound2;
+	}
+
+	_firstRun = false;
+
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
-	renderFrame(_curFrameNumber);
+	renderFrame(_curFrameNumber, kRenderModeNormal, sound1Changed, sound2Changed);
 	_window->_newMovieStarted = false;
 
 	// then call the stepMovie hook (if one exists)
@@ -823,7 +841,7 @@ void Score::update() {
 
 }
 
-void Score::renderFrame(uint16 frameId, RenderMode mode) {
+void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, bool sound2Changed) {
 	uint32 start = g_system->getMillis(false);
 	// Force cursor update if a new movie's started.
 	if (_window->_newMovieStarted)
@@ -848,7 +866,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 			renderPaletteCycle(mode);
 	}
 
-	playSoundChannel(false);
+	playSoundChannel(false, sound1Changed, sound2Changed);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
@@ -1757,7 +1775,7 @@ Channel *Score::getChannelById(uint16 id) {
 	return _channels[id];
 }
 
-void Score::playSoundChannel(bool puppetOnly) {
+void Score::playSoundChannel(bool puppetOnly, bool sound1Changed, bool sound2Changed) {
 	DirectorSound *sound = _window->getSoundManager();
 	CastMemberID sound1 = _currentFrame->_mainChannels.sound1;
 	CastMemberID sound2 = _currentFrame->_mainChannels.sound2;
@@ -1776,7 +1794,7 @@ void Score::playSoundChannel(bool puppetOnly) {
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
-	} else if (!puppetOnly) {
+	} else if (!puppetOnly && sound1Changed) {
 		if (_currentFrame->_mainChannels.soundType1 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType1 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType1, _currentFrame->_mainChannels.sound1.member, 1);
 		} else {
@@ -1786,7 +1804,7 @@ void Score::playSoundChannel(bool puppetOnly) {
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
-	} else if (!puppetOnly) {
+	} else if (!puppetOnly && sound2Changed) {
 		if (_currentFrame->_mainChannels.soundType2 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType2 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType2, _currentFrame->_mainChannels.sound2.member, 2);
 		} else {

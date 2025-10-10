@@ -127,7 +127,7 @@ public:
 	bool refreshPointersForCastLib(uint16 castLib);
 
 	bool renderTransition(uint16 frameId, RenderMode mode);
-	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal, bool sound1Changed = true, bool sound2Changed = true);
 	void incrementFilmLoops();
 	void updateSprites(RenderMode mode = kRenderModeNormal, bool withClean = false);
 	bool renderPrePaletteCycle(RenderMode mode = kRenderModeNormal);
@@ -139,7 +139,7 @@ public:
 
 	void invalidateRectsForMember(CastMember *member);
 
-	void playSoundChannel(bool puppetOnly);
+	void playSoundChannel(bool puppetOnly, bool sound1Changed = true, bool sound2Changed = true);
 
 	Common::String formatChannelInfo();
 	bool processFrozenPlayScript();
@@ -247,6 +247,7 @@ private:
 	DirectorSound *_soundManager;
 
 	int _previousBuildBotBuild = -1;
+	bool _firstRun = true;
 };
 
 } // End of namespace Director
