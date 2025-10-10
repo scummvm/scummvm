@@ -1178,7 +1178,10 @@ Common::Path dumpScriptName(const char *prefix, int type, int id, const char *ex
 		typeName = "EventScript";
 		break;
 	case kScoreScript:
-		typeName = "ScoreScript";
+		if (g_director->getVersion() >= 600)
+			typeName = "BehaviorScript";
+		else
+			typeName = "ScoreScript";
 		break;
 	case kParentScript:
 		typeName = "ParentScript";
