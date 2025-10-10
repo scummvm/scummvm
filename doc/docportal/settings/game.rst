@@ -1319,6 +1319,35 @@ Use original save/load screens
 
 ,,,,,,,,,,
 
+
+.. _Tot:
+
+Tot
+**************
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones.
+
+	*originalsaveload*
+
+Disable transitions
+	Disables transitions when moving between screens.
+
+	*transitions_disable*
+
+AdLib OPL3 mode
+	Enables OPL3 features when AdLib is selected. Depending on the game, this prevents cut-off notes, adds extra notes or instruments, and/or adds stereo.
+
+	*opl3_mode*
+
+Copy protection
+	Enables the in-game copy protection.
+
+	*copy_protection*
+
+
+,,,,,,,,,,
+
 .. _Trecision:
 
 Trecision
