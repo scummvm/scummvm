@@ -1084,14 +1084,14 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 
 				if ((c[1] & 2) == cval) {
 					if ((c[1] & 0xc) == 0) {
-						rstream.skip((sz - read) * 4);
+						rstream.skip((sz - (read + 1)) * 4);
 						break;
 					}
 					if ((c[1] & 0xc) == 4)
 						return 0;
 					if ((c[1] & 0xc) == 8) {
 						fastSkipAll = true;
-						rstream.skip((sz - read) * 4);
+						rstream.skip((sz - (read + 1)) * 4);
 						break;
 					}
 					ARR_00412208[ sbuf[ps] ] = (c[3] << 8) | c[2];
