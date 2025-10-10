@@ -164,7 +164,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 	}
 
 	// Open the file for saving.
-	Common::SeekableWriteStream *const sf = fileNode.createWriteStream();
+	Common::SeekableWriteStream *const sf = fileNode.createWriteStream(false);
 	if (!sf)
 		return nullptr;
 	Common::OutSaveFile *const result = new Common::OutSaveFile(compress ? Common::wrapCompressedWriteStream(sf) : sf);
