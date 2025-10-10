@@ -19,6 +19,7 @@
  *
  */
 
+#include "alcachofa/alcachofa.h"
 #include "alcachofa/graphics.h"
 #include "alcachofa/detection.h"
 #include "alcachofa/graphics-opengl.h"
@@ -37,7 +38,8 @@ using namespace Graphics;
 namespace Alcachofa {
 
 OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
-	: OpenGLTextureBase(w, h, withMipmaps) {
+	: ITexture({ (int16)w, (int16)h })
+	, _withMipmaps(withMipmaps) {
 	glEnable(GL_TEXTURE_2D); // will error on GLES2, but that is okay
 	OpenGL::clearGLError(); // we will just ignore it
 	GL_CALL(glGenTextures(1, &_handle));
@@ -75,7 +77,12 @@ void OpenGLTexture::setMirrorWrap(bool wrap) {
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode));
 }
 
-void OpenGLTexture::updateInner(const void *pixels) {
+void OpenGLTexture::update(const Surface &surface) {
+	assert(surface.format == g_engine->renderer().getPixelFormat());
+	assert(surface.w == size().x && surface.h == size().y);
+
+	const void *pixels = surface.getPixels();
+
 	glEnable(GL_TEXTURE_2D);
 	OpenGL::clearGLError();
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _handle));
@@ -105,6 +112,10 @@ ScopedPtr<ITexture> OpenGLRenderer::createTexture(int32 w, int32 h, bool withMip
 	return ScopedPtr<ITexture>(new OpenGLTexture(w, h, withMipmaps));
 }
 
+Graphics::PixelFormat OpenGLRenderer::getPixelFormat() const {
+	return Graphics::PixelFormat::createFormatRGBA32();
+}
+
 void OpenGLRenderer::end() {
 	GL_CALL(glFlush());
 
@@ -119,11 +130,6 @@ void OpenGLRenderer::end() {
 			GL_UNSIGNED_BYTE,
 			_currentOutput->getPixels()
 		));
-		if (_currentOutput->format != PixelFormat::createFormatRGBA32()) {
-			auto targetFormat = _currentOutput->format;
-			_currentOutput->format = PixelFormat::createFormatRGBA32();
-			_currentOutput->convertToInPlace(targetFormat);
-		}
 	}
 }
 
@@ -161,7 +167,7 @@ void OpenGLRenderer::setOutput(Surface &output) {
 		debugC(0, kDebugGraphics, "Output is larger than screen, output will be cropped (%d, %d) > (%d, %d)",
 			output.w, output.h, g_system->getWidth(), g_system->getHeight());
 
-	if (!isCompatibleFormat(output.format)) {
+	if (output.format != getPixelFormat()) {
 		auto formatString = output.format.toString();
 		debugC(0, kDebugGraphics, "Cannot use pixelformat of given output surface: %s", formatString.c_str());
 		_currentOutput = nullptr;

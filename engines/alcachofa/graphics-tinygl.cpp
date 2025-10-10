@@ -35,10 +35,11 @@ using namespace Graphics;
 
 namespace Alcachofa {
 
-class TinyGLTexture : public OpenGLTextureBase {
+class TinyGLTexture : public ITexture {
 public:
 	TinyGLTexture(int32 w, int32 h, bool withMipmaps)
-		: OpenGLTextureBase(w, h, withMipmaps) {
+		: ITexture({ (int16)w, (int16)h })
+		, _withMipmaps(withMipmaps) {
 		tglEnable(TGL_TEXTURE_2D);
 		tglGenTextures(1, &_handle);
 		tglBindTexture(TGL_TEXTURE_2D, _handle);
@@ -55,8 +56,12 @@ public:
 
 	inline TGLuint handle() const { return _handle; }
 
-protected:
-	void updateInner(const void *pixels) override {
+	void update(const Surface &surface) override {
+		assert(surface.format == g_engine->renderer().getPixelFormat());
+		assert(surface.w == size().x && surface.h == size().y);
+
+		const void *pixels = surface.getPixels();
+
 		tglEnable(TGL_TEXTURE_2D);
 		tglBindTexture(TGL_TEXTURE_2D, _handle);
 		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, size().x, size().y, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, pixels);
@@ -66,6 +71,8 @@ protected:
 			tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAX_LEVEL, 0);
 	}
 
+protected:
+	bool _withMipmaps;
 	TGLuint _handle;
 };
 
@@ -115,6 +122,10 @@ public:
 	ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override {
 		assert(w >= 0 && h >= 0);
 		return ScopedPtr<ITexture>(new TinyGLTexture(w, h, withMipmaps));
+	}
+
+	Graphics::PixelFormat getPixelFormat() const override {
+		return Graphics::PixelFormat::createFormatRGBA32();
 	}
 
 	void begin() override {
