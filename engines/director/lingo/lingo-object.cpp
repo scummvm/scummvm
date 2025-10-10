@@ -579,7 +579,13 @@ bool ScriptContext::hasProp(const Common::String &propName) {
 				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			return _properties["ancestor"].u.obj->hasProp(propName);
 		}
+
+		// This is used by behaviors
+		if (propName.equalsIgnoreCase("spriteNum")) {
+			return true;
+		}
 	}
+
 	return false;
 }
 
@@ -595,6 +601,11 @@ Datum ScriptContext::getProp(const Common::String &propName) {
 				&& (_properties["ancestor"].u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
 			return _properties["ancestor"].u.obj->getProp(propName);
+		}
+
+		// This is used by behaviors
+		if (propName.equalsIgnoreCase("spriteNum")) {
+			return Datum((int)g_director->getCurrentMovie()->_currentSpriteNum);
 		}
 	}
 	_propertyNames.push_back(propName);
