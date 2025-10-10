@@ -51,48 +51,36 @@ void MickeyEngine::readExe(int ofs, uint8 *buffer, long buflen) {
 		return;
 	infile.seek(ofs, SEEK_SET);
 	infile.read(buffer, buflen);
-	infile.close();
 }
 
-void MickeyEngine::getDatFileName(int iRoom, char *szFile) {
-	Common::sprintf_s(szFile, 256, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
+void MickeyEngine::getDatFileName(int iRoom, char *fileName) {
+	Common::sprintf_s(fileName, 256, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
 }
 
-void MickeyEngine::readDatHdr(char *szFile, MSA_DAT_HEADER *hdr) {
+void MickeyEngine::readDatHdr(char *fileName, MSA_DAT_HEADER *hdr) {
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
-	hdr->filelen = infile.readByte();
-	hdr->filelen += infile.readByte() * 0x100;
+	hdr->filelen = infile.readUint16LE();
 
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsRoom[i] = infile.readByte();
-		hdr->ofsRoom[i] += infile.readByte() * 0x100;
+		hdr->ofsRoom[i] = infile.readUint16LE();
 	}
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsDesc[i] = infile.readByte();
-		hdr->ofsDesc[i] += infile.readByte() * 0x100;
+		hdr->ofsDesc[i] = infile.readUint16LE();
 	}
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsStr[i] = infile.readByte();
-		hdr->ofsStr[i] += infile.readByte() * 0x100;
+		hdr->ofsStr[i] = infile.readUint16LE();
 	}
-
-	infile.close();
 }
 
 void MickeyEngine::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
-	uint16 ofs[256];
-
 	readExe(offset, buffer, buflen);
-	memcpy(ofs, buffer, sizeof(ofs));
 
-	for (int i = 0; i < 256; i++)
-		ofs[i] = buffer[i * 2] + 256 * buffer[i * 2 + 1];
+	uint16 ofs = READ_LE_UINT16(&buffer[iItem * 2]);
 
-	readExe(ofs[iItem] + IDI_MSA_OFS_EXE, buffer, buflen);
+	readExe(ofs + IDI_MSA_OFS_EXE, buffer, buflen);
 }
 
 // User Interface
@@ -120,17 +108,19 @@ bool MickeyEngine::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 }
 
 int MickeyEngine::choose1to9(int ofsPrompt) {
-	int answer = 0;
 	printExeStr(ofsPrompt);
 
 	while (!shouldQuit()) {
-		answer = getSelection(kSelNumber);
+		int answer = getSelection(kSelNumber);
 		if (answer == 10) {
 			printExeStr(IDO_MSA_PRESS_1_TO_9);
-			if (getSelection(kSelAnyKey) == 0)
+			if (getSelection(kSelAnyKey) == 0) {
 				return 0;
+			}
 			printExeStr(ofsPrompt);
-		} else return answer;
+		} else {
+			return answer;
+		}
 	}
 
 	return 0;
@@ -182,60 +172,52 @@ void MickeyEngine::printExeMsg(int ofs) {
 }
 
 void MickeyEngine::printDatString(int iStr) {
-	char buffer[256];
+	char fileName[256] = {0};
 	int iDat = getDat(_gameStateMickey.iRoom);
-
+	Common::sprintf_s(fileName, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
+	
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	Common::sprintf_s(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
-	readDatHdr(szFile, &hdr);
+	readDatHdr(fileName, &hdr);
 
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
+	char buffer[256];
 	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, SEEK_SET);
 	infile.read((uint8 *)buffer, 256);
-	infile.close();
 
 	printStr(buffer);
 }
 
 void MickeyEngine::printDesc(int iRoom) {
+	char fileName[256] = {0};
+	getDatFileName(iRoom, fileName);
+	
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	getDatFileName(iRoom, szFile);
-	readDatHdr(szFile, &hdr);
+	readDatHdr(fileName, &hdr);
 
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
-	char *buffer = (char *)malloc(256);
-	memset(buffer, 0, 256);
-
+	char buffer[256] = {0};
 	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
 	infile.read(buffer, 256);
-	infile.close();
 
 	printStr(buffer);
-	free(buffer);
 }
 
 bool MickeyEngine::checkMenu() {
 	MSA_MENU menu;
 	int iSel0, iSel1;
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	Common::File infile;
 
-	getDatFileName(_gameStateMickey.iRoom, szFile);
-	readDatHdr(szFile, &hdr);
-	if (!infile.open(szFile))
+	getDatFileName(_gameStateMickey.iRoom, fileName);
+	readDatHdr(fileName, &hdr);
+	if (!infile.open(fileName))
 		return false;
 
 	char *buffer = new char[sizeof(MSA_MENU)];
@@ -693,11 +675,11 @@ bool MickeyEngine::playSound(ENUM_MSA_SOUND iSound, WaitOptions options) {
 // Graphics
 
 void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	char szFile[255] = {0};
-	Common::sprintf_s(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
+	char fileName[255] = {0};
+	Common::sprintf_s(fileName, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
 
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(fileName))
 		return;
 
 	uint8 *buffer = new uint8[4096];
@@ -723,11 +705,11 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 }
 
 void MickeyEngine::drawPic(int iPic) {
-	char szFile[255] = {0};
-	Common::sprintf_s(szFile, IDS_MSA_PATH_PIC, iPic);
+	char fileName[255] = {0};
+	Common::sprintf_s(fileName, IDS_MSA_PATH_PIC, iPic);
 
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(fileName))
 		return;
 
 	uint8 *buffer = new uint8[4096];
@@ -949,7 +931,7 @@ void MickeyEngine::printRoomDesc() {
 
 bool MickeyEngine::loadGame() {
 	Common::InSaveFile *infile;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	bool diskerror = true;
 	int i = 0;
 
@@ -959,8 +941,8 @@ bool MickeyEngine::loadGame() {
 			return false;
 
 		// load game
-		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
-		if (!(infile = getSaveFileMan()->openForLoading(szFile))) {
+		Common::sprintf_s(fileName, "%s.s%02d", getTargetName().c_str(), sel);
+		if (!(infile = getSaveFileMan()->openForLoading(fileName))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
 			if (getSelection(kSelAnyKey) == 0)
@@ -1046,7 +1028,7 @@ bool MickeyEngine::loadGame() {
 
 void MickeyEngine::saveGame() {
 	Common::OutSaveFile *outfile;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	bool diskerror = true;
 	int i = 0;
 
@@ -1074,8 +1056,8 @@ void MickeyEngine::saveGame() {
 			return;
 
 		// save game
-		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
-		if (!(outfile = getSaveFileMan()->openForSaving(szFile))) {
+		Common::sprintf_s(fileName, "%s.s%02d", getTargetName().c_str(), sel);
+		if (!(outfile = getSaveFileMan()->openForSaving(fileName))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
 			if (getSelection(kSelAnyKey) == 0)
@@ -1143,7 +1125,7 @@ void MickeyEngine::saveGame() {
 			outfile->finalize();
 
 			if (outfile->err())
-				warning("Can't write file '%s'. (Disk full?)", szFile);
+				warning("Can't write file '%s'. (Disk full?)", fileName);
 
 			diskerror = false;
 			delete outfile;
@@ -2235,23 +2217,11 @@ void MickeyEngine::init() {
 	// clear game struct
 	memset(&_gameStateMickey, 0, sizeof(_gameStateMickey));
 	memset(&_gameStateMickey.iItem, IDI_MSA_OBJECT_NONE, sizeof(_gameStateMickey.iItem));
-	// read room extended desc flags
-	//readExe(IDO_MSA_ROOM_TEXT, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.fRmTxt, buffer, sizeof(_gameStateMickey.fRmTxt));
 
 	// read room extended desc offsets
 	readExe(IDO_MSA_ROOM_TEXT_OFFSETS, buffer, sizeof(buffer));
-	memcpy(_gameStateMickey.oRmTxt, buffer, sizeof(_gameStateMickey.oRmTxt));
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++)
-		_gameStateMickey.oRmTxt[i] = buffer[i * 2] + 256 * buffer[i * 2 + 1];
-
-	// read room object indices
-	//readExe(IDO_MSA_ROOM_OBJECT, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.iRmObj, buffer, sizeof(_gameStateMickey.iRmObj));
-
-	// read room picture indices
-	//readExe(IDO_MSA_ROOM_PICTURE, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.iRmPic, buffer, sizeof(_gameStateMickey.iRmPic));
+		_gameStateMickey.oRmTxt[i] = READ_LE_UINT16(&buffer[i * 2]);
 
 	// read room menu patch indices
 	readExe(IDO_MSA_ROOM_MENU_FIX, buffer, sizeof(buffer));
@@ -2276,7 +2246,6 @@ void MickeyEngine::init() {
 	_gameStateMickey.fHasXtal = true;
 	_gameStateMickey.nXtals = 9;
 	_gameStateMickey.fItemUsed[IDI_MSA_ITEM_LETTER] = true;
-
 #endif
 
 	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
