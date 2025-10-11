@@ -415,8 +415,8 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		loadRes18(pid, data, dataSize);
 	} else if (tp == RESTP_19) {
 		if (BYTE_004177f7 == 0) {
-			for (int i = 0; i < _thing1.size(); i++)
-				_thing1[i] = 0xf0fe;
+			for (int i = 0; i < _states.size(); i++)
+				_states.at(i) = 0xf0fe;
 
 			DAT_004177f8 = 1;
 			ProcessScript(true, data, dataSize);
@@ -620,8 +620,8 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 
 	uint32 bkgnum1 = dataStream.readUint32LE(); // 0
 	uint32 bkgnum2 = dataStream.readUint32LE(); // 4
-	_thing1Size = dataStream.readUint32LE(); // 8
-	_thing1Count = dataStream.readUint32LE(); // c
+	_statesWidth = dataStream.readUint32LE(); // 8
+	_statesHeight = dataStream.readUint32LE(); // c
 	_bkgUpdateSizes.x = dataStream.readUint32LE(); // 10
 	_bkgUpdateSizes.y = dataStream.readUint32LE(); // 14
 	/* bkgbufferSize */ dataStream.readUint32LE(); // 18
@@ -632,16 +632,16 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	uint32 midiCount = dataStream.readUint32LE(); // 2c
 	uint32 dat6xCount = dataStream.readUint32LE(); // 30
 
-	_thing1Shift = 2;
+	_statesShift = 2;
 	for(int i = 2; i < 9; i++) {
-		if (_thing1Size <= (1 << i)) {
-			_thing1Shift = i;
+		if (_statesWidth <= (1 << i)) {
+			_statesShift = i;
 			break;
 		}
 	}
 
-	_thing1.clear();
-	_thing1.resize(_thing1Count << _thing1Shift);
+	_states.clear();
+	_states.resize(_statesWidth, _statesHeight);
 
 	_bkgImages.clear();
 	_bkgImages.resize(bkgnum1 * bkgnum2);
@@ -1054,10 +1054,12 @@ int32 GamosEngine::ProcessScript(bool p1, const byte *data, size_t dataSize, int
 
 				uint16 fb = 0;
 				if (!p1) {
-					fb = _thing1[ ((int8)c[2] + DAT_00417220 + _thing1Size) % _thing1Size  +
-				                  ((((int8)c[3] + DAT_00417224 + _thing1Count) % _thing1Count) << _thing1Shift) ];
+					Common::Point xy;
+					xy.x = ((int8)c[2] + DAT_00417220 + _statesWidth) % _statesWidth;
+					xy.y = ((int8)c[3] + DAT_00417224 + _statesHeight) % _statesHeight;
+					fb = _states.at( xy );
 				} else {
-					fb = _thing1[(c[3] << _thing1Shift) + c[2]];
+					fb = _states.at(c[2], c[3]);
 				}
 
 				uint8 lb = fb & 0xff;
@@ -1401,8 +1403,8 @@ void GamosEngine::preprocessDataB1(int id, byte *data) {
 int GamosEngine::processData(int id, byte *data) {
 	preprocessData(_preprocDataId, data);
 	if (id == 0) {
-		FUN_0040283c( ((int8)data[3] + DAT_00417224 + _thing1Count) % _thing1Count,
-		              ((int8)data[2] + DAT_00417220 + _thing1Size) % _thing1Size,
+		FUN_0040283c( ((int8)data[3] + DAT_00417224 + _statesHeight) % _statesHeight,
+		              ((int8)data[2] + DAT_00417220 + _statesWidth) % _statesWidth,
 					  data );
 		if (_needReload)
 			return 0;
@@ -1415,24 +1417,24 @@ int GamosEngine::processData(int id, byte *data) {
 
 void GamosEngine::FUN_00402a68(const byte *d) {
 	if (d[2] != 0 || d[3] != 0) {
-		DAT_00417220 = ((int8)d[2] + DAT_00417220 + _thing1Size) % _thing1Size;
-        DAT_00417224 = ((int8)d[3] + DAT_00417224 + _thing1Count) % _thing1Count;
+		DAT_00417220 = ((int8)d[2] + DAT_00417220 + _statesWidth) % _statesWidth;
+		DAT_00417224 = ((int8)d[3] + DAT_00417224 + _statesHeight) % _statesHeight;
 
 		uint8 t = PTR_00417218->fld_3;
 
-        _thing1[(DAT_0041722c << _thing1Shift) + DAT_00417228] = ((PTR_00417218->fld_3 & 0xf0) << 8) | PTR_00417218->fld_2;
+        _states.at(DAT_00417228, DAT_0041722c) = ((PTR_00417218->fld_3 & 0xf0) << 8) | PTR_00417218->fld_2;
 
         FUN_00402654(0, DAT_00417224, DAT_00417220);
 
         PTR_00417218->pos = DAT_00417220;
         PTR_00417218->blk = DAT_00417224;
 
-        uint16 thing = _thing1[ (DAT_00417224 << _thing1Shift) + DAT_00417220 ];
+        uint16 &rthing = _states.at(DAT_00417220, DAT_00417224);
 
-        PTR_00417218->fld_2 = thing & 0xff;
-        PTR_00417218->fld_3 = (t & 0xf) | ((thing >> 8) & 0xf0);
+        PTR_00417218->fld_2 = rthing & 0xff;
+        PTR_00417218->fld_3 = (t & 0xf) | ((rthing >> 8) & 0xf0);
 
-        _thing1[ (DAT_00417224 << _thing1Shift) + DAT_00417220 ] = ((PTR_00417218->flags & 0xf0) << 8) | PTR_00417218->actID;
+        rthing = ((PTR_00417218->flags & 0xf0) << 8) | PTR_00417218->actID;
 
         BYTE_00412200 = 1;
 	}
@@ -1442,7 +1444,7 @@ void GamosEngine::FUN_00402a68(const byte *d) {
         PTR_00417218->flags = PTR_00417218->flags & 0xf;
         PTR_00417218->flags = PTR_00417218->flags | BYTE_004177f6;
 
-		uint16 &tref = _thing1[ (DAT_00417224 << _thing1Shift) + DAT_00417220 ];
+		uint16 &tref = _states.at(DAT_00417220, DAT_00417224);
 		tref = (tref & 0xff) | (BYTE_004177f6 << 8);
 
         BYTE_00412200 = 1;
@@ -1453,7 +1455,7 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 	byte td[4];
 	memcpy(td, data, 4);
 
-	uint16 *pv1 = _thing1.data() + (id << _thing1Shift) + pos;
+	uint16 &rthing = _states.at(pos, id);
 
 	uint8 oid = td[0];
 
@@ -1463,7 +1465,7 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 			if (_needReload)
 				return;
 
-			*pv1 = (td[1] << 8) | td[0];
+			rthing = (td[1] << 8) | td[0];
 			return;
 		}
 	} else {
@@ -1506,8 +1508,8 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 		obj->blk = id;
 		obj->x = -1;
 		obj->y = -1;
-		obj->fld_2 = (*pv1) & 0xff;
-		obj->fld_3 = ((*pv1) >> 8 ) & 0xff;
+		obj->fld_2 = rthing & 0xff;
+		obj->fld_3 = (rthing >> 8 ) & 0xff;
 		if (PTR_00417218 && obj->index > PTR_00417218->index)
 			obj->fld_3 |= 1;
 
@@ -1528,7 +1530,7 @@ void GamosEngine::FUN_0040283c(int id, int pos, const byte *data) {
 			PTR_004121b4 = obj;
 	}
 
-	*pv1 = (td[1] << 8) | td[0];
+	rthing = (td[1] << 8) | td[0];
 	executeScript(td[1], id, pos, odat, index, obj, &act, act.script1);
 }
 
@@ -1539,9 +1541,9 @@ void GamosEngine::removeObjectByIDMarkDirty(int32 id) {
 
 
 void GamosEngine::FUN_00402654(int mode, int id, int pos) {
-	uint16 *pth1 = &_thing1[pos + (id << _thing1Shift)];
+	uint16 &rthing = _states.at(pos, id);
 
-	uint8 actid = (*pth1 & 0xff);
+	uint8 actid = rthing & 0xff;
 
 	if (actid == 0xfe)
 		return;
@@ -1584,9 +1586,9 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	}
 
 	if (povar4)
-		*pth1 = ((povar4->fld_3 & 0xf0) << 8) | (povar4->fld_2 & 0xff);
+		rthing = ((povar4->fld_3 & 0xf0) << 8) | (povar4->fld_2 & 0xff);
 
-	executeScript((*pth1) >> 8, id, pos, nullptr, -1, nullptr, &act, act.script2);
+	executeScript(rthing >> 8, id, pos, nullptr, -1, nullptr, &act, act.script2);
 }
 
 Object *GamosEngine::getFreeObject() {
@@ -2148,7 +2150,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		break;
 
 	case 33:
-		PTR_00417218->fld_5 = _thing1Count - PTR_00417218->blk;
+		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
 		vm->EAX.val = 1;
 		break;
 
@@ -2508,7 +2510,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	if (!pobj) {
 		DAT_004173f4 = actPos.x / _unk2;
 		DAT_004173f0 = actPos.y / _unk3;
-		DAT_00417803 = _thing1[DAT_004173f4 + (DAT_004173f0 << _thing1Shift)] & 0xff;
+		DAT_00417803 = _states.at(DAT_004173f4, DAT_004173f0) & 0xff;
 	} else {
 		DAT_00417803 = actT;
 		if (actT == 2) {

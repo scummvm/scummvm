@@ -53,6 +53,8 @@
 #include "gamos/detection.h"
 #include "gamos/file.h"
 
+#include "gamos/array2d.h"
+
 namespace Gamos {
 
 struct GamosGameDescription;
@@ -309,10 +311,10 @@ private:
 	SystemProc _messageProc;
 	MoviePlayer _moviePlayer;
 
-	uint32 _thing1Size = 0;
-	uint32 _thing1Count = 0;
-	uint32 _thing1Shift = 0;
-	Common::Array<uint16> _thing1;
+	uint32 _statesWidth = 0;
+	uint32 _statesHeight = 0;
+	uint32 _statesShift = 0;
+	Array2D<uint16> _states;
 
 
 	uint8 _preprocDataId = 0;
