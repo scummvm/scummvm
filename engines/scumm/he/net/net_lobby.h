@@ -22,8 +22,8 @@
 #ifndef SCUMM_HE_NET_LOBBY_H
 #define SCUMM_HE_NET_LOBBY_H
 
-#include "backends/networking/curl/socket.h"
-#include "backends/networking/curl/url.h"
+#include "backends/networking/basic/socket.h"
+#include "backends/networking/basic/url.h"
 #include "common/formats/json.h"
 
 #include "scumm/he/net/net_main.h"
@@ -96,7 +96,7 @@ public:
 protected:
 	ScummEngine_v90he *_vm;
 	Common::String _gameName;
-	Networking::CurlSocket *_socket;
+	Networking::Socket *_socket;
 
 	Common::String _buffer;
 

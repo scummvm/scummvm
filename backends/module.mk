@@ -89,9 +89,9 @@ endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	networking/curl/cacert.o \
-	networking/curl/socket.o \
-	networking/curl/url.o
+	networking/basic/curl/cacert.o \
+	networking/basic/curl/socket.o \
+	networking/basic/curl/url.o
 ifdef USE_HTTP
 MODULE_OBJS += \
 	networking/http/curl/connectionmanager-curl.o \
@@ -340,7 +340,16 @@ MODULE_OBJS += \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \
 	graphics/android/android-graphics.o \
-	mutex/pthread/pthread-mutex.o
+	mutex/pthread/pthread-mutex.o \
+	networking/basic/android/jni.o \
+	networking/basic/android/socket.o \
+	networking/basic/android/url.o
+
+ifdef USE_HTTP
+MODULE_OBJS += \
+	networking/http/android/connectionmanager-android.o \
+	networking/http/android/networkreadstream-android.o
+endif
 endif
 
 ifdef AMIGAOS

@@ -539,7 +539,7 @@ private:
 	Common::String _gameName;
 	Common::String _gameVersion;
 
-	Networking::ENet *_enet;
+	Networking::ENet::ENet *_enet;
 
 	byte *_tmpbuffer;
 
@@ -553,7 +553,7 @@ private:
 	Common::HashMap<Common::String, int> _addressToUserId;
 
 	Common::String _sessionName;
-	Networking::Host *_sessionHost;
+	Networking::ENet::Host *_sessionHost;
 
 	// For Moonbase map generation:
 	uint8 _mapGenerator;
@@ -574,10 +574,10 @@ private:
 	int _hostPort;
 
 	// For broadcasting our game session over LAN.
-	Networking::Socket *_broadcastSocket;
+	Networking::ENet::Socket *_broadcastSocket;
 
 	// For creating/joining sessions over the Internet.
-	Networking::Host *_sessionServerHost;
+	Networking::ENet::Host *_sessionServerHost;
 	Address _sessionServerAddress;
 	bool _forcedAddress;
 	bool _gotSessions;

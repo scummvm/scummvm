@@ -288,7 +288,7 @@ Common::HashMap<Common::String, Common::String> NetworkReadStreamEmscripten::res
 
 	Common::HashMap<Common::String, Common::String> headers;
 
-	const char *headerString = responseHeaders().c_str();
+	const char *headerString = _responseHeaders.c_str();
 	char **responseHeaders = emscripten_fetch_unpack_response_headers(headerString);
 	assert(responseHeaders);
 
