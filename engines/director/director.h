@@ -94,6 +94,7 @@ enum {
 	kDebugPaused,
 	kDebugPauseOnLoad,
 	kDebugSaving,
+	kDebugPaths,
 };
 
 enum {
