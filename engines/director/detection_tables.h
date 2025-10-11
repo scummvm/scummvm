@@ -410,6 +410,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "okaytruehero",		"O!Kay! A True Hero" },
 	{ "operafatal",			"Opera Fatal" },
 	{ "oscarballforest",	"Oscar the Balloonist and the Secrets of the Forest" },
+	{ "oscar2",				"Oscar the Balloonist 2: Discovers the Farm" },
+	{ "oscar3",				"Oscar the Balloonist 3: Dives into the Lake" },
+	{ "oscar4",				"Oscar the Balloonist 4: Drops into the Countryside" },
+	{ "oscarsea",			"Oscar the Balloonist Discovers the Sea" },
 	{ "oslotg",				"Adventures with Oslo: Tools and Gadgets" },
 	{ "oztma",				"Oz: The Magical Adventure" },
 	{ "paparazzi",			"Paparazzi!: Tales of Tinseltown" },
@@ -991,6 +995,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "addybuschuzirkus",	"Addy Buschu: Im Zirkus" },
 	{ "bibi2",				"Bibi Blocksberg 2: Ein verhexter Schultag" },
 	{ "bibifilm",			"Bibi Blocksberg: Mein verhextes Filmstudio" },
+	{ "bibitina1",			"Bibi & Tina 1: Aufregung auf dem Martinshof" },
 	{ "braingames",			"Brain Games" },
 	{ "chemicus2",			"Chemicus 2: Die versunkene Stadt" },
 	{ "cklasse",			"Mercedes-Benz C-Class Information Booth" },
@@ -7563,11 +7568,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("osaka2", "Demo", "OSAKA2.EXE",		  	 "t:a1b15df3e663f99b015753bc82e22bcd", 1410110,
 								 "WINMOVIE/BARGAIN.DIR", "d:949640df6d4db94e85b466da5e5d8470", 1880116, Common::JA_JPN, 501),
 
+	WINGAME1("oscar2", "", "oshof31.exe", "t:37fb31223fdc146a06a206b8c62c68b3", 1076653, 501),
+	WINGAME1("oscar2", "", "oshof95.exe", "t:9b4e0d0183360481230aecc35d2c554d", 1555071, 501),
+
 	// Found on "A Case for Cap & Co"
 	MACGAME2("oscarballforest", "Demo", "Oscar Demo active",  "rt:1a0f4b8c982d1823a6953c1602e92d22", 705417,
 										"DACHS/DAFRUEHL.DIR", "d:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
 	WINDEMO2("oscarballforest", "Demo", "TIVOLA.EXE",		  "t:d13a9d569cd0b061ae572b8bea4e7966",  933683,
 										"DACHS/DAFRUEHL.DIR", "f:4cfe5498828fb97d9d2152a3064154e3",  366052, 501),
+
+	WINGAME1("oscarballforest", "Windows 3.1", "oswald~0.exe", "t:bade97b5322831177ba13dac113bfd8f", 1078137, 501),
+	WINGAME1("oscarballforest", "Windows 95", "oswald~1.exe", "t:af04b326b1e2eb3d8e2641d14b0aea5f", 1556537, 501),
 
 	WINGAME1("parliament", "", "PARL/GUIDE.EXE", "t:6ada9911cbb5aaa010fa4f4115603ce9", 918871, 500),
 
@@ -8862,6 +8873,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t_l("onsalakorv", "", "onsala.EXE", "41d87422d7c0f48886a99a7fe05ba1c0", 1713409, Common::SV_SWE, 650),
 
+	WINGAME1("oscar3", "",   "ossee32.exe", "t:c4953efef8d157b15a1220bb2984da4b", 1855956, 601),
+	WINGAME1("oscar3", "",   "ossee16.exe", "t:ea00ef6376eacdb8d2fce1beb4205443", 1394306, 601),
+
+	WINGAME1("oscar4", "",   "start32.exe", "t:6eeb631d693362c48f73daf08fe03e1e", 1661334, 601),
+
 //	MACGAME1_l("ozawaken", "v1.2", "Ozawa-Ken1.2", "8d83064402198a909b0abcebc6b46d2b", 118562, Common::JA_JPN, 602),
 
 	MACGAME2_l("pantosstory", "", "START", "7d0c7ae431938c53e64d443b05bf19fd", 1035232,
@@ -9804,6 +9820,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("bibifilm", "", "Filmstudio", "3ba983d2dd8c94d882c0de01ab920c43", 1249397, Common::DE_DEU, 850),
 	WINGAME1_l("bibifilm", "", "Filmstudio_start.exe", "c163f36141579ee374f7b4b2bddee95a", 148898, Common::DE_DEU, 850),
 
+	// Bibi & Tina 1: Aufregung auf dem Martinshof
+	WINGAME1_l("bibitina1", "", "Bibi und Tina 1.exe", "t:aefb73b3fb928cadf16fc597d942ae0b", 2958500, Common::DE_DEU, 800),
+
 	// Finnish title is Ville & Lilli: Ihan Pihalla
 	// Developer website calls this Double Trouble: Wacky Woods,
 	// although we don't know if it was actually released in English
@@ -10118,6 +10137,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"esl_bil.dxr", "70e5dd0d083af6f150eec9f2587c91ec", 9763420, 800),
 	WINGAME2t("optimumrsrc", "", "sampler.exe", "1269bfae9866db2000a012ad4107efe4", 2323650,
 								 "esl_bil.dxr", "fa0a09ae0b5ecb47148708a30f28fd66", 9763420, 800),
+
+	WINGAME2("oscarsea", "", 	"oscar.exe",	 "t:6609b9e2ac642dd3558aab5b3bf4e99f", 53320,
+								"Media/sc15_v.dxr", "3443dfac5f14520be0783e4cac08b43c", 9634204, 800),
 
 	WINGAME1t_l("janoschpanama", "", "panama.exe", "25d1a9fb6c8067953888719e07dc29bd", 2384444, Common::DE_DEU, 800),
 	WINGAME1t_l("janoschverkehr", "", "verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
