@@ -1529,6 +1529,10 @@ int Lingo::getMembersNum(uint16 castLibID) {
 }
 
 int Lingo::getXtrasNum() {
+	if (_openXtraObjects.size() < _openXtras.size()) {
+		warning("Lingo::getXtrasNum(): Mismatch between openXtras (%d) and openXtraObjects (%d)!", _openXtras.size(), _openXtraObjects.size());
+	}
+
 	return _openXtras.size();
 }
 
