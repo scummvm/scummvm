@@ -1750,7 +1750,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// La Leyenda de la Biblioteca
 	WME_WINENTRY("leyendabiblio", "",
-		WME_ENTRY1s("data.dcp", "95493a5293b0a3320159fab276fe128d", 63490845), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_10),
+		WME_ENTRY1s("data.dcp", "95493a5293b0a3320159fab276fe128d", 63490845), Common::ES_ESP, ADGF_NO_FLAGS, WME_1_8_10),
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
@@ -1813,7 +1813,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
-		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_11),
 
 	// Miskatonic. Part One
 	WME_WINENTRY("miskatonic1", "",
@@ -1859,15 +1859,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
-		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_DEMO, WME_1_9_1),
 
 	// Night Train Demo 2
 	WME_WINENTRY("nighttrain", "Demo",
-		WME_ENTRY1s("data.dcp", "c4c29461bb070735e564ef6612ea371a", 124495883), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "c4c29461bb070735e564ef6612ea371a", 124495883), Common::EN_ANY, ADGF_DEMO, WME_1_9_1),
 
 	// Nose Bound: Episode 1 (Demo) (multi-language)
 	WME_WINENTRY("nosebound1", "Demo",
-		WME_ENTRY1s("data.dcp", "280f2e063385e2ed4c17b43991666e93", 379558560), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "280f2e063385e2ed4c17b43991666e93", 379558560), Common::UNK_LANG, ADGF_DEMO, WME_1_9_3),
 
 	// Octave (Demo, Beta)
 	WME_WINENTRY("octave", "Demo",
@@ -1922,11 +1922,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// One Helluva Day (Demo) (multi-language)
 	WME_WINENTRY("onehelluvaday", "Demo",
-		WME_ENTRY1s("data.dcp", "144e23fca7c1c54103dad9c1342de2b6", 229963509), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "144e23fca7c1c54103dad9c1342de2b6", 229963509), Common::UNK_LANG, ADGF_DEMO, WME_1_9_3),
 
 	// One Helluva Day (Steam Demo) (multi-language)
 	WME_WINENTRY("onehelluvaday", "Demo",
-		WME_ENTRY1s("data.dcp", "0d79c74140c24f10255617f71b7e45da", 230689994), Common::UNK_LANG, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "0d79c74140c24f10255617f71b7e45da", 230689994), Common::UNK_LANG, ADGF_DEMO, WME_1_9_3),
 
 	// Open Quest
 	WME_WINENTRY("openquest", "",
@@ -1934,7 +1934,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Operacion: Bomba
 	WME_WINENTRY("operacionbomba", "",
-		WME_ENTRY1s("data.dcp", "4f5168a95b5ca46889221c5e9dabe691", 4176238), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_11),
+		WME_ENTRY1s("data.dcp", "4f5168a95b5ca46889221c5e9dabe691", 4176238), Common::ES_ESP, WME_1_8_11),
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
@@ -1979,7 +1979,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Precious Pills, Blasting Bacon and Mowing Minds
 	WME_WINENTRY("preciouspills", "",
-		WME_ENTRY1s("data.dcp", "9237dac68dd09e07c5d17d5b904774d0", 22451857), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "9237dac68dd09e07c5d17d5b904774d0", 22451857), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
 	// Project: Doom (Beta)
 	WME_WINENTRY("projectdoom", "Beta",
@@ -5679,7 +5679,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Trader of Stories (Demo)
 	WME_WINENTRY("tradestory", "Demo",
-		WME_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
+		WME_ENTRY1s("data.dcp", "0a0b51191636cc8ead89b905281c3218", 40401902), Common::EN_ANY, ADGF_DEMO, WME_1_9_0),
 
 	// The White Chamber (Version 1.7 - Definitive Edition) (built 2008.06.26) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
