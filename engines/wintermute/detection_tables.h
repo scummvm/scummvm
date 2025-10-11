@@ -1934,7 +1934,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Operacion: Bomba
 	WME_WINENTRY("operacionbomba", "",
-		WME_ENTRY1s("data.dcp", "4f5168a95b5ca46889221c5e9dabe691", 4176238), Common::ES_ESP, WME_1_8_11),
+		WME_ENTRY1s("data.dcp", "4f5168a95b5ca46889221c5e9dabe691", 4176238), Common::ES_ESP, ADGF_NO_FLAGS, WME_1_8_11),
 
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
