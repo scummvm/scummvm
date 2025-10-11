@@ -643,6 +643,12 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_states.clear();
 	_states.resize(_statesWidth, _statesHeight);
 
+	_statesCount = _statesHeight * _statesWidth;
+	_pathRight = _statesWidth - 1;
+	_pathBottom = _statesHeight - 1;
+	_pathMap.clear();
+	_pathMap.resize(_statesWidth, _statesHeight);
+
 	_bkgImages.clear();
 	_bkgImages.resize(bkgnum1 * bkgnum2);
 
@@ -1719,7 +1725,7 @@ bool GamosEngine::FUN_00402fb4()
 					PTR_00417214 = &_someActsArr[pobj->actID];
 					PTR_004173e8 = pobj->storage.data();
 
-					//DAT_00417804 = 0;
+					DAT_00417804 = 0;
 					for ( ScriptS &scr: PTR_00417214->scriptS ) {
 						BYTE_004177f6 = PTR_00417218->flags & 0xf0;
 
@@ -2152,6 +2158,117 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	case 33:
 		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
 		vm->EAX.val = 1;
+		break;
+
+	case 35:
+		arg1 = vm->pop32();
+
+		switch (arg1)
+		{
+		case 3:
+			FUN_00408648(0xe, 0xff, 0xff);
+			break;
+
+		case 4:
+			FUN_00408648(0xe, 0xfe, 0xff);
+			break;
+
+		case 5:
+			FUN_00408648(0xe, 0xfe, 0xfe);
+			break;
+
+		case 6:
+			FUN_00408648(0x82, 0xff, 0xff);
+			break;
+
+		case 7:
+			FUN_00408648(0x82, 0xfe, 0xff);
+			break;
+
+		case 8:
+			FUN_00408648(0x82, 0xfe, 0xfe);
+			break;
+
+		case 9:
+			FUN_00408648(0x83, 0xff, 0xff);
+			break;
+
+		case 10:
+			FUN_00408648(0x83, 0xfe, 0xff);
+			break;
+
+		case 11:
+			FUN_00408648(0x83, 0xfe, 0xfe);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 36:
+		arg1 = vm->pop32();
+		arg2 = vm->pop32();
+
+		switch (arg1)
+		{
+		case 1:
+			FUN_00408648(0, arg2, 0xff);
+			break;
+
+		case 2:
+			FUN_00408648(0, arg2, 0xfe);
+			break;
+
+		case 3:
+			FUN_00408648(0xe, arg2, 0xff);
+			break;
+
+		case 4:
+			FUN_00408648(0xe, arg2, 0xfe);
+			break;
+
+		case 5:
+			FUN_00408648(0xe, arg2, arg2);
+			break;
+
+		case 6:
+			FUN_00408648(0x82, arg2, 0xff);
+			break;
+
+		case 7:
+			FUN_00408648(0x82, arg2, 0xfe);
+			break;
+
+		case 8:
+			FUN_00408648(0x82, arg2, arg2);
+			break;
+
+		case 9:
+			FUN_00408648(0x83, arg2, 0xff);
+			break;
+
+		case 10:
+			FUN_00408648(0x83, arg2, 0xfe);
+			break;
+
+		case 11:
+			FUN_00408648(0x83, arg2, arg2);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	case 38:
+		arg1 = vm->pop32();
+		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412ca0)
+			vm->EAX.val = 0;
+		else
+			vm->EAX.val = 1;
 		break;
 
 	case 47: {
@@ -2696,6 +2813,339 @@ bool GamosEngine::FUN_00402bc4() {
 	}
 
 	return true;
+}
+
+void GamosEngine::FUN_00407db8(uint8 p)
+{
+	if ((p == 0x82) || (p == 0x83)) {
+		DAT_00412c94 = DAT_004173fc;
+		DAT_00412c98 = DAT_004173f8;
+	} else {
+		DAT_00412c94 = DAT_004173f4;
+		DAT_00412c98 = DAT_004173f0;
+	}
+	DAT_00412c8c = (uint)PTR_00417218->pos;
+	DAT_00412c90 = (uint)PTR_00417218->blk;
+	INT_00412ca0 = -1;
+	INT_00412c9c = -1;
+	DAT_00417804 = 0;
+}
+
+void GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
+	FUN_00407db8(p1);
+
+	if (p1 == 0x82 || p1 == 0x83) {
+		if (p1 != DAT_004177fe)
+			return;
+		if (p2 != 0xff && p2 != DAT_004177fd)
+			return;
+	} else {
+		if (p1 != 0xe) {
+			if (p3 == 0xff)
+				FUN_004084bc(p2);
+			else
+				FUN_00408510(p2);
+			return;
+		}
+		if (p2 != 0xff && p2 != DAT_00417803)
+			return;
+	}
+
+	if (p3 == 0xff)
+		FUN_00407e2c();
+	else if (p3 == 0xfe)
+		FUN_0040856c();
+	else
+		FUN_004085d8(p2);
+}
+
+void GamosEngine::FUN_004084bc(uint8 p) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+			if ((th1 & 0xff) != p)
+				_pathMap.at(i, j) = 0;
+			else
+				_pathMap.at(i, j) = 2;
+		}
+	}
+	FUN_0040841c(true);
+}
+
+void GamosEngine::FUN_00408510(uint8 p) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ((th1 & 0xff) == 0xfe)
+				_pathMap.at(i, j) = 0;
+			else if ((th1 & 0xff) == p)
+				_pathMap.at(i, j) = 2;
+			else
+				_pathMap.at(i, j) = 3;
+		}
+	}
+	FUN_0040841c(false);
+}
+
+void GamosEngine::FUN_0040856c() {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ((th1 & 0xff) == 0xfe)
+				_pathMap.at(i, j) = 0;
+			else
+				_pathMap.at(i, j) = 3;
+		}
+	}
+	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	FUN_0040841c(false);
+}
+
+void GamosEngine::FUN_004085d8(uint8 p) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ((th1 & 0xff) == p)
+				_pathMap.at(i, j) = 0;
+			else
+				_pathMap.at(i, j) = 3;
+		}
+	}
+	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	FUN_0040841c(false);
+}
+
+void GamosEngine::FUN_0040841c(bool p) {
+	_pathMap.at(DAT_00412c8c, DAT_00412c90) = 6;
+
+	while(true) {
+		byte res = FUN_004081b8(6, 4);
+		if (res == 0)
+			break;
+		else if (res == 1) {
+			if (p)
+				FUN_00407e2c();
+			else
+				FUN_00407f70(6);
+			break;
+		}
+
+		res = FUN_004081b8(4, 5);
+		if (res == 0)
+			break;
+		else if (res == 1) {
+			if (p)
+				FUN_00407e2c();
+			else
+				FUN_00407f70(4);
+			break;
+		}
+
+		res = FUN_004081b8(5, 6);
+		if (res == 0)
+			break;
+		else if (res == 1) {
+			if (p)
+				FUN_00407e2c();
+			else
+				FUN_00407f70(5);
+			break;
+		}
+	}
+}
+
+byte GamosEngine::FUN_00407e2c()
+{
+	int32 iVar2 = DAT_00412c8c - DAT_00412c94;
+	if (iVar2 < 1)
+		iVar2 = -iVar2;
+
+	int32 iVar1 = DAT_00412c90 - DAT_00412c98;
+	if (iVar1 < 1)
+		iVar1 = -iVar1;
+
+	if ((iVar2 == 0) && (iVar1 == 0))
+		return 0;
+
+	if ((iVar2 == 0) || (iVar1 / iVar2) > 3) {
+		if (iVar1 > 1) {
+			INT_00412c9c = 4;
+			if (DAT_00412c98 <= DAT_00412c90)
+				INT_00412c9c = 0;
+		}
+		INT_00412ca0 = 4;
+		if (DAT_00412c98 <= DAT_00412c90)
+			INT_00412ca0 = 0;
+	} else if ((iVar1 == 0) || (iVar2 / iVar1) > 3) {
+		if (iVar2 > 1) {
+			INT_00412c9c = 2;
+			if (DAT_00412c94 <= DAT_00412c8c)
+				INT_00412c9c = 6;
+		}
+		INT_00412ca0 = 2;
+		if (DAT_00412c94 <= DAT_00412c8c)
+			INT_00412ca0 = 6;
+	} else {
+		if (DAT_00412c8c < DAT_00412c94) {
+			INT_00412c9c = 3;
+			if (DAT_00412c98 <= DAT_00412c90)
+				INT_00412c9c = 1;
+		} else {
+			INT_00412c9c = 5;
+			if (DAT_00412c98 <= DAT_00412c90)
+				INT_00412c9c = 7;
+		}
+
+		if (iVar1 < iVar2) {
+			INT_00412ca0 = 2;
+			if (DAT_00412c94 <= DAT_00412c8c)
+				INT_00412ca0 = 6;
+		} else {
+			INT_00412ca0 = 4;
+			if (DAT_00412c98 <= DAT_00412c90)
+				INT_00412ca0 = 0;
+		}
+	}
+
+	DAT_00417804 = 1;
+	return 1;
+}
+
+byte GamosEngine::FUN_00407f70(uint8 p) {
+	int32 x = DAT_00412c94;
+	int32 y = DAT_00412c98;
+	int32 px = -1;
+	int32 py = -1;
+
+	while (true) {
+		int32 xdist = DAT_00412c8c - x;
+		if (xdist < 1)
+			xdist = -xdist;
+		int32 ydist = DAT_00412c90 - y;
+		if (ydist < 1)
+			ydist = -ydist;
+
+		int32 xx = x;
+		int32 yy = y;
+
+		if (ydist < xdist) {
+			if (x == 0 || _pathMap.at(x - 1, y) != p) {
+				if ((x >= _pathRight) || _pathMap.at(x + 1, y) != p) {
+					if ((y == 0) || _pathMap.at(x, y - 1) != p) {
+						if ((y >= _pathBottom) || _pathMap.at(x, y + 1) != p) {
+							return ydist;
+						} else {
+							yy = y + 1;
+						}
+					} else {
+						yy = y - 1;
+					}
+				} else {
+					xx = x + 1;
+				}
+			} else {
+				xx = x - 1;
+			}
+		} else {
+			if ((y == 0) || _pathMap.at(x, y - 1) != p) {
+				if ((y >= _pathBottom) || _pathMap.at(x, y + 1) != p) {
+					if ((x == 0) || _pathMap.at(x - 1, y) != p) {
+						if (x >= _pathRight || _pathMap.at(x + 1, y) != p) {
+							return ydist;
+						} else {
+							xx = x + 1;
+						}
+					} else {
+						xx = x - 1;
+					}
+				} else {
+					yy = y + 1;
+				}
+			} else {
+				yy = y - 1;
+			}
+		}
+
+		if (xx == DAT_00412c8c && yy == DAT_00412c90) {
+			INT_00412ca0 = 2;
+			if (x <= xx) {
+				INT_00412ca0 = 6;
+				if (x >= xx) {
+					INT_00412ca0 = 4;
+					if (y <= yy)
+						INT_00412ca0 = 0;
+				}
+			}
+			if (px != -1) {
+				if (py > yy) {
+					INT_00412c9c = 3;
+					if (px <= xx) {
+						INT_00412c9c = 5;
+						if (px >= xx)
+							INT_00412c9c = 4;
+					}
+				} else if (py < yy) {
+					INT_00412c9c = 1;
+					if (px <= xx) {
+						INT_00412c9c = 7;
+						if (px >= xx)
+							INT_00412c9c = 0;
+					}
+				} else {
+					INT_00412c9c = 2;
+					if (px <= xx)
+						INT_00412c9c = 6;
+				}
+			}
+			DAT_00417804 = 1;
+			return 1;
+		}
+
+		py = y;
+		px = x;
+
+		y = yy;
+		x = xx;
+
+		if (p == 4)
+			p = 6;
+		else if (p == 5)
+			p = 4;
+		else if (p == 6)
+			p = 5;
+	}
+}
+
+byte GamosEngine::FUN_004081b8(uint8 cv, uint8 sv) {
+	uint8 ret = 0;
+
+	for (int32 y = 0; y < _pathBottom; y++) {
+		for (int32 x = 0; x < _pathRight; x++) {
+			uint8 &rval = _pathMap.at(x, y);
+			if ( rval == 0) {
+				if ( (x > 0 && _pathMap.at(x - 1, y) == cv) ||
+					(x < _pathRight && _pathMap.at(x + 1, y) == cv) ||
+					(y > 0 && _pathMap.at(x, y - 1) == cv) ||
+					(y < _pathBottom && _pathMap.at(x, y + 1) == cv) ) {
+					ret = sv;
+					rval = sv;
+				}
+			} else if (rval == 2) {
+				if ( (x > 0 && _pathMap.at(x - 1, y) == cv) ||
+					(x < _pathRight && _pathMap.at(x + 1, y) == cv) ||
+					(y > 0 && _pathMap.at(x, y - 1) == cv) ||
+					(y < _pathBottom && _pathMap.at(x, y + 1) == cv) ) {
+					DAT_00412c94 = x;
+					DAT_00412c98 = y;
+					return 1;
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 

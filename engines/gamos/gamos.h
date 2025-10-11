@@ -356,10 +356,24 @@ private:
 	int32 DAT_004173f8 = 0;
 	int32 DAT_004173fc = 0;
 	uint8 DAT_00417803 = 0;
-
+	uint8 DAT_00417804 = 0;
 	uint8 DAT_00417805 = 0;
 
 	uint8 RawKeyCode = 0;
+
+
+	/* path find ? */
+	int32 DAT_00412c8c = 0;
+	int32 DAT_00412c90 = 0;
+	int32 DAT_00412c94 = 0;
+	int32 DAT_00412c98 = 0;
+	int32 INT_00412c9c = 0;
+	int32 INT_00412ca0 = 0;
+
+	Array2D<uint8> _pathMap;
+	uint32 _statesCount = 0;
+	int32 _pathRight = 0;
+	int32 _pathBottom = 0;
 
 	Common::Array<Common::Rect> _dirtyRects;
 
@@ -492,6 +506,18 @@ protected:
 	Object *FUN_00407588(int32 seq, int32 spr, int32 *pX, int32 y);
 
 	void FUN_00407a68(VM *vm, byte memtype, int32 offset, int32 val, int32 x, int32 y);
+
+	void FUN_00407db8(uint8 p);
+	void FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
+	void FUN_004084bc(uint8 p);
+	void FUN_00408510(uint8 p);
+	void FUN_0040856c();
+	void FUN_004085d8(uint8 p);
+	void FUN_0040841c(bool p);
+	byte FUN_00407e2c();
+	byte FUN_00407f70(uint8 p);
+	byte FUN_004081b8(uint8 cv, uint8 sv);
+
 
 	void vmCallDispatcher(VM *vm, uint32 funcID);
 
