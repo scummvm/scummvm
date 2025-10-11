@@ -33,6 +33,10 @@ namespace Networkingtests {
 // Helper functions for Networking tests
 
 TestExitStatus testConnectionLimit();
+#ifdef USE_BASIC_NET
+TestExitStatus testSocket();
+TestExitStatus testURL();
+#endif
 
 } // End of namespace Networkingtests
 
