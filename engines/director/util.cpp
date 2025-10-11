@@ -539,7 +539,8 @@ Common::String convertPath(const Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
+	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')
+			&& (g_director->getVersion() >= 500 && !path.contains('/'))) {
 		return path;
 	}
 
@@ -562,7 +563,7 @@ Common::String convertPath(const Common::String &path) {
 	}
 
 	while (idx < path.size()) {
-		if (path[idx] == ':' || path[idx] == '\\')
+		if (path[idx] == ':' || path[idx] == '\\' || (g_director->getVersion() >= 500 && path[idx] == '/'))
 			res += g_director->_dirSeparator;
 		else
 			res += path[idx];
