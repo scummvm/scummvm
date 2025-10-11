@@ -2036,6 +2036,10 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		DAT_004177ff = true;
 		vm->EAX.val = 1;
 		break;
+	case 1:
+		vm->EAX.val = PTR_00417218->y == -1 ? 1 : 0;
+		break;
+
 	case 2:
 		arg1 = vm->pop32();
 		if (PTR_00417218->x == -1)
