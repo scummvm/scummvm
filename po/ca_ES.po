@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-29 20:59+0000\n"
+"PO-Revision-Date: 2025-10-12 05:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -13518,10 +13518,8 @@ msgid "Disable fast walk"
 msgstr "Desactiva el caminar ràpid"
 
 #: engines/touche/metaengine.cpp:173
-#, fuzzy
-#| msgid "Toggle between mouse pointer and the last game item"
 msgid "Toggle between voice / text / text and voice"
-msgstr "Commuta entre el punter del ratolí i l'últim element del joc"
+msgstr "Commuta entre veu / text / text i veu"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
@@ -14011,26 +14009,20 @@ msgid "Ignite"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:60
-#, fuzzy
-#| msgid "Look at"
 msgid "Locate position"
-msgstr "Mira"
+msgstr "Localitza posició"
 
 #: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Mix reagents"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:62
-#, fuzzy
-#| msgid "New kid"
 msgid "New order"
-msgstr "Nou noi"
+msgstr "Ordre nova"
 
 #: engines/ultima/ultima4/metaengine.cpp:63
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open door"
-msgstr "Obre l'Holomapa"
+msgstr "Obre la porta"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
 msgid "Pass"
@@ -14041,16 +14033,12 @@ msgid "Peer"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:66
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quit and save"
-msgstr "Desament ràpid"
+msgstr "Surt i desa"
 
 #: engines/ultima/ultima4/metaengine.cpp:67
-#, fuzzy
-#| msgid "Next action"
 msgid "Ready weapon"
-msgstr "Acció següent"
+msgstr "Prepara l'arma"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
 msgid "Stats"
@@ -14069,26 +14057,20 @@ msgid "Speed up"
 msgstr "Accelerar"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
-#, fuzzy
-#| msgid "Move down"
 msgid "Speed down"
-msgstr "Mou avall"
+msgstr "Redueix la velocitat"
 
 #: engines/ultima/ultima4/metaengine.cpp:81
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speed normal"
-msgstr "Només veus"
+msgstr "Velocitat normal"
 
 #: engines/ultima/ultima4/metaengine.cpp:82
 msgid "Combat speed up"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:83
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Combat speed down"
-msgstr "Rota cap avall"
+msgstr "Redueix la velocitat de combat"
 
 #: engines/ultima/ultima4/metaengine.cpp:84
 msgid "Combat speed normal"
@@ -14099,78 +14081,56 @@ msgid "Party - None"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:91
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #1"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #1"
 
 #: engines/ultima/ultima4/metaengine.cpp:92
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #2"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #2"
 
 #: engines/ultima/ultima4/metaengine.cpp:93
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #3"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #3"
 
 #: engines/ultima/ultima4/metaengine.cpp:94
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #4"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #4"
 
 #: engines/ultima/ultima4/metaengine.cpp:95
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #5"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #5"
 
 #: engines/ultima/ultima4/metaengine.cpp:96
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #6"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #6"
 
 #: engines/ultima/ultima4/metaengine.cpp:97
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #7"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #7"
 
 #: engines/ultima/ultima4/metaengine.cpp:98
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #8"
-msgstr "Transfereix el personatge"
+msgstr "Grup - Personatge #8"
 
 #: engines/ultima/ultima4/metaengine.cpp:104
 msgid "Destroy all creatures"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:105
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle collision handling"
-msgstr "Commuta el rellotge"
+msgstr "Commuta la gestió de col·lisions"
 
 #: engines/ultima/ultima4/metaengine.cpp:106
-#, fuzzy
-#| msgid "Next object"
 msgid "Destroy object"
-msgstr "Objecte següent"
+msgstr "Destruir objecte"
 
 #: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Full equipment"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:108
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Flee combat"
-msgstr "Mode de combat"
+msgstr "Fugir del combat"
 
 #: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Help - Teleport to Lord British"
@@ -14185,10 +14145,8 @@ msgid "List karma"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:113
-#, fuzzy
-#| msgid "Next location"
 msgid "Leave location"
-msgstr "Ubicació següent"
+msgstr "Abandona la ubicació"
 
 #: engines/ultima/ultima4/metaengine.cpp:114
 msgid "Give mixtures"
@@ -14199,10 +14157,8 @@ msgid "Combat encounters"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:116
-#, fuzzy
-#| msgid "Toggle Drag Mode"
 msgid "Toggle overhead view"
-msgstr "Commuta el mode d'arrossegament"
+msgstr "Commuta la vista des de dalt"
 
 #: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Full party"
@@ -14217,10 +14173,8 @@ msgid "Full stats"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:120
-#, fuzzy
-#| msgid "Create directory"
 msgid "Create transport"
-msgstr "Crea un directori"
+msgstr "Crea transport"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
 msgid "Up level"
@@ -14235,10 +14189,8 @@ msgid "Grant virtue"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:124
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change wind"
-msgstr "Canvia el so"
+msgstr "Canvia el vent"
 
 #: engines/ultima/nuvie/nuvie.cpp:403
 #, c-format
@@ -14255,28 +14207,20 @@ msgid "Original Save"
 msgstr "Partida desada original"
 
 #: engines/ultima/nuvie/metaengine.cpp:59
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk west"
-msgstr "Vés a"
+msgstr "Camina cap a l'oest"
 
 #: engines/ultima/nuvie/metaengine.cpp:60
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk east"
-msgstr "Vés a"
+msgstr "Camina cap a l'est"
 
 #: engines/ultima/nuvie/metaengine.cpp:61
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk north"
-msgstr "Vés a"
+msgstr "Camina cap al nord"
 
 #: engines/ultima/nuvie/metaengine.cpp:62
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk south"
-msgstr "Vés a"
+msgstr "Camina cap al sud"
 
 #: engines/ultima/nuvie/metaengine.cpp:63
 msgid "Walk north-east"
