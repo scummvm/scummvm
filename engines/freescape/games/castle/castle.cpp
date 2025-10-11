@@ -466,13 +466,12 @@ bool CastleEngine::checkIfGameEnded() {
 				insertTemporaryMessage(_fallenMessage, _countdown - 4);
 			_gameStateControl = kFreescapeGameStateEnd;
 		}
+		if ((isSpectrum() && getGameBit(31)) || (isDOS() && _currentArea->getAreaID() == 74)) { // Escaped!
+			_gameStateControl = kFreescapeGameMissionComplete;
+			return true;
+		}
 	}
-
-	if (getGameBit(31) && _currentArea->getAreaID() == 74) { // Escaped!
-		_gameStateControl = kFreescapeGameStateEnd;
-		return true;
-	} else
-		return FreescapeEngine::checkIfGameEnded();
+	return FreescapeEngine::checkIfGameEnded();
 }
 
 void CastleEngine::endGame() {
@@ -480,7 +479,7 @@ void CastleEngine::endGame() {
 	_delayedShootObject = nullptr;
 	_endGamePlayerEndArea = true;
 
-	if (getGameBit(31) || _currentArea->getAreaID() == 74) {
+	if ((isSpectrum() && getGameBit(31)) || (isDOS() && _currentArea->getAreaID() == 74)) { // Escaped!
 		insertTemporaryMessage(_messagesList[5], INT_MIN);
 
 		if (isDOS()) {
