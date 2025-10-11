@@ -633,6 +633,7 @@ Common::String convert83Path(const Common::String &path) {
 Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory) {
 	// Path is the raw input from Director. Scrub it to be a clean relative path.
 	Common::String converted = convertPath(path);
+	debugC(2, kDebugPaths, "  convertPath(): '%s' => '%s'", path.c_str(), converted.c_str());
 
 	// Absolute path to the game directory
 	Common::Path gamePath = Common::Path(g_director->getGameDataDir()->getPath());
@@ -714,13 +715,13 @@ Common::Path resolvePathInner(const Common::String &path, const Common::Path &ba
 		// Check SearchMan
 		if (SearchMan.hasFile(newPath)) {
 			debugCN(1, kDebugPaths, "%s", recIndent());
-			debugC(1, kDebugPaths, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			debugC(1, kDebugPaths, "resolvePathInner(): Found SearchMan match for %s -> %s", path.c_str(), newPath.toString().c_str());
 			return newPath;
 		}
 		// Check MacResArchive
 		if (Common::MacResManager::exists(newPath)) {
 			debugCN(1, kDebugPaths, "%s", recIndent());
-			debugC(1, kDebugPaths, "resolvePath(): Found MacResManager match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			debugC(1, kDebugPaths, "resolvePathInner(): Found MacResManager match for %s -> %s", path.c_str(), newPath.toString().c_str());
 			return newPath;
 		}
 	} else {
@@ -749,7 +750,7 @@ Common::Path resolvePathInner(const Common::String &path, const Common::Path &ba
 			}
 			if (match) {
 				debugCN(1, kDebugPaths, "%s", recIndent());
-				debugC(1, kDebugPaths, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), testParent.toString().c_str());
+				debugC(1, kDebugPaths, "resolvePathInner(): Found SearchMan match for %s -> %s", path.c_str(), testParent.toString().c_str());
 				return testParent;
 			}
 
@@ -757,7 +758,7 @@ Common::Path resolvePathInner(const Common::String &path, const Common::Path &ba
 	}
 
 	debugCN(1, kDebugPaths, "%s", recIndent());
-	debugC(1, kDebugPaths, "resolvePath(): No match found for %s", path.c_str());
+	debugC(1, kDebugPaths, "resolvePathInner(): No match found for %s", path.c_str());
 	return Common::Path();
 }
 
@@ -779,6 +780,7 @@ Common::Path resolvePath(const Common::String &path, const Common::Path &base, b
 
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
 	Common::String converted = convertPath(path);
+	debugC(2, kDebugPaths, "  convertPath(): '%s' => '%s'", path.c_str(), converted.c_str());
 	Common::Path result;
 
 	Common::StringArray baseTokens = base.splitComponents();
