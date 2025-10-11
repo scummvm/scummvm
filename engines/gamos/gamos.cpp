@@ -534,8 +534,8 @@ bool GamosEngine::initMainDatas() {
 	_readBufSize = dataStream.readUint32LE();
 	_width = dataStream.readUint32LE();
 	_height = dataStream.readUint32LE();
-	_unk2 = dataStream.readUint32LE();
-	_unk3 = dataStream.readUint32LE();
+	_gridCellW = dataStream.readSint32LE();
+	_gridCellH = dataStream.readSint32LE();
 	_movieCount = dataStream.readUint32LE();
 	_unk5 = dataStream.readByte();
 	_unk6 = dataStream.readByte();
@@ -1834,25 +1834,25 @@ void GamosEngine::FUN_0040921c(Object *obj) {
 	ImagePos *imgPos = obj->pImg;
 	Image *img = imgPos->image;
 
-	int32 x = obj->fld_4 * _unk2;
-	int32 y = obj->fld_5 * _unk3;
+	int32 x = obj->fld_4 * _gridCellW;
+	int32 y = obj->fld_5 * _gridCellH;
 
 	if (obj->pos != 255 && obj->blk != 255) {
 		Object *o = &_drawElements[(obj->blk * 0x100) + obj->pos];
 		if (o->flags & 4) {
 			int t = obj->actID + 1;
-			x += (o->pos - obj->fld_4) * _unk2 * t / obj->fld_2;
-			y += (o->blk - obj->fld_5) * _unk3 * t / obj->fld_2;
+			x += (o->pos - obj->fld_4) * _gridCellW * t / obj->fld_2;
+			y += (o->blk - obj->fld_5) * _gridCellH * t / obj->fld_2;
 		}
 	}
 
 	if (obj->flags & 8)
-		obj->x = x - (img->surface.w - _unk2 - imgPos->xoffset);
+		obj->x = x - (img->surface.w - _gridCellW - imgPos->xoffset);
 	else
 		obj->x = x - imgPos->xoffset;
 
 	if (obj->flags & 0x10)
-		obj->y = y - (img->surface.h - _unk3 - imgPos->yoffset);
+		obj->y = y - (img->surface.h - _gridCellH - imgPos->yoffset);
 	else
 		obj->y = y - imgPos->yoffset;
 }
@@ -2223,7 +2223,7 @@ void GamosEngine::callbackVMCallDispatcher(void *engine, VM *vm, uint32 funcID) 
 
 uint32 GamosEngine::scriptFunc19(uint32 id) {
 	BYTE_004177fc = 1;
-	FUN_0040738c(id, DAT_00417220 * _unk2, DAT_00417224 * _unk3, false);
+	FUN_0040738c(id, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH, false);
 
 	return 1;
 }
@@ -2508,8 +2508,8 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	}
 
 	if (!pobj) {
-		DAT_004173f4 = actPos.x / _unk2;
-		DAT_004173f0 = actPos.y / _unk3;
+		DAT_004173f4 = actPos.x / _gridCellW;
+		DAT_004173f0 = actPos.y / _gridCellH;
 		DAT_00417803 = _states.at(DAT_004173f4, DAT_004173f0) & 0xff;
 	} else {
 		DAT_00417803 = actT;

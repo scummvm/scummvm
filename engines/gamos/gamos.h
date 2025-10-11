@@ -227,8 +227,8 @@ private:
 	uint32 _readBufSize;
 	uint32 _width;
 	uint32 _height;
-	uint32 _unk2;
-	uint32 _unk3;
+	int32 _gridCellW;
+	int32 _gridCellH;
 	uint32 _movieCount;
 	byte _unk5;
 	byte _unk6;
