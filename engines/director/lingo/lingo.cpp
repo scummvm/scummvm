@@ -676,7 +676,7 @@ bool Lingo::execute(int targetFrame) {
 		g_debugger->stepHook();
 
 		if (_state->script == nullptr) {
-			warning("Lingo::execute(): PANIC: No script to execute (1)");
+			debugC(1, kDebugLingoExec, "Lingo::execute(): PANIC: No script to execute (1)");
 			break;
 		}
 
@@ -695,7 +695,7 @@ bool Lingo::execute(int targetFrame) {
 		localCounter++;
 
 		if (_state->script == nullptr) {
-			warning("Lingo::execute(): PANIC: No script to execute (2)");
+			debugC(1, kDebugLingoExec, "Lingo::execute(): PANIC: No script to execute (2)");
 			break;
 		}
 
