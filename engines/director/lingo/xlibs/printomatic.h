@@ -27,6 +27,9 @@ namespace Director {
 class PrintOMaticXObject : public Object<PrintOMaticXObject> {
 public:
 	PrintOMaticXObject(ObjectType objType);
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
 
 namespace PrintOMaticXObj {

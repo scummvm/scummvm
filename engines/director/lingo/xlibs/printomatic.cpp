@@ -281,11 +281,24 @@ PrintOMaticXObject::PrintOMaticXObject(ObjectType ObjectType) :Object<PrintOMati
 	_objType = ObjectType;
 }
 
+bool PrintOMaticXObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum PrintOMaticXObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(PrintOMaticXObj::xlibName);
+	warning("FileIO::PrintOMaticXObject: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
 void PrintOMaticXObj::open(ObjectType type, const Common::Path &path) {
     PrintOMaticXObject::initMethods(xlibMethods);
     PrintOMaticXObject *xobj = new PrintOMaticXObject(type);
-    if (type == kXtraObj)
-        g_lingo->_openXtras.push_back(xlibName);
+	if (type == kXtraObj) {
+		g_lingo->_openXtras.push_back(xlibName);
+		g_lingo->_openXtraObjects.push_back(xobj);
+	}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }
