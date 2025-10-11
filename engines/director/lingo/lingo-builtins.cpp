@@ -1841,8 +1841,8 @@ void LB::b_xFactoryList(int nargs) {
 void LB::b_xtra(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == INT) {
-		int i = d.asInt() -1; // Lingo index for XTRAs start at 1
-		if (i >=0 && (uint)i < g_lingo->_openXtraObjects.size()) {
+		int i = d.asInt() - 1; // Lingo index for XTRAs start at 1
+		if (i >= 0 && (uint)i < g_lingo->_openXtraObjects.size()) {
 			Datum var = g_lingo->_openXtraObjects[i];
 			g_lingo->push(var);
 			return;
