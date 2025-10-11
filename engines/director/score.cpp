@@ -847,6 +847,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, boo
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
+	// If we have transitions, sounds start in parallel
+	playSoundChannel(false, sound1Changed, sound2Changed);
 
 	if (_skipTransition) {
 		incrementFilmLoops();
@@ -866,7 +868,6 @@ void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, boo
 			renderPaletteCycle(mode);
 	}
 
-	playSoundChannel(false, sound1Changed, sound2Changed);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
