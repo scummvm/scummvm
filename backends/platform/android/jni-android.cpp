@@ -1074,6 +1074,9 @@ jobject JNI::getNewSAFTree(bool writable, const Common::String &initURI,
 	jobject tree = env->CallObjectMethod(_jobj, _MID_getNewSAFTree,
 	                                     writable, javaInitURI, javaPrompt);
 
+	env->DeleteLocalRef(javaInitURI);
+	env->DeleteLocalRef(javaPrompt);
+
 	if (env->ExceptionCheck()) {
 		LOGE("getNewSAFTree: error");
 
@@ -1082,9 +1085,6 @@ jobject JNI::getNewSAFTree(bool writable, const Common::String &initURI,
 
 		return nullptr;
 	}
-
-	env->DeleteLocalRef(javaInitURI);
-	env->DeleteLocalRef(javaPrompt);
 
 	return tree;
 }
