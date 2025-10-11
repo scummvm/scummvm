@@ -90,7 +90,7 @@ public:
 
 protected:
 	void destructObject() override {
-		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
+		static_assert(sizeof(T) > 0, "SharedPtr: cannot delete incomplete type");
 		delete _ptr;
 	}
 
@@ -555,7 +555,7 @@ private:
 template <typename T>
 struct DefaultDeleter {
 	inline void operator()(T *object) {
-		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		static_assert(sizeof(T) > 0, "cannot delete incomplete type");
 		delete object;
 	}
 };
@@ -563,7 +563,7 @@ struct DefaultDeleter {
 template <typename T>
 struct ArrayDeleter {
 	inline void operator()(T *object) {
-		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		static_assert(sizeof(T) > 0, "cannot delete incomplete type");
 		delete[] object;
 	}
 };

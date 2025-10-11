@@ -116,8 +116,6 @@ public:
 	 * Common::Array<int> myArray = {1, 7, 42};
 	 * @endcode
 	 * constructs an array with 3 elements whose values are 1, 7, and 42 respectively.
-	 * @note
-	 * This constructor is only available when C++11 support is enabled.
 	 */
 	Array(std::initializer_list<T> list) : _size(list.size()) {
 		allocCapacity(list.size());

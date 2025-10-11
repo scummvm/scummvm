@@ -93,6 +93,15 @@ static inline uint32 ROTATE_RIGHT_32(const uint32 x, const uint32 r) {
 	return (x << (32 - r)) | (x >> r);
 }
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1910
+/** Template method to return the number of arguments passed to it. */
+template<typename... A> constexpr size_t NUMARGS(A&&...)	{ return sizeof...(A); }
+#else
+/** Macro that returns the number of arguments passed to it. */
+using int_c_array = int[]; // MSVC 2015 doesn't like the template method above
+#define NUMARGS(...)	(sizeof(int_c_array{__VA_ARGS__})/sizeof(int))
+#endif
+
 #ifdef ARRAYSIZE
 #undef ARRAYSIZE
 #endif

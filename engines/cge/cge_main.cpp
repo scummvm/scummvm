@@ -1039,7 +1039,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 
 	char tmpStr[kLineMax + 1];
 	Common::String line;
-	STATIC_ASSERT(kLineMax + 1 >= kPathMax, mergeExt_expects_kPathMax_buffer);
+	static_assert(kLineMax + 1 >= kPathMax, "mergeExt expects kPathMax buffer");
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) {      // sprite description file exist

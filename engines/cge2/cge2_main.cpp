@@ -167,7 +167,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	ID id;
 
 	char tmpStr[kLineMax + 1];
-	STATIC_ASSERT(sizeof(tmpStr) >= kPathMax, mergeExt_expects_kPathMax_buffer);
+	static_assert(sizeof(tmpStr) >= kPathMax, "mergeExt expects kPathMax buffer");
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) { // sprite description file exist

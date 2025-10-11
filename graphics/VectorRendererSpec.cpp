@@ -431,7 +431,7 @@ namespace Graphics {
  */
 template<typename PixelType>
 void colorFill(PixelType *first, PixelType *last, PixelType color) {
-	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+	static_assert(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, "Unsupported PixelType");
 
 	int count = (last - first);
 
@@ -445,7 +445,7 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 
 template<typename PixelType>
 void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX, int realY, Common::Rect &clippingArea) {
-	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+	static_assert(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, "Unsupported PixelType");
 
 	if (realY < clippingArea.top || realY >= clippingArea.bottom)
 		return;

@@ -1708,7 +1708,7 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 
 	const uint nTones = nLevels * (nLevels - 1) / 2;
 	const uint paletteSize = nStdColors + nColors * nTones;
-	STATIC_ASSERT(paletteSize < 256, cant_fit_all_the_tones_into_CLUT8_palettes);
+	static_assert(paletteSize < 256, "can't fit all the tones into CLUT8 palettes");
 
 	uint level[nLevels];
 	for (uint i = 0; i < nLevels - 1; i++) {

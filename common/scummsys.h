@@ -130,33 +130,6 @@
 	#include <limits>
 #endif
 
-#ifndef STATIC_ASSERT
-#if __cplusplus >= 201103L || defined(_MSC_VER)
-	/**
-	 * Generates a compile-time assertion.
-	 *
-	 * @param expression An expression that can be evaluated at compile time.
-	 * @param message An underscore-delimited message to be presented at compile
-	 * time if the expression evaluates to false.
-	 */
-	#define STATIC_ASSERT(expression, message) \
-		static_assert((expression), #message)
-#else
-	/**
-	 * Generates a compile-time assertion.
-	 *
-	 * @param expression An expression that can be evaluated at compile time.
-	 * @param message An underscore-delimited message to be presented at compile
-	 * time if the expression evaluates to false.
-	 */
-	#define STATIC_ASSERT(expression, message) \
-		do { \
-			extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
-			(void)(STATIC_ASSERT_##message); \
-		} while (false)
-#endif
-#endif
-
 // The following math constants are usually defined by the system math.h header, but
 // they are not part of the ANSI C++ standards and so can NOT be relied upon to be
 // present i.e. when -std=c++11 is passed to GCC, enabling strict ANSI compliance.

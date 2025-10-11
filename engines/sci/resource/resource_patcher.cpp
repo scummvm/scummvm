@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "sci/sci.h"
 #include "sci/engine/workarounds.h" // for SciMedia
 #include "sci/resource/resource.h"
@@ -30,16 +31,12 @@ namespace Sci {
 
 // Start of internal resource patcher macros. Please do not use these directly
 // in resource patches.
-// NOTE: The following breaks in non-C++11 compilers. It can be used to simplify the
-// _BYTEOP(), and consequently the REPLACE() and INSERT() macros below.
-//using int_c_array = int[];
-//#define _NUMARGS(...) (sizeof(int_c_array{ __VA_ARGS__ }) / sizeof(int))
 #ifdef SCUMM_LITTLE_ENDIAN
 #define _PACKINT32(n) (((uint32)n) & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 24 & 0xFF)
 #else
 #define _PACKINT32(n) (((uint32)n) >> 24 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) & 0xFF)
 #endif
-#define _BYTEOP(op, numBytes, ...) op, _PACKINT32(numBytes), __VA_ARGS__
+#define _BYTEOP(op, ...) op, _PACKINT32(NUMARGS(__VA_ARGS__)), __VA_ARGS__
 #define _NUMBEROP(op, type, value) op, sizeof(type), _PACKINT32(value)
 #define _FILLOP(op, numBytes, value) op, _PACKINT32(numBytes), value
 // End of internal resource patcher macros
@@ -52,12 +49,12 @@ namespace Sci {
 /**
  * Replaces data at the current position.
  */
-#define REPLACE(numBytes, ...) _BYTEOP(kReplaceBytes, numBytes, __VA_ARGS__)
+#define REPLACE(...) _BYTEOP(kReplaceBytes, __VA_ARGS__)
 
 /**
  * Inserts new data at the current position.
  */
-#define INSERT(numBytes, ...) _BYTEOP(kInsertBytes, numBytes, __VA_ARGS__)
+#define INSERT(...) _BYTEOP(kInsertBytes, __VA_ARGS__)
 
 /**
  * Replaces a number of the given type at the current position with the given
@@ -154,7 +151,7 @@ static const byte phant1View64001Palette[] = {
 static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_NUMBER(uint16,  16), // header size
 	INSERT_NUMBER(uint8,    1), // loop count
-	INSERT(2, 0x00, 0x01),      // unused
+	INSERT(0x00, 0x01),         // unused
 	INSERT_NUMBER(uint8,    0), // resolution flag
 	INSERT_NUMBER(uint16,   0), // unused
 	INSERT_NUMBER(uint32,  70), // palette offset
@@ -196,7 +193,7 @@ static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_NUMBER(uint8,    1), // used
 	INSERT_NUMBER(uint8,    0), // shared used
 	INSERT_NUMBER(uint32,   0), // version
-	INSERT(152,                 // color data
+	INSERT(                     // color data
 	0x01, 0x00, 0x00, 0x00, 0x01, 0x1B, 0x1B, 0x1B, 0x01, 0x2B,
 	0x2F, 0x2B, 0x01, 0x33, 0x33, 0x33, 0x01, 0x37, 0x3B, 0x37,
 	0x01, 0x47, 0x47, 0x47, 0x01, 0x4B, 0x4B, 0x4B, 0x01, 0x53,
@@ -217,7 +214,7 @@ static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_FILL(0x00, 872),     // unused color entries
 
 	// pixel data
-	INSERT(1955,
+	INSERT(
 	0x07, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
 	0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
 	0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
@@ -736,7 +733,7 @@ ResourcePatcher::PatchSizes ResourcePatcher::calculatePatchSizes(const byte *pat
 		}
 	}
 
-	return PatchSizes(dataSize, deltaSize);
+	return { dataSize, deltaSize };
 }
 
 int32 ResourcePatcher::readBlockSize(const byte * &patchData) const {

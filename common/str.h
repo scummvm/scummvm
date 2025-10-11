@@ -321,7 +321,7 @@ void strcpy_s(char *dst, size_t size, const char *src);
  */
 template<typename T, size_t N>
 FORCEINLINE void strcpy_s(T (&dst)[N], const char *src) {
-	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	static_assert(sizeof(T) == sizeof(char), "T is not compatible with char");
 	strcpy_s((char *)dst, N, src);
 }
 
@@ -352,7 +352,7 @@ void strcat_s(char *dst, size_t size, const char *src);
  */
 template<typename T, size_t N>
 FORCEINLINE void strcat_s(T (&dst)[N], const char *src) {
-	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	static_assert(sizeof(T) == sizeof(char), "T is not compatible with char");
 	strcat_s((char *)dst, N, src);
 }
 
@@ -374,7 +374,7 @@ int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) GCC_PRINT
  */
 template<typename T, size_t N>
 FORCEINLINE GCC_PRINTF(2, 0) int vsprintf_s(T (&dst)[N], const char *format, va_list ap) {
-	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	static_assert(sizeof(T) == sizeof(char), "T is not compatible with char");
 	return vsprintf_s((char *)dst, N, format, ap);
 }
 
@@ -396,7 +396,7 @@ int sprintf_s(char *dst, size_t size, MSVC_PRINTF const char *format, ...) GCC_P
  */
 template<typename T, size_t N>
 inline GCC_PRINTF(2, 3) int sprintf_s(T (&dst)[N], MSVC_PRINTF const char *format, ...) {
-	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	static_assert(sizeof(T) == sizeof(char), "T is not compatible with char");
 	int ret;
 	va_list ap;
 	va_start(ap, format);

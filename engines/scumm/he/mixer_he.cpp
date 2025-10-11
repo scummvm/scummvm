@@ -211,9 +211,9 @@ bool HEMixer::audioOverrideExists(int soundId, bool justGetInfo, int *duration, 
 #endif
 	};
 
-	STATIC_ASSERT(
+	static_assert(
 		ARRAYSIZE(formats) == ARRAYSIZE(formatDecoders),
-		formats_formatDecoders_must_have_same_size);
+		"formats and formatDecoders arrays must have same size");
 
 	const char *type;
 	if (soundId == HSND_TALKIE_SLOT) {
