@@ -40,6 +40,7 @@ void b_random(int nargs);
 void b_sin(int nargs);
 void b_sqrt(int nargs);
 void b_tan(int nargs);
+void b_void(int nargs);
 
 void b_chars(int nargs);
 void b_charToNum(int nargs);

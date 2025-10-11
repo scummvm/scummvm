@@ -68,6 +68,7 @@ static const BuiltinProto builtins[] = {
 	{ "sin",			LB::b_sin,			1, 1, 400, FBLTIN },	//			D4 f
 	{ "sqrt",			LB::b_sqrt,			1, 1, 200, FBLTIN },	// D2 f
 	{ "tan",			LB::b_tan,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "void",			LB::b_void,			0, 0, 600, FBLTIN },	// 					D6 f
 	// String
 	{ "chars",			LB::b_chars,		3, 3, 200, FBLTIN },	// D2 f
 	{ "charToNum",		LB::b_charToNum,	1, 1, 200, FBLTIN },	// D2 f
@@ -714,6 +715,10 @@ void LB::b_tan(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res(tan(d.asFloat()));
 	g_lingo->push(res);
+}
+
+void LB::b_void(int nargs) {
+	g_lingo->pushVoid();
 }
 
 ///////////////////
