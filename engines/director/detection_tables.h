@@ -1052,6 +1052,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "suderhof",			"Geschichten vom Süderhof" },
 	{ "technicus",			"Technicus: Ten Hours Left" },
 	{ "tiefsee",			"S.O.S. Tiefsee" },
+	{ "tivolaspielebox",	"Die tolle Spiele-Box" },
 	{ "tkkgkit",			"TKKG: Identikit" },
 	{ "vorsichthund",		"Vorsicht, bissiger Hund!" },
 	{ "www",				"Wellen, Wracks und Wassermänner" },
@@ -9068,6 +9069,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"dir/sims1.dir", "f:8c6ccc894cce347ddec675ebe56505c0", 11132824, 650),
 
 	WINGAME1_l("tiefsee", "", "Tiefsee.exe", "t:c932fbb3da13e4fdecd49f877531e422", 1508764, Common::DE_DEU, 650),
+
+	// "Die tolle Spiele-Box" is a collection of mini-games released by Tivola based on their
+	// full titles. One of the mini-games is an enhanced version of the juggling game in
+	// "Masters of the Elements", sharing some code and behavior.
+	// Requires installation.
+	WINGAME2_l("tivolaspielebox", "", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
+									  "SELECTOR.DXR", "f:058a411d0ca623bd76a5c9b61a69a4ba", 9859616, Common::DE_DEU, 601),
 
 	// Tivola demo/sampler disc, Fall 1998, released in Germany
 	MACGAME2f_l("tivolafall1998", "Sampler", "Start",        "r:d549c6d331cf1c6354f1f2b93b34c0f4", 1026645,
