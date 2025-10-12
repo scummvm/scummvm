@@ -142,7 +142,7 @@ AboutDialog::AboutDialog(bool inGame)
 	extensionsInfo += _("CPU extensions support:");
 	addLine(extensionsInfo);
 	Common::U32String compiledExtensionsList("C0");
-	compiledExtensionsList += Common::U32String::format("SSE2(%S) AVX2(%S) NEON(%S)",
+	compiledExtensionsList += Common::U32String::format("SSE2: %S, AVX2: %S, NEON: %S",
 		extensionSupportString[sse2Support].c_str(),
 		extensionSupportString[avx2Support].c_str(),
 		extensionSupportString[neonSupport].c_str());
