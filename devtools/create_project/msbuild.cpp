@@ -464,6 +464,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	} else {
 		properties << "\t\t<VcpkgTriplet>" << getMSVCArchName(arch) << "-windows</VcpkgTriplet>\n";
 		properties << "\t\t<VcpkgConfiguration>" << cfgPath << "</VcpkgConfiguration>\n";
+		properties << "\t\t<VcpkgEnableManifest>" << (setup.useVcpkgManifest ? "true" : "false") << "</VcpkgEnableManifest>\n";
 	}
 
 	properties << "\t</PropertyGroup>\n"

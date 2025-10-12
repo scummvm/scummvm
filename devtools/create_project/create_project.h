@@ -300,6 +300,7 @@ struct BuildSetup {
 	bool useWindowsSubsystem = false;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
 	bool useXCFramework = false;       ///< Whether to use Apple XCFrameworks instead of static libraries
 	bool useVcpkg = false;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
+	bool useVcpkgManifest = false;     ///< Whether to use a vcpkg manifest (vcpkg.json) to load libraries from vcpkg
 	bool win32 = false;                ///< Target is Windows
 
 	bool featureEnabled(const std::string &feature) const;

@@ -317,6 +317,9 @@ int main(int argc, char *argv[]) {
 			setup.useXCFramework = true;
 		} else if (!std::strcmp(argv[i], "--vcpkg")) {
 			setup.useVcpkg = true;
+		} else if (!std::strcmp(argv[i], "--vcpkg-manifest")) {
+			setup.useVcpkg = true;
+			setup.useVcpkgManifest = true;
 		} else if (!std::strcmp(argv[i], "--libs-path")) {
 			if (i + 1 >= argc) {
 				std::cerr << "ERROR: Missing \"path\" parameter for \"--libs-path\"!\n";
@@ -819,9 +822,11 @@ void displayHelp(const char *exe) {
 	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
 	        "                            (default: false)\n"
 	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
-			"                            " LIBS_DEFINE " environment variable\n "
+			"                            " LIBS_DEFINE " environment variable\n"
 	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
+			" --vcpkg-manifest           Enable vcpkg and use manifest file for auto-building all required libraries\n"
+			"                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines             list all available engines and their default state\n"
