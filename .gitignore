@@ -224,6 +224,7 @@ UpgradeLog.htm
 [Rr]elease64/
 LLVM32/
 LLVM64/
+vcpkg_installed/
 
 #Ignore files created by the Win32 distribution target
 win32dist-mingw/
