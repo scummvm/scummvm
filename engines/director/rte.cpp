@@ -73,7 +73,7 @@ RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream, uint16 id) : _c
 	debugC(5, kDebugLoading, "RTE2: _width: %d, _height: %d, _bpp: %d, _rle: %d bytes", _width, _height, _bpp, rleCount);
 }
 
-Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, const Graphics::PixelFormat &pf) const {
+Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, const Graphics::PixelFormat &pf, bool renderBg) const {
 	if (_rle.empty())
 		return nullptr;
 	Common::MemoryReadStream stream(_rle.data(), _rle.size());
@@ -122,8 +122,12 @@ Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, 
 	}
 	Graphics::ManagedSurface *result = new Graphics::ManagedSurface();
 	result->create((int16)_width, (int16)_height, pf);
-	// Fill it with the background colour
-	result->fillRect(Common::Rect(_width, _height), bgColor);
+
+	if (renderBg) {
+		// Fill it with the background colour
+		result->fillRect(Common::Rect(_width, _height), bgColor);
+	}
+
 	// Blit the alpha text map
 	result->blitFrom(surface, nullptr);
 
@@ -132,7 +136,8 @@ Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, 
 	if (ConfMan.getBool("dump_scripts")) {
 
 		Common::String prepend = _cast->getMacName();
-		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", encodePathForDump(prepend).c_str(), "RTE2", _id);
+		Common::String filename = Common::String::format("./dumps/%s-%s%s-%d.png",
+				encodePathForDump(prepend).c_str(), "RTE2", (renderBg ? "-bg" : ""), _id);
 		Common::DumpFile bitmapFile;
 
 		warning("RTE2::createSurface(): Dumping RTE2 to '%s'", filename.c_str());

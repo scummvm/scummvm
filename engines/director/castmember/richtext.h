@@ -55,6 +55,7 @@ private:
 	Common::U32String _plainText;
 	Graphics::PixelFormat _pf32;
 	Picture *_picture;
+	Picture *_pictureWithBg;
 
 	// _initialRect
 	// _boundingRect

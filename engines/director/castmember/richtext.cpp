@@ -24,6 +24,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/images.h"
 #include "director/movie.h"
 #include "director/picture.h"
@@ -81,6 +82,7 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 
 	_type = kCastRichText;
 	_picture = nullptr;
+	_pictureWithBg = nullptr;
 }
 
 RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, RichTextCastMember &source)
@@ -98,6 +100,9 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, RichTextCastMe
 RichTextCastMember::~RichTextCastMember() {
 	if (_picture)
 		delete _picture;
+
+	if (_pictureWithBg)
+		delete _pictureWithBg;
 }
 
 void RichTextCastMember::load() {
@@ -142,10 +147,18 @@ void RichTextCastMember::load() {
 	}
 	if (_cast->_loadedRTE2s.contains(rte2id)) {
 		_picture = new Picture();
-		const RTE2 *rte2 =  _cast->_loadedRTE2s.getVal(rte2id);
-		Graphics::ManagedSurface *surface = rte2->createSurface(_foreColor, _bgColor, _pf32);
+		const RTE2 *rte2 = _cast->_loadedRTE2s.getVal(rte2id);
+		Graphics::ManagedSurface *surface = rte2->createSurface(_foreColor, _bgColor, _pf32, false);
 		if (surface) {
 			_picture->_surface.copyFrom(surface->rawSurface());
+			surface->free();
+			delete surface;
+		}
+
+		_pictureWithBg = new Picture();
+		surface = rte2->createSurface(_foreColor, _bgColor, _pf32, true);
+		if (surface) {
+			_pictureWithBg->_surface.copyFrom(surface->rawSurface());
 			surface->free();
 			delete surface;
 		}
@@ -173,14 +186,18 @@ Graphics::MacWidget *RichTextCastMember::createWidget(Common::Rect &bbox, Channe
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	Graphics::Surface *dithered = nullptr;
+	Picture *src = _pictureWithBg;
+
+	if (channel->_sprite->_ink == kInkTypeBackgndTrans)
+		src = _picture;
 
 	if (dstBpp == 1) {
-		dithered = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+		dithered = src->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 	}
 
 	// scale for drawing a different size sprite
 	copyStretchImg(
-		dithered ? dithered : &_picture->_surface,
+		dithered ? dithered : &src->_surface,
 		widget->getSurface()->surfacePtr(),
 		_initialRect,
 		bbox,
@@ -194,8 +211,6 @@ Graphics::MacWidget *RichTextCastMember::createWidget(Common::Rect &bbox, Channe
 
 	return widget;
 }
-
-
 
 bool RichTextCastMember::hasField(int field) {
 	switch (field) {
