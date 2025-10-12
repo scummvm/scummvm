@@ -328,7 +328,8 @@ void ScummEngine_v80he::setupScummVars() {
 void ScummEngine_v90he::setupScummVars() {
 	ScummEngine_v80he::setupScummVars();
 
-	VAR_TIMER = 97;
+	VAR_LAST_FRAME_BURN_TIME = 96;
+	VAR_LAST_FRAME_SCUMM_TIME = 97;
 	VAR_QUIT_SCRIPT = 102;
 	VAR_DEFAULT_SCRIPT_PRIORITY = 103;
 	VAR_LAST_SCRIPT_PRIORITY = 104;

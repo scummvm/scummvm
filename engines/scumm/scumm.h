@@ -1894,6 +1894,9 @@ public:
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS = 0xFF;
 
+	byte VAR_LAST_FRAME_BURN_TIME = 0xFF;  // HE90+
+	byte VAR_LAST_FRAME_SCUMM_TIME = 0xFF; // HE90+
+
 #ifdef USE_RGB_COLOR
 	// FM-Towns / PC-Engine specific
 	Graphics::FontSJIS *_cjkFont = nullptr;

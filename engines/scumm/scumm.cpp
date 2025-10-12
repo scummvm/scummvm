@@ -2733,6 +2733,9 @@ Common::Error ScummEngine::go() {
 			if (_game.heversion >= 60) {
 				((SoundHE *)_sound)->feedMixer();
 			}
+
+			if (VAR_LAST_FRAME_SCUMM_TIME != 0xFF)
+				VAR(VAR_LAST_FRAME_SCUMM_TIME) = _system->getMillis() - _lastWaitTime;
 		}
 
 		if (shouldQuit()) {
@@ -2757,6 +2760,9 @@ void ScummEngine::waitForTimer(int quarterFrames, bool freezeMacGui) {
 	uint32 diff = cur - _lastWaitTime;
 	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
 	endTime = cur + msecDelay;
+
+	if (VAR_LAST_FRAME_BURN_TIME != 0xFF)
+		VAR(VAR_LAST_FRAME_BURN_TIME) = msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
