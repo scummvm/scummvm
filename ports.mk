@@ -514,7 +514,7 @@ OSX_STATIC_LIBS += -liconv \
                 $(STATICLIBPATH)/lib/libintl.a
 
 ifneq ($(BACKEND), ios7)
-OSX_STATIC_LIBS += -lreadline -framework AudioUnit
+OSX_STATIC_LIBS += -lreadline
 endif
 endif
 endif
@@ -595,7 +595,7 @@ endif
 # Special target to create a static linked binary for macOS.
 scummvm-static: $(DETECT_OBJS) $(OBJS)
 	+$(LD) $(LDFLAGS) -o scummvm-static $(PRE_OBJS_FLAGS) $(DETECT_OBJS) $(OBJS) $(POST_OBJS_FLAGS) \
-		-framework CoreMIDI \
+		-framework CoreMIDI -framework AudioUnit \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
 
