@@ -323,6 +323,9 @@ class ResourceManager;
 #define PIT_V7_SUBTIMER_INC            3977.0
 #define PIT_V7_SUBTIMER_THRESH         4971.0
 
+#define PIT_HE_PUTT_PUTT_DIVISOR       9362.0
+#define PIT_HE_FATTY_BEAR_DIVISOR      21845.0
+
 #define LOOM_STEAM_CDDA_RATE           240.0
 
 /**
