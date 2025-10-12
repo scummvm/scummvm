@@ -283,7 +283,7 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 		_numLocalScripts = _fileHandle->readUint16LE();
 		_HEHeapSize = _fileHandle->readUint16LE();
 		_numPalettes = _fileHandle->readUint16LE();
-		_numUnk = _fileHandle->readUint16LE();
+		_numWindows = _fileHandle->readUint16LE();
 		_numTalkies = _fileHandle->readUint16LE();
 		_numNewNames = 10;
 

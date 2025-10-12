@@ -817,11 +817,11 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
 	VAR_NUM_SPRITES = 0xFF;
 	VAR_NUM_PALETTES = 0xFF;
-	VAR_NUM_UNK = 0xFF;
+	VAR_NUM_WINDOWS = 0xFF;
 	VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS = 0xFF;
 
 	VAR_U32_VERSION = 0xFF;
-	VAR_U32_ARRAY_UNK = 0xFF;
+	VAR_U32_RESERVED = 0xFF;
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {

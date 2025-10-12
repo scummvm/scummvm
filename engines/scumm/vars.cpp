@@ -317,6 +317,7 @@ void ScummEngine_v80he::setupScummVars() {
 	VAR_PLATFORM_VERSION = 79;
 	VAR_CURRENT_CHARSET = 80;
 	VAR_SOUND_TOKEN_OFFSET = 84;
+	VAR_WINDEX_RUNNING = 85;
 	VAR_KEY_STATE = 86;
 	VAR_SOUND_CALLBACK_SCRIPT = 87;
 	VAR_NUM_SOUND_CHANNELS = 88;
@@ -338,7 +339,7 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
 		VAR_U32_VERSION = 107;
-		VAR_U32_ARRAY_UNK = 116;
+		VAR_U32_RESERVED = 116;
 		VAR_WIZ_TRANSPARENT_COLOR = 117;
 		VAR_OPERATION_FAILURE = 119;
 		VAR_START_DYN_SOUND_CHANNELS = 120;
@@ -357,7 +358,7 @@ void ScummEngine_v90he::setupScummVars() {
 #endif
 		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
-		VAR_NUM_UNK = 131;
+		VAR_NUM_WINDOWS = 131;
 		VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS = 139;
 	}
 }
@@ -741,7 +742,7 @@ void ScummEngine_v90he::resetScummVars() {
 	}
 	if (_game.heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
-		VAR(VAR_U32_ARRAY_UNK) = 0;
+		VAR(VAR_U32_RESERVED) = 0;
 	}
 }
 
@@ -749,7 +750,7 @@ void ScummEngine_v99he::resetScummVars() {
 	ScummEngine_v90he::resetScummVars();
 
 	VAR(VAR_NUM_PALETTES) = _numPalettes;
-	VAR(VAR_NUM_UNK) = _numUnk;
+	VAR(VAR_NUM_WINDOWS) = _numWindows;
 
 	if (_game.heversion >= 100 && (_game.features & GF_16BIT_COLOR)) {
 		// Enable Bink video in 16bit color games
@@ -819,8 +820,8 @@ void ScummEngine::resetScummVars() {
 
 	if (VAR_DEBUGMODE != 0xFF) {
 		VAR(VAR_DEBUGMODE) = (_debugMode ? 1 : 0);
-		if (_game.heversion >= 80 && _debugMode)
-			VAR(85) = 1;
+		if (_game.heversion >= 80 && _debugMode && VAR_WINDEX_RUNNING != 0xFF)
+			VAR(VAR_WINDEX_RUNNING) = 1;
 	}
 
 	if (VAR_FADE_DELAY != 0xFF)

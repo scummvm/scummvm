@@ -851,7 +851,7 @@ protected:
 	int _numPalettes = 0;
 	int _numSprites = 0;
 	int _numTalkies = 0;
-	int _numUnk = 0;
+	int _numWindows = 0;
 	int _HEHeapSize = 0;
 
 public:
@@ -1896,6 +1896,8 @@ public:
 
 	byte VAR_LAST_FRAME_BURN_TIME = 0xFF;  // HE90+
 	byte VAR_LAST_FRAME_SCUMM_TIME = 0xFF; // HE90+
+
+	byte VAR_WINDEX_RUNNING = 0xFF;
 
 #ifdef USE_RGB_COLOR
 	// FM-Towns / PC-Engine specific

@@ -44,15 +44,15 @@ Moonbase::~Moonbase() {
 }
 
 int Moonbase::readFromArray(int array, int y, int x) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = array;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = array;
 
-	return _vm->readArray(_vm->VAR_U32_ARRAY_UNK, y, x);
+	return _vm->readArray(_vm->VAR_U32_RESERVED, y, x);
 }
 
 void Moonbase::deallocateArray(int array) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = array;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = array;
 
-	return _vm->nukeArray(_vm->VAR_U32_ARRAY_UNK);
+	return _vm->nukeArray(_vm->VAR_U32_RESERVED);
 }
 
 int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {

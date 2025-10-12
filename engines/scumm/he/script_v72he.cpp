@@ -1809,7 +1809,7 @@ void ScummEngine_v72he::getStringFromArray(int arrayNumber, char *buffer, int ma
 
 	// this function makes a C-string out of <arrayNumber> contents
 
-	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_ARRAY_UNK
+	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_RESERVED
 
 	int i, ch;
 	for (i = 0; i < maxLength; ++i) {

@@ -41,12 +41,12 @@ int LogicHE::versionID() {
 }
 
 int LogicHE::getFromArray(int arg0, int idx2, int idx1) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = arg0;
 	return _vm->readArray(116, idx2, idx1);
 }
 
 void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = arg0;
 	_vm->writeArray(116, idx2, idx1, val);
 }
 
