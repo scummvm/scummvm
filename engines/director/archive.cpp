@@ -283,7 +283,7 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 		dataSize = resStream->size();
 	}
 
-	Common::Path prepend = _pathName.empty() ? _pathName : "stream";
+	Common::Path prepend = _pathName.empty() ? Common::Path(g_director->getEXEName()) : _pathName;
 	Common::Path filename(Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend.toString(g_director->_dirSeparator)).c_str(), tag2str(res.tag), res.index), '/');
 	resStream->read(data, len);
 
