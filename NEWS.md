@@ -162,6 +162,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed an edge case when decoding SMUSH videos. This would cause some
      gray artifacts/pixels to appear in the ending video of The Dig.
    - Fixed minor visual issues in Backyard Baseball (1997) and Pajama Sam 3.
+   - Fixed missing graphical effects in Spy Fox in Cheese Chase.
 
  Sherlock:
    - Added keymapper support.
