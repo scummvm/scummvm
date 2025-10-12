@@ -474,7 +474,9 @@ void Lingo::reloadOpenXLibs() {
 
 void LM::m_new(int nargs) {
 	// This is usually overridden by a user-defined mNew
-	g_lingo->printSTUBWithArglist("m_new", nargs);
+	//
+	// However, in behaviors it is often absent, and it is
+	// in essence our default constructor.
 	g_lingo->push(g_lingo->_state->me);
 }
 
