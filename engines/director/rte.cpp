@@ -88,13 +88,13 @@ Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, 
 				r = stream.readByte();
 				g = stream.readByte();
 				b = stream.readByte();
-				debugC(9, kDebugLoading, "[%04x] (%d, %d): color %d %d %d", pos, x, y, r, g, b);
+				debugC(8, kDebugLoading, "[%04x] (%d, %d): color %d %d %d", pos, x, y, r, g, b);
 				continue;
 			}
 			a = ((uint32)check*0xff/((1 << _bpp) - 1));
 			if (check == 0 || check == checkMax) {
 				byte count = stream.readByte();
-				debugC(9, kDebugLoading, "[%04x] (%d, %d): %02x, count %d", pos, x, y, check, count);
+				debugC(8, kDebugLoading, "[%04x] (%d, %d): %02x, count %d", pos, x, y, check, count);
 				if (count == 0x00 && check == 0x00) {
 					// end of line, fill the remaining colour
 					a = 0;
@@ -111,7 +111,7 @@ Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, 
 						break;
 				}
 			} else {
-				debugC(9, kDebugLoading, "[%04x] (%d, %d): %02x", pos, x, y, check);
+				debugC(8, kDebugLoading, "[%04x] (%d, %d): %02x", pos, x, y, check);
 				*(uint32 *)surface.getBasePtr(x, y) = pf.ARGBToColor(a, r, g, b);
 				x += 1;
 			}
