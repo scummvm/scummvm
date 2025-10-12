@@ -55,12 +55,13 @@ public:
 
 class RTE2 {
 public:
-	RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream);
+	RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream, uint16 id);
 	~RTE2();
 
 	Graphics::ManagedSurface *createSurface(uint32 foreColor, uint32 bgColor, const Graphics::PixelFormat &pf) const;
 
 	Cast *_cast;
+	uint16 _id;
 	uint16 _width;
 	uint16 _height;
 	uint32 _bpp;

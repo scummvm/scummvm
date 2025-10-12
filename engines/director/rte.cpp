@@ -50,7 +50,7 @@ RTE1::RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 		stream.read(&data[0], stream.size());
 }
 
-RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
+RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream, uint16 id) : _cast(cast), _id(id) {
 	if (debugChannelSet(9, kDebugLoading)) {
 		debugC(9, kDebugLoading, "RTE2:");
 		stream.hexdump(stream.size());

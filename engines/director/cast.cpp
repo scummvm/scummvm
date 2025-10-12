@@ -851,7 +851,7 @@ void Cast::loadCast() {
 	for (auto &iterator : rte2) {
 		r = _castArchive->getResource(MKTAG('R','T','E','2'), iterator);
 		debugC(3, kDebugText, "RTE2: id %d", iterator - _castIDoffset);
-		_loadedRTE2s.setVal(iterator, new RTE2(this, *r));
+		_loadedRTE2s.setVal(iterator, new RTE2(this, *r, iterator));
 		delete r;
 	}
 
