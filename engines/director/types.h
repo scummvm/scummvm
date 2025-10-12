@@ -240,6 +240,8 @@ enum LEvent {
 	kEventGetBehaviorDescription,
 	kEventGetPropertyDescriptionList,
 	kEventRunPropertyDialog,
+
+	kEventCuePassed,
 };
 
 enum TransitionType {

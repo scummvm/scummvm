@@ -96,7 +96,7 @@ static const BuiltinProto builtins[] = {
 	{ "getPos",			LB::b_getPos,		2, 2, 400, FBLTIN_LIST },	//			D4 f
 	{ "getProp",		LB::b_getProp,		2, 2, 400, FBLTIN_LIST },	//			D4 f
 	{ "getPropAt",		LB::b_getPropAt,	2, 2, 400, FBLTIN_LIST },	//			D4 f
-	{ "list",			LB::b_list,			-1, 0, 400, FBLTIN_LIST },	//			D4 f
+	{ "list",			LB::b_list,			-1,0, 400, FBLTIN_LIST },	//			D4 f
 	{ "listP",			LB::b_listP,		1, 1, 400, FBLTIN_LIST },	//			D4 f
 	{ "max",			LB::b_max,			-1,0, 400, FBLTIN_LIST },	//			D4 f
 	{ "min",			LB::b_min,			-1,0, 400, FBLTIN_LIST },	//			D4 f
@@ -122,14 +122,14 @@ static const BuiltinProto builtins[] = {
 	{ "xtra",			LB::b_xtra,			1, 1, 500, FBLTIN },	//				D5 f
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
-	{ "cancelIdleLoad",	LB::b_cancelIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
-	{ "call",			LB::b_call,			-1,0, 200, CBLTIN },	// 					D6 c
-	{ "callAncestor",	LB::b_callAncestor,	-1,0, 200, CBLTIN },	// 					D6 c
+	{ "cancelIdleLoad",	LB::b_cancelIdleLoad,1,1, 500, CBLTIN },	//				D5 c
+	{ "call",			LB::b_call,			-1,0, 600, CBLTIN },	// 					D6 c
+	{ "callAncestor",	LB::b_callAncestor,	-1,0, 600, CBLTIN },	// 					D6 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
 	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, 200, CBLTIN },	// D2 c
 	{ "delay",	 		LB::b_delay,		1, 1, 200, CBLTIN },	// D2 c
 	{ "do",		 		LB::b_do,			1, 1, 200, CBLTIN },	// D2 c
-	{ "finishIdleLoad",	LB::b_finishIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
+	{ "finishIdleLoad",	LB::b_finishIdleLoad,1,1, 500, CBLTIN },	//				D5 c
 	{ "go",		 		LB::b_go,			1, 2, 200, CBLTIN },	// D2 c
 	{ "halt",	 		LB::b_halt,			0, 0, 400, CBLTIN },	//			D4 c
 	{ "idleLoadDone",	LB::b_idleLoadDone,	1, 1, 500, FBLTIN },	//				D5 f
@@ -138,7 +138,7 @@ static const BuiltinProto builtins[] = {
 	{ "pause",			LB::b_pause,		0, 0, 200, CBLTIN },	// D2 c
 	{ "play",			LB::b_play,			0, 2, 200, CBLTIN },	// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, 200, CBLTIN },	// D2
-		// play done													// D2
+		// play done												// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadMember",	LB::b_preLoadCast,	-1,0, 500, CBLTIN },	//				D5 c
@@ -146,13 +146,15 @@ static const BuiltinProto builtins[] = {
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
+	{ "send",			LB::b_call,			-1,0, 400, CBLTIN },	//			D4 c, undocumented
+	{ "sendAncestor",	LB::b_callAncestor,	-1,0, 400, CBLTIN },	//			D4 c, undocumented
 	{ "shutDown",		LB::b_shutDown,		0, 0, 200, CBLTIN },	// D2 c
 	{ "startTimer",		LB::b_startTimer,	0, 0, 200, CBLTIN },	// D2 c
 	{ "stopEvent",		LB::b_stopEvent,	0, 0, 600, CBLTIN },	//						D6 c
-		// when keyDown													// D2
-		// when mouseDown												// D2
-		// when mouseUp													// D2
-		// when timeOut													// D2
+		// when keyDown												// D2
+		// when mouseDown											// D2
+		// when mouseUp												// D2
+		// when timeOut												// D2
 	// Types
 	{ "factory",		LB::b_factory,		1, 1, 300, FBLTIN },	//		D3
 	{ "floatP",			LB::b_floatP,		1, 1, 300, FBLTIN },	//		D3
@@ -172,31 +174,31 @@ static const BuiltinProto builtins[] = {
 	{ "param",	 		LB::b_param,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "printFrom",	 	LB::b_printFrom,	-1,0, 200, CBLTIN },	// D2 c
 	{ "put",			LB::b_put,			-1,0, 200, CBLTIN },	// D2
-		// set															// D2
+		// set														// D2
 	{ "setPref",		LB::b_setPref,		2, 2, 600, CBLTIN },	// 					D6 c
 	{ "showGlobals",	LB::b_showGlobals,	0, 0, 200, CBLTIN },	// D2 c
 	{ "showLocals",		LB::b_showLocals,	0, 0, 200, CBLTIN },	// D2 c
 	// Score
 	{ "constrainH",		LB::b_constrainH,	2, 2, 200, FBLTIN },	// D2 f
 	{ "constrainV",		LB::b_constrainV,	2, 2, 200, FBLTIN },	// D2 f
-	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1, 400, CBLTIN }, //			D4 c
+	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1,400, CBLTIN }, 	//			D4 c
 	{ "duplicate",		LB::b_duplicate,	1, 2, 400, CBLTIN },	//			D4 c
 	{ "editableText",	LB::b_editableText,	0, 0, 200, CBLTIN },	// D2
 	{ "erase",			LB::b_erase,		1, 1, 400, CBLTIN },	//			D4 c
 	{ "findEmpty",		LB::b_findEmpty,	1, 1, 400, FBLTIN },	//			D4 f
 		// go															// D2
-	{ "importFileInto",	LB::b_importFileInto,2, 2, 400, CBLTIN }, //			D4 c
+	{ "importFileInto",	LB::b_importFileInto,2,2, 400, CBLTIN },	//			D4 c
 	{ "installMenu",	LB::b_installMenu,	1, 1, 200, CBLTIN },	// D2 c
 	{ "label",			LB::b_label,		1, 1, 200, FBLTIN },	// D2 f
 	{ "marker",			LB::b_marker,		1, 1, 200, FBLTIN },	// D2 f
 	{ "move",			LB::b_move,			1, 2, 400, CBLTIN },	//			D4 c
-	{ "moveableSprite",	LB::b_moveableSprite,0, 0, 200, CBLTIN },// D2, FIXME: the field in D4+
-	{ "pasteClipBoardInto",LB::b_pasteClipBoardInto,1,1,400,CBLTIN },//		D4 c
-	{ "puppetPalette",	LB::b_puppetPalette, -1,0, 200, CBLTIN },// D2 c
+	{ "moveableSprite",	LB::b_moveableSprite,0, 0, 200, CBLTIN },	// D2, FIXME: the field in D4+
+	{ "pasteClipBoardInto",LB::b_pasteClipBoardInto,1,1,400,CBLTIN },//			D4 c
+	{ "puppetPalette",	LB::b_puppetPalette, -1,0, 200, CBLTIN },	// D2 c
 	{ "puppetSound",	LB::b_puppetSound,	-1,0, 200, CBLTIN },	// D2 c
 	{ "puppetSprite",	LB::b_puppetSprite,	-1,0, 200, CBLTIN },	// D2 c
 	{ "puppetTempo",	LB::b_puppetTempo,	1, 1, 200, CBLTIN },	// D2 c
-	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },// D2 c
+	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },	// D2 c
 	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, 300, FBLTIN },	//		D3.1 f
 	{ "rollOver",		LB::b_rollOver,		1, 1, 200, FBLTIN },	// D2 f
 	{ "sendAllSprites",	LB::b_sendAllSprites,-1,0,600, CBLTIN },	// 					D6 c
@@ -208,11 +210,11 @@ static const BuiltinProto builtins[] = {
 	{ "unLoadMovie",	LB::b_unLoadMovie,	1, 1, 500, CBLTIN },	//				D5 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, 200, CBLTIN },	// D2 c
-	{"immediateSprite", LB::b_immediateSprite, -1, 0, 200, CBLTIN}, // D2 c
+	{"immediateSprite", LB::b_immediateSprite,-1,0,200,CBLTIN },	// D2 c
 	// Score recording
 	{ "clearFrame",		LB::b_clearFrame,	0, 0, 500, CBLTIN },	//				D5 c
 	{ "deleteFrame",	LB::b_deleteFrame,	0, 0, 500, CBLTIN },	//				D5 c
-	{ "duplicateFrame",	LB::b_duplicateFrame,0, 0, 500, CBLTIN },	//				D5 c
+	{ "duplicateFrame",	LB::b_duplicateFrame,0,0, 500, CBLTIN },	//				D5 c
 	{ "insertFrame",	LB::b_insertFrame,	0, 0, 500, CBLTIN },	//				D5 c
 	{ "updateFrame",	LB::b_updateFrame,	0, 0, 500, CBLTIN },	//				D5 c
 	// Point
@@ -254,7 +256,7 @@ static const BuiltinProto builtins[] = {
 	{ "lineHeight",		LB::b_lineHeight,   2, 2, 500, FBLTIN },	//				D5 f
 	{ "linePosToLocV",	LB::b_linePosToLocV,2, 2, 500, FBLTIN },	//				D5 f
 	{ "locToCharPos",	LB::b_locToCharPos, 2, 2, 500, FBLTIN },	//				D5 f
-	{ "locVToLinePos",	LB::b_locVToLinePos, 2, 2, 500, FBLTIN },	//				D5 f
+	{ "locVToLinePos",	LB::b_locVToLinePos,2, 2, 500, FBLTIN },	//				D5 f
 	{ "scrollByLine",	LB::b_scrollByLine, 2, 2, 500, CBLTIN },	//				D5 c
 	{ "scrollByPage",	LB::b_scrollByPage, 2, 2, 500, CBLTIN },	//				D5 c
 	// Chunk operations
@@ -264,7 +266,7 @@ static const BuiltinProto builtins[] = {
 	{ "numberOfWords",	LB::b_numberofwords,1, 1, 300, FBLTIN },	//			D3 f
 	// Digital video operations
 	{ "trackCount",		LB::b_trackCount,	1, 1, 500, FBLTIN },	//				D5 f
-	{ "trackStartTime",	LB::b_trackStartTime,1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackStartTime",	LB::b_trackStartTime,1,1, 500, FBLTIN },	//				D5 f
 	{ "trackStopTime",	LB::b_trackStopTime,1, 1, 500, FBLTIN },	//				D5 f
 	{ "trackType",		LB::b_trackType,	1, 1, 500, FBLTIN },	//				D5 f
 
@@ -290,7 +292,7 @@ static const BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-/* These are related to Director Serrvices API, used by Xtras
+/* These are related to Director Services API, used by Xtras
    to talk to Director. Unused in ScummVM. Leaving here for reference.
 
    Media Info:

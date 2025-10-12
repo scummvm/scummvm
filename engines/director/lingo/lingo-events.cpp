@@ -75,6 +75,7 @@ struct EventHandlerType {
 	{ kEventMouseWithin,		"mouseWithin" },		//					D6, present in D5
 
 	{ kEventTimeout,			"timeout" },			// D2 as when
+	{ kEventCuePassed,			"cuePassed" },			//					D6
 
 	{ kEventStartUp,			"startUp" },
 

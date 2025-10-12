@@ -131,6 +131,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheMovieName,		"movieName",		false, 400, true },	//			D4 f
 	{ kTheMoviePath,		"moviePath",		false, 400, true },	//			D4 f
 	{ kTheMultiSound,		"multiSound",		false, 300, true },	//		D3.1 f
+	{ kTheNetThrottleTicks,	"netThrottleTicks",	false, 600, true }, //					D6 f, documented in D7
 	{ kTheOptionDown,		"optionDown",		false, 200, true },	// D2 f
 	{ kTheOrganizationName,	"organizationName",	false, 500, false },//				D5 p, documented in D7
 	{ kTheParamCount,		"paramCount",		false, 400, true },	//			D4 f
@@ -164,6 +165,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheShiftDown,		"shiftDown",		false, 200, true },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 200, false },// D2 p
 	{ kTheSoundEntity,		"sound",			true,  300, false },// 		D3 p
+	{ kTheSoundKeepDevice,	"soundKeepDevice",	false, 600, false },//					D6 p, documented in D7
 	{ kTheSoundLevel,		"soundLevel",		false, 200, false },// D2 p
 	{ kTheSprite,			"sprite",			true,  200, false },// 			D4 p
 	{ kTheStage,			"stage",			false, 400, false },//			D4 p
@@ -357,8 +359,9 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"chunkSize",	kTheChunkSize,	500 },//					D5 p
 	{ kTheCast,		"transitionType",kTheTransitionType,500 },//				D5 p
 
-	// XtrsaCastMember fields
+	// XtrasCastMember fields
 	{ kTheCast,		"interface",	kTheInterface,	500 },//					D5 p
+	{ kTheCast,		"mediaBusy",	kTheMediaBusy,	600 },//						D6 p
 
 	// Behavior (me) fields
 	{ kTheCast,		"spriteNum",	kTheSpriteNum,	600 },//						D6 p
@@ -928,6 +931,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// We always support multiple sound channels!
 		d = 1;
 		break;
+	case kTheNetThrottleTicks:
+		// This is default in Mac Director.
+		// Specifies the frequency of servicing to a network
+		d = 15;
+		break;
 	case kTheOptionDown:
 		d = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
@@ -1060,6 +1068,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 				break;
 			}
 		}
+		break;
+	case kTheSoundKeepDevice:
+		// System property; for Windows only, prevents the sound driver from unloading
+		// and reloading each time a sound needs to play. The default value is TRUE.
+		d = 1;
 		break;
 	case kTheSoundLevel:
 		// getting sound level of channel 1, maybe need to be amended in higher version
@@ -1345,6 +1358,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheMouseUpScript:
 		movie->setPrimaryEventHandler(kEventMouseUp, d.asString());
 		break;
+	case kTheNetThrottleTicks:
+		// No op, we always smooth on network operations
+		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
 		break;
@@ -1414,6 +1430,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 				break;
 			}
 		}
+		break;
+	case kTheSoundKeepDevice:
+		// We do not need to unload the sound driver, so just ignore this.
 		break;
 	case kTheSoundLevel:
 		// setting all of the channel for now
