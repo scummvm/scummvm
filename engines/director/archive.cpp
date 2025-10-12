@@ -278,6 +278,11 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	}
 	uint32 len = resStream->size();
 
+	if (res.tag == MKTAG('f','r','e','e') || res.tag == MKTAG('j','u','n','k')) {
+		if (len == 0)
+			return;
+	}
+
 	if (dataSize < len) {
 		data = (byte *)malloc(resStream->size());
 		dataSize = resStream->size();
