@@ -470,7 +470,8 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_50) {
 		/* just ignore it? */
 	} else if (tp == RESTP_51) {
-		_soundSamples[pid].assign(data, data + dataSize);
+		uint32 datSz = getU32(data) & (~3);
+		_soundSamples[pid].assign(data + 4, data + 4 + datSz);
 		//printf("sound  size %d\n", dataSize);
 	} else if (tp == RESTP_52) {
 		return loadRes52(pid, data, dataSize);
