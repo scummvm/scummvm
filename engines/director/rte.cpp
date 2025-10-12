@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/stream.h"
+#include "common/file.h"
 #include "common/memstream.h"
+
+#include "image/png.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -125,6 +128,21 @@ Graphics::ManagedSurface *RTE2::createSurface(uint32 foreColor, uint32 bgColor, 
 	result->blitFrom(surface, nullptr);
 
 	surface.free();
+
+	if (ConfMan.getBool("dump_scripts")) {
+
+		Common::String prepend = _cast->getMacName();
+		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", encodePathForDump(prepend).c_str(), "RTE2", _id);
+		Common::DumpFile bitmapFile;
+
+		warning("RTE2::createSurface(): Dumping RTE2 to '%s'", filename.c_str());
+
+		bitmapFile.open(Common::Path(filename), true);
+		Image::writePNG(bitmapFile, *result->surfacePtr(), nullptr);
+
+		bitmapFile.close();
+	}
+
 	return result;
 }
 
