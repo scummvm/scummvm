@@ -726,7 +726,7 @@ void BitmapCastMember::load() {
 
 					if (ConfMan.getBool("dump_scripts")) {
 
-						Common::String prepend = "stream";
+						Common::String prepend = _cast->getMacName();
 						Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", encodePathForDump(prepend).c_str(), tag2str(tag), imgId);
 						Common::DumpFile bitmapFile;
 
@@ -809,7 +809,7 @@ void BitmapCastMember::load() {
 
 	if (ConfMan.getBool("dump_scripts")) {
 
-		Common::String prepend = "stream";
+		Common::String prepend = _cast->getMacName();
 		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", encodePathForDump(prepend).c_str(), tag2str(tag), imgId);
 		Common::DumpFile bitmapFile;
 
