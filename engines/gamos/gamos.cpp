@@ -1987,8 +1987,23 @@ void GamosEngine::doDraw() {
 	}
 
 	for(Object *o: drawList) {
-		if (o->pImg && loadImage(o->pImg->image))
-			_screen->blitFrom(o->pImg->image->surface, Common::Point(o->x, o->y));
+		/*if (o->pImg && loadImage(o->pImg->image)) {
+			Common::Rect out(Common::Point(o->x, o->y), o->pImg->image->surface.w, o->pImg->image->surface.h);
+			out.clip(_screen->getBounds());
+			out.translate(-o->x, -o->y);
+			_screen->copyRectToSurfaceWithKey(o->pImg->image->surface, o->x+out.left, o->y+out.top, out, 0);
+		}*/
+		if (o->pImg && loadImage(o->pImg->image)) {
+			uint flip = 0;
+			if (o->flags & 8)
+				flip |= Graphics::FLIP_H;
+			if (o->flags & 0x10)
+				flip |= Graphics::FLIP_V;
+			Blitter::blit(&o->pImg->image->surface,
+						   Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
+		                   _screen->surfacePtr(),
+						   Common::Rect(o->x, o->y, _screen->w, _screen->h), flip);
+		}
 	}
 
 	_screen->update();

@@ -55,6 +55,8 @@
 
 #include "gamos/array2d.h"
 
+#include "gamos/blit.h"
+
 namespace Gamos {
 
 struct GamosGameDescription;
