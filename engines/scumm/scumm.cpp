@@ -4094,7 +4094,7 @@ bool ScummEngine::isUsingOriginalGUI() const {
 	if (_game.platform == Common::kPlatformPCEngine)
 		return false;
 
-	if (_game.heversion != 0)
+	if (_game.heversion >= 70)
 		return false;
 
 	return _useOriginalGUI;
