@@ -303,7 +303,7 @@ static const struct XLibProto {
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MSFile,             kXObj,          400),   // D4
 	XLIBDEF(MystIsleXObj,		kXObj,			400),	// D4
-	XLIBDEF(OSCheckXtra,			kXtraObj,					400),	// D4
+	XLIBDEF(OSCheckXtra,		kXtraObj,		400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
 	XLIBDEF(OpenURLXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(OrthoPlayXObj,		kXObj,			400),	// D4
@@ -339,7 +339,7 @@ static const struct XLibProto {
 	XLIBDEF(VMPresentXObj,		kXObj,			400),	// D4
 	XLIBDEF(VMisOnXFCN,			kXObj,			400),	// D4
 	XLIBDEF(ValkyrieXObj,		kXObj,			400),	// D4
-	XLIBDEF(VersionsXObj,			kXObj,					400),	// D4
+	XLIBDEF(VersionsXObj,		kXObj,			400),	// D4
 	XLIBDEF(VideodiscXObj,		kXObj,			200),	// D2
 	XLIBDEF(VolumeList,			kXObj,			300),	// D3
 	XLIBDEF(VoyagerXSoundXObj,	kXObj,			400),	// D4
