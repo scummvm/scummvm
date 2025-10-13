@@ -111,6 +111,7 @@
 #include "director/lingo/xlibs/prefpath.h"
 #include "director/lingo/xlibs/printomatic.h"
 #include "director/lingo/xlibs/processxobj.h"
+#include "director/lingo/xlibs/putcurs.h"
 #include "director/lingo/xlibs/qtmovie.h"
 #include "director/lingo/xlibs/qtcatmovieplayerxobj.h"
 #include "director/lingo/xlibs/qtvr.h"
@@ -315,6 +316,7 @@ static const struct XLibProto {
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
 	XLIBDEF(PrintOMaticXObj,	kXObj | kXtraObj,400),	// D4
 	XLIBDEF(ProcessXObj,		kXObj,			400),	// D4
+	XLIBDEF(PutcursXObj,		kXObj,			400),	// D4
 	XLIBDEF(QTCatMoviePlayerXObj,kXObj,			400),	// D4
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
