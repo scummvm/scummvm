@@ -60,8 +60,8 @@ LEGAL = """/* ScummVM - Graphic Adventure Engine
 TEMPLATE_H = (
     LEGAL
     + """
-#ifndef DIRECTOR_LINGO_{base_upper}_{slug_upper}_H
-#define DIRECTOR_LINGO_{base_upper}_{slug_upper}_H
+#ifndef DIRECTOR_LINGO_{base_upper}_{slug_upper_alpha}_{slug_upper}_H
+#define DIRECTOR_LINGO_{base_upper}_{slug_upper_alpha}_{slug_upper}_H
 
 namespace Director {{
 
@@ -99,7 +99,7 @@ TEMPLATE = (
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
-#include "director/lingo/{base}/{slug}.h"
+#include "director/lingo/{base}/{slug_alpha}/{slug}.h"
 
 /**************************************************
  *
@@ -190,8 +190,8 @@ XTRA_PROPS_H = """
 XCMD_TEMPLATE_H = (
     LEGAL
     + """
-#ifndef DIRECTOR_LINGO_XLIBS_{slug_upper}_H
-#define DIRECTOR_LINGO_XLIBS_{slug_upper}_H
+#ifndef DIRECTOR_LINGO_XLIBS_{slug_upper_alpha}_{slug_upper}_H
+#define DIRECTOR_LINGO_XLIBS_{slug_upper_alpha}_{slug_upper}_H
 
 namespace Director {{
 
@@ -222,7 +222,7 @@ XCMD_TEMPLATE = (
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
-#include "director/lingo/xlibs/{slug}.h"
+#include "director/lingo/xlibs/{slug_alpha}/{slug}.h"
 
 /**************************************************
  *
@@ -287,7 +287,8 @@ def read_uint32_be(data: bytes) -> int:
 
 def inject_makefile(slug: str, xcode_type: XCodeType) -> None:
     make_contents = open(MAKEFILE_PATH, "r").readlines()
-    storage_path = "lingo/xtras" if xcode_type == "Xtra" else "lingo/xlibs"
+    slug_alpha = slug[:1]
+    storage_path = f"lingo/xtras/{slug_alpha}" if xcode_type == "Xtra" else f"lingo/xlibs"
     expr = re.compile(f"^\t{storage_path}/([a-zA-Z0-9\\-]+).o( \\\\|)")
     for i in range(len(make_contents)):
         m = expr.match(make_contents[i])
@@ -313,7 +314,8 @@ def inject_makefile(slug: str, xcode_type: XCodeType) -> None:
 def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode_type: XCodeType) -> None:
     # write include statement for the object header
     lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
-    storage_path = "director/lingo/xtras" if xcode_type == "Xtra" else "director/lingo/xlibs"
+    slug_alpha = slug[:1]
+    storage_path = f"director/lingo/xtras/{slug_alpha}" if xcode_type == "Xtra" else f"director/lingo/xlibs"
     obj_type = "kXtraObj" if xcode_type == "Xtra" else "kXObj"
     expr = re.compile(f'^#include "{storage_path}/([a-zA-Z0-9\\-]+)\\.h"')
     in_xlibs = False
@@ -765,6 +767,7 @@ def generate_xobject_stubs(
     cpp_text = TEMPLATE.format(
         base="xlibs",
         slug=slug,
+        slug_alpha=slug[:1],
         name=name,
         filename=filename,
         xmethtable="\n".join(xmethtable),
@@ -803,6 +806,7 @@ def generate_xobject_stubs(
     header_text = TEMPLATE_H.format(
         base_upper="XLIBS",
         slug_upper=slug.upper(),
+        slug_upper_alpha=slug.upper()[:1],
         xobject_class=xobject_class,
         xobj_class=xobj_class,
         xtra_props_h="",
@@ -833,6 +837,7 @@ def generate_xcmd_stubs(
     methtype = "CBLTIN" if type == "XCMD" else "HBLTIN"
     cpp_text = XCMD_TEMPLATE.format(
         slug=slug,
+        slug_alpha=slug[:1],
         name=name,
         filename=filename,
         xobj_class=xobj_class,
@@ -858,6 +863,7 @@ def generate_xcmd_stubs(
 
     header_text = XCMD_TEMPLATE_H.format(
         slug_upper=slug.upper(),
+        slug_upper_alpha=slug.upper()[:1],
         xobj_class=xobj_class,
         methlist=TEMPLATE_HEADER_METH.format(methname=name),
     )
@@ -882,6 +888,7 @@ def generate_xtra_stubs(
     dry_run: bool = False,
 ) -> None:
     meths = []
+    slug_alpha=slug[:1]
     for e in msgtable:
         elem = e.split("--", 1)[0].strip()
         if not elem:
@@ -923,6 +930,7 @@ def generate_xtra_stubs(
     cpp_text = TEMPLATE.format(
         base="xtras",
         slug=slug,
+        slug_alpha=slug_alpha,
         name=name,
         filename=filename,
         xmethtable="\n".join(msgtable),
@@ -968,12 +976,13 @@ def generate_xtra_stubs(
         print(cpp_text)
         print()
     else:
-        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug}.cpp"), "w") as cpp:
+        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}/{slug}.cpp"), "w") as cpp:
             cpp.write(cpp_text)
 
     header_text = TEMPLATE_H.format(
         base_upper="XTRAS",
         slug_upper=slug.upper(),
+        slug_upper_alpha=slug.upper()[:1],
         xobject_class=xobject_class,
         xobj_class=xobj_class,
         xtra_props_h=XTRA_PROPS_H,
@@ -984,7 +993,7 @@ def generate_xtra_stubs(
         print(header_text)
         print()
     else:
-        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug}.h"), "w") as header:
+        with open(os.path.join(LINGO_XTRAS_PATH, f"{slug_alpha}/{slug}.h"), "w") as header:
             header.write(header_text)
 
     if not dry_run:
