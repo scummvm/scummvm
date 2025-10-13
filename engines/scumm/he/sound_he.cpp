@@ -229,7 +229,7 @@ bool SoundHE::isSoundInUse(int sound) const {
 void SoundHE::stopSound(int sound) {
 	int channel = -1;
 
-	if (_vm->_game.heversion == 60) {
+	if (_vm->_game.heversion < 70) {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
