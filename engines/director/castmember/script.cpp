@@ -43,6 +43,9 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		uint16 type = stream.readUint16BE();
 
 		switch (type) {
+		case 0:
+			_scriptType = kNoneScript;
+			break;
 		case 1:
 			_scriptType = kScoreScript;
 			break;
