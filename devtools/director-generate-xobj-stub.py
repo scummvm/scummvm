@@ -137,10 +137,10 @@ static BuiltinProto xlibBuiltins[] = {{
 void {xobj_class}::open(ObjectType type, const Common::Path &path) {{
     {xobject_class}::initMethods(xlibMethods);
     {xobject_class} *xobj = new {xobject_class}(type);
-    if (type == kXtraObj) {
+    if (type == kXtraObj) {{
         g_lingo->_openXtras.push_back(xlibName);
 		g_lingo->_openXtraObjects.push_back(xobj);
-	}
+	}}
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }}
