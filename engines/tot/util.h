@@ -84,6 +84,10 @@ inline bool isLanguageSpanish() {
 	return g_engine->_lang == Common::ES_ESP;
 };
 
+inline bool isDemo() {
+	return g_engine->_gameDescription->flags & ADGF_DEMO;
+};
+
 } // End of namespace Tot
 
 #endif

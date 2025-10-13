@@ -65,7 +65,6 @@ enum TotAction {
 class TotEngine : public Engine {
 
 private:
-	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
 	void handleEvent(Common::Event e);
@@ -192,6 +191,7 @@ public:
 	MouseManager *_mouse = nullptr;
 	ChronoManager *_chrono = nullptr;
 	Tot::TotEventManager *_events = nullptr;
+	const ADGameDescription *_gameDescription;
 
 	bool _showMouseGrid = false;
 	bool _showScreenGrid = false;

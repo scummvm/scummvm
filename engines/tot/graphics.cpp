@@ -37,19 +37,28 @@ GraphicsManager::GraphicsManager() {
 
 	// loads fonts
 	Common::File exeFile;
-	if (!exeFile.open(Common::Path("TOT.EXE"))) {
+	Common::String exeFilename = isDemo() ? "ANIMA.EXE" : "TOT.EXE";
+	if (!exeFile.open(Common::Path(exeFilename))) {
 		error("Could not open executable file!");
 	}
 
 	if (isLanguageSpanish()) {
-		exeFile.seek(FONT_LITT_OFFSET_ES);
+		if (isDemo()) {
+			exeFile.seek(FONT_LITT_OFFSET_DEMO);
+		} else {
+			exeFile.seek(FONT_LITT_OFFSET_ES);
+		}
 	} else {
 		exeFile.seek(FONT_LITT_OFFSET_EN);
 	}
 	_litt = new Graphics::BgiFont();
 	_litt->loadChr(exeFile);
 	if (isLanguageSpanish()) {
-		exeFile.seek(FONT_EURO_OFFSET_ES);
+		if (isDemo()) {
+			exeFile.seek(FONT_EURO_OFFSET_DEMO);
+		} else {
+			exeFile.seek(FONT_EURO_OFFSET_ES);
+		}
 	} else {
 		exeFile.seek(FONT_EURO_OFFSET_EN);
 	}

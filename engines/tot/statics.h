@@ -1189,6 +1189,9 @@ const int FONT_LITT_OFFSET_ES = 153584;
 const int FONT_EURO_OFFSET_ES = 159681;
 const int FONT_LITT_OFFSET_EN = 153010;
 const int FONT_EURO_OFFSET_EN = 159107;
+const int FONT_LITT_OFFSET_DEMO = 159073;
+const int FONT_EURO_OFFSET_DEMO = 165170;
+
 
 static const int32 menuOffsets_ES[8][2] = {
 	{0, 16004},

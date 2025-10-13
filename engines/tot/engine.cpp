@@ -5020,7 +5020,7 @@ static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, bool pressed) {
 }
 
 void TotEngine::copyProtection() {
-	if (!ConfMan.getBool("copy_protection")) {
+	if (!ConfMan.getBool("copy_protection") || isDemo()) {
 		return;
 	}
 	const char *message = isLanguageSpanish() ? hardcodedTexts_ES[12] : hardcodedTexts_EN[12];
