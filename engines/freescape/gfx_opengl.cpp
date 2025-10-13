@@ -264,7 +264,16 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glMultMatrixf(lookMatrix.getData());
 	glRotatef(rollAngle, 0.0f, 0.0f, 1.0f);
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
-	glTranslatef(_shakeOffset.x, _shakeOffset.y, 0);
+
+	// Apply a 2D shake effect on the projection matrix.
+	// This avoids moving the camera in the 3D world, which could cause clipping issues.
+	glMatrixMode(GL_PROJECTION);
+	GLfloat projMatrix[16];
+	glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
+	glLoadIdentity();
+	glTranslatef(_shakeOffset.x * 0.05f, _shakeOffset.y * 0.05f, 0.0f);
+	glMultMatrixf(projMatrix);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect &viewArea) {
