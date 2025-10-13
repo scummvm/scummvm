@@ -86,8 +86,8 @@ void PutcursXObj::m_set(int nargs) {
 		g_lingo->dropStack(nargs);
 		return;
 	}
-	int x = g_lingo->pop().asInt();
 	int y = g_lingo->pop().asInt();
+	int x = g_lingo->pop().asInt();
 	g_system->warpMouse(x, y);
 }
 
