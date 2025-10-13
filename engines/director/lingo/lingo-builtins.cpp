@@ -3929,8 +3929,10 @@ void LB::b_member(int nargs) {
 	}
 
 	if (res.member > g_lingo->getMembersNum(res.castLib)) {
-		g_lingo->lingoError("b_member: Cast member ID out of range");
-		return;
+		if (g_director->getVersion() < 600) {
+			g_lingo->lingoError("b_member: Cast member ID out of range");
+			return;
+		}
 	}
 	g_lingo->push(res);
 }
