@@ -77,7 +77,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "8a8b23c04fdc4ced8070a7bccd0177bb", 24467),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_CD,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 
