@@ -270,7 +270,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte c2 = (pair >> 4) & 0xf;
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = getCGAStipple(entry[(j / 8) % 4], c1, c2);
+				_stipples[i][j] = getCGAStipple(entry[(j / 4) % 4], c1, c2);
 		}
 	} else if (_renderMode == Common::kRenderC64) {
 		fillColorPairArray();
@@ -280,7 +280,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			byte c2 = (pair >> 4) & 0xf;
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = getC64Stipple(entry[(j / 8) % 4], c1, c2);
+				_stipples[i][j] = getC64Stipple(entry[(j / 4) % 4], c1, c2);
 		}
 	}
 

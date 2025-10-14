@@ -46,9 +46,6 @@ TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode rend
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
-	for (auto &it : _stippleTextureCache) {
-		delete (TinyGL3DTexture *)it._value;
-	}
 	TinyGL::destroyContext();
 	free(_verts);
 	free(_texCoord);
@@ -83,9 +80,6 @@ void TinyGLRenderer::init() {
 	tglDisable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	_stippleEnabled = false;
-	_lastColorSet0 = 0;
-	_lastColorSet1 = 0;
-	_stippleTexture = nullptr;
 }
 
 void TinyGLRenderer::setViewport(const Common::Rect &rect) {
@@ -362,16 +356,9 @@ void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 
 void TinyGLRenderer::setStippleData(byte *data) {
 	if (!data) {
-		_stippleTexture = nullptr;
-		assert(_stippleEnabled == false);
 		_variableStippleArray = nullptr;
 		return;
 	}
-	if (_stippleTextureCache.contains(uint64(data))) {
-
-	}
-	assert(_stippleTextureCache.size() <= 16);
-
 	_variableStippleArray = data;
 }
 
@@ -381,12 +368,20 @@ void TinyGLRenderer::useStipple(bool enabled) {
 	if (enabled) {
 		if (!_variableStippleArray)
 			_variableStippleArray = _defaultStippleArray;
+		tglEnable(TGL_POLYGON_STIPPLE);
+		tglEnable(TGL_TWO_COLOR_STIPPLE);
+		tglPolygonStipple(_variableStippleArray);
 	} else {
-		_stippleTexture = nullptr;
+		tglDisable(TGL_POLYGON_STIPPLE);
+		tglDisable(TGL_TWO_COLOR_STIPPLE);
+		_variableStippleArray = nullptr;
 	}
 }
 
 void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
+	if (_variableStippleArray && !_stippleEnabled)
+		return;
+
 	assert(vertices.size() >= 2);
 	const Math::Vector3d &v0 = vertices[0];
 
@@ -404,16 +399,6 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		return;
 	}
 
-	if (_stippleEnabled) {
-		if (_stippleTextureCache.contains(uint64(_variableStippleArray))) {
-			_stippleTexture = _stippleTextureCache[uint64(_variableStippleArray)];
-		} else {
-			_stippleTexture = new TinyGL3DTexture(_variableStippleArray, _lastColorSet0, _lastColorSet1);
-			_stippleTextureCache[uint64(_variableStippleArray)] = _stippleTexture;
-		}
-	} else if (_variableStippleArray)
-		return; // We are in the middle of a stipple rendering operation, so we should skip this face
-
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	uint vi = 0;
 	for (uint i = 1; i < vertices.size() - 1; i++) { // no underflow since vertices.size() > 2
@@ -426,64 +411,8 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	}
 	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
 
-	if (_stippleEnabled) {
-		tglClear(TGL_STENCIL_BUFFER_BIT);
-		tglEnable(TGL_STENCIL_TEST);
-		tglStencilFunc(TGL_ALWAYS, 1, 0xFF);        // Always pass stencil test
-		tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_REPLACE); // Replace stencil buffer where drawn
-		tglEnable(TGL_DEPTH_TEST);
-		tglDepthMask(TGL_TRUE);
-		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
-	}
-
 	tglDrawArrays(TGL_TRIANGLES, 0, vi + 3);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
-
-	if (_stippleEnabled) {
-		tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
-		tglStencilFunc(TGL_EQUAL, 1, 0xFF); // Only render where stencil value is 1
-		tglStencilOp(TGL_KEEP, TGL_KEEP, TGL_KEEP); // Don't change stencil buffer
-
-		tglMatrixMode(TGL_PROJECTION);
-		tglPushMatrix();
-
-		tglLoadIdentity();
-		tglOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0); // Orthographic projection
-
-		tglScalef(1, 1, 1);
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPushMatrix();
-		tglLoadIdentity();
-
-		tglEnable(TGL_TEXTURE_2D);
-		tglBindTexture(TGL_TEXTURE_2D, _stippleTexture->_id);
-		tglColor4f(1.f, 1.f, 1.f, 1.f);
-		tglDepthMask(TGL_FALSE);
-
-		tglBegin(TGL_QUADS);
-		tglTexCoord2f(0.0f, 0.0f);
-		tglVertex2f(0.0f, 0.0f);
-		tglTexCoord2f(1.0, 0.0f);
-		tglVertex2f(1.0, 0.0f);
-		tglTexCoord2f(1.0, 1.0);
-		tglVertex2f(1.0, 1.0);
-		tglTexCoord2f(0.0f, 1.0);
-		tglVertex2f(0.0f, 1.0);
-		tglEnd();
-
-		tglDepthMask(TGL_TRUE);
-		tglDisable(TGL_STENCIL_TEST);
-		tglDisable(TGL_TEXTURE_2D);
-		tglDisable(TGL_TEXTURE);
-		tglFlush();
-		tglBindTexture(TGL_TEXTURE_2D, 0);
-
-		tglMatrixMode(TGL_PROJECTION);
-		tglPopMatrix();
-
-		tglMatrixMode(TGL_MODELVIEW);
-		tglPopMatrix();
-	}
 }
 
 void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
@@ -516,6 +445,10 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	setStippleData(stipple);
 	useColor(r1, g1, b1);
+	if (r1 != r2 || g1 != g2 || b1 != b2) {
+		useStipple(true);
+		tglStippleColor(r2, g2, b2);
+	}
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	copyToVertexArray(0, position);
@@ -532,26 +465,7 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	tglDrawArrays(TGL_TRIANGLE_FAN, 0, triangleAmount + 2);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
-	if (r1 != r2 || g1 != g2 || b1 != b2) {
-		useStipple(true);
-		useColor(r2, g2, b2);
-
-		tglEnableClientState(TGL_VERTEX_ARRAY);
-		copyToVertexArray(0, position);
-
-		for (int i = 0; i <= triangleAmount; i++) {
-			copyToVertexArray(i + 1,
-			                  Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
-			                                 position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
-			                 );
-		}
-
-		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
-		tglDrawArrays(TGL_TRIANGLE_FAN, 0, triangleAmount + 2);
-		tglDisableClientState(TGL_VERTEX_ARRAY);
-
-		useStipple(false);
-	}
+	useStipple(false);
 
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
@@ -578,9 +492,11 @@ void TinyGLRenderer::polygonOffset(bool enabled) {
 }
 
 void TinyGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
-	_lastColorSet1 = _lastColorSet0;
-	_lastColorSet0 = _texturePixelFormat.RGBToColor(r, g, b);
-	tglColor4ub(r, g, b, 255);
+	if (_stippleEnabled) {
+		tglStippleColor(r, g, b);
+	} else {
+		tglColor4ub(r, g, b, 255);
+	}
 }
 
 void TinyGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
