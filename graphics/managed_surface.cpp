@@ -326,47 +326,60 @@ Graphics::ManagedSurface *ManagedSurface::rotoscale(const TransformStruct &trans
 	return target;
 }
 
-void ManagedSurface::simpleBlitFrom(const Surface &src, const Palette *srcPalette) {
-	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
+void ManagedSurface::simpleBlitFrom(const Surface &src,
+		byte flip, bool alpha, byte aMod,
+		const Palette *srcPalette) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), flip, alpha, aMod, srcPalette);
 }
 
-void ManagedSurface::simpleBlitFrom(const Surface &src, const Common::Point &destPos, const Palette *srcPalette) {
-	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos, srcPalette);
+void ManagedSurface::simpleBlitFrom(const Surface &src, const Common::Point &destPos,
+		byte flip, bool alpha, byte aMod,
+		const Palette *srcPalette) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos, flip, alpha, aMod, srcPalette);
 }
 
 void ManagedSurface::simpleBlitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, const Palette *srcPalette) {
-	simpleBlitFromInner(src, srcRect, destPos, srcPalette, false, 0);
+		const Common::Point &destPos,
+		byte flip, bool alpha, byte aMod,
+		const Palette *srcPalette) {
+	simpleBlitFromInner(src, srcRect, destPos, srcPalette, false, 0, flip, alpha, aMod);
 }
 
-void ManagedSurface::simpleBlitFrom(const ManagedSurface &src) {
-	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0));
+void ManagedSurface::simpleBlitFrom(const ManagedSurface &src,
+		byte flip, bool alpha, byte aMod) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), flip, alpha, aMod);
 }
 
-void ManagedSurface::simpleBlitFrom(const ManagedSurface &src, const Common::Point &destPos) {
-	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos);
+void ManagedSurface::simpleBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
+		byte flip, bool alpha, byte aMod) {
+	simpleBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos, flip, alpha, aMod);
 }
 
 void ManagedSurface::simpleBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos) {
+		const Common::Point &destPos,
+		byte flip, bool alpha, byte aMod) {
 	simpleBlitFromInner(src._innerSurface, srcRect, destPos, src._palette,
-		src._transparentColorSet, src._transparentColor);
+		src._transparentColorSet, src._transparentColor, flip, alpha, aMod);
 }
 
 void ManagedSurface::simpleBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos, const Palette *srcPalette,
-		bool transparentColorSet, uint transparentColor) {
+		bool transparentColorSet, uint transparentColor,
+		byte flip, bool alpha, byte aMod) {
+
+	if (aMod == 0)
+		return;
 
 	Common::Rect srcRectC = srcRect;
 	Common::Rect dstRectC = srcRect;
 
 	dstRectC.moveTo(destPos.x, destPos.y);
-	clip(srcRectC, dstRectC);
+	clip(srcRectC, dstRectC, src.w, src.h, flip);
 
 	const byte *srcPtr = (const byte *)src.getBasePtr(srcRectC.left, srcRectC.top);
 	byte *dstPtr = (byte *)getBasePtr(dstRectC.left, dstRectC.top);
 
-	if (format == src.format) {
+	if (format == src.format && !alpha && aMod == 0xff && flip == 0) {
 		if (transparentColorSet) {
 			keyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
 				format.bytesPerPixel, transparentColor);
@@ -381,70 +394,93 @@ void ManagedSurface::simpleBlitFromInner(const Surface &src, const Common::Rect 
 		uint32 map[256];
 		convertPaletteToMap(map, srcPalette->data(), srcPalette->size(), format);
 
-		if (transparentColorSet) {
-			crossKeyBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
-				format.bytesPerPixel, map, transparentColor);
+		if (alpha || aMod != 0xff || flip != 0) {
+			if (transparentColorSet) {
+				alphaKeyBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, map, transparentColor, flip, aMod);
+			} else {
+				alphaBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, map, flip, aMod);
+			}
 		} else {
-			crossBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
-				format.bytesPerPixel, map);
+			if (transparentColorSet) {
+				crossKeyBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format.bytesPerPixel, map, transparentColor);
+			} else {
+				crossBlitMap(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format.bytesPerPixel, map);
+			}
 		}
 	} else {
-		if (transparentColorSet) {
-			crossKeyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
-				format, src.format, transparentColor);
+		if (alpha || aMod != 0xff || flip != 0) {
+			if (transparentColorSet) {
+				alphaKeyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, src.format, transparentColor, flip, aMod);
+			} else {
+				alphaBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, src.format, flip, aMod);
+			}
 		} else {
-			crossBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
-				format, src.format);
+			if (transparentColorSet) {
+				crossKeyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, src.format, transparentColor);
+			} else {
+				crossBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+					format, src.format);
+			}
 		}
 	}
 
 	addDirtyRect(dstRectC);
 }
 
-void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Palette *srcPalette) {
-	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), srcPalette);
+void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, byte flip, bool alpha, byte aMod, const Palette *srcPalette) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), flip, alpha, aMod, srcPalette);
 }
 
-void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos, const Palette *srcPalette) {
-	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos, srcPalette);
+void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos, byte flip, bool alpha, byte aMod, const Palette *srcPalette) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos, flip, alpha, aMod, srcPalette);
 }
 
 void ManagedSurface::maskBlitFrom(const Surface &src, const Surface &mask, const Common::Rect &srcRect,
-		const Common::Point &destPos, const Palette *srcPalette) {
-	maskBlitFromInner(src, mask, srcRect, destPos, srcPalette);
+		const Common::Point &destPos, byte flip, bool alpha, byte aMod, const Palette *srcPalette) {
+	maskBlitFromInner(src, mask, srcRect, destPos, srcPalette, flip, alpha, aMod);
 }
 
-void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask) {
-	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0));
+void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, byte flip, bool alpha, byte aMod) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0), flip, alpha, aMod);
 }
 
-void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos) {
-	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos);
+void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos, byte flip, bool alpha, byte aMod) {
+	maskBlitFrom(src, mask, Common::Rect(0, 0, src.w, src.h), destPos, flip, alpha, aMod);
 }
 
 void ManagedSurface::maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask,
-		const Common::Rect &srcRect, const Common::Point &destPos) {
-	maskBlitFromInner(src._innerSurface, mask._innerSurface, srcRect, destPos, src._palette);
+		const Common::Rect &srcRect, const Common::Point &destPos, byte flip, bool alpha, byte aMod) {
+	maskBlitFromInner(src._innerSurface, mask._innerSurface, srcRect, destPos, src._palette, flip, alpha, aMod);
 }
 
 void ManagedSurface::maskBlitFromInner(const Surface &src, const Surface &mask,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		const Palette *srcPalette) {
+		const Palette *srcPalette, byte flip, bool alpha, byte aMod) {
 
 	if (mask.w != src.w || mask.h != src.h)
 		error("Surface::maskBlitFrom: mask dimensions do not match src");
+
+	if (aMod == 0)
+		return;
 
 	Common::Rect srcRectC = srcRect;
 	Common::Rect dstRectC = srcRect;
 
 	dstRectC.moveTo(destPos.x, destPos.y);
-	clip(srcRectC, dstRectC);
+	clip(srcRectC, dstRectC, src.w, src.h, flip);
 
 	const byte *srcPtr = (const byte *)src.getBasePtr(srcRectC.left, srcRectC.top);
 	const byte *maskPtr = (const byte *)mask.getBasePtr(srcRectC.left, srcRectC.top);
 	byte *dstPtr = (byte *)getBasePtr(dstRectC.left, dstRectC.top);
 
-	if (format == src.format) {
+	if (format == src.format && !alpha && aMod == 0xff && flip == 0) {
 		maskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
 			format.bytesPerPixel);
 	} else if (src.format.isCLUT8()) {
@@ -453,11 +489,21 @@ void ManagedSurface::maskBlitFromInner(const Surface &src, const Surface &mask,
 
 		uint32 map[256];
 		convertPaletteToMap(map, srcPalette->data(), srcPalette->size(), format);
-		crossMaskBlitMap(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
-			format.bytesPerPixel, map);
+		if (alpha || aMod != 0xff || flip != 0) {
+			alphaMaskBlitMap(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+				format, map, flip, aMod);
+		} else {
+			crossMaskBlitMap(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+				format.bytesPerPixel, map);
+		}
 	} else {
-		crossMaskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
-			format, src.format);
+		if (alpha || aMod != 0xff || flip != 0) {
+			alphaMaskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+				format, src.format, flip, aMod);
+		} else {
+			crossMaskBlit(dstPtr, srcPtr, maskPtr, pitch, src.pitch, mask.pitch, srcRectC.width(), srcRectC.height(),
+				format, src.format);
+		}
 	}
 
 	addDirtyRect(dstRectC);

@@ -90,14 +90,15 @@ protected:
 	 */
 	void simpleBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos, const Palette *srcPalette,
-		bool transparentColorSet, uint transparentColor);
+		bool transparentColorSet, uint transparentColor,
+		byte flip, bool alpha, byte aMod);
 
 	/**
 	 * Inner method for blitting with a transparent mask.
 	 */
 	void maskBlitFromInner(const Surface &src, const Surface &mask,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		const Palette *srcPalette);
+		const Palette *srcPalette, byte flip, bool alpha, byte aMod);
 
 	/**
 	 * Inner method for blitting.
@@ -329,66 +330,84 @@ public:
 	/**
 	 * Copy another surface into this one.
 	 */
-	void simpleBlitFrom(const Surface &src, const Palette *srcPalette = nullptr);
+	void simpleBlitFrom(const Surface &src,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
-	void simpleBlitFrom(const Surface &src, const Common::Point &destPos, const Palette *srcPalette = nullptr);
+	void simpleBlitFrom(const Surface &src, const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
 	void simpleBlitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos, const Palette *srcPalette = nullptr);
+		const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one.
 	 */
-	void simpleBlitFrom(const ManagedSurface &src);
+	void simpleBlitFrom(const ManagedSurface &src,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
-	void simpleBlitFrom(const ManagedSurface &src, const Common::Point &destPos);
+	void simpleBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
 	void simpleBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos);
+		const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one using a transparency mask.
 	 */
-	void maskBlitFrom(const Surface &src, const Surface &mask, const Palette *srcPalette = nullptr);
+	void maskBlitFrom(const Surface &src, const Surface &mask,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position using a transparency mask.
 	 */
-	void maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos, const Palette *srcPalette = nullptr);
+	void maskBlitFrom(const Surface &src, const Surface &mask, const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position using a transparency mask.
 	 */
 	void maskBlitFrom(const Surface &src, const Surface &mask, const Common::Rect &srcRect,
-		const Common::Point &destPos, const Palette *srcPalette = nullptr);
+		const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff,
+		const Palette *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one using a transparency mask.
 	 */
-	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask);
+	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one at a given destination position using a transparency mask.
 	 */
-	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos);
+	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask, const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one at a given destination position using a transparency mask.
 	 */
 	void maskBlitFrom(const ManagedSurface &src, const ManagedSurface &mask,
-		const Common::Rect &srcRect, const Common::Point &destPos);
+		const Common::Rect &srcRect, const Common::Point &destPos,
+		byte flip = FLIP_NONE, bool alpha = false, byte aMod = 0xff);
 
 	/**
 	 * Copy another surface into this one.
