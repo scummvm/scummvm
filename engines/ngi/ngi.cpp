@@ -245,7 +245,6 @@ Common::Error NGIEngine::run() {
 	initGraphics(800, 600, &format);
 
 	_backgroundSurface.create(800, 600, format);
-	_origFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	_globalMessageQueueList.reset(new GlobalMessageQueueList);
 	_behaviorManager.reset(new BehaviorManager);
