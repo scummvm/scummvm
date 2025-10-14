@@ -109,6 +109,9 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_trails = sprite._trails;
 
 	_cast = sprite._cast;
+
+	if (_matte)
+		delete _matte;
 	_matte = nullptr;
 
 	_thickness = sprite._thickness;
