@@ -325,8 +325,10 @@ void DirectsoundXtra::m_dsIsPlaying(int nargs) {
 	DirectsoundXtraObject *me = (DirectsoundXtraObject *)g_lingo->_globalvars[xlibName].u.obj;
 	int id = parseId(g_lingo->pop().asString());
 
-	if (id == -1)
+	if (id == -1) {
+		g_lingo->push(0);
 		return;
+	}
 
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 
