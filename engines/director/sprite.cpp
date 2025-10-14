@@ -90,8 +90,6 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 		return *this;
 	}
 
-	this->~Sprite();
-
 	_frame = sprite._frame;
 	_score = sprite._score;
 	_movie = sprite._movie;
