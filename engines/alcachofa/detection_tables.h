@@ -60,10 +60,21 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
+	// the spanish Steam variant
 	{
 		"aventuradecine",
 		"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
 		AD_ENTRY1s("Textos/Objetos.nkr", "93331e4cc8d2f8f8a0007bfb5140dff5", 16403),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
+	},
+	// the spanish CD variant
+	{
+		"aventuradecine",
+		"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
+		AD_ENTRY1s("Textos/Objetos.nkr", "8a8b23c04fdc4ced8070a7bccd0177bb", 24467),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
