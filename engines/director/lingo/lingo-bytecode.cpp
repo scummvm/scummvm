@@ -633,6 +633,10 @@ void LC::cb_theassign2() {
 		g_lingo->setTheEntity(entity->entity, id, kTEANOArgs, value);
 	} else {
 		warning("LC::cb_theassign2 Can't assign theEntity: (%s)", name.c_str());
+
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
 	}
 }
 
