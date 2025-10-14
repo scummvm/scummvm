@@ -45,9 +45,9 @@ void Blitter::blitNormal(Graphics::Surface *src, const Common::Rect &srcRect, Gr
     if (srect.isEmpty())
         return;
 
-    for(int y = srect.top; y < srect.bottom; y++) {
+    for(int y = 0; y < srect.height(); y++) {
         byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-        byte *psrc = (byte *)src->getBasePtr(srect.left, y);
+        byte *psrc = (byte *)src->getBasePtr(srect.left, srect.top + y);
         for(int x = srect.left; x < srect.right; x++) {
             if (*psrc != 0)
                 *pdst = *psrc;
