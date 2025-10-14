@@ -158,23 +158,58 @@ struct Unknown1 {
 	uint32 field_3;
 };
 
-struct ScriptS {
-	Common::Array<byte> data;
-	int32 codes1 = -1;
-	int32 codes2 = -1;
+struct ActEntry {
+	uint8 value = 0;
+	uint8 flags = 0;
+	uint8 t = 0;
+	int8 x = 0;
+	int8 y = 0;
 };
 
-struct SomeAction {
+struct ActTypeEntry {
+	uint8 t = 0;
+	Common::Array<ActEntry> entries;
+};
+
+struct Actions {
+	enum {
+		HAS_CONDITION = 1,
+		HAS_ACT2 = 2,
+		HAS_ACT4 = 4,
+		HAS_FUNCTION = 8,
+		HAS_ACT10 = 0x10
+	};
+
+	byte flags = 0;
+	byte num_act_10e = 0;
+
+	Common::Array<ActTypeEntry> act_2;
+
+	ActEntry act_4;
+
+	Common::Array<ActTypeEntry> act_10;
+
+	Common::Array<ActEntry> act_10end[3];
+
+	int32 conditionAddress = -1;
+	int32 functionAddress = -1;
+
+	void parse(const byte *data, size_t dataSize);
+};
+
+struct ObjectAction {
 	uint32 unk1;
-	int32 script1 = -1;
-	Common::Array< ScriptS > scriptS;
-	int32 script2 = -1;
+	int32 onCreateAddress = -1;
+	Common::Array< Actions > actions;
+	int32 onDeleteAddress = -1;
 };
 
 struct Object {
 	/* additional data */
 	int16 index = 0;
-	Sprite *spr = nullptr;
+	int32 sprId = -1;
+	int32 seqId = -1;
+	int32 frame = -1;
 
 	/* 80 - drawable
 	   40 -
@@ -198,10 +233,10 @@ struct Object {
 	Common::Array<byte> storage;
 };
 
-struct Dat61 {
+struct SubtitlePoint {
 	int16 x = 0;
 	int16 y = 0;
-	uint16 v = 0;
+	uint16 sprId = 0;
 };
 
 
@@ -263,8 +298,8 @@ private:
 
 	Common::Array< Common::Array<byte> > _soundSamples;
 
-	Common::Array< Common::Array<byte> > _dat60;
-	Common::Array< Common::Array<Dat61> > _dat61;
+	Common::Array< Actions > _subtitleActions;
+	Common::Array< Common::Array<SubtitlePoint> > _subtitlePoints;
 
 	uint32 _delayTime = 0;
 	uint32 _lastTimeStamp = 0;
@@ -322,15 +357,15 @@ private:
 	uint8 _preprocDataId = 0;
 
 	Common::Array<Unknown1> _thing2;
-	Common::Array<SomeAction> _someActsArr;
+	Common::Array<ObjectAction> _objectActions;
 
-	Pool<Object> _drawElements;
+	Pool<Object> _objects;
 
 	uint8 BYTE_00412200 = 0;
 
 	Object *DAT_00412204 = nullptr;
 
-	SomeAction *PTR_00417214 = nullptr;
+	ObjectAction *PTR_00417214 = nullptr;
 	Object *PTR_00417218 = nullptr;
 	Object *PTR_004121b4 = nullptr;
 
@@ -442,21 +477,22 @@ protected:
 
 	uint8 update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow);
 
-	int32 ProcessScript(bool p1, const byte *data, size_t dataSize, int32 code1 = -1, int32 code2 = -1);
+	int32 doActions(const Actions &a, bool absolute);
+	uint32 savedDoActions(const Actions &a);
 
 	void FUN_00404fcc(int32 id);
 
 	uint32 getU32(const void *ptr);
 
-	void preprocessData(int id, byte *data);
-	void preprocessDataB1(int id, byte *data);
-	int processData(int id, byte *data);
+	void preprocessData(int id, ActEntry *e);
+	void preprocessDataB1(int id, ActEntry *e);
+	int processData(ActEntry e, bool absolute);
 
-	void executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, SomeAction *act, int32 scriptAddr);
+	void executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, ObjectAction *act, int32 scriptAddr);
 
-	void FUN_00402a68(const byte *d);
+	void FUN_00402a68(ActEntry e);
 
-	void FUN_0040283c(int id, int pos, const byte *data);
+	void FUN_0040283c(ActEntry e, int32 x, int32 y);
 
 	void FUN_00402654(int mode, int id, int pos);
 
@@ -465,7 +501,7 @@ protected:
 	void removeObjectMarkDirty(Object *obj);
 	void removeObjectByIDMarkDirty(int32 id);
 
-	void FUN_004023d8(Object *obj);
+	void removeSubtitles(Object *obj);
 	void FUN_0040255c(Object *obj);
 
 	bool FUN_00402fb4();
@@ -487,7 +523,7 @@ protected:
 
 	bool FUN_0040738c(uint32 id, int32 x, int32 y, bool p);
 
-	void FUN_00409378(Sprite *spr, Object *obj, bool p);
+	void FUN_00409378(int32 sprId, Object *obj, bool p);
 
 	void FUN_004095a0(Object *obj);
 
@@ -498,16 +534,13 @@ protected:
 	void FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
 	bool FUN_00409600(Object *obj, Common::Point pos);
 
-	uint32 FUN_004070f8(const byte *data, size_t dataSize);
-
 	void setNeedReload() {
 		_needReload = true;
 		VM::_interrupt = true;
 	};
 
-	Object *FUN_00407588(int32 seq, int32 spr, int32 *pX, int32 y);
-
-	void FUN_00407a68(VM *vm, byte memtype, int32 offset, int32 val, int32 x, int32 y);
+	Object *addSubtitleImage(int32 seq, int32 spr, int32 *pX, int32 y);
+	void addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
 
 	void FUN_00407db8(uint8 p);
 	void FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
