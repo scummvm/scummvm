@@ -97,6 +97,7 @@ enum {
 	TGL_FRONT_FACE                  = 0x0B46,
 	TGL_POLYGON_MODE                = 0x0B40,
 
+	TGL_TWO_COLOR_STIPPLE			= 0x0BFF,
 	// Display Lists
 	TGL_COMPILE                     = 0x1300,
 	TGL_COMPILE_AND_EXECUTE         = 0x1301,
@@ -771,6 +772,8 @@ void tglPolygonMode(TGLenum face, TGLenum mode);
 void tglLineStipple(TGLint factor, TGLushort pattern);
 void tglPolygonStipple(const TGLubyte *mask);
 void tglGetPolygonStipple(TGLubyte *mask);
+
+void tglStippleColor(TGLubyte r, TGLubyte g, TGLubyte b);
 
 void tglLineWidth(TGLfloat width);
 void tglPointSize(TGLfloat size);

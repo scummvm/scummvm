@@ -176,6 +176,8 @@ private:
 		int stencilDppass;
 		bool polygonStippleEnabled;
 		byte polygonStipplePattern[128];
+		uint32 stippleColor;
+		bool two_color_stipple_enabled;
 		GLTexture *texture;
 		uint wrapS, wrapT;
 		GLTextureEnv textureEnv;

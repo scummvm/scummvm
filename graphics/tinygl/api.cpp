@@ -294,6 +294,17 @@ void tglPolygonStipple(const TGLubyte *mask) {
 	c->gl_add_op(p);
 }
 
+void tglStippleColor(TGLubyte r, TGLubyte g, TGLubyte b) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[7];
+
+	p[0].op = TinyGL::OP_StippleColor;
+	p[1].f = r;
+	p[2].f = g;
+	p[3].f = b;
+	c->gl_add_op(p);
+}
+
 void tglPolygonMode(TGLenum face, TGLenum mode) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[3];

@@ -458,6 +458,8 @@ struct GLContext {
 	// stipple
 	bool polygon_stipple_enabled;
 	byte polygon_stipple_pattern[128];
+	uint32 stippleColor;
+	bool two_color_stipple_enabled;
 
 	// blit test
 	Common::List<BlitImage *> _blitImages;

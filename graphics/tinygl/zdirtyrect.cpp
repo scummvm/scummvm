@@ -492,6 +492,8 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.fogColorR = c->fog_color.X;
 	state.fogColorG = c->fog_color.Y;
 	state.fogColorB = c->fog_color.Z;
+	state.stippleColor = c->stippleColor;
+	state.two_color_stipple_enabled = c->two_color_stipple_enabled;
 
 	memcpy(state.scissor, c->scissor, sizeof(state.scissor));
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
@@ -521,6 +523,8 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setFogEnabled(state.fogEnabled);
 	c->fb->setFogColor(state.fogColorR, state.fogColorG, state.fogColorB);
 	c->fb->setPolygonStipplePattern(state.polygonStipplePattern);
+	c->fb->setStippleColor(state.stippleColor >> 16, (state.stippleColor >> 8) & 0xff, state.stippleColor & 0xff);
+	c->fb->enableTwoColorStipple(state.two_color_stipple_enabled);
 	c->fb->enablePolygonStipple(state.polygonStippleEnabled);
 
 	c->scissor_test_enabled = state.enableScissor;

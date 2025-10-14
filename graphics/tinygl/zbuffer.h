@@ -379,7 +379,7 @@ private:
 	                     int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
 	                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
-	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool StippleEnabled, bool kDepthTestEnabled>
+	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
 	void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx);
 
 
@@ -652,6 +652,14 @@ public:
 		_polygonStipplePattern = stipple;
 	}
 
+	void enableTwoColorStipple(bool enable) {
+		_twoColorStippleEnabled = enable;
+	}
+
+	void setStippleColor(int r, int g, int b) {
+		_stippleColor = RGB_TO_PIXEL(r, g, b);
+	}
+
 	void setStencilTestFunc(int stencilFunc, byte stencilValue, byte stencilMask) {
 		_stencilTestFunc = stencilFunc;
 		_stencilRefVal = stencilValue;
@@ -838,6 +846,8 @@ private:
 	int _stencilDppass;
 
 	bool _polygonStippleEnabled;
+	bool _twoColorStippleEnabled;
+	uint32 _stippleColor;
 	const byte *_polygonStipplePattern;
 	int _depthFunc;
 	int _offsetStates;

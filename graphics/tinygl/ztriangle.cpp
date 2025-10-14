@@ -50,12 +50,16 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
                                     int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
                                     int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
                                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx) {
+	bool useStippleColor = false;
 	if (kEnableScissor && scissorPixel(x + _a, y)) {
 		goto end;
 	}
 
-	if (kStippleEnabled && !applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
-		goto end;
+	if (kStippleEnabled && applyStipplePattern(x + _a, y, _polygonStipplePattern)) {
+		if (_twoColorStippleEnabled)
+			useStippleColor = true;
+		else 
+			goto end;
 	}
 
 	if (kStencilEnabled) {
@@ -75,9 +79,17 @@ void FrameBuffer::putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
 		stencilOp(true, depthTestResult, ps + _a);
 	}
 	if (depthTestResult) {
-		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>
-		          (fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8),
-		          z, fog, fog_r, fog_g, fog_b);
+		if (useStippleColor) {
+			uint sb = (_stippleColor >> 16) & 0xFF;
+			uint sg = (_stippleColor >> 8) & 0xFF;
+			uint sr = _stippleColor & 0xFF;
+			writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>
+					(fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), sr, sg, sb, z, fog, fog_r, fog_g, fog_b);
+		} else {
+			writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>
+					(fbOffset + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8),
+					z, fog, fog_r, fog_g, fog_b);
+		}
 	}
 end:
 	z += dzdx;
