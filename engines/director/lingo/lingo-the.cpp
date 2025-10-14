@@ -67,6 +67,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheColorQD,			"colorQD",			false, 200, true },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false, 200, true },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 200, true },	// D2 f
+	{ kTheCpuHogTicks,		"cpuHogTicks",		false, 400, true },	//			D4 p, documented in D6
 	{ kTheCurrentSpriteNum,	"currentSpriteNum",	false, 600, true },	//					D6 p
 	{ kTheDate,				"date",				false, 300, true },	//		D3 f
 	{ kTheDeskTopRectList,	"deskTopRectList",	false, 500, true },	//				D5 p
@@ -592,6 +593,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheControlDown:
 		d = (movie->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		break;
+	case kTheCpuHogTicks:
+		// Mac-onlym specifies how often Director yeilds to other applications.
+		// Default is 20 ticks (1/3 second)
+		d = 20;
 		break;
 	case kTheCurrentSpriteNum:
 		d = (int)movie->_currentSpriteNum;
@@ -1237,6 +1243,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 
 		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
+		break;
+	case kTheCpuHogTicks:
+		// We do not need to do anything special to yield to other applications
+		// so, ignore this setting
 		break;
 	case kTheExitLock:
 		g_lingo->_exitLock = bool(d.asInt());
