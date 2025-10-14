@@ -210,6 +210,42 @@ bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 *map);
 
+bool alphaBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const byte flip, const byte aMod);
+
+bool alphaKeyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const uint32 key, const byte flip, const byte aMod);
+
+bool alphaMaskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const byte flip, const byte aMod);
+
+bool alphaBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const byte flip, const byte aMod);
+
+bool alphaKeyBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const uint32 key, const byte flip, const byte aMod);
+
+bool alphaMaskBlitMap(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const byte flip, const byte aMod);
+
 typedef void (*FastBlitFunc)(byte *, const byte *, const uint, const uint, const uint, const uint);
 
 #ifdef SCUMMVM_NEON

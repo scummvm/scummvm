@@ -350,7 +350,7 @@ bool ImageTests::testImageDecoder(Common::Path &filepath, Image::ImageDecoder &d
 
 	Graphics::Screen screen;
 	if (decoder.hasPalette()) {
-		screen.simpleBlitFrom(*pSurface, &decoder.getPalette());
+		screen.simpleBlitFrom(*pSurface, Graphics::FLIP_NONE, false, 255, &decoder.getPalette());
 	} else {
 		screen.simpleBlitFrom(*pSurface);
 	}
