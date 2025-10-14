@@ -240,9 +240,12 @@ Common::String NGIEngine::getSaveStateName(int slot) const {
 }
 
 Common::Error NGIEngine::run() {
-	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
-	initGraphics(800, 600, &format);
+	initGraphics(800, 600, nullptr);
+
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (format.isCLUT8())
+		return Common::kUnsupportedColorMode;
 
 	_backgroundSurface.create(800, 600, format);
 

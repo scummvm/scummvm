@@ -1180,17 +1180,21 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 }
 
 void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
-	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_nmi->_backgroundSurface.getBasePtr(x1, y);
+	// TODO: Let the backend handle this?
+	const Graphics::PixelFormat &format = g_nmi->_backgroundSurface.format;
 
+	for (int y = y1; y < y2; y++) {
 		for (int x = x1; x < x2; x++) {
-			uint32 color = *ptr;
-			color = (((color >> 24) & 0xff) * alpha / 0xff) << 24 |
-					(((color >> 16) & 0xff) * alpha / 0xff) << 16 |
-					(((color >>  8) & 0xff) * alpha / 0xff) <<  8 |
-					(color & 0xff);
-			*ptr = color;
-			ptr++;
+			uint32 color = g_nmi->_backgroundSurface.getPixel(x, y);
+
+			uint8 a, r, g, b;
+			format.colorToARGB(color, a, r, g, b);
+			r = (r * alpha) / 0xff;
+			g = (g * alpha) / 0xff;
+			b = (b * alpha) / 0xff;
+			color = format.ARGBToColor(a, r, g, b);
+
+			g_nmi->_backgroundSurface.setPixel(x, y, color);
 		}
 	}
 }
