@@ -206,6 +206,7 @@ bool SoundCastMember::hasField(int field) {
 	case kTheCuePointNames:		// D6
 	case kTheCuePointTimes:		// D6
 	case kTheCurrentTime:		// D6
+	case kTheLoop:
 	case kTheSampleRate:
 	case kTheSampleSize:
 		return true;
@@ -227,6 +228,9 @@ Datum SoundCastMember::getField(int field) {
 	case kTheChannelCount:
 		d = _audio->getChannelCount();
 		break;
+	case kTheLoop:
+		d = _looping ? 1 : 0;
+		break;
 	case kTheSampleRate:
 		d = _audio->getSampleRate();
 		break;
@@ -247,6 +251,10 @@ void SoundCastMember::setField(int field, const Datum &d) {
 	case kTheSampleSize:
 		warning("SoundCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
 		return;
+	case kTheLoop:
+		_looping = bool(d.asInt());
+		warning("STUB: SoundCastMember::setField(): Set looping to %d for cast %d", _looping, _castId);
+		break;
 	default:
 		break;
 	}
