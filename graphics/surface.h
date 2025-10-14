@@ -291,7 +291,7 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds) const;
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds, uint src_w = 0, uint src_h = 0, byte flip = FLIP_NONE) const;
 
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.

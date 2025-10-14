@@ -212,7 +212,7 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
-bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds, uint src_w, uint src_h, byte flip) const {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 		destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
@@ -236,6 +236,18 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
 	if (destBounds.left < 0) {
 		srcBounds.left += -destBounds.left;
 		destBounds.left = 0;
+	}
+
+	if (flip & FLIP_H) {
+		int tmp_w = srcBounds.width();
+		srcBounds.left = src_w - srcBounds.right;
+		srcBounds.right = srcBounds.left + tmp_w;
+	}
+
+	if (flip & FLIP_V) {
+		int tmp_h = srcBounds.height();
+		srcBounds.top = src_h - srcBounds.bottom;
+		srcBounds.bottom = srcBounds.top + tmp_h;
 	}
 
 	return true;
