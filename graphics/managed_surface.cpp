@@ -245,6 +245,20 @@ void ManagedSurface::copyFrom(const Surface &surf) {
 	}
 }
 
+uint32 ManagedSurface::convertTransparentColor(const ManagedSurface &surf, const PixelFormat &dstFmt) const {
+	if (surf.format == dstFmt) {
+		return surf._transparentColor;
+	} else if (surf.format.isCLUT8()) {
+		byte r, g, b;
+		surf._palette->get(surf._transparentColor, r, g, b);
+		return dstFmt.RGBToColor(r, g, b);
+	} else {
+		byte a, r, g, b;
+		surf.format.colorToARGB(surf._transparentColor, a, r, g, b);
+		return dstFmt.ARGBToColor(a, r, g, b);
+	}
+}
+
 void ManagedSurface::convertFrom(const ManagedSurface &surf, const PixelFormat &fmt) {
 	// Surface::copyFrom frees pixel pointer so let's free up ManagedSurface to be coherent
 	free();
@@ -258,7 +272,7 @@ void ManagedSurface::convertFrom(const ManagedSurface &surf, const PixelFormat &
 
 	// Copy miscellaneous properties
 	_transparentColorSet = surf._transparentColorSet;
-	_transparentColor = surf._transparentColor;
+	_transparentColor = convertTransparentColor(surf, fmt);
 	_palette = (fmt.isCLUT8() && surf._palette) ? new Palette(*surf._palette) : nullptr;
 }
 
@@ -280,6 +294,16 @@ void ManagedSurface::convertFrom(const Surface &surf, const PixelFormat &fmt) {
 		delete _palette;
 		_palette = nullptr;
 	}
+}
+
+void ManagedSurface::convertToInPlace(const PixelFormat &dstFormat) {
+	// Convert miscellaneous properties
+	_transparentColor = convertTransparentColor(*this, dstFormat);
+
+	if (_palette)
+		_innerSurface.convertToInPlace(dstFormat, _palette->data(), _palette->size());
+	else
+		_innerSurface.convertToInPlace(dstFormat);
 }
 
 Graphics::ManagedSurface *ManagedSurface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
