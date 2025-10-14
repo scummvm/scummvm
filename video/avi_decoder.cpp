@@ -206,7 +206,9 @@ bool AVIDecoder::parseNextChunk() {
 		_fileStream->skip(16);
 		break;
 	case ID_STRH:
-		handleStreamHeader(size);
+		// e.g. unsupported stream types or codecs will return false
+		if (!handleStreamHeader(size))
+			return false;
 		break;
 	case ID_HDRL: // Header list.. what's it doing here? Probably ok to ignore?
 	case ID_STRD: // Extra stream info, safe to ignore
@@ -233,7 +235,9 @@ bool AVIDecoder::parseNextChunk() {
 		readOldIndex(size);
 		break;
 	default:
-		error("Unknown tag \'%s\' found", tag2str(tag));
+		warning("Unknown tag \'%s\' found", tag2str(tag));
+		skipChunk(size);
+		break;
 	}
 
 	return true;
@@ -273,17 +277,19 @@ void AVIDecoder::handleList(uint32 listSize) {
 		break;
 	}
 
-	while ((_fileStream->pos() - curPos) < listSize)
-		parseNextChunk();
+	while ((_fileStream->pos() - curPos) < listSize && parseNextChunk())
+		;
 }
 
-void AVIDecoder::handleStreamHeader(uint32 size) {
+bool AVIDecoder::handleStreamHeader(uint32 size) {
 	AVIStreamHeader sHeader;
 	sHeader.size = size;
 	sHeader.streamType = _fileStream->readUint32BE();
 
-	if (sHeader.streamType == ID_MIDS)
-		error("Unhandled MIDI/Text stream");
+	if (sHeader.streamType == ID_MIDS) {
+		warning("Unhandled MIDI/Text stream");
+		return false;
+	}
 
 	if (sHeader.streamType == ID_TXTS)
 		warning("Unsupported Text stream detected");
@@ -303,8 +309,10 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 
 	_fileStream->skip(sHeader.size - 48); // Skip over the remainder of the chunk (frame)
 
-	if (_fileStream->readUint32BE() != ID_STRF)
-		error("Could not find STRF tag");
+	if (_fileStream->readUint32BE() != ID_STRF) {
+		warning("Could not find STRF tag");
+		return false;
+	}
 
 	uint32 strfSize = _fileStream->readUint32LE();
 	uint32 startPos = _fileStream->pos();
@@ -348,8 +356,10 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette, _videoCodecAccuracy);
 		if (track->isValid())
 			addTrack(track);
-		else
+		else {
 			delete track;
+			return false;
+		}
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
@@ -371,6 +381,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 
 	// Ensure that we're at the end of the chunk
 	_fileStream->seek(startPos + strfSize);
+	return true;
 }
 
 void AVIDecoder::addTrack(Track *track, bool isExternal) {
@@ -1060,7 +1071,8 @@ Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	Image::Codec *codec = Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
 									_bmInfo.height, _bmInfo.bitCount);
 
-	codec->setCodecAccuracy(_accuracy);
+	if (codec != nullptr)
+		codec->setCodecAccuracy(_accuracy);
 
 	return codec;
 }
