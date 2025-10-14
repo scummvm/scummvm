@@ -45,6 +45,7 @@ EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
 	_keyCode = Common::KEYCODE_INVALID;
 	_priorTimerTime = 0;
 	_action = kActionNone;
+	_interfaceOff = false;
 }
 
 EventsManager::~EventsManager() {
@@ -225,6 +226,9 @@ void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown
 		}
 		return;
 	}
+	
+	if (_interfaceOff)
+		return;
 
 	_action = action;
 

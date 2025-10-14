@@ -123,6 +123,7 @@ public:
 	Common::Array<JetFrame> _jetFrame;
 	Function _function;
 	int _roomFlag;
+	byte _palIntensity;
 	uint16 *_playField;
 	int _matrixSize;
 	int _playFieldWidth;

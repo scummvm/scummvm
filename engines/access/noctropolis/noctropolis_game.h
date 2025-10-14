@@ -41,6 +41,8 @@ public:
 	virtual int16 getScreenWidth() const override { return 640; }
 	virtual int16 getScreenHeight() const override { return 400; }
 
+	Player *_stil;
+
 protected:
 	void setupGame() override;
 	void initObjects() override;

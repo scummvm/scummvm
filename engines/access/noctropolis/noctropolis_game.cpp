@@ -32,7 +32,7 @@ namespace Noctropolis {
 
 
 NoctropolisEngine::NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-AccessEngine(syst, gameDesc), _invScript(nullptr)
+AccessEngine(syst, gameDesc), _invScript(nullptr), _stil(nullptr)
 {
 }
 
@@ -44,6 +44,7 @@ void NoctropolisEngine::initObjects() {
 	_room = new NoctropolisRoom(this);
 	_scripts = new NoctropolisScripts(this);
 	_invScript = new NoctropolisScripts(this);
+	_stil = new Player(this);
 }
 
 void NoctropolisEngine::setupGame() {

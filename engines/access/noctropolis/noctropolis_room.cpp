@@ -31,6 +31,37 @@ NoctropolisRoom::NoctropolisRoom(AccessEngine *vm): Room(vm) {
 
 void NoctropolisRoom::reloadRoom() {
 	loadRoom(_vm->_player->_roomNumber);
+	int subFileBase = 1;
+	int numSubFiles = 0;
+	int objBase = 0;
+	int fileNum = 0;
+	if (!(_roomFlag & 4)) {
+		if (_roomFlag) {
+			// Peter
+			numSubFiles = 5;
+			objBase = 0x64;
+			fileNum = 0xfe;
+		} else {
+			// Dark
+			numSubFiles = 5;
+			objBase = 0x69;
+			fileNum = 0xff;
+		}
+	} else {
+		// Top
+		numSubFiles = 1;
+		objBase = 0x73;
+		fileNum = 0xfc;
+	}
+	
+	_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
+	_vm->_player->loadAnimation(fileNum, 0);
+
+	for (int i = subFileBase; i > numSubFiles; i++) {
+		Resource *data = _vm->_files->loadFile(fileNum, i);
+		_vm->_objectsTable[objBase + i] = new SpriteResource(_vm, data);
+	}
+	
 	reloadRoom1();
 }
 
@@ -46,9 +77,6 @@ void NoctropolisRoom::reloadRoom1() {
 	_vm->_events->showCursor();
 	roomInit();
 	_vm->_player->load();
-
-	if (_vm->_player->_roomNumber != 47)
-		_vm->_player->calcManScale();
 
 	_vm->_events->hideCursor();
 	roomMenu();
@@ -120,9 +148,6 @@ void NoctropolisRoom::buildColumnXScroll(int playX, int screenX) {
 		pSrc += _playFieldWidth;
 	}
 }
-
-
-// TODO: Add more functions here.
 
 } // end namespace Noctropolis
 
