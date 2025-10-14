@@ -345,6 +345,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_firstTimeStruct = nullptr;
 	_pendingDeleteTimeEvent = nullptr;
 
+	_action = kActionNone;
+
 	_initMouse = 0;
 	_leftButtonDown = false;
 	_rightButtonDown = false;
