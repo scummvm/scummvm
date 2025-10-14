@@ -120,6 +120,8 @@ protected:
 		const Common::Rect &destRect, const int flipping, const uint colorMod,
 		const TSpriteBlendMode blend, const AlphaType alphaType);
 
+	uint32 convertTransparentColor(const ManagedSurface &surf, const PixelFormat &dstFmt) const;
+
 public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
@@ -994,9 +996,7 @@ public:
 	 *
 	 * @param dstFormat  The desired format.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat) {
-		_innerSurface.convertToInPlace(dstFormat);
-	}
+	void convertToInPlace(const PixelFormat &dstFormat);
 
 	/**
 	 * Convert the data to another pixel format.
