@@ -28,7 +28,9 @@ namespace Access {
 
 namespace Noctropolis {
 
-static const char *NOCT_FILES[] = {
+// The original game has 4 files after a bunch of nullptrs.
+// We add them separately to make this file a little smaller.
+static const char *NOCT_FILES_1[] = {
 	"DARK/MAP.AP", "DARK/SCENE01.AP", "DARK/SCENE02.AP", "DARK/SCENE03.AP",
 	"DARK/SCENE04.AP", "R05.AP", "R06.AP", "R07.AP",
 	"R08.AP", "R09.AP", "R10.AP", "DARK/SCENE11.AP",
@@ -54,7 +56,11 @@ static const char *NOCT_FILES[] = {
 	"R88.AP", "DARK/SCENE89.AP", "DARK/SCENE90.AP", "DARK/SCENE91.AP",
 	"DARK/SCENE92.AP", "DARK/SCENE93.AP", "DARK/SCENE94.AP", "DARK/SCENE95.AP",
 	"DARK/SCENE96.AP", "DARK/SCENE97.AP", "DARK/MUSIC.AP", "DARK/SOUND.AP",
-	nullptr,
+};
+
+static const char *NOCT_FILES_2[] = {
+	"DARK/TOP.AP", "DARK/STILETTO.AP",
+	"DARK/PLAYER.AP", "DARK/DARKSHR.AP",
 };
 
 static const byte ROOMDATA_02[] = {
@@ -1670,8 +1676,16 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	// Note: *don't* call the base class here. Noctropolis doesn't have data in access.dat.
 
 	// TODO: For non-EN variants we want to use something other than DARK/ as the path.
-	for (int i = 0; i < ARRAYSIZE(NOCT_FILES); i++) {
-		Common::Path filename = Common::Path(NOCT_FILES[i]).getLastComponent();
+	for (int i = 0; i < ARRAYSIZE(NOCT_FILES_1); i++) {
+		Common::Path filename = Common::Path(NOCT_FILES_1[i]).getLastComponent();
+		FILENAMES.push_back(filename);
+	}
+	// TODO: These last few files are maybe only ever be used from hard-coded points,
+	// so maybe we can just hard-code the names and avoid this ugliness?
+	while (FILENAMES.size() < 255 - ARRAYSIZE(NOCT_FILES_2))
+		FILENAMES.push_back(Common::Path());
+	for (int i = 0; i < ARRAYSIZE(NOCT_FILES_2); i++) {
+		Common::Path filename = Common::Path(NOCT_FILES_2[i]).getLastComponent();
 		FILENAMES.push_back(filename);
 	}
 
