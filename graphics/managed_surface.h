@@ -123,8 +123,8 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect& srcBounds, Common::Rect& destBounds) const {
-		return _innerSurface.clip(srcBounds, destBounds);
+	bool clip(Common::Rect& srcBounds, Common::Rect& destBounds, uint src_w = 0, uint src_h = 0, byte flip = FLIP_NONE) const {
+		return _innerSurface.clip(srcBounds, destBounds, src_w, src_h, flip);
 	}
 
 public:
