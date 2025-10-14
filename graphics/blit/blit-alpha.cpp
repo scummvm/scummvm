@@ -27,6 +27,282 @@ namespace Graphics {
 
 namespace {
 
+template<typename Color, int Size>
+static inline uint32 READ_PIXEL(const byte *src) {
+	if (Size == sizeof(Color)) {
+		return *(const Color *)src;
+	} else {
+		uint32 color;
+		uint8 *col = (uint8 *)&color;
+#ifdef SCUMM_BIG_ENDIAN
+		if (Size == 3)
+			col++;
+#endif
+		memcpy(col, src, Size);
+		return color;
+	}
+}
+
+template<typename Color, int Size>
+static inline void WRITE_PIXEL(byte *dst, const uint32 color) {
+	if (Size == sizeof(Color)) {
+		*(Color *)dst = color;
+	} else {
+		const uint8 *col = (const uint8 *)&color;
+#ifdef SCUMM_BIG_ENDIAN
+		if (Size == 3)
+			col++;
+#endif
+		memcpy(dst, col, Size);
+	}
+}
+
+template<typename SrcColor, int SrcSize, typename DstColor, int DstSize, bool hasKey, bool hasMask, bool hasMap>
+static inline void alphaBlitLogic(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
+						const PixelFormat &srcFmt, const PixelFormat &dstFmt, const uint32 *map,
+						const int srcDelta, const int dstDelta, const int maskDelta,
+						const int srcInc, const int dstInc, const int maskInc,
+						const uint32 key, const byte flip, const byte aMod) {
+	const uint32 alphaMask = srcFmt.ARGBToColor(255, 0, 0, 0);
+	const bool convert = hasMap ? false : ((SrcSize != DstSize) ? true : srcFmt == dstFmt);
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			const uint32 srcColor = hasMap ? map[*src]
+				: READ_PIXEL<SrcColor, SrcSize>(src);
+
+			const bool isOpaque = hasMask ? (*mask == 0xff)
+				: (hasKey ? (READ_PIXEL<SrcColor, SrcSize>(src) != key)
+				: !alphaMask || ((srcColor & alphaMask) == alphaMask));
+			const bool isTransparent = hasMask ? (*mask == 0x00)
+				: (hasKey ? (READ_PIXEL<SrcColor, SrcSize>(src) == key)
+				: alphaMask && ((srcColor & alphaMask) == 0));
+
+			if (isOpaque && aMod == 0xff) {
+				if (convert) {
+					byte sR, sG, sB;
+					srcFmt.colorToRGB(srcColor, sR, sG, sB);
+					WRITE_PIXEL<DstColor, DstSize>(dst, dstFmt.RGBToColor(sR, sG, sB));
+				} else {
+					WRITE_PIXEL<DstColor, DstSize>(dst, srcColor);
+				}
+			} else if (!isTransparent) {
+				// TODO: Optimise for matching formats?
+				const uint32 dstColor = READ_PIXEL<DstColor, DstSize>(dst);
+
+				byte sA, sR, sG, sB;
+				srcFmt.colorToARGB(srcColor, sA, sR, sG, sB);
+
+				byte dR, dG, dB;
+				dstFmt.colorToRGB(dstColor, dR, dG, dB);
+
+				if (hasKey)
+					sA = aMod;
+				else if (hasMask)
+					sA = ((*mask * aMod) >> 8);
+				else
+					sA = ((sA * aMod) >> 8);
+
+				dR = (dR * (255-sA) + sR * sA) >> 8;
+				dG = (dG * (255-sA) + sG * sA) >> 8;
+				dB = (dB * (255-sA) + sB * sA) >> 8;
+
+				const uint32 outColor = dstFmt.RGBToColor(dR, dG, dB);
+				WRITE_PIXEL<DstColor, DstSize>(dst, outColor);
+			}
+
+			src += srcInc;
+			dst += dstInc;
+			if (hasMask)
+				mask += maskInc;
+		}
+
+		src += srcDelta;
+		dst += dstDelta;
+		if (hasMask)
+			mask += maskDelta;
+	}
+}
+
+template<bool hasKey, bool hasMask>
+static inline bool alphaBlitHelper(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
+                         const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+                         const uint srcPitch, const uint dstPitch, const uint maskPitch,
+                         const uint32 key, const byte flip, const byte aMod) {
+	const bool hasMap = false;
+	const bool flipx = flip & FLIP_H;
+	const bool flipy = flip & FLIP_V;
+
+	// Faster, but larger, to provide optimized handling for each case.
+	      int dstDelta = (dstPitch - w * dstFmt.bytesPerPixel);
+	const int srcDelta = (srcPitch - w * srcFmt.bytesPerPixel);
+	const int maskDelta = hasMask ? (maskPitch - w) : 0;
+
+	const int dstInc = flipx ? -dstFmt.bytesPerPixel : dstFmt.bytesPerPixel;
+	const int srcInc = srcFmt.bytesPerPixel;
+	const int maskInc = 1;
+
+	if (flipx)
+		dst += (w - 1) * dstFmt.bytesPerPixel;
+
+	if (flipy)
+		dst += (h - 1) * dstPitch;
+
+	if (flipy && flipx)
+		dstDelta = -dstDelta;
+	else if (flipy)
+		dstDelta = -((dstPitch * 2) - dstDelta);
+	else if (flipx)
+		dstDelta =   (dstPitch * 2) - dstDelta;
+
+	if (aMod == 0)
+		return true;
+
+	// TODO: optimized cases for dstDelta of 0
+	if (dstFmt.bytesPerPixel == 2) {
+		if (srcFmt.bytesPerPixel == 2) {
+			alphaBlitLogic<uint16, 2, uint16, 2, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		} else if (srcFmt.bytesPerPixel == 3) {
+			alphaBlitLogic<uint8,  3, uint16, 2, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		} else {
+			alphaBlitLogic<uint32, 4, uint16, 2, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		}
+	} else if (dstFmt.bytesPerPixel == 4) {
+		if (srcFmt.bytesPerPixel == 2) {
+			alphaBlitLogic<uint16, 2, uint32, 4, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		} else if (srcFmt.bytesPerPixel == 3) {
+			alphaBlitLogic<uint8,  3, uint32, 4, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		} else {
+			alphaBlitLogic<uint32, 4, uint32, 4, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, nullptr, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+		}
+	} else {
+		return false;
+	}
+	return true;
+}
+
+template<bool hasKey, bool hasMask>
+static inline bool alphaBlitMapHelper(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
+                         const PixelFormat &dstFmt, const uint32 *map,
+                         const uint srcPitch, const uint dstPitch, const uint maskPitch,
+                         const uint32 key, const byte flip, const byte aMod) {
+	const Graphics::PixelFormat &srcFmt = dstFmt;
+	const bool hasMap = true;
+	const bool flipx = flip & FLIP_H;
+	const bool flipy = flip & FLIP_V;
+
+	// Faster, but larger, to provide optimized handling for each case.
+	      int dstDelta = (dstPitch - w * dstFmt.bytesPerPixel);
+	const int srcDelta = (srcPitch - w);
+	const int maskDelta = hasMask ? (maskPitch - w) : 0;
+
+	const int dstInc = flipx ? -dstFmt.bytesPerPixel : dstFmt.bytesPerPixel;
+	const int srcInc = 1;
+	const int maskInc = 1;
+
+	if (flipx)
+		dst += (w - 1) * dstFmt.bytesPerPixel;
+
+	if (flipy)
+		dst += (h - 1) * dstPitch;
+
+	if (flipy && flipx)
+		dstDelta = -dstDelta;
+	else if (flipy)
+		dstDelta = -((dstPitch * 2) - dstDelta);
+	else if (flipx)
+		dstDelta =   (dstPitch * 2) - dstDelta;
+
+	// TODO: optimized cases for dstDelta of 0
+	if (dstFmt.bytesPerPixel == 2) {
+		alphaBlitLogic<uint8,  1, uint16, 2, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, map, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+	} else if (dstFmt.bytesPerPixel == 4) {
+		alphaBlitLogic<uint8,  1, uint32, 4, hasKey, hasMask, hasMap>(dst, src, mask, w, h, srcFmt, dstFmt, map, srcDelta, dstDelta, maskDelta, srcInc, dstInc, maskInc, key, flip, aMod);
+	} else {
+		return false;
+	}
+	return true;
+}
+
+} // End of anonymous namespace
+
+bool alphaBlit(byte *dst, const byte *src,
+				const uint dstPitch, const uint srcPitch,
+				const uint w, const uint h,
+				const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+				const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
+			|| (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitHelper<false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcPitch, dstPitch, 0, 0, flip, aMod);
+}
+
+bool alphaKeyBlit(byte *dst, const byte *src,
+				const uint dstPitch, const uint srcPitch,
+				const uint w, const uint h,
+				const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+				const uint32 key, const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
+			|| (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitHelper<true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcPitch, dstPitch, 0, key, flip, aMod);
+}
+
+bool alphaMaskBlit(byte *dst, const byte *src, const byte *mask,
+				const uint dstPitch, const uint srcPitch, const uint maskPitch,
+				const uint w, const uint h,
+				const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+				const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
+			|| (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitHelper<false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcPitch, dstPitch, maskPitch, 0, flip, aMod);
+}
+
+bool alphaBlitMap(byte *dst, const byte *src,
+			        const uint dstPitch, const uint srcPitch,
+			        const uint w, const uint h,
+			        const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			        const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((dstFmt.bytesPerPixel == 1) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitMapHelper<false, false>(dst, src, nullptr, w, h, dstFmt, map, srcPitch, dstPitch, 0, 0, flip, aMod);
+}
+
+bool alphaKeyBlitMap(byte *dst, const byte *src,
+			        const uint dstPitch, const uint srcPitch,
+			        const uint w, const uint h,
+			        const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			        const uint32 key, const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((dstFmt.bytesPerPixel == 1) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitMapHelper<true, false>(dst, src, nullptr, w, h, dstFmt, map, srcPitch, dstPitch, 0, key, flip, aMod);
+}
+
+bool alphaMaskBlitMap(byte *dst, const byte *src, const byte *mask,
+			        const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			        const uint w, const uint h,
+			        const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			        const byte flip, const byte aMod) {
+	// Error out if conversion is impossible
+	if ((dstFmt.bytesPerPixel == 1) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	return alphaBlitMapHelper<false, true>(dst, src, mask, w, h, dstFmt, map, srcPitch, dstPitch, maskPitch, 0, flip, aMod);
+}
+
+namespace {
+
 template<typename Size, bool overwriteAlpha>
 inline bool applyColorKeyLogic(byte *dst, const byte *src, const uint w, const uint h,
 							   const uint srcDelta, const uint dstDelta,

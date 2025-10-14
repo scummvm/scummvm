@@ -1245,7 +1245,7 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertScrImage(Common::Seekab
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	const Graphics::Surface *decoded = decoder.getSurface();
 	surface->create(320, 200, _gfx->_texturePixelFormat);
-	surface->simpleBlitFrom(*decoded, Common::Point((320 - decoded->w) / 2, (200 - decoded->h) / 2), &decoder.getPalette());
+	surface->simpleBlitFrom(*decoded, Common::Point((320 - decoded->w) / 2, (200 - decoded->h) / 2), Graphics::FLIP_NONE, false, 255, &decoder.getPalette());
 	return surface;
 }
 
