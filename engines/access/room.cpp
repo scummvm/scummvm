@@ -38,6 +38,7 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_tile = nullptr;
 	_conFlag = false;
 	_selectCommand = -1;
+	_palIntensity = 0;
 
 	for (int i = 0; i < 10; i++) {
 		_rMouse[i][0] = vm->_res->getRMouse(i, 0);
@@ -302,6 +303,7 @@ void Room::loadRoomData(const byte *roomData) {
 	RoomInfo roomInfo(roomData, _vm->getGameID(), _vm->isCD(), _vm->isDemo());
 
 	_roomFlag = roomInfo._roomFlag;
+	_palIntensity = roomInfo._palIntensity;
 
 	// TODO: If roomFlag & 2 and noctropolis, load pal files.
 	// (see LoadRoom in noctropolis.)

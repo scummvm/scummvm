@@ -27,6 +27,7 @@
 #include "common/serializer.h"
 #include "access/asurface.h"
 #include "access/data.h"
+#include "access/animation.h"
 
 namespace Access {
 
@@ -78,9 +79,11 @@ protected:
 	bool isMMHover() const;
 	void jetpack();
 
+	void loadPalResource(Resource *pal);
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
+	AnimationResource *_playerAnimation;
 	// Fields in original Player structure
 	byte *_manPal1;
 	int *_walkOffRight;
@@ -125,8 +128,10 @@ public:
 	virtual void load();
 
 	void loadTexPalette();
+	void loadNoctPalette(int fileNum, int subFile);
 
 	void loadSprites(const Common::Path &name);
+	void loadAnimation(int fileNum, int subFile);
 
 	void freeSprites();
 

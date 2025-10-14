@@ -229,7 +229,7 @@ void Animation::anim11() {
 	setFrame(frame);
 	_countdownTicks += frame->_frameDelay;
 	setFrame1(frame, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
- }
+}
 
 void Animation::anim12() {
 }

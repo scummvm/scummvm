@@ -24,6 +24,7 @@
 #include "access/resources.h"
 #include "access/scripts.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_game.h"
 
 namespace Access {
 
@@ -896,7 +897,7 @@ void Scripts::cmdDoTravel() {
 void Scripts::cmdDoTravel_Noct() {
 	_vm->_events->setCursor(CURSOR_ARROW);
 	_vm->_player->_playerOff = true;
-	_vm->_stilOff = true;
+	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = true;
 	cmdRetPos();
 	error("TODO: Finish Noct style cmdTravel");
 }
@@ -1424,12 +1425,12 @@ void Scripts::cmdStilWalkCheck() {
 
 void Scripts::cmdStilOff() {
 	debugCN(1, kDebugScripts, "cmdStilOff()");
-	_vm->_stilOff = true;
+	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = true;
 }
 
 void Scripts::cmdStilOn() {
 	debugCN(1, kDebugScripts, "cmdStilOn()");
-	_vm->_stilOff = false;
+	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = false;
 }
 
 void Scripts::cmdReturnExit() {
@@ -1442,6 +1443,7 @@ void Scripts::cmdReturnExit() {
 
 void Scripts::cmdSetStilCoords() {
     error("TODO: Implement Scripts::cmdSetStilCoords");
+    // ((Noctropolis::NoctropolisEngine *)_vm)->_stil->
 }
 
 void Scripts::cmdSetPlayerDir() {
@@ -1451,7 +1453,7 @@ void Scripts::cmdSetPlayerDir() {
 
 void Scripts::cmdSetStilDir() {
 	debugCN(1, kDebugScripts, "cmdSetStilDir()");
-	_vm->_stilDir = _data->readByte();
+	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerDirection = (Direction)_data->readByte();
 }
 
 void Scripts::cmdStilScale() {

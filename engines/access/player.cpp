@@ -46,6 +46,7 @@ Player *Player::init(AccessEngine *vm) {
 Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites = nullptr;
 	_playerSprites1 = nullptr;
+	_playerAnimation = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
 	_rawTempL = 0;
@@ -139,17 +140,32 @@ void Player::load() {
 	}
 }
 
-void Player::loadTexPalette() {
-	Resource *texPal = _vm->_files->loadRawFile("TEXPAL.COL");
-	int size = texPal->_size;
+void Player::loadPalResource(Resource *pal) {
+	int size = pal->_size;
 	assert(size == 768);
 	_manPal1 = new byte[size];
-	memcpy(_manPal1, texPal->data(), size);
+	memcpy(_manPal1, pal->data(), size);
+}
+
+void Player::loadTexPalette() {
+	Resource *pal = _vm->_files->loadRawFile("TEXPAL.COL");
+	loadPalResource(pal);
+	delete pal;
+}
+
+void Player::loadNoctPalette(int fileNum, int subFile) {
+	Resource *pal = _vm->_files->loadFile(fileNum, subFile);
+	loadPalResource(pal);
+	delete pal;
+}
+
+void Player::loadAnimation(int fileNum, int subFile) {
+	Resource *data = _vm->_files->loadFile(fileNum, subFile);
+	_playerAnimation = new AnimationResource(_vm, data);
+	delete data;
 }
 
 void Player::loadSprites(const Common::Path &name) {
-	freeSprites();
-
 	Resource *data = _vm->_files->loadRawFile(name);
 
 #if 0
