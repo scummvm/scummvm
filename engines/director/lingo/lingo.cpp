@@ -621,6 +621,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 
 bool Lingo::execute(int targetFrame) {
 	uint localCounter = 0;
+	uint lastUpdate = 0;
 
 	while (!_abort && !_freezeState && !_playDone && _state->script && (*_state->script)[_state->pc] != STOP) {
 		if (targetFrame != -1 && (int)_state->callstack.size() == targetFrame)
@@ -653,7 +654,10 @@ bool Lingo::execute(int targetFrame) {
 			Score *score = movie->getScore();
 			score->updateWidgets(true);
 
-			g_system->updateScreen();
+			if (g_system->getMillis() - lastUpdate > 10) {
+				lastUpdate = g_system->getMillis();
+				g_system->updateScreen();
+			}
 		}
 
 		uint current = _state->pc;
