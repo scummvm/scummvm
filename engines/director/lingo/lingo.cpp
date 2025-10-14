@@ -654,7 +654,7 @@ bool Lingo::execute(int targetFrame) {
 			Score *score = movie->getScore();
 			score->updateWidgets(true);
 
-			if (g_system->getMillis() - lastUpdate > 10) {
+			if (g_system->getMillis() - lastUpdate > 20) {
 				lastUpdate = g_system->getMillis();
 				g_system->updateScreen();
 			}
