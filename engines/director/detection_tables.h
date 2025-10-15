@@ -891,6 +891,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "princerave",			"Prince: Rave Un2 the Joy Fantastic" },
 	{ "relaxation",			"Solitudes: Natural Relaxation" },
 	{ "relaxplayer",		"Solitudes: Natural Relaxation Audio Player" },
+	{ "rednex",				"Inbred with Rednex" },
 	{ "royksoppam",			"Röyksopp: Melody A.M." },
 	{ "sarahsurfacing",		"Sarah McLachlan: Surfacing" },
 	{ "smashchillin",		"Smash Hits: Chillin' Out Summer 2001" },
@@ -1609,6 +1610,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "encartaatlas2000",   "Microsoft Encarta Interactive World Atlas 2000" },
 	{ "exoticjapan",		"Exotic Japan: A Guide to Japanese Culture and Language" },
 	{ "famdoc3",			"The Family Doctor, 3rd Edition" },
+	{ "encyclopediasoccer", "Encyclopedia of Soccer"},
 	{ "macworldexpo92",		"Macworld Expo CD Boston 1992" },
 	{ "manhole",			"The Manhole" },
 	{ "mazebrew",			"MazeBrew" },
@@ -2146,6 +2148,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "StartUp",	  "4be24cb9ca426e9ae318163f75ae55ee", 51057, 201),
 	MACDEMO2("msword", "v5 Demo", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 204030,
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
+
+	// MacFormat #40
+	WINDEMO1("rednex", "Demo", "REDNEX.EXE", "t:e1d181303fd8c2aed5cd1d69b0c985e7", 696877, 404),
+	WINDEMO1("encyclopediasoccer", "Demo", "SOCCER.EXE", "t:d942e4d11e7d0a6d4da7659def16d179", 690039, 404),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "r:3eb3598b7f6bb09de4dd31aca3683d8f", 370898, 200),
