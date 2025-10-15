@@ -262,6 +262,18 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 		path += ".txt";
 	}
 
+	// We pretend that drive E:\ is a read-only CD-ROM
+	// It helps with CD checks in many games
+	if (option.equalsIgnoreCase("write") || option.equalsIgnoreCase("append")) {
+		if (origpath.hasPrefixIgnoreCase("E:\\"))
+			return kErrorIO;
+	}
+
+	// In general, we assume that there are no drives beyond disk E:
+	if (origpath.size() >= 2 && origpath[1] == ':' && (toupper(origpath[0]) > 'E')) {
+		return kErrorIO;
+	}
+
 	// Enforce target to the created files so they do not mix up
 	Common::String filenameOrig = lastPathComponent(path, dirSeparator);
 
