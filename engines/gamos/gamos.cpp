@@ -950,6 +950,8 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	_needReload = false;
 	VM::_interrupt = false;
 
+	RawKeyCode = keyCode;
+
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
 
 	if ( FUN_00402bc4() ) {
@@ -1414,9 +1416,10 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 	} else {
 		Unknown1 &unk1 = _thing2[ oid ];
 		uint8 index = rndRange16( unk1.field_1[0] );
+		oid = unk1.field_1[ index + 1 ];
 		if (!unk1.field_2.empty()) {
 			byte id1 = e.t;
-			e.t = unk1.field_2[ unk1.field_1[ index + 1 ] ] >> 4;
+			e.t = unk1.field_2[ oid ] >> 4;
 			preprocessData(8 + e.t, &e);
 		}
 	}
@@ -3100,8 +3103,8 @@ byte GamosEngine::FUN_00407f70(uint8 p) {
 byte GamosEngine::FUN_004081b8(uint8 cv, uint8 sv) {
 	uint8 ret = 0;
 
-	for (int32 y = 0; y < _pathBottom; y++) {
-		for (int32 x = 0; x < _pathRight; x++) {
+	for (int32 y = 0; y < _statesHeight; y++) {
+		for (int32 x = 0; x < _statesWidth; x++) {
 			uint8 &rval = _pathMap.at(x, y);
 			if ( rval == 0) {
 				if ( (x > 0 && _pathMap.at(x - 1, y) == cv) ||
