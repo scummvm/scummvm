@@ -28,6 +28,7 @@
 #include "image/jpeg.h"
 #include "image/pict.h"
 #include "image/png.h"
+#include "video/qt_data.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -577,8 +578,9 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 	}
 
 	if (!colorFound) {
-		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
+		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image cast %d, name %s", _castId, _name.c_str());
 	} else {
+		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): Will create matte for cast %d, name %s", _castId, _name.c_str());
 		if (_matte) {
 			_matte->free();
 			delete _matte;
@@ -618,6 +620,17 @@ Graphics::Surface *BitmapCastMember::getMatte(const Common::Rect &bbox) {
 	// Lazy loading of mattes
 	if (!_matte && !_noMatte) {
 		createMatte(bbox);
+
+		if (ConfMan.getBool("dump_scripts") && _matte) {
+			Common::String prepend = _cast->getMacName();
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d-matte.png", encodePathForDump(prepend).c_str(), tag2str(_tag), _castId);
+			Common::DumpFile bitmapFile;
+
+			bitmapFile.open(Common::Path(filename), true);
+			Image::writePNG(bitmapFile, *_matte, Video::quickTimeDefaultPalette256);
+
+			bitmapFile.close();
+		}
 	}
 
 	// check for the scale matte
