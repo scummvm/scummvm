@@ -293,7 +293,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, BitmapCastMember &
 	_bitsPerPixel = source._bitsPerPixel;
 
 	_tag = source._tag;
-	_noMatte = source._noMatte;
+	_matte = nullptr;
+	_noMatte = false;
 	_external = source._external;
 
 	_version = source._version;
@@ -545,42 +546,46 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 	Graphics::Surface tmp;
 	tmp.create(bbox.width(), bbox.height(), g_director->_pixelformat);
 
-	copyStretchImg(
-		_ditheredImg ? _ditheredImg : &_picture->_surface,
-		&tmp,
-		_initialRect,
-		bbox
-	);
+	copyStretchImg(&_picture->_surface, &tmp, _initialRect, bbox);
 
 	_noMatte = true;
 
 	// Searching white color in the corners
 	uint32 whiteColor = 0;
 	bool colorFound = false;
+	const byte *palette = g_director->getPalette();
 
-	if (g_director->_pixelformat.bytesPerPixel == 1) {
+	if (_picture->getPaletteCount() > 0) {
+		palette = _picture->_palette;
+	}
+
+	if (_picture->_surface.format.isCLUT8()) {
 		for (int y = 0; y < tmp.h; y++) {
 			for (int x = 0; x < tmp.w; x++) {
 				byte color = *(byte *)tmp.getBasePtr(x, y);
 
-				if (g_director->getPalette()[color * 3 + 0] == 0xff &&
-						g_director->getPalette()[color * 3 + 1] == 0xff &&
-						g_director->getPalette()[color * 3 + 2] == 0xff) {
+				if (palette[color * 3 + 0] == 0xff &&
+						palette[color * 3 + 1] == 0xff &&
+						palette[color * 3 + 2] == 0xff) {
 					whiteColor = color;
 					colorFound = true;
 					break;
 				}
+
+				// Skip entirety of image, scan only the corners
+				if (y > 0 && y < tmp.h - 1 && x == 0)
+					x = tmp.w - 2;
 			}
 		}
 	} else {
-		whiteColor = g_director->_wm->_colorWhite;
+		whiteColor = _picture->_surface.format.RGBToColor(0xff, 0xff, 0xff);
 		colorFound = true;
 	}
 
 	if (!colorFound) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image cast %d, name %s", _castId, _name.c_str());
 	} else {
-		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): Will create matte for cast %d, name %s", _castId, _name.c_str());
+		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): Will create matte for cast %d, name %s, whiteColor: 0x%08x", _castId, _name.c_str(), whiteColor);
 		if (_matte) {
 			_matte->free();
 			delete _matte;
