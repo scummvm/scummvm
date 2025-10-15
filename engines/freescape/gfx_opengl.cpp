@@ -344,7 +344,17 @@ void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
-		r = g = b = 255;
+		if (_renderMode == Common::kRenderHercG) {
+			// Hercules Green
+			r = b = 0;
+			g = 255;
+		} else if (_renderMode == Common::kRenderHercA) {
+			// Hercules Amber
+			r = 255;
+			g = 191;
+			b = 0;
+		} else
+			r = g = b = 255;
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
@@ -460,7 +470,17 @@ void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
-		r = g = b = 255;
+		if (_renderMode == Common::kRenderHercG) {
+			// Hercules Green
+			r = b = 0;
+			g = 255;
+		} else if (_renderMode == Common::kRenderHercA) {
+			// Hercules Amber
+			r = 255;
+			g = 191;
+			b = 0;
+		} else
+			r = g = b = 255;
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
