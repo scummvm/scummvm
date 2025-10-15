@@ -2172,7 +2172,17 @@ void cmdToggleMonitor(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdClearLines(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	int16 textRowUpper = parameter[0];
 	int16 textRowLower = parameter[1];
-	int16 color = vm->_text->calculateTextBackground(parameter[2]);
+	int16 color;
+	if (!vm->_game.gfxMode && vm->getPlatform() == Common::kPlatformAmiga) {
+		// The Amiga interpreter respected the color parameter in clear.lines
+		// while in text mode. Other platforms ignored it and used black.
+		// Amiga DDP sets a white background for its help screen, bug #16246.
+		// This logic could go in calculateTextBackground(), but it is called
+		// by other places in our code so that could cause side effects.
+		color = parameter[2];
+	} else {
+		color = vm->_text->calculateTextBackground(parameter[2]);
+	}
 
 	// Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423
 	// Agent06 incorrectly calls clear.lines(1,150,0), see ScummVM bugs
