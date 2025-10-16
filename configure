@@ -1040,6 +1040,7 @@ Optional Features:
                                             gles2 for forcing OpenGL ES 2
                            WARNING: only specify this manually if you know what
                            you are doing!
+  --disable-tinygl         don't build software 3D renderer
   --no-builtin-resources   do not include additional resources (e.g. engine
                            data, fonts) into the ScummVM binary
   --enable-windows-console  show console output on Windows (default)
