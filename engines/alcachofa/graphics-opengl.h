@@ -51,6 +51,7 @@ public:
 
 	Common::ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override;
 	Graphics::PixelFormat getPixelFormat() const override;
+	bool requiresPoTTextures() const override;
 	void end() override;
 	void setOutput(Graphics::Surface &output) override;
 

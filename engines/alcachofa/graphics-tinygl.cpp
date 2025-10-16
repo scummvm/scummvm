@@ -124,8 +124,12 @@ public:
 		return ScopedPtr<ITexture>(new TinyGLTexture(w, h, withMipmaps));
 	}
 
-	Graphics::PixelFormat getPixelFormat() const override {
-		return Graphics::PixelFormat::createFormatRGBA32();
+	PixelFormat getPixelFormat() const override {
+		return PixelFormat::createFormatRGBA32();
+	}
+
+	bool requiresPoTTextures() const override {
+		return false;
 	}
 
 	void begin() override {

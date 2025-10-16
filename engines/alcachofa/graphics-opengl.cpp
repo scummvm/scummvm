@@ -37,6 +37,10 @@ using namespace Graphics;
 
 namespace Alcachofa {
 
+//
+// OpenGL classes, calls to gl* are allowed here
+//
+
 OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
 	: ITexture({ (int16)w, (int16)h })
 	, _withMipmaps(withMipmaps) {
@@ -48,10 +52,6 @@ OpenGLTexture::OpenGLTexture(int32 w, int32 h, bool withMipmaps)
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	setMirrorWrap(false);
 }
-
-//
-// OpenGL classes, calls to gl* are allowed here
-//
 
 OpenGLTexture::~OpenGLTexture() {
 	if (_handle != 0)
@@ -102,7 +102,7 @@ OpenGLRenderer::OpenGLRenderer(Point resolution) : OpenGLRendererBase(resolution
 	GL_CALL(glEnable(GL_BLEND));
 	GL_CALL(glDepthMask(GL_FALSE));
 
-	if (!OpenGLContext.NPOTSupported || !OpenGLContext.textureMirrorRepeatSupported) {
+	if (!OpenGLContext.textureMirrorRepeatSupported) {
 		GUI::displayErrorDialog(_("Old OpenGL detected, some graphical errors will occur."));
 	}
 }
@@ -112,8 +112,12 @@ ScopedPtr<ITexture> OpenGLRenderer::createTexture(int32 w, int32 h, bool withMip
 	return ScopedPtr<ITexture>(new OpenGLTexture(w, h, withMipmaps));
 }
 
-Graphics::PixelFormat OpenGLRenderer::getPixelFormat() const {
-	return Graphics::PixelFormat::createFormatRGBA32();
+PixelFormat OpenGLRenderer::getPixelFormat() const {
+	return PixelFormat::createFormatRGBA32();
+}
+
+bool OpenGLRenderer::requiresPoTTextures() const {
+	return !OpenGLContext.NPOTSupported;
 }
 
 void OpenGLRenderer::end() {

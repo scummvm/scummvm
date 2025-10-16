@@ -77,6 +77,7 @@ public:
 
 	virtual Common::ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps = true) = 0;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
+	virtual bool requiresPoTTextures() const = 0;
 
 	virtual void begin() = 0;
 	virtual void setTexture(ITexture *texture) = 0;
