@@ -324,15 +324,25 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)();
  * With C++20, it may be possible to use the MessageMapFunctions enum and
  * avoid casting by using a designated initializer.
  */
-#ifdef __GNUC__
-#define BEGIN_SILENCE_CAST \
+// (Using *distinct* `#if` calls below is necessary for proper parsing)
+#if defined(__clang__) && defined(__has_warning)
+#  if __has_warning("-Wcast-function-type")
+#    define COMPILER_HAS_CAST_FUNCTION_TYPE_WARNING 1
+#  endif
+#elif GCC_ATLEAST(8, 1)
+#  define COMPILER_HAS_CAST_FUNCTION_TYPE_WARNING 1
+#endif
+
+#ifdef COMPILER_HAS_CAST_FUNCTION_TYPE_WARNING
+#  define BEGIN_SILENCE_CAST \
     _Pragma("GCC diagnostic push") \
     _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
-#define END_SILENCE_CAST \
+#  define END_SILENCE_CAST \
     _Pragma("GCC diagnostic pop")
+#  undef COMPILER_HAS_CAST_FUNCTION_TYPE_WARNING
 #else
-#define BEGIN_SILENCE_CAST
-#define END_SILENCE_CAST
+#  define BEGIN_SILENCE_CAST
+#  define END_SILENCE_CAST
 #endif
 
 #define BEGIN_TEMPLATE_MESSAGE_MAP(theClass, type_name, baseClass)          \
