@@ -33,10 +33,25 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"aventuradecine",
 		"Clever & Smart - A Movie Adventure",
-		AD_ENTRY1s("Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606),
+		AD_ENTRY2s(
+			"Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606,
+			"Data/DATA02.BIN", "ab6d8867585fbc0f555f5b13d8d1bdf3", 55906308
+		),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
+	},
+	{
+		"aventuradecine",
+		"Clever & Smart - A Movie Adventure",
+		AD_ENTRY2s(
+			"Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606,
+			"Data/DATA02.BIN", "4693e52835bad0c6deab63b60ead81fb", 38273192
+		),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_PIRATED,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 	{
@@ -77,7 +92,7 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("Textos/Objetos.nkr", "8a8b23c04fdc4ced8070a7bccd0177bb", 24467),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_CD,
+		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_CD,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 
