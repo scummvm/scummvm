@@ -1092,9 +1092,8 @@ Optional Libraries:
   --enable-mikmod          enable mikmod module for playing various sound
                            formats like impulsetracker [autodetect]
 
-  --with-openmpt-prefix=DIR Prefix where libopenmpt is installed (optional)
-  --enable-openmpt          enable openmpt module for playing various sound
-                            formats like impulsetracker [autodetect]
+  --enable-openmpt         enable openmpt module for playing various sound
+                           formats like impulsetracker [autodetect]
 
   --with-mpcdec-prefix=DIR prefix where libmpcdec is installed (optional)
   --enable-mpcdec          enable libmpcdec for playing musepack format audio
