@@ -183,6 +183,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			uint32 offset, length, compLength, flags;/*, timeDate1, timeDate2;*/
 
 			nameLength = stream->readByte();
+			// WME 2D Technology Demo has null name entries
+			if (nameLength == 0)
+				continue;
 			name = new char[nameLength];
 			stream->read(name, nameLength);
 
@@ -194,11 +197,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			}
 			debugC(kWintermuteDebugFileAccess, "Package contains %s", name);
 
-			Common::Path path;
-
-			// WME 2D Technology Demo has null name entries
-			if (nameLength != 0)
-				path = Common::Path(name, '\\');
+			Common::Path path(name, '\\');
 
 			delete[] name;
 			name = nullptr;
