@@ -990,6 +990,9 @@ Optional Features:
   --enable-release-mode    enable building in release mode (without
                            optimizations)
   --enable-optimizations   enable optimizations
+  --enable-gold            use gold linker (deprecated)
+  --enable-lld             use LLVM linker
+  --enable-mold            use mold linker
   --enable-asan            enable Address Sanitizer for memory-related debugging
   --enable-tsan            enable Thread Sanitizer for thread-related debugging
   --enable-ubsan           enable Undefined Behavior Sanitizer for
