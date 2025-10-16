@@ -559,7 +559,7 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 		palette = _picture->_palette;
 	}
 
-	if (_picture->_surface.format.isCLUT8()) {
+	if (tmp.format.isCLUT8()) {
 		for (int y = 0; y < tmp.h; y++) {
 			for (int x = 0; x < tmp.w; x++) {
 				byte color = *(byte *)tmp.getBasePtr(x, y);
@@ -578,7 +578,7 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 			}
 		}
 	} else {
-		whiteColor = _picture->_surface.format.RGBToColor(0xff, 0xff, 0xff);
+		whiteColor = tmp.format.RGBToColor(0xff, 0xff, 0xff);
 		colorFound = true;
 	}
 
