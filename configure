@@ -888,6 +888,8 @@ copy_if_changed() {
 #  who have Mad/Vorbis/ALSA installed in a non-standard locations.
 #
 
+# NOTE With add_component, some --enable-* no longer have an effect.
+
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
 		for engine in $_engines; do
