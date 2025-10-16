@@ -666,6 +666,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gp2006",				"Grand Prix 2006 & Auto Directory" },
 	{ "guns",				"Multimedia Guns" },
 	{ "haight",				"Haight-Ashbury in the Sixties" },
+	{ "hestonbible",		"Charlton Heston's Voyage Through the Bible" },
 	{ "heuther",			"Understanding Pathophysiology, 3rd Edition" },
 	{ "hikaruhana",			"Shining Flower: Hikaruhana" },					// 光る花
 	{ "hirezaudio",			"Hi Rez Audio" },
@@ -4629,6 +4630,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1t_l("henachocogala", "Itachoco Taizen 1 rerelease", "galakure-", "432fbbe4d75650580c1314e741e6a583", 290434, Common::JA_JPN, 402),
 
 	MACGAME1t_l("henachocotaizen", "", "LetterShop0.0", "b3fefa664154f160a32a7fdfcc83c047", 292680, Common::JA_JPN, 402),
+
+	WINGAME1f("hestonbible", "Old Testament", "OLDTEST.EXE", "t:56f332fa0190a21d697911887fad0ab5", 1003475, 404, GF_32BPP),
+	MACGAME1f("hestonbible", "Old Testament", "Bible Old Testament 1.0", "rt:49604f6c775663828a91b0999fe4f2aa", 483490, 404, GF_32BPP),
+	WINGAME1f("hestonbible", "New Testament", "ALPHA/NEWTEST.EXE", "t:7e7c9b3fe5aefe59ab930fb7ca47bd4a", 1319489, 404, GF_32BPP),
+	MACGAME1f("hestonbible", "New Testament", "ALPHA/New Testament 1.0", "rt:efeb87cee862bb7ef8ea21f4cbf46aa8", 483490, 404, GF_32BPP),
 
 	// Mac version is D3
 	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 404),
