@@ -130,7 +130,7 @@ const char *const inkType[] = {
 };
 
 const char *inkType2str(InkType type) {
-	if (type <= kInkTypeMask)
+	if (type >= kInkTypeCopy && type <= kInkTypeMask)
 		return inkType[type];
 
 	if (type >= kInkTypeBlend && type <= kInkTypeDark)
