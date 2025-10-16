@@ -183,9 +183,10 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			uint32 offset, length, compLength, flags;/*, timeDate1, timeDate2;*/
 
 			nameLength = stream->readByte();
-			// WME 2D Technology Demo has null name entries
-			if (nameLength == 0)
-				continue;
+			if (stream->eos()) {
+				debugC(kWintermuteDebugFileAccess, "  Warning: end of package file '%s'.", filename.c_str());
+				break;
+			}
 			name = new char[nameLength];
 			stream->read(name, nameLength);
 
