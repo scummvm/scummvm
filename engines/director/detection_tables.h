@@ -10510,10 +10510,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("heuther", "OS X", "HuetherOSX", "d483e955df901222145267d2ad729ea2", 228355, 900),
 	WINGAME1("heuther", "", "Huether.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 3353374, 900),
 
-	WINGAME1t_l("loewe2", "", "Loewenzahn 2.exe", "861c0ac98a672fc3e537a26b8cc543be", 95970, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe3", "", "Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe4", "", "Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
-	WINGAME1t_l("loewe6", "", "Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
+	// Re-releases, released as part of the "Jubiläums-Paket" 25th anniversary bundle
+	WINGAME1t_l("loewe2", "Jubiläums-Paket", "Loewenzahn 2.exe", "861c0ac98a672fc3e537a26b8cc543be", 95970, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe3", "Jubiläums-Paket", "Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe4", "Jubiläums-Paket", "Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
+	WINGAME1t_l("loewe6", "Jubiläums-Paket", "Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
 
 	// Mac versions are D8
 	WINGAME1_l("loewespielebox", "",			"Setup/WinRoot/Terzio/LZ_Spielebox/LZ_Spielebox.exe", "t:2e0749bd71f312abdf445e958f6fd737", 95544, Common::DE_DEU, 900),
@@ -10735,7 +10736,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Selection of Spanish, Catalan, English at start
 	WINGAME1("limit0", "", "Limit 0.exe", "827e5af88f4c096652a1523dc28c9bf4", 4664824, 1000),
 
-	WINGAME1t_l("loewe1", "", "Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
+	// Re-release, released as part of the "Jubiläums-Paket" 25th anniversary bundle
+	WINGAME1t_l("loewe1", "Jubiläums-Paket", "Loewe1.exe", "854989b2e1f7b9d55988ca1387859da2", 96316, Common::DE_DEU, 1010),
 
 	MACGAME1_l("mathica", "Classic", "Mathica.classic",	"r:afc5296d3ffc3a638d32ccbe867e7465", 219361, Common::DE_DEU, 1010),
 	MACGAME1_l("mathica", "OS X", 	 "Mathica.osx",		"r:dd763caab8c8e5b61fafd6306f7c4f1f", 270277, Common::DE_DEU, 1010),
