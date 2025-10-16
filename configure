@@ -901,16 +901,16 @@ for parm in "$@" ; do
 Usage: $0 [OPTIONS]...
 
 Configuration:
-  -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (3ds, atari, android, dc, ds,
-                          ios7, maemo, n64, null, opendingux, openpandora,
-                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
+  -h, --help               display this help and exit
+  --backend=BACKEND        backend to build (3ds, atari, android, dc, ds, ios7,
+                           maemo, n64, null, opendingux, openpandora, psp, psp2,
+                           samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
-  --prefix=PREFIX         install architecture-independent files in PREFIX
-                          [/usr/local]
-  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
-                          [PREFIX]
+  --prefix=PREFIX          install architecture-independent files in PREFIX
+                           [/usr/local]
+  --exec-prefix=EPREFIX    install architecture-dependent files in EPREFIX
+                           [PREFIX]
 
 By default, \`make install' will install all the files in
 \`/usr/local/bin', \`/usr/local/lib' etc.  You can specify
@@ -920,55 +920,55 @@ for instance \`--prefix=\$HOME'.
 For better control, use the options below.
 
 Fine tuning of the installation directories:
-  --bindir=DIR            user executables [EPREFIX/bin]
-  --libdir=DIR            object code libraries [EPREFIX/lib]
-  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
-  --datadir=DIR           read-only architecture-independent data
-                          [DATAROOTDIR/scummvm]
-  --mandir=DIR            man documentation [DATAROOTDIR/man]
-  --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
+  --bindir=DIR             user executables [EPREFIX/bin]
+  --libdir=DIR             object code libraries [EPREFIX/lib]
+  --datarootdir=DIR        read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR            read-only architecture-independent data
+                           [DATAROOTDIR/scummvm]
+  --mandir=DIR             man documentation [DATAROOTDIR/man]
+  --docdir=DIR             documentation root [DATAROOTDIR/doc/scummvm]
 
 Special configuration feature:
-  --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: 3ds for Nintendo 3DS
-                                           android-arm-v7a for Android ARMv7-A (armeabi-v7a)
-                                           android-arm64-v8a for Android ARMv8-A (arm64-v8a)
-                                           android-x86 for Android x86
-                                           android-x86_64 for Android x86_64
-                                           raspberrypi for Raspberry Pi
-                                           dreamcast for Sega Dreamcast
-                                           ds for Nintendo DS
-                                           gamecube for Nintendo GameCube
-                                           ios7 for Apple iPhone / iPad (iOS >= 7)
-                                           ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
-                                           kos32 for Kolibri OS
-                                           maemo for Nokia Maemo
-                                           miyoo for 1st generation Miyoo
-                                           miyoomini for Miyoo Mini
-                                           n64 for Nintendo 64
-                                           opendingux-gcw0 for GCW0 with Opendingux Beta
-                                           opendingux-lepus for Lepus with Opendingux Beta
-                                           opendingux-rs90 for RS90 and RG99 with Opendingux Beta
-                                           openpandora for OpenPandora
-                                           ouya for OUYA
-                                           ps3 for PlayStation 3
-                                           psp2 for PlayStation Vita
-                                           psp for PlayStation Portable
-                                           sailfish for SailfishOS
-                                           samsungtv for Samsung TV
-                                           switch for Nintendo Switch
-                                           tvos for Apple TV (tvOS 9.0+)
-                                           wasm32-unknown-emscripten for WebAssembly
-                                           wii for Nintendo Wii
+  --host=HOST              cross-compile to target HOST (arm-linux, ...)
+                           special targets: 3ds for Nintendo 3DS
+                                            android-arm-v7a for Android ARMv7-A (armeabi-v7a)
+                                            android-arm64-v8a for Android ARMv8-A (arm64-v8a)
+                                            android-x86 for Android x86
+                                            android-x86_64 for Android x86_64
+                                            raspberrypi for Raspberry Pi
+                                            dreamcast for Sega Dreamcast
+                                            ds for Nintendo DS
+                                            gamecube for Nintendo GameCube
+                                            ios7 for Apple iPhone / iPad (iOS >= 7)
+                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
+                                            kos32 for Kolibri OS
+                                            maemo for Nokia Maemo
+                                            miyoo for 1st generation Miyoo
+                                            miyoomini for Miyoo Mini
+                                            n64 for Nintendo 64
+                                            opendingux-gcw0 for GCW0 with Opendingux Beta
+                                            opendingux-lepus for Lepus with Opendingux Beta
+                                            opendingux-rs90 for RS90 and RG99 with Opendingux Beta
+                                            openpandora for OpenPandora
+                                            ouya for OUYA
+                                            ps3 for PlayStation 3
+                                            psp2 for PlayStation Vita
+                                            psp for PlayStation Portable
+                                            sailfish for SailfishOS
+                                            samsungtv for Samsung TV
+                                            switch for Nintendo Switch
+                                            tvos for Apple TV (tvOS 9.0+)
+                                            wasm32-unknown-emscripten for WebAssembly
+                                            wii for Nintendo Wii
 
 Game engines:
-  --enable-all-engines     enable all engines, including those which are
-                           broken or unsupported
+  --enable-all-engines     enable all engines, including those which are broken
+                           or unsupported
   --disable-all-engines    disable all engines
-  --enable-all-unstable-engines     enable the engines which are
-                                    broken or unsupported
-  --disable-all-unstable-engines    disable only the engines which are
-                                    broken or unsupported
+  --enable-all-unstable-engines  enable the engines which are broken or
+                                 unsupported
+  --disable-all-unstable-engines disable only the engines which are broken or
+                                 unsupported
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
   --enable-engine-static=<engine name>[,<engine name>...]
@@ -987,11 +987,13 @@ Optional Features:
   --disable-Werror         disable default promotion of some warnings to errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
-  --enable-release-mode    enable building in release mode (without optimizations)
+  --enable-release-mode    enable building in release mode (without
+                           optimizations)
   --enable-optimizations   enable optimizations
   --enable-asan            enable Address Sanitizer for memory-related debugging
   --enable-tsan            enable Thread Sanitizer for thread-related debugging
-  --enable-ubsan           enable Undefined Behavior Sanitizer for undefined-behavior-related debugging
+  --enable-ubsan           enable Undefined Behavior Sanitizer for
+                           undefined-behavior-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -999,19 +1001,24 @@ Optional Features:
   --disable-lua            don't enable Lua support
   --disable-nuked-opl      don't build Nuked OPL driver
   --disable-16bit          don't enable 16bit color support
-  --disable-highres        don't enable support for high resolution engines >320x240
-  --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
+  --disable-highres        don't enable support for high resolution
+                           engines >320x240
+  --disable-savegame-timestamp don't use timestamps for blank savegame
+                               descriptions
   --disable-scalers        exclude scalers
-  --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers as well)
+  --disable-hq-scalers     exclude HQ2x and HQ3x scalers (disables Edge scalers
+                           as well)
   --disable-edge-scalers   exclude Edge2x and Edge3x scalers
   --disable-aspect         exclude aspect ratio correction
   --disable-translation    don't build support for translated messages
-  --disable-taskbar        don't build support for taskbar and launcher integration
+  --disable-taskbar        don't build support for taskbar and launcher
+                           integration
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
   --enable-dlc             build scummvm dlc downloading support
-  --enable-scummvmdlc      build scummvm dlc downloading support using ScummVM Cloud
+  --enable-scummvmdlc      build scummvm dlc downloading support using ScummVM
+                           Cloud
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
@@ -1030,19 +1037,21 @@ Optional Features:
                                             gles2 for forcing OpenGL ES 2
                            WARNING: only specify this manually if you know what
                            you are doing!
-  --no-builtin-resources   do not include additional resources (e.g. engine data, fonts)
-                           into the ScummVM binary
+  --no-builtin-resources   do not include additional resources (e.g. engine
+                           data, fonts) into the ScummVM binary
   --enable-windows-console  show console output on Windows (default)
   --disable-windows-console do not show console output on Windows
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
-  --enable-ext-sse2         allow code to use sse2 extensions on x86/amd64
-  --enable-ext-avx2         allow code to use avx2 extensions on x86/amd64
-  --enable-ext-neon         allow code to use neon extensions on ARM
+  --enable-ext-sse2        allow code to use sse2 extensions on x86/amd64
+  --enable-ext-avx2        allow code to use avx2 extensions on x86/amd64
+  --enable-ext-neon        allow code to use neon extensions on ARM
 
 Optional Documentation Options:
-  --with-manual-version=VERSION version to use when generating the manual (optional)
-  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+  --with-manual-version=VERSION version to use when generating the manual
+                                (optional)
+  --with-pandoc-format=FORMAT pandoc format to use during the conversion
+                              (optional)
 
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
@@ -1060,8 +1069,8 @@ Optional Libraries:
   --with-mad-prefix=DIR    prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
 
-  --with-fribidi-prefix=DIR    prefix where libfribidi is installed
-  --disable-fribidi            disable libfribidi support [autodetect]
+  --with-fribidi-prefix=DIR prefix where libfribidi is installed
+  --disable-fribidi         disable libfribidi support [autodetect]
 
   --with-flac-prefix=DIR   prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
@@ -1072,24 +1081,28 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-mikmod-prefix=DIR    Prefix where libmikmod is installed (optional)
-  --enable-mikmod             enable mikmod module for playing various sound formats like impulsetracker [autodetect]
+  --with-mikmod-prefix=DIR prefix where libmikmod is installed (optional)
+  --enable-mikmod          enable mikmod module for playing various sound
+                           formats like impulsetracker [autodetect]
 
-  --with-openmpt-prefix=DIR    Prefix where libopenmpt is installed (optional)
-  --enable-openmpt             enable openmpt module for playing various sound formats like impulsetracker [autodetect]
+  --with-openmpt-prefix=DIR Prefix where libopenmpt is installed (optional)
+  --enable-openmpt          enable openmpt module for playing various sound
+                            formats like impulsetracker [autodetect]
 
-  --with-mpcdec-prefix=DIR    Prefix where libmpcdec is installed (optional)
-  --enable-mpcdec             enable libmpcdec for playing musepack format audio [autodetect]
+  --with-mpcdec-prefix=DIR prefix where libmpcdec is installed (optional)
+  --enable-mpcdec          enable libmpcdec for playing musepack format audio
+                           [autodetect]
 
-  --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
+  --with-a52-prefix=DIR    prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
   --with-opengl-prefix=DIR      prefix where OpenGL (ES) is installed (optional)
   --disable-opengl-game         disable OpenGL (ES) support in game [autodetect]
   --disable-opengl-game-classic disable OpenGL classic support in game
-  --disable-opengl-game-shaders disable use of modern OpenGL with shaders in game
+  --disable-opengl-game-shaders disable use of modern OpenGL with shaders in
+                                game
 
-  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
+  --with-jpeg-prefix=DIR   prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
   --with-png-prefix=DIR    prefix where libpng is installed (optional)
@@ -1098,8 +1111,8 @@ Optional Libraries:
   --with-gif-prefix=DIR    prefix where giflib is installed (optional)
   --disable-gif            disable GIF decoder [autodetect]
 
-  --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
-  --disable-theoradec      disable Theora decoder [autodetect]
+  --with-theoradec-prefix=DIR prefix where libtheoradec is installed (optional)
+  --disable-theoradec         disable Theora decoder [autodetect]
 
   --with-vpx-prefix=DIR    prefix where libtvpx is installed (optional)
   --disable-vpx            disable VP8/VP9 decoder [autodetect]
@@ -1107,31 +1120,30 @@ Optional Libraries:
   --with-faad-prefix=DIR   prefix where libfaad is installed (optional)
   --disable-faad           disable AAC decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR prefix where libfluidsynth is
-                           installed (optional)
-  --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
+  --with-fluidsynth-prefix=DIR prefix where libfluidsynth is installed
+                               (optional)
+  --disable-fluidsynth         disable fluidsynth MIDI driver [autodetect]
 
-  --with-fluidlite-prefix=DIR prefix where libfluidlite is
-                           installed (optional)
-  --disable-fluidlite      disable fluidlite MIDI driver [autodetect]
+  --with-fluidlite-prefix=DIR prefix where libfluidlite is installed (optional)
+  --disable-fluidlite         disable fluidlite MIDI driver [autodetect]
 
   --with-sonivox-prefix=DIR prefix where libsonivox is
-                           installed (optional)
-  --disable-sonivox        disable EAS MIDI driver [autodetect]
+                            installed (optional)
+  --disable-sonivox         disable EAS MIDI driver [autodetect]
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
-  --enable-opl2lpt         enable OPL2LPT support
+  --enable-opl2lpt           enable OPL2LPT support
 
   --with-retrowave-prefix=DIR prefix where libretrowave is installed (optional)
-  --enable-retrowave       enable RetroWave OPL3 support
+  --enable-retrowave          enable RetroWave OPL3 support
 
-  --with-sparkle-prefix=DIR    prefix where sparkle is installed
-                           (macOS/Windows only - optional)
-  --disable-sparkle        disable sparkle automatic update support
-                           [macOS/Windows only - autodetect]
+  --with-sparkle-prefix=DIR prefix where sparkle is installed
+                            (macOS/Windows only - optional)
+  --disable-sparkle         disable sparkle automatic update support
+                            [macOS/Windows only - autodetect]
 
-  --disable-osx-dock-plugin    disable the NSDockTilePlugin support
-                               [macOS only - autodetect]
+  --disable-osx-dock-plugin disable the NSDockTilePlugin support
+                            [macOS only - autodetect]
 
   --with-sdl-prefix=DIR    prefix where the SDL package is installed (optional)
                            e.g., if sdl-config script is at:
@@ -1139,21 +1151,22 @@ Optional Libraries:
                            then you should pass:
                            '--with-sdl-prefix=/opt/mxe/usr/i686-w64-mingw32.static'
 
-  --with-freetype2-prefix=DIR  prefix where the freetype-config script is
-                               installed (optional)
-  --disable-freetype2      disable freetype2 TTF library usage [autodetect]
+  --with-freetype2-prefix=DIR prefix where the freetype-config script is
+                              installed (optional)
+  --disable-freetype2         disable freetype2 TTF library usage [autodetect]
 
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-  --with-readline-prefix=DIR   prefix where readline is installed (optional)
-  --disable-readline       disable readline support in text console [autodetect]
+  --with-readline-prefix=DIR prefix where readline is installed (optional)
+  --disable-readline         disable readline support in text console
+                             [autodetect]
 
-  --with-libunity-prefix=DIR   prefix where libunity is installed (optional)
-  --disable-libunity       disable Unity launcher integration [autodetect]
+  --with-libunity-prefix=DIR prefix where libunity is installed (optional)
+  --disable-libunity         disable Unity launcher integration [autodetect]
 
-  --with-gtk-prefix=DIR   prefix where gtk is installed (optional)
-  --disable-gtk       disable GTK dialog integration [autodetect]
+  --with-gtk-prefix=DIR    prefix where gtk is installed (optional)
+  --disable-gtk            disable GTK dialog integration [autodetect]
 
   --with-sndio-prefix=DIR  prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
@@ -1161,13 +1174,14 @@ Optional Libraries:
   --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
 
-  --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
-  --disable-libcurl        disable libcurl networking library [autodetect]
+  --with-libcurl-prefix=DIR prefix where libcurl is installed (optional)
+  --disable-libcurl         disable libcurl networking library [autodetect]
 
-  --disable-enet         don't enable ENet networking support
+  --disable-enet           don't enable ENet networking support
 
-  --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
-  --disable-discord       disable Discord rich presence integration [autodetect]
+  --with-discord-prefix=DIR prefix where discord-rpc is installed (optional)
+  --disable-discord         disable Discord rich presence integration
+                            [autodetect]
 
 Some influential environment variables:
   AR                 archiver command
