@@ -1052,6 +1052,7 @@ Optional Features:
   --enable-ext-sse2        allow code to use sse2 extensions on x86/amd64
   --enable-ext-avx2        allow code to use avx2 extensions on x86/amd64
   --enable-ext-neon        allow code to use neon extensions on ARM
+  --enable-test-c++11      build the C++11 features test file
 
 Optional Documentation Options:
   --with-manual-version=VERSION version to use when generating the manual
