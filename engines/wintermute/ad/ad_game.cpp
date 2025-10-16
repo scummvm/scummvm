@@ -398,6 +398,15 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
+
+			// W/A for bug in game script: 'Five Magical Amulets'
+			// Before engine 1.4 MainObject was not invalidated on UnloadObject.
+			// It was used later by engine on already released object in memory.
+			// Engine was fixed in version 1.4, but game scripts were never fixed.
+			// Assign MainObject with new loaded actor.
+			if (BaseEngine::instance().getGameId() == "5ma") {
+				_mainObject = act;
+			}
 		} else {
 			SAFE_DELETE(act);
 			stack->pushNULL();
