@@ -2101,6 +2101,7 @@ n64)
 	fi
 	;;
 ps3)
+	# shellcheck disable=SC2153 # ignore warning about PS3DEV/PSPDEV variable names being so close
 	if test -z "$PS3DEV"; then
 		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
 		exit 1
@@ -2117,6 +2118,7 @@ psp2)
 	fi
 	;;
 psp)
+	# shellcheck disable=SC2153 # ignore warning about PS3DEV/PSPDEV variable names being so close
 	if test -z "$PSPDEV"; then
 		PSPDEV=`psp-config --pspdev-path`
 	fi
