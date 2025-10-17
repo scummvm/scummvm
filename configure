@@ -265,7 +265,7 @@ _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _libmikmodconfig=libmikmod-config
 _freetypeconfig=freetype-config
-_freetype_found="false"
+_freetype_found=false
 _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
@@ -3324,7 +3324,7 @@ EOF
 		if test "$_freetype2" = yes; then
 			# neither pkg-config nor freetype-config work, so we setup freetype manually
 			append_var LDFLAGS "-s USE_FREETYPE=1"
-			_freetype_found="true"
+			_freetype_found=true
 			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
 			FREETYPE2_CFLAGS="-I$_freetypepath"
 		else
@@ -3792,7 +3792,7 @@ if test -n "$_host"; then
 			FREETYPE2_STATIC_LIBS="-lfreetype"
 			FREETYPE2_CFLAGS="-I${KOS32_SDK_DIR}/sources/freetype/include"
 			_freetypeconfig=
-			_freetype_found="true"
+			_freetype_found=true
 
 			SDL_CFLAGS="-I${KOS32_SDK_DIR}/sources/SDL-1.2.2_newlib/include"
 			SDL_LIBS="-lSDLn -lsound"
@@ -6458,7 +6458,7 @@ find_freetype() {
 		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
 		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
 		FREETYPE2_STATIC_LIBS=`$_pkgconfig --static --libs freetype2`
-		_freetype_found="true"
+		_freetype_found=true
 	else
 		# Look for the freetype-config script
 		find_freetypeconfig
@@ -6476,14 +6476,14 @@ find_freetype() {
 			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
 			FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 			FREETYPE2_STATIC_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --static --libs 2>/dev/null`
-			_freetype_found="true"
+			_freetype_found=true
 		fi
 	fi
 }
 
 if test "$_freetype2" != "no"; then
 	find_freetype
-	if test $_freetype_found != true; then
+	if ! $_freetype_found ; then
 		_freetype2=no
 	else
 		if test "$_freetype2" = "auto"; then
