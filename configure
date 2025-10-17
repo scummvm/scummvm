@@ -247,13 +247,13 @@ _ext_sse2=auto
 _ext_avx2=auto
 _ext_neon=auto
 # Default commands
-_ranlib=ranlib
-_strip=strip
+_ranlib="ranlib"
+_strip="strip"
 _ar="ar cr"
 _as="as"
-_dwp=dwp
-_windres=windres
-_ldd=ldd
+_dwp="dwp"
+_windres="windres"
+_ldd="ldd"
 _stagingpath="staging"
 _amigaospath="install"
 _morphospath="PROGDIR:"
@@ -2735,14 +2735,14 @@ if test "$_release_build" != yes && test "$_werror_build" != no; then
 fi
 
 if test -n "$STRINGS"; then
-	_strings=$STRINGS
+	_strings="$STRINGS"
 else
 	echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 	if `which $_host_alias-strings >/dev/null 2>&1`; then
-		_strings=$_host_alias-strings
+		_strings="$_host_alias-strings"
 		echo yes >> "$TMPLOG"
 	else
-		_strings=strings
+		_strings="strings"
 		echo no >> "$TMPLOG"
 	fi
 fi
