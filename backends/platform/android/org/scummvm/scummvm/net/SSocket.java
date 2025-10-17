@@ -60,7 +60,7 @@ public class SSocket {
 			socket = proxyConnect(url, host, port);
 
 			if (scheme.equals("https")) {
-				SSLSocketFactory ssf = (SSLSocketFactory)SSLSocketFactory.getDefault();
+				SSLSocketFactory ssf = new TLSSocketFactory();
 				socket = ssf.createSocket(socket, host, port, true);
 			}
 
