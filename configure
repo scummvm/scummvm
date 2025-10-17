@@ -6401,7 +6401,7 @@ echo "$_libunity"
 # Check for GTK if system dialogs are enabled
 #
 echocheck "gtk"
-if test "$_unix" = no || test "$_dialogs" = no || test "$_pkg_config" = no; then
+if test "$_dialogs" = no || test "$_pkg_config" = no; then
 	_gtk=no
 else
 if test "$_gtk" = auto ; then
