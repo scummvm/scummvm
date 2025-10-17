@@ -2647,6 +2647,23 @@ Common::Error ScummEngine::go() {
 		}
 	}
 
+#ifdef ENABLE_HE
+	// Old "Spy Fox In: Cheese Chase" custom levels clash with the built-in levels.
+	// Assign them to the first player, 000.
+	if (strcmp(_game.gameid, "chase") == 0) {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		Common::StringArray filenames;
+		filenames = saveFileMan->listSavefiles(_targetName + "-chase???.???");
+
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			Common::String from = (*file).c_str();
+			Common::String to = (*file).c_str();
+			to.insertString("000-", from.size() - 12);
+			saveFileMan->renameSavefile(from, to);
+		}
+	}
+#endif // ENABLE_HE
+
 	while (!shouldQuit()) {
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;

@@ -146,7 +146,19 @@ Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
 	debug(2, "convertSavePath in: '%s'", (const char *)src);
 
 	// Strip us down to only the file
-	Common::String filePath = convertFilePath(src).baseName();
+	Common::Path path = convertFilePath(src);
+	Common::String filePath = path.baseName();
+
+	// Cheese Chase uses save file names that clash with the built-in
+	// levels, so keep last two components. The first of them seems to tie
+	// the custom level sets to a specific player anyway, so this is a
+	// win-win.
+	if (strcmp(_game.gameid, "chase") == 0 && (filePath.hasSuffixIgnoreCase(".map") || filePath.hasSuffixIgnoreCase(".obj"))) {
+		Common::StringArray components = convertFilePath(src).splitComponents();
+		int size = components.size();
+		if (size >= 2 && components[size - 2].size() == 3)
+			filePath = components[size - 2] + '-' + components[size - 1];
+	}
 
 	// Prepend the target name
 	filePath = _targetName + '-' + filePath;
