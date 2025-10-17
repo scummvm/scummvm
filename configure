@@ -3147,12 +3147,12 @@ EOF
 		_macos_min_version_dot=undefined
 		if test -n "$_macos_min_version" ; then
 			if test "$_macos_min_version" -lt 101000; then
-				_macos_min_ver_major=$((${_macos_min_version}/100))
-				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
+				_macos_min_ver_major=$((_macos_min_version/100))
+				_macos_min_ver_minor=$((_macos_min_version/10 - 10*_macos_min_ver_major))
 				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
 			else
-				_macos_min_ver_major=$((${_macos_min_version}/10000))
-				_macos_min_ver_minor=$((${_macos_min_version}/100 - 100*${_macos_min_ver_major}))
+				_macos_min_ver_major=$((_macos_min_version/10000))
+				_macos_min_ver_minor=$((_macos_min_version/100 - 100*_macos_min_ver_major))
 				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
 			fi
 		fi
