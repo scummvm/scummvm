@@ -20,6 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# shellcheck disable=SC2006,SC2016,SC2046,SC2086,SC2268 # possibly relevant, but too noisy for now
+
 set -a
 
 # NLS nuisances.
