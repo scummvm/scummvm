@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_METAENGINE_H
 #define ALCACHOFA_METAENGINE_H
 
-#include "engines/advancedDetector.h"
+#include "alcachofa/detection.h"
 
 namespace Alcachofa {
 
@@ -34,11 +34,11 @@ enum class EventAction {
 
 }
 
-class AlcachofaMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+class AlcachofaMetaEngine : public AdvancedMetaEngine<Alcachofa::AlcachofaGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Alcachofa::AlcachofaGameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

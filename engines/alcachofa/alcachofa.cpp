@@ -54,7 +54,7 @@ constexpr uint kDefaultFramerate = 100; // the original target framerate, not cr
 
 AlcachofaEngine *g_engine;
 
-AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc)
+AlcachofaEngine::AlcachofaEngine(OSystem *syst, const AlcachofaGameDescription *gameDesc)
 	: Engine(syst)
 	, _gameDescription(gameDesc)
 	, _eventLoopSemaphore("engine") {
@@ -68,11 +68,11 @@ AlcachofaEngine::~AlcachofaEngine() {
 }
 
 uint32 AlcachofaEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String AlcachofaEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
 }
 
 Common::Error AlcachofaEngine::run() {

@@ -108,10 +108,14 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
-	AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	AlcachofaEngine(OSystem *syst, const AlcachofaGameDescription *gameDesc);
 	~AlcachofaEngine() override;
 
-	inline const ADGameDescription &gameDescription() const { return *_gameDescription; }
+	inline bool isV1() const { return gameDescription().isVersionBetween(10, 19); }
+	inline bool isV2() const { return gameDescription().isVersionBetween(20, 29); }
+	inline bool isV3() const { return gameDescription().isVersionBetween(30, 39); }
+
+	inline const AlcachofaGameDescription &gameDescription() const { return *_gameDescription; }
 	inline IRenderer &renderer() { return *_renderer; }
 	inline DrawQueue &drawQueue() { return *_drawQueue; }
 	inline Camera &camera() { return _camera; }
@@ -168,7 +172,7 @@ public:
 private:
 	bool tryLoadFromLauncher();
 
-	const ADGameDescription *_gameDescription;
+	const AlcachofaGameDescription *_gameDescription;
 	Console *_console = new Console();
 	Common::ScopedPtr<IDebugHandler> _debugHandler;
 	Common::ScopedPtr<IRenderer> _renderer;

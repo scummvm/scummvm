@@ -34,16 +34,36 @@ enum AlcachofaDebugChannels {
 	kDebugSemaphores
 };
 
+enum class EngineVersion {
+	V1_0 = 10, // edicion orginal, vaqueros and terror
+	V2_0 = 20, // the rest
+	V3_0 = 30, // Remastered movie adventure (used for original spanish release)
+	V3_1 = 31, // Remastered movie adventure (for german release and english/spanish steam release)
+};
+
+struct AlcachofaGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+
+	EngineVersion engineVersion;
+
+	inline bool isVersionBetween(int min, int max) const {
+		int intVersion = (int)engineVersion;
+		return intVersion >= min && intVersion <= max;
+	}
+};
+
 extern const PlainGameDescriptor alcachofaGames[];
 
-extern const ADGameDescription gameDescriptions[];
+extern const AlcachofaGameDescription gameDescriptions[];
 
 #define GAMEOPTION_HIGH_QUALITY GUIO_GAMEOPTIONS1 // I should comment what this does, but I don't know
 #define GAMEOPTION_32BITS GUIO_GAMEOPTIONS2
 
 } // End of namespace Alcachofa
 
-class AlcachofaMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class AlcachofaMetaEngineDetection : public AdvancedMetaEngineDetection<Alcachofa::AlcachofaGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

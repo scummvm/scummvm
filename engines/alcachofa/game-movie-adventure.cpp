@@ -111,7 +111,7 @@ class GameMovieAdventure : public Game {
 		};
 
 		if (isInExemptions(exemptions) ||
-			((g_engine->gameDescription().flags & ADGF_DEMO) && isInExemptions(demoExemptions)))
+			((g_engine->gameDescription().desc.flags & ADGF_DEMO) && isInExemptions(demoExemptions)))
 			debugC(1, kDebugGraphics, "Animation exemption triggered: %s", fileName.c_str());
 		else
 			Game::missingAnimation(fileName);
@@ -168,7 +168,7 @@ class GameMovieAdventure : public Game {
 	void missingSound(const String &fileName) override {
 		if (fileName == "CHAS" || fileName == "517")
 			return;
-		if ((g_engine->gameDescription().flags & ADGF_DEMO) && (
+		if ((g_engine->gameDescription().desc.flags & ADGF_DEMO) && (
 			fileName == "M4996" ||
 			fileName == "T40"))
 			return;
@@ -177,13 +177,13 @@ class GameMovieAdventure : public Game {
 
 	bool isKnownBadVideo(int32 videoId) override {
 		return
-			(videoId == 3 && (g_engine->gameDescription().flags & ADGF_DEMO)) || // problem with MPEG PS decoding
+			(videoId == 3 && (g_engine->gameDescription().desc.flags & ADGF_DEMO)) || // problem with MPEG PS decoding
 			Game::isKnownBadVideo(videoId);
 	}
 
 	void invalidVideo(int32 videoId, const char *context) override {
 		// for the one, known AVI problem, let's not block development
-		if (videoId == 1 && g_engine->gameDescription().language != DE_DEU)
+		if (videoId == 1 && g_engine->gameDescription().desc.language != DE_DEU)
 			warning("Could not play video %d (%s) (WMV not supported)", videoId, context);
 		else
 			Game::invalidVideo(videoId, context);

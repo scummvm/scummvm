@@ -69,7 +69,7 @@ const ADExtraGuiOptionsMap *AlcachofaMetaEngine::getAdvancedExtraGuiOptions() co
 	return Alcachofa::optionsList;
 }
 
-Error AlcachofaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Error AlcachofaMetaEngine::createInstance(OSystem *syst, Engine **engine, const AlcachofaGameDescription *desc) const {
 	*engine = new Alcachofa::AlcachofaEngine(syst, desc);
 	return kNoError;
 }
