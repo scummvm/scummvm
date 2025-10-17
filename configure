@@ -138,6 +138,7 @@ _srcdir=`dirname $0`
 
 # Read list of engines
 for i in $_srcdir/engines/*/configure.engine; do
+	# shellcheck disable=SC1090 # 'source=./engines/*/configure.engine' not accepted yet?
 	. "$i"
 done
 
@@ -4307,6 +4308,7 @@ append_var MODULES "backends/platform/$_backend"
 echo "Checking for unused components..."
 awk -f "$_srcdir/engines.awk" -v _pass=pass1 < /dev/null
 
+# shellcheck disable=SC1091 # created on the fly
 . ./engines.awk.out
 
 for f in $_features_disabled; do
