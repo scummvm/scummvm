@@ -24,8 +24,8 @@ namespace Bagel {
 const PlainGameDescriptor bagelGames[] = {
 	{ "bagel", "Bagel" },
 	{ "spacebar", "The Space Bar" },
-	{ "hodjnpodj", "Hodj'n'Podj" },
-	{ "mazeodoom", "Hodj'n'Podj - Maze O' Doom" },
+	{ "hodjnpodj", "Hodj 'n' Podj" },
+	{ "mazeodoom", "Hodj 'n' Podj - Maze O' Doom" },
 	{ 0, 0 }
 };
 
