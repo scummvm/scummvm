@@ -1790,6 +1790,7 @@ opendingux-*)
 	;;
 dreamcast)
 	_host_os=dreamcast
+	# shellcheck disable=SC2209 # mistakes 'sh' architecture for 'sh' shell
 	_host_cpu=sh
 	_host_alias=sh-elf
 	append_var CXXFLAGS "-ml -m4-single-only"
