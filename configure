@@ -2749,9 +2749,9 @@ $CXX $LDFLAGS $CXXFLAGS $lto_keep_machine_code_flag -o $TMPO$HOSTEXEEXT tmp_endi
 if test "$?" -ne 0 && test "$have_gcc" = yes; then
 	$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
 fi
-if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
+if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep -q BIGenDianSyS; then
 	_endian=big
-elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep -q LiTTleEnDian; then
 	_endian=little
 fi
 echo $_endian
@@ -3137,7 +3137,7 @@ const char *_version() { char *s = (char *)version; return s; }
 int main(int argc, char *argv[]) { _version(); return 0; }
 EOF
 		cc_check_no_clean
-		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
+		if $_strings $TMPO$HOSTEXEEXT | grep -q Version:; then
 			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
 			_macos_min_version="${_macos_min_version#Version:}"
 		fi
@@ -6466,7 +6466,7 @@ find_freetype() {
 			freetypeprefix="$_freetypepath"
 			if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
 				teststring=VeryImplausibleSysrootX1Y2Z3
-				if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
+				if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep -q $teststring ); then
 					echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
 					freetypeprefix="${freetypeprefix##$SYSROOT}"
 				fi
