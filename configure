@@ -2151,12 +2151,12 @@ riscos)
 
 	if test -e "$GCCSDK_INSTALL_ENV/bin/tokenize"; then
 		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
-	elif `which tokenize >/dev/null 2>&1`; then
+	elif command -v tokenize >/dev/null 2>&1; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
 	if test -e "$GCCSDK_INSTALL_ENV/bin/makerun"; then
 		add_line_to_config_mk "MAKERUN := $GCCSDK_INSTALL_ENV/bin/makerun"
-	elif `which makerun >/dev/null 2>&1`; then
+	elif command -v makerun >/dev/null 2>&1; then
 		add_line_to_config_mk "MAKERUN := makerun"
 	fi
 	;;
@@ -2619,7 +2619,7 @@ if test "$_debug_build" != no; then
 	#       isn't implemented, and there's no fix in sight. So we force
 	#       DWARF version 4 and hope that works for, well... "most targets".
 
-	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+	if command -v $_dwp >/dev/null 2>&1 && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
 		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
@@ -2739,7 +2739,7 @@ if test -n "$STRINGS"; then
 	_strings="$STRINGS"
 else
 	echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-	if `which $_host_alias-strings >/dev/null 2>&1`; then
+	if command -v $_host_alias-strings >/dev/null 2>&1; then
 		_strings="$_host_alias-strings"
 		echo yes >> "$TMPLOG"
 	else
@@ -3881,9 +3881,9 @@ if test -n "$_host"; then
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
-			if `which $_host-peldd >/dev/null 2>&1`; then
+			if command -v $_host-peldd >/dev/null 2>&1; then
 				_ldd="$_host-peldd -t --ignore-errors"
-			elif `which peldd >/dev/null 2>&1`; then
+			elif command -v peldd >/dev/null 2>&1; then
 				_ldd="peldd -t --ignore-errors"
 			fi
 			;;
