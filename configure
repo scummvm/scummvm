@@ -4446,6 +4446,7 @@ if test "$_sdlnet" = auto ; then
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+	# shellcheck disable=SC2153 # variable names are close
 	cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
 	if test "$_sdlnet" = yes ; then
 		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
@@ -4456,6 +4457,7 @@ EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+		# shellcheck disable=SC2153 # variable names are close
 		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
 		if test "$_sdlnet" = yes ; then
 			set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
@@ -4466,6 +4468,7 @@ EOF
 #include "SDL3/SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+			# shellcheck disable=SC2153 # variable names are close
 			cc_check $SDL3_NET_LIBS $LIBS $INCLUDES $SDL3_NET_CFLAGS && _sdlnet=yes
 			if test "$_sdlnet" = yes ; then
 				set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
