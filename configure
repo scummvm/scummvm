@@ -7179,7 +7179,7 @@ fi
 echo "$_tinygl"
 
 echo_n "Building any 3D game... "
-if (test "$_tinygl" = yes || test "$_opengl_game_classic" = yes || test "$_opengl_game_shaders" = yes); then
+if test "$_tinygl" = yes || test "$_opengl_game_classic" = yes || test "$_opengl_game_shaders" = yes; then
 	_3d=yes
 else
 	_3d=no
