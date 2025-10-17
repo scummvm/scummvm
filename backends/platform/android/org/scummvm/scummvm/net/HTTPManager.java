@@ -13,6 +13,8 @@ public class HTTPManager {
 	 * Called from JNI (main ScummVM thread)
 	 */
 	public HTTPManager() {
+		TLSSocketFactory.init();
+
 		_executor = Executors.newCachedThreadPool();
 		// Use a capacity to make sure the queue is checked on a regular basis
 		_queue = new ArrayBlockingQueue<>(50);
