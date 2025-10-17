@@ -5812,7 +5812,7 @@ EOF
 	fi
 fi
 if test "$_a52" = yes ; then
-	INCLUDES="$INCLUDES $A52_FLAGS"
+	INCLUDES="$INCLUDES $A52_CFLAGS"
 	LIBS="$LIBS $A52_LIBS -la52"
 fi
 define_in_config_if_yes "$_a52" 'USE_A52'
