@@ -137,6 +137,7 @@ add_component() {
 _srcdir=`dirname $0`
 
 # Read list of engines
+_wip_engines=
 for i in $_srcdir/engines/*/configure.engine; do
 	# shellcheck disable=SC1090 # 'source=./engines/*/configure.engine' not accepted yet?
 	. "$i"
@@ -4305,6 +4306,8 @@ append_var MODULES "backends/platform/$_backend"
 #
 # Check if specific components are not used by enabled engines and disable them
 #
+_features_disabled=
+
 echo "Checking for unused components..."
 awk -f "$_srcdir/engines.awk" -v _pass=pass1 < /dev/null
 
