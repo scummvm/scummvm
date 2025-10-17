@@ -2474,7 +2474,7 @@ if test "$have_gcc" = yes ; then
 		;;
 	riscos)
 		# -Wformat complains about '%z' and so on. Don't know if it's related to
-		# the older compiler not being completely C+11-aware, or something else.
+		# the older compiler not being completely C++11-aware, or something else.
 		if test "$have_gcc" = yes && test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
 			std_variant=gnu++
 			pedantic=no
@@ -2838,7 +2838,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			maemo )
+			maemo)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
@@ -3360,7 +3360,7 @@ EOF
 		else
 			_zlib=no
 		fi
-	;;
+		;;
 	freebsd* | dragonfly*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -3384,7 +3384,7 @@ EOF
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
-			# retarded toolchain patch forces --gc-sections, overwrite it
+			# some defective toolchain patch forces --gc-sections; overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
@@ -3585,7 +3585,7 @@ EOF
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
-			# retarded toolchain patch forces --gc-sections, overwrite it
+			# some defective toolchain patch forces --gc-sections; overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
@@ -6573,7 +6573,7 @@ if test "$_opengl_mode" != none ; then
 							_opengl_mode=gl
 							;;
 						*)
-							# As SDL2 supports everything, let the user choose if he wants to
+							# As SDL2 supports everything, let users choose
 							test "$_opengl_mode" = "auto" && _opengl_mode=any
 							;;
 					esac
@@ -6593,7 +6593,7 @@ if test "$_opengl_mode" != none ; then
 			test "$_opengl_mode" = "auto" && _opengl_mode=none
 			# We only support OpenGL on SDL based backends and Android (already handled)
 			test "$_sdl" = "no" && _opengl_mode=none
-			# If it's a SDL based backend and OpenGL is really enabled, use GLAD
+			# If it's an SDL based backend and OpenGL is really enabled, use GLAD
 			test "$_opengl_mode" != "none" && test "$_sdl" != "no" && _opengl_glad=yes
 			;;
 	esac
