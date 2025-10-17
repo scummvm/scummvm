@@ -2614,7 +2614,7 @@ if test "$_debug_build" != no; then
 	#       isn't implemented, and there's no fix in sight. So we force
 	#       DWARF version 4 and hope that works for, well... "most targets".
 
-	if command -v $_dwp >/dev/null 2>&1 && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+	if command -v $_dwp >/dev/null 2>&1 && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && $_dwp -e $TMPO -o /dev/null >/dev/null 2>&1; then
 		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
