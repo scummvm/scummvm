@@ -804,7 +804,6 @@ engine_enable() {
 	if check_is_subengine ${engine} ; then
 		if test "$opt" != "yes" ; then
 			subengine_option_error ${engine}
-			return
 		fi
 		parent=`get_subengine_parent ${engine}`
 		if test `get_engine_build ${parent}` = "no" ; then
@@ -814,7 +813,6 @@ engine_enable() {
 
 	if test "$opt" != "static" -a "$opt" != "dynamic" -a "$opt" != "yes" ; then
 		option_error
-		return
 	fi
 
 	subengines=
@@ -823,13 +821,11 @@ engine_enable() {
 		subengines=$(get_engine_subengines ${engine})
 		if test "$subengines" = "" ; then
 			engine_option_error "${engine}*"
-			return
 		fi
 	fi
 
 	if test "`get_engine_name ${engine}`" = "" ; then
 		engine_option_error ${engine}
-		return
 	fi
 
 	set_var _engine_${engine}_build "$opt"
@@ -843,7 +839,6 @@ engine_disable() {
 	# Filter malformed options
 	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
 		option_error
-		return
 	fi
 
 	engine=`echo $1 | sed 's/-/_/g'`
