@@ -983,7 +983,10 @@ public:
 	static const uint32 kAdibou2NbrOfConstructionGameFiles = 3;
 
 	static const uint32 kAdi4NbrOfTempFiles = 9;
-	static const uint32 kAdi4NbrOfGameFiles = 36;
+	static const uint32 kAdi4NbrOfApplications = 2; // Only Math/Language for now
+	static const uint32 kAdi4NbrOfSchoolYears = 8;
+	// 4 isolated files, 1 "config" and "statv" file per child, 1 "dip" and "res" file per app x school year x child
+	static const uint32 kAdi4NbrOfGameFiles = 4 + 2 * kChildrenCount + 2 * kAdi4NbrOfApplications * kAdi4NbrOfSchoolYears * kChildrenCount;
 
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
