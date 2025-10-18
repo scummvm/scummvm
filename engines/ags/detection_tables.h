@@ -4301,8 +4301,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY_EN("magentaspacech12", "Magenta.exe", "d1fb19834d10cd56b763669b320ec6fd", 100972135),
 	UNSUPPORTED_GAME_ENTRY_EN("pqpn1", "PQPN.ags", "a48d4e2cb25c1fd8c8d48a2832120801", 3266124),
+	UNSUPPORTED_GAME_ENTRY("projectdevonia", "PDM.ags", "c99085930b667b3d67c2a9d5c60e447b", 40149942),  // En-De
+	UNSUPPORTED_GAME_ENTRY("projectdevonia", "PDM.ags", "52ace52f870a3219d60af095aace1631", 40150955),  // En-De v1.0.4
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75839830),  // v1.0.2
+	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75841814),  // TRAC #16236
+	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75845392),  // v1.0.3
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.exe", "6dc8f0aedfd55a47f81323f0a412bc15", 19623142),
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.ags", "e5e26631bf6a375ab722f9588e2f82a1", 16513746),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
@@ -4850,6 +4854,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087, 0),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492087, 0), // Mac
 	GAME_ENTRY_EN_STEAM("maggieapartment", "maggie.exe", "60619c2e5e8d4dac3eda3f932bd7aad8", 1244635713),
+	GAME_ENTRY_STEAM("magretfdb", "MagretandFacedebouc.exe", "48570b588ecb3fd0325beff5852e94c3", 1867716505),  // En-Fr-De-Es-It-Pt
 	GAME_ENTRY_EN_STEAM("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877),
 	GAME_ENTRY_EN("metaldead", "metaldead.exe", "3b0874c12fa643efa5fcdc43f647c871", 1501335400),
 	GAME_ENTRY_STEAM("mountainsofmadness", "MountainsOfMadness.exe", "95822b7957b8f239d3216b9209cfb1f5", 337894184),  // En-De-It
@@ -5225,7 +5230,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("thecastle", "maniac.exe", "f39cba038b386d28fbcf869556c090c1", 23324413),  // En-De-Es-It / Improved (De) translation
 	GAME_ENTRY_STEAM("thecastle", "maniac.ags", "a61420fa39d9772a0d43b41e5db31725", 20214505),  // En-De-Es-It / Improved (De) translation
 	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "96d3101a4377644b4e206e38b5d1ce90", 1072013505),  // Multilang (1.6?)
-	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702),  // Multilang
+	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702),  // Multilang (1.7)
+	GAME_ENTRY_GOG("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072606264),  // TRAC #16119
 	GAME_ENTRY_STEAM("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 53988582),
 	GAME_ENTRY("thecatlady", "Cat Lady.exe", "92320e20e3d4c70a94d89e2f797e65c1", 1061000756), // DVD
 	GAME_ENTRY_EN("thesecretofhuttongrammarschoolvga", "The Secret of Hutton Grammar School VGA.ags", "8d699b21ab64b28c6b2c245c01c822fc", 64971355),
@@ -6307,6 +6313,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barnrunner4", "Mini Game 4.exe", "465f972675db2da6040518221af5b0ba", 4954264),
 	GAME_ENTRY_EN("barnrunner5p5", "Barn Runner 5-5.exe", "beb4cc3da02c78321e80af92b834938c", 293046932),
 	GAME_ENTRY_EN("barnrunner5p5", "Barn Runner 5-5.exe", "beb4cc3da02c78321e80af92b834938c", 293051908),  // v1.0
+	GAME_ENTRY_EN("barnrunner5p5", "Barn Runner 5-5.exe", "beb4cc3da02c78321e80af92b834938c", 293052120),  // v1.0 updated
 	GAME_ENTRY_EN("barnrunnerbake1", "BR Bake Sale 1.exe", "18b284c22010850f79bc5c20054a70c4", 29716432),
 	GAME_ENTRY_EN("barnrunnerfashion", "MAGS 04-24.exe", "615e806856b7730afadf1fea9a756b70", 18323428),
 	GAME_ENTRY_EN("barnrunnerfashion", "MAGS 04-24.exe", "a21322447ef1d4efc1b6838c246b6f80", 19542970),
@@ -8016,6 +8023,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("metrocityresistance", "METRO CITY Resistance.ags", "81d898a3efa19c4982939d5ecb60c9a9", 3485209616),
 	GAME_ENTRY_EN("metrocityresistance", "METRO CITY Resistance.ags", "81d898a3efa19c4982939d5ecb60c9a9", 3485218984),
 	GAME_ENTRY_EN("metrocityresistance", "METRO CITY Resistance.ags", "81d898a3efa19c4982939d5ecb60c9a9", 3485220689),
+	GAME_ENTRY_EN("metrocityresistance", "METRO CITY Resistance.ags", "81d898a3efa19c4982939d5ecb60c9a9", 3477295379),
 	GAME_ENTRY_EN("mi", "Mi.exe", "615e73fc1874e92d60a1996c2330ea36", 6988459),
 	GAME_ENTRY("micarnivalofthedamned", "MI-COD.exe", "90413e9ae57e222f8913b09d2bc847bc", 5114086),  // Eng-Esp
 	GAME_ENTRY("mickeymauserpart1", "MM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12076323),  // En-It
