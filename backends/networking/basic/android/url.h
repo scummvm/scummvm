@@ -18,43 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_ANDROID_URL_H
+#define BACKENDS_NETWORKING_BASIC_ANDROID_URL_H
 
-#ifndef TESTBED_NETWORKING_H
-#define TESTBED_NETWORKING_H
+#include <jni.h>
 
-#include "testbed/testsuite.h"
+#include "backends/networking/basic/url.h"
 
-// This file can be used as template for header files of other newer testsuites.
+namespace Networking {
 
-namespace Testbed {
-
-namespace Networkingtests {
-
-// Helper functions for Networking tests
-
-TestExitStatus testConnectionLimit();
-#ifdef USE_BASIC_NET
-TestExitStatus testSocket();
-TestExitStatus testURL();
-#endif
-
-} // End of namespace Networkingtests
-
-class NetworkingTestSuite : public Testsuite {
+class AndroidURL : public URL {
 public:
-	NetworkingTestSuite();
-	~NetworkingTestSuite() {}
+	static URL *parseURL(const Common::String &url);
 
-	const char *getName() const {
-		return "Networking";
-	}
+	AndroidURL(JNIEnv *env, jobject url);
 
-	const char *getDescription() const {
-		return "Network and internet subsystems";
-	}
+	~AndroidURL() override;
 
+	Common::String getScheme() const override;
+	Common::String getHost() const override;
+	int getPort(bool returnDefault = false) const override;
+private:
+	jobject _url;
 };
 
-} // End of namespace Testbed
+} // End of Namespace Networking
 
-#endif // TESTBED_NETWORKING_H
+#endif

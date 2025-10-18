@@ -25,6 +25,7 @@
 #include "backends/networking/enet/host.h"
 
 namespace Networking {
+namespace ENet {
 
 Host::Host(ENetHost *host) {
 	_host = host;
@@ -187,4 +188,5 @@ bool Host::sendRawData(const Common::String &address, int port, const char *data
 
 }
 
+} // End of namespace ENet
 } // End of namespace Networking
