@@ -247,7 +247,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
 
 		int mode1 = mode;
 
-		ImGui::PushID((ch + 10 - mode) * 10000 + f);
+		ImGui::PushID((ch * 20 + mode) * 10000 + f);
 
 		// If the frame is not the start, then don't render any text
 		if (mode == kModeMember) {
