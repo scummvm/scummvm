@@ -1370,11 +1370,26 @@ void Scripts::cmdResetAnim() {
 }
 
 void Scripts::cmdWalkTo() {
-    error("TODO: Implement Scripts::cmdWalkTo");
+	int16 x = _data->readSint16LE();
+	int16 y = _data->readSint16LE();
+	int16 dir = _data->readSint16LE();
+	debugCN(1, kDebugScripts, "cmdWalkTo(%d, %d, %d)", x, y, dir);
+
+	_vm->_player->_moveTo.x = x;
+	_vm->_player->_moveTo.y = y;
+	_vm->_player->_move = (Direction)dir;
+	_vm->_player->_playerMove = true;
 }
 
 void Scripts::cmdWalkCheck() {
-    error("TODO: Implement Scripts::cmdWalkCheck");
+	debugCN(1, kDebugScripts, "cmdWalkCheck()");
+	if (!_vm->_player->_playerMove) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
 }
 
 void Scripts::cmdSoundEnd() {
@@ -1416,11 +1431,26 @@ void Scripts::cmdCopyScnBuf() {
 }
 
 void Scripts::cmdStilWalkTo() {
-    error("TODO: Implement Scripts::cmdStilWalkTo");
+	int16 x = _data->readSint16LE();
+	int16 y = _data->readSint16LE();
+	int16 dir = _data->readSint16LE();
+	debugCN(1, kDebugScripts, "cmdStilWalkTo(%d, %d, %d)", x, y, dir);
+
+	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.x = x;
+	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.y = y;
+	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_move = (Direction)dir;
+	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_playerMove = true;
 }
 
 void Scripts::cmdStilWalkCheck() {
-    error("TODO: Implement Scripts::cmdStilWalkCheck");
+	debugCN(1, kDebugScripts, "cmdStilWalkCheck()");
+	if (!((Noctropolis::NoctropolisEngine*)_vm)->_stil->_playerMove) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
 }
 
 void Scripts::cmdStilOff() {
