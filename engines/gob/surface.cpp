@@ -367,6 +367,12 @@ uint32 Surface::getColorFromIndex(uint8 index) const {
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
+	if (_bpp == 1 && from._bpp > 1) {
+		// Sometimes we run into this case because of script bugs. The attempt should be just ignord, no dithering is supposed to happen here.
+		warning("Error in Surface::blit(): trying to blit from a high-color source to a paletted destination");
+		return;
+	}
+
 	// Color depths have to fit
 	assert(_bpp == from._bpp || (from._bpp == 1 && from._highColorMap != nullptr));
 
