@@ -140,6 +140,18 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Penumbra: Im Halbschatten (Episode Eins) - German
+	// TRAC #16279
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "7b216d6bfdf2dc8f2a1371ee3565bb6f", 2363392),
+		Common::Language::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
+
 	// Penumbra: Black Plague (GOG v1.0)
 	{
 		"penumbrablackplague",
