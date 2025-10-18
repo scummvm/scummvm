@@ -230,7 +230,8 @@ void Inter_v5::o5_istrlen(OpFuncParams &params) {
 		strVar1 = _vm->_game->_script->readVarIndex();
 		strVar2 = _vm->_game->_script->readVarIndex(nullptr, &type);
 
-		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), READ_VARO_UINT16(strVar2));
+		uint32 fontIndex = readValue(strVar2, type);
+		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), (uint16)fontIndex);
 
 	} else {
 
