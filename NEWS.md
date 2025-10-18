@@ -164,6 +164,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      gray artifacts/pixels to appear in the ending video of The Dig.
    - Fixed minor visual issues in Backyard Baseball (1997) and Pajama Sam 3.
    - Fixed missing graphical effects in Spy Fox in Cheese Chase.
+   - Fixed Spy Fox in Cheese Chase always preferring custom levels over the
+     built-in ones.
 
  Sherlock:
    - Added keymapper support.
