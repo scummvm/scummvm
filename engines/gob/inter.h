@@ -796,9 +796,11 @@ protected:
 									const Common::Array<byte> &appChildData,
 									uint32 childNbr, uint32 appliNbr);
 
+	void o7_saveAdi4ExerciseAttemptsCount(OpGobParams &params);
+	void o7_saveAdi4ExerciseResults(OpGobParams &params);
 	void o7_writeUnknownChildDataToGameVariables(OpGobParams &params);
 	void o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params);
-	void o7_writeUnknownChildUint16ToGameVariables(OpGobParams &params);
+	void o7_writeChildScoreToGameVariables(OpGobParams &params);
 
 	void o7_startAdi4Application(OpGobParams &params);
 
@@ -818,7 +820,8 @@ private:
 
 	uint32 _adi4CurrentAppNbr = 0;
 	uint32 _adi4CurrentChildNbr = 0;
-	uint32 _adi4CurrentSectionInAppChildData = 0; // 0, 1, or 2
+	uint32 _adi4CurrentSectionInGeneralChildData = 0;
+	uint32 _adi4CurrentSectionInAppChildData = 0;
 	Common::Array<byte> _adi4GeneralChildData;
 	Common::Array<byte> _adi4CurrentAppChildData;
 

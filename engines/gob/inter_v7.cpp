@@ -150,9 +150,12 @@ void Inter_v7::setupOpcodesFunc() {
 }
 
 void Inter_v7::setupOpcodesGob() {
+	OPCODEGOB(0, o7_saveAdi4ExerciseAttemptsCount);
+	OPCODEGOB(1, o7_saveAdi4ExerciseResults);
+
 	OPCODEGOB(55, o7_writeUnknownChildDataToGameVariables);
 	OPCODEGOB(64, o7_writeUnknownAppChildDataToGameVariables);
-	OPCODEGOB(74, o7_writeUnknownChildUint16ToGameVariables);
+	OPCODEGOB(74, o7_writeChildScoreToGameVariables);
 
 	OPCODEGOB(406, o7_startAdi4Application);
 	OPCODEGOB(407, o7_xorDeobfuscate);
@@ -2052,8 +2055,11 @@ bool Inter_v7::writeAdi4InstalledAppsData(const Common::Array<byte> &generalChil
 										 const Common::Array<byte> &appChildData,
 										 uint32 childNbr,
 										 uint32 appliNbr) {
+	if (generalChildData.empty())
+		return false;
+
 	if (!writeAdi4InfDataForChild(generalChildData, childNbr, 0, kAdi4InfGeneralChildDataSize)) {
-		warning("wrAdi4InstalledAppsData: Failed to write general data for child %d in ADI.INF", childNbr);
+		warning("writeAdi4InstalledAppsData: Failed to write general data for child %d in ADI.INF", childNbr);
 		return false;
 	}
 
@@ -2064,15 +2070,92 @@ bool Inter_v7::writeAdi4InstalledAppsData(const Common::Array<byte> &generalChil
 								((appChildData[i + 2 * kAdi4InfAppChildDataSize] & 3) << 4);
 	}
 
-	if (!readAdi4InfDataForChild(appChildDataPacked,
-								 childNbr,
-								 kAdi4InfGeneralChildDataSize + appliNbr * kAdi4InfAppChildDataSize,
-								 kAdi4InfAppChildDataSize)) {
+	if (!writeAdi4InfDataForChild(appChildDataPacked,
+								  childNbr,
+								  kAdi4InfGeneralChildDataSize + appliNbr * kAdi4InfAppChildDataSize,
+								  kAdi4InfAppChildDataSize)) {
 		warning("readAdi4InstalledAppsData: Failed to write app-specific data for child %d in ADI.INF", childNbr);
 		return false;
-								 }
+	}
 
 	return true;
+}
+
+void Inter_v7::o7_saveAdi4ExerciseAttemptsCount(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+	uint16 sectionNumberVar = _vm->_game->_script->readUint16();
+	_vm->_game->_script->skip(2);
+
+	if (_adi4GeneralChildData.empty())
+		return;
+
+	uint16 sectionNumber = READ_VAR_UINT16(sectionNumberVar);
+	if (sectionNumber & 0x80) {
+		_adi4CurrentSectionInGeneralChildData = 0;
+		_adi4CurrentSectionInAppChildData = sectionNumber;
+		return;
+	}
+
+	if (sectionNumber & 0x100) {
+		_adi4CurrentSectionInGeneralChildData = 0;
+		_adi4CurrentSectionInAppChildData = 0;
+		return;
+	}
+
+	_adi4CurrentSectionInGeneralChildData = sectionNumber - 1;
+	if (_adi4CurrentSectionInAppChildData != 0)
+		_adi4CurrentSectionInGeneralChildData = _adi4CurrentSectionInAppChildData & 3;
+
+	uint16 unknownOffset = READ_LE_UINT16(&_adi4GeneralChildData[3]);
+	byte &totalAttemptsCount = _adi4GeneralChildData[2515 + _adi4CurrentAppNbr * 36 + unknownOffset * 3 + _adi4CurrentSectionInGeneralChildData];
+	if (totalAttemptsCount != 0xFF)
+		++totalAttemptsCount;
+}
+
+void Inter_v7::o7_saveAdi4ExerciseResults(OpGobParams &params) {
+	uint16 varIndexExerciseNumber = _vm->_game->_script->readUint16();
+	uint16 varIndexExerciseOutcome = _vm->_game->_script->readUint16();
+
+	if (_adi4GeneralChildData.empty())
+		return;
+
+	uint32 exerciseOutcome = VAR(varIndexExerciseOutcome);
+	if (exerciseOutcome < 10)
+		return; // Not completed
+
+	uint16 exerciseNumber = READ_VAR_UINT16(varIndexExerciseNumber);
+	byte &exerciseCompletionFlag = _adi4CurrentAppChildData[(_adi4CurrentSectionInAppChildData & 3) * 200 + exerciseNumber];
+	if (exerciseOutcome == 12) {
+		// Failed
+		if (exerciseCompletionFlag == 0)
+			exerciseCompletionFlag = 1; // Mark as attempted but not suceeded
+	} else {
+		// Succeeded
+		uint16 unknownOffset = READ_LE_UINT16(&_adi4GeneralChildData[3]);
+		if (exerciseCompletionFlag < 2) {
+			byte *currentScorePtr = &_adi4GeneralChildData[3241];
+			uint16 currentScore = READ_LE_UINT16(currentScorePtr);
+			if ((_adi4CurrentSectionInAppChildData & 80) == 0) {
+				WRITE_UINT16(currentScorePtr, currentScore + 2);
+			} else {
+				WRITE_UINT16(currentScorePtr, currentScore + 1);
+			}
+			byte &firstTimeSuccessCount = _adi4GeneralChildData[1075 + _adi4CurrentAppNbr * 36 + unknownOffset * 3 + _adi4CurrentSectionInGeneralChildData];
+			if (firstTimeSuccessCount != 0xFF)
+				++firstTimeSuccessCount;
+		} else {
+			byte &repeatSuccessCount = _adi4GeneralChildData[1795 + _adi4CurrentAppNbr * 36 + unknownOffset * 3 + _adi4CurrentSectionInGeneralChildData];
+			if (repeatSuccessCount != 0xFF)
+				++repeatSuccessCount;
+		}
+
+		exerciseCompletionFlag = 2;
+	}
+
+	writeAdi4InstalledAppsData(_adi4GeneralChildData,
+							   _adi4CurrentAppChildData,
+							   _adi4CurrentChildNbr,
+							   _adi4CurrentAppNbr);
 }
 
 void Inter_v7::o7_writeUnknownChildDataToGameVariables(OpGobParams &params) {
@@ -2093,11 +2176,11 @@ void Inter_v7::o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params) {
 
 	for (uint32 i = 0; i < kAdi4InfAppChildDataSize; ++i) {
 		WRITE_VARO_UINT8(destVarIndex * 4 + i,
-						_adi4CurrentAppChildData[i + _adi4CurrentSectionInAppChildData * kAdi4InfAppChildDataSize] & 3);
+						_adi4CurrentAppChildData[i + (_adi4CurrentSectionInAppChildData & 3) * kAdi4InfAppChildDataSize] & 3);
 	}
 }
 
-void Inter_v7::o7_writeUnknownChildUint16ToGameVariables(OpGobParams &params) {
+void Inter_v7::o7_writeChildScoreToGameVariables(OpGobParams &params) {
 	uint16 varIndex = _vm->_game->_script->readUint16();
 	if (_adi4GeneralChildData.empty())
 		return;
