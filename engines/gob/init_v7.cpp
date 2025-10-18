@@ -63,18 +63,13 @@ void Init_v7::initGame() {
 			// Look for any "DESC*.ADI" file
 			Common::FSList fileNodes;
 			subdirNode.getChildren(fileNodes, Common::FSNode::kListFilesOnly);
-			bool foundDescFile = false;
 			for (const Common::FSNode &fileNode : fileNodes) {
 				if (fileNode.getName().hasPrefixIgnoreCase("DESC") && fileNode.getName().hasSuffixIgnoreCase(".ADI")) {
 					debugC(1, kDebugFileIO, "Found Adi 4 application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
 					SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
-					foundDescFile = true;
 					break;
 				}
 			}
-
-			if (foundDescFile)
-				break;
 		}
 	}
 
