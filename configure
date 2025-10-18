@@ -20,6 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# shellcheck disable=SC2006,SC2016,SC2046,SC2086,SC2268 # possibly relevant, but too noisy for now
+
 set -a
 
 # NLS nuisances.
@@ -135,7 +137,9 @@ add_component() {
 _srcdir=`dirname $0`
 
 # Read list of engines
+_wip_engines=
 for i in $_srcdir/engines/*/configure.engine; do
+	# shellcheck disable=SC1090 # 'source=./engines/*/configure.engine' not accepted yet?
 	. "$i"
 done
 
@@ -243,13 +247,13 @@ _ext_sse2=auto
 _ext_avx2=auto
 _ext_neon=auto
 # Default commands
-_ranlib=ranlib
-_strip=strip
+_ranlib="ranlib"
+_strip="strip"
 _ar="ar cr"
 _as="as"
-_dwp=dwp
-_windres=windres
-_ldd=ldd
+_dwp="dwp"
+_windres="windres"
+_ldd="ldd"
 _stagingpath="staging"
 _amigaospath="install"
 _morphospath="PROGDIR:"
@@ -261,7 +265,7 @@ _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _libmikmodconfig=libmikmod-config
 _freetypeconfig=freetype-config
-_freetype_found="false"
+_freetype_found=false
 _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
@@ -800,7 +804,6 @@ engine_enable() {
 	if check_is_subengine ${engine} ; then
 		if test "$opt" != "yes" ; then
 			subengine_option_error ${engine}
-			return
 		fi
 		parent=`get_subengine_parent ${engine}`
 		if test `get_engine_build ${parent}` = "no" ; then
@@ -810,7 +813,6 @@ engine_enable() {
 
 	if test "$opt" != "static" -a "$opt" != "dynamic" -a "$opt" != "yes" ; then
 		option_error
-		return
 	fi
 
 	subengines=
@@ -819,13 +821,11 @@ engine_enable() {
 		subengines=$(get_engine_subengines ${engine})
 		if test "$subengines" = "" ; then
 			engine_option_error "${engine}*"
-			return
 		fi
 	fi
 
 	if test "`get_engine_name ${engine}`" = "" ; then
 		engine_option_error ${engine}
-		return
 	fi
 
 	set_var _engine_${engine}_build "$opt"
@@ -839,7 +839,6 @@ engine_disable() {
 	# Filter malformed options
 	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
 		option_error
-		return
 	fi
 
 	engine=`echo $1 | sed 's/-/_/g'`
@@ -1764,6 +1763,7 @@ opendingux-*)
 	;;
 dreamcast)
 	_host_os=dreamcast
+	# shellcheck disable=SC2209 # mistakes 'sh' architecture for 'sh' shell
 	_host_cpu=sh
 	_host_alias=sh-elf
 	append_var CXXFLAGS "-ml -m4-single-only"
@@ -2077,6 +2077,7 @@ n64)
 	fi
 	;;
 ps3)
+	# shellcheck disable=SC2153 # ignore warning about PS3DEV/PSPDEV variable names being so close
 	if test -z "$PS3DEV"; then
 		echo "Please set PS3DEV in your environment. export PS3DEV=<path to ps3 toolchain>"
 		exit 1
@@ -2093,6 +2094,7 @@ psp2)
 	fi
 	;;
 psp)
+	# shellcheck disable=SC2153 # ignore warning about PS3DEV/PSPDEV variable names being so close
 	if test -z "$PSPDEV"; then
 		PSPDEV=`psp-config --pspdev-path`
 	fi
@@ -2122,12 +2124,12 @@ riscos)
 
 	if test -e "$GCCSDK_INSTALL_ENV/bin/tokenize"; then
 		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
-	elif `which tokenize >/dev/null 2>&1`; then
+	elif command -v tokenize >/dev/null 2>&1; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
 	if test -e "$GCCSDK_INSTALL_ENV/bin/makerun"; then
 		add_line_to_config_mk "MAKERUN := $GCCSDK_INSTALL_ENV/bin/makerun"
-	elif `which makerun >/dev/null 2>&1`; then
+	elif command -v makerun >/dev/null 2>&1; then
 		add_line_to_config_mk "MAKERUN := makerun"
 	fi
 	;;
@@ -2467,7 +2469,7 @@ if test "$have_gcc" = yes ; then
 		;;
 	riscos)
 		# -Wformat complains about '%z' and so on. Don't know if it's related to
-		# the older compiler not being completely C+11-aware, or something else.
+		# the older compiler not being completely C++11-aware, or something else.
 		if test "$have_gcc" = yes && test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
 			std_variant=gnu++
 			pedantic=no
@@ -2590,7 +2592,7 @@ if test "$_debug_build" != no; then
 	#       isn't implemented, and there's no fix in sight. So we force
 	#       DWARF version 4 and hope that works for, well... "most targets".
 
-	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+	if command -v $_dwp >/dev/null 2>&1 && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && $_dwp -e $TMPO -o /dev/null >/dev/null 2>&1; then
 		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
@@ -2707,14 +2709,14 @@ if test "$_release_build" != yes && test "$_werror_build" != no; then
 fi
 
 if test -n "$STRINGS"; then
-	_strings=$STRINGS
+	_strings="$STRINGS"
 else
 	echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-	if `which $_host_alias-strings >/dev/null 2>&1`; then
-		_strings=$_host_alias-strings
+	if command -v $_host_alias-strings >/dev/null 2>&1; then
+		_strings="$_host_alias-strings"
 		echo yes >> "$TMPLOG"
 	else
-		_strings=strings
+		_strings="strings"
 		echo no >> "$TMPLOG"
 	fi
 fi
@@ -2727,26 +2729,24 @@ cat > tmp_endianness_check.cpp << EOF
 #ifndef __GNUC__
 #define __attribute__(x)
 #endif
+/* values are similar to the AC_C_BIGENDIAN autoconf test */
 __attribute__ ((used)) unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 __attribute__ ((used)) unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 const char * _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; return s; }
-__attribute__ ((used)) unsigned short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
-__attribute__ ((used)) unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
-const char * _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; return s; }
-int main() { _ascii (); _ebcdic (); return 0; }
+int main() { _ascii (); return 0; }
 EOF
 # Make sure that this particular object always has regular machine code content,
 # so that the checks below can be done, even with LTO on.
-test "$have_gcc" = yes && no_lto_regular_machine_code_removal=-ffat-lto-objects
-$CXX $LDFLAGS $CXXFLAGS $no_lto_regular_machine_code_removal -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
+test "$have_gcc" = yes && lto_keep_machine_code_flag=-ffat-lto-objects
+$CXX $LDFLAGS $CXXFLAGS $lto_keep_machine_code_flag -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
 # The flag may not exist in some older Clang releases (e.g. "Apple LLVM
 # version 6.0 (based on LLVM 3.5svn)")
 if test "$?" -ne 0 && test "$have_gcc" = yes; then
 	$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
 fi
-if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
+if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep -q BIGenDianSyS; then
 	_endian=big
-elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep -q LiTTleEnDian; then
 	_endian=little
 fi
 echo $_endian
@@ -2831,7 +2831,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			maemo )
+			maemo)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
@@ -3132,7 +3132,7 @@ const char *_version() { char *s = (char *)version; return s; }
 int main(int argc, char *argv[]) { _version(); return 0; }
 EOF
 		cc_check_no_clean
-		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
+		if $_strings $TMPO$HOSTEXEEXT | grep -q Version:; then
 			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
 			_macos_min_version="${_macos_min_version#Version:}"
 		fi
@@ -3142,12 +3142,12 @@ EOF
 		_macos_min_version_dot=undefined
 		if test -n "$_macos_min_version" ; then
 			if test "$_macos_min_version" -lt 101000; then
-				_macos_min_ver_major=$((${_macos_min_version}/100))
-				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
+				_macos_min_ver_major=$((_macos_min_version/100))
+				_macos_min_ver_minor=$((_macos_min_version/10 - 10*_macos_min_ver_major))
 				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
 			else
-				_macos_min_ver_major=$((${_macos_min_version}/10000))
-				_macos_min_ver_minor=$((${_macos_min_version}/100 - 100*${_macos_min_ver_major}))
+				_macos_min_ver_major=$((_macos_min_version/10000))
+				_macos_min_ver_minor=$((_macos_min_version/100 - 100*_macos_min_ver_major))
 				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
 			fi
 		fi
@@ -3317,7 +3317,7 @@ EOF
 		if test "$_freetype2" = yes; then
 			# neither pkg-config nor freetype-config work, so we setup freetype manually
 			append_var LDFLAGS "-s USE_FREETYPE=1"
-			_freetype_found="true"
+			_freetype_found=true
 			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
 			FREETYPE2_CFLAGS="-I$_freetypepath"
 		else
@@ -3353,7 +3353,7 @@ EOF
 		else
 			_zlib=no
 		fi
-	;;
+		;;
 	freebsd* | dragonfly*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -3377,7 +3377,7 @@ EOF
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
-			# retarded toolchain patch forces --gc-sections, overwrite it
+			# toolchain patch forces --gc-sections, overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
@@ -3578,7 +3578,7 @@ EOF
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		append_var LDFLAGS "-logc"
 		if test "$_dynamic_modules" = "yes" ; then
-			# retarded toolchain patch forces --gc-sections, overwrite it
+			# toolchain patch forces --gc-sections, overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
@@ -3785,7 +3785,7 @@ if test -n "$_host"; then
 			FREETYPE2_STATIC_LIBS="-lfreetype"
 			FREETYPE2_CFLAGS="-I${KOS32_SDK_DIR}/sources/freetype/include"
 			_freetypeconfig=
-			_freetype_found="true"
+			_freetype_found=true
 
 			SDL_CFLAGS="-I${KOS32_SDK_DIR}/sources/SDL-1.2.2_newlib/include"
 			SDL_LIBS="-lSDLn -lsound"
@@ -3852,9 +3852,9 @@ if test -n "$_host"; then
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
-			if `which $_host-peldd >/dev/null 2>&1`; then
+			if command -v $_host-peldd >/dev/null 2>&1; then
 				_ldd="$_host-peldd -t --ignore-errors"
-			elif `which peldd >/dev/null 2>&1`; then
+			elif command -v peldd >/dev/null 2>&1; then
 				_ldd="peldd -t --ignore-errors"
 			fi
 			;;
@@ -4278,9 +4278,12 @@ append_var MODULES "backends/platform/$_backend"
 #
 # Check if specific components are not used by enabled engines and disable them
 #
+_features_disabled=
+
 echo "Checking for unused components..."
 awk -f "$_srcdir/engines.awk" -v _pass=pass1 < /dev/null
 
+# shellcheck disable=SC1091 # created on the fly
 . ./engines.awk.out
 
 for f in $_features_disabled; do
@@ -4443,6 +4446,7 @@ if test "$_sdlnet" = auto ; then
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+	# shellcheck disable=SC2153 # variable names are close
 	cc_check $SDL2_NET_LIBS $LIBS $INCLUDES $SDL2_NET_CFLAGS && _sdlnet=yes
 	if test "$_sdlnet" = yes ; then
 		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
@@ -4453,6 +4457,7 @@ EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+		# shellcheck disable=SC2153 # variable names are close
 		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
 		if test "$_sdlnet" = yes ; then
 			set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
@@ -4463,6 +4468,7 @@ EOF
 #include "SDL3/SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
+			# shellcheck disable=SC2153 # variable names are close
 			cc_check $SDL3_NET_LIBS $LIBS $INCLUDES $SDL3_NET_CFLAGS && _sdlnet=yes
 			if test "$_sdlnet" = yes ; then
 				set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
@@ -5809,7 +5815,7 @@ EOF
 	fi
 fi
 if test "$_a52" = yes ; then
-	INCLUDES="$INCLUDES $A52_FLAGS"
+	INCLUDES="$INCLUDES $A52_CFLAGS"
 	LIBS="$LIBS $A52_LIBS -la52"
 fi
 define_in_config_if_yes "$_a52" 'USE_A52'
@@ -6357,7 +6363,7 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 # Check for Unity if taskbar integration is enabled
 #
 echocheck "libunity"
-if test "$_unix" = no || test "$_taskbar" = no || test "$_pkg_config" = no; then
+if test "$_posix" = no || test "$_taskbar" = no || test "$_pkg_config" = no; then
 	_libunity=no
 else
 if test "$_libunity" = auto ; then
@@ -6398,7 +6404,7 @@ echo "$_libunity"
 # Check for GTK if system dialogs are enabled
 #
 echocheck "gtk"
-if test "$_unix" = no || test "$_dialogs" = no || test "$_pkg_config" = no; then
+if test "$_dialogs" = no || test "$_pkg_config" = no; then
 	_gtk=no
 else
 if test "$_gtk" = auto ; then
@@ -6448,7 +6454,7 @@ find_freetype() {
 		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
 		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
 		FREETYPE2_STATIC_LIBS=`$_pkgconfig --static --libs freetype2`
-		_freetype_found="true"
+		_freetype_found=true
 	else
 		# Look for the freetype-config script
 		find_freetypeconfig
@@ -6458,7 +6464,7 @@ find_freetype() {
 			freetypeprefix="$_freetypepath"
 			if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
 				teststring=VeryImplausibleSysrootX1Y2Z3
-				if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
+				if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep -q $teststring ); then
 					echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
 					freetypeprefix="${freetypeprefix##$SYSROOT}"
 				fi
@@ -6466,14 +6472,14 @@ find_freetype() {
 			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
 			FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 			FREETYPE2_STATIC_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --static --libs 2>/dev/null`
-			_freetype_found="true"
+			_freetype_found=true
 		fi
 	fi
 }
 
 if test "$_freetype2" != "no"; then
 	find_freetype
-	if test $_freetype_found != true; then
+	if ! $_freetype_found ; then
 		_freetype2=no
 	else
 		if test "$_freetype2" = "auto"; then
@@ -6563,7 +6569,7 @@ if test "$_opengl_mode" != none ; then
 							_opengl_mode=gl
 							;;
 						*)
-							# As SDL2 supports everything, let the user choose if he wants to
+							# As SDL2 supports everything, let users choose if they want to
 							test "$_opengl_mode" = "auto" && _opengl_mode=any
 							;;
 					esac
@@ -6583,7 +6589,7 @@ if test "$_opengl_mode" != none ; then
 			test "$_opengl_mode" = "auto" && _opengl_mode=none
 			# We only support OpenGL on SDL based backends and Android (already handled)
 			test "$_sdl" = "no" && _opengl_mode=none
-			# If it's a SDL based backend and OpenGL is really enabled, use GLAD
+			# If it's an SDL based backend and OpenGL is really enabled, use GLAD
 			test "$_opengl_mode" != "none" && test "$_sdl" != "no" && _opengl_glad=yes
 			;;
 	esac
@@ -7173,7 +7179,7 @@ fi
 echo "$_tinygl"
 
 echo_n "Building any 3D game... "
-if (test "$_tinygl" = yes || test "$_opengl_game_classic" = yes || test "$_opengl_game_shaders" = yes); then
+if test "$_tinygl" = yes || test "$_opengl_game_classic" = yes || test "$_opengl_game_shaders" = yes; then
 	_3d=yes
 else
 	_3d=no
