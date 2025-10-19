@@ -88,6 +88,7 @@ void AnimationBase::load() {
 	}
 	if (_fileName.size() < 4 || scumm_strnicmp(_fileName.end() - 4, ".AN0", 4) != 0)
 		_fileName += ".AN0";
+	_fileName = reencode(_fileName);
 	fullPath += _fileName;
 
 	File file;

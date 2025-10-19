@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "common/stream.h"
+#include "common/str-enc.h"
 #include "common/stack.h"
 #include "math/vector2d.h"
 #include "math/vector3d.h"
@@ -117,6 +118,11 @@ bool isPowerOfTwo(int16 x);
 int16 nextPowerOfTwo(int16 v);
 
 float ease(float t, EasingType type);
+
+Common::String reencode(
+	const Common::String &string,
+	Common::CodePage from = Common::CodePage::kISO8859_1, // "Western European", used for the spanish special characters
+	Common::CodePage to = Common::CodePage::kUtf8);
 
 Math::Vector3d as3D(const Math::Vector2d &v);
 Math::Vector3d as3D(Common::Point p);
