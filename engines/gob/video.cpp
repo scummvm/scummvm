@@ -374,6 +374,11 @@ void Video::drawPacked(byte *sprBuf, int32 size, int16 width, int16 height,
 void Video::drawPackedSprite(byte *sprBuf, int32 size, int16 width, int16 height,
 		int16 x, int16 y, int16 transp, Surface &dest) {
 
+	if (y + height > dest.getHeight()) {
+		warning(" Video::drawPackedSprite: destY + height > destHeight");
+		return;
+	}
+
 	if (spriteUncompressor(sprBuf, size, width, height, x, y, transp, dest))
 		return;
 
