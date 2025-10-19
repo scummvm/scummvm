@@ -8709,7 +8709,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// French: "Le Maître des éléments", published by Gallimard Multimédia
 	// Mac version requires installation, installer in file "Installeur", created with VISE Lite 3.6 from MindVision Software
-	WINGAME1_l("melements", "", "MDE.EXE", "t:8db5c7ffd823515b341cee7acb72b9a8", 2256946, Common::FR_FRA, 602),
+	WINGAME1_l("melements", "", "MDE.EXE", "t:8db5c7ffd823515b341cee7acb72b9a8", 2256946, Common::FR_FRA, 650),
 
 	// Dutch: "Meesters van Macht", Netherlands/Belgium release by Karakter Interactive
 	// Game files likely match the original 1997 release since it is the only variant built with Director 6.0.1
