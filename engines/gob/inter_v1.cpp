@@ -1606,7 +1606,7 @@ void Inter_v1::o1_createSprite(OpFuncParams &params) {
 	flag = _vm->_game->_script->readInt16();
 	byte bpp = (flag & 0x200) ? 1 : _vm->_pixelFormat.bytesPerPixel;
 	if (width == 0 || height == 0) {
-		warning("Error in o1_createSprite: invalid sprite dimensions (w = %d, h = %d)", width, height);
+		warning("o1_createSprite(): invalid sprite dimensions (w = %d, h = %d)", width, height);
 		return;
 	}
 
