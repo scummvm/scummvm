@@ -188,21 +188,22 @@ static constexpr const ScriptKernelTask kScriptKernelTaskMapV31[] = {
 	ScriptKernelTask::LerpCamToObjectKeepingZ
 };
 
+static constexpr const char *kMapFiles[] = { // not really inherent to V3 but holds true for all V3 games
+	"MAPAS/MAPA5.EMC",
+	"MAPAS/MAPA4.EMC",
+	"MAPAS/MAPA3.EMC",
+	"MAPAS/MAPA2.EMC",
+	"MAPAS/MAPA1.EMC",
+	"MAPAS/GLOBAL.EMC",
+	nullptr
+};
+
 class GameWithVersion3 : public Game {
 public:
 	Point getResolution() override {
 		return Point(1024, 768);
 	}
 
-	static constexpr const char *kMapFiles[] = { // not really inherent to V3 but holds true for all V3 games
-		"MAPAS/MAPA5.EMC",
-		"MAPAS/MAPA4.EMC",
-		"MAPAS/MAPA3.EMC",
-		"MAPAS/MAPA2.EMC",
-		"MAPAS/MAPA1.EMC",
-		"MAPAS/GLOBAL.EMC",
-		nullptr
-	};
 	const char *const *getMapFiles() override {
 		return kMapFiles;
 	}

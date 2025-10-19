@@ -46,7 +46,7 @@ struct AlcachofaGameDescription {
 
 	ADGameDescription desc;
 
-	EngineVersion engineVersion;
+	EngineVersion engineVersion = EngineVersion::V3_0;
 
 	inline bool isVersionBetween(int min, int max) const {
 		int intVersion = (int)engineVersion;
