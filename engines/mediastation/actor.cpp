@@ -298,7 +298,7 @@ void SpatialEntity::setZIndex(int zIndex) {
 }
 
 void SpatialEntity::setDissolveFactor(double dissolveFactor) {
-	CLIP(dissolveFactor, 0.0, 1.0);
+	dissolveFactor = CLIP(dissolveFactor, 0.0, 1.0);
 	if (dissolveFactor != _dissolveFactor) {
 		_dissolveFactor = dissolveFactor;
 		invalidateLocalBounds();

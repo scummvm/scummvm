@@ -84,7 +84,7 @@ public:
 	void imageBlit(
 		const Common::Point &destinationPoint,
 		const Bitmap *image,
-		const double dissolveFactor,
+		double dissolveFactor,
 		const Common::Array<Common::Rect> &dirtyRegion,
 		Graphics::ManagedSurface *destinationImage = nullptr);
 

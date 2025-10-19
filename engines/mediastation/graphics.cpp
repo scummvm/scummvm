@@ -366,9 +366,9 @@ void VideoDisplayManager::_setPaletteToColor(Graphics::Palette &targetPalette, b
 }
 
 uint VideoDisplayManager::_limitColorRange(uint &startIndex, uint &colorCount) {
-	CLIP<uint>(startIndex, 0, Graphics::PALETTE_COUNT - 1);
+	startIndex = CLIP<uint>(startIndex, 0, Graphics::PALETTE_COUNT - 1);
 	uint endColorIndex = startIndex + colorCount;
-	CLIP<uint>(endColorIndex, 0, Graphics::PALETTE_COUNT);
+	endColorIndex = CLIP<uint>(endColorIndex, 0, Graphics::PALETTE_COUNT);
 	colorCount = endColorIndex - startIndex;
 	return endColorIndex;
 }
@@ -537,7 +537,7 @@ void VideoDisplayManager::_setPercentToPaletteObject(double percent, uint palett
 void VideoDisplayManager::imageBlit(
 	const Common::Point &destinationPoint,
 	const Bitmap *sourceImage,
-	const double dissolveFactor,
+	double dissolveFactor,
 	const Common::Array<Common::Rect> &dirtyRegion,
 	Graphics::ManagedSurface *targetImage) {
 
@@ -569,7 +569,7 @@ void VideoDisplayManager::imageBlit(
 
 	if (dissolveFactor > 1.0 || dissolveFactor < 0.0) {
 		warning("%s: Got out-of-range dissolve factor: %f", __func__, dissolveFactor);
-		CLIP(dissolveFactor, 0.0, 1.0);
+		dissolveFactor = CLIP(dissolveFactor, 0.0, 1.0);
 	} else if (dissolveFactor == 0.0) {
 		// If the image is fully transparent, there is nothing to draw, so we can return now.
 		return;
@@ -670,7 +670,7 @@ void VideoDisplayManager::dissolveBlitRectsClip(
 	byte dissolveIndex = DISSOLVE_PATTERN_COUNT;
 	if (integralDissolveFactor != 50) {
 		dissolveIndex = ((integralDissolveFactor + 2) / 4) - 1;
-		CLIP<byte>(dissolveIndex, 0, (DISSOLVE_PATTERN_COUNT - 1));
+		dissolveIndex = CLIP<byte>(dissolveIndex, 0, (DISSOLVE_PATTERN_COUNT - 1));
 	}
 
 	Common::Rect destRect(Common::Rect(destPos, source->width(), source->height()));
@@ -846,8 +846,12 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 	int destSizeInBytes = source->width() * source->height();
 
 	Common::SeekableReadStream *chunk = source->_compressedStream;
-	chunk->seek(0);
+	if (chunk == nullptr) {
+		warning("%s: Got empty image", __func__);
+		return dest;
+	}
 
+	chunk->seek(0);
 	bool imageFullyRead = false;
 	Common::Point sourcePos;
 	while (sourcePos.y < source->height()) {
@@ -921,7 +925,7 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 					// The bounds check is structured this way because the run can extend across scanlines.
 					byte runLength = operation;
 					uint maxAllowedRun = destSizeInBytes - (sourcePos.y * dest.w + sourcePos.x);
-					CLIP<uint>(runLength, 0, maxAllowedRun);
+					runLength = CLIP<uint>(runLength, 0, maxAllowedRun);
 
 					byte *destPtr = static_cast<byte *>(dest.getBasePtr(sourcePos.x, sourcePos.y));
 					chunk->read(destPtr, runLength);
@@ -936,7 +940,7 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 				byte colorIndexToRepeat = chunk->readByte();
 				byte repetitionCount = operation;
 				uint maxAllowedCount = destSizeInBytes - (sourcePos.y * dest.w + sourcePos.x);
-				CLIP<uint>(repetitionCount, 0, maxAllowedCount);
+				repetitionCount = CLIP<uint>(repetitionCount, 0, maxAllowedCount);
 
 				byte *destPtr = static_cast<byte *>(dest.getBasePtr(sourcePos.x, sourcePos.y));
 				memset(destPtr, colorIndexToRepeat, repetitionCount);
