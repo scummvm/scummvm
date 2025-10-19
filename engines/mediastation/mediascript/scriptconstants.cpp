@@ -103,6 +103,8 @@ const char *variableScopeToStr(VariableScope scope) {
 		return "Local";
 	case kVariableScopeParameter:
 		return "Parameter";
+	case kVariableScopeIndirectParameter:
+		return "IndirectParameter";
 	case kVariableScopeGlobal:
 		return "Global";
 	default:
@@ -135,6 +137,8 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "SpatialHide";
 	case kSpatialMoveToMethod:
 		return "SpatialMoveTo";
+	case kSpatialMoveToByOffsetMethod:
+		return "SpatialMoveToByOffset";
 	case kSpatialZMoveToMethod:
 		return "SpatialZMoveTo";
 	case kSpatialCenterMoveToMethod:
