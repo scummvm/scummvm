@@ -679,7 +679,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 		props.startFrame = 0;
 		props.lastFrame = -1;
-	} else if (props.lastFrame == -3) {
+	} else if (props.lastFrame == -3 && _vm->_mult->_objects != nullptr) {
 
 		if (file.empty()) {
 			if (props.flags & 0x400) {
