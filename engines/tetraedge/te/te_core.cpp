@@ -160,9 +160,9 @@ static void _findFileRecursively(const TetraedgeFSNode &parent,
 				 const Common::String &fname,
 				 Common::Array<TetraedgeFSNode> &foundFiles,
 				 int maxDepth) {
-	if (parent.getChild(Common::Path(fname, '/')).exists()) {
-		foundFiles.push_back(parent.getChild(Common::Path(fname, '/')));
-	}
+	TetraedgeFSNode child = parent.getChild(Common::Path(fname, '/'));
+	if (child.exists())
+		foundFiles.push_back(child);
 
 	if (maxDepth <= 0)
 		return;
@@ -203,11 +203,11 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path, bool quiet) const {
 	     it != _fileSystemFlags.end(); it++)
 		activeFlags[it->_value] = true;
 
-	// This is to keep behivour changes small when we migrated from old system.
+	// This is to minimize functionality changes from the previous implementation.
 	// I'm not sure if it's needed
-	// TODO: Figure out what to do with this. Right now we set flag
+	// TODO: Figure out what to do with this. Right now we set the flag
 	// to "SD" but use assets from "HD". This seems to give the best
-	// results but is fundamentally wrong.
+	// results, but is fundamentally wrong.
 	activeFlags.erase("SD");
 	activeFlags["HD"] = true;
 
