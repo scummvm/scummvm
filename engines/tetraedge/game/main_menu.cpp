@@ -60,7 +60,7 @@ void MainMenu::enter() {
 
 	TeSpriteLayout &appSpriteLayout = app->appSpriteLayout();
 	appSpriteLayout.setVisible(true);
-	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running()) {
+	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running() && g_engine->gameType() == TetraedgeEngine::kSyberia) {
 		appSpriteLayout.load("menus/menu.ogv");
 		appSpriteLayout._tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		appSpriteLayout._tiledSurfacePtr->play();

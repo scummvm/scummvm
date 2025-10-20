@@ -39,7 +39,7 @@ OptionsMenu::OptionsMenu() : _tutoPage(1) {
 void OptionsMenu::enter() {
 	Application *app = g_engine->getApplication();
 
-	if (!app->appSpriteLayout()._tiledSurfacePtr->isLoaded()) {
+	if (!app->appSpriteLayout()._tiledSurfacePtr->isLoaded() && g_engine->gameType() == TetraedgeEngine::kSyberia) {
 		// TODO: Check
 		app->appSpriteLayout().load("menus/menu.ogv");
 		app->appSpriteLayout().play();
