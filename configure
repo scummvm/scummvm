@@ -791,13 +791,16 @@ engine_disable_all_unstable() {
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
-	if ( echo $1 | grep ':' ) 2> /dev/null > /dev/null ; then
+	case "$1" in
+	*:*)
 		eng=`echo $1 | cut -d ':' -f 1`
 		opt=`echo $1 | cut -d ':' -f 2`
-	else
+		;;
+	*)
 		eng=$1
 		opt=yes
-	fi
+		;;
+	esac
 	engine=`echo $eng | sed 's/-/_/g'`
 
 	# Filter the parameter for the subengines
@@ -837,9 +840,11 @@ engine_enable() {
 # Disable the given engine
 engine_disable() {
 	# Filter malformed options
-	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
+	case "$1" in
+	*=*)
 		option_error
-	fi
+		;;
+	esac
 
 	engine=`echo $1 | sed 's/-/_/g'`
 	if test "`get_engine_name ${engine}`" != "" ; then
