@@ -40,7 +40,6 @@ void OptionsMenu::enter() {
 	Application *app = g_engine->getApplication();
 
 	if (!app->appSpriteLayout()._tiledSurfacePtr->isLoaded() && g_engine->gameType() == TetraedgeEngine::kSyberia) {
-		// TODO: Check
 		app->appSpriteLayout().load("menus/menu.ogv");
 		app->appSpriteLayout().play();
 	}
@@ -48,14 +47,15 @@ void OptionsMenu::enter() {
 	if (!g_engine->gameIsAmerzone()) {
 		load("menus/options/optionsMenu.lua");
 		_gui2.load("menus/options/tuto.lua");
+
+		app->frontLayout().addChild(layoutChecked("menu2"));
+		app->frontLayout().addChild(_gui2.buttonLayoutChecked("tuto"));
+		_gui2.buttonLayoutChecked("tuto")->setVisible(false);
 	} else {
 		load("GUI/OptionsMenu.lua");
-		_gui2.load("menus/options/tuto.lua");	// TODO: This is wrong
-	}
 
-	app->frontLayout().addChild(layoutChecked("menu2"));
-	app->frontLayout().addChild(_gui2.buttonLayoutChecked("tuto"));
-	_gui2.buttonLayoutChecked("tuto")->setVisible(false);
+		app->frontLayout().addChild(layoutChecked("menu2"));
+	}
 
 	const Common::Path musicPath(value("musicPath").toString());
 	if (!app->music().isPlaying() || (app->music().getAccessName() != musicPath)) {
@@ -64,52 +64,57 @@ void OptionsMenu::enter() {
 		app->music().volume(1.0);
 	}
 
-	Tetraedge::TeButtonLayout *quitButton = buttonLayout("quitButton");
-	if (quitButton) {
+	TeButtonLayout *quitButton = buttonLayout("quitButton");
+	if (quitButton)
 		quitButton->onMouseClickValidated().add(this, &OptionsMenu::onQuitButton);
-	}
 	buttonLayoutChecked("creditsButton")->onMouseClickValidated().add(this, &OptionsMenu::onCreditsButton);
 	TeButtonLayout *supportBtn = buttonLayout("supportButton");
-	if (supportBtn) {
+	if (supportBtn)
 		supportBtn->onMouseClickValidated().add(this, &OptionsMenu::onSupportButton);
-	}
 	TeButtonLayout *termsBtn = buttonLayout("termsButton");
-	if (termsBtn) {
+	if (termsBtn)
 		termsBtn->onMouseClickValidated().add(this, &OptionsMenu::onTermsOfServiceButton);
-	}
 	TeButtonLayout *privBtn = buttonLayout("privacyButton");
-	if (privBtn) {
+	if (privBtn)
 		privBtn->onMouseClickValidated().add(this, &OptionsMenu::onPrivacyPolicyButton);
-	}
 
-	buttonLayoutChecked("sfxVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onSFXVolumeMinusButton);
-	buttonLayoutChecked("sfxVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onSFXVolumePlusButton);
-	buttonLayoutChecked("musicVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onMusicVolumeMinusButton);
-	buttonLayoutChecked("musicVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onMusicVolumePlusButton);
-	buttonLayoutChecked("dialogVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onDialogVolumeMinusButton);
-	buttonLayoutChecked("dialogVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onDialogVolumePlusButton);
-	buttonLayoutChecked("videoVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onVideoVolumeMinusButton);
-	buttonLayoutChecked("videoVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onVideoVolumePlusButton);
-	buttonLayoutChecked("sfxVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("sfxVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("musicVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("musicVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("dialogVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("dialogVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("videoVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
-	buttonLayoutChecked("videoVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
+	if (!g_engine->gameIsAmerzone()) {
+		buttonLayoutChecked("sfxVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onSFXVolumeMinusButton);
+		buttonLayoutChecked("sfxVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onSFXVolumePlusButton);
+		buttonLayoutChecked("musicVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onMusicVolumeMinusButton);
+		buttonLayoutChecked("musicVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onMusicVolumePlusButton);
+		buttonLayoutChecked("dialogVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onDialogVolumeMinusButton);
+		buttonLayoutChecked("dialogVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onDialogVolumePlusButton);
+		buttonLayoutChecked("videoVolumeMinusButton")->onMouseClickValidated().add(this, &OptionsMenu::onVideoVolumeMinusButton);
+		buttonLayoutChecked("videoVolumePlusButton")->onMouseClickValidated().add(this, &OptionsMenu::onVideoVolumePlusButton);
+		buttonLayoutChecked("sfxVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("sfxVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("musicVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("musicVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("dialogVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("dialogVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("videoVolumeMinusButton")->setDoubleValidationProtectionEnabled(false);
+		buttonLayoutChecked("videoVolumePlusButton")->setDoubleValidationProtectionEnabled(false);
 
-	_tutoPage = 1;
-	buttonLayoutChecked("tutoButton")->onMouseClickValidated().add(this, &OptionsMenu::onVisibleTuto);
+		_tutoPage = 1;
+		buttonLayoutChecked("tutoButton")->onMouseClickValidated().add(this, &OptionsMenu::onVisibleTuto);
 
-	TeLayout *bg = _gui2.layoutChecked("background");
-	for (int i = 1; i <= bg->childCount(); i++) {
-		TeButtonLayout *page = _gui2.buttonLayoutChecked(pageStr(i));
-		if (i == bg->childCount()) {
-			page->onMouseClickValidated().add(this, &OptionsMenu::onCloseTuto);
-		} else {
-			page->onMouseClickValidated().add(this, &OptionsMenu::onVisibleTutoNextPage);
+		TeLayout *bg = _gui2.layoutChecked("background");
+		for (int i = 1; i <= bg->childCount(); i++) {
+			TeButtonLayout *page = _gui2.buttonLayoutChecked(pageStr(i));
+			if (i == bg->childCount()) {
+				page->onMouseClickValidated().add(this, &OptionsMenu::onCloseTuto);
+			} else {
+				page->onMouseClickValidated().add(this, &OptionsMenu::onVisibleTutoNextPage);
+			}
 		}
+	} else {
+		// Amerzone has no volume controls
+
+		// TODO: musicOn checkbox
+		// TODO: permanentHelp checkbox
+		// TODO: inverseLook checkbox
+		// TODO: compassLook checkbox
 	}
 
 	//
@@ -122,7 +127,6 @@ void OptionsMenu::enter() {
 	updateMusicVolumeJauge();
 	updateDialogVolumeJauge();
 	updateVideoVolumeJauge();
-	return;
 }
 
 void OptionsMenu::leave() {
