@@ -31,19 +31,6 @@ bool isPowerOfTwo(int16 x) {
 	return (x & (x - 1)) == 0;
 }
 
-int16 nextPowerOfTwo(int16 v) {
-	// adapted from https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-	assert(v >= 0);
-	if (v == 0)
-		return 0;
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	return v + 1;
-}
-
 float ease(float t, EasingType type) {
 	switch (type) {
 	case EasingType::Linear:

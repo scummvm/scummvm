@@ -115,7 +115,6 @@ private:
 };
 
 bool isPowerOfTwo(int16 x);
-int16 nextPowerOfTwo(int16 v);
 
 float ease(float t, EasingType type);
 

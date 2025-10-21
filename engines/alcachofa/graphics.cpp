@@ -258,8 +258,8 @@ void Animation::load() {
 	Rect maxBounds = maxFrameBounds();
 	int16 texWidth = maxBounds.width(), texHeight = maxBounds.height();
 	if (g_engine->renderer().requiresPoTTextures()) {
-		texWidth = nextPowerOfTwo(maxBounds.width());
-		texHeight = nextPowerOfTwo(maxBounds.height());
+		texWidth = nextHigher2(maxBounds.width());
+		texHeight = nextHigher2(maxBounds.height());
 	}
 	_renderedSurface.create(texWidth, texHeight, g_engine->renderer().getPixelFormat());
 	_renderedTexture = g_engine->renderer().createTexture(texWidth, texHeight, true);
@@ -334,8 +334,8 @@ int32 Animation::frameAtTime(uint32 time) const {
 void Animation::overrideTexture(const ManagedSurface &surface) {
 	int16 texWidth = surface.w, texHeight = surface.h;
 	if (g_engine->renderer().requiresPoTTextures()) {
-		texWidth = nextPowerOfTwo(texWidth);
-		texHeight = nextPowerOfTwo(texHeight);
+		texWidth = nextHigher2(texWidth);
+		texHeight = nextHigher2(texHeight);
 	}
 
 	// In order to really use the overridden surface we have to override all
@@ -468,7 +468,7 @@ void Font::load() {
 
 	_texMins.resize(_images.size());
 	_texMaxs.resize(_images.size());
-	ManagedSurface atlasSurface(nextPowerOfTwo(cellSize.x * 16), nextPowerOfTwo(cellSize.y * 16), g_engine->renderer().getPixelFormat());
+	ManagedSurface atlasSurface(nextHigher2(cellSize.x * 16), nextHigher2(cellSize.y * 16), g_engine->renderer().getPixelFormat());
 	cellSize.x = atlasSurface.w / 16;
 	cellSize.y = atlasSurface.h / 16;
 	const float invWidth = 1.0f / atlasSurface.w;
