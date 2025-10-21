@@ -787,6 +787,7 @@ protected:
 	void o7_checkData(OpFuncParams &params);
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
+	void o7_manageDataFile(OpFuncParams &params);
 
 	bool readAdi4InfDataForChild(Common::Array<byte> &dest, uint32 childNumber, uint32 offset, uint32 size);
 	bool readAdi4InstalledAppsData(Common::Array<byte> &generalChildData,

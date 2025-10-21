@@ -148,6 +148,7 @@ void Inter_v7::setupOpcodesFunc() {
 	OPCODEFUNC(0x3F, o7_checkData);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
+	OPCODEFUNC(0x4F, o7_manageDataFile);
 }
 
 void Inter_v7::setupOpcodesGob() {
@@ -1954,6 +1955,21 @@ void Inter_v7::o7_writeData(OpFuncParams &params) {
 		return;
 	else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", file.c_str());
+}
+
+void Inter_v7::o7_manageDataFile(OpFuncParams &params) {
+	Common::String file = _vm->_game->_script->evalString();
+
+	if (!file.empty()) {
+		bool result = _vm->_dataIO->openArchive(Common::Path(file, '\\').toString('/'), true);
+		WRITE_VAR(27, result);
+	} else {
+		_vm->_dataIO->closeArchive(true);
+
+		// NOTE: Lost in Time might close a data file without explicitely closing a video in it.
+		//       So we make sure that all open videos are still available.
+		_vm->_vidPlayer->reopenAll();
+	}
 }
 
 Common::String Inter_v7::ansiToOEM(Common::String string) {
