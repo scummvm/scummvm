@@ -1477,8 +1477,8 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 			PTR_004121b4 = obj;
 	}
 
-	rthing = (e.t << 12) | (e.flags << 8) | e.value;
 	executeScript(e.t << 4, y, x, odat, index, obj, &act, act.onCreateAddress);
+	rthing = (e.t << 12) | (e.flags << 8) | oid;
 }
 
 void GamosEngine::removeObjectByIDMarkDirty(int32 id) {
