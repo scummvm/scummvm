@@ -114,7 +114,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 		EngineVersion::V3_0
 	},
 
-	AD_TABLE_END_MARKER
+	{ AD_TABLE_END_MARKER, EngineVersion::V1_0 }
 };
 
 } // End of namespace Alcachofa
