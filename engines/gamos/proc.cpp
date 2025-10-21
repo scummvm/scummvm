@@ -33,6 +33,9 @@ void SystemProc::processMessage(const Common::Event &ev) {
 
 		_ascii = ev.kbd.ascii;
 
+		if (ev.kbd.ascii)
+			_rawKeyCode = ev.kbd.ascii;
+
 		winKey = KeyCodes::GetWinCode(ev.kbd.keycode);
 
 		if (winKey == _keyCodes[0])
