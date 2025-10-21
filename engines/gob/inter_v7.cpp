@@ -160,6 +160,7 @@ void Inter_v7::setupOpcodesGob() {
 	OPCODEGOB(406, o7_startAdi4Application);
 	OPCODEGOB(407, o7_xorDeobfuscate);
 	OPCODEGOB(408, o7_xorObfuscate);
+	OPCODEGOB(410, o7_resolvePath);
 	OPCODEGOB(420, o7_ansiToOEM);
 	OPCODEGOB(421, o7_oemToANSI);
 	OPCODEGOB(512, o7_setDBStringEncoding);
@@ -2270,6 +2271,21 @@ void Inter_v7::o7_xorObfuscate(OpGobParams &params) {
 	byte *data = _vm->_inter->_variables->getAddressVar8(varIndex);
 	uint16 size = _vm->_game->_script->readUint16();
 	xorObfuscate(data, size);
+}
+
+void Inter_v7::o7_resolvePath(OpGobParams &params) {
+	uint16 srcVarIndex = _vm->_game->_script->readUint16();
+	uint16 destVarIndex = _vm->_game->_script->readUint16();
+	char *str = GET_VAR_STR(srcVarIndex);
+	Common::String resolvedPath = getFile(str);
+	if ((int)resolvedPath.size() > 4 * _vm->_global->_inter_animDataSize) {
+		warning("o7_resolvePath: resolved path too long (%d > max length = %d), truncating",
+				(int)resolvedPath.size(),
+				4 * _vm->_global->_inter_animDataSize);
+		resolvedPath = resolvedPath.substr(0, 4 * _vm->_global->_inter_animDataSize);
+	}
+
+	WRITE_VAR_STR(destVarIndex, resolvedPath.c_str());
 }
 
 void Inter_v7::o7_ansiToOEM(OpGobParams &params) {

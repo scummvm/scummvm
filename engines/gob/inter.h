@@ -806,6 +806,7 @@ protected:
 
 	void o7_xorDeobfuscate(OpGobParams &params);
 	void o7_xorObfuscate(OpGobParams &params);
+	void o7_resolvePath(OpGobParams &params);
 	void o7_ansiToOEM(OpGobParams &params);
 	void o7_oemToANSI(OpGobParams &params);
 	void o7_setDBStringEncoding(OpGobParams &params);
