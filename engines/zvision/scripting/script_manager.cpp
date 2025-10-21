@@ -104,7 +104,7 @@ void ScriptManager::process(uint deltaTimeMillis) {
 	// Another idea would be to change if there are pending scripts
 	// in the exec queues, but that could cause this to hang
 	// indefinitely.
-	for (uint8 pass = 0; pass <= changingLocation() ? _changeLocationExtraCycles : 0; pass++) {
+	for (uint8 pass = 0; pass <= (changingLocation() ? _changeLocationExtraCycles : 0); pass++) {
 		updateNodes(pass == 0 ? deltaTimeMillis : 0);
 		debugC(5, kDebugLoop, "Script nodes updated");
 		if (!execScope(_nodeview))
