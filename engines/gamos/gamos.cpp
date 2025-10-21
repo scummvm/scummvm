@@ -59,7 +59,7 @@ const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x8
 										 0xa0, 0x12, 0xb8, 0x19, 0x20, 0x6a, 0x26, 0x7c,
 										 0x32, 0x57, 0xdd, 0xb2, 0x38, 0xa7, 0x95, 0x7a};
 
-GamosEngine::GamosEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Gamos") {
 	g_engine = this;
 }
@@ -69,11 +69,21 @@ GamosEngine::~GamosEngine() {
 }
 
 uint32 GamosEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String GamosEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
+}
+
+Common::String GamosEngine::getRunFile() const {
+	return _gameDescription->runFile;
+}
+
+uint32 GamosEngine::getEngineVersion() const {
+	return _gameDescription->engineVersion;
+}
+
 }
 
 Common::Error GamosEngine::run() {
@@ -90,15 +100,8 @@ Common::Error GamosEngine::run() {
 
 	g_system->showMouse(true);
 
-	Common::String mname;
-	if (Common::String(_gameDescription->gameId) == Common::String("solgamer"))
-		mname = "solgamer.exe";
-	else if (Common::String(_gameDescription->gameId) == Common::String("pilots"))
-		mname = "pilots.exe";
-	else if (Common::String(_gameDescription->gameId) == Common::String("pilots2"))
-		mname = "pilots2.exe";
 
-	init(mname);
+	init(getRunFile());
 
 	Common::Event e;
 

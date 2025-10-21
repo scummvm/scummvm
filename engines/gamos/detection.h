@@ -26,44 +26,15 @@
 
 namespace Gamos {
 
-enum GamosDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
+struct GamosGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+	const char *runFile;
+	uint32 engineVersion;
 };
-
-extern const PlainGameDescriptor gamosGames[];
-
-extern const ADGameDescription gameDescriptions[];
-
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
 } // End of namespace Gamos
 
-class GamosMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
-public:
-	GamosMetaEngineDetection();
-	~GamosMetaEngineDetection() override {}
-
-	const char *getName() const override {
-		return "gamos";
-	}
-
-	const char *getEngineName() const override {
-		return "Gamos";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Gamos (C)";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
-};
 
 #endif // GAMOS_DETECTION_H

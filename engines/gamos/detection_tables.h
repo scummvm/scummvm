@@ -29,35 +29,51 @@ const PlainGameDescriptor gamosGames[] = {
 	{ 0, 0 }
 };
 
-const ADGameDescription gameDescriptions[] = {
+const GamosGameDescription gameDescriptions[] = {
 	{
-		"solgamer",
-		0,
-		AD_ENTRY1s("solgamer.exe", "6049dd1645071da1b60cdd395e6999ba", 24658521),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		{
+			"solgamer",
+			0,
+			AD_ENTRY1s("solgamer.exe", "6049dd1645071da1b60cdd395e6999ba", 24658521),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"solgamer.exe",
+		0x80000018
 	},
 	{
-		"pilots",
-		0,
-		AD_ENTRY1s("pilots.exe", "152f751d3c1b325e91411dd75de54e95", 48357155),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		{
+			"pilots",
+			0,
+			AD_ENTRY1s("pilots.exe", "152f751d3c1b325e91411dd75de54e95", 48357155),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"pilots.exe",
+		0x80000016
 	},
 	{
-		"pilots2",
-		0,
-		AD_ENTRY1s("pilots2.exe", "a0353dfb46043d1b2d1ef8ab6c204b33", 582283983),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		{
+			"pilots2",
+			0,
+			AD_ENTRY1s("pilots2.exe", "a0353dfb46043d1b2d1ef8ab6c204b33", 582283983),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"pilots2.exe",
+		0x80000018
 	},
-	AD_TABLE_END_MARKER
+	{
+		AD_TABLE_END_MARKER,
+		"",
+		0
+	}
 };
 
 } // End of namespace Gamos

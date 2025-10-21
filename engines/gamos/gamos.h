@@ -244,7 +244,7 @@ class GamosEngine : public Engine {
 friend class MoviePlayer;
 
 private:
-	const ADGameDescription *_gameDescription;
+	const GamosGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
 	bool _errSet = false;
@@ -582,7 +582,7 @@ public:
 public:
 	Graphics::Screen *_screen = nullptr;
 public:
-	GamosEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc);
 	~GamosEngine() override;
 
 	uint32 getFeatures() const;
@@ -591,6 +591,10 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+
+	Common::String getRunFile() const;
+
+	uint32 getEngineVersion() const;
 
 	/**
 	 * Gets a random number

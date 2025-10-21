@@ -29,17 +29,27 @@
 #include "gamos/detection.h"
 #include "gamos/detection_tables.h"
 
-const DebugChannelDef GamosMetaEngineDetection::debugFlagList[] = {
-	{ Gamos::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Gamos::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Gamos::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Gamos::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Gamos::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
+class GamosMetaEngineDetection : public AdvancedMetaEngineDetection<Gamos::GamosGameDescription> {
+
+public:
+	GamosMetaEngineDetection(): AdvancedMetaEngineDetection(
+		Gamos::gameDescriptions, Gamos::gamosGames) {
+	}
+	~GamosMetaEngineDetection() override {}
+
+	const char *getName() const override {
+		return "gamos";
+	}
+
+	const char *getEngineName() const override {
+		return "Gamos";
+	}
+
+	const char *getOriginalCopyright() const override {
+		return "Gamos (C)";
+	}
+
 };
 
-GamosMetaEngineDetection::GamosMetaEngineDetection() : AdvancedMetaEngineDetection(
-	Gamos::gameDescriptions, Gamos::gamosGames) {
-}
 
 REGISTER_PLUGIN_STATIC(GAMOS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GamosMetaEngineDetection);

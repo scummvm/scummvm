@@ -25,34 +25,11 @@
 #include "gamos/detection.h"
 #include "gamos/gamos.h"
 
-namespace Gamos {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-} // End of namespace Gamos
-
 const char *GamosMetaEngine::getName() const {
 	return "gamos";
 }
 
-const ADExtraGuiOptionsMap *GamosMetaEngine::getAdvancedExtraGuiOptions() const {
-	return Gamos::optionsList;
-}
-
-Common::Error GamosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error GamosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Gamos::GamosGameDescription *desc) const {
 	*engine = new Gamos::GamosEngine(syst, desc);
 	return Common::kNoError;
 }
