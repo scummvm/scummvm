@@ -98,19 +98,18 @@ Common::Error GamosEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	g_system->showMouse(true);
-
+	_system->showMouse(true);
 
 	init(getRunFile());
 
 	Common::Event e;
 
 	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
+		while (_system->getEventManager()->pollEvent(e)) {
 			_messageProc.processMessage(e);
 		}
 
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = _system->getMillis();
 		if (curTime > _lastTimeStamp + _delayTime) {
 			_lastTimeStamp = curTime;
 
@@ -596,7 +595,7 @@ bool GamosEngine::init(const Common::String &moduleName) {
 }
 
 bool GamosEngine::loadInitModule() {
-	rndSeed(g_system->getMillis());
+	rndSeed(_system->getMillis());
 	//DAT_0041723c = -1;
 	_curObjIndex = -1;
 	PTR_00417218 = nullptr;
@@ -897,7 +896,7 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 	const int16 maxDelay = (500 / 10) - 1;
 
 	for (int16 p = 0; p < 16; p++) {
-		uint32 val = g_system->getMillis();
+		uint32 val = _system->getMillis();
 		const Common::Point point = checkerCoords[p];
 		for (uint32 x = point.x; x < _width; x += 64) {
 			for (uint32 y = point.y; y < _height; y += 64) {
@@ -905,10 +904,10 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 			}
 		}
 		_screen->update();
-		val = g_system->getMillis() - val;
+		val = _system->getMillis() - val;
 
 		if (val > maxDelay)
-			g_system->delayMillis(maxDelay - val);
+			_system->delayMillis(maxDelay - val);
 	}
 }
 
@@ -2542,7 +2541,7 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 		_cursorObject.y = 0;
 		_cursorObject.pImg = &_sprites[id].sequences[0][0];
 
-		g_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(),
+		_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(),
 								 _cursorObject.pImg->image->surface.w,
 								 _cursorObject.pImg->image->surface.h,
 								 _cursorObject.pImg->xoffset,
