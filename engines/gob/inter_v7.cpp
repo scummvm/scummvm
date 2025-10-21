@@ -88,6 +88,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x8E, o7_getFileInfo);
 	OPCODEDRAW(0x90, o7_loadImage);
+	OPCODEDRAW(0x91, o7_copyDataToClipboard);
 	OPCODEDRAW(0x93, o7_setVolume);
 	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA0, o7_draw0xA0);
@@ -1024,6 +1025,11 @@ void Inter_v7::o7_loadImage() {
 		warning("o7_loadImage(): Failed to load image \"%s\"", file.c_str());
 		return;
 	}
+}
+
+void Inter_v7::o7_copyDataToClipboard() {
+	Common::String data = _vm->_game->_script->evalString();
+	warning("STUB: Adi4: Copy data '%s' to clipboard", data.c_str());
 }
 
 void Inter_v7::o7_setVolume() {

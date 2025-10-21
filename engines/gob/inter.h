@@ -731,6 +731,7 @@ protected:
 	void o7_getFileInfo();
 	void o7_getSystemProperty();
 	void o7_loadImage();
+	void o7_copyDataToClipboard();
 	void o7_setVolume();
 	void o7_zeroVar();
 	void o7_draw0xA0();
