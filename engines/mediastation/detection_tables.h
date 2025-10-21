@@ -154,6 +154,20 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOASPECT)
 	},
 
+	{
+		"honeytree",
+		"v2.0/SE", // Also includes English as an in-game language option.
+		AD_ENTRY3s(
+			"Nalle Puh", "47dad417e616aaa45296eab1f6941c6f", 771456,
+			"BOOT.STM", "448efdc32f4ce36b5e4f91b34f44437a", 55284,
+			"100.CXT", "00239a03730b8e1c3c730050b8872d33", 2267499
+		),
+		Common::SV_SWE,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
 	// Disney's Animated Storybook: The Hunchback of Notre Dame
 	{
 		"notredame",
