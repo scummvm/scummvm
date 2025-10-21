@@ -84,10 +84,11 @@ void Inter_v6::o6_totSub() {
 			totFile += _vm->_game->_script->readChar();
 
 	uint8 flags = _vm->_game->_script->readByte();
-	if (flags & 0x40)
-		warning("Urban Stub: o6_totSub(), flags & 0x40");
-
-	_vm->_game->totSub(flags, totFile);
+	if (flags & 0x40) {
+		warning("STUB: o6_totSub(), flags & 0x40: starting external program: %s (flags = %X)", totFile.c_str(), flags);
+	} else {
+		_vm->_game->totSub(flags, totFile);
+	}
 }
 
 void Inter_v6::o6_playVmdOrMusic() {
