@@ -187,4 +187,4 @@ void MidiMusic::_timerProc(void *data) {
 	}
 }
 
-};
+}

@@ -62,6 +62,6 @@ public:
 	static void _timerProc(void *data);
 };
 
-};
+}
 
 #endif //GAMOS_MUSIC_H

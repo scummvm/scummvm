@@ -155,6 +155,6 @@ protected:
 	size_type _size = 0;
 };
 
-};
+}
 
 #endif

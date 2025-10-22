@@ -206,4 +206,4 @@ void Archive::decompress(RawData const *in, RawData *out) {
 }
 
 
-};
+}

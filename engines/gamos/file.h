@@ -82,6 +82,6 @@ private:
 
 
 
-}; // namespace Gamos
+} // namespace Gamos
 
 #endif // GAMOS_FILE_H
