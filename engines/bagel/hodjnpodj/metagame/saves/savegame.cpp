@@ -309,23 +309,13 @@ bool ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 		return false;
 	}
 
-	if (pSaveGameInfo->m_nFixedRecordSize != sizeof(SAVEGAME_INFO))
-		return false;
-
-	/*if (pSaveGameInfo->m_stPlayerInfo[0].m_lCrowns < 0)
-		return(false);
-
-	if (pSaveGameInfo->m_stPlayerInfo[1].m_lCrowns < 0)
-		return(false);*/
-
 	switch (pSaveGameInfo->m_iGameTime) {
-
 	case SHORT_GAME:
 	case MEDIUM_GAME:
 	case LONG_GAME:
 		break;
 
-		// not a valid game type
+	// not a valid game type
 	default:
 		return false;
 	}
