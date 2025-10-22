@@ -18,10 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+
 #include "gamos/gamos.h"
 
 namespace Gamos {
@@ -1027,9 +1024,13 @@ Common::String VM::opLog(const Common::Array<OpLog> &log) {
         tmp += Common::String::format("%08x: SP:%04x OP:[%02d] ", l.addr, l.sp, l.op) + decodeOp(l.addr) + "\n";
     }
 
-    FILE *f = fopen("oplog", "wb");
-    fwrite(tmp.c_str(), tmp.size(), 1, f);
-    fclose(f);
+    Common::DumpFile f;
+
+    if (f.open("oplog", true)) {
+        f.writeString(tmp);
+        f.flush();
+        f.close();
+    }
 
     return tmp;
 }

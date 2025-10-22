@@ -21,12 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 
 
 #include "gamos/gamos.h"
@@ -3586,51 +3580,49 @@ bool GamosEngine::FUN_004038b8() {
 
 void GamosEngine::dumpActions() {
 	Common::String t = Common::String::format("actions_%d.txt", _currentModuleID);
-	FILE *f = fopen(t.c_str(), "wb");
+
+	Common::DumpFile f;
+
+	if (!f.open(t.c_str(), true))
+		error("Cannot create actions dump file");
+
 	int i = 0;
 	for (ObjectAction &act : _objectActions) {
-		fprintf(f, "Act %d : %x\n", i, act.unk1);
+		f.writeString(Common::String::format("Act %d : %x\n", i, act.unk1));
 		if (act.onCreateAddress != -1) {
 			t = VM::disassembly(act.onCreateAddress);
-			fprintf(f, "Script1 : \n");
-			fwrite(t.c_str(), t.size(), 1, f);
-			fprintf(f, "\n");
+			f.writeString(Common::String::format("Script1 : \n%s\n", t.c_str()));
 		}
 
 		if (act.onDeleteAddress != -1) {
 			t = VM::disassembly(act.onDeleteAddress);
-			fprintf(f, "Script2 : \n");
-			fwrite(t.c_str(), t.size(), 1, f);
-			fprintf(f, "\n");
+			f.writeString(Common::String::format("Script2 : \n%s\n", t.c_str()));
 		}
 
 		int j = 0;
 		for (Actions &sc : act.actions) {
-			fprintf(f, "subscript %d : \n", j);
+			f.writeString(Common::String::format("subscript %d : \n", j));
 
 			if (sc.conditionAddress != -1) {
 				t = VM::disassembly(sc.conditionAddress);
-				fprintf(f, "condition : \n");
-				fwrite(t.c_str(), t.size(), 1, f);
-				fprintf(f, "\n");
+				f.writeString(Common::String::format("condition : \n%s\n", t.c_str()));
 			}
 
 			if (sc.functionAddress != -1) {
 				t = VM::disassembly(sc.functionAddress);
-				fprintf(f, "action : \n");
-				fwrite(t.c_str(), t.size(), 1, f);
-				fprintf(f, "\n");
+				f.writeString(Common::String::format("action : \n%s\n", t.c_str()));
 			}
 
 			j++;
 		}
 
 
-		fprintf(f, "\n\n#############################################\n\n");
+		f.writeString("\n\n#############################################\n\n");
 
 		i++;
 	}
-	fclose(f);
+	f.flush();
+	f.close();
 
 	warning("Actions saved into actions_%d.txt", _currentModuleID);
 }
