@@ -130,7 +130,7 @@ struct Sprite {
 	byte field_2;
 	byte field_3;
 
-	Common::Array<ImageSeq> sequences;
+	Common::Array<ImageSeq *> sequences;
 };
 
 /* Used to xor savedata */
@@ -288,6 +288,7 @@ private:
 	Common::Array<uint32> _movieOffsets;
 
 	Common::Array<Image *> _images;
+	Common::Array<ImageSeq *> _imgSeq;
 
 	Common::Point _bkgUpdateSizes;
 

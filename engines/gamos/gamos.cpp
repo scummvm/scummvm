@@ -545,9 +545,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 
 bool GamosEngine::reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3) {
 	if (tp == RESTP_43) {
-		_sprites[pid].sequences[p1][p2].image = _images.back();
+		_sprites[pid].sequences[p1]->operator[](p2).image = _images.back();
+	} else if (tp == RESTP_42) {
+		_sprites[pid].sequences[p1] = _imgSeq.back();
 	} else {
-		return false;
+		error("Reuse of resource not implemented: resource type %x, id %d %d %d %d", tp, pid, p1, p2, p3);
 	}
 	return true;
 }
@@ -768,7 +770,8 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 		_sprites[id].sequences.resize(1);
 
 	int32 count = dataSize / 8;
-	_sprites[id].sequences[p1].resize(count);
+	_imgSeq.push_back( new ImageSeq(count) );
+	_sprites[id].sequences[p1] = _imgSeq.back();
 
 	Common::MemoryReadStream strm(data, dataSize);
 	for(int i = 0; i < count; ++i) {
@@ -778,7 +781,7 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 			exit(0);
 		}
 
-		ImagePos &imgpos = _sprites[id].sequences[p1][i];
+		ImagePos &imgpos = _sprites[id].sequences[p1]->operator[](i);
 		imgpos.xoffset = strm.readSint16LE();
 		imgpos.yoffset = strm.readSint16LE();
 	}
@@ -787,9 +790,9 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 
 bool GamosEngine::loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize) {
 	_images.push_back( new Image() );
-	_sprites[id].sequences[p1][p2].image = _images.back();
+	_sprites[id].sequences[p1]->operator[](p2).image = _images.back();
 
-	Image *img = _sprites[id].sequences[p1][p2].image;
+	Image *img = _sprites[id].sequences[p1]->operator[](p2).image;
 
 	Common::MemoryReadStream s(data, dataSize);
 	img->surface.pitch = img->surface.w = s.readSint16LE();
@@ -1979,9 +1982,12 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 	} else {
 		addDirtRectOnObject(obj);
 		obj->actID++;
-		if (obj->actID == obj->fld_2) {
+		obj->frame++;
+
+		if (obj->frame == obj->fld_2) {
 			obj->actID = 0;
-			obj->pImg = obj->pImg - (obj->fld_2 - 1);
+			obj->frame = 0;
+			obj->pImg = &_sprites[obj->sprId].sequences[obj->seqId]->operator[](obj->frame);
 			if (p2 || (obj->flags & 4)) {
 				addDirtRectOnObject(obj);
 				if (p1)
@@ -1989,7 +1995,7 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 				return true;
 			}
 		} else {
-			obj->pImg++;
+			obj->pImg = &_sprites[obj->sprId].sequences[obj->seqId]->operator[](obj->frame);
 		}
 
 		if ((obj->flags & 0x40) == 0)
@@ -2010,7 +2016,7 @@ void GamosEngine::FUN_0040921c(Object *obj) {
 	if (obj->pos != 255 && obj->blk != 255) {
 		Object *o = &_objects[(obj->blk * 0x100) + obj->pos];
 		if (o->flags & 4) {
-			int t = obj->actID + 1;
+			int t = obj->frame + 1;
 			x += (o->pos - obj->fld_4) * _gridCellW * t / obj->fld_2;
 			y += (o->blk - obj->fld_5) * _gridCellH * t / obj->fld_2;
 		}
@@ -2611,12 +2617,14 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 	obj->flags &= ~0x18;
 	obj->actID = 0;
+	obj->frame = 0;
 	obj->sprId = sprId;
 
 	Sprite &spr = _sprites[sprId];
 
 	if (spr.field_2 == 1) {
-		obj->pImg = &spr.sequences[0][0];
+		obj->seqId = 0;
+		obj->pImg = &spr.sequences[0]->operator[](0);
 		if (BYTE_004177f6 == 8) {
 			if (spr.field_1 & 2)
 				obj->flags |= 8;
@@ -2683,7 +2691,8 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 			}
 		}
 
-		obj->pImg = &spr.sequences[frm][0];
+		obj->pImg = &spr.sequences[frm]->operator[](0);
+		obj->seqId = frm;
 	}
 	if (!p) {
 		obj->fld_4 = DAT_00417228;
@@ -2748,12 +2757,15 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 		_mouseCursorImgId = id;
 
 		_cursorObject.sprId = id;
+		_cursorObject.frame = 0;
+		_cursorObject.seqId = 0;
+
 		_cursorObject.flags = 0xc1;
 		_cursorObject.fld_2 = _sprites[id].field_3; // max frames
 		_cursorObject.actID = 0; //frame
 		_cursorObject.x = 0;
 		_cursorObject.y = 0;
-		_cursorObject.pImg = &_sprites[id].sequences[0][0];
+		_cursorObject.pImg = &_sprites[id].sequences[0]->operator[](0);
 
 		_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(),
 								 _cursorObject.pImg->image->surface.w,
@@ -2971,7 +2983,7 @@ Object *GamosEngine::addSubtitleImage(int32 frame, int32 spr, int32 *pX, int32 y
 	obj->sprId = spr;
 	obj->seqId = 0;
 	obj->frame = frame - _sprites[spr].field_1;
-	obj->pImg = &_sprites[spr].sequences[obj->seqId][obj->frame];
+	obj->pImg = &_sprites[spr].sequences[obj->seqId]->operator[](obj->frame);
 
 	*pX += obj->pImg->image->surface.w - obj->pImg->xoffset;
 
