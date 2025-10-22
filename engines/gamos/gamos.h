@@ -103,18 +103,6 @@ enum RESTYPE {
 	RESTP_XORSEQ2 = 0x7e,
 };
 
-struct BkgImage {
-	bool loaded = false;
-	uint32 offset = 0;
-	Graphics::Surface surface;
-	byte *palette = nullptr;
-
-	uint32 field2_0x8 = 0;
-	uint32 field3_0xc = 0;
-
-	RawData rawData;
-};
-
 struct Image {
 	bool loaded = false;
 	int32 offset = -1;
@@ -239,6 +227,17 @@ struct SubtitlePoint {
 	uint16 sprId = 0;
 };
 
+struct GameScreen {
+	bool loaded = false;
+	uint32 offset = 0;
+	Graphics::Surface _bkgImage;
+	byte *palette = nullptr;
+
+	Array2D<uint16> _savedStates;
+	Common::Array<Object> _savedObjects;
+
+	RawData _bkgImageData;
+};
 
 class GamosEngine : public Engine {
 friend class MoviePlayer;
@@ -273,8 +272,10 @@ private:
 	byte _fps;
 	byte _unk8;
 	byte _unk9;
-	byte _fadeEffectID;
+	byte _fadeEffectID = 0;
 	byte _unk11;
+
+	byte _currentFade = 0;
 
 	int _isMoviePlay = 0;
 
@@ -290,7 +291,7 @@ private:
 
 	Common::Point _bkgUpdateSizes;
 
-	Common::Array<BkgImage> _bkgImages;
+	Common::Array<GameScreen> _gameScreens;
 
 	Common::Array<Sprite> _sprites;
 
@@ -336,6 +337,7 @@ private:
 
 	uint32 _readingBkgOffset = 0;
 	int32 _readingBkgMainId = -1;
+	int32 _currentGameScreen = -1;
 	int32 _loadedDataSize = -1;
 
 	uint32 _addrBlk12 = 0;
@@ -480,8 +482,6 @@ protected:
 	int32 doActions(const Actions &a, bool absolute);
 	uint32 savedDoActions(const Actions &a);
 
-	void FUN_00404fcc(int32 id);
-
 	uint32 getU32(const void *ptr);
 
 	void preprocessData(int id, ActEntry *e);
@@ -517,6 +517,7 @@ protected:
 
 	void doDraw();
 	bool usePalette(byte *pal, int num, int fade, bool winColors);
+	bool setPaletteCurrentGS();
 
 	bool loadImage(Image *img);
 
@@ -553,6 +554,11 @@ protected:
 	byte FUN_00407e2c();
 	byte FUN_00407f70(uint8 p);
 	byte FUN_004081b8(uint8 cv, uint8 sv);
+
+
+	void storeToGameScreen(int id);
+	bool switchToGameScreen(int id, bool doNotStore);
+
 
 
 	void vmCallDispatcher(VM *vm, uint32 funcID);

@@ -229,6 +229,7 @@ bool GamosEngine::loadModule(uint id) {
 	_currentModuleID = id;
 	const byte targetDir = 2 + id;
 
+	_currentGameScreen = -1;
 	_readingBkgMainId = -1;
 
 	/* Complete me */
@@ -372,23 +373,19 @@ bool GamosEngine::loadModule(uint id) {
 	}
 
 	//FUN_00404a28();
-	if (BYTE_004177f7 == 0) {
-		// Reverse Here
+	if (BYTE_004177f7)
+		return true;
 
-		setCursor(0, false);
+	// Reverse Here
+	setCursor(0, false);
 
-		if (_readingBkgMainId == -1)
-			_screen->setPalette(_bkgImages[0].palette);
-			//FUN_00405ebc(0, false);
-		else
-			_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
-			//FUN_00405ebc(0, false);
 
-		addDirtyRect(Common::Rect(Common::Point(), _bkgUpdateSizes ));
-	} else {
+	int bkg = _readingBkgMainId;
+	if (bkg == -1)
+		bkg = 0;
 
-	}
-	_screen->update();
+	if ( !switchToGameScreen(bkg, false) )
+		return false;
 
 	return true;
 }
@@ -430,7 +427,8 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 				warning("needs reload from loadResHandler, CANT HAPPEN!");
 
 			DAT_004177f8 = 0;
-			FUN_00404fcc(pid);
+
+			storeToGameScreen(pid);
 		}
 	} else if (tp == RESTP_20) {
 		if (dataSize != 4)
@@ -657,8 +655,8 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_pathMap.clear();
 	_pathMap.resize(_statesWidth, _statesHeight);
 
-	_bkgImages.clear();
-	_bkgImages.resize(bkgnum1 * bkgnum2);
+	_gameScreens.clear();
+	_gameScreens.resize(bkgnum1 * bkgnum2);
 
 	_sprites.clear();
 	_sprites.resize(imageCount);
@@ -794,14 +792,14 @@ bool GamosEngine::loadRes52(int32 id, const byte *data, size_t dataSize) {
 }
 
 bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
-	BkgImage &bimg = _bkgImages[id];
+	GameScreen &bimg = _gameScreens[id];
 	bimg.loaded = true;
 	bimg.offset = _readingBkgOffset;
-	bimg.field2_0x8 = 0;
-	bimg.field3_0xc = 0;
+	bimg._savedStates.clear();
+	bimg._savedObjects.clear();
 	bimg.palette = nullptr;
 
-	bimg.rawData.assign(data, data + dataSize);
+	bimg._bkgImageData.assign(data, data + dataSize);
 
 	Common::MemoryReadStream strm(data, dataSize);
 
@@ -812,17 +810,17 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 
 	strm.seek(8);
 
-	bimg.surface.pitch = bimg.surface.w = strm.readUint32LE();
-	bimg.surface.h = strm.readUint32LE();
+	bimg._bkgImage.pitch = bimg._bkgImage.w = strm.readUint32LE();
+	bimg._bkgImage.h = strm.readUint32LE();
 
 	uint32 imgsize = strm.readUint32LE();
 
 	//printf("res 18 id %d 14: %x\n", id, strm.readUint32LE());
 
-	bimg.surface.setPixels(bimg.rawData.data() + 0x18);
-	bimg.surface.format = Graphics::PixelFormat::createFormatCLUT8();
+	bimg._bkgImage.setPixels(bimg._bkgImageData.data() + 0x18);
+	bimg._bkgImage.format = Graphics::PixelFormat::createFormatCLUT8();
 
-	bimg.palette = bimg.rawData.data() + 0x18 + imgsize;
+	bimg.palette = bimg._bkgImageData.data() + 0x18 + imgsize;
 
 	return true;
 }
@@ -836,10 +834,6 @@ bool GamosEngine::playIntro() {
 
 bool GamosEngine::playMovie(int id) {
 	bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
-	if (_readingBkgMainId == -1)
-		_screen->setPalette(_bkgImages[0].palette);
-	else
-		_screen->setPalette(_bkgImages[_readingBkgMainId].palette);
 	return res;
 }
 
@@ -987,6 +981,21 @@ bool GamosEngine::usePalette(byte *pal, int num, int fade, bool winColors) {
 	newPal.resize(num, true);
 
 	_screen->setPalette(newPal);
+	return true;
+}
+
+bool GamosEngine::setPaletteCurrentGS() {
+	_currentFade = _fadeEffectID;
+
+	int curGS = _currentGameScreen;
+	if (curGS == -1)
+		curGS = 0;
+
+	if (!usePalette(_gameScreens[curGS].palette, 256, _currentFade, true) )
+		return false;
+
+	addDirtyRect(Common::Rect(_bkgUpdateSizes.x, _bkgUpdateSizes.y));
+
 	return true;
 }
 
@@ -1976,10 +1985,12 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 }
 
 void GamosEngine::doDraw() {
-	if (_dirtyRects.empty())
+	if (_dirtyRects.empty()) {
+		_screen->update();
 		return;
+	}
 
-	int32 bkg = _readingBkgMainId;
+	int32 bkg = _currentGameScreen;
 	if (bkg == -1)
 		bkg = 0;
 
@@ -2019,10 +2030,12 @@ void GamosEngine::doDraw() {
 	for (int i = 0; i < _dirtyRects.size(); i++) {
 		Common::Rect &r = _dirtyRects[i];
 
-		if (_bkgImages[bkg].loaded) {
-			_screen->blitFrom(_bkgImages[bkg].surface, r, r);
+		if (_gameScreens[bkg].loaded) {
+			_screen->blitFrom(_gameScreens[bkg]._bkgImage, r, r);
 		}
-		_screen->addDirtyRect(r);
+
+		if (!_currentFade)
+			_screen->addDirtyRect(r);
 	}
 
 	for(Object *o: drawList) {
@@ -2044,6 +2057,13 @@ void GamosEngine::doDraw() {
 						   Common::Rect(o->x, o->y, _screen->w, _screen->h), flip);
 		}
 	}
+
+	if (_currentFade)
+		updateScreen(true, Common::Rect(_bkgUpdateSizes.x, _bkgUpdateSizes.y));
+
+	_currentFade = 0;
+
+	_dirtyRects.clear();
 
 	_screen->update();
 }
@@ -3317,11 +3337,6 @@ void Actions::parse(const byte *data, size_t dataSize) {
 	}
 }
 
-
-
-void GamosEngine::FUN_00404fcc(int32 id) {
-	warning("Not implemented FUN_00404fcc");
-}
 
 bool GamosEngine::FUN_004033a8(Common::Point mouseMove) {
 	_cursorObject.x = mouseMove.x;

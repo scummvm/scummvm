@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	music.o \
 	proc.o \
 	movie.o \
+	saveload.o \
 	vm.o
 
 # This module can be built as a plugin
