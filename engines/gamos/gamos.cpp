@@ -1618,7 +1618,7 @@ void GamosEngine::FUN_00402a68(ActEntry e) {
         PTR_00417218->flags = (PTR_00417218->flags & 0xf) | (e.t << 4);
 
 		uint16 &tref = _states.at(DAT_00417220, DAT_00417224);
-		tref = (tref & 0xff) | (BYTE_004177f6 << 8);
+		tref = (tref & 0xff) | (BYTE_004177f6 << 12);
 
         BYTE_00412200 = 1;
     }
@@ -1702,8 +1702,8 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 			PTR_004121b4 = obj;
 	}
 
-	executeScript(e.t << 4, y, x, odat, index, obj, &act, act.onCreateAddress);
 	rthing = (e.t << 12) | (e.flags << 8) | oid;
+	executeScript(e.t, y, x, odat, index, obj, &act, act.onCreateAddress);
 }
 
 void GamosEngine::removeObjectByIDMarkDirty(int32 id) {
@@ -1760,7 +1760,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	if (povar4)
 		rthing = ((povar4->fld_3 & 0xf0) << 8) | (povar4->fld_2 & 0xff);
 
-	executeScript(rthing >> 8, id, pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
+	executeScript(rthing >> 12, id, pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
 }
 
 Object *GamosEngine::getFreeObject() {
