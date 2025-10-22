@@ -287,8 +287,7 @@ bool CGtlData::InitProblem()
 
 	int iObjectClues[MAX_CLUES], iSecondaryClues[MAX_CLUES],
 	    iMishMoshClues[MAX_CLUES];
-	int iObjectCount, iSecondaryCount, iMishMoshCount, iMoneyCount ;
-	//int iMoneyClue = 0 ;        // number of chosen money clue
+	int iObjectCount, iSecondaryCount, iMishMoshCount;
 	const CClueTable * xpClueTable, *xpClueEntry ;
 
 	for (xpXodj = m_xpXodjChain ; xpXodj ; xpXodj = xpXodj->m_xpXodjNext) {
@@ -338,7 +337,7 @@ bool CGtlData::InitProblem()
 			xpXodj->m_bComputer = lpMetaGameStruct->m_cHodj.m_bComputer ;
 		}
 
-		iObjectCount = iSecondaryCount = iMishMoshCount = iMoneyCount = 0 ;
+		iObjectCount = iSecondaryCount = iMishMoshCount = 0;
 
 		xpClueTable = xpXodj->m_bHodj ? CMgStatic::cHodjClueTable : CMgStatic::cPodjClueTable;
 
@@ -362,7 +361,6 @@ bool CGtlData::InitProblem()
 				break ;
 
 			case MG_CLUE_CROWNS:    /* need some crowns */
-				//iMoneyClues[iMoneyCount++] = iIndex ;
 				break;
 
 			default:
@@ -371,7 +369,6 @@ bool CGtlData::InitProblem()
 		}
 
 		if (iObjectCount < iNumObjects || iMishMoshCount < 1
-		        || iMoneyCount < 1
 		        || iSecondaryCount < iSecondaryInfo) {
 			iError = 100 ;
 			goto cleanup ;
