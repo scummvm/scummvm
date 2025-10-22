@@ -778,8 +778,13 @@ bool GamosEngine::loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size
 		img->cSize = s.readSint32LE();
 	} else {
 		if (_sprites[id].field_1 & 0x80) {
-			img->offset = _arch._lastReadDataOffset;
-			img->cSize = _arch._lastReadSize;
+			if (_arch._lastReadDecompressedSize) {
+				img->offset = _arch._lastReadDataOffset;
+				img->cSize = _arch._lastReadSize;
+			} else {
+				img->offset = _arch._lastReadDataOffset;
+				img->cSize = 0;
+			}
 		} else {
 			img->loaded = true;
 			img->rawData.assign(data + 4, data + dataSize);
