@@ -2729,10 +2729,15 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 	if (obj == PTR_004121b4) {
 		PTR_004121b4 = nullptr;
 		int32 n = 0;
+
+		int16 objIndex = -1;
+		if (obj)
+			objIndex = obj->index;
+
 		for (int32 i = 0; i < _objects.size(); i++) {
 			Object &robj = _objects[i];
 
-			if (robj.index > obj->index)
+			if (robj.index > objIndex)
 				n++;
 
 			if ( (robj.flags & 3) == 3 && (_objectActions[robj.actID].unk1 & 0xff) == 3 ) {
