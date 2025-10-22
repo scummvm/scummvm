@@ -476,6 +476,9 @@ protected:
 
 	bool loadRes18(int32 id, const byte *data, size_t dataSize);
 
+	void freeImages();
+	void freeSequences();
+
 
 	bool playMidi(Common::Array<byte> *buffer);
 

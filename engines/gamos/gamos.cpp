@@ -65,6 +65,8 @@ GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : 
 }
 
 GamosEngine::~GamosEngine() {
+	freeImages();
+	freeSequences();
 	delete _screen;
 }
 
@@ -84,6 +86,18 @@ uint32 GamosEngine::getEngineVersion() const {
 	return _gameDescription->engineVersion;
 }
 
+void GamosEngine::freeImages() {
+	for (Image *img : _images)
+		delete img;
+
+	_images.clear();
+}
+
+void GamosEngine::freeSequences() {
+	for (ImageSeq *seq : _imgSeq)
+		delete seq;
+
+	_imgSeq.clear();
 }
 
 Common::Error GamosEngine::run() {
@@ -657,6 +671,9 @@ void GamosEngine::setFPS(uint fps) {
 
 void GamosEngine::readElementsConfig(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size(), DisposeAfterUse::NO);
+
+	freeImages();
+	freeSequences();
 
 	uint32 bkgnum1 = dataStream.readUint32LE(); // 0
 	uint32 bkgnum2 = dataStream.readUint32LE(); // 4
