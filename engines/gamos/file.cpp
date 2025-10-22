@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "gamos/gamos.h"
 
 namespace Gamos {
@@ -102,7 +100,7 @@ int32 Archive::readPackedInt() {
     if (skipsz) {
         skip(skipsz);
         /* warning !!!! */
-        printf("readPackedInt skipped %d\n", skipsz);
+        warning("readPackedInt skipped %d", skipsz);
     }
 
     static int32 negs[4] {0, -1, -1025, -263169};

@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
@@ -212,7 +210,7 @@ bool GamosEngine::loader2() {
 			p2 = dataStream.readSint32LE();
 		} else if (curByte == 7) {
 			int32 needsz = dataStream.readSint32LE(); // check free mem ?
-			//printf("7777 want %d\n", needsz);
+			//warning("7777 want %d", needsz);
 		} else if (curByte == 0x40) {
 			resSize = 4;
 			resType = 0x40;
@@ -239,11 +237,11 @@ bool GamosEngine::loader2() {
 
 			dataStream.skip(resSize);
 		} else if (curByte == 0xff) {
-			//printf("0xFF  %d %d %d \n", pid, p1, p2);
+			//warning("0xFF  %d %d %d", pid, p1, p2);
 			if (!reuseLastResource(resType, pid, p1, p2, 0))
 				return false;
 		} else {
-			printf("loader2 want %x\n", curByte);
+			warning("loader2 want %x", curByte);
 			return false;
 		}
 	}
@@ -361,7 +359,7 @@ bool GamosEngine::loadModule(uint id) {
 						break;
 
 					case RESTP_43:
-						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
+						//warning("t %x sz %x sum %x", prevByte, data.size(), _loadedDataSize);
 						if (_onlyScanImage)
 							_loadedDataSize += 0x10;
 						else
@@ -369,7 +367,7 @@ bool GamosEngine::loadModule(uint id) {
 						break;
 
 					default:
-						//printf("t %x sz %x sum %x\n", prevByte, data.size(), _loadedDataSize);
+						//warning("t %x sz %x sum %x", prevByte, data.size(), _loadedDataSize);
 						_loadedDataSize += datasz;
 						break;
 				}
@@ -481,11 +479,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_21) {
 		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onCreateAddress = _loadedDataSize + p3;
-		//printf("RESTP_21 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
+		//warning("RESTP_21 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_22) {
 		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onDeleteAddress = _loadedDataSize + p3;
-		//printf("RESTP_22 %x pid %d sz %x\n", _loadedDataSize, pid, dataSize);
+		//warning("RESTP_22 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_23) {
 		if (dataSize % 4 != 0 || dataSize < 4)
 			return false;
@@ -496,11 +494,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_2B) {
 		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].conditionAddress = _loadedDataSize + p3;
-		//printf("RESTP_2B %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
+		//warning("RESTP_2B %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_2C) {
 		VM::writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].functionAddress = _loadedDataSize + p3;
-		//printf("RESTP_2C %x pid %d p1 %d sz %x\n", _loadedDataSize, pid, p1, dataSize);
+		//warning("RESTP_2C %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
 		warning("Data 38 size %zu", dataSize);
 		_thing2[pid].field_0.assign(data, data + dataSize);
@@ -521,10 +519,10 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_51) {
 		uint32 datSz = getU32(data) & (~3);
 		_soundSamples[pid].assign(data + 4, data + 4 + datSz);
-		//printf("sound  size %d\n", dataSize);
+		//warning("sound  size %d", dataSize);
 	} else if (tp == RESTP_52) {
 		return loadRes52(pid, data, dataSize);
-		//printf("midi  size %d\n", dataSize);
+		//warning("midi  size %d", dataSize);
 	} else if (tp == RESTP_60) {
 		_subtitleActions[pid].parse(data, dataSize);
 	} else if (tp == RESTP_61) {
@@ -781,7 +779,7 @@ bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
 }
 
 bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSize) {
-	//printf("loadRes42 pid %d p %d sz %x\n",id, p1, dataSize);
+	//warning("loadRes42 pid %d p %d sz %x",id, p1, dataSize);
 
 	if (_sprites[id].sequences.size() == 0)
 		_sprites[id].sequences.resize(1);
@@ -863,7 +861,7 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 	if (_readingBkgMainId == -1 && (strm.readUint32LE() & 0x80000000) )
 		_readingBkgMainId = id;
 
-	//printf("res 18 id %d 4: %x\n", id, strm.readUint32LE());
+	//warning("res 18 id %d 4: %x", id, strm.readUint32LE());
 
 	strm.seek(8);
 
@@ -872,7 +870,7 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 
 	uint32 imgsize = strm.readUint32LE();
 
-	//printf("res 18 id %d 14: %x\n", id, strm.readUint32LE());
+	//warning("res 18 id %d 14: %x", id, strm.readUint32LE());
 
 	bimg._bkgImage.setPixels(bimg._bkgImageData.data() + 0x18);
 	bimg._bkgImage.format = Graphics::PixelFormat::createFormatCLUT8();
@@ -1083,7 +1081,7 @@ bool GamosEngine::setPaletteCurrentGS() {
 void GamosEngine::readData2(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
 
-	printf("Game data size %d\n", data.size());
+	warning("Game data size %d", data.size());
 
 	if (getEngineVersion() == 0x80000018) {
 		_stateExt = dataStream.readString(0, 4); // FIX ME
@@ -2258,7 +2256,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		break;
 	case 5:
 		arg1 = vm->pop32();
-		//printf("func 5 %x check %x \n", PTR_00417218->fld_4 & 0xb0, arg1);
+		//warning("func 5 %x check %x", PTR_00417218->fld_4 & 0xb0, arg1);
 		vm->EAX.val = (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0;
 		break;
 	case 6:

@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
@@ -595,7 +594,7 @@ void VM::writeMemory(uint32 address, const byte* data, uint32 dataSize) {
     uint32 pos = 0;
     uint32 remain = dataSize;
 
-    //printf("Write memory at %x sz %x\n", address, dataSize);
+    //warning("Write memory at %x sz %x", address, dataSize);
 
     for (uint32 addr = blockAddr; addr < address + dataSize; addr += 0x100) {
         MemoryBlock &block = _memMap.getOrCreateVal(addr);
