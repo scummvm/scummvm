@@ -133,7 +133,7 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 
     SP = STACK_POS;
 
-    Common::Array<OpLog> cmdlog;
+    //Common::Array<OpLog> cmdlog;
 
     bool loop = true;
     while (loop) {
@@ -141,7 +141,7 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
             return 0;
 
         byte op = _readAccess.getU8(ESI);
-        cmdlog.push_back({ESI, (OP)op, SP});
+        //cmdlog.push_back({ESI, (OP)op, SP});
         ESI++;
 
         switch (op) {
@@ -595,7 +595,7 @@ void VM::writeMemory(uint32 address, const byte* data, uint32 dataSize) {
     uint32 pos = 0;
     uint32 remain = dataSize;
 
-    printf("Write memory at %x sz %x\n", address, dataSize);
+    //printf("Write memory at %x sz %x\n", address, dataSize);
 
     for (uint32 addr = blockAddr; addr < address + dataSize; addr += 0x100) {
         MemoryBlock &block = _memMap.getOrCreateVal(addr);
