@@ -516,6 +516,7 @@ protected:
 	void addDirtyRect(const Common::Rect &rect);
 
 	void doDraw();
+	bool usePalette(byte *pal, int num, int fade, bool winColors);
 
 	bool loadImage(Image *img);
 

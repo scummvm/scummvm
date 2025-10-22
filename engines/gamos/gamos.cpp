@@ -911,6 +911,85 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 	}
 }
 
+bool GamosEngine::usePalette(byte *pal, int num, int fade, bool winColors) {
+
+	static const byte winColorMap[20][3] = {
+	/* r     g     b */
+	{ 0x00, 0x00, 0x00 },
+	{ 0x80, 0x00, 0x00 },
+	{ 0x00, 0x80, 0x00 },
+	{ 0x80, 0x80, 0x00 },
+	{ 0x00, 0x00, 0x80 },
+	{ 0x80, 0x00, 0x80 },
+	{ 0x00, 0x80, 0x80 },
+	{ 0xc0, 0xc0, 0xc0 },
+	{ 0xc0, 0xdc, 0xc0 },
+	{ 0xa6, 0xca, 0xf0 },
+
+	{ 0xff, 0xfb, 0xf0 },
+	{ 0xa0, 0xa0, 0xa4 },
+	{ 0x80, 0x80, 0x80 },
+	{ 0xff, 0x00, 0x00 },
+	{ 0x00, 0xff, 0x00 },
+	{ 0xff, 0xff, 0x00 },
+	{ 0x00, 0x00, 0xff },
+	{ 0xff, 0x00, 0xff },
+	{ 0x00, 0xff, 0xff },
+	{ 0xff, 0xff, 0xff } };
+
+	if (!pal)
+		return false;
+
+	if (_width != 0 && _height !=0) {
+		if (fade == 0) {
+			uint16 color = _screen->getPalette().findBestColor(0, 0, 0);
+			_screen->fillRect(_screen->getBounds(), color);
+			_screen->update();
+		} else {
+			uint16 color = 0;
+			if (fade == 2)
+				color = _screen->getPalette().findBestColor(0x80, 0x80, 0x80);
+			else if (fade == 3)
+				color = _screen->getPalette().findBestColor(0xc0, 0xc0, 0xc0);
+			else if (fade == 4)
+				color = _screen->getPalette().findBestColor(0xff, 0xff, 0xff);
+			else
+				color = _screen->getPalette().findBestColor(0, 0, 0);
+
+			/* 0.4sec */
+			const int16 maxDelay = (400 / 8) - 1;
+
+			for (int j = 0 ; j < 8; j++) {
+				uint32 val = _system->getMillis();
+
+				for (int i = j; i < _screen->w; i += 8)
+					_screen->drawLine(i, 0, i, _screen->h - 1, color);
+				for (int i = j; i < _screen->h; i += 8)
+					_screen->drawLine(0, i, _screen->w - 1, i, color);
+
+				_screen->update();
+				val = _system->getMillis() - val;
+
+				if (val < maxDelay)
+					_system->delayMillis(maxDelay - val);
+			}
+		}
+	}
+
+	Graphics::Palette newPal(256);
+	newPal.set(pal, 0, num);
+
+	if (winColors) {
+		newPal.set(winColorMap[0], 0, 10);
+		newPal.set(winColorMap[10], 246, 10);
+	}
+
+	newPal.resize(num, true);
+
+	_screen->setPalette(newPal);
+	return true;
+}
+
 
 void GamosEngine::readData2(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
