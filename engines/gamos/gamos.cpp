@@ -105,6 +105,8 @@ Common::Error GamosEngine::run() {
 	Common::Event e;
 
 	while (!shouldQuit()) {
+		Common::Point prevMousePos = _messageProc._mouseReportedPos;
+
 		while (_system->getEventManager()->pollEvent(e)) {
 			_messageProc.processMessage(e);
 		}
@@ -130,6 +132,9 @@ Common::Error GamosEngine::run() {
 			_messageProc._rawKeyCode = ACT_NONE;
 
 			doDraw();
+		} else {
+			if (prevMousePos != _messageProc._mouseReportedPos)
+				_screen->update();
 		}
 
 		//if (_delayTime)
