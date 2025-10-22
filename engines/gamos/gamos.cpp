@@ -2071,41 +2071,22 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 		return;
 	}
 
-	int flags = 0;
-
+	bool intersects = 0;
 	for(int i = 0; i < _dirtyRects.size(); i++) {
 		Common::Rect &r = _dirtyRects[i];
 		if (!rect.intersects(r))
 			continue;
 
-		flags |= 1;
+		intersects = true;
 
-		if (rect.left < r.left) {
-			r.left = rect.left;
-			flags |= 2;
-		}
-		if (rect.right > r.right) {
-			r.right = rect.right;
-			flags |= 2;
-		}
-		if (rect.top < r.top) {
-			r.top = rect.top;
-			flags |= 2;
-		}
-		if (rect.bottom > r.bottom) {
-			r.bottom = rect.bottom;
-			flags |= 2;
-		}
+		r.extend(rect);
 		break;
 	}
 
-	if (flags == 0) {
+	if (!intersects) {
 		_dirtyRects.push_back(rect);
 		return;
 	}
-
-	if ( !(flags & 2) )
-		return;
 
 	rerunCheck:
 	for(int i = _dirtyRects.size() - 2; i > 0; i--) {
