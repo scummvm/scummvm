@@ -40,6 +40,7 @@ protected:
 public:
 	Common::String _gameId;
 	Metagame::CBfcMgr _bfcMgr;
+	Graphics::Surface _boardgameThumbnail;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

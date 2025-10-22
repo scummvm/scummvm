@@ -203,6 +203,18 @@ Common::KeymapArray BagelMetaEngine::initKeymaps(Bagel::KeybindingMode mode, boo
 	return keymapArray;
 }
 
+void BagelMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Bagel::HodjNPodj::HodjNPodjEngine *engine =
+		dynamic_cast<Bagel::HodjNPodj::HodjNPodjEngine *>(g_engine);
+
+	if (engine) {
+		Graphics::Surface &newThumb = engine->_boardgameThumbnail;
+		thumb.copyFrom(newThumb);
+	} else {
+		MetaEngine::getSavegameThumbnail(thumb);
+	}
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(BAGEL)
 	REGISTER_PLUGIN_DYNAMIC(BAGEL, PLUGIN_TYPE_ENGINE, BagelMetaEngine);
 #else

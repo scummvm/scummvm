@@ -64,6 +64,8 @@ public:
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
 	/**
 	 * Initialize keymaps
 	 */

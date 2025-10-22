@@ -48,6 +48,7 @@ HodjNPodjEngine::HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HodjNPodjEngine::~HodjNPodjEngine() {
+	_boardgameThumbnail.free();
 }
 
 Common::Error HodjNPodjEngine::run() {

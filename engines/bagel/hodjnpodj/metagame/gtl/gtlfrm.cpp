@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/thumbnail.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtl.h"
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
 #include "bagel/hodjnpodj/metagame/gtl/init.h"
@@ -265,6 +266,9 @@ void CGtlFrame::ProcessMiniGameReturn() {
 void CGtlFrame::ShowOptions(CPalette *pPalette) {
 	CMetaOptDlg cOptionsDlg((CWnd*)this, pPalette);
 	int         nOptionsReturn = 0;
+
+	// Create a thumbnail of the current boardgame in case player saves the game
+	Graphics::createThumbnail(g_engine->_boardgameThumbnail);
 
 	cOptionsDlg.SetInitialOptions(lpMetaGameStruct);    // Sets the private members
 	nOptionsReturn = cOptionsDlg.DoModal();
