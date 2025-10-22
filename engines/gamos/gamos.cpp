@@ -2340,6 +2340,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.val = 1;
 		break;
 
+	case 27:
+		FUN_004025d0();
+		vm->EAX.val = 1;
+		break;
+
 	case 30: {
 		if (PTR_00417218->y != -1) {
 			Object *obj = &_objects[PTR_00417218->y];
@@ -2364,6 +2369,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
 		vm->EAX.val = 1;
 		break;
+
+	case 34: {
+		VM::Reg regRef = vm->popReg();
+		vm->setMem8(regRef.ref, regRef.val, PTR_00417218->fld_5);
+		vm->EAX.val = 1;
+	} break;
 
 	case 35:
 		arg1 = vm->pop32();
@@ -2474,6 +2485,70 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			vm->EAX.val = 0;
 		else
 			vm->EAX.val = 1;
+		break;
+
+	case 39:
+		arg1 = vm->pop32();
+		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412c9c)
+			vm->EAX.val = 0;
+		else
+			vm->EAX.val = 1;
+		break;
+
+	case 42: {
+		arg1 = vm->pop32();
+		if (DAT_00417804 != 0) {
+			if (arg1 == 0) {
+				DAT_00417804 = 0;
+				DAT_004177fe = 255;
+				DAT_00417805 = 255;
+				DAT_004177fd = 255;
+			} else if (arg1 == 1) {
+				ActEntry tmp;
+				tmp.value = 0xfe;
+				tmp.t = BYTE_004177f6;
+				tmp.flags = 0;
+				FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+			} else if (arg1 == 2) {
+				ActEntry tmp;
+				tmp.value = 0;
+				tmp.t = BYTE_004177f6;
+				tmp.flags = 0;
+				tmp.x = DAT_00412c94 - DAT_00412c8c;
+				tmp.y = DAT_00412c98 - DAT_00412c90;
+				FUN_00402a68(tmp);
+			}
+		}
+		vm->EAX.val = 1;
+	} break;
+
+	case 43: {
+		arg1 = vm->pop32();
+		if (DAT_00417804) {
+			ActEntry tmp;
+			tmp.value = arg1;
+			tmp.t = BYTE_004177f6;
+			tmp.flags = 0;
+			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+		}
+		vm->EAX.val = 1;
+	} break;
+
+	case 44: {
+		arg1 = vm->pop32();
+		if (DAT_00417804) {
+			ActEntry tmp;
+			tmp.value = arg1;
+			tmp.t = BYTE_004177f6;
+			tmp.flags = 1;
+			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+		}
+		vm->EAX.val = 1;
+	} break;
+
+	case 45:
+		arg1 = vm->pop32();
+		vm->EAX.val = (PTR_00417218->flags & arg1) ? 1 : 0;
 		break;
 
 	case 47: {
@@ -3471,6 +3546,30 @@ void Actions::parse(const byte *data, size_t dataSize) {
 			if (f & 1)
 				break;
 		}
+	}
+}
+
+
+void GamosEngine::FUN_004025d0() {
+	if (PTR_00417218->fld_2 != 0xfe) {
+		ObjectAction &act = _objectActions[PTR_00417218->fld_2];
+		PTR_00417218->pos;
+
+		for(int i = 0; i < _objects.size(); i++) {
+			Object &obj = _objects[i];
+			if ( (obj.flags & 0xC1) == 0x81 &&
+			     obj.pos == 0xff && obj.blk == 0xff &&
+				 obj.fld_4 == PTR_00417218->pos &&
+				 obj.fld_5 == PTR_00417218->blk ) {
+
+				removeObjectMarkDirty(&obj);
+				break;
+			}
+		}
+
+		executeScript(PTR_00417218->fld_3 >> 4, PTR_00417218->blk, PTR_00417218->pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
+		PTR_00417218->fld_2 = 0xfe;
+		PTR_00417218->fld_3 = 0xf0;
 	}
 }
 

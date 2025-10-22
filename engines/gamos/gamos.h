@@ -581,6 +581,9 @@ protected:
 	byte FUN_004081b8(uint8 cv, uint8 sv);
 
 
+	void FUN_004025d0();
+
+
 
 	/* save-load */
 	void storeToGameScreen(int id);
