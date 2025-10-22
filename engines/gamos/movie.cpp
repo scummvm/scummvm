@@ -63,6 +63,8 @@ bool MoviePlayer::deinit() {
     _gamos->stopMidi();
     _gamos->stopMCI();
 
+    _gamos->setPaletteCurrentGS();
+
     _file = nullptr;
     return true;
 }
@@ -295,9 +297,8 @@ int MoviePlayer::processImageChunk() {
 
     }
 
-    if (_doUpdateScreen) {
-        //FUN_00403c70(true);
-    }
+    if (_doUpdateScreen)
+        _gamos->flushDirtyRects(true);
 
     uint32 tstamp = 0;
     uint8 act = processMessages(keepAct, &tstamp);
@@ -357,8 +358,8 @@ int MoviePlayer::processPaletteChunk() {
     if (!readCompressed(_paletteBufferSize, &_paletteBuffer))
         return 0;
 
-    _screen->setPalette(_paletteBuffer.data());
-    //g_system->getPaletteManager()->setPalette(PalColors.data(), 0, 256);
+    if (!_gamos->usePalette(_paletteBuffer.data(), 256,  _gamos->_fadeEffectID, false))
+        return 0;
 
     return 1;
 }

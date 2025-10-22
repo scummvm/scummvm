@@ -516,6 +516,8 @@ protected:
 	void addDirtyRect(const Common::Rect &rect);
 
 	void doDraw();
+	void flushDirtyRects(bool apply);
+
 	bool usePalette(byte *pal, int num, int fade, bool winColors);
 	bool setPaletteCurrentGS();
 

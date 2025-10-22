@@ -905,6 +905,25 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 	}
 }
 
+void GamosEngine::flushDirtyRects(bool apply) {
+	if (apply) {
+		for(const Common::Rect &r : _dirtyRects) {
+			updateScreen(false, r);
+		}
+	}
+	_dirtyRects.clear();
+
+	_screen->update();
+
+	DAT_004177fd = 0xff;
+	DAT_004177fe = ACT_NONE;
+	PTR_00417388 = nullptr;
+
+	rndSeed(_system->getMillis());
+	PTR_004121b4 = nullptr;
+	FUN_0040255c(nullptr);
+}
+
 bool GamosEngine::usePalette(byte *pal, int num, int fade, bool winColors) {
 
 	static const byte winColorMap[20][3] = {
