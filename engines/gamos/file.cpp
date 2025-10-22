@@ -138,7 +138,7 @@ bool Archive::readCompressedData(RawData *out) {
 
     if (t & 0x40) {
         /* small uncompressed data */
-    _lastReadSize = t & 0x1F;
+        _lastReadSize = t & 0x1F;
     } else {
         /* read size */
         const byte szsize = (t & 3) + 1;
@@ -150,7 +150,7 @@ bool Archive::readCompressedData(RawData *out) {
         /* is compressed */
         if (t & 0xC) {
             for (uint i = 0; i < szsize; ++i)
-            _lastReadDecompressedSize |= readByte() << (i << 3);
+                _lastReadDecompressedSize |= readByte() << (i << 3);
         }
     }
 
