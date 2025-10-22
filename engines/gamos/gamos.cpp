@@ -882,7 +882,7 @@ void GamosEngine::setErrMessage(const Common::String &msg) {
 	_errSet = true;
 }
 
-void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
+void GamosEngine::updateScreen(bool checkers, const Common::Rect &rect) {
 	if (_width == 0 || _height == 0)
 		return;
 
@@ -891,13 +891,17 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 		return;
 	}
 
+	/* checkers update */
 	static const Common::Point checkerCoords[16] = {
 		{0, 0}, {16, 32}, {48, 16}, {16, 48},
 		{0, 32}, {32, 48}, {16, 16}, {48, 0},
 		{32, 32}, {0, 48}, {32, 16}, {16, 0},
 		{48, 32}, {32, 0}, {0, 16}, {48, 48}};
 
-	const int16 maxDelay = (500 / 10) - 1;
+	/* 0.4sec */
+	const int16 maxDelay = (400 / 16) - 1;
+
+	_screen->clearDirtyRects();
 
 	for (int16 p = 0; p < 16; p++) {
 		uint32 val = _system->getMillis();
@@ -910,7 +914,7 @@ void GamosEngine::updateScreen(bool checkers, Common::Rect rect) {
 		_screen->update();
 		val = _system->getMillis() - val;
 
-		if (val > maxDelay)
+		if (val < maxDelay)
 			_system->delayMillis(maxDelay - val);
 	}
 }

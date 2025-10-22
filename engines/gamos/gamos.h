@@ -473,7 +473,7 @@ protected:
 
 	void setErrMessage(const Common::String &msg);
 
-	void updateScreen(bool checkers, Common::Rect rect);
+	void updateScreen(bool checkers, const Common::Rect &rect);
 
 	void readData2(const RawData &data);
 
