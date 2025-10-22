@@ -158,7 +158,7 @@ const ADGameDescription gameDescriptions[] = {
 		"honeytree",
 		"v2.0/SE", // Also includes English as an in-game language option.
 		AD_ENTRY3s(
-			"Nalle Puh", "47dad417e616aaa45296eab1f6941c6f", 771456,
+			"Nalle Puh", "r:3c061bff404de99c69a0b0187018a7da", 765688,
 			"BOOT.STM", "448efdc32f4ce36b5e4f91b34f44437a", 55284,
 			"100.CXT", "00239a03730b8e1c3c730050b8872d33", 2267499
 		),
