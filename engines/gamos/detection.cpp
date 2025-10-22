@@ -33,7 +33,7 @@ class GamosMetaEngineDetection : public AdvancedMetaEngineDetection<Gamos::Gamos
 
 public:
 	GamosMetaEngineDetection(): AdvancedMetaEngineDetection(
-		Gamos::gameDescriptions, Gamos::gamosGames) {
+		    Gamos::gameDescriptions, Gamos::gamosGames) {
 	}
 	~GamosMetaEngineDetection() override {}
 

@@ -24,144 +24,144 @@
 namespace Gamos {
 
 void Blitter::blitNormal(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect) {
-    if (dst->format != src->format)
-        return;
+	if (dst->format != src->format)
+		return;
 
-    Common::Rect drect = dstRect;
-    if (drect.right <= drect.left)
-        drect.right = dst->w;
-    if (drect.bottom <= drect.top)
-        drect.bottom = dst->h;
+	Common::Rect drect = dstRect;
+	if (drect.right <= drect.left)
+		drect.right = dst->w;
+	if (drect.bottom <= drect.top)
+		drect.bottom = dst->h;
 
-    drect.clip(dst->w, dst->h);
+	drect.clip(dst->w, dst->h);
 
-    Common::Rect srect = srcRect;
-    srect.translate(dstRect.left, dstRect.top);
-    srect.clip(drect);
+	Common::Rect srect = srcRect;
+	srect.translate(dstRect.left, dstRect.top);
+	srect.clip(drect);
 
-    drect = srect;
-    srect.translate(-dstRect.left, -dstRect.top);
+	drect = srect;
+	srect.translate(-dstRect.left, -dstRect.top);
 
-    if (srect.isEmpty())
-        return;
+	if (srect.isEmpty())
+		return;
 
-    for(int y = 0; y < srect.height(); y++) {
-        byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-        byte *psrc = (byte *)src->getBasePtr(srect.left, srect.top + y);
-        for(int x = srect.left; x < srect.right; x++) {
-            if (*psrc != 0)
-                *pdst = *psrc;
+	for (int y = 0; y < srect.height(); y++) {
+		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
+		byte *psrc = (byte *)src->getBasePtr(srect.left, srect.top + y);
+		for (int x = srect.left; x < srect.right; x++) {
+			if (*psrc != 0)
+				*pdst = *psrc;
 
-            psrc++;
-            pdst++;
-        }
-    }
+			psrc++;
+			pdst++;
+		}
+	}
 
 }
 
 void Blitter::blitFlipH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect) {
-    if (dst->format != src->format)
-        return;
+	if (dst->format != src->format)
+		return;
 
-    Common::Rect drect = dstRect;
-    if (drect.right <= drect.left)
-        drect.right = dst->w;
-    if (drect.bottom <= drect.top)
-        drect.bottom = dst->h;
+	Common::Rect drect = dstRect;
+	if (drect.right <= drect.left)
+		drect.right = dst->w;
+	if (drect.bottom <= drect.top)
+		drect.bottom = dst->h;
 
-    drect.clip(dst->w, dst->h);
+	drect.clip(dst->w, dst->h);
 
-    Common::Rect srect = srcRect;
-    srect.translate(dstRect.left, dstRect.top);
-    srect.clip(drect);
+	Common::Rect srect = srcRect;
+	srect.translate(dstRect.left, dstRect.top);
+	srect.clip(drect);
 
-    drect = srect;
-    srect.translate(-dstRect.left, -dstRect.top);
+	drect = srect;
+	srect.translate(-dstRect.left, -dstRect.top);
 
-    if (srect.isEmpty())
-        return;
+	if (srect.isEmpty())
+		return;
 
-    for(int y = srect.top; y < srect.bottom; y++) {
-        byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-        byte *psrc = (byte *)src->getBasePtr(srect.right - 1, y);
-        for(int x = srect.left; x < srect.right; x++) {
-            if (*psrc != 0)
-                *pdst = *psrc;
+	for (int y = srect.top; y < srect.bottom; y++) {
+		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
+		byte *psrc = (byte *)src->getBasePtr(srect.right - 1, y);
+		for (int x = srect.left; x < srect.right; x++) {
+			if (*psrc != 0)
+				*pdst = *psrc;
 
-            psrc--;
-            pdst++;
-        }
-    }
+			psrc--;
+			pdst++;
+		}
+	}
 }
 
 void Blitter::blitFlipV(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect) {
-    if (dst->format != src->format)
-        return;
+	if (dst->format != src->format)
+		return;
 
-    Common::Rect drect = dstRect;
-    if (drect.right <= drect.left)
-        drect.right = dst->w;
-    if (drect.bottom <= drect.top)
-        drect.bottom = dst->h;
+	Common::Rect drect = dstRect;
+	if (drect.right <= drect.left)
+		drect.right = dst->w;
+	if (drect.bottom <= drect.top)
+		drect.bottom = dst->h;
 
-    drect.clip(dst->w, dst->h);
+	drect.clip(dst->w, dst->h);
 
-    Common::Rect srect = srcRect;
-    srect.translate(dstRect.left, dstRect.top);
-    srect.clip(drect);
+	Common::Rect srect = srcRect;
+	srect.translate(dstRect.left, dstRect.top);
+	srect.clip(drect);
 
-    drect = srect;
-    srect.translate(-dstRect.left, -dstRect.top);
+	drect = srect;
+	srect.translate(-dstRect.left, -dstRect.top);
 
-    if (srect.isEmpty())
-        return;
+	if (srect.isEmpty())
+		return;
 
-    for(int y = srect.top; y < srect.bottom; y++) {
-        byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-        byte *psrc = (byte *)src->getBasePtr(srect.left, srect.bottom - 1 - y);
-        for(int x = srect.left; x < srect.right; x++) {
-            if (*psrc != 0)
-                *pdst = *psrc;
+	for (int y = srect.top; y < srect.bottom; y++) {
+		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
+		byte *psrc = (byte *)src->getBasePtr(srect.left, srect.bottom - 1 - y);
+		for (int x = srect.left; x < srect.right; x++) {
+			if (*psrc != 0)
+				*pdst = *psrc;
 
-            psrc++;
-            pdst++;
-        }
-    }
+			psrc++;
+			pdst++;
+		}
+	}
 }
 
 void Blitter::blitFlipVH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect) {
-    if (dst->format != src->format)
-        return;
+	if (dst->format != src->format)
+		return;
 
-    Common::Rect drect = dstRect;
-    if (drect.right <= drect.left)
-        drect.right = dst->w;
-    if (drect.bottom <= drect.top)
-        drect.bottom = dst->h;
+	Common::Rect drect = dstRect;
+	if (drect.right <= drect.left)
+		drect.right = dst->w;
+	if (drect.bottom <= drect.top)
+		drect.bottom = dst->h;
 
-    drect.clip(dst->w, dst->h);
+	drect.clip(dst->w, dst->h);
 
-    Common::Rect srect = srcRect;
-    srect.translate(dstRect.left, dstRect.top);
-    srect.clip(drect);
+	Common::Rect srect = srcRect;
+	srect.translate(dstRect.left, dstRect.top);
+	srect.clip(drect);
 
-    drect = srect;
-    srect.translate(-dstRect.left, -dstRect.top);
+	drect = srect;
+	srect.translate(-dstRect.left, -dstRect.top);
 
-    if (srect.isEmpty())
-        return;
+	if (srect.isEmpty())
+		return;
 
-    for(int y = srect.top; y < srect.bottom; y++) {
-        byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-        byte *psrc = (byte *)src->getBasePtr(srect.right - 1, srect.bottom - 1 - y);
-        for(int x = srect.left; x < srect.right; x++) {
-            if (*psrc != 0)
-                *pdst = *psrc;
+	for (int y = srect.top; y < srect.bottom; y++) {
+		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
+		byte *psrc = (byte *)src->getBasePtr(srect.right - 1, srect.bottom - 1 - y);
+		for (int x = srect.left; x < srect.right; x++) {
+			if (*psrc != 0)
+				*pdst = *psrc;
 
-            psrc--;
-            pdst++;
-        }
-    }
+			psrc--;
+			pdst++;
+		}
+	}
 }
 
 }

@@ -240,7 +240,7 @@ struct GameScreen {
 };
 
 class GamosEngine : public Engine {
-friend class MoviePlayer;
+	friend class MoviePlayer;
 
 private:
 	const GamosGameDescription *_gameDescription;

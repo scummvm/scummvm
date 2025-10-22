@@ -36,7 +36,7 @@ Common::Error GamosMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 
 bool GamosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+	       (f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GAMOS)

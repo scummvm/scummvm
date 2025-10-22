@@ -29,31 +29,31 @@ namespace Gamos {
 
 class Blitter {
 protected:
-    static void blitNormal(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
-    static void blitFlipH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
-    static void blitFlipV(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
-    static void blitFlipVH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
+	static void blitNormal(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
+	static void blitFlipH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
+	static void blitFlipV(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
+	static void blitFlipVH(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect);
 
 public:
-    static void blit(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect, uint flip = 0) {
-        switch(flip) {
-            default:
-                blitNormal(src, srcRect, dst, dstRect);
-                break;
+	static void blit(Graphics::Surface *src, const Common::Rect &srcRect, Graphics::Surface *dst, const Common::Rect &dstRect, uint flip = 0) {
+		switch (flip) {
+		default:
+			blitNormal(src, srcRect, dst, dstRect);
+			break;
 
-            case Graphics::FLIP_H:
-                blitFlipH(src, srcRect, dst, dstRect);
-                break;
+		case Graphics::FLIP_H:
+			blitFlipH(src, srcRect, dst, dstRect);
+			break;
 
-            case Graphics::FLIP_V:
-                blitFlipV(src, srcRect, dst, dstRect);
-                break;
+		case Graphics::FLIP_V:
+			blitFlipV(src, srcRect, dst, dstRect);
+			break;
 
-            case Graphics::FLIP_VH:
-                blitFlipVH(src, srcRect, dst, dstRect);
-                break;
-        }
-    };
+		case Graphics::FLIP_VH:
+			blitFlipVH(src, srcRect, dst, dstRect);
+			break;
+		}
+	};
 };
 
 }

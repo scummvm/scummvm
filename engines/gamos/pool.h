@@ -29,44 +29,44 @@ namespace Gamos {
 template<class T, int shift = 6>
 class Pool {
 public:
-    typedef uint size_type; /*!< Size type of the array. */
+	typedef uint size_type; /*!< Size type of the array. */
 
-    const size_type _blockSize = (1 << shift);
-    const size_type _blockMask = _blockSize - 1;
+	const size_type _blockSize = (1 << shift);
+	const size_type _blockMask = _blockSize - 1;
 
 public:
 
-    constexpr Pool() : _size(0) {}
+	constexpr Pool() : _size(0) {}
 
-    explicit Pool(size_type count) : _size(count) {
-        alloc(count);
+	explicit Pool(size_type count) : _size(count) {
+		alloc(count);
 
-        size_type n = _size;
-        for (T* blk : _blocks) {
-            for (size_type i = 0; n > 0 && i < _blockSize; i++) {
-                n--;
-                new (blk + i) T();
-            }
-        }
-    }
+		size_type n = _size;
+		for (T * blk : _blocks) {
+			for (size_type i = 0; n > 0 && i < _blockSize; i++) {
+				n--;
+				new (blk + i) T();
+			}
+		}
+	}
 
-    ~Pool() {
+	~Pool() {
 		free();
 	}
 
-    template<class... TArgs>
+	template<class... TArgs>
 	void emplace_back(TArgs &&...args) {
 		alloc(_size + 1);
 
-        const size_type blid = _size >> shift;
-        const size_type elid = _size & _blockMask;
+		const size_type blid = _size >> shift;
+		const size_type elid = _size & _blockMask;
 
-        new (_blocks[blid] + elid)T(Common::forward<TArgs>(args)...);
+		new (_blocks[blid] + elid)T(Common::forward<TArgs>(args)...);
 
-        _size++;
+		_size++;
 	}
 
-    void push_back(const T &element) {
+	void push_back(const T &element) {
 		emplace_back(element);
 	}
 
@@ -77,8 +77,8 @@ public:
 	T &operator[](size_type idx) {
 		assert(idx < _size);
 
-        const size_type blid = idx >> shift;
-        const size_type elid = idx & _blockMask;
+		const size_type blid = idx >> shift;
+		const size_type elid = idx & _blockMask;
 
 		return _blocks[blid][elid];
 	}
@@ -87,7 +87,7 @@ public:
 		assert(idx < _size);
 
 		const size_type blid = idx >> shift;
-        const size_type elid = idx & _blockMask;
+		const size_type elid = idx & _blockMask;
 
 		return _blocks[blid][elid];
 	}
@@ -96,15 +96,15 @@ public:
 		return _size;
 	}
 
-    bool empty() const {
+	bool empty() const {
 		return (_size == 0);
 	}
 
 	void clear() {
-        free();
+		free();
 	}
 
-    T &front() {
+	T &front() {
 		assert(_size > 0);
 		return _blocks[0][0];
 	}
@@ -125,34 +125,34 @@ public:
 	}
 
 protected:
-    void alloc(size_type count) {
-        size_type blockCount = (count + _blockSize - 1) >> shift;
-        if (_blocks.size() < blockCount) {
-            size_type oldsz = _blocks.size();
-            _blocks.resize(blockCount);
-            for (size_type i = oldsz; i < blockCount; i++) {
-                _blocks[i] = (T*)malloc(sizeof(T) * _blockSize);
-            }
-        }
-    }
+	void alloc(size_type count) {
+		size_type blockCount = (count + _blockSize - 1) >> shift;
+		if (_blocks.size() < blockCount) {
+			size_type oldsz = _blocks.size();
+			_blocks.resize(blockCount);
+			for (size_type i = oldsz; i < blockCount; i++) {
+				_blocks[i] = (T*)malloc(sizeof(T) * _blockSize);
+			}
+		}
+	}
 
-    void free() {
-        size_type n = _size;
-        for (T* blk : _blocks) {
-            for (size_type i = 0; n > 0 && i < _blockSize; i++) {
-                n--;
-                blk[i].~T();
-            }
-            ::free(blk);
-        }
-        _blocks.clear();
+	void free() {
+		size_type n = _size;
+		for (T * blk : _blocks) {
+			for (size_type i = 0; n > 0 && i < _blockSize; i++) {
+				n--;
+				blk[i].~T();
+			}
+			::free(blk);
+		}
+		_blocks.clear();
 
-        _size = 0;
-    }
+		_size = 0;
+	}
 
 protected:
-    Common::Array<T*> _blocks;
-    size_type _size = 0;
+	Common::Array<T *> _blocks;
+	size_type _size = 0;
 };
 
 };

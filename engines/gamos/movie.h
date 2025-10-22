@@ -25,20 +25,19 @@
 
 #include "common/file.h"
 
-namespace Gamos
-{
+namespace Gamos {
 
 class GamosEngine;
 
 class MoviePlayer {
-    public:
+public:
 
-    bool playMovie(Common::File *file, uint32 offset, GamosEngine *gamos);
+	bool playMovie(Common::File *file, uint32 offset, GamosEngine *gamos);
 
 
-    private:
+private:
 
-    bool init(Common::File *file, uint32 offset, GamosEngine *gamos);
+	bool init(Common::File *file, uint32 offset, GamosEngine *gamos);
 	bool deinit();
 	bool error();
 
@@ -53,21 +52,21 @@ class MoviePlayer {
 
 	uint8 processMessages(bool keepAct, uint32 *msecs);
 
-	static byte* blit0(Common::Rect rect, byte *in, Graphics::Surface *surface);
-	static byte* blit1(Common::Rect rect, byte *in, Graphics::Surface *surface);
-	static byte* blit2(Common::Rect rect, byte *in, Graphics::Surface *surface);
-	static byte* blit3(Common::Rect rect, byte *in, Graphics::Surface *surface);
+	static byte *blit0(Common::Rect rect, byte *in, Graphics::Surface *surface);
+	static byte *blit1(Common::Rect rect, byte *in, Graphics::Surface *surface);
+	static byte *blit2(Common::Rect rect, byte *in, Graphics::Surface *surface);
+	static byte *blit3(Common::Rect rect, byte *in, Graphics::Surface *surface);
 
 
 
-    private:
+private:
 
-    GamosEngine *_gamos = nullptr;
-    Graphics::Screen *_screen = nullptr;
-    SystemProc *_messageProc = nullptr;
+	GamosEngine *_gamos = nullptr;
+	Graphics::Screen *_screen = nullptr;
+	SystemProc *_messageProc = nullptr;
 
 
-    bool _doUpdateScreen = false;
+	bool _doUpdateScreen = false;
 	uint32 _skippedFrames = 0;
 	uint32 _currentFrame = 0;
 	uint32 _firstFrameTime = 0;
@@ -75,26 +74,26 @@ class MoviePlayer {
 	bool _forceStopMidi = false;
 
 	int _loopCount = 1;
-    int _loopPoint = 0;
+	int _loopPoint = 0;
 
 	Common::Point _pos; /* Movie frame leftup corner */
 	Common::Point _frameSize; /* Sizes of movie frame */
 
-    int _midiBufferSize = 0;
-    int _soundBufferSize = 0;
-    int _paletteBufferSize = 0;
-    int _bufferSize = 0;
-    int _packedBufferSize = 0;
-    int _frameTime = 0;
+	int _midiBufferSize = 0;
+	int _soundBufferSize = 0;
+	int _paletteBufferSize = 0;
+	int _bufferSize = 0;
+	int _packedBufferSize = 0;
+	int _frameTime = 0;
 
-    Common::Array<byte> _midiBuffer;
-    Common::Array<byte> _soundBuffer;
-    Common::Array<byte> _paletteBuffer;
-    Common::Array<byte> _buffer;
-    Common::Array<byte> _packedBuffer;
+	Common::Array<byte> _midiBuffer;
+	Common::Array<byte> _soundBuffer;
+	Common::Array<byte> _paletteBuffer;
+	Common::Array<byte> _buffer;
+	Common::Array<byte> _packedBuffer;
 
-    bool _midiStarted = false;
-    bool _soundPlaying = false;
+	bool _midiStarted = false;
+	bool _soundPlaying = false;
 
 	Common::File *_file = nullptr;
 

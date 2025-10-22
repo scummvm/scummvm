@@ -26,7 +26,7 @@ namespace Gamos {
 void SystemProc::processMessage(const Common::Event &ev) {
 	uint8 winKey;
 
-	switch(ev.type) {
+	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
 		if ((_gd2flags & 1) == 0)
 			return;

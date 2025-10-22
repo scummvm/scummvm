@@ -37,29 +37,29 @@ namespace Gamos {
 class MidiMusic {
 private:
 	MidiDriver *_driver = nullptr;
-    Common::Array<byte> _pMidiData;
+	Common::Array<byte> _pMidiData;
 
-    Common::Mutex _mutex;
+	Common::Mutex _mutex;
 
-    uint32 _dataPos = 0;
-    uint32 _dataStart = 0;
-    int32 _midiDelayTicks = 0;
-    int32 _midiDelayCount = 0;
-    uint32 _midiTimeStamp = 0;
-    uint32 _midiOp = 0; /* save midi event type between update cycles */
-    bool _midiMute = false;
+	uint32 _dataPos = 0;
+	uint32 _dataStart = 0;
+	int32 _midiDelayTicks = 0;
+	int32 _midiDelayCount = 0;
+	uint32 _midiTimeStamp = 0;
+	uint32 _midiOp = 0; /* save midi event type between update cycles */
+	bool _midiMute = false;
 
 public:
 
 	MidiMusic();
-  ~MidiMusic();
+	~MidiMusic();
 
-  void stopMusic();
-  bool playMusic(Common::Array<byte> *midiData);
-  void update();
-  int16 midi2low();
+	void stopMusic();
+	bool playMusic(Common::Array<byte> *midiData);
+	void update();
+	int16 midi2low();
 
-  static void _timerProc(void *data);
+	static void _timerProc(void *data);
 };
 
 };
