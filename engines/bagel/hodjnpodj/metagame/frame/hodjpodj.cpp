@@ -304,9 +304,11 @@ CHodjPodjWindow::CHodjPodjWindow() {
 
 	lpMetaGame = &g_engine->_bfcMgr;
 
-	// Check for skipping intro
-	if (ConfMan.getBool("skip_intro")) {
-		// Don't play the into movie
+	if (ConfMan.hasKey("save_slot")) {
+		// Loading savegame from GMM
+		PostMessage(WM_COMMAND, IDC_GMM_LOADING);
+	} else if (ConfMan.getBool("skip_intro")) {
+		// Skipping intro, so don't play the into movie
 		PostMessage(WM_COMMAND, IDC_MAINDLG);
 	} else {
 		// Play the intro movie
@@ -664,6 +666,13 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		bSuccess = LoadZoomDLL();
 		if (!bSuccess)
+			PostMessage(WM_COMMAND, IDC_MAINDLG);
+		break;
+
+	case IDC_GMM_LOADING:
+		if (Restore(ConfMan.getInt("save_slot")))
+			PostMessage(WM_COMMAND, IDC_META);
+		else
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
 		break;
 
@@ -2044,7 +2053,7 @@ void CHodjPodjWindow::HandleError(ERROR_CODE errCode) {
 *       ERROR_CODE = Error return code
 *
 ****************************************************************/
-bool CHodjPodjWindow::Restore() {
+bool CHodjPodjWindow::Restore(int iStartupGameNum) {
 	bool bSuccess;
 	ERROR_CODE errCode;
 
@@ -2060,7 +2069,7 @@ bool CHodjPodjWindow::Restore() {
 
 	PositionAtHomePath();
 
-	bSuccess = Saves::RestoreGame((CWnd *)this, pGamePalette, &errCode);
+	bSuccess = Saves::RestoreGame((CWnd *)this, pGamePalette, &errCode, iStartupGameNum);
 
 	lpMetaGame->m_bScrolling = bScrollingEnabled;
 	lpMetaGame->m_bSlowCPU = bSlowCPU;

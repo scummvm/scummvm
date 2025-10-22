@@ -40,6 +40,7 @@ namespace Metagame {
 namespace Frame {
 
 // Button Identifier codes (BIDs)
+#define IDC_GMM_LOADING 889
 #define IDC_ZOOM        888
 #define IDC_META        887
 #define IDC_QUIT        886
@@ -100,7 +101,7 @@ public:
 
 	bool CheckLowMemory();
 
-	bool Restore();
+	bool Restore(int iStartupGameNum = -1);
 	void ShowCredits();
 
 	static  void ReleaseResources();

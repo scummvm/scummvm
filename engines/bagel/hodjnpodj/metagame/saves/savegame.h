@@ -55,7 +55,7 @@ extern bool SaveGame(CWnd *, CPalette *, ERROR_CODE *);
  * Shows a Restore-Game dialog box
  * User can select which game they want to restore.
 **/
-extern bool RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
+extern bool RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode, int iGameNum = -1);
 
 } // namespace Saves
 } // namespace Metagame
