@@ -19,10 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_rand
-
-
 #include "gamos/gamos.h"
 #include "graphics/framelimiter.h"
 #include "gamos/detection.h"
@@ -762,10 +758,9 @@ bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 }
 
 bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
-	if (*(const uint32 *)data != 0) {
-		warning("41 not null!!!");
-		exit(0);
-	}
+	if (*(const uint32 *)data != 0)
+		error("41 not null!!!");
+
 	if (dataSize % 4)
 		warning("loadRes41 datasize > 4");
 	_sprites[id].sequences.resize(dataSize / 4);
@@ -786,8 +781,7 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 	for(int i = 0; i < count; ++i) {
 		int32 dataz = strm.readSint32LE();
 		if (dataz != 0) {
-			warning("42    nut null");
-			exit(0);
+			error("42    nut null");
 		}
 
 		ImagePos &imgpos = _sprites[id].sequences[p1]->operator[](i);
