@@ -2170,10 +2170,17 @@ void GamosEngine::doDraw() {
 				flip |= Graphics::FLIP_H;
 			if (o->flags & 0x10)
 				flip |= Graphics::FLIP_V;
-			Blitter::blit(&o->pImg->image->surface,
-						   Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
-		                   _screen->surfacePtr(),
-						   Common::Rect(o->x, o->y, _screen->w, _screen->h), flip);
+			if (o->flags & 0x40) {
+				Blitter::blit(&o->pImg->image->surface,
+					Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
+					_screen->surfacePtr(),
+					Common::Rect(o->x - o->pImg->xoffset, o->y - o->pImg->yoffset, _screen->w, _screen->h), flip);
+			} else {
+				Blitter::blit(&o->pImg->image->surface,
+					Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
+					_screen->surfacePtr(),
+					Common::Rect(o->x, o->y, o->x + o->pImg->image->surface.w, o->y + o->pImg->image->surface.h), flip);
+			}
 		}
 	}
 
