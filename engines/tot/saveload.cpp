@@ -574,7 +574,7 @@ void TotEngine::loadGame(SavedGame *game) {
 
 const int kMaxSaveSlots = 100;
 
-Common::String drawAndSelectSaves(int pageNumber, Common::HashMap<int, SaveStateDescriptor> saveMap, uint selectedSlot) {
+Common::String drawAndSelectSaves(int pageNumber, const Common::HashMap<int, SaveStateDescriptor> &saveMap, uint selectedSlot) {
 	g_engine->_mouse->hide();
 	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
 	ExtendedSavegameHeader header;
