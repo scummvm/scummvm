@@ -134,10 +134,10 @@ void SoundGenMIDI::play(int resnum) {
 /* channel / instrument setup: */
 
 /* most songs are good with this: */
-unsigned char instr[] = {0, 0, 0};
+static const unsigned char instr[] = {0, 0, 0};
 
 /* cool for sq2:
-unsigned char instr[] = {50, 51, 19};
+static const unsigned char instr[] = {50, 51, 19};
 */
 
 static void writeDelta(Common::MemoryWriteStreamDynamic *st, int32 delta) {

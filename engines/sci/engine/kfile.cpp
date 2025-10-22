@@ -915,7 +915,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	if (!exists && name == "memory.drv") {
 		// Create a new file, and write the bytes for the empty password
 		// string inside
-		byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
+		const byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
 		Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
 		for (int i = 0; i < 10; i++)
 			outFile->writeByte(defaultContent[i]);

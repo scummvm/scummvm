@@ -661,11 +661,11 @@ void AgiEngine::stopUpdate(ScreenObjEntry *viewPtr) {
 
 // loops to use according to direction and number of loops in
 // the view resource
-static int loopTable2[] = {
+static const int loopTable2[] = {
 	0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x01, 0x01, 0x01
 };
 
-static int loopTable4[] = {
+static const int loopTable4[] = {
 	0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0x01, 0x01, 0x01
 };
 

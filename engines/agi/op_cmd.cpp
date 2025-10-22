@@ -1795,11 +1795,11 @@ void cmdSetMenuItem(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdVersion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	char ver2Msg[] =
+	const char *ver2Msg =
 	    "\n"
 	    "                               \n\n"
 	    "  ScummVM Sierra AGI v%x.%03x";
-	char ver3Msg[] =
+	const char *ver3Msg =
 	    "\n"
 	    "                             \n\n"
 	    "ScummVM Sierra AGI v%x.002.%03x";
