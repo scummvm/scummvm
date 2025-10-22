@@ -141,11 +141,14 @@ public:
     static void clearMemory();
     static void writeMemory(uint32 address, const byte* data, uint32 dataSize);
 
+    static void zeroMemory(uint32 address, uint32 count);
+
     static MemoryBlock *findMemoryBlock(uint32 address);
 
     static MemoryBlock *createBlock(uint32 address);
 
     static Common::Array<byte> readMemBlocks(uint32 address, uint32 count);
+    static void readMemBlocks(byte *dst, uint32 address, uint32 count);
 
     static Common::String readMemString(uint32 address, uint32 maxLen = 256);
 

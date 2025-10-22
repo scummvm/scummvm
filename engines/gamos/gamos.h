@@ -256,7 +256,7 @@ private:
 	bool _runReadDataMod;
 	int _currentModuleID;
 
-	byte _saveLoadID;
+	byte _saveLoadID = 0;
 
 	uint32 _magic;
 	uint32 _pages1kbCount;
@@ -327,10 +327,31 @@ private:
 
 	/* Data2 */
 
+	Common::String _stateExt;
+
+	int32 _svModuleId = 0;
+	int32 _svGameScreen = 0;
+	uint32 _d2_fld10 = 0;
 	uint8 _d2_fld14 = 0;
 	uint8 _d2_fld16 = 0;
 	uint8 _d2_fld17 = 0;
 	uint8 _d2_fld18 = 0;
+	uint8 _d2_fld19 = 0;
+	int32 _d2_outLeft = 0;
+	int32 _d2_outTop = 0;
+	int32 _d2_index = 0;
+	int16 _d2_fld26 = 0;
+	int16 _d2_fld28 = 0;
+	int16 _d2_fld2a = 0;
+	uint8 _d2_fld2c = 0;
+	uint8 _d2_fld2d = 0;
+	uint8 _d2_fld2e = 0;
+	uint8 _d2_fld2f = 0;
+	uint8 _sndChannels = 0;
+	uint8 _sndVolume = 0;
+	uint8 _midiVolume = 0;
+	uint8 _svFps = 0;
+	uint32 _svFrame = 0;
 
 	bool _enableMidi = false;
 	int32 _midiTrack = 0;
@@ -433,8 +454,6 @@ protected:
 	bool loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const RawData &data);
 
 	bool reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3);
-
-	bool initOrLoadSave(int32);
 
 	bool initMainDatas();
 
@@ -558,10 +577,23 @@ protected:
 	byte FUN_004081b8(uint8 cv, uint8 sv);
 
 
+
+	/* save-load */
 	void storeToGameScreen(int id);
 	bool switchToGameScreen(int id, bool doNotStore);
 
+	Common::String makeSaveName(const Common::String &main, int id, const Common::String &ext) const;
 
+	void writeVMData(Common::SeekableWriteStream *stream, const Common::Array<XorArg> &seq);
+	void readVMData(Common::SeekableReadStream *stream, const Common::Array<XorArg> &seq);
+
+	bool writeStateFile();
+	void writeStateData(Common::SeekableWriteStream *stream);
+
+	void zeroVMData(const Common::Array<XorArg> &seq);
+
+	bool loadStateFile();
+	void loadStateData(Common::SeekableReadStream *stream);
 
 	void vmCallDispatcher(VM *vm, uint32 funcID);
 

@@ -140,6 +140,17 @@ Common::Error GamosEngine::run() {
 		//if (_delayTime)
 	}
 
+	stopSounds();
+	stopMidi();
+	stopMCI();
+
+	_d2_fld17 = 1;
+	_enableMidi = true;
+	_d2_fld14 = 1;
+	_d2_fld16 = 1;
+	_runReadDataMod = true;
+	writeStateFile();
+
 	return Common::kNoError;
 }
 
@@ -227,15 +238,27 @@ bool GamosEngine::loader2() {
 }
 
 bool GamosEngine::loadModule(uint id) {
-	if ( (!_runReadDataMod && !initOrLoadSave(_saveLoadID)) ||
+	if ( (!_runReadDataMod && !writeStateFile()) ||
 	     !_arch.seekDir(1) )
 		return false;
 
 	_currentModuleID = id;
 	const byte targetDir = 2 + id;
 
+	//DAT_004126e4 = 1;
 	_currentGameScreen = -1;
 	_readingBkgMainId = -1;
+	//DAT_004172f8 = 0;
+	//DAT_004126ec = 0;
+	//INT_004126e8 = 0;
+
+	_xorSeq[0].clear();
+	_xorSeq[1].clear();
+	_xorSeq[2].clear();
+
+	stopMidi();
+	stopMCI();
+	stopSounds();
 
 	/* Complete me */
 
@@ -384,6 +407,8 @@ bool GamosEngine::loadModule(uint id) {
 	// Reverse Here
 	setCursor(0, false);
 
+	if (!loadStateFile())
+		return false;
 
 	int bkg = _readingBkgMainId;
 	if (bkg == -1)
@@ -528,10 +553,6 @@ bool GamosEngine::reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3
 }
 
 
-bool GamosEngine::initOrLoadSave(int32) {
-	return false;
-}
-
 bool GamosEngine::initMainDatas() {
 	RawData rawdata;
 
@@ -541,6 +562,12 @@ bool GamosEngine::initMainDatas() {
 	Common::MemoryReadStream dataStream(rawdata.data(), rawdata.size(), DisposeAfterUse::NO);
 
 	_magic = dataStream.readUint32LE();
+
+	if (_magic != getEngineVersion()) {
+		error("InitMainData: Invalid engine version! get %x expecting %x", _magic, getEngineVersion());
+		return false;
+	}
+
 	_pages1kbCount = dataStream.readUint32LE();
 	_readBufSize = dataStream.readUint32LE();
 	_width = dataStream.readUint32LE();
@@ -701,8 +728,8 @@ void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
 	seq.resize(num);
 
 	for(uint i = 0; i < num; ++i) {
-		seq[i].len = dataStream.readUint32LE();
 		seq[i].pos = dataStream.readUint32LE();
+		seq[i].len = dataStream.readUint32LE();
 	}
 }
 
@@ -1035,24 +1062,79 @@ bool GamosEngine::setPaletteCurrentGS() {
 
 void GamosEngine::readData2(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
-	dataStream.seek(4); // FIX ME
-	_messageProc._gd2flags = dataStream.readByte(); //4
-	//5
-	//x14
-	dataStream.seek(0x14);
-	_d2_fld14 = dataStream.readByte(); // x14
-	_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
-	_d2_fld16 = dataStream.readByte(); // x16
-	_d2_fld17 = dataStream.readByte(); // x17
-	_d2_fld18 = dataStream.readByte(); // x18
-	//x19
 
-	dataStream.seek(0x38);
-	_midiTrack = dataStream.readUint32LE(); //0x38
-	_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
-	//0x40
-	for (int i = 0; i < 12; i++) {
-		_messageProc._keyCodes[i] = dataStream.readByte();
+	printf("Game data size %d\n", data.size());
+
+	if (getEngineVersion() == 0x80000018) {
+		_stateExt = dataStream.readString(0, 4); // FIX ME
+		dataStream.seek(4);
+		_messageProc._gd2flags = dataStream.readByte(); //4
+		dataStream.seek(8);
+		_svModuleId = dataStream.readSint32LE(); // 8
+		_svGameScreen = dataStream.readSint32LE(); // c
+		_d2_fld10 = dataStream.readUint32LE(); // x10
+		_d2_fld14 = dataStream.readByte(); // x14
+		_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
+		_d2_fld16 = dataStream.readByte(); // x16
+		_d2_fld17 = dataStream.readByte(); // x17
+		_d2_fld18 = dataStream.readByte(); // x18
+		_d2_fld19 = dataStream.readByte(); // x19
+		_d2_outLeft = dataStream.readSint32LE(); // x1c
+		_d2_outTop = dataStream.readSint32LE(); // x20
+		_d2_index = dataStream.readSint16LE(); // x24
+		_d2_fld26 = dataStream.readSint16LE(); // x26
+		_d2_fld28 = dataStream.readSint16LE(); // x28
+		_d2_fld2a = dataStream.readSint16LE(); // x2a
+		_d2_fld2c = dataStream.readByte(); // x2c
+		_d2_fld2d = dataStream.readByte(); // x2d
+		_d2_fld2e = dataStream.readByte(); // x2e
+		_d2_fld2f = dataStream.readByte(); // x2f
+		_sndChannels = dataStream.readByte(); // x30
+		_sndVolume = dataStream.readByte(); // x34
+		_midiVolume = dataStream.readByte(); // x1a
+		_svFps = dataStream.readByte(); // x1b
+		_svFrame = dataStream.readSint32LE(); // x1c
+		_midiTrack = dataStream.readUint32LE(); //0x38
+		_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
+		//0x40
+		for (int i = 0; i < 12; i++) {
+			_messageProc._keyCodes[i] = dataStream.readByte();
+		}
+	} else if (getEngineVersion() == 0x80000016) {
+		_stateExt = dataStream.readString(0, 4); // FIX ME
+		dataStream.seek(4);
+		_messageProc._gd2flags = dataStream.readByte(); //4
+		dataStream.seek(8);
+		_svModuleId = dataStream.readSint32LE();
+		_svGameScreen = dataStream.readSint32LE();
+		_d2_fld10 = dataStream.readUint32LE();
+		_d2_fld14 = dataStream.readByte(); // x14
+		_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
+		_d2_fld16 = dataStream.readByte(); // x16
+		_d2_fld17 = dataStream.readByte(); // x17
+		_d2_fld18 = 0;
+		_d2_fld19 = 0;
+		_d2_outLeft = 0;
+		_d2_outTop = 0;
+		_d2_index = -1;
+		_d2_fld26 = 16;
+		_d2_fld28 = 80;
+		_d2_fld2a = -1;
+		_d2_fld2c = 0;
+		_d2_fld2d = 0;
+		_d2_fld2e = 0;
+		_d2_fld2f = 0;
+		_sndChannels = dataStream.readByte(); // x18
+		_sndVolume = dataStream.readByte(); // x19
+		_midiVolume = dataStream.readByte(); // x1a
+		_svFps = dataStream.readByte(); // x1b
+		_svFrame = dataStream.readSint32LE(); // x1c
+		_midiTrack = dataStream.readUint32LE(); // x20
+		_mouseCursorImgId = dataStream.readUint32LE(); // x24
+		//0x28
+		for (int i = 0; i < 12; i++) {
+			_messageProc._keyCodes[i] = dataStream.readByte();
+		}
 	}
 }
 

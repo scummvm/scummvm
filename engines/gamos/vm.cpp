@@ -614,6 +614,28 @@ void VM::writeMemory(uint32 address, const byte* data, uint32 dataSize) {
     }
 }
 
+void VM::zeroMemory(uint32 address, uint32 count) {
+    uint32 blockAddr = address & (~0xff);
+    uint32 pos = 0;
+    uint32 remain = count;
+
+    for (uint32 addr = blockAddr; addr < address + count; addr += 0x100) {
+        MemoryBlock *block = findMemoryBlock(addr);
+
+        uint32 zeroCnt = (addr + 0x100) - (address + pos);
+        if (zeroCnt > remain)
+            zeroCnt = remain;
+
+        uint32 blockPos = (address + pos) - addr;
+
+        if (block)
+            memset(block->data + blockPos, 0, zeroCnt);
+
+        pos += zeroCnt;
+        remain -= zeroCnt;
+    }
+}
+
 VM::MemoryBlock *VM::findMemoryBlock(uint32 address) {
     Common::HashMap<uint32, MemoryBlock>::iterator it = _memMap.find(address & (~0xff));
     if (it == _memMap.end())
@@ -631,9 +653,14 @@ VM::MemoryBlock *VM::createBlock(uint32 address) {
 
 
 Common::Array<byte> VM::readMemBlocks(uint32 address, uint32 count) {
-    Common::Array<byte> data;
-    data.resize(count);
+    Common::Array<byte> data(count);
 
+    readMemBlocks(data.data(), address, count);
+
+    return data;
+}
+
+void VM::readMemBlocks(byte *dst, uint32 address, uint32 count) {
     MemoryBlock *blk = findMemoryBlock(address);
 
     uint32 pos = 0;
@@ -641,13 +668,13 @@ Common::Array<byte> VM::readMemBlocks(uint32 address, uint32 count) {
     uint32 remain = count;
     while(remain > 0) {
         uint32 dataCpyCount = (blockAddr + 0x100) - (address + pos);
-        if (dataCpyCount < remain)
+        if (dataCpyCount > remain)
             dataCpyCount = remain;
 
         if (!blk) {
-            memset(data.data() + pos, 0, dataCpyCount);
+            memset(dst + pos, 0, dataCpyCount);
         } else {
-            memcpy(data.data() + pos, blk->data + (address + pos - blk->address), dataCpyCount);
+            memcpy(dst + pos, blk->data + (address + pos - blk->address), dataCpyCount);
         }
 
         pos += dataCpyCount;
@@ -655,7 +682,6 @@ Common::Array<byte> VM::readMemBlocks(uint32 address, uint32 count) {
         blockAddr += 0x100;
         blk = findMemoryBlock(blockAddr);
     }
-    return data;
 }
 
 Common::String VM::readMemString(uint32 address, uint32 maxLen) {
