@@ -3605,7 +3605,7 @@ bool GamosEngine::FUN_004038b8() {
 }
 
 void GamosEngine::dumpActions() {
-	Common::String t = Common::String::format("actions_%d.txt", _currentModuleID);
+	Common::String t = Common::String::format("./actions_%d.txt", _currentModuleID);
 
 	Common::DumpFile f;
 
