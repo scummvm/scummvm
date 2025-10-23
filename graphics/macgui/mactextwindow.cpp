@@ -272,7 +272,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		_wm->setActiveWindow(getId());
 
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
-			return _mactext->processEvent(event);
+			if (_mactext->processEvent(event))
+				return true;
 		}
 
 		switch (event.kbd.keycode) {

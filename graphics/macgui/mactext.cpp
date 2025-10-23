@@ -1307,7 +1307,7 @@ bool MacText::processEvent(Common::Event &event) {
 				}
 				return true;
 			default:
-				break;
+				return false;
 			}
 		}
 
