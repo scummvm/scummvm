@@ -396,8 +396,6 @@ protected:
 		int32 acrossMax;
 		int32 downMin;
 		int32 downMax;
-		int32 lastDown;
-		int32 lastDownOffset;
 		byte data[1];
 	} PACKED_STRUCT;
 

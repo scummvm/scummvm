@@ -144,16 +144,11 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int downMin, int downM
 	ah->downMin = TO_LE_32(downMin);
 	ah->downMax = TO_LE_32(downMax);
 
-	if (_game.heversion >= 95) {
-		ah->lastDown = -1;
-		ah->lastDownOffset = -1;
-	}
-
 	return ah->data;
 }
 
-int ScummEngine_v72he::readArray(int array, int down, int across) {
-	debug(9, "readArray (array %d, down %d, aMin %d)", readVar(array), down, across);
+int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
+	debug(9, "readArray (array %d, down %d, aMin %d)", readVar(array), idx2, idx1);
 
 	if (readVar(array) == 0)
 		error("readArray: Reference to zeroed array pointer");
@@ -163,10 +158,10 @@ int ScummEngine_v72he::readArray(int array, int down, int across) {
 	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (down < (int)FROM_LE_32(ah->downMin) || down > (int)FROM_LE_32(ah->downMax) ||
-		across < (int)FROM_LE_32(ah->acrossMin) || across > (int)FROM_LE_32(ah->acrossMax)) {
+	if (idx2 < (int)FROM_LE_32(ah->downMin) || idx2 > (int)FROM_LE_32(ah->downMax) ||
+		idx1 < (int)FROM_LE_32(ah->acrossMin) || idx1 > (int)FROM_LE_32(ah->acrossMax)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, across, down, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
+			  array, idx1, idx2, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
 			  FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax));
 	}
 
@@ -183,7 +178,7 @@ int ScummEngine_v72he::readArray(int array, int down, int across) {
 			readVar(ROOM_VAL(11)) == 1 &&  // The ball is a pop-up
 			readVar(291) < 2 &&  // Less than two outs
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
-			array == 295 && across == 8) {
+			array == 295 && idx1 == 8) {
 				int runnerIdx = readVar(342);
 				if (readArray(array, runnerIdx, 6) == 1 && readArray(array, runnerIdx, 7) == 1) {
 					// Bugfix: if runner is going forward to 1st base, return 1 so they can't turn around
@@ -195,32 +190,19 @@ int ScummEngine_v72he::readArray(int array, int down, int across) {
 	}
 #endif
 
-	int index;
-
-	if (_game.heversion >= 95) { // Caches the down offset
-		if (down == ah->lastDown) {
-			index = ah->lastDownOffset + across;
-		} else {
-			ah->lastDown = down;
-			ah->lastDownOffset = ((down - FROM_LE_32(ah->downMin)) *
-								 (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1)) - FROM_LE_32(ah->acrossMin);
-			index = ah->lastDownOffset + across;
-		}
-	} else {
-		index = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
-				 (down - FROM_LE_32(ah->downMin)) + (across - FROM_LE_32(ah->acrossMin));
-	}
+	const int offset = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(idx2 - FROM_LE_32(ah->downMin)) + (idx1 - FROM_LE_32(ah->acrossMin));
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
 	case kStringArray:
-		return ah->data[index];
+		return ah->data[offset];
 
 	case kIntArray:
-		return (int16)READ_LE_UINT16(ah->data + index * 2);
+		return (int16)READ_LE_UINT16(ah->data + offset * 2);
 
 	case kDwordArray:
-		return (int32)READ_LE_UINT32(ah->data + index * 4);
+		return (int32)READ_LE_UINT32(ah->data + offset * 4);
 
 	default:
 		break;
@@ -229,8 +211,8 @@ int ScummEngine_v72he::readArray(int array, int down, int across) {
 	return 0;
 }
 
-void ScummEngine_v72he::writeArray(int array, int down, int across, int value) {
-	debug(9, "writeArray (array %d, down %d, aMin %d, value %d)", readVar(array), down, across, value);
+void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
+	debug(9, "writeArray (array %d, down %d, aMin %d, value %d)", readVar(array), idx2, idx1, value);
 
 	if (readVar(array) == 0)
 		error("writeArray: Reference to zeroed array pointer");
@@ -240,43 +222,28 @@ void ScummEngine_v72he::writeArray(int array, int down, int across, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (down < (int)FROM_LE_32(ah->downMin) || down > (int)FROM_LE_32(ah->downMax) ||
-		across < (int)FROM_LE_32(ah->acrossMin) || across > (int)FROM_LE_32(ah->acrossMax)) {
+	if (idx2 < (int)FROM_LE_32(ah->downMin) || idx2 > (int)FROM_LE_32(ah->downMax) ||
+		idx1 < (int)FROM_LE_32(ah->acrossMin) || idx1 > (int)FROM_LE_32(ah->acrossMax)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, across, down, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
+			  array, idx1, idx2, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
 			  FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax));
 	}
 
-	int index;
-
-	if (_game.heversion >= 95) { // Caches the down offset
-		if (down == ah->lastDown) {
-			index = ah->lastDownOffset + across;
-		} else {
-			ah->lastDown = down;
-			ah->lastDownOffset = ((down - FROM_LE_32(ah->downMin)) *
-								  (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1)) -
-								 FROM_LE_32(ah->acrossMin);
-			index = ah->lastDownOffset + across;
-		}
-	} else {
-		index = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
-					(down - FROM_LE_32(ah->downMin)) +
-				(across - FROM_LE_32(ah->acrossMin));
-	}
+	const int offset = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(idx2 - FROM_LE_32(ah->downMin)) - FROM_LE_32(ah->acrossMin) + idx1;
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
 	case kStringArray:
-		ah->data[index] = value;
+		ah->data[offset] = value;
 		break;
 
 	case kIntArray:
-		WRITE_LE_UINT16(ah->data + index * 2, value);
+		WRITE_LE_UINT16(ah->data + offset * 2, value);
 		break;
 
 	case kDwordArray:
-		WRITE_LE_UINT32(ah->data + index * 4, value);
+		WRITE_LE_UINT32(ah->data + offset * 4, value);
 		break;
 
 	default:
@@ -2029,11 +1996,6 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->acrossMax = TO_LE_32(newDim1end);
 	ah->downMin = TO_LE_32(newDim2start);
 	ah->downMax = TO_LE_32(newDim2end);
-
-	if (_game.heversion >= 95) {
-		ah->lastDown = -1;
-		ah->lastDownOffset = -1;
-	}
 }
 
 void ScummEngine_v72he::checkArrayLimits(int array, int downMin, int downMax, int acrossMin, int acrossMax) {
