@@ -667,6 +667,7 @@ public:
 	struct Impl : public CGdiObjectImpl,
 			public Graphics::Palette {
 		Impl(const LPLOGPALETTE pal);
+		Impl(const Graphics::Palette &pal);
 		~Impl() override {}
 	};
 

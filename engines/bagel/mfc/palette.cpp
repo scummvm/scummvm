@@ -88,8 +88,12 @@ unsigned int CPalette::SetPaletteEntries(unsigned int nStartIndex, unsigned int 
 }
 
 unsigned int CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
-	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
-	*impl = pal;
+	DeleteObject();
+	m_hObject = new Impl(pal);
+
+	// This is where it becomes permanent
+	AfxHookObject();
+
 	return pal.size();
 }
 
@@ -126,6 +130,10 @@ CPalette::Impl::Impl(const LPLOGPALETTE pal) :
 		const auto &e = pal->palPalEntry[i];
 		set(i, e.peRed, e.peGreen, e.peBlue);
 	}
+}
+
+CPalette::Impl::Impl(const Graphics::Palette &pal) :
+		CGdiObjectImpl(), Graphics::Palette(pal) {
 }
 
 } // namespace MFC

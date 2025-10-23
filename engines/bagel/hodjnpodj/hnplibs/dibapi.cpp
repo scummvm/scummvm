@@ -182,8 +182,6 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 
 bool CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 	uint16 wNumColors;
-	HANDLE hLogPal;
-	LPLOGPALETTE lpPal;
 	bool bResult = false;
 
 	// If handle to DIB is invalid, return false
@@ -195,32 +193,7 @@ bool CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
 
 	if (wNumColors != 0) {
 		const Graphics::Palette *pal = hDIB->grabPalette();
-
-		// Allocate memory block for logical palette
-		hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
-		    + sizeof(PALETTEENTRY)
-		    * wNumColors);
-		assert(hLogPal);
-
-		lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
-
-		// Set version and number of palette entries
-		lpPal->palVersion = PALVERSION;
-		lpPal->palNumEntries = wNumColors;
-
-		for (uint i = 0; i < wNumColors; i++) {
-			pal->get(i,
-				lpPal->palPalEntry[i].peRed,
-				lpPal->palPalEntry[i].peGreen,
-				lpPal->palPalEntry[i].peBlue);
-			lpPal->palPalEntry[i].peFlags = 0;
-		}
-
-		// Create the palette and get handle to it
-		bResult = pPal->CreatePalette(lpPal);
-
-		GlobalUnlock((HGLOBAL)hLogPal);
-		GlobalFree((HGLOBAL)hLogPal);
+		bResult = pPal->SetPaletteEntries(*pal);
 	}
 
 	return bResult;
