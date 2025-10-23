@@ -216,7 +216,7 @@ bool Debugger::cmdEngineStats(int argc, const char **argv) {
 
 bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 	if (argc != 3) {
-		debugPrintf("Usage: Ultima8Engine::setVidMode width height\n");
+		debugPrintf("Usage: %s <width> <height>\n", argv[0]);
 		return true;
 	} else {
 		Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1], 0, 0), strtol(argv[2], 0, 0));
@@ -316,7 +316,7 @@ bool Debugger::cmdStopSFX(int argc, const char **argv) {
 		debugPrintf("Error: No AudioProcess\n");
 		return true;
 	} else if (argc < 2) {
-		debugPrintf("usage: stopSFX <_sfxNum> [<_objId>]\n");
+		debugPrintf("Usage: %s <sfxNum> [objId]\n", argv[0]);
 		return true;
 	} else {
 		int sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
@@ -333,7 +333,7 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 		debugPrintf("Error: No AudioProcess\n");
 		return true;
 	} else if (argc < 2) {
-		debugPrintf("usage: playSFX <_sfxNum>\n");
+		debugPrintf("Usage: %s <sfxNum>\n", argv[0]);
 		return true;
 	} else {
 		int sfxNum = static_cast<int>(strtol(argv[1], 0, 0));
@@ -689,7 +689,7 @@ bool Debugger::cmdFootpads(int argc, const char **argv) {
 
 bool Debugger::cmdGridlines(int argc, const char **argv) {
 	if (argc > 2) {
-		debugPrintf("usage: %s [on|off|<number>]\n", argv[0]);
+		debugPrintf("Usage: %s [on|off|<number>]\n", argv[0]);
 		return true;
 	}
 	
@@ -908,7 +908,7 @@ bool Debugger::cmdProcessTypes(int argc, const char **argv) {
 
 bool Debugger::cmdListProcesses(int argc, const char **argv) {
 	if (argc > 2) {
-		debugPrintf("usage: listProcesses [<itemnum>]\n");
+		debugPrintf("Usage: %s [itemnum]\n", argv[0]);
 	} else {
 		Kernel *kern = Kernel::get_instance();
 		ObjId item = 0;
@@ -930,7 +930,7 @@ bool Debugger::cmdListProcesses(int argc, const char **argv) {
 
 bool Debugger::cmdProcessInfo(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("usage: processInfo <objectnum>\n");
+		debugPrintf("Usage: %s <objectnum>\n", argv[0]);
 	} else {
 		Kernel *kern = Kernel::get_instance();
 
@@ -1014,11 +1014,11 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 			strtol(argv[4], 0, 0));
 		break;
 	default:
-		debugPrintf("teleport usage:\n");
-		debugPrintf("teleport <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum\n");
-		debugPrintf("teleport <x> <y> <z>: teleport to (x,y,z) on current map\n");
-		debugPrintf("teleport <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum\n");
-		debugPrintf("teleport <eggnum>: teleport to target egg eggnum on current map\n");
+		debugPrintf("Usage:\n");
+		debugPrintf("%s <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum\n", argv[0]);
+		debugPrintf("%s <x> <y> <z>: teleport to (x,y,z) on current map\n", argv[0]);
+		debugPrintf("%s <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum\n", argv[0]);
+		debugPrintf("%s <eggnum>: teleport to target egg eggnum on current map\n", argv[0]);
 		return true;
 	}
 
@@ -1027,7 +1027,7 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 
 bool Debugger::cmdMark(int argc, const char **argv) {
 	if (argc == 1) {
-		debugPrintf("Usage: mark <mark>: set named mark to this location\n");
+		debugPrintf("Usage: %s <mark>: set named mark to this location\n", argv[0]);
 		return true;
 	}
 
@@ -1049,7 +1049,7 @@ bool Debugger::cmdRecall(int argc, const char **argv) {
 		return true;
 	}
 	if (argc == 1) {
-		debugPrintf("Usage: recall <mark>: recall to named mark\n");
+		debugPrintf("Usage: %s <mark>: recall to named mark\n", argv[0]);
 		return true;
 	}
 
@@ -1359,7 +1359,7 @@ bool Debugger::cmdObjectTypes(int argc, const char **argv) {
 
 bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("usage: objectInfo <objectnum>\n");
+		debugPrintf("Usage: %s <objectnum>\n", argv[0]);
 	} else {
 		ObjectManager *objMan = ObjectManager::get_instance();
 
@@ -1431,7 +1431,7 @@ bool Debugger::cmdClipping(int argc, const char **argv) {
 bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
 	if (argc != 3) {
-		debugPrintf("usage: UCMachine::getGlobal offset size\n");
+		debugPrintf("Usage: %s <offset> <size>\n", argv[0]);
 		return true;
 	}
 
@@ -1445,7 +1445,7 @@ bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 bool Debugger::cmdSetGlobal(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
 	if (argc != 4) {
-		debugPrintf("usage: UCMachine::setGlobal offset size value\n");
+		debugPrintf("Usage: %s <offset> <size> <value>\n", argv[0]);
 		return true;
 	}
 
@@ -1461,7 +1461,7 @@ bool Debugger::cmdSetGlobal(int argc, const char **argv) {
 
 bool Debugger::cmdTracePID(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: UCMachine::tracePID _pid\n");
+		debugPrintf("Usage: %s <pid>\n", argv[0]);
 		return true;
 	}
 
@@ -1477,7 +1477,7 @@ bool Debugger::cmdTracePID(int argc, const char **argv) {
 
 bool Debugger::cmdTraceObjID(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: UCMachine::traceObjID objid\n");
+		debugPrintf("Usage: %s <objid>\n", argv[0]);
 		return true;
 	}
 
@@ -1493,7 +1493,7 @@ bool Debugger::cmdTraceObjID(int argc, const char **argv) {
 
 bool Debugger::cmdTraceClass(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: UCMachine::traceClass class\n");
+		debugPrintf("Usage: %s <class>\n", argv[0]);
 		return true;
 	}
 
@@ -1583,7 +1583,7 @@ bool Debugger::cmdInvertScreen(int argc, const char **argv) {
 
 bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("play usage: play <moviename>\n");
+		debugPrintf("Usage: %s <moviename>\n", argv[0]);
 		return true;
 	}
 
@@ -1602,7 +1602,7 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 bool Debugger::cmdPlayMusic(int argc, const char **argv) {
 	if (MusicProcess::_theMusicProcess) {
 		if (argc != 2) {
-			debugPrintf("MusicProcess::playMusic (tracknum)\n");
+			debugPrintf("Usage: %s <tracknum>\n", argv[0]);
 		} else {
 			debugPrintf("Playing track %s\n", argv[1]);
 			MusicProcess::_theMusicProcess->playMusic_internal(atoi(argv[1]));
@@ -1668,7 +1668,7 @@ bool Debugger::cmdClearMinimap(int argc, const char **argv) {
 
 bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 	if (argc != 4) {
-		debugPrintf("usage: RenderSurface::benchmark shapenum framenum iterations\n");
+		debugPrintf("Usage: %s <shapenum> <framenum> <iterations>\n", argv[0]);
 		return true;
 	}
 
@@ -1737,7 +1737,7 @@ bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
 bool Debugger::cmdVisualDebugPathfinder(int argc, const char **argv) {
 #ifdef DEBUG_PATHFINDER
 	if (argc != 2) {
-		debugPrintf("Usage: Pathfinder::visualDebug objid\n");
+		debugPrintf("Usage: %s <objid>\n", argv[0]);
 		debugPrintf("Specify objid -1 to stop tracing.\n");
 		return true;
 	}
