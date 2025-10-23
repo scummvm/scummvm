@@ -1088,6 +1088,7 @@ void GamosEngine::readData2(const RawData &data) {
 		_d2_fld17 = dataStream.readByte(); // x17
 		_d2_fld18 = dataStream.readByte(); // x18
 		_d2_fld19 = dataStream.readByte(); // x19
+		dataStream.seek(0x1c);
 		_d2_outLeft = dataStream.readSint32LE(); // x1c
 		_d2_outTop = dataStream.readSint32LE(); // x20
 		_d2_index = dataStream.readSint16LE(); // x24
