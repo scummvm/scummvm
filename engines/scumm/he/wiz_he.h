@@ -847,6 +847,7 @@ public:
 	void pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *mixColorTable);
 	void pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *mixColorTable);
 	void pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor);
+	void pgArbitraryTransparentBlitPrim(WizRawPixel8 *dstPtr, int dstStride, WizRawPixel8 *srcPtr, int srcStride, int copyWidth, int copyHeight, int transparentColor);
 
 	void pgDrawWarpDrawLetter(WizRawPixel *bitmapBuffer, int bitmapWidth, int bitmapHeight, const byte *charData, int x1, int y1, int width, int height, byte *colorLookupTable);
 	void pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const byte *extraTable, int transparentColor, const WizRawPixel *conversionTable);

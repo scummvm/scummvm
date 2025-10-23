@@ -261,7 +261,7 @@ void ScummEngine_v99he::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		g = *ptr++;
 		b = *ptr++;
 
-		if (i == 15 || r < 252 || g < 252 || b < 252) {
+		if (i == 15 || !(i > 10 && i < 246) || r < 252 || g < 252 || b < 252) {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;

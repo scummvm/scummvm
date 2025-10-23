@@ -954,40 +954,42 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 
 	// Left or right?
 	if (sourceRect->left <= sourceRect->right) {
-		soff = sw - cw;
-		doff = dw - cw;
+		if (!_uses16BitColor && _vm->_game.heversion >= 98 && ((sw >= 0) && ((cw % 4) == 0))) {
+			pgArbitraryTransparentBlitPrim(d8, dw, s8, sw, cw, ch, transparentColor);
+		} else {
+			soff = sw - cw;
+			doff = dw - cw;
 
-		while (--ch >= 0) {
-			if (!_uses16BitColor) {
-				for (int x = cw; --x >= 0;) {
-					value = *s8++;
+			while (--ch >= 0) {
+				if (!_uses16BitColor) {
+					for (int x = cw; --x >= 0;) {
+						value = *s8++;
 
-					if (value != tColor) {
-						*d8++ = (WizRawPixel8)value;
-					} else {
-						d8++;
+						if (value != tColor) {
+							*d8++ = (WizRawPixel8)value;
+						} else {
+							d8++;
+						}
 					}
-				}
 
-				s8 += soff;
-				d8 += doff;
-			} else {
-				for (int x = cw; --x >= 0;) {
-					value = FROM_LE_16(*s16++);
+					s8 += soff;
+					d8 += doff;
+				} else {
+					for (int x = cw; --x >= 0;) {
+						value = FROM_LE_16(*s16++);
 
-					if (value != tColor) {
-						*d16++ = (WizRawPixel16)value;
-					} else {
-						d16++;
+						if (value != tColor) {
+							*d16++ = (WizRawPixel16)value;
+						} else {
+							d16++;
+						}
 					}
-				}
 
-				s16 += soff;
-				d16 += doff;
+					s16 += soff;
+					d16 += doff;
+				}
 			}
-
 		}
-
 	} else {
 		soff = sw + cw;
 		doff = dw - cw;
@@ -1020,6 +1022,91 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 				s16 += soff;
 				d16 += doff;
 			}
+		}
+	}
+}
+
+void Wiz::pgArbitraryTransparentBlitPrim(WizRawPixel8 *dstPtr, int dstStride, WizRawPixel8 *srcPtr, int srcStride, int copyWidth, int copyHeight, int transparentColor) {
+	// Originally from ASM code...
+
+	// Fix the stride for this copy amount...
+	dstStride -= copyWidth;
+	srcStride -= copyWidth;
+
+	// Check to see if there is an odd amount...
+	if ((copyWidth & 3) == 0) {
+		// Width count / 4
+		int groupsOf4 = copyWidth >> 2;
+		if (groupsOf4 == 0)
+			return; // No actual data to transfer...
+
+		for (int y = 0; y < copyHeight; y++) {
+			// Cross off a group of 4 pixels...
+			for (int x = 0; x < groupsOf4; x++) {
+				WizRawPixel8 p0 = srcPtr[0];
+				if (p0 != transparentColor)
+					dstPtr[0] = p0;
+
+				WizRawPixel8 p1 = srcPtr[1];
+				if (p1 != transparentColor)
+					dstPtr[1] = p1;
+
+				WizRawPixel8 p2 = srcPtr[2];
+				if (p2 != transparentColor)
+					dstPtr[2] = p2;
+
+				WizRawPixel8 p3 = srcPtr[3];
+				if (p3 != transparentColor)
+					dstPtr[3] = p3;
+
+				dstPtr += 4;
+				srcPtr += 4;
+			}
+
+			dstPtr += dstStride;
+			srcPtr += srcStride;
+		}
+	} else {
+		// Adjust the counter for the odd copy amount...
+		int oddPixels = copyWidth & 3;
+		int groupsOf4 = copyWidth >> 2;
+
+		if (groupsOf4 == 0)
+			return; // No actual data to transfer...
+
+		for (int y = 0; y < copyHeight; y++) {
+			// Cross off a group of 4 pixels...
+			for (int x = 0; x < groupsOf4; x++) {
+				WizRawPixel8 p0 = srcPtr[0];
+				if (p0 != transparentColor)
+					dstPtr[0] = p0;
+
+				WizRawPixel8 p1 = srcPtr[1];
+				if (p1 != transparentColor)
+					dstPtr[1] = p1;
+
+				WizRawPixel8 p2 = srcPtr[2];
+				if (p2 != transparentColor)
+					dstPtr[2] = p2;
+
+				WizRawPixel8 p3 = srcPtr[3];
+				if (p3 != transparentColor)
+					dstPtr[3] = p3;
+
+				dstPtr += 4;
+				srcPtr += 4;
+			}
+
+			// Get leftover count...
+			for (int x = 0; x < oddPixels; x++) {
+				WizRawPixel8 p = *srcPtr++;
+				if (p != transparentColor)
+					*dstPtr = p;
+				dstPtr++;
+			}
+
+			dstPtr += dstStride;
+			srcPtr += srcStride;
 		}
 	}
 }

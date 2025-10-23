@@ -858,16 +858,36 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 		// cases. For instance, Zak tries to reload the intro music
 		// while it's playing. See bug #2115.
 
-		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume))
+		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume)) {
+			_vm->_insideCreateResource--;
 			return _types[type][idx]._address;
+		}
 	}
 
-	nukeResource(type, idx);
+	// HE70+ reuses the resource without deallocating it if it has the same size.
+	// 
+	// Not replicating this behavior this can creare very rare gfx corruption issues, e.g.
+	// #13864 ("SCUMM/HE: Blue's Treasure Hunt - Missing Backgrounds during some animations"),
+	// in which a WIZ transparent (color 5) image is prepared for it to serve as a canvas for
+	// some Smacker videos, only for the former to be nuked and replaced with an all 0 (black)
+	// empty image.
+	// 
+	// This is just one of the many differences of our system versus the HE resource allocation system...
+	// The whole thing should probably be rewritten at some point to match the source code. ;-)
+	if (_vm->_game.heversion >= 70 && _types[type][idx]._address && _types[type][idx]._size == size) {
+		increaseResourceCounters();
+		setResourceCounter(type, idx, 1);
+		_vm->_insideCreateResource--;
+		return _types[type][idx]._address;
+	} else {
+		nukeResource(type, idx);
+	}
 
 	expireResources(size);
 
 	byte *ptr = new byte[size + SAFETY_AREA]();
 	if (ptr == nullptr) {
+		_vm->_insideCreateResource--;
 		error("createResource(%s,%d): Out of memory while allocating %d", nameOfResType(type), idx, size);
 	}
 
