@@ -35,6 +35,8 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
+#define IDC_LEAVE_SAVE		1099
+
 extern HWND     ghwndParent;
 
 /*****************************************************************
@@ -119,21 +121,32 @@ bool CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_LEAVE_GAME:
 			if (m_pBfcMgr->m_bChanged) {
 				C2ButtonDialog dlg2Button(this, m_pPalette, "&Yes", "&No", "Would you like to", "save this game", "before leaving?");
-				if (dlg2Button.DoModal() == CBUTTON1)
-					Saves::SaveGame((CWnd *)this, m_pPalette, nullptr);
+				if (dlg2Button.DoModal() == CBUTTON1) {
+					PostMessage(WM_COMMAND, IDC_LEAVE_SAVE);
+					return true;
+				}
 			}
 			ClearDialogImage();
 			EndDialog(1);
 			return true;
 
-		case IDC_OPTIONS: {
+		case IDC_LEAVE_SAVE:
+			UpdateWindow();
+			Saves::SaveGame((CWnd *)this, m_pPalette, nullptr);
+			ClearDialogImage();
+			EndDialog(1);
+			return true;
+
+		case IDC_OPTIONS:
+		{
 			CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
 			m_bMusic = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");
 			m_bSoundFX = GetPrivateProfileInt("Meta", "SoundEffects", true, "HODJPODJ.INI");
 		}
 		return true;
 
-		case IDC_RULES: {
+		case IDC_RULES:
+		{
 			CRules RulesDlg(this, "metarule.txt", m_pPalette, nullptr);
 			RulesDlg.DoModal();
 			return true;
@@ -146,8 +159,12 @@ bool CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			ClearDialogImage();
 			EndDialog(0);
 			return true;
+
+		default:
+			break;
 		}
 	}
+
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
