@@ -65,7 +65,7 @@ enum {
 #define MAX_DIRPATH 256
 
 #define Assert(f) assert(f)
-#define TRACE(s) debug("%s", (s))
+#define TRACE(s) debug(9, "%s", (s))
 
 #define WF_80x87  1024
 #define WF_CPU186  128
