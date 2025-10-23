@@ -260,7 +260,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	g_scumm = this;
 
 	// Read settings from the detector & config manager
-	_debugMode = (gDebugLevel >= 0);
+	_debugMode = (gDebugLevel > 0);
 	_dumpScripts = ConfMan.getBool("dump_scripts");
 	_bootParam = ConfMan.getInt("boot_param");
 	// Boot params often need debugging switched on to work
