@@ -194,7 +194,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		// 22 bytes
 		// This is color image flag
 		if (_pitch & 0x8000) {
-			_pitch &= 0x0fff;
+			_pitch &= 0x3fff;
 
 			_bitsPerPixel = stream.readByte();
 
