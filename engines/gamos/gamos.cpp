@@ -134,8 +134,6 @@ Common::Error GamosEngine::run() {
 			_messageProc._act2 = ACT_NONE;
 			_messageProc._act1 = ACT_NONE;
 			_messageProc._rawKeyCode = ACT_NONE;
-
-			doDraw();
 		} else {
 			if (prevMousePos != _messageProc._mouseReportedPos)
 				_screen->update();
@@ -1182,7 +1180,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 		while (loop) {
 			if (!PTR_00417388) {
-				if (updateMouseCursor(mouseMove) && FUN_004038b8())
+				if (updateMouseCursor(mouseMove) && scrollAndDraw())
 					return 1;
 				else
 					return 0;
@@ -3605,8 +3603,95 @@ bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
 	return true;
 }
 
-bool GamosEngine::FUN_004038b8() {
-	warning("Not implemented FUN_004038b8");
+bool GamosEngine::scrollAndDraw() {
+	if (_scrollTrackObj != -1) {
+		Object &obj = _objects[_scrollTrackObj];
+		Common::Point objPos(obj.pos * _gridCellW, obj.blk * _gridCellH);
+
+		Common::Rect objArea;
+		objArea.right = _scrollX + _width - (_scrollBorderR + 1) * _gridCellW;
+		objArea.bottom = _scrollY + _height - (_scrollBorderB + 1) * _gridCellH;
+		objArea.left = _scrollX + _scrollBorderL * _gridCellW;
+		objArea.top = _scrollY + _scrollBorderU * _gridCellH;
+
+		int32 lDistance = 0;
+		int32 rDistance = 0;
+		int32 uDistance = 0;
+		int32 dDistance = 0;
+
+		if (objPos.x < objArea.left) {
+            lDistance = objArea.left - objPos.x;
+            if (lDistance > _scrollX)
+                lDistance = _scrollX;
+        } else if (objPos.x > objArea.right) {
+            int32 maxR = _bkgSize.x - _width - _scrollX;
+            rDistance = objPos.x - objArea.right;
+            if (rDistance > maxR)
+                rDistance = maxR;
+        }
+
+        if (objPos.y < objArea.top) {
+            uDistance = objArea.top - objPos.y;
+            if (uDistance > _scrollY)
+                uDistance = _scrollY;
+        } else if (objPos.y > objArea.bottom) {
+            int32 maxD = _bkgSize.y - _height - _scrollY;
+            dDistance = objPos.y - objArea.bottom;
+            if (dDistance > maxD)
+                dDistance = maxD;
+        }
+
+		if (lDistance != 0 || rDistance != 0 || uDistance != 0 || dDistance != 0) {
+			int32 lSpeed = _scrollSpeed;
+			int32 rSpeed = _scrollSpeed;
+			int32 uSpeed = _scrollSpeed;
+			int32 dSpeed = _scrollSpeed;
+			while (lDistance != 0 || rDistance != 0 || uDistance != 0 || dDistance != 0) {
+				int32 lDelta = (lDistance < lSpeed) ? lDistance : lSpeed;
+				int32 rDelta = (rDistance < rSpeed) ? rDistance : rSpeed;
+				int32 uDelta = (uDistance < uSpeed) ? uDistance : uSpeed;
+				int32 dDelta = (dDistance < dSpeed) ? dDistance : dSpeed;
+
+				_scrollX += rDelta - lDelta;
+				_scrollY += dDelta - uDelta;
+
+				doDraw();
+
+				lDistance -= lDelta;
+				if (lDistance != 0 && lDistance <= _scrollCutoff) {
+					lSpeed += _scrollSpeedReduce;
+					if (lSpeed < 2)
+						lSpeed = 1;
+				}
+
+				rDistance -= rDelta;
+				if (rDistance != 0 && rDistance <= _scrollCutoff) {
+					rSpeed += _scrollSpeedReduce;
+					if (rSpeed < 2)
+						rSpeed = 1;
+				}
+
+				uDistance -= uDelta;
+				if (uDistance != 0 && uDistance <= _scrollCutoff) {
+					uSpeed += _scrollSpeedReduce;
+					if (uSpeed < 2)
+						uSpeed = 1;
+				}
+
+				dDistance -= dDelta;
+				if (dDistance != 0 && dDistance <= _scrollCutoff) {
+					dSpeed += _scrollSpeedReduce;
+					if (dSpeed < 2)
+						dSpeed = 1;
+				}
+
+				_system->delayMillis(1000 / 15); // 15fps
+			}
+		}
+	}
+
+	doDraw();
+
 	return true;
 }
 

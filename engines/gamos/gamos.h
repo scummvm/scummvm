@@ -533,7 +533,7 @@ protected:
 	bool FUN_00402fb4();
 
 	bool updateMouseCursor(Common::Point mouseMove);
-	bool FUN_004038b8();
+	bool scrollAndDraw();
 	bool FUN_00402bc4();
 	bool FUN_00402f34(bool p1, bool p2, Object *obj);
 
