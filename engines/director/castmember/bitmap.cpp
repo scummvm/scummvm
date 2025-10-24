@@ -840,7 +840,7 @@ void BitmapCastMember::load() {
 	delete img;
 	delete pic;
 
-	debugC(5, kDebugImages, "BitmapCastMember::load(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %s", imgId, w, h, _flags1, _flags2, _bytes, _bitsPerPixel, _clut.asString().c_str());
+	debugC(5, kDebugImages, "BitmapCastMember::load(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x updateFlags: %x bytes: %x, bpp: %d clut: %s", imgId, w, h, _flags1, _flags2, _updateFlags, _bytes, _bitsPerPixel, _clut.asString().c_str());
 
 	_loaded = true;
 }
