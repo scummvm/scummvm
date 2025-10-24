@@ -1090,16 +1090,16 @@ void GamosEngine::readData2(const RawData &data) {
 		_d2_fld18 = dataStream.readByte(); // x18
 		_d2_fld19 = dataStream.readByte(); // x19
 		dataStream.seek(0x1c);
-		_d2_outLeft = dataStream.readSint32LE(); // x1c
-		_d2_outTop = dataStream.readSint32LE(); // x20
-		_d2_index = dataStream.readSint16LE(); // x24
-		_d2_fld26 = dataStream.readSint16LE(); // x26
-		_d2_fld28 = dataStream.readSint16LE(); // x28
-		_d2_fld2a = dataStream.readSint16LE(); // x2a
-		_d2_fld2c = dataStream.readByte(); // x2c
-		_d2_fld2d = dataStream.readByte(); // x2d
-		_d2_fld2e = dataStream.readByte(); // x2e
-		_d2_fld2f = dataStream.readByte(); // x2f
+		_scrollX = dataStream.readSint32LE(); // x1c
+		_scrollY = dataStream.readSint32LE(); // x20
+		_scrollTrackObj = dataStream.readSint16LE(); // x24
+		_scrollSpeed = dataStream.readSint16LE(); // x26
+		_scrollCutoff = dataStream.readSint16LE(); // x28
+		_scrollSpeedReduce = dataStream.readSint16LE(); // x2a
+		_scrollBorderL = dataStream.readByte(); // x2c
+		_scrollBorderR = dataStream.readByte(); // x2d
+		_scrollBorderU = dataStream.readByte(); // x2e
+		_scrollBorderB = dataStream.readByte(); // x2f
 		_sndChannels = dataStream.readByte(); // x30
 		_sndVolume = dataStream.readByte(); // x34
 		_midiVolume = dataStream.readByte(); // x1a
@@ -1125,16 +1125,16 @@ void GamosEngine::readData2(const RawData &data) {
 		_d2_fld17 = dataStream.readByte(); // x17
 		_d2_fld18 = 0;
 		_d2_fld19 = 0;
-		_d2_outLeft = 0;
-		_d2_outTop = 0;
-		_d2_index = -1;
-		_d2_fld26 = 16;
-		_d2_fld28 = 80;
-		_d2_fld2a = -1;
-		_d2_fld2c = 0;
-		_d2_fld2d = 0;
-		_d2_fld2e = 0;
-		_d2_fld2f = 0;
+		_scrollX = 0;
+		_scrollY = 0;
+		_scrollTrackObj = -1;
+		_scrollSpeed = 16;
+		_scrollCutoff = 80;
+		_scrollSpeedReduce = -1;
+		_scrollBorderL = 0;
+		_scrollBorderR = 0;
+		_scrollBorderU = 0;
+		_scrollBorderB = 0;
 		_sndChannels = dataStream.readByte(); // x18
 		_sndVolume = dataStream.readByte(); // x19
 		_midiVolume = dataStream.readByte(); // x1a
@@ -2887,8 +2887,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	if (act1 != 0xe)
 		tmpb |= act1 | 0x40;
 
-	//actPos +=
-	warning("Not full FUN_00402c2c");
+	actPos += Common::Point(_scrollX, _scrollY);
 
 	Object *pobj = nullptr;
 	uint8 actT = 0;
