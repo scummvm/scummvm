@@ -1575,6 +1575,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ypl2", 				"勇者泡泡龍2" },							// Yongzhe Paopao Long 2, aka Brave Bubble Dragon 2, aka Bubble Hero 2
 	{ "creativenursery",	"创意学前华文(一)" },						// Creative Nursery Chinese
 
+	// Korean titles
+	{ "neoguri",			"일곱마리 너구리의 한글교실" }, // Seven Raccoon-Dogs' Hangul Class
+
 	// Titles containing Director extras
 	{ "acrosstherhine",		"Across the Rhine" }, // Lou Reda documentary from disc 2 of "Across the Rhine" (Microprose)
 	{ "amgpremiere",		"The American Girls Premiere" },
@@ -1760,6 +1763,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "iliad",				"Iliad" },
 	{ "illustrator",		"Adobe Illustrator" },
 	{ "it1d",				"In the First Degree" },
+	{ "kidpix",				"Kid Pix" },
 	{ "landdesigner",		"Sierra Land Designer" },
 	{ "lbt8",				"The Land Before Time: The Big Freeze" },
 	{ "leopardspots",		"How the Leopard Got His Spots" },
@@ -8793,6 +8797,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("ngebrowser7", "", "BROWSE32.EXE",		 "t:d6250fd82cb0d6eb7c0c3a02d61a289a",  1826827,
 								  "ENGINE/ZSCR0102.Cxt", "f:d0248fdf4d4726f7b2693dae9ad12004",	  71224, Common::JA_JPN, 602),
 
+	WINDEMO1_l("neoguri", "", "Sevendem.exe", "t:763f6a1e5ff37a71d7548f7561002521", 5212676, Common::KO_KOR, 601),
+
 	// Study guide from The Daily Telegraph
 	// Mac executable filename does indeed end in .exe
 	MACGAME1("nia4", "", "nia4.exe",	"r:ee2cca33b022bed087aa3911f9ec78b1", 1032433, 650),
@@ -9464,6 +9470,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("kgbpocahontas", "", "CDGe.EXE",	 "t:7d1d6dba1026a1be63d60b7f14111619", 3037522,
 								  "CBAIOBJ.dir", "f:5f374ed90aca597fd43a0726ff2cf710",	204224, 702),
 
+	WINDEMO1_l("kidpix", "Demo", "kidpix.exe", "t:edb63181702824aaacfffe73012cbff3", 7445882, Common::KO_KOR, 702),
+
 	// Extra activities on Little Bear Thinking Adventures
 	MACGAME1("lbfamfun", "", "Little Bear Family Fun", "0944b962ebb00f4b5d5149d220f8449b", 112758, 702),
 	WINGAME1("lbfamfun", "", "Little Bear Family Fun.exe", "7c18c9a6af2694156bf09ed195c1ab09", 4214763, 702),
@@ -9493,6 +9501,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
+
+	// Korean title is 수학교실
+	WINDEMO1_l("mathsworkshop", "Preview", "Math.exe", "t:5e2d026147a09b063a2e8db2dba0ab94", 10146326, Common::KO_KOR, 702),
 
 	// Max i Duch Zamku
 	// Other languages are D4
@@ -9529,6 +9540,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("nyknicks2000", "", "KNICKS.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2834311,
 								 "Garden.dxr", "fe309424e95c3f0435c8f8a6e9a7883f", 322042, 700),
+
+	// Korean title is 올리의 그림 동화 만들기
+	WINDEMO1_l("orly", "Director Demo", "Orlydemo.exe", "t:191f9410b357d81d6fb183a5a968c8a7", 12936499, Common::KO_KOR, 702),
 
 	// Found on German releases of Silly Noisy House, The Great Green Mouse Disaster and possibly others
 	WINGAME2_l("otelo", "Demo", "PEARL.EXE", "t:fc853cf158e7eff823b6c8236bbfde4d", 8036549,
