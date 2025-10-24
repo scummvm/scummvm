@@ -230,7 +230,7 @@ void GamosEngine::writeStateData(Common::SeekableWriteStream *stream) {
 	stream->writeByte(_svFps); // 0x33
 	stream->writeSint32LE(_svFrame); // 0x34
 	stream->writeUint32LE(_midiTrack); // 0x38
-	stream->writeUint32LE(_mouseCursorImgId); // 0x3c
+	stream->writeSint32LE(_mouseCursorImgId); // 0x3c
 	// 0x40
 	for (int i = 0; i < 12; i++)
 		stream->writeByte(_messageProc._keyCodes[i]);
@@ -267,7 +267,7 @@ void GamosEngine::loadStateData(Common::SeekableReadStream *dataStream) {
 	_svFps = dataStream->readByte(); // x1b
 	_svFrame = dataStream->readSint32LE(); // x1c
 	_midiTrack = dataStream->readUint32LE(); //0x38
-	_mouseCursorImgId = dataStream->readUint32LE(); //0x3c
+	_mouseCursorImgId = dataStream->readSint32LE(); //0x3c
 
 	for (int i = 0; i < 12; i++)
 		_messageProc._keyCodes[i] = dataStream->readByte();

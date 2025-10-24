@@ -313,7 +313,10 @@ private:
 	uint32 _seed = 1;
 
 	Object _cursorObject;
-	uint32 _mouseCursorImgId = 0;
+
+	int32 _cursorFrame = 0;
+	int32 _mouseCursorImgId = 0;
+	int32 _currentCursor = -1;
 
 
 
@@ -529,7 +532,7 @@ protected:
 
 	bool FUN_00402fb4();
 
-	bool FUN_004033a8(Common::Point mouseMove);
+	bool updateMouseCursor(Common::Point mouseMove);
 	bool FUN_004038b8();
 	bool FUN_00402bc4();
 	bool FUN_00402f34(bool p1, bool p2, Object *obj);

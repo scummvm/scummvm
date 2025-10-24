@@ -20,6 +20,7 @@
  */
 
 #include "gamos/gamos.h"
+#include "graphics/cursorman.h"
 #include "graphics/framelimiter.h"
 #include "gamos/detection.h"
 #include "gamos/console.h"
@@ -1105,7 +1106,7 @@ void GamosEngine::readData2(const RawData &data) {
 		_svFps = dataStream.readByte(); // x1b
 		_svFrame = dataStream.readSint32LE(); // x1c
 		_midiTrack = dataStream.readUint32LE(); //0x38
-		_mouseCursorImgId = dataStream.readUint32LE(); //0x3c
+		_mouseCursorImgId = dataStream.readSint32LE(); //0x3c
 		//0x40
 		for (int i = 0; i < 12; i++) {
 			_messageProc._keyCodes[i] = dataStream.readByte();
@@ -1140,7 +1141,7 @@ void GamosEngine::readData2(const RawData &data) {
 		_svFps = dataStream.readByte(); // x1b
 		_svFrame = dataStream.readSint32LE(); // x1c
 		_midiTrack = dataStream.readUint32LE(); // x20
-		_mouseCursorImgId = dataStream.readUint32LE(); // x24
+		_mouseCursorImgId = dataStream.readSint32LE(); // x24
 		//0x28
 		for (int i = 0; i < 12; i++) {
 			_messageProc._keyCodes[i] = dataStream.readByte();
@@ -1181,7 +1182,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 		while (loop) {
 			if (!PTR_00417388) {
-				if (FUN_004033a8(mouseMove) && FUN_004038b8())
+				if (updateMouseCursor(mouseMove) && FUN_004038b8())
 					return 1;
 				else
 					return 0;
@@ -2856,27 +2857,8 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 
 void GamosEngine::setCursor(int id, bool dirtRect) {
 	if (_unk9 == 0) {
-		if (dirtRect && _cursorObject.sprId != -1)
-			addDirtRectOnObject(&_cursorObject);
-
 		_mouseCursorImgId = id;
-
-		_cursorObject.sprId = id;
-		_cursorObject.frame = 0;
-		_cursorObject.seqId = 0;
-
-		_cursorObject.flags = 0xc1;
-		_cursorObject.fld_2 = _sprites[id].field_3; // max frames
-		_cursorObject.actID = 0; //frame
-		_cursorObject.x = 0;
-		_cursorObject.y = 0;
-		_cursorObject.pImg = &_sprites[id].sequences[0]->operator[](0);
-
-		_system->setMouseCursor(_cursorObject.pImg->image->surface.getPixels(),
-		                        _cursorObject.pImg->image->surface.w,
-		                        _cursorObject.pImg->image->surface.h,
-		                        _cursorObject.pImg->xoffset,
-		                        _cursorObject.pImg->yoffset, 0);
+		_cursorFrame = 0;
 	}
 }
 
@@ -3592,10 +3574,35 @@ void GamosEngine::FUN_004025d0() {
 }
 
 
-bool GamosEngine::FUN_004033a8(Common::Point mouseMove) {
-	_cursorObject.x = mouseMove.x;
-	_cursorObject.y = mouseMove.y;
-	warning("Not implemented FUN_004033a8");
+bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
+	if (_unk9)
+		return true;
+
+	if (_mouseCursorImgId >= 0) {
+		Sprite &cursorSpr = _sprites[_mouseCursorImgId];
+
+		if (cursorSpr.field_3 > 1) {
+
+			_cursorFrame++;
+			if (_cursorFrame >= cursorSpr.field_3)
+				_cursorFrame = 0;
+
+			ImagePos &impos = cursorSpr.sequences[0]->operator[](_cursorFrame);
+			Graphics::Surface &surf = impos.image->surface;
+			CursorMan.replaceCursor(surf, impos.xoffset, impos.yoffset, 0);
+		} else {
+			if (_currentCursor != _mouseCursorImgId) {
+				ImagePos &impos = cursorSpr.sequences[0]->operator[](0);
+				Graphics::Surface &surf = impos.image->surface;
+				CursorMan.replaceCursor(surf, impos.xoffset, impos.yoffset, 0);
+			}
+		}
+	} else {
+		if (_currentCursor != _mouseCursorImgId)
+			CursorMan.setDefaultArrowCursor();
+	}
+
+	_currentCursor = _mouseCursorImgId;
 	return true;
 }
 
