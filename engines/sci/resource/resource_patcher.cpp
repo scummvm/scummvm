@@ -104,9 +104,9 @@ namespace Sci {
 //  See also: script patch laurabow2CDPatchFixMuseumActorLoops
 static const byte lauraBow2CdView828[] = {
 	SKIP(0x02),
-	REPLACE(1, 0x05), // view header: 5 loops instead of 9
+	REPLACE(0x05), // view header: 5 loops instead of 9
 	SKIP(0x51),
-	REPLACE(1, 0x08), // loop 4: 8 cels instead of 1
+	REPLACE(0x08), // loop 4: 8 cels instead of 1
 	SKIP(0x09),
 	REPLACE_NUMBER(uint32, 0x01c2), // loop 4: offset to loop 8 cel data
 	END
@@ -122,9 +122,9 @@ static const byte lauraBow2CdView828[] = {
 //  Sound 205 is the engine noise that plays when summoning a taxi.
 static const byte lsl1RussianSound205[] = {
 	SKIP(0x31),
-	REPLACE(1, 0xFF),
+	REPLACE(0xFF),
 	SKIP(0x29),
-	REPLACE(1, 0xFF),
+	REPLACE(0xFF),
 	END
 };
 
