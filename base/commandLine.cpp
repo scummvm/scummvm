@@ -2176,6 +2176,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"talkspeed",
 		"render-mode",
 		"random-seed",
+		"renderer",
 		nullptr
 	};
 
