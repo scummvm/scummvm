@@ -716,7 +716,7 @@ void MacText::setActive(bool active) {
 	MacWidget::setActive(active);
 
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-	if (_active && _autoSelect) {
+	if (_active && _editable) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 		// inactive -> active, we reset the selection
 		setSelection(_selStart, true);
