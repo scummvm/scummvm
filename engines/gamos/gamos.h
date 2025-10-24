@@ -290,7 +290,7 @@ private:
 	Common::Array<Image *> _images;
 	Common::Array<ImageSeq *> _imgSeq;
 
-	Common::Point _bkgUpdateSizes;
+	Common::Point _bkgSize;
 
 	Common::Array<GameScreen> _gameScreens;
 

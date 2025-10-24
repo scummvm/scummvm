@@ -669,8 +669,8 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	uint32 bkgnum2 = dataStream.readUint32LE(); // 4
 	_statesWidth = dataStream.readUint32LE(); // 8
 	_statesHeight = dataStream.readUint32LE(); // c
-	_bkgUpdateSizes.x = dataStream.readUint32LE(); // 10
-	_bkgUpdateSizes.y = dataStream.readUint32LE(); // 14
+	_bkgSize.x = dataStream.readUint32LE(); // 10
+	_bkgSize.y = dataStream.readUint32LE(); // 14
 	/* bkgbufferSize */ dataStream.readUint32LE(); // 18
 	uint32 actsCount = dataStream.readUint32LE(); // 1c
 	uint32 unk1Count = dataStream.readUint32LE(); // 20
@@ -1064,7 +1064,7 @@ bool GamosEngine::setPaletteCurrentGS() {
 	if (!usePalette(_gameScreens[curGS].palette, 256, _currentFade, true))
 		return false;
 
-	addDirtyRect(Common::Rect(_bkgUpdateSizes.x, _bkgUpdateSizes.y));
+	addDirtyRect(Common::Rect(_bkgSize.x, _bkgSize.y));
 
 	return true;
 }
@@ -2197,7 +2197,7 @@ void GamosEngine::doDraw() {
 	}
 
 	if (_currentFade)
-		updateScreen(true, Common::Rect(_bkgUpdateSizes.x, _bkgUpdateSizes.y));
+		updateScreen(true, Common::Rect(_bkgSize.x, _bkgSize.y));
 
 	_currentFade = 0;
 

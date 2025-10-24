@@ -94,7 +94,7 @@ bool GamosEngine::switchToGameScreen(int id, bool doNotStore) {
 	_currentGameScreen = id;
 	GameScreen &gs = _gameScreens[id];
 
-	addDirtyRect(Common::Rect(Common::Point(), _bkgUpdateSizes));
+	addDirtyRect(Common::Rect(Common::Point(), _bkgSize));
 
 	_states = gs._savedStates;
 
