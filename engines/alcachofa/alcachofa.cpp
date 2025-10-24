@@ -164,6 +164,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 		game().invalidVideo(videoId, "decode video");
 		return;
 	}
+	decoder->setOutputPixelFormat(g_engine->renderer().getPixelFormat());
 
 	Vector2d texMax(1.0f, 1.0f);
 	int16 texWidth = decoder->getWidth(), texHeight = decoder->getHeight();
