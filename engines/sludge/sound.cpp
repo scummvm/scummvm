@@ -227,11 +227,15 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 	}
 	Audio::RewindableAudioStream *mod = nullptr;
 
-	if (Audio::probeModXmS3m(memImage))
+	if (Audio::probeModXmS3m(memImage)) {
 		mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
+		if (mod) {
+			delete memImage;
+		}
+	}
 
 	if (!mod) {
-		mod = Audio::makeUniversalTrackerStream(memImage, DisposeAfterUse::NO);
+		mod = Audio::makeUniversalTrackerStream(memImage, DisposeAfterUse::YES);
 	}
 
 	if (!mod) {
@@ -329,19 +333,22 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 	readStream->seek(curr_ptr);
 
 	Audio::RewindableAudioStream *stream = nullptr;
-	if (tag == MKTAG('R','I','F','F'))
-		stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::NO);
-
+	switch (tag) {
+	case MKTAG('R','I','F','F'):
+		stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::YES);
+		break;
+	case MKTAG('O','g','g','S'):
 #ifdef USE_VORBIS
-	if (tag == MKTAG('O','g','g','S'))
-		stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
+		stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::YES);
 #endif
-
+		break;
+	default:
+		// TODO: Detect this correctly
 #ifdef USE_MAD
-	// TODO: Detect this correctly
-	if (!stream)
-		stream = Audio::makeMP3Stream(readStream->readStream(length), DisposeAfterUse::NO);
+		stream = Audio::makeMP3Stream(readStream->readStream(length), DisposeAfterUse::YES);
 #endif
+		break;
+	}
 
 	g_sludge->_resMan->finishAccess();
 
