@@ -12,16 +12,16 @@ public:
 		TS_ASSERT(v.y() == 0.0f);
 		TS_ASSERT(v.z() == 0.0f);
 
-		Math::Vector3d v2(3, 2.2, 1);
+		Math::Vector3d v2(3, 2.25, 1);
 
 		TS_ASSERT(v2.x() == 3.0f);
-		TS_ASSERT(v2.y() == 2.2f);
+		TS_ASSERT(v2.y() == 2.25f);
 		TS_ASSERT(v2.z() == 1.0f);
 
 		Math::Vector3d v3(v2);
 
 		TS_ASSERT(v3.x() == 3.0f);
-		TS_ASSERT(v3.y() == 2.2f);
+		TS_ASSERT(v3.y() == 2.25f);
 		TS_ASSERT(v3.z() == 1.0f);
 	}
 
