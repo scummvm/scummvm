@@ -81,14 +81,6 @@ static float textured_quad[] = {
 	0.0f, 1.0f, 0.0f, 1.0f,
 };
 
-static float textured_quad_centered[] = {
-//	 X   ,  Y   , Z   , S   , T
-	-0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-	-0.5f, +0.5f, 0.0f, 0.0f, 0.0f,
-	+0.5f, +0.5f, 0.0f, 1.0f, 0.0f,
-	+0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-};
-
 static float zero_texVerts[] = { 0.0, 0.0 };
 
 struct GrimVertex {
@@ -310,7 +302,7 @@ void GfxOpenGLS::setupTexturedQuad() {
 }
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
-	_spriteVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(textured_quad_centered), textured_quad_centered, GL_STATIC_DRAW);
+	_spriteVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 	_spriteProgram->enableVertexAttribute("position", _spriteVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
 	_spriteProgram->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 3 * sizeof(float));
 	_spriteProgram->disableVertexAttribute("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
@@ -1153,8 +1145,6 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	// FIXME: depth test does not work yet because final z coordinates
-	//        for Sprites and actor textures are inconsistently calculated
 	if (sprite->_flags2 & Sprite::DepthTest || _currentActor->isInOverworld()) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
@@ -1188,6 +1178,16 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	Math::Vector4d color(sprite->_red[0] / 255.0f, sprite->_green[0] / 255.0f, sprite->_blue[0] / 255.0f, sprite->_alpha[0] / 255.0f);
 	_spriteProgram->setUniform("uniformColor", color);
 
+	float sprite_textured_quad[] = {
+	//	 X   ,  Y   , Z   , S   , T
+		-0.5f, +0.5f, 0.0f, sprite->_texCoordX[0], sprite->_texCoordY[0],
+		+0.5f, +0.5f, 0.0f, sprite->_texCoordX[1], sprite->_texCoordY[1],
+		+0.5f, -0.5f, 0.0f, sprite->_texCoordX[2], sprite->_texCoordY[2],
+		-0.5f, -0.5f, 0.0f, sprite->_texCoordX[3], sprite->_texCoordY[3],
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(sprite_textured_quad), sprite_textured_quad, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
