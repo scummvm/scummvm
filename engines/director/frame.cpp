@@ -1531,6 +1531,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				sprite._spriteType = (SpriteType)stream.readByte();
+				debugC(6, kDebugLoading, "    sprite._spriteType: %d", sprite._spriteType);
 			}
 			break;
 		case 1:
@@ -1542,6 +1543,11 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 				sprite._trails = sprite._inkData & 0x40 ? true : false;
 				sprite._stretch = sprite._inkData & 0x80 ? true : false;
+
+				debugC(6, kDebugLoading, "    sprite._inkData: 0x%02x", sprite._inkData);
+				debugC(6, kDebugLoading, "    sprite._ink: %d", sprite._ink);
+				debugC(6, kDebugLoading, "    sprite._trails: %d", sprite._trails);
+				debugC(6, kDebugLoading, "    sprite._stretch: %d", sprite._stretch);
 			}
 			break;
 		case 2:
@@ -1549,6 +1555,8 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+
+				debugC(6, kDebugLoading, "    sprite._foreColor: 0x%02x", sprite._foreColor);
 			}
 			break;
 		case 3:
@@ -1556,6 +1564,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+				debugC(6, kDebugLoading, "    sprite._backColor: 0x%02x", sprite._backColor);
 			}
 			break;
 		case 4:
@@ -1564,6 +1573,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			} else {
 				int castLib = stream.readSint16();
 				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+				debugC(6, kDebugLoading, "    sprite._castId: %d", sprite._castId.member);
 			}
 			break;
 		case 6:
@@ -1572,6 +1582,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			} else {
 				uint16 memberID = stream.readUint16();
 				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
+				debugC(6, kDebugLoading, "    sprite._castId: %d", sprite._castId.member);
 			}
 			break;
 		case 8:
@@ -1579,6 +1590,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint32();
 			} else {
 				sprite._spriteListIdx = stream.readUint32();
+				debugC(6, kDebugLoading, "    sprite._spriteListIdx: %d", sprite._spriteListIdx);
 			}
 			break;
 		case 10: // This field could be optimized
@@ -1586,6 +1598,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint16();
 			} else {
 				sprite._spriteListIdx = stream.readUint16();
+				debugC(6, kDebugLoading, "    sprite._spriteListIdx (16): %d", sprite._spriteListIdx);
 			}
 			break;
 		case 12:
@@ -1593,6 +1606,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint16();
 			} else {
 				sprite._startPoint.y = (int16)stream.readUint16();
+				debugC(6, kDebugLoading, "    sprite._startPoint.y: %d", sprite._startPoint.y);
 			}
 			break;
 		case 14:
@@ -1600,13 +1614,14 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint16();
 			} else {
 				sprite._startPoint.x = (int16)stream.readUint16();
-			}
+				debugC(6, kDebugLoading, "    sprite._startPoint.x: %d", sprite._startPoint.x);}
 			break;
 		case 16:
 			if (sprite._puppet || sprite.getAutoPuppet(kAPHeight)) {
 				stream.readUint16();
 			} else {
 				sprite._height = (int16)stream.readUint16();
+				debugC(6, kDebugLoading, "    sprite._height: %d", sprite._height);
 			}
 			break;
 		case 18:
@@ -1614,6 +1629,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint16();
 			} else {
 				sprite._width = (int16)stream.readUint16();
+				debugC(6, kDebugLoading, "    sprite._width: %d", sprite._width);
 			}
 			break;
 		case 20:
@@ -1630,6 +1646,10 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
 				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+
+				debugC(6, kDebugLoading, "    sprite._colorcode: 0x%02x", sprite._colorcode);
+				debugC(6, kDebugLoading, "    sprite._editable: %d", sprite._editable);
+				debugC(6, kDebugLoading, "    sprite._moveable: %d", sprite._moveable);
 			}
 			break;
 		case 21:
@@ -1637,6 +1657,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				sprite._blendAmount = stream.readByte();
+				debugC(6, kDebugLoading, "    sprite._blendAmount: %d", sprite._blendAmount);
 			}
 			break;
 		case 22:
@@ -1644,6 +1665,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readByte();
 			} else {
 				sprite._thickness = stream.readByte();
+				debugC(6, kDebugLoading, "    sprite._thickness: %d", sprite._thickness);
 			}
 			break;
 		case 23:
