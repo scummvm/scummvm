@@ -1153,8 +1153,6 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	// FIXME: depth test does not work yet because final z coordinates
-	//        for Sprites and actor textures are inconsistently calculated
 	if (sprite->_flags2 & Sprite::DepthTest || _currentActor->isInOverworld()) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
