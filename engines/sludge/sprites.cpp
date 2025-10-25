@@ -483,21 +483,14 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	}
 
 	Graphics::Surface *blitted = &single.surface;
-	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
+	Graphics::Surface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
 	// Use Managed surface to scale and blit
 	if (!_zBuffer->numPanels) {
 		Graphics::ManagedSurface tmp;
 		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
-
-		if (ptr) {
-			ptr->free();
-			delete ptr;
-			ptr = nullptr;
-		}
 	} else {
-
 		// TODO: you dont need to copy the whole render surface, just the part to which the sprite may be drawn
 		Graphics::ManagedSurface scaled;
 		scaled.copyFrom(_renderSurface);
@@ -507,6 +500,12 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+	}
+
+	if (toDelete) {
+		toDelete->free();
+		delete toDelete;
+		toDelete = nullptr;
 	}
 
 	// Are we pointing at the sprite?
@@ -561,7 +560,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 	}
 
 	Graphics::Surface *blitted = &single.surface;
-	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
+	Graphics::Surface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
 	// draw backdrop
 	drawBackDrop();
@@ -576,12 +575,6 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		Graphics::ManagedSurface tmp;
 		tmp.copyFrom(single.surface);
 		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
-
-		if (ptr) {
-			ptr->free();
-			delete ptr;
-			ptr = nullptr;
-		}
 	} else {
 		Graphics::ManagedSurface scaled;
 		scaled.copyFrom(_renderSurface);
@@ -591,7 +584,12 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+	}
 
+	if (toDelete) {
+		toDelete->free();
+		delete toDelete;
+		toDelete = nullptr;
 	}
 
 	// copy screen to backdrop
