@@ -162,7 +162,7 @@ def expandWildcards( patterns ):
 
 def fixBackslashes( fileName ):
     '''Convert backslashes to slashes in file name'''
-    return re.sub( r'\\', '/', fileName, 0 )
+    return re.sub( r'\\', '/', fileName )
 
 def scanInputFiles(files):
     '''Scan all input files for test suites'''
