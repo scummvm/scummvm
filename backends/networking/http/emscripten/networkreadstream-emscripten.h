@@ -40,6 +40,9 @@ private:
 	bool _success;
 	char *_errorBuffer;
 
+	void resetStream();
+	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
+	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
 public:
 	NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval);
 
@@ -54,8 +57,6 @@ public:
 	bool reuse(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false) override { return false; }                                                 // no reuse for Emscripten
 	bool reuse(const char *url, RequestHeaders *headersList, const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) override { return false; } // no reuse for Emscripten
 	bool reuse(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = false) override { return false; }                         // no reuse for Emscripten
-	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) override;
-	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) override;
 
 	bool hasError() const override;
 	const char *getError() const override;
@@ -63,7 +64,6 @@ public:
 	long httpResponseCode() const override;
 	Common::String currentLocation() const override;
 	Common::HashMap<Common::String, Common::String> responseHeadersMap() const override;
-	void resetStream() override;
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 

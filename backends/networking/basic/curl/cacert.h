@@ -18,43 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_CURL_CACERT_H
+#define BACKENDS_NETWORKING_BASIC_CURL_CACERT_H
 
-#ifndef TESTBED_NETWORKING_H
-#define TESTBED_NETWORKING_H
+#include "common/str.h"
 
-#include "testbed/testsuite.h"
+namespace Networking {
 
-// This file can be used as template for header files of other newer testsuites.
+/** Return the path to the CA certificates bundle. */
+Common::String getCaCertPath();
 
-namespace Testbed {
+}
 
-namespace Networkingtests {
-
-// Helper functions for Networking tests
-
-TestExitStatus testConnectionLimit();
-#ifdef USE_BASIC_NET
-TestExitStatus testSocket();
-TestExitStatus testURL();
 #endif
-
-} // End of namespace Networkingtests
-
-class NetworkingTestSuite : public Testsuite {
-public:
-	NetworkingTestSuite();
-	~NetworkingTestSuite() {}
-
-	const char *getName() const {
-		return "Networking";
-	}
-
-	const char *getDescription() const {
-		return "Network and internet subsystems";
-	}
-
-};
-
-} // End of namespace Testbed
-
-#endif // TESTBED_NETWORKING_H

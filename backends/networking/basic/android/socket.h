@@ -18,43 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
+#define BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
 
-#ifndef TESTBED_NETWORKING_H
-#define TESTBED_NETWORKING_H
+#include <jni.h>
 
-#include "testbed/testsuite.h"
+#include "backends/networking/basic/socket.h"
 
-// This file can be used as template for header files of other newer testsuites.
+namespace Networking {
 
-namespace Testbed {
-
-namespace Networkingtests {
-
-// Helper functions for Networking tests
-
-TestExitStatus testConnectionLimit();
-#ifdef USE_BASIC_NET
-TestExitStatus testSocket();
-TestExitStatus testURL();
-#endif
-
-} // End of namespace Networkingtests
-
-class NetworkingTestSuite : public Testsuite {
+class AndroidSocket : public Socket {
 public:
-	NetworkingTestSuite();
-	~NetworkingTestSuite() {}
+	static Socket *connect(const Common::String &url);
 
-	const char *getName() const {
-		return "Networking";
-	}
+	AndroidSocket(JNIEnv *env, jobject socket);
+	~AndroidSocket() override;
 
-	const char *getDescription() const {
-		return "Network and internet subsystems";
-	}
+	int ready() override;
 
+	size_t send(const char *data, int len) override;
+	size_t recv(void *data, int maxLen) override;
+private:
+	jobject _socket;
 };
 
-} // End of namespace Testbed
+} // End of namespace Networking
 
-#endif // TESTBED_NETWORKING_H
+#endif

@@ -278,7 +278,7 @@ protected:
 
 #ifdef USE_ENET
 class Net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 class Lobby;
 #endif
 #endif
@@ -585,7 +585,7 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
 #ifdef USE_ENET
 	friend class Net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	friend class Lobby;
 #endif
 #endif
@@ -682,7 +682,7 @@ protected:
 #ifdef USE_ENET
 public:
 	Net *_net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	Lobby *_lobby;
 #endif
 #endif
