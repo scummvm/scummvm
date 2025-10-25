@@ -204,6 +204,7 @@ ModXmS3mStream::~ModXmS3mStream() {
 	}
 
 	if (_playCount) {
+		delete[] _playCount[0];
 		delete[] _playCount;
 		_playCount = nullptr;
 	}
