@@ -397,7 +397,7 @@ Common::Error DirectorEngine::run() {
 #endif
 
 	if (debugChannelSet(10, kDebugSaving)) {
-		_mainArchive->writeToFile(Common::String(""), getCurrentMovie());
+		//_mainArchive->writeToFile(Common::String(""), getCurrentMovie());
 	}
 
 	return Common::kNoError;
