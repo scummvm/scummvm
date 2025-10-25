@@ -1157,7 +1157,7 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 
 	// Release the HW screen surface
 	if (_hwScreen) {
-		destroySurface(_osdIconSurface);
+		destroySurface(_hwScreen);
 		_hwScreen = nullptr;
 	}
 	if (_tmpscreen) {
