@@ -884,18 +884,22 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 void SdlEventSource::openJoystick(int joystickIndex) {
 	int numJoysticks = 0;
-	SDL_GetJoysticks(&numJoysticks);
-	if (numJoysticks > joystickIndex) {
-		if (SDL_IsGamepad(joystickIndex)) {
-			_controller = SDL_OpenGamepad(joystickIndex);
+	auto joystickIds = SDL_GetJoysticks(&numJoysticks);
+	if (!joystickIds) {
+		warning("Failed to get connected joysticks: %s", SDL_GetError());
+	} else if (numJoysticks > joystickIndex) {
+		auto joystickId = joystickIds[joystickIndex];
+		if (SDL_IsGamepad(joystickId)) {
+			_controller = SDL_OpenGamepad(joystickId);
 			debug("Using game controller: %s", SDL_GetGamepadName(_controller));
 		} else {
-			_joystick = SDL_OpenJoystick(joystickIndex);
+			_joystick = SDL_OpenJoystick(joystickId);
 			debug("Using joystick: %s", SDL_GetJoystickName(_joystick));
 		}
 	} else {
 		debug(5, "Invalid joystick: %d", joystickIndex);
 	}
+	SDL_free(joystickIds);
 }
 
 void SdlEventSource::closeJoystick() {
