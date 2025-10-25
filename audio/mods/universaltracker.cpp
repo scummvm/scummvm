@@ -387,6 +387,9 @@ RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *st
 
 #if !defined(USE_OPENMPT) && !defined(USE_MIKMOD)
 	warning("Modplayer Support not compiled in");
+	if (disposeAfterUse == DisposeAfterUse::YES) {
+		delete stream;
+	}
 	return nullptr;
 #else
 
