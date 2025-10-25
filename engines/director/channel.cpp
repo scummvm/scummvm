@@ -164,6 +164,9 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeDark ||
 		(((_sprite->_thickness & kTHasBlend) || _sprite->_ink == kInkTypeBlend) && _sprite->_blendAmount > 0);
 
+	if (!_sprite->isQDShape() && _sprite->_ink == kInkTypeCopy && _sprite->_thickness & kTHasBlend)
+		needsMatte = true;
+
 	Common::Rect bbox(getBbox());
 
 	if (needsMatte || forceMatte) {

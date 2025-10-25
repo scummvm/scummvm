@@ -731,8 +731,10 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 		offsetRect.clip(srfClip);
 		switch (ink) {
 		case kInkTypeCopy:
-			dst->blitFrom(*srf, offsetRect, destRect);
-			return;
+			if (!mask) {
+				dst->blitFrom(*srf, offsetRect, destRect);
+				return;
+			}
 			break;
 		default:
 			break;
