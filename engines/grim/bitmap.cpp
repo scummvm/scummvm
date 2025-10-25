@@ -194,6 +194,10 @@ BitmapData::BitmapData(const Graphics::Surface &buf, int w, int h, const char *f
 	_verts = nullptr;
 	_layers = nullptr;
 
+	_numCoords = 0;
+	_numVerts = 0;
+	_numLayers = 0;
+
 	g_driver->createBitmap(this);
 }
 
