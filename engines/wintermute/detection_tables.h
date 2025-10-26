@@ -912,7 +912,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Devil In The Capital (Steam, July 2017) (English)
 	WME_WINENTRY("devilincapital", "",
-		WME_ENTRY1s("data.dcp", "c3a3cd00c0493cddb84ce243272f60be", 1317709066), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "c3a3cd00c0493cddb84ce243272f60be", 1317709066), Common::EN_ANY, GF_3D, WME_1_9_3),
 
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
@@ -5569,7 +5569,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Murder In Tehran's Alleys 1933 (Steam, June 2017) (English)
 	WME_WINENTRY("tehran1933", "",
-		WME_ENTRY1s("data.dcp", "7d74999f8a926bce367b2f851a06bc1c", 890506879), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "7d74999f8a926bce367b2f851a06bc1c", 890506879), Common::EN_ANY, GF_3D, WME_1_9_3),
 
 	// Murder In Tehran's Alleys 2016 (Hayoola) (Persian)
 	WME_WINENTRY("tehran2016", "",
