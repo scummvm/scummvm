@@ -1025,9 +1025,7 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		if (_paletteRealized) {
 			const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
 			const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
-			assert(srcPal && destPal);
-			Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
-			paletteMap = palLookup.createMap(destPal->data(), destPal->size());
+			paletteMap = getPaletteMap(srcPal, destPal);
 		}
 	}
 
@@ -1053,14 +1051,18 @@ void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	if (pSrcDC && _paletteRealized) {
 		const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
 		const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
-		assert(srcPal && destPal);
-		Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
-		paletteMap = palLookup.createMap(destPal->data(), destPal->size());
+		paletteMap = getPaletteMap(srcPal, destPal);
 	}
 
 	Gfx::stretchBlit(src, dest, srcRect, destRect, bgColor, dwRop, nullptr);
 
 	delete[] paletteMap;
+}
+
+uint32 *CDC::Impl::getPaletteMap(const Graphics::Palette *srcPal, const Graphics::Palette *destPal) {
+	assert(srcPal && destPal && srcPal->size() == destPal->size());
+	Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
+	return palLookup.createMap(destPal->data(), destPal->size());
 }
 
 void CDC::Impl::moveTo(int x, int y) {

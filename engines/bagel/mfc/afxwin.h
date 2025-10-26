@@ -749,6 +749,7 @@ public:
 
 		uint getPenColor() const;
 		uint getBrushColor() const;
+		uint32 *getPaletteMap(const Graphics::Palette *srcPal, const Graphics::Palette *destPal);
 
 	public:
 		HBITMAP _bitmap;
