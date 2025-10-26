@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/rect.h"
+#define WINVER 0
 #include "bagel/mfc/winnt.h"
 
 namespace Bagel {
