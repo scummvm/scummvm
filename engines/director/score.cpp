@@ -414,7 +414,7 @@ bool Score::isWaitingForNextFrame() {
 	bool goingTo = _nextFrame && _nextFrame != _curFrameNumber;
 
 	if (_waitForChannel) {
-		if (_waitForChannelCue != 0) {
+		if (_waitForChannelCue != 0 && _waitForChannelCue != -2) {
 			 // -1: next, -2: end, else specific cue point
 			 warning("STUB: Implement waiting for sound channel %d cue point %d", _waitForChannel, _waitForChannelCue);
 		}
