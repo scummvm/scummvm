@@ -373,7 +373,7 @@ public class ScummVMEvents implements
 				}
 			}
 
-			if (ScummVMActivity.keyboardWithoutTextInputShown ) {
+			if (_activity.isKeyboardOverlayShown()) {
 				if (action == KeyEvent.ACTION_DOWN) {
 					return true;
 				} else if (action == KeyEvent.ACTION_UP) {
@@ -643,7 +643,7 @@ public class ScummVMEvents implements
 //			Log.d(ScummVM.LOG_TAG,prefixDBGMsg + "Single touch event:: x: " + xPos + " y: " + yPos);
 //		}
 
-		if (ScummVMActivity.keyboardWithoutTextInputShown
+		if (_activity.isKeyboardOverlayShown()
 		    && _activity.isScreenKeyboardShown()
 		    && _activity.getScreenKeyboard().getY() <= event.getY() ) {
 			event.offsetLocation(-_activity.getScreenKeyboard().getX(), -_activity.getScreenKeyboard().getY());

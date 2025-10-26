@@ -126,7 +126,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private int _layoutOrientation;
 
 	public View _screenKeyboard = null;
-	static boolean keyboardWithoutTextInputShown = false;
+	private boolean keyboardWithoutTextInputShown = false;
 
 //	boolean _isPaused = false;
 	private InputMethodManager _inputManager = null;
