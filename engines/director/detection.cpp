@@ -98,6 +98,7 @@ public:
 		_fallback_blacklisted_names["Projector Skeleton"] = true;
 		_fallback_blacklisted_names["Director Player"] = true;
 		_fallback_blacklisted_names["Projector"] = true;
+		_fallback_blacklisted_names[""] = true;
 
 		// initialize customTarget hashmap here
 		for (int i = 0; customTargetList[i].name != nullptr; i++)
