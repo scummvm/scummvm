@@ -250,7 +250,7 @@ bool BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 	Gfx::blit(src, dest,
 		Common::Rect(xSrc, ySrc, xSrc + width, ySrc + height),
 		Common::Point(xDest, yDest),
-		bgColor, rop);
+		bgColor, rop, nullptr);
 	return true;
 }
 

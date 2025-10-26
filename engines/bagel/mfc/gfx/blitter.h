@@ -30,12 +30,11 @@ namespace Gfx {
 
 extern void blit(Gfx::Surface *src, Gfx::Surface *dest,
 	const Common::Rect &srcRect, const Common::Point &destPos,
-	uint bgColor, int mode);
+	uint bgColor, int mode, const uint32 *paletteMap);
 
 extern void stretchBlit(Gfx::Surface *src, Gfx::Surface *dest,
-	const Common::Rect &srcRect,
-	const Common::Rect &destRect,
-	uint bgColor, int mode);
+	const Common::Rect &srcRect, const Common::Rect &destRect,
+	uint bgColor, int mode, const uint32 *paletteMap);
 
 extern void frameRect(Gfx::Surface *dest,
 	const Common::Rect &r, byte color, int drawMode);

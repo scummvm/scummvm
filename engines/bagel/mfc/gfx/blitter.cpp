@@ -28,27 +28,31 @@ namespace MFC {
 namespace Gfx {
 
 static inline void copyPixel(const byte *srcP, byte *destP, int mode, const byte &WHITE,
-		bool isDestMonochrome, uint bgColor) {
+		bool isDestMonochrome, uint bgColor, const uint32 *paletteMap) {
+	byte src = *srcP;
+	if (paletteMap)
+		src = paletteMap[src];
+
 	switch (mode) {
 	case SRCCOPY:
-		*destP = *srcP;
+		*destP = src;
 		break;
 	case SRCAND:
-		*destP &= *srcP;
+		*destP &= src;
 		break;
 	case SRCINVERT:
-		*destP ^= *srcP;
+		*destP ^= src;
 		break;
 	case SRCPAINT:
-		*destP |= *srcP;
+		*destP |= src;
 		break;
 	case NOTSRCCOPY:
 		if (isDestMonochrome) {
-			*destP = *srcP == bgColor ? 0 : 0xff;
+			*destP = src == bgColor ? 0 : 0xff;
 			return;
 		}
 
-		*destP = ~*srcP;
+		*destP = ~src;
 		break;
 	case DSTINVERT:
 		*destP = ~*destP;
@@ -71,7 +75,7 @@ static inline void copyPixel(const byte *srcP, byte *destP, int mode, const byte
 static void blitInner(Gfx::Surface *srcSurface,
 		Gfx::Surface *destSurface,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		uint bgColor, int mode) {
+		uint bgColor, int mode, const uint32 *paletteMap) {
 	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
 		destSurface->format.aLoss == 255;
 	const byte WHITE = 255;
@@ -91,7 +95,7 @@ static void blitInner(Gfx::Surface *srcSurface,
 			if (!destP)
 				destP = &dummy;
 
-			copyPixel(srcP, destP, mode, WHITE, isDestMonochrome, bgColor);
+			copyPixel(srcP, destP, mode, WHITE, isDestMonochrome, bgColor, paletteMap);
 		}
 	}
 }
@@ -99,7 +103,7 @@ static void blitInner(Gfx::Surface *srcSurface,
 static void stretchBlitInner(Gfx::Surface *srcSurface,
 		Gfx::Surface *destSurface,
 		const Common::Rect &srcRect, const Common::Rect &dstRect,
-		uint bgColor, int mode) {
+		uint bgColor, int mode, const uint32 *paletteMap) {
 	const bool isDestMonochrome = destSurface->format.bytesPerPixel == 1 &&
 		destSurface->format.aLoss == 255;
 	const byte WHITE = 255;
@@ -140,14 +144,14 @@ static void stretchBlitInner(Gfx::Surface *srcSurface,
 			yDest = dstY;
 			byte *destP = xDest;
 
-			copyPixel(srcP, destP, mode, WHITE, isDestMonochrome, bgColor);
+			copyPixel(srcP, destP, mode, WHITE, isDestMonochrome, bgColor, paletteMap);
 		}
 	}
 }
 
 void blit(Gfx::Surface *src, Gfx::Surface *dest,
 		const Common::Rect &srcRect, const Common::Point &destPos,
-		uint bgColor, int mode) {
+		uint bgColor, int mode, const uint32 *paletteMap) {
 	// For normal copying modes, the formats must match.
 	// Other modes like DSTINVERT don't need a source,
 	// so in that case the source can remain uninitialized
@@ -156,7 +160,7 @@ void blit(Gfx::Surface *src, Gfx::Surface *dest,
 	assert(dest->format.bytesPerPixel == dest->format.bytesPerPixel ||
 		dest->format.bytesPerPixel == 0);
 
-	blitInner(src, dest, srcRect, destPos, bgColor, mode);
+	blitInner(src, dest, srcRect, destPos, bgColor, mode, paletteMap);
 
 	Common::Rect dirtyRect(destPos.x, destPos.y,
 		destPos.x + srcRect.width(), destPos.y + srcRect.height());
@@ -165,13 +169,13 @@ void blit(Gfx::Surface *src, Gfx::Surface *dest,
 
 void stretchBlit(Gfx::Surface *src, Gfx::Surface *dest,
 		const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint bgColor, int mode) {
+		uint bgColor, int mode, const uint32 *paletteMap) {
 	assert(src->format.bytesPerPixel == dest->format.bytesPerPixel ||
 		src->format.bytesPerPixel == 0);
 	assert(dest->format.bytesPerPixel == dest->format.bytesPerPixel ||
 		dest->format.bytesPerPixel == 0);
 
-	stretchBlitInner(src, dest, srcRect, destRect, bgColor, mode);
+	stretchBlitInner(src, dest, srcRect, destRect, bgColor, mode, paletteMap);
 }
 
 static inline void rasterPixel(byte *pixel, byte) {

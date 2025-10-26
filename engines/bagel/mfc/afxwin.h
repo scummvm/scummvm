@@ -744,7 +744,8 @@ public:
 		int _bkMode = TRANSPARENT;
 		COLORREF _textColor = 0;
 		uint _textAlign = TA_LEFT;
-		int _drawMode;
+		int _drawMode = 0;
+		bool _paletteRealized = false;
 
 		uint getPenColor() const;
 		uint getBrushColor() const;

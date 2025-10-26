@@ -790,9 +790,10 @@ unsigned int CDC::Impl::realizePalette() {
 		// This window is active - update the system palette
 		AfxGetApp()->setPalette(*pal);
 		return 1;  // number of entries changed - simplified
+	} else {
+		_paletteRealized = true;
 	}
 
-	// Not active - do not change system palette
 	return 0;
 }
 
@@ -1013,28 +1014,53 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 
 	Gfx::Surface dummySrc;
 	Gfx::Surface *src = &dummySrc;
+	uint32 *paletteMap = nullptr;
 
 	if (pSrcDC) {
-		src = pSrcDC->impl()->getSurface();
-		//CPoint srcOrg = src->getViewportOrg();
+		auto *srcImpl = pSrcDC->impl();
+		src = srcImpl->getSurface();
+
+		// If the source DC has a realized palette, we need to set up a palette map
+		// so that palette indexes can be mapped to our own destination palette
+		if (_paletteRealized) {
+			const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
+			const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
+			assert(srcPal && destPal);
+			Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
+			paletteMap = palLookup.createMap(destPal->data(), destPal->size());
+		}
 	}
 
 	Gfx::Surface *dest = getSurface();
 	const Common::Point destPos(x, y);
 	uint bgColor = getBkPixel();
 
-	Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
+	Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop, paletteMap);
+
+	delete[] paletteMap;
 }
 
 void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, uint32 dwRop) {
-	Gfx::Surface *src = pSrcDC->impl()->getSurface();
+	auto *srcImpl = pSrcDC->impl();
+	Gfx::Surface *src = srcImpl->getSurface();
 	Gfx::Surface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
 	uint bgColor = getBkPixel();
+	uint32 *paletteMap = nullptr;
 
-	Gfx::stretchBlit(src, dest, srcRect, destRect, bgColor, dwRop);
+	if (pSrcDC && _paletteRealized) {
+		const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
+		const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
+		assert(srcPal && destPal);
+		Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
+		paletteMap = palLookup.createMap(destPal->data(), destPal->size());
+	}
+
+	Gfx::stretchBlit(src, dest, srcRect, destRect, bgColor, dwRop, nullptr);
+
+	delete[] paletteMap;
 }
 
 void CDC::Impl::moveTo(int x, int y) {
