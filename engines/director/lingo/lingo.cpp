@@ -698,7 +698,7 @@ bool Lingo::execute(int targetFrame) {
 		_globalCounter++;
 		localCounter++;
 
-		if (_state->script == nullptr) {
+		if (!_abort && _state->script == nullptr) {
 			debugC(1, kDebugLingoExec, "Lingo::execute(): PANIC: No script to execute (2)");
 			break;
 		}
