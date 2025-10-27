@@ -147,77 +147,77 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 			break;
 
 		case OP_CMP_EQ:
-			if (EDX.val == EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() == EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_NE:
-			if (EDX.val != EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() != EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_LE:
-			if ((int32)EDX.val < (int32)EAX.val)
-				EAX.val = 1;
+			if ((int32)EDX.getVal() < (int32)EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_LEQ:
-			if ((int32)EDX.val <= (int32)EAX.val)
-				EAX.val = 1;
+			if ((int32)EDX.getVal() <= (int32)EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_GR:
-			if ((int32)EDX.val > (int32)EAX.val)
-				EAX.val = 1;
+			if ((int32)EDX.getVal() > (int32)EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_GREQ:
-			if ((int32)EDX.val >= (int32)EAX.val)
-				EAX.val = 1;
+			if ((int32)EDX.getVal() >= (int32)EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_NAE:
-			if (EDX.val < EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() < EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_NA:
-			if (EDX.val <= EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() <= EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_A:
-			if (EDX.val > EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() > EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_CMP_AE:
-			if (EDX.val >= EAX.val)
-				EAX.val = 1;
+			if (EDX.getVal() >= EAX.getVal())
+				EAX.setVal(1);
 			else
-				EAX.val = 0;
+				EAX.setVal(0);
 			break;
 
 		case OP_BRANCH:
-			if (EAX.val != 0)
+			if (EAX.getVal() != 0)
 				ESI += 4;
 			else
 				ESI += (int32)_readAccess.getU32(ESI);
@@ -233,26 +233,22 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 			break;
 
 		case OP_MOV_EDI_ECX_AL:
-			ECX.val = _readAccess.getU32(ESI);
-			setMem8(REF_EDI, ECX.val, EAX.val & 0xff);
+			setMem8(REF_EDI, _readAccess.getU32(ESI), EAX.getVal() & 0xff);
 			ESI += 4;
 			break;
 
 		case OP_MOV_EBX_ECX_AL:
-			ECX.val = _readAccess.getU32(ESI);
-			setMem8(REF_EBX, ECX.val, EAX.val & 0xff);
+			setMem8(REF_EBX, _readAccess.getU32(ESI), EAX.getVal() & 0xff);
 			ESI += 4;
 			break;
 
 		case OP_MOV_EDI_ECX_EAX:
-			ECX.val = _readAccess.getU32(ESI);
-			setMem32(REF_EDI, ECX.val, EAX.val);
+			setMem32(REF_EDI, _readAccess.getU32(ESI), EAX.getVal());
 			ESI += 4;
 			break;
 
 		case OP_MOV_EBX_ECX_EAX:
-			ECX.val = _readAccess.getU32(ESI);
-			setMem32(REF_EBX, ECX.val, EAX.val);
+			setMem32(REF_EBX, _readAccess.getU32(ESI), EAX.getVal());
 			ESI += 4;
 			break;
 
@@ -264,7 +260,7 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 		case OP_RETX:
 			ECX = popReg();
 			SP += _readAccess.getU32(ESI);
-			ESI = ECX.val;
+			ESI = ECX.getVal();
 			ESI += 4;
 			break;
 
@@ -273,51 +269,48 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 			break;
 
 		case OP_ADD_EAX_EDX:
-			EAX.val += EDX.val;
-			if (EAX.ref == REF_UNK && EDX.ref != REF_UNK)
-				EAX.ref = EDX.ref;
+			EAX.setVal(EAX.getVal() + EDX.getVal());
 			break;
 
 		case OP_MUL:
-			EAX.val *= EDX.val;
+			EAX.setVal(EAX.getVal() * EDX.getVal());
 			break;
 
 		case OP_OR:
-			EAX.val |= EDX.val;
+            EAX.setVal(EAX.getVal() | EDX.getVal());
 			break;
 
 		case OP_XOR:
-			EAX.val ^= EDX.val;
+            EAX.setVal(EAX.getVal() ^ EDX.getVal());
 			break;
 
 		case OP_AND:
-			EAX.val &= EDX.val;
+            EAX.setVal(EAX.getVal() & EDX.getVal());
 			break;
 
 		case OP_NEG:
-			EAX.val = (uint32)(-((int32)EAX.val));
+            EAX.setVal((uint32)(-(int32)EAX.getVal()));
 			break;
 
 		case OP_SAR:
-			EAX.val = (uint32)(((int32)EDX.val) >> (EAX.val & 0xff)); /* must be arythmetic shift! */
+            EAX.setVal((int32)EDX.getVal() >> (EAX.getVal() & 0xff)); /* must be arythmetic shift! */
 			break;
 
 		case OP_SHL:
-			EAX.val = EDX.val << (EAX.val & 0xff);
+            EAX.setVal(EDX.getVal() << (EAX.getVal() & 0xff));
 			break;
 
 		case OP_LOAD:
-			EAX.val = _readAccess.getU32(ESI);
-			EAX.ref = REF_UNK;
+            EAX.setVal( _readAccess.getU32(ESI) );
 			ESI += 4;
 			break;
 
 		case OP_INC:
-			EAX.val += 1;
+			EAX.setVal( EAX.getVal() + 1 );
 			break;
 
 		case OP_DEC:
-			EAX.val -= 1;
+            EAX.setVal( EAX.getVal() - 1 );
 			break;
 
 		case OP_XCHG:
@@ -336,41 +329,38 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 
 		case OP_LOAD_OFFSET_EDI:
 		case OP_LOAD_OFFSET_EDI2:
-			EAX.val = _readAccess.getU32(ESI);
-			EAX.ref = REF_EDI;
+            EAX.setAddress(REF_EDI, _readAccess.getU32(ESI));
 			ESI += 4;
 			break;
 
 		case OP_LOAD_OFFSET_EBX:
-			EAX.val = _readAccess.getU32(ESI);
-			EAX.ref = REF_EBX;
+            EAX.setAddress(REF_EBX, _readAccess.getU32(ESI));
 			ESI += 4;
 			break;
 
 		case OP_LOAD_OFFSET_ESP:
-			EAX.val = _readAccess.getU32(ESI) + SP;
-			EAX.ref = REF_STACK;
+            EAX.setAddress(REF_STACK, _readAccess.getU32(ESI) + SP);
 			ESI += 4;
 			break;
 
 		case OP_MOV_PTR_EDX_AL:
-			setMem8(EDX.ref, EDX.val, EAX.val & 0xff);
+			setMem8(EDX, EAX.getVal() & 0xff);
 			break;
 
 		case OP_MOV_PTR_EDX_EAX:
-			setMem32(EDX.ref, EDX.val, EAX.val);
+			setMem32(EDX, EAX.getVal());
 			break;
 
 		case OP_SHL_2:
-			EAX.val <<= 2;
+			EAX.setVal( EAX.getVal() << 2 );
 			break;
 
 		case OP_ADD_4:
-			EAX.val += 4;
+            EAX.setVal( EAX.getVal() + 4 );
 			break;
 
 		case OP_SUB_4:
-			EAX.val -= 4;
+            EAX.setVal( EAX.getVal() - 4 );
 			break;
 
 		case OP_XCHG_ESP:
@@ -380,47 +370,41 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 			break;
 
 		case OP_NEG_ADD:
-			EAX.val = (uint32)(-((int32)EAX.val)) + EDX.val;
+            EAX.setVal( (-(int32)EAX.getVal()) + EDX.getVal() );
 			break;
 
 		case OP_DIV:
 			ECX = EAX;
-			EAX.val = (int32)EDX.val / (int32)ECX.val;
-			EDX.val = (int32)EDX.val % (int32)ECX.val;
+            EAX.setVal( (int32)EDX.getVal() / (int32)ECX.getVal() );
+            EDX.setVal( (int32)EDX.getVal() % (int32)ECX.getVal() );
 			break;
 
 		case OP_MOV_EAX_BPTR_EDI:
-			ECX.val = _readAccess.getU32(ESI);
-			EAX.val = (int8)getMem8(REF_EDI, ECX.val);
+			EAX.setVal( (int32)((int8)getMem8(REF_EDI, _readAccess.getU32(ESI))) );
 			ESI += 4;
 			break;
 
 		case OP_MOV_EAX_BPTR_EBX:
-			ECX.val = _readAccess.getU32(ESI);
-			EAX.val = (int8)getMem8(REF_EBX, ECX.val);
+            EAX.setVal( (int32)((int8)getMem8(REF_EBX, _readAccess.getU32(ESI))) );
 			ESI += 4;
 			break;
 
 		case OP_MOV_EAX_DPTR_EDI:
-			ECX.val = _readAccess.getU32(ESI);
-			EAX.val = getMem32(REF_EDI, ECX.val);
+            EAX.setVal( getMem32(REF_EDI, _readAccess.getU32(ESI)) );
 			ESI += 4;
 			break;
 
 		case OP_MOV_EAX_DPTR_EBX:
-			ECX.val = _readAccess.getU32(ESI);
-			EAX.val = getMem32(REF_EBX, ECX.val);
+            EAX.setVal( getMem32(REF_EBX, _readAccess.getU32(ESI)) );
 			ESI += 4;
 			break;
 
 		case OP_MOV_EAX_BPTR_EAX:
-			EAX.val = (int8)getMem8(EAX.ref, EAX.val);
-			EAX.ref = REF_UNK;
+			EAX.setVal( (int32)( (int8)getMem8(EAX) ) );
 			break;
 
 		case OP_MOV_EAX_DPTR_EAX:
-			EAX.val = getMem32(EAX.ref, EAX.val);
-			EAX.ref = REF_UNK;
+            EAX.setVal( getMem32(EAX) );
 			break;
 
 		case OP_PUSH_ESI_ADD_EDI:
@@ -429,20 +413,20 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 			break;
 
 		case OP_CALL_FUNC:
-			EAX.val = _readAccess.getU32(ESI);
+			EAX.setVal( _readAccess.getU32(ESI) );
 			ESI += 4;
 			if (_callFuncs)
-				_callFuncs(_callingObject, this, EAX.val);
+				_callFuncs(_callingObject, this, EAX.getVal());
 			break;
 
 		case OP_PUSH_ESI_SET_EDX_EDI:
 			push32(ESI);
-			ESI = EDX.val;
+			ESI = EDX.getVal();
 			break;
 		}
 	}
 
-	return EAX.val;
+	return EAX.getVal();
 }
 
 
@@ -496,16 +480,14 @@ uint32 VM::pop32() {
 	return val;
 }
 
-void VM::pushReg(Reg reg) {
+void VM::pushReg(ValAddr reg) {
 	SP -= 4;
-	setU32(_stack + SP, reg.val);
-	_stackT[SP] = reg.ref;
+	setU32(_stack + SP, reg.getVal());
 }
 
-VM::Reg VM::popReg() {
-	Reg tmp;
-	tmp.val = getU32(_stack + SP);
-	tmp.ref = _stackT[SP];
+VM::ValAddr VM::popReg() {
+	ValAddr tmp;
+	tmp.setVal( getU32(_stack + SP) );
 	SP += 4;
 	return tmp;
 }
@@ -527,6 +509,10 @@ uint32 VM::getMem32(int memtype, uint32 offset) {
 	}
 }
 
+uint32 VM::getMem32(const ValAddr &addr) {
+    return getMem32(addr.getMemType(), addr.getOffset());
+}
+
 uint8 VM::getMem8(int memtype, uint32 offset) {
 	switch (memtype) {
 	default:
@@ -542,6 +528,10 @@ uint8 VM::getMem8(int memtype, uint32 offset) {
 	case REF_EDI:
 		return _readAccess.getU8(offset);
 	}
+}
+
+uint8 VM::getMem8(const ValAddr &addr) {
+    return getMem8(addr.getMemType(), addr.getOffset());
 }
 
 void VM::setMem32(int memtype, uint32 offset, uint32 val) {
@@ -562,6 +552,10 @@ void VM::setMem32(int memtype, uint32 offset, uint32 val) {
 	}
 }
 
+void VM::setMem32(const ValAddr &addr, uint32 val) {
+    setMem32(addr.getMemType(), addr.getOffset(), val);
+}
+
 void VM::setMem8(int memtype, uint32 offset, uint8 val) {
 	switch (memtype) {
 	default:
@@ -578,6 +572,10 @@ void VM::setMem8(int memtype, uint32 offset, uint8 val) {
 		_writeAccess.setU8(offset, val);
 		break;
 	}
+}
+
+void VM::setMem8(const ValAddr &addr, uint8 val) {
+    setMem8(addr.getMemType(), addr.getOffset(), val);
 }
 
 void VM::clearMemory() {
@@ -730,6 +728,10 @@ Common::String VM::getString(int memtype, uint32 offset, uint32 maxLen) {
 	case REF_EDI:
 		return readMemString(offset, maxLen);
 	}
+}
+
+Common::String VM::getString(const ValAddr &addr, uint32 maxLen) {
+    return getString(addr.getMemType(), addr.getOffset(), maxLen);
 }
 
 

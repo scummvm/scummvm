@@ -2244,46 +2244,46 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	switch (funcID) {
 	case 0:
 		DAT_004177ff = true;
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 	case 1:
-		vm->EAX.val = PTR_00417218->y == -1 ? 1 : 0;
+		vm->EAX.setVal( PTR_00417218->y == -1 ? 1 : 0 );
 		break;
 
 	case 2:
 		arg1 = vm->pop32();
 		if (PTR_00417218->x == -1)
-			vm->EAX.val = 0;
+			vm->EAX.setVal(0);
 		else
-			vm->EAX.val = _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0;
+			vm->EAX.setVal( _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0 );
 		break;
 	case 3:
 		//warning("func 3 %x check 0x10", PTR_00417218->fld_4 & 0x90);
-		vm->EAX.val = (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0;
+		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0 );
 		break;
 	case 4:
 		//warning("func 4 %x check 0x20", PTR_00417218->fld_4 & 0xa0);
-		vm->EAX.val = (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0;
+		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0 );
 		break;
 	case 5:
 		arg1 = vm->pop32();
 		//warning("func 5 %x check %x", PTR_00417218->fld_4 & 0xb0, arg1);
-		vm->EAX.val = (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0;
+		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0 );
 		break;
 	case 6:
 		arg1 = vm->pop32();
 		//warning("func 6 %x check %x", PTR_00417218->fld_4 & 0x4f, arg1);
-		vm->EAX.val = (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0;
+		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
 		break;
 	case 9:
 		arg1 = vm->pop32();
-		vm->EAX.val = savedDoActions(_subtitleActions[arg1]);
+		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 		break;
 	case 13: {
-		VM::Reg regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef.ref, regRef.val);
+		VM::ValAddr regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef);
 		//warning("CallDispatcher 13 keycode %s", str.c_str());
-		vm->EAX.val = 0;
+		vm->EAX.setVal(0);
 		break;
 	}
 
@@ -2291,23 +2291,23 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		loadModule(arg1);
 		setNeedReload();
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 16:
 		arg1 = vm->pop32();
-		vm->EAX.val = scriptFunc16(arg1);
+		vm->EAX.setVal( scriptFunc16(arg1) );
 		break;
 
 	case 17:
 		arg1 = vm->pop32();
 		playSound(arg1);
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 19:
 		arg1 = vm->pop32();
-		vm->EAX.val = scriptFunc19(arg1);
+		vm->EAX.setVal( scriptFunc19(arg1) );
 		break;
 
 	case 20: {
@@ -2315,17 +2315,17 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		for (const SubtitlePoint &d : _subtitlePoints[arg1]) {
 			FUN_0040738c(d.sprId, d.x, d.y, true);
 		}
-		vm->EAX.val = savedDoActions(_subtitleActions[arg1]);
+		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 	}
 	break;
 
 	case 24: {
-		VM::Reg regRef = vm->popReg();
+		VM::ValAddr regRef = vm->popReg();
 		arg2 = vm->pop32();
 		const SubtitlePoint &d = _subtitlePoints[arg2][0];
-		addSubtitles(vm, regRef.ref, regRef.val, d.sprId, d.x, d.y);
+		addSubtitles(vm, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y);
 
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
@@ -2343,18 +2343,18 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 				addDirtRectOnObject(&obj);
 			}
 		}
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
 	case 26:
 		removeSubtitles(PTR_00417218);
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 27:
 		FUN_004025d0();
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 30: {
@@ -2370,23 +2370,23 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	case 31:
 		arg1 = vm->pop32();
 		setCursor(arg1, true);
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 32:
 		setCursor(0, false);
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 33:
 		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 		break;
 
 	case 34: {
-		VM::Reg regRef = vm->popReg();
-		vm->setMem8(regRef.ref, regRef.val, PTR_00417218->fld_5);
-		vm->EAX.val = 1;
+		VM::ValAddr regRef = vm->popReg();
+		vm->setMem8(regRef, PTR_00417218->fld_5);
+		vm->EAX.setVal(1);
 	}
 	break;
 
@@ -2494,17 +2494,17 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	case 38:
 		arg1 = vm->pop32();
 		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412ca0)
-			vm->EAX.val = 0;
+			vm->EAX.setVal(0);
 		else
-			vm->EAX.val = 1;
+			vm->EAX.setVal(1);
 		break;
 
 	case 39:
 		arg1 = vm->pop32();
 		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412c9c)
-			vm->EAX.val = 0;
+			vm->EAX.setVal(0);
 		else
-			vm->EAX.val = 1;
+			vm->EAX.setVal(1);
 		break;
 
 	case 42: {
@@ -2531,7 +2531,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 				FUN_00402a68(tmp);
 			}
 		}
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
@@ -2544,7 +2544,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			tmp.flags = 0;
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
@@ -2557,13 +2557,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			tmp.flags = 1;
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
 	case 45:
 		arg1 = vm->pop32();
-		vm->EAX.val = (PTR_00417218->flags & arg1) ? 1 : 0;
+		vm->EAX.setVal( (PTR_00417218->flags & arg1) ? 1 : 0 );
 		break;
 
 	case 47: {
@@ -2571,23 +2571,23 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 		switch (arg1) {
 		case 0:
-			vm->EAX.val = _d2_fld16 != 0 ? 1 : 0;
+			vm->EAX.setVal(_d2_fld16 != 0 ? 1 : 0);
 			break;
 
 		case 1:
-			vm->EAX.val = _d2_fld14 != 0 ? 1 : 0;
+			vm->EAX.setVal(_d2_fld14 != 0 ? 1 : 0);
 			break;
 
 		case 2:
-			vm->EAX.val = 1; //BYTE_004177fb != 0 ? 1 : 0;
+			vm->EAX.setVal(1); //BYTE_004177fb != 0 ? 1 : 0;
 			break;
 
 		case 3:
-			vm->EAX.val = _d2_fld17 != 0 ? 1 : 0;
+			vm->EAX.setVal(_d2_fld17 != 0 ? 1 : 0);
 			break;
 
 		case 4:
-			vm->EAX.val = _d2_fld18 != 0 ? 1 : 0;
+			vm->EAX.setVal(_d2_fld18 != 0 ? 1 : 0);
 			break;
 
 		default:
@@ -2606,28 +2606,28 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 	case 54:
 		arg1 = vm->pop32();
-		vm->EAX.val = rndRange16(arg1);
+		vm->EAX.setVal(rndRange16(arg1));
 		break;
 
 	case 55: {
-		VM::Reg regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef.ref, regRef.val);
+		VM::ValAddr regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef);
 		warning("PlayMovie 55: %s", str.c_str());
-		vm->EAX.val = 1;
+		vm->EAX.setVal(1);
 	}
 	break;
 
 	case 57: {
-		VM::Reg regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef.ref, regRef.val);
+		VM::ValAddr regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef);
 		warning("CallDispatcher 57 keycode %s", str.c_str());
-		vm->EAX.val = 0;
+		vm->EAX.setVal(0);
 	}
 	break;
 
 	default:
 		warning("Call Dispatcher %d", funcID);
-		vm->EAX.val = 0;
+		vm->EAX.setVal(0);
 		break;
 	}
 }
