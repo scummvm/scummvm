@@ -49,7 +49,7 @@ class SeekableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here
 // For all the different encodings, refer to:
-// http://wiki.multimedia.cx/index.php?title=Category:ADPCM_Audio_Codecs
+// https://wiki.multimedia.cx/index.php?title=Category:ADPCM_Audio_Codecs
 // Usually, if the audio stream we're trying to play has the FourCC header
 // string intact, it's easy to discern which encoding is used
 enum ADPCMType {

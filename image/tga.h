@@ -74,7 +74,7 @@ public:
 	virtual bool loadStream(Common::SeekableReadStream &stream) override;
 private:
 	// Format-spec from:
-	//http://www.ludorg.net/amnesia/TGA_File_Format_Spec.html
+	// https://www.ludorg.net/amnesia/TGA_File_Format_Spec.html
 	enum {
 	    TYPE_CMAP = 1,
 	    TYPE_TRUECOLOR = 2,

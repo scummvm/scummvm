@@ -787,13 +787,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Eco Quest 2 - Korean DOS Floppy (from swkim01)
-    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
-    {"ecoquest2", "Floppy", {
-        {"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
-        {"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
-        {"resource.msg", 0, "a0fbf7c183ea64f4bc224f71f2862aa0", 219798},
-        AD_LISTEND},
-        Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16 },
+	// using swkim01's SCI Message Editor: https://github.com/swkim01/scime/
+	{"ecoquest2", "Floppy", {
+		{"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
+		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
+		{"resource.msg", 0, "a0fbf7c183ea64f4bc224f71f2862aa0", 219798},
+		AD_LISTEND},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16 },
 
 #undef GUIO_ECO2_WINDOWS
 
@@ -1082,7 +1082,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
 	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
-	// using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+	// using swkim01's SCI Message Editor: https://github.com/swkim01/scime/
 	{"gk2", "", {
 		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
@@ -6257,7 +6257,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Space Quest 5 - English DOS - THIS IS THE UNOFFICIAL BETA VERSION, WHICH IS OBVIOUSLY PIRATED AND CONTAINS MANY BUGS
-	//  refer to http://www.akril15.com/sr/sq5alt/sq5alt.html =DO NOT RE-ADD=
+	//  refer to https://www.akril15.com/sr/sq5alt/sq5alt.html =DO NOT RE-ADD=
 	// SCI interpreter version 1.001.067
 	{"sq5", "", {
 		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c9834", 6473},

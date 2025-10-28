@@ -175,7 +175,7 @@ public class ExternalStorage {
 		// Get listing of mounted devices with their properties.
 		ArrayList<File> mountedPaths = new ArrayList<>();
 		try {
-			// Note: Despite restricting some access to /proc (http://stackoverflow.com/a/38728738/423105),
+			// Note: Despite restricting some access to /proc (https://stackoverflow.com/a/38728738/423105),
 			// Android 7.0 does *not* block access to /proc/mounts, according to our test on George's Alcatel A30 GSM.
 			bufferedReader = new BufferedReader(new FileReader("/proc/mounts"));
 
@@ -202,7 +202,7 @@ public class ExternalStorage {
 				}
 
 				// TODO maybe: check options to make sure it's mounted RW?
-				// The answer at http://stackoverflow.com/a/13648873/423105 does.
+				// The answer at https://stackoverflow.com/a/13648873/423105 does.
 				// But it hasn't seemed to be necessary so far in my testing.
 
 				// This line met the criteria so far, so add it to candidate list.

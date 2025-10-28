@@ -206,7 +206,7 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 	return true;
 }
 
-// Additional information found from http://paulbourke.net/dataformats/tga/
+// Additional information found from https://paulbourke.net/dataformats/tga/
 // With some details from the link referenced in the header.
 bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth) {
 	// TrueColor

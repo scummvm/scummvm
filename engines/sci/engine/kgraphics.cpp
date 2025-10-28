@@ -1288,7 +1288,7 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// decoder in KQ6 is specifically written for the planar memory model.
 	// Planar memory mode access was used for VGA "Mode X" (320x240 resolution,
 	// although the intro in KQ6 is 320x200).
-	// Refer to http://en.wikipedia.org/wiki/Mode_X
+	// Refer to https://en.wikipedia.org/wiki/Mode_X
 
 	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
 	return s->r_acc;

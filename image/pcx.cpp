@@ -28,7 +28,7 @@
 
 /**
  * Based on the PCX specs:
- * http://www.fileformat.info/format/pcx/spec/a10e75307b3a4cc49c3bbe6db4c41fa2/view.htm
+ * https://www.fileformat.info/format/pcx/spec/a10e75307b3a4cc49c3bbe6db4c41fa2/view.htm
  * and the PCX decoder of FFmpeg (libavcodec/pcx.c):
  * https://git.ffmpeg.org/gitweb/ffmpeg.git/blob/HEAD:/libavcodec/pcx.c
  */

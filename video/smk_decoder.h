@@ -59,7 +59,7 @@ typedef Common::BitStreamImpl<Common::BitStreamMemoryStream, uint32, 8, false, f
 /**
  * Decoder for Smacker v2/v4 videos.
  *
- * Based on http://wiki.multimedia.cx/index.php?title=Smacker
+ * Based on https://wiki.multimedia.cx/index.php?title=Smacker
  * and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
  * https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/40a19c443430de520d86bbd644033c8e2ca87e9b
  *

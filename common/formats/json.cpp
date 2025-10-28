@@ -1175,7 +1175,7 @@ uint32 JSONValue::decodeUtf8Char(String::const_iterator &iter, const String::con
 * with the state from the previous byte until it returns 0 (success) or 1 (failure).
 *
 * Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
-* See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
+* See https://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 *
 * @access private
 *

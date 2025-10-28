@@ -273,7 +273,7 @@ public:
 	 * Functions to replace some amount of chars with chars from some other string.
 	 *
 	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/
+	 *       https://cplusplus.com/reference/string/string/replace/
 	 *
 	 * @param pos Starting position for the replace in the original string.
 	 * @param count Number of chars to replace from the original string.

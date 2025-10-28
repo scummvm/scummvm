@@ -64,7 +64,7 @@ void AudioPlayer::stopAllAudio() {
  * sciAudio is an external .NET library for playing MP3 files in fanmade games.
  * It runs in the background, and obtains sound commands from the
  * currently running game via text files (called "conductor files").
- * For further info, check: http://sciprogramming.com/community/index.php?topic=634.0
+ * For further info, check: https://sciprogramming.com/community/index.php?topic=634.0
  */
 void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan) {
 	// TODO: This is a bare bones implementation. Only the play/playx and stop commands
@@ -305,7 +305,7 @@ static void deDPCM8(byte *soundBuf, Common::SeekableReadStream &audioStream, uin
 }
 
 // Sierra SOL audio file reader
-// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
+// Check here for more info: https://wiki.multimedia.cx/index.php?title=Sierra_Audio
 static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags, uint32 resSize) {
 	if (headerSize != 7 && headerSize != 11 && headerSize != 12) {
 		warning("SOL audio header of size %i not supported", headerSize);

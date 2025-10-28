@@ -44,7 +44,7 @@ class SeekableReadStream;
  * A class able to load resources from a Windows New Executable, such
  * as cursors, bitmaps, and sounds.
  *
- * See http://en.wikipedia.org/wiki/New_Executable for more info.
+ * See https://en.wikipedia.org/wiki/New_Executable for more info.
  */
 class NEResources : public WinResources {
 public:

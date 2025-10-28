@@ -336,7 +336,7 @@ T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
  * equal keys, but stable sorting algorithms never do so.
  *
  * For more information, see:
- * http://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+ * https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
  *
  * @note Currently, this implementation is unstable.
  *

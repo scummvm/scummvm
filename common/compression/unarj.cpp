@@ -21,7 +21,7 @@
 
 //
 // This file is heavily based on the arj code available under the GPL
-// from http://arj.sourceforge.net/ , version 3.10.22 .
+// from <https://arj.sourceforge.net>, version 3.10.22.
 
 #include "common/scummsys.h"
 #include "common/archive.h"

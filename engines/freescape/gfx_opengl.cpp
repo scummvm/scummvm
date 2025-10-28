@@ -386,7 +386,7 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	float twicePi = (float)(2.0 * M_PI);
 
 	// Quick billboard effect inspired from this code:
-	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	// https://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	GLfloat m[16];
