@@ -97,7 +97,7 @@ void Primitives::drawThickLine(int x0, int y0, int x1, int y1, int penX, int pen
 }
 
 /* Bresenham as presented in Foley & Van Dam */
-/* Code is based on GD lib http://libgd.github.io/ */
+/* Code is based on GD lib https://libgd.github.io/ */
 void Primitives::drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color, void *data) {
 	int incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
 	int wid;
@@ -370,7 +370,7 @@ void Primitives::drawRoundRect1(const Common::Rect &rect, int arc, uint32 color,
 }
 
 // Based on public-domain code by Darel Rex Finley, 2007
-// http://alienryderflex.com/polygon_fill/
+// https://alienryderflex.com/polygon_fill/ 
 void Primitives::drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data) {
 	int *nodeX = (int *)calloc(npoints, sizeof(int));
 	int i, j;

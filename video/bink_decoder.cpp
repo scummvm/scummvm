@@ -415,7 +415,7 @@ bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
 		// For now, we do as the official Bink decoder up to version 1.2j. The stream is prefilled
 		// with silence.
 		// The official bink decoder behavior is documented here:
-		// http://www.radgametools.com/bnkhist.htm#Changes from 1.2i to 1.2J (02-18-2002)
+		// <https://www.radgametools.com/bnkhist.htm#Changes> from 1.2i to 1.2J (02-18-2002)
 		Audio::AudioStream *silence = Audio::makeSilentAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
 		Audio::AudioStream *prebuffer = Audio::makeLimitingAudioStream(silence, Audio::Timestamp(750));
 		_audioStream->queueAudioStream(prebuffer);

@@ -152,7 +152,7 @@ void SdlMixerManager::init() {
 #if !SDL_VERSION_ATLEAST(3, 0, 0)
 static uint32 roundDownPowerOfTwo(uint32 samples) {
 	// Public domain code from Sean Eron Anderson
-	// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+	// https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 	uint32 rounded = samples;
 	--rounded;
 	rounded |= rounded >> 1;

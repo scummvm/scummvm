@@ -123,8 +123,8 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// The following is based on the guide provided in:
-	//http://www.libpng.org/pub/png/libpng-1.2.5-manual.html#section-3
-	//http://www.libpng.org/pub/png/libpng-1.4.0-manual.pdf
+	// https://www.libpng.org/pub/png/libpng-1.2.5-manual.html#section-3
+	// https://www.libpng.org/pub/png/libpng-1.4.0-manual.pdf
 	// along with the png-loading code used in the sword25-engine.
 	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr) {

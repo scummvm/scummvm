@@ -359,7 +359,7 @@ int16 ScriptFunctions::sfPlayTele(int16 argc, int16 *argv) {
 	// It takes 1 parameter, the key pressed (0-9, 10 for asterisk, 11 for hash)
 
 	// A telephone keypad uses a two tones for each key.
-	// See http://en.wikipedia.org/wiki/Telephone_keypad for more info
+	// See https://en.wikipedia.org/wiki/Telephone_keypad for more info
 
 	static const int freqTable1[] = {
 		1336, 1209, 1336, 1477,

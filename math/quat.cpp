@@ -20,7 +20,7 @@
  */
 
 /*
- * Quaternion-math originally borrowed from plib http://plib.sourceforge.net/index.html
+ * Quaternion-math originally borrowed from plib https://plib.sourceforge.net/index.html
  * This code was originally made available under the LGPLv2 license (or later).
  *
  * Quaternion routines are Copyright (C) 1999

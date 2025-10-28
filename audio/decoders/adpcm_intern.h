@@ -244,7 +244,7 @@ private:
 };
 
 // Duck DK3 IMA ADPCM Decoder
-// Based on FFmpeg's decoder and http://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
+// Based on FFmpeg's decoder and https://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
 
 class DK3_ADPCMStream : public Ima_ADPCMStream {
 public:

@@ -61,7 +61,7 @@ bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
 	uint32 u1 = unicode(j);
 
 	// See: https://wiki.wesnoth.org/index.php?title=JapaneseTranslation&oldid=23480#Word-Wrapping
-	// and: http://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87
+	// and: https://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87
 
 	switch (u1) {
 	case 0xff08:

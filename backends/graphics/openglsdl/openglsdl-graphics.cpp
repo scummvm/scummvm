@@ -797,7 +797,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		// WORKAROUND: Working around infamous SDL bugs when switching
 		// resolutions too fast. This might cause the event system to supply
 		// incorrect mouse position events otherwise.
-		// Reference: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=665779
+		// Reference: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=665779
 		const uint32 curTime = SDL_GetTicks();
 		if (_hwScreen && (curTime < _lastVideoModeLoad || curTime - _lastVideoModeLoad < 100)) {
 			for (int i = 10; i > 0; --i) {

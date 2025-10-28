@@ -7584,7 +7584,7 @@ void EdenGame::getSinCosTables(unsigned short angle, signed char **cos_table, si
 
 
 void EdenGame::rotatePoint(XYZ *point, XYZ *rpoint) {
-	// see http://www.cprogramming.com/tutorial/3d/rotation.html
+	// see https://www.cprogramming.com/tutorial/3d/rotation.html
 	XYZ xrot;
 
 	xrot.x = point->x;

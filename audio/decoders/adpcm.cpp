@@ -35,10 +35,10 @@ namespace Audio {
 //   <https://web.archive.org/web/20050421220515/http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // IMA ADPCM support is based on
-//   <http://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
+//   <https://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
 //
 // In addition, also MS IMA ADPCM is supported. See
-//   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
+//   <https://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 //
 // XA ADPCM support is based on FFmpeg/libav
 

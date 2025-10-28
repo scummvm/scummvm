@@ -22,7 +22,7 @@
 /*
  * Based on MacVenture engine, based on
  * WebVenture (c) 2010, Sean Kasun
- * https://github.com/mrkite/webventure, http://seancode.com/webventure/
+ * https://github.com/mrkite/webventure, https://seancode.com/webventure/
  *
  * Used with explicit permission from the author
  */

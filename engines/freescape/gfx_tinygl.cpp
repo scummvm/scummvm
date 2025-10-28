@@ -424,7 +424,7 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	float twicePi = (float)(2.0 * M_PI);
 
 	// Quick billboard effect inspired from this code:
-	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	// https://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
 	TGLfloat m[16];

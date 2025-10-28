@@ -420,7 +420,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 	uint16 res;
 
 	if ((width & 3) != 0) {
-		// This isn't a valid width according to http://wiki.multimedia.cx/index.php?title=Indeo_3
+		// This isn't a valid width according to https://wiki.multimedia.cx/index.php?title=Indeo_3
 		error("Indeo3 file with width not divisible by 4. This will cause unaligned writes");
 	}
 

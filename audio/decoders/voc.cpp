@@ -238,7 +238,7 @@ void VocStream::preProcess() {
 		block.length = 0;
 
 		// If we hit EOS here we found the end of the VOC file.
-		// According to http://wiki.multimedia.cx/index.php?title=Creative_Voice
+		// According to https://wiki.multimedia.cx/index.php?title=Creative_Voice
 		// there is no need for an "Terminator" block to be present.
 		// In case we hit a "Terminator" block we also break here.
 		if (_stream->eos() || block.code == 0)

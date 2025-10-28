@@ -122,7 +122,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	char str[256];
 
 	// Read header (and check we have a binary PBM file)
-	// See http://netpbm.sourceforge.net/doc/pbm.html
+	// See https://netpbm.sourceforge.net/doc/pbm.html
 	// Header is in the form:
 	// - A "magic number" for identifying the file type ("P4" for binary pdm)
 	// - Whitespace (blanks, TABs, CRs, LFs).
