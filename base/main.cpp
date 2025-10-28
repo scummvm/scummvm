@@ -21,8 +21,8 @@
 
 /*! \mainpage %ScummVM Source Reference
  *
- * These pages contains a cross referenced documentation for the %ScummVM source code,
- * generated with Doxygen (http://www.doxygen.org) directly from the source.
+ * These pages contain a cross referenced documentation for the %ScummVM source code,
+ * generated with Doxygen (https://www.doxygen.nl) directly from the source.
  * Currently not much is actually properly documented, but at least you can get an overview
  * of almost all the classes, methods and variables, and how they interact.
  */

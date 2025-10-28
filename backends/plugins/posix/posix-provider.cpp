@@ -42,7 +42,7 @@ protected:
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
 		// and data pointers, but dlsym always returns a void pointer. For details,
-		// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
+		// see e.g. <https://web.archive.org/web/20061205092618/http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
 		assert(sizeof(VoidFunc) == sizeof(func));
 		VoidFunc tmp;
 		memcpy(&tmp, &func, sizeof(VoidFunc));

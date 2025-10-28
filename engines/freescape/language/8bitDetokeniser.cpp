@@ -22,7 +22,7 @@
 // Based on Phantasma code by Thomas Harte (2013),
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 // which was implemented based on John Elliott's reverse engineering of Driller (2001)
-// http://www.seasip.demon.co.uk/ZX/Driller/
+// https://web.archive.org/web/20200116141513/http://www.seasip.demon.co.uk/ZX/Driller/
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"

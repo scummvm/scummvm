@@ -21,7 +21,7 @@
 
 /*
  * Source is based on the player example from libvorbis package,
- * available at: http://svn.xiph.org/trunk/theora/examples/player_example.c
+ * available at: https://gitlab.xiph.org/xiph/theora/-/blob/main/examples/player_example.c
  *
  * THIS FILE IS PART OF THE OggTheora SOFTWARE CODEC SOURCE CODE.
  * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS

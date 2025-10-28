@@ -615,7 +615,7 @@ public class ScummVMEvents implements
 	@Override
 	final public boolean onTouch(View v, final MotionEvent event) {
 
-		// Note: In this article https://developer.android.com/training/gestures/multi
+		// Note: In this article https://developer.android.com/develop/ui/views/touch-and-input/gestures/multi
 		//       it is recommended to use MotionEventCompat helper methods, instead of directly using MotionEvent getAction() etc.
 		//       However, getActionMasked() and MotionEventCompat *are deprecated*, and now direct use of MotionEvent methods is recommended.
 		//       https://developer.android.com/reference/androidx/core/view/MotionEventCompat

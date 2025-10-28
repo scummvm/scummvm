@@ -539,7 +539,8 @@ int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 
 //----------------------------------------------
 // STACpack/LZS decompressor for SCI32
-// Based on Andre Beck's code from http://micky.ibh.de/~beck/stuff/lzs4i4l/
+// Based on Andre Beck's code from
+// https://web.archive.org/web/20070817214826/http://micky.ibh.de/~beck/stuff/lzs4i4l/
 //----------------------------------------------
 int DecompressorLZS::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);

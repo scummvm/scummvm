@@ -106,7 +106,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// values for it:
 	// 1  -> uncompressed PCM
 	// 17 -> IMA ADPCM compressed WAVE
-	// See <http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html>
+	// See <https://mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html>
 	// for a more complete list of common WAVE compression formats...
 	uint16 type = stream.readUint16LE();	// == 1 for PCM data
 	uint16 numChannels = stream.readUint16LE();	// 1 for mono, 2 for stereo

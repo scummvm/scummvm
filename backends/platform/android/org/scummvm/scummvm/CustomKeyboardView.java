@@ -226,7 +226,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 	private float mOldPointerY;
 
 	// @UnsupportedAppUsage
-	// https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/annotation/UnsupportedAppUsage.java
+	// https://android.googlesource.com/platform/prebuilts/fullsdk/sources/android-29/+/refs/heads/main/android/annotation/UnsupportedAppUsage.java
 	// Indicates that a class member, that is not part of the SDK, is used by apps.
 	// Since the member is not part of the SDK, such use is not supported.
 	//
@@ -346,7 +346,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 			int attr = a.getIndex(i);
 
 			// resolve: "resource IDs will be non-final in Android Gradle Plugin version 5.0, avoid using them in switch case statements"
-			// We converted the switch statement to if/else as suggested here: http://tools.android.com/tips/non-constant-fields
+			// We converted the switch statement to if/else as suggested here:
+			// https://web.archive.org/web/20210128075908/http://tools.android.com/tips/non-constant-fields
 			if (attr == R.styleable.CustomKeyboardView_keyBackground) {
 				mKeyBackground = a.getDrawable(attr);
 			} else if (attr == R.styleable.CustomKeyboardView_verticalCorrection) {
