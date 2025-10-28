@@ -292,7 +292,8 @@ namespace micropather
 
 	/* Used to cache results of paths. Much, much faster
 	   to return an existing solution than to calculate
-	   a new one. A post on this is here: http://grinninglizard.com/altera/programming/a-path-caching-2/
+	   a new one. A post on this is here:
+	   https://web.archive.org/web/20170714084918/http://grinninglizard.com/altera/programming/a-path-caching-2/
 	*/
 	class PathCache
 	{

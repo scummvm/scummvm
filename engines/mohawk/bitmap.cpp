@@ -752,7 +752,7 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImageLB(Common::SeekableReadStreamEnd
 }
 
 // Partially based on the Prince of Persia Format Specifications
-// See http://sdfg.com.ar/git/?p=fp-git.git;a=blob;f=FP/doc/FormatSpecifications
+// See https://sdfg.com.ar/git/r/fp-git.git/b/master/t/FP/doc/f=FormatSpecifications.html
 
 MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_header.height = stream->readUint16LE();

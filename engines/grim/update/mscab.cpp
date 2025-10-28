@@ -207,7 +207,7 @@ MsCabinet::Decompressor::~Decompressor() {
 }
 
 bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &entry) {
-	// Ref: http://blogs.kde.org/node/3181
+	// Ref: https://web.archive.org/web/20220518002805/http://blogs.kde.org/node/3181
 	uint16 uncompressedLen, compressedLen;
 	byte hdrS[4];
 	byte *buf_tmp, *dict;

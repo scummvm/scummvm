@@ -31,7 +31,8 @@ namespace Audio {
 
 // Routines to convert 12 bit linear samples to the
 // Dialogic or Oki ADPCM coding format aka VOX.
-// See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
+// See also
+//   <https://web.archive.org/web/20050421220515/http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // IMA ADPCM support is based on
 //   <http://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
