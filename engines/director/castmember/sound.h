@@ -50,6 +50,9 @@ public:
 
 	bool _looping;
 	AudioDecoder *_audio;
+
+	Common::Array<int32> _cuePoints;
+	Common::StringArray _cuePointNames;
 };
 
 } // End of namespace Director

@@ -1658,13 +1658,6 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			functionName = g_lingo->_eventHandlerTypes[kEventGeneric];
 		}
 
-		// We need to find movies with 'on cuePassed'
-		if (g_director->getVersion() >= 600) {
-			if (functionName.equalsIgnoreCase("cuePassed")) {
-				error("sev needs this movie as a sample for cuePoints, please talk to him");
-			}
-		}
-
 		Symbol sym;
 		if (!functionName.empty()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, functionName.c_str());
