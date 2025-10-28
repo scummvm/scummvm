@@ -28,12 +28,21 @@
 
 #include "rwopl3.h"
 
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnewline-eof"
+#endif
+
 #include <RetroWaveLib/Board/OPL3.h>
 #include <RetroWaveLib/Platform/Linux_SPI.h>
 #include <RetroWaveLib/Platform/POSIX_SerialPort.h>
 #include <RetroWaveLib/Platform/Win32_SerialPort.h>
 #ifdef EMSCRIPTEN
 #include <RetroWaveLib/Platform/Web_SerialPort.h>
+#endif
+
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic pop
 #endif
 
 #include "common/config-manager.h"

@@ -29,7 +29,22 @@
 #include "audio/fmopl.h"
 #include "common/mutex.h"
 
+#if defined(__clang__) && defined(__has_warning)
+#  if __has_warning("-Wnewline-eof")
+#    define COMPILER_HAS_NEWLINE_EOF_WARNING
+#  endif
+#endif
+
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnewline-eof"
+#endif
+
 #include <RetroWaveLib/RetroWave.h>
+
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic pop
+#endif
 
 namespace OPL {
 namespace RetroWaveOPL3 {
