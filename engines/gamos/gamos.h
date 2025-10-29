@@ -670,6 +670,7 @@ protected:
 	byte FUN_0040881c(const Common::Array<byte> &arr);
 
 
+	void FUN_0040279c(uint8 val, bool rnd);
 	void FUN_004025d0();
 	bool FUN_0040705c(int a, int b);
 

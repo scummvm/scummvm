@@ -2468,13 +2468,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 	case 28:
 		arg1 = vm->pop32();
-		//FUN_0040279c(arg1, false);
+		FUN_0040279c(arg1, false);
 		vm->EAX.setVal(1);
 		break;
 
 	case 29:
 		arg1 = vm->pop32();
-		//FUN_0040279c(arg1, true);
+		FUN_0040279c(arg1, true);
 		vm->EAX.setVal(1);
 		break;
 
@@ -3952,6 +3952,18 @@ void Actions::parse(const byte *data, size_t dataSize) {
 	}
 }
 
+void GamosEngine::FUN_0040279c(uint8 val, bool rnd) {
+	FUN_004025d0();
+
+	if (rnd)
+		val = _thing2[val].field_1[ 1 + rndRange16(_thing2[val].field_1[0]) ];
+
+	PTR_00417218->fld_2 = val;
+	PTR_00417218->fld_3 = 0x10;
+
+	ObjectAction &act = _objectActions[val];
+	executeScript(1, PTR_00417218->blk, PTR_00417218->pos, nullptr, -1, nullptr, &act, act.onCreateAddress);
+}
 
 void GamosEngine::FUN_004025d0() {
 	if (PTR_00417218->fld_2 != 0xfe) {
