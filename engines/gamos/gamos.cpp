@@ -4381,11 +4381,26 @@ void GamosEngine::dumpActions() {
 
 		i++;
 	}
+
+	i = 0;
+	for (const Actions &act : _subtitleActions) {
+		if (act.flags & Actions::HAS_CONDITION) {
+			t = VM::disassembly(act.conditionAddress);
+			f.writeString(Common::String::format("SubAct %d condition : \n%s\n", i, t.c_str()));
+		}
+
+		if (act.flags & Actions::HAS_FUNCTION) {
+			t = VM::disassembly(act.functionAddress);
+			f.writeString(Common::String::format("SubAct %d action : \n%s\n", i, t.c_str()));
+		}
+
+		i++;
+	}
+
 	f.flush();
 	f.close();
 
 	warning("Actions saved into actions_%d.txt", _currentModuleID);
 }
-
 
 } // End of namespace Gamos
