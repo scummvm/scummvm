@@ -1988,7 +1988,7 @@ bool GamosEngine::FUN_00402fb4() {
 						bool tmp = false;
 						for (int i = 0; i < 8; i++) {
 							if ((PTR_00417214->unk1 >> 8) & (1 << i)) {
-								//DAT_004173ec = ((i & 3) + ivr8) & 3;
+								DAT_004173ec = ((i & 3) + ivr8) & 3;
 								int fncid = ((i & 3) + ivr8) & 3;
 								if (i > 3)
 									fncid += 4;
@@ -2325,9 +2325,31 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
 		break;
+	case 7:
+		arg1 = vm->pop32();
+		if ((PTR_00417218->fld_4 & 0x40) == 0 || (PTR_00417218->fld_4 & 8) != (arg1 & 8))
+			vm->EAX.setVal(0);
+		else
+			vm->EAX.setVal( FUN_0040705c(arg1 & 7, PTR_00417218->fld_4 & 7) ? 1 : 0 );
+		break;
+	case 8:
+		arg1 = vm->pop32();
+		vm->EAX.setVal( PTR_00417218->fld_5 == arg1 ? 1 : 0 );
+		break;
 	case 9:
 		arg1 = vm->pop32();
 		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
+		break;
+	case 10:
+		vm->EAX.setVal( PTR_00417218->fld_2 == 0xfe ? 1 : 0 );
+		break;
+	case 11:
+		arg1 = vm->pop32();
+		vm->EAX.setVal( PTR_00417218->fld_2 == arg1 ? 1 : 0 );
+		break;
+	case 12:
+		arg1 = vm->pop32();
+		vm->EAX.setVal( (1 << (PTR_00417218->fld_2 & 7)) & _thing2[arg1].field_0[PTR_00417218->fld_2 >> 3] );
 		break;
 	case 13: {
 		VM::ValAddr regRef = vm->popReg();
@@ -2349,6 +2371,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		loadModule(arg1);
 		setNeedReload();
 		vm->EAX.setVal(1);
+		break;
+
+	case 15:
+		arg1 = vm->pop32();
+		switchToGameScreen(arg1, false);
+		setNeedReload();
 		break;
 
 	case 16:
@@ -2435,6 +2463,18 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 	case 27:
 		FUN_004025d0();
+		vm->EAX.setVal(1);
+		break;
+
+	case 28:
+		arg1 = vm->pop32();
+		//FUN_0040279c(arg1, false);
+		vm->EAX.setVal(1);
+		break;
+
+	case 29:
+		arg1 = vm->pop32();
+		//FUN_0040279c(arg1, true);
 		vm->EAX.setVal(1);
 		break;
 
@@ -2643,6 +2683,22 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			vm->EAX.setVal(1);
 		break;
 
+	case 40:
+		arg1 = vm->pop32();
+		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412ca0) != 0)
+			vm->EAX.setVal(1);
+		else
+			vm->EAX.setVal(0);
+		break;
+
+	case 41:
+		arg1 = vm->pop32();
+		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412c9c) != 0)
+			vm->EAX.setVal(1);
+		else
+			vm->EAX.setVal(0);
+		break;
+
 	case 42: {
 		arg1 = vm->pop32();
 		if (DAT_00417804 != 0) {
@@ -2698,6 +2754,15 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		vm->EAX.setVal( (PTR_00417218->flags & arg1) ? 1 : 0 );
 		break;
+
+	case 46: {
+		VM::ValAddr a1 = vm->popReg();
+		VM::ValAddr a2 = vm->popReg();
+		Common::String s = vm->getString(a1);
+		for(int i = 0; i <= s.size(); i++) {
+			vm->setMem8(a2.getMemType(), a2.getOffset() + i, s.c_str()[i]);
+		}
+	} break;
 
 	case 47: {
 		arg1 = vm->pop32();
@@ -2783,6 +2848,32 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	}
 	break;
 
+	case 50:
+		arg1 = vm->pop32();
+		PTR_00417388 = _thing2[arg1].field_0.data();
+		vm->EAX.setVal(1);
+		break;
+
+	case 51:
+		PTR_00417388 = nullptr;
+		vm->EAX.setVal(1);
+		break;
+
+	case 52:
+		arg1 = vm->pop32();
+		/* HELP */
+		//FUN_0040c614(arg1);
+		vm->EAX.setVal(1);
+		break;
+
+	case 53: {
+		arg1 = vm->pop32();
+		VM::ValAddr adr = vm->popReg();
+		uint kode = vm->getMem8(adr);
+		_messageProc._keyCodes[arg1] = kode;
+		vm->EAX.setVal(kode);
+	} break;
+
 	case 54:
 		arg1 = vm->pop32();
 		vm->EAX.setVal(rndRange16(arg1));
@@ -2796,6 +2887,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	}
 	break;
 
+	case 56: {
+		VM::ValAddr regRef = vm->popReg(); //implement
+		Common::String str = vm->getString(regRef);
+		warning("Create process: %s", str.c_str());
+		vm->EAX.setVal(1);
+	} break;
+
 	case 57: {
 		VM::ValAddr regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef);
@@ -2804,6 +2902,48 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			vm->EAX.setVal(1);
 		} else
 			vm->EAX.setVal(0);
+	} break;
+
+	case 58: {
+		arg1 = vm->pop32();
+		/* CD AUDIO */
+		vm->EAX.setVal(1);
+	} break;
+
+	case 59: {
+		arg1 = vm->pop32();
+		/* CD AUDIO */
+		vm->EAX.setVal(1);
+	} break;
+
+	case 60:
+		arg1 = vm->pop32();
+		if (arg1 == 0)
+			_scrollTrackObj = -1;
+		else
+			_scrollTrackObj = _curObjIndex;
+		vm->EAX.setVal(1);
+		break;
+
+	case 61: {
+		arg1 = vm->pop32();
+		VM::ValAddr adr = vm->popReg();
+		Common::String tmp = vm->getString(adr);
+
+		int val1 = 0, val2 = 0, val3 = 0, val4 = 0;
+		sscanf(tmp.c_str(), "%d %d %d %d", &val1, &val2, &val3, &val4);
+
+		if (arg1 == 0) {
+			_scrollBorderL = val1;
+			_scrollBorderR = val2;
+			_scrollBorderU = val3;
+			_scrollBorderB = val4;
+		} else {
+			_scrollSpeed = val1;
+			_scrollCutoff = val2;
+			_scrollSpeedReduce = val3;
+		}
+		vm->EAX.setVal(1);
 	} break;
 
 	default:
@@ -3990,6 +4130,18 @@ Common::String GamosEngine::gamos_itoa(int n, uint radix) {
 		tmp.setChar(c, j);
 	}
 	return tmp;
+}
+
+
+bool GamosEngine::FUN_0040705c(int a, int b) {
+	static const int arr[8] = {0, 7, 6, 5, 4, 3, 2, 1};
+	int v = DAT_004173ec;
+	if (v > 3) {
+		v -= 4;
+		a = arr[a];
+	}
+
+	return ((a + v * 2) & 7) == b;
 }
 
 int GamosEngine::txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y) {

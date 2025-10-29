@@ -379,6 +379,8 @@ private:
 
 	bool _midiStarted = false;
 
+	uint8 DAT_004173ec = 0;
+
 	/* Data2 */
 
 	Common::String _stateExt;
@@ -669,6 +671,7 @@ protected:
 
 
 	void FUN_004025d0();
+	bool FUN_0040705c(int a, int b);
 
 	int txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y);
 	void txtInputProcess(uint8 c);
