@@ -33,7 +33,7 @@ enum {
 	kConWOverlap = 20,
 	kConHOverlap = 20,
 	kConWPadding = 3,
-	kConHPadding = 4,
+	kConHPadding = 15,
 	kConOverscan = 3,
 	kConScrollStep = 12,
 };
@@ -123,7 +123,7 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
-		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
+		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height() + kConHPadding);
 	}
 
 	if (_wm->_mode & kWMModeWin95)
