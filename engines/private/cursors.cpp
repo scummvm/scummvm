@@ -60,21 +60,24 @@ void PrivateEngine::loadCursors() {
 		};
 
 		Common::WinResources *exe = nullptr;
+		Common::SeekableReadStream *exeStream = nullptr;
 		Common::ArchiveMemberList members;
 		Common::InstallShieldV3 installerArchive;
-		if (installerArchive.open("SUPPORT/PVTEYE.Z"))
-			if (_language == Common::JA_JPN)
-				exe = Common::WinResources::createFromEXE(installerArchive.createReadStreamForMember("PvteyeJ.EXE"));
-			else
-				exe = Common::WinResources::createFromEXE(installerArchive.createReadStreamForMember("PVTEYE.EXE"));
-		else  {
-			Common::File file;
-			if (!file.open("SUPPORT/PVTEYE.EX_")) {
+		if (installerArchive.open("SUPPORT/PVTEYE.Z")) {
+			const char *exeName = (_language == Common::JA_JPN) ? "PvteyeJ.EXE" : "PVTEYE.EXE";
+			exeStream = installerArchive.createReadStreamForMember(exeName);
+			if (exeStream == nullptr) {
+				error("%s not found", exeName);
+			}
+		} else {
+			Common::File *file = new Common::File();
+			if (!file->open("SUPPORT/PVTEYE.EX_")) {
 				error("PVTEYE.EX_ not found");
 			}
-			exe = Common::WinResources::createFromEXE(file.readStream(file.size()));
+			exeStream = file;
 		}
 
+		exe = Common::WinResources::createFromEXE(exeStream);
 		if (exe == nullptr) {
 			error("Executable not found");
 		}
@@ -97,6 +100,9 @@ void PrivateEngine::loadCursors() {
 				entry++;
 			}
 		}
+
+		delete exe;
+		delete exeStream;
 	} else {
 		const CursorEntry cursorIDReference[] = {
 			{ "kTurnLeft",  "k1", 133 },
