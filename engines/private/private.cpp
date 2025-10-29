@@ -22,6 +22,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "common/archive.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
@@ -175,27 +176,28 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 			return file2;
 	}
 
-	if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
+	Common::InstallShieldV3 installerArchive;
+	if (!installerArchive.open("SUPPORT/ASSETS.Z"))
 		error("Failed to open SUPPORT/ASSETS.Z");
 	// if the full game is used
 	if (!isDemo()) {
-		if (_installerArchive.hasFile("GAME.DAT"))
-			return _installerArchive.createReadStreamForMember("GAME.DAT");
-		if (_installerArchive.hasFile("GAME.WIN"))
-			return _installerArchive.createReadStreamForMember("GAME.WIN");
+		if (installerArchive.hasFile("GAME.DAT"))
+			return installerArchive.createReadStreamForMember("GAME.DAT");
+		if (installerArchive.hasFile("GAME.WIN"))
+			return installerArchive.createReadStreamForMember("GAME.WIN");
 		error("Unknown version");
 		return nullptr;
 	}
 
 	// if the demo from archive.org is used
-	if (_installerArchive.hasFile("GAME.TXT"))
-		return _installerArchive.createReadStreamForMember("GAME.TXT");
+	if (installerArchive.hasFile("GAME.TXT"))
+		return installerArchive.createReadStreamForMember("GAME.TXT");
 
 	// if the demo from the full retail CDROM is used
-	if (_installerArchive.hasFile("DEMOGAME.DAT"))
-		return _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
-	if (_installerArchive.hasFile("DEMOGAME.WIN"))
-		return _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
+	if (installerArchive.hasFile("DEMOGAME.DAT"))
+		return installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+	if (installerArchive.hasFile("DEMOGAME.WIN"))
+		return installerArchive.createReadStreamForMember("DEMOGAME.WIN");
 
 	error("Unknown version");
 	return nullptr;

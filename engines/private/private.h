@@ -22,7 +22,6 @@
 #ifndef PRIVATE_H
 #define PRIVATE_H
 
-#include "common/compression/installshieldv3_archive.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
@@ -178,7 +177,6 @@ public:
 	Audio::SoundHandle _bgSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
-	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
 	void restartGame();
