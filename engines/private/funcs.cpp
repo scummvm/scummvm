@@ -195,9 +195,6 @@ static void fLoadGame(ArgArray args) {
 	m.nextSetting = "";
 	m.flag1 = nullptr;
 	m.flag2 = nullptr;
-	if (g_private->_loadGameMask.surf)
-		g_private->_loadGameMask.surf->free();
-	delete g_private->_loadGameMask.surf;
 	g_private->_loadGameMask = m;
 	g_private->_masks.push_front(m);
 }
@@ -211,9 +208,6 @@ static void fSaveGame(ArgArray args) {
 	m.nextSetting = "";
 	m.flag1 = nullptr;
 	m.flag2 = nullptr;
-	if (g_private->_saveGameMask.surf)
-		g_private->_saveGameMask.surf->free();
-	delete g_private->_saveGameMask.surf;
 	g_private->_saveGameMask = m;
 	g_private->_masks.push_front(m);
 }
@@ -743,9 +737,6 @@ static void fSoundArea(ArgArray args) {
 		m.nextSetting = "";
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
-		if (g_private->_AMRadioArea.surf)
-			g_private->_AMRadioArea.surf->free();
-		delete g_private->_AMRadioArea.surf;
 		g_private->_AMRadioArea = m;
 		g_private->_masks.push_front(m);
 	} else if (n == "kPoliceRadio") {
@@ -754,9 +745,6 @@ static void fSoundArea(ArgArray args) {
 		m.nextSetting = "";
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
-		if (g_private->_policeRadioArea.surf)
-			g_private->_policeRadioArea.surf->free();
-		delete g_private->_policeRadioArea.surf;
 		g_private->_policeRadioArea = m;
 		g_private->_masks.push_front(m);
 	} else if (n == "kPhone") {
@@ -765,9 +753,6 @@ static void fSoundArea(ArgArray args) {
 		m.nextSetting = "";
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
-		if (g_private->_phoneArea.surf)
-			g_private->_phoneArea.surf->free();
-		delete g_private->_phoneArea.surf;
 		g_private->_phoneArea = m;
 		g_private->_masks.push_front(m);
 	} else
