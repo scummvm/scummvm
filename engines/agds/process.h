@@ -42,7 +42,7 @@ public:
 	enum Status { kStatusActive, kStatusPassive, kStatusDone, kStatusError };
 
 private:
-	typedef Common::Stack<int32> StackType;
+	using StackType = Common::Stack<int32>;
 
 	AGDSEngine *	_engine;
 	Common::String	_parentScreen;

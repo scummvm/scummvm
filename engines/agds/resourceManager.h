@@ -64,13 +64,13 @@ private:
 			return nullptr;
 		}
 	};
-	typedef Common::SharedPtr<ArchiveMember> ArchiveMemberPtr;
+	using ArchiveMemberPtr = Common::SharedPtr<ArchiveMember>;
 
 	class GrpFile : public Common::Archive
 	{
 		Common::File	_file;
 
-		typedef Common::HashMap<Common::String, ArchiveMemberPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MembersType;
+		using MembersType = Common::HashMap<Common::String, ArchiveMemberPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 		MembersType _members;
 
 	public:

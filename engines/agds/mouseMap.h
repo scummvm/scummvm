@@ -32,7 +32,7 @@ namespace AGDS {
 
 class AGDSEngine;
 struct Region;
-typedef Common::SharedPtr<Region> RegionPtr;
+using RegionPtr = Common::SharedPtr<Region>;
 
 struct MouseRegion {
 	int			id 			= -1;

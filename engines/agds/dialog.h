@@ -32,7 +32,7 @@ namespace AGDS {
 class AGDSEngine;
 
 class Dialog {
-	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DialogDefsType;
+	using DialogDefsType = Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 
 private:
 	struct Sound {
@@ -46,7 +46,7 @@ private:
 		Sound(const Common::String &name, const Common::String &sample, int step): Name(name), Sample(sample), Step(step) {
 		}
 	};
-	typedef Common::Array<Sound> SoundsType;
+	using SoundsType = Common::Array<Sound>;
 
 	AGDSEngine * 				_engine;
 	DialogDefsType				_dialogDefs;
