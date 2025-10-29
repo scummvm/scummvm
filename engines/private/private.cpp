@@ -54,6 +54,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
 	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
 	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
+	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -129,6 +130,7 @@ PrivateEngine::~PrivateEngine() {
 	delete Gen::g_vm;
 	delete Settings::g_setts;
 
+	delete _defaultCursor;
 	for (uint i = 0; i < _cursors.size(); i++) {
 		if (_cursors[i].winCursorGroup == nullptr) {
 			delete _cursors[i].cursor;

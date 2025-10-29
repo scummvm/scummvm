@@ -43,6 +43,8 @@ struct CursorEntry {
 };
 
 void PrivateEngine::loadCursors() {
+	_defaultCursor = Graphics::makeDefaultWinCursor();
+
 	if (_platform == Common::kPlatformWindows) {
 		const CursorEntry cursorIDReference[] = {
 			{ "kTurnLeft",  "k1", 23 },
@@ -138,7 +140,7 @@ void PrivateEngine::changeCursor(const Common::String &cursor) {
 	}
 
 	if (cursor == "default") {
-		CursorMan.replaceCursor(Graphics::makeDefaultWinCursor());
+		CursorMan.replaceCursor(_defaultCursor);
 	} else {
 		for (uint i = 0; i < _cursors.size(); i++) {
 			if (_cursors[i].name == cursor || _cursors[i].aname == cursor) {
