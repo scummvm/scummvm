@@ -227,7 +227,7 @@ public:
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
-	Graphics::Surface *decodeImage(const Common::String &file, byte **palette);
+	Graphics::Surface *decodeImage(const Common::String &file, byte **palette, bool *isNewPalette);
 	//byte *decodePalette(const Common::String &name);
 	void remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette);
 	void loadImage(const Common::String &file, int x, int y);
