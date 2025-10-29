@@ -100,7 +100,7 @@ private:
 	void createRotated();
 
 public:
-	Object(const Common::String &name, Common::SeekableReadStream * stream);
+	Object(const Common::String &name, Common::SeekableReadStream &stream);
 	~Object();
 
 	bool allowInitialise() const {

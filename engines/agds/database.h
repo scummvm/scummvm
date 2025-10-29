@@ -57,13 +57,13 @@ private:
 
 public:
 	bool open(const Common::String &filename);
-	bool open(const Common::String &filename, Common::SeekableReadStream *stream);
+	bool open(const Common::String &filename, Common::SeekableReadStream &stream);
 	Common::Array<Common::String> getEntries() const;
 
 	Common::SeekableReadStream * getEntry(const Common::String &name) const;
-	Common::SeekableReadStream *getEntry(Common::SeekableReadStream *parent, const Common::String &name) const;
+	Common::SeekableReadStream *getEntry(Common::SeekableReadStream &parent, const Common::String &name) const;
 
-	static void write(Common::WriteStream *stream, const Common::HashMap<Common::String, Common::Array<uint8>> & entries);
+	static void write(Common::WriteStream &stream, const Common::HashMap<Common::String, Common::Array<uint8>> & entries);
 };
 
 

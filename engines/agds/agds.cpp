@@ -163,13 +163,13 @@ bool AGDSEngine::load() {
 		Database patch;
 		patch.open("patch.adb");
 
-		loadPatches(&file, patch);
+		loadPatches(file, patch);
 	}
 	{
-		Common::File * file = new Common::File();
+		Common::ScopedPtr<Common::File> file(new Common::File());
 		file->open("jokes.chr");
 		_jokes = new Character(this, "jokes");
-		_jokes->load(file);
+		_jokes->load(*file);
 	}
 
 	return true;
@@ -177,14 +177,13 @@ bool AGDSEngine::load() {
 
 RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 	debug("loading region %s", name.c_str());
-	Common::SeekableReadStream *stream = _data.getEntry(name);
-	if (!stream)
+	Common::ScopedPtr<Common::SeekableReadStream>stream(_data.getEntry(name));
+	if (!stream) {
 		error("no database entry for %s\n", name.c_str());
+		return {};
+	}
 
-	RegionPtr region(new Region(name, stream));
-	delete stream;
-
-	return region;
+	return RegionPtr(new Region(name, *stream));
 }
 
 Common::String AGDSEngine::loadText(const Common::String &entryName) {
@@ -196,16 +195,15 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
 	debug("loadObject %s %s, allow init: %d", name.c_str(), prototype.c_str(), allowInitialise);
 	Common::String clone = prototype.empty() ? name : prototype;
-	Common::SeekableReadStream *stream = _data.getEntry(clone);
+	Common::ScopedPtr<Common::SeekableReadStream>stream(_data.getEntry(clone));
 	if (!stream)
 		error("no database entry for %s\n", clone.c_str());
 
-	ObjectPtr object(new Object(name, stream));
+	ObjectPtr object(new Object(name, *stream));
 	object->allowInitialise(allowInitialise);
 	if (!prototype.empty()) {
 		object->persistent(false);
 	}
-	delete stream;
 	return object;
 }
 
@@ -891,7 +889,8 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacterObject = object;
 
 	_currentCharacter = new Character(this, id);
-	_currentCharacter->load(_resourceManager.getResource(loadText(filename)));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(loadText(filename)));
+	_currentCharacter->load(*stream);
 	_currentCharacter->associate(object);
 }
 
@@ -1103,7 +1102,7 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
+void AGDSEngine::loadPatches(Common::SeekableReadStream &file, Database & db) {
 	debug("loading patches");
 	_patches.clear();
 	_objectPatches.clear();
@@ -1116,11 +1115,11 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 		Common::ScopedPtr<Common::SeekableReadStream> patchStream(db.getEntry(file, name));
 		if (patchStream->size() != ObjectPatch::Size) {
 			PatchPtr patch(new Patch());
-			patch->load(patchStream.get());
+			patch->load(*patchStream);
 			_patches[name] = patch;
 		} else {
 			ObjectPatchPtr patch(new ObjectPatch());
-			patch->load(patchStream.get());
+			patch->load(*patchStream);
 			_objectPatches[name] = patch;
 		}
 	}
@@ -1131,13 +1130,13 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	//saveAutosaveIfEnabled();
 
 	auto fileName = getSaveStateName(slot);
-	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(fileName);
+	Common::ScopedPtr<Common::InSaveFile> saveFile(_saveFileMan->openForLoading(fileName));
 
 	if (!saveFile)
 		return Common::kReadingFailed;
 
 	Database db;
-	if (!db.open(fileName, saveFile))
+	if (!db.open(fileName, *saveFile))
 		return Common::kReadingFailed;
 
 	stopAmbientSound();
@@ -1146,8 +1145,8 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 	{
 		// Compiled version (should be 2)
-		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(saveFile, "__agds_ver"));
-		int version = agds_ver->readUint32LE();
+		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(*saveFile, "__agds_ver"));
+		uint version = agds_ver->readUint32LE();
 		debug("version: %d", version);
 		if (version != 2) {
 			warning("wrong engine version (%d)", version);
@@ -1162,15 +1161,15 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 	{
 		// Current character
-		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(saveFile, "__agds_c"));
-		Common::String object = readString(agds_c.get());
-		Common::String filename = readString(agds_c.get());
-		Common::String id = readString(agds_c.get());
+		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(*saveFile, "__agds_c"));
+		Common::String object = readString(*agds_c);
+		Common::String filename = readString(*agds_c);
+		Common::String id = readString(*agds_c);
 		debug("savegame character %s %s -> %s %s", object.c_str(), filename.c_str(), filename.c_str(), id.c_str());
 		loadCharacter(id, filename, object);
 		auto character = getCharacter(id);
 		if (character) {
-			character->loadState(agds_c.get());
+			character->loadState(*agds_c);
 			character->visible(true);
 		} else
 			warning("no character");
@@ -1179,18 +1178,18 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	Common::String screenName;
 	{
 		// Palette and screen name
-		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(saveFile, "__agds_s"));
-		screenName = readString(agds_s.get());
+		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(*saveFile, "__agds_s"));
+		screenName = readString(*agds_s);
 	}
 
 	{
 		// Global vars
 		_globals.clear();
-		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(saveFile, "__agds_v"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(*saveFile, "__agds_v"));
 		uint32 n = agds_v->readUint32LE();
 		debug("reading %u vars...", n);
 		while(n--) {
-			Common::String name = readString(agds_v.get());
+			Common::String name = readString(*agds_v);
 			int value = agds_v->readSint32LE();
 			debug("setting var %s to %d", name.c_str(), value);
 			setGlobal(name, value);
@@ -1199,25 +1198,25 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 	{
 		// System vars
-		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(saveFile, "__agds_d"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(*saveFile, "__agds_d"));
 		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
 			Common::String & name = _systemVarList[i];
-			_systemVars[name]->read(agds_d.get());
+			_systemVars[name]->read(*agds_d);
 		}
 	}
 
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
-	loadPatches(saveFile, db);
+	loadPatches(*saveFile, db);
 	loadScreen(screenName, ScreenLoadingType::Normal, false);
 
 	{
 		// Saved ambient sound
-		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(saveFile, "__agds_a"));
-		auto resource = readString(agds_a.get());
+		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(*saveFile, "__agds_a"));
+		auto resource = readString(*agds_a);
 		auto filename = loadText(resource);
-		auto phaseVar = readString(agds_a.get());
+		auto phaseVar = readString(*agds_a);
 		uint volume = agds_a->readUint32LE();
 		uint type = agds_a->readUint32LE();
 		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
@@ -1227,11 +1226,10 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		debug("ambient sound id = %d", _ambientSoundId);
 	}
 	{
-		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(saveFile, "__agds_i"));
-		_inventory.load(agds_i.get());
+		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(*saveFile, "__agds_i"));
+		_inventory.load(*agds_i);
 	}
 
-	delete saveFile;
 	return Common::kNoError;
 }
 
@@ -1249,7 +1247,7 @@ void AGDSEngine::loadNextScreen() {
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug("saveGameState %d %s autosave: %d", slot, desc.c_str(), isAutosave);
 	auto fileName = getSaveStateName(slot);
-	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName, false);
+	Common::ScopedPtr<Common::OutSaveFile> saveFile(getSaveFileManager()->openForSaving(fileName, false));
 
 	if (!saveFile)
 		return Common::kWritingFailed;
@@ -1269,12 +1267,12 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		writeString(&stream, _currentCharacterObject);
-		writeString(&stream, _currentCharacterFilename);
-		writeString(&stream, _currentCharacterName);
+		writeString(stream, _currentCharacterObject);
+		writeString(stream, _currentCharacterFilename);
+		writeString(stream, _currentCharacterName);
 		auto character = getCharacter(_currentCharacterName);
 		if (character) {
-			character->saveState(&stream);
+			character->saveState(stream);
 		} else
 			warning("no character to save");
 
@@ -1288,7 +1286,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		writeString(&stream, _currentScreenName);
+		writeString(stream, _currentScreenName);
 		debug("saving screen name: %s", _currentScreenName.c_str());
 		char palette[0x300];
 		memset(palette, 0xaa, sizeof(palette));
@@ -1300,7 +1298,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
 			Common::String & name = _systemVarList[i];
-			_systemVars[name]->write(&stream);
+			_systemVars[name]->write(stream);
 		}
 		entries["__agds_d"].assign(stream.getData(), stream.getData() + stream.size());
 	}
@@ -1311,7 +1309,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 		stream.writeUint32LE(n);
 		debug("saving %u vars...", n);
 		for(auto & global : _globals) {
-			writeString(&stream, global._key);
+			writeString(stream, global._key);
 			stream.writeUint32LE(global._value);
 		}
 		entries["__agds_v"].assign(stream.getData(), stream.getData() + stream.size());
@@ -1319,7 +1317,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		_inventory.save(&stream);
+		_inventory.save(stream);
 		entries["__agds_i"].assign(stream.getData(), stream.getData() + stream.size());
 	}
 
@@ -1328,11 +1326,11 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 		debug("ambient sound id: %d", _ambientSoundId);
 		auto sound = _soundManager.find(_ambientSoundId);
 		if (sound) {
-			writeString(&stream, sound->resource);
-			writeString(&stream, sound->phaseVar);
+			writeString(stream, sound->resource);
+			writeString(stream, sound->phaseVar);
 		} else {
-			writeString(&stream, Common::String());
-			writeString(&stream, Common::String());
+			writeString(stream, Common::String());
+			writeString(stream, Common::String());
 		}
 		stream.writeUint32LE(70); //volume
 		stream.writeUint32LE(30); //type
@@ -1342,19 +1340,18 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	for(auto & objectPatch : _objectPatches) {
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		objectPatch._value->save(&stream);
+		objectPatch._value->save(stream);
 		entries[objectPatch._key].assign(stream.getData(), stream.getData() + stream.size());
 	}
 
 	for(auto & patch : _patches) {
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		patch._value->save(&stream);
+		patch._value->save(stream);
 		entries[patch._key].assign(stream.getData(), stream.getData() + stream.size());
 	}
 
-	Database::write(saveFile, entries);
+	Database::write(*saveFile, entries);
 
-	delete saveFile;
 	return Common::kNoError;
 }
 

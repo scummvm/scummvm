@@ -101,8 +101,8 @@ public:
 	Common::String loadText(const Common::String & name) const;
 };
 
-Common::String readString(Common::ReadStream *stream, uint size = 32);
-void writeString(Common::WriteStream *stream, const Common::String &string, uint size = 32);
+Common::String readString(Common::ReadStream &stream, uint size = 32);
+void writeString(Common::WriteStream &stream, const Common::String &string, uint size = 32);
 
 } // End of namespace AGDS
 

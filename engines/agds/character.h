@@ -64,13 +64,13 @@ class Character {
 	struct AnimationDescription {
 		struct Frame {
 			int x, y;
-			int w, h;
+			uint w, h;
 		};
 
 		Common::String 			filename;
 		Common::Array<Frame> 	frames;
 	};
-	Common::HashMap<int, AnimationDescription> _animations;
+	Common::HashMap<uint, AnimationDescription> _animations;
 	const AnimationDescription * _description;
 
 	bool animate(int direction, int speed, bool jokes);
@@ -95,9 +95,9 @@ public:
 		return _object;
 	}
 
-	void load(Common::SeekableReadStream* stream);
-	void loadState(Common::ReadStream* stream);
-	void saveState(Common::WriteStream* stream) const;
+	void load(Common::SeekableReadStream& stream);
+	void loadState(Common::ReadStream& stream);
+	void saveState(Common::WriteStream& stream) const;
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;

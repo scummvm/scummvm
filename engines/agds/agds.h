@@ -283,7 +283,7 @@ public:
 
 private:
 	void stopAmbientSound();
-	void loadPatches(Common::SeekableReadStream *file, Database & db);
+	void loadPatches(Common::SeekableReadStream &file, Database & db);
 
 	typedef Common::HashMap<int, Graphics::ManagedSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;

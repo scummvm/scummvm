@@ -22,7 +22,6 @@
 
 #include "agds/systemVariable.h"
 #include "common/array.h"
-#include "common/debug.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -44,12 +43,12 @@ void IntegerSystemVariable::setInteger(int value) {
 	_value = value;
 }
 
-void IntegerSystemVariable::read(Common::ReadStream * stream) {
-	_value = stream->readUint32LE();
+void IntegerSystemVariable::read(Common::ReadStream &stream) {
+	_value = stream.readSint32LE();
 }
 
-void IntegerSystemVariable::write(Common::WriteStream * stream) const {
-	stream->writeUint32LE(_value);
+void IntegerSystemVariable::write(Common::WriteStream &stream) const {
+	stream.writeSint32LE(_value);
 }
 
 const Common::String &StringSystemVariable::getString() const {
@@ -68,21 +67,21 @@ void StringSystemVariable::setInteger(int value) {
 	error("invalid type");
 }
 
-void StringSystemVariable::read(Common::ReadStream * stream) {
-	byte len = stream->readByte();
+void StringSystemVariable::read(Common::ReadStream &stream) {
+	byte len = stream.readByte();
 	if (len == 0)
 		error("invalid string var length");
 	Common::Array<char> str(len);
-	stream->read(str.data(), str.size());
+	stream.read(str.data(), str.size());
 	_value = Common::String(str.data(), len - 1);
 }
 
-void StringSystemVariable::write(Common::WriteStream * stream) const {
+void StringSystemVariable::write(Common::WriteStream &stream) const {
 	uint len = _value.size() + 1;
 	if (len > 255)
 		error("variable too long, %u", len);
-	stream->writeByte(len);
-	stream->write(_value.c_str(), len);
+	stream.writeByte(len);
+	stream.write(_value.c_str(), len);
 }
 
 } // namespace AGDS

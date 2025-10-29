@@ -60,8 +60,8 @@ public:
 	Inventory(AGDSEngine* engine);
 	~Inventory();
 
-	void load(Common::ReadStream* stream);
-	void save(Common::WriteStream* stream) const;
+	void load(Common::ReadStream& stream);
+	void save(Common::WriteStream& stream) const;
 
 	bool enabled() const {
 		return _enabled;

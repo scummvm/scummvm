@@ -188,12 +188,12 @@ void Inventory::clear() {
 	}
 }
 
-void Inventory::load(Common::ReadStream* stream) {
+void Inventory::load(Common::ReadStream& stream) {
 	clear();
 	for(int i = 0; i < kMaxSize; ++i) {
 		Common::String name = readString(stream);
-		int refcount = stream->readUint32LE();
-		int objectPtr = stream->readUint32LE();
+		int refcount = stream.readUint32LE();
+		int objectPtr = stream.readUint32LE();
 		if (!name.empty() && refcount) {
 			debug("load inventory object: %s %d %d", name.c_str(), refcount, objectPtr);
 			auto & entry = _entries[i];
@@ -203,11 +203,11 @@ void Inventory::load(Common::ReadStream* stream) {
 	}
 }
 
-void Inventory::save(Common::WriteStream* stream) const {
+void Inventory::save(Common::WriteStream& stream) const {
 	for(auto & entry : _entries) {
 		writeString(stream, entry.name);
-		stream->writeUint32LE(entry.hasObject? 1: 0);
-		stream->writeSint32LE(entry.hasObject? -1: 0);
+		stream.writeUint32LE(entry.hasObject? 1: 0);
+		stream.writeSint32LE(entry.hasObject? -1: 0);
 	}
 }
 
