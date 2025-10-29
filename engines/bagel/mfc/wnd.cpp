@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_SETFONT()
 	ON_WM_SETCURSOR()
 	ON_WM_SHOWWINDOW()
+	ON_WM_QUERYNEWPALETTE()
 END_MESSAGE_MAP()
 
 CWnd *CWnd::FromHandlePermanent(HWND hWnd) {
@@ -747,7 +748,11 @@ bool CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT 
 	}
 	break;
 
-	case AfxSig_wv: // AfxSig_bv, AfxSig_wv
+	case AfxSig_bv:
+		lResult = (this->*mmf.pfn_bv)() ? 1 : 0;
+		break;
+
+	case AfxSig_wv:
 		lResult = (this->*mmf.pfn_wv)();
 		break;
 
@@ -1249,6 +1254,12 @@ HWND CWnd::Detach() {
 
 	m_hWnd = nullptr;
 	return hWnd;
+}
+
+bool CWnd::OnQueryNewPalette() {
+	Invalidate();
+	UpdateWindow();
+	return true;
 }
 
 } // namespace MFC

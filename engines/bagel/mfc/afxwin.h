@@ -444,6 +444,7 @@ union MessageMapFunctions {
 	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, uint16 *);      // force return true
 	int (AFX_MSG_CALL CWnd:: *pfn_iis)(int, uint16 *);
 	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
+	bool(AFX_MSG_CALL CWnd:: *pfn_bv)();
 	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wv)();
 	void (AFX_MSG_CALL CWnd:: *pfn_vPOS)(WINDOWPOS *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vCALC)(bool, NCCALCSIZE_PARAMS *);
@@ -1211,9 +1212,6 @@ protected:
 	afx_msg bool OnQueryEndSession() {
 		return false;
 	}
-	afx_msg bool OnQueryNewPalette() {
-		return false;
-	}
 	afx_msg bool OnQueryOpen() {
 		return false;
 	}
@@ -1228,6 +1226,7 @@ protected:
 	afx_msg unsigned int OnQueryUIState() {
 		return 0;
 	}
+	afx_msg bool OnQueryNewPalette();
 
 	// Nonclient-Area message handler member functions
 	afx_msg bool OnNcActivate(bool bActive) {
