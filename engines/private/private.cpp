@@ -153,6 +153,14 @@ PrivateEngine::~PrivateEngine() {
 		}
 		delete _cursors[i].winCursorGroup;
 	}
+
+	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
+		const MaskInfo &m = *it;
+		if (m.surf != nullptr) {
+			m.surf->free();
+			delete m.surf;
+		}
+	}
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
@@ -478,60 +486,34 @@ void PrivateEngine::initFuncs() {
 }
 
 void PrivateEngine::clearAreas() {
+	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
+		const MaskInfo &m = *it;
+		if (m.surf != nullptr) {
+			m.surf->free();
+			delete m.surf;
+		}
+	}
+
 	_exits.clear();
 	_masks.clear();
 	_locationMasks.clear();
 	_memoryMasks.clear();
 
-	if (_loadGameMask.surf)
-		_loadGameMask.surf->free();
-	delete _loadGameMask.surf;
 	_loadGameMask.clear();
-
-	if (_saveGameMask.surf)
-		_saveGameMask.surf->free();
-	delete _saveGameMask.surf;
 	_saveGameMask.clear();
-
-	if (_policeRadioArea.surf)
-		_policeRadioArea.surf->free();
-	delete _policeRadioArea.surf;
 	_policeRadioArea.clear();
-
-	if (_AMRadioArea.surf)
-		_AMRadioArea.surf->free();
-	delete _AMRadioArea.surf;
 	_AMRadioArea.clear();
-
-	if (_phoneArea.surf)
-		_phoneArea.surf->free();
-	delete _phoneArea.surf;
 	_phoneArea.clear();
-
-	if (_dossierNextSuspectMask.surf)
-		_dossierNextSuspectMask.surf->free();
-	delete _dossierNextSuspectMask.surf;
 	_dossierNextSuspectMask.clear();
-
-	if (_dossierPrevSuspectMask.surf)
-		_dossierPrevSuspectMask.surf->free();
-	delete _dossierPrevSuspectMask.surf;
 	_dossierPrevSuspectMask.clear();
-
-	if (_dossierNextSheetMask.surf)
-		_dossierNextSheetMask.surf->free();
-	delete _dossierNextSheetMask.surf;
 	_dossierNextSheetMask.clear();
-
-	if (_dossierPrevSheetMask.surf)
-		_dossierPrevSheetMask.surf->free();
-	delete _dossierPrevSheetMask.surf;
 	_dossierPrevSheetMask.clear();
 
 	for (uint d = 0 ; d < 3; d++) {
-		if (_safeDigitArea[d].surf)
+		if (_safeDigitArea[d].surf) {
 			_safeDigitArea[d].surf->free();
-		delete _safeDigitArea[d].surf;
+			delete _safeDigitArea[d].surf;
+		}
 		_safeDigitArea[d].clear();
 		_safeDigit[d] = 0;
 		_safeDigitRect[d] = Common::Rect(0, 0);
@@ -905,9 +887,7 @@ bool PrivateEngine::selectDiaryPrevPage(Common::Point mousePos) {
 bool PrivateEngine::selectMemory(const Common::Point &mousePos) {
 	for (uint i = 0; i < _memoryMasks.size(); i++) {
 		if (inMask(_memoryMasks[i].surf, mousePos)) {
-			_masks.clear();
-			_memoryMasks.clear();
-			_exits.clear();
+			clearAreas();
 			_nextMovie = _diaryPages[_currentDiaryPage].memories[i].movie;
 			_nextSetting = "kDiaryMiddle";
 			return true;
