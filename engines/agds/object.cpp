@@ -34,7 +34,7 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream *stream) : _name(name), _stringTableLoaded(false),
+Object::Object(const Common::String &name, Common::SeekableReadStream &stream) : _name(name), _stringTableLoaded(false),
                                                                                  _picture(), _rotatedPicture(), _region(),
                                                                                  _animation(), _mouseCursor(),
                                                                                  _pos(), _z(10), _rotation(0),
@@ -44,20 +44,20 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _alpha(255), _scale(100), _locked(0), _alive(true),
 																				 _persistent(true), _allowInitialise(true),
 																				 _ignoreRegion(false) {
-	uint16 id = stream->readUint16LE();
+	uint16 id = stream.readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
-	uint16 dataSize = stream->readUint16LE();
+	uint16 dataSize = stream.readUint16LE();
 	if (dataSize != 0)
 		error("implement me: object with data (%u/0x%04x)", dataSize, dataSize);
-	uint16 codeSize = stream->readUint16LE();
-	uint8 flags = stream->readByte();
+	uint16 codeSize = stream.readUint16LE();
+	uint8 flags = stream.readByte();
 	if (flags != 1)
 		error("implement me: no flags handling yet");
 
 	debug("object code size %u", codeSize);
 	_code.resize(codeSize);
-	stream->read(_code.data(), _code.size());
+	stream.read(_code.data(), _code.size());
 }
 
 Object::~Object() {

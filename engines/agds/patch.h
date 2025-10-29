@@ -42,14 +42,14 @@ struct ObjectPatch {
 	Common::String text;
 	Common::String region;
 	int z;
-	void load(Common::ReadStream *stream);
-	void save(Common::WriteStream *stream) const;
+	void load(Common::ReadStream &stream);
+	void save(Common::WriteStream &stream) const;
 };
 
 struct Patch {
 	struct Object {
 		Common::String 	name;
-		int				flag;
+		int16			flag;
 
 		Object(const Common::String &n, int f): name(n), flag(f) {}
 	};
@@ -67,8 +67,8 @@ struct Patch {
 	Common::String defaultMouseCursor;
 	Common::Array<Object> objects;
 
-	void load(Common::ReadStream *stream);
-	void save(Common::WriteStream *stream);
+	void load(Common::ReadStream &stream);
+	void save(Common::WriteStream &stream);
 	void setFlag(const Common::String & name, int flag);
 	int getFlag(const Common::String & name) const;
 	int incRef(const Common::String & name);

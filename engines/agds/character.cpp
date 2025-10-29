@@ -28,7 +28,6 @@
 #include "agds/resourceManager.h"
 #include "common/array.h"
 #include "common/debug.h"
-#include "common/error.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -40,7 +39,8 @@
 namespace AGDS {
 
 Character::Character(AGDSEngine * engine, const Common::String & name):
-	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
+	_engine(engine), _object(), _animation(nullptr), _jokes(false),
+	_name(name),
 	_enabled(true), _visible(false), _stopped(false), _shown(false),
 	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
@@ -48,10 +48,10 @@ Character::Character(AGDSEngine * engine, const Common::String & name):
 Character::~Character() {
 }
 
-void Character::load(Common::SeekableReadStream *stream) {
+void Character::load(Common::SeekableReadStream &stream) {
 	debug("loading character...");
-	stream->readUint32LE(); //unk
-	uint16 magic = stream->readUint16LE();
+	stream.readUint32LE(); //unk
+	uint16 magic = stream.readUint16LE();
 	switch (magic) {
 	case 0xdead:
 		_movementDirections = 16;
@@ -64,40 +64,40 @@ void Character::load(Common::SeekableReadStream *stream) {
 	}
 
 	_animations.clear();
-	while (stream->pos() < stream->size()) {
-		uint size = stream->readUint32LE();
-		uint index = stream->readUint16LE();
+	while (stream.pos() < stream.size()) {
+		uint size = stream.readUint32LE();
+		uint index = stream.readUint16LE();
 		debug("header size %u, index: %u", size, index);
 
-		uint16 frames = stream->readUint16LE();
-		uint16 format = stream->readUint16LE();
+		uint16 frames = stream.readUint16LE();
+		uint16 format = stream.readUint16LE();
 		Common::String filename = readString(stream);
 
 		AnimationDescription animation;
 		animation.filename = filename;
 		debug("%s:%u: animation %s, frames: %d, format: %d", _name.c_str(), _animations.size(), animation.filename.c_str(), frames, format);
 		while (frames--) {
-			int x = stream->readSint16LE();
-			int y = stream->readSint16LE();
-			int w = stream->readUint32LE();
-			int h = stream->readUint32LE();
+			int x = stream.readSint16LE();
+			int y = stream.readSint16LE();
+			uint w = stream.readUint32LE();
+			uint h = stream.readUint32LE();
 			AnimationDescription::Frame frame = {x, y, w, h};
 			animation.frames.push_back(frame);
 			debug("frame %d, %d, %dx%d", x, y, w, h);
-			uint unk1 = stream->readUint32LE();
-			uint unk2 = stream->readUint32LE();
-			uint unk3 = stream->readUint32LE();
-			uint unk4 = stream->readUint32LE(); //GRP file offset?
-			uint unk5 = stream->readUint32LE();
-			uint unk6 = stream->readByte();
-			uint unk7 = stream->readUint32LE();
-			uint unk8 = stream->readUint32LE();
-			stream->readUint32LE(); //CDCDCDCD
-			uint unk9 = stream->readUint32LE();
-			uint unk10 = stream->readUint32LE();
-			stream->readUint32LE(); //CDCDCDCD
-			uint unk11 = stream->readByte();
-			stream->readUint32LE(); //CDCDCDCD
+			uint unk1 = stream.readUint32LE();
+			uint unk2 = stream.readUint32LE();
+			uint unk3 = stream.readUint32LE();
+			uint unk4 = stream.readUint32LE(); //GRP file offset?
+			uint unk5 = stream.readUint32LE();
+			uint unk6 = stream.readByte();
+			uint unk7 = stream.readUint32LE();
+			uint unk8 = stream.readUint32LE();
+			stream.readUint32LE(); //CDCDCDCD
+			uint unk9 = stream.readUint32LE();
+			uint unk10 = stream.readUint32LE();
+			stream.readUint32LE(); //CDCDCDCD
+			uint unk11 = stream.readByte();
+			stream.readUint32LE(); //CDCDCDCD
 			debug("unknown: %u %u %u 0x%08x - %u %u %u %u - %u %u %u",
 			      unk1, unk2, unk3, unk4,
 			      unk5, unk6, unk7, unk8,
@@ -105,8 +105,6 @@ void Character::load(Common::SeekableReadStream *stream) {
 		}
 		_animations[index] = animation;
 	}
-
-	delete stream;
 }
 
 void Character::associate(const Common::String &name) {
@@ -121,23 +119,23 @@ void Character::visible(bool visible) {
 	_visible = visible;
 }
 
-void Character::loadState(Common::ReadStream* stream) {
-	int x = stream->readUint16LE();
-	int y = stream->readUint16LE();
-	int dir = stream->readSint16LE();
+void Character::loadState(Common::ReadStream& stream) {
+	int x = stream.readUint16LE();
+	int y = stream.readUint16LE();
+	int dir = stream.readSint16LE();
 	debug("character at %d, %d, dir: %d", x, y, dir);
 	position(Common::Point(x, y));
 	direction(dir);
-	_visible = stream->readUint16LE();
-	_enabled = stream->readUint16LE();
+	_visible = stream.readUint16LE();
+	_enabled = stream.readUint16LE();
 }
 
-void Character::saveState(Common::WriteStream* stream) const {
-	stream->writeUint16LE(_pos.x);
-	stream->writeUint16LE(_pos.y);
-	stream->writeUint16LE(_direction);
-	stream->writeUint16LE(_visible);
-	stream->writeUint16LE(_enabled);
+void Character::saveState(Common::WriteStream& stream) const {
+	stream.writeUint16LE(_pos.x);
+	stream.writeUint16LE(_pos.y);
+	stream.writeUint16LE(_direction);
+	stream.writeUint16LE(_visible);
+	stream.writeUint16LE(_enabled);
 }
 
 

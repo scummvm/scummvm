@@ -29,23 +29,23 @@
 
 namespace AGDS {
 
-Region::Region(const Common::String &resourceName, Common::SeekableReadStream *stream) {
-	int size = stream->size();
+Region::Region(const Common::String &resourceName, Common::SeekableReadStream &stream) {
+	auto size = stream.size();
 	name = readString(stream);
-	center.x = stream->readUint16LE();
-	center.y = stream->readUint16LE();
-	flags = stream->readUint16LE();
+	center.x = stream.readSint16LE();
+	center.y = stream.readSint16LE();
+	flags = stream.readUint16LE();
 	debug("region %s at (%d,%d) %04x", name.c_str(), center.x, center.y, flags);
-	while (stream->pos() + 2 <= size) {
-		uint16 ext = stream->readUint16LE();
+	while (stream.pos() + 2 <= size) {
+		uint16 ext = stream.readUint16LE();
 		if (ext)
 			debug("extended entries %u", ext);
 
 		PointsType points;
 		while (ext--) {
-			int16 a = stream->readSint16LE();
-			int16 b = stream->readSint16LE();
-			int16 c = stream->readUint16LE();
+			int16 a = stream.readSint16LE();
+			int16 b = stream.readSint16LE();
+			int16 c = stream.readUint16LE();
 			if (c != -12851) //0xcdcd
 				debug("extended entry: %d %d %d", a, b, c);
 			else

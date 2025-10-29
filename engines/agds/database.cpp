@@ -32,7 +32,7 @@ bool Database::open(const Common::String &filename) {
 	if (!file.open(Common::Path{filename}))
 		return false;
 
-	return open(filename, &file);
+	return open(filename, file);
 }
 
 namespace {
@@ -46,17 +46,17 @@ uint32 Database::getDataOffset(uint32 maxNameSize, uint32 totalEntries) {
 	return kHeaderSize + (maxNameSize + kHeaderFieldSize) * totalEntries;
 }
 
-bool Database::open(const Common::String &filename, Common::SeekableReadStream *stream) {
+bool Database::open(const Common::String &filename, Common::SeekableReadStream &stream) {
 	_filename = filename;
-	uint32 magic = stream->readUint32LE();
+	uint32 magic = stream.readUint32LE();
 	if (magic != kMagic) {
 		debug("invalid magic for database %s", _filename.c_str());
 		return false;
 	}
-	_writeable = stream->readUint32LE();
-	_totalEntries = stream->readUint32LE();
-	_usedEntries = stream->readUint32LE();
-	_maxNameSize = stream->readUint32LE();
+	_writeable = stream.readUint32LE();
+	_totalEntries = stream.readUint32LE();
+	_usedEntries = stream.readUint32LE();
+	_maxNameSize = stream.readUint32LE();
 	if (_maxNameSize == 0) {
 		debug("invalid max name record size");
 		return false;
@@ -65,11 +65,11 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream *
 	uint32 dataOffset = getDataOffset(_maxNameSize, _totalEntries);
 	Common::Array<char> nameBuffer(_maxNameSize + 1);
 	for (uint32 i = 0; i < _usedEntries; ++i) {
-		uint32 offset = stream->readUint32LE();
-		stream->read(nameBuffer.data(), nameBuffer.size());
+		uint32 offset = stream.readUint32LE();
+		stream.read(nameBuffer.data(), nameBuffer.size());
 		char *z = Common::find(nameBuffer.begin(), nameBuffer.end(), 0);
 		Common::String name(nameBuffer.data(), z - nameBuffer.begin());
-		uint32 size = stream->readUint32LE();
+		uint32 size = stream.readUint32LE();
 		//debug("adb entry: %s, offset %08x, size: %u", name.c_str(), offset, size);
 		_entries.setVal(name, Entry(dataOffset + offset, size));
 	}
@@ -77,33 +77,33 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream *
 	return true;
 }
 
-void Database::write(Common::WriteStream *stream, const Common::HashMap<Common::String, Common::Array<uint8>> & entries) {
+void Database::write(Common::WriteStream &stream, const Common::HashMap<Common::String, Common::Array<uint8>> &entries) {
 	auto n = entries.size();
-	stream->writeUint32LE(kMagic);
-	stream->writeUint32LE(1);
-	stream->writeUint32LE(n);
-	stream->writeUint32LE(n);
-	stream->writeUint32LE(kDefaultNameSize);
+	stream.writeUint32LE(kMagic);
+	stream.writeUint32LE(1);
+	stream.writeUint32LE(n);
+	stream.writeUint32LE(n);
+	stream.writeUint32LE(kDefaultNameSize);
 	auto dataOffset = getDataOffset(kDefaultNameSize, n);
 	debug("database data offset: 0x%06x", dataOffset);
-	auto offset = 0;
+	uint offset = 0;
 
-	for(auto entry: entries) {
+	for(auto &entry: entries) {
 		auto &key = entry._key;
 		auto &value = entry._value;
 
-		stream->writeUint32LE(offset);
+		stream.writeUint32LE(offset);
 		Common::Array<char> text(kDefaultNameSize + 1);
 		strncpy(text.data(), key.c_str(), kDefaultNameSize);
-		stream->write(text.data(), text.size());
+		stream.write(text.data(), text.size());
 		debug("database entry %s: 0x%06x", key.c_str(), offset);
 		offset += value.size();
-		stream->writeUint32LE(value.size());
+		stream.writeUint32LE(value.size());
 	}
 
 	for(auto entry: entries) {
 		auto & value = entry._value;
-		stream->write(value.data(), value.size());
+		stream.write(value.data(), value.size());
 	}
 }
 
@@ -122,16 +122,16 @@ Common::SeekableReadStream *Database::getEntry(const Common::String &name) const
 		return NULL;
 	}
 
-	return getEntry(&file, name);
+	return getEntry(file, name);
 }
 
-Common::SeekableReadStream *Database::getEntry(Common::SeekableReadStream *parent, const Common::String &name) const {
+Common::SeekableReadStream *Database::getEntry(Common::SeekableReadStream &parent, const Common::String &name) const {
 	EntriesType::const_iterator i = _entries.find(name);
 	if (i == _entries.end())
 		return NULL;
 
 	const Entry &entry = i->_value;
-	parent->seek(entry.offset);
-	return parent->readStream(entry.size);
+	parent.seek(entry.offset);
+	return parent.readStream(entry.size);
 }
 } // namespace AGDS
