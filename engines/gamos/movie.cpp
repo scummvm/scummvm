@@ -135,7 +135,7 @@ bool MoviePlayer::error() {
 }
 
 int MoviePlayer::processControlChunk() {
-	warning("%x movieProcessControl %d", (uint32)_file->pos(), _hdrBytes[1]);
+	//warning("%x movieProcessControl %d", (uint32)_file->pos(), _hdrBytes[1]);
 
 	switch (_hdrBytes[1]) {
 	case 0:
@@ -208,7 +208,7 @@ int MoviePlayer::processControlChunk() {
 }
 
 int MoviePlayer::processImageChunk() {
-	warning("%x movieProcessImageChunk %d", (uint32)_file->pos(), _hdrValue1);
+	//warning("%x movieProcessImageChunk %d", (uint32)_file->pos(), _hdrValue1);
 	if (!readCompressed(_bufferSize, &_buffer))
 		return 0;
 
@@ -274,7 +274,7 @@ int MoviePlayer::processImageChunk() {
 				wh = _frameSize;
 			}
 
-			warning("movie blit%d %d %d %d %d", val & 3, xy.x, xy.y, wh.x, wh.y);
+			//warning("movie blit%d %d %d %d %d", val & 3, xy.x, xy.y, wh.x, wh.y);
 			static byte *(*blitters[4])(Common::Rect, byte *, Graphics::Surface *) = {
 				&blit0,
 				&blit1,
@@ -351,7 +351,7 @@ int MoviePlayer::processImageChunk() {
 }
 
 int MoviePlayer::processPaletteChunk() {
-	warning("%x movieProcessPaletteChunk", (uint32)_file->pos());
+	//warning("%x movieProcessPaletteChunk", (uint32)_file->pos());
 	if (!readCompressed(_paletteBufferSize, &_paletteBuffer))
 		return 0;
 
@@ -362,14 +362,14 @@ int MoviePlayer::processPaletteChunk() {
 }
 
 int MoviePlayer::processSoundChunk() {
-	warning("%x movieProcessSoundChunk", (uint32)_file->pos());
+	//warning("%x movieProcessSoundChunk", (uint32)_file->pos());
 	if (!readCompressed(_soundBufferSize, &_soundBuffer))
 		return 0;
 	return 1;
 }
 
 int MoviePlayer::proccessMidiChunk() {
-	warning("%x movieProcessMidiChunk", (uint32)_file->pos());
+	//warning("%x movieProcessMidiChunk", (uint32)_file->pos());
 
 	if (_midiStarted && (_forceStopMidi == false || _hdrBytes[1] != 0)) {
 		_gamos->stopMidi();
