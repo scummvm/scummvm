@@ -652,15 +652,20 @@ protected:
 	void addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
 
 	void FUN_00407db8(uint8 p);
-	void FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
-	void FUN_004084bc(uint8 p);
-	void FUN_00408510(uint8 p);
-	void FUN_0040856c();
-	void FUN_004085d8(uint8 p);
-	void FUN_0040841c(bool p);
+	byte FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
+	byte FUN_004084bc(uint8 p);
+	byte FUN_00408510(uint8 p);
+	byte FUN_0040856c();
+	byte FUN_004085d8(uint8 p);
+	byte FUN_0040841c(bool p);
 	byte FUN_00407e2c();
 	byte FUN_00407f70(uint8 p);
 	byte FUN_004081b8(uint8 cv, uint8 sv);
+
+	byte FUN_004088cc(uint8 p1, uint8 p2, uint8 p3);
+	byte FUN_004086e4(const Common::Array<byte> &arr);
+	byte FUN_00408778(const Common::Array<byte> &arr);
+	byte FUN_0040881c(const Common::Array<byte> &arr);
 
 
 	void FUN_004025d0();

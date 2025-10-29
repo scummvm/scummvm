@@ -2465,109 +2465,165 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		VM::ValAddr regRef = vm->popReg();
 		vm->setMem8(regRef, PTR_00417218->fld_5);
 		vm->EAX.setVal(1);
-	}
-	break;
+	} break;
 
-	case 35:
+	case 35: {
 		arg1 = vm->pop32();
-
+		uint ret = 0;
 		switch (arg1) {
 		case 3:
-			FUN_00408648(0xe, 0xff, 0xff);
+			ret = FUN_00408648(0xe, 0xff, 0xff);
 			break;
 
 		case 4:
-			FUN_00408648(0xe, 0xfe, 0xff);
+			ret = FUN_00408648(0xe, 0xfe, 0xff);
 			break;
 
 		case 5:
-			FUN_00408648(0xe, 0xfe, 0xfe);
+			ret = FUN_00408648(0xe, 0xfe, 0xfe);
 			break;
 
 		case 6:
-			FUN_00408648(0x82, 0xff, 0xff);
+			ret = FUN_00408648(0x82, 0xff, 0xff);
 			break;
 
 		case 7:
-			FUN_00408648(0x82, 0xfe, 0xff);
+			ret = FUN_00408648(0x82, 0xfe, 0xff);
 			break;
 
 		case 8:
-			FUN_00408648(0x82, 0xfe, 0xfe);
+			ret = FUN_00408648(0x82, 0xfe, 0xfe);
 			break;
 
 		case 9:
-			FUN_00408648(0x83, 0xff, 0xff);
+			ret = FUN_00408648(0x83, 0xff, 0xff);
 			break;
 
 		case 10:
-			FUN_00408648(0x83, 0xfe, 0xff);
+			ret = FUN_00408648(0x83, 0xfe, 0xff);
 			break;
 
 		case 11:
-			FUN_00408648(0x83, 0xfe, 0xfe);
+			ret = FUN_00408648(0x83, 0xfe, 0xfe);
 			break;
 
 		default:
 			break;
 		}
+		vm->EAX.setVal(ret);
+	} break;
 
-		break;
-
-	case 36:
+	case 36: {
 		arg1 = vm->pop32();
 		arg2 = vm->pop32();
 
+		uint ret = 0;
 		switch (arg1) {
 		case 1:
-			FUN_00408648(0, arg2, 0xff);
+			ret = FUN_00408648(0, arg2, 0xff);
 			break;
 
 		case 2:
-			FUN_00408648(0, arg2, 0xfe);
+			ret = FUN_00408648(0, arg2, 0xfe);
 			break;
 
 		case 3:
-			FUN_00408648(0xe, arg2, 0xff);
+			ret = FUN_00408648(0xe, arg2, 0xff);
 			break;
 
 		case 4:
-			FUN_00408648(0xe, arg2, 0xfe);
+			ret = FUN_00408648(0xe, arg2, 0xfe);
 			break;
 
 		case 5:
-			FUN_00408648(0xe, arg2, arg2);
+			ret = FUN_00408648(0xe, arg2, arg2);
 			break;
 
 		case 6:
-			FUN_00408648(0x82, arg2, 0xff);
+			ret = FUN_00408648(0x82, arg2, 0xff);
 			break;
 
 		case 7:
-			FUN_00408648(0x82, arg2, 0xfe);
+			ret = FUN_00408648(0x82, arg2, 0xfe);
 			break;
 
 		case 8:
-			FUN_00408648(0x82, arg2, arg2);
+			ret = FUN_00408648(0x82, arg2, arg2);
 			break;
 
 		case 9:
-			FUN_00408648(0x83, arg2, 0xff);
+			ret = FUN_00408648(0x83, arg2, 0xff);
 			break;
 
 		case 10:
-			FUN_00408648(0x83, arg2, 0xfe);
+			ret = FUN_00408648(0x83, arg2, 0xfe);
 			break;
 
 		case 11:
-			FUN_00408648(0x83, arg2, arg2);
+			ret = FUN_00408648(0x83, arg2, arg2);
 			break;
 
 		default:
 			break;
 		}
+		vm->EAX.setVal(ret);
+	} break;
 
-		break;
+	case 37: {
+		arg1 = vm->pop32();
+		arg2 = vm->pop32();
+
+		uint ret = 0;
+		switch (arg1) {
+		case 1:
+			ret = FUN_004088cc(0, arg2, 0xff);
+			break;
+
+		case 2:
+			ret = FUN_004088cc(0, arg2, 0xfe);
+			break;
+
+		case 3:
+			ret = FUN_004088cc(0xe, arg2, 0xff);
+			break;
+
+		case 4:
+			ret = FUN_004088cc(0xe, arg2, 0xfe);
+			break;
+
+		case 5:
+			ret = FUN_004088cc(0xe, arg2, arg2);
+			break;
+
+		case 6:
+			ret = FUN_004088cc(0x82, arg2, 0xff);
+			break;
+
+		case 7:
+			ret = FUN_004088cc(0x82, arg2, 0xfe);
+			break;
+
+		case 8:
+			ret = FUN_004088cc(0x82, arg2, arg2);
+			break;
+
+		case 9:
+			ret = FUN_004088cc(0x83, arg2, 0xff);
+			break;
+
+		case 10:
+			ret = FUN_004088cc(0x83, arg2, 0xfe);
+			break;
+
+		case 11:
+			ret = FUN_004088cc(0x83, arg2, arg2);
+			break;
+
+		default:
+			break;
+		}
+		vm->EAX.setVal(ret);
+	} break;
 
 	case 38:
 		arg1 = vm->pop32();
@@ -3263,35 +3319,34 @@ void GamosEngine::FUN_00407db8(uint8 p) {
 	DAT_00417804 = 0;
 }
 
-void GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
+byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
 	FUN_00407db8(p1);
 
 	if (p1 == 0x82 || p1 == 0x83) {
 		if (p1 != DAT_004177fe)
-			return;
+			return 0;
 		if (p2 != 0xff && p2 != DAT_004177fd)
-			return;
+			return 0;
 	} else {
 		if (p1 != 0xe) {
 			if (p3 == 0xff)
-				FUN_004084bc(p2);
+				return FUN_004084bc(p2);
 			else
-				FUN_00408510(p2);
-			return;
+				return FUN_00408510(p2);
 		}
 		if (p2 != 0xff && p2 != DAT_00417803)
-			return;
+			return 0;
 	}
 
 	if (p3 == 0xff)
-		FUN_00407e2c();
+		return FUN_00407e2c();
 	else if (p3 == 0xfe)
-		FUN_0040856c();
+		return FUN_0040856c();
 	else
-		FUN_004085d8(p2);
+		return FUN_004085d8(p2);
 }
 
-void GamosEngine::FUN_004084bc(uint8 p) {
+byte GamosEngine::FUN_004084bc(uint8 p) {
 	for (int j = 0; j < _statesHeight; j++) {
 		for (int i = 0; i < _statesWidth; i++) {
 			uint16 th1 = _states.at(i, j);
@@ -3301,10 +3356,10 @@ void GamosEngine::FUN_004084bc(uint8 p) {
 				_pathMap.at(i, j) = 2;
 		}
 	}
-	FUN_0040841c(true);
+	return FUN_0040841c(true);
 }
 
-void GamosEngine::FUN_00408510(uint8 p) {
+byte GamosEngine::FUN_00408510(uint8 p) {
 	for (int j = 0; j < _statesHeight; j++) {
 		for (int i = 0; i < _statesWidth; i++) {
 			uint16 th1 = _states.at(i, j);
@@ -3317,10 +3372,10 @@ void GamosEngine::FUN_00408510(uint8 p) {
 				_pathMap.at(i, j) = 3;
 		}
 	}
-	FUN_0040841c(false);
+	return FUN_0040841c(false);
 }
 
-void GamosEngine::FUN_0040856c() {
+byte GamosEngine::FUN_0040856c() {
 	for (int j = 0; j < _statesHeight; j++) {
 		for (int i = 0; i < _statesWidth; i++) {
 			uint16 th1 = _states.at(i, j);
@@ -3332,10 +3387,10 @@ void GamosEngine::FUN_0040856c() {
 		}
 	}
 	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
-	FUN_0040841c(false);
+	return FUN_0040841c(false);
 }
 
-void GamosEngine::FUN_004085d8(uint8 p) {
+byte GamosEngine::FUN_004085d8(uint8 p) {
 	for (int j = 0; j < _statesHeight; j++) {
 		for (int i = 0; i < _statesWidth; i++) {
 			uint16 th1 = _states.at(i, j);
@@ -3347,44 +3402,41 @@ void GamosEngine::FUN_004085d8(uint8 p) {
 		}
 	}
 	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
-	FUN_0040841c(false);
+	return FUN_0040841c(false);
 }
 
-void GamosEngine::FUN_0040841c(bool p) {
+byte GamosEngine::FUN_0040841c(bool p) {
 	_pathMap.at(DAT_00412c8c, DAT_00412c90) = 6;
 
 	while (true) {
 		byte res = FUN_004081b8(6, 4);
 		if (res == 0)
-			break;
+			return 0;
 		else if (res == 1) {
 			if (p)
-				FUN_00407e2c();
+				return FUN_00407e2c();
 			else
-				FUN_00407f70(6);
-			break;
+				return FUN_00407f70(6);
 		}
 
 		res = FUN_004081b8(4, 5);
 		if (res == 0)
-			break;
+			return 0;
 		else if (res == 1) {
 			if (p)
-				FUN_00407e2c();
+				return FUN_00407e2c();
 			else
-				FUN_00407f70(4);
-			break;
+				return FUN_00407f70(4);
 		}
 
 		res = FUN_004081b8(5, 6);
 		if (res == 0)
-			break;
+			return 0;
 		else if (res == 1) {
 			if (p)
-				FUN_00407e2c();
+				return FUN_00407e2c();
 			else
-				FUN_00407f70(5);
-			break;
+				return FUN_00407f70(5);
 		}
 	}
 }
@@ -3578,6 +3630,81 @@ byte GamosEngine::FUN_004081b8(uint8 cv, uint8 sv) {
 	}
 	return ret;
 }
+
+byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
+	FUN_00407db8(p1);
+
+	if (p1 == 0x82 || p1 == 0x83) {
+		if (p1 != DAT_004177fe)
+			return 0;
+
+		if ( (_thing2[p2].field_0[ DAT_004177fd >> 3 ] & (1 << (DAT_004177fd & 7))) == 0 )
+			return 0;
+	} else {
+		if (p1 != 0xe) {
+			if (p3 == 0xff)
+				return FUN_004086e4(_thing2[p2].field_0);
+			else
+				return FUN_00408778(_thing2[p2].field_0);
+		}
+
+		if ( (_thing2[p2].field_0[ DAT_00417803 >> 3 ] & (1 << (DAT_00417803 & 7))) == 0 )
+			return 0;
+	}
+
+	if (p3 == 0xff)
+		return FUN_00407e2c();
+	else if (p3 == 0xfe)
+		return FUN_0040881c(_thing2[p2].field_0);
+	else
+		return FUN_0040856c();
+}
+
+byte GamosEngine::FUN_004086e4(const Common::Array<byte> &arr) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ( ((arr[th1 >> 3]) & (1 << (th1 & 7))) == 0 )
+				_pathMap.at(i, j) = 0;
+			else
+				_pathMap.at(i, j) = 2;
+		}
+	}
+	return FUN_0040841c(true);
+}
+
+byte GamosEngine::FUN_00408778(const Common::Array<byte> &arr) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ( ((arr[th1 >> 3]) & (1 << (th1 & 7))) == 0 )
+				_pathMap.at(i, j) = 3;
+			else
+				_pathMap.at(i, j) = 2;
+		}
+	}
+	return FUN_0040841c(false);
+}
+
+byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
+	for (int j = 0; j < _statesHeight; j++) {
+		for (int i = 0; i < _statesWidth; i++) {
+			uint16 th1 = _states.at(i, j);
+
+			if ( ((arr[th1 >> 3]) & (1 << (th1 & 7))) == 0 )
+				_pathMap.at(i, j) = 3;
+			else
+				_pathMap.at(i, j) = 0;
+		}
+	}
+	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	return FUN_0040841c(false);
+}
+
+
+
 
 void Actions::parse(const byte *data, size_t dataSize) {
 	Common::MemoryReadStream rstream(data, dataSize);
