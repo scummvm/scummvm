@@ -144,6 +144,7 @@ typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
 typedef Common::List<Common::String> InvList;
+typedef Common::List<Common::Rect *> RectList;
 
 // arrays
 
@@ -382,6 +383,9 @@ public:
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
+
+	// VM objects
+	RectList _rects; // created by fCRect
 };
 
 extern PrivateEngine *g_private;
