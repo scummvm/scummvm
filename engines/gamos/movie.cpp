@@ -336,6 +336,7 @@ int MoviePlayer::processImageChunk() {
 					break;
 
 				g_system->delayMillis(1);
+                g_system->updateScreen();
 			}
 		}
 

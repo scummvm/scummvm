@@ -116,7 +116,7 @@ Common::Error GamosEngine::run() {
 		}
 
 		uint32 curTime = _system->getMillis();
-		if (curTime > _lastTimeStamp + _delayTime) {
+		if (curTime >= _lastTimeStamp + _delayTime) {
 			_lastTimeStamp = curTime;
 
 			if (_messageProc._gd2flags & 2) {
@@ -136,7 +136,8 @@ Common::Error GamosEngine::run() {
 			_messageProc._rawKeyCode = ACT_NONE;
 		} else {
 			if (prevMousePos != _messageProc._mouseReportedPos)
-				_screen->update();
+				_system->updateScreen();
+			_system->delayMillis(1);
 		}
 
 		//if (_delayTime)
