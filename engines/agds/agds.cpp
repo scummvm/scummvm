@@ -83,20 +83,9 @@ AGDSEngine::~AGDSEngine() {
 }
 
 bool AGDSEngine::initGraphics(int w, int h) {
-	typedef Common::List<Graphics::PixelFormat> FormatsType;
-	FormatsType formats = _system->getSupportedFormats();
-
-	for (FormatsType::iterator fi = formats.begin(); fi != formats.end(); ++fi) {
-		const Graphics::PixelFormat &format = *fi;
-		if (fi->bytesPerPixel == 4 && format == Graphics::BlendBlit::getSupportedPixelFormat()) {
-			debug("found mode %s", format.toString().c_str());
-			_pixelFormat = format;
-			::initGraphics(w, h, &_pixelFormat);
-			return true;
-		}
-	}
-	error("no supported video format found");
-	return false;
+	_pixelFormat = Graphics::BlendBlit::getSupportedPixelFormat();
+	::initGraphics(w, h, &_pixelFormat);
+	return true;
 }
 
 void AGDSEngine::Color::FromString(const Common::String &rgb) {
