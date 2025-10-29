@@ -3313,7 +3313,7 @@ void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, 
 	PTR_00417218->fld_3 |= 2;
 
 	while (true) {
-		byte ib = vm->getMem8(memtype, offset);
+		uint8 ib = vm->getMem8(memtype, offset);
 		offset++;
 
 		if (ib == 0)
@@ -3376,7 +3376,7 @@ void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, 
 					}
 
 					for (int i = 0; i < tmp.size(); i++) {
-						addSubtitleImage(tmp[i], sprId, &x, y);
+						addSubtitleImage((uint8)tmp[i], sprId, &x, y);
 					}
 				}
 			}
@@ -3387,7 +3387,7 @@ void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, 
 
 }
 
-Object *GamosEngine::addSubtitleImage(int32 frame, int32 spr, int32 *pX, int32 y) {
+Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y) {
 	Object *obj = getFreeObject();
 	obj->flags |= 0xe0;
 	obj->actID = 0;

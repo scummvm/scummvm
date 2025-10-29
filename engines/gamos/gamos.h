@@ -650,7 +650,7 @@ protected:
 		VM::_interrupt = true;
 	};
 
-	Object *addSubtitleImage(int32 seq, int32 spr, int32 *pX, int32 y);
+	Object *addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y);
 	void addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
 
 	void FUN_00407db8(uint8 p);
