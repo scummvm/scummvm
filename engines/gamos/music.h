@@ -49,6 +49,8 @@ private:
 	uint32 _midiOp = 0; /* save midi event type between update cycles */
 	bool _midiMute = false;
 
+	uint8 _volume;
+
 public:
 
 	MidiMusic();
@@ -57,6 +59,9 @@ public:
 	void stopMusic();
 	bool playMusic(Common::Array<byte> *midiData);
 	void update();
+
+	void setVolume(uint8 volume);
+
 	int16 midi2low();
 
 	static void _timerProc(void *data);

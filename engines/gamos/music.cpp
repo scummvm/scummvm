@@ -130,6 +130,9 @@ void MidiMusic::update() {
 
 				doDelay = (b & 0x80) == 0;
 				param2 = b & 0x7f;
+
+				if (cmd == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON)
+					param2 = param2 * _volume / 255;
 			}
 
 			if (doSend)
@@ -145,6 +148,16 @@ void MidiMusic::update() {
 			}
 		}
 	}
+}
+
+void MidiMusic::setVolume(uint8 volume) {
+	if (volume == 0) {
+		_midiMute = true;
+		_driver->stopAllNotes();
+	} else
+		_midiMute = false;
+
+	_volume = volume;
 }
 
 int16 MidiMusic::midi2low() {

@@ -625,6 +625,10 @@ bool GamosEngine::init(const Common::String &moduleName) {
 	if (!loadInitModule())
 		return false;
 
+	_savedSndVolume = !ConfMan.hasKey("sfx_volume") ? 255 : ConfMan.getInt("sfx_volume");
+	_savedMidiVolume = !ConfMan.hasKey("music_volume") ? 255 : ConfMan.getInt("music_volume");
+	_sndVolumeTarget = _savedSndVolume;
+	_midiVolumeTarget = _savedMidiVolume;
 
 	if (!playIntro())
 		return false;
@@ -646,10 +650,10 @@ bool GamosEngine::loadInitModule() {
 	_txtInputActive = false;
 	//DAT_00417808 = 0;
 	_runReadDataMod = true;
-	//DAT_00417807 = 0;
-	//DAT_00417806 = 0;
-	//DAT_004177fa = 0;
-	//DAT_004177fb = 0;
+	_savedSndVolume = 0;
+	_savedMidiVolume = 0;
+	_sndVolumeTarget = 0;
+	_midiVolumeTarget = 0;
 	//_mouseInWindow = false;
 
 	return loadModule(0);
@@ -1160,8 +1164,38 @@ bool GamosEngine::playMidi(Common::Array<byte> *buffer) {
 
 bool GamosEngine::playSound(uint id) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(_soundSamples[id].data(), _soundSamples[id].size(), 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, nullptr, stream, id);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, nullptr, stream, -1, _sndVolume);
 	return true;
+}
+
+int GamosEngine::stepVolume(int volume, int target) {
+	int d = target - volume;
+	if (d == 0)
+		return 0;
+
+	int step = 255 / _fps;
+	if (d < 0) {
+		step = -step;
+		if (step < d)
+			step = d;
+	} else {
+		if (step > d)
+			step = d;
+	}
+	return step;
+}
+
+void GamosEngine::changeVolume() {
+	const int sndStep = stepVolume(_sndVolume, _sndVolumeTarget);
+	if (sndStep) {
+		_sndVolume += sndStep;
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, _sndVolume);
+	}
+	const int midiStep = stepVolume(_midiVolume, _midiVolumeTarget);
+	if (midiStep) {
+		_midiVolume += midiStep;
+		_musicPlayer.setVolume(_midiVolume);
+	}
 }
 
 uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
@@ -1184,6 +1218,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	}
 
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
+	changeVolume();
 	if (FUN_00402bc4()) {
 		bool loop = false;
 		if (!_txtInputActive)
@@ -2638,6 +2673,52 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		}
 	}
 	break;
+
+	case 48: {
+		arg1 = vm->pop32();
+
+		switch (arg1) {
+		case 0:
+			_d2_fld16 = 0;
+			break;
+		case 1:
+			_d2_fld16 = 1;
+			break;
+		case 2:
+			_d2_fld14 = 0;
+			_sndVolumeTarget = 0;
+			break;
+		case 3:
+			_d2_fld14 = 1;
+			_sndVolumeTarget = _savedSndVolume;
+			break;
+		case 4:
+			_midiVolumeTarget = 0;
+			break;
+		case 5:
+			_midiVolumeTarget = _savedMidiVolume;
+			break;
+		case 6:
+			_d2_fld17 = 0;
+			break;
+		case 7:
+			_d2_fld17 = 1;
+			break;
+		case 8:
+			//FUN_0040a9c0(0);
+			_d2_fld18 = 0;
+			break;
+		case 9:
+			if (_d2_fld19 != 0xff) {
+				//FUN_0040a958(_d2_fld19);
+			}
+			_d2_fld18 = 1;
+			break;
+		default:
+			break;
+		}
+		vm->EAX.setVal(1);
+	} break;
 
 	case 49: {
 		arg1 = vm->pop32();

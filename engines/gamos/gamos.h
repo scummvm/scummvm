@@ -407,6 +407,11 @@ private:
 	uint8 _svFps = 0;
 	uint32 _svFrame = 0;
 
+	uint8 _sndVolumeTarget = 0;
+	uint8 _midiVolumeTarget = 0;
+	uint8 _savedSndVolume = 0;
+	uint8 _savedMidiVolume = 0;
+
 	bool _enableMidi = false;
 	int32 _midiTrack = 0;
 
@@ -556,6 +561,10 @@ protected:
 	bool playMidi(Common::Array<byte> *buffer);
 
 	bool playSound(uint id);
+	int stepVolume(int volume, int target);
+
+	void changeVolume();
+
 
 	void stopMidi();
 	void stopMCI();
