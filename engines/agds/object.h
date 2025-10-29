@@ -43,7 +43,7 @@ using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Object {
 public:
-	typedef Common::Array<uint8> CodeType;
+	using CodeType = Common::Array<uint8>;
 
 	struct StringEntry
 	{
@@ -55,10 +55,10 @@ public:
 	};
 
 private:
-	typedef Common::Array<StringEntry> StringTableType;
-	typedef Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> KeyHandlersType;
-	typedef Common::HashMap<Common::String, uint> UseHandlersType;
-	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
+	using StringTableType 	= Common::Array<StringEntry> ;
+	using KeyHandlersType 	= Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using UseHandlersType 	= Common::HashMap<Common::String, uint>;
+	using ManagedSurfacePtr	= Common::ScopedPtr<Graphics::ManagedSurface>;
 
 	Common::String					_name;
 	CodeType						_code;
@@ -339,7 +339,7 @@ public:
 
 	bool pointIn(Common::Point pos);
 };
-typedef Common::SharedPtr<Object> ObjectPtr;
+using ObjectPtr = Common::SharedPtr<Object>;
 
 
 } // End of namespace AGDS

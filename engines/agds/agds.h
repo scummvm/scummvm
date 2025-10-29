@@ -78,7 +78,7 @@ class Console;
 
 class AGDSEngine : public Engine {
 	friend class Process;
-	typedef Common::Array<ProcessPtr> ProcessListType;
+	using ProcessListType = Common::Array<ProcessPtr>;
 	static constexpr uint MaxProcesses = 100;
 
 public:
@@ -285,15 +285,15 @@ private:
 	void stopAmbientSound();
 	void loadPatches(Common::SeekableReadStream &file, Database & db);
 
-	typedef Common::HashMap<int, Common::ScopedPtr<Graphics::ManagedSurface>> PictureCacheType;
-	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
-	typedef Common::Array<Common::String> SystemVariablesListType;
-	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
-	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
-	typedef Common::HashMap<int, Common::ScopedPtr<Font>> FontsType;
-	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
-	typedef Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectPatchesType;
-	typedef Common::HashMap<Common::String, Common::Array<uint8>> PatchDatabase;
+	using PictureCacheType = Common::HashMap<int, Common::ScopedPtr<Graphics::ManagedSurface>>;
+	using PictureCacheLookup = Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using SystemVariablesListType = Common::Array<Common::String>;
+	using SystemVariablesType = Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using GlobalsType = Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using FontsType = Common::HashMap<int, Common::ScopedPtr<Font>>;
+	using PatchesType = Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using ObjectPatchesType = Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using PatchDatabase = Common::HashMap<Common::String, Common::Array<uint8>>;
 
 	const ADGameDescription *		_gameDescription;
 	ResourceManager					_resourceManager;

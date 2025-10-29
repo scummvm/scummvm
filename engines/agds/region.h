@@ -31,7 +31,7 @@
 namespace AGDS {
 
 struct Region {
-	typedef Common::Array<Common::Point> PointsType;
+	using PointsType = Common::Array<Common::Point> ;
 
 	Common::String	name;
 	Common::Point	center;

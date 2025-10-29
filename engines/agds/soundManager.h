@@ -60,7 +60,7 @@ namespace AGDS {
 	};
 
 	class SoundManager {
-		typedef Common::List<Sound> SoundList;
+		using SoundList = Common::List<Sound>;
 		int							_nextId;
 		AGDSEngine *				_engine;
 		Audio::Mixer *				_mixer;

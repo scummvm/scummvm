@@ -119,9 +119,9 @@ Common::Point Region::topLeft() const {
 
 //FIXME: copied from wintermute/base_region.cpp
 
-typedef struct {
+struct dPoint {
 	double x, y;
-} dPoint;
+} ;
 
 bool Region::pointIn(Common::Point point) const {
 	for(uint r = 0; r < regions.size(); ++r) {

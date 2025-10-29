@@ -33,7 +33,7 @@ namespace Common { class ReadStream; class WriteStream; }
 
 namespace AGDS {
 class Object;
-typedef Common::SharedPtr<Object> ObjectPtr;
+using ObjectPtr = Common::SharedPtr<Object>;
 class AGDSEngine;
 
 class Inventory {
@@ -49,7 +49,7 @@ class Inventory {
 			object.reset();
 		}
 	};
-	typedef Common::Array<Entry> EntriesType;
+	using EntriesType = Common::Array<Entry>;
 	EntriesType _entries;
 	bool _enabled;
 	bool _visible;
@@ -93,7 +93,7 @@ public:
 		return _entries;
 	}
 
-	int maxSize() const {
+	uint maxSize() const {
 		return _entries.size();
 	}
 

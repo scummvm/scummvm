@@ -42,7 +42,7 @@ private:
 		Entry(uint32 o, uint32 s): offset(o), size(s) { }
 	};
 
-	typedef Common::HashMap<Common::String, Entry> EntriesType;
+	using EntriesType = Common::HashMap<Common::String, Entry>;
 
 	Common::String	_filename;
 	bool			_writeable;
