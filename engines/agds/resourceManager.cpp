@@ -151,13 +151,12 @@ Common::SeekableReadStream *ResourceManager::GrpFile::createReadStreamForMember(
 }
 
 bool ResourceManager::addPath(const Common::Path &grpFilename) {
-	GrpFile *grpFile = new GrpFile();
+	Common::ScopedPtr<GrpFile> grpFile(new GrpFile());
 	if (!grpFile->load(grpFilename)) {
-		delete grpFile;
 		return false;
 	}
 
-	SearchMan.add(grpFilename.toString(), grpFile, 0, true);
+	SearchMan.add(grpFilename.toString(), grpFile.release(), 0, true);
 	return true;
 }
 
@@ -199,13 +198,10 @@ Graphics::Surface *ResourceManager::loadPicture(const Common::String &name, cons
 	return NULL;
 }
 
-Common::String ResourceManager::loadText(Common::SeekableReadStream *stream) {
-	if (!stream)
-		error("stream is null");
-	Common::Array<char> text(stream->size());
-	if (stream->read(text.data(), text.size()) != text.size())
+Common::String ResourceManager::loadText(Common::SeekableReadStream &stream) {
+	Common::Array<char> text(stream.size());
+	if (stream.read(text.data(), text.size()) != text.size())
 		error("short read from text resource");
-	delete stream;
 
 	if (text.empty())
 		return Common::String();
@@ -224,10 +220,10 @@ Common::String ResourceManager::loadText(Common::SeekableReadStream *stream) {
 }
 
 Common::String ResourceManager::loadText(const Common::String &name) const {
-	Common::SeekableReadStream *stream = getResource(name);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(getResource(name));
 	if (!stream)
 		error("no text resource %s", name.c_str());
-	return loadText(stream);
+	return loadText(*stream);
 }
 
 Common::String readString(Common::ReadStream &stream, uint size) {

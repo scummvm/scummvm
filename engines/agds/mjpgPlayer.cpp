@@ -66,9 +66,7 @@ MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String 
 	}
 }
 
-MJPGPlayer::~MJPGPlayer() {
-	delete _stream;
-}
+MJPGPlayer::~MJPGPlayer() {}
 
 void MJPGPlayer::rewind() {
 	_framesPlayed = 0;
@@ -86,26 +84,24 @@ const Graphics::Surface *MJPGPlayer::decodeFrame() {
 
 	if (_stream->eos())
 		return NULL;
-	Common::SeekableReadStream *stream = _stream->readStream(size);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_stream->readStream(size));
 	const Graphics::Surface *surface = _decoder.decodeFrame(*stream);
 	++_framesPlayed;
-	delete stream;
 	return surface;
 }
 
 void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	auto *surface = decodeFrame();
 	if (surface) {
-		Graphics::Surface *scaled;
+		Common::ScopedPtr<Graphics::Surface> scaled;
 		{
-			Graphics::Surface *converted = surface->convertTo(engine.pixelFormat());
+			Common::ScopedPtr<Graphics::Surface> converted(surface->convertTo(engine.pixelFormat()));
 			auto scaleW = 1.0f * backbuffer.w / converted->w;
 			auto scaleH = 1.0f * backbuffer.h / converted->h;
 			auto scale = MIN(scaleW, scaleH);
 
-			scaled = converted->scale(converted->w * scale, converted->h * scale);
+			scaled.reset(converted->scale(converted->w * scale, converted->h * scale));
 			converted->free();
-			delete converted;
 		}
 
 		Common::Point dst((backbuffer.w - scaled->w) / 2, (backbuffer.h - scaled->h) / 2);
@@ -114,7 +110,6 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 			backbuffer.copyRectToSurface(*scaled, dst.x, dst.y, srcRect);
 		scaled->free();
-		delete scaled;
 	}
 
 	if (_subtitles.empty())

@@ -78,16 +78,14 @@ void Object::unlock() {
 void Object::freeRotated() {
 	if (_rotatedPicture) {
 		_rotatedPicture->free();
-		delete _rotatedPicture;
-		_rotatedPicture = nullptr;
+		_rotatedPicture.reset();
 	}
 }
 
 void Object::freePicture() {
 	if (_picture) {
 		_picture->free();
-		delete _picture;
-		_picture = nullptr;
+		_picture.reset();
 	}
 }
 
@@ -139,7 +137,7 @@ const Object::StringEntry &Object::getString(uint16 index) const {
 void Object::setPicture(Graphics::ManagedSurface *picture) {
 	_pos = Common::Point();
 	freePicture();
-	_picture = picture;
+	_picture.reset(picture);
 	freeRotated();
 	_rotation = 0;
 
@@ -189,7 +187,7 @@ void Object::createRotated() {
 		return;
 
 	Graphics::TransformStruct transform(100, 100, 90 * _rotation, _picture->w / 2, _picture->h / 2);
-	_rotatedPicture = getPicture()->rotoscale(transform);
+	_rotatedPicture.reset(getPicture()->rotoscale(transform));
 }
 
 void Object::alive(bool value)

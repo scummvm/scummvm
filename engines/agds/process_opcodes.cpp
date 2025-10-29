@@ -909,7 +909,7 @@ void Process::loadSaveSlotNamePicture() {
 
 	Common::String saveSlotName = _engine->getSaveStateName(saveSlot);
 	Common::SaveFileManager * saveMan = _engine->getSaveFileManager();
-	Common::InSaveFile * save = saveMan->openForLoading(saveSlotName);
+	Common::ScopedPtr<Common::InSaveFile> save(saveMan->openForLoading(saveSlotName));
 
 	debug("save state name: %s", saveSlotName.c_str());
 	int fontId = _engine->getSystemVariable("edit_font")->getInteger();
@@ -925,8 +925,6 @@ void Process::loadSaveSlotNamePicture() {
 	Graphics::ManagedSurface *transparentLabel = _engine->convertToTransparent(label);
 	_object->setPicture(transparentLabel);
 	_object->generateRegion();
-
-	delete save;
 }
 
 void Process::setObjectRegionOffset() {

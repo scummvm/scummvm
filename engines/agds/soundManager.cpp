@@ -125,7 +125,7 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 			return sample->id;
 		}
 	}
-	Common::File *file = new Common::File();
+	Common::ScopedPtr<Common::File> file(new Common::File());
 	if (!file->open(Common::Path{filename})) {
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 1);
@@ -140,13 +140,12 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 
 	Audio::SeekableAudioStream *stream = NULL;
 	if (lname.hasSuffix(".ogg")) {
-		stream = Audio::makeVorbisStream(file, DisposeAfterUse::YES);
+		stream = Audio::makeVorbisStream(file.release(), DisposeAfterUse::YES);
 	} else if (lname.hasSuffix(".wav")) {
-		stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+		stream = Audio::makeWAVStream(file.release(), DisposeAfterUse::YES);
 	}
 	if (!stream) {
 		warning("could not play sound %s", filename.c_str());
-		delete file;
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, _engine->getGlobal(phaseVar)? 1: 0);
 		else
