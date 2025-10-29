@@ -2355,6 +2355,13 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.setVal( txtInputBegin(vm, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y) );
 	} break;
 
+	case 23: {
+		VM::ValAddr regRef = vm->popReg();
+		arg2 = vm->pop32();
+		addSubtitles(vm, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH);
+		vm->EAX.setVal(1);
+	} break;
+
 	case 24: {
 		VM::ValAddr regRef = vm->popReg();
 		arg2 = vm->pop32();
@@ -3062,26 +3069,38 @@ void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, 
 						offset += 4;
 					}
 
-					warning("addSubtitles unimplemented part");
-
+					Common::String tmp;
 					switch (flg & 7) {
 					case 0:
+						tmp = gamos_itoa((int32)(int8)vm->getMem8(btp, boff), 10);
 						break;
 
-					case 1:
-						break;
+					case 1: {
+						VM::ValAddr addr;
+						addr.setVal( vm->getMem32(btp, boff) );
+						tmp = vm->getString(addr, b2);
+					} break;
 
 					case 2:
+						tmp = vm->getString(btp, boff, b2);
 						break;
 
 					case 3:
+						tmp = gamos_itoa(vm->getMem32(btp, boff), 10);
 						break;
 
-					case 4:
-						break;
+					case 4: {
+						VM::ValAddr addr;
+						addr.setVal( vm->getMem32(btp, boff) );
+						tmp = gamos_itoa(vm->getMem32(addr), 10);
+					} break;
 
 					case 5:
 						break;
+					}
+
+					for (int i = 0; i < tmp.size(); i++) {
+						addSubtitleImage(tmp[i], sprId, &x, y);
 					}
 				}
 			}
@@ -3732,6 +3751,38 @@ bool GamosEngine::scrollAndDraw() {
 	doDraw();
 
 	return true;
+}
+
+Common::String GamosEngine::gamos_itoa(int n, uint radix) {
+	Common::String tmp;
+	bool minus = false;
+	uint un = n;
+	if (radix == 10 && n < 0) {
+		un = -n;
+		minus = true;
+	}
+
+	if (un == 0) {
+		tmp += '0';
+	} else {
+		while (un != 0) {
+			uint r = un % radix;
+			un /= radix;
+			if (r > 9)
+				tmp += 'A' + r - 10;
+			else
+				tmp += '0' + r;
+		}
+	}
+	if (minus)
+		tmp += '-';
+
+	for (int i = 0, j = tmp.size() - 1; i < j; i++, j--) {
+		char c = tmp[i];
+		tmp.setChar(tmp[j], i);
+		tmp.setChar(c, j);
+	}
+	return tmp;
 }
 
 int GamosEngine::txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y) {

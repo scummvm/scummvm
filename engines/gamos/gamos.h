@@ -686,6 +686,9 @@ protected:
 
 	static void callbackVMCallDispatcher(void *engine, VM *vm, uint32 funcID);
 
+
+	static Common::String gamos_itoa(int value, uint radix);
+
 public:
 
 	inline void rndSeed(uint32 seed) {
