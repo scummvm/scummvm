@@ -990,10 +990,6 @@ void GfxOpenGLS::clearShadowMode() {
 	glDepthMask(GL_TRUE);
 }
 
-bool GfxOpenGLS::isShadowModeActive() {
-	return false;
-}
-
 void GfxOpenGLS::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorR = r;
 	_shadowColorG = g;
@@ -1058,7 +1054,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 		glEnable(GL_BLEND);
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	OpenGL::Shader *actorShader;
-	if ((face->_flags & EMIMeshFace::kNoLighting) ? false : _lightsEnabled)
+	if ((face->_flags & EMIMeshFace::kNoLighting || isShadowModeActive()) ? false : _lightsEnabled)
 		actorShader = mud->_shaderLights;
 	else
 		actorShader = mud->_shader;
