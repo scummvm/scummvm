@@ -468,6 +468,7 @@ Common::Error PrivateEngine::run() {
 			}
 		}
 	}
+	removeTimer();
 	return Common::kNoError;
 }
 
@@ -1824,7 +1825,7 @@ static void timerCallback(void *refCon) {
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void *)ns, "timerCallback");
+	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, ns, "timerCallback");
 }
 
 void PrivateEngine::removeTimer() {

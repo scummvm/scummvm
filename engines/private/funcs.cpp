@@ -781,15 +781,11 @@ static void fTimer(ArgArray args) {
 		debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
 	int32 delay = 1000000 * args[0].u.val;
-	// This pointer is necessary since installTimer needs one
-	Common::String *s = new Common::String(args[1].u.sym->name->c_str());
 	if (delay > 0) {
-		if (!g_private->installTimer(delay, s))
+		if (!g_private->installTimer(delay, args[1].u.sym->name))
 			error("Timer installation failed!");
 	} else if (delay == 0) {
-		g_private->_nextSetting = *s;
-		// No need to keep the pointer alive
-		delete s;
+		g_private->_nextSetting = *(args[1].u.sym->name);
 	} else {
 		assert(0);
 	}
