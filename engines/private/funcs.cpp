@@ -601,6 +601,7 @@ static void fCRect(ArgArray args) {
 	d.type = RECT;
 	d.u.rect = rect;
 	Gen::push(d);
+	g_private->_rects.push_back(rect);
 }
 
 static void fBitmap(ArgArray args) {

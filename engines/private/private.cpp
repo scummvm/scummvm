@@ -161,6 +161,11 @@ PrivateEngine::~PrivateEngine() {
 			delete m.surf;
 		}
 	}
+
+	for (RectList::iterator it = _rects.begin(); it != _rects.end(); ++it) {
+		Common::Rect *r = (*it);
+		delete r;
+	}
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
