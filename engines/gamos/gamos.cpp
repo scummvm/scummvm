@@ -18,23 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "gamos/console.h"
+#include "gamos/detection.h"
 #include "gamos/gamos.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/framelimiter.h"
-#include "gamos/detection.h"
-#include "gamos/console.h"
-#include "common/scummsys.h"
+#include "graphics/paletteman.h"
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/rect.h"
-#include "common/util.h"
-#include "engines/util.h"
-#include "graphics/paletteman.h"
-#include "common/keyboard.h"
 #include "common/endian.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/util.h"
+
+#include "engines/util.h"
+
 #include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 
@@ -2290,7 +2293,7 @@ uint32 GamosEngine::doScript(uint32 scriptAddress) {
 
 
 void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
-	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
+	uint32 arg1 = 0, arg2 = 0;
 
 	switch (funcID) {
 	case 0:
@@ -2309,21 +2312,17 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			vm->EAX.setVal( _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0 );
 		break;
 	case 3:
-		//warning("func 3 %x check 0x10", PTR_00417218->fld_4 & 0x90);
 		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0 );
 		break;
 	case 4:
-		//warning("func 4 %x check 0x20", PTR_00417218->fld_4 & 0xa0);
 		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0 );
 		break;
 	case 5:
 		arg1 = vm->pop32();
-		//warning("func 5 %x check %x", PTR_00417218->fld_4 & 0xb0, arg1);
 		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0 );
 		break;
 	case 6:
 		arg1 = vm->pop32();
-		//warning("func 6 %x check %x", PTR_00417218->fld_4 & 0x4f, arg1);
 		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
 		break;
 	case 9:
@@ -2379,8 +2378,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			FUN_0040738c(d.sprId, d.x, d.y, true);
 		}
 		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
-	}
-	break;
+	} break;
 
 	case 21: {
 		VM::ValAddr regRef = vm->popReg();
@@ -2447,8 +2445,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			PTR_00417218->y = -1;
 			removeObjectMarkDirty(obj);
 		}
-	}
-	break;
+	} break;
 
 	case 31:
 		arg1 = vm->pop32();
@@ -2671,8 +2668,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			}
 		}
 		vm->EAX.setVal(1);
-	}
-	break;
+	} break;
 
 	case 43: {
 		arg1 = vm->pop32();
@@ -2684,8 +2680,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
 		vm->EAX.setVal(1);
-	}
-	break;
+	} break;
 
 	case 44: {
 		arg1 = vm->pop32();
@@ -2697,8 +2692,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
 		vm->EAX.setVal(1);
-	}
-	break;
+	} break;
 
 	case 45:
 		arg1 = vm->pop32();
@@ -3071,7 +3065,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	else if (act2 == ACT_NONE)
 		actPos = move;
 
-	if (act1 != 0xe)
+	if (act1 != ACT_NONE)
 		tmpb |= act1 | 0x40;
 
 	actPos += Common::Point(_scrollX, _scrollY);

@@ -311,8 +311,8 @@ private:
 	uint32 _magic;
 	uint32 _pages1kbCount;
 	uint32 _readBufSize;
-	uint32 _width;
-	uint32 _height;
+	uint32 _width; //screen output width
+	uint32 _height; //screen output height
 	int32 _gridCellW;
 	int32 _gridCellH;
 	uint32 _movieCount;
