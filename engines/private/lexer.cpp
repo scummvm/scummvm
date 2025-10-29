@@ -2197,6 +2197,7 @@ int parse(const char *code) {
 	yy_switch_to_buffer(bp);
 	PRIVATE_parse();
 	yy_delete_buffer(bp);
+	yylex_destroy();
 	return 0;
 }
 
