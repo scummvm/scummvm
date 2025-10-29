@@ -425,6 +425,8 @@ private:
 
 	uint8 RawKeyCode = 0;
 
+	Common::String _keySeq;
+
 
 	/* path find ? */
 	int32 DAT_00412c8c = 0;

@@ -242,6 +242,8 @@ bool GamosEngine::loader2() {
 }
 
 bool GamosEngine::loadModule(uint id) {
+	_keySeq.clear();
+
 	if ((!_runReadDataMod && !writeStateFile()) ||
 	        !_arch.seekDir(1))
 		return false;
@@ -1166,10 +1168,22 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	_needReload = false;
 	VM::_interrupt = false;
 
+	if (_d2_fld16 == 0) {
+		act1 = ACT_NONE;
+		act2 = ACT_NONE;
+		RawKeyCode = ACT_NONE;
+	}
+
 	RawKeyCode = keyCode;
 
-	FUN_00402c2c(mouseMove, actPos, act2, act1);
+	if (RawKeyCode != ACT_NONE) {
+		if (_keySeq.size() >= 32)
+			_keySeq = _keySeq.substr(_keySeq.size() - 31);
 
+		_keySeq += RawKeyCode;
+	}
+
+	FUN_00402c2c(mouseMove, actPos, act2, act1);
 	if (FUN_00402bc4()) {
 		bool loop = false;
 		if (!DAT_00417802)
@@ -2282,10 +2296,17 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 		break;
 	case 13: {
-		VM::ValAddr regRef = vm->popReg(); //implement
+		VM::ValAddr regRef = vm->popReg();
 		Common::String str = vm->getString(regRef);
-		//warning("CallDispatcher 13 keycode %s", str.c_str());
+
 		vm->EAX.setVal(0);
+
+		for(uint i = 0; i < str.size(); i++) {
+			if (str[i] == RawKeyCode) {
+				vm->EAX.setVal(1);
+				break;
+			}
+		}
 		break;
 	}
 
@@ -2622,10 +2643,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	case 57: {
 		VM::ValAddr regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef);
-		warning("CallDispatcher 57 keycode %s", str.c_str());
-		vm->EAX.setVal(0);
-	}
-	break;
+		if (_keySeq.find(str) != Common::String::npos) {
+			_keySeq.clear();
+			vm->EAX.setVal(1);
+		} else
+			vm->EAX.setVal(0);
+	} break;
 
 	default:
 		warning("Call Dispatcher %d", funcID);
