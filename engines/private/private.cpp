@@ -1216,6 +1216,11 @@ void PrivateEngine::restartGame() {
 	// Movies
 	_repeatedMovieExit = "";
 	_playedMovies.clear();
+	if (_videoDecoder != _pausedVideo) {
+		delete _pausedVideo;
+	}
+	delete _videoDecoder;
+	_videoDecoder = nullptr;
 	_pausedVideo = nullptr;
 
 	// Pause
