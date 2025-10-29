@@ -278,18 +278,28 @@ Common::Error PrivateEngine::run() {
 
 	// Load the game frame once
 	byte *palette;
-	_frameImage = decodeImage(_framePath, nullptr);
-	_mframeImage = decodeImage(_framePath, &palette);
+	bool isNewPalette;
+	_frameImage = decodeImage(_framePath, nullptr, nullptr);
+	_mframeImage = decodeImage(_framePath, &palette, &isNewPalette);
 
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
+	if (isNewPalette) {
+		free(palette);
+		palette = nullptr;
+	}
 
 	byte *initialPalette;
-	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette);
+	bool isNewInitialPalette;
+	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette, &isNewInitialPalette);
 	_compositeSurface->setPalette(initialPalette, 0, 256);
 	surf->free();
 	delete surf;
 	_image->destroy();
+	if (isNewInitialPalette) {
+		free(initialPalette);
+		initialPalette = nullptr;
+	}
 
 	// Main event loop
 	Common::Event event;
@@ -1594,7 +1604,7 @@ void PrivateEngine::stopSound(bool all) {
 	}
 }
 
-Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette) {
+Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette, bool *isNewPalette) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	Common::Path path = convertPath(name);
 	Common::ScopedPtr<Common::SeekableReadStream> file(Common::MacResManager::openFileOrDataFork(path));
@@ -1615,13 +1625,26 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
+		if (palette != nullptr) {
+			*palette = currentPalette;
+			if (isNewPalette != nullptr) {
+				*isNewPalette = true;
+			}
+		} else {
+			free(currentPalette);
+			if (isNewPalette != nullptr) {
+				*isNewPalette = false;
+			}
+		}
 	} else {
 		currentPalette = const_cast<byte *>(oldPalette);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
-	}
-
-	if (palette != nullptr) {
-		*palette = currentPalette;
+		if (palette != nullptr) {
+			*palette = currentPalette;
+		}
+		if (isNewPalette != nullptr) {
+			*isNewPalette = false;
+		}
 	}
 
 	return newImage;
@@ -1670,13 +1693,17 @@ void PrivateEngine::remapImage(uint16 ncolors, const Graphics::Surface *oldImage
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
 	byte *palette;
-	Graphics::Surface *surf = decodeImage(name, &palette);
+	bool isNewPalette;
+	Graphics::Surface *surf = decodeImage(name, &palette, &isNewPalette);
 	_compositeSurface->setPalette(palette, 0, 256);
 	_compositeSurface->setTransparentColor(_transparentColor);
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
 	_image->destroy();
+	if (isNewPalette) {
+		free(palette);
+	}
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1697,7 +1724,8 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(_screenRect, _transparentColor);
 	byte *palette;
-	Graphics::Surface *csurf = decodeImage(name, &palette);
+	bool isNewPalette;
+	Graphics::Surface *csurf = decodeImage(name, &palette, &isNewPalette);
 
 	uint32 hdiff = 0;
 	uint32 wdiff = 0;
@@ -1719,6 +1747,10 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	csurf->free();
 	delete csurf;
 	_image->destroy();
+
+	if (isNewPalette) {
+		free(palette);
+	}
 
 	return surf;
 }
