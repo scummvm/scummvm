@@ -1881,6 +1881,7 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		offset = offset + 22;
 		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
+		surface->free();
 		delete surface;
 	}
 }
