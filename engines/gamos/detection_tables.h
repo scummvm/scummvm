@@ -26,6 +26,7 @@ const PlainGameDescriptor gamosGames[] = {
 	{ "solgamer", "21 Solitaire" },
 	{ "pilots", "Pilots 1" },
 	{ "pilots2", "Pilots 2" },
+	{ "wild", "WildSnakes"},
 	{ 0, 0 }
 };
 
@@ -67,6 +68,19 @@ const GamosGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 		"pilots2.exe",
+		0x80000018
+	},
+	{
+		{
+			"wild",
+			0,
+			AD_ENTRY1s("wildus.exe", "6049dd1645071da1b60cdd395e6999ba", 11475754),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"wildus.exe",
 		0x80000018
 	},
 	{
