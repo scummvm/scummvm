@@ -508,7 +508,7 @@ byte *MoviePlayer::blit2(Common::Rect rect, byte *in, Graphics::Surface *surface
 				x += count;
 			}
 		} else if (b == 0) {
-			x += b + 1;
+			x = rect.right;
 		} else if (b != 1) {
 			int count = b + 1;
 			byte val = *in;
