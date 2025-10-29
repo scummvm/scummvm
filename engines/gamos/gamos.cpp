@@ -102,7 +102,8 @@ Common::Error GamosEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	_system->showMouse(true);
+	CursorMan.setDefaultArrowCursor();
+	CursorMan.showMouse(true);
 
 	init(getRunFile());
 
@@ -2855,10 +2856,12 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 }
 
 void GamosEngine::setCursor(int id, bool dirtRect) {
-	if (_unk9 == 0) {
+	if (_unk9 == 0)
 		_mouseCursorImgId = id;
-		_cursorFrame = 0;
-	}
+	else
+		_mouseCursorImgId = -1;
+
+	_cursorFrame = 0;
 }
 
 
@@ -3573,10 +3576,7 @@ void GamosEngine::FUN_004025d0() {
 
 
 bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
-	if (_unk9)
-		return true;
-
-	if (_mouseCursorImgId >= 0) {
+	if (_mouseCursorImgId >= 0 && _unk9 == 0) {
 		Sprite &cursorSpr = _sprites[_mouseCursorImgId];
 
 		if (cursorSpr.field_3 > 1) {
@@ -3587,12 +3587,14 @@ bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
 
 			ImagePos &impos = cursorSpr.sequences[0]->operator[](_cursorFrame);
 			Graphics::Surface &surf = impos.image->surface;
-			CursorMan.replaceCursor(surf, impos.xoffset, impos.yoffset, 0);
+			CursorMan.replaceCursor(surf, -impos.xoffset, -impos.yoffset, 0);
+			CursorMan.disableCursorPalette(true);
 		} else {
 			if (_currentCursor != _mouseCursorImgId) {
 				ImagePos &impos = cursorSpr.sequences[0]->operator[](0);
 				Graphics::Surface &surf = impos.image->surface;
-				CursorMan.replaceCursor(surf, impos.xoffset, impos.yoffset, 0);
+				CursorMan.replaceCursor(surf, -impos.xoffset, -impos.yoffset, 0);
+				CursorMan.disableCursorPalette(true);
 			}
 		}
 	} else {
