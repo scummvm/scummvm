@@ -643,7 +643,7 @@ bool GamosEngine::loadInitModule() {
 	_xorSeq[1].clear();
 	_xorSeq[0].clear();
 	_isMoviePlay = 0;
-	DAT_00417802 = false;
+	_txtInputActive = false;
 	//DAT_00417808 = 0;
 	_runReadDataMod = true;
 	//DAT_00417807 = 0;
@@ -1186,10 +1186,10 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
 	if (FUN_00402bc4()) {
 		bool loop = false;
-		if (!DAT_00417802)
+		if (!_txtInputActive)
 			loop = FUN_00402fb4();
-		/*else
-		    loop = FUN_00403314(_messageProc._act2);*/
+		else
+		    loop = onTxtInputUpdate(act2);
 
 		if (_needReload)
 			return 2;  // rerun update after loadModule
@@ -1207,10 +1207,10 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 			if (!FUN_00402bc4())
 				return 0;
 
-			if (!DAT_00417802)
+			if (!_txtInputActive)
 				loop = FUN_00402fb4();
-			/*else
-			    loop = FUN_00403314(_messageProc._act2);*/
+			else
+			    loop = onTxtInputUpdate(act2);
 
 			if (_needReload)
 				return 2; // rerun update after loadModule
@@ -2341,6 +2341,19 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 	}
 	break;
+
+	case 21: {
+		VM::ValAddr regRef = vm->popReg();
+		arg2 = vm->pop32();
+		vm->EAX.setVal( txtInputBegin(vm, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH) );
+	} break;
+
+	case 22: {
+		VM::ValAddr regRef = vm->popReg();
+		arg2 = vm->pop32();
+		const SubtitlePoint &d = _subtitlePoints[arg2][0];
+		vm->EAX.setVal( txtInputBegin(vm, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y) );
+	} break;
 
 	case 24: {
 		VM::ValAddr regRef = vm->popReg();
@@ -3720,6 +3733,200 @@ bool GamosEngine::scrollAndDraw() {
 
 	return true;
 }
+
+int GamosEngine::txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y) {
+	if (memtype != VM::REF_EDI) {
+		error("Unsupported memtype");
+		return 0;
+	}
+
+	if (_txtInputActive == false) {
+		removeSubtitles(PTR_00417218);
+		PTR_00417218->fld_3 |= 2;
+		_txtInputVmOffset = offset;
+		_txtInputSpriteID = sprId;
+		_txtInputX = x;
+		_txtInputY = y;
+		_txtInputObject = PTR_00417218;
+		_txtInputAction = PTR_00417214;
+		_txtInputObjectIndex = _curObjIndex;
+
+		txtInputProcess(0);
+		return 1;
+	}
+	return 0;
+}
+
+void GamosEngine::txtInputProcess(uint8 c) {
+	PTR_00417218 = _txtInputObject;
+	PTR_00417214 = _txtInputAction;
+	_curObjIndex = _txtInputObjectIndex;
+
+	Sprite &spr = _sprites[_txtInputSpriteID];
+
+	uint8 ib = c;
+
+	while (true) {
+		if (ib == 0) {
+			if (_txtInputActive) {
+				_txtInputActive = false;
+				removeSubtitles(PTR_00417218);
+				return;
+			}
+			_txtInputActive = true;
+			_txtInputTyped = false;
+			ib = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputVmOffset++;
+			continue;
+		} else if (ib == KeyCodes::WIN_BACK) {
+			if (_txtInputTyped) {
+				if (_txtInputLength)
+					txtInputEraseBack(1);
+				return;
+			}
+		} else if (ib == KeyCodes::WIN_RETURN) {
+			if (_txtInputTyped) {
+				_txtInputBuffer[_txtInputLength] = 0;
+				switch (_txtInputFlags & 7) {
+					case 0:
+						_txtInputVMAccess.setU8( atoi((char *)_txtInputBuffer) );
+						break;
+
+					case 1: {
+						VmTxtFmtAccess adr;
+						adr.setVal( _txtInputVMAccess.getU32() );
+						adr.write(_txtInputBuffer, _txtInputLength + 1);
+					} break;
+
+					case 2:
+						_txtInputVMAccess.write(_txtInputBuffer, _txtInputLength + 1);
+						break;
+
+					case 3:
+						_txtInputVMAccess.setU32( atoi((char *)_txtInputBuffer) );
+						break;
+
+					case 4: {
+						VmTxtFmtAccess adr;
+						adr.setVal( _txtInputVMAccess.getU32() );
+						adr.setU32( atoi((char *)_txtInputBuffer) );
+					} break;
+				}
+
+				_txtInputTyped = false;
+				ib = VM::memory().getU8(_txtInputVmOffset);
+				_txtInputVmOffset++;
+				continue;
+			}
+		} else if (ib == 0xf) {
+			_txtInputFlags = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputVmOffset++;
+			_txtInputMaxLength = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputVmOffset++;
+
+			if ((_txtInputFlags & 0x70) == 0 || (_txtInputFlags & 0x70) == 0x10) {
+				_txtInputVMAccess.setMemType(VM::REF_EDI);
+				if ((_txtInputFlags & 0x70) == 0x10) {
+					_txtInputVMAccess.setMemType(VM::REF_EBX);
+					_txtInputVMAccess.objMem = PTR_004173e8;
+				}
+				if ( (_txtInputFlags & 0x80) == 0 ) {
+					_txtInputVMAccess.setOffset( VM::memory().getU8(_txtInputVmOffset) );
+					_txtInputVmOffset++;
+				} else {
+					_txtInputVMAccess.setOffset( VM::memory().getU32(_txtInputVmOffset) );
+					_txtInputVmOffset += 4;
+				}
+				switch (_txtInputFlags & 7) {
+					case 0:
+					case 3:
+					case 4:
+						_txtInputIsNumber = true;
+						break;
+
+					case 1:
+					case 2:
+						_txtInputIsNumber = false;
+						break;
+				}
+
+				_txtInputLength = 0;
+				_txtInputTyped = true;
+				return;
+			}
+		} else if (ib == KeyCodes::WIN_ESCAPE) {
+			if (_txtInputTyped) {
+				if (_txtInputLength != 0) {
+                    txtInputEraseBack(_txtInputLength);
+                    return;
+                }
+
+				if (_txtInputActive) {
+					_txtInputActive = false;
+					removeSubtitles(PTR_00417218);
+					return;
+				}
+				_txtInputActive = true;
+				_txtInputTyped = false;
+				ib = VM::memory().getU8(_txtInputVmOffset);
+				_txtInputVmOffset++;
+				continue;
+			}
+		}
+
+		if (_txtInputTyped) {
+			if (_txtInputLength < _txtInputMaxLength) {
+				if (ib < spr.field_1)
+					ib = tolower(ib);
+				if (ib > spr.field_2)
+					ib = toupper(ib);
+				if (ib >= spr.field_1 && ib <= spr.field_2 &&
+				   (_txtInputIsNumber == false || Common::isDigit(ib))) {
+					_txtInputBuffer[_txtInputLength] = ib;
+					_txtInputObjects[_txtInputLength] = addSubtitleImage(ib, _txtInputSpriteID, &_txtInputX, _txtInputY);
+					_txtInputLength++;
+				}
+			}
+			return;
+		} else {
+			addSubtitleImage(ib, _txtInputSpriteID, &_txtInputX, _txtInputY);
+			ib = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputVmOffset++;
+		}
+	}
+}
+
+void GamosEngine::txtInputEraseBack(int n) {
+	for (int32 i = _txtInputLength - 1; i >= 0 && n > 0; i--, n--) {
+		ImagePos *ips = _txtInputObjects[i]->pImg;
+		_txtInputX -= ips->image->surface.w - ips->xoffset;
+		removeObjectMarkDirty(_txtInputObjects[i]);
+
+		_txtInputLength--;
+	}
+}
+
+bool GamosEngine::onTxtInputUpdate(uint8 c) {
+	for(int i = 0; i < _objects.size(); i++) {
+		Object &obj = _objects[i];
+		if ((obj.flags & 0x87) == 0x81) {
+			if ((obj.frame + 1 == obj.fld_2) && obj.pos != 255 && obj.blk != 255) {
+				int32 idx = (obj.blk << 8) | obj.pos;
+				obj.fld_4 = _objects[idx].pos;
+				obj.fld_5 = _objects[idx].blk;
+			}
+			FUN_00402f34(false, false, &obj);
+		}
+	}
+
+	if (RawKeyCode != KeyCodes::WIN_SPACE && RawKeyCode != KeyCodes::WIN_RETURN &&
+		(RawKeyCode == ACT_NONE || c != ACT_NONE) )
+		return true;
+
+	txtInputProcess(RawKeyCode);
+	return true;
+}
+
 
 void GamosEngine::dumpActions() {
 	Common::String t = Common::String::format("./actions_%d.txt", _currentModuleID);

@@ -239,6 +239,56 @@ struct GameScreen {
 	RawData _bkgImageData;
 };
 
+struct VmTxtFmtAccess : VM::ValAddr {
+	byte *objMem = nullptr;
+
+	inline bool isObjMem() const { return getMemType() == VM::REF_EBX;}
+
+	inline Common::String getString(uint maxLen = 256) const {
+		if (isObjMem()) {
+			Common::String s = Common::String((const char *)objMem + getOffset());
+			if (s.size() > maxLen)
+				s.erase(maxLen);
+			return s;
+		}
+
+		return VM::readMemString(getOffset(), maxLen);
+	}
+
+	inline uint8 getU8() const {
+		if (isObjMem())
+			return objMem[getOffset()];
+		return VM::memory().getU8(getOffset());
+	}
+
+	inline uint32 getU32() const {
+		if (isObjMem())
+			return VM::getU32(objMem + getOffset());
+		return VM::memory().getU32(getOffset());
+	}
+
+	inline void write(byte *src, uint len) {
+		if (isObjMem())
+			memcpy(objMem + getOffset(), src, len);
+		else
+			VM::writeMemory(getOffset(), src, len);
+	}
+
+	inline void setU8(uint8 v) {
+		if (isObjMem())
+			objMem[getOffset()] = v;
+		else
+			VM::memory().setU8(getOffset(), v);
+	}
+
+	inline void setU32(uint32 v) {
+		if (isObjMem())
+			VM::setU32(objMem + getOffset(), v);
+		else
+			VM::memory().setU32(getOffset(), v);
+	}
+};
+
 class GamosEngine : public Engine {
 	friend class MoviePlayer;
 
@@ -412,8 +462,6 @@ private:
 
 	int32 _curObjIndex = 0;
 
-	bool DAT_00417802 = false;
-
 
 	int32 DAT_004173f0 = 0;
 	int32 DAT_004173f4 = 0;
@@ -426,6 +474,26 @@ private:
 	uint8 RawKeyCode = 0;
 
 	Common::String _keySeq;
+
+
+	int32 _txtInputVmOffset = -1;
+	int32 _txtInputSpriteID = 0;
+	int32 _txtInputX = 0;
+	int32 _txtInputY = 0;
+	uint8 _txtInputBuffer[256];
+	Object *_txtInputObjects[256];
+	int32 _txtInputLength = 0;
+	int32 _txtInputMaxLength = 0;
+	VmTxtFmtAccess _txtInputVMAccess;
+	uint8 _txtInputFlags = 0;
+	bool _txtInputTyped = false;
+	bool _txtInputIsNumber = false;
+	Object *_txtInputObject = nullptr;
+	ObjectAction *_txtInputAction = nullptr;
+	int32 _txtInputObjectIndex = -1;
+
+
+	bool _txtInputActive = false;
 
 
 	/* path find ? */
@@ -588,7 +656,11 @@ protected:
 
 	void FUN_004025d0();
 
+	int txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y);
+	void txtInputProcess(uint8 c);
+	void txtInputEraseBack(int n);
 
+	bool onTxtInputUpdate(uint8 c);
 
 	/* save-load */
 	void storeToGameScreen(int id);
