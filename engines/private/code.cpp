@@ -64,9 +64,20 @@ using namespace Gen;
 
 SettingMaps *g_setts;
 
+SettingMaps::SettingMaps() :
+	_setting(nullptr) {
+}
+
+SettingMaps::~SettingMaps() {
+	for (uint i = 0; i < _settings.size(); i++) {
+		free(_settings[i]);
+	}
+}
+
 /* initialize setting for code generation */
 void SettingMaps::init() {
 	_setting = (Setting *)malloc(sizeof(Setting));
+	_settings.push_back(_setting);
 	memset((void *)_setting, 0, sizeof(Setting));
 
 	g_vm->_prog = (Inst *)&_setting->prog;
