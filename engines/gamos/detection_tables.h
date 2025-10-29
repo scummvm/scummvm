@@ -27,6 +27,8 @@ const PlainGameDescriptor gamosGames[] = {
 	{ "pilots", "Pilots 1" },
 	{ "pilots2", "Pilots 2" },
 	{ "wild", "WildSnakes"},
+	{ "flop", "Flip-Flop"},
+	{ "it", "IT"},
 	{ 0, 0 }
 };
 
@@ -82,6 +84,19 @@ const GamosGameDescription gameDescriptions[] = {
 		},
 		"wildus.exe",
 		0x80000018
+	},
+	{
+		{
+			"flop",
+			0,
+			AD_ENTRY1s("FFLOPRD.EXE", "82d5b8a9d442bcec25c3401b4f7c0f9e", 4637680),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		"FFLOPRD.EXE",
+		0x80000016
 	},
 	{
 		AD_TABLE_END_MARKER,
