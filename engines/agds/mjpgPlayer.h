@@ -34,7 +34,8 @@ namespace AGDS {
 
 class AGDSEngine;
 class MJPGPlayer {
-	Common::SeekableReadStream * 	_stream;
+	using StreamPtr = Common::ScopedPtr<Common::SeekableReadStream>;
+	StreamPtr					 	_stream;
 	int32							_firstFramePos;
 	Image::JPEGDecoder				_decoder;
 	uint							_framesPlayed;

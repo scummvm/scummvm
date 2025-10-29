@@ -40,14 +40,12 @@ Animation::Animation(AGDSEngine *engine, const Common::String &name) :
 
 Animation::~Animation() {
 	freeFrame();
-	delete _flic;
 }
 
 void Animation::freeScaledFrame() {
 	if (_scaledFrame) {
 		_scaledFrame->free();
-		delete _scaledFrame;
-		_scaledFrame = nullptr;
+		_scaledFrame.reset();
 	}
 }
 
@@ -55,8 +53,7 @@ void Animation::freeFrame() {
 	freeScaledFrame();
 	if (_frame) {
 		_frame->free();
-		delete _frame;
-		_frame = nullptr;
+		_frame.reset();
 	}
 }
 
@@ -85,11 +82,10 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 			_delay = 0;
 		}
 	}
-	delete _flic;
-	_flic = nullptr;
+	_flic.reset();
 
 	if (fname.hasSuffixIgnoreCase(".bmp")) {
-		_frame = _engine->loadPicture(fname);
+		_frame.reset(_engine->loadPicture(fname));
 		rescaleCurrentFrame();
 		_frames = 1;
 		return true;
@@ -98,7 +94,7 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 	Video::FlicDecoder *flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
 		_frames = flic->getFrameCount();
-		_flic = flic;
+		_flic.reset(flic);
 		decodeNextFrame();
 		return true;
 	} else {
@@ -122,15 +118,11 @@ void Animation::rescaleCurrentFrame() {
 	freeScaledFrame();
 	if (_rotation != 0) {
 		Graphics::TransformStruct transform(_scale * 100, _scale * 100, 90 * _rotation, _frame->w / 2, _frame->h / 2, Graphics::TSpriteBlendMode::BLEND_NORMAL, Graphics::kDefaultRgbaMod);
-		if (_scaledFrame)
-			delete _scaledFrame;
-		_scaledFrame = _frame->rotoscale(transform);
+		_scaledFrame.reset(_frame->rotoscale(transform));
 	} else if (_scale != 1) {
-		if (_scaledFrame)
-			delete _scaledFrame;
-		_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+		_scaledFrame.reset(_frame->scale(_frame->w * _scale, _frame->h * _scale, true));
 	}
-	auto *frame = _scaledFrame? _scaledFrame: _frame;
+	auto *frame = _scaledFrame? _scaledFrame.get(): _frame.get();
 	if (frame) {
 		uint h = frame->h, w = frame->w;
 		_visibleHeight = 0;
@@ -170,7 +162,7 @@ void Animation::decodeNextFrame() {
 
 	freeFrame();
 	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
-	_frame = _engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette()));
+	_frame.reset(_engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette())));
 	rescaleCurrentFrame();
 	++_phase;
 }
@@ -248,7 +240,7 @@ bool Animation::tick() {
 
 void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::ManagedSurface *mask, int maskAlpha) const {
 	dst += _position;
-	auto *frame = _scaledFrame? _scaledFrame: _frame;
+	auto *frame = _scaledFrame? _scaledFrame.get(): _frame.get();
 	if (!frame || !_onScreen)
 		return;
 

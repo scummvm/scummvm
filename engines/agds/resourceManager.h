@@ -97,7 +97,7 @@ public:
 	Common::SeekableReadStream * getResource(const Common::String &name) const;
 	Graphics::Surface * loadPicture(const Common::String & name, const Graphics::PixelFormat &format);
 
-	static Common::String loadText(Common::SeekableReadStream *stream);
+	static Common::String loadText(Common::SeekableReadStream &stream);
 	Common::String loadText(const Common::String & name) const;
 };
 

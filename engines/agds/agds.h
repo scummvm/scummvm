@@ -171,7 +171,7 @@ public:
 	}
 
 	Screen * getCurrentScreen() {
-		return _currentScreen;
+		return _currentScreen.get();
 	}
 	Console * getConsole();
 
@@ -200,13 +200,13 @@ public:
 	AnimationPtr findAnimationByPhaseVar(const Common::String &phaseVar);
 	void loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
 	Character * getCharacter(const Common::String &name) {
-		return _currentCharacterName == name? _currentCharacter: nullptr;
+		return _currentCharacterName == name? _currentCharacter.get(): nullptr;
 	}
 	Character * currentCharacter() const {
-		return _currentCharacter;
+		return _currentCharacter.get();
 	}
 	Character * jokes() const {
-		return _jokes;
+		return _jokes.get();
 	}
 
 	void loadDefaultMouseCursor(const Common::String &name) {
@@ -285,76 +285,76 @@ private:
 	void stopAmbientSound();
 	void loadPatches(Common::SeekableReadStream &file, Database & db);
 
-	typedef Common::HashMap<int, Graphics::ManagedSurface *> PictureCacheType;
+	typedef Common::HashMap<int, Common::ScopedPtr<Graphics::ManagedSurface>> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
 	typedef Common::Array<Common::String> SystemVariablesListType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
-	typedef Common::HashMap<int, Font *> FontsType;
+	typedef Common::HashMap<int, Common::ScopedPtr<Font>> FontsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 	typedef Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectPatchesType;
 	typedef Common::HashMap<Common::String, Common::Array<uint8>> PatchDatabase;
 
-	const ADGameDescription *	_gameDescription;
-	ResourceManager				_resourceManager;
-	SoundManager				_soundManager;
-	Database					_data;
-	PictureCacheType			_pictureCache;
-	PictureCacheLookup			_pictureCacheLookup;
-	int							_pictureCacheId;
-	FontsType					_fonts;
-	ProcessListType				_processes;
-	ProcessListType				_pendingReactivatedProcesses;
-	PatchesType					_patches;
-	ObjectPatchesType			_objectPatches;
-	int							_sharedStorageIndex;
-	Common::String				_sharedStorage[10];
-	GlobalsType					_globals;
-	SystemVariablesListType		_systemVarList;
-	SystemVariablesType			_systemVars;
-	Graphics::PixelFormat		_pixelFormat;
-	Color						_colorKey;
-	Color						_minShadowColor;
-	Color						_maxShadowColor;
-	int							_shadowIntensity;
-	MJPGPlayer *				_mjpgPlayer;
-	uint32						_filmStarted;
-	Common::String				_filmProcess;
-	Screen *					_currentScreen;
-	Common::String				_currentScreenName;
-	Character *					_currentCharacter;
-	Character *					_jokes;
-	Common::String				_currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
-	Common::String				_nextScreenName;
-	ScreenLoadingType			_nextScreenType;
-	Common::String 				_defaultMouseCursorName;
-	AnimationPtr				_defaultMouseCursor;
-	Common::Point				_mouse;
-	bool						_userEnabled;
-	bool						_systemUserEnabled;
-	MouseMap					_mouseMap;
-	Common::RandomSource		_random;
+	const ADGameDescription *		_gameDescription;
+	ResourceManager					_resourceManager;
+	SoundManager					_soundManager;
+	Database						_data;
+	PictureCacheType				_pictureCache;
+	PictureCacheLookup				_pictureCacheLookup;
+	int								_pictureCacheId;
+	FontsType						_fonts;
+	ProcessListType					_processes;
+	ProcessListType					_pendingReactivatedProcesses;
+	PatchesType						_patches;
+	ObjectPatchesType				_objectPatches;
+	int								_sharedStorageIndex;
+	Common::String					_sharedStorage[10];
+	GlobalsType						_globals;
+	SystemVariablesListType			_systemVarList;
+	SystemVariablesType				_systemVars;
+	Graphics::PixelFormat			_pixelFormat;
+	Color							_colorKey;
+	Color							_minShadowColor;
+	Color							_maxShadowColor;
+	int								_shadowIntensity;
+	Common::ScopedPtr<MJPGPlayer>	_mjpgPlayer;
+	uint32							_filmStarted;
+	Common::String					_filmProcess;
+	Common::ScopedPtr<Screen>		_currentScreen;
+	Common::String					_currentScreenName;
+	Common::ScopedPtr<Character>	_currentCharacter;
+	Common::ScopedPtr<Character>	_jokes;
+	Common::String					_currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
+	Common::String					_nextScreenName;
+	ScreenLoadingType				_nextScreenType;
+	Common::String 					_defaultMouseCursorName;
+	AnimationPtr					_defaultMouseCursor;
+	Common::Point					_mouse;
+	bool							_userEnabled;
+	bool							_systemUserEnabled;
+	MouseMap						_mouseMap;
+	Common::RandomSource			_random;
 
-	Inventory					_inventory;
-	Common::String				_inventoryRegionName;
-	RegionPtr					_inventoryRegion;
-	ObjectPtr					_currentInventoryObject;
+	Inventory						_inventory;
+	Common::String					_inventoryRegionName;
+	RegionPtr						_inventoryRegion;
+	ObjectPtr						_currentInventoryObject;
 
-	Dialog						_dialog;
+	Dialog							_dialog;
 
 	// Original engine use weird names for the vars, I keep them.
-	int							_tellTextTimer;
-	TextLayout					_textLayout;
+	int								_tellTextTimer;
+	TextLayout						_textLayout;
 
-	int							_syncSoundId;
-	int							_ambientSoundId;
+	int								_syncSoundId;
+	int								_ambientSoundId;
 
-	Common::String				_curtainProcess;
-	int							_curtainTimer;
-	int							_curtainScreen;
+	Common::String					_curtainProcess;
+	int								_curtainTimer;
+	int								_curtainScreen;
 
-	bool						_fastMode;
-	bool						_hintMode;
+	bool							_fastMode;
+	bool							_hintMode;
 };
 
 

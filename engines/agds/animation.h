@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/ptr.h"
 
 namespace Common	{ class SeekableReadStream; }
 namespace Graphics	{ struct Surface; struct ManagedSurface; }
@@ -37,11 +38,14 @@ class AGDSEngine;
 class Object;
 
 class Animation {
+	using FlicPtr = Common::ScopedPtr<Video::FlicDecoder>;
+	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
+
 	AGDSEngine *		_engine;
 	Common::String		_name;
-	Video::FlicDecoder *_flic;
-	Graphics::ManagedSurface *_frame;
-	Graphics::ManagedSurface *_scaledFrame;
+	FlicPtr				_flic;
+	ManagedSurfacePtr	_frame;
+	ManagedSurfacePtr	_scaledFrame;
 	int					_frames;
 	Common::Point		_position;
 	Common::String		_process;

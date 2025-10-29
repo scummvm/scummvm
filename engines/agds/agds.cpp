@@ -73,13 +73,10 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 }
 
 AGDSEngine::~AGDSEngine() {
-	delete _jokes;
-	delete _currentCharacter;
-	delete _currentScreen;
 	for (PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
 		i->_value->free();
-		delete i->_value;
 	}
+	_pictureCache.clear();
 }
 
 bool AGDSEngine::initGraphics(int w, int h) {
@@ -168,7 +165,7 @@ bool AGDSEngine::load() {
 	{
 		Common::ScopedPtr<Common::File> file(new Common::File());
 		file->open("jokes.chr");
-		_jokes = new Character(this, "jokes");
+		_jokes.reset(new Character(this, "jokes"));
 		_jokes->load(*file);
 	}
 
@@ -189,7 +186,8 @@ RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	if (entryName.empty())
 		return Common::String();
-	return ResourceManager::loadText(_data.getEntry(entryName));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_data.getEntry(entryName));
+	return ResourceManager::loadText(*stream);
 }
 
 ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
@@ -348,9 +346,9 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	bool hasScreenPatch = doPatch && patch->screenSaved;
 
 	_currentScreenName = name;
-	_currentScreen = nullptr;
+	_currentScreen.reset();
 	auto screenObject = loadObject(name, Common::String(), !hasScreenPatch);
-	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
+	_currentScreen.reset(new Screen(this, screenObject, loadingType, previousScreenName));
 
 	runProcess(screenObject);
 
@@ -367,8 +365,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 }
 
 void AGDSEngine::resetCurrentScreen() {
-	delete _currentScreen;
-	_currentScreen = NULL;
+	_currentScreen.reset();
 	_currentScreenName.clear();
 }
 
@@ -799,11 +796,10 @@ Common::Error AGDSEngine::run() {
 }
 
 void AGDSEngine::playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles) {
-	delete _mjpgPlayer;
-	_mjpgPlayer = nullptr;
+	_mjpgPlayer.reset();
 
 	_filmProcess = process.getName();
-	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video), subtitles);
+	_mjpgPlayer.reset(new MJPGPlayer(_resourceManager.getResource(video), subtitles));
 	_soundManager.stopAll();
 	_filmStarted = _system->getMillis();
 	_syncSoundId = _soundManager.play(process.getName(), Common::String(), audio, Common::String(), true, 100, 0);
@@ -811,10 +807,7 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 
 void AGDSEngine::skipFilm() {
 	debug("skip");
-	if (_mjpgPlayer) {
-		delete _mjpgPlayer;
-		_mjpgPlayer = NULL;
-	}
+	_mjpgPlayer.reset();
 	if (_syncSoundId >= 0) {
 		debug("skip: stopping sound %d", _syncSoundId);
 		_mixer->stopID(_syncSoundId);
@@ -882,13 +875,11 @@ AnimationPtr AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar)
 void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
 	debug("loadCharacter %s %s %s", id.c_str(), filename.c_str(), object.c_str());
 
-	delete _currentCharacter;
-
 	_currentCharacterName = id;
 	_currentCharacterFilename = filename;
 	_currentCharacterObject = object;
 
-	_currentCharacter = new Character(this, id);
+	_currentCharacter.reset(new Character(this, id));
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(loadText(filename)));
 	_currentCharacter->load(*stream);
 	_currentCharacter->associate(object);
@@ -908,28 +899,26 @@ int AGDSEngine::saveToCache(const Common::String &name, Graphics::ManagedSurface
 		return -1;
 	int id = _pictureCacheId++;
 	_pictureCacheLookup[name] = id;
-	_pictureCache[id] = surface;
+	_pictureCache[id].reset(surface);
 	return id;
 }
 
 Graphics::ManagedSurface *AGDSEngine::loadFromCache(int id) const {
 	PictureCacheType::const_iterator i = _pictureCache.find(id);
-	return (i != _pictureCache.end()) ? i->_value : NULL;
+	return (i != _pictureCache.end()) ? i->_value.get() : NULL;
 }
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
 	debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
 	Graphics::ManagedSurface *surface = loadPicture(name);
-	Font *&font = _fonts[id];
-	delete font;
-	font = new Font(surface, gw, gh);
+	_fonts[id].reset(new Font(surface, gw, gh));
 }
 
 Font *AGDSEngine::getFont(int id) const {
 	FontsType::const_iterator i = _fonts.find(id);
 	if (i == _fonts.end())
 		error("no font with id %d", id);
-	return i->_value;
+	return i->_value.get();
 }
 
 Graphics::Surface *AGDSEngine::createSurface(int w, int h) {

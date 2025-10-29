@@ -58,6 +58,7 @@ private:
 	typedef Common::Array<StringEntry> StringTableType;
 	typedef Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> KeyHandlersType;
 	typedef Common::HashMap<Common::String, uint> UseHandlersType;
+	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
 
 	Common::String					_name;
 	CodeType						_code;
@@ -65,8 +66,8 @@ private:
 	bool							_stringTableLoaded;
 	KeyHandlersType					_keyHandlers;
 	UseHandlersType					_useHandlers;
-	Graphics::ManagedSurface *	_picture;
-	Graphics::ManagedSurface *	_rotatedPicture;
+	ManagedSurfacePtr				_picture;
+	ManagedSurfacePtr				_rotatedPicture;
 	RegionPtr						_region;
 	RegionPtr						_trapRegion;
 	AnimationPtr					_animation;
@@ -160,7 +161,7 @@ public:
 	void setPicture(Graphics::ManagedSurface *);
 
 	Graphics::ManagedSurface *getPicture() const {
-		return _rotatedPicture? _rotatedPicture: _picture;
+		return _rotatedPicture? _rotatedPicture.get(): _picture.get();
 	}
 
 	void rotate(int rot);
