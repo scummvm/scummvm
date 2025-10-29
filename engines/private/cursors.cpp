@@ -22,6 +22,8 @@
 #include "common/rect.h"
 #include "graphics/cursorman.h"
 
+#include "common/compression/installshieldv3_archive.h"
+
 #include "common/formats/winexe_ne.h"
 #include "common/formats/winexe_pe.h"
 
@@ -59,11 +61,12 @@ void PrivateEngine::loadCursors() {
 
 		Common::WinResources *exe = nullptr;
 		Common::ArchiveMemberList members;
-		if (_installerArchive.open("SUPPORT/PVTEYE.Z"))
+		Common::InstallShieldV3 installerArchive;
+		if (installerArchive.open("SUPPORT/PVTEYE.Z"))
 			if (_language == Common::JA_JPN)
-				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PvteyeJ.EXE"));
+				exe = Common::WinResources::createFromEXE(installerArchive.createReadStreamForMember("PvteyeJ.EXE"));
 			else
-				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PVTEYE.EXE"));
+				exe = Common::WinResources::createFromEXE(installerArchive.createReadStreamForMember("PVTEYE.EXE"));
 		else  {
 			Common::File file;
 			if (!file.open("SUPPORT/PVTEYE.EX_")) {
