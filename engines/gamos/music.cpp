@@ -61,8 +61,7 @@ bool MidiMusic::playMusic(Common::Array<byte> *midiData) {
 	if (!_mutex.lock())
 		return false;
 
-	_pMidiData.clear();
-	_pMidiData.swap(*midiData);
+	_pMidiData = *midiData;
 
 	_dataStart = 4;
 	_dataPos = _dataStart;
