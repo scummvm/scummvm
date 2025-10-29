@@ -236,6 +236,7 @@ public:
 	void drawScreenFrame(const byte *videoPalette);
 
 	// Cursors
+	Graphics::Cursor *_defaultCursor;
 	Common::Array<CursorInfo> _cursors;
 	Common::String _currentCursor;
 	void changeCursor(const Common::String &);
