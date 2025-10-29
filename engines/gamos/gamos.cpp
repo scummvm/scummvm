@@ -890,7 +890,7 @@ bool GamosEngine::playMovie(int id) {
 
 
 bool GamosEngine::scriptFunc18(uint32 id) {
-	if (true) {
+	if (_d2_fld17 != 0) {
 		_isMoviePlay++;
 		bool res = playMovie(id);
 		_isMoviePlay--;
@@ -2361,6 +2361,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		arg1 = vm->pop32();
 		playSound(arg1);
 		vm->EAX.setVal(1);
+		break;
+
+	case 18:
+		arg1 = vm->pop32();
+		vm->EAX.setVal( scriptFunc18(arg1) ? 1 : 0 );
 		break;
 
 	case 19:
