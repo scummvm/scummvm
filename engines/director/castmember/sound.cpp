@@ -246,6 +246,26 @@ Datum SoundCastMember::getField(int field) {
 	case kTheChannelCount:
 		d = _audio->getChannelCount();
 		break;
+	case kTheCuePointNames:
+		{
+			FArray *arr = new FArray();
+			for (size_t i = 0; i < _cuePointNames.size(); i++) {
+				arr->arr.push_back(Datum(_cuePointNames[i]));
+			}
+			d.type = ARRAY;
+			d.u.farr = arr;
+		}
+		break;
+	case kTheCuePointTimes:
+		{
+			FArray *arr = new FArray();
+			for (size_t i = 0; i < _cuePoints.size(); i++) {
+				arr->arr.push_back(Datum((int)_cuePoints[i]));
+			}
+			d.type = ARRAY;
+			d.u.farr = arr;
+		}
+		break;
 	case kTheLoop:
 		d = _looping ? 1 : 0;
 		break;
