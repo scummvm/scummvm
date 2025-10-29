@@ -1267,7 +1267,7 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 			textObject->setY(456);
 			g_grim->setMovieSubtitle(textObject);
 		} else {
-			if (_visible && isInSet(currSet->getName())) {
+			if (_visible && isInSet(currSet->getName()) && getEffectiveSortOrder() >= 0) {
 				_mustPlaceText = true;
 			} else {
 				_mustPlaceText = false;
