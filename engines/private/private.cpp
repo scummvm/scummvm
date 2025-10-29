@@ -124,9 +124,24 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 PrivateEngine::~PrivateEngine() {
-	// Dispose your resources here
-	delete _frameImage;
+	if (_videoDecoder != _pausedVideo) {
+		delete _pausedVideo;
+	}
+	delete _videoDecoder;
+
+	delete _compositeSurface;
+	if (_frameImage != nullptr) {
+		_frameImage->free();
+		delete _frameImage;
+	}
+	if (_mframeImage != nullptr) {
+		_mframeImage->free();
+		delete _mframeImage;
+	}
+	free(_framePalette);
+
 	delete _rnd;
+	delete _image;
 
 	delete Gen::g_vm;
 	delete Settings::g_setts;
