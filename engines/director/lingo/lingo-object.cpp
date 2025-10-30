@@ -144,6 +144,7 @@
 #include "director/lingo/xlibs/x/xsoundxfcn.h"
 #include "director/lingo/xlibs/x/xwin.h"
 #include "director/lingo/xlibs/y/yasix.h"
+#include "director/lingo/xtras/a/audio.h"
 #include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
@@ -158,6 +159,7 @@
 #include "director/lingo/xtras/r/registryreader.h"
 #include "director/lingo/xtras/rtk.h"
 #include "director/lingo/xtras/scrnutil.h"
+#include "director/lingo/xtras/s/smacker.h"
 #include "director/lingo/xtras/timextra.h"
 #include "director/lingo/xtras/xsound.h"
 
@@ -237,6 +239,7 @@ static const struct XLibProto {
 	XLIBDEF(AiffXObj,			kXObj,			400),	// D4
 	XLIBDEF(AppleCDXObj,		kXObj,			300),	// D3
 	XLIBDEF(AskUser,			kXObj,			400),	// D4
+	XLIBDEF(AudioXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(BackdropXObj,		kXObj,			400),	// D4
 	XLIBDEF(BarakeObj,			kXObj,			400),	// D4
 	XLIBDEF(BatQT,				kXObj,			400),	// D4
@@ -337,6 +340,7 @@ static const struct XLibProto {
 	XLIBDEF(RolloverToolkitXtra,kXtraObj,		500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
+	XLIBDEF(SmackerXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SmallUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4

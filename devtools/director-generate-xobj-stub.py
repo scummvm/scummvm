@@ -1052,8 +1052,9 @@ def main() -> None:
             args.dry_run,
         )
     elif xcode["type"] == "Xtra":
+        version = args.version if args.version > 500 else 500
         generate_xtra_stubs(
-            xcode["method_table"], slug, name, xcode["filename"], args.version, args.dry_run
+            xcode["method_table"], slug, name, xcode["filename"], version, args.dry_run
         )
     elif xcode["type"] == "XFCN" or xcode["type"] == "XCMD":
         generate_xcmd_stubs(
