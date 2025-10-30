@@ -36,7 +36,7 @@ using ObjectPtr = Common::SharedPtr<Object>;
 class AGDSEngine;
 
 class Inventory {
-	class AGDSEngine* _engine;
+	class AGDSEngine *_engine;
 	struct Entry {
 		Common::String name;
 		bool hasObject;
@@ -56,11 +56,11 @@ class Inventory {
 public:
 	static const int kMaxSize = 35;
 
-	Inventory(AGDSEngine* engine);
+	Inventory(AGDSEngine *engine);
 	~Inventory();
 
-	void load(Common::ReadStream& stream);
-	void save(Common::WriteStream& stream) const;
+	void load(Common::ReadStream &stream);
+	void save(Common::WriteStream &stream) const;
 
 	bool enabled() const {
 		return _enabled;
@@ -76,7 +76,7 @@ public:
 	void visible(bool visible);
 
 	int add(const Common::String &name);
-	int add(const ObjectPtr & object);
+	int add(const ObjectPtr &object);
 	bool remove(const Common::String &name);
 	void removeGaps();
 
@@ -88,7 +88,7 @@ public:
 	int free() const;
 	void clear();
 
-	const EntriesType & entries() const {
+	const EntriesType &entries() const {
 		return _entries;
 	}
 

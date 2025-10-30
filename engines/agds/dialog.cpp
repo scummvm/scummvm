@@ -121,7 +121,7 @@ bool Dialog::tick() {
 	line.clear();
 
 	bool command = _dialogScript[_dialogScriptPos] == '@';
-	while(_dialogScriptPos < n) {
+	while (_dialogScriptPos < n) {
 		if (!command && _dialogScript[_dialogScriptPos] == '@')
 			break;
 
@@ -131,7 +131,7 @@ bool Dialog::tick() {
 		if (!command)
 			line += '\n';
 
-		while(_dialogScriptPos < n && (_dialogScript[_dialogScriptPos] == '\n' || _dialogScript[_dialogScriptPos] == '\r'))
+		while (_dialogScriptPos < n && (_dialogScript[_dialogScriptPos] == '\n' || _dialogScript[_dialogScriptPos] == '\r'))
 			++_dialogScriptPos;
 
 		if (command)
@@ -179,7 +179,7 @@ void Dialog::processSoundDirective(const Common::String &line) {
 	}
 	--end;
 	Common::String name = line.substr(arg1, comma1 - arg1 - 1);
-	while(line[comma1] == ' ')
+	while (line[comma1] == ' ')
 		++comma1;
 	Common::String sample = line.substr(comma1, comma2 - comma1);
 	while(line[comma2] == ' ')
@@ -207,8 +207,8 @@ void Dialog::processDirective(Common::String line) {
 			if (!_currentDef.hasPrefix("vybervarianty") && !_currentDef.hasPrefix("varianta")) {
 				_currentSoundIndex = -1;
 
-				for(uint s = 0; s < _sounds.size(); ++s) {
-					auto & sound = _sounds[s];
+				for (uint s = 0; s < _sounds.size(); ++s) {
+					auto &sound = _sounds[s];
 					if (_currentDef.hasPrefixIgnoreCase(sound.Name)) {
 						_currentSoundIndex = s;
 						break;
@@ -235,7 +235,7 @@ Common::String Dialog::getNextDialogSound() {
 	auto currentSample = sample;
 
 	int carry = sound.Step;
-	for(auto pos = sample.size() - 1; pos > 0 && sample[pos] >= '0' && sample[pos] <= '9'; --pos) {
+	for (auto pos = sample.size() - 1; pos > 0 && sample[pos] >= '0' && sample[pos] <= '9'; --pos) {
 		int d = sample[pos] - '0';
 		d += carry;
 		carry = d / 10;

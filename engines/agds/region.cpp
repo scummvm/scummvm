@@ -102,7 +102,7 @@ Common::Point Region::topLeft() const {
 		return Common::Point();
 
 	Common::Point p = regions[0][0];
-	for(uint i = 0; i < regions.size(); ++i) {
+	for (uint i = 0; i < regions.size(); ++i) {
 		const PointsType &points = regions[i];
 
 		for(uint j = 0; j < points.size(); ++j) {
@@ -123,7 +123,7 @@ struct dPoint {
 } ;
 
 bool Region::pointIn(Common::Point point) const {
-	for(uint r = 0; r < regions.size(); ++r) {
+	for (uint r = 0; r < regions.size(); ++r) {
 		const PointsType &points = regions[r];
 		uint32 size = points.size();
 		if (size < 3) {

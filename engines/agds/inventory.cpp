@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Inventory::Inventory(AGDSEngine* engine): _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
+Inventory::Inventory(AGDSEngine *engine): _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
 Inventory::~Inventory() {}
 
 void Inventory::visible(bool visible) {
@@ -64,7 +64,7 @@ int Inventory::free() const {
 
 bool Inventory::has(int index) const {
 	if (index >= 0 && index < kMaxSize) {
-		auto & entry = _entries[index];
+		auto &entry = _entries[index];
 		return entry.hasObject;
 	}
 	return {};
@@ -72,7 +72,7 @@ bool Inventory::has(int index) const {
 
 ObjectPtr Inventory::get(int index) {
 	if (index >= 0 && index < kMaxSize) {
-		auto & entry = _entries[index];
+		auto &entry = _entries[index];
 		if (entry.hasObject && !entry.object) {
 			entry.object = _engine->runObject(entry.name);
 			entry.object->persistent(false);
@@ -82,14 +82,14 @@ ObjectPtr Inventory::get(int index) {
 	return {};
 }
 
-int Inventory::add(const Common::String & name) {
+int Inventory::add(const Common::String &name) {
 	int idx = find(name);
 	if (idx >= 0) {
 		warning("Double adding object %s, skipping...", name.c_str());
 		return idx;
 	}
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (!entry.hasObject) {
 			entry.name = name;
 			entry.object.reset();
@@ -100,9 +100,9 @@ int Inventory::add(const Common::String & name) {
 	return idx;
 }
 
-int Inventory::add(const ObjectPtr & object) {
+int Inventory::add(const ObjectPtr &object) {
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (entry.hasObject && entry.name == object->getName()) {
 			warning("Double adding object [pointer] %s, skipping...", object->getName().c_str());
 			return i;
@@ -110,7 +110,7 @@ int Inventory::add(const ObjectPtr & object) {
 	}
 	object->persistent(false);
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (!entry.hasObject) {
 			entry.name = object->getName();
 			entry.object = object;
@@ -124,7 +124,7 @@ int Inventory::add(const ObjectPtr & object) {
 bool Inventory::remove(const Common::String &name) {
 	bool removed = false;
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (entry.hasObject && entry.name == name) {
 			entry.reset();
 			removed = true;
@@ -136,16 +136,13 @@ bool Inventory::remove(const Common::String &name) {
 void Inventory::removeGaps() {
 	auto n = _entries.size();
 	for (uint src = 0, dst = 0; src < n; ++src) {
-		auto & entry = _entries[src];
-		if (entry.hasObject)
-		{
-			if (dst != src)
-			{
+		auto &entry = _entries[src];
+		if (entry.hasObject) {
+			if (dst != src) {
 				debug("moving inventory object %u -> %u", src, dst);
 				_entries[dst++] = _entries[src];
 				_entries[src].reset();
-			}
-			else
+			} else
 				++dst;
 		}
 	}
@@ -153,7 +150,7 @@ void Inventory::removeGaps() {
 
 int Inventory::find(const Common::String &name) const {
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (entry.hasObject && entry.name == name)
 			return i;
 	}
@@ -165,11 +162,11 @@ ObjectPtr Inventory::find(const Common::Point pos) const {
 		return {};
 
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & entry = _entries[i];
+		auto &entry = _entries[i];
 		if (!entry.object)
 			continue;
 
-		auto & object = entry.object;
+		auto &object = entry.object;
 		auto picture = object->getPicture();
 		if (picture) {
 			auto rect = picture->getBounds();
@@ -189,7 +186,7 @@ void Inventory::clear() {
 
 void Inventory::load(Common::ReadStream& stream) {
 	clear();
-	for(int i = 0; i < kMaxSize; ++i) {
+	for (int i = 0; i < kMaxSize; ++i) {
 		Common::String name = readString(stream);
 		int refcount = stream.readUint32LE();
 		int objectPtr = stream.readUint32LE();
@@ -203,10 +200,10 @@ void Inventory::load(Common::ReadStream& stream) {
 }
 
 void Inventory::save(Common::WriteStream& stream) const {
-	for(auto & entry : _entries) {
+	for (const auto &entry : _entries) {
 		writeString(stream, entry.name);
-		stream.writeUint32LE(entry.hasObject? 1: 0);
-		stream.writeSint32LE(entry.hasObject? -1: 0);
+		stream.writeUint32LE(entry.hasObject ? 1 : 0);
+		stream.writeSint32LE(entry.hasObject ? -1 : 0);
 	}
 }
 

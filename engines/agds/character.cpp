@@ -118,7 +118,7 @@ void Character::visible(bool visible) {
 	_visible = visible;
 }
 
-void Character::loadState(Common::ReadStream& stream) {
+void Character::loadState(Common::ReadStream &stream) {
 	int x = stream.readUint16LE();
 	int y = stream.readUint16LE();
 	int dir = stream.readSint16LE();
@@ -129,7 +129,7 @@ void Character::loadState(Common::ReadStream& stream) {
 	_enabled = stream.readUint16LE();
 }
 
-void Character::saveState(Common::WriteStream& stream) const {
+void Character::saveState(Common::WriteStream &stream) const {
 	stream.writeUint16LE(_pos.x);
 	stream.writeUint16LE(_pos.y);
 	stream.writeUint16LE(_direction);
@@ -149,7 +149,7 @@ bool Character::direction(int dir) {
 	return animate(dir, 100, false);
 }
 
-void Character::notifyProcess(const Common::String & name) {
+void Character::notifyProcess(const Common::String &name) {
 	debug("%s:notifyProcess %s", _name.c_str(), name.c_str());
 	if (!_processName.empty())
 		_engine->reactivate(name, "Character::notifyProcess", false);
@@ -157,7 +157,7 @@ void Character::notifyProcess(const Common::String & name) {
 	_processName = name;
 }
 
-bool Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
+bool Character::moveTo(const Common::String &processName, Common::Point dst, int dir) {
 	if (!_visible)
 		return false;
 
@@ -170,7 +170,7 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 	auto *screen = _engine->getCurrentScreen();
 	if (screen) {
 		auto objects = screen->find(dst);
-		for(auto & object: objects) {
+		for (auto &object : objects) {
 			auto region = object->getTrapRegion();
 			if (region && region->pointIn(dst)) {
 				debug("starting trap process");
@@ -181,7 +181,7 @@ bool Character::moveTo(const Common::String & processName, Common::Point dst, in
 	return r;
 }
 
-void Character::pointTo(const Common::String & processName, Common::Point dst) {
+void Character::pointTo(const Common::String &processName, Common::Point dst) {
 	debug("character point to stub %d,%d, process: %s", dst.x, dst.y, processName.c_str());
 	notifyProcess(processName);
 	if (!_processName.empty() && !_engine->activeCurtain()) {

@@ -31,7 +31,7 @@ namespace AGDS {
 MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String &subtitles) :
 	_stream(stream), _firstFramePos(_stream->pos()), _framesPlayed(0), _nextSubtitleIndex(0) {
 	uint pos = 0;
-	while(pos < subtitles.size()) {
+	while (pos < subtitles.size()) {
 		auto next = subtitles.find('\n', pos);
 		if (next == subtitles.npos)
 			next = subtitles.size();
@@ -44,7 +44,7 @@ MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String 
 			pos = next + 1;
 			continue;
 		}
-		while(offset < static_cast<int>(line.size()) && line[offset] == ' ')
+		while (offset < static_cast<int>(line.size()) && line[offset] == ' ')
 			++offset;
 
 		line = line.substr(offset);
@@ -52,7 +52,7 @@ MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String 
 		Text::Lines lines;
 		{
 			uint lineBegin = 0;
-			while(lineBegin < line.size()) {
+			while (lineBegin < line.size()) {
 				uint lineEnd = line.find('|', lineBegin);
 				if (lineEnd == line.npos)
 					lineEnd = line.size();
@@ -114,7 +114,7 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_subtitles.empty())
 		return;
 
-	while(_nextSubtitleIndex < _subtitles.size() && _framesPlayed > _subtitles[_nextSubtitleIndex].end)
+	while (_nextSubtitleIndex < _subtitles.size() && _framesPlayed > _subtitles[_nextSubtitleIndex].end)
 		++_nextSubtitleIndex;
 
 	if (_nextSubtitleIndex >= _subtitles.size() || _framesPlayed < _subtitles[_nextSubtitleIndex].begin)
@@ -125,11 +125,11 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	int baseY = engine.getSystemVariable("subtitle_y")->getInteger();
 	int maxWidth = engine.getSystemVariable("subtitle_width")->getInteger();
 
-	auto & lines = _subtitles[_nextSubtitleIndex].lines;
-	for(auto & line : lines) {
+	auto &lines = _subtitles[_nextSubtitleIndex].lines;
+	for (auto &line : lines) {
 		Text::Lines sublines;
 		font->wordWrapText(line, maxWidth, sublines);
-		for(auto & subline : sublines) {
+		for (auto &subline : sublines) {
 			int w = font->getStringWidth(subline);
 			int x = baseX - w / 2;
 			font->drawString(&backbuffer, subline, x, baseY, backbuffer.w - x, 0);

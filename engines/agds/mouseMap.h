@@ -84,7 +84,7 @@ public:
 	void hideAll(AGDSEngine *engine);
 
 	void hideInactive(AGDSEngine *engine, Common::Point pos);
-	MouseRegion * find(int id);
+	MouseRegion *find(int id);
 };
 
 } // End of namespace AGDS

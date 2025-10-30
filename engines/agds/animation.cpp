@@ -202,8 +202,7 @@ bool Animation::tick() {
 		return true;
 	}
 
-	if (!eov)
-	{
+	if (!eov) {
 		decodeNextFrame();
 		onScreen(true);
 	}
@@ -282,7 +281,7 @@ void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics
 }
 
 uint Animation::width() const {
-	return _flic ? _flic->getWidth() * _scale: 0;
+	return _flic ? _flic->getWidth() * _scale : 0;
 }
 uint Animation::height() const {
 	return _flic ? _flic->getHeight() * _scale: 0;

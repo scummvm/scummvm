@@ -273,7 +273,7 @@ ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String
 
 PatchPtr AGDSEngine::getPatch(const Common::String &screenName) const {
 	auto it = _patches.find(screenName);
-	return it != _patches.end()? it->_value: PatchPtr();
+	return it != _patches.end() ? it->_value : PatchPtr();
 }
 
 PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
@@ -285,7 +285,7 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 
 ObjectPatchPtr AGDSEngine::getObjectPatch(const Common::String &objectName) const {
 	auto it = _objectPatches.find(objectName);
-	return it != _objectPatches.end()? it->_value: ObjectPatchPtr();
+	return it != _objectPatches.end() ? it->_value : ObjectPatchPtr();
 }
 
 ObjectPatchPtr AGDSEngine::createObjectPatch(const Common::String &objectName) {
@@ -683,7 +683,7 @@ Common::Error AGDSEngine::run() {
 
 
 			AnimationPtr cursor;
-			for(auto & object : objects) {
+			for (auto & object : objects) {
 				cursor = object->getMouseCursor();
 				if (cursor)
 					break;
@@ -692,9 +692,9 @@ Common::Error AGDSEngine::run() {
 			if (cursor)
 				mouseCursor = cursor;
 
-			for(auto & object : objects) {
+			for (auto &object : objects) {
 				if (!object->title().empty()) {
-					auto & title = object->title();
+					auto &title = object->title();
 					auto font = getFont(getSystemVariable("objtext_font")->getInteger());
 					int w = font->getStringWidth(title);
 					int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
@@ -1090,7 +1090,7 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-void AGDSEngine::loadPatches(Common::SeekableReadStream &file, Database & db) {
+void AGDSEngine::loadPatches(Common::SeekableReadStream &file, Database &db) {
 	debug("loading patches");
 	_patches.clear();
 	_objectPatches.clear();
@@ -1176,7 +1176,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(*saveFile, "__agds_v"));
 		uint32 n = agds_v->readUint32LE();
 		debug("reading %u vars...", n);
-		while(n--) {
+		while (n--) {
 			Common::String name = readString(*agds_v);
 			int value = agds_v->readSint32LE();
 			debug("setting var %s to %d", name.c_str(), value);
@@ -1187,7 +1187,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	{
 		// System vars
 		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(*saveFile, "__agds_d"));
-		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
 			Common::String & name = _systemVarList[i];
 			_systemVars[name]->read(*agds_d);
 		}
@@ -1240,7 +1240,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	while(_currentScreen && _currentScreen->loadingType() == ScreenLoadingType::SaveOrLoad) {
+	while (_currentScreen && _currentScreen->loadingType() == ScreenLoadingType::SaveOrLoad) {
 		returnToPreviousScreen();
 		loadNextScreen();
 	}
@@ -1284,7 +1284,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
 			Common::String & name = _systemVarList[i];
 			_systemVars[name]->write(stream);
 		}
@@ -1296,7 +1296,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 		auto n = _globals.size();
 		stream.writeUint32LE(n);
 		debug("saving %u vars...", n);
-		for(auto & global : _globals) {
+		for (auto &global : _globals) {
 			writeString(stream, global._key);
 			stream.writeUint32LE(global._value);
 		}
@@ -1326,13 +1326,13 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 		entries["__agds_a"].assign(stream.getData(), stream.getData() + stream.size());
 	}
 
-	for(auto & objectPatch : _objectPatches) {
+	for (auto &objectPatch : _objectPatches) {
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 		objectPatch._value->save(stream);
 		entries[objectPatch._key].assign(stream.getData(), stream.getData() + stream.size());
 	}
 
-	for(auto & patch : _patches) {
+	for (auto &patch : _patches) {
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 		patch._value->save(stream);
 		entries[patch._key].assign(stream.getData(), stream.getData() + stream.size());
@@ -1348,7 +1348,7 @@ void AGDSEngine::reactivate(const Common::String &name, const Common::String &wh
 	if (name.empty())
 		return;
 
-	for(uint i = 0; i < _processes.size(); ++i) {
+	for (uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr &process = _processes[i];
 		if (process && process->getName() == name) {
 			debug("reactivate %s now: %d, %s", name.c_str(), runNow, where.c_str());
@@ -1360,7 +1360,7 @@ void AGDSEngine::reactivate(const Common::String &name, const Common::String &wh
 }
 
 void AGDSEngine::runPendingReactivatedProcesses() {
-	while(!_pendingReactivatedProcesses.empty()) {
+	while (!_pendingReactivatedProcesses.empty()) {
 		ProcessListType processes;
 		_pendingReactivatedProcesses.swap(processes);
 		for(auto & process : processes) {
@@ -1370,7 +1370,7 @@ void AGDSEngine::runPendingReactivatedProcesses() {
 }
 
 ProcessPtr AGDSEngine::findProcess(const Common::String & name) const {
-	for(uint i = 0; i < _processes.size(); ++i) {
+	for (uint i = 0; i < _processes.size(); ++i) {
 		const ProcessPtr &process = _processes[i];
 		if (process && !process->finished() && process->getName() == name)
 			return process;

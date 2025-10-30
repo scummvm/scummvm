@@ -121,17 +121,17 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg) override { return true; }
 	bool canSaveGameStateCurrently(Common::U32String *msg) override { return false; }
 
-	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String(), bool allowInitialise = true);
-	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
+	ObjectPtr loadObject(const Common::String &name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
+	ObjectPtr runObject(const Common::String &name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
 	void runObject(const ObjectPtr &object);
 	void runProcess(const ObjectPtr &object, uint ip = 0);
-	ProcessPtr findProcess(const Common::String & name) const;
+	ProcessPtr findProcess(const Common::String &name) const;
 	void reactivate(const Common::String &name, const Common::String &where, bool runNow = false);
 	bool hasActiveProcesses(const Common::String &name) const;
 	void runPendingReactivatedProcesses();
 
 	void resetCurrentScreen();
-	void loadScreen(const Common::String & name, ScreenLoadingType type, bool savePatch = true);
+	void loadScreen(const Common::String &name, ScreenLoadingType type, bool savePatch = true);
 	void loadNextScreen();
 	void saveScreenPatch();
 
@@ -139,47 +139,47 @@ public:
 	Common::String loadText(const Common::String &name);
 
 	int appendToSharedStorage(const Common::String &value);
-	const Common::String & getSharedStorage(int id) const;
+	const Common::String &getSharedStorage(int id) const;
 
 	bool active() const { return !_mjpgPlayer; }
 	void playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles);
 	void skipFilm();
 
-	ResourceManager & resourceManager() {
+	ResourceManager &resourceManager() {
 		return _resourceManager;
 	}
 
-	SoundManager & soundManager() {
+	SoundManager &soundManager() {
 		return _soundManager;
 	}
 
-	Inventory & inventory() {
+	Inventory &inventory() {
 		return _inventory;
 	}
 
-	Dialog & dialog() {
+	Dialog &dialog() {
 		return _dialog;
 	}
 
-	const ProcessListType & processes() const {
+	const ProcessListType &processes() const {
 		return _processes;
 	}
 
-	TextLayout & textLayout() {
+	TextLayout &textLayout() {
 		return _textLayout;
 	}
 
-	Screen * getCurrentScreen() {
+	Screen *getCurrentScreen() {
 		return _currentScreen.get();
 	}
-	Console * getConsole();
+	Console *getConsole();
 
-	Common::String & getCurrentScreenName() {
+	Common::String &getCurrentScreenName() {
 		return _currentScreenName;
 	}
 	ObjectPtr getCurrentScreenObject(const Common::String &name);
 
-	const Graphics::PixelFormat & pixelFormat() const {
+	const Graphics::PixelFormat &pixelFormat() const {
 		return _pixelFormat;
 	}
 
@@ -199,12 +199,12 @@ public:
 	AnimationPtr findAnimationByPhaseVar(const Common::String &phaseVar);
 	void loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
 	Character * getCharacter(const Common::String &name) {
-		return _currentCharacterName == name? _currentCharacter.get(): nullptr;
+		return _currentCharacterName == name ? _currentCharacter.get() : nullptr;
 	}
-	Character * currentCharacter() const {
+	Character *currentCharacter() const {
 		return _currentCharacter.get();
 	}
-	Character * jokes() const {
+	Character *jokes() const {
 		return _jokes.get();
 	}
 
@@ -254,10 +254,10 @@ public:
 		return _mouse;
 	}
 
-	void currentInventoryObject(const ObjectPtr & object);
+	void currentInventoryObject(const ObjectPtr &object);
 	void resetCurrentInventoryObject();
 	ObjectPtr popCurrentInventoryObject();
-	const ObjectPtr & currentInventoryObject() const {
+	const ObjectPtr &currentInventoryObject() const {
 		return _currentInventoryObject;
 	}
 
@@ -282,7 +282,7 @@ public:
 
 private:
 	void stopAmbientSound();
-	void loadPatches(Common::SeekableReadStream &file, Database & db);
+	void loadPatches(Common::SeekableReadStream &file, Database &db);
 
 	using PictureCacheType = Common::HashMap<int, Common::ScopedPtr<Graphics::ManagedSurface>>;
 	using PictureCacheLookup = Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
@@ -294,7 +294,7 @@ private:
 	using ObjectPatchesType = Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 	using PatchDatabase = Common::HashMap<Common::String, Common::Array<uint8>>;
 
-	const ADGameDescription *		_gameDescription;
+	const ADGameDescription		   *_gameDescription;
 	ResourceManager					_resourceManager;
 	SoundManager					_soundManager;
 	Database						_data;
