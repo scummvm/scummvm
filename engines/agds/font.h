@@ -27,7 +27,7 @@
 #include "common/ptr.h"
 
 namespace Graphics {
-	struct ManagedSurface;
+	class ManagedSurface;
 }
 
 namespace AGDS {

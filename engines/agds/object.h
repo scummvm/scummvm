@@ -31,7 +31,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
-namespace Graphics { struct Surface; struct ManagedSurface; }
+namespace Graphics { struct Surface; class ManagedSurface; }
 
 namespace AGDS {
 
