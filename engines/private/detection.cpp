@@ -220,7 +220,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // MacOS demo (US)
-		nullptr,
+		"Demo",
 		AD_ENTRY2s("demogame.mac", "d:cfbceaa8b91f0f53c745db61d1bc9749", 6103,
 		    "bklynlgo.bmp", "d:1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
