@@ -173,7 +173,11 @@ void Scripts::charLoop() {
 	_vm->plotList1();
 	_vm->copyBlocks();
 
-	_data->seek(pos);
+	// Have to check for null data here in case of death
+	// (which original handles by goto-ing out of the loop)
+	if (_data)
+		_data->seek(pos);
+
 	_endFlag = endFlag;
 }
 
@@ -1233,6 +1237,14 @@ void Scripts::cmdDead() {
 	int deathId = _data->readByte();
 	debugC(1, kDebugScripts, "cmdDead(deathId=%d)", deathId);
 	_vm->dead(deathId);
+
+	//
+	// The original uses GOTO inside the death function so never gets here,
+	// but we avoid the goto and return instead.
+	//
+	// The room script has been freed so set end flag to gracefully exit.
+	//
+	_endFlag = true;
 }
 
 void Scripts::cmdFadeOut() {
