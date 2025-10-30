@@ -164,6 +164,7 @@ static const BuiltinProto builtins[] = {
 	{ "pictureP",		LB::b_pictureP,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "stringp",		LB::b_stringp,		1, 1, 200, FBLTIN },	// D2 f
 	{ "symbolp",		LB::b_symbolp,		1, 1, 200, FBLTIN },	// D2 f
+	{ "symbol",		LB::b_symbol,		1, 1, 600, FBLTIN },	//							D6 f
 	{ "voidP",			LB::b_voidP,		1, 1, 400, FBLTIN },	//			D4 f
 	// Misc
 	{ "alert",	 		LB::b_alert,		1, 1, 200, CBLTIN },	// D2 c
@@ -2398,11 +2399,47 @@ void LB::b_stringp(int nargs) {
 	g_lingo->push(res);
 }
 
+void LB::b_symbol(int nargs) {
+	Datum d = g_lingo->pop();
+	switch (d.type) {
+	case SYMBOL:
+		g_lingo->push(d);
+		break;
+	case STRING:
+		{
+			Common::String payload = d.asString();
+			if ((payload.size() == 0) || ((payload.size() == 1) && (payload[0] == ' '))) {
+				payload = "";
+			} else if (payload.size() == 1) {
+				// if the string is one character, allow it
+				// unless it's space, in which case return a zero-length symbol
+			} else {
+				// if the string is more than one character, cut it at the first non [a-zA-Z0-9_] character
+				for (unsigned int i = 0; i < payload.size(); i++) {
+					if (!Common::isAlnum(payload[i]) && (payload[i] != '_')) {
+						payload = payload.substr(0, i);
+						break;
+					}
+				}
+			}
+
+			Datum result(payload);
+			result.type = SYMBOL;
+			g_lingo->push(result);
+		}
+		break;
+	default:
+		g_lingo->pushVoid();
+		break;
+	}
+}
+
 void LB::b_symbolp(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res((d.type == SYMBOL) ? 1 : 0);
 	g_lingo->push(res);
 }
+
 
 void LB::b_voidP(int nargs) {
 	Datum d = g_lingo->pop();
