@@ -789,6 +789,7 @@ unsigned int CDC::Impl::realizePalette() {
 	if (!m_bForceBackground && pTopLevel == app->GetActiveWindow()) {
 		// This window is active - update the system palette
 		AfxGetApp()->setPalette(*pal);
+		_paletteRealized = true;
 		return 1;  // number of entries changed - simplified
 	} else {
 		_paletteRealized = true;

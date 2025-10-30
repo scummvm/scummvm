@@ -52,6 +52,9 @@ void EventLoop::runEventLoop() {
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
 	assert(_quitFlag == QUIT_NONE);
+	if (wnd == GetActiveWindow())
+		// Already the active window
+		return;
 
 	// If it's the first window added, and we don't have
 	// a main window defined, set it as the main window

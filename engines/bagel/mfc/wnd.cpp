@@ -246,10 +246,12 @@ void CWnd::ShowWindow(int nCmdShow) {
 	assert(nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL ||
 		nCmdShow == SW_HIDE);
 
-	if (nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL)
+	if (nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL) {
 		m_nStyle |= WS_VISIBLE;
-	else
+		SetActiveWindow();
+	} else {
 		m_nStyle &= ~WS_VISIBLE;
+	}
 
 	Invalidate(false);
 	SendMessage(WM_SHOWWINDOW, (m_nStyle & WS_VISIBLE) != 0);
