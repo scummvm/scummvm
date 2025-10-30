@@ -80,8 +80,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_conversation = 0;
 	_newTime = 0;
 	_newDate = 0;
-	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
-	Common::fill(&_establishTable[0], &_establishTable[100], false);
+	Common::fill(&_objectsTable[0], &_objectsTable[128], (SpriteResource *)nullptr);
+	Common::fill(&_establishTable[0], &_establishTable[128], false);
 	Common::fill(&_flags[0], &_flags[256], 0);
 	_establishFlag = false;
 	_establishMode = 0;

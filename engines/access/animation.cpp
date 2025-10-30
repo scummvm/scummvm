@@ -226,12 +226,12 @@ void Animation::anim10() {
 void Animation::anim11() {
      // Actor idle
 	const AnimationFrame *frame = calcFrame();
-	setFrame(frame);
 	_countdownTicks += frame->_frameDelay;
 	setFrame1(frame, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
 }
 
 void Animation::anim12() {
+	debug("TODO: Animation::anim12");
 }
 
 

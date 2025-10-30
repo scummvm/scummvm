@@ -754,7 +754,10 @@ void Player::plotCom1() {
 
 void Player::plotCom2() {
 	// WORKAROUND: Amazon has at least one cutscene with the player not properly turned off
-	if (!_playerOff && _spritesPtr != nullptr) {
+	if (_playerOff)
+		return;
+
+	if (_spritesPtr != nullptr) {
 		ImageEntry ie = *this;
 		if (!isMMHover()) {
 			_vm->_images.addToList(ie);
@@ -764,6 +767,11 @@ void Player::plotCom2() {
 			ie._frameNumber = 13;
 			_vm->_images.addToList(ie);
 		}
+	} else if (_playerAnimation != nullptr) {
+		// Noctropolis player animation
+		int animNum = ((int)_playerDirection + (_playerMove ? 0 : 8));
+		Animation *anim = _playerAnimation->getAnimation(animNum);
+		anim->animate();
 	}
 }
 

@@ -73,14 +73,14 @@ void NoctropolisEngine::initVariables() {
 	_converseMode = 0;
 	_inventory->_startInvItem = 0;
 	_inventory->_startInvBox = 0;
-	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
+	Common::fill(&_objectsTable[0], &_objectsTable[128], (SpriteResource *)nullptr);
 	_player->_playerOff = false;
 	/*
 	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
 	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 	*/
 	_room->_selectCommand = -1;
-	_events->setNormalCursor(CURSOR_ARROW);
+	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
 	_animation->clearTimers();
 }
@@ -220,7 +220,6 @@ void NoctropolisEngine::doIntro() {
 	_screen->clearScreen();
 	_screen->forceFadeOut();
 
-	// TODO: midi files have been split into MUSIC/Mxx.MID files
 	_midi->loadMusic(98, 1);
 	_room->loadPlayField(1, 0);
 	_buffer2.copyFrom(*_screen);
