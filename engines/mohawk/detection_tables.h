@@ -1561,6 +1561,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Demo from Arisu Media website
+	{
+		{
+			"seussabc",
+			"Demo",
+			AD_ENTRY1s("ABC32.LB", "ee396c0ddf1e28f47e2045bca371e893", 608),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
 	{ // Version 1.0, built on unsupported LivingBooks version
 		{
 			"seussps",
@@ -2034,6 +2050,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"The Tortoise & The Hare"
+	},
+
+	// 이술우화 토끼와 거북이
+	// Demo from Arisu Media website
+	{
+		{
+			"tortoise",
+			"Demo",
+			AD_ENTRY1s("Tortoise.lb", "a02a038109b773fec178cbc8c40c37df", 1281),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"TORTOISE.EXE"
 	},
 
 	{
@@ -2544,6 +2577,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		"Living Books Player"
 	},
+	// 할머니와 둘이서
+	// Demo from Arisu Media website
+	{
+		{
+			"grandma",
+			"Demo Korean/English/French/German",
+			AD_ENTRY1s("outline", "d1e7e5a3589930e6a85dddfb7113740f", 751),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
 
 	// Ruff's Bone 1.0
 	// From pacifist
@@ -2836,6 +2885,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Demo from Arisu Media website
+	{
+		{
+			"arthurrace",
+			"Demo",
+			AD_ENTRY1s("RACE.LB", "cf33793a7ec94f215656a6a726be06e5", 656),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV3,
