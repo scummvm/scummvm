@@ -1259,8 +1259,6 @@ HWND CWnd::Detach() {
 }
 
 bool CWnd::OnQueryNewPalette() {
-	Invalidate();
-	UpdateWindow();
 	return true;
 }
 
