@@ -761,6 +761,7 @@ HPALETTE CDC::Impl::selectPalette(HPALETTE pal, bool bForceBackground) {
 
 	if (pal) {
 		_palette = pal;
+		_hasLogicalPalette = true;
 		CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
 
 		auto *newPal = static_cast<CPalette::Impl *>(pal);
@@ -1021,13 +1022,8 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		auto *srcImpl = pSrcDC->impl();
 		src = srcImpl->getSurface();
 
-		// If the source DC has a realized palette, we need to set up a palette map
-		// so that palette indexes can be mapped to our own destination palette
-		if (_paletteRealized) {
-			const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
-			const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
-			paletteMap = getPaletteMap(srcPal, destPal);
-		}
+		// Get a palette map if necessary
+		paletteMap = getPaletteMap(srcImpl);
 	}
 
 	Gfx::Surface *dest = getSurface();
@@ -1047,21 +1043,24 @@ void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
 	uint bgColor = getBkPixel();
-	uint32 *paletteMap = nullptr;
-
-	if (pSrcDC && _paletteRealized) {
-		const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
-		const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
-		paletteMap = getPaletteMap(srcPal, destPal);
-	}
+	uint32 *paletteMap = getPaletteMap(srcImpl);
 
 	Gfx::stretchBlit(src, dest, srcRect, destRect, bgColor, dwRop, nullptr);
 
 	delete[] paletteMap;
 }
 
-uint32 *CDC::Impl::getPaletteMap(const Graphics::Palette *srcPal, const Graphics::Palette *destPal) {
+uint32 *CDC::Impl::getPaletteMap(const CDC::Impl *srcImpl) {
+	// If we haven't realized our palette locally, or the source bitmap hasn't had any
+	// palette at all set, then return null indicating no palette mapping will occur
+	if (!_paletteRealized || !srcImpl->_hasLogicalPalette)
+		return nullptr;
+
+	const Graphics::Palette *srcPal = dynamic_cast<Graphics::Palette *>(srcImpl->_palette);
+	const Graphics::Palette *destPal = dynamic_cast<Graphics::Palette *>(_palette);
 	assert(srcPal && destPal && srcPal->size() == destPal->size());
+
+	// Create the map
 	Graphics::PaletteLookup palLookup(srcPal->data(), srcPal->size());
 	return palLookup.createMap(destPal->data(), destPal->size());
 }

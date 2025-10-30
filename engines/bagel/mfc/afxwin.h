@@ -750,7 +750,7 @@ public:
 
 		uint getPenColor() const;
 		uint getBrushColor() const;
-		uint32 *getPaletteMap(const Graphics::Palette *srcPal, const Graphics::Palette *destPal);
+		uint32 *getPaletteMap(const CDC::Impl *srcImpl);
 
 	public:
 		HBITMAP _bitmap;
@@ -760,6 +760,7 @@ public:
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
 		bool m_bForceBackground = false;
+		bool _hasLogicalPalette = false;
 
 	public:
 		Impl(CWnd *wndOwner = nullptr);
