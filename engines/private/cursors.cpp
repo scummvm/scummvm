@@ -64,10 +64,16 @@ void PrivateEngine::loadCursors() {
 		Common::ArchiveMemberList members;
 		Common::InstallShieldV3 installerArchive;
 		if (installerArchive.open("SUPPORT/PVTEYE.Z")) {
-			const char *exeName = (_language == Common::JA_JPN) ? "PvteyeJ.EXE" : "PVTEYE.EXE";
-			exeStream = installerArchive.createReadStreamForMember(exeName);
+			const char *exeNames[] = {
+				"PVTEYE.EXE",
+				"PvteyeJ.EXE", // Japan
+				"PVTDEMO.EXE"
+			};
+			for (uint i = 0; i < ARRAYSIZE(exeNames) && exeStream == nullptr; i++) {
+				exeStream = installerArchive.createReadStreamForMember(exeNames[i]);
+			}
 			if (exeStream == nullptr) {
-				error("%s not found", exeName);
+				error("Executable not found in PVTEYE.Z");
 			}
 		} else {
 			Common::File *file = new Common::File();
