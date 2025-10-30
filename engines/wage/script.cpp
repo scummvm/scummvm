@@ -644,7 +644,6 @@ enum {
 	kCompEqTextInputString,
 	kCompEqNumberTextInput,
 	kCompEqTextInputNumber,
-	kCompEqStringChr,
 	kCompLtNumNum,
 	kCompLtStringTextInput,
 	kCompLtTextInputString,
@@ -693,7 +692,6 @@ struct Comparator {
 	{ '=', STRING, STRING, kCompEqStringString },
 	{ '=', NUMBER, TEXT_INPUT, kCompEqNumberTextInput },
 	{ '=', TEXT_INPUT, NUMBER, kCompEqTextInputNumber },
-	{ '=', STRING, CHR, kCompEqStringChr },
 
 	{ '<', NUMBER, NUMBER, kCompLtNumNum },
 	{ '<', STRING, TEXT_INPUT, kCompLtStringTextInput },
@@ -758,15 +756,6 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		} else {
 			for (const auto &obj : o2->_value.chr->_inventory)
 				if (obj == o1->_value.obj)
-					return true;
-		}
-		return false;
-	case kCompEqStringChr:
-		if (o2->_value.chr == NULL) {
-			debug(1, "%s() o2->_value.chr is null", __func__);
-		} else {
-			for (const auto &obj : o2->_value.chr->_inventory)
-				if (obj->_name.equalsIgnoreCase(*o1->_value.string))
 					return true;
 		}
 		return false;
