@@ -59,9 +59,9 @@ class Screen {
 	using Animations = Common::SortedArray<ScreenAnimationDesc, const ScreenAnimationDesc &>;
 	using Children = Common::SortedArray<ObjectPtr, const ObjectPtr &>;
 
-	AGDSEngine *	_engine;
+	AGDSEngine 	   *_engine;
 	ObjectPtr		_object;
-	Object *		_background;
+	Object		   *_background;
 	Common::Point	_scroll;
 	Common::String	_name;
 	ScreenLoadingType _loadingType;
@@ -120,7 +120,7 @@ public:
 		return _loadingType;
 	}
 
-	const RegionPtr & region() const {
+	const RegionPtr &region() const {
 		return _region;
 	}
 
@@ -128,7 +128,7 @@ public:
 		_region = region;
 	}
 
-	const Children & children() const {
+	const Children &children() const {
 		return _children;
 	}
 
@@ -150,15 +150,15 @@ public:
 			add(object);
 	}
 
-	void setBackground(Object * object) {
+	void setBackground(Object *object) {
 		_background = object;
 	}
 
-	bool remove(const Common::String & name);
-	bool remove(const ObjectPtr & object);
+	bool remove(const Common::String &name);
+	bool remove(const ObjectPtr &object);
 
 	void tick();
-	void paint(Graphics::Surface & backbuffer) const;
+	void paint(Graphics::Surface &backbuffer) const;
 	Common::Array<ObjectPtr> find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);

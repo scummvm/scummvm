@@ -47,7 +47,7 @@ private:
 	};
 	using SoundsType = Common::Array<Sound>;
 
-	AGDSEngine * 				_engine;
+	AGDSEngine				   *_engine;
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;
 	uint32						_dialogScriptPos;

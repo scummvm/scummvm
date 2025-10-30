@@ -68,10 +68,10 @@ struct Patch {
 
 	void load(Common::ReadStream &stream);
 	void save(Common::WriteStream &stream);
-	void setFlag(const Common::String & name, int flag);
-	int getFlag(const Common::String & name) const;
-	int incRef(const Common::String & name);
-	int decRef(const Common::String & name);
+	void setFlag(const Common::String &name, int flag);
+	int getFlag(const Common::String &name) const;
+	int incRef(const Common::String &name);
+	int decRef(const Common::String &name);
 };
 
 

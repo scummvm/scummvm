@@ -34,7 +34,7 @@ void TextLayout::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (!_valid)
 		return;
 	Font *font = engine.getFont(_fontId);
-	for(uint i = 0; i < _lines.size(); ++i) {
+	for (uint i = 0; i < _lines.size(); ++i) {
 		Line & line = _lines[i];
 		font->drawString(&backbuffer, line.text, line.pos.x, line.pos.y, line.size.x, 0);
 	}
@@ -74,8 +74,8 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 
 	Common::Point basePos;
 	size_t begin = 0;
-	while(begin < text.size()) {
-		while(begin < text.size() && (text[begin]== '\r' || text[begin]== ' '))
+	while (begin < text.size()) {
+		while (begin < text.size() && (text[begin] == '\r' || text[begin] == ' '))
 			++begin;
 		size_t end = text.find('\n', begin);
 		if (end == text.npos)
@@ -100,7 +100,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 	}
 
 	int dy = -basePos.y / 2;
-	for(uint i = 0; i < _lines.size(); ++i) {
+	for (uint i = 0; i < _lines.size(); ++i) {
 		Line & line = _lines[i];
 		line.pos.x += pos.x - line.size.x / 2;
 		line.pos.y += pos.y + dy;
@@ -121,16 +121,16 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 					engine.setGlobal(_charDirectionNotifyVar, character->direction());
 			} else {
 				switch(character->direction()) {
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 13:
-					case 14:
-					case 15:
-						break;
-					default:
-						character->animate(Common::Point(), character->direction(), 100);
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 13:
+				case 14:
+				case 15:
+					break;
+				default:
+					character->animate(Common::Point(), character->direction(), 100);
 				}
 			}
 		} else

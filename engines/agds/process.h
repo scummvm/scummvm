@@ -43,7 +43,7 @@ public:
 private:
 	using StackType = Common::Stack<int32>;
 
-	AGDSEngine *	_engine;
+	AGDSEngine	   *_engine;
 	Common::String	_parentScreen;
 	ObjectPtr		_object;
 	StackType		_stack;
@@ -119,7 +119,7 @@ private:
 	void tell(bool npc, const Common::String &sound);
 	void tell(bool npc) { tell(npc, Common::String()); }
 
-	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
+	Common::String getCloneVarName(const Common::String &arg1, const Common::String &arg2);
 
 	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String());
 	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0);
@@ -127,7 +127,7 @@ private:
 	ProcessExitCode resume();
 	void suspendIfPassive();
 
-	void setupAnimation(const AnimationPtr & animation);
+	void setupAnimation(const AnimationPtr &animation);
 	void attachInventoryObjectToMouse(bool flag);
 	void leaveCharacter(const Common::String &name, const Common::String &regionName, int dir);
 	void removeScreenObject(const Common::String &name);
@@ -144,11 +144,11 @@ public:
 		return _object;
 	}
 
-	const Common::String & getName() const {
+	const Common::String &getName() const {
 		return _object->getName();
 	}
 
-	const Common::String & parentScreenName() const {
+	const Common::String &parentScreenName() const {
 		return _parentScreen;
 	}
 
@@ -177,7 +177,7 @@ public:
 		return _exitCode;
 	}
 
-	const Common::String & getExitArg1() const {
+	const Common::String &getExitArg1() const {
 		return _exitArg1;
 	}
 
@@ -185,7 +185,7 @@ public:
 		return _exitIntArg1;
 	}
 
-	const Common::String & getExitArg2() const {
+	const Common::String &getExitArg2() const {
 		return _exitArg2;
 	}
 
@@ -198,7 +198,7 @@ public:
 	}
 	void updateWithCurrentMousePosition();
 
-	const Common::String & phaseVar() const {
+	const Common::String &phaseVar() const {
 		return _phaseVar;
 	}
 

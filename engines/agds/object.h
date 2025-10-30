@@ -44,8 +44,7 @@ class Object {
 public:
 	using CodeType = Common::Array<uint8>;
 
-	struct StringEntry
-	{
+	struct StringEntry {
 		Common::String	string;
 		uint16			flags;
 
@@ -125,18 +124,18 @@ public:
 	}
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
-	const StringEntry & getString(uint16 index) const;
+	const StringEntry &getString(uint16 index) const;
 	uint getStringTableSize() const
 	{ return _stringTable.size(); }
 
-	const Common::String & getName() const
+	const Common::String &getName() const
 	{ return _name; }
 
 	const CodeType & getCode() const {
 		return _code;
 	}
 
-	void setAnimation(const AnimationPtr & animation) {
+	void setAnimation(const AnimationPtr &animation) {
 		_animation = animation;
 	}
 
@@ -148,19 +147,19 @@ public:
 		_animationPos = animationPos;
 	}
 
-	void setMouseCursor(const AnimationPtr & mouseCursor) {
+	void setMouseCursor(const AnimationPtr &mouseCursor) {
 		_mouseCursor = mouseCursor;
 		freeRotated();
 	}
 
-	const AnimationPtr & getMouseCursor() const {
+	const AnimationPtr &getMouseCursor() const {
 		return _mouseCursor;
 	}
 
 	void setPicture(Graphics::ManagedSurface *);
 
 	Graphics::ManagedSurface *getPicture() const {
-		return _rotatedPicture? _rotatedPicture.get(): _picture.get();
+		return _rotatedPicture ? _rotatedPicture.get() : _picture.get();
 	}
 
 	void rotate(int rot);
@@ -197,7 +196,7 @@ public:
 
 	void region(RegionPtr region);
 
-	const RegionPtr& region() const {
+	const RegionPtr &region() const {
 		return _region;
 	}
 
@@ -262,11 +261,9 @@ public:
 		_trapRegion = region;
 	}
 
-	RegionPtr getTrapRegion() const
-	{ return _trapRegion; }
+	RegionPtr getTrapRegion() const { return _trapRegion; }
 
-	uint getTrapHandler() const
-	{ return _trapHandler; }
+	uint getTrapHandler() const { return _trapHandler; }
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point pos) const;
 
@@ -280,7 +277,7 @@ public:
 		return _z;
 	}
 
-	const Common::String & getText() const {
+	const Common::String &getText() const {
 		return _text;
 	}
 
@@ -292,7 +289,7 @@ public:
 		_title = title;
 	}
 
-	const Common::String& title() const {
+	const Common::String &title() const {
 		return _title;
 	}
 
@@ -329,8 +326,7 @@ public:
 	void lock();
 	void unlock();
 
-	bool alive() const
-	{ return _alive; }
+	bool alive() const { return _alive; }
 
 	void alive(bool value);
 

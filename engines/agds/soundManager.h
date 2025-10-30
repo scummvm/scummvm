@@ -45,7 +45,7 @@ namespace AGDS {
 		int					pan;
 		int					group;
 		bool				paused;
-		Sound(int id_, const Common::String &process_, const Common::String & res, const Common::String &filename_, const Common::String & var, int volume_, int pan_, int group_ = 0):
+		Sound(int id_, const Common::String &process_, const Common::String &res, const Common::String &filename_, const Common::String &var, int volume_, int pan_, int group_ = 0):
 			id(id_), process(process_), resource(res), filename(filename_), phaseVar(var), handle(), volume(volume_), pan(pan_), group(group_), paused(false) {
 		}
 
@@ -61,8 +61,8 @@ namespace AGDS {
 	class SoundManager {
 		using SoundList = Common::List<Sound>;
 		int							_nextId;
-		AGDSEngine *				_engine;
-		Audio::Mixer *				_mixer;
+		AGDSEngine				   *_engine;
+		Audio::Mixer			   *_mixer;
 		SoundList					_sounds;
 
 	public:

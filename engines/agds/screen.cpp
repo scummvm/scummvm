@@ -77,8 +77,7 @@ void Screen::scrollTo(Common::Point scroll) {
 }
 
 
-float Screen::getZScale(int y) const
-{
+float Screen::getZScale(int y) const {
 	int h = g_system->getHeight();
 	int dy = h - y;
 	if (dy > _characterNear) {
@@ -184,7 +183,7 @@ AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 }
 
 void Screen::tick() {
-	for(uint i = 0; i < _animations.size(); ) {
+	for (uint i = 0; i < _animations.size(); ) {
 		const auto & desc = _animations.data()[i];
 		const auto & animation = desc.animation;
 		if (!desc.removed && animation->tick())
@@ -202,7 +201,7 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 
 	auto child = _children.begin();
 	auto desc = _animations.begin();
-	while(child != _children.end() || desc != _animations.end() || character) {
+	while (child != _children.end() || desc != _animations.end() || character) {
 		bool child_valid = child != _children.end();
 		bool animation_valid = desc != _animations.end();
 		if (animation_valid && desc->removed) {
@@ -238,38 +237,38 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 
 		auto basePos = Common::Point() - _scroll;
 		switch (render_type) {
-			case 0:
-				//debug("object z: %d", (*child)->z());
-				if ((*child) != currentInventoryObject && (*child)->alive()) {
-					if ((*child)->scale() < 0)
-						basePos = Common::Point();
-					(*child)->paint(*_engine, backbuffer, basePos);
-				}
-				++child;
-				break;
-			case 1:
-				//debug("animation z: %d", (*animation)->z());
-				if ((*desc).animation->scale() < 0)
+		case 0:
+			//debug("object z: %d", (*child)->z());
+			if ((*child) != currentInventoryObject && (*child)->alive()) {
+				if ((*child)->scale() < 0)
 					basePos = Common::Point();
-				(*desc).animation->paint(backbuffer, basePos);
-				++desc;
-				break;
-			case 2:
-				//debug("character z: %d", character->z());
-				character->paint(backbuffer, basePos);
-				character = nullptr;
-				break;
-			default:
-				error("invalid logic in z-sort");
+				(*child)->paint(*_engine, backbuffer, basePos);
+			}
+			++child;
+			break;
+		case 1:
+			//debug("animation z: %d", (*animation)->z());
+			if ((*desc).animation->scale() < 0)
+				basePos = Common::Point();
+			(*desc).animation->paint(backbuffer, basePos);
+			++desc;
+			break;
+		case 2:
+			//debug("character z: %d", character->z());
+			character->paint(backbuffer, basePos);
+			character = nullptr;
+			break;
+		default:
+			error("invalid logic in z-sort");
 		}
 	}
 	if (_fade != 0) {
 		auto alpha = (100 - _fade) * 256 / 100;
 		auto & format = backbuffer.format;
-		for(int y = 0; y < backbuffer.h; ++y) {
+		for (int y = 0; y < backbuffer.h; ++y) {
 			uint32 * line = (uint32 *)backbuffer.getBasePtr(0, y);
 			int w = backbuffer.w;
-			while(w--) {
+			while (w--) {
 				uint8 r, g, b;
 				format.colorToRGB(*line, r, g, b);
 				r = (r * alpha) >> 8;
@@ -286,7 +285,7 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 	objects.reserve(_children.size());
 	for (auto i = _children.begin(); i != _children.end(); ++i) {
 		const auto & object = *i;
-		auto visiblePos = (object->scale() >= 0)? pos + _scroll: pos;
+		auto visiblePos = (object->scale() >= 0) ? pos + _scroll : pos;
 		if (object->pointIn(visiblePos) && object->alive()) {
 			objects.insert_at(0, object);
 		}

@@ -40,7 +40,7 @@ using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Character {
 	using FogPtr = Common::ScopedPtr<Graphics::ManagedSurface>;
-	AGDSEngine *	_engine;
+	AGDSEngine	   *_engine;
 	ObjectPtr		_object;
 	AnimationPtr	_animation;
 	FogPtr			_fog;
@@ -70,27 +70,27 @@ class Character {
 		Common::Array<Frame> 	frames;
 	};
 	Common::HashMap<uint, AnimationDescription> _animations;
-	const AnimationDescription * _description;
+	const AnimationDescription *_description;
 
 	bool animate(int direction, int speed, bool jokes);
 	Common::Point animationPosition() const;
 
 public:
-	Character(AGDSEngine * engine, const Common::String & name);
+	Character(AGDSEngine *engine, const Common::String &name);
 	~Character();
 
 	void associate(const Common::String &name);
 
-	const AnimationDescription * animationDescription(uint index) const {
+	const AnimationDescription *animationDescription(uint index) const {
 		auto it = _animations.find(index);
-		return it != _animations.end()? &it->_value: nullptr;
+		return it != _animations.end() ? &it->_value : nullptr;
 	}
 
-	const Common::String & name() const {
+	const Common::String &name() const {
 		return _name;
 	}
 
-	const ObjectPtr & object() const {
+	const ObjectPtr &object() const {
 		return _object;
 	}
 
@@ -117,7 +117,7 @@ public:
 	void leave(const Common::String &processName);
 
 	int phase() const {
-		return _jokes? _phase: -1;
+		return _jokes ? _phase : -1;
 	}
 	void phase(int phase) {
 		_phase = phase;
@@ -139,18 +139,18 @@ public:
 	bool direction(int dir);
 
 	int direction() const {
-		return _jokes? _jokesDirection: _direction;
+		return _jokes ? _jokesDirection : _direction;
 	}
 
 	void tick(bool reactivate);
-	void paint(Graphics::Surface & backbuffer, Common::Point pos) const;
+	void paint(Graphics::Surface &backbuffer, Common::Point pos) const;
 
 	int getDirectionForMovement(Common::Point delta);
 
 	int z() const;
 
 	void reset();
-	void setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ);
+	void setFog(Graphics::ManagedSurface *surface, int minZ, int maxZ);
 };
 
 

@@ -60,7 +60,7 @@ void Patch::load(Common::ReadStream &stream) {
 	defaultMouseCursor = readString(stream);
 	debug("default pointer name: %s", defaultMouseCursor.c_str());
 	objects.clear();
-	for(uint i = 0; i < object_count; ++i) {
+	for (uint i = 0; i < object_count; ++i) {
 		int flag = stream.readSint16LE();
 		Common::String name = readString(stream);
 		debug("patch object %s %d", name.c_str(), flag);
@@ -91,8 +91,8 @@ void Patch::save(Common::WriteStream &stream) {
 	}
 }
 
-void Patch::setFlag(const Common::String & name, int flag) {
-	for(auto & object : objects) {
+void Patch::setFlag(const Common::String &name, int flag) {
+	for (auto &object : objects) {
 		if (object.name == name) {
 			object.flag = flag;
 			return;
@@ -101,16 +101,16 @@ void Patch::setFlag(const Common::String & name, int flag) {
 	objects.push_back({name, flag});
 }
 
-int Patch::getFlag(const Common::String & name) const {
-	for(auto & object : objects) {
+int Patch::getFlag(const Common::String &name) const {
+	for (auto &object : objects) {
 		if (object.name == name)
 			return object.flag;
 	}
 	return 0;
 }
 
-int Patch::incRef(const Common::String & name) {
-	for(auto & object : objects) {
+int Patch::incRef(const Common::String &name) {
+	for (auto &object : objects) {
 		if (object.name == name) {
 			return ++object.flag;
 		}
@@ -119,8 +119,8 @@ int Patch::incRef(const Common::String & name) {
 	return 1;
 }
 
-int Patch::decRef(const Common::String & name) {
-	for(auto & object : objects) {
+int Patch::decRef(const Common::String &name) {
+	for (auto &object : objects) {
 		if (object.name == name) {
 			//this is original code lol
 			object.flag = 0;

@@ -87,7 +87,7 @@ void Database::write(Common::WriteStream &stream, const Common::HashMap<Common::
 	debug("database data offset: 0x%06x", dataOffset);
 	uint offset = 0;
 
-	for(auto &entry: entries) {
+	for (auto &entry : entries) {
 		auto &key = entry._key;
 		auto &value = entry._value;
 
@@ -100,7 +100,7 @@ void Database::write(Common::WriteStream &stream, const Common::HashMap<Common::
 		stream.writeUint32LE(value.size());
 	}
 
-	for(auto entry: entries) {
+	for (auto &entry : entries) {
 		auto & value = entry._value;
 		stream.write(value.data(), value.size());
 	}
@@ -108,7 +108,7 @@ void Database::write(Common::WriteStream &stream, const Common::HashMap<Common::
 
 Common::Array<Common::String> Database::getEntries() const {
 	Common::Array<Common::String> names;
-	for(EntriesType::const_iterator i = _entries.begin(); i != _entries.end(); ++i) {
+	for (EntriesType::const_iterator i = _entries.begin(); i != _entries.end(); ++i) {
 		names.push_back(i->_key);
 	}
 	return names;
@@ -133,4 +133,5 @@ Common::SeekableReadStream *Database::getEntry(Common::SeekableReadStream &paren
 	parent.seek(entry.offset);
 	return parent.readStream(entry.size);
 }
+
 } // namespace AGDS

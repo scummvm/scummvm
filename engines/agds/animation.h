@@ -40,7 +40,7 @@ class Animation {
 	using FlicPtr = Common::ScopedPtr<Video::FlicDecoder>;
 	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
 
-	AGDSEngine *		_engine;
+	AGDSEngine 		   *_engine;
 	Common::String		_name;
 	FlicPtr				_flic;
 	ManagedSurfacePtr	_frame;
@@ -79,7 +79,7 @@ public:
 		return _phase >= _frames;
 	}
 
-	const Common::Point & position() const {
+	const Common::Point &position() const {
 		return _position;
 	}
 
@@ -87,19 +87,19 @@ public:
 		_position = position;
 	}
 
-	const Common::String & phaseVar() const {
+	const Common::String &phaseVar() const {
 		return _phaseVar;
 	}
 
-	void phaseVar(const Common::String & phaseVar) {
+	void phaseVar(const Common::String &phaseVar) {
 		_phaseVar = phaseVar;
 	}
 
-	const Common::String & process() const {
+	const Common::String &process() const {
 		return _process;
 	}
 
-	void process(const Common::String & process) {
+	void process(const Common::String &process) {
 		_process = process;
 	}
 
@@ -170,7 +170,7 @@ public:
 	void onScreen(bool onScreen);
 
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
-	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::ManagedSurface *mask = nullptr, int maskAlpha = 0) const;
+	void paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::ManagedSurface *mask = nullptr, int maskAlpha = 0) const;
 	uint width() const;
 	uint height() const;
 	uint visibleHeight() const {

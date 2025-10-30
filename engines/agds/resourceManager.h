@@ -38,9 +38,8 @@ class ResourceManager {
 private:
 
 	class GrpFile;
-	class ArchiveMember : public Common::ArchiveMember
-	{
-		GrpFile *		_parent;
+	class ArchiveMember : public Common::ArchiveMember {
+		GrpFile		   *_parent;
 		Common::String	_name;
 		uint32			_offset;
 		uint32			_size;
@@ -65,8 +64,7 @@ private:
 	};
 	using ArchiveMemberPtr = Common::SharedPtr<ArchiveMember>;
 
-	class GrpFile : public Common::Archive
-	{
+	class GrpFile : public Common::Archive {
 		Common::File	_file;
 
 		using MembersType = Common::HashMap<Common::String, ArchiveMemberPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
@@ -93,11 +91,11 @@ public:
 
 	bool addPath(const Common::Path &grpFilename);
 
-	Common::SeekableReadStream * getResource(const Common::String &name) const;
-	Graphics::Surface * loadPicture(const Common::String & name, const Graphics::PixelFormat &format);
+	Common::SeekableReadStream *getResource(const Common::String &name) const;
+	Graphics::Surface *loadPicture(const Common::String &name, const Graphics::PixelFormat &format);
 
 	static Common::String loadText(Common::SeekableReadStream &stream);
-	Common::String loadText(const Common::String & name) const;
+	Common::String loadText(const Common::String &name) const;
 };
 
 Common::String readString(Common::ReadStream &stream, uint size = 32);

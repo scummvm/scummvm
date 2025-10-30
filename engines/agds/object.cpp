@@ -189,8 +189,7 @@ void Object::createRotated() {
 	_rotatedPicture.reset(getPicture()->rotoscale(transform));
 }
 
-void Object::alive(bool value)
-{
+void Object::alive(bool value) {
 	_alive = value;
 	if (!_alive)
 		_region.reset();
