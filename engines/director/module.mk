@@ -177,6 +177,7 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
 	lingo/xtras/b/budapi.o \
+	lingo/xtras/a/audio.o \
 	lingo/xtras/directsound.o \
 	lingo/xtras/d/displayres.o \
 	lingo/xtras/filextra.o \
@@ -189,6 +190,7 @@ MODULE_OBJS = \
 	lingo/xtras/r/registryreader.o \
 	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
+	lingo/xtras/s/smacker.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o
 
