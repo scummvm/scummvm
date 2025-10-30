@@ -8608,6 +8608,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989859, Common::NL_BEL, 600),
 	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989785, Common::NL_NLD, 600),
 
+	MACGAME1("ispyspooky", "", "Play I Spy Spooky Mansion", "rt:66f2146acecb09b969c599d5ec854e5e", 115778, 602),
+	WINGAME1("ispyspooky", "", "_Spooky.exe", "t:b57f9500220d32301f83c6b20b02fb96", 1568954, 602),
+
 	MACGAME1("jmmg", "", "Just Me and My Grandpa", "66f1a7078033867061b05f3789c6e5de", 1032378, 602),
 	WINGAME1("jmmg", "", "JMMG.EXE", "t:9801c1217842b39b25e42584cf5f8548", 1704089, 600),
 
