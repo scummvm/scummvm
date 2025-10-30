@@ -57,9 +57,9 @@ void NoctropolisRoom::reloadRoom() {
 	_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
 	_vm->_player->loadAnimation(fileNum, 0);
 
-	for (int i = subFileBase; i > numSubFiles; i++) {
+	for (int i = subFileBase; i < numSubFiles; i++) {
 		Resource *data = _vm->_files->loadFile(fileNum, i);
-		_vm->_objectsTable[objBase + i] = new SpriteResource(_vm, data);
+		_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
 	}
 	
 	reloadRoom1();
