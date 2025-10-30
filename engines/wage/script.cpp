@@ -657,6 +657,40 @@ enum {
 	kMoveChrScene
 };
 
+#define defEnum(x) #x
+
+static const char *compList[] = {
+	defEnum(kCompEqNumNum),
+	defEnum(kCompEqObjScene),
+	defEnum(kCompEqChrScene),
+	defEnum(kCompEqObjChr),
+	defEnum(kCompEqChrChr),
+	defEnum(kCompEqSceneScene),
+	defEnum(kCompEqStringTextInput),
+	defEnum(kCompEqTextInputString),
+	defEnum(kCompEqNumberTextInput),
+	defEnum(kCompEqTextInputNumber),
+	defEnum(kCompLtNumNum),
+	defEnum(kCompLtStringTextInput),
+	defEnum(kCompLtTextInputString),
+	defEnum(kCompLtObjChr),
+	defEnum(kCompLtChrObj),
+	defEnum(kCompLtObjScene),
+	defEnum(kCompGtNumNum),
+	defEnum(kCompGtStringString),
+	defEnum(kCompGtChrScene),
+	defEnum(kMoveObjChr),
+	defEnum(kMoveObjScene),
+	defEnum(kMoveChrScene),
+};
+
+Common::String comp2str(int fl) {
+	if (fl >= ARRAYSIZE(compList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return compList[fl];
+}
+
 static const char *typeNames[] = {
 	"OBJ",
 	"CHR",
@@ -725,6 +759,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		debug(1, "%s() o2 is null", __func__);
 		return false;
 	}
+
+	debug(9, "     comparator %s with %s with %s", typeNames[o1->_type], typeNames[o2->_type], comp2str(comparator).c_str());
 
 	switch(comparator) {
 	case kCompEqNumNum:
@@ -868,6 +904,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 
 	// Now, try partial matches.
 	Operand *c1, *c2;
+	debug(8, "   no direct comparators, trying partial matches");
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
 			continue;
@@ -886,6 +923,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	}
 
 	// Now, try double conversion.
+	debug(8, "   no direct comparators, trying double conversion");
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
 			continue;
