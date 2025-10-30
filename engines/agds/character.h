@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; class ReadStream; class WriteStream; }
-namespace Graphics	{ struct Surface; struct ManagedSurface; }
+namespace Graphics	{ struct Surface; class ManagedSurface; }
 
 namespace AGDS {
 

@@ -51,7 +51,7 @@
  * - Black Mirror (Windows)
  */
 
-namespace Graphics { struct ManagedSurface; }
+namespace Graphics { class ManagedSurface; }
 
 namespace AGDS {
 

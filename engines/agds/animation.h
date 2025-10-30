@@ -29,7 +29,7 @@
 #include "common/ptr.h"
 
 namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ struct Surface; struct ManagedSurface; }
+namespace Graphics	{ struct Surface; class ManagedSurface; }
 namespace Video		{ class FlicDecoder; }
 
 namespace AGDS {
