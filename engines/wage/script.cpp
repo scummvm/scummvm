@@ -640,7 +640,6 @@ enum {
 	kCompEqChrChr,
 	kCompEqSceneScene,
 	kCompEqStringTextInput,
-	kCompEqStringString,
 	kCompEqTextInputString,
 	kCompEqNumberTextInput,
 	kCompEqTextInputNumber,
@@ -689,7 +688,6 @@ struct Comparator {
 	{ '=', SCENE, SCENE, kCompEqSceneScene },
 	{ '=', STRING, TEXT_INPUT, kCompEqStringTextInput },
 	{ '=', TEXT_INPUT, STRING, kCompEqTextInputString },
-	{ '=', STRING, STRING, kCompEqStringString },
 	{ '=', NUMBER, TEXT_INPUT, kCompEqNumberTextInput },
 	{ '=', TEXT_INPUT, NUMBER, kCompEqTextInputNumber },
 
@@ -775,14 +773,6 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		}
 	case kCompEqTextInputString:
 		return compare(o2, o1, kCompEqStringTextInput);
-	case kCompEqStringString:
-		{
-			Common::String s1(*o1->_value.string), s2(*o2->_value.string);
-			s1.toLowercase();
-			s2.toLowercase();
-
-			return s1.contains(s2);
-		}
 	case kCompEqNumberTextInput:
 		if (_inputText == NULL) {
 			return false;
