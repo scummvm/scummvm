@@ -83,6 +83,7 @@ void b_integerp(int nargs);
 void b_objectp(int nargs);
 void b_pictureP(int nargs);
 void b_stringp(int nargs);
+void b_symbol(int nargs);
 void b_symbolp(int nargs);
 void b_voidP(int nargs);
 
