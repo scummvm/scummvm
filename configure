@@ -7577,7 +7577,7 @@ case $_host_os in
 		system_libs=''
 		for lib in $LIBS; do
 			case $lib in
-			-lz|-lm|-ldl)
+			-lz|-lm|-ldl|-llog)
 				system_libs="$system_libs $lib"
 				;;
 			*)
