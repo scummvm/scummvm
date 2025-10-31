@@ -2017,7 +2017,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// In case we create the main ScummVM project files we will need to
 	// generate engines/plugins_table.h & engines/detection_table.h
-	if (!setup.tests && !setup.devTools) {
+	if (!setup.devTools) {
 		createEnginePluginsTable(setup);
 	}
 }
