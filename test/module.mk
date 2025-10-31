@@ -29,7 +29,7 @@ TEST_LIBS += test/null_osystem.o \
 endif
 
 ifdef USE_TINYGL
-TESTS += $(srcdir)/test/tgraphics/tinygl*.h
+TESTS += $(srcdir)/test/graphics/tinygl*.h
 endif
 
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
