@@ -2,7 +2,7 @@
 
 #include "common/str.h"
 #include "common/ustr.h"
-#include "../null_osystem.h"
+#include "../system/null_osystem.h"
 
 // We support CJK on all the platforms but it relies on OSystem to read
 // file which *in test environments* is available only on some platforms
