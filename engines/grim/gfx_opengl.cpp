@@ -1571,7 +1571,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
-	if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
+	if (text->getFont()->is8Bit())
 		return;
 
 	TextObjectUserData *ud = (TextObjectUserData *)const_cast<void *>(text->getUserData());
