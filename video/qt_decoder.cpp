@@ -341,7 +341,7 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 
 	_durationOverride = -1;
 	_scaledSurface = 0;
-	_curPalette = 0;
+	_curPalette = nullptr;
 	_dirtyPalette = false;
 	_reversed = false;
 }
@@ -400,6 +400,7 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
 	_delayedFrameToBufferTo = -1; // abort any delayed buffering
+	_curPalette = nullptr; // invalidate any palette
 
 	uint32 convertedFrames = requestedTime.convertToFramerate(_decoder->_timeScale).totalNumberOfFrames();
 	for (_curEdit = 0; !atLastEdit(); _curEdit++)
@@ -628,6 +629,7 @@ const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
 
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 	_delayedFrameToBufferTo = -1; // abort any delayed buffering
+	_curPalette = nullptr; // invalidate any palette
 
 	_reversed = reverse;
 
@@ -882,8 +884,8 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 
 	// The codec palette takes priority over the container one
 	if (entry->_videoCodec->containsPalette()) {
-		_curPalette = entry->_videoCodec->getPalette();
 		_dirtyPalette = entry->_videoCodec->hasDirtyPalette();
+		_curPalette = entry->_videoCodec->getPalette();
 	}
 
 	return frame;
