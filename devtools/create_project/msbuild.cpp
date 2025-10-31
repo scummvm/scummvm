@@ -167,8 +167,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Output auto-generated test runner
 	if (setup.tests) {
 		project << "\t<ItemGroup>\n";
-		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
-		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/null_osystem.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"test/runner/test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/system/null_osystem.cpp\" />\n";
 		project << "\t\t<ClCompile Remove=\"" << setup.srcDir << "/backends/base-backend.cpp\" />\n"; // symbols are already defined in null_osystem.cpp
 		project << "\t</ItemGroup>\n";
 	}

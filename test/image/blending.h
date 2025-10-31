@@ -42,7 +42,7 @@
 #include "graphics/primitives.h"
 #include "graphics/transform_tools.h"
 
-#include "../null_osystem.h"
+#include "../system/null_osystem.h"
 
 #if NULL_OSYSTEM_IS_AVAILABLE
 #define BENCHMARK_TIME 1

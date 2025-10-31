@@ -268,7 +268,10 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	for (StringList::const_iterator it = setup.testDirs.begin(); it != setup.testDirs.end(); ++it)
 		target += " $(SolutionDir)" + *it + "*.h";
 
-	return "python3 &quot;$(SolutionDir)" + setup.filePrefix + "/test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
+	std::string cmdLine = "";
+	cmdLine = "if not exist \"$(SolutionDir)test\\runner\" mkdir \"$(SolutionDir)test\\runner\"\n"
+	          "python3 &quot;$(SolutionDir)" + setup.filePrefix + "/test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test/runner/test_runner.cpp&quot;" + target;
+	return cmdLine;
 }
 
 std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup, bool isRelease) const {
