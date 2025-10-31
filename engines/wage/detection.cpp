@@ -45,8 +45,9 @@ static const PlainGameDescriptor wageGames[] = {
 #include "wage/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
-	{Wage::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
-	{Wage::kDebugSound, "sound", "Show sound debug information	"},
+	{ Wage::kDebugImGui,   "imgui",   "Show ImGui debug window (if available)"},
+	{ Wage::kDebugSound,   "sound",   "Show sound debug information"},
+	{ Wage::kDebugLoading, "loading", "Show loading debug information" },
 	DEBUG_CHANNEL_END
 };
 

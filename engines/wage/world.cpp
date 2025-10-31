@@ -357,6 +357,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
 
+		debugC(1, kDebugLoading, "MENU: About: %s", toPrintable(_aboutMenuItemName).c_str());
+
 		delete menu;
 		delete res;
 	}
@@ -365,6 +367,10 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
 		_commandsMenu = menu->operator[](1);
+
+		debugC(1, kDebugLoading, "MENU: Commands name: %s", toPrintable(_commandsMenuName).c_str());
+		debugC(1, kDebugLoading, "MENU: Commands menu: %s", toPrintable(_commandsMenu).c_str());
+
 		delete menu;
 		delete res;
 	}
@@ -374,6 +380,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		_weaponsMenuName = menu->operator[](0);
 		delete menu;
 		delete res;
+
+		debugC(1, kDebugLoading, "MENU: Weapons name: %s", toPrintable(_weaponsMenuName).c_str());
 	}
 	// TODO: Read Apple menu and get the name of that menu item..
 
@@ -552,6 +560,8 @@ const char *World::getAboutMenuItemName() {
 			strncat(menu, pos + 1, 255);
 		}
 	}
+
+	debugC(1, kDebugLoading, "MENU: About cleansed: %s", Common::toPrintable(menu).c_str());
 
 	return menu;
 }

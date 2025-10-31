@@ -94,6 +94,7 @@ typedef Common::List<Chr *> ChrList;
 enum {
 	kDebugImGui = 1,
 	kDebugSound,
+	kDebugLoading,
 };
 
 enum OperandType {
