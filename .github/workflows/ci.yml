@@ -148,8 +148,7 @@ jobs:
           path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}\\bin\\*.pdb
   xcode:
     name: Xcode
-    # macos-14 is arm64. macosx build currently fails on macos-14.
-    runs-on: macos-13
+    runs-on: macos-15-intel
     strategy:
       fail-fast: false
       matrix:
