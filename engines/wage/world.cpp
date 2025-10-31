@@ -558,6 +558,8 @@ const char *World::getAboutMenuItemName() {
 			strncat(menu, str, (pos - str));
 			strncat(menu, _name.c_str(), 255);
 			strncat(menu, pos + 1, 255);
+		} else {
+			Common::strlcpy(menu, _aboutMenuItemName.c_str(), 256);
 		}
 	}
 
