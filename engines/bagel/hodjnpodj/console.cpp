@@ -21,14 +21,57 @@
 
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/afxwin.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 
 Console::Console() : GUI::Debugger() {
+	registerCmd("dumpres", WRAP_METHOD(Console, cmdDumpRes));
 }
 
 Console::~Console() {
+}
+
+bool Console::cmdDumpRes(int argc, const char **argv) {
+	if (argc == 2) {
+		int num = atoi(argv[1]);
+		Common::String name = Common::String::format("#%d", num);
+		HINSTANCE hInst = nullptr;
+		uint dwBytes;
+		HRSRC hRsc;
+		HGLOBAL hGbl;
+		byte *pData;
+
+		hRsc = FindResource(hInst, name.c_str(), RT_BITMAP);
+		if (hRsc != nullptr) {
+			dwBytes = (size_t)SizeofResource(hInst, hRsc);
+			hGbl = LoadResource(hInst, hRsc);
+			if ((dwBytes != 0) && (hGbl != nullptr)) {
+				pData = (byte *)LockResource(hGbl);
+				Common::MemoryReadStream rs(pData, dwBytes);
+				Common::DumpFile df;
+				if (df.open("dump.bin"))
+					df.writeStream(&rs);
+
+				UnlockResource(hGbl);
+				FreeResource(hGbl);
+
+				if (df.isOpen())
+					debugPrintf("Created dump.bin\n");
+				else
+					debugPrintf("Could not create dump.bin\n");
+			} else {
+				debugPrintf("Could not find resource\n");
+			}
+		} else {
+			debugPrintf("Could not find resource\n");
+		}
+	} else {
+		debugPrintf("dumpres [num]\n");
+	}
+
+	return true;
 }
 
 } // namespace HodjNPodj
