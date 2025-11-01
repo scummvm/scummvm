@@ -60,26 +60,6 @@ endif
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) $(PATH_BUILD_ASSETS)/doc/
 	(cd $(PATH_BUILD_ASSETS)/ && find assets doc -type f | sort | xargs md5sum) > $@
 
-ifdef DIST_ANDROID_CACERT_PEM
-$(PATH_BUILD_ASSETS)/assets/cacert.pem: $(DIST_ANDROID_CACERT_PEM)
-	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/
-	$(INSTALL) -c -m 644 $(DIST_ANDROID_CACERT_PEM) $(PATH_BUILD_ASSETS)/assets/cacert.pem
-$(PATH_BUILD_ASSETS)/MD5SUMS: $(PATH_BUILD_ASSETS)/assets/cacert.pem
-else
-ifdef USE_CURL
-$(PATH_BUILD_ASSETS)/assets/cacert.pem:
-	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/
-	$(QUIET_CURL)$(CURL) -s https://curl.se/ca/cacert.pem --time-cond $(PATH_BUILD_ASSETS)/assets/cacert.pem --output $(PATH_BUILD_ASSETS)/assets/cacert.pem
-androidcacert:
-	$(INSTALL) -d $(PATH_BUILD_ASSETS)/assets/
-	$(QUIET_CURL)$(CURL) -s https://curl.se/ca/cacert.pem --time-cond $(PATH_BUILD_ASSETS)/assets/cacert.pem --output $(PATH_BUILD_ASSETS)/assets/cacert.pem
-
-.PHONY: androidcacert
-endif
-endif
-# Make MD5SUMS depend on cacert. If it's not here and neither DIST_ANDROID_CACERT_PEM nor USE_CURL are defined, it will error out
-$(PATH_BUILD_ASSETS)/MD5SUMS: $(PATH_BUILD_ASSETS)/assets/cacert.pem
-
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
 	$(INSTALL) -c -m 644 libscummvm.so $(PATH_BUILD_LIBSCUMMVM)

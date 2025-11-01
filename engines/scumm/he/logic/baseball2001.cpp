@@ -22,7 +22,7 @@
 #include "scumm/he/intern_he.h"
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 #include "scumm/he/net/net_lobby.h"
 #endif
 #include "scumm/he/net/net_defines.h"
@@ -78,7 +78,7 @@ int LogicHEbaseball2001::versionID() {
 
 int LogicHEbaseball2001::startOfFrame() {
 #ifdef USE_ENET
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	_vm->_lobby->doNetworkOnceAFrame();
 #endif
 	_vm->_net->doNetworkOnceAFrame(15);
@@ -87,7 +87,7 @@ int LogicHEbaseball2001::startOfFrame() {
 }
 
 int32 LogicHEbaseball2001::dispatch(int op, int numArgs, int32 *args) {
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	if (op > 2120 && op < 3003 && op != OP_NET_CHECK_INTERNET_STATUS)
 		return _vm->_lobby->dispatch(op, numArgs, args);
 #endif
@@ -114,7 +114,7 @@ case OP_NET_INIT:
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		if (_vm->_lobby->_sessionId) {
 			_vm->_net->querySessions();
 			// Only proceed if we've found the session
@@ -125,7 +125,7 @@ case OP_NET_INIT:
 		break;
 
 	case OP_NET_JOIN_SESSION:
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		if (_vm->_lobby->_sessionId) {
 			res = _vm->_net->joinSessionById(_vm->_lobby->_sessionId);
 			if (res) {
@@ -159,7 +159,7 @@ case OP_NET_INIT:
 #endif // USE_ENET
 
 	case OP_NET_CHECK_INTERNET_STATUS:
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 		// We can only use the lobby system if both
 		// libcurl (for lobby communication) and
 		// ENet (for gameplay communication) is enabled.

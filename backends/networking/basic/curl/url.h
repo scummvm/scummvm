@@ -18,16 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_NETWORKING_CURL_CACERT_H
-#define BACKENDS_NETWORKING_CURL_CACERT_H
+#ifndef BACKENDS_NETWORKING_BASIC_CURL_URL_H
+#define BACKENDS_NETWORKING_BASIC_CURL_URL_H
 
-#include "common/str.h"
+typedef struct Curl_URL CURLU;
+
+#include "backends/networking/basic/url.h"
 
 namespace Networking {
 
-/** Return the path to the CA certificates bundle. */
-Common::String getCaCertPath();
+class CurlURL : public URL {
+public:
+	CurlURL(CURLU *curlu);
 
-}
+	~CurlURL() override;
+
+	Common::String getScheme() const override;
+	Common::String getHost() const override;
+	int getPort(bool returnDefault = false) const override;
+private:
+	CURLU *_url;
+};
+
+} // End of Namespace Networking
 
 #endif

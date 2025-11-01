@@ -28,6 +28,7 @@
 #include "common/debug.h"
 
 namespace Networking {
+namespace ENet {
 
 ENet::ENet() {
 	_initialized = false;
@@ -139,4 +140,5 @@ Socket *ENet::createSocket(const Common::String &address, int port) {
 	return new Socket(enetSocket);
 }
 
+} // End of namespace ENet
 } // End of namespace Networking

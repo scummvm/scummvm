@@ -27,6 +27,7 @@
 #include "common/textconsole.h"
 
 namespace Networking {
+namespace ENet {
 
 Socket::Socket(ENetSocket socket) {
 	_socket = socket;
@@ -101,4 +102,5 @@ int Socket::getPort() {
 	return _recentPort;
 }
 
+} // End of namespace ENet
 } // End of namespace Networking

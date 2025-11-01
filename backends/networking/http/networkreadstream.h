@@ -47,17 +47,6 @@ protected:
 	uint64 _progressDownloaded, _progressTotal;
 
 	/**
-	 * This method is called by ConnectionManager to indicate
-	 * that transfer is finished.
-	 *
-	 * @note It's called on failure too.
-	 */
-	virtual void resetStream() = 0;
-
-	virtual void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) = 0;
-	virtual void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) = 0;
-
-	/**
 	 * Fills the passed buffer with _sendingContentsBuffer contents.
 	 * It works similarly to read(), expect it's not for reading
 	 * Stream's contents, but for sending our own data to the server.
@@ -147,15 +136,6 @@ public:
 	 * @note This method should be called when eos() == true.
 	 */
 	virtual Common::String currentLocation() const = 0;
-
-	/**
-	 * Return response headers.
-	 *
-	 * @note This method should be called when eos() == true.
-	 */
-	Common::String responseHeaders() const {
-		return _responseHeaders;
-	}
 
 	/**
 	 * Return response headers as HashMap. All header names in

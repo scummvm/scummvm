@@ -1187,6 +1187,7 @@ const Feature s_features[] = {
 	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support (software) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{               "http",                      "USE_HTTP", false, true,  "HTTP client support" },
+	{          "basic-net",                 "USE_BASIC_NET", false, true,  "Basic network support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
@@ -1299,9 +1300,10 @@ static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
 		setFeatureBuildState("mikmod", setup.features, false);
 	}
 
-	// Only libcurl provides an HTTP client for now
-	// (or Emscripten but it's not supported by create_project)
+	// Only libcurl provides basic network and HTTP client for now
+	// (or Emscripten and Android but they are not supported by create_project)
 	if (!getFeatureBuildState("libcurl", setup.features)) {
+		setFeatureBuildState("basic-net", setup.features, false);
 		setFeatureBuildState("http", setup.features, false);
 	}
 

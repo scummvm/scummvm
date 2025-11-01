@@ -766,7 +766,7 @@ bool Net::initProvider() {
 	// Create a new ENet instance and initialize the library.
 	if (_enet)
 		return true;
-	_enet = new Networking::ENet();
+	_enet = new Networking::ENet::ENet();
 	if (!_enet->initialize()) {
 		_vm->displayMessage(0, "Unable to initialize ENet library.");
 		Net::closeProvider();

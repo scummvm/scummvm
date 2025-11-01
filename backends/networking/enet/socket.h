@@ -36,6 +36,7 @@ typedef int ENetSocket;
 #include "common/str.h"
 
 namespace Networking {
+namespace ENet {
 
 class Socket {
 public:
@@ -103,6 +104,7 @@ private:
 	int _recentPort;
 };
 
+} // End of namespace ENet
 } // End of namespace Networking
 
 #endif

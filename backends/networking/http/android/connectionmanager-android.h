@@ -19,42 +19,28 @@
  *
  */
 
-#ifndef TESTBED_NETWORKING_H
-#define TESTBED_NETWORKING_H
+#ifndef BACKENDS_NETWORKING_HTTP_ANDROID_CONNECTIONMANAGER_ANDROID_H
+#define BACKENDS_NETWORKING_HTTP_ANDROID_CONNECTIONMANAGER_ANDROID_H
 
-#include "testbed/testsuite.h"
+#include <jni.h>
 
-// This file can be used as template for header files of other newer testsuites.
+#include "backends/networking/http/connectionmanager.h"
 
-namespace Testbed {
+namespace Networking {
 
-namespace Networkingtests {
+class ConnectionManagerAndroid : public ConnectionManager {
+private:
+	jobject _manager;
 
-// Helper functions for Networking tests
+	void processTransfers() override;
 
-TestExitStatus testConnectionLimit();
-#ifdef USE_BASIC_NET
-TestExitStatus testSocket();
-TestExitStatus testURL();
-#endif
-
-} // End of namespace Networkingtests
-
-class NetworkingTestSuite : public Testsuite {
 public:
-	NetworkingTestSuite();
-	~NetworkingTestSuite() {}
+	ConnectionManagerAndroid();
+	~ConnectionManagerAndroid() override;
 
-	const char *getName() const {
-		return "Networking";
-	}
-
-	const char *getDescription() const {
-		return "Network and internet subsystems";
-	}
-
+	void registerRequest(JNIEnv *env, jobject request) const;
 };
 
-} // End of namespace Testbed
+} // End of namespace Networking
 
-#endif // TESTBED_NETWORKING_H
+#endif

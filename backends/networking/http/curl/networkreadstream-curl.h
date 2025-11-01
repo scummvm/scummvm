@@ -45,8 +45,6 @@ private:
 	byte *_bufferCopy; // To use with old curl version where CURLOPT_COPYPOSTFIELDS is not available
 	void initCurl(const char *url, RequestHeaders *headersList);
 	bool reuseCurl(const char *url, RequestHeaders *headersList);
-	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) override;
-	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) override;
 	static struct curl_slist *requestHeadersToSlist(const RequestHeaders *headersList);
 
 	static size_t curlDataCallback(char *d, size_t n, size_t l, void *p);
@@ -56,6 +54,9 @@ private:
 
 	// CURL-specific methods
 	CURL *getEasyHandle() const { return _easy; }
+	void resetStream();
+	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
+	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
 
 public:
 	NetworkReadStreamCurl(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval);
@@ -76,8 +77,6 @@ public:
 		const Common::HashMap<Common::String, Common::Path> &formFiles) override;
 	/** Send <buffer>, using POST by default. */
 	bool reuse(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true) override;
-
-	void resetStream() override;
 
 	long httpResponseCode() const override;
 	Common::String currentLocation() const override;

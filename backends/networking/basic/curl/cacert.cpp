@@ -19,23 +19,14 @@
  *
  */
 
-#if defined(ANDROID_BACKEND)
-#include "backends/platform/android/jni-android.h"
-#endif
-
-#include "backends/networking/curl/cacert.h"
+#include "backends/networking/basic/curl/cacert.h"
 
 #include "common/fs.h"
 
 namespace Networking {
 
 Common::String getCaCertPath() {
-#if defined(ANDROID_BACKEND)
-	// cacert path must exist on filesystem and be reachable by standard open syscall
-	// Lets use ScummVM internal directory
-	Common::String assetsPath = JNI::getScummVMAssetsPath();
-	return assetsPath + "/cacert.pem";
-#elif defined(DATA_PATH)
+#if defined(DATA_PATH)
 	static enum {
 		kNotInitialized,
 		kFileNotFound,

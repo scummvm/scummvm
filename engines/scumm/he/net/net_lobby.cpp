@@ -353,8 +353,6 @@ bool Lobby::connect() {
 	if (_socket)
 		return true;
 
-	_socket = new Networking::CurlSocket();
-
 	// NOTE: Even though the protocol starts with http(s), this is an entirely
 	// different protocol.  This is done so we can achieve communicating over
 	// TLS/SSL sockets.
@@ -364,9 +362,9 @@ bool Lobby::connect() {
 	}
 
 	// Parse the URL for checks:
-	Networking::CurlURL url;
-	if (url.parseURL(lobbyUrl)) {
-		Common::String scheme = url.getScheme();
+	Networking::URL *url = Networking::URL::parseURL(lobbyUrl);
+	if (url) {
+		Common::String scheme = url->getScheme();
 		if (!scheme.contains("http")) {
 			warning("LOBBY: Unsupported scheme in URL: \"%s\"", scheme.c_str());
 			writeStringArray(109, "Unsupported scheme in server address");
@@ -374,7 +372,7 @@ bool Lobby::connect() {
 			return false;
 		}
 
-		int port = url.getPort();
+		int port = url->getPort();
 		switch (port) {
 		case -1:
 			warning("LOBBY: Unable to get port.");
@@ -386,17 +384,18 @@ bool Lobby::connect() {
 			lobbyUrl += ":9130";
 			break;
 		}
+
+		delete url;
 	} else
 		warning("LOBBY: Could not parse URL, attempting to connect as is");
 
 	debugC(DEBUG_NETWORK, "LOBBY: Connecting to %s", lobbyUrl.c_str());
 
-	if (_socket->connect(lobbyUrl)) {
+	_socket = Networking::Socket::connect(lobbyUrl);
+	if (_socket) {
 		debugC(DEBUG_NETWORK, "LOBBY: Successfully connected to %s", lobbyUrl.c_str());
 		return true;
 	} else {
-		delete _socket;
-		_socket = nullptr;
 		writeStringArray(109, "Unable to contact server");
 		_vm->writeVar(108, -99);
 	}

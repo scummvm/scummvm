@@ -18,43 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
+#define BACKENDS_NETWORKING_BASIC_CURL_SOCKET_H
 
-#ifndef TESTBED_NETWORKING_H
-#define TESTBED_NETWORKING_H
+typedef void CURL;
+#ifdef WIN32
+// Including winsock2.h will result in errors, we have to define
+// SOCKET ourselves.
+#include <basetsd.h>
+typedef UINT_PTR SOCKET;
 
-#include "testbed/testsuite.h"
-
-// This file can be used as template for header files of other newer testsuites.
-
-namespace Testbed {
-
-namespace Networkingtests {
-
-// Helper functions for Networking tests
-
-TestExitStatus testConnectionLimit();
-#ifdef USE_BASIC_NET
-TestExitStatus testSocket();
-TestExitStatus testURL();
+typedef SOCKET curl_socket_t;
+#else
+typedef int curl_socket_t;
 #endif
 
-} // End of namespace Networkingtests
+#include "backends/networking/basic/socket.h"
 
-class NetworkingTestSuite : public Testsuite {
+namespace Networking {
+
+class CurlSocket : public Socket {
 public:
-	NetworkingTestSuite();
-	~NetworkingTestSuite() {}
+	CurlSocket(CURL *easy, curl_socket_t socket);
+	~CurlSocket() override;
 
-	const char *getName() const {
-		return "Networking";
-	}
+	int ready() override;
 
-	const char *getDescription() const {
-		return "Network and internet subsystems";
-	}
-
+	size_t send(const char *data, int len) override;
+	size_t recv(void *data, int maxLen) override;
+private:
+	CURL *_easy;
+	curl_socket_t _socket;
 };
 
-} // End of namespace Testbed
+} // End of namespace Networking
 
-#endif // TESTBED_NETWORKING_H
+#endif

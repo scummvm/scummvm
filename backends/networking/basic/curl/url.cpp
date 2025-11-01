@@ -22,69 +22,47 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <curl/curl.h>
 
-#include "backends/networking/curl/url.h"
+#include "backends/networking/basic/curl/url.h"
 
 #include "common/debug.h"
 #include "common/textconsole.h"
 
 namespace Networking {
 
-CurlURL::CurlURL() {
-	_url = nullptr;
-}
-
 // This requires libcurl version 7.62.0, If we're using
 // a lower version, stub all of this.
 #if LIBCURL_VERSION_NUM < 0x073E00
-CurlURL::~CurlURL() {
-}
 
-Common::String CurlURL::getScheme() {
-	return "";
-}
-
-Common::String CurlURL::getHost() {
-	return "";
-}
-
-int CurlURL::getPort(bool defaultPort) {
-	return -1;
-}
-
-bool CurlURL::parseURL(const Common::String &url) {
+URL *URL::parseURL(const Common::String &url) {
 	warning("libcurl: curl_url requires curl 7.62.0 or later");
-	return false;
+	return nullptr;
 }
 
 #else
 
-CurlURL::~CurlURL() {
-	if (_url) {
-		curl_url_cleanup(_url);
-		_url = nullptr;
-	}
-}
-
-bool CurlURL::parseURL(const Common::String &url) {
-	if (_url)
-		curl_url_cleanup(_url);
-
-	_url = curl_url();
-	if (!_url) {
+URL *URL::parseURL(const Common::String &url) {
+	CURLU *curlu = curl_url();
+	if (!curlu) {
 		warning("libcurl: Could not create curl_url handle");
-		return false;
+		return nullptr;
 	}
-	CURLUcode rc = curl_url_set(_url, CURLUPART_URL, url.c_str(), 0);
+	CURLUcode rc = curl_url_set(curlu, CURLUPART_URL, url.c_str(), 0);
 	if (rc) {
 		warning("libcurl: Unable to parse URL: \"%s\"", url.c_str());
-		return false;
+		curl_url_cleanup(curlu);
+		return nullptr;
 	}
-	return true;
+	return new CurlURL(curlu);
 }
 
-Common::String CurlURL::getScheme() {
-	if (!_url)
-		return "";
+CurlURL::CurlURL(CURLU *curlu) : _url(curlu) {
+}
+
+CurlURL::~CurlURL() {
+	curl_url_cleanup(_url);
+}
+
+Common::String CurlURL::getScheme() const {
 	char *scheme;
 	CURLUcode rc = curl_url_get(_url, CURLUPART_SCHEME, &scheme, 0);
 	if (rc) {
@@ -96,9 +74,7 @@ Common::String CurlURL::getScheme() {
 	return schemeString;
 }
 
-Common::String CurlURL::getHost() {
-	if (!_url)
-		return "";
+Common::String CurlURL::getHost() const {
 	char *host;
 	CURLUcode rc = curl_url_get(_url, CURLUPART_HOST, &host, 0);
 	if (rc) {
@@ -110,10 +86,7 @@ Common::String CurlURL::getHost() {
 	return hostString;
 }
 
-int CurlURL::getPort(bool defaultPort) {
-	if (!_url)
-		return -1;
-
+int CurlURL::getPort(bool defaultPort) const {
 	char *portChr;
 	CURLUcode rc = curl_url_get(_url, CURLUPART_PORT, &portChr, (defaultPort) ? CURLU_DEFAULT_PORT : CURLU_NO_DEFAULT_PORT);
 	if (rc) {

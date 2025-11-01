@@ -25,6 +25,7 @@
 #include "common/str.h"
 
 namespace Networking {
+namespace ENet {
 
 class Host;
 class Socket;
@@ -89,6 +90,7 @@ private:
 	bool _initialized;
 };
 
+} // End of namespace ENet
 } // End of namespace Networking
 
 
