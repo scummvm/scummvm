@@ -497,7 +497,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		_objectActions[pid].actions[p1].functionAddress = _loadedDataSize + p3;
 		//warning("RESTP_2C %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
-		warning("Data 38 size %zu", dataSize);
+		//warning("Data 38 size %zu", dataSize);
 		_thing2[pid].field_0.assign(data, data + dataSize);
 	} else if (tp == RESTP_39) {
 		_thing2[pid].field_1.assign(data, data + dataSize);
