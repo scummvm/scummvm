@@ -33,17 +33,49 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "image/png.h"
 
 #include "pelrock/detection.h"
+#include "pelrock/types.h"
 
 namespace Pelrock {
 
 struct PelrockGameDescription;
 
+const int kAlfredFrameWidth = 51;
+const int kAlfredFrameHeight = 102;
+
 class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Image::PNGDecoder *decoder = new Image::PNGDecoder();
+	void init();
+	void playIntro();
+	void setScreen(int s, int dir);
+	void setScreenJava(int s, int dir);
+	void loadAnims();
+	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
+	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+	void loadMainCharacterAnims();
+	void frames();
+
+	int xAlfred = 200;
+	int yAlfred = 200;
+	bool shouldPlayIntro = false;
+	GameState stateGame = GAME;
+	bool gameInitialized = false;
+	bool screenReady = false;
+	int dirAlfred = 0;
+	int prevDirX = 0;
+	int prevDirY = 0;
+	Common::String objectToShow = "";
+	int prevWhichScreen = 0;
+	int whichScreen = 0;
+	byte *pixelsShadows;// =new int[640*400];
+	byte *standingAnim = new byte[3060 * 102];
+
+	int curAlfredFrame = 9;
 protected:
 	// Engine APIs
 	Common::Error run() override;
