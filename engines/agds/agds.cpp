@@ -24,6 +24,7 @@
 #include "agds/character.h"
 #include "agds/console.h"
 #include "agds/database.h"
+#include "agds/detection.h"
 #include "agds/font.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
@@ -197,7 +198,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 	if (!stream)
 		error("no database entry for %s\n", clone.c_str());
 
-	ObjectPtr object(new Object(name, *stream));
+	ObjectPtr object(new Object(name, *stream, v2()));
 	object->allowInitialise(allowInitialise);
 	if (!prototype.empty()) {
 		object->persistent(false);
@@ -241,7 +242,7 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 			return;
 		}
 		if (!process) {
-			process = ProcessPtr(new Process(this, object, ip));
+			process = ProcessPtr(new Process(this, object, ip, v2()));
 			process->run();
 			return;
 		}
@@ -1418,6 +1419,10 @@ void AGDSEngine::returnToPreviousScreen() {
 
 int AGDSEngine::getRandomNumber(int max) {
 	return max > 0 ? _random.getRandomNumber(max - 1) : 0;
+}
+
+bool AGDSEngine::v2() const {
+	return _gameDescription->flags & AGDS_V2;
 }
 
 } // End of namespace AGDS

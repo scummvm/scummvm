@@ -279,6 +279,7 @@ public:
 	bool activeCurtain() const {
 		return _curtainTimer >= 0;
 	}
+	bool v2() const;
 
 private:
 	void stopAmbientSound();

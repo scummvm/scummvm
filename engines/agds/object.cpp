@@ -33,16 +33,17 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream &stream) : _name(name), _stringTableLoaded(false),
-                                                                                 _picture(), _rotatedPicture(), _region(),
-                                                                                 _animation(), _mouseCursor(),
-                                                                                 _pos(), _z(10), _rotation(0),
-                                                                                 _clickHandler(0), _examineHandler(0), _userUseHandler(0),
-																				 _throwHandler(0), _useOnHandler(0),
-																				 _handlerBD(0), _handlerC1(0),
-                                                                                 _alpha(255), _scale(100), _locked(0), _alive(true),
-																				 _persistent(true), _allowInitialise(true),
-																				 _ignoreRegion(false) {
+Object::Object(const Common::String &name, Common::SeekableReadStream &stream, bool v2) :
+		_name(name), _stringTableLoaded(false),
+		_picture(), _rotatedPicture(), _region(),
+		_animation(), _mouseCursor(),
+		_pos(), _z(10), _rotation(0),
+		_clickHandler(0), _examineHandler(0), _userUseHandler(0),
+		_throwHandler(0), _useOnHandler(0),
+		_handlerBD(0), _handlerC1(0),
+		_alpha(255), _scale(100), _locked(0), _alive(true),
+		_persistent(true), _allowInitialise(true),
+		_ignoreRegion(false), _v2(v2) {
 	uint16 id = stream.readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
@@ -92,11 +93,11 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
 		return;
 
-	resOffset += 5 /*instruction*/ + 0x11 /*another header*/;
+	resOffset += 5 /*instruction*/ + (_v2? 0x13: 0x11) /*another header*/;
 	if (resOffset >= _code.size())
-		error("invalid resource table offset");
+		error("invalid resource table offset %u/%u", resOffset, _code.size());
 
-	//debug("resource table at %08x", resOffset);
+	// debug("resource table at %04x", resOffset);
 	Common::MemoryReadStream stream(_code.data() + resOffset, _code.size() - resOffset);
 	_stringTable.resize(resCount);
 	for (uint16 i = 0; i < resCount; ++i) {
@@ -105,7 +106,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 
 		unsigned nameOffset = resOffset + offset;
 		if (nameOffset > _code.size())
-			error("invalid resource name offset");
+			error("invalid resource name offset %u/%u", nameOffset, _code.size());
 
 		const char *nameBegin = reinterpret_cast<const char *>(_code.data() + nameOffset);
 		const char *codeEnd = reinterpret_cast<const char *>(_code.data() + _code.size());
@@ -113,7 +114,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 
 		Common::String name(nameBegin, nameEnd - nameBegin);
 
-		//debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
+		// debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
 		_stringTable[i] = StringEntry(name, flags);
 	}
 	debug("loaded %u strings", resCount);
