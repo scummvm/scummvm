@@ -20,9 +20,9 @@
  */
 
 #include "agds/textLayout.h"
-#include "agds/font.h"
 #include "agds/agds.h"
 #include "agds/character.h"
+#include "agds/font.h"
 #include "agds/object.h"
 #include "agds/process.h"
 #include "agds/systemVariable.h"
@@ -35,7 +35,7 @@ void TextLayout::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		return;
 	Font *font = engine.getFont(_fontId);
 	for (uint i = 0; i < _lines.size(); ++i) {
-		Line & line = _lines[i];
+		Line &line = _lines[i];
 		font->drawString(&backbuffer, line.text, line.pos.x, line.pos.y, line.size.x, 0);
 	}
 }
@@ -46,7 +46,7 @@ void TextLayout::reset(AGDSEngine &engine) {
 	_lines.clear();
 
 	if (valid) {
-		Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
+		Common::String &var = _npc ? _npcNotifyVar : _charNotifyVar;
 		if (!var.empty()) {
 			engine.setGlobal(var, 0);
 		}
@@ -89,7 +89,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 		size.y = font->getFontHeight();
 		_lines.push_back(Line());
 
-		Line & l = _lines.back();
+		Line &l = _lines.back();
 		l.pos = basePos;
 		l.text = line;
 		l.size = size;
@@ -101,14 +101,14 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 
 	int dy = -basePos.y / 2;
 	for (uint i = 0; i < _lines.size(); ++i) {
-		Line & line = _lines[i];
+		Line &line = _lines[i];
 		line.pos.x += pos.x - line.size.x / 2;
 		line.pos.y += pos.y + dy;
 	}
 
 	_valid = true;
 
-	Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
+	Common::String &var = _npc ? _npcNotifyVar : _charNotifyVar;
 	if (!var.empty()) {
 		if (!engine.getGlobal(var))
 			engine.setGlobal(var, 1);
@@ -120,7 +120,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 				if (!engine.getGlobal(_charDirectionNotifyVar))
 					engine.setGlobal(_charDirectionNotifyVar, character->direction());
 			} else {
-				switch(character->direction()) {
+				switch (character->direction()) {
 				case 0:
 				case 1:
 				case 2:
@@ -138,4 +138,4 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 	}
 }
 
-}
+} // namespace AGDS

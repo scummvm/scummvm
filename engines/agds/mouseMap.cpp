@@ -21,32 +21,31 @@
 
 #include "agds/mouseMap.h"
 #include "agds/agds.h"
-#include "agds/region.h"
 #include "agds/object.h"
+#include "agds/region.h"
 #include <utility>
 
 namespace AGDS {
 
 int MouseMap::findFree() const {
-	for(int i = 0, n = _mouseRegions.size(); i != n; ++i) {
-		auto & region = _mouseRegions[i];
+	for (int i = 0, n = _mouseRegions.size(); i != n; ++i) {
+		auto &region = _mouseRegions[i];
 		if (!region)
 			return i;
 	}
 	error("no mouse region available");
 }
 
-
 int MouseMap::add(MouseRegion area) {
 	auto id = findFree();
-	auto & region = _mouseRegions[id];
+	auto &region = _mouseRegions[id];
 	region.reset(new MouseRegion(std::move(area)));
 	region->id = id;
 	return id;
 }
 
 void MouseMap::hideInactive(AGDSEngine *engine, Common::Point pos) {
-	for (auto & region : _mouseRegions) {
+	for (auto &region : _mouseRegions) {
 		if (!region || !region->enabled)
 			continue;
 
@@ -64,7 +63,7 @@ void MouseMap::hideInactive(AGDSEngine *engine, Common::Point pos) {
 }
 
 MouseRegion *MouseMap::find(int id) {
-	for (auto & region : _mouseRegions) {
+	for (auto &region : _mouseRegions) {
 		if (region && region->id == id)
 			return region.get();
 	}
@@ -100,7 +99,7 @@ void MouseRegion::hide(AGDSEngine *engine) {
 }
 
 void MouseMap::hideAll(AGDSEngine *engine) {
-	for (auto & region : _mouseRegions)
+	for (auto &region : _mouseRegions)
 		if (region)
 			region->hide(engine);
 }

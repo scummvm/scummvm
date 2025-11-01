@@ -22,59 +22,62 @@
 #ifndef AGDS_SOUND_MANAGER_H
 #define AGDS_SOUND_MANAGER_H
 
+#include "audio/mixer.h"
+#include "common/hashmap.h"
+#include "common/list.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/list.h"
-#include "common/hashmap.h"
-#include "audio/mixer.h"
 
-namespace Common	{ class SeekableReadStream; }
-namespace Audio		{ class Mixer; }
+namespace Common {
+class SeekableReadStream;
+}
+namespace Audio {
+class Mixer;
+}
 
 namespace AGDS {
-	class AGDSEngine;
+class AGDSEngine;
 
-	struct Sound {
-		int 				id;
-		Common::String		process;
-		Common::String		resource;
-		Common::String		filename;
-		Common::String		phaseVar;
-		Audio::SoundHandle	handle;
-		int 				volume;
-		int					pan;
-		int					group;
-		bool				paused;
-		Sound(int id_, const Common::String &process_, const Common::String &res, const Common::String &filename_, const Common::String &var, int volume_, int pan_, int group_ = 0):
-			id(id_), process(process_), resource(res), filename(filename_), phaseVar(var), handle(), volume(volume_), pan(pan_), group(group_), paused(false) {
-		}
+struct Sound {
+	int id;
+	Common::String process;
+	Common::String resource;
+	Common::String filename;
+	Common::String phaseVar;
+	Audio::SoundHandle handle;
+	int volume;
+	int pan;
+	int group;
+	bool paused;
+	Sound(int id_, const Common::String &process_, const Common::String &res, const Common::String &filename_, const Common::String &var, int volume_, int pan_, int group_ = 0) : id(id_), process(process_), resource(res), filename(filename_), phaseVar(var), handle(), volume(volume_), pan(pan_), group(group_), paused(false) {
+	}
 
-		int leftVolume() const {
-			return pan < 0? volume: volume * (100 - pan) / 100;
-		}
+	int leftVolume() const {
+		return pan < 0 ? volume : volume * (100 - pan) / 100;
+	}
 
-		int rightVolume() const {
-			return pan < 0? volume * (100 + pan) / 100: volume;
-		}
-	};
+	int rightVolume() const {
+		return pan < 0 ? volume * (100 + pan) / 100 : volume;
+	}
+};
 
-	class SoundManager {
-		using SoundList = Common::List<Sound>;
-		int							_nextId;
-		AGDSEngine				   *_engine;
-		Audio::Mixer			   *_mixer;
-		SoundList					_sounds;
+class SoundManager {
+	using SoundList = Common::List<Sound>;
+	int _nextId;
+	AGDSEngine *_engine;
+	Audio::Mixer *_mixer;
+	SoundList _sounds;
 
-	public:
-		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _nextId(1), _engine(engine), _mixer(mixer) { }
-		void tick();
-		int play(Common::String process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id = -1, bool ambient = false);
-		bool playing(int id) const;
-		void stopAllFrom(const Common::String &process);
-		void stopAll();
-		const Sound *find(int id) const;
-		Sound *findSampleByPhaseVar(const Common::String &phaseVar);
-	};
+public:
+	SoundManager(AGDSEngine *engine, Audio::Mixer *mixer) : _nextId(1), _engine(engine), _mixer(mixer) {}
+	void tick();
+	int play(Common::String process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id = -1, bool ambient = false);
+	bool playing(int id) const;
+	void stopAllFrom(const Common::String &process);
+	void stopAll();
+	const Sound *find(int id) const;
+	Sound *findSampleByPhaseVar(const Common::String &phaseVar);
+};
 
 } // End of namespace AGDS
 

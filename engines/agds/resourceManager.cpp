@@ -92,7 +92,7 @@ bool ResourceManager::GrpFile::load(const Common::Path &grpPath) {
 	if (!reader.skip(3 * 4))
 		return false;
 
-	//debug("+%u files in index", dirCount);
+	// debug("+%u files in index", dirCount);
 	while (dirCount--) {
 		uint8 dirData[0x31];
 		uint8 *dirDataEnd = dirData + sizeof(dirData);
@@ -116,7 +116,7 @@ bool ResourceManager::GrpFile::load(const Common::Path &grpPath) {
 
 		uint32 offset = dirReader.readSint32();
 		uint32 size = dirReader.readSint32();
-		//debug("\t\tfile %s %u %u", name.c_str(), offset, size);
+		// debug("\t\tfile %s %u %u", name.c_str(), offset, size);
 		ArchiveMemberPtr resource(new ArchiveMember(this, name, offset, size));
 		_members.setVal(name, resource);
 	}

@@ -22,9 +22,9 @@
 #ifndef AGDS_DIALOG_H
 #define AGDS_DIALOG_H
 
-#include "common/scummsys.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace AGDS {
@@ -39,42 +39,42 @@ private:
 		Common::String Sample;
 		int Step;
 
-		Sound(): Step(1) {
+		Sound() : Step(1) {
 		}
 
-		Sound(const Common::String &name, const Common::String &sample, int step): Name(name), Sample(sample), Step(step) {
+		Sound(const Common::String &name, const Common::String &sample, int step) : Name(name), Sample(sample), Step(step) {
 		}
 	};
 	using SoundsType = Common::Array<Sound>;
 
-	AGDSEngine				   *_engine;
-	DialogDefsType				_dialogDefs;
-	Common::String				_dialogScript;
-	uint32						_dialogScriptPos;
-	Common::String				_dialogProcessName;
-	Common::String				_dialogLine;
+	AGDSEngine *_engine;
+	DialogDefsType _dialogDefs;
+	Common::String _dialogScript;
+	uint32 _dialogScriptPos;
+	Common::String _dialogProcessName;
+	Common::String _dialogLine;
 
-	SoundsType					_sounds;
-	Common::String				_currentDef;
-	int							_currentSoundIndex;
+	SoundsType _sounds;
+	Common::String _currentDef;
+	int _currentSoundIndex;
 
 	void parseDialogDefs(const Common::String &defs);
 
 public:
-	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0), _currentSoundIndex(-1) { }
+	Dialog(AGDSEngine *engine) : _engine(engine), _dialogScriptPos(0), _currentSoundIndex(-1) {}
 	int textDelay(const Common::String &str);
 	const Common::String &getNextDialogLine() const {
 		return _dialogLine;
 	}
 	Common::String getNextDialogSound();
 
-	void load(const Common::String &processName, const Common::String &dialogScript, const Common::String & defs);
+	void load(const Common::String &processName, const Common::String &dialogScript, const Common::String &defs);
 	bool tick();
+
 private:
 	void processSoundDirective(const Common::String &line);
 	void processDirective(Common::String line);
 };
-
 
 } // End of namespace AGDS
 

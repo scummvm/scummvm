@@ -33,29 +33,23 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
-	{
-		"black-mirror",
-		0,
-		AD_ENTRY1s("gfx1.grp", "652f931f02c5a79fb9bcbe32abafbdf7", 907732355),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NONE)
-	},
+		GUIO1(GUIO_NONE)},
+	{"black-mirror",
+	 0,
+	 AD_ENTRY1s("gfx1.grp", "652f931f02c5a79fb9bcbe32abafbdf7", 907732355),
+	 Common::RU_RUS,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM,
+	 GUIO1(GUIO_NONE)},
 
-	{
-		"nibiru",
-		0,
-		AD_ENTRY1s("gfx1.grp", "c8e711bc01b16cd82849cbd996d02642", 381768360),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | AGDS_V2 | ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NONE)
-	},
+	{"nibiru",
+	 0,
+	 AD_ENTRY1s("gfx1.grp", "c8e711bc01b16cd82849cbd996d02642", 381768360),
+	 Common::RU_RUS,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | AGDS_V2 | ADGF_UNSUPPORTED,
+	 GUIO1(GUIO_NONE)},
 
-	AD_TABLE_END_MARKER
-};
+	AD_TABLE_END_MARKER};
 
 } // End of namespace AGDS

@@ -25,9 +25,9 @@
 #include "agds/object.h"
 #include "agds/opcode.h"
 #include "agds/processExitCode.h"
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
-#include "common/debug.h"
 
 namespace AGDS {
 
@@ -38,42 +38,45 @@ using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Process {
 public:
-	enum Status { kStatusActive, kStatusPassive, kStatusDone, kStatusError };
+	enum Status { kStatusActive,
+				  kStatusPassive,
+				  kStatusDone,
+				  kStatusError };
 
 private:
 	using StackType = Common::Stack<int32>;
 
-	AGDSEngine	   *_engine;
-	Common::String	_parentScreen;
-	ObjectPtr		_object;
-	StackType		_stack;
-	unsigned		_entryPoint;
-	unsigned		_ip, _lastIp;
-	Status			_status;
-	bool			_exited;
-	ProcessExitCode	_exitCode;
-	Common::String	_exitArg1, _exitArg2;
-	int				_exitIntArg1, _exitIntArg2;
-	int				_tileWidth, _tileHeight;
-	int				_tileResource;
-	int				_tileIndex;
-	Common::String	_phaseVar;
-	int				_timer;
-	int				_animationCycles;
-	bool			_animationLoop;
-	Common::Point	_animationPosition;
-	int				_animationZ;
-	int				_animationDelay;
-	int				_animationRandom;
-	bool			_phaseVarControlled;
-	int				_animationSpeed;
-	bool			_samplePeriodic;
-	bool			_sampleAmbient;
-	int32			_sampleVolume;
-	Common::Point	_mousePosition;
-	int				_filmSubtitlesResource;
-	AnimationPtr	_processAnimation;
-	bool			_v2;
+	AGDSEngine *_engine;
+	Common::String _parentScreen;
+	ObjectPtr _object;
+	StackType _stack;
+	unsigned _entryPoint;
+	unsigned _ip, _lastIp;
+	Status _status;
+	bool _exited;
+	ProcessExitCode _exitCode;
+	Common::String _exitArg1, _exitArg2;
+	int _exitIntArg1, _exitIntArg2;
+	int _tileWidth, _tileHeight;
+	int _tileResource;
+	int _tileIndex;
+	Common::String _phaseVar;
+	int _timer;
+	int _animationCycles;
+	bool _animationLoop;
+	Common::Point _animationPosition;
+	int _animationZ;
+	int _animationDelay;
+	int _animationRandom;
+	bool _phaseVarControlled;
+	int _animationSpeed;
+	bool _samplePeriodic;
+	bool _sampleAmbient;
+	int32 _sampleVolume;
+	Common::Point _mousePosition;
+	int _filmSubtitlesResource;
+	AnimationPtr _processAnimation;
+	bool _v2;
 
 private:
 	void debug(const char *str, ...);
@@ -98,23 +101,23 @@ private:
 	Common::String popText();
 
 #define AGDS_PROCESS_METHOD(opcode, method) \
-	void method () ;
+	void method();
 #define AGDS_PROCESS_METHOD_C(opcode, method) \
-	void method (int8) ;
+	void method(int8);
 #define AGDS_PROCESS_METHOD_B(opcode, method) \
-	void method (uint8) ;
+	void method(uint8);
 #define AGDS_PROCESS_METHOD_W(opcode, method) \
-	void method (int16) ;
+	void method(int16);
 #define AGDS_PROCESS_METHOD_U(opcode, method) \
-	void method (uint16) ;
+	void method(uint16);
 #define AGDS_PROCESS_METHOD_UD(opcode, method) \
-	void method (int32) ;
+	void method(int32);
 #define AGDS_PROCESS_METHOD_UU(opcode, method) \
-	void method (uint16, uint16) ;
+	void method(uint16, uint16);
 
 	AGDS_OPCODE_LIST(AGDS_PROCESS_METHOD,
-		AGDS_PROCESS_METHOD_C, AGDS_PROCESS_METHOD_B, AGDS_PROCESS_METHOD_W,
-		AGDS_PROCESS_METHOD_U, AGDS_PROCESS_METHOD_UD, AGDS_PROCESS_METHOD_UU)
+					 AGDS_PROCESS_METHOD_C, AGDS_PROCESS_METHOD_B, AGDS_PROCESS_METHOD_W,
+					 AGDS_PROCESS_METHOD_U, AGDS_PROCESS_METHOD_UD, AGDS_PROCESS_METHOD_UU)
 
 	void moveCharacter(bool usermove);
 	void tell(bool npc, const Common::String &sound);
@@ -194,7 +197,7 @@ public:
 		return _exitIntArg2;
 	}
 
-	void setMousePosition(Common::Point	mousePosition) {
+	void setMousePosition(Common::Point mousePosition) {
 		_mousePosition = mousePosition;
 	}
 	void updateWithCurrentMousePosition();
@@ -209,7 +212,6 @@ public:
 
 	void removeProcessAnimation();
 };
-
 
 } // End of namespace AGDS
 

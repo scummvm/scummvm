@@ -45,7 +45,7 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream &s
 			int16 a = stream.readSint16LE();
 			int16 b = stream.readSint16LE();
 			int16 c = stream.readUint16LE();
-			if (c != -12851) //0xcdcd
+			if (c != -12851) // 0xcdcd
 				debug("extended entry: %d %d %d", a, b, c);
 			else
 				debug("extended entry: %d %d", a, b);
@@ -105,7 +105,7 @@ Common::Point Region::topLeft() const {
 	for (uint i = 0; i < regions.size(); ++i) {
 		const PointsType &points = regions[i];
 
-		for(uint j = 0; j < points.size(); ++j) {
+		for (uint j = 0; j < points.size(); ++j) {
 			Common::Point point = points[j];
 			if (point.x < p.x)
 				p.x = point.x;
@@ -116,11 +116,11 @@ Common::Point Region::topLeft() const {
 	return p;
 }
 
-//FIXME: copied from wintermute/base_region.cpp
+// FIXME: copied from wintermute/base_region.cpp
 
 struct dPoint {
 	double x, y;
-} ;
+};
 
 bool Region::pointIn(Common::Point point) const {
 	for (uint r = 0; r < regions.size(); ++r) {

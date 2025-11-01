@@ -20,9 +20,9 @@
  */
 
 #include "agds/inventory.h"
+#include "agds/agds.h"
 #include "agds/object.h"
 #include "agds/resourceManager.h"
-#include "agds/agds.h"
 #include "agds/systemVariable.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Inventory::Inventory(AGDSEngine *engine): _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
+Inventory::Inventory(AGDSEngine *engine) : _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
 Inventory::~Inventory() {}
 
 void Inventory::visible(bool visible) {
@@ -184,7 +184,7 @@ void Inventory::clear() {
 	}
 }
 
-void Inventory::load(Common::ReadStream& stream) {
+void Inventory::load(Common::ReadStream &stream) {
 	clear();
 	for (int i = 0; i < kMaxSize; ++i) {
 		Common::String name = readString(stream);
@@ -192,14 +192,14 @@ void Inventory::load(Common::ReadStream& stream) {
 		int objectPtr = stream.readUint32LE();
 		if (!name.empty() && refcount) {
 			debug("load inventory object: %s %d %d", name.c_str(), refcount, objectPtr);
-			auto & entry = _entries[i];
+			auto &entry = _entries[i];
 			entry.name = name;
 			entry.hasObject = true;
 		}
 	}
 }
 
-void Inventory::save(Common::WriteStream& stream) const {
+void Inventory::save(Common::WriteStream &stream) const {
 	for (const auto &entry : _entries) {
 		writeString(stream, entry.name);
 		stream.writeUint32LE(entry.hasObject ? 1 : 0);

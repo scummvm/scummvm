@@ -22,15 +22,18 @@
 #ifndef AGDS_OBJECT_H
 #define AGDS_OBJECT_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 
-namespace Graphics { struct Surface; class ManagedSurface; }
+namespace Graphics {
+struct Surface;
+class ManagedSurface;
+} // namespace Graphics
 
 namespace AGDS {
 
@@ -45,54 +48,54 @@ public:
 	using CodeType = Common::Array<uint8>;
 
 	struct StringEntry {
-		Common::String	string;
-		uint16			flags;
+		Common::String string;
+		uint16 flags;
 
-		StringEntry(): string(), flags() { }
-		StringEntry(const Common::String &s, uint16 f): string(s), flags(f) { }
+		StringEntry() : string(), flags() {}
+		StringEntry(const Common::String &s, uint16 f) : string(s), flags(f) {}
 	};
 
 private:
-	using StringTableType 	= Common::Array<StringEntry> ;
-	using KeyHandlersType 	= Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
-	using UseHandlersType 	= Common::HashMap<Common::String, uint>;
-	using ManagedSurfacePtr	= Common::ScopedPtr<Graphics::ManagedSurface>;
+	using StringTableType = Common::Array<StringEntry>;
+	using KeyHandlersType = Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
+	using UseHandlersType = Common::HashMap<Common::String, uint>;
+	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
 
-	Common::String					_name;
-	CodeType						_code;
-	StringTableType					_stringTable;
-	bool							_stringTableLoaded;
-	KeyHandlersType					_keyHandlers;
-	UseHandlersType					_useHandlers;
-	ManagedSurfacePtr				_picture;
-	ManagedSurfacePtr				_rotatedPicture;
-	RegionPtr						_region;
-	RegionPtr						_trapRegion;
-	AnimationPtr					_animation;
-	AnimationPtr					_mouseCursor;
-	Common::Point					_pos, _animationPos, _offset;
-	Common::Point					_regionOffset;
-	Common::Rect					_srcRect;
-	int								_z;
-	int								_rotation;
-	Common::String					_text;
-	Common::String					_title;
-	uint							_clickHandler;
-	uint							_examineHandler;
-	uint							_userUseHandler;
-	uint							_throwHandler;
-	uint							_useOnHandler;
-	uint							_trapHandler;
-	uint							_handlerBD;
-	uint							_handlerC1;
-	int								_alpha;
-	int								_scale;
-	uint							_locked;
-	bool							_alive;
-	bool							_persistent;
-	bool							_allowInitialise;
-	bool							_ignoreRegion;
-	bool							_v2;
+	Common::String _name;
+	CodeType _code;
+	StringTableType _stringTable;
+	bool _stringTableLoaded;
+	KeyHandlersType _keyHandlers;
+	UseHandlersType _useHandlers;
+	ManagedSurfacePtr _picture;
+	ManagedSurfacePtr _rotatedPicture;
+	RegionPtr _region;
+	RegionPtr _trapRegion;
+	AnimationPtr _animation;
+	AnimationPtr _mouseCursor;
+	Common::Point _pos, _animationPos, _offset;
+	Common::Point _regionOffset;
+	Common::Rect _srcRect;
+	int _z;
+	int _rotation;
+	Common::String _text;
+	Common::String _title;
+	uint _clickHandler;
+	uint _examineHandler;
+	uint _userUseHandler;
+	uint _throwHandler;
+	uint _useOnHandler;
+	uint _trapHandler;
+	uint _handlerBD;
+	uint _handlerC1;
+	int _alpha;
+	int _scale;
+	uint _locked;
+	bool _alive;
+	bool _persistent;
+	bool _allowInitialise;
+	bool _ignoreRegion;
+	bool _v2;
 
 private:
 	void freeRotated();
@@ -126,13 +129,11 @@ public:
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
 	const StringEntry &getString(uint16 index) const;
-	uint getStringTableSize() const
-	{ return _stringTable.size(); }
+	uint getStringTableSize() const { return _stringTable.size(); }
 
-	const Common::String &getName() const
-	{ return _name; }
+	const Common::String &getName() const { return _name; }
 
-	const CodeType & getCode() const {
+	const CodeType &getCode() const {
 		return _code;
 	}
 
@@ -140,7 +141,7 @@ public:
 		_animation = animation;
 	}
 
-	const AnimationPtr & getAnimation() const {
+	const AnimationPtr &getAnimation() const {
 		return _animation;
 	}
 
@@ -222,7 +223,7 @@ public:
 	}
 
 	uint getUseHandler(const Common::String &name) const {
-		return _useHandlers.getValOrDefault(name, 0); //use handler can never be 0
+		return _useHandlers.getValOrDefault(name, 0); // use handler can never be 0
 	}
 
 	void setUserUseHandler(uint ip) {
@@ -310,7 +311,7 @@ public:
 
 	uint getKeyHandler(const Common::String &name) const {
 		KeyHandlersType::const_iterator i = _keyHandlers.find(name);
-		return i != _keyHandlers.end()? i->_value: 0;
+		return i != _keyHandlers.end() ? i->_value : 0;
 	}
 
 	uint throwHandler() const {
@@ -336,7 +337,6 @@ public:
 	bool pointIn(Common::Point pos);
 };
 using ObjectPtr = Common::SharedPtr<Object>;
-
 
 } // End of namespace AGDS
 

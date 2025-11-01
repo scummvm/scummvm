@@ -22,19 +22,19 @@
 #ifndef AGDS_REGION_H
 #define AGDS_REGION_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "common/stream.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace AGDS {
 
 struct Region {
-	using PointsType = Common::Array<Common::Point> ;
+	using PointsType = Common::Array<Common::Point>;
 
-	Common::String	name;
-	Common::Point	center;
-	uint16			flags;
+	Common::String name;
+	Common::Point center;
+	uint16 flags;
 	Common::Array<PointsType> regions;
 
 	Region(const Common::String &resourceName, Common::SeekableReadStream &stream);
@@ -49,7 +49,6 @@ struct Region {
 		return regions.empty();
 	}
 };
-
 
 } // End of namespace AGDS
 

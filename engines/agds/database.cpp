@@ -35,11 +35,11 @@ bool Database::open(const Common::String &filename) {
 }
 
 namespace {
-	static const uint32 kMagic = 666;
-	static const uint32 kHeaderFieldSize = 0x09;
-	static const uint32 kHeaderSize = 0x14;
-	static const uint32 kDefaultNameSize = 0x1f;
-}
+static const uint32 kMagic = 666;
+static const uint32 kHeaderFieldSize = 0x09;
+static const uint32 kHeaderSize = 0x14;
+static const uint32 kDefaultNameSize = 0x1f;
+} // namespace
 
 uint32 Database::getDataOffset(uint32 maxNameSize, uint32 totalEntries) {
 	return kHeaderSize + (maxNameSize + kHeaderFieldSize) * totalEntries;
@@ -69,7 +69,7 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream &
 		char *z = Common::find(nameBuffer.begin(), nameBuffer.end(), 0);
 		Common::String name(nameBuffer.data(), z - nameBuffer.begin());
 		uint32 size = stream.readUint32LE();
-		//debug("adb entry: %s, offset %08x, size: %u", name.c_str(), offset, size);
+		// debug("adb entry: %s, offset %08x, size: %u", name.c_str(), offset, size);
 		_entries.setVal(name, Entry(dataOffset + offset, size));
 	}
 
@@ -101,7 +101,7 @@ void Database::write(Common::WriteStream &stream, const Common::HashMap<Common::
 	}
 
 	for (auto &entry : entries) {
-		auto & value = entry._value;
+		auto &value = entry._value;
 		stream.write(value.data(), value.size());
 	}
 }
@@ -117,7 +117,7 @@ Common::Array<Common::String> Database::getEntries() const {
 Common::SeekableReadStream *Database::getEntry(const Common::String &name) const {
 	Common::File file;
 	if (!file.open(Common::Path{_filename})) {
-		error("could not open database file %s", _filename.c_str()); //previously available, but now disappeared or no fd, error
+		error("could not open database file %s", _filename.c_str()); // previously available, but now disappeared or no fd, error
 		return NULL;
 	}
 

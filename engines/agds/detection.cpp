@@ -22,9 +22,9 @@
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor agdsGames[] = {
-    {"nibiru", "NiBiRu: Age of Secrets"},
-    {"black-mirror", "Black Mirror"},
-    {0, 0}};
+	{"nibiru", "NiBiRu: Age of Secrets"},
+	{"black-mirror", "Black Mirror"},
+	{0, 0}};
 
 #include "agds/detection_tables.h"
 

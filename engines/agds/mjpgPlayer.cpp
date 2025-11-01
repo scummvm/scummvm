@@ -28,8 +28,7 @@
 
 namespace AGDS {
 
-MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String &subtitles) :
-	_stream(stream), _firstFramePos(_stream->pos()), _framesPlayed(0), _nextSubtitleIndex(0) {
+MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String &subtitles) : _stream(stream), _firstFramePos(_stream->pos()), _framesPlayed(0), _nextSubtitleIndex(0) {
 	uint pos = 0;
 	while (pos < subtitles.size()) {
 		auto next = subtitles.find('\n', pos);
@@ -137,6 +136,5 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		}
 	}
 }
-
 
 } // namespace AGDS

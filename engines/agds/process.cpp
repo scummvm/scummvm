@@ -27,17 +27,15 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, bool v2) :
-	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
-	_entryPoint(ip), _ip(ip), _lastIp(ip),
-	_status(kStatusActive), _exited(false), _exitCode(kExitCodeDestroy),
-	_tileWidth(16), _tileHeight(16), _tileResource(-1), _tileIndex(0),
-	_timer(0),
-	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
-	_phaseVarControlled(false), _animationSpeed(100),
-	_samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
-	_filmSubtitlesResource(-1), _v2(v2)
-	{
+Process::Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, bool v2) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
+																					  _entryPoint(ip), _ip(ip), _lastIp(ip),
+																					  _status(kStatusActive), _exited(false), _exitCode(kExitCodeDestroy),
+																					  _tileWidth(16), _tileHeight(16), _tileResource(-1), _tileIndex(0),
+																					  _timer(0),
+																					  _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
+																					  _phaseVarControlled(false), _animationSpeed(100),
+																					  _samplePeriodic(false), _sampleAmbient(false), _sampleVolume(100),
+																					  _filmSubtitlesResource(-1), _v2(v2) {
 	updateWithCurrentMousePosition();
 }
 
@@ -56,7 +54,7 @@ void Process::debug(const char *str, ...) {
 	va_end(va);
 }
 
-//fixme: remove copy-paste
+// fixme: remove copy-paste
 void Process::error(const char *str, ...) {
 	va_list va;
 	va_start(va, str);
@@ -93,9 +91,8 @@ void Process::suspend(ProcessExitCode exitCode, int arg1, int arg2) {
 	_exitArg2.clear();
 }
 
-
 uint8 Process::next() {
-	const Object::CodeType & code = _object->getCode();
+	const Object::CodeType &code = _object->getCode();
 	if (_ip < code.size()) {
 		return code[_ip++];
 	} else {
@@ -159,8 +156,7 @@ void Process::updateWithCurrentMousePosition() {
 	setMousePosition(_engine->mousePosition());
 }
 
-
-void Process::setupAnimation(const AnimationPtr & animation) {
+void Process::setupAnimation(const AnimationPtr &animation) {
 	animation->position(_animationPosition);
 	animation->z(_animationZ);
 	animation->process(getName());
@@ -171,14 +167,14 @@ void Process::setupAnimation(const AnimationPtr & animation) {
 	animation->setRandom(_animationRandom);
 	animation->phaseVarControlled(_phaseVarControlled);
 	if (_phaseVar.empty())
-			suspend();
+		suspend();
 	else if (_phaseVarControlled)
-			_engine->setGlobal(_phaseVar, 0);
+		_engine->setGlobal(_phaseVar, 0);
 }
 
 void Process::removeProcessAnimation() {
 	if (_processAnimation) {
-		auto * screen = _engine->getCurrentScreen();
+		auto *screen = _engine->getCurrentScreen();
 		if (screen)
 			screen->remove(_processAnimation);
 		_processAnimation = nullptr;
@@ -186,7 +182,7 @@ void Process::removeProcessAnimation() {
 }
 
 void Process::activate() {
-	switch(status()) {
+	switch (status()) {
 	case kStatusPassive:
 		_status = Process::kStatusActive;
 		break;
@@ -200,7 +196,7 @@ void Process::activate() {
 }
 
 void Process::deactivate() {
-	switch(status()) {
+	switch (status()) {
 	case kStatusActive:
 		debug("deactivated");
 		_status = Process::kStatusPassive;
@@ -228,7 +224,7 @@ void Process::fail() {
 
 void Process::run() {
 	bool restart = true;
-	while(_status != kStatusDone && _status != kStatusError && restart) {
+	while (_status != kStatusDone && _status != kStatusError && restart) {
 		restart = false;
 		ProcessExitCode code = resume();
 		switch (code) {
@@ -258,7 +254,7 @@ void Process::run() {
 		case kExitCodeSetNextScreenSaveOrLoad:
 			done();
 			debug("process %s launches screen: %s, saveorload: ", getName().c_str(), getExitArg1().c_str(), code == kExitCodeSetNextScreenSaveOrLoad);
-			_engine->setNextScreenName(getExitArg1(), code == kExitCodeSetNextScreenSaveOrLoad? ScreenLoadingType::SaveOrLoad: ScreenLoadingType::Normal);
+			_engine->setNextScreenName(getExitArg1(), code == kExitCodeSetNextScreenSaveOrLoad ? ScreenLoadingType::SaveOrLoad : ScreenLoadingType::Normal);
 			break;
 		case kExitCodeMouseAreaChange:
 			deactivate();
@@ -314,79 +310,88 @@ void Process::run() {
 	}
 }
 
-#define UNARY_OP(NAME, OP) void Process:: NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
-#define BINARY_OP(NAME, OP) void Process:: NAME () { int arg2 = pop(); int arg1 = pop(); debug(" %d " #NAME " %d", arg1, arg2); push(arg1 OP arg2); }
+#define UNARY_OP(NAME, OP)       \
+	void Process::NAME() {       \
+		int arg = pop();         \
+		debug(#NAME " %d", arg); \
+		push(OP arg);            \
+	}
+#define BINARY_OP(NAME, OP)                    \
+	void Process::NAME() {                     \
+		int arg2 = pop();                      \
+		int arg1 = pop();                      \
+		debug(" %d " #NAME " %d", arg1, arg2); \
+		push(arg1 OP arg2);                    \
+	}
 
-	UNARY_OP(boolNot, !)
-	UNARY_OP(bitNot, ~)
-	UNARY_OP(negate, -)
-	BINARY_OP(shl, <<)
-	BINARY_OP(shr, >>)
-	BINARY_OP(boolOr, ||)
-	BINARY_OP(boolAnd, &&)
-	BINARY_OP(equals, ==)
-	BINARY_OP(notEquals, !=)
-	BINARY_OP(greater, >)
-	BINARY_OP(greaterOrEquals, >=)
-	BINARY_OP(less, <)
-	BINARY_OP(lessOrEquals, <=)
-	BINARY_OP(add, +)
-	BINARY_OP(sub, -)
-	BINARY_OP(mul, *)
-	BINARY_OP(div, /)
-	BINARY_OP(mod, %)
-	BINARY_OP(bitAnd, &)
-	BINARY_OP(bitOr, |)
-	BINARY_OP(bitXor, ^)
+UNARY_OP(boolNot, !)
+UNARY_OP(bitNot, ~)
+UNARY_OP(negate, -)
+BINARY_OP(shl, <<)
+BINARY_OP(shr, >>)
+BINARY_OP(boolOr, ||)
+BINARY_OP(boolAnd, &&)
+BINARY_OP(equals, ==)
+BINARY_OP(notEquals, !=)
+BINARY_OP(greater, >)
+BINARY_OP(greaterOrEquals, >=)
+BINARY_OP(less, <)
+BINARY_OP(lessOrEquals, <=)
+BINARY_OP(add, +)
+BINARY_OP(sub, -)
+BINARY_OP(mul, *)
+BINARY_OP(div, /)
+BINARY_OP(mod, %)
+BINARY_OP(bitAnd, &)
+BINARY_OP(bitOr, |)
+BINARY_OP(bitXor, ^)
 
 #undef UNARY_OP
 #undef BINARY_OP
 
-
-//fixme: add trace here
+// fixme: add trace here
 #define AGDS_OP(NAME, METHOD) \
-	case NAME:           \
-		METHOD();        \
+	case NAME:                \
+		METHOD();             \
 		break;
 
 #define AGDS_OP_C(NAME, METHOD) \
-	case NAME: {           \
-		int8 arg = next(); \
-		METHOD(arg);       \
-	} break;
-
-#define AGDS_OP_B(NAME, METHOD)  \
-	case NAME: {            \
-		uint8 arg = next(); \
-		METHOD(arg);        \
-	} break;
-
-#define AGDS_OP_W(NAME, METHOD)    \
-	case NAME: {              \
-		int16 arg = next16(); \
-		METHOD(arg);          \
-	} break;
-
-#define AGDS_OP_U(NAME, METHOD)     \
-	case NAME: {               \
-		uint16 arg = next16(); \
-		METHOD(arg);           \
-	} break;
-
-#define AGDS_OP_UU(NAME, METHOD)     \
 	case NAME: {                \
-		uint16 arg1 = next16(); \
-		uint16 arg2 = next16(); \
-		METHOD(arg1, arg2);     \
+		int8 arg = next();      \
+		METHOD(arg);            \
 	} break;
 
-#define AGDS_OP_UD(NAME, METHOD)           \
-	case NAME: {                     \
-		uint16 arg1 = next16();      \
-		uint32 arg2 = next16();      \
+#define AGDS_OP_B(NAME, METHOD) \
+	case NAME: {                \
+		uint8 arg = next();     \
+		METHOD(arg);            \
+	} break;
+
+#define AGDS_OP_W(NAME, METHOD) \
+	case NAME: {                \
+		int16 arg = next16();   \
+		METHOD(arg);            \
+	} break;
+
+#define AGDS_OP_U(NAME, METHOD) \
+	case NAME: {                \
+		uint16 arg = next16();  \
+		METHOD(arg);            \
+	} break;
+
+#define AGDS_OP_UU(NAME, METHOD) \
+	case NAME: {                 \
+		uint16 arg1 = next16();  \
+		uint16 arg2 = next16();  \
+		METHOD(arg1, arg2);      \
+	} break;
+
+#define AGDS_OP_UD(NAME, METHOD)                         \
+	case NAME: {                                         \
+		uint16 arg1 = next16();                          \
+		uint32 arg2 = next16();                          \
 		METHOD(static_cast<int32>(arg1 | (arg2 << 16))); \
 	} break;
-
 
 ProcessExitCode Process::resume() {
 	_exitCode = kExitCodeDestroy;
@@ -407,12 +412,18 @@ ProcessExitCode Process::resume() {
 				op |= next() << 8;
 				op >>= 1;
 			}
-			switch(op) {
-				case 8000: op = kEnter; break;
-				case 8011: op = kPushImm8; break;
-				case 8013: op = kPushImm8_2; break;
-				default:
-					break;
+			switch (op) {
+			case 8000:
+				op = kEnter;
+				break;
+			case 8011:
+				op = kPushImm8;
+				break;
+			case 8013:
+				op = kPushImm8_2;
+				break;
+			default:
+				break;
 			}
 		}
 		// debug("CODE %04x: %u", _lastIp, (uint)op);
@@ -421,8 +432,7 @@ ProcessExitCode Process::resume() {
 				AGDS_OP,
 				AGDS_OP_C, AGDS_OP_B,
 				AGDS_OP_W, AGDS_OP_U,
-				AGDS_OP_UD, AGDS_OP_UU
-			)
+				AGDS_OP_UD, AGDS_OP_UU)
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _lastIp, (unsigned)op, (unsigned)op);
 			fail();
@@ -434,46 +444,52 @@ ProcessExitCode Process::resume() {
 	return _exitCode;
 }
 
-#define AGDS_DIS(NAME, METHOD) \
-	case NAME:           \
+#define AGDS_DIS(NAME, METHOD)                           \
+	case NAME:                                           \
 		source += Common::String::format("%s\n", #NAME); \
 		break;
 
-#define AGDS_DIS_C(NAME, METHOD) \
-	case NAME: {           \
-		int8 arg = code[ip++]; \
+#define AGDS_DIS_C(NAME, METHOD)                                      \
+	case NAME: {                                                      \
+		int8 arg = code[ip++];                                        \
 		source += Common::String::format("%s %d\n", #NAME, (int)arg); \
 	} break;
 
-#define AGDS_DIS_B(NAME, METHOD)  \
-	case NAME: {            \
-		uint8 arg = code[ip++]; \
+#define AGDS_DIS_B(NAME, METHOD)                                       \
+	case NAME: {                                                       \
+		uint8 arg = code[ip++];                                        \
 		source += Common::String::format("%s %u\n", #NAME, (uint)arg); \
 	} break;
 
-#define AGDS_DIS_W(NAME, METHOD)    \
-	case NAME: {              \
-		int16 arg = code[ip++]; arg |= ((int16)code[ip++]) << 8; \
+#define AGDS_DIS_W(NAME, METHOD)                                      \
+	case NAME: {                                                      \
+		int16 arg = code[ip++];                                       \
+		arg |= ((int16)code[ip++]) << 8;                              \
 		source += Common::String::format("%s %d\n", #NAME, (int)arg); \
 	} break;
 
-#define AGDS_DIS_U(NAME, METHOD)     \
-	case NAME: {               \
-		uint16 arg = code[ip++]; arg |= ((uint16)code[ip++]) << 8; \
+#define AGDS_DIS_U(NAME, METHOD)                                       \
+	case NAME: {                                                       \
+		uint16 arg = code[ip++];                                       \
+		arg |= ((uint16)code[ip++]) << 8;                              \
 		source += Common::String::format("%s %u\n", #NAME, (uint)arg); \
 	} break;
 
-#define AGDS_DIS_UU(NAME, METHOD)     \
-	case NAME: {                \
-		uint16 arg1 = code[ip++]; arg1 |= ((uint16)code[ip++]) << 8; \
-		uint16 arg2 = code[ip++]; arg2 |= ((uint16)code[ip++]) << 8; \
+#define AGDS_DIS_UU(NAME, METHOD)                                                      \
+	case NAME: {                                                                       \
+		uint16 arg1 = code[ip++];                                                      \
+		arg1 |= ((uint16)code[ip++]) << 8;                                             \
+		uint16 arg2 = code[ip++];                                                      \
+		arg2 |= ((uint16)code[ip++]) << 8;                                             \
 		source += Common::String::format("%s %u %u\n", #NAME, (uint)arg1, (uint)arg2); \
 	} break;
 
-#define AGDS_DIS_UD(NAME, METHOD)           \
-	case NAME: {                     \
-		uint16 arg1 = code[ip++]; arg1 |= ((uint16)code[ip++]) << 8; \
-		uint16 arg2 = code[ip++]; arg2 |= ((uint16)code[ip++]) << 8; \
+#define AGDS_DIS_UD(NAME, METHOD)                                                        \
+	case NAME: {                                                                         \
+		uint16 arg1 = code[ip++];                                                        \
+		arg1 |= ((uint16)code[ip++]) << 8;                                               \
+		uint16 arg2 = code[ip++];                                                        \
+		arg2 |= ((uint16)code[ip++]) << 8;                                               \
 		source += Common::String::format("%s %u\n", #NAME, (uint)(arg1 | (arg2 << 16))); \
 	} break;
 
@@ -497,8 +513,7 @@ Common::String Process::disassemble(const ObjectPtr &object, bool v2) {
 				AGDS_DIS,
 				AGDS_DIS_C, AGDS_DIS_B,
 				AGDS_DIS_W, AGDS_DIS_U,
-				AGDS_DIS_UD, AGDS_DIS_UU
-			)
+				AGDS_DIS_UD, AGDS_DIS_UU)
 		default:
 			source += Common::String::format("unknown opcode 0x%02x (%u)\n", (unsigned)op, (unsigned)op);
 			break;
