@@ -38,7 +38,7 @@ const GamosGameDescription gameDescriptions[] = {
 			"solgamer",
 			0,
 			AD_ENTRY1s("solgamer.exe", "6049dd1645071da1b60cdd395e6999ba", 24658521),
-			Common::EN_ANY,
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
@@ -51,7 +51,7 @@ const GamosGameDescription gameDescriptions[] = {
 			"pilots",
 			0,
 			AD_ENTRY1s("pilots.exe", "152f751d3c1b325e91411dd75de54e95", 48357155),
-			Common::EN_ANY,
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
@@ -64,7 +64,7 @@ const GamosGameDescription gameDescriptions[] = {
 			"pilots2",
 			0,
 			AD_ENTRY1s("pilots2.exe", "a0353dfb46043d1b2d1ef8ab6c204b33", 582283983),
-			Common::EN_ANY,
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
@@ -90,12 +90,38 @@ const GamosGameDescription gameDescriptions[] = {
 			"flop",
 			0,
 			AD_ENTRY1s("FFLOPRD.EXE", "82d5b8a9d442bcec25c3401b4f7c0f9e", 4637680),
-			Common::EN_ANY,
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
 		"FFLOPRD.EXE",
+		0x80000016
+	},
+	{
+		{
+			"flop",
+			0,
+			AD_ENTRY1s("FFLOPE.EXE", "6049dd1645071da1b60cdd395e6999ba", 4633340),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"FFLOPE.EXE",
+		0x80000018
+	},
+	{
+		{
+			"it",
+			0,
+			AD_ENTRY1s("IT.EXE", "82d5b8a9d442bcec25c3401b4f7c0f9e", 4125894),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		"IT.EXE",
 		0x80000016
 	},
 	{
