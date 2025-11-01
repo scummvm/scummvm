@@ -71,12 +71,18 @@ typedef Common::HashMap<Common::String, Setting *> SettingMap;
 
 class SettingMaps {
 public:
+	SettingMaps();
+	~SettingMaps();
+
 	Setting *_setting;
 	SettingMap _map;
 
 	void init();
 	void save(const char *);
 	void load(const Common::String &);
+
+private:
+	Common::Array<Setting *> _settings;
 };
 
 extern SettingMaps *g_setts;

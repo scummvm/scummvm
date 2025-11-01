@@ -22,6 +22,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "common/archive.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
@@ -54,6 +55,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
 	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
 	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
+	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -122,18 +124,47 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 PrivateEngine::~PrivateEngine() {
-	// Dispose your resources here
-	delete _frameImage;
+	if (_videoDecoder != _pausedVideo) {
+		delete _pausedVideo;
+	}
+	delete _videoDecoder;
+
+	delete _compositeSurface;
+	if (_frameImage != nullptr) {
+		_frameImage->free();
+		delete _frameImage;
+	}
+	if (_mframeImage != nullptr) {
+		_mframeImage->free();
+		delete _mframeImage;
+	}
+	free(_framePalette);
+
 	delete _rnd;
+	delete _image;
 
 	delete Gen::g_vm;
 	delete Settings::g_setts;
 
+	delete _defaultCursor;
 	for (uint i = 0; i < _cursors.size(); i++) {
 		if (_cursors[i].winCursorGroup == nullptr) {
 			delete _cursors[i].cursor;
 		}
 		delete _cursors[i].winCursorGroup;
+	}
+
+	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
+		const MaskInfo &m = *it;
+		if (m.surf != nullptr) {
+			m.surf->free();
+			delete m.surf;
+		}
+	}
+
+	for (RectList::iterator it = _rects.begin(); it != _rects.end(); ++it) {
+		Common::Rect *r = (*it);
+		delete r;
 	}
 }
 
@@ -173,27 +204,28 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 			return file2;
 	}
 
-	if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
+	Common::InstallShieldV3 installerArchive;
+	if (!installerArchive.open("SUPPORT/ASSETS.Z"))
 		error("Failed to open SUPPORT/ASSETS.Z");
 	// if the full game is used
 	if (!isDemo()) {
-		if (_installerArchive.hasFile("GAME.DAT"))
-			return _installerArchive.createReadStreamForMember("GAME.DAT");
-		if (_installerArchive.hasFile("GAME.WIN"))
-			return _installerArchive.createReadStreamForMember("GAME.WIN");
+		if (installerArchive.hasFile("GAME.DAT"))
+			return installerArchive.createReadStreamForMember("GAME.DAT");
+		if (installerArchive.hasFile("GAME.WIN"))
+			return installerArchive.createReadStreamForMember("GAME.WIN");
 		error("Unknown version");
 		return nullptr;
 	}
 
 	// if the demo from archive.org is used
-	if (_installerArchive.hasFile("GAME.TXT"))
-		return _installerArchive.createReadStreamForMember("GAME.TXT");
+	if (installerArchive.hasFile("GAME.TXT"))
+		return installerArchive.createReadStreamForMember("GAME.TXT");
 
 	// if the demo from the full retail CDROM is used
-	if (_installerArchive.hasFile("DEMOGAME.DAT"))
-		return _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
-	if (_installerArchive.hasFile("DEMOGAME.WIN"))
-		return _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
+	if (installerArchive.hasFile("DEMOGAME.DAT"))
+		return installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+	if (installerArchive.hasFile("DEMOGAME.WIN"))
+		return installerArchive.createReadStreamForMember("DEMOGAME.WIN");
 
 	error("Unknown version");
 	return nullptr;
@@ -259,18 +291,28 @@ Common::Error PrivateEngine::run() {
 
 	// Load the game frame once
 	byte *palette;
-	_frameImage = decodeImage(_framePath, nullptr);
-	_mframeImage = decodeImage(_framePath, &palette);
+	bool isNewPalette;
+	_frameImage = decodeImage(_framePath, nullptr, nullptr);
+	_mframeImage = decodeImage(_framePath, &palette, &isNewPalette);
 
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
+	if (isNewPalette) {
+		free(palette);
+		palette = nullptr;
+	}
 
 	byte *initialPalette;
-	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette);
+	bool isNewInitialPalette;
+	Graphics::Surface *surf = decodeImage("inface/general/inface1.bmp", &initialPalette, &isNewInitialPalette);
 	_compositeSurface->setPalette(initialPalette, 0, 256);
 	surf->free();
 	delete surf;
 	_image->destroy();
+	if (isNewInitialPalette) {
+		free(initialPalette);
+		initialPalette = nullptr;
+	}
 
 	// Main event loop
 	Common::Event event;
@@ -431,6 +473,7 @@ Common::Error PrivateEngine::run() {
 			}
 		}
 	}
+	removeTimer();
 	return Common::kNoError;
 }
 
@@ -449,60 +492,34 @@ void PrivateEngine::initFuncs() {
 }
 
 void PrivateEngine::clearAreas() {
+	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
+		const MaskInfo &m = *it;
+		if (m.surf != nullptr) {
+			m.surf->free();
+			delete m.surf;
+		}
+	}
+
 	_exits.clear();
 	_masks.clear();
 	_locationMasks.clear();
 	_memoryMasks.clear();
 
-	if (_loadGameMask.surf)
-		_loadGameMask.surf->free();
-	delete _loadGameMask.surf;
 	_loadGameMask.clear();
-
-	if (_saveGameMask.surf)
-		_saveGameMask.surf->free();
-	delete _saveGameMask.surf;
 	_saveGameMask.clear();
-
-	if (_policeRadioArea.surf)
-		_policeRadioArea.surf->free();
-	delete _policeRadioArea.surf;
 	_policeRadioArea.clear();
-
-	if (_AMRadioArea.surf)
-		_AMRadioArea.surf->free();
-	delete _AMRadioArea.surf;
 	_AMRadioArea.clear();
-
-	if (_phoneArea.surf)
-		_phoneArea.surf->free();
-	delete _phoneArea.surf;
 	_phoneArea.clear();
-
-	if (_dossierNextSuspectMask.surf)
-		_dossierNextSuspectMask.surf->free();
-	delete _dossierNextSuspectMask.surf;
 	_dossierNextSuspectMask.clear();
-
-	if (_dossierPrevSuspectMask.surf)
-		_dossierPrevSuspectMask.surf->free();
-	delete _dossierPrevSuspectMask.surf;
 	_dossierPrevSuspectMask.clear();
-
-	if (_dossierNextSheetMask.surf)
-		_dossierNextSheetMask.surf->free();
-	delete _dossierNextSheetMask.surf;
 	_dossierNextSheetMask.clear();
-
-	if (_dossierPrevSheetMask.surf)
-		_dossierPrevSheetMask.surf->free();
-	delete _dossierPrevSheetMask.surf;
 	_dossierPrevSheetMask.clear();
 
 	for (uint d = 0 ; d < 3; d++) {
-		if (_safeDigitArea[d].surf)
+		if (_safeDigitArea[d].surf) {
 			_safeDigitArea[d].surf->free();
-		delete _safeDigitArea[d].surf;
+			delete _safeDigitArea[d].surf;
+		}
 		_safeDigitArea[d].clear();
 		_safeDigit[d] = 0;
 		_safeDigitRect[d] = Common::Rect(0, 0);
@@ -876,9 +893,7 @@ bool PrivateEngine::selectDiaryPrevPage(Common::Point mousePos) {
 bool PrivateEngine::selectMemory(const Common::Point &mousePos) {
 	for (uint i = 0; i < _memoryMasks.size(); i++) {
 		if (inMask(_memoryMasks[i].surf, mousePos)) {
-			_masks.clear();
-			_memoryMasks.clear();
-			_exits.clear();
+			clearAreas();
 			_nextMovie = _diaryPages[_currentDiaryPage].memories[i].movie;
 			_nextSetting = "kDiaryMiddle";
 			return true;
@@ -1201,6 +1216,11 @@ void PrivateEngine::restartGame() {
 	// Movies
 	_repeatedMovieExit = "";
 	_playedMovies.clear();
+	if (_videoDecoder != _pausedVideo) {
+		delete _pausedVideo;
+	}
+	delete _videoDecoder;
+	_videoDecoder = nullptr;
 	_pausedVideo = nullptr;
 
 	// Pause
@@ -1575,7 +1595,7 @@ void PrivateEngine::stopSound(bool all) {
 	}
 }
 
-Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette) {
+Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette, bool *isNewPalette) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	Common::Path path = convertPath(name);
 	Common::ScopedPtr<Common::SeekableReadStream> file(Common::MacResManager::openFileOrDataFork(path));
@@ -1596,13 +1616,26 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
+		if (palette != nullptr) {
+			*palette = currentPalette;
+			if (isNewPalette != nullptr) {
+				*isNewPalette = true;
+			}
+		} else {
+			free(currentPalette);
+			if (isNewPalette != nullptr) {
+				*isNewPalette = false;
+			}
+		}
 	} else {
 		currentPalette = const_cast<byte *>(oldPalette);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
-	}
-
-	if (palette != nullptr) {
-		*palette = currentPalette;
+		if (palette != nullptr) {
+			*palette = currentPalette;
+		}
+		if (isNewPalette != nullptr) {
+			*isNewPalette = false;
+		}
 	}
 
 	return newImage;
@@ -1651,13 +1684,17 @@ void PrivateEngine::remapImage(uint16 ncolors, const Graphics::Surface *oldImage
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
 	byte *palette;
-	Graphics::Surface *surf = decodeImage(name, &palette);
+	bool isNewPalette;
+	Graphics::Surface *surf = decodeImage(name, &palette, &isNewPalette);
 	_compositeSurface->setPalette(palette, 0, 256);
 	_compositeSurface->setTransparentColor(_transparentColor);
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
 	_image->destroy();
+	if (isNewPalette) {
+		free(palette);
+	}
 }
 
 void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
@@ -1678,7 +1715,8 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(_screenRect, _transparentColor);
 	byte *palette;
-	Graphics::Surface *csurf = decodeImage(name, &palette);
+	bool isNewPalette;
+	Graphics::Surface *csurf = decodeImage(name, &palette, &isNewPalette);
 
 	uint32 hdiff = 0;
 	uint32 wdiff = 0;
@@ -1700,6 +1738,10 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	csurf->free();
 	delete csurf;
 	_image->destroy();
+
+	if (isNewPalette) {
+		free(palette);
+	}
 
 	return surf;
 }
@@ -1793,7 +1835,7 @@ static void timerCallback(void *refCon) {
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, (void *)ns, "timerCallback");
+	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, ns, "timerCallback");
 }
 
 void PrivateEngine::removeTimer() {
@@ -1830,6 +1872,7 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		offset = offset + 22;
 		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
+		surface->free();
 		delete surface;
 	}
 }

@@ -22,7 +22,6 @@
 #ifndef PRIVATE_H
 #define PRIVATE_H
 
-#include "common/compression/installshieldv3_archive.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
@@ -145,6 +144,7 @@ typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
 typedef Common::List<Common::String> InvList;
+typedef Common::List<Common::Rect *> RectList;
 
 // arrays
 
@@ -178,7 +178,6 @@ public:
 	Audio::SoundHandle _bgSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
-	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
 	void restartGame();
@@ -229,13 +228,14 @@ public:
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
-	Graphics::Surface *decodeImage(const Common::String &file, byte **palette);
+	Graphics::Surface *decodeImage(const Common::String &file, byte **palette, bool *isNewPalette);
 	//byte *decodePalette(const Common::String &name);
 	void remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame(const byte *videoPalette);
 
 	// Cursors
+	Graphics::Cursor *_defaultCursor;
 	Common::Array<CursorInfo> _cursors;
 	Common::String _currentCursor;
 	void changeCursor(const Common::String &);
@@ -383,6 +383,9 @@ public:
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
+
+	// VM objects
+	RectList _rects; // created by fCRect
 };
 
 extern PrivateEngine *g_private;

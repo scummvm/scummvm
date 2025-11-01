@@ -1182,7 +1182,7 @@ return RANDOMTOK;
 case 20:
 YY_RULE_SETUP
 #line 72 "engines/private/lexer.l"
-PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
+PRIVATE_lval.s = g_private->maps.string(PRIVATE_text); return NAME;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -1192,7 +1192,7 @@ PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); retu
 case 22:
 YY_RULE_SETUP
 #line 74 "engines/private/lexer.l"
-PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, PRIVATE_text); return STRING;
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
@@ -2197,6 +2197,7 @@ int parse(const char *code) {
 	yy_switch_to_buffer(bp);
 	PRIVATE_parse();
 	yy_delete_buffer(bp);
+	yylex_destroy();
 	return 0;
 }
 

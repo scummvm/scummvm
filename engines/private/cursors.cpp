@@ -22,6 +22,8 @@
 #include "common/rect.h"
 #include "graphics/cursorman.h"
 
+#include "common/compression/installshieldv3_archive.h"
+
 #include "common/formats/winexe_ne.h"
 #include "common/formats/winexe_pe.h"
 
@@ -43,6 +45,8 @@ struct CursorEntry {
 };
 
 void PrivateEngine::loadCursors() {
+	_defaultCursor = Graphics::makeDefaultWinCursor();
+
 	if (_platform == Common::kPlatformWindows) {
 		const CursorEntry cursorIDReference[] = {
 			{ "kTurnLeft",  "k1", 23 },
@@ -56,20 +60,30 @@ void PrivateEngine::loadCursors() {
 		};
 
 		Common::WinResources *exe = nullptr;
+		Common::SeekableReadStream *exeStream = nullptr;
 		Common::ArchiveMemberList members;
-		if (_installerArchive.open("SUPPORT/PVTEYE.Z"))
-			if (_language == Common::JA_JPN)
-				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PvteyeJ.EXE"));
-			else
-				exe = Common::WinResources::createFromEXE(_installerArchive.createReadStreamForMember("PVTEYE.EXE"));
-		else  {
-			Common::File file;
-			if (!file.open("SUPPORT/PVTEYE.EX_")) {
+		Common::InstallShieldV3 installerArchive;
+		if (installerArchive.open("SUPPORT/PVTEYE.Z")) {
+			const char *exeNames[] = {
+				"PVTEYE.EXE",
+				"PvteyeJ.EXE", // Japan
+				"PVTDEMO.EXE"
+			};
+			for (uint i = 0; i < ARRAYSIZE(exeNames) && exeStream == nullptr; i++) {
+				exeStream = installerArchive.createReadStreamForMember(exeNames[i]);
+			}
+			if (exeStream == nullptr) {
+				error("Executable not found in PVTEYE.Z");
+			}
+		} else {
+			Common::File *file = new Common::File();
+			if (!file->open("SUPPORT/PVTEYE.EX_")) {
 				error("PVTEYE.EX_ not found");
 			}
-			exe = Common::WinResources::createFromEXE(file.readStream(file.size()));
+			exeStream = file;
 		}
 
+		exe = Common::WinResources::createFromEXE(exeStream);
 		if (exe == nullptr) {
 			error("Executable not found");
 		}
@@ -92,6 +106,9 @@ void PrivateEngine::loadCursors() {
 				entry++;
 			}
 		}
+
+		delete exe;
+		delete exeStream;
 	} else {
 		const CursorEntry cursorIDReference[] = {
 			{ "kTurnLeft",  "k1", 133 },
@@ -138,7 +155,7 @@ void PrivateEngine::changeCursor(const Common::String &cursor) {
 	}
 
 	if (cursor == "default") {
-		CursorMan.replaceCursor(Graphics::makeDefaultWinCursor());
+		CursorMan.replaceCursor(_defaultCursor);
 	} else {
 		for (uint i = 0; i < _cursors.size(); i++) {
 			if (_cursors[i].name == cursor || _cursors[i].aname == cursor) {

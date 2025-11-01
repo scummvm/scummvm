@@ -69,9 +69,9 @@ FALSE			        return FALSETOK;
 TRUE					return TRUETOK;
 NULL					return NULLTOK;
 Random			        return RANDOMTOK;
-[A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
+[A-Za-z_][A-Za-z_0-9]*  PRIVATE_lval.s = g_private->maps.string(PRIVATE_text); return NAME;
 [\-]?[0-9]+		        PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); return NUM;
-\"[^\"\r\n]*\"	        PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+\"[^\"\r\n]*\"	        PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, PRIVATE_text); return STRING;
 [\r|\n]+				/* ignore return */;
 [ \t]+		            /* ignore whitespace */;
 .				        return *yytext;
@@ -87,6 +87,7 @@ int parse(const char *code) {
 	yy_switch_to_buffer(bp);
 	PRIVATE_parse();
 	yy_delete_buffer(bp);
+	yylex_destroy();
 	return 0;
 }
 

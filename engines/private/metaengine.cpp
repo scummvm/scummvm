@@ -67,10 +67,14 @@ Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, 
 
 void PrivateMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	byte *palette;
-	Graphics::Surface *vs = Private::g_private->decodeImage(Private::g_private->_nextVS, &palette);
+	bool isNewPalette;
+	Graphics::Surface *vs = Private::g_private->decodeImage(Private::g_private->_nextVS, &palette, &isNewPalette);
 	::createThumbnail(&thumb, (const uint8 *)vs->getPixels(), vs->w, vs->h, palette);
 	vs->free();
 	delete vs;
+	if (isNewPalette) {
+		free(palette);
+	}
 }
 
 Common::KeymapArray PrivateMetaEngine::initKeymaps(const char *target) const {

@@ -37,7 +37,7 @@ typedef struct Symbol {	 /* symbol table entry */
 	short  type;			/* NAME, NUM, STRING or RECT  */
 	union {
 		int val;			/* NAME or NUM */
-		const char *str;	/* STRING */
+		char *str;			/* STRING */
 		Common::Rect *rect; /* RECT */
 	} u;
 } Symbol;
@@ -48,7 +48,8 @@ void setSymbol(Symbol *, int);
 
 typedef Common::HashMap<Common::String, Symbol *> SymbolMap;
 typedef Common::List<Common::String> NameList;
-typedef Common::List<Symbol *> ConstantList;
+typedef Common::List<Symbol *> SymbolList;
+typedef Common::HashMap<Common::String, char *> StringMap;
 
 typedef Common::Queue<Common::String> StringQueue;
 typedef Common::Queue<Common::Rect *> RectQueue;
@@ -58,16 +59,25 @@ private:
 	StringQueue stringToDefine;
 	RectQueue rectToDefine;
 
+	static void freeSymbolMap(SymbolMap &symbols);
+	static void freeSymbolList(SymbolList &symbols);
+	static void freeStringMap(StringMap &strings);
 public:
 	SymbolMap settings;
 	SymbolMap variables;
 	SymbolMap cursors;
 	SymbolMap locations;
 	SymbolMap rects;
-	ConstantList constants;
+	SymbolList constants;
+	SymbolList names;
 
 	NameList variableList;
 	NameList locationList;
+
+	StringMap strings;
+
+	SymbolMaps() { }
+	~SymbolMaps();
 
 	Symbol *constant(int t, int d, const char *s);
 	Symbol *lookupVariable(Common::String *n);
@@ -76,6 +86,7 @@ public:
 	Symbol *lookupName(const char *n);
 	void installAll(const char *n);
 	void defineSymbol(const char *, Common::Rect *);
+	char *string(const char *in);
 };
 
 } // End of namespace Private
