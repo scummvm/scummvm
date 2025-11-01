@@ -249,6 +249,9 @@ void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
 void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("test/engine-data", new Common::FSDirectory("test/engine-data", 4), priority);
 	s.add("gui/themes", new Common::FSDirectory("gui/themes", 4), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 OSystem *OSystem_NULL_create(bool silenceLogs) {

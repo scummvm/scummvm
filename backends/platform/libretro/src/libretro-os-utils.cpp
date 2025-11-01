@@ -280,4 +280,7 @@ Common::String OSystem_libretro::getSaveDir(void) {
 void OSystem_libretro::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	if (!s_systemDir.empty())
 		s.add("systemDir", new Common::FSDirectory(Common::FSNode(Common::Path(s_systemDir))), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }

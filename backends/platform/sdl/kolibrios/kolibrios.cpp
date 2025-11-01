@@ -62,6 +62,9 @@ void OSystem_KolibriOS::init() {
 void OSystem_KolibriOS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	Common::FSNode dataNode(_exePath);
 	s.add("exePath", new Common::FSDirectory(dataNode, 4), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 void OSystem_KolibriOS::initBackend() {

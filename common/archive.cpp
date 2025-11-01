@@ -632,13 +632,6 @@ void SearchManager::clear() {
 	// so that archives added by client code are searched first.
 	if (g_system)
 		g_system->addSysArchivesToSearchSet(*this, -1);
-
-#if !defined(__ANDROID__) && !defined(PSP2)
-	// Add the current dir as a very last resort.
-	// See also bug #3984.
-	// But don't do this for Android platform, since it may lead to crashes
-	addDirectory(".", ".", -2);
-#endif
 }
 
 DECLARE_SINGLETON(SearchManager);

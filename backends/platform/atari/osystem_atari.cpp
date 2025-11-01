@@ -466,6 +466,9 @@ void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 		}
 	}
 #endif
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 Common::Path OSystem_Atari::getDefaultConfigFileName() {
