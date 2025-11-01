@@ -1222,39 +1222,42 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 	FUN_00402c2c(mouseMove, actPos, act2, act1);
 	changeVolume();
-	if (FUN_00402bc4()) {
-		bool loop = false;
+
+	if (!FUN_00402bc4())
+		return 0;
+
+	bool loop = false;
+	if (!_txtInputActive)
+		loop = FUN_00402fb4();
+	else
+		loop = onTxtInputUpdate(act2);
+
+	if (_needReload)
+		return 2;  // rerun update after loadModule
+
+	while (loop) {
+		if (!PTR_00417388) {
+			if (updateMouseCursor(mouseMove) && scrollAndDraw())
+				return 1;
+			else
+				return 0;
+		}
+
+		RawKeyCode = ACT_NONE;
+
+		if (!FUN_00402bc4())
+			return 0;
+
 		if (!_txtInputActive)
 			loop = FUN_00402fb4();
 		else
-		    loop = onTxtInputUpdate(act2);
+			loop = onTxtInputUpdate(act2);
 
 		if (_needReload)
-			return 2;  // rerun update after loadModule
-
-		while (loop) {
-			if (!PTR_00417388) {
-				if (updateMouseCursor(mouseMove) && scrollAndDraw())
-					return 1;
-				else
-					return 0;
-			}
-
-			RawKeyCode = ACT_NONE;
-
-			if (!FUN_00402bc4())
-				return 0;
-
-			if (!_txtInputActive)
-				loop = FUN_00402fb4();
-			else
-			    loop = onTxtInputUpdate(act2);
-
-			if (_needReload)
-				return 2; // rerun update after loadModule
-		}
+			return 2; // rerun update after loadModule
 	}
-	return 1;
+
+	return 0;
 }
 
 int32 GamosEngine::doActions(const Actions &a, bool absolute) {
