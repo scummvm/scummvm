@@ -26,9 +26,9 @@
 #include "common/str.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
-}
+class ReadStream;
+class WriteStream;
+} // namespace Common
 
 namespace AGDS {
 
@@ -50,8 +50,7 @@ class IntegerSystemVariable : public SystemVariable {
 	int _defaultValue;
 
 public:
-	IntegerSystemVariable(int defaultValue = 0):
-		_value(defaultValue), _defaultValue(defaultValue) {
+	IntegerSystemVariable(int defaultValue = 0) : _value(defaultValue), _defaultValue(defaultValue) {
 	}
 
 	virtual const Common::String &getString() const;
@@ -66,12 +65,11 @@ public:
 };
 
 class StringSystemVariable : public SystemVariable {
-	Common::String	_value;
-	Common::String	_defaultValue;
+	Common::String _value;
+	Common::String _defaultValue;
 
 public:
-	StringSystemVariable(const Common::String &defaultValue = Common::String()):
-		_value(defaultValue), _defaultValue(defaultValue) {
+	StringSystemVariable(const Common::String &defaultValue = Common::String()) : _value(defaultValue), _defaultValue(defaultValue) {
 	}
 	virtual const Common::String &getString() const;
 	virtual int getInteger() const;

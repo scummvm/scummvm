@@ -21,8 +21,8 @@
 
 #include "agds/dialog.h"
 #include "agds/agds.h"
-#include "agds/systemVariable.h"
 #include "agds/object.h"
+#include "agds/systemVariable.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -38,7 +38,7 @@ void Dialog::parseDialogDefs(const Common::String &defs) {
 		} else if (ch == '\n' || ch == '\r' || p + 1 == size) {
 			if (p + 1 == size)
 				value += ch;
-			//debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
+			// debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
 			if (!name.empty() && !value.empty()) {
 				_dialogDefs[name] = atoi(value.c_str());
 			}
@@ -83,17 +83,15 @@ int Dialog::textDelay(const Common::String &str) {
 	if (delay < 20)
 		delay = 20;
 
-	//this looks like an error in original code
-	//original first value in this table is 0x0FFFFFEB4 (-332)
-	//0x0FFFFFEB4 * 20 and then 16-to-32 conversion gives 0xffffe610
-	// 0xe610 / 20 = 2944
+	// this looks like an error in original code
+	// original first value in this table is 0x0FFFFFEB4 (-332)
+	// 0x0FFFFFEB4 * 20 and then 16-to-32 conversion gives 0xffffe610
+	//  0xe610 / 20 = 2944
 	static const int delays[] = {
 		2944, 631, 398, 251, 158,
-		100, 63, 40, 25, 16, 10
-	};
+		100, 63, 40, 25, 16, 10};
 	return delays[speed] * delay / 41 + 1;
 }
-
 
 bool Dialog::tick() {
 	if (_dialogProcessName.empty())
@@ -182,7 +180,7 @@ void Dialog::processSoundDirective(const Common::String &line) {
 	while (line[comma1] == ' ')
 		++comma1;
 	Common::String sample = line.substr(comma1, comma2 - comma1);
-	while(line[comma2] == ' ')
+	while (line[comma2] == ' ')
 		++comma2;
 	Common::String step = line.substr(comma2 + 1, end - comma2);
 	debug("sound args = %s,%s,%s", name.c_str(), sample.c_str(), step.c_str());
@@ -250,4 +248,4 @@ Common::String Dialog::getNextDialogSound() {
 	return currentSample + ".ogg";
 }
 
-}
+} // namespace AGDS

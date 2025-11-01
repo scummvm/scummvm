@@ -48,28 +48,28 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-	_gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
-	_shadowIntensity(0),
-	_processes(MaxProcesses),
-	_mjpgPlayer(), _filmStarted(0),
-	_currentScreen(),
-	_currentCharacter(),
-	_defaultMouseCursor(),
-	_nextScreenType(ScreenLoadingType::Normal),
-	_mouse(400, 300),
-	_userEnabled(true), _systemUserEnabled(true),
-	_random("agds"),
-	_inventoryRegion(),
-	_soundManager(this, system->getMixer()),
-	_inventory(this),
-	_dialog(this),
-	_tellTextTimer(0),
-	_syncSoundId(-1),
-	_ambientSoundId(-1),
-	_curtainTimer(-1),
-	_curtainScreen(0),
-	_fastMode(true),
-	_hintMode(false) {
+																			 _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
+																			 _shadowIntensity(0),
+																			 _processes(MaxProcesses),
+																			 _mjpgPlayer(), _filmStarted(0),
+																			 _currentScreen(),
+																			 _currentCharacter(),
+																			 _defaultMouseCursor(),
+																			 _nextScreenType(ScreenLoadingType::Normal),
+																			 _mouse(400, 300),
+																			 _userEnabled(true), _systemUserEnabled(true),
+																			 _random("agds"),
+																			 _inventoryRegion(),
+																			 _soundManager(this, system->getMixer()),
+																			 _inventory(this),
+																			 _dialog(this),
+																			 _tellTextTimer(0),
+																			 _syncSoundId(-1),
+																			 _ambientSoundId(-1),
+																			 _curtainTimer(-1),
+																			 _curtainScreen(0),
+																			 _fastMode(true),
+																			 _hintMode(false) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -107,7 +107,7 @@ bool AGDSEngine::load() {
 	if (!configFile.open("agds.cfg"))
 		return false;
 
-	configFile.readLine(); //skip first line
+	configFile.readLine(); // skip first line
 	config.setDefaultSectionName("core");
 	if (!config.loadFromStream(configFile))
 		return false;
@@ -175,7 +175,7 @@ bool AGDSEngine::load() {
 
 RegionPtr AGDSEngine::loadRegion(const Common::String &name) {
 	debug("loading region %s", name.c_str());
-	Common::ScopedPtr<Common::SeekableReadStream>stream(_data.getEntry(name));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_data.getEntry(name));
 	if (!stream) {
 		error("no database entry for %s\n", name.c_str());
 		return {};
@@ -194,7 +194,7 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
 	debug("loadObject %s %s, allow init: %d", name.c_str(), prototype.c_str(), allowInitialise);
 	Common::String clone = prototype.empty() ? name : prototype;
-	Common::ScopedPtr<Common::SeekableReadStream>stream(_data.getEntry(clone));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_data.getEntry(clone));
 	if (!stream)
 		error("no database entry for %s\n", clone.c_str());
 
@@ -213,7 +213,7 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 
 			auto it = _objectPatches.find(object->getName());
 			if (it != _objectPatches.end()) {
-				auto& patch = *it->_value;
+				auto &patch = *it->_value;
 				if (!patch.region.empty()) {
 					RegionPtr region = loadRegion(patch.region);
 					debug("runObject: patch region: %s", region->toString().c_str());
@@ -233,9 +233,9 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 }
 
 void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
-	const auto & objectName = object->getName();
+	const auto &objectName = object->getName();
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
-	for(uint i = 0; i < _processes.size(); ++i) {
+	for (uint i = 0; i < _processes.size(); ++i) {
 		auto &process = _processes[i];
 		if (ip != 0 && process && process->getName() == objectName && process->entryPoint() == ip) {
 			debug("found existing process, skipping...");
@@ -251,16 +251,15 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 }
 
 bool AGDSEngine::hasActiveProcesses(const Common::String &name) const {
-	for(auto & process : _processes) {
+	for (auto &process : _processes) {
 		if (process && process->getName() == name && !process->finished())
 			return true;
 	}
 	return false;
 }
 
-
 ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
-	return _currentScreen? _currentScreen->find(name): ObjectPtr();
+	return _currentScreen ? _currentScreen->find(name) : ObjectPtr();
 }
 
 ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
@@ -279,7 +278,7 @@ PatchPtr AGDSEngine::getPatch(const Common::String &screenName) const {
 }
 
 PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
-	auto & patch = _patches[screenName];
+	auto &patch = _patches[screenName];
 	if (!patch)
 		patch = PatchPtr(new Patch());
 	return patch;
@@ -291,7 +290,7 @@ ObjectPatchPtr AGDSEngine::getObjectPatch(const Common::String &objectName) cons
 }
 
 ObjectPatchPtr AGDSEngine::createObjectPatch(const Common::String &objectName) {
-	auto & patch = _objectPatches[objectName];
+	auto &patch = _objectPatches[objectName];
 	if (!patch)
 		patch = ObjectPatchPtr(new ObjectPatch());
 	return patch;
@@ -312,7 +311,6 @@ void AGDSEngine::saveScreenPatch() {
 	}
 	patch->defaultMouseCursor = _defaultMouseCursorName;
 }
-
 
 void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadingType, bool savePatch) {
 	debug("loadScreen %s [type: %d, save patch: %d, previous: %s]", name.c_str(), static_cast<int>(loadingType), savePatch, _currentScreenName.c_str());
@@ -338,7 +336,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 
 	auto previousScreenName = _currentScreenName;
 	resetCurrentScreen();
-	for(uint i = 0; i < _processes.size(); ++i) {
+	for (uint i = 0; i < _processes.size(); ++i) {
 		_processes[i].reset();
 	}
 
@@ -370,7 +368,6 @@ void AGDSEngine::resetCurrentScreen() {
 	_currentScreenName.clear();
 }
 
-
 void AGDSEngine::runProcesses() {
 	fadeAndReactivate();
 	for (uint i = 0; i < _processes.size(); ++i) {
@@ -385,7 +382,7 @@ void AGDSEngine::runProcesses() {
 			debug("deleting process %s", process->getName().c_str());
 			_processes[i].reset();
 		} else {
-			//debug("suspended process %s", process->getName().c_str());
+			// debug("suspended process %s", process->getName().c_str());
 		}
 	}
 }
@@ -393,7 +390,6 @@ void AGDSEngine::runProcesses() {
 Console *AGDSEngine::getConsole() {
 	return static_cast<Console *>(getDebugger());
 }
-
 
 void AGDSEngine::newGame() {
 	SystemVariable *doneVar = getSystemVariable("done_resources");
@@ -418,9 +414,9 @@ void AGDSEngine::newGame() {
 void AGDSEngine::curtain(const Common::String &process, int screen, int sound, int music, bool updateGlobals) {
 	assert(!process.empty());
 	if (updateGlobals) {
-		getSystemVariable("screen_curtain")->setInteger(screen >= 0? screen: -screen);
-		getSystemVariable("sound_curtain")->setInteger(sound >= 0? sound: -sound);
-		getSystemVariable("music_curtain")->setInteger(music >= 0? music: -music);
+		getSystemVariable("screen_curtain")->setInteger(screen >= 0 ? screen : -screen);
+		getSystemVariable("sound_curtain")->setInteger(sound >= 0 ? sound : -sound);
+		getSystemVariable("music_curtain")->setInteger(music >= 0 ? music : -music);
 	}
 	_curtainProcess = process;
 	_curtainTimer = 100;
@@ -569,7 +565,7 @@ Common::Error AGDSEngine::run() {
 				if (userEnabled()) {
 					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
 					debug("%s %d, %d inv: %s", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y,
-						_currentInventoryObject? _currentInventoryObject->getName().c_str(): "none");
+						  _currentInventoryObject ? _currentInventoryObject->getName().c_str() : "none");
 
 					ObjectPtr runObject;
 					uint ip = 0;
@@ -596,13 +592,13 @@ Common::Error AGDSEngine::run() {
 					}
 					if (!runObject) {
 						auto objects = _currentScreen->find(_mouse);
-						if (objects.empty() && !_currentInventoryObject) { //allow inventory to be selected
+						if (objects.empty() && !_currentInventoryObject) { // allow inventory to be selected
 							auto object = _inventory.find(_mouse);
 							if (object)
 								objects.push_back(object);
 						}
 
-						for(auto & object : objects) {
+						for (auto &object : objects) {
 							debug("found object %s", object->getName().c_str());
 							if (lclick) {
 								if (_currentInventoryObject) {
@@ -647,7 +643,7 @@ Common::Error AGDSEngine::run() {
 						debug("no handler found");
 						if (lclick) {
 							if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
-								auto & region = _currentScreen->region();
+								auto &region = _currentScreen->region();
 								if (region->pointIn(_mouse)) {
 									// FIXME: some object requires character to be in "trap" region
 									// Remove this after movement implementation.
@@ -683,9 +679,8 @@ Common::Error AGDSEngine::run() {
 					objects.push_back(object);
 			}
 
-
 			AnimationPtr cursor;
-			for (auto & object : objects) {
+			for (auto &object : objects) {
 				cursor = object->getMouseCursor();
 				if (cursor)
 					break;
@@ -721,7 +716,7 @@ Common::Error AGDSEngine::run() {
 			mouseCursor = _defaultMouseCursor;
 
 		if (userEnabled()) {
-			if (auto *picture = _currentInventoryObject? _currentInventoryObject->getPicture(): nullptr) {
+			if (auto *picture = _currentInventoryObject ? _currentInventoryObject->getPicture() : nullptr) {
 				Common::Rect srcRect = picture->getBounds();
 				Common::Point dst = _mouse;
 				dst.x -= srcRect.width() / 2;
@@ -730,7 +725,7 @@ Common::Error AGDSEngine::run() {
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
 					picture->blendBlitTo(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
-			} else if (auto cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): AnimationPtr())) {
+			} else if (auto cursor = (_currentInventoryObject ? _currentInventoryObject->getMouseCursor() : AnimationPtr())) {
 				cursor->rotate(_currentInventoryObject->rotation());
 				cursor->tick();
 				auto pos = _mouse;
@@ -850,7 +845,7 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	if (i != _globals.end())
 		return i->_value;
 	else {
-		//debug("global %s was not declared, returning 0", name.c_str());
+		// debug("global %s was not declared, returning 0", name.c_str());
 		return 0;
 	}
 }
@@ -870,7 +865,7 @@ AnimationPtr AGDSEngine::loadAnimation(const Common::String &name) {
 }
 
 AnimationPtr AGDSEngine::findAnimationByPhaseVar(const Common::String &phaseVar) {
-	return _currentScreen? _currentScreen->findAnimationByPhaseVar(phaseVar): nullptr;
+	return _currentScreen ? _currentScreen->findAnimationByPhaseVar(phaseVar) : nullptr;
 }
 
 void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &filename, const Common::String &object) {
@@ -934,8 +929,8 @@ Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *s)
 	Graphics::ManagedSurface *t = new Graphics::ManagedSurface(s->w, s->h, _pixelFormat);
 	assert(s->format.bytesPerPixel == 4);
 	assert(t->format.bytesPerPixel == 4);
-	uint8* dst = static_cast<uint8 *>(t->getPixels());
-	const uint8* src = static_cast<uint8 *>(s->getPixels());
+	uint8 *dst = static_cast<uint8 *>(t->getPixels());
+	const uint8 *src = static_cast<uint8 *>(s->getPixels());
 	uint8 shadowAlpha = 255 * _shadowIntensity / 100;
 	auto &dstFormat = t->format;
 	auto &srcFormat = s->format;
@@ -952,8 +947,7 @@ Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *s)
 			} else if (
 				r >= _minShadowColor.r && r <= _maxShadowColor.r &&
 				g >= _minShadowColor.g && g <= _maxShadowColor.g &&
-				b >= _minShadowColor.b && b <= _maxShadowColor.b
-			) {
+				b >= _minShadowColor.b && b <= _maxShadowColor.b) {
 				r = g = b = 0;
 				a = shadowAlpha;
 			}
@@ -973,7 +967,7 @@ void AGDSEngine::tell(Process &process, const Common::String &regionName, Common
 		_inventory.enable(false);
 	}
 
-	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
+	int font_id = getSystemVariable(npc ? "npc_tell_font" : "tell_font")->getInteger();
 	Common::Point pos;
 
 	if (regionName.empty()) {
@@ -1003,7 +997,6 @@ void AGDSEngine::stopAmbientSound() {
 		_ambientSoundId = -1;
 	}
 }
-
 
 void AGDSEngine::initSystemVariables() {
 	addSystemVar("inventory_scr", new StringSystemVariable());
@@ -1098,7 +1091,7 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream &file, Database &db) {
 	_objectPatches.clear();
 	Common::Array<Common::String> entries = db.getEntries();
 	for (uint i = 0; i < entries.size(); ++i) {
-		const Common::String & name = entries[i];
+		const Common::String &name = entries[i];
 		if (name[0] == '_')
 			continue;
 		debug("loading patch for %s", name.c_str());
@@ -1117,7 +1110,7 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream &file, Database &db) {
 }
 
 Common::Error AGDSEngine::loadGameState(int slot) {
-	//saveAutosaveIfEnabled();
+	// saveAutosaveIfEnabled();
 
 	auto fileName = getSaveStateName(slot);
 	Common::ScopedPtr<Common::InSaveFile> saveFile(_saveFileMan->openForLoading(fileName));
@@ -1190,7 +1183,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		// System vars
 		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(*saveFile, "__agds_d"));
 		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
-			Common::String & name = _systemVarList[i];
+			Common::String &name = _systemVarList[i];
 			_systemVars[name]->read(*agds_d);
 		}
 	}
@@ -1212,7 +1205,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
 		debug("phase var for sample -> %d", getGlobal(phaseVar));
 		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true,
-			volume, /*pan=*/0, /*id=*/-1, /*ambient=*/true);
+											 volume, /*pan=*/0, /*id=*/-1, /*ambient=*/true);
 		debug("ambient sound id = %d", _ambientSoundId);
 	}
 	{
@@ -1287,7 +1280,7 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
-			Common::String & name = _systemVarList[i];
+			Common::String &name = _systemVarList[i];
 			_systemVars[name]->write(stream);
 		}
 		entries["__agds_d"].assign(stream.getData(), stream.getData() + stream.size());
@@ -1322,8 +1315,8 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 			writeString(stream, Common::String());
 			writeString(stream, Common::String());
 		}
-		stream.writeUint32LE(70); //volume
-		stream.writeUint32LE(30); //type
+		stream.writeUint32LE(70); // volume
+		stream.writeUint32LE(30); // type
 
 		entries["__agds_a"].assign(stream.getData(), stream.getData() + stream.size());
 	}
@@ -1345,7 +1338,6 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 	return Common::kNoError;
 }
 
-
 void AGDSEngine::reactivate(const Common::String &name, const Common::String &where, bool runNow) {
 	if (name.empty())
 		return;
@@ -1365,13 +1357,13 @@ void AGDSEngine::runPendingReactivatedProcesses() {
 	while (!_pendingReactivatedProcesses.empty()) {
 		ProcessListType processes;
 		_pendingReactivatedProcesses.swap(processes);
-		for(auto & process : processes) {
+		for (auto &process : processes) {
 			process->run();
 		}
 	}
 }
 
-ProcessPtr AGDSEngine::findProcess(const Common::String & name) const {
+ProcessPtr AGDSEngine::findProcess(const Common::String &name) const {
 	for (uint i = 0; i < _processes.size(); ++i) {
 		const ProcessPtr &process = _processes[i];
 		if (process && !process->finished() && process->getName() == name)
@@ -1380,10 +1372,10 @@ ProcessPtr AGDSEngine::findProcess(const Common::String & name) const {
 	return {};
 }
 
-void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
+void AGDSEngine::currentInventoryObject(const ObjectPtr &object) {
 	if (_currentInventoryObject)
-		warning("setting current inventory object to %s, old: %s", object? object->getName().c_str(): "none",
-			_currentInventoryObject? _currentInventoryObject->getName().c_str(): "none");
+		warning("setting current inventory object to %s, old: %s", object ? object->getName().c_str() : "none",
+				_currentInventoryObject ? _currentInventoryObject->getName().c_str() : "none");
 	_currentInventoryObject = object;
 }
 
@@ -1409,7 +1401,7 @@ void AGDSEngine::setNextScreenName(const Common::String &nextScreenName, ScreenL
 }
 
 void AGDSEngine::returnToPreviousScreen() {
-	auto previousScreenName = _currentScreen? _currentScreen->getPreviousScreenName(): Common::String();
+	auto previousScreenName = _currentScreen ? _currentScreen->getPreviousScreenName() : Common::String();
 	debug("returnToPreviousScreen from %s, previous screen: %s", _currentScreenName.c_str(), previousScreenName.c_str());
 	if (!previousScreenName.empty()) {
 		_nextScreenName = previousScreenName;

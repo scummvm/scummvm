@@ -21,9 +21,9 @@
 
 #include "agds/patch.h"
 #include "agds/resourceManager.h"
-#include "common/stream.h"
 #include "common/debug.h"
 #include "common/error.h"
+#include "common/stream.h"
 
 namespace AGDS {
 
@@ -50,7 +50,7 @@ void Patch::load(Common::ReadStream &stream) {
 	characterPosition.y = stream.readSint32LE();
 	characterDirection = stream.readSint32LE();
 	characterPresent = stream.readUint32LE();
-	debug("character %s at %u,%u with dir: %d", characterPresent? "[present]": "[absent]", characterPosition.x, characterPosition.y, characterDirection);
+	debug("character %s at %u,%u with dir: %d", characterPresent ? "[present]" : "[absent]", characterPosition.x, characterPosition.y, characterDirection);
 	uint object_count = stream.readUint32LE();
 	debug("objects in this patch: %u", object_count);
 	if (stream.read(palette, sizeof(palette)) != sizeof(palette)) {
@@ -85,7 +85,7 @@ void Patch::save(Common::WriteStream &stream) {
 	}
 
 	writeString(stream, defaultMouseCursor);
-	for(auto &object: objects) {
+	for (auto &object : objects) {
 		stream.writeSint16LE(object.flag);
 		writeString(stream, object.name);
 	}
@@ -122,7 +122,7 @@ int Patch::incRef(const Common::String &name) {
 int Patch::decRef(const Common::String &name) {
 	for (auto &object : objects) {
 		if (object.name == name) {
-			//this is original code lol
+			// this is original code lol
 			object.flag = 0;
 			return 0;
 		}
@@ -131,4 +131,4 @@ int Patch::decRef(const Common::String &name) {
 	return 0;
 }
 
-}
+} // namespace AGDS

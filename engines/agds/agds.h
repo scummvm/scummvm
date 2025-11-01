@@ -22,14 +22,6 @@
 #ifndef AGDS_AGDS_H
 #define AGDS_AGDS_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "common/hashmap.h"
-#include "common/ptr.h"
-#include "common/random.h"
-#include "common/rect.h"
-#include "engines/advancedDetector.h"
-#include "agds/soundManager.h"
 #include "agds/database.h"
 #include "agds/dialog.h"
 #include "agds/inventory.h"
@@ -37,7 +29,15 @@
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
 #include "agds/screen.h"
+#include "agds/soundManager.h"
 #include "agds/textLayout.h"
+#include "common/array.h"
+#include "common/hashmap.h"
+#include "common/ptr.h"
+#include "common/random.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "engines/advancedDetector.h"
 #include "graphics/pixelformat.h"
 #include "video/flic_decoder.h"
 
@@ -50,7 +50,9 @@
  * - Black Mirror (Windows)
  */
 
-namespace Graphics { class ManagedSurface; }
+namespace Graphics {
+class ManagedSurface;
+}
 
 namespace AGDS {
 
@@ -81,7 +83,6 @@ class AGDSEngine : public Engine {
 	static constexpr uint MaxProcesses = 100;
 
 public:
-
 	struct Color {
 		uint8 r = 0;
 		uint8 g = 0;
@@ -114,7 +115,6 @@ private:
 	void fadeAndReactivate();
 
 public:
-
 	bool hasFeature(EngineFeature f) const override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
@@ -185,9 +185,9 @@ public:
 
 	Graphics::ManagedSurface *loadPicture(const Common::String &name);
 	Graphics::Surface *createSurface(int w, int h);
-	Graphics::ManagedSurface *convertToTransparent(Graphics::Surface *surface); //destroys surface!
+	Graphics::ManagedSurface *convertToTransparent(Graphics::Surface *surface); // destroys surface!
 
-	int loadFromCache(const Common::String & name) const;
+	int loadFromCache(const Common::String &name) const;
 	Graphics::ManagedSurface *loadFromCache(int id) const;
 	int saveToCache(const Common::String &name, Graphics::ManagedSurface *surface);
 
@@ -198,7 +198,7 @@ public:
 	AnimationPtr loadMouseCursor(const Common::String &name);
 	AnimationPtr findAnimationByPhaseVar(const Common::String &phaseVar);
 	void loadCharacter(const Common::String &id, const Common::String &name, const Common::String &object);
-	Character * getCharacter(const Common::String &name) {
+	Character *getCharacter(const Common::String &name) {
 		return _currentCharacterName == name ? _currentCharacter.get() : nullptr;
 	}
 	Character *currentCharacter() const {
@@ -295,68 +295,67 @@ private:
 	using ObjectPatchesType = Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 	using PatchDatabase = Common::HashMap<Common::String, Common::Array<uint8>>;
 
-	const ADGameDescription		   *_gameDescription;
-	ResourceManager					_resourceManager;
-	SoundManager					_soundManager;
-	Database						_data;
-	PictureCacheType				_pictureCache;
-	PictureCacheLookup				_pictureCacheLookup;
-	int								_pictureCacheId;
-	FontsType						_fonts;
-	ProcessListType					_processes;
-	ProcessListType					_pendingReactivatedProcesses;
-	PatchesType						_patches;
-	ObjectPatchesType				_objectPatches;
-	int								_sharedStorageIndex;
-	Common::String					_sharedStorage[10];
-	GlobalsType						_globals;
-	SystemVariablesListType			_systemVarList;
-	SystemVariablesType				_systemVars;
-	Graphics::PixelFormat			_pixelFormat;
-	Color							_colorKey;
-	Color							_minShadowColor;
-	Color							_maxShadowColor;
-	int								_shadowIntensity;
-	Common::ScopedPtr<MJPGPlayer>	_mjpgPlayer;
-	uint32							_filmStarted;
-	Common::String					_filmProcess;
-	Common::ScopedPtr<Screen>		_currentScreen;
-	Common::String					_currentScreenName;
-	Common::ScopedPtr<Character>	_currentCharacter;
-	Common::ScopedPtr<Character>	_jokes;
-	Common::String					_currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
-	Common::String					_nextScreenName;
-	ScreenLoadingType				_nextScreenType;
-	Common::String 					_defaultMouseCursorName;
-	AnimationPtr					_defaultMouseCursor;
-	Common::Point					_mouse;
-	bool							_userEnabled;
-	bool							_systemUserEnabled;
-	MouseMap						_mouseMap;
-	Common::RandomSource			_random;
+	const ADGameDescription *_gameDescription;
+	ResourceManager _resourceManager;
+	SoundManager _soundManager;
+	Database _data;
+	PictureCacheType _pictureCache;
+	PictureCacheLookup _pictureCacheLookup;
+	int _pictureCacheId;
+	FontsType _fonts;
+	ProcessListType _processes;
+	ProcessListType _pendingReactivatedProcesses;
+	PatchesType _patches;
+	ObjectPatchesType _objectPatches;
+	int _sharedStorageIndex;
+	Common::String _sharedStorage[10];
+	GlobalsType _globals;
+	SystemVariablesListType _systemVarList;
+	SystemVariablesType _systemVars;
+	Graphics::PixelFormat _pixelFormat;
+	Color _colorKey;
+	Color _minShadowColor;
+	Color _maxShadowColor;
+	int _shadowIntensity;
+	Common::ScopedPtr<MJPGPlayer> _mjpgPlayer;
+	uint32 _filmStarted;
+	Common::String _filmProcess;
+	Common::ScopedPtr<Screen> _currentScreen;
+	Common::String _currentScreenName;
+	Common::ScopedPtr<Character> _currentCharacter;
+	Common::ScopedPtr<Character> _jokes;
+	Common::String _currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
+	Common::String _nextScreenName;
+	ScreenLoadingType _nextScreenType;
+	Common::String _defaultMouseCursorName;
+	AnimationPtr _defaultMouseCursor;
+	Common::Point _mouse;
+	bool _userEnabled;
+	bool _systemUserEnabled;
+	MouseMap _mouseMap;
+	Common::RandomSource _random;
 
-	Inventory						_inventory;
-	Common::String					_inventoryRegionName;
-	RegionPtr						_inventoryRegion;
-	ObjectPtr						_currentInventoryObject;
+	Inventory _inventory;
+	Common::String _inventoryRegionName;
+	RegionPtr _inventoryRegion;
+	ObjectPtr _currentInventoryObject;
 
-	Dialog							_dialog;
+	Dialog _dialog;
 
 	// Original engine use weird names for the vars, I keep them.
-	int								_tellTextTimer;
-	TextLayout						_textLayout;
+	int _tellTextTimer;
+	TextLayout _textLayout;
 
-	int								_syncSoundId;
-	int								_ambientSoundId;
+	int _syncSoundId;
+	int _ambientSoundId;
 
-	Common::String					_curtainProcess;
-	int								_curtainTimer;
-	int								_curtainScreen;
+	Common::String _curtainProcess;
+	int _curtainTimer;
+	int _curtainScreen;
 
-	bool							_fastMode;
-	bool							_hintMode;
+	bool _fastMode;
+	bool _hintMode;
 };
-
 
 } // End of namespace AGDS
 

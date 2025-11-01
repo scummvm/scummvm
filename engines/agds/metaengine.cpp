@@ -83,10 +83,10 @@ Common::Error AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 	return Common::Error(Common::kNoError);
 }
 
-}
+} // namespace AGDS
 
 #if PLUGIN_ENABLED_DYNAMIC(AGDS)
-	REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
 #endif

@@ -31,8 +31,8 @@ class AGDSEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(AGDSEngine *engine);
-	using GUI::Debugger::registerVar;
 	using GUI::Debugger::clearVars;
+	using GUI::Debugger::registerVar;
 
 private:
 	bool load(int argc, const char **argv);
@@ -47,6 +47,6 @@ private:
 	AGDSEngine *_engine;
 };
 
-} // End of namespace TeenAgent
+} // namespace AGDS
 
 #endif

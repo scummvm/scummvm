@@ -22,20 +22,20 @@
 #ifndef AGDS_FONT_H
 #define AGDS_FONT_H
 
-#include "graphics/font.h"
 #include "common/ptr.h"
+#include "graphics/font.h"
 
 namespace Graphics {
-	class ManagedSurface;
+class ManagedSurface;
 }
 
 namespace AGDS {
 
 class Font : public Graphics::Font {
 	Common::ScopedPtr<Graphics::ManagedSurface> _surface;
-	int		_glyphW, _glyphH;
-	int		_cellW, _cellH;
-	uint8	_width[0x100];
+	int _glyphW, _glyphH;
+	int _cellW, _cellH;
+	uint8 _width[0x100];
 
 public:
 	Font(Graphics::ManagedSurface *surface, int gw, int gh);
@@ -49,11 +49,10 @@ public:
 	}
 
 	virtual int getCharWidth(uint32 chr) const {
-		return chr < 0x100? _width[chr]: 0;
+		return chr < 0x100 ? _width[chr] : 0;
 	}
 
 	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
-
 };
 
 } // End of namespace AGDS

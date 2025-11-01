@@ -22,13 +22,16 @@
 #ifndef AGDS_INVENTORY_H
 #define AGDS_INVENTORY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
-namespace Common { class ReadStream; class WriteStream; }
+namespace Common {
+class ReadStream;
+class WriteStream;
+} // namespace Common
 
 namespace AGDS {
 class Object;
@@ -95,9 +98,7 @@ public:
 	uint maxSize() const {
 		return _entries.size();
 	}
-
 };
-
 
 } // End of namespace AGDS
 

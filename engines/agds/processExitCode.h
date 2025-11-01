@@ -24,22 +24,22 @@
 
 namespace AGDS {
 
-	enum ProcessExitCode {
-		kExitCodeDestroy						= 2,
-		kExitCodeSuspend						= 5,
-		kExitCodeSetNextScreen					= 6,
-		kExitCodeSetNextScreenSaveOrLoad		= 7,
-		kExitCodeLoadScreenObject				= 8,
-		kExitCodeLoadScreenObjectAs				= 9,
-		kExitCodeLoadInventoryObject			= 10,
-		kExitCodeMouseAreaChange				= 11,
-		kExitCodeRunDialog						= 12,
-		kExitCodeNewGame						= 13,
-		kExitCodeLoadGame						= 14,
-		kExitCodeExitScreen						= 15,
-		kExitCodeCloseInventory					= 16,
-		kExitCodeSaveGame						= 17,
-	};
+enum ProcessExitCode {
+	kExitCodeDestroy = 2,
+	kExitCodeSuspend = 5,
+	kExitCodeSetNextScreen = 6,
+	kExitCodeSetNextScreenSaveOrLoad = 7,
+	kExitCodeLoadScreenObject = 8,
+	kExitCodeLoadScreenObjectAs = 9,
+	kExitCodeLoadInventoryObject = 10,
+	kExitCodeMouseAreaChange = 11,
+	kExitCodeRunDialog = 12,
+	kExitCodeNewGame = 13,
+	kExitCodeLoadGame = 14,
+	kExitCodeExitScreen = 15,
+	kExitCodeCloseInventory = 16,
+	kExitCodeSaveGame = 17,
+};
 
 }
 

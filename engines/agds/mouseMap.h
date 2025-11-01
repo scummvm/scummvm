@@ -34,10 +34,10 @@ struct Region;
 using RegionPtr = Common::SharedPtr<Region>;
 
 struct MouseRegion {
-	int			id 			= -1;
-	RegionPtr	region		= nullptr;
-	bool		enabled		= true;
-	bool		visible		= false;
+	int id = -1;
+	RegionPtr region = nullptr;
+	bool enabled = true;
+	bool visible = false;
 
 	Common::String onEnter;
 	Common::String onLeave;
@@ -50,24 +50,22 @@ struct MouseRegion {
 		enabled = false;
 	}
 
-	MouseRegion()
-	{ }
+	MouseRegion() {}
 
-	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave):
-		region(reg), onEnter(enter), onLeave(leave) {
+	MouseRegion(RegionPtr reg, const Common::String &enter, const Common::String &leave) : region(reg), onEnter(enter), onLeave(leave) {
 	}
 
-	void hide(AGDSEngine * engine);
-	void show(AGDSEngine * engine);
+	void hide(AGDSEngine *engine);
+	void show(AGDSEngine *engine);
 };
 using MouseRegionPtr = Common::ScopedPtr<MouseRegion>;
 
 class MouseMap {
-	Common::Array<MouseRegionPtr>	_mouseRegions;
-	bool							_disabled;
+	Common::Array<MouseRegionPtr> _mouseRegions;
+	bool _disabled;
 
 public:
-	MouseMap(): _mouseRegions(100), _disabled(false) { }
+	MouseMap() : _mouseRegions(100), _disabled(false) {}
 
 	void disable(bool disabled) {
 		_disabled = disabled;

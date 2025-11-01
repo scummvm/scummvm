@@ -22,15 +22,15 @@
 #ifndef AGDS_SCREEN_H
 #define AGDS_SCREEN_H
 
-#include "common/scummsys.h"
+#include "agds/screenLoadingType.h"
 #include "common/array.h"
 #include "common/ptr.h"
-#include "common/str.h"
 #include "common/rect.h"
-#include "agds/screenLoadingType.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace AGDS {
@@ -48,7 +48,7 @@ using PatchPtr = Common::SharedPtr<Patch>;
 struct ScreenAnimationDesc {
 	AnimationPtr animation;
 	bool removed = false;
-	ScreenAnimationDesc(const AnimationPtr &a): animation(a) {
+	ScreenAnimationDesc(const AnimationPtr &a) : animation(a) {
 	}
 };
 
@@ -59,27 +59,27 @@ class Screen {
 	using Animations = Common::SortedArray<ScreenAnimationDesc, const ScreenAnimationDesc &>;
 	using Children = Common::SortedArray<ObjectPtr, const ObjectPtr &>;
 
-	AGDSEngine 	   *_engine;
-	ObjectPtr		_object;
-	Object		   *_background;
-	Common::Point	_scroll;
-	Common::String	_name;
+	AGDSEngine *_engine;
+	ObjectPtr _object;
+	Object *_background;
+	Common::Point _scroll;
+	Common::String _name;
 	ScreenLoadingType _loadingType;
-	Common::String	_previousScreen;
-	Children		_children;
-	Animations		_animations;
-	RegionPtr		_region;
-	bool			_applyingPatch;
-	int				_characterNear, _characterFar;
-	int				_fade;
+	Common::String _previousScreen;
+	Children _children;
+	Animations _animations;
+	RegionPtr _region;
+	bool _applyingPatch;
+	int _characterNear, _characterFar;
+	int _fade;
 
 public:
 	struct KeyHandler {
-		ObjectPtr	object;
-		uint		ip;
+		ObjectPtr object;
+		uint ip;
 
-		KeyHandler(): object(), ip() { }
-		KeyHandler(Object *o, uint i): object(o), ip(i) { }
+		KeyHandler() : object(), ip() {}
+		KeyHandler(Object *o, uint i) : object(o), ip(i) {}
 	};
 
 	Screen(AGDSEngine *engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen);
@@ -132,7 +132,7 @@ public:
 		return _children;
 	}
 
-	const Animations & animations() const {
+	const Animations &animations() const {
 		return _animations;
 	}
 	void scrollTo(Common::Point scroll);
@@ -142,7 +142,7 @@ public:
 
 	bool add(ObjectPtr object);
 	void add(AnimationPtr animation);
-	bool remove(const AnimationPtr  &animation);
+	bool remove(const AnimationPtr &animation);
 
 	void update(const ObjectPtr &object) {
 		bool found = remove(object);
@@ -167,7 +167,6 @@ public:
 	void load(const PatchPtr &patch);
 	void save(const PatchPtr &patch);
 };
-
 
 } // End of namespace AGDS
 

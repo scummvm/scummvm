@@ -22,10 +22,10 @@
 #ifndef AGDS_MJPG_PLAYER_H
 #define AGDS_MJPG_PLAYER_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "common/stream.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 #include "image/jpeg.h"
 
@@ -34,24 +34,24 @@ namespace AGDS {
 class AGDSEngine;
 class MJPGPlayer {
 	using StreamPtr = Common::ScopedPtr<Common::SeekableReadStream>;
-	StreamPtr					 	_stream;
-	int32							_firstFramePos;
-	Image::JPEGDecoder				_decoder;
-	uint							_framesPlayed;
+	StreamPtr _stream;
+	int32 _firstFramePos;
+	Image::JPEGDecoder _decoder;
+	uint _framesPlayed;
 
 	struct Text {
 		using Lines = Common::Array<Common::String>;
 
-		uint			begin;
-		uint			end;
-		Lines 			lines;
+		uint begin;
+		uint end;
+		Lines lines;
 	};
 
-	Common::Array<Text> 			_subtitles;
-	uint							_nextSubtitleIndex;
+	Common::Array<Text> _subtitles;
+	uint _nextSubtitleIndex;
 
 public:
-	MJPGPlayer(Common::SeekableReadStream * stream, const Common::String &subtitles);
+	MJPGPlayer(Common::SeekableReadStream *stream, const Common::String &subtitles);
 	~MJPGPlayer();
 
 	bool eos() {
@@ -66,7 +66,6 @@ public:
 		return _framesPlayed * 1000 / 24;
 	}
 };
-
 
 } // End of namespace AGDS
 

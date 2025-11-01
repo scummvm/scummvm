@@ -39,11 +39,10 @@ int Screen::AnimationZCompare(const ScreenAnimationDesc &a, const ScreenAnimatio
 	return b.animation->z() - a.animation->z();
 }
 
-Screen::Screen(AGDSEngine * engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen) :
-	_engine(engine), _object(object), _background(nullptr),
-	_name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
-	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
-	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()), _fade(0) {
+Screen::Screen(AGDSEngine *engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen) : _engine(engine), _object(object), _background(nullptr),
+																														_name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
+																														_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
+																														_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()), _fade(0) {
 	add(object);
 }
 
@@ -76,7 +75,6 @@ void Screen::scrollTo(Common::Point scroll) {
 	_scroll = scroll;
 }
 
-
 float Screen::getZScale(int y) const {
 	int h = g_system->getHeight();
 	int dy = h - y;
@@ -89,13 +87,12 @@ float Screen::getZScale(int y) const {
 		return 1.0f;
 }
 
-
 bool Screen::add(ObjectPtr object) {
 	if (object == NULL) {
 		warning("refusing to add null to scene");
 		return false;
 	}
-	for (auto i = _children.begin(); i != _children.end(); ) {
+	for (auto i = _children.begin(); i != _children.end();) {
 		if (*i == object) {
 			if (object->alive()) {
 				debug("double adding object %s", object->getName().c_str());
@@ -120,13 +117,12 @@ void Screen::add(AnimationPtr animation) {
 		warning("Screen: skipping null animation");
 }
 
-
-bool Screen::remove(const AnimationPtr & animation) {
+bool Screen::remove(const AnimationPtr &animation) {
 	if (!animation)
 		return false;
 
 	bool removed = false;
-	for(auto i = _animations.begin(); i != _animations.end(); ++i) {
+	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
 		if (i->animation == animation) {
 			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
 			i->removed = true;
@@ -160,7 +156,7 @@ bool Screen::remove(const ObjectPtr &object) {
 
 bool Screen::remove(const Common::String &name) {
 	for (auto i = _children.begin(); i != _children.end(); ++i) {
-		const ObjectPtr & object = *i;
+		const ObjectPtr &object = *i;
 		if (object->getName() == name) {
 			if (object->locked())
 				object->alive(false);
@@ -174,8 +170,8 @@ bool Screen::remove(const Common::String &name) {
 
 AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
-		const auto & desc = *i;
-		const auto & animation = desc.animation;
+		const auto &desc = *i;
+		const auto &animation = desc.animation;
 		if (!desc.removed && animation->phaseVar() == phaseVar)
 			return animation;
 	}
@@ -183,9 +179,9 @@ AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 }
 
 void Screen::tick() {
-	for (uint i = 0; i < _animations.size(); ) {
-		const auto & desc = _animations.data()[i];
-		const auto & animation = desc.animation;
+	for (uint i = 0; i < _animations.size();) {
+		const auto &desc = _animations.data()[i];
+		const auto &animation = desc.animation;
 		if (!desc.removed && animation->tick())
 			++i;
 		else {
@@ -196,8 +192,8 @@ void Screen::tick() {
 }
 
 void Screen::paint(Graphics::Surface &backbuffer) const {
-	auto & currentInventoryObject = _engine->currentInventoryObject();
-	Character * character = _engine->currentCharacter();
+	auto &currentInventoryObject = _engine->currentInventoryObject();
+	Character *character = _engine->currentCharacter();
 
 	auto child = _children.begin();
 	auto desc = _animations.begin();
@@ -213,7 +209,7 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 		int z = 0;
 		int render_type = -1;
 		if (animation_valid) {
-			const auto & animation = desc->animation;
+			const auto &animation = desc->animation;
 			if (!z_valid || animation->z() > z) {
 				z = animation->z();
 				z_valid = true;
@@ -238,7 +234,7 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 		auto basePos = Common::Point() - _scroll;
 		switch (render_type) {
 		case 0:
-			//debug("object z: %d", (*child)->z());
+			// debug("object z: %d", (*child)->z());
 			if ((*child) != currentInventoryObject && (*child)->alive()) {
 				if ((*child)->scale() < 0)
 					basePos = Common::Point();
@@ -247,14 +243,14 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 			++child;
 			break;
 		case 1:
-			//debug("animation z: %d", (*animation)->z());
+			// debug("animation z: %d", (*animation)->z());
 			if ((*desc).animation->scale() < 0)
 				basePos = Common::Point();
 			(*desc).animation->paint(backbuffer, basePos);
 			++desc;
 			break;
 		case 2:
-			//debug("character z: %d", character->z());
+			// debug("character z: %d", character->z());
 			character->paint(backbuffer, basePos);
 			character = nullptr;
 			break;
@@ -264,9 +260,9 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 	}
 	if (_fade != 0) {
 		auto alpha = (100 - _fade) * 256 / 100;
-		auto & format = backbuffer.format;
+		auto &format = backbuffer.format;
 		for (int y = 0; y < backbuffer.h; ++y) {
-			uint32 * line = (uint32 *)backbuffer.getBasePtr(0, y);
+			uint32 *line = (uint32 *)backbuffer.getBasePtr(0, y);
 			int w = backbuffer.w;
 			while (w--) {
 				uint8 r, g, b;
@@ -284,13 +280,13 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 	Common::Array<ObjectPtr> objects;
 	objects.reserve(_children.size());
 	for (auto i = _children.begin(); i != _children.end(); ++i) {
-		const auto & object = *i;
+		const auto &object = *i;
 		auto visiblePos = (object->scale() >= 0) ? pos + _scroll : pos;
 		if (object->pointIn(visiblePos) && object->alive()) {
 			objects.insert_at(0, object);
 		}
 	}
-	Character * character = _engine->currentCharacter();
+	Character *character = _engine->currentCharacter();
 	if (character) {
 		if (character->pointIn(pos - _scroll)) {
 			objects.insert_at(0, character->object());
@@ -302,7 +298,7 @@ Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	KeyHandler keyHandler;
 	for (auto i = _children.begin(); i != _children.end(); ++i) {
-		const auto & object = *i;
+		const auto &object = *i;
 		if (!object->alive())
 			continue;
 
@@ -319,7 +315,7 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 void Screen::load(const PatchPtr &patch) {
 	debug("applying patch with %u objects", patch->objects.size());
 	_applyingPatch = true;
-	for(uint i = 0; i < patch->objects.size(); ++i) {
+	for (uint i = 0; i < patch->objects.size(); ++i) {
 		const Patch::Object &object = patch->objects[i];
 		debug("patch object %s %d", object.name.c_str(), object.flag);
 		if (object.name == _name)
@@ -341,13 +337,12 @@ void Screen::save(const PatchPtr &patch) {
 	patch->loadingType = _loadingType;
 	patch->objects.clear();
 	for (auto i = _children.begin(); i != _children.end(); ++i) {
-		const auto & object = *i;
+		const auto &object = *i;
 		if (!object->persistent() || !object->alive() || object->getName() == _name)
 			continue;
 		debug("saving patch object %s %d", object->getName().c_str(), object->alive());
 		patch->objects.push_back(Patch::Object(object->getName(), 1));
 	}
 }
-
 
 } // namespace AGDS

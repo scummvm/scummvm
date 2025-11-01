@@ -32,7 +32,7 @@
 namespace AGDS {
 
 void SoundManager::tick() {
-	for (auto it = _sounds.begin(); it != _sounds.end(); ) {
+	for (auto it = _sounds.begin(); it != _sounds.end();) {
 		Sound &sound = *it;
 		auto &phaseVar = sound.phaseVar;
 
@@ -86,7 +86,6 @@ Sound *SoundManager::findSampleByPhaseVar(const Common::String &phaseVar) {
 	return nullptr;
 }
 
-
 void SoundManager::stopAll() {
 	_mixer->stopAll();
 	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
@@ -98,7 +97,7 @@ void SoundManager::stopAll() {
 }
 
 void SoundManager::stopAllFrom(const Common::String &process) {
-	for (auto i = _sounds.begin(); i != _sounds.end(); ) {
+	for (auto i = _sounds.begin(); i != _sounds.end();) {
 		auto &sound = *i;
 		if (sound.process == process) {
 			_mixer->stopID(sound.id);
@@ -110,7 +109,6 @@ void SoundManager::stopAllFrom(const Common::String &process) {
 		}
 	}
 }
-
 
 int SoundManager::play(Common::String process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id, bool ambient) {
 	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d, ambient: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id, ambient);
@@ -146,7 +144,7 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 	if (!stream) {
 		warning("could not play sound %s", filename.c_str());
 		if (!phaseVar.empty())
-			_engine->setGlobal(phaseVar, _engine->getGlobal(phaseVar)? 1: 0);
+			_engine->setGlobal(phaseVar, _engine->getGlobal(phaseVar) ? 1 : 0);
 		else
 			_engine->reactivate(process, "no sound");
 		return -1;
@@ -158,12 +156,12 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 	auto handle = &_sounds.back().handle;
 	if (startPlaying)
 		_mixer->playStream(
-			ambient? Audio::Mixer::kMusicSoundType: Audio::Mixer::kPlainSoundType,
+			ambient ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kPlainSoundType,
 			&_sounds.back().handle, stream, id,
 			volume * Audio::Mixer::kMaxChannelVolume / 100, pan * 127 / 100);
 	if (ambient)
 		_mixer->loopChannel(*handle);
-	//if (sound_off)
+	// if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;
 }

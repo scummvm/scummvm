@@ -22,14 +22,21 @@
 #ifndef AGDS_ANIMATION_H
 #define AGDS_ANIMATION_H
 
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "common/str.h"
 #include "common/ptr.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
-namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ struct Surface; class ManagedSurface; }
-namespace Video		{ class FlicDecoder; }
+namespace Common {
+class SeekableReadStream;
+}
+namespace Graphics {
+struct Surface;
+class ManagedSurface;
+} // namespace Graphics
+namespace Video {
+class FlicDecoder;
+}
 
 namespace AGDS {
 
@@ -40,29 +47,29 @@ class Animation {
 	using FlicPtr = Common::ScopedPtr<Video::FlicDecoder>;
 	using ManagedSurfacePtr = Common::ScopedPtr<Graphics::ManagedSurface>;
 
-	AGDSEngine 		   *_engine;
-	Common::String		_name;
-	FlicPtr				_flic;
-	ManagedSurfacePtr	_frame;
-	ManagedSurfacePtr	_scaledFrame;
-	int					_frames;
-	Common::Point		_position;
-	Common::String		_process;
-	Common::String 		_phaseVar;
-	bool				_loop;
-	int					_cycles;
-	bool				_phaseVarControlled;
-	int					_phase;
-	bool				_paused;
-	int					_speed;
-	int					_z;
-	int					_rotation;
-	int					_delay;
-	int					_random;
-	float				_scale;
-	bool				_onScreen;
-	uint				_visibleHeight;
-	uint 				_visibleCenter;
+	AGDSEngine *_engine;
+	Common::String _name;
+	FlicPtr _flic;
+	ManagedSurfacePtr _frame;
+	ManagedSurfacePtr _scaledFrame;
+	int _frames;
+	Common::Point _position;
+	Common::String _process;
+	Common::String _phaseVar;
+	bool _loop;
+	int _cycles;
+	bool _phaseVarControlled;
+	int _phase;
+	bool _paused;
+	int _speed;
+	int _z;
+	int _rotation;
+	int _delay;
+	int _random;
+	float _scale;
+	bool _onScreen;
+	uint _visibleHeight;
+	uint _visibleCenter;
 
 public:
 	Animation(AGDSEngine *engine, const Common::String &name);
@@ -115,7 +122,7 @@ public:
 		_delay = delay;
 	}
 
-	void setRandom(int value) { //can't declare random() because of stupid macro
+	void setRandom(int value) { // can't declare random() because of stupid macro
 		_random = value;
 	}
 
@@ -188,7 +195,6 @@ private:
 	void freeFrame();
 	void freeScaledFrame();
 };
-
 
 } // End of namespace AGDS
 

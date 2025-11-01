@@ -22,13 +22,20 @@
 #ifndef AGDS_CHARACTER_H
 #define AGDS_CHARACTER_H
 
-#include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 
-namespace Common	{ class SeekableReadStream; class ReadStream; class WriteStream; }
-namespace Graphics	{ struct Surface; class ManagedSurface; }
+namespace Common {
+class SeekableReadStream;
+class ReadStream;
+class WriteStream;
+} // namespace Common
+namespace Graphics {
+struct Surface;
+class ManagedSurface;
+} // namespace Graphics
 
 namespace AGDS {
 
@@ -40,15 +47,15 @@ using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Character {
 	using FogPtr = Common::ScopedPtr<Graphics::ManagedSurface>;
-	AGDSEngine	   *_engine;
-	ObjectPtr		_object;
-	AnimationPtr	_animation;
-	FogPtr			_fog;
-	bool			_jokes;
-	Common::String 	_name;
-	Common::String	_processName;
-	Common::Point	_pos;
-	Common::Point	_animationPos;
+	AGDSEngine *_engine;
+	ObjectPtr _object;
+	AnimationPtr _animation;
+	FogPtr _fog;
+	bool _jokes;
+	Common::String _name;
+	Common::String _processName;
+	Common::Point _pos;
+	Common::Point _animationPos;
 	bool _enabled;
 	bool _visible;
 	bool _stopped;
@@ -66,8 +73,8 @@ class Character {
 			uint w, h;
 		};
 
-		Common::String 			filename;
-		Common::Array<Frame> 	frames;
+		Common::String filename;
+		Common::Array<Frame> frames;
 	};
 	Common::HashMap<uint, AnimationDescription> _animations;
 	const AnimationDescription *_description;
@@ -94,9 +101,9 @@ public:
 		return _object;
 	}
 
-	void load(Common::SeekableReadStream& stream);
-	void loadState(Common::ReadStream& stream);
-	void saveState(Common::WriteStream& stream) const;
+	void load(Common::SeekableReadStream &stream);
+	void loadState(Common::ReadStream &stream);
+	void saveState(Common::WriteStream &stream) const;
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;
@@ -132,7 +139,7 @@ public:
 	}
 	bool pointIn(Common::Point pos) const;
 
-	void notifyProcess(const Common::String & processName);
+	void notifyProcess(const Common::String &processName);
 	bool moveTo(const Common::String &processName, Common::Point dst, int direction);
 	void pointTo(const Common::String &processName, Common::Point dst);
 
@@ -152,7 +159,6 @@ public:
 	void reset();
 	void setFog(Graphics::ManagedSurface *surface, int minZ, int maxZ);
 };
-
 
 } // End of namespace AGDS
 

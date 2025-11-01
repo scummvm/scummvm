@@ -30,13 +30,13 @@
 namespace AGDS {
 
 Console::Console(AGDSEngine *engine) : _engine(engine) {
-	registerCmd("activate",		WRAP_METHOD(Console, activate));
-	registerCmd("info",			WRAP_METHOD(Console, info));
-	registerCmd("load",			WRAP_METHOD(Console, load));
-	registerCmd("run",			WRAP_METHOD(Console, run));
-	registerCmd("stop",			WRAP_METHOD(Console, stop));
-	registerCmd("set",			WRAP_METHOD(Console, setGlobal));
-	registerCmd("invadd",		WRAP_METHOD(Console, inventoryAdd));
+	registerCmd("activate", WRAP_METHOD(Console, activate));
+	registerCmd("info", WRAP_METHOD(Console, info));
+	registerCmd("load", WRAP_METHOD(Console, load));
+	registerCmd("run", WRAP_METHOD(Console, run));
+	registerCmd("stop", WRAP_METHOD(Console, stop));
+	registerCmd("set", WRAP_METHOD(Console, setGlobal));
+	registerCmd("invadd", WRAP_METHOD(Console, inventoryAdd));
 	registerCmd("patch", WRAP_METHOD(Console, patch));
 }
 
@@ -106,21 +106,21 @@ bool Console::info(int argc, const char **argv) {
 	auto screen = _engine->getCurrentScreen();
 	if (screen) {
 		debugPrintf("screen %s:\n", screen->getName().c_str());
-		for(auto & object : screen->children()) {
+		for (auto &object : screen->children()) {
 			auto pos = object->getPosition();
 			debugPrintf("object %s [alive: %d] at %d,%d\n", object->getName().c_str(), object->alive(), pos.x, pos.y);
 		}
-		for(auto & desc : screen->animations()) {
+		for (auto &desc : screen->animations()) {
 			auto &animation = desc.animation;
 			auto pos = animation->position();
 			debugPrintf("animation %s (process: %s, %s) at %d,%d,%d, frame: %d\n",
-				animation->phaseVar().c_str(), animation->process().c_str(), animation->paused()? "paused": "running",
-				pos.x, pos.y, animation->z(), animation->phase());
+						animation->phaseVar().c_str(), animation->process().c_str(), animation->paused() ? "paused" : "running",
+						pos.x, pos.y, animation->z(), animation->phase());
 		}
 	}
 	debugPrintf("processes:\n");
-	auto & processes = _engine->processes();
-	for(auto & process : processes) {
+	auto &processes = _engine->processes();
+	for (auto &process : processes) {
 		if (process)
 			debugPrintf("%s\n", process->getName().c_str());
 	}
@@ -170,7 +170,7 @@ bool Console::patch(int argc, const char **argv) {
 		debugPrintf("screen loading type: %d\n", static_cast<int>(patch->loadingType));
 		debugPrintf("character pos: %d,%d, direction: %d, present: %d\n", patch->characterPosition.x, patch->characterPosition.y, patch->characterDirection, patch->characterPresent);
 		debugPrintf("mouse cursor: %s\n", patch->defaultMouseCursor.c_str());
-		for(auto & object: patch->objects) {
+		for (auto &object : patch->objects) {
 			debugPrintf(" - object %s: present: %d\n", object.name.c_str(), object.flag);
 		}
 	} else if (argc == 4) {
@@ -185,4 +185,4 @@ bool Console::patch(int argc, const char **argv) {
 	return true;
 }
 
-}
+} // namespace AGDS

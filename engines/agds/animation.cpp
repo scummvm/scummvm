@@ -29,12 +29,11 @@
 
 namespace AGDS {
 
-Animation::Animation(AGDSEngine *engine, const Common::String &name) :
-	_engine(engine), _name(name), _flic(), _frame(), _scaledFrame(),
-	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
-	_phase(0), _paused(false), _speed(100), _z(0), _rotation(0),
-	_delay(0), _random(0), _scale(1), _onScreen(true),
-	_visibleHeight(0), _visibleCenter(0) {
+Animation::Animation(AGDSEngine *engine, const Common::String &name) : _engine(engine), _name(name), _flic(), _frame(), _scaledFrame(),
+																	   _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
+																	   _phase(0), _paused(false), _speed(100), _z(0), _rotation(0),
+																	   _delay(0), _random(0), _scale(1), _onScreen(true),
+																	   _visibleHeight(0), _visibleCenter(0) {
 }
 
 Animation::~Animation() {
@@ -55,7 +54,6 @@ void Animation::freeFrame() {
 		_frame.reset();
 	}
 }
-
 
 bool Animation::load(Common::SeekableReadStream *stream, const Common::String &fname) {
 	if (_phaseVarControlled) {
@@ -121,15 +119,15 @@ void Animation::rescaleCurrentFrame() {
 	} else if (_scale != 1) {
 		_scaledFrame.reset(_frame->scale(_frame->w * _scale, _frame->h * _scale, true));
 	}
-	auto *frame = _scaledFrame? _scaledFrame.get(): _frame.get();
+	auto *frame = _scaledFrame ? _scaledFrame.get() : _frame.get();
 	if (frame) {
 		uint h = frame->h, w = frame->w;
 		_visibleHeight = 0;
 		uint minX = w, maxX = 0;
-		for(uint i = 0; i != h; ++i) {
+		for (uint i = 0; i != h; ++i) {
 			uint y = h - 1 - i;
-			auto * ptr = static_cast<uint32*>(frame->getBasePtr(0, y));
-			for(uint x = 0; x != w; ++x) {
+			auto *ptr = static_cast<uint32 *>(frame->getBasePtr(0, y));
+			for (uint x = 0; x != w; ++x) {
 				uint8 a, r, g, b;
 				frame->format.colorToARGB(*ptr++, a, r, g, b);
 				if (a != 0) {
@@ -142,7 +140,7 @@ void Animation::rescaleCurrentFrame() {
 				}
 			}
 		}
-		_visibleCenter = minX < maxX? (maxX + minX) / 2: 0;
+		_visibleCenter = minX < maxX ? (maxX + minX) / 2 : 0;
 	}
 }
 
@@ -160,7 +158,7 @@ void Animation::decodeNextFrame() {
 	}
 
 	freeFrame();
-	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
+	_delay = _flic->getCurFrameDelay() * _speed / 4000; // 40 == 1000 / 25, 25 fps
 	_frame.reset(_engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette())));
 	rescaleCurrentFrame();
 	++_phase;
@@ -176,7 +174,7 @@ void Animation::onScreen(bool onScreen) {
 }
 
 bool Animation::tick() {
-	if (!_flic && _frame) { //static frame
+	if (!_flic && _frame) { // static frame
 		return true;
 	}
 
@@ -210,7 +208,7 @@ bool Animation::tick() {
 	if (!_process.empty()) {
 		if (!_phaseVar.empty())
 			_engine->setGlobal(_phaseVar, _phase - 1);
-		if (/*_phase || */_phaseVarControlled) {
+		if (/*_phase || */ _phaseVarControlled) {
 			if (eov && _random) {
 				rewind();
 				_delay = _engine->getRandomNumber(_random);
@@ -238,7 +236,7 @@ bool Animation::tick() {
 
 void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::ManagedSurface *mask, int maskAlpha) const {
 	dst += _position;
-	auto *frame = _scaledFrame? _scaledFrame.get(): _frame.get();
+	auto *frame = _scaledFrame ? _scaledFrame.get() : _frame.get();
 	if (!frame || !_onScreen)
 		return;
 
@@ -250,20 +248,20 @@ void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics
 		int invMaskAlpha = 255 - maskAlpha;
 		auto subFrame = frame->getSubArea(srcRect);
 		auto subMask = mask->getSubArea(srcRect);
-		byte * dstPixels = static_cast<byte *>(backbuffer.getBasePtr(dst.x, dst.y));
-		const byte * srcPixels = static_cast<byte *>(subFrame.getPixels());
-		const byte * maskPixels = static_cast<byte *>(subMask.getPixels());
-		for(int y = 0; y != srcRect.height(); ++y) {
+		byte *dstPixels = static_cast<byte *>(backbuffer.getBasePtr(dst.x, dst.y));
+		const byte *srcPixels = static_cast<byte *>(subFrame.getPixels());
+		const byte *maskPixels = static_cast<byte *>(subMask.getPixels());
+		for (int y = 0; y != srcRect.height(); ++y) {
 			byte *dstRow = dstPixels;
 			const byte *srcRow = srcPixels;
 			const byte *maskRow = maskPixels;
-			for(int x = 0; x != srcRect.width(); ++x) {
+			for (int x = 0; x != srcRect.width(); ++x) {
 				uint8 srcA = *srcRow++;
 				++dstRow;
 				++maskRow;
 				uint8 invSrcA = 255 - srcA;
 				if (srcA != 0) {
-					for(int n = 3; n--; ++dstRow) {
+					for (int n = 3; n--; ++dstRow) {
 						*dstRow = ((*dstRow * invSrcA + *srcRow++ * srcA) * invMaskAlpha + *maskRow++ * maskAlpha * srcA) / 65025;
 					}
 				} else {
@@ -284,7 +282,7 @@ uint Animation::width() const {
 	return _flic ? _flic->getWidth() * _scale : 0;
 }
 uint Animation::height() const {
-	return _flic ? _flic->getHeight() * _scale: 0;
+	return _flic ? _flic->getHeight() * _scale : 0;
 }
 
 } // namespace AGDS

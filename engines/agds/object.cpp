@@ -28,22 +28,21 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
 #include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream &stream, bool v2) :
-		_name(name), _stringTableLoaded(false),
-		_picture(), _rotatedPicture(), _region(),
-		_animation(), _mouseCursor(),
-		_pos(), _z(10), _rotation(0),
-		_clickHandler(0), _examineHandler(0), _userUseHandler(0),
-		_throwHandler(0), _useOnHandler(0),
-		_handlerBD(0), _handlerC1(0),
-		_alpha(255), _scale(100), _locked(0), _alive(true),
-		_persistent(true), _allowInitialise(true),
-		_ignoreRegion(false), _v2(v2) {
+Object::Object(const Common::String &name, Common::SeekableReadStream &stream, bool v2) : _name(name), _stringTableLoaded(false),
+																						  _picture(), _rotatedPicture(), _region(),
+																						  _animation(), _mouseCursor(),
+																						  _pos(), _z(10), _rotation(0),
+																						  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
+																						  _throwHandler(0), _useOnHandler(0),
+																						  _handlerBD(0), _handlerC1(0),
+																						  _alpha(255), _scale(100), _locked(0), _alive(true),
+																						  _persistent(true), _allowInitialise(true),
+																						  _ignoreRegion(false), _v2(v2) {
 	uint16 id = stream.readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
@@ -93,7 +92,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (_stringTableLoaded)
 		return;
 
-	resOffset += 5 /*instruction*/ + (_v2? 0x13: 0x11) /*another header*/;
+	resOffset += 5 /*instruction*/ + (_v2 ? 0x13 : 0x11) /*another header*/;
 	if (resOffset >= _code.size())
 		error("invalid resource table offset %u/%u", resOffset, _code.size());
 
@@ -196,7 +195,6 @@ void Object::alive(bool value) {
 		_region.reset();
 }
 
-
 void Object::region(RegionPtr region) {
 	_region = region;
 }
@@ -255,7 +253,6 @@ bool Object::pointIn(Common::Point pos) {
 
 	if (_trapRegion && _trapRegion->pointIn(pos))
 		return true;
-
 
 	if (!_ignoreRegion && _region && _region->pointIn(pos))
 		return true;

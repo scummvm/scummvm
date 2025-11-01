@@ -22,13 +22,13 @@
 #ifndef AGDS_TEXT_LAYOUT_H
 #define AGDS_TEXT_LAYOUT_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
-#include "common/str.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace AGDS {
@@ -37,10 +37,10 @@ class AGDSEngine;
 class Process;
 
 class TextLayout {
-	int				_fontId;
-	Common::Point 	_pos;
-	bool			_npc;
-	bool 			_valid;
+	int _fontId;
+	Common::Point _pos;
+	bool _npc;
+	bool _valid;
 
 	struct Line {
 		Common::Point pos;
@@ -50,13 +50,13 @@ class TextLayout {
 
 	Common::Array<Line> _lines;
 
-	Common::String		_process;
-	Common::String		_charNotifyVar;
-	Common::String		_charDirectionNotifyVar;
-	Common::String		_npcNotifyVar;
+	Common::String _process;
+	Common::String _charNotifyVar;
+	Common::String _charDirectionNotifyVar;
+	Common::String _npcNotifyVar;
 
 public:
-	TextLayout(): _fontId(-1), _npc(true), _valid(false) {}
+	TextLayout() : _fontId(-1), _npc(true), _valid(false) {}
 
 	bool valid() const {
 		return _valid;

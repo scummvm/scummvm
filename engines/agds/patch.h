@@ -22,13 +22,16 @@
 #ifndef AGDS_PATCH_H
 #define AGDS_PATCH_H
 
-#include "common/scummsys.h"
+#include "agds/screenLoadingType.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
-#include "agds/screenLoadingType.h"
 
-namespace Common	{ class ReadStream; class WriteStream; }
+namespace Common {
+class ReadStream;
+class WriteStream;
+} // namespace Common
 
 namespace AGDS {
 
@@ -47,10 +50,10 @@ struct ObjectPatch {
 
 struct Patch {
 	struct Object {
-		Common::String 	name;
-		int16			flag;
+		Common::String name;
+		int16 flag;
 
-		Object(const Common::String &n, int f): name(n), flag(f) {}
+		Object(const Common::String &n, int f) : name(n), flag(f) {}
 	};
 
 	bool screenSaved = false;
@@ -73,7 +76,6 @@ struct Patch {
 	int incRef(const Common::String &name);
 	int decRef(const Common::String &name);
 };
-
 
 } // End of namespace AGDS
 

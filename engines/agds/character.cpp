@@ -37,11 +37,10 @@
 
 namespace AGDS {
 
-Character::Character(AGDSEngine * engine, const Common::String & name):
-	_engine(engine), _object(), _animation(nullptr), _jokes(false),
-	_name(name),
-	_enabled(true), _visible(false), _stopped(false), _shown(false),
-	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
+Character::Character(AGDSEngine *engine, const Common::String &name) : _engine(engine), _object(), _animation(nullptr), _jokes(false),
+																	   _name(name),
+																	   _enabled(true), _visible(false), _stopped(false), _shown(false),
+																	   _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
 
 Character::~Character() {
@@ -49,7 +48,7 @@ Character::~Character() {
 
 void Character::load(Common::SeekableReadStream &stream) {
 	debug("loading character...");
-	stream.readUint32LE(); //unk
+	stream.readUint32LE(); // unk
 	uint16 magic = stream.readUint16LE();
 	switch (magic) {
 	case 0xdead:
@@ -86,21 +85,21 @@ void Character::load(Common::SeekableReadStream &stream) {
 			uint unk1 = stream.readUint32LE();
 			uint unk2 = stream.readUint32LE();
 			uint unk3 = stream.readUint32LE();
-			uint unk4 = stream.readUint32LE(); //GRP file offset?
+			uint unk4 = stream.readUint32LE(); // GRP file offset?
 			uint unk5 = stream.readUint32LE();
 			uint unk6 = stream.readByte();
 			uint unk7 = stream.readUint32LE();
 			uint unk8 = stream.readUint32LE();
-			stream.readUint32LE(); //CDCDCDCD
+			stream.readUint32LE(); // CDCDCDCD
 			uint unk9 = stream.readUint32LE();
 			uint unk10 = stream.readUint32LE();
-			stream.readUint32LE(); //CDCDCDCD
+			stream.readUint32LE(); // CDCDCDCD
 			uint unk11 = stream.readByte();
-			stream.readUint32LE(); //CDCDCDCD
+			stream.readUint32LE(); // CDCDCDCD
 			debug("unknown: %u %u %u 0x%08x - %u %u %u %u - %u %u %u",
-			      unk1, unk2, unk3, unk4,
-			      unk5, unk6, unk7, unk8,
-			      unk9, unk10, unk11);
+				  unk1, unk2, unk3, unk4,
+				  unk5, unk6, unk7, unk8,
+				  unk9, unk10, unk11);
 		}
 		_animations[index] = animation;
 	}
@@ -136,7 +135,6 @@ void Character::saveState(Common::WriteStream &stream) const {
 	stream.writeUint16LE(_visible);
 	stream.writeUint16LE(_enabled);
 }
-
 
 bool Character::direction(int dir) {
 	debug("setDirection %d", dir);
@@ -201,15 +199,15 @@ bool Character::animate(int direction, int speed, bool jokes) {
 		return false;
 	}
 
-	auto character = jokes? _engine->jokes(): this;
+	auto character = jokes ? _engine->jokes() : this;
 	auto description = character->animationDescription(direction);
 	if (!description) {
-		warning("no %s animation %d", jokes? "jokes": "character", direction);
+		warning("no %s animation %d", jokes ? "jokes" : "character", direction);
 		return false;
 	}
 	auto animation = _engine->loadAnimation(description->filename);
 	if (!animation) {
-		warning("no %s animation file %s", jokes? "jokes": "character", description->filename.c_str());
+		warning("no %s animation file %s", jokes ? "jokes" : "character", description->filename.c_str());
 		return false;
 	}
 	_description = description;
@@ -253,7 +251,7 @@ void Character::tick(bool reactivate) {
 		return;
 	if (_animation) {
 		auto screen = _engine->getCurrentScreen();
-		auto scale = screen? screen->getZScale(_pos.y): 1;
+		auto scale = screen ? screen->getZScale(_pos.y) : 1;
 		_animation->scale(scale);
 
 		if (!_stopped && _phase >= 0 && _phase < _frames) {
@@ -305,9 +303,8 @@ Common::Point Character::animationPosition() const {
 	return pos;
 }
 
-
 void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
-	if (!_enabled || !visible()|| !_animation)
+	if (!_enabled || !visible() || !_animation)
 		return;
 
 	pos += animationPosition();
@@ -326,8 +323,8 @@ void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 
 int Character::z() const {
 	int y = _pos.y + _animationPos.y;
-	//fixme: add temp var : _movePos?
-	//debug("char z = %d", y);
+	// fixme: add temp var : _movePos?
+	// debug("char z = %d", y);
 	return g_system->getHeight() - y;
 }
 
@@ -339,7 +336,7 @@ void Character::reset() {
 	_frames = 0;
 }
 
-void Character::setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ) {
+void Character::setFog(Graphics::ManagedSurface *surface, int minZ, int maxZ) {
 	_fog.reset(surface);
 	_fogMinZ = minZ;
 	_fogMaxZ = maxZ;
