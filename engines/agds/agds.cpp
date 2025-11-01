@@ -163,9 +163,10 @@ bool AGDSEngine::load() {
 	}
 	{
 		Common::ScopedPtr<Common::File> file(new Common::File());
-		file->open("jokes.chr");
-		_jokes.reset(new Character(this, "jokes"));
-		_jokes->load(*file);
+		if (file->open("jokes.chr")) {
+			_jokes.reset(new Character(this, "jokes"));
+			_jokes->load(*file);
+		}
 	}
 
 	return true;
