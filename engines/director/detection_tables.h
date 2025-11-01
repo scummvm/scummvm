@@ -9503,7 +9503,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
 
 	// Korean title is 수학교실
-	WINDEMO1_l("mathsworkshop", "Preview", "Math.exe", "t:5e2d026147a09b063a2e8db2dba0ab94", 10146326, Common::KO_KOR, 702),
+	WINDEMO2_l("mathsworkshop", "Preview", "Math.exe",	   "t:5e2d026147a09b063a2e8db2dba0ab94", 10146326,
+										   "gorilla1.avi", "f:93c4103cf645bdaaf03df5259cfd17de",   966656, Common::KO_KOR, 702),
 
 	// Max i Duch Zamku
 	// Other languages are D4
