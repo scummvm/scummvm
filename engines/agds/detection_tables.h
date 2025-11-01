@@ -49,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("gfx1.grp", "c8e711bc01b16cd82849cbd996d02642", 381768360),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
 
