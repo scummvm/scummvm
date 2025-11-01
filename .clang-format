@@ -19,5 +19,5 @@
     SpacesInAngles: false,
     SpacesInParentheses: false,
     SpacesInSquareBrackets: false,
-    Standard: c++03,
+    Standard: c++11,
 }
