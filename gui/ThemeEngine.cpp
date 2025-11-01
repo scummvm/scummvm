@@ -1691,7 +1691,7 @@ const Graphics::Font *ThemeEngine::getFont(FontStyle font) const {
 }
 
 int ThemeEngine::getFontHeight(FontStyle font) const {
-	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() : 0;
+	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() + 2 : 0;
 }
 
 int ThemeEngine::getStringWidth(const Common::U32String &str, FontStyle font) const {
