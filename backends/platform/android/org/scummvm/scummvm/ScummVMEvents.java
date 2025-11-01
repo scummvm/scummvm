@@ -12,7 +12,8 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.window.OnBackInvokedCallback;
+import android.window.BackEvent;
+import android.window.OnBackAnimationCallback;
 import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.NonNull;
@@ -130,13 +131,40 @@ public class ScummVMEvents implements
 		}
 	}
 
-	@RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU)
-	private class OnBackInvoked implements OnBackInvokedCallback {
+	@RequiresApi(android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+	private class OnBackInvoked implements OnBackAnimationCallback {
+		@Override
+		public void onBackStarted(@NonNull BackEvent backEvent) {
+			final int typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
+			final boolean fired = !_handler.hasMessages(typeOfLongPressMessage);
+			_handler.removeMessages(typeOfLongPressMessage);
+			_handler.sendMessageDelayed(_handler.obtainMessage(typeOfLongPressMessage), _longPressTimeout);
+		}
+
+		@Override
+		public void onBackCancelled() {
+			_handler.removeMessages(MSG_SBACK_LONG_PRESS);
+		}
+
 		@Override
 		public void onBackInvoked() {
+			if (_activity.isKeyboardOverlayShown() &&
+				_activity.isScreenKeyboardShown()) {
+				_activity.hideScreenKeyboard();
+				return;
+			}
+
+			final int typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
+			final boolean fired = !_handler.hasMessages(typeOfLongPressMessage);
+			_handler.removeMessages(typeOfLongPressMessage);
+
+			if (fired) {
+				return;
+			}
+
 			//Log.d(ScummVM.LOG_TAG,"Sending back key");
 			ScummVMEvents.this._scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK,
-					0, 0, 0, 0);
+				0, 0, 0, 0);
 			ScummVMEvents.this._scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK,
 					0, 0, 0, 0);
 		}
@@ -169,8 +197,15 @@ public class ScummVMEvents implements
 		_doubleTapMode = false;
 		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			activity.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvoked());
+		/*
+		 * Register our OnBackInvokedCallback starting with Baklava
+		 * Before, it's not enabled by default.
+		 * We don't want to get it too soon, because OnBackAnimationCallback (which we require to
+		 * handle the long press on back) is not available in Tiramisu when the feature was introduced.
+		 */
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+			activity.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+				OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvoked());
 		}
 	}
 
@@ -373,7 +408,7 @@ public class ScummVMEvents implements
 				}
 			}
 
-			if (ScummVMActivity.keyboardWithoutTextInputShown ) {
+			if (_activity.isKeyboardOverlayShown()) {
 				if (action == KeyEvent.ACTION_DOWN) {
 					return true;
 				} else if (action == KeyEvent.ACTION_UP) {
@@ -643,7 +678,7 @@ public class ScummVMEvents implements
 //			Log.d(ScummVM.LOG_TAG,prefixDBGMsg + "Single touch event:: x: " + xPos + " y: " + yPos);
 //		}
 
-		if (ScummVMActivity.keyboardWithoutTextInputShown
+		if (_activity.isKeyboardOverlayShown()
 		    && _activity.isScreenKeyboardShown()
 		    && _activity.getScreenKeyboard().getY() <= event.getY() ) {
 			event.offsetLocation(-_activity.getScreenKeyboard().getX(), -_activity.getScreenKeyboard().getY());
