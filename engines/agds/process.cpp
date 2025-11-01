@@ -422,6 +422,15 @@ ProcessExitCode Process::resume() {
 			case 8013:
 				op = kPushImm8_2;
 				break;
+			case 8043:
+				op = kSetGlobal;
+				break;
+			case 8137:
+				op = kSetStringSystemVariable;
+				break;
+			case 8193:
+				op = kLoadMouse;
+				break;
 			default:
 				break;
 			}
