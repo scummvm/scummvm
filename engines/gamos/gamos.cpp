@@ -1710,7 +1710,7 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 		if (!unk1.field_2.empty()) {
 			byte id1 = e.t;
 			e.t = unk1.field_2[ oid ] >> 4;
-			preprocessData(8 + e.t, &e);
+			preprocessData(8 + id1, &e);
 		}
 	}
 
