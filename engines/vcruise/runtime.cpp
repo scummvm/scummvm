@@ -2725,7 +2725,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
 			Graphics::Palette p(_animDecoder->getPalette(), 256);
-			_gameSection.surf->simpleBlitFrom(*surface, copyRect, copyRect.origin(), &p);
+			_gameSection.surf->simpleBlitFrom(*surface, copyRect, copyRect.origin(), Graphics::FLIP_NONE, false, 255, &p);
 			drawSectionToScreen(_gameSection, copyRect);
 		}
 

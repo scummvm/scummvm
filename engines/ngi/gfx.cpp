@@ -703,6 +703,7 @@ Bitmap::Bitmap() {
 	_flags = 0;
 	_flipping = Graphics::FLIP_NONE;
 	_surface = nullptr;
+	_mask = nullptr;
 }
 
 Bitmap::Bitmap(const Bitmap &src) {
@@ -714,14 +715,27 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_width = src._width;
 	_height = src._height;
 	_flipping = src._flipping;
-	_surface = new Graphics::ManagedSurface();
-	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-	_surface->copyFrom(*src._surface);
+	_surface = nullptr;
+	_mask = nullptr;
+	if (src._surface) {
+		_surface = new Graphics::ManagedSurface();
+		_surface->copyFrom(*src._surface);
+	}
+	if (src._mask) {
+		_mask = new Graphics::ManagedSurface();
+		_mask->copyFrom(*src._mask);
+	}
 }
 
 Bitmap::~Bitmap() {
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+	if (_mask) {
+		_mask->free();
+		delete _mask;
+	}
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -747,13 +761,16 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (!_surface)
 		return false;
 
-	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
+	if (_mask)
+		return (*((uint8 *)_mask->getBasePtr(x - _x, y - _y)) != 0);
+
+	if (_surface->hasTransparentColor())
+		return _surface->getPixel(x - _x, y - _y) != _surface->getTransparentColor();
+
+	return true;
 }
 
 void Bitmap::decode(byte *pixels, const Palette &palette) {
-	_surface = new Graphics::ManagedSurface();
-	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
 		putDibRB(pixels, palette);
 	else
@@ -783,14 +800,14 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	if (y1 < 0)
 		y1 = 0;
 
-	uint32 alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
-
-	g_nmi->_backgroundSurface.blendBlitFrom(*_surface, sub, Common::Point(x1, y1), _flipping, alphac);
+	if (_mask)
+		g_nmi->_backgroundSurface.maskBlitFrom(*_surface, *_mask, sub, Common::Point(x1, y1), _flipping, false, alpha);
+	else
+		g_nmi->_backgroundSurface.simpleBlitFrom(*_surface, sub, Common::Point(x1, y1), _flipping, false, alpha);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
-	uint32 *curDestPtr;
+void Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 	int endy;
 	int x;
 	int start1;
@@ -802,8 +819,15 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 
 	if (!palette.size) {
 		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
-		return false;
+		return;
 	}
+
+	_surface = new Graphics::ManagedSurface();
+	_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+	_mask = new Graphics::ManagedSurface();
+	_mask->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+
+	convertPalette(palette);
 
 	debugC(8, kDebugDrawing, "Bitmap::putDibRB()");
 
@@ -854,10 +878,10 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 				if (fillLen > 0 || start1 >= 0) {
 					if (x <= _width + 1 || (fillLen += _width - x + 1, fillLen > 0)) {
 						if (y <= endy) {
-							int bgcolor = palette.pal[(pixel >> 8) & 0xff];
-							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+							uint8 *curDestPtr = (uint8 *)_surface->getBasePtr(start1, y);
+							uint8 *curMaskPtr = (uint8 *)_mask->getBasePtr(start1, y);
 							fillLen = MIN(_width - start1, fillLen);
-							colorFill(curDestPtr, fillLen, bgcolor);
+							colorFill(curDestPtr, curMaskPtr, (pixel >> 8) & 0xff, fillLen);
 						}
 					}
 				}
@@ -882,19 +906,17 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 				}
 
 				if (y <= endy) {
-					curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
+					uint8 *curDestPtr = (uint8 *)_surface->getBasePtr(start1, y);
+					uint8 *curMaskPtr = (uint8 *)_mask->getBasePtr(start1, y);
 					fillLen = MIN(_width - start1, fillLen);
-					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, palette);
+					paletteFill(curDestPtr, curMaskPtr, (byte *)srcPtr2, fillLen);
 				}
 			}
 		}
 	}
-
-	return false;
 }
 
 void Bitmap::putDibCB(byte *pixels, const Palette &palette) {
-	uint32 *curDestPtr;
 	int endx;
 	int endy;
 	int bpp;
@@ -920,20 +942,47 @@ void Bitmap::putDibCB(byte *pixels, const Palette &palette) {
 	int starty = 0;
 	int startx = 0;
 
-	if (_flags & 0x1000000) {
+	if (cb05_format) {
+		_surface = new Graphics::ManagedSurface();
+		_surface->create(_width, _height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+
+		if (_flags & 0x1000000)
+			_surface->setTransparentColor(0);
+
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, palette, cb05_format);
+			uint16 *curDestPtr = (uint16 *)_surface->getBasePtr(startx, y);
+			copier16(curDestPtr, srcPtr, endx - startx + 1);
 		}
+
+		// Converting from true colour is slow compared to converting
+		// from paletted surfaces, so we do this up-front.
+		_surface->convertToInPlace(g_system->getScreenFormat());
 	} else {
+		_surface = new Graphics::ManagedSurface();
+		_surface->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+
+		if (_flags & 0x1000000)
+			_surface->setTransparentColor(_flags & 0xff);
+		convertPalette(palette);
+
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
-			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copier(curDestPtr, srcPtr, endx - startx + 1, palette, cb05_format);
+			uint8 *curDestPtr = (uint8 *)_surface->getBasePtr(startx, y);
+			copier8(curDestPtr, srcPtr, endx - startx + 1);
 		}
 	}
 }
 
-void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
+void Bitmap::convertPalette(const Palette &palette) {
+	constexpr Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	for (uint i = 0; i < palette.size; i++) {
+		byte col[3];
+		format.colorToRGB(palette.pal[i] & 0xffff, col[0], col[1], col[2]);
+		_surface->setPalette(col, i, 1);
+	}
+}
+
+void Bitmap::colorFill(uint8 *dest, uint8 *mask, byte color, int len) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -944,17 +993,13 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 		colorFill = ptrfillColor16bit;
 	}
 #endif
-	byte r, g, b;
-
-	g_nmi->_origFormat.colorToRGB(color, r, g, b);
-
-	uint32 c = MS_ARGB(0xff, r, g, b);
-
-	for (int i = 0; i < len; i++)
-		*dest++ = c;
+	for (int i = 0; i < len; i++) {
+		*dest++ = color;
+		*mask++ = 0xff;
+	}
 }
 
-void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palette) {
+void Bitmap::paletteFill(uint8 *dest, uint8 *mask, byte *src, int len) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -966,93 +1011,47 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	}
 #endif
 
-	byte r, g, b;
-
 	for (int i = 0; i < len; i++) {
-		g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
-
-		*dest++ = MS_ARGB(0xff, r, g, b);
+		*dest++ = *src++;
+		*mask++ = 0xff;
 	}
 }
 
-void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, const Palette &palette, bool cb05_format) {
+void Bitmap::copier8(uint8 *dest, byte *src, int len) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
-			if (cb05_format)
-				copierKeyColor = ptrcopier16bitKeycolorAlpha;
-			else
-				copierKeyColor = ptrcopierKeycolorAlpha;
+			copier = ptrcopierWithPaletteAlpha;
 		} else {
 			copier = 0;
 		}
-	} else if (cb05_format) {
-		copierKeyColor = ptrcopier16bitKeycolor;
-	} else {
-		copierKeyColor = ptrkeyColor16bit;
-	}
-#endif
-
-	byte r, g, b;
-
-	if (!cb05_format) {
-		for (int i = 0; i < len; i++) {
-			if (*src != keyColor) {
-				g_nmi->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
-				*dest = MS_ARGB(0xff, r, g, b);
-			}
-
-			dest++;
-			src++;
-		}
-	} else {
-		int16 *src16 = (int16 *)src;
-
-		for (int i = 0; i < len; i++) {
-			if (*src16 != 0) {
-				g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
-				*dest = MS_ARGB(0xff, r, g, b);
-			}
-
-			dest++;
-			src16++;
-		}
-	}
-}
-
-void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bool cb05_format) {
-#if 0
-	if (blendMode) {
-		if (blendMode == 1) {
-			if (cb05_format)
-				copier = ptrcopier16bitAlpha;
-			else
-				copier = ptrcopierWithPaletteAlpha;
-		} else {
-			copier = 0;
-		}
-	} else if (cb05_format) {
-		copier = ptrcopier16bit;
 	} else {
 		copier = ptrcopierWithPalette;
 	}
 #endif
 
-	byte r, g, b;
+	for (int i = 0; i < len; i++) {
+		*dest++ = *src++;
+	}
+}
 
-	if (!cb05_format) {
-		for (int i = 0; i < len; i++) {
-			g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
-
-			*dest++ = MS_ARGB(0xff, r, g, b);
+void Bitmap::copier16(uint16 *dest, byte *src, int len) {
+#if 0
+	if (blendMode) {
+		if (blendMode == 1) {
+			copier = ptrcopier16bitAlpha;
+		} else {
+			copier = 0;
 		}
 	} else {
-		int16 *src16 = (int16 *)src;
+		copier = ptrcopier16bit;
+	}
+#endif
 
-		for (int i = 0; i < len; i++) {
-			g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
-			*dest++ = MS_ARGB(0xff, r, g, b);
-		}
+	int16 *src16 = (int16 *)src;
+
+	for (int i = 0; i < len; i++) {
+		*dest++ = READ_LE_UINT16(src16++);
 	}
 }
 
@@ -1181,17 +1180,21 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 }
 
 void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
-	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_nmi->_backgroundSurface.getBasePtr(x1, y);
+	// TODO: Let the backend handle this?
+	const Graphics::PixelFormat &format = g_nmi->_backgroundSurface.format;
 
+	for (int y = y1; y < y2; y++) {
 		for (int x = x1; x < x2; x++) {
-			uint32 color = *ptr;
-			color = (((color >> 24) & 0xff) * alpha / 0xff) << 24 |
-					(((color >> 16) & 0xff) * alpha / 0xff) << 16 |
-					(((color >>  8) & 0xff) * alpha / 0xff) <<  8 |
-					(color & 0xff);
-			*ptr = color;
-			ptr++;
+			uint32 color = g_nmi->_backgroundSurface.getPixel(x, y);
+
+			uint8 a, r, g, b;
+			format.colorToARGB(color, a, r, g, b);
+			r = (r * alpha) / 0xff;
+			g = (g * alpha) / 0xff;
+			b = (b * alpha) / 0xff;
+			color = format.ARGBToColor(a, r, g, b);
+
+			g_nmi->_backgroundSurface.setPixel(x, y, color);
 		}
 	}
 }
