@@ -385,7 +385,6 @@ else ifeq ($(platform), emscripten)
    CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
    USE_LIBCO  = 0
-   USE_CLOUD = 0
 
 # Windows MSVC 2017 all architectures
 else ifneq (,$(findstring windows_msvc2017,$(platform)))

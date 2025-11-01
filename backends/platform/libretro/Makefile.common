@@ -105,7 +105,7 @@ USE_JPEG          = 1
 
 USE_FREETYPE2     = 1
 
-USE_CLOUD        ?= 0
+USE_CLOUD        ?=
 
 # Components (defines handled by engines.awk)
 USE_THEORADEC    ?= 1
