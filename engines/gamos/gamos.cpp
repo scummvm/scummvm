@@ -1406,7 +1406,6 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 			switch (ate.t) {
 			case 0: {
 				uint16 rndval = rndRange16(a.num_act_10e);
-				rnd();
 				for (ActEntry e : a.act_10end[rndval]) {
 					retval += processData(e, absolute);
 					if (_needReload)
@@ -1988,10 +1987,10 @@ bool GamosEngine::FUN_00402fb4() {
 						bool tmp = false;
 						for (int i = 0; i < 8; i++) {
 							if ((PTR_00417214->unk1 >> 8) & (1 << i)) {
-								DAT_004173ec = ((i & 3) + ivr8) & 3;
 								int fncid = ((i & 3) + ivr8) & 3;
 								if (i > 3)
 									fncid += 4;
+								DAT_004173ec = fncid;
 
 								DAT_004177ff = false;
 								_preprocDataId = fncid;
