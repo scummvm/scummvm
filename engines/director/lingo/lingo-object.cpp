@@ -144,15 +144,22 @@
 #include "director/lingo/xlibs/x/xsoundxfcn.h"
 #include "director/lingo/xlibs/x/xwin.h"
 #include "director/lingo/xlibs/y/yasix.h"
+#include "director/lingo/xtras/a/audio.h"
+#include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/directsound.h"
+#include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/filextra.h"
 #include "director/lingo/xtras/keypoll.h"
 #include "director/lingo/xtras/masterapp.h"
+#include "director/lingo/xtras/m/mui.h"
+#include "director/lingo/xtras/m/mui.h"
 #include "director/lingo/xtras/openurl.h"
 #include "director/lingo/xtras/oscheck.h"
 #include "director/lingo/xtras/qtvrxtra.h"
+#include "director/lingo/xtras/r/registryreader.h"
 #include "director/lingo/xtras/rtk.h"
 #include "director/lingo/xtras/scrnutil.h"
+#include "director/lingo/xtras/s/smacker.h"
 #include "director/lingo/xtras/timextra.h"
 #include "director/lingo/xtras/xsound.h"
 
@@ -232,11 +239,13 @@ static const struct XLibProto {
 	XLIBDEF(AiffXObj,			kXObj,			400),	// D4
 	XLIBDEF(AppleCDXObj,		kXObj,			300),	// D3
 	XLIBDEF(AskUser,			kXObj,			400),	// D4
+	XLIBDEF(AudioXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(BackdropXObj,		kXObj,			400),	// D4
 	XLIBDEF(BarakeObj,			kXObj,			400),	// D4
 	XLIBDEF(BatQT,				kXObj,			400),	// D4
 	XLIBDEF(BIMXObj,			kXObj,			400),	// D4
 	XLIBDEF(BlitPictXObj,		kXObj,			400),	// D4
+	XLIBDEF(BudAPIXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(CDROMXObj,			kXObj,			200),	// D2
 	XLIBDEF(CloseBleedWindowXCMD,kXObj,			300),	// D3
 	XLIBDEF(ColorXObj,			kXObj,			400),	// D4
@@ -252,6 +261,7 @@ static const struct XLibProto {
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
+	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4
 	XLIBDEF(Ednox,				kXObj,			300),	// D3
 	XLIBDEF(EventQXObj,			kXObj,			400),	// D4
@@ -302,6 +312,7 @@ static const struct XLibProto {
 	XLIBDEF(MovieIdxXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
 	XLIBDEF(MSFile,             kXObj,          400),   // D4
+	XLIBDEF(MuiXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(MystIsleXObj,		kXObj,			400),	// D4
 	XLIBDEF(OSCheckXtra,		kXtraObj,		400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
@@ -324,10 +335,12 @@ static const struct XLibProto {
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3
 	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
+	XLIBDEF(RegistryReaderXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3
 	XLIBDEF(RolloverToolkitXtra,kXtraObj,		500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
+	XLIBDEF(SmackerXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SmallUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4

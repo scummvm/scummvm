@@ -666,6 +666,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gp2006",				"Grand Prix 2006 & Auto Directory" },
 	{ "guns",				"Multimedia Guns" },
 	{ "haight",				"Haight-Ashbury in the Sixties" },
+	{ "hestonbible",		"Charlton Heston's Voyage Through the Bible" },
 	{ "heuther",			"Understanding Pathophysiology, 3rd Edition" },
 	{ "hikaruhana",			"Shining Flower: Hikaruhana" },					// 光る花
 	{ "hirezaudio",			"Hi Rez Audio" },
@@ -4629,6 +4630,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1t_l("henachocogala", "Itachoco Taizen 1 rerelease", "galakure-", "432fbbe4d75650580c1314e741e6a583", 290434, Common::JA_JPN, 402),
 
 	MACGAME1t_l("henachocotaizen", "", "LetterShop0.0", "b3fefa664154f160a32a7fdfcc83c047", 292680, Common::JA_JPN, 402),
+
+	WINGAME1f("hestonbible", "Old Testament", "OLDTEST.EXE", "t:56f332fa0190a21d697911887fad0ab5", 1003475, 404, GF_32BPP),
+	MACGAME1f("hestonbible", "Old Testament", "Bible Old Testament 1.0", "rt:49604f6c775663828a91b0999fe4f2aa", 483490, 404, GF_32BPP),
+	WINGAME1f("hestonbible", "New Testament", "ALPHA/NEWTEST.EXE", "t:7e7c9b3fe5aefe59ab930fb7ca47bd4a", 1319489, 404, GF_32BPP),
+	MACGAME1f("hestonbible", "New Testament", "ALPHA/New Testament 1.0", "rt:efeb87cee862bb7ef8ea21f4cbf46aa8", 483490, 404, GF_32BPP),
 
 	// Mac version is D3
 	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 404),
@@ -8605,6 +8611,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 								 "DATA/BREAKER.dxr",		 "f:12e7762062fab71450081643e1d15c5e",  8466950, 650),
 	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989859, Common::NL_BEL, 600),
 	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989785, Common::NL_NLD, 600),
+
+	MACGAME1("ispyspooky", "", "Play I Spy Spooky Mansion", "rt:66f2146acecb09b969c599d5ec854e5e", 115778, 602),
+	WINGAME1("ispyspooky", "", "_Spooky.exe", "t:b57f9500220d32301f83c6b20b02fb96", 1568954, 602),
 
 	MACGAME1("jmmg", "", "Just Me and My Grandpa", "66f1a7078033867061b05f3789c6e5de", 1032378, 602),
 	WINGAME1("jmmg", "", "JMMG.EXE", "t:9801c1217842b39b25e42584cf5f8548", 1704089, 600),

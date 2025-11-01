@@ -176,15 +176,21 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xsoundxfcn.o \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
+	lingo/xtras/b/budapi.o \
+	lingo/xtras/a/audio.o \
 	lingo/xtras/directsound.o \
+	lingo/xtras/d/displayres.o \
 	lingo/xtras/filextra.o \
 	lingo/xtras/keypoll.o \
 	lingo/xtras/masterapp.o \
+	lingo/xtras/m/mui.o \
 	lingo/xtras/openurl.o \
 	lingo/xtras/oscheck.o \
 	lingo/xtras/qtvrxtra.o \
+	lingo/xtras/r/registryreader.o \
 	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
+	lingo/xtras/s/smacker.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o
 
