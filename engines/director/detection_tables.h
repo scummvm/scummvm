@@ -891,6 +891,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "princerave",			"Prince: Rave Un2 the Joy Fantastic" },
 	{ "relaxation",			"Solitudes: Natural Relaxation" },
 	{ "relaxplayer",		"Solitudes: Natural Relaxation Audio Player" },
+	{ "rednex",				"Inbred with Rednex" },
 	{ "royksoppam",			"Röyksopp: Melody A.M." },
 	{ "sarahsurfacing",		"Sarah McLachlan: Surfacing" },
 	{ "smashchillin",		"Smash Hits: Chillin' Out Summer 2001" },
@@ -1612,6 +1613,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "encartaatlas2000",   "Microsoft Encarta Interactive World Atlas 2000" },
 	{ "exoticjapan",		"Exotic Japan: A Guide to Japanese Culture and Language" },
 	{ "famdoc3",			"The Family Doctor, 3rd Edition" },
+	{ "encyclopediasoccer", "Encyclopedia of Soccer"},
 	{ "macworldexpo92",		"Macworld Expo CD Boston 1992" },
 	{ "manhole",			"The Manhole" },
 	{ "mazebrew",			"MazeBrew" },
@@ -2151,6 +2153,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO2("msword", "v5 Demo", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 204030,
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
 
+	// MacFormat Format #40
+	WINDEMO1("rednex", "Demo", "REDNEX.EXE", "t:e1d181303fd8c2aed5cd1d69b0c985e7", 696877, 0),
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "r:3eb3598b7f6bb09de4dd31aca3683d8f", 370898, 200),
 
@@ -2664,6 +2668,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("encarta95", "", "Installer Files/Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385729, 313),
 	WINDEMO1("encarta95", "Demo", "ENDEM95.EXE", "61d63911d437806fd473ffc31ddfc53d", 12109799, 311),
 
+	// MacFormat #40
+	WINDEMO1("encyclopediasoccer", "Demo", "SOCCER.EXE", "t:d942e4d11e7d0a6d4da7659def16d179", 690039, 310),
 	// HyperCard application, calls movie using external MacroMind Player
 	MACGAME2("exoticjapan", "", "MacroMind Player", "7f443f2e63fd497a9ad85b10dc880a91", 2196398,
 								"Exotic Japan Stack", "28bdf606d2fbec537716ceae5edfaa93", 878941, 313),
@@ -7285,6 +7291,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lovedisk", "", "MAP/LOVEDISK", "b69f9cb79da512852ed383a1cfef14b9", 719005, 501),
 
+	// MacFormat Format #40
+	MACDEMO1("luxor","Demo", "Secrets®PPC",  "r:d6c013a8b640b92f07737d38d85738f4", 60068, 0),
 	MACGAME1("luxor", "", "Secrets PPC", "r:0fb300fd8a82c7a2d264cea1736bd124", 96616, 505),
 	WINGAME2("luxor", "", "SECRETS.EXE", "t:7f1d08293b07dbdff264858dd38ac6f0", 938231,
 						  "SETUP.DIR",	 "f:4eb814e34c5c7f62a3e7edf75f550c50", 113900, 501),
