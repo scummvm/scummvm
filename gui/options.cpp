@@ -1689,7 +1689,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
 #ifdef USE_HTTP
+#ifndef EMSCRIPTEN // No shader updates on Emscripten, they are always loaded directly from server
 	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
+#endif
 #endif
 
 	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
