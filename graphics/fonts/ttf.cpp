@@ -79,11 +79,15 @@ namespace Graphics {
 
 namespace {
 
-inline int ftCeil26_6(FT_Pos x) {
+static inline int ftFloor26_6(FT_Pos x) {
+	return (x) / 64;
+}
+
+static inline int ftCeil26_6(FT_Pos x) {
 	return (x + 63) / 64;
 }
 
-inline int divRoundToNearest(int dividend, int divisor) {
+static inline int divRoundToNearest(int dividend, int divisor) {
 	return (dividend + (divisor / 2)) / divisor;
 }
 
@@ -332,12 +336,21 @@ bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag di
 		break;
 	}
 
+#ifndef CALCULATE_OWN_METRICS
+	_ascent = ftCeil26_6(_face->size->metrics.ascender);
+	_descent = ftFloor26_6(_face->size->metrics.descender);
+	_width = ftCeil26_6(_face->size->metrics.max_advance);
+	_height = ftCeil26_6(_face->size->metrics.height);
+#else
 	FT_Fixed yScale = _face->size->metrics.y_scale;
 	_ascent = ftCeil26_6(FT_MulFix(_face->ascender, yScale));
-	_descent = ftCeil26_6(FT_MulFix(_face->descender, yScale));
+	_descent = ftFloor26_6(FT_MulFix(_face->descender, yScale));
 
 	_width = ftCeil26_6(FT_MulFix(_face->max_advance_width, _face->size->metrics.x_scale));
-	_height = _ascent - _descent + 1;
+	// The real difference will be here because FT does a round while we do a ceil
+	// This would make sure we have enough room for the glyphs
+	_height = ftCeil26_6(FT_MulFix(_face->height, yScale));
+#endif
 
 #if FAKE_BOLD > 0
 	// Width isn't modified when we can't fake bold
