@@ -68,7 +68,7 @@ class GuiObject;
 
 
 // Height of a single text line
-#define kLineHeight	(g_gui.getFontHeight() + 2)
+#define kLineHeight	(g_gui.getFontHeight() + 3)
 
 
 
