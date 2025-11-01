@@ -92,6 +92,7 @@ private:
 	bool							_persistent;
 	bool							_allowInitialise;
 	bool							_ignoreRegion;
+	bool							_v2;
 
 private:
 	void freeRotated();
@@ -99,7 +100,7 @@ private:
 	void createRotated();
 
 public:
-	Object(const Common::String &name, Common::SeekableReadStream &stream);
+	Object(const Common::String &name, Common::SeekableReadStream &stream, bool v2);
 	~Object();
 
 	bool allowInitialise() const {

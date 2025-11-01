@@ -22,9 +22,11 @@
 #ifndef AGDS_OPCODE_H
 #define AGDS_OPCODE_H
 
+#include "common/scummsys.h"
+
 namespace AGDS {
 
-enum Opcode {
+enum Opcode : uint8 {
 	kEnter							= 5,
 	kJumpZImm16						= 8,
 	kJumpImm16						= 9,

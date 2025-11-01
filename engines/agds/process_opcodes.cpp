@@ -78,8 +78,8 @@ void Process::enter(uint16 magic, uint16 size) {
 	uint16 resCount = next16();
 	uint16 unk4 = next16();
 	debug("resource block %04x %04x %04x %04x,"
-	      " resources table with %u entries",
-	      unk1, unk2, unk3, unk4, resCount);
+	      " resources table at %04x with %u entries",
+	      unk1, unk2, unk3, unk4, resOffset, resCount);
 
 	_object->readStringTable(resOffset, resCount);
 }
