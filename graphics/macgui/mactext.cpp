@@ -30,6 +30,8 @@ namespace Graphics {
 enum {
 	kConScrollStep = 12,
 
+	kConHPadding = 15,
+
 	kCursorMaxHeight = 100
 };
 
@@ -831,7 +833,7 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	_contentIsDirty = true;
 
 	if (_editable) {
-		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height());
+		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height() + kConHPadding);
 
 		_cursorRow = MAX<int>(getLineCount() - 1, 0);
 		_cursorCol = _canvas.getLineCharWidth(_cursorRow);
