@@ -401,7 +401,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Disable unused features / components
-	disableComponents(setup.components);
+	if (!setup.tests)
+		disableComponents(setup.components);
 
 	// Handle hard-coded component logic
 	fixupComponents(setup);
@@ -2014,7 +2015,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// In case we create the main ScummVM project files we will need to
 	// generate engines/plugins_table.h & engines/detection_table.h
-	if (!setup.tests && !setup.devTools) {
+	if (!setup.devTools) {
 		createEnginePluginsTable(setup);
 	}
 }
@@ -2391,7 +2392,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				FileList files = listDirectory(folder);
 
 				// Add to list of test folders
-				testDirs.push_back(folder);
+				if (shouldInclude.top()) {
+					testDirs.push_back(folder);
+				}
 
 				for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
 					if (f->isDirectory)

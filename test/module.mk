@@ -9,7 +9,7 @@ TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/common/formats/*.h $(sr
 TEST_LIBS    :=
 
 ifdef POSIX
-TEST_LIBS += test/null_osystem.o \
+TEST_LIBS += test/system/null_osystem.o \
 	backends/fs/posix/posix-fs-factory.o \
 	backends/fs/posix/posix-fs.o \
 	backends/fs/posix/posix-iostream.o \
@@ -19,7 +19,7 @@ TEST_LIBS += test/null_osystem.o \
 endif
 
 ifdef WIN32
-TEST_LIBS += test/null_osystem.o \
+TEST_LIBS += test/system/null_osystem.o \
 	backends/fs/windows/windows-fs-factory.o \
 	backends/fs/windows/windows-fs.o \
 	backends/fs/abstract-fs.o \
@@ -29,7 +29,7 @@ TEST_LIBS += test/null_osystem.o \
 endif
 
 ifdef USE_TINYGL
-TESTS += $(srcdir)/test/tgraphics/tinygl*.h
+TESTS += $(srcdir)/test/graphics/tinygl*.h
 endif
 
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
@@ -90,7 +90,7 @@ test/runner.cpp: $(TESTS) $(srcdir)/test/module.mk
 
 clean: clean-test
 clean-test:
-	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat test/null_osystem.o
+	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat test/system/null_osystem.o
 	-rmdir test/engine-data
 
 test/engine-data/encoding.dat: $(srcdir)/dists/engine-data/encoding.dat

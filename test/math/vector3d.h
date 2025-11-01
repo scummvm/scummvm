@@ -60,7 +60,7 @@ public:
 		Math::Vector3d v1(1, 0, 2);
 		Math::Vector3d v2(0, 5, 3);
 
-		Math::Vector3d int1 = Math::Vector3d::interpolate(v1, v2, 0.1);
+		Math::Vector3d int1 = Math::Vector3d::interpolate(v1, v2, 0.1f);
 		TS_ASSERT_DELTA(int1.x(), 0.9, 0.0001);
 		TS_ASSERT_DELTA(int1.y(), 0.5, 0.0001);
 		TS_ASSERT_DELTA(int1.z(), 2.1, 0.0001);

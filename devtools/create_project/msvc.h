@@ -100,7 +100,7 @@ protected:
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
 	 */
-	std::string getPreBuildEvent() const;
+	std::string getPreBuildEvent(const BuildSetup &setup) const;
 
 	/**
 	* Get the command line for the test generator

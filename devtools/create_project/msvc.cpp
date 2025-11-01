@@ -249,13 +249,13 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	}
 }
 
-std::string MSVCProvider::getPreBuildEvent() const {
+std::string MSVCProvider::getPreBuildEvent(const BuildSetup &setup) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 	          "echo.\n"
-	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(SolutionDir)&quot;\n"
+	          "@call &quot;$(SolutionDir)" + setup.filePrefix + "/devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/" + setup.filePrefix + "&quot; &quot;$(SolutionDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
@@ -268,7 +268,10 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	for (StringList::const_iterator it = setup.testDirs.begin(); it != setup.testDirs.end(); ++it)
 		target += " $(SolutionDir)" + *it + "*.h";
 
-	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
+	std::string cmdLine = "";
+	cmdLine = "if not exist \"$(SolutionDir)test\\runner\" mkdir \"$(SolutionDir)test\\runner\"\n"
+	          "python3 &quot;$(SolutionDir)" + setup.filePrefix + "/test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test/runner/test_runner.cpp&quot;" + target;
+	return cmdLine;
 }
 
 std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup, bool isRelease) const {
@@ -277,7 +280,7 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 	cmdLine = "@echo off\n"
 	          "echo Executing Post-Build script...\n"
 	          "echo.\n"
-	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
+	          "@call &quot;$(SolutionDir)" + setup.filePrefix + "/devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)" + setup.filePrefix + "&quot; &quot;$(OutDir)&quot; ";
 
 	cmdLine += setup.getSDLName();
 

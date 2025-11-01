@@ -167,7 +167,9 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Output auto-generated test runner
 	if (setup.tests) {
 		project << "\t<ItemGroup>\n";
-		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"test/runner/test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/system/null_osystem.cpp\" />\n";
+		project << "\t\t<ClCompile Remove=\"" << setup.srcDir << "/backends/base-backend.cpp\" />\n"; // symbols are already defined in null_osystem.cpp
 		project << "\t</ItemGroup>\n";
 	}
 
@@ -186,6 +188,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
 		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
 		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
+		        << "\t\t\t<Copy SourceFiles=\"" + setup.filePrefix + "/dists/engine-data/encoding.dat\" DestinationFolder=\"$(ProjectDir)test/engine-data\" SkipUnchangedFiles=\"true\" />\n"
 		        << "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
 		        << "\t\t</Target>\n";
 	}
@@ -319,7 +322,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
 			        << "\t\t\t<Message>Generate revision</Message>\n"
-			        << "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
+			        << "\t\t\t<Command>" << getPreBuildEvent(setup) << "</Command>\n"
 			        << "\t\t</PreBuildEvent>\n";
 
 			// Copy data files to the build folder
@@ -363,8 +366,12 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 			   << "\t<PropertyGroup>\n"
 			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 			   << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
-			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
-			   << "\t</PropertyGroup>\n"
+			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n";
+
+	if (_msvcVersion.version >= 17 && setup.useVcpkg)
+		properties << "\t\t<VcpkgEnableManifest>true</VcpkgEnableManifest>\n";
+
+	properties << "\t</PropertyGroup>\n"
 			   << "\t<ItemDefinitionGroup>\n"
 			   << "\t\t<ClCompile>\n"
 			   << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
