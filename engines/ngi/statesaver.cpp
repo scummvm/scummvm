@@ -27,6 +27,7 @@
 
 #include "ngi/gameloader.h"
 #include "ngi/objects.h"
+#include "engines/metaengine.h"
 
 namespace NGI {
 
@@ -126,7 +127,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->write(stream.getData(), stream.size());
 
 	uint headerPos = saveFile->pos();
-	FullpipeSavegameHeader header2;
+	ExtendedSavegameHeader header2;
 
 	Common::strcpy_s(header2.id, "SVMCR");
 	header2.version = NGI_SAVEGAME_VERSION;

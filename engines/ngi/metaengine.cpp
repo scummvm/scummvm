@@ -36,6 +36,10 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+
+#include "engines/metaengine.h"
+
+
 namespace NGI {
 
 uint32 NGIEngine::getFeatures() const {
@@ -73,6 +77,14 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const NGI::NGIGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+    SaveStateList listSaves(const char *target) const ;
+    bool removeSaveState(const char *target, int slot) const;
+    SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
+    Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+		return MetaEngine::getSavegameFile(saveGameIdx, "fullpipe");
+	}
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -199,6 +211,17 @@ Common::KeymapArray NGIMetaEngine::initKeymaps(const char *target) const {
 	return keymaps;
 }
 
+SaveStateList NGIMetaEngine::listSaves(const char *target) const {
+    return MetaEngine::listSaves(target);
+}
+
+bool NGIMetaEngine::removeSaveState(const char*target, int slot) const {
+    return MetaEngine::removeSaveState(target,slot);
+}
+
+SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+    return MetaEngine::querySaveMetaInfos(target,slot);
+}
 #if PLUGIN_ENABLED_DYNAMIC(NGI)
 	REGISTER_PLUGIN_DYNAMIC(NGI, PLUGIN_TYPE_ENGINE, NGIMetaEngine);
 #else
