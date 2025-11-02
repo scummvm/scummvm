@@ -64,7 +64,7 @@ CWnd::CWnd() : m_hWnd(this) {
 	_hFont = app->getDefaultFont();
 	_hPen = app->getDefaultPen();
 	_hBrush = app->getDefaultBrush();
-	_hPalette = app->getSystemPalette();
+	_hPalette = app->getSystemDefaultPalette();
 }
 
 CWnd::~CWnd() {

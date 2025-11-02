@@ -664,7 +664,7 @@ CDC::Impl::Impl(CWnd *wndOwner) : m_pWnd(wndOwner), _drawMode(R2_COPYPEN) {
 	_font = app->getDefaultFont();
 	_pen = app->getDefaultPen();
 	_brush = app->getDefaultBrush();
-	_palette = app->getSystemPalette();
+	_palette = app->getSystemDefaultPalette();
 }
 
 CDC::Impl::Impl(HDC srcDc) {
@@ -686,7 +686,7 @@ CDC::Impl::Impl(HDC srcDc) {
 		_font = app->getDefaultFont();
 		_pen = app->getDefaultPen();
 		_brush = app->getDefaultBrush();
-		_palette = app->getSystemPalette();
+		_palette = app->getSystemDefaultPalette();
 	}
 }
 
@@ -771,7 +771,7 @@ HPALETTE CDC::Impl::selectPalette(HPALETTE pal, bool bForceBackground) {
 
 	if (pal) {
 		_palette = pal;
-		_hasLogicalPalette = app->getSystemPalette() != pal;
+		_hasLogicalPalette = app->getSystemDefaultPalette() != pal;
 		CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
 
 		auto *newPal = static_cast<CPalette::Impl *>(pal);
@@ -1065,7 +1065,7 @@ uint32 *CDC::Impl::getPaletteMap(const CDC::Impl *srcImpl) {
 	// then source pixels map from the local logical palette to the system one
 	if (_paletteRealized && m_bForceBackground) {
 		srcPal = dynamic_cast<Graphics::Palette *>(_palette);
-		destPal = dynamic_cast<Graphics::Palette *>(AfxGetApp()->getSystemPalette());
+		destPal = dynamic_cast<Graphics::Palette *>(AfxGetApp()->getCurrentPalette());
 	}
 	// If we haven't realized our palette locally, or the source bitmap hasn't had any
 	// palette at all set, then return null indicating no palette mapping will occur

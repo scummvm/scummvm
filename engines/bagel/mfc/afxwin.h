@@ -2095,7 +2095,11 @@ public:
 		assert(_defaultBrush.m_hObject);
 		return (HBRUSH)_defaultBrush.m_hObject;
 	}
-	HPALETTE getSystemPalette() {
+	HPALETTE getCurrentPalette() const {
+		assert(_currentPalette.m_hObject);
+		return (HPALETTE)_currentPalette.m_hObject;
+	}
+	HPALETTE getSystemDefaultPalette() const {
 		assert(_systemPalette.m_hObject);
 		return (HPALETTE)_systemPalette.m_hObject;
 	}
