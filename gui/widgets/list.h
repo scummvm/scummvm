@@ -84,6 +84,7 @@ protected:
 	int				_rightPadding;
 	int				_topPadding;
 	int				_bottomPadding;
+	int				_itemSpacing;
 	int				_scrollBarWidth;
 
 	Common::U32String	_filter;

@@ -76,6 +76,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_hlLeftPadding = _hlRightPadding = 0;
 	_leftPadding = _rightPadding = 0;
 	_topPadding = _bottomPadding = 0;
+	_itemSpacing = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
@@ -118,6 +119,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_hlLeftPadding = _hlRightPadding = 0;
 	_leftPadding = _rightPadding = 0;
 	_topPadding = _bottomPadding = 0;
+	_itemSpacing = 0;
 
 	_scrollBarWidth = 0;
 }
@@ -317,7 +319,7 @@ void ListWidget::handleMouseLeft(int button) {
 
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding) return -1;
-	int item = (y - _topPadding) / kLineHeight + _currentPos;
+	int item = (y - _topPadding) / (kLineHeight + _itemSpacing) + _currentPos;
 	if (isItemVisible(item) && item < (int)_list.size())
 		return item;
 	else
@@ -552,9 +554,9 @@ void ListWidget::drawWidget() {
 	                                    ThemeEngine::kWidgetBackgroundBorder);
 
 	// Draw the list items
+	const int lineHeight = kLineHeight + _itemSpacing;
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + kLineHeight * i;
-		const int fontHeight = g_gui.getFontHeight();
+		const int y = _y + _topPadding + lineHeight * i;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
@@ -571,12 +573,12 @@ void ListWidget::drawWidget() {
 		// If in numbering mode & not in RTL based GUI, we first print a number prefix
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
-			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight),
+			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + lineHeight),
 									buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
-		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
+		Common::Rect r1(_x + r.left, y, _x + r.right, y + lineHeight);
 
 		if (g_gui.useRTL()) {
 			if (_scrollBar->isVisible()) {
@@ -625,8 +627,13 @@ Common::Rect ListWidget::getEditRect() const {
 	if (editWidth < 0) {
 		editWidth = 0;
 	}
-	Common::Rect r(_hlLeftPadding, 0, _hlLeftPadding + editWidth, g_gui.getFontHeight());
-	const int offset = (_selectedItem - _currentPos) * kLineHeight + _topPadding;
+
+	const int fontHeight = g_gui.getFontHeight();
+	const int lineHeight = kLineHeight + _itemSpacing;
+
+	// Center the caret/text vertically inside the line
+	Common::Rect r(_hlLeftPadding, 0, _hlLeftPadding + editWidth, fontHeight);
+	const int offset = (_selectedItem - _currentPos) * lineHeight + _topPadding + (lineHeight - fontHeight) / 2;
 	r.top += offset;
 	r.bottom += offset;
 
@@ -721,6 +728,7 @@ void ListWidget::reflowLayout() {
 	_bottomPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Bottom", 0);
 	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
 	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
+	_itemSpacing = g_gui.xmlEval()->getVar("Globals.ListWidget.itemSpacing", 0);
 
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
@@ -729,7 +737,7 @@ void ListWidget::reflowLayout() {
 	// of the list.
 	// We do a rough rounding on the decimal places of Entries Per Page,
 	// to add another entry even if it goes a tad over the padding.
-	frac_t entriesPerPage = intToFrac(_h - _topPadding - _bottomPadding) / kLineHeight;
+	frac_t entriesPerPage = intToFrac(_h - _topPadding - _bottomPadding) / (kLineHeight + _itemSpacing);
 
 	// Our threshold before we add another entry is 0.9375 (0xF000 with FRAC_BITS being 16).
 	const frac_t threshold = intToFrac(15) / 16;
