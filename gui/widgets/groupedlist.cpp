@@ -341,9 +341,10 @@ void GroupedListWidget::drawWidget() {
 										ThemeEngine::kWidgetBackgroundBorder);
 
 	// Draw the list items
+	const int lineHeight = kLineHeight + _itemSpacing;
+	const int indentSpacing = g_gui.getFontHeight();
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + kLineHeight * i;
-		const int fontHeight = g_gui.getFontHeight();
+		const int y = _y + _topPadding + lineHeight * i;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 #if 0
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
@@ -362,11 +363,11 @@ void GroupedListWidget::drawWidget() {
 #if 0
 			bold = ThemeEngine::kFontStyleBold;
 #endif
-			r.left += fontHeight + _leftPadding;
-			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
+			r.left += indentSpacing + _leftPadding;
+			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + indentSpacing + _leftPadding, y + lineHeight), _groupExpanded[groupID]);
 			pad = 0;
 		} else if (_groupsVisible) {
-			r.left += fontHeight + _leftPadding;
+			r.left += indentSpacing + _leftPadding;
 			r.right -= _rightPadding;
 			pad = 0;
 		}
@@ -374,12 +375,12 @@ void GroupedListWidget::drawWidget() {
 		// If in numbering mode & not in RTL based GUI, we first print a number prefix
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
-			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight),
+			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + lineHeight),
 									buffer, _state, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
-		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
+		Common::Rect r1(_x + r.left, y, _x + r.right, y + lineHeight);
 
 		if (g_gui.useRTL()) {
 			if (_scrollBar->isVisible()) {
