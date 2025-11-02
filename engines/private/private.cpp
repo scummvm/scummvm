@@ -240,9 +240,7 @@ Common::Error PrivateEngine::run() {
 	if (!Common::parseBool(ConfMan.get("sfxSubtitles"), _sfxSubtitles))
 		warning("Failed to parse bool from sfxSubtitles options");
 
-	if (_useSubtitles) {
-		g_system->showOverlay(false);
-	} else if (_sfxSubtitles) {
+	if (!_useSubtitles && _sfxSubtitles) {
 		warning("SFX subtitles are enabled, but no subtitles will be shown");
 	}
 
@@ -439,9 +437,11 @@ Common::Error PrivateEngine::run() {
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
-				delete _subtitles;
-				_subtitles = nullptr;
-				g_system->clearOverlay();
+				if (_subtitles != nullptr) {
+					delete _subtitles;
+					_subtitles = nullptr;
+					g_system->clearOverlay();
+				}
 				_currentMovie = "";
 			} else if (!_videoDecoder->needsUpdate() && needsUpdate) {
 				g_system->updateScreen();
@@ -467,7 +467,7 @@ Common::Error PrivateEngine::run() {
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
-		if (_subtitles) {
+		if (_subtitles != nullptr) {
 			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
 				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false, _sfxSubtitles);
 			} else {
@@ -1570,7 +1570,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		_subtitles->loadSRTFile(subPath);
 		g_system->showOverlay(false);
 		adjustSubtitleSize();
-	} else {
+	} else if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
 		g_system->clearOverlay();
@@ -1596,9 +1596,11 @@ void PrivateEngine::skipVideo() {
 	_videoDecoder->close();
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
-	delete _subtitles;
-	_subtitles = nullptr;
-	g_system->clearOverlay();
+	if (_subtitles != nullptr) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		g_system->clearOverlay();
+	}
 	_currentMovie = "";
 }
 
