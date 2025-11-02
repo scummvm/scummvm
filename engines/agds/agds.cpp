@@ -1158,6 +1158,35 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 			warning("no character");
 	}
 
+	{
+		// Saved ambient sound
+		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(*saveFile, "__agds_a"));
+		auto resource = readString(*agds_a);
+		auto filename = loadText(resource);
+		auto phaseVar = readString(*agds_a);
+		uint volume = agds_a->readUint32LE();
+		uint type = agds_a->readUint32LE();
+		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
+		debug("phase var for sample -> %d", getGlobal(phaseVar));
+		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true,
+											 volume, /*pan=*/0, /*id=*/-1, /*ambient=*/true);
+		debug("ambient sound id = %d", _ambientSoundId);
+	}
+
+	{
+		// System vars
+		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(*saveFile, "__agds_d"));
+		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+			Common::String &name = _systemVarList[i];
+			_systemVars[name]->read(*agds_d);
+		}
+	}
+
+	{
+		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(*saveFile, "__agds_i"));
+		_inventory.load(*agds_i);
+	}
+
 	Common::String screenName;
 	{
 		// Palette and screen name
@@ -1179,39 +1208,11 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		}
 	}
 
-	{
-		// System vars
-		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(*saveFile, "__agds_d"));
-		for (uint i = 0, n = _systemVarList.size(); i < n; ++i) {
-			Common::String &name = _systemVarList[i];
-			_systemVars[name]->read(*agds_d);
-		}
-	}
-
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
 	loadPatches(*saveFile, db);
 	loadScreen(screenName, ScreenLoadingType::Normal, false);
-
-	{
-		// Saved ambient sound
-		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(*saveFile, "__agds_a"));
-		auto resource = readString(*agds_a);
-		auto filename = loadText(resource);
-		auto phaseVar = readString(*agds_a);
-		uint volume = agds_a->readUint32LE();
-		uint type = agds_a->readUint32LE();
-		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
-		debug("phase var for sample -> %d", getGlobal(phaseVar));
-		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true,
-											 volume, /*pan=*/0, /*id=*/-1, /*ambient=*/true);
-		debug("ambient sound id = %d", _ambientSoundId);
-	}
-	{
-		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(*saveFile, "__agds_i"));
-		_inventory.load(*agds_i);
-	}
 
 	return Common::kNoError;
 }
