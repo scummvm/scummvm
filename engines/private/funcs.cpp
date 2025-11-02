@@ -540,7 +540,7 @@ static void fLoopedSound(ArgArray args) {
 	Common::String s(args[0].u.str);
 
 	if (s != "\"\"") {
-		g_private->playSound(s, 0, true, true);
+		g_private->playSound(s, 0, false, true);
 	} else {
 		g_private->stopSound(true);
 	}
