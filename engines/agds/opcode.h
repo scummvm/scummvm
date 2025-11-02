@@ -259,7 +259,7 @@ enum Opcode : uint16 {
 	kInventoryHasObjectByName = 238,
 	kStub239 = 239,
 	kLoadDialog = 240,
-	kColorStub241 = 241,
+	kStub241 = 241,
 	kHasGlobal = 242,
 	kStub243 = 243,
 	kSetCharacterNotifyVars = 244,
@@ -267,10 +267,23 @@ enum Opcode : uint16 {
 	kStub246 = 246,
 	kSetDialogForNextFilm = 247,
 	kSetCamera = 252,
+	kStub251 = 251,
+	kCharacterStub253 = 253,
+	kStub257 = 257,
+	kStub258 = 258,
 	kSetFog = 263,
+	kStub264 = 264,
+	kStub265 = 265,
+	kStub266 = 266,
+	kStub267 = 267,
 	kStub275 = 275,
-	kColorStub276 = 276,
+	kStub276 = 276,
+	kStub278 = 278,
+	kStub279 = 279,
+	kStub280 = 280,
 	kStub284 = 284,
+	kStub291 = 291,
+	kStub292 = 292,
 };
 
 #define AGDS_OPCODE_LIST(OP, OP_C, OP_B, OP_W, OP_U, OP_UD, OP_UU)                      \
@@ -482,16 +495,29 @@ enum Opcode : uint16 {
 	OP(kInventoryFindObjectByName, inventoryFindObjectByName)                           \
 	OP(kInventoryHasObjectByName, inventoryHasObjectByName)                             \
 	OP(kLoadDialog, loadDialog)                                                         \
-	OP(kColorStub241, colorStub241)                                                     \
+	OP(kStub241, stub241)                                                               \
 	OP(kHasGlobal, hasGlobal)                                                           \
 	OP(kAttachInventoryObjectToMouse0, attachInventoryObjectToMouse0)                   \
 	OP(kAttachInventoryObjectToMouse1, attachInventoryObjectToMouse1)                   \
 	OP(kSetDialogForNextFilm, setDialogForNextFilm)                                     \
+	OP(kCharacterStub253, characterStub253)                                             \
+	OP(kStub251, stub251)                                                               \
+	OP(kStub257, stub257)                                                               \
+	OP(kStub258, stub258)                                                               \
+	OP(kStub264, stub264)                                                               \
+	OP(kStub265, stub265)                                                               \
+	OP(kStub266, stub266)                                                               \
+	OP(kStub267, stub267)                                                               \
 	OP(kStub275, stub275)                                                               \
-	OP(kColorStub276, colorStub276)                                                     \
+	OP(kStub276, stub276)                                                               \
 	OP(kSetCamera, setCamera)                                                           \
 	OP(kSetFog, setFog)                                                                 \
-	OP(kStub284, stub284)
+	OP(kStub278, stub278)                                                               \
+	OP(kStub279, stub279)                                                               \
+	OP(kStub280, stub280)                                                               \
+	OP(kStub284, stub284)                                                               \
+	OP(kStub291, stub291)                                                               \
+	OP(kStub292, stub292)
 
 } // namespace AGDS
 

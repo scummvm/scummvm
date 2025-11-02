@@ -152,6 +152,13 @@ Common::String Process::popText() {
 	return _engine->loadText(popString());
 }
 
+uint32 Process::popColor() {
+	int b = pop();
+	int g = pop();
+	int r = pop();
+	return _engine->pixelFormat().RGBToColor(r, g, b);
+}
+
 void Process::updateWithCurrentMousePosition() {
 	setMousePosition(_engine->mousePosition());
 }
