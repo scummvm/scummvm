@@ -231,6 +231,8 @@ public:
 	Graphics::Surface *decodeImage(const Common::String &file, byte **palette, bool *isNewPalette);
 	//byte *decodePalette(const Common::String &name);
 	void remapImage(uint16 ncolors, const Graphics::Surface *oldImage, const byte *oldPalette, Graphics::Surface *newImage, const byte *currentPalette);
+	static uint32 findMaskTransparentColor(const byte *palette, uint32 defaultColor);
+	static void swapImageColors(Graphics::Surface *image, byte *palette, uint32 a, uint32 b);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame(const byte *videoPalette);
 

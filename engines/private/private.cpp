@@ -292,7 +292,11 @@ Common::Error PrivateEngine::run() {
 	// Load the game frame once
 	byte *palette;
 	bool isNewPalette;
-	_frameImage = decodeImage(_framePath, nullptr, nullptr);
+	_frameImage = decodeImage(_framePath, &palette, &isNewPalette);
+	if (isNewPalette) {
+		free(palette);
+		palette = nullptr;
+	}
 	_mframeImage = decodeImage(_framePath, &palette, &isNewPalette);
 
 	_framePalette = (byte *) malloc(3*256);
@@ -1616,26 +1620,22 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
-		if (palette != nullptr) {
-			*palette = currentPalette;
-			if (isNewPalette != nullptr) {
-				*isNewPalette = true;
-			}
-		} else {
-			free(currentPalette);
-			if (isNewPalette != nullptr) {
-				*isNewPalette = false;
-			}
-		}
+		*palette = currentPalette;
+		*isNewPalette = true;
 	} else {
 		currentPalette = const_cast<byte *>(oldPalette);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
-		if (palette != nullptr) {
-			*palette = currentPalette;
-		}
-		if (isNewPalette != nullptr) {
-			*isNewPalette = false;
-		}
+		*palette = currentPalette;
+		*isNewPalette = false;
+	}
+
+	// Most images store the transparent color (green) in color 250, except for
+	// those in Mavis' apartment. Our engine assumes that all images share the
+	// the same transparent color number (250), so if this image stores it in
+	// a different palette entry then swap it with 250.
+	uint32 maskTransparentColor = findMaskTransparentColor(currentPalette, _transparentColor);
+	if (maskTransparentColor != _transparentColor) {
+		swapImageColors(newImage, currentPalette, maskTransparentColor, _transparentColor);
 	}
 
 	return newImage;
@@ -1677,6 +1677,51 @@ void PrivateEngine::remapImage(uint16 ncolors, const Graphics::Surface *oldImage
 	for (int y = 0; y != oldImage->h; ++y) {
 		for (int x = 0; x != oldImage->w; ++x) {
 			dst[y * pitch + x] = paletteMap[src[y * pitch + x]];
+		}
+	}
+}
+
+uint32 PrivateEngine::findMaskTransparentColor(const byte *palette, uint32 defaultColor) {
+	// Green is used for the transparent color in masks. It is not always
+	// the same shade of green, and it is not always the same palette
+	// index in the bitmap image. It appears that the original searched
+	// each bitmap's palette for the nearest match to RGB 00 FF 00.
+	// Some masks use 00 FC 00. Green is usually color 250 in masks,
+	// but it is color 2 in the masks in Mavis' apartment.
+	uint32 transparentColor = defaultColor;
+	for (uint32 c = 0; c < 256; c++) {
+		byte r = palette[3 * c + 0];
+		byte g = palette[3 * c + 1];
+		byte b = palette[3 * c + 2];
+		if (r == 0 && b == 0) {
+			if (g == 0xff) {
+				// exact match, stop scanning
+				transparentColor = c;
+				break;
+			}
+			if (g == 0xfc) {
+				// almost green, keep scanning
+				transparentColor = c;
+			}
+		}
+	}
+	return transparentColor;
+}
+
+// swaps two colors in an image
+void PrivateEngine::swapImageColors(Graphics::Surface *image, byte *palette, uint32 a, uint32 b) {
+	SWAP(palette[3 * a + 0], palette[3 * b + 0]);
+	SWAP(palette[3 * a + 1], palette[3 * b + 1]);
+	SWAP(palette[3 * a + 2], palette[3 * b + 2]);
+
+	for (int y = 0; y < image->h; y++) {
+		for (int x = 0; x < image->w; x++) {
+			uint32 pixel = image->getPixel(x, y);
+			if (pixel == a) {
+				image->setPixel(x, y, b);
+			} else if (pixel == b) {
+				image->setPixel(x, y, a);
+			}
 		}
 	}
 }
