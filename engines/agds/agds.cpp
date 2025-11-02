@@ -905,9 +905,13 @@ Graphics::ManagedSurface *AGDSEngine::loadFromCache(int id) const {
 }
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
-	debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
-	Graphics::ManagedSurface *surface = loadPicture(name);
-	_fonts[id].reset(new Font(surface, gw, gh));
+	if (v2()) {
+		debug("loadTTF %d %s, pixelSize: %d: stub", id, name.c_str(), gh);
+	} else {
+		debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
+		Graphics::ManagedSurface *surface = loadPicture(name);
+		_fonts[id].reset(new Font(surface, gw, gh));
+	}
 }
 
 Font *AGDSEngine::getFont(int id) const {
