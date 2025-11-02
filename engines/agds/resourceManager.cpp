@@ -170,15 +170,24 @@ Common::SeekableReadStream *ResourceManager::getResource(const Common::String &n
 	return (file.open(Common::Path{name})) ? file.readStream(file.size()) : NULL;
 }
 
+bool ResourceManager::IsBMP(Common::SeekableReadStream &stream) {
+	auto b0 = stream.readByte();
+	auto b1 = stream.readByte();
+	stream.seek(-2, SEEK_CUR);
+	return b0 == 'B' && b1 == 'M';
+}
+
 Graphics::Surface *ResourceManager::loadPicture(const Common::String &name, const Graphics::PixelFormat &format) {
 	Common::SeekableReadStream *stream = getResource(name);
 	if (!stream)
 		return NULL;
 
+	auto is_bmp = IsBMP(*stream);
+
 	Common::String lname = name;
 	lname.toLowercase();
 
-	if (lname.hasSuffix(".bmp")) {
+	if (lname.hasSuffix(".bmp") || is_bmp) {
 		Image::BitmapDecoder bmp;
 		return bmp.loadStream(*stream) ? bmp.getSurface()->convertTo(format) : NULL;
 	} else if (lname.hasSuffix(".pcx")) {

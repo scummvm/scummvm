@@ -416,6 +416,9 @@ ProcessExitCode Process::resume() {
 			case 8000:
 				op = kEnter;
 				break;
+			case 8005:
+				op = kPop;
+				break;
 			case 8011:
 				op = kPushImm8;
 				break;

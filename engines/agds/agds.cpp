@@ -853,12 +853,12 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 AnimationPtr AGDSEngine::loadAnimation(const Common::String &name) {
 	debug("loadAnimation %s", name.c_str());
 
-	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(name));
 	if (!stream)
 		error("could not load animation from %s", name.c_str());
 
 	Common::SharedPtr<Animation> animation(new Animation(this, name));
-	if (!animation->load(stream, name))
+	if (!animation->load(stream.release(), name))
 		error("could not load animation from %s", name.c_str());
 
 	return animation;

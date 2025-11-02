@@ -22,6 +22,7 @@
 #include "agds/animation.h"
 #include "agds/agds.h"
 #include "agds/object.h"
+#include "agds/resourceManager.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
@@ -80,8 +81,9 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 		}
 	}
 	_flic.reset();
+	auto is_bmp = ResourceManager::IsBMP(*stream);
 
-	if (fname.hasSuffixIgnoreCase(".bmp")) {
+	if (fname.hasSuffixIgnoreCase(".bmp") || is_bmp) {
 		_frame.reset(_engine->loadPicture(fname));
 		rescaleCurrentFrame();
 		_frames = 1;

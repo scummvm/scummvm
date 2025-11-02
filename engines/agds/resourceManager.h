@@ -89,6 +89,7 @@ public:
 	~ResourceManager();
 
 	static void decrypt(uint8 *data, unsigned size);
+	static bool IsBMP(Common::SeekableReadStream &stream);
 
 	bool addPath(const Common::Path &grpFilename);
 
