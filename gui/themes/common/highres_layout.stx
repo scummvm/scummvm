@@ -39,6 +39,7 @@
 
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
 		<def var = 'ListWidget.hlRightPadding' value = '0'/>
+		<def var = 'ListWidget.itemSpacing' value = '2'/>
 
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
