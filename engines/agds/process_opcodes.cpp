@@ -1268,18 +1268,14 @@ void Process::playerSay125() {
 	playerSay120(); // same case
 }
 
-void Process::colorStub241() {
-	int b = pop();
-	int g = pop();
-	int r = pop();
-	debug("colorStub241 #%02x%02x%02x", r, g, b);
+void Process::stub241() {
+	auto color = popColor();
+	debug("stub241 #%08x", color);
 }
 
-void Process::colorStub276() {
-	int b = pop();
-	int g = pop();
-	int r = pop();
-	debug("colorStub276 #%02x%02x%02x", r, g, b);
+void Process::stub276() {
+	auto color = popColor();
+	debug("stub276 #%08x", color);
 }
 
 void Process::stub275() {
@@ -1300,8 +1296,80 @@ void Process::setFog() {
 	debug("setFog %d %d: stub", unk1, unk2);
 }
 
+void Process::stub251() {
+	auto arg3 = popString();
+	auto arg2 = popString();
+	auto arg1 = popString();
+	debug("stub251 %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+}
+
+void Process::stub257() {
+	auto arg2 = pop();
+	auto arg1 = pop();
+	debug("stub257 %d %d", arg1, arg2);
+}
+
+void Process::stub258() {
+	auto arg = pop();
+	debug("stub258 %d - rotation?", arg);
+}
+
+void Process::stub264() {
+	auto color = popColor();
+	debug("stub264: %08x", color);
+}
+
+void Process::stub265() {
+	auto color = popColor();
+	debug("stub265: %08x", color);
+}
+
+void Process::stub266() {
+	auto color = popColor();
+	debug("stub265: %08x", color);
+}
+
+void Process::stub267() {
+	auto color = popColor();
+	debug("stub267: %08x", color);
+}
+
+void Process::stub278() {
+	auto arg = popString();
+	debug("stub278 %s", arg.c_str());
+}
+
+void Process::stub279() {
+	auto arg = popString();
+	debug("stub279 %s", arg.c_str());
+}
+
+void Process::stub280() {
+	auto arg2 = pop();
+	auto arg1 = popString();
+	debug("stub280 %s %d", arg1.c_str(), arg2);
+}
+
 void Process::stub284() {
 	debug("stub284");
+}
+
+void Process::characterStub253() {
+	auto arg3 = pop();
+	auto arg2 = popString();
+	auto arg1 = popString();
+	debug("characterStub253: %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+}
+
+void Process::stub291() {
+	auto arg = popString();
+	debug("stub291: %s @ignore @ignore", arg.c_str());
+}
+
+void Process::stub292() {
+	auto arg2 = popString();
+	auto arg1 = popString();
+	debug("stub292: %s %s", arg1.c_str(), arg2.c_str());
 }
 
 void Process::loadDialog() {

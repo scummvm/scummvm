@@ -99,6 +99,7 @@ private:
 		return getString(pop());
 	}
 	Common::String popText();
+	uint32 popColor();
 
 #define AGDS_PROCESS_METHOD(opcode, method) \
 	void method();
