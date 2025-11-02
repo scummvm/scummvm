@@ -1287,6 +1287,23 @@ void Process::stub275() {
 	debug("stub275: %d", x);
 }
 
+void Process::setCamera() {
+	auto lens = pop();
+	auto unk = pop();
+	auto camera = pop();
+	debug("setCamera %d %d %d", camera, unk, lens);
+}
+
+void Process::setFog() {
+	auto unk2 = pop();
+	auto unk1 = pop();
+	debug("setFog %d %d: stub", unk1, unk2);
+}
+
+void Process::stub284() {
+	debug("stub284");
+}
+
 void Process::loadDialog() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();

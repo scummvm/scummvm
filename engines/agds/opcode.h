@@ -266,8 +266,11 @@ enum Opcode : uint16 {
 	kAttachInventoryObjectToMouse1 = 245,
 	kStub246 = 246,
 	kSetDialogForNextFilm = 247,
+	kSetCamera = 252,
+	kSetFog = 263,
 	kStub275 = 275,
 	kColorStub276 = 276,
+	kStub284 = 284,
 };
 
 #define AGDS_OPCODE_LIST(OP, OP_C, OP_B, OP_W, OP_U, OP_UD, OP_UU)                      \
@@ -485,7 +488,10 @@ enum Opcode : uint16 {
 	OP(kAttachInventoryObjectToMouse1, attachInventoryObjectToMouse1)                   \
 	OP(kSetDialogForNextFilm, setDialogForNextFilm)                                     \
 	OP(kStub275, stub275)                                                               \
-	OP(kColorStub276, colorStub276)
+	OP(kColorStub276, colorStub276)                                                     \
+	OP(kSetCamera, setCamera)                                                           \
+	OP(kSetFog, setFog)                                                                 \
+	OP(kStub284, stub284)
 
 } // namespace AGDS
 

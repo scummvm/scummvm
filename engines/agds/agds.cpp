@@ -853,11 +853,16 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 AnimationPtr AGDSEngine::loadAnimation(const Common::String &name) {
 	debug("loadAnimation %s", name.c_str());
 
+	Common::SharedPtr<Animation> animation(new Animation(this, name));
+	if (v2()) {
+		debug("v2 stub");
+		return animation;
+	}
+
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(name));
 	if (!stream)
 		error("could not load animation from %s", name.c_str());
 
-	Common::SharedPtr<Animation> animation(new Animation(this, name));
 	if (!animation->load(stream.release(), name))
 		error("could not load animation from %s", name.c_str());
 
@@ -876,7 +881,13 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacterObject = object;
 
 	_currentCharacter.reset(new Character(this, id));
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(loadText(filename)));
+	auto resName = loadText(filename);
+	if (v2()) {
+		debug("character resource name: %s, stub\n", resName.c_str());
+		_currentCharacter->associate(object);
+		return;
+	}
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_resourceManager.getResource(resName));
 	_currentCharacter->load(*stream);
 	_currentCharacter->associate(object);
 }
