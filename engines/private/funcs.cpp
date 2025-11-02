@@ -56,11 +56,13 @@ static void fChgMode(ArgArray args) {
 		setSymbol(location, true);
 	}
 
-	// This is the only place where this should be used
-	if (g_private->_noStopSounds) {
-		g_private->_noStopSounds = false;
-	} else {
-		g_private->stopSound(true);
+	if (g_private->_mode == 0) {
+		// This is the only place where this should be used
+		if (g_private->_noStopSounds) {
+			g_private->_noStopSounds = false;
+		} else {
+			g_private->stopSound(true);
+		}
 	}
 }
 
