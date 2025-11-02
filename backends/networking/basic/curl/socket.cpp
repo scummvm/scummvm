@@ -100,7 +100,7 @@ Socket *Socket::connect(const Common::String &url) {
 #else
 	// Fallback on old deprecated CURLINFO_LASTSOCKET API for libcurl older than v7.45.0 (October 2015)
 	long socket;
-	res = curl_easy_getinfo(easy, CURLINFO_LASTSOCKET, &socketl);
+	res = curl_easy_getinfo(easy, CURLINFO_LASTSOCKET, &socket);
 	if (res == CURLE_OK) {
 		// curl_socket_t is an int or a SOCKET (Win32) which is a UINT_PTR
 		// A cast should be safe enough as long fits in it
