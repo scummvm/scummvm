@@ -1268,6 +1268,25 @@ void Process::playerSay125() {
 	playerSay120(); // same case
 }
 
+void Process::colorStub241() {
+	int b = pop();
+	int g = pop();
+	int r = pop();
+	debug("colorStub241 #%02x%02x%02x", r, g, b);
+}
+
+void Process::colorStub276() {
+	int b = pop();
+	int g = pop();
+	int r = pop();
+	debug("colorStub276 #%02x%02x%02x", r, g, b);
+}
+
+void Process::stub275() {
+	auto x = pop();
+	debug("stub275: %d", x);
+}
+
 void Process::loadDialog() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();

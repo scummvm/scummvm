@@ -412,31 +412,7 @@ ProcessExitCode Process::resume() {
 				op |= next() << 8;
 				op >>= 1;
 			}
-			switch (op) {
-			case 8000:
-				op = kEnter;
-				break;
-			case 8005:
-				op = kPop;
-				break;
-			case 8011:
-				op = kPushImm8;
-				break;
-			case 8013:
-				op = kPushImm8_2;
-				break;
-			case 8043:
-				op = kSetGlobal;
-				break;
-			case 8137:
-				op = kSetStringSystemVariable;
-				break;
-			case 8193:
-				op = kLoadMouse;
-				break;
-			default:
-				break;
-			}
+			op -= 7995;
 		}
 		// debug("CODE %04x: %u", _lastIp, (uint)op);
 		switch (op) {

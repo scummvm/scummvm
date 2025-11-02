@@ -26,7 +26,7 @@
 
 namespace AGDS {
 
-enum Opcode : uint8 {
+enum Opcode : uint16 {
 	kEnter = 5,
 	kJumpZImm16 = 8,
 	kJumpImm16 = 9,
@@ -259,13 +259,15 @@ enum Opcode : uint8 {
 	kInventoryHasObjectByName = 238,
 	kStub239 = 239,
 	kLoadDialog = 240,
-	kStub241 = 241,
+	kColorStub241 = 241,
 	kHasGlobal = 242,
 	kStub243 = 243,
 	kSetCharacterNotifyVars = 244,
 	kAttachInventoryObjectToMouse1 = 245,
 	kStub246 = 246,
-	kSetDialogForNextFilm = 247
+	kSetDialogForNextFilm = 247,
+	kStub275 = 275,
+	kColorStub276 = 276,
 };
 
 #define AGDS_OPCODE_LIST(OP, OP_C, OP_B, OP_W, OP_U, OP_UD, OP_UU)                      \
@@ -477,10 +479,13 @@ enum Opcode : uint8 {
 	OP(kInventoryFindObjectByName, inventoryFindObjectByName)                           \
 	OP(kInventoryHasObjectByName, inventoryHasObjectByName)                             \
 	OP(kLoadDialog, loadDialog)                                                         \
+	OP(kColorStub241, colorStub241)                                                     \
 	OP(kHasGlobal, hasGlobal)                                                           \
 	OP(kAttachInventoryObjectToMouse0, attachInventoryObjectToMouse0)                   \
 	OP(kAttachInventoryObjectToMouse1, attachInventoryObjectToMouse1)                   \
-	OP(kSetDialogForNextFilm, setDialogForNextFilm)
+	OP(kSetDialogForNextFilm, setDialogForNextFilm)                                     \
+	OP(kStub275, stub275)                                                               \
+	OP(kColorStub276, colorStub276)
 
 } // namespace AGDS
 
