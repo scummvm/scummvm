@@ -1032,6 +1032,21 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 	}
 }
 
+void PrivateEngine::addDossier(Common::String &page1, Common::String &page2) {
+	// Each dossier page can only be added once.
+	// Do this even when loading games to fix saves with duplicates.
+	for (uint i = 0; i < _dossiers.size(); i++) {
+		if (_dossiers[i].page1 == page1) {
+			return;
+		}
+	}
+
+	DossierInfo d;
+	d.page1 = page1;
+	d.page2 = page2;
+	_dossiers.push_back(d);
+}
+
 void PrivateEngine::loadDossier() {
 	int x = 40;
 	int y = 30;
@@ -1285,11 +1300,10 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	// Dossiers
 	_dossiers.clear();
 	size = stream->readUint32LE();
-	DossierInfo m;
 	for (uint32 i = 0; i < size; ++i) {
-		m.page1 = stream->readString();
-		m.page2 = stream->readString();
-		_dossiers.push_back(m);
+		Common::String page1 = stream->readString();
+		Common::String page2 = stream->readString();
+		addDossier(page1, page2);
 	}
 
 	// Radios

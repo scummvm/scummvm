@@ -292,6 +292,7 @@ public:
 	bool selectDossierPrevSuspect(Common::Point);
 	bool selectDossierNextSheet(Common::Point);
 	bool selectDossierPrevSheet(Common::Point);
+	void addDossier(Common::String &page1, Common::String &page2);
 	void loadDossier();
 
 	// Police Bust
