@@ -744,6 +744,41 @@ uint8 DirectorSound::getChannelFaderR(int channel) {
 	return _mixer->getChannelFaderR(_channels[channel]->handle);
 }
 
+void DirectorSound::processCuePoints() {
+	for (auto &it : _channels) {
+		SoundChannel *channel = it._value;
+
+		const SoundID &lastPlayedSound = channel->lastPlayedSound;
+		if (lastPlayedSound.type == kSoundCast) {
+			CastMemberID memberID(lastPlayedSound.u.cast.member, lastPlayedSound.u.cast.castLib);
+			SoundCastMember *soundCast = (SoundCastMember *)_window->getCurrentMovie()->getCastMember(memberID);
+
+			if (!soundCast)
+				continue;
+
+			if (soundCast->_cuePoints.empty())
+				continue;
+
+			uint32 elapsedTime = _mixer->getSoundElapsedTime(channel->handle);
+
+			if (!elapsedTime)
+				continue;
+
+			for (uint i = channel->lastCuePointIndex + 1; i < soundCast->_cuePoints.size(); i++) {
+				int32 cuePoint = soundCast->_cuePoints[i];
+
+				if (cuePoint > elapsedTime)
+					break;
+
+				debugC(5, kDebugSound, "DirectorSound::processCuePoints(): cue point %d reached on channel %d", cuePoint, it._key);
+
+				_window->getCurrentMovie()->processEvent(kEventCuePassed, i);
+
+				channel->lastCuePointIndex = i;
+			}
+		}
+	}
+}
 
 
 SNDDecoder::SNDDecoder()

@@ -359,6 +359,8 @@ void Score::step() {
 			if (_movie->_currentHoveredSpriteId) {
 				_movie->processEvent(kEventMouseWithin, _movie->_currentHoveredSpriteId);
 			}
+
+			_soundManager->processCuePoints();
 		} else 	if (_version >= kFileVer500) {
 			// In D5, these events are only generated if a mouse button is pressed
 			if (_movie->_currentHoveredSpriteId && g_system->getEventManager()->getButtonState() != 0) {
