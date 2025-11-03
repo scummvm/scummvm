@@ -25,8 +25,6 @@
 #include "common/system.h"
 #include "engines/advancedDetector.h"
 
-namespace AGDS {
-
 class AGDSMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -83,10 +81,8 @@ Common::Error AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 	return Common::Error(Common::kNoError);
 }
 
-} // namespace AGDS
-
 #if PLUGIN_ENABLED_DYNAMIC(AGDS)
-REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDS::AGDSMetaEngine);
+REGISTER_PLUGIN_STATIC(AGDS, PLUGIN_TYPE_ENGINE, AGDSMetaEngine);
 #endif
