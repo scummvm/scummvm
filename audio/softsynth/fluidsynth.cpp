@@ -517,9 +517,6 @@ void MidiDriver_FluidSynth::close() {
 
 	_mixer->stopHandle(_mixerSoundHandle);
 
-	if (_soundFont != -1)
-		fluid_synth_sfunload(_synth, _soundFont, 1);
-
 	delete_fluid_synth(_synth);
 	delete_fluid_settings(_settings);
 }
