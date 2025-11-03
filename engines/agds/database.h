@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_DATABASE_H
-#define AGDS_DATABASE_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include "common/hash-str.h"
 #include "common/hashmap.h"

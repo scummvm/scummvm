@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_AGDS_H
-#define AGDS_AGDS_H
+#ifndef AGDS_H
+#define AGDS_H
 
 #include "agds/database.h"
 #include "agds/dialog.h"

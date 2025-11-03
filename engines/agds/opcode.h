@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_OPCODE_H
-#define AGDS_OPCODE_H
+#ifndef OPCODE_H
+#define OPCODE_H
 
 #include "common/scummsys.h"
 

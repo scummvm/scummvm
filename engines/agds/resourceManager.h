@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_RESOURCE_MANAGER_H
-#define AGDS_RESOURCE_MANAGER_H
+#ifndef RESOURCE_MANAGER_H
+#define RESOURCE_MANAGER_H
 
 #include "common/archive.h"
 #include "common/file.h"

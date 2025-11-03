@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_ANIMATION_H
-#define AGDS_ANIMATION_H
+#ifndef ANIMATION_H
+#define ANIMATION_H
 
 #include "common/ptr.h"
 #include "common/rect.h"

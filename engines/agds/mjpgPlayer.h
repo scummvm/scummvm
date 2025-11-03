@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_MJPG_PLAYER_H
-#define AGDS_MJPG_PLAYER_H
+#ifndef MJPG_PLAYER_H
+#define MJPG_PLAYER_H
 
 #include "common/array.h"
 #include "common/scummsys.h"

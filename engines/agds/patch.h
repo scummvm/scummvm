@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_PATCH_H
-#define AGDS_PATCH_H
+#ifndef PATCH_H
+#define PATCH_H
 
 #include "agds/screenLoadingType.h"
 #include "common/array.h"

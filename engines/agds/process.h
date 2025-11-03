@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_PROCESS_H
-#define AGDS_PROCESS_H
+#ifndef PROCESS_H
+#define PROCESS_H
 
 #include "agds/object.h"
 #include "agds/opcode.h"
