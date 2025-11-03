@@ -88,4 +88,57 @@ bool OptionsWidget::save() {
 	return true;
 }
 
+const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"original_menus",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FLOPPY_MUSIC,
+		{
+			_s("Use floppy version music"),
+			_s("Use the music from the floppy version. The floppy version's music files must be copied to the SOUND directory."),
+			"use_floppy_music",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+
+const PopUpOptionsMap popUpOptionsList[] = {
+	{
+		GAMEOPTION_SFX_MODE,
+		_s("SFX mode:"),
+		_s("Determines if the game should use CD version SFX only, CD SFX with additional floppy SFX, or floppy SFX only. Floppy SFX are only available if floppy music is used."),
+		"sfx_mode",
+		SFX_MODE_CD_ONLY,
+		{
+			{
+				_s("CD version SFX only"),
+				SFX_MODE_CD_ONLY
+			},
+			{
+				_s("CD + extra floppy SFX"),
+				SFX_MODE_CD_PLUS_FLOPPY
+			},
+			{
+				_s("Floppy version SFX only"),
+				SFX_MODE_FLOPPY_ONLY
+			},
+			POPUP_OPTIONS_ITEMS_TERMINATOR
+		}
+	},
+	POPUP_OPTIONS_TERMINATOR
+};
+
 } // End of namespace Darkseed
