@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-03 19:43+0000\n"
-"PO-Revision-Date: 2025-09-04 20:02+0000\n"
+"PO-Revision-Date: 2025-11-03 20:27+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7249,6 +7249,8 @@ msgstr ""
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
 msgstr ""
+"Detectada una versión antigua de OpenGL, se producirán algunos errores "
+"gráficos."
 
 #: engines/alcachofa/metaengine.cpp:40
 msgid "High Quality"
@@ -7264,7 +7266,7 @@ msgstr "32 bits"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Indica si se debe renderizar el juego con color a 16 bits o no"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7426,38 +7428,28 @@ msgid "Escape"
 msgstr "Escapar"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Page up"
 msgid "Page Up"
-msgstr "Subir página"
+msgstr "Re Pág"
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Page down"
 msgid "Page Down"
-msgstr "Bajar página"
+msgstr "Av Pág"
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Home key"
 msgid "Home"
-msgstr "Tecla Inicio"
+msgstr "Inicio"
 
 #: engines/bagel/metaengine.cpp:73
-#, fuzzy
-#| msgid "End key"
 msgid "End"
-msgstr "Tecla Fin"
+msgstr "Fin"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "Teclas comunes"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Volumen mínimo"
+msgstr "Teclas mínimas"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -8322,10 +8314,8 @@ msgstr ""
 "dicha versión deben copiarse en el directorio SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Efectos:"
+msgstr "Modo de efectos:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8333,18 +8323,23 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Determina si el juego debería utilizar únicamente los efectos de sonido de "
+"la versión en CD, los efectos de la versión de PC más los adicionales de la "
+"versión en disquetes, o solo los efectos de la versión en disquetes. Los "
+"efectos de sonido de la versión en disquetes solo estarán disponibles si se "
+"utiliza la música de dicha versión."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Solo los efectos de la versión en CD"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "Efectos de CD + adicionales de disquete"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Solo los efectos de la versión en disquetes"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8361,8 +8356,6 @@ msgid "Time advance"
 msgstr "Avanzar tiempo"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
 msgstr "Omitir escena"
 
@@ -10420,8 +10413,6 @@ msgstr ""
 "música en formato MIDI."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
 msgstr "Usar cursores de Windows"
 
@@ -10431,6 +10422,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Si activas esta opción, el juego utilizará los cursores del ratón de Windows "
+"que vienen incluidos en el ejecutable original. De lo contrario, se "
+"utilizarán los cursores de baja resolución que hay en los archivos de datos."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -11263,53 +11257,39 @@ msgid "Confirm the selected save / new save name"
 msgstr "Confirmar partida seleccionada/nombre nuevo de partida"
 
 #: engines/ngi/metaengine.cpp:105
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "Asignaciones para salir"
+msgstr "Asignaciones de créditos"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:107
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "Asignaciones de ventana de salida"
+msgstr "Asignaciones de ventanas"
 
 #: engines/ngi/metaengine.cpp:117
-#, fuzzy
-#| msgid "Search / Select item"
 msgid "Deselect item"
-msgstr "Registrar/Seleccionar objeto"
+msgstr "Deseleccionar objeto"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Precargar sonidos"
+msgstr "Detener sonidos"
 
 #: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Mostrar/Ocultar inventario"
 
 #: engines/ngi/metaengine.cpp:163
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Mostrar créditos"
+msgstr "Omitir créditos"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:170
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "Cerrar cuadro de diálogo"
+msgstr "Cerrar ventana"
 
 #: engines/ngi/metaengine.cpp:184
-#, fuzzy
-#| msgid "Close gumps"
 msgid "Close map"
-msgstr "Cerrar todas las ventanas"
+msgstr "Cerrar mapa"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11406,36 +11386,26 @@ msgid "Toggle Chatty AI"
 msgstr "IA locuaz"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "Mover/Interactuar/Omitir diálogo"
+msgstr "Interactuar/Omitir diálogo"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Abrir menú de acciones/Cerrar menú"
+msgstr "Abrir menú de acciones/Cerrar interfaz actual"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Acción de Chapáyev"
+msgstr "Usar objeto con Chapáyev"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Mostrar/Ocultar consola"
+msgstr "Mostrar/Ocultar pantalla de opciones"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "Interfaz de ratón sencilla"
+msgstr "Cerrar interfaz actual"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -11511,12 +11481,10 @@ msgid "Display SFX subtitles"
 msgstr "Mostrar subtítulos para efectos de sonido"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
-"Utiliza la conversión de texto a voz para leer los subtítulos (si está "
-"disponible)"
+"Muestra subtítulos de los efectos de sonido (si los subtítulos están "
+"activados)."
 
 #: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -14281,10 +14249,8 @@ msgid "Close inventory"
 msgstr "Cerrar inventario"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "Modo de interacción"
+msgstr "Ejecutar en modo interactivo"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14507,50 +14473,36 @@ msgid "Unable to locate the '%s' data file."
 msgstr "No se puede localizar el archivo de datos «%s»."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "Activar protección anticopia"
+msgstr "Protección anticopia"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Pixellated scene transitions"
 msgid "Disable scene transitions"
-msgstr "Transiciones pixeladas"
+msgstr "Desactivar transiciones entre escenas"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Desactiva las transiciones originales entre escenas"
 
 #: engines/tot/metaengine.cpp:58
-#, fuzzy
-#| msgid "Open save / load dialog"
 msgid "Original save/load dialog"
-msgstr "Abrir ventana de guardar/cargar"
+msgstr "Ventana de guardado/carga original"
 
 #: engines/tot/metaengine.cpp:59
-#, fuzzy
-#| msgid "Use original savegame dialog"
 msgid "Use original save and load dialogs"
-msgstr "Usar menús originales al guardar/cargar"
+msgstr "Utiliza las ventanas originales de guardado y carga de partidas"
 
 #: engines/tot/metaengine.cpp:118
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Default action"
-msgstr "Realizar acción predeterminada"
+msgstr "Acción predeterminada"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Save / load game"
 msgid "Save and load game"
 msgstr "Guardar/Cargar partida"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu"
 msgid "Main menu/Exit"
-msgstr "Menú principal"
+msgstr "Menú principal/Salir"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -14963,19 +14915,17 @@ msgstr ""
 "contenido descargable!"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
-msgstr ""
-"Este juego requiere el submotor FoxTail, el cual no está presente en la "
-"compilación."
+msgstr "Este juego requiere OpenGL con shaders, que tu sistema no soporta."
 
 #: engines/twp/twp.cpp:1022
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Este juego requiere objetos de búfer de fotogramas de OpenGL, que tu sistema "
+"no soporta."
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
