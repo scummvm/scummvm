@@ -1,2 +1,2 @@
-engines/sludge/detection_tables.h
+engines/sludge/event.cpp
 engines/sludge/keymapper_tables.h

@@ -1,2 +1,3 @@
+engines/alcachofa/detection.cpp
 engines/alcachofa/graphics-opengl.cpp
 engines/alcachofa/metaengine.cpp

@@ -126,6 +126,7 @@ backends/platform/sdl/psp2/psp2.cpp
 backends/platform/sdl/switch/switch.cpp
 backends/platform/wii/options.cpp
 backends/presence/discord/discord.cpp
+backends/text-to-speech/emscripten/emscripten-text-to-speech.cpp
 backends/text-to-speech/linux/linux-text-to-speech.cpp
 backends/text-to-speech/macosx/macosx-text-to-speech.mm
 backends/text-to-speech/windows/windows-text-to-speech.cpp
