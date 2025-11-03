@@ -381,7 +381,8 @@ else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
    AR_ALONE := emar
    AR := emar rcs
-   DEFINES += -DEMSCRIPTEN -DUSE_CXX11
+   datadir = /share/scummvm
+   DEFINES += -DEMSCRIPTEN -DUSE_CXX11 -DDATA_PATH=\"$(datadir)\"
    CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
    USE_LIBCO  = 0
