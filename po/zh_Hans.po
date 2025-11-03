@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-03 19:24+0000\n"
+"POT-Creation-Date: 2025-11-03 19:43+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -324,7 +324,8 @@ msgstr "另一存储正工作中。您要中断它吗？"
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4324
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1242
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:321
+#: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
+#: engines/zvision/zvision.cpp:321
 msgid "Yes"
 msgstr "是"
 
@@ -341,7 +342,8 @@ msgstr "是"
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4324
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1248
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:322
+#: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
+#: engines/zvision/zvision.cpp:322
 msgid "No"
 msgstr "否"
 
@@ -3807,13 +3809,14 @@ msgstr "右键点击"
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/hypno/metaengine.cpp:186 engines/hypno/metaengine.cpp:369
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
-#: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
-#: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
-#: engines/sludge/keymapper_tables.h:187 engines/sludge/keymapper_tables.h:243
-#: engines/sludge/keymapper_tables.h:262 engines/sludge/keymapper_tables.h:459
-#: engines/sludge/keymapper_tables.h:490 engines/supernova/metaengine.cpp:262
-#: engines/sword25/metaengine.cpp:124 engines/tucker/metaengine.cpp:184
-#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:1608
+#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:123
+#: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:52
+#: engines/sludge/keymapper_tables.h:125 engines/sludge/keymapper_tables.h:187
+#: engines/sludge/keymapper_tables.h:243 engines/sludge/keymapper_tables.h:262
+#: engines/sludge/keymapper_tables.h:459 engines/sludge/keymapper_tables.h:490
+#: engines/supernova/metaengine.cpp:262 engines/sword25/metaengine.cpp:124
+#: engines/tucker/metaengine.cpp:184 engines/twine/metaengine.cpp:223
+#: engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "暂停"
 
@@ -4073,6 +4076,7 @@ msgid "Display keyboard"
 msgstr "显示键盘"
 
 #: backends/events/default/default-events.cpp:352
+#: engines/ngi/metaengine.cpp:136
 msgid "Toggle mute"
 msgstr "开关静音"
 
@@ -5822,10 +5826,11 @@ msgstr "最小化"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
+#. I18N: Opens the help screen.
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
-#: engines/supernova/metaengine.cpp:238 engines/tucker/metaengine.cpp:215
-#: engines/zvision/metaengine.cpp:246
+#: engines/ngi/metaengine.cpp:149 engines/supernova/metaengine.cpp:238
+#: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "帮助"
 
@@ -6118,6 +6123,7 @@ msgstr "正在检查更新..."
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/ngi/metaengine.cpp:102 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
 #: engines/private/metaengine.cpp:84 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
@@ -6216,11 +6222,12 @@ msgstr "向右下方移动"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
 #: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
-#: engines/sherlock/metaengine.cpp:405 engines/sherlock/metaengine.cpp:556
-#: engines/sherlock/metaengine.cpp:815 engines/supernova/metaengine.cpp:326
-#: engines/tinsel/metaengine.cpp:300 engines/tot/metaengine.cpp:134
-#: engines/tsage/metaengine.cpp:206 engines/ultima/nuvie/metaengine.cpp:67
+#: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
+#: engines/sherlock/metaengine.cpp:556 engines/sherlock/metaengine.cpp:815
+#: engines/supernova/metaengine.cpp:326 engines/tinsel/metaengine.cpp:300
+#: engines/tot/metaengine.cpp:134 engines/tsage/metaengine.cpp:206
+#: engines/ultima/nuvie/metaengine.cpp:67
 msgid "Look"
 msgstr "观察"
 
@@ -6244,15 +6251,16 @@ msgstr "获取"
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
 #: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:81
-#: engines/queen/metaengine.cpp:294 engines/saga/metaengine.cpp:379
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:227
-#: engines/scumm/help.cpp:253 engines/sherlock/metaengine.cpp:440
-#: engines/sherlock/metaengine.cpp:561 engines/sky/metaengine.cpp:95
-#: engines/sludge/keymapper_tables.h:333 engines/supernova/metaengine.cpp:356
-#: engines/tot/metaengine.cpp:139 engines/tsage/metaengine.cpp:211
-#: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
+#: engines/petka/metaengine.cpp:151 engines/queen/metaengine.cpp:294
+#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
+#: engines/sherlock/metaengine.cpp:440 engines/sherlock/metaengine.cpp:561
+#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
+#: engines/supernova/metaengine.cpp:356 engines/tot/metaengine.cpp:139
+#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
+#: engines/ultima/ultima4/metaengine.cpp:71
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6265,10 +6273,11 @@ msgstr ""
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
-#: engines/efh/metaengine.cpp:506 engines/scumm/help.cpp:174
-#: engines/scumm/help.cpp:226 engines/sherlock/metaengine.cpp:415
-#: engines/supernova/metaengine.cpp:361 engines/tot/metaengine.cpp:124
-#: engines/tsage/metaengine.cpp:216 engines/ultima/ultima4/metaengine.cpp:70
+#: engines/efh/metaengine.cpp:506 engines/petka/metaengine.cpp:158
+#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
+#: engines/sherlock/metaengine.cpp:415 engines/supernova/metaengine.cpp:361
+#: engines/tot/metaengine.cpp:124 engines/tsage/metaengine.cpp:216
+#: engines/ultima/ultima4/metaengine.cpp:70
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr "交流"
@@ -6278,7 +6287,8 @@ msgid "Travel"
 msgstr "旅行"
 
 #: engines/access/metaengine.cpp:317 engines/cine/metaengine.cpp:332
-#: engines/saga/metaengine.cpp:394 engines/supernova/metaengine.cpp:331
+#: engines/petka/metaengine.cpp:144 engines/saga/metaengine.cpp:394
+#: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "拿取"
 
@@ -6290,15 +6300,16 @@ msgstr "拿取"
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
-#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
-#: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
-#: engines/sludge/keymapper_tables.h:168 engines/sludge/keymapper_tables.h:181
-#: engines/sludge/keymapper_tables.h:217 engines/sludge/keymapper_tables.h:256
-#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
-#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
-#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
+#: engines/icb/icb.cpp:179 engines/petka/metaengine.cpp:173
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
+#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
+#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:58
+#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
+#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
+#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
+#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
+#: engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "物品栏"
 
@@ -6307,7 +6318,8 @@ msgid "Climb"
 msgstr ""
 
 #: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:298 engines/scumm/help.cpp:225
+#: engines/freescape/games/castle/castle.cpp:298
+#: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "行走"
@@ -6427,7 +6439,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:105
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
-#: engines/crab/metaengine.cpp:34 engines/darkseed/dialogs.h:73
+#: engines/crab/metaengine.cpp:34 engines/darkseed/dialogs.cpp:95
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
@@ -6440,7 +6452,7 @@ msgstr "使用原始存档/读档屏幕"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:106
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
-#: engines/crab/metaengine.cpp:35 engines/darkseed/dialogs.h:74
+#: engines/crab/metaengine.cpp:35 engines/darkseed/dialogs.cpp:96
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
@@ -6510,7 +6522,7 @@ msgstr "添加速度菜单"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "添加游戏速度菜单（与 PC 版本相似）"
 
-#: engines/agi/metaengine.cpp:195 engines/agos/dialogs.h:73
+#: engines/agi/metaengine.cpp:195 engines/agos/dialogs.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:45
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
@@ -6519,7 +6531,7 @@ msgstr "添加游戏速度菜单（与 PC 版本相似）"
 msgid "Enable copy protection"
 msgstr "启用复制保护"
 
-#: engines/agi/metaengine.cpp:196 engines/agos/dialogs.h:74
+#: engines/agi/metaengine.cpp:196 engines/agos/dialogs.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:46
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
@@ -6591,47 +6603,74 @@ msgstr "恢复游戏："
 msgid "Restore"
 msgstr "恢复"
 
-#: engines/agos/saveload.cpp:138
-msgid "Quick load or save game isn't supported in this location"
-msgstr "此位置不支持快速存档或读档"
-
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3278
-#, c-format
-msgid ""
-"Failed to load saved game from file:\n"
-"\n"
-"%s"
-msgstr ""
-"无法从文件载入存档：\n"
-"\n"
-"%s"
-
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3265
-#, c-format
-msgid ""
-"Failed to save game to file:\n"
-"\n"
-"%s"
-msgstr ""
-"无法将游戏保存到文件：\n"
-"\n"
-"%s"
-
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3298
-#, c-format
-msgid ""
-"Successfully saved game in file:\n"
-"\n"
-"%s"
-msgstr ""
-"成功将游戏保存到文件：\n"
-"\n"
-"%s"
-
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "找不到转场文件“%s”！"
+
+#: engines/agos/dialogs.cpp:49 engines/tot/metaengine.cpp:69
+msgid "AdLib OPL3 mode"
+msgstr "AdLib OPL3 模式"
+
+#: engines/agos/dialogs.cpp:50 engines/tot/metaengine.cpp:70
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the game, "
+"this will prevent cut-off notes, add extra notes or instruments and/or add "
+"stereo."
+msgstr ""
+"当选择 AdLib 时，将会使用 OPL3 特性。取决于游戏，这将避免截断音符、添加附加音"
+"符或乐器，和/或添加立体声。"
+
+#: engines/agos/dialogs.cpp:60
+msgid "Use DOS version music tempos"
+msgstr "使用 DOS 版本音乐音调"
+
+#: engines/agos/dialogs.cpp:61
+msgid ""
+"Selecting this option will play the music using the tempos used by the DOS "
+"version of the game. Otherwise, the faster tempos of the Windows version "
+"will be used."
+msgstr ""
+"启用此设置后，将会用 DOS 版本的速度播放游戏音乐。否则将使用 Windows 版本更快"
+"的速度。"
+
+#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:95
+msgid "Prefer digital sound effects"
+msgstr "优先使用电子音效"
+
+#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:96
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "优先使用数字音效而非合成音效"
+
+#: engines/agos/dialogs.cpp:82
+msgid "Disable fade-out effects"
+msgstr "禁用淡出效果"
+
+#: engines/agos/dialogs.cpp:83
+msgid "Don't fade every screen to black when leaving a room."
+msgstr "离开房间时不要将屏幕渐变为黑色。"
+
+#: engines/agos/dialogs.cpp:96 engines/sci/detection_options.h:263
+msgid "MIDI mode:"
+msgstr "MIDI 模式："
+
+#: engines/agos/dialogs.cpp:97 engines/sci/detection_options.h:264
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr "当使用外部 MIDI 设备时（例如通过 USB-MIDI），请在这里选择设备"
+
+#: engines/agos/dialogs.cpp:102 engines/sci/detection_options.h:269
+msgid "Standard (GM / MT-32)"
+msgstr "标准 (GM / MT-32)\""
+
+#: engines/agos/dialogs.cpp:106 engines/sci/detection_options.h:281
+msgid "Casio MT-540"
+msgstr "Casio MT-540"
+
+#: engines/agos/dialogs.cpp:110 engines/sci/detection_options.h:285
+msgid "Casio CT-460 / CSM-1"
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/agos/metaengine.cpp:105
 msgid "AGOS 2 support is not compiled in"
@@ -6837,69 +6876,42 @@ msgstr ""
 "%s 或 %s。若没有其一，音乐\n"
 "听起来会与原游戏不同。"
 
-#: engines/agos/dialogs.h:84 engines/tot/metaengine.cpp:69
-msgid "AdLib OPL3 mode"
-msgstr "AdLib OPL3 模式"
+#: engines/agos/saveload.cpp:138
+msgid "Quick load or save game isn't supported in this location"
+msgstr "此位置不支持快速存档或读档"
 
-#: engines/agos/dialogs.h:85 engines/tot/metaengine.cpp:70
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3278
+#, c-format
 msgid ""
-"When AdLib is selected, OPL3 features will be used. Depending on the game, "
-"this will prevent cut-off notes, add extra notes or instruments and/or add "
-"stereo."
+"Failed to load saved game from file:\n"
+"\n"
+"%s"
 msgstr ""
-"当选择 AdLib 时，将会使用 OPL3 特性。取决于游戏，这将避免截断音符、添加附加音"
-"符或乐器，和/或添加立体声。"
+"无法从文件载入存档：\n"
+"\n"
+"%s"
 
-#: engines/agos/dialogs.h:95
-msgid "Use DOS version music tempos"
-msgstr "使用 DOS 版本音乐音调"
-
-#: engines/agos/dialogs.h:96
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3265
+#, c-format
 msgid ""
-"Selecting this option will play the music using the tempos used by the DOS "
-"version of the game. Otherwise, the faster tempos of the Windows version "
-"will be used."
+"Failed to save game to file:\n"
+"\n"
+"%s"
 msgstr ""
-"启用此设置后，将会用 DOS 版本的速度播放游戏音乐。否则将使用 Windows 版本更快"
-"的速度。"
+"无法将游戏保存到文件：\n"
+"\n"
+"%s"
 
-#: engines/agos/dialogs.h:106 engines/sci/detection_options.h:95
-msgid "Prefer digital sound effects"
-msgstr "优先使用电子音效"
-
-#: engines/agos/dialogs.h:107 engines/sci/detection_options.h:96
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "优先使用数字音效而非合成音效"
-
-#: engines/agos/dialogs.h:117
-msgid "Disable fade-out effects"
-msgstr "禁用淡出效果"
-
-#: engines/agos/dialogs.h:118
-msgid "Don't fade every screen to black when leaving a room."
-msgstr "离开房间时不要将屏幕渐变为黑色。"
-
-#: engines/agos/dialogs.h:131 engines/sci/detection_options.h:263
-msgid "MIDI mode:"
-msgstr "MIDI 模式："
-
-#: engines/agos/dialogs.h:132 engines/sci/detection_options.h:264
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3298
+#, c-format
 msgid ""
-"When using external MIDI devices (e.g. through USB-MIDI), select your device "
-"here"
-msgstr "当使用外部 MIDI 设备时（例如通过 USB-MIDI），请在这里选择设备"
-
-#: engines/agos/dialogs.h:137 engines/sci/detection_options.h:269
-msgid "Standard (GM / MT-32)"
-msgstr "标准 (GM / MT-32)\""
-
-#: engines/agos/dialogs.h:141 engines/sci/detection_options.h:281
-msgid "Casio MT-540"
-msgstr "Casio MT-540"
-
-#: engines/agos/dialogs.h:145 engines/sci/detection_options.h:285
-msgid "Casio CT-460 / CSM-1"
-msgstr "Casio CT-460 / CSM-1"
+"Successfully saved game in file:\n"
+"\n"
+"%s"
+msgstr ""
+"成功将游戏保存到文件：\n"
+"\n"
+"%s"
 
 #: engines/ags/ags.cpp:152
 msgid ""
@@ -7473,15 +7485,15 @@ msgstr "开关线索隐私"
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:154
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
 #: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
-#: engines/prince/metaengine.cpp:243 engines/saga/metaengine.cpp:442
-#: engines/sherlock/metaengine.cpp:462 engines/sherlock/metaengine.cpp:613
-#: engines/sherlock/metaengine.cpp:821 engines/sludge/keymapper_tables.h:107
-#: engines/sludge/keymapper_tables.h:156 engines/stark/metaengine.cpp:208
-#: engines/tetraedge/metaengine.cpp:110 engines/titanic/metaengine.cpp:199
-#: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
-#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/ultima/ultima8/metaengine.cpp:45 engines/vcruise/metaengine.cpp:175
-#: engines/wintermute/keymapper_tables.h:920
+#: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
+#: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
+#: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:821
+#: engines/sludge/keymapper_tables.h:107 engines/sludge/keymapper_tables.h:156
+#: engines/stark/metaengine.cpp:208 engines/tetraedge/metaengine.cpp:110
+#: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
+#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
+#: engines/tsage/metaengine.cpp:242 engines/ultima/ultima8/metaengine.cpp:45
+#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "保存游戏"
 
@@ -7500,12 +7512,12 @@ msgstr "保存游戏"
 #: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:198
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/pegasus/pegasus.cpp:2831
-#: engines/prince/metaengine.cpp:249 engines/saga/metaengine.cpp:432
-#: engines/sherlock/metaengine.cpp:457 engines/sherlock/metaengine.cpp:608
-#: engines/sherlock/metaengine.cpp:826 engines/stark/metaengine.cpp:213
-#: engines/tetraedge/metaengine.cpp:104 engines/titanic/metaengine.cpp:205
-#: engines/toltecs/metaengine.cpp:240 engines/toon/metaengine.cpp:118
-#: engines/trecision/metaengine.cpp:175
+#: engines/petka/metaengine.cpp:203 engines/prince/metaengine.cpp:249
+#: engines/saga/metaengine.cpp:432 engines/sherlock/metaengine.cpp:457
+#: engines/sherlock/metaengine.cpp:608 engines/sherlock/metaengine.cpp:826
+#: engines/stark/metaengine.cpp:213 engines/tetraedge/metaengine.cpp:104
+#: engines/titanic/metaengine.cpp:205 engines/toltecs/metaengine.cpp:240
+#: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
 #: engines/ultima/ultima8/metaengine.cpp:46 engines/vcruise/metaengine.cpp:180
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
@@ -8061,7 +8073,7 @@ msgstr "下一页"
 msgid "Previous page"
 msgstr "上一页"
 
-#: engines/crab/input/input.cpp:241
+#: engines/crab/input/input.cpp:241 engines/petka/metaengine.cpp:179
 msgid "Map"
 msgstr "地图"
 
@@ -8106,40 +8118,40 @@ msgstr "未编译入 Versailles 1685 支持"
 msgid "Unable to locate the darkseed.dat engine data file."
 msgstr "无法定位“%s”引擎数据文件。"
 
-#: engines/darkseed/dialogs.h:84
+#: engines/darkseed/dialogs.cpp:106
 #, fuzzy
 #| msgid "Use DOS version music tempos"
 msgid "Use floppy version music"
 msgstr "使用 DOS 版本音乐音调"
 
-#: engines/darkseed/dialogs.h:85
+#: engines/darkseed/dialogs.cpp:107
 msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
 
-#: engines/darkseed/dialogs.h:99
+#: engines/darkseed/dialogs.cpp:121
 #, fuzzy
 #| msgid "SFX volume:"
 msgid "SFX mode:"
 msgstr "特殊效果音量："
 
-#: engines/darkseed/dialogs.h:100
+#: engines/darkseed/dialogs.cpp:122
 msgid ""
 "Determines if the game should use CD version SFX only, CD SFX with "
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
 
-#: engines/darkseed/dialogs.h:105
+#: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
 msgstr ""
 
-#: engines/darkseed/dialogs.h:109
+#: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
 msgstr ""
 
-#: engines/darkseed/dialogs.h:113
+#: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
 msgstr ""
 
@@ -8315,7 +8327,7 @@ msgstr "使用 TTS 读出字母（若可用）"
 msgid "Skip intro / Exit map or inventory"
 msgstr "跳过入场动画/退出地图或物品界面"
 
-#: engines/draci/metaengine.cpp:218
+#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:178
 msgid "Open map"
 msgstr "打开地图"
 
@@ -9701,7 +9713,7 @@ msgid "Add additional content that is not enabled the original implementation."
 msgstr "添加原作中未启用的附加内容。"
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
-#: engines/voyeur/metaengine.cpp:188
+#: engines/ngi/metaengine.cpp:104 engines/voyeur/metaengine.cpp:188
 #, fuzzy
 #| msgid "Index keymappings"
 msgid "Intro keymappings"
@@ -9716,8 +9728,8 @@ msgid "Secondary shoot"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
-#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
-#: engines/voyeur/metaengine.cpp:235
+#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:232
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "跳过入场动画"
 
@@ -10201,8 +10213,8 @@ msgstr ""
 msgid "Exit keymappings"
 msgstr "Esc 按键绑定"
 
-#: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
-#: engines/sherlock/metaengine.cpp:780
+#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:103
+#: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:780
 #, fuzzy
 #| msgid "Start menu keymappings"
 msgid "Map keymappings"
@@ -11223,14 +11235,14 @@ msgstr "游戏按键绑定"
 msgid "Pause menu keymappings"
 msgstr "游戏按键绑定"
 
-#: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
-#: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
-#: engines/sludge/keymapper_tables.h:132 engines/sludge/keymapper_tables.h:175
-#: engines/sludge/keymapper_tables.h:211 engines/sludge/keymapper_tables.h:231
-#: engines/sludge/keymapper_tables.h:250 engines/sludge/keymapper_tables.h:275
-#: engines/sludge/keymapper_tables.h:386 engines/sludge/keymapper_tables.h:446
-#: engines/sludge/keymapper_tables.h:478 engines/sludge/keymapper_tables.h:529
-#: engines/tot/metaengine.cpp:112
+#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:111
+#: engines/prince/metaengine.cpp:231 engines/queen/metaengine.cpp:180
+#: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
+#: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
+#: engines/sludge/keymapper_tables.h:231 engines/sludge/keymapper_tables.h:250
+#: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
+#: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
+#: engines/sludge/keymapper_tables.h:529 engines/tot/metaengine.cpp:112
 #, fuzzy
 #| msgid "Move left"
 msgid "Move / Interact"
@@ -11260,6 +11272,57 @@ msgstr ""
 #| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
 msgstr "创建新存档"
+
+#: engines/ngi/metaengine.cpp:105
+#, fuzzy
+#| msgid "Escape keymappings"
+msgid "Credits keymappings"
+msgstr "Esc 按键绑定"
+
+#. I18N: Keymap for various dialogs such as save game dialog.
+#: engines/ngi/metaengine.cpp:107
+#, fuzzy
+#| msgid "Quit panel keymapping"
+msgid "Dialog keymappings"
+msgstr "退出面板按键绑定"
+
+#: engines/ngi/metaengine.cpp:117
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Deselect item"
+msgstr "选择主题"
+
+#. I18N: Stops all currently playing sounds.
+#: engines/ngi/metaengine.cpp:130
+#, fuzzy
+#| msgid "Preload sounds"
+msgid "Stop sounds"
+msgstr "预录制声音"
+
+#: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle inventory"
+msgstr "开关物品栏/智商显示"
+
+#: engines/ngi/metaengine.cpp:163
+#, fuzzy
+#| msgid "Show credits"
+msgid "Skip credits"
+msgstr "显示游戏致谢界面"
+
+#. I18N: Closes any open dialogs, such as save game dialog.
+#: engines/ngi/metaengine.cpp:170
+#, fuzzy
+#| msgid "Close the Dialogue box"
+msgid "Close dialog"
+msgstr "关闭对话框"
+
+#: engines/ngi/metaengine.cpp:184
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close map"
+msgstr "关闭弹出窗口"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11364,6 +11427,38 @@ msgstr "开关快速模式"
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
 msgstr "开关唠叨 AI"
+
+#: engines/petka/metaengine.cpp:117
+#, fuzzy
+#| msgid "Go to next dialogue"
+msgid "Interact / Skip dialog"
+msgstr "转到下一对话"
+
+#. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
+#: engines/petka/metaengine.cpp:124
+#, fuzzy
+#| msgid "Open action menu / Close menu"
+msgid "Open action menu / Close current interface"
+msgstr "打开操作菜单/关闭菜单"
+
+#. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
+#: engines/petka/metaengine.cpp:166
+#, fuzzy
+#| msgid "Chapayev's action"
+msgid "Chapayev use object"
+msgstr "Chapayev 的操作"
+
+#: engines/petka/metaengine.cpp:186
+#, fuzzy
+#| msgid "Show / Hide console"
+msgid "Show / Hide options screen"
+msgstr "显示/隐藏控制台"
+
+#: engines/petka/metaengine.cpp:192
+#, fuzzy
+#| msgid "Easy mouse interface"
+msgid "Close current interface"
+msgstr "易用鼠标界面"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -14335,11 +14430,11 @@ msgstr "物品栏"
 msgid "Close inventory"
 msgstr "打开/关闭物品栏"
 
-#: engines/teenagent/metaengine.cpp:226
+#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
 #, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
-msgid "Toggle inventory"
-msgstr "开关物品栏/智商显示"
+#| msgid "Interact Mode"
+msgid "Run in interactive mode"
+msgstr "互动模式"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
