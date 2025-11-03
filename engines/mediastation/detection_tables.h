@@ -34,6 +34,7 @@ const PlainGameDescriptor mediastationGames[] = {
 	{ "ibmcrayolaholiday", "IBM/Crayola Print Factory Holiday Activity Pack" },
 	{ "101dalmatians", "Disney's Animated Storybook: 101 Dalmatians" },
 	{ "herculesasb", "Disney's Animated Storybook: Hercules" },
+	{ "pocahontas", "Disney's Animated Storybook: Pocahontas"},
 	{ "barbieasrapunzel", "Magic Fairy Tales: Barbie as Rapunzel" },
 	{ "tonkasearchandrescue", "Tonka Search and Rescue" },
 	{ "arielstorystudio", "Disney presents Ariel's Story Studio" },
@@ -280,6 +281,36 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
+	// Disney's Animated Storybook: Pocahontas
+	{
+		"pocahontas",
+		"v1.0/SE", // Also includes English as an in-game language option
+		AD_ENTRY3s(
+			"POCA_ASB.EXE", "b5dc94c806c1122a69b19a2ef9113d3c", 389440,
+			"BOOT.STM", "dfb9353599cf8ca0f95095353041ef54", 337944,
+			"100.CXT", "7f9fae41a07e8e1cc467d1b2be37ef9d", 1117144
+		),
+		Common::SV_SWE,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
+	// Disney's Animated Storybook: Pocahontas
+	{
+		"pocahontas",
+		"v1.0/SE", // Also includes English as an in-game language option
+		AD_ENTRY3s(
+			"Pocahontas", "r:6b0d52f286954d7dbb5fd703ff696b40", 326402,
+			"BOOT.STM", "dfb9353599cf8ca0f95095353041ef54", 337944,
+			"100.CXT", "7f9fae41a07e8e1cc467d1b2be37ef9d", 1117144
+		),
+		Common::SV_SWE,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
