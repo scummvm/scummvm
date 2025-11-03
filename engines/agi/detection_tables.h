@@ -442,6 +442,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "", "bdb10876cd4cb20eabd88778c40b4075", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
+	// King's Quest 2 (Hebrew) [2.1 1987-04-10/DOS]
+	// Fan made translation by SegMash, based on the English GoG version
+	GAME_LVFPN("kq2", "", "logdir", "34e9abb9f1ce54db4e1abcc37b53b198", 543, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
