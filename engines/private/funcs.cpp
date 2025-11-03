@@ -269,20 +269,15 @@ static void fBustMovie(ArgArray args) {
 }
 
 static void fDossierAdd(ArgArray args) {
-
 	assert(args.size() == 2);
 	Common::String s1 = args[0].u.str;
 	Common::String s2 = args[1].u.str;
-	DossierInfo m;
-	m.page1 = s1;
 
-	if (s2 != "\"\"") {
-		m.page2 = s2;
-	} else {
-		m.page2 = "";
+	if (s2 == "\"\"") {
+		s2 = "";
 	}
 
-	g_private->_dossiers.push_back(m);
+	g_private->addDossier(s1, s2);
 }
 
 static void fDossierBitmap(ArgArray args) {
