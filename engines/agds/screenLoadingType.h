@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_SCREEN_LOADING_TYPE_H
-#define AGDS_SCREEN_LOADING_TYPE_H
+#ifndef SCREEN_LOADING_TYPE_H
+#define SCREEN_LOADING_TYPE_H
 
 namespace AGDS {
 

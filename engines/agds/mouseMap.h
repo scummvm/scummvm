@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_MOUSE_MAP_H
-#define AGDS_MOUSE_MAP_H
+#ifndef MOUSE_MAP_H
+#define MOUSE_MAP_H
 
 #include "common/array.h"
 #include "common/ptr.h"

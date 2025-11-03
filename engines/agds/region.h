@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_REGION_H
-#define AGDS_REGION_H
+#ifndef REGION_H
+#define REGION_H
 
 #include "common/array.h"
 #include "common/rect.h"

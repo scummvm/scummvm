@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_INVENTORY_H
-#define AGDS_INVENTORY_H
+#ifndef INVENTORY_H
+#define INVENTORY_H
 
 #include "common/array.h"
 #include "common/ptr.h"

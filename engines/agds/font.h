@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_FONT_H
-#define AGDS_FONT_H
+#ifndef FONT_H
+#define FONT_H
 
 #include "common/ptr.h"
 #include "graphics/font.h"

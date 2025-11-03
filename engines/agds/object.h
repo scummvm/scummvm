@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_OBJECT_H
-#define AGDS_OBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include "common/array.h"
 #include "common/hash-str.h"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_CONSOLE_H
-#define AGDS_CONSOLE_H
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 #include "gui/debugger.h"
 

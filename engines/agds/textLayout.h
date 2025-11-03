@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_TEXT_LAYOUT_H
-#define AGDS_TEXT_LAYOUT_H
+#ifndef TEXT_LAYOUT_H
+#define TEXT_LAYOUT_H
 
 #include "common/array.h"
 #include "common/rect.h"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_SYSTEM_VARIABLE_H
-#define AGDS_SYSTEM_VARIABLE_H
+#ifndef SYSTEM_VARIABLE_H
+#define SYSTEM_VARIABLE_H
 
 #include "common/scummsys.h"
 #include "common/str.h"

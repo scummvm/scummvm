@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_SCREEN_H
-#define AGDS_SCREEN_H
+#ifndef SCREEN_H
+#define SCREEN_H
 
 #include "agds/screenLoadingType.h"
 #include "common/array.h"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_DIALOG_H
-#define AGDS_DIALOG_H
+#ifndef DIALOG_H
+#define DIALOG_H
 
 #include "common/hash-str.h"
 #include "common/hashmap.h"

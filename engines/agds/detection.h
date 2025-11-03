@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_DETECTION_H
-#define AGDS_DETECTION_H
+#ifndef DETECTION_H
+#define DETECTION_H
 
 namespace AGDS {
 

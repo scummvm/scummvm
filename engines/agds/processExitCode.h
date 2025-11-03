@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGDS_PROCESS_EXIT_CODE_H
-#define AGDS_PROCESS_EXIT_CODE_H
+#ifndef PROCESS_EXIT_CODE_H
+#define PROCESS_EXIT_CODE_H
 
 namespace AGDS {
 
