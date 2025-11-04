@@ -332,6 +332,8 @@ private:
 	bool _onlyScanImage = false;
 	int32 _resReadOffset = 0;
 
+	Common::Point _introPos;
+	Common::Point _introSize;
 	Common::String _string1;
 	Common::String _winCaption;
 
@@ -625,7 +627,7 @@ protected:
 	void doDraw();
 	void flushDirtyRects(bool apply);
 
-	bool usePalette(byte *pal, int num, int fade, bool winColors);
+	bool usePalette(const byte *pal, int num, int fade, bool winColors);
 	bool setPaletteCurrentGS();
 
 	bool loadImage(Image *img);
@@ -706,6 +708,15 @@ protected:
 
 
 	static Common::String gamos_itoa(int value, uint radix);
+
+
+
+	/* video */
+	void playVideo(const Common::String &video, const Common::Point &pos, const Common::Point &size);
+	void surfacePaletteRemap(Graphics::Surface *dst, const byte *tgtPalette, const Graphics::Surface *src, const byte *srcPalette, int srcCount);
+
+	/* skip events */
+	bool eventsSkip(bool breakOnInput = false);
 
 public:
 

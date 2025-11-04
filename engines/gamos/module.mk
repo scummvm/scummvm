@@ -11,7 +11,8 @@ MODULE_OBJS = \
 	proc.o \
 	movie.o \
 	saveload.o \
-	vm.o
+	vm.o \
+	video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GAMOS), DYNAMIC_PLUGIN)

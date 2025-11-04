@@ -595,11 +595,10 @@ bool GamosEngine::initMainDatas() {
 	_fadeEffectID = dataStream.readByte();
 	_unk11 = dataStream.readByte();
 
-	/*_winX = dataStream.readUint32LE();
-	_winY = dataStream.readUint32LE();
-	_winW = dataStream.readUint32LE();
-	_winH = dataStream.readUint32LE();*/
-	dataStream.skip(16);
+	_introPos.x = dataStream.readSint32LE();
+	_introPos.y = dataStream.readSint32LE();
+	_introSize.x = dataStream.readSint32LE();
+	_introSize.y = dataStream.readSint32LE();
 
 	int64 pos = dataStream.pos();
 	_string1 = dataStream.readString(0, 64);
@@ -632,6 +631,8 @@ bool GamosEngine::init(const Common::String &moduleName) {
 	_savedMidiVolume = !ConfMan.hasKey("music_volume") ? 255 : ConfMan.getInt("music_volume");
 	_sndVolumeTarget = _savedSndVolume;
 	_midiVolumeTarget = _savedMidiVolume;
+
+	playVideo("intro", _introPos, _introSize);
 
 	if (!playIntro())
 		return false;
@@ -983,7 +984,7 @@ void GamosEngine::flushDirtyRects(bool apply) {
 	FUN_0040255c(nullptr);
 }
 
-bool GamosEngine::usePalette(byte *pal, int num, int fade, bool winColors) {
+bool GamosEngine::usePalette(const byte *pal, int num, int fade, bool winColors) {
 
 	static const byte winColorMap[20][3] = {
 		/* r     g     b */
@@ -2884,6 +2885,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	case 55: {
 		VM::ValAddr regRef = vm->popReg(); //implement
 		Common::String str = vm->getString(regRef);
+
+		char buffer[256];
+		int a = 0, b = 0, c = 0, d = 0;
+		sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d);
+
+		playVideo(Common::String(buffer), Common::Point(a, b), Common::Point(c, d));
 		warning("PlayMovie 55: %s", str.c_str());
 		vm->EAX.setVal(1);
 	}
@@ -4349,6 +4356,21 @@ bool GamosEngine::onTxtInputUpdate(uint8 c) {
 
 	txtInputProcess(RawKeyCode);
 	return true;
+}
+
+bool GamosEngine::eventsSkip(bool breakOnInput) {
+	bool brk = false;
+	Common::Event e;
+	while(_system->getEventManager()->pollEvent(e)) {
+		if (breakOnInput){
+			if (e.type == Common::EVENT_LBUTTONUP ||
+				e.type == Common::EVENT_RBUTTONUP ||
+				e.type == Common::EVENT_KEYUP)
+				brk = true;
+		}
+	}
+
+	return shouldQuit() || brk;
 }
 
 
