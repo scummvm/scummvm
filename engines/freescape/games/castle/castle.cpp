@@ -987,22 +987,25 @@ void CastleEngine::loadAssets() {
 			continue;
 
 		it._value->addStructure(_areaMap[255]);
-		if (it._value->objectWithID(125)) {
-			_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
-			//group = (Group *)_areaMap[it._key]->objectWithID(195);
 
-			_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
-			//group = (Group *)_areaMap[it._key]->objectWithID(212);
-		}
+		if (isDOS() || isAmiga() || isAtariST()) {
+			if (it._value->objectWithID(125)) {
+				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
+				//group = (Group *)_areaMap[it._key]->objectWithID(195);
 
-		if (it._value->objectWithID(126)) {
-			_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
-			//group = (Group *)_areaMap[it._key]->objectWithID(191);
-		}
+				_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
+				//group = (Group *)_areaMap[it._key]->objectWithID(212);
+			}
 
-		if (it._value->objectWithID(127)) {
-			_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-			//group = (Group *)_areaMap[it._key]->objectWithID(193);
+			if (it._value->objectWithID(126)) {
+				_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
+				//group = (Group *)_areaMap[it._key]->objectWithID(191);
+			}
+
+			if (it._value->objectWithID(127)) {
+				_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
+				//group = (Group *)_areaMap[it._key]->objectWithID(193);
+			}
 		}
 
 		for (auto &id : globalIds) {
