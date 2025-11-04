@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/metaengine.h"
 #include "ngi/ngi.h"
 
 #include "ngi/constants.h"
@@ -2170,7 +2171,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	for (int i = 0; i < 7; i++) {
 		FileInfo &fileinfo = _files[i];
 
-		Common::strlcpy(fileinfo.filename, getSavegameFile(i), sizeof(fileinfo.filename));
+		Common::strlcpy(fileinfo.filename, g_nmi->getMetaEngine()->getSavegameFile(i,fileinfo.filename).c_str(), sizeof(fileinfo.filename));
 
 		if (!getFileInfo(i, &fileinfo)) {
 			fileinfo.empty = true;
@@ -2200,20 +2201,20 @@ char *ModalSaveGame::getSaveName() {
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		NGI::getSavegameFile(slot)));
+		g_nmi->getMetaEngine()->getSavegameFile(slot,fileinfo->filename)));
 
 	if (!f)
 		return false;
 
-	NGI::FullpipeSavegameHeader header;
-	if (!NGI::readSavegameHeader(f.get(), header))
+	ExtendedSavegameHeader header;
+	if (!MetaEngine::readSavegameHeader(f.get(), &header))
 		return false;
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(g_nmi->getMetaEngine(), slot, header.description);
 	char res[17];
 
-	NGI::parseSavegameHeader(header, desc);
+	MetaEngine::parseSavegameHeader(&header, &desc);
 
 	snprintf(res, sizeof(res), "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 

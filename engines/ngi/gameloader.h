@@ -75,16 +75,6 @@ class PreloadItems : public Common::Array<PreloadItem>, public CObject {
 	bool load(MfcArchive &file) override;
 };
 
-struct FullpipeSavegameHeader {
-	char id[6];
-	uint8 version;
-	Common::String saveName;
-	Common::String description;
-	uint32 date;
-	uint16 time;
-	uint32 playtime;
-	Graphics::Surface *thumbnail;
-};
 
 struct SaveHeader {
 	int32 version;
@@ -140,9 +130,6 @@ class GameLoader : public CObject {
 	int _preloadEntranceId;
 };
 
-const char *getSavegameFile(int saveGameIdx);
-WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail = true);
-void parseSavegameHeader(NGI::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
 
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();

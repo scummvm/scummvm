@@ -22,6 +22,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/metaengine.h"
 #include "common/file.h"
 
 #include "graphics/surface.h"
@@ -73,6 +74,18 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const NGI::NGIGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+    Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
+	    if (saveGameIdx == kSavegameFilePattern) {
+	    	// Pattern requested
+	    	const char *pattern = "%s.s##";
+	    	return Common::String::format(pattern, "fullpipe");
+	    } else {
+	    	// Specific filename requested
+	    	const char *pattern = "%s.s%02d";
+	    	return Common::String::format(pattern, "fullpipe", saveGameIdx);
+	    }
+	}
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {

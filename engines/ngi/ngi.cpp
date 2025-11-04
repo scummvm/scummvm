@@ -26,6 +26,7 @@
 #include "common/debug-channels.h"
 #include "audio/mixer.h"
 
+#include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 
@@ -42,7 +43,6 @@
 #include "ngi/floaters.h"
 #include "ngi/console.h"
 #include "ngi/constants.h"
-
 namespace NGI {
 
 NGIEngine *g_nmi = nullptr;
@@ -222,14 +222,14 @@ bool NGIEngine::shouldQuit() {
 Common::Error NGIEngine::loadGameState(int slot) {
 	deleteModalObject();
 
-	if (_gameLoader->readSavegame(getSavegameFile(slot)))
+	if (_gameLoader->readSavegame(g_nmi->getMetaEngine()->getSavegameFile(slot,"fullpipe").c_str()))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
 }
 
 Common::Error NGIEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
+	if (_gameLoader->writeSavegame(_currentScene, g_nmi->getMetaEngine()->getSavegameFile(slot,"fullpipe").c_str(), description))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
