@@ -29,7 +29,7 @@
 MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source) {
 }
 
-uint32 MidiParser_SMF::readDelta(byte *&data) {
+uint32 MidiParser_SMF::readDelta(const byte *&data) {
 	// Default implementation: use the standard MIDI VLQ format.
 	return readVLQ(data);
 }

@@ -31,7 +31,7 @@ class MidiParser_SMF : public MidiParser {
 
 protected:
 	// Reads a delta between events.
-	virtual uint32 readDelta(byte *&data);
+	virtual uint32 readDelta(const byte *&data);
 
 	void parseNextEvent(EventInfo &info) override;
 

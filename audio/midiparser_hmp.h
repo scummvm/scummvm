@@ -36,14 +36,14 @@ protected:
 	static const char HMP_HEADER_VERSION_1[];
 	static const char HMP_HEADER_VERSION_013195[];
 
-	uint32 readDelta(byte *&data) override;
+	uint32 readDelta(const byte *&data) override;
 
-	HmpVersion determineVersion(byte *pos);
+	HmpVersion determineVersion(const byte *pos);
 
 public:
 	MidiParser_HMP(int8 source = -1);
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 

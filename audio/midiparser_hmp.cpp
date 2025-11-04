@@ -31,7 +31,7 @@ const char MidiParser_HMP::HMP_HEADER_VERSION_013195[] = "013195";
 MidiParser_HMP::MidiParser_HMP(int8 source) : MidiParser_SMF(source) {
 }
 
-uint32 MidiParser_HMP::readDelta(byte*& data) {
+uint32 MidiParser_HMP::readDelta(const byte*& data) {
 	byte str;
 	uint32 value = 0;
 
@@ -44,9 +44,9 @@ uint32 MidiParser_HMP::readDelta(byte*& data) {
 	return value;
 }
 
-bool MidiParser_HMP::loadMusic(byte *data, uint32 size) {
+bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
-	byte *pos = data;
+	const byte *pos = data;
 
 	// Process header
 	if (memcmp(pos, HMP_HEADER, 8)) {
@@ -143,7 +143,7 @@ int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
 	return stream->pos() - startPos;
 }
 
-MidiParser_HMP::HmpVersion MidiParser_HMP::determineVersion(byte *pos) {
+MidiParser_HMP::HmpVersion MidiParser_HMP::determineVersion(const byte *pos) {
 	if (!memcmp(pos, HMP_HEADER_VERSION_1, 6)) {
 		return HmpVersion::VERSION_1;
 	} else if (!memcmp(pos, HMP_HEADER_VERSION_013195, 6)) {
