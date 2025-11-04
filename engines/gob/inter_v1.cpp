@@ -772,7 +772,7 @@ void Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	int16 height = resource->getHeight();
 	_vm->_draw->adjustCoords(0, &width, &height);
 
-	_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
+	_vm->_video->drawPackedSprite(resource->getData(),
 			width, height,
 			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;

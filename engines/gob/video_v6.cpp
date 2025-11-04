@@ -41,11 +41,11 @@ Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm), _highColorPackedSpriteFormat(2
 {
 }
 
-char Video_v6::spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int16 srcHeight,
+char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
-		drawPacked(sprBuf, size, x, y, destDesc);
+		drawPacked(sprBuf, x, y, destDesc);
 		return 1;
 	}
 
@@ -55,10 +55,10 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int1
 	}
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 2)) {
-		if (Video_v2::spriteUncompressor(sprBuf, size, srcWidth, srcHeight, x, y, transp, destDesc))
+		if (Video_v2::spriteUncompressor(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc))
 			return 1;
 
-		Video::drawPacked(sprBuf, size, srcWidth, srcHeight, x, y, transp, destDesc);
+		Video::drawPacked(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc);
 		return 1;
 	}
 
@@ -67,7 +67,11 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int1
 	return 1;
 }
 
-void Video_v6::drawPacked(const byte *sprBuf, int32 size, int16 x, int16 y, Surface &surfDesc) {
+#ifndef INT32_MAX
+#define INT32_MAX              (2147483647)
+#endif
+
+void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc) {
 	const byte *data = sprBuf + 2;
 
 	int16 width = READ_LE_UINT16(data);
@@ -84,13 +88,13 @@ void Video_v6::drawPacked(const byte *sprBuf, int32 size, int16 x, int16 y, Surf
 		// Compressed YUV data
 		warning("drawPacked: untested case, compressed YUV data");
 		int32 uncompresedSize = 0;
-		byte *uncompressedData = DataIO::unpack(srcData, size, uncompresedSize, 1);
+		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresedSize, 1);
 		drawYUVData(uncompressedData, surfDesc, width, height, x, y);
 		delete uncompressedData;
 	} else if (dataType == 3) {
 		// Compressed high-color RGB data
 		int32 uncompresesSize = 0;
-		byte *uncompressedData = DataIO::unpack(srcData, size, uncompresesSize, 1);
+		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresesSize, 1);
 		Graphics::PixelFormat &format = _highColorPackedSpriteFormat;
 
 		if (_vm->getPixelFormat().aBits() > 0) {
@@ -105,12 +109,12 @@ void Video_v6::drawPacked(const byte *sprBuf, int32 size, int16 x, int16 y, Surf
 												  surfDesc.getWidth() * surfDesc.getBPP(), width * format.bytesPerPixel,
 												  width, height,
 												  _vm->getPixelFormat(), format, 0);
-		}
-		else
+		} else {
 			conversionOk = Graphics::crossBlit(surfDesc.getData(x, y), uncompressedData,
 											   surfDesc.getWidth() * surfDesc.getBPP(), width * format.bytesPerPixel,
 											   width, height,
 											   _vm->getPixelFormat(), format);
+		}
 
 		if (!conversionOk)
 			warning("drawPacked: error when cross-blitting from compressed RGB high-color data");

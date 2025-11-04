@@ -35,7 +35,7 @@ namespace Gob {
 Video_v1::Video_v1(GobEngine *vm) : Video(vm) {
 }
 
-char Video_v1::spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int16 srcHeight,
+char Video_v1::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 	byte *memBuffer;
 	byte *srcPtr;

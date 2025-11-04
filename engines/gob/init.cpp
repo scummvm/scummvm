@@ -194,7 +194,7 @@ void Init::initGame() {
 				int32 size;
 				byte *sprite = _vm->_dataIO->getFile("coktel.ims", size);
 				if (sprite) {
-					_vm->_video->drawPackedSprite(sprite, size, 320, 200, 0, 0, 0,
+					_vm->_video->drawPackedSprite(sprite, 320, 200, 0, 0, 0,
 							*_vm->_draw->_frontSurface);
 					_vm->_palAnim->fade(_palDesc, 0, 0);
 					_vm->_util->delay(500);

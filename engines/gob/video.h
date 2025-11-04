@@ -129,7 +129,7 @@ public:
 	void waitRetrace(bool mouse = true);
 	void sparseRetrace(int max);
 
-	void drawPackedSprite(byte *sprBuf, int32 size, int16 width, int16 height,
+	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 			int16 x, int16 y, int16 transp, Surface &dest);
 	void drawPackedSprite(const char *path, Surface &dest, int width = 320);
 
@@ -152,7 +152,7 @@ public:
 	void dirtyRectsAdd(int16 left, int16 top, int16 right, int16 bottom);
 	void dirtyRectsApply(int left, int top, int width, int height, int x, int y);
 
-	virtual char spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth,
+	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			Surface &destDesc) = 0;
 
@@ -168,12 +168,12 @@ protected:
 
 	GobEngine *_vm;
 
-	void drawPacked(byte *sprBuf, int32 size, int16 width, int16 height, int16 x, int16 y, byte transp, Surface &dest);
+	void drawPacked(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Surface &dest);
 };
 
 class Video_v1 : public Video {
 public:
-	char spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int16 srcHeight,
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v1(GobEngine *vm);
@@ -182,7 +182,7 @@ public:
 
 class Video_v2 : public Video_v1 {
 public:
-	char spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int16 srcHeight,
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v2(GobEngine *vm);
@@ -191,7 +191,7 @@ public:
 
 class Video_v6 : public Video_v2 {
 public:
-	char spriteUncompressor(byte *sprBuf, int32 size, int16 srcWidth, int16 srcHeight,
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v6(GobEngine *vm);
@@ -200,7 +200,7 @@ public:
 private:
 	Graphics::PixelFormat _highColorPackedSpriteFormat;
 
-	void drawPacked(const byte *sprBuf, int32 size, int16 x, int16 y, Surface &surfDesc);
+	void drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc);
 	void drawYUVData(const byte *srcData, Surface &destDesc,
 			int16 width, int16 height, int16 x, int16 y);
 	void drawYUV(Surface &destDesc, int16 x, int16 y,

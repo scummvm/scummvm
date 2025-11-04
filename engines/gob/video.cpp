@@ -325,7 +325,7 @@ void Video::sparseRetrace(int max) {
 	_lastSparse = timeKey;
 }
 
-void Video::drawPacked(byte *sprBuf, int32 size, int16 width, int16 height,
+void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 		int16 x, int16 y, byte transp, Surface &dest) {
 
 	int destRight = x + width;
@@ -371,7 +371,7 @@ void Video::drawPacked(byte *sprBuf, int32 size, int16 width, int16 height,
 	}
 }
 
-void Video::drawPackedSprite(byte *sprBuf, int32 size, int16 width, int16 height,
+void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 		int16 x, int16 y, int16 transp, Surface &dest) {
 
 	if (y + height > dest.getHeight()) {
@@ -379,10 +379,10 @@ void Video::drawPackedSprite(byte *sprBuf, int32 size, int16 width, int16 height
 		return;
 	}
 
-	if (spriteUncompressor(sprBuf, size, width, height, x, y, transp, dest))
+	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
 
-	drawPacked(sprBuf,size,  width, height, x, y, transp, dest);
+	drawPacked(sprBuf, width, height, x, y, transp, dest);
 }
 
 void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
@@ -393,7 +393,7 @@ void Video::drawPackedSprite(const char *path, Surface &dest, int width) {
 		return;
 	}
 
-	drawPackedSprite(data, size, width, dest.getHeight(), 0, 0, 0, dest);
+	drawPackedSprite(data, width, dest.getHeight(), 0, 0, 0, dest);
 	delete[] data;
 }
 

@@ -414,7 +414,7 @@ void Draw_v1::spriteOperation(int16 operation, bool ttsAddHotspotText) {
 		if (!resource)
 			break;
 
-		_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
+		_vm->_video->drawPackedSprite(resource->getData(),
 				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 				_transparency, *_spritesArray[_destSurface]);
 

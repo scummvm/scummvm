@@ -196,7 +196,7 @@ void Draw_Fascination::spriteOperation(int16 operation, bool ttsAddHotspotText) 
 		if (!resource)
 			break;
 
-		_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
+		_vm->_video->drawPackedSprite(resource->getData(),
 				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 				_transparency, *_spritesArray[_destSurface]);
 
@@ -430,7 +430,7 @@ void Draw_Fascination::drawWin(int16 fct) {
 			break;
 		}
 
-		_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
+		_vm->_video->drawPackedSprite(resource->getData(),
 				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
 				_transparency, *_spritesArray[_destSurface]);
 
@@ -747,7 +747,7 @@ void Draw_Fascination::decompWin(int16 x, int16 y, SurfacePtr destPtr) {
 	if (!resource)
 		return;
 
-	_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
+	_vm->_video->drawPackedSprite(resource->getData(),
 			_spriteRight, _spriteBottom, x, y, _transparency, *destPtr);
 
 	delete resource;

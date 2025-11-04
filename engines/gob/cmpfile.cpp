@@ -146,7 +146,7 @@ void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 		return;
 	}
 
-	_vm->_video->drawPackedSprite(data, size, _surface->getWidth(), _surface->getHeight(), 0, 0, 0, *_surface);
+	_vm->_video->drawPackedSprite(data, _surface->getWidth(), _surface->getHeight(), 0, 0, 0, *_surface);
 
 	delete[] data;
 }
