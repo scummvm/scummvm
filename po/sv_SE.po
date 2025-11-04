@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-03 19:43+0000\n"
+"POT-Creation-Date: 2025-11-04 09:15+0000\n"
 "PO-Revision-Date: 2025-11-04 06:00+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3904,7 +3904,7 @@ msgstr "Högerklick"
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/hypno/metaengine.cpp:186 engines/hypno/metaengine.cpp:369
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
-#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:123
+#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:136
 #: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:52
 #: engines/sludge/keymapper_tables.h:125 engines/sludge/keymapper_tables.h:187
 #: engines/sludge/keymapper_tables.h:243 engines/sludge/keymapper_tables.h:262
@@ -4181,7 +4181,7 @@ msgid "Display keyboard"
 msgstr "Visa tangentbord"
 
 #: backends/events/default/default-events.cpp:352
-#: engines/ngi/metaengine.cpp:136
+#: engines/ngi/metaengine.cpp:149
 msgid "Toggle mute"
 msgstr "Ljud av/på"
 
@@ -5959,7 +5959,7 @@ msgstr "Minimera"
 #. I18N: Opens the help screen.
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
-#: engines/ngi/metaengine.cpp:149 engines/supernova/metaengine.cpp:238
+#: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "Hjälp"
@@ -6253,7 +6253,7 @@ msgstr "Leta efter uppdateringar..."
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
-#: engines/ngi/metaengine.cpp:102 engines/petka/metaengine.cpp:113
+#: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
 #: engines/private/metaengine.cpp:84 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
@@ -8370,7 +8370,7 @@ msgstr ""
 msgid "Skip intro / Exit map or inventory"
 msgstr "Hoppa över intro/avsluta karta eller översikt"
 
-#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:178
+#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:191
 msgid "Open map"
 msgstr "Öppna karta"
 
@@ -9603,7 +9603,7 @@ msgstr ""
 "implementationen."
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
-#: engines/ngi/metaengine.cpp:104 engines/voyeur/metaengine.cpp:188
+#: engines/ngi/metaengine.cpp:117 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
 msgstr "Kortkommandon för intro"
 
@@ -9616,7 +9616,7 @@ msgid "Secondary shoot"
 msgstr "Sekundärt skott"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
-#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:232
+#: engines/ngi/metaengine.cpp:168 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Hoppa över intro"
@@ -10068,7 +10068,7 @@ msgstr ""
 msgid "Exit keymappings"
 msgstr "Avsluta kortkommandon"
 
-#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:103
+#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:116
 #: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:780
 msgid "Map keymappings"
 msgstr "Kortkommandon för karta"
@@ -11084,7 +11084,7 @@ msgstr "Kortkommandon för filhanteringsmeny"
 msgid "Pause menu keymappings"
 msgstr "Kortkommandon för pausmeny"
 
-#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:111
+#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:124
 #: engines/prince/metaengine.cpp:231 engines/queen/metaengine.cpp:180
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -11114,42 +11114,42 @@ msgstr "Hoppa över hela sekvensen (fungerar endast i vissa scener)"
 msgid "Confirm the selected save / new save name"
 msgstr "Bekräfta vald sparning / nytt sparat namn"
 
-#: engines/ngi/metaengine.cpp:105
+#: engines/ngi/metaengine.cpp:118
 #, fuzzy
 #| msgid "Quit keymappings"
 msgid "Credits keymappings"
 msgstr "Avsluta kortkommandon"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
-#: engines/ngi/metaengine.cpp:107
+#: engines/ngi/metaengine.cpp:120
 #, fuzzy
 #| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
 msgstr "Kortkommandon för avslutningsdialog"
 
-#: engines/ngi/metaengine.cpp:117
+#: engines/ngi/metaengine.cpp:130
 msgid "Deselect item"
 msgstr "Avmarkera objekt"
 
 #. I18N: Stops all currently playing sounds.
-#: engines/ngi/metaengine.cpp:130
+#: engines/ngi/metaengine.cpp:143
 msgid "Stop sounds"
 msgstr "Stoppa ljud"
 
-#: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
+#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Växla inventarier"
 
-#: engines/ngi/metaengine.cpp:163
+#: engines/ngi/metaengine.cpp:176
 msgid "Skip credits"
 msgstr "Hoppa över medverkande"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
-#: engines/ngi/metaengine.cpp:170
+#: engines/ngi/metaengine.cpp:183
 msgid "Close dialog"
 msgstr "Stäng dialogen"
 
-#: engines/ngi/metaengine.cpp:184
+#: engines/ngi/metaengine.cpp:197
 msgid "Close map"
 msgstr "Stäng karta"
 

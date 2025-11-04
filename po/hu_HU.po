@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-03 19:43+0000\n"
+"POT-Creation-Date: 2025-11-04 09:15+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3922,7 +3922,7 @@ msgstr "Jobb katt"
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
 #: engines/hypno/metaengine.cpp:186 engines/hypno/metaengine.cpp:369
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
-#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:123
+#: engines/mohawk/riven.cpp:876 engines/ngi/metaengine.cpp:136
 #: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:52
 #: engines/sludge/keymapper_tables.h:125 engines/sludge/keymapper_tables.h:187
 #: engines/sludge/keymapper_tables.h:243 engines/sludge/keymapper_tables.h:262
@@ -4198,7 +4198,7 @@ msgid "Display keyboard"
 msgstr "Billentyűzet megjelenítése"
 
 #: backends/events/default/default-events.cpp:352
-#: engines/ngi/metaengine.cpp:136
+#: engines/ngi/metaengine.cpp:149
 msgid "Toggle mute"
 msgstr "Némítás kapcsolása"
 
@@ -6005,7 +6005,7 @@ msgstr "Kis méret"
 #. I18N: Opens the help screen.
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
-#: engines/ngi/metaengine.cpp:149 engines/supernova/metaengine.cpp:238
+#: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "Súgó"
@@ -6299,7 +6299,7 @@ msgstr "Frissítések keresése..."
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
-#: engines/ngi/metaengine.cpp:102 engines/petka/metaengine.cpp:113
+#: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
 #: engines/private/metaengine.cpp:84 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
@@ -8554,7 +8554,7 @@ msgstr "Használja a TTS-t a feliratokhoz (ha a TTS elérhető)"
 msgid "Skip intro / Exit map or inventory"
 msgstr "Bevezető átugrása / Kilépés térképből vagy felszerelésből"
 
-#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:178
+#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:191
 msgid "Open map"
 msgstr "Térkép megnyitása"
 
@@ -9958,7 +9958,7 @@ msgstr ""
 "implementációban."
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
-#: engines/ngi/metaengine.cpp:104 engines/voyeur/metaengine.cpp:188
+#: engines/ngi/metaengine.cpp:117 engines/voyeur/metaengine.cpp:188
 #, fuzzy
 #| msgid "Index keymappings"
 msgid "Intro keymappings"
@@ -9975,7 +9975,7 @@ msgid "Secondary shoot"
 msgstr "Másodpercek"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
-#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:232
+#: engines/ngi/metaengine.cpp:168 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Nyitóvideó átugrása"
@@ -10475,7 +10475,7 @@ msgstr ""
 msgid "Exit keymappings"
 msgstr "Kilépési kiosztások"
 
-#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:103
+#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:116
 #: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:780
 #, fuzzy
 #| msgid "Start menu keymappings"
@@ -11549,7 +11549,7 @@ msgstr "Játék gombkiosztások"
 msgid "Pause menu keymappings"
 msgstr "Játék gombkiosztások"
 
-#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:111
+#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:124
 #: engines/prince/metaengine.cpp:231 engines/queen/metaengine.cpp:180
 #: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
 #: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
@@ -11587,52 +11587,52 @@ msgstr ""
 msgid "Confirm the selected save / new save name"
 msgstr "Új játékmentés létrehozása"
 
-#: engines/ngi/metaengine.cpp:105
+#: engines/ngi/metaengine.cpp:118
 #, fuzzy
 #| msgid "Escape keymappings"
 msgid "Credits keymappings"
 msgstr "Kilépési kiosztások"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
-#: engines/ngi/metaengine.cpp:107
+#: engines/ngi/metaengine.cpp:120
 #, fuzzy
 #| msgid "Quit panel keymapping"
 msgid "Dialog keymappings"
 msgstr "Kilépő panel gombkiosztás"
 
-#: engines/ngi/metaengine.cpp:117
+#: engines/ngi/metaengine.cpp:130
 #, fuzzy
 #| msgid "Select a Theme"
 msgid "Deselect item"
 msgstr "Válassz témát"
 
 #. I18N: Stops all currently playing sounds.
-#: engines/ngi/metaengine.cpp:130
+#: engines/ngi/metaengine.cpp:143
 #, fuzzy
 #| msgid "Preload sounds"
 msgid "Stop sounds"
 msgstr "Hangok előtöltése"
 
-#: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
+#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 #, fuzzy
 #| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory"
 msgstr "Felszerelés / IQ pont kijelző kapcsoló"
 
-#: engines/ngi/metaengine.cpp:163
+#: engines/ngi/metaengine.cpp:176
 #, fuzzy
 #| msgid "Show credits"
 msgid "Skip credits"
 msgstr "Stáblista megjelenítése"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
-#: engines/ngi/metaengine.cpp:170
+#: engines/ngi/metaengine.cpp:183
 #, fuzzy
 #| msgid "Close the Dialogue box"
 msgid "Close dialog"
 msgstr "Panel bezárása"
 
-#: engines/ngi/metaengine.cpp:184
+#: engines/ngi/metaengine.cpp:197
 #, fuzzy
 #| msgid "Close popup"
 msgid "Close map"
