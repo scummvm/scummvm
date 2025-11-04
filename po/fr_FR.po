@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-03 19:43+0000\n"
-"PO-Revision-Date: 2025-09-03 13:08+0000\n"
+"PO-Revision-Date: 2025-11-04 06:00+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7250,7 +7250,7 @@ msgstr ""
 
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
-msgstr ""
+msgstr "OpenGL obsolète détecté, des erreurs graphiques peuvent se produire."
 
 #: engines/alcachofa/metaengine.cpp:40
 msgid "High Quality"
@@ -7266,7 +7266,7 @@ msgstr "32 Bits"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Afficher le jeu en couleurs 16 bits ou non"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7440,26 +7440,20 @@ msgid "Page Down"
 msgstr "Page suiv."
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Home key"
 msgid "Home"
-msgstr "Touche Début"
+msgstr "Début"
 
 #: engines/bagel/metaengine.cpp:73
-#, fuzzy
-#| msgid "End key"
 msgid "End"
-msgstr "Touche Fin"
+msgstr "Fin"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "Touches principales"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Volume Minimum"
+msgstr "Touches minimales"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -11531,13 +11525,12 @@ msgstr "Touche X"
 
 #: engines/private/metaengine.cpp:37
 msgid "Display SFX subtitles"
-msgstr "Afficher les sous-titres des sons"
+msgstr "Sous-titres des bruitages"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "Utilise la synthèse vocale (si disponible) pour lire les sous-titres"
+msgstr ""
+"Affiche les sous-titres des bruitages (si les sous-titres sont activés)."
 
 #: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -15440,7 +15433,7 @@ msgstr "Act. / Désact. l'audio"
 
 #: engines/ultima/nuvie/metaengine.cpp:100
 msgid "Toggle sfx"
-msgstr "Act. / Désact. les effets sonores"
+msgstr "Act. / Désact. les bruitages"
 
 #: engines/ultima/nuvie/metaengine.cpp:101
 msgid "Toggle original style command bar"
