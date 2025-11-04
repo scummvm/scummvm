@@ -931,7 +931,7 @@ void GamosEngine::updateScreen(bool checkers, const Common::Rect &rect) {
 	if (_width == 0 || _height == 0)
 		return;
 
-	if (!checkers) {
+	if (!checkers || shouldQuit()) {
 		_screen->addDirtyRect(rect);
 		return;
 	}
@@ -958,10 +958,18 @@ void GamosEngine::updateScreen(bool checkers, const Common::Rect &rect) {
 			}
 		}
 		_screen->update();
-		val = _system->getMillis() - val;
 
-		if (val < maxDelay)
-			_system->delayMillis(maxDelay - val);
+		while (_system->getMillis() - val < maxDelay) {
+			_system->delayMillis(1);
+
+			if (eventsSkip()) {
+				_screen->addDirtyRect(rect);
+				_screen->update();
+				return;
+			} else {
+				_system->updateScreen();
+			}
+		}
 	}
 }
 
@@ -1015,7 +1023,7 @@ bool GamosEngine::usePalette(const byte *pal, int num, int fade, bool winColors)
 		return false;
 
 	if (_width != 0 && _height != 0) {
-		if (fade == 0) {
+		if (fade == 0 || shouldQuit()) {
 			uint16 color = _screen->getPalette().findBestColor(0, 0, 0);
 			_screen->fillRect(_screen->getBounds(), color);
 			_screen->update();
@@ -1042,10 +1050,20 @@ bool GamosEngine::usePalette(const byte *pal, int num, int fade, bool winColors)
 					_screen->drawLine(0, i, _screen->w - 1, i, color);
 
 				_screen->update();
-				val = _system->getMillis() - val;
 
-				if (val < maxDelay)
-					_system->delayMillis(maxDelay - val);
+				while (_system->getMillis() - val < maxDelay) {
+					_system->delayMillis(1);
+
+					if (eventsSkip()) {
+						j = 8;
+						uint16 color = _screen->getPalette().findBestColor(0, 0, 0);
+						_screen->fillRect(_screen->getBounds(), color);
+						_screen->update();
+						break;
+					} else {
+						_system->updateScreen();
+					}
+				}
 			}
 		}
 	}
