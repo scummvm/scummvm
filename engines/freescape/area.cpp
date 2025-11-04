@@ -402,7 +402,7 @@ Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 			if (((GeometricObject *)obj)->isLineButNotStraight())
 				continue;
 
-		if (!obj->isDestroyed() && !obj->isInvisible()) {
+		if (!obj->isDestroyed() && !obj->isInvisible() && obj->isGeometric()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			Math::Vector3d collidedNormal;
 			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, raySize * ray.getDirection(), collidedNormal);
@@ -426,7 +426,7 @@ Object *Area::checkCollisionRay(const Math::Ray &ray, int raySize) {
 ObjectArray Area::checkCollisions(const Math::AABB &boundingBox) {
 	ObjectArray collided;
 	for (auto &obj : _drawableObjects) {
-		if (!obj->isDestroyed() && !obj->isInvisible()) {
+		if (!obj->isDestroyed() && !obj->isInvisible() && obj->isGeometric()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			if (gobj->collides(boundingBox)) {
 				collided.push_back(gobj);
@@ -508,7 +508,7 @@ Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, cons
 		Math::Vector3d direction = position - lastPosition;
 
 		for (auto &obj : _drawableObjects) {
-			if (!obj->isDestroyed() && !obj->isInvisible()) {
+			if (!obj->isDestroyed() && !obj->isInvisible() && obj->isGeometric()) {
 				GeometricObject *gobj = (GeometricObject *)obj;
 				Math::Vector3d collidedNormal;
 				float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, direction, collidedNormal);

@@ -485,9 +485,11 @@ uint16 FreescapeEngine::playSoundDOSSpeaker(uint16 frequencyStart, soundSpeakerF
 	int waveDuration = waveDurationMultipler * (frequencyDuration + 1);
 
 	while (true) {
-		float hzFreq = 1193180.0 / freq;
-		debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f, duration: %d", freq, hzFreq, waveDuration);
-		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
+		if (freq > 0) {
+			float hzFreq = 1193180.0 / freq;
+			debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f, duration: %d", freq, hzFreq, waveDuration);
+			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
+		}
 		if (frequencyStepsNumber > 0) {
 			// Ascending initial portions of cycle
 			freq += frequencyStep;

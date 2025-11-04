@@ -34,6 +34,7 @@ Sensor::Sensor(
 	uint8 flags_,
 	FCLInstructionVector condition_,
 	Common::String conditionSource_) {
+	_type = kSensorType;
 	_objectID = objectID_;
 	_origin = origin_;
 	_rotation = rotation_;
