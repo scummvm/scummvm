@@ -1849,7 +1849,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_numChannelsDisplayed = 30;
 
 		_firstFramePosition = _framesStream->pos();
-	} else if (version >= kFileVer600 && version < kFileVer1100) {
+	} else if (version >= kFileVer600) {
 		_framesStreamSize = _framesStream->readUint32();
 		int32 ver = (int32)_framesStream->readUint32();
 		uint32 listStart = _framesStream->readUint32();
@@ -1892,7 +1892,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_spriteDetailAccessed[0] = true;
 	}
 
-	if (version >= kFileVer400 && version < kFileVer1100) {
+	if (version >= kFileVer400) {
 		_framesStreamSize = _framesStream->readUint32();
 		_frame1Offset = _framesStream->readUint32();
 		_numOfFrames = _framesStream->readUint32();
@@ -1915,10 +1915,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 		debugC(1, kDebugLoading, "Score::loadFrames(): size: %d, frame1Offset: %d, numOfFrames: %d, version: %d, spriteRecordSize: %d, numChannels: %d, numChannelsDisplayed: %d",
 			_framesStreamSize, _frame1Offset, _numOfFrames, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
-	}
-
-	if (version >= kFileVer1100) {
-		error("STUB: Score::loadFrames(): score not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
 
 	// partically by channels, hence we keep it and read the score from left to right
