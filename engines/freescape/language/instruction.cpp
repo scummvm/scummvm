@@ -291,7 +291,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			executeRedraw(instruction);
 			break;
 		case Token::EXECUTE:
-			executeExecute(instruction, shot, collided, activated);
+			executeExecute(instruction);
 			ip = codeSize;
 			break;
 		case Token::DELAY:
@@ -357,7 +357,7 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	waitInLoop(delay);
 }
 
-void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, bool collided, bool activated) {
+void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 	uint16 objId = instruction._source;
 	debugC(1, kFreescapeDebugCode, "Executing instructions from object %d", objId);
 	Object *obj = _currentArea->objectWithID(objId);
@@ -371,11 +371,11 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, boo
 			} 
 			assert(obj);
 			FCLInstructionVector &condition = ((Entrance *)obj)->_condition;
-			executeCode(condition, shot, collided, false, activated);
+			executeCode(condition, true, true, true, true);
 			return;
 		}
 	}
-	executeObjectConditions((GeometricObject *)obj, shot, collided, activated);
+	executeObjectConditions((GeometricObject *)obj, true, true, true);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
@@ -479,7 +479,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 	if (additional == 0) {
 		obj = _currentArea->objectWithID(source);
 		if (!obj && isCastle())
-			return false; // The value is not important
+			return (true == (value != 0));
 		assert(obj);
 		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d is %d!", source, value);
 	} else {
@@ -605,6 +605,7 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 		debugC(1, kFreescapeDebugCode, "WARNING: Destroying obj %d in area %d already destroyed!", objectID, areaID);
 
 	obj->destroy();
+	obj->makeInvisible();
 }
 
 void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
@@ -656,9 +657,6 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
 	if (_areaMap.contains(areaID)) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
-		if (!obj && isCastle() && _executingGlobalCode)
-			return; // No side effects
-
 		if (!obj) {
 			obj = _areaMap[255]->objectWithID(objectID);
 			if (!obj) {
@@ -666,7 +664,11 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 					error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
 				return;
 			}
-			_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+
+			if (obj->getType() != kGroupType)
+				_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+			else if (obj->_partOfGroup)
+				_currentArea->addGroupFromArea(objectID, _areaMap[255]);
 			obj = _areaMap[areaID]->objectWithID(objectID);
 			assert(obj); // We know that an object should be there
 		}

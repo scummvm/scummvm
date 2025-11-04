@@ -415,12 +415,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 	resetInput();
 
-	/*if (entranceID > 0) {
-		Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
-		assert(entrance);
-		executeEntranceConditions(entrance);
+	if (entranceID > 0) {
 		executeMovementConditions();
-	}*/
+	}
 }
 
 void CastleEngine::initGameState() {
@@ -932,6 +929,7 @@ void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 	if (obj->isDestroyed())
 		debugC(1, kFreescapeDebugCode, "WARNING: Destroying obj %d in area %d already destroyed!", objectID, areaID);
 
+	obj->makeInvisible();
 	obj->destroy();
 }
 
@@ -983,22 +981,39 @@ void CastleEngine::loadAssets() {
 		delete tmp;
 	}
 
-	if (isDOS()) {
-		// Discard some global conditions
-		// It is unclear why they hide/unhide objects that formed the spirits
-		for (int i = 0; i < 3; i++) {
-			debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[1].c_str());
-			_conditions.remove_at(1);
-			_conditionSources.remove_at(1);
+	Common::List<int> globalIds = _areaMap[255]->getEntranceIds();
+	for (auto &it : _areaMap) {
+		if (it._value->getAreaID() == 255)
+			continue;
+
+		it._value->addStructure(_areaMap[255]);
+		if (it._value->objectWithID(125)) {
+			_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
+			//group = (Group *)_areaMap[it._key]->objectWithID(195);
+
+			_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
+			//group = (Group *)_areaMap[it._key]->objectWithID(212);
 		}
 
-		for (auto &it : _areaMap) {
-			it._value->addStructure(_areaMap[255]);
-			it._value->addObjectFromArea(227, _areaMap[255]);
-			it._value->addObjectFromArea(228, _areaMap[255]);
-			it._value->addObjectFromArea(229, _areaMap[255]);
-			it._value->addObjectFromArea(242, _areaMap[255]);
-			it._value->addObjectFromArea(139, _areaMap[255]);
+		if (it._value->objectWithID(126)) {
+			_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
+			//group = (Group *)_areaMap[it._key]->objectWithID(191);
+		}
+
+		if (it._value->objectWithID(127)) {
+			_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
+			//group = (Group *)_areaMap[it._key]->objectWithID(193);
+		}
+
+		for (auto &id : globalIds) {
+			if (it._value->entranceWithID(id))
+				continue;
+
+			Object *obj = _areaMap[255]->entranceWithID(id);
+			assert(obj);
+			assert(obj->getType() == ObjectType::kEntranceType);
+			// The entrance is not in the current area, so we need to add it
+			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
 	_areaMap[1]->addFloor();
@@ -1251,37 +1266,6 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface, Common::Point ori
 }
 
 void CastleEngine::addGhosts() {
-	for (auto &it : _areaMap) {
-		for (auto &sensor : it._value->getSensors()) {
-			if (sensor->getObjectID() == 125) {
-				if (isDOS()) {
-					_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
-					_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
-				} else if (isSpectrum() || isCPC()) {
-					_areaMap[it._key]->addObjectFromArea(170, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(172, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(173, _areaMap[255]);
-				}
-			} else if (sensor->getObjectID() == 126) {
-				if (isDOS())
-					_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
-				else if (isSpectrum()) {
-					_areaMap[it._key]->addObjectFromArea(145, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(165, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(166, _areaMap[255]);
-				}
-			} else if (sensor->getObjectID() == 127) {
-				if (isDOS())
-					_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-				else if (isSpectrum() || isCPC()) {
-					_areaMap[it._key]->addObjectFromArea(142, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(143, _areaMap[255]);
-					_areaMap[it._key]->addObjectFromArea(144, _areaMap[255]);
-				}
-			} else
-				debugC(1, kFreescapeDebugParser, "Sensor %d in area %d", sensor->getObjectID(), it._key);
-		}
-	}
 }
 
 void CastleEngine::checkSensors() {
@@ -1294,39 +1278,6 @@ void CastleEngine::checkSensors() {
 		_gfx->_shakeOffset = Common::Point();
 		return;
 	}
-
-	for (auto &it : _sensors) {
-		Sensor *sensor = (Sensor *)it;
-		if (isDOS()) { // Should be similar to Amiga/AtariST
-			if (sensor->getObjectID() == 125) {
-				Group *group = (Group *)_currentArea->objectWithID(195);
-				if (!group->isDestroyed() && !group->isInvisible()) {
-					group->_active = true;
-				} else
-					return;
-
-				group = (Group *)_currentArea->objectWithID(212);
-				if (!group->isDestroyed() && !group->isInvisible()) {
-					group->_active = true;
-				} else
-					return;
-
-			} else if (sensor->getObjectID() == 126) {
-				Group *group = (Group *)_currentArea->objectWithID(191);
-				if (!group->isDestroyed() && !group->isInvisible()) {
-					group->_active = true;
-				} else
-					return;
-			} else if (sensor->getObjectID() == 197) {
-				Group *group = (Group *)_currentArea->objectWithID(182);
-				if (!group->isDestroyed() && !group->isInvisible()) {
-					group->_active = true;
-				} else
-					return;
-			}
-		}
-	}
-
 
 	if (!ghostInArea()) {
 		_mixer->stopHandle(_soundFxGhostHandle);

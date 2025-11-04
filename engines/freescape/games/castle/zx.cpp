@@ -230,29 +230,6 @@ void CastleEngine::loadAssetsZXFullGame() {
 	tmp->free();
 	delete tmp;
 	_riddleBottomFrame->convertToInPlace(_gfx->_texturePixelFormat);
-
-	for (auto &it : _areaMap) {
-		it._value->addStructure(_areaMap[255]);
-
-		it._value->addObjectFromArea(164, _areaMap[255]);
-		it._value->addObjectFromArea(174, _areaMap[255]);
-		it._value->addObjectFromArea(175, _areaMap[255]);
-		for (int16 id = 136; id < 140; id++) {
-			it._value->addObjectFromArea(id, _areaMap[255]);
-		}
-
-		it._value->addObjectFromArea(195, _areaMap[255]);
-		for (int16 id = 214; id < 228; id++) {
-			it._value->addObjectFromArea(id, _areaMap[255]);
-		}
-	}
-	// Discard some global conditions
-	// It is unclear why they hide/unhide objects that formed the spirits
-	for (int i = 0; i < 3; i++) {
-		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[0].c_str());
-		_conditions.remove_at(0);
-		_conditionSources.remove_at(0);
-	}
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {
