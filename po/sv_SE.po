@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-03 19:43+0000\n"
-"PO-Revision-Date: 2025-10-26 16:36+0000\n"
+"PO-Revision-Date: 2025-11-04 06:00+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -7141,7 +7141,7 @@ msgstr ""
 
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
-msgstr ""
+msgstr "Gammal OpenGL har upptäckts, vissa grafiska fel kommer att uppstå."
 
 #: engines/alcachofa/metaengine.cpp:40
 msgid "High Quality"
@@ -7157,7 +7157,7 @@ msgstr "32-bitars"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Huruvida spelet ska renderas i 16-bitars färg"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7319,38 +7319,28 @@ msgid "Escape"
 msgstr "Escape"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Page up"
 msgid "Page Up"
 msgstr "Sida upp"
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Page down"
 msgid "Page Down"
 msgstr "Sida ner"
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Home key"
 msgid "Home"
-msgstr "Home-tangent"
+msgstr "Hem"
 
 #: engines/bagel/metaengine.cpp:73
-#, fuzzy
-#| msgid "End key"
 msgid "End"
-msgstr "Sluttangent"
+msgstr "End"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "Allmänna tangenter"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Min. volym"
+msgstr "Minimala tangenter"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -8211,10 +8201,8 @@ msgstr ""
 "kopieras till katalogen SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "SFX-volym:"
+msgstr "SFX-läge:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8222,18 +8210,21 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Bestämmer om spelet ska använda endast CD-versionen av SFX, CD-SFX med "
+"ytterligare diskett-SFX eller endast diskett-SFX. Diskett-SFX är endast "
+"tillgängligt om diskettmusik används."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Endast CD-versionens SFX"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + extra diskett-SFX"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Endast diskettversionens SFX"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8250,8 +8241,6 @@ msgid "Time advance"
 msgstr "Avancera tid"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
 msgstr "Hoppa över mellansekvens"
 
@@ -10285,8 +10274,6 @@ msgstr ""
 "inledningen. Annars spelar det MIDI-musik."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
 msgstr "Använd Windows-muspekare"
 
@@ -10296,6 +10283,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Om detta alternativ väljs kommer spelet att använda Windows-muspekare som "
+"ingår i den ursprungliga .exe-filen. Annars kommer det att använda pekare "
+"med lägre upplösning från datafilerna."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -11138,40 +11128,30 @@ msgid "Dialog keymappings"
 msgstr "Kortkommandon för avslutningsdialog"
 
 #: engines/ngi/metaengine.cpp:117
-#, fuzzy
-#| msgid "Search / Select item"
 msgid "Deselect item"
-msgstr "Sök / Välj objekt"
+msgstr "Avmarkera objekt"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Förinläs ljud"
+msgstr "Stoppa ljud"
 
 #: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Växla inventarier"
 
 #: engines/ngi/metaengine.cpp:163
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Visa medverkande"
+msgstr "Hoppa över medverkande"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:170
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "Stäng dialogrutan"
+msgstr "Stäng dialogen"
 
 #: engines/ngi/metaengine.cpp:184
-#, fuzzy
-#| msgid "Close gumps"
 msgid "Close map"
-msgstr "Stäng gumps"
+msgstr "Stäng karta"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11294,10 +11274,8 @@ msgid "Show / Hide options screen"
 msgstr "Visa / dölj konsol"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "Enkelt musgränssnitt"
+msgstr "Stäng aktuellt gränssnitt"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -11373,10 +11351,8 @@ msgid "Display SFX subtitles"
 msgstr "Visa undertexter för ljudeffekter"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "Använd TTT för att läsa undertexter (om TTT är tillgängligt)"
+msgstr "Använd SFX-undertexter (om undertexter finns tillgängliga)"
 
 #: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -14091,10 +14067,8 @@ msgid "Close inventory"
 msgstr "Stäng inventarier"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "Interaktionsläge"
+msgstr "Kör i interaktionsläge"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14317,20 +14291,16 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Kunde inte hitta datafilen '%s'."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "Aktivera kopieringsskydd"
+msgstr "Kopieringsskydd"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Pixellated scene transitions"
 msgid "Disable scene transitions"
-msgstr "Pixliga scenövergångar"
+msgstr "Inaktivera scenövergångar"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Inaktivera ursprungliga övergångseffekter mellan scener"
 
 #: engines/tot/metaengine.cpp:58
 #, fuzzy
@@ -14345,22 +14315,16 @@ msgid "Use original save and load dialogs"
 msgstr "Använd originalskärmar för spara/ladda"
 
 #: engines/tot/metaengine.cpp:118
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Default action"
-msgstr "Genomför standardhandling"
+msgstr "Standardhandling"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Save / load game"
 msgid "Save and load game"
-msgstr "Spara / läs in spel"
+msgstr "Spara och läs in spel"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu"
 msgid "Main menu/Exit"
-msgstr "Huvudmeny"
+msgstr "Huvudmeny/Avsluta"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -14771,17 +14735,16 @@ msgid ""
 msgstr "Du valde Ransome *unbeeped* (DLC) men DLC:n har inte upptäckts!"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
-msgstr "Detta spel kräver FoxTail-undermotorn, vilken inte kompilerats in."
+msgstr "Detta spel kräver OpenGL med shaders, vilket inte stöds på ditt system"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Detta spel kräver OpenGL Framebuffer Objects, som inte stöds av ditt system"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
