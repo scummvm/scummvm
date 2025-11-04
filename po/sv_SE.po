@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-04 09:15+0000\n"
-"PO-Revision-Date: 2025-11-04 06:00+0000\n"
+"PO-Revision-Date: 2025-11-04 10:12+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -11115,17 +11115,13 @@ msgid "Confirm the selected save / new save name"
 msgstr "Bekräfta vald sparning / nytt sparat namn"
 
 #: engines/ngi/metaengine.cpp:118
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "Avsluta kortkommandon"
+msgstr "Kortkommandon för medverkande"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "Kortkommandon för avslutningsdialog"
+msgstr "Kortkommandon för dialog"
 
 #: engines/ngi/metaengine.cpp:130
 msgid "Deselect item"
@@ -11248,30 +11244,22 @@ msgid "Toggle Chatty AI"
 msgstr "Växla pratsam AI"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "Flytta / Interagera / Hoppa över dialog"
+msgstr "Interagera / Hoppa över dialog"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Öppna åtgärdsmeny / Stäng meny"
+msgstr "Öppna åtgärdsmeny / Stäng aktuellt gränssnitt"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Chapayevs handling"
+msgstr "Chapayevs använd objekt"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Visa / dölj konsol"
+msgstr "Visa / dölj alternativskärm"
 
 #: engines/petka/metaengine.cpp:192
 msgid "Close current interface"
@@ -14303,16 +14291,12 @@ msgid "Disable original transition effects between scenes"
 msgstr "Inaktivera ursprungliga övergångseffekter mellan scener"
 
 #: engines/tot/metaengine.cpp:58
-#, fuzzy
-#| msgid "Open save / load dialog"
 msgid "Original save/load dialog"
-msgstr "Öppna dialog för spara / läs in"
+msgstr "Ursprunglig dialog för spara / läsa in"
 
 #: engines/tot/metaengine.cpp:59
-#, fuzzy
-#| msgid "Use original savegame dialog"
 msgid "Use original save and load dialogs"
-msgstr "Använd originalskärmar för spara/ladda"
+msgstr "Använd originaldialoger för spara/läsa in"
 
 #: engines/tot/metaengine.cpp:118
 msgid "Default action"
