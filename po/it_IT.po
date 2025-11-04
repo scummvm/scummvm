@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-04 09:15+0000\n"
-"PO-Revision-Date: 2025-11-04 10:12+0000\n"
+"PO-Revision-Date: 2025-11-04 11:01+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11239,46 +11239,34 @@ msgstr "Mappature tasti credits"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "Mappatura tasti finestra Uscita"
+msgstr "Mappature tasti finestre"
 
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Search / Select item"
 msgid "Deselect item"
-msgstr "Cerca / Seleziona oggetto"
+msgstr "Deseleziona oggetto"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:143
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Precarica i suoni"
+msgstr "Interrompi suoni in riproduzione"
 
 #: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Mostra / nascondi inventario"
 
 #: engines/ngi/metaengine.cpp:176
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Mostra riconoscimenti"
+msgstr "Salta riconoscimenti"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:183
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "Chiudi finestra dialogo"
+msgstr "Chiudi finestra"
 
 #: engines/ngi/metaengine.cpp:197
-#, fuzzy
-#| msgid "Close gumps"
 msgid "Close map"
-msgstr "Chiudi tutte le finestre popup"
+msgstr "Chiudi mappa"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11375,36 +11363,26 @@ msgid "Toggle Chatty AI"
 msgstr "Attiva/disattiva IA chiacchierona"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "Movimento / Interazione / Salta dialogo"
+msgstr "Interazione / Salta dialogo"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Apri menù azioni / Chiudi menù"
+msgstr "Apri menù azioni / Chiudi interfaccia corrente"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Azione di Chapayev"
+msgstr "Usa oggetto con Chapayev"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Mostra/nascondi console"
+msgstr "Mostra/nascondi schermata opzioni"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "Interfaccia mouse facilitata"
+msgstr "Chiudi Interfaccia corrente"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -11480,10 +11458,9 @@ msgid "Display SFX subtitles"
 msgstr "Mostra sottotitoli effetti sonori"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "Utilizza la Sintesi Vocale per leggere i sottotitoli (se disponibile)"
+msgstr ""
+"Mostra sottotitoli per gli effetti sonori (se i sottotitoli sono abilitati),"
 
 #: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -14244,10 +14221,8 @@ msgid "Close inventory"
 msgstr "Chiudi inventario"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "Modalità interazione"
+msgstr "Esegui in modalità interattiva"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14471,49 +14446,36 @@ msgid "Unable to locate the '%s' data file."
 msgstr "File dati '%s' non trovato."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "Abilita protezione anticopia"
+msgstr "Protezione anticopia"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Pixellated scene transitions"
 msgid "Disable scene transitions"
-msgstr "Transizioni di scena pixellate"
+msgstr "Disabilita transizioni di scena"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Disabilita gli effetti di transizione da una schermata alla successiva"
 
 #: engines/tot/metaengine.cpp:58
-#, fuzzy
-#| msgid "Open save / load dialog"
 msgid "Original save/load dialog"
-msgstr "Apri finestra salvataggio / caricamento"
+msgstr "Schermate di salvataggio/caricamento originali"
 
 #: engines/tot/metaengine.cpp:59
-#, fuzzy
 msgid "Use original save and load dialogs"
-msgstr "Usa schermate di salvataggio originali"
+msgstr "Usa le schermate di salvataggio e caricamento originali"
 
 #: engines/tot/metaengine.cpp:118
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Default action"
-msgstr "Esegui azione predefinita"
+msgstr "Azione predefinita"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Save / load game"
 msgid "Save and load game"
 msgstr "Salva / carica gioco"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu"
 msgid "Main menu/Exit"
-msgstr "Menù principale"
+msgstr "Menù principale / Uscita"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -14929,19 +14891,19 @@ msgstr ""
 "Hai selezionato Ransome *debippato* (DLC), ma il DLC non è stato trovato!"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
 msgstr ""
-"Questo gioco richiede il sotto-motore FoxTail, che non è stato incluso "
-"durante la compilazione."
+"Questo gioco richiede OpenGL con shaders, che non sono supportati dal tuo "
+"sistema"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Questo gioco richiede OpenGL Framebuffer Objects, che non sono supportati "
+"dal tuo sistema"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
