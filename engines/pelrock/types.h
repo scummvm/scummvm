@@ -4,6 +4,15 @@ namespace Pelrock {
     const int kRoomStructSize = 104;
     const int kNumRooms = 56;
 
+    struct Anim {
+        int x;
+        int y;
+        int w;
+        int h;
+        int nframes;
+        int speed;
+        byte *animData;
+    };
 
     enum GameState {
         GAME = 100,

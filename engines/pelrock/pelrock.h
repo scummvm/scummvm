@@ -57,6 +57,7 @@ private:
 	void loadAnims();
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+	Common::List<Anim> getRoomAnimations(Common::File *roomFile, int roomOffset);
 	void loadMainCharacterAnims();
 	void frames();
 

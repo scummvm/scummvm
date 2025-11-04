@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/scummsys.h"
@@ -178,7 +179,7 @@ void PelrockEngine::init() {
 		// 		myoverlay.setCredits();
 		loadAnims();
 		// 		loadOtherBitmaps();
-		setScreen(0, 2);
+		setScreen(1, 2);
 		// setScreen(0, 2);
 		// 		valSound1 = 0;
 		// 		valSound2 = 0;
@@ -851,6 +852,59 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 	}
 }
 
+Common::List<Anim> PelrockEngine::getRoomAnimations(Common::File *roomFile, int roomOffset) {
+	uint32_t pair_offset = roomOffset + (8 * 8);
+	roomFile->seek(pair_offset, SEEK_SET);
+    uint32_t offset = roomFile->readUint32LE();
+    uint32_t size = roomFile->readUint32LE();
+
+	byte *data = new byte[size];
+	roomFile->seek(offset, SEEK_SET);
+	roomFile->read(data, size);
+
+	unsigned char *pic = new byte[10000 * 10000];
+    if (offset > 0 && size > 0) {
+        decompress_rle_block(data, size, 0, size, &pic);
+	} else {
+		return Common::List<Anim>();
+	}
+	Common::List<Anim> anims = Common::List<Anim>();
+	uint32_t spriteEnd = offset + size;
+	uint32_t metadata_start = spriteEnd + 108;
+	uint32_t picOffset = 0;
+	for(int i = 0; i < 10; i++) {
+ 		uint32_t animOffset = metadata_start + (i * 44);
+		roomFile->seek(animOffset, SEEK_SET);
+
+		int16 x = roomFile->readSint16LE();
+		int16 y = roomFile->readSint16LE();
+		byte w = roomFile->readByte();
+        byte h = roomFile->readByte();
+		roomFile->skip(2); // reserved
+        int secAnimCount = roomFile->readByte();
+		roomFile->skip(1);
+        byte frames = 0;
+		for( int i =0; i < secAnimCount; i++) {
+            frames += roomFile->readByte();
+		}
+		if (w > 0 && h > 0 && frames > 0) {
+			Anim anim;
+			anim.x = x;
+			anim.y = y;
+			anim.w = w;
+			anim.h = h;
+			anim.nframes = frames;
+			uint32_t needed = anim.w * anim.h * anim.nframes;
+			anim.animData = new byte[needed];
+			Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
+			picOffset += needed;
+			debug("Anim %d: x=%d y=%d w=%d h=%d nframes=%d", i, anim.x, anim.y, anim.w, anim.h, anim.nframes);
+			anims.push_back(anim);
+		}
+	}
+	return anims;
+}
+
 void PelrockEngine::loadMainCharacterAnims() {
 	Common::File alfred3;
 	if (!alfred3.open(Common::Path("ALFRED.3"))) {
@@ -891,7 +945,6 @@ void PelrockEngine::setScreen(int number, int dir) {
 		return;
 	}
 
-
 	int roomOffset = number * kRoomStructSize;
 
 	byte *palette = new byte[256 * 3];
@@ -908,6 +961,23 @@ void PelrockEngine::setScreen(int number, int dir) {
 	for (int i = 0; i < 640; i++) {
 		for (int j = 0; j < 400; j++) {
 			_screen->setPixel(i, j, background[j * 640 + i]);
+		}
+	}
+	Common::List<Anim> anims = getRoomAnimations(&roomFile, roomOffset);
+	int num = 0;
+	for (Common::List<Anim>::iterator i = anims.begin(); i != anims.end(); i++) {
+		byte *frame = new byte[i->w * i->h];
+
+		Common::copy(i->animData, i->animData + (i->w * i->h), frame);
+
+		for (int y = 0; y < i->h; y++) {
+			for (int x = 0; x < i->w; x++) {
+				unsigned int src_pos = (y * i->w) + x;
+				int xPos = i->x + x;
+				int yPos = i->y + y;
+				if(frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+					_screen->setPixel(xPos, yPos, frame[src_pos]);
+			}
 		}
 	}
 	_screen->markAllDirty();
