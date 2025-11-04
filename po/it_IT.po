@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-04 09:15+0000\n"
-"PO-Revision-Date: 2025-09-03 19:18+0000\n"
+"PO-Revision-Date: 2025-11-04 10:12+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7224,6 +7224,8 @@ msgstr ""
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
 msgstr ""
+"Rilevata versione obsoleta di OpenGL. Potrebbero verificarsi degli errori "
+"grafici."
 
 #: engines/alcachofa/metaengine.cpp:40
 msgid "High Quality"
@@ -7239,7 +7241,7 @@ msgstr "32 bit"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Profondità di colore della grafica (32 o 16 bit)"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7403,38 +7405,28 @@ msgid "Escape"
 msgstr "Escape"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Page up"
 msgid "Page Up"
-msgstr "Pagina precedente"
+msgstr "Pagina prec."
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Page down"
 msgid "Page Down"
-msgstr "Pagina successiva"
+msgstr "Pagina succ."
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Home key"
 msgid "Home"
-msgstr "Tasto Inizio"
+msgstr "Inizio"
 
 #: engines/bagel/metaengine.cpp:73
-#, fuzzy
-#| msgid "End key"
 msgid "End"
-msgstr "Tasto Fine"
+msgstr "Fine"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "Tasti Generali"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Volume minimo"
+msgstr "Tasti Fondamentali"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -8296,10 +8288,8 @@ msgstr ""
 "nella directory SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Volume effetti:"
+msgstr "Modalità effetti sonori:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8307,18 +8297,22 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Seleziona se utilizzare solo gli effetti della versione CD, solo gli effetti "
+"della versione floppy, o entrambi contemporaneamente. Gli effetti della "
+"versione floppy sono disponibili solo se si abilita anche la musica di "
+"questa versione."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Solo effetti della versione CD"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "Versione CD + effetti extra della versione floppy"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Solo effetti della versione floppy"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8335,8 +8329,6 @@ msgid "Time advance"
 msgstr "Avanza orologio"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
 msgstr "Salta scena di intermezzo"
 
@@ -10389,10 +10381,8 @@ msgstr ""
 "l'introduzione. Altrimenti verrà utilizzata la musica MIDI."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
-msgstr "Usa cursori di Windows"
+msgstr "Usa puntatore mouse di Windows"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -10400,6 +10390,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Se abilitato, il gioco utilizzerà i puntatori mouse per Windows inclusi "
+"nell'eseguibile del gioco. Altrimenti verranno utilizzati i puntatori "
+"presenti nei file dati, a risoluzione inferiore."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -11241,10 +11234,8 @@ msgid "Confirm the selected save / new save name"
 msgstr "Conferma salvataggio selezionato / nuovo nome salvataggio"
 
 #: engines/ngi/metaengine.cpp:118
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "Mappature tasti uscita"
+msgstr "Mappature tasti credits"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
