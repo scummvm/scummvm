@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-03 19:43+0000\n"
-"PO-Revision-Date: 2025-11-04 06:00+0000\n"
+"PO-Revision-Date: 2025-11-04 08:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -152,7 +152,7 @@ msgstr "Vous demandera de lancer le Serveur web local"
 
 #: gui/cloudconnectionwizard.cpp:207
 msgid "Requires the Local Webserver feature"
-msgstr "Récessite la fonction Serveur web local"
+msgstr "Nécessite la fonction Serveur web local"
 
 #: gui/cloudconnectionwizard.cpp:223
 msgid "Quick Mode: Step 1"
@@ -2627,7 +2627,7 @@ msgstr ""
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr ""
-"La fermeture de la boite de dialogue Options entrainera l'arrêt du serveur."
+"La fermeture de la boîte de dialogue Options entrainera l'arrêt du serveur."
 
 #: gui/options.cpp:2859
 msgid "Run server to manage files with browser (in the same network)."
@@ -2638,7 +2638,7 @@ msgstr ""
 #: gui/options.cpp:2860
 msgid "Closing options dialog will stop the server."
 msgstr ""
-"La fermeture de la boite de dialogue Options entrainera l'arrêt du serveur."
+"La fermeture de la boîte de dialogue Options entrainera l'arrêt du serveur."
 
 #: gui/options.cpp:2871
 msgid "Use Text to speech"
@@ -6719,7 +6719,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:147
 msgid "Predictive Input Dialog on mouse click"
-msgstr "Boite de dialogue de saisie prédictive si clic gauche"
+msgstr "Boîte de dialogue de saisie prédictive si clic gauche"
 
 #: engines/agi/metaengine.cpp:148
 msgid ""
@@ -7428,14 +7428,10 @@ msgid "Escape"
 msgstr "Echap"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Page up"
 msgid "Page Up"
 msgstr "Page préc."
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Page down"
 msgid "Page Down"
 msgstr "Page suiv."
 
@@ -8085,7 +8081,7 @@ msgstr "Utilise la synthèse vocale (si disponible) pour lire les sous-titres"
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
 msgid "Close the dialog box"
-msgstr "Fermer la boîte de dialogues"
+msgstr "Fermer la boîte de dialogue"
 
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
@@ -8095,7 +8091,7 @@ msgstr "Conf. des touches Message Quitter"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr "Utiliser des dialogues transparents dans les scènes 16 couleurs"
+msgstr "Utiliser des b. de dial. transparentes dans les scènes 16 couleurs"
 
 #: engines/cine/metaengine.cpp:58
 msgid ""
@@ -8319,10 +8315,8 @@ msgstr ""
 "la version disquette doivent être copiés dans le répertoire SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Volume Bruitages :"
+msgstr "Bruitages :"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8330,18 +8324,22 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Indique si le jeu doit utiliser les bruitages de la version CD seuls, les "
+"bruitages CD avec des bruitages additionnels de la version disquette, ou les "
+"bruitages disquette seuls. Les bruitages disquette ne sont disponibles que "
+"si la musique disquette est utilisée."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Version CD seuls"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + Disquette add."
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Version Disquette seuls"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8358,8 +8356,6 @@ msgid "Time advance"
 msgstr "Avancer l'horloge"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
 msgstr "Passer la cinématique"
 
@@ -10424,14 +10420,12 @@ msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-"Si cette option est sélectionnée, le jeu utilisera une bande-son numérique "
-"pendant l'introduction. Sinon, il jouera de la musique MIDI."
+"Si activé, le jeu utilisera une bande-son numérique pendant l'introduction. "
+"Sinon, il jouera la musique MIDI."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
-msgstr "Utiliser les curseurs Windows"
+msgstr "Utiliser les curseurs de souris Windows"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -10439,6 +10433,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Si activé, le jeu utilisera les curseurs de souris Windows inclus dans le "
+"fichier .exe d'origine. Sinon, il utilisera les curseurs de plus faible "
+"résolution provenant des fichiers de données."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -11280,53 +11277,39 @@ msgid "Confirm the selected save / new save name"
 msgstr "Valider la sauvegarde sélectionnée / le nouveau nom"
 
 #: engines/ngi/metaengine.cpp:105
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "Conf. des touches Quitter"
+msgstr "Conf. des touches Crédits"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:107
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "Conf. des touches Message Quitter"
+msgstr "Conf. des touches Boîtes de dialogue"
 
 #: engines/ngi/metaengine.cpp:117
-#, fuzzy
-#| msgid "Search / Select item"
 msgid "Deselect item"
-msgstr "Chercher / Sélectionner l'item"
+msgstr "Désélectionner l'item"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Précharger les sons"
+msgstr "Arrêter les sons"
 
 #: engines/ngi/metaengine.cpp:142 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Act. / Désact. l'inventaire"
 
 #: engines/ngi/metaengine.cpp:163
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Afficher les crédits"
+msgstr "Passer les crédits"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:170
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "Fermer la boîte de dialogues"
+msgstr "Fermer la boîte de dialogue"
 
 #: engines/ngi/metaengine.cpp:184
-#, fuzzy
-#| msgid "Close gumps"
 msgid "Close map"
-msgstr "Fermer les pop-ups"
+msgstr "Fermer la carte"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11423,36 +11406,26 @@ msgid "Toggle Chatty AI"
 msgstr "Act. / Désact. IA bavarde"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "Se déplacer / Interagir / Passer les dialogues"
+msgstr "Interagir / Passer les dialogues"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Ouvrir le menu action / Fermer le menu"
+msgstr "Ouvrir le menu action / Fermer l'interface actuelle"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Action de Chapayev"
+msgstr "Utiliser objet par Chapayev"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Afficher/Cacher la console"
+msgstr "Afficher/Cacher l'écran des options"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "Interface souris simple"
+msgstr "Fermer l'interface actuelle"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -13258,7 +13231,7 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Le support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
+"Le support MIDI natif nécessite la mise à jour Roland de LucasArts,\n"
 "mais %s est manquant. AdLib sera utilisé."
 
 #: engines/scumm/scumm.cpp:2318
@@ -13866,7 +13839,7 @@ msgstr "DEBUG : Afficher le sol"
 #: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
 #: engines/sludge/keymapper_tables.h:547
 msgid "DEBUG: Show boxes"
-msgstr "DEBUG : Afficher les boites"
+msgstr "DEBUG : Afficher les boîtes"
 
 #: engines/sludge/keymapper_tables.h:237
 msgid "Inventory / Examine"
@@ -14052,13 +14025,13 @@ msgstr ""
 #: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
-"'language.ini' est recommandé pour obtenir des boites de dialogues de "
+"'language.ini' est recommandé pour obtenir des boîtes de dialogues de "
 "confirmation traduites."
 
 #: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
-"'game.exe' est recommandé pour obtenir des boites de dialogues de "
+"'game.exe' est recommandé pour obtenir des boîtes de dialogues de "
 "confirmation stylisés."
 
 #: engines/supernova/supernova.cpp:193
@@ -14315,10 +14288,8 @@ msgid "Close inventory"
 msgstr "Fermer l'inventaire"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "Mode Interagir"
+msgstr "Démarrer en mode interactif"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14396,7 +14367,7 @@ msgstr "Raccourcis Inventaire"
 
 #: engines/titanic/metaengine.cpp:176
 msgid "Continue game dialogue keymappings"
-msgstr "Conf. des touches Boite de dialogue Continuer la partie"
+msgstr "Conf. des touches Boîte de dialogue Continuer la partie"
 
 #: engines/titanic/metaengine.cpp:177
 msgid "Star Map keymappings"
@@ -14543,50 +14514,36 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "Activer la protection anti-copie"
+msgstr "Protection anti-copie"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Pixellated scene transitions"
 msgid "Disable scene transitions"
-msgstr "Transitions de scènes pixélisées"
+msgstr "Désactiver les transitions de scènes"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Désactive les effets de transition originaux entre deux scènes"
 
 #: engines/tot/metaengine.cpp:58
-#, fuzzy
-#| msgid "Open save / load dialog"
 msgid "Original save/load dialog"
-msgstr "Ouvrir l'écran de sauvegarde/chargement"
+msgstr "Fenêtre sauvegarder/charger d'origine"
 
 #: engines/tot/metaengine.cpp:59
-#, fuzzy
-#| msgid "Use original savegame dialog"
 msgid "Use original save and load dialogs"
-msgstr "Utiliser le dialogue de sauvegarde d'origine"
+msgstr "Utilise la boîte de dialogue sauvegarder et charger d'origine"
 
 #: engines/tot/metaengine.cpp:118
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Default action"
-msgstr "Exécuter l'action par défaut"
+msgstr "Action par défaut"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Save / load game"
 msgid "Save and load game"
-msgstr "Sauvegarder / Charger une partie"
+msgstr "Sauvegarder et charger une partie"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu"
 msgid "Main menu/Exit"
-msgstr "Menu principal"
+msgstr "Menu principal/Sortir"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -15002,19 +14959,19 @@ msgstr ""
 "détecté !"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
 msgstr ""
-"Ce jeu nécessite le sous-moteur FoxTail qui n'est pas inclus dans la "
-"compilation."
+"Ce jeu nécessite OpenGL avec shaders qui n'est pas pris en charge par votre "
+"système"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Ce jeu nécessite les Framebuffer Objects OpenGL, qui ne sont pas pris en "
+"charges par votre système"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
