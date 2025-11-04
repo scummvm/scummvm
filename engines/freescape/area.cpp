@@ -452,7 +452,7 @@ Math::Vector3d Area::separateFromWall(const Math::Vector3d &_position) {
 	Math::Vector3d position = _position;
 	float sep = 8 / _scale;
 	for (auto &obj : _drawableObjects) {
-		if (!obj->isDestroyed() && !obj->isInvisible()) {
+		if (!obj->isDestroyed() && !obj->isInvisible() && obj->isGeometric()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			Math::Vector3d distance = gobj->_boundingBox.distance(position);
 			if (distance.length() > 0.0001)

@@ -30,6 +30,7 @@ const Common::Array<uint16> objectIds_,
 const Math::Vector3d offset1_,
 const Math::Vector3d offset2_,
 const Common::Array<AnimationOpcode *> operations_) {
+	_type = kGroupType;
 	_objectID = objectID_;
 	_flags = flags_;
 	_scale = 0;
