@@ -69,6 +69,8 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
     if (!SearchMan.hasFile(aviPath))
         return;
 
+    bool loadbkg = false;
+
     if (SearchMan.hasFile(bmpPath)) {
         Common::File f;
         if (f.open(bmpPath)) {
@@ -78,18 +80,21 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
             bkg = bmp.getSurface();
             bkgPalette = bmp.getPalette();
             bkgPaletteCount = bmp.getPaletteColorCount();
-        } else {
-            screenCopy.copyFrom( *_screen->surfacePtr() );
-            bkg = &screenCopy;
-
-            screenPalette.resize(3 * 256);
-            _screen->getPalette( screenPalette.data() );
-
-            bkgPalette = screenPalette.data();
-            bkgPaletteCount = 256;
-
-            isAllocated = true;
+            loadbkg = true;
         }
+    }
+
+    if (!loadbkg) {
+        screenCopy.copyFrom( *_screen->surfacePtr() );
+        bkg = &screenCopy;
+
+        screenPalette.resize(3 * 256);
+        _screen->getPalette( screenPalette.data() );
+
+        bkgPalette = screenPalette.data();
+        bkgPaletteCount = 256;
+
+        isAllocated = true;
     }
 
     Common::File *avifile = new Common::File();
