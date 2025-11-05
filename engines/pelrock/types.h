@@ -10,6 +10,7 @@ struct Anim {
 	int w;
 	int h;
 	int nframes;
+    int curFrame;
 	byte *animData;
 };
 

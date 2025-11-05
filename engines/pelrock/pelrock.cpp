@@ -45,10 +45,12 @@ PelrockEngine *g_engine;
 PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																				 _gameDescription(gameDesc), _randomSource("Pelrock") {
 	g_engine = this;
+	_chronoManager = new ChronoManager();
 }
 
 PelrockEngine::~PelrockEngine() {
 	delete _screen;
+	delete _chronoManager;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -85,6 +87,7 @@ Common::Error PelrockEngine::run() {
 	}
 
 	while (!shouldQuit()) {
+		_chronoManager->updateChrono();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
@@ -774,7 +777,7 @@ void PelrockEngine::loadAnims() {
 }
 
 const int EXPECTED_SIZE = 640 * 400;
-size_t decompress_rle_block(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data) {
+size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data) {
 	// Check for uncompressed markers
 	if (size == 0x8000 || size == 0x6800) {
 		*out_data = (uint8_t *)malloc(size);
@@ -847,7 +850,7 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 			roomFile->seek(offset, SEEK_SET);
 			roomFile->read(data, size);
 			uint8_t *block_data = NULL;
-			size_t block_size = decompress_rle_block(data, size, 0, size, &block_data);
+			size_t block_size = rleDecompress(data, size, 0, size, &block_data);
 
 			memcpy(background + combined_size, block_data, block_size);
 			combined_size += block_size + 1;
@@ -869,7 +872,7 @@ Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, i
 
 	unsigned char *pic = new byte[10000 * 10000];
 	if (offset > 0 && size > 0) {
-		decompress_rle_block(data, size, 0, size, &pic);
+		rleDecompress(data, size, 0, size, &pic);
 	} else {
 		return Common::List<AnimSet>();
 	}
@@ -899,6 +902,7 @@ Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, i
 			anim.y = animSet.y;
 			anim.w = animSet.w;
 			anim.h = animSet.h;
+			anim.curFrame = 0;
 			anim.nframes = frames;
 			anim.animData = new byte[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
@@ -909,11 +913,13 @@ Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, i
 				debug("Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes);
 				picOffset += needed;
 			} else {
+				continue;
 				debug("Anim %d-%d: invalid dimensions, skipping", i, j);
 			}
 			animSet.animData[j] = anim;
 		}
 		anims.push_back(animSet);
+
 		// if (w > 0 && h > 0 && frames > 0) {
 		// 	AnimSet anim;
 		// 	anim.x = x;
@@ -1010,20 +1016,77 @@ void PelrockEngine::loadMainCharacterAnims() {
 	int index3 = 0;
 	uint32_t capacity = 3060 * 102;
 	unsigned char *pic = new unsigned char[capacity];
-	decompress_rle_block(bufferFile, alfred3Size, 0, alfred3Size, &pic);
+	rleDecompress(bufferFile, alfred3Size, 0, alfred3Size, &pic);
 	memcpy(standingAnim, pic, 3060 * 102);
 }
 
 void PelrockEngine::frames() {
-	for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-		for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-			unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
-			if (standingAnim[src_pos] != 255)
-				_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
+	if (_chronoManager->_gameTick) {
+		for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
+			for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+				unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
+				if (standingAnim[src_pos] != 255)
+					_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
+			}
 		}
+		int num = 0;
+
+		for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
+			debug("Processing animation set %d, numAnims %d", num, i->numAnims);
+			if (i->numAnims == 0) {
+				num++;
+				continue;
+			}
+
+			for (int j = 0; j < i->numAnims; j++) {
+				debug("Drawing animation %d of set %d at (%d,%d) size (%d,%d) nframes %d", j, num, i->x, i->y, i->w, i->h, i->animData[j].nframes);
+				int x = i->animData[j].x;
+				int y = i->animData[j].y;
+				int w = i->animData[j].w;
+				int h = i->animData[j].h;
+
+				int frameSize = i->animData[j].w * i->animData[j].h;
+				int curFrame = i->animData[j].curFrame;
+				byte *frame = new byte[frameSize];
+				Common::copy(i->animData[j].animData + (curFrame * i->h * i->w), i->animData[j].animData + (curFrame * i->h * i->w) + (frameSize), frame);
+				debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
+
+				byte *bg = new byte[frameSize];
+				for (int j = 0; j < w; j++) {
+					for (int i = 0; i < h; i++) {
+						int idx = i * w + j;
+						*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
+					}
+				}
+
+				for (int i = 0; i < w; i++) {
+					for (int j = 0; j < h; j++) {
+						int index = (j * w + i);
+							*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = bg[index];
+					}
+				}
+
+				for (int y = 0; y < i->h; y++) {
+					for (int x = 0; x < i->w; x++) {
+
+						unsigned int src_pos = (y * i->w) + x;
+						int xPos = i->x + x;
+						int yPos = i->y + y;
+						if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+							_screen->setPixel(xPos, yPos, frame[src_pos]);
+					}
+				}
+				if (i->animData[j].curFrame < i->animData[j].nframes - 1) {
+					i->animData[j].curFrame++;
+				} else {
+					i->animData[j].curFrame = 0;
+				}
+			}
+			num++;
+		}
+		_screen->markAllDirty();
+		_screen->update();
 	}
-	_screen->markAllDirty();
-	_screen->update();
 }
 
 void PelrockEngine::checkMouseHover() {
@@ -1058,38 +1121,17 @@ void PelrockEngine::setScreen(int number, int dir) {
 
 	byte *background = new byte[640 * 400];
 	getBackground(&roomFile, roomOffset, background);
+	if(_currentBackground != nullptr)
+		delete[] _currentBackground;
+	_currentBackground = new byte[640 * 400];
+	Common::copy(background, background + 640 * 400, _currentBackground);
 	for (int i = 0; i < 640; i++) {
 		for (int j = 0; j < 400; j++) {
 			_screen->setPixel(i, j, background[j * 640 + i]);
 		}
 	}
-	Common::List<AnimSet> anims = getRoomAnimations(&roomFile, roomOffset);
-	int num = 0;
-	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
-		debug("Processing animation set %d, numAnims %d", num, i->numAnims);
-		if (i->numAnims == 0) {
-			num++;
-			continue;
-		}
+	_currentRoomAnims = getRoomAnimations(&roomFile, roomOffset);
 
-		for (int j = 0; j < i->numAnims; j++) {
-			debug("Drawing animation %d of set %d at (%d,%d) size (%d,%d) nframes %d", j, num, i->x, i->y, i->w, i->h, i->animData[j].nframes);
-			int frameSize = i->animData[j].w * i->animData[j].h;
-			byte *frame = new byte[frameSize];
-			Common::copy(i->animData[j].animData, i->animData[j].animData + (frameSize), frame);
-
-			for (int y = 0; y < i->h; y++) {
-				for (int x = 0; x < i->w; x++) {
-					unsigned int src_pos = (y * i->w) + x;
-					int xPos = i->x + x;
-					int yPos = i->y + y;
-					if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
-						_screen->setPixel(xPos, yPos, frame[src_pos]);
-				}
-			}
-		}
-		num++;
-	}
 	loadHotspots(&roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(&roomFile, roomOffset);
 	int walkboxCount = 0;

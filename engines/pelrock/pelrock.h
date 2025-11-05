@@ -24,6 +24,7 @@
 
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/file.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -35,6 +36,7 @@
 #include "graphics/screen.h"
 #include "image/png.h"
 
+#include "pelrock/chrono.h"
 #include "pelrock/detection.h"
 #include "pelrock/types.h"
 
@@ -67,11 +69,15 @@ private:
 	void frames();
 	void checkMouseHover();
 
+	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
 	Common::List<HotSpot> _hotspots;
+	Common::List<AnimSet> _currentRoomAnims;
+	int *_currentAnimFrames = nullptr;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
+	byte *_currentBackground = nullptr;
 
 	// From the original code
 	int xAlfred = 200;
