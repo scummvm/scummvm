@@ -86,7 +86,13 @@ Common::Error PelrockEngine::run() {
 
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+			if (e.type == Common::EVENT_MOUSEMOVE) {
+				mouseX = e.mouse.x;
+				mouseY = e.mouse.y;
+				debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+			}
 		}
+		checkMouseHover();
 		frames();
 		_screen->update();
 		limiter.delayBeforeSwap();
@@ -179,7 +185,7 @@ void PelrockEngine::init() {
 		// 		myoverlay.setCredits();
 		loadAnims();
 		// 		loadOtherBitmaps();
-		setScreen(1, 2);
+		setScreen(2, 2);
 		// setScreen(0, 2);
 		// 		valSound1 = 0;
 		// 		valSound2 = 0;
@@ -819,7 +825,6 @@ void PelrockEngine::getPalette(Common::File *roomFile, int roomOffset, byte *pal
 		palette[i * 3 + 1] = palette[i * 3 + 1] << 2;
 		palette[i * 3 + 2] = palette[i * 3 + 2] << 2;
 	}
-
 }
 
 void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *background) {
@@ -852,43 +857,43 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 	}
 }
 
-Common::List<Anim> PelrockEngine::getRoomAnimations(Common::File *roomFile, int roomOffset) {
+Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	roomFile->seek(pair_offset, SEEK_SET);
-    uint32_t offset = roomFile->readUint32LE();
-    uint32_t size = roomFile->readUint32LE();
+	uint32_t offset = roomFile->readUint32LE();
+	uint32_t size = roomFile->readUint32LE();
 
 	byte *data = new byte[size];
 	roomFile->seek(offset, SEEK_SET);
 	roomFile->read(data, size);
 
 	unsigned char *pic = new byte[10000 * 10000];
-    if (offset > 0 && size > 0) {
-        decompress_rle_block(data, size, 0, size, &pic);
+	if (offset > 0 && size > 0) {
+		decompress_rle_block(data, size, 0, size, &pic);
 	} else {
-		return Common::List<Anim>();
+		return Common::List<AnimSet>();
 	}
-	Common::List<Anim> anims = Common::List<Anim>();
+	Common::List<AnimSet> anims = Common::List<AnimSet>();
 	uint32_t spriteEnd = offset + size;
 	uint32_t metadata_start = spriteEnd + 108;
 	uint32_t picOffset = 0;
-	for(int i = 0; i < 10; i++) {
- 		uint32_t animOffset = metadata_start + (i * 44);
+	for (int i = 0; i < 10; i++) {
+		uint32_t animOffset = metadata_start + (i * 44);
 		roomFile->seek(animOffset, SEEK_SET);
 
 		int16 x = roomFile->readSint16LE();
 		int16 y = roomFile->readSint16LE();
 		byte w = roomFile->readByte();
-        byte h = roomFile->readByte();
+		byte h = roomFile->readByte();
 		roomFile->skip(2); // reserved
-        int secAnimCount = roomFile->readByte();
+		int secAnimCount = roomFile->readByte();
 		roomFile->skip(1);
-        byte frames = 0;
-		for( int i =0; i < secAnimCount; i++) {
-            frames += roomFile->readByte();
+		byte frames = 0;
+		for (int i = 0; i < secAnimCount; i++) {
+			frames += roomFile->readByte();
 		}
 		if (w > 0 && h > 0 && frames > 0) {
-			Anim anim;
+			AnimSet anim;
 			anim.x = x;
 			anim.y = y;
 			anim.w = w;
@@ -903,6 +908,68 @@ Common::List<Anim> PelrockEngine::getRoomAnimations(Common::File *roomFile, int 
 		}
 	}
 	return anims;
+}
+
+Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int roomOffset) {
+	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+	roomFile->seek(pair10_offset_pos, SEEK_SET);
+	// roomFile->skip(4);
+	uint32_t pair10_data_offset = roomFile->readUint32LE();
+	uint32_t pair10_size = roomFile->readUint32LE();
+
+	uint32_t walkbox_countOffset = pair10_data_offset + 0x213;
+	roomFile->seek(walkbox_countOffset, SEEK_SET);
+	byte walkbox_count = roomFile->readByte();
+	debug("Walkbox count: %d", walkbox_count);
+	uint32_t walkbox_offset = pair10_data_offset + 0x218;
+	Common::List<WalkBox> walkboxes;
+	for (int i = 0; i < walkbox_count; i++) {
+		uint32_t box_offset = walkbox_offset + i * 9;
+		roomFile->seek(box_offset, SEEK_SET);
+		int16 x1 = roomFile->readSint16LE();
+		int16 y1 = roomFile->readSint16LE();
+		int16 w = roomFile->readSint16LE();
+		int16 h = roomFile->readSint16LE();
+		byte flags = roomFile->readByte();
+		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		WalkBox box;
+		box.x = x1;
+		box.y = y1;
+		box.w = w;
+		box.h = h;
+		box.flags = flags;
+		walkboxes.push_back(box);
+	}
+	return walkboxes;
+}
+
+void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
+	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+	roomFile->seek(pair10_offset_pos, SEEK_SET);
+	// roomFile->skip(4);
+	uint32_t pair10_data_offset = roomFile->readUint32LE();
+	uint32_t pair10_size = roomFile->readUint32LE();
+	uint32_t count_offset = pair10_data_offset + 0x47a;
+	roomFile->seek(count_offset, SEEK_SET);
+	byte hotspot_count = roomFile->readByte();
+	uint32_t hotspot_data_start = pair10_data_offset + 0x47c;
+	Common::List<HotSpot> hotspots;
+	for (int i = 0; i < hotspot_count; i++) {
+		uint32_t obj_offset = hotspot_data_start + i * 9;
+		roomFile->seek(obj_offset, SEEK_SET);
+		byte obj_bytes[9];
+		roomFile->read(obj_bytes, 9);
+		byte type_byte = obj_bytes[0];
+		HotSpot spot;
+		spot.x = obj_bytes[1] | (obj_bytes[2] << 8);
+		spot.y = obj_bytes[3] | (obj_bytes[4] << 8);
+		spot.w = obj_bytes[5];
+		spot.h = obj_bytes[6];
+		spot.extra = obj_bytes[7] | (obj_bytes[8] << 8);
+		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, type_byte, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		hotspots.push_back(spot);
+	}
+	_hotspots = hotspots;
 }
 
 void PelrockEngine::loadMainCharacterAnims() {
@@ -929,12 +996,23 @@ void PelrockEngine::frames() {
 	for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
 		for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
 			unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
-			if(standingAnim[src_pos] != 255)
+			if (standingAnim[src_pos] != 255)
 				_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
 		}
 	}
 	_screen->markAllDirty();
 	_screen->update();
+}
+
+void PelrockEngine::checkMouseHover() {
+	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
+		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
+			mouseY >= i->y && mouseY <= (i->y + i->h)) {
+			// _currentHotspot = &(*i);
+			debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
+			return;
+		}
+	}
 }
 
 void PelrockEngine::setScreen(int number, int dir) {
@@ -963,9 +1041,9 @@ void PelrockEngine::setScreen(int number, int dir) {
 			_screen->setPixel(i, j, background[j * 640 + i]);
 		}
 	}
-	Common::List<Anim> anims = getRoomAnimations(&roomFile, roomOffset);
+	Common::List<AnimSet> anims = getRoomAnimations(&roomFile, roomOffset);
 	int num = 0;
-	for (Common::List<Anim>::iterator i = anims.begin(); i != anims.end(); i++) {
+	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
 		byte *frame = new byte[i->w * i->h];
 
 		Common::copy(i->animData, i->animData + (i->w * i->h), frame);
@@ -975,10 +1053,21 @@ void PelrockEngine::setScreen(int number, int dir) {
 				unsigned int src_pos = (y * i->w) + x;
 				int xPos = i->x + x;
 				int yPos = i->y + y;
-				if(frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+				if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
 					_screen->setPixel(xPos, yPos, frame[src_pos]);
 			}
 		}
+	}
+	loadHotspots(&roomFile, roomOffset);
+	Common::List<WalkBox> walkboxes = loadWalkboxes(&roomFile, roomOffset);
+	int walkboxCount = 0;
+	for (Common::List<WalkBox>::iterator i = walkboxes.begin(); i != walkboxes.end(); i++) {
+		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
+		_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
+		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		walkboxCount++;
 	}
 	_screen->markAllDirty();
 	roomFile.close();

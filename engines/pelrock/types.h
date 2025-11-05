@@ -1,45 +1,70 @@
 
 namespace Pelrock {
 
-    const int kRoomStructSize = 104;
-    const int kNumRooms = 56;
+const int kRoomStructSize = 104;
+const int kNumRooms = 56;
 
-    struct Anim {
-        int x;
-        int y;
-        int w;
-        int h;
-        int nframes;
-        int speed;
-        byte *animData;
-    };
+struct Anim {
+	int x;
+	int y;
+	int w;
+	int h;
+	int nframes;
+	byte *animData;
+};
 
-    enum GameState {
-        GAME = 100,
-        MENU = 101,
-        CREDITS = 102,
-        SAVELOAD = 103,
-        SETTINGS = 104,
-        EXTRA_SCREEN = 105,
-        INTRO = 106,
-        PROMOTE = 107,
-	};
+struct AnimSet {
+	int x;
+	int y;
+	int w;
+	int h;
+	int nframes;
+	int speed;
+	byte *animData;
+};
 
-    // struct rectCam
-    // {
-    //     Common::List<int> vecinos;
-    //     bool marked;
-    //     int index;
-    //     int x;
-    //     int y;
-    //     int w;
-    //     int h;
-    // };
+struct HotSpot {
+	int x;
+	int y;
+	int id;
+	int w;
+	int h;
+	int extra;
+};
 
-    // struct defCam
-    // {
-    //     rectCam cams[];
-    // };
+struct WalkBox {
+	int16 x;
+	int16 y;
+	int16 w;
+	int16 h;
+	byte flags;
+};
 
+enum GameState {
+	GAME = 100,
+	MENU = 101,
+	CREDITS = 102,
+	SAVELOAD = 103,
+	SETTINGS = 104,
+	EXTRA_SCREEN = 105,
+	INTRO = 106,
+	PROMOTE = 107,
+};
+
+// struct rectCam
+// {
+//     Common::List<int> vecinos;
+//     bool marked;
+//     int index;
+//     int x;
+//     int y;
+//     int w;
+//     int h;
+// };
+
+// struct defCam
+// {
+//     rectCam cams[];
+// };
 
 } // End of namespace Pelrock

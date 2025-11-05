@@ -22,13 +22,13 @@
 #ifndef PELROCK_H
 #define PELROCK_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
@@ -55,12 +55,25 @@ private:
 	void setScreen(int s, int dir);
 	void setScreenJava(int s, int dir);
 	void loadAnims();
+	// Room data
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	Common::List<Anim> getRoomAnimations(Common::File *roomFile, int roomOffset);
+	Common::List<AnimSet> getRoomAnimations(Common::File *roomFile, int roomOffset);
+	void loadHotspots(Common::File *roomFile, int roomOffset);
 	void loadMainCharacterAnims();
-	void frames();
+	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 
+	// render loop
+	void frames();
+	void checkMouseHover();
+
+	byte *standingAnim = new byte[3060 * 102];
+	Common::List<HotSpot> _hotspots;
+	int curAlfredFrame = 9;
+	uint16 mouseX = 0;
+	uint16 mouseY = 0;
+
+	// From the original code
 	int xAlfred = 200;
 	int yAlfred = 200;
 	bool shouldPlayIntro = false;
@@ -73,15 +86,14 @@ private:
 	Common::String objectToShow = "";
 	int prevWhichScreen = 0;
 	int whichScreen = 0;
-	byte *pixelsShadows;// =new int[640*400];
-	byte *standingAnim = new byte[3060 * 102];
-
-	int curAlfredFrame = 9;
+	byte *pixelsShadows; // =new int[640*400];
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
 public:
 	Graphics::Screen *_screen = nullptr;
+
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~PelrockEngine() override;
@@ -101,10 +113,9 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsLoadingDuringRuntime) ||
+			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
