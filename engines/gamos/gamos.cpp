@@ -1100,7 +1100,7 @@ bool GamosEngine::setPaletteCurrentGS() {
 void GamosEngine::readData2(const RawData &data) {
 	Common::MemoryReadStream dataStream(data.data(), data.size());
 
-	warning("Game data size %d", data.size());
+	//warning("Game data size %d", data.size());
 
 	if (getEngineVersion() == 0x80000018) {
 		_stateExt = dataStream.readString(0, 4); // FIX ME
