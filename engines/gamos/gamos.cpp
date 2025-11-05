@@ -2905,10 +2905,20 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 
 		char buffer[256];
 		int a = 0, b = 0, c = 0, d = 0;
-		sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d);
+		if ( sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d) > 0) {
+			stopMidi();
+			stopSounds();
 
-		playVideo(Common::String(buffer), Common::Point(a, b), Common::Point(c, d));
-		warning("PlayMovie 55: %s", str.c_str());
+			playVideo(Common::String(buffer), Common::Point(a, b), Common::Point(c, d));
+
+			if (_d2_fld19 != 0xff) {
+				/* vm func 58 */
+			}
+
+			if (_midiTrack != -1) {
+				scriptFunc16(_midiTrack);
+			}
+		}
 		vm->EAX.setVal(1);
 	}
 	break;
