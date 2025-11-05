@@ -496,7 +496,7 @@ uint32 VM::getMem32(int memtype, uint32 offset) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
-		return 0;
+		return 0; // Set here breakpoint for find what is going wrong
 
 	case REF_STACK:
 		return getU32(_stack + offset);
@@ -517,7 +517,7 @@ uint8 VM::getMem8(int memtype, uint32 offset) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
-		return 0;
+		return 0; // Set here breakpoint for find what is going wrong
 
 	case REF_STACK:
 		return _stack[offset];
@@ -538,7 +538,7 @@ void VM::setMem32(int memtype, uint32 offset, uint32 val) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
-		break;
+		break; // Set here breakpoint for find what is going wrong
 	case REF_STACK:
 		setU32(_stack + offset, val);
 		break;
@@ -560,7 +560,7 @@ void VM::setMem8(int memtype, uint32 offset, uint8 val) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
-		break;
+		break; // Set here breakpoint for find what is going wrong
 	case REF_STACK:
 		_stack[offset] = val;
 		break;

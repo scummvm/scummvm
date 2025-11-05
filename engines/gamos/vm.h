@@ -214,7 +214,6 @@ public:
     ValAddr ECX;
     uint32 SP = 0;
     byte _stack[STACK_SIZE];
-    byte _stackT[STACK_SIZE];
 
 private:
     MemAccess _readAccess;
