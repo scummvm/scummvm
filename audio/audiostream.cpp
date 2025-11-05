@@ -97,7 +97,7 @@ LoopingAudioStream::LoopingAudioStream(Common::DisposablePtr<RewindableAudioStre
 	assert(_parent);
 
 	if (rewind && !_parent->rewind()) {
-		// TODO: Properly indicate error
+		warning("LoopingAudioStream: failed to rewind parent stream, disabling looping");
 		_loops = _completeIterations = 1;
 	}
 	if (_parent->endOfStream()) {
@@ -199,7 +199,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	_pos = _pos.addFrames(framesRead);
 
 	if (framesRead < framesLeft && _parent->endOfStream()) {
-		// TODO: Proper error indication.
+		warning("SubLoopingAudioStream: unexpected end of parent stream");
 		if (!_completeIterations)
 			_completeIterations = 1;
 		_loops = _completeIterations;
@@ -210,7 +210,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			return framesRead;
 
 		if (!_parent->seek(_loopStart)) {
-			// TODO: Proper error indication.
+			warning("SubLoopingAudioStream: failed to seek to loop start position");
 			_loops = _completeIterations;
 			return framesRead;
 		}
