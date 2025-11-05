@@ -221,6 +221,7 @@ public:
 	Common::Path convertPath(const Common::String &);
 	void playVideo(const Common::String &);
 	void skipVideo();
+	void destroyVideo();
 
 	void loadSubtitles(const Common::Path &path);
 	void adjustSubtitleSize();

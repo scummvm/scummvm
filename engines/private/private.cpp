@@ -124,10 +124,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 PrivateEngine::~PrivateEngine() {
-	if (_videoDecoder != _pausedVideo) {
-		delete _pausedVideo;
-	}
-	delete _videoDecoder;
+	destroyVideo();
 
 	delete _compositeSurface;
 	if (_frameImage != nullptr) {
@@ -434,7 +431,6 @@ Common::Error PrivateEngine::run() {
 			}
 
 			if (_videoDecoder->endOfVideo()) {
-				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
 				if (_subtitles != nullptr) {
@@ -1235,12 +1231,7 @@ void PrivateEngine::restartGame() {
 	// Movies
 	_repeatedMovieExit = "";
 	_playedMovies.clear();
-	if (_videoDecoder != _pausedVideo) {
-		delete _pausedVideo;
-	}
-	delete _videoDecoder;
-	_videoDecoder = nullptr;
-	_pausedVideo = nullptr;
+	destroyVideo();
 
 	// Pause
 	_pausedSetting = "";
@@ -1250,9 +1241,9 @@ void PrivateEngine::restartGame() {
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	// We don't want to continue with any sound from a previous game
+	// We don't want to continue with any sound or videos from a previous game
 	stopSound(true);
-	_pausedVideo = nullptr;
+	destroyVideo();
 
 	Common::Serializer s(stream, nullptr);
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
@@ -1593,7 +1584,6 @@ void PrivateEngine::playVideo(const Common::String &name) {
 }
 
 void PrivateEngine::skipVideo() {
-	_videoDecoder->close();
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	if (_subtitles != nullptr) {
@@ -1602,6 +1592,15 @@ void PrivateEngine::skipVideo() {
 		g_system->clearOverlay();
 	}
 	_currentMovie = "";
+}
+
+void PrivateEngine::destroyVideo() {
+	if (_videoDecoder != _pausedVideo) {
+		delete _pausedVideo;
+	}
+	delete _videoDecoder;
+	_videoDecoder = nullptr;
+	_pausedVideo = nullptr;
 }
 
 void PrivateEngine::stopSound(bool all) {
