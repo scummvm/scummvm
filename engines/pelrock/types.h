@@ -18,9 +18,9 @@ struct AnimSet {
 	int y;
 	int w;
 	int h;
-	int nframes;
 	int speed;
-	byte *animData;
+	int numAnims;
+	Anim *animData;
 };
 
 struct HotSpot {

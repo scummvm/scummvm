@@ -89,7 +89,7 @@ Common::Error PelrockEngine::run() {
 			if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
-				debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
 			}
 		}
 		checkMouseHover();
@@ -877,35 +877,57 @@ Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, i
 	uint32_t spriteEnd = offset + size;
 	uint32_t metadata_start = spriteEnd + 108;
 	uint32_t picOffset = 0;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 7; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
 		roomFile->seek(animOffset, SEEK_SET);
 
-		int16 x = roomFile->readSint16LE();
-		int16 y = roomFile->readSint16LE();
-		byte w = roomFile->readByte();
-		byte h = roomFile->readByte();
+		AnimSet animSet;
+		animSet.x = roomFile->readSint16LE();
+		animSet.y = roomFile->readSint16LE();
+		animSet.w = roomFile->readByte();
+		animSet.h = roomFile->readByte();
 		roomFile->skip(2); // reserved
-		int secAnimCount = roomFile->readByte();
+		animSet.numAnims = roomFile->readByte();
+		debug("AnimSet %d: x=%d y=%d w=%d h=%d numAnims=%d", i, animSet.x, animSet.y, animSet.w, animSet.h, animSet.numAnims);
+		animSet.animData = new Anim[animSet.numAnims];
 		roomFile->skip(1);
-		byte frames = 0;
-		for (int i = 0; i < secAnimCount; i++) {
-			frames += roomFile->readByte();
-		}
-		if (w > 0 && h > 0 && frames > 0) {
-			AnimSet anim;
-			anim.x = x;
-			anim.y = y;
-			anim.w = w;
-			anim.h = h;
+
+		for (int j = 0; j < animSet.numAnims; j++) {
+			byte frames = roomFile->readByte();
+			Anim anim;
+			anim.x = animSet.x;
+			anim.y = animSet.y;
+			anim.w = animSet.w;
+			anim.h = animSet.h;
 			anim.nframes = frames;
-			uint32_t needed = anim.w * anim.h * anim.nframes;
-			anim.animData = new byte[needed];
-			Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
-			picOffset += needed;
-			debug("Anim %d: x=%d y=%d w=%d h=%d nframes=%d", i, anim.x, anim.y, anim.w, anim.h, anim.nframes);
-			anims.push_back(anim);
+			anim.animData = new byte[anim.nframes];
+			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
+				uint32_t needed = anim.w * anim.h * anim.nframes;
+				anim.animData = new byte[needed];
+				Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
+				animSet.animData[j] = anim;
+				debug("Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes);
+				picOffset += needed;
+			} else {
+				debug("Anim %d-%d: invalid dimensions, skipping", i, j);
+			}
+			animSet.animData[j] = anim;
 		}
+		anims.push_back(animSet);
+		// if (w > 0 && h > 0 && frames > 0) {
+		// 	AnimSet anim;
+		// 	anim.x = x;
+		// 	anim.y = y;
+		// 	anim.w = w;
+		// 	anim.h = h;
+		// 	anim.numAnims = frames;
+		// 	uint32_t needed = anim.w * anim.h * anim.nframes;
+		// 	anim.animData = new byte[needed];
+		// 	Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
+		// 	picOffset += needed;
+		// 	debug("Anim %d: x=%d y=%d w=%d h=%d nframes=%d", i, anim.x, anim.y, anim.w, anim.h, anim.nframes);
+		// 	anims.push_back(anim);
+		// }
 	}
 	return anims;
 }
@@ -931,7 +953,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;
@@ -1009,7 +1031,7 @@ void PelrockEngine::checkMouseHover() {
 		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
 			mouseY >= i->y && mouseY <= (i->y + i->h)) {
 			// _currentHotspot = &(*i);
-			debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
+			// debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
 			return;
 		}
 	}
@@ -1044,19 +1066,29 @@ void PelrockEngine::setScreen(int number, int dir) {
 	Common::List<AnimSet> anims = getRoomAnimations(&roomFile, roomOffset);
 	int num = 0;
 	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
-		byte *frame = new byte[i->w * i->h];
+		debug("Processing animation set %d, numAnims %d", num, i->numAnims);
+		if (i->numAnims == 0) {
+			num++;
+			continue;
+		}
 
-		Common::copy(i->animData, i->animData + (i->w * i->h), frame);
+		for (int j = 0; j < i->numAnims; j++) {
+			debug("Drawing animation %d of set %d at (%d,%d) size (%d,%d) nframes %d", j, num, i->x, i->y, i->w, i->h, i->animData[j].nframes);
+			int frameSize = i->animData[j].w * i->animData[j].h;
+			byte *frame = new byte[frameSize];
+			Common::copy(i->animData[j].animData, i->animData[j].animData + (frameSize), frame);
 
-		for (int y = 0; y < i->h; y++) {
-			for (int x = 0; x < i->w; x++) {
-				unsigned int src_pos = (y * i->w) + x;
-				int xPos = i->x + x;
-				int yPos = i->y + y;
-				if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
-					_screen->setPixel(xPos, yPos, frame[src_pos]);
+			for (int y = 0; y < i->h; y++) {
+				for (int x = 0; x < i->w; x++) {
+					unsigned int src_pos = (y * i->w) + x;
+					int xPos = i->x + x;
+					int yPos = i->y + y;
+					if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+						_screen->setPixel(xPos, yPos, frame[src_pos]);
+				}
 			}
 		}
+		num++;
 	}
 	loadHotspots(&roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(&roomFile, roomOffset);
