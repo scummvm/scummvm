@@ -1231,7 +1231,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 
 	RawKeyCode = keyCode;
 
-	if (RawKeyCode != ACT_NONE) {
+	if (RawKeyCode != 0 && RawKeyCode != ACT_NONE) {
 		if (_keySeq.size() >= 32)
 			_keySeq = _keySeq.substr(_keySeq.size() - 31);
 
