@@ -718,7 +718,6 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_midiTracks.clear();
 	_midiTracks.resize(midiCount);
 
-	_mixer->stopAll();
 	_soundSamples.clear();
 	_soundSamples.resize(soundCount);
 
@@ -910,11 +909,11 @@ void GamosEngine::stopMidi() {
 }
 
 void GamosEngine::stopMCI() {
-	warning("Not implemented stopMCI");
+	//warning("Not implemented stopMCI");
 }
 
 void GamosEngine::stopSounds() {
-	warning("Not implemented stopSounds");
+	_mixer->stopAll();
 }
 
 
