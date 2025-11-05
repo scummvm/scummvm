@@ -707,7 +707,7 @@ void showScore() {
 
 		{  // Render pagination
 			ImGui::BeginDisabled(numFrames <= FRAME_PAGE_SIZE);
-			ImGui::Text("   Jump to frame:", numFrames);
+			ImGui::Text("   Jump to frame:");
 			ImGui::SameLine();
 			ImGui::SliderInt("##scorepage", &_state->_scorePageSlider, 0, numFrames / FRAME_PAGE_SIZE, "%d00");
 			_state->_scoreFrameOffset = _state->_scorePageSlider * FRAME_PAGE_SIZE + 1;

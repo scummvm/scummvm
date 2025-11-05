@@ -767,7 +767,7 @@ void DirectorSound::processCuePoints() {
 			for (uint i = channel->lastCuePointIndex + 1; i < soundCast->_cuePoints.size(); i++) {
 				int32 cuePoint = soundCast->_cuePoints[i];
 
-				if (cuePoint > elapsedTime)
+				if (cuePoint > (int32)elapsedTime)
 					break;
 
 				debugC(5, kDebugSound, "DirectorSound::processCuePoints(): cue point %d reached on channel %d", cuePoint, it._key);
