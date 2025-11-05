@@ -10,8 +10,21 @@ struct Anim {
 	int w;
 	int h;
 	int nframes;
-    int curFrame;
+	int curFrame;
 	byte *animData;
+};
+
+struct Exit {
+	uint16 x;
+	uint16 y;
+	byte w;
+	byte h;
+	uint16 targetRoom;
+	uint16 targetX;
+	uint16 targetY;
+	uint16 targetDir;
+	byte dir;
+	byte flags;
 };
 
 struct AnimSet {

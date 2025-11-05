@@ -23,8 +23,8 @@
 #define PELROCK_H
 
 #include "common/error.h"
-#include "common/fs.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -63,16 +63,19 @@ private:
 	Common::List<AnimSet> getRoomAnimations(Common::File *roomFile, int roomOffset);
 	void loadHotspots(Common::File *roomFile, int roomOffset);
 	void loadMainCharacterAnims();
+	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 
 	// render loop
 	void frames();
 	void checkMouseHover();
+	void checkMouseClick(int x, int y);
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
 	Common::List<HotSpot> _hotspots;
 	Common::List<AnimSet> _currentRoomAnims;
+	Common::List<Exit> _currentRoomExits;
 	int *_currentAnimFrames = nullptr;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;

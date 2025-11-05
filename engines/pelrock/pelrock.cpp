@@ -93,6 +93,8 @@ Common::Error PelrockEngine::run() {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+			} else if (e.type == Common::EVENT_LBUTTONUP) {
+				checkMouseClick(e.mouse.x, e.mouse.y);
 			}
 		}
 		checkMouseHover();
@@ -188,7 +190,7 @@ void PelrockEngine::init() {
 		// 		myoverlay.setCredits();
 		loadAnims();
 		// 		loadOtherBitmaps();
-		setScreen(2, 2);
+		setScreen(1, 2);
 		// setScreen(0, 2);
 		// 		valSound1 = 0;
 		// 		valSound2 = 0;
@@ -971,6 +973,33 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 	return walkboxes;
 }
 
+Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffset) {
+	Common::List<Exit> exits;
+	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+	roomFile->seek(pair10_offset_pos, SEEK_SET);
+	uint32_t pair10_data_offset = roomFile->readUint32LE();
+	uint32_t pair10_size = roomFile->readUint32LE();
+	roomFile->seek(pair10_data_offset + 0x1BE, SEEK_SET);
+	int exit_count = roomFile->readByte();
+	roomFile->seek(pair10_data_offset + 0x1BF, SEEK_SET);
+	for (int i = 0; i < exit_count; i++) {
+		Exit exit;
+		exit.targetRoom = roomFile->readUint16LE();
+		exit.flags = roomFile->readByte();
+		exit.x = roomFile->readUint16LE();
+		exit.y = roomFile->readUint16LE();
+		exit.w = roomFile->readByte();
+		exit.h = roomFile->readByte();
+
+		exit.targetX = roomFile->readUint16LE();
+		exit.targetY = roomFile->readUint16LE();
+		exit.dir = roomFile->readByte();
+		debug("Exit %d: x=%d y=%d w=%d h=%d targetRoom=%d targetX=%d targetY=%d", i, exit.x, exit.y, exit.w, exit.h, exit.targetRoom, exit.targetX, exit.targetY);
+		exits.push_back(exit);
+	}
+	return exits;
+}
+
 void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
@@ -1032,14 +1061,14 @@ void PelrockEngine::frames() {
 		int num = 0;
 
 		for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
-			debug("Processing animation set %d, numAnims %d", num, i->numAnims);
+			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 			if (i->numAnims == 0) {
 				num++;
 				continue;
 			}
 
 			for (int j = 0; j < i->numAnims; j++) {
-				debug("Drawing animation %d of set %d at (%d,%d) size (%d,%d) nframes %d", j, num, i->x, i->y, i->w, i->h, i->animData[j].nframes);
+				// debug("Drawing animation %d of set %d at (%d,%d) size (%d,%d) nframes %d", j, num, i->x, i->y, i->w, i->h, i->animData[j].nframes);
 				int x = i->animData[j].x;
 				int y = i->animData[j].y;
 				int w = i->animData[j].w;
@@ -1049,22 +1078,22 @@ void PelrockEngine::frames() {
 				int curFrame = i->animData[j].curFrame;
 				byte *frame = new byte[frameSize];
 				Common::copy(i->animData[j].animData + (curFrame * i->h * i->w), i->animData[j].animData + (curFrame * i->h * i->w) + (frameSize), frame);
-				debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
+				// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
 
-				byte *bg = new byte[frameSize];
-				for (int j = 0; j < w; j++) {
-					for (int i = 0; i < h; i++) {
-						int idx = i * w + j;
-						*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
-					}
-				}
+				// byte *bg = new byte[frameSize];
+				// for (int j = 0; j < w; j++) {
+				// 	for (int i = 0; i < h; i++) {
+				// 		int idx = i * w + j;
+				// 		*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
+				// 	}
+				// }
 
-				for (int i = 0; i < w; i++) {
-					for (int j = 0; j < h; j++) {
-						int index = (j * w + i);
-							*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = bg[index];
-					}
-				}
+				// for (int i = 0; i < w; i++) {
+				// 	for (int j = 0; j < h; j++) {
+				// 		int index = (j * w + i);
+				// 			*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = bg[index];
+				// 	}
+				// }
 
 				for (int y = 0; y < i->h; y++) {
 					for (int x = 0; x < i->w; x++) {
@@ -1086,6 +1115,25 @@ void PelrockEngine::frames() {
 		}
 		_screen->markAllDirty();
 		_screen->update();
+	}
+}
+
+void PelrockEngine::checkMouseClick(int x, int y) {
+	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
+		if (x >= i->x && x <= (i->x + i->w) &&
+			y >= i->y && y <= (i->y + i->h)) {
+			debug("Clicked Exit at (%d,%d) size (%d,%d) to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
+			setScreen(i->targetRoom, i->dir);
+			return;
+		}
+	}
+	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
+		if (x >= i->x && x <= (i->x + i->w) &&
+			y >= i->y && y <= (i->y + i->h)) {
+			debug("Clicked Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
+			// process hotspot action based on i->extra or other properties
+			return;
+		}
 	}
 }
 
@@ -1121,7 +1169,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 
 	byte *background = new byte[640 * 400];
 	getBackground(&roomFile, roomOffset, background);
-	if(_currentBackground != nullptr)
+	if (_currentBackground != nullptr)
 		delete[] _currentBackground;
 	_currentBackground = new byte[640 * 400];
 	Common::copy(background, background + 640 * 400, _currentBackground);
@@ -1143,6 +1191,18 @@ void PelrockEngine::setScreen(int number, int dir) {
 		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
 		walkboxCount++;
 	}
+
+	_currentRoomExits = loadExits(&roomFile, roomOffset);
+
+	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
+		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
+		_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
+		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		walkboxCount++;
+	}
+
 	_screen->markAllDirty();
 	roomFile.close();
 	delete[] background;
