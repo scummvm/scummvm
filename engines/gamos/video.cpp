@@ -78,8 +78,8 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
             f.close();
 
             bkg = bmp.getSurface();
-            bkgPalette = bmp.getPalette();
-            bkgPaletteCount = bmp.getPaletteColorCount();
+            bkgPalette = bmp.getPalette().data();
+            bkgPaletteCount = bmp.getPalette().size();
             loadbkg = true;
         }
     }
