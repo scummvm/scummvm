@@ -80,10 +80,10 @@ void Configuration::clear() {
 void Configuration::value(const Std::string &key, Std::string &ret,
 						  const char *defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if ((*i)->hasNode(key)) {
-			(*i)->value(key, ret, defaultvalue);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		const Shared::XMLTree *tree = _trees[i];
+		if (tree->hasNode(key)) {
+			tree->value(key, ret, defaultvalue);
 			return;
 		}
 	}
@@ -108,10 +108,10 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 
 void Configuration::value(const Std::string &key, int &ret, int defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if ((*i)->hasNode(key)) {
-			(*i)->value(key, ret, defaultvalue);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		const Shared::XMLTree *tree = _trees[i];
+		if (tree->hasNode(key)) {
+			tree->value(key, ret, defaultvalue);
 			return;
 		}
 	}
@@ -136,10 +136,10 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) co
 
 void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if ((*i)->hasNode(key)) {
-			(*i)->value(key, ret, defaultvalue);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		const Shared::XMLTree *tree = _trees[i];
+		if (tree->hasNode(key)) {
+			tree->value(key, ret, defaultvalue);
 			return;
 		}
 	}
@@ -175,11 +175,11 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
-			(*i)->set(key, value);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		Shared::XMLTree *tree = _trees[i];
+		if (!(tree->isReadonly()) &&
+		        tree->checkRoot(key)) {
+			tree->set(key, value);
 			return true;
 		}
 	}
@@ -208,11 +208,11 @@ bool Configuration::set(const Std::string &key, int value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
-			(*i)->set(key, value);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		Shared::XMLTree *tree = _trees[i];
+		if (!(tree->isReadonly()) &&
+		        tree->checkRoot(key)) {
+			tree->set(key, value);
 			return true;
 		}
 	}
@@ -236,11 +236,11 @@ bool Configuration::set(const Std::string &key, bool value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
-		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
-			(*i)->set(key, value);
+	for (int i = _trees.size() - 1; i >= 0; --i) {
+		Shared::XMLTree *tree = _trees[i];
+		if (!(tree->isReadonly()) &&
+		        tree->checkRoot(key)) {
+			tree->set(key, value);
 			return true;
 		}
 	}

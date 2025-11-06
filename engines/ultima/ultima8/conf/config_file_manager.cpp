@@ -85,10 +85,10 @@ void ConfigFileManager::clearRoot(const Std::string &category) {
 }
 
 bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, string &ret) const {
-	Std::vector<ConfigFile*>::const_reverse_iterator i;
-	for (i = _configFiles.rbegin(); i != _configFiles.rend(); ++i) {
-		if (category.equalsIgnoreCase((*i)->_category)) {
-			if ((*i)->_iniFile.getKey(key, section, ret)) {
+	for (int i = _configFiles.size() - 1; i >= 0; --i) {
+		const ConfigFile *file = _configFiles[i];
+		if (category.equalsIgnoreCase(file->_category)) {
+			if (file->_iniFile.getKey(key, section, ret)) {
 				return true;
 			}
 		}

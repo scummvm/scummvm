@@ -134,8 +134,8 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 	);
 
 	// Iterate through rendering each of the needed tiles
- 	for (Std::vector<MapTile>::reverse_iterator t = tiles.rbegin(); t != tiles.rend(); ++t) {
-		MapTile &frontTile = *t;
+	for (int t = tiles.size() - 1; t >= 0; --t) {
+		MapTile &frontTile = tiles[t];
 		Tile *frontTileType = _tileSet->get(frontTile._id);
 
 		if (!frontTileType) {
