@@ -718,9 +718,12 @@ void MacText::setActive(bool active) {
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	if (_active && _editable) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
-		// inactive -> active, we reset the selection
-		setSelection(_selStart, true);
-		setSelection(_selEnd, false);
+
+		if (_autoSelect) {
+			// inactive -> active, we reset the selection
+			setSelection(_selStart, true);
+			setSelection(_selEnd, false);
+		}
 	} else {
 		// clear the selection and cursor
 		_selectedText.endY = -1;
