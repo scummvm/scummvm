@@ -26,6 +26,7 @@
 #include "ultima/shared/conf/xml_node.h"
 #include "ultima/shared/std/containers.h"
 #include "common/file.h"
+#include "common/list.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -218,14 +219,14 @@ private:
 	 * Gets a property as Common::String from the script, and
 	 * translates it using scriptTranslate.
 	 */
-	Common::String getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+	Common::String getPropAsStr(Common::List<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
 
 	Common::String getPropAsStr(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
 
 	/**
 	 * Gets a property as int from the script
 	 */
-	int getPropAsInt(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
+	int getPropAsInt(Common::List<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive);
 
 	int getPropAsInt(Shared::XMLNode *node, const Common::String &prop, bool recursive = false);
 
@@ -419,7 +420,7 @@ private:
 	State _state;                    /**< The state the script is in */
 	Shared::XMLNode *_currentScript;       /**< The currently running script */
 	Shared::XMLNode *_currentItem;         /**< The current position in the script */
-	Std::list<Shared::XMLNode *> _translationContext;  /**< A list of nodes that make up our translation context */
+	Common::List<Shared::XMLNode *> _translationContext;  /**< A list of nodes that make up our translation context */
 	Common::String _target;                  /**< The name of a target script */
 	InputType _inputType;            /**< The type of input required */
 	Common::String _inputName;               /**< The variable in which to place the input (by default, "input") */
