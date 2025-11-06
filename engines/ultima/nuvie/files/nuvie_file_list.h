@@ -70,7 +70,7 @@ public:
 	const Std::string *get_latest() const;
 	uint32 get_num_files() const;
 
-	Std::set<Std::string> get_filenames() const;
+	const Std::list<NuvieFileDesc> &get_filelist() const;
 
 	void close();
 };

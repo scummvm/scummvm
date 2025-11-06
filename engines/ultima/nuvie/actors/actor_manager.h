@@ -164,7 +164,7 @@ private:
 	void loadNPCTiles(const Common::Path &datadir);
 	void loadAvatarTiles(const Common::Path &datadir);
 	void loadCustomBaseTiles();
-	Std::set<Std::string> getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix);
+	Std::vector<Std::string> getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix);
 };
 
 } // End of namespace Nuvie
