@@ -198,12 +198,12 @@ public class ScummVMEvents implements
 		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
 
 		/*
-		 * Register our OnBackInvokedCallback starting with Baklava
-		 * Before, it's not enabled by default.
-		 * We don't want to get it too soon, because OnBackAnimationCallback (which we require to
-		 * handle the long press on back) is not available in Tiramisu when the feature was introduced.
+		 * Register our OnBackInvokedCallback starting with Upside Down Cake
+		 * OnBackAnimationCallback (which we require to handle the long press on back) is not
+		 * available in Tiramisu when the feature was introduced.
+		 * This is synchronized with the enableOnBackInvokedCallback attribute on the application.
 		 */
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
 			activity.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
 				OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvoked());
 		}
