@@ -44,6 +44,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
+#include "graphics/fonts/ttf.h"
 
 namespace AGDS {
 
@@ -917,7 +918,8 @@ Graphics::ManagedSurface *AGDSEngine::loadFromCache(int id) const {
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
 	if (v2()) {
-		debug("loadTTF %d %s, pixelSize: %d: stub", id, name.c_str(), gh);
+		debug("loadTTF %d %s, pixelSize: %d", id, name.c_str(), gh);
+		_fonts[id].reset(Graphics::loadTTFFontFromArchive(name, gh));
 	} else {
 		debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
 		Graphics::ManagedSurface *surface = loadPicture(name);
@@ -925,7 +927,7 @@ void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
 	}
 }
 
-Font *AGDSEngine::getFont(int id) const {
+const Graphics::Font *AGDSEngine::getFont(int id) const {
 	FontsType::const_iterator i = _fonts.find(id);
 	if (i == _fonts.end())
 		error("no font with id %d", id);
