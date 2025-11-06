@@ -243,7 +243,7 @@ public:
 	}
 
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
 //void updateScroll();

@@ -251,7 +251,7 @@ GUI_status MsgScrollNewUI::KeyDown(const Common::KeyState &key) {
 	return MsgScroll::KeyDown(key);
 }
 
-GUI_status MsgScrollNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status MsgScrollNewUI::MouseDown(int x, int y, Events::MouseButton button) {
 	MsgScrollEventType event = SCROLL_ESCAPE;
 
 	return scroll_movement_event(event);

@@ -292,15 +292,15 @@ public:
 	void update();
 	void Display(bool full_redraw) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDouble(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseClick(int x, int y, Events::MouseButton button) override;
 	GUI_status Idle(void) override;
 	GUI_status MouseLeave(uint8 state) override;
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDelayed(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseHeld(int x, int y, Events::MouseButton button) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 

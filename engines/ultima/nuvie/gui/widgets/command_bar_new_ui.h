@@ -53,8 +53,8 @@ public:
 
 	void Display(bool full_redraw) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 
 private:
 	const char *get_command_name(sint8 command_num) const;

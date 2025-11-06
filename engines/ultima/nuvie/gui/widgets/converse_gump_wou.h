@@ -59,11 +59,11 @@ public:
 
 	void Display(bool full_redraw) override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 	GUI_status MouseMotion(int x, int y, uint8 state) override {
@@ -75,16 +75,16 @@ public:
 	GUI_status MouseLeave(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseClick(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDouble(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDelayed(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseHeld(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 

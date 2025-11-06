@@ -331,7 +331,7 @@ inline void DollWidget::display_readied_object(uint8 location, uint16 x, uint16 
 
 // when no action is pending the Use button may be used to start dragging,
 // otherwise it has the same effect as ENTER (using InventoryView's callback)
-GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status DollWidget::MouseDown(int x, int y, Events::MouseButton button) {
 	Events *event = Game::get_game()->get_event();
 	uint8 location;
 	Obj *obj;
@@ -380,7 +380,7 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 }
 
 // un-ready selected item
-GUI_status DollWidget::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status DollWidget::MouseUp(int x, int y, Events::MouseButton button) {
 	Events *event = Game::get_game()->get_event();
 
 // only act now if double-click is disabled
@@ -397,7 +397,7 @@ GUI_status DollWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 	return GUI_PASS;
 }
 
-GUI_status DollWidget::MouseClick(int x, int y, Shared::MouseButton button) {
+GUI_status DollWidget::MouseClick(int x, int y, Events::MouseButton button) {
 	return MouseUp(x, y, button);
 }
 
@@ -524,7 +524,7 @@ void DollWidget::drag_draw(int x, int y, int message, void *data) {
 
 /* Use object.
  */
-GUI_status DollWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
+GUI_status DollWidget::MouseDouble(int x, int y, Events::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return GUI_PASS;
@@ -543,7 +543,7 @@ GUI_status DollWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status DollWidget::MouseDelayed(int x, int y, Shared::MouseButton button) {
+GUI_status DollWidget::MouseDelayed(int x, int y, Events::MouseButton button) {
 	Events *event = Game::get_game()->get_event();
 	if (unready_obj) {
 		event->unready(unready_obj);

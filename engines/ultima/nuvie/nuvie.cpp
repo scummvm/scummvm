@@ -121,7 +121,7 @@ bool NuvieEngine::initialize() {
 	initConfig();
 
 	// Setup events
-	Events *events = new Ultima::Nuvie::Events(this, _config);
+	Events *events = new Ultima::Nuvie::Events(_config);
 	_events = events;
 
 	// Setup savegame handler

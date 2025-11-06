@@ -68,7 +68,7 @@ protected:
 	void display_name();
 	void display_actor_stats();
 	bool in_party;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 	void update_cursor();
