@@ -29,34 +29,6 @@ namespace Std {
 
 class string final : public Common::String {
 public:
-	struct reverse_iterator {
-	private:
-		string *_owner;
-		int _index;
-	public:
-		reverse_iterator(string *owner, int index) : _owner(owner), _index(index) {}
-		reverse_iterator() : _owner(0), _index(-1) {}
-
-		char &operator*() const { return (*_owner)[_index]; }
-
-		reverse_iterator &operator++() {
-			--_index;
-			return *this;
-		}
-		reverse_iterator operator++(int) {
-			reverse_iterator tmp(_owner, _index);
-			++(*this);
-			return tmp;
-		}
-
-		bool operator==(const reverse_iterator &rhs) {
-			return _owner == rhs._owner && _index == rhs._index;
-		}
-		bool operator!=(const reverse_iterator &rhs) {
-			return !operator==(rhs);
-		}
-	};
-public:
 	constexpr string() : Common::String() {}
 	string(const char *str) : Common::String(str) {}
 	string(const char *str, uint32 len) : Common::String(str, len) {}
@@ -64,13 +36,6 @@ public:
 	string(const String &str) : Common::String(str) {}
 	explicit constexpr string(char c) : Common::String(c) {}
 	string(size_t n, char c) : Common::String(n, c) {}
-
-	reverse_iterator rbegin() {
-		return reverse_iterator(this, (int)size() - 1);
-	}
-	reverse_iterator rend() {
-		return reverse_iterator(this, -1);
-	}
 };
 
 } // End of namespace Std

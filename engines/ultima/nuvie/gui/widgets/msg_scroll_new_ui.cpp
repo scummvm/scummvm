@@ -106,10 +106,9 @@ void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool includ
 	string s = trailing_whitespace + str;
 	trailing_whitespace.clear();
 
-	Std::string::reverse_iterator iter;
-	uint16 i;
-	for (i = 0, iter = s.rbegin(); iter != s.rend(); iter++, i++) {
-		char c = *iter;
+	uint16 i, pos;
+	for (i = 0, pos = s.size(); pos >= 0; pos--, i++) {
+		char c = s[pos];
 		if (c != '\t' && c != '\n')
 			break;
 	}
