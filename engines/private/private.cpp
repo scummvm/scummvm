@@ -337,7 +337,7 @@ Common::Error PrivateEngine::run() {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-				if (event.customType == kActionSkip && _videoDecoder) {
+				if (event.customType == kActionSkip) {
 					skipVideo();
 				}
 				break;
@@ -1584,6 +1584,10 @@ void PrivateEngine::playVideo(const Common::String &name) {
 }
 
 void PrivateEngine::skipVideo() {
+	if (_videoDecoder == nullptr || _videoDecoder->isPaused()) {
+		return;
+	}
+
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	if (_subtitles != nullptr) {
