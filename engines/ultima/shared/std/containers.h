@@ -37,72 +37,9 @@ namespace Std {
 template<class T>
 class vector : public Common::Array<T> {
 public:
-	struct reverse_iterator {
-	private:
-		vector<T> *_owner;
-		int _index;
-	public:
-		reverse_iterator(vector<T> *owner, int index) : _owner(owner), _index(index) {}
-		reverse_iterator() : _owner(0), _index(-1) {}
-
-		T &operator*() { return (*_owner)[_index]; }
-
-		reverse_iterator &operator++() {
-			--_index;
-			return *this;
-		}
-
-		bool operator==(const reverse_iterator &rhs) {
-			return _owner == rhs._owner && _index == rhs._index;
-		}
-		bool operator!=(const reverse_iterator &rhs) {
-			return !operator==(rhs);
-		}
-	};
-
-	struct const_reverse_iterator {
-	private:
-		const vector<T> *_owner;
-		int _index;
-	public:
-		const_reverse_iterator(const vector<T> *owner, int index) : _owner(owner), _index(index) {
-		}
-		const_reverse_iterator() : _owner(0), _index(-1) {
-		}
-
-		const T operator*() const {
-			return (*_owner)[_index];
-		}
-
-		const_reverse_iterator &operator++() {
-			--_index;
-			return *this;
-		}
-
-		bool operator==(const const_reverse_iterator &rhs) {
-			return _owner == rhs._owner && _index == rhs._index;
-		}
-		bool operator!=(const const_reverse_iterator &rhs) {
-			return !operator==(rhs);
-		}
-	};
-public:
 	constexpr vector() : Common::Array<T>() {}
 	vector(size_t newSize) : Common::Array<T>(newSize) {}
 	vector(size_t newSize, const T elem) : Common::Array<T>(newSize, elem) {}
-
-	reverse_iterator rbegin() {
-		return reverse_iterator(this, (int)Common::Array<T>::size() - 1);
-	}
-	reverse_iterator rend() {
-		return reverse_iterator(this, -1);
-	}
-	const_reverse_iterator rbegin() const {
-		return const_reverse_iterator(this, (int)Common::Array<T>::size() - 1);
-	}
-	const_reverse_iterator rend() const {
-		return const_reverse_iterator(this, -1);
-	}
 };
 
 template<class T>
