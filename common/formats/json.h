@@ -155,6 +155,9 @@ public:
 	/** Prepares raw bytes in a given stream to be parsed with Common::JSON::parse(). */
 	static char *zeroTerminateContents(Common::MemoryWriteStreamDynamic &stream);
 
+	static JSONValue *parse(const Common::String &data) {
+		return parse(data.c_str());
+	}
 	static JSONValue *parse(const char *data);
 	static String stringify(const JSONValue *value);
 protected:
