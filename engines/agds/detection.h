@@ -30,4 +30,4 @@ enum AGDSGameFlag {
 
 } // End of namespace AGDS
 
-#endif // AGDS_DETECTION_H
+#endif // DETECTION_H
