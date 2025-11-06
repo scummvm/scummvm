@@ -2143,8 +2143,8 @@ void GamosEngine::addDirtRectOnObject(Object *obj) {
 		rect.left -= imgPos->xoffset;
 		rect.top -= imgPos->yoffset;
 	}
-	rect.right = rect.left + imgPos->image->surface.w;
-	rect.bottom = rect.top + imgPos->image->surface.h;
+	rect.setWidth(imgPos->image->surface.w);
+	rect.setHeight(imgPos->image->surface.h);
 
 	addDirtyRect(rect);
 }
@@ -2158,6 +2158,7 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 	bool intersects = 0;
 	for (int i = 0; i < _dirtyRects.size(); i++) {
 		Common::Rect &r = _dirtyRects[i];
+
 		if (!rect.intersects(r))
 			continue;
 
@@ -2188,10 +2189,8 @@ rerunCheck:
 }
 
 void GamosEngine::doDraw() {
-	if (_dirtyRects.empty()) {
-		_screen->update();
+	if (_dirtyRects.empty())
 		return;
-	}
 
 	int32 bkg = _currentGameScreen;
 	if (bkg == -1)
@@ -2206,11 +2205,6 @@ void GamosEngine::doDraw() {
 			drawList[cnt] = &obj;
 			cnt++;
 		}
-	}
-
-	if (_unk9 == 0 /*&& */) {
-		/*drawList[cnt] = &_cursorObject;
-		cnt++;*/
 	}
 
 	drawList.resize(cnt);
@@ -2228,45 +2222,60 @@ void GamosEngine::doDraw() {
 		}
 	}
 
-	/* add mouse cursor here*/
-
 	for (int i = 0; i < _dirtyRects.size(); i++) {
-		Common::Rect &r = _dirtyRects[i];
+		Common::Rect r = _dirtyRects[i];
 
+		r.translate(-_scrollX, -_scrollY);
+		r.clip(_screen->getBounds());
+
+		if (r.isEmpty())
+			continue;
+
+		Common::Rect srcRect = r;
+		srcRect.translate(_scrollX, _scrollY);
+
+		/* update bkg at this rect */
 		if (_gameScreens[bkg].loaded) {
-			_screen->blitFrom(_gameScreens[bkg]._bkgImage, r, r);
+			_screen->blitFrom(_gameScreens[bkg]._bkgImage, srcRect, r.origin());
+		}
+
+		for (Object *o : drawList) {
+			if (o->pImg && loadImage(o->pImg->image)) {
+
+				Common::Rect s;
+				s.left = o->x - _scrollX;
+				s.top = o->y - _scrollY;
+
+				if (o->flags & 0x40) {
+					s.left -= o->pImg->xoffset;
+					s.top -= o->pImg->yoffset;
+				}
+
+				s.setWidth(o->pImg->image->surface.w);
+				s.setHeight(o->pImg->image->surface.h);
+
+				if (!s.intersects(r))
+					continue;
+
+				Common::Rect sdirt = s;
+				sdirt.clip(r);
+
+				Common::Rect ssrc(sdirt.origin() - s.origin(), sdirt.width(), sdirt.height());
+
+				uint flip = 0;
+				if (o->flags & 8)
+					flip |= Graphics::FLIP_H;
+				if (o->flags & 0x10)
+					flip |= Graphics::FLIP_V;
+
+				Blitter::blit(&o->pImg->image->surface, ssrc, _screen->surfacePtr(), sdirt, flip);
+			}
 		}
 
 		if (!_currentFade)
 			_screen->addDirtyRect(r);
 	}
 
-	for (Object *o : drawList) {
-		/*if (o->pImg && loadImage(o->pImg->image)) {
-		    Common::Rect out(Common::Point(o->x, o->y), o->pImg->image->surface.w, o->pImg->image->surface.h);
-		    out.clip(_screen->getBounds());
-		    out.translate(-o->x, -o->y);
-		    _screen->copyRectToSurfaceWithKey(o->pImg->image->surface, o->x+out.left, o->y+out.top, out, 0);
-		}*/
-		if (o->pImg && loadImage(o->pImg->image)) {
-			uint flip = 0;
-			if (o->flags & 8)
-				flip |= Graphics::FLIP_H;
-			if (o->flags & 0x10)
-				flip |= Graphics::FLIP_V;
-			if (o->flags & 0x40) {
-				Blitter::blit(&o->pImg->image->surface,
-				              Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
-				              _screen->surfacePtr(),
-				              Common::Rect(o->x - o->pImg->xoffset, o->y - o->pImg->yoffset, _screen->w, _screen->h), flip);
-			} else {
-				Blitter::blit(&o->pImg->image->surface,
-				              Common::Rect(o->pImg->image->surface.w, o->pImg->image->surface.h),
-				              _screen->surfacePtr(),
-				              Common::Rect(o->x, o->y, o->x + o->pImg->image->surface.w, o->y + o->pImg->image->surface.h), flip);
-			}
-		}
-	}
 
 	if (_currentFade)
 		updateScreen(true, Common::Rect(_bkgSize.x, _bkgSize.y));
