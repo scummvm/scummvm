@@ -201,8 +201,10 @@ void PSXStreamDecoder::readNextPacket() {
 
 		sector->seek(0x11);
 		byte track = sector->readByte();
-		if (track >= 32)
-			error("Bad PSX stream track");
+		if (track >= 32) {
+			warning("Bad PSX stream track");
+			return;
+		}
 
 		byte sectorType = sector->readByte() & CDXA_TYPE_MASK;
 
@@ -406,8 +408,10 @@ void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::BitStreamMemoryStream 
 	uint16 scale = bits.getBits<16>();
 	uint16 version = bits.getBits<16>();
 
-	if (version != 2 && version != 3)
-		error("Unknown PSX stream frame version");
+	if (version != 2 && version != 3) {
+		warning("Unknown PSX stream frame version");
+		return;
+	}
 
 	// Initalize default v3 DC here
 	_lastDC[0] = _lastDC[1] = _lastDC[2] = 0;
