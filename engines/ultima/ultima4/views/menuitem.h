@@ -64,7 +64,7 @@ public:
 	bool isHighlighted() const;
 	bool isSelected() const;
 	bool isVisible() const;
-	const Std::set<int> &getShortcutKeys() const;
+	bool hasShortcutKey(int key) const;
 	bool getClosesMenu() const;
 
 	void setId(int id);
@@ -85,7 +85,7 @@ protected:
 	bool _selected;
 	bool _visible;
 	int _scOffset;
-	Std::set<int> _shortcutKeys;
+	Common::Array<int> _shortcutKeys;
 	bool _closesMenu;
 };
 

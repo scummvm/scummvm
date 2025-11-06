@@ -59,8 +59,10 @@ bool MenuItem::isSelected() const {
 bool MenuItem::isVisible() const {
 	return _visible;
 }
-const Std::set<int> &MenuItem::getShortcutKeys() const {
-	return _shortcutKeys;
+bool MenuItem::hasShortcutKey(int sc) const {
+	Common::Array<int>::const_iterator begin = _shortcutKeys.begin();
+	Common::Array<int>::const_iterator end = _shortcutKeys.end();
+	return (Common::find(begin, end, sc) != end);
 }
 bool MenuItem::getClosesMenu() const {
 	return _closesMenu;
@@ -95,7 +97,8 @@ void MenuItem::setVisible(bool v) {
 }
 
 void MenuItem::addShortcutKey(int sc) {
-	_shortcutKeys.insert(sc);
+	if (!hasShortcutKey(sc))
+		_shortcutKeys.push_back(sc);
 }
 
 void MenuItem::setClosesMenu(bool closesMenu) {
