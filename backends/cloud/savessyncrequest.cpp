@@ -188,7 +188,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 
 	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
-		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
+		Common::JSONValue *value = Common::JSON::parse(error.response);
 
 		// Somehow OneDrive returns JSON with '.' in unexpected places, try fixing it
 		if (!value) {
@@ -197,7 +197,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 				if (fixedResponse[i] == '.')
 					fixedResponse.replace(i, 1, " ");
 			}
-			value = Common::JSON::parse(fixedResponse.c_str());
+			value = Common::JSON::parse(fixedResponse);
 		}
 
 		if (value) {

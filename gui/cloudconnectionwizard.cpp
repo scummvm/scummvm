@@ -549,10 +549,7 @@ void CloudConnectionWizard::manualModeConnect() {
 	}
 
 	// parse JSON and display message if failed
-	Common::MemoryWriteStreamDynamic jsonStream(DisposeAfterUse::YES);
-	jsonStream.write(code.c_str(), code.size());
-	char *contents = Common::JSON::zeroTerminateContents(jsonStream);
-	Common::JSONValue *json = Common::JSON::parse(contents);
+	Common::JSONValue *json = Common::JSON::parse(code);
 
 	// pass JSON to the manager
 	_connecting = true;

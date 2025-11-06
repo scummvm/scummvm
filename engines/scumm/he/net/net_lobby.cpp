@@ -111,7 +111,7 @@ void Lobby::receiveData() {
 
 void Lobby::processLine(Common::String line) {
 	debugC(DEBUG_NETWORK, "LOBBY: Received Data: %s", line.c_str());
-	Common::JSONValue *json = Common::JSON::parse(line.c_str());
+	Common::JSONValue *json = Common::JSON::parse(line);
 	if (!json) {
 		warning("LOBBY: Received trunciated data from server! %s", line.c_str());
 		return;

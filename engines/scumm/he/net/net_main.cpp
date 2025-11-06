@@ -825,7 +825,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		reliable == true ? "true" : "false", data.c_str());
 
 	debugC(DEBUG_NETWORK, "NETWORK: Sending data: %s", res.c_str());
-	Common::JSONValue *str = Common::JSON::parse(res.c_str());
+	Common::JSONValue *str = Common::JSON::parse(res);
 	if (_isHost) {
 		_hostDataQueue.push(str);
 		_peerIndexQueue.push(sendTypeParam - 1);
@@ -975,7 +975,7 @@ void Net::serviceSessionServer() {
 void Net::handleSessionServerData(Common::String data) {
 	debugC(DEBUG_NETWORK, "NETWORK: Received data from session server.  Data: %s", data.c_str());
 
-	Common::JSONValue *json = Common::JSON::parse(data.c_str());
+	Common::JSONValue *json = Common::JSON::parse(data);
 	if (!json) {
 		warning("NETWORK: Received non-JSON string from session server, \"%s\", ignoring", data.c_str());
 		return;
@@ -1126,7 +1126,7 @@ bool Net::serviceBroadcast() {
 void Net::handleBroadcastData(Common::String data, Common::String host, int port) {
 	debugC(DEBUG_NETWORK, "NETWORK: Received data from broadcast socket.  Source: %s:%d  Data: %s", host.c_str(), port, data.c_str());
 
-	Common::JSONValue *json = Common::JSON::parse(data.c_str());
+	Common::JSONValue *json = Common::JSON::parse(data);
 	if (!json) {
 		// Just about anything could come from the broadcast address, so do not warn.
 		debugC(DEBUG_NETWORK, "NETWORK: Not a JSON string, ignoring.");
@@ -1271,7 +1271,7 @@ void Net::remoteReceiveData() {
 				break;
 			}
 
-			Common::JSONValue *json = Common::JSON::parse(data.c_str());
+			Common::JSONValue *json = Common::JSON::parse(data);
 			if (!json) {
 				// Just about anything could come from the broadcast address, so do not warn.
 				warning("NETWORK: Received non-JSON string.  Got: \"%s\"", data.c_str());
