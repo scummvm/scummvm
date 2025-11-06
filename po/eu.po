@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-04 09:15+0000\n"
+"POT-Creation-Date: 2025-11-06 17:38+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -352,11 +352,11 @@ msgid "Wait until current Storage finishes and try again."
 msgstr "Uneko biltegiratzeak bukatzea itxaron eta berriz saiatu."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:567
+#: gui/cloudconnectionwizard.cpp:564
 msgid "JSON code contents are malformed."
 msgstr "JSON kodearen edukia ez dago ongi osatuta."
 
-#: gui/cloudconnectionwizard.cpp:588 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:585 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:260 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:566 gui/launcher.cpp:570 gui/massadd.cpp:90
@@ -382,16 +382,16 @@ msgstr "JSON kodearen edukia ez dago ongi osatuta."
 msgid "OK"
 msgstr "Ados"
 
-#: gui/cloudconnectionwizard.cpp:589
+#: gui/cloudconnectionwizard.cpp:586
 msgid "Incorrect JSON."
 msgstr "JSON akastuna."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:596
+#: gui/cloudconnectionwizard.cpp:593
 msgid "Interrupted."
 msgstr "Geldituta."
 
-#: gui/cloudconnectionwizard.cpp:669
+#: gui/cloudconnectionwizard.cpp:666
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -400,12 +400,12 @@ msgstr ""
 "Joan orri horretara eskuz, mesedez."
 
 #. I18N: JSON is a file format name
-#: gui/cloudconnectionwizard.cpp:686
+#: gui/cloudconnectionwizard.cpp:683
 msgid "Select JSON file copied from scummvm.org site"
 msgstr "Aukeratu scummvm.org gunetik kopiatutako JSON fitxategia"
 
 #. I18N: JSON is a file format name
-#: gui/cloudconnectionwizard.cpp:692
+#: gui/cloudconnectionwizard.cpp:689
 msgid "Failed to load JSON file"
 msgstr "JSON fitxategia kargatzean huts egin da"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-04 09:15+0000\n"
+"POT-Creation-Date: 2025-11-06 17:38+0000\n"
 "PO-Revision-Date: 2025-10-12 05:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -354,11 +354,11 @@ msgid "Wait until current Storage finishes and try again."
 msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:567
+#: gui/cloudconnectionwizard.cpp:564
 msgid "JSON code contents are malformed."
 msgstr "El contingut del codi JSON està mal format."
 
-#: gui/cloudconnectionwizard.cpp:588 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:585 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:260 gui/fluidsynth-dialog.cpp:154
 #: gui/launcher.cpp:566 gui/launcher.cpp:570 gui/massadd.cpp:90
@@ -384,16 +384,16 @@ msgstr "El contingut del codi JSON està mal format."
 msgid "OK"
 msgstr "D'acord"
 
-#: gui/cloudconnectionwizard.cpp:589
+#: gui/cloudconnectionwizard.cpp:586
 msgid "Incorrect JSON."
 msgstr "JSON incorrecte."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:596
+#: gui/cloudconnectionwizard.cpp:593
 msgid "Interrupted."
 msgstr "Interromput."
 
-#: gui/cloudconnectionwizard.cpp:669
+#: gui/cloudconnectionwizard.cpp:666
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -402,12 +402,12 @@ msgstr ""
 "Navegueu a aquesta pàgina manualment."
 
 #. I18N: JSON is a file format name
-#: gui/cloudconnectionwizard.cpp:686
+#: gui/cloudconnectionwizard.cpp:683
 msgid "Select JSON file copied from scummvm.org site"
 msgstr "Seleccioneu el fitxer JSON copiat del lloc scummvm.org"
 
 #. I18N: JSON is a file format name
-#: gui/cloudconnectionwizard.cpp:692
+#: gui/cloudconnectionwizard.cpp:689
 msgid "Failed to load JSON file"
 msgstr "No s'ha pogut carregar el fitxer JSON"
 
