@@ -94,12 +94,8 @@ void NuvieFileList::close() {
 	return;
 }
 
-Std::set<Std::string> NuvieFileList::get_filenames() const {
-	Std::set<Std::string> filenames;
-	for (const auto &desc : file_list) {
-		filenames.insert(desc.filename);
-	}
-	return filenames;
+const Std::list<NuvieFileDesc> &NuvieFileList::get_filelist() const {
+	return file_list;
 }
 
 } // End of namespace Nuvie

@@ -264,17 +264,6 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 	return new ConfigNode(*this, key);
 }
 
-Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) const {
-	Std::set<Std::string> keys;
-	for (auto *tree : _trees) {
-		Common::Array<Common::String> treeKeys = tree->listKeys(key, longformat);
-		for (const auto &k : treeKeys) {
-			keys.insert(k);
-		}
-	}
-	return keys;
-}
-
 void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
 	for (Shared::XMLTree *tree : _trees) {
 		Shared::XMLTree::KeyTypeList l;

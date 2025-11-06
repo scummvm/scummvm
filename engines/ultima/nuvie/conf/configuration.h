@@ -108,9 +108,6 @@ public:
 	// get node ref. (delete it afterwards)
 	ConfigNode *getNode(const Std::string &key);
 
-	// list all subkeys of a key. (no guaranteed order in result)
-	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false) const;
-
 	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
