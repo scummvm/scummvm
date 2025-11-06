@@ -21,6 +21,7 @@
 
 #include "agds/agds.h"
 #include "agds/object.h"
+#include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/advancedDetector.h"
