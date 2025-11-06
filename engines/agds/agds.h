@@ -51,6 +51,7 @@
  */
 
 namespace Graphics {
+class Font;
 class ManagedSurface;
 }
 
@@ -192,7 +193,7 @@ public:
 	int saveToCache(const Common::String &name, Graphics::ManagedSurface *surface);
 
 	void loadFont(int id, const Common::String &name, int gw, int gh);
-	Font *getFont(int id) const;
+	const Graphics::Font *getFont(int id) const;
 
 	AnimationPtr loadAnimation(const Common::String &name);
 	AnimationPtr loadMouseCursor(const Common::String &name);
@@ -290,7 +291,7 @@ private:
 	using SystemVariablesListType = Common::Array<Common::String>;
 	using SystemVariablesType = Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 	using GlobalsType = Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
-	using FontsType = Common::HashMap<int, Common::ScopedPtr<Font>>;
+	using FontsType = Common::HashMap<int, Common::ScopedPtr<Graphics::Font>>;
 	using PatchesType = Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 	using ObjectPatchesType = Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 	using PatchDatabase = Common::HashMap<Common::String, Common::Array<uint8>>;

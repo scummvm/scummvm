@@ -33,7 +33,7 @@ namespace AGDS {
 void TextLayout::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (!_valid)
 		return;
-	Font *font = engine.getFont(_fontId);
+	auto *font = engine.getFont(_fontId);
 	for (uint i = 0; i < _lines.size(); ++i) {
 		Line &line = _lines[i];
 		font->drawString(&backbuffer, line.text, line.pos.x, line.pos.y, line.size.x, 0);
@@ -67,7 +67,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 	process.deactivate();
 	_fontId = fontId;
 	_npc = npc;
-	Font *font = engine.getFont(fontId);
+	auto *font = engine.getFont(fontId);
 
 	_lines.clear();
 	int w = 0;

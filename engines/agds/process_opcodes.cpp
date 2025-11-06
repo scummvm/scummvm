@@ -913,7 +913,7 @@ void Process::loadSaveSlotNamePicture() {
 	debug("save state name: %s", saveSlotName.c_str());
 	int fontId = _engine->getSystemVariable("edit_font")->getInteger();
 
-	Font *font = _engine->getFont(fontId);
+	auto *font = _engine->getFont(fontId);
 	int h = font->getFontHeight();
 	static const int w = 400;
 
