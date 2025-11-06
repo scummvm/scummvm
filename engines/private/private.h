@@ -272,6 +272,9 @@ public:
 	Common::String getPauseMovieSetting();
 	Common::String getGoIntroSetting();
 	Common::String getMainDesktopSetting();
+	Common::String getDiaryTOCSetting();
+	Common::String getDiaryMiddleSetting();
+	Common::String getDiaryLastPageSetting();
 	Common::String getPOGoBustMovieSetting();
 	Common::String getPoliceBustFromMOSetting();
 	Common::String getAlternateGameVariable();
