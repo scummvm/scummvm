@@ -193,20 +193,28 @@ struct ObjectAction {
 };
 
 struct Object {
+	enum {
+		FLAG_VALID = 1,
+
+		/* Action objects */
+		FLAG_HASACTION = 2,
+		FLAG_TRANSITION = 4, /* transition between logic cells */
+		FLAG_STORAGE = 8, /* in original engine used to indicate allocated storage */
+
+		/* Graphic objects */
+		FLAG_GRAPHIC = 0x80,
+		FLAG_FREECOORDS = 0x40, /* coords not binded to grid */
+		FLAG_OVERLAY = 0x20, /* gfx object like titles and etc */
+		FLAG_FLIPV = 0x10,
+		FLAG_FLIPH = 8,
+		FLAG_DIRTRECT = 4,
+	};
 	/* additional data */
 	int16 index = 0;
 	int32 sprId = -1;
 	int32 seqId = -1;
 	int32 frame = -1;
 
-	/* 80 - drawable
-	   40 -
-	   20 -
-	   10 -
-	   8 - has storage
-	   4 -
-	   2 -
-	   1 - used */
 	uint8 flags = 0;
 	uint8 actID = 0;
 	uint8 fld_2 = 0;
@@ -219,6 +227,12 @@ struct Object {
 	int16 y = 0;
 	ImagePos *pImg = nullptr;
 	Common::Array<byte> storage;
+
+	inline bool isActionObject() const { return (flags & (FLAG_HASACTION | FLAG_VALID)) == (FLAG_HASACTION | FLAG_VALID); };
+	inline bool isGraphicObject() const { return (flags & (FLAG_GRAPHIC | FLAG_VALID | FLAG_HASACTION)) == (FLAG_GRAPHIC | FLAG_VALID); };
+	inline bool isOverlayObject() const { return (flags & (FLAG_GRAPHIC | FLAG_OVERLAY | FLAG_FREECOORDS | FLAG_VALID | FLAG_HASACTION)) ==
+												          (FLAG_GRAPHIC | FLAG_OVERLAY | FLAG_FREECOORDS | FLAG_VALID); };
+	inline bool isStaticObject() const { return (flags & (FLAG_GRAPHIC | FLAG_FREECOORDS | FLAG_VALID)) == (FLAG_GRAPHIC | FLAG_VALID); };
 };
 
 struct SubtitlePoint {
