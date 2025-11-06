@@ -35,18 +35,16 @@ void Blitter::blitNormal(Graphics::Surface *src, const Common::Rect &srcRect, Gr
 
 	drect.clip(dst->w, dst->h);
 
-	Common::Rect srect = srcRect;
-	srect.translate(dstRect.left, dstRect.top);
-	srect.clip(drect);
+	Common::Rect proj(dstRect.origin(), srcRect.width(), srcRect.height());
+	proj.clip(drect);
 
-	drect = srect;
-	srect.translate(-dstRect.left, -dstRect.top);
-
-	if (srect.isEmpty())
+	if (proj.isEmpty())
 		return;
 
+	Common::Rect srect(srcRect.origin() + proj.origin() - dstRect.origin(), proj.width(), proj.height());
+
 	for (int y = 0; y < srect.height(); y++) {
-		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
+		byte *pdst = (byte *)dst->getBasePtr(proj.left, proj.top + y);
 		byte *psrc = (byte *)src->getBasePtr(srect.left, srect.top + y);
 		for (int x = srect.left; x < srect.right; x++) {
 			if (*psrc != 0)
@@ -71,19 +69,19 @@ void Blitter::blitFlipH(Graphics::Surface *src, const Common::Rect &srcRect, Gra
 
 	drect.clip(dst->w, dst->h);
 
-	Common::Rect srect = srcRect;
-	srect.translate(dstRect.left, dstRect.top);
-	srect.clip(drect);
+	Common::Rect proj(dstRect.origin(), srcRect.width(), srcRect.height());
+	proj.clip(drect);
 
-	drect = srect;
-	srect.translate(-dstRect.left, -dstRect.top);
-
-	if (srect.isEmpty())
+	if (proj.isEmpty())
 		return;
 
-	for (int y = srect.top; y < srect.bottom; y++) {
-		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-		byte *psrc = (byte *)src->getBasePtr(srect.right - 1, y);
+	Common::Rect srect(srcRect.origin() + proj.origin() - dstRect.origin(), proj.width(), proj.height());
+
+	int32 sw = src->w;
+
+	for (int y = 0; y < srect.height(); y++) {
+		byte *pdst = (byte *)dst->getBasePtr(proj.left, proj.top + y);
+		byte *psrc = (byte *)src->getBasePtr(sw - 1 - srect.left, srect.top + y);
 		for (int x = srect.left; x < srect.right; x++) {
 			if (*psrc != 0)
 				*pdst = *psrc;
@@ -106,19 +104,19 @@ void Blitter::blitFlipV(Graphics::Surface *src, const Common::Rect &srcRect, Gra
 
 	drect.clip(dst->w, dst->h);
 
-	Common::Rect srect = srcRect;
-	srect.translate(dstRect.left, dstRect.top);
-	srect.clip(drect);
+	Common::Rect proj(dstRect.origin(), srcRect.width(), srcRect.height());
+	proj.clip(drect);
 
-	drect = srect;
-	srect.translate(-dstRect.left, -dstRect.top);
-
-	if (srect.isEmpty())
+	if (proj.isEmpty())
 		return;
 
-	for (int y = srect.top; y < srect.bottom; y++) {
-		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-		byte *psrc = (byte *)src->getBasePtr(srect.left, srect.bottom - 1 - y);
+	Common::Rect srect(srcRect.origin() + proj.origin() - dstRect.origin(), proj.width(), proj.height());
+
+	int32 sh = src->h;
+
+	for (int y = 0; y < srect.height(); y++) {
+		byte *pdst = (byte *)dst->getBasePtr(proj.left, proj.top + y);
+		byte *psrc = (byte *)src->getBasePtr(srect.left, sh - 1 - srect.top - y);
 		for (int x = srect.left; x < srect.right; x++) {
 			if (*psrc != 0)
 				*pdst = *psrc;
@@ -141,19 +139,20 @@ void Blitter::blitFlipVH(Graphics::Surface *src, const Common::Rect &srcRect, Gr
 
 	drect.clip(dst->w, dst->h);
 
-	Common::Rect srect = srcRect;
-	srect.translate(dstRect.left, dstRect.top);
-	srect.clip(drect);
+	Common::Rect proj(dstRect.origin(), srcRect.width(), srcRect.height());
+	proj.clip(drect);
 
-	drect = srect;
-	srect.translate(-dstRect.left, -dstRect.top);
-
-	if (srect.isEmpty())
+	if (proj.isEmpty())
 		return;
 
-	for (int y = srect.top; y < srect.bottom; y++) {
-		byte *pdst = (byte *)dst->getBasePtr(drect.left, drect.top + y);
-		byte *psrc = (byte *)src->getBasePtr(srect.right - 1, srect.bottom - 1 - y);
+	Common::Rect srect(srcRect.origin() + proj.origin() - dstRect.origin(), proj.width(), proj.height());
+
+	int32 sw = src->w;
+	int32 sh = src->h;
+
+	for (int y = 0; y < srect.height(); y++) {
+		byte *pdst = (byte *)dst->getBasePtr(proj.left, proj.top + y);
+		byte *psrc = (byte *)src->getBasePtr(sw - 1 - srect.left, sh - 1 - srect.top - y);
 		for (int x = srect.left; x < srect.right; x++) {
 			if (*psrc != 0)
 				*pdst = *psrc;
