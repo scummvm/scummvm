@@ -260,8 +260,7 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 
 bool Menu::activateItemByShortcut(int key, MenuEvent::Type action) {
 	for (auto *i : _items) {
-		const Std::set<int> &shortcuts = i->getShortcutKeys();
-		if (shortcuts.find(key) != shortcuts.end()) {
+		if (i->hasShortcutKey(key)) {
 			activateItem(i->getId(), action);
 			// if the selection doesn't close the menu, highlight the selection
 			if (!i->getClosesMenu())

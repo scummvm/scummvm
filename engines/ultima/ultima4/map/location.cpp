@@ -172,7 +172,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	const static int dirs_per_step = sizeof(dirs) / sizeof(*dirs);
 	int loop_count = 0;
 
-	Std::set<MapCoords> searched;
+	//std::set<MapCoords> searched;
 	Common::List<MapCoords> searchQueue;
 
 	//Pathfinding to closest traversable tile with appropriate replacement properties.
@@ -182,7 +182,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 		MapCoords currentStep = searchQueue.front();
 		searchQueue.pop_front();
 
-		searched.insert(currentStep);
+		//searched.insert(currentStep);
 
 		for (int i = 0; i < dirs_per_step; i++) {
 			MapCoords newStep(currentStep);
