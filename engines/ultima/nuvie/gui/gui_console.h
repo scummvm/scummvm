@@ -51,8 +51,8 @@ public:
 	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
 	virtual void AddLine(const Std::string &line);

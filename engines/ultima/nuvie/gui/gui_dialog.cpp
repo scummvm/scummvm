@@ -194,7 +194,7 @@ GUI_Dialog::Display(bool full_redraw) {
 	return;
 }
 
-GUI_status GUI_Dialog::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_Dialog::MouseDown(int x, int y, Events::MouseButton button) {
 	drag = can_drag;
 	button_x = x;
 	button_y = y;
@@ -204,7 +204,7 @@ GUI_status GUI_Dialog::MouseDown(int x, int y, Shared::MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Dialog::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_Dialog::MouseUp(int x, int y, Events::MouseButton button) {
 	drag = false;
 
 	release_focus();

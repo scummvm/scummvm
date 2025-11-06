@@ -60,7 +60,7 @@ void DraggableView::set_bg_color_key(uint8 r, uint8 g, uint8 b) {
 	}
 }
 
-GUI_status DraggableView::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status DraggableView::MouseDown(int x, int y, Events::MouseButton button) {
 	if (bg_image && HitRect(x, y)) {
 		uint32 pixel = sdl_getpixel(bg_image, x - area.left, y - area.top);
 		if (pixel == bg_color_key) {
@@ -80,11 +80,11 @@ GUI_status DraggableView::MouseDown(int x, int y, Shared::MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status DraggableView::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status DraggableView::MouseUp(int x, int y, Events::MouseButton button) {
 	drag = false;
 
 	release_focus();
-	if (button == Shared::BUTTON_RIGHT) {
+	if (button == Events::BUTTON_RIGHT) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}
 	return GUI_YUM;

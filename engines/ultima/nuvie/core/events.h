@@ -22,7 +22,6 @@
 #ifndef NUVIE_CORE_EVENT_H
 #define NUVIE_CORE_EVENT_H
 
-#include "ultima/shared/engine/events.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/misc/call_back.h"
@@ -55,6 +54,8 @@ class ScriptThread;
 #define NUVIE_INTERVAL    50
 #define PUSH_FROM_PLAYER false
 #define PUSH_FROM_OBJECT true
+
+#define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
 
 enum EventMode {
 	LOOK_MODE = 0,
@@ -180,7 +181,7 @@ struct EventInput_s {
 };
 typedef struct EventInput_s EventInput;
 
-class Events : public Ultima::Shared::EventsManager, public CallBack {
+class Events : public CallBack {
 	friend class Magic; // FIXME
 private:
 	const Configuration *config;
@@ -232,6 +233,9 @@ private:
 	FpsCounter *fps_counter_widget;
 	ScriptThread *scriptThread;
 
+	Common::Point _mousePos;
+	uint8 _buttonsDown;
+
 	static Events *g_events;
 protected:
 	inline uint32 TimeLeft();
@@ -242,7 +246,15 @@ protected:
 	void try_next_attack();
 
 public:
-	Events(Shared::EventsCallback *callback, const Configuration *cfg);
+	enum MouseButton {
+		BUTTON_NONE = 0,
+		BUTTON_LEFT = 1,
+		BUTTON_RIGHT = 2,
+		BUTTON_MIDDLE = 3,
+		MOUSE_LAST
+	};
+
+	Events(const Configuration *cfg);
 	~Events() override;
 
 	void clear();
@@ -272,10 +284,27 @@ public:
 	void set_direction_selects_target(bool val) {
 		direction_selects_target = val;
 	}
+
+	/**
+	 * Return the mouse position
+	 */
+	Common::Point getMousePos() const {
+		return _mousePos;
+	}
+
+	/**
+	 * Returns the mouse buttons states
+	 */
+	byte getButtonState() const {
+		return _buttonsDown;
+	}
+
 	bool using_pickpocket_cheat;
 	bool cursor_mode;
 	void update_timers();
 	bool update();
+	static MouseButton whichButton(Common::EventType type);
+	bool pollEvent(Common::Event &event);
 	bool handleEvent(const Common::Event *event);
 	void request_input(CallBack *caller, void *user_data = nullptr);
 	void target_spell();

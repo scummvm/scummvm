@@ -47,8 +47,8 @@ public:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 	GUI_status KeyDown(const Common::KeyState &key) override;

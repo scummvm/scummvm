@@ -76,7 +76,7 @@ public:
 	virtual bool init_buttons();
 
 	void Display(bool full_redraw) override;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
 	void update() {
 		update_display = true;
 	}

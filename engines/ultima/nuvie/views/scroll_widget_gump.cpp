@@ -195,11 +195,11 @@ GUI_status ScrollWidgetGump::MouseWheel(sint32 x, sint32 y) {
 	return scroll_movement_event(event);
 }
 
-GUI_status ScrollWidgetGump::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status ScrollWidgetGump::MouseDown(int x, int y, Events::MouseButton button) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	switch (button) {
-	case Shared::BUTTON_LEFT : {
+	case Events::BUTTON_LEFT : {
 		x -= area.left;
 		y -= area.top;
 		if (HitRect(x, y, arrow_up_rect))

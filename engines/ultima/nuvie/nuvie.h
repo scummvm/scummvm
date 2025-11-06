@@ -33,13 +33,14 @@
 namespace Ultima {
 namespace Nuvie {
 
+class Events;
 class Game;
 class SaveGame;
 class Screen;
 class Script;
 class SoundManager;
 
-class NuvieEngine : public Engine, public Ultima::Shared::EventsCallback {
+class NuvieEngine : public Engine {
 private:
 	Common::RandomSource _randomSource;
 	Configuration *_config;
@@ -49,7 +50,7 @@ private:
 	SaveGame *_savegame;
 
 	SoundManager *_soundManager;
-	Ultima::Shared::EventsManager *_events;
+	Events *_events;
 protected:
 	const UltimaGameDescription *_gameDescription;
 private:

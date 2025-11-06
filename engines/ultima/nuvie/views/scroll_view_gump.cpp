@@ -97,7 +97,7 @@ void ScrollViewGump::Display(bool full_redraw) {
 	return;
 }
 
-GUI_status ScrollViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status ScrollViewGump::MouseDown(int x, int y, Events::MouseButton button) {
 	if (scroll_widget->MouseDown(x, y, button) != GUI_YUM) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}

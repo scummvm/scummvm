@@ -136,7 +136,7 @@ CommandBarNewUI::~CommandBarNewUI() {
 
 
 
-GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBarNewUI::MouseDown(int x, int y, Events::MouseButton button) {
 	if (HitRect(x, y)) {
 		x -= area.left;
 		y -= area.right;
@@ -157,7 +157,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) 
 	return GUI_YUM;
 }
 
-GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBarNewUI::MouseUp(int x, int y, Events::MouseButton button) {
 	/*
 	    if(HitRect(x, y))
 	    {

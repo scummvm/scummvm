@@ -235,14 +235,14 @@ GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 	return GUI_YUM;
 }
 
-GUI_status MapEditorView::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status MapEditorView::MouseDown(int x, int y, Events::MouseButton button) {
 
 	return GUI_YUM;
 }
 
-GUI_status MapEditorView::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status MapEditorView::MouseUp(int x, int y, Events::MouseButton button) {
 
-	if (button == Shared::BUTTON_RIGHT) {
+	if (button == Events::BUTTON_RIGHT) {
 		//Game::get_game()->get_view_manager()->close_gump(this);
 		close_view();
 		GUI::get_gui()->removeWidget((GUI_Widget *)this);

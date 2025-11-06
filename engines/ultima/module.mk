@@ -4,8 +4,7 @@ MODULE_OBJS := \
 	metaengine.o \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
-	shared/engine/data_archive.o \
-	shared/engine/events.o
+	shared/engine/data_archive.o
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
@@ -29,6 +28,7 @@ MODULE_OBJS += \
 	shared/early/game.o \
 	shared/early/game_base.o \
 	shared/early/ultima_early.o \
+	shared/engine/events.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \

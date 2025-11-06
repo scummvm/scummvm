@@ -857,7 +857,7 @@ GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status MsgScroll::MouseUp(int x, int y, Events::MouseButton button) {
 	uint16 i;
 	Std::string token_str;
 

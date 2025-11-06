@@ -75,8 +75,8 @@ void EventInput_s::set_loc(const MapCoord &c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Shared::EventsCallback *callback, const Configuration *cfg)
-		: Shared::EventsManager(callback), config(cfg), converse(nullptr),
+Events::Events(const Configuration *cfg)
+		: config(cfg), converse(nullptr),
 		  keybinder(nullptr), showingQuitDialog(false), fps_counter_widget(nullptr),
 		  cursor_mode(false){
 	g_events = this;
@@ -210,6 +210,46 @@ bool Events::update() {
 		game->set_mouse_pointer(0);
 
 	return true;
+}
+
+Events::MouseButton Events::whichButton(Common::EventType type) {
+	if (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_LBUTTONUP)
+		return BUTTON_LEFT;
+	else if (type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_RBUTTONUP)
+		return BUTTON_RIGHT;
+	else if (type == Common::EVENT_MBUTTONDOWN || type == Common::EVENT_MBUTTONUP)
+		return BUTTON_MIDDLE;
+	else
+		return BUTTON_NONE;
+}
+
+bool Events::pollEvent(Common::Event &evt) {
+	// Event handling
+	if (g_system->getEventManager()->pollEvent(evt)) {
+		switch (evt.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = evt.mouse;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_MBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			_buttonsDown |= BUTTON_MASK(whichButton(evt.type));
+			_mousePos = evt.mouse;
+			break;
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			_buttonsDown &= ~BUTTON_MASK(whichButton(evt.type));
+			_mousePos = evt.mouse;
+			break;
+		default:
+			break;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 bool Events::handleSDL_KEYDOWN(const Common::Event *event_) {

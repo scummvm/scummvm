@@ -72,8 +72,8 @@ protected:
 	unsigned int mouseup[3]; /* for 3 buttons */
 	unsigned int mousedown[3]; /* waiting for MouseUp */
 	bool accept_mouseclick[3]; /* which buttons can be [double]clicked */
-	Shared::MouseButton delayed_button; /* a MouseClick can be delayed on one button; 0=none */
-	Shared::MouseButton held_button; /* a MouseDown can be delayed on one button; 0=none */
+	Events::MouseButton delayed_button; /* a MouseClick can be delayed on one button; 0=none */
+	Events::MouseButton held_button; /* a MouseDown can be delayed on one button; 0=none */
 	bool mouse_moved; /* true if mouse moves while button is pressed */
 
 	bool mouse_over; // initialized here; toggled by GUI
@@ -170,17 +170,17 @@ public:
 	*/
 	virtual GUI_status KeyDown(const Common::KeyState &key);
 	virtual GUI_status KeyUp(Common::KeyState key);
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
+	virtual GUI_status MouseDown(int x, int y, Events::MouseButton button);
+	virtual GUI_status MouseUp(int x, int y, Events::MouseButton button);
 	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 	virtual GUI_status MouseWheel(sint32 x, sint32 y);
 	// <SB-X>
 	virtual GUI_status MouseEnter(uint8 state);
 	virtual GUI_status MouseLeave(uint8 state);
-	virtual GUI_status MouseClick(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseDouble(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseDelayed(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseHeld(int x, int y, Shared::MouseButton button);
+	virtual GUI_status MouseClick(int x, int y, Events::MouseButton button);
+	virtual GUI_status MouseDouble(int x, int y, Events::MouseButton button);
+	virtual GUI_status MouseDelayed(int x, int y, Events::MouseButton button);
+	virtual GUI_status MouseHeld(int x, int y, Events::MouseButton button);
 	// </SB-X>
 
 	bool drag_accept_drop(int x, int y, int message, void *data) override;
@@ -235,12 +235,12 @@ protected:
 		else return 0;
 	}
 	void wait_for_mouseclick(int button) {
-		if (button >= Shared::BUTTON_NONE && button < Shared::BUTTON_MIDDLE)
-			delayed_button = (Shared::MouseButton)button;
+		if (button >= Events::BUTTON_NONE && button < Events::BUTTON_MIDDLE)
+			delayed_button = (Events::MouseButton)button;
 	}
 	void wait_for_mousedown(int button) {
-		if (button >= Shared::BUTTON_NONE && button <= Shared::BUTTON_MIDDLE)
-			held_button = (Shared::MouseButton)button;
+		if (button >= Events::BUTTON_NONE && button <= Events::BUTTON_MIDDLE)
+			held_button = (Events::MouseButton)button;
 	}
 	virtual GUI_status try_mouse_delayed();
 };

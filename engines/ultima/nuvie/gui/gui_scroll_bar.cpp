@@ -227,7 +227,7 @@ GUI_status GUI_ScrollBar::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_ScrollBar::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_ScrollBar::MouseDown(int x, int y, Events::MouseButton button) {
 	if (y >= area.top + button_height + slider_y && y <= area.top + button_height + slider_y + slider_length) {
 		drag = true;
 		slider_click_offset = y - area.top - button_height - slider_y;
@@ -240,7 +240,7 @@ GUI_status GUI_ScrollBar::MouseDown(int x, int y, Shared::MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_ScrollBar::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_ScrollBar::MouseUp(int x, int y, Events::MouseButton button) {
 	drag = false;
 
 	release_focus();

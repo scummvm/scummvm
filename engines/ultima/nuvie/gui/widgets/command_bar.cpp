@@ -267,7 +267,7 @@ void CommandBar::select_action(sint8 activate) {
 		set_selected_action(activate);
 }
 
-GUI_status CommandBar::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status CommandBar::MouseDown(int x, int y, Events::MouseButton button) {
 	x -= area.left;
 	y -= area.top;
 
