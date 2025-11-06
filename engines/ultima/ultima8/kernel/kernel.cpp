@@ -23,6 +23,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/set.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
@@ -420,7 +421,7 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 	}
 
 	// Integrity check for processes
-	Std::set<ProcId> procs;
+	Set<ProcId> procs;
 	for (const auto *p : _processes) {
 		if (!_pIDs->isIDUsed(p->getPid())) {
 			warning("Process id %d exists but not marked used.  Corrupt save?", p->getPid());
