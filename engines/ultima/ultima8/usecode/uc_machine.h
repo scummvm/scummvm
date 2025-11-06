@@ -23,6 +23,7 @@
 #define ULTIMA8_USECODE_UCMACHINE_H
 
 #include "ultima/ultima8/misc/common_types.h"
+#include "ultima/ultima8/misc/set.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
@@ -115,9 +116,9 @@ private:
 	// tracing
 	bool _tracingEnabled;
 	bool _traceAll;
-	Std::set<ObjId> _traceObjIDs;
-	Std::set<ProcId> _tracePIDs;
-	Std::set<uint16> _traceClasses;
+	Set<ObjId> _traceObjIDs;
+	Set<ProcId> _tracePIDs;
+	Set<uint16> _traceClasses;
 
 	inline bool trace_show(ProcId pid, ObjId objid, uint16 ucclass) {
 		if (!_tracingEnabled) return false;

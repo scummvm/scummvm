@@ -25,6 +25,7 @@
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/point3.h"
+#include "ultima/ultima8/misc/priority_queue.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 //#define DEBUG_PATHFINDER
@@ -96,7 +97,7 @@ protected:
 	int32 _actorXd, _actorYd, _actorZd;
 
 	Common::Array<PathfindingState> _visited;
-	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
+	PriorityQueue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
 	/** List of nodes for garbage collection later and order is not important */
 	Std::vector<PathNode *> _cleanupNodes;
