@@ -1581,6 +1581,59 @@ void PrivateEngine::playVideo(const Common::String &name) {
 
 	loadSubtitles(path);
 	_videoDecoder->start();
+
+	// set the view screen based on the video, unless playing from diary
+	if (_currentSetting != "kDiaryMiddle") {
+		Common::String videoViewScreen = getVideoViewScreen(name);
+		if (!videoViewScreen.empty()) {
+			_nextVS = videoViewScreen;
+		}
+	}
+}
+
+Common::String PrivateEngine::getVideoViewScreen(Common::String video) {
+	video = convertPath(video).toString();
+
+	// find the separator
+	const char *separators[] = { "/animatio/", "/" };
+	size_t separatorPos = Common::String::npos;
+	size_t separatorLength = Common::String::npos;
+	for (uint i = 0; i < ARRAYSIZE(separators); i++) {
+		separatorPos = video.find(separators[i]);
+		if (separatorPos != Common::String::npos) {
+			separatorLength = strlen(separators[i]);
+			break;
+		}
+	}
+	if (separatorPos == Common::String::npos) {
+		return "";
+	}
+
+	// find the video suffix. these suffixes are from the executable.
+	size_t suffixPos = Common::String::npos;
+	const char *suffixes[] = { "ys.smk", "xs.smk", "a.smk", "s.smk", ".smk" };
+	for (uint i = 0; i < ARRAYSIZE(suffixes); i++) {
+		if (video.hasSuffix(suffixes[i])) {
+			suffixPos = video.size() - strlen(suffixes[i]);
+			break;
+		}
+	}
+	if (suffixPos == Common::String::npos) {
+		return "";
+	}
+
+	// build the view screen picture name
+	Common::String picture = Common::String::format(
+		"\"inface/views/%s/%s.bmp\"",
+		video.substr(0, separatorPos).c_str(),
+		video.substr(separatorPos + separatorLength, suffixPos - (separatorPos + separatorLength)).c_str());
+
+	// not every video has a picture
+	if (!Common::File::exists(convertPath(picture))) {
+		return "";
+	}
+
+	return picture;
 }
 
 void PrivateEngine::skipVideo() {
