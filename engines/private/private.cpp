@@ -668,6 +668,27 @@ Common::String PrivateEngine::getMainDesktopSetting() {
 	return "k183";
 }
 
+Common::String PrivateEngine::getDiaryTOCSetting() {
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
+		return "kDiaryTOC";
+
+	return "k185";
+}
+
+Common::String PrivateEngine::getDiaryMiddleSetting() {
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
+		return "kDiaryMiddle";
+
+	return "k186";
+}
+
+Common::String PrivateEngine::getDiaryLastPageSetting() {
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
+		return "kDiaryLastPage";
+
+	return "k187";
+}
+
 Common::String PrivateEngine::getPoliceIndexVariable() {
 	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
 		return "kPoliceIndex";
@@ -895,7 +916,7 @@ bool PrivateEngine::selectMemory(const Common::Point &mousePos) {
 		if (inMask(_memoryMasks[i].surf, mousePos)) {
 			clearAreas();
 			_nextMovie = _diaryPages[_currentDiaryPage].memories[i].movie;
-			_nextSetting = "kDiaryMiddle";
+			_nextSetting = getDiaryMiddleSetting();
 			return true;
 		}
 	}
@@ -1583,7 +1604,7 @@ void PrivateEngine::playVideo(const Common::String &name) {
 	_videoDecoder->start();
 
 	// set the view screen based on the video, unless playing from diary
-	if (_currentSetting != "kDiaryMiddle") {
+	if (_currentSetting != getDiaryMiddleSetting()) {
 		Common::String videoViewScreen = getVideoViewScreen(name);
 		if (!videoViewScreen.empty()) {
 			_nextVS = videoViewScreen;
@@ -1975,7 +1996,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 			MaskInfo m;
 			m.surf = loadMask(s, rect.left + 120, rect.top + offset, true);
 			m.cursor = g_private->getExitCursor();
-			m.nextSetting = "kDiaryMiddle";
+			m.nextSetting = getDiaryMiddleSetting();
 			m.flag1 = nullptr;
 			m.flag2 = nullptr;
 			_masks.push_front(m);
@@ -2006,7 +2027,7 @@ void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset,
 		MaskInfo m;
 		m.surf = loadMask(_diaryPages[_currentDiaryPage].memories[i].image, rect.left + horizontalOffset, rect.top + currentVerticalOffset, true);
 		m.cursor = g_private->getExitCursor();
-		m.nextSetting = "kDiaryMiddle";
+		m.nextSetting = getDiaryMiddleSetting();
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
 		_masks.push_front(m);

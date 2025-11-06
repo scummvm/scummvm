@@ -99,7 +99,7 @@ static void fDiaryGoLoc(ArgArray args) {
 	ExitInfo e;
 
 	e.rect = *args[1].u.rect;
-	e.nextSetting = "kDiaryMiddle";
+	e.nextSetting = g_private->getDiaryMiddleSetting();
 
 	if (args[0].u.val) {
 		e.cursor = "kTurnRight";
@@ -116,14 +116,14 @@ static void fDiaryPageTurn(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "DiaryPageTurn(%d, ..)", args[0].u.val);
 
 	ExitInfo e;
-	e.nextSetting = "kDiaryMiddle";
+	e.nextSetting = g_private->getDiaryMiddleSetting();
 	e.rect = *args[1].u.rect;
 
 	if (args[0].u.val == 1) {
 		e.cursor = "kTurnRight";
 
 		if ((uint)g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
-			e.nextSetting = "kDiaryLastPage";
+			e.nextSetting = g_private->getDiaryLastPageSetting();
 		}
 
 		g_private->_diaryNextPageExit = e;
@@ -131,7 +131,7 @@ static void fDiaryPageTurn(ArgArray args) {
 		e.cursor = "kTurnLeft";
 
 		if (g_private->_currentDiaryPage == 0) {
-			e.nextSetting = "kDiaryTOC";
+			e.nextSetting = g_private->getDiaryTOCSetting();
 		}
 
 		g_private->_diaryPrevPageExit = e;
