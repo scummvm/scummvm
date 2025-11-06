@@ -218,7 +218,8 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
-	Common::Path convertPath(const Common::String &);
+	static Common::Path convertPath(const Common::String &name);
+	static Common::String getVideoViewScreen(Common::String video);
 	void playVideo(const Common::String &);
 	void skipVideo();
 	void destroyVideo();
