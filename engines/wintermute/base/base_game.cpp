@@ -627,7 +627,7 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 		initGraphics3d(_settingsResWidth, _settingsResHeight);
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
-#endif // defined(USE_OPENGL)
+#endif // defined(USE_OPENGL_GAME)
 #if defined(USE_TINYGL)
 	if (!force2dRenderer && matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		if (_playing3DGame) {
