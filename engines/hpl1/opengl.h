@@ -27,7 +27,7 @@
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL) && !USE_FORCED_GLES2 && !USE_FORCED_GLES
+#if defined(USE_OPENGL_GAME) && !USE_FORCED_GLES2 && !USE_FORCED_GLES
 
 #define HPL1_USE_OPENGL
 
@@ -53,5 +53,5 @@ Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot();
 #define GL_CHECK_FN() \
 	{ ::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__); }
 
-#endif // defined(USE_OPENGL) && !USE_FORCED_GLES2 && !USE_FORCED_GLES
+#endif // defined(USE_OPENGL_GAME) && !USE_FORCED_GLES2 && !USE_FORCED_GLES
 #endif // HPL1_OPENGL_H
