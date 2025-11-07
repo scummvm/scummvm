@@ -1338,10 +1338,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvm_WarningCFlags.push_back("-Werror=return-type");
 	ADD_SETTING_LIST(scummvm_Debug, "WARNING_CFLAGS", scummvm_WarningCFlags, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ValueList scummvm_defines(_defines);
-	REMOVE_DEFINE(scummvm_defines, "MACOSX");
-	REMOVE_DEFINE(scummvm_defines, "IPHONE");
-	REMOVE_DEFINE(scummvm_defines, "IPHONE_IOS7");
-	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_UNUSED_VARIABLE", "YES");
@@ -1677,11 +1673,9 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "USE_NASM")  // Not supported on Mac
-			continue;
-
 		ADD_DEFINE(_defines, *i);
 	}
+	REMOVE_DEFINE(_defines, "USE_NASM"); // Not supported on Mac
 	// Add special defines for Mac support
 	REMOVE_DEFINE(_defines, "MACOSX");
 	REMOVE_DEFINE(_defines, "IPHONE");
