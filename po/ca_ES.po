@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-06 17:38+0000\n"
-"PO-Revision-Date: 2025-10-12 05:36+0000\n"
+"PO-Revision-Date: 2025-11-07 23:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -6942,10 +6942,8 @@ msgid "General Keys"
 msgstr "Tecles generals"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Volum mínim"
+msgstr "Tecles mínimes"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -7809,10 +7807,8 @@ msgstr ""
 "versió del disquet s'han de copiar al directori SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Volum d'efectes:"
+msgstr "Mode d'efectes de so:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -7848,10 +7844,8 @@ msgid "Time advance"
 msgstr "Avanç del temps"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
-msgstr "Salta la seqüència de video"
+msgstr "Omet l'escena"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
@@ -9885,10 +9879,8 @@ msgid ""
 msgstr ""
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
-msgstr "Utilitza els cursors de Windows"
+msgstr "Utilitza els cursors del ratolí de Windows"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -10653,53 +10645,39 @@ msgid "Confirm the selected save / new save name"
 msgstr "Confirmeu el nom seleccionat de desament / nou desat de partida"
 
 #: engines/ngi/metaengine.cpp:118
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "Assignació de tecles de sortida"
+msgstr "Assignació de tecles dels crèdits"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "Assignacions de tecles del diàleg de sortida"
+msgstr "Assignacions de tecles dels diàlegs"
 
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Deselect item"
-msgstr "Seleccioneu un Tema"
+msgstr "Desselecciona l'objecte"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:143
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Precarrega els sons"
+msgstr "Atura els sons"
 
 #: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Commuta l'inventari"
 
 #: engines/ngi/metaengine.cpp:176
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Mostra els crèdits"
+msgstr "Omet els crèdits"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:183
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "Tanca el quadre de diàleg"
+msgstr "Tanca el diàleg"
 
 #: engines/ngi/metaengine.cpp:197
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close map"
-msgstr "Tanca la finestra emergent"
+msgstr "Tanca el mapa"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -10796,36 +10774,26 @@ msgid "Toggle Chatty AI"
 msgstr "Commutar IA de xat"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "Mou / Interactua / Omet el diàleg"
+msgstr "Interactua / Omet el diàleg"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Obre el menú d'acció / Tanca el menú"
+msgstr "Obre el menú d'acció / Tanca la interfície actual"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Acció de Chapayev"
+msgstr "Usa l'objecte amb Chapayev"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Mostra / Oculta la consola"
+msgstr "Mostra / Amaga la pantalla d'opcions"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Stop current voice"
 msgid "Close current interface"
-msgstr "Atura la veu actual"
+msgstr "Tanca la interfície actual"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -10901,11 +10869,9 @@ msgid "Display SFX subtitles"
 msgstr "Mostra els subtítols dels efectes de so"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
-"Utilitza TextToSpeech per llegir els subtítols (si TTS està disponible)"
+"Usa subtítols per als efectes de so (si els subtítols estan habilitats)."
 
 #: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13453,10 +13419,8 @@ msgid "Close inventory"
 msgstr "Tanca l'inventari"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "Mode d'interacció"
+msgstr "Executa en mode interactiu"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -13673,16 +13637,12 @@ msgid "Unable to locate the '%s' data file."
 msgstr "No s'ha pogut localitzar el fitxer de dades '%s'."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "Habilita la protecció contra còpia"
+msgstr "Protecció contra còpia"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Enable short transitions"
 msgid "Disable scene transitions"
-msgstr "Activa transicions curtes"
+msgstr "Desactiva les transicions d'escena"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
@@ -14119,12 +14079,11 @@ msgid ""
 msgstr "Heu seleccionat Ransome *unbeeped* (DLC) però el DLC no s'ha detectat!"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
 msgstr ""
-"Aquest joc requereix el submotor FoxTail, que no està dins la compilació."
+"Aquest joc requereix OpenGL amb shaders, que no està suportat al vostre "
+"sistema"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
