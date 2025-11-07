@@ -1213,7 +1213,7 @@ void PaletteRotation::remove() {
 
 void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotationMode, int duration, Action *action) {
 	_duration = duration;
-	_step = false;
+	_step = 0;
 	_action = action;
 	_scenePalette = palette;
 
@@ -1259,12 +1259,22 @@ void PaletteFader::synchronize(Serializer &s) {
 }
 
 void PaletteFader::signal() {
-	_percent -= _step;
-	if (_percent > 0) {
-		_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
-	} else {
-		remove();
+	// FIXME: HACK to slow down fading process and mimic the original behavior
+	// This hack is in the same spirit as the one in SceneObjectList::draw() for slowing down the scroller
+	int count = (_step & 0x7F00) >> 8;
+
+	if (count++ == 0) {
+		_percent -= _step;
+		if (_percent > 0) {
+			_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
+		} else {
+			remove();
+		}
 	}
+
+	if (count == 2)
+		count = 0;
+	_step = (count << 8) | (_step & 0xFF);
 }
 
 void PaletteFader::remove() {
