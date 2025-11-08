@@ -822,9 +822,11 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 			}
 
 			if (m.flag1 != nullptr) { // TODO: check this
-				setSymbol(m.flag1, 1);
 				// an item was taken
 				if (_toTake) {
+					if (!inInventory(m.inventoryItem))
+						inventory.push_back(m.inventoryItem);
+					setSymbol(m.flag1, 1);
 					playSound(getTakeSound(), 1, false, false);
 					_toTake = false;
 				}
@@ -992,6 +994,14 @@ void PrivateEngine::addMemory(const Common::String &path) {
 	}
 
 	_diaryPages.insert_at(0, diaryPage);
+}
+
+bool PrivateEngine::inInventory(const Common::String &bmp) const {
+	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
+		if (*it == bmp)
+			return true;
+	}
+	return false;
 }
 
 void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {

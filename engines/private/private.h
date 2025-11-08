@@ -87,6 +87,7 @@ typedef struct MaskInfo {
 	Symbol *flag1;
 	Symbol *flag2;
 	Common::String cursor;
+	Common::String inventoryItem;
 
 	void clear() {
 		surf = nullptr;
@@ -95,6 +96,7 @@ typedef struct MaskInfo {
 		nextSetting.clear();
 		cursor.clear();
 		point = Common::Point();
+		inventoryItem.clear();
 	}
 } MaskInfo;
 
@@ -311,6 +313,7 @@ public:
 
 	// Diary
 	InvList inventory;
+	bool inInventory(const Common::String &bmp) const;
 	Common::String _diaryLocPrefix;
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);

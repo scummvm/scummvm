@@ -359,14 +359,6 @@ static void fLoseInventory(ArgArray args) {
 	g_private->inventory.clear();
 }
 
-bool inInventory(Common::String &bmp) {
-	for (NameList::const_iterator it = g_private->inventory.begin(); it != g_private->inventory.end(); ++it) {
-		if (*it == bmp)
-			return true;
-	}
-	return false;
-}
-
 static void fInventory(ArgArray args) {
 	// assert types
 	Datum b1 = args[0];
@@ -414,6 +406,7 @@ static void fInventory(ArgArray args) {
 		} else
 			m.flag2 = nullptr;
 
+		m.inventoryItem = bmp;
 		g_private->_masks.push_front(m);
 		g_private->_toTake = true;
 		Common::String sound(snd.u.str);
@@ -423,23 +416,20 @@ static void fInventory(ArgArray args) {
 		} else {
 			g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
 		}
-
-		if (!inInventory(bmp))
-			g_private->inventory.push_back(bmp);
 	} else {
 		if (v1.type == NAME) {
 			v1.u.sym = g_private->maps.lookupVariable(v1.u.sym->name);
 			if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
 				v1.u.sym->u.val = 0;
-				if (inInventory(bmp))
+				if (g_private->inInventory(bmp))
 					g_private->inventory.remove(bmp);
 			} else {
 				v1.u.sym->u.val = 1;
-				if (!inInventory(bmp))
+				if (!g_private->inInventory(bmp))
 					g_private->inventory.push_back(bmp);
 			}
 		} else {
-			if (!inInventory(bmp))
+			if (!g_private->inInventory(bmp))
 				g_private->inventory.push_back(bmp);
 		}
 		if (v2.type == NAME) {
