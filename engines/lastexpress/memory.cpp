@@ -291,6 +291,12 @@ Seq *MemoryManager::copySeq(Seq *sequenceToCopy) {
 		newSeq->sprites[frame].copyScreenAndRedrawFlag = newSeqDataStream->readByte();
 		newSeq->sprites[frame].spritesUnk3 = newSeqDataStream->readByte();
 		newSeq->sprites[frame].ticksToWaitUntilCycleRestart = newSeqDataStream->readByte();
+
+		// This variable could have been edited afterwards...
+		if (newSeq->sprites[frame].ticksToWaitUntilCycleRestart != sequenceToCopy->sprites[frame].ticksToWaitUntilCycleRestart) {
+			newSeq->sprites[frame].ticksToWaitUntilCycleRestart = sequenceToCopy->sprites[frame].ticksToWaitUntilCycleRestart;
+		}
+
 		newSeq->sprites[frame].soundDelay = newSeqDataStream->readByte();
 		newSeq->sprites[frame].soundAction = newSeqDataStream->readByte();
 		newSeq->sprites[frame].flags = newSeqDataStream->readByte();
@@ -302,6 +308,11 @@ Seq *MemoryManager::copySeq(Seq *sequenceToCopy) {
 
 		newSeq->sprites[frame].visibilityDist = newSeqDataStream->readUint16LE();
 		newSeq->sprites[frame].hotspotPriority = newSeqDataStream->readUint16LE();
+
+		// This variable could have been edited afterwards...
+		if (newSeq->sprites[frame].hotspotPriority != sequenceToCopy->sprites[frame].hotspotPriority) {
+			newSeq->sprites[frame].hotspotPriority = sequenceToCopy->sprites[frame].hotspotPriority;
+		}
 
 		newSeqDataStream->readUint32LE(); // Empty "next" sprite pointer
 	}
