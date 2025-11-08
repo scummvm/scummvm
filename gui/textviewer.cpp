@@ -139,7 +139,7 @@ void TextViewerDialog::reflowLayout() {
 	_closeButton->setSize(bW, bH);
 
 #ifdef EMSCRIPTEN
-	_downloadButton->setPos(_w - 2*bW - 2*padR, _h - buttonOffset);
+	_downloadButton->setPos(_w - 2 * bW - 2 * padR, _h - buttonOffset);
 	_downloadButton->setSize(bW, bH);
 #endif
 
