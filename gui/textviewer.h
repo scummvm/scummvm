@@ -35,6 +35,11 @@ namespace GUI {
 
 class ButtonWidget;
 class ScrollBarWidget;
+#ifdef EMSCRIPTEN
+enum {
+	kDownloadFileCmd = 'dlfc',
+};
+#endif 
 
 class TextViewerDialog : public Dialog {
 private:
@@ -51,6 +56,9 @@ private:
 
 	ScrollBarWidget *_scrollBar;
 	ButtonWidget *_closeButton;
+#ifdef EMSCRIPTEN
+	ButtonWidget *_downloadButton;
+#endif
 
 	Common::Path _fname;
 	const Graphics::Font *_font = nullptr;
