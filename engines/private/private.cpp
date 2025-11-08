@@ -1095,6 +1095,7 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 
 	if (inMask(_dossierNextSuspectMask.surf, mousePos)) {
 		if ((_dossierSuspect + 1) < _dossiers.size()) {
+			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierSuspect++;
 			_dossierPage = 0;
 			loadDossier();
@@ -1113,6 +1114,7 @@ bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
 
 	if (inMask(_dossierPrevSheetMask.surf, mousePos)) {
 		if (_dossierPage == 1) {
+			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierPage = 0;
 			loadDossier();
 			drawMask(_dossierNextSuspectMask.surf);
@@ -1131,6 +1133,7 @@ bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
 	if (inMask(_dossierNextSheetMask.surf, mousePos)) {
 		DossierInfo m = _dossiers[_dossierSuspect];
 		if (_dossierPage == 0 && !m.page2.empty()) {
+			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierPage = 1;
 			loadDossier();
 			drawMask(_dossierNextSuspectMask.surf);
@@ -1148,6 +1151,7 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 
 	if (inMask(_dossierPrevSuspectMask.surf, mousePos)) {
 		if (_dossierSuspect > 0) {
+			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierSuspect--;
 			_dossierPage = 0;
 			loadDossier();
