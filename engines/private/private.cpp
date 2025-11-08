@@ -112,7 +112,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 	// Diary
 	_diaryLocPrefix = "inface/diary/loclist/";
-	_currentDiaryPage = 0;
+	_currentDiaryPage = -1;
 
 	// Safe
 	_safeNumberPath = "sg/search_s/sgsaf%d.bmp";
@@ -282,7 +282,7 @@ Common::Error PrivateEngine::run() {
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 	_compositeSurface->setTransparentColor(_transparentColor);
 
-	_currentDiaryPage = 0;
+	_currentDiaryPage = -1;
 
 	// Load the game frame once
 	byte *palette;
@@ -2016,6 +2016,9 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 }
 
 void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset) {
+	if (_currentDiaryPage < 0);
+		return;
+
 	Common::String s = Common::String::format("inface/diary/loctabs/drytab%d.bmp", _diaryPages[_currentDiaryPage].locationID);
 	loadImage(s, 0, 0);
 
