@@ -970,6 +970,7 @@ void PrivateEngine::addMemory(const Common::String &path) {
 
 	DiaryPage diaryPage;
 	diaryPage.locationName = location;
+	diaryPage.locationID = -1;
 
 	uint locationIndex = 0;
 	for (auto &it : maps.locationList) {
@@ -977,12 +978,46 @@ void PrivateEngine::addMemory(const Common::String &path) {
 		locationIndex++;
 
 		Common::String currentLocation = it.substr(9);
+		if (it.size() <= 3) {
+			if (it == "k0") {
+				currentLocation = "mo";
+			} else if (it == "k1") {
+				currentLocation = "is";
+			} else if (it == "k2") {
+				currentLocation = "mw";
+			} else if (it == "k3") {
+				currentLocation = "cs";
+			} else if (it == "k4") {
+				currentLocation = "cw";
+			} else if (it == "k5") {
+				currentLocation = "ts";
+			} else if (it == "k6") {
+				currentLocation = "bo";
+			} else if (it == "k7") {
+				currentLocation = "gz";
+			} else if (it == "k8") {
+				currentLocation = "sg";
+			} else if (it == "k9") {
+				currentLocation = "da";
+			} else if (it == "k10") {
+				currentLocation = "dl";
+			} else if (it == "k11") {
+				currentLocation = "vn";
+			} else if (it == "k12") {
+				currentLocation = "po";
+			} else if (it == "k13") {
+				currentLocation = "dc";
+			} else
+				error("Unknown location symbol %s", it.c_str());
+		}
+
 		currentLocation.toLowercase();
 		if (sym->u.val && currentLocation == location) {
 			diaryPage.locationID = locationIndex;
 			break;
 		}
 	}
+	assert(diaryPage.locationID != -1);
 
 	diaryPage.memories.push_back(memory);
 
@@ -2030,7 +2065,7 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 }
 
 void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset) {
-	if (_currentDiaryPage < 0);
+	if (_currentDiaryPage < 0)
 		return;
 
 	Common::String s = Common::String::format("inface/diary/loctabs/drytab%d.bmp", _diaryPages[_currentDiaryPage].locationID);
