@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-06 17:38+0000\n"
+"POT-Creation-Date: 2025-11-08 14:27+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -59,7 +59,7 @@ msgstr "Tilgjengelige motorer:"
 #. I18N: Close dialog button
 #: gui/about.cpp:527 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
-#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:56
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -422,7 +422,7 @@ msgstr "Henter DLCer..."
 msgid "All Downloads"
 msgstr "Alle nedlastninger"
 
-#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:268
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:268 gui/textviewer.cpp:59
 msgid "Download"
 msgstr "Last ned"
 

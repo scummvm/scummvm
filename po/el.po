@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-06 17:38+0000\n"
+"POT-Creation-Date: 2025-11-08 14:27+0000\n"
 "PO-Revision-Date: 2025-09-15 15:01+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgstr "Διαθέσιμες μηχανές:"
 #. I18N: Close dialog button
 #: gui/about.cpp:527 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
-#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:56
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -425,7 +425,7 @@ msgstr "Προσκόμιση DLC..."
 msgid "All Downloads"
 msgstr "Όλες οι λήψεις"
 
-#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:268
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:268 gui/textviewer.cpp:59
 msgid "Download"
 msgstr "Λήψη"
 
