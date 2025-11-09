@@ -130,8 +130,7 @@ void Collection::apply(const Common::Array<ScriptValue> &args) {
 	uint functionId = args[0].asFunctionId();
 	for (const ScriptValue &item : *this) {
 		argsToApply[0] = item;
-		// TODO: Need to create and call FunctionManager.
-		warning("%s: Applying function %d not implemented", __func__, functionId);
+		g_engine->getFunctionManager()->call(functionId, argsToApply);
 	}
 }
 

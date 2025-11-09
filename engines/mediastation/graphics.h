@@ -103,12 +103,21 @@ public:
 	void performUpdateDirty();
 	void performUpdateAll();
 
+	void setGammaValues(double red, double green, double blue);
+	void getDefaultGammaValues(double &red, double &green, double &blue);
+	void getGammaValues(double &red, double &green, double &blue);
+
 private:
 	MediaStationEngine *_vm = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	Graphics::Palette *_registeredPalette = nullptr;
 	Common::Array<ScriptValue> _scheduledTransitionOnSync;
 	double _defaultTransitionTime = 0.0;
+
+	const double DEFAULT_GAMMA_VALUE = 1.0;
+	double _redGamma = 1.0;
+	double _greenGamma = 1.0;
+	double _blueGamma = 1.0;
 
 	void readAndEffectTransition(Chunk &chunk);
 	void readAndRegisterPalette(Chunk &chunk);

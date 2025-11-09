@@ -114,16 +114,70 @@ const char *variableScopeToStr(VariableScope scope) {
 
 const char *builtInFunctionToStr(BuiltInFunction function) {
 	switch (function) {
-	case kUnk1Function:
-		return "Unk1Function";
+	case kRandomFunction:
+		return "Random";
+	case kTimeOfDayFunction:
+		return "TimeOfDay";
 	case kEffectTransitionFunction:
 		return "EffectTransition";
 	case kEffectTransitionOnSyncFunction:
 		return "EffectTransitionOnSync";
+	case kPlatformFunction:
+		return "Platform";
+	case kSquareRootFunction:
+		return "SquareRoot";
+	case kGetUniqueRandomFunction:
+		return "GetUniqueRandom";
+	case kCurrentRunTimeFunction:
+		return "CurrentRunTime";
+	case kSetGammaCorrectionFunction:
+		return "SetGammaCorrection";
+	case kGetDefaultGammaCorrectionFunction:
+		return "GetDefaultGammaCorrection";
+	case kGetCurrentGammaCorrectionFunction:
+		return "GetCurrentGammaCorrection";
+	case kSetAudioVolumeFunction:
+		return "SetAudioVolume";
+	case kGetAudioVolumeFunction:
+		return "GetAudioVolume";
+	case kSystemLanguagePreferenceFunction:
+		return "SystemLanguagePreference";
+	case kSetRegistryFunction:
+		return "SetRegistry";
+	case kGetRegistryFunction:
+		return "GetRegistry";
+	case kSetProfileFunction:
+		return "SetProfile";
+	case kMazeGenerateFunction:
+		return "MazeGenerate";
+	case kMazeApplyMoveMaskFunction:
+		return "MazeApplyMoveMask";
+	case kMazeSolveFunction:
+		return "MazeSolve";
+	case kBeginTimedIntervalFunction:
+		return "BeginTimedInterval";
+	case kEndTimedIntervalFunction:
+		return "EndTimedInterval";
 	case kDrawingFunction:
 		return "Drawing";
-	case kDebugPrintFunction:
+	case kLegacy_RandomFunction:
+		return "Legacy Random";
+	case kLegacy_TimeOfDayFunction:
+		return "Legacy TimeOfDay";
+	case kLegacy_EffectTransitionFunction:
+		return "Legacy EffectTransition";
+	case kLegacy_EffectTransitionOnSyncFunction:
+		return "Legacy EffectTransitionOnSync";
+	case kLegacy_PlatformFunction:
+		return "Legacy Platform";
+	case kLegacy_SquareRootFunction:
+		return "Legacy SquareRoot";
+	case kLegacy_GetUniqueRandomFunction:
+		return "Legacy GetUniqueRandom";
+	case kLegacy_DebugPrintFunction:
 		return "DebugPrint";
+	case kLegacy_SystemLanguagePreferenceFunction:
+		return "Legacy SystemLanguagePreference";
 	default:
 		return "UNKNOWN";
 	}

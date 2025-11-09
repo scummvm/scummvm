@@ -232,9 +232,31 @@ BuiltInMethod ScriptValue::asMethodId() const {
 	}
 }
 
+Common::String ScriptValue::getDebugString() {
+	switch (getType()) {
+	case kScriptValueTypeEmpty:
+		return "empty";
+
+	case kScriptValueTypeFloat:
+		return Common::String::format("float: %f", asFloat());
+
+	case kScriptValueTypeActorId:
+		return Common::String::format("actor: %d", asActorId());
+
+	case kScriptValueTypeTime:
+		return Common::String::format("time: %f", asTime());
+
+	case kScriptValueTypeParamToken:
+		return Common::String::format("token: %d", asParamToken());
+
+	default:
+		return Common::String::format("arg type %s", scriptValueTypeToStr(getType()));
+	}
+}
+
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
 	if (lhs.getType() != rhs.getType()) {
-		error("%s: Attempt to compare mismatched types %s and %s", __func__, scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
+		warning("%s: Attempt to compare mismatched types %s and %s", __func__, scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
 	}
 
 	switch (lhs.getType()) {
@@ -292,7 +314,8 @@ bool ScriptValue::compareEmptyValues(Opcode op) {
 		return false;
 
 	default:
-		error("%s: Got invalid empty value operation %s", __func__, opcodeToStr(op));
+		warning("%s: Got invalid empty value operation %s", __func__, opcodeToStr(op));
+		return false;
 	}
 }
 

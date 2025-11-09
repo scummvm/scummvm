@@ -965,4 +965,23 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 	return dest;
 }
 
+void VideoDisplayManager::setGammaValues(double red, double green, double blue) {
+	_redGamma = red;
+	_blueGamma = blue;
+	_greenGamma = green;
+	// TODO: Actually perform gamma correction.
+}
+
+void VideoDisplayManager::getDefaultGammaValues(double &red, double &green, double &blue) {
+	red = DEFAULT_GAMMA_VALUE;
+	green = DEFAULT_GAMMA_VALUE;
+	blue = DEFAULT_GAMMA_VALUE;
+}
+
+void VideoDisplayManager::getGammaValues(double &red, double &green, double &blue) {
+	red = _redGamma;
+	green = _greenGamma;
+	blue = _blueGamma;
+}
+
 } // End of namespace MediaStation

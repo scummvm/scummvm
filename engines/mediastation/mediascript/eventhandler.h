@@ -36,7 +36,6 @@ public:
 	~EventHandler();
 
 	ScriptValue execute(uint actorId);
-	Common::String getDebugHeader();
 	EventType _type;
 	ScriptValue _argumentValue;
 

@@ -71,15 +71,42 @@ enum VariableScope {
 const char *variableScopeToStr(VariableScope scope);
 
 enum BuiltInFunction {
-	kUnk1Function = 0xA,
-	// TODO: Figure out if effectTransitionOnSync = 13 is consistent across titles?
-	kEffectTransitionFunction = 0xC,
-	kEffectTransitionOnSyncFunction = 0xD,
+	kRandomFunction = 0x0A,
+	kTimeOfDayFunction = 0x0B,
+	kEffectTransitionFunction = 0x0C,
+	kEffectTransitionOnSyncFunction = 0x0D,
+	kPlatformFunction = 0x0E,
+	kSquareRootFunction = 0x0F,
+	kGetUniqueRandomFunction = 0x10,
+	kCurrentRunTimeFunction = 0x11,
+	kSetGammaCorrectionFunction = 0x12,
+	kGetDefaultGammaCorrectionFunction = 0x13,
+	kGetCurrentGammaCorrectionFunction = 0x14,
+	kSetAudioVolumeFunction = 0x17,
+	kGetAudioVolumeFunction = 0x18,
+	kSystemLanguagePreferenceFunction = 0x19,
+	kSetRegistryFunction = 0x1A,
+	kGetRegistryFunction = 0x1B,
+	kSetProfileFunction = 0x1C,
+	kMazeGenerateFunction = 0x1F,
+	kMazeApplyMoveMaskFunction = 0x20,
+	kMazeSolveFunction = 0x21,
+	kBeginTimedIntervalFunction = 0x22,
+	kEndTimedIntervalFunction = 0x23,
 	kDrawingFunction = 0x25,
-	// TODO: Figure out if TimeOfDay = 101 is consistent across titles.
-	kDebugPrintFunction = 0xB4,
-	// TODO: Figure out code for DebugPrint.
-	// TODO: Figure out code for Quit.
+
+	// Early engine versions (like for Lion King and such), had different opcodes
+	// for some functions, even though the functions were the same. So those are
+	// defined here.
+	kLegacy_RandomFunction = 0x64,
+	kLegacy_TimeOfDayFunction = 0x65,
+	kLegacy_EffectTransitionFunction = 0x66,
+	kLegacy_EffectTransitionOnSyncFunction = 0x67,
+	kLegacy_PlatformFunction = 0x68,
+	kLegacy_SquareRootFunction = 0x69,
+	kLegacy_GetUniqueRandomFunction = 0x6A,
+	kLegacy_DebugPrintFunction = 0xB4,
+	kLegacy_SystemLanguagePreferenceFunction = 0xC8,
 };
 const char *builtInFunctionToStr(BuiltInFunction function);
 

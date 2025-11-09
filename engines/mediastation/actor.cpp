@@ -62,7 +62,7 @@ void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		for (EventHandler *existingEventHandler : eventHandlersForType) {
 			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
 				error("%s: Event handler for %s (%s) already exists", __func__,
-					  eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
+					  eventTypeToStr(eventHandler->_type), eventHandler->_argumentValue.getDebugString().c_str());
 			}
 		}
 		eventHandlersForType.push_back(eventHandler);
@@ -82,7 +82,8 @@ void Actor::loadIsComplete() {
 }
 
 ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	error("%s: Got unimplemented method call 0x%x (%s)", __func__, static_cast<uint>(methodId), builtInMethodToStr(methodId));
+	warning("%s: Got unimplemented method call 0x%x (%s)", __func__, static_cast<uint>(methodId), builtInMethodToStr(methodId));
+	return ScriptValue();
 }
 
 void Actor::readChunk(Chunk &chunk) {
