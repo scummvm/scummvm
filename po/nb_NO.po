@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-08 14:27+0000\n"
+"POT-Creation-Date: 2025-11-09 13:17+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6357,7 +6357,7 @@ msgstr "Sjekk for oppdateringer..."
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/private/metaengine.cpp:84 engines/queen/metaengine.cpp:146
+#: engines/private/metaengine.cpp:95 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
 #: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
@@ -7889,7 +7889,7 @@ msgstr "Indeks-tasteoppsett"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:87
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:98
 #: engines/sherlock/metaengine.cpp:1185
 #, fuzzy
 #| msgid "Interact Mode"
@@ -11960,7 +11960,17 @@ msgstr ""
 "Bruk tekst til tale til å lese undertekster (hvis tekst til tale er "
 "tilgjengelig)"
 
-#: engines/private/metaengine.cpp:93 engines/trecision/metaengine.cpp:137
+#: engines/private/metaengine.cpp:48
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Highlight decision areas"
+msgstr "Merk neste dialog"
+
+#: engines/private/metaengine.cpp:49
+msgid "Highlight clickable areas in decision scenes."
+msgstr ""
+
+#: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip video"
