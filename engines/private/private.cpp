@@ -57,6 +57,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
+	_highlightMasks = false;
 	_rnd = new Common::RandomSource("private");
 
 	// Global object for external reference
@@ -236,6 +237,9 @@ Common::Error PrivateEngine::run() {
 
 	if (!Common::parseBool(ConfMan.get("sfxSubtitles"), _sfxSubtitles))
 		warning("Failed to parse bool from sfxSubtitles options");
+
+	if (!Common::parseBool(ConfMan.get("highlightMasks"), _shouldHighlightMasks))
+		warning("Failed to parse bool from highlightMasks options");
 
 	if (!_useSubtitles && _sfxSubtitles) {
 		warning("SFX subtitles are enabled, but no subtitles will be shown");
@@ -502,6 +506,7 @@ void PrivateEngine::clearAreas() {
 
 	_exits.clear();
 	_masks.clear();
+	_highlightMasks = false;
 	_locationMasks.clear();
 	_memoryMasks.clear();
 
@@ -811,6 +816,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 	if (!ns.empty()) {
 		_numberClicks++; // count click only if it hits a hotspot
 		_nextSetting = ns;
+		_highlightMasks = false;
 	}
 }
 
@@ -846,6 +852,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 	if (!ns.empty()) {
 		_numberClicks++; // count click only if it hits a hotspot
 		_nextSetting = ns;
+		_highlightMasks = false;
 	}
 }
 
@@ -1938,6 +1945,9 @@ void PrivateEngine::loadMaskAndInfo(MaskInfo *m, const Common::String &name, int
 
 Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
+	if (_shouldHighlightMasks && name.contains("\\decision\\"))
+		_highlightMasks = true;
+
 	MaskInfo m;
 	loadMaskAndInfo(&m, name, x, y, drawn);
 	return m.surf;
@@ -1945,6 +1955,42 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 
 void PrivateEngine::drawMask(Graphics::Surface *surf) {
 	_compositeSurface->transBlitFrom(*surf, _origin, _transparentColor);
+}
+
+void drawCircle(Graphics::ManagedSurface *surface, int x, int y, int radius, int color) {
+	int cx = 0;
+	int cy = radius;
+	int df = 1 - radius;
+	int d_e = 3;
+	int d_se = -2 * radius + 5;
+
+	do {
+		surface->setPixel(x + cx, y + cy, color);
+		surface->setPixel(x - cx, y + cy, color);
+		surface->setPixel(x + cx, y - cy, color);
+		surface->setPixel(x - cx, y - cy, color);
+		surface->setPixel(x + cy, y + cx, color);
+		surface->setPixel(x - cy, y + cx, color);
+		surface->setPixel(x + cy, y - cx, color);
+		surface->setPixel(x - cy, y - cx, color);
+
+		if (df < 0) {
+			df += d_e;
+			d_e += 2;
+			d_se += 2;
+		} else {
+			df += d_se;
+			d_e += 2;
+			d_se += 4;
+			cy--;
+		}
+		cx++;
+	} while (cx <= cy);
+
+	for (int i = -radius; i <= radius; i++) {
+		surface->setPixel(x + i, y, color);
+		surface->setPixel(x, y + i, color);
+	}
 }
 
 void PrivateEngine::drawScreen() {
@@ -1973,6 +2019,47 @@ void PrivateEngine::drawScreen() {
 			// We can reuse newPalette
 			g_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
 			drawScreenFrame((byte *) &newPalette);
+		}
+
+		if (_highlightMasks) {
+			byte redIndex = 0;
+			int min_dist = 1000 * 1000;
+			for (int i = 0; i < 256; ++i) {
+				int r = newPalette[i * 3 + 0];
+				int g = newPalette[i * 3 + 1];
+				int b = newPalette[i * 3 + 2];
+				int dist = (255 - r) * (255 - r) + g * g + b * b;
+				if (dist < min_dist) {
+					min_dist = dist;
+					redIndex = i;
+				}
+			}
+
+			for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
+				const MaskInfo &m = *it;
+				if (m.surf == nullptr) continue;
+
+				long sumX = 0;
+				long sumY = 0;
+				int count = 0;
+
+				for (int sx = 0; sx < m.surf->w; ++sx) {
+					for (int sy = 0; sy < m.surf->h; ++sy) {
+						if (m.surf->getPixel(sx, sy) != _transparentColor) {
+							sumX += sx;
+							sumY += sy;
+							count++;
+						}
+					}
+				}
+
+				if (count > 0) {
+					int centerX = sumX / count;
+					int centerY = sumY / count;
+
+					drawCircle(_compositeSurface, centerX + _origin.x, centerY + _origin.y, 7, redIndex);
+				}
+			}
 		}
 
 		Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);

@@ -174,6 +174,8 @@ private:
 	int _screenW, _screenH;
 
 public:
+	bool _shouldHighlightMasks;
+	bool _highlightMasks;
 	PrivateEngine(OSystem *syst, const ADGameDescription *gd);
 	~PrivateEngine();
 

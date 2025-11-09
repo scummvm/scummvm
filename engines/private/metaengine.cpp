@@ -42,6 +42,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_HIGHLIGHT_MASKS,
+		{
+			_s("Highlight decision areas"),
+			_s("Highlight clickable areas in decision scenes."),
+			"highlightMasks",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
