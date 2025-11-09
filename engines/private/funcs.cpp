@@ -170,6 +170,8 @@ static void fSyncSound(ArgArray args) {
 	Common::String s = args[0].u.str;
 
 	if (s != "\"\"") {
+		g_private->drawScreen();
+
 		g_private->playSound(s, 1, true, false);
 		while (g_private->isSoundActive())
 			g_private->ignoreEvents();
