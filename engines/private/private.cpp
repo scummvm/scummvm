@@ -427,13 +427,6 @@ Common::Error PrivateEngine::run() {
 				stopSound(true);
 			}
 
-			if (_needToDrawScreenFrame && _videoDecoder->getCurFrame() >= 0) {
-				const byte *videoPalette = _videoDecoder->getPalette();
-				g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
-				drawScreenFrame(videoPalette);
-				_needToDrawScreenFrame = false;
-			}
-
 			if (_videoDecoder->endOfVideo()) {
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
@@ -1997,10 +1990,14 @@ void PrivateEngine::drawScreen() {
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
-		const byte *videoPalette = nullptr;
 
-		if (_videoDecoder->hasDirtyPalette()) {
-			videoPalette = _videoDecoder->getPalette();
+		if (_needToDrawScreenFrame && _videoDecoder->getCurFrame() >= 0) {
+			const byte *videoPalette = _videoDecoder->getPalette();
+			g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+			drawScreenFrame(videoPalette);
+			_needToDrawScreenFrame = false;
+		} else if (_videoDecoder->hasDirtyPalette()) {
+			const byte *videoPalette = _videoDecoder->getPalette();
 			g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 
 			if (_mode == 1) {
