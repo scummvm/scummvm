@@ -455,7 +455,14 @@ Common::Error PrivateEngine::run() {
 			_currentVS = "";
 			Gen::g_vm->run();
 			changeCursor("default");
-			drawScreen();
+
+			// Draw the screen once the VM has processed the last setting.
+			// This prevents the screen from flickering images as VM settings
+			// are executed. Fixes the previous screen from being displayed
+			// when a video finishes playing.
+			if (_nextSetting.empty()) {
+				drawScreen();
+			}
 		}
 
 		g_system->updateScreen();
