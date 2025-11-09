@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-09 13:17+0000\n"
-"PO-Revision-Date: 2025-11-04 10:12+0000\n"
+"PO-Revision-Date: 2025-11-09 19:19+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -11343,14 +11343,12 @@ msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr "Använd SFX-undertexter (om undertexter finns tillgängliga)"
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight decision areas"
-msgstr "Markera objekt"
+msgstr "Markera beslutsområden"
 
 #: engines/private/metaengine.cpp:49
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "Markera klickbara områden i beslutsscener."
 
 #: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
