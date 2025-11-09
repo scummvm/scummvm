@@ -1113,6 +1113,11 @@ void WetEngine::drawHealth() {
 			moFormat = _objString + "   %d/%d";
 		}
 
+		if (_language == Common::KO_KOR) {
+			sp.y -= 1;
+			op.y -= 1;
+		}
+
 		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);
 		if (op.x > 0 && op.y > 0)
 			drawString("block05.fgx", Common::String::format(moFormat.c_str(), mo, mm), op.x, op.y, 60, c);
