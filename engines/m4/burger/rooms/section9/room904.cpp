@@ -583,10 +583,6 @@ size_t Room904::getMaxCreditsHeaderWidth() const {
 	int32 maxWidth = 0;
 
 	for (int sectionNum = 1; sectionNum <= _numSections; ++sectionNum) {
-		const char *tmp = getCreditsSectionString(sectionNum);
-		int w = gr_font_string_width(tmp);
-		debug("%d", w);
-
 		maxWidth = MAX(maxWidth, gr_font_string_width(getCreditsSectionString(sectionNum)));
 	}
 
