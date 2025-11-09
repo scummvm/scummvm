@@ -810,7 +810,7 @@ void MidiDriver_AdLib::playSwitch(bool play) {
 bool MidiDriver_AdLib::loadResource(const SciSpan<const byte> &data) {
 	const uint32 size = data.size();
 	if (size != 1344 && size != 2690 && size != 5382) {
-		error("ADLIB: Unsupported patch format (%u bytes)", size);
+		warning("ADLIB: Unsupported patch format (%u bytes)", size);
 		return false;
 	}
 
@@ -859,6 +859,14 @@ int MidiPlayer_AdLib::open() {
 	if (res) {
 		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(*res);
 		delete res;
+
+		// WORKAROUND: The Willy Beamish interactive demo has empty Adlib patch
+		// data. Ignore the failure there.
+		const DgdsEngine *engine = DgdsEngine::getInstance();
+		if (!ok && engine->getGameId() == GID_WILLY && engine->isDemo()) {
+			warning("No ADLIB sound available for Willy Beamish demo");
+			ok = true;
+		}
 	} else {
 		// Early SCI0 games have the sound bank embedded in the AdLib driver
 
