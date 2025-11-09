@@ -88,9 +88,17 @@ typedef struct MaskInfo {
 	Symbol *flag2;
 	Common::String cursor;
 	Common::String inventoryItem;
+	bool useBoxCollision;
+	Common::Rect box;
+
+	MaskInfo() {
+		clear();
+	}
 
 	void clear() {
 		surf = nullptr;
+		useBoxCollision = false;
+		box = Common::Rect();
 		flag1 = nullptr;
 		flag2 = nullptr;
 		nextSetting.clear();
@@ -252,9 +260,11 @@ public:
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;
 	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
+	void loadMaskAndInfo(MaskInfo *m, const Common::String &name, int x, int y, bool drawn);
 	void drawMask(Graphics::Surface *);
 	void fillRect(uint32, Common::Rect);
 	bool inMask(Graphics::Surface *, Common::Point);
+	bool inBox(const Common::Rect &box, Common::Point mousePos);
 	uint32 _transparentColor;
 	Common::Rect _screenRect;
 	Common::String _framePath;

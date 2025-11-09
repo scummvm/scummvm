@@ -610,12 +610,17 @@ bool PrivateEngine::inMask(Graphics::Surface *surf, Common::Point mousePos) {
 	return (surf->getPixel(mousePos.x, mousePos.y) != _transparentColor);
 }
 
+bool PrivateEngine::inBox(const Common::Rect &box, Common::Point mousePos) {
+	return box.contains(mousePos);
+}
+
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
 	bool inside = false;
 	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
 		const MaskInfo &m = *it;
 
-		if (inMask(m.surf, mousePos)) {
+		bool inArea = m.useBoxCollision ? m.box.contains(mousePos) : inMask(m.surf, mousePos);
+		if (inArea) {
 			if (!m.cursor.empty()) { // TODO: check this
 				inside = true;
 				changeCursor(m.cursor);
@@ -854,7 +859,7 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 	for (auto &it : maps.locationList) {
 		const Private::Symbol *sym = maps.locations.getVal(it);
 		if (sym->u.val) {
-			if (inMask(_locationMasks[i].surf, mousePos)) {
+			if (inBox(_locationMasks[i].box, mousePos)) {
 				bool diaryPageSet = false;
 				for (uint j = 0; j < _diaryPages.size(); j++) {
 					if (_diaryPages[j].locationID == totalLocations + 1) {
@@ -1896,11 +1901,10 @@ void PrivateEngine::drawScreenFrame(const byte *newPalette) {
 	g_system->copyRectToScreen(_mframeImage->getPixels(), _mframeImage->pitch, 0, 0, _screenW, _screenH);
 }
 
-Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
-	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
-	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(_screenW, _screenH, _pixelFormat);
-	surf->fillRect(_screenRect, _transparentColor);
+void PrivateEngine::loadMaskAndInfo(MaskInfo *m, const Common::String &name, int x, int y, bool drawn) {
+	m->surf = new Graphics::Surface();
+	m->surf->create(_screenW, _screenH, _pixelFormat);
+	m->surf->fillRect(_screenRect, _transparentColor);
 	byte *palette;
 	bool isNewPalette;
 	Graphics::Surface *csurf = decodeImage(name, &palette, &isNewPalette);
@@ -1914,12 +1918,13 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 		wdiff = y + csurf->w - _screenW;
 
 	Common::Rect crect(csurf->w - wdiff, csurf->h - hdiff);
-	surf->copyRectToSurface(*csurf, x, y, crect);
+	m->surf->copyRectToSurface(*csurf, x, y, crect);
+	m->box = Common::Rect(x, y, x + csurf->w, y + csurf->h);
 
 	if (drawn) {
 		_compositeSurface->setPalette(palette, 0, 256);
 		_compositeSurface->setTransparentColor(_transparentColor);
-		drawMask(surf);
+		drawMask(m->surf);
 	}
 
 	csurf->free();
@@ -1929,8 +1934,13 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	if (isNewPalette) {
 		free(palette);
 	}
+}
 
-	return surf;
+Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
+	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
+	MaskInfo m;
+	loadMaskAndInfo(&m, name, x, y, drawn);
+	return m.surf;
 }
 
 void PrivateEngine::drawMask(Graphics::Surface *surf) {
@@ -2043,11 +2053,12 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
 			MaskInfo m;
-			m.surf = loadMask(s, rect.left + 120, rect.top + offset, true);
+			loadMaskAndInfo(&m, s, rect.left + 120, rect.top + offset, true);
 			m.cursor = g_private->getExitCursor();
 			m.nextSetting = getDiaryMiddleSetting();
 			m.flag1 = nullptr;
 			m.flag2 = nullptr;
+			m.useBoxCollision = true;
 			_masks.push_front(m);
 			_locationMasks.push_back(m);
 		}
