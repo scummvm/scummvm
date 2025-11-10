@@ -22,6 +22,7 @@
 #ifndef NANCY_STATE_HELP_H
 #define NANCY_STATE_HELP_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/commontypes.h"
@@ -40,8 +41,6 @@ namespace State {
 class Help : public State, public Common::Singleton<Help> {
 public:
 	enum State { kInit, kBegin, kRun, kWait };
-	Help();
-	virtual ~Help();
 
 	// State API
 	void process() override;
@@ -54,9 +53,9 @@ private:
 	void run();
 	void wait();
 
-	State _state;
+	State _state = kInit;
 	UI::FullScreenImage _image;
-	UI::Button *_button;
+	Common::ScopedPtr<UI::Button> _button;
 	Time _buttonPressActivationTime;
 };
 
