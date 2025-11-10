@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-09 13:17+0000\n"
-"PO-Revision-Date: 2025-03-27 07:17+0000\n"
+"PO-Revision-Date: 2025-11-10 21:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.12.2\n"
 "X-Language-name: Українська\n"
 
 #: audio/mac_plugin.cpp:30
@@ -872,7 +872,7 @@ msgstr "Запустити поштового клієнта"
 
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
-msgstr ""
+msgstr "Ця гра містить доповнення, виберіть частину, яку ви хочете перевірити:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -1635,7 +1635,7 @@ msgstr "Нал. ~г~ри..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
-msgstr ""
+msgstr "Доповнення"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1244 gui/launcher.cpp:1446
@@ -3673,10 +3673,8 @@ msgid "Could not apply filtering setting."
 msgstr "Не вдалося застосувати режим фільтрування."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "Could not apply filtering setting."
 msgid "Could not apply shader setting."
-msgstr "Не вдалося застосувати режим фільтрування."
+msgstr "Не вдалося застосувати налаштування шейдера."
 
 #: engines/engine.cpp:536
 msgid "Error"
@@ -3776,19 +3774,16 @@ msgid "Start anyway"
 msgstr "Все одно запустити"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"ПОПЕРЕДЖЕННЯ: Гра, яку ви хочете запустити, ще не підтримується повністю "
-"ScummVM. Скорше за все вона не буде працювати стабільно, і збережені ігри, "
-"які ви зробите, можуть не працювати у подальших версіях ScummVM."
+"ПОПЕРЕДЖЕННЯ: Гра, яку ви хочете запустити, містить доповнення '%s', яке ще "
+"не підтримується повністю ScummVM. Скорше за все вона не буде працювати "
+"стабільно, і збережені ігри, які ви зробите, можуть не працювати у подальших "
+"версіях ScummVM."
 
 #: engines/engine.cpp:852
 #, c-format
@@ -3797,6 +3792,9 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"Гра \"%s\", яку ви намагаєтеся додати, є доповненням для \"%s\", яке не "
+"можна запустити окремо. Скопіюйте вміст доповнення до підпапки базової гри "
+"та запустіть саму базову гру."
 
 #: engines/engine.cpp:869
 msgid "This game is not supported."
@@ -3824,11 +3822,13 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
+"Папка '%s' схожа на доповнення для гри '%s', але ScummVM не зміг знайти в "
+"ній жодного відповідного доповнення."
 
 #: engines/engine.cpp:1241
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
-msgstr ""
+msgstr "Папка '%s' має кілька доповнень, будь ласка, виберіть одне."
 
 #: engines/game.cpp:199
 #, c-format
@@ -5296,19 +5296,19 @@ msgstr "У іграх"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export backup"
-msgstr ""
+msgstr "Експорт резервної копії"
 
 #: backends/platform/android/options.cpp:192
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Експорт резервної копії конфігурації та файлів збереження"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import backup"
-msgstr ""
+msgstr "Імпорт резервної копії"
 
 #: backends/platform/android/options.cpp:193
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Імпорт раніше експортованого файлу резервної копії"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:196
@@ -5316,53 +5316,45 @@ msgid "Remove folder authorizations..."
 msgstr "Видалити авторизацію для папок..."
 
 #: backends/platform/android/options.cpp:268
-#, fuzzy
-#| msgid "Select the orientation:"
 msgid "Select backup destination"
-msgstr "Оберіть орієнтацію:"
+msgstr "Виберіть місце розташування резервної копії"
 
 #: backends/platform/android/options.cpp:276
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "Резервну копію успішно збережено."
 
 #: backends/platform/android/options.cpp:278
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "Резервну копію успішно збережено в папку «Downloads»."
 
 #: backends/platform/android/options.cpp:280
 #: backends/platform/android/options.cpp:313
-#, fuzzy
-#| msgid "the shader could not be changed"
 msgid "The game saves couldn't be backed up"
-msgstr "шейдер не може бути змінено"
+msgstr "Не вдалося створити резервну копію збережених ігор"
 
 #: backends/platform/android/options.cpp:282
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "Виникла помилка під час запису збереженої гри"
+msgstr "Під час збереження резервної копії сталася помилка."
 
 #: backends/platform/android/options.cpp:289
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Відновлення резервної копії видалить поточну конфігурацію та перезапише "
+"існуючі збереження. Продовжити?"
 
 #: backends/platform/android/options.cpp:294
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select backup file"
-msgstr "Виберіть тему"
+msgstr "Виберіть файл резервної копії"
 
 #: backends/platform/android/options.cpp:311
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "Резервну копію успішно відновлено."
 
 #: backends/platform/android/options.cpp:315
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "Виникла помилка під час запису збереженої гри"
+msgstr "Під час відновлення резервної копії сталася помилка."
 
 #: backends/platform/android/options.cpp:559
 msgid "Remove"
@@ -5828,21 +5820,6 @@ msgid "Libretro playlist"
 msgstr "Список Libretro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:236
-#, fuzzy
-#| msgid ""
-#| "## Libretro playlists for ScummVM core\n"
-#| "Playlists used in Libretro frontends (e.g. Retroarch) are plain text "
-#| "lists used to directly launch a game with a specific core from the user "
-#| "interface. Those lists are structured to pass to the core the path of a "
-#| "specific content file to be loaded (e.g. ROM).\n"
-#| "\n"
-#| "ScummVM core can accept as content the path to any of the files inside a "
-#| "valid game folder, the detection system will try to autodetect the game "
-#| "from the content file parent folder and run the game with default ScummVM "
-#| "options.\n"
-#| "\n"
-#| "The core also supports dedicated per game **hook** plain text files with "
-#| "**."
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -6308,14 +6285,10 @@ msgid "Default keymappings"
 msgstr "Мапи клавіш за замовчунням"
 
 #: engines/access/metaengine.cpp:202
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip"
-msgstr "Перейти до наступного діалогу"
+msgstr "Переміщення / Взаємодія / Пропуск"
 
 #: engines/access/metaengine.cpp:214 engines/sherlock/metaengine.cpp:483
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
 msgstr "Пропустити відео"
 
@@ -6439,7 +6412,7 @@ msgstr "Використати"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "Перейти"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6485,7 +6458,7 @@ msgstr "Інвентар"
 
 #: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "Піднятися"
 
 #: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:298
