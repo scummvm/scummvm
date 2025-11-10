@@ -38,6 +38,8 @@
 
 #include "pelrock/chrono.h"
 #include "pelrock/detection.h"
+#include "pelrock/fonts/large_font.h"
+#include "pelrock/fonts/small_font.h"
 #include "pelrock/types.h"
 
 namespace Pelrock {
@@ -77,9 +79,9 @@ private:
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
 	void changeCursor(Cursor cursor);
-	HotSpot* isHotspotUnder(int x, int y);
-	Exit* isExitUnder(int x, int y);
-	AnimSet* isSpriteUnder(int x, int y);
+	HotSpot *isHotspotUnder(int x, int y);
+	Exit *isExitUnder(int x, int y);
+	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
 
 	ChronoManager *_chronoManager = nullptr;
@@ -92,22 +94,22 @@ private:
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
 	byte *_currentBackground = nullptr;
-	byte *_cursorMasks[5] = { nullptr };
+	byte *_cursorMasks[5] = {nullptr};
 
 	uint32 _mouseDownTime;
-    bool _isMouseDown;
+	bool _isMouseDown;
 
-	byte *_verbIcons[9] = { nullptr };
+	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
 	byte *_bgPopupBalloon = nullptr;
-
 
 	bool _displayPopup = false;
 	int _popupX = 0;
 	int _popupY = 0;
 	int _currentPopupFrame = 0;
 
-
+	SmallFont *_smallFont = nullptr;
+	LargeFont *_largeFont = nullptr;
 
 	// From the original code
 	int xAlfred = 200;

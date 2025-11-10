@@ -99,6 +99,7 @@ struct AnimSet {
 };
 
 struct HotSpot {
+	byte type;
 	int x;
 	int y;
 	int id;

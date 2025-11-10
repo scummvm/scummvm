@@ -36,6 +36,7 @@
 #include "pelrock.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
+#include "pelrock/fonts/small_font.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 
@@ -60,6 +61,9 @@ PelrockEngine::~PelrockEngine() {
 	}
 
 	delete[] _popUpBalloon;
+	if (_bgPopupBalloon)
+		delete[] _bgPopupBalloon;
+	delete _smallFont;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -131,6 +135,10 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	loadCursors();
 	loadInteractionIcons();
+	_smallFont = new SmallFont();
+	_smallFont->load("ALFRED.4");
+	_largeFont = new LargeFont();
+	_largeFont->load("ALFRED.7");
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);
@@ -138,6 +146,9 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreen(0, 2);
+		_smallFont->drawString(g_engine->_screen, Common::String("Welcome to Pelrock!"), 0, 0, 400, 102);
+		_largeFont->drawString(g_engine->_screen, Common::String("Click to start"), 200, 180, 400, 102);
+		_screen->update();
 	}
 }
 
@@ -434,8 +445,8 @@ void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 		roomFile->seek(obj_offset, SEEK_SET);
 		byte obj_bytes[9];
 		roomFile->read(obj_bytes, 9);
-		byte type_byte = obj_bytes[0];
 		HotSpot spot;
+		spot.type = obj_bytes[0];
 		spot.x = obj_bytes[1] | (obj_bytes[2] << 8);
 		spot.y = obj_bytes[3] | (obj_bytes[4] << 8);
 		spot.w = obj_bytes[5];
@@ -553,7 +564,7 @@ void PelrockEngine::frames() {
 				// 		}
 				// 	}
 				// }
-				if(_bgPopupBalloon!=nullptr) {
+				if (_bgPopupBalloon != nullptr) {
 					putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
 				}
 				showActionBalloon(_popupX, _popupY, _currentPopupFrame);
@@ -573,18 +584,19 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	if (hotspot != nullptr) {
 		// _popupX = hotspot->x;
 		// _popupY = hotspot->y;
-		if(_bgPopupBalloon != nullptr) {
+		if (_bgPopupBalloon != nullptr) {
 			putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
 			delete[] _bgPopupBalloon;
 		}
 		_popupX = x - kBalloonWidth / 2;
-		if(_popupX < 0) _popupX = 0;
-		if(_popupX + kBalloonWidth > 640) {
+		if (_popupX < 0)
+			_popupX = 0;
+		if (_popupX + kBalloonWidth > 640) {
 			_popupX -= 640 - (_popupX + kBalloonWidth);
 		}
 
 		_popupY = y - kBalloonHeight;
-		if(_popupY < 0) {
+		if (_popupY < 0) {
 			_popupY = 0;
 		}
 		_displayPopup = true;
@@ -599,7 +611,20 @@ HotSpot *PelrockEngine::isHotspotUnder(int x, int y) {
 	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
 		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
 			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
+			int lookable = i->extra & 0x0B;
+			int openable = i->extra & 0x0F;
+			debug("Hotspot at (%d,%d) size (%d,%d) extra %d, type = %d, lookable = %d, openable=%d", i->x, i->y, i->w, i->h, i->extra, i->type, lookable, openable);
+			/*
+			LOOK = 0x0B      # Look at
+	TAKE = 0x0C      # Take/Pick up
+	USE = 0x0D       # Use
+	TALK = 0x0E      # Talk to
+	OPEN = 0x0F      # Open
+	CLOSE = 0x10     # Close
+	PUSH = 0x11      # Push/Move
+	PULL = 0x12      # Pull
+	GIVE = 0x13      # Give
+	*/
 			return &(*i);
 		}
 	}
@@ -649,7 +674,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 void PelrockEngine::checkMouseClick(int x, int y) {
 
 	_displayPopup = false;
-	if(_bgPopupBalloon != nullptr) {
+	if (_bgPopupBalloon != nullptr) {
 		putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
 		delete[] _bgPopupBalloon;
 		_bgPopupBalloon = nullptr;
