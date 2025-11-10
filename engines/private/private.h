@@ -134,7 +134,7 @@ typedef struct MemoryInfo {
 typedef struct DiaryPage {
 	Common::String locationName;
 	Common::Array<MemoryInfo> memories;
-	uint locationID;
+	int locationID;
 } DiaryPage;
 
 // funcs

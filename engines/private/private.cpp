@@ -53,7 +53,7 @@ extern int parse(const char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0),
 	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
@@ -862,7 +862,7 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 	}
 
 	uint i = 0;
-	uint totalLocations = 0;
+	int totalLocations = 0;
 	for (auto &it : maps.locationList) {
 		const Private::Symbol *sym = maps.locations.getVal(it);
 		if (sym->u.val) {
