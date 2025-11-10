@@ -553,6 +553,9 @@ void PelrockEngine::frames() {
 				// 		}
 				// 	}
 				// }
+				if(_bgPopupBalloon!=nullptr) {
+					putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+				}
 				showActionBalloon(_popupX, _popupY, _currentPopupFrame);
 				if (_currentPopupFrame < 3) {
 					_currentPopupFrame++;
@@ -568,11 +571,26 @@ void PelrockEngine::frames() {
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
 	if (hotspot != nullptr) {
-		_popupX = hotspot->x;
-		_popupY = hotspot->y;
+		// _popupX = hotspot->x;
+		// _popupY = hotspot->y;
+		if(_bgPopupBalloon != nullptr) {
+			putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+			delete[] _bgPopupBalloon;
+		}
+		_popupX = x - kBalloonWidth / 2;
+		if(_popupX < 0) _popupX = 0;
+		if(_popupX + kBalloonWidth > 640) {
+			_popupX -= 640 - (_popupX + kBalloonWidth);
+		}
+
+		_popupY = y - kBalloonHeight;
+		if(_popupY < 0) {
+			_popupY = 0;
+		}
 		_displayPopup = true;
 		_currentPopupFrame = 0;
-		// _bgPopupBalloon =
+
+		_bgPopupBalloon = grabBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight);
 	}
 }
 
@@ -622,7 +640,6 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	for (uint32_t y = 0; y < kVerbIconHeight; y++) {
 		for (uint32_t x = 0; x < kVerbIconWidth; x++) {
 			unsigned int src_pos = y * kVerbIconWidth + x;
-			debug("Color = %d", _verbIcons[LOOK][src_pos]);
 			if (_verbIcons[LOOK][src_pos] != 1)
 				_screen->setPixel(x + posx + 10, y + posy + 10, _verbIcons[LOOK][src_pos]);
 		}
@@ -630,6 +647,13 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 }
 
 void PelrockEngine::checkMouseClick(int x, int y) {
+
+	_displayPopup = false;
+	if(_bgPopupBalloon != nullptr) {
+		putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+		delete[] _bgPopupBalloon;
+		_bgPopupBalloon = nullptr;
+	}
 
 	Exit *exit = isExitUnder(mouseX, mouseY);
 	if (exit != nullptr) {
