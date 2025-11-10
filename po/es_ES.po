@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-09 13:17+0000\n"
-"PO-Revision-Date: 2025-11-03 20:27+0000\n"
+"PO-Revision-Date: 2025-11-10 14:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11487,14 +11487,12 @@ msgstr ""
 "activados)."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight decision areas"
-msgstr "Resaltar objetos"
+msgstr "Resaltar zonas de decisión"
 
 #: engines/private/metaengine.cpp:49
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "Resalta las zonas interactuables durante las escenas de decisión."
 
 #: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
