@@ -22,29 +22,22 @@
 #ifndef NANCY_STATE_SETUPMENU_H
 #define NANCY_STATE_SETUPMENU_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/state/state.h"
-
 #include "engines/nancy/ui/fullscreenimage.h"
+#include "engines/nancy/ui/scrollbar.h"
+#include "engines/nancy/ui/button.h"
 
 namespace Nancy {
 
 struct SET;
 
-namespace UI {
-class Button;
-class Toggle;
-class Scrollbar;
-}
-
 namespace State {
 
 class SetupMenu : public State, public Common::Singleton<SetupMenu> {
 public:
-	SetupMenu() : _state(kInit), _exitButton(nullptr), _setupData(nullptr) {}
-	virtual ~SetupMenu();
-
 	// State API
 	void process() override;
 	void onStateEnter(const NancyState::NancyState prevState) override;
@@ -62,11 +55,11 @@ private:
 	enum State { kInit, kRun, kStop };
 
 	UI::FullScreenImage _background;
-	State _state;
+	State _state = kInit;
 
-	Common::Array<UI::Toggle *> _toggles;
-	Common::Array<UI::Scrollbar *> _scrollbars;
-	UI::Button *_exitButton;
+	Common::Array<Common::ScopedPtr<UI::Toggle>> _toggles;
+	Common::Array<Common::ScopedPtr<UI::Scrollbar>> _scrollbars;
+	Common::ScopedPtr<UI::Button> _exitButton;
 
 	const SET *_setupData;
 };
