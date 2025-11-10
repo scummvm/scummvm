@@ -467,6 +467,27 @@ void PelrockEngine::loadMainCharacterAnims() {
 	memcpy(standingAnim, pic, 3060 * 102);
 }
 
+byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
+	byte *bg = new byte[w * h];
+	for (int j = 0; j < w; j++) {
+		for (int i = 0; i < h; i++) {
+			int idx = i * w + j;
+			if (y + i < 400 && x + j < 640) {
+				*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
+			}
+		}
+	}
+	return bg;
+}
+void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) {
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+			int index = (j * w + i);
+			if (x + i < 640 && y + j < 400)
+				*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = slice[index];
+		}
+	}
+}
 void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
@@ -492,24 +513,8 @@ void PelrockEngine::frames() {
 				Common::copy(i->animData[j].animData + (curFrame * i->h * i->w), i->animData[j].animData + (curFrame * i->h * i->w) + (frameSize), frame);
 				// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
 
-				byte *bg = new byte[frameSize];
-				for (int j = 0; j < w; j++) {
-					for (int i = 0; i < h; i++) {
-						int idx = i * w + j;
-						if (y + i < 400 && x + j < 640) {
-							*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
-						}
-					}
-				}
-
-				for (int i = 0; i < w; i++) {
-					for (int j = 0; j < h; j++) {
-						int index = (j * w + i);
-						if (x + i < 640 && y + j < 400)
-							*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = bg[index];
-					}
-				}
-
+				byte *bg = grabBackgroundSlice(x, y, w, h);
+				putBackgroundSlice(x, y, w, h, bg);
 				for (int y = 0; y < i->h; y++) {
 					for (int x = 0; x < i->w; x++) {
 
@@ -536,6 +541,24 @@ void PelrockEngine::frames() {
 						_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
 				}
 			}
+
+			if (_displayPopup) {
+
+				// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
+				// for (int j = 0; j < kBalloonWidth; j++) {
+				// 	for (int i = 0; i < kBalloonHeight; i++) {
+				// 		int idx = i * kBalloonWidth + j;
+				// 		if (_popupY + i < 400 && _popupX + j < 640) {
+				// 			*(bgDialog + idx) = _currentBackground[(_popupY + i) * 640 + (_popupX + j)];
+				// 		}
+				// 	}
+				// }
+				showActionBalloon(_popupX, _popupY, _currentPopupFrame);
+				if (_currentPopupFrame < 3) {
+					_currentPopupFrame++;
+				} else
+					_currentPopupFrame = 0;
+			}
 		}
 		_screen->markAllDirty();
 		_screen->update();
@@ -545,7 +568,11 @@ void PelrockEngine::frames() {
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
 	if (hotspot != nullptr) {
-		showActionBalloon(hotspot->x, hotspot->y);
+		_popupX = hotspot->x;
+		_popupY = hotspot->y;
+		_displayPopup = true;
+		_currentPopupFrame = 0;
+		// _bgPopupBalloon =
 	}
 }
 
@@ -582,8 +609,7 @@ AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
 	return nullptr;
 }
 
-void PelrockEngine::showActionBalloon(int posx, int posy) {
-	int curFrame = 0;
+void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	for (uint32_t y = 0; y < kBalloonHeight; y++) {
 		for (uint32_t x = 0; x < kBalloonWidth; x++) {

@@ -68,6 +68,8 @@ private:
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	void loadCursors();
 	void loadInteractionIcons();
+	byte *grabBackgroundSlice(int x, int y, int w, int h);
+	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 
 	// render loop
 	void frames();
@@ -78,7 +80,7 @@ private:
 	HotSpot* isHotspotUnder(int x, int y);
 	Exit* isExitUnder(int x, int y);
 	AnimSet* isSpriteUnder(int x, int y);
-	void showActionBalloon(int posx, int posy);
+	void showActionBalloon(int posx, int posy, int curFrame);
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
@@ -97,6 +99,15 @@ private:
 
 	byte *_verbIcons[9] = { nullptr };
 	byte *_popUpBalloon = nullptr;
+	byte *_bgPopupBalloon = nullptr;
+
+
+	bool _displayPopup = false;
+	int _popupX = 0;
+	int _popupY = 0;
+	int _currentPopupFrame = 0;
+
+
 
 	// From the original code
 	int xAlfred = 200;
