@@ -90,7 +90,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 		int32 uncompresedSize = 0;
 		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresedSize, 1);
 		drawYUVData(uncompressedData, surfDesc, width, height, x, y);
-		delete uncompressedData;
+		delete[] uncompressedData;
 	} else if (dataType == 3) {
 		// Compressed high-color RGB data
 		int32 uncompresesSize = 0;
@@ -119,7 +119,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 		if (!conversionOk)
 			warning("drawPacked: error when cross-blitting from compressed RGB high-color data");
 
-		delete uncompressedData;
+		delete[] uncompressedData;
 	} else {
 		warning("drawPacked: unknown compression type %d", dataType);
 	}
