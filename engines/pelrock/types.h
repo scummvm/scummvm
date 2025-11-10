@@ -27,8 +27,20 @@ enum Cursor {
 	DEFAULT,
 	HOTSPOT,
 	EXIT,
-	ANIMATION,
+	ALFRED,
 	COMBINATION
+};
+
+enum VerbIcons {
+	PICKUP,
+	TALK,
+	WALK,
+	LOOK,
+	PUSH,
+	PULL,
+	OPEN,
+	CLOSE,
+	UNKNOWN
 };
 
 // enum HoverState {
@@ -40,11 +52,18 @@ enum Cursor {
 
 // };
 
+static const uint32 kLongClickDuration = 500; // 500ms for long click
 const int kCursorWidth = 16;
 const int kCursorHeight = 18;
 const int kCursorSize = 288;  // 16 * 18
 const int kRoomStructSize = 104;
 const int kNumRooms = 56;
+const int kVerbIconWidth = 60;
+const int kVerbIconHeight = 60;
+const int kNumVerbIcons = 9;
+const int kBalloonWidth = 247;
+const int kBalloonHeight = 112;
+const int kBalloonFrames = 4;
 
 struct Anim {
 	int x;

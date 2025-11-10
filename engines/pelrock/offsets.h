@@ -33,6 +33,9 @@ namespace Pelrock {
         0x367EF0
     };
 
+    uint32_t kBalloonFramesOffset = 2176936;
+    uint32_t kBalloonFramesSize = 24950;
+
 } // End of namespace Pelrock
 #endif
 

@@ -36,8 +36,8 @@
 #include "pelrock.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
-#include "pelrock/pelrock.h"
 #include "pelrock/offsets.h"
+#include "pelrock/pelrock.h"
 
 namespace Pelrock {
 
@@ -52,9 +52,14 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 PelrockEngine::~PelrockEngine() {
 	delete _screen;
 	delete _chronoManager;
-	for(int i =0; i<5; i++) {
+	for (int i = 0; i < 5; i++) {
 		delete[] _cursorMasks[i];
 	}
+	for (int i = 0; i < kNumVerbIcons; i++) {
+		delete[] _verbIcons[i];
+	}
+
+	delete[] _popUpBalloon;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -97,8 +102,19 @@ Common::Error PelrockEngine::run() {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
+				_mouseDownTime = g_system->getMillis();
+				_isMouseDown = true;
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				checkMouseClick(e.mouse.x, e.mouse.y);
+				if (_isMouseDown) {
+					uint32 clickDuration = g_system->getMillis() - _mouseDownTime;
+					if (clickDuration >= kLongClickDuration) {
+						checkLongMouseClick(e.mouse.x, e.mouse.y);
+					} else {
+						checkMouseClick(e.mouse.x, e.mouse.y);
+					}
+					_isMouseDown = false;
+				}
 			}
 		}
 		checkMouseHover();
@@ -114,6 +130,7 @@ Common::Error PelrockEngine::run() {
 
 void PelrockEngine::init() {
 	loadCursors();
+	loadInteractionIcons();
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);
@@ -328,20 +345,50 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 
 void PelrockEngine::loadCursors() {
 	Common::File alfred7File;
-	if(!alfred7File.open("ALFRED.7")) {
+	if (!alfred7File.open("ALFRED.7")) {
 		error("Couldnt find file ALFRED.7");
 	}
-	for (int i= 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		uint32_t cursorOffset = cursor_offsets[i];
 		alfred7File.seek(cursorOffset);
 		_cursorMasks[i] = new byte[kCursorSize];
 		alfred7File.read(_cursorMasks[i], kCursorSize);
-		for(int j = 0; j < kCursorSize; j++) {
-			byte *cursorMask = _cursorMasks[i];
-			if(cursorMask[j] == 255) cursorMask[j] = 0;
-		}
 	}
 	alfred7File.close();
+}
+
+void PelrockEngine::loadInteractionIcons() {
+	Common::File alfred7File;
+	if (!alfred7File.open("ALFRED.7")) {
+		error("Couldnt find file ALFRED.7");
+	}
+
+	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
+
+	uint32_t totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
+	_popUpBalloon = new byte[totalBalloonSize];
+
+	uint32_t compressedSize = kBalloonFramesSize;
+
+	byte *raw = new byte[compressedSize];
+	alfred7File.read(raw, compressedSize);
+	rleDecompress(raw, compressedSize, 0, compressedSize, &_popUpBalloon);
+
+	delete[] raw;
+
+	alfred7File.close();
+	Common::File alfred4File;
+	if (!alfred4File.open("ALFRED.4")) {
+		error("Couldnt find file ALFRED.4");
+	}
+
+	int iconSize = kVerbIconHeight * kVerbIconWidth;
+	for (int i = 0; i < kNumVerbIcons; i++) {
+		uint32_t iconOffset = i * iconSize;
+		_verbIcons[i] = new byte[iconSize];
+		alfred4File.read(_verbIcons[i], iconSize);
+	}
+	alfred4File.close();
 }
 
 Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffset) {
@@ -449,7 +496,7 @@ void PelrockEngine::frames() {
 				for (int j = 0; j < w; j++) {
 					for (int i = 0; i < h; i++) {
 						int idx = i * w + j;
-						if(y + i < 400 && x + j < 640) {
+						if (y + i < 400 && x + j < 640) {
 							*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
 						}
 					}
@@ -458,7 +505,7 @@ void PelrockEngine::frames() {
 				for (int i = 0; i < w; i++) {
 					for (int j = 0; j < h; j++) {
 						int index = (j * w + i);
-						if(x + i < 640 && y + j < 400)
+						if (x + i < 640 && y + j < 400)
 							*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = bg[index];
 					}
 				}
@@ -482,52 +529,121 @@ void PelrockEngine::frames() {
 			num++;
 
 			for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-			for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-				unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
-				// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-				if (standingAnim[src_pos] != 255)
-					_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
+				for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+					unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
+					// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
+					if (standingAnim[src_pos] != 255)
+						_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
+				}
 			}
-		}
 		}
 		_screen->markAllDirty();
 		_screen->update();
 	}
 }
 
-void PelrockEngine::checkMouseClick(int x, int y) {
+void PelrockEngine::checkLongMouseClick(int x, int y) {
+	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
+	if (hotspot != nullptr) {
+		showActionBalloon(hotspot->x, hotspot->y);
+	}
+}
+
+HotSpot *PelrockEngine::isHotspotUnder(int x, int y) {
+
+	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
+		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
+			mouseY >= i->y && mouseY <= (i->y + i->h)) {
+			debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
+			return &(*i);
+		}
+	}
+	return nullptr;
+}
+
+Exit *PelrockEngine::isExitUnder(int x, int y) {
 	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
 		if (x >= i->x && x <= (i->x + i->w) &&
 			y >= i->y && y <= (i->y + i->h)) {
-			debug("Clicked Exit at (%d,%d) size (%d,%d) to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
-			xAlfred = i->targetX;
-			yAlfred = i->targetY - kAlfredFrameHeight;
-			setScreen(i->targetRoom, i->dir);
-			return;
+			return &(*i);
 		}
 	}
-	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
-		if (x >= i->x && x <= (i->x + i->w) &&
-			y >= i->y && y <= (i->y + i->h)) {
-			debug("Clicked Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
-			// process hotspot action based on i->extra or other properties
-			return;
+	return nullptr;
+}
+
+AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
+	for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
+		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
+			mouseY >= i->y && mouseY <= (i->y + i->h)) {
+			debug("Sprite at (%d,%d) size (%d,%d)", i->x, i->y, i->w, i->h);
+			return &(*i);
 		}
+	}
+	return nullptr;
+}
+
+void PelrockEngine::showActionBalloon(int posx, int posy) {
+	int curFrame = 0;
+
+	for (uint32_t y = 0; y < kBalloonHeight; y++) {
+		for (uint32_t x = 0; x < kBalloonWidth; x++) {
+			unsigned int src_pos = (curFrame * kBalloonHeight * kBalloonWidth) + (y * kBalloonWidth) + x;
+			if (_popUpBalloon[src_pos] != 255)
+				_screen->setPixel(x + posx, y + posy, _popUpBalloon[src_pos]);
+		}
+	}
+
+	for (uint32_t y = 0; y < kVerbIconHeight; y++) {
+		for (uint32_t x = 0; x < kVerbIconWidth; x++) {
+			unsigned int src_pos = y * kVerbIconWidth + x;
+			debug("Color = %d", _verbIcons[LOOK][src_pos]);
+			if (_verbIcons[LOOK][src_pos] != 1)
+				_screen->setPixel(x + posx + 10, y + posy + 10, _verbIcons[LOOK][src_pos]);
+		}
+	}
+}
+
+void PelrockEngine::checkMouseClick(int x, int y) {
+
+	Exit *exit = isExitUnder(mouseX, mouseY);
+	if (exit != nullptr) {
+		xAlfred = exit->targetX;
+		yAlfred = exit->targetY - kAlfredFrameHeight;
+		setScreen(exit->targetRoom, exit->dir);
+	}
+
+	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
+	if (hotspot != nullptr) {
+		debug("Clicked Hotspot at (%d,%d) size (%d,%d) extra %d", hotspot->x, hotspot->y, hotspot->w, hotspot->h, hotspot->extra);
+		changeCursor(HOTSPOT);
 	}
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
-	CursorMan.replaceCursor(_cursorMasks[cursor], kCursorWidth, kCursorHeight, 0, 0, 0);
+	CursorMan.replaceCursor(_cursorMasks[cursor], kCursorWidth, kCursorHeight, 0, 0, 255);
 }
 
 void PelrockEngine::checkMouseHover() {
-	for (Common::List<HotSpot>::iterator i = _hotspots.begin(); i != _hotspots.end(); i++) {
-		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
-			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			// _currentHotspot = &(*i);
-			debug("Hotspot at (%d,%d) size (%d,%d) extra %d", i->x, i->y, i->w, i->h, i->extra);
-			return;
-		}
+	bool isSomethingUnder = false;
+
+	AnimSet *sprite = isSpriteUnder(mouseX, mouseY);
+	if (sprite != nullptr) {
+		isSomethingUnder = true;
+		changeCursor(HOTSPOT);
+	}
+
+	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
+	if (hotspot != nullptr) {
+		isSomethingUnder = true;
+		changeCursor(HOTSPOT);
+	}
+	Exit *exit = isExitUnder(mouseX, mouseY);
+	if (exit != nullptr) {
+		isSomethingUnder = true;
+		changeCursor(EXIT);
+	}
+	if (!isSomethingUnder) {
+		changeCursor(DEFAULT);
 	}
 }
 

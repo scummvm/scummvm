@@ -67,13 +67,18 @@ private:
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	void loadCursors();
-
+	void loadInteractionIcons();
 
 	// render loop
 	void frames();
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
+	void checkLongMouseClick(int x, int y);
 	void changeCursor(Cursor cursor);
+	HotSpot* isHotspotUnder(int x, int y);
+	Exit* isExitUnder(int x, int y);
+	AnimSet* isSpriteUnder(int x, int y);
+	void showActionBalloon(int posx, int posy);
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
@@ -86,6 +91,12 @@ private:
 	uint16 mouseY = 0;
 	byte *_currentBackground = nullptr;
 	byte *_cursorMasks[5] = { nullptr };
+
+	uint32 _mouseDownTime;
+    bool _isMouseDown;
+
+	byte *_verbIcons[9] = { nullptr };
+	byte *_popUpBalloon = nullptr;
 
 	// From the original code
 	int xAlfred = 200;
