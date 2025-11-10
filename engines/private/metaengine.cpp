@@ -48,7 +48,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Highlight decision areas"),
 			_s("Highlight clickable areas in decision scenes."),
 			"highlightMasks",
-			true,
+			false,
 			0,
 			0
 		}
