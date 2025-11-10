@@ -39,12 +39,6 @@ DECLARE_SINGLETON(Nancy::State::MainMenu);
 namespace Nancy {
 namespace State {
 
-MainMenu::~MainMenu() {
-	for (auto *button : _buttons) {
-		delete button;
-	}
-}
-
 void MainMenu::process() {
 	switch (_state) {
 	case kInit:
@@ -70,7 +64,7 @@ bool MainMenu::onStateExit(const NancyState::NancyState nextState) {
 void MainMenu::registerGraphics() {
 	_background.registerGraphics();
 
-	for (auto *button : _buttons) {
+	for (auto &button : _buttons) {
 		button->registerGraphics();
 	}
 
@@ -78,7 +72,7 @@ void MainMenu::registerGraphics() {
 }
 
 void MainMenu::clearButtonState() {
-	for (auto *button : _buttons) {
+	for (auto &button : _buttons) {
 		button->_isClicked = false;
 	}
 }
@@ -97,14 +91,15 @@ void MainMenu::init() {
 		g_nancy->_sound->playSound("MSND");
 	}
 
+	_buttons.resize(_menuData->_buttonDests.size());
 	for (uint i = 0; i < _menuData->_buttonDests.size(); ++i) {
-		_buttons.push_back(new UI::Button(5, _background._drawSurface,
+		_buttons[i].reset(new UI::Button(5, _background._drawSurface,
 			_menuData->_buttonDownSrcs[i], _menuData->_buttonDests[i],
 			_menuData->_buttonHighlightSrcs.size() ? _menuData->_buttonHighlightSrcs[i] : Common::Rect(),
 			_menuData->_buttonDisabledSrcs.size() ? _menuData->_buttonDisabledSrcs[i] : Common::Rect()));
 
-		_buttons.back()->init();
-		_buttons.back()->setVisible(false);
+		_buttons[i]->init();
+		_buttons[i]->setVisible(false);
 	}
 
 	registerGraphics();
@@ -139,7 +134,7 @@ void MainMenu::run() {
 	}
 
 	for (uint i = 0; i < _buttons.size(); ++i) {
-		auto *button = _buttons[i];
+		auto &button = _buttons[i];
 		button->handleInput(input);
 		if (_selected == -1 && button->_isClicked) {
 			if (button->_isDisabled) {
