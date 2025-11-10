@@ -43,9 +43,6 @@
 
 namespace Gamos {
 
-GamosEngine *g_engine;
-
-
 const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x84, 0x2c,
                                          0xfd, 0x81, 0x38, 0xac, 0x73, 0xd2, 0x22, 0x47,
                                          0xa0, 0x12, 0xb8, 0x19, 0x20, 0x6a, 0x26, 0x7c,
@@ -53,9 +50,10 @@ const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x8
                                         };
 
 GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Gamos"), _messageProc(this) {
-	g_engine = this;
-}
+	_gameDescription(gameDesc), _randomSource("Gamos"),
+	_messageProc(this),
+	_vm(this, callbackVMCallDispatcher),
+	_txtInputVMAccess(_vm) {}
 
 GamosEngine::~GamosEngine() {
 	freeImages();
@@ -96,9 +94,6 @@ void GamosEngine::freeSequences() {
 Common::Error GamosEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
-
-	VM::_callFuncs = callbackVMCallDispatcher;
-	VM::_callingObject = this;
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -439,16 +434,16 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		_addrKeyCode = _loadedDataSize + 3;
 		_addrCurrentFrame = _loadedDataSize + 4;
 
-		VM::memory().setU8(_addrBlk12, dataStream.readByte());
+		_vm.memory().setU8(_addrBlk12, dataStream.readByte());
 		dataStream.skip(1);
-		VM::memory().setU8(_addrFPS, _fps);
-		VM::memory().setU8(_addrKeyDown, dataStream.readByte());
-		VM::memory().setU8(_addrKeyCode, dataStream.readByte());
-		VM::memory().setU32(_addrCurrentFrame, dataStream.readUint32LE());
+		_vm.memory().setU8(_addrFPS, _fps);
+		_vm.memory().setU8(_addrKeyDown, dataStream.readByte());
+		_vm.memory().setU8(_addrKeyCode, dataStream.readByte());
+		_vm.memory().setU32(_addrCurrentFrame, dataStream.readUint32LE());
 
 		setFPS(_fps);
 	} else if (tp == RESTP_13) {
-		VM::writeMemory(_loadedDataSize, data, dataSize);
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 	} else if (tp == RESTP_18) {
 		loadRes18(pid, data, dataSize);
 	} else if (tp == RESTP_19) {
@@ -474,11 +469,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 			return false;
 		_objectActions[pid].unk1 = getU32(data);
 	} else if (tp == RESTP_21) {
-		VM::writeMemory(_loadedDataSize, data, dataSize);
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onCreateAddress = _loadedDataSize + p3;
 		//warning("RESTP_21 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_22) {
-		VM::writeMemory(_loadedDataSize, data, dataSize);
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onDeleteAddress = _loadedDataSize + p3;
 		//warning("RESTP_22 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
 	} else if (tp == RESTP_23) {
@@ -489,11 +484,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		Actions &scr = _objectActions[pid].actions[p1];
 		scr.parse(data, dataSize);
 	} else if (tp == RESTP_2B) {
-		VM::writeMemory(_loadedDataSize, data, dataSize);
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].conditionAddress = _loadedDataSize + p3;
 		//warning("RESTP_2B %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_2C) {
-		VM::writeMemory(_loadedDataSize, data, dataSize);
+		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].functionAddress = _loadedDataSize + p3;
 		//warning("RESTP_2C %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
@@ -734,7 +729,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_subtitlePoints.resize(dat6xCount);
 
 	_loadedDataSize = 0;
-	VM::clearMemory();
+	_vm.clearMemory();
 }
 
 void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
@@ -1221,7 +1216,7 @@ void GamosEngine::changeVolume() {
 
 uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
 	_needReload = false;
-	VM::_interrupt = false;
+	_vm._interrupt = false;
 
 	if (_d2_fld16 == 0) {
 		act1 = ACT_NONE;
@@ -2316,79 +2311,79 @@ bool GamosEngine::loadImage(Image *img) {
 }
 
 uint32 GamosEngine::doScript(uint32 scriptAddress) {
-	uint32 res = VM::doScript(scriptAddress, PTR_004173e8);
+	uint32 res = _vm.doScript(scriptAddress, PTR_004173e8);
 	return res;
 }
 
 
-void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
+void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 	uint32 arg1 = 0, arg2 = 0;
 
 	switch (funcID) {
 	case 0:
 		DAT_004177ff = true;
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 	case 1:
-		vm->EAX.setVal( PTR_00417218->y == -1 ? 1 : 0 );
+		ctx->EAX.setVal( PTR_00417218->y == -1 ? 1 : 0 );
 		break;
 
 	case 2:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (PTR_00417218->x == -1)
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		else
-			vm->EAX.setVal( _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0 );
+			ctx->EAX.setVal( _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0 );
 		break;
 	case 3:
-		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0 );
 		break;
 	case 4:
-		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0 );
 		break;
 	case 5:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0 );
 		break;
 	case 6:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
 		break;
 	case 7:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if ((PTR_00417218->fld_4 & 0x40) == 0 || (PTR_00417218->fld_4 & 8) != (arg1 & 8))
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		else
-			vm->EAX.setVal( FUN_0040705c(arg1 & 7, PTR_00417218->fld_4 & 7) ? 1 : 0 );
+			ctx->EAX.setVal( FUN_0040705c(arg1 & 7, PTR_00417218->fld_4 & 7) ? 1 : 0 );
 		break;
 	case 8:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( PTR_00417218->fld_5 == arg1 ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( PTR_00417218->fld_5 == arg1 ? 1 : 0 );
 		break;
 	case 9:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 		break;
 	case 10:
-		vm->EAX.setVal( PTR_00417218->fld_2 == 0xfe ? 1 : 0 );
+		ctx->EAX.setVal( PTR_00417218->fld_2 == 0xfe ? 1 : 0 );
 		break;
 	case 11:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( PTR_00417218->fld_2 == arg1 ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( PTR_00417218->fld_2 == arg1 ? 1 : 0 );
 		break;
 	case 12:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( (1 << (PTR_00417218->fld_2 & 7)) & _thing2[arg1].field_0[PTR_00417218->fld_2 >> 3] );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( (1 << (PTR_00417218->fld_2 & 7)) & _thing2[arg1].field_0[PTR_00417218->fld_2 >> 3] );
 		break;
 	case 13: {
-		VM::ValAddr regRef = vm->popReg();
-		Common::String str = vm->getString(regRef);
+		VM::ValAddr regRef = ctx->popReg();
+		Common::String str = ctx->getString(regRef);
 
-		vm->EAX.setVal(0);
+		ctx->EAX.setVal(0);
 
 		for(uint i = 0; i < str.size(); i++) {
 			if (str[i] == RawKeyCode) {
-				vm->EAX.setVal(1);
+				ctx->EAX.setVal(1);
 				break;
 			}
 		}
@@ -2396,79 +2391,79 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	}
 
 	case 14:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		loadModule(arg1);
 		setNeedReload();
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 15:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		switchToGameScreen(arg1, false);
 		setNeedReload();
 		break;
 
 	case 16:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( scriptFunc16(arg1) );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( scriptFunc16(arg1) );
 		break;
 
 	case 17:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		playSound(arg1);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 18:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( scriptFunc18(arg1) ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( scriptFunc18(arg1) ? 1 : 0 );
 		break;
 
 	case 19:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( scriptFunc19(arg1) );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( scriptFunc19(arg1) );
 		break;
 
 	case 20: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		for (const SubtitlePoint &d : _subtitlePoints[arg1]) {
 			FUN_0040738c(d.sprId, d.x, d.y, true);
 		}
-		vm->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
+		ctx->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 	} break;
 
 	case 21: {
-		VM::ValAddr regRef = vm->popReg();
-		arg2 = vm->pop32();
-		vm->EAX.setVal( txtInputBegin(vm, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH) );
+		VM::ValAddr regRef = ctx->popReg();
+		arg2 = ctx->pop32();
+		ctx->EAX.setVal( txtInputBegin(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH) );
 	} break;
 
 	case 22: {
-		VM::ValAddr regRef = vm->popReg();
-		arg2 = vm->pop32();
+		VM::ValAddr regRef = ctx->popReg();
+		arg2 = ctx->pop32();
 		const SubtitlePoint &d = _subtitlePoints[arg2][0];
-		vm->EAX.setVal( txtInputBegin(vm, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y) );
+		ctx->EAX.setVal( txtInputBegin(ctx, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y) );
 	} break;
 
 	case 23: {
-		VM::ValAddr regRef = vm->popReg();
-		arg2 = vm->pop32();
-		addSubtitles(vm, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH);
-		vm->EAX.setVal(1);
+		VM::ValAddr regRef = ctx->popReg();
+		arg2 = ctx->pop32();
+		addSubtitles(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 24: {
-		VM::ValAddr regRef = vm->popReg();
-		arg2 = vm->pop32();
+		VM::ValAddr regRef = ctx->popReg();
+		arg2 = ctx->pop32();
 		const SubtitlePoint &d = _subtitlePoints[arg2][0];
-		addSubtitles(vm, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y);
+		addSubtitles(ctx, regRef.getMemType(), regRef.getOffset(), d.sprId, d.x, d.y);
 
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	}
 	break;
 
 	case 25: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (PTR_00417218->fld_5 != arg1) {
 			PTR_00417218->fld_5 = arg1;
 			if (PTR_00417218->x != -1) {
@@ -2481,30 +2476,30 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 				addDirtRectOnObject(&obj);
 			}
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	}
 	break;
 
 	case 26:
 		removeSubtitles(PTR_00417218);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 27:
 		FUN_004025d0();
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 28:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		FUN_0040279c(arg1, false);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 29:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		FUN_0040279c(arg1, true);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 30: {
@@ -2517,29 +2512,29 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	} break;
 
 	case 31:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		setCursor(arg1, true);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 32:
 		setCursor(0, false);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 33:
 		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 34: {
-		VM::ValAddr regRef = vm->popReg();
-		vm->setMem8(regRef, PTR_00417218->fld_5);
-		vm->EAX.setVal(1);
+		VM::ValAddr regRef = ctx->popReg();
+		ctx->setMem8(regRef, PTR_00417218->fld_5);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 35: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		uint ret = 0;
 		switch (arg1) {
 		case 3:
@@ -2581,12 +2576,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		default:
 			break;
 		}
-		vm->EAX.setVal(ret);
+		ctx->EAX.setVal(ret);
 	} break;
 
 	case 36: {
-		arg1 = vm->pop32();
-		arg2 = vm->pop32();
+		arg1 = ctx->pop32();
+		arg2 = ctx->pop32();
 
 		uint ret = 0;
 		switch (arg1) {
@@ -2637,12 +2632,12 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		default:
 			break;
 		}
-		vm->EAX.setVal(ret);
+		ctx->EAX.setVal(ret);
 	} break;
 
 	case 37: {
-		arg1 = vm->pop32();
-		arg2 = vm->pop32();
+		arg1 = ctx->pop32();
+		arg2 = ctx->pop32();
 
 		uint ret = 0;
 		switch (arg1) {
@@ -2693,43 +2688,43 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		default:
 			break;
 		}
-		vm->EAX.setVal(ret);
+		ctx->EAX.setVal(ret);
 	} break;
 
 	case 38:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412ca0)
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		else
-			vm->EAX.setVal(1);
+			ctx->EAX.setVal(1);
 		break;
 
 	case 39:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412c9c)
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		else
-			vm->EAX.setVal(1);
+			ctx->EAX.setVal(1);
 		break;
 
 	case 40:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412ca0) != 0)
-			vm->EAX.setVal(1);
+			ctx->EAX.setVal(1);
 		else
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		break;
 
 	case 41:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412c9c) != 0)
-			vm->EAX.setVal(1);
+			ctx->EAX.setVal(1);
 		else
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 		break;
 
 	case 42: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804 != 0) {
 			if (arg1 == 0) {
 				DAT_00417804 = 0;
@@ -2752,11 +2747,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 				FUN_00402a68(tmp);
 			}
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 43: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804) {
 			ActEntry tmp;
 			tmp.value = arg1;
@@ -2764,11 +2759,11 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			tmp.flags = 0;
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 44: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (DAT_00417804) {
 			ActEntry tmp;
 			tmp.value = arg1;
@@ -2776,45 +2771,45 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			tmp.flags = 1;
 			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 45:
-		arg1 = vm->pop32();
-		vm->EAX.setVal( (PTR_00417218->flags & arg1) ? 1 : 0 );
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal( (PTR_00417218->flags & arg1) ? 1 : 0 );
 		break;
 
 	case 46: {
-		VM::ValAddr a1 = vm->popReg();
-		VM::ValAddr a2 = vm->popReg();
-		Common::String s = vm->getString(a1);
+		VM::ValAddr a1 = ctx->popReg();
+		VM::ValAddr a2 = ctx->popReg();
+		Common::String s = ctx->getString(a1);
 		for(int i = 0; i <= s.size(); i++) {
-			vm->setMem8(a2.getMemType(), a2.getOffset() + i, s.c_str()[i]);
+			ctx->setMem8(a2.getMemType(), a2.getOffset() + i, s.c_str()[i]);
 		}
 	} break;
 
 	case 47: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 
 		switch (arg1) {
 		case 0:
-			vm->EAX.setVal(_d2_fld16 != 0 ? 1 : 0);
+			ctx->EAX.setVal(_d2_fld16 != 0 ? 1 : 0);
 			break;
 
 		case 1:
-			vm->EAX.setVal(_d2_fld14 != 0 ? 1 : 0);
+			ctx->EAX.setVal(_d2_fld14 != 0 ? 1 : 0);
 			break;
 
 		case 2:
-			vm->EAX.setVal(1); //BYTE_004177fb != 0 ? 1 : 0;
+			ctx->EAX.setVal(1); //BYTE_004177fb != 0 ? 1 : 0;
 			break;
 
 		case 3:
-			vm->EAX.setVal(_d2_fld17 != 0 ? 1 : 0);
+			ctx->EAX.setVal(_d2_fld17 != 0 ? 1 : 0);
 			break;
 
 		case 4:
-			vm->EAX.setVal(_d2_fld18 != 0 ? 1 : 0);
+			ctx->EAX.setVal(_d2_fld18 != 0 ? 1 : 0);
 			break;
 
 		default:
@@ -2824,7 +2819,7 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 	break;
 
 	case 48: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 
 		switch (arg1) {
 		case 0:
@@ -2866,51 +2861,51 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 		default:
 			break;
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 49: {
-		arg1 = vm->pop32();
-		arg2 = vm->pop32();
+		arg1 = ctx->pop32();
+		arg2 = ctx->pop32();
 
 		warning("Do save-load %d %d", arg1, arg2);
 	}
 	break;
 
 	case 50:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		PTR_00417388 = _thing2[arg1].field_0.data();
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 51:
 		PTR_00417388 = nullptr;
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 52:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		/* HELP */
 		//FUN_0040c614(arg1);
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 53: {
-		arg1 = vm->pop32();
-		VM::ValAddr adr = vm->popReg();
-		uint kode = vm->getMem8(adr);
+		arg1 = ctx->pop32();
+		VM::ValAddr adr = ctx->popReg();
+		uint kode = ctx->getMem8(adr);
 		_messageProc._keyCodes[arg1] = kode;
-		vm->EAX.setVal(kode);
+		ctx->EAX.setVal(kode);
 	} break;
 
 	case 54:
-		arg1 = vm->pop32();
-		vm->EAX.setVal(rndRange16(arg1));
+		arg1 = ctx->pop32();
+		ctx->EAX.setVal(rndRange16(arg1));
 		break;
 
 	case 55: {
-		VM::ValAddr regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef);
+		VM::ValAddr regRef = ctx->popReg(); //implement
+		Common::String str = ctx->getString(regRef);
 
 		char buffer[256];
 		int a = 0, b = 0, c = 0, d = 0;
@@ -2928,52 +2923,52 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 				scriptFunc16(_midiTrack);
 			}
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	}
 	break;
 
 	case 56: {
-		VM::ValAddr regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef);
+		VM::ValAddr regRef = ctx->popReg(); //implement
+		Common::String str = ctx->getString(regRef);
 		warning("Create process: %s", str.c_str());
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 57: {
-		VM::ValAddr regRef = vm->popReg(); //implement
-		Common::String str = vm->getString(regRef);
+		VM::ValAddr regRef = ctx->popReg(); //implement
+		Common::String str = ctx->getString(regRef);
 		if (_keySeq.find(str) != Common::String::npos) {
 			_keySeq.clear();
-			vm->EAX.setVal(1);
+			ctx->EAX.setVal(1);
 		} else
-			vm->EAX.setVal(0);
+			ctx->EAX.setVal(0);
 	} break;
 
 	case 58: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		/* CD AUDIO */
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 59: {
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		/* CD AUDIO */
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	case 60:
-		arg1 = vm->pop32();
+		arg1 = ctx->pop32();
 		if (arg1 == 0)
 			_scrollTrackObj = -1;
 		else
 			_scrollTrackObj = _curObjIndex;
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 		break;
 
 	case 61: {
-		arg1 = vm->pop32();
-		VM::ValAddr adr = vm->popReg();
-		Common::String tmp = vm->getString(adr);
+		arg1 = ctx->pop32();
+		VM::ValAddr adr = ctx->popReg();
+		Common::String tmp = ctx->getString(adr);
 
 		int val1 = 0, val2 = 0, val3 = 0, val4 = 0;
 		sscanf(tmp.c_str(), "%d %d %d %d", &val1, &val2, &val3, &val4);
@@ -2988,19 +2983,19 @@ void GamosEngine::vmCallDispatcher(VM *vm, uint32 funcID) {
 			_scrollCutoff = val2;
 			_scrollSpeedReduce = val3;
 		}
-		vm->EAX.setVal(1);
+		ctx->EAX.setVal(1);
 	} break;
 
 	default:
 		warning("Call Dispatcher %d", funcID);
-		vm->EAX.setVal(0);
+		ctx->EAX.setVal(0);
 		break;
 	}
 }
 
-void GamosEngine::callbackVMCallDispatcher(void *engine, VM *vm, uint32 funcID) {
+void GamosEngine::callbackVMCallDispatcher(void *engine, VM::Context *ctx, uint32 funcID) {
 	GamosEngine *gamos = (GamosEngine *)engine;
-	gamos->vmCallDispatcher(vm, funcID);
+	gamos->vmCallDispatcher(ctx, funcID);
 }
 
 uint32 GamosEngine::scriptFunc19(uint32 id) {
@@ -3353,25 +3348,25 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 	return res;
 }
 
-void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, int32 x, int32 y) {
+void GamosEngine::addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int32 sprId, int32 x, int32 y) {
 	removeSubtitles(PTR_00417218);
 	PTR_00417218->fld_3 |= 2;
 
 	while (true) {
-		uint8 ib = vm->getMem8(memtype, offset);
+		uint8 ib = ctx->getMem8(memtype, offset);
 		offset++;
 
 		if (ib == 0)
 			break;
 
 		if (ib == 0xf) {
-			byte flg = vm->getMem8(memtype, offset);
+			byte flg = ctx->getMem8(memtype, offset);
 			offset++;
-			byte b2 = vm->getMem8(memtype, offset);
+			byte b2 = ctx->getMem8(memtype, offset);
 			offset++;
 
 			if ((flg & 0x70) == 0x20) {
-				byte funcid = vm->getMem8(memtype, offset);
+				byte funcid = ctx->getMem8(memtype, offset);
 				offset++;
 				warning("CHECKIT and write funcid %d", funcid);
 			} else {
@@ -3383,37 +3378,37 @@ void GamosEngine::addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, 
 						btp = VM::REF_EBX;
 
 					if ((flg & 0x80) == 0) {
-						boff = vm->getMem8(memtype, offset);
+						boff = ctx->getMem8(memtype, offset);
 						offset++;
 					} else {
-						boff = vm->getMem32(memtype, offset);
+						boff = ctx->getMem32(memtype, offset);
 						offset += 4;
 					}
 
 					Common::String tmp;
 					switch (flg & 7) {
 					case 0:
-						tmp = gamos_itoa((int32)(int8)vm->getMem8(btp, boff), 10);
+						tmp = gamos_itoa((int32)(int8)ctx->getMem8(btp, boff), 10);
 						break;
 
 					case 1: {
 						VM::ValAddr addr;
-						addr.setVal( vm->getMem32(btp, boff) );
-						tmp = vm->getString(addr, b2);
+						addr.setVal( ctx->getMem32(btp, boff) );
+						tmp = ctx->getString(addr, b2);
 					} break;
 
 					case 2:
-						tmp = vm->getString(btp, boff, b2);
+						tmp = ctx->getString(btp, boff, b2);
 						break;
 
 					case 3:
-						tmp = gamos_itoa(vm->getMem32(btp, boff), 10);
+						tmp = gamos_itoa(ctx->getMem32(btp, boff), 10);
 						break;
 
 					case 4: {
 						VM::ValAddr addr;
-						addr.setVal( vm->getMem32(btp, boff) );
-						tmp = gamos_itoa(vm->getMem32(addr), 10);
+						addr.setVal( ctx->getMem32(btp, boff) );
+						tmp = gamos_itoa(ctx->getMem32(addr), 10);
 					} break;
 
 					case 5:
@@ -3457,27 +3452,27 @@ Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 
 
 bool GamosEngine::FUN_00402bc4() {
 	if (RawKeyCode == ACT_NONE) {
-		VM::memory().setU8(_addrKeyCode, 0);
-		VM::memory().setU8(_addrKeyDown, 0);
+		_vm.memory().setU8(_addrKeyCode, 0);
+		_vm.memory().setU8(_addrKeyDown, 0);
 	} else {
-		VM::memory().setU8(_addrKeyCode, RawKeyCode);
-		VM::memory().setU8(_addrKeyDown, 1);
+		_vm.memory().setU8(_addrKeyCode, RawKeyCode);
+		_vm.memory().setU8(_addrKeyDown, 1);
 	}
 
-	if (VM::memory().getU8(_addrBlk12) != 0)
+	if (_vm.memory().getU8(_addrBlk12) != 0)
 		return false;
 
-	uint32 frameval = VM::memory().getU32(_addrCurrentFrame);
-	VM::memory().setU32(_addrCurrentFrame, frameval + 1);
+	uint32 frameval = _vm.memory().getU32(_addrCurrentFrame);
+	_vm.memory().setU32(_addrCurrentFrame, frameval + 1);
 
-	uint8 fpsval = VM::memory().getU8(_addrFPS);
+	uint8 fpsval = _vm.memory().getU8(_addrFPS);
 
 	if (fpsval == 0) {
 		fpsval = 1;
-		VM::memory().setU8(_addrFPS, 1);
+		_vm.memory().setU8(_addrFPS, 1);
 	} else if (fpsval > 50) {
 		fpsval = 50;
-		VM::memory().setU8(_addrFPS, 50);
+		_vm.memory().setU8(_addrFPS, 50);
 	}
 
 	if (fpsval != _fps) {
@@ -4201,7 +4196,7 @@ bool GamosEngine::FUN_0040705c(int a, int b) {
 	return ((a + v * 2) & 7) == b;
 }
 
-int GamosEngine::txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y) {
+int GamosEngine::txtInputBegin(VM::Context *ctx, byte memtype, int32 offset, int sprId, int32 x, int32 y) {
 	if (memtype != VM::REF_EDI) {
 		error("Unsupported memtype");
 		return 0;
@@ -4242,7 +4237,7 @@ void GamosEngine::txtInputProcess(uint8 c) {
 			}
 			_txtInputActive = true;
 			_txtInputTyped = false;
-			ib = VM::memory().getU8(_txtInputVmOffset);
+			ib = _vm.memory().getU8(_txtInputVmOffset);
 			_txtInputVmOffset++;
 			continue;
 		} else if (ib == KeyCodes::WIN_BACK) {
@@ -4260,7 +4255,7 @@ void GamosEngine::txtInputProcess(uint8 c) {
 						break;
 
 					case 1: {
-						VmTxtFmtAccess adr;
+						VmTxtFmtAccess adr(_vm);
 						adr.setVal( _txtInputVMAccess.getU32() );
 						adr.write(_txtInputBuffer, _txtInputLength + 1);
 					} break;
@@ -4274,21 +4269,21 @@ void GamosEngine::txtInputProcess(uint8 c) {
 						break;
 
 					case 4: {
-						VmTxtFmtAccess adr;
+						VmTxtFmtAccess adr(_vm);
 						adr.setVal( _txtInputVMAccess.getU32() );
 						adr.setU32( atoi((char *)_txtInputBuffer) );
 					} break;
 				}
 
 				_txtInputTyped = false;
-				ib = VM::memory().getU8(_txtInputVmOffset);
+				ib = _vm.memory().getU8(_txtInputVmOffset);
 				_txtInputVmOffset++;
 				continue;
 			}
 		} else if (ib == 0xf) {
-			_txtInputFlags = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputFlags = _vm.memory().getU8(_txtInputVmOffset);
 			_txtInputVmOffset++;
-			_txtInputMaxLength = VM::memory().getU8(_txtInputVmOffset);
+			_txtInputMaxLength = _vm.memory().getU8(_txtInputVmOffset);
 			_txtInputVmOffset++;
 
 			if ((_txtInputFlags & 0x70) == 0 || (_txtInputFlags & 0x70) == 0x10) {
@@ -4298,10 +4293,10 @@ void GamosEngine::txtInputProcess(uint8 c) {
 					_txtInputVMAccess.objMem = PTR_004173e8;
 				}
 				if ( (_txtInputFlags & 0x80) == 0 ) {
-					_txtInputVMAccess.setOffset( VM::memory().getU8(_txtInputVmOffset) );
+					_txtInputVMAccess.setOffset( _vm.memory().getU8(_txtInputVmOffset) );
 					_txtInputVmOffset++;
 				} else {
-					_txtInputVMAccess.setOffset( VM::memory().getU32(_txtInputVmOffset) );
+					_txtInputVMAccess.setOffset( _vm.memory().getU32(_txtInputVmOffset) );
 					_txtInputVmOffset += 4;
 				}
 				switch (_txtInputFlags & 7) {
@@ -4335,7 +4330,7 @@ void GamosEngine::txtInputProcess(uint8 c) {
 				}
 				_txtInputActive = true;
 				_txtInputTyped = false;
-				ib = VM::memory().getU8(_txtInputVmOffset);
+				ib = _vm.memory().getU8(_txtInputVmOffset);
 				_txtInputVmOffset++;
 				continue;
 			}
@@ -4357,7 +4352,7 @@ void GamosEngine::txtInputProcess(uint8 c) {
 			return;
 		} else {
 			addSubtitleImage(ib, _txtInputSpriteID, &_txtInputX, _txtInputY);
-			ib = VM::memory().getU8(_txtInputVmOffset);
+			ib = _vm.memory().getU8(_txtInputVmOffset);
 			_txtInputVmOffset++;
 		}
 	}
@@ -4422,12 +4417,12 @@ void GamosEngine::dumpActions() {
 	for (ObjectAction &act : _objectActions) {
 		f.writeString(Common::String::format("Act %d : %x\n", i, act.unk1));
 		if (act.onCreateAddress != -1) {
-			t = VM::disassembly(act.onCreateAddress);
+			t = _vm.disassembly(act.onCreateAddress);
 			f.writeString(Common::String::format("Script1 : \n%s\n", t.c_str()));
 		}
 
 		if (act.onDeleteAddress != -1) {
-			t = VM::disassembly(act.onDeleteAddress);
+			t = _vm.disassembly(act.onDeleteAddress);
 			f.writeString(Common::String::format("Script2 : \n%s\n", t.c_str()));
 		}
 
@@ -4436,12 +4431,12 @@ void GamosEngine::dumpActions() {
 			f.writeString(Common::String::format("subscript %d : \n", j));
 
 			if (sc.conditionAddress != -1) {
-				t = VM::disassembly(sc.conditionAddress);
+				t = _vm.disassembly(sc.conditionAddress);
 				f.writeString(Common::String::format("condition : \n%s\n", t.c_str()));
 			}
 
 			if (sc.functionAddress != -1) {
-				t = VM::disassembly(sc.functionAddress);
+				t = _vm.disassembly(sc.functionAddress);
 				f.writeString(Common::String::format("action : \n%s\n", t.c_str()));
 			}
 
@@ -4457,12 +4452,12 @@ void GamosEngine::dumpActions() {
 	i = 0;
 	for (const Actions &act : _subtitleActions) {
 		if (act.flags & Actions::HAS_CONDITION) {
-			t = VM::disassembly(act.conditionAddress);
+			t = _vm.disassembly(act.conditionAddress);
 			f.writeString(Common::String::format("SubAct %d condition : \n%s\n", i, t.c_str()));
 		}
 
 		if (act.flags & Actions::HAS_FUNCTION) {
-			t = VM::disassembly(act.functionAddress);
+			t = _vm.disassembly(act.functionAddress);
 			f.writeString(Common::String::format("SubAct %d action : \n%s\n", i, t.c_str()));
 		}
 

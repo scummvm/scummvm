@@ -276,7 +276,7 @@ void GamosEngine::loadStateData(Common::SeekableReadStream *dataStream) {
 
 void GamosEngine::writeVMData(Common::SeekableWriteStream *stream, const Common::Array<XorArg> &seq) {
 	for (const XorArg &xarg : seq) {
-		Common::Array<byte> tmp = VM::readMemBlocks(xarg.pos, xarg.len);
+		Common::Array<byte> tmp = _vm.readMemBlocks(xarg.pos, xarg.len);
 
 		//xor data in tmp
 		//...
@@ -296,13 +296,13 @@ void GamosEngine::readVMData(Common::SeekableReadStream *stream, const Common::A
 		//...
 
 		// and write it
-		VM::writeMemory(xarg.pos, buf.data(), xarg.len);
+		_vm.writeMemory(xarg.pos, buf.data(), xarg.len);
 	}
 }
 
 void GamosEngine::zeroVMData(const Common::Array<XorArg> &seq) {
 	for (const XorArg &xarg : seq)
-		VM::zeroMemory(xarg.pos, xarg.len);
+		_vm.zeroMemory(xarg.pos, xarg.len);
 }
 
 }

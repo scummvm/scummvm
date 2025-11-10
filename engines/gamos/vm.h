@@ -117,8 +117,6 @@ public:
         inline void setAddress(uint tp, uint32 offset) { value = (offset & ADDRESS_MASK) | ((tp & 3) << MEMTYPE_SHIFT); };
     };
 
-    typedef void (* CallDispatcher)(void *object, VM *state, uint32 funcID);
-
     struct MemoryBlock {
         uint32 address = 0;
         byte data[256];
@@ -136,6 +134,9 @@ public:
     };
 
     struct MemAccess {
+        MemAccess(VM &vm): _vm(vm) {};
+
+        VM &_vm;
         MemoryBlock *_currentBlock = nullptr;
 
         uint8 getU8(uint32 address);
@@ -149,85 +150,100 @@ public:
         }
     };
 
+    class Context {
+    public:
+        Context(VM &vm): _vm(vm), _readAccess(vm), _writeAccess(vm) {};
+
+        Common::String getString(int memtype, uint32 offset, uint32 maxLen = 256);
+        Common::String getString(const ValAddr &addr, uint32 maxLen = 256);
+
+        uint32 execute(uint32 scriptAddress, byte *storage = nullptr);
+
+        void push32(uint32 val);
+        uint32 pop32();
+
+        void pushReg(ValAddr reg);
+        ValAddr popReg();
+
+        uint32 getMem32(int memtype, uint32 offset);
+        uint32 getMem32(const ValAddr& addr);
+        uint8 getMem8(int memtype, uint32 offset);
+        uint8 getMem8(const ValAddr& addr);
+
+        void setMem32(int memtype, uint32 offset, uint32 val);
+        void setMem32(const ValAddr& addr, uint32 val);
+        void setMem8(int memtype, uint32 offset, uint8 val);
+        void setMem8(const ValAddr& addr, uint8 val);
+
+    public:
+        VM &_vm;
+        bool _inUse = false;
+
+        uint32 ESI = 0;
+        byte *EBX = nullptr;
+        ValAddr EAX;
+        ValAddr EDX;
+        ValAddr ECX;
+        uint32 SP = 0;
+        byte _stack[STACK_SIZE];
+
+    private:
+        MemAccess _readAccess;
+        MemAccess _writeAccess;
+    };
+
+    typedef void (* CallDispatcher)(void *object, Context *state, uint32 funcID);
+
 public:
-    inline static MemAccess &memory() {
+    friend class Context;
+
+public:
+    VM(void *obj, CallDispatcher dispatcher): _memAccess(*this), _threads{*this, *this}, _callFuncs(dispatcher), _callingObject(obj) {};
+
+    inline MemAccess &memory() {
         return _memAccess;
     };
 
-    static void clearMemory();
-    static void writeMemory(uint32 address, const byte* data, uint32 dataSize);
+    void clearMemory();
+    void writeMemory(uint32 address, const byte* data, uint32 dataSize);
 
-    static void zeroMemory(uint32 address, uint32 count);
+    void zeroMemory(uint32 address, uint32 count);
 
-    static MemoryBlock *findMemoryBlock(uint32 address);
+    MemoryBlock *findMemoryBlock(uint32 address);
 
-    static MemoryBlock *createBlock(uint32 address);
+    MemoryBlock *createBlock(uint32 address);
 
-    static Common::Array<byte> readMemBlocks(uint32 address, uint32 count);
-    static void readMemBlocks(byte *dst, uint32 address, uint32 count);
+    Common::Array<byte> readMemBlocks(uint32 address, uint32 count);
+    void readMemBlocks(byte *dst, uint32 address, uint32 count);
 
-    static Common::String readMemString(uint32 address, uint32 maxLen = 256);
+    Common::String readMemString(uint32 address, uint32 maxLen = 256);
 
-    Common::String getString(int memtype, uint32 offset, uint32 maxLen = 256);
-    Common::String getString(const ValAddr &addr, uint32 maxLen = 256);
-
-    uint32 execute(uint32 scriptAddress, byte *storage = nullptr);
-
-    static uint32 doScript(uint32 scriptAddress, byte *storage = nullptr);
+    uint32 doScript(uint32 scriptAddress, byte *storage = nullptr);
 
     static int32 getS32(const void *);
     static uint32 getU32(const void *);
     static void setU32(void *, uint32 val);
 
-    void push32(uint32 val);
-    uint32 pop32();
+    Common::String decodeOp(uint32 address, int *size = nullptr);
+    Common::String disassembly(uint32 address);
 
-    void pushReg(ValAddr reg);
-    ValAddr popReg();
+    Common::String opLog(const Common::Array<OpLog> &log);
 
-    uint32 getMem32(int memtype, uint32 offset);
-    uint32 getMem32(const ValAddr& addr);
-    uint8 getMem8(int memtype, uint32 offset);
-    uint8 getMem8(const ValAddr& addr);
+    void printDisassembly(uint32 address);
 
-    void setMem32(int memtype, uint32 offset, uint32 val);
-    void setMem32(const ValAddr& addr, uint32 val);
-    void setMem8(int memtype, uint32 offset, uint8 val);
-    void setMem8(const ValAddr& addr, uint8 val);
+protected:
+    Common::HashMap<uint32, MemoryBlock> _memMap;
 
-    static Common::String decodeOp(uint32 address, int *size = nullptr);
-    static Common::String disassembly(uint32 address);
+    MemAccess _memAccess;
 
-    static Common::String opLog(const Common::Array<OpLog> &log);
+    Context _threads[THREADS_COUNT];
 
-    static void printDisassembly(uint32 address);
-
-private:
+    CallDispatcher const _callFuncs = nullptr;
+    void * const _callingObject = nullptr;
 
 public:
-    bool _inUse = false;
 
-    uint32 ESI = 0;
-    byte *EBX = nullptr;
-    ValAddr EAX;
-    ValAddr EDX;
-    ValAddr ECX;
-    uint32 SP = 0;
-    byte _stack[STACK_SIZE];
-
-private:
-    MemAccess _readAccess;
-    MemAccess _writeAccess;
-
-public:
-    static CallDispatcher _callFuncs;
-    static void *_callingObject;
-
-    static Common::HashMap<uint32, MemoryBlock> _memMap;
-    static bool _interrupt;
-
-    static VM _threads[THREADS_COUNT];
-    static MemAccess _memAccess;
+    bool _interrupt = false;
 };
 
 

@@ -254,6 +254,8 @@ struct GameScreen {
 };
 
 struct VmTxtFmtAccess : VM::ValAddr {
+	VmTxtFmtAccess(VM &vm): _vm(vm) {};
+	VM &_vm;
 	byte *objMem = nullptr;
 
 	inline bool isObjMem() const { return getMemType() == VM::REF_EBX;}
@@ -266,40 +268,40 @@ struct VmTxtFmtAccess : VM::ValAddr {
 			return s;
 		}
 
-		return VM::readMemString(getOffset(), maxLen);
+		return _vm.readMemString(getOffset(), maxLen);
 	}
 
 	inline uint8 getU8() const {
 		if (isObjMem())
 			return objMem[getOffset()];
-		return VM::memory().getU8(getOffset());
+		return _vm.memory().getU8(getOffset());
 	}
 
 	inline uint32 getU32() const {
 		if (isObjMem())
-			return VM::getU32(objMem + getOffset());
-		return VM::memory().getU32(getOffset());
+			return _vm.getU32(objMem + getOffset());
+		return _vm.memory().getU32(getOffset());
 	}
 
 	inline void write(byte *src, uint len) {
 		if (isObjMem())
 			memcpy(objMem + getOffset(), src, len);
 		else
-			VM::writeMemory(getOffset(), src, len);
+			_vm.writeMemory(getOffset(), src, len);
 	}
 
 	inline void setU8(uint8 v) {
 		if (isObjMem())
 			objMem[getOffset()] = v;
 		else
-			VM::memory().setU8(getOffset(), v);
+			_vm.memory().setU8(getOffset(), v);
 	}
 
 	inline void setU32(uint32 v) {
 		if (isObjMem())
-			VM::setU32(objMem + getOffset(), v);
+			_vm.setU32(objMem + getOffset(), v);
 		else
-			VM::memory().setU32(getOffset(), v);
+			_vm.memory().setU32(getOffset(), v);
 	}
 };
 
@@ -534,6 +536,8 @@ private:
 
 	Common::Array<Common::Rect> _dirtyRects;
 
+	VM _vm;
+
 	bool _needReload = false;
 
 protected:
@@ -663,11 +667,11 @@ protected:
 
 	void setNeedReload() {
 		_needReload = true;
-		VM::_interrupt = true;
+		_vm._interrupt = true;
 	};
 
 	Object *addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y);
-	void addSubtitles(VM *vm, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
+	void addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
 
 	void FUN_00407db8(uint8 p);
 	byte FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
@@ -690,7 +694,7 @@ protected:
 	void FUN_004025d0();
 	bool FUN_0040705c(int a, int b);
 
-	int txtInputBegin(VM *vm, byte memtype, int32 offset, int sprId, int32 x, int32 y);
+	int txtInputBegin(VM::Context *ctx, byte memtype, int32 offset, int sprId, int32 x, int32 y);
 	void txtInputProcess(uint8 c);
 	void txtInputEraseBack(int n);
 
@@ -713,12 +717,12 @@ protected:
 	bool loadStateFile();
 	void loadStateData(Common::SeekableReadStream *stream);
 
-	void vmCallDispatcher(VM *vm, uint32 funcID);
+	void vmCallDispatcher(VM::Context *ctx, uint32 funcID);
 
 
 	void dumpActions();
 
-	static void callbackVMCallDispatcher(void *engine, VM *vm, uint32 funcID);
+	static void callbackVMCallDispatcher(void *engine, VM::Context *ctx, uint32 funcID);
 
 
 	static Common::String gamos_itoa(int value, uint radix);

@@ -23,23 +23,9 @@
 
 namespace Gamos {
 
-VM::CallDispatcher VM::_callFuncs = nullptr;
-void *VM::_callingObject = nullptr;
-
-Common::HashMap<uint32, VM::MemoryBlock> VM::_memMap;
-bool VM::_interrupt = false;
-
-VM VM::_threads[THREADS_COUNT];
-
-VM::MemAccess VM::_memAccess;
-
-
-
-
-
 uint8 VM::MemAccess::getU8(uint32 address) {
 	if (!_currentBlock || address < _currentBlock->address || address >= (_currentBlock->address + 0x100))
-		_currentBlock = findMemoryBlock(address);
+		_currentBlock = _vm.findMemoryBlock(address);
 
 	if (!_currentBlock)
 		return 0; // ERROR!
@@ -49,7 +35,7 @@ uint8 VM::MemAccess::getU8(uint32 address) {
 
 uint32 VM::MemAccess::getU32(uint32 address) {
 	if (!_currentBlock || address < _currentBlock->address || address >= (_currentBlock->address + 0x100))
-		_currentBlock = findMemoryBlock(address);
+		_currentBlock = _vm.findMemoryBlock(address);
 
 	if (!_currentBlock)
 		return 0; // ERROR!
@@ -63,7 +49,7 @@ uint32 VM::MemAccess::getU32(uint32 address) {
 	for (int i = 1; i < 4; i++) {
 		pos++;
 		if (pos >= 0x100) {
-			block = findMemoryBlock(address + i);
+			block = _vm.findMemoryBlock(address + i);
 			if (!block)
 				break;
 			pos = 0;
@@ -76,20 +62,20 @@ uint32 VM::MemAccess::getU32(uint32 address) {
 
 void VM::MemAccess::setU8(uint32 address, uint8 val) {
 	if (!_currentBlock || address < _currentBlock->address || address >= (_currentBlock->address + 0x100))
-		_currentBlock = findMemoryBlock(address);
+		_currentBlock = _vm.findMemoryBlock(address);
 
 	if (!_currentBlock)
-		_currentBlock = createBlock(address);
+		_currentBlock = _vm.createBlock(address);
 
 	_currentBlock->data[ address - _currentBlock->address ] = val;
 }
 
 void VM::MemAccess::setU32(uint32 address, uint32 val) {
 	if (!_currentBlock || address < _currentBlock->address || address >= (_currentBlock->address + 0x100))
-		_currentBlock = findMemoryBlock(address);
+		_currentBlock = _vm.findMemoryBlock(address);
 
 	if (!_currentBlock)
-		_currentBlock = createBlock(address);
+		_currentBlock = _vm.createBlock(address);
 
 	uint32 pos = address - _currentBlock->address;
 
@@ -105,7 +91,7 @@ void VM::MemAccess::setU32(uint32 address, uint32 val) {
 	for (int i = 1; i < 4; i++) {
 		pos++;
 		if (pos >= 0x100) {
-			block = createBlock(address + i);
+			block = _vm.createBlock(address + i);
 			if (!block)
 				break;
 			pos = 0;
@@ -118,7 +104,7 @@ void VM::MemAccess::setU32(uint32 address, uint32 val) {
 
 
 
-uint32 VM::execute(uint32 scriptAddress, byte *storage) {
+uint32 VM::Context::execute(uint32 scriptAddress, byte *storage) {
 	//Common::String disasm = disassembly(scriptAddress);
 
 	ESI = scriptAddress;
@@ -133,7 +119,7 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 
 	bool loop = true;
 	while (loop) {
-		if (_interrupt)
+		if (_vm._interrupt)
 			return 0;
 
 		byte op = _readAccess.getU8(ESI);
@@ -415,8 +401,8 @@ uint32 VM::execute(uint32 scriptAddress, byte *storage) {
 		case OP_CALL_FUNC:
 			EAX.setVal( _readAccess.getU32(ESI) );
 			ESI += 4;
-			if (_callFuncs)
-				_callFuncs(_callingObject, this, EAX.getVal());
+			if (_vm._callFuncs)
+				_vm._callFuncs(_vm._callingObject, this, EAX.getVal());
 			break;
 
 		case OP_PUSH_ESI_SET_EDX_EDI:
@@ -443,7 +429,7 @@ uint32 VM::doScript(uint32 scriptAddress, byte *storage) {
 		}
 	}
 
-	VM *tmpcontext = new VM();
+	Context *tmpcontext = new Context(*this);
 	uint32 res = tmpcontext->execute(scriptAddress, storage);
 	delete tmpcontext;
 	return res;
@@ -469,30 +455,30 @@ void VM::setU32(void *mem, uint32 val) {
 	mem8[3] = (val >> 24) & 0xff;
 }
 
-void VM::push32(uint32 val) {
+void VM::Context::push32(uint32 val) {
 	SP -= 4;
 	setU32(_stack + SP, val);
 }
 
-uint32 VM::pop32() {
+uint32 VM::Context::pop32() {
 	uint32 val = getU32(_stack + SP);
 	SP += 4;
 	return val;
 }
 
-void VM::pushReg(ValAddr reg) {
+void VM::Context::pushReg(ValAddr reg) {
 	SP -= 4;
 	setU32(_stack + SP, reg.getVal());
 }
 
-VM::ValAddr VM::popReg() {
+VM::ValAddr VM::Context::popReg() {
 	ValAddr tmp;
 	tmp.setVal( getU32(_stack + SP) );
 	SP += 4;
 	return tmp;
 }
 
-uint32 VM::getMem32(int memtype, uint32 offset) {
+uint32 VM::Context::getMem32(int memtype, uint32 offset) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
@@ -509,11 +495,11 @@ uint32 VM::getMem32(int memtype, uint32 offset) {
 	}
 }
 
-uint32 VM::getMem32(const ValAddr &addr) {
+uint32 VM::Context::getMem32(const ValAddr &addr) {
     return getMem32(addr.getMemType(), addr.getOffset());
 }
 
-uint8 VM::getMem8(int memtype, uint32 offset) {
+uint8 VM::Context::getMem8(int memtype, uint32 offset) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
@@ -530,11 +516,11 @@ uint8 VM::getMem8(int memtype, uint32 offset) {
 	}
 }
 
-uint8 VM::getMem8(const ValAddr &addr) {
+uint8 VM::Context::getMem8(const ValAddr &addr) {
     return getMem8(addr.getMemType(), addr.getOffset());
 }
 
-void VM::setMem32(int memtype, uint32 offset, uint32 val) {
+void VM::Context::setMem32(int memtype, uint32 offset, uint32 val) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
@@ -552,11 +538,11 @@ void VM::setMem32(int memtype, uint32 offset, uint32 val) {
 	}
 }
 
-void VM::setMem32(const ValAddr &addr, uint32 val) {
+void VM::Context::setMem32(const ValAddr &addr, uint32 val) {
     setMem32(addr.getMemType(), addr.getOffset(), val);
 }
 
-void VM::setMem8(int memtype, uint32 offset, uint8 val) {
+void VM::Context::setMem8(int memtype, uint32 offset, uint8 val) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
@@ -574,7 +560,7 @@ void VM::setMem8(int memtype, uint32 offset, uint8 val) {
 	}
 }
 
-void VM::setMem8(const ValAddr &addr, uint8 val) {
+void VM::Context::setMem8(const ValAddr &addr, uint8 val) {
     setMem8(addr.getMemType(), addr.getOffset(), val);
 }
 
@@ -706,7 +692,7 @@ Common::String VM::readMemString(uint32 address, uint32 maxLen) {
 	return s;
 }
 
-Common::String VM::getString(int memtype, uint32 offset, uint32 maxLen) {
+Common::String VM::Context::getString(int memtype, uint32 offset, uint32 maxLen) {
 	switch (memtype) {
 	default:
 	case REF_UNK:
@@ -726,11 +712,11 @@ Common::String VM::getString(int memtype, uint32 offset, uint32 maxLen) {
 	}
 
 	case REF_EDI:
-		return readMemString(offset, maxLen);
+		return _vm.readMemString(offset, maxLen);
 	}
 }
 
-Common::String VM::getString(const ValAddr &addr, uint32 maxLen) {
+Common::String VM::Context::getString(const ValAddr &addr, uint32 maxLen) {
     return getString(addr.getMemType(), addr.getOffset(), maxLen);
 }
 
@@ -738,7 +724,7 @@ Common::String VM::getString(const ValAddr &addr, uint32 maxLen) {
 Common::String VM::decodeOp(uint32 address, int *size) {
 	Common::String tmp;
 
-	MemAccess readmem;
+	MemAccess readmem(*this);
 
 	int sz = 1;
 	byte op = readmem.getU8(address);
@@ -998,7 +984,7 @@ Common::String VM::disassembly(uint32 address) {
 	Common::String tmp;
 
 	uint32 addr = address;
-	MemAccess readmem;
+	MemAccess readmem(*this);
 
 	while (true) {
 		tmp += Common::String::format("%08x: ", addr);
