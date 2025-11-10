@@ -22,9 +22,11 @@
 #ifndef NANCY_UI_INVENTORYBOX_H
 #define NANCY_UI_INVENTORYBOX_H
 
-#include "engines/nancy/time.h"
+#include "common/ptr.h"
 
+#include "engines/nancy/time.h"
 #include "engines/nancy/renderobject.h"
+#include "engines/nancy/ui/scrollbar.h"
 
 namespace Nancy {
 
@@ -37,8 +39,6 @@ class Scene;
 
 namespace UI {
 
-class Scrollbar;
-
 class InventoryBox : public RenderObject {
 	friend class Nancy::State::Scene;
 
@@ -50,7 +50,6 @@ public:
 	};
 
 	InventoryBox();
-	virtual ~InventoryBox();
 
 	void init() override;
 	void updateGraphics() override;
@@ -96,7 +95,7 @@ private:
 	Graphics::ManagedSurface _iconsSurface;
 	Graphics::ManagedSurface _fullInventorySurface;
 
-	Scrollbar *_scrollbar;
+	Common::ScopedPtr<Scrollbar> _scrollbar;
 	Curtains _curtains;
 
 	float _scrollbarPos;
