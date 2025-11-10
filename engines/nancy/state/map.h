@@ -22,6 +22,7 @@
 #ifndef NANCY_STATE_MAP_H
 #define NANCY_STATE_MAP_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/sound.h"
@@ -127,10 +128,6 @@ private:
 };
 
 class Nancy1Map : public Map {
-public:
-	Nancy1Map();
-	virtual ~Nancy1Map();
-
 private:
 	void init() override;
 	void load() override;
@@ -139,7 +136,7 @@ private:
 
 	bool onStateExit(const NancyState::NancyState next) override;
 
-	UI::Button *_button;
+	Common::ScopedPtr<UI::Button> _button;
 };
 
 #define NancyMapState Nancy::State::Map::instance()

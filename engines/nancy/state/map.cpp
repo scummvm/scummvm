@@ -351,12 +351,6 @@ void TVDMap::MapGlobe::onTrigger() {
 	}
 }
 
-Nancy1Map::Nancy1Map() : _button(nullptr)/*, _mapButtonClicked(false)*/ {}
-
-Nancy1Map::~Nancy1Map() {
-	delete _button;
-}
-
 void Nancy1Map::init() {
 	_viewport.init();
 	_label.init();
@@ -382,7 +376,7 @@ void Nancy1Map::init() {
 		_locationLabelDests[i].top = _locationLabelDests[i].bottom - _mapData->locations[i].labelSrc.height() + 1;
 	}
 
-	_button = new UI::Button(9, g_nancy->_graphics->_object0, _mapData->buttonSrc, _mapData->buttonDest);
+	_button.reset(new UI::Button(9, g_nancy->_graphics->_object0, _mapData->buttonSrc, _mapData->buttonDest));
 	_button->init();
 	_button->setVisible(true);
 
