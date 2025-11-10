@@ -53,7 +53,7 @@ const byte GamosEngine::_xorKeys[32] =  {0xa7, 0x15, 0xf0, 0x56, 0xf3, 0xfa, 0x8
                                         };
 
 GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Gamos") {
+	_gameDescription(gameDesc), _randomSource("Gamos"), _messageProc(this) {
 	g_engine = this;
 }
 

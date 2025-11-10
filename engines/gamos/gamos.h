@@ -303,7 +303,7 @@ struct VmTxtFmtAccess : VM::ValAddr {
 	}
 };
 
-class GamosEngine : public Engine {
+class GamosEngine : public Engine, public KeyCodes {
 	friend class MoviePlayer;
 
 private:

@@ -260,20 +260,18 @@ public:
 	};
 
 private:
-	static KeyCodes _instance;
-
 	uint8 _winCodes[Common::KEYCODE_LAST];
 	uint16 _scummCodes[256];
 
-private:
+protected:
 	KeyCodes();
 
 public:
-	static uint8 GetWinCode(uint16 code) {
-		return _instance._winCodes[code];
+	uint8 GetWinCode(uint16 code) {
+		return _winCodes[code];
 	};
-	static uint16 GetScummCode(uint8 code) {
-		return _instance._scummCodes[code];
+	uint16 GetScummCode(uint8 code) {
+		return _scummCodes[code];
 	};
 };
 

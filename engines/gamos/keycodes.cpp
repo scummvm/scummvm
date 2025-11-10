@@ -22,8 +22,6 @@
 #include "gamos/gamos.h"
 namespace Gamos {
 
-KeyCodes KeyCodes::_instance;
-
 KeyCodes::KeyCodes() {
 	for (int16 i = 0; i < Common::KEYCODE_LAST; i++) {
 		_winCodes[i] = WIN_INVALID;

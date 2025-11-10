@@ -38,10 +38,13 @@ enum ACT2 {
 
 class SystemProc {
 public:
+	SystemProc(KeyCodes *conv) : _codesConverter(conv) {};
 
 	void processMessage(const Common::Event &ev);
 
 public:
+	KeyCodes *_codesConverter = nullptr;
+
 	uint8 _act1 = 0;
 	uint8 _act2 = 0;
 
