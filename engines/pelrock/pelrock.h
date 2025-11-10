@@ -57,6 +57,7 @@ private:
 	void setScreen(int s, int dir);
 	void setScreenJava(int s, int dir);
 	void loadAnims();
+
 	// Room data
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
@@ -65,11 +66,14 @@ private:
 	void loadMainCharacterAnims();
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	void loadCursors();
+
 
 	// render loop
 	void frames();
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
+	void changeCursor(Cursor cursor);
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
@@ -81,6 +85,7 @@ private:
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
 	byte *_currentBackground = nullptr;
+	byte *_cursorMasks[5] = { nullptr };
 
 	// From the original code
 	int xAlfred = 200;
