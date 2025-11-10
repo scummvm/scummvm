@@ -76,8 +76,7 @@ private:
 
 	Common::Array<ArchiveDir> _directories;
 
-
-	bool _error;
+	//bool _error;
 };
 
 
