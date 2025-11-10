@@ -199,8 +199,8 @@ bool GamosEngine::loader2() {
 		} else if (curByte == 2) {
 			p2 = dataStream.readSint32LE();
 		} else if (curByte == 7) {
-			int32 needsz = dataStream.readSint32LE(); // check free mem ?
-			//warning("7777 want %d", needsz);
+			/*int32 needsz = dataStream.readSint32LE(); // check free mem ? */
+			dataStream.skip(4);
 		} else if (curByte == 0x40) {
 			resSize = 4;
 			resType = 0x40;
@@ -1050,7 +1050,7 @@ bool GamosEngine::usePalette(const byte *pal, int num, int fade, bool winColors)
 
 					if (eventsSkip()) {
 						j = 8;
-						uint16 color = _screen->getPalette().findBestColor(0, 0, 0);
+						color = _screen->getPalette().findBestColor(0, 0, 0);
 						_screen->fillRect(_screen->getBounds(), color);
 						_screen->update();
 						break;
@@ -1382,6 +1382,9 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 					return 0;
 				}
 			}
+
+			if (fastSkipAll)
+				break;
 		}
 	}
 
@@ -4008,7 +4011,6 @@ void GamosEngine::FUN_0040279c(uint8 val, bool rnd) {
 void GamosEngine::FUN_004025d0() {
 	if (PTR_00417218->fld_2 != 0xfe) {
 		ObjectAction &act = _objectActions[PTR_00417218->fld_2];
-		PTR_00417218->pos;
 
 		for (int i = 0; i < _objects.size(); i++) {
 			Object &obj = _objects[i];
