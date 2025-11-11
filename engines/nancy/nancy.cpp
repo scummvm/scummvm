@@ -108,6 +108,16 @@ NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDe
 	error("Unknown GameType");
 }
 
+Common::Error NancyEngine::loadGameState(int slot) {
+	auto save = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), slot);
+	if (save.isValid() && save.getDescription() != "SECOND CHANCE") {
+		// Ensure the nancy8+ save screen will display the last non-autosave name
+		ConfMan.setInt("display_slot", slot, Common::ConfigManager::kTransientDomain);
+	}
+
+	return Engine::loadGameState(slot);
+}
+
 Common::Error NancyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer ser(stream, nullptr);
 	return synchronize(ser);
@@ -260,12 +270,6 @@ Common::Error NancyEngine::run() {
 		if (getGameType() <= kGameTypeNancy7) {
 			ConfMan.setInt("nancy_max_saves", 8, ConfMan.getActiveDomainName());
 		}
-	}
-
-	// TODO: Since the original save/load menus aren't implemented for
-	// Nancy 8 and newer games, we always use the ScummVM ones there
-	if (getGameType() >= kGameTypeNancy8) {
-		ConfMan.setBool("originalsaveload", false, ConfMan.getActiveDomainName());
 	}
 
 	if (!ConfMan.getBool("originalsaveload")) {

@@ -516,7 +516,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRectArray(*chunkStream, _disabledButtonSrcs, 5);
 
 		readRectArray(*chunkStream, _buttonDests, 5);
-		readRectArray(*chunkStream, _textboxBounds, 10);
+		readRectArray(*chunkStream, _textboxBounds, 9);
+		readRect(*chunkStream, _inputTextboxBounds);
 
 		chunkStream->skip(25); // prefixes and suffixes for filenames
 

@@ -835,9 +835,13 @@ void Scene::init() {
 
 		// Remove key so clicking on "New Game" in start menu doesn't just reload the save
 		ConfMan.removeKey("save_slot", Common::ConfigManager::kTransientDomain);
+		// Retain the last slot used so the nancy8+ save menu shows its name on top
+		ConfMan.setInt("display_slot", saveSlot, Common::ConfigManager::kTransientDomain);
 	} else {
 		// Normal boot, load default first scene
 		_state = kLoad;
+		// Make sure the nancy8+ save menu doesn't display a save name on new game
+		ConfMan.removeKey("display_slot", Common::ConfigManager::kTransientDomain);
 	}
 
 	// Set relevant event flag when player has won the game at least once

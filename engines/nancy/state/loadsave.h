@@ -23,85 +23,144 @@
 #define NANCY_STATE_LOADSAVE_H
 
 #include "common/singleton.h"
+#include "common/ptr.h"
 
 #include "engines/nancy/state/state.h"
 #include "engines/nancy/ui/fullscreenimage.h"
+#include "engines/nancy/ui/button.h"
 #include "engines/nancy/font.h"
 
 namespace Nancy {
 
 struct LOAD;
 
-namespace UI {
-class Button;
-}
-
 namespace State {
 
 class LoadSaveMenu : public State, public Common::Singleton<LoadSaveMenu> {
 public:
-	LoadSaveMenu() :
-		_state(kInit), _selectedSave(-1), _enteringNewState(false), _nextBlink(0),
-		_baseFont(nullptr), _highlightFont(nullptr),
-		_disabledFont(nullptr), _loadSaveData(nullptr),
-		_cancelButton(nullptr), _exitButton(nullptr),
-		_blinkingCursorOverlay(6), _successOverlay(8) {}
 	virtual ~LoadSaveMenu();
+
+protected:
+	enum State { kInit, kRun, kEnterFilename, kSave, kLoad, kSuccess, kStop };
+
+	LoadSaveMenu() :
+		_blinkingCursorOverlay(6),
+		_successOverlay(8) {};
+
+	virtual void init() = 0;
+	virtual void run() = 0;
+	virtual void enterFilename();
+	virtual void save() = 0;
+	virtual void load();
+	virtual void success();
+	virtual void stop();
+
+	virtual int scummVMSaveSlotToLoad() const = 0;
+
+	virtual void registerGraphics();
+
+	virtual uint16 writeToTextbox(int textboxID, const Common::String &text, const Font *font);
+
+	void scummVMSave();
+	void scummVMLoad();
 
 	// State API
 	void process() override;
 	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
-private:
-	void init();
-	void run();
-	void enterFilename();
-	void save();
-	void load();
-	void success();
-	void stop();
+	const Font *_baseFont = nullptr;
+	const Font *_highlightFont = nullptr;
+	const Font *_disabledFont = nullptr;
 
-	void registerGraphics();
+	State _state = kInit;
+	bool _enteringNewState = true;
+	bool _destroyOnExit = true;
+	const LOAD *_loadSaveData = nullptr;
 
-	void scummVMSave();
-	void scummVMLoad();
+	int16 _selectedSave = -1;
+	RenderObject *_textboxReceivingInput = nullptr;
 
-	uint16 writeToTextbox(uint textboxID, const Common::String &text, const Font *font);
+	// UI elements common to both menus
+	Common::Array<Common::ScopedPtr<RenderObject>> _textboxes;
+	Common::ScopedPtr<UI::Button> _exitButton;
 
-	enum State { kInit, kRun, kEnterFilename, kSave, kLoad, kSuccess, kStop };
-
-	State _state;
-
-	UI::FullScreenImage _background;
-
-	const Font *_baseFont;
-	const Font *_highlightFont;
-	const Font *_disabledFont;
-
-	Common::Array<Common::String> _filenameStrings;
-	Common::Array<bool> _saveExists;
-	Common::String _enteredString;
-
-	Common::Array<RenderObject *> _textboxes;
-	Common::Array<UI::Button *> _loadButtons;
-	Common::Array<UI::Button *> _saveButtons;
-	Common::Array<RenderObject *> _cancelButtonOverlays;
-	UI::Button *_exitButton;
-	UI::Button *_cancelButton;
 	RenderObject _blinkingCursorOverlay;
 	RenderObject _successOverlay;
 
-	int16 _selectedSave;
-	bool _enteringNewState;
-	uint32 _nextBlink;
+	uint32 _nextBlink = 0;
+	Common::String _enteredString;
+};
 
-	bool _destroyOnExit = true;
+class LoadSaveMenu_V1 : public LoadSaveMenu {
+private:
+	void init() override;
+	void run() override;
+	void enterFilename() override;
+	void save() override;
 
-	const LOAD *_loadSaveData;
+	virtual int scummVMSaveSlotToLoad() const override;
+
+	void registerGraphics() override;
+
+	UI::FullScreenImage _background;
+
+	Common::Array<Common::String> _filenameStrings;
+	Common::Array<bool> _saveExists;
+	Common::Array<Common::ScopedPtr<UI::Button>> _loadButtons;
+	Common::Array<Common::ScopedPtr<UI::Button>> _saveButtons;
+	Common::Array<Common::ScopedPtr<RenderObject>> _cancelButtonOverlays;
+	Common::ScopedPtr<UI::Button> _cancelButton;
+};
+
+class LoadSaveMenu_V2 : public LoadSaveMenu {
+private:
+	void init() override;
+	void run() override;
+	void enterFilename() override;
+	void save() override;
+	void success() override;
+
+	virtual int scummVMSaveSlotToLoad() const override;
+
+	void registerGraphics() override;
+
+	uint16 writeToTextbox(int textboxID, const Common::String &text, const Font *font) override;
+	uint16 writeToInputTextbox(const Font *font);
+
+	void filterAndSortSaveStates();
+	void extractSaveNames(uint pageID);
+	void goToPage(uint pageID);
+	void reloadSaves();
+	void setConfig();
+
+	UI::FullScreenImage _background1;
+	UI::FullScreenImage _background2;
+	Graphics::ManagedSurface _buttonsImage;
+
+	Common::Array<Common::String> _filenameStrings;
+	Common::Array<bool> _saveExists;
+
+	Common::ScopedPtr<RenderObject> _inputTextbox;
+	Common::ScopedPtr<UI::Button> _loadButton;
+	Common::ScopedPtr<UI::Button> _saveButton;
+	Common::ScopedPtr<UI::Button> _pageUpButton;
+	Common::ScopedPtr<UI::Button> _pageDownButton;
+
+	int16 _hoveredSave = -1;
+	uint _currentPage = 0;
+
+	SaveStateList _sortedSavesList;
 };
 
 } // End of namespace State
 } // End of namespace Nancy
+
+namespace Common {
+
+template<>
+Nancy::State::LoadSaveMenu *Singleton<Nancy::State::LoadSaveMenu>::makeInstance();
+
+} // End of namespace Common
 
 #endif // NANCY_STATE_LOADSAVE_H

@@ -275,6 +275,7 @@ struct LOAD : public EngineData {
 	Common::Array<Common::Rect> _saveButtonDests;
 	Common::Array<Common::Rect> _loadButtonDests;
 	Common::Array<Common::Rect> _textboxBounds;
+	Common::Rect _inputTextboxBounds;
 	Common::Rect _doneButtonDest;
 	Common::Array<Common::Rect> _saveButtonDownSrcs;
 	Common::Array<Common::Rect> _loadButtonDownSrcs;
