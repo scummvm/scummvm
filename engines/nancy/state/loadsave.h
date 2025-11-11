@@ -50,7 +50,7 @@ protected:
 	virtual void init() = 0;
 	virtual void run() = 0;
 	virtual void enterFilename();
-	virtual void save() = 0;
+	virtual bool save();
 	virtual void load();
 	virtual void success();
 	virtual void stop();
@@ -97,7 +97,7 @@ private:
 	void init() override;
 	void run() override;
 	void enterFilename() override;
-	void save() override;
+	bool save() override;
 
 	virtual int scummVMSaveSlotToLoad() const override;
 
@@ -118,7 +118,7 @@ private:
 	void init() override;
 	void run() override;
 	void enterFilename() override;
-	void save() override;
+	bool save() override;
 	void success() override;
 
 	virtual int scummVMSaveSlotToLoad() const override;

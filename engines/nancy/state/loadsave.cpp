@@ -201,6 +201,45 @@ void LoadSaveMenu::enterFilename() {
 	}
 }
 
+bool LoadSaveMenu::save() {
+	auto *sdlg = GetEngineData(SDLG);
+
+	if (sdlg && sdlg->dialogs.size() > 1) {
+		// nancy6 added a "Do you want to overwrite this save" dialog.
+		// First, check if we are actually overwriting
+		SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), _selectedSave + 1);
+		if (desc.isValid()) {
+			if (!ConfMan.hasKey("sdlg_return", Common::ConfigManager::kTransientDomain)) {
+				// Request the dialog
+				ConfMan.setInt("sdlg_id", 1, Common::ConfigManager::kTransientDomain);
+				_destroyOnExit = false;
+				g_nancy->setState(NancyState::kSaveDialog);
+				return false;
+			} else {
+				// Dialog has returned
+				g_nancy->_graphics->suppressNextDraw();
+				_destroyOnExit = true;
+				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
+				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
+				switch (ret) {
+				case 1 :
+					// "No" keeps us in the LoadSave state but doesn't save
+					_state = kRun;
+					return false;
+				case 2 :
+					// "Cancel" returns to the main menu
+					g_nancy->setState(NancyState::kMainMenu);
+					return false;
+				default:
+					// "Yes" actually saves
+					break;
+				}
+			}
+		}
+	}
+	return true;
+}
+
 void LoadSaveMenu::load() {
 	auto *sdlg = GetEngineData(SDLG);
 
@@ -626,41 +665,9 @@ void LoadSaveMenu_V1::enterFilename() {
 	}
 }
 
-void LoadSaveMenu_V1::save() {
-	auto *sdlg = GetEngineData(SDLG);
-
-	if (sdlg && sdlg->dialogs.size() > 1) {
-		// nancy6 added a "Do you want to overwrite this save" dialog.
-		// First, check if we are actually overwriting
-		SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), _selectedSave + 1);
-		if (desc.isValid()) {
-			if (!ConfMan.hasKey("sdlg_return", Common::ConfigManager::kTransientDomain)) {
-				// Request the dialog
-				ConfMan.setInt("sdlg_id", 1, Common::ConfigManager::kTransientDomain);
-				_destroyOnExit = false;
-				g_nancy->setState(NancyState::kSaveDialog);
-				return;
-			} else {
-				// Dialog has returned
-				g_nancy->_graphics->suppressNextDraw();
-				_destroyOnExit = true;
-				uint ret = ConfMan.getInt("sdlg_return", Common::ConfigManager::kTransientDomain);
-				ConfMan.removeKey("sdlg_return", Common::ConfigManager::kTransientDomain);
-				switch (ret) {
-				case 1 :
-					// "No" keeps us in the LoadSave state but doesn't save
-					_state = kRun;
-					return;
-				case 2 :
-					// "Cancel" returns to the main menu
-					g_nancy->setState(NancyState::kMainMenu);
-					return;
-				default:
-					// "Yes" actually saves
-					break;
-				}
-			}
-		}
+bool LoadSaveMenu_V1::save() {
+	if (!LoadSaveMenu::save()) {
+		return false;
 	}
 
 	// Improvement: not providing a name doesn't result in the
@@ -719,6 +726,7 @@ void LoadSaveMenu_V1::save() {
 
 	_saveExists[_selectedSave] = true;
 	g_nancy->_hasJustSaved = true;
+	return true;
 }
 
 int LoadSaveMenu_V1::scummVMSaveSlotToLoad() const {
@@ -1166,7 +1174,11 @@ void LoadSaveMenu_V2::enterFilename() {
 	}
 }
 
-void LoadSaveMenu_V2::save() {
+bool LoadSaveMenu_V2::save() {
+	if (!LoadSaveMenu::save()) {
+		return false;
+	}
+
 	Common::String finalDesc = _enteredString;
 
 	// Look for a state with a matching name and overwrite it
@@ -1213,6 +1225,7 @@ void LoadSaveMenu_V2::save() {
 
 	_saveExists[_selectedSave] = true;
 	g_nancy->_hasJustSaved = true;
+	return true;
 }
 
 void LoadSaveMenu_V2::success() {
