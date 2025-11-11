@@ -74,7 +74,8 @@ private:
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 	Common::List<VerbIcons> populateActionsMenu(HotSpot hotspot);
-
+ 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
+    Exit *isExitAtPoint(int x, int y);
 	// render loop
 	void frames();
 	void checkMouseHover();
@@ -92,6 +93,7 @@ private:
 	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
+	Common::List<WalkBox> _currentRoomWalkboxes;
 	int *_currentAnimFrames = nullptr;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;

@@ -146,6 +146,7 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreen(0, 2);
+		// setScreen(24, 2);
 	}
 }
 
@@ -258,6 +259,8 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 	}
 	Common::List<AnimSet> anims = Common::List<AnimSet>();
 	uint32_t spriteEnd = offset + size;
+
+	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
 	uint32_t metadata_start = spriteEnd + 108;
 	uint32_t picOffset = 0;
 	for (int i = 0; i < 7; i++) {
@@ -268,7 +271,8 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 		animSet.y = roomFile->readSint16LE();
 		animSet.w = roomFile->readByte();
 		animSet.h = roomFile->readByte();
-		roomFile->skip(2); // reserved
+		animSet.extra = roomFile->readByte();
+		roomFile->skip(1); // reserved
 		animSet.numAnims = roomFile->readByte();
 		debug("AnimSet %d: x=%d y=%d w=%d h=%d numAnims=%d", i, animSet.x, animSet.y, animSet.w, animSet.h, animSet.numAnims);
 		animSet.animData = new Anim[animSet.numAnims];
@@ -338,7 +342,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;
@@ -449,7 +453,7 @@ void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 		spot.w = obj_bytes[5];
 		spot.h = obj_bytes[6];
 		spot.extra = obj_bytes[7] | (obj_bytes[8] << 8);
-		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, type_byte, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	_hotspots = hotspots;
@@ -610,6 +614,16 @@ void PelrockEngine::frames() {
 					_currentPopupFrame = 0;
 			}
 		}
+
+		int walkboxCount = 0;
+		for (Common::List<WalkBox>::iterator i = _currentRoomWalkboxes.begin(); i != _currentRoomWalkboxes.end(); i++) {
+			// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+			_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
+			_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+			_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
+			_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+			walkboxCount++;
+		}
 		_screen->markAllDirty();
 		_screen->update();
 	}
@@ -671,7 +685,7 @@ AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
 	for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
 		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
 			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			debug("Sprite at (%d,%d) size (%d,%d), type = %d, extra = %d, enabled=%d", i->x, i->y, i->w, i->h, i->type, i->extra, i->enabled);
+			// debug("Sprite at (%d,%d) size (%d,%d), type = %d, extra = %d, enabled=%d", i->x, i->y, i->w, i->h, i->type, i->extra, i->enabled);
 			return &(*i);
 		}
 	}
@@ -731,25 +745,119 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 void PelrockEngine::checkMouseHover() {
 	bool isSomethingUnder = false;
 
+
+	 // Calculate walk target first (before checking anything else)
+    Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
+
+    // Check if walk target hits any exit
+    bool exitDetected = false;
+    Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
+    if (exit != nullptr) {
+        exitDetected = true;
+    }
+
 	AnimSet *sprite = isSpriteUnder(mouseX, mouseY);
 	if (sprite != nullptr) {
 		isSomethingUnder = true;
-		changeCursor(HOTSPOT);
 	}
 
 	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
 	if (hotspot != nullptr) {
 		isSomethingUnder = true;
+	}
+	// Exit *exit = isExitUnder(mouseX, mouseY);
+	// if (exit != nullptr) {
+	// 	isSomethingUnder = true;
+	// 	changeCursor(EXIT);
+	// }
+	if (isSomethingUnder && exitDetected) {
+		changeCursor(COMBINATION);
+	}
+	else if (isSomethingUnder) {
 		changeCursor(HOTSPOT);
 	}
-	Exit *exit = isExitUnder(mouseX, mouseY);
-	if (exit != nullptr) {
-		isSomethingUnder = true;
+	else if (exitDetected) {
 		changeCursor(EXIT);
-	}
-	if (!isSomethingUnder) {
+	} else {
 		changeCursor(DEFAULT);
 	}
+
+}
+
+Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
+    // Starting point for pathfinding
+    int sourceX = mouseX;
+    int sourceY = mouseY;
+
+    // TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
+    // For now, just use mouse position
+
+    // Find nearest walkable point in walkboxes
+    uint32 minDistance = 0xFFFFFFFF;
+    Common::Point bestTarget(sourceX, sourceY);
+
+    for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
+         it != _currentRoomWalkboxes.end(); ++it) {
+
+        // Calculate distance from source point to this walkbox (Manhattan distance)
+        int dx = 0;
+        int dy = 0;
+
+        // Calculate horizontal distance
+        if (sourceX < it->x) {
+            dx = it->x - sourceX;
+        } else if (sourceX > it->x + it->w) {
+            dx = sourceX - (it->x + it->w);
+        }
+        // else: sourceX is inside walkbox horizontally, dx = 0
+
+        // Calculate vertical distance
+        if (sourceY < it->y) {
+            dy = it->y - sourceY;
+        } else if (sourceY > it->y + it->h) {
+            dy = sourceY - (it->y + it->h);
+        }
+        // else: sourceY is inside walkbox vertically, dy = 0
+
+        uint32 distance = dx + dy;
+
+        if (distance < minDistance) {
+            minDistance = distance;
+
+            // Calculate target point (nearest point on walkbox to source)
+            int targetX = sourceX;
+            int targetY = sourceY;
+
+            if (sourceX < it->x) {
+                targetX = it->x;
+            } else if (sourceX > it->x + it->w) {
+                targetX = it->x + it->w;
+            }
+
+            if (sourceY < it->y) {
+                targetY = it->y;
+            } else if (sourceY > it->y + it->h) {
+                targetY = it->y + it->h;
+            }
+
+            bestTarget.x = targetX;
+            bestTarget.y = targetY;
+        }
+    }
+
+    return bestTarget;
+}
+
+Exit *PelrockEngine::isExitAtPoint(int x, int y) {
+    for (Common::List<Exit>::iterator i = _currentRoomExits.begin();
+         i != _currentRoomExits.end(); ++i) {
+        // Check if point is inside exit trigger rectangle
+        if (x >= i->x && x <= (i->x + i->w) &&
+            y >= i->y && y <= (i->y + i->h)) {
+            return &(*i);
+        }
+    }
+    return nullptr;
 }
 
 void PelrockEngine::setScreen(int number, int dir) {
@@ -795,19 +903,11 @@ void PelrockEngine::setScreen(int number, int dir) {
 		hotsPotCount++;
 	}
 
-	Common::List<WalkBox> walkboxes = loadWalkboxes(&roomFile, roomOffset);
-	int walkboxCount = 0;
-	for (Common::List<WalkBox>::iterator i = walkboxes.begin(); i != walkboxes.end(); i++) {
-		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
-		_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-		_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
-		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-		walkboxCount++;
-	}
+	_currentRoomWalkboxes = loadWalkboxes(&roomFile, roomOffset);
 
 	_currentRoomExits = loadExits(&roomFile, roomOffset);
 
+	int walkboxCount = 0;
 	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
 		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
 		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
