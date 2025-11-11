@@ -589,15 +589,17 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		_ports->penColor(colorPen);
 	}
 
-	// To make sure that the Korean hires font does not get overdrawn we update the display area before printing
-	// the text. The PC-98 versions use a lowres font here, so this fix is only for the Korean fan translation.
-	if (g_sci->getLanguage() == Common::KO_KOR && !_screen->_picNotValid && bRedraw)
+	// To make sure that the hires font used by PQ2 PC-98 and by the Korean fan translations does not get overdrawn we update the
+	// display area before printing the text. The other (non-PQ2) PC-98 versions use a lowres font here, so this fix is only for
+	// PQ2 PC-98 and for the Korean fan translations.
+	bool needCJKFix = (g_sci->getLanguage() == Common::KO_KOR || (g_sci->getPlatform() == Common::kPlatformPC98 && g_sci->getGameId() == GID_PQ2));
+	if (needCJKFix && !_screen->_picNotValid && bRedraw)
 		bitsShow(rect);
 
-	_text16->Box(text, languageSplitter, g_sci->getLanguage() == Common::KO_KOR, rect, alignment, -1);
+	_text16->Box(text, languageSplitter, needCJKFix, rect, alignment, -1);
 
 	// See comment above.
-	if (g_sci->getLanguage() != Common::KO_KOR && _screen->_picNotValid == 0 && bRedraw)
+	if (!needCJKFix && _screen->_picNotValid == 0 && bRedraw)
 		bitsShow(rect);
 
 	// restoring port and cursor pos
