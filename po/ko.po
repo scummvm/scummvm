@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-09 13:17+0000\n"
+"POT-Creation-Date: 2025-11-11 10:58+0000\n"
 "PO-Revision-Date: 2025-09-08 17:01+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -260,7 +260,7 @@ msgstr "클립보드에서 코드 붙여넣기"
 
 #: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:1019 engines/mm/xeen/saves.cpp:259
-#: engines/nancy/state/loadsave.cpp:124 engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:153
 #: engines/parallaction/metaengine.cpp:151
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
@@ -1523,7 +1523,7 @@ msgid "Search:"
 msgstr "검색:"
 
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:1019
-#: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
+#: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:153
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:642 engines/wage/saveload.cpp:753
 msgid "Load game:"
@@ -3507,7 +3507,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
-#: engines/nancy/state/loadsave.cpp:107 engines/neverhood/menumodule.cpp:925
+#: engines/nancy/state/loadsave.cpp:136 engines/neverhood/menumodule.cpp:925
 #: engines/pegasus/pegasus.cpp:407 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1250
@@ -3529,7 +3529,7 @@ msgstr "게임 저장:"
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
-#: engines/nancy/state/loadsave.cpp:107 engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:136
 #: engines/neverhood/menumodule.cpp:925 engines/parallaction/metaengine.cpp:157
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
@@ -10916,7 +10916,7 @@ msgstr ""
 "마지막 퍼즐에 실패하기 전에 조금 더 시간을 가지세요. 이것은 HeR Interactive"
 "의 공식 패치입니다."
 
-#: engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108
 msgid "Would you like to load or save a game?"
 msgstr "게임을 로드하거나 저장할까요?"
 

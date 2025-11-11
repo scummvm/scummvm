@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-09 13:17+0000\n"
+"POT-Creation-Date: 2025-11-11 10:58+0000\n"
 "PO-Revision-Date: 2025-11-04 17:36+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -260,7 +260,7 @@ msgstr "Colle le code depuis le presse-papiers"
 
 #: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:1019 engines/mm/xeen/saves.cpp:259
-#: engines/nancy/state/loadsave.cpp:124 engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:153
 #: engines/parallaction/metaengine.cpp:151
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
@@ -1554,7 +1554,7 @@ msgid "Search:"
 msgstr "Filtre :"
 
 #: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:1019
-#: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
+#: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:153
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:642 engines/wage/saveload.cpp:753
 msgid "Load game:"
@@ -3609,7 +3609,7 @@ msgstr "~R~etour au lanceur"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
-#: engines/nancy/state/loadsave.cpp:107 engines/neverhood/menumodule.cpp:925
+#: engines/nancy/state/loadsave.cpp:136 engines/neverhood/menumodule.cpp:925
 #: engines/pegasus/pegasus.cpp:407 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1250
@@ -3631,7 +3631,7 @@ msgstr "Sauvegarder :"
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
-#: engines/nancy/state/loadsave.cpp:107 engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:136
 #: engines/neverhood/menumodule.cpp:925 engines/parallaction/metaengine.cpp:157
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
@@ -11198,7 +11198,7 @@ msgstr ""
 "Accorde un peu plus de temps avant d'échouer au puzzle final. Il s'agit d'un "
 "patch officiel de HeR Interactive."
 
-#: engines/nancy/state/loadsave.cpp:154
+#: engines/nancy/state/loadsave.cpp:108
 msgid "Would you like to load or save a game?"
 msgstr "Voulez-vous charger ou sauvegarder une partie ?"
 
