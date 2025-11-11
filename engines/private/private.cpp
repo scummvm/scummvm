@@ -1770,6 +1770,11 @@ void PrivateEngine::destroyVideo() {
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	_pausedVideo = nullptr;
+	if (_subtitles != nullptr) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		g_system->hideOverlay();
+	}
 }
 
 void PrivateEngine::stopSound(bool all) {
