@@ -440,7 +440,7 @@ Common::Error PrivateEngine::run() {
 				if (_subtitles != nullptr) {
 					delete _subtitles;
 					_subtitles = nullptr;
-					g_system->clearOverlay();
+					g_system->hideOverlay();
 				}
 				_currentMovie = "";
 			} else if (!_videoDecoder->needsUpdate() && mouseMoved) {
@@ -480,7 +480,7 @@ Common::Error PrivateEngine::run() {
 			} else {
 				delete _subtitles;
 				_subtitles = nullptr;
-				g_system->clearOverlay();
+				g_system->hideOverlay();
 			}
 		}
 	}
@@ -1668,7 +1668,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	} else if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->clearOverlay();
+		g_system->hideOverlay();
 	}
 }
 void PrivateEngine::playVideo(const Common::String &name) {
@@ -1750,7 +1750,7 @@ void PrivateEngine::skipVideo() {
 	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->clearOverlay();
+		g_system->hideOverlay();
 	}
 	_currentMovie = "";
 }
