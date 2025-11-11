@@ -48,8 +48,8 @@ struct SRTEntry {
 
 	Common::Array<SubtitlePart> parts;
 
-	SRTEntry(uint seq_, uint32 start_, uint32 end_, const Common::Array<SubtitlePart> &parts_) {
-		seq = seq_; start = start_; end = end_; parts = parts_;
+	SRTEntry(uint seq_, uint32 start_, uint32 end_) {
+		seq = seq_; start = start_; end = end_;
 	}
 
 	// Dummy constructor for bsearch
@@ -68,7 +68,6 @@ public:
 	bool parseFile(const Common::Path &fname);
 	void parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const;
 	const Common::Array<SubtitlePart> *getSubtitleParts(uint32 timestamp) const;
-	Common::String getSubtitle(uint32 timestamp) const;
 
 private:
 	Common::Array<SRTEntry *> _entries;
@@ -80,12 +79,12 @@ public:
 	~Subtitles();
 
 	void loadSRTFile(const Common::Path &fname);
-	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
+	void close() { _loaded = false; _parts = nullptr; _fname.clear(); _srtParser.cleanup(); }
 	void setFont(const char *fontname, int height = 18, Common::String type = "regular");
 	void setBBox(const Common::Rect &bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
-	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false);
+	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 
 private:
@@ -95,6 +94,8 @@ private:
 	bool _loaded;
 	bool _subtitleDev;
 	bool _overlayHasAlpha;
+
+	mutable Common::Array<SubtitlePart> _devParts;
 
 	Common::HashMap<Common::String, const Graphics::Font *> _fonts;
 	int _fontHeight;
@@ -107,7 +108,6 @@ private:
 	mutable int16 _lastOverlayWidth, _lastOverlayHeight;
 
 	Common::Path _fname;
-	mutable Common::String _subtitle;
 	mutable const Common::Array<SubtitlePart> *_parts;
 	uint32 _color;
 	uint32 _blackColor;
