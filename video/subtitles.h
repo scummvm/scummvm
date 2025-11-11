@@ -75,12 +75,17 @@ private:
 
 class Subtitles {
 public:
+	enum FontStyle : int {
+		kFontStyleRegular = 0,
+		kFontStyleItalic,
+	};
+
 	Subtitles();
 	~Subtitles();
 
 	void loadSRTFile(const Common::Path &fname);
 	void close() { _loaded = false; _parts = nullptr; _fname.clear(); _srtParser.cleanup(); }
-	void setFont(const char *fontname, int height = 18, Common::String type = "regular");
+	void setFont(const char *fontname, int height = 18, FontStyle type = kFontStyleRegular);
 	void setBBox(const Common::Rect &bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
@@ -97,7 +102,7 @@ private:
 
 	mutable Common::Array<SubtitlePart> _devParts;
 
-	Common::HashMap<Common::String, const Graphics::Font *> _fonts;
+	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _fontHeight;
 
 	Graphics::Surface *_surface;

@@ -571,8 +571,8 @@ void HypnoEngine::adjustSubtitleSize() {
 		_subtitles->setBBox(Common::Rect(20, h - 160 * scale, w - 20, h - 20));
 		int fontSize = MAX(8, int(50 * scale));
 		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, "regular");
-		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 	}
 }
 
