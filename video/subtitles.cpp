@@ -289,7 +289,7 @@ Subtitles::~Subtitles() {
 	delete _surface;
 }
 
-void Subtitles::setFont(const char *fontname, int height, Common::String type) {
+void Subtitles::setFont(const char *fontname, int height, FontStyle type) {
 	_fontHeight = height;
 
 #ifdef USE_FREETYPE2
@@ -320,7 +320,6 @@ void Subtitles::setFont(const char *fontname, int height, Common::String type) {
 
 		_fonts[type] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
-
 }
 
 void Subtitles::loadSRTFile(const Common::Path &fname) {
@@ -470,8 +469,8 @@ void Subtitles::renderSubtitle() const {
 
 	int currentLineWidth = 0;
 	for (const auto &part : *_parts) {
-		const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-		if (!font) font = _fonts["regular"];
+		const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
+		if (!font) font = _fonts[kFontStyleRegular];
 
 		Common::U32String u32_text(part.text);
 		int partWidth = font->getStringWidth(u32_text);
@@ -490,8 +489,8 @@ void Subtitles::renderSubtitle() const {
 	for (const auto &line : lines) {
 		int lineWidth = 0;
 		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-			if (!font) font = _fonts["regular"];
+			const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
+			if (!font) font = _fonts[kFontStyleRegular];
 			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
 		}
 		totalWidth = MAX(totalWidth, lineWidth);
@@ -501,8 +500,8 @@ void Subtitles::renderSubtitle() const {
 	for (const auto &line : lines) {
 		int lineWidth = 0;
 		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? "italic" : "regular"];
-			if (!font) font = _fonts["regular"];
+			const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
+			if (!font) font = _fonts[kFontStyleRegular];
 			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
 		}
 
@@ -510,8 +509,9 @@ void Subtitles::renderSubtitle() const {
 		int currentX = originX;
 
 		for (const auto &part : line) {
-			Common::String fontType = part.tag == "i" ? "italic" : "regular";
-			const Graphics::Font *font = _fonts[fontType] ? _fonts[fontType] : _fonts["regular"];
+			FontStyle fontType = part.tag == "i" ? kFontStyleItalic : kFontStyleRegular;
+			const Graphics::Font *font = _fonts[fontType];
+			if (!font) font = _fonts[kFontStyleRegular];
 			Common::U32String u32_text = convertBiDiU32String(Common::U32String(part.text)).visual;
 			int partWidth = font->getStringWidth(u32_text);
 
@@ -523,7 +523,7 @@ void Subtitles::renderSubtitle() const {
 
 			currentX += partWidth;
 		}
-		height += _fonts["regular"]->getFontHeight();
+		height += _fonts[kFontStyleRegular]->getFontHeight();
 		if (height + _vPad > _realBBox.bottom)
 			break;
 	}
