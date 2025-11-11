@@ -253,9 +253,9 @@ bool SRTParser::parseFile(const Common::Path &fname) {
 			break;
 		}
 
-		Common::Array<SubtitlePart> parts;
-		parseTextAndTags(text, parts);
-		_entries.push_back(new SRTEntry(seq, start, end, parts));
+		SRTEntry *entry = new SRTEntry(seq, start, end);
+		parseTextAndTags(text, entry->parts);
+		_entries.push_back(entry);
 	}
 
 	qsort(_entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparator);
@@ -275,18 +275,6 @@ const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp)
 		return nullptr;
 
 	return &(*entry)->parts;
-}
-
-Common::String SRTParser::getSubtitle(uint32 timestamp) const {
-	const Common::Array<SubtitlePart> *parts = getSubtitleParts(timestamp);
-	if (!parts)
-		return "";
-
-	Common::String subtitle;
-	for (const auto &part : *parts) {
-		subtitle += part.text;
-	}
-	return subtitle;
 }
 
 #define SHADOW 1
@@ -366,19 +354,19 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
-	const Common::Array<SubtitlePart> *parts = nullptr;
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
+	const Common::Array<SubtitlePart> *parts;
+	bool isSFX = false;
 	if (_loaded) {
 		parts = _srtParser.getSubtitleParts(timestamp);
-	}
-
-	Common::String subtitle;
-	if (parts) {
-		for (const auto &part : *parts) {
-			subtitle += part.text;
+		if (parts && !parts->empty()) {
+			isSFX = (*parts)[0].tag != "sfx";
 		}
 	} else if (_subtitleDev) {
-		subtitle = _fname.toString('/');
+		// Force refresh
+		_parts = nullptr;
+
+		Common::String subtitle = _fname.toString('/');
 		uint32 hours, mins, secs, msecs;
 		secs = timestamp / 1000;
 		hours = secs / 3600;
@@ -386,6 +374,13 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
 		secs %= 60;
 		msecs = timestamp % 1000;
 		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
+
+		if (_devParts.empty()) {
+			_devParts.push_back(SubtitlePart("", ""));
+		}
+		_devParts[0].text = subtitle;
+
+		parts = &_devParts;
 	} else {
 		return false;
 	}
@@ -424,16 +419,23 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
 		force = true;
 	}
 
-	if (!force && _overlayHasAlpha && subtitle == _subtitle)
+	if (!force && _overlayHasAlpha && parts == _parts)
 		return false;
 
-	if (force || subtitle != _subtitle) {
-		debug(1, "%d: %s", timestamp, subtitle.c_str());
+	if (force || parts != _parts) {
+		if (debugLevelSet(1)) {
+			Common::String subtitle;
+			if (parts) {
+				for (const auto &part : *parts) {
+					subtitle += part.text;
+				}
+			}
+			debug(1, "%d: %s", timestamp, subtitle.c_str());
+		}
 
-		_subtitle = subtitle;
 		_parts = parts;
 
-		if ((!parts || parts->empty() || (*parts)[0].tag != "sfx") || showSFX)
+		if (!isSFX || showSFX)
 			renderSubtitle();
 	}
 
