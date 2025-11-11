@@ -39,7 +39,7 @@ public:
 		SceneChangeWithFlag sceneChange;
 
 		// NewPhone members
-		int16 eventFlagCondition = -1;
+		int16 directoryDisplayCondition = -1;
 		Common::Rect displaySrc;
 	};
 
