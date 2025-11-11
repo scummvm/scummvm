@@ -509,9 +509,13 @@ else
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += -liconv \
                 -framework CoreMIDI -framework CoreAudio\
-                $(STATICLIBPATH)/lib/libfluidsynth.a \
-                $(STATICLIBPATH)/lib/libglib-2.0.a \
-                $(STATICLIBPATH)/lib/libintl.a
+                $(STATICLIBPATH)/lib/libfluidsynth.a
+ifneq (,$(wildcard $(STATICLIBPATH)/lib/libglib-2.0.a))
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglib-2.0.a
+ifneq (,$(wildcard $(STATICLIBPATH)/lib/libintl.a))
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libintl.a
+endif
+endif
 
 ifneq ($(BACKEND), ios7)
 OSX_STATIC_LIBS += -lreadline
