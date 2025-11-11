@@ -36,7 +36,8 @@ public:
 			const Common::Rect &clickSrcBounds,
 			const Common::Rect &destBounds,
 			const Common::Rect &hoverSrcBounds = Common::Rect(),
-			const Common::Rect &disabledSrcBounds = Common::Rect());
+			const Common::Rect &disabledSrcBounds = Common::Rect(),
+			const Common::Rect &baseSrcBounds = Common::Rect());
 	virtual ~Button() = default;
 
 	void handleInput(NancyInput &input);
@@ -47,6 +48,7 @@ public:
 	Common::Rect _clickSrc;
 	Common::Rect _hoverSrc;
 	Common::Rect _disabledSrc;
+	Common::Rect _baseSrc;
 
 	bool _isClicked;
 	bool _isDisabled;
