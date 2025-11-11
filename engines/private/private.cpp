@@ -1660,16 +1660,24 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	subPath = subPath.appendComponent(language);
 	subPath = subPath.appendComponent(subPathStr);
 	debugC(1, kPrivateDebugFunction, "Loading subtitles from %s", subPath.toString().c_str());
-	if (Common::File::exists(subPath)) {
-		_subtitles = new Video::Subtitles();
-		_subtitles->loadSRTFile(subPath);
-		g_system->showOverlay(false);
-		adjustSubtitleSize();
-	} else if (_subtitles != nullptr) {
+
+	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
 		g_system->hideOverlay();
 	}
+
+	_subtitles = new Video::Subtitles();
+	_subtitles->loadSRTFile(subPath);
+	if (!_subtitles->isLoaded()) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		return;
+	}
+
+	g_system->showOverlay(false);
+	g_system->clearOverlay();
+	adjustSubtitleSize();
 }
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
