@@ -22,6 +22,8 @@
 #ifndef NANCY_ACTION_SECONDARYMOVIE_H
 #define NANCY_ACTION_SECONDARYMOVIE_H
 
+#include "common/ptr.h"
+
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Video {
@@ -86,7 +88,7 @@ public:
 	SceneChangeDescription _sceneChange;
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-	Video::VideoDecoder *_decoder = nullptr;
+	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }

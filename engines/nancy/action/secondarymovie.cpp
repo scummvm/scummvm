@@ -36,8 +36,6 @@ namespace Nancy {
 namespace Action {
 
 PlaySecondaryMovie::~PlaySecondaryMovie() {
-	delete _decoder;
-
 	if (NancySceneState.getActiveMovie() == this) {
 		NancySceneState.setActiveMovie(nullptr);
 	}
@@ -97,9 +95,9 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 void PlaySecondaryMovie::init() {
 	if (!_decoder) {
 		if (_videoType == kVideoPlaytypeAVF) {
-			_decoder = new AVFDecoder();
+			_decoder.reset(new AVFDecoder());
 		} else {
-			_decoder = new Video::BinkDecoder();
+			_decoder.reset(new Video::BinkDecoder());
 		}
 	}
 
@@ -145,7 +143,7 @@ void PlaySecondaryMovie::execute() {
 			// Sync audio and video. This is mostly relevant for some nancy2 scenes, as the
 			// devs stopped using the built-in movie sound around nancy4. The 12 ms
 			// difference is roughly how long it takes for a single execution of the main game loop
-			((AVFDecoder *)_decoder)->addFrameTime(12);
+			((AVFDecoder *)_decoder.get())->addFrameTime(12);
 		}
 
 		if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
