@@ -31,6 +31,7 @@ public:
 	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvcVersion);
 
 protected:
+	const int _version;
 	const MSVCVersion _msvcVersion;
 
 	StringList _enableLanguageExtensions;
