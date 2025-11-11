@@ -51,7 +51,6 @@ void SRTParser::cleanup() {
 
 void SRTParser::parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const {
 	Common::String currentText = text;
-	currentText.replace('\n', ' ');
 
 	while (true) {
 		Common::String::size_type pos_i_start = currentText.find("<i>");
@@ -358,7 +357,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 	if (_loaded) {
 		parts = _srtParser.getSubtitleParts(timestamp);
 		if (parts && !parts->empty()) {
-			isSFX = (*parts)[0].tag != "sfx";
+			isSFX = (*parts)[0].tag == "sfx";
 		}
 	} else if (_subtitleDev) {
 		// Force refresh
@@ -452,87 +451,125 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 	return true;
 }
 
+struct SubtitleRenderingPart {
+	Common::U32String text;
+	const Graphics::Font *font;
+	bool newLine;
+	int left;
+	int right;
+};
+
 void Subtitles::renderSubtitle() const {
 	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
 
 	if (!_parts || _parts->empty()) {
-		_drawRect.left = 0;
-		_drawRect.top = 0;
-		_drawRect.right = 0;
-		_drawRect.bottom = 0;
+		_drawRect.setEmpty();
 		return;
 	}
 
-	Common::Array<Common::Array<SubtitlePart>> lines;
-	lines.push_back(Common::Array<SubtitlePart>());
+	Common::Array<SubtitleRenderingPart> splitParts;
 
-	int currentLineWidth = 0;
+	// First, calculate all positions as if we were left aligned
+	bool newLine = true;
+	int currentX = 0;
 	for (const auto &part : *_parts) {
 		const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
 		if (!font) font = _fonts[kFontStyleRegular];
 
-		Common::U32String u32_text(part.text);
-		int partWidth = font->getStringWidth(u32_text);
+		Common::Array<Common::U32String> lines;
 
-		if (currentLineWidth + partWidth > _realBBox.width()) {
-			lines.push_back(Common::Array<SubtitlePart>());
-			currentLineWidth = 0;
+		font->wordWrapText(part.text.decode(Common::kUtf8), _realBBox.width(), lines, currentX);
+
+		if (lines.empty()) {
+			continue;
 		}
-		lines.back().push_back(part);
-		currentLineWidth += partWidth;
+		splitParts.reserve(splitParts.size() + lines.size());
+
+		int width = 0;
+		for (auto line = lines.begin(); line != lines.end() - 1; line++) {
+			width = font->getStringWidth(*line);
+			splitParts.emplace_back(SubtitleRenderingPart{*line, font, newLine, currentX, currentX + width});
+			newLine = true;
+			currentX = 0;
+		}
+		width = font->getStringWidth(lines.back());
+		splitParts.emplace_back(SubtitleRenderingPart{lines.back(), font, newLine, currentX, currentX + width});
+		newLine = false;
+		currentX += width;
+
+		// Last newline doesn't trigger an empty line in wordWrapText
+		if (part.text.hasSuffix("\n")) {
+			newLine = true;
+			currentX = 0;
+		}
 	}
 
-	int height = _vPad;
-	int totalWidth = 0;
+	// Then, center all lines and calculate the drawing box
+	auto lineBegin = splitParts.begin();
+	int minX = _realBBox.width();
+	int maxWidth = 0;
 
-	for (const auto &line : lines) {
-		int lineWidth = 0;
-		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
-			if (!font) font = _fonts[kFontStyleRegular];
-			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
+	for (auto splitPart = splitParts.begin() + 1; splitPart != splitParts.end(); splitPart++) {
+		if (!splitPart->newLine) {
+			continue;
 		}
-		totalWidth = MAX(totalWidth, lineWidth);
+		int width = MIN(splitPart[-1].right + 2 * _hPad, (int)_realBBox.width());
+		int origin = (_realBBox.width() - width) / 2;
+		minX = MIN(minX, origin);
+		maxWidth = MAX(maxWidth, width);
+
+		for(auto part = lineBegin; part != splitPart; part++) {
+			part->left += origin;
+			part->right += origin;
+		}
+
+		lineBegin = splitPart;
 	}
-	totalWidth = MIN(totalWidth + 2 * _hPad, (int)_realBBox.width());
+	if (lineBegin != splitParts.end()) {
+		int width = MIN(splitParts.back().right + 2 * _hPad, (int)_realBBox.width());
+		int origin = (_realBBox.width() - width) / 2;
+		minX = MIN(minX, origin);
+		maxWidth = MAX(maxWidth, width);
 
-	for (const auto &line : lines) {
-		int lineWidth = 0;
-		for (const auto &part : line) {
-			const Graphics::Font *font = _fonts[part.tag == "i" ? kFontStyleItalic : kFontStyleRegular];
-			if (!font) font = _fonts[kFontStyleRegular];
-			lineWidth += font->getStringWidth(convertUtf8ToUtf32(part.text));
+		for(auto part = lineBegin; part != splitParts.end(); part++) {
+			part->left += origin;
+			part->right += origin;
 		}
-
-		int originX = (_realBBox.width() - lineWidth) / 2;
-		int currentX = originX;
-
-		for (const auto &part : line) {
-			FontStyle fontType = part.tag == "i" ? kFontStyleItalic : kFontStyleRegular;
-			const Graphics::Font *font = _fonts[fontType];
-			if (!font) font = _fonts[kFontStyleRegular];
-			Common::U32String u32_text = convertBiDiU32String(Common::U32String(part.text)).visual;
-			int partWidth = font->getStringWidth(u32_text);
-
-			font->drawString(&_surface, u32_text, currentX, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(&_surface, u32_text, currentX + SHADOW * 2, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(&_surface, u32_text, currentX, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(&_surface, u32_text, currentX + SHADOW * 2, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(&_surface, u32_text, currentX + SHADOW, height + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
-
-			currentX += partWidth;
-		}
-		height += _fonts[kFontStyleRegular]->getFontHeight();
-		if (height + _vPad > _realBBox.bottom)
-			break;
 	}
 
-	height += _vPad;
+	// Finally, render every part on the surface
+	int currentY = _vPad;
+	int lineHeight = 0;
+	for (const auto &part : splitParts) {
+		const Graphics::Font *font = part.font;
+		int partWidth = part.right - part.left;
 
-	_drawRect.left = (_realBBox.width() - totalWidth) / 2;
+		if (part.newLine) {
+			currentY += lineHeight;
+			if (currentY + _vPad > _realBBox.bottom) {
+				lineHeight = 0;
+				break;
+			}
+
+			lineHeight = font->getFontHeight();
+		}
+
+		Common::U32String u32_text = convertBiDiU32String(part.text).visual;
+
+		font->drawString(&_surface, u32_text, part.left, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW * 2, currentY + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+		font->drawString(&_surface, u32_text, part.left + SHADOW, currentY + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
+
+	}
+
+	currentY += lineHeight + _vPad;
+
+	_drawRect.left = minX;
 	_drawRect.top = 0;
-	_drawRect.setWidth(totalWidth + SHADOW * 2);
-	_drawRect.setHeight(height + SHADOW * 2);
+	_drawRect.setWidth(maxWidth + SHADOW * 2);
+	_drawRect.setHeight(currentY + SHADOW * 2);
 	_drawRect.clip(_realBBox.width(), _realBBox.height());
 }
 
