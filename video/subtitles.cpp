@@ -285,10 +285,18 @@ Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(tr
 
 Subtitles::~Subtitles() {
 	_surface.free();
+	for (const auto &font : _fonts) {
+		FontMan.mayDeleteFont(font._value);
+	}
 }
 
 void Subtitles::setFont(const char *fontname, int height, FontStyle type) {
 	_fontHeight = height;
+
+	if (_fonts[type]) {
+		FontMan.mayDeleteFont(_fonts[type]);
+		_fonts[type] = nullptr;
+	}
 
 #ifdef USE_FREETYPE2
 	Graphics::Font *font = nullptr;
