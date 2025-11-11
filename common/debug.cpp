@@ -177,7 +177,7 @@ void DebugManager::addDebugChannels(const DebugChannelDef *channels) {
 } // End of namespace Common
 
 bool debugLevelSet(int level) {
-	return level <= gDebugLevel;
+	return level <= gDebugLevel && !gDebugChannelsOnly;
 }
 
 bool debugChannelSet(int level, uint32 debugChannel) {
