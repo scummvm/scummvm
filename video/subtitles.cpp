@@ -533,6 +533,7 @@ void Subtitles::renderSubtitle() const {
 	_drawRect.top = 0;
 	_drawRect.setWidth(totalWidth + SHADOW * 2);
 	_drawRect.setHeight(height + SHADOW * 2);
+	_drawRect.clip(_realBBox.width(), _realBBox.height());
 }
 
 } // End of namespace Video
