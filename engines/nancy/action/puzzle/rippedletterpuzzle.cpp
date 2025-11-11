@@ -100,6 +100,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint elemSize = g_nancy->getGameType() <= kGameTypeNancy8 ? 1 : 2;
 
 	_initOrder.resize(width * height);
+	assert(width * height <= 24); // If this gets hit we need to increase the sizes in RippedLetterPuzzleData
+
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
 			_initOrder[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
@@ -423,11 +425,7 @@ bool RippedLetterPuzzle::checkOrder(bool useAlt) {
 	auto &current = _puzzleState->order;
 	auto &correct = useAlt ? _solveOrderAlt : _solveOrder;
 
-	if (!_doubles.size()) {
-		return current == correct;
-	}
-
-	for (uint i = 0; i < current.size(); ++i) {
+	for (uint i = 0; i < correct.size(); ++i) {
 		bool foundCorrect = false;
 		bool isDoubled = false;
 		for (auto &d : _doubles) {

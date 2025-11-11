@@ -58,22 +58,20 @@ RippedLetterPuzzleData::RippedLetterPuzzleData() :
 	playerHasTriedPuzzle(false) {}
 
 void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
-	if (ser.isLoading()) {
-		order.resize(24);
-		rotations.resize(24);
-	} else {
-		// A piece may still be held while saving; make sure the saved data
-		// has it back in the last place it was picked up from
-		if (_pickedUpPieceID != -1) {
-			order[_pickedUpPieceLastPos] = _pickedUpPieceID;
-			rotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
-			_pickedUpPieceID = -1;
-			_pickedUpPieceLastPos = -1;
-			_pickedUpPieceRot = 0;
-		}
+	order.resize(24);
+	rotations.resize(24);
+
+	// A piece may still be held while saving; make sure the saved data
+	// has it back in the last place it was picked up from
+	if (_pickedUpPieceID != -1) {
+		order[_pickedUpPieceLastPos] = _pickedUpPieceID;
+		rotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
+		_pickedUpPieceID = -1;
+		_pickedUpPieceLastPos = -1;
+		_pickedUpPieceRot = 0;
 	}
 
-	ser.syncArray(order.data(), 24, Common::Serializer::Byte);
+	ser.syncArray(order.data(), order.size(), Common::Serializer::Byte);
 	ser.syncArray(rotations.data(), 24, Common::Serializer::Byte);
 }
 
