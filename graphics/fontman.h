@@ -106,6 +106,14 @@ public:
 
 	//const Font *getFontBySize(int size???) const;
 
+	/**
+	 * Delete the font if it's not one in use by the FontManager
+	 * This may be used when mixing directly loaded fonts and FontManager ones.
+	 *
+	 * @param font the font object to delete
+	 */
+	void mayDeleteFont(const Font *font) const;
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
