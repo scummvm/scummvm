@@ -211,6 +211,7 @@ public:
 	void resumeGame();
 
 	// Cursors
+	void updateCursor(Common::Point);
 	bool cursorPauseMovie(Common::Point);
 	bool cursorExit(Common::Point);
 	bool cursorMask(Common::Point);

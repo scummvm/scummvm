@@ -330,10 +330,9 @@ Common::Error PrivateEngine::run() {
 	}
 
 	_needToDrawScreenFrame = false;
-	bool needsUpdate = false;
 
 	while (!shouldQuit()) {
-		needsUpdate = false;
+		bool mouseMoved = false;
 		checkPhoneCall();
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -388,15 +387,8 @@ Common::Error PrivateEngine::run() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				needsUpdate = true;
-				// Reset cursor to default
-				changeCursor("default");
-				// The following functions will return true
-				// if the cursor is changed
-				if (cursorPauseMovie(mousePos)) {
-				} else if (cursorMask(mousePos)) {
-				} else
-					cursorExit(mousePos);
+				mouseMoved = true;
+				updateCursor(mousePos);
 				break;
 
 			default:
@@ -413,6 +405,7 @@ Common::Error PrivateEngine::run() {
 			playVideo(_nextMovie);
 			_currentMovie = _nextMovie;
 			_nextMovie = "";
+			updateCursor(mousePos);
 			continue;
 		}
 
@@ -436,7 +429,7 @@ Common::Error PrivateEngine::run() {
 					g_system->clearOverlay();
 				}
 				_currentMovie = "";
-			} else if (!_videoDecoder->needsUpdate() && needsUpdate) {
+			} else if (!_videoDecoder->needsUpdate() && mouseMoved) {
 				g_system->updateScreen();
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
@@ -454,13 +447,13 @@ Common::Error PrivateEngine::run() {
 			_nextSetting = "";
 			_currentVS = "";
 			Gen::g_vm->run();
-			changeCursor("default");
 
 			// Draw the screen once the VM has processed the last setting.
 			// This prevents the screen from flickering images as VM settings
 			// are executed. Fixes the previous screen from being displayed
 			// when a video finishes playing.
 			if (_nextSetting.empty()) {
+				updateCursor(mousePos);
 				drawScreen();
 			}
 		}
@@ -572,6 +565,20 @@ void PrivateEngine::checkPoliceBust() {
 	}
 }
 
+void PrivateEngine::updateCursor(Common::Point mousePos) {
+	// If a function returns true then it changed the cursor.
+	if (cursorPauseMovie(mousePos)) {
+		return;
+	}
+	if (cursorMask(mousePos)) {
+		return;
+	}
+	if (cursorExit(mousePos)) {
+		return;
+	}
+	changeCursor("default");
+}
+
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
 	mousePos = mousePos - _origin;
 	if (mousePos.x < 0 || mousePos.y < 0)
@@ -641,6 +648,7 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
+			changeCursor("default");
 			return true;
 		}
 	}
