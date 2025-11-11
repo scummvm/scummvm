@@ -188,6 +188,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			projectType = kProjectXcode;
+		} else if (!std::strcmp(argv[i], "--ios")) {
+			setup.appleEmbedded = true;
+		} else if (!std::strcmp(argv[i], "--tvos")) {
+			setup.appleEmbedded = true;
 #endif
 
 		} else if (!std::strcmp(argv[i], "--msvc-version")) {
@@ -447,14 +451,13 @@ int main(int argc, char *argv[]) {
 
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
-		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
-		// correct target by the Xcode project provider.
-		// This define will help catching up target-dependent files, like "browser_osx.mm"
-		// The suffix ("_osx", or "_ios") will be used by the project provider to filter out
-		// the files, according to the target.
-		setup.defines.push_back("MACOSX");
-		setup.defines.push_back("IPHONE");
-		setup.defines.push_back("SCUMMVM_NEON");
+		if (setup.appleEmbedded) {
+			setup.defines.push_back("IPHONE");
+			setup.defines.push_back("IPHONE_IOS7");
+			setup.defines.push_back("SCUMMVM_NEON");
+		} else {
+			setup.defines.push_back("MACOSX");
+		}
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
 		setup.defines.push_back("WIN32");
 		setup.win32 = true;
@@ -480,18 +483,20 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	setup.defines.push_back("SDL_BACKEND");
-	if (setup.useSDL == kSDLVersion1) {
-		cout << "\nBuilding against SDL 1.2\n\n";
-	} else if (setup.useSDL == kSDLVersion2) {
-		cout << "\nBuilding against SDL 2\n\n";
-		setup.defines.push_back("USE_SDL2");
-	} else if (setup.useSDL == kSDLVersion3) {
-		cout << "\nBuilding against SDL 3\n\n";
-		setup.defines.push_back("USE_SDL3");
-	} else {
-		std::cerr << "ERROR: Unsupported SDL version\n";
-		return -1;
+	if (projectType != kProjectXcode || !setup.appleEmbedded) {
+		setup.defines.push_back("SDL_BACKEND");
+		if (setup.useSDL == kSDLVersion1) {
+			cout << "\nBuilding against SDL 1.2\n\n";
+		} else if (setup.useSDL == kSDLVersion2) {
+			cout << "\nBuilding against SDL 2\n\n";
+			setup.defines.push_back("USE_SDL2");
+		} else if (setup.useSDL == kSDLVersion3) {
+			cout << "\nBuilding against SDL 3\n\n";
+			setup.defines.push_back("USE_SDL3");
+		} else {
+			std::cerr << "ERROR: Unsupported SDL version\n";
+			return -1;
+		}
 	}
 
 	if (setup.useStaticDetection) {
@@ -823,6 +828,10 @@ void displayHelp(const char *exe) {
 			"                            " LIBS_DEFINE " environment variable\n "
 	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
+	        "\n"
+	        "XCode specific settings:\n"
+	        " --ios                      build for iOS or tvOS\n"
+	        " --tvos                     build for iOS or tvOS\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines             list all available engines and their default state\n"
@@ -1287,6 +1296,18 @@ FeatureList getAllFeatures() {
  * This means disabling conflicting features, enabling meta-features, ...
  */
 static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
+#ifdef ENABLE_XCODE
+	// IMGUI and NASM are not available on Xcode
+	if (projectType == kProjectXcode) {
+		setFeatureBuildState("imgui", setup.features, false);
+		setFeatureBuildState("nasm", setup.features, false);
+	}
+	// OpenGL classic is not available on iOS/tvOS
+	if (projectType == kProjectXcode && setup.appleEmbedded) {
+		setFeatureBuildState("opengl_game_classic", setup.features, false);
+	}
+#endif
+
 	// Vorbis and Tremor can not be enabled simultaneously
 	if (getFeatureBuildState("tremor", setup.features)) {
 		setFeatureBuildState("vorbis", setup.features, false);
@@ -1321,18 +1342,13 @@ static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
 	}
 
 	// Check IMGUI dependencies
-	if (!getFeatureBuildState("opengl", setup.features) ||
+	if (getFeatureBuildState("imgui", setup.features) && (
+		!getFeatureBuildState("opengl", setup.features) ||
 		!getFeatureBuildState("freetype2", setup.features) ||
-		setup.useSDL == kSDLVersion1) {
+		setup.useSDL == kSDLVersion1)) {
 		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2+\n";
 		setFeatureBuildState("imgui", setup.features, false);
 	}
-	// IMGUI is not available on Xcode
-#ifdef ENABLE_XCODE
-	if (projectType == kProjectXcode) {
-		setFeatureBuildState("imgui", setup.features, false);
-	}
-#endif
 
 	// Calculate 3D feature state
 	setFeatureBuildState("3d", setup.features,
@@ -1960,7 +1976,9 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		pchEx.clear();
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		if (std::find(setup.defines.begin(), setup.defines.end(), "SDL_BACKEND") != setup.defines.end()) {
+			createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		}
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
