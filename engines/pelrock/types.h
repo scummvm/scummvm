@@ -89,6 +89,7 @@ struct Exit {
 };
 
 struct AnimSet {
+	byte type;
 	int x;
 	int y;
 	int w;
@@ -96,6 +97,15 @@ struct AnimSet {
 	int speed;
 	int numAnims;
 	Anim *animData;
+	byte extra;
+	bool enabled;
+};
+
+struct HoverArea {
+	int x;
+	int y;
+	int w;
+	int h;
 };
 
 struct HotSpot {

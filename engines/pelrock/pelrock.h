@@ -63,15 +63,17 @@ private:
 	// Room data
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	Common::List<AnimSet> getRoomAnimations(Common::File *roomFile, int roomOffset);
-	void loadHotspots(Common::File *roomFile, int roomOffset);
+	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	void loadMainCharacterAnims();
+	void loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadCursors();
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
+	Common::List<VerbIcons> populateActionsMenu(HotSpot hotspot);
 
 	// render loop
 	void frames();
@@ -87,6 +89,7 @@ private:
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
 	Common::List<HotSpot> _hotspots;
+	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
 	int *_currentAnimFrames = nullptr;
@@ -107,6 +110,7 @@ private:
 	int _popupX = 0;
 	int _popupY = 0;
 	int _currentPopupFrame = 0;
+	HotSpot *_currentHotspot = nullptr;
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;

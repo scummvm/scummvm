@@ -146,9 +146,6 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreen(0, 2);
-		_smallFont->drawString(g_engine->_screen, Common::String("Welcome to Pelrock!"), 0, 0, 400, 102);
-		_largeFont->drawString(g_engine->_screen, Common::String("Click to start"), 200, 180, 400, 102);
-		_screen->update();
 	}
 }
 
@@ -243,7 +240,7 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 	}
 }
 
-Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, int roomOffset) {
+Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	roomFile->seek(pair_offset, SEEK_SET);
 	uint32_t offset = roomFile->readUint32LE();
@@ -265,9 +262,8 @@ Common::List<AnimSet> PelrockEngine::getRoomAnimations(Common::File *roomFile, i
 	uint32_t picOffset = 0;
 	for (int i = 0; i < 7; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
-		roomFile->seek(animOffset, SEEK_SET);
-
 		AnimSet animSet;
+		roomFile->seek(animOffset, SEEK_SET);
 		animSet.x = roomFile->readSint16LE();
 		animSet.y = roomFile->readSint16LE();
 		animSet.w = roomFile->readByte();
@@ -354,6 +350,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 	return walkboxes;
 }
 
+
 void PelrockEngine::loadCursors() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
@@ -431,8 +428,8 @@ Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffs
 
 void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
-	// roomFile->skip(4);
 	uint32_t pair10_data_offset = roomFile->readUint32LE();
 	uint32_t pair10_size = roomFile->readUint32LE();
 	uint32_t count_offset = pair10_data_offset + 0x47a;
@@ -456,6 +453,9 @@ void PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 		hotspots.push_back(spot);
 	}
 	_hotspots = hotspots;
+	// uint32_t hover_areas_start = pair10_data_offset + 0x1BE;
+	// roomFile->seek(hover_areas_start, SEEK_SET);
+
 }
 
 void PelrockEngine::loadMainCharacterAnims() {
@@ -499,6 +499,42 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 		}
 	}
 }
+Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot hotspot) {
+	Common::List<VerbIcons> verbs;
+	verbs.push_back(LOOK);
+
+	if(hotspot.type & 1) {
+		debug("Hotspot allows OPEN action");
+		verbs.push_back(OPEN);
+	}
+	if(hotspot.type & 2) {
+		debug("Hotspot allows CLOSE action");
+		verbs.push_back(CLOSE);
+	}
+	if(hotspot.type & 4) {
+		debug("Hotspot allows UNKNOWN action");
+		verbs.push_back(UNKNOWN);
+	}
+	if(hotspot.type & 8) {
+		debug("Hotspot allows PICKUP action");
+		verbs.push_back(PICKUP);
+	}
+	if(hotspot.type & 16) {
+		debug("Hotspot allows TALK action");
+		verbs.push_back(TALK);
+	}
+	if(hotspot.type & 32) {
+		debug("Hotspot allows WALK action");
+		verbs.push_back(PUSH);
+	}
+	if(hotspot.type & 128) {
+		debug("Hotspot allows PULL action");
+		verbs.push_back(PULL);
+	}
+	return verbs;
+}
+
+
 void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
@@ -601,7 +637,8 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		}
 		_displayPopup = true;
 		_currentPopupFrame = 0;
-
+		_currentHotspot = hotspot;
+		populateActionsMenu(*hotspot);
 		_bgPopupBalloon = grabBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight);
 	}
 }
@@ -613,18 +650,7 @@ HotSpot *PelrockEngine::isHotspotUnder(int x, int y) {
 			mouseY >= i->y && mouseY <= (i->y + i->h)) {
 			int lookable = i->extra & 0x0B;
 			int openable = i->extra & 0x0F;
-			debug("Hotspot at (%d,%d) size (%d,%d) extra %d, type = %d, lookable = %d, openable=%d", i->x, i->y, i->w, i->h, i->extra, i->type, lookable, openable);
-			/*
-			LOOK = 0x0B      # Look at
-	TAKE = 0x0C      # Take/Pick up
-	USE = 0x0D       # Use
-	TALK = 0x0E      # Talk to
-	OPEN = 0x0F      # Open
-	CLOSE = 0x10     # Close
-	PUSH = 0x11      # Push/Move
-	PULL = 0x12      # Pull
-	GIVE = 0x13      # Give
-	*/
+			// debug("Hotspot at (%d,%d) size (%d,%d) extra %d, type = %d, lookable = %d, openable=%d", i->x, i->y, i->w, i->h, i->extra, i->type, lookable, openable);
 			return &(*i);
 		}
 	}
@@ -645,7 +671,7 @@ AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
 	for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
 		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
 			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			debug("Sprite at (%d,%d) size (%d,%d)", i->x, i->y, i->w, i->h);
+			debug("Sprite at (%d,%d) size (%d,%d), type = %d, extra = %d, enabled=%d", i->x, i->y, i->w, i->h, i->type, i->extra, i->enabled);
 			return &(*i);
 		}
 	}
@@ -661,6 +687,10 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 				_screen->setPixel(x + posx, y + posy, _popUpBalloon[src_pos]);
 		}
 	}
+
+	// for (Common::List<VerbIcons>::iterator i = verbList.begin(); i != verbList.end(); i++) {
+	// 	debug("Verb icon to show: %d", *i);
+	// }
 
 	for (uint32_t y = 0; y < kVerbIconHeight; y++) {
 		for (uint32_t x = 0; x < kVerbIconWidth; x++) {
@@ -752,7 +782,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 			_screen->setPixel(i, j, background[j * 640 + i]);
 		}
 	}
-	_currentRoomAnims = getRoomAnimations(&roomFile, roomOffset);
+	_currentRoomAnims = loadRoomAnimations(&roomFile, roomOffset);
 
 	loadHotspots(&roomFile, roomOffset);
 	int hotsPotCount = 0;
