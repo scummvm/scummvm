@@ -27,9 +27,10 @@
 #include "common/hashmap.h"
 #include "common/rect.h"
 
+#include "graphics/surface.h"
+
 namespace Graphics {
 class Font;
-struct Surface;
 }
 
 namespace Video {
@@ -105,7 +106,7 @@ private:
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _fontHeight;
 
-	Graphics::Surface *_surface;
+	mutable Graphics::Surface _surface;
 
 	mutable Common::Rect _drawRect;
 	Common::Rect _requestedBBox;

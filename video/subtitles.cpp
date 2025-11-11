@@ -281,12 +281,11 @@ const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp)
 
 Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(true),
 	_lastOverlayWidth(-1), _lastOverlayHeight(-1) {
-	_surface = new Graphics::Surface();
 	_subtitleDev = ConfMan.getBool("subtitle_dev");
 }
 
 Subtitles::~Subtitles() {
-	delete _surface;
+	_surface.free();
 }
 
 void Subtitles::setFont(const char *fontname, int height, FontStyle type) {
@@ -336,16 +335,16 @@ void Subtitles::setBBox(const Common::Rect &bbox) {
 
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
 	_overlayHasAlpha = overlayFormat.aBits() != 0;
-	_surface->create(_requestedBBox.width() + SHADOW * 2, _requestedBBox.height() + SHADOW * 2, overlayFormat);
+	_surface.create(_requestedBBox.width() + SHADOW * 2, _requestedBBox.height() + SHADOW * 2, overlayFormat);
 	// Force recalculation of real bounding box
 	_lastOverlayWidth = -1;
 	_lastOverlayHeight = -1;
 }
 
 void Subtitles::setColor(byte r, byte g, byte b) {
-	_color = _surface->format.ARGBToColor(255, r, g, b);
-	_blackColor = _surface->format.ARGBToColor(255, 0, 0, 0);
-	_transparentColor = _surface->format.ARGBToColor(0, 0, 0, 0);
+	_color = _surface.format.ARGBToColor(255, r, g, b);
+	_blackColor = _surface.format.ARGBToColor(255, 0, 0, 0);
+	_transparentColor = _surface.format.ARGBToColor(0, 0, 0, 0);
 }
 
 void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
@@ -440,13 +439,13 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 
 	if (_overlayHasAlpha) {
 		// When we have alpha, draw the whole surface without thinking it more
-		g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
+		g_system->copyRectToOverlay(_surface.getPixels(), _surface.pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
 	} else {
 		// When overlay doesn't have alpha, showing it hides the underlying game screen
 		// We force a copy of the game screen to the overlay by clearing it
 		// We then draw the smallest possible surface to minimize black rectangle behind text
 		g_system->clearOverlay();
-		g_system->copyRectToOverlay((byte *)_surface->getPixels() + _drawRect.top * _surface->pitch + _drawRect.left * _surface->format.bytesPerPixel, _surface->pitch,
+		g_system->copyRectToOverlay((byte *)_surface.getPixels() + _drawRect.top * _surface.pitch + _drawRect.left * _surface.format.bytesPerPixel, _surface.pitch,
 				_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
 	}
 
@@ -454,7 +453,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 }
 
 void Subtitles::renderSubtitle() const {
-	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
+	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
 
 	if (!_parts || _parts->empty()) {
 		_drawRect.left = 0;
@@ -515,11 +514,11 @@ void Subtitles::renderSubtitle() const {
 			Common::U32String u32_text = convertBiDiU32String(Common::U32String(part.text)).visual;
 			int partWidth = font->getStringWidth(u32_text);
 
-			font->drawString(_surface, u32_text, currentX, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW * 2, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW * 2, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
-			font->drawString(_surface, u32_text, currentX + SHADOW, height + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
+			font->drawString(&_surface, u32_text, currentX, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
+			font->drawString(&_surface, u32_text, currentX + SHADOW * 2, height, partWidth, _blackColor, Graphics::kTextAlignLeft);
+			font->drawString(&_surface, u32_text, currentX, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+			font->drawString(&_surface, u32_text, currentX + SHADOW * 2, height + SHADOW * 2, partWidth, _blackColor, Graphics::kTextAlignLeft);
+			font->drawString(&_surface, u32_text, currentX + SHADOW, height + SHADOW, partWidth, _color, Graphics::kTextAlignLeft);
 
 			currentX += partWidth;
 		}
