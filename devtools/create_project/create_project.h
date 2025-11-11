@@ -298,6 +298,7 @@ struct BuildSetup {
 	bool useStaticDetection = true;    ///< Whether to link detection features inside the executable or not.
 	bool useWindowsUnicode = true;     ///< Whether to use Windows Unicode APIs or ANSI APIs.
 	bool useWindowsSubsystem = false;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
+	bool appleEmbedded = false;        ///< Whether the build will target iOS or tvOS instead of macOS.
 	bool useXCFramework = false;       ///< Whether to use Apple XCFrameworks instead of static libraries
 	bool useVcpkg = false;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
 	bool win32 = false;                ///< Target is Windows
