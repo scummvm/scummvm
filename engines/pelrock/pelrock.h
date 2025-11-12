@@ -65,7 +65,7 @@ private:
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void loadMainCharacterAnims();
 	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
-	Common::List<HotSpot>loadHotspots(Common::File *roomFile, int roomOffset);
+	Common::List<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
@@ -74,8 +74,8 @@ private:
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 	Common::List<VerbIcons> populateActionsMenu(HotSpot hotspot);
- 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
-    Exit *isExitAtPoint(int x, int y);
+	Common::Point calculateWalkTarget(int mouseX, int mouseY);
+	Exit *isExitAtPoint(int x, int y);
 	// render loop
 	void frames();
 	void checkMouseHover();

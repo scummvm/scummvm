@@ -280,7 +280,6 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 		animSet.actionFlags = animData[34];
 		animSet.isDisabled = animData[38];
 
-
 		animSet.animData = new Anim[animSet.numAnims];
 		debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
 		// roomFile->skip(1);
@@ -310,7 +309,6 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 				debug("Anim %d-%d: invalid dimensions, skipping", i, j);
 			}
 			animSet.animData[j] = anim;
-
 		}
 
 		anims.push_back(animSet);
@@ -372,10 +370,8 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	Common::List<HotSpot> hotspots;
 
-
-
 	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
-		if(!i->isDisabled) {
+		if (!i->isDisabled) {
 			hotspots.push_back(
 				HotSpot{
 					i->actionFlags,
@@ -384,16 +380,13 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 					i->w,
 					i->h,
 					i->extra,
-				}
-			);
+				});
 		}
 	}
 
 	Common::List<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
-
-
 
 	int hotsPotCount = 0;
 	for (Common::List<HotSpot>::iterator i = staticHotspots.begin(); i != staticHotspots.end(); i++) {
@@ -415,7 +408,6 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
 		walkboxCount++;
 	}
-
 
 	_currentRoomAnims = anims;
 	_currentRoomHotspots = hotspots;
@@ -497,7 +489,7 @@ Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffs
 	return exits;
 }
 
-Common::List<HotSpot>PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
+Common::List<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
 
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
@@ -526,7 +518,6 @@ Common::List<HotSpot>PelrockEngine::loadHotspots(Common::File *roomFile, int roo
 	return hotspots;
 	// uint32_t hover_areas_start = pair10_data_offset + 0x1BE;
 	// roomFile->seek(hover_areas_start, SEEK_SET);
-
 }
 
 void PelrockEngine::loadMainCharacterAnims() {
@@ -574,37 +565,36 @@ Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot hotspot) {
 	Common::List<VerbIcons> verbs;
 	verbs.push_back(LOOK);
 
-	if(hotspot.type & 1) {
+	if (hotspot.type & 1) {
 		debug("Hotspot allows OPEN action");
 		verbs.push_back(OPEN);
 	}
-	if(hotspot.type & 2) {
+	if (hotspot.type & 2) {
 		debug("Hotspot allows CLOSE action");
 		verbs.push_back(CLOSE);
 	}
-	if(hotspot.type & 4) {
+	if (hotspot.type & 4) {
 		debug("Hotspot allows UNKNOWN action");
 		verbs.push_back(UNKNOWN);
 	}
-	if(hotspot.type & 8) {
+	if (hotspot.type & 8) {
 		debug("Hotspot allows PICKUP action");
 		verbs.push_back(PICKUP);
 	}
-	if(hotspot.type & 16) {
+	if (hotspot.type & 16) {
 		debug("Hotspot allows TALK action");
 		verbs.push_back(TALK);
 	}
-	if(hotspot.type & 32) {
+	if (hotspot.type & 32) {
 		debug("Hotspot allows WALK action");
 		verbs.push_back(PUSH);
 	}
-	if(hotspot.type & 128) {
+	if (hotspot.type & 128) {
 		debug("Hotspot allows PULL action");
 		verbs.push_back(PULL);
 	}
 	return verbs;
 }
-
 
 void PelrockEngine::frames() {
 
@@ -719,7 +709,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_displayPopup = true;
 		_currentPopupFrame = 0;
 		_currentHotspot = hotspot;
-		populateActionsMenu(*hotspot);
 		_bgPopupBalloon = grabBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight);
 	}
 }
@@ -769,15 +758,32 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		}
 	}
 
-	// for (Common::List<VerbIcons>::iterator i = verbList.begin(); i != verbList.end(); i++) {
-	// 	debug("Verb icon to show: %d", *i);
-	// }
+	Common::List<VerbIcons> availableActions = populateActionsMenu(*_currentHotspot);
+
+	for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
+		debug("Verb icon to show: %d", *i);
+	}
 
 	for (uint32_t y = 0; y < kVerbIconHeight; y++) {
 		for (uint32_t x = 0; x < kVerbIconWidth; x++) {
 			unsigned int src_pos = y * kVerbIconWidth + x;
 			if (_verbIcons[LOOK][src_pos] != 1)
-				_screen->setPixel(x + posx + 10, y + posy + 10, _verbIcons[LOOK][src_pos]);
+				_screen->setPixel(x + posx + 20, y + posy + 20, _verbIcons[LOOK][src_pos]);
+		}
+	}
+
+	for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
+		VerbIcons verb = *i;
+		int index = 0;
+		for (Common::List<VerbIcons>::iterator j = availableActions.begin(); j != i; j++) {
+			index++;
+		}
+		for (uint32_t y = 0; y < kVerbIconHeight; y++) {
+			for (uint32_t x = 0; x < kVerbIconWidth; x++) {
+				unsigned int src_pos = y * kVerbIconWidth + x;
+				if (_verbIcons[verb][src_pos] != 1)
+					_screen->setPixel(x + posx + 20 + (index * (kVerbIconWidth + 2)), y + posy + 20, _verbIcons[verb][src_pos]);
+			}
 		}
 	}
 }
@@ -793,7 +799,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
 
-    Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
+	Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
 
 	if (exit != nullptr) {
 		xAlfred = exit->targetX;
@@ -815,16 +821,15 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 void PelrockEngine::checkMouseHover() {
 	bool isSomethingUnder = false;
 
+	// Calculate walk target first (before checking anything else)
+	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
 
-	 // Calculate walk target first (before checking anything else)
-    Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
-
-    // Check if walk target hits any exit
-    bool exitDetected = false;
-    Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
-    if (exit != nullptr) {
-        exitDetected = true;
-    }
+	// Check if walk target hits any exit
+	bool exitDetected = false;
+	Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
+	if (exit != nullptr) {
+		exitDetected = true;
+	}
 
 	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
 	if (hotspot != nullptr) {
@@ -837,92 +842,89 @@ void PelrockEngine::checkMouseHover() {
 	// }
 	if (isSomethingUnder && exitDetected) {
 		changeCursor(COMBINATION);
-	}
-	else if (isSomethingUnder) {
+	} else if (isSomethingUnder) {
 		changeCursor(HOTSPOT);
-	}
-	else if (exitDetected) {
+	} else if (exitDetected) {
 		changeCursor(EXIT);
 	} else {
 		changeCursor(DEFAULT);
 	}
-
 }
 
 Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
-    // Starting point for pathfinding
-    int sourceX = mouseX;
-    int sourceY = mouseY;
+	// Starting point for pathfinding
+	int sourceX = mouseX;
+	int sourceY = mouseY;
 
-    // TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
-    // For now, just use mouse position
+	// TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
+	// For now, just use mouse position
 
-    // Find nearest walkable point in walkboxes
-    uint32 minDistance = 0xFFFFFFFF;
-    Common::Point bestTarget(sourceX, sourceY);
+	// Find nearest walkable point in walkboxes
+	uint32 minDistance = 0xFFFFFFFF;
+	Common::Point bestTarget(sourceX, sourceY);
 
-    for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
-         it != _currentRoomWalkboxes.end(); ++it) {
+	for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
+		 it != _currentRoomWalkboxes.end(); ++it) {
 
-        // Calculate distance from source point to this walkbox (Manhattan distance)
-        int dx = 0;
-        int dy = 0;
+		// Calculate distance from source point to this walkbox (Manhattan distance)
+		int dx = 0;
+		int dy = 0;
 
-        // Calculate horizontal distance
-        if (sourceX < it->x) {
-            dx = it->x - sourceX;
-        } else if (sourceX > it->x + it->w) {
-            dx = sourceX - (it->x + it->w);
-        }
-        // else: sourceX is inside walkbox horizontally, dx = 0
+		// Calculate horizontal distance
+		if (sourceX < it->x) {
+			dx = it->x - sourceX;
+		} else if (sourceX > it->x + it->w) {
+			dx = sourceX - (it->x + it->w);
+		}
+		// else: sourceX is inside walkbox horizontally, dx = 0
 
-        // Calculate vertical distance
-        if (sourceY < it->y) {
-            dy = it->y - sourceY;
-        } else if (sourceY > it->y + it->h) {
-            dy = sourceY - (it->y + it->h);
-        }
-        // else: sourceY is inside walkbox vertically, dy = 0
+		// Calculate vertical distance
+		if (sourceY < it->y) {
+			dy = it->y - sourceY;
+		} else if (sourceY > it->y + it->h) {
+			dy = sourceY - (it->y + it->h);
+		}
+		// else: sourceY is inside walkbox vertically, dy = 0
 
-        uint32 distance = dx + dy;
+		uint32 distance = dx + dy;
 
-        if (distance < minDistance) {
-            minDistance = distance;
+		if (distance < minDistance) {
+			minDistance = distance;
 
-            // Calculate target point (nearest point on walkbox to source)
-            int targetX = sourceX;
-            int targetY = sourceY;
+			// Calculate target point (nearest point on walkbox to source)
+			int targetX = sourceX;
+			int targetY = sourceY;
 
-            if (sourceX < it->x) {
-                targetX = it->x;
-            } else if (sourceX > it->x + it->w) {
-                targetX = it->x + it->w;
-            }
+			if (sourceX < it->x) {
+				targetX = it->x;
+			} else if (sourceX > it->x + it->w) {
+				targetX = it->x + it->w;
+			}
 
-            if (sourceY < it->y) {
-                targetY = it->y;
-            } else if (sourceY > it->y + it->h) {
-                targetY = it->y + it->h;
-            }
+			if (sourceY < it->y) {
+				targetY = it->y;
+			} else if (sourceY > it->y + it->h) {
+				targetY = it->y + it->h;
+			}
 
-            bestTarget.x = targetX;
-            bestTarget.y = targetY;
-        }
-    }
+			bestTarget.x = targetX;
+			bestTarget.y = targetY;
+		}
+	}
 
-    return bestTarget;
+	return bestTarget;
 }
 
 Exit *PelrockEngine::isExitAtPoint(int x, int y) {
-    for (Common::List<Exit>::iterator i = _currentRoomExits.begin();
-         i != _currentRoomExits.end(); ++i) {
-        // Check if point is inside exit trigger rectangle
-        if (x >= i->x && x <= (i->x + i->w) &&
-            y >= i->y && y <= (i->y + i->h)) {
-            return &(*i);
-        }
-    }
-    return nullptr;
+	for (Common::List<Exit>::iterator i = _currentRoomExits.begin();
+		 i != _currentRoomExits.end(); ++i) {
+		// Check if point is inside exit trigger rectangle
+		if (x >= i->x && x <= (i->x + i->w) &&
+			y >= i->y && y <= (i->y + i->h)) {
+			return &(*i);
+		}
+	}
+	return nullptr;
 }
 
 void PelrockEngine::setScreen(int number, int dir) {
@@ -955,7 +957,6 @@ void PelrockEngine::setScreen(int number, int dir) {
 			_screen->setPixel(i, j, background[j * 640 + i]);
 		}
 	}
-
 
 	loadRoomMetadata(&roomFile, roomOffset);
 
