@@ -30,7 +30,7 @@
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/fs/emscripten/emscripten-fs-factory.h"
 #include "backends/platform/sdl/emscripten/emscripten.h"
-#include "backends/timer/default/default-timer.h"
+#include "backends/timer/emscripten/emscripten-timer.h"
 #include "common/file.h"
 #ifdef USE_TTS
 #include "backends/text-to-speech/emscripten/emscripten-text-to-speech.h"
@@ -120,6 +120,13 @@ void OSystem_Emscripten::initBackend() {
 }
 
 void OSystem_Emscripten::init() {
+
+	// SDL Timers don't work in Emscripten unless threads are enabled or Asyncify is disabled.
+	// We can do neither, so we use the EmscriptenTimerManager instead.
+	// This has to be done before the filesystem is initialized so it's available for folders
+	// being loaded over HTTP.
+	_timerManager = new EmscriptenTimerManager();
+
 	// Initialze File System Factory
 	EmscriptenFilesystemFactory *fsFactory = new EmscriptenFilesystemFactory();
 	_fsFactory = fsFactory;
@@ -199,24 +206,6 @@ void OSystem_Emscripten::exportFile(const Common::Path &filename) {
 	delete[] bytes;
 }
 
-void OSystem_Emscripten::updateTimers() {
-	// avoid a recursion loop if a timer callback decides to call OSystem::delayMillis()
-	static bool inTimer = false;
-
-	if (!inTimer) {
-		inTimer = true;
-		((DefaultTimerManager *)_timerManager)->checkTimers();
-		inTimer = false;
-	} else {
-		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-		assert(activeDomain);
-
-		warning("%s/%s calls update() from timer",
-				activeDomain->getValOrDefault("engineid").c_str(),
-				activeDomain->getValOrDefault("gameid").c_str());
-	}
-}
-
 Common::MutexInternal *OSystem_Emscripten::createMutex() {
 	return new NullMutexInternal();
 }
@@ -231,22 +220,17 @@ void OSystem_Emscripten::addSysArchivesToSearchSet(Common::SearchSet &s, int pri
 }
 
 void OSystem_Emscripten::delayMillis(uint msecs) {
-	static uint32 lastThreshold = 0;
-	const uint32 threshold = getMillis() + msecs;
-	if (msecs == 0 && threshold - lastThreshold < 10) {
+	static uint32 lastSleep = 0;
+	if (msecs == 0 && getMillis() - lastSleep < 20) {
 		return;
 	}
-	uint32 pause = 0;
-	do {
 #ifdef ENABLE_EVENTRECORDER
-		if (!g_eventRec.processDelayMillis())
+	if (!g_eventRec.processDelayMillis())
 #endif
-		SDL_Delay(pause);
-		updateTimers();
-		pause = getMillis() > threshold ? 0 : threshold - getMillis(); // Avoid negative values
-		pause = pause > 10 ? 10 : pause; // ensure we don't pause for too long
-	} while (pause > 0);
-	lastThreshold = threshold;
+	SDL_Delay(msecs);
+
+	((EmscriptenTimerManager *)_timerManager)->checkTimers();
+	lastSleep = getMillis();
 }
 
 #ifdef USE_CLOUD
