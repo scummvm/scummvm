@@ -123,8 +123,10 @@ void PrivateEngine::loadCursors() {
 
 		Common::MacResManager resMan;
 
-		Common::String path = isDemo() ? "SUPPORT/Private Eye Demo" : "SUPPORT/Private Eye";
-		if (resMan.open(path.c_str())) {
+		const char *executableFilePath = isDemo() ? "SUPPORT/Private Eye Demo" : "SUPPORT/Private Eye";
+		const char *executableInstallerPath = isDemo() ? "Private Eye Demo" : "Private Eye";
+		Common::ScopedPtr<Common::Archive> macInstaller(loadMacInstaller());
+		if (resMan.open(executableFilePath) || (macInstaller && resMan.open(executableInstallerPath, *macInstaller))) {
 			const Common::MacResIDArray cursorResIDs = resMan.getResIDArray(MKTAG('C', 'U', 'R', 'S'));
 			_cursors.resize(cursorResIDs.size());
 
