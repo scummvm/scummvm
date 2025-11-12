@@ -1225,7 +1225,8 @@ const MSVCVersion s_msvc[] = {
 	{ 14,    "Visual Studio 2015",    "12.00",            "14",    "14.0",    "v140",    "LLVM-vs2014" },
 	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        },
-	{ 17,    "Visual Studio 2022",    "12.00",    "Version 17",    "17.0",    "v143",    "llvm"        }
+	{ 17,    "Visual Studio 2022",    "12.00",    "Version 17",    "17.0",    "v143",    "llvm"        },
+	{ 18,    "Visual Studio 2026",    "12.00",    "Version 18",    "18.0",    "v145",    "llvm"        }
 };
 
 const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
