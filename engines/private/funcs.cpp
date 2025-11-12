@@ -53,7 +53,12 @@ static void fChgMode(ArgArray args) {
 
 	if (args.size() == 3) {
 		Symbol *location = g_private->maps.lookupLocation(args[2].u.sym->name);
-		setSymbol(location, true);
+		if (location->u.val == 0) {
+			// visited locations have non-zero values.
+			// set to an incrementing value to record the order visited.
+			int maxLocationValue = g_private->getMaxLocationValue();
+			setSymbol(location, maxLocationValue + 1);
+		}
 	}
 
 	if (g_private->_mode == 0) {
