@@ -120,7 +120,6 @@ struct HotSpot {
 	byte type;
 	int extra;
 	bool isEnabled = true;
-	Common::String description;
 };
 
 struct Description {

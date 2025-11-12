@@ -74,7 +74,7 @@ private:
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
-	Common::List<VerbIcons> populateActionsMenu(HotSpot hotspot);
+	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
 	Exit *isExitAtPoint(int x, int y);
 	void showDescription(Common::String text, int x, int y, byte color);
@@ -85,7 +85,7 @@ private:
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
 	void changeCursor(Cursor cursor);
-	HotSpot *isHotspotUnder(int x, int y);
+	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
 	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
