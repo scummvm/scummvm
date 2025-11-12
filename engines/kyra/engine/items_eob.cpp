@@ -818,6 +818,10 @@ void EoBCoreEngine::checkFlyingObjects() {
 }
 
 void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger) {
+	if (_configADDRuleEnhancements) {
+		return reloadWeaponSlotEnhanced(charIndex, slotIndex);
+	}
+
 	if (arrowOrDagger && _characters[charIndex].inventory[16]) {
 		_characters[charIndex].inventory[slotIndex] = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
 	} else {
@@ -829,6 +833,26 @@ void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType,
 			_characters[charIndex].inventory[slotIndex] = _characters[charIndex].inventory[i];
 			_characters[charIndex].inventory[i] = 0;
 			return;
+		}
+	}
+}
+
+bool EoBCoreEngine::isThrownWeaponItemType(int itemType) {
+	return (_itemTypes[itemType].extraProperties & 0x7F) == 2;
+}
+
+void EoBCoreEngine::reloadWeaponSlotEnhanced(int charIndex, int slotIndex) {
+	const uint8 kThrownWeaponSlotCount = 17;
+	const uint8 kThrownWeaponSlots[kThrownWeaponSlotCount] = {
+		24, 23, 22,  // belt, bottom to top
+		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15  // backpack
+	};
+
+	for (int i = 0; i < kThrownWeaponSlotCount; i++) {
+		uint8 candidateSlotIndex = kThrownWeaponSlots[i];
+		if (_characters[charIndex].inventory[candidateSlotIndex] && isThrownWeaponItemType(_items[_characters[charIndex].inventory[candidateSlotIndex]].type)) {
+			SWAP(_characters[charIndex].inventory[slotIndex], _characters[charIndex].inventory[candidateSlotIndex]);
+			break;
 		}
 	}
 }

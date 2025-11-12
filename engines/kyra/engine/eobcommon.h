@@ -491,6 +491,8 @@ protected:
 	void checkFlyingObjects();
 
 	void reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger);
+	bool isThrownWeaponItemType(int itemType);
+	void reloadWeaponSlotEnhanced(int charIndex, int slotIndex);
 
 	Common::Array<EoBItem> _items;
 	uint16 _numItems;
