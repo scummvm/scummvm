@@ -27,6 +27,7 @@
 
 #include "backends/events/emscriptensdl/emscriptensdl-events.h"
 #include "backends/fs/emscripten/emscripten-fs-factory.h"
+#include "backends/mixer/emscriptensdl/emscriptensdl-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/fs/emscripten/emscripten-fs-factory.h"
 #include "backends/platform/sdl/emscripten/emscripten.h"
@@ -114,6 +115,10 @@ void OSystem_Emscripten::initBackend() {
 
 	// Event source
 	_eventSource = new EmscriptenSdlEventSource();
+
+	// Emscripten-specific mixer manager
+	_mixerManager = new EmscriptenSdlMixerManager();
+	_mixerManager->init();
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
