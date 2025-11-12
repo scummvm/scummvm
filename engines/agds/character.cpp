@@ -33,8 +33,6 @@
 #include "common/util.h"
 #include "graphics/managed_surface.h"
 
-#include <math.h>
-
 namespace AGDS {
 
 Character::Character(AGDSEngine *engine, const Common::String &name) : _engine(engine), _object(), _animation(nullptr), _jokes(false),
