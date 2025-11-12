@@ -32,6 +32,10 @@
 
 #include "private/grammar.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Image {
 class ImageDecoder;
 }
@@ -196,6 +200,7 @@ public:
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	Common::SeekableReadStream *loadAssets();
+	Common::Archive *loadMacInstaller();
 
 	// Functions
 

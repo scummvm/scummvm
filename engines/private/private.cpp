@@ -173,7 +173,6 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	Common::File *test = new Common::File();
-	Common::SeekableReadStream *file = nullptr;
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
 		return test;
@@ -187,19 +186,15 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	delete test;
 
-	if (_platform == Common::kPlatformMacintosh && _language == Common::JA_JPN)
-		file = Common::MacResManager::openFileOrDataFork("xn--16jc8na7ay6a0eyg9e5nud0e4525d");
-	else
-		file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
-	if (file) {
-		Common::Archive *s = createStuffItArchive(file, true);
-		Common::SeekableReadStream *file2 = nullptr;
-		if (s)
-			file2 = s->createReadStreamForMember(isDemo() ? "demogame.mac" : "game.mac");
-		// file2 is enough to keep valid reference
-		delete file;
-		if (file2)
-			return file2;
+	if (_platform == Common::kPlatformMacintosh) {
+		Common::ScopedPtr<Common::Archive> macInstaller(loadMacInstaller());
+		if (macInstaller) {
+			const char *macFileName = isDemo() ? "demogame.mac" : "game.mac";
+			Common::SeekableReadStream *file = macInstaller->createReadStreamForMember(macFileName);
+			if (file != nullptr) {
+				return file;
+			}
+		}
 	}
 
 	Common::InstallShieldV3 installerArchive;
@@ -227,6 +222,25 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	error("Unknown version");
 	return nullptr;
+}
+
+Common::Archive *PrivateEngine::loadMacInstaller() {
+	const char *fileName;
+	if (_language == Common::JA_JPN) {
+		fileName = "xn--16jc8na7ay6a0eyg9e5nud0e4525d";
+	} else if (isDemo()) {
+		fileName = "Private Eye Demo Installer";
+	} else {
+		fileName = "Private Eye Installer";
+	}
+
+	Common::SeekableReadStream *archiveFile = Common::MacResManager::openFileOrDataFork(fileName);
+	if (archiveFile == nullptr) {
+		return nullptr;
+	}
+
+	// createStuffItArchive() takes ownership of incoming stream, even on failure
+	return createStuffItArchive(archiveFile, true);
 }
 
 Common::Error PrivateEngine::run() {
