@@ -105,6 +105,7 @@ MODULE_OBJS += \
 	fs/emscripten/emscripten-posix-fs.o \
 	fs/emscripten/http-fs.o \
 	midi/webmidi.o \
+	mixer/emscriptensdl/emscriptensdl-mixer.o \
 	timer/emscripten/emscripten-timer.o
 ifdef USE_CLOUD
 MODULE_OBJS += \
