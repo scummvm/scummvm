@@ -2155,26 +2155,50 @@ void PrivateEngine::removeTimer() {
 // Diary
 
 void PrivateEngine::loadLocations(const Common::Rect &rect) {
-	uint32 i = 0;
-	int16 offset = 54;
+	// Locations are displayed in the order they are visited.
+	// maps.locations and maps.locationList contain all locations.
+	// A non-zero symbol value indicates that a location has been
+	// visited and the order in which it was visited.
+
+	// Create an array of visited locations, sorted by order visited
+	Common::Array<const Symbol *> visitedLocations;
+	Common::HashMap<const Symbol *, int> locationIDs;
+	int locationID = 1; // one-based for image file names
 	for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
 		const Private::Symbol *sym = maps.locations.getVal(*it);
-		i++;
-		if (sym->u.val) {
-			Common::String s =
-				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
-
-			MaskInfo m;
-			loadMaskAndInfo(&m, s, rect.left + 90, rect.top + offset, true);
-			m.cursor = g_private->getExitCursor();
-			m.nextSetting = getDiaryMiddleSetting();
-			m.flag1 = nullptr;
-			m.flag2 = nullptr;
-			m.useBoxCollision = true;
-			_masks.push_front(m);
-			_locationMasks.push_back(m);
-			offset += 26;
+		if (sym->u.val != 0) {
+			visitedLocations.push_back(sym);
+			locationIDs[sym] = locationID;
 		}
+		locationID++;
+	}
+	Common::sort(visitedLocations.begin(), visitedLocations.end(), [&locationIDs](const Symbol *a, const Symbol *b) {
+		if (a->u.val != b->u.val) {
+			return a->u.val < b->u.val;
+		} else {
+			// backwards compatibility for older saves files that stored 1
+			// for visited locations and displayed them in a fixed order.
+			return locationIDs[a] < locationIDs[b];
+		}
+	});
+
+	// Load the sorted visited locations
+	int16 offset = 54;
+	for (uint i = 0; i < visitedLocations.size(); i++) {
+		const Private::Symbol *sym = visitedLocations[i];
+		Common::String s =
+			Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), locationIDs[sym]);
+
+		MaskInfo m;
+		loadMaskAndInfo(&m, s, rect.left + 90, rect.top + offset, true);
+		m.cursor = g_private->getExitCursor();
+		m.nextSetting = getDiaryMiddleSetting();
+		m.flag1 = nullptr;
+		m.flag2 = nullptr;
+		m.useBoxCollision = true;
+		_masks.push_front(m);
+		_locationMasks.push_back(m);
+		offset += 26;
 	}
 }
 
@@ -2217,6 +2241,15 @@ void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset,
 			currentVerticalOffset = 0;
 		}
 	}
+}
+
+int PrivateEngine::getMaxLocationValue() {
+	int maxValue = 0;
+	for (SymbolMap::iterator it = maps.locations.begin(); it != maps.locations.end(); ++it) {
+		Symbol *s = it->_value;
+		maxValue = MAX(maxValue, s->u.val);
+	}
+	return maxValue;
 }
 
 } // End of namespace Private

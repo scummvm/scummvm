@@ -348,6 +348,7 @@ public:
 	Common::Array<MaskInfo> _locationMasks;
 	Common::Array<MaskInfo> _memoryMasks;
 	bool selectMemory(const Common::Point &mousePos);
+	int getMaxLocationValue();
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
