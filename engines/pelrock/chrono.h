@@ -40,6 +40,7 @@ public:
 	~ChronoManager();
 	void updateChrono();
 	void changeSpeed();
+	void delay(uint32 ms);
 
 	bool _gameTick = false;
 	bool _gameTickHalfSpeed = false;

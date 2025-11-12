@@ -65,9 +65,10 @@ private:
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void loadMainCharacterAnims();
 	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
-	Common::List<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
+	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadCursors();
 	void loadInteractionIcons();
@@ -76,6 +77,8 @@ private:
 	Common::List<VerbIcons> populateActionsMenu(HotSpot hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
 	Exit *isExitAtPoint(int x, int y);
+	void showDescription(Common::String text, int x, int y, byte color);
+
 	// render loop
 	void frames();
 	void checkMouseHover();
@@ -89,11 +92,12 @@ private:
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
-	Common::List<HotSpot> _currentRoomHotspots;
+	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
 	Common::List<WalkBox> _currentRoomWalkboxes;
+	Common::Array<Description> _currentRoomDescriptions;
 	int *_currentAnimFrames = nullptr;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;
@@ -107,6 +111,7 @@ private:
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
 	byte *_bgPopupBalloon = nullptr;
+	byte *_bgText = nullptr;
 
 	bool _displayPopup = false;
 	int _popupX = 0;

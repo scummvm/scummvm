@@ -51,34 +51,12 @@ int LargeFont::getCharWidth(uint32 chr) const {
 }
 
 void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-
-	// """Extract a single character from the large font data (12x24 pixels)
-	// Each character is 48 bytes (24 rows × 2 bytes per row)"""
-	// offset = char_index * 0x30  # 48 bytes per character
-	// char_data = data[offset:offset + 0x30]
-
-	// # Create 12x24 pixel array
-	// pixels = np.zeros((24, 12), dtype=np.uint8)
-
-	// # Process each row (2 bytes per row)
-	// for row in range(24):
-	//     byte1 = char_data[row * 2]
-	//     byte2 = char_data[row * 2 + 1]
-
-	//     # Process 12 bits (12 pixels) from the two bytes
-	//     for bit in range(8):
-	//         pixels[row, bit] = 255 if (byte1 & (0x80 >> bit)) else 0
-	//     for bit in range(4):
-	//         pixels[row, bit + 8] = 255 if (byte2 & (0x80 >> bit)) else 0
-
-	// return pixels
-
-	if (!_fontData || chr > 255) {
+	chr -= 32; // Adjust for font starting at ASCII 32
+	if (!_fontData || chr > 255 || chr < 0) {
 		return;
 	}
-	chr -= 32; // Adjust for font starting at ASCII 32
 	int charOffset = chr * 0x30;
-	debug("LargeFont::drawChar: Drawing char %d at offset %d", chr, charOffset);
+
 	for (int i = 0; i < 24; i++) {
 		byte rowByte1 = _fontData[charOffset + i * 2];
 		byte rowByte2 = _fontData[charOffset + i * 2 + 1];

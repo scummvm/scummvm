@@ -112,13 +112,21 @@ struct HoverArea {
 };
 
 struct HotSpot {
-	byte type;
+	int id;
 	int x;
 	int y;
-	int id;
 	int w;
 	int h;
+	byte type;
 	int extra;
+	bool isEnabled = true;
+	Common::String description;
+};
+
+struct Description {
+	byte itemId;
+	byte index;
+	Common::String text;
 };
 
 struct WalkBox {

@@ -243,6 +243,7 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 
 Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
+	debug("Sprite pair offset position: %d", pair_offset);
 	roomFile->seek(pair_offset, SEEK_SET);
 	uint32_t offset = roomFile->readUint32LE();
 	uint32_t size = roomFile->readUint32LE();
@@ -279,7 +280,9 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 		animSet.spriteType = animData[33];
 		animSet.actionFlags = animData[34];
 		animSet.isDisabled = animData[38];
-
+		if(animSet.numAnims == 0) {
+			break;
+		}
 		animSet.animData = new Anim[animSet.numAnims];
 		debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
 		// roomFile->skip(1);
@@ -352,7 +355,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;
@@ -364,39 +367,83 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 	return walkboxes;
 }
 
+Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roomFile, int roomOffset) {
+	uint32_t pair12_offset_pos = roomOffset + (12 * 8);
+	roomFile->seek(pair12_offset_pos, SEEK_SET);
+	// roomFile->skip(4);
+	uint32_t pair12_data_offset = roomFile->readUint32LE();
+	uint32_t pair12_size = roomFile->readUint32LE();
+
+	roomFile->seek(pair12_data_offset, SEEK_SET);
+	byte *data = new byte[pair12_size];
+	roomFile->read(data, pair12_size);
+	Common::Array<Description> descriptions;
+	uint32_t pos = 0;
+	while (pos < (pair12_size)) {
+		// char *desc = new char[256];
+		int desc_pos = 0;
+		if(data[pos] == 0xFF) {
+			Description description;
+			description.itemId = data[++pos];
+			pos += 2;
+			description.index = data[pos++];
+			description.text = "";
+			// debug("Found description terminator");
+			while (pos < (pair12_size) && data[pos] != 0xFD && pos < (pair12_size)) {
+				// debug(" char: %c", data[pos]);
+				if(data[pos] != 0x00) {
+					description.text.append(1, (char)data[pos]);
+				}
+				// desc[desc_pos++] = (char)data[pos];
+				// debug("Current desc: %s", desc);
+				pos++;
+			}
+			debug("Found description for item %d index %d, text: %s", description.itemId, description.index, description.text.c_str());
+
+			descriptions.push_back(description);
+		}
+		pos++;
+	}
+
+	delete[] data;
+	// for (Common::List<Common::String>::iterator i = descriptions.begin(); i != descriptions.end(); i++) {
+	// 	debug("Room description: %s", i->c_str());
+	// }
+	return descriptions;
+}
+
 void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
+
+	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset);
 
 	Common::List<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
 
-	Common::List<HotSpot> hotspots;
-
+	Common::Array<HotSpot> hotspots;
+	int count = 0;
 	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
-		if (!i->isDisabled) {
-			hotspots.push_back(
-				HotSpot{
-					i->actionFlags,
-					i->x,
-					i->y,
-					i->w,
-					i->h,
-					i->extra,
-				});
-		}
+
+		HotSpot thisHotspot;
+		thisHotspot.x = i->x;
+		thisHotspot.y = i->y;
+		thisHotspot.w = i->w;
+		thisHotspot.h = i->h;
+		thisHotspot.extra = i->extra;
+		thisHotspot.type = i->actionFlags;
+		thisHotspot.isEnabled = !i->isDisabled;
+		thisHotspot.description = descriptions[count].text;
+		hotspots.push_back(thisHotspot);
+		count++;
 	}
 
-	Common::List<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
+	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
-	int hotsPotCount = 0;
-	for (Common::List<HotSpot>::iterator i = staticHotspots.begin(); i != staticHotspots.end(); i++) {
-		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 100 + hotsPotCount);
-		_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 100 + hotsPotCount);
-		_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 100 + hotsPotCount);
-		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 100 + hotsPotCount);
-		hotsPotCount++;
-		hotspots.push_back(*i);
+	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
+	for (int i = 0; i < staticHotspots.size(); i++) {
+		HotSpot hotspot = staticHotspots[i];
+		hotspot.description =  descriptions[anims.size() + i].text;
+		hotspots.push_back(hotspot);
 	}
 
 	int walkboxCount = 0;
@@ -413,6 +460,17 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	_currentRoomHotspots = hotspots;
 	_currentRoomExits = exits;
 	_currentRoomWalkboxes = walkboxes;
+	_currentRoomDescriptions = descriptions;
+
+
+	for(int i=0; i < _currentRoomHotspots.size(); i++) {
+		HotSpot hotspot = _currentRoomHotspots[i];
+		debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, hotspot.description.c_str());
+		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
+		_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
+		_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+	}
 }
 
 void PelrockEngine::loadCursors() {
@@ -489,9 +547,9 @@ Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffs
 	return exits;
 }
 
-Common::List<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
+Common::Array<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-
+	debug("Hotspot(10)  pair offset position: %d", pair10_offset_pos);
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
 	uint32_t pair10_data_offset = roomFile->readUint32LE();
 	uint32_t pair10_size = roomFile->readUint32LE();
@@ -499,7 +557,7 @@ Common::List<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int ro
 	roomFile->seek(count_offset, SEEK_SET);
 	byte hotspot_count = roomFile->readByte();
 	uint32_t hotspot_data_start = pair10_data_offset + 0x47c;
-	Common::List<HotSpot> hotspots;
+	Common::Array<HotSpot> hotspots;
 	for (int i = 0; i < hotspot_count; i++) {
 		uint32_t obj_offset = hotspot_data_start + i * 9;
 		roomFile->seek(obj_offset, SEEK_SET);
@@ -715,13 +773,15 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 
 HotSpot *PelrockEngine::isHotspotUnder(int x, int y) {
 
-	for (Common::List<HotSpot>::iterator i = _currentRoomHotspots.begin(); i != _currentRoomHotspots.end(); i++) {
-		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
-			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			int lookable = i->extra & 0x0B;
-			int openable = i->extra & 0x0F;
+	for (size_t i = 0; i < _currentRoomHotspots.size(); i++) {
+		HotSpot hotspot = _currentRoomHotspots[i];
+		if (hotspot.isEnabled &&
+			mouseX >= hotspot.x && mouseX <= (hotspot.x + hotspot.w) &&
+			mouseY >= hotspot.y && mouseY <= (hotspot.y + hotspot.h)) {
+			int lookable = hotspot.extra & 0x0B;
+			int openable = hotspot.extra & 0x0F;
 			// debug("Hotspot at (%d,%d) size (%d,%d) extra %d, type = %d, lookable = %d, openable=%d", i->x, i->y, i->w, i->h, i->extra, i->type, lookable, openable);
-			return &(*i);
+			return &hotspot;
 		}
 	}
 	return nullptr;
@@ -809,7 +869,9 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	HotSpot *hotspot = isHotspotUnder(mouseX, mouseY);
 	if (hotspot != nullptr) {
-		debug("Clicked Hotspot at (%d,%d) size (%d,%d) extra %d", hotspot->x, hotspot->y, hotspot->w, hotspot->h, hotspot->extra);
+
+		showDescription(hotspot->description.c_str(), xAlfred, yAlfred, 13);
+
 		changeCursor(HOTSPOT);
 	}
 }
@@ -925,6 +987,35 @@ Exit *PelrockEngine::isExitAtPoint(int x, int y) {
 		}
 	}
 	return nullptr;
+}
+
+void PelrockEngine::showDescription(Common::String text, int x, int y, byte color) {
+	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
+	if(x + rect.width() > 640) {
+		x = 640 - rect.width();
+	}
+	if(y + rect.height() > 400) {
+		y = 400 - rect.height();
+	}
+	x = 0;
+	y = 0;
+	if(_bgText != nullptr) {
+		putBackgroundSlice(x, y, 640, 400, _bgText);
+		delete[] _bgText;
+	}
+	int16 w = MIN(rect.width(), (int16)(640 - x));
+	int16 h = MIN(rect.height(), (int16)(400 - y));
+	debug("grabbing bg slice at (%d,%d) w=%d h=%d", x, y, w, h);
+
+	_bgText = grabBackgroundSlice(x, y, 640, 400);
+	_largeFont->drawString(_screen, text.c_str(), x - 1, y, 640, 0);     // Left
+    _largeFont->drawString(_screen, text.c_str(), x + 1, y, 640, 0);     // Right
+    _largeFont->drawString(_screen, text.c_str(), x, y - 1, 640, 0);     // Top
+    _largeFont->drawString(_screen, text.c_str(), x, y + 1, 640, 0);     // Bottom
+
+    // Draw main text on top
+    _largeFont->drawString(_screen, text.c_str(), x, y, 640, color);
+
 }
 
 void PelrockEngine::setScreen(int number, int dir) {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "pelrock/chrono.h"
@@ -55,6 +56,19 @@ void ChronoManager::changeSpeed() {
 		_speedMultiplier = 4;
 	else
 		_speedMultiplier = 1;
+}
+
+void ChronoManager::delay(uint32 ms) {
+	uint32 delayStart = g_system->getMillis();
+
+	ms = ms / _speedMultiplier;
+	Common::Event e;
+	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(e)) {
+
+		}
+		g_engine->_screen->update();
+	}
 }
 
 } // End of namespace Pelrock
