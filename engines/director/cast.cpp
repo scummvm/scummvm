@@ -563,8 +563,8 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
-	if (_movieDepth > 0) {
-		warning("STUB: loadConfig(): Movie bit depth is %d", _movieDepth);
+	if (_movieDepth != _vm->_colorDepth) {
+		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
 	}
 
 	delete stream;
