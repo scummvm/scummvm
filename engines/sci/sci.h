@@ -279,8 +279,8 @@ public:
 	 *						If nullptr is passed then no subtitle will be added to the returned string.
 	 * @return				The processed string.
 	 */
-	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep = "\r----------\r");
-	Common::String strSplit(const char *str, const char *sep = "\r----------\r") {
+	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep);
+	Common::String strSplit(const char *str, const char *sep) {
 		return strSplitLanguage(str, NULL, sep);
 	}
 
