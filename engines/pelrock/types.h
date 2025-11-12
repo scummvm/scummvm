@@ -73,6 +73,8 @@ struct Anim {
 	int nframes;
 	int curFrame;
 	byte *animData;
+	byte loopCount;
+	byte speed;
 };
 
 struct Exit {
@@ -90,15 +92,16 @@ struct Exit {
 
 struct AnimSet {
 	byte type;
-	int x;
-	int y;
-	int w;
-	int h;
-	int speed;
-	int numAnims;
+	int x; //0
+	int y;//2
+	int w;//4
+	int h;//5
+	byte extra; //6
+	int numAnims; //8
+	byte spriteType; //33
+	byte actionFlags;//34
+	bool isDisabled; //38
 	Anim *animData;
-	byte extra;
-	bool enabled;
 };
 
 struct HoverArea {

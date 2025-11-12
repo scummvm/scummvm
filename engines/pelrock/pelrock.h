@@ -63,9 +63,9 @@ private:
 	// Room data
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	void loadMainCharacterAnims();
-	void loadHotspots(Common::File *roomFile, int roomOffset);
+	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
+	Common::List<HotSpot>loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
@@ -89,7 +89,7 @@ private:
 
 	ChronoManager *_chronoManager = nullptr;
 	byte *standingAnim = new byte[3060 * 102];
-	Common::List<HotSpot> _hotspots;
+	Common::List<HotSpot> _currentRoomHotspots;
 	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
