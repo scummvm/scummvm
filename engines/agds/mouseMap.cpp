@@ -23,7 +23,6 @@
 #include "agds/agds.h"
 #include "agds/object.h"
 #include "agds/region.h"
-#include <utility>
 
 namespace AGDS {
 
@@ -39,7 +38,7 @@ int MouseMap::findFree() const {
 int MouseMap::add(MouseRegion area) {
 	auto id = findFree();
 	auto &region = _mouseRegions[id];
-	region.reset(new MouseRegion(std::move(area)));
+	region.reset(new MouseRegion(Common::move(area)));
 	region->id = id;
 	return id;
 }
