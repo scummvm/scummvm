@@ -2504,6 +2504,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      added to the NEWS file).
    - Fixed missing voice reactions when hitting enemies in CD version of
      Lands of Lore.
+   - In Eye of the Beholder 1 and 2, when "Faithful AD&D Rules" option is
+     enabled, thrown weapons are auto-replaced from backpack slots.
 
  Lab:
    - Fixed lock-up during ending sequence.
