@@ -2156,17 +2156,16 @@ void PrivateEngine::removeTimer() {
 
 void PrivateEngine::loadLocations(const Common::Rect &rect) {
 	uint32 i = 0;
-	int16 offset = 44;
+	int16 offset = 54;
 	for (NameList::const_iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {
 		const Private::Symbol *sym = maps.locations.getVal(*it);
 		i++;
 		if (sym->u.val) {
-			offset = offset + 22;
 			Common::String s =
 				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
 			MaskInfo m;
-			loadMaskAndInfo(&m, s, rect.left + 120, rect.top + offset, true);
+			loadMaskAndInfo(&m, s, rect.left + 90, rect.top + offset, true);
 			m.cursor = g_private->getExitCursor();
 			m.nextSetting = getDiaryMiddleSetting();
 			m.flag1 = nullptr;
@@ -2174,6 +2173,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 			m.useBoxCollision = true;
 			_masks.push_front(m);
 			_locationMasks.push_back(m);
+			offset += 26;
 		}
 	}
 }
@@ -2181,10 +2181,10 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common::Rect &r2) {
 	int16 offset = 0;
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
-		offset = offset + 22;
 		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
 		surface->free();
 		delete surface;
+		offset += 20;
 	}
 }
 
