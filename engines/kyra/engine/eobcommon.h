@@ -855,6 +855,8 @@ protected:
 	bool _configHpBarGraphs;
 	bool _configMouseBtSwap;
 	bool _configADDRuleEnhancements;
+	bool _configEnhancedReload;
+	bool _configNPCPatch;
 
 	Graphics::Surface _thumbNail;
 

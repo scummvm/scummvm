@@ -138,6 +138,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_configHpBarGraphs = true;
 	_configMouseBtSwap = false;
 	_configADDRuleEnhancements = false;
+	_configEnhancedReload = false;
+	_configNPCPatch = false;
 
 	_npcSequenceSub = 0;
 	_moveCounter = 0;
@@ -686,13 +688,18 @@ void EoBCoreEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("hpbargraphs", true);
 	ConfMan.registerDefault("mousebtswap", false);
 	ConfMan.registerDefault("addrules", false);
+	ConfMan.registerDefault("mreload", false);
 	ConfMan.registerDefault("importOrigSaves", true);
+	if (_flags.gameID == GI_EOB1)
+		ConfMan.registerDefault("npcpatch", false);
 }
 
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
 	_configADDRuleEnhancements = ConfMan.getBool("addrules");
+	_configEnhancedReload = ConfMan.getBool("mreload");
+	_configNPCPatch = (_flags.gameID == GI_EOB1) ? ConfMan.getBool("npcpatch") : false;
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
@@ -706,6 +713,9 @@ void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("addrules", _configADDRuleEnhancements);
+	ConfMan.setBool("mreload", _configEnhancedReload);
+	if (_flags.gameID == GI_EOB1)
+		ConfMan.setBool("npcpatch", _configNPCPatch);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 	if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD)
 		ConfMan.setBool("music_mute", _configMusic == 0);
@@ -1432,7 +1442,7 @@ void EoBCoreEngine::initNpc(int npcIndex) {
 	 * "sister"), by the portrait and by the character sheet in the
 	 * official Clue Book.
 	 */
-	if (_configADDRuleEnhancements) {
+	if (_configNPCPatch) {
 		if (_flags.gameID == GI_EOB1) {
 			if (npcIndex == 1) {
 				debugC(1, kDebugLevelMain, "Patching Beohram to be a paladin");

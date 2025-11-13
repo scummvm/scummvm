@@ -165,6 +165,30 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_EOB_NPCPATCH,
+		{
+			_s("Fix NPC stats"),
+			_s("Fix stats of Ileria and Beohram NPCs (Ileria should be female and Beohram a paladin)"),
+			"npcpatch",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_EOB_RELOAD,
+		{
+			_s("Enhanced missile reload"),
+			_s("Daggers, darts, stones and similar weapons get reloaded from all inventory slots, not just the belt"),
+			"mreload",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
