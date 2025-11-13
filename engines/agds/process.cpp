@@ -319,14 +319,14 @@ void Process::run() {
 
 #define UNARY_OP(NAME, OP)       \
 	void Process::NAME() {       \
-		int arg = pop();         \
+		int32 arg = pop();         \
 		debug(#NAME " %d", arg); \
 		push(OP arg);            \
 	}
 #define BINARY_OP(NAME, OP)                    \
 	void Process::NAME() {                     \
-		int arg2 = pop();                      \
-		int arg1 = pop();                      \
+		int32 arg2 = pop();                      \
+		int32 arg1 = pop();                      \
 		debug(" %d " #NAME " %d", arg1, arg2); \
 		push(arg1 OP arg2);                    \
 	}
