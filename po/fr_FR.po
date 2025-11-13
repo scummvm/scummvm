@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-11 10:58+0000\n"
-"PO-Revision-Date: 2025-11-04 17:36+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"PO-Revision-Date: 2025-11-13 11:41+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -11506,14 +11506,12 @@ msgstr ""
 "Affiche les sous-titres des bruitages (si les sous-titres sont activés)."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight decision areas"
-msgstr "Surligner les items"
+msgstr "Surligner les zones de décision"
 
 #: engines/private/metaengine.cpp:49
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "Met en évidence les zones cliquables dans les scènes de décision."
 
 #: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
