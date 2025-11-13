@@ -44,6 +44,14 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{"nibiru",
 	 0,
+	 AD_ENTRY1s("gfx1.grp", "40a7a88f77c35305b6aba0329ed8a9ac", 381768750),
+	 Common::EN_USA,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | AGDS_V2 | ADGF_UNSTABLE,
+	 GUIO1(GUIO_NONE)},
+
+	{"nibiru",
+	 0,
 	 AD_ENTRY1s("gfx1.grp", "c8e711bc01b16cd82849cbd996d02642", 381768360),
 	 Common::RU_RUS,
 	 Common::kPlatformWindows,
