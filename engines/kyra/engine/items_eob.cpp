@@ -823,12 +823,14 @@ void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType,
 	}
 
 	if (arrowOrDagger && _characters[charIndex].inventory[16]) {
+		// this branch is never taken because arrowOrDagger = 0 is passed by the only caller
 		_characters[charIndex].inventory[slotIndex] = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
 	} else {
 		for (int i = 24; i >= 22; i--) {
 			if (!_characters[charIndex].inventory[i])
 				continue;
 			if (_items[_characters[charIndex].inventory[i]].type == itemType && itemType != -1)
+				// this branch is never taken because itemType = -1 is passed by the only caller
 				continue;
 			_characters[charIndex].inventory[slotIndex] = _characters[charIndex].inventory[i];
 			_characters[charIndex].inventory[i] = 0;
