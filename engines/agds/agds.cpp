@@ -354,8 +354,8 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 
 	if (doPatch) {
 		_currentScreen->load(patch);
-		if (_currentCharacter && patch->characterPresent) {
-			_currentCharacter->visible(true);
+		if (_currentCharacter) {
+			_currentCharacter->visible(patch->characterPresent);
 			_currentCharacter->position(patch->characterPosition);
 			_currentCharacter->direction(patch->characterDirection);
 		}
