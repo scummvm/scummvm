@@ -99,7 +99,7 @@ void Process::setStringSystemVariable() {
 }
 
 void Process::setIntegerSystemVariable() {
-	int value = pop();
+	int32 value = pop();
 	Common::String name = popString();
 	debug("setIntegerSystemVariable: %s -> %d", name.c_str(), value);
 	_engine->getSystemVariable(name)->setInteger(value);
@@ -107,7 +107,7 @@ void Process::setIntegerSystemVariable() {
 
 void Process::getIntegerSystemVariable() {
 	Common::String name = popString();
-	int value = _engine->getSystemVariable(name)->getInteger();
+	int32 value = _engine->getSystemVariable(name)->getInteger();
 	debug("getIntegerSystemVariable: %s -> %d", name.c_str(), value);
 	push(value);
 }
@@ -115,7 +115,7 @@ void Process::getIntegerSystemVariable() {
 void Process::getRegionCenterX() {
 	Common::String name = popString();
 	RegionPtr reg = _engine->loadRegion(name);
-	int value = reg->center.x;
+	int32 value = reg->center.x;
 	push(value);
 	debug("getRegionCenterX %s -> %d", name.c_str(), value);
 }
@@ -123,7 +123,7 @@ void Process::getRegionCenterX() {
 void Process::getRegionCenterY() {
 	Common::String name = popString();
 	RegionPtr reg = _engine->loadRegion(name);
-	int value = reg->center.y;
+	int32 value = reg->center.y;
 	push(value);
 	debug("getRegionCenterY %s -> %d", name.c_str(), value);
 }
@@ -136,14 +136,14 @@ void Process::getObjectId() {
 		if (*i == '.')
 			dotpos = i + 1;
 	Common::String id(dotpos, name.end());
-	int value = atoi(id.c_str());
+	int32 value = atoi(id.c_str());
 	debug("getObjectId %s %d", name.c_str(), value);
 	push(value);
 }
 
 void Process::loadPicture() {
 	Common::String name = popText();
-	int cacheId = _engine->loadFromCache(name);
+	int32 cacheId = _engine->loadFromCache(name);
 	if (cacheId < 0) {
 		cacheId = _engine->saveToCache(name, _engine->loadPicture(name));
 	}
@@ -187,7 +187,7 @@ void Process::getSampleVolume() {
 	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
 	if (sound) {
 		debug("\treturning %d", sound->leftVolume());
-		push(sound->leftVolume());
+		push((int32)sound->leftVolume());
 	} else {
 		warning("could not find sample %s", name.c_str());
 		push(-1);
@@ -334,7 +334,7 @@ void Process::resetMousePointer() {
 
 void Process::getRandomNumber() {
 	int max = pop();
-	int value = _engine->getRandomNumber(max);
+	int32 value = _engine->getRandomNumber(max);
 	debug("random %d -> %d", max, value);
 	push(value);
 }
@@ -362,21 +362,21 @@ void Process::setPhaseVar() {
 
 void Process::getGlobal(uint8 index) {
 	auto name = getString(index);
-	int value = _engine->getGlobal(name);
+	int32 value = _engine->getGlobal(name);
 	debug("get global %u %s -> %d", index, name.c_str(), value);
 	push(value);
 }
 
 void Process::hasGlobal() {
 	Common::String name = popString();
-	int result = _engine->hasGlobal(name) ? 1 : 0;
+	int32 result = _engine->hasGlobal(name) ? 1 : 0;
 	debug("hasGlobal %s %d", name.c_str(), result);
 	push(result);
 }
 
 void Process::postIncrementGlobal() {
 	Common::String name = popString();
-	int value = _engine->getGlobal(name);
+	int32 value = _engine->getGlobal(name);
 	debug("post-increment global %s %d", name.c_str(), value);
 	push(value);
 	_engine->setGlobal(name, value + 1);
@@ -384,7 +384,7 @@ void Process::postIncrementGlobal() {
 
 void Process::postDecrementGlobal() {
 	Common::String name = popString();
-	int value = _engine->getGlobal(name);
+	int32 value = _engine->getGlobal(name);
 	debug("post-decrement global %s %d", name.c_str(), value);
 	push(value);
 	_engine->setGlobal(name, value - 1);
@@ -472,13 +472,13 @@ void Process::xorGlobalByTop() {
 
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
-	int index = _engine->appendToSharedStorage(value);
+	int32 index = _engine->appendToSharedStorage(value);
 	// debug("appendToSharedStorage %s -> %d", value.c_str(), index);
 	push(index);
 }
 
 void Process::appendNameToSharedStorage() {
-	int index = _engine->appendToSharedStorage(_object->getName());
+	int32 index = _engine->appendToSharedStorage(_object->getName());
 	push(index);
 }
 
@@ -511,11 +511,11 @@ void Process::getCloneVar() {
 	debug("getCloneVar %s %s", arg1.c_str(), arg2.c_str());
 	Common::String name = getCloneVarName(arg1, arg2);
 	debug("global name for clone: %s", name.c_str());
-	push(_engine->getGlobal(name));
+	push((int32)_engine->getGlobal(name));
 }
 
 void Process::setCloneVar() {
-	int arg3 = pop();
+	int32 arg3 = pop();
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("setCloneVar %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
@@ -530,7 +530,7 @@ void Process::cloneName() {
 	Common::String arg1 = popString();
 	Common::String name = Common::String::format("%s.%d", arg1.c_str(), arg2);
 	debug("cloneName: %s %d -> %s", arg1.c_str(), arg2, name.c_str());
-	push(_engine->appendToSharedStorage(name));
+	push((int32)_engine->appendToSharedStorage(name));
 }
 
 void Process::disableUser() {
@@ -561,16 +561,16 @@ void Process::checkScreenPatch() {
 		if (objectName != _engine->getSystemVariable("inventory_scr")->getString()) {
 			debug("checkScreenPatch for object %s %s", screenName.c_str(), objectName.c_str());
 			auto patch = _engine->getPatch(screenName);
-			push(patch ? patch->getFlag(objectName) : 0);
+			push((int32)(patch ? patch->getFlag(objectName) : 0));
 		} else {
 			push(_engine->inventory().find(objectName) >= 0);
 		}
 	} else if (screen && screen->applyingPatch()) {
 		debug("checkScreenPatch: attempt to change screen patch (%s) in patching process %s", screen->getName().c_str(), getName().c_str());
-		push(-1);
+		push((int32)-1);
 	} else {
 		ObjectPtr object = screen->find(objectName);
-		int value = object && object->alive();
+		int32 value = object && object->alive();
 		debug("checkScreenPatch: current screen object present: %d", value);
 		push(value);
 	}
@@ -745,7 +745,7 @@ void Process::compareScreenName() {
 	auto name = popString();
 	auto currentScreenName = _engine->getCurrentScreenName();
 	debug("compareScreenName %s (currentScreen: %s)", name.c_str(), currentScreenName.c_str());
-	push(name == currentScreenName ? 1 : 0);
+	push((int32)(name == currentScreenName ? 1 : 0));
 }
 
 void Process::objectPatchSetText() {
@@ -837,7 +837,7 @@ void Process::getPictureBaseX() {
 	Common::String name = popString();
 	debug("getPictureBaseX: %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	int x = object ? object->getOffset().x : 0;
+	int32 x = object ? object->getOffset().x : 0;
 	debug("\t%d", x);
 	push(x);
 }
@@ -846,7 +846,7 @@ void Process::getPictureBaseY() {
 	Common::String name = popString();
 	debug("getPictureBaseY: %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	int y = object ? object->getOffset().y : 0;
+	int32 y = object ? object->getOffset().y : 0;
 	debug("\t%d", y);
 	push(y);
 }
@@ -855,7 +855,7 @@ void Process::getObjectSurfaceX() {
 	Common::String name = popString();
 	debug("getObjectSurfaceX: %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	int x = object ? object->getPosition().x : 0;
+	int32 x = object ? object->getPosition().x : 0;
 	debug("\t%d", x);
 	push(x);
 }
@@ -864,7 +864,7 @@ void Process::getObjectSurfaceY() {
 	Common::String name = popString();
 	debug("getObjectSurfaceY: %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	int y = object ? object->getPosition().y : 0;
+	int32 y = object ? object->getPosition().y : 0;
 	debug("\t%d", y);
 	push(y);
 }
@@ -898,7 +898,7 @@ void Process::getSaveGameName() {
 	int flag = pop();
 	int saveSlot = pop();
 	debug("getSaveGameName stub %d %d", saveSlot, flag);
-	push(1);
+	push((int32)1);
 	suspendIfPassive();
 }
 
@@ -1398,12 +1398,12 @@ void Process::getObjectPictureWidth() {
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
 		const auto *picture = object->getPicture();
-		int value = picture ? picture->w : 0;
+		int32 value = picture ? picture->w : 0;
 		debug("\t->%d", value);
 		push(value);
 	} else {
 		warning("getObjectPictureWidth: object %s not found", name.c_str());
-		push(0);
+		push((int32)0);
 	}
 }
 
@@ -1413,12 +1413,12 @@ void Process::getObjectPictureHeight() {
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
 		const auto *picture = object->getPicture();
-		int value = picture ? picture->h : 0;
+		int32 value = picture ? picture->h : 0;
 		debug("\t->%d", value);
 		push(value);
 	} else {
 		warning("getObjectPictureHeight: object %s not found", name.c_str());
-		push(0);
+		push((int32)0);
 	}
 }
 
@@ -1455,7 +1455,7 @@ void Process::inventoryRemoveObject() {
 void Process::inventoryFindObjectByName() {
 	Common::String name = popString();
 	debug("inventoryFindObjectByName %s", name.c_str());
-	int index = _engine->inventory().find(name);
+	int32 index = _engine->inventory().find(name);
 	debug("\t->%d", index);
 	push(index);
 }
@@ -1476,13 +1476,13 @@ void Process::inventoryHasObject() {
 }
 
 void Process::getMaxInventorySize() {
-	int size = _engine->inventory().maxSize();
+	int32 size = _engine->inventory().maxSize();
 	debug("getMaxInventorySize -> %d", size);
 	push(size);
 }
 
 void Process::getInventoryFreeSpace() {
-	int size = _engine->inventory().free();
+	int32 size = _engine->inventory().free();
 	debug("getInventoryFreeSpace -> %d", size);
 	push(size);
 }
@@ -1491,7 +1491,7 @@ void Process::appendInventoryObjectNameToSharedSpace() {
 	int index = pop();
 	debug("appendInventoryObjectNameToSharedSpace %d", index);
 	ObjectPtr object = _engine->inventory().get(index);
-	push(_engine->appendToSharedStorage(object ? object->getName() : Common::String()));
+	push((int32)_engine->appendToSharedStorage(object ? object->getName() : Common::String()));
 }
 
 void Process::setNextScreen() {
@@ -1604,7 +1604,7 @@ void Process::addMouseArea() {
 	RegionPtr region = _engine->loadRegion(name);
 	debug("region: %s", region->toString().c_str());
 
-	int value = _engine->_mouseMap.add(MouseRegion(region, onEnter, onLeave));
+	int32 value = _engine->_mouseMap.add(MouseRegion(region, onEnter, onLeave));
 	debug("\tmouse area id -> %d", value);
 	push(value);
 }
@@ -1777,7 +1777,7 @@ void Process::getCharacterAnimationPhase() {
 	Character *character = _engine->getCharacter(name);
 	if (!character)
 		warning("no character %s", name.c_str());
-	int phase = character ? character->phase() : -1;
+	int32 phase = character ? character->phase() : -1;
 	debug("animation phase = %d", phase);
 	push(phase);
 }
@@ -1787,7 +1787,7 @@ void Process::getCharacterX() {
 	Character *character = _engine->getCharacter(name);
 	if (!character)
 		warning("no character %s", name.c_str());
-	int value = character ? character->position().x : -1;
+	int32 value = character ? character->position().x : -1;
 	push(value);
 }
 void Process::getCharacterY() {
@@ -1796,7 +1796,7 @@ void Process::getCharacterY() {
 	Character *character = _engine->getCharacter(name);
 	if (!character)
 		warning("no character %s", name.c_str());
-	int value = character ? character->position().y : -1;
+	int32 value = character ? character->position().y : -1;
 	push(value);
 }
 
