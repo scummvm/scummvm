@@ -190,7 +190,7 @@ void Process::getSampleVolume() {
 		push((int32)sound->leftVolume());
 	} else {
 		warning("could not find sample %s", name.c_str());
-		push(-1);
+		push((int32)-1);
 	}
 }
 
