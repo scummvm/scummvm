@@ -137,7 +137,9 @@ int SoundManager::play(Common::String process, const Common::String &resource, c
 
 	Audio::SeekableAudioStream *stream = NULL;
 	if (lname.hasSuffix(".ogg")) {
+#ifdef USE_VORBIS
 		stream = Audio::makeVorbisStream(file.release(), DisposeAfterUse::YES);
+#endif
 	} else if (lname.hasSuffix(".wav")) {
 		stream = Audio::makeWAVStream(file.release(), DisposeAfterUse::YES);
 	}
