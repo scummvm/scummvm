@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-11 10:58+0000\n"
-"PO-Revision-Date: 2025-11-10 21:37+0000\n"
+"PO-Revision-Date: 2025-11-13 11:41+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6468,10 +6468,8 @@ msgid "Walk"
 msgstr "Іти"
 
 #: engines/access/metaengine.cpp:348
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Open save/load menu"
-msgstr "Попередня сторінка в меню збереження/завантаження"
+msgstr "Відкрити меню збереження/завантаження"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -6698,7 +6696,7 @@ msgstr "Ввімкнути захист від копіювання, який з
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "Використовувати звуковий чіп PCjr у режимі 16-бітного зсуву"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -6707,6 +6705,11 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"У звуковому режимі PCjr емулювати нестандартний звуковий чіп SN76496, "
+"подібний до чіпів, що використовуються в консолях SEGA Master System. Це "
+"дозволить використовувати певні музичні ефекти, особливо у фанатських іграх, "
+"але оригінальна музика Sierra, розроблена виключно для PCjr, може звучати "
+"неправильно."
 
 #: engines/agi/metaengine.cpp:447 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6878,20 +6881,14 @@ msgid "Music volume up"
 msgstr "Гучність музики вище"
 
 #: engines/agos/metaengine.cpp:194 engines/vcruise/metaengine.cpp:201
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle music on / off"
 msgstr "Перемикання музики"
 
 #: engines/agos/metaengine.cpp:199 engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effects on / off"
 msgstr "Перемикання звукових ефектів"
 
 #: engines/agos/metaengine.cpp:204 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode on/off"
 msgid "Toggle fast mode on / off"
 msgstr "Перемикання швидкого режиму"
 
@@ -6930,10 +6927,8 @@ msgid "Turn right"
 msgstr "Повернутися вправо"
 
 #: engines/agos/metaengine.cpp:241
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fight mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемикання режиму бою"
 
 #: engines/agos/metaengine.cpp:250
 msgid "Text speed - Fast"
@@ -6952,8 +6947,6 @@ msgid "Show objects to interact"
 msgstr "Показувати об'єкти для взаємодії"
 
 #: engines/agos/metaengine.cpp:272
-#, fuzzy
-#| msgid "Toggle background sounds on/off"
 msgid "Toggle background sounds on / off"
 msgstr "Перемикання фонових звукових ефектів"
 
@@ -6963,10 +6956,8 @@ msgid "Switch characters"
 msgstr "Переключити героїв"
 
 #: engines/agos/metaengine.cpp:287
-#, fuzzy
-#| msgid "Toggle hitbox names on/off"
 msgid "Toggle hitbox names on / off"
-msgstr "Перемикання назви хіт-боксів"
+msgstr "Перемикання назв хіт-боксів"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -7080,13 +7071,9 @@ msgid ""
 msgstr "Ця гра потребує AGS-движок версії раніше 2.5, яка не підтримується."
 
 #: engines/ags/ags.cpp:157
-#, fuzzy
-#| msgid ""
-#| "The selected game uses a pre-2.5 version of the AGS engine, which is not "
-#| "supported."
 msgid ""
 "The selected game uses version 4 of the AGS engine, which is not supported."
-msgstr "Ця гра потребує AGS-движок версії раніше 2.5, яка не підтримується."
+msgstr "Ця гра потребує AGS-движок версії 4, яка не підтримується."
 
 #: engines/ags/ags.cpp:165
 msgid ""
@@ -7170,27 +7157,23 @@ msgstr ""
 
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
-msgstr ""
+msgstr "Виявлено старий OpenGL, можуть виникнути деякі графічні помилки."
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "Якість музики:"
+msgstr "Висока якість"
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggles some optional graphical effects"
-msgstr "Перемикання звукових ефектів"
+msgstr "Перемикає деякі додаткові графічні ефекти"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32 біти"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Чи слід відображати гру в 16-бітному кольорі"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7208,12 +7191,15 @@ msgstr "Глянути на"
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
 msgstr ""
+"Використовувати відео для CD-ROM одинарної швидкості, тобто нижчої якості"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
 msgstr ""
+"Ці відео нижчої якості, звичайна версія використовує відео CD-ROM з "
+"подвійною швидкістю, що забезпечує кращу якість"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -7258,8 +7244,6 @@ msgid "Open character inventory"
 msgstr "Відкрити інвентар героя"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle animation on / off"
 msgstr "Перемикання анімації"
 
@@ -7303,16 +7287,14 @@ msgstr "Все одно зчитати"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "Ввімкнути екрани титулу та захисту від копіювання (якщо наявні)"
 
 #: engines/awe/metaengine.cpp:36
-#, fuzzy
-#| msgid ""
-#| "Enable any copy protection that would otherwise be bypassed by default."
 msgid ""
 "Displays title and copy protection screens that would otherwise be bypassed "
 "by default."
-msgstr "Ввімкнути захист від копіювання, який зазвичай перескакується."
+msgstr ""
+"Показує екрани титулу та захисту від копіювання, які зазвичай не показуються."
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
