@@ -191,6 +191,8 @@ void AccessEngine::initialize() {
 	_midi = new MusicManager(this);
 	_video = new VideoPlayer(this);
 
+	syncSoundSettings();
+
 	setDebugger(Debugger::init(this));
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
 	_buffer2.create(g_system->getWidth(), g_system->getHeight());
@@ -460,6 +462,12 @@ void AccessEngine::freeChar() {
 	_animation->clearTimers();
 	_animation->freeAnimationData();
 	_player->freeSprites();
+}
+
+void AccessEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	_midi->syncVolume();
+	_sound->syncVolume();
 }
 
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {

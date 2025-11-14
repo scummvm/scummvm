@@ -328,6 +328,8 @@ public:
 	void printText(BaseSurface *s, const Common::String &msg);
 	void speakText(BaseSurface *s, const Common::String &msg);
 
+	void syncSoundSettings() override;
+
 	/**
 	 * Load a savegame
 	 */
