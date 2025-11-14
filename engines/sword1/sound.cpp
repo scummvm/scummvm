@@ -1227,7 +1227,6 @@ void Sound::updateMusicStreaming() {
 						
 						if (_musicStreamFading[i] == 0) {
 							_mixer->setChannelVolume(_hSampleMusic[i], 0);
-							_musicOutputStream[i]->finish();
 							_musicOutputStream[i] = nullptr;
 
 							_mixer->stopHandle(_hSampleMusic[i]);
