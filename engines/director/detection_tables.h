@@ -1614,7 +1614,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "encartaatlas2000",   "Microsoft Encarta Interactive World Atlas 2000" },
 	{ "exoticjapan",		"Exotic Japan: A Guide to Japanese Culture and Language" },
 	{ "famdoc3",			"The Family Doctor, 3rd Edition" },
-	{ "encyclopediasoccer", "Encyclopedia of Soccer"},
+	{ "encyclopediasoccer", "The Ultimate Encyclopedia of Soccer"},
 	{ "macworldexpo92",		"Macworld Expo CD Boston 1992" },
 	{ "manhole",			"The Manhole" },
 	{ "mazebrew",			"MazeBrew" },
@@ -2153,10 +2153,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "StartUp",	  "4be24cb9ca426e9ae318163f75ae55ee", 51057, 201),
 	MACDEMO2("msword", "v5 Demo", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 204030,
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
-
-	// MacFormat #40
-	WINDEMO1("rednex", "Demo", "REDNEX.EXE", "t:e1d181303fd8c2aed5cd1d69b0c985e7", 696877, 404),
-	WINDEMO1("encyclopediasoccer", "Demo", "SOCCER.EXE", "t:d942e4d11e7d0a6d4da7659def16d179", 690039, 404),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "r:3eb3598b7f6bb09de4dd31aca3683d8f", 370898, 200),
@@ -4262,6 +4258,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("encarta95", "1995 Demo", "ENCARTA.EXE", 		 "f3ed0fec480c8b0396bfd3b22044fa6f", 12015231,
 									    "SOUNDS/HURDY2.AIF", "a649e6394bc3f8b7037fead811bf7226", 217286, 404),
 
+	// MacFormat #40
+	MACDEMO2("encyclopediasoccer", "Demo", "PPC Projector", "rt:dbe7541cd99aed182bcfcd37d9a30de9",  57832,
+										   "LAWS.DIR",		"d:49a04fe6b22391139d6860d4dfc4084c", 1167212, 404),
+	WINDEMO2("encyclopediasoccer", "Demo", "SOCCER.EXE",	"t:d942e4d11e7d0a6d4da7659def16d179",  690039,
+										   "LAWS.DIR",		"f:49a04fe6b22391139d6860d4dfc4084c", 1167212, 404),
+
 	// From CD Loisirs Nº6
 	MACDEMO1("ephemeralfilms", "Demo", "Ephemeral Films", "77f4098988d5386794d1530065f514cd", 301669, 400),
 
@@ -5052,6 +5054,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("lulu", "", "LULU.EXE", 					 "t:a89aa6079ba7745917c63b99e52ade66", 876993,
 						   "CHAP/1CHAP.DXR",  			 "d:f4f62669342b305b789479014969e782", 5011138, Common::DE_DEU, 404),
 
+	// Macformat #40
+	// Original filename is Secrets®PPC
+	MACDEMO1("luxor", "Demo", "xn--SecretsPPC-xoa", "rt:7c7110c9da581141793e918c071d903d", 60068, 404),
+
 	// Pre-rendered CG animated adventure based on the popular comedy manga
 	// Developed by Future Pirates, published by Toshiba EMI
 	MACGAME1_l("macaroni", "", "Macaroni.PowerMac", "r:be7faef1b5c713e2d13a693eb6e1f5c9", 180025, Common::JA_JPN, 404),
@@ -5838,6 +5844,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("readblasterjr", "Preview v1.0c", "RBJUNIOR.EXE",					"t:d146b5084aef8f4edac617c9e0fa79a9", 705457, 404),
 	// from Great Adventures by Fisher-Price: Castle (1995)
 	MACDEMO1("readblasterjr", "Preview v1.0c", "Reading Blaster Power Mac", "49aa41e6b624e64e8e48850faa882cc8", 61732, 404),
+
+	// MacFormat #40
+	MACDEMO1("rednex", "Demo", "RedNex",	 "rt:99a4f9d7fb487053826c42e97aa96b33", 483490, 404),
+	WINDEMO1("rednex", "Demo", "REDNEX.EXE", "t:e1d181303fd8c2aed5cd1d69b0c985e7",  696877, 404),
 
 	MACDEMO1("redshift", "1994 Demo",	  "RSDEMO.MAC",	   "r:4f7ff33ce95ed9f42befdae4f9b6b690", 291988, 403),
 	// Sound / No Sound demos found on MacFormat August '94
