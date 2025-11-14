@@ -69,7 +69,13 @@ private:
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
-	Common::Array<ConversationLine> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
+
+	Common::String cleanText(const Common::String &text);
+    Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
+	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
+	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
+
+	void talk();
 	Common::String getControlName(byte b);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadCursors();
@@ -100,6 +106,8 @@ private:
 	Common::List<Exit> _currentRoomExits;
 	Common::List<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
+	Common::Array<ConversationNode> _currentRoomConversations;
+
 	int *_currentAnimFrames = nullptr;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;

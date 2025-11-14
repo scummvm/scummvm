@@ -52,11 +52,10 @@ int LargeFont::getCharWidth(uint32 chr) const {
 
 void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	chr -= 32; // Adjust for font starting at ASCII 32
-	if (!_fontData || chr > 255 || chr < 0) {
+	if (!_fontData || chr > 96 || chr < 0) {
 		return;
 	}
 	int charOffset = chr * 0x30;
-
 	for (int i = 0; i < 24; i++) {
 		byte rowByte1 = _fontData[charOffset + i * 2];
 		byte rowByte2 = _fontData[charOffset + i * 2 + 1];

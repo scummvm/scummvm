@@ -126,14 +126,47 @@ struct HotSpot {
 	bool isEnabled = true;
 };
 
-struct ConversationLine {
-    Common::String text;
-    Common::Array<Common::String> controlBytes;
-    byte speaker;
-    uint32 offset;
-    Common::Array<byte> rawBytes;
+struct ConversationElement {
+    enum Type {
+        DIALOGUE,
+        CHOICE_MARKER,
+        END_CONV,
+        END_BRANCH
+    } type;
 
-    ConversationLine() : speaker(0), offset(0) {}
+    Common::String speaker;
+	byte speakerId;
+    Common::String text;
+    int choiceIndex;
+    bool isRealChoice;
+
+    ConversationElement() : type(DIALOGUE), choiceIndex(-1), isRealChoice(false) {}
+};
+
+
+struct ConversationNode {
+    enum NodeType {
+        ROOT,
+        CHOICE,
+        RESPONSE
+    } type;
+
+    Common::String text;
+    Common::String speaker;
+	byte speakerId;
+    int choiceIndex;
+    bool terminated;
+
+    Common::Array<ConversationNode> choices;
+    Common::Array<ConversationNode> responses;
+    Common::Array<ConversationNode> subchoices;
+
+    ConversationNode() : type(ROOT), choiceIndex(-1), terminated(false) {}
+};
+
+struct StackEntry {
+    ConversationNode *node;
+    int index;
 };
 
 struct Description {
