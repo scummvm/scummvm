@@ -5286,6 +5286,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819875, 0), // Mac v1.2.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820344, 0), // Mac v1.2.2
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617832279, 0), // Mac v2.0.0
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617832846, 0), // Mac v2.0.0 hotfix
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, 0), // Windows/Linux
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, 0), // Windows/Linux v0.9.0 (GOG v1.2)
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040045, 0), // Windows?/Linux v1.0.0
@@ -5297,6 +5298,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820344, 0), // Windows/Linux v1.2.2
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617821115, 0), // Windows/Linux v1.2.3
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617832279, 0), // Windows/Linux v2.0.0
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617832846, 0), // Windows/Linux v2.0.0 hotfix
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, 0), // Windows/Linux
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, 0), // Windows/Linux v0.9.0 (GOG v1.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756037170, 0), // Windows/Linux v0.9.0 (GOG v1.3)
@@ -5310,10 +5312,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820661, 0), // Windows/Linux v1.2.2 (GOG v2.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617821432, 0), // Windows/Linux v1.2.3 (GOG v2.3)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617832596, 0), // Windows/Linux v2.0.0 (GOG v2.5)
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617833163, 0), // Windows/Linux v2.0.0 hotfix (GOG v2.7)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819592, 0), // Mac v1.1.1 (GOG v2.0.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820192, 0), // Mac v1.2.1 (GOG v2.1-v2.3)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820661, 0), // Mac v1.2.2 (GOG v2.4)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617832596, 0), // Mac v2.0.0 (GOG v2.6)
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617833163, 0), // Mac v2.0.0 hotfix (GOG v2.7)
 	GAME_ENTRY_EN_STEAM("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 129124983),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1074262526),
