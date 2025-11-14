@@ -6613,6 +6613,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version is D4
 	WINGAME1f("amber", "", "AMBER_F/AMBER_JB.EXE", "t:9041928550219b808fd23d96e7ad7c6d", 1418103, 500, GF_32BPP),
+	// Amber: Reisen ins Jenseits (TRAC #16349)
+	WINGAME1f_l("amber", "", "AMBER_F/AMBER_JB.EXE", "t:a6de30cf9261cc1a910e87b25f0d0e1b", 1418087, Common::DE_DEU, 500, GF_32BPP),
 	WINDEMO2t("amber", "Demo", "DEMO.EXE", "98f65233a8d80a75513267fed14c1e18", 1417811,
 							   "AMBERHUB.DXR", "a95601f2521fd00c88ac424d66da1605", 868766, 501),
 
