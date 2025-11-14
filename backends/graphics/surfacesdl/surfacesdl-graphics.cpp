@@ -1242,7 +1242,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			blackrect.x = ((_videoMode.screenWidth + _gameScreenShakeXOffset) * _videoMode.scaleFactor);
 		}
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible) {
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 		}
 
@@ -1263,7 +1263,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			blackrect.y = ((_videoMode.screenHeight + _gameScreenShakeYOffset) * _videoMode.scaleFactor);
 		}
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible) {
 			blackrect.y = real2Aspect(blackrect.y);
 			blackrect.h = real2Aspect(blackrect.h + blackrect.y - 1) - blackrect.y + 1;
 		}
@@ -1450,7 +1450,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dst_x *= scale1;
 				dst_y *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
 				_scaler->scale((byte *)srcSurf->pixels + (src_x + _maxExtraPixels) * bpp + (src_y + _maxExtraPixels) * srcPitch, srcPitch,
@@ -1462,7 +1462,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				r->h = dst_h * scale1;
 
 #ifdef USE_ASPECT
-				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, 	convertSDLPixelFormat(_hwScreen->format));
 #endif
 			}
@@ -1487,7 +1487,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 		// We draw the focus rectangle on top of everything, to assure it's easily visible.
-		// Of course when the overlay is visible we do not show it, since it is only for game
+		// Of course when the GUI overlay is visible we do not show it, since it is only for game
 		// specific focus.
 		if (_enableFocusRect && !_overlayInGUI) {
 			int x = _focusRect.left + _currentShakeXOffset;
@@ -1507,7 +1507,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				w *= scale1;
 				h *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					y = real2Aspect(y);
 
 				if (h > 0 && w > 0) {
@@ -1852,7 +1852,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool in
 	}
 
 #ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection && !_overlayInGUI && !realCoordinates)
+	if (_videoMode.aspectRatioCorrection && !inOverlay && !realCoordinates)
 		makeRectStretchable(x, y, w, h, _videoMode.filtering);
 #endif
 
@@ -1962,7 +1962,7 @@ void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 
 	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), false);
 #endif
 }
 
@@ -1976,7 +1976,7 @@ void SurfaceSdlGraphicsManager::clearFocusRectangle() {
 
 	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), false);
 #endif
 }
 
