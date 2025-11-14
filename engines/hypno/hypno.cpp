@@ -322,7 +322,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 
 	delete _subtitles;
 	_subtitles = nullptr;
-	g_system->clearOverlay();
+	g_system->hideOverlay();
 }
 
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -612,16 +612,24 @@ void HypnoEngine::loadSubtitles(const Common::Path &path) {
 	subPath = subPath.appendComponent(language);
 	subPath = subPath.appendComponent(subPathStr);
 	debugC(1, kHypnoDebugMedia, "Loading subtitles from %s", subPath.toString().c_str());
-	if (Common::File::exists(subPath)) {
-		_subtitles = new Video::Subtitles();
-		_subtitles->loadSRTFile(subPath);
-		g_system->showOverlay(false);
-		adjustSubtitleSize();
-	} else {
+
+	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->clearOverlay();
+		g_system->hideOverlay();
 	}
+
+	_subtitles = new Video::Subtitles();
+	_subtitles->loadSRTFile(subPath);
+	if (!_subtitles->isLoaded()) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		return;
+	}
+
+	g_system->showOverlay(false);
+	g_system->clearOverlay();
+	adjustSubtitleSize();
 }
 
 
