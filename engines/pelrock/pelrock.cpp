@@ -243,7 +243,7 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 
 Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
-	debug("Sprite pair offset position: %d", pair_offset);
+	// debug("Sprite pair offset position: %d", pair_offset);
 	roomFile->seek(pair_offset, SEEK_SET);
 	uint32_t offset = roomFile->readUint32LE();
 	uint32_t size = roomFile->readUint32LE();
@@ -284,8 +284,7 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 			break;
 		}
 		animSet.animData = new Anim[animSet.numAnims];
-		debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
-		// roomFile->skip(1);
+		// debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
 		int subAnimOffset = 10;
 		for (int j = 0; j < animSet.numAnims; j++) {
 
@@ -305,7 +304,7 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 				anim.animData = new byte[needed];
 				Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
 				animSet.animData[j] = anim;
-				debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
+				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
 				picOffset += needed;
 			} else {
 				continue;
@@ -367,7 +366,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 	return walkboxes;
 }
 
-Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roomFile, int roomOffset) {
+Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos) {
 	uint32_t pair12_offset_pos = roomOffset + (12 * 8);
 	roomFile->seek(pair12_offset_pos, SEEK_SET);
 	// roomFile->skip(4);
@@ -379,6 +378,7 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 	roomFile->read(data, pair12_size);
 	Common::Array<Description> descriptions;
 	uint32_t pos = 0;
+	uint32_t lastDescPos = 0;
 	while (pos < (pair12_size)) {
 		// char *desc = new char[256];
 		int desc_pos = 0;
@@ -401,10 +401,12 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 			debug("Found description for item %d index %d, text: %s", description.itemId, description.index, description.text.c_str());
 
 			descriptions.push_back(description);
+			lastDescPos = pos;
 		}
 		pos++;
 	}
-
+	debug("End of descriptions at position %d", pos);
+	outPos = lastDescPos+1;
 	delete[] data;
 	// for (Common::List<Common::String>::iterator i = descriptions.begin(); i != descriptions.end(); i++) {
 	// 	debug("Room description: %s", i->c_str());
@@ -412,9 +414,199 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 	return descriptions;
 }
 
-void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
+bool isControlByte(byte b) {
+	//  0xFD: 'END_LINE',
+    // 0xFC: 'TEXT_TERM',
+    // 0xFB: 'CHOICE',
+    // 0xFA: 'SKIP',
+    // 0xF9: 'PAGE_BREAK',
+    // 0xF8: 'ACTION',
+    // 0xF7: 'END_BRANCH',
+    // 0xF6: 'LINE_CONT',
+    // 0xF5: 'END_BRANCH_2',
+    // 0xF4: 'END_CONV',
+    // 0xF1: 'CHOICE_ALT',
+    // 0xF0: 'GO_BACK',
+    // 0xFE: 'END_BRANCH_3',
+    // 0xEB: 'END_ALT',
+    // 0xFF: 'DESC_START',
+    // 0x08: 'SPEAKER',
+	if (b == 0xFD || b == 0xFC || b == 0xFB || b == 0xFA || b == 0xF9 || b == 0xF8 ||
+		b == 0xF7 || b == 0xF6 || b == 0xF5 || b == 0xF4 || b == 0xF1 ||
+		b == 0xF0 || b == 0xFE || b == 0xEB || b == 0xFF || b == 0x08) {
+		return true;
+	}
+	return false;
+}
 
-	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset);
+bool isTerminalByte(byte b) {
+	return (b == 0xFD || b == 0xF4 || b == 0xEB || b == 0xF7 || b == 0xF5 || b == 0xFE || b == 0xFC);
+}
+
+
+/**
+ * def decode_byte(b):
+    """Decode a byte to character"""
+    special = {
+        0x80: 'ñ', 0x81: 'í', 0x82: '¡', 0x83: '¿', 0x84: 'ú',
+        0x7B: 'á', 0x7C: 'é', 0x7D: 'í', 0x7E: 'ó', 0x7F: 'ú',
+    }
+
+    if b in special:
+        return special[b]
+    elif 0x20 <= b <= 0x7A:
+        return chr(b)
+    else:
+        return f'[{b:02X}]'
+ */
+char32_t decodeByte(byte b) {
+	if ( b == 0x80) {
+		return 'n';
+	} else if (b == 0x81) {
+		return 'i';
+	} else if (b == 0x82) {
+		return 'X';
+	} else if (b == 0x83) {
+		return 'X';
+	} else if (b == 0x84) {
+		return 'u';
+	} else if (b == 0x7B) {
+		return 'a';
+	} else if (b == 0x7C) {
+		return 'e';
+	} else if (b == 0x7D) {
+		return 'i';
+	} else if (b == 0x7E) {
+		return 'o';
+	} else if (b == 0x7F) {
+		return 'u';
+	} else if (b >= 0x20 && b <= 0x7A) {
+		return (char)b;
+	} else {
+		// return string in format [XX]
+		return '.';
+	}
+
+}
+
+Common::String PelrockEngine::getControlName(byte b) {
+    switch (b) {
+        case 0xFD: return "END_LINE";
+        case 0xFC: return "TEXT_TERM";
+        case 0xFB: return "CHOICE";
+        case 0xFA: return "SKIP";
+        case 0xF9: return "PAGE_BREAK";
+        case 0xF8: return "ACTION";
+        case 0xF7: return "END_BRANCH";
+        case 0xF6: return "LINE_CONT";
+        case 0xF5: return "END_BRANCH_2";
+        case 0xF4: return "END_CONV";
+        case 0xF1: return "CHOICE_ALT";
+        case 0xF0: return "GO_BACK";
+        case 0xFE: return "END_BRANCH_3";
+        case 0xEB: return "END_ALT";
+        case 0xFF: return "DESC_START";
+        case 0x08: return "SPEAKER";
+        default: return Common::String::format("UNKNOWN(0x%02X)", b);
+    }
+}
+
+Common::Array<ConversationLine> PelrockEngine::loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos) {
+    Common::Array<ConversationLine> conversations;
+
+    debug("Loading conversations starting at position %d", startPos);
+
+    uint32_t pair12_offset_pos = roomOffset + (12 * 8);
+    roomFile->seek(pair12_offset_pos, SEEK_SET);
+    uint32_t pair12_data_offset = roomFile->readUint32LE();
+    uint32_t pair12_size = roomFile->readUint32LE();
+
+	startPos += 2;
+    uint32_t conversation_start = pair12_data_offset + startPos;
+    uint32_t conversation_size = pair12_size - startPos;
+
+    roomFile->seek(conversation_start, SEEK_SET);
+    byte *data = new byte[conversation_size];
+    roomFile->read(data, conversation_size);
+
+    uint32_t i = 0;
+    int lineNum = 1;
+
+    while (i < conversation_size) {
+        uint32_t lineStart = i;
+        ConversationLine line;
+        line.offset = startPos + lineStart;
+        line.speaker = 0;
+
+        // Read until we hit an end marker
+        while (i < conversation_size) {
+            byte b = data[i];
+
+            if (b == 0x08) { // SPEAKER
+                i++;
+                if (i < conversation_size) {
+                    line.speaker = data[i];
+                    line.controlBytes.push_back(Common::String::format("SPEAKER(0x%02X)", line.speaker));
+                    i++;
+                }
+                continue;
+            } else if (isControlByte(b)) {
+                line.controlBytes.push_back(Common::String::format("%s(0x%02X)",
+                                                                    getControlName(b).c_str(), b));
+                i++;
+
+                // Check for end markers
+                if (isTerminalByte(b)) {
+                    break;
+                }
+            } else {
+                // Regular text character
+                if (b != 0x00) {
+                    line.text += decodeByte(b);
+                }
+                i++;
+            }
+        }
+
+        // Store raw bytes for this line
+        for (uint32_t j = lineStart; j < i && j < conversation_size; j++) {
+            line.rawBytes.push_back(data[j]);
+        }
+
+        // Only add line if it has content
+        if (!line.text.empty() || line.controlBytes.size() > 0) {
+            // debug("Line %d (offset %d): %s", lineNum, line.offset, line.text.c_str());
+            if (line.controlBytes.size() > 0) {
+                Common::String controls;
+                for (uint k = 0; k < line.controlBytes.size(); k++) {
+                    if (k > 0) controls += ", ";
+                    controls += line.controlBytes[k];
+                }
+                // debug("  Controls: %s", controls.c_str());
+            }
+            conversations.push_back(line);
+            lineNum++;
+        }
+    }
+
+    delete[] data;
+    debug("Loaded %d conversation lines", conversations.size());
+    return conversations;
+}
+
+void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
+	uint32_t outPos = 0;
+
+	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset, outPos);
+	debug("After decsriptions, position is %d", outPos);
+	Common::Array<ConversationLine> conversations = loadConversations(roomFile, roomOffset, outPos);
+	for(int i = 0; i < conversations.size(); i++) {
+		if( conversations[i].text.empty()) {
+			continue;
+		}
+		debug("Conversation %d: %s", i, conversations[i].text.c_str());
+	}
+
 
 	Common::List<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
 
@@ -437,6 +629,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
+
 
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
@@ -462,7 +655,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
-		debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, _currentRoomDescriptions[i].text.c_str());
+		// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, _currentRoomDescriptions[i].text.c_str());
 		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
 		_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
 		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
@@ -567,7 +760,7 @@ Common::Array<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int r
 		spot.w = obj_bytes[5];
 		spot.h = obj_bytes[6];
 		spot.extra = obj_bytes[7] | (obj_bytes[8] << 8);
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	return hotspots;

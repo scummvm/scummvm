@@ -21,6 +21,10 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
+#include "common/types.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+
 namespace Pelrock {
 
 enum Cursor {
@@ -122,6 +126,16 @@ struct HotSpot {
 	bool isEnabled = true;
 };
 
+struct ConversationLine {
+    Common::String text;
+    Common::Array<Common::String> controlBytes;
+    byte speaker;
+    uint32 offset;
+    Common::Array<byte> rawBytes;
+
+    ConversationLine() : speaker(0), offset(0) {}
+};
+
 struct Description {
 	byte itemId;
 	byte index;
@@ -147,20 +161,22 @@ enum GameState {
 	PROMOTE = 107,
 };
 
-// struct rectCam
-// {
-//     Common::List<int> vecinos;
-//     bool marked;
-//     int index;
-//     int x;
-//     int y;
-//     int w;
-//     int h;
-// };
-
-// struct defCam
-// {
-//     rectCam cams[];
+// enum ConversationMarkers : byte {
+//     END_LINE(0xFD),
+//     TEXT_TERM(0xFC),
+// 	CHOICE(0xFB),
+// 	SKIP(0xFA),
+// 	PAGE_BREAK(0xF9),
+// 	ACTION(0xF8),
+// 	END_BRANCH(0xF7),
+// 	LINE_CONT(0xF6),
+// 	END_BRANCH_2(0xF5),
+// 	END_CONV(0xF4),
+// 	GO_BACK(0xF0),
+// 	END_BRANCH_3(0xFE),
+// 	END_ALT(0xEB),
+// 	DESC_START(0xFF),
+// 	SPEAKER(0x08)
 // };
 
 } // End of namespace Pelrock

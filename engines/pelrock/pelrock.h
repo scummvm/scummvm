@@ -68,7 +68,9 @@ private:
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
-	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset);
+	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
+	Common::Array<ConversationLine> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
+	Common::String getControlName(byte b);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadCursors();
 	void loadInteractionIcons();
