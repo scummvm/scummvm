@@ -5689,6 +5689,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("twc", "Definitive Edition",
 		WME_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_8_6),
 
+	// The White Chamber (Version 1.7 - Definitive Edition) (multi-language + Spanish fanmade translation)
+	WME_WINENTRY("twc", "Spanish fanmade",
+		WME_ENTRY1s("data.dcp", "969a3c3025f6654fa26002e1ecb83662", 186452619), Common::UNK_LANG, ADGF_NO_FLAGS, WME_1_9_1),
+
 	// Today, Mama!
 	WME_WINENTRY("todaymama", "",
 		WME_ENTRY1s("data.dcp", "b89e4a2000109f21d1aba10ef0920180", 1266324389), Common::RU_RUS, ADGF_UNSTABLE, WME_1_7_3),
