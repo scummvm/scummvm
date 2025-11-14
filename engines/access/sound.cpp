@@ -334,7 +334,7 @@ void MusicManager::midiPlay() {
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);
-		setVolume(127);
+		syncVolume();
 		_isPlaying = true;
 	} else if (magic == MKTAG('B', 'E', 'm', 'd')) {
 		_parser = new MidiParser_BEmd();
