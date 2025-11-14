@@ -157,7 +157,11 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		GAMEOPTION_EOB_ADDRULES,
 		{
 			_s("Faithful AD&D rules"),
-			_s("Make implementation of AD&D rules more compliant with the AD&D 2nd edition handbook"),
+			_s(
+				"- Eliminate HP gain round-off errors\n"
+				"- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
+				"- Elves get +1 to hit with swords and bows (per official game manual)"
+			),
 			"addrules",
 			false,
 			0,
@@ -168,8 +172,8 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_EOB_NPCPATCH,
 		{
-			_s("Fix NPC stats"),
-			_s("Fix stats of Ileria and Beohram NPCs (Ileria should be female and Beohram a paladin)"),
+			_s("Fix Ileria and Beohram NPCs"),
+			_s("Make Ileria a female and Beohram a paladin"),
 			"npcpatch",
 			false,
 			0,
@@ -180,8 +184,8 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_EOB_RELOAD,
 		{
-			_s("Enhanced missile reload"),
-			_s("Daggers, darts, stones and similar weapons get reloaded from all inventory slots, not just the belt"),
+			_s("Enhanced thrown weapon reload"),
+			_s("Thrown weapons (daggers, darts, spears...) get replaced from belt and backpack inventory slots, by thrown weapons only"),
 			"mreload",
 			false,
 			0,
