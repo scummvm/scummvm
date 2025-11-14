@@ -1626,18 +1626,44 @@ bool PrivateEngine::isSoundActive() {
 void PrivateEngine::adjustSubtitleSize() {
 	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
 	if (_subtitles) {
+		// Subtitle positioning constants (as percentages of screen height)
+		const int HORIZONTAL_MARGIN = 20;
+		const float BOTTOM_MARGIN_PERCENT = 0.009f;  // ~20px at 2160p
+		const float MAIN_MENU_HEIGHT_PERCENT = 0.093f;  // ~200px at 2160p
+		const float ALTERNATE_MODE_HEIGHT_PERCENT = 0.102f;  // ~220px at 2160p
+		const float DEFAULT_HEIGHT_PERCENT = 0.074f;  // ~160px at 2160p
+
+		// Font sizing constants (as percentage of screen height)
+		const int MIN_FONT_SIZE = 8;
+		const float BASE_FONT_SIZE_PERCENT = 0.023f;  // ~50px at 2160p
+
 		int16 h = g_system->getOverlayHeight();
 		int16 w = g_system->getOverlayWidth();
-		float scale = h / 2160.f;
+
+		int bottomMargin = int(h * BOTTOM_MARGIN_PERCENT);
+
 		// If we are in the main menu, we need to adjust the position of the subtitles
 		if (_mode == 0) {
-			_subtitles->setBBox(Common::Rect(20, h - 200 * scale, w - 20, h - 20));
+			int topOffset = int(h * MAIN_MENU_HEIGHT_PERCENT);
+			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
+											h - topOffset,
+											w - HORIZONTAL_MARGIN,
+											h - bottomMargin));
 		} else if (_mode == -1) {
-			_subtitles->setBBox(Common::Rect(20, h - 220 * scale, w - 20, h - 20));
+			int topOffset = int(h * ALTERNATE_MODE_HEIGHT_PERCENT);
+			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
+											h - topOffset,
+											w - HORIZONTAL_MARGIN,
+											h - bottomMargin));
 		} else {
-			_subtitles->setBBox(Common::Rect(20, h - 160 * scale, w - 20, h - 20));
+			int topOffset = int(h * DEFAULT_HEIGHT_PERCENT);
+			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
+											h - topOffset,
+											w - HORIZONTAL_MARGIN,
+											h - bottomMargin));
 		}
-		int fontSize = MAX(8, int(50 * scale));
+
+		int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
 		_subtitles->setColor(0xff, 0xff, 0x80);
 		_subtitles->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
 		_subtitles->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
