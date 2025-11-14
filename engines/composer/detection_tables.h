@@ -280,6 +280,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Imo and the King Italian - from bug #16343
+	{
+		{
+			"imoking",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "c9bb23d35125b0721bd3ff439790cfe6", 3297},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: The Little Samurai - from bug #5964
 	{
 		{
