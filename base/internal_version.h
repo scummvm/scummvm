@@ -16,8 +16,8 @@
 #define SCUMMVM_REVISION
 #endif
 
-#define SCUMMVM_VERSION "3.0.0git"
+#define SCUMMVM_VERSION "3.1.0git"
 
 #define SCUMMVM_VER_MAJOR 3
-#define SCUMMVM_VER_MINOR 0
+#define SCUMMVM_VER_MINOR 1
 #define SCUMMVM_VER_PATCH 0
