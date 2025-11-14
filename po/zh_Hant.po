@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-11 10:58+0000\n"
+"POT-Creation-Date: 2025-11-14 06:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -56,7 +56,7 @@ msgstr ""
 #: gui/about.cpp:527 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:56
-#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:571
 #: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
@@ -104,7 +104,7 @@ msgstr ""
 #: engines/engine.cpp:833 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
@@ -536,7 +536,7 @@ msgid ""
 msgstr ""
 
 #: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:117
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 msgid "Proceed"
 msgstr ""
 
@@ -769,9 +769,9 @@ msgstr ""
 #: gui/options.cpp:1675 gui/options.cpp:1711 gui/options.cpp:1727
 #: gui/options.cpp:2142 gui/options.cpp:2598 gui/options.cpp:2672
 #: gui/options.cpp:2886 gui/options.cpp:3387 audio/null.cpp:45
-#: backends/platform/android/options.cpp:154
-#: backends/platform/android/options.cpp:155
-#: backends/platform/android/options.cpp:183
+#: backends/platform/android/options.cpp:157
+#: backends/platform/android/options.cpp:158
+#: backends/platform/android/options.cpp:186
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
 #: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
@@ -4765,26 +4765,30 @@ msgid ""
 "other_platforms/android.html) for more information.\n"
 msgstr ""
 
-#: backends/platform/android/options.cpp:135
+#: backends/platform/android/options.cpp:137
 #: backends/platform/ios7/ios7_options.mm:165
 msgid "Show On-screen control"
 msgstr ""
 
-#: backends/platform/android/options.cpp:136
+#: backends/platform/android/options.cpp:138
+msgid "Ignore safe areas in-game"
+msgstr ""
+
+#: backends/platform/android/options.cpp:139
 #: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
 msgstr ""
 
-#: backends/platform/android/options.cpp:138
-#: backends/platform/android/options.cpp:169
+#: backends/platform/android/options.cpp:141
+#: backends/platform/android/options.cpp:172
 #: backends/platform/ios7/ios7_options.mm:117
 #: backends/platform/ios7/ios7_options.mm:144
 msgid "In menus"
 msgstr ""
 
-#: backends/platform/android/options.cpp:140
-#: backends/platform/android/options.cpp:158
-#: backends/platform/android/options.cpp:159
+#: backends/platform/android/options.cpp:143
+#: backends/platform/android/options.cpp:161
+#: backends/platform/android/options.cpp:162
 #: backends/platform/ios7/ios7_options.mm:119
 #: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_options.mm:137
@@ -4792,9 +4796,9 @@ msgstr ""
 msgid "Touchpad emulation"
 msgstr ""
 
-#: backends/platform/android/options.cpp:141
-#: backends/platform/android/options.cpp:161
-#: backends/platform/android/options.cpp:162
+#: backends/platform/android/options.cpp:144
+#: backends/platform/android/options.cpp:164
+#: backends/platform/android/options.cpp:165
 #: backends/platform/ios7/ios7_options.mm:120
 #: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_options.mm:140
@@ -4802,114 +4806,114 @@ msgstr ""
 msgid "Direct mouse"
 msgstr ""
 
-#: backends/platform/android/options.cpp:142
-#: backends/platform/android/options.cpp:164
-#: backends/platform/android/options.cpp:165
+#: backends/platform/android/options.cpp:145
+#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:168
 msgid "Gamepad emulation"
 msgstr ""
 
-#: backends/platform/android/options.cpp:148
+#: backends/platform/android/options.cpp:151
 #: backends/platform/ios7/ios7_options.mm:126
 msgid "In 2D games"
 msgstr ""
 
-#: backends/platform/android/options.cpp:150
+#: backends/platform/android/options.cpp:153
 #: backends/platform/ios7/ios7_options.mm:128
 msgid "In 3D games"
 msgstr ""
 
-#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:170
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
 msgstr ""
 
-#: backends/platform/android/options.cpp:171
-#: backends/platform/android/options.cpp:186
+#: backends/platform/android/options.cpp:174
+#: backends/platform/android/options.cpp:189
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
 msgid "Automatic"
 msgstr ""
 
-#: backends/platform/android/options.cpp:172
-#: backends/platform/android/options.cpp:187
+#: backends/platform/android/options.cpp:175
+#: backends/platform/android/options.cpp:190
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
 msgstr ""
 
-#: backends/platform/android/options.cpp:173
-#: backends/platform/android/options.cpp:188
+#: backends/platform/android/options.cpp:176
+#: backends/platform/android/options.cpp:191
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
 msgid "Landscape"
 msgstr ""
 
-#: backends/platform/android/options.cpp:179
+#: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:154
 msgid "In games"
 msgstr ""
 
-#: backends/platform/android/options.cpp:192
+#: backends/platform/android/options.cpp:195
 msgid "Export backup"
 msgstr ""
 
-#: backends/platform/android/options.cpp:192
+#: backends/platform/android/options.cpp:195
 msgid "Export a backup of the configuration and save files"
 msgstr ""
 
-#: backends/platform/android/options.cpp:193
+#: backends/platform/android/options.cpp:196
 msgid "Import backup"
 msgstr ""
 
-#: backends/platform/android/options.cpp:193
+#: backends/platform/android/options.cpp:196
 msgid "Import a previously exported backup file"
 msgstr ""
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
-#: backends/platform/android/options.cpp:196
+#: backends/platform/android/options.cpp:199
 msgid "Remove folder authorizations..."
 msgstr ""
 
-#: backends/platform/android/options.cpp:268
+#: backends/platform/android/options.cpp:272
 msgid "Select backup destination"
 msgstr ""
 
-#: backends/platform/android/options.cpp:276
+#: backends/platform/android/options.cpp:280
 msgid "The backup has been saved successfully."
 msgstr ""
 
-#: backends/platform/android/options.cpp:278
+#: backends/platform/android/options.cpp:282
 msgid "The backup has been saved successfully to the Downloads folder."
 msgstr ""
 
-#: backends/platform/android/options.cpp:280
-#: backends/platform/android/options.cpp:313
+#: backends/platform/android/options.cpp:284
+#: backends/platform/android/options.cpp:317
 msgid "The game saves couldn't be backed up"
 msgstr ""
 
-#: backends/platform/android/options.cpp:282
+#: backends/platform/android/options.cpp:286
 msgid "An error occured while saving the backup."
 msgstr ""
 
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
 
-#: backends/platform/android/options.cpp:294
+#: backends/platform/android/options.cpp:298
 msgid "Select backup file"
 msgstr ""
 
-#: backends/platform/android/options.cpp:311
+#: backends/platform/android/options.cpp:315
 msgid "The backup has been restored successfully."
 msgstr ""
 
-#: backends/platform/android/options.cpp:315
+#: backends/platform/android/options.cpp:319
 msgid "An error occured while restoring the backup."
 msgstr ""
 
-#: backends/platform/android/options.cpp:559
+#: backends/platform/android/options.cpp:572
 msgid "Remove"
 msgstr ""
 

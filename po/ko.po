@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-11 10:58+0000\n"
+"POT-Creation-Date: 2025-11-14 06:56+0000\n"
 "PO-Revision-Date: 2025-09-08 17:01+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -59,7 +59,7 @@ msgstr "사용 가능한 엔진:"
 #: gui/about.cpp:527 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:56
-#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:571
 #: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
@@ -107,7 +107,7 @@ msgstr "위로"
 #: engines/engine.cpp:833 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
@@ -554,7 +554,7 @@ msgstr ""
 "겠습니까?"
 
 #: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:117
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 msgid "Proceed"
 msgstr "진행"
 
@@ -789,9 +789,9 @@ msgstr "게임 언어입니다. 이렇게 하면 스페인어 게임 버전이 �
 #: gui/options.cpp:1675 gui/options.cpp:1711 gui/options.cpp:1727
 #: gui/options.cpp:2142 gui/options.cpp:2598 gui/options.cpp:2672
 #: gui/options.cpp:2886 gui/options.cpp:3387 audio/null.cpp:45
-#: backends/platform/android/options.cpp:154
-#: backends/platform/android/options.cpp:155
-#: backends/platform/android/options.cpp:183
+#: backends/platform/android/options.cpp:157
+#: backends/platform/android/options.cpp:158
+#: backends/platform/android/options.cpp:186
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
 #: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
@@ -5147,26 +5147,30 @@ msgstr ""
 "자세한 내용은 [안드로이드 설명서](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html)를 참조하세요.\n"
 
-#: backends/platform/android/options.cpp:135
+#: backends/platform/android/options.cpp:137
 #: backends/platform/ios7/ios7_options.mm:165
 msgid "Show On-screen control"
 msgstr "화면상 조작 표시"
 
-#: backends/platform/android/options.cpp:136
+#: backends/platform/android/options.cpp:138
+msgid "Ignore safe areas in-game"
+msgstr ""
+
+#: backends/platform/android/options.cpp:139
 #: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
 msgstr "선호하는 터치 모드를 선택:"
 
-#: backends/platform/android/options.cpp:138
-#: backends/platform/android/options.cpp:169
+#: backends/platform/android/options.cpp:141
+#: backends/platform/android/options.cpp:172
 #: backends/platform/ios7/ios7_options.mm:117
 #: backends/platform/ios7/ios7_options.mm:144
 msgid "In menus"
 msgstr "메뉴에서"
 
-#: backends/platform/android/options.cpp:140
-#: backends/platform/android/options.cpp:158
-#: backends/platform/android/options.cpp:159
+#: backends/platform/android/options.cpp:143
+#: backends/platform/android/options.cpp:161
+#: backends/platform/android/options.cpp:162
 #: backends/platform/ios7/ios7_options.mm:119
 #: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_options.mm:137
@@ -5174,9 +5178,9 @@ msgstr "메뉴에서"
 msgid "Touchpad emulation"
 msgstr "터치패드 에뮬레이션"
 
-#: backends/platform/android/options.cpp:141
-#: backends/platform/android/options.cpp:161
-#: backends/platform/android/options.cpp:162
+#: backends/platform/android/options.cpp:144
+#: backends/platform/android/options.cpp:164
+#: backends/platform/android/options.cpp:165
 #: backends/platform/ios7/ios7_options.mm:120
 #: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_options.mm:140
@@ -5184,96 +5188,96 @@ msgstr "터치패드 에뮬레이션"
 msgid "Direct mouse"
 msgstr "직접 마우스"
 
-#: backends/platform/android/options.cpp:142
-#: backends/platform/android/options.cpp:164
-#: backends/platform/android/options.cpp:165
+#: backends/platform/android/options.cpp:145
+#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:168
 msgid "Gamepad emulation"
 msgstr "게임패드 에뮬레이션"
 
-#: backends/platform/android/options.cpp:148
+#: backends/platform/android/options.cpp:151
 #: backends/platform/ios7/ios7_options.mm:126
 msgid "In 2D games"
 msgstr "2D 게임에서"
 
-#: backends/platform/android/options.cpp:150
+#: backends/platform/android/options.cpp:153
 #: backends/platform/ios7/ios7_options.mm:128
 msgid "In 3D games"
 msgstr "3D 게임에서"
 
-#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:170
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
 msgstr "방향을 선택:"
 
-#: backends/platform/android/options.cpp:171
-#: backends/platform/android/options.cpp:186
+#: backends/platform/android/options.cpp:174
+#: backends/platform/android/options.cpp:189
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
 msgid "Automatic"
 msgstr "자동"
 
-#: backends/platform/android/options.cpp:172
-#: backends/platform/android/options.cpp:187
+#: backends/platform/android/options.cpp:175
+#: backends/platform/android/options.cpp:190
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
 msgstr "세로 방향"
 
-#: backends/platform/android/options.cpp:173
-#: backends/platform/android/options.cpp:188
+#: backends/platform/android/options.cpp:176
+#: backends/platform/android/options.cpp:191
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
 msgid "Landscape"
 msgstr "가로 방향"
 
-#: backends/platform/android/options.cpp:179
+#: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:154
 msgid "In games"
 msgstr "게임에서"
 
-#: backends/platform/android/options.cpp:192
+#: backends/platform/android/options.cpp:195
 msgid "Export backup"
 msgstr "백업 내보내기"
 
-#: backends/platform/android/options.cpp:192
+#: backends/platform/android/options.cpp:195
 msgid "Export a backup of the configuration and save files"
 msgstr "구성 백업을 내보내고 파일을 저장"
 
-#: backends/platform/android/options.cpp:193
+#: backends/platform/android/options.cpp:196
 msgid "Import backup"
 msgstr "백업 가져오기"
 
-#: backends/platform/android/options.cpp:193
+#: backends/platform/android/options.cpp:196
 msgid "Import a previously exported backup file"
 msgstr "이전에 내보낸 백업 파일 가져오기"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
-#: backends/platform/android/options.cpp:196
+#: backends/platform/android/options.cpp:199
 msgid "Remove folder authorizations..."
 msgstr "폴더 권한을 제거합니다..."
 
-#: backends/platform/android/options.cpp:268
+#: backends/platform/android/options.cpp:272
 msgid "Select backup destination"
 msgstr "백업 대상 선택"
 
-#: backends/platform/android/options.cpp:276
+#: backends/platform/android/options.cpp:280
 msgid "The backup has been saved successfully."
 msgstr "백업이 성공적으로 저장되었습니다."
 
-#: backends/platform/android/options.cpp:278
+#: backends/platform/android/options.cpp:282
 msgid "The backup has been saved successfully to the Downloads folder."
 msgstr "백업이 다운로드 폴더에 성공적으로 저장되었습니다."
 
-#: backends/platform/android/options.cpp:280
-#: backends/platform/android/options.cpp:313
+#: backends/platform/android/options.cpp:284
+#: backends/platform/android/options.cpp:317
 msgid "The game saves couldn't be backed up"
 msgstr "게임 저장을 백업할 수 없음"
 
-#: backends/platform/android/options.cpp:282
+#: backends/platform/android/options.cpp:286
 msgid "An error occured while saving the backup."
 msgstr "백업을 저장하는 동안 오류가 발생했습니다."
 
-#: backends/platform/android/options.cpp:289
+#: backends/platform/android/options.cpp:293
 msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
@@ -5281,19 +5285,19 @@ msgstr ""
 "백업을 복원하면 현재 구성이 지워지고 기존 저장 내용이 덮어쓰여집니다. 계속할"
 "까요?"
 
-#: backends/platform/android/options.cpp:294
+#: backends/platform/android/options.cpp:298
 msgid "Select backup file"
 msgstr "백업 파일 선택"
 
-#: backends/platform/android/options.cpp:311
+#: backends/platform/android/options.cpp:315
 msgid "The backup has been restored successfully."
 msgstr "백업이 성공적으로 복구되었습니다."
 
-#: backends/platform/android/options.cpp:315
+#: backends/platform/android/options.cpp:319
 msgid "An error occured while restoring the backup."
 msgstr "백업을 복원하는 동안 오류가 발생했습니다."
 
-#: backends/platform/android/options.cpp:559
+#: backends/platform/android/options.cpp:572
 msgid "Remove"
 msgstr "제거"
 
