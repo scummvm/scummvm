@@ -185,7 +185,7 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		GAMEOPTION_EOB_RELOAD,
 		{
 			_s("Enhanced thrown weapon reload"),
-			_s("Thrown weapons (daggers, darts, spears...) get replaced from belt and backpack inventory slots, by thrown weapons only"),
+			_s("Thrown weapons (daggers, darts, spears...) get replaced from belt and backpack inventory slots, with thrown weapons only"),
 			"mreload",
 			false,
 			0,
