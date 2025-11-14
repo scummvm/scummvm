@@ -818,7 +818,7 @@ void EoBCoreEngine::checkFlyingObjects() {
 }
 
 void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger) {
-	if (_configADDRuleEnhancements) {
+	if (_configEnhancedReload) {
 		return reloadWeaponSlotEnhanced(charIndex, slotIndex);
 	}
 
