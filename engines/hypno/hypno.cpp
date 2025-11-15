@@ -99,9 +99,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	Action *a = new Quit();
 	q.actions.push_back(a);
 	Scene *quit = new Scene();
-	Hotspots hs;
-	hs.push_back(q);
-	quit->hots = hs;
+	quit->hots.push_back(q);
 	quit->resolution = "320x200";
 	_levels["<quit>"] = quit;
 	resetStatistics();
@@ -309,6 +307,12 @@ void HypnoEngine::runIntros(Videos &videos) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+
+	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+		delete it->decoder;
+		it->decoder = nullptr;
+	}
+
 	keymapper->getKeymap("intro")->setEnabled(false);
 	enableGameKeymaps();
 }
