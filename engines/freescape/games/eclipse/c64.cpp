@@ -29,6 +29,8 @@ namespace Freescape {
 
 void EclipseEngine::initC64() {
 	_viewArea = Common::Rect(32, 32, 288, 136);
+
+	_maxEnergy = 35;
 }
 
 extern byte kC64Palette[16][3];

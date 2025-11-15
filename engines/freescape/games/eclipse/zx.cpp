@@ -29,11 +29,11 @@ namespace Freescape {
 
 void EclipseEngine::initZX() {
 	_viewArea = Common::Rect(56, 36, 265, 139);
-	_maxEnergy = 63;
-	_maxShield = 63;
+	_maxEnergy = 25;
+	_maxShield = 50;
 
 	_soundIndexShoot = 5;
-	_soundIndexCollide = -1; // Scripted 
+	_soundIndexCollide = -1; // Scripted
 	_soundIndexStepDown = 12;
 	_soundIndexStepUp = 12;
 	_soundIndexMenu = -1;
