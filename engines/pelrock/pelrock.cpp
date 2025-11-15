@@ -154,7 +154,7 @@ void PelrockEngine::playIntro() {
 }
 
 void PelrockEngine::loadAnims() {
-	loadMainCharacterAnims();
+	loadAlfredAnims();
 }
 
 const int EXPECTED_SIZE = 640 * 400;
@@ -406,7 +406,7 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 		pos++;
 	}
 	debug("End of descriptions at position %d", pos);
-	outPos = lastDescPos+1;
+	outPos = lastDescPos + 1;
 	delete[] data;
 	// for (Common::List<Common::String>::iterator i = descriptions.begin(); i != descriptions.end(); i++) {
 	// 	debug("Room description: %s", i->c_str());
@@ -414,24 +414,23 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 	return descriptions;
 }
 
-
 /**
  * def decode_byte(b):
-    """Decode a byte to character"""
-    special = {
-        0x80: 'ñ', 0x81: 'í', 0x82: '¡', 0x83: '¿', 0x84: 'ú',
-        0x7B: 'á', 0x7C: 'é', 0x7D: 'í', 0x7E: 'ó', 0x7F: 'ú',
-    }
+	"""Decode a byte to character"""
+	special = {
+		0x80: 'ñ', 0x81: 'í', 0x82: '¡', 0x83: '¿', 0x84: 'ú',
+		0x7B: 'á', 0x7C: 'é', 0x7D: 'í', 0x7E: 'ó', 0x7F: 'ú',
+	}
 
-    if b in special:
-        return special[b]
-    elif 0x20 <= b <= 0x7A:
-        return chr(b)
-    else:
-        return f'[{b:02X}]'
+	if b in special:
+		return special[b]
+	elif 0x20 <= b <= 0x7A:
+		return chr(b)
+	else:
+		return f'[{b:02X}]'
  */
 char32_t decodeByte(byte b) {
-	if ( b == 0x80) {
+	if (b == 0x80) {
 		return '\xA4';
 	} else if (b == 0x81) {
 		return '\xA1';
@@ -457,418 +456,434 @@ char32_t decodeByte(byte b) {
 		// return string in format [XX]
 		return '.';
 	}
-
 }
 
 void PelrockEngine::talk() {
-	if(_currentRoomConversations.size() == 0)
+	if (_currentRoomConversations.size() == 0)
 		return;
 	int x = _currentRoomHotspots[0].x;
 	int y = _currentRoomHotspots[0].y;
 	debug("Say %s", _currentRoomConversations[0].text.c_str());
-	showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
-	for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
-		int idx = _currentRoomConversations.size() - 1 - i;
-		_smallFont->drawString(_screen, _currentRoomConversations[0].choices[idx].text.c_str(), 0, 400 - ((i + 1) * 12), 640, 14);
-	}
-
-
+	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
+	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
+	// 	int idx = _currentRoomConversations.size() - 1 - i;
+	// 	_smallFont->drawString(_screen, _currentRoomConversations[0].choices[idx].text.c_str(), 0, 400 - ((i + 1) * 12), 640, 14);
+	// }
 }
 
 Common::String PelrockEngine::getControlName(byte b) {
 	switch (b) {
-        case 0xFD: return "END_LINE";
-        case 0xFC: return "TEXT_TERM";
-        case 0xFB: return "CHOICE";
-        case 0xFA: return "SKIP";
-        case 0xF9: return "PAGE_BREAK";
-        case 0xF8: return "ACTION";
-        case 0xF7: return "END_BRANCH";
-        case 0xF6: return "LINE_CONT";
-        case 0xF5: return "END_BRANCH_2";
-        case 0xF4: return "END_CONV";
-        case 0xF1: return "CHOICE_ALT";
-        case 0xF0: return "GO_BACK";
-        case 0xFE: return "END_BRANCH_3";
-        case 0xEB: return "END_ALT";
-        case 0xFF: return "DESC_START";
-        case 0x08: return "SPEAKER";
-        default: return Common::String::format("UNKNOWN(0x%02X)", b);
-    }
+	case 0xFD:
+		return "END_LINE";
+	case 0xFC:
+		return "TEXT_TERM";
+	case 0xFB:
+		return "CHOICE";
+	case 0xFA:
+		return "SKIP";
+	case 0xF9:
+		return "PAGE_BREAK";
+	case 0xF8:
+		return "ACTION";
+	case 0xF7:
+		return "END_BRANCH";
+	case 0xF6:
+		return "LINE_CONT";
+	case 0xF5:
+		return "END_BRANCH_2";
+	case 0xF4:
+		return "END_CONV";
+	case 0xF1:
+		return "CHOICE_ALT";
+	case 0xF0:
+		return "GO_BACK";
+	case 0xFE:
+		return "END_BRANCH_3";
+	case 0xEB:
+		return "END_ALT";
+	case 0xFF:
+		return "DESC_START";
+	case 0x08:
+		return "SPEAKER";
+	default:
+		return Common::String::format("UNKNOWN(0x%02X)", b);
+	}
 }
 
 Common::String PelrockEngine::cleanText(const Common::String &text) {
-    Common::String cleaned = text;
+	Common::String cleaned = text;
 
-    // Trim leading/trailing whitespace
-    while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
-        cleaned.deleteChar(0);
-    }
-    while (!cleaned.empty() && Common::isSpace(cleaned.lastChar())) {
-        cleaned.deleteLastChar();
-    }
+	// Trim leading/trailing whitespace
+	while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
+		cleaned.deleteChar(0);
+	}
+	while (!cleaned.empty() && Common::isSpace(cleaned.lastChar())) {
+		cleaned.deleteLastChar();
+	}
 
-    // Remove leading [XX][00] patterns
-    while (!cleaned.empty() && cleaned.contains('[')) {
-        uint idx = 0;
-        for (uint i = 0; i < cleaned.size() && i < 15; i++) {
-            if (cleaned[i] == '[') {
-                idx = i;
-                break;
-            }
-        }
+	// Remove leading [XX][00] patterns
+	while (!cleaned.empty() && cleaned.contains('[')) {
+		uint idx = 0;
+		for (uint i = 0; i < cleaned.size() && i < 15; i++) {
+			if (cleaned[i] == '[') {
+				idx = i;
+				break;
+			}
+		}
 
-        if (idx < 10) {
-            int endIdx = -1;
-            for (uint i = idx; i < cleaned.size() && i < idx + 10; i++) {
-                if (cleaned[i] == ']') {
-                    endIdx = i;
-                    break;
-                }
-            }
+		if (idx < 10) {
+			int endIdx = -1;
+			for (uint i = idx; i < cleaned.size() && i < idx + 10; i++) {
+				if (cleaned[i] == ']') {
+					endIdx = i;
+					break;
+				}
+			}
 
-            if (endIdx > (int)idx && endIdx < (int)idx + 10) {
-                cleaned = cleaned.c_str() + endIdx + 1;
-                // Trim leading whitespace again
-                while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
-                    cleaned.deleteChar(0);
-                }
-            } else {
-                break;
-            }
-        } else {
-            break;
-        }
-    }
+			if (endIdx > (int)idx && endIdx < (int)idx + 10) {
+				cleaned = cleaned.c_str() + endIdx + 1;
+				// Trim leading whitespace again
+				while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
+					cleaned.deleteChar(0);
+				}
+			} else {
+				break;
+			}
+		} else {
+			break;
+		}
+	}
 
-    // Remove single leading control characters
-    if (cleaned.size() > 1) {
-        byte first = (byte)cleaned[0];
-        byte second = (byte)cleaned[1];
+	// Remove single leading control characters
+	if (cleaned.size() > 1) {
+		byte first = (byte)cleaned[0];
+		byte second = (byte)cleaned[1];
 
-        if ((first == 'A' || first == 'H') &&
-            (Common::isUpper(second) || second == 0x83 || second == 0x82 || second == '[')) {
-            cleaned.deleteChar(0);
-            while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
-                cleaned.deleteChar(0);
-            }
-        } else if (strchr("#%')!+,.-\"*&$(/", first)) {
-            cleaned.deleteChar(0);
-            while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
-                cleaned.deleteChar(0);
-            }
-        }
-    }
+		if ((first == 'A' || first == 'H') &&
+			(Common::isUpper(second) || second == 0x83 || second == 0x82 || second == '[')) {
+			cleaned.deleteChar(0);
+			while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
+				cleaned.deleteChar(0);
+			}
+		} else if (strchr("#%')!+,.-\"*&$(/", first)) {
+			cleaned.deleteChar(0);
+			while (!cleaned.empty() && Common::isSpace(cleaned.firstChar())) {
+				cleaned.deleteChar(0);
+			}
+		}
+	}
 
-    return cleaned;
+	return cleaned;
 }
 
 Common::Array<ConversationElement> PelrockEngine::parseConversationElements(const byte *convData, uint32 size) {
-    Common::Array<ConversationElement> elements;
-    Common::HashMap<int, int> choiceIndices; // Track choice index occurrences
-    uint32 pos = 0;
+	Common::Array<ConversationElement> elements;
+	Common::HashMap<int, int> choiceIndices; // Track choice index occurrences
+	uint32 pos = 0;
 
-    // First pass: parse elements and track choice indices
-    while (pos < size) {
-        byte b = convData[pos];
+	// First pass: parse elements and track choice indices
+	while (pos < size) {
+		byte b = convData[pos];
 
-        if (b == 0x08) { // SPEAKER
-            pos++;
-            if (pos < size) {
-                byte speakerId = convData[pos];
-                Common::String speaker = (speakerId == 0x0D) ? "ALFRED" : "NPC";
-                pos++;
+		if (b == 0x08) { // SPEAKER
+			pos++;
+			if (pos < size) {
+				byte speakerId = convData[pos];
+				Common::String speaker = (speakerId == 0x0D) ? "ALFRED" : "NPC";
+				pos++;
 
-                // Read text
-                Common::String text;
-                while (pos < size && convData[pos] != 0x08 && convData[pos] != 0xFB &&
-                       convData[pos] != 0xF1 && convData[pos] != 0xF8 && convData[pos] != 0xFD &&
-                       convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
-                       convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
-                       convData[pos] != 0xF0) {
-                    char32_t ch = decodeByte(convData[pos]);
-                    if (ch != '.') {
-                        text += ch;
-                    }
-                    pos++;
-                }
+				// Read text
+				Common::String text;
+				while (pos < size && convData[pos] != 0x08 && convData[pos] != 0xFB &&
+					   convData[pos] != 0xF1 && convData[pos] != 0xF8 && convData[pos] != 0xFD &&
+					   convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
+					   convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
+					   convData[pos] != 0xF0) {
+					char32_t ch = decodeByte(convData[pos]);
+					if (ch != '.') {
+						text += ch;
+					}
+					pos++;
+				}
 
-                text = cleanText(text);
-                if (!text.empty()) {
-                    ConversationElement elem;
-                    elem.type = ConversationElement::DIALOGUE;
+				text = cleanText(text);
+				if (!text.empty()) {
+					ConversationElement elem;
+					elem.type = ConversationElement::DIALOGUE;
 					elem.speakerId = speakerId;
-                    elem.speaker = speaker;
-                    elem.text = text;
-                    elem.choiceIndex = -1;
-                    elements.push_back(elem);
-                }
-            }
-        } else if (b == 0xFB || b == 0xF1) { // CHOICE marker
-            pos++;
-            int choiceIndex = -1;
-            if (pos < size) {
-                choiceIndex = convData[pos];
-                // Track this choice index
-                if (choiceIndices.contains(choiceIndex)) {
-                    choiceIndices[choiceIndex]++;
-                } else {
-                    choiceIndices[choiceIndex] = 1;
-                }
-                pos++;
-            }
+					elem.speaker = speaker;
+					elem.text = text;
+					elem.choiceIndex = -1;
+					elements.push_back(elem);
+				}
+			}
+		} else if (b == 0xFB || b == 0xF1) { // CHOICE marker
+			pos++;
+			int choiceIndex = -1;
+			if (pos < size) {
+				choiceIndex = convData[pos];
+				// Track this choice index
+				if (choiceIndices.contains(choiceIndex)) {
+					choiceIndices[choiceIndex]++;
+				} else {
+					choiceIndices[choiceIndex] = 1;
+				}
+				pos++;
+			}
 
-            // Skip next 2 bytes (speaker marker)
-            if (pos < size) pos++;
-            if (pos < size) pos++;
+			// Skip next 2 bytes (speaker marker)
+			if (pos < size)
+				pos++;
+			if (pos < size)
+				pos++;
 
-            // Read text
-            Common::String text;
-            while (pos < size && convData[pos] != 0x08 && convData[pos] != 0xFB &&
-                   convData[pos] != 0xF1 && convData[pos] != 0xF8 && convData[pos] != 0xFD &&
-                   convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
-                   convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
-                   convData[pos] != 0xF0) {
-                char32_t ch = decodeByte(convData[pos]);
-                if (ch != '.') {
-                    text += ch;
-                }
-                pos++;
-            }
+			// Read text
+			Common::String text;
+			while (pos < size && convData[pos] != 0x08 && convData[pos] != 0xFB &&
+				   convData[pos] != 0xF1 && convData[pos] != 0xF8 && convData[pos] != 0xFD &&
+				   convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
+				   convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
+				   convData[pos] != 0xF0) {
+				char32_t ch = decodeByte(convData[pos]);
+				if (ch != '.') {
+					text += ch;
+				}
+				pos++;
+			}
 
-            text = cleanText(text);
-            if (!text.empty()) {
-                ConversationElement elem;
-                elem.type = ConversationElement::CHOICE_MARKER;
-                elem.text = text;
-                elem.choiceIndex = choiceIndex;
-                elements.push_back(elem);
-            }
-        } else if (b == 0xF8) { // ACTION
-            pos += 3;
-        } else if (b == 0xF4) { // END_CONV
-            ConversationElement elem;
-            elem.type = ConversationElement::END_CONV;
-            elements.push_back(elem);
-            pos++;
-        } else if (b == 0xF7) { // END_BRANCH
-            ConversationElement elem;
-            elem.type = ConversationElement::END_BRANCH;
-            elements.push_back(elem);
-            pos++;
-        } else if (b == 0xFD || b == 0xFC || b == 0xF5 || b == 0xFE || b == 0xEB || b == 0xF0) {
-            pos++;
-        } else {
-            pos++;
-        }
-    }
+			text = cleanText(text);
+			if (!text.empty()) {
+				ConversationElement elem;
+				elem.type = ConversationElement::CHOICE_MARKER;
+				elem.text = text;
+				elem.choiceIndex = choiceIndex;
+				elements.push_back(elem);
+			}
+		} else if (b == 0xF8) { // ACTION
+			pos += 3;
+		} else if (b == 0xF4) { // END_CONV
+			ConversationElement elem;
+			elem.type = ConversationElement::END_CONV;
+			elements.push_back(elem);
+			pos++;
+		} else if (b == 0xF7) { // END_BRANCH
+			ConversationElement elem;
+			elem.type = ConversationElement::END_BRANCH;
+			elements.push_back(elem);
+			pos++;
+		} else if (b == 0xFD || b == 0xFC || b == 0xF5 || b == 0xFE || b == 0xEB || b == 0xF0) {
+			pos++;
+		} else {
+			pos++;
+		}
+	}
 
-    // Second pass: mark which indices are actual choices (appear multiple times)
-    for (uint i = 0; i < elements.size(); i++) {
-        if (elements[i].choiceIndex >= 0) {
-            elements[i].isRealChoice = (choiceIndices[elements[i].choiceIndex] > 1);
-        }
-    }
+	// Second pass: mark which indices are actual choices (appear multiple times)
+	for (uint i = 0; i < elements.size(); i++) {
+		if (elements[i].choiceIndex >= 0) {
+			elements[i].isRealChoice = (choiceIndices[elements[i].choiceIndex] > 1);
+		}
+	}
 
-    return elements;
+	return elements;
 }
 
 Common::Array<ConversationNode> PelrockEngine::buildTreeStructure(const Common::Array<ConversationElement> &elements) {
-    Common::Array<ConversationNode> roots;
-    Common::Array<StackEntry> stack;
-    ConversationNode *currentRoot = nullptr;
-    uint i = 0;
+	Common::Array<ConversationNode> roots;
+	Common::Array<StackEntry> stack;
+	ConversationNode *currentRoot = nullptr;
+	uint i = 0;
 
-    while (i < elements.size()) {
-        const ConversationElement &elem = elements[i];
+	while (i < elements.size()) {
+		const ConversationElement &elem = elements[i];
 
-        if (elem.type == ConversationElement::DIALOGUE && elem.speaker == "NPC") {
-            if (stack.empty()) {
-                // New root conversation
-                ConversationNode root;
-                root.type = ConversationNode::ROOT;
-                root.text = elem.text;
-                roots.push_back(root);
-                currentRoot = &roots[roots.size() - 1];
-            } else {
-                // NPC response within a branch
-                ConversationNode *parent = stack[stack.size() - 1].node;
-                ConversationNode response;
-                response.type = ConversationNode::RESPONSE;
-                response.speaker = "NPC";
+		if (elem.type == ConversationElement::DIALOGUE && elem.speaker == "NPC") {
+			if (stack.empty()) {
+				// New root conversation
+				ConversationNode root;
+				root.type = ConversationNode::ROOT;
+				root.text = elem.text;
+				roots.push_back(root);
+				currentRoot = &roots[roots.size() - 1];
+			} else {
+				// NPC response within a branch
+				ConversationNode *parent = stack[stack.size() - 1].node;
+				ConversationNode response;
+				response.type = ConversationNode::RESPONSE;
+				response.speaker = "NPC";
 				response.speakerId = elem.speakerId;
-                response.text = elem.text;
-                parent->responses.push_back(response);
-            }
-            i++;
+				response.text = elem.text;
+				parent->responses.push_back(response);
+			}
+			i++;
 
-        } else if (elem.type == ConversationElement::CHOICE_MARKER) {
-            if (elem.isRealChoice) {
-                // Real choice - player selects from menu
-                ConversationNode choiceNode;
-                choiceNode.type = ConversationNode::CHOICE;
-                choiceNode.text = elem.text;
-                choiceNode.choiceIndex = elem.choiceIndex;
+		} else if (elem.type == ConversationElement::CHOICE_MARKER) {
+			if (elem.isRealChoice) {
+				// Real choice - player selects from menu
+				ConversationNode choiceNode;
+				choiceNode.type = ConversationNode::CHOICE;
+				choiceNode.text = elem.text;
+				choiceNode.choiceIndex = elem.choiceIndex;
 
-                // Find where to attach this choice
-                while (!stack.empty() && stack[stack.size() - 1].index >= elem.choiceIndex) {
-                    stack.pop_back();
-                }
+				// Find where to attach this choice
+				while (!stack.empty() && stack[stack.size() - 1].index >= elem.choiceIndex) {
+					stack.pop_back();
+				}
 
-                if (!stack.empty()) {
-                    ConversationNode *parent = stack[stack.size() - 1].node;
-                    parent->subchoices.push_back(choiceNode);
+				if (!stack.empty()) {
+					ConversationNode *parent = stack[stack.size() - 1].node;
+					parent->subchoices.push_back(choiceNode);
 
-                    // Get pointer to the newly added choice
-                    ConversationNode *newChoice = &parent->subchoices[parent->subchoices.size() - 1];
+					// Get pointer to the newly added choice
+					ConversationNode *newChoice = &parent->subchoices[parent->subchoices.size() - 1];
 
-                    StackEntry entry;
-                    entry.node = newChoice;
-                    entry.index = elem.choiceIndex;
-                    stack.push_back(entry);
-                } else {
-                    if (currentRoot) {
-                        currentRoot->choices.push_back(choiceNode);
+					StackEntry entry;
+					entry.node = newChoice;
+					entry.index = elem.choiceIndex;
+					stack.push_back(entry);
+				} else {
+					if (currentRoot) {
+						currentRoot->choices.push_back(choiceNode);
 
-                        // Get pointer to the newly added choice
-                        ConversationNode *newChoice = &currentRoot->choices[currentRoot->choices.size() - 1];
+						// Get pointer to the newly added choice
+						ConversationNode *newChoice = &currentRoot->choices[currentRoot->choices.size() - 1];
 
-                        StackEntry entry;
-                        entry.node = newChoice;
-                        entry.index = elem.choiceIndex;
-                        stack.push_back(entry);
-                    }
-                }
-            } else {
-                // Auto-dialogue - ALFRED just speaks
-                if (!stack.empty()) {
-                    ConversationNode *parent = stack[stack.size() - 1].node;
-                    ConversationNode response;
-                    response.type = ConversationNode::RESPONSE;
-                    response.speaker = "ALFRED";
+						StackEntry entry;
+						entry.node = newChoice;
+						entry.index = elem.choiceIndex;
+						stack.push_back(entry);
+					}
+				}
+			} else {
+				// Auto-dialogue - ALFRED just speaks
+				if (!stack.empty()) {
+					ConversationNode *parent = stack[stack.size() - 1].node;
+					ConversationNode response;
+					response.type = ConversationNode::RESPONSE;
+					response.speaker = "ALFRED";
 					response.speakerId = 0x0D;
-                    response.text = elem.text;
-                    parent->responses.push_back(response);
-                }
-            }
-            i++;
+					response.text = elem.text;
+					parent->responses.push_back(response);
+				}
+			}
+			i++;
 
-        } else if (elem.type == ConversationElement::DIALOGUE && elem.speaker == "ALFRED") {
-            if (!stack.empty()) {
-                ConversationNode *parent = stack[stack.size() - 1].node;
-                ConversationNode response;
-                response.type = ConversationNode::RESPONSE;
-                response.speaker = "ALFRED";
-                response.text = elem.text;
-					response.speakerId = 0x0D;
-                parent->responses.push_back(response);
-            }
-            i++;
+		} else if (elem.type == ConversationElement::DIALOGUE && elem.speaker == "ALFRED") {
+			if (!stack.empty()) {
+				ConversationNode *parent = stack[stack.size() - 1].node;
+				ConversationNode response;
+				response.type = ConversationNode::RESPONSE;
+				response.speaker = "ALFRED";
+				response.text = elem.text;
+				response.speakerId = 0x0D;
+				parent->responses.push_back(response);
+			}
+			i++;
 
-        } else if (elem.type == ConversationElement::END_CONV) {
-            if (!stack.empty()) {
-                stack[stack.size() - 1].node->terminated = true;
-                stack.pop_back();
-            }
-            i++;
+		} else if (elem.type == ConversationElement::END_CONV) {
+			if (!stack.empty()) {
+				stack[stack.size() - 1].node->terminated = true;
+				stack.pop_back();
+			}
+			i++;
 
-        } else if (elem.type == ConversationElement::END_BRANCH) {
-            stack.clear();
-            currentRoot = nullptr;
-            i++;
+		} else if (elem.type == ConversationElement::END_BRANCH) {
+			stack.clear();
+			currentRoot = nullptr;
+			i++;
 
-        } else {
-            i++;
-        }
-    }
+		} else {
+			i++;
+		}
+	}
 
-    return roots;
+	return roots;
 }
 
 Common::Array<ConversationNode> PelrockEngine::loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos) {
 
-    debug("Loading conversations starting at position %d", startPos);
+	debug("Loading conversations starting at position %d", startPos);
 
-    uint32_t pair12_offset_pos = roomOffset + (12 * 8);
-    roomFile->seek(pair12_offset_pos, SEEK_SET);
-    uint32_t pair12_data_offset = roomFile->readUint32LE();
-    uint32_t pair12_size = roomFile->readUint32LE();
+	uint32_t pair12_offset_pos = roomOffset + (12 * 8);
+	roomFile->seek(pair12_offset_pos, SEEK_SET);
+	uint32_t pair12_data_offset = roomFile->readUint32LE();
+	uint32_t pair12_size = roomFile->readUint32LE();
 
 	// startPos += 2;
-    uint32_t conversation_start = pair12_data_offset + startPos;
-    uint32_t conversation_size = pair12_size - startPos;
+	uint32_t conversation_start = pair12_data_offset + startPos;
+	uint32_t conversation_size = pair12_size - startPos;
 
-    roomFile->seek(conversation_start, SEEK_SET);
-    byte *data = new byte[conversation_size];
-    roomFile->read(data, conversation_size);
+	roomFile->seek(conversation_start, SEEK_SET);
+	byte *data = new byte[conversation_size];
+	roomFile->read(data, conversation_size);
 
 	Common::Array<ConversationElement> elements = parseConversationElements(data, conversation_size);
 	Common::Array<ConversationNode> roots = buildTreeStructure(elements);
 	return roots;
 
-    // uint32_t i = 0;
-    // int lineNum = 1;
+	// uint32_t i = 0;
+	// int lineNum = 1;
 
-    // while (i < conversation_size) {
-    //     uint32_t lineStart = i;
-    //     ConversationLine line;
-    //     line.offset = startPos + lineStart;
-    //     line.speaker = 0;
+	// while (i < conversation_size) {
+	//     uint32_t lineStart = i;
+	//     ConversationLine line;
+	//     line.offset = startPos + lineStart;
+	//     line.speaker = 0;
 
-    //     // Read until we hit an end marker
-    //     while (i < conversation_size) {
-    //         byte b = data[i];
+	//     // Read until we hit an end marker
+	//     while (i < conversation_size) {
+	//         byte b = data[i];
 
-    //         if (b == 0x08) { // SPEAKER
-    //             i++;
-    //             if (i < conversation_size) {
-    //                 line.speaker = data[i];
-    //                 line.controlBytes.push_back(Common::String::format("SPEAKER(0x%02X)", line.speaker));
-    //                 i++;
-    //             }
-    //             continue;
-    //         } else if (isControlByte(b)) {
-    //             line.controlBytes.push_back(Common::String::format("%s(0x%02X)",
-    //                                                                 getControlName(b).c_str(), b));
-    //             i++;
+	//         if (b == 0x08) { // SPEAKER
+	//             i++;
+	//             if (i < conversation_size) {
+	//                 line.speaker = data[i];
+	//                 line.controlBytes.push_back(Common::String::format("SPEAKER(0x%02X)", line.speaker));
+	//                 i++;
+	//             }
+	//             continue;
+	//         } else if (isControlByte(b)) {
+	//             line.controlBytes.push_back(Common::String::format("%s(0x%02X)",
+	//                                                                 getControlName(b).c_str(), b));
+	//             i++;
 
-    //             // Check for end markers
-    //             if (isTerminalByte(b)) {
-    //                 break;
-    //             }
-    //         } else {
-    //             // Regular text character
-    //             if (b != 0x00) {
-    //                 line.text += decodeByte(b);
-    //             }
-    //             i++;
-    //         }
-    //     }
+	//             // Check for end markers
+	//             if (isTerminalByte(b)) {
+	//                 break;
+	//             }
+	//         } else {
+	//             // Regular text character
+	//             if (b != 0x00) {
+	//                 line.text += decodeByte(b);
+	//             }
+	//             i++;
+	//         }
+	//     }
 
-    //     // Store raw bytes for this line
-    //     for (uint32_t j = lineStart; j < i && j < conversation_size; j++) {
-    //         line.rawBytes.push_back(data[j]);
-    //     }
+	//     // Store raw bytes for this line
+	//     for (uint32_t j = lineStart; j < i && j < conversation_size; j++) {
+	//         line.rawBytes.push_back(data[j]);
+	//     }
 
-    //     // Only add line if it has content
-    //     if (!line.text.empty() || line.controlBytes.size() > 0) {
-    //         // debug("Line %d (offset %d): %s", lineNum, line.offset, line.text.c_str());
-    //         if (line.controlBytes.size() > 0) {
-    //             Common::String controls;
-    //             for (uint k = 0; k < line.controlBytes.size(); k++) {
-    //                 if (k > 0) controls += ", ";
-    //                 controls += line.controlBytes[k];
-    //             }
-    //             // debug("  Controls: %s", controls.c_str());
-    //         }
-    //         conversations.push_back(line);
-    //         lineNum++;
-    //     }
-    // }
+	//     // Only add line if it has content
+	//     if (!line.text.empty() || line.controlBytes.size() > 0) {
+	//         // debug("Line %d (offset %d): %s", lineNum, line.offset, line.text.c_str());
+	//         if (line.controlBytes.size() > 0) {
+	//             Common::String controls;
+	//             for (uint k = 0; k < line.controlBytes.size(); k++) {
+	//                 if (k > 0) controls += ", ";
+	//                 controls += line.controlBytes[k];
+	//             }
+	//             // debug("  Controls: %s", controls.c_str());
+	//         }
+	//         conversations.push_back(line);
+	//         lineNum++;
+	//     }
+	// }
 
-    // delete[] data;
-    // debug("Loaded %d conversation lines", conversations.size());
-    // return conversations;
+	// delete[] data;
+	// debug("Loaded %d conversation lines", conversations.size());
+	// return conversations;
 }
 
 void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
@@ -877,8 +892,8 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset, outPos);
 	debug("After decsriptions, position is %d", outPos);
 	Common::Array<ConversationNode> roots = loadConversations(roomFile, roomOffset, outPos);
-	for(int i = 0; i < roots.size(); i++) {
-		if( roots[i].text.empty()) {
+	for (int i = 0; i < roots.size(); i++) {
+		if (roots[i].text.empty()) {
 			continue;
 		}
 		debug("Conversation %d: %s", i, roots[i].text.c_str());
@@ -907,7 +922,6 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
 	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
-
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
 		HotSpot hotspot = staticHotspots[i];
@@ -915,14 +929,14 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	}
 
 	int walkboxCount = 0;
-	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
-		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-		_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
-		_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-		_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
-		_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-		walkboxCount++;
-	}
+	// for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
+	// 	// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+	// 	_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
+	// 	_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+	// 	_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
+	// 	_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+	// 	walkboxCount++;
+	// }
 
 	_currentRoomAnims = anims;
 	_currentRoomHotspots = hotspots;
@@ -930,14 +944,14 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	_currentRoomWalkboxes = walkboxes;
 	_currentRoomDescriptions = descriptions;
 
-	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
-		HotSpot hotspot = _currentRoomHotspots[i];
-		// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, _currentRoomDescriptions[i].text.c_str());
-		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
-		_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
-		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
-		_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
-	}
+	// for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+	// 	HotSpot hotspot = _currentRoomHotspots[i];
+	// 	// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, _currentRoomDescriptions[i].text.c_str());
+	// 	_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
+	// 	_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+	// 	_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
+	// 	_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+	// }
 }
 
 void PelrockEngine::loadCursors() {
@@ -1045,7 +1059,16 @@ Common::Array<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int r
 	// roomFile->seek(hover_areas_start, SEEK_SET);
 }
 
-void PelrockEngine::loadMainCharacterAnims() {
+void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight) {
+	for (int y = 0; y < frameHeight; y++) {
+		for (int x = 0; x < frameWidth; x++) {
+			unsigned int src_pos = (frameIndex * frameHeight * frameWidth) + (y * frameWidth) + x;
+			dest[y * frameWidth + x] = source[src_pos];
+		}
+	}
+}
+
+void PelrockEngine::loadAlfredAnims() {
 	Common::File alfred3;
 	if (!alfred3.open(Common::Path("ALFRED.3"))) {
 		error("Could not open ALFRED.3");
@@ -1062,7 +1085,38 @@ void PelrockEngine::loadMainCharacterAnims() {
 	uint32_t capacity = 3060 * 102;
 	unsigned char *pic = new unsigned char[capacity];
 	rleDecompress(bufferFile, alfred3Size, 0, alfred3Size, &pic);
-	memcpy(standingAnim, pic, 3060 * 102);
+
+	for (int i = 0; i < 4; i++) {
+		standingAnimFrames[i] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
+
+		int prevWalkingFrames = 0;
+		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3];
+		int prevTalkingFrames = 0;
+		for (int j = 0; j < i; j++) {
+			prevWalkingFrames += walkingAnimLengths[j] + 1;
+			prevTalkingFrames += talkingFramesOffset + talkingAnimLengths[j];
+		}
+		walkingAnimFrames[i] = new byte *[walkingAnimLengths[i]];
+
+		int standingFrame = prevWalkingFrames;
+		debug("Loading standing frame %d at index %d", i, standingFrame);
+		extractSingleFrame(pic, standingAnimFrames[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		for (int j = 0; j < walkingAnimLengths[i]; j++) {
+
+			walkingAnimFrames[i][j] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
+			int walkingFrame = prevWalkingFrames + 1 + j;
+			extractSingleFrame(pic, walkingAnimFrames[i][j], walkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+
+		talkingAnimFrames[i] = new byte *[talkingAnimLengths[i]];
+
+		int talkingStartFrame = prevWalkingFrames + 1 + walkingAnimLengths[i];
+		for (int j = 0; j < talkingAnimLengths[i]; j++) {
+			talkingAnimFrames[i][j] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
+			int talkingFrame = talkingStartFrame + j;
+			extractSingleFrame(pic, talkingAnimFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+	}
 }
 
 byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
@@ -1169,10 +1223,10 @@ void PelrockEngine::frames() {
 
 			for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
 				for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-					unsigned int src_pos = (curAlfredFrame * kAlfredFrameHeight * kAlfredFrameWidth) + (y * kAlfredFrameWidth) + x;
+					unsigned int src_pos = (y * kAlfredFrameWidth) + x;
 					// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-					if (standingAnim[src_pos] != 255)
-						_screen->setPixel(x + xAlfred, y + yAlfred, standingAnim[src_pos]);
+					if (standingAnimFrames[dirAlfred][src_pos] != 255)
+						_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
 				}
 			}
 
@@ -1463,10 +1517,10 @@ void PelrockEngine::showDescription(Common::String text, int x, int y, byte colo
 	if (y + 2 + rect.height() > 400) {
 		y = 400 - rect.height();
 	}
-	if(x - 2 < 0) {
+	if (x - 2 < 0) {
 		x = 2;
 	}
-	if(y - 2 < 0) {
+	if (y - 2 < 0) {
 		y = 2;
 	}
 
@@ -1501,6 +1555,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 		error("Could not open ALFRED.1");
 		return;
 	}
+	dirAlfred = dir;
 
 	int roomOffset = number * kRoomStructSize;
 

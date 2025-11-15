@@ -63,7 +63,7 @@ private:
 	// Room data
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	void loadMainCharacterAnims();
+	void loadAlfredAnims();
 	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
@@ -71,7 +71,7 @@ private:
 	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
 
 	Common::String cleanText(const Common::String &text);
-    Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
+	Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
 	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
 	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 
@@ -99,7 +99,14 @@ private:
 	void showActionBalloon(int posx, int posy, int curFrame);
 
 	ChronoManager *_chronoManager = nullptr;
-	byte *standingAnim = new byte[3060 * 102];
+
+	// byte *standingAnim = new byte[3060 * 102];
+
+	byte **walkingAnimFrames[4];              // 4 arrays of arrays
+	byte *standingAnimFrames[4];              // 4 directions
+	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	byte **talkingAnimFrames[4];              // 4 arrays of arrays
+	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
@@ -109,6 +116,10 @@ private:
 	Common::Array<ConversationNode> _currentRoomConversations;
 
 	int *_currentAnimFrames = nullptr;
+	// From the original code
+	int xAlfred = 200;
+	int yAlfred = 200;
+	int dirAlfred = 0;
 	int curAlfredFrame = 9;
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
@@ -132,14 +143,10 @@ private:
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 
-	// From the original code
-	int xAlfred = 200;
-	int yAlfred = 200;
 	bool shouldPlayIntro = false;
 	GameState stateGame = GAME;
 	bool gameInitialized = false;
 	bool screenReady = false;
-	int dirAlfred = 0;
 	int prevDirX = 0;
 	int prevDirY = 0;
 	Common::String objectToShow = "";
