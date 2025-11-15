@@ -329,7 +329,8 @@ bool FreescapeEngine::rise() {
 			if (_currentArea->getAreaID() == previousAreaID) {
 				_playerHeightNumber--;
 				changePlayerHeight(_playerHeightNumber);
-				setGameBit(31);
+				if (!isCastle())
+					setGameBit(31);
 			}
 		} else
 			result = true;
@@ -438,7 +439,8 @@ void FreescapeEngine::updatePlayerMovementClassic(float deltaTime) {
 	if (_currentArea->getAreaID() == previousAreaID)
 		executeMovementConditions();
 	_gotoExecuted = false;
-	clearGameBit(31);
+	if (!isCastle())
+		clearGameBit(31);
 }
 
 void FreescapeEngine::updatePlayerMovementSmooth(float deltaTime) {
@@ -486,7 +488,8 @@ void FreescapeEngine::updatePlayerMovementSmooth(float deltaTime) {
 		executeMovementConditions();
 	}
 	_gotoExecuted = false;
-	clearGameBit(31);
+	if (!isCastle())
+		clearGameBit(31);
 }
 
 void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
@@ -510,7 +513,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	if (_flyMode) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
-			if (!executed)
+			if (!executed && !isCastle())
 				setGameBit(31);
 			playSound(_soundIndexCollide, false, _movementSoundHandle);
 		}
@@ -535,7 +538,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if (_lastPosition.y() < newPosition.y())
 			isSteppingUp = true;
 
-		if (!executed)
+		if (!executed && !isCastle())
 			setGameBit(31);
 
 		isCollidingWithWall = true;
@@ -560,7 +563,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		_endGameDelayTicks = 60 * 5;
 		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
-		else 
+		else
 			playSound(_soundIndexFall, false, _movementSoundHandle);
 
 		if (_hasFallen)
@@ -570,7 +573,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (!_hasFallen && fallen > 0) {
 		isSteppingDown = true;
 		// Position in Y was changed, let's re-run effects
-		runCollisionConditions(_lastPosition, newPosition); 
+		runCollisionConditions(_lastPosition, newPosition);
 	}
 
 	if (isSteppingUp && (newPosition - _lastPosition).length() <= 1) {
