@@ -162,7 +162,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_extraBuffer = nullptr;
 
 	_lastFrame = 0;
-	_nearClipPlane = 2;
+	// The near clip plane of 2 is useful for Driller and Dark Side as they have open spaces without too much
+	// close-up detail. Other games need a smaller value to avoid clipping of nearby objects
+	_nearClipPlane = (isDriller() || isDark()) ? 2 : 0.5;
 	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
 
 	// These depends on the specific game
@@ -821,7 +823,7 @@ Common::Error FreescapeEngine::run() {
 	if (saveSlot >= 0) { // load the savegame
 		initGameState();
 		loadGameState(saveSlot);
-	} 
+	}
 
 	g_system->showMouse(false);
 	g_system->lockMouse(true);
