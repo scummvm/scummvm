@@ -22,14 +22,42 @@
 #ifndef PHOENIXVR_SCRIPT_H
 #define PHOENIXVR_SCRIPT_H
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/ptr.h"
+#include "common/str.h"
+
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace PhoenixVR {
 class Script {
+	struct Test {
+		void parseLine(const Common::String &line, uint lineno);
+	};
+	using TestPtr = Common::SharedPtr<Test>;
+
+	struct Warp {
+		Common::String vrFile;
+		Common::String testFile;
+		Common::Array<TestPtr> tests;
+
+		void parseLine(const Common::String &line, uint lineno);
+	};
+
+	using WarpPtr = Common::SharedPtr<Warp>;
+	Common::HashMap<Common::String, WarpPtr> _warps;
+	WarpPtr _currentWarp;
+	TestPtr _currentTest;
+
+private:
+	static Common::String strip(const Common::String &str);
+	void parseLine(const Common::String &line, uint lineno);
+
 public:
 	Script(Common::SeekableReadStream &s);
+	~Script();
 };
 } // namespace PhoenixVR
 
