@@ -100,7 +100,7 @@ public:
 	}
 
 private:
-	void load(const Common::Path &scriptFile);
+	void loadScript(const Common::Path &scriptFile);
 };
 
 extern PhoenixVREngine *g_engine;

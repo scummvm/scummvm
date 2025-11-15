@@ -32,15 +32,24 @@ class SeekableReadStream;
 }
 
 namespace PhoenixVR {
+
+class PhoenixVREngine;
+
 class Script {
+public:
+	struct ExecutionContext {
+		PhoenixVREngine *engine;
+		bool running = true;
+	};
 	struct Command {
 		virtual ~Command() = default;
-		virtual void exec() = 0;
+		virtual void exec(ExecutionContext &ctx) const = 0;
 	};
 	using CommandPtr = Common::SharedPtr<Command>;
 
 	struct Test {
 		int idx;
+		Common::Array<CommandPtr> commands;
 	};
 	using TestPtr = Common::SharedPtr<Test>;
 
@@ -54,6 +63,8 @@ class Script {
 	};
 
 	using WarpPtr = Common::SharedPtr<Warp>;
+
+private:
 	Common::HashMap<Common::String, uint> _warpsIndex;
 	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;

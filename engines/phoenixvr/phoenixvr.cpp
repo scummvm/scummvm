@@ -55,7 +55,7 @@ Common::String PhoenixVREngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-void PhoenixVREngine::load(const Common::Path &scriptFile) {
+void PhoenixVREngine::loadScript(const Common::Path &scriptFile) {
 	Common::File file;
 	if (!file.open(scriptFile)) {
 		auto pakFile = scriptFile;
@@ -71,7 +71,7 @@ void PhoenixVREngine::load(const Common::Path &scriptFile) {
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
-	load("script.lst");
+	loadScript("script.lst");
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
