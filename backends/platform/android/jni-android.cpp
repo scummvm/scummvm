@@ -819,6 +819,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	// initial value of zero!
 	sem_init(&pause_sem, 0, 0);
 
+	virt_keyboard_state = false;
+
 	_asset_archive = new AndroidAssetArchive(asset_manager);
 	assert(_asset_archive);
 
