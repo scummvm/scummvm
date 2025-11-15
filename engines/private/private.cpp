@@ -420,13 +420,6 @@ Common::Error PrivateEngine::run() {
 			_currentMovie = _nextMovie;
 			_nextMovie = "";
 			updateCursor(mousePos);
-			continue;
-		}
-
-		if (!_nextVS.empty() && _currentVS.empty() && (_currentSetting == getMainDesktopSetting())) {
-			loadImage(_nextVS, 160, 120);
-			drawScreen();
-			_currentVS = _nextVS;
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
@@ -467,6 +460,11 @@ Common::Error PrivateEngine::run() {
 			// are executed. Fixes the previous screen from being displayed
 			// when a video finishes playing.
 			if (_nextSetting.empty()) {
+				if (!_nextVS.empty() && _currentVS.empty() && _currentSetting == getMainDesktopSetting()) {
+					loadImage(_nextVS, 160, 120);
+					_currentVS = _nextVS;
+				}
+
 				updateCursor(mousePos);
 				drawScreen();
 			}
