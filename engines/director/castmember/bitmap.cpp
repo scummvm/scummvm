@@ -555,10 +555,6 @@ void BitmapCastMember::createMatte(const Common::Rect &bbox) {
 	bool colorFound = false;
 	const byte *palette = g_director->getPalette();
 
-	if (_picture->getPaletteCount() > 0) {
-		palette = _picture->_palette;
-	}
-
 	if (tmp.format.isCLUT8()) {
 		for (int y = 0; y < tmp.h; y++) {
 			for (int x = 0; x < tmp.w; x++) {
