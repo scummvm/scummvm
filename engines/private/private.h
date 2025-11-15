@@ -297,6 +297,7 @@ public:
 	Common::String getDiaryLastPageSetting();
 	Common::String getPOGoBustMovieSetting();
 	Common::String getPoliceBustFromMOSetting();
+	Common::String getListenToPhoneSetting();
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
 	Common::String getWallSafeValueVariable();
