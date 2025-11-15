@@ -339,7 +339,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
-	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2); 
+	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2);
 
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
@@ -539,7 +539,7 @@ void CastleEngine::pressedKey(const int keycode) {
 	} else if (keycode == kActionFaceForward) {
 		_pitch = 0;
 		updateCamera();
-	} else if (keycode == kActionActivate) 
+	} else if (keycode == kActionActivate)
 		activate();
 }
 
