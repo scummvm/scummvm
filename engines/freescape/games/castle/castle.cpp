@@ -341,6 +341,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->show();
 	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2);
 
+	_nearClipPlane = _currentArea->isOutside() ? 2 : 0.5;
+
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
 
