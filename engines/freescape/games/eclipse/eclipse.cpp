@@ -45,6 +45,12 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_soundIndexCrushed = -1;
 	_soundIndexMissionComplete = -1;
 
+	_maxEnergy = 27;
+	_maxShield = 50;
+
+	_initialEnergy = 16;
+	_initialShield = 50;
+
 	if (isDOS())
 		initDOS();
 	else if (isCPC())
@@ -73,12 +79,6 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_angleRotations.push_back(5);
 	_angleRotations.push_back(10);
 	_angleRotations.push_back(15);
-
-	_maxEnergy = 27;
-	_maxShield = 50;
-
-	_initialEnergy = 16;
-	_initialShield = 50;
 
 	_endArea = 1;
 	_endEntrance = 33;
