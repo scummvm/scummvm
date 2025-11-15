@@ -391,6 +391,10 @@ static void fInventory(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "Inventory(...)");
 	Common::String mask(b1.u.str);
 	if (mask != "\"\"") {
+		if (g_private->inInventory(bmp)) {
+			return;
+		}
+
 		MaskInfo m;
 		m.surf = g_private->loadMask(mask, 0, 0, true);
 
