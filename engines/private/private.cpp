@@ -1120,11 +1120,11 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 		return;
 
 	if (inMask(_phoneArea.surf, mousePos)) {
-		const PhoneInfo &i = _phone.back();
+		const PhoneInfo &i = _phone.front();
 		setSymbol(i.flag, i.val);
 		Common::String sound = _phonePrefix + i.sound + ".wav";
 		playSound(sound, 1, true, false);
-		_phone.pop_back();
+		_phone.pop_front();
 	}
 }
 
