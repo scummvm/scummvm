@@ -670,97 +670,72 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 }
 
 Common::String PrivateEngine::getPauseMovieSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kPauseMovie";
-
-	return "k3";
+	return getSymbolName("kPauseMovie", "k3");
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR || _language == Common::JA_JPN) && _platform != Common::kPlatformMacintosh)
-		return "kGoIntro";
-
-	return "k1";
+	return getSymbolName("kGoIntro", "k1");
 }
 
 Common::String PrivateEngine::getAlternateGameVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kAlternateGame";
-
-	return "k2";
+	return getSymbolName("kAlternateGame", "k2");
 }
 
 Common::String PrivateEngine::getMainDesktopSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kMainDesktop";
-
-	if (isDemo())
-		return "k45";
-
-	return "k183";
+	return getSymbolName("kMainDesktop", "k183", "k45");
 }
 
 Common::String PrivateEngine::getDiaryTOCSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kDiaryTOC";
-
-	return "k185";
+	return getSymbolName("kDiaryTOC", "k185");
 }
 
 Common::String PrivateEngine::getDiaryMiddleSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kDiaryMiddle";
-
-	return "k186";
+	return getSymbolName("kDiaryMiddle", "k186");
 }
 
 Common::String PrivateEngine::getDiaryLastPageSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kDiaryLastPage";
-
-	return "k187";
+	return getSymbolName("kDiaryLastPage", "k187");
 }
 
 Common::String PrivateEngine::getPoliceIndexVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kPoliceIndex";
-
-	return "k0";
+	return getSymbolName("kPoliceIndex", "k0");
 }
 
 Common::String PrivateEngine::getPOGoBustMovieSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kPOGoBustMovie";
-
-	return "k7";
+	return getSymbolName("kPOGoBustMovie", "k7");
 }
 
 Common::String PrivateEngine::getPoliceBustFromMOSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kPoliceBustFromMO";
-
-	return "k6";
+	return getSymbolName("kPoliceBustFromMO", "k6");
 }
 
 Common::String PrivateEngine::getWallSafeValueVariable() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kWallSafeValue";
-
-	return "k3";
+	return getSymbolName("kWallSafeValue", "k3");
 }
 
 Common::String PrivateEngine::getExitCursor() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kExit";
-
-	return "k5";
+	return getSymbolName("kExit", "k5");
 }
 
 Common::String PrivateEngine::getInventoryCursor() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
-		return "kInventory";
+	return getSymbolName("kInventory", "k7");
+}
 
-	return "k7";
+const char *PrivateEngine::getSymbolName(const char *name, const char *strippedName, const char *demoName) {
+	if (_platform == Common::kPlatformWindows) {
+		if (_language == Common::EN_USA ||
+			_language == Common::JA_JPN ||
+			_language == Common::KO_KOR ||
+			_language == Common::RU_RUS) {
+			return name;
+		}
+	}
+
+	if (demoName != nullptr && isDemo()) {
+		return demoName;
+	}
+
+	return strippedName;
 }
 
 void PrivateEngine::selectPauseGame(Common::Point mousePos) {
