@@ -300,6 +300,7 @@ public:
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
 	Common::String getWallSafeValueVariable();
+	const char *getSymbolName(const char *name, const char *strippedName, const char *demoName = nullptr);
 
 	// movies
 	Common::String _nextMovie;
