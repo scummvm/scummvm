@@ -66,24 +66,24 @@ extern int HYPNO_ARC_debug;
     FILENAME = 259,                /* FILENAME  */
     BNTOK = 260,                   /* BNTOK  */
     SNTOK = 261,                   /* SNTOK  */
-    KNTOK = 262,                   /* KNTOK  */
-    YXTOK = 263,                   /* YXTOK  */
-    FNTOK = 264,                   /* FNTOK  */
-    ENCTOK = 265,                  /* ENCTOK  */
-    ONTOK = 266,                   /* ONTOK  */
-    H12TOK = 267,                  /* H12TOK  */
-    NUM = 268,                     /* NUM  */
-    BYTE = 269,                    /* BYTE  */
-    COMMENT = 270,                 /* COMMENT  */
-    ALTOK = 271,                   /* ALTOK  */
-    AVTOK = 272,                   /* AVTOK  */
-    ABTOK = 273,                   /* ABTOK  */
-    CTOK = 274,                    /* CTOK  */
-    DTOK = 275,                    /* DTOK  */
-    HTOK = 276,                    /* HTOK  */
-    HETOK = 277,                   /* HETOK  */
-    HLTOK = 278,                   /* HLTOK  */
-    HUTOK = 279,                   /* HUTOK  */
+    YXTOK = 262,                   /* YXTOK  */
+    FNTOK = 263,                   /* FNTOK  */
+    ENCTOK = 264,                  /* ENCTOK  */
+    ONTOK = 265,                   /* ONTOK  */
+    H12TOK = 266,                  /* H12TOK  */
+    NUM = 267,                     /* NUM  */
+    BYTE = 268,                    /* BYTE  */
+    COMMENT = 269,                 /* COMMENT  */
+    ALTOK = 270,                   /* ALTOK  */
+    AVTOK = 271,                   /* AVTOK  */
+    ABTOK = 272,                   /* ABTOK  */
+    CTOK = 273,                    /* CTOK  */
+    DTOK = 274,                    /* DTOK  */
+    HTOK = 275,                    /* HTOK  */
+    HETOK = 276,                   /* HETOK  */
+    HLTOK = 277,                   /* HLTOK  */
+    HUTOK = 278,                   /* HUTOK  */
+    KNTOK = 279,                   /* KNTOK  */
     RETTOK = 280,                  /* RETTOK  */
     QTOK = 281,                    /* QTOK  */
     RESTOK = 282,                  /* RESTOK  */
@@ -127,7 +127,7 @@ extern int HYPNO_ARC_debug;
 #if ! defined HYPNO_ARC_STYPE && ! defined HYPNO_ARC_STYPE_IS_DECLARED
 union HYPNO_ARC_STYPE
 {
-#line 95 "engines/hypno/grammar_arc.y"
+#line 97 "engines/hypno/grammar_arc.y"
 
 	char *s; /* string value */
 	int i;	 /* integer value */
