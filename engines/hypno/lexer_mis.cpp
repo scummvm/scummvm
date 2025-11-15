@@ -1,4 +1,4 @@
-#line 2 "engines/hypno/lexer_mis.cpp"
+#line 1 "engines/hypno/lexer_mis.cpp"
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -35,7 +35,7 @@
 #include "hypno/grammar.h"
 #include "hypno/tokens_mis.h"
 
-#line 39 "engines/hypno/lexer_mis.cpp"
+#line 38 "engines/hypno/lexer_mis.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -311,6 +311,7 @@
 /* First, we deal with  platform-specific or compiler-specific issues. */
 
 /* begin standard C headers. */
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -327,8 +328,8 @@
 
 #if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
-/* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types. 
+/* C++ systems might need __STDC_LIMIT_MACROS defined before including
+ * <stdint.h>, if you want the limit (max/min) macros for int types.
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -2427,6 +2428,9 @@ void yyfree (void * ptr )
 
 namespace Hypno {
 
+extern Common::Array<uint32> *smenu_idx;
+extern HotspotsStack *stack;
+
 int parse_mis(const char *code) {
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
@@ -2434,6 +2438,10 @@ int parse_mis(const char *code) {
 	yy_switch_to_buffer(bp);
 	HYPNO_MIS_parse();
 	yy_delete_buffer(bp);
+	delete smenu_idx;
+	smenu_idx = nullptr;
+	delete stack;
+	stack = nullptr;
 	return 0;
 }
 
