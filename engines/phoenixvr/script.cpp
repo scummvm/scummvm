@@ -12,7 +12,9 @@ class Parser {
 	uint _pos;
 
 public:
-	Parser(const Common::String &line, uint lineno) : _line(line), _lineno(lineno), _pos(0) {}
+	Parser(const Common::String &line, uint lineno) : _line(line), _lineno(lineno), _pos(0) {
+		skip();
+	}
 
 	void skip() {
 		while (_pos < _line.size() && Common::isSpace(_line[_pos]))
@@ -27,7 +29,7 @@ public:
 	void expect(int ch) {
 		skip();
 		if (_pos >= _line.size() || _line[_pos] != ch)
-			error("expected '%c'", ch);
+			error("expected '%c' at line %u", ch, _lineno);
 		++_pos;
 		skip();
 	}
@@ -45,7 +47,7 @@ public:
 	Common::String nextWord() {
 		skip();
 		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && !Common::isPunct(_line[_pos]))
+		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',')
 			++_pos;
 		auto end = _pos;
 		skip();
@@ -54,11 +56,16 @@ public:
 };
 } // namespace
 
-void Script::Test::parseLine(const Common::String &line, uint lineno) {
-	debug("test parser: %u: %s\n", lineno, line.c_str());
+void Script::Warp::setText(int idx, const TestPtr &text) {
+	if (idx < -1)
+		error("test id must be >= -1");
+	uint realIdx = idx + 1;
+	if (realIdx + 1 > tests.size())
+		tests.resize(realIdx + 1);
+	tests[realIdx] = text;
 }
 
-Script::Script(Common::SeekableReadStream &s) {
+Script::Script(Common::SeekableReadStream &s) : _pluginContext(false) {
 	uint lineno = 1;
 	while (!s.eos()) {
 		auto line = s.readLine();
@@ -71,7 +78,6 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		return;
 
 	Parser p(line, lineno);
-	p.skip();
 	if (p.atEnd())
 		return;
 
@@ -80,25 +86,44 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		p.next();
 		if (p.maybe("bool]=")) {
 			auto name = p.nextWord();
-			debug("getting bool flag %s\n", name.c_str());
+			debug("bool flag %s", name.c_str());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
 			auto test = p.nextWord();
 			debug("got warp %s %s", vr.c_str(), test.c_str());
 			_currentWarp.reset(new Warp{vr, test, {}});
-			_warps[vr] = _currentWarp;
+			_warpsIndex[vr] = _warps.size();
+			_warps.push_back(_currentWarp);
 		} else if (p.maybe("test]=")) {
 			if (!_currentWarp)
 				error("test without warp");
-			_currentTest.reset(new Test);
+			auto word = p.nextWord();
+			debug("test %s\n", word.c_str());
+			auto idx = std::atoi(word.c_str());
+			if (!_currentWarp)
+				error("text must have parent wrap section");
+			_currentTest.reset(new Test{idx});
+			_currentWarp->setText(idx, _currentTest);
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}
-	} break;
+		break;
+	}
 	default:
-		if (_currentTest)
-			_currentTest->parseLine(line, lineno);
-		else
+		if (_currentTest) {
+			if (p.maybe("plugin")) {
+				if (_pluginContext)
+					error("nested plugin context is not allowed");
+				_pluginContext = true;
+			} else if (p.maybe("endplugin")) {
+				if (!_pluginContext)
+					error("endplugin without plugin");
+				_pluginContext = false;
+			} else {
+				error("unhandled script command %s, at line %u", line.c_str(), lineno);
+			}
+
+		} else
 			error("invalid directive on line %u: %s\n", lineno, line.c_str());
 	}
 }

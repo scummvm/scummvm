@@ -33,8 +33,14 @@ class SeekableReadStream;
 
 namespace PhoenixVR {
 class Script {
+	struct Command {
+		virtual ~Command() = default;
+		virtual void exec() = 0;
+	};
+	using CommandPtr = Common::SharedPtr<Command>;
+
 	struct Test {
-		void parseLine(const Common::String &line, uint lineno);
+		int idx;
 	};
 	using TestPtr = Common::SharedPtr<Test>;
 
@@ -44,12 +50,15 @@ class Script {
 		Common::Array<TestPtr> tests;
 
 		void parseLine(const Common::String &line, uint lineno);
+		void setText(int idx, const TestPtr &text);
 	};
 
 	using WarpPtr = Common::SharedPtr<Warp>;
-	Common::HashMap<Common::String, WarpPtr> _warps;
+	Common::HashMap<Common::String, uint> _warpsIndex;
+	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
+	bool _pluginContext;
 
 private:
 	static Common::String strip(const Common::String &str);

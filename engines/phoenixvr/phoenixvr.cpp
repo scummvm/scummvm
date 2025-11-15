@@ -57,8 +57,13 @@ Common::String PhoenixVREngine::getGameId() const {
 
 void PhoenixVREngine::load(const Common::Path &scriptFile) {
 	Common::File file;
-	if (!file.open(scriptFile))
-		error("can't open script file");
+	if (!file.open(scriptFile)) {
+		auto pakFile = scriptFile;
+		pakFile = pakFile.removeExtension().append(".pak");
+		file.open(pakFile);
+	}
+	if (!file.isOpen())
+		error("can't open script file %s", scriptFile.toString().c_str());
 	Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
 	Common::ScopedPtr<Script> script(new Script(*scriptStream));
 }
@@ -66,7 +71,7 @@ void PhoenixVREngine::load(const Common::Path &scriptFile) {
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
-	load("script.pak");
+	load("script.lst");
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
