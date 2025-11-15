@@ -709,6 +709,10 @@ Common::String PrivateEngine::getPoliceBustFromMOSetting() {
 	return getSymbolName("kPoliceBustFromMO", "k6");
 }
 
+Common::String PrivateEngine::getListenToPhoneSetting() {
+	return getSymbolName("kListenToPhone", "k9");
+}
+
 Common::String PrivateEngine::getWallSafeValueVariable() {
 	return getSymbolName("kWallSafeValue", "k3");
 }
@@ -1100,6 +1104,7 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 		Common::String sound = _phonePrefix + i.sound + ".wav";
 		playSound(sound, 1, true, false);
 		_phone.pop_front();
+		_nextSetting = getListenToPhoneSetting();
 	}
 }
 
