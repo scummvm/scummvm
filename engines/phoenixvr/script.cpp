@@ -7,95 +7,6 @@
 namespace PhoenixVR {
 
 namespace {
-class Parser {
-	const Common::String &_line;
-	uint _lineno;
-	uint _pos;
-
-public:
-	Parser(const Common::String &line, uint lineno) : _line(line), _lineno(lineno), _pos(0) {
-		skip();
-	}
-
-	void skip() {
-		while (_pos < _line.size() && Common::isSpace(_line[_pos]))
-			++_pos;
-		if (_pos < _line.size() && _line[_pos] == ';')
-			_pos = _line.size();
-	}
-
-	bool atEnd() const { return _pos >= _line.size(); }
-
-	int peek() const { return _pos < _line.size() ? _line[_pos] : 0; }
-	int next() { return _pos < _line.size() ? _line[_pos++] : 0; }
-
-	void expect(int expected) {
-		skip();
-		auto ch = next();
-		if (ch != expected)
-			error("expected '%c' at line %u, got %c in %s", expected, _lineno, ch, _line.c_str());
-		skip();
-	}
-
-	bool maybe(const Common::String &prefix) {
-		skip();
-		bool yes = scumm_strnicmp(_line.c_str() + _pos, prefix.c_str(), prefix.size()) == 0;
-		if (yes) {
-			_pos += prefix.size();
-			skip();
-		}
-		return yes;
-	}
-
-	Common::String nextArg() {
-		skip();
-		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != ')')
-			++_pos;
-		auto end = _pos;
-		skip();
-		return _line.substr(begin, end - begin);
-	}
-
-	Common::String nextWord() {
-		skip();
-		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != '(' && _line[_pos] != '=' && _line[_pos] != ')')
-			++_pos;
-		auto end = _pos;
-		skip();
-		return _line.substr(begin, end - begin);
-	}
-
-	Common::String nextString() {
-		skip();
-		expect('"');
-		Common::String str;
-		while (_pos < _line.size()) {
-			auto ch = _line[_pos++];
-			if (ch == '"')
-				break;
-			str += ch;
-		}
-		skip();
-		return str;
-	}
-
-	Common::Array<Common::String> readStringList() {
-		Common::Array<Common::String> list;
-		do {
-			if (peek() == '"')
-				list.push_back(nextString());
-			else {
-				list.push_back(nextArg());
-			}
-			if (peek() == ',')
-				next();
-		} while (peek() != ')');
-		return list;
-	}
-};
-
 struct MultiCD_Set_Transition_Script : public Script::Command {
 	Common::String path;
 
@@ -181,6 +92,168 @@ Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<
 	PLUGIN_LIST(ADD_PLUGIN)
 	error("unhandled plugin command %s", cmd.c_str());
 }
+
+class Parser {
+	const Common::String &_line;
+	uint _lineno;
+	uint _pos;
+	bool &_pluginContext;
+
+public:
+	Parser(const Common::String &line, uint lineno, bool &pluginContext) : _line(line), _lineno(lineno), _pos(0), _pluginContext(pluginContext) {
+		skip();
+	}
+
+	void skip() {
+		while (_pos < _line.size() && Common::isSpace(_line[_pos]))
+			++_pos;
+		if (_pos < _line.size() && _line[_pos] == ';')
+			_pos = _line.size();
+	}
+
+	bool atEnd() const { return _pos >= _line.size(); }
+
+	int peek() const { return _pos < _line.size() ? _line[_pos] : 0; }
+	int next() { return _pos < _line.size() ? _line[_pos++] : 0; }
+
+	void expect(int expected) {
+		skip();
+		auto ch = next();
+		if (ch != expected)
+			error("expected '%c' at line %u, got %c in %s", expected, _lineno, ch, _line.c_str());
+		skip();
+	}
+
+	bool maybe(const Common::String &prefix) {
+		skip();
+		bool yes = scumm_strnicmp(_line.c_str() + _pos, prefix.c_str(), prefix.size()) == 0;
+		if (yes) {
+			_pos += prefix.size();
+			skip();
+		}
+		return yes;
+	}
+
+	Common::String nextArg() {
+		skip();
+		auto begin = _pos;
+		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != ')')
+			++_pos;
+		auto end = _pos;
+		skip();
+		return _line.substr(begin, end - begin);
+	}
+
+	Common::String nextWord() {
+		skip();
+		auto begin = _pos;
+		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != '(' && _line[_pos] != '=' && _line[_pos] != ')')
+			++_pos;
+		auto end = _pos;
+		skip();
+		return _line.substr(begin, end - begin);
+	}
+
+	Common::String nextString() {
+		skip();
+		expect('"');
+		Common::String str;
+		while (_pos < _line.size()) {
+			auto ch = _line[_pos++];
+			if (ch == '"')
+				break;
+			str += ch;
+		}
+		skip();
+		return str;
+	}
+
+	Common::Array<Common::String> readStringList() {
+		Common::Array<Common::String> list;
+		do {
+			if (peek() == '"')
+				list.push_back(nextString());
+			else {
+				list.push_back(nextArg());
+			}
+			if (peek() == ',')
+				next();
+		} while (peek() != ')');
+		return list;
+	}
+
+	Script::CommandPtr parseCommand() {
+		using CommandPtr = Script::CommandPtr;
+		if (maybe("plugin")) {
+			if (_pluginContext)
+				error("nested plugin context is not allowed, line: %u", _lineno);
+			_pluginContext = true;
+		} else if (maybe("endplugin")) {
+			if (!_pluginContext)
+				error("endplugin without plugin");
+			_pluginContext = false;
+		} else if (maybe("end")) {
+			return CommandPtr{new End()};
+		} else if (maybe("setcursordefault")) {
+			auto idx = atoi(nextWord().c_str());
+			expect(',');
+			auto fname = nextWord();
+			debug("setcursordefault %d: %s", idx, fname.c_str());
+		} else if (maybe("lockkey")) {
+			auto idx = atoi(nextWord().c_str());
+			expect(',');
+			auto fname = nextWord();
+			debug("lockkey %d: %s", idx, fname.c_str());
+		} else if (maybe("resetlockkey")) {
+			debug("resetlockkey");
+		} else if (maybe("setzoom=")) {
+			auto zoom = atoi(nextWord().c_str());
+			debug("setzoom %d\n", zoom);
+		} else if (maybe("anglexmax=")) {
+			auto xmax = atoi(nextWord().c_str());
+			debug("anglexmax %d", xmax);
+		} else if (maybe("ifand=")) {
+			auto var = nextWord();
+			debug("ifand %s\n", var.c_str());
+		} else if (maybe("gotowarp")) {
+			auto id = nextWord();
+			debug("gotowarp %s", id.c_str());
+		} else if (maybe("playsound")) {
+			auto sound = nextWord();
+			expect(',');
+			auto arg0 = nextWord();
+			expect(',');
+			auto arg1 = nextWord();
+			debug("playsound %s %s %s", sound.c_str(), arg0.c_str(), arg1.c_str());
+		} else if (maybe("stopsound")) {
+			auto sound = nextWord();
+			debug("stopsound %s", sound.c_str());
+		} else if (maybe("setcursor")) {
+			auto image = nextWord();
+			expect(',');
+			auto warp = nextWord();
+			expect(',');
+			auto idx = nextWord();
+			debug("setcursor %s %s %s", image.c_str(), warp.c_str(), idx.c_str());
+		} else if (maybe("set")) {
+			auto var = nextWord();
+			expect('=');
+			auto value = nextWord();
+			debug("set %s = %s", var.c_str(), value.c_str());
+		} else {
+			if (_pluginContext) {
+				auto cmd = nextWord();
+				expect('(');
+				auto args = readStringList();
+				expect(')');
+				return createCommand(cmd, args);
+			} else
+				error("unhandled script command %s, at line %u", _line.c_str(), _lineno);
+		}
+		return {};
+	};
+};
+
 } // namespace
 
 void Script::Test::exec(ExecutionContext &ctx) const {
@@ -216,11 +289,12 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	if (line.empty())
 		return;
 
-	Parser p(line, lineno);
+	Parser p(line, lineno, _pluginContext);
 	if (p.atEnd())
 		return;
 
 	debug("line %s at %u", line.c_str(), lineno);
+
 	switch (p.peek()) {
 	case '[': {
 		p.next();
@@ -253,72 +327,9 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	default:
 		if (_currentTest) {
 			auto &commands = _currentTest->commands;
-			if (p.maybe("plugin")) {
-				if (_pluginContext)
-					error("nested plugin context is not allowed, line: %u", lineno);
-				_pluginContext = true;
-			} else if (p.maybe("endplugin")) {
-				if (!_pluginContext)
-					error("endplugin without plugin");
-				_pluginContext = false;
-			} else if (p.maybe("end")) {
-				commands.emplace_back(new End());
-			} else if (p.maybe("setcursordefault")) {
-				auto idx = atoi(p.nextWord().c_str());
-				p.expect(',');
-				auto fname = p.nextWord();
-				debug("setcursordefault %d: %s", idx, fname.c_str());
-			} else if (p.maybe("lockkey")) {
-				auto idx = atoi(p.nextWord().c_str());
-				p.expect(',');
-				auto fname = p.nextWord();
-				debug("lockkey %d: %s", idx, fname.c_str());
-			} else if (p.maybe("resetlockkey")) {
-				debug("resetlockkey");
-			} else if (p.maybe("setzoom=")) {
-				auto zoom = atoi(p.nextWord().c_str());
-				debug("setzoom %d\n", zoom);
-			} else if (p.maybe("anglexmax=")) {
-				auto xmax = atoi(p.nextWord().c_str());
-				debug("anglexmax %d", xmax);
-			} else if (p.maybe("ifand=")) {
-				auto var = p.nextWord();
-				debug("ifand %s\n", var.c_str());
-			} else if (p.maybe("gotowarp")) {
-				auto id = p.nextWord();
-				debug("gotowarp %s", id.c_str());
-			} else if (p.maybe("playsound")) {
-				auto sound = p.nextWord();
-				p.expect(',');
-				auto arg0 = p.nextWord();
-				p.expect(',');
-				auto arg1 = p.nextWord();
-				debug("playsound %s %s %s", sound.c_str(), arg0.c_str(), arg1.c_str());
-			} else if (p.maybe("stopsound")) {
-				auto sound = p.nextWord();
-				debug("stopsound %s", sound.c_str());
-			} else if (p.maybe("setcursor")) {
-				auto image = p.nextWord();
-				p.expect(',');
-				auto warp = p.nextWord();
-				p.expect(',');
-				auto idx = p.nextWord();
-				debug("setcursor %s %s %s", image.c_str(), warp.c_str(), idx.c_str());
-			} else if (p.maybe("set")) {
-				auto var = p.nextWord();
-				p.expect('=');
-				auto value = p.nextWord();
-				debug("set %s = %s", var.c_str(), value.c_str());
-			} else {
-				if (_pluginContext) {
-					auto cmd = p.nextWord();
-					p.expect('(');
-					auto args = p.readStringList();
-					p.expect(')');
-					commands.push_back(createCommand(cmd, args));
-				} else
-					error("unhandled script command %s, at line %u", line.c_str(), lineno);
-			}
+			auto cmd = p.parseCommand();
+			if (cmd)
+				commands.push_back(Common::move(cmd));
 		} else
 			error("invalid directive on line %u: %s\n", lineno, line.c_str());
 	}
