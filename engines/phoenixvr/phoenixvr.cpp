@@ -84,6 +84,16 @@ void PhoenixVREngine::goToWarp(const Common::String &warp) {
 	_nextWarp = warp;
 }
 
+Script::ConstWarpPtr PhoenixVREngine::getWarp(const Common::String &name) {
+	return _script->getWarp(name);
+}
+
+Region PhoenixVREngine::getRegion(int idx) const {
+	if (!_regSet)
+		error("no region set");
+	return _regSet->getRegion(idx);
+}
+
 void PhoenixVREngine::setCursorDefault(uint idx, const Common::String &path) {
 	debug("setCursorDefault %u: %s", idx, path.c_str());
 }

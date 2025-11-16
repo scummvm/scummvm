@@ -110,6 +110,10 @@ public:
 	void setVariable(const Common::String &name, int value);
 	int getVariable(const Common::String &name) const;
 
+	Script::ConstWarpPtr getWarp(const Common::String &name);
+	Script::ConstWarpPtr getCurrentWarp() { return _warp; }
+	Region getRegion(int idx) const;
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);

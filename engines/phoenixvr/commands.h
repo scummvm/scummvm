@@ -378,11 +378,16 @@ struct SetCursorDefault : public Script::Command {
 
 struct SetCursor : public Script::Command {
 	Common::String fname;
-	Common::String warp;
+	Common::String wname;
 	int idx;
-	SetCursor(Common::String f, Common::String w, int i) : fname(Common::move(f)), warp(Common::move(w)), idx(i) {}
+	SetCursor(Common::String f, Common::String w, int i) : fname(Common::move(f)), wname(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursor %s %s:%d", fname.c_str(), warp.c_str(), idx);
+		debug("setcursor %s %s:%d", fname.c_str(), wname.c_str(), idx);
+		auto warp = ctx.engine->getCurrentWarp();
+		if (!warp || !warp->vrFile.equalsIgnoreCase(wname))
+			error("setting cursor for different warp, active: %s, required: %s", warp ? warp->vrFile.c_str() : "null", wname.c_str());
+		auto reg = g_engine->getRegion(idx);
+		debug("region: %g %g %g %g", reg.a, reg.b, reg.c, reg.d);
 	}
 };
 

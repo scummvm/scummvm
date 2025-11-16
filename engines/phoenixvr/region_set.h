@@ -38,6 +38,9 @@ class RegionSet {
 
 public:
 	RegionSet(const Common::String &fname);
+	const Region &getRegion(int idx) const {
+		return _regions[idx];
+	}
 };
 } // namespace PhoenixVR
 
