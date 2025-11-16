@@ -103,6 +103,10 @@ public:
 	void setNextScript(const Common::String &path);
 	void setCursorDefault(uint idx, const Common::String &path);
 
+	void declareVariable(const Common::String &name);
+	void setVariable(const Common::String &name, int value);
+	int getVariable(const Common::String &name) const;
+
 private:
 	void loadScript(const Common::Path &scriptFile);
 	void runScript(Common::SeekableReadStream &script);
@@ -111,6 +115,7 @@ private:
 
 private:
 	Common::String _nextScript;
+	Common::HashMap<Common::String, int> _variables;
 };
 
 extern PhoenixVREngine *g_engine;

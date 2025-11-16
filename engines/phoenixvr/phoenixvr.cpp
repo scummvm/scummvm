@@ -77,6 +77,19 @@ void PhoenixVREngine::setCursorDefault(uint idx, const Common::String &path) {
 	debug("setCursorDefault %u: %s", idx, path.c_str());
 }
 
+void PhoenixVREngine::declareVariable(const Common::String &name) {
+	_variables.setVal(name, 0);
+}
+
+void PhoenixVREngine::setVariable(const Common::String &name, int value) {
+	debug("set %s %d", name.c_str(), value);
+	_variables.setVal(name, value);
+}
+
+int PhoenixVREngine::getVariable(const Common::String &name) const {
+	return _variables.getVal(name);
+}
+
 void PhoenixVREngine::runScript(Common::SeekableReadStream &scriptSource) {
 	Script script(scriptSource);
 	Script::ExecutionContext ctx{this, true};
@@ -101,6 +114,7 @@ void PhoenixVREngine::loadScript(const Common::Path &scriptFile) {
 		runScript(*scriptStream);
 		if (!_nextScript.empty()) {
 			nextScript = removeDrive(_nextScript);
+			_nextScript.clear();
 		} else
 			nextScript.clear();
 	}
