@@ -108,8 +108,10 @@ void PhoenixVREngine::setCursor(const Common::String &path, const Common::String
 	auto &cursor = _cursors[idx];
 	auto rect = reg.toRect();
 	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, rect.toString().c_str(), path.c_str());
-	if (!_warp || !_warp->vrFile.equalsIgnoreCase(wname))
-		error("setting cursor for different warp, active: %s, required: %s", _warp ? _warp->vrFile.c_str() : "null", wname.c_str());
+	if (!_warp || !_warp->vrFile.equalsIgnoreCase(wname)) {
+		warning("setting cursor for different warp, active: %s, required: %s", _warp ? _warp->vrFile.c_str() : "null", wname.c_str());
+		return;
+	}
 	cursor.free();
 	cursor.surface = loadSurface(path);
 	cursor.rect = rect;
