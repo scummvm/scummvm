@@ -370,7 +370,7 @@ struct SetCursorDefault : public Script::Command {
 	Common::String fname;
 	SetCursorDefault(int i, Common::String f) : idx(i), fname(Common::move(f)) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursordefault %d, %s", idx, fname.c_str());
+		g_engine->setCursorDefault(idx, fname);
 	}
 };
 
@@ -380,12 +380,7 @@ struct SetCursor : public Script::Command {
 	int idx;
 	SetCursor(Common::String f, Common::String w, int i) : fname(Common::move(f)), wname(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursor %s %s:%d", fname.c_str(), wname.c_str(), idx);
-		auto warp = g_engine->getCurrentWarp();
-		if (!warp || !warp->vrFile.equalsIgnoreCase(wname))
-			error("setting cursor for different warp, active: %s, required: %s", warp ? warp->vrFile.c_str() : "null", wname.c_str());
-		auto reg = g_engine->getRegion(idx);
-		debug("region: %g %g %g %g", reg.a, reg.b, reg.c, reg.d);
+		g_engine->setCursor(fname, wname, idx);
 	}
 };
 
@@ -394,7 +389,7 @@ struct HideCursor : public Script::Command {
 	int idx;
 	HideCursor(Common::String w, int i) : warp(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursor %s:%d", warp.c_str(), idx);
+		g_engine->hideCursor(warp, idx);
 	}
 };
 

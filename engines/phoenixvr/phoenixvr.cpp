@@ -29,6 +29,7 @@
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
+#include "image/pcx.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/detection.h"
 #include "phoenixvr/pakf.h"
@@ -42,7 +43,7 @@ PhoenixVREngine *g_engine;
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
-																					 _pixelFormat(Graphics::PixelFormat::createFormatRGB24()) {
+																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()) {
 	g_engine = this;
 	auto path = Common::FSNode(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(path, "NecroES/Data", 1, 1, true);
@@ -94,8 +95,29 @@ Region PhoenixVREngine::getRegion(int idx) const {
 	return _regSet->getRegion(idx);
 }
 
-void PhoenixVREngine::setCursorDefault(uint idx, const Common::String &path) {
-	debug("setCursorDefault %u: %s", idx, path.c_str());
+void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
+	debug("setCursorDefault %d: %s", idx, path.c_str());
+	if (idx == 0) {
+		_defaultCursor.free();
+		_defaultCursor.surface = loadSurface(path);
+	}
+}
+
+void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
+	auto reg = g_engine->getRegion(idx);
+	auto &cursor = _cursors[idx];
+	auto rect = reg.toRect();
+	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, rect.toString().c_str(), path.c_str());
+	if (!_warp || !_warp->vrFile.equalsIgnoreCase(wname))
+		error("setting cursor for different warp, active: %s, required: %s", _warp ? _warp->vrFile.c_str() : "null", wname.c_str());
+	cursor.free();
+	cursor.surface = loadSurface(path);
+	cursor.rect = rect;
+}
+
+void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
+	debug("hide cursor %s:%d", warp.c_str(), idx);
+	_cursors[idx].free();
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
@@ -109,6 +131,32 @@ void PhoenixVREngine::setVariable(const Common::String &name, int value) {
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getVal(name);
+}
+
+Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
+	Common::File file;
+	if (!file.open(Common::Path(path))) {
+		warning("can't find %s", path.c_str());
+		return nullptr;
+	}
+	if (path.hasSuffix(".pcx")) {
+		Image::PCXDecoder pcx;
+		if (pcx.loadStream(file))
+			return pcx.getSurface()->convertTo(_pixelFormat, pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
+		warning("pcx decode failed on %s", path.c_str());
+		return nullptr;
+	}
+	warning("can't find decoder for %s", path.c_str());
+	return nullptr;
+}
+
+void PhoenixVREngine::Cursor::free() {
+	if (surface) {
+		surface->free();
+		delete surface;
+		surface = nullptr;
+	}
+	rect.setEmpty();
 }
 
 Common::Error PhoenixVREngine::run() {
@@ -133,11 +181,31 @@ Common::Error PhoenixVREngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	Common::Event e;
+	Common::Event event;
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_mousePos = event.mouse;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				for (uint i = 0; i != _cursors.size(); ++i) {
+					auto &c = _cursors[i];
+					if (c.rect.contains(event.mouse)) {
+						debug("click region %u", i);
+						auto test = _warp->getTest(i);
+						if (test) {
+							Script::ExecutionContext ctx;
+							test->scope.exec(ctx);
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());
@@ -167,10 +235,29 @@ Common::Error PhoenixVREngine::run() {
 			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 			_regSet.reset(new RegionSet(_warp->testFile));
 
+			for (auto &c : _cursors)
+				c.free();
+			_cursors.resize(_regSet->size());
+
 			Script::ExecutionContext ctx;
 			debug("execute warp script %s", _warp->vrFile.c_str());
 			auto &test = _warp->getDefaultTest();
 			test->scope.exec(ctx);
+		}
+
+		_screen->clear();
+		Graphics::Surface *cursor = nullptr;
+		for (auto &c : _cursors) {
+			if (c.rect.contains(_mousePos)) {
+				cursor = c.surface;
+				if (cursor)
+					break;
+			}
+		}
+		if (!cursor)
+			cursor = _defaultCursor.surface;
+		if (cursor) {
+			paint(*cursor, _mousePos);
 		}
 
 		// Delay for a bit. All events loops should have a delay
@@ -181,6 +268,13 @@ Common::Error PhoenixVREngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
+	Common::Rect srcRect = src.getRect();
+	Common::Rect clip(0, 0, _screen->w, _screen->h);
+	if (Common::Rect::getBlitRect(dst, srcRect, clip))
+		_screen->copyRectToSurface(src, dst.x, dst.y, srcRect);
 }
 
 Common::Error PhoenixVREngine::syncGame(Common::Serializer &s) {

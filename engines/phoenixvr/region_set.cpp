@@ -41,4 +41,13 @@ RegionSet::RegionSet(const Common::String &fname) {
 	}
 }
 
+Common::Rect Region::toRect() const {
+	Common::Rect rect;
+	rect.left = static_cast<short>(MIN(a, b));
+	rect.right = static_cast<short>(MAX(a, b));
+	rect.top = static_cast<short>(MIN(c, d));
+	rect.bottom = static_cast<short>(MAX(c, d));
+	return rect;
+}
+
 } // namespace PhoenixVR

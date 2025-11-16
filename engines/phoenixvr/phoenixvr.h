@@ -104,7 +104,9 @@ public:
 	// Script API
 	void setNextScript(const Common::String &path);
 	void goToWarp(const Common::String &warp);
-	void setCursorDefault(uint idx, const Common::String &path);
+	void setCursorDefault(int idx, const Common::String &path);
+	void setCursor(const Common::String &path, const Common::String &warp, int idx);
+	void hideCursor(const Common::String &warp, int idx);
 
 	void declareVariable(const Common::String &name);
 	void setVariable(const Common::String &name, int value);
@@ -117,8 +119,11 @@ public:
 private:
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);
+	Graphics::Surface *loadSurface(const Common::String &path);
+	void paint(Graphics::Surface &src, Common::Point dst);
 
 private:
+	Common::Point _mousePos;
 	Common::String _nextScript;
 	Common::String _nextWarp;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
@@ -126,6 +131,14 @@ private:
 
 	Script::ConstWarpPtr _warp;
 	Common::ScopedPtr<RegionSet> _regSet;
+
+	struct Cursor {
+		Common::Rect rect;
+		Graphics::Surface *surface = nullptr;
+		void free();
+	};
+	Common::Array<Cursor> _cursors;
+	Cursor _defaultCursor;
 };
 
 extern PhoenixVREngine *g_engine;
