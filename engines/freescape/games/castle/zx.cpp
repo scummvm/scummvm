@@ -33,7 +33,7 @@ void CastleEngine::initZX() {
 	_soundIndexCollide = 3;
 	_soundIndexStartFalling = -1;
 	_soundIndexFallen = 1;
-	_soundIndexFall = 6; 
+	_soundIndexFall = 6;
 	_soundIndexStepUp = 12;
 	_soundIndexStepDown = 12;
 	_soundIndexMenu = 3;
@@ -259,7 +259,10 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
 		if (_gameStateControl != kFreescapeGameStateEnd) {
-			drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
+			if (getGameBit(31)) { // The final cutscene is playing but it is not ended yet
+				drawStringInSurface(_messagesList[5], 120, 179, front, black, surface); // "You did it!"
+			} else
+				drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
 		}
 	}
 

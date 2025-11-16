@@ -483,7 +483,8 @@ void CastleEngine::endGame() {
 
 		if (isDOS()) {
 			drawFullscreenEndGameAndWait();
-		}
+		} else
+			drawFullscreenGameOverAndWait();
 	} else {
 		drawFullscreenGameOverAndWait();
 	}
@@ -870,11 +871,18 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		playSound(9, false, _soundFxHandle);
 	}
 
+	if (isSpectrum() && getGameBit(31)) {
+		insertTemporaryMessage(_messagesList[5], _countdown - 1);
+	}
+
 	while (!shouldQuit() && cont) {
 		if (_temporaryMessageDeadlines.empty()) {
 			insertTemporaryMessage(scoreString, _countdown - 2);
 			insertTemporaryMessage(spiritsDestroyedString, _countdown - 4);
 			insertTemporaryMessage(keysCollectedString, _countdown - 6);
+			if (isSpectrum() && getGameBit(31)) {
+				insertTemporaryMessage(_messagesList[5], _countdown - 8);
+			}
 		}
 
 		while (_eventManager->pollEvent(event)) {
@@ -1563,6 +1571,9 @@ void CastleEngine::drawLiftingGate(Graphics::Surface *surface) {
 }
 
 void CastleEngine::drawDroppingGate(Graphics::Surface *surface) {
+	if (isSpectrum() && getGameBit(31))
+		return; // No gate dropping when the player escaped
+
 	if (_droppingGateStartTicks <= 0)
 		return;
 
