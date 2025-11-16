@@ -140,6 +140,7 @@ void OpenGLTexture::copyFromFramebuffer(const Common::Rect &screen) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	g_system->presentBuffer();
 	glCopyTexImage2D(GL_TEXTURE_2D, 0, internalFormat, screen.left, screen.top, internalWidth, internalHeight, 0);
 }
 

@@ -308,6 +308,7 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(screen.width(), screen.height(), Texture::getRGBAPixelFormat());
 
+	g_system->presentBuffer();
 	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 
 	flipVertical(s);
