@@ -35,6 +35,8 @@
 #include "graphics/screen.h"
 
 #include "phoenixvr/detection.h"
+#include "phoenixvr/region_set.h"
+#include "phoenixvr/script.h"
 
 namespace PhoenixVR {
 
@@ -101,6 +103,7 @@ public:
 
 	// Script API
 	void setNextScript(const Common::String &path);
+	void goToWarp(const Common::String &warp);
 	void setCursorDefault(uint idx, const Common::String &path);
 
 	void declareVariable(const Common::String &name);
@@ -108,14 +111,17 @@ public:
 	int getVariable(const Common::String &name) const;
 
 private:
-	void loadScript(const Common::Path &scriptFile);
-	void runScript(Common::SeekableReadStream &script);
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);
 
 private:
 	Common::String _nextScript;
+	Common::String _nextWarp;
 	Common::HashMap<Common::String, int> _variables;
+	Common::ScopedPtr<Script> _script;
+
+	Script::ConstWarpPtr _warp;
+	Common::ScopedPtr<RegionSet> _regSet;
 };
 
 extern PhoenixVREngine *g_engine;

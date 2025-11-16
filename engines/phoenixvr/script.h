@@ -80,6 +80,7 @@ public:
 	};
 
 	using WarpPtr = Common::SharedPtr<Warp>;
+	using ConstWarpPtr = Common::SharedPtr<const Warp>;
 
 private:
 	Common::HashMap<Common::String, uint> _warpsIndex;
@@ -97,7 +98,8 @@ public:
 	Script(Common::SeekableReadStream &s);
 	~Script();
 
-	void exec(ExecutionContext &ctx) const;
+	ConstWarpPtr getWarp(const Common::String &name) const;
+	ConstWarpPtr getInitScript() const;
 };
 } // namespace PhoenixVR
 

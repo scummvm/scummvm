@@ -317,11 +317,13 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 Script::~Script() {
 }
 
-void Script::exec(ExecutionContext &ctx) const {
-	auto &warp = _warps.front();
-	debug("execute warp script %s", warp->vrFile.c_str());
-	auto &test = warp->getDefaultTest();
-	test->scope.exec(ctx);
+Script::ConstWarpPtr Script::getWarp(const Common::String &name) const {
+	auto idx = _warpsIndex.getVal(name);
+	return _warps[idx];
+}
+
+Script::ConstWarpPtr Script::getInitScript() const {
+	return _warps.front();
 }
 
 } // namespace PhoenixVR

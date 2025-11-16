@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	phoenixvr.o \
 	console.o \
 	metaengine.o \
+	region_set.o \
 	script.o
 
 # This module can be built as a plugin

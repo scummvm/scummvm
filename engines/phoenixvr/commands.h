@@ -342,7 +342,7 @@ struct SetCursorDefault : public Script::Command {
 	Common::String fname;
 	SetCursorDefault(int i, Common::String f) : idx(i), fname(Common::move(f)) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursordefault %d, %s\n", idx, fname.c_str());
+		debug("setcursordefault %d, %s", idx, fname.c_str());
 	}
 };
 
@@ -352,7 +352,7 @@ struct SetCursor : public Script::Command {
 	int idx;
 	SetCursor(Common::String f, Common::String w, int i) : fname(Common::move(f)), warp(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursor %s %s:%d\n", fname.c_str(), warp.c_str(), idx);
+		debug("setcursor %s %s:%d", fname.c_str(), warp.c_str(), idx);
 	}
 };
 
@@ -361,7 +361,7 @@ struct HideCursor : public Script::Command {
 	int idx;
 	HideCursor(Common::String w, int i) : warp(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("setcursor %s:%d\n", warp.c_str(), idx);
+		debug("setcursor %s:%d", warp.c_str(), idx);
 	}
 };
 
@@ -414,7 +414,7 @@ struct GoToWarp : public Script::Command {
 	GoToWarp(Common::String w) : warp(Common::move(w)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("goto warp %s", warp.c_str());
+		ctx.engine->goToWarp(warp);
 	}
 };
 

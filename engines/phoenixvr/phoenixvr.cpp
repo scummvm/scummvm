@@ -32,6 +32,7 @@
 #include "phoenixvr/console.h"
 #include "phoenixvr/detection.h"
 #include "phoenixvr/pakf.h"
+#include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
 
 namespace PhoenixVR {
@@ -73,6 +74,11 @@ void PhoenixVREngine::setNextScript(const Common::String &path) {
 	debug("setNextScript %s", _nextScript.c_str());
 }
 
+void PhoenixVREngine::goToWarp(const Common::String &warp) {
+	debug("gotowarp %s", warp.c_str());
+	_nextWarp = warp;
+}
+
 void PhoenixVREngine::setCursorDefault(uint idx, const Common::String &path) {
 	debug("setCursorDefault %u: %s", idx, path.c_str());
 }
@@ -90,40 +96,10 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getVal(name);
 }
 
-void PhoenixVREngine::runScript(Common::SeekableReadStream &scriptSource) {
-	Script script(scriptSource);
-	Script::ExecutionContext ctx{this, true};
-	script.exec(ctx);
-}
-
-void PhoenixVREngine::loadScript(const Common::Path &scriptFile) {
-	Common::String nextScript = scriptFile.toString();
-	while (!nextScript.empty()) {
-		Common::File file;
-		Common::Path nextPath(nextScript);
-		if (file.open(nextPath)) {
-			runScript(file);
-		} else {
-			auto pakFile = nextPath;
-			pakFile = pakFile.removeExtension().append(".pak");
-			file.open(pakFile);
-		}
-		if (!file.isOpen())
-			error("can't open script file %s", scriptFile.toString().c_str());
-		Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
-		runScript(*scriptStream);
-		if (!_nextScript.empty()) {
-			nextScript = removeDrive(_nextScript);
-			_nextScript.clear();
-		} else
-			nextScript.clear();
-	}
-}
-
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
-	loadScript("script.lst");
+	setNextScript("script.lst");
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -138,6 +114,39 @@ Common::Error PhoenixVREngine::run() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+		}
+		if (!_nextScript.empty()) {
+			debug("loading script from %s", _nextScript.c_str());
+			auto nextScript = Common::move(_nextScript);
+			_nextScript.clear();
+
+			nextScript = removeDrive(nextScript);
+
+			Common::File file;
+			Common::Path nextPath(nextScript);
+			if (file.open(nextPath)) {
+				_script.reset(new Script(file));
+			} else {
+				auto pakFile = nextPath;
+				pakFile = pakFile.removeExtension().append(".pak");
+				file.open(pakFile);
+				if (!file.isOpen())
+					error("can't open script file %s", nextScript.c_str());
+				Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
+				_script.reset(new Script(*scriptStream));
+			}
+			goToWarp(_script->getInitScript()->vrFile);
+		}
+		if (!_nextWarp.empty()) {
+			_warp = _script->getWarp(_nextWarp);
+			_nextWarp.clear();
+			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
+			_regSet.reset(new RegionSet(_warp->testFile));
+
+			Script::ExecutionContext ctx{this, true};
+			debug("execute warp script %s", _warp->vrFile.c_str());
+			auto &test = _warp->getDefaultTest();
+			test->scope.exec(ctx);
 		}
 
 		// Delay for a bit. All events loops should have a delay
