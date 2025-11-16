@@ -47,10 +47,15 @@ public:
 	};
 	using CommandPtr = Common::SharedPtr<Command>;
 
-	struct Test {
-		int idx;
+	struct Scope : public Script::Command {
 		Common::Array<CommandPtr> commands;
 		void exec(ExecutionContext &ctx) const;
+	};
+	using ScopePtr = Common::SharedPtr<Scope>;
+
+	struct Test {
+		int idx;
+		Scope scope;
 	};
 	using TestPtr = Common::SharedPtr<Test>;
 

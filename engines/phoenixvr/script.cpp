@@ -68,6 +68,12 @@ struct Cmp : public Script::Command {
 	}
 };
 
+struct Branch : public Script::Command {
+	Common::Array<Common::String> vars;
+	Script::CommandPtr target;
+	Branch(const Common::Array<Common::String> &args) : vars(args) {}
+};
+
 struct End : public Script::Command {
 	End() {}
 	void exec(Script::ExecutionContext &ctx) const override {
@@ -256,7 +262,7 @@ public:
 
 } // namespace
 
-void Script::Test::exec(ExecutionContext &ctx) const {
+void Script::Scope::exec(ExecutionContext &ctx) const {
 	for (auto &cmd : commands) {
 		if (!ctx.running)
 			break;
@@ -326,7 +332,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	}
 	default:
 		if (_currentTest) {
-			auto &commands = _currentTest->commands;
+			auto &commands = _currentTest->scope.commands;
 			auto cmd = p.parseCommand();
 			if (cmd)
 				commands.push_back(Common::move(cmd));
@@ -344,7 +350,7 @@ void Script::exec(ExecutionContext &ctx) const {
 			break;
 		debug("warp %s", warp->vrFile.c_str());
 		auto &test = warp->getDefaultTest();
-		test->exec(ctx);
+		test->scope.exec(ctx);
 	}
 }
 
