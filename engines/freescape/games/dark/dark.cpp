@@ -459,32 +459,32 @@ void DarkEngine::addSkanner(Area *area) {
 		debugC(1, kFreescapeDebugParser, "Adding group %d", id);
 		area->addGroupFromArea(id, _areaMap[255]);
 	} else {
-		GeometricObject *obj = nullptr;
+		Object *obj = nullptr;
 		id = 248;
 		// If first object is already added, do not re-add any
 		if (area->objectWithID(id) != nullptr)
 			return;
 
 		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		obj = _areaMap[255]->objectWithID(id);
 		assert(obj);
-		obj = (GeometricObject *)obj->duplicate();
+		obj = obj->duplicate();
 		obj->makeInvisible();
 		area->addObject(obj);
 
 		id = 249;
 		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		obj = _areaMap[255]->objectWithID(id);
 		assert(obj);
-		obj = (GeometricObject *)obj->duplicate();
+		obj = obj->duplicate();
 		obj->makeInvisible();
 		area->addObject(obj);
 
 		id = 250;
 		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		obj = _areaMap[255]->objectWithID(id);
 		assert(obj);
-		obj = (GeometricObject *)obj->duplicate();
+		obj = obj->duplicate();
 		obj->makeInvisible();
 		area->addObject(obj);
 	}
