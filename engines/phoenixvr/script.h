@@ -33,13 +33,10 @@ class SeekableReadStream;
 
 namespace PhoenixVR {
 
-class PhoenixVREngine;
-
 class Script {
 public:
 	struct ExecutionContext {
-		PhoenixVREngine *engine;
-		bool running;
+		bool running = true;
 	};
 	struct Command {
 		virtual ~Command() = default;

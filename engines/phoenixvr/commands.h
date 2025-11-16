@@ -25,7 +25,7 @@ struct MultiCD_Set_Next_Script : public Script::Command {
 	MultiCD_Set_Next_Script(const Common::Array<Common::String> &args) : filename(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("MultiCD_Set_Next_Script %s", filename.c_str());
-		ctx.engine->setNextScript(filename);
+		g_engine->setNextScript(filename);
 	}
 };
 
@@ -161,10 +161,10 @@ struct Cmp : public Script::Command {
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("cmp %s %s %s %s %d", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1);
 		if (op == "==") {
-			auto value0 = ctx.engine->getVariable(arg0);
+			auto value0 = g_engine->getVariable(arg0);
 			bool r = value0 == arg1;
-			ctx.engine->setVariable(var, r);
-			ctx.engine->setVariable(negativeVar, !r);
+			g_engine->setVariable(var, r);
+			g_engine->setVariable(negativeVar, !r);
 		} else {
 			error("invalid cmp op %s", op.c_str());
 		}
@@ -308,10 +308,9 @@ Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<
 struct IfAnd : public Script::Conditional {
 	using Script::Conditional::Conditional;
 	void exec(Script::ExecutionContext &ctx) const override {
-		auto *engine = ctx.engine;
 		bool result = true;
 		for (auto &var : vars) {
-			auto value = engine->getVariable(var);
+			auto value = g_engine->getVariable(var);
 			debug("ifand, %s: %d", var.c_str(), value);
 			if (!value)
 				result = false;
@@ -326,10 +325,9 @@ struct IfAnd : public Script::Conditional {
 struct IfOr : public Script::Conditional {
 	using Script::Conditional::Conditional;
 	void exec(Script::ExecutionContext &ctx) const override {
-		auto *engine = ctx.engine;
 		bool result = false;
 		for (auto &var : vars) {
-			auto value = engine->getVariable(var);
+			auto value = g_engine->getVariable(var);
 			debug("ifor, %s: %d", var.c_str(), value);
 			if (value)
 				result = true;
@@ -347,7 +345,7 @@ struct Set : public Script::Command {
 
 	Set(Common::String n, int v) : name(Common::move(n)), value(v) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		ctx.engine->setVariable(name, value);
+		g_engine->setVariable(name, value);
 	}
 };
 
@@ -383,7 +381,7 @@ struct SetCursor : public Script::Command {
 	SetCursor(Common::String f, Common::String w, int i) : fname(Common::move(f)), wname(Common::move(w)), idx(i) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("setcursor %s %s:%d", fname.c_str(), wname.c_str(), idx);
-		auto warp = ctx.engine->getCurrentWarp();
+		auto warp = g_engine->getCurrentWarp();
 		if (!warp || !warp->vrFile.equalsIgnoreCase(wname))
 			error("setting cursor for different warp, active: %s, required: %s", warp ? warp->vrFile.c_str() : "null", wname.c_str());
 		auto reg = g_engine->getRegion(idx);
@@ -449,7 +447,7 @@ struct GoToWarp : public Script::Command {
 	GoToWarp(Common::String w) : warp(Common::move(w)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		ctx.engine->goToWarp(warp);
+		g_engine->goToWarp(warp);
 	}
 };
 

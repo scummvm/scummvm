@@ -167,7 +167,7 @@ Common::Error PhoenixVREngine::run() {
 			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 			_regSet.reset(new RegionSet(_warp->testFile));
 
-			Script::ExecutionContext ctx{this, true};
+			Script::ExecutionContext ctx;
 			debug("execute warp script %s", _warp->vrFile.c_str());
 			auto &test = _warp->getDefaultTest();
 			test->scope.exec(ctx);
