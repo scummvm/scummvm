@@ -153,13 +153,21 @@ struct Cmp : public Script::Command {
 	Common::String negativeVar;
 	Common::String arg0;
 	Common::String op;
-	Common::String arg1;
+	int arg1;
 
 	Cmp(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]),
-													 arg0(args[2]), op(args[3]), arg1(args[4]) {}
+													 arg0(args[2]), op(args[3]), arg1(atoi(args[4].c_str())) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("cmp");
+		debug("cmp %s %s %s %s %d", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1);
+		if (op == "==") {
+			auto value0 = ctx.engine->getVariable(arg0);
+			bool r = value0 == arg1;
+			ctx.engine->setVariable(var, r);
+			ctx.engine->setVariable(negativeVar, !r);
+		} else {
+			error("invalid cmp op %s", op.c_str());
+		}
 	}
 };
 
@@ -300,14 +308,36 @@ Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<
 struct IfAnd : public Script::Conditional {
 	using Script::Conditional::Conditional;
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("ifand");
+		auto *engine = ctx.engine;
+		bool result = true;
+		for (auto &var : vars) {
+			auto value = engine->getVariable(var);
+			debug("ifand, %s: %d", var.c_str(), value);
+			if (!value)
+				result = false;
+		}
+		if (!result)
+			return;
+		debug("ifand: executing conditional block");
+		target->exec(ctx);
 	}
 };
 
 struct IfOr : public Script::Conditional {
 	using Script::Conditional::Conditional;
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("ifor");
+		auto *engine = ctx.engine;
+		bool result = false;
+		for (auto &var : vars) {
+			auto value = engine->getVariable(var);
+			debug("ifor, %s: %d", var.c_str(), value);
+			if (value)
+				result = true;
+		}
+		if (!result)
+			return;
+		debug("ifor: executing conditional block");
+		target->exec(ctx);
 	}
 };
 

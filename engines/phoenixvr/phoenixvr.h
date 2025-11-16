@@ -117,7 +117,7 @@ private:
 private:
 	Common::String _nextScript;
 	Common::String _nextWarp;
-	Common::HashMap<Common::String, int> _variables;
+	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	Common::ScopedPtr<Script> _script;
 
 	Script::ConstWarpPtr _warp;

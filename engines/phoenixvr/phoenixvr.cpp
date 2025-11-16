@@ -104,6 +104,15 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
+	{
+		Common::File vars;
+		if (vars.open(Common::Path("variable.txt"))) {
+			while (!vars.eos()) {
+				auto var = vars.readLine();
+				declareVariable(var);
+			}
+		}
+	}
 	setNextScript("script.lst");
 
 	// Set the engine's debugger console
