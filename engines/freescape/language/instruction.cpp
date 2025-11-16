@@ -355,6 +355,8 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	if (isEclipse2() && _currentArea->getAreaID() == _startArea && _gameStateControl == kFreescapeGameStateStart)
 		delay = delay * 10;
 
+	if (isCastle() && isSpectrum() && getGameBit(31))
+		delay = delay * 15; // Slow down redraws when the final cutscene is playing
 	waitInLoop(delay);
 }
 
