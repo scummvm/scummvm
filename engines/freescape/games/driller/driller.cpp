@@ -727,7 +727,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 
 void DrillerEngine::addSkanner(Area *area) {
 	debugC(1, kFreescapeDebugParser, "Adding skanner to area: %d", area->getAreaID());
-	GeometricObject *obj = nullptr;
+	Object *obj = nullptr;
 	int16 id;
 
 	id = 248;
@@ -736,25 +736,25 @@ void DrillerEngine::addSkanner(Area *area) {
 		return;
 
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 249;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 250;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	obj = _areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
+	obj = obj->duplicate();
 	obj->makeInvisible();
 	area->addObject(obj);
 }
