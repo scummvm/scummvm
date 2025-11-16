@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-14 21:01+0000\n"
+"POT-Creation-Date: 2025-11-16 20:53+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -4957,14 +4957,14 @@ msgstr "وضع التكبير متوقف. إعادة تنشيط وضع السح�
 msgid "Magnify Mode Off"
 msgstr "وضع التكبير متوقف"
 
-#: backends/platform/android/android.cpp:1065
+#: backends/platform/android/android.cpp:1066
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #, fuzzy
 #| msgid "Settings"
 msgid "Getting help"
 msgstr "إعدادات"
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1069
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4986,7 +4986,7 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1077
+#: backends/platform/android/android.cpp:1078
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 #, fuzzy
@@ -4994,7 +4994,7 @@ msgstr ""
 msgid "Touch Controls"
 msgstr "تحكم"
 
-#: backends/platform/android/android.cpp:1080
+#: backends/platform/android/android.cpp:1081
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5063,7 +5063,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1136
+#: backends/platform/android/android.cpp:1137
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 #, fuzzy
@@ -5071,7 +5071,7 @@ msgstr ""
 msgid "Adding Games"
 msgstr "~أ~ضف اللعبة ..."
 
-#: backends/platform/android/android.cpp:1139
+#: backends/platform/android/android.cpp:1140
 #, fuzzy
 #| msgid ""
 #| "In this new version of ScummVM Android, significant changes were made to "

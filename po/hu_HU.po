@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-14 21:01+0000\n"
+"POT-Creation-Date: 2025-11-16 20:53+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4949,12 +4949,12 @@ msgstr "Nagyítás mód ki. Húzás Mód újra aktiválása..."
 msgid "Magnify Mode Off"
 msgstr "Nagyítás Mód Ki"
 
-#: backends/platform/android/android.cpp:1065
+#: backends/platform/android/android.cpp:1066
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Segítség kérése"
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1069
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4995,13 +4995,13 @@ msgstr ""
 "észveszejtő szinten. Ha végleg el van akadva egy játékban, érdemes "
 "megtekinteni egy végigjátszást. Sok sikert!\n"
 
-#: backends/platform/android/android.cpp:1077
+#: backends/platform/android/android.cpp:1078
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Érintő irányítás"
 
-#: backends/platform/android/android.cpp:1080
+#: backends/platform/android/android.cpp:1081
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5137,13 +5137,13 @@ msgstr ""
 "  ![Billentyűzet ikon](keyboard.png \"Billentyűzet ikon\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1136
+#: backends/platform/android/android.cpp:1137
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Játékok hozzáadása"
 
-#: backends/platform/android/android.cpp:1139
+#: backends/platform/android/android.cpp:1140
 msgid ""
 "## Adding Games \n"
 "\n"

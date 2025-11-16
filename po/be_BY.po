@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-14 21:01+0000\n"
+"POT-Creation-Date: 2025-11-16 20:53+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4928,14 +4928,14 @@ msgstr "Рэжым павелічэння выключаны. Зварот да 
 msgid "Magnify Mode Off"
 msgstr "Рэжым павелічэння выключаны"
 
-#: backends/platform/android/android.cpp:1065
+#: backends/platform/android/android.cpp:1066
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #, fuzzy
 #| msgid "Settings"
 msgid "Getting help"
 msgstr "Налады"
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1069
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4957,7 +4957,7 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1077
+#: backends/platform/android/android.cpp:1078
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 #, fuzzy
@@ -4965,7 +4965,7 @@ msgstr ""
 msgid "Touch Controls"
 msgstr "Кіраванне"
 
-#: backends/platform/android/android.cpp:1080
+#: backends/platform/android/android.cpp:1081
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5034,7 +5034,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1136
+#: backends/platform/android/android.cpp:1137
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 #, fuzzy
@@ -5043,7 +5043,7 @@ msgstr ""
 msgid "Adding Games"
 msgstr "Доб. игру"
 
-#: backends/platform/android/android.cpp:1139
+#: backends/platform/android/android.cpp:1140
 msgid ""
 "## Adding Games \n"
 "\n"
