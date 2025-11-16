@@ -31,7 +31,14 @@ RegionSet::RegionSet(const Common::String &fname) {
 		return;
 	}
 	auto n = file.readUint32LE();
-	debug("regions: %u", n);
+	while (n--) {
+		auto a = file.readFloatLE();
+		auto b = file.readFloatLE();
+		auto c = file.readFloatLE();
+		auto d = file.readFloatLE();
+		debug("region %g %g %g %g", a, b, c, d);
+		_regions.push_back(Region{a, b, c, d});
+	}
 }
 
 } // namespace PhoenixVR

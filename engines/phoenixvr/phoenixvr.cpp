@@ -40,8 +40,13 @@ namespace PhoenixVR {
 PhoenixVREngine *g_engine;
 
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																					 _gameDescription(gameDesc), _randomSource("PhoenixVR"), _pixelFormat(Graphics::PixelFormat::createFormatRGB24()) {
+																					 _gameDescription(gameDesc),
+																					 _randomSource("PhoenixVR"),
+																					 _pixelFormat(Graphics::PixelFormat::createFormatRGB24()) {
 	g_engine = this;
+	auto path = Common::FSNode(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(path, "NecroES/Data", 1, 1, true);
+	SearchMan.addSubDirectoryMatching(path, "NecroES/Data2", 2, 1, true);
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
