@@ -41,6 +41,8 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 			case Common::EVENT_MOUSEMOVE:
 				if (_hasFallen || _playerWasCrushed || _gameStateControl != kFreescapeGameStatePlaying)
 					break;
+				if (isCastle() && isSpectrum() && getGameBit(31)) // Game is finished
+					break;
 				mousePos = event.mouse;
 
 				if (_demoMode)
