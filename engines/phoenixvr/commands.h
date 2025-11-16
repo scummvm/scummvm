@@ -203,6 +203,8 @@ struct LoadSave_Test_Slot : public Script::Command {
 	LoadSave_Test_Slot(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())), show(args[1]), hide(args[2]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("LoadSave_Test_Slot %d %s %s", slot, show.c_str(), hide.c_str());
+		g_engine->setVariable(show, 0);
+		g_engine->setVariable(hide, 1);
 	}
 };
 
