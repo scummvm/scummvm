@@ -64,6 +64,16 @@ PelrockEngine::~PelrockEngine() {
 	if (_bgPopupBalloon)
 		delete[] _bgPopupBalloon;
 	delete _smallFont;
+	for (int i = 0; i < 4; i++) {
+
+		// free all frame buffers
+		for (int j = 0; j < walkingAnimLengths[i]; j++) {
+			delete[] walkingAnimFrames[i][j];
+		}
+
+		// free the array of pointers
+		delete[] walkingAnimFrames[i];
+	}
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -102,7 +112,18 @@ Common::Error PelrockEngine::run() {
 	while (!shouldQuit()) {
 		_chronoManager->updateChrono();
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_MOUSEMOVE) {
+			if (e.type == Common::EVENT_KEYDOWN) {
+				if (e.kbd.keycode == Common::KEYCODE_w) {
+					isAlfredWalking = true;
+					isAlfredTalking = false;
+				} else if (e.kbd.keycode == Common::KEYCODE_t) {
+					isAlfredWalking = false;
+					isAlfredTalking = true;
+				} else if (e.kbd.keycode == Common::KEYCODE_s) {
+					isAlfredWalking = false;
+					isAlfredTalking = false;
+				}
+			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
@@ -124,9 +145,8 @@ Common::Error PelrockEngine::run() {
 		checkMouseHover();
 		frames();
 		_screen->update();
-		limiter.delayBeforeSwap();
-		_screen->update();
-		limiter.startFrame();
+		// limiter.delayBeforeSwap();
+		// limiter.startFrame();
 	}
 
 	return Common::kNoError;
@@ -354,7 +374,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;
@@ -920,6 +940,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
+
 	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
@@ -929,14 +950,6 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	}
 
 	int walkboxCount = 0;
-	// for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
-	// 	// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-	// 	_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
-	// 	_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-	// 	_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
-	// 	_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-	// 	walkboxCount++;
-	// }
 
 	_currentRoomAnims = anims;
 	_currentRoomHotspots = hotspots;
@@ -952,6 +965,15 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	// 	_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
 	// 	_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
 	// }
+
+	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
+		debug("Exit: x=%d y=%d w=%d h=%d to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
+		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+		// _screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0);
+		// _screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0);
+		// _screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0);
+		// _screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h);
+	}
 }
 
 void PelrockEngine::loadCursors() {
@@ -1088,14 +1110,16 @@ void PelrockEngine::loadAlfredAnims() {
 
 	for (int i = 0; i < 4; i++) {
 		standingAnimFrames[i] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
+		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3] + 4;
 
 		int prevWalkingFrames = 0;
-		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3];
 		int prevTalkingFrames = 0;
+
 		for (int j = 0; j < i; j++) {
 			prevWalkingFrames += walkingAnimLengths[j] + 1;
-			prevTalkingFrames += talkingFramesOffset + talkingAnimLengths[j];
+			prevTalkingFrames += talkingAnimLengths[j];
 		}
+
 		walkingAnimFrames[i] = new byte *[walkingAnimLengths[i]];
 
 		int standingFrame = prevWalkingFrames;
@@ -1110,7 +1134,7 @@ void PelrockEngine::loadAlfredAnims() {
 
 		talkingAnimFrames[i] = new byte *[talkingAnimLengths[i]];
 
-		int talkingStartFrame = prevWalkingFrames + 1 + walkingAnimLengths[i];
+		int talkingStartFrame = talkingFramesOffset + prevTalkingFrames;
 		for (int j = 0; j < talkingAnimLengths[i]; j++) {
 			talkingAnimFrames[i][j] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
 			int talkingFrame = talkingStartFrame + j;
@@ -1179,9 +1203,8 @@ Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot *hotspot) {
 void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
-
+		debug("Game tick!");
 		int num = 0;
-
 		for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 			if (i->numAnims == 0) {
@@ -1220,38 +1243,71 @@ void PelrockEngine::frames() {
 				}
 			}
 			num++;
-
-			for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-				for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-					unsigned int src_pos = (y * kAlfredFrameWidth) + x;
-					// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-					if (standingAnimFrames[dirAlfred][src_pos] != 255)
-						_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
-				}
-			}
-
-			if (_displayPopup) {
-
-				// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
-				// for (int j = 0; j < kBalloonWidth; j++) {
-				// 	for (int i = 0; i < kBalloonHeight; i++) {
-				// 		int idx = i * kBalloonWidth + j;
-				// 		if (_popupY + i < 400 && _popupX + j < 640) {
-				// 			*(bgDialog + idx) = _currentBackground[(_popupY + i) * 640 + (_popupX + j)];
-				// 		}
-				// 	}
-				// }
-				if (_bgPopupBalloon != nullptr) {
-					putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
-				}
-				showActionBalloon(_popupX, _popupY, _currentPopupFrame);
-				if (_currentPopupFrame < 3) {
-					_currentPopupFrame++;
-				} else
-					_currentPopupFrame = 0;
-			}
 		}
 
+		if (_bgAlfred != nullptr) {
+			putBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight, _bgAlfred);
+			delete[] _bgAlfred;
+			_bgAlfred = nullptr;
+		}
+		_bgAlfred = grabBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight);
+
+		if (isAlfredWalking) {
+			debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
+			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
+			// for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
+			// 	for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+			// 		unsigned int src_pos = (y * kAlfredFrameWidth) + x;
+			// 		// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
+			// 		if (walkingAnimFrames[dirAlfred][curAlfredFrame][src_pos] != 255)
+			// 			_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
+			// 	}
+			// }
+			if (curAlfredFrame < walkingAnimLengths[dirAlfred] - 1) {
+				curAlfredFrame++;
+			} else {
+				curAlfredFrame = 0;
+			}
+			debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
+		} else if (isAlfredTalking) {
+			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
+			if (curAlfredFrame < talkingAnimLengths[dirAlfred] - 1) {
+				curAlfredFrame++;
+			} else {
+				curAlfredFrame = 0;
+			}
+			debug("CurAlfredFrame from talking is now %d", curAlfredFrame);
+		} else {
+			drawAlfred(standingAnimFrames[dirAlfred]);
+			// for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
+			// 	for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+			// 		unsigned int src_pos = (y * kAlfredFrameWidth) + x;
+			// 		// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
+			// 		if (standingAnimFrames[dirAlfred][src_pos] != 255)
+			// 			_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
+			// 	}
+			// }
+		}
+		if (_displayPopup) {
+
+			// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
+			// for (int j = 0; j < kBalloonWidth; j++) {
+			// 	for (int i = 0; i < kBalloonHeight; i++) {
+			// 		int idx = i * kBalloonWidth + j;
+			// 		if (_popupY + i < 400 && _popupX + j < 640) {
+			// 			*(bgDialog + idx) = _currentBackground[(_popupY + i) * 640 + (_popupX + j)];
+			// 		}
+			// 	}
+			// }
+			if (_bgPopupBalloon != nullptr) {
+				putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+			}
+			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
+			if (_currentPopupFrame < 3) {
+				_currentPopupFrame++;
+			} else
+				_currentPopupFrame = 0;
+		}
 		int walkboxCount = 0;
 		for (Common::List<WalkBox>::iterator i = _currentRoomWalkboxes.begin(); i != _currentRoomWalkboxes.end(); i++) {
 			// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
@@ -1263,6 +1319,17 @@ void PelrockEngine::frames() {
 		}
 		_screen->markAllDirty();
 		_screen->update();
+	}
+}
+
+void PelrockEngine::drawAlfred(byte *buf) {
+	for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
+		for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+			unsigned int src_pos = (y * kAlfredFrameWidth) + x;
+			// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
+			if (buf[src_pos] != 255 && x + xAlfred >= 0 && y + yAlfred >= 0 && x + xAlfred < 640 && y + yAlfred < 400)
+				_screen->setPixel(x + xAlfred, y + yAlfred, buf[src_pos]);
+		}
 	}
 }
 
@@ -1558,7 +1625,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 	dirAlfred = dir;
 
 	int roomOffset = number * kRoomStructSize;
-
+	curAlfredFrame = 0;
 	byte *palette = new byte[256 * 3];
 	getPalette(&roomFile, roomOffset, palette);
 

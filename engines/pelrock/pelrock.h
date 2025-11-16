@@ -89,6 +89,7 @@ private:
 
 	// render loop
 	void frames();
+	void drawAlfred(byte *buf);
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
@@ -108,7 +109,6 @@ private:
 	byte **talkingAnimFrames[4];              // 4 arrays of arrays
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 	Common::Array<HotSpot> _currentRoomHotspots;
-	Common::List<HoverArea> _hoverAreas;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
 	Common::List<WalkBox> _currentRoomWalkboxes;
@@ -120,7 +120,9 @@ private:
 	int xAlfred = 200;
 	int yAlfred = 200;
 	int dirAlfred = 0;
-	int curAlfredFrame = 9;
+	int curAlfredFrame = 0;
+	bool isAlfredWalking = false;
+	bool isAlfredTalking = false;
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
 	byte *_currentBackground = nullptr;
@@ -133,6 +135,7 @@ private:
 	byte *_popUpBalloon = nullptr;
 	byte *_bgPopupBalloon = nullptr;
 	byte *_bgText = nullptr;
+	byte *_bgAlfred = nullptr;
 
 	bool _displayPopup = false;
 	int _popupX = 0;

@@ -108,12 +108,6 @@ struct AnimSet {
 	Anim *animData;
 };
 
-struct HoverArea {
-	int x;
-	int y;
-	int w;
-	int h;
-};
 
 struct HotSpot {
 	int id;
