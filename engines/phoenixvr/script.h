@@ -53,6 +53,13 @@ public:
 	};
 	using ScopePtr = Common::SharedPtr<Scope>;
 
+	struct Conditional : public Script::Command {
+		Common::Array<Common::String> vars;
+		Script::CommandPtr target;
+		Conditional(Common::Array<Common::String> args) : vars(Common::move(args)) {}
+	};
+	using ConditionalPtr = Common::SharedPtr<Conditional>;
+
 	struct Test {
 		int idx;
 		Scope scope;
@@ -80,6 +87,7 @@ private:
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
 	ScopePtr _pluginScope;
+	ConditionalPtr _conditional;
 
 private:
 	static Common::String strip(const Common::String &str);

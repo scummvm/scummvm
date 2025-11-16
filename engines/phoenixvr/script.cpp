@@ -239,12 +239,6 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 	}
 };
 
-struct Branch : public Script::Command {
-	Common::Array<Common::String> vars;
-	Script::CommandPtr target;
-	Branch(const Common::Array<Common::String> &args) : vars(args) {}
-};
-
 struct RolloverMalette : public Script::Command {
 	int arg;
 
@@ -260,6 +254,20 @@ struct RolloverSecretaire : public Script::Command {
 	RolloverSecretaire(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("RolloverSecretaire %d", arg);
+	}
+};
+
+struct IfAnd : public Script::Conditional {
+	using Script::Conditional::Conditional;
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("ifand");
+	}
+};
+
+struct IfOr : public Script::Conditional {
+	using Script::Conditional::Conditional;
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("ifor");
 	}
 };
 
@@ -417,12 +425,6 @@ public:
 		} else if (maybe("anglexmax=")) {
 			auto xmax = atoi(nextWord().c_str());
 			debug("anglexmax %d", xmax);
-		} else if (maybe("ifand=")) {
-			auto var = nextWord();
-			debug("ifand %s", var.c_str());
-		} else if (maybe("ifor=")) {
-			auto var = nextWord();
-			debug("ifor %s", var.c_str());
 		} else if (maybe("gotowarp")) {
 			auto id = nextWord();
 			debug("gotowarp %s", id.c_str());
@@ -538,15 +540,26 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	default:
 		if (_currentTest) {
 			auto &commands = _currentTest->scope.commands;
-			if (p.maybe("plugin")) {
+			if (p.maybe("ifand=")) {
+				_conditional.reset(new IfAnd(p.readStringList()));
+			} else if (p.maybe("ifor=")) {
+				_conditional.reset(new IfOr(p.readStringList()));
+			} else if (p.maybe("plugin")) {
 				if (_pluginScope)
 					error("nested plugin context is not allowed, line: %u", lineno);
 				_pluginScope.reset(new Script::Scope);
 			} else if (p.maybe("endplugin")) {
 				if (!_pluginScope)
 					error("endplugin without plugin");
-				commands.push_back(Common::move(_pluginScope));
-				_pluginScope.reset();
+				if (_conditional) {
+					_conditional->target = Common::move(_pluginScope);
+					_pluginScope.reset();
+					commands.push_back(Common::move(_conditional));
+					_conditional.reset();
+				} else {
+					commands.push_back(Common::move(_pluginScope));
+					_pluginScope.reset();
+				}
 			} else {
 				if (_pluginScope) {
 					auto name = p.nextWord();
@@ -554,12 +567,20 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 					auto args = p.readStringList();
 					p.expect(')');
 					auto cmd = createCommand(name, args);
-					if (cmd)
-						_pluginScope->commands.push_back(Common::move(cmd));
+					if (cmd) {
+						if (_conditional) {
+							_conditional->target = Common::move(cmd);
+							commands.push_back(Common::move(_conditional));
+							_conditional.reset();
+						} else
+							_pluginScope->commands.push_back(Common::move(cmd));
+					}
 				} else {
 					auto cmd = p.parseCommand();
 					if (cmd)
 						commands.push_back(Common::move(cmd));
+					else
+						warning("unhandled script command %s", line.c_str());
 				}
 			}
 		} else
