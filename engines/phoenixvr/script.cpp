@@ -313,7 +313,7 @@ class Parser {
 	uint _pos;
 
 public:
-	Parser(const Common::String &line, uint lineno, bool &pluginContext) : _line(line), _lineno(lineno), _pos(0) {
+	Parser(const Common::String &line, uint lineno) : _line(line), _lineno(lineno), _pos(0) {
 		skip();
 	}
 
@@ -488,7 +488,7 @@ const Script::TestPtr &Script::Warp::getTest(int idx) const {
 	return tests[idx + 1];
 }
 
-Script::Script(Common::SeekableReadStream &s) : _pluginContext(false) {
+Script::Script(Common::SeekableReadStream &s) {
 	uint lineno = 1;
 	while (!s.eos()) {
 		auto line = s.readLine();
@@ -500,7 +500,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	if (line.empty())
 		return;
 
-	Parser p(line, lineno, _pluginContext);
+	Parser p(line, lineno);
 	if (p.atEnd())
 		return;
 
@@ -537,24 +537,25 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	}
 	default:
 		if (_currentTest) {
+			auto &commands = _currentTest->scope.commands;
 			if (p.maybe("plugin")) {
-				if (_pluginContext)
+				if (_pluginScope)
 					error("nested plugin context is not allowed, line: %u", lineno);
-				_pluginContext = true;
+				_pluginScope.reset(new Script::Scope);
 			} else if (p.maybe("endplugin")) {
-				if (!_pluginContext)
+				if (!_pluginScope)
 					error("endplugin without plugin");
-				_pluginContext = false;
+				commands.push_back(Common::move(_pluginScope));
+				_pluginScope.reset();
 			} else {
-				auto &commands = _currentTest->scope.commands;
-				if (_pluginContext) {
+				if (_pluginScope) {
 					auto name = p.nextWord();
 					p.expect('(');
 					auto args = p.readStringList();
 					p.expect(')');
 					auto cmd = createCommand(name, args);
 					if (cmd)
-						commands.push_back(Common::move(cmd));
+						_pluginScope->commands.push_back(Common::move(cmd));
 				} else {
 					auto cmd = p.parseCommand();
 					if (cmd)

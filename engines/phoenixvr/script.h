@@ -79,7 +79,7 @@ private:
 	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
-	bool _pluginContext;
+	ScopePtr _pluginScope;
 
 private:
 	static Common::String strip(const Common::String &str);
