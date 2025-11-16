@@ -39,7 +39,7 @@ class Script {
 public:
 	struct ExecutionContext {
 		PhoenixVREngine *engine;
-		bool running = true;
+		bool running;
 	};
 	struct Command {
 		virtual ~Command() = default;
@@ -50,6 +50,7 @@ public:
 	struct Test {
 		int idx;
 		Common::Array<CommandPtr> commands;
+		void exec(ExecutionContext &ctx) const;
 	};
 	using TestPtr = Common::SharedPtr<Test>;
 
@@ -60,6 +61,10 @@ public:
 
 		void parseLine(const Common::String &line, uint lineno);
 		void setText(int idx, const TestPtr &text);
+		const TestPtr &getTest(int idx) const;
+		const TestPtr &getDefaultTest() const {
+			return getTest(-1);
+		}
 	};
 
 	using WarpPtr = Common::SharedPtr<Warp>;
@@ -78,6 +83,8 @@ private:
 public:
 	Script(Common::SeekableReadStream &s);
 	~Script();
+
+	void exec(ExecutionContext &ctx) const;
 };
 } // namespace PhoenixVR
 

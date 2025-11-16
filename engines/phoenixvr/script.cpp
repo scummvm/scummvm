@@ -2,6 +2,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
 
@@ -32,7 +33,7 @@ public:
 		skip();
 		auto ch = next();
 		if (ch != expected)
-			error("expected '%c' at line %u, got %c", expected, _lineno, ch);
+			error("expected '%c' at line %u, got %c in %s", expected, _lineno, ch, _line.c_str());
 		skip();
 	}
 
@@ -46,17 +47,27 @@ public:
 		return yes;
 	}
 
-	Common::String nextWord() {
+	Common::String nextArg() {
 		skip();
 		auto begin = _pos;
-		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != '(')
+		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != ')')
 			++_pos;
 		auto end = _pos;
 		skip();
 		return _line.substr(begin, end - begin);
 	}
 
-	Common::String readString() {
+	Common::String nextWord() {
+		skip();
+		auto begin = _pos;
+		while (_pos < _line.size() && !Common::isSpace(_line[_pos]) && _line[_pos] != ',' && _line[_pos] != '(' && _line[_pos] != '=' && _line[_pos] != ')')
+			++_pos;
+		auto end = _pos;
+		skip();
+		return _line.substr(begin, end - begin);
+	}
+
+	Common::String nextString() {
 		skip();
 		expect('"');
 		Common::String str;
@@ -73,8 +84,14 @@ public:
 	Common::Array<Common::String> readStringList() {
 		Common::Array<Common::String> list;
 		do {
-			list.push_back(readString());
-		} while (peek() == ',');
+			if (peek() == '"')
+				list.push_back(nextString());
+			else {
+				list.push_back(nextArg());
+			}
+			if (peek() == ',')
+				next();
+		} while (peek() != ')');
 		return list;
 	}
 };
@@ -94,6 +111,49 @@ struct MultiCD_Set_Next_Script : public Script::Command {
 	MultiCD_Set_Next_Script(const Common::Array<Common::String> &args) : filename(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("MultiCD_Set_Next_Script %s", filename.c_str());
+		ctx.engine->setNextScript(filename);
+	}
+};
+
+struct LoadSave_Enter_Script : public Script::Command {
+	Common::String reloading, notReloading;
+
+	LoadSave_Enter_Script(const Common::Array<Common::String> &args) : reloading(args[0]), notReloading(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("LoadSave_Enter_Script %s, %s", reloading.c_str(), notReloading.c_str());
+	}
+};
+
+struct Play_Movie : public Script::Command {
+	Common::String filename;
+
+	Play_Movie(const Common::Array<Common::String> &args) : filename(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("Play_Movie %s", filename.c_str());
+	}
+};
+
+struct While : public Script::Command {
+	double seconds;
+
+	While(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("while %g", seconds);
+	}
+};
+
+struct Cmp : public Script::Command {
+	Common::String var;
+	Common::String negativeVar;
+	Common::String arg0;
+	Common::String op;
+	Common::String arg1;
+
+	Cmp(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]),
+													 arg0(args[2]), op(args[3]), arg1(args[4]) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("cmp");
 	}
 };
 
@@ -105,9 +165,31 @@ struct End : public Script::Command {
 };
 
 #define PLUGIN_LIST(E)               \
+	E(Cmp)                           \
+	E(LoadSave_Enter_Script)         \
 	E(MultiCD_Set_Transition_Script) \
-	E(MultiCD_Set_Next_Script)
+	E(MultiCD_Set_Next_Script)       \
+	E(Play_Movie)                    \
+	E(While)                         \
+	/* */
+
+#define ADD_PLUGIN(NAME)             \
+	if (cmd.equalsIgnoreCase(#NAME)) \
+		return Script::CommandPtr(new NAME(args));
+
+Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<Common::String> &args) {
+	PLUGIN_LIST(ADD_PLUGIN)
+	error("unhandled plugin command %s", cmd.c_str());
+}
 } // namespace
+
+void Script::Test::exec(ExecutionContext &ctx) const {
+	for (auto &cmd : commands) {
+		if (!ctx.running)
+			break;
+		cmd->exec(ctx);
+	}
+}
 
 void Script::Warp::setText(int idx, const TestPtr &text) {
 	if (idx < -1)
@@ -116,6 +198,10 @@ void Script::Warp::setText(int idx, const TestPtr &text) {
 	if (realIdx + 1 > tests.size())
 		tests.resize(realIdx + 1);
 	tests[realIdx] = text;
+}
+
+const Script::TestPtr &Script::Warp::getTest(int idx) const {
+	return tests[idx + 1];
 }
 
 Script::Script(Common::SeekableReadStream &s) : _pluginContext(false) {
@@ -134,6 +220,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	if (p.atEnd())
 		return;
 
+	debug("line %s at %u", line.c_str(), lineno);
 	switch (p.peek()) {
 	case '[': {
 		p.next();
@@ -166,39 +253,88 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	default:
 		if (_currentTest) {
 			auto &commands = _currentTest->commands;
-			if (p.maybe("end")) {
-				commands.emplace_back(new End());
-			} else if (p.maybe("plugin")) {
+			if (p.maybe("plugin")) {
 				if (_pluginContext)
-					error("nested plugin context is not allowed");
+					error("nested plugin context is not allowed, line: %u", lineno);
 				_pluginContext = true;
 			} else if (p.maybe("endplugin")) {
 				if (!_pluginContext)
 					error("endplugin without plugin");
 				_pluginContext = false;
+			} else if (p.maybe("end")) {
+				commands.emplace_back(new End());
+			} else if (p.maybe("setcursordefault")) {
+				auto idx = atoi(p.nextWord().c_str());
+				p.expect(',');
+				auto fname = p.nextWord();
+				debug("setcursordefault %d: %s", idx, fname.c_str());
+			} else if (p.maybe("lockkey")) {
+				auto idx = atoi(p.nextWord().c_str());
+				p.expect(',');
+				auto fname = p.nextWord();
+				debug("lockkey %d: %s", idx, fname.c_str());
+			} else if (p.maybe("resetlockkey")) {
+				debug("resetlockkey");
+			} else if (p.maybe("setzoom=")) {
+				auto zoom = atoi(p.nextWord().c_str());
+				debug("setzoom %d\n", zoom);
+			} else if (p.maybe("anglexmax=")) {
+				auto xmax = atoi(p.nextWord().c_str());
+				debug("anglexmax %d", xmax);
+			} else if (p.maybe("ifand=")) {
+				auto var = p.nextWord();
+				debug("ifand %s\n", var.c_str());
+			} else if (p.maybe("gotowarp")) {
+				auto id = p.nextWord();
+				debug("gotowarp %s", id.c_str());
+			} else if (p.maybe("playsound")) {
+				auto sound = p.nextWord();
+				p.expect(',');
+				auto arg0 = p.nextWord();
+				p.expect(',');
+				auto arg1 = p.nextWord();
+				debug("playsound %s %s %s", sound.c_str(), arg0.c_str(), arg1.c_str());
+			} else if (p.maybe("stopsound")) {
+				auto sound = p.nextWord();
+				debug("stopsound %s", sound.c_str());
+			} else if (p.maybe("setcursor")) {
+				auto image = p.nextWord();
+				p.expect(',');
+				auto warp = p.nextWord();
+				p.expect(',');
+				auto idx = p.nextWord();
+				debug("setcursor %s %s %s", image.c_str(), warp.c_str(), idx.c_str());
+			} else if (p.maybe("set")) {
+				auto var = p.nextWord();
+				p.expect('=');
+				auto value = p.nextWord();
+				debug("set %s = %s", var.c_str(), value.c_str());
 			} else {
 				if (_pluginContext) {
 					auto cmd = p.nextWord();
 					p.expect('(');
 					auto args = p.readStringList();
 					p.expect(')');
-#define ADD_PLUGIN(NAME)                       \
-	if (cmd.equalsIgnoreCase(#NAME)) {         \
-		commands.emplace_back(new NAME(args)); \
-	} else
-
-					PLUGIN_LIST(ADD_PLUGIN)
-					error("unimplemented plugin command %s", cmd.c_str());
+					commands.push_back(createCommand(cmd, args));
 				} else
 					error("unhandled script command %s, at line %u", line.c_str(), lineno);
 			}
-
 		} else
 			error("invalid directive on line %u: %s\n", lineno, line.c_str());
 	}
 }
 
 Script::~Script() {
+}
+
+void Script::exec(ExecutionContext &ctx) const {
+	for (auto &warp : _warps) {
+		if (!ctx.running)
+			break;
+		debug("warp %s", warp->vrFile.c_str());
+		auto &test = warp->getDefaultTest();
+		test->exec(ctx);
+	}
 }
 
 } // namespace PhoenixVR

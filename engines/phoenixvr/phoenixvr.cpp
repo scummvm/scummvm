@@ -55,17 +55,55 @@ Common::String PhoenixVREngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::String PhoenixVREngine::resolvePath(const Common::String &path) {
+	auto resolved = removeDrive(path);
+	resolved.replace('\\', '/');
+	return resolved;
+}
+
+Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
+	if (path.size() < 2 || path[1] != ':')
+		return path;
+	else
+		return path.substr(2);
+}
+
+void PhoenixVREngine::setNextScript(const Common::String &path) {
+	_nextScript = resolvePath(path);
+	debug("setNextScript %s", _nextScript.c_str());
+}
+
+void PhoenixVREngine::setCursorDefault(uint idx, const Common::String &path) {
+	debug("setCursorDefault %u: %s", idx, path.c_str());
+}
+
+void PhoenixVREngine::runScript(Common::SeekableReadStream &scriptSource) {
+	Script script(scriptSource);
+	Script::ExecutionContext ctx{this, true};
+	script.exec(ctx);
+}
+
 void PhoenixVREngine::loadScript(const Common::Path &scriptFile) {
-	Common::File file;
-	if (!file.open(scriptFile)) {
-		auto pakFile = scriptFile;
-		pakFile = pakFile.removeExtension().append(".pak");
-		file.open(pakFile);
+	Common::String nextScript = scriptFile.toString();
+	while (!nextScript.empty()) {
+		Common::File file;
+		Common::Path nextPath(nextScript);
+		if (file.open(nextPath)) {
+			runScript(file);
+		} else {
+			auto pakFile = nextPath;
+			pakFile = pakFile.removeExtension().append(".pak");
+			file.open(pakFile);
+		}
+		if (!file.isOpen())
+			error("can't open script file %s", scriptFile.toString().c_str());
+		Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
+		runScript(*scriptStream);
+		if (!_nextScript.empty()) {
+			nextScript = removeDrive(_nextScript);
+		} else
+			nextScript.clear();
 	}
-	if (!file.isOpen())
-		error("can't open script file %s", scriptFile.toString().c_str());
-	Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
-	Common::ScopedPtr<Script> script(new Script(*scriptStream));
 }
 
 Common::Error PhoenixVREngine::run() {

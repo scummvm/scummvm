@@ -99,8 +99,18 @@ public:
 		return syncGame(s);
 	}
 
+	// Script API
+	void setNextScript(const Common::String &path);
+	void setCursorDefault(uint idx, const Common::String &path);
+
 private:
 	void loadScript(const Common::Path &scriptFile);
+	void runScript(Common::SeekableReadStream &script);
+	static Common::String removeDrive(const Common::String &path);
+	static Common::String resolvePath(const Common::String &path);
+
+private:
+	Common::String _nextScript;
 };
 
 extern PhoenixVREngine *g_engine;
