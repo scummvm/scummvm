@@ -141,6 +141,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_HIGHLIGHT_MASKS)
 	},
 	{
+		"private-eye", // Promotional demo disc
+		"Demo",
+		AD_ENTRY2s("pvteye.z", "adb2ceca453da546d5e86baad0c73cd1", 262537,
+			"bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+			Common::EN_USA,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_HIGHLIGHT_MASKS)
+	},
+	{
 		"private-eye", // Demo from the EU release (DE)
 		"Demo",
 		AD_ENTRY2s("pvtdemo.ex_", "17156cbac7d14b08f4e351ac0e16a889", 599040,
