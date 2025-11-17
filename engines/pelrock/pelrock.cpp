@@ -1239,17 +1239,15 @@ void PelrockEngine::frames() {
 		for (int i = 0; i < _currentRoomAnims.size(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 
-			int j = 0;
+			int x = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].x;
+			int y = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].y;
+			int w = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w;
+			int h = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h;
 
-			int x = _currentRoomAnims[i].animData[j].x;
-			int y = _currentRoomAnims[i].animData[j].y;
-			int w = _currentRoomAnims[i].animData[j].w;
-			int h = _currentRoomAnims[i].animData[j].h;
-
-			int frameSize = _currentRoomAnims[i].animData[j].w * _currentRoomAnims[i].animData[j].h;
-			int curFrame = _currentRoomAnims[i].animData[j].curFrame;
+			int frameSize = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h;
+			int curFrame = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame;
 			byte *frame = new byte[frameSize];
-			Common::copy(_currentRoomAnims[i].animData[j].animData + (curFrame * _currentRoomAnims[i].animData[j].h * _currentRoomAnims[i].animData[j].w), _currentRoomAnims[i].animData[j].animData + (curFrame * _currentRoomAnims[i].animData[j].h * _currentRoomAnims[i].animData[j].w) + (frameSize), frame);
+			Common::copy(_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].animData + (curFrame * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w), _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].animData + (curFrame * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w) + (frameSize), frame);
 			// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
 
 			// byte *bg = grabBackgroundSlice(x, y, w, h);
@@ -1265,10 +1263,22 @@ void PelrockEngine::frames() {
 			// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
 			// 	}
 			// }
-			if (_currentRoomAnims[i].animData[j].curFrame < _currentRoomAnims[i].animData[j].nframes - 1) {
-				_currentRoomAnims[i].animData[j].curFrame++;
+			if (_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].nframes - 1) {
+				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame++;
 			} else {
-				_currentRoomAnims[i].animData[j].curFrame = 0;
+				if(_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].loopCount - 1){
+					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
+					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop++;
+				} else {
+					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
+					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop = 0;
+					if(_currentRoomAnims[i].curAnimIndex < _currentRoomAnims[i].numAnims - 1){
+						_currentRoomAnims[i].curAnimIndex++;
+					}
+					else {
+						_currentRoomAnims[i].curAnimIndex = 0;
+					}
+				}
 			}
 		}
 
@@ -1291,6 +1301,7 @@ void PelrockEngine::frames() {
 			debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
 		} else if (isAlfredTalking) {
 			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
+
 			if (curAlfredFrame < talkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame++;
 			} else {

@@ -75,7 +75,8 @@ struct Anim {
 	int w;
 	int h;
 	int nframes;
-	int curFrame;
+	int curFrame = 0;
+	int curLoop = 0;
 	byte *animData;
 	byte loopCount;
 	byte speed;
@@ -102,7 +103,7 @@ struct AnimSet {
 	int h;//5
 	byte extra; //6
 	int numAnims; //8
-	int curAnimIndex;
+	int curAnimIndex = 0;
 	byte spriteType; //33
 	byte actionFlags;//34
 	bool isDisabled; //38
