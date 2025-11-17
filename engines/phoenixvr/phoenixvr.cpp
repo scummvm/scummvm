@@ -144,8 +144,16 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	}
 	if (path.hasSuffix(".pcx")) {
 		Image::PCXDecoder pcx;
-		if (pcx.loadStream(file))
-			return pcx.getSurface()->convertTo(_pixelFormat, pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
+		if (pcx.loadStream(file)) {
+			auto *s = pcx.getSurface()->convertTo(_pixelFormat, pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
+			if (s) {
+				byte r = 0, g = 0, b = 0;
+				if (pcx.hasPalette())
+					pcx.getPalette().get(0, r, g, b);
+				s->applyColorKey(r, g, b);
+			}
+			return s;
+		}
 		warning("pcx decode failed on %s", path.c_str());
 		return nullptr;
 	}
@@ -293,8 +301,10 @@ Common::Error PhoenixVREngine::run() {
 void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
 	Common::Rect srcRect = src.getRect();
 	Common::Rect clip(0, 0, _screen->w, _screen->h);
-	if (Common::Rect::getBlitRect(dst, srcRect, clip))
-		_screen->copyRectToSurface(src, dst.x, dst.y, srcRect);
+	if (Common::Rect::getBlitRect(dst, srcRect, clip)) {
+		Common::Rect dstRect(dst.x, dst.y, dst.x + srcRect.width(), dst.y + srcRect.height());
+		_screen->blendBlitFrom(src, srcRect, dstRect);
+	}
 }
 
 Common::Error PhoenixVREngine::syncGame(Common::Serializer &s) {
