@@ -61,8 +61,8 @@ PelrockEngine::~PelrockEngine() {
 	}
 
 	delete[] _popUpBalloon;
-	if (_bgPopupBalloon)
-		delete[] _bgPopupBalloon;
+	// if (_bgPopupBalloon)
+	// 	delete[] _bgPopupBalloon;
 	delete _smallFont;
 	for (int i = 0; i < 4; i++) {
 
@@ -88,6 +88,7 @@ Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
+
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -155,6 +156,10 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	loadCursors();
 	loadInteractionIcons();
+
+	_compositeBuffer = new byte[640 * 400];
+    _currentBackground = new byte[640 * 400];
+
 	_smallFont = new SmallFont();
 	_smallFont->load("ALFRED.4");
 	_largeFont = new LargeFont();
@@ -165,8 +170,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		// setScreen(0, 2);
-		setScreen(2, 2);
+		setScreen(0, 2);
+		// setScreen(2, 2);
+		// setScreen(28, 0);
 	}
 }
 
@@ -957,17 +963,17 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	_currentRoomWalkboxes = walkboxes;
 	_currentRoomDescriptions = descriptions;
 
-	// for (int i = 0; i < _currentRoomHotspots.size(); i++) {
-	// 	HotSpot hotspot = _currentRoomHotspots[i];
-	// 	// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, _currentRoomDescriptions[i].text.c_str());
-	// 	_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
-	// 	_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
-	// 	_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
-	// 	_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
-	// }
+	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+		HotSpot hotspot = _currentRoomHotspots[i];
+		// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d extra=%d, desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, hotspot.extra, _currentRoomDescriptions[i].text.c_str());
+		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
+		_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
+		_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+	}
 
 	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
-		debug("Exit: x=%d y=%d w=%d h=%d to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
+		// debug("Exit: x=%d y=%d w=%d h=%d to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
 		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
 		// _screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0);
 		// _screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0);
@@ -1164,6 +1170,30 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 		}
 	}
 }
+
+// Helper function for transparent blitting
+void drawSpriteToBuffer(byte *buffer, int bufferWidth,
+						byte *sprite, int x, int y,
+						int width, int height,
+						int transparentColor) {
+	for (int py = 0; py < height; py++) {
+		for (int px = 0; px < width; px++) {
+			int srcIdx = py * width + px;
+			byte pixel = sprite[srcIdx];
+
+			if (pixel != transparentColor) {
+				int destX = x + px;
+				int destY = y + py;
+
+				if (destX >= 0 && destX < 640 &&
+					destY >= 0 && destY < 400) {
+					buffer[destY * bufferWidth + destX] = pixel;
+				}
+			}
+		}
+	}
+}
+
 Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot *hotspot) {
 	Common::List<VerbIcons> verbs;
 	debug("Populating actions menu for hotspot type %d", hotspot->type);
@@ -1203,16 +1233,15 @@ Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot *hotspot) {
 void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
+
+    	memcpy(_compositeBuffer, _currentBackground, 640 * 400);
+
 		debug("Game tick!");
-		int num = 0;
 		for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
-			if (i->numAnims == 0) {
-				num++;
-				continue;
-			}
 
-			for (int j = 0; j < i->numAnims; j++) {
+			int j = 0;
+			// for (int j = 0; j < i->numAnims; j++) {
 				int x = i->animData[j].x;
 				int y = i->animData[j].y;
 				int w = i->animData[j].w;
@@ -1224,45 +1253,38 @@ void PelrockEngine::frames() {
 				Common::copy(i->animData[j].animData + (curFrame * i->h * i->w), i->animData[j].animData + (curFrame * i->h * i->w) + (frameSize), frame);
 				// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
 
-				byte *bg = grabBackgroundSlice(x, y, w, h);
-				putBackgroundSlice(x, y, w, h, bg);
-				for (int y = 0; y < i->h; y++) {
-					for (int x = 0; x < i->w; x++) {
+				// byte *bg = grabBackgroundSlice(x, y, w, h);
+				// putBackgroundSlice(x, y, w, h, bg);
+				drawSpriteToBuffer(_compositeBuffer, 640, frame, i->x, i->y, i->w, i->h, 255);
+				// for (int y = 0; y < i->h; y++) {
+				// 	for (int x = 0; x < i->w; x++) {
 
-						unsigned int src_pos = (y * i->w) + x;
-						int xPos = i->x + x;
-						int yPos = i->y + y;
-						if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
-							_screen->setPixel(xPos, yPos, frame[src_pos]);
-					}
-				}
+				// 		unsigned int src_pos = (y * i->w) + x;
+				// 		int xPos = i->x + x;
+				// 		int yPos = i->y + y;
+				// 		if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+				// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
+				// 	}
+				// }
 				if (i->animData[j].curFrame < i->animData[j].nframes - 1) {
 					i->animData[j].curFrame++;
 				} else {
 					i->animData[j].curFrame = 0;
 				}
-			}
-			num++;
+			// }
 		}
 
-		if (_bgAlfred != nullptr) {
-			putBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight, _bgAlfred);
-			delete[] _bgAlfred;
-			_bgAlfred = nullptr;
-		}
-		_bgAlfred = grabBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight);
+		// if (_bgAlfred != nullptr) {
+		// 	putBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight, _bgAlfred);
+		// 	delete[] _bgAlfred;
+		// 	_bgAlfred = nullptr;
+		// }
+		// _bgAlfred = grabBackgroundSlice(xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight);
 
 		if (isAlfredWalking) {
 			debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
 			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
-			// for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-			// 	for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-			// 		unsigned int src_pos = (y * kAlfredFrameWidth) + x;
-			// 		// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-			// 		if (walkingAnimFrames[dirAlfred][curAlfredFrame][src_pos] != 255)
-			// 			_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
-			// 	}
-			// }
+
 			if (curAlfredFrame < walkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame++;
 			} else {
@@ -1279,14 +1301,6 @@ void PelrockEngine::frames() {
 			debug("CurAlfredFrame from talking is now %d", curAlfredFrame);
 		} else {
 			drawAlfred(standingAnimFrames[dirAlfred]);
-			// for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-			// 	for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-			// 		unsigned int src_pos = (y * kAlfredFrameWidth) + x;
-			// 		// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-			// 		if (standingAnimFrames[dirAlfred][src_pos] != 255)
-			// 			_screen->setPixel(x + xAlfred, y + yAlfred, standingAnimFrames[dirAlfred][src_pos]);
-			// 	}
-			// }
 		}
 		if (_displayPopup) {
 
@@ -1299,38 +1313,40 @@ void PelrockEngine::frames() {
 			// 		}
 			// 	}
 			// }
-			if (_bgPopupBalloon != nullptr) {
-				putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
-			}
+			// if (_bgPopupBalloon != nullptr) {
+			// 	putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+			// }
 			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
 			if (_currentPopupFrame < 3) {
 				_currentPopupFrame++;
 			} else
 				_currentPopupFrame = 0;
 		}
-		int walkboxCount = 0;
-		for (Common::List<WalkBox>::iterator i = _currentRoomWalkboxes.begin(); i != _currentRoomWalkboxes.end(); i++) {
-			// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-			_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
-			_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-			_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
-			_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
-			walkboxCount++;
-		}
+		// int walkboxCount = 0;
+		// for (Common::List<WalkBox>::iterator i = _currentRoomWalkboxes.begin(); i != _currentRoomWalkboxes.end(); i++) {
+		// 	// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
+		// 	_screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0 + walkboxCount);
+		// 	_screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		// 	_screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0 + walkboxCount);
+		// 	_screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h, 0 + walkboxCount);
+		// 	walkboxCount++;
+		// }
+		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 		_screen->markAllDirty();
-		_screen->update();
+		// _screen->update();
 	}
 }
 
 void PelrockEngine::drawAlfred(byte *buf) {
-	for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
-		for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
-			unsigned int src_pos = (y * kAlfredFrameWidth) + x;
-			// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
-			if (buf[src_pos] != 255 && x + xAlfred >= 0 && y + yAlfred >= 0 && x + xAlfred < 640 && y + yAlfred < 400)
-				_screen->setPixel(x + xAlfred, y + yAlfred, buf[src_pos]);
-		}
-	}
+	// for (uint32_t y = 0; y < kAlfredFrameHeight; y++) {
+	// 	for (uint32_t x = 0; x < kAlfredFrameWidth; x++) {
+	// 		unsigned int src_pos = (y * kAlfredFrameWidth) + x;
+	// 		// debug("Xpos = %d, yPos=%d", x + xAlfred, y + yAlfred);
+	// 		if (buf[src_pos] != 255 && x + xAlfred >= 0 && y + yAlfred >= 0 && x + xAlfred < 640 && y + yAlfred < 400)
+	// 			_screen->setPixel(x + xAlfred, y + yAlfred, buf[src_pos]);
+	// 	}
+	// }
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight, 255);
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
@@ -1338,10 +1354,10 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	if (hotspotIndex != -1) {
 		// _popupX = hotspot->x;
 		// _popupY = hotspot->y;
-		if (_bgPopupBalloon != nullptr) {
-			putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
-			delete[] _bgPopupBalloon;
-		}
+		// if (_bgPopupBalloon != nullptr) {
+		// 	putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+		// 	delete[] _bgPopupBalloon;
+		// }
 		_popupX = x - kBalloonWidth / 2;
 		if (_popupX < 0)
 			_popupX = 0;
@@ -1357,7 +1373,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_currentPopupFrame = 0;
 		_currentHotspot = &_currentRoomHotspots[hotspotIndex];
 		debug("Current hotspot type: %d", _currentHotspot->type);
-		_bgPopupBalloon = grabBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight);
+		// _bgPopupBalloon = grabBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight);
 	}
 }
 
@@ -1397,41 +1413,22 @@ AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
-	for (uint32_t y = 0; y < kBalloonHeight; y++) {
-		for (uint32_t x = 0; x < kBalloonWidth; x++) {
-			unsigned int src_pos = (curFrame * kBalloonHeight * kBalloonWidth) + (y * kBalloonWidth) + x;
-			if (_popUpBalloon[src_pos] != 255)
-				_screen->setPixel(x + posx, y + posy, _popUpBalloon[src_pos]);
-		}
-	}
-
+	drawSpriteToBuffer(_compositeBuffer, 640, _popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::List<VerbIcons> availableActions = populateActionsMenu(_currentHotspot);
 
 	// for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
 	// 	debug("Verb icon to show: %d", *i);
 	// }
 
-	for (uint32_t y = 0; y < kVerbIconHeight; y++) {
-		for (uint32_t x = 0; x < kVerbIconWidth; x++) {
-			unsigned int src_pos = y * kVerbIconWidth + x;
-			if (_verbIcons[LOOK][src_pos] != 1)
-				_screen->setPixel(x + posx + 20, y + posy + 20, _verbIcons[LOOK][src_pos]);
-		}
-	}
-
+	drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
 		VerbIcons verb = *i;
 		int index = 0;
 		for (Common::List<VerbIcons>::iterator j = availableActions.begin(); j != i; j++) {
 			index++;
 		}
-		for (uint32_t y = 0; y < kVerbIconHeight; y++) {
-			for (uint32_t x = 0; x < kVerbIconWidth; x++) {
-				unsigned int src_pos = y * kVerbIconWidth + x;
-				if (_verbIcons[verb][src_pos] != 1)
-					_screen->setPixel(x + posx + 20 + (index * (kVerbIconWidth + 2)), y + posy + 20, _verbIcons[verb][src_pos]);
-			}
-		}
+		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[verb], posx + 20 + (index * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+
 	}
 }
 
@@ -1439,11 +1436,11 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	_displayPopup = false;
 	_currentHotspot = nullptr;
-	if (_bgPopupBalloon != nullptr) {
-		putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
-		delete[] _bgPopupBalloon;
-		_bgPopupBalloon = nullptr;
-	}
+	// if (_bgPopupBalloon != nullptr) {
+	// 	putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
+	// 	delete[] _bgPopupBalloon;
+	// 	_bgPopupBalloon = nullptr;
+	// }
 
 	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
 
@@ -1458,6 +1455,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
 	if (hotspotIndex != -1) {
 		talk();
+		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
 		// showDescription(_currentRoomDescriptions[hotspotIndex].text.c_str(), xAlfred, yAlfred, 13);
 		// changeCursor(HOTSPOT);
 	}
@@ -1593,15 +1591,15 @@ void PelrockEngine::showDescription(Common::String text, int x, int y, byte colo
 
 	x = 2;
 	y = 2;
-	if (_bgText != nullptr) {
-		putBackgroundSlice(x, y, 640, 400, _bgText);
-		delete[] _bgText;
-	}
+	// if (_bgText != nullptr) {
+	// 	putBackgroundSlice(x, y, 640, 400, _bgText);
+	// 	delete[] _bgText;
+	// }
 	int16 w = MIN(rect.width(), (int16)(640 - x));
 	int16 h = MIN(rect.height(), (int16)(400 - y));
 	debug("grabbing bg slice at (%d,%d) w=%d h=%d", x, y, w, h);
 
-	_bgText = grabBackgroundSlice(x, y, 640, 400);
+	// _bgText = grabBackgroundSlice(x, y, 640, 400);
 	_largeFont->drawString(_screen, text.c_str(), x - 1, y, 640, 0); // Left
 	_largeFont->drawString(_screen, text.c_str(), x - 2, y, 640, 0); // Left
 	_largeFont->drawString(_screen, text.c_str(), x + 1, y, 640, 0); // Right

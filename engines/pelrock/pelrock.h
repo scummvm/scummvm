@@ -82,6 +82,8 @@ private:
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
+
+
 	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
 	Exit *isExitAtPoint(int x, int y);
@@ -108,6 +110,7 @@ private:
 	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 	byte **talkingAnimFrames[4];              // 4 arrays of arrays
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::List<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
@@ -125,7 +128,6 @@ private:
 	bool isAlfredTalking = false;
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
-	byte *_currentBackground = nullptr;
 	byte *_cursorMasks[5] = {nullptr};
 
 	uint32 _mouseDownTime;
@@ -133,9 +135,14 @@ private:
 
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
-	byte *_bgPopupBalloon = nullptr;
-	byte *_bgText = nullptr;
-	byte *_bgAlfred = nullptr;
+
+	byte *_currentBackground;      // Clean background - NEVER modified
+    byte *_compositeBuffer;        // Working composition buffer
+
+	// byte *_currentBackground = nullptr;
+	// byte *_bgPopupBalloon = nullptr;
+	// byte *_bgText = nullptr;
+	// byte *_bgAlfred = nullptr;
 
 	bool _displayPopup = false;
 	int _popupX = 0;
