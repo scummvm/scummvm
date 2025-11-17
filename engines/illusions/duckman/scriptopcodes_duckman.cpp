@@ -499,6 +499,10 @@ void ScriptOpcodes_Duckman::opStartMoveActorToObject(ScriptThread *scriptThread,
 	ARG_UINT32(objectId2);
 	ARG_UINT32(sequenceId);
 	Control *control1 = _vm->_dict->getObjectControl(objectId1);
+	if (!control1) {
+		warning("opStartMoveActorToObject: Control1 not found for objectId: %08X", objectId1);
+		return;
+	}
 	Common::Point pos;
 	if (objectId2 == 0x40003) {
 		pos = _vm->_cursor._position;
