@@ -374,7 +374,14 @@ static void fInventory(ArgArray args) {
 	Datum e = args[3];
 	Datum i = args[4];
 	Datum c = args[5];
-	Datum snd = args[8];
+
+	Datum snd;
+	if (args.size() >= 9)
+		snd = args[8];
+	else {
+		snd.type = STRING;
+		snd.u.str = "\"\"";
+	}
 
 	assert(v1.type == STRING || v1.type == NAME);
 	assert(b1.type == STRING);
