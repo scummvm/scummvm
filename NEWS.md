@@ -83,6 +83,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
+   - Introduced new launcher checkbox in Eye of the Beholder 1 and 2,
+     to enable smarter replacing of thrown weapons from inventory.
+   - In Eye of the Beholder 1, Ileria and Beohram NPC data fix is now behind
+     a separate feature flag and launcher checkbox.
 
  Lab:
    - Added keymapper support.
@@ -2504,10 +2508,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      added to the NEWS file).
    - Fixed missing voice reactions when hitting enemies in CD version of
      Lands of Lore.
-   - In Eye of the Beholder 1 and 2, new launcher checkbox is introducted,
-     to enable smarter replacing of thrown weapons from inventory.
-   - In Eye of the Beholder 1, Ileria and Beohram NPC data fix is now behind
-     a separate feature flag and launcher checkbox.
 
  Lab:
    - Fixed lock-up during ending sequence.
