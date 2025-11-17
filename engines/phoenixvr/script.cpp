@@ -240,9 +240,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	case '[': {
 		p.next();
 		if (p.maybe("bool]=")) {
-			auto name = p.nextWord();
-			// FIXME: pass engine here?
-			g_engine->declareVariable(name);
+			g_engine->declareVariable(p.nextWord());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
 			p.expect(',');

@@ -139,6 +139,7 @@ private:
 	};
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor;
+	Graphics::Surface *_static640x480 = nullptr;
 };
 
 extern PhoenixVREngine *g_engine;

@@ -6,7 +6,8 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	region_set.o \
-	script.o
+	script.o \
+	vr.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PHOENIXVR), DYNAMIC_PLUGIN)

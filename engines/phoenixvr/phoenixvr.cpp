@@ -35,6 +35,7 @@
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
+#include "phoenixvr/vr.h"
 
 namespace PhoenixVR {
 
@@ -234,7 +235,20 @@ Common::Error PhoenixVREngine::run() {
 		if (!_nextWarp.empty()) {
 			_warp = _script->getWarp(_nextWarp);
 			_nextWarp.clear();
+
 			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
+
+			if (_static640x480) {
+				_static640x480->free();
+				delete _static640x480;
+				_static640x480 = nullptr;
+			}
+
+			Common::File vr;
+			if (vr.open(Common::Path(_warp->vrFile))) {
+				_static640x480 = VR::load640x480(_pixelFormat, vr);
+			}
+
 			_regSet.reset(new RegionSet(_warp->testFile));
 
 			for (auto &c : _cursors)
@@ -247,7 +261,11 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		_screen->clear();
+		if (_static640x480)
+			_screen->copyFrom(*_static640x480);
+		else
+			_screen->clear();
+
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
 			if (c.rect.contains(_mousePos)) {
