@@ -84,6 +84,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Kyra:
    - CPU-Auslastung im Hauptmenü von LoL reduziert.
    - CPU-Auslastung in EoB 1 und 2 reduziert.
+   - Neues Auswahlfeld in der Benutzeroberfläche für Eye of the Beholder 1 und 2 hinzugefügt,
+     mit der geworfene Waffen jetzt intelligenter aus dem Inventar ersetzt werden können.
+   - Die Spieldatenkorrektur für die NPCs Ileria und Beohram wird in Eye of the Beholder 1 jetzt
+     hinter einem Feature-Flag und einem Auswahlfeld in der ScummVM-Benutzeroberfläche verborgen.
 
  Lab:
    - Unterstütung für Tastenkürzel hinzugefügt.
