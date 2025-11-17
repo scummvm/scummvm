@@ -89,7 +89,6 @@ Common::Error PelrockEngine::run() {
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
 
-
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
@@ -158,7 +157,7 @@ void PelrockEngine::init() {
 	loadInteractionIcons();
 
 	_compositeBuffer = new byte[640 * 400];
-    _currentBackground = new byte[640 * 400];
+	_currentBackground = new byte[640 * 400];
 
 	_smallFont = new SmallFont();
 	_smallFont->load("ALFRED.4");
@@ -267,7 +266,7 @@ void PelrockEngine::getBackground(Common::File *roomFile, int roomOffset, byte *
 	}
 }
 
-Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
+Common::Array<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	// debug("Sprite pair offset position: %d", pair_offset);
 	roomFile->seek(pair_offset, SEEK_SET);
@@ -282,9 +281,9 @@ Common::List<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile, 
 	if (offset > 0 && size > 0) {
 		rleDecompress(data, size, 0, size, &pic);
 	} else {
-		return Common::List<AnimSet>();
+		return Common::Array<AnimSet>();
 	}
-	Common::List<AnimSet> anims = Common::List<AnimSet>();
+	Common::Array<AnimSet> anims = Common::Array<AnimSet>();
 	uint32_t spriteEnd = offset + size;
 
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
@@ -926,20 +925,20 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	}
 	_currentRoomConversations = roots;
 
-	Common::List<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
+	Common::Array<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
 
 	Common::Array<HotSpot> hotspots;
 	int count = 0;
-	for (Common::List<AnimSet>::iterator i = anims.begin(); i != anims.end(); i++) {
+	for (int i = 0; i < anims.size(); i++) {
 
 		HotSpot thisHotspot;
-		thisHotspot.x = i->x;
-		thisHotspot.y = i->y;
-		thisHotspot.w = i->w;
-		thisHotspot.h = i->h;
-		thisHotspot.extra = i->extra;
-		thisHotspot.type = i->actionFlags;
-		thisHotspot.isEnabled = !i->isDisabled;
+		thisHotspot.x = anims[i].x;
+		thisHotspot.y = anims[i].y;
+		thisHotspot.w = anims[i].w;
+		thisHotspot.h = anims[i].h;
+		thisHotspot.extra = anims[i].extra;
+		thisHotspot.type = anims[i].actionFlags;
+		thisHotspot.isEnabled = !anims[i].isDisabled;
 		hotspots.push_back(thisHotspot);
 		count++;
 	}
@@ -1234,44 +1233,43 @@ void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
 
-    	memcpy(_compositeBuffer, _currentBackground, 640 * 400);
+		memcpy(_compositeBuffer, _currentBackground, 640 * 400);
 
 		debug("Game tick!");
-		for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
+		for (int i = 0; i < _currentRoomAnims.size(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 
 			int j = 0;
-			// for (int j = 0; j < i->numAnims; j++) {
-				int x = i->animData[j].x;
-				int y = i->animData[j].y;
-				int w = i->animData[j].w;
-				int h = i->animData[j].h;
 
-				int frameSize = i->animData[j].w * i->animData[j].h;
-				int curFrame = i->animData[j].curFrame;
-				byte *frame = new byte[frameSize];
-				Common::copy(i->animData[j].animData + (curFrame * i->h * i->w), i->animData[j].animData + (curFrame * i->h * i->w) + (frameSize), frame);
-				// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
+			int x = _currentRoomAnims[i].animData[j].x;
+			int y = _currentRoomAnims[i].animData[j].y;
+			int w = _currentRoomAnims[i].animData[j].w;
+			int h = _currentRoomAnims[i].animData[j].h;
 
-				// byte *bg = grabBackgroundSlice(x, y, w, h);
-				// putBackgroundSlice(x, y, w, h, bg);
-				drawSpriteToBuffer(_compositeBuffer, 640, frame, i->x, i->y, i->w, i->h, 255);
-				// for (int y = 0; y < i->h; y++) {
-				// 	for (int x = 0; x < i->w; x++) {
+			int frameSize = _currentRoomAnims[i].animData[j].w * _currentRoomAnims[i].animData[j].h;
+			int curFrame = _currentRoomAnims[i].animData[j].curFrame;
+			byte *frame = new byte[frameSize];
+			Common::copy(_currentRoomAnims[i].animData[j].animData + (curFrame * _currentRoomAnims[i].animData[j].h * _currentRoomAnims[i].animData[j].w), _currentRoomAnims[i].animData[j].animData + (curFrame * _currentRoomAnims[i].animData[j].h * _currentRoomAnims[i].animData[j].w) + (frameSize), frame);
+			// debug("Current frame %d of %d", curFrame, i->animData[j].nframes);
 
-				// 		unsigned int src_pos = (y * i->w) + x;
-				// 		int xPos = i->x + x;
-				// 		int yPos = i->y + y;
-				// 		if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
-				// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
-				// 	}
-				// }
-				if (i->animData[j].curFrame < i->animData[j].nframes - 1) {
-					i->animData[j].curFrame++;
-				} else {
-					i->animData[j].curFrame = 0;
-				}
+			// byte *bg = grabBackgroundSlice(x, y, w, h);
+			// putBackgroundSlice(x, y, w, h, bg);
+			drawSpriteToBuffer(_compositeBuffer, 640, frame, _currentRoomAnims[i].x, _currentRoomAnims[i].y, _currentRoomAnims[i].w, _currentRoomAnims[i].h, 255);
+			// for (int y = 0; y < i->h; y++) {
+			// 	for (int x = 0; x < i->w; x++) {
+
+			// 		unsigned int src_pos = (y * i->w) + x;
+			// 		int xPos = i->x + x;
+			// 		int yPos = i->y + y;
+			// 		if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+			// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
+			// 	}
 			// }
+			if (_currentRoomAnims[i].animData[j].curFrame < _currentRoomAnims[i].animData[j].nframes - 1) {
+				_currentRoomAnims[i].animData[j].curFrame++;
+			} else {
+				_currentRoomAnims[i].animData[j].curFrame = 0;
+			}
 		}
 
 		// if (_bgAlfred != nullptr) {
@@ -1400,17 +1398,6 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 	return nullptr;
 }
 
-AnimSet *PelrockEngine::isSpriteUnder(int x, int y) {
-	for (Common::List<AnimSet>::iterator i = _currentRoomAnims.begin(); i != _currentRoomAnims.end(); i++) {
-		if (mouseX >= i->x && mouseX <= (i->x + i->w) &&
-			mouseY >= i->y && mouseY <= (i->y + i->h)) {
-			// debug("Sprite at (%d,%d) size (%d,%d), type = %d, extra = %d, enabled=%d", i->x, i->y, i->w, i->h, i->type, i->extra, i->enabled);
-			return &(*i);
-		}
-	}
-	return nullptr;
-}
-
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	drawSpriteToBuffer(_compositeBuffer, 640, _popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
@@ -1428,7 +1415,6 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 			index++;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[verb], posx + 20 + (index * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
-
 	}
 }
 

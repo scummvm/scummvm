@@ -102,6 +102,7 @@ struct AnimSet {
 	int h;//5
 	byte extra; //6
 	int numAnims; //8
+	int curAnimIndex;
 	byte spriteType; //33
 	byte actionFlags;//34
 	bool isDisabled; //38

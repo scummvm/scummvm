@@ -64,7 +64,7 @@ private:
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void loadAlfredAnims();
-	Common::List<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
+	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
@@ -82,7 +82,6 @@ private:
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
-
 
 	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
@@ -112,7 +111,7 @@ private:
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 
 	Common::Array<HotSpot> _currentRoomHotspots;
-	Common::List<AnimSet> _currentRoomAnims;
+	Common::Array<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
 	Common::List<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
@@ -136,8 +135,8 @@ private:
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
 
-	byte *_currentBackground;      // Clean background - NEVER modified
-    byte *_compositeBuffer;        // Working composition buffer
+	byte *_currentBackground; // Clean background - NEVER modified
+	byte *_compositeBuffer;   // Working composition buffer
 
 	// byte *_currentBackground = nullptr;
 	// byte *_bgPopupBalloon = nullptr;
