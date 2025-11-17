@@ -3,6 +3,8 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
+#include "graphics/yuv_to_rgb.h"
+#include "math/dct.h"
 
 namespace PhoenixVR {
 
@@ -30,6 +32,10 @@ class BitStream {
 
 public:
 	BitStream(const byte *data, uint bytePos) : _data(data), _bytePos(bytePos), _bitMask(0x80) {}
+
+	uint getBytePos() const {
+		return _bytePos;
+	}
 
 	bool readBit() {
 		bool bit = _data[_bytePos] & _bitMask;
@@ -133,18 +139,28 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 				break;
 			decoded.push_back(static_cast<byte>(value));
 		}
+		bs.alignToByte();
+		offset = bs.getBytePos();
 	}
-	debug("decoded %u bytes", decoded.size());
+	debug("decoded %u bytes at %08x", decoded.size(), offset);
 	return decoded;
 }
 
-void unpack640x480(Graphics::Surface &s, const byte *huff, uint huffSize, const byte *coeff, uint dataSize) {
+void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *coeff, uint dataSize) {
 	auto decoded = unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
+	static const Math::DCT dct(6, Math::DCT::DCT_III);
+
+	static constexpr uint planePitch = 640;
+	static constexpr uint planeSize = planePitch * 480;
+	Common::Array<byte> planes(planeSize * 3, 0);
+
 	BitStream bs(coeff, 0);
+	uint channel = 0;
+	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
-		short ac[64] = {};
-		ac[0] = bs.readUInt(8);
+		float ac[64] = {};
+		ac[0] = 1.0f * bs.readUInt(8);
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
@@ -156,15 +172,46 @@ void unpack640x480(Graphics::Surface &s, const byte *huff, uint huffSize, const 
 				auto l = b & 0x0f;
 				idx += h;
 				if (l && idx < 64) {
-					ac[ZIGZAG[idx++]] = bs.readInt(l);
+					ac[ZIGZAG[idx]] = 1024 * bs.readInt(l);
+					++idx;
 				}
 			}
 		}
+		dct.calc(ac);
 		Common::String str;
 		for (uint i = 0; i != 64; ++i)
-			str += Common::String::format("%d ", ac[i]);
+			str += Common::String::format("%g ", ac[i]);
+		debug("decoded block %s", str.c_str());
+
+		debug("block at %d,%d %d", x0, y0, channel);
+		auto *dst = planes.data() + channel++ * planeSize + y0 * planePitch + x0;
+		if (channel == 3) {
+			channel = 0;
+			x0 += 8;
+			if (x0 >= 640) {
+				x0 = 0;
+				y0 += 8;
+			}
+		}
+		const auto *src = ac;
+		str.clear();
+		for (unsigned h = 8; h--; dst += planePitch - 8) {
+			for (unsigned w = 8; w--;) {
+				int v = *src++;
+				if (v < 0)
+					v = 0;
+				if (v > 255)
+					v = 255;
+				str += Common::String::format("%d ", v);
+				*dst++ = v;
+			}
+		}
 		debug("decoded block %s", str.c_str());
 	}
+	auto *y = planes.data();
+	auto *u = y + planeSize;
+	auto *v = u + planeSize;
+	YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull, y, u, v, 640, 480, planePitch, planePitch);
 }
 } // namespace
 
@@ -189,7 +236,7 @@ Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::
 			s.read(staticData.data(), staticData.size());
 			Graphics::Surface *pic = new Graphics::Surface();
 			pic->create(640, 480, format);
-			unpack640x480(*pic, staticData.data(), unpHuffSize, staticData.data() + coefOffset - 4, staticData.size());
+			unpack640x480(*pic, staticData.data(), unpHuffSize, staticData.data() + coefOffset, staticData.size());
 			return pic;
 		}
 		s.skip(chunkSize - 8);

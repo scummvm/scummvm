@@ -277,7 +277,7 @@ Common::Error PhoenixVREngine::run() {
 		if (!cursor)
 			cursor = _defaultCursor.surface;
 		if (cursor) {
-			paint(*cursor, _mousePos);
+			paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 		}
 
 		// Delay for a bit. All events loops should have a delay
