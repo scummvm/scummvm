@@ -437,8 +437,7 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 			&& !g_hasSuperVidel) {
 			atari_warning("Engine surfaces not divisible by 16, aborting");
 			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
-		} else if (_overlayState == kOverlayIgnoredHide || _currentState.width != _pendingState.width || _currentState.height != _pendingState.height) {
-			// if kOverlayIgnoredHide and with valid w/h, force a video mode reset
+		} else if (_currentState.width != _pendingState.width || _currentState.height != _pendingState.height) {
 			hasPendingSize = true;
 		}
 	}
@@ -501,11 +500,11 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 		_palette.entries = 256;
 		_pendingScreenChanges.queuePalette();
 
-		if (_overlayState == kOverlayIgnoredHide) {
+		if (_overlayState == kOverlayIgnoredHide)
 			_overlayState = kOverlayHidden;
-			_ignoreHideOverlay = false;
-			_pendingScreenChanges.queueAll();
-		}
+
+		_ignoreHideOverlay = false;
+		_pendingScreenChanges.queueAll();
 	} else {
 		// clear any queued transaction changes from feature flags (e.g. aspect ratio correction)
 		_pendingScreenChanges.clearTransaction();
