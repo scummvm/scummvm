@@ -398,7 +398,7 @@ static void fInventory(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "Inventory(...)");
 	Common::String mask(b1.u.str);
 	if (mask != "\"\"") {
-		if (g_private->inInventory(bmp)) {
+		if (bmp != "\"\"" && g_private->inInventory(bmp)) {
 			return;
 		}
 
