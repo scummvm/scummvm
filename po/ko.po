@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-16 20:53+0000\n"
-"PO-Revision-Date: 2025-09-08 17:01+0000\n"
+"PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -5154,7 +5154,7 @@ msgstr "화면상 조작 표시"
 
 #: backends/platform/android/options.cpp:138
 msgid "Ignore safe areas in-game"
-msgstr ""
+msgstr "게임 내 안전 구역 무시"
 
 #: backends/platform/android/options.cpp:139
 #: backends/platform/ios7/ios7_options.mm:112
@@ -7067,7 +7067,7 @@ msgstr ""
 
 #: engines/alcachofa/graphics-opengl.cpp:106
 msgid "Old OpenGL detected, some graphical errors will occur."
-msgstr ""
+msgstr "이전 OpenGL이 감지되어 일부 그래픽 오류가 발생합니다."
 
 #: engines/alcachofa/metaengine.cpp:40
 msgid "High Quality"
@@ -7083,7 +7083,7 @@ msgstr "32 비트"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "게임을 16비트 컬러로 렌더링할지 여부"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:315
@@ -7240,38 +7240,28 @@ msgid "Escape"
 msgstr "탈출"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Page up"
 msgid "Page Up"
-msgstr "페이지 위"
+msgstr "페이지 위로"
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Page down"
 msgid "Page Down"
-msgstr "페이지 아래"
+msgstr "페이지 아래로"
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Home key"
 msgid "Home"
-msgstr "홈 키"
+msgstr "홈"
 
 #: engines/bagel/metaengine.cpp:73
-#, fuzzy
-#| msgid "End key"
 msgid "End"
-msgstr "엔드 키"
+msgstr "엔드"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "일반 키"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "최소 볼륨"
+msgstr "최소 키"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -8124,10 +8114,8 @@ msgstr ""
 "복사해야 합니다."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "효과음 볼륨:"
+msgstr "효과음 모드:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8135,18 +8123,21 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"게임에서 CD 버전 SFX만 사용할지, 추가 플로피 디스크 SFX가 포함된 CD SFX를 "
+"사용할지, 아니면 플로피 디스크 SFX만 사용할지 결정합니다. 플로피 디스크 "
+"SFX는 플로피 음악을 사용하는 경우에만 사용할 수 있습니다."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "CD 버전 SFX만"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + 추가 플로피 디스크 SFX"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "플로피 버전 SFX만"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8163,8 +8154,6 @@ msgid "Time advance"
 msgstr "타임 어드밴스"
 
 #: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip Cutscene"
 msgstr "컷씬 건너뛰기"
 
@@ -10175,10 +10164,8 @@ msgstr ""
 "디 음악을 재생합니다."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
-msgstr "윈도우즈 커서 사용"
+msgstr "윈도우 커서 사용"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -10186,6 +10173,8 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"이 옵션을 선택하면 게임은 원본 .exe 파일에 포함된 윈도우 마우스 커서를 "
+"사용합니다. 그렇지 않으면 데이터 파일에 있는 저해상도 커서를 사용합니다."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -10996,53 +10985,39 @@ msgid "Confirm the selected save / new save name"
 msgstr "선택한 저장 / 새 저장 이름 확인"
 
 #: engines/ngi/metaengine.cpp:118
-#, fuzzy
-#| msgid "Quit keymappings"
 msgid "Credits keymappings"
-msgstr "키맵핑 종료"
+msgstr "크레딧 키맵핑"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
-#, fuzzy
-#| msgid "Quit dialog keymappings"
 msgid "Dialog keymappings"
-msgstr "대화 상자 키맵핑 종료"
+msgstr "대화 상자 키맵핑"
 
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Search / Select item"
 msgid "Deselect item"
-msgstr "검색 / 아이템 선택"
+msgstr "항목 선택 해제"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:143
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "사전 불러오기 사운드"
+msgstr "사운드 중지"
 
 #: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "인벤토리 전환"
 
 #: engines/ngi/metaengine.cpp:176
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "크레딧 표시"
+msgstr "크레딧 건너뛰기"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:183
-#, fuzzy
-#| msgid "Close the dialog box"
 msgid "Close dialog"
-msgstr "대화 상자를 닫기"
+msgstr "대화 상자 닫기"
 
 #: engines/ngi/metaengine.cpp:197
-#, fuzzy
-#| msgid "Close gumps"
 msgid "Close map"
-msgstr "검프 닫기"
+msgstr "지도 닫기"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11138,36 +11113,26 @@ msgid "Toggle Chatty AI"
 msgstr "말 많은 AI 전환"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Interact / Skip dialog"
-msgstr "이동 / 소통 / 대화 건너뛰기"
+msgstr "소통 / 대화 건너뛰기"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "동작 메뉴 열기 / 메뉴 닫기"
+msgstr "동작 메뉴 열기 / 현재 인터페이스 닫기"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Chapayev의 행동"
+msgstr "Chapayev는 객체 사용"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "콘솔을 보이기/숨기기"
+msgstr "옵션 화면 표시/숨기기"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "쉬운 마우스 인터페이스"
+msgstr "현재 인터페이스 닫기"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
@@ -11243,20 +11208,16 @@ msgid "Display SFX subtitles"
 msgstr "SFX 자막 표시"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "TTS를 사용하여 자막 읽기 (TTS가 가능한 경우)"
+msgstr "(자막이 활성화된 경우) SFX 자막을 사용합니다."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight decision areas"
-msgstr "아이템 강조 표시"
+msgstr "결정 영역 강조"
 
 #: engines/private/metaengine.cpp:49
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "결정 장면에서 클릭 가능한 영역을 강조 표시합니다."
 
 #: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13929,10 +13890,8 @@ msgid "Close inventory"
 msgstr "인벤토리 닫기"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact mode"
 msgid "Run in interactive mode"
-msgstr "소통 모드"
+msgstr "대화형 모드로 실행"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14152,50 +14111,36 @@ msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
 
 #: engines/tot/metaengine.cpp:36
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Copy protection"
-msgstr "복사 방지 기능 활성화"
+msgstr "복사 방지"
 
 #: engines/tot/metaengine.cpp:47
-#, fuzzy
-#| msgid "Pixellated scene transitions"
 msgid "Disable scene transitions"
-msgstr "픽셀화된 장면 전환"
+msgstr "장면 전환 비활성화"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "장면 간 원래 전환 효과 비활성화"
 
 #: engines/tot/metaengine.cpp:58
-#, fuzzy
-#| msgid "Open save / load dialog"
 msgid "Original save/load dialog"
-msgstr "저장/로드 대화 상자 열기"
+msgstr "오리지널 저장/로드 대화 상자"
 
 #: engines/tot/metaengine.cpp:59
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original save and load dialogs"
-msgstr "원본 저장/불러오기 화면 사용"
+msgstr "오리지널 저장 및 로드 대화 상자 사용"
 
 #: engines/tot/metaengine.cpp:118
-#, fuzzy
-#| msgid "Perform default action"
 msgid "Default action"
-msgstr "기본 작업 수행"
+msgstr "기본 작업"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Save / load game"
 msgid "Save and load game"
-msgstr "저장 / 로드 게임"
+msgstr "게임 저장 및 로드"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu"
 msgid "Main menu/Exit"
-msgstr "메인 메뉴"
+msgstr "메인 메뉴/나가기"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -14606,19 +14551,15 @@ msgid ""
 msgstr "랜섬 *신호음 없음* (DLC)을 선택했었지만 DLC가 감지되지 않았습니다!"
 
 #: engines/twp/twp.cpp:1016
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
-msgstr ""
-"이 게임을 하려면 FoxTail 서브엔진이 필요한데, 이 엔진은 컴파일되지 않았습니"
-"다."
+msgstr "이 게임에는 셰이더가 포함된 OpenGL이 필요하지만 이는 시스템에서 지원되지 않음"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
-msgstr ""
+msgstr "이 게임에는 시스템에서 지원되지 않는 OpenGL 프레임버퍼 개체가 필요함"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
