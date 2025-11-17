@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-11-16 20:53+0000\n"
-"PO-Revision-Date: 2025-11-07 12:36+0000\n"
+"PO-Revision-Date: 2025-11-17 11:06+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -10414,10 +10414,8 @@ msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Highlight decision areas"
-msgstr "ელემენტების გამოკვეთა"
+msgstr "გადაწყვეტის არეების გამოკვეთა"
 
 #: engines/private/metaengine.cpp:49
 msgid "Highlight clickable areas in decision scenes."
