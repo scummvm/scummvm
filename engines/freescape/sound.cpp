@@ -508,13 +508,13 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::Sound
 		if (value.isRaw) {
 			debugC(1, kFreescapeDebugMedia, "raw hz: %f, duration: %d", value.rawFreq, value.rawLengthus);
 			if (value.rawFreq == 0) {
-				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 5 * value.rawLengthus);
+				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 1, 5 * value.rawLengthus);
 				continue;
 			}
 			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, value.rawFreq, 5 * value.rawLengthus);
 		} else {
 			if (value.freqTimesSeconds == 0 && value.tStates == 0) {
-				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 1000 * value.multiplier);
+				_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 1, 1000 * value.multiplier);
 				continue;
 			}
 
