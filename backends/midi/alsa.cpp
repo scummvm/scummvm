@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
@@ -286,6 +287,9 @@ void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
 	// Send it
 	snd_seq_ev_set_sysex(&ev, length + 2, &buf);
 	send_event(1);
+
+	// FIXME: Limiting delay between sysEx calls to allow processing and prevent overflow on physical MIDI devices. Need to make this configurable...
+	g_system->delayMillis(39);
 }
 
 void MidiDriver_ALSA::send_event(int do_flush) {
