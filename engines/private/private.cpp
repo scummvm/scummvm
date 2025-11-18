@@ -582,6 +582,9 @@ void PrivateEngine::updateCursor(Common::Point mousePos) {
 	if (cursorPauseMovie(mousePos)) {
 		return;
 	}
+	if (cursorSafeDigit(mousePos)) {
+		return;
+	}
 	if (cursorMask(mousePos)) {
 		return;
 	}
@@ -615,6 +618,29 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
 	if (!cursor.empty()) {
 		changeCursor(cursor);
 		return true;
+	}
+
+	return false;
+}
+
+bool PrivateEngine::cursorSafeDigit(Common::Point mousePos) {
+	if (_safeDigitArea[0].surf == nullptr) {
+		return false;
+	}
+
+	mousePos = mousePos - _origin;
+	if (mousePos.x < 0 || mousePos.y < 0) {
+		return false;
+	}
+
+	for (uint i = 0; i < 3; i++) {
+		MaskInfo &m = _safeDigitArea[i];
+		if (m.surf != nullptr) {
+			if (_safeDigitRect[i].contains(mousePos) && !m.cursor.empty()) {
+				changeCursor(m.cursor);
+				return true;
+			}
+		}
 	}
 
 	return false;
