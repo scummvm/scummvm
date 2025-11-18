@@ -178,12 +178,7 @@ static void fSyncSound(ArgArray args) {
 		g_private->drawScreen();
 
 		g_private->playSound(s, 1, true, false);
-		while (g_private->isSoundActive())
-			g_private->ignoreEvents();
-
-		uint32 i = 100;
-		while (i--) // one second extra
-			g_private->ignoreEvents();
+		g_private->waitForSoundToStop();
 	}
 }
 
@@ -265,6 +260,8 @@ static void fBustMovie(ArgArray args) {
 	if (kPoliceBustVideos[videoIndex] == 2) {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
 		g_private->playSound(s, 1, false, false);
+		g_private->changeCursor("default");
+		g_private->waitForSoundToStop();
 	}
 
 	g_private->_nextMovie = pv;
