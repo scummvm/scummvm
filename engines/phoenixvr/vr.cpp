@@ -416,13 +416,9 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 		// str.clear();
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++;
-				if (v < 0)
-					v = 0;
-				if (v > 255)
-					v = 255;
+				int v = clip<int>(*src++ / 16 + 128);
 				// str += Common::String::format("%d ", v);
-				*dst++ = v;
+				*dst++ = v - 128;
 			}
 		}
 		++channel;

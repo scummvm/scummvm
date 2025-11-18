@@ -67,8 +67,6 @@ public:
 				*dstPtr++ = row / 4;
 			}
 		}
-		for (uint i = 0; i != 64; ++i)
-			dst[i] /= 4;
 	}
 };
 
