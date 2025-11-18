@@ -160,6 +160,13 @@ PrivateEngine::~PrivateEngine() {
 		}
 	}
 
+	for (uint i = 0; i < ARRAYSIZE(_safeDigitArea); i++) {
+		if (_safeDigitArea[i].surf != nullptr) {
+			_safeDigitArea[i].surf->free();
+			delete _safeDigitArea[i].surf;
+		}
+	}
+
 	for (RectList::iterator it = _rects.begin(); it != _rects.end(); ++it) {
 		Common::Rect *r = (*it);
 		delete r;
