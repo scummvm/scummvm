@@ -210,6 +210,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - 3D renderer enabled by default for 2D games.
    - Added Text-to-Speech support.
 
+ Atari port:
+   - Unified paths for FreeMiNT and TOS in scummvm.cfg (better delete the old
+     config file).
+   - Added translation for longer than 8+3 .dat filenames.
+   - Fixed slow rendering of Eco Quest's intro.
+   - Fixed cursor rendering of Phantasmagoria, KQ7 and other SCI32 games.
+   - Increased stack size to 256k to avoid stack overflow in some engines (e.g.
+     Supernova).
+   - Fixed launching games from command line.
+
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
  AGI:
