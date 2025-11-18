@@ -4,7 +4,7 @@
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/yuv_to_rgb.h"
-#include "math/dct.h"
+#include "phoenixvr/dct.h"
 
 namespace PhoenixVR {
 
@@ -12,6 +12,12 @@ namespace PhoenixVR {
 #define CHUNK_STATIC (0xa0b1c400)
 
 namespace {
+
+template<typename T>
+T clip(T a) {
+	return a >= 0 ? a <= 255 ? a : 255 : 0;
+}
+
 const byte ZIGZAG[] = {
 	0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4,
 	5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7,
@@ -351,7 +357,7 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
 	auto decoded = unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
-	static const Math::DCT dct(6, Math::DCT::DCT_III);
+	static const DCT2DIII<6> dct;
 
 	static constexpr uint planePitch = 640;
 	static constexpr uint planeSize = planePitch * 480;
@@ -398,22 +404,15 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 			str += Common::String::format("%g ", ac[i]);
 		debug("input block %s", str.c_str());
 		str.clear();
-		dct.calc(ac);
+		float out[64];
+		dct.calc(ac, out);
 		for (uint i = 0; i != 64; ++i)
-			str += Common::String::format("%g ", ac[i]);
+			str += Common::String::format("%g ", out[i]);
 		debug("decoded block %s", str.c_str());
 
 		debug("block at %d,%d %d", x0, y0, channel);
-		auto *dst = planes.data() + channel++ * planeSize + y0 * planePitch + x0;
-		if (channel == 3) {
-			channel = 0;
-			x0 += 8;
-			if (x0 >= 640) {
-				x0 = 0;
-				y0 += 8;
-			}
-		}
-		const auto *src = ac;
+		auto *dst = planes.data() + channel * planeSize + y0 * planePitch + x0;
+		const auto *src = out;
 		// str.clear();
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
@@ -426,12 +425,40 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 				*dst++ = v;
 			}
 		}
+		++channel;
+		if (channel == 3) {
+			channel = 0;
+			x0 += 8;
+			if (x0 >= 640) {
+				x0 = 0;
+				y0 += 8;
+			}
+		}
 		// debug("decoded block %s", str.c_str());
 	}
-	auto *y = planes.data();
-	auto *u = y + planeSize;
-	auto *v = u + planeSize;
-	YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull, y, u, v, 640, 480, planePitch, planePitch);
+	auto *yPtr = planes.data();
+	auto *crPtr = yPtr + planeSize;
+	auto *cbPtr = crPtr + planeSize;
+#if 0
+	auto &format = pic.format;
+	for(int yy = 0; yy < 480; ++yy) {
+		auto *rows = static_cast<uint32*>(pic.getBasePtr(0, yy));
+		for(int xx = 0; xx < 640; ++xx) {
+			int16 y = 128 + *yPtr++;
+			int16 cr = (int16)*crPtr++;
+			int16 cb = (int16)*cbPtr++;
+
+			int r = clip(y + ((cr * 91881 + 32768) >> 16));
+			int g = clip(y - ((cb * 22553 + cr * 46801 + 32768) >> 16));
+			int b = clip(y + ((cb * 116129 + 32768) >> 16));
+
+			*rows++ = format.RGBToColor(r, g, b);
+		}
+	}
+#else
+	YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull,
+						   yPtr, crPtr, cbPtr, 640, 480, planePitch, planePitch);
+#endif
 }
 } // namespace
 
