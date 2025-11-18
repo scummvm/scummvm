@@ -306,6 +306,11 @@ const struct Quirk {
 	// in the projector as a resource. New edition expects Xtra, old edition is D4 and won't be affected.
 	{ "puppetmotel", Common::kPlatformWindows, &quirkForceFileIOXtra },
 	{ "puppetmotel", Common::kPlatformMacintosh, &quirkForceFileIOXtra },
+
+	// Stay Tooned is D5, but expects the XObject version to be used.
+	{ "staytooned", Common::kPlatformWindows, &quirkForceFileIOXObj },
+	{ "staytooned", Common::kPlatformMacintosh, &quirkForceFileIOXObj },
+
 	// Ingenious bundles both the Xtra and XObject editions in the Xtra folder, but expects the XObject
 	// version to be available.
 	{ "ingenious", Common::kPlatformWindows, &quirkForceFileIOXObj },

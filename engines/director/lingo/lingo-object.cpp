@@ -160,6 +160,12 @@
 #include "director/lingo/xtras/rtk.h"
 #include "director/lingo/xtras/scrnutil.h"
 #include "director/lingo/xtras/s/smacker.h"
+#include "director/lingo/xtras/s/staytoonedhall.h"
+#include "director/lingo/xtras/s/staytoonedball.h"
+#include "director/lingo/xtras/s/staytoonedglop.h"
+#include "director/lingo/xtras/s/staytoonedhigh.h"
+#include "director/lingo/xtras/s/staytoonedober.h"
+#include "director/lingo/xtras/s/staytoonedtoon.h"
 #include "director/lingo/xtras/timextra.h"
 #include "director/lingo/xtras/xsound.h"
 
@@ -345,6 +351,12 @@ static const struct XLibProto {
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
+	XLIBDEF(StayToonedBallXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedGlopXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedHallXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedHighXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedOberXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(StayToonedToonXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SysColorXObj,		kXObj,			400),	// D4
 	XLIBDEF(TenguXObj,			kXObj,			400),	// D4
 	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
@@ -399,6 +411,7 @@ void Lingo::initXLibs() {
 
 			_xlibOpeners[lib->names[i].name] = lib->opener;
 			_xlibClosers[lib->names[i].name] = lib->closer;
+			_xlibTypes[lib->names[i].name] = lib->type;
 		}
 	}
 }
@@ -439,6 +452,19 @@ void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &p
 
 	if (_openXLibs.contains(name))
 		return;
+
+	if (type == 0 && _xlibTypes.contains(name)) {
+		type = (_xlibTypes[name] & kXtraObj) ? kXtraObj : kXObj;
+	}
+
+	// manual override for game quirks
+	if (name.equalsIgnoreCase("fileio")) {
+		if (g_director->_fileIOType == kXtraObj && g_director->getVersion() >= 500) {
+			type = kXtraObj;
+		} else if (g_director->_fileIOType == kXObj) {
+			type = kXObj;
+		}
+	}
 
 	_openXLibs[name] = type;
 
