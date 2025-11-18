@@ -202,9 +202,12 @@ Common::Error PhoenixVREngine::run() {
 				_mousePos = event.mouse;
 				break;
 			case Common::EVENT_LBUTTONUP:
-				for (uint i = 0; i != _cursors.size(); ++i) {
-					auto &c = _cursors[i];
-					if (c.rect.contains(event.mouse)) {
+				debug("click %s", _mousePos.toString().c_str());
+				if (!_regSet)
+					break;
+				for (uint i = 0; i != _regSet->size(); ++i) {
+					auto rect = _regSet->getRegion(i).toRect();
+					if (rect.contains(event.mouse)) {
 						debug("click region %u", i);
 						auto test = _warp->getTest(i);
 						if (test) {
