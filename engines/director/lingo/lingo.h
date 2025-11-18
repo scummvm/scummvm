@@ -243,6 +243,7 @@ typedef void (*XLibOpenerFunc)(ObjectType, const Common::Path &);
 typedef void (*XLibCloserFunc)(ObjectType);
 typedef Common::HashMap<Common::String, XLibOpenerFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibOpenerFuncHash;
 typedef Common::HashMap<Common::String, XLibCloserFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibCloserFuncHash;
+typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibTypeHash;
 typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 typedef Common::HashMap<Common::String, AbstractObject *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsStateHash;
 
@@ -533,6 +534,7 @@ public:
 	SymbolHash _methods;
 	XLibOpenerFuncHash _xlibOpeners;
 	XLibCloserFuncHash _xlibClosers;
+	XLibTypeHash _xlibTypes;
 
 	OpenXLibsHash _openXLibs;
 	OpenXLibsStateHash _openXLibsState;

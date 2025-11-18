@@ -188,12 +188,6 @@ static const BuiltinProto xlibBuiltins[] = {
 
 void FileIO::open(ObjectType type, const Common::Path &path) {
 	FileObject::initMethods(xlibMethods);
-	// manual override for game quirks
-	if (g_director->_fileIOType == kXtraObj && g_director->getVersion() >= 500) {
-		type = kXtraObj;
-	} else if (g_director->_fileIOType == kXObj) {
-		type = kXObj;
-	}
 	FileObject *xobj = new FileObject(type);
 	if (type == kXtraObj) {
 		g_lingo->_openXtras.push_back(xlibName);

@@ -191,6 +191,12 @@ MODULE_OBJS = \
 	lingo/xtras/rtk.o \
 	lingo/xtras/scrnutil.o \
 	lingo/xtras/s/smacker.o \
+	lingo/xtras/s/staytoonedhall.o \
+	lingo/xtras/s/staytoonedball.o \
+	lingo/xtras/s/staytoonedglop.o \
+	lingo/xtras/s/staytoonedhigh.o \
+	lingo/xtras/s/staytoonedober.o \
+	lingo/xtras/s/staytoonedtoon.o \
 	lingo/xtras/timextra.o \
 	lingo/xtras/xsound.o
 
