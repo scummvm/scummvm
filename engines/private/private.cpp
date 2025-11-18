@@ -1601,6 +1601,15 @@ bool PrivateEngine::isSoundActive() {
 	return _mixer->isSoundIDActive(-1);
 }
 
+void PrivateEngine::waitForSoundToStop() {
+	while (g_private->isSoundActive())
+		g_private->ignoreEvents();
+
+	uint32 i = 100;
+	while (i--) // one second extra
+		g_private->ignoreEvents();
+}
+
 void PrivateEngine::adjustSubtitleSize() {
 	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
 	if (_subtitles) {
