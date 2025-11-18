@@ -161,7 +161,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		// Virtual Worlds release
 		"driller",
-		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
+		"",
 		{
 			{"d.pak", 0, "607b44b9d31e0da5668b653e03d25efe", 706},
 			{"dril.all", 0, "65277222effa1eb4d73b234245001d75", 158158},
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE | GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
