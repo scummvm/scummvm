@@ -447,20 +447,22 @@ Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::
 		auto chunkSize = s.readUint32LE();
 		debug("chunk %08x %u", chunkId, chunkSize);
 		if (chunkId == CHUNK_STATIC) {
-			auto unk0 = s.readUint32LE();
+			auto quality = s.readUint32LE();
 			auto dataSize = s.readUint32LE();
-			auto coefOffset = s.readUint32LE();
-			auto unpHuffSize = s.readUint32LE();
-			debug("static picture header %u packed data size: %u ac/dc offset: %08x unpacked huff size: %u", unk0, dataSize, coefOffset, unpHuffSize);
-			Common::Array<byte> staticData(chunkSize - 16 - 8);
-			s.read(staticData.data(), staticData.size());
+
+			Common::Array<byte> vrData(dataSize);
+			s.read(vrData.data(), vrData.size());
+
+			auto huffSize = READ_LE_UINT32(vrData.data());
+			auto unpHuffSize = READ_LE_UINT32(vrData.data() + 4);
+			debug("static picture header, quality: %u, packed data size: %u, huff size: %08x, unpacked huff size: %u", quality, dataSize, huffSize, unpHuffSize);
 			Graphics::Surface *pic = new Graphics::Surface();
 			pic->create(640, 480, format);
-			auto dcOffset = READ_LE_UINT32(staticData.data() + coefOffset);
-			coefOffset += 8;
-			auto *acPtr = staticData.data() + coefOffset;
-			auto *dcPtr = acPtr + dcOffset;
-			unpack640x480(*pic, staticData.data(), unpHuffSize, acPtr, dcPtr, unk0);
+			auto *huff = vrData.data() + 8;
+			auto *acPtr = vrData.data() + huffSize + 12;
+			auto dcOffset = READ_LE_UINT32(vrData.data() + huffSize + 8);
+			auto *dcPtr = vrData.data() + huffSize + 16 + dcOffset;
+			unpack640x480(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
 			return pic;
 		}
 		s.skip(chunkSize - 8);
