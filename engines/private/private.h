@@ -219,6 +219,7 @@ public:
 	void updateCursor(Common::Point);
 	bool cursorPauseMovie(Common::Point);
 	bool cursorExit(Common::Point);
+	bool cursorSafeDigit(Common::Point);
 	bool cursorMask(Common::Point);
 
 	bool hasFeature(EngineFeature f) const override;
