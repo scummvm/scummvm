@@ -80,7 +80,7 @@ public:
 	using ConstWarpPtr = Common::SharedPtr<const Warp>;
 
 private:
-	Common::HashMap<Common::String, uint> _warpsIndex;
+	Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _warpsIndex;
 	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
