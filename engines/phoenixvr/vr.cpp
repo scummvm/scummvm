@@ -348,7 +348,7 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 	return decoded;
 }
 
-void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *coeff, uint coefSize, int quality) {
+void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
 	auto decoded = unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
 	static const Math::DCT dct(6, Math::DCT::DCT_III);
@@ -370,12 +370,12 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 		return v;
 	};
 
-	BitStream bs(coeff, 0);
+	BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
 		float ac[64] = {};
-		ac[0] = 1.0f * iquant(channel, 0) * bs.readUInt(8);
+		ac[0] = 1.0f * iquant(channel, 0) * dcBs.readUInt(8);
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
@@ -388,7 +388,7 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 				idx += h;
 				if (l && idx < 64) {
 					auto ac_idx = ZIGZAG[idx];
-					ac[ac_idx] = 1.0f * iquant(channel, ac_idx) * bs.readInt(l);
+					ac[ac_idx] = 1.0f * iquant(channel, ac_idx) * acBs.readInt(l);
 					++idx;
 				}
 			}
@@ -417,7 +417,7 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 		// str.clear();
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = (channel == 0 ? 128 : 0) + *src++;
+				int v = *src++;
 				if (v < 0)
 					v = 0;
 				if (v > 255)
@@ -456,8 +456,11 @@ Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::
 			s.read(staticData.data(), staticData.size());
 			Graphics::Surface *pic = new Graphics::Surface();
 			pic->create(640, 480, format);
+			auto dcOffset = READ_LE_UINT32(staticData.data() + coefOffset);
 			coefOffset += 8;
-			unpack640x480(*pic, staticData.data(), unpHuffSize, staticData.data() + coefOffset, staticData.size() - coefOffset, unk0);
+			auto *acPtr = staticData.data() + coefOffset;
+			auto *dcPtr = acPtr + dcOffset;
+			unpack640x480(*pic, staticData.data(), unpHuffSize, acPtr, dcPtr, unk0);
 			return pic;
 		}
 		s.skip(chunkSize - 8);
