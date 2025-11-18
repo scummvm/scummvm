@@ -399,18 +399,8 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 				}
 			}
 		}
-		Common::String str;
-		for (uint i = 0; i != 64; ++i)
-			str += Common::String::format("%g ", ac[i]);
-		debug("input block %s", str.c_str());
-		str.clear();
 		float out[64];
 		dct.calc(ac, out);
-		for (uint i = 0; i != 64; ++i)
-			str += Common::String::format("%g ", out[i]);
-		debug("decoded block %s", str.c_str());
-
-		debug("block at %d,%d %d", x0, y0, channel);
 		auto *dst = planes.data() + channel * planeSize + y0 * planePitch + x0;
 		const auto *src = out;
 		// str.clear();
