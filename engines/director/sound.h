@@ -141,6 +141,7 @@ struct SoundChannel {
 	Audio::SoundHandle handle;
 	SoundID lastPlayedSound;
 	bool stopOnZero; // Should the sound be stopped when the channel contains cast member 0?
+	bool fromLastMovie; // Was this sound carried over from a movie switch?
 	byte volume;
 	int pitchShiftPercent;
 	int originalRate;
@@ -159,7 +160,7 @@ struct SoundChannel {
 	// a stop at the end of a loop.
 	Audio::LoopableAudioStream *loopPtr;
 
-	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), originalRate(-1),
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), fromLastMovie(false), volume(255), originalRate(-1),
 		pitchShiftPercent(100), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr),
 		lastCuePointIndex(-1) {}
 };

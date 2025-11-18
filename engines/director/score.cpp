@@ -337,9 +337,6 @@ void Score::startPlay() {
 			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
 
 	updateSprites(kRenderForceUpdate, true);
-
-	_soundManager->disablePuppetSound(1);
-	_soundManager->disablePuppetSound(2);
 }
 
 void Score::step() {
