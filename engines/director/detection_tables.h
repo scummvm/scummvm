@@ -890,9 +890,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "listen7up",			"Listen 7UP! Music Mix CD: Volume 1" },
 	{ "nyack",				"Nyack 11-Track Player" },
 	{ "princerave",			"Prince: Rave Un2 the Joy Fantastic" },
+	{ "rednex",				"Inbred With REDNEX" },
 	{ "relaxation",			"Solitudes: Natural Relaxation" },
 	{ "relaxplayer",		"Solitudes: Natural Relaxation Audio Player" },
-	{ "rednex",				"Inbred with Rednex" },
 	{ "royksoppam",			"Röyksopp: Melody A.M." },
 	{ "sarahsurfacing",		"Sarah McLachlan: Surfacing" },
 	{ "smashchillin",		"Smash Hits: Chillin' Out Summer 2001" },
@@ -4836,10 +4836,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("ios", "How To Game", "HOW.EXE", "a526a724f26e266b17815b4f7f7ae079", 1863309,
 									 "HOW02",	"86a19681ed45c043b5756f5a6ea189de", 2116536, Common::JA_JPN, 404),
 
-	MACGAME1("isaslm", "", "install this stuff/VM folder/VMplay", "27519b873d23565470f627ad2f3d1b03", 322465, 400),
-	// WINGAME1t("isaslm", "", "PLAY_IT.EXE", "ab30cc755f44ac3844fee3214cfc5ead", 691009, 400),
-	WINGAME1t("isaslm", "", "VMCD.EXE", "02b7441caf27724af5d055259d0d8e30", 1104401, 400),
-
+	MACGAME1("isaslm", "", "install this stuff/VM folder/VMplay", "rt:1762dd0cfeef33753ccda4ef0a61544e", 322465, 404),
+	WINGAME1t("isaslm", "", "VMCD.EXE", "t:02b7441caf27724af5d055259d0d8e30", 1104401, 404),
 
 	MACGAME1("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 777630, 404),
 	WINGAME2("isis", "", "ISIS.EXE", 				 "59c1cb960199dd3f041262ab5271bb23", 14747213,
@@ -5848,6 +5846,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// MacFormat #40
 	MACDEMO1("rednex", "Demo", "RedNex",	 "rt:99a4f9d7fb487053826c42e97aa96b33", 483490, 404),
 	WINDEMO1("rednex", "Demo", "REDNEX.EXE", "t:e1d181303fd8c2aed5cd1d69b0c985e7",  696877, 404),
+	MACGAME1("rednex", "", "RedNex PPC", "tr:00263777ffe8ac57a58fbc931d52ac51", 58292, 404),
+	WINGAME1("rednex", "", "REDNEX.EXE", "t:14fae6eca2a359b6b10ff9a98c217f65", 692585, 404),
 
 	MACDEMO1("redshift", "1994 Demo",	  "RSDEMO.MAC",	   "r:4f7ff33ce95ed9f42befdae4f9b6b690", 291988, 403),
 	// Sound / No Sound demos found on MacFormat August '94
