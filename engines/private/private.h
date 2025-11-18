@@ -371,6 +371,7 @@ public:
 	void playSound(const Common::String &, uint, bool, bool);
 	void stopSound(bool);
 	bool isSoundActive();
+	void waitForSoundToStop();
 	bool _noStopSounds;
 
 	Common::String getPaperShuffleSound();
