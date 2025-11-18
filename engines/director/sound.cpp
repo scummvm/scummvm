@@ -95,6 +95,7 @@ void DirectorSound::playFile(Common::String filename, int soundChannel) {
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
 	setLastPlayedSound(soundChannel, SoundID(), false);
+	_channels[soundChannel]->fromLastMovie = false;
 }
 
 void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) {
@@ -143,6 +144,7 @@ void DirectorSound::playStream(Audio::AudioStream &stream, int soundChannel) {
 	if (_channels[soundChannel]->pitchShiftPercent != 100) {
 		_mixer->setChannelRate(_channels[soundChannel]->handle, _channels[soundChannel]->originalRate*_channels[soundChannel]->pitchShiftPercent/100);
 	}
+	_channels[soundChannel]->fromLastMovie = false;
 }
 
 void DirectorSound::playSound(SoundID soundID, int soundChannel, bool forPuppet) {
@@ -171,7 +173,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, int soundChannel, bool
 			stopSound(soundChannel);
 			// Director 4 will stop after the current loop iteration, but
 			// Director 3 will continue looping until the sound is replaced.
-		} else if (g_director->getVersion() >= 400) {
+		} else if (g_director->getVersion() >= 400 && !_channels[soundChannel]->fromLastMovie) {
 			// If there is a loopable stream specified, set the loop to expire by itself
 			if (_channels[soundChannel]->loopPtr) {
 				debugC(5, kDebugSound, "DirectorSound::playCastMember(): telling loop in channel %d to stop", soundChannel);
@@ -481,8 +483,11 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, int soundChan
 void DirectorSound::changingMovie() {
 	for (auto &it : _channels) {
 		it._value->movieChanged = true;
+
+		// When switching movies, the puppetSound flag is disabled. This means any sound (channel or script)
+		// can take over. Any existing sound that is playing (sample or loop) will continue to play until that happens.
 		if (isChannelPuppet(it._key)) {
-			setPuppetSound(SoundID(), it._key); // disable puppet sound
+			disablePuppetSound(it._key); // disable puppet sound
 		}
 
 		if (isChannelActive(it._key)) {
@@ -498,6 +503,9 @@ void DirectorSound::changingMovie() {
 					_mixer->loopChannel(it._value->handle);
 				}
 			}
+
+			// Flag that this is from a previous movie, therefore looping should continue.
+			it._value->fromLastMovie = true;
 		}
 	}
 	unloadSampleSounds(); // TODO: we can possibly keep this between movies
@@ -527,6 +535,7 @@ void DirectorSound::stopSound(int soundChannel) {
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel]->handle);
 	setLastPlayedSound(soundChannel, SoundID());
+	_channels[soundChannel]->fromLastMovie = false;
 	return;
 }
 
@@ -542,6 +551,7 @@ void DirectorSound::stopSound() {
 
 		_mixer->stopHandle(it._value->handle);
 		setLastPlayedSound(it._key, SoundID());
+		it._value->fromLastMovie = false;
 	}
 
 	_mixer->stopHandle(_scriptSound);
