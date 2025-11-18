@@ -131,6 +131,6 @@ private:
 	Common::Array<StreamAudioTrack *> _audioTracks;
 };
 
-} // End of namespace Sherlock
+} // End of namespace Video
 
 #endif
