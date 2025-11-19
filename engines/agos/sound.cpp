@@ -351,6 +351,7 @@ Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixe
 	_hasVoiceFile = false;
 
 	_ambientPlaying = 0;
+	_voicePlaying = 0;
 
 	_soundQueuePtr = nullptr;
 	_soundQueueNum = 0;
@@ -505,9 +506,14 @@ void Sound::playVoice(uint sound) {
 			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, true, -1500);
 		else
 			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, true);
+
+		_voicePlaying = (sound < 11) ? sound + 1 : sound;
 	} else {
 		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
+		_voicePlaying = sound;
 	}
+
+	debug(0, "Playing voice %d", _voicePlaying);
 }
 
 void Sound::playEffects(uint sound) {
@@ -557,11 +563,13 @@ void Sound::stopSfx() {
 
 void Sound::stopVoice() {
 	_mixer->stopHandle(_voiceHandle);
+	_voicePlaying = 0;
 }
 
 void Sound::stopAll() {
 	_mixer->stopAll();
 	_ambientPlaying = 0;
+	_voicePlaying = 0;
 }
 
 void Sound::effectsMute(bool mute, uint16 effectsVolume) {
@@ -636,6 +644,8 @@ void Sound::playSfx5Data(byte *soundData, uint sound, uint pan, uint vol) {
 void Sound::playVoiceData(byte *soundData, uint sound) {
 	_mixer->stopHandle(_voiceHandle);
 	playSoundData(&_voiceHandle, soundData, sound);
+
+	_voicePlaying = sound;
 }
 
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
