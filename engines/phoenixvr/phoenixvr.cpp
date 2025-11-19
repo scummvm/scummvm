@@ -249,15 +249,15 @@ Common::Error PhoenixVREngine::run() {
 
 			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 
-			if (_static640x480) {
-				_static640x480->free();
-				delete _static640x480;
-				_static640x480 = nullptr;
+			if (_static) {
+				_static->free();
+				delete _static;
+				_static = nullptr;
 			}
 
 			Common::File vr;
 			if (vr.open(Common::Path(_warp->vrFile))) {
-				_static640x480 = VR::load640x480(_pixelFormat, vr);
+				_static = VR::loadStatic(_pixelFormat, vr);
 			}
 
 			_regSet.reset(new RegionSet(_warp->testFile));
@@ -272,9 +272,12 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		if (_static640x480)
-			_screen->copyFrom(*_static640x480);
-		else
+		if (_static) {
+			Common::Point dst(0, 0);
+			Common::Rect src(_static->getRect());
+			Common::Rect::getBlitRect(dst, src, _screen->getBounds());
+			_screen->copyRectToSurface(*_static, dst.x, dst.y, src);
+		} else
 			_screen->clear();
 
 		Graphics::Surface *cursor = nullptr;
@@ -303,7 +306,7 @@ Common::Error PhoenixVREngine::run() {
 
 void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
 	Common::Rect srcRect = src.getRect();
-	Common::Rect clip(0, 0, _screen->w, _screen->h);
+	Common::Rect clip = _screen->getBounds();
 	if (Common::Rect::getBlitRect(dst, srcRect, clip)) {
 		Common::Rect dstRect(dst.x, dst.y, dst.x + srcRect.width(), dst.y + srcRect.height());
 		_screen->blendBlitFrom(src, srcRect, dstRect);

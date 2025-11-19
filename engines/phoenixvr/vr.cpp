@@ -9,7 +9,8 @@
 namespace PhoenixVR {
 
 #define CHUNK_VR (0x12fa84ab)
-#define CHUNK_STATIC (0xa0b1c400)
+#define CHUNK_STATIC_2D (0xa0b1c400)
+#define CHUNK_STATIC_3D (0xa0b1c200)
 
 namespace {
 
@@ -354,13 +355,13 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 	return decoded;
 }
 
-void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
+void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
 	auto decoded = unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 
-	static constexpr uint planePitch = 640;
-	static constexpr uint planeSize = planePitch * 480;
+	const uint planePitch = pic.w;
+	const uint planeSize = planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
 	auto iquant = [&](uint channel, int idx) {
@@ -403,11 +404,9 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 		dct.calc(ac, out);
 		auto *dst = planes.data() + channel * planeSize + y0 * planePitch + x0;
 		const auto *src = out;
-		// str.clear();
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
 				int v = clip<int>(*src++ / 16 + 128);
-				// str += Common::String::format("%d ", v);
 				*dst++ = v - 128;
 			}
 		}
@@ -415,40 +414,39 @@ void unpack640x480(Graphics::Surface &pic, const byte *huff, uint huffSize, cons
 		if (channel == 3) {
 			channel = 0;
 			x0 += 8;
-			if (x0 >= 640) {
+			if (static_cast<int16>(x0) >= pic.w) {
 				x0 = 0;
 				y0 += 8;
 			}
 		}
-		// debug("decoded block %s", str.c_str());
 	}
 	auto *yPtr = planes.data();
 	auto *crPtr = yPtr + planeSize;
 	auto *cbPtr = crPtr + planeSize;
 #if 0
 	auto &format = pic.format;
-	for(int yy = 0; yy < 480; ++yy) {
+	for(int yy = 0; yy < pic.h; ++yy) {
 		auto *rows = static_cast<uint32*>(pic.getBasePtr(0, yy));
-		for(int xx = 0; xx < 640; ++xx) {
-			int16 y = 128 + *yPtr++;
+		for(int xx = 0; xx < pic.w; ++xx) {
+			int16 y = *yPtr++;
 			int16 cr = (int16)*crPtr++;
 			int16 cb = (int16)*cbPtr++;
 
-			int r = clip(y + ((cr * 91881 + 32768) >> 16));
-			int g = clip(y - ((cb * 22553 + cr * 46801 + 32768) >> 16));
-			int b = clip(y + ((cb * 116129 + 32768) >> 16));
+			int r = y;
+			int g = y;
+			int b = y;
 
 			*rows++ = format.RGBToColor(r, g, b);
 		}
 	}
 #else
 	YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull,
-						   yPtr, crPtr, cbPtr, 640, 480, planePitch, planePitch);
+						   yPtr, crPtr, cbPtr, pic.w, pic.h, planePitch, planePitch);
 #endif
 }
 } // namespace
 
-Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
+Graphics::Surface *VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
 	auto magic = s.readUint32LE();
 	if (magic != CHUNK_VR) {
 		error("wrong VR magic");
@@ -459,7 +457,9 @@ Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::
 		auto chunkId = s.readUint32LE();
 		auto chunkSize = s.readUint32LE();
 		debug("chunk %08x %u", chunkId, chunkSize);
-		if (chunkId == CHUNK_STATIC) {
+		bool pic2d = chunkId == CHUNK_STATIC_2D;
+		bool pic3d = chunkId == CHUNK_STATIC_3D;
+		if (pic2d || pic3d) {
 			auto quality = s.readUint32LE();
 			auto dataSize = s.readUint32LE();
 
@@ -470,12 +470,15 @@ Graphics::Surface *VR::load640x480(const Graphics::PixelFormat &format, Common::
 			auto unpHuffSize = READ_LE_UINT32(vrData.data() + 4);
 			debug("static picture header, quality: %u, packed data size: %u, huff size: %08x, unpacked huff size: %u", quality, dataSize, huffSize, unpHuffSize);
 			Graphics::Surface *pic = new Graphics::Surface();
-			pic->create(640, 480, format);
+			if (pic3d)
+				pic->create(256, 6144, format);
+			else
+				pic->create(640, 480, format);
 			auto *huff = vrData.data() + 8;
 			auto *acPtr = vrData.data() + huffSize + 12;
 			auto dcOffset = READ_LE_UINT32(vrData.data() + huffSize + 8);
 			auto *dcPtr = vrData.data() + huffSize + 16 + dcOffset;
-			unpack640x480(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
+			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
 			return pic;
 		}
 		s.skip(chunkSize - 8);

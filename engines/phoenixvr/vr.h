@@ -32,7 +32,7 @@ class Surface;
 namespace PhoenixVR {
 class VR {
 public:
-	static Graphics::Surface *load640x480(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
+	static Graphics::Surface *loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
 };
 } // namespace PhoenixVR
 
