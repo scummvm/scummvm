@@ -1252,33 +1252,39 @@ void PelrockEngine::frames() {
 
 			// byte *bg = grabBackgroundSlice(x, y, w, h);
 			// putBackgroundSlice(x, y, w, h, bg);
-			drawSpriteToBuffer(_compositeBuffer, 640, frame, _currentRoomAnims[i].x, _currentRoomAnims[i].y, _currentRoomAnims[i].w, _currentRoomAnims[i].h, 255);
-			// for (int y = 0; y < i->h; y++) {
-			// 	for (int x = 0; x < i->w; x++) {
 
-			// 		unsigned int src_pos = (y * i->w) + x;
-			// 		int xPos = i->x + x;
-			// 		int yPos = i->y + y;
-			// 		if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
-			// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
-			// 	}
-			// }
-			if (_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].nframes - 1) {
-				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame++;
-			} else {
-				if(_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].loopCount - 1){
-					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
-					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop++;
+				drawSpriteToBuffer(_compositeBuffer, 640, frame, _currentRoomAnims[i].x, _currentRoomAnims[i].y, _currentRoomAnims[i].w, _currentRoomAnims[i].h, 255);
+				// for (int y = 0; y < i->h; y++) {
+				// 	for (int x = 0; x < i->w; x++) {
+
+				// 		unsigned int src_pos = (y * i->w) + x;
+				// 		int xPos = i->x + x;
+				// 		int yPos = i->y + y;
+				// 		if (frame[src_pos] != 255 && xPos > 0 && yPos > 0 && xPos < 640 && yPos < 400)
+				// 			_screen->setPixel(xPos, yPos, frame[src_pos]);
+				// 	}
+				// }
+			if (_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].elpapsedFrames == _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].speed) {
+				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].elpapsedFrames = 0;
+				if (_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].nframes - 1) {
+					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame++;
 				} else {
-					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
-					_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop = 0;
-					if(_currentRoomAnims[i].curAnimIndex < _currentRoomAnims[i].numAnims - 1){
-						_currentRoomAnims[i].curAnimIndex++;
-					}
-					else {
-						_currentRoomAnims[i].curAnimIndex = 0;
+					if (_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop < _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].loopCount - 1) {
+						_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
+						_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop++;
+					} else {
+						_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame = 0;
+						_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curLoop = 0;
+						if (_currentRoomAnims[i].curAnimIndex < _currentRoomAnims[i].numAnims - 1) {
+							_currentRoomAnims[i].curAnimIndex++;
+						} else {
+							_currentRoomAnims[i].curAnimIndex = 0;
+						}
 					}
 				}
+			}
+			else {
+				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].elpapsedFrames++;
 			}
 		}
 

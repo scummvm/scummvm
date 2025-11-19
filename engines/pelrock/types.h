@@ -80,6 +80,7 @@ struct Anim {
 	byte *animData;
 	byte loopCount;
 	byte speed;
+	byte elpapsedFrames = 0;
 };
 
 struct Exit {
