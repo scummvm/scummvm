@@ -290,14 +290,13 @@ Common::Error PrivateEngine::run() {
 	delete file;
 	if (maps.constants.size() == 0)
 		error("Failed to parse game script");
+	initializeWallSafeValue();
 
 	// Initialize graphics
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_screenW, _screenH, &_pixelFormat);
 	_transparentColor = 250;
 
-	initializeWallSafeValue();
-	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
 	_screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	loadCursors();
 	changeCursor("default");
@@ -1268,7 +1267,7 @@ bool PrivateEngine::selectSafeDigit(Common::Point mousePos) {
 	for (uint d = 0 ; d < 3; d ++)
 		if (_safeDigitRect[d].contains(mousePos)) {
 			incrementSafeDigit(d);
-			renderSafeDigit(d);
+			_nextSetting = _safeDigitArea[d].nextSetting;
 			return true;
 		}
 
@@ -1279,33 +1278,13 @@ void PrivateEngine::addSafeDigit(uint32 d, Common::Rect *rect) {
 
 	MaskInfo m;
 	_safeDigitRect[d] = *rect;
-	fillRect(_safeColor, _safeDigitRect[d]);
 	int digitValue = getSafeDigit(d);
 	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), digitValue), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
 	m.cursor = g_private->getExitCursor();
-	m.nextSetting = "";
+	m.nextSetting = _currentSetting;
 	m.flag1 = nullptr;
 	m.flag2 = nullptr;
 	_safeDigitArea[d] = m;
-}
-
-void PrivateEngine::renderSafeDigit(uint32 d) {
-
-	if (_safeDigitArea[d].surf != nullptr) {
-		_safeDigitArea[d].surf->free();
-		delete _safeDigitArea[d].surf;
-		_safeDigitArea[d].clear();
-	}
-	fillRect(_safeColor, _safeDigitRect[d]);
-	int digitValue = getSafeDigit(d);
-	MaskInfo m;
-	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), digitValue), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
-	m.cursor = g_private->getExitCursor();
-	m.nextSetting = "";
-	m.flag1 = nullptr;
-	m.flag2 = nullptr;
-	_safeDigitArea[d] = m;
-	drawScreen();
 }
 
 int PrivateEngine::getSafeDigit(uint32 d) {
