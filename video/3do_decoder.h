@@ -103,6 +103,7 @@ private:
 		void queueAudio(Common::SeekableReadStream *stream, uint32 size);
 
 		bool matchesId(uint trackId);
+		bool endOfTrack() const override;
 
 	protected:
 		Audio::AudioStream *getAudioStream() const override;
@@ -113,6 +114,7 @@ private:
 
 	public:
 		uint32 getTotalAudioQueued() const { return _totalAudioQueued; }
+		void setFinished() { _audioStream->finish(); }
 
 	private:
 		int16 decodeSample(uint8 dataNibble);
