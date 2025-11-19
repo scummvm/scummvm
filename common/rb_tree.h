@@ -251,7 +251,7 @@ public:
 		Node *const z = it._current;
 		Node *y = z;
 		assert(y);
-		const auto ret = it++;
+		const auto ret = ++it;
 		Color y_prev_color = y->color;
 		Node *x;
 		Node *xp = nullptr;
