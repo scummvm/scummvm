@@ -28,6 +28,25 @@
 
 namespace Freescape {
 
+namespace {
+// A simple implementation of memmem, which is a non-standard GNU extension.
+const void *local_memmem(const void *haystack, size_t haystack_len, const void *needle, size_t needle_len) {
+	if (needle_len == 0) {
+		return haystack;
+	}
+	if (haystack_len < needle_len) {
+		return nullptr;
+	}
+	const char *h = (const char *)haystack;
+	for (size_t i = 0; i <= haystack_len - needle_len; ++i) {
+		if (memcmp(h + i, needle, needle_len) == 0) {
+			return h + i;
+		}
+	}
+	return nullptr;
+}
+} // namespace
+
 Common::SeekableReadStream *DrillerEngine::decryptFileAtariVirtualWorlds(const Common::Path &filename) {
 	Common::File file;
 	if (!file.open(filename)) {
@@ -42,7 +61,7 @@ Common::SeekableReadStream *DrillerEngine::decryptFileAtariVirtualWorlds(const C
 	int chunk_size = 0;
 
 	while (true) {
-		byte *found = nullptr;//(byte *)memmem(data + start, size - start, "CBCP", 4);	// FIXME: memmem() is non-standard
+		const byte *found = (const byte *)local_memmem(data + start, size - start, "CBCP", 4);
 		if (!found) break;
 
 		int idx = found - data;
