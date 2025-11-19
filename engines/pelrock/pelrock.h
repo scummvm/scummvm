@@ -67,7 +67,7 @@ private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
-	Common::List<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
 
 	Common::String cleanText(const Common::String &text);
@@ -76,6 +76,17 @@ private:
 	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 
 	void walkTo(int x, int y);
+	bool pathFind(int x, int y, PathContext *context);
+	uint8_t find_walkbox_for_point(uint16_t x, uint16_t y);
+	bool point_in_walkbox(WalkBox *box, uint16_t x, uint16_t y);
+	uint16_t build_walkbox_path(uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
+	uint8_t get_adjacent_walkbox(uint8_t current_box_index);
+	void clear_visited_flags();
+	uint16_t generate_movement_steps(uint8_t *path_buffer,
+									 uint16_t path_length,
+									 uint16_t start_x, uint16_t start_y,
+									 uint16_t dest_x, uint16_t dest_y,
+									 MovementStep *movement_buffer);
 
 	void talk();
 	Common::String getControlName(byte b);
@@ -112,10 +123,13 @@ private:
 	byte **talkingAnimFrames[4];              // 4 arrays of arrays
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 
+	PathContext _currentContext;
+	int _current_step = 0;
+
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<AnimSet> _currentRoomAnims;
 	Common::List<Exit> _currentRoomExits;
-	Common::List<WalkBox> _currentRoomWalkboxes;
+	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
 	Common::Array<ConversationNode> _currentRoomConversations;
 
@@ -154,9 +168,7 @@ private:
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 
-
 	Common::Point _curWalkTarget;
-
 
 	bool shouldPlayIntro = false;
 	GameState stateGame = GAME;

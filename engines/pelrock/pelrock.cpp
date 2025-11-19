@@ -84,6 +84,14 @@ Common::String PelrockEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color) {
+	// debug("Drawing rect at (%d,%d) w=%d h=%d color=%d", x, y, w, h, color);
+	surface->drawLine(x, y, x + w, y, color);
+	surface->drawLine(x, y + h, x + w, y + h, color);
+	surface->drawLine(x, y, x, y + h, color);
+	surface->drawLine(x + w, y, x + w, y + h, color);
+}
+
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
@@ -358,7 +366,7 @@ Common::Array<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile,
 	return anims;
 }
 
-Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int roomOffset) {
+Common::Array<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
 	// roomFile->skip(4);
@@ -370,7 +378,7 @@ Common::List<WalkBox> PelrockEngine::loadWalkboxes(Common::File *roomFile, int r
 	byte walkbox_count = roomFile->readByte();
 	debug("Walkbox count: %d", walkbox_count);
 	uint32_t walkbox_offset = pair10_data_offset + 0x218;
-	Common::List<WalkBox> walkboxes;
+	Common::Array<WalkBox> walkboxes;
 	for (int i = 0; i < walkbox_count; i++) {
 		uint32_t box_offset = walkbox_offset + i * 9;
 		roomFile->seek(box_offset, SEEK_SET);
@@ -882,7 +890,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
 
-	Common::List<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
+	Common::Array<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
@@ -901,10 +909,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d extra=%d, desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, hotspot.extra, _currentRoomDescriptions[i].text.c_str());
-		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x + hotspot.w, hotspot.y, 200 + i);
-		_screen->drawLine(hotspot.x, hotspot.y + hotspot.h, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
-		_screen->drawLine(hotspot.x, hotspot.y, hotspot.x, hotspot.y + hotspot.h, 200 + i);
-		_screen->drawLine(hotspot.x + hotspot.w, hotspot.y, hotspot.x + hotspot.w, hotspot.y + hotspot.h, 200 + i);
+		// drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
 	}
 
 	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
@@ -1171,7 +1176,7 @@ void PelrockEngine::frames() {
 
 		memcpy(_compositeBuffer, _currentBackground, 640 * 400);
 
-		debug("Game tick!");
+		// debug("Game tick!");
 		for (int i = 0; i < _currentRoomAnims.size(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 
@@ -1205,14 +1210,66 @@ void PelrockEngine::frames() {
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].elpapsedFrames++;
 			}
 		}
 
 		if (isAlfredWalking) {
-			debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
+			debug("Alfred is walking, current step %d of %d", _current_step, _currentContext.movement_count);
+			MovementStep step = _currentContext.movement_buffer[_current_step];
+			debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
+
+			if (step.distance_x > 0) {
+				if (step.flags & MOVE_RIGHT) {
+					dirAlfred = 0;
+					xAlfred += MIN((uint16_t)6, step.distance_x);
+				}
+				if (step.flags & MOVE_LEFT) {
+					dirAlfred = 1;
+					xAlfred -= MIN((uint16_t)6, step.distance_x);
+				}
+			}
+			if (step.distance_y > 0) {
+				if (step.flags & MOVE_DOWN) {
+					dirAlfred = 2;
+					yAlfred += MIN((uint16_t)6, step.distance_y);
+				}
+				if (step.flags & MOVE_UP) {
+					dirAlfred = 3;
+					yAlfred -= MIN((uint16_t)6, step.distance_y);
+				}
+			}
+
+			if (step.distance_x > 0)
+				step.distance_x -= MIN((uint16_t)6, step.distance_x);
+
+			if (step.distance_y > 0)
+				step.distance_y -= MIN((uint16_t)6, step.distance_y);
+			debug("Alfred position after step: x=%d, y=%d, step distance_x=%d, step distance_y=%d", xAlfred, yAlfred, step.distance_x, step.distance_y);
+			if (step.distance_x <= 0 && step.distance_y <= 0) {
+				debug("Alfred completed step %d", _current_step);
+				_current_step++;
+				if (_current_step >= _currentContext.movement_count) {
+					debug("Alfred reached his walk target.");
+					_current_step = 0;
+					isAlfredWalking = false;
+				}
+			} else {
+				_currentContext.movement_buffer[_current_step] = step;
+			}
+			// _current_step++;
+			// if(_current_step >= _currentContext.movement_count) {
+			// 	debug("Alfred reached his walk target.");
+			// 	_current_step = 0;
+			// 	isAlfredWalking = false;
+			// }
+			// if (step->flags & MOVE_RIGHT) printf("RIGHT ");
+			// if (step->flags & MOVE_LEFT) printf("LEFT ");
+			// if (step->flags & MOVE_DOWN) printf("DOWN ");
+			// if (step->flags & MOVE_UP) printf("UP ");
+
+			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
 			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
 
 			if (curAlfredFrame < walkingAnimLengths[dirAlfred] - 1) {
@@ -1220,7 +1277,7 @@ void PelrockEngine::frames() {
 			} else {
 				curAlfredFrame = 0;
 			}
-			debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
+			// debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
 		} else if (isAlfredTalking) {
 			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
 
@@ -1254,21 +1311,31 @@ void PelrockEngine::frames() {
 				_currentPopupFrame = 0;
 		}
 
-
-
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-
-				if(_curWalkTarget.x < 640 && _curWalkTarget.y < 400 && _curWalkTarget.x >=0 && _curWalkTarget.y >=0) {
+		// debug("Drawing walkboxes..., %d, _currentRoomWalkboxes.size()=%d",  _currentRoomWalkboxes.size(), _currentRoomWalkboxes.size());
+		for (int i = 0; i < _currentRoomWalkboxes.size(); i++) {
+			// debug("Drawing walkbox %d", i);
+			WalkBox box = _currentRoomWalkboxes[i];
+			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
+		}
+		if (_curWalkTarget.x < 640 && _curWalkTarget.y < 400 && _curWalkTarget.x >= 0 && _curWalkTarget.y >= 0) {
 			_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y, 100);
-			if(_curWalkTarget.x - 1 > 0 && _curWalkTarget.y - 1 > 0) {
+			if (_curWalkTarget.x - 1 > 0 && _curWalkTarget.y - 1 > 0)
 				_screen->setPixel(_curWalkTarget.x - 1, _curWalkTarget.y - 1, 100);
-			}
-			if(_curWalkTarget.x - 1 > 0 && _curWalkTarget.y + 1 < 400)
+			if (_curWalkTarget.x - 1 > 0 && _curWalkTarget.y + 1 < 400)
 				_screen->setPixel(_curWalkTarget.x - 1, _curWalkTarget.y + 1, 100);
-			if(_curWalkTarget.x + 1 < 640 && _curWalkTarget.y - 1 > 0)
+			if (_curWalkTarget.x + 1 < 640 && _curWalkTarget.y - 1 > 0)
 				_screen->setPixel(_curWalkTarget.x + 1, _curWalkTarget.y - 1, 100);
-			if(_curWalkTarget.x + 1 < 640 && _curWalkTarget.y + 1 < 400)
+			if (_curWalkTarget.x + 1 < 640 && _curWalkTarget.y + 1 < 400)
 				_screen->setPixel(_curWalkTarget.x + 1, _curWalkTarget.y + 1, 100);
+			if (_curWalkTarget.x - 2 > 0)
+				_screen->setPixel(_curWalkTarget.x - 2, _curWalkTarget.y, 100);
+			if (_curWalkTarget.x + 2 < 640)
+				_screen->setPixel(_curWalkTarget.x + 2, _curWalkTarget.y, 100);
+			if (_curWalkTarget.y - 2 > 0)
+				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y - 2, 100);
+			if (_curWalkTarget.y + 2 < 400)
+				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y + 2, 100);
 		}
 		_screen->markAllDirty();
 		// _screen->update();
@@ -1277,7 +1344,7 @@ void PelrockEngine::frames() {
 
 void PelrockEngine::drawAlfred(byte *buf) {
 
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred, kAlfredFrameWidth, kAlfredFrameHeight, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred - kAlfredFrameHeight, kAlfredFrameWidth, kAlfredFrameHeight, 255);
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
@@ -1330,7 +1397,6 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	drawSpriteToBuffer(_compositeBuffer, 640, _popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::List<VerbIcons> availableActions = populateActionsMenu(_currentHotspot);
 
-
 	drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
 		VerbIcons verb = *i;
@@ -1346,6 +1412,39 @@ void PelrockEngine::walkTo(int x, int y) {
 	isAlfredWalking = true;
 	curAlfredFrame = 0;
 
+	PathContext context = {NULL, NULL, NULL, 0, 0, 0};
+
+	pathFind(x, y, &context);
+	debug("\nPath Information:\n");
+	debug("================\n");
+
+	debug("Walkbox path (%d boxes): ", context.path_length);
+	for (int i = 0; i < context.path_length && context.path_buffer[i] != PATH_END; i++) {
+		debug("%d ", context.path_buffer[i]);
+	}
+
+	debug("Movement steps (%d steps):\n", context.movement_count);
+	for (int i = 0; i < context.movement_count; i++) {
+		MovementStep *step = &context.movement_buffer[i];
+		debug("  Step %d: ", i);
+
+		if (step->flags & MOVE_RIGHT)
+			debug("RIGHT ");
+		if (step->flags & MOVE_LEFT)
+			debug("LEFT ");
+		if (step->flags & MOVE_DOWN)
+			debug("DOWN ");
+		if (step->flags & MOVE_UP)
+			debug("UP ");
+
+		debug("(dx=%d, dy=%d)\n", step->distance_x, step->distance_y);
+	}
+
+	debug("\nCompressed path (%d bytes): ", context.compressed_length);
+	for (int i = 0; i < context.compressed_length; i++) {
+		debug("%02X ", context.compressed_path[i]);
+	}
+
 	// if (x > xAlfred) {
 	// 	dirAlfred = RIGHT;
 	// } else if (x < xAlfred) {
@@ -1356,6 +1455,298 @@ void PelrockEngine::walkTo(int x, int y) {
 	// 	dirAlfred = DOWN;
 	// }
 	debug("Setting Alfred to walk towards (%d, %d) from (%d, %d) in direction %d", x, y, xAlfred, yAlfred, dirAlfred);
+	_currentContext = context;
+	debug("Path find complete, movement count: %d", _currentContext.movement_count);
+}
+
+bool PelrockEngine::pathFind(int x, int y, PathContext *context) {
+
+	if (context->path_buffer == NULL) {
+		context->path_buffer = (uint8_t *)malloc(MAX_PATH_LENGTH);
+	}
+	if (context->movement_buffer == NULL) {
+		context->movement_buffer = (MovementStep *)malloc(MAX_MOVEMENT_STEPS * sizeof(MovementStep));
+	}
+	// if (context->compressed_path == NULL) {
+	//     context->compressed_path = (uint8_t*)malloc(MAX_COMPRESSED_PATH);
+	// }
+
+	int startX = xAlfred;
+	int startY = yAlfred;
+	Common::Point target = calculateWalkTarget(x, y);
+	x = target.x;
+	y = target.y;
+	debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, x, y);
+
+	uint8_t start_box = find_walkbox_for_point(startX, startY);
+	uint8_t dest_box = find_walkbox_for_point(x, y);
+
+	debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n",
+		  startX, startY, start_box,
+		  x, y, dest_box);
+	// Check if both points are in valid walkboxes
+	if (start_box == 0xFF || dest_box == 0xFF) {
+		debug("Error: Start or destination not in any walkbox\n");
+		return false;
+	}
+	// Special case: same walkbox
+	if (start_box == dest_box) {
+		// Generate direct movement
+		MovementStep direct_step;
+		direct_step.flags = 0;
+		if (startX < x) {
+			direct_step.distance_x = x - startX;
+			direct_step.flags |= MOVE_RIGHT;
+		} else {
+			direct_step.distance_x = startX - x;
+			direct_step.flags |= MOVE_LEFT;
+		}
+
+		if (startY < y) {
+			direct_step.distance_y = y - startY;
+			direct_step.flags |= MOVE_DOWN;
+		} else {
+			direct_step.distance_y = startY - y;
+			direct_step.flags |= MOVE_UP;
+		}
+
+		context->movement_buffer[0] = direct_step;
+		context->movement_count = 1;
+	} else {
+		// Build walkbox path
+		context->path_length = build_walkbox_path(start_box, dest_box,
+												  context->path_buffer);
+
+		if (context->path_length == 0) {
+			debug("Error: No path found\n");
+			return false;
+		}
+
+		// Generate movement steps
+		context->movement_count = generate_movement_steps(
+			context->path_buffer,
+			context->path_length,
+			startX, startY,
+			x, y,
+			context->movement_buffer);
+	}
+	return true;
+}
+
+/**
+ * Calculate movement needed to reach a target within a walkbox
+ */
+void calculate_movement_to_target(uint16_t current_x, uint16_t current_y,
+								  uint16_t target_x, uint16_t target_y,
+								  WalkBox *box,
+								  MovementStep *step) {
+	step->flags = 0;
+	step->distance_x = 0;
+	step->distance_y = 0;
+
+	// Calculate horizontal movement
+	if (current_x < box->x) {
+		// Need to move right to enter walkbox
+		step->distance_x = box->x - current_x;
+		step->flags |= MOVE_RIGHT;
+	} else if (current_x > box->x + box->w) {
+		// Need to move left to enter walkbox
+		step->distance_x = current_x - (box->x + box->w);
+		step->flags |= MOVE_LEFT;
+	}
+
+	// Calculate vertical movement
+	if (current_y < box->y) {
+		// Need to move down to enter walkbox
+		step->distance_y = box->y - current_y;
+		step->flags |= MOVE_DOWN;
+	} else if (current_y > box->y + box->h) {
+		// Need to move up to enter walkbox
+		step->distance_y = current_y - (box->y + box->h);
+		step->flags |= MOVE_UP;
+	}
+}
+
+/**
+ * Generate movement steps from walkbox path
+ * Returns: number of movement steps generated
+ */
+uint16_t PelrockEngine::generate_movement_steps(uint8_t *path_buffer,
+												uint16_t path_length,
+												uint16_t start_x, uint16_t start_y,
+												uint16_t dest_x, uint16_t dest_y,
+												MovementStep *movement_buffer) {
+	uint16_t current_x = start_x;
+	uint16_t current_y = start_y;
+	uint16_t movement_index = 0;
+
+	// Generate movements for each walkbox in path
+	for (uint16_t i = 0; i < path_length && path_buffer[i] != PATH_END; i++) {
+		uint8_t box_index = path_buffer[i];
+		WalkBox *box = &_currentRoomWalkboxes[box_index];
+
+		MovementStep step;
+		calculate_movement_to_target(current_x, current_y,
+									 dest_x, dest_y,
+									 box, &step);
+
+		if (step.distance_x > 0 || step.distance_y > 0) {
+			movement_buffer[movement_index++] = step;
+
+			// Update current position
+			if (step.flags & MOVE_RIGHT) {
+				current_x = box->x;
+			} else if (step.flags & MOVE_LEFT) {
+				current_x = box->x + box->w;
+			}
+
+			if (step.flags & MOVE_DOWN) {
+				current_y = box->y;
+			} else if (step.flags & MOVE_UP) {
+				current_y = box->y + box->h;
+			}
+		}
+	}
+
+	// Final movement to exact destination
+	MovementStep final_step;
+	final_step.flags = 0;
+
+	if (current_x < dest_x) {
+		final_step.distance_x = dest_x - current_x;
+		final_step.flags |= MOVE_RIGHT;
+	} else if (current_x > dest_x) {
+		final_step.distance_x = current_x - dest_x;
+		final_step.flags |= MOVE_LEFT;
+	} else {
+		final_step.distance_x = 0;
+	}
+
+	if (current_y < dest_y) {
+		final_step.distance_y = dest_y - current_y;
+		final_step.flags |= MOVE_DOWN;
+	} else if (current_y > dest_y) {
+		final_step.distance_y = current_y - dest_y;
+		final_step.flags |= MOVE_UP;
+	} else {
+		final_step.distance_y = 0;
+	}
+
+	if (final_step.distance_x > 0 || final_step.distance_y > 0) {
+		movement_buffer[movement_index++] = final_step;
+	}
+
+	return movement_index;
+}
+
+uint16_t PelrockEngine::build_walkbox_path(
+	uint8_t start_box,
+	uint8_t dest_box,
+	uint8_t *path_buffer) {
+	uint16_t path_index = 0;
+	uint8_t current_box = start_box;
+
+	// Initialize path with start walkbox
+	path_buffer[path_index++] = start_box;
+
+	// Clear visited flags
+	clear_visited_flags();
+
+	// Breadth-first search through walkboxes
+	while (current_box != dest_box && path_index < MAX_PATH_LENGTH - 1) {
+		uint8_t next_box = get_adjacent_walkbox(current_box);
+
+		if (next_box == 0xFF) {
+			// Dead end - backtrack
+			if (path_index > 1) {
+				path_index--;
+				current_box = path_buffer[path_index - 1];
+			} else {
+				// No path exists
+				return 0;
+			}
+		} else if (next_box == dest_box) {
+			// Found destination
+			path_buffer[path_index++] = dest_box;
+			break;
+		} else {
+			// Continue searching
+			path_buffer[path_index++] = next_box;
+			current_box = next_box;
+		}
+	}
+
+	// Terminate path
+	path_buffer[path_index] = PATH_END;
+
+	return path_index;
+}
+
+void PelrockEngine::clear_visited_flags() {
+	for (int i = 0; i < _currentRoomWalkboxes.size(); i++) {
+		_currentRoomWalkboxes[i].flags = 0;
+	}
+}
+
+/**
+ * Check if two walkboxes overlap or touch (are adjacent)
+ */
+bool walkboxes_adjacent(WalkBox *box1, WalkBox *box2) {
+	uint16_t box1_x_max = box1->x + box1->w;
+	uint16_t box1_y_max = box1->y + box1->h;
+	uint16_t box2_x_max = box2->x + box2->w;
+	uint16_t box2_y_max = box2->y + box2->h;
+
+	// Check if X ranges overlap
+	bool x_overlap = (box1->x <= box2_x_max) && (box2->x <= box1_x_max);
+
+	// Check if Y ranges overlap
+	bool y_overlap = (box1->y <= box2_y_max) && (box2->y <= box1_y_max);
+
+	return x_overlap && y_overlap;
+}
+
+uint8_t PelrockEngine::get_adjacent_walkbox(uint8_t current_box_index) {
+	WalkBox *current_box = &_currentRoomWalkboxes[current_box_index];
+
+	// Mark current walkbox as visited
+	current_box->flags = 0x01;
+
+	// Search for adjacent unvisited walkbox
+	for (uint8_t i = 0; i < _currentRoomWalkboxes.size(); i++) {
+		// Skip current walkbox
+		if (i == current_box_index) {
+			continue;
+		}
+
+		// Skip already visited walkboxes
+		if (_currentRoomWalkboxes[i].flags == 0x01) {
+			continue;
+		}
+
+		// Check if walkboxes are adjacent
+		if (walkboxes_adjacent(current_box, &_currentRoomWalkboxes[i])) {
+			return i;
+		}
+	}
+
+	return 0xFF; // No adjacent walkbox found
+}
+
+bool PelrockEngine::point_in_walkbox(WalkBox *box, uint16_t x, uint16_t y) {
+	return (x >= box->x &&
+			x <= box->x + box->w &&
+			y >= box->y &&
+			y <= box->y + box->h);
+}
+
+uint8_t PelrockEngine::find_walkbox_for_point(uint16_t x, uint16_t y) {
+	for (uint8_t i = 0; i < _currentRoomWalkboxes.size(); i++) {
+		if (point_in_walkbox(&_currentRoomWalkboxes[i], x, y)) {
+			return i;
+		}
+	}
+	return 0xFF; // Not found
 }
 
 void PelrockEngine::checkMouseClick(int x, int y) {
@@ -1363,17 +1754,17 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_displayPopup = false;
 	_currentHotspot = nullptr;
 
-
 	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
-	walkTo(walkTarget.x, walkTarget.y);
 	_curWalkTarget = walkTarget;
 	debug("Calculated walk target at (%d, %d)", walkTarget.x, walkTarget.y);
 	Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
 
 	if (exit != nullptr) {
 		xAlfred = exit->targetX;
-		yAlfred = exit->targetY - kAlfredFrameHeight;
+		yAlfred = exit->targetY;
 		setScreen(exit->targetRoom, exit->dir);
+	} else {
+		walkTo(walkTarget.x, walkTarget.y);
 	}
 
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
@@ -1381,8 +1772,6 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		talk();
 		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
 	}
-
-
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -1430,26 +1819,27 @@ Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
 	uint32 minDistance = 0xFFFFFFFF;
 	Common::Point bestTarget(sourceX, sourceY);
 
-	for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
-		 it != _currentRoomWalkboxes.end(); ++it) {
+	// for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
+	//  it != _currentRoomWalkboxes.end(); ++it) {
+	for (size_t i = 0; i < _currentRoomWalkboxes.size(); i++) {
 
 		// Calculate distance from source point to this walkbox (Manhattan distance)
 		int dx = 0;
 		int dy = 0;
 
 		// Calculate horizontal distance
-		if (sourceX < it->x) {
-			dx = it->x - sourceX;
-		} else if (sourceX > it->x + it->w) {
-			dx = sourceX - (it->x + it->w);
+		if (sourceX < _currentRoomWalkboxes[i].x) {
+			dx = _currentRoomWalkboxes[i].x - sourceX;
+		} else if (sourceX > _currentRoomWalkboxes[i].x + _currentRoomWalkboxes[i].w) {
+			dx = sourceX - (_currentRoomWalkboxes[i].x + _currentRoomWalkboxes[i].w);
 		}
 		// else: sourceX is inside walkbox horizontally, dx = 0
 
 		// Calculate vertical distance
-		if (sourceY < it->y) {
-			dy = it->y - sourceY;
-		} else if (sourceY > it->y + it->h) {
-			dy = sourceY - (it->y + it->h);
+		if (sourceY < _currentRoomWalkboxes[i].y) {
+			dy = _currentRoomWalkboxes[i].y - sourceY;
+		} else if (sourceY > _currentRoomWalkboxes[i].y + _currentRoomWalkboxes[i].h) {
+			dy = sourceY - (_currentRoomWalkboxes[i].y + _currentRoomWalkboxes[i].h);
 		}
 		// else: sourceY is inside walkbox vertically, dy = 0
 
@@ -1462,16 +1852,16 @@ Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
 			int targetX = sourceX;
 			int targetY = sourceY;
 
-			if (sourceX < it->x) {
-				targetX = it->x;
-			} else if (sourceX > it->x + it->w) {
-				targetX = it->x + it->w;
+			if (sourceX < _currentRoomWalkboxes[i].x) {
+				targetX = _currentRoomWalkboxes[i].x;
+			} else if (sourceX > _currentRoomWalkboxes[i].x + _currentRoomWalkboxes[i].w) {
+				targetX = _currentRoomWalkboxes[i].x + _currentRoomWalkboxes[i].w;
 			}
 
-			if (sourceY < it->y) {
-				targetY = it->y;
-			} else if (sourceY > it->y + it->h) {
-				targetY = it->y + it->h;
+			if (sourceY < _currentRoomWalkboxes[i].y) {
+				targetY = _currentRoomWalkboxes[i].y;
+			} else if (sourceY > _currentRoomWalkboxes[i].y + _currentRoomWalkboxes[i].h) {
+				targetY = _currentRoomWalkboxes[i].y + _currentRoomWalkboxes[i].h;
 			}
 
 			bestTarget.x = targetX;

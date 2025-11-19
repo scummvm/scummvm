@@ -21,9 +21,9 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
-#include "common/types.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/types.h"
 
 namespace Pelrock {
 
@@ -53,13 +53,12 @@ enum VerbIcons {
 // 	HOSTPOT,
 // 	SPECIAl;
 
-
 // };
 
 static const uint32 kLongClickDuration = 500; // 500ms for long click
 const int kCursorWidth = 16;
 const int kCursorHeight = 18;
-const int kCursorSize = 288;  // 16 * 18
+const int kCursorSize = 288; // 16 * 18
 const int kRoomStructSize = 104;
 const int kNumRooms = 56;
 const int kVerbIconWidth = 60;
@@ -68,6 +67,35 @@ const int kNumVerbIcons = 9;
 const int kBalloonWidth = 247;
 const int kBalloonHeight = 112;
 const int kBalloonFrames = 4;
+
+// Direction flags (bit-packed)
+#define MOVE_RIGHT 0x01 // Move right (positive X)
+#define MOVE_LEFT 0x02  // Move left (negative X)
+#define MOVE_HORIZ 0x03 // Horizontal movement mask
+#define MOVE_DOWN 0x04  // Move down (positive Y)
+#define MOVE_UP 0x08    // Move up (negative Y)
+#define MOVE_VERT 0x0C  // Vertical movement mask
+#define MAX_PATH_LENGTH 100
+#define MAX_MOVEMENT_STEPS 100 // 500 bytes / 5 bytes per step
+#define PATH_END 0xFF          // End of path marker
+
+typedef struct {
+	uint8_t flags;       // Direction flags (see MOVE_* constants)
+	uint16_t distance_x; // Horizontal distance to move
+	uint16_t distance_y; // Vertical distance to move
+} MovementStep;
+
+/**
+ * Pathfinding context
+ */
+typedef struct {
+	uint8_t *path_buffer;          // Sequence of walkbox indices
+	MovementStep *movement_buffer; // Array of movement steps
+	uint8_t *compressed_path;      // Final compressed path
+	uint16_t path_length;
+	uint16_t movement_count;
+	uint16_t compressed_length;
+} PathContext;
 
 struct Anim {
 	int x;
@@ -98,19 +126,18 @@ struct Exit {
 
 struct AnimSet {
 	byte type;
-	int x; //0
-	int y;//2
-	int w;//4
-	int h;//5
-	byte extra; //6
-	int numAnims; //8
+	int x;        // 0
+	int y;        // 2
+	int w;        // 4
+	int h;        // 5
+	byte extra;   // 6
+	int numAnims; // 8
 	int curAnimIndex = 0;
-	byte spriteType; //33
-	byte actionFlags;//34
-	bool isDisabled; //38
+	byte spriteType;  // 33
+	byte actionFlags; // 34
+	bool isDisabled;  // 38
 	Anim *animData;
 };
-
 
 struct HotSpot {
 	int id;
@@ -124,46 +151,45 @@ struct HotSpot {
 };
 
 struct ConversationElement {
-    enum Type {
-        DIALOGUE,
-        CHOICE_MARKER,
-        END_CONV,
-        END_BRANCH
-    } type;
+	enum Type {
+		DIALOGUE,
+		CHOICE_MARKER,
+		END_CONV,
+		END_BRANCH
+	} type;
 
-    Common::String speaker;
+	Common::String speaker;
 	byte speakerId;
-    Common::String text;
-    int choiceIndex;
-    bool isRealChoice;
+	Common::String text;
+	int choiceIndex;
+	bool isRealChoice;
 
-    ConversationElement() : type(DIALOGUE), choiceIndex(-1), isRealChoice(false) {}
+	ConversationElement() : type(DIALOGUE), choiceIndex(-1), isRealChoice(false) {}
 };
 
-
 struct ConversationNode {
-    enum NodeType {
-        ROOT,
-        CHOICE,
-        RESPONSE
-    } type;
+	enum NodeType {
+		ROOT,
+		CHOICE,
+		RESPONSE
+	} type;
 
-    Common::String text;
-    Common::String speaker;
+	Common::String text;
+	Common::String speaker;
 	byte speakerId;
-    int choiceIndex;
-    bool terminated;
+	int choiceIndex;
+	bool terminated;
 
-    Common::Array<ConversationNode> choices;
-    Common::Array<ConversationNode> responses;
-    Common::Array<ConversationNode> subchoices;
+	Common::Array<ConversationNode> choices;
+	Common::Array<ConversationNode> responses;
+	Common::Array<ConversationNode> subchoices;
 
-    ConversationNode() : type(ROOT), choiceIndex(-1), terminated(false) {}
+	ConversationNode() : type(ROOT), choiceIndex(-1), terminated(false) {}
 };
 
 struct StackEntry {
-    ConversationNode *node;
-    int index;
+	ConversationNode *node;
+	int index;
 };
 
 struct Description {
