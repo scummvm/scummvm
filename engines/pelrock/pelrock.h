@@ -75,6 +75,8 @@ private:
 	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
 	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 
+	void walkTo(int x, int y);
+
 	void talk();
 	Common::String getControlName(byte b);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
@@ -151,6 +153,10 @@ private:
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
+
+
+	Common::Point _curWalkTarget;
+
 
 	bool shouldPlayIntro = false;
 	GameState stateGame = GAME;
