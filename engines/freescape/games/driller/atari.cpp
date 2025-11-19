@@ -42,7 +42,7 @@ Common::SeekableReadStream *DrillerEngine::decryptFileAtariVirtualWorlds(const C
 	int chunk_size = 0;
 
 	while (true) {
-		byte *found = (byte *)memmem(data + start, size - start, "CBCP", 4);
+		byte *found = nullptr;//(byte *)memmem(data + start, size - start, "CBCP", 4);	// FIXME: memmem() is non-standard
 		if (!found) break;
 
 		int idx = found - data;
