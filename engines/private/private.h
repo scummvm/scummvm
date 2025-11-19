@@ -400,7 +400,6 @@ public:
 	void checkPhoneCall();
 
 	// Safe
-	uint32 _safeColor;
 	Common::String _safeNumberPath;
 	MaskInfo _safeDigitArea[3];
 	Common::Rect _safeDigitRect[3];
@@ -408,7 +407,6 @@ public:
 	void initializeWallSafeValue();
 	bool selectSafeDigit(Common::Point);
 	void addSafeDigit(uint32, Common::Rect*);
-	void renderSafeDigit(uint32);
 	int getSafeDigit(uint32 d);
 	void incrementSafeDigit(uint32 d);
 
