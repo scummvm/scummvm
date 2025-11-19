@@ -152,6 +152,7 @@ Common::Error PelrockEngine::run() {
 		}
 		checkMouseHover();
 		frames();
+
 		_screen->update();
 		// limiter.delayBeforeSwap();
 		// limiter.startFrame();
@@ -177,7 +178,7 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, 2);
+		setScreen(0, 1);
 		// setScreen(2, 2);
 		// setScreen(28, 0);
 	}
@@ -888,7 +889,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	}
 
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
-	Common::List<Exit> exits = loadExits(roomFile, roomOffset);
+	Common::Array<Exit> exits = loadExits(roomFile, roomOffset);
 
 	Common::Array<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
@@ -908,17 +909,12 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
-		// debug("Hotspot %d: x=%d y=%d w=%d h=%d type=%d enabled? %d extra=%d, desc=%s", i, hotspot.x, hotspot.y, hotspot.w, hotspot.h, hotspot.type, hotspot.isEnabled, hotspot.extra, _currentRoomDescriptions[i].text.c_str());
-		// drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
+		drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
 	}
 
-	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
-		// debug("Exit: x=%d y=%d w=%d h=%d to room %d", i->x, i->y, i->w, i->h, i->targetRoom);
-		// _screen->fillRect(Common::Rect(i->x, i->y, i->x + i->w, i->y + i->h), 255);
-		// _screen->drawLine(i->x, i->y, i->x + i->w, i->y, 0);
-		// _screen->drawLine(i->x, i->y + i->h, i->x + i->w, i->y + i->h, 0);
-		// _screen->drawLine(i->x, i->y, i->x, i->y + i->h, 0);
-		// _screen->drawLine(i->x + i->w, i->y, i->x + i->w, i->y + i->h);
+	for (int i = 0; i < _currentRoomExits.size(); i++) {
+		Exit exit = _currentRoomExits[i];
+		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
 	}
 }
 
@@ -970,8 +966,8 @@ void PelrockEngine::loadInteractionIcons() {
 	alfred4File.close();
 }
 
-Common::List<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffset) {
-	Common::List<Exit> exits;
+Common::Array<Exit> PelrockEngine::loadExits(Common::File *roomFile, int roomOffset) {
+	Common::Array<Exit> exits;
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
 	uint32_t pair10_data_offset = roomFile->readUint32LE();
@@ -1216,7 +1212,7 @@ void PelrockEngine::frames() {
 		}
 
 		if (isAlfredWalking) {
-			debug("Alfred is walking, current step %d of %d", _current_step, _currentContext.movement_count);
+
 			MovementStep step = _currentContext.movement_buffer[_current_step];
 			debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
 
@@ -1258,25 +1254,24 @@ void PelrockEngine::frames() {
 			} else {
 				_currentContext.movement_buffer[_current_step] = step;
 			}
-			// _current_step++;
-			// if(_current_step >= _currentContext.movement_count) {
-			// 	debug("Alfred reached his walk target.");
-			// 	_current_step = 0;
-			// 	isAlfredWalking = false;
-			// }
-			// if (step->flags & MOVE_RIGHT) printf("RIGHT ");
-			// if (step->flags & MOVE_LEFT) printf("LEFT ");
-			// if (step->flags & MOVE_DOWN) printf("DOWN ");
-			// if (step->flags & MOVE_UP) printf("UP ");
 
-			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
-			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
+			Exit *exit = isExitUnder(xAlfred, yAlfred);
 
-			if (curAlfredFrame < walkingAnimLengths[dirAlfred] - 1) {
-				curAlfredFrame++;
-			} else {
+			if (exit != nullptr) {
+				xAlfred = exit->targetX;
+				yAlfred = exit->targetY;
+				setScreen(exit->targetRoom, exit->dir);
+			}
+
+			debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
+
+			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
 				curAlfredFrame = 0;
 			}
+
+			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
+
 			// debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
 		} else if (isAlfredTalking) {
 			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
@@ -1383,10 +1378,11 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 }
 
 Exit *PelrockEngine::isExitUnder(int x, int y) {
-	for (Common::List<Exit>::iterator i = _currentRoomExits.begin(); i != _currentRoomExits.end(); i++) {
-		if (x >= i->x && x <= (i->x + i->w) &&
-			y >= i->y && y <= (i->y + i->h)) {
-			return &(*i);
+	for (int i = 0; i < _currentRoomExits.size(); i++) {
+		Exit exit = _currentRoomExits[i];
+		if (x >= exit.x && x <= (exit.x + exit.w) &&
+			y >= exit.y && y <= (exit.y + exit.h)) {
+			return &(_currentRoomExits[i]);
 		}
 	}
 	return nullptr;
@@ -1756,22 +1752,22 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
 	_curWalkTarget = walkTarget;
-	debug("Calculated walk target at (%d, %d)", walkTarget.x, walkTarget.y);
-	Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
+	// debug("Calculated walk target at (%d, %d)", walkTarget.x, walkTarget.y);
+	// Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
 
-	if (exit != nullptr) {
+	/*if (exit != nullptr) {
 		xAlfred = exit->targetX;
 		yAlfred = exit->targetY;
 		setScreen(exit->targetRoom, exit->dir);
-	} else {
-		walkTo(walkTarget.x, walkTarget.y);
-	}
+	} else {*/
+	walkTo(walkTarget.x, walkTarget.y);
+	/*	} */
 
-	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-	if (hotspotIndex != -1) {
-		talk();
-		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
-	}
+	// int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+	// if (hotspotIndex != -1) {
+	// 	talk();
+	// 	debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
+	// }
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -1786,7 +1782,7 @@ void PelrockEngine::checkMouseHover() {
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;
-	Exit *exit = isExitAtPoint(walkTarget.x, walkTarget.y);
+	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
 	if (exit != nullptr) {
 		exitDetected = true;
 	}
@@ -1872,18 +1868,6 @@ Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
 	return bestTarget;
 }
 
-Exit *PelrockEngine::isExitAtPoint(int x, int y) {
-	for (Common::List<Exit>::iterator i = _currentRoomExits.begin();
-		 i != _currentRoomExits.end(); ++i) {
-		// Check if point is inside exit trigger rectangle
-		if (x >= i->x && x <= (i->x + i->w) &&
-			y >= i->y && y <= (i->y + i->h)) {
-			return &(*i);
-		}
-	}
-	return nullptr;
-}
-
 void PelrockEngine::showDescription(Common::String text, int x, int y, byte color) {
 	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
 	if (x + 2 + rect.width() > 640) {
@@ -1931,7 +1915,9 @@ void PelrockEngine::setScreen(int number, int dir) {
 		return;
 	}
 	dirAlfred = dir;
-
+	isAlfredWalking = false;
+	isAlfredTalking = false;
+	_current_step = 0;
 	int roomOffset = number * kRoomStructSize;
 	curAlfredFrame = 0;
 	byte *palette = new byte[256 * 3];

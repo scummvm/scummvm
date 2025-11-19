@@ -66,7 +66,7 @@ private:
 	void loadAlfredAnims();
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
-	Common::List<Exit> loadExits(Common::File *roomFile, int roomOffset);
+	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
 
@@ -98,7 +98,6 @@ private:
 
 	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
-	Exit *isExitAtPoint(int x, int y);
 	void showDescription(Common::String text, int x, int y, byte color);
 
 	// render loop
@@ -128,15 +127,15 @@ private:
 
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<AnimSet> _currentRoomAnims;
-	Common::List<Exit> _currentRoomExits;
+	Common::Array<Exit> _currentRoomExits;
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
 	Common::Array<ConversationNode> _currentRoomConversations;
 
 	int *_currentAnimFrames = nullptr;
 	// From the original code
-	int xAlfred = 200;
-	int yAlfred = 200;
+	int xAlfred = 319;
+	int yAlfred = 302;
 	int dirAlfred = 0;
 	int curAlfredFrame = 0;
 	bool isAlfredWalking = false;
