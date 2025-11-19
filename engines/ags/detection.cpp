@@ -22,6 +22,7 @@
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/formats/winexe_pe.h"
 #include "common/md5.h"
 #include "common/str-array.h"
 #include "common/util.h"
@@ -174,6 +175,24 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 				}
 			}
 
+			if (hasUnknownFiles && filename.baseName().hasSuffixIgnoreCase(".exe")) {
+				Common::PEResources *exeResources = new Common::PEResources();
+				f.seek(0);
+				if (exeResources->loadFromEXE(&f)) {
+					const Common::Array<Common::WinResourceID> versions = exeResources->getIDList(Common::kWinVersion);
+					for (uint i = 0; i < versions.size(); i++) {
+						Common::WinResources::VersionInfo *info = exeResources->getVersionResource(versions[i]);
+						if (info) {
+							Common::String fileDesc = info->hash["FileDescription"].encode();
+							_extra = fileDesc;
+							_gameid = AdvancedMetaEngineDetectionBase::sanitizeName(fileDesc.c_str(), fileDesc.size());
+							AGS::g_fallbackDesc.desc.flags |= ADGF_USEEXTRAASTITLE;
+							AGS::g_fallbackDesc.desc.platform = Common::kPlatformWindows;
+							break;
+						}
+					}
+				}
+			}
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 
