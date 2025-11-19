@@ -228,6 +228,36 @@ const uint16 Q[] = {
 	0x4DF,
 };
 
+struct Quantisation {
+	int quantY[64];
+	int quantCbCr[64];
+
+	Quantisation(int quality) {
+		for (uint i = 0; i != 64; ++i) {
+			auto v = (QY[i] * quality + 50) / 100;
+			if (v > 255)
+				v = 255;
+			else if (v < 8) {
+				v = 8;
+			}
+			v *= Q[i];
+			v >>= 13;
+			quantY[i] = v;
+		}
+		for (uint i = 0; i != 64; ++i) {
+			auto v = (QUV[i] * quality + 50) / 100;
+			if (v > 255)
+				v = 255;
+			else if (v < 8) {
+				v = 8;
+			}
+			v *= Q[i];
+			v >>= 13;
+			quantCbCr[i] = v;
+		}
+	}
+};
+
 struct HuffChar {
 	short next;
 	short falseIdx;
@@ -356,6 +386,7 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 }
 
 void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
+	Quantisation quant(quality);
 	auto decoded = unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
@@ -364,25 +395,13 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	const uint planeSize = planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
-	auto iquant = [&](uint channel, int idx) {
-		int v = ((channel == 0 ? QY : QUV)[idx] * quality + 50) / 100;
-		if (v > 255)
-			v = 255;
-		else if (v < 8) {
-			v = 8;
-		}
-
-		v *= Q[idx];
-		v >>= 13;
-		return v;
-	};
-
 	BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
 		float ac[64] = {};
-		ac[0] = 1.0f * iquant(channel, 0) * dcBs.readUInt(8);
+		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
+		ac[0] = 1.0f * iquant[0] * dcBs.readUInt(8);
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
@@ -395,7 +414,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 				idx += h;
 				if (l && idx < 64) {
 					auto ac_idx = ZIGZAG[idx];
-					ac[ac_idx] = 1.0f * iquant(channel, ac_idx) * acBs.readInt(l);
+					ac[ac_idx] = 1.0f * iquant[ac_idx] * acBs.readInt(l);
 					++idx;
 				}
 			}
