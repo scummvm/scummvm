@@ -773,7 +773,7 @@ void Score::update() {
 	bool sound1Changed = true;
 	bool sound2Changed = true;
 
-	if (!_firstRun) {
+	if (_version >= kFileVer600 && !_firstRun) {
 		// We check if the sound channels have changed, and only restart
 		// the sound if they have. Even if the sound was stopped
 		//
