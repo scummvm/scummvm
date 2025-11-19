@@ -400,8 +400,9 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
 		float ac[64] = {};
+		byte dc8 = dcBs.readUInt(8) - 128;
 		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
-		ac[0] = 1.0f * iquant[0] * dcBs.readUInt(8);
+		ac[0] = 1.0f * iquant[0] * (int)dc8;
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
