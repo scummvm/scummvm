@@ -1129,7 +1129,12 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 
 	if (inMask(_phoneArea.surf, mousePos)) {
 		const PhoneInfo &i = _phone.front();
-		setSymbol(i.flag, i.val);
+		// -100 indicates that the variable should be decremented
+		if (i.val == -100) {
+			setSymbol(i.flag, i.flag->u.val - 1);
+		} else {
+			setSymbol(i.flag, i.val);
+		}
 		Common::String sound = _phonePrefix + i.sound + ".wav";
 		playSound(sound, 1, true, false);
 		_phone.pop_front();
