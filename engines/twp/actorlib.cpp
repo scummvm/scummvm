@@ -867,9 +867,8 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 		for (int i = 0; i < numIds; i++) {
 			if (sq_gettype(v, index + i) != OT_NULL) {
 				Common::String text;
-				if (SQ_FAILED(sqget(v, index + i, text)))
-					return sq_throwerror(v, "failed to get text");
-				texts.push_back(text);
+				if (SQ_SUCCEEDED(sqget(v, index + i, text)))
+					texts.push_back(text);
 			}
 		}
 	}
