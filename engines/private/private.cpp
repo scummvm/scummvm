@@ -70,6 +70,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_modified = false;
 	_mode = -1;
 	_toTake = false;
+	_haveTakenItem = false;
 
 	// Movies
 	_nextMovie = "";
@@ -878,6 +879,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 					setSymbol(m.flag1, 1);
 					playSound(getTakeSound(), 1, false, false);
 					_toTake = false;
+					_haveTakenItem = true;
 				}
 			}
 
@@ -1392,6 +1394,8 @@ void PrivateEngine::restartGame() {
 		sym->u.val = 0;
 	}
 	inventory.clear();
+	_toTake = false;
+	_haveTakenItem = false;
 	_dossiers.clear();
 	_diaryPages.clear();
 
@@ -1444,6 +1448,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	for (uint32 i = 0; i < size; ++i) {
 		inventory.push_back(stream->readString());
 	}
+	_haveTakenItem = (inventory.size() > 1); // TODO: include this in save format
 
 	// Diary pages
 	_diaryPages.clear();
@@ -2232,8 +2237,18 @@ Common::String PrivateEngine::getTakeSound() {
 	if (isDemo())
 		return (_globalAudioPath + "mvo007.wav");
 
-	uint r = _rnd->getRandomNumber(4) + 1;
-	return Common::String::format("%stook%d.wav", _globalAudioPath.c_str(), r);
+	// Only the first four sounds are available when taking the first item.
+	const char *sounds[7] = {
+		"mvo007.wav",
+		"mvo003.wav",
+		"took1.wav",
+		"took2.wav",
+		"took3.wav",
+		"took4.wav",
+		"took5.wav"
+	};
+	uint r = _rnd->getRandomNumber(_haveTakenItem ? 6 : 3);
+	return _globalAudioPath + sounds[r];
 }
 
 Common::String PrivateEngine::getTakeLeaveSound() {
