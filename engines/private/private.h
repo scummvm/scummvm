@@ -302,6 +302,8 @@ public:
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
 	Common::String getWallSafeValueVariable();
+	Common::String getBeenDowntownVariable();
+	Common::String getPoliceStationLocation();
 	const char *getSymbolName(const char *name, const char *strippedName, const char *demoName = nullptr);
 
 	// movies
