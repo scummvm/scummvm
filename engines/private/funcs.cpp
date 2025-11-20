@@ -59,6 +59,14 @@ static void fChgMode(ArgArray args) {
 			int maxLocationValue = g_private->getMaxLocationValue();
 			setSymbol(location, maxLocationValue + 1);
 		}
+		// set a game flag when visiting the police station.
+		if (!g_private->isDemo()) {
+			if (*(args[2].u.sym->name) == g_private->getPoliceStationLocation()) {
+				Common::String beenDowntownName = g_private->getBeenDowntownVariable();
+				Symbol *beenDowntown = g_private->maps.lookupVariable(&beenDowntownName);
+				setSymbol(beenDowntown, 1);
+			}
+		}
 	}
 
 	if (g_private->_mode == 0) {
