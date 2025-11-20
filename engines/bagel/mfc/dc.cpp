@@ -1076,7 +1076,9 @@ uint32 *CDC::Impl::getPaletteMap(const CDC::Impl *srcImpl) {
 		destPal = dynamic_cast<Graphics::Palette *>(_palette);
 	}
 
-	assert(srcPal && destPal && srcPal->size() == destPal->size());
+	if (!srcPal || srcPal->empty() || !destPal || destPal->empty())
+		return nullptr;
+	assert(srcPal->size() == destPal->size());
 
 	// Create the map
 	Graphics::PaletteLookup palLookup(destPal->data(), destPal->size());
