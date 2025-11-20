@@ -1081,6 +1081,31 @@ bool PrivateEngine::inInventory(const Common::String &bmp) const {
 	return false;
 }
 
+void PrivateEngine::removeRandomInventory() {
+	// This logic was extracted from the executable.
+	// Examples:
+	//   0-3 items:  0 items removed
+	//   4-6 items:  1 item removed
+	//   7-10 items: 2 items removed
+	//
+	// TODO: Clear the inventory flag for the item.
+	// We are currently only removing items from the diary. We need to also
+	// remove them from Marlowe's inventory by clearing their item flag.
+	// We can do this once item flags are stored and included in save files.
+	uint numberOfItemsToRemove = (inventory.size() * 30) / 100;
+	for (uint i = 0; i < numberOfItemsToRemove; i++) {
+		uint indexToRemove = _rnd->getRandomNumber(inventory.size() - 1);
+		uint index = 0;
+		for (InvList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
+			if (index == indexToRemove) {
+				inventory.erase(it);
+				break;
+			}
+			index++;
+		}
+	}
+}
+
 void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 	if (_AMRadioArea.surf == nullptr)
 		return;

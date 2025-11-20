@@ -335,6 +335,7 @@ public:
 	// Diary
 	InvList inventory;
 	bool inInventory(const Common::String &bmp) const;
+	void removeRandomInventory();
 	Common::String _diaryLocPrefix;
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);

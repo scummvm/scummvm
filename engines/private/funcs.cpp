@@ -359,8 +359,9 @@ static void fNoStopSounds(ArgArray args) {
 
 static void fLoseInventory(ArgArray args) {
 	assert(args.size() == 0);
-	debugC(1, kPrivateDebugScript, "LoveInventory()");
-	g_private->inventory.clear();
+	debugC(1, kPrivateDebugScript, "LoseInventory()");
+
+	g_private->removeRandomInventory();
 }
 
 static void fInventory(ArgArray args) {
