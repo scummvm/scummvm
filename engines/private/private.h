@@ -341,6 +341,7 @@ public:
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
 	bool _toTake;
+	bool _haveTakenItem;
 	DiaryPages _diaryPages;
 	int _currentDiaryPage;
 	ExitInfo _diaryNextPageExit;
