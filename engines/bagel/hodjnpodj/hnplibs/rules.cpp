@@ -258,16 +258,17 @@ void CRules::OnDestroy() {
 	//if (hNewCursor != nullptr);
 	SetCursor(hNewCursor);
 
-	if (pNarrative != nullptr)                         // end the narration
-		delete pNarrative;
-
-	if (pOKButton != nullptr)                          // release the button
-		delete pOKButton;
-
-	delete pFont;                                   // release the font file
+	// Free the objects
+	delete pNarrative;
+	pNarrative = nullptr;
+	delete pOKButton;
+	pOKButton = nullptr;
+	delete pFont;
+	pFont = nullptr;
 
 	(*pHelpFile).Close();                           // close and release the rules file
 	delete pHelpFile;
+	pHelpFile = nullptr;
 
 	if (pBackgroundBitmap != nullptr) {
 		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
