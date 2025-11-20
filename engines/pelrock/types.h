@@ -47,14 +47,6 @@ enum VerbIcons {
 	UNKNOWN
 };
 
-// enum HoverState {
-// 	NONE,
-// 	INTERACTIVE,
-// 	HOSTPOT,
-// 	SPECIAl;
-
-// };
-
 static const uint32 kLongClickDuration = 500; // 500ms for long click
 const int kCursorWidth = 16;
 const int kCursorHeight = 18;
@@ -67,6 +59,7 @@ const int kNumVerbIcons = 9;
 const int kBalloonWidth = 247;
 const int kBalloonHeight = 112;
 const int kBalloonFrames = 4;
+const int kTextCharDisplayTime = 100; // 10ms per character
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -79,8 +72,22 @@ const int kBalloonFrames = 4;
 #define MAX_MOVEMENT_STEPS 100 // 500 bytes / 5 bytes per step
 #define PATH_END 0xFF          // End of path marker
 
+#define MAX_CHARS_PER_LINE 0x2F // 47 characters
+#define MAX_LINES 5             // Maximum number of lines per page (0-indexed check against 4)
+
+// Control character codes (negative values in signed char)
+#define CHAR_SPACE 0x20        /* ' ' */
+#define CHAR_END_MARKER_1 0xFD /* -3 (end of text marker) */
+#define CHAR_END_MARKER_2 0xF4 /* -0xC (alternate end marker) */
+#define CHAR_END_MARKER_3 0xF8 /* -8 (another end marker) */
+#define CHAR_END_MARKER_4 0xF0 /* -0x10 (another end marker) */
+#define CHAR_NEWLINE 0xF6      /* -10 (newline marker) */
+#define CHAR_PAGE_BREAK 0xF9   /* marker inserted when switching pages */
+
+#define ALFRED_COLOR 0x0D
+
 typedef struct {
-	uint8_t flags;       // Direction flags (see MOVE_* constants)
+	uint8_t flags;       /* Direction flags (see MOVE_* constants) */
 	uint16_t distance_x; // Horizontal distance to move
 	uint16_t distance_y; // Vertical distance to move
 } MovementStep;
@@ -216,24 +223,6 @@ enum GameState {
 	INTRO = 106,
 	PROMOTE = 107,
 };
-
-// enum ConversationMarkers : byte {
-//     END_LINE(0xFD),
-//     TEXT_TERM(0xFC),
-// 	CHOICE(0xFB),
-// 	SKIP(0xFA),
-// 	PAGE_BREAK(0xF9),
-// 	ACTION(0xF8),
-// 	END_BRANCH(0xF7),
-// 	LINE_CONT(0xF6),
-// 	END_BRANCH_2(0xF5),
-// 	END_CONV(0xF4),
-// 	GO_BACK(0xF0),
-// 	END_BRANCH_3(0xFE),
-// 	END_ALT(0xEB),
-// 	DESC_START(0xFF),
-// 	SPEAKER(0x08)
-// };
 
 } // End of namespace Pelrock
 

@@ -44,6 +44,7 @@ public:
 
 	bool _gameTick = false;
 	bool _gameTickHalfSpeed = false;
+	long _textTtl = 0;
 };
 
 } // End of namespace Pelrock

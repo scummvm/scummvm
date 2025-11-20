@@ -91,7 +91,7 @@ void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byt
 	surface->drawLine(x, y, x, y + h, color);
 	surface->drawLine(x + w, y, x + w, y + h, color);
 }
-
+Common::Array<Common::Array<Common::String> > wordWrap(Common::String text);
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
@@ -348,21 +348,6 @@ Common::Array<AnimSet> PelrockEngine::loadRoomAnimations(Common::File *roomFile,
 		}
 
 		anims.push_back(animSet);
-
-		// if (w > 0 && h > 0 && frames > 0) {
-		// 	AnimSet anim;
-		// 	anim.x = x;
-		// 	anim.y = y;
-		// 	anim.w = w;
-		// 	anim.h = h;
-		// 	anim.numAnims = frames;
-		// 	uint32_t needed = anim.w * anim.h * anim.nframes;
-		// 	anim.animData = new byte[needed];
-		// 	Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
-		// 	picOffset += needed;
-		// 	debug("Anim %d: x=%d y=%d w=%d h=%d nframes=%d", i, anim.x, anim.y, anim.w, anim.h, anim.nframes);
-		// 	anims.push_back(anim);
-		// }
 	}
 	return anims;
 }
@@ -448,21 +433,6 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 	return descriptions;
 }
 
-/**
- * def decode_byte(b):
-	"""Decode a byte to character"""
-	special = {
-		0x80: 'ñ', 0x81: 'í', 0x82: '¡', 0x83: '¿', 0x84: 'ú',
-		0x7B: 'á', 0x7C: 'é', 0x7D: 'í', 0x7E: 'ó', 0x7F: 'ú',
-	}
-
-	if b in special:
-		return special[b]
-	elif 0x20 <= b <= 0x7A:
-		return chr(b)
-	else:
-		return f'[{b:02X}]'
- */
 char32_t decodeByte(byte b) {
 	if (b == 0x80) {
 		return '\xA4';
@@ -1242,6 +1212,7 @@ void PelrockEngine::frames() {
 
 			if (step.distance_y > 0)
 				step.distance_y -= MIN((uint16_t)6, step.distance_y);
+
 			debug("Alfred position after step: x=%d, y=%d, step distance_x=%d, step distance_y=%d", xAlfred, yAlfred, step.distance_x, step.distance_y);
 			if (step.distance_x <= 0 && step.distance_y <= 0) {
 				debug("Alfred completed step %d", _current_step);
@@ -1272,16 +1243,12 @@ void PelrockEngine::frames() {
 			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
 			curAlfredFrame++;
 
-			// debug("CurAlfredFrame from walking is now %d", curAlfredFrame);
 		} else if (isAlfredTalking) {
-			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
-
-			if (curAlfredFrame < talkingAnimLengths[dirAlfred] - 1) {
-				curAlfredFrame++;
-			} else {
+			if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame = 0;
 			}
-			debug("CurAlfredFrame from talking is now %d", curAlfredFrame);
+			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
 		} else {
 			drawAlfred(standingAnimFrames[dirAlfred]);
 		}
@@ -1307,6 +1274,26 @@ void PelrockEngine::frames() {
 		}
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+
+		if (!_currentTextPages.empty()) {
+			// debug("Will render text, _chronoManager->_textTtl=%d", _chronoManager->_textTtl);
+			if (_chronoManager->_textTtl > 0) {
+				renderText(_currentTextPages[_currentTextPageIndex], _textColor);
+			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
+				_currentTextPageIndex++;
+
+				int totalChars = 0;
+				for (int i = 0; i < _currentTextPages[_currentTextPageIndex].size(); i++) {
+					totalChars += _currentTextPages[_currentTextPageIndex][i].size();
+				}
+				_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
+			} else {
+				_currentTextPages.clear();
+				_currentTextPageIndex = 0;
+				isAlfredTalking = false;
+			}
+		}
+
 		// debug("Drawing walkboxes..., %d, _currentRoomWalkboxes.size()=%d",  _currentRoomWalkboxes.size(), _currentRoomWalkboxes.size());
 		for (int i = 0; i < _currentRoomWalkboxes.size(); i++) {
 			// debug("Drawing walkbox %d", i);
@@ -1334,6 +1321,26 @@ void PelrockEngine::frames() {
 		}
 		_screen->markAllDirty();
 		// _screen->update();
+	}
+}
+
+void PelrockEngine::renderText(Common::Array<Common::String> lines, int color) {
+	if (color == ALFRED_COLOR) {
+		int baseX = xAlfred;
+		int baseY = yAlfred - kAlfredFrameHeight - 10;
+		int maxW = 0;
+		for (size_t i = 0; i < lines.size(); i++) {
+			Common::Rect r = _largeFont->getBoundingBox(lines[i]);
+			if (r.width() > maxW) {
+				maxW = r.width();
+			}
+		}
+		int lineSize = lines.size();
+		for (size_t i = 0; i < lines.size(); i++) {
+			int textX = baseX - (maxW / 2);
+			int textY = baseY - (lineSize * 20) + (i * 20);
+			drawText(lines[i], textX, textY, maxW, color);
+		}
 	}
 }
 
@@ -1760,14 +1767,15 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		yAlfred = exit->targetY;
 		setScreen(exit->targetRoom, exit->dir);
 	} else {*/
-	walkTo(walkTarget.x, walkTarget.y);
 	/*	} */
 
-	// int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-	// if (hotspotIndex != -1) {
-	// 	talk();
-	// 	debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
-	// }
+	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+	if (hotspotIndex != -1) {
+		sayAlfred(_currentRoomDescriptions[hotspotIndex].text);
+		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
+	} else {
+		walkTo(walkTarget.x, walkTarget.y);
+	}
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -1868,7 +1876,7 @@ Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
 	return bestTarget;
 }
 
-void PelrockEngine::showDescription(Common::String text, int x, int y, byte color) {
+void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte color) {
 	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
 	if (x + 2 + rect.width() > 640) {
 		x = 640 - rect.width() - 2;
@@ -1883,28 +1891,153 @@ void PelrockEngine::showDescription(Common::String text, int x, int y, byte colo
 		y = 2;
 	}
 
-	x = 2;
-	y = 2;
-	// if (_bgText != nullptr) {
-	// 	putBackgroundSlice(x, y, 640, 400, _bgText);
-	// 	delete[] _bgText;
-	// }
-	int16 w = MIN(rect.width(), (int16)(640 - x));
-	int16 h = MIN(rect.height(), (int16)(400 - y));
-	debug("grabbing bg slice at (%d,%d) w=%d h=%d", x, y, w, h);
-
-	// _bgText = grabBackgroundSlice(x, y, 640, 400);
-	_largeFont->drawString(_screen, text.c_str(), x - 1, y, 640, 0); // Left
-	_largeFont->drawString(_screen, text.c_str(), x - 2, y, 640, 0); // Left
-	_largeFont->drawString(_screen, text.c_str(), x + 1, y, 640, 0); // Right
-	_largeFont->drawString(_screen, text.c_str(), x + 2, y, 640, 0); // Right
-	_largeFont->drawString(_screen, text.c_str(), x, y - 1, 640, 0); // Top
-	_largeFont->drawString(_screen, text.c_str(), x, y - 2, 640, 0); // Top
-	_largeFont->drawString(_screen, text.c_str(), x, y + 1, 640, 0); // Bottom
-	_largeFont->drawString(_screen, text.c_str(), x, y + 2, 640, 0); // Bottom
+	_largeFont->drawString(_screen, text.c_str(), x - 1, y, w, 0, Graphics::kTextAlignCenter); // Left
+	// _largeFont->drawString(_screen, text.c_str(), x - 2, y, 640, 0); // Left
+	_largeFont->drawString(_screen, text.c_str(), x + 1, y, w, 0, Graphics::kTextAlignCenter); // Right
+	// _largeFont->drawString(_screen, text.c_str(), x + 2, y, 640, 0); // Right
+	_largeFont->drawString(_screen, text.c_str(), x, y - 1, w, 0, Graphics::kTextAlignCenter); // Top
+	// _largeFont->drawString(_screen, text.c_str(), x, y - 2, 640, 0); // Top
+	_largeFont->drawString(_screen, text.c_str(), x, y + 1, w, 0, Graphics::kTextAlignCenter); // Bottom
+	// _largeFont->drawString(_screen, text.c_str(), x, y + 2, 640, 0); // Bottom
 
 	// Draw main text on top
-	_largeFont->drawString(_screen, text.c_str(), x, y, 640, color);
+	_largeFont->drawString(_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
+}
+
+void PelrockEngine::sayAlfred(Common::String text) {
+	isAlfredTalking = true;
+	curAlfredFrame = 0;
+	debug("Alfred says: %s", text.c_str());
+	_currentTextPages = wordWrap(text);
+	_textColor = 13;
+	int totalChars = 0;
+	for (int i = 0; i < _currentTextPages[0].size(); i++) {
+		totalChars += _currentTextPages[0][i].size();
+	}
+	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
+}
+bool isEndMarker(char char_byte) {
+	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
+}
+
+int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
+	// return word_length, is_end
+	int wordLength = 0;
+	int pos = startPos;
+	while (pos < text.size()) {
+		char char_byte = text[pos];
+		if (char_byte == CHAR_SPACE || isEndMarker(char_byte)) {
+			break;
+		}
+		wordLength++;
+		pos++;
+	}
+	// Check if we hit an end marker
+	if (pos < text.size() && isEndMarker(text[pos])) {
+		isEnd = true;
+	}
+	// Count ALL trailing spaces as part of this word
+	if (pos < text.size() && !isEnd) {
+		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
+			wordLength += 3;
+		} else {
+			// Count all consecutive spaces
+			while (pos < text.size() && text[pos] == CHAR_SPACE) {
+				wordLength++;
+				pos++;
+			}
+		}
+	}
+	return wordLength;
+}
+
+Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator) {
+	Common::String result;
+	for (uint i = 0; i < strings.size(); i++) {
+		result += strings[i];
+		if (i < strings.size() - 1)
+			result += separator;
+	}
+	return result;
+}
+
+Common::Array<Common::Array<Common::String> > wordWrap(Common::String text) {
+
+	Common::Array<Common::Array<Common::String> > pages;
+	Common::Array<Common::String> currentPage;
+	Common::Array<Common::String> currentLine;
+	int charsRemaining = MAX_CHARS_PER_LINE;
+	int position = 0;
+	int currentLineNum = 0;
+	while (position < text.size()) {
+		bool isEnd = false;
+		int wordLength = calculateWordLength(text, position, isEnd);
+		// # Extract the word (including trailing spaces)
+		// word = text[position:position + word_length].decode('latin-1', errors='replace')
+		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
+		// # Key decision: if word_length > chars_remaining, wrap to next line
+		if (wordLength > charsRemaining) {
+			// Word is longer than the entire line - need to split
+			currentPage.push_back(joinStrings(currentLine, " "));
+			currentLine.clear();
+			charsRemaining = MAX_CHARS_PER_LINE;
+			currentLineNum++;
+
+			if (currentLineNum >= MAX_LINES) {
+				pages.push_back(currentPage);
+				currentPage.clear();
+				currentLineNum = 0;
+			}
+		}
+		// Add word to current line
+		currentLine.push_back(word);
+		charsRemaining -= wordLength;
+
+		if (charsRemaining == 0 && isEnd) {
+			Common::String lineText = joinStrings(currentLine, "");
+			while (lineText.lastChar() == CHAR_SPACE) {
+				lineText = lineText.substr(0, lineText.size() - 1);
+			}
+			int trailingSpaces = currentLine.size() - lineText.size();
+			if (trailingSpaces > 0) {
+				currentPage.push_back(lineText);
+				//  current_line = [' ' * trailing_spaces]
+				Common::String currentLine(trailingSpaces, ' ');
+				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
+				currentLineNum += 1;
+
+				if (currentLineNum >= MAX_LINES) {
+					pages.push_back(currentPage);
+					currentPage.clear();
+					currentLineNum = 0;
+				}
+			}
+		}
+
+		position += wordLength;
+		if (isEnd) {
+			// End of sentence/paragraph/page
+			break;
+		}
+	}
+	if (currentLine.empty() == false) {
+		Common::String lineText = joinStrings(currentLine, "");
+		while (lineText.lastChar() == CHAR_SPACE) {
+			lineText = lineText.substr(0, lineText.size() - 1);
+		}
+		currentPage.push_back(lineText);
+	}
+	if (currentPage.empty() == false) {
+		pages.push_back(currentPage);
+	}
+	debug("Word wrap produced %d pages", pages.size());
+	for (int i = 0; i < pages.size(); i++) {
+		debug(" Page %d:", i);
+		for (int j = 0; j < pages[i].size(); j++) {
+			debug("   Line %d: %s", j, pages[i][j].c_str());
+		}
+	}
+	return pages;
 }
 
 void PelrockEngine::setScreen(int number, int dir) {

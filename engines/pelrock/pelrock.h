@@ -98,10 +98,12 @@ private:
 
 	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
-	void showDescription(Common::String text, int x, int y, byte color);
+	void drawText(Common::String text, int x, int y, int w, byte color);
 
+	void sayAlfred(Common::String text);
 	// render loop
 	void frames();
+	void renderText(Common::Array<Common::String> lines, int color);
 	void drawAlfred(byte *buf);
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -124,7 +126,9 @@ private:
 
 	PathContext _currentContext;
 	int _current_step = 0;
-
+	byte _textColor = 0;
+	Common::Array<Common::Array<Common::String> > _currentTextPages = Common::Array<Common::Array<Common::String> >();
+	int _currentTextPageIndex = 0;
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<AnimSet> _currentRoomAnims;
 	Common::Array<Exit> _currentRoomExits;
@@ -152,11 +156,6 @@ private:
 
 	byte *_currentBackground; // Clean background - NEVER modified
 	byte *_compositeBuffer;   // Working composition buffer
-
-	// byte *_currentBackground = nullptr;
-	// byte *_bgPopupBalloon = nullptr;
-	// byte *_bgText = nullptr;
-	// byte *_bgAlfred = nullptr;
 
 	bool _displayPopup = false;
 	int _popupX = 0;
