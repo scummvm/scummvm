@@ -746,6 +746,14 @@ Common::String PrivateEngine::getWallSafeValueVariable() {
 	return getSymbolName("kWallSafeValue", "k3");
 }
 
+Common::String PrivateEngine::getBeenDowntownVariable() {
+	return getSymbolName("kBeenDowntown", "k8");
+}
+
+Common::String PrivateEngine::getPoliceStationLocation() {
+	return getSymbolName("kLocationPO", "k12");
+}
+
 Common::String PrivateEngine::getExitCursor() {
 	return getSymbolName("kExit", "k5");
 }
@@ -2216,8 +2224,19 @@ Common::String PrivateEngine::getLeaveSound() {
 	if (isDemo())
 		return (_globalAudioPath + "mvo008.wav");
 
-	uint r = _rnd->getRandomNumber(4) + 1;
-	return Common::String::format("%sleft%d.wav", _globalAudioPath.c_str(), r);
+	// The last sound is only available after going to the police station.
+	const char *sounds[7] = {
+		"mvo008.wav",
+		"mvo004.wav",
+		"left1.wav",
+		"left2.wav",
+		"left3.wav",
+		"left4.wav",
+		"left5.wav" // "I've had enough trouble with the police"
+	};
+	Private::Symbol *beenDowntown = maps.variables.getVal(getBeenDowntownVariable());
+	uint r = _rnd->getRandomNumber(beenDowntown->u.val ? 6 : 5);
+	return _globalAudioPath + sounds[r];
 }
 
 Common::String PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j) {
