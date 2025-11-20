@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-16 20:53+0000\n"
+"POT-Creation-Date: 2025-11-20 00:14+0000\n"
 "PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -579,7 +579,7 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2073 gui/options.cpp:2252
-#: backends/graphics/atari/atari-graphics.cpp:1055
+#: backends/graphics/atari/atari-graphics.cpp:1054
 #: backends/graphics/sdl/sdl-graphics.cpp:488
 msgid "Graphics"
 msgstr "그래픽"
@@ -4181,7 +4181,7 @@ msgstr "새 폴더 추가"
 msgid "Choose a new folder"
 msgstr "새 폴더를 선택"
 
-#: backends/graphics/atari/atari-graphics.cpp:1059
+#: backends/graphics/atari/atari-graphics.cpp:1058
 #: backends/graphics/sdl/sdl-graphics.cpp:515
 msgid "Toggle aspect ratio correction"
 msgstr "화면비 교정 전환"
@@ -8123,9 +8123,9 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
-"게임에서 CD 버전 SFX만 사용할지, 추가 플로피 디스크 SFX가 포함된 CD SFX를 "
-"사용할지, 아니면 플로피 디스크 SFX만 사용할지 결정합니다. 플로피 디스크 "
-"SFX는 플로피 음악을 사용하는 경우에만 사용할 수 있습니다."
+"게임에서 CD 버전 SFX만 사용할지, 추가 플로피 디스크 SFX가 포함된 CD SFX를 사"
+"용할지, 아니면 플로피 디스크 SFX만 사용할지 결정합니다. 플로피 디스크 SFX는 "
+"플로피 음악을 사용하는 경우에만 사용할 수 있습니다."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
@@ -10173,8 +10173,8 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
-"이 옵션을 선택하면 게임은 원본 .exe 파일에 포함된 윈도우 마우스 커서를 "
-"사용합니다. 그렇지 않으면 데이터 파일에 있는 저해상도 커서를 사용합니다."
+"이 옵션을 선택하면 게임은 원본 .exe 파일에 포함된 윈도우 마우스 커서를 사용합"
+"니다. 그렇지 않으면 데이터 파일에 있는 저해상도 커서를 사용합니다."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -14553,7 +14553,8 @@ msgstr "랜섬 *신호음 없음* (DLC)을 선택했었지만 DLC가 감지되�
 #: engines/twp/twp.cpp:1016
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
-msgstr "이 게임에는 셰이더가 포함된 OpenGL이 필요하지만 이는 시스템에서 지원되지 않음"
+msgstr ""
+"이 게임에는 셰이더가 포함된 OpenGL이 필요하지만 이는 시스템에서 지원되지 않음"
 
 #: engines/twp/twp.cpp:1022
 msgid ""
