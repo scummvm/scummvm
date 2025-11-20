@@ -117,8 +117,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 135, black, yellow, surface);
 
-	Common::String encodedScoreStr = getScoreString(score);
-	drawStringInSurface(encodedScoreStr, 136, 6, black, white, surface);
+	drawScoreString(score, 136, 6, black, white, surface);
 
 	int x = 171;
 	if (shield < 10)

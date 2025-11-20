@@ -723,23 +723,30 @@ void EclipseEngine::drawSensorShoot(Sensor *sensor) {
 	}
 }
 
-Common::String EclipseEngine::getScoreString(int score) {
+void EclipseEngine::drawScoreString(int score, int x, int y, uint32 front, uint32 back, Graphics::Surface *surface) {
 	Common::String scoreStr = Common::String::format("%07d", score);
 
 	if (isDOS() || isCPC() || isSpectrum()) {
 		scoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
-		if (_renderMode == Common::RenderMode::kRenderEGA || isSpectrum())
-			return scoreStr;
+		if (_renderMode == Common::RenderMode::kRenderEGA || isSpectrum()) {
+			drawStringInSurface(scoreStr, x, y, front, back, surface);
+			return;
+		}
+
 	}
-	Common::String encodedScoreStr;
+
+	// Start in x,y and draw each digit, from left to right, adding a gap every 3 digits
+	int gapSize = isC64() ? 8 : 4;
 
 	for (int i = 0; i < int(scoreStr.size()); i++) {
-		encodedScoreStr.insertChar(scoreStr[int(scoreStr.size()) - i - 1], 0);
-		if ((i + 1) % 3 == 0 && i > 0)
-		encodedScoreStr.insertChar(',', 0);
+		drawStringInSurface(Common::String(scoreStr[i]), x, y, front, back, surface);
+		x += 8;
+		if ((i - scoreStr.size() + 1) % 3 == 1)
+			x += gapSize;
 	}
-	return encodedScoreStr;
+
 }
+
 
 void EclipseEngine::updateTimeVariables() {
 	if (isEclipse2() && _gameStateControl == kFreescapeGameStateStart) {

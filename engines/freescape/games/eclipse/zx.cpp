@@ -179,8 +179,7 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 141, back, yellow, surface);
 
-	Common::String encodedScoreStr = getScoreString(score);
-	drawStringInSurface(encodedScoreStr, 135, 11, back, gray, surface);
+	drawScoreString(score, 135, 11, back, gray, surface);
 
 	Common::String shieldStr = Common::String::format("%d", shield);
 

@@ -134,8 +134,7 @@ void EclipseEngine::drawC64UI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 104, 138, back, yellow, surface);
 
-	Common::String encodedScoreStr = getScoreString(score);
-	drawStringInSurface(encodedScoreStr, 128, 7, black, white, surface);
+	drawScoreString(score, 128, 7, black, white, surface);
 
 	Common::String shieldStr = Common::String::format("%d", shield);
 
