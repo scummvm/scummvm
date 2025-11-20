@@ -92,6 +92,7 @@ public:
 	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
 	void drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2);
 	Common::String getScoreString(int score);
+	void drawScoreString(int score, int x, int y, uint32 front, uint32 back, Graphics::Surface *surface);
 
 	soundFx *load1bPCM(Common::SeekableReadStream *file, int offset);
 
