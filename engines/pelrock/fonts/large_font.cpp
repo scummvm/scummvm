@@ -37,12 +37,75 @@ bool LargeFont::load(const Common::String &filename) {
 	}
 
 	file.seek(0x7DC8, SEEK_SET);
-	const int dataSize = 96 * 48; // 96 characters × 48 bytes
-	_fontData = new byte[dataSize];
-	file.read(_fontData, dataSize);
+	const int numChars = 96;
+	const int charWidth = 12;
+	const int charHeight = 24;
+	const int pad = 1;
+
+	const int paddedWidth = charWidth + 2 * pad;   // 14
+	const int paddedHeight = charHeight + 2 * pad; // 26
+
+	const int dataSize = numChars * paddedHeight * paddedWidth; // 96 characters × 14 × 26 bytes
+	byte *rawFontData = new byte[numChars * 48];                // original format: 96 × 48 bytes
+	file.read(rawFontData, numChars * 48);
 	debug("LargeFont::load: Loading large font data from %s, size %d bytes", filename.c_str(), dataSize);
 	file.close();
 
+	delete[] _fontData;
+
+	_fontData = new byte[dataSize];
+	memset(_fontData, 0, dataSize);
+	for (int c = 0; c < numChars; c++) {
+		// Temporary bitmap for character + border
+		bool mask[paddedHeight][paddedWidth] = {false};
+		// Decode character pixels from rawFontData
+		int charOffset = c * 0x30;
+		for (int i = 0; i < charHeight; i++) {
+			byte rowByte1 = rawFontData[charOffset + i * 2];
+			byte rowByte2 = rawFontData[charOffset + i * 2 + 1];
+			for (int bit = 0; bit < 8; bit++) {
+				mask[i + pad][bit + pad] = (rowByte1 & (0x80 >> bit)) != 0;
+			}
+			for (int bit = 0; bit < 4; bit++) {
+				mask[i + pad][bit + 8 + pad] = (rowByte2 & (0x80 >> bit)) != 0;
+			}
+		}
+
+		bool borderMask[paddedHeight][paddedWidth] = {false};
+
+		for (int y = 0; y < paddedHeight; y++) {
+			for (int x = 0; x < paddedWidth; x++) {
+				if (mask[y][x]) {
+					// Mark 3x3 area around character pixel
+					for (int dy = -1; dy <= 1; dy++) {
+						for (int dx = -1; dx <= 1; dx++) {
+							int ny = y + dy;
+							int nx = x + dx;
+							if (ny >= 0 && ny < paddedHeight && nx >= 0 && nx < paddedWidth) {
+								if (!mask[ny][nx]) {
+									borderMask[ny][nx] = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		int outOffset = c * paddedHeight * paddedWidth;
+		for (int y = 0; y < paddedHeight; y++) {
+			for (int x = 0; x < paddedWidth; x++) {
+				if (mask[y][x]) {
+					_fontData[outOffset + y * paddedWidth + x] = 2;
+				} else if (borderMask[y][x]) {
+					_fontData[outOffset + y * paddedWidth + x] = 1;
+				} else {
+					_fontData[outOffset + y * paddedWidth + x] = 0;
+				}
+			}
+		}
+	}
+	delete[] rawFontData;
 	return true;
 }
 
@@ -55,24 +118,22 @@ void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint3
 	if (!_fontData || chr > 96 || chr < 0) {
 		return;
 	}
-	int charOffset = chr * 0x30;
-	for (int i = 0; i < 24; i++) {
-		byte rowByte1 = _fontData[charOffset + i * 2];
-		byte rowByte2 = _fontData[charOffset + i * 2 + 1];
-		for (int bit = 0; bit < 8; bit++) {
-			bool pixelOn = (rowByte1 & (0x80 >> bit)) != 0;
-			if (pixelOn) {
-				if ((x + bit) < dst->w && (y + i) < dst->h) {
-					*((byte *)dst->getBasePtr(x + bit, y + i)) = color;
-				}
-			}
-		}
-		for (int bit = 0; bit < 4; bit++) {
-			bool pixelOn = (rowByte2 & (0x80 >> bit)) != 0;
-			if (pixelOn) {
-				if ((x + bit + 8) < dst->w && (y + i) < dst->h) {
-					*((byte *)dst->getBasePtr(x + bit + 8, y + i)) = color;
-				}
+
+	const int paddedWidth = 14;
+	const int paddedHeight = 26;
+	int charOffset = chr * paddedWidth * paddedHeight;
+
+	for (int cy = 0; cy < paddedHeight; cy++) {
+		for (int cx = 0; cx < paddedWidth; cx++) {
+			byte val = _fontData[charOffset + cy * paddedWidth + cx];
+			int px = x + cx;
+			int py = y + cy;
+			if (px < 0 || px >= dst->w || py < 0 || py >= dst->h)
+				continue;
+			if (val == 1) {
+				*((byte *)dst->getBasePtr(px, py)) = 0;
+			} else if (val == 2) {
+				*((byte *)dst->getBasePtr(px, py)) = color;
 			}
 		}
 	}

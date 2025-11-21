@@ -1275,7 +1275,7 @@ void PelrockEngine::frames() {
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
-		if (!_currentTextPages.empty()) {
+		if (!isAlfredWalking && !_currentTextPages.empty()) {
 			// debug("Will render text, _chronoManager->_textTtl=%d", _chronoManager->_textTtl);
 			if (_chronoManager->_textTtl > 0) {
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor);
@@ -1773,9 +1773,9 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	if (hotspotIndex != -1) {
 		sayAlfred(_currentRoomDescriptions[hotspotIndex].text);
 		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
-	} else {
-		walkTo(walkTarget.x, walkTarget.y);
 	}
+
+	walkTo(walkTarget.x, walkTarget.y);
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -1891,14 +1891,14 @@ void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte colo
 		y = 2;
 	}
 
-	_largeFont->drawString(_screen, text.c_str(), x - 1, y, w, 0, Graphics::kTextAlignCenter); // Left
-	// _largeFont->drawString(_screen, text.c_str(), x - 2, y, 640, 0); // Left
-	_largeFont->drawString(_screen, text.c_str(), x + 1, y, w, 0, Graphics::kTextAlignCenter); // Right
-	// _largeFont->drawString(_screen, text.c_str(), x + 2, y, 640, 0); // Right
-	_largeFont->drawString(_screen, text.c_str(), x, y - 1, w, 0, Graphics::kTextAlignCenter); // Top
-	// _largeFont->drawString(_screen, text.c_str(), x, y - 2, 640, 0); // Top
-	_largeFont->drawString(_screen, text.c_str(), x, y + 1, w, 0, Graphics::kTextAlignCenter); // Bottom
-	// _largeFont->drawString(_screen, text.c_str(), x, y + 2, 640, 0); // Bottom
+	// _largeFont->drawString(_screen, text.c_str(), x - 1, y, w, 0, Graphics::kTextAlignCenter); // Left
+	// // _largeFont->drawString(_screen, text.c_str(), x - 2, y, w, 0, Graphics::kTextAlignCenter); // Left
+	// _largeFont->drawString(_screen, text.c_str(), x + 1, y, w, 0, Graphics::kTextAlignCenter); // Right
+	// // _largeFont->drawString(_screen, text.c_str(), x + 2, y, w, 0, Graphics::kTextAlignCenter); // Right
+	// _largeFont->drawString(_screen, text.c_str(), x, y - 1, w, 0, Graphics::kTextAlignCenter); // Top
+	// // _largeFont->drawString(_screen, text.c_str(), x, y - 2, w, 0, Graphics::kTextAlignCenter); // Top
+	// _largeFont->drawString(_screen, text.c_str(), x, y + 1, w, 0, Graphics::kTextAlignCenter); // Bottom
+	// // _largeFont->drawString(_screen, text.c_str(), x, y + 2, w, 0, Graphics::kTextAlignCenter); // Bottom
 
 	// Draw main text on top
 	_largeFont->drawString(_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);

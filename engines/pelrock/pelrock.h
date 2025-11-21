@@ -142,8 +142,6 @@ private:
 	int yAlfred = 302;
 	int dirAlfred = 0;
 	int curAlfredFrame = 0;
-	bool isAlfredWalking = false;
-	bool isAlfredTalking = false;
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
 	byte *_cursorMasks[5] = {nullptr};
@@ -184,6 +182,8 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	bool isAlfredWalking = false;
+	bool isAlfredTalking = false;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
