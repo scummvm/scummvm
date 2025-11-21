@@ -150,11 +150,11 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 191, 149, front, transparent, surface);
 	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 191, 157, front, transparent, surface);
 
-	surface->fillRect(Common::Rect(80, 165, 95, 171), back);
-	surface->fillRect(Common::Rect(80, 172, 102, 178), back);
+	surface->fillRect(Common::Rect(80, 165, 95, 172), back);
+	surface->fillRect(Common::Rect(80, 172, 102, 179), back);
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 79, 165, front, transparent, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 79, 173, front, transparent, surface);
-	surface->fillRect(Common::Rect(96, 12, 151, 18), back);
+	surface->fillRect(Common::Rect(96, 12, 151, 19), back);
 	drawStringInSurface(Common::String::format("%07d", score), 95, 13, front, transparent, surface);
 	drawStringInSurface(Common::String::format("%3d%%", ecds), 191, 13, front, back, surface);
 
@@ -176,20 +176,26 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(80, 140, 143 - (_maxShield - shield), 148);
+		shieldBar = Common::Rect(80, 141, 143 - (_maxShield - shield), 148);
 		surface->fillRect(shieldBar, back);
 
-		shieldBar = Common::Rect(80, 141, 143 - (_maxShield - shield), 147);
+		shieldBar = Common::Rect(80, 142, 143 - (_maxShield - shield), 147);
 		surface->fillRect(shieldBar, front);
+
+		shieldBar = Common::Rect(80, 144, 143 - (_maxShield - shield), 145);
+		surface->fillRect(shieldBar, back);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(80, 147, 143 - (_maxEnergy - energy), 155);
+		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 155);
 		surface->fillRect(energyBar, back);
 
-		energyBar = Common::Rect(80, 148, 143 - (_maxEnergy - energy), 154);
+		energyBar = Common::Rect(80, 149, 143 - (_maxEnergy - energy), 154);
 		surface->fillRect(energyBar, front);
+
+		energyBar = Common::Rect(80, 151, 143 - (_maxEnergy - energy), 152);
+		surface->fillRect(energyBar, back);
 	}
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
 	drawBinaryClock(surface, 273, 128, clockColor, back);
