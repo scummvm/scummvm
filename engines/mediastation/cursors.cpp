@@ -187,7 +187,7 @@ WindowsCursorManager::WindowsCursorManager(const Common::Path &appName) : Cursor
 	}
 
 	Common::WinResources *exe = Common::WinResources::createFromEXE(appName);
-	if (!exe->loadFromEXE(appName)) {
+	if (exe == nullptr || !exe->loadFromEXE(appName)) {
 		error("%s: Could not load resources from executable %s", __func__, appName.toString().c_str());
 	}
 
@@ -215,13 +215,15 @@ WindowsCursorManager::~WindowsCursorManager() {
 }
 
 Graphics::Cursor *WindowsCursorManager::loadResourceCursor(const Common::String &name) {
-	Graphics::WinCursorGroup *group = _cursorGroups.getValOrDefault(name);
-	if (group != nullptr) {
-		Graphics::Cursor *cursor = group->cursors[0].cursor;
-		return cursor;
-	} else {
-		error("%s: Reqested Windows cursor %s not found", __func__, name.c_str());
+	// Search for case-insensitive match since resource names are expected to be case-insensitive.
+	for (auto it = _cursorGroups.begin(); it != _cursorGroups.end(); ++it) {
+		if (it->_key.equalsIgnoreCase(name)) {
+			Graphics::Cursor *cursor = it->_value->cursors[0].cursor;
+			return cursor;
+		}
 	}
+
+	error("%s: Reqested Windows cursor %s not found", __func__, name.c_str());
 }
 
 MacCursorManager::MacCursorManager(const Common::Path &appName) : CursorManager(appName) {
