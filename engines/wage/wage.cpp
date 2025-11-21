@@ -531,6 +531,8 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = true;
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+   		_world->_commandsMenu = _world->_commandsMenuDefault;  
+   		_gui->regenCommandsMenu();
 		regen();
 		sayText(playerScene->_name, Common::TextToSpeechManager::QUEUE);
 		Common::String input("look");
