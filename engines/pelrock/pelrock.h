@@ -96,13 +96,14 @@ private:
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 
-	Common::List<VerbIcons> populateActionsMenu(HotSpot *hotspot);
+	Common::Array<VerbIcons> availableActions(HotSpot *hotspot);
 	Common::Point calculateWalkTarget(int mouseX, int mouseY);
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
 	void sayAlfred(Common::String text);
 	// render loop
 	void frames();
+	void doAction(byte object, byte action);
 	void renderText(Common::Array<Common::String> lines, int color);
 	void drawAlfred(byte *buf);
 	void checkMouseHover();

@@ -62,6 +62,7 @@ const int kBalloonWidth = 247;
 const int kBalloonHeight = 112;
 const int kBalloonFrames = 4;
 const int kTextCharDisplayTime = 100; // 10ms per character
+const int kVerbIconPadding = 20;
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -150,6 +151,7 @@ struct AnimSet {
 };
 
 struct HotSpot {
+	int index;
 	int id;
 	int x;
 	int y;

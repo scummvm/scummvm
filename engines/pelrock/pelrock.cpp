@@ -91,6 +91,15 @@ void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byt
 	surface->drawLine(x, y, x, y + h, color);
 	surface->drawLine(x + w, y, x + w, y + h, color);
 }
+void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color) {
+	// debug("Drawing rect at (%d,%d) w=%d h=%d color=%d", x, y, w, h, color);
+	surface->drawLine(x, y, x + w, y, color);
+	surface->drawLine(x, y + h, x + w, y + h, color);
+	surface->drawLine(x, y, x, y + h, color);
+	surface->drawLine(x + w, y, x + w, y + h, color);
+}
+
+
 Common::Array<Common::Array<Common::String> > wordWrap(Common::String text);
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
@@ -465,9 +474,7 @@ char32_t decodeByte(byte b) {
 void PelrockEngine::talk() {
 	if (_currentRoomConversations.size() == 0)
 		return;
-	int x = _currentRoomHotspots[0].x;
-	int y = _currentRoomHotspots[0].y;
-	debug("Say %s", _currentRoomConversations[0].text.c_str());
+
 	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
 	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
 	// 	int idx = _currentRoomConversations.size() - 1 - i;
@@ -843,10 +850,10 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	Common::Array<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
 
 	Common::Array<HotSpot> hotspots;
-	int count = 0;
 	for (int i = 0; i < anims.size(); i++) {
 
 		HotSpot thisHotspot;
+		thisHotspot.index = i;
 		thisHotspot.x = anims[i].x;
 		thisHotspot.y = anims[i].y;
 		thisHotspot.w = anims[i].w;
@@ -855,7 +862,6 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 		thisHotspot.type = anims[i].actionFlags;
 		thisHotspot.isEnabled = !anims[i].isDisabled;
 		hotspots.push_back(thisHotspot);
-		count++;
 	}
 
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
@@ -866,6 +872,7 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
 		HotSpot hotspot = staticHotspots[i];
+		hotspot.index = anims.size() + i;
 		hotspots.push_back(hotspot);
 	}
 
@@ -879,12 +886,12 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
-		drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
+		// drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
 	}
 
 	for (int i = 0; i < _currentRoomExits.size(); i++) {
 		Exit exit = _currentRoomExits[i];
-		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
+		// drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
 	}
 }
 
@@ -1100,8 +1107,8 @@ void drawSpriteToBuffer(byte *buffer, int bufferWidth,
 	}
 }
 
-Common::List<VerbIcons> PelrockEngine::populateActionsMenu(HotSpot *hotspot) {
-	Common::List<VerbIcons> verbs;
+Common::Array<VerbIcons> PelrockEngine::availableActions(HotSpot *hotspot) {
+	Common::Array<VerbIcons> verbs;
 	debug("Populating actions menu for hotspot type %d", hotspot->type);
 	verbs.push_back(LOOK);
 
@@ -1184,7 +1191,7 @@ void PelrockEngine::frames() {
 		if (isAlfredWalking) {
 
 			MovementStep step = _currentContext.movement_buffer[_current_step];
-			debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
+			// debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
 
 			if (step.distance_x > 0) {
 				if (step.flags & MOVE_RIGHT) {
@@ -1213,12 +1220,12 @@ void PelrockEngine::frames() {
 			if (step.distance_y > 0)
 				step.distance_y -= MIN((uint16_t)6, step.distance_y);
 
-			debug("Alfred position after step: x=%d, y=%d, step distance_x=%d, step distance_y=%d", xAlfred, yAlfred, step.distance_x, step.distance_y);
+			// debug("Alfred position after step: x=%d, y=%d, step distance_x=%d, step distance_y=%d", xAlfred, yAlfred, step.distance_x, step.distance_y);
 			if (step.distance_x <= 0 && step.distance_y <= 0) {
-				debug("Alfred completed step %d", _current_step);
+				// debug("Alfred completed step %d", _current_step);
 				_current_step++;
 				if (_current_step >= _currentContext.movement_count) {
-					debug("Alfred reached his walk target.");
+					// debug("Alfred reached his walk target.");
 					_current_step = 0;
 					isAlfredWalking = false;
 				}
@@ -1234,7 +1241,7 @@ void PelrockEngine::frames() {
 				setScreen(exit->targetRoom, exit->dir);
 			}
 
-			debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
+			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
 
 			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
 				curAlfredFrame = 0;
@@ -1298,7 +1305,7 @@ void PelrockEngine::frames() {
 		for (int i = 0; i < _currentRoomWalkboxes.size(); i++) {
 			// debug("Drawing walkbox %d", i);
 			WalkBox box = _currentRoomWalkboxes[i];
-			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
+			// drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
 		}
 		if (_curWalkTarget.x < 640 && _curWalkTarget.y < 400 && _curWalkTarget.x >= 0 && _curWalkTarget.y >= 0) {
 			_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y, 100);
@@ -1322,6 +1329,9 @@ void PelrockEngine::frames() {
 		_screen->markAllDirty();
 		// _screen->update();
 	}
+}
+
+void PelrockEngine::doAction(byte object, byte action) {
 }
 
 void PelrockEngine::renderText(Common::Array<Common::String> lines, int color) {
@@ -1395,19 +1405,33 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 	return nullptr;
 }
 
+void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY) {
+    for (int y = 0; y < surface->h; y++) {
+        for (int x = 0; x < surface->w; x++) {
+            int px = destX + x;
+            int py = destY + y;
+            if (px >= 0 && px < bufferWidth && py >= 0 && py < bufferHeight) {
+                byte pixel = *((byte *)surface->getBasePtr(x, y));
+                buffer[py * bufferWidth + px] = pixel;
+            }
+        }
+    }
+}
+
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	drawSpriteToBuffer(_compositeBuffer, 640, _popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
-	Common::List<VerbIcons> availableActions = populateActionsMenu(_currentHotspot);
+	Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
 
 	drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
-	for (Common::List<VerbIcons>::iterator i = availableActions.begin(); i != availableActions.end(); i++) {
-		VerbIcons verb = *i;
-		int index = 0;
-		for (Common::List<VerbIcons>::iterator j = availableActions.begin(); j != i; j++) {
-			index++;
-		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[verb], posx + 20 + (index * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+	// Graphics::Surface rects;
+	// rects.create(kVerbIconWidth, kVerbIconHeight, Graphics::PixelFormat::createFormatCLUT8());
+	// drawRect(&rects, 0, 0, kVerbIconWidth, kVerbIconHeight, 255);
+
+	// blitSurfaceToBuffer(&rects, _compositeBuffer, 640, 480, posx + ver, posy + 20);
+
+	for(int i = 0; i < actions.size(); i++) {
+		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 }
 
@@ -1418,32 +1442,32 @@ void PelrockEngine::walkTo(int x, int y) {
 	PathContext context = {NULL, NULL, NULL, 0, 0, 0};
 
 	pathFind(x, y, &context);
-	debug("\nPath Information:\n");
-	debug("================\n");
+	// debug("\nPath Information:\n");
+	// debug("================\n");
 
-	debug("Walkbox path (%d boxes): ", context.path_length);
+	// debug("Walkbox path (%d boxes): ", context.path_length);
 	for (int i = 0; i < context.path_length && context.path_buffer[i] != PATH_END; i++) {
 		debug("%d ", context.path_buffer[i]);
 	}
 
-	debug("Movement steps (%d steps):\n", context.movement_count);
+	// debug("Movement steps (%d steps):\n", context.movement_count);
 	for (int i = 0; i < context.movement_count; i++) {
 		MovementStep *step = &context.movement_buffer[i];
-		debug("  Step %d: ", i);
+		// debug("  Step %d: ", i);
 
-		if (step->flags & MOVE_RIGHT)
-			debug("RIGHT ");
-		if (step->flags & MOVE_LEFT)
-			debug("LEFT ");
-		if (step->flags & MOVE_DOWN)
-			debug("DOWN ");
-		if (step->flags & MOVE_UP)
-			debug("UP ");
+		// if (step->flags & MOVE_RIGHT)
+		// 	debug("RIGHT ");
+		// if (step->flags & MOVE_LEFT)
+		// 	debug("LEFT ");
+		// if (step->flags & MOVE_DOWN)
+		// 	debug("DOWN ");
+		// if (step->flags & MOVE_UP)
+		// 	debug("UP ");
 
-		debug("(dx=%d, dy=%d)\n", step->distance_x, step->distance_y);
+		// debug("(dx=%d, dy=%d)\n", step->distance_x, step->distance_y);
 	}
 
-	debug("\nCompressed path (%d bytes): ", context.compressed_length);
+	// debug("\nCompressed path (%d bytes): ", context.compressed_length);
 	for (int i = 0; i < context.compressed_length; i++) {
 		debug("%02X ", context.compressed_path[i]);
 	}
@@ -1457,9 +1481,9 @@ void PelrockEngine::walkTo(int x, int y) {
 	// } else if (y > yAlfred) {
 	// 	dirAlfred = DOWN;
 	// }
-	debug("Setting Alfred to walk towards (%d, %d) from (%d, %d) in direction %d", x, y, xAlfred, yAlfred, dirAlfred);
+	// debug("Setting Alfred to walk towards (%d, %d) from (%d, %d) in direction %d", x, y, xAlfred, yAlfred, dirAlfred);
 	_currentContext = context;
-	debug("Path find complete, movement count: %d", _currentContext.movement_count);
+	// debug("Path find complete, movement count: %d", _currentContext.movement_count);
 }
 
 bool PelrockEngine::pathFind(int x, int y, PathContext *context) {
@@ -1754,8 +1778,33 @@ uint8_t PelrockEngine::find_walkbox_for_point(uint16_t x, uint16_t y) {
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
+
+	if(_displayPopup) {
+		Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
+
+		Common::Rect lookRect = Common::Rect(_popupX + 20, _popupY + 20, _popupX + 20 + kVerbIconWidth, _popupY + 20 +kVerbIconHeight);
+		// debug("Look rect: x=%d, y=%d, w=%d, h=%d", lookRect.left, lookRect.top, lookRect, lookRect.h);
+		if(lookRect.contains(x, y)) {
+			debug("Look action clicked");
+			walkTo(_currentHotspot->x, _currentHotspot->y);
+			sayAlfred(_currentRoomDescriptions[_currentHotspot->index].text);
+			_displayPopup = false;
+			return;
+		}
+		for(int i = 0; i < actions.size(); i++) {
+			Common::Rect actionRect = Common::Rect(_popupX + 20 + (i * (kVerbIconWidth + 2)), _popupY + 20, kVerbIconWidth, kVerbIconHeight);
+			if(actionRect.contains(x, y)) {
+				doAction(actions[i], _currentHotspot->extra);
+				_displayPopup = false;
+				return;
+			}
+		}
+	}
+
 	_displayPopup = false;
 	_currentHotspot = nullptr;
+
+
 
 	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
 	_curWalkTarget = walkTarget;
@@ -1769,11 +1818,11 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	} else {*/
 	/*	} */
 
-	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-	if (hotspotIndex != -1) {
-		sayAlfred(_currentRoomDescriptions[hotspotIndex].text);
-		debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
-	}
+	// int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+	// if (hotspotIndex != -1) {
+	// 	sayAlfred(_currentRoomDescriptions[hotspotIndex].text);
+	// 	debug("Hotspot clicked: %d", _currentRoomHotspots[hotspotIndex].extra);
+	// }
 
 	walkTo(walkTarget.x, walkTarget.y);
 }
