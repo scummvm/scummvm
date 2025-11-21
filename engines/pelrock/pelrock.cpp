@@ -1338,7 +1338,7 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color) {
 		int lineSize = lines.size();
 		for (size_t i = 0; i < lines.size(); i++) {
 			int textX = baseX - (maxW / 2);
-			int textY = baseY - (lineSize * 20) + (i * 20);
+			int textY = baseY - (lineSize * 25) + (i * 25);
 			drawText(lines[i], textX, textY, maxW, color);
 		}
 	}
@@ -1978,7 +1978,7 @@ Common::Array<Common::Array<Common::String> > wordWrap(Common::String text) {
 		// # Key decision: if word_length > chars_remaining, wrap to next line
 		if (wordLength > charsRemaining) {
 			// Word is longer than the entire line - need to split
-			currentPage.push_back(joinStrings(currentLine, " "));
+			currentPage.push_back(joinStrings(currentLine, ""));
 			currentLine.clear();
 			charsRemaining = MAX_CHARS_PER_LINE;
 			currentLineNum++;
