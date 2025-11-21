@@ -106,7 +106,7 @@ void Player::drawCursor(bool forceDefaultCursor) {
 	}
 }
 
-void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) {
+void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera, bool isTemporary) {
 	debugC(1, kDebugGameplay, "Change room to %s", targetRoomName.c_str());
 
 	// original would be to always free all resources from globalRoom, inventory, GlobalUI
@@ -118,7 +118,6 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 		return; // exiting game entirely
 	}
 
-	_roomBeforeInventory = nullptr;
 	if (_currentRoom != nullptr) {
 		g_engine->scheduler().killProcessByName("ACTUALIZAR_" + _currentRoom->name());
 
@@ -127,11 +126,17 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 			_currentRoom->name().equalsIgnoreCase("inventario");
 		if (targetRoomName.equalsIgnoreCase("inventario")) {
 			keepResources = true;
-			_roomBeforeInventory = _currentRoom;
+			if (!_isInTemporaryRoom)
+				_roomBeforeInventory = _currentRoom;
 		}
 		if (!keepResources)
 			_currentRoom->freeResources();
 	}
+
+	// this fixes a bug with all original games where changing the room in the inventory (e.g. iFOTO in aventura de cine)
+	// would overwrite the actual game room thus returning from the inventory one would be stuck in the temporary room
+	// If we know that a transition is temporary we prevent that and only remember the real game room
+	_isInTemporaryRoom = isTemporary;
 
 	_currentRoom = g_engine->world().getRoomByName(targetRoomName.c_str());
 	if (_currentRoom == nullptr) // no good way to recover, leaving-the-room actions might already prevent further progress
@@ -344,7 +349,8 @@ bool Player::isAllowedToOpenMenu() {
 		isGameLoaded() &&
 		!g_engine->menu().isOpen() &&
 		g_engine->sounds().musicSemaphore().isReleased() &&
-		!g_engine->script().variable("prohibirESC");
+		!g_engine->script().variable("prohibirESC") &&
+		!_isInTemporaryRoom; // we cannot reliably store this state across multiple room changes
 }
 
 void Player::syncGame(Serializer &s) {
@@ -379,6 +385,7 @@ void Player::syncGame(Serializer &s) {
 		_nextLastDialogCharacter = 0;
 		_isGameLoaded = true;
 		_roomBeforeInventory = nullptr;
+		_isInTemporaryRoom = false;
 		fill(_lastDialogCharacters, _lastDialogCharacters + kMaxLastDialogCharacters, nullptr);
 		changeRoom(roomName, true);
 	}

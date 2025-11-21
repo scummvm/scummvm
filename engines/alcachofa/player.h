@@ -50,7 +50,7 @@ public:
 	void updateCursor();
 	void drawCursor(bool forceDefaultCursor = false);
 	void resetCursor();
-	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
+	void changeRoom(const Common::String &targetRoomName, bool resetCamera, bool isTemporary = false);
 	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
@@ -74,7 +74,8 @@ private:
 	int32 _cursorFrameI = 0;
 	bool
 		_isGameLoaded = true,
-		_didLoadGlobalRooms = false;
+		_didLoadGlobalRooms = false,
+		_isInTemporaryRoom = false;
 	Character *_lastDialogCharacters[kMaxLastDialogCharacters] = { nullptr };
 	int _nextLastDialogCharacter = 0;
 };
