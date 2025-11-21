@@ -874,9 +874,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 		for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
 			if (!mtypes[i])
 				continue;
-			uint pos = guiOptions.findFirstOf(MidiDriver::musicType2GUIO(mtypes[i]));
-			if (pos != Common::String::npos)
-				guiOptions.erase(pos, 1);
+			Common::replace(guiOptions, MidiDriver::musicType2GUIO(mtypes[i]), Common::String());
 		}
 	}
 
@@ -895,9 +893,7 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 	static const char *const rmodes[] = { GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGABW, GUIO_RENDERCGACOMP, GUIO_RENDERCGA };
 	if (res.game.platform == Common::kPlatformAmiga) {
 		for (int i = 0; i < ARRAYSIZE(rmodes); ++i) {
-			uint pos = guiOptions.findFirstOf(rmodes[i][0]);
-			if (pos != Common::String::npos)
-				guiOptions.erase(pos, 1);
+			Common::replace(guiOptions, rmodes[i], Common::String());
 		}
 	}
 
