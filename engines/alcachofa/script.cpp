@@ -627,12 +627,16 @@ private:
 					error("Invalid room name: %s\n", getStringArg(0));
 				if (process().isActiveForPlayer()) {
 					g_engine->player().heldItem() = nullptr;
-					if (g_engine->player().currentRoom() == &g_engine->world().inventory())
+					bool isTemporaryRoom = false;
+					if (g_engine->player().currentRoom() == &g_engine->world().inventory()) {
+						isTemporaryRoom = true; // see changeRoom, this fixes a bug on looking at items in the inventory
+						// this is also why we do not exit the inventory room here (like when the user closes the inventory)
 						g_engine->world().inventory().close();
+					}
 					if (targetRoom == &g_engine->world().inventory())
 						g_engine->world().inventory().open();
 					else
-						g_engine->player().changeRoom(targetRoom->name(), true);
+						g_engine->player().changeRoom(targetRoom->name(), true, isTemporaryRoom);
 					g_engine->sounds().setMusicToRoom(targetRoom->musicID());
 				}
 				g_engine->script().createProcess(process().character(), "ENTRAR_" + targetRoom->name(), ScriptFlags::AllowMissing);

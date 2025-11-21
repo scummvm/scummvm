@@ -395,8 +395,10 @@ bool Inventory::updateInput() {
 		input.wasMenuKeyPressed() ||
 		input.wasInventoryKeyPressed();
 	if (!player.activeCharacter()->isBusy() &&
-		userWantsToCloseInventory)
+		userWantsToCloseInventory) {
+		player.changeRoomToBeforeInventory();
 		close();
+	}
 
 	if (!player.activeCharacter()->isBusy() &&
 		hoveredItem == nullptr &&
@@ -473,7 +475,6 @@ void Inventory::open() {
 }
 
 void Inventory::close() {
-	g_engine->player().changeRoomToBeforeInventory();
 	g_engine->camera().restore(1);
 	g_engine->globalUI().startClosingInventory();
 }
