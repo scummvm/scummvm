@@ -53,7 +53,7 @@ extern int parse(const char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0),
+	  _framePalette(nullptr),
 	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
@@ -86,9 +86,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_framePath = "inface/general/inface2.bmp";
 
 	// Police
-	_policeBustEnabled = false;
-	_policeBustSetting = "";
-	_numberClicks = 0;
+	resetPoliceBust();
 	_sirenSound = "po/audio/posfx002.wav";
 
 	// General sounds
@@ -542,43 +540,125 @@ void PrivateEngine::clearAreas() {
 	}
 }
 
+void PrivateEngine::resetPoliceBust() {
+	_policeBustEnabled = false;
+	_policeSirenPlayed = false;
+	_numberOfClicks = 0;
+	_numberClicksAfterSiren = 0;
+	_policeBustMovieIndex = 0;
+	_policeBustMovie = "";
+	_policeBustPreviousSetting = "";
+}
+
 void PrivateEngine::startPoliceBust() {
-	// This logic was extracted from the binary
+	_policeBustEnabled = true;
+	_policeSirenPlayed = false;
+
+	// Calculate two click counts:
+	// 1. the number of clicks until the siren warning
+	// 2. the number of clicks after the siren warning until the bust
+	// This logic was extracted from the executable.
 	int policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
-	int r = _rnd->getRandomNumber(0xc);
-	if (policeIndex > 0x14) {
-		policeIndex = 0x15;
+	if (policeIndex > 20) {
+		policeIndex = 21;
 	}
-	_maxNumberClicks = r + 0x10 + (policeIndex * 0xe) / -0x15;
-	_sirenWarning = _rnd->getRandomNumber(0x7) + 3;
-	_numberClicks = 0;
-	if (_sirenWarning >= _maxNumberClicks)
-		_sirenWarning = _maxNumberClicks - 1;
+	int r = _rnd->getRandomNumber(11);
+	int numberOfClicks = r + ((policeIndex * 14) / -21) + 16;
+	_numberClicksAfterSiren = _rnd->getRandomNumber(6) + 3;
+	if ((numberOfClicks - _numberClicksAfterSiren) <= 2) {
+		_numberOfClicks = 2;
+	} else {
+		_numberOfClicks = numberOfClicks - _numberClicksAfterSiren;
+	}
+}
+
+void PrivateEngine::stopPoliceBust() {
+	_policeBustEnabled = false;
+}
+
+void PrivateEngine::wallSafeAlarm() {
+	// This logic was extracted from the executable.
+	// It looks like the developers' intended to randomly reduce
+	// the number of clicks until the police arrive.
+	// But instead of using their low random number, they generated
+	// a new random number, so the safe alarm may increase the
+	// number of clicks until the police arrive.
+
+	int r1 = _rnd->getRandomNumber(3);
+	int r2 = _rnd->getRandomNumber(3);
+	if (r1 + r2 + 1 <= _numberOfClicks) {
+		r1 = _rnd->getRandomNumber(3);
+		r2 = _rnd->getRandomNumber(3);
+		_numberOfClicks = r1 + r2 + 1;
+	}
+}
+
+void PrivateEngine::completePoliceBust() {
+	if (!_policeBustPreviousSetting.empty()) {
+		_nextSetting = _policeBustPreviousSetting;
+	}
+
+	int policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
+	if (policeIndex > 13) {
+		return;
+	}
+
+	// Set kPoliceArrived. This flag is cleared by the wall safe alarm.
+	Symbol *policeArrived = maps.variables.getVal(getPoliceArrivedVariable());
+	setSymbol(policeArrived, 1);
+
+	// Select the movie for BustMovie() to play
+	_policeBustMovie =
+		Common::String::format("po/animatio/spoc%02dxs.smk",
+			kPoliceBustVideos[g_private->_policeBustMovieIndex]);
+
+	// Play audio on the second bust movie
+	if (kPoliceBustVideos[_policeBustMovieIndex] == 2) {
+		Common::String s("global/transiti/audio/spoc02VO.wav");
+		g_private->playSound(s, 1, false, false);
+		g_private->changeCursor("default");
+		g_private->waitForSoundToStop();
+	}
+
+	// Cycle to the next movie and wrap around
+	_policeBustMovieIndex = (_policeBustMovieIndex + 1) % ARRAYSIZE(kPoliceBustVideos);
+
+	_nextSetting = getPOGoBustMovieSetting();
 }
 
 void PrivateEngine::checkPoliceBust() {
-	if (!_policeBustEnabled)
-		return;
-
-	if (_numberClicks < _sirenWarning)
-		return;
-
-	if (_numberClicks == _sirenWarning) {
-		stopSound(true);
-		playSound(_sirenSound, 0, false, false);
-		_numberClicks++; // Won't execute again
+	if (!_policeBustEnabled) {
 		return;
 	}
 
-	if (_numberClicks == _maxNumberClicks + 1) {
-		uint policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
-		_policeBustSetting = _currentSetting;
-		if (policeIndex <= 13) {
-			_nextSetting = getPOGoBustMovieSetting();
+	if (_numberOfClicks >= 0) {
+		return;
+	}
+
+	if (!_policeSirenPlayed) {
+		// Play siren
+		stopSound(true);
+		playSound(_sirenSound, 1, false, false);
+
+		_policeSirenPlayed = true;
+		_numberOfClicks = _numberClicksAfterSiren;
+	} else {
+		// Bust Marlowe.
+		// The original seems to record _currentSetting instead of
+		// _nextSetting, but that causes a click to do nothing if it
+		// triggers a police bust that doesn't do anything except for
+		// restoring the current scene.
+		if (!_nextSetting.empty()) {
+			_policeBustPreviousSetting = _nextSetting;
 		} else {
-			_nextSetting = getPoliceBustFromMOSetting();
+			_policeBustPreviousSetting = _currentSetting;
 		}
-		clearAreas();
+		// The next setting is indeed kPoliceBustFromMO, even though it
+		// occurs from all locations and is unrelated to Marlowe's office.
+		// According to comments in the game script, Marlowe's office
+		// originally required a special mode but it was later removed.
+		// Apparently the developers didn't rename the setting.
+		_nextSetting = getPoliceBustFromMOSetting();
 		_policeBustEnabled = false;
 	}
 }
@@ -747,6 +827,10 @@ Common::String PrivateEngine::getWallSafeValueVariable() {
 	return getSymbolName("kWallSafeValue", "k3");
 }
 
+Common::String PrivateEngine::getPoliceArrivedVariable() {
+	return getSymbolName("kPoliceArrived", "k7");
+}
+
 Common::String PrivateEngine::getBeenDowntownVariable() {
 	return getSymbolName("kBeenDowntown", "k8");
 }
@@ -853,7 +937,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
-		_numberClicks++; // count click only if it hits a hotspot
+		_numberOfClicks--; // count click only if it hits a hotspot
 		_nextSetting = ns;
 		_highlightMasks = false;
 	}
@@ -890,7 +974,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
-		_numberClicks++; // count click only if it hits a hotspot
+		_numberOfClicks--; // count click only if it hits a hotspot
 		_nextSetting = ns;
 		_highlightMasks = false;
 	}
@@ -915,8 +999,6 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 						break;
 					}
 				}
-
-				_numberClicks++;
 
 				// Prevent crash if there are no memories for this location
 				if (!diaryPageSet) {
@@ -1387,6 +1469,9 @@ void PrivateEngine::restartGame() {
 		if (*(sym->name) != getAlternateGameVariable())
 			sym->u.val = 0;
 	}
+
+	// Police Bust
+	resetPoliceBust();
 
 	// Diary
 	for (NameList::iterator it = maps.locationList.begin(); it != maps.locationList.end(); ++it) {

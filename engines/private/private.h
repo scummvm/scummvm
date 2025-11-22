@@ -302,6 +302,7 @@ public:
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
 	Common::String getWallSafeValueVariable();
+	Common::String getPoliceArrivedVariable();
 	Common::String getBeenDowntownVariable();
 	Common::String getPoliceStationLocation();
 	const char *getSymbolName(const char *name, const char *strippedName, const char *demoName = nullptr);
@@ -327,12 +328,18 @@ public:
 
 	// Police Bust
 	bool _policeBustEnabled;
+	bool _policeSirenPlayed;
+	int _numberOfClicks;
+	int _numberClicksAfterSiren;
+	int _policeBustMovieIndex;
+	Common::String _policeBustMovie;
+	Common::String _policeBustPreviousSetting;
+	void resetPoliceBust();
 	void startPoliceBust();
+	void stopPoliceBust();
+	void wallSafeAlarm();
+	void completePoliceBust();
 	void checkPoliceBust();
-	int _numberClicks;
-	int _maxNumberClicks;
-	int _sirenWarning;
-	Common::String _policeBustSetting;
 
 	// Diary
 	InvList inventory;
