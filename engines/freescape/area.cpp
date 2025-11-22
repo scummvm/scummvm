@@ -225,8 +225,13 @@ void Area::resetArea() {
 
 void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait) {
 	bool runAnimation = animationTicks != _lastTick;
+	bool cameraChanged = camera != _lastCameraPosition;
+	bool sort = runAnimation || cameraChanged || _sortedObjects.empty();
+
 	assert(_drawableObjects.size() > 0);
-	ObjectArray sortedObjects;
+	if (sort)
+		_sortedObjects.clear();
+
 	Object *floor = nullptr;
 
 	for (auto &obj : _drawableObjects) {
@@ -241,7 +246,8 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			sortedObjects.push_back(obj);
+			if (sort)
+				_sortedObjects.push_back(obj);
 		}
 	}
 
@@ -313,13 +319,13 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	// NOTE: The sorting is performed on unprojected world-space coordinates relative to the player (L847f).
 	// The rotation/view matrix (computed in L95de) is NOT applied to the bounding boxes used for sorting.
 	// It is only applied to the vertices during the projection phase (L850f/L9177).
-	int n = sortedObjects.size();
-	if (n > 1) {
+	int n = _sortedObjects.size();
+	if (n > 1 && sort) {
 		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
 			bool changed = false;
 			for (int j = 0; j < n - 1; j++) { // L9c45_objects_loop
-				Object *a = sortedObjects[j];
-				Object *b = sortedObjects[j + 1];
+				Object *a = _sortedObjects[j];
+				Object *b = _sortedObjects[j + 1];
 
 				Math::AABB bboxA = a->_occlusionBox;
 				Math::AABB bboxB = b->_occlusionBox;
@@ -350,8 +356,8 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 
 				if (!keepOrder) {
 					// Swap objects (L9d2c_flip_objects_loop)
-					sortedObjects[j] = b;
-					sortedObjects[j + 1] = a;
+					_sortedObjects[j] = b;
+					_sortedObjects[j + 1] = a;
 					changed = true;
 				}
 			}
@@ -360,11 +366,13 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		}
 	}
 
-	for (auto &obj : sortedObjects) {
+	for (auto &obj : _sortedObjects) {
 		obj->draw(gfx);
 	}
 
 	_lastTick = animationTicks;
+	if (sort)
+		_lastCameraPosition = camera;
 }
 
 void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) {
