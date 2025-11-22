@@ -232,50 +232,39 @@ static void fRestartGame(ArgArray args) {
 static void fPoliceBust(ArgArray args) {
 	// assert types
 	assert(args.size() == 1 || args.size() == 2);
-	g_private->_policeBustEnabled = args[0].u.val;
-	//debug("Number of clicks %d", g_private->computePoliceIndex());
-
-	if (g_private->_policeBustEnabled)
-		g_private->startPoliceBust();
-
-	if (args.size() == 2) {
-		if (args[1].u.val == 2) {
-			// Unclear what it means
-		} else if (args[1].u.val == 3) {
-			g_private->_nextSetting = g_private->getMainDesktopSetting();
-			g_private->_mode = 0;
-			g_private->_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
-		} else
-			assert(0);
+	int mode = (args.size() == 2) ? args[1].u.val : 0;
+	debugC(1, kPrivateDebugScript, "PoliceBust(%d, %d)", args[0].u.val, mode);
+	
+	if (mode == 3) {
+		g_private->completePoliceBust();
+		return;
 	}
-	debugC(1, kPrivateDebugScript, "PoliceBust(%d, ..)", args[0].u.val);
-	debugC(1, kPrivateDebugScript, "WARNING: PoliceBust partially implemented");
+	if (mode == 2) {
+		g_private->wallSafeAlarm();
+		return;
+	}
+	if (mode == 1) {
+		// Not implemented: a special mode for police busts
+		// in Marlowe's office that was removed from the game.
+		return;
+	}
+
+	if (args[0].u.val) {
+		g_private->startPoliceBust();
+	} else {
+		g_private->stopPoliceBust();
+	}
 }
 
 static void fBustMovie(ArgArray args) {
 	// assert types
 	assert(args.size() == 1);
 	debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.sym->name->c_str());
-	uint policeIndex = g_private->maps.variables.getVal(g_private->getPoliceIndexVariable())->u.val;
-	int videoIndex = policeIndex / 2 - 1;
-	if (videoIndex < 0)
-		videoIndex = 0;
-	assert(videoIndex <= 5);
-	Common::String pv =
-		Common::String::format("po/animatio/spoc%02dxs.smk",
-							   kPoliceBustVideos[videoIndex]);
 
-	if (kPoliceBustVideos[videoIndex] == 2) {
-		Common::String s("global/transiti/audio/spoc02VO.wav");
-		g_private->playSound(s, 1, false, false);
-		g_private->changeCursor("default");
-		g_private->waitForSoundToStop();
-	}
-
-	g_private->_nextMovie = pv;
+	g_private->_nextMovie = g_private->_policeBustMovie;
 	g_private->_nextSetting = args[0].u.sym->name->c_str();
 
-	Common::String memoryPath = pv;
+	Common::String memoryPath = g_private->_policeBustMovie;
 	memoryPath.replace('/', '\\');
 	g_private->addMemory(memoryPath);
 }
