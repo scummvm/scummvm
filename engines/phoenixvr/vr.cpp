@@ -426,8 +426,10 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		const auto *src = out;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = clip<int>(*src++ / 16 + 128);
-				*dst++ = v - 128;
+				int v = *src++;
+				v -= 510;
+				v = v / 8 + 128;
+				*dst++ = clip(v);
 			}
 		}
 		++channel;
