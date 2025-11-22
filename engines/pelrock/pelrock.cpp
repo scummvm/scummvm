@@ -429,10 +429,10 @@ Common::Array<Description> PelrockEngine::loadRoomDescriptions(Common::File *roo
 					description.text.append(1, (char)data[pos]);
 				}
 				if (data[pos] == 0xF8) {
-
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
+					debug("Found action trigger: %d", description.actionTrigger);
 					pos += 2;
-					continue;
+					break;
 				}
 				// desc[desc_pos++] = (char)data[pos];
 				// debug("Current desc: %s", desc);
@@ -1862,7 +1862,6 @@ void PelrockEngine::checkMouseHover() {
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
 
 	if (hotspotIndex != -1) {
-		debug("Hotspot under mouse: %d, (%d,%d)", hotspotIndex, _currentRoomHotspots[hotspotIndex].x, _currentRoomHotspots[hotspotIndex].y);
 		isSomethingUnder = true;
 	}
 
