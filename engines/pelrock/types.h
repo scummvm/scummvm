@@ -207,6 +207,8 @@ struct StackEntry {
 struct Description {
 	byte itemId;
 	byte index;
+	bool isAction = false;
+	uint16 actionTrigger;
 	Common::String text;
 };
 

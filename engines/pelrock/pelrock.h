@@ -88,7 +88,7 @@ private:
 									 uint16_t dest_x, uint16_t dest_y,
 									 MovementStep *movement_buffer);
 
-	void talk();
+	void talk(byte object);
 	Common::String getControlName(byte b);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadCursors();
@@ -147,8 +147,9 @@ private:
 	uint16 mouseY = 0;
 	byte *_cursorMasks[5] = {nullptr};
 
-	uint32 _mouseDownTime;
-	bool _isMouseDown;
+	uint32 _mouseClickTime;
+	bool _isMouseDown = false;
+	bool _longClick = false;
 
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
@@ -156,6 +157,7 @@ private:
 	byte *_currentBackground; // Clean background - NEVER modified
 	byte *_compositeBuffer;   // Working composition buffer
 
+	bool _lMouseDown = false;
 	bool _displayPopup = false;
 	int _popupX = 0;
 	int _popupY = 0;
@@ -171,12 +173,12 @@ private:
 	GameState stateGame = GAME;
 	bool gameInitialized = false;
 	bool screenReady = false;
-	int prevDirX = 0;
-	int prevDirY = 0;
-	Common::String objectToShow = "";
-	int prevWhichScreen = 0;
-	int whichScreen = 0;
-	byte *pixelsShadows; // =new int[640*400];
+	// int prevDirX = 0;
+	// int prevDirY = 0;
+	// Common::String objectToShow = "";
+	// int prevWhichScreen = 0;
+	// int whichScreen = 0;
+	// byte *pixelsShadows; // =new int[640*400];
 protected:
 	// Engine APIs
 	Common::Error run() override;
