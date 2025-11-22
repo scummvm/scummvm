@@ -68,7 +68,7 @@ protected:
 private:
 	bool readBlockHeader(ROQBlockHeader &blockHeader);
 
-	bool isValidBlockHeaderType(uint16 blockHeader_type);
+	bool isValidBlockHeaderType(uint16 blockHeaderType);
 	bool processBlock();
 	bool processBlockInfo(ROQBlockHeader &blockHeader);
 	bool processBlockQuadCodebook(ROQBlockHeader &blockHeader);
