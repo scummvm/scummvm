@@ -273,6 +273,12 @@ Object *GeometricObject::duplicate() {
 
 void GeometricObject::computeBoundingBox() {
 	_boundingBox = Math::AABB();
+	_occlusionBox = Math::AABB();
+
+	// These are used for the rendered, they should NOT be refined or it will break the sorting algorithm
+	_occlusionBox.expand(_origin);
+	_occlusionBox.expand(_origin + _size);
+
 	Math::Vector3d v;
 	switch (_type) {
 	default:

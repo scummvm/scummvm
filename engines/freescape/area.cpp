@@ -84,18 +84,6 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 		}
 	}
 
-	// sort so that those that are planar are drawn last
-	struct {
-		bool operator()(Object *object1, Object *object2) {
-			if (!object1->isPlanar() && object2->isPlanar())
-				return true;
-			if (object1->isPlanar() && !object2->isPlanar())
-				return false;
-			return object1->getObjectID() > object2->getObjectID();
-		};
-	} compareObjects;
-
-	Common::sort(_drawableObjects.begin(), _drawableObjects.end(), compareObjects);
 	_lastTick = 0;
 }
 
@@ -238,11 +226,8 @@ void Area::resetArea() {
 void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait) {
 	bool runAnimation = animationTicks != _lastTick;
 	assert(_drawableObjects.size() > 0);
-	ObjectArray planarObjects;
-	ObjectArray nonPlanarObjects;
+	ObjectArray sortedObjects;
 	Object *floor = nullptr;
-	Common::HashMap<Object *, float> sizes;
-	float offset = MAX(0.15, 1.0 / _scale);
 
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
@@ -256,10 +241,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			if (obj->isPlanar())
-				planarObjects.push_back(obj);
-			else
-				nonPlanarObjects.push_back(obj);
+			sortedObjects.push_back(obj);
 		}
 	}
 
@@ -269,103 +251,117 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		gfx->depthTesting(true);
 	}
 
-	Common::HashMap<Object *, float> offsetMap;
-	for (auto &planar : planarObjects)
-		offsetMap[planar] = 0;
+	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
+	auto checkAxis = [](float minA, float maxA, float minB, float maxB) -> int {
+		if (minA >= maxB) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
+			bool signMinA = minA >= 0;
+			bool signMaxA = maxA >= 0;
+			bool signMinB = minB >= 0;
+			bool signMaxB = maxB >= 0;
 
-	for (auto &planar : planarObjects) {
-		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
-		centerPlanar /= 2;
-		Math::Vector3d distance;
-		for (auto &object : nonPlanarObjects) {
-			if (object->_partOfGroup)
-				continue;
+			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
+				return 1; // A is closer
+			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
+				return 2; // B is closer
 
-			distance = object->_boundingBox.distance(centerPlanar);
-			if (distance.length() > 0.0001)
-				continue;
+			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
+				return 0;
 
-			float sizeNonPlanar = object->_boundingBox.getSize().length();
-			if (sizes[planar] >= sizeNonPlanar)
-				continue;
+			// Same side
+			if (!signMinA) { // Negative side (sign bit set in asm)
+				if (minA > minB) return 1; // A closer
+				if (minA < minB) return 2; // B closer
+				if (maxA > maxB) return 1; // A closer
+				return 2; // B closer
+			} else { // Positive side (sign bit clear in asm)
+				if (minA < minB) return 1; // A closer
+				if (minA > minB) return 2; // B closer
+				if (maxA > maxB) return 2; // B closer
+				return 1; // A closer
+			}
+		} else if (minB >= maxA) { // B is clearly "greater" than A
+			bool signMinB = minB >= 0;
+			bool signMaxB = maxB >= 0;
+			bool signMinA = minA >= 0;
+			bool signMaxA = maxA >= 0;
 
-			sizes[planar] = sizeNonPlanar;
+			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
+				return 2; // B is closer
+			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
+				return 1; // A is closer
 
-			if (planar->getSize().x() == 0) {
-				if (object->getOrigin().x() >= centerPlanar.x())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else if (planar->getSize().y() == 0) {
-				if (object->getOrigin().y() >= centerPlanar.y())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else if (planar->getSize().z() == 0) {
-				if (object->getOrigin().z() >= centerPlanar.z())
-					offsetMap[planar] = -offset;
-				else
-					offsetMap[planar] = offset;
-			} else
-				; //It was not really planar?!
-		}
-	}
+			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
+				return 0;
 
-	for (auto &planar : planarObjects) {
-		Math::Vector3d centerPlanar = planar->_boundingBox.getMin() + planar->_boundingBox.getMax();
-		centerPlanar /= 2;
-		Math::Vector3d distance;
-		for (auto &object : planarObjects) {
-			if (object == planar)
-				continue;
-
-			distance = object->_boundingBox.distance(centerPlanar);
-			if (distance.length() > 0)
-				continue;
-
-			if (planar->getSize().x() == 0) {
-				if (object->getSize().x() > 0)
-					continue;
-			} else if (planar->getSize().y() == 0) {
-				if (object->getSize().y() > 0)
-					continue;
-			} else if (planar->getSize().z() == 0) {
-				if (object->getSize().z() > 0)
-					continue;
-			} else
-				continue;
-
-			//debug("planar object %d collides with planar object %d", planar->getObjectID(), object->getObjectID());
-			if (offsetMap[planar] == offsetMap[object] && offsetMap[object] != 0) {
-				// Nothing to do?
-			} else if (offsetMap[planar] == offsetMap[object] && offsetMap[object] == 0) {
-				if (planar->getSize().x() == 0) {
-					if (object->getOrigin().x() < centerPlanar.x())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else if (planar->getSize().y() == 0) {
-					if (object->getOrigin().y() < centerPlanar.y())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else if (planar->getSize().z() == 0) {
-					if (object->getOrigin().z() < centerPlanar.z())
-						offsetMap[planar] = -offset;
-					else
-						offsetMap[planar] = offset;
-				} else
-					; //It was not really planar?!
+			// Same side
+			if (!signMinB) { // Negative side
+				if (minB > minA) return 2; // B closer
+				if (minB < minA) return 1; // A closer
+				if (maxB > maxA) return 2; // B closer
+				return 1; // A closer
+			} else { // Positive side
+				if (minB < minA) return 2; // B closer
+				if (minB > minA) return 1; // A closer
+				if (maxB > maxA) return 1; // A closer
+				return 2; // B closer
 			}
 		}
+		return 0; // Overlap (L9cf3_objects_incomparable_in_this_axis)
+	};
+
+	// Bubble sort as implemented in castlemaster2-annotated.asm (L9c2d_sort_objects_for_rendering)
+	// NOTE: The sorting is performed on unprojected world-space coordinates relative to the player (L847f).
+	// The rotation/view matrix (computed in L95de) is NOT applied to the bounding boxes used for sorting.
+	// It is only applied to the vertices during the projection phase (L850f/L9177).
+	int n = sortedObjects.size();
+	if (n > 1) {
+		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
+			bool changed = false;
+			for (int j = 0; j < n - 1; j++) { // L9c45_objects_loop
+				Object *a = sortedObjects[j];
+				Object *b = sortedObjects[j + 1];
+
+				Math::AABB bboxA = a->_occlusionBox;
+				Math::AABB bboxB = b->_occlusionBox;
+				Math::Vector3d minA = bboxA.getMin() - camera;
+				Math::Vector3d maxA = bboxA.getMax() - camera;
+				Math::Vector3d minB = bboxB.getMin() - camera;
+				Math::Vector3d maxB = bboxB.getMax() - camera;
+
+				int result = 0;
+
+				// X axis
+				result = (result << 2) | checkAxis(minA.x(), maxA.x(), minB.x(), maxB.x());
+				// Y axis
+				result = (result << 2) | checkAxis(minA.y(), maxA.y(), minB.y(), maxB.y());
+				// Z axis
+				result = (result << 2) | checkAxis(minA.z(), maxA.z(), minB.z(), maxB.z());
+
+				bool keepOrder = false;
+				// If result indicates B is closer in at least one axis, AND A is NEVER closer in any axis, keep order (A before B)
+				// Codes where B is closer (2) and A is not (1):
+				// 2 (Z), 8 (Y), 32 (X) -> hex: 02, 08, 20
+				// 2+8=10 (0A), 2+32=34 (22), 8+32=40 (28)
+				// 2+8+32=42 (2A)
+				// L9d37_next_object (Keep order)
+				if (result == 0x02 || result == 0x08 || result == 0x20 ||
+					result == 0x0A || result == 0x22 || result == 0x28 || result == 0x2A)
+					keepOrder = true; // A before B
+
+				if (!keepOrder) {
+					// Swap objects (L9d2c_flip_objects_loop)
+					sortedObjects[j] = b;
+					sortedObjects[j + 1] = a;
+					changed = true;
+				}
+			}
+			if (!changed)
+				break;
+		}
 	}
 
-	for (auto &obj : nonPlanarObjects) {
+	for (auto &obj : sortedObjects) {
 		obj->draw(gfx);
-	}
-
-	for (auto &pair : offsetMap) {
-		pair._key->draw(gfx, pair._value);
 	}
 
 	_lastTick = animationTicks;
