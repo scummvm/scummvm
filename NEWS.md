@@ -40,6 +40,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  AGI:
    - Added Text-to-Speech support.
+   - Added support for SQ2 French translation.
+   - Added support for KQ1, KQ2, KQ3 Hebrew translations.
    - Fixed Mickey's Space Adventure sound on PS3, Wii, and other big-endian
      ports.
 
