@@ -82,6 +82,12 @@ typedef struct ExitInfo {
 	Common::String nextSetting;
 	Common::Rect   rect;
 	Common::String cursor;
+
+	void clear() {
+		nextSetting.clear();
+		rect.setEmpty();
+		cursor.clear();
+	}
 } ExitInfo;
 
 typedef struct MaskInfo {
