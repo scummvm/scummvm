@@ -315,10 +315,12 @@ public:
 	DossierArray _dossiers;
 	uint _dossierSuspect;
 	uint _dossierPage;
+	MaskInfo _dossierPageMask;
 	MaskInfo _dossierNextSuspectMask;
 	MaskInfo _dossierPrevSuspectMask;
 	MaskInfo _dossierNextSheetMask;
 	MaskInfo _dossierPrevSheetMask;
+	bool selectDossierPage(Common::Point);
 	bool selectDossierNextSuspect(Common::Point);
 	bool selectDossierPrevSuspect(Common::Point);
 	bool selectDossierNextSheet(Common::Point);
