@@ -105,6 +105,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	// Dossiers
 	_dossierPage = 0;
 	_dossierSuspect = 0;
+	_dossierPageMask.clear();
 	_dossierNextSuspectMask.clear();
 	_dossierPrevSuspectMask.clear();
 	_dossierNextSheetMask.clear();
@@ -380,6 +381,8 @@ Common::Error PrivateEngine::run() {
 					break;
 				else if (selectDossierPrevSheet(mousePos))
 					break;
+				else if (selectDossierPage(mousePos))
+					break;
 				else if (selectSafeDigit(mousePos))
 					break;
 				else if (selectDiaryNextPage(mousePos))
@@ -525,6 +528,7 @@ void PrivateEngine::clearAreas() {
 	_policeRadioArea.clear();
 	_AMRadioArea.clear();
 	_phoneArea.clear();
+	_dossierPageMask.clear();
 	_dossierNextSuspectMask.clear();
 	_dossierPrevSuspectMask.clear();
 	_dossierNextSheetMask.clear();
@@ -1286,15 +1290,31 @@ void PrivateEngine::loadDossier() {
 	int x = 40;
 	int y = 30;
 
-	DossierInfo m = _dossiers[_dossierSuspect];
+	MaskInfo m;
+	DossierInfo d = _dossiers[_dossierSuspect];
 
 	if (_dossierPage == 0) {
-		loadImage(m.page1, x, y);
+		m.surf = loadMask(d.page1, x, y, true);
 	} else if (_dossierPage == 1) {
-		loadImage(m.page2, x, y);
+		m.surf = loadMask(d.page2, x, y, true);
 	} else {
 		error("Invalid page");
 	}
+
+	m.cursor = "default";
+	_dossierPageMask = m;
+	_masks.push_back(m); // not push_front, as this occurs after DossierChgSheet
+}
+
+bool PrivateEngine::selectDossierPage(Common::Point mousePos) {
+	if (_dossierPageMask.surf == nullptr) {
+		return false;
+	}
+
+	if (inMask(_dossierPageMask.surf, mousePos)) {
+		return true;
+	}
+	return false;
 }
 
 bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {

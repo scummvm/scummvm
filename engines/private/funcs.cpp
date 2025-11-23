@@ -291,6 +291,11 @@ static void fDossierChgSheet(ArgArray args) {
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
+	// do nothing if suspect only has one sheet
+	if (g_private->_dossiers[g_private->_dossierSuspect].page2.empty()) {
+		return;
+	}
+
 	int p = args[1].u.val;
 	int x = args[2].u.val;
 	int y = args[3].u.val;
