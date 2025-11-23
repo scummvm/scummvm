@@ -315,6 +315,10 @@ static void fDossierPrevSuspect(ArgArray args) {
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
+	if (g_private->_dossierSuspect == 0) {
+		return;
+	}
+
 	int x = args[1].u.val;
 	int y = args[2].u.val;
 
@@ -331,6 +335,10 @@ static void fDossierNextSuspect(ArgArray args) {
 	assert(args.size() == 3);
 	Common::String s(args[0].u.str);
 	MaskInfo m;
+
+	if ((g_private->_dossierSuspect + 1) >= g_private->_dossiers.size()) {
+		return;
+	}
 
 	int x = args[1].u.val;
 	int y = args[2].u.val;

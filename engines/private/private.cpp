@@ -1306,10 +1306,9 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierSuspect++;
 			_dossierPage = 0;
-			loadDossier();
-			drawMask(_dossierNextSuspectMask.surf);
-			drawMask(_dossierPrevSuspectMask.surf);
-			drawScreen();
+			
+			// reload kDossierOpen
+			_nextSetting = _currentSetting;
 		}
 		return true;
 	}
@@ -1324,10 +1323,9 @@ bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
 		if (_dossierPage == 1) {
 			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierPage = 0;
-			loadDossier();
-			drawMask(_dossierNextSuspectMask.surf);
-			drawMask(_dossierPrevSuspectMask.surf);
-			drawScreen();
+			
+			// reload kDossierOpen
+			_nextSetting = _currentSetting;
 		}
 		return true;
 	}
@@ -1343,10 +1341,9 @@ bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
 		if (_dossierPage == 0 && !m.page2.empty()) {
 			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierPage = 1;
-			loadDossier();
-			drawMask(_dossierNextSuspectMask.surf);
-			drawMask(_dossierPrevSuspectMask.surf);
-			drawScreen();
+			
+			// reload kDossierOpen
+			_nextSetting = _currentSetting;
 		}
 		return true;
 	}
@@ -1362,10 +1359,9 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 			playSound(getPaperShuffleSound(), 1, false, false);
 			_dossierSuspect--;
 			_dossierPage = 0;
-			loadDossier();
-			drawMask(_dossierNextSuspectMask.surf);
-			drawMask(_dossierPrevSuspectMask.surf);
-			drawScreen();
+			
+			// reload kDossierOpen
+			_nextSetting = _currentSetting;
 		}
 		return true;
 	}
