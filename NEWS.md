@@ -136,10 +136,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added keymapper support.
 
  SCI:
-   - Fixed the palette in SLATER Mac.
-   - Fixed LSL6 temporary freeze after control panel.
-   - Fixed PEPPER spinning in Ben Franklin's workshop.
-   - Enabled extra LSL6 messages when clicking on Larry.
+   - Fixed PHANT1 losing save files. (ScummVM 2.9.0 bug)
+   - Fixed QFG4 v1.1/German lockup when entering cave at end of game.
+   - Fixed PQ2 PC-98 Japanese text not displaying on certain screens.
+   - Fixed KQ1 Amiga crash when incorrectly guessing gnome's name.
+   - Fixed LONGBOW Amiga crash when going to abbey.
+   - Fixed SQ4 Amiga taking three minutes to display title screen.
+   - Fixed script bugs in ECO1, LSL6, PEPPER.
+   - Added support for SLATER Macintosh.
    - Virtual keyboard now correctly triggers on/off wherever text input is
      needed.
 
