@@ -200,9 +200,9 @@ void PSXStreamDecoder::readNextPacket() {
 			error("Corrupt PSX stream sector");
 
 		sector->seek(0x11);
-		byte track = sector->readByte();
-		if (track >= 32) {
-			warning("Bad PSX stream track");
+		byte channel = sector->readByte();
+		if (channel >= 32) {
+			warning("Bad PSX stream channel");
 			return;
 		}
 
@@ -210,60 +210,64 @@ void PSXStreamDecoder::readNextPacket() {
 
 		switch (sectorType) {
 		case CDXA_TYPE_DATA:
-		case CDXA_TYPE_VIDEO:
-			if (track == 1) {
-				if (!_videoTrack) {
-					_videoTrack = new PSXVideoTrack(sector, _speed, _frameCount);
-					addTrack(_videoTrack);
+		case CDXA_TYPE_VIDEO: {
+			if (!_videoTrack) {
+				_videoTrack = new PSXVideoTrack(sector, _speed, _frameCount, channel);
+				addTrack(_videoTrack);
 
-					// If no video track is initialized, we are called
-					// by loadStream(). Stop here, and start rendering
-					// the track from the next call.
-					_stream->seek(prevPos);
-					return;
-				}
+				// If no video track is initialized, we are called
+				// by loadStream(). Stop here, and start rendering
+				// the track from the next call.
+				_stream->seek(prevPos);
+				return;
+			}
 
-				sector->seek(28);
-				uint16 curSector = sector->readUint16LE();
-				uint16 sectorCount = sector->readUint16LE();
-				sector->readUint32LE();
-				uint16 frameSize = sector->readUint32LE();
+			if (_videoTrack->getChannel() != channel) {
+				warning("Unhandled multi-channel video");
+				return;
+			}
 
-				if (curSector >= sectorCount)
-					error("Bad sector");
+			sector->seek(28);
+			uint16 curSector = sector->readUint16LE();
+			uint16 sectorCount = sector->readUint16LE();
+			sector->readUint32LE();
+			uint16 frameSize = sector->readUint32LE();
 
-				if (!partialFrame)
-					partialFrame = (byte *)malloc(sectorCount * VIDEO_DATA_CHUNK_SIZE);
+			if (curSector >= sectorCount)
+				error("Bad sector");
 
-				sector->seek(VIDEO_DATA_HEADER_SIZE);
-				sector->read(partialFrame + curSector * VIDEO_DATA_CHUNK_SIZE, VIDEO_DATA_CHUNK_SIZE);
+			if (!partialFrame)
+				partialFrame = (byte *)malloc(sectorCount * VIDEO_DATA_CHUNK_SIZE);
 
-				if (curSector == sectorCount - 1) {
-					// Done assembling the frame
-					Common::BitStreamMemoryStream *frame = new Common::BitStreamMemoryStream(partialFrame, frameSize, DisposeAfterUse::YES);
+			sector->seek(VIDEO_DATA_HEADER_SIZE);
+			sector->read(partialFrame + curSector * VIDEO_DATA_CHUNK_SIZE, VIDEO_DATA_CHUNK_SIZE);
 
-					_videoTrack->decodeFrame(frame, sectorsRead);
+			if (curSector == sectorCount - 1) {
+				// Done assembling the frame
+				Common::BitStreamMemoryStream *frame = new Common::BitStreamMemoryStream(partialFrame, frameSize, DisposeAfterUse::YES);
 
-					delete frame;
-					delete sector;
-					return;
-				}
-			} else
-				error("Unhandled multi-track video");
-			break;
-		case CDXA_TYPE_AUDIO:
-			// We only handle one audio channel so far
-			if (track == 1) {
-				if (!_audioTrack) {
-					_audioTrack = new PSXAudioTrack(sector, getSoundType());
-					addTrack(_audioTrack);
-				}
+				_videoTrack->decodeFrame(frame, sectorsRead);
 
-				_audioTrack->queueAudioFromSector(sector);
-			} else {
-				warning("Unhandled multi-track audio");
+				delete frame;
+				delete sector;
+				return;
 			}
 			break;
+		}
+		case CDXA_TYPE_AUDIO: {
+			// We only handle one audio channel so far
+			if (!_audioTrack) {
+				_audioTrack = new PSXAudioTrack(sector, getSoundType(), channel);
+				addTrack(_audioTrack);
+			}
+
+			if (_audioTrack->getChannel() != channel) {
+				warning("Unhandled multi-channel audio");
+			}
+
+			_audioTrack->queueAudioFromSector(sector);
+			break;
+		}
 		default:
 			// This shows up way too often, but the other sectors
 			// are safe to ignore
@@ -308,8 +312,8 @@ Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 #define AUDIO_DATA_CHUNK_SIZE   2304
 #define AUDIO_DATA_SAMPLE_COUNT 4032
 
-PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType, byte channel) :
+		AudioTrack(soundType), _channel(channel) {
 	assert(sector);
 	_endOfTrack = false;
 
@@ -350,7 +354,8 @@ Audio::AudioStream *PSXStreamDecoder::PSXAudioTrack::getAudioStream() const {
 }
 
 
-PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount) : _nextFrameStartTime(0, speed), _frameCount(frameCount), _surface(nullptr) {
+PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount, byte channel) :
+	_nextFrameStartTime(0, speed), _frameCount(frameCount), _channel(channel), _surface(nullptr) {
 	assert(firstSector);
 
 	firstSector->seek(40);
