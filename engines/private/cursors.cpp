@@ -42,6 +42,7 @@ struct CursorEntry {
 	const char *name;
  	const char *aname;
 	uint id;
+	uint japaneseId;
 };
 
 void PrivateEngine::loadCursors() {
@@ -49,14 +50,14 @@ void PrivateEngine::loadCursors() {
 
 	if (_platform == Common::kPlatformWindows) {
 		const CursorEntry cursorIDReference[] = {
-			{ "kTurnLeft",  "k1", 23 },
-			{ "kTurnRight", "k2", 9  },
-			{ "kZoomIn",    "k3", 17 },
-			{ "kZoomOut",   "k4", 11 },
-			{ "kExit",      "k5", 7  },
-			{ "kPhone",     "k6", 25 },
-			{ "kInventory", "k7", 19 },
-			{ nullptr, nullptr,   0  }
+			{ "kTurnLeft",  "k1", 23, 17 },
+			{ "kTurnRight", "k2", 9,  3  },
+			{ "kZoomIn",    "k3", 17, 11 },
+			{ "kZoomOut",   "k4", 11, 5  },
+			{ "kExit",      "k5", 7,  1  },
+			{ "kPhone",     "k6", 25, 19 },
+			{ "kInventory", "k7", 19, 13 },
+			{ nullptr, nullptr,   0,  0  }
 		};
 
 		Common::WinResources *exe = nullptr;
@@ -98,7 +99,8 @@ void PrivateEngine::loadCursors() {
 
 			const CursorEntry *entry = cursorIDReference;
 			while (entry->name != nullptr) {
-				if (entry->id == _cursors[i].winCursorGroup->cursors[0].id.getID()) {
+				uint entryId = (_language == Common::JA_JPN) ? entry->japaneseId : entry->id;
+				if (entryId == _cursors[i].winCursorGroup->cursors[0].id.getID()) {
 					_cursors[i].name = entry->name;
 					_cursors[i].aname = entry->aname;
 					break;
@@ -111,14 +113,14 @@ void PrivateEngine::loadCursors() {
 		delete exeStream;
 	} else {
 		const CursorEntry cursorIDReference[] = {
-			{ "kTurnLeft",  "k1", 133 },
-			{ "kTurnRight", "k2", 132 },
-			{ "kZoomIn",    "k3", 138 },
-			{ "kZoomOut",   "k4", 135 },
-			{ "kExit",      "k5", 130 },
-			{ "kPhone",     "k6", 141 },
-			{ "kInventory", "k7", 139 },
-			{ nullptr, nullptr,   0   }
+			{ "kTurnLeft",  "k1", 133, 0 },
+			{ "kTurnRight", "k2", 132, 0 },
+			{ "kZoomIn",    "k3", 138, 0 },
+			{ "kZoomOut",   "k4", 135, 0 },
+			{ "kExit",      "k5", 130, 0 },
+			{ "kPhone",     "k6", 141, 0 },
+			{ "kInventory", "k7", 139, 0 },
+			{ nullptr, nullptr,   0,   0 }
 		};
 
 		Common::MacResManager resMan;
