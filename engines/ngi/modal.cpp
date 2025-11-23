@@ -2542,6 +2542,18 @@ void NGIEngine::openHelp() {
 }
 
 void NGIEngine::openMainMenu() {
+	/**
+	 * This function is only called in global_messageHandler1 to open the main menu.
+	 * To reach it, g_nmi->_modalObject is supposed to be null because, else, this object
+	 * would catch the message (see ExCommand::handle).
+	 * If we hammer kPauseAction, we get several messages in the queue which lead to this method
+	 * executed several times leading to use-after-frees when the last main menu is closed.
+	 * Instead, ignore messages which come in a row and only handle the first one.
+	 */
+	if (g_nmi->_modalObject) {
+		return;
+	}
+
 	if (isDemo() && getLanguage() == Common::RU_RUS) {
 		ModalQuery *q = new ModalQuery;
 
