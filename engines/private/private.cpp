@@ -529,6 +529,8 @@ void PrivateEngine::clearAreas() {
 	_dossierPrevSuspectMask.clear();
 	_dossierNextSheetMask.clear();
 	_dossierPrevSheetMask.clear();
+	_diaryNextPageExit.clear();
+	_diaryPrevPageExit.clear();
 
 	for (uint d = 0 ; d < 3; d++) {
 		if (_safeDigitArea[d].surf) {
