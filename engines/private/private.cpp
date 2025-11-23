@@ -1026,7 +1026,7 @@ void PrivateEngine::addMemory(const Common::String &path) {
 
 	uint locationIndex = 0;
 	for (auto &it : maps.locationList) {
-		const Private::Symbol *sym = maps.locations.getVal(it);
+		Private::Symbol *sym = maps.locations.getVal(it);
 		locationIndex++;
 
 		Common::String currentLocation = it.substr(9);
@@ -1064,7 +1064,13 @@ void PrivateEngine::addMemory(const Common::String &path) {
 		}
 
 		currentLocation.toLowercase();
-		if (sym->u.val && currentLocation == location) {
+		if (currentLocation == location) {
+			// Ensure that the location is marked as visited.
+			// Police station video spoc00xs can be played before the
+			// police station has been visited if the player has not
+			// been busted by the police yet.
+			setLocationAsVisited(sym);
+
 			diaryPage.locationID = locationIndex;
 			break;
 		}
@@ -2386,6 +2392,15 @@ void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset,
 			horizontalOffset = rightPageOffset;
 			currentVerticalOffset = 0;
 		}
+	}
+}
+
+void PrivateEngine::setLocationAsVisited(Symbol *location) {
+	if (location->u.val == 0) {
+		// visited locations have non-zero values.
+		// set to an incrementing value to record the order visited.
+		int maxLocationValue = getMaxLocationValue();
+		setSymbol(location, maxLocationValue + 1);
 	}
 }
 

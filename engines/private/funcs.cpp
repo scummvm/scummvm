@@ -53,12 +53,8 @@ static void fChgMode(ArgArray args) {
 
 	if (args.size() == 3) {
 		Symbol *location = g_private->maps.lookupLocation(args[2].u.sym->name);
-		if (location->u.val == 0) {
-			// visited locations have non-zero values.
-			// set to an incrementing value to record the order visited.
-			int maxLocationValue = g_private->getMaxLocationValue();
-			setSymbol(location, maxLocationValue + 1);
-		}
+		g_private->setLocationAsVisited(location);
+
 		// set a game flag when visiting the police station.
 		if (!g_private->isDemo()) {
 			if (*(args[2].u.sym->name) == g_private->getPoliceStationLocation()) {
