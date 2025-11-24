@@ -484,15 +484,19 @@ char32_t decodeByte(byte b) {
 }
 
 void PelrockEngine::talk(byte object) {
+	debug("Talking to object %d", object);
 	if (_currentRoomConversations.size() == 0)
 		return;
 
 	AnimSet *animSet;
 	for (int i = 0; i < _currentRoomAnims.size(); i++) {
 		if (_currentRoomAnims[i].extra == object) {
-			AnimSet *animSet = &_currentRoomAnims[i];
+			animSet = &_currentRoomAnims[i];
 		}
 	}
+	isNPCATalking = true;
+	NPCTalking = animSet->extra;
+
 
 	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
 	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
@@ -914,6 +918,118 @@ void PelrockEngine::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	}
 }
 
+void readUntilBuda(Common::SeekableReadStream *stream, byte *&buffer, size_t &outSize) {
+ const char marker[] = "BUDA";
+    const int markerLen = 4;
+    size_t bufferSize = 4096;
+    size_t pos = 0;
+
+    buffer = (byte *)malloc(bufferSize);
+
+    while (!stream->eos()) {
+        byte b = stream->readByte();
+        if (pos + 1 > bufferSize) {
+            bufferSize *= 2;
+            buffer = (byte *)realloc(buffer, bufferSize);
+        }
+        buffer[pos++] = b;
+
+        // Check for marker at the end of buffer
+        if (pos >= markerLen &&
+            buffer[pos - 4] == 'B' &&
+            buffer[pos - 3] == 'U' &&
+            buffer[pos - 2] == 'D' &&
+            buffer[pos - 1] == 'A') {
+            break;
+        }
+    }
+    outSize = pos;
+}
+
+void PelrockEngine::loadRoomTalkingAnimations(int roomNumber) {
+
+	int headerIndex = roomNumber;
+	uint32 offset = kTalkingAnimHeaderSize * headerIndex;
+
+	TalkinAnimHeader talkHeader;
+	Common::File talkFile;
+	if (!talkFile.open("ALFRED.2")) {
+		error("Couldnt find file ALFRED.2");
+	}
+
+	talkFile.seek(offset, SEEK_SET);
+
+	talkHeader.spritePointer = talkFile.readUint16LE();
+	talkHeader.unknown1 = talkFile.readByte();
+	talkFile.read(&talkHeader.unknown2, 4);
+	talkHeader.offsetX = talkFile.readByte();
+	talkHeader.offsetY = talkFile.readByte();
+	talkHeader.wAnimA = talkFile.readByte();
+	talkHeader.hAnimA = talkFile.readByte();
+	talkFile.read(&talkHeader.unknown3, 2);
+	talkHeader.numFramesAnimA = talkFile.readByte();
+	talkFile.read(&talkHeader.unknown4, 7);
+	talkHeader.wAnimB = talkFile.readByte();
+	talkHeader.hAnimB = talkFile.readByte();
+	talkHeader.unknown5 = talkFile.readByte();
+	talkHeader.numFramesAnimB = talkFile.readByte();
+	talkFile.read(&talkHeader.unknown6, 29);
+
+	if(talkHeader.spritePointer == 0) {
+		debug("No talking animation for room %d", roomNumber);
+		talkFile.close();
+		return;
+	}
+
+	if(talkHeader.animA != nullptr) {
+		delete[] talkHeader.animA;
+		talkHeader.animA = nullptr;
+	}
+	talkHeader.animA = new byte *[talkHeader.numFramesAnimA];
+
+
+	talkFile.seek(talkHeader.spritePointer, SEEK_SET);
+
+	byte *data = nullptr;
+	byte *decompressed = new byte[talkHeader.wAnimA * talkHeader.hAnimA * talkHeader.numFramesAnimA];
+	size_t dataSize = 0;
+	readUntilBuda(&talkFile, data, dataSize);
+	rleDecompress(data, dataSize, 0, dataSize, &decompressed);
+	debug("Decompressed talking anim A size: %zu", dataSize);
+	for(int i = 0; i < talkHeader.numFramesAnimA; i++) {
+		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
+		Common::copy(decompressed + (i * talkHeader.wAnimA * talkHeader.hAnimA), decompressed + ((i + 1) * talkHeader.wAnimA * talkHeader.hAnimA), talkHeader.animA[i]);
+	}
+	free(data);
+	free(decompressed);
+
+
+	if(talkHeader.numFramesAnimB > 0) {
+		if(talkHeader.animB != nullptr) {
+			delete[] talkHeader.animB;
+			talkHeader.animB = nullptr;
+		}
+		talkHeader.animB = new byte *[talkHeader.numFramesAnimB];
+		// Read second animation frames
+		size_t offsetB = talkHeader.spritePointer + dataSize;
+		talkFile.seek(offsetB, SEEK_SET);
+		byte *dataB = nullptr;
+		byte *decompressedB = new byte[talkHeader.wAnimB * talkHeader.hAnimB * talkHeader.numFramesAnimB];
+		size_t dataBSize = 0;
+		readUntilBuda(&talkFile, dataB, dataBSize);
+		rleDecompress(dataB, 0, dataBSize, dataBSize, &decompressedB);
+		for(int i = 0; i < talkHeader.numFramesAnimB; i++) {
+			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
+			Common::copy(decompressedB + (i * talkHeader.wAnimB * talkHeader.hAnimB), decompressedB + ((i + 1) * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.animB[i]);
+		}
+		free(dataB);
+		free(decompressedB);
+	}
+	_talkingAnimHeader = talkHeader;
+
+	talkFile.close();
+}
+
 void PelrockEngine::loadCursors() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
@@ -1002,16 +1118,14 @@ Common::Array<HotSpot> PelrockEngine::loadHotspots(Common::File *roomFile, int r
 	for (int i = 0; i < hotspot_count; i++) {
 		uint32_t obj_offset = hotspot_data_start + i * 9;
 		roomFile->seek(obj_offset, SEEK_SET);
-		byte obj_bytes[9];
-		roomFile->read(obj_bytes, 9);
 		HotSpot spot;
-		spot.type = obj_bytes[0];
-		spot.x = obj_bytes[1] | (obj_bytes[2] << 8);
-		spot.y = obj_bytes[3] | (obj_bytes[4] << 8);
-		spot.w = obj_bytes[5];
-		spot.h = obj_bytes[6];
-		spot.extra = obj_bytes[7] | (obj_bytes[8] << 8);
-		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		spot.type = roomFile->readByte();
+		spot.x = roomFile->readUint16LE();
+		spot.y = roomFile->readUint16LE();
+		spot.w = roomFile->readByte();
+		spot.h = roomFile->readByte();
+		spot.extra = roomFile->readUint16LE();
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	return hotspots;
@@ -1175,6 +1289,13 @@ void PelrockEngine::frames() {
 			int y = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].y;
 			int w = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w;
 			int h = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h;
+			int extra = _currentRoomAnims[i].extra;
+
+			if(NPCTalking == extra) {
+				debug("Skipping anim set %d because NPC is talking", i);
+				talkNPC(&_currentRoomAnims[i]);
+				continue;
+			}
 
 			int frameSize = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].w * _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h;
 			int curFrame = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].curFrame;
@@ -1205,6 +1326,7 @@ void PelrockEngine::frames() {
 				_currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].elpapsedFrames++;
 			}
 		}
+
 
 		if (isAlfredWalking) {
 
@@ -1349,7 +1471,7 @@ void PelrockEngine::frames() {
 	}
 }
 
-void PelrockEngine::doAction(byte object, byte action) {
+void PelrockEngine::doAction(byte action, byte object) {
 	if (action == TALK) {
 		talk(object);
 	}
@@ -1454,6 +1576,23 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	for (int i = 0; i < actions.size(); i++) {
 		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
+}
+
+void PelrockEngine::talkNPC(AnimSet *animSet) {
+	//Change with the right index
+	int x = animSet->x + _talkingAnimHeader.offsetX;
+	int y = animSet->y + _talkingAnimHeader.offsetY;
+	int w = _talkingAnimHeader.wAnimA;
+	int h = _talkingAnimHeader.hAnimA;
+	int numFrames = _talkingAnimHeader.numFramesAnimA;
+	int curFrame = _talkingAnimHeader.currentFrameAnimA++;
+	if (curFrame >= numFrames) {
+		_talkingAnimHeader.currentFrameAnimA = 0;
+		curFrame = 0;
+	}
+	debug("Talking NPC frame %d/%d, x=%d, y=%d, w=%d, h=%d", curFrame, numFrames, x, y, w, h);
+
+	drawSpriteToBuffer(_compositeBuffer, 640, _talkingAnimHeader.animA[curFrame], x, y, w, h, 255);
 }
 
 void PelrockEngine::walkTo(int x, int y) {
@@ -1799,9 +1938,13 @@ uint8_t PelrockEngine::find_walkbox_for_point(uint16_t x, uint16_t y) {
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
+	if(NPCTalking) NPCTalking = false;
+
 	if (_displayPopup) {
 		Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
-
+		for (int i = 0; i < actions.size(); i++) {
+			debug("Available action %d at index %d", actions[i], i);
+		}
 		Common::Rect lookRect = Common::Rect(_popupX + 20, _popupY + 20, _popupX + 20 + kVerbIconWidth, _popupY + 20 + kVerbIconHeight);
 		// debug("Look rect: x=%d, y=%d, w=%d, h=%d", lookRect.left, lookRect.top, lookRect, lookRect.h);
 		if (lookRect.contains(x, y)) {
@@ -1811,12 +1954,15 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 			_displayPopup = false;
 			return;
 		}
-		for (int i = 0; i < actions.size(); i++) {
-			debug("Checking action %d at index %d for mouse click = %d, %d", actions[i], i, x, y);
+		for (int i = 1; i < actions.size(); i++) {
+
+			// debug("Checking action %d at index %d for mouse click = %d, %d", actions[i], i, x, y);
 			int x = _popupX + 20 + (i * (kVerbIconWidth + 2));
 			int y = _popupY + 20;
 			Common::Rect actionRect = Common::Rect(x, y, x + kVerbIconWidth, y + kVerbIconHeight);
+
 			if (actionRect.contains(x, y)) {
+				debug("Action %d clicked", actions[i]);
 				doAction(actions[i], _currentHotspot->extra);
 				_displayPopup = false;
 				return;
@@ -2140,6 +2286,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 	}
 
 	loadRoomMetadata(&roomFile, roomOffset);
+	loadRoomTalkingAnimations(number);
 
 	_screen->markAllDirty();
 	roomFile.close();

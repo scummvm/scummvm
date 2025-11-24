@@ -91,6 +91,7 @@ private:
 	void talk(byte object);
 	Common::String getControlName(byte b);
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
+	void loadRoomTalkingAnimations(int roomNumber);
 	void loadCursors();
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
@@ -103,7 +104,7 @@ private:
 	void sayAlfred(Common::String text);
 	// render loop
 	void frames();
-	void doAction(byte object, byte action);
+	void doAction(byte action, byte object);
 	void renderText(Common::Array<Common::String> lines, int color);
 	void drawAlfred(byte *buf);
 	void checkMouseHover();
@@ -114,16 +115,19 @@ private:
 	Exit *isExitUnder(int x, int y);
 	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
+	void talkNPC(AnimSet *animSet);
 
 	ChronoManager *_chronoManager = nullptr;
 
 	// byte *standingAnim = new byte[3060 * 102];
 
-	byte **walkingAnimFrames[4];              // 4 arrays of arrays
-	byte *standingAnimFrames[4];              // 4 directions
-	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
-	byte **talkingAnimFrames[4];              // 4 arrays of arrays
-	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	byte **walkingAnimFrames[4];                // 4 arrays of arrays
+	byte *standingAnimFrames[4] = {nullptr};    // 4 directions
+	int walkingAnimLengths[4] = {8, 8, 4, 4};   // size of each inner array
+	byte **talkingAnimFrames[4];                // 4 arrays of arrays
+	int talkingAnimLengths[4] = {8, 8, 4, 4};   // size of each inner array
+
+	TalkinAnimHeader _talkingAnimHeader;
 
 	PathContext _currentContext;
 	int _current_step = 0;
@@ -168,7 +172,12 @@ private:
 	LargeFont *_largeFont = nullptr;
 
 	Common::Point _curWalkTarget;
+	bool isNPCATalking = false;
+	uint16 NPCTalking = 0;
+	bool isNPCBTalking = false;
 
+
+	//JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = GAME;
 	bool gameInitialized = false;

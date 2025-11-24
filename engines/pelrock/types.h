@@ -54,6 +54,7 @@ const int kCursorWidth = 16;
 const int kCursorHeight = 18;
 const int kCursorSize = 288; // 16 * 18
 const int kRoomStructSize = 104;
+const int kTalkingAnimHeaderSize = 55;
 const int kNumRooms = 56;
 const int kVerbIconWidth = 60;
 const int kVerbIconHeight = 60;
@@ -160,6 +161,33 @@ struct HotSpot {
 	byte type;
 	int extra;
 	bool isEnabled = true;
+};
+
+struct TalkinAnimHeader {
+	uint16 spritePointer;
+	byte unknown1;
+	byte unknown2[4];
+
+	int8 offsetX;
+	int8 offsetY;
+
+	byte wAnimA;
+	byte hAnimA;
+	byte unknown3[2];
+	byte numFramesAnimA;
+	byte unknown4[7];
+
+	byte currentFrameAnimA;
+
+	byte wAnimB;
+	byte hAnimB;
+	byte unknown5;
+	byte numFramesAnimB;
+	byte unknown6[29];
+	byte currentFrameAnimB;
+
+	byte **animA = nullptr;
+	byte **animB = nullptr;
 };
 
 struct ConversationElement {
