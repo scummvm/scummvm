@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	lexer.o \
 	metaengine.o \
 	private.o \
+	savegame.o \
 	symbol.o
 
 MODULE_DIRS += \

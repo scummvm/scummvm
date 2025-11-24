@@ -43,6 +43,7 @@
 #include "private/decompiler.h"
 #include "private/grammar.h"
 #include "private/private.h"
+#include "private/savegame.h"
 #include "private/tokens.h"
 
 namespace Private {
@@ -1558,8 +1559,23 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	stopSound(true);
 	destroyVideo();
 
-	Common::Serializer s(stream, nullptr);
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
+
+	// Read and validate metadata header
+	SavegameMetadata meta;
+	if (!readSavegameMetadata(stream, meta)) {
+		return Common::kReadingFailed;
+	}
+
+	// Log unexpected language or platform
+	if (meta.language != _language) {
+		warning("Save language %d different than game %d", meta.language, _language);
+	}
+	if (meta.platform != _platform) {
+		warning("Save platform  %d different than game %d", meta.platform, _platform);
+	}
+
+	Common::Serializer s(stream, nullptr);
 	int val;
 
 	for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
@@ -1584,7 +1600,8 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 		inv.flag = stream->readString();
 		inventory.push_back(inv);
 	}
-	_haveTakenItem = (inventory.size() > 1); // TODO: include this in save format
+	_toTake = (stream->readByte() == 1);
+	_haveTakenItem = (stream->readByte() == 1);
 
 	// Diary pages
 	_diaryPages.clear();
@@ -1613,6 +1630,15 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 		Common::String page2 = stream->readString();
 		addDossier(page1, page2);
 	}
+
+	// Police Bust
+	_policeBustEnabled = (stream->readByte() == 1);
+	_policeSirenPlayed = (stream->readByte() == 1);
+	_numberOfClicks = stream->readSint32LE();
+	_numberClicksAfterSiren = stream->readSint32LE();
+	_policeBustMovieIndex = stream->readSint32LE();
+	_policeBustMovie = stream->readString();
+	_policeBustPreviousSetting = stream->readString();
 
 	// Radios
 	size = stream->readUint32LE();
@@ -1685,6 +1711,13 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	if (isAutosave)
 		return Common::kNoError;
 
+	// Metadata
+	SavegameMetadata meta;
+	meta.version = kCurrentSavegameVersion;
+	meta.language = _language;
+	meta.platform = _platform;
+	writeSavegameMetadata(stream, meta);
+
 	// Variables
 	for (NameList::const_iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
 		const Private::Symbol *sym = maps.variables.getVal(*it);
@@ -1704,6 +1737,8 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 		stream->writeString(it->flag);
 		stream->writeByte(0);
 	}
+	stream->writeByte(_toTake ? 1 : 0);
+	stream->writeByte(_haveTakenItem ? 1 : 0);
 
 	stream->writeUint32LE(_diaryPages.size());
 	for (uint i = 0; i < _diaryPages.size(); i++) {
@@ -1731,6 +1766,17 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 			stream->writeString(it->page2.c_str());
 		stream->writeByte(0);
 	}
+
+	// Police Bust
+	stream->writeByte(_policeBustEnabled ? 1 : 0);
+	stream->writeByte(_policeSirenPlayed ? 1 : 0);
+	stream->writeSint32LE(_numberOfClicks);
+	stream->writeSint32LE(_numberClicksAfterSiren);
+	stream->writeSint32LE(_policeBustMovieIndex);
+	stream->writeString(_policeBustMovie);
+	stream->writeByte(0);
+	stream->writeString(_policeBustPreviousSetting);
+	stream->writeByte(0);
 
 	// Radios
 	stream->writeUint32LE(_AMRadio.size());
@@ -2457,13 +2503,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 		locationID++;
 	}
 	Common::sort(visitedLocations.begin(), visitedLocations.end(), [&locationIDs](const Symbol *a, const Symbol *b) {
-		if (a->u.val != b->u.val) {
-			return a->u.val < b->u.val;
-		} else {
-			// backwards compatibility for older saves files that stored 1
-			// for visited locations and displayed them in a fixed order.
-			return locationIDs[a] < locationIDs[b];
-		}
+		return a->u.val < b->u.val;
 	});
 
 	// Load the sorted visited locations
