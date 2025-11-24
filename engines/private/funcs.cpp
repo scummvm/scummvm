@@ -439,20 +439,16 @@ static void fInventory(ArgArray args) {
 			g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
 		}
 	} else {
+		Common::String flag;
 		if (v1.type == NAME) {
-			v1.u.sym = g_private->maps.lookupVariable(v1.u.sym->name);
 			if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
-				v1.u.sym->u.val = 0;
-				if (g_private->inInventory(bmp))
-					g_private->inventory.remove(bmp);
+				g_private->removeInventory(bmp);
 			} else {
-				v1.u.sym->u.val = 1;
-				if (!g_private->inInventory(bmp))
-					g_private->inventory.push_back(bmp);
+				flag = *(v1.u.sym->name);
+				g_private->addInventory(bmp, flag);
 			}
 		} else {
-			if (!g_private->inInventory(bmp))
-				g_private->inventory.push_back(bmp);
+			g_private->addInventory(bmp, flag);
 		}
 		if (v2.type == NAME) {
 			v2.u.sym = g_private->maps.lookupVariable(v2.u.sym->name);
