@@ -964,9 +964,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 			if (m.flag1 != nullptr) { // TODO: check this
 				// an item was taken
 				if (_toTake) {
-					if (!inInventory(m.inventoryItem))
-						inventory.push_back(m.inventoryItem);
-					setSymbol(m.flag1, 1);
+					addInventory(m.inventoryItem, *(m.flag1->name));
 					playSound(getTakeSound(), 1, false, false);
 					_toTake = false;
 					_haveTakenItem = true;
@@ -1178,11 +1176,42 @@ void PrivateEngine::addMemory(const Common::String &path) {
 }
 
 bool PrivateEngine::inInventory(const Common::String &bmp) const {
-	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
-		if (*it == bmp)
+	for (InvList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
+		if (it->diaryImage == bmp)
 			return true;
 	}
 	return false;
+}
+
+void PrivateEngine::addInventory(const Common::String &bmp, Common::String &flag) {
+	// set game flag
+	if (!flag.empty()) {
+		Symbol *sym = maps.lookupVariable(&flag);
+		setSymbol(sym, 1);
+	}
+
+	// add to casebook
+	if (!inInventory(bmp)) {
+		InventoryItem i;
+		i.diaryImage = bmp;
+		i.flag = flag;
+		inventory.push_back(i);
+	}
+}
+
+void PrivateEngine::removeInventory(const Common::String &bmp) {
+	for (InvList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
+		if (it->diaryImage == bmp) {
+			// clear game flag
+			if (!it->flag.empty()) {
+				Symbol *sym = maps.lookupVariable(&(it->flag));
+				setSymbol(sym, 0);
+			}
+			// remove from casebook
+			inventory.erase(it);
+			break;
+		}
+	}
 }
 
 void PrivateEngine::removeRandomInventory() {
@@ -1191,18 +1220,13 @@ void PrivateEngine::removeRandomInventory() {
 	//   0-3 items:  0 items removed
 	//   4-6 items:  1 item removed
 	//   7-10 items: 2 items removed
-	//
-	// TODO: Clear the inventory flag for the item.
-	// We are currently only removing items from the diary. We need to also
-	// remove them from Marlowe's inventory by clearing their item flag.
-	// We can do this once item flags are stored and included in save files.
 	uint numberOfItemsToRemove = (inventory.size() * 30) / 100;
 	for (uint i = 0; i < numberOfItemsToRemove; i++) {
 		uint indexToRemove = _rnd->getRandomNumber(inventory.size() - 1);
 		uint index = 0;
 		for (InvList::iterator it = inventory.begin(); it != inventory.end(); ++it) {
 			if (index == indexToRemove) {
-				inventory.erase(it);
+				removeInventory(it->diaryImage);
 				break;
 			}
 			index++;
@@ -1555,7 +1579,10 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	inventory.clear();
 	uint32 size = stream->readUint32LE();
 	for (uint32 i = 0; i < size; ++i) {
-		inventory.push_back(stream->readString());
+		InventoryItem inv;
+		inv.diaryImage = stream->readString();
+		inv.flag = stream->readString();
+		inventory.push_back(inv);
 	}
 	_haveTakenItem = (inventory.size() > 1); // TODO: include this in save format
 
@@ -1671,8 +1698,10 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	}
 
 	stream->writeUint32LE(inventory.size());
-	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
-		stream->writeString(*it);
+	for (InvList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
+		stream->writeString(it->diaryImage);
+		stream->writeByte(0);
+		stream->writeString(it->flag);
 		stream->writeByte(0);
 	}
 
@@ -2459,8 +2488,8 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 
 void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common::Rect &r2) {
 	int16 offset = 0;
-	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
-		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
+	for (InvList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
+		Graphics::Surface *surface = loadMask(it->diaryImage, r1.left, r1.top + offset, true);
 		surface->free();
 		delete surface;
 		offset += 20;

@@ -147,6 +147,11 @@ typedef struct DiaryPage {
 	int locationID;
 } DiaryPage;
 
+typedef struct InventoryItem {
+	Common::String diaryImage;
+	Common::String flag;
+} InventoryItem;
+
 // funcs
 
 typedef struct FuncTable {
@@ -163,7 +168,7 @@ typedef Common::List<ExitInfo> ExitList;
 typedef Common::List<MaskInfo> MaskList;
 typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
-typedef Common::List<Common::String> InvList;
+typedef Common::List<InventoryItem> InvList;
 typedef Common::List<Common::Rect *> RectList;
 
 // arrays
@@ -352,6 +357,8 @@ public:
 	// Diary
 	InvList inventory;
 	bool inInventory(const Common::String &bmp) const;
+	void addInventory(const Common::String &bmp, Common::String &flag);
+	void removeInventory(const Common::String &bmp);
 	void removeRandomInventory();
 	Common::String _diaryLocPrefix;
 	void loadLocations(const Common::Rect &);
