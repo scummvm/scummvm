@@ -170,6 +170,16 @@ void PhoenixVREngine::Cursor::free() {
 	rect.setEmpty();
 }
 
+void PhoenixVREngine::executeTest(int idx) {
+	debug("execute test %d", idx);
+	auto test = _warp->getTest(idx);
+	if (test) {
+		Script::ExecutionContext ctx;
+		test->scope.exec(ctx);
+	} else
+		warning("invalid test id %d", idx);
+}
+
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
@@ -209,11 +219,7 @@ Common::Error PhoenixVREngine::run() {
 					auto rect = _regSet->getRegion(i).toRect();
 					if (rect.contains(event.mouse)) {
 						debug("click region %u", i);
-						auto test = _warp->getTest(i);
-						if (test) {
-							Script::ExecutionContext ctx;
-							test->scope.exec(ctx);
-						}
+						executeTest(i);
 					}
 				}
 				break;

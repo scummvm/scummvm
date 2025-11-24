@@ -112,6 +112,8 @@ public:
 	void setVariable(const Common::String &name, int value);
 	int getVariable(const Common::String &name) const;
 
+	void executeTest(int idx);
+
 	Script::ConstWarpPtr getWarp(const Common::String &name);
 	Script::ConstWarpPtr getCurrentWarp() { return _warp; }
 	Region getRegion(int idx) const;
