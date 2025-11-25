@@ -142,6 +142,19 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{
+	{
+		"adibou2",
+		"ADIBOU Environnement (Adaptation Québecoise)",
+		AD_ENTRY1s("intro.stk", "5606ff29ef33ef423519eb24e8096afc", 8737284),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // -- German: Addy Junior --
 
