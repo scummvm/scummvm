@@ -130,20 +130,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added keymapper support.
 
  Private:
-   - Added memories section to casebook for replaying videos.
+   - Added several important missing graphics and gameplay sounds,
+     the engine is now considered to be at feature parity with the original game.
+   - Fixed inaccesible places, missing interactions or conversations.
    - Added option to highlight decision areas for improved visibility. 
    - Added support for third party subtitles.
-   - Fixed Mavis Weld's apartment not responding to clicks.
-   - Fixed police station not appearing on map.
-   - Fixed Marlowe not speaking when breaking in to locations.
-   - Fixed gangsters not breaking in to Marlowe's office.
-   - Fixed police not arresting Marlowe for murder.
-   - Fixed wall safe alarm not affecting police.
-   - Fixed drugs reappearing after Marlowe takes them.
-   - Fixed duplicate dossier pages and missing sound effects.
-   - Fixed the order that phone calls occur.
-   - Fixed the order that casebook entries appear.
-   - Fixed the photograph in the desktop screen.
+   - Added missing features and fixed crashes in the desktop screen.
    - Fixed various graphics and cursor glitches.
    - Added keymapper support.
 
