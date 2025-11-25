@@ -102,10 +102,11 @@ private:
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
 	void sayAlfred(Common::String text);
+	void sayNPC(AnimSet *anim, Common::String text, byte color);
 	// render loop
 	void frames();
 	void doAction(byte action, byte object);
-	void renderText(Common::Array<Common::String> lines, int color);
+	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void drawAlfred(byte *buf);
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -131,9 +132,14 @@ private:
 
 	PathContext _currentContext;
 	int _current_step = 0;
+
+
 	byte _textColor = 0;
+	Common::Point _textPos;
 	Common::Array<Common::Array<Common::String> > _currentTextPages = Common::Array<Common::Array<Common::String> >();
 	int _currentTextPageIndex = 0;
+
+
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<AnimSet> _currentRoomAnims;
 	Common::Array<Exit> _currentRoomExits;
@@ -173,7 +179,7 @@ private:
 
 	Common::Point _curWalkTarget;
 	bool isNPCATalking = false;
-	uint16 NPCTalking = 0;
+	uint16 whichNPCTalking = 0;
 	bool isNPCBTalking = false;
 
 

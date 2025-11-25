@@ -494,8 +494,16 @@ void PelrockEngine::talk(byte object) {
 			animSet = &_currentRoomAnims[i];
 		}
 	}
-	isNPCATalking = true;
-	NPCTalking = animSet->extra;
+
+	ConversationNode selectedNode = _currentRoomConversations[0];
+
+	bool isNPC = selectedNode.speakerId != 13;
+	if (isNPC) {
+		sayNPC(animSet, selectedNode.text, selectedNode.speakerId);
+	}
+	// for(int i= 0; i< _currentRoomConversations.size(); i++) {
+	// _currentRoomConversations
+	// }
 
 	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
 	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
@@ -736,6 +744,8 @@ Common::Array<ConversationNode> PelrockEngine::buildTreeStructure(const Common::
 				ConversationNode root;
 				root.type = ConversationNode::ROOT;
 				root.text = elem.text;
+				root.speaker = "NPC";
+				root.speakerId = elem.speakerId;
 				roots.push_back(root);
 				currentRoot = &roots[roots.size() - 1];
 			} else {
@@ -756,6 +766,8 @@ Common::Array<ConversationNode> PelrockEngine::buildTreeStructure(const Common::
 				ConversationNode choiceNode;
 				choiceNode.type = ConversationNode::CHOICE;
 				choiceNode.text = elem.text;
+				choiceNode.speaker = "ALFRED";
+				choiceNode.speakerId = 0x0D; // Player
 				choiceNode.choiceIndex = elem.choiceIndex;
 
 				// Find where to attach this choice
@@ -1280,7 +1292,7 @@ void PelrockEngine::frames() {
 			int h = _currentRoomAnims[i].animData[_currentRoomAnims[i].curAnimIndex].h;
 			int extra = _currentRoomAnims[i].extra;
 
-			if (NPCTalking == extra) {
+			if (whichNPCTalking == extra) {
 				// debug("Skipping anim set %d because NPC is talking", i);
 				talkNPC(&_currentRoomAnims[i], i);
 				continue;
@@ -1411,9 +1423,9 @@ void PelrockEngine::frames() {
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
 		if (!isAlfredWalking && !_currentTextPages.empty()) {
-			// debug("Will render text, _chronoManager->_textTtl=%d", _chronoManager->_textTtl);
 			if (_chronoManager->_textTtl > 0) {
-				renderText(_currentTextPages[_currentTextPageIndex], _textColor);
+				debug("Will render text, _chronoManager->_textTtl=%d", _chronoManager->_textTtl);
+				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
 			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
 				_currentTextPageIndex++;
 
@@ -1426,6 +1438,8 @@ void PelrockEngine::frames() {
 				_currentTextPages.clear();
 				_currentTextPageIndex = 0;
 				isAlfredTalking = false;
+				isNPCATalking = false;
+				isNPCBTalking = false;
 			}
 		}
 
@@ -1465,23 +1479,20 @@ void PelrockEngine::doAction(byte action, byte object) {
 	}
 }
 
-void PelrockEngine::renderText(Common::Array<Common::String> lines, int color) {
-	if (color == ALFRED_COLOR) {
-		int baseX = xAlfred;
-		int baseY = yAlfred - kAlfredFrameHeight - 10;
-		int maxW = 0;
-		for (size_t i = 0; i < lines.size(); i++) {
-			Common::Rect r = _largeFont->getBoundingBox(lines[i]);
-			if (r.width() > maxW) {
-				maxW = r.width();
-			}
+void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, int baseX, int baseY) {
+
+	int maxW = 0;
+	for (size_t i = 0; i < lines.size(); i++) {
+		Common::Rect r = _largeFont->getBoundingBox(lines[i]);
+		if (r.width() > maxW) {
+			maxW = r.width();
 		}
-		int lineSize = lines.size();
-		for (size_t i = 0; i < lines.size(); i++) {
-			int textX = baseX - (maxW / 2);
-			int textY = baseY - (lineSize * 25) + (i * 25);
-			drawText(lines[i], textX, textY, maxW, color);
-		}
+	}
+	int lineSize = lines.size();
+	for (size_t i = 0; i < lines.size(); i++) {
+		int textX = baseX - (maxW / 2);
+		int textY = baseY - (lineSize * 25) + (i * 25);
+		drawText(lines[i], textX, textY, maxW, color);
 	}
 }
 
@@ -1934,8 +1945,8 @@ uint8_t PelrockEngine::find_walkbox_for_point(uint16_t x, uint16_t y) {
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
-	if (NPCTalking)
-		NPCTalking = false;
+	if (whichNPCTalking)
+		whichNPCTalking = false;
 
 	if (_displayPopup) {
 		Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
@@ -2087,30 +2098,34 @@ Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
 
 void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte color) {
 	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
-	if (x + 2 + rect.width() > 640) {
+	if (x + rect.width() > 640) {
 		x = 640 - rect.width() - 2;
 	}
-	if (y + 2 + rect.height() > 400) {
+	if (y + rect.height() > 400) {
 		y = 400 - rect.height();
 	}
-	if (x - 2 < 0) {
-		x = 2;
+	if (x < 0) {
+		x = 0;
 	}
-	if (y - 2 < 0) {
-		y = 2;
+	if (y < 0) {
+		y = 0;
 	}
-
-	// _largeFont->drawString(_screen, text.c_str(), x - 1, y, w, 0, Graphics::kTextAlignCenter); // Left
-	// // _largeFont->drawString(_screen, text.c_str(), x - 2, y, w, 0, Graphics::kTextAlignCenter); // Left
-	// _largeFont->drawString(_screen, text.c_str(), x + 1, y, w, 0, Graphics::kTextAlignCenter); // Right
-	// // _largeFont->drawString(_screen, text.c_str(), x + 2, y, w, 0, Graphics::kTextAlignCenter); // Right
-	// _largeFont->drawString(_screen, text.c_str(), x, y - 1, w, 0, Graphics::kTextAlignCenter); // Top
-	// // _largeFont->drawString(_screen, text.c_str(), x, y - 2, w, 0, Graphics::kTextAlignCenter); // Top
-	// _largeFont->drawString(_screen, text.c_str(), x, y + 1, w, 0, Graphics::kTextAlignCenter); // Bottom
-	// // _largeFont->drawString(_screen, text.c_str(), x, y + 2, w, 0, Graphics::kTextAlignCenter); // Bottom
-
 	// Draw main text on top
 	_largeFont->drawString(_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
+}
+
+void PelrockEngine::sayNPC(AnimSet *anim, Common::String text, byte color) {
+	isNPCATalking = true;
+	whichNPCTalking = anim->extra;
+	debug("NPC says %s, color = %d", text.c_str(), color);
+	_currentTextPages = wordWrap(text);
+	_textColor = color;
+	int totalChars = 0;
+	for (int i = 0; i < _currentTextPages[0].size(); i++) {
+		totalChars += _currentTextPages[0][i].size();
+	}
+	_textPos = Common::Point(anim->x, anim->y - anim->h - 10);
+	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
 }
 
 void PelrockEngine::sayAlfred(Common::String text) {
@@ -2123,6 +2138,7 @@ void PelrockEngine::sayAlfred(Common::String text) {
 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
 		totalChars += _currentTextPages[0][i].size();
 	}
+	_textPos = Common::Point(xAlfred, yAlfred - kAlfredFrameHeight - 10);
 	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
 }
 bool isEndMarker(char char_byte) {
