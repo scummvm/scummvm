@@ -31,18 +31,18 @@
 
 namespace MediaStation {
 
-enum ContextDeclarationSectionType {
-	kContextDeclarationPlaceholder = 0x0003,
-	kContextDeclarationContextId = 0x0004,
-	kContextDeclarationStreamId = 0x0005,
-	kContextDeclarationParentContextId = 0x0006,
-	kContextDeclarationName = 0x0bb8
+enum ContextReferenceSectionType {
+	kContextReferencePlaceholder = 0x0003,
+	kContextReferenceContextId = 0x0004,
+	kContextReferenceStreamId = 0x0005,
+	kContextReferenceParentContextId = 0x0006,
+	kContextReferenceName = 0x0bb8
 };
 
-class ContextDeclaration {
+class ContextReference {
 public:
-	ContextDeclaration(Chunk &chunk);
-	ContextDeclaration() {};
+	ContextReference(Chunk &chunk);
+	ContextReference() {};
 
 	uint _contextId = 0;
 	uint _streamId = 0;
@@ -50,30 +50,30 @@ public:
 	Common::Array<uint> _parentContextIds;
 
 private:
-	ContextDeclarationSectionType getSectionType(Chunk &chunk);
+	ContextReferenceSectionType getSectionType(Chunk &chunk);
 };
 
-enum ScreenDeclarationSectionType {
-	kScreenDeclarationActorId = 0x0009,
-	kScreenDeclarationScreenId = 0x0004
+enum ScreenReferenceSectionType {
+	kScreenReferenceScreenId = 0x0009,
+	kScreenReferenceContextId = 0x0004
 };
 
-class ScreenDeclaration {
+class ScreenReference {
 public:
-	ScreenDeclaration(Chunk &chunk);
-	ScreenDeclaration() {};
+	ScreenReference(Chunk &chunk);
+	ScreenReference() {};
 
-	uint _actorId = 0;
-	uint _screenId = 0;
+	uint _screenActorId = 0;
+	uint _contextId = 0;
 
 private:
-	ScreenDeclarationSectionType getSectionType(Chunk &chunk);
+	ScreenReferenceSectionType getSectionType(Chunk &chunk);
 };
 
-enum FileDeclarationSectionType {
-	kFileDeclarationEmptySection = 0x0000,
-	kFileDeclarationFileId = 0x002b,
-	kFileDeclarationFileNameAndType = 0x002d
+enum FileInfoSectionType {
+	kFileInfoEmptySection = 0x0000,
+	kFileInfoFileId = 0x002b,
+	kFileInfoFileNameAndType = 0x002d
 };
 
 // Indicates where a file is intended to be stored.
@@ -89,37 +89,37 @@ enum IntendedFileLocation {
 	kFileIntendedOnHardDisk = 0x000b
 };
 
-class FileDeclaration {
+class FileInfo {
 public:
-	FileDeclaration(Chunk &chunk);
-	FileDeclaration() {};
+	FileInfo(Chunk &chunk);
+	FileInfo() {};
 
 	uint _id = 0;
 	IntendedFileLocation _intendedLocation = kFileLocationEmpty;
 	Common::String _name;
 
 private:
-	FileDeclarationSectionType getSectionType(Chunk &chunk);
+	FileInfoSectionType getSectionType(Chunk &chunk);
 };
 
-enum SubfileDeclarationSectionType {
-	kSubfileDeclarationEmptySection = 0x0000,
-	kSubfileDeclarationActorId = 0x002a,
-	kSubfileDeclarationFileId = 0x002b,
-	kSubfileDeclarationStartOffset = 0x002c
+enum StreamInfoSectionType {
+	kStreamInfoEmptySection = 0x0000,
+	kStreamInfoActorId = 0x002a,
+	kStreamInfoFileId = 0x002b,
+	kStreamInfoStartOffset = 0x002c
 };
 
-class SubfileDeclaration {
+class StreamInfo {
 public:
-	SubfileDeclaration(Chunk &chunk);
-	SubfileDeclaration() {};
+	StreamInfo(Chunk &chunk);
+	StreamInfo() {};
 
 	uint _actorId = 0;
 	uint _fileId = 0;
 	uint _startOffsetInFile = 0;
 
 private:
-	SubfileDeclarationSectionType getSectionType(Chunk &chunk);
+	StreamInfoSectionType getSectionType(Chunk &chunk);
 };
 
 // Declares a cursor, which is stored as a cursor resource in the game executable.
@@ -142,55 +142,18 @@ public:
 	int _id = 0;
 };
 
-enum BootStreamType {
-	kBootDocumentDef = 0x01,
-	kBootControlCommands = 0x0d,
-};
-
 enum BootSectionType {
 	kBootLastSection = 0x0000,
-	kBootContextDeclaration = 0x0002,
+	kBootContextReference = 0x0002,
 	kBootVersionInformation = 0x0190,
 	kBootUnk1 = 0x0191,
 	kBootFunctionTableSize = 0x0192,
 	kBootUnk3 = 0x0193,
 	kBootEngineResource = 0x0bba,
 	kBootEngineResourceId = 0x0bbb,
-	kBootScreenDeclaration = 0x0007,
-	kBootFileDeclaration = 0x000a,
-	kBootSubfileDeclaration = 0x000b,
-};
-
-class Boot : Datafile {
-private:
-	BootSectionType getSectionType(Chunk &chunk);
-
-public:
-	Common::String _gameTitle;
-	VersionInfo _versionInfo;
-	Common::String _engineInfo;
-	Common::String _sourceString;
-	Common::HashMap<uint32, ContextDeclaration> _contextDeclarations;
-	Common::HashMap<uint32, ScreenDeclaration> _screenDeclarations;
-	Common::HashMap<uint32, FileDeclaration> _fileMap;
-	Common::HashMap<uint32, SubfileDeclaration> _streamMap;
-	Common::HashMap<uint32, EngineResourceDeclaration> _engineResourceDeclarations;
-	uint _unk1 = 0;
-	uint _functionTableSize = 0;
-	uint _unk3 = 0;
-
-	void readDocumentDef(Chunk &chunk);
-	void readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType);
-	void readVersionInfoFromStream(Chunk &chunk);
-	void readContextReferencesFromStream(Chunk &chunk);
-	void readScreenDeclarationsFromStream(Chunk &chunk);
-	void readAndAddFileMaps(Chunk &chunk);
-	void readAndAddStreamMaps(Chunk &chunk);
-
-	void readStartupInformation(Chunk &chunk);
-
-	Boot(const Common::Path &path);
-	~Boot();
+	kBootScreenReference = 0x0007,
+	kBootFileInfo = 0x000a,
+	kBootStreamInfo = 0x000b,
 };
 
 } // End of namespace MediaStation

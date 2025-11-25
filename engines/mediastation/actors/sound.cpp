@@ -22,8 +22,17 @@
 #include "mediastation/audio.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/actors/sound.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
+
+SoundActor::~SoundActor() {
+	unregisterWithStreamManager();
+	if (_streamFeed != nullptr) {
+		g_engine->getStreamFeedManager()->closeStreamFeed(_streamFeed);
+		_streamFeed = nullptr;
+	}
+}
 
 void SoundActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
@@ -37,8 +46,9 @@ void SoundActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		break;
 	}
 
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
 		break;
 
 	case kActorHeaderHasOwnSubfile:
@@ -46,7 +56,6 @@ void SoundActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		break;
 
 	case kActorHeaderSoundInfo:
-		_chunkCount = chunk.readTypedUint16();
 		_sequence.readParameters(chunk);
 		break;
 
@@ -70,6 +79,10 @@ void SoundActor::process() {
 		_sequence.stop();
 		runEventHandlerIfExists(kSoundEndEvent);
 	}
+}
+void SoundActor::readChunk(Chunk &chunk) {
+	_isLoadedFromChunk = true;
+	_sequence.readChunk(chunk);
 }
 
 ScriptValue SoundActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -101,28 +114,17 @@ ScriptValue SoundActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 	}
 }
 
-void SoundActor::readSubfile(Subfile &subfile, Chunk &chunk) {
-	uint32 expectedChunkId = chunk._id;
-
-	debugC(5, kDebugLoading, "Sound::readSubfile(): Reading %d chunks", _chunkCount);
-	readChunk(chunk);
-	for (uint i = 1; i < _chunkCount; i++) {
-		debugC(5, kDebugLoading, "Sound::readSubfile(): Reading chunk %d of %d", i, _chunkCount);
-		chunk = subfile.nextChunk();
-		if (chunk._id != expectedChunkId) {
-			error("%s: Expected chunk %s, got %s", __func__, tag2str(expectedChunkId), tag2str(chunk._id));
-		}
-		readChunk(chunk);
-	}
-}
-
 void SoundActor::timePlay() {
+	if (_streamFeed == nullptr && !_isLoadedFromChunk) {
+		_streamFeed = g_engine->getStreamFeedManager()->openStreamFeed(_id);
+		_streamFeed->readData();
+	}
+
 	if (_isPlaying) {
 		return;
 	}
 
 	if (_sequence.isEmpty()) {
-		warning("%s: Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet", __func__);
 		_isPlaying = false;
 		return;
 	}

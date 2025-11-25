@@ -66,7 +66,11 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class MediaStationEngine : public Engine {
+// As this is currently structured, some of the methods in the main engine class are from
+// the RT_ImtGod class in the original, and others are from the RT_App class in the original.
+// In the interest of avoiding more indirection than is already present in the original, we will
+// just keep these together for now.
+class MediaStationEngine : public Engine, public ChannelClient {
 public:
 	MediaStationEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MediaStationEngine() override;
@@ -87,22 +91,30 @@ public:
 
 	void registerActor(Actor *actorToAdd);
 	void destroyActor(uint actorId);
+	void destroyContext(uint contextId, bool eraseFromLoadedContexts = true);
+	bool contextIsLocked(uint contextId);
 
-	void scheduleScreenBranch(uint screenId);
-	void scheduleContextRelease(uint contextId);
 	void readUnrecognizedFromStream(Chunk &chunk, uint sectionType);
-	void releaseContext(uint32 contextId);
+	void readHeaderSections(Subfile &subfile, Chunk &chunk);
 
 	Actor *getActorById(uint actorId);
 	SpatialEntity *getSpatialEntityById(uint spatialEntityId);
-	Actor *getActorByChunkReference(uint chunkReference);
+	ChannelClient *getChannelClientByChannelIdent(uint channelIdent);
 	ScriptValue *getVariable(uint variableId);
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
 	CursorManager *getCursorManager() { return _cursorManager; }
 	FunctionManager *getFunctionManager() { return _functionManager; }
 	RootStage *getRootStage() { return _stageDirector->getRootStage(); }
+	StreamFeedManager *getStreamFeedManager() { return _streamFeedManager; }
+	Document *getDocument() { return _document; }
+
+	const FileInfo &fileInfoForIdent(uint fileId) { return _fileMap.getValOrDefault(fileId); }
+	const StreamInfo &streamInfoForIdent(uint streamId) { return _streamMap.getValOrDefault(streamId); }
+	const ScreenReference &screenRefWithId(uint screenActorId) { return _screenReferences.getValOrDefault(screenActorId); }
+	const ContextReference &contextRefWithId(uint contextId) { return _contextReferences.getValOrDefault(contextId); }
 
 	Common::Array<ParameterClient *> _parameterClients;
+	Common::HashMap<uint, Context *> _loadedContexts;
 
 	SpatialEntity *getMouseInsideHotspot() { return _mouseInsideHotspot; }
 	void setMouseInsideHotspot(SpatialEntity *entity) { _mouseInsideHotspot = entity; }
@@ -114,10 +126,9 @@ public:
 
 	Common::RandomSource _randomSource;
 
-	Context *_currentContext = nullptr;
-
 	static const uint SCREEN_WIDTH = 640;
 	static const uint SCREEN_HEIGHT = 480;
+	static const uint BOOT_STREAM_ID = 1;
 
 protected:
 	Common::Error run() override;
@@ -133,14 +144,24 @@ private:
 	Document *_document = nullptr;
 	DeviceOwner *_deviceOwner = nullptr;
 	StageDirector *_stageDirector = nullptr;
+	StreamFeedManager *_streamFeedManager = nullptr;
 
-	Boot *_boot = nullptr;
 	Common::HashMap<uint, Actor *> _actors;
-	Common::HashMap<uint, Context *> _loadedContexts;
 	SpatialEntity *_mouseInsideHotspot = nullptr;
 	SpatialEntity *_mouseDownHotspot = nullptr;
-	uint _requestedScreenBranchId = 0;
-	Common::Array<uint> _requestedContextReleaseId;
+
+	Common::String _gameTitle;
+	VersionInfo _versionInfo;
+	Common::String _engineInfo;
+	Common::String _sourceString;
+	Common::HashMap<uint, ContextReference> _contextReferences;
+	Common::HashMap<uint, ScreenReference> _screenReferences;
+	Common::HashMap<uint, FileInfo> _fileMap;
+	Common::HashMap<uint, StreamInfo> _streamMap;
+	Common::HashMap<uint, EngineResourceDeclaration> _engineResourceDeclarations;
+	uint _unk1 = 0;
+	uint _functionTableSize = 0;
+	uint _unk3 = 0;
 
 	void initDisplayManager();
 	void initCursorManager();
@@ -148,9 +169,29 @@ private:
 	void initDocument();
 	void initDeviceOwner();
 	void initStageDirector();
+	void initStreamFeedManager();
+	void setupInitialStreamMap();
 
-	void doBranchToScreen();
-	Context *loadContext(uint32 contextId);
+	virtual void readChunk(Chunk &chunk) override;
+	void readDocumentDef(Chunk &chunk);
+	void readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType);
+	void readVersionInfoFromStream(Chunk &chunk);
+	void readContextReferencesFromStream(Chunk &chunk);
+	void readScreenReferencesFromStream(Chunk &chunk);
+	void readAndAddFileMaps(Chunk &chunk);
+	void readAndAddStreamMaps(Chunk &chunk);
+
+	void readControlCommands(Chunk &chunk);
+	void readCommandFromStream(Chunk &chunk, ContextSectionType sectionType);
+	void readCreateContextData(Chunk &chunk);
+	void readDestroyContextData(Chunk &chunk);
+	void readCreateActorData(Chunk &chunk);
+	void readDestroyActorData(Chunk &chunk);
+	void readActorLoadComplete(Chunk &chunk);
+	void readCreateVariableData(Chunk &chunk);
+	void readContextNameData(Chunk &chunk);
+
+	void destroyActorsInContext(uint contextId);
 };
 
 extern MediaStationEngine *g_engine;

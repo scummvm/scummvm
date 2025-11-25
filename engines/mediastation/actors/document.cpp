@@ -24,24 +24,65 @@
 
 namespace MediaStation {
 
+const uint MediaStation::DocumentActor::DOCUMENT_ACTOR_ID;
+
 ScriptValue DocumentActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
-
 	switch (methodId) {
-	case kBranchToScreenMethod:
+	case kDocumentBranchToScreenMethod:
 		processBranch(args);
-		return returnValue;
+		break;
 
-	case kReleaseContextMethod: {
+	case kDocumentQuitMethod:
+		g_engine->quitGame();
+		break;
+
+	case kDocumentContextLoadInProgressMethod: {
 		assert(args.size() == 1);
-		uint32 contextId = args[0].asActorId();
-		g_engine->scheduleContextRelease(contextId);
-		return returnValue;
+		uint contextId = args[0].asActorId();
+		bool isLoading = g_engine->getDocument()->isContextLoadInProgress(contextId);
+		returnValue.setToBool(isLoading);
+		break;
+	}
+
+	case kDocumentSetMultipleStreamsMethod:
+	case kDocumentSetMultipleSoundsMethod: {
+		assert(args.size() == 1);
+		bool value = args[0].asBool();
+		warning("%s: STUB: %s: %d", __func__, builtInMethodToStr(methodId), value);
+		break;
+	}
+
+	case kDocumentLoadContextMethod: {
+		assert(args.size() == 1);
+		uint contextId = args[0].asActorId();
+		g_engine->getDocument()->startContextLoad(contextId);
+		break;
+	}
+
+	case kDocumentReleaseContextMethod: {
+		assert(args.size() == 1);
+		uint contextId = args[0].asActorId();
+		g_engine->getDocument()->scheduleContextRelease(contextId);
+		break;
+	}
+
+	case kDocumentContextIsLoadedMethod: {
+		assert(args.size() == 1);
+		uint contextId = args[0].asActorId();
+
+		// We are looking for the screen actor with the same ID as the context.
+		Actor *screenActor = g_engine->getActorById(contextId);
+		bool contextIsLoading = g_engine->getDocument()->isContextLoadInProgress(contextId);
+		bool contextIsLoaded = (screenActor != nullptr) && !contextIsLoading;
+		returnValue.setToBool(contextIsLoaded);
+		break;
 	}
 
 	default:
-		return Actor::callMethod(methodId, args);
+		returnValue = Actor::callMethod(methodId, args);
 	}
+	return returnValue;
 }
 
 void DocumentActor::processBranch(Common::Array<ScriptValue> &args) {
@@ -53,7 +94,7 @@ void DocumentActor::processBranch(Common::Array<ScriptValue> &args) {
 			warning("%s: disableUpdates parameter not handled yet", __func__);
 	}
 
-	g_engine->scheduleScreenBranch(contextId);
+	g_engine->getDocument()->scheduleScreenBranch(contextId);
 }
 
 } // End of namespace MediaStation

@@ -25,19 +25,21 @@
 
 namespace MediaStation {
 
+ImageAsset::~ImageAsset() {
+	delete bitmap;
+	bitmap = nullptr;
+}
+
 ImageActor::~ImageActor() {
-	if (_actorReference == 0) {
-		// If we're just referencing another actor's bitmap,
-		// don't delete that bitmap.
-		delete _bitmap;
-	}
-	_bitmap = nullptr;
+	unregisterWithStreamManager();
 }
 
 void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
+		_asset = Common::SharedPtr<ImageAsset>(new ImageAsset);
 		break;
 
 	case kActorHeaderStartup:
@@ -55,6 +57,20 @@ void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	case kActorHeaderY:
 		_yOffset = chunk.readTypedUint16();
 		break;
+
+	case kActorHeaderActorReference: {
+		_actorReference = chunk.readTypedUint16();
+		Actor *referencedActor = g_engine->getActorById(_actorReference);
+		if (referencedActor == nullptr) {
+			error("%s: Referenced actor %d doesn't exist or has not been read yet in this title", __func__, _actorReference);
+		}
+		if (referencedActor->type() != kActorTypeImage) {
+			error("%s: Type mismatch of referenced actor %d", __func__, _actorReference);
+		}
+		ImageActor *referencedImage = static_cast<ImageActor *>(referencedActor);
+		_asset = referencedImage->_asset;
+		break;
+	}
 
 	default:
 		SpatialEntity::readParameter(chunk, paramType);
@@ -84,7 +100,7 @@ ScriptValue ImageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 void ImageActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	if (_isVisible) {
 		Common::Point origin = getBbox().origin();
-		g_engine->getDisplayManager()->imageBlit(origin, _bitmap, _dissolveFactor, dirtyRegion);
+		g_engine->getDisplayManager()->imageBlit(origin, _asset->bitmap, _dissolveFactor, dirtyRegion);
 	}
 }
 
@@ -104,13 +120,13 @@ void ImageActor::spatialHide() {
 
 Common::Rect ImageActor::getBbox() const {
 	Common::Point origin(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
-	Common::Rect bbox(origin, _bitmap->width(), _bitmap->height());
+	Common::Rect bbox(origin, _asset->bitmap->width(), _asset->bitmap->height());
 	return bbox;
 }
 
 void ImageActor::readChunk(Chunk &chunk) {
 	BitmapHeader *bitmapHeader = new BitmapHeader(chunk);
-	_bitmap = new Bitmap(chunk, bitmapHeader);
+	_asset->bitmap = new Bitmap(chunk, bitmapHeader);
 }
 
 } // End of namespace MediaStation

@@ -402,7 +402,7 @@ StageDirector::StageDirector() {
 }
 
 StageDirector::~StageDirector() {
-	delete _rootStage;
+	g_engine->destroyActor(RootStage::ROOT_STAGE_ACTOR_ID);
 	_rootStage = nullptr;
 }
 

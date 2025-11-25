@@ -61,7 +61,8 @@ private:
 enum MovieSectionType {
 	kMovieRootSection = 0x06a8,
 	kMovieImageDataSection = 0x06a9,
-	kMovieFrameDataSection = 0x06aa
+	kMovieFrameDataSection = 0x06aa,
+	kMovieChunkMarkerSection = 0x06ab
 };
 
 struct MovieFrame {
@@ -82,13 +83,44 @@ struct MovieFrame {
 	MovieFrameImage *keyframeImage = nullptr;
 };
 
-class StreamMovieActor : public SpatialEntity {
+class StreamMovieActor;
+
+// This is called `RT_stmvFrames` in the original.
+class StreamMovieActorFrames : public ChannelClient {
 public:
-	StreamMovieActor() : _framesOnScreen(StreamMovieActor::compareFramesByZIndex), SpatialEntity(kActorTypeMovie) {}
+	StreamMovieActorFrames(StreamMovieActor *parent) : ChannelClient(), _parent(parent) {}
+	~StreamMovieActorFrames();
+
+	virtual void readChunk(Chunk &chunk) override;
+
+	Common::Array<MovieFrame *> _frames;
+	Common::Array<MovieFrameImage *> _images;
+
+private:
+	StreamMovieActor *_parent = nullptr;
+
+	void readImageData(Chunk &chunk);
+	void readFrameData(Chunk &chunk);
+};
+
+// This is called `RT_stmvSound` in the original.
+class StreamMovieActorSound : public ChannelClient {
+public:
+	~StreamMovieActorSound();
+	virtual void readChunk(Chunk &chunk) override;
+
+	AudioSequence _audioSequence;
+};
+
+class StreamMovieActor : public SpatialEntity, public ChannelClient {
+friend class StreamMovieActorFrames;
+friend class StreamMovieActorSound;
+
+public:
+	StreamMovieActor();
 	virtual ~StreamMovieActor() override;
 
 	virtual void readChunk(Chunk &chunk) override;
-	virtual void readSubfile(Subfile &subfile, Chunk &chunk) override;
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
@@ -98,20 +130,18 @@ public:
 
 	virtual bool isVisible() const override { return _isVisible; }
 
-	uint32 _audioChunkReference = 0;
-	uint32 _animationChunkReference = 0;
-
 private:
-	AudioSequence _audioSequence;
-	uint _audioChunkCount = 0;
+	ImtStreamFeed *_streamFeed = nullptr;
 	uint _fullTime = 0;
+	uint _chunkCount = 0;
+	double _frameRate = 0;
 
 	uint _loadType = 0;
 	bool _isPlaying = false;
 	bool _hasStill = false;
 
-	Common::Array<MovieFrame *> _frames;
-	Common::Array<MovieFrameImage *> _images;
+	StreamMovieActorFrames *_streamFrames = nullptr;
+	StreamMovieActorSound *_streamSound = nullptr;
 
 	Common::Array<MovieFrame *> _framesNotYetShown;
 	Common::SortedArray<MovieFrame *, const MovieFrame *> _framesOnScreen;
@@ -125,8 +155,8 @@ private:
 	void invalidateRect(const Common::Rect &rect);
 	void decompressIntoAuxImage(MovieFrame *frame);
 
-	void readImageData(Chunk &chunk);
-	void readFrameData(Chunk &chunk);
+	void parseMovieHeader(Chunk &chunk);
+	void parseMovieChunkMarker(Chunk &chunk);
 
 	Common::Rect getFrameBoundingBox(MovieFrame *frame);
 	static int compareFramesByZIndex(const MovieFrame *a, const MovieFrame *b);

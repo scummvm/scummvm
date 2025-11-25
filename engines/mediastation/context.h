@@ -38,7 +38,8 @@ enum StreamType {
 };
 
 enum ContextSectionType {
-	kEndOfContextData = 0x00,
+	kContextEndOfSection = 0x00,
+	kContextControlCommands = 0x0d,
 	kContextCreateData = 0x0e,
 	kContextDestroyData = 0x0f,
 	kContextLoadCompleteSection = 0x10,
@@ -50,46 +51,17 @@ enum ContextSectionType {
 	kContextNameData = 0xbb8
 };
 
-class ScreenActor;
-
-class Context : public Datafile {
+class Context {
 public:
-	Context(const Common::Path &path);
 	~Context();
 
-	uint32 _unk1;
-	uint32 _subfileCount;
-	uint32 _fileSize;
-	ScreenActor *_screenActor = nullptr;
+	Common::String _name;
+	Common::HashMap<uint, ScriptValue *> _variables;
 
-	Actor *getActorById(uint actorId);
-	Actor *getActorByChunkReference(uint chunkReference);
-	ScriptValue *getVariable(uint variableId);
-
-private:
 	// This is not an internal file ID, but the number of the file
 	// as it appears in the filename. For instance, the context in
 	// "100.cxt" would have file number 100.
 	uint _id = 0;
-	Common::String _contextName;
-
-	Common::HashMap<uint, Actor *> _actors;
-	Common::HashMap<uint, Actor *> _actorsByChunkReference;
-	Common::HashMap<uint, ScriptValue *> _variables;
-
-	void readHeaderSections(Subfile &subfile, Chunk &chunk);
-
-	void readControlCommands(Chunk &chunk);
-	void readCommandFromStream(ContextSectionType sectionType, Chunk &chunk);
-	void readCreateContextData(Chunk &chunk);
-	void readDestroyContextData(Chunk &chunk);
-	void readCreateActorData(Chunk &chunk);
-	void readDestroyActorData(Chunk &chunk);
-	void readActorLoadComplete(Chunk &chunk);
-	void readCreateVariableData(Chunk &chunk);
-	void readContextNameData(Chunk &chunk);
-
-	void readActorFromLaterSubfile(Subfile &subfile);
 };
 
 } // End of namespace MediaStation

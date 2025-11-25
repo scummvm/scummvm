@@ -25,17 +25,17 @@
 
 namespace MediaStation {
 
-#pragma region ContextDeclaration
-ContextDeclaration::ContextDeclaration(Chunk &chunk) {
+#pragma region ContextReference
+ContextReference::ContextReference(Chunk &chunk) {
 	// Read the file number.
-	ContextDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kContextDeclarationContextId != sectionType) {
+	ContextReferenceSectionType sectionType = getSectionType(chunk);
+	if (kContextReferenceContextId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_contextId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
-	if (kContextDeclarationStreamId != sectionType) {
+	if (kContextReferenceStreamId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_streamId = chunk.readTypedUint16();
@@ -44,7 +44,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	// and unfortunately we can't determine which just by relying
 	// on the title compiler version number.
 	sectionType = getSectionType(chunk);
-	if (kContextDeclarationName == sectionType) {
+	if (kContextReferenceName == sectionType) {
 		_name = chunk.readTypedString();
 		sectionType = getSectionType(chunk);
 	}
@@ -53,7 +53,7 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	// references there are beforehand, so we'll just read until
 	// we get something else.
 	uint rewindOffset = chunk.pos();
-	while (kContextDeclarationParentContextId == sectionType) {
+	while (kContextReferenceParentContextId == sectionType) {
 		int fileReference = chunk.readTypedUint16();
 		_parentContextIds.push_back(fileReference);
 		rewindOffset = chunk.pos();
@@ -62,44 +62,44 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	chunk.seek(rewindOffset);
 }
 
-ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
-	return static_cast<ContextDeclarationSectionType>(chunk.readTypedUint16());
+ContextReferenceSectionType ContextReference::getSectionType(Chunk &chunk) {
+	return static_cast<ContextReferenceSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
-#pragma region ScreenDeclaration
-ScreenDeclaration::ScreenDeclaration(Chunk &chunk) {
+#pragma region ScreenReference
+ScreenReference::ScreenReference(Chunk &chunk) {
 	// Make sure this declaration isn't empty.
-	ScreenDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kScreenDeclarationActorId != sectionType) {
+	ScreenReferenceSectionType sectionType = getSectionType(chunk);
+	if (kScreenReferenceScreenId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
-	_actorId = chunk.readTypedUint16();
+	_screenActorId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
-	if (kScreenDeclarationScreenId != sectionType) {
+	if (kScreenReferenceContextId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
-	_screenId = chunk.readTypedUint16();
+	_contextId = chunk.readTypedUint16();
 }
 
-ScreenDeclarationSectionType ScreenDeclaration::getSectionType(Chunk &chunk) {
-	return static_cast<ScreenDeclarationSectionType>(chunk.readTypedUint16());
+ScreenReferenceSectionType ScreenReference::getSectionType(Chunk &chunk) {
+	return static_cast<ScreenReferenceSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
-#pragma region FileDeclaration
-FileDeclaration::FileDeclaration(Chunk &chunk) {
+#pragma region FileInfo
+FileInfo::FileInfo(Chunk &chunk) {
 	// Read the file ID.
-	FileDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kFileDeclarationFileId != sectionType) {
+	FileInfoSectionType sectionType = getSectionType(chunk);
+	if (kFileInfoFileId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_id = chunk.readTypedUint16();
 
 	// Read the intended file location.
 	sectionType = getSectionType(chunk);
-	if (kFileDeclarationFileNameAndType != sectionType) {
+	if (kFileInfoFileNameAndType != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_intendedLocation = static_cast<IntendedFileLocation>(chunk.readTypedUint16());
@@ -110,37 +110,37 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	_name = chunk.readTypedFilename();
 }
 
-FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
-	return static_cast<FileDeclarationSectionType>(chunk.readTypedUint16());
+FileInfoSectionType FileInfo::getSectionType(Chunk &chunk) {
+	return static_cast<FileInfoSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
-#pragma region SubfileDeclaration
-SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
+#pragma region StreamInfo
+StreamInfo::StreamInfo(Chunk &chunk) {
 	// Read the actor ID.
-	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationActorId != sectionType) {
+	StreamInfoSectionType sectionType = getSectionType(chunk);
+	if (kStreamInfoActorId != sectionType) {
 		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_actorId = chunk.readTypedUint16();
 
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationFileId != sectionType) {
+	if (kStreamInfoFileId != sectionType) {
 		error("%s: Expected section type FILE_ID, got 0x%x", __func__, static_cast<uint>(sectionType));
 	}
 	_fileId = chunk.readTypedUint16();
 
 	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationStartOffset != sectionType) {
+	if (kStreamInfoStartOffset != sectionType) {
 		error("%s: Expected section type START_OFFSET, got 0x%x", __func__, static_cast<uint>(sectionType));
 	}
 	_startOffsetInFile = chunk.readTypedUint32();
 }
 
-SubfileDeclarationSectionType SubfileDeclaration::getSectionType(Chunk &chunk) {
-	return static_cast<SubfileDeclarationSectionType>(chunk.readTypedUint16());
+StreamInfoSectionType StreamInfo::getSectionType(Chunk &chunk) {
+	return static_cast<StreamInfoSectionType>(chunk.readTypedUint16());
 }
 #pragma endregion
 
@@ -155,43 +155,10 @@ CursorDeclaration::CursorDeclaration(Chunk &chunk) {
 #pragma endregion
 
 #pragma region Boot
-Boot::Boot(const Common::Path &path) : Datafile(path) {
-	Subfile subfile = getNextSubfile();
-	Chunk chunk = subfile.nextChunk();
-
-	// TODO: This is really analogous to RT_ImtGod::notifyBufferFilled.
-	// But we are currently only handling the DocumentDef part of it.
-	BootStreamType streamType = static_cast<BootStreamType>(chunk.readTypedUint16());
-	switch (streamType) {
-		case kBootDocumentDef:
-			readDocumentDef(chunk);
-			break;
-
-		case kBootControlCommands:
-			error("%s: STUB: readControlComments", __func__);
-			break;
-
-		default:
-			error("%s: Unhandled section type 0x%x", __func__, static_cast<uint>(streamType));
-	}
-}
-
-BootSectionType Boot::getSectionType(Chunk &chunk) {
-	return static_cast<BootSectionType>(chunk.readTypedUint16());
-}
-
-Boot::~Boot() {
-	_contextDeclarations.clear();
-	_streamMap.clear();
-	_engineResourceDeclarations.clear();
-	_screenDeclarations.clear();
-	_fileMap.clear();
-}
-
-void Boot::readDocumentDef(Chunk &chunk) {
+void MediaStationEngine::readDocumentDef(Chunk &chunk) {
 	BootSectionType sectionType = kBootLastSection;
 	while (true) {
-		sectionType = getSectionType(chunk);
+		sectionType = static_cast<BootSectionType>(chunk.readTypedUint16());
 		if (sectionType == kBootLastSection) {
 			break;
 		}
@@ -199,25 +166,25 @@ void Boot::readDocumentDef(Chunk &chunk) {
 	}
 }
 
-void Boot::readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType) {
+void MediaStationEngine::readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType) {
 	switch (sectionType) {
 	case kBootVersionInformation:
 		readVersionInfoFromStream(chunk);
 		break;
 
-	case kBootContextDeclaration:
+	case kBootContextReference:
 		readContextReferencesFromStream(chunk);
 		break;
 
-	case kBootScreenDeclaration:
-		readScreenDeclarationsFromStream(chunk);
+	case kBootScreenReference:
+		readScreenReferencesFromStream(chunk);
 		break;
 
-	case kBootFileDeclaration:
+	case kBootFileInfo:
 		readAndAddFileMaps(chunk);
 		break;
 
-	case kBootSubfileDeclaration:
+	case kBootStreamInfo:
 		readAndAddStreamMaps(chunk);
 		break;
 
@@ -236,48 +203,48 @@ void Boot::readDocumentInfoFromStream(Chunk &chunk, BootSectionType sectionType)
 	default:
 		// See if any registered parameter clients know how to
 		// handle this parameter.
-		g_engine->readUnrecognizedFromStream(chunk, static_cast<uint>(sectionType));
+		readUnrecognizedFromStream(chunk, static_cast<uint>(sectionType));
 	}
 }
 
-void Boot::readVersionInfoFromStream(Chunk &chunk) {
+void MediaStationEngine::readVersionInfoFromStream(Chunk &chunk) {
 	_gameTitle = chunk.readTypedString();
 	_versionInfo = chunk.readTypedVersion();
 	_engineInfo = chunk.readTypedString();
 	_sourceString = chunk.readTypedString();
 }
 
-void Boot::readContextReferencesFromStream(Chunk &chunk) {
+void MediaStationEngine::readContextReferencesFromStream(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
-		ContextDeclaration contextDeclaration(chunk);
-		_contextDeclarations.setVal(contextDeclaration._contextId, contextDeclaration);
+		ContextReference contextReference(chunk);
+		_contextReferences.setVal(contextReference._contextId, contextReference);
 		flag = chunk.readTypedUint16();
 	}
 }
 
-void Boot::readScreenDeclarationsFromStream(Chunk &chunk) {
+void MediaStationEngine::readScreenReferencesFromStream(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
-		ScreenDeclaration screenDeclaration(chunk);
-		_screenDeclarations.setVal(screenDeclaration._screenId, screenDeclaration);
+		ScreenReference screenDeclaration(chunk);
+		_screenReferences.setVal(screenDeclaration._screenActorId, screenDeclaration);
 		flag = chunk.readTypedUint16();
 	}
 }
 
-void Boot::readAndAddFileMaps(Chunk &chunk) {
+void MediaStationEngine::readAndAddFileMaps(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
-		FileDeclaration fileDeclaration(chunk);
+		FileInfo fileDeclaration(chunk);
 		_fileMap.setVal(fileDeclaration._id, fileDeclaration);
 		flag = chunk.readTypedUint16();
 	}
 }
 
-void Boot::readAndAddStreamMaps(Chunk &chunk) {
+void MediaStationEngine::readAndAddStreamMaps(Chunk &chunk) {
 	uint flag = chunk.readTypedUint16();
 	while (flag != 0) {
-		SubfileDeclaration subfileDeclaration(chunk);
+		StreamInfo subfileDeclaration(chunk);
 		_streamMap.setVal(subfileDeclaration._actorId, subfileDeclaration);
 		flag = chunk.readTypedUint16();
 	}

@@ -40,7 +40,7 @@ private:
 	int _unk2 = 0;
 };
 
-class FontActor : public Actor {
+class FontActor : public Actor, public ChannelClient {
 public:
 	FontActor() : Actor(kActorTypeFont) {};
 	~FontActor();

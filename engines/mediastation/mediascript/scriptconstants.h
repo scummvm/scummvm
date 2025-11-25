@@ -186,10 +186,14 @@ enum BuiltInMethod {
 	kClearToPaletteMethod = 0x17B,
 
 	// DOCUMENT METHODS.
-	kLoadContextMethod = 0x176,
-	kReleaseContextMethod = 0x177,
-	kBranchToScreenMethod = 0xC9,
-	kIsLoadedMethod = 0x178,
+	kDocumentBranchToScreenMethod = 0xC9,
+	kDocumentQuitMethod = 0xD9,
+	kDocumentContextLoadInProgressMethod = 0x169,
+	kDocumentSetMultipleStreamsMethod = 0x174,
+	kDocumentSetMultipleSoundsMethod = 0x175,
+	kDocumentLoadContextMethod = 0x176,
+	kDocumentReleaseContextMethod = 0x177,
+	kDocumentContextIsLoadedMethod = 0x178,
 
 	// PATH METHODS.
 	kSetDurationMethod = 0x106,

@@ -137,7 +137,7 @@ void PathActor::process() {
 		// palette animation in the On Step event handler, so nothing is actually drawn on the screen now.
 
 		// We don't run a step event for the last step.
-		runEventHandlerIfExists(kStepEvent);
+		runEventHandlerIfExists(kPathStepEvent);
 		_nextPathStepTime = ++_currentStep * _stepDurationInMilliseconds;
 	} else {
 		_isPlaying = false;

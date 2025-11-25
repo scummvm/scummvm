@@ -204,7 +204,7 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 	case kTimeStopMethod:
 		return "TimeStop";
 	case kIsPlayingMethod:
-		return "IsPlaying";
+		return "IsPlaying/SetMultipleStreams";
 	case kSetDissolveFactorMethod:
 		return "SetDissolveFactor";
 	case kMouseActivateMethod:
@@ -280,13 +280,19 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "PanTo";
 	case kClearToPaletteMethod:
 		return "ClearToPalette";
-	case kLoadContextMethod:
+	case kDocumentLoadContextMethod:
 		return "LoadContext";
-	case kReleaseContextMethod:
+	case kDocumentReleaseContextMethod:
 		return "ReleaseContext";
-	case kBranchToScreenMethod:
+	case kDocumentBranchToScreenMethod:
 		return "BranchToScreen";
-	case kIsLoadedMethod:
+	case kDocumentQuitMethod:
+		return "Quit";
+	case kDocumentContextLoadInProgressMethod:
+		return "ContextLoadInProgress";
+	case kDocumentSetMultipleSoundsMethod:
+		return "SetMultipleSounds";
+	case kDocumentContextIsLoadedMethod:
 		return "IsLoaded";
 	case kSetDurationMethod:
 		return "SetDuration";

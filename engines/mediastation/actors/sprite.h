@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/ptr.h"
 
 #include "mediastation/actor.h"
 #include "mediastation/datafile.h"
@@ -44,7 +45,7 @@ public:
 	SpriteFrameHeader(Chunk &chunk);
 
 	uint _index;
-	Common::Point _boundingBox;
+	Common::Point _offset;
 };
 
 class SpriteFrame : public Bitmap {
@@ -62,11 +63,17 @@ private:
 	SpriteFrameHeader *_bitmapHeader = nullptr;
 };
 
+// The original had a separate class that did reference counting,
+// for sharing an asset across actors, but we can just use a SharedPtr.
+struct SpriteAsset {
+	~SpriteAsset();
+
+	Common::Array<SpriteFrame *> frames;
+};
+
 // Sprites are somewhat like movies, but they strictly show one frame at a time
 // and don't have sound. They are intended for background/recurrent animations.
-class SpriteMovieActor : public SpatialEntity {
-friend class Context;
-
+class SpriteMovieActor : public SpatialEntity, public ChannelClient {
 public:
 	SpriteMovieActor() : SpatialEntity(kActorTypeSprite) {};
 	~SpriteMovieActor();
@@ -86,8 +93,9 @@ private:
 	uint _loadType = 0;
 	uint _frameRate = 0;
 	uint _frameCount = 0;
+	uint _actorReference = 0;
 	Common::HashMap<uint, SpriteClip> _clips;
-	Common::Array<SpriteFrame *> _frames;
+	Common::SharedPtr<SpriteAsset> _asset;
 	bool _isPlaying = false;
 	uint _currentFrameIndex = 0;
 	uint _nextFrameTime = 0;

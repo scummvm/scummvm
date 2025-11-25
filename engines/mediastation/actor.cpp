@@ -86,14 +86,6 @@ ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	return ScriptValue();
 }
 
-void Actor::readChunk(Chunk &chunk) {
-	error("%s: Chunk reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
-}
-
-void Actor::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("%s: Subfile reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
-}
-
 void Actor::processTimeEventHandlers() {
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
@@ -290,10 +282,6 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 
 	case kActorHeaderChildActorId:
 		_stageId = chunk.readTypedUint16();
-		break;
-
-	case kActorHeaderActorReference:
-		_actorReference = chunk.readTypedUint16();
 		break;
 
 	case kActorHeaderScaleXAndY:

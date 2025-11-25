@@ -66,7 +66,7 @@ enum DatumType {
 	kDatumTypeTime = 0x11,
 	kDatumTypeString = 0x12,
 	kDatumTypeVersion = 0x13,
-	kDatumTypeChunkReference = 0x1b,
+	kDatumTypeChannelIdent = 0x1b,
 	kDatumTypePolygon = 0x1d,
 };
 
@@ -92,7 +92,7 @@ public:
 	double readTypedTime();
 	Common::String readTypedString();
 	VersionInfo readTypedVersion();
-	uint32 readTypedChunkReference();
+	uint32 readTypedChannelIdent();
 	Polygon readTypedPolygon();
 
 private:
@@ -141,11 +141,86 @@ private:
 	Chunk _rootChunk;
 };
 
-class Datafile : public Common::File {
+// The stream loading class hierarchy presented below is a bit complex for reading directly
+// from streams, like we can do on modern computers, without needing to worry about
+// buffering from CD-ROM. But we are staying close to the original logic and class
+// hierarchy where possible, so some of that original architecture is reflected here.
+typedef uint32 ChannelIdent;
+
+class CdRomStream : public Common::File {
 public:
-	Datafile(const Common::Path &path);
+	CdRomStream() {};
+	void openStream(uint streamId);
+	void closeStream() { close(); }
 
 	Subfile getNextSubfile();
+
+private:
+	uint _fileId = 0;
+};
+
+class ChannelClient {
+public:
+	virtual ~ChannelClient() {};
+
+	void setChannelIdent(ChannelIdent channelIdent) { _channelIdent = channelIdent; }
+	ChannelIdent channelIdent() const { return _channelIdent; }
+
+	virtual void readChunk(Chunk &chunk) {};
+
+	void registerWithStreamManager();
+	void unregisterWithStreamManager();
+
+protected:
+	ChannelIdent _channelIdent = 0;
+};
+
+class StreamFeed {
+public:
+	StreamFeed(uint streamId) : _id(streamId) {};
+	virtual ~StreamFeed() {};
+
+	virtual void openFeed(uint streamId, uint startOffset) = 0;
+
+	// The original also has forceCloseFeed, which doesn't do some other cleanup
+	// that the regular closeFeed does. However, since we are not doing caching and
+	// some other functionality in the original, we don't need this.
+	virtual void closeFeed() = 0;
+	virtual void stopFeed() = 0;
+	virtual void readData() = 0;
+
+	uint _id = 0;
+
+protected:
+	CdRomStream *_stream = nullptr;
+};
+
+class ImtStreamFeed : public StreamFeed {
+public:
+	ImtStreamFeed(uint streamId);
+	~ImtStreamFeed();
+
+	virtual void openFeed(uint streamId, uint startOffset) override;
+	virtual void closeFeed() override;
+	// This implementation is currently empty because all this has to do with read timing.
+	virtual void stopFeed() override {};
+	virtual void readData() override;
+};
+
+class StreamFeedManager {
+public:
+	~StreamFeedManager();
+
+	void registerChannelClient(ChannelClient *client);
+	void unregisterChannelClient(ChannelClient *client);
+	ChannelClient *channelClientForChannel(uint clientId) { return _channelClients.getValOrDefault(clientId); }
+
+	ImtStreamFeed *openStreamFeed(uint streamId, uint offsetInStream = 0, uint maxBytesToRead = 0);
+	void closeStreamFeed(StreamFeed *streamFeed);
+
+private:
+	Common::HashMap<uint, StreamFeed *> _streamFeeds;
+	Common::HashMap<ChannelIdent, ChannelClient *> _channelClients;
 };
 
 } // End of namespace MediaStation

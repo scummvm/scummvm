@@ -50,9 +50,21 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 		Common::String directoryGlob = directoryGlobs[i];
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
+
+	_channelIdent = MKTAG('i', 'g', 'o', 'd'); // ImtGod
 }
 
 MediaStationEngine::~MediaStationEngine() {
+	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
+		destroyContext(it->_value->_id, false);
+	}
+	_loadedContexts.clear();
+
+	// Only delete the document actor.
+	// The root stage is deleted from stage director, and
+	// the other actors are deleted from their contexts.
+	destroyActor(DocumentActor::DOCUMENT_ACTOR_ID);
+
 	delete _displayManager;
 	_displayManager = nullptr;
 
@@ -68,21 +80,18 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _deviceOwner;
 	_deviceOwner = nullptr;
 
-	delete _boot;
-	_boot = nullptr;
-
 	delete _stageDirector;
 	_stageDirector = nullptr;
 
-	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		delete it->_value;
-	}
-	_loadedContexts.clear();
+	unregisterWithStreamManager();
+	delete _streamFeedManager;
+	_streamFeedManager = nullptr;
 
-	// Only delete the document actor.
-	// The root stage is deleted from stage director, and
-	// the other actors are deleted from their contexts.
-	delete _actors.getVal(1);
+	_contextReferences.clear();
+	_streamMap.clear();
+	_engineResourceDeclarations.clear();
+	_screenReferences.clear();
+	_fileMap.clear();
 	_actors.clear();
 }
 
@@ -90,7 +99,7 @@ Actor *MediaStationEngine::getActorById(uint actorId) {
 	return _actors.getValOrDefault(actorId);
 }
 
-SpatialEntity *MediaStationEngine::getSpatialEntityById(uint spatialEntityId){
+SpatialEntity *MediaStationEngine::getSpatialEntityById(uint spatialEntityId) {
 	Actor *actor = getActorById(spatialEntityId);
 	if (actor != nullptr) {
 		if (!actor->isSpatialActor()) {
@@ -101,19 +110,13 @@ SpatialEntity *MediaStationEngine::getSpatialEntityById(uint spatialEntityId){
 	return nullptr;
 }
 
-Actor *MediaStationEngine::getActorByChunkReference(uint chunkReference) {
-	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		Actor *actor = it->_value->getActorByChunkReference(chunkReference);
-		if (actor != nullptr) {
-			return actor;
-		}
-	}
-	return nullptr;
+ChannelClient *MediaStationEngine::getChannelClientByChannelIdent(uint channelIdent) {
+	return _streamFeedManager->channelClientForChannel(channelIdent);
 }
 
 ScriptValue *MediaStationEngine::getVariable(uint variableId) {
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		ScriptValue *variable = it->_value->getVariable(variableId);
+		ScriptValue *variable = it->_value->_variables.getValOrDefault(variableId);
 		if (variable != nullptr) {
 			return variable;
 		}
@@ -138,11 +141,7 @@ const char *MediaStationEngine::getAppName() const {
 }
 
 bool MediaStationEngine::isFirstGenerationEngine() {
-	if (_boot == nullptr) {
-		error("%s: Attempted to get engine version before BOOT.STM was read", __func__);
-	} else {
-		return (_boot->_versionInfo.major == 0);
-	}
+	return _versionInfo.major == 0;
 }
 
 void MediaStationEngine::addDirtyRect(const Common::Rect &rect) {
@@ -156,38 +155,25 @@ Common::Error MediaStationEngine::run() {
 	initDocument();
 	initDeviceOwner();
 	initStageDirector();
-
-	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
-	_boot = new Boot(bootStmFilepath);
+	initStreamFeedManager();
+	setupInitialStreamMap();
 
 	if (ConfMan.hasKey("entry_context")) {
 		// For development purposes, we can choose to start at an arbitrary context
 		// in this title. This might not work in all cases.
 		uint entryContextId = ConfMan.get("entry_context").asUint64();
 		warning("%s: Starting at user-requested context %d", __func__, entryContextId);
-		_requestedScreenBranchId = entryContextId;
+		_document->beginTitle(entryContextId);
 	} else {
-		_requestedScreenBranchId = _document->_entryScreenId;
+		_document->beginTitle();
 	}
-	doBranchToScreen();
 
 	while (true) {
 		processEvents();
 		if (shouldQuit()) {
 			break;
 		}
-
-		if (!_requestedContextReleaseId.empty()) {
-			for (uint contextId : _requestedContextReleaseId) {
-				releaseContext(contextId);
-			}
-			_requestedContextReleaseId.clear();
-		}
-
-		if (_requestedScreenBranchId != 0) {
-			doBranchToScreen();
-			_requestedScreenBranchId = 0;
-		}
+		_document->process();
 
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
 		for (auto it = _actors.begin(); it != _actors.end(); ++it) {
@@ -239,6 +225,25 @@ void MediaStationEngine::initDeviceOwner() {
 
 void MediaStationEngine::initStageDirector() {
 	_stageDirector = new StageDirector;
+}
+
+void MediaStationEngine::initStreamFeedManager() {
+	_streamFeedManager = new StreamFeedManager;
+	registerWithStreamManager();
+}
+
+void MediaStationEngine::setupInitialStreamMap() {
+	StreamInfo streamInfo;
+	streamInfo._actorId = 0;
+	streamInfo._fileId = MediaStationEngine::BOOT_STREAM_ID;
+	streamInfo._startOffsetInFile = 0;
+	_streamMap.setVal(streamInfo._fileId, streamInfo);
+
+	const Common::String BOOT_STM_FILENAME("BOOT.STM");
+	FileInfo fileInfo;
+	fileInfo._id = MediaStationEngine::BOOT_STREAM_ID;
+	fileInfo._name = BOOT_STM_FILENAME;
+	_fileMap.setVal(fileInfo._id, fileInfo);
 }
 
 void MediaStationEngine::processEvents() {
@@ -293,48 +298,6 @@ void MediaStationEngine::draw(bool dirtyOnly) {
 	_displayManager->doTransitionOnSync();
 }
 
-Context *MediaStationEngine::loadContext(uint32 contextId) {
-	if (_boot == nullptr) {
-		error("%s: Cannot load contexts before BOOT.STM is read", __func__);
-	}
-
-	debugC(5, kDebugLoading, "MediaStationEngine::loadContext(): Loading context %d", contextId);
-	if (_loadedContexts.contains(contextId)) {
-		warning("%s: Context %d already loaded, returning existing context", __func__, contextId);
-		return _loadedContexts.getVal(contextId);
-	}
-
-	// Get the file ID.
-	const SubfileDeclaration &subfileDeclaration = _boot->_streamMap.getValOrDefault(contextId);
-	// There are other actors in a subfile too, so we need to make sure we're
-	// referencing the screen actor, at the start of the file.
-	if (subfileDeclaration._startOffsetInFile != 16) {
-		warning("%s: Requested ID wasn't for a context.", __func__);
-		return nullptr;
-	}
-	uint fileId = subfileDeclaration._fileId;
-
-	// Get the filename.
-	const FileDeclaration &fileDeclaration = _boot->_fileMap.getVal(fileId);
-	Common::Path entryCxtFilepath(fileDeclaration._name);
-
-	// Load any child contexts before we actually load this one. The child
-	// contexts must be unloaded explicitly later.
-	ContextDeclaration contextDeclaration = _boot->_contextDeclarations.getVal(contextId);
-	for (uint childContextId : contextDeclaration._parentContextIds) {
-		// The root context is referred to by an ID of 0, regardless of what its
-		// actual ID is. The root context is already always loaded.
-		if (childContextId != 0) {
-			debugC(5, kDebugLoading, "MediaStationEngine::loadContext(): Loading child context %d", childContextId);
-			loadContext(childContextId);
-		}
-	}
-	Context *context = new Context(entryCxtFilepath);
-
-	_loadedContexts.setVal(contextId, context);
-	return context;
-}
-
 void MediaStationEngine::registerActor(Actor *actorToAdd) {
 	if (getActorById(actorToAdd->id())) {
 		error("%s: Actor with ID 0x%d was already defined in this title", __func__, actorToAdd->id());
@@ -345,54 +308,46 @@ void MediaStationEngine::registerActor(Actor *actorToAdd) {
 void MediaStationEngine::destroyActor(uint actorId) {
 	Actor *actorToDestroy = getActorById(actorId);
 	if (actorToDestroy) {
+		delete _actors[actorId];
 		_actors.erase(actorId);
-		// The actor will actually be deleted when the context is destroyed.
 	} else {
 		warning("%s: Actor %d is not currently loaded", __func__, actorId);
 	}
 }
 
-void MediaStationEngine::scheduleScreenBranch(uint screenId) {
-	_requestedScreenBranchId = screenId;
-}
-
-void MediaStationEngine::scheduleContextRelease(uint contextId) {
-	_requestedContextReleaseId.push_back(contextId);
-}
-
-void MediaStationEngine::doBranchToScreen() {
-	if (_currentContext != nullptr) {
-		_currentContext->_screenActor->runEventHandlerIfExists(kExitEvent);
-		releaseContext(_currentContext->_screenActor->id());
-	}
-
-	_currentContext = loadContext(_requestedScreenBranchId);
-
-	if (_currentContext->_screenActor != nullptr) {
-		_currentContext->_screenActor->runEventHandlerIfExists(kEntryEvent);
-	}
-
-	_requestedScreenBranchId = 0;
-}
-
-void MediaStationEngine::releaseContext(uint32 contextId) {
-	debugC(5, kDebugScript, "MediaStationEngine::releaseContext(): Releasing context %d", contextId);
+void MediaStationEngine::destroyContext(uint contextId, bool eraseFromLoadedContexts) {
+	debugC(5, kDebugScript, "%s: Destroying context %d", __func__, contextId);
 	Context *context = _loadedContexts.getValOrDefault(contextId);
 	if (context == nullptr) {
 		error("%s: Attempted to unload context %d that is not currently loaded", __func__, contextId);
 	}
 
-	// Make sure nothing is still using this context.
+	getRootStage()->deleteChildrenFromContextId(contextId);
+	destroyActorsInContext(contextId);
+	_functionManager->deleteFunctionsForContext(contextId);
+
+	delete context;
+	if (eraseFromLoadedContexts) {
+		// If we are deleting all contexts at once, we don't want to actually do this,
+		// as it will mess up our iterators - the whole structure should be cleared after this.
+		_loadedContexts.erase(contextId);
+	}
+}
+
+bool MediaStationEngine::contextIsLocked(uint contextId) {
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
 		uint id = it->_key;
-		ContextDeclaration contextDeclaration = _boot->_contextDeclarations.getVal(id);
-		for (uint32 childContextId : contextDeclaration._parentContextIds) {
+		ContextReference contextReference = _contextReferences.getVal(id);
+		for (uint childContextId : contextReference._parentContextIds) {
 			if (childContextId == contextId) {
-				return;
+				return true;
 			}
 		}
 	}
+	return false;
+}
 
+void MediaStationEngine::destroyActorsInContext(uint contextId) {
 	// Collect actors to remove first, then delete them.
 	// This is necessary because calling erase on a hashmap invalidates
 	// the iterators, so collecting them all first makes more sense.
@@ -406,14 +361,8 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 
 	// Now remove the collected actors.
 	for (uint actorId : actorsToRemove) {
-		_actors.erase(actorId);
+		destroyActor(actorId);
 	}
-
-	getRootStage()->deleteChildrenFromContextId(contextId);
-	_functionManager->deleteFunctionsForContext(contextId);
-
-	delete context;
-	_loadedContexts.erase(contextId);
 }
 
 void MediaStationEngine::readUnrecognizedFromStream(Chunk &chunk, uint sectionType) {
@@ -426,7 +375,23 @@ void MediaStationEngine::readUnrecognizedFromStream(Chunk &chunk, uint sectionTy
 	}
 
 	if (!paramHandled) {
-		error("%s: Unhandled section type 0x%x", __func__, static_cast<uint>(sectionType));
+		warning("%s: Parameter %d not handled", __func__, sectionType);
+	}
+}
+
+void MediaStationEngine::readChunk(Chunk &chunk) {
+	StreamType streamType = static_cast<StreamType>(chunk.readTypedUint16());
+	switch (streamType) {
+	case kDocumentDefStream:
+		readDocumentDef(chunk);
+		break;
+
+	case kControlCommandsStream:
+		readControlCommands(chunk);
+		break;
+
+	default:
+		error("%s: Unhandled section type 0x%x", __func__, static_cast<uint>(streamType));
 	}
 }
 

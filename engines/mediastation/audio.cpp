@@ -56,25 +56,22 @@ void AudioSequence::stop() {
 }
 
 void AudioSequence::readParameters(Chunk &chunk) {
+	_chunkCount = chunk.readTypedUint16();
 	_rate = chunk.readTypedUint32();
 	_channelCount = chunk.readTypedUint16();
 	_bitsPerSample = chunk.readTypedUint16();
 }
 
 void AudioSequence::readChunk(Chunk &chunk) {
-	byte *buffer = (byte *)malloc(chunk._length);
-	chunk.read((void *)buffer, chunk._length);
+	Common::SeekableReadStream *buffer = chunk.readStream(chunk._length);
 	Audio::SeekableAudioStream *stream = nullptr;
 	switch (_bitsPerSample) {
 	case 16:
-		stream = Audio::makeRawStream(buffer, chunk._length, _rate, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+		stream = Audio::makeRawStream(buffer, _rate, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 		break;
 
-	case 4: // IMA ADPCM-encoded
-		// TODO: The interface here is different. We can't pass in the
-		// buffers directly. We have to make a stream first.
-		warning("%s: ADPCM decoding not implemented yet", __func__);
-		chunk.skip(chunk.bytesRemaining());
+	case 4: // IMA ADPCM-encoded, raw nibbles (no headers).
+		stream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, _rate, 1, 8);
 		break;
 
 	default:

@@ -30,7 +30,8 @@ namespace MediaStation {
 
 class DocumentActor : public Actor {
 public:
-	DocumentActor() : Actor(kActorTypeDocument) { _id = 1; };
+	static const uint DOCUMENT_ACTOR_ID = 1;
+	DocumentActor() : Actor(kActorTypeDocument) { _id = DOCUMENT_ACTOR_ID; };
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 

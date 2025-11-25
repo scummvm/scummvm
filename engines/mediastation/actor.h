@@ -65,9 +65,9 @@ enum ActorHeaderSectionType {
 	kActorHeaderEventHandler = 0x0017,
 	kActorHeaderChildActorId = 0x0019,
 	kActorHeaderActorId = 0x001a,
-	kActorHeaderChunkReference = 0x001b,
-	kActorHeaderMovieAnimationChunkReference = 0x06a4,
-	kActorHeaderMovieAudioChunkReference = 0x06a5,
+	kActorHeaderChannelIdent = 0x001b,
+	kActorHeaderMovieAnimationChannelIdent = 0x06a4,
+	kActorHeaderMovieAudioChannelIdent = 0x06a5,
 	kActorHeaderActorReference = 0x077b,
 	kActorHeaderBoundingBox = 0x001c,
 	kActorHeaderMouseActiveArea = 0x001d,
@@ -169,11 +169,6 @@ public:
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType);
 	virtual void loadIsComplete();
 
-	// These are not pure virtual so if an actor doesn't read any chunks or
-	// subfiles it doesn't need to just implement these with an error message.
-	virtual void readChunk(Chunk &chunk);
-	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
-
 	void processTimeEventHandlers();
 	void runEventHandlerIfExists(EventType eventType, const ScriptValue &arg);
 	void runEventHandlerIfExists(EventType eventType);
@@ -183,9 +178,6 @@ public:
 	uint contextId() const { return _contextId; }
 	void setId(uint id) { _id = id; }
 	void setContextId(uint id) { _contextId = id; }
-
-	uint32 _chunkReference = 0;
-	uint _actorReference = 0;
 
 protected:
 	ActorType _type = kActorTypeEmpty;

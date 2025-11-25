@@ -22,6 +22,8 @@
 #ifndef MEDIASTATION_IMAGE_H
 #define MEDIASTATION_IMAGE_H
 
+#include "common/ptr.h"
+
 #include "mediastation/actor.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
@@ -30,9 +32,15 @@
 
 namespace MediaStation {
 
-class ImageActor : public SpatialEntity {
-friend class Context;
+// The original had a separate class that did reference counting,
+// for sharing an asset across actors, but we can just use a SharedPtr.
+struct ImageAsset {
+	~ImageAsset();
 
+	Bitmap *bitmap = nullptr;
+};
+
+class ImageActor : public SpatialEntity, public ChannelClient {
 public:
 	ImageActor() : SpatialEntity(kActorTypeImage) {};
 	virtual ~ImageActor() override;
@@ -45,10 +53,11 @@ public:
 	virtual Common::Rect getBbox() const override;
 
 private:
-	Bitmap *_bitmap = nullptr;
+	Common::SharedPtr<ImageAsset> _asset;
 	uint _loadType = 0;
 	int _xOffset = 0;
 	int _yOffset = 0;
+	uint _actorReference = 0;
 
 	// Script method implementations.
 	void spatialShow();

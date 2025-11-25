@@ -31,6 +31,7 @@ FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapH
 }
 
 FontActor::~FontActor() {
+	unregisterWithStreamManager();
 	for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
 		delete it->_value;
 	}
@@ -39,8 +40,9 @@ FontActor::~FontActor() {
 
 void FontActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
 		break;
 
 	default:

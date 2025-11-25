@@ -19,9 +19,9 @@
  *
  */
 
-#include "mediastation/mediastation.h"
 #include "mediastation/actors/movie.h"
 #include "mediastation/debugchannels.h"
+#include "mediastation/mediastation.h"
 
 namespace MediaStation {
 
@@ -77,15 +77,17 @@ MovieFrameImage::~MovieFrameImage() {
 }
 
 StreamMovieActor::~StreamMovieActor() {
-	for (MovieFrame *frame : _frames) {
-		delete frame;
+	unregisterWithStreamManager();
+	if (_streamFeed != nullptr) {
+		g_engine->getStreamFeedManager()->closeStreamFeed(_streamFeed);
+		_streamFeed = nullptr;
 	}
-	_frames.clear();
 
-	for (MovieFrameImage *image : _images) {
-		delete image;
-	}
-	_images.clear();
+	delete _streamFrames;
+	_streamFrames = nullptr;
+
+	delete _streamSound;
+	_streamSound = nullptr;
 }
 
 void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
@@ -104,8 +106,9 @@ void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
 		break;
 
 	case kActorHeaderHasOwnSubfile: {
@@ -120,17 +123,22 @@ void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kActorHeaderMovieAudioChunkReference:
-		_audioChunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderMovieAudioChannelIdent: {
+		ChannelIdent soundChannelIdent = chunk.readTypedChannelIdent();
+		_streamSound->setChannelIdent(soundChannelIdent);
+		_streamSound->registerWithStreamManager();
 		break;
+	}
 
-	case kActorHeaderMovieAnimationChunkReference:
-		_animationChunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderMovieAnimationChannelIdent: {
+		ChannelIdent framesChannelIdent = chunk.readTypedChannelIdent();
+		_streamFrames->setChannelIdent(framesChannelIdent);
+		_streamFrames->registerWithStreamManager();
 		break;
+	}
 
 	case kActorHeaderSoundInfo:
-		_audioChunkCount = chunk.readTypedUint16();
-		_audioSequence.readParameters(chunk);
+		_streamSound->_audioSequence.readParameters(chunk);
 		break;
 
 	default:
@@ -193,14 +201,17 @@ ScriptValue StreamMovieActor::callMethod(BuiltInMethod methodId, Common::Array<S
 }
 
 void StreamMovieActor::timePlay() {
-	// TODO: Play movies one chunk at a time, which more directly approximates
-	// the original's reading from the CD one chunk at a time.
+	if (_streamFeed == nullptr) {
+		_streamFeed = g_engine->getStreamFeedManager()->openStreamFeed(_id);
+		_streamFeed->readData();
+	}
+
 	if (_isPlaying) {
 		return;
 	}
 
-	_audioSequence.play();
-	_framesNotYetShown = _frames;
+	_streamSound->_audioSequence.play();
+	_framesNotYetShown = _streamFrames->_frames;
 	_framesOnScreen.clear();
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
@@ -217,10 +228,10 @@ void StreamMovieActor::timeStop() {
 	for (MovieFrame *frame : _framesOnScreen) {
 		invalidateRect(getFrameBoundingBox(frame));
 	}
-	_audioSequence.stop();
+	_streamSound->_audioSequence.stop();
 	_framesNotYetShown.empty();
 	if (_hasStill) {
-		_framesNotYetShown = _frames;
+		_framesNotYetShown = _streamFrames->_frames;
 	}
 	_framesOnScreen.clear();
 	_startTime = 0;
@@ -290,7 +301,7 @@ void StreamMovieActor::updateFrameState() {
 			if (_framesOnScreen.empty() && movieTime >= _fullTime) {
 				_isPlaying = false;
 				if (_hasStill) {
-					_framesNotYetShown = _frames;
+					_framesNotYetShown = _streamFrames->_frames;
 					updateFrameState();
 				}
 				runEventHandlerIfExists(kMovieEndEvent);
@@ -340,8 +351,21 @@ Common::Rect StreamMovieActor::getFrameBoundingBox(MovieFrame *frame) {
 	return bbox;
 }
 
-void StreamMovieActor::readChunk(Chunk &chunk) {
-	// Individual chunks are "stills" and are stored in the first subfile.
+StreamMovieActorFrames::~StreamMovieActorFrames() {
+	unregisterWithStreamManager();
+
+	for (MovieFrame *frame : _frames) {
+		delete frame;
+	}
+	_frames.clear();
+
+	for (MovieFrameImage *image : _images) {
+		delete image;
+	}
+	_images.clear();
+}
+
+void StreamMovieActorFrames::readChunk(Chunk &chunk) {
 	uint sectionType = chunk.readTypedUint16();
 	switch ((MovieSectionType)sectionType) {
 	case kMovieImageDataSection:
@@ -355,88 +379,64 @@ void StreamMovieActor::readChunk(Chunk &chunk) {
 	default:
 		error("%s: Unknown movie still section type", __func__);
 	}
-	_hasStill = true;
+
+	for (MovieFrame *frame : _frames) {
+		if (frame->endInMilliseconds > _parent->_fullTime) {
+			_parent->_fullTime = frame->endInMilliseconds;
+		}
+		if (frame->keepAfterEnd) {
+			_parent->_hasStill = true;
+		}
+	}
+
+	if (_parent->_hasStill) {
+		_parent->_framesNotYetShown = _frames;
+	}
 }
 
-void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
-	uint expectedRootSectionType = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
-	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
-		error("%s: Expected ROOT section type, got 0x%x", __func__, expectedRootSectionType);
+StreamMovieActorSound::~StreamMovieActorSound() {
+	unregisterWithStreamManager();
+}
+
+void StreamMovieActorSound::readChunk(Chunk &chunk) {
+	_audioSequence.readChunk(chunk);
+}
+
+StreamMovieActor::StreamMovieActor() : _framesOnScreen(StreamMovieActor::compareFramesByZIndex), SpatialEntity(kActorTypeMovie) {
+	_streamFrames = new StreamMovieActorFrames(this);
+	_streamSound = new StreamMovieActorSound();
+}
+
+void StreamMovieActor::readChunk(Chunk &chunk) {
+	MovieSectionType sectionType = static_cast<MovieSectionType>(chunk.readTypedUint16());
+	if (sectionType == kMovieRootSection) {
+		parseMovieHeader(chunk);
+	} else if (sectionType == kMovieChunkMarkerSection) {
+		parseMovieChunkMarker(chunk);
+	} else {
+		error("%s: Got unused movie chunk header section", __func__);
 	}
-	uint chunkCount = chunk.readTypedUint16();
-	double unk1 = chunk.readTypedDouble();
-	debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): chunkCount = 0x%x, unk1 = %f (@0x%llx)", chunkCount, unk1, static_cast<long long int>(chunk.pos()));
+}
+
+void StreamMovieActor::parseMovieHeader(Chunk &chunk) {
+	_chunkCount = chunk.readTypedUint16();
+	_frameRate = chunk.readTypedDouble();
+	debugC(5, kDebugLoading, "%s: chunkCount = 0x%x, frameRate = %f (@0x%llx)", __func__, _chunkCount, _frameRate, static_cast<long long int>(chunk.pos()));
 
 	Common::Array<uint> chunkLengths;
-	for (uint i = 0; i < chunkCount; i++) {
+	for (uint i = 0; i < _chunkCount; i++) {
 		uint chunkLength = chunk.readTypedUint32();
 		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, static_cast<long long int>(chunk.pos()));
 		chunkLengths.push_back(chunkLength);
 	}
+}
 
-	// RAD THE INTERLEAVED AUDIO AND ANIMATION DATA.
-	for (uint i = 0; i < chunkCount; i++) {
-		debugC(5, kDebugLoading, "\nMovie::readSubfile(): Reading frameset %d of %d in subfile (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		chunk = subfile.nextChunk();
-
-		// READ ALL THE FRAMES IN THIS CHUNK.
-		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAnimationChunk = (chunk._id == _animationChunkReference);
-		if (!isAnimationChunk) {
-			warning("%s: (Frameset %d of %d) No animation chunks found (@0x%llx)", __func__, i, chunkCount, static_cast<long long int>(chunk.pos()));
-		}
-		while (isAnimationChunk) {
-			uint sectionType = chunk.readTypedUint16();
-			debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-			switch (MovieSectionType(sectionType)) {
-			case kMovieImageDataSection:
-				readImageData(chunk);
-				break;
-
-			case kMovieFrameDataSection:
-				readFrameData(chunk);
-				break;
-
-			default:
-				error("%s: Unknown movie animation section type 0x%x (@0x%llx)", __func__, static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
-			}
-
-			chunk = subfile.nextChunk();
-			isAnimationChunk = (chunk._id == _animationChunkReference);
-		}
-
-		// READ THE AUDIO.
-		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isAudioChunk = (chunk._id == _audioChunkReference);
-		if (isAudioChunk) {
-			_audioSequence.readChunk(chunk);
-			chunk = subfile.nextChunk();
-		} else {
-			debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		}
-
-		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
-		bool isHeaderChunk = (chunk._id == _chunkReference);
-		if (isHeaderChunk) {
-			if (chunk._length != 0x04) {
-				error("%s: Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", __func__, chunk._length, static_cast<long long int>(chunk.pos()));
-			}
-			chunk.skip(chunk._length);
-		} else {
-			error("%s: Expected header chunk, got %s (@0x%llx)", __func__, tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
-		}
-	}
-
-	for (MovieFrame *frame : _frames) {
-		if (frame->endInMilliseconds > _fullTime) {
-			_fullTime = frame->endInMilliseconds;
-		}
-	}
-
-	if (_hasStill) {
-		_framesNotYetShown = _frames;
-	}
+void StreamMovieActor::parseMovieChunkMarker(Chunk &chunk) {
+	// TODO: There is no warning here because that would spam with thousands of warnings.
+	// This takes care of scheduling stream load and such - it doesn't actually read from the
+	// chunk that is passed in. Since we don't need that scheduling since we are currently reading
+	// the whole movie at once rather than streaming it from the CD-ROM, we don't currently need
+	// to do much here anyway.
 }
 
 void StreamMovieActor::invalidateRect(const Common::Rect &rect) {
@@ -453,13 +453,13 @@ void StreamMovieActor::decompressIntoAuxImage(MovieFrame *frame) {
 	g_engine->getDisplayManager()->imageBlit(origin, frame->keyframeImage, 1.0, allDirty, &frame->keyframeImage->_image);
 }
 
-void StreamMovieActor::readImageData(Chunk &chunk) {
+void StreamMovieActorFrames::readImageData(Chunk &chunk) {
 	MovieFrameHeader *header = new MovieFrameHeader(chunk);
 	MovieFrameImage *frame = new MovieFrameImage(chunk, header);
 	_images.push_back(frame);
 }
 
-void StreamMovieActor::readFrameData(Chunk &chunk) {
+void StreamMovieActorFrames::readFrameData(Chunk &chunk) {
 	uint frameDataToRead = chunk.readTypedUint16();
 	for (uint i = 0; i < frameDataToRead; i++) {
 		MovieFrame *frame = new MovieFrame(chunk);

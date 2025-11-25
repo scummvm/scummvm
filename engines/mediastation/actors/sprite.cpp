@@ -58,21 +58,22 @@ uint32 SpriteFrame::index() {
 	return _bitmapHeader->_index;
 }
 
-SpriteMovieActor::~SpriteMovieActor() {
-	// If we're just referencing another actor's frames,
-	// don't delete those frames.
-	if (_actorReference == 0) {
-		for (SpriteFrame *frame : _frames) {
-			delete frame;
-		}
+SpriteAsset::~SpriteAsset() {
+	for (SpriteFrame *frame : frames) {
+		delete frame;
 	}
-	_frames.clear();
+}
+
+SpriteMovieActor::~SpriteMovieActor() {
+	unregisterWithStreamManager();
 }
 
 void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kActorHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kActorHeaderChannelIdent:
+		_channelIdent = chunk.readTypedChannelIdent();
+		registerWithStreamManager();
+		_asset = Common::SharedPtr<SpriteAsset>(new SpriteAsset);
 		break;
 
 	case kActorHeaderFrameRate:
@@ -112,6 +113,20 @@ void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 	case kActorHeaderCurrentSpriteClip: {
 		uint clipId = chunk.readTypedUint16();
 		setCurrentClip(clipId);
+		break;
+	}
+
+	case kActorHeaderActorReference: {
+		_actorReference = chunk.readTypedUint16();
+		Actor *referencedActor = g_engine->getActorById(_actorReference);
+		if (referencedActor == nullptr) {
+			error("%s: Referenced actor %d doesn't exist or has not been read yet in this title", __func__, _actorReference);
+		}
+		if (referencedActor->type() != kActorTypeSprite) {
+			error("%s: Type mismatch of referenced actor %d", __func__, _actorReference);
+		}
+		SpriteMovieActor *referencedSprite = static_cast<SpriteMovieActor *>(referencedActor);
+		_asset = referencedSprite->_asset;
 		break;
 	}
 
@@ -292,11 +307,11 @@ void SpriteMovieActor::readChunk(Chunk &chunk) {
 	debugC(5, kDebugLoading, "Sprite::readFrame(): Reading sprite frame (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	SpriteFrameHeader *header = new SpriteFrameHeader(chunk);
 	SpriteFrame *frame = new SpriteFrame(chunk, header);
-	_frames.push_back(frame);
+	_asset->frames.push_back(frame);
 
 	// TODO: Are these in exactly reverse order? If we can just reverse the
 	// whole thing once.
-	Common::sort(_frames.begin(), _frames.end(), [](SpriteFrame *a, SpriteFrame *b) {
+	Common::sort(_asset->frames.begin(), _asset->frames.end(), [](SpriteFrame *a, SpriteFrame *b) {
 		return a->index() < b->index();
 	});
 }
@@ -361,7 +376,7 @@ void SpriteMovieActor::postMovieEndEventIfNecessary() {
 }
 
 void SpriteMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
-	SpriteFrame *activeFrame = _frames[_currentFrameIndex];
+	SpriteFrame *activeFrame = _asset->frames[_currentFrameIndex];
 	if (_isVisible) {
 		Common::Rect frameBbox = activeFrame->boundingBox();
 		frameBbox.translate(_boundingBox.left, _boundingBox.top);

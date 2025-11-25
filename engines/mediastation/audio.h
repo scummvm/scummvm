@@ -46,6 +46,7 @@ public:
 	uint _rate = 0;
 	uint _channelCount = 0;
 	uint _bitsPerSample = 0;
+	uint _chunkCount = 0;
 
 private:
 	Common::Array<Audio::SeekableAudioStream *> _streams;
