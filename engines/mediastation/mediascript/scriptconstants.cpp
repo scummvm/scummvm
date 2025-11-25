@@ -377,22 +377,28 @@ const char *eventTypeToStr(EventType type) {
 		return "MovieBegin";
 	case kSpriteMovieEndEvent:
 		return "SpriteMovieEnd";
-	case kEntryEvent:
-		return "EntryEvent";
-	case kExitEvent:
-		return "ExitEvent";
-	case kLoadCompleteEvent:
-		return "LoadComplete";
-	case kInputEvent:
-		return "Input";
-	case kErrorEvent:
-		return "Error";
-	case kPanAbortEvent:
-		return "PanAbort";
-	case kPanEndEvent:
-		return "PanEnd";
-	case kStepEvent:
-		return "StepEvent";
+	case kScreenEntryEvent:
+		return "ScreenEntry";
+	case kScreenExitEvent:
+		return "ScreenExit";
+	case kContextLoadCompleteEvent:
+		return "ContextLoadComplete";
+	case kContextLoadCompleteEvent2:
+		return "ContextLoadComplete2";
+	case kContextLoadAbortEvent:
+		return "ContextLoadAbort";
+	case kContextLoadFailureEvent:
+		return "ContextLoadFailure";
+	case kTextInputEvent:
+		return "TextInput";
+	case kTextErrorEvent:
+		return "TextError";
+	case kCameraPanAbortEvent:
+		return "CameraPanAbort";
+	case kCameraPanEndEvent:
+		return "CameraPanEnd";
+	case kPathStepEvent:
+		return "PathStep";
 	case kPathStoppedEvent:
 		return "PathStopped";
 	case kPathEndEvent:

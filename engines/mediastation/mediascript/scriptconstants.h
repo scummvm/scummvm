@@ -226,54 +226,39 @@ enum BuiltInMethod {
 const char *builtInMethodToStr(BuiltInMethod method);
 
 enum EventType {
-	// TIMER EVENTS.
-	kTimerEvent = 0x5,
-
-	// HOTSPOT EVENTS.
-	kMouseDownEvent = 0x6,
-	kMouseUpEvent = 0x7,
-	kMouseMovedEvent = 0x8,
-	kMouseEnteredEvent = 0x9,
-	kMouseExitedEvent = 0xA,
-	kKeyDownEvent = 0xD,
-
-	// SOUND EVENTS.
-	kSoundEndEvent = 0xE,
+	kTimerEvent = 0x05,
+	kMouseDownEvent = 0x06,
+	kMouseUpEvent = 0x07,
+	kMouseMovedEvent = 0x08,
+	kMouseEnteredEvent = 0x09,
+	kMouseExitedEvent = 0x0A,
+	kKeyDownEvent = 0x0D,
+	kSoundEndEvent = 0x0E,
+	kMovieEndEvent = 0x0F,
+	kPathEndEvent = 0x10,
+	kScreenEntryEvent = 0x11,
 	kSoundAbortEvent = 0x13,
 	kSoundFailureEvent = 0x14,
-	kSoundStoppedEvent = 0x1D,
-	kSoundBeginEvent = 0x1E,
-
-	// MOVIE EVENTS.
-	kMovieEndEvent = 0xF,
 	kMovieAbortEvent = 0x15,
 	kMovieFailureEvent = 0x16,
+	kSpriteMovieEndEvent = 0x17,
+	kScreenExitEvent = 0x1B,
+	kPathStepEvent = 0x1C,
+	kSoundStoppedEvent = 0x1D,
+	kSoundBeginEvent = 0x1E,
 	kMovieStoppedEvent = 0x1F,
 	kMovieBeginEvent = 0x20,
-
-	// SPRITE EVENTS.
-	// Just "MovieEnd" in source.
-	kSpriteMovieEndEvent = 0x17,
-
-	// SCREEN EVENTS.
-	kEntryEvent = 0x11,
-	kExitEvent = 0x1B,
-
-	// CONTEXT EVENTS.
-	kLoadCompleteEvent = 0x2C,
-
-	// TEXT EVENTS.
-	kInputEvent = 0x25,
-	kErrorEvent = 0x26,
-
-	// CAMERA EVENTS.
-	kPanAbortEvent = 0x2B,
-	kPanEndEvent = 0x2A,
-
-	// PATH EVENTS.
-	kStepEvent = 0x1C,
 	kPathStoppedEvent = 0x21,
-	kPathEndEvent = 0x10
+	kTextInputEvent = 0x25,
+	kTextErrorEvent = 0x26,
+	kCameraPanEndEvent = 0x2A,
+	kCameraPanAbortEvent = 0x2B,
+	kContextLoadCompleteEvent = 0x2C,
+	// TODO: These last 3 events appear as valid event types, but I haven't found
+	// scripts that actually use them. So the names might be wrong.
+	kContextLoadCompleteEvent2 = 0x2D,
+	kContextLoadAbortEvent = 0x2E,
+	kContextLoadFailureEvent = 0x2F,
 };
 const char *eventTypeToStr(EventType type);
 
