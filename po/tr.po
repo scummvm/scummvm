@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-20 00:14+0000\n"
+"POT-Creation-Date: 2025-11-25 04:12+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -5922,7 +5922,7 @@ msgstr ""
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/private/metaengine.cpp:95 engines/queen/metaengine.cpp:146
+#: engines/private/metaengine.cpp:127 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
 #: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
@@ -7381,7 +7381,7 @@ msgstr "A~y~arlar..."
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:98
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
 #: engines/sherlock/metaengine.cpp:1185
 #, fuzzy
 #| msgid "Interact"
@@ -11097,24 +11097,24 @@ msgstr ""
 msgid "X key"
 msgstr ""
 
-#: engines/private/metaengine.cpp:37
+#: engines/private/metaengine.cpp:39
 #, fuzzy
 msgid "Display SFX subtitles"
 msgstr "Altyazılar"
 
-#: engines/private/metaengine.cpp:38
+#: engines/private/metaengine.cpp:40
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
 
-#: engines/private/metaengine.cpp:48
+#: engines/private/metaengine.cpp:50
 msgid "Highlight decision areas"
 msgstr ""
 
-#: engines/private/metaengine.cpp:49
+#: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
 msgstr ""
 
-#: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
+#: engines/private/metaengine.cpp:136 engines/trecision/metaengine.cpp:137
 #, fuzzy
 msgid "Skip video"
 msgstr "İptal"

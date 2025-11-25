@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-20 00:14+0000\n"
+"POT-Creation-Date: 2025-11-25 04:12+0000\n"
 "PO-Revision-Date: 2025-11-17 12:09+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -6324,7 +6324,7 @@ msgstr "Cerca aggiornamenti..."
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/private/metaengine.cpp:95 engines/queen/metaengine.cpp:146
+#: engines/private/metaengine.cpp:127 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
 #: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
@@ -7819,7 +7819,7 @@ msgstr "Mappature tasti inventario"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:98
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
 #: engines/sherlock/metaengine.cpp:1185
 msgid "Select / Interact"
 msgstr "Selezione / Interazione"
@@ -11457,24 +11457,24 @@ msgstr "Tasto Z"
 msgid "X key"
 msgstr "Tasto X"
 
-#: engines/private/metaengine.cpp:37
+#: engines/private/metaengine.cpp:39
 msgid "Display SFX subtitles"
 msgstr "Mostra sottotitoli effetti sonori"
 
-#: engines/private/metaengine.cpp:38
+#: engines/private/metaengine.cpp:40
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
 "Mostra sottotitoli per gli effetti sonori (se i sottotitoli sono abilitati),"
 
-#: engines/private/metaengine.cpp:48
+#: engines/private/metaengine.cpp:50
 msgid "Highlight decision areas"
 msgstr "Evidenzia aree decisionali"
 
-#: engines/private/metaengine.cpp:49
+#: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
 msgstr "Evidenzia le aree cliccabili nelle schermate delle decisioni."
 
-#: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
+#: engines/private/metaengine.cpp:136 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
 msgstr "Salta video"
 
