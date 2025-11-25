@@ -164,9 +164,9 @@ struct HotSpot {
 };
 
 struct TalkinAnimHeader {
-	uint16 spritePointer;
-	byte unknown1;
-	byte unknown2[4];
+	uint32 spritePointer;
+
+	byte unknown2[3];
 
 	int8 offsetXAnimA;
 	int8 offsetYAnimA;

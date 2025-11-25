@@ -194,10 +194,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(5, 0);
-		// setScreen(13, 1);
-		// setScreen(2, 2);
-		// setScreen(28, 0);
+		// setScreen(5, 0); //museum entrance
+		// setScreen(13, 1); // restaurants kitchen
+		setScreen(2, 2); // hooker
 	}
 }
 
@@ -959,9 +958,8 @@ void PelrockEngine::loadRoomTalkingAnimations(int roomNumber) {
 
 	talkFile.seek(offset, SEEK_SET);
 
-	talkHeader.spritePointer = talkFile.readUint16LE();
-	talkHeader.unknown1 = talkFile.readByte();
-	talkFile.read(&talkHeader.unknown2, 4);
+	talkHeader.spritePointer = talkFile.readUint32LE();
+	talkFile.read(&talkHeader.unknown2, 3);
 	talkHeader.offsetXAnimA = talkFile.readByte();
 	talkHeader.offsetYAnimA = talkFile.readByte();
 	talkHeader.wAnimA = talkFile.readByte();
