@@ -2502,7 +2502,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 		}
 		locationID++;
 	}
-	Common::sort(visitedLocations.begin(), visitedLocations.end(), [&locationIDs](const Symbol *a, const Symbol *b) {
+	Common::sort(visitedLocations.begin(), visitedLocations.end(), [](const Symbol *a, const Symbol *b) {
 		return a->u.val < b->u.val;
 	});
 
