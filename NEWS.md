@@ -136,7 +136,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Private:
    - Added several important missing graphics and gameplay sounds,
      the engine is now considered to be at feature parity with the original game.
-   - Fixed inaccesible places, missing interactions or conversations.
+   - Fixed inaccessible places, missing interactions or conversations.
    - Added option to highlight decision areas for improved visibility. 
    - Added support for third party subtitles.
    - Added missing features and fixed crashes in the desktop screen.
