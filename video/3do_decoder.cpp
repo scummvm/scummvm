@@ -50,6 +50,11 @@ ThreeDOMovieDecoder::~ThreeDOMovieDecoder() {
 	close();
 }
 
+bool ThreeDOMovieDecoder::isAudioTrackFinished() const {
+	if (_audioTracks.empty()) return true;
+	return _audioTracks[0]->endOfTrack();
+}
+
 VideoDecoder::AudioTrack* ThreeDOMovieDecoder::getAudioTrack(int index) {
 	return _audioTracks[index];
 }
