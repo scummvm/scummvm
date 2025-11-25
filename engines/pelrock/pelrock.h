@@ -40,6 +40,7 @@
 #include "pelrock/detection.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
+#include "pelrock/resources.h"
 #include "pelrock/types.h"
 
 namespace Pelrock {
@@ -53,7 +54,7 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	Image::PNGDecoder *decoder = new Image::PNGDecoder();
+
 	void init();
 	void playIntro();
 	void setScreen(int s, int dir);
@@ -64,11 +65,11 @@ private:
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void loadAlfredAnims();
-	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
-	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
-	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
-	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
-	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
+	// Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
+	// Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
+	// Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
+	// Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	// Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
 
 	Common::String cleanText(const Common::String &text);
 	Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
@@ -90,7 +91,7 @@ private:
 
 	void talk(byte object);
 	Common::String getControlName(byte b);
-	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
+	// void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadRoomTalkingAnimations(int roomNumber);
 	void loadCursors();
 	void loadInteractionIcons();
@@ -122,30 +123,21 @@ private:
 
 	// byte *standingAnim = new byte[3060 * 102];
 
-	byte **walkingAnimFrames[4];                // 4 arrays of arrays
-	byte *standingAnimFrames[4] = {nullptr};    // 4 directions
-	int walkingAnimLengths[4] = {8, 8, 4, 4};   // size of each inner array
-	byte **talkingAnimFrames[4];                // 4 arrays of arrays
-	int talkingAnimLengths[4] = {8, 8, 4, 4};   // size of each inner array
+	byte **walkingAnimFrames[4];              // 4 arrays of arrays
+	byte *standingAnimFrames[4] = {nullptr};  // 4 directions
+	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	byte **talkingAnimFrames[4];              // 4 arrays of arrays
+	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 
 	TalkinAnimHeader _talkingAnimHeader;
 
 	PathContext _currentContext;
 	int _current_step = 0;
 
-
 	byte _textColor = 0;
 	Common::Point _textPos;
 	Common::Array<Common::Array<Common::String> > _currentTextPages = Common::Array<Common::Array<Common::String> >();
 	int _currentTextPageIndex = 0;
-
-
-	Common::Array<HotSpot> _currentRoomHotspots;
-	Common::Array<AnimSet> _currentRoomAnims;
-	Common::Array<Exit> _currentRoomExits;
-	Common::Array<WalkBox> _currentRoomWalkboxes;
-	Common::Array<Description> _currentRoomDescriptions;
-	Common::Array<ConversationNode> _currentRoomConversations;
 
 	int *_currentAnimFrames = nullptr;
 	// From the original code
@@ -182,8 +174,7 @@ private:
 	uint16 whichNPCTalking = 0;
 	bool isNPCBTalking = false;
 
-
-	//JAVA
+	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = GAME;
 	bool gameInitialized = false;
@@ -194,6 +185,9 @@ private:
 	// int prevWhichScreen = 0;
 	// int whichScreen = 0;
 	// byte *pixelsShadows; // =new int[640*400];
+
+	ResourceManager *_resourceManager = nullptr;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -248,6 +242,13 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	Common::Array<HotSpot> _currentRoomHotspots;
+	Common::Array<AnimSet> _currentRoomAnims;
+	Common::Array<Exit> _currentRoomExits;
+	Common::Array<WalkBox> _currentRoomWalkboxes;
+	Common::Array<Description> _currentRoomDescriptions;
+	Common::Array<ConversationNode> _currentRoomConversations;
 };
 
 extern PelrockEngine *g_engine;

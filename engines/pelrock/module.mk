@@ -5,8 +5,10 @@ MODULE_OBJS = \
 	chrono.o \
 	console.o \
 	metaengine.o \
+	resources.o \
 	fonts/small_font.o \
 	fonts/large_font.o \
+	util.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)
