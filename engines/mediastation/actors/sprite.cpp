@@ -27,9 +27,7 @@ namespace MediaStation {
 
 SpriteFrameHeader::SpriteFrameHeader(Chunk &chunk) : BitmapHeader(chunk) {
 	_index = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _index = 0x%x (@0x%llx)", _index, static_cast<long long int>(chunk.pos()));
-	_boundingBox = chunk.readTypedPoint();
-	debugC(5, kDebugLoading, "SpriteFrameHeader::SpriteFrameHeader(): _boundingBox (@0x%llx)", static_cast<long long int>(chunk.pos()));
+	_offset = chunk.readTypedPoint();
 }
 
 SpriteFrame::SpriteFrame(Chunk &chunk, SpriteFrameHeader *header) : Bitmap(chunk, header) {
@@ -41,11 +39,11 @@ SpriteFrame::~SpriteFrame() {
 }
 
 uint32 SpriteFrame::left() {
-	return _bitmapHeader->_boundingBox.x;
+	return _bitmapHeader->_offset.x;
 }
 
 uint32 SpriteFrame::top() {
-	return _bitmapHeader->_boundingBox.y;
+	return _bitmapHeader->_offset.y;
 }
 
 Common::Point SpriteFrame::topLeft() {

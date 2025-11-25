@@ -43,11 +43,16 @@ Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) : _bitmapHeader(bitmapH
 		if (isCompressed()) {
 			_compressedStream = chunk.readStream(chunk.bytesRemaining());
 		} else {
-			_image.create(width(), height(), Graphics::PixelFormat::createFormatCLUT8());
+			_image.create(stride(), height(), Graphics::PixelFormat::createFormatCLUT8());
 			if (getCompressionType() == kUncompressedTransparentBitmap)
 				_image.setTransparentColor(0);
 			byte *pixels = static_cast<byte *>(_image.getPixels());
-			chunk.read(pixels, chunk.bytesRemaining());
+
+			chunk.read(pixels, stride() * height());
+			if (chunk.bytesRemaining() > 0) {
+				warning("%s: %d bytes remaining in bitmap chunk after reading image data", __func__, chunk.bytesRemaining());
+				chunk.skip(chunk.bytesRemaining());
+			}
 		}
 	}
 }
