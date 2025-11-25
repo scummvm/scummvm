@@ -55,6 +55,12 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close() override;
 
+	/**
+	 * Check if the audio track has finished playing.
+	 * Returns true if all queued audio has been played.
+	 */
+	bool isAudioTrackFinished() const;
+
 protected:
 	void readNextPacket() override;
 	bool supportsAudioTrackSwitching() const override { return true; }
