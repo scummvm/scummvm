@@ -168,15 +168,17 @@ struct TalkinAnimHeader {
 	byte unknown1;
 	byte unknown2[4];
 
-	int8 offsetX;
-	int8 offsetY;
+	int8 offsetXAnimA;
+	int8 offsetYAnimA;
 
 	byte wAnimA;
 	byte hAnimA;
 	byte unknown3[2];
 	byte numFramesAnimA;
-	byte unknown4[7];
+	byte unknown4[5];
 
+	byte offsetXAnimB;
+	byte offsetYAnimB;
 	byte currentFrameAnimA;
 
 	byte wAnimB;

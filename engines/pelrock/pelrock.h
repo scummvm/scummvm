@@ -115,7 +115,7 @@ private:
 	Exit *isExitUnder(int x, int y);
 	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
-	void talkNPC(AnimSet *animSet);
+	void talkNPC(AnimSet *animSet, int index);
 
 	ChronoManager *_chronoManager = nullptr;
 
