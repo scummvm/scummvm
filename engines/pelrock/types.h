@@ -134,6 +134,7 @@ struct Exit {
 };
 
 struct AnimSet {
+	int index; // number of the animation in the rooms
 	byte type;
 	int x;        // 0
 	int y;        // 2

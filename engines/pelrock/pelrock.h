@@ -93,6 +93,7 @@ private:
 	void doAction(byte action, byte object);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void drawAlfred(byte *buf);
+	void drawNextFrame(AnimSet *animSet);
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
@@ -101,7 +102,7 @@ private:
 	Exit *isExitUnder(int x, int y);
 	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
-	void talkNPC(AnimSet *animSet, int index);
+	void talkNPC(AnimSet *animSet);
 
 	ChronoManager *_chronoManager = nullptr;
 

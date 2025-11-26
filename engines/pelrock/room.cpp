@@ -228,6 +228,7 @@ Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, i
 		roomFile->seek(animOffset, SEEK_SET);
 		roomFile->read(animData, 44);
 		AnimSet animSet;
+		animSet.index = i;
 		animSet.x = animData[0] | (animData[1] << 8);
 		animSet.y = animData[2] | (animData[3] << 8);
 		animSet.w = animData[4];

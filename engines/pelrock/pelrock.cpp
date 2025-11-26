@@ -276,7 +276,6 @@ void PelrockEngine::loadInteractionIcons() {
 	alfred4File.close();
 }
 
-
 void PelrockEngine::loadAlfredAnims() {
 	Common::File alfred3;
 	if (!alfred3.open(Common::Path("ALFRED.3"))) {
@@ -353,7 +352,6 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 	}
 }
 
-
 Common::Array<VerbIcons> PelrockEngine::availableActions(HotSpot *hotspot) {
 	Common::Array<VerbIcons> verbs;
 	verbs.push_back(LOOK);
@@ -399,46 +397,7 @@ void PelrockEngine::frames() {
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
 			AnimSet &animSet = _room->_currentRoomAnims[i];
-			int x = animSet.animData[animSet.curAnimIndex].x;
-			int y = animSet.animData[animSet.curAnimIndex].y;
-			int w = animSet.animData[animSet.curAnimIndex].w;
-			int h = animSet.animData[animSet.curAnimIndex].h;
-			int extra = animSet.extra;
-
-			if (whichNPCTalking == extra) {
-				// debug("Skipping anim set %d because NPC is talking", i);
-				talkNPC(&animSet, i);
-				continue;
-			}
-
-			int frameSize = animSet.animData[animSet.curAnimIndex].w * animSet.animData[animSet.curAnimIndex].h;
-			int curFrame = animSet.animData[animSet.curAnimIndex].curFrame;
-			byte *frame = new byte[frameSize];
-			extractSingleFrame(animSet.animData[animSet.curAnimIndex].animData, frame, curFrame, animSet.animData[animSet.curAnimIndex].w, animSet.animData[animSet.curAnimIndex].h);
-
-			drawSpriteToBuffer(_compositeBuffer, 640, frame, animSet.x, animSet.y, animSet.w, animSet.h, 255);
-
-			if (animSet.animData[animSet.curAnimIndex].elpapsedFrames == animSet.animData[animSet.curAnimIndex].speed) {
-				animSet.animData[animSet.curAnimIndex].elpapsedFrames = 0;
-				if (animSet.animData[animSet.curAnimIndex].curFrame < animSet.animData[animSet.curAnimIndex].nframes - 1) {
-					animSet.animData[animSet.curAnimIndex].curFrame++;
-				} else {
-					if (animSet.animData[animSet.curAnimIndex].curLoop < animSet.animData[animSet.curAnimIndex].loopCount - 1) {
-						animSet.animData[animSet.curAnimIndex].curFrame = 0;
-						animSet.animData[animSet.curAnimIndex].curLoop++;
-					} else {
-						animSet.animData[animSet.curAnimIndex].curFrame = 0;
-						animSet.animData[animSet.curAnimIndex].curLoop = 0;
-						if (animSet.curAnimIndex < animSet.numAnims - 1) {
-							animSet.curAnimIndex++;
-						} else {
-							animSet.curAnimIndex = 0;
-						}
-					}
-				}
-			} else {
-				animSet.animData[animSet.curAnimIndex].elpapsedFrames++;
-			}
+			drawNextFrame(&animSet);
 		}
 
 		if (isAlfredWalking) {
@@ -609,8 +568,50 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 }
 
 void PelrockEngine::drawAlfred(byte *buf) {
-
 	drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred - kAlfredFrameHeight, kAlfredFrameWidth, kAlfredFrameHeight, 255);
+}
+
+void PelrockEngine::drawNextFrame(AnimSet *animSet) {
+	Anim &animData = animSet->animData[animSet->curAnimIndex];
+	int x = animData.x;
+	int y = animData.y;
+	int w = animData.w;
+	int h = animData.h;
+	int extra = animSet->extra;
+
+	if (whichNPCTalking == extra) {
+		talkNPC(animSet);
+		return;
+	}
+
+	int frameSize = animData.w * animData.h;
+	int curFrame = animData.curFrame;
+	byte *frame = new byte[frameSize];
+	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
+
+	drawSpriteToBuffer(_compositeBuffer, 640, frame, animSet->x, animSet->y, animSet->w, animSet->h, 255);
+
+	if (animData.elpapsedFrames == animData.speed) {
+		animData.elpapsedFrames = 0;
+		if (animData.curFrame < animData.nframes - 1) {
+			animData.curFrame++;
+		} else {
+			if (animData.curLoop < animData.loopCount - 1) {
+				animData.curFrame = 0;
+				animData.curLoop++;
+			} else {
+				animData.curFrame = 0;
+				animData.curLoop = 0;
+				if (animSet->curAnimIndex < animSet->numAnims - 1) {
+					animSet->curAnimIndex++;
+				} else {
+					animSet->curAnimIndex = 0;
+				}
+			}
+		}
+	} else {
+		animData.elpapsedFrames++;
+	}
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
@@ -689,9 +690,10 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	}
 }
 
-void PelrockEngine::talkNPC(AnimSet *animSet, int index) {
+void PelrockEngine::talkNPC(AnimSet *animSet) {
 	// Change with the right index
 
+	int index = animSet->index;
 	TalkinAnimHeader *animHeader = &_room->_talkingAnimHeader;
 
 	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);
