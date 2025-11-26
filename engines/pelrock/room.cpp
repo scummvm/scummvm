@@ -398,7 +398,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	int headerIndex = roomNumber;
 	uint32 offset = kTalkingAnimHeaderSize * headerIndex;
 
-	TalkinAnimHeader talkHeader;
+	TalkingAnimHeader talkHeader;
 	Common::File talkFile;
 	if (!talkFile.open("ALFRED.2")) {
 		error("Couldnt find file ALFRED.2");

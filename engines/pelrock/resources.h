@@ -1,0 +1,51 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#ifndef PELROCK_RESOURCES_H
+#define PELROCK_RESOURCES_H
+
+ #include "common/scummsys.h"
+
+namespace Pelrock {
+
+class ResourceManager {
+private:
+	/* data */
+public:
+	ResourceManager(/* args */);
+	~ResourceManager();
+
+	void loadCursors();
+	void loadInteractionIcons();
+	void loadAlfredAnims();
+
+	byte **walkingAnimFrames[4];              // 4 arrays of arrays
+	byte *standingAnimFrames[4] = {nullptr};  // 4 directions
+	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	byte **talkingAnimFrames[4];              // 4 arrays of arrays
+	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+    byte *_cursorMasks[5] = {nullptr};
+	byte *_verbIcons[9] = {nullptr};
+	byte *_popUpBalloon = nullptr;
+};
+
+
+} // End of namespace Pelrock
+#endif

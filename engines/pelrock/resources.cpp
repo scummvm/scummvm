@@ -19,12 +19,37 @@
  *
  */
 
-#include "pelrock/pelrock.h"
+#include "pelrock/resources.h"
 #include "pelrock/offsets.h"
+#include "pelrock/pelrock.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {
-void PelrockEngine::loadCursors() {
+
+ResourceManager::ResourceManager(/* args */) {
+}
+
+ResourceManager::~ResourceManager() {
+	for (int i = 0; i < 5; i++) {
+		delete[] _cursorMasks[i];
+	}
+	for (int i = 0; i < kNumVerbIcons; i++) {
+		delete[] _verbIcons[i];
+	}
+	delete[] _popUpBalloon;
+	for (int i = 0; i < 4; i++) {
+
+		// free all frame buffers
+		for (int j = 0; j < walkingAnimLengths[i]; j++) {
+			delete[] walkingAnimFrames[i][j];
+		}
+
+		// free the array of pointers
+		delete[] walkingAnimFrames[i];
+	}
+}
+
+void ResourceManager::loadCursors() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
 		error("Couldnt find file ALFRED.7");
@@ -37,7 +62,7 @@ void PelrockEngine::loadCursors() {
 	}
 	alfred7File.close();
 }
-void PelrockEngine::loadInteractionIcons() {
+void ResourceManager::loadInteractionIcons() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
 		error("Couldnt find file ALFRED.7");
@@ -71,7 +96,7 @@ void PelrockEngine::loadInteractionIcons() {
 	alfred4File.close();
 }
 
-void PelrockEngine::loadAlfredAnims() {
+void ResourceManager::loadAlfredAnims() {
 	Common::File alfred3;
 	if (!alfred3.open(Common::Path("ALFRED.3"))) {
 		error("Could not open ALFRED.3");

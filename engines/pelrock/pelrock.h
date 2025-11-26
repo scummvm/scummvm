@@ -40,6 +40,7 @@
 #include "pelrock/detection.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
+#include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/types.h"
 
@@ -54,14 +55,15 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	ChronoManager *_chronoManager = nullptr;
+	RoomManager *_room = nullptr;
+	ResourceManager *_res = nullptr;
 
 	void init();
 	void playIntro();
 	void setScreen(int s, int dir);
 	void setScreenJava(int s, int dir);
 	void loadAnims();
-
-	void loadAlfredAnims();
 
 	void walkTo(int x, int y);
 	bool pathFind(int x, int y, PathContext *context);
@@ -77,8 +79,6 @@ private:
 									 MovementStep *movement_buffer);
 
 	void talk(byte object);
-	void loadCursors();
-	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 
@@ -88,64 +88,57 @@ private:
 
 	void sayAlfred(Common::String text);
 	void sayNPC(AnimSet *anim, Common::String text, byte color);
-	// render loop
+
 	void frames();
 	void doAction(byte action, byte object);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void drawAlfred(byte *buf);
 	void drawNextFrame(AnimSet *animSet);
-	void checkMouseHover();
-	void checkMouseClick(int x, int y);
-	void checkLongMouseClick(int x, int y);
 	void changeCursor(Cursor cursor);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
 	AnimSet *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
-	void talkNPC(AnimSet *animSet);
+	void drawTalkNPC(AnimSet *animSet);
 
-	ChronoManager *_chronoManager = nullptr;
-
-	byte **walkingAnimFrames[4];              // 4 arrays of arrays
-	byte *standingAnimFrames[4] = {nullptr};  // 4 directions
-	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
-	byte **talkingAnimFrames[4];              // 4 arrays of arrays
-	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	void checkMouseHover();
+	void checkMouseClick(int x, int y);
+	void checkLongMouseClick(int x, int y);
 
 
-	PathContext _currentContext;
+	//walking
 	int _current_step = 0;
+	PathContext _currentContext;
 
+	//text display
 	byte _textColor = 0;
 	Common::Point _textPos;
 	Common::Array<Common::Array<Common::String> > _currentTextPages = Common::Array<Common::Array<Common::String> >();
 	int _currentTextPageIndex = 0;
 
-	int *_currentAnimFrames = nullptr;
-	// From the original code
+
+	// Alfred
 	int xAlfred = 319;
 	int yAlfred = 302;
 	int dirAlfred = 0;
 	int curAlfredFrame = 0;
+
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
-	byte *_cursorMasks[5] = {nullptr};
-
+	bool _lMouseDown = false;
 	uint32 _mouseClickTime;
 	bool _isMouseDown = false;
 	bool _longClick = false;
 
-	byte *_verbIcons[9] = {nullptr};
-	byte *_popUpBalloon = nullptr;
 
-	byte *_currentBackground; // Clean background - NEVER modified
+	byte *_currentBackground = nullptr; // Clean background - NEVER modified
 	byte *_compositeBuffer;   // Working composition buffer
 
-	bool _lMouseDown = false;
 	bool _displayPopup = false;
 	int _popupX = 0;
 	int _popupY = 0;
 	int _currentPopupFrame = 0;
+
 	HotSpot *_currentHotspot = nullptr;
 
 	SmallFont *_smallFont = nullptr;
@@ -168,7 +161,6 @@ private:
 	// int whichScreen = 0;
 	// byte *pixelsShadows; // =new int[640*400];
 
-	RoomManager *_room = nullptr;
 
 protected:
 	// Engine APIs
@@ -176,9 +168,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	bool isAlfredWalking = false;
-	bool isAlfredTalking = false;
-
+	AlfredState alfredState = ALFRED_IDLE;
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~PelrockEngine() override;

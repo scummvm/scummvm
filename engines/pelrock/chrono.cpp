@@ -36,7 +36,7 @@ ChronoManager::~ChronoManager() {
 void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
-	if(_textTtl > 0 && g_engine->isAlfredTalking && !g_engine->isAlfredWalking) {
+	if(_textTtl > 0 && g_engine->alfredState == ALFRED_TALKING && g_engine->alfredState != ALFRED_WALKING) {
 		_textTtl -= (currentTime - _lastTick);
 		if(_textTtl < 0)
 			_textTtl = 0;

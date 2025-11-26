@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_RESOURCES_H
-#define PELROCK_RESOURCES_H
+#ifndef PELROCK_ROOM_H
+#define PELROCK_ROOM_H
 
 #include "common/array.h"
 #include "common/file.h"
@@ -44,7 +44,7 @@ public:
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
 	Common::Array<ConversationNode> _currentRoomConversations;
-	TalkinAnimHeader _talkingAnimHeader;
+	TalkingAnimHeader _talkingAnimHeader;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);

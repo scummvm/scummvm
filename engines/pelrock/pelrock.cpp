@@ -50,6 +50,7 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	g_engine = this;
 	_chronoManager = new ChronoManager();
 	_room = new RoomManager();
+	_res = new ResourceManager();
 }
 
 PelrockEngine::~PelrockEngine() {
@@ -59,27 +60,11 @@ PelrockEngine::~PelrockEngine() {
 	delete _largeFont;
 	delete _screen;
 	delete _chronoManager;
-	for (int i = 0; i < 5; i++) {
-		delete[] _cursorMasks[i];
-	}
-	for (int i = 0; i < kNumVerbIcons; i++) {
-		delete[] _verbIcons[i];
-	}
 
-	delete[] _popUpBalloon;
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
 	delete _smallFont;
-	for (int i = 0; i < 4; i++) {
 
-		// free all frame buffers
-		for (int j = 0; j < walkingAnimLengths[i]; j++) {
-			delete[] walkingAnimFrames[i][j];
-		}
-
-		// free the array of pointers
-		delete[] walkingAnimFrames[i];
-	}
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -122,31 +107,25 @@ Common::Error PelrockEngine::run() {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN) {
 				if (e.kbd.keycode == Common::KEYCODE_w) {
-					isAlfredWalking = true;
-					isAlfredTalking = false;
+					alfredState = ALFRED_WALKING;
 				} else if (e.kbd.keycode == Common::KEYCODE_t) {
-					isAlfredWalking = false;
-					isAlfredTalking = true;
+					alfredState = ALFRED_TALKING;
 				} else if (e.kbd.keycode == Common::KEYCODE_s) {
-					isAlfredWalking = false;
-					isAlfredTalking = false;
+					alfredState = ALFRED_IDLE;
 				}
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-				debug("long button down");
 				if (!_isMouseDown) {
 					_mouseClickTime = g_system->getMillis();
 					_isMouseDown = true;
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				_isMouseDown = false;
-				// if (!_longClick) {
 				checkMouseClick(e.mouse.x, e.mouse.y);
 				_displayPopup = false;
-				// }
 				_longClick = false;
 			}
 		}
@@ -170,8 +149,8 @@ Common::Error PelrockEngine::run() {
 }
 
 void PelrockEngine::init() {
-	loadCursors();
-	loadInteractionIcons();
+	_res->loadCursors();
+	_res->loadInteractionIcons();
 
 	_compositeBuffer = new byte[640 * 400];
 	_currentBackground = new byte[640 * 400];
@@ -183,6 +162,7 @@ void PelrockEngine::init() {
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);
+
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
@@ -196,7 +176,7 @@ void PelrockEngine::playIntro() {
 }
 
 void PelrockEngine::loadAnims() {
-	loadAlfredAnims();
+	_res->loadAlfredAnims();
 }
 
 void PelrockEngine::talk(byte object) {
@@ -299,7 +279,7 @@ void PelrockEngine::frames() {
 			drawNextFrame(&animSet);
 		}
 
-		if (isAlfredWalking) {
+		if (alfredState == ALFRED_WALKING) {
 
 			MovementStep step = _currentContext.movement_buffer[_current_step];
 			// debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
@@ -338,7 +318,7 @@ void PelrockEngine::frames() {
 				if (_current_step >= _currentContext.movement_count) {
 					// debug("Alfred reached his walk target.");
 					_current_step = 0;
-					isAlfredWalking = false;
+					alfredState = ALFRED_IDLE;
 				}
 			} else {
 				_currentContext.movement_buffer[_current_step] = step;
@@ -354,21 +334,21 @@ void PelrockEngine::frames() {
 
 			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
 
-			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
+			if (curAlfredFrame >= _res->walkingAnimLengths[dirAlfred]) {
 				curAlfredFrame = 0;
 			}
 
-			drawAlfred(walkingAnimFrames[dirAlfred][curAlfredFrame]);
+			drawAlfred(_res->walkingAnimFrames[dirAlfred][curAlfredFrame]);
 			curAlfredFrame++;
 
-		} else if (isAlfredTalking) {
-			if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
+		} else if (alfredState == ALFRED_TALKING) {
+			if (curAlfredFrame >= _res->talkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame = 0;
 			}
-			drawAlfred(talkingAnimFrames[dirAlfred][curAlfredFrame]);
+			drawAlfred(_res->talkingAnimFrames[dirAlfred][curAlfredFrame]);
 			curAlfredFrame++;
 		} else {
-			drawAlfred(standingAnimFrames[dirAlfred]);
+			drawAlfred(_res->standingAnimFrames[dirAlfred]);
 		}
 		if (_displayPopup) {
 
@@ -393,7 +373,7 @@ void PelrockEngine::frames() {
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
-		if (!isAlfredWalking && !_currentTextPages.empty()) {
+		if (alfredState != ALFRED_WALKING && !_currentTextPages.empty()) {
 			if (_chronoManager->_textTtl > 0) {
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
 			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
@@ -407,7 +387,7 @@ void PelrockEngine::frames() {
 			} else {
 				_currentTextPages.clear();
 				_currentTextPageIndex = 0;
-				isAlfredTalking = false;
+				alfredState = ALFRED_IDLE;
 				isNPCATalking = false;
 				isNPCBTalking = false;
 			}
@@ -479,7 +459,7 @@ void PelrockEngine::drawNextFrame(AnimSet *animSet) {
 	int extra = animSet->extra;
 
 	if (whichNPCTalking == extra) {
-		talkNPC(animSet);
+		drawTalkNPC(animSet);
 		return;
 	}
 
@@ -561,10 +541,10 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
-	drawSpriteToBuffer(_compositeBuffer, 640, _popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
 
-	drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+	drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	// Graphics::Surface rects;
 	// rects.create(kVerbIconWidth, kVerbIconHeight, Graphics::PixelFormat::createFormatCLUT8());
 	// drawRect(&rects, 0, 0, kVerbIconWidth, kVerbIconHeight, 255);
@@ -572,15 +552,15 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	// blitSurfaceToBuffer(&rects, _compositeBuffer, 640, 480, posx + ver, posy + 20);
 
 	for (int i = 0; i < actions.size(); i++) {
-		drawSpriteToBuffer(_compositeBuffer, 640, _verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 }
 
-void PelrockEngine::talkNPC(AnimSet *animSet) {
+void PelrockEngine::drawTalkNPC(AnimSet *animSet) {
 	// Change with the right index
 
 	int index = animSet->index;
-	TalkinAnimHeader *animHeader = &_room->_talkingAnimHeader;
+	TalkingAnimHeader *animHeader = &_room->_talkingAnimHeader;
 
 	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);
 	int y = animSet->y + (index ? animHeader->offsetYAnimB : animHeader->offsetYAnimA);
@@ -604,7 +584,7 @@ void PelrockEngine::talkNPC(AnimSet *animSet) {
 }
 
 void PelrockEngine::walkTo(int x, int y) {
-	isAlfredWalking = true;
+	alfredState = ALFRED_WALKING;
 	curAlfredFrame = 0;
 
 	PathContext context = {NULL, NULL, NULL, 0, 0, 0};
@@ -999,7 +979,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
-	CursorMan.replaceCursor(_cursorMasks[cursor], kCursorWidth, kCursorHeight, 0, 0, 255);
+	CursorMan.replaceCursor(_res->_cursorMasks[cursor], kCursorWidth, kCursorHeight, 0, 0, 255);
 }
 
 void PelrockEngine::checkMouseHover() {
@@ -1130,7 +1110,7 @@ void PelrockEngine::sayNPC(AnimSet *anim, Common::String text, byte color) {
 }
 
 void PelrockEngine::sayAlfred(Common::String text) {
-	isAlfredTalking = true;
+	alfredState = ALFRED_TALKING;
 	curAlfredFrame = 0;
 	debug("Alfred says: %s", text.c_str());
 	_currentTextPages = wordWrap(text);
@@ -1265,8 +1245,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 		return;
 	}
 	dirAlfred = dir;
-	isAlfredWalking = false;
-	isAlfredTalking = false;
+	alfredState = ALFRED_IDLE;
 	_current_step = 0;
 	int roomOffset = number * kRoomStructSize;
 	curAlfredFrame = 0;

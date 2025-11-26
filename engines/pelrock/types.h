@@ -63,6 +63,15 @@ const int kBalloonFrames = 4;
 const int kTextCharDisplayTime = 100; // 10ms per character
 const int kVerbIconPadding = 20;
 
+
+enum AlfredState {
+	ALFRED_IDLE,
+	ALFRED_WALKING,
+	ALFRED_TALKING,
+	ALFRED_INTERACTING,
+};
+
+
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
 #define MOVE_LEFT 0x02  // Move left (negative X)
@@ -161,7 +170,7 @@ struct HotSpot {
 	bool isEnabled = true;
 };
 
-struct TalkinAnimHeader {
+struct TalkingAnimHeader {
 	uint32 spritePointer;
 
 	byte unknown2[3];
