@@ -248,7 +248,9 @@ void CWnd::ShowWindow(int nCmdShow) {
 
 	if (nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL) {
 		m_nStyle |= WS_VISIBLE;
-		SetActiveWindow();
+
+		if (dynamic_cast<CFrameWnd *>(this) || dynamic_cast<CDialog *>(this))
+			SetActiveWindow();
 	} else {
 		m_nStyle &= ~WS_VISIBLE;
 	}
