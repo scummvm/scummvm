@@ -228,107 +228,6 @@ void PelrockEngine::talk(byte object) {
 	// }
 }
 
-void PelrockEngine::loadCursors() {
-	Common::File alfred7File;
-	if (!alfred7File.open("ALFRED.7")) {
-		error("Couldnt find file ALFRED.7");
-	}
-	for (int i = 0; i < 5; i++) {
-		uint32_t cursorOffset = cursor_offsets[i];
-		alfred7File.seek(cursorOffset);
-		_cursorMasks[i] = new byte[kCursorSize];
-		alfred7File.read(_cursorMasks[i], kCursorSize);
-	}
-	alfred7File.close();
-}
-
-void PelrockEngine::loadInteractionIcons() {
-	Common::File alfred7File;
-	if (!alfred7File.open("ALFRED.7")) {
-		error("Couldnt find file ALFRED.7");
-	}
-
-	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
-
-	uint32_t totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
-	_popUpBalloon = new byte[totalBalloonSize];
-
-	uint32_t compressedSize = kBalloonFramesSize;
-
-	byte *raw = new byte[compressedSize];
-	alfred7File.read(raw, compressedSize);
-	rleDecompress(raw, compressedSize, 0, compressedSize, &_popUpBalloon);
-
-	delete[] raw;
-
-	alfred7File.close();
-	Common::File alfred4File;
-	if (!alfred4File.open("ALFRED.4")) {
-		error("Couldnt find file ALFRED.4");
-	}
-
-	int iconSize = kVerbIconHeight * kVerbIconWidth;
-	for (int i = 0; i < kNumVerbIcons; i++) {
-		uint32_t iconOffset = i * iconSize;
-		_verbIcons[i] = new byte[iconSize];
-		alfred4File.read(_verbIcons[i], iconSize);
-	}
-	alfred4File.close();
-}
-
-void PelrockEngine::loadAlfredAnims() {
-	Common::File alfred3;
-	if (!alfred3.open(Common::Path("ALFRED.3"))) {
-		error("Could not open ALFRED.3");
-		return;
-	}
-	int alfred3Size = alfred3.size();
-	unsigned char *bufferFile = (unsigned char *)malloc(alfred3Size);
-	alfred3.seek(0, SEEK_SET);
-	alfred3.read(bufferFile, alfred3Size);
-	alfred3.close();
-
-	int index = 0;
-	int index3 = 0;
-	uint32_t capacity = 3060 * 102;
-	unsigned char *pic = new unsigned char[capacity];
-	rleDecompress(bufferFile, alfred3Size, 0, alfred3Size, &pic);
-
-	for (int i = 0; i < 4; i++) {
-		standingAnimFrames[i] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
-		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3] + 4;
-
-		int prevWalkingFrames = 0;
-		int prevTalkingFrames = 0;
-
-		for (int j = 0; j < i; j++) {
-			prevWalkingFrames += walkingAnimLengths[j] + 1;
-			prevTalkingFrames += talkingAnimLengths[j];
-		}
-
-		walkingAnimFrames[i] = new byte *[walkingAnimLengths[i]];
-
-		int standingFrame = prevWalkingFrames;
-		debug("Loading standing frame %d at index %d", i, standingFrame);
-		extractSingleFrame(pic, standingAnimFrames[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
-		for (int j = 0; j < walkingAnimLengths[i]; j++) {
-
-			walkingAnimFrames[i][j] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
-			int walkingFrame = prevWalkingFrames + 1 + j;
-			extractSingleFrame(pic, walkingAnimFrames[i][j], walkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
-		}
-
-		talkingAnimFrames[i] = new byte *[talkingAnimLengths[i]];
-
-		int talkingStartFrame = talkingFramesOffset + prevTalkingFrames;
-		for (int j = 0; j < talkingAnimLengths[i]; j++) {
-			talkingAnimFrames[i][j] = new byte[kAlfredFrameWidth * kAlfredFrameHeight];
-			int talkingFrame = talkingStartFrame + j;
-			extractSingleFrame(pic, talkingAnimFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
-		}
-	}
-}
-
 byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
 	byte *bg = new byte[w * h];
 	for (int j = 0; j < w; j++) {
@@ -658,19 +557,6 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 		}
 	}
 	return nullptr;
-}
-
-void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY) {
-	for (int y = 0; y < surface->h; y++) {
-		for (int x = 0; x < surface->w; x++) {
-			int px = destX + x;
-			int py = destY + y;
-			if (px >= 0 && px < bufferWidth && py >= 0 && py < bufferHeight) {
-				byte pixel = *((byte *)surface->getBasePtr(x, y));
-				buffer[py * bufferWidth + px] = pixel;
-			}
-		}
-	}
 }
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
@@ -1256,6 +1142,7 @@ void PelrockEngine::sayAlfred(Common::String text) {
 	_textPos = Common::Point(xAlfred, yAlfred - kAlfredFrameHeight - 10);
 	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
 }
+
 bool isEndMarker(char char_byte) {
 	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
 }
@@ -1289,16 +1176,6 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 		}
 	}
 	return wordLength;
-}
-
-Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator) {
-	Common::String result;
-	for (uint i = 0; i < strings.size(); i++) {
-		result += strings[i];
-		if (i < strings.size() - 1)
-			result += separator;
-	}
-	return result;
 }
 
 Common::Array<Common::Array<Common::String> > wordWrap(Common::String text) {

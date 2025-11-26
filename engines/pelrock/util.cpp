@@ -128,7 +128,6 @@ void drawSpriteToBuffer(byte *buffer, int bufferWidth,
 	}
 }
 
-
 void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight) {
 	for (int y = 0; y < frameHeight; y++) {
 		for (int x = 0; x < frameWidth; x++) {
@@ -138,4 +137,13 @@ void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth
 	}
 }
 
+Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator) {
+	Common::String result;
+	for (uint i = 0; i < strings.size(); i++) {
+		result += strings[i];
+		if (i < strings.size() - 1)
+			result += separator;
+	}
+	return result;
+}
 } // End of namespace Pelrock

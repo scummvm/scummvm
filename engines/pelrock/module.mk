@@ -8,7 +8,8 @@ MODULE_OBJS = \
 	room.o \
 	fonts/small_font.o \
 	fonts/large_font.o \
-	util.o
+	util.o \
+	resources.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

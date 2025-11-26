@@ -25,7 +25,7 @@
 
 namespace Pelrock {
 
-    uint32_t cursor_offsets[5] = {
+    static const uint32_t cursor_offsets[5] = {
         0x0FDDFD,
         0x0FDCDD,
         0x0FDF1D,
@@ -33,8 +33,8 @@ namespace Pelrock {
         0x367EF0
     };
 
-    uint32_t kBalloonFramesOffset = 2176936;
-    uint32_t kBalloonFramesSize = 24950;
+    static const uint32_t kBalloonFramesOffset = 2176936;
+    static const uint32_t kBalloonFramesSize = 24950;
 
 } // End of namespace Pelrock
 #endif
