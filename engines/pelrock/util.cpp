@@ -105,4 +105,37 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *
 	outSize = pos;
 }
 
+// Helper function for transparent blitting
+void drawSpriteToBuffer(byte *buffer, int bufferWidth,
+						byte *sprite, int x, int y,
+						int width, int height,
+						int transparentColor) {
+	for (int py = 0; py < height; py++) {
+		for (int px = 0; px < width; px++) {
+			int srcIdx = py * width + px;
+			byte pixel = sprite[srcIdx];
+
+			if (pixel != transparentColor) {
+				int destX = x + px;
+				int destY = y + py;
+
+				if (destX >= 0 && destX < 640 &&
+					destY >= 0 && destY < 400) {
+					buffer[destY * bufferWidth + destX] = pixel;
+				}
+			}
+		}
+	}
+}
+
+
+void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight) {
+	for (int y = 0; y < frameHeight; y++) {
+		for (int x = 0; x < frameWidth; x++) {
+			unsigned int src_pos = (frameIndex * frameHeight * frameWidth) + (y * frameWidth) + x;
+			dest[y * frameWidth + x] = source[src_pos];
+		}
+	}
+}
+
 } // End of namespace Pelrock

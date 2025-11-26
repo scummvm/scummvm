@@ -91,6 +91,7 @@ Common::String PelrockEngine::getGameId() const {
 }
 
 Common::Array<Common::Array<Common::String> > wordWrap(Common::String text);
+
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
@@ -275,14 +276,6 @@ void PelrockEngine::loadInteractionIcons() {
 	alfred4File.close();
 }
 
-void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight) {
-	for (int y = 0; y < frameHeight; y++) {
-		for (int x = 0; x < frameWidth; x++) {
-			unsigned int src_pos = (frameIndex * frameHeight * frameWidth) + (y * frameWidth) + x;
-			dest[y * frameWidth + x] = source[src_pos];
-		}
-	}
-}
 
 void PelrockEngine::loadAlfredAnims() {
 	Common::File alfred3;
@@ -349,6 +342,7 @@ byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
 	}
 	return bg;
 }
+
 void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) {
 	for (int i = 0; i < w; i++) {
 		for (int j = 0; j < h; j++) {
@@ -359,28 +353,6 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 	}
 }
 
-// Helper function for transparent blitting
-void drawSpriteToBuffer(byte *buffer, int bufferWidth,
-						byte *sprite, int x, int y,
-						int width, int height,
-						int transparentColor) {
-	for (int py = 0; py < height; py++) {
-		for (int px = 0; px < width; px++) {
-			int srcIdx = py * width + px;
-			byte pixel = sprite[srcIdx];
-
-			if (pixel != transparentColor) {
-				int destX = x + px;
-				int destY = y + py;
-
-				if (destX >= 0 && destX < 640 &&
-					destY >= 0 && destY < 400) {
-					buffer[destY * bufferWidth + destX] = pixel;
-				}
-			}
-		}
-	}
-}
 
 Common::Array<VerbIcons> PelrockEngine::availableActions(HotSpot *hotspot) {
 	Common::Array<VerbIcons> verbs;
@@ -442,7 +414,7 @@ void PelrockEngine::frames() {
 			int frameSize = animSet.animData[animSet.curAnimIndex].w * animSet.animData[animSet.curAnimIndex].h;
 			int curFrame = animSet.animData[animSet.curAnimIndex].curFrame;
 			byte *frame = new byte[frameSize];
-			Common::copy(animSet.animData[animSet.curAnimIndex].animData + (curFrame * animSet.animData[animSet.curAnimIndex].h * animSet.animData[animSet.curAnimIndex].w), animSet.animData[animSet.curAnimIndex].animData + (curFrame * animSet.animData[animSet.curAnimIndex].h * animSet.animData[animSet.curAnimIndex].w) + (frameSize), frame);
+			extractSingleFrame(animSet.animData[animSet.curAnimIndex].animData, frame, curFrame, animSet.animData[animSet.curAnimIndex].w, animSet.animData[animSet.curAnimIndex].h);
 
 			drawSpriteToBuffer(_compositeBuffer, 640, frame, animSet.x, animSet.y, animSet.w, animSet.h, 255);
 
@@ -565,7 +537,6 @@ void PelrockEngine::frames() {
 
 		if (!isAlfredWalking && !_currentTextPages.empty()) {
 			if (_chronoManager->_textTtl > 0) {
-				debug("Will render text, _chronoManager->_textTtl=%d", _chronoManager->_textTtl);
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
 			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
 				_currentTextPageIndex++;
@@ -721,25 +692,24 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 void PelrockEngine::talkNPC(AnimSet *animSet, int index) {
 	// Change with the right index
 
-	TalkinAnimHeader animHeader = _room->_talkingAnimHeader;
+	TalkinAnimHeader *animHeader = &_room->_talkingAnimHeader;
 
-	int x = animSet->x + (index ? animHeader.offsetXAnimB : animHeader.offsetXAnimA);
-	int y = animSet->y + (index ? animHeader.offsetYAnimB : animHeader.offsetYAnimA);
+	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);
+	int y = animSet->y + (index ? animHeader->offsetYAnimB : animHeader->offsetYAnimA);
 
-	int w = index ? animHeader.wAnimB : animHeader.wAnimA;
-	int h = index ? animHeader.hAnimB : animHeader.hAnimA;
-	int numFrames = index ? animHeader.numFramesAnimB : animHeader.numFramesAnimA;
-	int curFrame = index ? animHeader.currentFrameAnimB++ : animHeader.currentFrameAnimA++;
+	int w = index ? animHeader->wAnimB : animHeader->wAnimA;
+	int h = index ? animHeader->hAnimB : animHeader->hAnimA;
+	int numFrames = index ? animHeader->numFramesAnimB : animHeader->numFramesAnimA;
+	int curFrame = index ? animHeader->currentFrameAnimB++ : animHeader->currentFrameAnimA++;
 	if (curFrame >= numFrames) {
 		if (index) {
-			animHeader.currentFrameAnimB = 0;
+			animHeader->currentFrameAnimB = 0;
 		} else {
-			animHeader.currentFrameAnimA = 0;
+			animHeader->currentFrameAnimA = 0;
 		}
 		curFrame = 0;
 	}
-	byte *frame = index ? animHeader.animB[curFrame] : animHeader.animA[curFrame];
-
+	byte *frame = index ? animHeader->animB[curFrame] : animHeader->animA[curFrame];
 	debug("Talking NPC frame %d/%d, x=%d, y=%d, w=%d, h=%d", curFrame, numFrames, x, y, w, h);
 
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);

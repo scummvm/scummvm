@@ -446,7 +446,8 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
 	for (int i = 0; i < talkHeader.numFramesAnimA; i++) {
 		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
-		Common::copy(decompressed + (i * talkHeader.wAnimA * talkHeader.hAnimA), decompressed + ((i + 1) * talkHeader.wAnimA * talkHeader.hAnimA), talkHeader.animA[i]);
+		extractSingleFrame(decompressed, talkHeader.animA[i], i, talkHeader.wAnimA, talkHeader.hAnimA);
+
 	}
 
 	if (talkHeader.numFramesAnimB > 0) {
@@ -457,7 +458,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		talkHeader.animB = new byte *[talkHeader.numFramesAnimB];
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
-			Common::copy(decompressed + animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), decompressed + animASize + ((i + 1) * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.animB[i]);
+			extractSingleFrame(decompressed + animASize, talkHeader.animB[i], i, talkHeader.wAnimB, talkHeader.hAnimB);
 		}
 	}
 	free(decompressed);
