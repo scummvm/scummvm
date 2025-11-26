@@ -28,6 +28,8 @@ namespace Pelrock {
 
 const int EXPECTED_SIZE = 640 * 400;
 size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data);
+void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize);
+
 void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color);
 void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
 } // End of namespace Pelrock

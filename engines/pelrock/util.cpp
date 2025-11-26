@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/stream.h"
 
 #include "pelrock/util.h"
 #include "pelrock/types.h"
@@ -74,6 +75,34 @@ size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uin
 	}
 
 	return result_size;
+}
+
+void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize) {
+	const char marker[] = "BUDA";
+	const int markerLen = 4;
+	size_t bufferSize = 4096;
+	size_t pos = 0;
+
+	buffer = (byte *)malloc(bufferSize);
+	stream->seek(startPos, SEEK_SET);
+	while (!stream->eos()) {
+		byte b = stream->readByte();
+		if (pos + 1 > bufferSize) {
+			bufferSize *= 2;
+			buffer = (byte *)realloc(buffer, bufferSize);
+		}
+		buffer[pos++] = b;
+
+		// Check for marker at the end of buffer
+		if (pos >= markerLen &&
+			buffer[pos - 4] == 'B' &&
+			buffer[pos - 3] == 'U' &&
+			buffer[pos - 2] == 'D' &&
+			buffer[pos - 1] == 'A') {
+			break;
+		}
+	}
+	outSize = pos;
 }
 
 } // End of namespace Pelrock

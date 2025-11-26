@@ -5,7 +5,7 @@ MODULE_OBJS = \
 	chrono.o \
 	console.o \
 	metaengine.o \
-	resources.o \
+	room.o \
 	fonts/small_font.o \
 	fonts/large_font.o \
 	util.o

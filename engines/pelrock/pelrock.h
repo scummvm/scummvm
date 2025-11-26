@@ -40,7 +40,7 @@
 #include "pelrock/detection.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
-#include "pelrock/resources.h"
+#include "pelrock/room.h"
 #include "pelrock/types.h"
 
 namespace Pelrock {
@@ -61,20 +61,7 @@ private:
 	void setScreenJava(int s, int dir);
 	void loadAnims();
 
-	// Room data
-	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
-	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void loadAlfredAnims();
-	// Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
-	// Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
-	// Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
-	// Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
-	// Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
-
-	Common::String cleanText(const Common::String &text);
-	Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
-	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
-	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 
 	void walkTo(int x, int y);
 	bool pathFind(int x, int y, PathContext *context);
@@ -90,9 +77,6 @@ private:
 									 MovementStep *movement_buffer);
 
 	void talk(byte object);
-	Common::String getControlName(byte b);
-	// void loadRoomMetadata(Common::File *roomFile, int roomOffset);
-	void loadRoomTalkingAnimations(int roomNumber);
 	void loadCursors();
 	void loadInteractionIcons();
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
@@ -121,15 +105,12 @@ private:
 
 	ChronoManager *_chronoManager = nullptr;
 
-	// byte *standingAnim = new byte[3060 * 102];
-
 	byte **walkingAnimFrames[4];              // 4 arrays of arrays
 	byte *standingAnimFrames[4] = {nullptr};  // 4 directions
 	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 	byte **talkingAnimFrames[4];              // 4 arrays of arrays
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 
-	TalkinAnimHeader _talkingAnimHeader;
 
 	PathContext _currentContext;
 	int _current_step = 0;
@@ -186,7 +167,7 @@ private:
 	// int whichScreen = 0;
 	// byte *pixelsShadows; // =new int[640*400];
 
-	ResourceManager *_resourceManager = nullptr;
+	RoomManager *_room = nullptr;
 
 protected:
 	// Engine APIs
@@ -242,13 +223,6 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
-
-	Common::Array<HotSpot> _currentRoomHotspots;
-	Common::Array<AnimSet> _currentRoomAnims;
-	Common::Array<Exit> _currentRoomExits;
-	Common::Array<WalkBox> _currentRoomWalkboxes;
-	Common::Array<Description> _currentRoomDescriptions;
-	Common::Array<ConversationNode> _currentRoomConversations;
 };
 
 extern PelrockEngine *g_engine;

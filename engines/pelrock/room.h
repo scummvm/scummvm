@@ -29,12 +29,22 @@
 
 namespace Pelrock {
 
-class ResourceManager {
+class RoomManager {
 public:
-	ResourceManager();
-	~ResourceManager();
+	RoomManager();
+	~RoomManager();
 	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
 	void loadRoomTalkingAnimations(int roomNumber);
+	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
+	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+
+	Common::Array<HotSpot> _currentRoomHotspots;
+	Common::Array<AnimSet> _currentRoomAnims;
+	Common::Array<Exit> _currentRoomExits;
+	Common::Array<WalkBox> _currentRoomWalkboxes;
+	Common::Array<Description> _currentRoomDescriptions;
+	Common::Array<ConversationNode> _currentRoomConversations;
+	TalkinAnimHeader _talkingAnimHeader;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
@@ -42,6 +52,12 @@ private:
 	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
 	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
+
+	Common::String getControlName(byte b);
+	Common::String cleanText(const Common::String &text);
+	Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
+	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
+	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 };
 
 } // End of namespace Pelrock
