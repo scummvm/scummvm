@@ -105,18 +105,26 @@ Common::Error PelrockEngine::run() {
 		_chronoManager->updateChrono();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN) {
-				if (e.kbd.keycode == Common::KEYCODE_w) {
-					alfredState = ALFRED_WALKING;
-				} else if (e.kbd.keycode == Common::KEYCODE_t) {
-					alfredState = ALFRED_TALKING;
-				} else if (e.kbd.keycode == Common::KEYCODE_s) {
-					alfredState = ALFRED_IDLE;
-				} else if (e.kbd.keycode == Common::KEYCODE_c) {
-					alfredState = ALFRED_COMB;
-				} else if (e.kbd.keycode == Common::KEYCODE_i) {
-					alfredState = ALFRED_INTERACTING;
-				}
-			} else if (e.type == Common::EVENT_MOUSEMOVE) {
+            switch (e.kbd.keycode) {
+                case Common::KEYCODE_w:
+                    alfredState = ALFRED_WALKING;
+                    break;
+                case Common::KEYCODE_t:
+                    alfredState = ALFRED_TALKING;
+                    break;
+                case Common::KEYCODE_s:
+                    alfredState = ALFRED_IDLE;
+                    break;
+                case Common::KEYCODE_c:
+                    alfredState = ALFRED_COMB;
+                    break;
+                case Common::KEYCODE_i:
+                    alfredState = ALFRED_INTERACTING;
+                    break;
+                default:
+                    break;
+            }
+        } else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
@@ -282,91 +290,88 @@ void PelrockEngine::frames() {
 			drawNextFrame(&animSet);
 		}
 
-		if (alfredState == ALFRED_WALKING) {
+		switch (alfredState) {
+            case ALFRED_WALKING: {
+                MovementStep step = _currentContext.movement_buffer[_current_step];
 
-			MovementStep step = _currentContext.movement_buffer[_current_step];
-			// debug("Alfred step: distance_x=%d, distance_y=%d", step.distance_x, step.distance_y);
+                if (step.distance_x > 0) {
+                    if (step.flags & MOVE_RIGHT) {
+                        dirAlfred = 0;
+                        xAlfred += MIN((uint16_t)6, step.distance_x);
+                    }
+                    if (step.flags & MOVE_LEFT) {
+                        dirAlfred = 1;
+                        xAlfred -= MIN((uint16_t)6, step.distance_x);
+                    }
+                }
+                if (step.distance_y > 0) {
+                    if (step.flags & MOVE_DOWN) {
+                        dirAlfred = 2;
+                        yAlfred += MIN((uint16_t)6, step.distance_y);
+                    }
+                    if (step.flags & MOVE_UP) {
+                        dirAlfred = 3;
+                        yAlfred -= MIN((uint16_t)6, step.distance_y);
+                    }
+                }
 
-			if (step.distance_x > 0) {
-				if (step.flags & MOVE_RIGHT) {
-					dirAlfred = 0;
-					xAlfred += MIN((uint16_t)6, step.distance_x);
-				}
-				if (step.flags & MOVE_LEFT) {
-					dirAlfred = 1;
-					xAlfred -= MIN((uint16_t)6, step.distance_x);
-				}
-			}
-			if (step.distance_y > 0) {
-				if (step.flags & MOVE_DOWN) {
-					dirAlfred = 2;
-					yAlfred += MIN((uint16_t)6, step.distance_y);
-				}
-				if (step.flags & MOVE_UP) {
-					dirAlfred = 3;
-					yAlfred -= MIN((uint16_t)6, step.distance_y);
-				}
-			}
+                if (step.distance_x > 0)
+                    step.distance_x -= MIN((uint16_t)6, step.distance_x);
 
-			if (step.distance_x > 0)
-				step.distance_x -= MIN((uint16_t)6, step.distance_x);
+                if (step.distance_y > 0)
+                    step.distance_y -= MIN((uint16_t)6, step.distance_y);
 
-			if (step.distance_y > 0)
-				step.distance_y -= MIN((uint16_t)6, step.distance_y);
+                if (step.distance_x <= 0 && step.distance_y <= 0) {
+                    _current_step++;
+                    if (_current_step >= _currentContext.movement_count) {
+                        _current_step = 0;
+                        alfredState = ALFRED_IDLE;
+                    }
+                } else {
+                    _currentContext.movement_buffer[_current_step] = step;
+                }
 
-			// debug("Alfred position after step: x=%d, y=%d, step distance_x=%d, step distance_y=%d", xAlfred, yAlfred, step.distance_x, step.distance_y);
-			if (step.distance_x <= 0 && step.distance_y <= 0) {
-				// debug("Alfred completed step %d", _current_step);
-				_current_step++;
-				if (_current_step >= _currentContext.movement_count) {
-					// debug("Alfred reached his walk target.");
-					_current_step = 0;
-					alfredState = ALFRED_IDLE;
-				}
-			} else {
-				_currentContext.movement_buffer[_current_step] = step;
-			}
+                Exit *exit = isExitUnder(xAlfred, yAlfred);
 
-			Exit *exit = isExitUnder(xAlfred, yAlfred);
+                if (exit != nullptr) {
+                    xAlfred = exit->targetX;
+                    yAlfred = exit->targetY;
+                    setScreen(exit->targetRoom, exit->dir);
+                }
 
-			if (exit != nullptr) {
-				xAlfred = exit->targetX;
-				yAlfred = exit->targetY;
-				setScreen(exit->targetRoom, exit->dir);
-			}
+                if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
+                    curAlfredFrame = 0;
+                }
 
-			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
-
-			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
-				curAlfredFrame = 0;
-			}
-
-			drawAlfred(_res->alfredWalkFrames[dirAlfred][curAlfredFrame]);
-			curAlfredFrame++;
-
-		} else if (alfredState == ALFRED_TALKING) {
-			if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
-				curAlfredFrame = 0;
-			}
-			drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
-			curAlfredFrame++;
-		} else if (alfredState == ALFRED_COMB) {
-			if (curAlfredFrame >= 11) {
-				curAlfredFrame = 0;
-			}
-			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
-			curAlfredFrame++;
-
-		} else if(alfredState == ALFRED_INTERACTING) {
-			if (curAlfredFrame >= interactingAnimLength) {
-				curAlfredFrame = 0;
-			}
-			drawAlfred(_res->alfredInteractFrames[dirAlfred][curAlfredFrame]);
-			curAlfredFrame++;
-		}
-		else {
-			drawAlfred(_res->alfredIdle[dirAlfred]);
-		}
+                drawAlfred(_res->alfredWalkFrames[dirAlfred][curAlfredFrame]);
+                curAlfredFrame++;
+                break;
+            }
+            case ALFRED_TALKING:
+                if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
+                    curAlfredFrame = 0;
+                }
+                drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
+                curAlfredFrame++;
+                break;
+            case ALFRED_COMB:
+                if (curAlfredFrame >= 11) {
+                    curAlfredFrame = 0;
+                }
+                drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
+                curAlfredFrame++;
+                break;
+            case ALFRED_INTERACTING:
+                if (curAlfredFrame >= interactingAnimLength) {
+                    curAlfredFrame = 0;
+                }
+                drawAlfred(_res->alfredInteractFrames[dirAlfred][curAlfredFrame]);
+                curAlfredFrame++;
+                break;
+            default:
+                drawAlfred(_res->alfredIdle[dirAlfred]);
+                break;
+        }
 		if (_displayPopup) {
 
 			// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
@@ -414,7 +419,7 @@ void PelrockEngine::frames() {
 		for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 			// debug("Drawing walkbox %d", i);
 			WalkBox box = _room->_currentRoomWalkboxes[i];
-			// drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
+			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
 		}
 		if (_curWalkTarget.x < 640 && _curWalkTarget.y < 400 && _curWalkTarget.x >= 0 && _curWalkTarget.y >= 0) {
 			_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y, 100);
