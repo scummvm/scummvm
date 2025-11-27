@@ -4490,6 +4490,8 @@ void SceneHandler::process(Event &event) {
 				g_globals->_player._uiEnabled &&
 				((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330)) &&
 				((g_vm->getGameID() != GType_BlueForce) || (R2_GLOBALS._sceneManager._sceneNumber != 100))) {
+			// Disable the "?" UI element when showing the right-click popup menu
+			T2_GLOBALS._uiElements._question.setEnabled(false);
 			g_globals->_game->rightClick();
 
 			event.handled = true;
