@@ -1,9 +1,12 @@
 #include "phoenixvr/vr.h"
 #include "common/array.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/textconsole.h"
+#include "graphics/screen.h"
 #include "graphics/surface.h"
 #include "graphics/yuv_to_rgb.h"
+#include "image/bmp.h"
 #include "phoenixvr/dct.h"
 
 namespace PhoenixVR {
@@ -467,7 +470,15 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 }
 } // namespace
 
-Graphics::Surface *VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
+VR::~VR() {
+	if (_pic) {
+		_pic->free();
+		_pic.reset();
+	}
+}
+
+VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
+	VR vr;
 	auto magic = s.readUint32LE();
 	if (magic != CHUNK_VR) {
 		error("wrong VR magic");
@@ -490,21 +501,43 @@ Graphics::Surface *VR::loadStatic(const Graphics::PixelFormat &format, Common::S
 			auto huffSize = READ_LE_UINT32(vrData.data());
 			auto unpHuffSize = READ_LE_UINT32(vrData.data() + 4);
 			debug("static picture header, quality: %u, packed data size: %u, huff size: %08x, unpacked huff size: %u", quality, dataSize, huffSize, unpHuffSize);
-			Graphics::Surface *pic = new Graphics::Surface();
-			if (pic3d)
+			if (vr._pic)
+				error("2d/3d picture in the same file");
+			vr._pic.reset(new Graphics::Surface());
+			auto *pic = vr._pic.get();
+			if (pic3d) {
+				vr._vr = true;
 				pic->create(256, 6144, format);
-			else
+			} else
 				pic->create(640, 480, format);
 			auto *huff = vrData.data() + 8;
 			auto *acPtr = vrData.data() + huffSize + 12;
 			auto dcOffset = READ_LE_UINT32(vrData.data() + huffSize + 8);
 			auto *dcPtr = vrData.data() + huffSize + 16 + dcOffset;
 			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
-			return pic;
 		}
 		s.skip(chunkSize - 8);
 	}
-	return nullptr;
+	if (vr._pic) {
+		Common::DumpFile out;
+		if (out.open("static.bmp"))
+			Image::writeBMP(out, *vr._pic);
+	}
+	return vr;
+}
+
+void VR::render(Graphics::Screen *screen) {
+	if (!_pic) {
+		screen->clear();
+		return;
+	}
+
+	if (!_vr) {
+		Common::Point dst(0, 0);
+		Common::Rect src(_pic->getRect());
+		Common::Rect::getBlitRect(dst, src, screen->getBounds());
+		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
+	}
 }
 
 } // namespace PhoenixVR

@@ -37,6 +37,7 @@
 #include "phoenixvr/detection.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
+#include "phoenixvr/vr.h"
 
 namespace PhoenixVR {
 
@@ -141,7 +142,7 @@ private:
 	};
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor;
-	Graphics::Surface *_static = nullptr;
+	VR _vr;
 };
 
 extern PhoenixVREngine *g_engine;

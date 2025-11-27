@@ -255,15 +255,9 @@ Common::Error PhoenixVREngine::run() {
 
 			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 
-			if (_static) {
-				_static->free();
-				delete _static;
-				_static = nullptr;
-			}
-
 			Common::File vr;
 			if (vr.open(Common::Path(_warp->vrFile))) {
-				_static = VR::loadStatic(_pixelFormat, vr);
+				_vr = VR::loadStatic(_pixelFormat, vr);
 			}
 
 			_regSet.reset(new RegionSet(_warp->testFile));
@@ -278,13 +272,7 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		if (_static) {
-			Common::Point dst(0, 0);
-			Common::Rect src(_static->getRect());
-			Common::Rect::getBlitRect(dst, src, _screen->getBounds());
-			_screen->copyRectToSurface(*_static, dst.x, dst.y, src);
-		} else
-			_screen->clear();
+		_vr.render(_screen);
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {

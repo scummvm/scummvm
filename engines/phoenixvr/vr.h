@@ -19,20 +19,30 @@
  *
  */
 
-#ifndef PHOENIXVR_COMMANDS_H
-#define PHOENIXVR_COMMANDS_H
+#ifndef PHOENIXVR_VR_H
+#define PHOENIXVR_VR_H
 
 #include "common/stream.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
 class Surface;
-}
+class Screen;
+} // namespace Graphics
 
 namespace PhoenixVR {
 class VR {
+	Common::ScopedPtr<Graphics::Surface> _pic;
+	bool _vr = false;
+
 public:
-	static Graphics::Surface *loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
+	~VR();
+	VR() = default;
+	VR(VR &&) = default;
+	VR &operator=(VR &&) = default;
+
+	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
+	void render(Graphics::Screen *screen);
 };
 } // namespace PhoenixVR
 
