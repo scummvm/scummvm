@@ -63,12 +63,17 @@ const int kBalloonFrames = 4;
 const int kTextCharDisplayTime = 100; // 10ms per character
 const int kVerbIconPadding = 20;
 
+const int kAlfredFrameWidth = 51;
+const int kAlfredFrameHeight = 102;
+
+
 
 enum AlfredState {
 	ALFRED_IDLE,
 	ALFRED_WALKING,
 	ALFRED_TALKING,
 	ALFRED_INTERACTING,
+	ALFRED_COMB
 };
 
 

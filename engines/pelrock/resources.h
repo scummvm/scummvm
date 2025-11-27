@@ -36,11 +36,14 @@ public:
 	void loadInteractionIcons();
 	void loadAlfredAnims();
 
-	byte **walkingAnimFrames[4];              // 4 arrays of arrays
-	byte *standingAnimFrames[4] = {nullptr};  // 4 directions
+	byte **alfredWalkFrames[4];              // 4 arrays of arrays
+	byte *alfredIdle[4] = {nullptr};  // 4 directions
 	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
-	byte **talkingAnimFrames[4];              // 4 arrays of arrays
+	byte **alfredTalkFrames[4];              // 4 arrays of arrays
 	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+	byte **alfredCombFrames[2];
+
+
     byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;

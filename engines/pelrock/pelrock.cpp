@@ -112,6 +112,8 @@ Common::Error PelrockEngine::run() {
 					alfredState = ALFRED_TALKING;
 				} else if (e.kbd.keycode == Common::KEYCODE_s) {
 					alfredState = ALFRED_IDLE;
+				} else if (e.kbd.keycode == Common::KEYCODE_c) {
+					alfredState = ALFRED_COMB;
 				}
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
@@ -338,17 +340,24 @@ void PelrockEngine::frames() {
 				curAlfredFrame = 0;
 			}
 
-			drawAlfred(_res->walkingAnimFrames[dirAlfred][curAlfredFrame]);
+			drawAlfred(_res->alfredWalkFrames[dirAlfred][curAlfredFrame]);
 			curAlfredFrame++;
 
 		} else if (alfredState == ALFRED_TALKING) {
 			if (curAlfredFrame >= _res->talkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame = 0;
 			}
-			drawAlfred(_res->talkingAnimFrames[dirAlfred][curAlfredFrame]);
+			drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
 			curAlfredFrame++;
+		} else if (alfredState == ALFRED_COMB) {
+			if (curAlfredFrame >= 11) {
+				curAlfredFrame = 0;
+			}
+			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
+			curAlfredFrame++;
+
 		} else {
-			drawAlfred(_res->standingAnimFrames[dirAlfred]);
+			drawAlfred(_res->alfredIdle[dirAlfred]);
 		}
 		if (_displayPopup) {
 

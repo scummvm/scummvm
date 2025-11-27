@@ -68,6 +68,7 @@ size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uin
 		uint8_t value = data[pos + 1];
 
 		for (int i = 0; i < count; i++) {
+			// debug("Pos = %zu, writing value %02X", result_size, value);
 			(*out_data)[result_size++] = value;
 		}
 
@@ -102,6 +103,7 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *
 			break;
 		}
 	}
+	debug("Read %zu bytes until BUDA marker", pos);
 	outSize = pos;
 }
 

@@ -48,9 +48,6 @@ namespace Pelrock {
 
 struct PelrockGameDescription;
 
-const int kAlfredFrameWidth = 51;
-const int kAlfredFrameHeight = 102;
-
 class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;

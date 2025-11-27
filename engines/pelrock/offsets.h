@@ -36,6 +36,11 @@ namespace Pelrock {
     static const uint32_t kBalloonFramesOffset = 2176936;
     static const uint32_t kBalloonFramesSize = 24950;
 
+    static const uint32_t ALFRED7_ALFRED_COMB_R = 67764;
+    static const uint32_t ALFRED7_ALFRED_COMB_L = 88404;
+
+
+
 } // End of namespace Pelrock
 #endif
 
