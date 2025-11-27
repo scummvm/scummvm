@@ -400,7 +400,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
 		float ac[64] = {};
-		byte dc8 = dcBs.readUInt(8) - 128;
+		int8 dc8 = dcBs.readUInt(8);
 		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
 		ac[0] = 1.0f * iquant[0] * (int)dc8;
 		for (uint idx = 1; idx < 64;) {
@@ -426,10 +426,9 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		const auto *src = out;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++;
-				v -= 510;
-				v = v / 8 + 128;
-				*dst++ = clip(v);
+				int v = *src++ / 4 + 128;
+				v = clip(v);
+				*dst++ = v;
 			}
 		}
 		++channel;
