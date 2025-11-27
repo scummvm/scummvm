@@ -64,7 +64,6 @@ PelrockEngine::~PelrockEngine() {
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
 	delete _smallFont;
-
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -114,6 +113,8 @@ Common::Error PelrockEngine::run() {
 					alfredState = ALFRED_IDLE;
 				} else if (e.kbd.keycode == Common::KEYCODE_c) {
 					alfredState = ALFRED_COMB;
+				} else if (e.kbd.keycode == Common::KEYCODE_i) {
+					alfredState = ALFRED_INTERACTING;
 				}
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
@@ -336,7 +337,7 @@ void PelrockEngine::frames() {
 
 			// debug("Drawing walking frame %d for direction %d", curAlfredFrame, dirAlfred);
 
-			if (curAlfredFrame >= _res->walkingAnimLengths[dirAlfred]) {
+			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
 				curAlfredFrame = 0;
 			}
 
@@ -344,7 +345,7 @@ void PelrockEngine::frames() {
 			curAlfredFrame++;
 
 		} else if (alfredState == ALFRED_TALKING) {
-			if (curAlfredFrame >= _res->talkingAnimLengths[dirAlfred] - 1) {
+			if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
 				curAlfredFrame = 0;
 			}
 			drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
@@ -356,7 +357,14 @@ void PelrockEngine::frames() {
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
 			curAlfredFrame++;
 
-		} else {
+		} else if(alfredState == ALFRED_INTERACTING) {
+			if (curAlfredFrame >= interactingAnimLength) {
+				curAlfredFrame = 0;
+			}
+			drawAlfred(_res->alfredInteractFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
+		}
+		else {
 			drawAlfred(_res->alfredIdle[dirAlfred]);
 		}
 		if (_displayPopup) {

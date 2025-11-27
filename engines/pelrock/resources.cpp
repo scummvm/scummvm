@@ -38,15 +38,25 @@ ResourceManager::~ResourceManager() {
 	}
 	delete[] _popUpBalloon;
 	for (int i = 0; i < 4; i++) {
-
 		// free all frame buffers
 		for (int j = 0; j < walkingAnimLengths[i]; j++) {
 			delete[] alfredWalkFrames[i][j];
+			delete[] alfredTalkFrames[i][j];
+		}
+
+		for(int j = 0; j < 4; j ++) {
+			delete[] alfredInteractFrames[i][j];
 		}
 
 		// free the array of pointers
 		delete[] alfredWalkFrames[i];
+		delete[] alfredTalkFrames[i];
+		delete[] alfredInteractFrames[i];
+		delete[] alfredIdle[i];
 	}
+
+		delete[] alfredCombFrames[0];
+		delete[] alfredCombFrames[1];
 }
 
 void ResourceManager::loadCursors() {
@@ -118,13 +128,15 @@ void ResourceManager::loadAlfredAnims() {
 	for (int i = 0; i < 4; i++) {
 		alfredIdle[i] = new byte[frameSize];
 		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3] + 4;
-
+		int interactingFramesOffset = talkingFramesOffset + talkingAnimLengths[0] + talkingAnimLengths[1] + talkingAnimLengths[2] + talkingAnimLengths[3];
 		int prevWalkingFrames = 0;
 		int prevTalkingFrames = 0;
+		int prevInteractingFrames = 0;
 
 		for (int j = 0; j < i; j++) {
 			prevWalkingFrames += walkingAnimLengths[j] + 1;
 			prevTalkingFrames += talkingAnimLengths[j];
+			prevInteractingFrames += interactingAnimLength;
 		}
 
 		alfredWalkFrames[i] = new byte *[walkingAnimLengths[i]];
@@ -147,6 +159,15 @@ void ResourceManager::loadAlfredAnims() {
 			int talkingFrame = talkingStartFrame + j;
 			extractSingleFrame(pic, alfredTalkFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		}
+
+		alfredInteractFrames[i] = new byte *[interactingAnimLength];
+		int interactingStartFrame = interactingFramesOffset + prevInteractingFrames;
+		for (int j = 0; j < interactingAnimLength; j++) {
+			alfredInteractFrames[i][j] = new byte[frameSize];
+			int interactingFrame = interactingStartFrame + j;
+			extractSingleFrame(pic, alfredInteractFrames[i][j], interactingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+
 	}
 
 	free(bufferFile);

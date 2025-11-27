@@ -25,6 +25,11 @@
 
 namespace Pelrock {
 
+
+static const int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+static const int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
+static const int interactingAnimLength = 2;
+
 class ResourceManager {
 private:
 	/* data */
@@ -36,13 +41,14 @@ public:
 	void loadInteractionIcons();
 	void loadAlfredAnims();
 
-	byte **alfredWalkFrames[4];              // 4 arrays of arrays
 	byte *alfredIdle[4] = {nullptr};  // 4 directions
-	int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
-	byte **alfredTalkFrames[4];              // 4 arrays of arrays
-	int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
-	byte **alfredCombFrames[2];
 
+	byte **alfredWalkFrames[4];              // 4 arrays of arrays
+
+	byte **alfredTalkFrames[4];              // 4 arrays of arrays
+
+	byte **alfredCombFrames[2];
+	byte **alfredInteractFrames[4];
 
     byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
