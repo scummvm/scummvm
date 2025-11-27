@@ -1088,6 +1088,9 @@ void CMainWindow::PlayBackSeries(int nNumNotes) {
 
 	pNewNote = CNote::GetNoteHead();
 	for (i = nNumNotes; i > 0; --i) {
+		if (g_engine->shouldQuit())
+			break;
+
 		if (pNewNote) {                                                              // If this isn't the end
 			m_nButID = pNewNote->GetValue();                                        // Get the new note
 
