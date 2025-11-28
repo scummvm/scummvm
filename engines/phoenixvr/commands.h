@@ -149,24 +149,26 @@ struct ChangeCurseur : public Script::Command {
 struct Add : public Script::Command {
 	Common::String dstVar;
 	Common::String srcVar;
-	int addend;
+	int imm;
 
-	Add(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), addend(atoi(args[2].c_str())) {}
+	Add(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), imm(atoi(args[2].c_str())) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("add %s %s %d", dstVar.c_str(), srcVar.c_str(), addend);
+		debug("add %s %s %d", dstVar.c_str(), srcVar.c_str(), imm);
+		g_engine->setVariable(dstVar, g_engine->getVariable(srcVar) + imm);
 	}
 };
 
 struct Sub : public Script::Command {
 	Common::String dstVar;
 	Common::String srcVar;
-	int addend;
+	int imm;
 
-	Sub(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), addend(atoi(args[2].c_str())) {}
+	Sub(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), imm(atoi(args[2].c_str())) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("sub %s %s %d", dstVar.c_str(), srcVar.c_str(), addend);
+		debug("sub %s %s %d", dstVar.c_str(), srcVar.c_str(), imm);
+		g_engine->setVariable(dstVar, g_engine->getVariable(srcVar) - imm);
 	}
 };
 
