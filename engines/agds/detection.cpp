@@ -31,7 +31,7 @@ static const PlainGameDescriptor agdsGames[] = {
 class AGDSMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	AGDSMetaEngineDetection() : AdvancedMetaEngineDetection(AGDS::gameDescriptions, agdsGames) {
-		_maxScanDepth = 3;
+		_maxScanDepth = 1;
 	}
 
 	const char *getName() const override {

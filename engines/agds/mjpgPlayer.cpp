@@ -104,7 +104,6 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 
 		Common::Point dst((backbuffer.w - scaled->w) / 2, (backbuffer.h - scaled->h) / 2);
 		Common::Rect srcRect(scaled->getRect());
-		debug("scaled %u %d", scaled->w, scaled->h);
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 			backbuffer.copyRectToSurface(*scaled, dst.x, dst.y, srcRect);
 		scaled->free();

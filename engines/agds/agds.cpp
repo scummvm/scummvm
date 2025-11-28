@@ -43,8 +43,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/managed_surface.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 
@@ -157,11 +157,12 @@ bool AGDSEngine::load() {
 
 	{
 		Common::File file;
-		file.open("patch.adb");
-		Database patch;
-		patch.open("patch.adb");
+		if (file.open("patch.adb")) {
+			Database patch;
+			patch.open("patch.adb");
 
-		loadPatches(file, patch);
+			loadPatches(file, patch);
+		}
 	}
 	{
 		Common::ScopedPtr<Common::File> file(new Common::File());
