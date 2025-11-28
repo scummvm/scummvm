@@ -81,6 +81,12 @@ void PhoenixVREngine::setNextScript(const Common::String &path) {
 	debug("setNextScript %s", _nextScript.c_str());
 }
 
+void PhoenixVREngine::end() {
+	debug("end");
+	if (_nextScript.empty())
+		quitGame();
+}
+
 void PhoenixVREngine::goToWarp(const Common::String &warp) {
 	debug("gotowarp %s", warp.c_str());
 	_nextWarp = warp;

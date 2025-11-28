@@ -378,8 +378,8 @@ struct Set : public Script::Command {
 struct End : public Script::Command {
 	End() {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("end");
 		ctx.running = false;
+		g_engine->end();
 	}
 };
 
