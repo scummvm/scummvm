@@ -123,7 +123,19 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
-		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
+		// Add one line of bottom padding to ensure the last line is not covered
+		int padding = _mactext->getLineHeight(_mactext->getLineCount() - 1);
+		padding = MIN<int>(padding, getInnerDimensions().height());
+
+		int oldScroll = _mactext->_scrollPos;
+
+		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height() + padding);
+
+		if (_mactext->_scrollPos != oldScroll) {
+			_mactext->undrawCursor();
+			_mactext->_cursorY -= (_mactext->_scrollPos - oldScroll);
+			_mactext->_cursorDirty = true;
+		}
 	}
 
 	if (_wm->_mode & kWMModeWin95)
