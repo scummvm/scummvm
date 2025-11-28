@@ -36,6 +36,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace ArtParts {
 
+#define FONT_SIZE 14
+
 bool    InArtRegion(CPoint point);
 CPoint  WinToArt(CPoint point);
 
@@ -221,7 +223,7 @@ void CMainWindow::OnPaint() {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 	} else {
 		PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
@@ -1044,7 +1046,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 		if (nMinutes == 0 && nSeconds == 0) {
 			char buf[64];
@@ -1586,7 +1588,7 @@ void CMainWindow::NewGame() {
 	else {
 		Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 	}
-	(*m_pTimeText).DisplayString(pDC, msg, 16, FW_SEMIBOLD, OPTIONS_COLOR);
+	(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 	EndWaitCursor();
 
