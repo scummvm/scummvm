@@ -77,7 +77,6 @@ public:
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
 	virtual void enableCulling(bool enabled) override;
-	virtual void depthTesting(bool enabled) override;
 
 
 	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;

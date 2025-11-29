@@ -74,7 +74,6 @@ public:
 	 */
 	virtual void flipBuffer() {}
 	virtual void useColor(uint8 r, uint8 g, uint8 b) = 0;
-	virtual void depthTesting(bool enabled) {};
 	virtual void enableCulling(bool enabled) {};
 	virtual void polygonOffset(bool enabled) = 0;
 

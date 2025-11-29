@@ -106,7 +106,6 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	TinyGL3DTexture *glTexture = static_cast<TinyGL3DTexture *>(texture);
-	tglDisable(TGL_DEPTH_TEST);
 	tglDisable(TGL_CULL_FACE);
 	tglEnable(TGL_TEXTURE_2D);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
@@ -254,7 +253,7 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	}
 
-	tglDisable(TGL_DEPTH_TEST);
+
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4ub(r, g, b, 255);
@@ -486,15 +485,6 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	tglDepthMask(TGL_TRUE);
 	tglPopMatrix();
-}
-
-void TinyGLRenderer::depthTesting(bool enabled) {
-	/*if (enabled) {
-		tglClear(TGL_DEPTH_BUFFER_BIT);
-		tglEnable(TGL_DEPTH_TEST);
-	} else {
-		tglDisable(TGL_DEPTH_TEST);
-	}*/
 }
 
 void TinyGLRenderer::enableCulling(bool enabled) {

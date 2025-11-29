@@ -252,9 +252,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	}
 
 	if (floor) {
-		gfx->depthTesting(false);
 		floor->draw(gfx);
-		gfx->depthTesting(true);
 	}
 
 	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
