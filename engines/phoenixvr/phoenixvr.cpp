@@ -212,6 +212,7 @@ Common::Error PhoenixVREngine::run() {
 	Common::Event event;
 
 	Graphics::FrameLimiter limiter(g_system, 60);
+	uint frameDuration = 0;
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -241,12 +242,12 @@ Common::Error PhoenixVREngine::run() {
 		if (_vr.isVR()) {
 			auto da = _mousePos - _screenCenter;
 			_system->warpMouse(_screenCenter.x, _screenCenter.y);
-			static const float kSpeedX = 0.01f;
-			static const float kSpeedY = 0.01f;
-			_angleX -= float(da.x) * kSpeedX;
-			_angleX = fmodf(_angleX, M_PI * 2);
-			_angleY += -float(da.y) * kSpeedY;
-			_angleY = fmodf(_angleY, M_PI * 2);
+			_mousePos = _screenCenter;
+			static const float kSpeedX = 0.2f;
+			static const float kSpeedY = 0.2f;
+			const auto dt = float(frameDuration) / 1000.0f;
+			_angleX += float(da.x) * kSpeedX * dt;
+			_angleY += float(da.y) * kSpeedY * dt;
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());
@@ -313,7 +314,7 @@ Common::Error PhoenixVREngine::run() {
 		// to prevent the system being unduly loaded
 		limiter.delayBeforeSwap();
 		_screen->update();
-		limiter.startFrame();
+		frameDuration = limiter.startFrame();
 	}
 
 	return Common::kNoError;

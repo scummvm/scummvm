@@ -548,24 +548,31 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 		struct Column {
 			float angle;
 			int faceIdx;
-			float tan;
+			int srcX;
 		};
 		Common::Array<Column> columns(w);
 		float a = ax - kFOV / 2;
 		for (int dstX = 0; dstX != w; ++dstX) {
-			int faceIdx = static_cast<int>((a + M_PI_4) / M_PI_2) % 4;
+			auto aPi4 = a + float(M_PI_4);
+			float quadrantA = fmodf(aPi4, M_PI_2);
+			if (quadrantA < 0)
+				quadrantA += M_PI_2;
+			quadrantA -= M_PI_4;
+			int faceIdx = static_cast<int>(aPi4 / M_PI_2) % 4;
 			if (faceIdx < 0)
 				faceIdx += 4;
 			static int faceIdxH[] = {1, 4, 3, 5};
 			faceIdx = faceIdxH[faceIdx];
-			columns[dstX] = {a, faceIdx, tan(a)};
+			auto srcX = static_cast<int>(tan(quadrantA) * 256) + 256;
+			columns[dstX] = {quadrantA, faceIdx, srcX};
 			a += kdA;
 		}
 		for (int dstY = 0; dstY != h; ++dstY) {
+			const int srcY0 = (dstY << 9) / h;
 			for (int dstX = 0; dstX != w; ++dstX) {
 				auto &col = columns[dstX];
-				int srcX = (dstX << 9) / w;
-				int srcY = (dstY << 9) / h;
+				int srcX = col.srcX;
+				int srcY = srcY0;
 				int tileId = col.faceIdx * 4;
 				tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
 				srcX &= 0xff;
