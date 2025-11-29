@@ -2,6 +2,7 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 #include "graphics/surface.h"
@@ -526,7 +527,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 	return vr;
 }
 
-void VR::render(Graphics::Screen *screen) {
+void VR::render(Graphics::Screen *screen, float ax, float ay) {
 	if (!_pic) {
 		screen->clear();
 		return;
@@ -537,6 +538,42 @@ void VR::render(Graphics::Screen *screen) {
 		Common::Rect src(_pic->getRect());
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
+	} else {
+		screen->clear();
+		auto w = g_system->getWidth();
+		auto h = g_system->getHeight();
+
+		static const float kFOV = (90 / 180.0f) * M_PI;
+		static const float kdA = kFOV / w;
+		struct Column {
+			float angle;
+			int faceIdx;
+			float tan;
+		};
+		Common::Array<Column> columns(w);
+		float a = ax - kFOV / 2;
+		for (int dstX = 0; dstX != w; ++dstX) {
+			int faceIdx = static_cast<int>((a + M_PI_4) / M_PI_2) % 4;
+			if (faceIdx < 0)
+				faceIdx += 4;
+			static int faceIdxH[] = {1, 4, 3, 5};
+			faceIdx = faceIdxH[faceIdx];
+			columns[dstX] = {a, faceIdx, tan(a)};
+			a += kdA;
+		}
+		for (int dstY = 0; dstY != h; ++dstY) {
+			for (int dstX = 0; dstX != w; ++dstX) {
+				auto &col = columns[dstX];
+				int srcX = (dstX << 9) / w;
+				int srcY = (dstY << 9) / h;
+				int tileId = col.faceIdx * 4;
+				tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
+				srcX &= 0xff;
+				srcY &= 0xff;
+				srcY += (tileId << 8);
+				screen->setPixel(dstX, dstY, _pic->getPixel(srcX, srcY));
+			}
+		}
 	}
 }
 

@@ -45,16 +45,14 @@ struct PhoenixVRGameDescription;
 
 class PhoenixVREngine : public Engine {
 private:
+	Graphics::Screen *_screen = nullptr;
+	Common::Point _screenCenter;
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::PixelFormat _pixelFormat;
 
-protected:
 	// Engine APIs
 	Common::Error run() override;
-
-public:
-	Graphics::Screen *_screen = nullptr;
 
 public:
 	PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -144,6 +142,8 @@ private:
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor;
 	VR _vr;
+	float _angleX = 0;
+	float _angleY = 0;
 };
 
 extern PhoenixVREngine *g_engine;

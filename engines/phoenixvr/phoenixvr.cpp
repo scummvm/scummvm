@@ -189,6 +189,7 @@ void PhoenixVREngine::executeTest(int idx) {
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
+	_screenCenter = _screen->getBounds().center();
 	{
 		Common::File vars;
 		if (vars.open(Common::Path("variable.txt"))) {
@@ -214,6 +215,10 @@ Common::Error PhoenixVREngine::run() {
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.ascii == ' ')
+					goToWarp("N1M01L03W02E0.vr");
+				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
 				break;
@@ -232,6 +237,16 @@ Common::Error PhoenixVREngine::run() {
 			default:
 				break;
 			}
+		}
+		if (_vr.isVR()) {
+			auto da = _mousePos - _screenCenter;
+			_system->warpMouse(_screenCenter.x, _screenCenter.y);
+			static const float kSpeedX = 0.01f;
+			static const float kSpeedY = 0.01f;
+			_angleX -= float(da.x) * kSpeedX;
+			_angleX = fmodf(_angleX, M_PI * 2);
+			_angleY += -float(da.y) * kSpeedY;
+			_angleY = fmodf(_angleY, M_PI * 2);
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());
@@ -278,7 +293,7 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		_vr.render(_screen);
+		_vr.render(_screen, _angleX, _angleY);
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
