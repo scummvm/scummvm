@@ -366,8 +366,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
-		_commandsMenu = menu->operator[](1);
-
+		_commandsMenuDefault = menu->operator[](1);
+		_commandsMenu = _commandsMenuDefault;
 		debugC(1, kDebugLoading, "MENU: Commands name: %s", toPrintable(_commandsMenuName).c_str());
 		debugC(1, kDebugLoading, "MENU: Commands menu: %s", toPrintable(_commandsMenu).c_str());
 
