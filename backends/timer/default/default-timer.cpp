@@ -24,19 +24,6 @@
 #include "common/util.h"
 #include "common/system.h"
 
-struct TimerSlot {
-	Common::TimerManager::TimerProc callback;
-	void *refCon;
-	Common::String id;
-	uint32 interval;	// in microseconds
-
-	uint32 nextFireTime;	// in milliseconds
-	uint32 nextFireTimeMicro;	// microseconds part of nextFire
-
-	TimerSlot *next;
-
-	TimerSlot() : callback(nullptr), refCon(nullptr), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(nullptr) {}
-};
 
 void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	// The head points to a fake anchor TimerSlot; this common
