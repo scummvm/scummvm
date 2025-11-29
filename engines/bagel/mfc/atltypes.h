@@ -287,6 +287,12 @@ public:
 	CPoint &BottomRight() {
 		return *((CPoint *)&right);
 	}
+	const CPoint &TopLeft() const {
+		return *((const CPoint *)this);
+	}
+	const CPoint &BottomRight() const {
+		return *((const CPoint *)&right);
+	}
 };
 
 // CSize
@@ -662,10 +668,10 @@ inline void CRect::MoveToXY(POINT pt) {
 
 inline bool CRect::IntersectRect(
     LPCRECT lpRect1, LPCRECT lpRect2) {
-	return (lpRect1->left < lpRect2->right) &&
-	       (lpRect2->left < lpRect1->right) &&
-	       (lpRect1->top < lpRect2->bottom) &&
-	       (lpRect2->top < lpRect1->bottom);
+	Common::Rect r = Common::Rect(*lpRect1).findIntersectingRect(*lpRect2);
+	SetRect(r.left, r.top, r.right, r.bottom);
+
+	return !r.isEmpty();
 }
 
 inline bool CRect::UnionRect(LPCRECT lpRect1, LPCRECT lpRect2) {
