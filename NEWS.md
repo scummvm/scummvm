@@ -71,6 +71,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Freescape:
    - Added roll rotation to Driller and Dark Side.
+   - Added full TinyGL support for all the games.
+   - Fixed several small details across all the games including missing
+     graphics and sounds.
 
  Gob:
    - Added Text-to-Speech support.
@@ -137,7 +140,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added several important missing graphics and gameplay sounds,
      the engine is now considered to be at feature parity with the original game.
    - Fixed inaccessible places, missing interactions or conversations.
-   - Added option to highlight decision areas for improved visibility. 
+   - Added option to highlight decision areas for improved visibility.
    - Added support for third party subtitles.
    - Added missing features and fixed crashes in the desktop screen.
    - Fixed various graphics and cursor glitches.
