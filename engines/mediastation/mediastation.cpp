@@ -168,8 +168,13 @@ Common::Error MediaStationEngine::run() {
 		_document->beginTitle();
 	}
 
+	runEventLoop();
+	return Common::kNoError;
+}
+
+void MediaStationEngine::runEventLoop() {
 	while (true) {
-		processEvents();
+		dispatchSystemEvents();
 		if (shouldQuit()) {
 			break;
 		}
@@ -184,8 +189,6 @@ Common::Error MediaStationEngine::run() {
 
 		g_system->delayMillis(10);
 	}
-
-	return Common::kNoError;
 }
 
 void MediaStationEngine::initDisplayManager() {
@@ -246,10 +249,10 @@ void MediaStationEngine::setupInitialStreamMap() {
 	_fileMap.setVal(fileInfo._id, fileInfo);
 }
 
-void MediaStationEngine::processEvents() {
+void MediaStationEngine::dispatchSystemEvents() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		debugC(9, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		debugC(9, kDebugEvents, "@@@@   Processing events");
+		debugC(9, kDebugEvents, "@@@@   Dispatching system events");
 		debugC(9, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 		switch (_event.type) {

@@ -85,7 +85,7 @@ public:
 	};
 
 	bool isFirstGenerationEngine();
-	void processEvents();
+	void dispatchSystemEvents();
 	void addDirtyRect(const Common::Rect &rect);
 	void draw(bool dirtyOnly = true);
 
@@ -171,6 +171,8 @@ private:
 	void initStageDirector();
 	void initStreamFeedManager();
 	void setupInitialStreamMap();
+
+	void runEventLoop();
 
 	virtual void readChunk(Chunk &chunk) override;
 	void readDocumentDef(Chunk &chunk);
