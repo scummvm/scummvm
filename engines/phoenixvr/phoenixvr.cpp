@@ -245,6 +245,8 @@ Common::Error PhoenixVREngine::run() {
 			_mousePos = _screenCenter;
 			static const float kSpeedX = 0.2f;
 			static const float kSpeedY = 0.2f;
+			if (frameDuration > 100)
+				frameDuration = 100;
 			const auto dt = float(frameDuration) / 1000.0f;
 			_angleX += float(da.x) * kSpeedX * dt;
 			_angleY += float(da.y) * kSpeedY * dt;
