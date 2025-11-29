@@ -101,7 +101,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 54532),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE | GF_C64_TAPE,
+		ADGF_TESTING | GF_C64_TAPE,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 55556),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE | GF_C64_DISC,
+		ADGF_TESTING | GF_C64_DISC,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSTABLE | GF_ATARI_BUDGET,
+		ADGF_TESTING | GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -367,7 +367,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
 	},
 	// Microstatus release decrypted
@@ -381,7 +381,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Cinemaware release
@@ -395,7 +395,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Microstatus release
@@ -423,7 +423,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Stampede Amiga, Issue 1, July 1990
@@ -533,7 +533,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DARKSIDE.C64.DATA", "7d5fc9a962a146e303a0c71a2d5c651e", 48129),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE | GF_C64_TAPE,
+		ADGF_TESTING | GF_C64_TAPE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
@@ -542,7 +542,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DARKSIDE.C64.DATA", "1d8e42c71d6a9ae0e682396824dd12ba", 53780),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE | GF_C64_DISC,
+		ADGF_TESTING | GF_C64_DISC,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
@@ -554,7 +554,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE | GF_C64_DISC,
+		ADGF_TESTING | GF_C64_DISC,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 
@@ -801,7 +801,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("castlemaster.zx.data", "e2ed83c30cd0ed7119e349d0f677ae91", 36096),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING | GF_ZX_RETAIL,
+		GF_ZX_RETAIL,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX)
 	},
 	// Disc release
@@ -811,7 +811,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("castlemaster.zx.data", "98513a4438ba93971d793a0fbc875b70", 36309),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING | GF_ZX_DISC,
+		GF_ZX_DISC,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX)
 	},
 	// Spanish release was disc-only?
@@ -821,7 +821,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("castlemaster.zx.data", "3e6f6b283fa00a3073edce2392950601", 36309),
 		Common::ES_ESP,
 		Common::kPlatformZX,
-		ADGF_TESTING | GF_ZX_DISC,
+		GF_ZX_DISC,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX)
 	},
 	{
@@ -835,7 +835,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -908,7 +908,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -924,7 +924,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -940,7 +940,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED, // Compressed with lzexe
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -956,7 +956,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSUPPORTED, // Game data offset are different
 		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
