@@ -245,8 +245,6 @@ Common::Error PhoenixVREngine::run() {
 			_mousePos = _screenCenter;
 			static const float kSpeedX = 0.2f;
 			static const float kSpeedY = 0.2f;
-			if (frameDuration > 100)
-				frameDuration = 100;
 			const auto dt = float(frameDuration) / 1000.0f;
 			_angleX += float(da.x) * kSpeedX * dt;
 			_angleY += float(da.y) * kSpeedY * dt;
@@ -282,6 +280,10 @@ Common::Error PhoenixVREngine::run() {
 			Common::File vr;
 			if (vr.open(Common::Path(_warp->vrFile))) {
 				_vr = VR::loadStatic(_pixelFormat, vr);
+				if (_vr.isVR()) {
+					_mousePos = _screenCenter;
+					_system->warpMouse(_screenCenter.x, _screenCenter.y);
+				}
 			}
 
 			_regSet.reset(new RegionSet(_warp->testFile));

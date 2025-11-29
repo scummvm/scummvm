@@ -529,11 +529,72 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 
 namespace {
 
+struct Cube {
+	float x;
+	float y;
+	int faceIdx;
+};
+
+Cube toCube(float x, float y, float z) {
+	Cube cube;
+
+	float absX = fabs(x);
+	float absY = fabs(y);
+	float absZ = fabs(z);
+
+	bool isXPositive = x > 0;
+	bool isYPositive = y > 0;
+	bool isZPositive = z > 0;
+
+	float maxAxis, cy, cx;
+
+	if (isXPositive && absX >= absY && absX >= absZ) {
+		maxAxis = absX;
+		cx = y;
+		cy = z;
+		cube.faceIdx = 1;
+	}
+	if (!isXPositive && absX >= absY && absX >= absZ) {
+		maxAxis = absX;
+		cx = -y;
+		cy = z;
+		cube.faceIdx = 3;
+	}
+	if (isYPositive && absY >= absX && absY >= absZ) {
+		maxAxis = absY;
+		cx = -x;
+		cy = z;
+		cube.faceIdx = 4;
+	}
+	if (!isYPositive && absY >= absX && absY >= absZ) {
+		maxAxis = absY;
+		cx = x;
+		cy = z;
+		cube.faceIdx = 5;
+	}
+	if (isZPositive && absZ >= absX && absZ >= absY) {
+		maxAxis = absZ;
+		cx = -x;
+		cy = -y;
+		cube.faceIdx = 0;
+	}
+	if (!isZPositive && absZ >= absX && absZ >= absY) {
+		maxAxis = absZ;
+		cx = -x;
+		cy = y;
+		cube.faceIdx = 2;
+	}
+
+	// Convert range from −1 to 1 to 0 to 1
+	cube.y = 0.5f * (cy / maxAxis + 1.0f);
+	cube.x = 0.5f * (cx / maxAxis + 1.0f);
+	return cube;
+}
+
 struct Projection {
 	struct Point {
 		float angle;
-		int faceIdx;
-		int texPos;
+		float sine, cosine;
 	};
 	Common::Array<Point> points;
 
@@ -541,17 +602,7 @@ struct Projection {
 		const auto da = fov / float(num);
 		float a = start - fov / 2;
 		for (uint i = 0; i != num; ++i) {
-			auto aPi4 = a + float(M_PI_4);
-			float quadrantA = fmodf(aPi4, M_PI_2);
-			if (quadrantA < 0)
-				quadrantA += M_PI_2;
-			quadrantA -= M_PI_4;
-			int faceIdx = static_cast<int>(aPi4 / M_PI_2) % 4;
-			if (faceIdx < 0)
-				faceIdx += 4;
-			debug("%u/%u: qA %g", i, num, quadrantA);
-			auto texPos = static_cast<int>(tan(quadrantA) * 256) + 256;
-			points[i] = {quadrantA, faceIdx, texPos};
+			points[i] = {a, sin(a), cos(a)};
 			a += da;
 		}
 	}
@@ -576,25 +627,19 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 
 		static const float kFOV = (90 / 180.0f) * M_PI;
 		Projection projH(w, ax, kFOV);
-		Projection projV(h, ay, kFOV);
+		Projection projV(h, ay - M_PI_2, kFOV);
 		debug("angle %g %g", ax, ay);
 		for (int dstY = 0; dstY != h; ++dstY) {
 			auto &pv = projV.points[dstY];
-			if (dstY == 0)
-				debug("v faceidx %d", pv.faceIdx);
 			for (int dstX = 0; dstX != w; ++dstX) {
 				auto &ph = projH.points[dstX];
-				int srcX = ph.texPos;
-				int srcY = pv.texPos;
-				static int faceIdxHMap[] = {1, 4, 3, 5};
-				int faceIdx;
-				if (pv.faceIdx == 1)
-					faceIdx = 2;
-				else if (pv.faceIdx == 3)
-					faceIdx = 0;
-				else
-					faceIdx = faceIdxHMap[ph.faceIdx];
-				int tileId = faceIdx * 4;
+				float x = ph.cosine * pv.sine;
+				float y = ph.sine * pv.sine;
+				float z = pv.cosine;
+				auto cube = toCube(x, y, z);
+				int srcX = static_cast<int>(512 * cube.x);
+				int srcY = static_cast<int>(512 * cube.y);
+				int tileId = cube.faceIdx * 4;
 				tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
 				srcX &= 0xff;
 				srcY &= 0xff;
