@@ -133,7 +133,7 @@ struct PointBase {
  * Old GCC don't support constructor inheritance
  */
 #define BEGIN_POINT_TYPE(T, Point) \
-	struct Point : public PointBase<T, Point> {
+	struct Point : public Common::PointBase<T, Point> {
 #define END_POINT_TYPE(T, Point) \
 		constexpr Point() : PointBase() {} \
 		constexpr Point(T x1, T y1) : PointBase(x1, y1) {} \
@@ -511,7 +511,7 @@ struct RectBase {
  * Old GCC don't support constructor inheritance
  */
 #define BEGIN_RECT_TYPE(T, Rect, Point) \
-	struct Rect : public RectBase<T, Rect, Point> {
+	struct Rect : public Common::RectBase<T, Rect, Point> {
 
 #define END_RECT_TYPE(T, Rect, Point) \
 		constexpr Rect() : RectBase() {} \
