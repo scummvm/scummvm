@@ -1121,7 +1121,7 @@ Other functions:
  *      void
  *
  ****************************************************************/
-void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
+void CMainWindow::SwitchAreas(const CRect &Src, const CRect &Dst) {
 	POINT SrcCR, DstCR, SizeCR, Temp;
 	int c, r;
 
@@ -1135,7 +1135,8 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
 	DrawPart(Src.TopLeft(), Dst.TopLeft(), Src.Width(), Src.Height());
 
 	CRect Overlap;
-	if (Overlap.IntersectRect(Src, Dst) == 0) {          // They don't intersect
+	if (Overlap.IntersectRect(Src, Dst) == 0) {
+		// They don't intersect
 		DrawPart(Dst.TopLeft(), Src.TopLeft(), Src.Width(), Src.Height());
 
 		for (c = 0; c < SizeCR.x; c++) {                // Update the Grid data
@@ -1150,7 +1151,6 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
 		}
 
 	} else {                                            // Deal with intersection
-
 		POINT *Movers, *MGrids, *SGrids, *p, *g, *s, Part, NewPart;
 		Movers = (POINT *)malloc((SizeCR.x * SizeCR.y) * sizeof(POINT));
 		MGrids = (POINT *)malloc((SizeCR.x * SizeCR.y) * sizeof(POINT));
@@ -1246,7 +1246,7 @@ void CMainWindow::SwitchAreas(CRect Src, CRect Dst) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight) {
+void CMainWindow::DrawPart(const CPoint &Src, const CPoint &Dst, int nWidth, int nHeight) {
 
 	pScratch2DC->BitBlt(Dst.x, Dst.y, nWidth, nHeight, pScratch1DC, Src.x, Src.y, SRCCOPY);
 

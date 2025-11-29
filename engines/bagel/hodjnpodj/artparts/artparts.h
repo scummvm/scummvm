@@ -105,8 +105,8 @@ class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
 	bool LoadArtWork();
-	void DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight);
-	void SwitchAreas(CRect Src, CRect Dst);
+	void DrawPart(const CPoint &Src, const CPoint &Dst, int nWidth, int nHeight);
+	void SwitchAreas(const CRect &Src, const CRect &Dst);
 	void InitValues();
 	void NewGame();
 	void CheckForWin();
