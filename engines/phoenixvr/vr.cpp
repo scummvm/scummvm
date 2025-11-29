@@ -527,6 +527,37 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 	return vr;
 }
 
+namespace {
+
+struct Projection {
+	struct Point {
+		float angle;
+		int faceIdx;
+		int texPos;
+	};
+	Common::Array<Point> points;
+
+	Projection(uint num, float start, float fov) : points(num) {
+		const auto da = fov / float(num);
+		float a = start - fov / 2;
+		for (uint i = 0; i != num; ++i) {
+			auto aPi4 = a + float(M_PI_4);
+			float quadrantA = fmodf(aPi4, M_PI_2);
+			if (quadrantA < 0)
+				quadrantA += M_PI_2;
+			quadrantA -= M_PI_4;
+			int faceIdx = static_cast<int>(aPi4 / M_PI_2) % 4;
+			if (faceIdx < 0)
+				faceIdx += 4;
+			debug("%u/%u: qA %g", i, num, quadrantA);
+			auto texPos = static_cast<int>(tan(quadrantA) * 256) + 256;
+			points[i] = {quadrantA, faceIdx, texPos};
+			a += da;
+		}
+	}
+};
+} // namespace
+
 void VR::render(Graphics::Screen *screen, float ax, float ay) {
 	if (!_pic) {
 		screen->clear();
@@ -544,36 +575,26 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 		auto h = g_system->getHeight();
 
 		static const float kFOV = (90 / 180.0f) * M_PI;
-		static const float kdA = kFOV / w;
-		struct Column {
-			float angle;
-			int faceIdx;
-			int srcX;
-		};
-		Common::Array<Column> columns(w);
-		float a = ax - kFOV / 2;
-		for (int dstX = 0; dstX != w; ++dstX) {
-			auto aPi4 = a + float(M_PI_4);
-			float quadrantA = fmodf(aPi4, M_PI_2);
-			if (quadrantA < 0)
-				quadrantA += M_PI_2;
-			quadrantA -= M_PI_4;
-			int faceIdx = static_cast<int>(aPi4 / M_PI_2) % 4;
-			if (faceIdx < 0)
-				faceIdx += 4;
-			static int faceIdxH[] = {1, 4, 3, 5};
-			faceIdx = faceIdxH[faceIdx];
-			auto srcX = static_cast<int>(tan(quadrantA) * 256) + 256;
-			columns[dstX] = {quadrantA, faceIdx, srcX};
-			a += kdA;
-		}
+		Projection projH(w, ax, kFOV);
+		Projection projV(h, ay, kFOV);
+		debug("angle %g %g", ax, ay);
 		for (int dstY = 0; dstY != h; ++dstY) {
-			const int srcY0 = (dstY << 9) / h;
+			auto &pv = projV.points[dstY];
+			if (dstY == 0)
+				debug("v faceidx %d", pv.faceIdx);
 			for (int dstX = 0; dstX != w; ++dstX) {
-				auto &col = columns[dstX];
-				int srcX = col.srcX;
-				int srcY = srcY0;
-				int tileId = col.faceIdx * 4;
+				auto &ph = projH.points[dstX];
+				int srcX = ph.texPos;
+				int srcY = pv.texPos;
+				static int faceIdxHMap[] = {1, 4, 3, 5};
+				int faceIdx;
+				if (pv.faceIdx == 1)
+					faceIdx = 2;
+				else if (pv.faceIdx == 3)
+					faceIdx = 0;
+				else
+					faceIdx = faceIdxHMap[ph.faceIdx];
+				int tileId = faceIdx * 4;
 				tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
 				srcX &= 0xff;
 				srcY &= 0xff;
