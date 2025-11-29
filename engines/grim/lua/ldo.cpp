@@ -311,8 +311,8 @@ void lua_error(const char *s) {
 		longjmp(*((jmp_buf *)lua_state->errorJmp), 1);
 	} else {
 		fprintf(stderr, "lua: exit(1). Unable to recover\n");
-		exit(1);
 	}
+	exit(1); // exit in both cases, to help compilers with noreturn/longjmp
 }
 
 /*
