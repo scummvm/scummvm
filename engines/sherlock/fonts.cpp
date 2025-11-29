@@ -93,7 +93,7 @@ void Fonts::setFont(int fontNum) {
 		}
 	}
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		// use FONT[number].VGS, which is a regular sherlock graphic file
 		fontFilename = Common::Path(Common::String::format("FONT%d.VGS", fontNum + 1));
