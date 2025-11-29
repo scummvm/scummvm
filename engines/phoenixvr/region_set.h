@@ -23,7 +23,7 @@
 #define PHOENIXVR_REGIONS_H
 
 #include "common/array.h"
-#include "common/rect.h"
+#include "phoenixvr/rectf.h"
 
 namespace Common {
 class String;
@@ -32,7 +32,7 @@ class String;
 namespace PhoenixVR {
 struct Region {
 	float a, b, c, d;
-	Common::Rect toRect() const;
+	RectF toRect() const;
 };
 
 class RegionSet {

@@ -135,7 +135,7 @@ private:
 	Common::ScopedPtr<RegionSet> _regSet;
 
 	struct Cursor {
-		Common::Rect rect;
+		RectF rect;
 		Graphics::Surface *surface = nullptr;
 		void free();
 	};

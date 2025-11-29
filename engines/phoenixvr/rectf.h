@@ -19,35 +19,22 @@
  *
  */
 
-#include "phoenixvr/region_set.h"
-#include "common/debug.h"
-#include "common/file.h"
+#ifndef PHOENIXVR_RECTF_H
+#define PHOENIXVR_RECTF_H
+
+#include "common/rect.h"
 
 namespace PhoenixVR {
-RegionSet::RegionSet(const Common::String &fname) {
-	Common::File file;
-	if (!file.open(Common::Path(fname))) {
-		debug("can't find region %s", fname.c_str());
-		return;
-	}
-	auto n = file.readUint32LE();
-	while (n--) {
-		auto a = file.readFloatLE();
-		auto b = file.readFloatLE();
-		auto c = file.readFloatLE();
-		auto d = file.readFloatLE();
-		debug("region %g %g %g %g", a, b, c, d);
-		_regions.push_back(Region{a, b, c, d});
-	}
-}
 
-RectF Region::toRect() const {
-	RectF rect;
-	rect.left = MIN(a, b);
-	rect.right = MAX(a, b);
-	rect.top = MIN(c, d);
-	rect.bottom = MAX(c, d);
-	return rect;
+BEGIN_POINT_TYPE(float, PointF)
+END_POINT_TYPE(float, PointF)
+
+BEGIN_RECT_TYPE(float, RectF, PointF);
+Common::String toString() const {
+	return Common::String::format("%g, %g, %g, %g", left, top, right, bottom);
 }
+END_RECT_TYPE(float, RectF, PointF);
 
 } // namespace PhoenixVR
+
+#endif

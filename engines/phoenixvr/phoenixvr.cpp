@@ -229,7 +229,7 @@ Common::Error PhoenixVREngine::run() {
 					break;
 				for (uint i = 0; i != _regSet->size(); ++i) {
 					auto rect = _regSet->getRegion(i).toRect();
-					if (rect.contains(event.mouse)) {
+					if (rect.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 					}
@@ -302,7 +302,7 @@ Common::Error PhoenixVREngine::run() {
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
-			if (c.rect.contains(_mousePos)) {
+			if (c.rect.contains(_mousePos.x, _mousePos.y)) {
 				cursor = c.surface;
 				if (cursor)
 					break;
