@@ -1279,72 +1279,13 @@ BEGIN_MESSAGE_MAP(CMainWindow, CFrameWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CTheApp
-
-// InitInstance:
-// When any CTheApp object is created, this member function is automatically
-// called.  Any data may be set up at this point.
-//
-// Also, the main window of the application should be created and shown here.
-// Return true if the initialization is successful.
-//
-/*
-bool CTheApp::InitInstance()
-{
-CMainWindow *pMyMain;
-
-TRACE( "Boffo Games\n" );
-
-SetDialogBkColor();         // hook gray dialogs (was default in MFC V1)
-
-m_pMainWnd = pMyMain = new CMainWindow();
-m_pMainWnd->ShowWindow( m_nCmdShow );
-
-m_pMainWnd->UpdateWindow();
-
-return true;
-}
-
-bool CTheApp::ExitInstance()
-{
-
-CSprite::FlushSpriteChain();
-
-if (pShotGlass != nullptr)
-    delete pShotGlass;
-if (pTableSlot != nullptr)
-    delete pTableSlot;
-if (pInvalidSlot != nullptr)
-    delete pInvalidSlot;
-if (pCursorSprite != nullptr)
-    delete pCursorSprite;
-
-if (pScrollButton != nullptr)
-    delete pScrollButton;
-
-if (pGamePalette != nullptr ) {
-    pGamePalette->DeleteObject ;
-    delete pGamePalette;
-    }
-
-// don't forget to set the Cursor back to normal!
-
-#ifndef SHOW_CURSOR
-::ShowCursor(true);
-#endif
-
-return(true);
-}
-*/
-
 void CMainWindow::OnClose() {
 	CDC     *pDC;
 	CBrush  myBrush;
 	CRect   myRect;
 
-//	CTheApp::ExitInstance();
+	// Remove the linked sprites
+	CSprite::FlushSpriteChain();
 
 	pDC = GetDC();
 	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
