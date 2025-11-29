@@ -245,9 +245,16 @@ Common::Error PhoenixVREngine::run() {
 			_mousePos = _screenCenter;
 			static const float kSpeedX = 0.2f;
 			static const float kSpeedY = 0.2f;
+			static const float PIx2 = M_PI * 2;
 			const auto dt = float(frameDuration) / 1000.0f;
 			_angleX += float(da.x) * kSpeedX * dt;
+			_angleX = fmodf(_angleX, PIx2);
+			if (_angleX < 0)
+				_angleX += PIx2;
 			_angleY += float(da.y) * kSpeedY * dt;
+			_angleY = fmodf(_angleY, M_PI * 2);
+			if (_angleY < 0)
+				_angleY += PIx2;
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());
