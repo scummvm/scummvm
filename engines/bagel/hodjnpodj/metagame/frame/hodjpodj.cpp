@@ -876,6 +876,7 @@ void CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 	if ((nWhichDLL > MG_GAME_COUNT) || (nWhichDLL < 0)) {
 
 		if (bReturnToZoom) {
+			CBofSound::stopSounds();
 			StartBackgroundMidi();
 			LoadZoomDLL();
 		}
