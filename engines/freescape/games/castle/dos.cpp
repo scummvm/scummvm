@@ -463,7 +463,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 		surface->copyRectToSurfaceWithKey((const Graphics::Surface)*_keysBorderFrames[k], 76 - k * 3, 179, Common::Rect(0, 0, 6, 14), black);
 	}
 
-	drawEnergyMeter(surface, Common::Point(39, 157));
+	drawEnergyMeter(surface, Common::Point(38, 158));
 	int flagFrameIndex = (_ticks / 10) % 4;
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 285, 5, Common::Rect(0, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
 
