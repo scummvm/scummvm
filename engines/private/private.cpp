@@ -585,12 +585,11 @@ void PrivateEngine::stopPoliceBust() {
 
 void PrivateEngine::wallSafeAlarm() {
 	// This logic was extracted from the executable.
-	// It looks like the developers' intended to randomly reduce
-	// the number of clicks until the police arrive.
-	// But instead of using their low random number, they generated
-	// a new random number, so the safe alarm may increase the
-	// number of clicks until the police arrive.
+	// It skips the siren and randomly alters the number of clicks
+	// until the police arrive. This may increase or decrease the
+	// number of clicks, but there will always be at least 1 left.
 
+	_policeSirenPlayed = true;
 	int r1 = _rnd->getRandomNumber(3);
 	int r2 = _rnd->getRandomNumber(3);
 	if (r1 + r2 + 1 <= _numberOfClicks) {
