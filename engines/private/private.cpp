@@ -752,10 +752,6 @@ bool PrivateEngine::inMask(Graphics::Surface *surf, Common::Point mousePos) {
 	return (surf->getPixel(mousePos.x, mousePos.y) != _transparentColor);
 }
 
-bool PrivateEngine::inBox(const Common::Rect &box, Common::Point mousePos) {
-	return box.contains(mousePos);
-}
-
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
 	bool inside = false;
 	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
@@ -994,7 +990,7 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 	for (auto &it : maps.locationList) {
 		const Private::Symbol *sym = maps.locations.getVal(it);
 		if (sym->u.val) {
-			if (inBox(_locationMasks[i].box, mousePos)) {
+			if (_locationMasks[i].box.contains(mousePos)) {
 				bool diaryPageSet = false;
 				for (uint j = 0; j < _diaryPages.size(); j++) {
 					if (_diaryPages[j].locationID == totalLocations + 1) {
