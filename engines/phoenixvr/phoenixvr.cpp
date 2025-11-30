@@ -309,7 +309,16 @@ Common::Error PhoenixVREngine::run() {
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
-			if (c.rect.contains(_mousePos.x, _mousePos.y)) {
+			float x, y;
+			if (_vr.isVR()) {
+				x = _angleX / M_PI_4;
+				y = (2 * M_PI - _angleY) / M_PI_4;
+				debug("vr %g %g", x, y);
+			} else {
+				x = _mousePos.x;
+				y = _mousePos.y;
+			}
+			if (c.rect.contains(x, y)) {
 				cursor = c.surface;
 				if (cursor)
 					break;
