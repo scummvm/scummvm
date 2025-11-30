@@ -252,7 +252,7 @@ Common::Error PhoenixVREngine::run() {
 				debug("click %s", _mousePos.toString().c_str());
 				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
 					auto &rect = _cursors[i].rect;
-					if (rect.contains(event.mouse.x, event.mouse.y)) {
+					if (_vr.isVR() ? rect.containsVR(_angleX.angle(), _angleY.angle()) : rect.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 					}
@@ -329,7 +329,7 @@ Common::Error PhoenixVREngine::run() {
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
-			if (_vr.isVR() ? c.rect.containsVR(_angleX.angle(), _angleX.angle()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
+			if (_vr.isVR() ? c.rect.containsVR(_angleX.angle(), _angleY.angle()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
 				cursor = c.surface;
 				if (cursor)
 					break;
