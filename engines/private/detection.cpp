@@ -27,7 +27,7 @@
 #include "private/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
-	{Private::kPrivateDebugFunction, "functions", "Function execution debug channel"},
+	{Private::kPrivateDebugFunction, "function", "Function execution debug channel"},
 	{Private::kPrivateDebugCode, "code", "Code execution debug channel"},
 	{Private::kPrivateDebugScript, "script", "Script execution debug channel"},
 	DEBUG_CHANNEL_END
