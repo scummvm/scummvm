@@ -284,7 +284,6 @@ public:
 	void drawMask(Graphics::Surface *);
 	void fillRect(uint32, Common::Rect);
 	bool inMask(Graphics::Surface *, Common::Point);
-	bool inBox(const Common::Rect &box, Common::Point mousePos);
 	uint32 _transparentColor;
 	Common::Rect _screenRect;
 	Common::String _framePath;
