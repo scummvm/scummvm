@@ -40,6 +40,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  AGI:
    - Unterstützung für Text-to-speech hinzugefügt.
+   - Unterstützung für die französische Übersetzung von SQ2 hinzugefügt.
+   - Unterstützung für die hebräischen Übersetzungen von KQ1, KQ2 und KQ3 hinzugefügt.
    - Ton-Wiedergabeprobleme in Mickey's Space Adventure auf PS3, Wii und weiteren
      Big-Endian-Plattformen korrigiert.
 
@@ -70,6 +72,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Freescape:
    - Unterstützung für Rotation/Rollen in Driller und Dark Side hinzugefügt.
+   - Vollständige Unterstützung für TinyGL in allen Spielen hinzugefügt.
+   - Mehrere kleine Detail-Verbesserungen in allen Spielen vorgenommen, einschließlich
+     fehlender Grafiken und Sounds.
 
  Gob:
    - Unterstützung für Text-to-speech hinzugefügt.
@@ -133,16 +138,27 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Tastenkürzel hinzugefügt.
 
  Private:
+   - Einige wichtige fehlende Grafiken und Sounds hinzugefügt.
+     Der Funktionsumfang der Engine entspricht nun dem Original-Spiel.
+   - Einige nicht zugängliche Orte sowie fehlende Interaktionen oder Unterhaltungen wurden hinzugefügt.
+   - Zur Verbesserung der Benutzerfreundlichkeit können entscheidende Bereiche hervorgehoben werden.
+   - Unterstützung für von Dritten erstellte Untertitel hinzugefügt.
+   - Einige fehlende Funktionen zum Desktop-Bildschirm hinzugefügt; Fehlerkorrekturen.
+   - Einige kleinere Fehler in Grafiken und der Cursor-Darstellung korrigiert.
    - Unterstützung für Tastenkürzel hinzugefügt.
 
  Queen:
    - Unterstützung für Tastenkürzel hinzugefügt.
 
  SCI:
-   - Farbpalette in SLATER Mac korrigiert.
-   - Fehler behoben, der LSL6 einfrieren lässt, wenn das Control-Panel genutzt wird.
-   - Fehlerkorrektur in Ben Frankin's workshop.
-   - Aktivierung zusätzlicher Nachrichten in LSL6, wenn Larry angeklickt wird.
+   - Fehler korrigiert, der zum Verlust von Spielständen in PHANT1 geführt hat (Fehler in ScummVM 2.9.0)
+   - Absturz in der deutschen Version von QFG4 v1.1 hinzugefügt, der auftritt, wenn die Höhle am Ende des Spiels betreten wird.
+   - Fehler in der japanischen PC-98-Version von PQ2 korrigiert, der zu fehlender Text-Darstellung in einigen Bereichen geführt hat.
+   - Absturz in der Amiga-Version von KQ1 behoben, der auftritt, wenn der Name des Gnoms falsch geraten wird.
+   - Absturz in der Amiga-Version von LONGBOW behoben, der auftritt, wenn die Abtei betreten wird.
+   - Fehler in der Amiga-Version von SQ4 korrigiert, der dazu führt, dass es drei Minuten dauert, bis der Titel-Bildschirm angezeigt wird.
+   - Skript-Fehler in ECO1, LSL6 und PEPPER korrigiert.
+   - Unterstützung für die Macintosh-Version von SLATER hinzugefügt.
    - Die virtuelle Tastatur wird jetzt korrekt ausgelöst, wenn eine Text-Eingabe erwartet wird.
 
  SCUMM:
@@ -209,6 +225,16 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Wintermute:
    - Der 3D-Renderer wird jetzt auch standardmäßig für 2D-Spiele genutzt.
    - Unterstützung für Text-to-speech hinzugefügt.
+
+ Atari-Portierung:
+   - Pfad-Angaben unter FreeMiNT und TOS in scummvm.cfg vereinheitlicht
+     (am Besten löschst Du die alte Konfigurationsdatei).
+   - .dat-Dateinamen, die länger als 8+3 sind, werden jetzt korrekt übersetzt.
+   - Langsame Darstellung in Eco Quests Intro korrigiert.
+   - Langsame Cursor-Darstellung in Phantasmagoria, KQ7 und anderen SCI32-Spielen korrigiert.
+   - Stack-Größe auf 256k angehoben, um einen Stack-Overflow in einigen Engines (wie Supernova)
+     zu vermeiden.
+   - Spiele können jetzt wieder korrekt über die Kommandozeile gestartet werden.
 
 #### 2.9.1 "Slappin da BASS" (25.05.2025)
 
