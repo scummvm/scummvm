@@ -440,9 +440,13 @@ public:
 	// Random values
 	bool getRandomBool(uint);
 
-	// Timers
-	bool installTimer(uint32, Common::String *);
-	void removeTimer();
+	// Timer
+	Common::String _timerSetting;
+	uint32 _timerStartTime;
+	uint32 _timerDelay;
+	void setTimer(uint32 duration, const Common::String &setting);
+	void clearTimer();
+	void checkTimer();
 
 	// VM objects
 	RectList _rects; // created by fCRect
