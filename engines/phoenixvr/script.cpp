@@ -139,6 +139,10 @@ public:
 		return list;
 	}
 
+	static float toAngle(int a) {
+		return (float(a) / 8192.0f) * float(M_PI * 2);
+	}
+
 	Script::CommandPtr parseCommand() {
 		using CommandPtr = Script::CommandPtr;
 		if (keyword("setcursordefault")) {
@@ -165,16 +169,16 @@ public:
 			auto i0 = nextInt();
 			if (i0 > 4095)
 				i0 -= 8192;
-			auto a0 = i0 / 1024.0f;
+			auto a0 = toAngle(i0);
 			expect(',');
-			auto a1 = nextInt() / 1024.0f;
+			auto a1 = toAngle(nextInt());
 			return CommandPtr(new SetAngle(a0, a1));
 		} else if (maybe("anglexmax=")) {
-			return CommandPtr(new AngleXMax(nextInt() / 1024.0f));
+			return CommandPtr(new AngleXMax(toAngle(nextInt())));
 		} else if (maybe("angleymax=")) {
-			auto y0 = nextInt() / 1024.0f;
+			auto y0 = toAngle(nextInt());
 			expect(',');
-			auto y1 = nextInt() / 1024.0f;
+			auto y1 = toAngle(nextInt());
 			return CommandPtr(new AngleYMax(y0, y1));
 		} else if (keyword("gotowarp")) {
 			return CommandPtr(new GoToWarp(nextWord()));
@@ -186,7 +190,7 @@ public:
 			auto arg1 = nextInt();
 			expect(',');
 			auto arg2 = nextInt();
-			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, arg1 / 1024.0f, arg2));
+			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
 		} else if (keyword("playsound")) {
 			auto sound = nextWord();
 			expect(',');
