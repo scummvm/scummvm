@@ -20,18 +20,18 @@
  */
 
 #include "phoenixvr/phoenixvr.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
-#include "graphics/paletteman.h"
 #include "image/pcx.h"
 #include "phoenixvr/console.h"
-#include "phoenixvr/detection.h"
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
@@ -44,7 +44,8 @@ PhoenixVREngine *g_engine;
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
-																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()) {
+																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
+																					 _mixer(syst->getMixer()) {
 	g_engine = this;
 	auto path = Common::FSNode(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(path, "NecroES/Data", 1, 1, true);
@@ -140,6 +141,30 @@ void PhoenixVREngine::setVariable(const Common::String &name, int value) {
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getVal(name);
+}
+
+void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int loops) {
+	debug("play sound %s %d %d", sound.c_str(), volume, loops);
+	Audio::SoundHandle h;
+	Common::ScopedPtr<Common::File> f(new Common::File());
+	if (!f->open(Common::Path(sound))) {
+		warning("sound %s couldn't be found", sound.c_str());
+		return;
+	}
+
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &h, Audio::makeWAVStream(f.release(), DisposeAfterUse::YES), -1, volume);
+	if (loops < 0)
+		_mixer->loopChannel(h);
+	_sounds[sound] = h;
+}
+
+void PhoenixVREngine::stopSound(const Common::String &sound) {
+	debug("stop sound %s", sound.c_str());
+	auto it = _sounds.find(sound);
+	if (it != _sounds.end()) {
+		_mixer->stopHandle(it->_value);
+		_sounds.erase(it);
+	}
 }
 
 Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {

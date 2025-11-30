@@ -475,12 +475,12 @@ struct GoToWarp : public Script::Command {
 struct PlaySound : public Script::Command {
 	Common::String sound;
 	int volume;
-	int unk;
+	int loops;
 
-	PlaySound(Common::String s, int v, int u) : sound(Common::move(s)), volume(v), unk(u) {}
+	PlaySound(Common::String s, int v, int l) : sound(Common::move(s)), volume(v), loops(l) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("play sound %s %d %d", sound.c_str(), volume, unk);
+		g_engine->playSound(sound, volume, loops);
 	}
 };
 
@@ -490,7 +490,7 @@ struct StopSound : public Script::Command {
 	StopSound(Common::String s) : sound(Common::move(s)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("stop sound %s", sound.c_str());
+		g_engine->stopSound(sound);
 	}
 };
 

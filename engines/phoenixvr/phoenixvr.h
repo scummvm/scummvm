@@ -22,6 +22,7 @@
 #ifndef PHOENIXVR_H
 #define PHOENIXVR_H
 
+#include "audio/mixer.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
@@ -107,6 +108,9 @@ public:
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
 	void hideCursor(const Common::String &warp, int idx);
 
+	void playSound(const Common::String &sound, uint8 volume, int loops);
+	void stopSound(const Common::String &sound);
+
 	void declareVariable(const Common::String &name);
 	void setVariable(const Common::String &name, int value);
 	int getVariable(const Common::String &name) const;
@@ -129,6 +133,7 @@ private:
 	Common::String _nextScript;
 	Common::String _nextWarp;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
+	Common::HashMap<Common::String, Audio::SoundHandle, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
 
 	Script::ConstWarpPtr _warp;
@@ -144,6 +149,7 @@ private:
 	VR _vr;
 	float _angleX = 0;
 	float _angleY = 0;
+	Audio::Mixer *_mixer;
 };
 
 extern PhoenixVREngine *g_engine;
