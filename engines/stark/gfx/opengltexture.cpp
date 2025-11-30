@@ -56,16 +56,18 @@ void OpenGlTexture::bind() const {
 }
 
 void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
+	const Graphics::Surface *rgbaSurface = surface;
 	if (surface->format != Driver::getRGBAPixelFormat()) {
 		// Convert the surface to texture format
-		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
+		rgbaSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
+	}
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurface->getPixels());
+	// Stark textures (not bitmaps!) are always POT
+	glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, rgbaSurface->w, rgbaSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaSurface->getPixels());
 
-		convertedSurface->free();
-		delete convertedSurface;
-	} else {
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	if (rgbaSurface != surface) {
+		const_cast<Graphics::Surface *>(rgbaSurface)->free();
+		delete rgbaSurface;
 	}
 }
 
