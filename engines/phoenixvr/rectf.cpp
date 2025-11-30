@@ -19,23 +19,15 @@
  *
  */
 
-#ifndef PHOENIXVR_RECTF_H
-#define PHOENIXVR_RECTF_H
-
-#include "common/rect.h"
+#include "phoenixvr/rectf.h"
+#include "phoenixvr/angle.h"
 
 namespace PhoenixVR {
-
-BEGIN_POINT_TYPE(float, PointF)
-END_POINT_TYPE(float, PointF)
-
-BEGIN_RECT_TYPE(float, RectF, PointF);
-Common::String toString() const {
-	return Common::String::format("%g, %g, %g, %g", left, top, right, bottom);
+bool RectF::containsVR(float ax, float ay) const {
+	Angle x(ax);
+	x.add(+M_PI_4);
+	float y = ay;
+	return contains(x.angle(), y);
 }
-bool containsVR(float ax, float ay) const;
-END_RECT_TYPE(float, RectF, PointF);
 
 } // namespace PhoenixVR
-
-#endif

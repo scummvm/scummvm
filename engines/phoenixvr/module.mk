@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	phoenixvr.o \
 	console.o \
 	metaengine.o \
+	rectf.o \
 	region_set.o \
 	script.o \
 	vr.o
