@@ -27,7 +27,7 @@ namespace PhoenixVR {
 PointF RectF::transform(float ax, float ay) {
 	Angle x(ax);
 	x.add(+M_PI_4);
-	float y = ay;
+	float y = ay + float(M_PI_2);
 	return {x.angle(), y};
 }
 
