@@ -42,7 +42,7 @@ public:
 	VR &operator=(VR &&) = default;
 
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
-	void render(Graphics::Screen *screen, float ax, float ay);
+	void render(Graphics::Screen *screen, float ax, float ay, float fov);
 	bool isVR() const { return _vr; }
 };
 } // namespace PhoenixVR

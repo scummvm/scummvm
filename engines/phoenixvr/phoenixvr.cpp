@@ -45,6 +45,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
 																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
+																					 _fov(M_PI_2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
 	auto path = Common::FSNode(ConfMan.getPath("path"));
@@ -332,7 +333,7 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		_vr.render(_screen, _angleX.angle(), _angleY.angle());
+		_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {

@@ -427,7 +427,7 @@ struct Projection {
 };
 } // namespace
 
-void VR::render(Graphics::Screen *screen, float ax, float ay) {
+void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 	if (!_pic) {
 		screen->clear();
 		return;
@@ -443,9 +443,8 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 		auto w = g_system->getWidth();
 		auto h = g_system->getHeight();
 
-		static const float kFOV = (90 / 180.0f) * M_PI;
-		Projection projH(w, ax, kFOV);
-		Projection projV(h, ay - M_PI_2, kFOV);
+		Projection projH(w, ax, fov);
+		Projection projV(h, ay - M_PI_2, fov);
 		for (int dstY = 0; dstY != h; ++dstY) {
 			auto &pv = projV.points[dstY];
 			for (int dstX = 0; dstX != w; ++dstX) {

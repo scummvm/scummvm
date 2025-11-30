@@ -158,6 +158,7 @@ private:
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor[2];
 	VR _vr;
+	float _fov;
 	Angle _angleX;
 	Angle _angleY;
 	Audio::Mixer *_mixer;
