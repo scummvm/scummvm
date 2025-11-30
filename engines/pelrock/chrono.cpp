@@ -22,6 +22,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "chrono.h"
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
 
@@ -36,9 +37,9 @@ ChronoManager::~ChronoManager() {
 void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
-	if(_textTtl > 0 && g_engine->alfredState == ALFRED_TALKING && g_engine->alfredState != ALFRED_WALKING) {
+	if (_textTtl > 0 && g_engine->alfredState == ALFRED_TALKING && g_engine->alfredState != ALFRED_WALKING) {
 		_textTtl -= (currentTime - _lastTick);
-		if(_textTtl < 0)
+		if (_textTtl < 0)
 			_textTtl = 0;
 	}
 
@@ -71,10 +72,24 @@ void ChronoManager::delay(uint32 ms) {
 	Common::Event e;
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
-
 		}
 		g_engine->_screen->update();
 	}
 }
 
+void ChronoManager::waitForKey() {
+	bool waitForKey = false;
+	Common::Event e;
+	debug("Waiting for key!");
+	while (!waitForKey && !g_engine->shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (e.type == Common::EVENT_KEYDOWN) {
+				waitForKey = true;
+			}
+		}
+
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
+	}
+}
 } // End of namespace Pelrock

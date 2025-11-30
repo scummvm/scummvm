@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	fonts/small_font.o \
 	fonts/large_font.o \
 	util.o \
-	resources.o
+	resources.o\
+	video/video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

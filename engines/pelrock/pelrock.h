@@ -43,6 +43,7 @@
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/types.h"
+#include "pelrock/video/video.h"
 
 namespace Pelrock {
 
@@ -52,12 +53,10 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	ChronoManager *_chronoManager = nullptr;
 	RoomManager *_room = nullptr;
 	ResourceManager *_res = nullptr;
 
 	void init();
-	void playIntro();
 	void setScreen(int s, int dir);
 	void setScreenJava(int s, int dir);
 	void loadAnims();
@@ -147,8 +146,8 @@ private:
 	bool isNPCBTalking = false;
 
 	// JAVA
-	bool shouldPlayIntro = false;
-	GameState stateGame = GAME;
+	bool shouldPlayIntro = true;
+	GameState stateGame = INTRO;
 	bool gameInitialized = false;
 	bool screenReady = false;
 	// int prevDirX = 0;
@@ -166,6 +165,8 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	AlfredState alfredState = ALFRED_IDLE;
+	ChronoManager *_chronoManager = nullptr;
+	VideoManager *_videoManager = nullptr;
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~PelrockEngine() override;

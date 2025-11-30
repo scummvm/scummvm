@@ -60,6 +60,7 @@ PelrockEngine::~PelrockEngine() {
 	delete _largeFont;
 	delete _screen;
 	delete _chronoManager;
+	delete _videoManager;
 
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
@@ -80,6 +81,7 @@ Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
+	_videoManager = new VideoManager(_screen);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -98,33 +100,33 @@ Common::Error PelrockEngine::run() {
 		stateGame = GAME;
 	} else {
 		stateGame = INTRO;
-		playIntro();
+		_videoManager->playIntro();
 	}
 
 	while (!shouldQuit()) {
 		_chronoManager->updateChrono();
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN) {
-            switch (e.kbd.keycode) {
-                case Common::KEYCODE_w:
-                    alfredState = ALFRED_WALKING;
-                    break;
-                case Common::KEYCODE_t:
-                    alfredState = ALFRED_TALKING;
-                    break;
-                case Common::KEYCODE_s:
-                    alfredState = ALFRED_IDLE;
-                    break;
-                case Common::KEYCODE_c:
-                    alfredState = ALFRED_COMB;
-                    break;
-                case Common::KEYCODE_i:
-                    alfredState = ALFRED_INTERACTING;
-                    break;
-                default:
-                    break;
-            }
-        } else if (e.type == Common::EVENT_MOUSEMOVE) {
+				switch (e.kbd.keycode) {
+				case Common::KEYCODE_w:
+					alfredState = ALFRED_WALKING;
+					break;
+				case Common::KEYCODE_t:
+					alfredState = ALFRED_TALKING;
+					break;
+				case Common::KEYCODE_s:
+					alfredState = ALFRED_IDLE;
+					break;
+				case Common::KEYCODE_c:
+					alfredState = ALFRED_COMB;
+					break;
+				case Common::KEYCODE_i:
+					alfredState = ALFRED_INTERACTING;
+					break;
+				default:
+					break;
+				}
+			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				mouseX = e.mouse.x;
 				mouseY = e.mouse.y;
 				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
@@ -181,9 +183,6 @@ void PelrockEngine::init() {
 		// setScreen(13, 1); // restaurants kitchen
 		setScreen(2, 2); // hooker
 	}
-}
-
-void PelrockEngine::playIntro() {
 }
 
 void PelrockEngine::loadAnims() {
@@ -291,87 +290,87 @@ void PelrockEngine::frames() {
 		}
 
 		switch (alfredState) {
-            case ALFRED_WALKING: {
-                MovementStep step = _currentContext.movement_buffer[_current_step];
+		case ALFRED_WALKING: {
+			MovementStep step = _currentContext.movement_buffer[_current_step];
 
-                if (step.distance_x > 0) {
-                    if (step.flags & MOVE_RIGHT) {
-                        dirAlfred = 0;
-                        xAlfred += MIN((uint16_t)6, step.distance_x);
-                    }
-                    if (step.flags & MOVE_LEFT) {
-                        dirAlfred = 1;
-                        xAlfred -= MIN((uint16_t)6, step.distance_x);
-                    }
-                }
-                if (step.distance_y > 0) {
-                    if (step.flags & MOVE_DOWN) {
-                        dirAlfred = 2;
-                        yAlfred += MIN((uint16_t)6, step.distance_y);
-                    }
-                    if (step.flags & MOVE_UP) {
-                        dirAlfred = 3;
-                        yAlfred -= MIN((uint16_t)6, step.distance_y);
-                    }
-                }
+			if (step.distance_x > 0) {
+				if (step.flags & MOVE_RIGHT) {
+					dirAlfred = 0;
+					xAlfred += MIN((uint16_t)6, step.distance_x);
+				}
+				if (step.flags & MOVE_LEFT) {
+					dirAlfred = 1;
+					xAlfred -= MIN((uint16_t)6, step.distance_x);
+				}
+			}
+			if (step.distance_y > 0) {
+				if (step.flags & MOVE_DOWN) {
+					dirAlfred = 2;
+					yAlfred += MIN((uint16_t)6, step.distance_y);
+				}
+				if (step.flags & MOVE_UP) {
+					dirAlfred = 3;
+					yAlfred -= MIN((uint16_t)6, step.distance_y);
+				}
+			}
 
-                if (step.distance_x > 0)
-                    step.distance_x -= MIN((uint16_t)6, step.distance_x);
+			if (step.distance_x > 0)
+				step.distance_x -= MIN((uint16_t)6, step.distance_x);
 
-                if (step.distance_y > 0)
-                    step.distance_y -= MIN((uint16_t)6, step.distance_y);
+			if (step.distance_y > 0)
+				step.distance_y -= MIN((uint16_t)6, step.distance_y);
 
-                if (step.distance_x <= 0 && step.distance_y <= 0) {
-                    _current_step++;
-                    if (_current_step >= _currentContext.movement_count) {
-                        _current_step = 0;
-                        alfredState = ALFRED_IDLE;
-                    }
-                } else {
-                    _currentContext.movement_buffer[_current_step] = step;
-                }
+			if (step.distance_x <= 0 && step.distance_y <= 0) {
+				_current_step++;
+				if (_current_step >= _currentContext.movement_count) {
+					_current_step = 0;
+					alfredState = ALFRED_IDLE;
+				}
+			} else {
+				_currentContext.movement_buffer[_current_step] = step;
+			}
 
-                Exit *exit = isExitUnder(xAlfred, yAlfred);
+			Exit *exit = isExitUnder(xAlfred, yAlfred);
 
-                if (exit != nullptr) {
-                    xAlfred = exit->targetX;
-                    yAlfred = exit->targetY;
-                    setScreen(exit->targetRoom, exit->dir);
-                }
+			if (exit != nullptr) {
+				xAlfred = exit->targetX;
+				yAlfred = exit->targetY;
+				setScreen(exit->targetRoom, exit->dir);
+			}
 
-                if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
-                    curAlfredFrame = 0;
-                }
+			if (curAlfredFrame >= walkingAnimLengths[dirAlfred]) {
+				curAlfredFrame = 0;
+			}
 
-                drawAlfred(_res->alfredWalkFrames[dirAlfred][curAlfredFrame]);
-                curAlfredFrame++;
-                break;
-            }
-            case ALFRED_TALKING:
-                if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
-                    curAlfredFrame = 0;
-                }
-                drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
-                curAlfredFrame++;
-                break;
-            case ALFRED_COMB:
-                if (curAlfredFrame >= 11) {
-                    curAlfredFrame = 0;
-                }
-                drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
-                curAlfredFrame++;
-                break;
-            case ALFRED_INTERACTING:
-                if (curAlfredFrame >= interactingAnimLength) {
-                    curAlfredFrame = 0;
-                }
-                drawAlfred(_res->alfredInteractFrames[dirAlfred][curAlfredFrame]);
-                curAlfredFrame++;
-                break;
-            default:
-                drawAlfred(_res->alfredIdle[dirAlfred]);
-                break;
-        }
+			drawAlfred(_res->alfredWalkFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
+			break;
+		}
+		case ALFRED_TALKING:
+			if (curAlfredFrame >= talkingAnimLengths[dirAlfred] - 1) {
+				curAlfredFrame = 0;
+			}
+			drawAlfred(_res->alfredTalkFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
+			break;
+		case ALFRED_COMB:
+			if (curAlfredFrame >= 11) {
+				curAlfredFrame = 0;
+			}
+			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][curAlfredFrame], xAlfred, yAlfred - kAlfredFrameHeight, 51, 102, 255);
+			curAlfredFrame++;
+			break;
+		case ALFRED_INTERACTING:
+			if (curAlfredFrame >= interactingAnimLength) {
+				curAlfredFrame = 0;
+			}
+			drawAlfred(_res->alfredInteractFrames[dirAlfred][curAlfredFrame]);
+			curAlfredFrame++;
+			break;
+		default:
+			drawAlfred(_res->alfredIdle[dirAlfred]);
+			break;
+		}
 		if (_displayPopup) {
 
 			// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
@@ -993,6 +992,8 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		if (exit != nullptr) {
 			xAlfred = exit->targetX;
 			yAlfred = exit->targetY;
+
+			debug("Placing character at %d, %d", exit->targetX, exit->targetY);
 			setScreen(exit->targetRoom, exit->dir);
 		} else {
 			walkTo(walkTarget.x, walkTarget.y);

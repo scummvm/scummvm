@@ -18,34 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_CHRONO_H
-#define PELROCK_CHRONO_H
 
-#include "common/scummsys.h"
+#ifndef PELROCK_VIDEO_H
+#define PELROCK_VIDEO_H
 
 namespace Pelrock {
 
-// const int kTickMs = 20;
-const int kTickMs = 55;
-const int kHalfTickMultiplier = 2;
+static const uint32 offsets[] = {
+	0x64000,
+	0x69000,
+	0x6E000,
+	0x73000,
+	0x78000,
+	0x7D000,
+	0x82000,
+	0x87000};
 
-class ChronoManager {
-private:
-	uint32 _lastTick = 0;
-	byte _tickCount = 0;
-	byte _speedMultiplier = 1;
-
+class VideoManager {
 public:
-	ChronoManager();
-	~ChronoManager();
-	void updateChrono();
-	void changeSpeed();
-	void delay(uint32 ms);
-	void waitForKey();
+	VideoManager(Graphics::Screen *screen);
+	~VideoManager();
+	void playIntro();
 
-	bool _gameTick = false;
-	bool _gameTickHalfSpeed = false;
-	long _textTtl = 0;
+private:
+	Graphics::Screen *_screen;
+	void loadPalette(Common::SeekableReadStream &stream);
+	byte *decodeCopyBlock(byte *data, size_t size, uint32 offset);
 };
 
 } // End of namespace Pelrock
