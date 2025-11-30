@@ -48,14 +48,33 @@ public:
 			return false;
 	}
 
-	bool maybe(const Common::String &prefix) {
+	bool peek(const Common::String &prefix) {
 		skip();
-		bool yes = scumm_strnicmp(_line.c_str() + _pos, prefix.c_str(), prefix.size()) == 0;
-		if (yes) {
+		return scumm_strnicmp(_line.c_str() + _pos, prefix.c_str(), prefix.size()) == 0;
+	}
+
+	bool maybe(const Common::String &prefix) {
+		if (peek(prefix)) {
 			_pos += prefix.size();
 			skip();
+			return true;
 		}
-		return yes;
+		return false;
+	}
+
+	bool keyword(const Common::String &prefix) {
+		skip();
+		bool yes = peek(prefix);
+		// keywords ends either on non-alpha or eof
+		if (yes) {
+			auto end = _pos + prefix.size();
+			if (end >= _line.size() || !Common::isAlpha(_line[end])) {
+				_pos += prefix.size();
+				skip();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	Common::String nextArg() {
@@ -122,16 +141,16 @@ public:
 
 	Script::CommandPtr parseCommand() {
 		using CommandPtr = Script::CommandPtr;
-		if (maybe("setcursordefault")) {
+		if (keyword("setcursordefault")) {
 			auto idx = nextInt();
 			expect(',');
 			return CommandPtr(new SetCursorDefault(idx, nextWord()));
-		} else if (maybe("lockkey")) {
+		} else if (keyword("lockkey")) {
 			auto idx = nextInt();
 			expect(',');
 			auto fname = nextWord();
 			return CommandPtr(new LockKey(idx, Common::move(fname)));
-		} else if (maybe("resetlockkey")) {
+		} else if (keyword("resetlockkey")) {
 			return CommandPtr(new ResetLockKey());
 		} else if (maybe("fade=")) {
 			auto arg0 = nextInt();
@@ -142,6 +161,14 @@ public:
 			return CommandPtr(new Fade(arg0, arg1, arg2));
 		} else if (maybe("setzoom=")) {
 			return CommandPtr(new Zoom(nextInt()));
+		} else if (maybe("setangle=")) {
+			auto i0 = nextInt();
+			if (i0 > 4095)
+				i0 -= 8192;
+			auto a0 = i0 / 1024.0f;
+			expect(',');
+			auto a1 = nextInt() / 1024.0f;
+			return CommandPtr(new SetAngle(a0, a1));
 		} else if (maybe("anglexmax=")) {
 			return CommandPtr(new AngleXMax(nextInt() / 1024.0f));
 		} else if (maybe("angleymax=")) {
@@ -149,9 +176,9 @@ public:
 			expect(',');
 			auto y1 = nextInt() / 1024.0f;
 			return CommandPtr(new AngleYMax(y0, y1));
-		} else if (maybe("gotowarp")) {
+		} else if (keyword("gotowarp")) {
 			return CommandPtr(new GoToWarp(nextWord()));
-		} else if (maybe("playsound3d")) {
+		} else if (keyword("playsound3d")) {
 			auto sound = nextWord();
 			expect(',');
 			auto arg0 = nextInt();
@@ -160,37 +187,37 @@ public:
 			expect(',');
 			auto arg2 = nextInt();
 			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, arg1 / 1024.0f, arg2));
-		} else if (maybe("playsound")) {
+		} else if (keyword("playsound")) {
 			auto sound = nextWord();
 			expect(',');
 			auto arg0 = nextInt();
 			expect(',');
 			auto arg1 = nextInt();
 			return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
-		} else if (maybe("stopsound3d")) {
+		} else if (keyword("stopsound3d")) {
 			return CommandPtr(new StopSound3D(nextWord()));
-		} else if (maybe("stopsound")) {
+		} else if (keyword("stopsound")) {
 			return CommandPtr(new StopSound(nextWord()));
-		} else if (maybe("setcursor")) {
+		} else if (keyword("setcursor")) {
 			auto image = nextWord();
 			expect(',');
 			auto warp = nextWord();
 			expect(',');
 			auto idx = nextInt();
 			return CommandPtr(new SetCursor(Common::move(image), Common::move(warp), idx));
-		} else if (maybe("hidecursor")) {
+		} else if (keyword("hidecursor")) {
 			auto warp = nextWord();
 			expect(',');
 			auto idx = nextInt();
 			return CommandPtr(new HideCursor(Common::move(warp), idx));
-		} else if (maybe("set")) {
+		} else if (keyword("set")) {
 			auto var = nextWord();
 			expect('=');
 			auto value = nextInt();
 			return CommandPtr(new Set(Common::move(var), value));
-		} else if (maybe("return")) {
+		} else if (keyword("return")) {
 			return CommandPtr{new Return()};
-		} else if (maybe("end")) {
+		} else if (keyword("end")) {
 			return CommandPtr{new End()};
 		}
 		return {};

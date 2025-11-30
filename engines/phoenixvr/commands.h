@@ -463,6 +463,15 @@ struct AngleYMax : public Script::Command {
 	}
 };
 
+struct SetAngle : public Script::Command {
+	float a0, a1;
+	SetAngle(float a0_, float a1_) : a0(a0_), a1(a1_) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("set angle %g %g", a0, a1);
+	}
+};
+
 struct GoToWarp : public Script::Command {
 	Common::String warp;
 	GoToWarp(Common::String w) : warp(Common::move(w)) {}
