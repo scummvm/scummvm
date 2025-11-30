@@ -356,8 +356,8 @@ Common::Error PrivateEngine::run() {
 		bool mouseMoved = false;
 		checkPhoneCall();
 
-		while (g_system->getEventManager()->pollEvent(event)) {
-			mousePos = g_system->getEventManager()->getMousePos();
+		while (_system->getEventManager()->pollEvent(event)) {
+			mousePos = _system->getEventManager()->getMousePos();
 			// Events
 			switch (event.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
@@ -442,15 +442,15 @@ Common::Error PrivateEngine::run() {
 				if (_subtitles != nullptr) {
 					delete _subtitles;
 					_subtitles = nullptr;
-					g_system->hideOverlay();
+					_system->hideOverlay();
 				}
 				_currentMovie = "";
 			} else if (!_videoDecoder->needsUpdate() && mouseMoved) {
-				g_system->updateScreen();
+				_system->updateScreen();
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
-			g_system->delayMillis(5); // Yield to the system
+			_system->delayMillis(5); // Yield to the system
 			continue;
 		}
 
@@ -479,15 +479,15 @@ Common::Error PrivateEngine::run() {
 			}
 		}
 
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+		_system->updateScreen();
+		_system->delayMillis(10);
 		if (_subtitles != nullptr) {
 			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
 				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false, _sfxSubtitles);
 			} else {
 				delete _subtitles;
 				_subtitles = nullptr;
-				g_system->hideOverlay();
+				_system->hideOverlay();
 			}
 		}
 	}
@@ -497,9 +497,9 @@ Common::Error PrivateEngine::run() {
 
 void PrivateEngine::ignoreEvents() {
 	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-	g_system->updateScreen();
-	g_system->delayMillis(10);
+	_system->getEventManager()->pollEvent(event);
+	_system->updateScreen();
+	_system->delayMillis(10);
 }
 
 void PrivateEngine::initFuncs() {
@@ -1906,8 +1906,8 @@ void PrivateEngine::adjustSubtitleSize() {
 		const int MIN_FONT_SIZE = 8;
 		const float BASE_FONT_SIZE_PERCENT = 0.023f;  // ~50px at 2160p
 
-		int16 h = g_system->getOverlayHeight();
-		int16 w = g_system->getOverlayWidth();
+		int16 h = _system->getOverlayHeight();
+		int16 w = _system->getOverlayWidth();
 
 		int bottomMargin = int(h * BOTTOM_MARGIN_PERCENT);
 
@@ -1959,7 +1959,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->hideOverlay();
+		_system->hideOverlay();
 	}
 
 	_subtitles = new Video::Subtitles();
@@ -1970,8 +1970,8 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		return;
 	}
 
-	g_system->showOverlay(false);
-	g_system->clearOverlay();
+	_system->showOverlay(false);
+	_system->clearOverlay();
 	adjustSubtitleSize();
 }
 void PrivateEngine::playVideo(const Common::String &name) {
@@ -2053,7 +2053,7 @@ void PrivateEngine::skipVideo() {
 	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->hideOverlay();
+		_system->hideOverlay();
 	}
 	_currentMovie = "";
 }
@@ -2068,7 +2068,7 @@ void PrivateEngine::destroyVideo() {
 	if (_subtitles != nullptr) {
 		delete _subtitles;
 		_subtitles = nullptr;
-		g_system->hideOverlay();
+		_system->hideOverlay();
 	}
 }
 
@@ -2101,7 +2101,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 	if (ncolors < 256 || path.toString('/').hasPrefix("intro")) { // For some reason, requires color remapping
 		currentPalette = (byte *) malloc(3*256);
 		drawScreen();
-		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
+		_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
 		newImage = oldImage->convertTo(_pixelFormat, currentPalette);
 		remapImage(ncolors, oldImage, oldPalette, newImage, currentPalette);
 		*palette = currentPalette;
@@ -2235,7 +2235,7 @@ void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
 void PrivateEngine::drawScreenFrame(const byte *newPalette) {
 	debugC(1, kPrivateDebugFunction, "%s(..)", __FUNCTION__);
 	remapImage(256, _frameImage, _framePalette, _mframeImage, newPalette);
-	g_system->copyRectToScreen(_mframeImage->getPixels(), _mframeImage->pitch, 0, 0, _screenW, _screenH);
+	_system->copyRectToScreen(_mframeImage->getPixels(), _mframeImage->pitch, 0, 0, _screenW, _screenH);
 }
 
 void PrivateEngine::loadMaskAndInfo(MaskInfo *m, const Common::String &name, int x, int y, bool drawn) {
@@ -2330,12 +2330,12 @@ void PrivateEngine::drawScreen() {
 
 		if (_needToDrawScreenFrame && _videoDecoder->getCurFrame() >= 0) {
 			const byte *videoPalette = _videoDecoder->getPalette();
-			g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+			_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 			drawScreenFrame(videoPalette);
 			_needToDrawScreenFrame = false;
 		} else if (_videoDecoder->hasDirtyPalette()) {
 			const byte *videoPalette = _videoDecoder->getPalette();
-			g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
+			_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 
 			if (_mode == 1) {
 				drawScreenFrame(videoPalette);
@@ -2343,15 +2343,15 @@ void PrivateEngine::drawScreen() {
 		}
 
 		// No use of _compositeSurface, we write the frame directly to the screen in the expected position
-		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);
+		_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);
 	} else {
 		byte newPalette[256 * 3];
 		_compositeSurface->grabPalette(newPalette, 0, 256);
-		g_system->getPaletteManager()->setPalette(newPalette, 0, 256);
+		_system->getPaletteManager()->setPalette(newPalette, 0, 256);
 
 		if (_mode == 1) {
 			// We can reuse newPalette
-			g_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
+			_system->getPaletteManager()->grabPalette((byte *) &newPalette, 0, 256);
 			drawScreenFrame((byte *) &newPalette);
 		}
 
@@ -2398,12 +2398,12 @@ void PrivateEngine::drawScreen() {
 
 		Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
 		Graphics::Surface sa = _compositeSurface->getSubArea(w);
-		g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
+		_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
 	}
 
 	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused())
 		_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
-	g_system->updateScreen();
+	_system->updateScreen();
 }
 
 bool PrivateEngine::getRandomBool(uint p) {
@@ -2474,11 +2474,11 @@ static void timerCallback(void *refCon) {
 }
 
 bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-	return g_system->getTimerManager()->installTimerProc(&timerCallback, delay, ns, "timerCallback");
+	return _system->getTimerManager()->installTimerProc(&timerCallback, delay, ns, "timerCallback");
 }
 
 void PrivateEngine::removeTimer() {
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
+	_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 
 // Diary
