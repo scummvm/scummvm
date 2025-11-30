@@ -247,13 +247,43 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
 		processedTextPtr = stringPrintf(logicTextPtr);
-		// For RTL languages, adjust the cursor position to right-align text
+
+		// Word wrap first to get the actual display width
+		int16 calculatedWidth = 0;
+		processedTextPtr = stringWordWrap(processedTextPtr, 40, &calculatedWidth);
+
+		// For RTL languages, right-align text (mirroring LTR behavior)
 		if (_vm->isLanguageRTL()) {
-			int textLength = strlen(processedTextPtr);
-			textColumn = MAX<int16>(0, 40 - textColumn - textLength);
-			charPos_Set(textRow, textColumn);
+			if (strchr(processedTextPtr, '\n') != nullptr) {
+				// For long strings that require a word wrap, we rely on the padding
+				// provided by rightAlign() in displayText() to handle the
+				// alignment. We only pad to 39 columns, because padding to 40
+				// leads to an extra row being inserted since the newline char
+				// pushes the line length to 40. The result is that word-wrapped
+				// lines in RTL always start indented one column. This is unavoidable
+				// without a much more significant change to word wrapping. If
+				// you need a line to start exactly on the right edge, then 
+				// manually split up the string into lines of 39 chars or less.
+				charPos_Set(textRow, 0);
+				_messageState.textSize_Width = 39;
+				// Prepend spaces for first-line indent. This mimics the behavior
+				// of LTR text, where the textColumn value determines the indent
+				// of the first line.
+				Common::String padded;
+				for (int16 i = 0; i < textColumn ; i++)
+					padded += ' ';
+				padded += processedTextPtr;
+				// Need to use a static buffer since processedTextPtr points to one
+				static char rtlBuffer[2000];
+				Common::strlcpy(rtlBuffer, padded.c_str(), sizeof(rtlBuffer));
+				processedTextPtr = rtlBuffer;
+			} else {
+				// For single (non-wrapped) lines, we simply manual position them
+				// indented in from the right to get RTL alignment
+				textColumn = MAX<int16>(0, 40 - textColumn - calculatedWidth);
+				charPos_Set(textRow, textColumn);
+			}
 		}
-		processedTextPtr = stringWordWrap(processedTextPtr, 40);
 
 #ifdef USE_TTS
 		if (!_vm->_game.gfxMode) {
