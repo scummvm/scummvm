@@ -105,10 +105,11 @@ Region PhoenixVREngine::getRegion(int idx) const {
 
 void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 	debug("setCursorDefault %d: %s", idx, path.c_str());
-	if (idx == 0) {
-		_defaultCursor.free();
-		_defaultCursor.surface = loadSurface(path);
-	}
+	if (idx == 0 || idx == 1) {
+		_defaultCursor[idx].free();
+		_defaultCursor[idx].surface = loadSurface(path);
+	} else
+		warning("only 2 default cursors supported, got %d", idx);
 }
 
 void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
@@ -337,12 +338,13 @@ Common::Error PhoenixVREngine::run() {
 		for (auto &c : _cursors) {
 			if (_vr.isVR() ? c.rect.contains(currentVRPos()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
 				cursor = c.surface;
-				if (cursor)
-					break;
+				if (!cursor)
+					cursor = _defaultCursor[1].surface;
+				break;
 			}
 		}
 		if (!cursor)
-			cursor = _defaultCursor.surface;
+			cursor = _defaultCursor[0].surface;
 		if (cursor) {
 			paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 		}

@@ -156,7 +156,7 @@ private:
 		void free();
 	};
 	Common::Array<Cursor> _cursors;
-	Cursor _defaultCursor;
+	Cursor _defaultCursor[2];
 	VR _vr;
 	Angle _angleX;
 	Angle _angleY;
