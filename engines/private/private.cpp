@@ -366,7 +366,11 @@ Common::Error PrivateEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				if (event.customType == kActionSkip) {
-					skipVideo();
+					if (!_timerSkipSetting.empty()) {
+						skipTimer();
+					} else {
+						skipVideo();
+					}
 				}
 				break;
 
@@ -2472,16 +2476,23 @@ Common::String PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j)
 
 // Timer
 
-void PrivateEngine::setTimer(uint32 delay, const Common::String &setting) {
+void PrivateEngine::setTimer(uint32 delay, const Common::String &setting, const Common::String &skipSetting) {
 	_timerSetting = setting;
+	_timerSkipSetting = skipSetting;
 	_timerStartTime = _system->getMillis();
 	_timerDelay = delay;
 }
 
 void PrivateEngine::clearTimer() {
 	_timerSetting.clear();
+	_timerSkipSetting.clear();
 	_timerStartTime = 0;
 	_timerDelay = 0;
+}
+
+void PrivateEngine::skipTimer() {
+	_nextSetting = _timerSkipSetting;
+	clearTimer();
 }
 
 void PrivateEngine::checkTimer() {
