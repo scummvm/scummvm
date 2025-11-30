@@ -26,6 +26,9 @@
 #include "freescape/games/driller/driller.h"
 #include "freescape/language/8bitDetokeniser.h"
 
+#include "audio/audiostream.h"
+#include "audio/softsynth/ay8912.h"
+
 namespace Freescape {
 
 void DrillerEngine::initCPC() {
@@ -247,6 +250,199 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	drawCompass(surface, 87, 156, _yaw - 30, 10, 75, front);
 	drawCompass(surface, 230, 156, _pitch - 30, 10, 60, front);
+}
+
+class DrillerCPCSfxStream : public Audio::AudioStream {
+public:
+	DrillerCPCSfxStream(int index, int rate = 44100) : _ay(rate, 1000000), _index(index), _rate(rate) { // 1MHz for CPC AY
+		// Initialize sound chip (silence)
+		initAY();
+
+		_counter = 0;
+		_finished = false;
+
+        // Initialize state based on index
+        _var_3a64 = 0;
+
+        if (index == 1) { // Shoot
+            _var_3a64 = 0xfffc;
+
+            // Channel data from binary extraction
+            uint8_t shoot_data[3][24] = {
+                {0x20, 0xa, 0x11, 0xc1, 0x42, 0x5, 0x2, 0x2, 0x1, 0x1, 0x21, 0x1b, 0x77, 0xee, 0x40, 0x85, 0x21, 0x85, 0x24, 0x84, 0x1f, 0x86, 0x9, 0xd},
+                {0x0, 0x0, 0x0, 0x1a, 0xf, 0xa, 0x19, 0x1, 0x1b, 0x5, 0x19, 0x0, 0xc, 0x10, 0x1, 0x64, 0xf, 0x0, 0xf, 0x6, 0x16, 0x10, 0x10, 0x1},
+                {0x82, 0x20, 0x9c, 0x9, 0x7, 0x20, 0x1, 0x18, 0x8, 0x8, 0x8, 0xc, 0x16, 0x35, 0x35, 0x7, 0x4, 0x4, 0x4, 0x4, 0x85, 0xc, 0x82, 0x20}
+            };
+
+            for (int i=0; i<3; i++) {
+                memcpy(_channels[i].data, shoot_data[i], 24);
+            }
+        } else if (index == 10) { // Area Change (Bell)
+             _var_3a64 = 0x9408;
+        }
+	}
+
+	void initAY() {
+		// Silence all channels
+		writeReg(7, 0xFF); // Disable all tones and noise
+		writeReg(8, 0);    // Volume A 0
+		writeReg(9, 0);    // Volume B 0
+		writeReg(10, 0);   // Volume C 0
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		if (_finished)
+			return 0;
+
+		int samplesPerTick = _rate / 50;
+		int samplesGenerated = 0;
+
+		while (samplesGenerated < numSamples && !_finished) {
+			int samplesTodo = MIN(numSamples - samplesGenerated, samplesPerTick);
+
+			updateState();
+
+			_ay.readBuffer(buffer + samplesGenerated, samplesTodo);
+			samplesGenerated += samplesTodo;
+
+			if (_finished) break;
+		}
+
+		return samplesGenerated;
+	}
+
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return _finished; }
+	bool endOfStream() const override { return _finished; }
+	int getRate() const override { return _rate; }
+
+private:
+	Audio::AY8912Stream _ay;
+	int _index;
+	int _rate;
+	int _counter;
+	bool _finished;
+    uint8_t _regs[16];
+
+    void writeReg(int reg, uint8_t val) {
+        if (reg >= 0 && reg < 16) {
+            _regs[reg] = val;
+            _ay.setReg(reg, val);
+        }
+    }
+
+    uint16_t _var_3a64;
+
+    struct ChannelState {
+        uint8_t data[24];
+    };
+
+    ChannelState _channels[3];
+
+    void processChannel(int ch_idx) {
+        uint8_t *d = _channels[ch_idx].data;
+
+        // Emulate FUN_5a21 logic
+        if (d[0x16] == 0) {
+            d[4]--;
+            if (d[4] == 0) {
+                d[4] = d[2]; // Reset counter
+                d[5] = (d[5] + d[1]) & 0xf; // Accumulate
+
+                // Write to Env Period (Approx logic based on FUN_5a21)
+                // Assuming scaling for audible effect
+                int val = d[5] * 20;
+                writeReg(11, val & 0xff);
+                writeReg(12, (val >> 8) & 0xff);
+
+                // Trigger?
+                writeReg(13, 0); // Shape
+
+                // Set Mixer/Volume for this channel
+                if (ch_idx == 0) {
+                    writeReg(8, 0x10); // Vol A = Env
+                    writeReg(7, _regs[7] & ~1); // Enable Tone A
+                }
+            }
+        }
+    }
+
+	void updateState() {
+		_counter++;
+
+		// Safety timeout
+		if (_counter > 200) {
+			_finished = true;
+			return;
+		}
+
+        if (_var_3a64 & 0x10) { // Update channels
+            // Process channels using extracted data
+            // for (int i=0; i<3; i++) {
+            //    processChannel(i);
+            // }
+
+            // Manual implementation for Shoot (Index 1) since extracted data seems to be idle/delay state
+            if (_index == 1) {
+                // Sweep Tone A
+                // Period: 10 -> ~130 (Slower sweep)
+                // Was: 10 + (_counter * 5)
+                int period = 10 + (_counter * 2);
+                writeReg(0, period & 0xff);
+                writeReg(1, (period >> 8) & 0xf);
+
+                // Enable Tone A, Disable Noise
+                writeReg(7, 0x3E); // 0011 1110. Tone A (bit 0) = 0 (On).
+
+                // Volume A: Envelope or Decay
+                // Use software volume decay for reliability
+                // Was: 15 - (_counter / 2) -> 30 ticks (~0.6s)
+                // Now: 15 - (_counter / 4) -> 60 ticks (~1.2s)
+                int vol = 15 - (_counter / 4);
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+
+                if (vol == 0) _finished = true;
+            }
+        }
+
+        // Handle Bell (Index 10) - Using data derived from binary (0x1802, 0xF602)
+        if (_index == 10) {
+             if (_counter > 200) {
+                _finished = true;
+             } else {
+                // Alternating pitch based on binary values found near 0x4219 (0x0218 and 0x02F6)
+                // 0x0218 = 536 (~116Hz)
+                // 0x02F6 = 758 (~82Hz)
+                // Even slower alternation (was /6 -> 120ms, now /12 -> 240ms)
+                int pitch = ((_counter / 12) % 2 == 0) ? 0x218 : 0x2F6;
+                writeReg(0, pitch & 0xff);
+                writeReg(1, (pitch >> 8) & 0xf);
+
+                // Even slower decay
+                int vol = 15 - (_counter / 12);
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+                writeReg(7, 0x3E); // Tone A only
+             }
+        }
+
+        // Handle unhandled sounds
+        if (_index != 1 && _index != 10) {
+             _finished = true;
+        }
+
+        if (_finished) {
+             initAY(); // Silence
+        }
+	}
+};
+
+void FreescapeEngine::playSoundDrillerCPC(int index, Audio::SoundHandle &handle) {
+	debugC(1, kFreescapeDebugMedia, "Playing Driller CPC sound %d", index);
+	// Create a new stream for the sound
+	DrillerCPCSfxStream *stream = new DrillerCPCSfxStream(index);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::YES);
 }
 
 } // End of namespace Freescape
