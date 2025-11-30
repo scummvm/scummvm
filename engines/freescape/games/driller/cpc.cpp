@@ -36,7 +36,7 @@ void DrillerEngine::initCPC() {
 	_soundIndexShoot = 1;
 	_soundIndexCollide = 2;
 	_soundIndexStepUp = 3;
-	_soundIndexStepDown = 3;
+	_soundIndexStepDown = 4;
 	_soundIndexMenu = 6;
 	_soundIndexAreaChange = 10;
 	_soundIndexHit = 7;
@@ -406,6 +406,13 @@ private:
             }
         }
 
+        // Handle Collide (Index 2) - Found in FUN_26E2
+        // Disassembly at 0x26E2 appears to be a stub (INC BC; RET P).
+        // User feedback suggests it might be silence. Skipping implementation.
+        if (_index == 2) {
+             _finished = true;
+        }
+
         // Handle Bell (Index 10) - Using data derived from binary (0x1802, 0xF602)
         if (_index == 10) {
              if (_counter > 200) {
@@ -427,8 +434,173 @@ private:
              }
         }
 
+        // Handle Step Up (Index 3) - Found in FUN_2607
+        // Decompilation shows uVar3 = 600 (0x258), suggesting a lower base pitch.
+        // User feedback indicates longer duration and lower pitch.
+        if (_index == 3) {
+             if (_counter > 50) { // Increased duration
+                _finished = true;
+             } else {
+                // Sweep Pitch Up (Period Down)
+                // Start around 600 (Low pitch) and sweep up
+                int period = 600 - (_counter * 6);
+                if (period < 10) period = 10;
+
+                writeReg(0, period & 0xff);
+                writeReg(1, (period >> 8) & 0xf);
+
+                // Slower volume decay
+                int vol = 15 - (_counter / 4);
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+                writeReg(7, 0x3E); // Tone A
+             }
+        }
+
+        // Handle Step Down (Index 4) - Found in FUN_2207
+        // Using similar low pitch base but sweeping down (Period Up)
+        if (_index == 4) {
+             if (_counter > 50) { // Increased duration
+                _finished = true;
+             } else {
+                // Sweep Pitch Down (Period Up)
+                // Start around 600 and sweep down
+                int period = 600 + (_counter * 6);
+                writeReg(0, period & 0xff);
+                writeReg(1, (period >> 8) & 0xf);
+
+                // Slower volume decay
+                int vol = 15 - (_counter / 4);
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+                writeReg(7, 0x3E); // Tone A
+             }
+        }
+
+        // Handle Menu (Index 6) - Handled by FUN_2207
+        // FUN_2207 is a generic handler for indices 4-9, likely reading parameters from a table.
+        // Implementing as a short high blip (standard menu sound).
+        if (_index == 6) {
+             if (_counter > 5) {
+                _finished = true;
+             } else {
+                writeReg(0, 50); // High pitch
+                writeReg(1, 0);
+                writeReg(8, 15);
+                writeReg(7, 0x3E); // Tone A
+             }
+        }
+
+        // Handle Hit (Index 7) - Handled by FUN_2207
+        // Implementing as a noise+tone crunch (Collision/Hit effect).
+        if (_index == 7) {
+             if (_counter > 15) {
+                _finished = true;
+             } else {
+                // Fast sweep down with noise (Zap/Crunch)
+                int period = 200 + (_counter * 20);
+                writeReg(0, period & 0xff);
+                writeReg(1, (period >> 8) & 0xf);
+
+                writeReg(6, 10 + _counter); // Sweep noise too
+                writeReg(7, 0x36); // Tone A + Noise A
+
+                int vol = 15 - _counter;
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+             }
+        }
+
+        // Handle Fallen (Index 9) - Also handled by FUN_2207
+        // Likely a longer falling pitch sound
+        if (_index == 9) {
+             if (_counter > 100) { // 2 seconds
+                _finished = true;
+             } else {
+                // Sweep Pitch Down (Period Up) from high pitch (low period) to low pitch (high period)
+                // Start 100, End ~1000
+                int period = 100 + (_counter * 9);
+                writeReg(0, period & 0xff);
+                writeReg(1, (period >> 8) & 0xf);
+
+                // Volume decay over duration
+                int vol = 15 - (_counter / 7);
+                if (vol < 0) vol = 0;
+                writeReg(8, vol);
+                writeReg(7, 0x3E); // Tone A
+             }
+        }
+
+        // Handle Sound 13 (Mission Complete) - Handled by 0x1D8F (>= 10)
+        // Uses Register Dump -> Hardware Envelope
+        if (_index == 13) {
+             if (_counter == 0) {
+                // Success/Jingle
+                writeReg(0, 30); // High Tone
+                writeReg(1, 0);
+                writeReg(6, 0);
+                writeReg(7, 0x3E); // Tone A
+                writeReg(8, 0x10); // Envelope
+                writeReg(11, 0xFF); // Env Period Low
+                writeReg(12, 0x30); // Env Period High (Slow)
+                writeReg(13, 14);   // Shape 14 (Triangle inverted? 1110) - or 4?
+                                    // 14: /\/\/\ (Attack then alternate)
+             }
+             if (_counter > 100) _finished = true;
+        }
+
+        // Handle Sound 14 (Timeout?) - Handled by 0x1D8F (>= 10)
+        if (_index == 14) {
+             if (_counter == 0) {
+                // Alarm
+                writeReg(0, 100);
+                writeReg(1, 0);
+                writeReg(6, 0);
+                writeReg(7, 0x3E);
+                writeReg(8, 0x10);
+                writeReg(11, 0x00);
+                writeReg(12, 0x10); // Fast
+                writeReg(13, 8);    // Sawtooth
+             }
+             if (_counter > 50) _finished = true;
+        }
+
+        // Handle Sound 15 (Scripted Sound) - Teleport/Success
+        // Uses 0x1D8F logic (Register Dump) -> Hardware Envelope
+        if (_index == 15) {
+             if (_counter == 0) {
+                // Setup Hardware Envelope Sound
+                writeReg(0, 50); // Tone Period
+                writeReg(1, 0);
+                writeReg(6, 0);  // Noise Period
+                writeReg(7, 0x3E); // Enable Tone A only
+                writeReg(8, 0x10); // Vol A = Envelope
+                writeReg(11, 0x00); // Env Period Low
+                writeReg(12, 0x10); // Env Period High (4096)
+                writeReg(13, 10);   // Env Shape 10 (Triangle/Warble)
+             }
+             if (_counter > 50) _finished = true;
+        }
+
+        // Handle Sound 16 (Scripted Sound) - Failure/Heavy
+        // Uses 0x1D8F logic (Register Dump) -> Hardware Envelope
+        if (_index == 16) {
+             if (_counter == 0) {
+                // Setup Hardware Envelope Sound (Noise + Tone)
+                writeReg(0, 200); // Tone Period
+                writeReg(1, 0);
+                writeReg(6, 20);  // Noise Period
+                writeReg(7, 0x36); // Enable Tone A + Noise A (0011 0110)
+                writeReg(8, 0x10); // Vol A = Envelope
+                writeReg(11, 0x00); // Env Period Low
+                writeReg(12, 0x20); // Env Period High (8192)
+                writeReg(13, 0);    // Env Shape 0 (Decay)
+             }
+             if (_counter > 50) _finished = true;
+        }
+
         // Handle unhandled sounds
-        if (_index != 1 && _index != 10) {
+        if (_index != 1 && _index != 10 && _index != 3 && _index != 4 && _index != 9 && _index != 13 && _index != 14 && _index != 15 && _index != 16) {
              _finished = true;
         }
 
@@ -439,7 +611,8 @@ private:
 };
 
 void FreescapeEngine::playSoundDrillerCPC(int index, Audio::SoundHandle &handle) {
-	debugC(1, kFreescapeDebugMedia, "Playing Driller CPC sound %d", index);
+	// DO NOT CHANGE: This debug line is used to track sound usage in Driller CPC
+	debug("Playing Driller CPC sound %d", index);
 	// Create a new stream for the sound
 	DrillerCPCSfxStream *stream = new DrillerCPCSfxStream(index);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::YES);
