@@ -35,6 +35,7 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
+#include "phoenixvr/angle.h"
 #include "phoenixvr/detection.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
@@ -122,6 +123,13 @@ public:
 	Script::ConstWarpPtr getCurrentWarp() { return _warp; }
 	Region getRegion(int idx) const;
 
+	uint numCursors() const {
+		return _cursors.size();
+	}
+	const RectF *getCursorRect(uint idx) const {
+		return idx < _cursors.size() ? &_cursors[idx].rect : nullptr;
+	}
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);
@@ -147,8 +155,8 @@ private:
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor;
 	VR _vr;
-	float _angleX = 0;
-	float _angleY = 0;
+	Angle _angleX;
+	Angle _angleY;
 	Audio::Mixer *_mixer;
 };
 

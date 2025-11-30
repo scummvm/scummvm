@@ -9,6 +9,7 @@
 #include "graphics/yuv_to_rgb.h"
 #include "image/bmp.h"
 #include "phoenixvr/dct.h"
+#include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
 
@@ -600,10 +601,14 @@ struct Projection {
 
 	Projection(uint num, float start, float fov) : points(num) {
 		const auto da = fov / float(num);
-		float a = start - fov / 2;
+		float a = fmodf(start - fov / 2 + 2 * M_PI, 2 * M_PI);
+		float a2 = fmodf(start + 2 * M_PI, 2 * M_PI);
 		for (uint i = 0; i != num; ++i) {
-			points[i] = {a, sin(a), cos(a)};
+			points[i] = {a2, sin(a), cos(a)};
 			a += da;
+			a2 += da;
+			a = fmodf(a, M_PI * 2);
+			a2 = fmodf(a2, M_PI * 2);
 		}
 	}
 };
@@ -644,7 +649,23 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 				srcX &= 0xff;
 				srcY &= 0xff;
 				srcY += (tileId << 8);
-				screen->setPixel(dstX, dstY, _pic->getPixel(srcX, srcY));
+				auto color = _pic->getPixel(srcX, srcY);
+#if 0
+				auto n = g_engine->numCursors();
+				for(uint i = 0; i != n; ++i) {
+					auto *src = g_engine->getCursorRect(i);
+					if (src && src->containsVR(ph.angle, pv.angle)) {
+						uint8 r, g, b;
+						_pic->format.colorToRGB(color, r, g, b);
+						r += 32;
+						g += 32;
+						b += 32;
+						color = _pic->format.RGBToColor(r, g, b);
+						break;
+					}
+				}
+#endif
+				screen->setPixel(dstX, dstY, color);
 			}
 		}
 	}

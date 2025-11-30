@@ -268,16 +268,9 @@ Common::Error PhoenixVREngine::run() {
 			_mousePos = _screenCenter;
 			static const float kSpeedX = 0.2f;
 			static const float kSpeedY = 0.2f;
-			static const float PIx2 = M_PI * 2;
 			const auto dt = float(frameDuration) / 1000.0f;
-			_angleX += float(da.x) * kSpeedX * dt;
-			_angleX = fmodf(_angleX, PIx2);
-			if (_angleX < 0)
-				_angleX += PIx2;
-			_angleY += float(da.y) * kSpeedY * dt;
-			_angleY = fmodf(_angleY, M_PI * 2);
-			if (_angleY < 0)
-				_angleY += PIx2;
+			_angleX.add(float(da.x) * kSpeedX * dt);
+			_angleY.add(float(da.y) * kSpeedY * dt);
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());
@@ -332,25 +325,14 @@ Common::Error PhoenixVREngine::run() {
 			test->scope.exec(ctx);
 		}
 
-		_vr.render(_screen, _angleX, _angleY);
+		_vr.render(_screen, _angleX.angle(), _angleY.angle());
 
 		Graphics::Surface *cursor = nullptr;
-		{
-			float x, y;
-			if (_vr.isVR()) {
-				x = _angleX / M_PI_4;
-				y = (2 * M_PI - _angleY) / M_PI_4;
-				debug("vr %g %g", x, y);
-			} else {
-				x = _mousePos.x;
-				y = _mousePos.y;
-			}
-			for (auto &c : _cursors) {
-				if (c.rect.contains(x, y)) {
-					cursor = c.surface;
-					if (cursor)
-						break;
-				}
+		for (auto &c : _cursors) {
+			if (_vr.isVR() ? c.rect.containsVR(_angleX.angle(), _angleX.angle()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
+				cursor = c.surface;
+				if (cursor)
+					break;
 			}
 		}
 		if (!cursor)
