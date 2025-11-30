@@ -788,7 +788,11 @@ static void fTimer(ArgArray args) {
 
 	int32 delay = args[0].u.val * 1000; // seconds => milliseconds
 	if (delay > 0) {
-		g_private->setTimer(delay, *(args[1].u.sym->name));
+		Common::String skipSetting;
+		if (args.size() == 3) {
+			skipSetting = *(args[2].u.sym->name);
+		}
+		g_private->setTimer(delay, *(args[1].u.sym->name), skipSetting);
 	} else if (delay == 0) {
 		g_private->_nextSetting = *(args[1].u.sym->name);
 	} else {
