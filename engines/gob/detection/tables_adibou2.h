@@ -147,7 +147,7 @@
 		"adibou2",
 		"ADIBOU Environnement (Adaptation Québecoise)",
 		AD_ENTRY1s("intro.stk", "5606ff29ef33ef423519eb24e8096afc", 8737284),
-		FR_FRA,
+		FR_FRA, // Canadian French
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()
@@ -306,6 +306,22 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+{
+	{
+		"adibou2readcount45",
+		"", // "Lecture/Calcul 4-5 ans"
+		AD_ENTRY2s("intro_ap.stk", "8f9dcb2fe953b1e031563307eae19a77", 40835810,
+				   "appli_01.vmd", "d5f26306952d2ffbbadbb2b7d6cb3299", 41806),
+		FR_FRA, // Canadian French
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2readcount45",
@@ -366,6 +382,22 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+{
+	{
+		"adibou2readcount67",
+		"", // "Lecture/Calcul 6-7 ans"
+		AD_ENTRY2s("intro_ap.stk", "82ec211d2f0cb3430d8f1eb80c949f41", 36540108,
+				   "appli_03.vmd", "2ec3177c0f1b4ef326cc663834003eb4", 38062),
+		FR_FRA, // Canadian French
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2readcount67",
@@ -401,8 +433,9 @@
 	{
 		"adibou2sciences",
 		"", // "Je découvre la nature et les sciences"
-		AD_ENTRY2s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
-				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920),
+		AD_ENTRY3s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
+				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920,
+				   "APPBOFR1.ITK", "b5354d97e1115ad337de55410dae82f7", 129994752),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_ADDON,
@@ -411,6 +444,23 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
+{
+	{
+		"adibou2sciences",
+		"", // "Je découvre la nature et les sciences"
+		AD_ENTRY3s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
+				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920,
+				   "APPBOFR1.ITK", "8bd95ce195278a29f0375ca2e2f3475d", 139196416),
+		FR_FRA, // Canadian French
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 {
 	{
 		"adibou2sciences",
