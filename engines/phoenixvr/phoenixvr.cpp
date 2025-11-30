@@ -262,7 +262,7 @@ Common::Error PhoenixVREngine::run() {
 				break;
 			}
 		}
-		if (_vr.isVR()) {
+		if (_vr.isVR() && _mousePos != _screenCenter) {
 			auto da = _mousePos - _screenCenter;
 			_system->warpMouse(_screenCenter.x, _screenCenter.y);
 			_mousePos = _screenCenter;
@@ -271,6 +271,7 @@ Common::Error PhoenixVREngine::run() {
 			const auto dt = float(frameDuration) / 1000.0f;
 			_angleX.add(float(da.x) * kSpeedX * dt);
 			_angleY.add(float(da.y) * kSpeedY * dt);
+			debug("angle %g %g", _angleX.angle(), _angleY.angle());
 		}
 		if (!_nextScript.empty()) {
 			debug("loading script from %s", _nextScript.c_str());

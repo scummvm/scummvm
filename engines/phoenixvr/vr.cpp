@@ -633,7 +633,6 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 		static const float kFOV = (90 / 180.0f) * M_PI;
 		Projection projH(w, ax, kFOV);
 		Projection projV(h, ay - M_PI_2, kFOV);
-		debug("angle %g %g", ax, ay);
 		for (int dstY = 0; dstY != h; ++dstY) {
 			auto &pv = projV.points[dstY];
 			for (int dstX = 0; dstX != w; ++dstX) {
