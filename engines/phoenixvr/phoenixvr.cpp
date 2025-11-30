@@ -248,16 +248,21 @@ Common::Error PhoenixVREngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
 				break;
-			case Common::EVENT_LBUTTONUP:
-				debug("click %s", _mousePos.toString().c_str());
+			case Common::EVENT_LBUTTONUP: {
+				auto vrPos = currentVRPos();
+				if (_vr.isVR()) {
+					debug("click ax: %g, ay: %g", vrPos.x, vrPos.y);
+				} else
+					debug("click %s", _mousePos.toString().c_str());
+
 				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
 					auto &rect = _cursors[i].rect;
-					if (_vr.isVR() ? rect.containsVR(_angleX.angle(), _angleY.angle()) : rect.contains(event.mouse.x, event.mouse.y)) {
+					if (_vr.isVR() ? rect.contains(vrPos) : rect.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 					}
 				}
-				break;
+			} break;
 			default:
 				break;
 			}
@@ -330,7 +335,7 @@ Common::Error PhoenixVREngine::run() {
 
 		Graphics::Surface *cursor = nullptr;
 		for (auto &c : _cursors) {
-			if (_vr.isVR() ? c.rect.containsVR(_angleX.angle(), _angleY.angle()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
+			if (_vr.isVR() ? c.rect.contains(currentVRPos()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
 				cursor = c.surface;
 				if (cursor)
 					break;

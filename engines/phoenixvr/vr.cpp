@@ -653,7 +653,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay) {
 				auto n = g_engine->numCursors();
 				for(uint i = 0; i != n; ++i) {
 					auto *src = g_engine->getCursorRect(i);
-					if (src && src->containsVR(ph.angle, pv.angle)) {
+					if (src && src->contains(RectF::transform(ph.angle, pv.angle))) {
 						uint8 r, g, b;
 						_pic->format.colorToRGB(color, r, g, b);
 						r += 32;

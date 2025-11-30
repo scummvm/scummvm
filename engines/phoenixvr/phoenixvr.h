@@ -135,6 +135,9 @@ private:
 	static Common::String resolvePath(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
 	void paint(Graphics::Surface &src, Common::Point dst);
+	PointF currentVRPos() const {
+		return RectF::transform(_angleX.angle(), _angleY.angle());
+	}
 
 private:
 	Common::Point _mousePos;

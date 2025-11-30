@@ -23,11 +23,12 @@
 #include "phoenixvr/angle.h"
 
 namespace PhoenixVR {
-bool RectF::containsVR(float ax, float ay) const {
+
+PointF RectF::transform(float ax, float ay) {
 	Angle x(ax);
 	x.add(+M_PI_4);
 	float y = ay;
-	return contains(x.angle(), y);
+	return {x.angle(), y};
 }
 
 } // namespace PhoenixVR
