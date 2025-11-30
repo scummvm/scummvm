@@ -122,6 +122,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 		_safeDigitArea[d].clear();
 		_safeDigitRect[d] = Common::Rect(0, 0);
 	}
+
+	// Timer
+	clearTimer();
 }
 
 PrivateEngine::~PrivateEngine() {
@@ -354,6 +357,7 @@ Common::Error PrivateEngine::run() {
 
 	while (!shouldQuit()) {
 		bool mouseMoved = false;
+		checkTimer();
 		checkPhoneCall();
 
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -423,7 +427,7 @@ Common::Error PrivateEngine::run() {
 
 		// Movies
 		if (!_nextMovie.empty()) {
-			removeTimer();
+			clearTimer();
 			_videoDecoder = new Video::SmackerDecoder();
 			playVideo(_nextMovie);
 			_currentMovie = _nextMovie;
@@ -455,7 +459,7 @@ Common::Error PrivateEngine::run() {
 		}
 
 		if (!_nextSetting.empty()) {
-			removeTimer();
+			clearTimer();
 			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
@@ -491,7 +495,6 @@ Common::Error PrivateEngine::run() {
 			}
 		}
 	}
-	removeTimer();
 	return Common::kNoError;
 }
 
@@ -1548,6 +1551,9 @@ void PrivateEngine::restartGame() {
 
 	// Wall Safe
 	initializeWallSafeValue();
+
+	// Timer
+	clearTimer();
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -2464,18 +2470,30 @@ Common::String PrivateEngine::getRandomPhoneClip(const char *clip, int i, int j)
 	return Common::String::format("%s%02d", clip, r);
 }
 
-// Timers
-static void timerCallback(void *refCon) {
-	g_private->removeTimer();
-	g_private->_nextSetting = *(Common::String *)refCon;
+// Timer
+
+void PrivateEngine::setTimer(uint32 delay, const Common::String &setting) {
+	_timerSetting = setting;
+	_timerStartTime = _system->getMillis();
+	_timerDelay = delay;
 }
 
-bool PrivateEngine::installTimer(uint32 delay, Common::String *ns) {
-	return _system->getTimerManager()->installTimerProc(&timerCallback, delay, ns, "timerCallback");
+void PrivateEngine::clearTimer() {
+	_timerSetting.clear();
+	_timerStartTime = 0;
+	_timerDelay = 0;
 }
 
-void PrivateEngine::removeTimer() {
-	_system->getTimerManager()->removeTimerProc(&timerCallback);
+void PrivateEngine::checkTimer() {
+	if (_timerSetting.empty()) {
+		return;
+	}
+	
+	uint32 now = _system->getMillis();
+	if (now - _timerStartTime >= _timerDelay) {
+		_nextSetting = _timerSetting;
+		clearTimer();
+	}
 }
 
 // Diary
