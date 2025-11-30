@@ -30,6 +30,15 @@ namespace Freescape {
 
 void DrillerEngine::initCPC() {
 	_viewArea = Common::Rect(36, 16, 284, 117);
+	_soundIndexShoot = 1;
+	_soundIndexCollide = 2;
+	_soundIndexStepUp = 3;
+	_soundIndexStepDown = 3;
+	_soundIndexMenu = 6;
+	_soundIndexAreaChange = 10;
+	_soundIndexHit = 7;
+	_soundIndexFallen = 9;
+	_soundIndexMissionComplete = 13;
 }
 
 byte kCPCPaletteTitleData[4][3] = {

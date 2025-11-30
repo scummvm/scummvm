@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/softsynth/ay8912.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
@@ -330,75 +331,17 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 		else
 			playSoundZX(_soundsSpeakerFxZX[index], handle);
 		return;
+	} else if (isCPC()) {
+		if (isDriller())
+			playSoundDrillerCPC(index, handle);
+		// else playSoundCPC(...)
+		return;
 	}
 
 	Common::Path filename;
 	filename = Common::String::format("%s-%d.wav", _targetName.c_str(), index);
 	debugC(1,  kFreescapeDebugMedia, "Playing sound %s", filename.toString().c_str());
 	playWav(filename);
-	/*switch (index) {
-	case 1:
-		playWav("fsDOS_laserFire.wav");
-		break;
-	case 2: // Done
-		playWav("fsDOS_WallBump.wav");
-		break;
-	case 3:
-		playWav("fsDOS_stairDown.wav");
-		break;
-	case 4:
-		playWav("fsDOS_stairUp.wav");
-		break;
-	case 5:
-		playWav("fsDOS_roomChange.wav");
-		break;
-	case 6:
-		playWav("fsDOS_configMenu.wav");
-		break;
-	case 7:
-		playWav("fsDOS_bigHit.wav");
-		break;
-	case 8:
-		playWav("fsDOS_teleporterActivated.wav");
-		break;
-	case 9:
-		playWav("fsDOS_powerUp.wav");
-		break;
-	case 10:
-		playWav("fsDOS_energyDrain.wav");
-		break;
-	case 11: // ???
-		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		break;
-	case 12:
-		playWav("fsDOS_switchOff.wav");
-		break;
-	case 13: // Seems to be repeated?
-		playWav("fsDOS_laserHit.wav");
-		break;
-	case 14:
-		playWav("fsDOS_tankFall.wav");
-		break;
-	case 15:
-		playWav("fsDOS_successJingle.wav");
-		break;
-	case 16: // Silence?
-		break;
-	case 17:
-		playWav("fsDOS_badJingle.wav");
-		break;
-	case 18: // Silence?
-		break;
-	case 19:
-		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		break;
-	case 20:
-		playWav("fsDOS_bigHit.wav");
-		break;
-	default:
-		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
-		break;
-	}*/
 	_syncSound = sync;
 }
 void FreescapeEngine::playWav(const Common::Path &filename) {
@@ -666,6 +609,166 @@ void FreescapeEngine::playSoundDrillerZX(int index, Audio::SoundHandle &handle) 
 	}
 
 	playSoundZX(&soundUnits, handle);
+}
+
+class DrillerCPCSfxStream : public Audio::AudioStream {
+public:
+	DrillerCPCSfxStream(int index, int rate = 44100) : _ay(rate, 1000000), _index(index), _rate(rate) { // 1MHz for CPC AY
+		// Initialize sound chip (silence)
+		initAY();
+
+		_counter = 0;
+		_finished = false;
+	}
+
+	void initAY() {
+		// Silence all channels
+		_ay.setReg(7, 0xFF); // Disable all tones and noise
+		_ay.setReg(8, 0);    // Volume A 0
+		_ay.setReg(9, 0);    // Volume B 0
+		_ay.setReg(10, 0);   // Volume C 0
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		if (_finished)
+			return 0;
+
+		// We need to generate samples from AY
+		// And update the AY state periodically
+
+		// Simulate 50Hz updates
+		int samplesPerTick = _rate / 50;
+		int samplesGenerated = 0;
+
+		while (samplesGenerated < numSamples && !_finished) {
+			int samplesTodo = MIN(numSamples - samplesGenerated, samplesPerTick);
+
+			// Update AY state (simulate FUN_4760 tick)
+			updateState();
+
+			// Generate audio
+			_ay.readBuffer(buffer + samplesGenerated, samplesTodo);
+			samplesGenerated += samplesTodo;
+
+			if (_finished) break;
+		}
+
+		return samplesGenerated;
+	}
+
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return _finished; }
+	bool endOfStream() const override { return _finished; }
+	int getRate() const override { return _rate; }
+
+private:
+	Audio::AY8912Stream _ay;
+	int _index;
+	int _rate;
+	int _counter;
+	bool _finished;
+
+	void updateState() {
+		// Simulation of Driller CPC sound effects
+		// Based on analysis of FUN_4581 and FUN_4760
+		// CPC AY-3-8912 Clock is 1MHz
+
+		_counter++;
+
+		switch (_index) {
+		case 1: // Shoot
+			// Related to FUN_43E2 (0x43E2) and FUN_5A21 (0x5A21)
+			// The shoot sound logic involves setting up a channel structure and updating it.
+			// FUN_4760 checks 0x3a64 bit 4 and calls FUN_43E2 three times (3 channels?).
+
+			// 0x5A21: LD A,(IX+0x5); ADD A,(IX+0x1); AND 0xf; LD (IX+0x5),A
+			// This suggests a volume or parameter update loop.
+
+			// Implementation: Fast frequency sweep down with decay.
+			// Replicating the "Laser" effect likely produced by the hardware envelope or software sweep.
+
+			if (_counter > 12) {
+				_finished = true;
+			} else {
+				// Sweep logic
+				// Start Frequency High (Period Low) -> End Frequency Low (Period High)
+				int period = 20 + _counter * 30;
+
+				// Apply to Channel A (Reg 0, 1)
+				_ay.setReg(0, period & 0xff);
+				_ay.setReg(1, (period >> 8) & 0xf);
+
+				// Apply to Channel B (Reg 2, 3) - Detuned for thickness
+				_ay.setReg(2, (period + 5) & 0xff);
+				_ay.setReg(3, ((period + 5) >> 8) & 0xf);
+
+				// Volume Decay (Software Envelope)
+				// 0x5A21 suggests updating IX+0x5 (Volume?)
+				int vol = 15 - _counter;
+				if (vol < 0) vol = 0;
+
+				_ay.setReg(8, vol);
+				_ay.setReg(9, vol);
+
+				// Enable Tone A and B (Reg 7)
+				// 0x3C = 0011 1100 (Enable Tone A(0), B(1))
+				// Noise disabled for cleaner "zap"
+				_ay.setReg(7, 0x3C);
+			}
+			break;
+		case 2: // Bump
+			// Low pitch noise/tone
+			if (_counter > 5) {
+				_finished = true;
+			} else {
+				_ay.setReg(0, 0xA0);
+				_ay.setReg(1, 0x05); // Period 0x5A0 (~44Hz)
+				_ay.setReg(8, 15);
+				_ay.setReg(7, 0x3E); // Tone A
+			}
+			break;
+		case 10: // Area Change / Start (Elevator Bell)
+		case 21: // Bell logic from FUN_4581 (0x15)
+			// Related to FUN_4581 case 0x15 which swaps registers 0x39b9/a and 0x39bb/c
+			// This indicates an alternating two-tone effect.
+
+			if (_counter > 50) {
+				_finished = true;
+			} else {
+				// Alternating tones (Ding-Dong / Trill)
+				// Tone 1: High (e.g., C5)
+				// Tone 2: Slightly lower (e.g., A4)
+				int pitch = ((_counter / 3) % 2 == 0) ? 119 : 142;
+
+				_ay.setReg(0, pitch & 0xff);
+				_ay.setReg(1, (pitch >> 8) & 0xf);
+
+				// Volume Decay
+				int vol = 15 - (_counter / 3);
+				if (vol < 0) vol = 0;
+
+				_ay.setReg(8, vol);
+				_ay.setReg(7, 0x3E); // Enable Tone A
+			}
+			break;
+		case 13: // Mission Complete
+			// Fanfare?
+			if (_counter > 100) _finished = true;
+			// TODO: Implement fanfare
+			break;
+		default:
+			// For unknown sounds, play nothing for now
+			_finished = true;
+			break;
+		}
+	}
+};
+
+void FreescapeEngine::playSoundDrillerCPC(int index, Audio::SoundHandle &handle) {
+	debugC(1, kFreescapeDebugMedia, "Playing Driller CPC sound %d", index);
+	// Create a new stream for the sound
+	DrillerCPCSfxStream *stream = new DrillerCPCSfxStream(index);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::YES);
 }
 
 } // namespace Freescape
