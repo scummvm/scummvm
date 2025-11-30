@@ -33,7 +33,7 @@ BEGIN_RECT_TYPE(float, RectF, PointF);
 Common::String toString() const {
 	return Common::String::format("%g, %g, %g, %g", left, top, right, bottom);
 }
-static PointF transform(float ax, float ay);
+static PointF transform(float ax, float ay, float fov);
 END_RECT_TYPE(float, RectF, PointF);
 
 } // namespace PhoenixVR

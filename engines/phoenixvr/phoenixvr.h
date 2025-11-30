@@ -136,7 +136,7 @@ private:
 	Graphics::Surface *loadSurface(const Common::String &path);
 	void paint(Graphics::Surface &src, Common::Point dst);
 	PointF currentVRPos() const {
-		return RectF::transform(_angleX.angle(), _angleY.angle());
+		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
 
 private:
