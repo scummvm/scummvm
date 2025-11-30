@@ -1508,9 +1508,10 @@ bool PrivateEngine::hasFeature(EngineFeature f) const {
 void PrivateEngine::restartGame() {
 	debugC(1, kPrivateDebugFunction, "restartGame");
 
+	Common::String alternateGameVariableName = getAlternateGameVariable();
 	for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
 		Private::Symbol *sym = maps.variables.getVal(*it);
-		if (*(sym->name) != getAlternateGameVariable())
+		if (*(sym->name) != alternateGameVariableName)
 			sym->u.val = 0;
 	}
 
