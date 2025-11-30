@@ -95,13 +95,14 @@ Common::Error PelrockEngine::run() {
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
-	init();
 	if (shouldPlayIntro == false) {
 		stateGame = GAME;
 	} else {
 		stateGame = INTRO;
 		_videoManager->playIntro();
+		stateGame = GAME;
 	}
+	init();
 
 	while (!shouldQuit()) {
 		_chronoManager->updateChrono();

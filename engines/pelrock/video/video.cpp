@@ -42,11 +42,11 @@ void VideoManager::playIntro() {
 		return;
 	}
 	loadPalette(videoFile);
-	videoFile.seek(0x5000, SEEK_SET);
-	size_t firstChunkSize = 0x5000 * 13;
+	videoFile.seek(frame0offset, SEEK_SET);
+	size_t firstChunkSize = chunkSize * 13;
 	byte *chunk0 = new byte[firstChunkSize];
 	videoFile.read(chunk0, firstChunkSize);
-	byte *background = decodeCopyBlock(chunk0, firstChunkSize, 0);
+	byte *background = decodeCopyBlock(chunk0, 0);
 
 	for (int i = 0; i < 640; i++) {
 		for (int j = 0; j < 400; j++) {
@@ -55,6 +55,47 @@ void VideoManager::playIntro() {
 	}
 	_screen->markAllDirty();
 	_screen->update();
+	delete[] chunk0;
+	g_engine->_chronoManager->waitForKey();
+
+	size_t chunk1Size = chunkSize * 6;
+	byte chunk1_data[chunk1Size];
+	videoFile.seek(frame1offset, SEEK_SET);
+	videoFile.read(chunk1_data, chunk1Size);
+
+	byte *delta1 = decodeRLE(chunk1_data, chunk1Size, 0x0D);
+	for (int j = 0; j < 256000; j++) {
+		background[j] ^= delta1[j];
+	}
+	delete[] delta1;
+	for (int x = 0; x < 640; x++) {
+		for (int y = 0; y < 400; y++) {
+			_screen->setPixel(x, y, background[y * 640 + x]);
+		}
+	}
+	_screen->markAllDirty();
+	_screen->update();
+	g_engine->_chronoManager->waitForKey();
+
+	for (size_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); i++) {
+		byte *chunk = new byte[chunkSize];
+		videoFile.seek(offsets[i], SEEK_SET);
+		videoFile.read(chunk, chunkSize);
+		byte *delta = decodeCopyBlock(chunk, 0);
+		for (int j = 0; j < 256000; j++) {
+			background[j] ^= delta[j];
+		}
+		delete[] delta;
+		for (int x = 0; x < 640; x++) {
+			for (int y = 0; y < 400; y++) {
+				_screen->setPixel(x, y, background[y * 640 + x]);
+			}
+		}
+		delete[] chunk;
+		_screen->markAllDirty();
+		_screen->update();
+		g_engine->_chronoManager->waitForKey();
+	}
 	g_engine->_chronoManager->waitForKey();
 	videoFile.close();
 }
@@ -70,19 +111,9 @@ void VideoManager::loadPalette(Common::SeekableReadStream &stream) {
 		palette[i * 3 + 2] = paletteData[i * 3 + 2] << 2;
 	}
 	_screen->setPalette(palette);
-	// def extract_palette(data):
-	// """Extract and convert VGA palette to 8-bit RGB"""
-	// file_palette = data[0x0009:0x0009 + 768]
-	// palette = []
-	// for i in range(256):
-	//     r = file_palette[i * 3 + 0] * 4
-	//     g = file_palette[i * 3 + 1] * 4
-	//     b = file_palette[i * 3 + 2] * 4
-	//     palette.extend([r, g, b])
-	// return palette
 }
 
-byte *VideoManager::decodeCopyBlock(byte *data, size_t size, uint32 offset) {
+byte *VideoManager::decodeCopyBlock(byte *data, uint32 offset) {
 
 	byte *buf = new byte[256000];
 	memset(buf, 0, 256000);
@@ -90,7 +121,7 @@ byte *VideoManager::decodeCopyBlock(byte *data, size_t size, uint32 offset) {
 	// frames are encoded so that each block copy has a 5-byte header
 	// the first 3 bytes are the offset within the screen to which to
 	// copy the bytes. The 5th byte is the length of the block to copy.
-	while (pos + 5 < size) {
+	while (true) {
 		byte dest_lo = data[pos];
 		byte dest_mid = data[pos + 1];
 		byte dest_hi = data[pos + 2];
@@ -109,5 +140,58 @@ byte *VideoManager::decodeCopyBlock(byte *data, size_t size, uint32 offset) {
 	}
 
 	return buf; // Placeholder
+}
+
+byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
+	byte *buf = new byte[256000];
+	memset(buf, 0, 256000);
+	uint32 pos = offset;
+	// result = bytearray()
+	// pos = start_pos
+
+	uint32 outPos = 0;
+	while (outPos < 256000 && pos < size) {
+		byte countByte = data[pos];
+		pos += 1;
+
+		if ((countByte & 0xC0) == 0xC0) {
+			// RLE: count in lower 6 bits, next byte is value
+			uint32 count = countByte & 0x3F;
+			if (pos >= size) {
+				break;
+			}
+			byte value = data[pos];
+			pos += 1;
+			for (uint32 i = 0; i < count && outPos < 256000; i++) {
+				buf[outPos++] = value;
+			}
+		} else {
+			// Literal: count is 1, this byte is the value
+			buf[outPos++] = countByte;
+		}
+	}
+	return buf;
+
+	// while len(result) < max_size and pos < len(data):
+	//     count_byte = data[pos]
+	//     pos += 1
+
+	//     if (count_byte & 0xC0) == 0xC0:
+	//         # RLE: count in lower 6 bits, next byte is value
+	//         count = count_byte & 0x3F
+	//         if pos >= len(data):
+	//             break
+	//         value = data[pos]
+	//         pos += 1
+	//         result.extend([value] * count)
+	//     else:
+	//         # Literal: count is 1, this byte is the value
+	//         result.append(count_byte)
+
+	// # Pad to exact size
+	// if len(result) < max_size:
+	//     result.extend([0] * (max_size - len(result)))
+
+	// return bytes(result[:max_size])
 }
 } // End of namespace Pelrock

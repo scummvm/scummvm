@@ -24,6 +24,9 @@
 
 namespace Pelrock {
 
+static const uint32 frame0offset = 0x5000;
+static const uint32 frame1offset = 0x46000;
+static const uint32 chunkSize = 0x5000;
 static const uint32 offsets[] = {
 	0x64000,
 	0x69000,
@@ -43,7 +46,8 @@ public:
 private:
 	Graphics::Screen *_screen;
 	void loadPalette(Common::SeekableReadStream &stream);
-	byte *decodeCopyBlock(byte *data, size_t size, uint32 offset);
+	byte *decodeCopyBlock(byte *data, uint32 offset);
+    byte *decodeRLE(byte *data, size_t size, uint32 offset);
 };
 
 } // End of namespace Pelrock
