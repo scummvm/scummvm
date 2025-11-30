@@ -41,7 +41,7 @@ class RegionSet {
 public:
 	RegionSet(const Common::String &fname);
 	uint size() const { return _regions.size(); }
-	const Region &getRegion(int idx) const {
+	const Region &getRegion(uint idx) const {
 		return _regions[idx];
 	}
 };

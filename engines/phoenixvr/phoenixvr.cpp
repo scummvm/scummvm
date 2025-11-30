@@ -250,10 +250,8 @@ Common::Error PhoenixVREngine::run() {
 				break;
 			case Common::EVENT_LBUTTONUP:
 				debug("click %s", _mousePos.toString().c_str());
-				if (!_regSet)
-					break;
-				for (uint i = 0; i != _regSet->size(); ++i) {
-					auto rect = _regSet->getRegion(i).toRect();
+				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
+					auto &rect = _cursors[i].rect;
 					if (rect.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
@@ -322,7 +320,11 @@ Common::Error PhoenixVREngine::run() {
 
 			for (auto &c : _cursors)
 				c.free();
+
 			_cursors.resize(_regSet->size());
+			for (uint i = 0; i != _regSet->size(); ++i) {
+				_cursors[i].rect = _regSet->getRegion(i).toRect();
+			}
 
 			Script::ExecutionContext ctx;
 			debug("execute warp script %s", _warp->vrFile.c_str());
