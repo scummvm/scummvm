@@ -262,6 +262,7 @@ Common::Error PhoenixVREngine::run() {
 					if (_vr.isVR() ? rect.contains(vrPos) : rect.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
+						break;
 					}
 				}
 			} break;
