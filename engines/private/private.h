@@ -442,10 +442,12 @@ public:
 
 	// Timer
 	Common::String _timerSetting;
+	Common::String _timerSkipSetting;
 	uint32 _timerStartTime;
 	uint32 _timerDelay;
-	void setTimer(uint32 duration, const Common::String &setting);
+	void setTimer(uint32 duration, const Common::String &setting, const Common::String &skipSetting);
 	void clearTimer();
+	void skipTimer();
 	void checkTimer();
 
 	// VM objects
