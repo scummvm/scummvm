@@ -262,6 +262,19 @@ struct WalkBox {
 	byte flags;
 };
 
+struct ScalingParams {
+	int16 yThreshold;
+	byte scaleDivisor;
+	byte scaleMode;
+};
+
+struct ScaleCalculation {
+	int scaledWidth;
+	int scaledHeight;
+	int scaleUp;
+	int scaleDown;
+};
+
 enum GameState {
 	GAME = 100,
 	MENU = 101,

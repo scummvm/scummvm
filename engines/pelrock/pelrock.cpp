@@ -75,7 +75,7 @@ Common::String PelrockEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-Common::Array<Common::Array<Common::String> > wordWrap(Common::String text);
+Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
@@ -165,6 +165,7 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
+	calculateScalingMasks();
 
 	_compositeBuffer = new byte[640 * 400];
 	_currentBackground = new byte[640 * 400];
@@ -180,9 +181,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		// setScreen(5, 0); //museum entrance
+		setScreen(6, 0); // museum entrance
 		// setScreen(13, 1); // restaurants kitchen
-		setScreen(2, 2); // hooker
+		// setScreen(2, 2); // hooker
 	}
 }
 
@@ -469,7 +470,108 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 }
 
 void PelrockEngine::drawAlfred(byte *buf) {
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred - kAlfredFrameHeight, kAlfredFrameWidth, kAlfredFrameHeight, 255);
+
+	ScaleCalculation scale = calculateScaling(yAlfred, _room->_scaleParams);
+
+	int finalHeight = kAlfredFrameHeight - scale.scaleDown + scale.scaleUp;
+	if (finalHeight <= 0) {
+		finalHeight = 1;
+	}
+	float scaleFactor = static_cast<float>(finalHeight) / static_cast<float>(kAlfredFrameHeight);
+	int finalWidth = static_cast<int>(kAlfredFrameWidth * scaleFactor);
+	if (finalWidth <= 0) {
+		finalWidth = 1;
+	}
+	int scaleIndex = finalHeight - 1;
+	if (scaleIndex >= _heightScalingTable.size()) {
+		scaleIndex = _heightScalingTable.size() - 1;
+	}
+	if (scaleIndex < 0) {
+		scaleIndex = 0;
+	}
+	debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
+	int linesToSkip = kAlfredFrameHeight - finalHeight;
+
+	debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
+
+	if (linesToSkip <= 0) {
+		// No skipping needed, output all lines
+		drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred - kAlfredFrameHeight, kAlfredFrameWidth, kAlfredFrameHeight, 255);
+	} else {
+
+		byte *scaledData = new byte[finalWidth * finalHeight];
+		int skipInterval = kAlfredFrameHeight / linesToSkip;
+		Common::Array<float> idealSkipPositions;
+		for (int i = 0; i < linesToSkip; i++) {
+			float idealPos = (i + 0.5f) * skipInterval;
+			idealSkipPositions.push_back(idealPos);
+		}
+
+		debug("Ideal skip positions:");
+		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
+			debug("  %.2f", idealSkipPositions[i]);
+		}
+
+		debug("Height scaling table size =%d", _heightScalingTable.size());
+		Common::Array<int> tableSkipPositions;
+		for (int scanline = 0; scanline < kAlfredFrameHeight; scanline++) {
+			if (_heightScalingTable[scaleIndex][scanline] != 0) {
+				tableSkipPositions.push_back(scanline);
+			}
+		}
+
+		debug("Table skip positions:");
+		for (size_t i = 0; i < tableSkipPositions.size(); i++) {
+			debug("  %d", tableSkipPositions[i]);
+		}
+
+		Common::Array<int> skipTheseLines;
+		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
+			float idealPos = idealSkipPositions[i];
+			int closest = -1;
+			int minDiff = INT32_MAX;
+			for (size_t j = 0; j < tableSkipPositions.size(); j++) {
+				int candidate = tableSkipPositions[j];
+				int diff = static_cast<int>(abs(candidate - idealPos));
+				if (diff < minDiff) {
+					minDiff = diff;
+					closest = candidate;
+				}
+			}
+			if (closest != -1) {
+				skipTheseLines.push_back(closest);
+			}
+			if (skipTheseLines.size() >= static_cast<size_t>(linesToSkip)) {
+				break;
+			}
+		}
+
+		int outY = 0;
+		for (int srcY = 0; srcY < kAlfredFrameHeight; srcY++) {
+			bool skipLine = false;
+			for (size_t skipIdx = 0; skipIdx < skipTheseLines.size(); ++skipIdx) {
+				if (skipTheseLines[skipIdx] == srcY) {
+					skipLine = true;
+					break;
+				}
+			}
+			if (!skipLine) {
+				for (int outX = 0; outX < finalWidth; outX++) {
+					int srcX = static_cast<int>(outX * kAlfredFrameWidth / finalWidth);
+					if (srcX >= kAlfredFrameWidth) {
+						srcX = kAlfredFrameWidth - 1;
+					}
+					int srcIndex = srcY * kAlfredFrameWidth + srcX;
+					int outIndex = outY * finalWidth + outX;
+					scaledData[outIndex] = buf[srcIndex];
+				}
+				outY++;
+			}
+		}
+		drawSpriteToBuffer(_compositeBuffer, 640, scaledData, xAlfred, yAlfred - finalHeight, finalWidth, finalHeight, 255);
+
+		delete[] scaledData;
+	}
 }
 
 void PelrockEngine::drawNextFrame(AnimSet *animSet) {
@@ -535,6 +637,126 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
 		debug("Current hotspot type: %d", _currentHotspot->type);
 	}
+}
+
+void PelrockEngine::calculateScalingMasks() {
+
+	//    for scale_factor in range(CHAR_WIDTH):
+	//     step = CHAR_WIDTH / (scale_factor + 1.0)
+	//     row = []
+	//     index = 0.0
+	//     source_pixel = 0
+
+	//     while index < CHAR_WIDTH:
+	//         row.append(source_pixel)
+	//         index += step
+	//         source_pixel += 1
+	//         if source_pixel >= CHAR_WIDTH:
+	//             source_pixel = CHAR_WIDTH - 1
+
+	//     # Pad to exactly CHAR_WIDTH entries
+	//     while len(row) < CHAR_WIDTH:
+	//         row.append(row[-1] if row else 0)
+	//     width_table.append(row[:CHAR_WIDTH])
+
+	for (int scaleFactor = 0; scaleFactor < kAlfredFrameWidth; scaleFactor++) {
+		float step = kAlfredFrameWidth / (scaleFactor + 1.0f);
+		Common::Array<int> row;
+		float index = 0.0f;
+		int sourcePixel = 0;
+
+		while (index < kAlfredFrameWidth) {
+			row.push_back(sourcePixel);
+			index += step;
+			sourcePixel += 1;
+			if (sourcePixel >= kAlfredFrameWidth) {
+				sourcePixel = kAlfredFrameWidth - 1;
+			}
+		}
+
+		// Pad to exactly CHAR_WIDTH entries
+		while (row.size() < kAlfredFrameWidth) {
+			row.push_back(row.empty() ? 0 : row[row.size() - 1]);
+		}
+
+		_widthScalingTable.push_back(row);
+	}
+
+	//  height_table = []
+	// for scale_factor in range(CHAR_HEIGHT):
+	//     step = CHAR_HEIGHT / (scale_factor + 1.0)
+	//     row = [0] * CHAR_HEIGHT  # Initialize all to 0
+
+	//     # Mark positions where we should keep/duplicate the scanline
+	//     position = step
+	//     counter = 1
+	//     while position < CHAR_HEIGHT:
+	//         idx = round(position)
+	//         if idx < CHAR_HEIGHT:
+	//             row[idx] = counter
+	//             counter += 1
+	//         position += step
+
+	//     height_table.append(row)
+	for (int scaleFactor = 0; scaleFactor < kAlfredFrameHeight; scaleFactor++) {
+		float step = kAlfredFrameHeight / (scaleFactor + 1.0f);
+		Common::Array<int> row;
+		row.resize(kAlfredFrameHeight, 0);
+		float position = step;
+		int counter = 1;
+		while (position < kAlfredFrameHeight) {
+			int idx = static_cast<int>(round(position));
+			if (idx < kAlfredFrameHeight) {
+				row[idx] = counter;
+				counter++;
+			}
+			position += step;
+		}
+		_heightScalingTable.push_back(row);
+	}
+}
+
+ScaleCalculation PelrockEngine::calculateScaling(int yPos, ScalingParams scalingParams) {
+	int scaleDown = 0;
+	int scaleUp = 0;
+	if (scalingParams.scaleMode == 0xFF) {
+		scaleDown = 0x5e;
+		scaleUp = 0x2f;
+	} else if (scalingParams.scaleMode == 0xFE) {
+		scaleDown = 0;
+		scaleUp = 0;
+	} else if (scalingParams.scaleMode == 0) {
+		if (scalingParams.yThreshold < yPos) {
+			scaleDown = 0;
+			scaleUp = 0;
+		} else {
+			if (scalingParams.scaleDivisor != 0) {
+				scaleDown = (scalingParams.yThreshold - yPos) / scalingParams.scaleDivisor;
+				scaleUp = scaleDown / 2;
+			} else {
+				scaleDown = 0;
+				scaleUp = 0;
+			}
+		}
+	} else {
+		scaleDown = 0;
+		scaleUp = 0;
+	}
+
+	int finalHeight = kAlfredFrameHeight - scaleDown + scaleUp;
+	if (finalHeight < 1)
+		finalHeight = 1;
+
+	int finalWidth = kAlfredFrameWidth * (finalHeight / kAlfredFrameHeight);
+	if (finalWidth < 1)
+		finalWidth = 1;
+
+	ScaleCalculation scaleCalc;
+	scaleCalc.scaledHeight = finalHeight;
+	scaleCalc.scaledWidth = finalWidth;
+	scaleCalc.scaleDown = scaleDown;
+	scaleCalc.scaleUp = scaleUp;
+	return scaleCalc;
 }
 
 int PelrockEngine::isHotspotUnder(int x, int y) {
@@ -1182,9 +1404,9 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 	return wordLength;
 }
 
-Common::Array<Common::Array<Common::String> > wordWrap(Common::String text) {
+Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
 
-	Common::Array<Common::Array<Common::String> > pages;
+	Common::Array<Common::Array<Common::String>> pages;
 	Common::Array<Common::String> currentPage;
 	Common::Array<Common::String> currentLine;
 	int charsRemaining = MAX_CHARS_PER_LINE;

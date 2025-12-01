@@ -22,6 +22,7 @@
 #include "pelrock/room.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "room.h"
 
 namespace Pelrock {
 
@@ -172,7 +173,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 
 	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
 	Common::Array<Exit> exits = loadExits(roomFile, roomOffset);
-
+	ScalingParams scalingParams = loadScalingParams(roomFile, roomOffset);
 	Common::Array<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
 	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
@@ -189,6 +190,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	_currentRoomExits = exits;
 	_currentRoomWalkboxes = walkboxes;
 	_currentRoomDescriptions = descriptions;
+	_scaleParams = scalingParams;
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
@@ -287,6 +289,8 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int ro
 	uint32_t walkbox_countOffset = pair10_data_offset + 0x213;
 	roomFile->seek(walkbox_countOffset, SEEK_SET);
 	byte walkbox_count = roomFile->readByte();
+
+
 	debug("Walkbox count: %d", walkbox_count);
 	uint32_t walkbox_offset = pair10_data_offset + 0x218;
 	Common::Array<WalkBox> walkboxes;
@@ -823,5 +827,19 @@ Common::Array<ConversationNode> RoomManager::loadConversations(Common::File *roo
 	return roots;
 }
 
+ScalingParams RoomManager::loadScalingParams(Common::File *roomFile, int roomOffset) {
+	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+	roomFile->seek(pair10_offset_pos, SEEK_SET);
+	// roomFile->skip(4);
+	uint32_t pair10_data_offset = roomFile->readUint32LE();
+	uint32_t pair10_size = roomFile->readUint32LE();
+	uint32_t scalingParamsOffset = pair10_data_offset + 0x214;
 
+	roomFile->seek(scalingParamsOffset, SEEK_SET);
+	ScalingParams scalingParams;
+	scalingParams.yThreshold = roomFile->readSint16LE();
+	scalingParams.scaleDivisor = roomFile->readByte();
+	scalingParams.scaleMode = roomFile->readByte();
+	return scalingParams;
+}
 } // End of namespace Pelrock

@@ -101,21 +101,27 @@ private:
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
 
+	void calculateScalingMasks();
+	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
 
-	//walking
+	Common::Array<Common::Array<int>> _widthScalingTable;
+	Common::Array<Common::Array<int>> _heightScalingTable;
+
+	// walking
 	int _current_step = 0;
 	PathContext _currentContext;
 
-	//text display
+	// text display
 	byte _textColor = 0;
 	Common::Point _textPos;
-	Common::Array<Common::Array<Common::String> > _currentTextPages = Common::Array<Common::Array<Common::String> >();
+	Common::Array<Common::Array<Common::String>> _currentTextPages = Common::Array<Common::Array<Common::String>>();
 	int _currentTextPageIndex = 0;
 
-
 	// Alfred
-	int xAlfred = 319;
-	int yAlfred = 302;
+	// int xAlfred = 319;
+	// int yAlfred = 302;
+	int xAlfred = 264;
+	int yAlfred = 394;
 	int dirAlfred = 0;
 	int curAlfredFrame = 0;
 
@@ -126,9 +132,8 @@ private:
 	bool _isMouseDown = false;
 	bool _longClick = false;
 
-
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
-	byte *_compositeBuffer;   // Working composition buffer
+	byte *_compositeBuffer;             // Working composition buffer
 
 	bool _displayPopup = false;
 	int _popupX = 0;
@@ -146,7 +151,7 @@ private:
 	bool isNPCBTalking = false;
 
 	// JAVA
-	bool shouldPlayIntro = true;
+	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;
 	bool gameInitialized = false;
 	bool screenReady = false;
@@ -157,7 +162,6 @@ private:
 	// int whichScreen = 0;
 	// byte *pixelsShadows; // =new int[640*400];
 
-
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -167,6 +171,7 @@ public:
 	AlfredState alfredState = ALFRED_IDLE;
 	ChronoManager *_chronoManager = nullptr;
 	VideoManager *_videoManager = nullptr;
+
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~PelrockEngine() override;

@@ -146,9 +146,6 @@ byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
 	byte *buf = new byte[256000];
 	memset(buf, 0, 256000);
 	uint32 pos = offset;
-	// result = bytearray()
-	// pos = start_pos
-
 	uint32 outPos = 0;
 	while (outPos < 256000 && pos < size) {
 		byte countByte = data[pos];
@@ -171,27 +168,5 @@ byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
 		}
 	}
 	return buf;
-
-	// while len(result) < max_size and pos < len(data):
-	//     count_byte = data[pos]
-	//     pos += 1
-
-	//     if (count_byte & 0xC0) == 0xC0:
-	//         # RLE: count in lower 6 bits, next byte is value
-	//         count = count_byte & 0x3F
-	//         if pos >= len(data):
-	//             break
-	//         value = data[pos]
-	//         pos += 1
-	//         result.extend([value] * count)
-	//     else:
-	//         # Literal: count is 1, this byte is the value
-	//         result.append(count_byte)
-
-	// # Pad to exact size
-	// if len(result) < max_size:
-	//     result.extend([0] * (max_size - len(result)))
-
-	// return bytes(result[:max_size])
 }
 } // End of namespace Pelrock
