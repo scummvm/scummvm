@@ -963,6 +963,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kjoeties",			"Invasie van de Kjoeties" },
 	{ "klikker1", 			"Klikkerdeklik" },
 	{ "lannoo",				"Lannoo Nieuwe Media Demo" },
+	{ "lannoodummy",		"Lannoo Placeholder Dummy" },
 	{ "moordspel",			"Moordspel: Moord in Huize Huiver" },
 	{ "samson",				"Op Reis Met Samson & Gert" },
 	{ "welkom",				"Welkom op the Wereld" },
@@ -7638,7 +7639,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("osaka2", "Demo", "OSAKA2.EXE",		  	 "t:a1b15df3e663f99b015753bc82e22bcd", 1410110,
 								 "WINMOVIE/BARGAIN.DIR", "d:949640df6d4db94e85b466da5e5d8470", 1880116, Common::JA_JPN, 501),
 
-    WINDEMO1_l("oscar2", "Demo", "Oscar2/START.EXE", "a288605e511c815d7fcea9de6780d548", 1287391, Common::NL_NLD, 501),
+    WINDEMO1_l("oscar2", "Demo", "Oscar2/START.EXE", "t:a288605e511c815d7fcea9de6780d548", 1287391, Common::NL_NLD, 501),
 
  	WINGAME1("oscar2", "Windows 3.1", "oshof16.exe", "t:f7eee50cc1e538417a969f6a26b449a4", 1081413, 501),
  	WINGAME1("oscar2", "Windows 95",  "oshof32.exe", "t:c65ee08c70eab2ff6ef2ac32bd93031c", 1559831, 501),
@@ -7712,7 +7713,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	//found on TKKG4 Verraad bij TKKG by Lannoo (Belgium)
 	WINDEMO1_l("pettson2dutchdemo", "", "pettdemo.exe", "t:99186d8de1156cabce545f66f413f9d0", 1430755, Common::NL_NLD, 501),
-
+	WINDEMO1_l("pettson2dutchdemo", "", "Pettson/pettdemo.exe", "t:99186d8de1156cabce545f66f413f9d0", 1430755, Common::NL_NLD, 501),
 
 	// From Japanese Star Trek: Borg DVD (2000)
 	WINGAME1_l("picarddossier", "DVD", "OMNIBORG.EXE",	"t:312801acbcbedcb6825414dad03538e8", 1501528, Common::JA_JPN, 501),
@@ -9641,6 +9642,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("kgbpocahontas", "", "Pocahontas",	 "rt:3994eb4201e400d9baea84ac555e73dc", 112502, 702),
 	WINGAME2("kgbpocahontas", "", "CDGe.EXE",	 "t:7d1d6dba1026a1be63d60b7f14111619", 3037522,
 								  "CBAIOBJ.dir", "f:5f374ed90aca597fd43a0726ff2cf710",	204224, 702),
+
+	//found on TKKG Releases by Lannoo (Belgium)
+	WINGAME1_l("lannoodummy", "", "start_pc.exe", "t:2b8f3db3c94ebb395938ae2dc5bbb425", 1901292, Common::NL_NLD, 702),
 
 	WINDEMO1_l("kidpix", "Demo", "kidpix.exe", "t:edb63181702824aaacfffe73012cbff3", 7445882, Common::KO_KOR, 702),
 
