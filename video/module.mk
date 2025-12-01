@@ -2,6 +2,7 @@ MODULE := video
 
 MODULE_OBJS := \
 	3do_decoder.o \
+	4xm_decoder.o \
 	avi_decoder.o \
 	coktel_decoder.o \
 	dxa_decoder.o \
