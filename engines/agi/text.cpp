@@ -242,47 +242,19 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 	char *processedTextPtr   = nullptr;
 
 	charPos_Push();
-	charPos_Set(textRow, textColumn);
 
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
 		processedTextPtr = stringPrintf(logicTextPtr);
 
-		// Word wrap first to get the actual display width
 		int16 calculatedWidth = 0;
 		processedTextPtr = stringWordWrap(processedTextPtr, 40, &calculatedWidth);
 
-		// For RTL languages, right-align text (mirroring LTR behavior)
 		if (_vm->isLanguageRTL()) {
-			if (strchr(processedTextPtr, '\n') != nullptr) {
-				// For long strings that require a word wrap, we rely on the padding
-				// provided by rightAlign() in displayText() to handle the
-				// alignment. We only pad to 39 columns, because padding to 40
-				// leads to an extra row being inserted since the newline char
-				// pushes the line length to 40. The result is that word-wrapped
-				// lines in RTL always start indented one column. This is unavoidable
-				// without a much more significant change to word wrapping. If
-				// you need a line to start exactly on the right edge, then 
-				// manually split up the string into lines of 39 chars or less.
-				charPos_Set(textRow, 0);
-				_messageState.textSize_Width = 39;
-				// Prepend spaces for first-line indent. This mimics the behavior
-				// of LTR text, where the textColumn value determines the indent
-				// of the first line.
-				Common::String padded;
-				for (int16 i = 0; i < textColumn ; i++)
-					padded += ' ';
-				padded += processedTextPtr;
-				// Need to use a static buffer since processedTextPtr points to one
-				static char rtlBuffer[2000];
-				Common::strlcpy(rtlBuffer, padded.c_str(), sizeof(rtlBuffer));
-				processedTextPtr = rtlBuffer;
-			} else {
-				// For single (non-wrapped) lines, we simply manual position them
-				// indented in from the right to get RTL alignment
-				textColumn = MAX<int16>(0, 40 - textColumn - calculatedWidth);
-				charPos_Set(textRow, textColumn);
-			}
+			// handles setting cursor position and processing string for proper RTL alignment
+			processedTextPtr = displayAdjustRTL(textRow, textColumn, processedTextPtr, calculatedWidth);
+		} else {
+			charPos_Set(textRow, textColumn);
 		}
 
 #ifdef USE_TTS
@@ -313,6 +285,40 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 		}
 	}
 	charPos_Pop();
+}
+
+char *TextMgr::displayAdjustRTL(int16 textRow, int16 textColumn, char *text, int16 calculatedWidth) {
+	static char rtlBuffer[2000];
+
+	if (strchr(text, '\n') != nullptr) {
+		// For multi-line strings, we rely on the padding provided by
+		// rightAlign() in displayText() to handle alignment. 
+		// Accordingloy, row position is set to 0 because alignment will
+		// be handled by rightAlign()'s zero padding
+		charPos_Set(textRow, 0);
+
+                // We only pad to 39 columns, because padding to 40 leads to an extra 
+		// row being inserted since the newline pushes the line length past 40. 
+		// The result is that word-wrapped lines in RTL always start indented
+		// one column from the right edge.
+		_messageState.textSize_Width = 39;
+
+		// Prepend spaces for first-line indent. This mimics the behavior
+		// of LTR text, where textColumn determines the first line indent.
+		Common::String padded;
+		for (int16 i = 0; i < textColumn; i++)
+			padded += ' ';
+		padded += text;
+		Common::strlcpy(rtlBuffer, padded.c_str(), sizeof(rtlBuffer));
+
+		return rtlBuffer;
+	} else {
+		// For single lines, we directly position them indented from the right edge
+		textColumn = MAX<int16>(0, 40 - textColumn - calculatedWidth);
+		charPos_Set(textRow, textColumn);
+
+		return text;
+	}
 }
 
 void TextMgr::displayTextInsideWindow(const char *textPtr, int16 windowRow, int16 windowColumn) {
