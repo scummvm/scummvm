@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/keyboard.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -132,6 +133,9 @@ public:
 		return idx < _cursors.size() ? &_cursors[idx].rect : nullptr;
 	}
 
+	void resetLockKey();
+	void lockKey(Common::KeyCode code, const Common::String &warp);
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);
@@ -146,6 +150,12 @@ private:
 	Common::Point _mousePos;
 	Common::String _nextScript;
 	Common::String _nextWarp;
+
+	struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
+		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }
+	};
+
+	Common::HashMap<Common::KeyCode, Common::String, KeyCodeHash> _keys;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	struct Sound {
 		Audio::SoundHandle handle;

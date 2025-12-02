@@ -186,6 +186,14 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 #endif
 }
 
+void PhoenixVREngine::resetLockKey() {
+	_keys.clear();
+}
+
+void PhoenixVREngine::lockKey(Common::KeyCode code, const Common::String &warp) {
+	_keys[code] = warp;
+}
+
 Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	Common::File file;
 	if (!file.open(Common::Path(path))) {
@@ -350,15 +358,19 @@ Common::Error PhoenixVREngine::run() {
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.ascii == ' ') {
+			case Common::EVENT_KEYDOWN: {
+				auto it = _keys.find(event.kbd.keycode);
+				if (it != _keys.end()) {
+					debug("matched code %d", static_cast<int>(event.kbd.keycode));
+					goToWarp(it->_value);
+				} else if (event.kbd.ascii == ' ') {
 					if (_movie) {
 						_movie->stop();
 						_movie.reset();
 					} else
 						goToWarp("N1M01L03W02E0.vr");
 				}
-				break;
+			} break;
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
 				break;
