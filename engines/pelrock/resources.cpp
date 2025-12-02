@@ -142,7 +142,7 @@ void ResourceManager::loadAlfredAnims() {
 		alfredWalkFrames[i] = new byte *[walkingAnimLengths[i]];
 
 		int standingFrame = prevWalkingFrames;
-		debug("Loading standing frame %d at index %d", i, standingFrame);
+
 		extractSingleFrame(pic, alfredIdle[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		for (int j = 0; j < walkingAnimLengths[i]; j++) {
 
@@ -199,11 +199,7 @@ void ResourceManager::loadAlfredAnims() {
 	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_L, alfredCombLeftRaw, alfredCombLeftSize);
 	byte *alfredCombLeft = nullptr;
 	size_t outSize = rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
-	debug("Sprite map size: %d, %d, %d", spriteMapSize, alfredCombLeftSize, outSize);
 
-	for (int i = 0; i < 11; i++) {
-		debug("Extracting comb left frame %d", i);
-	}
 	for (int i = 0; i < 11; i++) {
 		alfredCombFrames[1][i] = new byte[frameSize];
 		extractSingleFrame(alfredCombLeft, alfredCombFrames[1][i], i, kAlfredFrameWidth, kAlfredFrameHeight);

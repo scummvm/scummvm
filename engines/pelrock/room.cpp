@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/scummsys.h"
 
 #include "pelrock/room.h"
 #include "pelrock/pelrock.h"
@@ -27,7 +28,11 @@
 namespace Pelrock {
 
 RoomManager::RoomManager() {
-	_pixelsShadows = new byte[640*400] { 0 };
+	_pixelsShadows = new byte[640 * 400]{0};
+	_roomNames = loadRoomNames();
+	for (int i = 0; i < _roomNames.size(); i++) {
+		debug("Room %d name: %s", i, _roomNames[i].c_str());
+	}
 }
 
 RoomManager::~RoomManager() {
@@ -115,7 +120,7 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 
 Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	debug("Hotspot(10)  pair offset position: %d", pair10_offset_pos);
+	// debug("Hotspot(10)  pair offset position: %d", pair10_offset_pos);
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
 	uint32_t pair10_data_offset = roomFile->readUint32LE();
 	uint32_t pair10_size = roomFile->readUint32LE();
@@ -134,7 +139,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roo
 		spot.w = roomFile->readByte();
 		spot.h = roomFile->readByte();
 		spot.extra = roomFile->readUint16LE();
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	return hotspots;
@@ -185,7 +190,6 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		hotspot.index = anims.size() + i;
 		hotspots.push_back(hotspot);
 	}
-
 
 	byte *shadows = loadShadowMap(roomNumber);
 	loadRemaps(roomNumber);
@@ -299,8 +303,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int ro
 	roomFile->seek(walkbox_countOffset, SEEK_SET);
 	byte walkbox_count = roomFile->readByte();
 
-
-	debug("Walkbox count: %d", walkbox_count);
+	// debug("Walkbox count: %d", walkbox_count);
 	uint32_t walkbox_offset = pair10_data_offset + 0x218;
 	Common::Array<WalkBox> walkboxes;
 	for (int i = 0; i < walkbox_count; i++) {
@@ -311,7 +314,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int ro
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;
@@ -352,7 +355,7 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
-					debug("Found action trigger: %d", description.actionTrigger);
+					// debug("Found action trigger: %d", description.actionTrigger);
 					pos += 2;
 					break;
 				}
@@ -360,14 +363,14 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 				// debug("Current desc: %s", desc);
 				pos++;
 			}
-			debug("Found description for item %d index %d, text: %s", description.itemId, description.index, description.text.c_str());
+			// debug("Found description for item %d index %d, text: %s", description.itemId, description.index, description.text.c_str());
 
 			descriptions.push_back(description);
 			lastDescPos = pos;
 		}
 		pos++;
 	}
-	debug("End of descriptions at position %d", pos);
+	// debug("End of descriptions at position %d", pos);
 	outPos = lastDescPos + 1;
 	delete[] data;
 	// for (Common::List<Common::String>::iterator i = descriptions.begin(); i != descriptions.end(); i++) {
@@ -375,7 +378,6 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 	// }
 	return descriptions;
 }
-
 
 char32_t decodeByte(byte b) {
 	if (b == 0x80) {
@@ -457,11 +459,10 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	readUntilBuda(&talkFile, talkHeader.spritePointer, data, dataSize);
 	size_t decompressedSize = rleDecompress(data, dataSize, 0, dataSize, &decompressed);
 	free(data);
-	debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
+	// debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
 	for (int i = 0; i < talkHeader.numFramesAnimA; i++) {
 		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
 		extractSingleFrame(decompressed, talkHeader.animA[i], i, talkHeader.wAnimA, talkHeader.hAnimA);
-
 	}
 
 	if (talkHeader.numFramesAnimB > 0) {
@@ -866,8 +867,6 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 
 	uint32 entryOffset = roomNumber * 6;
 
-	debug("Loading shadow map for room %d at offset %d", roomNumber, entryOffset);
-
 	shadowMapFile.seek(entryOffset, SEEK_SET);
 	uint32 shadowOffset = readUint24(shadowMapFile);
 
@@ -875,7 +874,6 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 	size_t compressedSize = 0;
 	readUntilBuda(&shadowMapFile, shadowOffset, compressed, compressedSize);
 
-	debug("Shadow map compressed size: %zu", compressedSize);
 	byte *shadows = nullptr;
 	size_t output = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
 	free(compressed);
@@ -896,6 +894,40 @@ void RoomManager::loadRemaps(int roomNumber) {
 	remapFile.read(alfredRemap, 256);
 	remapFile.read(overlayRemap, 256);
 	remapFile.close();
+}
+
+Common::Array<Common::String> RoomManager::loadRoomNames() {
+	Common::Array<Common::String> roomNames;
+	Common::File juegoExe;
+	if (!juegoExe.open(Common::Path("JUEGO.EXE"))) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+
+	size_t namesSize = 1335;
+	juegoExe.seek(0x49315, SEEK_SET);
+	byte *namesData = new byte[namesSize];
+	juegoExe.read(namesData, namesSize);
+	uint32 pos = 0;
+	Common::String currentName = "";
+	while (pos < namesSize) {
+		if (namesData[pos] == 0xFD &&
+			namesData[pos + 1] == 0x00 &&
+			namesData[pos + 2] == 0x08 &&
+			namesData[pos + 3] == 0x02) {
+			if (currentName.size() > 0	) {
+				debug("Found room name: %s", currentName.c_str());
+				roomNames.push_back(currentName);
+			}
+			currentName = "";
+			pos += 4;
+			continue;
+		}
+		currentName += (char)namesData[pos];
+		pos++;
+	}
+	delete[] namesData;
+	juegoExe.close();
+	return roomNames;
 }
 
 } // End of namespace Pelrock

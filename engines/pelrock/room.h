@@ -37,6 +37,12 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+	Common::String getRoomName(int roomNumber) {
+		if (roomNumber >= 0 && roomNumber < _roomNames.size()) {
+			return _roomNames[roomNumber];
+		}
+		return "Unknown Room";
+	}
 
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<AnimSet> _currentRoomAnims;
@@ -49,6 +55,7 @@ public:
 	byte *_pixelsShadows = nullptr;
 	byte alfredRemap[256];
 	byte overlayRemap[256];
+	Common::Array<Common::String> _roomNames;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
@@ -65,6 +72,8 @@ private:
 	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);
+	Common::Array<Common::String> loadRoomNames();
+
 };
 
 } // End of namespace Pelrock

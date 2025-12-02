@@ -137,7 +137,6 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *
 			break;
 		}
 	}
-	debug("Read %zu bytes until BUDA marker", pos);
 	outSize = pos;
 }
 

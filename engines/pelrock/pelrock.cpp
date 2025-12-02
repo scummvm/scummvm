@@ -49,8 +49,6 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 																				 _gameDescription(gameDesc), _randomSource("Pelrock") {
 	g_engine = this;
 	_chronoManager = new ChronoManager();
-	_room = new RoomManager();
-	_res = new ResourceManager();
 }
 
 PelrockEngine::~PelrockEngine() {
@@ -82,6 +80,8 @@ Common::Error PelrockEngine::run() {
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
 	_videoManager = new VideoManager(_screen);
+	_room = new RoomManager();
+	_res = new ResourceManager();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -226,7 +226,7 @@ void PelrockEngine::talk(byte object) {
 void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
 	int overlayHeight = choices.size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
-	debug("Displaying choices overlay at y=%d, height=%d", overlayY, overlayHeight);
+	// debug("Displaying choices overlay at y=%d, height=%d", overlayY, overlayHeight);
 	for (int x = 0; x < 640; x++) {
 		for (int y = overlayY; y < 400; y++) {
 			int index = y * 640 + x;
@@ -516,10 +516,10 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (scaleIndex < 0) {
 		scaleIndex = 0;
 	}
-	debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
+	// debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
-	debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
+	// debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
 
 	int shadowPos = yAlfred; // - finalHeight;
 	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + xAlfred] != 0xFF;
@@ -532,11 +532,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 		for (int i = 0; i < linesToSkip; i++) {
 			float idealPos = (i + 0.5f) * skipInterval;
 			idealSkipPositions.push_back(idealPos);
-		}
-
-		// debug("Ideal skip positions:");
-		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
-			debug("  %.2f", idealSkipPositions[i]);
 		}
 
 		// debug("Height scaling table size =%d", _heightScalingTable.size());
@@ -875,9 +870,6 @@ void PelrockEngine::walkTo(int x, int y) {
 	// debug("================\n");
 
 	// debug("Walkbox path (%d boxes): ", context.path_length);
-	for (int i = 0; i < context.path_length && context.path_buffer[i] != PATH_END; i++) {
-		debug("%d ", context.path_buffer[i]);
-	}
 
 	// debug("Movement steps (%d steps):\n", context.movement_count);
 	for (int i = 0; i < context.movement_count; i++) {
@@ -897,9 +889,6 @@ void PelrockEngine::walkTo(int x, int y) {
 	}
 
 	// debug("\nCompressed path (%d bytes): ", context.compressed_length);
-	for (int i = 0; i < context.compressed_length; i++) {
-		debug("%02X ", context.compressed_path[i]);
-	}
 
 	// if (x > xAlfred) {
 	// 	dirAlfred = RIGHT;
@@ -923,9 +912,6 @@ bool PelrockEngine::pathFind(int x, int y, PathContext *context) {
 	if (context->movement_buffer == NULL) {
 		context->movement_buffer = (MovementStep *)malloc(MAX_MOVEMENT_STEPS * sizeof(MovementStep));
 	}
-	// if (context->compressed_path == NULL) {
-	//     context->compressed_path = (uint8_t*)malloc(MAX_COMPRESSED_PATH);
-	// }
 
 	int startX = xAlfred;
 	int startY = yAlfred;
@@ -1212,11 +1198,8 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	if (_displayPopup) {
 		Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
-		for (int i = 0; i < actions.size(); i++) {
-			debug("Available action %d at index %d", actions[i], i);
-		}
+
 		Common::Rect lookRect = Common::Rect(_popupX + 20, _popupY + 20, _popupX + 20 + kVerbIconWidth, _popupY + 20 + kVerbIconHeight);
-		// debug("Look rect: x=%d, y=%d, w=%d, h=%d", lookRect.left, lookRect.top, lookRect, lookRect.h);
 		if (lookRect.contains(x, y)) {
 			debug("Look action clicked");
 			walkTo(_currentHotspot->x, _currentHotspot->y);
@@ -1226,7 +1209,6 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		}
 		for (int i = 1; i < actions.size(); i++) {
 
-			// debug("Checking action %d at index %d for mouse click = %d, %d", actions[i], i, x, y);
 			int x = _popupX + 20 + (i * (kVerbIconWidth + 2));
 			int y = _popupY + 20;
 			Common::Rect actionRect = Common::Rect(x, y, x + kVerbIconWidth, y + kVerbIconHeight);
@@ -1523,6 +1505,7 @@ Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
 void PelrockEngine::setScreen(int number, int dir) {
 
 	Common::File roomFile;
+	debug("Loading room %s number %d", _room->getRoomName(number).c_str(), number);
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
 		error("Could not open ALFRED.1");
 		return;
