@@ -507,12 +507,12 @@ struct PlaySound3D : public Script::Command {
 	Common::String sound;
 	int volume;
 	float angle;
-	int unk;
+	int loops;
 
-	PlaySound3D(Common::String s, int v, float a, int u) : sound(Common::move(s)), volume(v), angle(a), unk(u) {}
+	PlaySound3D(Common::String s, int v, float a, int l) : sound(Common::move(s)), volume(v), angle(a), loops(l) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("play sound %s %d %g %d", sound.c_str(), volume, angle, unk);
+		g_engine->playSound(sound, volume, loops);
 	}
 };
 
@@ -522,7 +522,7 @@ struct StopSound3D : public Script::Command {
 	StopSound3D(Common::String s) : sound(Common::move(s)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("stop sound 3d %s", sound.c_str());
+		g_engine->stopSound(sound);
 	}
 };
 
