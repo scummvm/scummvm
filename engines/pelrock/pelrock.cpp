@@ -185,8 +185,8 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreen(6, 0); // museum entrance
-		// setScreen(13, 1); // restaurants kitchen
-		// setScreen(2, 2); // hooker
+						 // setScreen(13, 1); // restaurants kitchen
+						 // setScreen(2, 2); // hooker
 	}
 }
 
@@ -445,7 +445,7 @@ void PelrockEngine::frames() {
 				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y + 2, 100);
 		}
 
-		if(showShadows) {
+		if (showShadows) {
 			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
 		}
 
@@ -503,12 +503,12 @@ void PelrockEngine::drawAlfred(byte *buf) {
 
 	debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
 
-	if (linesToSkip <= 0) {
-		// No skipping needed, output all lines
-		drawSpriteToBuffer(_compositeBuffer, 640, buf, xAlfred, yAlfred - kAlfredFrameHeight, kAlfredFrameWidth, kAlfredFrameHeight, 255);
-	} else {
+	int shadowPos = yAlfred; // - finalHeight;
+	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + xAlfred] != 0xFF;
 
-		byte *scaledData = new byte[finalWidth * finalHeight];
+	byte *finalBuf = new byte[finalWidth * finalHeight];
+
+	if (linesToSkip > 0) {
 		int skipInterval = kAlfredFrameHeight / linesToSkip;
 		Common::Array<float> idealSkipPositions;
 		for (int i = 0; i < linesToSkip; i++) {
@@ -572,15 +572,25 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					}
 					int srcIndex = srcY * kAlfredFrameWidth + srcX;
 					int outIndex = outY * finalWidth + outX;
-					scaledData[outIndex] = buf[srcIndex];
+					finalBuf[outIndex] = buf[srcIndex];
 				}
 				outY++;
 			}
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, scaledData, xAlfred, yAlfred - finalHeight, finalWidth, finalHeight, 255);
-
-		delete[] scaledData;
+	} else {
+		Common::copy(buf, buf + (kAlfredFrameWidth * kAlfredFrameHeight), finalBuf);
 	}
+
+	if (shadeCharacter) {
+		for (int i = 0; i < finalWidth * finalHeight; i++) {
+			if (finalBuf[i] != 255) {
+				finalBuf[i] = _room->alfredRemap[finalBuf[i]];
+			}
+		}
+	}
+
+	drawSpriteToBuffer(_compositeBuffer, 640, finalBuf, xAlfred, yAlfred - finalHeight, finalWidth, finalHeight, 255);
+	delete[] finalBuf;
 }
 
 void PelrockEngine::drawNextFrame(AnimSet *animSet) {

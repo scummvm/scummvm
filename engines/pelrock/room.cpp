@@ -188,6 +188,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 
 	byte *shadows = loadShadowMap(roomNumber);
+	loadRemaps(roomNumber);
 
 	int walkboxCount = 0;
 
@@ -878,7 +879,23 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 	byte *shadows = nullptr;
 	size_t output = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
 	free(compressed);
+	shadowMapFile.close();
 	return shadows;
+}
+
+void RoomManager::loadRemaps(int roomNumber) {
+
+	Common::File remapFile;
+	if (!remapFile.open("ALFRED.9")) {
+		error("Couldnt find file ALFRED.9");
+	}
+
+	uint32 remapOffset = 0x200 + (roomNumber * 1024);
+
+	remapFile.seek(remapOffset, SEEK_SET);
+	remapFile.read(alfredRemap, 256);
+	remapFile.read(overlayRemap, 256);
+	remapFile.close();
 }
 
 } // End of namespace Pelrock

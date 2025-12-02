@@ -47,6 +47,8 @@ public:
 	TalkingAnimHeader _talkingAnimHeader;
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
+	byte alfredRemap[256];
+	byte overlayRemap[256];
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
@@ -62,6 +64,7 @@ private:
 	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
 	byte *loadShadowMap(int roomNumber);
+	void loadRemaps(int roomNumber);
 };
 
 } // End of namespace Pelrock
