@@ -61,7 +61,7 @@ namespace Gtl {
 #define IDC_NOTEBOOK_BOOK       921
 #define IDC_NOTEBOOK_SOUND      922
 
-#define NOTE_FONT_SIZE          -16
+#define NOTE_FONT_SIZE          -12
 #define NOTE_TEXT_COLOR         RGB(128,0,128)
 #define NOTE_MORE_COLOR         RGB(0,0,0)
 
