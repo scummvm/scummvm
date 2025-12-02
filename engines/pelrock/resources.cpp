@@ -44,7 +44,7 @@ ResourceManager::~ResourceManager() {
 			delete[] alfredTalkFrames[i][j];
 		}
 
-		for(int j = 0; j < 4; j ++) {
+		for(int j = 0; j < 2; j ++) {
 			delete[] alfredInteractFrames[i][j];
 		}
 

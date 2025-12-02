@@ -28,7 +28,7 @@
 namespace Pelrock {
 
 RoomManager::RoomManager() {
-	_pixelsShadows = new byte[640 * 400]{0};
+	_pixelsShadows = new byte[640 * 400];
 	_roomNames = loadRoomNames();
 	for (int i = 0; i < _roomNames.size(); i++) {
 		debug("Room %d name: %s", i, _roomNames[i].c_str());
@@ -42,7 +42,10 @@ RoomManager::~RoomManager() {
 	// delete[] _currentRoomWalkboxes;
 	// delete[] _currentRoomDescriptions;
 	// delete[] _currentRoomConversations;
-	delete[] _pixelsShadows;
+	if(_pixelsShadows != nullptr) {
+		delete[] _pixelsShadows;
+		_pixelsShadows = nullptr;
+	}
 }
 
 void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palette) {
@@ -194,15 +197,18 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	byte *shadows = loadShadowMap(roomNumber);
 	loadRemaps(roomNumber);
 
-	int walkboxCount = 0;
+	Common::Array<int> sfx = loadRoomSfx(roomFile, roomOffset);
 
+	int walkboxCount = 0;
 	_currentRoomAnims = anims;
 	_currentRoomHotspots = hotspots;
 	_currentRoomExits = exits;
 	_currentRoomWalkboxes = walkboxes;
 	_currentRoomDescriptions = descriptions;
 	_scaleParams = scalingParams;
-	_pixelsShadows = shadows;
+	Common::copy(shadows, shadows + (640 * 400), _pixelsShadows);
+	_musicTrack = loadMusicTrackForRoom(roomFile, roomOffset);
+	_roomSfx = sfx;
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
@@ -928,6 +934,35 @@ Common::Array<Common::String> RoomManager::loadRoomNames() {
 	delete[] namesData;
 	juegoExe.close();
 	return roomNames;
+}
+
+byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) {
+	uint32_t pair9offset = roomOffset + (9 * 8);
+	roomFile->seek(pair9offset, SEEK_SET);
+	uint32_t pair9_data_offset = roomFile->readUint32LE();
+	uint32_t pair9_size = roomFile->readUint32LE();
+
+	roomFile->seek(pair9_data_offset, SEEK_SET);
+	byte musicTrack = roomFile->readByte();
+	debug("Music track for room at offset %d is %d", roomOffset, musicTrack);
+	return musicTrack + 1;
+}
+
+Common::Array<int> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffset) {
+	uint32_t pair9offset = roomOffset + (9 * 8);
+	roomFile->seek(pair9offset, SEEK_SET);
+	uint32_t pair9_data_offset = roomFile->readUint32LE();
+	uint32_t pair9_size = roomFile->readUint32LE();
+
+	roomFile->seek(pair9_data_offset, SEEK_SET);
+	roomFile->skip(1); // skip music track byte
+	Common::Array<int> roomSfx;
+	for(int i=0; i< 9; i++) {
+		byte sfx = roomFile->readByte();
+		roomSfx.push_back((int)sfx);
+		debug("SFX %d for room at offset %d is %d", i, roomOffset, sfx);
+	}
+	return roomSfx;
 }
 
 } // End of namespace Pelrock

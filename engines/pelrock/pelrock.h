@@ -42,6 +42,7 @@
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
+#include "pelrock/sound.h"
 #include "pelrock/types.h"
 #include "pelrock/video/video.h"
 
@@ -175,6 +176,7 @@ public:
 	AlfredState alfredState = ALFRED_IDLE;
 	ChronoManager *_chronoManager = nullptr;
 	VideoManager *_videoManager = nullptr;
+	SoundManager *_soundManager = nullptr;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);

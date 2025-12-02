@@ -52,14 +52,15 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 PelrockEngine::~PelrockEngine() {
-	delete _room;
 	delete[] _compositeBuffer;
 	delete[] _currentBackground;
 	delete _largeFont;
 	delete _screen;
 	delete _chronoManager;
 	delete _videoManager;
-
+	delete _soundManager;
+	delete _room;
+	delete _res;
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
 	delete _smallFont;
@@ -82,6 +83,7 @@ Common::Error PelrockEngine::run() {
 	_videoManager = new VideoManager(_screen);
 	_room = new RoomManager();
 	_res = new ResourceManager();
+	_soundManager = new SoundManager(_mixer);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -184,7 +186,8 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(6, 0); // museum entrance
+		setScreen(0, 0);
+		// setScreen(6, 0); // museum entrance
 						 // setScreen(13, 1); // restaurants kitchen
 						 // setScreen(2, 2); // hooker
 	}
@@ -1538,7 +1541,11 @@ void PelrockEngine::setScreen(int number, int dir) {
 
 	_room->loadRoomMetadata(&roomFile, number);
 	_room->loadRoomTalkingAnimations(number);
-
+	if(_room->_musicTrack > 0)
+		_soundManager->playMusicTrack(_room->_musicTrack);
+	else {
+		_soundManager->stopMusic();
+	}
 	_screen->markAllDirty();
 	roomFile.close();
 	delete[] background;

@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	fonts/large_font.o \
 	util.o \
 	resources.o\
+	sound.o \
 	video/video.o
 
 # This module can be built as a plugin
