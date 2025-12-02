@@ -246,7 +246,7 @@ void PhoenixVREngine::tick(float dt) {
 		if (!sound.spatial)
 			continue;
 
-		int8 balance = -127 * sinf(_angleX.angle() - (sound.angle + M_PI_2));
+		int8 balance = 127 * sinf(sound.angle - _angleX.angle());
 		_mixer->setChannelBalance(sound.handle, balance);
 	}
 	if (!_nextScript.empty()) {

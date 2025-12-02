@@ -367,36 +367,36 @@ Cube toCube(float x, float y, float z) {
 		maxAxis = absX;
 		cx = y;
 		cy = z;
-		cube.faceIdx = 1;
+		cube.faceIdx = 4;
 	}
 	if (!isXPositive && absX >= absY && absX >= absZ) {
 		maxAxis = absX;
 		cx = -y;
 		cy = z;
-		cube.faceIdx = 3;
+		cube.faceIdx = 5;
 	}
 	if (isYPositive && absY >= absX && absY >= absZ) {
 		maxAxis = absY;
 		cx = -x;
 		cy = z;
-		cube.faceIdx = 4;
+		cube.faceIdx = 3;
 	}
 	if (!isYPositive && absY >= absX && absY >= absZ) {
 		maxAxis = absY;
 		cx = x;
 		cy = z;
-		cube.faceIdx = 5;
+		cube.faceIdx = 1;
 	}
 	if (isZPositive && absZ >= absX && absZ >= absY) {
 		maxAxis = absZ;
-		cx = -x;
-		cy = -y;
+		cx = y;
+		cy = -x;
 		cube.faceIdx = 0;
 	}
 	if (!isZPositive && absZ >= absX && absZ >= absY) {
 		maxAxis = absZ;
-		cx = -x;
-		cy = y;
+		cx = y;
+		cy = x;
 		cube.faceIdx = 2;
 	}
 
