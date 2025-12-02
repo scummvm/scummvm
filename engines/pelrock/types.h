@@ -66,7 +66,7 @@ const int kVerbIconPadding = 20;
 const int kAlfredFrameWidth = 51;
 const int kAlfredFrameHeight = 102;
 
-
+const int kChoiceHeight = 16; // Height of each choice line in pixels
 
 enum AlfredState {
 	ALFRED_IDLE,

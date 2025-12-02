@@ -223,6 +223,18 @@ void PelrockEngine::talk(byte object) {
 	// }
 }
 
+void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
+	int overlayHeight = choices.size() * kChoiceHeight + 2;
+	int overlayY = 400 - overlayHeight;
+	debug("Displaying choices overlay at y=%d, height=%d", overlayY, overlayHeight);
+	for (int x = 0; x < 640; x++) {
+		for (int y = overlayY; y < 400; y++) {
+			int index = y * 640 + x;
+			compositeBuffer[index] = _room->overlayRemap[compositeBuffer[index]];
+		}
+	}
+}
+
 byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
 	byte *bg = new byte[w * h];
 	for (int j = 0; j < w; j++) {
@@ -397,6 +409,12 @@ void PelrockEngine::frames() {
 				_currentPopupFrame = 0;
 		}
 
+		Common::Array<Common::String> testChoices;
+		testChoices.push_back("First choice");
+		testChoices.push_back("Second choice");
+		testChoices.push_back("Third choice");
+		displayChoices(testChoices, _compositeBuffer);
+
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
 		if (alfredState != ALFRED_WALKING && !_currentTextPages.empty()) {
@@ -516,12 +534,12 @@ void PelrockEngine::drawAlfred(byte *buf) {
 			idealSkipPositions.push_back(idealPos);
 		}
 
-		debug("Ideal skip positions:");
+		// debug("Ideal skip positions:");
 		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
 			debug("  %.2f", idealSkipPositions[i]);
 		}
 
-		debug("Height scaling table size =%d", _heightScalingTable.size());
+		// debug("Height scaling table size =%d", _heightScalingTable.size());
 		Common::Array<int> tableSkipPositions;
 		for (int scanline = 0; scanline < kAlfredFrameHeight; scanline++) {
 			if (_heightScalingTable[scaleIndex][scanline] != 0) {
@@ -529,10 +547,10 @@ void PelrockEngine::drawAlfred(byte *buf) {
 			}
 		}
 
-		debug("Table skip positions:");
-		for (size_t i = 0; i < tableSkipPositions.size(); i++) {
-			debug("  %d", tableSkipPositions[i]);
-		}
+		// debug("Table skip positions:");
+		// for (size_t i = 0; i < tableSkipPositions.size(); i++) {
+		// 	debug("  %d", tableSkipPositions[i]);
+		// }
 
 		Common::Array<int> skipTheseLines;
 		for (size_t i = 0; i < idealSkipPositions.size(); i++) {

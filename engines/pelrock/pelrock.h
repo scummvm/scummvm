@@ -75,6 +75,8 @@ private:
 									 MovementStep *movement_buffer);
 
 	void talk(byte object);
+	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
+
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 
