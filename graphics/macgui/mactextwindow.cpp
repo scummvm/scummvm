@@ -69,7 +69,7 @@ void MacTextWindow::init() {
 	_selectable = true;
 
 	_textColorRGB = 0;
-
+	
 	// Disable autoselect on activation
 	_mactext->setAutoSelect(false);
 
@@ -112,6 +112,9 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	uint16 red = (_textColorRGB >> 16) & 0xFF;
 	uint16 green = (_textColorRGB >> 8) & 0xFF;
 	uint16 blue = (_textColorRGB) & 0xFF;
+
+	// Adding empty line at the bottom of the input text area if needed
+	_mactext->setInputPadding(true);
 
 	if (macFont)
 		_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
