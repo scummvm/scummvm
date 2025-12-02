@@ -23,6 +23,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/mixer.h"
 #include "common/file.h"
+#include "common/debug.h"
 #include "common/scummsys.h"
 
 #include "pelrock/sound.h"
@@ -59,6 +60,7 @@ bool SoundManager::isPlaying() const {
 
 void SoundManager::stopMusic() {
     if(_isMusicPlaying) {
+        debug("Stopping music");
         _mixer->stopHandle(_musicHandle);
         _isMusicPlaying = false;
     }
@@ -70,7 +72,7 @@ void SoundManager::playMusicTrack(int trackNumber) {
         return;
     }
     _currentMusicTrack = trackNumber;
-	stopSound();
+	stopMusic();
 	// Open the file
 	_musicFile = new Common::File();
 	Common::String filename = Common::String::format("music/track%d.mp3", trackNumber);
@@ -89,7 +91,7 @@ void SoundManager::playMusicTrack(int trackNumber) {
 		return;
 	}
 	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(stream, 0);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, loopStream, -1, _currentVolume);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _currentVolume);
     _isMusicPlaying = true;
     _musicFile = nullptr;
 #endif

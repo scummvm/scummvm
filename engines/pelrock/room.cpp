@@ -945,7 +945,7 @@ byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	byte musicTrack = roomFile->readByte();
 	debug("Music track for room at offset %d is %d", roomOffset, musicTrack);
-	return musicTrack + 1;
+	return musicTrack > 0 ? musicTrack + 1 : 0;
 }
 
 Common::Array<int> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffset) {
