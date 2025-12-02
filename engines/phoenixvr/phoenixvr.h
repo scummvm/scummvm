@@ -110,7 +110,7 @@ public:
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
 	void hideCursor(const Common::String &warp, int idx);
 
-	void playSound(const Common::String &sound, uint8 volume, int loops);
+	void playSound(const Common::String &sound, uint8 volume, int loops, bool spatial = false, float angle = 0);
 	void stopSound(const Common::String &sound);
 	void playMovie(const Common::String &movie);
 
@@ -147,7 +147,12 @@ private:
 	Common::String _nextScript;
 	Common::String _nextWarp;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
-	Common::HashMap<Common::String, Audio::SoundHandle, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
+	struct Sound {
+		Audio::SoundHandle handle;
+		bool spatial;
+		float angle;
+	};
+	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
 
 	Script::ConstWarpPtr _warp;

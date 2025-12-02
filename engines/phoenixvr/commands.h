@@ -512,7 +512,7 @@ struct PlaySound3D : public Script::Command {
 	PlaySound3D(Common::String s, int v, float a, int l) : sound(Common::move(s)), volume(v), angle(a), loops(l) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->playSound(sound, volume, loops);
+		g_engine->playSound(sound, volume, loops, true, angle);
 	}
 };
 

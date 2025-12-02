@@ -149,8 +149,8 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getVal(name);
 }
 
-void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int loops) {
-	debug("play sound %s %d %d", sound.c_str(), volume, loops);
+void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int loops, bool spatial, float angle) {
+	debug("play sound %s %d %d 3d: %d, angle: %g", sound.c_str(), volume, loops, spatial, angle);
 	Audio::SoundHandle h;
 	Common::ScopedPtr<Common::File> f(new Common::File());
 	if (!f->open(Common::Path(sound))) {
@@ -161,14 +161,14 @@ void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int l
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &h, Audio::makeWAVStream(f.release(), DisposeAfterUse::YES), -1, volume);
 	if (loops < 0)
 		_mixer->loopChannel(h);
-	_sounds[sound] = h;
+	_sounds[sound] = Sound{h, spatial, angle};
 }
 
 void PhoenixVREngine::stopSound(const Common::String &sound) {
 	debug("stop sound %s", sound.c_str());
 	auto it = _sounds.find(sound);
 	if (it != _sounds.end()) {
-		_mixer->stopHandle(it->_value);
+		_mixer->stopHandle(it->_value.handle);
 		_sounds.erase(it);
 	}
 }
@@ -240,6 +240,14 @@ void PhoenixVREngine::tick(float dt) {
 		_angleX.add(float(da.x) * kSpeedX * dt);
 		_angleY.add(float(da.y) * kSpeedY * dt);
 		debug("angle %g %g", _angleX.angle(), _angleY.angle());
+	}
+	for (auto &kv : _sounds) {
+		auto &sound = kv._value;
+		if (!sound.spatial)
+			continue;
+
+		int8 balance = -127 * sinf(_angleX.angle() - (sound.angle + M_PI_2));
+		_mixer->setChannelBalance(sound.handle, balance);
 	}
 	if (!_nextScript.empty()) {
 		debug("loading script from %s", _nextScript.c_str());
