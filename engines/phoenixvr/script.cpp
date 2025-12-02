@@ -296,8 +296,12 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		if (_currentTest) {
 			auto &commands = _currentTest->scope.commands;
 			if (p.maybe("ifand=")) {
+				if (_pluginScope)
+					error("ifand in plugin scope");
 				_conditional.reset(new IfAnd(p.readStringList()));
 			} else if (p.maybe("ifor=")) {
+				if (_pluginScope)
+					error("ifor in plugin scope");
 				_conditional.reset(new IfOr(p.readStringList()));
 			} else if (p.maybe("plugin")) {
 				if (_pluginScope)
@@ -332,9 +336,14 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 					}
 				} else {
 					auto cmd = p.parseCommand();
-					if (cmd)
-						commands.push_back(Common::move(cmd));
-					else
+					if (cmd) {
+						if (_conditional) {
+							_conditional->target = Common::move(cmd);
+							commands.push_back(Common::move(_conditional));
+							_conditional.reset();
+						} else
+							commands.push_back(Common::move(cmd));
+					} else
 						error("unhandled script command %s", line.c_str());
 				}
 			}
