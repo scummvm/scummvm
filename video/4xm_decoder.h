@@ -40,14 +40,13 @@ private:
 	};
 
 	class FourXMVideoTrack : public FixedRateVideoTrack {
-		const FourXMDecoder *_dec;
+		FourXMDecoder *_dec;
 		Common::Rational _frameRate;
 		uint _w, _h;
-		int _curFrame;
 		Graphics::Surface *_frame;
 
 	public:
-		FourXMVideoTrack(const FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _curFrame(0), _frame(nullptr) {}
+		FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {}
 		~FourXMVideoTrack();
 
 		uint16 getWidth() const override { return _w; }
@@ -56,19 +55,19 @@ private:
 		Graphics::PixelFormat getPixelFormat() const override {
 			return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
 		}
-		int getCurFrame() const override {
-			return _curFrame;
-		}
+		int getCurFrame() const override;
 		int getFrameCount() const override;
 		const Graphics::Surface *decodeNextFrame() override;
+
+		void decode(uint32 tag, const byte *data, uint size);
 
 	private:
 		Common::Rational getFrameRate() const override { return _frameRate; }
 	};
 
-	class FourXMAudioTrack : public SeekableAudioTrack {
+	class FourXMAudioTrack : public AudioTrack {
 		class Stream;
-		const FourXMDecoder *_dec;
+		FourXMDecoder *_dec;
 		uint _trackIdx;
 		uint _audioType;
 		uint _audioChannels;
@@ -76,19 +75,23 @@ private:
 		uint _sampleResolution;
 
 	public:
-		FourXMAudioTrack(const FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate, uint sampleResolution) : SeekableAudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate), _sampleResolution(sampleResolution) {
+		FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate, uint sampleResolution) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate), _sampleResolution(sampleResolution) {
 		}
 
+		void decode(uint32 tag, const byte *data, uint size);
+
 	private:
-		Audio::SeekableAudioStream *getSeekableAudioStream() const override;
+		Audio::AudioStream *getAudioStream() const override;
 	};
 
 	void readList(uint32 size);
+	void decodeNextFrameImpl();
 
 	uint32 _dataRate = 0;
 	Common::Rational _frameRate;
 	Common::SeekableReadStream *_stream;
 	Common::Array<Frame> _frames;
+	uint _curFrame = 0;
 	FourXMVideoTrack *_video = nullptr;
 	FourXMAudioTrack *_audio = nullptr;
 };

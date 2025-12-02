@@ -48,7 +48,12 @@ const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
 		_frame->create(_w, _h, getPixelFormat());
 	}
 	debug("decode next video frame");
+	_dec->decodeNextFrameImpl();
 	return _frame;
+}
+
+int FourXMDecoder::FourXMVideoTrack::getCurFrame() const {
+	return _dec->_curFrame;
 }
 
 int FourXMDecoder::FourXMVideoTrack::getFrameCount() const {
@@ -62,15 +67,13 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
-class FourXMDecoder::FourXMAudioTrack::Stream : public Audio::SeekableAudioStream {
+class FourXMDecoder::FourXMAudioTrack::Stream : public Audio::AudioStream {
 	const FourXMAudioTrack *_track;
-	uint _frameIndex = 0;
 
 public:
 	Stream(const FourXMAudioTrack *track) : _track(track) {}
 	int readBuffer(int16 *buffer, const int numSamples) override {
 		debug("decode next audio frame");
-		++_frameIndex;
 		return 0;
 	}
 
@@ -84,19 +87,55 @@ public:
 	}
 
 	virtual bool endOfData() const override {
-		return _frameIndex >= _track->_dec->_frames.size();
-	}
-
-	bool seek(const Audio::Timestamp &ts) override {
-		return true;
-	}
-	Audio::Timestamp getLength() const override {
-		return {};
+		auto *decoder = _track->_dec;
+		return decoder->_curFrame >= decoder->_frames.size();
 	}
 };
 
-Audio::SeekableAudioStream *FourXMDecoder::FourXMAudioTrack::getSeekableAudioStream() const {
+Audio::AudioStream *FourXMDecoder::FourXMAudioTrack::getAudioStream() const {
 	return new Stream(this);
+}
+
+void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, const byte *data, uint size) {
+}
+
+void FourXMDecoder::FourXMAudioTrack::decode(uint32 tag, const byte *data, uint size) {
+}
+
+void FourXMDecoder::decodeNextFrameImpl() {
+	if (_curFrame >= _frames.size())
+		return;
+	auto &frame = _frames[_curFrame];
+	_stream->seek(frame.offset);
+	uint32 listType = _stream->readUint32BE();
+	if (listType != MKTAG('F', 'R', 'A', 'M')) {
+		error("invalid FRAM offset for frame %u", _curFrame);
+	}
+
+	Common::Array<byte> packet;
+	while (_stream->pos() < frame.end) {
+		uint32 tag = _stream->readUint32BE();
+		uint32 size = _stream->readUint32LE();
+		debug("%u: sub frame %s, %u bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos() - 4);
+		auto pos = _stream->pos();
+		if (size > packet.size())
+			packet.resize(size);
+		_stream->read(packet.data(), size);
+		switch (tag) {
+		case MKTAG('s', 'n', 'd', '_'):
+			_audio->decode(tag, packet.data(), size);
+			break;
+		case MKTAG('i', 'f', 'r', 'm'):
+		case MKTAG('p', 'f', 'r', 'm'):
+		case MKTAG('c', 'f', 'r', 'm'):
+			_video->decode(tag, packet.data(), size);
+			break;
+		default:
+			warning("unknown frame type %s", tagName(tag).c_str());
+		}
+		_stream->seek(pos + size + (size & 1));
+	}
+	++_curFrame;
 }
 
 void FourXMDecoder::readList(uint32 listEnd) {
