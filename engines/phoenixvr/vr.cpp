@@ -29,6 +29,7 @@
 #include "graphics/surface.h"
 #include "graphics/yuv_to_rgb.h"
 #include "image/bmp.h"
+#include "math/vector3d.h"
 #include "phoenixvr/dct.h"
 #include "phoenixvr/dct_tables.h"
 #include "phoenixvr/phoenixvr.h"
@@ -405,26 +406,6 @@ Cube toCube(float x, float y, float z) {
 	return cube;
 }
 
-struct Projection {
-	struct Point {
-		float angle;
-		float sine, cosine;
-	};
-	Common::Array<Point> points;
-
-	Projection(uint num, float start, float fov) : points(num) {
-		const auto da = fov / float(num);
-		static const float kPi2 = 2 * M_PI;
-		float a = fmodf(start - fov / 2, kPi2);
-		if (a < 0)
-			a += kPi2;
-		for (uint i = 0; i != num; ++i) {
-			points[i] = {a, sin(a), cos(a)};
-			a += da;
-			a = fmodf(a, M_PI * 2);
-		}
-	}
-};
 } // namespace
 
 void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
@@ -443,16 +424,27 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 		auto w = g_system->getWidth();
 		auto h = g_system->getHeight();
 
-		Projection projH(w, ax, fov);
-		Projection projV(h, ay - M_PI_2, fov);
-		for (int dstY = 0; dstY != h; ++dstY) {
-			auto &pv = projV.points[dstY];
-			for (int dstX = 0; dstX != w; ++dstX) {
-				auto &ph = projH.points[dstX];
-				float x = ph.cosine * pv.sine;
-				float y = ph.sine * pv.sine;
-				float z = pv.cosine;
-				auto cube = toCube(x, y, z);
+		// camera pose
+		using namespace Math;
+		Vector3d forward = Vector3d(
+							   cosf(ax) * sinf(-ay),
+							   sinf(ax) * sinf(-ay),
+							   cosf(-ay))
+							   .getNormalized();
+		Vector3d right = Vector3d::crossProduct(forward, Vector3d(0, 0, -1)).getNormalized();
+		Vector3d up = Vector3d::crossProduct(forward, right); // already normalized
+
+		// camera projection
+		float gx = tanf(fov / 2.0f), gy = gx * h / w;
+		Vector3d incrementX = right * (2 * gx / w);
+		Vector3d incrementY = up * (2 * gy / h);
+		Vector3d start = forward - right * gx - up * gy;
+		Vector3d line = start;
+		for (int dstY = 0; dstY != h; ++dstY, line += incrementY) {
+			Vector3d pixel = line;
+			for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX) {
+				Vector3d ray = pixel.getNormalized();
+				auto cube = toCube(ray.x(), ray.y(), ray.z());
 				int srcX = static_cast<int>(512 * cube.x);
 				int srcY = static_cast<int>(512 * cube.y);
 				int tileId = cube.faceIdx * 4;
@@ -461,21 +453,6 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 				srcY &= 0xff;
 				srcY += (tileId << 8);
 				auto color = _pic->getPixel(srcX, srcY);
-#if 0
-				auto n = g_engine->numCursors();
-				for(uint i = 0; i != n; ++i) {
-					auto *src = g_engine->getCursorRect(i);
-					if (src && src->contains(RectF::transform(ph.angle, pv.angle, fov))) {
-						uint8 r, g, b;
-						_pic->format.colorToRGB(color, r, g, b);
-						r += 32;
-						g += 32;
-						b += 32;
-						color = _pic->format.RGBToColor(r, g, b);
-						break;
-					}
-				}
-#endif
 				screen->setPixel(dstX, dstY, color);
 			}
 		}
