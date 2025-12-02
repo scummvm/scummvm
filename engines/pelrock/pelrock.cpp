@@ -124,6 +124,9 @@ Common::Error PelrockEngine::run() {
 				case Common::KEYCODE_i:
 					alfredState = ALFRED_INTERACTING;
 					break;
+				case Common::KEYCODE_z:
+					showShadows = !showShadows;
+					break;
 				default:
 					break;
 				}
@@ -441,7 +444,13 @@ void PelrockEngine::frames() {
 			if (_curWalkTarget.y + 2 < 400)
 				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y + 2, 100);
 		}
+
+		if(showShadows) {
+			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
+		}
+
 		_screen->markAllDirty();
+
 		// _screen->update();
 	}
 }
@@ -1516,7 +1525,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 		}
 	}
 
-	_room->loadRoomMetadata(&roomFile, roomOffset);
+	_room->loadRoomMetadata(&roomFile, number);
 	_room->loadRoomTalkingAnimations(number);
 
 	_screen->markAllDirty();

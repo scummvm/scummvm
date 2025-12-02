@@ -33,7 +33,7 @@ class RoomManager {
 public:
 	RoomManager();
 	~RoomManager();
-	void loadRoomMetadata(Common::File *roomFile, int roomOffset);
+	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
@@ -46,7 +46,7 @@ public:
 	Common::Array<ConversationNode> _currentRoomConversations;
 	TalkingAnimHeader _talkingAnimHeader;
 	ScalingParams _scaleParams;
-	byte *pixelsShadows = nullptr;
+	byte *_pixelsShadows = nullptr;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);

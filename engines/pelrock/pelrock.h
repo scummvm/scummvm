@@ -150,6 +150,8 @@ private:
 	uint16 whichNPCTalking = 0;
 	bool isNPCBTalking = false;
 
+	bool showShadows = false;
+
 	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;

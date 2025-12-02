@@ -27,7 +27,7 @@
 namespace Pelrock {
 
 RoomManager::RoomManager() {
-	pixelsShadows = new byte[640*400] { 0 };
+	_pixelsShadows = new byte[640*400] { 0 };
 }
 
 RoomManager::~RoomManager() {
@@ -37,7 +37,7 @@ RoomManager::~RoomManager() {
 	// delete[] _currentRoomWalkboxes;
 	// delete[] _currentRoomDescriptions;
 	// delete[] _currentRoomConversations;
-	delete[] pixelsShadows;
+	delete[] _pixelsShadows;
 }
 
 void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palette) {
@@ -142,9 +142,10 @@ Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roo
 	// roomFile->seek(hover_areas_start, SEEK_SET);
 }
 
-void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
+void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	uint32_t outPos = 0;
 
+	int roomOffset = roomNumber * kRoomStructSize;
 	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset, outPos);
 	debug("After decsriptions, position is %d", outPos);
 	Common::Array<ConversationNode> roots = loadConversations(roomFile, roomOffset, outPos);
@@ -185,6 +186,9 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 		hotspots.push_back(hotspot);
 	}
 
+
+	byte *shadows = loadShadowMap(roomNumber);
+
 	int walkboxCount = 0;
 
 	_currentRoomAnims = anims;
@@ -193,6 +197,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 	_currentRoomWalkboxes = walkboxes;
 	_currentRoomDescriptions = descriptions;
 	_scaleParams = scalingParams;
+	_pixelsShadows = shadows;
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
@@ -203,6 +208,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomOffset) {
 		// drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
 	}
 }
+
 Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	// debug("Sprite pair offset position: %d", pair_offset);
@@ -859,14 +865,20 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 
 	uint32 entryOffset = roomNumber * 6;
 
+	debug("Loading shadow map for room %d at offset %d", roomNumber, entryOffset);
+
 	shadowMapFile.seek(entryOffset, SEEK_SET);
 	uint32 shadowOffset = readUint24(shadowMapFile);
 
-	shadowMapFile.seek(shadowOffset, SEEK_SET);
+	byte *compressed = nullptr;
+	size_t compressedSize = 0;
+	readUntilBuda(&shadowMapFile, shadowOffset, compressed, compressedSize);
 
-	// pixelsShadows = rleDecompress(
-
-
-	return nullptr;
+	debug("Shadow map compressed size: %zu", compressedSize);
+	byte *shadows = nullptr;
+	size_t output = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
+	free(compressed);
+	return shadows;
 }
+
 } // End of namespace Pelrock
