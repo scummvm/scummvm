@@ -41,38 +41,72 @@ void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color
 	surface->drawLine(x + w, y, x + w, y + h, color);
 }
 
-size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data) {
-	// Check for uncompressed markers
-	if (size == 0x8000 || size == 0x6800) {
-		*out_data = (uint8_t *)malloc(size);
-		memcpy(*out_data, data + offset, size);
-		return size;
+size_t rleDecompress(
+	const uint8_t *input,
+	size_t inputSize,
+	uint32_t offset,
+	uint32_t expectedSize,
+	uint8_t **out_data,
+    bool untilBuda
+) {
+	// // Check for uncompressed markers
+	if (inputSize == 0x8000 || inputSize == 0x6800) {
+		*out_data = (uint8_t *)malloc(inputSize);
+		memcpy(*out_data, input + offset, inputSize);
+		return inputSize;
 	}
 
 	// RLE compressed
-	*out_data = (uint8_t *)malloc(EXPECTED_SIZE * 2); // Allocate enough space
+	size_t bufferCapacity;
 	size_t result_size = 0;
-
 	uint32_t pos = offset;
-	uint32_t end = offset + size;
 
-	while (pos + 2 <= end && pos + 2 <= data_size) {
+	if (untilBuda) {
+		// Dynamic allocation mode - grow buffer as needed
+		bufferCapacity = 4096;
+		*out_data = (uint8_t *)malloc(bufferCapacity);
+		if (!*out_data)
+			return 0;
+	} else {
+		// Fixed size mode
+		bufferCapacity = expectedSize;
+		*out_data = (uint8_t *)malloc(expectedSize);
+		if (!*out_data)
+			return 0;
+	}
+
+	while (pos + 2 <= inputSize) {
 		// Check for BUDA marker
-		if (pos + 4 <= data_size &&
-			data[pos] == 'B' && data[pos + 1] == 'U' &&
-			data[pos + 2] == 'D' && data[pos + 3] == 'A') {
+		if (pos + 4 <= inputSize &&
+			input[pos] == 'B' && input[pos + 1] == 'U' &&
+			input[pos + 2] == 'D' && input[pos + 3] == 'A') {
 			break;
 		}
 
-		uint8_t count = data[pos];
-		uint8_t value = data[pos + 1];
+		uint8_t count = input[pos];
+		uint8_t value = input[pos + 1];
 
 		for (int i = 0; i < count; i++) {
+			 // If in untilBuda mode, grow buffer as needed
+            if (untilBuda && result_size >= bufferCapacity) {
+                bufferCapacity *= 2;
+                uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+                if (!newBuf) {
+                    free(*out_data);
+                    *out_data = nullptr;
+                    return 0;
+                }
+                *out_data = newBuf;
+            }
 			// debug("Pos = %zu, writing value %02X", result_size, value);
 			(*out_data)[result_size++] = value;
 		}
 
 		pos += 2;
+    	// In fixed size mode, stop when we reach expected size
+        if (!untilBuda && result_size >= expectedSize) {
+            break;
+        }
 	}
 
 	return result_size;
@@ -134,6 +168,7 @@ void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth
 	for (int y = 0; y < frameHeight; y++) {
 		for (int x = 0; x < frameWidth; x++) {
 			unsigned int src_pos = (frameIndex * frameHeight * frameWidth) + (y * frameWidth) + x;
+			// debug("Copying pixel from source pos %u to dest pos %d", src_pos, y * frameWidth + x);
 			dest[y * frameWidth + x] = source[src_pos];
 		}
 	}

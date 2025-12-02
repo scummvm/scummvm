@@ -31,7 +31,7 @@
 namespace Pelrock {
 
 const int EXPECTED_SIZE = 640 * 400;
-size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data);
+size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data, bool untilBuda = true);
 void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize);
 void drawSpriteToBuffer(byte *buffer, int bufferWidth,
 						byte *sprite, int x, int y,

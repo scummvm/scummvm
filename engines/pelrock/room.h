@@ -46,6 +46,7 @@ public:
 	Common::Array<ConversationNode> _currentRoomConversations;
 	TalkingAnimHeader _talkingAnimHeader;
 	ScalingParams _scaleParams;
+	byte *pixelsShadows = nullptr;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
@@ -60,6 +61,7 @@ private:
 	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
 	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
+	byte *loadShadowMap(int roomNumber);
 };
 
 } // End of namespace Pelrock

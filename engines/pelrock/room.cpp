@@ -27,6 +27,7 @@
 namespace Pelrock {
 
 RoomManager::RoomManager() {
+	pixelsShadows = new byte[640*400] { 0 };
 }
 
 RoomManager::~RoomManager() {
@@ -36,6 +37,7 @@ RoomManager::~RoomManager() {
 	// delete[] _currentRoomWalkboxes;
 	// delete[] _currentRoomDescriptions;
 	// delete[] _currentRoomConversations;
+	delete[] pixelsShadows;
 }
 
 void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palette) {
@@ -75,7 +77,7 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 			roomFile->seek(offset, SEEK_SET);
 			roomFile->read(data, size);
 			uint8_t *block_data = NULL;
-			size_t block_size = rleDecompress(data, size, 0, size, &block_data);
+			size_t block_size = rleDecompress(data, size, 0, 640 * 400, &block_data);
 
 			memcpy(background + combined_size, block_data, block_size);
 			combined_size += block_size + 1;
@@ -212,9 +214,9 @@ Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, i
 	roomFile->seek(offset, SEEK_SET);
 	roomFile->read(data, size);
 
-	unsigned char *pic = new byte[10000 * 10000];
+	unsigned char *pic = nullptr;
 	if (offset > 0 && size > 0) {
-		rleDecompress(data, size, 0, size, &pic);
+		rleDecompress(data, size, 0, size, &pic, true);
 	} else {
 		return Common::Array<AnimSet>();
 	}
@@ -841,5 +843,30 @@ ScalingParams RoomManager::loadScalingParams(Common::File *roomFile, int roomOff
 	scalingParams.scaleDivisor = roomFile->readByte();
 	scalingParams.scaleMode = roomFile->readByte();
 	return scalingParams;
+}
+
+static uint32 readUint24(Common::ReadStream &stream) {
+	uint32 value = stream.readUint16LE();
+	value |= stream.readByte() << 16;
+	return value;
+}
+
+byte *RoomManager::loadShadowMap(int roomNumber) {
+	Common::File shadowMapFile;
+	if (!shadowMapFile.open("ALFRED.5")) {
+		error("Couldnt find file ALFRED.5");
+	}
+
+	uint32 entryOffset = roomNumber * 6;
+
+	shadowMapFile.seek(entryOffset, SEEK_SET);
+	uint32 shadowOffset = readUint24(shadowMapFile);
+
+	shadowMapFile.seek(shadowOffset, SEEK_SET);
+
+	// pixelsShadows = rleDecompress(
+
+
+	return nullptr;
 }
 } // End of namespace Pelrock

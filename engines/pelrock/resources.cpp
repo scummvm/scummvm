@@ -87,7 +87,7 @@ void ResourceManager::loadInteractionIcons() {
 
 	byte *raw = new byte[compressedSize];
 	alfred7File.read(raw, compressedSize);
-	rleDecompress(raw, compressedSize, 0, compressedSize, &_popUpBalloon);
+	rleDecompress(raw, compressedSize, 0, totalBalloonSize, &_popUpBalloon);
 
 	delete[] raw;
 
@@ -122,7 +122,7 @@ void ResourceManager::loadAlfredAnims() {
 	int index3 = 0;
 	uint32_t capacity = 3060 * 102;
 	unsigned char *pic = new unsigned char[capacity];
-	rleDecompress(bufferFile, alfred3Size, 0, alfred3Size, &pic);
+	rleDecompress(bufferFile, alfred3Size, 0, capacity, &pic);
 
 	int frameSize = kAlfredFrameHeight * kAlfredFrameWidth;
 	for (int i = 0; i < 4; i++) {
@@ -178,18 +178,18 @@ void ResourceManager::loadAlfredAnims() {
 		return;
 	}
 	int spriteMapSize = frameSize * 11;
+
 	byte *alfredCombRightRaw;
 	size_t alfredCombRightSize;
 
 	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_R, alfredCombRightRaw, alfredCombRightSize);
 	byte *alfredCombRight = nullptr;
-	rleDecompress(alfredCombRightRaw, alfredCombRightSize, 0, alfredCombRightSize, &alfredCombRight);
+	rleDecompress(alfredCombRightRaw, alfredCombRightSize, 0, spriteMapSize, &alfredCombRight);
 
 	alfredCombFrames[0] = new byte *[11];
 	alfredCombFrames[1] = new byte *[11];
 
 	for (int i = 0; i < 11; i++) {
-
 		alfredCombFrames[0][i] = new byte[frameSize];
 		extractSingleFrame(alfredCombRight, alfredCombFrames[0][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
 	}
@@ -198,8 +198,12 @@ void ResourceManager::loadAlfredAnims() {
 	size_t alfredCombLeftSize;
 	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_L, alfredCombLeftRaw, alfredCombLeftSize);
 	byte *alfredCombLeft = nullptr;
-	rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
+	size_t outSize = rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
+	debug("Sprite map size: %d, %d, %d", spriteMapSize, alfredCombLeftSize, outSize);
 
+	for (int i = 0; i < 11; i++) {
+		debug("Extracting comb left frame %d", i);
+	}
 	for (int i = 0; i < 11; i++) {
 		alfredCombFrames[1][i] = new byte[frameSize];
 		extractSingleFrame(alfredCombLeft, alfredCombFrames[1][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
