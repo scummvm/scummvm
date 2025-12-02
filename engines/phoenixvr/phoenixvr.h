@@ -164,8 +164,8 @@ private:
 	Cursor _defaultCursor[2];
 	VR _vr;
 	float _fov;
-	Angle _angleX;
-	Angle _angleY;
+	AngleX _angleX;
+	AngleY _angleY;
 	Audio::Mixer *_mixer;
 };
 

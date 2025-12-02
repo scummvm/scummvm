@@ -25,10 +25,10 @@
 namespace PhoenixVR {
 
 PointF RectF::transform(float ax, float ay, float fov) {
-	Angle x(ax);
-	Angle y(ay);
+	AngleX x(ax);
+	AngleX y(ay); // not a typo, we need 0;pi*2 range
 	x.add(-M_PI_2);
-	y.add(M_PI_2);
+	y.add(M_PI_4);
 	return {x.angle(), y.angle()};
 }
 

@@ -31,6 +31,7 @@
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "image/pcx.h"
+#include "math/utils.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
@@ -47,6 +48,8 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _randomSource("PhoenixVR"),
 																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
 																					 _fov(M_PI_2),
+																					 _angleX(M_PI),
+																					 _angleY(-M_PI_2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
 	auto path = Common::FSNode(ConfMan.getPath("path"));

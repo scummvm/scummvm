@@ -22,6 +22,7 @@
 #ifndef PHOENIXVR_ANGLE_H
 #define PHOENIXVR_ANGLE_H
 
+#include "math/utils.h"
 #include <math.h>
 
 namespace Common {
@@ -30,18 +31,48 @@ class String;
 
 namespace PhoenixVR {
 class Angle {
+protected:
 	float _angle;
+	float _min;
+	float _max;
 
 public:
-	Angle(float angle = 0) : _angle(angle) {}
+	Angle(float angle, float min, float max) : _min(min), _max(max) {
+		set(angle);
+	}
+
+	Angle &operator=(float angle) {
+		set(angle);
+		return *this;
+	}
 
 	float angle() const { return _angle; }
 
+	void set(float v) {
+		auto range = _max - _min;
+		auto a = fmod(v - _min, range);
+		if (a < 0)
+			a += range;
+		_angle = a + _min;
+	}
+
 	void add(float v) {
-		static const float kPi2 = M_PI * 2;
-		_angle = fmod(_angle + v, kPi2);
-		if (_angle < 0)
-			_angle += kPi2;
+		set(_angle + v);
+	}
+};
+struct AngleX : Angle {
+	AngleX(float angle) : Angle(angle, 0, 2 * M_PI) {}
+};
+
+struct AngleY : Angle {
+	AngleY(float angle) : Angle(angle, -M_PI, -Math::epsilon) {}
+	void add(float v) {
+		v += angle();
+		if (v <= _min)
+			v = _min + Math::epsilon;
+		if (v >= _max)
+			v = _max - Math::epsilon;
+		set(v);
 	}
 };
 } // namespace PhoenixVR
