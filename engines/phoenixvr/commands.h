@@ -64,7 +64,7 @@ struct Play_Movie : public Script::Command {
 
 	Play_Movie(const Common::Array<Common::String> &args) : filename(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_Movie %s", filename.c_str());
+		g_engine->playMovie(filename);
 	}
 };
 

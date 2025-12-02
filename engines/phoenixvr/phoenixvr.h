@@ -34,6 +34,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "video/video_decoder.h"
 
 #include "phoenixvr/angle.h"
 #include "phoenixvr/detection.h"
@@ -111,6 +112,7 @@ public:
 
 	void playSound(const Common::String &sound, uint8 volume, int loops);
 	void stopSound(const Common::String &sound);
+	void playMovie(const Common::String &movie);
 
 	void declareVariable(const Common::String &name);
 	void setVariable(const Common::String &name, int value);
@@ -138,6 +140,7 @@ private:
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
+	void tick(float dt);
 
 private:
 	Common::Point _mousePos;
@@ -149,6 +152,8 @@ private:
 
 	Script::ConstWarpPtr _warp;
 	Common::ScopedPtr<RegionSet> _regSet;
+
+	Common::ScopedPtr<Video::VideoDecoder> _movie;
 
 	struct Cursor {
 		RectF rect;

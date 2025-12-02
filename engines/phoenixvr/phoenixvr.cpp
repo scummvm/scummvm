@@ -36,6 +36,7 @@
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
 #include "phoenixvr/vr.h"
+#include "video/4xm_decoder.h"
 
 namespace PhoenixVR {
 
@@ -169,6 +170,19 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 	}
 }
 
+void PhoenixVREngine::playMovie(const Common::String &movie) {
+	debug("playMovie %s", movie.c_str());
+#if 0
+	_movie.reset(new Video::FourXMDecoder());
+	if (_movie->loadFile(Common::Path{movie})) {
+		_movie->start();
+	} else {
+		_movie.reset();
+		warning("playMovie %s failed", movie.c_str());
+	}
+#endif
+}
+
 Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	Common::File file;
 	if (!file.open(Common::Path(path))) {
@@ -213,6 +227,88 @@ void PhoenixVREngine::executeTest(int idx) {
 		warning("invalid test id %d", idx);
 }
 
+void PhoenixVREngine::tick(float dt) {
+	if (_vr.isVR() && _mousePos != _screenCenter) {
+		auto da = _mousePos - _screenCenter;
+		_system->warpMouse(_screenCenter.x, _screenCenter.y);
+		_mousePos = _screenCenter;
+		static const float kSpeedX = 0.2f;
+		static const float kSpeedY = 0.2f;
+		_angleX.add(float(da.x) * kSpeedX * dt);
+		_angleY.add(float(da.y) * kSpeedY * dt);
+		debug("angle %g %g", _angleX.angle(), _angleY.angle());
+	}
+	if (!_nextScript.empty()) {
+		debug("loading script from %s", _nextScript.c_str());
+		auto nextScript = Common::move(_nextScript);
+		_nextScript.clear();
+
+		nextScript = removeDrive(nextScript);
+
+		Common::File file;
+		Common::Path nextPath(nextScript);
+		if (file.open(nextPath)) {
+			_script.reset(new Script(file));
+		} else {
+			auto pakFile = nextPath;
+			pakFile = pakFile.removeExtension().append(".pak");
+			file.open(pakFile);
+			if (!file.isOpen())
+				error("can't open script file %s", nextScript.c_str());
+			Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
+			_script.reset(new Script(*scriptStream));
+		}
+		goToWarp(_script->getInitScript()->vrFile);
+	}
+	if (!_nextWarp.empty()) {
+		_warp = _script->getWarp(_nextWarp);
+		_nextWarp.clear();
+
+		debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
+
+		Common::File vr;
+		if (vr.open(Common::Path(_warp->vrFile))) {
+			_vr = VR::loadStatic(_pixelFormat, vr);
+			if (_vr.isVR()) {
+				_mousePos = _screenCenter;
+				_system->warpMouse(_screenCenter.x, _screenCenter.y);
+			}
+		}
+
+		_regSet.reset(new RegionSet(_warp->testFile));
+
+		for (auto &c : _cursors)
+			c.free();
+
+		_cursors.resize(_regSet->size());
+		for (uint i = 0; i != _regSet->size(); ++i) {
+			_cursors[i].rect = _regSet->getRegion(i).toRect();
+		}
+
+		Script::ExecutionContext ctx;
+		debug("execute warp script %s", _warp->vrFile.c_str());
+		auto &test = _warp->getDefaultTest();
+		test->scope.exec(ctx);
+	}
+
+	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
+
+	Graphics::Surface *cursor = nullptr;
+	for (auto &c : _cursors) {
+		if (_vr.isVR() ? c.rect.contains(currentVRPos()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
+			cursor = c.surface;
+			if (!cursor)
+				cursor = _defaultCursor[1].surface;
+			break;
+		}
+	}
+	if (!cursor)
+		cursor = _defaultCursor[0].surface;
+	if (cursor) {
+		paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+	}
+}
+
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
 	_screen = new Graphics::Screen();
@@ -244,8 +340,13 @@ Common::Error PhoenixVREngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.ascii == ' ')
-					goToWarp("N1M01L03W02E0.vr");
+				if (event.kbd.ascii == ' ') {
+					if (_movie) {
+						_movie->stop();
+						_movie.reset();
+					} else
+						goToWarp("N1M01L03W02E0.vr");
+				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
@@ -270,86 +371,16 @@ Common::Error PhoenixVREngine::run() {
 				break;
 			}
 		}
-		if (_vr.isVR() && _mousePos != _screenCenter) {
-			auto da = _mousePos - _screenCenter;
-			_system->warpMouse(_screenCenter.x, _screenCenter.y);
-			_mousePos = _screenCenter;
-			static const float kSpeedX = 0.2f;
-			static const float kSpeedY = 0.2f;
-			const auto dt = float(frameDuration) / 1000.0f;
-			_angleX.add(float(da.x) * kSpeedX * dt);
-			_angleY.add(float(da.y) * kSpeedY * dt);
-			debug("angle %g %g", _angleX.angle(), _angleY.angle());
-		}
-		if (!_nextScript.empty()) {
-			debug("loading script from %s", _nextScript.c_str());
-			auto nextScript = Common::move(_nextScript);
-			_nextScript.clear();
-
-			nextScript = removeDrive(nextScript);
-
-			Common::File file;
-			Common::Path nextPath(nextScript);
-			if (file.open(nextPath)) {
-				_script.reset(new Script(file));
-			} else {
-				auto pakFile = nextPath;
-				pakFile = pakFile.removeExtension().append(".pak");
-				file.open(pakFile);
-				if (!file.isOpen())
-					error("can't open script file %s", nextScript.c_str());
-				Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
-				_script.reset(new Script(*scriptStream));
-			}
-			goToWarp(_script->getInitScript()->vrFile);
-		}
-		if (!_nextWarp.empty()) {
-			_warp = _script->getWarp(_nextWarp);
-			_nextWarp.clear();
-
-			debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
-
-			Common::File vr;
-			if (vr.open(Common::Path(_warp->vrFile))) {
-				_vr = VR::loadStatic(_pixelFormat, vr);
-				if (_vr.isVR()) {
-					_mousePos = _screenCenter;
-					_system->warpMouse(_screenCenter.x, _screenCenter.y);
-				}
-			}
-
-			_regSet.reset(new RegionSet(_warp->testFile));
-
-			for (auto &c : _cursors)
-				c.free();
-
-			_cursors.resize(_regSet->size());
-			for (uint i = 0; i != _regSet->size(); ++i) {
-				_cursors[i].rect = _regSet->getRegion(i).toRect();
-			}
-
-			Script::ExecutionContext ctx;
-			debug("execute warp script %s", _warp->vrFile.c_str());
-			auto &test = _warp->getDefaultTest();
-			test->scope.exec(ctx);
-		}
-
-		_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
-
-		Graphics::Surface *cursor = nullptr;
-		for (auto &c : _cursors) {
-			if (_vr.isVR() ? c.rect.contains(currentVRPos()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
-				cursor = c.surface;
-				if (!cursor)
-					cursor = _defaultCursor[1].surface;
-				break;
-			}
-		}
-		if (!cursor)
-			cursor = _defaultCursor[0].surface;
-		if (cursor) {
-			paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
-		}
+		if (_movie) {
+			if (_movie->isPlaying()) {
+				debug("playing movie frame: %d", _movie->getCurFrame());
+				auto *s = _movie->decodeNextFrame();
+				if (s)
+					_screen->copyFrom(*s);
+			} else
+				_movie.reset();
+		} else
+			tick(float(frameDuration) / 1000.0f);
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
