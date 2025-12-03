@@ -668,20 +668,7 @@ static void fAddSound(Common::String sound, const char *t, Symbol *flag = nullpt
 		g_private->_AMRadio.push_back(sound);
 	else if (strcmp(t, "PoliceClip") == 0)
 		g_private->_policeRadio.push_back(sound);
-	else if (strcmp(t, "PhoneClip") == 0) {
-		// This condition will avoid adding the same phone call twice,
-		// it is unclear why this could be useful, but it looks like a bug
-		// in the original scripts
-		if (g_private->_playedPhoneClips.contains(sound))
-			return;
-
-		g_private->_playedPhoneClips.setVal(sound, true);
-		PhoneInfo p;
-		p.sound = sound;
-		p.flag = flag;
-		p.val = val;
-		g_private->_phone.push_back(p);
-	} else
+	else
 		error("error: invalid sound type %s", t);
 }
 
@@ -708,17 +695,19 @@ static void fPhoneClip(ArgArray args) {
 		debugC(1, kPrivateDebugScript, "Unimplemented PhoneClip special case");
 		return;
 	}
-	int i = args[2].u.val;
-	int j = args[3].u.val;
-	Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
+	assert(args.size() == 6);
+	debugC(1, kPrivateDebugScript, "PhoneClip(%s,%d,%d,%d,%s,%d)",
+		args[0].u.str, args[1].u.val, args[2].u.val, args[3].u.val, args[4].u.sym->name->c_str(), args[5].u.val);
 
-	if (i == j)
-		fAddSound(args[0].u.str, "PhoneClip", flag, args[5].u.val);
-	else {
-		assert(i < j);
-		Common::String sound = g_private->getRandomPhoneClip(args[0].u.str, i, j);
-		fAddSound(sound, "PhoneClip", flag, args[5].u.val);
-	}
+	const char *name = args[0].u.str;
+	bool once = (args[1].u.val != 0);
+	int startIndex = args[2].u.val;
+	int endIndex = args[3].u.val;
+	Common::String *flagName = args[4].u.sym->name;
+	int flagValue = args[5].u.val;
+	assert(startIndex <= endIndex);
+
+	g_private->addPhone(name, once, startIndex, endIndex, *flagName, flagValue);
 }
 
 static void fSoundArea(ArgArray args) {
@@ -760,7 +749,7 @@ static void fSoundArea(ArgArray args) {
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
 		g_private->_phoneArea = m;
-		g_private->_masks.push_front(m);
+		g_private->initializePhoneOnDesktop();
 	} else
 		error("Invalid type for SoundArea");
 }
