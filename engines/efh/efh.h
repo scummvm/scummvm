@@ -264,7 +264,7 @@ enum TTSMenuRestriction {
 	kMenu
 };
 
-enum EFHAction {
+enum EFHAction : unsigned {
 	kActionNone,
 	kActionQuit,
 	kActionSkipVideo,
