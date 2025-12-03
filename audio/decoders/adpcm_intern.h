@@ -262,6 +262,22 @@ private:
 	bool _topNibble;
 };
 
+class FOURXM_ADPCMStream : public Ima_ADPCMStream {
+public:
+	FOURXM_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	}
+
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+
+	void reset() {
+		Ima_ADPCMStream::reset();
+	}
+
+private:
+};
+
+
 } // End of namespace Audio
 
 #endif

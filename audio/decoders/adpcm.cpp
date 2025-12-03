@@ -559,6 +559,32 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 	return samp;
 }
 
+int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	assert(_stream->pos() == 0);
+	assert(_channels == 1 || _channels == 2);
+	for (int i = 0; i < _channels; i++)
+		_status.ima_ch[i].last = _stream->readSint16LE();
+	for (int i = 0; i < _channels; i++)
+		_status.ima_ch[i].stepIndex = _stream->readSint16LE();
+
+	assert(_stream->pos() == _channels * 4);
+	auto samplesToDecode = (_endpos - _stream->pos()) * 2;
+	assert(numSamples >= samplesToDecode);
+
+	int samples = 0;
+	auto encodedPerChannel = (_endpos - _stream->pos()) / _channels;
+	for (int i = 0; i < _channels; i++) {
+		for(auto s = encodedPerChannel; s--; ) {
+			byte data = _stream->readByte();
+			buffer[samples++] = decodeIMA(data & 0x0f, i);
+			buffer[samples++] = decodeIMA((data >> 4) & 0x0f, i);
+		}
+	}
+	assert(_stream->pos() == _endpos);
+	return samples;
+}
+
+
 SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, ADPCMType type, int rate, int channels, uint32 blockAlign) {
 	// If size is 0, report the entire size of the stream
 	if (!size)
@@ -579,6 +605,8 @@ SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispose
 		return new DK3_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMXA:
 		return new XA_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCM4XM:
+		return new FOURXM_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
