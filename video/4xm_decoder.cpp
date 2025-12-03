@@ -125,7 +125,9 @@ public:
 };
 
 Audio::AudioStream *FourXMDecoder::FourXMAudioTrack::getAudioStream() const {
-	return _dec->_audioStream = new FourXMAudioStream(this);
+	if (!_dec->_audioStream)
+		_dec->_audioStream = new FourXMAudioStream(this);
+	return _dec->_audioStream;
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, const byte *data, uint size) {

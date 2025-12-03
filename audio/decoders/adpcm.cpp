@@ -568,20 +568,22 @@ int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 		_status.ima_ch[i].stepIndex = _stream->readSint16LE();
 
 	assert(_stream->pos() == _channels * 4);
-	auto samplesToDecode = (_endpos - _stream->pos()) * 2;
+	int samplesToDecode = (_endpos - _stream->pos()) * 2;
 	assert(numSamples >= samplesToDecode);
 
-	int samples = 0;
 	auto encodedPerChannel = (_endpos - _stream->pos()) / _channels;
 	for (int i = 0; i < _channels; i++) {
+		int samples = i;
 		for(auto s = encodedPerChannel; s--; ) {
 			byte data = _stream->readByte();
-			buffer[samples++] = decodeIMA(data & 0x0f, i);
-			buffer[samples++] = decodeIMA((data >> 4) & 0x0f, i);
+			buffer[samples] = decodeIMA(data & 0x0f, i);
+			samples += _channels;
+			buffer[samples] = decodeIMA((data >> 4) & 0x0f, i);
+			samples += _channels;
 		}
 	}
 	assert(_stream->pos() == _endpos);
-	return samples;
+	return samplesToDecode;
 }
 
 
