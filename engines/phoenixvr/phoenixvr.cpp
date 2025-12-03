@@ -396,16 +396,18 @@ Common::Error PhoenixVREngine::run() {
 		}
 		if (_movie) {
 			if (_movie->isPlaying()) {
-				debug("playing movie frame: %d", _movie->getCurFrame());
-				auto *s = _movie->decodeNextFrame();
-				if (s) {
-					Common::ScopedPtr<Graphics::Surface> converted;
-					if (s->format != _pixelFormat) {
-						converted.reset(s->convertTo(_pixelFormat));
-						_screen->copyFrom(*converted);
-						converted->free();
-					} else
-						_screen->copyFrom(*s);
+				if (_movie->getTimeToNextFrame() <= 0) {
+					debug("playing movie frame: %d", _movie->getCurFrame());
+					auto *s = _movie->decodeNextFrame();
+					if (s) {
+						Common::ScopedPtr<Graphics::Surface> converted;
+						if (s->format != _pixelFormat) {
+							converted.reset(s->convertTo(_pixelFormat));
+							_screen->copyFrom(*converted);
+							converted->free();
+						} else
+							_screen->copyFrom(*s);
+					}
 				}
 			} else
 				_movie.reset();
