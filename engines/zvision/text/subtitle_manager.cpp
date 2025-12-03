@@ -81,7 +81,7 @@ void SubtitleManager::process(int32 deltatime) {
 				Graphics::Surface textSurface;
 				//TODO - make this surface a persistent member of the manager; only call create() when currently displayed subtitle is changed.
 				textSurface.create(sub->_textArea.width(), sub->_textArea.height(), _engine->_resourcePixelFormat);
-				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), -1); // TODO Unnecessary operation?  Check later.
+				textSurface.fillRect(Common::Rect(sub->_textArea.width(), sub->_textArea.height()), (uint32)-1); // TODO Unnecessary operation?  Check later.
 				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->_lines[sub->_lineId].subStr, textSurface, _engine->isWidescreen());
 				_renderManager->blitSurfaceToText(textSurface, sub->_textArea.left, sub->_textArea.top, -1);
 				textSurface.free();
