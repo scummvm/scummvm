@@ -68,7 +68,7 @@ enum AccessDebugChannels {
 	kDebugSound,
 };
 
-enum ACCESSActions {
+enum ACCESSActions : unsigned {
 	kActionNone,
 	kActionMoveUp,
 	kActionMoveDown,
