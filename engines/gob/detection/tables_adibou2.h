@@ -105,9 +105,25 @@
 	{
 		"adibou2",
 		"ADIBOU 2.12 Environnement",
-		AD_ENTRY2s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
-				   "BECBF212.CD1",	"bc828c320908a5eaa349956d396bd8e1", 8),
+		AD_ENTRY3s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
+				   "BECBF212.CD1", "bc828c320908a5eaa349956d396bd8e1", 8,
+				   "intro.itk", "610b4ade4912442f42f342594c654226", 13592576),
 		FR_FRA,
+		kPlatformWindows,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2",
+		"ADIBOU 2.12 Environnement",
+		AD_ENTRY3s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
+				   "BECBF212.CD1", "bc828c320908a5eaa349956d396bd8e1", 8,
+				   "intro.itk", "269fc5814db277b5a18d748e7ed55e90", 15079424),
+		FR_FRA, // Canadian French
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
 		GUIO0()
