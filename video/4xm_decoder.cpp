@@ -21,8 +21,10 @@
 
 #include "video/4xm_decoder.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
@@ -67,14 +69,28 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
-class FourXMDecoder::FourXMAudioTrack::Stream : public Audio::AudioStream {
+class FourXMDecoder::FourXMAudioStream : public Audio::AudioStream {
 	const FourXMAudioTrack *_track;
+	Common::List<Common::Array<int16>> _buffers;
 
 public:
-	Stream(const FourXMAudioTrack *track) : _track(track) {}
+	FourXMAudioStream(const FourXMAudioTrack *track) : _track(track) {}
+
 	int readBuffer(int16 *buffer, const int numSamples) override {
-		debug("decode next audio frame");
-		return 0;
+		int offset = 0;
+		while (!_buffers.empty() && offset < numSamples) {
+			auto &next = _buffers.front();
+			auto read = MIN<uint>(numSamples - offset, next.size());
+			for (uint i = 0; i != read; ++i) {
+				buffer[offset++] = next[i];
+			}
+			if (read == next.size()) {
+				_buffers.pop_front();
+			} else {
+				next.erase(next.begin(), next.begin() + read);
+			}
+		}
+		return offset;
 	}
 
 	bool isStereo() const override {
@@ -90,16 +106,29 @@ public:
 		auto *decoder = _track->_dec;
 		return decoder->_curFrame >= decoder->_frames.size();
 	}
+
+	void decode(uint32 tag, const byte *data, uint size) {
+		Common::MemoryReadStream ms(data, size);
+		Common::ScopedPtr<Audio::SeekableAudioStream> x(Audio::makeADPCMStream(&ms, DisposeAfterUse::NO, size, Audio::kADPCM4XM, _track->_sampleRate, _track->_audioChannels));
+		auto numChannels = _track->_audioChannels;
+		int numSamples = (size - 4 * numChannels) * 2;
+		Common::Array<int16> buf(numSamples);
+		int r = x->readBuffer(buf.data(), numSamples);
+		if (r < 0) {
+			warning("ADPCMStream::readBuffer failed");
+			return;
+		}
+		assert(r == numSamples);
+		if (!buf.empty())
+			_buffers.push_back(Common::move(buf));
+	}
 };
 
 Audio::AudioStream *FourXMDecoder::FourXMAudioTrack::getAudioStream() const {
-	return new Stream(this);
+	return _dec->_audioStream = new FourXMAudioStream(this);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, const byte *data, uint size) {
-}
-
-void FourXMDecoder::FourXMAudioTrack::decode(uint32 tag, const byte *data, uint size) {
 }
 
 void FourXMDecoder::decodeNextFrameImpl() {
@@ -123,7 +152,10 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		_stream->read(packet.data(), size);
 		switch (tag) {
 		case MKTAG('s', 'n', 'd', '_'):
-			_audio->decode(tag, packet.data(), size);
+			if (_audioStream)
+				_audioStream->decode(tag, packet.data(), size);
+			else
+				warning("no audio stream to decode sample to");
 			break;
 		case MKTAG('i', 'f', 'r', 'm'):
 		case MKTAG('p', 'f', 'r', 'm'):

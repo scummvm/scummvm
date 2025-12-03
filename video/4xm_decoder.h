@@ -65,8 +65,11 @@ private:
 		Common::Rational getFrameRate() const override { return _frameRate; }
 	};
 
+	class FourXMAudioStream;
+
 	class FourXMAudioTrack : public AudioTrack {
-		class Stream;
+		friend class FourXMAudioStream;
+
 		FourXMDecoder *_dec;
 		uint _trackIdx;
 		uint _audioType;
@@ -77,8 +80,6 @@ private:
 	public:
 		FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate, uint sampleResolution) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate), _sampleResolution(sampleResolution) {
 		}
-
-		void decode(uint32 tag, const byte *data, uint size);
 
 	private:
 		Audio::AudioStream *getAudioStream() const override;
@@ -94,6 +95,7 @@ private:
 	uint _curFrame = 0;
 	FourXMVideoTrack *_video = nullptr;
 	FourXMAudioTrack *_audio = nullptr;
+	FourXMAudioStream *_audioStream = nullptr;
 };
 
 } // namespace Video
