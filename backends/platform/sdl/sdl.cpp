@@ -999,7 +999,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 	// If the new mode and the current mode are not from the same graphics
 	// manager, delete and create the new mode graphics manager
 	if (render3d) {
-		uint best3DSupport = -1;
+		uint best3DSupport = (uint) -1;
 		uint i;
 		// Make sure the requested mode supports 3D
 		for (i = 0; i < GraphicsManagerCount; ++i) {
