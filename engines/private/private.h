@@ -118,10 +118,25 @@ typedef struct MaskInfo {
 	}
 } MaskInfo;
 
+enum PhoneStatus : byte {
+	kPhoneStatusWaiting,
+	kPhoneStatusAvailable,
+	kPhoneStatusCalling,
+	kPhoneStatusMissed,
+	kPhoneStatusAnswered
+};
+
 typedef struct PhoneInfo {
-	Common::String sound;
-	Symbol *flag;
-	int val;
+	Common::String name;
+	bool once;
+	int startIndex;
+	int endIndex;
+	Common::String flagName;
+	int flagValue;
+	PhoneStatus status;
+	int callCount;
+	uint32 soundIndex;
+	Common::Array<Common::String> sounds;
 } PhoneInfo;
 
 typedef struct DossierInfo {
@@ -203,6 +218,7 @@ public:
 
 	Audio::SoundHandle _fgSoundHandle;
 	Audio::SoundHandle _bgSoundHandle;
+	Audio::SoundHandle _phoneCallSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
 
@@ -387,7 +403,6 @@ public:
 	bool _modified;
 
 	PlayedMediaTable _playedMovies;
-	PlayedMediaTable _playedPhoneClips;
 	Common::String _repeatedMovieExit;
 
 	// Masks/Exits
@@ -396,6 +411,7 @@ public:
 
 	// Sounds
 	void playSound(const Common::String &, uint, bool, bool);
+	void playPhoneCallSound();
 	void stopSound(bool);
 	bool isSoundActive();
 	void waitForSoundToStop();
@@ -413,18 +429,21 @@ public:
 	Common::String _infaceRadioPath;
 	MaskInfo _AMRadioArea;
 	MaskInfo _policeRadioArea;
+	SoundList _AMRadio;
+	SoundList _policeRadio;
+	void selectAMRadioArea(Common::Point);
+	void selectPoliceRadioArea(Common::Point);
+
+	// Phone
 	MaskInfo _phoneArea;
 	Common::String _phonePrefix;
 	Common::String _phoneCallSound;
-	SoundList _AMRadio;
-	SoundList _policeRadio;
-	PhoneList _phone;
-
-	Common::String getRandomPhoneClip(const char *, int, int);
-	void selectAMRadioArea(Common::Point);
-	void selectPoliceRadioArea(Common::Point);
-	void selectPhoneArea(Common::Point);
+	PhoneList _phones;
+	void addPhone(const Common::String &name, bool once, int startIndex, int endIndex, const Common::String &flagName, int flagValue);
+	void initializePhoneOnDesktop();
 	void checkPhoneCall();
+	bool cursorPhoneArea(Common::Point mousePos);
+	void selectPhoneArea(Common::Point mousePos);
 
 	// Safe
 	Common::String _safeNumberPath;
