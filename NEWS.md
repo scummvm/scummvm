@@ -54,6 +54,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Cruise:
    - Added Text-to-Speech support.
 
+ Cryomni3D:
+   - Added support for Chinese DOS/Win95 Versailles CD version
+
  Draci:
    - Added Text-to-Speech support.
 
@@ -71,6 +74,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Freescape:
    - Added roll rotation to Driller and Dark Side.
+   - Added full TinyGL support for all the games.
+   - Fixed several small details across all the games including missing
+     graphics and sounds.
 
  Gob:
    - Added Text-to-Speech support.
@@ -85,6 +91,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
+   - Introduced new launcher checkbox in Eye of the Beholder 1 and 2,
+     to enable smarter replacing of thrown weapons from inventory.
+   - In Eye of the Beholder 1, Ileria and Beohram NPC data fix is now behind
+     a separate feature flag and launcher checkbox.
 
  Lab:
    - Added keymapper support.
@@ -133,7 +143,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added several important missing graphics and gameplay sounds,
      the engine is now considered to be at feature parity with the original game.
    - Fixed inaccessible places, missing interactions or conversations.
-   - Added option to highlight decision areas for improved visibility. 
+   - Added option to highlight decision areas for improved visibility.
    - Added support for third party subtitles.
    - Added missing features and fixed crashes in the desktop screen.
    - Fixed various graphics and cursor glitches.
@@ -218,6 +228,40 @@ For a more comprehensive changelog of the latest experimental code, see:
  Wintermute:
    - 3D renderer enabled by default for 2D games.
    - Added Text-to-Speech support.
+
+ Desktop ports:
+   - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R)
+   - Add support for building with SDL3 (although SDL2 is still used by default)
+   - Add support for scaling shaders within 3D engines
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
+
+ Android port:
+   - Support Android 16
+   - Add support for scaling shaders within 3D engines
+   - Add support for antialiasing with 3D engines
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
+   - Take screen forbidden zones into account
+   - Use Android networking code instead of libcurl: system HTTPS certificates are now used
+   - Long-press on back button with latest Android versions is fixed
+
+ Atari port:
+   - Unified paths for FreeMiNT and TOS in scummvm.cfg (better delete the old
+     config file).
+   - Added translation for longer than 8+3 .dat filenames.
+   - Fixed slow rendering of Eco Quest's intro.
+   - Fixed cursor rendering of Phantasmagoria, KQ7 and other SCI32 games.
+   - Increased stack size to 256k to avoid stack overflow in some engines (e.g.
+     Supernova).
+   - Fixed launching games from command line.
+
+ DS port:
+   - Migrate to latest devkitPRO SDK
+
+ iOS port:
+   - Add support for scaling shaders within 3D engines
+   - Add support for antialiasing with 3D engines
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
+   - Take screen forbidden zones into account
 
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
