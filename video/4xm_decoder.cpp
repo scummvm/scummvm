@@ -147,18 +147,22 @@ void FourXMDecoder::decodeNextFrameImpl() {
 	while (_stream->pos() < frame.end) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 size = _stream->readUint32LE();
-		debug("%u: sub frame %s, %u bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos() - 4);
+		debug("%u: sub frame %s, %u bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos());
 		auto pos = _stream->pos();
 		if (size > packet.size())
 			packet.resize(size);
 		_stream->read(packet.data(), size);
 		switch (tag) {
-		case MKTAG('s', 'n', 'd', '_'):
-			if (_audioStream)
-				_audioStream->decode(tag, packet.data(), size);
-			else
-				warning("no audio stream to decode sample to");
-			break;
+		case MKTAG('s', 'n', 'd', '_'): {
+			auto trackIdx = _stream->readUint32LE();
+			_stream->skip(4);
+			if (trackIdx == 0) {
+				if (_audioStream)
+					_audioStream->decode(tag, packet.data() + 8, size - 8);
+				else
+					warning("no audio stream to decode sample to");
+			}
+		} break;
 		case MKTAG('i', 'f', 'r', 'm'):
 		case MKTAG('p', 'f', 'r', 'm'):
 		case MKTAG('c', 'f', 'r', 'm'):
@@ -223,8 +227,12 @@ void FourXMDecoder::readList(uint32 listEnd) {
 				auto audioChannels = _stream->readUint32LE();
 				auto sampleRate = _stream->readUint32LE();
 				auto sampleResolution = _stream->readUint32LE();
-				debug("audio track %u %u %u %u %u", trackIdx, audioType, audioChannels, sampleRate, sampleResolution);
-				addTrack(_audio = new FourXMAudioTrack(this, trackIdx, audioType, audioChannels, sampleRate, sampleResolution));
+				debug("audio track idx: %u type: %u channels: %u sample rate: %u bits: %u", trackIdx, audioType, audioChannels, sampleRate, sampleResolution);
+				if (sampleResolution != 16)
+					error("only 16 bit audio is supported");
+				addTrack(_audio = new FourXMAudioTrack(this, trackIdx, audioType, audioChannels, sampleRate));
+				if (trackIdx == 0) // only support single track for now
+					_audioStream = new FourXMAudioStream(_audio);
 			} break;
 			default:
 				break;

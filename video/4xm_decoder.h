@@ -32,6 +32,7 @@ namespace Video {
 class FourXMDecoder : public Video::VideoDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
+	bool useAudioSync() const override { return false; }
 
 private:
 	struct Frame {
@@ -75,10 +76,9 @@ private:
 		uint _audioType;
 		uint _audioChannels;
 		uint _sampleRate;
-		uint _sampleResolution;
 
 	public:
-		FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate, uint sampleResolution) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate), _sampleResolution(sampleResolution) {
+		FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate) {
 		}
 
 	private:
