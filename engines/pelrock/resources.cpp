@@ -23,6 +23,8 @@
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "resources.h"
+#include "room.h"
 
 namespace Pelrock {
 
@@ -44,7 +46,7 @@ ResourceManager::~ResourceManager() {
 			delete[] alfredTalkFrames[i][j];
 		}
 
-		for(int j = 0; j < 2; j ++) {
+		for (int j = 0; j < 2; j++) {
 			delete[] alfredInteractFrames[i][j];
 		}
 
@@ -55,8 +57,9 @@ ResourceManager::~ResourceManager() {
 		delete[] alfredIdle[i];
 	}
 
-		delete[] alfredCombFrames[0];
-		delete[] alfredCombFrames[1];
+	delete[] alfredCombFrames[0];
+	delete[] alfredCombFrames[1];
+	delete _mainMenu;
 }
 
 void ResourceManager::loadCursors() {
@@ -72,6 +75,7 @@ void ResourceManager::loadCursors() {
 	}
 	alfred7File.close();
 }
+
 void ResourceManager::loadInteractionIcons() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
@@ -167,7 +171,6 @@ void ResourceManager::loadAlfredAnims() {
 			int interactingFrame = interactingStartFrame + j;
 			extractSingleFrame(pic, alfredInteractFrames[i][j], interactingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		}
-
 	}
 
 	free(bufferFile);
@@ -209,5 +212,45 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombRightRaw);
 	free(alfredCombLeftRaw);
 }
+
+
+void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer) {
+	stream->seek(offset, SEEK_SET);
+	// get screen
+	size_t combined_size = 0;
+	for (int i = 0; i < numBlocks; i++) {
+		byte *thisBlock = nullptr;
+		size_t blockSize = 0;
+		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
+		uint8_t *block_data = nullptr;
+		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
+		memcpy(outputBuffer + combined_size, block_data, decompressedSize);
+		combined_size += decompressedSize + 1;
+		free(block_data);
+		free(thisBlock);
+	}
+}
+
+void ResourceManager::loadSettingsMenu() {
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("Could not open ALFRED.7");
+		return;
+	}
+
+	_mainMenu = new byte[640 * 400];
+
+	alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
+	alfred7.read(_mainMenuPalette, 768);
+	for (int i = 0; i < 256; i++) {
+		_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
+		_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
+		_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
+	}
+
+	mergeRleBlocks(&alfred7, kSettingsMenuOffset, 8, _mainMenu);
+	alfred7.close();
+}
+
 
 } // End of namespace Pelrock

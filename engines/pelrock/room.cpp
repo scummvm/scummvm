@@ -63,13 +63,13 @@ void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palet
 		palette[i * 3 + 1] = palette[i * 3 + 1] << 2;
 		palette[i * 3 + 2] = palette[i * 3 + 2] << 2;
 	}
+	memcpy(_roomPalette, palette, 768);
 }
 
 void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *background) {
 	roomFile->seek(0, SEEK_SET);
 	// get screen
 	size_t combined_size = 0;
-	size_t uncompressed_size = 0;
 	for (int pair_idx = 0; pair_idx < 8; pair_idx++) {
 		uint32_t pair_offset = roomOffset + (pair_idx * 8);
 		if (pair_offset + 8 > roomFile->size())
@@ -78,7 +78,6 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 		roomFile->seek(pair_offset, SEEK_SET);
 		uint32_t offset = roomFile->readUint32LE();
 		uint32_t size = roomFile->readUint32LE();
-		uncompressed_size += size;
 
 		if (offset > 0 && size > 0 && offset < roomFile->size()) {
 			byte *data = new byte[size];

@@ -21,10 +21,10 @@
 #ifndef PELROCK_RESOURCES_H
 #define PELROCK_RESOURCES_H
 
- #include "common/scummsys.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Pelrock {
-
 
 static const int walkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
 static const int talkingAnimLengths[4] = {8, 8, 4, 4}; // size of each inner array
@@ -32,29 +32,33 @@ static const int interactingAnimLength = 2;
 
 class ResourceManager {
 private:
-	/* data */
+	void mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer);
 public:
 	ResourceManager(/* args */);
 	~ResourceManager();
 
+	void loadSettingsMenu();
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
+	byte *loadExtra();
 
-	byte *alfredIdle[4] = {nullptr};  // 4 directions
+	byte *alfredIdle[4] = {nullptr}; // 4 directions
 
-	byte **alfredWalkFrames[4];              // 4 arrays of arrays
+	byte **alfredWalkFrames[4]; // 4 arrays of arrays
 
-	byte **alfredTalkFrames[4];              // 4 arrays of arrays
+	byte **alfredTalkFrames[4]; // 4 arrays of arrays
 
 	byte **alfredCombFrames[2];
 	byte **alfredInteractFrames[4];
 
-    byte *_cursorMasks[5] = {nullptr};
+	byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
-};
 
+	byte *_mainMenu = nullptr;
+	byte _mainMenuPalette[768] = {0};
+};
 
 } // End of namespace Pelrock
 #endif

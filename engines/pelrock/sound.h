@@ -52,6 +52,7 @@ private:
     int _currentVolume;
     Common::File *_musicFile;
     byte _currentMusicTrack = 0;
+    Audio::SoundHandle _sfxHandles[8];
 };
 
 } // End of namespace Pelrock

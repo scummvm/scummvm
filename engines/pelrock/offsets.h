@@ -39,6 +39,9 @@ namespace Pelrock {
     static const uint32_t ALFRED7_ALFRED_COMB_R = 67768;
     static const uint32_t ALFRED7_ALFRED_COMB_L = 88408;
 
+    static const uint32_t kSettingsMenuOffset = 910097; // Placeholder offset
+    static const uint32_t kSettingsPaletteOffset = 1038141; // 640 * 480
+
 
 
 } // End of namespace Pelrock

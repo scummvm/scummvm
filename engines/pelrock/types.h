@@ -283,8 +283,8 @@ enum GameState {
 	SETTINGS = 104,
 	EXTRA_SCREEN = 105,
 	INTRO = 106,
-	PROMOTE = 107,
 };
+
 
 } // End of namespace Pelrock
 

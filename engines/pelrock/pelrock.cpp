@@ -146,6 +146,13 @@ Common::Error PelrockEngine::run() {
 				checkMouseClick(e.mouse.x, e.mouse.y);
 				_displayPopup = false;
 				_longClick = false;
+			} else if (e.type == Common::EVENT_RBUTTONUP) {
+				if (stateGame != SETTINGS)
+					stateGame = SETTINGS;
+				else {
+					g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+					stateGame = GAME;
+				}
 			}
 		}
 		if (_isMouseDown) {
@@ -157,7 +164,16 @@ Common::Error PelrockEngine::run() {
 			}
 		}
 		checkMouseHover();
-		frames();
+		if (stateGame == SETTINGS) {
+
+			memcpy(_screen->getPixels(), _res->_mainMenu, 640 * 400);
+			g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+			g_engine->_screen->markAllDirty();
+			g_engine->_screen->update();
+
+		} else if (stateGame == GAME) {
+			frames();
+		}
 
 		_screen->update();
 		// limiter.delayBeforeSwap();
@@ -171,7 +187,7 @@ void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
 	calculateScalingMasks();
-
+	_res->loadSettingsMenu();
 	_compositeBuffer = new byte[640 * 400];
 	_currentBackground = new byte[640 * 400];
 
@@ -188,8 +204,8 @@ void PelrockEngine::init() {
 		loadAnims();
 		setScreen(0, 0);
 		// setScreen(6, 0); // museum entrance
-						 // setScreen(13, 1); // restaurants kitchen
-						 // setScreen(2, 2); // hooker
+		// setScreen(13, 1); // restaurants kitchen
+		// setScreen(2, 2); // hooker
 	}
 }
 
@@ -1541,7 +1557,7 @@ void PelrockEngine::setScreen(int number, int dir) {
 
 	_room->loadRoomMetadata(&roomFile, number);
 	_room->loadRoomTalkingAnimations(number);
-	if(_room->_musicTrack > 0)
+	if (_room->_musicTrack > 0)
 		_soundManager->playMusicTrack(_room->_musicTrack);
 	else {
 		_soundManager->stopMusic();

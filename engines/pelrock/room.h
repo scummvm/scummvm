@@ -53,6 +53,7 @@ public:
 	TalkingAnimHeader _talkingAnimHeader;
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
+	byte _roomPalette[768];
 	byte alfredRemap[256];
 	byte overlayRemap[256];
 	Common::Array<Common::String> _roomNames;

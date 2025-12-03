@@ -25,8 +25,9 @@
 
 namespace Pelrock {
 
-// const int kTickMs = 20;
-const int kTickMs = 55;
+const int kTickMs = 18;
+// const int kTickMs = 55;
+// const int kTickMs = 15;
 const int kHalfTickMultiplier = 2;
 
 class ChronoManager {
