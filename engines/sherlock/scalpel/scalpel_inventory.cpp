@@ -106,7 +106,7 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 		assert((uint)mode < ARRAYSIZE(_actionsIndexed));
 		ui._oldAction = _actionsIndexed[mode];
 	} else {
-		ui._oldAction = -1;
+		ui._oldAction = (Common::CustomEventType) -1;
 	}
 
 	invCommands(0);
