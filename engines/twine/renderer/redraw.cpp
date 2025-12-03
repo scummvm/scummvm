@@ -674,7 +674,7 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 					if (drawList[i].numObj == OWN_ACTOR_SCENE_INDEX && drawList[i].type == DrawListType::DrawShadows) {
 						shadowtwinsen = true;
 						processDrawListShadows(drawList[i]);
-						drawList[i].type = -1; // invalidate shadow entry
+						drawList[i].type = (uint32)-1; // invalidate shadow entry
 						break;
 					}
 				}
