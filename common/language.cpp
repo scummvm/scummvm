@@ -69,6 +69,7 @@ const LanguageDescription g_languages[] = {
 	{ "fi", "fi_FI", "Finnish", FI_FIN },
 	{ "be", "nl_BE", "Flemish", NL_BEL },
 	{ "fr", "fr_FR", "French", FR_FRA },
+	{ "fr-ca", "fr_CA", "French (Canada)", FR_CAN },
 	{ "de", "de_DE", "German", DE_DEU },
 	{ "el", "el_GR", "Greek", EL_GRC },
 	{ "he", "he_IL", "Hebrew", HE_ISR },

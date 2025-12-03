@@ -59,6 +59,7 @@ enum Language : int8 {
 	FA_IRN,
 	FI_FIN,
 	FR_FRA,
+	FR_CAN,
 	HE_ISR,
 	HR_HRV,
 	HU_HUN,
