@@ -852,7 +852,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bonest", "Beneath Our Next Establishment" },
 	{ "bonnieball", "Bonnie's Ball Quest" },
 	{ "boogiebum", "Boogie Bum's Roger Quest" },
-	{ "bookertail", "Booker Tail" },
 	{ "bookofdestiny", "Book of Destiny" },
 	{ "bookofknowledge", "The Books of Knowledge" },
 	{ "bookofspells4", "The Book of Spells (A funtasy Adventure) - Chapter 4" },
@@ -993,6 +992,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "christmas42", "Christmas42" },
 	{ "christmasgamearcade", "CGA: Christmas Game Arcade" },
 	{ "christmashunt", "Christmas Hunt" },
+	{ "christmashuntrm", "Christmas Hunt (Remade)" },
 	{ "christmaspresent", "Search for the Christmas Present - Remake" },
 	{ "christmasquest", "Christmas Quest" },
 	{ "christmasquest2", "Christmas Quest 2: The Yuletide Flows In" },
@@ -1099,6 +1099,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "cyberjack", "cyberJACK" },
 	{ "cybermemory", "Cybermemory Not Found" },
 	{ "cyberpunk97ep1", "Cyberpunk '97 - Episode 1" },
+	{ "czisakfiles", "The Czisak Files" },
 	{ "daceyinthedark", "Dacey in the Dark: Prelude" },
 	{ "dada", "Dada: Stagnation in Blue" },
 	{ "dadaxmas", "Dada Christmas Special: Stagnation in Red and White" },
@@ -1241,6 +1242,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dragontales", "Dragon Tales" },
 	{ "dragoonjourney", "Dragoon's Journey" },
 	{ "drawnflame", "Drawn to the Flame" },
+	{ "drchaseadv", "Dr. Chase's Adventure" },
 	{ "drchuckles", "Dr. Chuckles' Miniature World Of Madness" },
 	{ "dreadmacfarlane", "Dread Mac Farlane" },
 	{ "dreadmacfarlane2", "Dread Mac Farlane - Part 2" },
@@ -1876,6 +1878,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "koscheitheimmortal", "Koschei The Immortal - The Beginning" },
 	{ "kq3plus", "King's Quest III+" },
 	{ "kq4retold", "King's Quest IV: The Perils of Rosella Retold" },
+	{ "kq4retoldvga", "King's Quest IV: The Perils of Rosella Retold VGA Talkie" },
 	{ "kq9vga", "King's Quest IX: The Silver Lining VGA" },
 	{ "kristmaskrisis", "Kristmas Krisis" },
 	{ "ksauna", "Karjalan Sauna" },
@@ -2963,6 +2966,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shootinggame", "The Shooting Game" },
 	{ "shootmyvalentine", "Shoot My Valentine" },
 	{ "shortcut", "ShortCut" },
+	{ "shredder", "Shredder" },
 	{ "shrivel", "Shrivel" },
 	{ "shunday", "Shunday" },
 	{ "sierraquest1", "Sierra Quest 1: Roberta in Love" },
@@ -3041,6 +3045,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sonicandfriendsinclubhouse", "Sonic and friends in: Club House" },
 	{ "sophiamcgrath", "Sophia McGrath and the Strange Invitation" },
 	{ "sorenquest", "Soren's Quest" },
+	{ "sororityrush", "Sorority Rush" },
 	{ "sosk", "Secrets of Sultan Kanuni" },
 	{ "soulsquest", "Souls Quest" },
 	{ "sovietunterzoegersdorf1", "Soviet Unterzögersdorf: Sector I" },
@@ -3206,6 +3211,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "taospacetime", "Tao Through Space and Time" },
 	{ "tarthenia", "Tarthenia" },
 	{ "tasteblood", "Taste the blood of darkness" },
+	{ "tastetexas", "A Taste of Texas" },
 	{ "tattooroom", "The Tattoo Room" },
 	{ "taverntales", "Tales From A Forgotten Tavern" },
 	{ "teafortwo", "Tea for Two - A Detective Logan Case" },
@@ -3470,6 +3476,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tinybigquest", "Tiny Big Quest" },
 	{ "tinysoccer", "Tiny Soccer Manager Stories" },
 	{ "tirnanog", "Tir Na Nog" },
+	{ "tmol", "The Meaning of Life" },
 	{ "toffeetrouble", "Toffee Trouble in Creamville" },
 	{ "tokyouhalloween", "Tokyo University Halloween 2024" },
 	{ "tomandjimi", "Tom and Jimi in Blowout!" },
@@ -3573,7 +3580,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "valhallaextinction", "Valhalla Extinction" },
 	{ "valis", "Valis" },
 	{ "vankairbreak", "van K. Airbreak" },
-	{ "vasafasa", "The Vasa Fasa" },
 	{ "vasiletemplar", "Vasile The Templar" },
 	{ "vectorvendetta", "Vector Vendetta" },
 	{ "vegetablepatch", "Vegetable Patch Extreem Turbo" },
@@ -3741,18 +3747,25 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "snowyadventures", "Snowy Adventures" },
 
 
-	// AGS 3.6.2 games. not currently supported
+	// AGS 3.6.2/3 games. not currently supported
 	{ "agent11", "Agent 11 - The Missing Knight" },
 	{ "badcoral", "Bad to the Coral" },
 	{ "beachbelly", "Beach Belly Bloodbath" },
+	{ "bearingdown", "Bearing Down" },
+	{ "bookertail", "Booker Tail" },
 	{ "bugadv", "Bug Adventure Game" },
 	{ "burncloset", "Burn Down The Closet: a game about being agender" },
 	{ "db0oops", "Double-0-Oops!" },
 	{ "magentaspacech12", "Magenta: IN SPACE (Chapter 1 & 2)" },
 	{ "pqpn1", "Police Quest: Panama Nights - Part 1" },
+	{ "principessasangue", "Principessa della magia del sangue" },
+	{ "raorchard", "The Round-about Orchard: A tiny OtGW fan game" },
 	{ "remembersmile", "Remember to Smile!" },
+	{ "sequencebreak", "Sequence Break" },
 	{ "snarl", "Snarl" },
+	{ "startrekxeno", "Star Trek - Xenomorph Alert" },
 	{ "theescapeags", "The Escape" },
+	{ "vasafasa", "The Vasa Fasa" },
 	{ "weightgravity", "Weight of Gravity" },
 	{ "yanms", "You are not my son" },
 
@@ -3760,6 +3773,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "boundedrealms", "Bounded Realms" },
 	{ "castleescapech2", "Castle Escape - Chapter 2" },
 	{ "centralstandard", "Central Standard" },
+	{ "crescentrover", "Crescent Rover" },
 	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
 	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
 	{ "dustrust", "Dust 'n' Rust" },
@@ -4300,12 +4314,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("zak2", "clk:fanadv_zak2.exe:Zak2.exe", "A:e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
 	UNSUPPORTED_GAME_ENTRY_EN("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
-	// AGS 3.6.2 games
+	// AGS 3.6.2/3 games
 	UNSUPPORTED_GAME_ENTRY_EN("agent11", "Agent 11 - The Missing Knight.ags", "4b9c9d5bdab4df97f13ac68fff8f9a1e", 472664809),
 	UNSUPPORTED_GAME_ENTRY_EN("badcoral", "BadToTheCoral.ags", "404ba29796e56672febce37c38d41d23", 4638605),  //v1.02
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "4792bc8c90ba9d08dfe32394af61420b", 25562809),
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "08d7ab12e0844b2217171b9f16f87062", 11267330),  // Post-Jam
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "b9e0b0bbbb82a04d9c83efa455610eda", 11728709),  // Post-Jam v11
+	UNSUPPORTED_DEMO_ENTRY_EN("bearingdown", "Bear Game.ags", "f5271361fcbad7c5d588d863272a560b", 2576138),
 	UNSUPPORTED_DEMO_ENTRY_EN("bookertail", "Bookertail.ags", "036588310f7c60c40ae97be9f2ea641c", 8593198),
 	UNSUPPORTED_GAME_ENTRY_EN("brownieadv1", "Brownie1.exe", "a3a797d0ea4bacd17e75d06edc5a7c4b", 166779573),  // GOG v8.0
 	UNSUPPORTED_GAME_ENTRY_EN("bugadv", "bug game file.exe", "0ce1f999753709e6bb9d0aac5ab3c5b8", 330311727),
@@ -4318,13 +4333,19 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY_EN("magentaspacech12", "Magenta.exe", "d1fb19834d10cd56b763669b320ec6fd", 100972135),
 	UNSUPPORTED_GAME_ENTRY_EN("pqpn1", "PQPN.ags", "a48d4e2cb25c1fd8c8d48a2832120801", 3266124),
+	UNSUPPORTED_GAME_ENTRY_EN("principessasangue", "principessa.exe", "30ef2c1c7d7fe6f535e14657401d0c89", 9262162),  // Win
+	UNSUPPORTED_GAME_ENTRY_EN("principessasangue", "principessa.ags", "9379fac054876b3ef2d15b152031430b", 6150206),  // Linux
 	UNSUPPORTED_GAME_ENTRY("projectdevonia", "PDM.ags", "c99085930b667b3d67c2a9d5c60e447b", 40149942),  // En-De
 	UNSUPPORTED_GAME_ENTRY("projectdevonia", "PDM.ags", "52ace52f870a3219d60af095aace1631", 40150955),  // En-De v1.0.4
+	UNSUPPORTED_GAME_ENTRY_EN("raorchard", "OtGW Fan Game.ags", "3630f3417d103c9ab942cd4b1fb15825", 57489965),  // itch.io client
 	UNSUPPORTED_GAME_ENTRY_EN("remembersmile", "socialcues.ags", "47b9859ee2ad917ea71e09db5d6e39b6", 1554396),
+	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.exe", "a9661d5c5313a1ab1eabc97c412401e4", 24895535),  // PoC Win
+	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.ags", "81561910dd2cf232a9aca096aad16411", 21778459),  // PoC Linux
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75839830),  // v1.0.2
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75841814),  // TRAC #16236
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75845392),  // v1.0.3
+	UNSUPPORTED_GAME_ENTRY("startrekxeno", "Star Trek Xenomorph Alert V2.ags", "1422a3b5a3870def6ef910774a0242be", AD_NO_SIZE),  // En-Fr
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.exe", "6dc8f0aedfd55a47f81323f0a412bc15", 19623142),
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.ags", "e5e26631bf6a375ab722f9588e2f82a1", 16513746),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
@@ -4337,6 +4358,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	AGS4_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.exe", "124753417c6ccda01c93f9935eb5a87d", 4527841),  // Windows
 	AGS4_ENTRY_EN("castleescapech2", "CastleEscapeChapter2.ags", "3a1136db0175eb81b499bc4c755ecbee", 1549005),  // Linux
 	AGS4_ENTRY_EN("centralstandard", "Dunning-Kruger 2.ags", "db56a79e4a2472521e20cb441d7dc94b", 48001719),
+	AGS4_ENTRY_EN("crescentrover", "CrescentRover.ags", "bb0c6cd07e33c67f2893e13c362d90f0", 16762424),
 	AGS4_ENTRY_LANG("dreadmacfarlaneisep1", "Dread Mac Farlane 1.ags", "f9d45767a3cf610b6fe777da54c5234d", 468102549, Common::FR_FRA),
 	AGS4_ENTRY_EN("dreadmacfarlaneisep1", "Dread Mac Farlane 1_English.ags", "68999f3a425f0da1d558a72a8bff7f26", 468102549),
 	AGS4_ENTRY_LANG("dreadmacfarlaneisep2", "Dread Mac Farlane 2.ags", "df836f1cd98fdbf959d49701e47e2207", 296604541, Common::FR_FRA),
@@ -5871,6 +5893,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("smileordie", "SmileOrDie.exe", "06a03fe35791b0578068ab1873455463", 12740162),
 	DEMO_ENTRY_EN("snowproblem", "Snow Problem Demo V3.exe", "fae163b58c16e194688727d0903684be", 5047803),  //v3
 	DEMO_ENTRY_EN("snowproblem", "Snow Problem.exe", "fae163b58c16e194688727d0903684be", 5139172),  //v4
+	DEMO_ENTRY("sororityrush", "Sorority Rush.ags", "04675f8a0b6bea3e2532d311fb487e2e", 2237190),  // itch.io client Eng-Esp-Cat
 	DEMO_ENTRY_LANG("spacefreakers", "Space Freakers v2.exe", "7a3096ac0237cb6aa8e1718e28caf039", 64527091, Common::FR_FRA),
 	DEMO_ENTRY_EN("spacepirates", "Space Pirates.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3006210),
 	DEMO_ENTRY("spacetrash", "SpaceTrash.exe", "615e73fc1874e92d60a1996c2330ea36", 7532576),  // En-Fr
@@ -6680,6 +6703,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("christmas42", "christmas_42.exe", "97f74f77ff127215fc44f35958fd2d55", 1546010),
 	GAME_ENTRY_EN("christmasgamearcade", "Xmas_2015.exe", "b5c41e08919834b549ca350a28f18f87", 7363985),
 	GAME_ENTRY_EN("christmashunt", "MyXmasGame.exe", "0241777c2537fc5d077c05cde10bfa9f", 3170875),
+	GAME_ENTRY_EN("christmashuntrm", "Christmas Hunt Remade.ags", "bc3952088a805448230075d469470c00", 115805947),
 	GAME_ENTRY_EN("christmaspresent", "christmas.exe", "3128b9f90e2f954ba704414ae854d10b", 5644948),
 	GAME_ENTRY_EN("christmasquest", "christmas quest.exe", "f120690b506dd63cd7d1112ea6af2f77", 14042816),
 	GAME_ENTRY_EN("christmasquest2", "christmasquest2.exe", "06a03fe35791b0578068ab1873455463", 22683950),
@@ -6812,6 +6836,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("cutman", "cutman.exe", "0564de07d3fd5c16e6947a647061913c", 7962851),
 	GAME_ENTRY_EN("cyberdog2050", "Cyberdog.exe", "57386d527b1925eac52ec094f1681cb5", 17858869),
 	GAME_ENTRY_EN("cyberjack", "brewton24.exe", "e3962995a70923a8d5a8f1cf8f932eee", 3439339),
+	GAME_ENTRY_EN("czisakfiles", "VEHICLE.exe", "fae163b58c16e194688727d0903684be", 8056245),
 	GAME_ENTRY_EN("daceyinthedark", "Darkness.exe", "27343924ddad3be0b97bdcaa71858b1b", 6353848),
 	GAME_ENTRY_EN("dada", "Dada.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3992871),
 	GAME_ENTRY_EN("dadaxmas", "DadaXmas.exe", "2986195aec1d206f8e9c080b3232b25e", 13170134),
@@ -6988,6 +7013,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("dragoonjourney", "DragoonsJourney.exe", "ba989a02e5392a9a7550fee72629c02f", 120122456),
 	GAME_ENTRY_EN("drawnflame", "Drawn to the Flame.exe", "7971a7c02d414dc8cb33b6ec36080b91", 51616597),  // Windows
 	GAME_ENTRY_EN("drawnflame", "Drawn to the Flame.ags", "11ef599203105c5094f587c805871fb4", 49119557),  // Linux
+	GAME_ENTRY_EN("drchaseadv", "DrChaseScumm.ags", "35985d6c43073e852af48c7a56fde82b", 3165616),  // itch.io client
 	GAME_ENTRY_EN("drchuckles", "Dr Chuckles.exe", "07b30f9606f5dfde84cb66e926f7cc74", 615657195),
 	GAME_ENTRY("dreadmacfarlane", "Dread.exe", "615e806856b7730afadf1fea9a756b70", 11157310),  // Eng-Fra
 	GAME_ENTRY_LANG("dreadmacfarlane", "Dread.exe", "615e806856b7730afadf1fea9a756b70", 11158073, Common::FR_FRA),
@@ -7768,6 +7794,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Win (fixed)
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.ags", "fdf0ce483760fca13a4279f161b965da", 164061798), // v1.0.5 Linux
 	GAME_ENTRY_EN("kq4retold", "game.ags", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Mac
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 209477363, "Basic"),
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 208806651, "Legacy"),
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),  // En-De
 	GAME_ENTRY_LANG("ksauna", "Karjalan Sauna.exe", "663bbdd33432ee73be23f3c97d10053e", 14485962, Common::FI_FIN),
 	GAME_ENTRY_EN("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
@@ -9085,6 +9113,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shootinggame", "GUN.exe", "9cf51833e787cc919837d9a8bd8fc14c", 776082),
 	GAME_ENTRY_EN("shootmyvalentine", "Valentine.exe", "06a03fe35791b0578068ab1873455463", 2859760),
 	GAME_ENTRY_EN("shortcut", "ShortCut.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 4415830),
+	GAME_ENTRY_EN("shredder", "Shredder.ags", "924103861254be01493c2073cd3742df", 416763254),
 	GAME_ENTRY_EN("shrivel", "Shrivel.exe", "12c6a846b5ba9a5dde4a1b804b3e86e9", 58873190),  // Windows
 	GAME_ENTRY_EN("shrivel", "Shrivel.ags", "889d3fa28cc647a430ba61412f43e369", 56392024),  // Linux
 	GAME_ENTRY_EN("shunday", "Shunday.exe", "82da2565c456dcfb265ded6fe3189c0b", 4937129),
@@ -9403,6 +9432,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tarthenia", "Tarthenia.exe", "0a00053ae87573e4dd273f0252336854", 1047989168),  // itch.io
 	GAME_ENTRY_EN("tasteblood", "Taste the blood of darkness.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 199304272),  // Windows
 	GAME_ENTRY_EN("tasteblood", "Taste the blood of darkness.ags", "9eac7b72519618075e9a16ec630600b6", 196268092),  // Linux
+	GAME_ENTRY_EN("tastetexas", "MAGS_11_25.exe", "331515edbe9047c1f4cc7580bb40c029", 13340768),
 	GAME_ENTRY_EN("tattooroom", "tattooroom.exe", "615e73fc1874e92d60a1996c2330ea36", 10112843),
 	GAME_ENTRY_EN("taverntales", "MAGS_07_23.exe", "8e21f6f21e88b8e50e0cdaec09e2b539", 22151992),
 	GAME_ENTRY_EN("teafortwo", "detective208x.exe", "7d551cb6cc3c3424d40da9568a3c2340", 11076184),  // Windows
@@ -9741,6 +9771,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tinysoccer", "Tiny Picky Football Manager.exe", "08cb9ad3be9f966132d0c17f0dee471c", 27090817),  // Windows
 	GAME_ENTRY_EN("tinysoccer", "Tiny Picky Football Manager.ags", "7fb21c498a2b2e2184dd4b351cb82edf", 3251218),  // Linux
 	GAME_ENTRY_EN("tirnanog", "TirNaNog.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 240701949),
+	GAME_ENTRY("tmol", "TMOL.ags", "58cbfac12cce3325b271306097329062", 180468256),  // Eng-Esp
 	GAME_ENTRY("toffeetrouble", "ToffeeTrouble.exe", "acda5a3cf15b9e9e1d96bdc78f6eff60", 74459735),  // Eng-Deu
 	GAME_ENTRY_EN_PLATFORM("toffeetrouble", "ToffeeTrouble.exe", "f7aeb21fc351474cb039769c23b2e8e9", 69824254, "MAGS"),
 	GAME_ENTRY_EN("tokyouhalloween", "hw2024.exe", "615e73fc1874e92d60a1996c2330ea36", 40600826),
