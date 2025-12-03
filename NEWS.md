@@ -88,6 +88,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Hypno:
    - Added keymapper support.
 
+ Illusions:
+   - Fixed a crash when triggering the game menu early in the game.
+
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
@@ -214,6 +217,14 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Toltecs:
    - Added keymapper support.
+
+ Toon:
+   - Adjusted the speed of the Gift-O-Matic machine sequence, so that it better
+     matches the way it behaved on original hardware.
+
+ Touche:
+   - Fixed a crash when quitting the game while some speech was about to be
+     played.
 
  TwinE:
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
