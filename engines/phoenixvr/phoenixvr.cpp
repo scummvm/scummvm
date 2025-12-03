@@ -395,7 +395,7 @@ Common::Error PhoenixVREngine::run() {
 			}
 		}
 		if (_movie) {
-			if (_movie->isPlaying()) {
+			if (!_movie->endOfVideo()) {
 				if (_movie->getTimeToNextFrame() <= 0) {
 					debug("playing movie frame: %d", _movie->getCurFrame());
 					auto *s = _movie->decodeNextFrame();
