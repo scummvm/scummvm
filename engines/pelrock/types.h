@@ -76,7 +76,6 @@ enum AlfredState {
 	ALFRED_COMB
 };
 
-
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
 #define MOVE_LEFT 0x02  // Move left (negative X)

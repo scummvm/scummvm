@@ -20,8 +20,8 @@
  */
 #include "common/scummsys.h"
 
-#include "pelrock/room.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/room.h"
 #include "pelrock/util.h"
 #include "room.h"
 
@@ -30,9 +30,6 @@ namespace Pelrock {
 RoomManager::RoomManager() {
 	_pixelsShadows = new byte[640 * 400];
 	_roomNames = loadRoomNames();
-	for (int i = 0; i < _roomNames.size(); i++) {
-		debug("Room %d name: %s", i, _roomNames[i].c_str());
-	}
 }
 
 RoomManager::~RoomManager() {
@@ -42,7 +39,7 @@ RoomManager::~RoomManager() {
 	// delete[] _currentRoomWalkboxes;
 	// delete[] _currentRoomDescriptions;
 	// delete[] _currentRoomConversations;
-	if(_pixelsShadows != nullptr) {
+	if (_pixelsShadows != nullptr) {
 		delete[] _pixelsShadows;
 		_pixelsShadows = nullptr;
 	}
@@ -196,8 +193,6 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	byte *shadows = loadShadowMap(roomNumber);
 	loadRemaps(roomNumber);
 
-	Common::Array<int> sfx = loadRoomSfx(roomFile, roomOffset);
-
 	int walkboxCount = 0;
 	_currentRoomAnims = anims;
 	_currentRoomHotspots = hotspots;
@@ -207,7 +202,8 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	_scaleParams = scalingParams;
 	Common::copy(shadows, shadows + (640 * 400), _pixelsShadows);
 	_musicTrack = loadMusicTrackForRoom(roomFile, roomOffset);
-	_roomSfx = sfx;
+	_roomSfx = loadRoomSfx(roomFile, roomOffset);
+
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
@@ -901,8 +897,8 @@ void RoomManager::loadRemaps(int roomNumber) {
 	remapFile.close();
 }
 
-Common::Array<Common::String> RoomManager::loadRoomNames() {
-	Common::Array<Common::String> roomNames;
+Common::StringArray RoomManager::loadRoomNames() {
+	Common::StringArray roomNames;
 	Common::File juegoExe;
 	if (!juegoExe.open(Common::Path("JUEGO.EXE"))) {
 		error("Couldnt find file JUEGO.EXE");
@@ -919,8 +915,7 @@ Common::Array<Common::String> RoomManager::loadRoomNames() {
 			namesData[pos + 1] == 0x00 &&
 			namesData[pos + 2] == 0x08 &&
 			namesData[pos + 3] == 0x02) {
-			if (currentName.size() > 0	) {
-				debug("Found room name: %s", currentName.c_str());
+			if (currentName.size() > 0) {
 				roomNames.push_back(currentName);
 			}
 			currentName = "";
@@ -947,7 +942,7 @@ byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) 
 	return musicTrack > 0 ? musicTrack + 1 : 0;
 }
 
-Common::Array<int> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffset) {
+Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffset) {
 	uint32_t pair9offset = roomOffset + (9 * 8);
 	roomFile->seek(pair9offset, SEEK_SET);
 	uint32_t pair9_data_offset = roomFile->readUint32LE();
@@ -955,11 +950,11 @@ Common::Array<int> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffs
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	roomFile->skip(1); // skip music track byte
-	Common::Array<int> roomSfx;
-	for(int i=0; i< 9; i++) {
+	Common::Array<byte> roomSfx(kNumSfxPerRoom);
+	for (int i = 0; i < kNumSfxPerRoom; i++) {
 		byte sfx = roomFile->readByte();
-		roomSfx.push_back((int)sfx);
-		debug("SFX %d for room at offset %d is %d", i, roomOffset, sfx);
+		roomSfx[i] = sfx;
+		debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
 	}
 	return roomSfx;
 }

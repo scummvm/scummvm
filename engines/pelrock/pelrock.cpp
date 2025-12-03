@@ -186,8 +186,10 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
-	calculateScalingMasks();
 	_res->loadSettingsMenu();
+	_soundManager->loadSoundIndex();
+
+	calculateScalingMasks();
 	_compositeBuffer = new byte[640 * 400];
 	_currentBackground = new byte[640 * 400];
 
@@ -1562,6 +1564,11 @@ void PelrockEngine::setScreen(int number, int dir) {
 	else {
 		_soundManager->stopMusic();
 	}
+	for (int i = 0; i < kNumSfxPerRoom; i++) {
+		if (_room->_roomSfx[i])
+			_soundManager->playSound(_room->_roomSfx[i]);
+	}
+
 	_screen->markAllDirty();
 	roomFile.close();
 	delete[] background;

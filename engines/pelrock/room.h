@@ -29,6 +29,8 @@
 
 namespace Pelrock {
 
+static const int kNumSfxPerRoom = 8;
+
 class RoomManager {
 public:
 	RoomManager();
@@ -56,9 +58,9 @@ public:
 	byte _roomPalette[768];
 	byte alfredRemap[256];
 	byte overlayRemap[256];
-	Common::Array<Common::String> _roomNames;
+	Common::StringArray _roomNames;
 	byte _musicTrack = 0;
-	Common::Array<int> _roomSfx;
+	Common::Array<byte> _roomSfx;
 
 private:
 	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
@@ -75,9 +77,9 @@ private:
 	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);
-	Common::Array<Common::String> loadRoomNames();
+	Common::StringArray loadRoomNames();
 	byte loadMusicTrackForRoom(Common::File *roomFile, int roomOffset);
-	Common::Array<int> loadRoomSfx(Common::File *roomFile, int roomOffset);
+	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
 };
 
 } // End of namespace Pelrock
