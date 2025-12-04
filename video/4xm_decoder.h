@@ -40,32 +40,7 @@ private:
 		int64 end;
 	};
 
-	class FourXMVideoTrack : public FixedRateVideoTrack {
-		FourXMDecoder *_dec;
-		Common::Rational _frameRate;
-		uint _w, _h;
-		Graphics::Surface *_frame;
-
-	public:
-		FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {}
-		~FourXMVideoTrack();
-
-		uint16 getWidth() const override { return _w; }
-		uint16 getHeight() const override { return _h; }
-
-		Graphics::PixelFormat getPixelFormat() const override {
-			return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
-		}
-		int getCurFrame() const override;
-		int getFrameCount() const override;
-		const Graphics::Surface *decodeNextFrame() override;
-
-		void decode(uint32 tag, const byte *data, uint size);
-
-	private:
-		Common::Rational getFrameRate() const override { return _frameRate; }
-	};
-
+	class FourXMVideoTrack;
 	class FourXMAudioTrack;
 
 	void readList(uint32 size);

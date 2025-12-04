@@ -45,6 +45,62 @@ Common::String tagName(uint32 tag) {
 }
 } // namespace
 
+class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
+	FourXMDecoder *_dec;
+	uint _trackIdx;
+	uint _audioType;
+	uint _audioChannels;
+	uint _sampleRate;
+	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
+
+public:
+	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
+																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
+	}
+
+	void decode(uint32 tag, byte *buf, uint size) {
+		if (_audioType == 0) {
+			// Raw PCM data
+			byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+			if (_audioChannels > 1)
+				flags |= Audio::FLAG_STEREO;
+			_output->queueBuffer(buf, size, DisposeAfterUse::YES, flags);
+		} else {
+			free(buf);
+			warning("unsupported audio type %u", _audioType);
+		}
+	}
+
+private:
+	Audio::AudioStream *getAudioStream() const override { return _output.get(); }
+};
+
+class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
+	FourXMDecoder *_dec;
+	Common::Rational _frameRate;
+	uint _w, _h;
+	Graphics::Surface *_frame;
+
+public:
+	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {}
+	~FourXMVideoTrack();
+
+	uint16 getWidth() const override { return _w; }
+	uint16 getHeight() const override { return _h; }
+
+	Graphics::PixelFormat getPixelFormat() const override {
+		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); // RGB565
+	}
+	int getCurFrame() const override;
+	int getFrameCount() const override;
+	const Graphics::Surface *decodeNextFrame() override;
+
+	void decode(uint32 tag, byte *buf, uint size);
+
+private:
+	Common::Rational getFrameRate() const override { return _frameRate; }
+};
+
 const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
 	if (!_frame) {
 		_frame = new Graphics::Surface();
@@ -70,54 +126,8 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
-class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
-	FourXMDecoder *_dec;
-	uint _trackIdx;
-	uint _audioType;
-	uint _audioChannels;
-	uint _sampleRate;
-	Common::MemoryReadWriteStream _bitStream;
-	Common::ScopedPtr<Audio::AudioStream> _adpcm;
-	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
-
-public:
-	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
-																											   _bitStream(DisposeAfterUse::YES), _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
-	}
-
-	void decode(uint32 tag, const byte *data, uint size) {
-		debug("got %u of audio data", size);
-		_bitStream.write(data, size);
-		if (!_adpcm) {
-			assert(_bitStream.pos() == 0);
-			_adpcm.reset(Audio::makeADPCMStream(&_bitStream, DisposeAfterUse::NO, size, Audio::kADPCM4XM, _sampleRate, _audioChannels));
-			// this is first bitstream write, getting preamble size from stream pos.
-			size -= _bitStream.pos();
-		}
-		int numSamples = size * 2;
-
-		auto bufSize = numSamples * sizeof(int16);
-		int16 *buf = static_cast<int16 *>(malloc(bufSize));
-		int r = _adpcm->readBuffer(buf, numSamples);
-		if (r < 0) {
-			free(buf);
-			warning("ADPCMStream::readBuffer failed");
-			return;
-		}
-		assert(_bitStream.pos() == _bitStream.size());
-		assert(r == numSamples);
-		debug("decoded %d samples", r);
-		byte flags = Audio::FLAG_16BITS;
-		if (_audioChannels > 1)
-			flags |= Audio::FLAG_STEREO;
-		_output->queueBuffer(reinterpret_cast<byte *>(buf), bufSize, DisposeAfterUse::YES, flags);
-	}
-
-private:
-	Audio::AudioStream *getAudioStream() const override { return _output.get(); }
-};
-
-void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, const byte *data, uint size) {
+void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, byte *buf, uint size) {
+	free(buf);
 }
 
 void FourXMDecoder::decodeNextFrameImpl() {
@@ -130,37 +140,39 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		error("invalid FRAM offset for frame %u", _curFrame);
 	}
 
-	Common::Array<byte> packet;
 	while (_stream->pos() < frame.end) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 size = _stream->readUint32LE();
 		debug("%u: sub frame %s, %u bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos());
 		auto pos = _stream->pos();
-		if (size > packet.size())
-			packet.resize(size);
-		_stream->read(packet.data(), size);
+
+		auto loadBuf = [this](uint bufSize) {
+			byte *buf = static_cast<byte *>(malloc(bufSize));
+			if (!buf)
+				error("failed to allocate %u bytes", bufSize);
+			_stream->read(buf, bufSize);
+			return buf;
+		};
 		switch (tag) {
 		case MKTAG('s', 'n', 'd', '_'): {
 			uint offset = 0;
 			while (offset < size) {
-				auto trackIdx = READ_UINT32(packet.data() + offset);
-				auto packetSize = READ_UINT32(packet.data() + offset + 4);
-				if (trackIdx == 0) {
-					if (_audio)
-						_audio->decode(tag, packet.data() + offset + 8, packetSize);
-					else
-						warning("no audio stream to decode sample to");
-				}
-				offset += packetSize + 8;
+				auto trackIdx = _stream->readUint32LE();
+				auto packetSize = _stream->readUint32LE();
+				if (trackIdx == 0 && _audio) {
+					_audio->decode(tag, loadBuf(packetSize), packetSize);
+				} else
+					offset += packetSize + 8;
 			}
 		} break;
 		case MKTAG('i', 'f', 'r', 'm'):
 		case MKTAG('p', 'f', 'r', 'm'):
 		case MKTAG('c', 'f', 'r', 'm'):
-			_video->decode(tag, packet.data(), size);
+			_video->decode(tag, loadBuf(size), size);
 			break;
 		default:
 			warning("unknown frame type %s", tagName(tag).c_str());
+			_stream->skip(size);
 		}
 		_stream->seek(pos + size + (size & 1));
 	}
