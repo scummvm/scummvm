@@ -22,6 +22,7 @@
 #include "video/4xm_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
+#include "audio/decoders/raw.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/memstream.h"
@@ -69,66 +70,52 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
-class FourXMDecoder::FourXMAudioStream : public Audio::AudioStream {
-	const FourXMAudioTrack *_track;
-	Common::List<Common::Array<int16>> _buffers;
+class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
+	FourXMDecoder *_dec;
+	uint _trackIdx;
+	uint _audioType;
+	uint _audioChannels;
+	uint _sampleRate;
+	Common::MemoryReadWriteStream _bitStream;
+	Common::ScopedPtr<Audio::AudioStream> _adpcm;
+	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
 
 public:
-	FourXMAudioStream(const FourXMAudioTrack *track) : _track(track) {}
-
-	int readBuffer(int16 *buffer, const int numSamples) override {
-		int offset = 0;
-		while (!_buffers.empty() && offset < numSamples) {
-			auto &next = _buffers.front();
-			auto read = MIN<uint>(numSamples - offset, next.size());
-			for (uint i = 0; i != read; ++i) {
-				buffer[offset++] = next[i];
-			}
-			if (read == next.size()) {
-				_buffers.pop_front();
-			} else {
-				next.erase(next.begin(), next.begin() + read);
-			}
-		}
-		return offset;
-	}
-
-	bool isStereo() const override {
-		return _track->_audioChannels > 1;
-	}
-
-	/** Sample rate of the stream. */
-	virtual int getRate() const override {
-		return _track->_sampleRate;
-	}
-
-	virtual bool endOfData() const override {
-		auto *decoder = _track->_dec;
-		return decoder->_curFrame >= decoder->_frames.size();
+	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
+																											   _bitStream(DisposeAfterUse::YES), _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
 	}
 
 	void decode(uint32 tag, const byte *data, uint size) {
-		Common::MemoryReadStream ms(data, size);
-		Common::ScopedPtr<Audio::SeekableAudioStream> x(Audio::makeADPCMStream(&ms, DisposeAfterUse::NO, size, Audio::kADPCM4XM, _track->_sampleRate, _track->_audioChannels));
-		auto numChannels = _track->_audioChannels;
-		int numSamples = (size - 4 * numChannels) * 2;
-		Common::Array<int16> buf(numSamples);
-		int r = x->readBuffer(buf.data(), numSamples);
+		debug("got %u of audio data", size);
+		_bitStream.write(data, size);
+		if (!_adpcm) {
+			assert(_bitStream.pos() == 0);
+			_adpcm.reset(Audio::makeADPCMStream(&_bitStream, DisposeAfterUse::NO, size, Audio::kADPCM4XM, _sampleRate, _audioChannels));
+			// this is first bitstream write, getting preamble size from stream pos.
+			size -= _bitStream.pos();
+		}
+		int numSamples = size * 2;
+
+		auto bufSize = numSamples * sizeof(int16);
+		int16 *buf = static_cast<int16 *>(malloc(bufSize));
+		int r = _adpcm->readBuffer(buf, numSamples);
 		if (r < 0) {
+			free(buf);
 			warning("ADPCMStream::readBuffer failed");
 			return;
 		}
+		assert(_bitStream.pos() == _bitStream.size());
 		assert(r == numSamples);
-		if (!buf.empty())
-			_buffers.push_back(Common::move(buf));
+		debug("decoded %d samples", r);
+		byte flags = Audio::FLAG_16BITS;
+		if (_audioChannels > 1)
+			flags |= Audio::FLAG_STEREO;
+		_output->queueBuffer(reinterpret_cast<byte *>(buf), bufSize, DisposeAfterUse::YES, flags);
 	}
-};
 
-Audio::AudioStream *FourXMDecoder::FourXMAudioTrack::getAudioStream() const {
-	if (!_dec->_audioStream)
-		_dec->_audioStream = new FourXMAudioStream(this);
-	return _dec->_audioStream;
-}
+private:
+	Audio::AudioStream *getAudioStream() const override { return _output.get(); }
+};
 
 void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, const byte *data, uint size) {
 }
@@ -154,13 +141,17 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		_stream->read(packet.data(), size);
 		switch (tag) {
 		case MKTAG('s', 'n', 'd', '_'): {
-			auto trackIdx = _stream->readUint32LE();
-			_stream->skip(4);
-			if (trackIdx == 0) {
-				if (_audioStream)
-					_audioStream->decode(tag, packet.data() + 8, size - 8);
-				else
-					warning("no audio stream to decode sample to");
+			uint offset = 0;
+			while (offset < size) {
+				auto trackIdx = READ_UINT32(packet.data() + offset);
+				auto packetSize = READ_UINT32(packet.data() + offset + 4);
+				if (trackIdx == 0) {
+					if (_audio)
+						_audio->decode(tag, packet.data() + offset + 8, packetSize);
+					else
+						warning("no audio stream to decode sample to");
+				}
+				offset += packetSize + 8;
 			}
 		} break;
 		case MKTAG('i', 'f', 'r', 'm'):
@@ -231,8 +222,6 @@ void FourXMDecoder::readList(uint32 listEnd) {
 				if (sampleResolution != 16)
 					error("only 16 bit audio is supported");
 				addTrack(_audio = new FourXMAudioTrack(this, trackIdx, audioType, audioChannels, sampleRate));
-				if (trackIdx == 0) // only support single track for now
-					_audioStream = new FourXMAudioStream(_audio);
 			} break;
 			default:
 				break;
