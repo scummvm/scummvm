@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 
+#include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
 #include "sound.h"
 
@@ -220,7 +221,7 @@ void SoundManager::playMusicTrack(int trackNumber) {
 #endif
 }
 
-void Pelrock::SoundManager::loadSoundIndex() {
+void SoundManager::loadSoundIndex() {
 
 	Common::File sonidosFile;
 	if (!sonidosFile.open(Common::Path("SONIDOS.DAT"))) {
@@ -247,6 +248,28 @@ void Pelrock::SoundManager::loadSoundIndex() {
 		_soundMap[sonido.filename] = sonido;
 	}
 	sonidosFile.close();
+}
+
+
+int gerRandomNumber() {
+
+
+}
+
+int SoundManager::tick() {
+
+	soundFrameCounter++;
+	uint32 random = g_engine->getRandomNumber(1);
+	if(!random) {
+		return -1;
+	}
+	if((soundFrameCounter & COUNTER_MASK) != COUNTER_MASK){
+
+		return -1;
+	}
+	soundFrameCounter = 0;
+	uint32 slot = g_engine->getRandomNumber(4);
+	return slot;
 }
 
 } // End of namespace Pelrock

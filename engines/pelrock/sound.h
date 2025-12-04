@@ -150,6 +150,8 @@ struct SoundData {
 	uint32 size;
 };
 
+static const uint COUNTER_MASK = 0x1F;
+
 const int kMaxChannels = 15;
 
 class SoundManager {
@@ -169,6 +171,8 @@ public:
 	}
 	void loadSoundIndex();
 
+	int tick();
+
 private:
 	void playSound(SonidoFile sound, int volume = 255);
 	SoundFormat detectFormat(byte *data, uint32 size);
@@ -183,7 +187,7 @@ private:
 	byte _currentMusicTrack = 0;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
-
+	int soundFrameCounter = 0;
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
 };
 

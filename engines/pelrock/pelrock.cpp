@@ -318,6 +318,12 @@ void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
 
+		int soundIndex = _soundManager->tick();
+		if(soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
+			debug("Playing SFX index %d", soundIndex);
+			_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
+		}
+
 		memcpy(_compositeBuffer, _currentBackground, 640 * 400);
 
 		// debug("Game tick!");
@@ -1526,7 +1532,7 @@ Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
 }
 
 void PelrockEngine::setScreen(int number, AlfredDirection dir) {
-
+	_soundManager->stopAllSounds();
 	Common::File roomFile;
 	debug("Loading room %s number %d", _room->getRoomName(number).c_str(), number);
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
@@ -1566,10 +1572,10 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	else {
 		_soundManager->stopMusic();
 	}
-	for (int i = 0; i < kNumSfxPerRoom; i++) {
-		if (_room->_roomSfx[i])
-			_soundManager->playSound(_room->_roomSfx[i]);
-	}
+	// for (int i = 0; i < kNumSfxPerRoom; i++) {
+	// 	if (_room->_roomSfx[i])
+	// 		_soundManager->playSound(_room->_roomSfx[i]);
+	// }
 
 	_screen->markAllDirty();
 	roomFile.close();
