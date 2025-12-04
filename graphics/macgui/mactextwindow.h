@@ -118,6 +118,10 @@ private:
 	uint _inputTextHeight;
 	bool _inputIsDirty;
 
+	WindowClick _scrollDirection;
+	uint32 _nextScrollTime;
+	uint32 _scrollDelay;
+
 	MacMenu *_menu;
 
 	int _bgcolor;

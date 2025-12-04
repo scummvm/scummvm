@@ -69,7 +69,11 @@ void MacTextWindow::init() {
 	_selectable = true;
 
 	_textColorRGB = 0;
-	
+
+	_scrollDirection = kBorderNone;
+	_nextScrollTime = 0;
+	_scrollDelay = 50;
+
 	// Disable autoselect on activation
 	_mactext->setAutoSelect(false);
 
@@ -198,6 +202,20 @@ const MacFont *MacTextWindow::getTextWindowFont() {
 }
 
 bool MacTextWindow::draw(bool forceRedraw) {
+
+	if (_scrollDirection != kBorderNone) {
+		uint32 now = g_system->getMillis();
+		if (now >= _nextScrollTime) {
+			if (_scrollDirection == kBorderScrollUp) {
+				_mactext->scroll(-1);
+			} else if (_scrollDirection == kBorderScrollDown) {
+				_mactext->scroll(1);
+			}
+			calcScrollBar();
+			_nextScrollTime = now + _scrollDelay;
+		}
+	}
+
 	if (!_borderIsDirty && !_contentIsDirty && !_mactext->needsRedraw() && !_inputIsDirty && !forceRedraw)
 		return false;
 
@@ -345,23 +363,15 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			setHighlight(click);
-			_mactext->scroll(0);
+			_scrollDirection = click;
 			calcScrollBar();
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
-			switch (click) {
-			case kBorderScrollUp:
-				setHighlight(kBorderNone);
-				_mactext->scroll(-1);
-				break;
-			case kBorderScrollDown:
-				setHighlight(kBorderNone);
-				_mactext->scroll(1);
-				break;
-			default:
-				return false;
-			}
-
+			// reset scrolling state
+			_scrollDirection = kBorderNone;
+			setHighlight(kBorderNone);
+			// hide the scroll bar
+			setScroll(0, 0);
 			return true;
 		}
 
