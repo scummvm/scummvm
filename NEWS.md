@@ -241,19 +241,19 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
 
  Desktop ports:
-   - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R)
-   - Add support for building with SDL3 (although SDL2 is still used by default)
-   - Add support for scaling shaders within 3D engines
-   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
+   - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R).
+   - Add support for building with SDL3 (although SDL2 is still used by default).
+   - Add support for scaling shaders within 3D engines.
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified.
 
  Android port:
-   - Support Android 16
-   - Add support for scaling shaders within 3D engines
-   - Add support for antialiasing with 3D engines
-   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
-   - Take screen forbidden zones into account
-   - Use Android networking code instead of libcurl: system HTTPS certificates are now used
-   - Long-press on back button with latest Android versions is fixed
+   - Support Android 16.
+   - Add support for scaling shaders within 3D engines.
+   - Add support for antialiasing with 3D engines.
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified.
+   - Take screen forbidden zones into account.
+   - Use Android networking code instead of libcurl: system HTTPS certificates are now used.
+   - Long-press on back button with latest Android versions is fixed.
 
  Atari port:
    - Unified paths for FreeMiNT and TOS in scummvm.cfg (better delete the old
@@ -266,13 +266,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed launching games from command line.
 
  DS port:
-   - Migrate to latest devkitPRO SDK
+   - Migrate to latest devkitPRO SDK.
 
  iOS port:
-   - Add support for scaling shaders within 3D engines
-   - Add support for antialiasing with 3D engines
-   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified
-   - Take screen forbidden zones into account
+   - Add support for scaling shaders within 3D engines.
+   - Add support for antialiasing with 3D engines.
+   - Remove last remnants from the ResidualVM merge: the codebase is now fully unified.
+   - Take screen forbidden zones into account.
 
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
