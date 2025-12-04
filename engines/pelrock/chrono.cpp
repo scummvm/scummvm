@@ -37,7 +37,7 @@ ChronoManager::~ChronoManager() {
 void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
-	if (_textTtl > 0 && g_engine->alfredState == ALFRED_TALKING && g_engine->alfredState != ALFRED_WALKING) {
+	if (_textTtl > 0 && g_engine->alfredState.animState == ALFRED_TALKING && g_engine->alfredState.animState != ALFRED_WALKING) {
 		_textTtl -= (currentTime - _lastTick);
 		if (_textTtl < 0)
 			_textTtl = 0;
@@ -46,12 +46,6 @@ void ChronoManager::updateChrono() {
 	if ((currentTime - _lastTick) >= kTickMs / _speedMultiplier) {
 		_gameTick = true;
 		_tickCount++;
-		if (_tickCount == kHalfTickMultiplier) {
-			_tickCount = 0;
-			_gameTickHalfSpeed = true;
-		} else {
-			_gameTickHalfSpeed = false;
-		}
 		_lastTick = currentTime;
 	} else {
 		_gameTick = false;

@@ -111,7 +111,26 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 
 		exit.targetX = roomFile->readUint16LE();
 		exit.targetY = roomFile->readUint16LE();
-		exit.dir = roomFile->readByte();
+		byte dir = roomFile->readByte();
+		switch (dir)
+		{
+		case ALFRED_RIGHT:
+			exit.dir = ALFRED_RIGHT;
+			break;
+		case ALFRED_LEFT:
+			exit.dir = ALFRED_LEFT;
+			break;
+		case ALFRED_DOWN:
+			exit.dir = ALFRED_DOWN;
+			break;
+		case ALFRED_UP:
+			exit.dir = ALFRED_UP;
+			break;
+		default:
+			exit.dir = ALFRED_DOWN;
+			break;
+		}
+
 		exits.push_back(exit);
 	}
 	return exits;

@@ -58,8 +58,7 @@ private:
 	ResourceManager *_res = nullptr;
 
 	void init();
-	void setScreen(int s, int dir);
-	void setScreenJava(int s, int dir);
+	void setScreen(int s, AlfredDirection dir);
 	void loadAnims();
 
 	void walkTo(int x, int y);
@@ -121,12 +120,7 @@ private:
 	int _currentTextPageIndex = 0;
 
 	// Alfred
-	// int xAlfred = 319;
-	// int yAlfred = 302;
-	int xAlfred = 264;
-	int yAlfred = 394;
-	int dirAlfred = 0;
-	int curAlfredFrame = 0;
+	bool alfredFrameSkip = false;
 
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
@@ -173,7 +167,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	AlfredState alfredState = ALFRED_IDLE;
+	AlfredState alfredState;
 	ChronoManager *_chronoManager = nullptr;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_soundManager = nullptr;

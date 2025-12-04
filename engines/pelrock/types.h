@@ -68,13 +68,6 @@ const int kAlfredFrameHeight = 102;
 
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
-enum AlfredState {
-	ALFRED_IDLE,
-	ALFRED_WALKING,
-	ALFRED_TALKING,
-	ALFRED_INTERACTING,
-	ALFRED_COMB
-};
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -100,6 +93,32 @@ enum AlfredState {
 #define CHAR_PAGE_BREAK 0xF9   /* marker inserted when switching pages */
 
 #define ALFRED_COLOR 0x0D
+
+
+
+enum AlfredAnimState {
+	ALFRED_IDLE,
+	ALFRED_WALKING,
+	ALFRED_TALKING,
+	ALFRED_INTERACTING,
+	ALFRED_COMB
+};
+
+enum AlfredDirection {
+	ALFRED_RIGHT = 0,
+	ALFRED_LEFT = 1,
+	ALFRED_DOWN = 2,
+	ALFRED_UP = 3
+};
+
+struct AlfredState {
+	AlfredAnimState animState = ALFRED_IDLE;
+	AlfredDirection direction = ALFRED_DOWN;
+	int curFrame = 0;
+	uint16 movementSpeed = 6; // pixels per frame
+	uint16 x = 319;
+	uint16 y = 302;
+};
 
 typedef struct {
 	uint8_t flags;       /* Direction flags (see MOVE_* constants) */
@@ -142,7 +161,7 @@ struct Exit {
 	uint16 targetX;
 	uint16 targetY;
 	uint16 targetDir;
-	byte dir;
+	AlfredDirection dir;
 	byte flags;
 };
 
@@ -283,7 +302,6 @@ enum GameState {
 	EXTRA_SCREEN = 105,
 	INTRO = 106,
 };
-
 
 } // End of namespace Pelrock
 
