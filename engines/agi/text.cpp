@@ -242,6 +242,7 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 	char *processedTextPtr   = nullptr;
 
 	charPos_Push();
+	charPos_Set(textRow, textColumn);
 
 	if (textNr >= 1 && textNr <= _vm->_game._curLogic->numTexts) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
@@ -253,9 +254,7 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 		if (_vm->isLanguageRTL()) {
 			// handles setting cursor position and processing string for proper RTL alignment
 			processedTextPtr = displayAdjustRTL(textRow, textColumn, processedTextPtr, calculatedWidth);
-		} else {
-			charPos_Set(textRow, textColumn);
-		}
+		} 
 
 #ifdef USE_TTS
 		if (!_vm->_game.gfxMode) {
