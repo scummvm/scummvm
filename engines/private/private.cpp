@@ -621,7 +621,7 @@ void PrivateEngine::completePoliceBust() {
 	// Play audio on the second bust movie
 	if (kPoliceBustVideos[_policeBustMovieIndex] == 2) {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
-		g_private->playSound(s, 1, false, false);
+		g_private->playSound(s, 1, true, false);
 		g_private->changeCursor("default");
 		g_private->waitForSoundToStop();
 	}
