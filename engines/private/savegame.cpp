@@ -44,17 +44,17 @@ bool readSavegameMetadata(Common::SeekableReadStream *stream, SavegameMetadata &
 
 	uint32 header = READ_BE_UINT32(buffer);
 	if (header != kSavegameHeader) {
-		debugN(1, "Save does not have metadata header");
+		debug(1, "Save does not have metadata header");
 		return false;
 	}
 
 	meta.version = READ_LE_UINT16(buffer + 4);
 	if (meta.version < kMinimumSavegameVersion) {
-		debugN("Save version %d lower than minimum %d", meta.version, kMinimumSavegameVersion);
+		debug(1, "Save version %d lower than minimum %d", meta.version, kMinimumSavegameVersion);
 		return false;
 	}
 	if (meta.version > kCurrentSavegameVersion) {
-		debugN("Save version %d newer than current %d", meta.version, kCurrentSavegameVersion);
+		debug(1, "Save version %d newer than current %d", meta.version, kCurrentSavegameVersion);
 		return false;
 	}
 
