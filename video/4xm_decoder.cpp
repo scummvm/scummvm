@@ -101,6 +101,9 @@ public:
 	const Graphics::Surface *decodeNextFrame() override;
 
 	void decode(uint32 tag, byte *buf, uint size);
+	void decode_ifrm(Common::SeekableReadStream *stream);
+	void decode_pfrm(Common::SeekableReadStream *stream);
+	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
 	Common::Rational getFrameRate() const override { return _frameRate; }
@@ -131,8 +134,47 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
+void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
+	stream->skip(4);
+	auto bitstreamSize = stream->readUint32LE();
+	stream->skip(bitstreamSize);
+	auto prefixSize = stream->readUint32LE();
+	auto tokenCount = stream->readUint32LE();
+	debug("i-frame, bitstream: %u, prefix stream: %u, tokens: %u", bitstreamSize, prefixSize, tokenCount);
+	stream->skip(prefixSize * 4);
+}
+
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
+	stream->skip(12);
+	auto bitStreamSize = stream->readUint32LE();
+	auto wordStreamSize = stream->readUint32LE();
+	auto byteStreamSize = stream->readUint32LE();
+	debug("p-frame, bitstream: %u, wordstream: %u, bytestream: %u", bitStreamSize, wordStreamSize, byteStreamSize);
+}
+
+void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *stream) {
+	stream->skip(4);
+	auto frameIdx = stream->readUint32LE();
+	auto frameSize = stream->readUint32LE();
+	debug("c-frame, frame id: %u, size: %u", frameIdx, frameSize);
+}
+
 void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, byte *buf, uint size) {
-	free(buf);
+	Common::MemoryReadStream ms(buf, size, DisposeAfterUse::YES);
+	switch (tag) {
+	case MKTAG('i', 'f', 'r', 'm'):
+		decode_ifrm(&ms);
+		break;
+	case MKTAG('p', 'f', 'r', 'm'):
+		decode_pfrm(&ms);
+		break;
+	case MKTAG('c', 'f', 'r', 'm'):
+		decode_cfrm(&ms);
+		break;
+	default:
+		warning("uknown video frame %s", tagName(tag).c_str());
+		break;
+	}
 }
 
 void FourXMDecoder::decodeNextFrameImpl() {
