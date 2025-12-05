@@ -135,6 +135,9 @@ public:
 
 	void resetLockKey();
 	void lockKey(Common::KeyCode code, const Common::String &warp);
+	void startTimer(float seconds);
+	void pauseTimer(bool pause, bool deactivate);
+	void killTimer();
 
 private:
 	static Common::String removeDrive(const Common::String &path);
@@ -145,6 +148,7 @@ private:
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
 	void tick(float dt);
+	void tickTimer(float dt);
 
 private:
 	Common::Point _mousePos;
@@ -182,6 +186,11 @@ private:
 	AngleX _angleX;
 	AngleY _angleY;
 	Audio::Mixer *_mixer;
+
+	static constexpr byte kPaused = 2;
+	static constexpr byte kActive = 4;
+	byte _timerFlags = 0;
+	float _timer = 0;
 };
 
 extern PhoenixVREngine *g_engine;

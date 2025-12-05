@@ -118,15 +118,17 @@ struct StartTimer : public Script::Command {
 	StartTimer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("starttimer %g", seconds);
+		g_engine->startTimer(seconds);
 	}
 };
 
 struct PauseTimer : public Script::Command {
-	int arg1, arg2;
+	int paused, deactivate;
 
-	PauseTimer(const Common::Array<Common::String> &args) : arg1(atoi(args[0].c_str())), arg2(atoi(args[1].c_str())) {}
+	PauseTimer(const Common::Array<Common::String> &args) : paused(atoi(args[0].c_str())), deactivate(atoi(args[1].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("pause_timer %d %d", arg1, arg2);
+		debug("pausetimer %d %d", paused, deactivate);
+		g_engine->pauseTimer(paused, deactivate);
 	}
 };
 

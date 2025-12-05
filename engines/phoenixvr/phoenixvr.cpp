@@ -236,7 +236,49 @@ void PhoenixVREngine::executeTest(int idx) {
 		warning("invalid test id %d", idx);
 }
 
+void PhoenixVREngine::startTimer(float seconds) {
+	_timer = seconds;
+	_timerFlags = 5;
+}
+
+void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
+	if (pause)
+		_timerFlags |= 2;
+	else
+		_timerFlags &= ~2;
+	if (deactivate)
+		_timerFlags &= ~4;
+	else
+		_timerFlags |= 4;
+}
+
+void PhoenixVREngine::killTimer() {
+	_timerFlags = 0;
+}
+
+void PhoenixVREngine::tickTimer(float dt) {
+	if (_timerFlags) {
+		if ((_timerFlags & 2) == 0) {
+			if (_timer > dt) {
+				_timer -= dt;
+			} else {
+				_timer = 0;
+			}
+			debug("timer tick %g", _timer);
+		}
+		if (_timerFlags & 4) {
+			if (_timer <= 0) {
+				debug("timer trigger");
+				killTimer();
+				executeTest(99);
+			}
+		}
+	}
+}
+
 void PhoenixVREngine::tick(float dt) {
+	tickTimer(dt);
+
 	if (_vr.isVR() && _mousePos != _screenCenter) {
 		auto da = _mousePos - _screenCenter;
 		_system->warpMouse(_screenCenter.x, _screenCenter.y);
@@ -392,6 +434,7 @@ Common::Error PhoenixVREngine::run() {
 				break;
 			}
 		}
+		float dt = float(frameDuration) / 1000.0f;
 		if (_movie) {
 			if (!_movie->endOfVideo()) {
 				if (_movie->needsUpdate()) {
@@ -410,7 +453,7 @@ Common::Error PhoenixVREngine::run() {
 			} else
 				_movie.reset();
 		} else
-			tick(float(frameDuration) / 1000.0f);
+			tick(dt);
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
