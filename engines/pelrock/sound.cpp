@@ -50,7 +50,7 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::playSound(byte index, int volume) {
-	debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
+	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
 		playSound(it->_value, volume);
@@ -272,7 +272,7 @@ int SoundManager::tick() {
 
 	uint16 rand2 = _rng.nextRandom();
 	int slot = rand2 & 3;
-	debug("Slot = %d (rand2 = %u)", slot, rand2);
+	// debug("Slot = %d (rand2 = %u)", slot, rand2);
 
 	soundFrameCounter = 0;
 	// uint32 slot = g_engine->getRandomNumber(4);

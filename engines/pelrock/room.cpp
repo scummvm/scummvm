@@ -170,13 +170,13 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	int roomOffset = roomNumber * kRoomStructSize;
 	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset, outPos);
-	debug("After decsriptions, position is %d", outPos);
+	// debug("After decsriptions, position is %d", outPos);
 	Common::Array<ConversationNode> roots = loadConversations(roomFile, roomOffset, outPos);
 	for (int i = 0; i < roots.size(); i++) {
 		if (roots[i].text.empty()) {
 			continue;
 		}
-		debug("Conversation %d: %s", i, roots[i].text.c_str());
+		// debug("Conversation %d: %s", i, roots[i].text.c_str());
 	}
 	_currentRoomConversations = roots;
 
@@ -202,7 +202,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	ScalingParams scalingParams = loadScalingParams(roomFile, roomOffset);
 	Common::Array<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
-	debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
+	// debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
 		HotSpot hotspot = staticHotspots[i];
 		hotspot.index = anims.size() + i;
@@ -300,12 +300,12 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 				anim.animData = new byte[needed];
 				Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
 				sprite.animData[j] = anim;
-				debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
-				debug("  Movement flags: 0x%04X", anim.movementFlags);
+				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
+				// debug("  Movement flags: 0x%04X", anim.movementFlags);
 				picOffset += needed;
 			} else {
 				continue;
-				debug("Anim %d-%d: invalid dimensions, skipping", i, j);
+				// debug("Anim %d-%d: invalid dimensions, skipping", i, j);
 			}
 			sprite.animData[j] = anim;
 		}
@@ -461,7 +461,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkFile.read(&talkHeader.unknown5, 2);
 	talkHeader.numFramesAnimB = talkFile.readByte();
 	talkFile.read(&talkHeader.unknown6, 29);
-	debug("Talking anim header for room %d: spritePointer=%d, wA=%d, hA=%d, framesA=%d, wB=%d, hB=%d, framesB=%d", roomNumber, talkHeader.spritePointer, talkHeader.wAnimA, talkHeader.hAnimA, talkHeader.numFramesAnimA, talkHeader.wAnimB, talkHeader.hAnimB, talkHeader.numFramesAnimB);
+	// debug("Talking anim header for room %d: spritePointer=%d, wA=%d, hA=%d, framesA=%d, wB=%d, hB=%d, framesB=%d", roomNumber, talkHeader.spritePointer, talkHeader.wAnimA, talkHeader.hAnimA, talkHeader.numFramesAnimA, talkHeader.wAnimB, talkHeader.hAnimB, talkHeader.numFramesAnimB);
 
 	if (talkHeader.spritePointer == 0) {
 		debug("No talking animation for room %d", roomNumber);
@@ -960,7 +960,7 @@ byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) 
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	byte musicTrack = roomFile->readByte();
-	debug("Music track for room at offset %d is %d", roomOffset, musicTrack);
+	// debug("Music track for room at offset %d is %d", roomOffset, musicTrack);
 	return musicTrack > 0 ? musicTrack + 1 : 0;
 }
 
@@ -976,7 +976,7 @@ Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOff
 	for (int i = 0; i < kNumSfxPerRoom; i++) {
 		byte sfx = roomFile->readByte();
 		roomSfx[i] = sfx;
-		debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
+		// debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
 	}
 	return roomSfx;
 }

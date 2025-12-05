@@ -20,8 +20,9 @@
  */
 #include "common/stream.h"
 
-#include "pelrock/util.h"
 #include "pelrock/types.h"
+#include "pelrock/util.h"
+#include "util.h"
 
 namespace Pelrock {
 
@@ -34,11 +35,33 @@ void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byt
 }
 
 void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color) {
-	// debug("Drawing rect at (%d,%d) w=%d h=%d color=%d", x, y, w, h, color);
 	surface->drawLine(x, y, x + w, y, color);
 	surface->drawLine(x, y + h, x + w, y + h, color);
 	surface->drawLine(x, y, x, y + h, color);
 	surface->drawLine(x + w, y, x + w, y + h, color);
+}
+
+Common::String printMovementFlags(uint8_t flags) {
+	Common::String result;
+	if (flags & MOVE_HORIZ) {
+		result += "HORIZ ";
+	}
+	if (flags & MOVE_VERT) {
+		result += "VERT ";
+	}
+	if (flags & MOVE_DOWN) {
+		result += "DOWN ";
+	}
+	if (flags & MOVE_LEFT) {
+		result += "LEFT ";
+	}
+	if (flags & MOVE_UP) {
+		result += "UP ";
+	}
+	if (flags & MOVE_RIGHT) {
+		result += "RIGHT ";
+	}
+	return result;
 }
 
 size_t rleDecompress(
@@ -47,8 +70,7 @@ size_t rleDecompress(
 	uint32_t offset,
 	uint32_t expectedSize,
 	uint8_t **out_data,
-    bool untilBuda
-) {
+	bool untilBuda) {
 	// // Check for uncompressed markers
 	if (inputSize == 0x8000 || inputSize == 0x6800) {
 		*out_data = (uint8_t *)malloc(inputSize);
@@ -87,26 +109,26 @@ size_t rleDecompress(
 		uint8_t value = input[pos + 1];
 
 		for (int i = 0; i < count; i++) {
-			 // If in untilBuda mode, grow buffer as needed
-            if (untilBuda && result_size >= bufferCapacity) {
-                bufferCapacity *= 2;
-                uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
-                if (!newBuf) {
-                    free(*out_data);
-                    *out_data = nullptr;
-                    return 0;
-                }
-                *out_data = newBuf;
-            }
+			// If in untilBuda mode, grow buffer as needed
+			if (untilBuda && result_size >= bufferCapacity) {
+				bufferCapacity *= 2;
+				uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+				if (!newBuf) {
+					free(*out_data);
+					*out_data = nullptr;
+					return 0;
+				}
+				*out_data = newBuf;
+			}
 			// debug("Pos = %zu, writing value %02X", result_size, value);
 			(*out_data)[result_size++] = value;
 		}
 
 		pos += 2;
-    	// In fixed size mode, stop when we reach expected size
-        if (!untilBuda && result_size >= expectedSize) {
-            break;
-        }
+		// In fixed size mode, stop when we reach expected size
+		if (!untilBuda && result_size >= expectedSize) {
+			break;
+		}
 	}
 
 	return result_size;
@@ -157,6 +179,22 @@ void drawSpriteToBuffer(byte *buffer, int bufferWidth,
 				if (destX >= 0 && destX < 640 &&
 					destY >= 0 && destY < 400) {
 					buffer[destY * bufferWidth + destX] = pixel;
+				}
+			}
+		}
+	}
+}
+
+void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY) {
+	for (int y = 0; y < surface->h; y++) {
+		for (int x = 0; x < surface->w; x++) {
+			int px = destX + x;
+			int py = destY + y;
+			if (px >= 0 && px < bufferWidth && py >= 0 && py < bufferHeight) {
+
+				byte pixel = *((byte *)surface->getBasePtr(x, y));
+				if (pixel != 0) {
+					buffer[py * bufferWidth + px] = pixel;
 				}
 			}
 		}

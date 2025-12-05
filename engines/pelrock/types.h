@@ -130,11 +130,11 @@ typedef struct {
  * Pathfinding context
  */
 typedef struct {
-	uint8_t *path_buffer;          // Sequence of walkbox indices
-	MovementStep *movement_buffer; // Array of movement steps
+	uint8_t *pathBuffer;          // Sequence of walkbox indices
+	MovementStep *movementBuffer; // Array of movement steps
 	uint8_t *compressed_path;      // Final compressed path
-	uint16_t path_length;
-	uint16_t movement_count;
+	uint16_t pathLength;
+	uint16_t movementCount;
 	uint16_t compressed_length;
 } PathContext;
 
@@ -176,7 +176,7 @@ struct Sprite {
 	byte extra;   // 6
 	int numAnims; // 8
 	int curAnimIndex = 0;
-	byte zOrder;
+	int8 zOrder;
 	byte spriteType;  // 33
 	byte actionFlags; // 34
 	bool isDisabled;  // 38

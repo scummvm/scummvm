@@ -62,12 +62,12 @@ private:
 
 	void walkTo(int x, int y);
 	bool pathFind(int x, int y, PathContext *context);
-	uint8_t find_walkbox_for_point(uint16_t x, uint16_t y);
-	bool point_in_walkbox(WalkBox *box, uint16_t x, uint16_t y);
-	uint16_t build_walkbox_path(uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
-	uint8_t get_adjacent_walkbox(uint8_t current_box_index);
-	void clear_visited_flags();
-	uint16_t generate_movement_steps(uint8_t *path_buffer,
+	uint8_t findWalkboxForPoint(uint16_t x, uint16_t y);
+	bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y);
+	uint16_t buildWalkboxPath(uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
+	uint8_t getAdjacentWalkbox(uint8_t current_box_index);
+	void clearVisitedFlags();
+	uint16_t generateMovementSteps(uint8_t *path_buffer,
 									 uint16_t path_length,
 									 uint16_t start_x, uint16_t start_y,
 									 uint16_t dest_x, uint16_t dest_y,
@@ -109,7 +109,7 @@ private:
 	Common::Array<Common::Array<int>> _heightScalingTable;
 
 	// walking
-	int _current_step = 0;
+	int _currentStep = 0;
 	PathContext _currentContext;
 
 	// text display
