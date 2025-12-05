@@ -52,12 +52,10 @@ class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
 	uint _audioChannels;
 	uint _sampleRate;
 	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
-	Common::ScopedPtr<Audio::AudioStream> _adpcm;
-	Common::MemoryReadWriteStream _bitStream;
 
 public:
 	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
-																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)), _bitStream(DisposeAfterUse::YES) {
+																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
 	}
 
 	byte getAudioType() const { return _audioType; }
@@ -70,21 +68,8 @@ public:
 				flags |= Audio::FLAG_STEREO;
 			_output->queueBuffer(buf, size, DisposeAfterUse::YES, flags);
 		} else if (_audioType == 1) {
-			_bitStream.write(buf, size);
-			auto header = 0;
-			if (!_adpcm) {
-				_adpcm.reset(Audio::makeADPCMStream(&_bitStream, DisposeAfterUse::NO, 0, Audio::ADPCMType::kADPCM4XM, _sampleRate, _audioChannels));
-				header += _audioChannels * 4;
-			}
-			size -= header;
-			auto numSamples = size * 2;
-			void *samples = malloc(numSamples * sizeof(int16));
-			_adpcm->readBuffer(static_cast<int16 *>(samples), numSamples);
-			byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-			if (_audioChannels > 1)
-				flags |= Audio::FLAG_STEREO;
-			_output->queueBuffer(static_cast<byte *>(samples), numSamples * 2, DisposeAfterUse::YES, flags);
-			free(buf);
+			auto *input = new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
+			_output->queueAudioStream(Audio::makeADPCMStream(input, DisposeAfterUse::YES, size, Audio::ADPCMType::kADPCM4XM, _sampleRate, _audioChannels));
 		} else {
 			free(buf);
 			warning("unsupported audio type %u", _audioType);
