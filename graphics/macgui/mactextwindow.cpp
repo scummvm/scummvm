@@ -69,7 +69,7 @@ void MacTextWindow::init() {
 	_selectable = true;
 
 	_textColorRGB = 0;
-
+	
 	// Disable autoselect on activation
 	_mactext->setAutoSelect(false);
 
@@ -113,6 +113,9 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	uint16 green = (_textColorRGB >> 8) & 0xFF;
 	uint16 blue = (_textColorRGB) & 0xFF;
 
+	// Adding empty line at the bottom of the input text area if needed
+	_mactext->setInputPadding(true);
+
 	if (macFont)
 		_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
 	else {
@@ -123,7 +126,19 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
-		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
+		// Add one line of bottom padding to ensure the last line is not covered
+		int padding = _mactext->getLineHeight(_mactext->getLineCount() - 1);
+		padding = MIN<int>(padding, getInnerDimensions().height());
+
+		int oldScroll = _mactext->_scrollPos;
+
+		_mactext->_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height() + padding);
+
+		if (_mactext->_scrollPos != oldScroll) {
+			_mactext->undrawCursor();
+			_mactext->_cursorY -= (_mactext->_scrollPos - oldScroll);
+			_mactext->_cursorDirty = true;
+		}
 	}
 
 	if (_wm->_mode & kWMModeWin95)
