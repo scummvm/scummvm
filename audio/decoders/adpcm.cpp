@@ -559,20 +559,12 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 	return samp;
 }
 
+// format is planar, we expect numSamples of L channel + numSamples of R channel to follow.
 int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	assert(_stream->pos() == 0);
-	assert(_channels == 1 || _channels == 2);
-	for (int i = 0; i < _channels; i++)
-		_status.ima_ch[i].last = _stream->readSint16LE();
-	for (int i = 0; i < _channels; i++)
-		_status.ima_ch[i].stepIndex = _stream->readSint16LE();
+	int requiredSamplesPerChannel = numSamples / _channels; // each byte encode 2 samples.
 
-	assert(_stream->pos() == _channels * 4);
-	int samplesToDecode = (_endpos - _stream->pos()) * 2;
-	assert(numSamples >= samplesToDecode);
-
-	auto encodedPerChannel = (_endpos - _stream->pos()) / _channels;
-	for (int i = 0; i < _channels; i++) {
+	auto encodedPerChannel = requiredSamplesPerChannel / 2;
+	for (int i = 0; i < _channels; ++i) {
 		int samples = i;
 		for(auto s = encodedPerChannel; s--; ) {
 			byte data = _stream->readByte();
@@ -582,8 +574,8 @@ int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			samples += _channels;
 		}
 	}
-	assert(_stream->pos() == _endpos);
-	return samplesToDecode;
+	assert(_stream->pos() == _stream->size());
+	return numSamples;
 }
 
 
@@ -608,7 +600,7 @@ SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispose
 	case kADPCMXA:
 		return new XA_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCM4XM:
-		return new FOURXM_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+		return new FOURXM_ADPCMStream(stream, disposeAfterUse, size, rate, channels);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;

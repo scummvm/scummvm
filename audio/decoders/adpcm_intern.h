@@ -168,7 +168,6 @@ public:
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-
 };
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
@@ -264,8 +263,17 @@ private:
 
 class FOURXM_ADPCMStream : public Ima_ADPCMStream {
 public:
-	FOURXM_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+	FOURXM_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels)
+		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, 0) {
+		assert(_channels == 1 || _channels == 2);
+		for (int i = 0; i < _channels; i++)
+			_status.ima_ch[i].last = _stream->readSint16LE();
+		for (int i = 0; i < _channels; i++) {
+			auto stepIndex = _stream->readSint16LE();
+			_status.ima_ch[i].stepIndex = stepIndex;
+			if (stepIndex > 88)
+				error("invalid step index");
+		}
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -273,10 +281,7 @@ public:
 	void reset() {
 		Ima_ADPCMStream::reset();
 	}
-
-private:
 };
-
 
 } // End of namespace Audio
 
