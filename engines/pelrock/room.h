@@ -47,7 +47,7 @@ public:
 	}
 
 	Common::Array<HotSpot> _currentRoomHotspots;
-	Common::Array<AnimSet> _currentRoomAnims;
+	Common::Array<Sprite> _currentRoomAnims;
 	Common::Array<Exit> _currentRoomExits;
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
@@ -61,9 +61,10 @@ public:
 	Common::StringArray _roomNames;
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
+	byte _currentRoomNumber = 0;
 
 private:
-	Common::Array<AnimSet> loadRoomAnimations(Common::File *roomFile, int roomOffset);
+	Common::Array<Sprite> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);

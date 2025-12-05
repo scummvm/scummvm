@@ -154,6 +154,36 @@ static const uint COUNTER_MASK = 0x1F;
 
 const int kMaxChannels = 15;
 
+
+
+	class GameRNG {
+
+private:
+    uint32_t _state;
+public:
+    // LCG constants (from JUEGO.EXE @ 0x0002b12f)
+    static constexpr uint32_t MULTIPLIER = 0x41C64E6D; // 1103515245
+    static constexpr uint32_t INCREMENT  = 0x3039;     // 12345
+
+    GameRNG(uint32_t seed = 0) {
+        _state = seed & 0xFFFFFFFF;
+    }
+
+    // Generate next random number (0-32767)
+    uint16_t nextRandom() {
+        _state = (_state * MULTIPLIER + INCREMENT) & 0xFFFFFFFF;
+        return static_cast<uint16_t>((_state >> 16) & 0x7FFF);
+    }
+
+    uint32_t getState() const {
+        return _state;
+    }
+
+    void setState(uint32_t state) {
+        _state = state & 0xFFFFFFFF;
+    }
+};
+
 class SoundManager {
 public:
 	SoundManager(Audio::Mixer *mixer);
@@ -189,7 +219,11 @@ private:
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	int soundFrameCounter = 0;
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
+	GameRNG _rng = GameRNG(0);
 };
+
+
+
 
 } // End of namespace Pelrock
 

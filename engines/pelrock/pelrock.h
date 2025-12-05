@@ -58,7 +58,6 @@ private:
 	ResourceManager *_res = nullptr;
 
 	void init();
-	void setScreen(int s, AlfredDirection dir);
 	void loadAnims();
 
 	void walkTo(int x, int y);
@@ -85,19 +84,19 @@ private:
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
 	void sayAlfred(Common::String text);
-	void sayNPC(AnimSet *anim, Common::String text, byte color);
+	void sayNPC(Sprite *anim, Common::String text, byte color);
 
 	void frames();
 	void doAction(byte action, byte object);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void drawAlfred(byte *buf);
-	void drawNextFrame(AnimSet *animSet);
+	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
-	AnimSet *isSpriteUnder(int x, int y);
+	Sprite *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
-	void drawTalkNPC(AnimSet *animSet);
+	void drawTalkNPC(Sprite *animSet);
 
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -217,6 +216,9 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+
+	void setScreen(int s, AlfredDirection dir);
 };
 
 extern PelrockEngine *g_engine;

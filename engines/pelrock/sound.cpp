@@ -37,6 +37,8 @@
 
 namespace Pelrock {
 
+
+
 SoundManager::SoundManager(Audio::Mixer *mixer)
 	: _mixer(mixer), _currentVolume(255), _musicFile(nullptr) {
 	// TODO: Initialize sound manager
@@ -250,26 +252,31 @@ void SoundManager::loadSoundIndex() {
 	sonidosFile.close();
 }
 
-
-int gerRandomNumber() {
-
-
-}
+int RANDOM_THRESHOLD = 0x4000;
 
 int SoundManager::tick() {
 
 	soundFrameCounter++;
-	uint32 random = g_engine->getRandomNumber(1);
-	if(!random) {
-		return -1;
-	}
-	if((soundFrameCounter & COUNTER_MASK) != COUNTER_MASK){
 
+	uint16 rand1 = _rng.nextRandom();
+	// uint32 random = g_engine->getRandomNumber(1);
+	if(rand1 <= RANDOM_THRESHOLD){
+		// debug("No SFX this tick due to 50% random");
 		return -1;
 	}
+
+	if((soundFrameCounter & COUNTER_MASK) != COUNTER_MASK){
+		// debug("No SFX this tick due to counter mask (counter = %d)", soundFrameCounter);
+		return -1;
+	}
+
+	uint16 rand2 = _rng.nextRandom();
+	int slot = rand2 & 3;
+	debug("Slot = %d (rand2 = %u)", slot, rand2);
+
 	soundFrameCounter = 0;
-	uint32 slot = g_engine->getRandomNumber(4);
-	return slot;
+	// uint32 slot = g_engine->getRandomNumber(4);
+	return slot + 1;
 }
 
 } // End of namespace Pelrock

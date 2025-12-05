@@ -86,7 +86,7 @@ Common::Error PelrockEngine::run() {
 	_soundManager = new SoundManager(_mixer);
 
 	// Set the engine's debugger console
-	setDebugger(new Console());
+	setDebugger(new PelrockConsole(this));
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -220,7 +220,7 @@ void PelrockEngine::talk(byte object) {
 	if (_room->_currentRoomConversations.size() == 0)
 		return;
 
-	AnimSet *animSet;
+	Sprite *animSet;
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].extra == object) {
 			animSet = &_room->_currentRoomAnims[i];
@@ -329,7 +329,7 @@ void PelrockEngine::frames() {
 		// debug("Game tick!");
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
-			AnimSet &animSet = _room->_currentRoomAnims[i];
+			Sprite &animSet = _room->_currentRoomAnims[i];
 			drawNextFrame(&animSet);
 		}
 		switch (alfredState.animState) {
@@ -495,7 +495,7 @@ void PelrockEngine::frames() {
 		if (showShadows) {
 			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
 		}
-
+		_smallFont->drawString(_screen, Common::String::format("Room number: %d",_room->_currentRoomNumber), 0, 4, 640, 13);
 		_screen->markAllDirty();
 
 		// _screen->update();
@@ -635,16 +635,52 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	delete[] finalBuf;
 }
 
-void PelrockEngine::drawNextFrame(AnimSet *animSet) {
-	Anim &animData = animSet->animData[animSet->curAnimIndex];
-	int x = animData.x;
-	int y = animData.y;
+
+void applyMovement(int16_t *x, int16_t *y, /*int8_t *z,*/ uint16_t flags) {
+    // X-axis movement
+    if (flags & 0x10) {  // Bit 4: X movement enabled
+        int amount = flags & 0x07;  // Bits 0-2: pixels per frame
+        if (flags & 0x08) {  // Bit 3: direction
+            *x += amount;   // 1 = right (add)
+        } else {
+            *x -= amount;   // 0 = left (subtract)
+        }
+    }
+
+    // Y-axis movement
+    if (flags & 0x200) {  // Bit 9: Y movement enabled
+        int amount = (flags >> 5) & 0x07;  // Bits 5-7: pixels per frame
+        if (flags & 0x100) {  // Bit 8: direction
+            *y += amount;   // 1 = down (add)
+        } else {
+            *y -= amount;   // 0 = up (subtract)
+        }
+    }
+
+    // // Z-axis movement
+    // if (flags & 0x4000) {  // Bit 14: Z movement enabled
+    //     int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
+    //     if (flags & 0x2000) {  // Bit 13: direction
+    //         *z += amount;   // 1 = forward (add)
+    //     } else {
+    //         *z -= amount;   // 0 = back (subtract)
+    //     }
+    // }
+}
+
+
+void PelrockEngine::drawNextFrame(Sprite *sprite) {
+	Anim &animData = sprite->animData[sprite->curAnimIndex];
+
+
+	applyMovement(&(sprite->x), &(sprite->y), animData.movementFlags);
+	int x = sprite->x;
+	int y = sprite->y;
 	int w = animData.w;
 	int h = animData.h;
-	int extra = animSet->extra;
-
+	int extra = sprite->extra;
 	if (whichNPCTalking == extra) {
-		drawTalkNPC(animSet);
+		drawTalkNPC(sprite);
 		return;
 	}
 
@@ -653,7 +689,7 @@ void PelrockEngine::drawNextFrame(AnimSet *animSet) {
 	byte *frame = new byte[frameSize];
 	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
 
-	drawSpriteToBuffer(_compositeBuffer, 640, frame, animSet->x, animSet->y, animSet->w, animSet->h, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, frame, sprite->x, sprite->y, sprite->w, sprite->h, 255);
 
 	if (animData.elpapsedFrames == animData.speed) {
 		animData.elpapsedFrames = 0;
@@ -666,10 +702,10 @@ void PelrockEngine::drawNextFrame(AnimSet *animSet) {
 			} else {
 				animData.curFrame = 0;
 				animData.curLoop = 0;
-				if (animSet->curAnimIndex < animSet->numAnims - 1) {
-					animSet->curAnimIndex++;
+				if (sprite->curAnimIndex < sprite->numAnims - 1) {
+					sprite->curAnimIndex++;
 				} else {
-					animSet->curAnimIndex = 0;
+					sprite->curAnimIndex = 0;
 				}
 			}
 		}
@@ -861,7 +897,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	}
 }
 
-void PelrockEngine::drawTalkNPC(AnimSet *animSet) {
+void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 	// Change with the right index
 
 	int index = animSet->index;
@@ -893,44 +929,8 @@ void PelrockEngine::walkTo(int x, int y) {
 	alfredState.curFrame = 0;
 
 	PathContext context = {NULL, NULL, NULL, 0, 0, 0};
-
 	pathFind(x, y, &context);
-	// debug("\nPath Information:\n");
-	// debug("================\n");
-
-	// debug("Walkbox path (%d boxes): ", context.path_length);
-
-	// debug("Movement steps (%d steps):\n", context.movement_count);
-	for (int i = 0; i < context.movement_count; i++) {
-		MovementStep *step = &context.movement_buffer[i];
-		// debug("  Step %d: ", i);
-
-		// if (step->flags & MOVE_RIGHT)
-		// 	debug("RIGHT ");
-		// if (step->flags & MOVE_LEFT)
-		// 	debug("LEFT ");
-		// if (step->flags & MOVE_DOWN)
-		// 	debug("DOWN ");
-		// if (step->flags & MOVE_UP)
-		// 	debug("UP ");
-
-		// debug("(dx=%d, dy=%d)\n", step->distance_x, step->distance_y);
-	}
-
-	// debug("\nCompressed path (%d bytes): ", context.compressed_length);
-
-	// if (x > xAlfred) {
-	// 	dirAlfred = RIGHT;
-	// } else if (x < xAlfred) {
-	// 	dirAlfred = LEFT;
-	// } else if (y < yAlfred) {
-	// 	dirAlfred = UP;
-	// } else if (y > yAlfred) {
-	// 	dirAlfred = DOWN;
-	// }
-	// debug("Setting Alfred to walk towards (%d, %d) from (%d, %d) in direction %d", x, y, xAlfred, yAlfred, dirAlfred);
 	_currentContext = context;
-	// debug("Path find complete, movement count: %d", _currentContext.movement_count);
 }
 
 bool PelrockEngine::pathFind(int x, int y, PathContext *context) {
@@ -1389,7 +1389,7 @@ void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte colo
 	_largeFont->drawString(_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
 }
 
-void PelrockEngine::sayNPC(AnimSet *anim, Common::String text, byte color) {
+void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
 	isNPCATalking = true;
 	whichNPCTalking = anim->extra;
 	debug("NPC says %s, color = %d", text.c_str(), color);
@@ -1577,6 +1577,7 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	// 		_soundManager->playSound(_room->_roomSfx[i]);
 	// }
 
+	_room->_currentRoomNumber = number;
 	_screen->markAllDirty();
 	roomFile.close();
 	delete[] background;

@@ -139,8 +139,8 @@ typedef struct {
 } PathContext;
 
 struct Anim {
-	int x;
-	int y;
+	int16 x;
+	int16 y;
 	int w;
 	int h;
 	int nframes;
@@ -150,31 +150,33 @@ struct Anim {
 	byte loopCount;
 	byte speed;
 	byte elpapsedFrames = 0;
+	uint16 movementFlags = 0;
 };
 
 struct Exit {
-	uint16 x;
-	uint16 y;
+	int16 x;
+	int16 y;
 	byte w;
 	byte h;
 	uint16 targetRoom;
-	uint16 targetX;
-	uint16 targetY;
+	int16 targetX;
+	int16 targetY;
 	uint16 targetDir;
 	AlfredDirection dir;
 	byte flags;
 };
 
-struct AnimSet {
+struct Sprite {
 	int index; // number of the animation in the rooms
 	byte type;
-	int x;        // 0
-	int y;        // 2
+	int16 x;        // 0
+	int16 y;        // 2
 	int w;        // 4
 	int h;        // 5
 	byte extra;   // 6
 	int numAnims; // 8
 	int curAnimIndex = 0;
+	byte zOrder;
 	byte spriteType;  // 33
 	byte actionFlags; // 34
 	bool isDisabled;  // 38

@@ -19,20 +19,32 @@
  *
  */
 
+#include "console.h"
+
 #include "pelrock/console.h"
+#include "pelrock/types.h"
 
 namespace Pelrock {
 
-Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine(engine) {
+	registerCmd("setScreen", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
 }
 
-Console::~Console() {
+PelrockConsole::~PelrockConsole() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+
+bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: setScreen <roomNumber>");
+		return true;
+	}
+
+	int roomNumber = atoi(argv[1]);
+	g_engine->setScreen(roomNumber, ALFRED_DOWN);
+	debugPrintf("Loaded room %d", roomNumber);
 	return true;
 }
+
 
 } // End of namespace Pelrock

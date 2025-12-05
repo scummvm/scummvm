@@ -180,7 +180,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	}
 	_currentRoomConversations = roots;
 
-	Common::Array<AnimSet> anims = loadRoomAnimations(roomFile, roomOffset);
+	Common::Array<Sprite> anims = loadRoomAnimations(roomFile, roomOffset);
 
 	Common::Array<HotSpot> hotspots;
 	for (int i = 0; i < anims.size(); i++) {
@@ -234,7 +234,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	}
 }
 
-Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
+Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	// debug("Sprite pair offset position: %d", pair_offset);
 	roomFile->seek(pair_offset, SEEK_SET);
@@ -249,9 +249,9 @@ Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, i
 	if (offset > 0 && size > 0) {
 		rleDecompress(data, size, 0, size, &pic, true);
 	} else {
-		return Common::Array<AnimSet>();
+		return Common::Array<Sprite>();
 	}
-	Common::Array<AnimSet> anims = Common::Array<AnimSet>();
+	Common::Array<Sprite> anims = Common::Array<Sprite>();
 	uint32_t spriteEnd = offset + size;
 
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
@@ -262,52 +262,55 @@ Common::Array<AnimSet> RoomManager::loadRoomAnimations(Common::File *roomFile, i
 		byte *animData = new byte[44];
 		roomFile->seek(animOffset, SEEK_SET);
 		roomFile->read(animData, 44);
-		AnimSet animSet;
-		animSet.index = i;
-		animSet.x = animData[0] | (animData[1] << 8);
-		animSet.y = animData[2] | (animData[3] << 8);
-		animSet.w = animData[4];
-		animSet.h = animData[5];
-		animSet.extra = animData[6];
+		Sprite sprite;
+		sprite.index = i;
+		sprite.x = animData[0] | (animData[1] << 8);
+		sprite.y = animData[2] | (animData[3] << 8);
+		sprite.w = animData[4];
+		sprite.h = animData[5];
+		sprite.extra = animData[6];
 		// roomFile->skip(1); // reserved
-		animSet.numAnims = animData[8];
-		animSet.spriteType = animData[33];
-		animSet.actionFlags = animData[34];
-		animSet.isDisabled = animData[38];
-		if (animSet.numAnims == 0) {
+		sprite.numAnims = animData[8];
+		sprite.zOrder = animData[23];
+		sprite.spriteType = animData[33];
+		sprite.actionFlags = animData[34];
+		sprite.isDisabled = animData[38];
+		if (sprite.numAnims == 0) {
 			break;
 		}
-		animSet.animData = new Anim[animSet.numAnims];
+		sprite.animData = new Anim[sprite.numAnims];
 		// debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
 		int subAnimOffset = 10;
-		for (int j = 0; j < animSet.numAnims; j++) {
+		for (int j = 0; j < sprite.numAnims; j++) {
 
 			Anim anim;
-			anim.x = animSet.x;
-			anim.y = animSet.y;
-			anim.w = animSet.w;
-			anim.h = animSet.h;
+			anim.x = sprite.x;
+			anim.y = sprite.y;
+			anim.w = sprite.w;
+			anim.h = sprite.h;
 			anim.curFrame = 0;
 
 			anim.nframes = animData[subAnimOffset + j];
 			anim.loopCount = animData[subAnimOffset + 4 + j];
 			anim.speed = animData[subAnimOffset + 8 + j];
+			anim.movementFlags = animData[subAnimOffset + 14 + (j*2)] | (animData[subAnimOffset + 14 + (j*2) + 1] << 8);
 			anim.animData = new byte[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
 				uint32_t needed = anim.w * anim.h * anim.nframes;
 				anim.animData = new byte[needed];
 				Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
-				animSet.animData[j] = anim;
-				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
+				sprite.animData[j] = anim;
+				debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
+				debug("  Movement flags: 0x%04X", anim.movementFlags);
 				picOffset += needed;
 			} else {
 				continue;
 				debug("Anim %d-%d: invalid dimensions, skipping", i, j);
 			}
-			animSet.animData[j] = anim;
+			sprite.animData[j] = anim;
 		}
 
-		anims.push_back(animSet);
+		anims.push_back(sprite);
 	}
 	return anims;
 }

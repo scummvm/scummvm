@@ -24,15 +24,19 @@
 #define PELROCK_CONSOLE_H
 
 #include "gui/debugger.h"
+#include "pelrock/pelrock.h"
 
 namespace Pelrock {
 
-class Console : public GUI::Debugger {
+class PelrockConsole : public GUI::Debugger {
 private:
-	bool Cmd_test(int argc, const char **argv);
+	PelrockEngine *_engine;
+	bool cmdLoadRoom(int argc, const char **argv);
+	bool cmdTest(int argc, const char **argv);
+
 public:
-	Console();
-	~Console() override;
+	PelrockConsole(PelrockEngine *engine);
+	~PelrockConsole() override;
 };
 
 } // End of namespace Pelrock
