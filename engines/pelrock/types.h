@@ -35,7 +35,7 @@ enum Cursor {
 	COMBINATION
 };
 
-enum VerbIcons {
+enum VerbIcon {
 	PICKUP,
 	TALK,
 	WALK,
@@ -44,7 +44,8 @@ enum VerbIcons {
 	PULL,
 	OPEN,
 	CLOSE,
-	UNKNOWN
+	UNKNOWN,
+	NO_ACTION
 };
 
 static const uint32 kLongClickDuration = 500; // 500ms for long click
@@ -94,7 +95,7 @@ const int kChoiceHeight = 16; // Height of each choice line in pixels
 
 #define ALFRED_COLOR 0x0D
 
-
+const byte kIconBlinkPeriod = 4;
 
 enum AlfredAnimState {
 	ALFRED_IDLE,
@@ -113,6 +114,7 @@ enum AlfredDirection {
 
 struct AlfredState {
 	AlfredAnimState animState = ALFRED_IDLE;
+	AlfredAnimState nextState = ALFRED_IDLE;
 	AlfredDirection direction = ALFRED_DOWN;
 	int curFrame = 0;
 	uint16 movementSpeed = 6; // pixels per frame

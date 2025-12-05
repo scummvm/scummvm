@@ -220,35 +220,6 @@ void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
 }
 
-void PelrockEngine::talk(byte object) {
-	debug("Talking to object %d", object);
-	if (_room->_currentRoomConversations.size() == 0)
-		return;
-
-	Sprite *animSet;
-	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].extra == object) {
-			animSet = &_room->_currentRoomAnims[i];
-		}
-	}
-
-	ConversationNode selectedNode = _room->_currentRoomConversations[0];
-
-	bool isNPC = selectedNode.speakerId != 13;
-	if (isNPC) {
-		sayNPC(animSet, selectedNode.text, selectedNode.speakerId);
-	}
-	// for(int i= 0; i< _currentRoomConversations.size(); i++) {
-	// _currentRoomConversations
-	// }
-
-	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
-	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
-	// 	int idx = _currentRoomConversations.size() - 1 - i;
-	// 	_smallFont->drawString(_screen, _currentRoomConversations[0].choices[idx].text.c_str(), 0, 400 - ((i + 1) * 12), 640, 14);
-	// }
-}
-
 void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
 	int overlayHeight = choices.size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
@@ -284,36 +255,32 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 	}
 }
 
-Common::Array<VerbIcons> PelrockEngine::availableActions(HotSpot *hotspot) {
-	Common::Array<VerbIcons> verbs;
+Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
+	if(hotspot == nullptr) {
+		return Common::Array<VerbIcon>();
+	}
+	Common::Array<VerbIcon> verbs;
 	verbs.push_back(LOOK);
 
 	if (hotspot->type & 1) {
-		debug("Hotspot allows OPEN action");
 		verbs.push_back(OPEN);
 	}
 	if (hotspot->type & 2) {
-		debug("Hotspot allows CLOSE action");
 		verbs.push_back(CLOSE);
 	}
 	if (hotspot->type & 4) {
-		debug("Hotspot allows UNKNOWN action");
 		verbs.push_back(UNKNOWN);
 	}
 	if (hotspot->type & 8) {
-		debug("Hotspot allows PICKUP action");
 		verbs.push_back(PICKUP);
 	}
 	if (hotspot->type & 16) {
-		debug("Hotspot allows TALK action");
 		verbs.push_back(TALK);
 	}
 	if (hotspot->type & 32) {
-		debug("Hotspot allows WALK action");
 		verbs.push_back(PUSH);
 	}
 	if (hotspot->type & 128) {
-		debug("Hotspot allows PULL action");
 		verbs.push_back(PULL);
 	}
 	return verbs;
@@ -324,7 +291,7 @@ void PelrockEngine::frames() {
 	if (_chronoManager->_gameTick) {
 
 		int soundIndex = _soundManager->tick();
-		if(soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
+		if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
 			// debug("Playing SFX index %d", soundIndex);
 			_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
 		}
@@ -337,6 +304,12 @@ void PelrockEngine::frames() {
 			Sprite &animSet = _room->_currentRoomAnims[i];
 			drawNextFrame(&animSet);
 		}
+		// if(alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
+		// 	alfredState.animState = alfredState.nextState;
+		// 	alfredState.nextState = ALFRED_IDLE;
+		// 	alfredState.curFrame = 0;
+		// }
+
 		switch (alfredState.animState) {
 		case ALFRED_WALKING: {
 
@@ -424,19 +397,6 @@ void PelrockEngine::frames() {
 		}
 
 		if (_displayPopup) {
-
-			// byte *bgDialog = new byte[kBalloonWidth * kBalloonHeight];
-			// for (int j = 0; j < kBalloonWidth; j++) {
-			// 	for (int i = 0; i < kBalloonHeight; i++) {
-			// 		int idx = i * kBalloonWidth + j;
-			// 		if (_popupY + i < 400 && _popupX + j < 640) {
-			// 			*(bgDialog + idx) = _currentBackground[(_popupY + i) * 640 + (_popupX + j)];
-			// 		}
-			// 	}
-			// }
-			// if (_bgPopupBalloon != nullptr) {
-			// 	putBackgroundSlice(_popupX, _popupY, kBalloonWidth, kBalloonHeight, _bgPopupBalloon);
-			// }
 			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
 			if (_currentPopupFrame < 3) {
 				_currentPopupFrame++;
@@ -452,8 +412,9 @@ void PelrockEngine::frames() {
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
-		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
+		if (alfredState.animState == ALFRED_TALKING && !_currentTextPages.empty()) {
 			if (_chronoManager->_textTtl > 0) {
+				_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
 			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
 				_currentTextPageIndex++;
@@ -470,6 +431,13 @@ void PelrockEngine::frames() {
 				isNPCATalking = false;
 				isNPCBTalking = false;
 			}
+		}
+
+		if(alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
+			// debug("Switching Alfred state from IDLE to %d", alfredState.nextState);
+			alfredState.animState = alfredState.nextState;
+			alfredState.nextState = ALFRED_IDLE;
+			alfredState.curFrame = 0;
 		}
 
 		// debug("Drawing walkboxes..., %d, _currentRoomWalkboxes.size()=%d",  _currentRoomWalkboxes.size(), _currentRoomWalkboxes.size());
@@ -502,17 +470,60 @@ void PelrockEngine::frames() {
 		if (showShadows) {
 			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
 		}
-		_smallFont->drawString(_screen, Common::String::format("Room number: %d",_room->_currentRoomNumber), 0, 4, 640, 13);
+		_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 		_screen->markAllDirty();
 
 		// _screen->update();
 	}
 }
 
-void PelrockEngine::doAction(byte action, byte object) {
-	if (action == TALK) {
-		talk(object);
+void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
+	switch (action) {
+	case LOOK:
+		lookAtHotspot(_currentHotspot);
+		break;
+	case TALK:
+		talkTo(_currentHotspot);
+		break;
+	default:
+		break;
 	}
+}
+
+void PelrockEngine::talkTo(HotSpot *hotspot) {
+	debug("Talking to object %d", hotspot->index);
+	if (_room->_currentRoomConversations.size() == 0)
+		return;
+
+	Sprite *animSet;
+	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+		if (i == hotspot->index) {
+			animSet = &_room->_currentRoomAnims[i];
+		}
+	}
+
+	ConversationNode selectedNode = _room->_currentRoomConversations[0];
+
+	bool isNPC = selectedNode.speakerId != 13;
+	if (isNPC) {
+		sayNPC(animSet, selectedNode.text, selectedNode.speakerId);
+	}
+	// for(int i= 0; i< _currentRoomConversations.size(); i++) {
+	// _currentRoomConversations
+	// }
+
+	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
+	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
+	// 	int idx = _currentRoomConversations.size() - 1 - i;
+	// 	_smallFont->drawString(_screen, _currentRoomConversations[0].choices[idx].text.c_str(), 0, 400 - ((i + 1) * 12), 640, 14);
+	// }
+}
+
+void PelrockEngine::lookAtHotspot(HotSpot *hotspot) {
+	debug("Look action clicked");
+	walkTo(_currentHotspot->x, _currentHotspot->y);
+	sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
+	_displayPopup = false;
 }
 
 void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, int baseX, int baseY) {
@@ -642,43 +653,41 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	delete[] finalBuf;
 }
 
-
 void applyMovement(int16_t *x, int16_t *y, /*int8_t *z,*/ uint16_t flags) {
-    // X-axis movement
-    if (flags & 0x10) {  // Bit 4: X movement enabled
-        int amount = flags & 0x07;  // Bits 0-2: pixels per frame
-        if (flags & 0x08) {  // Bit 3: direction
-            *x += amount;   // 1 = right (add)
-        } else {
-            *x -= amount;   // 0 = left (subtract)
-        }
-    }
+	// X-axis movement
+	if (flags & 0x10) {            // Bit 4: X movement enabled
+		int amount = flags & 0x07; // Bits 0-2: pixels per frame
+		if (flags & 0x08) {        // Bit 3: direction
+			*x += amount;          // 1 = right (add)
+		} else {
+			*x -= amount; // 0 = left (subtract)
+		}
+	}
 
-    // Y-axis movement
-    if (flags & 0x200) {  // Bit 9: Y movement enabled
-        int amount = (flags >> 5) & 0x07;  // Bits 5-7: pixels per frame
-        if (flags & 0x100) {  // Bit 8: direction
-            *y += amount;   // 1 = down (add)
-        } else {
-            *y -= amount;   // 0 = up (subtract)
-        }
-    }
+	// Y-axis movement
+	if (flags & 0x200) {                  // Bit 9: Y movement enabled
+		int amount = (flags >> 5) & 0x07; // Bits 5-7: pixels per frame
+		if (flags & 0x100) {              // Bit 8: direction
+			*y += amount;                 // 1 = down (add)
+		} else {
+			*y -= amount; // 0 = up (subtract)
+		}
+	}
 
-    // // Z-axis movement
-    // if (flags & 0x4000) {  // Bit 14: Z movement enabled
-    //     int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
-    //     if (flags & 0x2000) {  // Bit 13: direction
-    //         *z += amount;   // 1 = forward (add)
-    //     } else {
-    //         *z -= amount;   // 0 = back (subtract)
-    //     }
-    // }
+	// // Z-axis movement
+	// if (flags & 0x4000) {  // Bit 14: Z movement enabled
+	//     int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
+	//     if (flags & 0x2000) {  // Bit 13: direction
+	//         *z += amount;   // 1 = forward (add)
+	//     } else {
+	//         *z -= amount;   // 0 = back (subtract)
+	//     }
+	// }
 }
-
 
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
-	if(sprite->zOrder == -1) {
+	if (sprite->zOrder == -1) {
 		// skips z0rder -1 sprites
 		return;
 	}
@@ -893,17 +902,16 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
-	Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
-
-	// drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[LOOK], posx + 20, posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
-	// Graphics::Surface rects;
-	// rects.create(kVerbIconWidth, kVerbIconHeight, Graphics::PixelFormat::createFormatCLUT8());
-	// drawRect(&rects, 0, 0, kVerbIconWidth, kVerbIconHeight, 1);
-
-
+	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
+	VerbIcon icon = isActionUnder(mouseX, mouseY);
 	for (int i = 0; i < actions.size(); i++) {
+		if(icon == actions[i] && _iconBlink++ < kIconBlinkPeriod/2) {
+			continue;
+		}
+		if (_iconBlink > kIconBlinkPeriod) {
+			_iconBlink = 0;
+		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
-		// blitSurfaceToBuffer(&rects, _compositeBuffer, 640, 480, posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20);
 	}
 }
 
@@ -995,7 +1003,7 @@ bool PelrockEngine::pathFind(int targetX, int targetY, PathContext *context) {
 		// Build walkbox path
 		context->pathLength = buildWalkboxPath(startBox, destBox, context->pathBuffer);
 		debug("Walkbox path to point");
-		for(int i = 0; i < context->pathLength; i++) {
+		for (int i = 0; i < context->pathLength; i++) {
 			debug("Walkbox %d: %d", i, context->pathBuffer[i]);
 		}
 		if (context->pathLength == 0) {
@@ -1005,7 +1013,7 @@ bool PelrockEngine::pathFind(int targetX, int targetY, PathContext *context) {
 
 		// Generate movement steps
 		context->movementCount = generateMovementSteps(context->pathBuffer, context->pathLength, startX, startY, targetX, targetY, context->movementBuffer);
-		for(int i = 0; i < context->movementCount; i++) {
+		for (int i = 0; i < context->movementCount; i++) {
 			debug("Movement step %d: flags=\"%s\", dx=%d, dy=%d", i, printMovementFlags(context->movementBuffer[i].flags).c_str(), context->movementBuffer[i].distance_x, context->movementBuffer[i].distance_y);
 		}
 	}
@@ -1016,9 +1024,9 @@ bool PelrockEngine::pathFind(int targetX, int targetY, PathContext *context) {
  * Calculate movement needed to reach a target within a walkbox
  */
 void calculateMovementToTarget(uint16_t current_x, uint16_t current_y,
-								  uint16_t target_x, uint16_t target_y,
-								  WalkBox *box,
-								  MovementStep *step) {
+							   uint16_t target_x, uint16_t target_y,
+							   WalkBox *box,
+							   MovementStep *step) {
 	step->flags = 0;
 	step->distance_x = 0;
 	step->distance_y = 0;
@@ -1051,10 +1059,10 @@ void calculateMovementToTarget(uint16_t current_x, uint16_t current_y,
  * Returns: number of movement steps generated
  */
 uint16_t PelrockEngine::generateMovementSteps(uint8_t *pathBuffer,
-												uint16_t pathLength,
-												uint16_t startX, uint16_t startY,
-												uint16_t destX, uint16_t destY,
-												MovementStep *movementBuffer) {
+											  uint16_t pathLength,
+											  uint16_t startX, uint16_t startY,
+											  uint16_t destX, uint16_t destY,
+											  MovementStep *movementBuffer) {
 	uint16_t currentX = startX;
 	uint16_t currentY = startY;
 	uint16_t movementIndex = 0;
@@ -1224,33 +1232,33 @@ uint8_t PelrockEngine::findWalkboxForPoint(uint16_t x, uint16_t y) {
 	return 0xFF; // Not found
 }
 
+VerbIcon PelrockEngine::isActionUnder(int x, int y) {
+	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
+	for (int i = 0; i < actions.size(); i++) {
+		int actionX = _popupX + 20 + (i * (kVerbIconWidth + 2));
+		int actionY = _popupY + 20;
+		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
+		if (actionRect.contains(x, y)) {
+
+			return actions[i];
+		}
+	}
+	return NO_ACTION;
+}
+
 void PelrockEngine::checkMouseClick(int x, int y) {
 
 	if (whichNPCTalking)
 		whichNPCTalking = false;
 
 	if (_displayPopup) {
-		Common::Array<VerbIcons> actions = availableActions(_currentHotspot);
-
-		Common::Rect lookRect = Common::Rect(_popupX + 20, _popupY + 20, _popupX + 20 + kVerbIconWidth, _popupY + 20 + kVerbIconHeight);
-		if (lookRect.contains(x, y)) {
-			debug("Look action clicked");
-			walkTo(_currentHotspot->x, _currentHotspot->y);
-			sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
+		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
+		VerbIcon actionClicked = isActionUnder(x, y);
+		if (actionClicked != NO_ACTION) {
+			debug("Action %d clicked", actionClicked);
+			doAction(actionClicked, _currentHotspot);
 			_displayPopup = false;
 			return;
-		}
-		for (int i = 1; i < actions.size(); i++) {
-
-			int actionX = _popupX + 20 + (i * (kVerbIconWidth + 2));
-			int actionY = _popupY + 20;
-			Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
-			if (actionRect.contains(x, y)) {
-				debug("Action %d clicked", actions[i]);
-				doAction(actions[i], _currentHotspot->extra);
-				_displayPopup = false;
-				return;
-			}
 		}
 	}
 
@@ -1296,6 +1304,10 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		isSomethingUnder = true;
+	}
+
+	if(isActionUnder(mouseX, mouseY) != NO_ACTION) {
+		isSomethingUnder = false;
 	}
 
 	if (isSomethingUnder && exitDetected) {
@@ -1407,7 +1419,7 @@ void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
 }
 
 void PelrockEngine::sayAlfred(Common::String text) {
-	alfredState.animState = ALFRED_TALKING;
+	alfredState.nextState = ALFRED_TALKING;
 	alfredState.curFrame = 0;
 	debug("Alfred says: %s", text.c_str());
 	_currentTextPages = wordWrap(text);
@@ -1416,7 +1428,6 @@ void PelrockEngine::sayAlfred(Common::String text) {
 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
 		totalChars += _currentTextPages[0][i].size();
 	}
-	_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
 	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
 }
 

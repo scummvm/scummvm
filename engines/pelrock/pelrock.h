@@ -60,42 +60,44 @@ private:
 	void init();
 	void loadAnims();
 
+	/*
+		Walking alforithm
+	*/
 	void walkTo(int x, int y);
 	bool pathFind(int x, int y, PathContext *context);
+	Common::Point calculateWalkTarget(int mouseX, int mouseY);
 	uint8_t findWalkboxForPoint(uint16_t x, uint16_t y);
 	bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y);
 	uint16_t buildWalkboxPath(uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
 	uint8_t getAdjacentWalkbox(uint8_t current_box_index);
 	void clearVisitedFlags();
-	uint16_t generateMovementSteps(uint8_t *path_buffer,
-									 uint16_t path_length,
-									 uint16_t start_x, uint16_t start_y,
-									 uint16_t dest_x, uint16_t dest_y,
-									 MovementStep *movement_buffer);
+	uint16_t generateMovementSteps(uint8_t *path_buffer, uint16_t path_length, uint16_t start_x, uint16_t start_y, uint16_t dest_x, uint16_t dest_y, MovementStep *movement_buffer);
 
 	void talk(byte object);
 	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
+	void sayAlfred(Common::String text);
+	void sayNPC(Sprite *anim, Common::String text, byte color);
 
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
 	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
 
-	Common::Array<VerbIcons> availableActions(HotSpot *hotspot);
-	Common::Point calculateWalkTarget(int mouseX, int mouseY);
-	void drawText(Common::String text, int x, int y, int w, byte color);
-
-	void sayAlfred(Common::String text);
-	void sayNPC(Sprite *anim, Common::String text, byte color);
-
-	void frames();
-	void doAction(byte action, byte object);
-	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
-	void drawAlfred(byte *buf);
-	void drawNextFrame(Sprite *animSet);
-	void changeCursor(Cursor cursor);
+	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
+	VerbIcon isActionUnder(int x, int y);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
 	Sprite *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
+
+	void drawText(Common::String text, int x, int y, int w, byte color);
+
+	void frames();
+	void doAction(byte action, HotSpot *hotspot);
+	void talkTo(HotSpot *hotspot);
+	void lookAtHotspot(HotSpot *hotspot);
+	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
+	void drawAlfred(byte *buf);
+	void drawNextFrame(Sprite *animSet);
+	void changeCursor(Cursor cursor);
 	void drawTalkNPC(Sprite *animSet);
 
 	void checkMouseHover();
@@ -120,6 +122,7 @@ private:
 
 	// Alfred
 	bool alfredFrameSkip = false;
+	bool isAlkfredWalking = false;
 
 	uint16 mouseX = 0;
 	uint16 mouseY = 0;
@@ -132,6 +135,7 @@ private:
 	byte *_compositeBuffer;             // Working composition buffer
 
 	bool _displayPopup = false;
+	byte _iconBlink = 0;
 	int _popupX = 0;
 	int _popupY = 0;
 	int _currentPopupFrame = 0;
