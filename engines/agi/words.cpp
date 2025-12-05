@@ -163,6 +163,7 @@ int Words::loadExtendedDictionary(const char *sierraFname) {
 		}
 	}
 
+	_usingExtendedDictionary = true;
 	return errOK;
 }
 
@@ -253,7 +254,7 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowercase, uint
 
 	foundWordLen = 0;
 
-	const byte lastCharInAbc = _vm->getFeatures() & GF_EXTCHAR ? 0xff : 'z';
+	const byte lastCharInAbc = _usingExtendedDictionary ? 0xff : 'z';
 
 	// Words normally have to start with a letter.
 	// ENHANCEMENT: Fan games and translations include words that start with a

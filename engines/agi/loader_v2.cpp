@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 
 #include "agi/agi.h"
@@ -187,7 +188,12 @@ int AgiLoader_v2::loadObjects() {
 }
 
 int AgiLoader_v2::loadWords() {
-	if (_vm->getFeatures() & GF_EXTCHAR) {
+	bool useExtended = _vm->getFeatures() & GF_EXTCHAR;
+	if (!useExtended && ConfMan.hasKey("extended_vocabulary")) {
+		useExtended = ConfMan.getBool("extended_vocabulary");
+	}
+
+	if (useExtended) {
 		return _vm->_words->loadExtendedDictionary(WORDS);
 	} else {
 		return _vm->_words->loadDictionary(WORDS);

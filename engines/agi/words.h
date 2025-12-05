@@ -48,6 +48,8 @@ private:
 	WordEntry _egoWords[MAX_WORDS];
 	uint16  _egoWordCount;
 
+	bool _usingExtendedDictionary = false;
+
 public:
 	uint16 getEgoWordCount() const;
 	const char *getEgoWord(int16 wordNr) const;
