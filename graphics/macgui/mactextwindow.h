@@ -121,6 +121,7 @@ private:
 	WindowClick _scrollDirection;
 	uint32 _nextScrollTime;
 	uint32 _scrollDelay;
+	uint32 _nextWheelEventTime;
 	WindowClick _clickedScrollPart;
 
 	MacMenu *_menu;
