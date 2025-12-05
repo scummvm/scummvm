@@ -175,7 +175,6 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
 	debug("playMovie %s", movie.c_str());
-#if 0
 	_movie.reset(new Video::FourXMDecoder());
 	if (_movie->loadFile(Common::Path{movie})) {
 		_movie->start();
@@ -183,7 +182,6 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		_movie.reset();
 		warning("playMovie %s failed", movie.c_str());
 	}
-#endif
 }
 
 void PhoenixVREngine::resetLockKey() {
