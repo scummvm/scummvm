@@ -33,6 +33,7 @@
 #include "audio/audiostream.h"
 #include "common/endian.h"
 #include "common/ptr.h"
+#include "common/array.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -265,22 +266,24 @@ class FOURXM_ADPCMStream : public Ima_ADPCMStream {
 public:
 	FOURXM_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels)
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, 0) {
-		assert(_channels == 1 || _channels == 2);
-		for (int i = 0; i < _channels; i++)
-			_status.ima_ch[i].last = _stream->readSint16LE();
-		for (int i = 0; i < _channels; i++) {
-			auto stepIndex = _stream->readSint16LE();
-			_status.ima_ch[i].stepIndex = stepIndex;
-			if (stepIndex > 88)
-				error("invalid step index");
-		}
+		decode();
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override {
+		return !_planes.empty() && _samplePos >= _planes[0].size();
+	}
 
 	void reset() {
 		Ima_ADPCMStream::reset();
+		_samplePos = 0;
+		_planes.clear();
 	}
+private:
+	void decode();
+
+	uint _samplePos = 0;
+	Common::Array<Common::Array<int16>> _planes;
 };
 
 } // End of namespace Audio

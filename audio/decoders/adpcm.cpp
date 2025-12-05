@@ -559,23 +559,46 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 	return samp;
 }
 
-// format is planar, we expect numSamples of L channel + numSamples of R channel to follow.
-int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	int requiredSamplesPerChannel = numSamples / _channels; // each byte encode 2 samples.
-
-	auto encodedPerChannel = requiredSamplesPerChannel / 2;
+void FOURXM_ADPCMStream::decode() {
+	assert(_channels == 1 || _channels == 2);
+	for (int i = 0; i < _channels; i++)
+		_status.ima_ch[i].last = _stream->readSint16LE();
+	for (int i = 0; i < _channels; i++) {
+		auto stepIndex = _stream->readSint16LE();
+		_status.ima_ch[i].stepIndex = stepIndex;
+		if (stepIndex > 88)
+			error("invalid step index %d", stepIndex);
+	}
+	auto size = _endpos - _stream->pos();
+	_planes.resize(_channels);
+	auto encodedPerChannel = size / _channels;
 	for (int i = 0; i < _channels; ++i) {
-		int samples = i;
+		auto &plane = _planes[i];
+		plane.resize(encodedPerChannel * 2);
+		auto sample = 0;
 		for(auto s = encodedPerChannel; s--; ) {
 			byte data = _stream->readByte();
-			buffer[samples] = decodeIMA(data & 0x0f, i);
-			samples += _channels;
-			buffer[samples] = decodeIMA((data >> 4) & 0x0f, i);
-			samples += _channels;
+			plane[sample++] = decodeIMA(data & 0x0f, i);
+			plane[sample++] = decodeIMA((data >> 4) & 0x0f, i);
 		}
 	}
-	assert(_stream->pos() == _stream->size());
-	return numSamples;
+}
+
+
+// format is planar, we expect numSamples of L channel + numSamples of R channel to follow.
+int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	assert(numSamples % _channels == 0);
+	int samples = 0;
+	while(samples < numSamples) {
+		for(int c = 0; c != _channels; ++c) {
+			auto &plane = _planes[c];
+			if (_samplePos >= plane.size())
+				return samples;
+			buffer[samples++] = plane[_samplePos];
+		}
+		++_samplePos;
+	}
+	return samples;
 }
 
 
