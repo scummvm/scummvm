@@ -71,6 +71,7 @@ void MacTextWindow::init() {
 	_textColorRGB = 0;
 
 	_scrollDirection = kBorderNone;
+	_clickedScrollPart = kBorderNone;
 	_nextScrollTime = 0;
 	_scrollDelay = 50;
 
@@ -298,6 +299,28 @@ void MacTextWindow::calcScrollBar() {
 bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_clickedScrollPart == kBorderScrollUp || _clickedScrollPart == kBorderScrollDown) {
+			if (click == _clickedScrollPart) {
+				// we are on the bar, so keep scrolling 
+				if (_scrollDirection != _clickedScrollPart) {
+					_scrollDirection = _clickedScrollPart;
+					setHighlight(_clickedScrollPart);
+					calcScrollBar();
+				}
+			} else {
+				// we moved away from the bar, pause scrolling
+				if (_scrollDirection != kBorderNone) {
+					_scrollDirection = kBorderNone;
+					setHighlight(kBorderNone);
+					calcScrollBar();
+					setScroll(0, 0);
+				}
+			}
+			return true;
+		}
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN) {
 		if (!_editable)
 			return false;
@@ -364,11 +387,13 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			setHighlight(click);
 			_scrollDirection = click;
+			_clickedScrollPart = click;
 			calcScrollBar();
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
 			// reset scrolling state
 			_scrollDirection = kBorderNone;
+			_clickedScrollPart = kBorderNone;
 			setHighlight(kBorderNone);
 			// hide the scroll bar
 			setScroll(0, 0);
@@ -376,6 +401,14 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		}
 
 		return false;
+	}
+
+	if (event.type == Common::EVENT_LBUTTONUP && _clickedScrollPart != kBorderNone) {
+		_scrollDirection = kBorderNone;
+		_clickedScrollPart = kBorderNone;
+		setHighlight(kBorderNone);
+		setScroll(0, 0);
+		return true;
 	}
 
 	if (click == kBorderInner) {
