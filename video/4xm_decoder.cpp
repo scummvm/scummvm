@@ -52,11 +52,15 @@ class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
 	uint _audioChannels;
 	uint _sampleRate;
 	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
+	Common::ScopedPtr<Audio::AudioStream> _adpcm;
+	Common::MemoryReadWriteStream _bitStream;
 
 public:
 	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
-																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
+																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)), _bitStream(DisposeAfterUse::YES) {
 	}
+
+	byte getAudioType() const { return _audioType; }
 
 	void decode(uint32 tag, byte *buf, uint size) {
 		if (_audioType == 0) {
@@ -65,6 +69,22 @@ public:
 			if (_audioChannels > 1)
 				flags |= Audio::FLAG_STEREO;
 			_output->queueBuffer(buf, size, DisposeAfterUse::YES, flags);
+		} else if (_audioType == 1) {
+			_bitStream.write(buf, size);
+			auto header = 0;
+			if (!_adpcm) {
+				_adpcm.reset(Audio::makeADPCMStream(&_bitStream, DisposeAfterUse::NO, 0, Audio::ADPCMType::kADPCM4XM, _sampleRate, _audioChannels));
+				header += _audioChannels * 4;
+			}
+			size -= header;
+			auto numSamples = size * 2;
+			void *samples = malloc(numSamples * sizeof(int16));
+			_adpcm->readBuffer(static_cast<int16 *>(samples), numSamples);
+			byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+			if (_audioChannels > 1)
+				flags |= Audio::FLAG_STEREO;
+			_output->queueBuffer(static_cast<byte *>(samples), numSamples * 2, DisposeAfterUse::YES, flags);
+			free(buf);
 		} else {
 			free(buf);
 			warning("unsupported audio type %u", _audioType);
@@ -155,14 +175,33 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		};
 		switch (tag) {
 		case MKTAG('s', 'n', 'd', '_'): {
-			uint offset = 0;
-			while (offset < size) {
+			if (!_audio)
+				error("no audio track but got sound frame");
+			switch (_audio->getAudioType()) {
+			case 0: {
+				uint offset = 0;
+				while (offset < size) {
+					auto trackIdx = _stream->readUint32LE();
+					auto packetSize = _stream->readUint32LE();
+					if (trackIdx == 0 && _audio) {
+						_audio->decode(tag, loadBuf(packetSize), packetSize);
+					} else {
+						_stream->skip(packetSize);
+						offset += packetSize + 8;
+					}
+				}
+			} break;
+			case 1: {
 				auto trackIdx = _stream->readUint32LE();
-				auto packetSize = _stream->readUint32LE();
+				_stream->skip(4);
 				if (trackIdx == 0 && _audio) {
-					_audio->decode(tag, loadBuf(packetSize), packetSize);
-				} else
-					offset += packetSize + 8;
+					_audio->decode(tag, loadBuf(size - 8), size - 8);
+				} else {
+					_stream->skip(size - 8);
+				}
+			} break;
+			default:
+				warning("unknown audio type");
 			}
 		} break;
 		case MKTAG('i', 'f', 'r', 'm'):
