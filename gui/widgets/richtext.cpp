@@ -261,7 +261,11 @@ void RichTextWidget::drawWidget() {
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	_surface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
+	uint32 themedBg = g_gui.xmlEval()->getVar("Globals.RichTextWidget.BgColor", 0);
+	uint32 fallbackBg = g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
+	uint32 bg = themedBg ? themedBg : fallbackBg;
+
+	_surface->clear(bg);
 
 	if (_cachedTextSurface) {
     	int cachedHeight = _cachedTextSurface->h;
