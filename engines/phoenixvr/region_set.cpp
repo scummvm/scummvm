@@ -36,13 +36,13 @@ RegionSet::RegionSet(const Common::String &fname) {
 		auto b = file.readFloatLE();
 		auto c = file.readFloatLE();
 		auto d = file.readFloatLE();
-		debug("region %g %g %g %g", a, b, c, d);
-		_regions.push_back(Region{a, b, c, d});
+		_regions.push_back(Region{MIN(a, b), MAX(a, b), MIN(c, d), MAX(c, d)});
+		debug("region %s", _regions.back().toString().c_str());
 	}
 }
 
 Common::String Region::toString() const {
-	return Common::String::format("%g-%g, %g-%g", a, b, c, d);
+	return Common::String::format("{ x: %g,%g, y:%g,%g }", a, b, c, d);
 }
 
 RectF Region::toRect() const {
