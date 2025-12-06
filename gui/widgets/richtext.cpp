@@ -261,11 +261,10 @@ void RichTextWidget::drawWidget() {
     	int srcY = CLIP((int)_scrolledY, 0, maxY);
 
     	_surface->blitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth, MIN(srcY + _textHeight, cachedHeight)), Common::Point(0, 0));
+	} else {
+    	_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
 	}
-	else {
-    _txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
-	}
-
+	
 	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_FULL);
 }
 
