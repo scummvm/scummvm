@@ -139,6 +139,35 @@ typedef struct PhoneInfo {
 	Common::Array<Common::String> sounds;
 } PhoneInfo;
 
+typedef struct RadioClip {
+	Common::String name;
+	bool played;
+	int priority;
+	int disabledPriority1; // 0 == none
+	bool exactPriorityMatch1;
+	int disabledPriority2; // 0 == none
+	bool exactPriorityMatch2;
+	Common::String flagName;
+	int flagValue;
+} RadioClip;
+
+typedef struct Radio {
+	Common::String path;
+	Common::Array<RadioClip> clips;
+	int channels[3];
+
+	Radio() {
+		clear();
+	}
+
+	void clear() {
+		clips.clear();
+		for (uint i = 0; i < ARRAYSIZE(channels); i++) {
+			channels[i] = -1;
+		}
+	}
+} Radio;
+
 typedef struct DossierInfo {
 	Common::String page1;
 	Common::String page2;
@@ -181,7 +210,6 @@ extern const FuncTable funcTable[];
 
 typedef Common::List<ExitInfo> ExitList;
 typedef Common::List<MaskInfo> MaskList;
-typedef Common::List<Common::String> SoundList;
 typedef Common::List<PhoneInfo> PhoneList;
 typedef Common::List<InventoryItem> InvList;
 typedef Common::List<Common::Rect *> RectList;
@@ -426,11 +454,19 @@ public:
 	Common::String _sirenSound;
 
 	// Radios
-	Common::String _infaceRadioPath;
 	MaskInfo _AMRadioArea;
 	MaskInfo _policeRadioArea;
-	SoundList _AMRadio;
-	SoundList _policeRadio;
+	Radio _AMRadio;
+	Radio _policeRadio;
+	void addRadioClip(
+		Radio &radio, const Common::String &name, int priority,
+		int disabledPriority1, bool exactPriorityMatch1,
+		int disabledPriority2, bool exactPriorityMatch2,
+		const Common::String &flagName, int flagValue);
+	void initializeAMRadioChannels(uint clipCount);
+	void initializePoliceRadioChannels();
+	void disableRadioClips(Radio &radio, int priority);
+	void playRadio(Radio &radio, bool randomlyDisableClips);
 	void selectAMRadioArea(Common::Point);
 	void selectPoliceRadioArea(Common::Point);
 
