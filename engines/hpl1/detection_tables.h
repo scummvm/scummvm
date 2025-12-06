@@ -36,7 +36,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "43c33c142b18268c9e98d4c5a6d911b7", 2727936),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -47,7 +47,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "f840b972ee889200ba501ee3a465317e", 2744320),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -58,7 +58,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.app/Contents/MacOS/Penumbra", "e893ccac7b311ab1559890837aa131b0", 8234848),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -69,7 +69,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.app/Contents/MacOS/Penumbra", "18d91c220e3461f2f7cf257009068416", 8468352),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -80,7 +80,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.app/Contents/MacOS/Penumbra", "1fcca1c15ac595c84c49c01692b90c0d", 17446384),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -91,7 +91,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("PenumbraDemo.app/Contents/MacOS/PenumbraDemo", "656342216967baaaa80eb413d5c93b29", 16203948),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformMacintosh,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO0()
 	},
 
@@ -102,7 +102,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("PenumbraDemo.app/Contents/MacOS/PenumbraDemo", "c898d408859f80d260dbe0bd312c3acf", 17402172),
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformMacintosh,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO0()
 	},
 
@@ -114,7 +114,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "202990aa064ae67a675e2b187384036a", 2736128),
 		Common::Language::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -125,7 +125,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "384e33ddc55f51debca07b6538087e75", 3104768),
 		Common::Language::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -136,7 +136,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("penumbra.bin", "41950a7597b7d9976f77a73a43e8871d", 6301460),
 		Common::Language::EN_ANY,
 		Common::kPlatformLinux,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -148,7 +148,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "7b216d6bfdf2dc8f2a1371ee3565bb6f", 2363392),
 		Common::Language::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 

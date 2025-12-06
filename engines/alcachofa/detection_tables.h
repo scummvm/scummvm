@@ -40,7 +40,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+			ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
@@ -55,7 +55,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_PIRATED,
+			ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_PIRATED,
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
@@ -67,7 +67,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Textos/Objetos.nkr", "8dce25494470209d4882bf12f1a5ea42", 19208),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_DEMO,
+			ADGF_USEEXTRAASTITLE | ADGF_REMASTERED | ADGF_DEMO,
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
@@ -82,7 +82,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Textos/Objetos.nkr", "ad3cb78ad7a51cfe63ee6f84768c7e66", 15895),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+			ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
@@ -95,7 +95,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Textos/Objetos.nkr", "93331e4cc8d2f8f8a0007bfb5140dff5", 16403),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
+			ADGF_USEEXTRAASTITLE | ADGF_REMASTERED,
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
