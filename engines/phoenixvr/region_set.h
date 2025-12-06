@@ -37,9 +37,10 @@ struct Region {
 	}
 	RectF toRect() const;
 	Common::String toString() const;
-	bool contains(float angleX, float angleY) const;
-	bool contains(const PointF &p) const {
-		return contains(p.x, p.y);
+	bool contains3D(float angleX, float angleY) const;
+	bool contains3D(PointF p) const { return contains3D(p.x, p.y); }
+	bool contains2D(float x, float y) const {
+		return toRect().contains(x, y);
 	}
 };
 

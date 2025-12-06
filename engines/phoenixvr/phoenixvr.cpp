@@ -287,7 +287,7 @@ void PhoenixVREngine::tick(float dt) {
 		static const float kSpeedY = 0.2f;
 		_angleX.add(float(da.x) * kSpeedX * dt);
 		_angleY.add(float(da.y) * kSpeedY * dt);
-		debug("angle %g %g", _angleX.angle(), _angleY.angle());
+		debug("angle %g %g -> %s", _angleX.angle(), _angleY.angle(), currentVRPos().toString().c_str());
 	}
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
@@ -353,8 +353,9 @@ void PhoenixVREngine::tick(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
 
 	Graphics::Surface *cursor = nullptr;
-	for (auto &c : _cursors) {
-		if (_vr.isVR() ? c.region.contains(currentVRPos()) : c.region.contains(_mousePos.x, _mousePos.y)) {
+	for (uint i = 0; i != _cursors.size(); ++i) {
+		auto &c = _cursors[i];
+		if (_vr.isVR() ? c.region.contains3D(currentVRPos()) : c.region.contains2D(_mousePos.x, _mousePos.y)) {
 			cursor = c.surface;
 			if (!cursor)
 				cursor = _defaultCursor[1].surface;
@@ -422,7 +423,7 @@ Common::Error PhoenixVREngine::run() {
 
 				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
 					auto &cur = _cursors[i];
-					if (_vr.isVR() ? cur.region.contains(vrPos) : cur.region.contains(event.mouse.x, event.mouse.y)) {
+					if (_vr.isVR() ? cur.region.contains3D(vrPos) : cur.region.contains2D(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 						break;

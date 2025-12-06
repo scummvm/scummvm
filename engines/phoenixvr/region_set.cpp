@@ -54,12 +54,32 @@ RectF Region::toRect() const {
 	return rect;
 }
 
-bool Region::contains(float angleX, float angleY) const {
-	bool containsX = (a < b) ? angleX >= a && angleX < b : angleX < a || angleX >= b;
-	if (!containsX)
-		return false;
-	bool containsY = (c < d) ? angleY >= c && angleY < d : angleY < c || angleY >= d;
-	return containsY;
+bool Region::contains3D(float angleX, float angleY) const {
+	static const float kPI2 = 2 * M_PI;
+	float x0 = a, x1 = b;
+	float y0 = c, y1 = d;
+	if (x1 - x0 > M_PI) {
+		float t = x0 + kPI2;
+		x0 = x1;
+		x1 = t;
+	}
+	if (y1 - y0 > M_PI) {
+		float t = y0 + kPI2;
+		y0 = y1;
+		y1 = t;
+	}
+	float ax_pi2 = angleX + kPI2;
+	if ((angleX >= x0 && angleX <= x1) || (ax_pi2 >= x0 && ax_pi2 <= x1)) {
+		if (angleY >= y0 && angleY <= y1)
+			return true;
+
+		float ay_pi2 = angleY + kPI2;
+		if (ay_pi2 < y0)
+			return false;
+		if (ay_pi2 <= y1)
+			return true;
+	}
+	return false;
 }
 
 } // namespace PhoenixVR
