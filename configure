@@ -668,13 +668,7 @@ get_system_exe_extension() {
 		_exeext=".exe"
 		;;
 	mint)
-		if test "$_backend" = "atari"; then
-			# ATARI backend
-			_exeext=".ttp"
-		else
-			# SDL backend
-			_exeext=".gtp"
-		fi
+		_exeext=".prg"
 		;;
 	emscripten)
 		_exeext=".html"
@@ -3435,7 +3429,6 @@ EOF
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var DEFINES "-D_GNU_SOURCE"
-		append_var DEFINES "-D_ISOC11_SOURCE"
 		;;
 	morphos*)
 		if test "$_debug_build" = no; then
@@ -3853,8 +3846,39 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-Wl,--msuper-memory"
 			append_var LDFLAGS "-Wl,--stack,256k"
 
+			# common defines for atari and firebee/sdl backends
+			_sdlnet=no
+			_libcurl=no
+			_enet=no
+			_flac=no
+			_alsa=no
 			_seq_midi=no
+			_sndio=no
 			_timidity=no
+			_mpeg2=no
+			_a52=no
+			_vpx=no
+			_faad=no
+			_fluidsynth=no
+			_fluidlite=no
+			_sonivox=no
+			_opengl_mode=none
+			_tinygl=no
+			_tts=no
+			_fribidi=no
+			_discord=no
+			_text_console=yes # USE_TEXT_CONSOLE_FOR_DEBUGGER
+			_mt32emu=no
+			_lua=no
+			_build_hq_scalers=no
+			_cloud=no
+			_curl=no
+			_translation=no
+			_lua=no
+			_sid_audio=no
+			_tinygl=no
+			_nuked_opl=no
+			_detection_features_full=no
 			;;
 		maemo)
 			_optimization_level=-Os
@@ -4163,7 +4187,21 @@ case $_backend in
 		append_var DEFINES "-DDISABLE_NES_APU"
 		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lgem"
-		_sid_audio=no
+		_ogg=no
+		_vorbis=no
+		_tremor=no
+		_mad=no
+		_jpeg=no
+		_png=no
+		_gif=no
+		_theoradec=no
+		_readline=no
+		_freetype2=no
+		_libmikmod=no
+		_libopenmpt=no
+		_libmpcdec=no
+		_build_scalers=no
+		_build_aspect=no
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
@@ -4729,7 +4767,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dc | ds | emscripten |ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
+	3ds | android | dc | ds | emscripten | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
