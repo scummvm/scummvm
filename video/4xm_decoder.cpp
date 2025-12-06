@@ -29,6 +29,7 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
+#include "video/4xm_utils.h"
 
 namespace Video {
 
@@ -137,11 +138,20 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
 	stream->skip(4);
 	auto bitstreamSize = stream->readUint32LE();
+	auto bitstreamPos = stream->pos();
 	stream->skip(bitstreamSize);
 	auto prefixSize = stream->readUint32LE();
 	auto tokenCount = stream->readUint32LE();
 	debug("i-frame, bitstream: %u, prefix stream: %u, tokens: %u", bitstreamSize, prefixSize, tokenCount);
-	stream->skip(prefixSize * 4);
+
+	Common::Array<byte> prefixStream(prefixSize * 4);
+	stream->read(prefixStream.data(), prefixStream.size());
+	assert(stream->pos() == stream->size());
+
+	Common::hexdump(prefixStream.data(), prefixStream.size());
+	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size());
+	debug("decoded %u bytes", prefixData.size());
+	Common::hexdump(prefixData.data(), prefixData.size());
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {

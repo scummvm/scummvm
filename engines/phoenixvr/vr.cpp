@@ -33,6 +33,7 @@
 #include "phoenixvr/dct.h"
 #include "phoenixvr/dct_tables.h"
 #include "phoenixvr/phoenixvr.h"
+#include "video/4xm_utils.h"
 
 namespace PhoenixVR {
 
@@ -77,136 +78,9 @@ struct Quantisation {
 	}
 };
 
-struct HuffChar {
-	short next;
-	short falseIdx;
-	short trueIdx;
-};
-
-class BitStream {
-	const byte *_data;
-	uint _bytePos;
-	byte _bitMask;
-
-public:
-	BitStream(const byte *data, uint bytePos) : _data(data), _bytePos(bytePos), _bitMask(0x80) {}
-
-	uint getBytePos() const {
-		return _bytePos;
-	}
-
-	bool readBit() {
-		bool bit = _data[_bytePos] & _bitMask;
-		_bitMask >>= 1;
-		if (_bitMask == 0) {
-			_bitMask = 128;
-			++_bytePos;
-		}
-		return bit;
-	}
-
-	int readUInt(byte n) {
-		int value = 0;
-		for (int i = 0; i != n; ++i) {
-			if (readBit())
-				value |= 1 << i;
-		}
-		return value;
-	}
-
-	int readInt(byte n) {
-		int value = readUInt(n);
-		if ((value & (1 << (n - 1))) == 0)
-			value += 1 - (1 << n);
-		return value;
-	}
-
-	void alignToByte() {
-		if (_bitMask != 0x80) {
-			_bitMask = 128;
-			++_bytePos;
-		}
-	}
-};
-
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
-	HuffChar table[514] = {};
-	uint offset = 0;
-	uint8 codebyte = huff[offset++];
-	do {
-		uint8 next = huff[offset++];
-		if (codebyte <= next) {
-			for (auto idx = codebyte; idx <= next; ++idx) {
-				table[idx].next = huff[offset++];
-			}
-		}
-		codebyte = huff[offset++];
-	} while (codebyte != 0);
-	table[256].next = 1;
-	table[513].next = 0x7FFF;
-
-	short startEntry;
-	short codeIdx = 257, nIdx = 257;
-	while (true) {
-		short idx = 0, dstIdx = 0;
-		short trueIdx = 513, falseIdx = 513;
-		short nextLo = 513, nextHi = 513;
-		while (idx < nIdx) {
-			auto next = table[dstIdx].next;
-			if (next != 0) {
-				if (next >= table[nextLo].next) {
-					if (next < table[nextHi].next) {
-						trueIdx = idx;
-						nextHi = dstIdx;
-					}
-				} else {
-					trueIdx = falseIdx;
-					nextHi = nextLo;
-					falseIdx = idx;
-					nextLo = dstIdx;
-				}
-			}
-			++idx;
-			++dstIdx;
-		}
-		if (trueIdx == 513) {
-			startEntry = nIdx - 1;
-			break;
-		}
-		table[codeIdx].next = table[falseIdx].next + table[trueIdx].next;
-		table[falseIdx].next = table[trueIdx].next = 0;
-		table[codeIdx].falseIdx = falseIdx;
-		table[codeIdx].trueIdx = trueIdx;
-		++codeIdx;
-		++nIdx;
-	}
-	Common::Array<byte> decoded;
-	decoded.reserve(huffSize);
-	{
-		BitStream bs(huff, offset);
-		while (true) {
-			short value = startEntry;
-			while (value > 256) {
-				auto bit = bs.readBit();
-				if (bit)
-					value = table[value].trueIdx;
-				else
-					value = table[value].falseIdx;
-			}
-			if (value == 256)
-				break;
-			decoded.push_back(static_cast<byte>(value));
-		}
-		bs.alignToByte();
-		offset = bs.getBytePos();
-	}
-	debug("decoded %u bytes at %08x", decoded.size(), offset);
-	return decoded;
-}
-
 void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
 	Quantisation quant(quality);
-	auto decoded = unpackHuffman(huff, huffSize);
+	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 
@@ -214,7 +88,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	const uint planeSize = planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
-	BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
+	Video::FourXM::BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	while (decodedOffset < decoded.size()) {
