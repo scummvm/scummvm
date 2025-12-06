@@ -220,6 +220,14 @@ Common::String joinStrings(const Common::Array<Common::String> &strings, const C
 	}
 	return result;
 }
+void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color) {
+	if (x < 640 && y < 400 && x >= 0 && y >= 0) {
+		surface->setPixel(x, y, 100);
+
+		surface->drawEllipse(x - 3, y - 3, x+3, y+3, color, true);
+	}
+}
+
 char32_t decodeCPByte(byte b) {
 	return cp437_to_unicode[b];
 }

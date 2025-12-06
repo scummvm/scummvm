@@ -223,12 +223,14 @@ void PelrockEngine::loadAnims() {
 void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
 	int overlayHeight = choices.size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
-	// debug("Displaying choices overlay at y=%d, height=%d", overlayY, overlayHeight);
 	for (int x = 0; x < 640; x++) {
 		for (int y = overlayY; y < 400; y++) {
 			int index = y * 640 + x;
 			compositeBuffer[index] = _room->overlayRemap[compositeBuffer[index]];
 		}
+	}
+	for (int i = 0; i < choices.size(); i++) {
+		drawText(choices[i], 10, overlayY + 2 + i * kChoiceHeight, 620, 15);
 	}
 }
 
@@ -304,11 +306,6 @@ void PelrockEngine::frames() {
 			Sprite &animSet = _room->_currentRoomAnims[i];
 			drawNextFrame(&animSet);
 		}
-		// if(alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
-		// 	alfredState.animState = alfredState.nextState;
-		// 	alfredState.nextState = ALFRED_IDLE;
-		// 	alfredState.curFrame = 0;
-		// }
 
 		switch (alfredState.animState) {
 		case ALFRED_WALKING: {
@@ -449,25 +446,10 @@ void PelrockEngine::frames() {
 			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
 			_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
 		}
-		if (_curWalkTarget.x < 640 && _curWalkTarget.y < 400 && _curWalkTarget.x >= 0 && _curWalkTarget.y >= 0) {
-			_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y, 100);
-			if (_curWalkTarget.x - 1 > 0 && _curWalkTarget.y - 1 > 0)
-				_screen->setPixel(_curWalkTarget.x - 1, _curWalkTarget.y - 1, 100);
-			if (_curWalkTarget.x - 1 > 0 && _curWalkTarget.y + 1 < 400)
-				_screen->setPixel(_curWalkTarget.x - 1, _curWalkTarget.y + 1, 100);
-			if (_curWalkTarget.x + 1 < 640 && _curWalkTarget.y - 1 > 0)
-				_screen->setPixel(_curWalkTarget.x + 1, _curWalkTarget.y - 1, 100);
-			if (_curWalkTarget.x + 1 < 640 && _curWalkTarget.y + 1 < 400)
-				_screen->setPixel(_curWalkTarget.x + 1, _curWalkTarget.y + 1, 100);
-			if (_curWalkTarget.x - 2 > 0)
-				_screen->setPixel(_curWalkTarget.x - 2, _curWalkTarget.y, 100);
-			if (_curWalkTarget.x + 2 < 640)
-				_screen->setPixel(_curWalkTarget.x + 2, _curWalkTarget.y, 100);
-			if (_curWalkTarget.y - 2 > 0)
-				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y - 2, 100);
-			if (_curWalkTarget.y + 2 < 400)
-				_screen->setPixel(_curWalkTarget.x, _curWalkTarget.y + 2, 100);
-		}
+
+		drawPos(_screen, alfredState.x, alfredState.y, 13);
+		drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
+
 
 		if (showShadows) {
 			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);

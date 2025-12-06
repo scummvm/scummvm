@@ -43,6 +43,7 @@ void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byt
 void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
 Common::String printMovementFlags(uint8_t flags);
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
+void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 static const char32_t cp437_to_unicode[256] = {
     // 0x00 - 0x7F: ASCII (unchanged)
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
