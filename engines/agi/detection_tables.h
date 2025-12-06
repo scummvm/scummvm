@@ -855,6 +855,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "updated", "d24f19b047e65e1763eff4b46f3d50df", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
 
+	// Space Quest 2 (Hebrew) 2.0F
+	// Based on English version from GOG
+	GAME_LVFPN("sq2", "", "logdir", "5f73ab13808a260d777d0002c70b967c", 423, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// Troll's Tale (PC Booter)
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformDOS),
 
