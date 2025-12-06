@@ -64,7 +64,8 @@ MODULE_OBJS := \
 	softsynth/appleiigs.o \
 	softsynth/fluidsynth.o \
 	softsynth/eas.o \
-	softsynth/pcspk.o
+	softsynth/pcspk.o \
+	softsynth/ay8912.o
 
 ifndef DISABLE_NUKED_OPL
 MODULE_OBJS += \
