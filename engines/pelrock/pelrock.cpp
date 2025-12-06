@@ -323,7 +323,7 @@ void PelrockEngine::frames() {
 
 		// First pass: sprites behind Alfred (y <= alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			if (_room->_currentRoomAnims[i].y < (alfredY - kAlfredFrameHeight)) {
+			if (_room->_currentRoomAnims[i].zOrder > 10) {
 				debug("Drawing sprite %d in front of Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
 
 				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
@@ -336,7 +336,7 @@ void PelrockEngine::frames() {
 
 		// Second pass: sprites in front of Alfred (y > alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			if (_room->_currentRoomAnims[i].y > (alfredY - kAlfredFrameHeight)) {
+			if (_room->_currentRoomAnims[i].zOrder <= 10) {
 				debug("Drawing sprite %d behind Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
 				drawNextFrame(&_room->_currentRoomAnims[i]);
 				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
