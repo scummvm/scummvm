@@ -220,4 +220,7 @@ Common::String joinStrings(const Common::Array<Common::String> &strings, const C
 	}
 	return result;
 }
+char32_t decodeCPByte(byte b) {
+	return cp437_to_unicode[b];
+}
 } // End of namespace Pelrock

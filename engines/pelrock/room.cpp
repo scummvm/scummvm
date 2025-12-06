@@ -370,24 +370,20 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 			pos += 3;
 			description.index = data[pos++];
 			description.text = "";
-			// debug("Found description terminator");
+
 			while (pos < (pair12_size) && data[pos] != 0xFD && pos < (pair12_size)) {
-				// debug(" char: %c", data[pos]);
+
 				if (data[pos] != 0x00) {
-					description.text.append(1, (char)data[pos]);
+					// debug("Description char byte: 0x%02X", data[pos]);
+					description.text.append(1, decodeCPByte((byte)data[pos]));
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
-					// debug("Found action trigger: %d", description.actionTrigger);
 					pos += 2;
 					break;
 				}
-				// desc[desc_pos++] = (char)data[pos];
-				// debug("Current desc: %s", desc);
 				pos++;
 			}
-			// debug("Found description for item %d index %d, text: %s", description.itemId, description.index, description.text.c_str());
-
 			descriptions.push_back(description);
 			lastDescPos = pos;
 		}

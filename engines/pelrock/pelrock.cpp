@@ -412,9 +412,11 @@ void PelrockEngine::frames() {
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
-		if (alfredState.animState == ALFRED_TALKING && !_currentTextPages.empty()) {
+		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
 			if (_chronoManager->_textTtl > 0) {
-				_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
+				if(alfredState.animState == ALFRED_TALKING) {
+					_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
+				}
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
 			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
 				_currentTextPageIndex++;
@@ -937,7 +939,7 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 		curFrame = 0;
 	}
 	byte *frame = index ? animHeader->animB[curFrame] : animHeader->animA[curFrame];
-	debug("Talking NPC frame %d/%d, x=%d, y=%d, w=%d, h=%d", curFrame, numFrames, x, y, w, h);
+	// debug("Talking NPC frame %d/%d, x=%d, y=%d, w=%d, h=%d", curFrame, numFrames, x, y, w, h);
 
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
 }
@@ -1414,7 +1416,8 @@ void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
 		totalChars += _currentTextPages[0][i].size();
 	}
-	_textPos = Common::Point(anim->x, anim->y - anim->h - 10);
+	debug("Settijng textpos to %d, %d", anim->x, anim->y - 10);
+	_textPos = Common::Point(anim->x, anim->y - 10);
 	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
 }
 
