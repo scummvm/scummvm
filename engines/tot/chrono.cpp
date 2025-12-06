@@ -35,7 +35,7 @@ ChronoManager::~ChronoManager() {
 void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
-	if ((currentTime - _lastTick) >= kTickMs / _speedMultiplier) {
+	if ((currentTime - _lastTick) >= static_cast<uint32>(kTickMs / _speedMultiplier)) {
 		_gameTick = true;
 		_tickCount++;
 		if (_tickCount == kHalfTickMultiplier) {

@@ -537,7 +537,7 @@ void VideoPlayer::updateLive(bool force, int exceptSlot) {
 		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
 				i >= 0 &&
 				i < kVideoSlotWithCurFrameVarCount)
-			WRITE_VAR(53 + i, -1);
+			WRITE_VAR(53 + i, (uint32)-1);
 
 		if (i != exceptSlot)
 			updateLive(i, force);

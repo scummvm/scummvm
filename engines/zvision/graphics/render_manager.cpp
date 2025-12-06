@@ -119,7 +119,7 @@ void RenderManager::initialize(bool hiRes) {
 		debugC(1, kDebugGraphics, "Switching to standard resolution");
 #endif
 	_screen.create(_screenArea.width(), _screenArea.height(), _engine->_screenPixelFormat);
-	_screen.setTransparentColor(-1);
+	_screen.setTransparentColor((uint32)-1);
 	_screen.clear();
 
 	debugC(1, kDebugGraphics, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
@@ -227,10 +227,10 @@ bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool p
 		return false;
 	} else {
 		debugC(5, kDebugGraphics, "Rendering menu");
-		_menuManagedSurface.transBlitFrom(_menuSurface, -1);
+		_menuManagedSurface.transBlitFrom(_menuSurface, (uint32)-1);
 		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		debugC(5, kDebugGraphics, "Rendering text");
-		_textManagedSurface.transBlitFrom(_textSurface, -1);
+		_textManagedSurface.transBlitFrom(_textSurface, (uint32)-1);
 		debugC(5, kDebugGraphics, "\tCumulative render time this frame: %d ms", _system->getMillis() - startTime);
 		if (immediate) {
 			_frameLimiter.startFrame();

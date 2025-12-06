@@ -1132,7 +1132,7 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 			return;
 		}
 		// Create mask using alpha values
-		for (uint x = 0; x < _blockW * _blockH; ++x) {
+		for (uint x = 0; x < static_cast<uint>(_blockW * _blockH); ++x) {
 			// Extract alpha value
 			// We XOR it with 1 to invert and get an actual alpha value
 			mask[x] = (byte)(READ_UINT16(src_p + x) >> 15) ^ 0x01;
