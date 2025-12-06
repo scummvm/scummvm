@@ -37,6 +37,7 @@ class ScrollBarWidget;
 /* RichTextWidget */
 class RichTextWidget : public Widget, public CommandSender {
 protected:
+	Graphics::ManagedSurface *_cachedTextSurface = nullptr;
 	Graphics::MacText *_txtWnd = nullptr;
 	Graphics::ManagedSurface *_surface = nullptr;
 	Common::U32String _text;
@@ -50,6 +51,8 @@ protected:
 	uint16 _limitH;
 	int _textWidth;
 	int _textHeight;
+	int _cachedTextHeight = 0;
+
 
 	Common::Path _imageArchive;
 
