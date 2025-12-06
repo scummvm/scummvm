@@ -128,7 +128,7 @@ void PhoenixVREngine::setCursor(const Common::String &path, const Common::String
 	}
 	cursor.free();
 	cursor.surface = loadSurface(path);
-	cursor.rect = rect;
+	cursor.region = reg;
 }
 
 void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
@@ -223,7 +223,7 @@ void PhoenixVREngine::Cursor::free() {
 		delete surface;
 		surface = nullptr;
 	}
-	rect.setEmpty();
+	region.setEmpty();
 }
 
 void PhoenixVREngine::executeTest(int idx) {
@@ -341,7 +341,7 @@ void PhoenixVREngine::tick(float dt) {
 
 		_cursors.resize(_regSet->size());
 		for (uint i = 0; i != _regSet->size(); ++i) {
-			_cursors[i].rect = _regSet->getRegion(i).toRect();
+			_cursors[i].region = _regSet->getRegion(i);
 		}
 
 		Script::ExecutionContext ctx;
@@ -354,7 +354,7 @@ void PhoenixVREngine::tick(float dt) {
 
 	Graphics::Surface *cursor = nullptr;
 	for (auto &c : _cursors) {
-		if (_vr.isVR() ? c.rect.contains(currentVRPos()) : c.rect.contains(_mousePos.x, _mousePos.y)) {
+		if (_vr.isVR() ? c.region.contains(currentVRPos()) : c.region.contains(_mousePos.x, _mousePos.y)) {
 			cursor = c.surface;
 			if (!cursor)
 				cursor = _defaultCursor[1].surface;
@@ -422,8 +422,8 @@ Common::Error PhoenixVREngine::run() {
 					debug("click %s", _mousePos.toString().c_str());
 
 				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
-					auto &rect = _cursors[i].rect;
-					if (_vr.isVR() ? rect.contains(vrPos) : rect.contains(event.mouse.x, event.mouse.y)) {
+					auto &cur = _cursors[i];
+					if (_vr.isVR() ? cur.region.contains(vrPos) : cur.region.contains(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 						break;

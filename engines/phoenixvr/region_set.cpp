@@ -50,4 +50,12 @@ RectF Region::toRect() const {
 	return rect;
 }
 
+bool Region::contains(float angleX, float angleY) const {
+	bool containsX = (a < b) ? angleX >= a && angleX < b : angleX < a || angleX >= b;
+	if (!containsX)
+		return false;
+	bool containsY = (c < d) ? angleY >= c && angleY < d : angleY < c || angleY >= d;
+	return containsY;
+}
+
 } // namespace PhoenixVR

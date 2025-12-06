@@ -129,8 +129,8 @@ public:
 	uint numCursors() const {
 		return _cursors.size();
 	}
-	const RectF *getCursorRect(uint idx) const {
-		return idx < _cursors.size() ? &_cursors[idx].rect : nullptr;
+	const Region *getCursorRegion(uint idx) const {
+		return idx < _cursors.size() ? &_cursors[idx].region : nullptr;
 	}
 
 	void resetLockKey();
@@ -175,7 +175,7 @@ private:
 	Common::ScopedPtr<Video::VideoDecoder> _movie;
 
 	struct Cursor {
-		RectF rect;
+		Region region;
 		Graphics::Surface *surface = nullptr;
 		void free();
 	};

@@ -32,7 +32,14 @@ class String;
 namespace PhoenixVR {
 struct Region {
 	float a, b, c, d;
+	void setEmpty() {
+		a = b = c = d = 0;
+	}
 	RectF toRect() const;
+	bool contains(float angleX, float angleY) const;
+	bool contains(const PointF &p) const {
+		return contains(p.x, p.y);
+	}
 };
 
 class RegionSet {
