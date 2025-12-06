@@ -258,7 +258,7 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 }
 
 Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
-	if(hotspot == nullptr) {
+	if (hotspot == nullptr) {
 		return Common::Array<VerbIcon>();
 	}
 	Common::Array<VerbIcon> verbs;
@@ -288,6 +288,20 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	return verbs;
 }
 
+// Sort sprites by zOrder in-place using insertion sort (efficient for nearly-sorted data)
+void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
+	for (size_t i = 1; i < anims.size(); ++i) {
+		Sprite key = anims[i];
+		int z = key.zOrder;
+		size_t j = i;
+		while (j > 0 && anims[j - 1].zOrder > z) {
+			anims[j] = anims[j - 1];
+			--j;
+		}
+		anims[j] = key;
+	}
+}
+
 void PelrockEngine::frames() {
 
 	if (_chronoManager->_gameTick) {
@@ -298,100 +312,41 @@ void PelrockEngine::frames() {
 			_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
 		}
 
+		// Sort sprites by zOrder (persists in the array)
+		sortAnimsByZOrder(_room->_currentRoomAnims);
+
 		memcpy(_compositeBuffer, _currentBackground, 640 * 400);
 
-		// debug("Game tick!");
+		// Create temporary render order partitioned by Alfred's Y position
+		Common::Array<Sprite *> renderOrder;
+		int alfredY = alfredState.y;
+
+		// First pass: sprites behind Alfred (y <= alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			// debug("Processing animation set %d, numAnims %d", num, i->numAnims);
-			Sprite &animSet = _room->_currentRoomAnims[i];
-			drawNextFrame(&animSet);
+			if (_room->_currentRoomAnims[i].y < (alfredY - kAlfredFrameHeight)) {
+				debug("Drawing sprite %d in front of Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
+
+				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
+				drawNextFrame(&_room->_currentRoomAnims[i]);
+			}
 		}
 
-		switch (alfredState.animState) {
-		case ALFRED_WALKING: {
+		// Draw Alfred here (you'll need to add this)
+		chooseAlfredStateAndDraw();
 
-			MovementStep step = _currentContext.movementBuffer[_currentStep];
-
-			if (step.distance_x > 0) {
-				if (step.flags & MOVE_RIGHT) {
-					alfredState.direction = ALFRED_RIGHT;
-					alfredState.x += MIN(alfredState.movementSpeed, step.distance_x);
-				}
-				if (step.flags & MOVE_LEFT) {
-					alfredState.direction = ALFRED_LEFT;
-					alfredState.x -= MIN(alfredState.movementSpeed, step.distance_x);
-				}
+		// Second pass: sprites in front of Alfred (y > alfredY)
+		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+			if (_room->_currentRoomAnims[i].y > (alfredY - kAlfredFrameHeight)) {
+				debug("Drawing sprite %d behind Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
+				drawNextFrame(&_room->_currentRoomAnims[i]);
+				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
 			}
-			if (step.distance_y > 0) {
-				if (step.flags & MOVE_DOWN) {
-					alfredState.direction = ALFRED_DOWN;
-					alfredState.y += MIN(alfredState.movementSpeed, step.distance_y);
-				}
-				if (step.flags & MOVE_UP) {
-					alfredState.direction = ALFRED_UP;
-					alfredState.y -= MIN(alfredState.movementSpeed, step.distance_y);
-				}
-			}
-
-			if (step.distance_x > 0)
-				step.distance_x -= MIN(alfredState.movementSpeed, step.distance_x);
-
-			if (step.distance_y > 0)
-				step.distance_y -= MIN(alfredState.movementSpeed, step.distance_y);
-
-			if (step.distance_x <= 0 && step.distance_y <= 0) {
-				_currentStep++;
-				if (_currentStep >= _currentContext.movementCount) {
-					_currentStep = 0;
-					alfredState.animState = ALFRED_IDLE;
-				}
-			} else {
-				_currentContext.movementBuffer[_currentStep] = step;
-			}
-
-			Exit *exit = isExitUnder(alfredState.x, alfredState.y);
-
-			if (exit != nullptr) {
-				alfredState.x = exit->targetX;
-				alfredState.y = exit->targetY;
-				setScreen(exit->targetRoom, exit->dir);
-			}
-
-			if (alfredState.curFrame >= walkingAnimLengths[alfredState.direction]) {
-				alfredState.curFrame = 0;
-			}
-
-			drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
-			// if(alfredFrameSkip) alfredState.curFrame++;
-			// alfredFrameSkip = !alfredFrameSkip;
-			alfredState.curFrame++;
-			break;
 		}
-		case ALFRED_TALKING:
-			if (alfredState.curFrame >= talkingAnimLengths[alfredState.direction] - 1) {
-				alfredState.curFrame = 0;
-			}
-			drawAlfred(_res->alfredTalkFrames[alfredState.direction][alfredState.curFrame]);
-			alfredState.curFrame++;
-			break;
-		case ALFRED_COMB:
-			if (alfredState.curFrame >= 11) {
-				alfredState.curFrame = 0;
-			}
-			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-			alfredState.curFrame++;
-			break;
-		case ALFRED_INTERACTING:
-			if (alfredState.curFrame >= interactingAnimLength) {
-				alfredState.curFrame = 0;
-			}
-			drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
-			alfredState.curFrame++;
-			break;
-		default:
-			drawAlfred(_res->alfredIdle[alfredState.direction]);
-			break;
-		}
+
+		// // Render in the computed order
+		// for (int i = 0; i < renderOrder.size(); i++) {
+		// 	drawNextFrame(renderOrder[i]);
+		// }
 
 		if (_displayPopup) {
 			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
@@ -411,7 +366,7 @@ void PelrockEngine::frames() {
 
 		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
 			if (_chronoManager->_textTtl > 0) {
-				if(alfredState.animState == ALFRED_TALKING) {
+				if (alfredState.animState == ALFRED_TALKING) {
 					_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
 				}
 				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
@@ -432,7 +387,7 @@ void PelrockEngine::frames() {
 			}
 		}
 
-		if(alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
+		if (alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
 			// debug("Switching Alfred state from IDLE to %d", alfredState.nextState);
 			alfredState.animState = alfredState.nextState;
 			alfredState.nextState = ALFRED_IDLE;
@@ -448,13 +403,14 @@ void PelrockEngine::frames() {
 		}
 
 		drawPos(_screen, alfredState.x, alfredState.y, 13);
+		drawPos(_screen, alfredState.x, alfredState.y - kAlfredFrameHeight, 13);
 		drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
-
 
 		if (showShadows) {
 			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
 		}
 		_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
+		_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
 		_screen->markAllDirty();
 
 		// _screen->update();
@@ -524,6 +480,94 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 		int textX = baseX - (maxW / 2);
 		int textY = baseY - (lineSize * 25) + (i * 25);
 		drawText(lines[i], textX, textY, maxW, color);
+	}
+}
+
+void PelrockEngine::chooseAlfredStateAndDraw() {
+	switch (alfredState.animState) {
+	case ALFRED_WALKING: {
+
+		MovementStep step = _currentContext.movementBuffer[_currentStep];
+
+		if (step.distance_x > 0) {
+			if (step.flags & MOVE_RIGHT) {
+				alfredState.direction = ALFRED_RIGHT;
+				alfredState.x += MIN(alfredState.movementSpeed, step.distance_x);
+			}
+			if (step.flags & MOVE_LEFT) {
+				alfredState.direction = ALFRED_LEFT;
+				alfredState.x -= MIN(alfredState.movementSpeed, step.distance_x);
+			}
+		}
+		if (step.distance_y > 0) {
+			if (step.flags & MOVE_DOWN) {
+				alfredState.direction = ALFRED_DOWN;
+				alfredState.y += MIN(alfredState.movementSpeed, step.distance_y);
+			}
+			if (step.flags & MOVE_UP) {
+				alfredState.direction = ALFRED_UP;
+				alfredState.y -= MIN(alfredState.movementSpeed, step.distance_y);
+			}
+		}
+
+		if (step.distance_x > 0)
+			step.distance_x -= MIN(alfredState.movementSpeed, step.distance_x);
+
+		if (step.distance_y > 0)
+			step.distance_y -= MIN(alfredState.movementSpeed, step.distance_y);
+
+		if (step.distance_x <= 0 && step.distance_y <= 0) {
+			_currentStep++;
+			if (_currentStep >= _currentContext.movementCount) {
+				_currentStep = 0;
+				alfredState.animState = ALFRED_IDLE;
+			}
+		} else {
+			_currentContext.movementBuffer[_currentStep] = step;
+		}
+
+		Exit *exit = isExitUnder(alfredState.x, alfredState.y);
+
+		if (exit != nullptr) {
+			alfredState.x = exit->targetX;
+			alfredState.y = exit->targetY;
+			setScreen(exit->targetRoom, exit->dir);
+		}
+
+		if (alfredState.curFrame >= walkingAnimLengths[alfredState.direction]) {
+			alfredState.curFrame = 0;
+		}
+
+		drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
+		// if(alfredFrameSkip) alfredState.curFrame++;
+		// alfredFrameSkip = !alfredFrameSkip;
+		alfredState.curFrame++;
+		break;
+	}
+	case ALFRED_TALKING:
+		if (alfredState.curFrame >= talkingAnimLengths[alfredState.direction] - 1) {
+			alfredState.curFrame = 0;
+		}
+		drawAlfred(_res->alfredTalkFrames[alfredState.direction][alfredState.curFrame]);
+		alfredState.curFrame++;
+		break;
+	case ALFRED_COMB:
+		if (alfredState.curFrame >= 11) {
+			alfredState.curFrame = 0;
+		}
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
+		alfredState.curFrame++;
+		break;
+	case ALFRED_INTERACTING:
+		if (alfredState.curFrame >= interactingAnimLength) {
+			alfredState.curFrame = 0;
+		}
+		drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
+		alfredState.curFrame++;
+		break;
+	default:
+		drawAlfred(_res->alfredIdle[alfredState.direction]);
+		break;
 	}
 }
 
@@ -889,7 +933,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	VerbIcon icon = isActionUnder(mouseX, mouseY);
 	for (int i = 0; i < actions.size(); i++) {
-		if(icon == actions[i] && _iconBlink++ < kIconBlinkPeriod/2) {
+		if (icon == actions[i] && _iconBlink++ < kIconBlinkPeriod / 2) {
 			continue;
 		}
 		if (_iconBlink > kIconBlinkPeriod) {
@@ -1290,7 +1334,7 @@ void PelrockEngine::checkMouseHover() {
 		isSomethingUnder = true;
 	}
 
-	if(isActionUnder(mouseX, mouseY) != NO_ACTION) {
+	if (isActionUnder(mouseX, mouseY) != NO_ACTION) {
 		isSomethingUnder = false;
 	}
 
