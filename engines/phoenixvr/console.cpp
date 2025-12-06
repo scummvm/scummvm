@@ -20,18 +20,23 @@
  */
 
 #include "phoenixvr/console.h"
+#include "phoenixvr/phoenixvr.h"
 
 namespace PhoenixVR {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
+	registerCmd("warp", WRAP_METHOD(Console, cmdWarp));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::cmdWarp(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("warp <location.vr>");
+		return true;
+	}
+	g_engine->goToWarp(argv[1]);
 	return true;
 }
 
