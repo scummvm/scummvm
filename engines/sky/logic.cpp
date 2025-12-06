@@ -2517,12 +2517,26 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 		speechFileFound = _skySound->startSpeech((uint16)textNum);
 
 
-	// Set the focus region to that area
-	// Calculate the point where the character is
+	// set the focus region to that area
+	// calculate the point where the character is
 	int x = target->xcood - TOP_LEFT_X;
 	int y = target->ycood - TOP_LEFT_Y;
-	// TODO: Make the box size change based on the object that has the focus
-	_skyScreen->setFocusRectangle(Common::Rect::center(x, y, 192, 128));
+
+	// get the sprite header to find the width/height of the object that has the focus
+	byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
+	DataFileHeader *header = (DataFileHeader *)targetGfx;
+
+	// we add 32px padding so the camera isn't too tight
+	int boxWidth = header->s_width + 32;
+	int boxHeight = header->s_height + 32;
+
+	// safety clamp (don't let it get too tiny)
+	if (boxWidth < 50)
+		boxWidth = 50;
+	if (boxHeight < 50)
+		boxHeight = 50;
+
+	_skyScreen->setFocusRectangle(Common::Rect::center(x, y, boxWidth, boxHeight));
 
 
 	if ((SkyEngine::_systemVars->systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
@@ -2540,7 +2554,6 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			//talking on-screen
 			//create the x coordinate for the speech text
 			//we need the talkers sprite information
-			byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
 			uint16 xPos = target->xcood + ((DataFileHeader *)targetGfx)->s_offset_x;
 			uint16 width = (((DataFileHeader *)targetGfx)->s_width >> 1);
 
