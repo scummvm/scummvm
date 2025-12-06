@@ -137,7 +137,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "056d517360c89eb4c297a319f21a7071", 700469),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,
@@ -150,7 +150,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "d073582c9011d44dd0d7e2ede317a86d", 700469),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,
@@ -163,7 +163,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "d9e9f8befec432a047b1047fb2bc7aea", 710997),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,
@@ -176,7 +176,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "3d48c5700785d11e6a5bc832b95be918", 701973),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,
@@ -189,7 +189,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "5ee011cff7178dae3ddf6f9b7d4102ac", 701691),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,
@@ -202,7 +202,7 @@ static const M4GameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ripley.has", "30ad07f5c52af0cb72020df042674aa8", 704511),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
 		},
 		GType_Riddle,

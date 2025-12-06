@@ -101,7 +101,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 54532),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_TESTING | GF_C64_TAPE,
+		GF_C64_TAPE,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
@@ -119,7 +119,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 55556),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_TESTING | GF_C64_DISC,
+		GF_C64_DISC,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_TESTING | GF_ATARI_BUDGET,
+		GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -367,7 +367,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
 	},
 	// Microstatus release decrypted
@@ -381,7 +381,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Cinemaware release
@@ -395,7 +395,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Microstatus release
@@ -423,7 +423,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Stampede Amiga, Issue 1, July 1990
@@ -533,7 +533,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DARKSIDE.C64.DATA", "7d5fc9a962a146e303a0c71a2d5c651e", 48129),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_TESTING | GF_C64_TAPE,
+		GF_C64_TAPE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
@@ -542,7 +542,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("DARKSIDE.C64.DATA", "1d8e42c71d6a9ae0e682396824dd12ba", 53780),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_TESTING | GF_C64_DISC,
+		GF_C64_DISC,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
@@ -554,7 +554,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_TESTING | GF_C64_DISC,
+		GF_C64_DISC,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 

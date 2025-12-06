@@ -172,7 +172,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -187,7 +187,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -202,7 +202,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -218,7 +218,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -279,7 +279,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -297,7 +297,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -313,7 +313,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -328,7 +328,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -347,7 +347,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO | ADGF_DGDS_ALT_DIALOG_COLORS,
+		ADGF_DEMO | ADGF_DGDS_ALT_DIALOG_COLORS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -363,7 +363,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -378,7 +378,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -393,7 +393,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DGDS_EGA,
+		ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -408,7 +408,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DGDS_EGA,
+		ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -424,7 +424,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DGDS_EGA,
+		ADGF_DGDS_EGA,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -440,7 +440,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -455,7 +455,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 

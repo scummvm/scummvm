@@ -445,7 +445,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -462,7 +462,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -479,7 +479,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -496,7 +496,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -507,7 +507,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "e1a4db8cbac3de50d8e808f06d673b36", 29643931),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -524,7 +524,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy6
@@ -535,7 +535,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "e49e6f56a47c363e2651bd19a70ff557", 55835579),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy7
@@ -552,7 +552,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy7
@@ -569,7 +569,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy7
@@ -580,7 +580,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "a2001796b82a88d36693d087b15526e1", 56580014),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy7
@@ -597,7 +597,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
 			NANCY6_7_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy7
