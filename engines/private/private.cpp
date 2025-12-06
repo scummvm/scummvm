@@ -98,8 +98,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_policeRadioArea.clear();
 	_AMRadioArea.clear();
 	_phoneArea.clear();
-	// TODO: use this as a default sound for radio
-	_infaceRadioPath = "inface/radio/";
+	_AMRadio.path = "inface/radio/comm_/";
+	_policeRadio.path = "inface/radio/police/";
 	_phonePrefix = "inface/telephon/";
 	_phoneCallSound = "phone.wav";
 
@@ -1253,13 +1253,8 @@ void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 	if (_AMRadioArea.surf == nullptr)
 		return;
 
-	if (_AMRadio.empty())
-		return;
-
 	if (inMask(_AMRadioArea.surf, mousePos)) {
-		Common::String sound = _infaceRadioPath + "comm_/" + _AMRadio.back() + ".wav";
-		playSound(sound, 1, false, false);
-		_AMRadio.pop_back();
+		playRadio(_AMRadio, false);
 	}
 }
 
@@ -1267,13 +1262,8 @@ void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 	if (_policeRadioArea.surf == nullptr)
 		return;
 
-	if (_policeRadio.empty())
-		return;
-
 	if (inMask(_policeRadioArea.surf, mousePos)) {
-		Common::String sound = _infaceRadioPath + "police/" + _policeRadio.back() + ".wav";
-		playSound(sound, 1, false, false);
-		_policeRadio.pop_back();
+		playRadio(_policeRadio, true);
 	}
 }
 
@@ -1392,6 +1382,222 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 		return true;
 	}
 	return false;
+}
+
+void PrivateEngine::addRadioClip(
+	Radio &radio, const Common::String &name, int priority,
+	int disabledPriority1, bool exactPriorityMatch1,
+	int disabledPriority2, bool exactPriorityMatch2,
+	const Common::String &flagName, int flagValue) {
+
+	// lookup radio clip by name
+	RadioClip *clip = nullptr;
+	for (uint i = 0; i < radio.clips.size(); i++) {
+		if (radio.clips[i].name == name) {
+			clip = &radio.clips[i];
+			break;
+		}
+	}
+
+	// add clip if new
+	if (clip == nullptr) {
+		RadioClip newClip;
+		newClip.name = name;
+		newClip.played = false;
+		newClip.priority = priority;
+		newClip.disabledPriority1 = disabledPriority1;
+		newClip.exactPriorityMatch1 = exactPriorityMatch1;
+		newClip.disabledPriority2 = disabledPriority2;
+		newClip.exactPriorityMatch2 = exactPriorityMatch2;
+		newClip.flagName = flagName;
+		newClip.flagValue = flagValue;
+		radio.clips.push_back(newClip);
+		clip = &radio.clips[radio.clips.size() - 1];
+	}
+
+	// disable other clips based on the clip's priority
+	disableRadioClips(radio, clip->priority);
+}
+
+void PrivateEngine::initializeAMRadioChannels(uint clipCount) {
+	Radio &radio = _AMRadio;
+	assert(clipCount < radio.clips.size());
+
+	// clear all channels
+	for (uint i = 0; i < ARRAYSIZE(radio.channels); i++) {
+		radio.channels[i] = -1;
+	}
+
+	// build array of playable clip indexes (up to clipCount)
+	Common::Array<uint> playableClips;
+	for (uint i = 0; i < clipCount; i++) {
+		if (!radio.clips[i].played) {
+			playableClips.push_back(i);
+		}
+	}
+
+	// place the highest priority clips in the channels (up to two)
+	uint channelCount;
+	switch (playableClips.size()) {
+	case 0: channelCount = 0; break;
+	case 1: channelCount = 1; break;
+	case 2: channelCount = 1; break;
+	case 3: channelCount = 1; break;
+	default: channelCount = 2; break;
+	}
+	uint channel = 0;
+	uint end = 0;
+	while (channel < channelCount) {
+		channel++;
+		if (channel < playableClips.size()) {
+			uint start = channel;
+			uint remainingClips = playableClips.size() - start;
+			while (remainingClips--) {
+				RadioClip &clip1 = radio.clips[playableClips[start]];
+				RadioClip &clip2 = radio.clips[playableClips[end]];
+				if (clip1.priority < clip2.priority) {
+					SWAP(playableClips[start], playableClips[end]);
+				}
+				start++;
+			}
+		}
+		radio.channels[channel - 1] = playableClips[end];
+		end++;
+	}
+
+	// build another array of playable clip indexes, starting at clipCount
+	Common::Array<uint> morePlayableClips;
+	for (uint i = clipCount; i < radio.clips.size(); i++) {
+		if (!radio.clips[i].played) {
+			morePlayableClips.push_back(i);
+		}
+	}
+
+	// shuffle second array
+	if (!morePlayableClips.empty()) {
+		for (uint i = morePlayableClips.size() - 1; i > 0; i--) {
+			uint n = _rnd->getRandomNumber(i);
+			SWAP(morePlayableClips[i], morePlayableClips[n]);
+		}
+	}
+
+	// install some of the clips from the second array into channels, starting
+	// at the end of the channel array to keep the highest priority clips.
+	uint copyCount = morePlayableClips.size();
+	if (playableClips.size() <= 3) { // not morePlayableClips
+		copyCount = MIN<uint>(copyCount, 2);
+	} else {
+		copyCount = MIN<uint>(copyCount, 1);
+	}
+	for (uint i = 0; i < copyCount; i++) {
+		radio.channels[2 - i] = morePlayableClips[i];
+	}
+
+	// shuffle channels
+	for (uint i = ARRAYSIZE(radio.channels) - 1; i > 0; i--) {
+		uint n = _rnd->getRandomNumber(i);
+		SWAP(radio.channels[i], radio.channels[n]);
+	}
+}
+
+void PrivateEngine::initializePoliceRadioChannels() {
+	Radio &radio = _policeRadio;
+
+	// clear all channels
+	for (uint i = 0; i < ARRAYSIZE(radio.channels); i++) {
+		radio.channels[i] = -1;
+	}
+
+	// build array of playable clip indexes
+	Common::Array<uint> playableClips;
+	for (uint i = 0; i < radio.clips.size(); i++) {
+		if (!radio.clips[i].played) {
+			playableClips.push_back(i);
+		}
+	}
+
+	// place the highest priority clips in the channels (up to three)
+	uint channelCount = MIN<uint>(playableClips.size(), ARRAYSIZE(radio.channels));
+	uint channel = 0;
+	uint end = 0;
+	while (channel < channelCount) {
+		channel++;
+		if (channel < playableClips.size()) {
+			uint start = channel;
+			uint remainingClips = playableClips.size() - start;
+			while (remainingClips--) {
+				RadioClip &clip1 = radio.clips[playableClips[start]];
+				RadioClip &clip2 = radio.clips[playableClips[end]];
+				if (clip1.priority < clip2.priority) {
+					SWAP(playableClips[start], playableClips[end]);
+				}
+				start++;
+			}
+		}
+		radio.channels[channel - 1] = playableClips[end];
+		end++;
+	}
+}
+
+void PrivateEngine::disableRadioClips(Radio &radio, int priority) {
+	for (uint i = 0; i < radio.clips.size(); i++) {
+		RadioClip &clip = radio.clips[i];
+		if (clip.played) {
+			continue;
+		}
+
+		if (clip.disabledPriority1) {
+			if ((clip.exactPriorityMatch1 && priority == clip.disabledPriority1) ||
+				(!clip.exactPriorityMatch1 && priority <= clip.disabledPriority1)) {
+				clip.played = true;
+			}
+		}
+		if (clip.disabledPriority2) {
+			if ((clip.exactPriorityMatch2 && priority == clip.disabledPriority2) ||
+				(!clip.exactPriorityMatch2 && priority <= clip.disabledPriority2)) {
+				clip.played = true;
+			}
+		}
+	}
+}
+
+void PrivateEngine::playRadio(Radio &radio, bool randomlyDisableClips) {
+	// search channels for first available clip
+	for (uint i = 0; i < ARRAYSIZE(radio.channels); i++) {
+		// skip empty channels
+		if (radio.channels[i] == -1) {
+			continue;
+		}
+
+		// verify that clip hasn't been already been played
+		RadioClip &clip = radio.clips[radio.channels[i]];
+		radio.channels[i] = -1;
+		if (clip.played) {
+			continue;
+		}
+
+		// the police radio randomly disables clips (!)
+		if (randomlyDisableClips) {
+			uint r = _rnd->getRandomNumber(9);
+			if (r < 3) {
+				clip.played = true;
+				break; // play radio.wav
+			}
+		}
+
+		// play the clip
+		Common::String sound = radio.path + clip.name + ".wav";
+		playSound(sound, 1, false, false);
+		clip.played = true;
+		if (!clip.flagName.empty()) {
+			Symbol *flag = maps.lookupVariable(&(clip.flagName));
+			setSymbol(flag, clip.flagValue);
+		}
+		return;
+	}
+
+	// play default radio sound
+	playSound("inface/radio/radio.wav", 1, false, false);
 }
 
 void PrivateEngine::addPhone(const Common::String &name, bool once, int startIndex, int endIndex, const Common::String &flagName, int flagValue) {
@@ -1785,18 +1991,28 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	_policeBustPreviousSetting = stream->readString();
 
 	// Radios
-	size = stream->readUint32LE();
-	_AMRadio.clear();
+	Radio *radios[] = { &_AMRadio, &_policeRadio };
+	for (uint r = 0; r < ARRAYSIZE(radios); r++) {
+		Radio *radio = radios[r];
+		radio->clear();
 
-	for (uint32 i = 0; i < size; ++i) {
-		_AMRadio.push_back(stream->readString());
-	}
-
-	size = stream->readUint32LE();
-	_policeRadio.clear();
-
-	for (uint32 i = 0; i < size; ++i) {
-		_policeRadio.push_back(stream->readString());
+		size = stream->readUint32LE();
+		for (uint32 i = 0; i < size; ++i) {
+			RadioClip clip;
+			clip.name = stream->readString();
+			clip.played = (stream->readByte() == 1);
+			clip.priority = stream->readSint32LE();
+			clip.disabledPriority1 = stream->readSint32LE();
+			clip.exactPriorityMatch1 = (stream->readByte() == 1);
+			clip.disabledPriority2 = stream->readSint32LE();
+			clip.exactPriorityMatch2 = (stream->readByte() == 1);
+			clip.flagName = stream->readString();
+			clip.flagValue = stream->readSint32LE();
+			radio->clips.push_back(clip);
+		}
+		for (uint i = 0; i < ARRAYSIZE(radio->channels); i++) {
+			radio->channels[i] = stream->readSint32LE();
+		}
 	}
 
 	size = stream->readUint32LE();
@@ -1925,15 +2141,27 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	stream->writeByte(0);
 
 	// Radios
-	stream->writeUint32LE(_AMRadio.size());
-	for (SoundList::const_iterator it = _AMRadio.begin(); it != _AMRadio.end(); ++it) {
-		stream->writeString(*it);
-		stream->writeByte(0);
-	}
-	stream->writeUint32LE(_policeRadio.size());
-	for (SoundList::const_iterator it = _policeRadio.begin(); it != _policeRadio.end(); ++it) {
-		stream->writeString(*it);
-		stream->writeByte(0);
+	Radio *radios[] = { &_AMRadio, &_policeRadio };
+	for (uint r = 0; r < ARRAYSIZE(radios); r++) {
+		Radio *radio = radios[r];
+		stream->writeUint32LE(radio->clips.size());
+		for (uint i = 0; i < radio->clips.size(); i++) {
+			RadioClip &clip = radio->clips[i];
+			stream->writeString(clip.name);
+			stream->writeByte(0);
+			stream->writeByte(clip.played ? 1 : 0);
+			stream->writeSint32LE(clip.priority);
+			stream->writeSint32LE(clip.disabledPriority1);
+			stream->writeByte(clip.exactPriorityMatch1 ? 1 : 0);
+			stream->writeSint32LE(clip.disabledPriority2);
+			stream->writeByte(clip.exactPriorityMatch2 ? 1 : 0);
+			stream->writeString(clip.flagName);
+			stream->writeByte(0);
+			stream->writeSint32LE(clip.flagValue);
+		}
+		for (uint i = 0; i < ARRAYSIZE(radio->channels); i++) {
+			stream->writeSint32LE(radio->channels[i]);
+		}
 	}
 
 	// Phone

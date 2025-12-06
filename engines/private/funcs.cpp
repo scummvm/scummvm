@@ -660,34 +660,64 @@ static void fMaskDrawn(ArgArray args) {
 	_fMask(args, true);
 }
 
-static void fAddSound(Common::String sound, const char *t, Symbol *flag = nullptr, int val = 0) {
-	if (sound == "\"\"")
-		return;
-
-	if (strcmp(t, "AMRadioClip") == 0)
-		g_private->_AMRadio.push_back(sound);
-	else if (strcmp(t, "PoliceClip") == 0)
-		g_private->_policeRadio.push_back(sound);
-	else
-		error("error: invalid sound type %s", t);
-}
-
 static void fAMRadioClip(ArgArray args) {
 	assert(args.size() <= 4);
-	fAddSound(args[0].u.str, "AMRadioClip");
+	debugC(1, kPrivateDebugScript, "AMRadioClip(%s,%d,...)", args[0].u.str, args[1].u.val);
+
+	const char *name = args[0].u.str;
+	if (strcmp(name, "\"\"") == 0) {
+		int clipCount = args[1].u.val;
+		g_private->initializeAMRadioChannels(clipCount);
+		return;
+	}
+
+	int priority = args[1].u.val;
+
+	// The third and fourth parameters are numbers followed by an optional '+' character.
+	// Each number is a priority and the '+' indicates that it is to be treated as a range
+	// instead of the default behavior of requiring an exact match.
+	int disabledPriority1 = (args.size() >= 3) ? args[2].u.val : 0;
+	bool exactPriorityMatch1 = (args.size() >= 3) ? (args[2].type != NUM_PLUS) : true;
+	int disabledPriority2 = (args.size() >= 4) ? args[3].u.val : 0;
+	bool exactPriorityMatch2 = (args.size() >= 4) ? (args[3].type != NUM_PLUS) : true;
+
+	Common::String flagName = (args.size() >= 6) ? *(args[4].u.sym->name) : "";
+	int flagValue = (args.size() >= 6) ? args[5].u.val : 0;
+
+	g_private->addRadioClip(g_private->_AMRadio, name, priority,
+		disabledPriority1, exactPriorityMatch1,
+		disabledPriority2, exactPriorityMatch2,
+		flagName, flagValue);
 }
 
 static void fPoliceClip(ArgArray args) {
 	assert(args.size() <= 4 || args.size() == 6);
-	fAddSound(args[0].u.str, "PoliceClip");
-	// In the original, the variable is updated when the clip is played, but here we just update
-	// the variable when the clip is added to play. The effect for the player, is mostly the same.
-	if (args.size() == 6) {
-		assert(args[4].type == NAME);
-		assert(args[5].type == NUM);
-		Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
-		setSymbol(flag, args[5].u.val);
+	debugC(1, kPrivateDebugScript, "PoliceClip(%s,%d,...)", args[0].u.str, args[1].u.val);
+
+	const char *name = args[0].u.str;
+	if (strcmp(name, "\"\"") == 0) {
+		g_private->initializePoliceRadioChannels();
+		return;
 	}
+	
+	int priority = args[1].u.val;
+	if (strcmp(name, "\"DISABLE_ONLY\"") == 0) {
+		g_private->disableRadioClips(g_private->_policeRadio, priority);
+		return;
+	}
+
+	// The third and fourth parameters are numbers followed by an optional '+' character.
+	// Each number is a priority and the '+' indicates that it is to be treated as a range
+	// instead of the default behavior of requiring an exact match.
+	int disabledPriority1 = (args.size() >= 3) ? args[2].u.val : 0;
+	bool exactPriorityMatch1 = (args.size() >= 3) ? (args[2].type != NUM_PLUS) : true;
+	int disabledPriority2 = (args.size() >= 4) ? args[3].u.val : 0;
+	bool exactPriorityMatch2 = (args.size() >= 4) ? (args[3].type != NUM_PLUS) : true;
+
+	g_private->addRadioClip(g_private->_policeRadio, name, priority,
+		disabledPriority1, exactPriorityMatch1,
+		disabledPriority2, exactPriorityMatch2,
+		"", 0);
 }
 
 static void fPhoneClip(ArgArray args) {
