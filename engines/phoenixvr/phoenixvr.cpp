@@ -407,8 +407,7 @@ Common::Error PhoenixVREngine::run() {
 					if (_movie) {
 						_movie->stop();
 						_movie.reset();
-					} else
-						goToWarp("N1M01L03W02E0.vr");
+					}
 				}
 			} break;
 			case Common::EVENT_MOUSEMOVE:
