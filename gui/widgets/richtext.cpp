@@ -177,7 +177,6 @@ void RichTextWidget::recalc() {
 		_cachedTextSurface->free();
     	delete _cachedTextSurface;
     	_cachedTextSurface = nullptr;
-    	_cachedTextHeight = 0;
 	}
 		createWidget();
 	} else if (_surface->h != _textHeight)
@@ -220,19 +219,19 @@ void RichTextWidget::createWidget() {
 
 	_txtWnd->setMarkdownText(_text);
 
-	_cachedTextHeight = _txtWnd->getTextHeight();
+	int textHeight = _txtWnd->getTextHeight();
 
-	if (_cachedTextHeight > 0) {
+	if (textHeight > 0) {
     	if (_cachedTextSurface) {
         	_cachedTextSurface->free();
         	delete _cachedTextSurface;
     	}
-		_cachedTextSurface = new Graphics::ManagedSurface(_textWidth, _cachedTextHeight, g_gui.getWM()->_pixelformat);
-
+    	_cachedTextSurface = new Graphics::ManagedSurface(_textWidth, textHeight, g_gui.getWM()->_pixelformat);
     	_cachedTextSurface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff));
 
-    	_txtWnd->draw(_cachedTextSurface, 0, 0, _textWidth, _cachedTextHeight, 0, 0);
+    	_txtWnd->draw(_cachedTextSurface, 0, 0, _textWidth, textHeight, 0, 0);
 	}
+
 	if (_surface)
 		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
 	else
@@ -257,10 +256,12 @@ void RichTextWidget::drawWidget() {
 	_surface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
 
 	if (_cachedTextSurface) {
-    	int maxY = MAX(0, _cachedTextHeight - _textHeight);
-		int srcY = CLIP((int)_scrolledY, 0, maxY);
-    	_surface->blitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth, MIN(srcY + _textHeight , _cachedTextHeight)), Common::Point(0, 0));
-	} 
+    	int cachedHeight = _cachedTextSurface->h;
+    	int maxY = MAX(0, cachedHeight - _textHeight);
+    	int srcY = CLIP((int)_scrolledY, 0, maxY);
+
+    	_surface->blitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth, MIN(srcY + _textHeight, cachedHeight)), Common::Point(0, 0));
+	}
 	else {
     _txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
 	}

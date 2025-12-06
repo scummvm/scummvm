@@ -51,8 +51,6 @@ protected:
 	uint16 _limitH;
 	int _textWidth;
 	int _textHeight;
-	int _cachedTextHeight = 0;
-
 
 	Common::Path _imageArchive;
 
