@@ -86,7 +86,7 @@ cd ../scummvm-icons
 num_lines=`git -P log --oneline "--since=$fileDate" default/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Repack gui/themes/gui-icons.dat${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd ../scummvm-icons/default; zip -r9 ../../scummvm/gui/themes/gui-icons.dat .'${NC}"
 
   failPlus
 else
