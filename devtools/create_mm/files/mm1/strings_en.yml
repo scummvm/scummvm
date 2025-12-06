@@ -7,7 +7,7 @@ dialogs:
 			3: "--blacksmith--"
 			4: "--tavern--"
 		gold: "gold= "
-		# FIXME: Spelling incorrect. cant should be cannot. Fixing changes game data and thus may cause issues 
+		# FIXME: Spelling incorrect. cant should be cannot. Fixing changes game data and thus may cause issues
 		buy: "'a'-'f' to buy\r(- = cant use)"
 		sell: "'a'-'f' to sell"
 		gather: "'g' gather gold\r'#' other char"
@@ -91,7 +91,7 @@ dialogs:
 		3: "Fortunately, you may renew"
 		4: "your quest from the last"
 		5: "inn in which you stayed"
-		6: "by pressing 'Enter'"	
+		6: "by pressing 'Enter'"
 	inn:
 		title: "(%c) Inn of "
 		to_view: "to view"
@@ -190,7 +190,7 @@ dialogs:
 			4: "a h-orc archer"
 			5: "a human cleric"
 			6: "a blue dragon"
-			7: "a gray minotaur"			
+			7: "a gray minotaur"
 		messages:
 			0: "Services rendered, secrets unfold\nthe brothers together\nlead to treasures untold\n\nfive towns you must travel\nfor this quest to unravel"
 			1: "Seek the wizard Ranalou\nin his lair at the Korin Bluffs\nsix castles he will send you to\nbut Doom will be quite tough!\ncruelty and kindness\nmeasured throughout\njudgement day is then sought out"
@@ -407,6 +407,7 @@ dialogs:
 		delay_currently: "(currently= %d)"
 		infiltration: "infiltrates the ranks!"
 		exchange_places: "Exchange places with (1-%c)?"
+		advances: " advances!"
 		status:
 			0: "(paralyze)"
 			1: "(webbed)  "
@@ -445,7 +446,7 @@ enhdialogs:
 		sell: "Sell"
 		for_gold: "for %d gold"
 		areas:
-			weapons: "Weapons"	
+			weapons: "Weapons"
 			armor: "Armor"
 			misc: "Misc"
 		buttons:
@@ -582,7 +583,7 @@ enhdialogs:
 			equip: "\x01""37Equip"
 			remove: "\x01""37Rem"
 			discard: "\x01""37Disc"
-			trade: "\x01""37Trade"		
+			trade: "\x01""37Trade"
 			use: "\x01""37Use"
 			charge: "\x01""37Charg"
 			copy: "\x01""37Copy"
@@ -619,7 +620,7 @@ enhdialogs:
 			ac: "A.C."
 			cond: "Cond"
 	rest:
-		too_dangerous: "Too dangerous to rest here!"		
+		too_dangerous: "Too dangerous to rest here!"
 	spellbook:
 		title: "Spells for"
 		spell_points: "Spell Pts"
@@ -904,7 +905,7 @@ monster_spells:
 	gazes: "gazes"
 	acid_arrow: "acid arrow"
 	calls_elements: "calls uppon the elements"
-	cold_beam: "cold beam"       
+	cold_beam: "cold beam"
 	dancing_sword: "dancing sword"
 	magic_drain: "magic drain"
 	finger_of_death: "finger of death"
@@ -1003,7 +1004,7 @@ maps:
 		blacksmith_inside: "A man wearing a leather apron speaks:\n\"Distinguished travelers, you've come to\nthe right place. Can I help you (Y/N)?\""
 		inn_inside: "The innekeeper asks: \"Would you like to sign in (Y/N)?\""
 		market_inside: "Behind the counter, an overweight dwarf\nexclaims: \"You look like a hungry bunch!\nWould you like to buy some food (Y/N)?\""
-		temple_inside: "Several ornately robed clerics approach\nthe party and ask, \"Do you seek our help (Y/N)?\""		
+		temple_inside: "Several ornately robed clerics approach\nthe party and ask, \"Do you seek our help (Y/N)?\""
 		training_inside: "Before you are various groups engaged in\ntraining exercises. Worg,the guildmaster\nasks, \"Do you require training (Y/N)?\""
 
 		leprechaun: "A tenacious leprechaun appears saying,\n\"Traveling the roads is quite dangerous\nsave for the strong and courageous,\nonly 1 gem you lose and i'll send you\nto the town you choose.\"\n\n'ESC' to go back      Which town (1-5)?"
@@ -1091,7 +1092,7 @@ maps:
 
 		telgoran1: "An elf dressed in robes approaches...\n\n"
 		telgoran2: "\"Friends, I am telgoran. This scroll you\nhave brought me will be very helpful\n(+2500 exp) Here's 1500 gold for your\nservices. I'll tell you a secret, if\ntreasure is what you want...\""
-		telgoran3: "\"The brothers you must find...\nPortsmith and Algary are combined.\"" 
+		telgoran3: "\"The brothers you must find...\nPortsmith and Algary are combined.\""
 		telgoran4: "\"You're not the couriers!\""
 	emap03:
 		blacksmith_inside: "A young gnome materializes, asking,\n\"Would you be wanting my services (Y/N)?\""
@@ -1584,7 +1585,7 @@ maps:
 	emap37:
 		okrim: "Okrim"
 		okrim1: "A ghostlike figure rises from the body of Okrim and speaks, \"In exchange for my ring, forfeit a life. Accept (Y/N)?\""
-	
+
 	map38:
 		message4: "Etched in gold, message 4 reads:'\nof-be-has-true-knowledge-plane-a-level-'\nto-reality-it"
 		banner: "A banner reads:\nthe labyrinth of lazzeruth...\nfew have entered, none have returned!"
