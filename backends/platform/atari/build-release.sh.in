@@ -28,22 +28,8 @@ then
 	--backend=atari \
 	--host=${PLATFORM} \
 	--enable-release \
-	--disable-png \
-	--disable-enet \
-	--disable-mt32emu \
-	--disable-lua \
-	--disable-nuked-opl \
-	--disable-16bit \
-	--disable-scalers \
-	--disable-aspect \
-	--disable-translation \
-	--disable-eventrecorder \
-	--disable-tts \
-	--opengl-mode=none \
 	--enable-verbose-build \
-	--enable-text-console \
-	--disable-engine=hugo,director,cine,ultima \
-	--disable-detection-full
+	--disable-engine=hugo,director,cine,ultima
 fi
 
 make -j$(getconf _NPROCESSORS_CONF)
@@ -51,10 +37,10 @@ rm -rf dist-generic
 make dist-generic
 
 # create symbol file and strip
-rm dist-generic/scummvm/scummvm.ttp
-cp -a scummvm.ttp dist-generic/scummvm/scummvm.ttp
-${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
-${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
+rm dist-generic/scummvm/scummvm.prg
+cp -a scummvm.prg dist-generic/scummvm/scummvm.prg
+${PLATFORM}-nm -C dist-generic/scummvm/scummvm.prg | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
+${PLATFORM}-strip -s dist-generic/scummvm/scummvm.prg
 
 # remove unused files; absent gui-icons.dat massively speeds up startup time (used for the grid mode)
 rm dist-generic/scummvm/data/{achievements,classicmacfonts,encoding,gui-icons,hadesch_translations,macgui,prince_translation,shaders}.dat
