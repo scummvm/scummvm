@@ -157,6 +157,20 @@
 {
 	{
 		"adi5language",
+		"", // Français Math CE1
+		AD_ENTRY2s("fr06.itk", "edf5b0d00f1cc670b49db5b8c79b4d0d", 10491811,
+				   "fr07.itk", "83b00b904a989a9d1a83e8c6fbcf6478", 59044143),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+{
+	{
+		"adi5language",
 		"", // Français Math CM1
 		AD_ENTRY2s("fr08.itk", "0daba190b67c2404fbdfb3aed3f82b4f", 53645106,
 				   "fr09.itk", "0c4f77aa52e76163f25ce4abbf5d4788", 41428906),
