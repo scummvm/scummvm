@@ -12,8 +12,6 @@ certifi==2025.4.26
     # via requests
 charset-normalizer==3.4.2
     # via requests
-colorama==0.4.6
-    # via sphinx
 docutils==0.21.2
     # via
     #   sphinx
@@ -68,5 +66,5 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-urllib3==2.5.0
+urllib3==2.6.0
     # via requests
