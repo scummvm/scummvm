@@ -36,6 +36,7 @@ struct Region {
 		a = b = c = d = 0;
 	}
 	RectF toRect() const;
+	Common::String toString() const;
 	bool contains(float angleX, float angleY) const;
 	bool contains(const PointF &p) const {
 		return contains(p.x, p.y);

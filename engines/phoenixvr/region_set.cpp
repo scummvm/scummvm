@@ -41,6 +41,10 @@ RegionSet::RegionSet(const Common::String &fname) {
 	}
 }
 
+Common::String Region::toString() const {
+	return Common::String::format("%g-%g, %g-%g", a, b, c, d);
+}
+
 RectF Region::toRect() const {
 	RectF rect;
 	rect.left = MIN(a, b);

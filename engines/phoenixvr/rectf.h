@@ -27,6 +27,9 @@
 namespace PhoenixVR {
 
 BEGIN_POINT_TYPE(float, PointF)
+Common::String toString() const {
+	return Common::String::format("%g, %g", x, y);
+}
 END_POINT_TYPE(float, PointF)
 
 BEGIN_RECT_TYPE(float, RectF, PointF);
