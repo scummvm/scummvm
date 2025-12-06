@@ -204,8 +204,6 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 			auto *s = pcx.getSurface()->convertTo(_pixelFormat, pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
 			if (s) {
 				byte r = 0, g = 0, b = 0;
-				if (pcx.hasPalette())
-					pcx.getPalette().get(0, r, g, b);
 				s->applyColorKey(r, g, b);
 			}
 			return s;
