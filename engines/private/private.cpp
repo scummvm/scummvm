@@ -632,14 +632,14 @@ void PrivateEngine::completePoliceBust() {
 	// Select the movie for BustMovie() to play
 	_policeBustMovie =
 		Common::String::format("po/animatio/spoc%02dxs.smk",
-			kPoliceBustVideos[g_private->_policeBustMovieIndex]);
+			kPoliceBustVideos[_policeBustMovieIndex]);
 
 	// Play audio on the second bust movie
 	if (kPoliceBustVideos[_policeBustMovieIndex] == 2) {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
-		g_private->playSound(s, 1, true, false);
-		g_private->changeCursor("default");
-		g_private->waitForSoundToStop();
+		playSound(s, 1, true, false);
+		changeCursor("default");
+		waitForSoundToStop();
 	}
 
 	// Cycle to the next movie and wrap around
@@ -1592,7 +1592,7 @@ void PrivateEngine::addSafeDigit(uint32 d, Common::Rect *rect) {
 	_safeDigitRect[d] = *rect;
 	int digitValue = getSafeDigit(d);
 	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), digitValue), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
-	m.cursor = g_private->getExitCursor();
+	m.cursor = getExitCursor();
 	m.nextSetting = _currentSetting;
 	m.flag1 = nullptr;
 	m.flag2 = nullptr;
@@ -2051,12 +2051,12 @@ bool PrivateEngine::isSoundActive() {
 }
 
 void PrivateEngine::waitForSoundToStop() {
-	while (g_private->isSoundActive())
-		g_private->ignoreEvents();
+	while (isSoundActive())
+		ignoreEvents();
 
 	uint32 i = 100;
 	while (i--) // one second extra
-		g_private->ignoreEvents();
+		ignoreEvents();
 }
 
 void PrivateEngine::adjustSubtitleSize() {
@@ -2695,7 +2695,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 
 		MaskInfo m;
 		loadMaskAndInfo(&m, s, rect.left + 90, rect.top + offset, true);
-		m.cursor = g_private->getExitCursor();
+		m.cursor = getExitCursor();
 		m.nextSetting = getDiaryMiddleSetting();
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
@@ -2730,7 +2730,7 @@ void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset,
 	for (uint i = 0; i < _diaryPages[_currentDiaryPage].memories.size(); i++) {
 		MaskInfo m;
 		m.surf = loadMask(_diaryPages[_currentDiaryPage].memories[i].image, rect.left + horizontalOffset, rect.top + currentVerticalOffset, true);
-		m.cursor = g_private->getExitCursor();
+		m.cursor = getExitCursor();
 		m.nextSetting = getDiaryMiddleSetting();
 		m.flag1 = nullptr;
 		m.flag2 = nullptr;
