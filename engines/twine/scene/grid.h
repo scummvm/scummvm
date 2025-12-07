@@ -22,7 +22,7 @@
 #ifndef TWINE_SCENE_GRID_H
 #define TWINE_SCENE_GRID_H
 
-#define WATER_BRICK (0xF1)
+#define WATER_BRICK (0xF1) // CJ_WATER
 
 #include "common/scummsys.h"
 #include "twine/parser/blocklibrary.h"
