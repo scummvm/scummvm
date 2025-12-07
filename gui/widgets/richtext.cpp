@@ -171,6 +171,13 @@ void RichTextWidget::recalc() {
 //	}
 	if (!_surface || _surface->w != _textWidth) {
 		delete _txtWnd;
+		_txtWnd = nullptr;
+
+	if (_cachedTextSurface) {
+		_cachedTextSurface->free();
+    	delete _cachedTextSurface;
+    	_cachedTextSurface = nullptr;
+	}
 		createWidget();
 	} else if (_surface->h != _textHeight)
 		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
@@ -191,7 +198,10 @@ void RichTextWidget::recalc() {
 void RichTextWidget::createWidget() {
 	Graphics::MacWindowManager *wm = g_gui.getWM();
 
-	uint32 bg = wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
+	uint32 themedBg = g_gui.xmlEval()->getVar("Globals.RichTextWidget.BgColor", 0);
+    uint32 fallbackBg = wm->_pixelformat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
+    uint32 bg = themedBg ? themedBg : fallbackBg;
+
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
@@ -212,10 +222,28 @@ void RichTextWidget::createWidget() {
 
 	_txtWnd->setMarkdownText(_text);
 
-	if (_surface)
-		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
-	else
-		_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
+	int textHeight = _txtWnd->getTextHeight();
+
+	if (textHeight > 0) {
+		if (!_cachedTextSurface || _cachedTextSurface->w != _textWidth || _cachedTextSurface->h != textHeight) {
+			if (_cachedTextSurface) {
+        		_cachedTextSurface->free();
+        		delete _cachedTextSurface;
+    		}
+
+    		_cachedTextSurface = new Graphics::ManagedSurface(_textWidth, textHeight, g_gui.getWM()->_pixelformat);
+		}
+		_cachedTextSurface->clear(bg);
+
+    	_txtWnd->draw(_cachedTextSurface, 0, 0, _textWidth, textHeight, 0, 0);
+	}
+
+	if (!_surface || _surface->w != _textWidth || _surface->h != _textHeight) {
+    	if (_surface)
+        	_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+    	else
+        	_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
+	}
 }
 
 void RichTextWidget::reflowLayout() {
@@ -233,10 +261,22 @@ void RichTextWidget::drawWidget() {
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	_surface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
+	uint32 themedBg = g_gui.xmlEval()->getVar("Globals.RichTextWidget.BgColor", 0);
+	uint32 fallbackBg = g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
+	uint32 bg = themedBg ? themedBg : fallbackBg;
 
-	_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
+	_surface->clear(bg);
 
+	if (_cachedTextSurface) {
+    	int cachedHeight = _cachedTextSurface->h;
+    	int maxY = MAX(0, cachedHeight - _textHeight);
+    	int srcY = CLIP((int)_scrolledY, 0, maxY);
+
+    	_surface->blitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth, MIN(srcY + _textHeight, cachedHeight)), Common::Point(0, 0));
+	} else {
+    	_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
+	}
+	
 	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_FULL);
 }
 
