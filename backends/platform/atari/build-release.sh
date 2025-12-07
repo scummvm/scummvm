@@ -8,11 +8,10 @@ cd build-release
 
 PLATFORM=m68k-atari-mintelf
 FASTCALL=false
-
 export ASFLAGS="-m68020-60"
 export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER -DDISABLE_LAUNCHERDISPLAY_GRID"
-
 export LDFLAGS="-m68020-60"
+
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
 
 if $FASTCALL
@@ -20,6 +19,13 @@ then
 	ASFLAGS="$ASFLAGS -mfastcall"
 	CXXFLAGS="$CXXFLAGS -mfastcall"
 	LDFLAGS="$LDFLAGS -mfastcall"
+fi
+
+if [ ! -f ../backends/platform/atari/.patched ]
+then
+	cd .. && cat backends/platform/atari/patches/print_rate.patch | patch -p1 && cd -
+	cd .. && cat backends/platform/atari/patches/tooltips.patch | patch -p1 && cd -
+	touch ../backends/platform/atari/.patched
 fi
 
 if [ ! -f config.log ]
@@ -32,43 +38,4 @@ then
 	--disable-engine=hugo,director,cine,ultima
 fi
 
-make -j$(getconf _NPROCESSORS_CONF)
-rm -rf dist-generic
-make dist-generic
-
-# create symbol file and strip
-rm dist-generic/scummvm/scummvm.prg
-cp -a scummvm.prg dist-generic/scummvm/scummvm.prg
-${PLATFORM}-nm -C dist-generic/scummvm/scummvm.prg | grep -vF ' .L' | grep ' [TtWV] ' | ${PLATFORM}-c++filt | sort -u > dist-generic/scummvm/scummvm.sym
-${PLATFORM}-strip -s dist-generic/scummvm/scummvm.prg
-
-# remove unused files; absent gui-icons.dat massively speeds up startup time (used for the grid mode)
-rm dist-generic/scummvm/data/{achievements,classicmacfonts,encoding,gui-icons,hadesch_translations,macgui,prince_translation,shaders}.dat
-
-# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
-mv dist-generic/scummvm/data/cryomni3d.dat dist-generic/scummvm/data/cryomni3.dat
-mv dist-generic/scummvm/data/neverhood.dat dist-generic/scummvm/data/neverhoo.dat
-mv dist-generic/scummvm/data/supernova.dat dist-generic/scummvm/data/supernov.dat
-mv dist-generic/scummvm/data/teenagent.dat dist-generic/scummvm/data/teenagen.dat
-
-# move themes into 'themes' folder (with compression level zero for faster depacking)
-mkdir -p dist-generic/scummvm/themes
-cd dist-generic/scummvm/themes
-(
-for f in ../data/*.zip
-do
-	unzip -d tmp "$f" && cd tmp && zip -0 ../$(basename "$f") * && cd .. && rm -r tmp && rm "$f"
-done
-)
-cd -
-
-# readme.txt
-cp ../backends/platform/atari/readme.txt dist-generic/scummvm
-unix2dos dist-generic/scummvm/readme.txt
-
-cd dist-generic
-mv scummvm scummvm-3.0.0pre-atari-full
-zip -r -9 scummvm-3.0.0pre-atari-full.zip scummvm-3.0.0pre-atari-full
-cd -
-
-mv dist-generic/scummvm-3.0.0pre-atari-full.zip ..
+make -j$(getconf _NPROCESSORS_CONF) atarifulldist
