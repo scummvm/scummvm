@@ -40,6 +40,8 @@ namespace PhoenixVR {
 #define CHUNK_VR (0x12fa84ab)
 #define CHUNK_STATIC_2D (0xa0b1c400)
 #define CHUNK_STATIC_3D (0xa0b1c200)
+#define CHUNK_ANIMATION (0xa0b1c201)
+#define CHUNK_ANIMATION_BLOCK (0xa0b1c211)
 
 namespace {
 
@@ -176,9 +178,10 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 	auto fsize = s.readUint32LE();
 	debug("file size = %08x", fsize);
 	while (s.pos() < fsize) {
+		auto chunkPos = s.pos();
 		auto chunkId = s.readUint32LE();
 		auto chunkSize = s.readUint32LE();
-		debug("chunk %08x %u", chunkId, chunkSize);
+		debug("chunk %08x %u at %08lx", chunkId, chunkSize, chunkPos);
 		bool pic2d = chunkId == CHUNK_STATIC_2D;
 		bool pic3d = chunkId == CHUNK_STATIC_3D;
 		if (pic2d || pic3d) {
@@ -205,8 +208,37 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto dcOffset = READ_LE_UINT32(vrData.data() + huffSize + 8);
 			auto *dcPtr = vrData.data() + huffSize + 16 + dcOffset;
 			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
+		} else if (chunkId == CHUNK_ANIMATION) {
+			auto name = s.readString(0, 32);
+			s.skip(4);
+			debug("animation %s", name.c_str());
+			while (s.pos() < chunkPos + chunkSize) {
+				auto animChunkPos = s.pos();
+				auto animChunkId = s.readUint32LE();
+				auto animChunkSize = s.readUint32LE();
+				debug("animation chunk %08x %u at %08lx", animChunkId, animChunkSize, animChunkPos);
+				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
+					auto prefixSize = s.readUint32LE();
+					debug("prefixes: %u", prefixSize);
+					Common::Array<byte> prefixData(prefixSize * 4);
+					s.read(prefixData.data(), prefixData.size());
+					Common::hexdump(prefixData.data(), prefixData.size());
+					auto quality = s.readUint32LE();
+					auto size = s.readUint32LE();
+					Common::Array<byte> blockData(size);
+					s.read(blockData.data(), blockData.size());
+					Common::hexdump(blockData.data(), blockData.size());
+					auto huffSize = READ_LE_UINT32(blockData.data());
+					auto unpHuffSize = READ_LE_UINT32(blockData.data() + 4);
+					auto decoded = Video::FourXM::unpackHuffman(blockData.data() + 8, huffSize);
+					assert(decoded.size() == unpHuffSize);
+					debug("quality: %u, size: %u", quality, size);
+					break;
+				}
+				s.seek(animChunkPos + animChunkSize);
+			}
 		}
-		s.skip(chunkSize - 8);
+		s.seek(chunkPos + chunkSize);
 	}
 	if (vr._pic) {
 		Common::DumpFile out;
