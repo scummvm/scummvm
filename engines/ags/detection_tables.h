@@ -22,7 +22,7 @@
 namespace AGS {
 
 const PlainGameDescriptor GAME_NAMES[] = {
-	{ "ags", "Adventure Game Studio Game" },
+	{ "ags", "Unknown AGS game" },
 	{ "ags-scan", "AGS Game Scanner" },
 
 	// Pre-2.5 games that aren't supported by the current AGS engine
