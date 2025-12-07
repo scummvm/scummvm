@@ -477,8 +477,9 @@ Common::Error TwinEEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 }
 
 void TwinEEngine::autoSave() {
-	debug("Autosave %s", _gameState->_sceneName);
-	saveGameState(getAutosaveSlot(), _gameState->_sceneName, true);
+	Common::U32String originalSceneName(_gameState->_sceneName, Common::kDos850);
+	const Common::String sceneName = originalSceneName.encode(Common::kUtf8);
+	saveGameState(getAutosaveSlot(), sceneName, true);
 }
 
 void TwinEEngine::allocVideoMemory(int32 w, int32 h) {
