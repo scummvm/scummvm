@@ -191,7 +191,7 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
-	_res->loadSettingsMenu();
+	// _res->loadSettingsMenu();
 	_soundManager->loadSoundIndex();
 
 	calculateScalingMasks();
@@ -324,9 +324,6 @@ void PelrockEngine::frames() {
 		// First pass: sprites behind Alfred (y <= alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			if (_room->_currentRoomAnims[i].zOrder > 10) {
-				debug("Drawing sprite %d in front of Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
-
-				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
 				drawNextFrame(&_room->_currentRoomAnims[i]);
 			}
 		}
@@ -337,16 +334,9 @@ void PelrockEngine::frames() {
 		// Second pass: sprites in front of Alfred (y > alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			if (_room->_currentRoomAnims[i].zOrder <= 10) {
-				debug("Drawing sprite %d behind Alfred at zOrder %d, pos (%d, %d)", i, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].x, _room->_currentRoomAnims[i].y);
 				drawNextFrame(&_room->_currentRoomAnims[i]);
-				// renderOrder.push_back(&_room->_currentRoomAnims[i]);
 			}
 		}
-
-		// // Render in the computed order
-		// for (int i = 0; i < renderOrder.size(); i++) {
-		// 	drawNextFrame(renderOrder[i]);
-		// }
 
 		if (_displayPopup) {
 			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
@@ -356,11 +346,11 @@ void PelrockEngine::frames() {
 				_currentPopupFrame = 0;
 		}
 
-		Common::Array<Common::String> testChoices;
-		testChoices.push_back("First choice");
-		testChoices.push_back("Second choice");
-		testChoices.push_back("Third choice");
-		displayChoices(testChoices, _compositeBuffer);
+		// Common::Array<Common::String> testChoices;
+		// testChoices.push_back("First choice");
+		// testChoices.push_back("Second choice");
+		// testChoices.push_back("Third choice");
+		// displayChoices(testChoices, _compositeBuffer);
 
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
@@ -566,6 +556,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.curFrame++;
 		break;
 	default:
+		debug("Drawing Alfred idle frame for direction %d", alfredState.direction);
 		drawAlfred(_res->alfredIdle[alfredState.direction]);
 		break;
 	}
@@ -591,7 +582,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (scaleIndex < 0) {
 		scaleIndex = 0;
 	}
-	// debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
+	debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
 	// debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
@@ -660,7 +651,12 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					}
 					int srcIndex = srcY * kAlfredFrameWidth + srcX;
 					int outIndex = outY * finalWidth + outX;
-					finalBuf[outIndex] = buf[srcIndex];
+					debug("srcIndex = %d, outIndex = %d, original size = %d, outsize = %d", srcIndex, outIndex, kAlfredFrameWidth * kAlfredFrameHeight, finalWidth * finalHeight);
+					if(outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
+						debug("Index out of bounds!");
+					}
+					else
+						finalBuf[outIndex] = buf[srcIndex];
 				}
 				outY++;
 			}

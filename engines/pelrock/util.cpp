@@ -65,73 +65,99 @@ Common::String printMovementFlags(uint8_t flags) {
 }
 
 size_t rleDecompress(
-	const uint8_t *input,
-	size_t inputSize,
-	uint32_t offset,
-	uint32_t expectedSize,
-	uint8_t **out_data,
-	bool untilBuda) {
-	// // Check for uncompressed markers
-	if (inputSize == 0x8000 || inputSize == 0x6800) {
-		*out_data = (uint8_t *)malloc(inputSize);
-		memcpy(*out_data, input + offset, inputSize);
-		return inputSize;
-	}
+    const uint8_t *input,
+    size_t inputSize,
+    uint32_t offset,
+    uint32_t expectedSize,
+    uint8_t **out_data,
+    bool untilBuda) {
+    // Check for uncompressed markers
+    if (inputSize == 0x8000 || inputSize == 0x6800) {
+        *out_data = (uint8_t *)malloc(inputSize);
+        if (!*out_data)
+            return 0;
+        memcpy(*out_data, input + offset, inputSize);
+        return inputSize;
+    }
 
-	// RLE compressed
-	size_t bufferCapacity;
-	size_t result_size = 0;
-	uint32_t pos = offset;
+    // RLE compressed
+    size_t bufferCapacity;
+    size_t result_size = 0;
+    uint32_t pos = offset;
+    uint8_t last_value = 0;
 
-	if (untilBuda) {
-		// Dynamic allocation mode - grow buffer as needed
-		bufferCapacity = 4096;
-		*out_data = (uint8_t *)malloc(bufferCapacity);
-		if (!*out_data)
-			return 0;
-	} else {
-		// Fixed size mode
-		bufferCapacity = expectedSize;
-		*out_data = (uint8_t *)malloc(expectedSize);
-		if (!*out_data)
-			return 0;
-	}
+    if (untilBuda || expectedSize == 0) {
+        // Dynamic allocation mode - grow buffer as needed
+        bufferCapacity = 4096;
+        *out_data = (uint8_t *)malloc(bufferCapacity);
+        if (!*out_data)
+            return 0;
+    } else {
+        // Fixed size mode
+        bufferCapacity = expectedSize;
+        *out_data = (uint8_t *)malloc(bufferCapacity);
+        if (!*out_data)
+            return 0;
+    }
 
-	while (pos + 2 <= inputSize) {
-		// Check for BUDA marker
-		if (pos + 4 <= inputSize &&
-			input[pos] == 'B' && input[pos + 1] == 'U' &&
-			input[pos + 2] == 'D' && input[pos + 3] == 'A') {
-			break;
-		}
+    while (pos + 2 <= inputSize) {
+        // Read the RLE pair
+        uint8_t count = input[pos];
+        uint8_t value = input[pos + 1];
+        last_value = value;
 
-		uint8_t count = input[pos];
-		uint8_t value = input[pos + 1];
+        // Write pixels for this pair
+        for (int i = 0; i < count; i++) {
+            // Grow buffer if needed
+            if (result_size >= bufferCapacity) {
+                if (untilBuda || expectedSize == 0) {
+                    bufferCapacity *= 2;
+                } else {
+                    // In fixed mode, we've hit the limit - something is wrong
+                    // but grow minimally to avoid crash
+                    bufferCapacity += 256;
+                }
+                uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+                if (!newBuf) {
+                    free(*out_data);
+                    *out_data = nullptr;
+                    return 0;
+                }
+                *out_data = newBuf;
+            }
+            (*out_data)[result_size++] = value;
+        }
 
-		for (int i = 0; i < count; i++) {
-			// If in untilBuda mode, grow buffer as needed
-			if (untilBuda && result_size >= bufferCapacity) {
-				bufferCapacity *= 2;
-				uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
-				if (!newBuf) {
-					free(*out_data);
-					*out_data = nullptr;
-					return 0;
-				}
-				*out_data = newBuf;
-			}
-			// debug("Pos = %zu, writing value %02X", result_size, value);
-			(*out_data)[result_size++] = value;
-		}
+        // Advance to next pair
+        pos += 2;
 
-		pos += 2;
-		// In fixed size mode, stop when we reach expected size
-		if (!untilBuda && result_size >= expectedSize) {
-			break;
-		}
-	}
+        // Check for BUDA marker at new position
+        if (untilBuda && pos + 4 <= inputSize &&
+            input[pos] == 'B' && input[pos + 1] == 'U' &&
+            input[pos + 2] == 'D' && input[pos + 3] == 'A') {
+            // Game writes one final pixel after BUDA marker
+            // Grow buffer if needed
+            if (result_size >= bufferCapacity) {
+                bufferCapacity++;
+                uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+                if (!newBuf) {
+                    free(*out_data);
+                    *out_data = nullptr;
+                    return 0;
+                }
+                *out_data = newBuf;
+            }
+            (*out_data)[result_size++] = last_value;
+            break;
+        }
 
-	return result_size;
+        // In fixed size mode, stop when we reach expected size
+        if (!untilBuda && expectedSize > 0 && result_size >= expectedSize) {
+            break;
+        }
+    }
+
+    return result_size;
 }
 
 void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize) {
