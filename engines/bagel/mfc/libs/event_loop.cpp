@@ -356,7 +356,7 @@ bool EventLoop::PostMessage(HWND hWnd, unsigned int Msg,
 		// so we can ignore the WM_PARENTNOTIFY on closure
 		return false;
 
-	assert((hWnd || Msg == WM_QUIT) && hWnd != (HWND)0xdddddddd);
+	assert(hWnd || Msg == WM_QUIT);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
 }
