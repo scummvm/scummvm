@@ -29,6 +29,7 @@
 namespace Pelrock {
 
 ResourceManager::ResourceManager(/* args */) {
+	_inventoryIcons = new InventoryObject[69];
 }
 
 ResourceManager::~ResourceManager() {
@@ -60,6 +61,7 @@ ResourceManager::~ResourceManager() {
 	delete[] alfredCombFrames[0];
 	delete[] alfredCombFrames[1];
 	delete _mainMenu;
+	delete[] _inventoryIcons;
 }
 
 void ResourceManager::loadCursors() {
@@ -213,6 +215,27 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombLeftRaw);
 }
 
+void ResourceManager::loadInventoryIcons() {
+	Common::File alfred4File;
+	if (!alfred4File.open("ALFRED.4")) {
+		error("Couldnt find file ALFRED.4");
+	}
+	uint32 iconsSize = alfred4File.size() - 423656;
+	byte *iconData = new byte[iconsSize];
+	alfred4File.seek(42366, SEEK_SET);
+	alfred4File.read(iconData, iconsSize);
+
+	int iconSize = 60 * 60; // each icon has 30 bytes of header
+	for (int i = 0; i < 69; i++) {
+		_inventoryIcons[i].index = i;
+		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
+	}
+	delete[] iconData;
+}
+
+InventoryObject ResourceManager::getInventoryObject(byte index) {
+	return _inventoryIcons[index];
+}
 
 void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer) {
 	stream->seek(offset, SEEK_SET);
@@ -225,7 +248,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
 		memcpy(outputBuffer + combined_size, block_data, decompressedSize);
-		combined_size += decompressedSize + 1;
+		combined_size += decompressedSize;
 		free(block_data);
 		free(thisBlock);
 	}
@@ -251,6 +274,5 @@ void ResourceManager::loadSettingsMenu() {
 	mergeRleBlocks(&alfred7, kSettingsMenuOffset, 8, _mainMenu);
 	alfred7.close();
 }
-
 
 } // End of namespace Pelrock

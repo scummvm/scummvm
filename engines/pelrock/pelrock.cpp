@@ -170,9 +170,16 @@ Common::Error PelrockEngine::run() {
 		}
 		checkMouseHover();
 		if (stateGame == SETTINGS) {
-
-			memcpy(_screen->getPixels(), _res->_mainMenu, 640 * 400);
 			g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+
+			memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
+
+			for (int i = 0; i < 4; i++) {
+				InventoryObject item = _res->getInventoryObject(i);
+				drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
+			}
+			memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+
 			g_engine->_screen->markAllDirty();
 			g_engine->_screen->update();
 
@@ -191,7 +198,8 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
-	// _res->loadSettingsMenu();
+	_res->loadInventoryIcons();
+	_res->loadSettingsMenu();
 	_soundManager->loadSoundIndex();
 
 	calculateScalingMasks();
@@ -556,7 +564,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.curFrame++;
 		break;
 	default:
-		debug("Drawing Alfred idle frame for direction %d", alfredState.direction);
+		// debug("Drawing Alfred idle frame for direction %d", alfredState.direction);
 		drawAlfred(_res->alfredIdle[alfredState.direction]);
 		break;
 	}
@@ -582,7 +590,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (scaleIndex < 0) {
 		scaleIndex = 0;
 	}
-	debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
+	// debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
 	// debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
@@ -652,10 +660,9 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					int srcIndex = srcY * kAlfredFrameWidth + srcX;
 					int outIndex = outY * finalWidth + outX;
 					debug("srcIndex = %d, outIndex = %d, original size = %d, outsize = %d", srcIndex, outIndex, kAlfredFrameWidth * kAlfredFrameHeight, finalWidth * finalHeight);
-					if(outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
+					if (outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
 						debug("Index out of bounds!");
-					}
-					else
+					} else
 						finalBuf[outIndex] = buf[srcIndex];
 				}
 				outY++;

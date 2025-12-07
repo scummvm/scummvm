@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "pelrock/types.h"
 
 namespace Pelrock {
 
@@ -33,6 +34,7 @@ static const int interactingAnimLength = 2;
 class ResourceManager {
 private:
 	void mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer);
+	InventoryObject *_inventoryIcons = nullptr;
 public:
 	ResourceManager(/* args */);
 	~ResourceManager();
@@ -41,6 +43,8 @@ public:
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
+	void loadInventoryIcons();
+	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
 
 	byte *alfredIdle[4] = {nullptr}; // 4 directions

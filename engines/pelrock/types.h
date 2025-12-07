@@ -307,6 +307,12 @@ enum GameState {
 	INTRO = 106,
 };
 
+struct InventoryObject {
+	byte index;
+	Common::String description;
+	byte iconData[60 * 60];
+};
+
 } // End of namespace Pelrock
 
 #endif
