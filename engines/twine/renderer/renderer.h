@@ -297,6 +297,22 @@ public:
 	void draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom);
 
 	void asmTexturedTriangleNoClip(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], const uint8 *holomapImage, uint32 holomapImageSize);
+
+	inline IVec3 getCameraPosition() const {
+		return _cameraPos;
+	}
+
+	inline IVec3 getCameraRotation() const {
+		return _cameraRot;
+	}
+
+	inline int32 getLFactorX() const {
+		return _lFactorX;
+	}
+
+	inline int32 getLFactorY() const {
+		return _lFactorY;
+	}
 };
 
 inline void Renderer::setCameraRotation(int32 x, int32 y, int32 z) {

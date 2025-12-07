@@ -918,6 +918,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_movements->update();
 
+	if (isLBA2()) {
+		_rain->GereRain();
+	}
+
 	_debugState->update();
 
 	if (_menuOptions->flagCredits) {
@@ -1236,6 +1240,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	_grid->centerScreenOnActor();
 
 	_redraw->drawScene(_redraw->_firstTime);
+
+	if (isLBA2()) {
+		_rain->AffRain();
+	}
 
 	// workaround to fix hero redraw after drowning
 	if (_actor->_cropBottomScreen && _redraw->_firstTime) {
