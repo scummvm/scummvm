@@ -196,6 +196,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Added keymapper support.
 
+ Stark:
+   - The OpenGL renderer now works on older implementations not supporting non-power-of-two textures
+
  Supernova:
    - Added keymapper support.
 
