@@ -261,6 +261,10 @@ const Trajectory *Resources::giveTrajPtr(int index) const {
 int Resources::findSmkMovieIndex(const char *name) const {
 	Common::String smkName = name;
 	smkName.toLowercase();
+	if (!_movieInfo.contains(smkName)) {
+		warning("Movie '%s' not found in movie info", smkName.c_str());
+		return -1;
+	}
 	const Common::Array<int32> &info = getMovieInfo(smkName);
 	return info[0];
 }
