@@ -182,6 +182,10 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = (f.size() >= 0xffffffff) ? AD_NO_SIZE : f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 
+			// If adding an unknown game, append filename for easier identification
+			if (_gameid.equals("ags"))
+				AGS::g_fallbackDesc.desc.extra = _filenameStr.c_str();
+
 			ADDetectedGame game(&AGS::g_fallbackDesc.desc);
 			game.matchedFiles[filename].md5 = _md5;
 			game.matchedFiles[filename].size = f.size();
