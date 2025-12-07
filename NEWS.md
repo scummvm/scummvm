@@ -111,6 +111,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  MM:
    - Fixed protection from elements spell.
    - Added Text-to-Speech support.
+   - Fixed errors with M&M1 monster advancement in combat.
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
