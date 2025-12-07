@@ -83,6 +83,8 @@
 // Twinsun explosion
 #define GAMEFLAG_VIDEO_EXPLODE2 219
 
+#define GAMEFLAG_ESC 249
+
 // lba2 Kashes or Zlitos
 #define GAMEFLAG_MONEY 8
 // FLAG_ARDOISE

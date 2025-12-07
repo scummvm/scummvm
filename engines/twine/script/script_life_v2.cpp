@@ -19,6 +19,8 @@
  *
  */
 
+#include "twine/scene/grid.h"
+#include "twine/scene/collision.h"
 #include "twine/script/script_life_v2.h"
 #include "twine/audio/sound.h"
 #include "twine/audio/music.h"
@@ -212,8 +214,15 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::FADE_TO_PAL(%i)", palIndex);
-	// TODO: implement
-	return -1;
+	engine->saveTimer(false);
+	HQR::getPaletteEntry(engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, palIndex);
+	engine->_screens->fadeToPal(engine->_screens->_ptrPal);
+	engine->_screens->_flagPalettePcx = true;
+	if (palIndex == 3) { // Black palette?
+		engine->_screens->_flagFade = true;
+	}
+	engine->restoreTimer();
+	return 0;
 }
 
 int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -445,27 +454,51 @@ int32 ScriptLifeV2::lANIM_TEXTURE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int32 actorIdx = ctx.stream.readByte();
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_MESSAGE_OBJ(%i)", (int)textIdx);
-	// TODO: implement me
-	return -1;
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_MESSAGE_OBJ(%i, %i)", (int)actorIdx, (int)textIdx);
+
+	if (engine->_scene->getActor(actorIdx)->_lifePoint > 0) {
+		engine->saveTimer(false);
+		engine->testRestoreModeSVGA(true);
+		if (engine->_text->_showDialogueBubble) {
+			engine->_redraw->drawBubble(actorIdx);
+		}
+		engine->_text->setFontCrossColor(engine->_scene->getActor(actorIdx)->_talkColor);
+		engine->_scene->_talkingActor = (int16)actorIdx;
+		engine->setPalette(engine->_screens->_ptrPal);
+		engine->_text->drawTextProgressive(textIdx);
+		engine->_redraw->drawScene(true);
+		engine->restoreTimer();
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lADD_MESSAGE(%i)", (int)textIdx);
-	// TODO: implement me
-	return -1;
+
+	engine->saveTimer(false);
+	engine->testRestoreModeSVGA(true);
+	if (engine->_text->_showDialogueBubble) {
+		engine->_redraw->drawBubble(ctx.actorIdx);
+	}
+	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
+	engine->_scene->_talkingActor = (int16)ctx.actorIdx;
+	engine->setPalette(engine->_screens->_ptrPal);
+	engine->_text->drawTextProgressive(textIdx);
+	engine->_redraw->drawScene(true);
+	engine->restoreTimer();
+	return 0;
 }
 
 int32 ScriptLifeV2::lCAMERA_CENTER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 angle = ClampAngle(ToAngle(ctx.stream.readByte() * 1024));
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lCAMERA_CENTER(%i)", (int)angle);
-	// TODO: implement me - see centerOnActor in grid
-	// AddBetaCam = num ;
-	// CameraCenter( 2 ) ;
-	// FirstTime = AFF_ALL_FLIP ;
-	return -1;
+	engine->_grid->_addBetaCam = angle;
+	engine->_grid->centerOnActor(engine->_scene->getActor(2));
+	engine->_redraw->_firstTime = true;
+	return 0;
 }
 
 int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -482,10 +515,22 @@ int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lCINEMA_MODE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const uint8 val = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lCINEMA_MODE(%i)", (int)val);
-	// TODO: implement me
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lCINEMA_MODE(%i)", (int)num);
+	if (num != engine->_scene->_cinemaMode) {
+		engine->_scene->_cinemaMode = num;
+		if (!num) {
+			engine->_redraw->_firstTime = true;
+			// TODO: DureeCycleCinema = BoundRegleTrois( 1, 500, 39, ClipWindowYMin ) ;
+		} else {
+			// TODO: DureeCycleCinema = BoundRegleTrois( 1, 500, 39, 39-ClipWindowYMin ) ;
+			engine->_gameState->setGameFlag(GAMEFLAG_ESC, 0);
+		}
+		// TODO: DebCycleCinema = ClipWindowYMin ;
+		// TODO: LastYCinema = ClipWindowYMin ;
+		// TODO: TimerCinema = TimerRefHR ;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAVE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -565,9 +610,18 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	} while (true);
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lPLAY_ACF(%s)", movie);
 
+	if (!engine->_screens->_flagFade) {
+		// TODO: FadeToBlackAndSamples( PtrPal ) ;
+	}
+	engine->_screens->_flagFade = true;
+
 	engine->_movie->playMovie(movie);
 	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
+	// if (CubeMode==CUBE_INTERIEUR) InitGrille( NumCube ) ;
+	// RazListPartFlow() ;
+	// ChoicePalette() ;
 	engine->setPalette(engine->_screens->_ptrPal);
+	engine->_screens->_flagFade = true;
 	engine->restoreTimer();
 	engine->_redraw->_firstTime = true;
 
@@ -632,10 +686,24 @@ int32 ScriptLifeV2::lSET_CHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx
 }
 
 int32 ScriptLifeV2::lMESSAGE_ZOE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 textIdx = ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lMESSAGE_ZOE(%i)", (int)textIdx);
-	// TODO: implement me
-	return -1;
+
+	engine->_scene->_talkingActor = OWN_ACTOR_SCENE_INDEX;
+	ActorStruct *hero = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
+	int32 oldColor = hero->_talkColor;
+	hero->_talkColor = 1; // COUL_ZOE
+
+	engine->saveTimer(false);
+	engine->testRestoreModeSVGA(true);
+	engine->_text->setFontCrossColor(hero->_talkColor);
+	engine->setPalette(engine->_screens->_ptrPal);
+	engine->_text->drawTextProgressive(textIdx);
+	engine->_redraw->drawScene(true);
+	engine->restoreTimer();
+
+	hero->_talkColor = oldColor;
+	return 0;
 }
 
 int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -648,9 +716,9 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int frame = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSET_FRAME(%i)", (int)frame);
 	if (!ctx.actor->_flags.bSprite3D) {
-		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
+		engine->_actor->setFrame(ctx.actorIdx, frame);
 	}
-	return -1;
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -683,21 +751,18 @@ int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lIMPACT_OBJ(%i, %i, %i)", (int)num, (int)n, (int)y);
 	ActorStruct *otherActor = engine->_scene->getActor(num);
 	if (otherActor->_lifePoint > 0) {
-		// TODO: DoImpact(n, otherActor->_pos.x, otherActor->_pos.y + y, otherActor->_pos.z, num);
+		engine->_collision->doImpact(n, otherActor->posObj().x, otherActor->posObj().y + y, otherActor->posObj().z, num);
 	}
-	return -1;
+	return 0;
 }
 
 int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 brickTrackId = ctx.stream.readByte();
 	const uint16 n = ctx.stream.readUint16LE();
 	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lIMPACT_POINT(%i, %i)", (int)brickTrackId, (int)n);
-	// const IVec3 &pos = engine->_scene->_sceneTracks[brickTrackId];
-	// int16 x0 = pos.x;
-	// int16 y0 = pos.y;
-	// int16 z0 = pos.z;
-	// TODO: DoImpact(n, x0, y0, z0, ctx.actorIdx);
-	return -1;
+	const IVec3 &pos = engine->_scene->_sceneTracks[brickTrackId];
+	engine->_collision->doImpact(n, pos.x, pos.y, pos.z, ctx.actorIdx);
+	return 0;
 }
 
 // ECHELLE
@@ -810,43 +875,63 @@ int32 ScriptLifeV2::lRESTORE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext
 }
 
 int32 ScriptLifeV2::lSAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE(%i)", (int)sample);
-	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, 1, ctx.actor->posObj());
-	return -1;
+	const uint16 sampleIdx = ctx.stream.readUint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE(%i)", (int)sampleIdx);
+	engine->_sound->mixSample3D(sampleIdx, 0x1000, 1, ctx.actor->posObj(), ctx.actorIdx);
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAMPLE_RND(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_RND(%i)", (int)sample);
-	// TODO: HQ_3D_MixSample(sample, 0x800, 0x1000, 1, ctx.actor->posObj());
-	return -1;
+	const uint16 sampleIdx = ctx.stream.readUint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_RND(%i)", (int)sampleIdx);
+	int32 frequency = 0x800 + engine->getRandomNumber(0x800);
+	engine->_sound->mixSample3D(sampleIdx, frequency, 1, ctx.actor->posObj(), ctx.actorIdx);
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAMPLE_ALWAYS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_ALWAYS(%i)", (int)sample);
-	// TODO:
-	return -1;
+	const uint16 sampleIdx = ctx.stream.readUint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_ALWAYS(%i)", (int)sampleIdx);
+	if (!engine->_sound->isSamplePlaying(sampleIdx)) {
+		engine->_sound->mixSample3D(sampleIdx, 0x1000, 1, ctx.actor->posObj(), ctx.actorIdx);
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAMPLE_STOP(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 sample = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_STOP(%i)", (int)sample);
-	// TODO:
-	return -1;
+	const uint16 sampleIdx = ctx.stream.readUint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lSAMPLE_STOP(%i)", (int)sampleIdx);
+	engine->_sound->stopSample(sampleIdx);
+	return 0;
 }
 
 int32 ScriptLifeV2::lREPEAT_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 sample = ctx.stream.readSint16LE();
-	uint8 repeat = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lREPEAT_SAMPLE(%i, %i)", (int)sample, (int)repeat);
-	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, repeat, ctx.actor->posObj());
-	return -1;
+	const uint16 sampleIdx = ctx.stream.readUint16LE();
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lREPEAT_SAMPLE(%i, %i)", (int)sampleIdx, (int)num);
+	engine->_sound->mixSample3D(sampleIdx, 0x1000, num, ctx.actor->posObj(), ctx.actorIdx);
+	return 0;
 }
 
 int32 ScriptLifeV2::lBACKGROUND(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 val = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScriptsLife, "LIFE::lBACKGROUND(%i)", (int)val);
+	if (val != 0) {
+		if (!ctx.actor->_flags.bIsBackgrounded) {
+			ctx.actor->_flags.bIsBackgrounded = 1;
+			if (ctx.actor->_workFlags.bWasDrawn) {
+				engine->_redraw->_firstTime = true;
+			}
+		}
+	} else {
+		if (ctx.actor->_flags.bIsBackgrounded) {
+			ctx.actor->_flags.bIsBackgrounded = 0;
+			if (ctx.actor->_workFlags.bWasDrawn) {
+				engine->_redraw->_firstTime = true;
+			}
+		}
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {

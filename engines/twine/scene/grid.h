@@ -199,6 +199,8 @@ public:
 	/** Current grid camera x, y and z coordinates */
 	IVec3 _worldCube; // WorldXCube WorldYCube
 
+	int32 _addBetaCam = 0;
+
 	/** Flag to know if the engine is using celling grids */
 	int16 _zoneGrm = 0;
 	/** Current celling grid index */

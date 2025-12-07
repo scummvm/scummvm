@@ -855,10 +855,13 @@ void Redraw::setRenderText(const Common::String &text) {
 }
 
 void Redraw::renderText() {
-	if (_textDisappearTime <= _engine->timerRef) {
+	if (_text.empty()) {
 		return;
 	}
-	if (_text.empty()) {
+
+	if (_textDisappearTime != -1 && _engine->timerRef > _textDisappearTime) {
+		_text.clear();
+		_textDisappearTime = -1;
 		return;
 	}
 	_engine->_text->setFontColor(COLOR_WHITE);
@@ -872,6 +875,10 @@ void Redraw::renderText() {
 	_engine->copyBlockPhys(x, y, x + width, y + height);
 	const Common::Rect redraw(x, y, x + width, y + height);
 	addPhysBox(redraw);
+}
+
+void Redraw::fillBackground(uint8 color) {
+	_engine->_frontVideoBuffer.fillRect(Common::Rect(0, 0, _engine->width(), _engine->height()), color);
 }
 
 void Redraw::drawScene(bool flagflip) { // AffScene

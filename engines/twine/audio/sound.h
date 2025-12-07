@@ -70,6 +70,10 @@ private:
 	/** Remove a sample from the channel usage list */
 	void removeChannelWatch(int32 channelIdx);
 public:
+	int32 _parmSampleVolume = 127;
+	int32 _parmSampleDecalage = 0;
+	int32 _parmSampleFrequence = 0;
+
 	Sound(TwinEEngine *engine);
 	~Sound();
 
