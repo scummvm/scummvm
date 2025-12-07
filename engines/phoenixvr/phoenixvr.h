@@ -124,7 +124,7 @@ public:
 
 	Script::ConstWarpPtr getWarp(const Common::String &name);
 	Script::ConstWarpPtr getCurrentWarp() { return _warp; }
-	Region getRegion(int idx) const;
+	const Region *getRegion(int idx) const;
 
 	uint numCursors() const {
 		return _cursors.size();

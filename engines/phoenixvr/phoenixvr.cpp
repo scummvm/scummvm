@@ -102,10 +102,10 @@ Script::ConstWarpPtr PhoenixVREngine::getWarp(const Common::String &name) {
 	return _script->getWarp(name);
 }
 
-Region PhoenixVREngine::getRegion(int idx) const {
+const Region *PhoenixVREngine::getRegion(int idx) const {
 	if (!_regSet)
 		error("no region set");
-	return _regSet->getRegion(idx);
+	return (idx < static_cast<int>(_regSet->size())) ? &_regSet->getRegion(idx) : nullptr;
 }
 
 void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
@@ -118,17 +118,20 @@ void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 }
 
 void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
-	auto reg = g_engine->getRegion(idx);
-	auto &cursor = _cursors[idx];
-	auto rect = reg.toRect();
-	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, rect.toString().c_str(), path.c_str());
+	debug("setCursor %s %s:%d", path.c_str(), wname.c_str(), idx);
 	if (!_warp || !_warp->vrFile.equalsIgnoreCase(wname)) {
 		warning("setting cursor for different warp, active: %s, required: %s", _warp ? _warp->vrFile.c_str() : "null", wname.c_str());
 		return;
 	}
+	auto *reg = g_engine->getRegion(idx);
+	if (idx >= static_cast<int>(_cursors.size()))
+		_cursors.resize(idx + 1);
+	auto &cursor = _cursors[idx];
+	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, reg ? reg->toString().c_str() : "no region", path.c_str());
 	cursor.free();
 	cursor.surface = loadSurface(path);
-	cursor.region = reg;
+	if (reg)
+		cursor.region = *reg;
 }
 
 void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
