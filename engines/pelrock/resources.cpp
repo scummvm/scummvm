@@ -262,16 +262,50 @@ void ResourceManager::loadSettingsMenu() {
 	}
 
 	_mainMenu = new byte[640 * 400];
-
-	alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
-	alfred7.read(_mainMenuPalette, 768);
-	for (int i = 0; i < 256; i++) {
-		_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-		_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-		_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
+	for (int i = 0; i < 640 * 400; i++) {
+		_mainMenu[i] = 13;
 	}
 
-	mergeRleBlocks(&alfred7, kSettingsMenuOffset, 8, _mainMenu);
+	alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
+	// alfred7.read(_mainMenuPalette, 768);
+	// for (int i = 0; i < 256; i++) {
+	// 	_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
+	// 	_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
+	// 	_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
+	// }
+
+	uint32 curPos = 0;
+	alfred7.seek(2405266, SEEK_SET);
+	alfred7.read(_mainMenu, 65536);
+
+	curPos += 65536;
+
+	byte *compressedPart1 = new byte[29418];
+	alfred7.read(compressedPart1, 29418);
+	byte *decompressedPart1 = nullptr;
+	size_t decompressedSize = rleDecompress(compressedPart1, 29418, 0, 0, &decompressedPart1, true);
+
+	memcpy(_mainMenu + curPos, decompressedPart1, decompressedSize);
+	curPos += decompressedSize;
+
+
+	delete[] compressedPart1;
+	delete[] decompressedPart1;
+	alfred7.seek(2500220, SEEK_SET);
+	alfred7.read(_mainMenu + curPos, 32768);
+	curPos += 32768;
+	byte *compressedPart2 = new byte[30288];
+	alfred7.read(compressedPart2, 30288);
+	byte *decompressedPart2 = nullptr;
+	decompressedSize = rleDecompress(compressedPart2, 30288, 0, 0, &decompressedPart2, true);
+
+	memcpy(_mainMenu + curPos, decompressedPart2, decompressedSize);
+	curPos += decompressedSize;
+	debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + 92160);
+	delete[] compressedPart2;
+	delete[] decompressedPart2;
+	alfred7.seek(2563266, SEEK_SET);
+	alfred7.read(_mainMenu + curPos, 92160);
 	alfred7.close();
 }
 
