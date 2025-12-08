@@ -66,6 +66,8 @@ using namespace Settings;
 extern int PRIVATE_lex();
 //extern int PRIVATE_parse();
 
+int markplus();
+
 void PRIVATE_xerror(const char *str) {
 }
 
@@ -86,6 +88,7 @@ int PRIVATE_wrap() {
 
 %token<s> NAME
 %token<sym> STRING NUM
+%token NUM_PLUS
 %type <inst> body if startp cond end expr statements statement fcall value
 %token LTE GTE NEQ EQ FALSETOK TRUETOK NULLTOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK EMITCODEONTOK EMITCODEOFFTOK RESETIDTOK DEFINETOK SETTINGTOK RANDOMTOK
 %type<narg> params
@@ -205,6 +208,17 @@ expr:     value	   { $$ = $1; }
 	| value '>' value { code1(gt); }
 	| value LTE value { code1(le); }
 	| value GTE value { code1(ge); }
-	| value '+'       { $$ = $1; } // unclear what it should do
+	| value '+'       { code1(markplus); $$ = $1; }
 	| RANDOMTOK '(' NUM '%' ')' { code3(constpush, (Inst)$NUM, randbool); }
 	;
+
+%%
+
+int markplus() {
+	Datum d = pop();
+	if (d.type == NUM) {
+		d.type = NUM_PLUS;
+	}
+	push(d);
+	return 0;
+}

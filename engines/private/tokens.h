@@ -65,24 +65,25 @@ extern int PRIVATE_debug;
     NAME = 258,                    /* NAME  */
     STRING = 259,                  /* STRING  */
     NUM = 260,                     /* NUM  */
-    LTE = 261,                     /* LTE  */
-    GTE = 262,                     /* GTE  */
-    NEQ = 263,                     /* NEQ  */
-    EQ = 264,                      /* EQ  */
-    FALSETOK = 265,                /* FALSETOK  */
-    TRUETOK = 266,                 /* TRUETOK  */
-    NULLTOK = 267,                 /* NULLTOK  */
-    IFTOK = 268,                   /* IFTOK  */
-    ELSETOK = 269,                 /* ELSETOK  */
-    RECT = 270,                    /* RECT  */
-    GOTOTOK = 271,                 /* GOTOTOK  */
-    DEBUGTOK = 272,                /* DEBUGTOK  */
-    EMITCODEONTOK = 273,           /* EMITCODEONTOK  */
-    EMITCODEOFFTOK = 274,          /* EMITCODEOFFTOK  */
-    RESETIDTOK = 275,              /* RESETIDTOK  */
-    DEFINETOK = 276,               /* DEFINETOK  */
-    SETTINGTOK = 277,              /* SETTINGTOK  */
-    RANDOMTOK = 278                /* RANDOMTOK  */
+    NUM_PLUS = 261,                /* NUM_PLUS  */
+    LTE = 262,                     /* LTE  */
+    GTE = 263,                     /* GTE  */
+    NEQ = 264,                     /* NEQ  */
+    EQ = 265,                      /* EQ  */
+    FALSETOK = 266,                /* FALSETOK  */
+    TRUETOK = 267,                 /* TRUETOK  */
+    NULLTOK = 268,                 /* NULLTOK  */
+    IFTOK = 269,                   /* IFTOK  */
+    ELSETOK = 270,                 /* ELSETOK  */
+    RECT = 271,                    /* RECT  */
+    GOTOTOK = 272,                 /* GOTOTOK  */
+    DEBUGTOK = 273,                /* DEBUGTOK  */
+    EMITCODEONTOK = 274,           /* EMITCODEONTOK  */
+    EMITCODEOFFTOK = 275,          /* EMITCODEOFFTOK  */
+    RESETIDTOK = 276,              /* RESETIDTOK  */
+    DEFINETOK = 277,               /* DEFINETOK  */
+    SETTINGTOK = 278,              /* SETTINGTOK  */
+    RANDOMTOK = 279                /* RANDOMTOK  */
   };
   typedef enum PRIVATE_tokentype PRIVATE_token_kind_t;
 #endif
@@ -91,7 +92,7 @@ extern int PRIVATE_debug;
 #if ! defined PRIVATE_STYPE && ! defined PRIVATE_STYPE_IS_DECLARED
 union PRIVATE_STYPE
 {
-#line 79 "engines/private/grammar.y"
+#line 81 "engines/private/grammar.y"
 
 	Private::Symbol *sym; /* symbol table pointer */
 	int (**inst)();       /* machine instruction */
@@ -99,7 +100,7 @@ union PRIVATE_STYPE
 	int *i;	       /* integer value */
 	int narg;	     /* auxiliary value to count function arguments */
 
-#line 103 "engines/private/tokens.h"
+#line 104 "engines/private/tokens.h"
 
 };
 typedef union PRIVATE_STYPE PRIVATE_STYPE;
