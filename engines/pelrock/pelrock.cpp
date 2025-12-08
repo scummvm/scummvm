@@ -152,8 +152,10 @@ Common::Error PelrockEngine::run() {
 				_displayPopup = false;
 				_longClick = false;
 			} else if (e.type == Common::EVENT_RBUTTONUP) {
-				if (stateGame != SETTINGS)
+				if (stateGame != SETTINGS){
+					g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
 					stateGame = SETTINGS;
+				}
 				else {
 					g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 					stateGame = GAME;
@@ -170,8 +172,6 @@ Common::Error PelrockEngine::run() {
 		}
 		checkMouseHover();
 		if (stateGame == SETTINGS) {
-			g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
-
 			memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
 
 			for (int i = 0; i < 4; i++) {
@@ -338,6 +338,7 @@ void PelrockEngine::frames() {
 
 		// Draw Alfred here (you'll need to add this)
 		chooseAlfredStateAndDraw();
+
 
 		// Second pass: sprites in front of Alfred (y > alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
@@ -766,6 +767,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+
 	if (hotspotIndex != -1) {
 
 		_popupX = x - kBalloonWidth / 2;
@@ -1192,7 +1194,7 @@ uint16_t PelrockEngine::buildWalkboxPath(uint8_t startBox, uint8_t destBox, uint
 
 	// Terminate path
 	pathBuffer[pathIndex] = PATH_END;
-
+	debug("Built walkbox path of length %d", pathIndex);
 	return pathIndex;
 }
 
@@ -1332,7 +1334,11 @@ void PelrockEngine::checkMouseHover() {
 	}
 
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-
+	if(hotspotIndex != -1) {
+	debug("Hotspot under mouse: %d, %d (extra = %d)", _room->_currentRoomHotspots[hotspotIndex].x,
+		  _room->_currentRoomHotspots[hotspotIndex].y,
+		  hotspotIndex != -1 ? _room->_currentRoomHotspots[hotspotIndex].extra : -1);
+	}
 	if (hotspotIndex != -1) {
 		isSomethingUnder = true;
 	}

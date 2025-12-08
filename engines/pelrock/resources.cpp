@@ -267,12 +267,12 @@ void ResourceManager::loadSettingsMenu() {
 	}
 
 	alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
-	// alfred7.read(_mainMenuPalette, 768);
-	// for (int i = 0; i < 256; i++) {
-	// 	_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-	// 	_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-	// 	_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
-	// }
+	alfred7.read(_mainMenuPalette, 768);
+	for (int i = 0; i < 256; i++) {
+		_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
+		_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
+		_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
+	}
 
 	uint32 curPos = 0;
 	alfred7.seek(2405266, SEEK_SET);
