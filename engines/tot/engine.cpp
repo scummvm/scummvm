@@ -881,7 +881,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	_mouse->show();
 }
 
-void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint objectCode2) {
+void TotEngine::useInventoryObjectWithInventoryObject(int16 objectCode1, int16 objectCode2) {
 	byte invIndex, indobj1, indobj2;
 
 	readObject(_sceneObjectsData, objectCode1, _curObject);
