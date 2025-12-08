@@ -95,6 +95,8 @@ using namespace Settings;
 extern int PRIVATE_lex();
 //extern int PRIVATE_parse();
 
+int markplus();
+
 void PRIVATE_xerror(const char *str) {
 }
 
@@ -104,7 +106,7 @@ int PRIVATE_wrap() {
 
 
 
-#line 108 "engines/private/grammar.cpp"
+#line 110 "engines/private/grammar.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -138,51 +140,52 @@ enum yysymbol_kind_t
   YYSYMBOL_NAME = 3,                       /* NAME  */
   YYSYMBOL_STRING = 4,                     /* STRING  */
   YYSYMBOL_NUM = 5,                        /* NUM  */
-  YYSYMBOL_LTE = 6,                        /* LTE  */
-  YYSYMBOL_GTE = 7,                        /* GTE  */
-  YYSYMBOL_NEQ = 8,                        /* NEQ  */
-  YYSYMBOL_EQ = 9,                         /* EQ  */
-  YYSYMBOL_FALSETOK = 10,                  /* FALSETOK  */
-  YYSYMBOL_TRUETOK = 11,                   /* TRUETOK  */
-  YYSYMBOL_NULLTOK = 12,                   /* NULLTOK  */
-  YYSYMBOL_IFTOK = 13,                     /* IFTOK  */
-  YYSYMBOL_ELSETOK = 14,                   /* ELSETOK  */
-  YYSYMBOL_RECT = 15,                      /* RECT  */
-  YYSYMBOL_GOTOTOK = 16,                   /* GOTOTOK  */
-  YYSYMBOL_DEBUGTOK = 17,                  /* DEBUGTOK  */
-  YYSYMBOL_EMITCODEONTOK = 18,             /* EMITCODEONTOK  */
-  YYSYMBOL_EMITCODEOFFTOK = 19,            /* EMITCODEOFFTOK  */
-  YYSYMBOL_RESETIDTOK = 20,                /* RESETIDTOK  */
-  YYSYMBOL_DEFINETOK = 21,                 /* DEFINETOK  */
-  YYSYMBOL_SETTINGTOK = 22,                /* SETTINGTOK  */
-  YYSYMBOL_RANDOMTOK = 23,                 /* RANDOMTOK  */
-  YYSYMBOL_24_ = 24,                       /* '{'  */
-  YYSYMBOL_25_ = 25,                       /* '}'  */
-  YYSYMBOL_26_ = 26,                       /* ','  */
-  YYSYMBOL_27_ = 27,                       /* ';'  */
-  YYSYMBOL_28_ = 28,                       /* '('  */
-  YYSYMBOL_29_ = 29,                       /* ')'  */
-  YYSYMBOL_30_ = 30,                       /* '!'  */
-  YYSYMBOL_31_ = 31,                       /* '+'  */
-  YYSYMBOL_32_ = 32,                       /* '<'  */
-  YYSYMBOL_33_ = 33,                       /* '>'  */
-  YYSYMBOL_34_ = 34,                       /* '%'  */
-  YYSYMBOL_YYACCEPT = 35,                  /* $accept  */
-  YYSYMBOL_lines = 36,                     /* lines  */
-  YYSYMBOL_line = 37,                      /* line  */
-  YYSYMBOL_debug = 38,                     /* debug  */
-  YYSYMBOL_statements = 39,                /* statements  */
-  YYSYMBOL_statement = 40,                 /* statement  */
-  YYSYMBOL_body = 41,                      /* body  */
-  YYSYMBOL_end = 42,                       /* end  */
-  YYSYMBOL_if = 43,                        /* if  */
-  YYSYMBOL_cond = 44,                      /* cond  */
-  YYSYMBOL_define = 45,                    /* define  */
-  YYSYMBOL_fcall = 46,                     /* fcall  */
-  YYSYMBOL_startp = 47,                    /* startp  */
-  YYSYMBOL_params = 48,                    /* params  */
-  YYSYMBOL_value = 49,                     /* value  */
-  YYSYMBOL_expr = 50                       /* expr  */
+  YYSYMBOL_NUM_PLUS = 6,                   /* NUM_PLUS  */
+  YYSYMBOL_LTE = 7,                        /* LTE  */
+  YYSYMBOL_GTE = 8,                        /* GTE  */
+  YYSYMBOL_NEQ = 9,                        /* NEQ  */
+  YYSYMBOL_EQ = 10,                        /* EQ  */
+  YYSYMBOL_FALSETOK = 11,                  /* FALSETOK  */
+  YYSYMBOL_TRUETOK = 12,                   /* TRUETOK  */
+  YYSYMBOL_NULLTOK = 13,                   /* NULLTOK  */
+  YYSYMBOL_IFTOK = 14,                     /* IFTOK  */
+  YYSYMBOL_ELSETOK = 15,                   /* ELSETOK  */
+  YYSYMBOL_RECT = 16,                      /* RECT  */
+  YYSYMBOL_GOTOTOK = 17,                   /* GOTOTOK  */
+  YYSYMBOL_DEBUGTOK = 18,                  /* DEBUGTOK  */
+  YYSYMBOL_EMITCODEONTOK = 19,             /* EMITCODEONTOK  */
+  YYSYMBOL_EMITCODEOFFTOK = 20,            /* EMITCODEOFFTOK  */
+  YYSYMBOL_RESETIDTOK = 21,                /* RESETIDTOK  */
+  YYSYMBOL_DEFINETOK = 22,                 /* DEFINETOK  */
+  YYSYMBOL_SETTINGTOK = 23,                /* SETTINGTOK  */
+  YYSYMBOL_RANDOMTOK = 24,                 /* RANDOMTOK  */
+  YYSYMBOL_25_ = 25,                       /* '{'  */
+  YYSYMBOL_26_ = 26,                       /* '}'  */
+  YYSYMBOL_27_ = 27,                       /* ','  */
+  YYSYMBOL_28_ = 28,                       /* ';'  */
+  YYSYMBOL_29_ = 29,                       /* '('  */
+  YYSYMBOL_30_ = 30,                       /* ')'  */
+  YYSYMBOL_31_ = 31,                       /* '!'  */
+  YYSYMBOL_32_ = 32,                       /* '+'  */
+  YYSYMBOL_33_ = 33,                       /* '<'  */
+  YYSYMBOL_34_ = 34,                       /* '>'  */
+  YYSYMBOL_35_ = 35,                       /* '%'  */
+  YYSYMBOL_YYACCEPT = 36,                  /* $accept  */
+  YYSYMBOL_lines = 37,                     /* lines  */
+  YYSYMBOL_line = 38,                      /* line  */
+  YYSYMBOL_debug = 39,                     /* debug  */
+  YYSYMBOL_statements = 40,                /* statements  */
+  YYSYMBOL_statement = 41,                 /* statement  */
+  YYSYMBOL_body = 42,                      /* body  */
+  YYSYMBOL_end = 43,                       /* end  */
+  YYSYMBOL_if = 44,                        /* if  */
+  YYSYMBOL_cond = 45,                      /* cond  */
+  YYSYMBOL_define = 46,                    /* define  */
+  YYSYMBOL_fcall = 47,                     /* fcall  */
+  YYSYMBOL_startp = 48,                    /* startp  */
+  YYSYMBOL_params = 49,                    /* params  */
+  YYSYMBOL_value = 50,                     /* value  */
+  YYSYMBOL_expr = 51                       /* expr  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -510,10 +513,10 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   124
+#define YYLAST   127
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  35
+#define YYNTOKENS  36
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  16
 /* YYNRULES -- Number of rules.  */
@@ -522,7 +525,7 @@ union yyalloc
 #define YYNSTATES  116
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   278
+#define YYMAXUTOK   279
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -539,16 +542,16 @@ static const yytype_int8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    30,     2,     2,     2,    34,     2,     2,
-      28,    29,     2,    31,    26,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    27,
-      32,     2,    33,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    31,     2,     2,     2,    35,     2,     2,
+      29,    30,     2,    32,    27,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    28,
+      33,     2,    34,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    24,     2,    25,     2,     2,     2,     2,
+       2,     2,     2,    25,     2,    26,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -563,19 +566,19 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
 };
 
 #if PRIVATE_DEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    95,    95,    96,    99,   100,   101,   102,   103,   104,
-     108,   109,   112,   113,   116,   123,   124,   129,   137,   138,
-     141,   144,   147,   150,   151,   156,   160,   161,   164,   172,
-     173,   181,   184,   185,   186,   187,   188,   191,   192,   193,
-     194,   195,   196,   199,   200,   201,   202,   203,   204,   205,
-     206,   207,   208,   209
+       0,    98,    98,    99,   102,   103,   104,   105,   106,   107,
+     111,   112,   115,   116,   119,   126,   127,   132,   140,   141,
+     144,   147,   150,   153,   154,   159,   163,   164,   167,   175,
+     176,   184,   187,   188,   189,   190,   191,   194,   195,   196,
+     197,   198,   199,   202,   203,   204,   205,   206,   207,   208,
+     209,   210,   211,   212
 };
 #endif
 
@@ -592,13 +595,13 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "NAME", "STRING",
-  "NUM", "LTE", "GTE", "NEQ", "EQ", "FALSETOK", "TRUETOK", "NULLTOK",
-  "IFTOK", "ELSETOK", "RECT", "GOTOTOK", "DEBUGTOK", "EMITCODEONTOK",
-  "EMITCODEOFFTOK", "RESETIDTOK", "DEFINETOK", "SETTINGTOK", "RANDOMTOK",
-  "'{'", "'}'", "','", "';'", "'('", "')'", "'!'", "'+'", "'<'", "'>'",
-  "'%'", "$accept", "lines", "line", "debug", "statements", "statement",
-  "body", "end", "if", "cond", "define", "fcall", "startp", "params",
-  "value", "expr", YY_NULLPTR
+  "NUM", "NUM_PLUS", "LTE", "GTE", "NEQ", "EQ", "FALSETOK", "TRUETOK",
+  "NULLTOK", "IFTOK", "ELSETOK", "RECT", "GOTOTOK", "DEBUGTOK",
+  "EMITCODEONTOK", "EMITCODEOFFTOK", "RESETIDTOK", "DEFINETOK",
+  "SETTINGTOK", "RANDOMTOK", "'{'", "'}'", "','", "';'", "'('", "')'",
+  "'!'", "'+'", "'<'", "'>'", "'%'", "$accept", "lines", "line", "debug",
+  "statements", "statement", "body", "end", "if", "cond", "define",
+  "fcall", "startp", "params", "value", "expr", YY_NULLPTR
 };
 
 static const char *
@@ -608,7 +611,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-75)
+#define YYPACT_NINF (-74)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -622,18 +625,18 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      67,   -10,   -75,   -75,   -75,    12,    19,    28,    67,    26,
-      13,    27,   -75,   -75,    17,     5,    36,    51,    26,   -75,
-      24,    30,    25,   -75,    37,     4,    49,    51,    50,    52,
-     -75,     6,   -75,   -75,    47,    53,    78,   -75,   -75,    15,
-      20,   -75,    54,   -75,     1,    64,   -75,    62,   -75,   -75,
-     -75,   -75,   -75,   -75,    66,    65,    40,    63,    51,   -75,
-     -75,    88,    25,    68,    69,    70,    71,    93,   -75,    95,
-     -75,    65,    65,    65,    65,    65,    65,    65,   -75,    76,
-      89,    79,     1,   -75,     1,    80,    73,   -75,   -75,   -75,
-     -75,   -75,   -75,   -75,   -75,    20,    97,   -75,   -75,    99,
-      81,   -75,    82,    83,   -75,   -75,   106,   107,    87,    85,
-     110,   -75,    90,    91,    36,   -75
+      69,   -17,   -74,   -74,   -74,    12,    13,    19,    69,    21,
+       2,     6,   -74,   -74,    -1,    18,    40,    36,    21,   -74,
+      22,    20,    16,   -74,    25,     4,    29,    36,    42,    23,
+     -74,     7,   -74,   -74,    52,    30,    71,   -74,   -74,    17,
+      56,   -74,    46,   -74,     1,    53,   -74,    49,   -74,   -74,
+     -74,   -74,   -74,   -74,    64,    73,    28,    65,    36,   -74,
+     -74,    77,    16,    67,    70,    68,    72,    89,   -74,    95,
+     -74,    73,    73,    73,    73,    73,    73,    73,   -74,    75,
+      87,    76,     1,   -74,     1,    78,    74,   -74,   -74,   -74,
+     -74,   -74,   -74,   -74,   -74,    56,    99,   -74,   -74,   101,
+      80,   -74,    81,    84,   -74,   -74,   102,   107,    86,    85,
+     109,   -74,    88,    90,    40,   -74
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -658,8 +661,8 @@ static const yytype_int8 yydefact[] =
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -75,   108,   -75,   100,   -24,   -39,    29,    21,   -75,   -75,
-     -31,   -42,   -75,   -74,   -14,    84
+     -74,   108,   -74,   103,   -24,   -39,    24,    26,   -74,   -74,
+     -31,   -42,   -74,   -73,    -8,    83
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -674,65 +677,65 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      43,    59,    64,    38,    62,    49,    50,    35,    97,    20,
-      98,    51,    52,    53,     9,    10,    24,    63,    48,    49,
-      50,    42,    11,    22,    54,    51,    52,    53,    12,    14,
-      19,    55,    36,    23,    79,    24,    25,    16,    54,    20,
-      64,    70,    64,    18,    58,    55,    71,    72,    73,    74,
-      31,    17,    45,    33,    22,    32,    59,    87,    88,    89,
-      90,    91,    92,    93,    23,    34,    24,    25,    48,    49,
-      50,    75,    76,    77,    37,    51,    52,    53,    39,    41,
-      46,    47,    61,   115,     1,     2,     3,     4,     5,     6,
-      67,    68,    78,    81,    69,    82,    36,    84,    85,    83,
-      86,    94,   102,    95,   103,    96,    99,   100,   106,   107,
-     104,   108,   109,   110,   111,   112,    13,   114,    30,   113,
-       0,     0,   105,    57,   101
+      43,    59,    64,    38,    62,    49,    50,    35,     9,    97,
+      20,    98,    51,    52,    53,    10,    11,    24,    63,    12,
+      48,    49,    50,    42,    14,    54,    18,    16,    51,    52,
+      53,    17,    55,    36,    79,    71,    72,    73,    74,    22,
+      64,    54,    64,    20,    19,    33,    32,    70,    55,    31,
+      23,    41,    24,    25,    34,    37,    59,    45,    46,    22,
+      75,    76,    77,    87,    88,    89,    90,    91,    92,    93,
+      23,    39,    24,    25,    47,    61,    48,    49,    50,    68,
+      67,    58,    81,   115,    51,    52,    53,     1,     2,     3,
+       4,     5,     6,    69,    85,    78,    36,    82,    83,    84,
+      86,    94,    95,    96,   102,    99,   103,   108,   106,   100,
+     104,   107,   109,   110,   112,   111,    13,   114,   113,   101,
+       0,    30,    57,     0,     0,     0,     0,   105
 };
 
 static const yytype_int8 yycheck[] =
 {
-      31,    40,    44,    27,     3,     4,     5,     3,    82,     3,
-      84,    10,    11,    12,    24,     3,    15,    16,     3,     4,
-       5,    15,     3,     3,    23,    10,    11,    12,     0,     3,
-      25,    30,    28,    13,    58,    15,    16,    24,    23,     3,
-      82,    55,    84,    26,    24,    30,     6,     7,     8,     9,
-      26,    24,     5,    28,     3,    25,    95,    71,    72,    73,
-      74,    75,    76,    77,    13,    28,    15,    16,     3,     4,
-       5,    31,    32,    33,    25,    10,    11,    12,    28,    27,
-      27,     3,    28,   114,    17,    18,    19,    20,    21,    22,
-      26,    29,    29,     5,    28,    26,    28,    26,     5,    29,
-       5,    25,     5,    14,     5,    26,    26,    34,    26,    26,
-      29,     5,     5,    26,    29,     5,     8,    26,    18,    29,
-      -1,    -1,   101,    39,    95
+      31,    40,    44,    27,     3,     4,     5,     3,    25,    82,
+       3,    84,    11,    12,    13,     3,     3,    16,    17,     0,
+       3,     4,     5,    16,     3,    24,    27,    25,    11,    12,
+      13,    25,    31,    29,    58,     7,     8,     9,    10,     3,
+      82,    24,    84,     3,    26,    29,    26,    55,    31,    27,
+      14,    28,    16,    17,    29,    26,    95,     5,    28,     3,
+      32,    33,    34,    71,    72,    73,    74,    75,    76,    77,
+      14,    29,    16,    17,     3,    29,     3,     4,     5,    30,
+      27,    25,     5,   114,    11,    12,    13,    18,    19,    20,
+      21,    22,    23,    29,     5,    30,    29,    27,    30,    27,
+       5,    26,    15,    27,     5,    27,     5,     5,    27,    35,
+      30,    27,     5,    27,     5,    30,     8,    27,    30,    95,
+      -1,    18,    39,    -1,    -1,    -1,    -1,   101
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    17,    18,    19,    20,    21,    22,    36,    37,    24,
-       3,     3,     0,    36,     3,    38,    24,    24,    26,    25,
-       3,    45,     3,    13,    15,    16,    39,    40,    43,    46,
-      38,    26,    25,    28,    28,     3,    28,    25,    39,    28,
-      44,    27,    15,    45,    47,     5,    27,     3,     3,     4,
-       5,    10,    11,    12,    23,    30,    49,    50,    24,    40,
-      41,    28,     3,    16,    46,    48,    50,    26,    29,    28,
-      49,     6,     7,     8,     9,    31,    32,    33,    29,    39,
-      42,     5,    26,    29,    26,     5,     5,    49,    49,    49,
-      49,    49,    49,    49,    25,    14,    26,    48,    48,    26,
-      34,    41,     5,     5,    29,    42,    26,    26,     5,     5,
-      26,    29,     5,    29,    26,    45
+       0,    18,    19,    20,    21,    22,    23,    37,    38,    25,
+       3,     3,     0,    37,     3,    39,    25,    25,    27,    26,
+       3,    46,     3,    14,    16,    17,    40,    41,    44,    47,
+      39,    27,    26,    29,    29,     3,    29,    26,    40,    29,
+      45,    28,    16,    46,    48,     5,    28,     3,     3,     4,
+       5,    11,    12,    13,    24,    31,    50,    51,    25,    41,
+      42,    29,     3,    17,    47,    49,    51,    27,    30,    29,
+      50,     7,     8,     9,    10,    32,    33,    34,    30,    40,
+      43,     5,    27,    30,    27,     5,     5,    50,    50,    50,
+      50,    50,    50,    50,    26,    15,    27,    49,    49,    27,
+      35,    42,     5,     5,    30,    43,    27,    27,     5,     5,
+      27,    30,     5,    30,    27,    46
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    35,    36,    36,    37,    37,    37,    37,    37,    37,
-      38,    38,    39,    39,    40,    40,    40,    40,    41,    41,
-      42,    43,    44,    45,    45,    45,    45,    45,    46,    46,
-      46,    47,    48,    48,    48,    48,    48,    49,    49,    49,
-      49,    49,    49,    50,    50,    50,    50,    50,    50,    50,
-      50,    50,    50,    50
+       0,    36,    37,    37,    38,    38,    38,    38,    38,    38,
+      39,    39,    40,    40,    41,    41,    41,    41,    42,    42,
+      43,    44,    45,    46,    46,    46,    46,    46,    47,    47,
+      47,    48,    49,    49,    49,    49,    49,    50,    50,    50,
+      50,    50,    50,    51,    51,    51,    51,    51,    51,    51,
+      51,    51,    51,    51
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -1207,50 +1210,50 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* line: DEBUGTOK '{' debug '}'  */
-#line 99 "engines/private/grammar.y"
+#line 102 "engines/private/grammar.y"
                              { /* Not used in the game */ }
-#line 1213 "engines/private/grammar.cpp"
+#line 1216 "engines/private/grammar.cpp"
     break;
 
   case 5: /* line: EMITCODEONTOK  */
-#line 100 "engines/private/grammar.y"
+#line 103 "engines/private/grammar.y"
                         { /* Unclear what this is */ }
-#line 1219 "engines/private/grammar.cpp"
+#line 1222 "engines/private/grammar.cpp"
     break;
 
   case 6: /* line: EMITCODEOFFTOK  */
-#line 101 "engines/private/grammar.y"
+#line 104 "engines/private/grammar.y"
                          { /* Unclear what this is */ }
-#line 1225 "engines/private/grammar.cpp"
+#line 1228 "engines/private/grammar.cpp"
     break;
 
   case 7: /* line: RESETIDTOK  */
-#line 102 "engines/private/grammar.y"
+#line 105 "engines/private/grammar.y"
                      { /* Unclear what this is */ }
-#line 1231 "engines/private/grammar.cpp"
+#line 1234 "engines/private/grammar.cpp"
     break;
 
   case 8: /* line: DEFINETOK NAME '{' define '}'  */
-#line 103 "engines/private/grammar.y"
+#line 106 "engines/private/grammar.y"
                                         { g_private->maps.installAll((yyvsp[-3].s)); }
-#line 1237 "engines/private/grammar.cpp"
+#line 1240 "engines/private/grammar.cpp"
     break;
 
   case 9: /* line: SETTINGTOK NAME '{' statements '}'  */
-#line 104 "engines/private/grammar.y"
+#line 107 "engines/private/grammar.y"
                                              { g_setts->save((yyvsp[-3].s));
 					       g_setts->init(); }
-#line 1244 "engines/private/grammar.cpp"
+#line 1247 "engines/private/grammar.cpp"
     break;
 
   case 12: /* statements: %empty  */
-#line 112 "engines/private/grammar.y"
+#line 115 "engines/private/grammar.y"
                                { (yyval.inst) = g_vm->_progp; }
-#line 1250 "engines/private/grammar.cpp"
+#line 1253 "engines/private/grammar.cpp"
     break;
 
   case 14: /* statement: GOTOTOK NAME ';'  */
-#line 116 "engines/private/grammar.y"
+#line 119 "engines/private/grammar.y"
                             {
 	(yyval.inst) = g_vm->_progp;
 	code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
@@ -1258,99 +1261,99 @@ yyreduce:
 	code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto"));
 	code1(funcpush);
 	}
-#line 1262 "engines/private/grammar.cpp"
+#line 1265 "engines/private/grammar.cpp"
     break;
 
   case 15: /* statement: fcall ';'  */
-#line 123 "engines/private/grammar.y"
+#line 126 "engines/private/grammar.y"
                          { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1268 "engines/private/grammar.cpp"
+#line 1271 "engines/private/grammar.cpp"
     break;
 
   case 16: /* statement: if cond body end  */
-#line 124 "engines/private/grammar.y"
+#line 127 "engines/private/grammar.y"
                            {
 		/* else-less if */
 		((yyvsp[-3].inst))[1] = (Inst)(yyvsp[-1].inst);     /* thenpart */
 		((yyvsp[-3].inst))[3] = (Inst)(yyvsp[0].inst);
 		}
-#line 1278 "engines/private/grammar.cpp"
+#line 1281 "engines/private/grammar.cpp"
     break;
 
   case 17: /* statement: if cond body end ELSETOK body end  */
-#line 129 "engines/private/grammar.y"
+#line 132 "engines/private/grammar.y"
                                             {
 		/* if with else */
 		((yyvsp[-6].inst))[1] = (Inst)(yyvsp[-4].inst);     /* thenpart */
 		((yyvsp[-6].inst))[2] = (Inst)(yyvsp[-1].inst);     /* elsepart */
 		((yyvsp[-6].inst))[3] = (Inst)(yyvsp[0].inst);
 		}
-#line 1289 "engines/private/grammar.cpp"
+#line 1292 "engines/private/grammar.cpp"
     break;
 
   case 18: /* body: statement  */
-#line 137 "engines/private/grammar.y"
+#line 140 "engines/private/grammar.y"
                         { (yyval.inst) = (yyvsp[0].inst); }
-#line 1295 "engines/private/grammar.cpp"
+#line 1298 "engines/private/grammar.cpp"
     break;
 
   case 19: /* body: '{' statements '}'  */
-#line 138 "engines/private/grammar.y"
+#line 141 "engines/private/grammar.y"
                              { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1301 "engines/private/grammar.cpp"
+#line 1304 "engines/private/grammar.cpp"
     break;
 
   case 20: /* end: %empty  */
-#line 141 "engines/private/grammar.y"
+#line 144 "engines/private/grammar.y"
                              { code1(STOP); (yyval.inst) = g_vm->_progp; }
-#line 1307 "engines/private/grammar.cpp"
+#line 1310 "engines/private/grammar.cpp"
     break;
 
   case 21: /* if: IFTOK  */
-#line 144 "engines/private/grammar.y"
+#line 147 "engines/private/grammar.y"
           { (yyval.inst) = code1(ifcode); code3(STOP, STOP, STOP); }
-#line 1313 "engines/private/grammar.cpp"
+#line 1316 "engines/private/grammar.cpp"
     break;
 
   case 22: /* cond: '(' expr ')'  */
-#line 147 "engines/private/grammar.y"
+#line 150 "engines/private/grammar.y"
                         { code1(STOP); (yyval.inst) = (yyvsp[-1].inst); }
-#line 1319 "engines/private/grammar.cpp"
+#line 1322 "engines/private/grammar.cpp"
     break;
 
   case 24: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')' ',' define  */
-#line 151 "engines/private/grammar.y"
+#line 154 "engines/private/grammar.y"
                                                                         {
 	  Common::Rect *r = new Common::Rect((yyvsp[-9].sym)->u.val, (yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val);
 	  assert(r->isValidRect());
 	  g_private->maps.defineSymbol((yyvsp[-13].s), r);
 	  }
-#line 1329 "engines/private/grammar.cpp"
+#line 1332 "engines/private/grammar.cpp"
     break;
 
   case 25: /* define: NAME ',' RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 156 "engines/private/grammar.y"
+#line 159 "engines/private/grammar.y"
                                                             {
 	  Common::Rect *r = new Common::Rect((yyvsp[-7].sym)->u.val, (yyvsp[-5].sym)->u.val, (yyvsp[-3].sym)->u.val, (yyvsp[-1].sym)->u.val);
 	  g_private->maps.defineSymbol((yyvsp[-11].s), r);
 	  }
-#line 1338 "engines/private/grammar.cpp"
+#line 1341 "engines/private/grammar.cpp"
     break;
 
   case 26: /* define: NAME ',' define  */
-#line 160 "engines/private/grammar.y"
+#line 163 "engines/private/grammar.y"
                           { g_private->maps.defineSymbol((yyvsp[-2].s), NULL); }
-#line 1344 "engines/private/grammar.cpp"
+#line 1347 "engines/private/grammar.cpp"
     break;
 
   case 27: /* define: NAME  */
-#line 161 "engines/private/grammar.y"
+#line 164 "engines/private/grammar.y"
                     { g_private->maps.defineSymbol((yyvsp[0].s), NULL); }
-#line 1350 "engines/private/grammar.cpp"
+#line 1353 "engines/private/grammar.cpp"
     break;
 
   case 28: /* fcall: GOTOTOK '(' NAME ')'  */
-#line 164 "engines/private/grammar.y"
+#line 167 "engines/private/grammar.y"
                                {
 			       (yyval.inst) = g_vm->_progp;
 			       code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-1].s)));
@@ -1358,166 +1361,166 @@ yyreduce:
 			       code2(strpush, (Inst) g_private->maps.constant(STRING, 0, "goto"));
 			       code1(funcpush);
 			       }
-#line 1362 "engines/private/grammar.cpp"
+#line 1365 "engines/private/grammar.cpp"
     break;
 
   case 29: /* fcall: RECT '(' NUM ',' NUM ',' NUM ',' NUM ')'  */
-#line 172 "engines/private/grammar.y"
+#line 175 "engines/private/grammar.y"
                                                    { (yyval.inst) = g_vm->_progp; }
-#line 1368 "engines/private/grammar.cpp"
+#line 1371 "engines/private/grammar.cpp"
     break;
 
   case 30: /* fcall: NAME '(' startp params ')'  */
-#line 173 "engines/private/grammar.y"
+#line 176 "engines/private/grammar.y"
                                       {
 			       (yyval.inst) = (yyvsp[-2].inst);
 			       code2(constpush, (Inst) g_private->maps.constant(NUM, (yyvsp[-1].narg), NULL));
 			       code2(strpush, (Inst) g_private->maps.constant(STRING, 0, (yyvsp[-4].s)));
 			       code1(funcpush);
 			       }
-#line 1379 "engines/private/grammar.cpp"
+#line 1382 "engines/private/grammar.cpp"
     break;
 
   case 31: /* startp: %empty  */
-#line 181 "engines/private/grammar.y"
+#line 184 "engines/private/grammar.y"
                     { (yyval.inst) = g_vm->_progp; }
-#line 1385 "engines/private/grammar.cpp"
+#line 1388 "engines/private/grammar.cpp"
     break;
 
   case 32: /* params: %empty  */
-#line 184 "engines/private/grammar.y"
+#line 187 "engines/private/grammar.y"
                             { (yyval.narg) = 0; }
-#line 1391 "engines/private/grammar.cpp"
+#line 1394 "engines/private/grammar.cpp"
     break;
 
   case 33: /* params: fcall ',' params  */
-#line 185 "engines/private/grammar.y"
+#line 188 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1397 "engines/private/grammar.cpp"
+#line 1400 "engines/private/grammar.cpp"
     break;
 
   case 34: /* params: expr ',' params  */
-#line 186 "engines/private/grammar.y"
+#line 189 "engines/private/grammar.y"
                             { (yyval.narg) = (yyvsp[0].narg) + 1; }
-#line 1403 "engines/private/grammar.cpp"
+#line 1406 "engines/private/grammar.cpp"
     break;
 
   case 35: /* params: expr  */
-#line 187 "engines/private/grammar.y"
+#line 190 "engines/private/grammar.y"
                 { (yyval.narg) = 1; }
-#line 1409 "engines/private/grammar.cpp"
+#line 1412 "engines/private/grammar.cpp"
     break;
 
   case 36: /* params: fcall  */
-#line 188 "engines/private/grammar.y"
+#line 191 "engines/private/grammar.y"
                       { (yyval.narg) = 1; }
-#line 1415 "engines/private/grammar.cpp"
+#line 1418 "engines/private/grammar.cpp"
     break;
 
   case 37: /* value: NULLTOK  */
-#line 191 "engines/private/grammar.y"
+#line 194 "engines/private/grammar.y"
                    { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
-#line 1421 "engines/private/grammar.cpp"
+#line 1424 "engines/private/grammar.cpp"
     break;
 
   case 38: /* value: FALSETOK  */
-#line 192 "engines/private/grammar.y"
+#line 195 "engines/private/grammar.y"
                    { code2(constpush, (Inst) g_private->maps.constant(NUM, 0, NULL)); }
-#line 1427 "engines/private/grammar.cpp"
+#line 1430 "engines/private/grammar.cpp"
     break;
 
   case 39: /* value: TRUETOK  */
-#line 193 "engines/private/grammar.y"
+#line 196 "engines/private/grammar.y"
                    { code2(constpush, (Inst) g_private->maps.constant(NUM, 1, NULL)); }
-#line 1433 "engines/private/grammar.cpp"
+#line 1436 "engines/private/grammar.cpp"
     break;
 
   case 40: /* value: NUM  */
-#line 194 "engines/private/grammar.y"
+#line 197 "engines/private/grammar.y"
                    { code2(constpush, (Inst)(yyvsp[0].sym)); }
-#line 1439 "engines/private/grammar.cpp"
+#line 1442 "engines/private/grammar.cpp"
     break;
 
   case 41: /* value: STRING  */
-#line 195 "engines/private/grammar.y"
+#line 198 "engines/private/grammar.y"
                    { code2(strpush, (Inst)(yyvsp[0].sym)); }
-#line 1445 "engines/private/grammar.cpp"
+#line 1448 "engines/private/grammar.cpp"
     break;
 
   case 42: /* value: NAME  */
-#line 196 "engines/private/grammar.y"
+#line 199 "engines/private/grammar.y"
                    { code1(varpush); code1((Inst) g_private->maps.lookupName((yyvsp[0].s))); code1(eval); }
-#line 1451 "engines/private/grammar.cpp"
+#line 1454 "engines/private/grammar.cpp"
     break;
 
   case 43: /* expr: value  */
-#line 199 "engines/private/grammar.y"
+#line 202 "engines/private/grammar.y"
                    { (yyval.inst) = (yyvsp[0].inst); }
-#line 1457 "engines/private/grammar.cpp"
+#line 1460 "engines/private/grammar.cpp"
     break;
 
   case 44: /* expr: '!' value  */
-#line 200 "engines/private/grammar.y"
+#line 203 "engines/private/grammar.y"
                           { code1(negate); (yyval.inst) = (yyvsp[0].inst); }
-#line 1463 "engines/private/grammar.cpp"
+#line 1466 "engines/private/grammar.cpp"
     break;
 
   case 45: /* expr: value EQ value  */
-#line 201 "engines/private/grammar.y"
+#line 204 "engines/private/grammar.y"
                           { code1(eq); }
-#line 1469 "engines/private/grammar.cpp"
+#line 1472 "engines/private/grammar.cpp"
     break;
 
   case 46: /* expr: value NEQ value  */
-#line 202 "engines/private/grammar.y"
+#line 205 "engines/private/grammar.y"
                           { code1(ne); }
-#line 1475 "engines/private/grammar.cpp"
+#line 1478 "engines/private/grammar.cpp"
     break;
 
   case 47: /* expr: value '+' value  */
-#line 203 "engines/private/grammar.y"
+#line 206 "engines/private/grammar.y"
                           { code1(add); }
-#line 1481 "engines/private/grammar.cpp"
+#line 1484 "engines/private/grammar.cpp"
     break;
 
   case 48: /* expr: value '<' value  */
-#line 204 "engines/private/grammar.y"
+#line 207 "engines/private/grammar.y"
                           { code1(lt); }
-#line 1487 "engines/private/grammar.cpp"
+#line 1490 "engines/private/grammar.cpp"
     break;
 
   case 49: /* expr: value '>' value  */
-#line 205 "engines/private/grammar.y"
+#line 208 "engines/private/grammar.y"
                           { code1(gt); }
-#line 1493 "engines/private/grammar.cpp"
+#line 1496 "engines/private/grammar.cpp"
     break;
 
   case 50: /* expr: value LTE value  */
-#line 206 "engines/private/grammar.y"
+#line 209 "engines/private/grammar.y"
                           { code1(le); }
-#line 1499 "engines/private/grammar.cpp"
+#line 1502 "engines/private/grammar.cpp"
     break;
 
   case 51: /* expr: value GTE value  */
-#line 207 "engines/private/grammar.y"
+#line 210 "engines/private/grammar.y"
                           { code1(ge); }
-#line 1505 "engines/private/grammar.cpp"
+#line 1508 "engines/private/grammar.cpp"
     break;
 
   case 52: /* expr: value '+'  */
-#line 208 "engines/private/grammar.y"
-                          { (yyval.inst) = (yyvsp[-1].inst); }
-#line 1511 "engines/private/grammar.cpp"
+#line 211 "engines/private/grammar.y"
+                          { code1(markplus); (yyval.inst) = (yyvsp[-1].inst); }
+#line 1514 "engines/private/grammar.cpp"
     break;
 
   case 53: /* expr: RANDOMTOK '(' NUM '%' ')'  */
-#line 209 "engines/private/grammar.y"
+#line 212 "engines/private/grammar.y"
                                     { code3(constpush, (Inst)(yyvsp[-2].sym), randbool); }
-#line 1517 "engines/private/grammar.cpp"
+#line 1520 "engines/private/grammar.cpp"
     break;
 
 
-#line 1521 "engines/private/grammar.cpp"
+#line 1524 "engines/private/grammar.cpp"
 
       default: break;
     }
@@ -1710,3 +1713,14 @@ yyreturnlab:
   return yyresult;
 }
 
+#line 215 "engines/private/grammar.y"
+
+
+int markplus() {
+	Datum d = pop();
+	if (d.type == NUM) {
+		d.type = NUM_PLUS;
+	}
+	push(d);
+	return 0;
+}
