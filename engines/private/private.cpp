@@ -1801,9 +1801,8 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	size = stream->readUint32LE();
 	_phones.clear();
-	PhoneInfo p;
-	Common::String name;
 	for (uint32 j = 0; j < size; ++j) {
+		PhoneInfo p;
 		p.name = stream->readString();
 		p.once = (stream->readByte() == 1);
 		p.startIndex = stream->readSint32LE();
