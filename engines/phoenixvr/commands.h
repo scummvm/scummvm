@@ -70,13 +70,14 @@ struct Play_Movie : public Script::Command {
 
 struct Play_AnimBloc : public Script::Command {
 	Common::String name;
-	Common::String block;
+	Common::String var;
 	int start;
 	int stop;
 
-	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), block(args[1]), start(atoi(args[2].c_str())), stop(atoi(args[3].c_str())) {}
+	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), var(args[1]), start(atoi(args[2].c_str())), stop(atoi(args[3].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc %s %s %d-%d", name.c_str(), block.c_str(), start, stop);
+		debug("Play_AnimBloc %s %s %d-%d", name.c_str(), var.c_str(), start, stop);
+		g_engine->playAnimation(name, var);
 	}
 };
 

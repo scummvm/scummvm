@@ -22,6 +22,8 @@
 #ifndef PHOENIXVR_VR_H
 #define PHOENIXVR_VR_H
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/stream.h"
 #include "graphics/pixelformat.h"
 
@@ -34,16 +36,18 @@ namespace PhoenixVR {
 class VR {
 	Common::ScopedPtr<Graphics::Surface> _pic;
 	bool _vr = false;
+	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _animations;
 
 public:
 	~VR();
 	VR() = default;
 	VR(VR &&) = default;
-	VR &operator=(VR &&) = default;
+	VR &operator=(VR &&) noexcept = default;
 
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
 	void render(Graphics::Screen *screen, float ax, float ay, float fov);
 	bool isVR() const { return _vr; }
+	void playAnimation(const Common::String &name);
 };
 } // namespace PhoenixVR
 

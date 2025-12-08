@@ -186,6 +186,9 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		warning("playMovie %s failed", movie.c_str());
 	}
 }
+void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var) {
+	_vr.playAnimation(name);
+}
 
 void PhoenixVREngine::resetLockKey() {
 	_keys.clear();

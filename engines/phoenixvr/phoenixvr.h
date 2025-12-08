@@ -138,6 +138,7 @@ public:
 	void startTimer(float seconds);
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
+	void playAnimation(const Common::String &name, const Common::String &var);
 
 private:
 	static Common::String removeDrive(const Common::String &path);

@@ -50,6 +50,17 @@ T clip(T a) {
 	return a >= 0 ? a <= 255 ? a : 255 : 0;
 }
 
+uint32 YCbCr2RGB(const Graphics::PixelFormat &format, int16 y, int16 cb, int16 cr) {
+	cr -= 128;
+	cb -= 128;
+
+	int r = clip(y + ((cr * 91881 + 32768) >> 16));
+	int g = clip(y - ((cb * 22553 + cr * 46801 + 32768) >> 16));
+	int b = clip(y + ((cb * 116129 + 32768) >> 16));
+
+	return format.RGBToColor(r, g, b);
+}
+
 struct Quantisation {
 	int quantY[64];
 	int quantCbCr[64];
@@ -80,19 +91,20 @@ struct Quantisation {
 	}
 };
 
-void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality) {
+void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality, const Common::Array<uint> *prefix = nullptr) {
 	Quantisation quant(quality);
 	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 
-	const uint planePitch = pic.w;
-	const uint planeSize = planePitch * pic.h;
+	const uint planePitch = prefix ? 8 : pic.w;
+	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
 	Video::FourXM::BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
+	uint blockIdx = 0;
 	while (decodedOffset < decoded.size()) {
 		float ac[64] = {};
 		int8 dc8 = dcBs.readUInt(8);
@@ -117,7 +129,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		}
 		float out[64];
 		dct.calc(ac, out);
-		auto *dst = planes.data() + channel * planeSize + y0 * planePitch + x0;
+		auto *dst = prefix ? planes.data() + channel * planeSize + blockIdx * 64 : planes.data() + channel * planeSize + y0 * planePitch + x0;
 		const auto *src = out;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
@@ -128,6 +140,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		}
 		++channel;
 		if (channel == 3) {
+			++blockIdx;
 			channel = 0;
 			x0 += 8;
 			if (static_cast<int16>(x0) >= pic.w) {
@@ -137,28 +150,42 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		}
 	}
 	auto *yPtr = planes.data();
-	auto *crPtr = yPtr + planeSize;
-	auto *cbPtr = crPtr + planeSize;
-#if 0
-	auto &format = pic.format;
-	for(int yy = 0; yy < pic.h; ++yy) {
-		auto *rows = static_cast<uint32*>(pic.getBasePtr(0, yy));
-		for(int xx = 0; xx < pic.w; ++xx) {
-			int16 y = *yPtr++;
-			int16 cr = (int16)*crPtr++;
-			int16 cb = (int16)*cbPtr++;
+	auto *cbPtr = yPtr + planeSize;
+	auto *crPtr = cbPtr + planeSize;
 
-			int r = y;
-			int g = y;
-			int b = y;
+	if (prefix) {
+		for (auto dstOffset : *prefix) {
+			int dstY = dstOffset / pic.w;
+			int dstX = dstOffset % pic.w;
+			for (uint by = 0; by < 8; ++by) {
+				auto *dstPixel = static_cast<uint32 *>(pic.getBasePtr(dstX, dstY++));
+				for (uint bx = 0; bx < 8; ++bx) {
+					int16 y = *yPtr++;
+					int16 cr = *crPtr++;
+					int16 cb = *cbPtr++;
 
-			*rows++ = format.RGBToColor(r, g, b);
+					*dstPixel++ = YCbCr2RGB(pic.format, y, cb, cr);
+				}
+			}
 		}
-	}
+	} else {
+#if 0
+		auto &format = pic.format;
+		for(int yy = 0; yy < pic.h; ++yy) {
+			auto *rows = static_cast<uint32*>(pic.getBasePtr(0, yy));
+			for(int xx = 0; xx < pic.w; ++xx) {
+				int16 y = *yPtr++;
+				int16 cr = *crPtr++;
+				int16 cb = *cbPtr++;
+
+				*rows++ = YCbCr2RGB(format, y, cb, cr);
+			}
+		}
 #else
-	YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull,
-						   yPtr, crPtr, cbPtr, pic.w, pic.h, planePitch, planePitch);
+		YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull,
+							   yPtr, cbPtr, crPtr, pic.w, pic.h, planePitch, planePitch);
 #endif
+	}
 }
 } // namespace
 
@@ -218,22 +245,9 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				auto animChunkSize = s.readUint32LE();
 				debug("animation chunk %08x %u at %08lx", animChunkId, animChunkSize, animChunkPos);
 				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
-					auto prefixSize = s.readUint32LE();
-					debug("prefixes: %u", prefixSize);
-					Common::Array<byte> prefixData(prefixSize * 4);
-					s.read(prefixData.data(), prefixData.size());
-					Common::hexdump(prefixData.data(), prefixData.size());
-					auto quality = s.readUint32LE();
-					auto size = s.readUint32LE();
-					Common::Array<byte> blockData(size);
+					auto &blockData = vr._animations[name];
+					blockData.resize(animChunkSize);
 					s.read(blockData.data(), blockData.size());
-					Common::hexdump(blockData.data(), blockData.size());
-					auto huffSize = READ_LE_UINT32(blockData.data());
-					auto unpHuffSize = READ_LE_UINT32(blockData.data() + 4);
-					auto decoded = Video::FourXM::unpackHuffman(blockData.data() + 8, huffSize);
-					assert(decoded.size() == unpHuffSize);
-					debug("quality: %u, size: %u", quality, size);
-					break;
 				}
 				s.seek(animChunkPos + animChunkSize);
 			}
@@ -313,6 +327,35 @@ Cube toCube(float x, float y, float z) {
 }
 
 } // namespace
+
+void VR::playAnimation(const Common::String &name) {
+	auto it = _animations.find(name);
+	if (it == _animations.end()) {
+		warning("no animation %s", name.c_str());
+		return;
+	}
+	const auto *data = it->_value.data();
+	auto prefixSize = READ_LE_UINT32(data);
+	debug("prefixes: %u", prefixSize);
+	Common::Array<uint32> prefixData(prefixSize);
+	uint offset = 4;
+	for (uint i = 0; i != prefixSize; ++i) {
+		prefixData[i] = READ_LE_UINT32(data + offset);
+		offset += 4;
+	}
+	auto quality = READ_LE_UINT32(data + offset);
+	auto size = READ_LE_UINT32(data + offset + 4);
+	debug("quality: %u, size: %u", quality, size);
+	offset += 8;
+	auto huffSize = READ_LE_UINT32(data + offset);
+	auto unpHuffSize = READ_LE_UINT32(data + offset + 4);
+	offset += 8;
+	debug("huffman size: %u, unpacked size: %u", huffSize, unpHuffSize);
+	auto *acPtr = data + offset + huffSize + 4;
+	auto dcOffset = READ_LE_UINT32(data + offset + huffSize);
+	auto *dcPtr = data + offset + huffSize + 8 + dcOffset;
+	unpack(*_pic, data + offset, huffSize, acPtr, dcPtr, quality, &prefixData);
+}
 
 void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 	if (!_pic) {
