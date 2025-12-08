@@ -107,86 +107,11 @@ Common::Error PelrockEngine::run() {
 	init();
 
 	while (!shouldQuit()) {
-		_chronoManager->updateChrono();
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN) {
-				switch (e.kbd.keycode) {
-				case Common::KEYCODE_w:
-					alfredState.animState = ALFRED_WALKING;
-					break;
-				case Common::KEYCODE_t:
-					alfredState.animState = ALFRED_TALKING;
-					break;
-				case Common::KEYCODE_s:
-					alfredState.animState = ALFRED_IDLE;
-					break;
-				case Common::KEYCODE_c:
-					alfredState.animState = ALFRED_COMB;
-					break;
-				case Common::KEYCODE_i:
-					alfredState.animState = ALFRED_INTERACTING;
-					break;
-				case Common::KEYCODE_z:
-					showShadows = !showShadows;
-					break;
-				case Common::KEYCODE_y:
-					alfredState.x = 193;
-					alfredState.y = 382;
-					walkTo(377, 318);
-					break;
-				default:
-					break;
-				}
-			} else if (e.type == Common::EVENT_MOUSEMOVE) {
-				mouseX = e.mouse.x;
-				mouseY = e.mouse.y;
-				// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
-			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-				if (!_isMouseDown) {
-					_mouseClickTime = g_system->getMillis();
-					_isMouseDown = true;
-				}
-			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				_isMouseDown = false;
-				checkMouseClick(e.mouse.x, e.mouse.y);
-				_displayPopup = false;
-				_longClick = false;
-			} else if (e.type == Common::EVENT_RBUTTONUP) {
-				if (stateGame != SETTINGS){
-					g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
-					stateGame = SETTINGS;
-				}
-				else {
-					g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-					stateGame = GAME;
-				}
-			}
-		}
-		if (_isMouseDown) {
-			if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
-				debug("long click!");
-				_longClick = true;
-				_isMouseDown = false;
-				checkLongMouseClick(e.mouse.x, e.mouse.y);
-			}
-		}
-		checkMouseHover();
 		if (stateGame == SETTINGS) {
-			memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
-
-			for (int i = 0; i < 4; i++) {
-				InventoryObject item = _res->getInventoryObject(i);
-				drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
-			}
-			memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-
-			g_engine->_screen->markAllDirty();
-			g_engine->_screen->update();
-
+			menuLoop();
 		} else if (stateGame == GAME) {
-			frames();
+			gameLoop();
 		}
-
 		_screen->update();
 		// limiter.delayBeforeSwap();
 		// limiter.startFrame();
@@ -338,7 +263,6 @@ void PelrockEngine::frames() {
 
 		// Draw Alfred here (you'll need to add this)
 		chooseAlfredStateAndDraw();
-
 
 		// Second pass: sprites in front of Alfred (y > alfredY)
 		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
@@ -975,6 +899,96 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
 }
 
+void PelrockEngine::gameLoop() {
+	_chronoManager->updateChrono();
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (e.type == Common::EVENT_KEYDOWN) {
+			switch (e.kbd.keycode) {
+			case Common::KEYCODE_w:
+				alfredState.animState = ALFRED_WALKING;
+				break;
+			case Common::KEYCODE_t:
+				alfredState.animState = ALFRED_TALKING;
+				break;
+			case Common::KEYCODE_s:
+				alfredState.animState = ALFRED_IDLE;
+				break;
+			case Common::KEYCODE_c:
+				alfredState.animState = ALFRED_COMB;
+				break;
+			case Common::KEYCODE_i:
+				alfredState.animState = ALFRED_INTERACTING;
+				break;
+			case Common::KEYCODE_z:
+				showShadows = !showShadows;
+				break;
+			case Common::KEYCODE_y:
+				alfredState.x = 193;
+				alfredState.y = 382;
+				walkTo(377, 318);
+				break;
+			default:
+				break;
+			}
+		} else if (e.type == Common::EVENT_MOUSEMOVE) {
+			mouseX = e.mouse.x;
+			mouseY = e.mouse.y;
+			// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+		} else if (e.type == Common::EVENT_LBUTTONDOWN) {
+			if (!_isMouseDown) {
+				_mouseClickTime = g_system->getMillis();
+				_isMouseDown = true;
+			}
+		} else if (e.type == Common::EVENT_LBUTTONUP) {
+			_isMouseDown = false;
+			checkMouseClick(e.mouse.x, e.mouse.y);
+			_displayPopup = false;
+			_longClick = false;
+		} else if (e.type == Common::EVENT_RBUTTONUP) {
+			g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+			stateGame = SETTINGS;
+		}
+	}
+	if (_isMouseDown) {
+		if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
+			debug("long click!");
+			_longClick = true;
+			_isMouseDown = false;
+			checkLongMouseClick(e.mouse.x, e.mouse.y);
+		}
+	}
+	checkMouseHover();
+	frames();
+}
+
+void PelrockEngine::menuLoop() {
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (e.type == Common::EVENT_LBUTTONUP) {
+			// _isMouseDown = false;
+			// checkMouseClick(e.mouse.x, e.mouse.y);
+			// _displayPopup = false;
+			// _longClick = false;
+		} else if (e.type == Common::EVENT_RBUTTONUP) {
+
+			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+			stateGame = GAME;
+		}
+	}
+
+	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
+
+	for (int i = 0; i < 4; i++) {
+		InventoryObject item = _res->getInventoryObject(i);
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
+	}
+	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+
+	g_engine->_screen->markAllDirty();
+	g_engine->_screen->update();
+}
+
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;
 	PathContext context = {nullptr, nullptr, nullptr, 0, 0, 0};
@@ -1334,10 +1348,10 @@ void PelrockEngine::checkMouseHover() {
 	}
 
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-	if(hotspotIndex != -1) {
-	debug("Hotspot under mouse: %d, %d (extra = %d)", _room->_currentRoomHotspots[hotspotIndex].x,
-		  _room->_currentRoomHotspots[hotspotIndex].y,
-		  hotspotIndex != -1 ? _room->_currentRoomHotspots[hotspotIndex].extra : -1);
+	if (hotspotIndex != -1) {
+		debug("Hotspot under mouse: %d, %d (extra = %d)", _room->_currentRoomHotspots[hotspotIndex].x,
+			  _room->_currentRoomHotspots[hotspotIndex].y,
+			  hotspotIndex != -1 ? _room->_currentRoomHotspots[hotspotIndex].extra : -1);
 	}
 	if (hotspotIndex != -1) {
 		isSomethingUnder = true;

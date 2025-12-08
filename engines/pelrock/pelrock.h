@@ -101,6 +101,9 @@ private:
 	void changeCursor(Cursor cursor);
 	void drawTalkNPC(Sprite *animSet);
 
+	void gameLoop();
+	void menuLoop();
+
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
