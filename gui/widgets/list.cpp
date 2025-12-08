@@ -51,6 +51,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_numberingMode = kListNumberingOne;
 	_currentPos = 0;
 	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -94,6 +95,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_numberingMode = kListNumberingOne;
 	_currentPos = 0;
 	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -194,6 +196,80 @@ void ListWidget::setSelected(int item) {
 	}
 }
 
+bool ListWidget::isItemSelected(int item) const {
+	// Convert to actual item index if filtering is active
+	int actualItem = item;
+	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+		actualItem = _listIndex[item];
+	}
+
+	for (const int &selected : _selectedItems) {
+		if (selected == actualItem)
+			return true;
+	}
+	return false;
+}
+
+void ListWidget::addSelectedItem(int item) {
+	// Convert to actual item index if filtering is active
+	int actualItem = item;
+	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+		actualItem = _listIndex[item];
+	}
+
+	// Avoid duplicates
+	if (isItemSelected(actualItem))
+		return;
+
+	// Insert in ascending order to keep selection sorted
+	bool inserted = false;
+	for (int i = 0; i < _selectedItems.size(); ++i) {
+		if (_selectedItems[i] > actualItem) {
+			_selectedItems.insert_at(i, actualItem);
+			inserted = true;
+			break;
+		}
+	}
+	if (!inserted)
+		_selectedItems.push_back(actualItem);
+
+	markAsDirty();
+}
+
+void ListWidget::removeSelectedItem(int item) {
+	// Convert to actual item index if filtering is active
+	int actualItem = item;
+	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+		actualItem = _listIndex[item];
+	}
+
+	for (int i = 0; i < _selectedItems.size(); ++i) {
+		if (_selectedItems[i] == actualItem) {
+			_selectedItems.remove_at(i);
+			break;
+		}
+	}
+	markAsDirty();
+}
+
+void ListWidget::clearSelection() {
+	_selectedItems.clear();
+	_lastSelectionStartItem = -1;
+	markAsDirty();
+}
+
+void ListWidget::selectItemRange(int from, int to) {
+	if (from > to)
+		SWAP(from, to);
+
+	clearSelection();
+
+	for (int i = from; i <= to; ++i) {
+		addSelectedItem(i);
+	}
+	markAsDirty();
+}
+
 void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
@@ -210,6 +286,8 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_currentPos < 0)
 		_currentPos = 0;
 	_selectedItem = -1;
+	_selectedItems.clear(); // Clear multi-selection
+	_lastSelectionStartItem = -1;
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	scrollBarRecalc();
@@ -260,10 +338,43 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// First check whether the selection changed
 	int newSelectedItem = findItem(x, y);
 
-	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
-		if (_editMode)
-			abortEditMode();
+	if (newSelectedItem == -1)
+		return;
+
+	if (_editMode)
+		abortEditMode();
+
+	// Get modifier keys
+	int modifiers = g_system->getEventManager()->getModifierState();
+	bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
+	bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
+
+	if (shiftClick && _lastSelectionStartItem != -1) {
+		// Shift+Click: Select range from last selection start to current item
+		selectItemRange(_lastSelectionStartItem, newSelectedItem);
 		_selectedItem = newSelectedItem;
+		sendCommand(kListSelectionChangedCmd, _selectedItem);
+	} else if (ctrlClick) {
+		// Ctrl+Click: Add/remove from selection
+		if (isItemSelected(newSelectedItem)) {
+			removeSelectedItem(newSelectedItem);
+			// If the primary selection is the same item, clear it to avoid highlight
+			sendCommand(kListSelectionChangedCmd, newSelectedItem);
+			markAsDirty();
+			if (_selectedItem == newSelectedItem)
+				_selectedItem = -1;
+		} else {
+			addSelectedItem(newSelectedItem);
+			_selectedItem = newSelectedItem;
+			_lastSelectionStartItem = newSelectedItem;
+		}
+		sendCommand(kListSelectionChangedCmd, _selectedItem);
+	} else {
+		// Regular click: Clear previous selection and select only this item
+		clearSelection();
+		_selectedItem = newSelectedItem;
+		addSelectedItem(newSelectedItem);
+		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
@@ -560,7 +671,7 @@ void ListWidget::drawWidget() {
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos)
+		if (_selectedItem == pos || isItemSelected(pos))
 			inverted = _inversion;
 
 		// Get state for drawing the item text

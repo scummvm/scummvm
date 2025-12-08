@@ -1386,28 +1386,94 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	}
+	case kRemoveGameCmd: {
+		// Handle multi-selection removal
+		const Common::Array<int> &selectedItems = _list->getSelectedItems();
+		if (selectedItems.size() > 1) {
+			// Multi-selection removal: show confirmation dialog with list of games
+			removeMultipleGames(selectedItems);
+		} else {
+			// Single selection removal
+			LauncherDialog::handleCommand(sender, cmd, data);
+		}
+		break;
+	}
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
 }
 
+void LauncherSimple::removeMultipleGames(const Common::Array<int> &selectedItems) {
+	// Build confirmation message with list of games to remove
+	Common::U32String confirmMsg = _("Are you sure you want to remove the following games?\n\n");
+
+	for (const int &idx : selectedItems) {
+		if (idx >= 0 && idx < (int)_domains.size()) {
+			// Get the game title from the list
+			confirmMsg += _list->getList()[idx];
+			confirmMsg += Common::U32String("\n");
+		}
+	}
+
+	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
+
+	if (alert.runModal() == GUI::kMessageOK) {
+		// Remove all selected games in reverse order to avoid index shifting issues
+		Common::Array<int> sortedItems = selectedItems;
+		Common::sort(sortedItems.begin(), sortedItems.end(), Common::Greater<int>());
+
+		int selPos = -1;
+		for (const int &idx : sortedItems) {
+			if (idx >= 0 && idx < (int)_domains.size()) {
+				// Get position of game item if grouping is enabled
+				if (_groupBy != kGroupByNone) {
+					selPos = getItemPos(idx);
+				}
+
+				// Remove the game domain
+				ConfMan.removeGameDomain(_domains[idx]);
+
+				// Remove all the add-ons for this game
+				const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+				for (const auto &domain : domains) {
+					if (domain._value.getValOrDefault("parent") == _domains[idx]) {
+						ConfMan.removeGameDomain(domain._key);
+					}
+				}
+			}
+		}
+
+		// Write config to disk
+		ConfMan.flushToDisk();
+
+		// Clear the selection and update the listing
+		_list->clearSelection();
+		updateListing(selPos);
+		updateButtons();
+		g_gui.scheduleTopDialogRedraw();
+	}
+}
+
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
+	const Common::Array<int> &selectedItems = _list->getSelectedItems();
+	bool hasMultiSelection = selectedItems.size() > 1;
+
 	bool isAddOn = false;
 	if (item >= 0) {
 		const Common::ConfigManager::Domain *domain = ConfMan.getDomain(_domains[item]);
 		isAddOn = domain && domain->contains("parent");
 	}
 
-	bool enable = (item >= 0 && !isAddOn);
+	bool enable = (item >= 0 && !isAddOn && !hasMultiSelection);
 
 	_startButton->setEnabled(enable);
 	_editButton->setEnabled(enable);
-	_removeButton->setEnabled(enable);
+	_removeButton->setEnabled(item >= 0 || hasMultiSelection);
 
 	bool en = enable;
 
-	if (item >= 0  && !isAddOn)
+	if (item >= 0 && !isAddOn && !hasMultiSelection)
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
 	_loadButton->setEnabled(en);

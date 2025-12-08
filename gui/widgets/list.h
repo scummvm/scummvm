@@ -72,6 +72,8 @@ protected:
 	int				_currentPos;
 	int				_entriesPerPage;
 	int				_selectedItem;
+	Common::Array<int> _selectedItems;    /// Multiple selected items
+	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 
@@ -117,6 +119,13 @@ public:
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
+	/// Multi-selection support
+	const Common::Array<int> &getSelectedItems() const { return _selectedItems; }
+	bool isItemSelected(int item) const;
+	void addSelectedItem(int item);
+	void removeSelectedItem(int item);
+	void clearSelection();
+	void selectItemRange(int from, int to);
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 
 	void scrollTo(int item);
