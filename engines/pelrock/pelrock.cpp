@@ -185,7 +185,7 @@ void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) 
 		for (int j = 0; j < h; j++) {
 			int index = (j * w + i);
 			if (x + i < 640 && y + j < 400)
-				*(byte *)g_engine->_screen->getBasePtr(x + i, y + j) = slice[index];
+				*(byte *)_screen->getBasePtr(x + i, y + j) = slice[index];
 		}
 	}
 }
@@ -985,8 +985,8 @@ void PelrockEngine::menuLoop() {
 	}
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
-	g_engine->_screen->markAllDirty();
-	g_engine->_screen->update();
+	_screen->markAllDirty();
+	_screen->update();
 }
 
 void PelrockEngine::walkTo(int x, int y) {
