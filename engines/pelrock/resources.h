@@ -44,6 +44,7 @@ public:
 	void loadInteractionIcons();
 	void loadAlfredAnims();
 	void loadInventoryIcons();
+	void loadInventoryDescriptions();
 	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
 
@@ -62,6 +63,7 @@ public:
 
 	byte *_mainMenu = nullptr;
 	byte _mainMenuPalette[768] = {0};
+	Common::Array<Common::String> _inventoryDescriptions;
 };
 
 } // End of namespace Pelrock

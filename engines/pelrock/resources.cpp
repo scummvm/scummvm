@@ -233,6 +233,44 @@ void ResourceManager::loadInventoryIcons() {
 	delete[] iconData;
 }
 
+void ResourceManager::loadInventoryDescriptions() {
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+	byte *descBuffer = new byte[kInventoryDescriptionsSize];
+	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
+	exe.read(descBuffer, kInventoryDescriptionsSize);
+	int pos = 0;
+	Common::String desc = "";
+	while (pos < kInventoryDescriptionsSize) {
+		if (descBuffer[pos] == 0xFD) {
+			if (!desc.empty()) {
+				_inventoryDescriptions.push_back(desc);
+				desc = Common::String();
+			}
+			pos++;
+			continue;
+		}
+		if (descBuffer[pos] == 0x00) {
+			pos++;
+			continue;
+		}
+		if (descBuffer[pos] == 0x08) {
+			pos += 2;
+			continue;
+		}
+
+		desc.append(1, descBuffer[pos]);
+		if (pos + 1 == kInventoryDescriptionsSize) {
+			_inventoryDescriptions.push_back(desc);
+		}
+		pos++;
+	}
+	delete[] descBuffer;
+	exe.close();
+}
+
 InventoryObject ResourceManager::getInventoryObject(byte index) {
 	return _inventoryIcons[index];
 }

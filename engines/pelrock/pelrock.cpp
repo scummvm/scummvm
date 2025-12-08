@@ -124,6 +124,7 @@ void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
 	_res->loadInventoryIcons();
+	_res->loadInventoryDescriptions();
 	_res->loadSettingsMenu();
 	_soundManager->loadSoundIndex();
 
@@ -1348,11 +1349,6 @@ void PelrockEngine::checkMouseHover() {
 	}
 
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
-	if (hotspotIndex != -1) {
-		debug("Hotspot under mouse: %d, %d (extra = %d)", _room->_currentRoomHotspots[hotspotIndex].x,
-			  _room->_currentRoomHotspots[hotspotIndex].y,
-			  hotspotIndex != -1 ? _room->_currentRoomHotspots[hotspotIndex].extra : -1);
-	}
 	if (hotspotIndex != -1) {
 		isSomethingUnder = true;
 	}
