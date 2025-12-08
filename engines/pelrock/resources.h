@@ -34,6 +34,7 @@ static const int interactingAnimLength = 2;
 class ResourceManager {
 private:
 	void mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer);
+	void loadInventoryDescriptions();
 	InventoryObject *_inventoryIcons = nullptr;
 public:
 	ResourceManager(/* args */);
@@ -43,8 +44,7 @@ public:
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
-	void loadInventoryIcons();
-	void loadInventoryDescriptions();
+	void loadInventoryItems();
 	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
 

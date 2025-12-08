@@ -156,6 +156,10 @@ private:
 
 	bool showShadows = false;
 
+	//Temporary
+	int selectedInvIndex = 0;
+	Common::String _menuText;
+
 	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;

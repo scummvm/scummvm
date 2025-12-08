@@ -123,8 +123,7 @@ Common::Error PelrockEngine::run() {
 void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
-	_res->loadInventoryIcons();
-	_res->loadInventoryDescriptions();
+	_res->loadInventoryItems();
 	_res->loadSettingsMenu();
 	_soundManager->loadSoundIndex();
 
@@ -967,6 +966,9 @@ void PelrockEngine::menuLoop() {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (e.type == Common::EVENT_LBUTTONUP) {
+
+			_menuText = _res->getInventoryObject(selectedInvIndex++).description;
+
 			// _isMouseDown = false;
 			// checkMouseClick(e.mouse.x, e.mouse.y);
 			// _displayPopup = false;
@@ -985,7 +987,7 @@ void PelrockEngine::menuLoop() {
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
 	}
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-
+	_smallFont->drawString(_screen, _menuText, 0, 0, 640, 0);
 	_screen->markAllDirty();
 	_screen->update();
 }

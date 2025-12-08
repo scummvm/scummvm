@@ -215,7 +215,8 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombLeftRaw);
 }
 
-void ResourceManager::loadInventoryIcons() {
+void ResourceManager::loadInventoryItems() {
+	loadInventoryDescriptions();
 	Common::File alfred4File;
 	if (!alfred4File.open("ALFRED.4")) {
 		error("Couldnt find file ALFRED.4");
@@ -229,6 +230,7 @@ void ResourceManager::loadInventoryIcons() {
 	for (int i = 0; i < 69; i++) {
 		_inventoryIcons[i].index = i;
 		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
+		_inventoryIcons[i].description = _inventoryDescriptions[i];
 	}
 	delete[] iconData;
 }
