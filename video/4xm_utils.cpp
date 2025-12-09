@@ -31,7 +31,7 @@ struct HuffChar {
 	short trueIdx;
 };
 
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
+Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedStart) {
 	HuffChar table[514] = {};
 	uint offset = 0;
 	uint8 codebyte = huff[offset++];
@@ -44,6 +44,9 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 		}
 		codebyte = huff[offset++];
 	} while (codebyte != 0);
+	if (alignedStart && (offset % 4) != 0) {
+		offset += 4 - (offset % 4);
+	}
 	table[256].next = 1;
 	table[513].next = 0x7FFF;
 
@@ -83,9 +86,9 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize) {
 		++nIdx;
 	}
 	Common::Array<byte> decoded;
-	decoded.reserve(huffSize);
+	decoded.reserve(huffSize * 2);
 	{
-		BitStream bs(huff, offset);
+		BitStream bs(huff, huffSize, offset);
 		while (true) {
 			short value = startEntry;
 			while (value > 256) {

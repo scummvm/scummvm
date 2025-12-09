@@ -26,17 +26,19 @@ namespace FourXM {
 
 class BitStream {
 	const byte *_data;
+	uint _size;
 	uint _bytePos;
 	byte _bitMask;
 
 public:
-	BitStream(const byte *data, uint bytePos) : _data(data), _bytePos(bytePos), _bitMask(0x80) {}
+	BitStream(const byte *data, uint size, uint bytePos) : _data(data), _size(size), _bytePos(bytePos), _bitMask(0x80) {}
 
 	uint getBytePos() const {
 		return _bytePos;
 	}
 
 	bool readBit() {
+		assert(_bytePos < _size);
 		bool bit = _data[_bytePos] & _bitMask;
 		_bitMask >>= 1;
 		if (_bitMask == 0) {
@@ -69,7 +71,7 @@ public:
 		}
 	}
 };
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize);
+Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedStart);
 
 } // namespace FourXM
 } // namespace Video

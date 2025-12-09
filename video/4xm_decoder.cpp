@@ -138,8 +138,10 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
 	stream->skip(4);
 	auto bitstreamSize = stream->readUint32LE();
-	auto bitstreamPos = stream->pos();
-	stream->skip(bitstreamSize);
+
+	Common::Array<byte> bitstreamData(bitstreamSize);
+	stream->read(bitstreamData.data(), bitstreamData.size());
+
 	auto prefixSize = stream->readUint32LE();
 	auto tokenCount = stream->readUint32LE();
 	debug("i-frame, bitstream: %u, prefix stream: %u, tokens: %u", bitstreamSize, prefixSize, tokenCount);
@@ -148,10 +150,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	stream->read(prefixStream.data(), prefixStream.size());
 	assert(stream->pos() == stream->size());
 
-	Common::hexdump(prefixStream.data(), prefixStream.size());
-	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size());
-	debug("decoded %u bytes", prefixData.size());
-	Common::hexdump(prefixData.data(), prefixData.size());
+	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size(), true);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {

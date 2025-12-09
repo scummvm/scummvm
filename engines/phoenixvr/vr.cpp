@@ -91,9 +91,9 @@ struct Quantisation {
 	}
 };
 
-void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, const byte *dcPtr, int quality, const Common::Array<uint> *prefix = nullptr) {
+void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, uint acSize, const byte *dcPtr, uint dcSize, int quality, const Common::Array<uint> *prefix = nullptr) {
 	Quantisation quant(quality);
-	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize);
+	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize, false);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 
@@ -101,7 +101,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
-	Video::FourXM::BitStream acBs(acPtr, 0), dcBs(dcPtr, 0);
+	Video::FourXM::BitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	uint blockIdx = 0;
@@ -231,10 +231,12 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			} else
 				pic->create(640, 480, format);
 			auto *huff = vrData.data() + 8;
-			auto *acPtr = vrData.data() + huffSize + 12;
-			auto dcOffset = READ_LE_UINT32(vrData.data() + huffSize + 8);
-			auto *dcPtr = vrData.data() + huffSize + 16 + dcOffset;
-			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr, quality);
+			uint acOffset = huffSize + 12;
+			auto *acPtr = vrData.data() + acOffset;
+			auto dcOffset = READ_LE_UINT32(huff + huffSize);
+			auto *dcPtr = acPtr + 4 + dcOffset;
+			auto *dcEnd = vrData.data() + vrData.size();
+			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
 		} else if (chunkId == CHUNK_ANIMATION) {
 			auto name = s.readString(0, 32);
 			s.skip(4);
@@ -354,7 +356,8 @@ void VR::playAnimation(const Common::String &name) {
 	auto *acPtr = data + offset + huffSize + 4;
 	auto dcOffset = READ_LE_UINT32(data + offset + huffSize);
 	auto *dcPtr = data + offset + huffSize + 8 + dcOffset;
-	unpack(*_pic, data + offset, huffSize, acPtr, dcPtr, quality, &prefixData);
+	auto *dcEnd = data + it->_value.size();
+	unpack(*_pic, data + offset, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality, &prefixData);
 }
 
 void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
