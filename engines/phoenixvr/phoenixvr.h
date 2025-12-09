@@ -143,6 +143,8 @@ public:
 		_fov = M_PI * fov / 180;
 	}
 
+	bool testSaveSlot(int idx) const;
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	static Common::String resolvePath(const Common::String &path);

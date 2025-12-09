@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -476,6 +477,10 @@ void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
 		Common::Rect dstRect(dst.x, dst.y, dst.x + srcRect.width(), dst.y + srcRect.height());
 		_screen->blendBlitFrom(src, srcRect, dstRect);
 	}
+}
+
+bool PhoenixVREngine::testSaveSlot(int idx) const {
+	return _saveFileMan->exists(getSaveStateName(idx));
 }
 
 Common::Error PhoenixVREngine::syncGame(Common::Serializer &s) {
