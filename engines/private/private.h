@@ -264,10 +264,10 @@ public:
 
 	// User input
 	void selectPauseGame(Common::Point);
-	void selectMask(Common::Point);
-	void selectExit(Common::Point);
-	void selectLoadGame(Common::Point);
-	void selectSaveGame(Common::Point);
+	bool selectMask(Common::Point);
+	bool selectExit(Common::Point);
+	bool selectLoadGame(Common::Point);
+	bool selectSaveGame(Common::Point);
 	void resumeGame();
 
 	// Cursors
@@ -467,8 +467,8 @@ public:
 	void initializePoliceRadioChannels();
 	void disableRadioClips(Radio &radio, int priority);
 	void playRadio(Radio &radio, bool randomlyDisableClips);
-	void selectAMRadioArea(Common::Point);
-	void selectPoliceRadioArea(Common::Point);
+	bool selectAMRadioArea(Common::Point);
+	bool selectPoliceRadioArea(Common::Point);
 
 	// Phone
 	MaskInfo _phoneArea;
@@ -479,7 +479,7 @@ public:
 	void initializePhoneOnDesktop();
 	void checkPhoneCall();
 	bool cursorPhoneArea(Common::Point mousePos);
-	void selectPhoneArea(Common::Point mousePos);
+	bool selectPhoneArea(Common::Point mousePos);
 
 	// Safe
 	Common::String _safeNumberPath;

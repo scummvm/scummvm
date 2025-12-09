@@ -389,37 +389,44 @@ Common::Error PrivateEngine::run() {
 			case Common::EVENT_LBUTTONDOWN:
 				if (selectDossierNextSuspect(mousePos))
 					break;
-				else if (selectDossierPrevSuspect(mousePos))
+				if (selectDossierPrevSuspect(mousePos))
 					break;
-				else if (selectDossierNextSheet(mousePos))
+				if (selectDossierNextSheet(mousePos))
 					break;
-				else if (selectDossierPrevSheet(mousePos))
+				if (selectDossierPrevSheet(mousePos))
 					break;
-				else if (selectDossierPage(mousePos))
+				if (selectDossierPage(mousePos))
 					break;
-				else if (selectSafeDigit(mousePos))
+				if (selectSafeDigit(mousePos))
 					break;
-				else if (selectDiaryNextPage(mousePos))
+				if (selectDiaryNextPage(mousePos))
 					break;
-				else if (selectDiaryPrevPage(mousePos))
+				if (selectDiaryPrevPage(mousePos))
 					break;
-				else if (selectLocation(mousePos))
+				if (selectLocation(mousePos))
 					break;
-				else if (selectMemory(mousePos)) {
+				if (selectMemory(mousePos)) {
 					_needToDrawScreenFrame = true;
 					break;
 				}
 
+				if (selectPhoneArea(mousePos))
+					 break;
+				if (selectPoliceRadioArea(mousePos))
+					break;
+				if (selectAMRadioArea(mousePos))
+					break;
+				if (selectLoadGame(mousePos))
+					break;
+				if (selectSaveGame(mousePos))
+					break;
+				if (_nextSetting.empty())
+					if (selectMask(mousePos))
+						break;
+				if (_nextSetting.empty())
+					if (selectExit(mousePos))
+						break;
 				selectPauseGame(mousePos);
-				selectPhoneArea(mousePos);
-				selectPoliceRadioArea(mousePos);
-				selectAMRadioArea(mousePos);
-				selectLoadGame(mousePos);
-				selectSaveGame(mousePos);
-				if (_nextSetting.empty())
-					selectMask(mousePos);
-				if (_nextSetting.empty())
-					selectExit(mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -687,9 +694,6 @@ void PrivateEngine::checkPoliceBust() {
 
 void PrivateEngine::updateCursor(Common::Point mousePos) {
 	// If a function returns true then it changed the cursor.
-	if (cursorPauseMovie(mousePos)) {
-		return;
-	}
 	if (cursorPhoneArea(mousePos)) {
 		return;
 	}
@@ -702,13 +706,14 @@ void PrivateEngine::updateCursor(Common::Point mousePos) {
 	if (cursorExit(mousePos)) {
 		return;
 	}
+	if (cursorPauseMovie(mousePos)) {
+		return;
+	}
 	changeCursor("default");
 }
 
 bool PrivateEngine::cursorExit(Common::Point mousePos) {
 	mousePos = mousePos - _origin;
-	if (mousePos.x < 0 || mousePos.y < 0)
-		return false;
 
 	int rs = 100000000;
 	int cs = 0;
@@ -930,17 +935,14 @@ void PrivateEngine::resumeGame() {
 }
 
 
-void PrivateEngine::selectExit(Common::Point mousePos) {
+bool PrivateEngine::selectExit(Common::Point mousePos) {
 	mousePos = mousePos - _origin;
-	if (mousePos.x < 0 || mousePos.y < 0)
-		return;
 
 	Common::String ns = "";
 	int rs = 100000000;
-	int cs = 0;
 	for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
 		const ExitInfo &e = *it;
-		cs = e.rect.width() * e.rect.height();
+		int cs = e.rect.width() * e.rect.height();
 		//debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
 		if (e.rect.contains(mousePos)) {
 			//debug("Inside! %d %d", cs, rs);
@@ -961,10 +963,12 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 		_numberOfClicks--; // count click only if it hits a hotspot
 		_nextSetting = ns;
 		_highlightMasks = false;
+		return true;
 	}
+	return false;
 }
 
-void PrivateEngine::selectMask(Common::Point mousePos) {
+bool PrivateEngine::selectMask(Common::Point mousePos) {
 	Common::String ns;
 	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
 		const MaskInfo &m = *it;
@@ -996,7 +1000,9 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 		_numberOfClicks--; // count click only if it hits a hotspot
 		_nextSetting = ns;
 		_highlightMasks = false;
+		return true;
 	}
+	return false;
 }
 
 bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
@@ -1249,22 +1255,26 @@ void PrivateEngine::removeRandomInventory() {
 	}
 }
 
-void PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
+bool PrivateEngine::selectAMRadioArea(Common::Point mousePos) {
 	if (_AMRadioArea.surf == nullptr)
-		return;
+		return false;
 
 	if (inMask(_AMRadioArea.surf, mousePos)) {
 		playRadio(_AMRadio, false);
+		return true;
 	}
+	return false;
 }
 
-void PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
+bool PrivateEngine::selectPoliceRadioArea(Common::Point mousePos) {
 	if (_policeRadioArea.surf == nullptr)
-		return;
+		return false;
 
 	if (inMask(_policeRadioArea.surf, mousePos)) {
 		playRadio(_policeRadio, true);
+		return true;
 	}
+	return false;
 }
 
 void PrivateEngine::addDossier(Common::String &page1, Common::String &page2) {
@@ -1720,13 +1730,13 @@ bool PrivateEngine::cursorPhoneArea(Common::Point mousePos) {
 	return false;
 }
 
-void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
+bool PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 	if (_phoneArea.surf == nullptr) {
-		return;
+		return false;
 	}
 
 	if (!_mixer->isSoundHandleActive(_phoneCallSoundHandle)) {
-		return;
+		return false;
 	}
 
 	if (inMask(_phoneArea.surf, mousePos)) {
@@ -1739,7 +1749,7 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 			}
 		}
 		if (phone == nullptr) {
-			return;
+			return true;
 		}
 
 		// phone clip has been answered, select sound
@@ -1757,7 +1767,9 @@ void PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 
 		playSound(sound, 1, true, false);
 		_nextSetting = getListenToPhoneSetting();
+		return true;
 	}
+	return false;
 }
 
 void PrivateEngine::initializeWallSafeValue() {
@@ -1835,22 +1847,26 @@ void PrivateEngine::incrementSafeDigit(uint32 d) {
 	sym->u.val = (100 * digits[0]) + (10 * digits[1]) + digits[2];
 }
 
-void PrivateEngine::selectLoadGame(Common::Point mousePos) {
+bool PrivateEngine::selectLoadGame(Common::Point mousePos) {
 	if (_loadGameMask.surf == nullptr)
-		return;
+		return false;
 
 	if (inMask(_loadGameMask.surf, mousePos)) {
 		loadGameDialog();
+		return true;
 	}
+	return false;
 }
 
-void PrivateEngine::selectSaveGame(Common::Point mousePos) {
+bool PrivateEngine::selectSaveGame(Common::Point mousePos) {
 	if (_saveGameMask.surf == nullptr)
-		return;
+		return false;
 
 	if (inMask(_saveGameMask.surf, mousePos)) {
 		saveGameDialog();
+		return true;
 	}
+	return false;
 }
 
 bool PrivateEngine::hasFeature(EngineFeature f) const {
