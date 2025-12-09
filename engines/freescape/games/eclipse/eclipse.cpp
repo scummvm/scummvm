@@ -271,11 +271,13 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 
 	act = new Common::Action("TGGLHEIGHT", _("Toggle Height"));
 	act->setCustomEngineActionEvent(kActionToggleRiseLower);
+	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("h");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("REST", _("Rest"));
 	act->setCustomEngineActionEvent(kActionRest);
+	act->addDefaultInputMapping("JOY_Y");
 	act->addDefaultInputMapping("r");
 	engineKeyMap->addAction(act);
 
