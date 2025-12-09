@@ -38,8 +38,10 @@ static const uint32_t kBalloonFramesSize = 24950;
 static const uint32_t ALFRED7_ALFRED_COMB_R = 67768;
 static const uint32_t ALFRED7_ALFRED_COMB_L = 88408;
 
-static const uint32_t kAlternateSettingsMenuOffset = 910097; // Placeholder offset
-static const uint32_t kSettingsPaletteOffset = 1038141;      // 640 * 480
+
+static const uint32_t kAlternateSettingsMenuOffset = 910097;
+static const uint32_t kAlternateSettingsPaletteOffset = 1038141;      // 640 * 480
+static const uint32_t kSettingsPaletteOffset = 0x2884c2;      // 640 * 480
 
 #define DESCRIPTION_BASE_OFFSET 0x4715D
 #define NUM_DESCRIPTIONS 113

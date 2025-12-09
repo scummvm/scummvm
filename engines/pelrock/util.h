@@ -38,6 +38,7 @@ void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWid
 void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight);
 void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color);
 void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
+void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color);
 Common::String printMovementFlags(uint8_t flags);
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
 void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);

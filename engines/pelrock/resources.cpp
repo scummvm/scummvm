@@ -296,7 +296,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 
 void ResourceManager::loadSettingsMenu() {
 
-	bool alternateMenu = true;
+	bool alternateMenu = false;
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
 		error("Could not open ALFRED.7");
@@ -355,7 +355,7 @@ void ResourceManager::loadSettingsMenu() {
 
 		_mainMenu = new byte[640 * 400];
 
-		alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
+		alfred7.seek(kAlternateSettingsPaletteOffset, SEEK_SET);
 		alfred7.read(_mainMenuPalette, 768);
 		for (int i = 0; i < 256; i++) {
 			_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;

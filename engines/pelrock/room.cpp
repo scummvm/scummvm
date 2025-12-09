@@ -75,14 +75,12 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 		roomFile->seek(pair_offset, SEEK_SET);
 		uint32_t offset = roomFile->readUint32LE();
 		uint32_t size = roomFile->readUint32LE();
-		debug("Background pair %d: offset=%d size=%d", pair_idx, offset, size);
 		if (offset > 0 && size > 0 && offset < roomFile->size()) {
 			byte *data = new byte[size];
 			roomFile->seek(offset, SEEK_SET);
 			roomFile->read(data, size);
 			uint8_t *block_data = NULL;
 			size_t block_size = rleDecompress(data, size, 0, 640 * 400, &block_data);
-			debug(" Decompressed block size: %d, combined size: %d", block_size, combined_size + block_size);
 			if (block_size + combined_size > 640 * 400) {
 				debug(" Warning: decompressed background size exceeds buffer size!");
 				block_size = 640 * 400 - combined_size;

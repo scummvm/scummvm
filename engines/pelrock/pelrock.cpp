@@ -108,6 +108,7 @@ Common::Error PelrockEngine::run() {
 
 	while (!shouldQuit()) {
 		if (stateGame == SETTINGS) {
+			changeCursor(DEFAULT);
 			menuLoop();
 		} else if (stateGame == GAME) {
 			gameLoop();
@@ -714,6 +715,32 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	}
 }
 
+void PelrockEngine::checkMouseClickOnSettings(int x, int y) {
+
+	bool selectedItem = false;
+	for(int i = 0; i < 4; i++) {
+		if(x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
+		   y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
+			selectedInvIndex = curInventoryPage * 4 + i;
+			_menuText = _res->getInventoryObject(selectedInvIndex).description;
+			debug("Selected inventory index: %d", selectedInvIndex);
+			selectedItem = true;
+			return;
+		}
+	}
+	if(!selectedItem) {
+		selectedInvIndex = -1;
+		_menuText = "";
+	}
+
+	if(x >= 471 && x <= 471 + 23 &&
+	   y >= 87 && y <= 87 + 33) {
+		curInventoryPage++;
+	}
+
+
+}
+
 void PelrockEngine::calculateScalingMasks() {
 
 	//    for scale_factor in range(CHAR_WIDTH):
@@ -968,13 +995,8 @@ void PelrockEngine::menuLoop() {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (e.type == Common::EVENT_LBUTTONUP) {
+			checkMouseClickOnSettings(e.mouse.x, e.mouse.y);
 
-			_menuText = _res->getInventoryObject(selectedInvIndex++).description;
-
-			// _isMouseDown = false;
-			// checkMouseClick(e.mouse.x, e.mouse.y);
-			// _displayPopup = false;
-			// _longClick = false;
 		} else if (e.type == Common::EVENT_RBUTTONUP) {
 
 			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
@@ -984,13 +1006,15 @@ void PelrockEngine::menuLoop() {
 
 	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
 
-	for (int i = 0; i < 4; i++) {
-		InventoryObject item = _res->getInventoryObject(i);
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
+	for(int i = 0; i < 4; i++) {
+		int itemIndex = curInventoryPage * 4 + i;
+		InventoryObject item = _res->getInventoryObject(itemIndex);
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
+		drawRect(_compositeBuffer, 140 + (82 * i) - 2, 115 - (8 * i) - 2, 64, 64, 255); // Draw border
 	}
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	_smallFont->drawString(_screen, _menuText, 0, 0, 640, 0);
+	_smallFont->drawString(_screen, _menuText, 230, 200, 200, 0);
 	_screen->markAllDirty();
 	_screen->update();
 }

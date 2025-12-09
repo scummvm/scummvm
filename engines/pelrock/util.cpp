@@ -41,6 +41,22 @@ void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color
 	surface->drawLine(x + w, y, x + w, y + h, color);
 }
 
+void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	drawRect(surface, 0, 0, w, h, color);
+
+	for (int py = 0; py < h; py++) {
+		for (int px = 0; px < w; px++) {
+			int destIdx = (y + py) * 640 + (x + px);
+			int srcIdx = py * w + px;
+			int color  = *((byte *)surface->getBasePtr(px, py));
+			if(color != 0)
+			screenBuffer[destIdx] = color;
+		}
+	}
+}
+
 Common::String printMovementFlags(uint8_t flags) {
 	Common::String result;
 	if (flags & MOVE_HORIZ) {

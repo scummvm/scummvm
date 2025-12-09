@@ -107,6 +107,7 @@ private:
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
+	void checkMouseClickOnSettings(int x, int y);
 
 	void calculateScalingMasks();
 	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
@@ -158,6 +159,7 @@ private:
 
 	//Temporary
 	int selectedInvIndex = 0;
+	int curInventoryPage = 0;
 	Common::String _menuText;
 
 	// JAVA
