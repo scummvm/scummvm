@@ -288,6 +288,7 @@ void PelrockEngine::frames() {
 		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 
 		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
+			_chronoManager->countTextDown = true;
 			if (_chronoManager->_textTtl > 0) {
 				if (alfredState.animState == ALFRED_TALKING) {
 					_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
@@ -307,6 +308,7 @@ void PelrockEngine::frames() {
 				alfredState.animState = ALFRED_IDLE;
 				isNPCATalking = false;
 				isNPCBTalking = false;
+				_chronoManager->countTextDown = false;
 			}
 		}
 
@@ -694,14 +696,14 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 
 	if (hotspotIndex != -1) {
 
-		_popupX = x - kBalloonWidth / 2;
+		_popupX = alfredState.x - kBalloonWidth / 2;
 		if (_popupX < 0)
 			_popupX = 0;
 		if (_popupX + kBalloonWidth > 640) {
 			_popupX -= 640 - (_popupX + kBalloonWidth);
 		}
 
-		_popupY = y - kBalloonHeight;
+		_popupY = alfredState.y - kAlfredFrameHeight - kBalloonHeight;
 		if (_popupY < 0) {
 			_popupY = 0;
 		}
@@ -986,6 +988,7 @@ void PelrockEngine::menuLoop() {
 		InventoryObject item = _res->getInventoryObject(i);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + i * 85, 110 - i * 5, 60, 60, 1);
 	}
+
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 	_smallFont->drawString(_screen, _menuText, 0, 0, 640, 0);
 	_screen->markAllDirty();
