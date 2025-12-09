@@ -256,7 +256,8 @@ void Menu::triggerSave() {
 		error = g_engine->saveGameStream(savefile.get());
 	if (error.getCode() == kNoError) {
 		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), _selectedSavefileDescription, false);
-		_savefiles.push_back(fileName);
+		if (_selectedSavefileI >= _savefiles.size())
+			_savefiles.push_back(fileName);
 		updateSelectedSavefile(true);
 	} else {
 		GUI::MessageDialog dialog(error.getTranslatedDesc());
