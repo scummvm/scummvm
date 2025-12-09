@@ -55,7 +55,7 @@ struct LoadSave_Enter_Script : public Script::Command {
 
 	LoadSave_Enter_Script(const Common::Array<Common::String> &args) : reloading(args[0]), notReloading(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Enter_Script %s, %s", reloading.c_str(), notReloading.c_str());
+		warning("LoadSave_Enter_Script %s, %s", reloading.c_str(), notReloading.c_str());
 	}
 };
 
@@ -90,7 +90,7 @@ struct Play_AnimBloc_Number : public Script::Command {
 	Play_AnimBloc_Number(const Common::Array<Common::String> &args) : name1(args[0]), name2(args[1]),
 																	  block(args[2]), start(atoi(args[3].c_str())), stop(atoi(args[4].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc_Number %s %s %s %d-%d", name1.c_str(), name2.c_str(), block.c_str(), start, stop);
+		warning("Play_AnimBloc_Number %s %s %s %d-%d", name1.c_str(), name2.c_str(), block.c_str(), start, stop);
 	}
 };
 
@@ -100,7 +100,7 @@ struct Until : public Script::Command {
 
 	Until(const Common::Array<Common::String> &args) : block(args[0]), frame(atoi(args[1].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("until %s %d", block.c_str(), frame);
+		warning("until %s %d", block.c_str(), frame);
 	}
 };
 
@@ -109,7 +109,7 @@ struct While : public Script::Command {
 
 	While(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("while %g", seconds);
+		warning("while %g", seconds);
 	}
 };
 
@@ -137,6 +137,7 @@ struct KillTimer : public Script::Command {
 	KillTimer(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("killtimer");
+		g_engine->killTimer();
 	}
 };
 
@@ -203,7 +204,7 @@ struct LoadSave_Init_Slots : public Script::Command {
 
 	LoadSave_Init_Slots(const Common::Array<Common::String> &args) : slots(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Init_Slots %d", slots);
+		warning("LoadSave_Init_Slots %d", slots);
 	}
 };
 
@@ -218,7 +219,7 @@ struct LoadSave_Draw_Slot : public Script::Command {
 																	arg1(atoi(args[2].c_str())),
 																	arg2(atoi(args[3].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Draw_Slot %d %d %d %d", slot, arg0, arg1, arg2);
+		warning("LoadSave_Draw_Slot %d %d %d %d", slot, arg0, arg1, arg2);
 	}
 };
 
@@ -229,7 +230,7 @@ struct LoadSave_Test_Slot : public Script::Command {
 
 	LoadSave_Test_Slot(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())), show(args[1]), hide(args[2]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Test_Slot %d %s %s", slot, show.c_str(), hide.c_str());
+		warning("LoadSave_Test_Slot %d %s %s", slot, show.c_str(), hide.c_str());
 		g_engine->setVariable(show, 0);
 		g_engine->setVariable(hide, 1);
 	}
@@ -238,7 +239,7 @@ struct LoadSave_Test_Slot : public Script::Command {
 struct LoadSave_Capture_Context : public Script::Command {
 	LoadSave_Capture_Context(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Capture_Context");
+		warning("LoadSave_Capture_Context");
 	}
 };
 
@@ -248,7 +249,7 @@ struct LoadSave_Context_Restored : public Script::Command {
 
 	LoadSave_Context_Restored(const Common::Array<Common::String> &args) : progress(args[0]), done(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Context_Restored %s %s", progress.c_str(), done.c_str());
+		warning("LoadSave_Context_Restored %s %s", progress.c_str(), done.c_str());
 	}
 };
 
@@ -257,7 +258,7 @@ struct LoadSave_Load : public Script::Command {
 
 	LoadSave_Load(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Load %d", slot);
+		warning("LoadSave_Load %d", slot);
 	}
 };
 
@@ -266,7 +267,7 @@ struct LoadSave_Save : public Script::Command {
 
 	LoadSave_Save(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Save %d", slot);
+		warning("LoadSave_Save %d", slot);
 	}
 };
 
@@ -275,7 +276,7 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 
 	LoadSave_Set_Context_Label(const Common::Array<Common::String> &args) : label(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("LoadSave_Set_Context_Label %s", label.c_str());
+		warning("LoadSave_Set_Context_Label %s", label.c_str());
 	}
 };
 
@@ -284,7 +285,7 @@ struct RolloverMalette : public Script::Command {
 
 	RolloverMalette(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("RolloverMalette %d", arg);
+		warning("RolloverMalette %d", arg);
 	}
 };
 
@@ -293,7 +294,7 @@ struct RolloverSecretaire : public Script::Command {
 
 	RolloverSecretaire(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("RolloverSecretaire %d", arg);
+		warning("RolloverSecretaire %d", arg);
 	}
 };
 
@@ -486,12 +487,12 @@ struct LockKey : public Script::Command {
 	}
 };
 
-struct Zoom : public Script::Command {
-	int zoom;
-	Zoom(int z) : zoom(z) {}
+struct SetZoom : public Script::Command {
+	int fov;
+	SetZoom(int f) : fov(f) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("zoom %d", zoom);
+		g_engine->setZoom(fov);
 	}
 };
 
@@ -500,7 +501,7 @@ struct AngleXMax : public Script::Command {
 	AngleXMax(float x) : xMax(x) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("angle x max %g", xMax);
+		warning("angle x max %g", xMax);
 	}
 };
 
@@ -509,7 +510,7 @@ struct AngleYMax : public Script::Command {
 	AngleYMax(float y0, float y1) : yMax0(y0), yMax1(y1) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("angle y max %g %g", yMax0, yMax1);
+		warning("angle y max %g %g", yMax0, yMax1);
 	}
 };
 
@@ -518,7 +519,7 @@ struct SetAngle : public Script::Command {
 	SetAngle(float a0_, float a1_) : a0(a0_), a1(a1_) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("set angle %g %g", a0, a1);
+		warning("set angle %g %g", a0, a1);
 	}
 };
 

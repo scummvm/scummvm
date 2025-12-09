@@ -164,7 +164,7 @@ public:
 			auto arg2 = nextInt();
 			return CommandPtr(new Fade(arg0, arg1, arg2));
 		} else if (maybe("setzoom=")) {
-			return CommandPtr(new Zoom(nextInt()));
+			return CommandPtr(new SetZoom(nextInt()));
 		} else if (maybe("setangle=")) {
 			auto i0 = nextInt();
 			if (i0 > 4095)

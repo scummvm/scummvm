@@ -139,6 +139,9 @@ public:
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
 	void playAnimation(const Common::String &name, const Common::String &var);
+	void setZoom(int fov) {
+		_fov = M_PI * fov / 180;
+	}
 
 private:
 	static Common::String removeDrive(const Common::String &path);
