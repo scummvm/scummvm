@@ -70,27 +70,30 @@ struct Play_Movie : public Script::Command {
 
 struct Play_AnimBloc : public Script::Command {
 	Common::String name;
-	Common::String var;
-	int start;
-	int stop;
-
-	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), var(args[1]), start(atoi(args[2].c_str())), stop(atoi(args[3].c_str())) {}
-	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc %s %s %d-%d", name.c_str(), var.c_str(), start, stop);
-		g_engine->playAnimation(name, var);
-	}
-};
-
-struct Play_AnimBloc_Number : public Script::Command {
-	Common::String name1, name2;
 	Common::String block;
 	int start;
 	int stop;
 
-	Play_AnimBloc_Number(const Common::Array<Common::String> &args) : name1(args[0]), name2(args[1]),
+	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), block(args[1]), start(atoi(args[2].c_str())), stop(atoi(args[3].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("Play_AnimBloc %s %s %d-%d", name.c_str(), block.c_str(), start, stop);
+		g_engine->playAnimation(name, block);
+	}
+};
+
+struct Play_AnimBloc_Number : public Script::Command {
+	Common::String prefix, var;
+	Common::String block;
+	int start;
+	int stop;
+
+	Play_AnimBloc_Number(const Common::Array<Common::String> &args) : prefix(args[0]), var(args[1]),
 																	  block(args[2]), start(atoi(args[3].c_str())), stop(atoi(args[4].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("Play_AnimBloc_Number %s %s %s %d-%d", name1.c_str(), name2.c_str(), block.c_str(), start, stop);
+		debug("Play_AnimBloc_Number %s %s %s %d-%d", prefix.c_str(), var.c_str(), block.c_str(), start, stop);
+		int value = g_engine->getVariable(var);
+		auto name = Common::String::format("%s%04d", prefix.c_str(), value);
+		g_engine->playAnimation(name, block);
 	}
 };
 
