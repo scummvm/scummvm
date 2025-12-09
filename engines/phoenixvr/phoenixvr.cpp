@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
+#include "graphics/surface.h"
 #include "image/pcx.h"
 #include "math/utils.h"
 #include "phoenixvr/console.h"
@@ -483,13 +484,66 @@ bool PhoenixVREngine::testSaveSlot(int idx) const {
 	return _saveFileMan->exists(getSaveStateName(idx));
 }
 
-Common::Error PhoenixVREngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
+	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
+	if (!slot)
+		return;
+	auto state = loadGameStateObject(slot.get());
+
+	Graphics::PixelFormat rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	Graphics::Surface thumbnail;
+	thumbnail.init(state.thumbWidth, state.thumbHeight, state.thumbnail.size() / state.thumbHeight, state.thumbnail.data(), rgb565);
+	auto &dst = _vr.getSurface();
+	Graphics::Surface *src = thumbnail.convertTo(dst.format);
+	src->flipVertical(src->getRect());
+	static const uint8 mapFaceId[] = {0, 3, 2, 1, 5, 4};
+	y += mapFaceId[face] * 4 * 256;
+	if (x > 256) {
+		x -= 256;
+		y += 256;
+	}
+	// FIXME: clip vertically here.
+	dst.copyRectToSurface(*src, x, y, src->getRect());
+	src->free();
+	delete src;
+}
+
+Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::SeekableReadStream *stream) {
+	GameState state;
+
+	auto readString = [&]() {
+		auto size = stream->readUint32LE();
+		return stream->readString(0, size);
+	};
+
+	state.script = readString();
+	debug("save.script: %s", state.script.c_str());
+	state.game = readString();
+	debug("save.game: %s", state.game.c_str());
+	state.info = readString();
+	debug("save.datetime: %s", state.info.c_str());
+	uint dibHeaderSize = stream->readUint32LE();
+	stream->seek(-4, SEEK_CUR);
+	state.dibHeader.resize(dibHeaderSize + 3 * 4); // rmask/gmask/bmask
+	stream->read(state.dibHeader.data(), state.dibHeader.size());
+	state.thumbWidth = READ_LE_UINT32(state.dibHeader.data() + 0x04);
+	state.thumbHeight = READ_LE_UINT32(state.dibHeader.data() + 0x08);
+	auto imageSize = READ_LE_UINT32(state.dibHeader.data() + 0x14);
+	debug("save.image %dx%d, %u", state.thumbWidth, state.thumbHeight, imageSize);
+	state.thumbnail.resize(imageSize);
+	stream->read(state.thumbnail.data(), state.thumbnail.size());
+	auto gameStateSize = stream->readUint32LE();
+	debug("save.state %u bytes", gameStateSize);
+	state.state.resize(gameStateSize);
+	stream->read(state.state.data(), state.state.size());
+	return state;
+}
+
+Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	return Common::kNoError;
 }

@@ -48,6 +48,7 @@ public:
 	void render(Graphics::Screen *screen, float ax, float ay, float fov);
 	bool isVR() const { return _vr; }
 	void playAnimation(const Common::String &name);
+	Graphics::Surface &getSurface() { return *_pic; }
 };
 } // namespace PhoenixVR
 

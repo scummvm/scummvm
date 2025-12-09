@@ -213,16 +213,17 @@ struct LoadSave_Init_Slots : public Script::Command {
 
 struct LoadSave_Draw_Slot : public Script::Command {
 	int slot;
-	int arg0;
-	int arg1;
-	int arg2;
+	int face;
+	int x;
+	int y;
 
 	LoadSave_Draw_Slot(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())),
-																	arg0(atoi(args[1].c_str())),
-																	arg1(atoi(args[2].c_str())),
-																	arg2(atoi(args[3].c_str())) {}
+																	face(atoi(args[1].c_str())),
+																	x(atoi(args[2].c_str())),
+																	y(atoi(args[3].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Draw_Slot %d %d %d %d", slot, arg0, arg1, arg2);
+		debug("LoadSave_Draw_Slot %d %d %d %d", slot, face, x, y);
+		g_engine->drawSlot(slot, face, x, y);
 	}
 };
 

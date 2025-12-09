@@ -89,20 +89,8 @@ public:
 		return true;
 	}
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
-
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	// Script API
 	void setNextScript(const Common::String &path);
@@ -144,6 +132,7 @@ public:
 	}
 
 	bool testSaveSlot(int idx) const;
+	void drawSlot(int idx, int face, int x, int y);
 
 private:
 	static Common::String removeDrive(const Common::String &path);
@@ -197,6 +186,19 @@ private:
 	static constexpr byte kActive = 4;
 	byte _timerFlags = 0;
 	float _timer = 0;
+
+	struct GameState {
+		Common::String script;
+		Common::String game;
+		Common::String info;
+		Common::Array<byte> dibHeader;
+		int16 thumbWidth;
+		int16 thumbHeight;
+		Common::Array<byte> thumbnail;
+		Common::Array<byte> state;
+	};
+
+	GameState loadGameStateObject(Common::SeekableReadStream *stream);
 };
 
 extern PhoenixVREngine *g_engine;
