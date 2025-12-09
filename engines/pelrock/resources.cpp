@@ -262,8 +262,13 @@ void ResourceManager::loadInventoryDescriptions() {
 			pos += 2;
 			continue;
 		}
+		if(descBuffer[pos] == 0xC8) {
+			desc.append(1, '\n');
+			pos++;
+			continue;
+		}
 
-		desc.append(1, descBuffer[pos]);
+		desc.append(1, decodeChar(descBuffer[pos]));
 		if (pos + 1 == kInventoryDescriptionsSize) {
 			_inventoryDescriptions.push_back(desc);
 		}

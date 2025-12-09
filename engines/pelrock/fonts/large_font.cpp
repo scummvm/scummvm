@@ -37,7 +37,7 @@ bool LargeFont::load(const Common::String &filename) {
 	}
 
 	file.seek(0x7DC8, SEEK_SET);
-	const int numChars = 96;
+	const int numChars = 100;
 	const int charWidth = 12;
 	const int charHeight = 24;
 	const int pad = 1;
@@ -115,7 +115,7 @@ int LargeFont::getCharWidth(uint32 chr) const {
 
 void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	chr -= 32; // Adjust for font starting at ASCII 32
-	if (!_fontData || chr >= 96 || chr < 0) {
+	if (!_fontData || chr >= 100 || chr < 0) {
 		return;
 	}
 

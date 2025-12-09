@@ -268,7 +268,20 @@ void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color) {
 	}
 }
 
-char32_t decodeCPByte(byte b) {
-	return cp437_to_unicode[b];
+byte decodeChar(byte b) {
+	switch (b) {
+		case 0x82: return special_chars[1];
+		case 0x83: return special_chars[0];
+
+		case 0x80: return special_chars[3]; // n tilde
+		case 0x7F: return special_chars[4];
+		case 0x7E: return special_chars[5];
+		case 0x7D: return special_chars[6];
+		case 0x7C: return special_chars[7];
+		case 0x7B: return special_chars[8];
+		default:
+    		return b;
+	}
 }
+
 } // End of namespace Pelrock

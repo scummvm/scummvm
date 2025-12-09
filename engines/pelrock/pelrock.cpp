@@ -587,7 +587,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					}
 					int srcIndex = srcY * kAlfredFrameWidth + srcX;
 					int outIndex = outY * finalWidth + outX;
-					debug("srcIndex = %d, outIndex = %d, original size = %d, outsize = %d", srcIndex, outIndex, kAlfredFrameWidth * kAlfredFrameHeight, finalWidth * finalHeight);
 					if (outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
 						debug("Index out of bounds!");
 					} else
@@ -701,7 +700,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		if (_popupX < 0)
 			_popupX = 0;
 		if (_popupX + kBalloonWidth > 640) {
-			_popupX -= 640 - (_popupX + kBalloonWidth);
+			_popupX = 640 - kBalloonWidth;
 		}
 
 		_popupY = alfredState.y - kAlfredFrameHeight - kBalloonHeight;

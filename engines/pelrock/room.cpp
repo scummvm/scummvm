@@ -376,8 +376,8 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 			while (pos < (pair12_size) && data[pos] != 0xFD && pos < (pair12_size)) {
 
 				if (data[pos] != 0x00) {
-					// debug("Description char byte: 0x%02X", data[pos]);
-					description.text.append(1, decodeCPByte((byte)data[pos]));
+					// debug("Adding char 0x%02X to description, decoded as %lc", data[pos], decodeChar((byte)data[pos]));
+					description.text.append(1, decodeChar((byte)data[pos]));
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
@@ -398,35 +398,6 @@ Common::Array<Description> RoomManager::loadRoomDescriptions(Common::File *roomF
 	// 	debug("Room description: %s", i->c_str());
 	// }
 	return descriptions;
-}
-
-char32_t decodeByte(byte b) {
-	if (b == 0x80) {
-		return '\xA4';
-	} else if (b == 0x81) {
-		return '\xA1';
-	} else if (b == 0x82) {
-		return '\xAD';
-	} else if (b == 0x83) {
-		return '\xA8';
-	} else if (b == 0x84) {
-		return '\xA3';
-	} else if (b == 0x7B) {
-		return '\xA0';
-	} else if (b == 0x7C) {
-		return '\x82';
-	} else if (b == 0x7D) {
-		return '\xA1';
-	} else if (b == 0x7E) {
-		return '\xA2';
-	} else if (b == 0x7F) {
-		return '\xA3';
-	} else if (b >= 0x20 && b <= 0x7A) {
-		return (char)b;
-	} else {
-		// return string in format [XX]
-		return '.';
-	}
 }
 
 void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
@@ -631,7 +602,7 @@ Common::Array<ConversationElement> RoomManager::parseConversationElements(const 
 					   convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
 					   convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
 					   convData[pos] != 0xF0) {
-					char32_t ch = decodeByte(convData[pos]);
+					char32_t ch = decodeChar(convData[pos]);
 					if (ch != '.') {
 						text += ch;
 					}
@@ -676,7 +647,7 @@ Common::Array<ConversationElement> RoomManager::parseConversationElements(const 
 				   convData[pos] != 0xFC && convData[pos] != 0xF4 && convData[pos] != 0xF7 &&
 				   convData[pos] != 0xF5 && convData[pos] != 0xFE && convData[pos] != 0xEB &&
 				   convData[pos] != 0xF0) {
-				char32_t ch = decodeByte(convData[pos]);
+				char32_t ch = decodeChar(convData[pos]);
 				if (ch != '.') {
 					text += ch;
 				}
