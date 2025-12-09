@@ -454,7 +454,6 @@ int main(int argc, char *argv[]) {
 		if (setup.appleEmbedded) {
 			setup.defines.push_back("IPHONE");
 			setup.defines.push_back("IPHONE_IOS7");
-			setup.defines.push_back("SCUMMVM_NEON");
 		} else {
 			setup.defines.push_back("MACOSX");
 		}
