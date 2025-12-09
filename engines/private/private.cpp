@@ -656,6 +656,10 @@ void PrivateEngine::completePoliceBust() {
 }
 
 void PrivateEngine::checkPoliceBust() {
+	if (_mode != 1) {
+		return;
+	}
+
 	if (!_policeBustEnabled) {
 		return;
 	}
@@ -794,7 +798,7 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
 }
 
 bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
-	if (_mode == 1 && !_policeBustEnabled) {
+	if (_mode == 1) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
@@ -891,7 +895,7 @@ const char *PrivateEngine::getSymbolName(const char *name, const char *strippedN
 }
 
 void PrivateEngine::selectPauseGame(Common::Point mousePos) {
-	if (_mode == 1 && !_policeBustEnabled) {
+	if (_mode == 1) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
@@ -960,7 +964,9 @@ bool PrivateEngine::selectExit(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
-		_numberOfClicks--; // count click only if it hits a hotspot
+		if (_mode == 1) {
+			_numberOfClicks--; // count click only if it hits a hotspot
+		}
 		_nextSetting = ns;
 		_highlightMasks = false;
 		return true;
@@ -997,7 +1003,9 @@ bool PrivateEngine::selectMask(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
-		_numberOfClicks--; // count click only if it hits a hotspot
+		if (_mode == 1) {
+			_numberOfClicks--; // count click only if it hits a hotspot
+		}
 		_nextSetting = ns;
 		_highlightMasks = false;
 		return true;
