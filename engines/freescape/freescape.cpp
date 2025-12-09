@@ -1283,12 +1283,14 @@ void FreescapeEngine::removeTimers() {
 }
 
 void FreescapeEngine::pauseEngineIntern(bool pause) {
-	drawFrame();
-	if (_savedScreen) {
-		_savedScreen->free();
-		delete _savedScreen;
+	if (_currentArea) {
+		drawFrame();
+		if (_savedScreen) {
+			_savedScreen->free();
+			delete _savedScreen;
+		}
+		_savedScreen = _gfx->getScreenshot();
 	}
-	_savedScreen = _gfx->getScreenshot();
 
 	Engine::pauseEngineIntern(pause);
 
