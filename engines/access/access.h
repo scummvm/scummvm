@@ -68,8 +68,8 @@ enum AccessDebugChannels {
 	kDebugSound,
 };
 
-/* unsigned to match Common::CustomEventType, aka uint32 */
-enum ACCESSActions : unsigned {
+/* typed enum to match unsignedness of Common::CustomEventType */
+enum ACCESSActions : Common::CustomEventType {
 	kActionNone,
 	kActionMoveUp,
 	kActionMoveDown,
