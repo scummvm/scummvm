@@ -140,7 +140,8 @@ public:
 	}
 
 	static float toAngle(int a) {
-		return (float(a) / 8192.0f) * float(M_PI * 2);
+		static const float angleToFloat = M_PI / 4096.0f;
+		return angleToFloat * a;
 	}
 
 	Script::CommandPtr parseCommand() {
