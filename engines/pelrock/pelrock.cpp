@@ -338,45 +338,45 @@ void PelrockEngine::frames() {
 		_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 		_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
 
-		if (_paletteAnim != nullptr) {
+		if (_paletteFadeAnim != nullptr) {
 
 			// if (_paletteAnim->curFrameCount >= _paletteAnim->speed) {
-			_paletteAnim->curFrameCount = 0;
-			if (_paletteAnim->currentR >= _paletteAnim->maxR &&
-				_paletteAnim->currentG >= _paletteAnim->maxG &&
-				_paletteAnim->currentB >= _paletteAnim->maxB) {
-				_paletteAnim->downDirection = 0;
-			} else if (_paletteAnim->currentR <= _paletteAnim->minR &&
-					   _paletteAnim->currentG <= _paletteAnim->minG &&
-					   _paletteAnim->currentB <= _paletteAnim->minB) {
-				_paletteAnim->downDirection = 1;
+			_paletteFadeAnim->curFrameCount = 0;
+			if (_paletteFadeAnim->currentR >= _paletteFadeAnim->maxR &&
+				_paletteFadeAnim->currentG >= _paletteFadeAnim->maxG &&
+				_paletteFadeAnim->currentB >= _paletteFadeAnim->maxB) {
+				_paletteFadeAnim->downDirection = 0;
+			} else if (_paletteFadeAnim->currentR <= _paletteFadeAnim->minR &&
+					   _paletteFadeAnim->currentG <= _paletteFadeAnim->minG &&
+					   _paletteFadeAnim->currentB <= _paletteFadeAnim->minB) {
+				_paletteFadeAnim->downDirection = 1;
 			}
 
-			if (_paletteAnim->downDirection) {
-				if (_paletteAnim->currentR < _paletteAnim->maxR) {
-					_paletteAnim->currentR += _paletteAnim->speed;
+			if (_paletteFadeAnim->downDirection) {
+				if (_paletteFadeAnim->currentR < _paletteFadeAnim->maxR) {
+					_paletteFadeAnim->currentR += _paletteFadeAnim->speed;
 				}
-				if (_paletteAnim->currentG < _paletteAnim->maxG) {
-					_paletteAnim->currentG += _paletteAnim->speed;
+				if (_paletteFadeAnim->currentG < _paletteFadeAnim->maxG) {
+					_paletteFadeAnim->currentG += _paletteFadeAnim->speed;
 				}
-				if (_paletteAnim->currentB < _paletteAnim->maxB) {
-					_paletteAnim->currentB += _paletteAnim->speed;
+				if (_paletteFadeAnim->currentB < _paletteFadeAnim->maxB) {
+					_paletteFadeAnim->currentB += _paletteFadeAnim->speed;
 				}
 			} else {
-				if (_paletteAnim->currentR > _paletteAnim->minR) {
-					_paletteAnim->currentR -= _paletteAnim->speed;
+				if (_paletteFadeAnim->currentR > _paletteFadeAnim->minR) {
+					_paletteFadeAnim->currentR -= _paletteFadeAnim->speed;
 				}
-				if (_paletteAnim->currentG > _paletteAnim->minG) {
-					_paletteAnim->currentG -= _paletteAnim->speed;
+				if (_paletteFadeAnim->currentG > _paletteFadeAnim->minG) {
+					_paletteFadeAnim->currentG -= _paletteFadeAnim->speed;
 				}
-				if (_paletteAnim->currentB > _paletteAnim->minB) {
-					_paletteAnim->currentB -= _paletteAnim->speed;
+				if (_paletteFadeAnim->currentB > _paletteFadeAnim->minB) {
+					_paletteFadeAnim->currentB -= _paletteFadeAnim->speed;
 				}
 			}
 
-			_room->_roomPalette[_paletteAnim->paletteIndex * 3] = _paletteAnim->currentR;
-			_room->_roomPalette[_paletteAnim->paletteIndex * 3 + 1] = _paletteAnim->currentG;
-			_room->_roomPalette[_paletteAnim->paletteIndex * 3 + 2] = _paletteAnim->currentB;
+			_room->_roomPalette[_paletteFadeAnim->paletteIndex * 3] = _paletteFadeAnim->currentR;
+			_room->_roomPalette[_paletteFadeAnim->paletteIndex * 3 + 1] = _paletteFadeAnim->currentG;
+			_room->_roomPalette[_paletteFadeAnim->paletteIndex * 3 + 2] = _paletteFadeAnim->currentB;
 			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 
 			// } else {
@@ -384,6 +384,29 @@ void PelrockEngine::frames() {
 			// }
 		}
 
+		if (_paletteRotateAnim != nullptr) {
+			if (_paletteRotateAnim->curFrameCount >= _paletteRotateAnim->delay) {
+				_paletteRotateAnim->curFrameCount = 0;
+				int colors = _paletteRotateAnim->paletteMode;
+				byte *paletteValues = new byte[colors * 3];
+				for (int i = 0; i < colors; i++) {
+					paletteValues[i * 3] = _room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3];
+					paletteValues[i * 3 + 1] = _room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3 + 1];
+					paletteValues[i * 3 + 2] = _room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3 + 2];
+				}
+				for (int i = 0; i < colors; i++) {
+					int srcIndex = (i + 1) % colors;
+					_room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3] = paletteValues[srcIndex * 3];
+					_room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3 + 1] = paletteValues[srcIndex * 3 + 1];
+					_room->_roomPalette[(_paletteRotateAnim->paletteStartIndex + i) * 3 + 2] = paletteValues[srcIndex * 3 + 2];
+				}
+
+				g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+
+			} else {
+				_paletteRotateAnim->curFrameCount++;
+			}
+		}
 		_screen->markAllDirty();
 
 		// _screen->update();
@@ -1714,12 +1737,17 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 
 	_room->_currentRoomNumber = number;
 
-	if (number == 2 && _paletteAnim == nullptr) { // Pelrock Mansion
-		_paletteAnim = _room->paletteAnimRoom2();
+	if (number == 2 && _paletteFadeAnim == nullptr) { // Pelrock Mansion
+		_paletteFadeAnim = _room->paletteAnimRoom2();
+	} else if (number == 0 && _paletteRotateAnim == nullptr) {
+		_paletteRotateAnim = _room->paletteAnimRoom0();
 	} else {
-		if (_paletteAnim != nullptr)
-			free(_paletteAnim);
-		_paletteAnim = nullptr;
+		if (_paletteFadeAnim != nullptr)
+			free(_paletteFadeAnim);
+		_paletteFadeAnim = nullptr;
+		if (_paletteRotateAnim != nullptr)
+			free(_paletteRotateAnim);
+		_paletteRotateAnim = nullptr;
 	}
 
 	_screen->markAllDirty();

@@ -162,8 +162,8 @@ private:
 	int curInventoryPage = 0;
 	Common::String _menuText;
 
-	PaletteAnimFade *_paletteAnim = nullptr;
-
+	PaletteAnimFade *_paletteFadeAnim = nullptr;
+	PaletteAnimRotate *_paletteRotateAnim = nullptr;
 	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;

@@ -330,6 +330,17 @@ struct PaletteAnimFade {
 	byte curFrameCount = 0;
 };
 
+
+struct PaletteAnimRotate {
+	byte paletteStartIndex;
+	byte paletteMode;
+	byte unknown;
+	byte delay;
+	byte unknownBytes[7];
+	byte flags;
+	byte curFrameCount = 0;
+};
+
 } // End of namespace Pelrock
 
 #endif

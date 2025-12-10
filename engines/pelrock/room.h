@@ -39,7 +39,7 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	void paletteAnimRoom0();
+	PaletteAnimRotate *paletteAnimRoom0();
 	PaletteAnimFade *paletteAnimRoom2();
 
 	Common::String getRoomName(int roomNumber) {

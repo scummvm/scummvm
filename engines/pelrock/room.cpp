@@ -93,8 +93,23 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
-void RoomManager::paletteAnimRoom0() {
+PaletteAnimRotate *RoomManager::paletteAnimRoom0() {
+	Common::File exeFile;
 
+	if (!exeFile.open("JUEGO.EXE")) {
+		debug("Could not open JUEGO.EXE for palette animation!");
+		return nullptr;
+	}
+	exeFile.seek(0x0004B88C, SEEK_SET);
+	PaletteAnimRotate *anim = new PaletteAnimRotate();
+	anim->paletteStartIndex = exeFile.readByte();
+	anim->paletteMode = exeFile.readByte();
+	anim->unknown = exeFile.readByte();
+	anim->delay = exeFile.readByte();
+	exeFile.read(anim->unknownBytes, 7);
+	anim->flags = exeFile.readByte();
+	exeFile.close();
+	return anim;
 }
 
 PaletteAnimFade *RoomManager::paletteAnimRoom2() {
@@ -124,6 +139,7 @@ PaletteAnimFade *RoomManager::paletteAnimRoom2() {
 	// lower 5 bits are speed, bit 6 is direction
 	anim->speed = flags & 0x3F;
 	anim->downDirection = (flags & 0x40);
+	exeFile.close();
 	return anim;
 }
 
