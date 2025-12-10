@@ -1067,6 +1067,8 @@ bool PrivateEngine::selectDiaryNextPage(Common::Point mousePos) {
 		_currentDiaryPage++;
 		_nextSetting = _diaryNextPageExit.nextSetting;
 
+		playSound(getPaperShuffleSound(), 1, false, false);
+
 		return true;
 	}
 
@@ -1081,6 +1083,8 @@ bool PrivateEngine::selectDiaryPrevPage(Common::Point mousePos) {
 	if (_diaryPrevPageExit.rect.contains(mousePos)) {
 		_currentDiaryPage--;
 		_nextSetting = _diaryPrevPageExit.nextSetting;
+
+		playSound(getPaperShuffleSound(), 1, false, false);
 
 		return true;
 	}
