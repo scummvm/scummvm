@@ -444,6 +444,8 @@ public:
 	bool isSoundActive();
 	void waitForSoundToStop();
 	bool _noStopSounds;
+	Common::String _backgroundSound;
+	Common::String _pausedBackgroundSound;
 
 	Common::String getPaperShuffleSound();
 	Common::String _globalAudioPath;

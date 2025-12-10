@@ -911,6 +911,9 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 					_videoDecoder->pauseVideo(true);
 					_pausedVideo = _videoDecoder;
 				}
+
+				_pausedBackgroundSound = _backgroundSound;
+
 				_compositeSurface->fillRect(_screenRect, 0);
 				_compositeSurface->setPalette(_framePalette, 0, 256);
 				_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
@@ -935,6 +938,11 @@ void PrivateEngine::resumeGame() {
 	if (_videoDecoder) {
 		_videoDecoder->pauseVideo(false);
 		_needToDrawScreenFrame = true;
+	}
+
+	if (!_pausedBackgroundSound.empty()) {
+		playSound(_pausedBackgroundSound, 0, false, true);
+		_pausedBackgroundSound.clear();
 	}
 }
 
@@ -1909,6 +1917,8 @@ void PrivateEngine::restartGame() {
 	_AMRadio.clear();
 	_policeRadio.clear();
 	_phones.clear();
+	_backgroundSound.clear();
+	_pausedBackgroundSound.clear();
 
 	// Movies
 	_repeatedMovieExit = "";
@@ -2089,6 +2099,13 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	else
 		_nextSetting = getPauseMovieSetting();
 
+	// Sounds
+	if (meta.version >= 4) {
+		_pausedBackgroundSound = stream->readString();
+	} else {
+		_pausedBackgroundSound.clear();
+	}
+
 	return Common::kNoError;
 }
 
@@ -2235,6 +2252,10 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	else
 		stream->writeUint32LE(0);
 
+	// Sounds
+	stream->writeString(_pausedBackgroundSound);
+	stream->writeByte(0);
+
 	return Common::kNoError;
 }
 
@@ -2275,6 +2296,7 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 	if (background) {
 		_mixer->stopHandle(_bgSoundHandle);
 		sh = &_bgSoundHandle;
+		_backgroundSound = name;
 	} else {
 		_mixer->stopHandle(_fgSoundHandle);
 		_mixer->stopHandle(_phoneCallSoundHandle);
@@ -2498,6 +2520,7 @@ void PrivateEngine::stopSound(bool all) {
 
 	if (all) {
 		_mixer->stopHandle(_bgSoundHandle);
+		_backgroundSound.clear();
 	}
 }
 
