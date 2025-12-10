@@ -36,13 +36,14 @@ namespace Private {
 //
 // Version - new/changed feature
 // =============================
+//       4 - _pausedBackgroundSound (December 2025)
 //       3 - Radio detailed state (December 2025)
 //       2 - Phone clip detailed state (December 2025)
 //       1 - Metadata header and more game state (November 2025)
 //
 // Earlier versions did not have a header and not supported.
 
-const uint16 kCurrentSavegameVersion = 3;
+const uint16 kCurrentSavegameVersion = 4;
 const uint16 kMinimumSavegameVersion = 3;
 
 struct SavegameMetadata {
