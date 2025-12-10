@@ -131,7 +131,7 @@ static void fDiaryPageTurn(ArgArray args) {
 	if (args[0].u.val == 1) {
 		e.cursor = "kTurnRight";
 
-		if ((uint)g_private->_currentDiaryPage == g_private->_diaryPages.size() - 1) {
+		if (g_private->_currentDiaryPage >= (int)g_private->_diaryPages.size() - 1) {
 			e.nextSetting = g_private->getDiaryLastPageSetting();
 		}
 
@@ -139,7 +139,7 @@ static void fDiaryPageTurn(ArgArray args) {
 	} else {
 		e.cursor = "kTurnLeft";
 
-		if (g_private->_currentDiaryPage == 0) {
+		if (g_private->_currentDiaryPage <= 0) {
 			e.nextSetting = g_private->getDiaryTOCSetting();
 		}
 
