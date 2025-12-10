@@ -337,6 +337,53 @@ void PelrockEngine::frames() {
 		}
 		_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 		_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
+
+		if (_paletteAnim != nullptr) {
+
+			// if (_paletteAnim->curFrameCount >= _paletteAnim->speed) {
+			_paletteAnim->curFrameCount = 0;
+			if (_paletteAnim->currentR >= _paletteAnim->maxR &&
+				_paletteAnim->currentG >= _paletteAnim->maxG &&
+				_paletteAnim->currentB >= _paletteAnim->maxB) {
+				_paletteAnim->downDirection = 0;
+			} else if (_paletteAnim->currentR <= _paletteAnim->minR &&
+					   _paletteAnim->currentG <= _paletteAnim->minG &&
+					   _paletteAnim->currentB <= _paletteAnim->minB) {
+				_paletteAnim->downDirection = 1;
+			}
+
+			if (_paletteAnim->downDirection) {
+				if (_paletteAnim->currentR < _paletteAnim->maxR) {
+					_paletteAnim->currentR += _paletteAnim->speed;
+				}
+				if (_paletteAnim->currentG < _paletteAnim->maxG) {
+					_paletteAnim->currentG += _paletteAnim->speed;
+				}
+				if (_paletteAnim->currentB < _paletteAnim->maxB) {
+					_paletteAnim->currentB += _paletteAnim->speed;
+				}
+			} else {
+				if (_paletteAnim->currentR > _paletteAnim->minR) {
+					_paletteAnim->currentR -= _paletteAnim->speed;
+				}
+				if (_paletteAnim->currentG > _paletteAnim->minG) {
+					_paletteAnim->currentG -= _paletteAnim->speed;
+				}
+				if (_paletteAnim->currentB > _paletteAnim->minB) {
+					_paletteAnim->currentB -= _paletteAnim->speed;
+				}
+			}
+
+			_room->_roomPalette[_paletteAnim->paletteIndex * 3] = _paletteAnim->currentR;
+			_room->_roomPalette[_paletteAnim->paletteIndex * 3 + 1] = _paletteAnim->currentG;
+			_room->_roomPalette[_paletteAnim->paletteIndex * 3 + 2] = _paletteAnim->currentB;
+			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+
+			// } else {
+			// 	_paletteAnim->curFrameCount++;
+			// }
+		}
+
 		_screen->markAllDirty();
 
 		// _screen->update();
@@ -717,9 +764,9 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 void PelrockEngine::checkMouseClickOnSettings(int x, int y) {
 
 	bool selectedItem = false;
-	for(int i = 0; i < 4; i++) {
-		if(x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
-		   y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
+	for (int i = 0; i < 4; i++) {
+		if (x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
+			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
 			selectedInvIndex = curInventoryPage * 4 + i;
 			_menuText = _res->getInventoryObject(selectedInvIndex).description;
 			debug("Selected inventory index: %d", selectedInvIndex);
@@ -727,17 +774,15 @@ void PelrockEngine::checkMouseClickOnSettings(int x, int y) {
 			return;
 		}
 	}
-	if(!selectedItem) {
+	if (!selectedItem) {
 		selectedInvIndex = -1;
 		_menuText = "";
 	}
 
-	if(x >= 471 && x <= 471 + 23 &&
-	   y >= 87 && y <= 87 + 33) {
+	if (x >= 471 && x <= 471 + 23 &&
+		y >= 87 && y <= 87 + 33) {
 		curInventoryPage++;
 	}
-
-
 }
 
 void PelrockEngine::calculateScalingMasks() {
@@ -1005,7 +1050,7 @@ void PelrockEngine::menuLoop() {
 
 	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
 
-	for(int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		int itemIndex = curInventoryPage * 4 + i;
 		InventoryObject item = _res->getInventoryObject(itemIndex);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
@@ -1668,6 +1713,15 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	// }
 
 	_room->_currentRoomNumber = number;
+
+	if (number == 2 && _paletteAnim == nullptr) { // Pelrock Mansion
+		_paletteAnim = _room->paletteAnimRoom2();
+	} else {
+		if (_paletteAnim != nullptr)
+			free(_paletteAnim);
+		_paletteAnim = nullptr;
+	}
+
 	_screen->markAllDirty();
 	roomFile.close();
 	delete[] background;

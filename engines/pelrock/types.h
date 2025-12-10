@@ -313,6 +313,23 @@ struct InventoryObject {
 	byte iconData[60 * 60];
 };
 
+struct PaletteAnimFade {
+	byte paletteIndex;
+	byte paletteMode;
+	byte currentR;
+	byte currentG;
+	byte currentB;
+	byte minR;
+	byte minG;
+	byte minB;
+	byte maxR;
+	byte maxG;
+	byte maxB;
+	byte speed;
+	bool downDirection;
+	byte curFrameCount = 0;
+};
+
 } // End of namespace Pelrock
 
 #endif

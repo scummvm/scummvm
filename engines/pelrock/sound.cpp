@@ -100,10 +100,10 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 		return;
 	}
 
-	if (stream) {
-		int channel = findFreeChannel();
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
-	}
+	// if (stream) {
+	// 	int channel = findFreeChannel();
+	// 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+	// }
 	// TODO: Play sound file
 }
 
@@ -193,34 +193,34 @@ void SoundManager::stopMusic() {
 }
 
 void SoundManager::playMusicTrack(int trackNumber) {
-	if (_currentMusicTrack == trackNumber && _isMusicPlaying) {
-		// Already playing this track
-		return;
-	}
-	_currentMusicTrack = trackNumber;
-	stopMusic();
-	// Open the file
-	_musicFile = new Common::File();
-	Common::String filename = Common::String::format("music/track%d.mp3", trackNumber);
+// 	if (_currentMusicTrack == trackNumber && _isMusicPlaying) {
+// 		// Already playing this track
+// 		return;
+// 	}
+// 	_currentMusicTrack = trackNumber;
+// 	stopMusic();
+// 	// Open the file
+// 	_musicFile = new Common::File();
+// 	Common::String filename = Common::String::format("music/track%d.mp3", trackNumber);
 
-	if (!_musicFile->open(Common::Path(filename))) {
-		delete _musicFile;
-		_musicFile = nullptr;
-		return;
-	}
-#ifdef USE_MAD
-	Audio::SeekableAudioStream *stream = Audio::makeMP3Stream(_musicFile, DisposeAfterUse::YES);
-	if (!stream) {
-		_musicFile->close();
-		delete _musicFile;
-		_musicFile = nullptr;
-		return;
-	}
-	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(stream, 0);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _currentVolume);
-	_isMusicPlaying = true;
-	_musicFile = nullptr;
-#endif
+// 	if (!_musicFile->open(Common::Path(filename))) {
+// 		delete _musicFile;
+// 		_musicFile = nullptr;
+// 		return;
+// 	}
+// #ifdef USE_MAD
+// 	Audio::SeekableAudioStream *stream = Audio::makeMP3Stream(_musicFile, DisposeAfterUse::YES);
+// 	if (!stream) {
+// 		_musicFile->close();
+// 		delete _musicFile;
+// 		_musicFile = nullptr;
+// 		return;
+// 	}
+// 	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(stream, 0);
+// 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _currentVolume);
+// 	_isMusicPlaying = true;
+// 	_musicFile = nullptr;
+// #endif
 }
 
 void SoundManager::loadSoundIndex() {
