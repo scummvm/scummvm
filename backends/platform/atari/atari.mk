@@ -45,8 +45,10 @@ atarilitedist: $(EXECUTABLE)
 	$(CP) -r $(DIST_FILES_PLATFORM) ${LITE_DIR}
 	unix2dos ${LITE_DIR}/readme.txt
 
+ifeq ($(CREATE_ZIP),y)
 	$(RM) ../${LITE_DIR}.zip
 	$(ZIP) -r -9 ../${LITE_DIR}.zip ${LITE_DIR}
+endif
 
 atarifulldist: $(EXECUTABLE)
 	$(RM_REC) ${FULL_DIR}
@@ -88,8 +90,10 @@ atarifulldist: $(EXECUTABLE)
 	$(CP) -r $(DIST_FILES_PLATFORM) ${FULL_DIR}
 	unix2dos ${FULL_DIR}/readme.txt
 
+ifeq ($(CREATE_ZIP),y)
 	$(RM) ../${FULL_DIR}.zip
 	$(ZIP) -r -9 ../${FULL_DIR}.zip ${FULL_DIR}
+endif
 
 fbdist: $(EXECUTABLE)
 	$(RM_REC) ${FB_DIR}
@@ -124,5 +128,7 @@ fbdist: $(EXECUTABLE)
 	$(CP) -r $(DIST_FILES_PLATFORM) ${FB_DIR}
 	unix2dos ${FB_DIR}/readme.txt
 
+ifeq ($(CREATE_ZIP),y)
 	$(RM) ../${FB_DIR}.zip
 	$(ZIP) -r -9 ../${FB_DIR}.zip ${FB_DIR}
+endif
