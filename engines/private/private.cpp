@@ -2990,7 +2990,7 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 }
 
 void PrivateEngine::loadMemories(const Common::Rect &rect, uint rightPageOffset, uint verticalOffset) {
-	if (_currentDiaryPage < 0)
+	if (_currentDiaryPage < 0 ||_currentDiaryPage >= (int)_diaryPages.size())
 		return;
 
 	Common::String s = Common::String::format("inface/diary/loctabs/drytab%d.bmp", _diaryPages[_currentDiaryPage].locationID);
