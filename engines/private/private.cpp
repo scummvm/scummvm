@@ -1663,8 +1663,7 @@ void PrivateEngine::addPhone(const Common::String &name, bool once, int startInd
 				SWAP<Common::String>(newPhone.sounds[i], newPhone.sounds[n]);
 			}
 		}
-		// add to front of list; calls occur in reverse order
-		_phones.push_front(newPhone);
+		_phones.push_back(newPhone);
 	} else {
 		// update an available phone clip's state if its sounds haven't been played yet
 		if (phone->soundIndex < phone->sounds.size()) {
