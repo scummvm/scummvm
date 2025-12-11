@@ -26,7 +26,7 @@ namespace Video {
 namespace FourXM {
 
 struct HuffChar {
-	short freq;
+	int freq;
 	short falseIdx;
 	short trueIdx;
 };
@@ -34,63 +34,58 @@ struct HuffChar {
 Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedStart) {
 	HuffChar table[514] = {};
 	uint offset = 0;
-	uint8 codebyte = huff[offset++];
+	uint8 freq_first = huff[offset++];
 	do {
-		uint8 freq = huff[offset++];
-		if (codebyte <= freq) {
-			for (auto idx = codebyte; idx <= freq; ++idx) {
+		uint8 freq_last = huff[offset++];
+		if (freq_first <= freq_last) {
+			for (auto idx = freq_first; idx <= freq_last; ++idx) {
 				table[idx].freq = huff[offset++];
 			}
 		}
-		codebyte = huff[offset++];
-	} while (codebyte != 0);
+		freq_first = huff[offset++];
+	} while (freq_first != 0);
 	if (alignedStart && (offset % 4) != 0) {
 		offset += 4 - (offset % 4);
 	}
 	table[256].freq = 1;
 	table[513].freq = 0x7FFF;
 
-	short startEntry;
-	short codeIdx = 257, nIdx = 257;
+	int startEntry;
+	short codeIdx = 257;
 	while (true) {
-		short idx = 0, dstIdx = 0;
-		short trueIdx = 513, falseIdx = 513;
-		short nextLo = 513, nextHi = 513;
-		while (idx < nIdx) {
-			auto freq = table[dstIdx].freq;
+		short idx = 0;
+		short smallest2 = 513, smallest1 = 513;
+		while (idx < codeIdx) {
+			auto freq = table[idx].freq;
 			if (freq != 0) {
-				if (freq >= table[nextLo].freq) {
-					if (freq < table[nextHi].freq) {
-						trueIdx = idx;
-						nextHi = dstIdx;
+				if (freq >= table[smallest1].freq) {
+					if (freq < table[smallest2].freq) {
+						smallest2 = idx;
 					}
 				} else {
-					trueIdx = falseIdx;
-					nextHi = nextLo;
-					falseIdx = idx;
-					nextLo = dstIdx;
+					smallest2 = smallest1;
+					smallest1 = idx;
 				}
 			}
 			++idx;
-			++dstIdx;
 		}
-		if (trueIdx == 513) {
-			startEntry = nIdx - 1;
+		if (smallest2 == 513) {
+			startEntry = codeIdx - 1;
 			break;
 		}
-		table[codeIdx].freq = table[falseIdx].freq + table[trueIdx].freq;
-		table[falseIdx].freq = table[trueIdx].freq = 0;
-		table[codeIdx].falseIdx = falseIdx;
-		table[codeIdx].trueIdx = trueIdx;
+		table[codeIdx].freq = table[smallest1].freq + table[smallest2].freq;
+		table[smallest1].freq = table[smallest2].freq = 0;
+		table[codeIdx].falseIdx = smallest1;
+		table[codeIdx].trueIdx = smallest2;
 		++codeIdx;
-		++nIdx;
+		assert(codeIdx < 513);
 	}
 	Common::Array<byte> decoded;
 	decoded.reserve(huffSize * 2);
 	{
 		BitStream bs(huff, huffSize, offset);
 		while (true) {
-			short value = startEntry;
+			int value = startEntry;
 			while (value > 256) {
 				auto bit = bs.readBit();
 				if (bit)
