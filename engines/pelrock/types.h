@@ -314,7 +314,7 @@ struct InventoryObject {
 };
 
 struct PaletteAnimFade {
-	byte paletteIndex;
+	byte startIndex;
 	byte paletteMode;
 	byte currentR;
 	byte currentG;
@@ -332,12 +332,19 @@ struct PaletteAnimFade {
 
 
 struct PaletteAnimRotate {
-	byte paletteStartIndex;
+	byte startIndex;
 	byte paletteMode;
 	byte unknown;
 	byte delay;
 	byte unknownBytes[7];
 	byte flags;
+	byte curFrameCount = 0;
+};
+
+struct PaletteAnim {
+	byte startIndex;
+	byte paletteMode;
+	byte data[10]; // Based on mode its a rotate or fade
 	byte curFrameCount = 0;
 };
 

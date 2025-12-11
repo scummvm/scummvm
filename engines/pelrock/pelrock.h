@@ -91,6 +91,8 @@ private:
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
 	void frames();
+	void animateFadePalette(PaletteAnim *anim);
+	void animateRotatePalette(PaletteAnim *anim);
 	void doAction(byte action, HotSpot *hotspot);
 	void talkTo(HotSpot *hotspot);
 	void lookAtHotspot(HotSpot *hotspot);
@@ -157,19 +159,16 @@ private:
 
 	bool showShadows = false;
 
-	//Temporary
+	// Temporary
 	int selectedInvIndex = 0;
 	int curInventoryPage = 0;
 	Common::String _menuText;
 
-	PaletteAnimFade *_paletteFadeAnim = nullptr;
-	PaletteAnimRotate *_paletteRotateAnim = nullptr;
 	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;
 	bool gameInitialized = false;
 	bool screenReady = false;
-
 
 	// int prevDirX = 0;
 	// int prevDirY = 0;
@@ -234,7 +233,6 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
-
 
 	void setScreen(int s, AlfredDirection dir);
 };

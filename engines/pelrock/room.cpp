@@ -93,52 +93,37 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
-PaletteAnimRotate *RoomManager::paletteAnimRoom0() {
+PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	Common::File exeFile;
 
 	if (!exeFile.open("JUEGO.EXE")) {
 		debug("Could not open JUEGO.EXE for palette animation!");
 		return nullptr;
 	}
-	exeFile.seek(0x0004B88C, SEEK_SET);
-	PaletteAnimRotate *anim = new PaletteAnimRotate();
-	anim->paletteStartIndex = exeFile.readByte();
-	anim->paletteMode = exeFile.readByte();
-	anim->unknown = exeFile.readByte();
-	anim->delay = exeFile.readByte();
-	exeFile.read(anim->unknownBytes, 7);
-	anim->flags = exeFile.readByte();
-	exeFile.close();
-	return anim;
-}
-
-PaletteAnimFade *RoomManager::paletteAnimRoom2() {
-	Common::File exeFile;
-
-	if (!exeFile.open("JUEGO.EXE")) {
-		debug("Could not open JUEGO.EXE for palette animation!");
+	uint32_t offset = 0;
+	switch (roomNumber) {
+	case 0:
+		offset = 0x0004B88C;
+		break;
+	case 2:
+		offset = 0x0004B860;
+		break;
+	default:
+		exeFile.close();
 		return nullptr;
 	}
-	exeFile.seek(0x0004B860, SEEK_SET);
-	PaletteAnimFade *anim = new PaletteAnimFade();
-	anim->paletteIndex = exeFile.readByte();
+
+	exeFile.seek(offset, SEEK_SET);
+	PaletteAnim *anim = new PaletteAnim();
+	anim->startIndex = exeFile.readByte();
 	anim->paletteMode = exeFile.readByte();
-	anim->currentR = exeFile.readByte() << 2;
-	anim->currentG = exeFile.readByte() << 2;
-	anim->currentB = exeFile.readByte() << 2;
-	anim->minR = exeFile.readByte() << 2;
-	anim->minG = exeFile.readByte() << 2;
-	anim->minB = exeFile.readByte() << 2;
-	anim->maxR = exeFile.readByte() << 2;
-	anim->maxG = exeFile.readByte() << 2;
-	anim->maxB = exeFile.readByte() << 2;
-	byte flags = exeFile.readByte();
-	anim->curFrameCount = 0;
+	exeFile.read(anim->data, 10);
+	if (anim->paletteMode == 1) {
+		for (int i = 2; i < 10; i++) {
+			anim->data[i] = anim->data[i] << 2;
+		}
+	}
 
-
-	// lower 5 bits are speed, bit 6 is direction
-	anim->speed = flags & 0x3F;
-	anim->downDirection = (flags & 0x40);
 	exeFile.close();
 	return anim;
 }
@@ -164,8 +149,7 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 		exit.targetX = roomFile->readUint16LE();
 		exit.targetY = roomFile->readUint16LE();
 		byte dir = roomFile->readByte();
-		switch (dir)
-		{
+		switch (dir) {
 		case ALFRED_RIGHT:
 			exit.dir = ALFRED_RIGHT;
 			break;
@@ -284,6 +268,15 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		Exit exit = _currentRoomExits[i];
 		// drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
 	}
+	PaletteAnim *anim = getPaletteAnimForRoom(roomNumber);
+	if (anim != nullptr) {
+		if (_currentPaletteAnim != nullptr) {
+			delete _currentPaletteAnim;
+		}
+		_currentPaletteAnim = anim;
+	} else {
+		_currentPaletteAnim = nullptr;
+	}
 }
 
 Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
@@ -345,7 +338,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 			anim.nframes = animData[subAnimOffset + j];
 			anim.loopCount = animData[subAnimOffset + 4 + j];
 			anim.speed = animData[subAnimOffset + 8 + j];
-			anim.movementFlags = animData[subAnimOffset + 14 + (j*2)] | (animData[subAnimOffset + 14 + (j*2) + 1] << 8);
+			anim.movementFlags = animData[subAnimOffset + 14 + (j * 2)] | (animData[subAnimOffset + 14 + (j * 2) + 1] << 8);
 			anim.animData = new byte[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
 				uint32_t needed = anim.w * anim.h * anim.nframes;

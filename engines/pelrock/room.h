@@ -39,8 +39,8 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	PaletteAnimRotate *paletteAnimRoom0();
-	PaletteAnimFade *paletteAnimRoom2();
+
+	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
 	Common::String getRoomName(int roomNumber) {
 		if (roomNumber >= 0 && roomNumber < _roomNames.size()) {
@@ -65,6 +65,7 @@ public:
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
 	byte _currentRoomNumber = 0;
+	PaletteAnim *_currentPaletteAnim = nullptr;
 
 private:
 	Common::Array<Sprite> loadRoomAnimations(Common::File *roomFile, int roomOffset);
