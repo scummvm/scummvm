@@ -308,20 +308,26 @@ void MacTextWindow::calcScrollBar() {
 	int maxText = 0, maxScrollbar = 0, displayHeight = 0;
 
 	displayHeight = getInnerDimensions().height();
-
 	maxScrollbar = getDimensions().height() - getBorderOffsets().upperScrollHeight - getBorderOffsets().lowerScrollHeight;
+	maxText = _mactext->getTextHeight();
 
 	// if we enable the win95 mode but the text height is smaller than window height, then we don't draw the scrollbar
-	if (_wm->_mode & kWMModeWin95 && displayHeight > _mactext->getTextHeight() && !_editable)
+	if (_wm->_mode & kWMModeWin95 && displayHeight > maxText && !_editable)
 		return;
 
+	int maxScroll = 0;
+	// identical to MacText scroll() logic
 	if (_editable)
-		maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+		maxScroll = maxText - kConScrollStep;
 	else
-		maxText = MAX<int>(_mactext->getTextHeight(), displayHeight);
+		maxScroll = maxText - displayHeight;
 
-	float scrollSize = (float)maxScrollbar * (float)displayHeight / (float)maxText;
-	float scrollPos = (float)_mactext->_scrollPos * (float)maxScrollbar / (float)maxText;
+	float contentHeight = (float)(maxText + displayHeight);
+	float scrollSize = (float)(maxScrollbar * displayHeight) / contentHeight;
+	int range = maxScrollbar - (int)scrollSize - 1;
+
+	float ratio = CLIP<float>((float)_mactext->_scrollPos / (float)maxScroll, 0.0f, 1.0f);
+	float scrollPos = ratio * (float)range;
 	setScroll(scrollPos, scrollSize);
 }
 
