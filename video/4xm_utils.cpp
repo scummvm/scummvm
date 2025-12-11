@@ -26,7 +26,7 @@ namespace Video {
 namespace FourXM {
 
 struct HuffChar {
-	short next;
+	short freq;
 	short falseIdx;
 	short trueIdx;
 };
@@ -36,10 +36,10 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 	uint offset = 0;
 	uint8 codebyte = huff[offset++];
 	do {
-		uint8 next = huff[offset++];
-		if (codebyte <= next) {
-			for (auto idx = codebyte; idx <= next; ++idx) {
-				table[idx].next = huff[offset++];
+		uint8 freq = huff[offset++];
+		if (codebyte <= freq) {
+			for (auto idx = codebyte; idx <= freq; ++idx) {
+				table[idx].freq = huff[offset++];
 			}
 		}
 		codebyte = huff[offset++];
@@ -47,8 +47,8 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 	if (alignedStart && (offset % 4) != 0) {
 		offset += 4 - (offset % 4);
 	}
-	table[256].next = 1;
-	table[513].next = 0x7FFF;
+	table[256].freq = 1;
+	table[513].freq = 0x7FFF;
 
 	short startEntry;
 	short codeIdx = 257, nIdx = 257;
@@ -57,10 +57,10 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 		short trueIdx = 513, falseIdx = 513;
 		short nextLo = 513, nextHi = 513;
 		while (idx < nIdx) {
-			auto next = table[dstIdx].next;
-			if (next != 0) {
-				if (next >= table[nextLo].next) {
-					if (next < table[nextHi].next) {
+			auto freq = table[dstIdx].freq;
+			if (freq != 0) {
+				if (freq >= table[nextLo].freq) {
+					if (freq < table[nextHi].freq) {
 						trueIdx = idx;
 						nextHi = dstIdx;
 					}
@@ -78,8 +78,8 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 			startEntry = nIdx - 1;
 			break;
 		}
-		table[codeIdx].next = table[falseIdx].next + table[trueIdx].next;
-		table[falseIdx].next = table[trueIdx].next = 0;
+		table[codeIdx].freq = table[falseIdx].freq + table[trueIdx].freq;
+		table[falseIdx].freq = table[trueIdx].freq = 0;
 		table[codeIdx].falseIdx = falseIdx;
 		table[codeIdx].trueIdx = trueIdx;
 		++codeIdx;
@@ -106,6 +106,7 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 		offset = bs.getBytePos();
 	}
 	debug("decoded %u bytes at %08x", decoded.size(), offset);
+	assert(offset == huffSize); // must decode to the end
 	return decoded;
 }
 
