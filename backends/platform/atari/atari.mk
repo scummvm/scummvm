@@ -35,7 +35,8 @@ atarilitedist: $(EXECUTABLE)
 	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${LITE_DATA}
 
 	# remove unused files
-	$(RM) ${LITE_DATA}/helpdialog.zip ${LITE_DATA}/{achievements,classicmacfonts,encoding,macgui}.dat
+	$(RM) ${LITE_DATA}/helpdialog.zip
+	$(RM) $(addsuffix .dat, $(addprefix ${LITE_DATA}/, achievements classicmacfonts encoding macgui))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
 	mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
@@ -65,7 +66,8 @@ atarifulldist: $(EXECUTABLE)
 	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FULL_DATA}
 
 	# remove unused files
-	$(RM) ${FULL_DATA}/helpdialog.zip ${FULL_DATA}/{achievements,classicmacfonts,encoding,hadesch_translations,macgui,prince_translation}.dat
+	$(RM) ${FULL_DATA}/helpdialog.zip
+	$(RM) $(addsuffix .dat, $(addprefix ${FULL_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
 	mv ${FULL_DATA}/cryomni3d.dat ${FULL_DATA}/cryomni3.dat
@@ -77,7 +79,7 @@ atarifulldist: $(EXECUTABLE)
 	$(CP) -a $(DIST_FILES_THEMES) ${FULL_THEMES}
 
 	# remove unused files; absent gui-icons.dat massively speeds up startup time (it is used for the grid mode only)
-	$(RM) ${FULL_THEMES}/{gui-icons,shaders}.dat
+	$(RM) ${FULL_THEMES}/gui-icons.dat ${FULL_THEMES}/shaders.dat
 
 	# adjust to compression level zero for faster depacking
 	cd ${FULL_THEMES} && \
@@ -109,13 +111,14 @@ fbdist: $(EXECUTABLE)
 	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FB_DATA}
 
 	# remove unused files
-	$(RM) ${FB_DATA}/helpdialog.zip ${FULL_DATA}/{achievements,classicmacfonts,encoding,hadesch_translations,macgui,prince_translation}.dat
+	$(RM) ${FB_DATA}/helpdialog.zip
+	$(RM) $(addsuffix .dat, $(addprefix ${FB_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	$(MKDIR) ${FB_THEMES}
 	$(CP) -a $(DIST_FILES_THEMES) ${FB_THEMES}
 
 	# remove unused files
-	$(RM) ${FB_THEMES}/{shaders}.dat
+	$(RM) ${FB_THEMES}/shaders.dat
 
 	# adjust to compression level zero for faster depacking
 	cd ${FB_THEMES} && \
