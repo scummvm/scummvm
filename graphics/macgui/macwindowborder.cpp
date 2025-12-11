@@ -164,13 +164,13 @@ int MacWindowBorder::getMinHeight(uint32 flags) const {
 void MacWindowBorder::setTitle(const Common::String& title, int width) {
 	_title = title;
 	const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
-	int titleWidth = font->getStringWidth(_title) + 8;
+	int titleWidth = font->getStringWidth(_title) + getOffset().titlePadding;
 
 	// if titleWidth is changed, then we modify it
 	// here, we change all the border that has title
 	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++) {
 		if ((_border[i] != nullptr) && (i & kWindowBorderTitle)) {
-			int maxWidth = MAX<int>(width - _border[i]->getMinWidth() - 7, 0);
+			int maxWidth = MAX<int>(width - _border[i]->getMinWidth() + getOffset().titlePadding, 0);
 			if (titleWidth > maxWidth)
 				titleWidth = maxWidth;
 			_border[i]->modifyTitleWidth(titleWidth);
