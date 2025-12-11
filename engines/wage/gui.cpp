@@ -619,11 +619,11 @@ bool Gui::saveDialog() {
 	Graphics::MacFont font;
 
 	Graphics::MacText saveBeforeCloseMessage(*_engine->_world->_saveBeforeCloseMessage, _wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
+									  Graphics::kColorWhite, 250, Graphics::kTextAlignCenter);
 
 	_engine->sayText(*_engine->_world->_saveBeforeCloseMessage);
 
-	Graphics::MacDialog save(&_screen, _wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
+	Graphics::MacDialog save(&_screen, _wm, 291, &saveBeforeCloseMessage, 250, &buttons, 1);
 
 	int button = save.run();
 
