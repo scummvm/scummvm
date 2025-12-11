@@ -184,7 +184,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	} else {
 		_saveBeforeQuitMessage = new Common::String("Save changes before quiting?");
 	}
-	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
+	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL && !message->empty()) {
 		message->trim();
 		debug(2, "_saveBeforeCloseMessage: %s", message->c_str());
 		_saveBeforeCloseMessage = message;
