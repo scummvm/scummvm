@@ -386,7 +386,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (Hebrew) [DOS 2.0F 1987]
 	// Fan made translation by SegMash, based on the English GoG version
-	GAME_LVFPN("kq1", "", "logdir", "28954efaa2dd118cb3a6b672e03d806b", 315, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LPS("kq1", "", "28954efaa2dd118cb3a6b672e03d806b", 315, Common::HE_ISR, 0x2917, GID_KQ1, Common::kPlatformDOS),
 
 	// King's Quest 2 (Apple II) 1.0G [AGI 1.08]
 	A2("kq2", "1.0G", "8e8d562e50233c939112c89bba55d249", 0x1120, GID_KQ2),
@@ -444,7 +444,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 2 (Hebrew) [2.1 1987-04-10/DOS]
 	// Fan made translation by SegMash, based on the English GoG version
-	GAME_LVFPN("kq2", "", "logdir", "34e9abb9f1ce54db4e1abcc37b53b198", 543, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LPS("kq2", "", "34e9abb9f1ce54db4e1abcc37b53b198", 543, Common::HE_ISR, 0x2917, GID_KQ2, Common::kPlatformDOS),
 
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -713,7 +713,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("pq1", "2.0G 1987-12-03", "d194e5d88363095f55d5096b8e32fbbb", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Hebrew translation
-	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", AD_NO_SIZE, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", AD_NO_SIZE, Common::HE_ISR, 0x2917, 0, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Spanish translation (TRAC #14369)
 	GAME_LPS("pq1", "2.0G 1987-12-03", "5d151f2f4c4e0675534d49b13529da3f", 360, Common::ES_ESP, 0x2917, GID_PQ1, Common::kPlatformDOS),
@@ -762,7 +762,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation
-	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, GF_EXTCHAR, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, 0, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
@@ -845,7 +845,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 3.5" / 5.25") 2.0F [AGI 2.936]; French Translation
-	GAME_LVFPN("sq2", "2.0F", "words.tok.extended", "b2efb603df643d8d93db0c6d51a54b5a", 19142, Common::FR_FRA, 0x2936, GF_EXTCHAR, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("sq2", "2.0F", "words.tok.extended", "b2efb603df643d8d93db0c6d51a54b5a", 19142, Common::FR_FRA, 0x2936, 0, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
@@ -857,7 +857,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 2 (Hebrew) 2.0F
 	// Based on English version from GOG
-	GAME_LVFPN("sq2", "", "logdir", "5f73ab13808a260d777d0002c70b967c", 423, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LPS("sq2", "", "5f73ab13808a260d777d0002c70b967c", 423, Common::HE_ISR, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Troll's Tale (PC Booter)
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformDOS),
