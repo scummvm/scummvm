@@ -236,7 +236,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto dcOffset = READ_LE_UINT32(huff + huffSize);
 			auto *dcPtr = acPtr + 4 + dcOffset;
 			auto *dcEnd = vrData.data() + vrData.size();
-			unpack(*pic, huff, unpHuffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
+			unpack(*pic, huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
 		} else if (chunkId == CHUNK_ANIMATION) {
 			auto name = s.readString(0, 32);
 			s.skip(4);
