@@ -418,10 +418,13 @@ void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
 void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 	switch (action) {
 	case LOOK:
-		lookAtHotspot(_currentHotspot);
+		lookAt(hotspot);
 		break;
 	case TALK:
-		talkTo(_currentHotspot);
+		talkTo(hotspot);
+		break;
+	case OPEN:
+		open(hotspot);
 		break;
 	default:
 		break;
@@ -457,11 +460,23 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 	// }
 }
 
-void PelrockEngine::lookAtHotspot(HotSpot *hotspot) {
+void PelrockEngine::lookAt(HotSpot *hotspot) {
 	debug("Look action clicked");
 	walkTo(_currentHotspot->x, _currentHotspot->y);
 	sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
 	_displayPopup = false;
+}
+
+void PelrockEngine::open(HotSpot *hotspot) {
+	switch (hotspot->extra)
+	{
+	case 261:
+		_room->placeSticker(_res->getSticker(91), _currentBackground);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, int baseX, int baseY) {
@@ -782,7 +797,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_displayPopup = true;
 		_currentPopupFrame = 0;
 		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
-		debug("Current hotspot type: %d", _currentHotspot->type);
+		debug("Current hotspot (x=%d, y=%d) with extra = %d type: %d, desc= %s", _currentHotspot->x, _currentHotspot->y, _currentHotspot->extra, _currentHotspot->type, _room->_currentRoomDescriptions[_currentHotspot->index].text.c_str());
 	}
 }
 

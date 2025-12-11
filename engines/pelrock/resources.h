@@ -45,6 +45,7 @@ public:
 	void loadInteractionIcons();
 	void loadAlfredAnims();
 	void loadInventoryItems();
+	Sticker getSticker(int stickerIndex);
 	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
 

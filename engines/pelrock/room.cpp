@@ -93,6 +93,21 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
+void RoomManager::placeSticker(Sticker sticker, byte *background) {
+	for (int y = 0; y < sticker.h; y++) {
+		for (int x = 0; x < sticker.w; x++) {
+			byte pixel = sticker.stickerData[y * sticker.w + x];
+			if (pixel != 0) {
+				int bgX = sticker.x + x;
+				int bgY = sticker.y + y;
+				if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
+					background[bgY * 640 + bgX] = pixel;
+				}
+			}
+		}
+	}
+}
+
 PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	Common::File exeFile;
 
@@ -174,7 +189,7 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 
 Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roomOffset) {
 	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	// debug("Hotspot(10)  pair offset position: %d", pair10_offset_pos);
+
 	roomFile->seek(pair10_offset_pos, SEEK_SET);
 	uint32_t pair10_data_offset = roomFile->readUint32LE();
 	uint32_t pair10_size = roomFile->readUint32LE();
@@ -193,17 +208,15 @@ Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roo
 		spot.w = roomFile->readByte();
 		spot.h = roomFile->readByte();
 		spot.extra = roomFile->readUint16LE();
-		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	return hotspots;
-	// uint32_t hover_areas_start = pair10_data_offset + 0x1BE;
-	// roomFile->seek(hover_areas_start, SEEK_SET);
 }
 
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	uint32_t outPos = 0;
-
+	_currentRoomStickers.clear();
 	int roomOffset = roomNumber * kRoomStructSize;
 	Common::Array<Description> descriptions = loadRoomDescriptions(roomFile, roomOffset, outPos);
 	// debug("After decsriptions, position is %d", outPos);

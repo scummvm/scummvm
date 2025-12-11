@@ -39,7 +39,7 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-
+	void placeSticker(Sticker sticker, byte *background);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
 	Common::String getRoomName(int roomNumber) {
@@ -66,6 +66,7 @@ public:
 	Common::Array<byte> _roomSfx;
 	byte _currentRoomNumber = 0;
 	PaletteAnim *_currentPaletteAnim = nullptr;
+	Common::Array<Sticker> _currentRoomStickers;
 
 private:
 	Common::Array<Sprite> loadRoomAnimations(Common::File *roomFile, int roomOffset);

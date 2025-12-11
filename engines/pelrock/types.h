@@ -330,6 +330,15 @@ struct PaletteAnimFade {
 	byte curFrameCount = 0;
 };
 
+struct Sticker
+{
+	uint16 x;
+	uint16 y;
+	byte w;
+	byte h;
+	byte *stickerData;
+};
+
 
 struct PaletteAnimRotate {
 	byte startIndex;

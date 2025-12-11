@@ -235,6 +235,25 @@ void ResourceManager::loadInventoryItems() {
 	delete[] iconData;
 }
 
+Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
+	Common::File alfred6File;
+	if (!alfred6File.open("ALFRED.6")) {
+		error("Couldnt find file ALFRED.6");
+	}
+
+	uint32 stickerOffset = pegatina_offsets[stickerIndex];
+	alfred6File.seek(stickerOffset, SEEK_SET);
+	Sticker sticker;
+	sticker.x = alfred6File.readUint16LE();
+	sticker.y = alfred6File.readUint16LE();
+	sticker.w = alfred6File.readByte();
+	sticker.h = alfred6File.readByte();
+	sticker.stickerData = new byte[sticker.w * sticker.h];
+	alfred6File.read(sticker.stickerData, sticker.w * sticker.h);
+	alfred6File.close();
+	return sticker;
+}
+
 void ResourceManager::loadInventoryDescriptions() {
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {

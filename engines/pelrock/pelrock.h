@@ -95,7 +95,8 @@ private:
 	void animateRotatePalette(PaletteAnim *anim);
 	void doAction(byte action, HotSpot *hotspot);
 	void talkTo(HotSpot *hotspot);
-	void lookAtHotspot(HotSpot *hotspot);
+	void lookAt(HotSpot *hotspot);
+	void open(HotSpot *hotspot);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
