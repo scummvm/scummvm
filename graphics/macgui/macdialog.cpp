@@ -59,13 +59,26 @@
 namespace Graphics {
 
 enum {
-	kDialogHeight = 113
+	kDialogHeight = 113,
+	kDialogBottomPadding = 15
 };
 
 MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton) :
 	_screen(screen), _wm(wm), _mactext(mactext), _maxTextWidth(maxTextWidth), _buttons(buttons), _defaultButton(defaultButton) {
+	// if we have buttons the height of the dialog box should resize accordingly
+	int buttonBottomPos = 0;
+	if (_buttons) {
+		for (uint i = 0; i < _buttons->size(); i++) {
+			if ((*_buttons)[i]->bounds.bottom > buttonBottomPos)
+				buttonBottomPos = (*_buttons)[i]->bounds.bottom;
+		}
+	}
 
-	int height = kDialogHeight + _mactext->getTextHeight();
+	int height;
+	if (buttonBottomPos > 0)
+		height = buttonBottomPos + kDialogBottomPadding;
+	else 
+		height = kDialogHeight + _mactext->getTextHeight();
 
 	_font = getDialogFont();
 
