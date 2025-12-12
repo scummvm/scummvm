@@ -77,5 +77,7 @@ public:
 using ByteBitStream = BitStream<byte>;
 Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize);
 
+void idct(int16_t block[64]);
+
 } // namespace FourXM
 } // namespace Video
