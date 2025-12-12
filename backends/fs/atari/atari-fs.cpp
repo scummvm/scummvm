@@ -24,8 +24,6 @@
 
 #include "backends/fs/atari/atari-fs.h"
 
-#if defined(ATARI)
-
 void AtariFilesystemNode::setFlags() {
 	DrivePOSIXFilesystemNode::setFlags();
 
@@ -36,5 +34,3 @@ void AtariFilesystemNode::setFlags() {
 		_displayNameChecked = true;
 	}
 }
-
-#endif	// ATARI
