@@ -40,8 +40,6 @@
 
 #include "backends/platform/atari/osystem_atari.h"
 
-#if defined(ATARI)
-
 #include "backends/audiocd/default/default-audiocd.h"
 #include "common/config-manager.h"
 #include "backends/events/atari/atari-events.h"
@@ -519,5 +517,3 @@ int main(int argc, char *argv[]) {
 
 	return res;
 }
-
-#endif
