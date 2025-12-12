@@ -135,6 +135,83 @@ FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
 	}
 }
 
+namespace {
+static const uint8_t iquant[64] = {
+	16,
+	15,
+	13,
+	19,
+	24,
+	31,
+	28,
+	17,
+	17,
+	23,
+	25,
+	31,
+	36,
+	63,
+	45,
+	21,
+	18,
+	24,
+	27,
+	37,
+	52,
+	59,
+	49,
+	20,
+	16,
+	28,
+	34,
+	40,
+	60,
+	80,
+	51,
+	20,
+	18,
+	31,
+	48,
+	66,
+	68,
+	86,
+	56,
+	21,
+	19,
+	38,
+	56,
+	59,
+	64,
+	64,
+	48,
+	20,
+	27,
+	48,
+	55,
+	55,
+	56,
+	51,
+	35,
+	15,
+	20,
+	35,
+	34,
+	32,
+	31,
+	22,
+	15,
+	8,
+};
+
+const byte zigzag[] = {
+	0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4,
+	5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13, 6, 7,
+	14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22,
+	15, 23, 30, 37, 44, 51, 58, 59, 52, 45, 38, 31, 39,
+	46, 53, 60, 61, 54, 47, 55, 62, 63};
+
+} // namespace
+
 void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
 	stream->skip(4);
 	auto bitstreamSize = stream->readUint32LE();
@@ -150,7 +227,50 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	stream->read(prefixStream.data(), prefixStream.size());
 	assert(stream->pos() == stream->size());
 
-	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size(), true);
+	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size(), 4);
+	FourXM::ByteBitStream bitstream(bitstreamData.data(), bitstreamData.size(), 0);
+	uint prefixOffset = 0;
+	auto mbW = (_frame->w + 15) / 16;
+	auto mbH = (_frame->h + 15) / 16;
+	int lastDC = 0;
+	for (int y = 0; y != mbH; ++y) {
+		for (int x = 0; x != mbW; ++x) {
+			debug("decoding macroblock %d,%d", y, x);
+			int16_t block[6][64] = {};
+			auto readBlock = [&](byte blockIdx, int16_t *ac) {
+				int dc = prefixData[prefixOffset++];
+				if (dc >> 4)
+					error("dc run code");
+				dc = bitstream.readInt(dc);
+				dc = lastDC + dc * iquant[0];
+				debug("DC = %d", dc);
+				lastDC = dc;
+				ac[0] = dc;
+				if (blockIdx <= 4)
+					ac[0] *= 128 * 64;
+				for (uint idx = 1; idx < 64;) {
+					auto b = prefixData[prefixOffset++];
+					if (b == 0x00) {
+						break;
+					} else if (b == 0xf0) {
+						idx += 16;
+					} else {
+						auto h = b >> 4;
+						auto l = b & 0x0f;
+						idx += h;
+						if (l && idx < 64) {
+							auto ac_idx = zigzag[idx];
+							ac[ac_idx] = iquant[ac_idx] * bitstream.readInt(l);
+							++idx;
+						}
+					}
+				}
+				FourXM::idct(ac);
+			};
+			for (int b = 0; b != 6; ++b)
+				readBlock(b, block[b]);
+		}
+	}
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
