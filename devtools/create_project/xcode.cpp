@@ -1478,8 +1478,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		ADD_SETTING_QUOTE(iPhone_Debug, "TARGETED_DEVICE_FAMILY", "1,2");
 		ValueList scummvmIOSsimulator_defines;
 		ADD_DEFINE(scummvmIOSsimulator_defines, "\"$(inherited)\"");
-		ADD_DEFINE(scummvmIOSsimulator_defines, "IPHONE");
-		ADD_DEFINE(scummvmIOSsimulator_defines, "IPHONE_IOS7");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
 			ADD_DEFINE(scummvmIOSsimulator_defines, "WITHOUT_SDL");
 		ADD_SETTING_LIST(iPhone_Debug, "\"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]\"", scummvmIOSsimulator_defines, kSettingsNoQuote | kSettingsAsList, 5);
@@ -1561,8 +1559,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		ADD_SETTING_QUOTE(tvOS_Debug, "TARGETED_DEVICE_FAMILY", "3");
 		ValueList scummvmTVOSsimulator_defines;
 		ADD_DEFINE(scummvmTVOSsimulator_defines, "\"$(inherited)\"");
-		ADD_DEFINE(scummvmTVOSsimulator_defines, "IPHONE");
-		ADD_DEFINE(scummvmTVOSsimulator_defines, "IPHONE_IOS7");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
 			ADD_DEFINE(scummvmTVOSsimulator_defines, "WITHOUT_SDL");
 		ADD_SETTING_LIST(tvOS_Debug, "\"GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*]\"", scummvmTVOSsimulator_defines, kSettingsNoQuote | kSettingsAsList, 5);
