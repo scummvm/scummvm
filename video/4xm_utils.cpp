@@ -31,7 +31,35 @@ struct HuffChar {
 	short trueIdx;
 };
 
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedStart) {
+namespace {
+
+template<typename Word>
+Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset, const HuffChar *table, int startEntry) {
+	Common::Array<byte> decoded;
+	decoded.reserve(huffSize * 2);
+	assert((offset % sizeof(Word)) == 0);
+	BitStream<Word> bs(reinterpret_cast<const Word *>(huff), huffSize / sizeof(Word), offset / sizeof(Word));
+	while (true) {
+		int value = startEntry;
+		while (value > 256) {
+			auto bit = bs.readBit();
+			if (bit)
+				value = table[value].trueIdx;
+			else
+				value = table[value].falseIdx;
+		}
+		if (value == 256)
+			break;
+		decoded.push_back(static_cast<byte>(value));
+	}
+	bs.alignToWord();
+	offset = bs.getWordPos() * sizeof(Word);
+	return decoded;
+}
+
+} // namespace
+
+Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize) {
 	HuffChar table[514] = {};
 	uint offset = 0;
 	uint8 freq_first = huff[offset++];
@@ -44,8 +72,8 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 		}
 		freq_first = huff[offset++];
 	} while (freq_first != 0);
-	if (alignedStart && (offset % 4) != 0) {
-		offset += 4 - (offset % 4);
+	if (wordSize > 1 && (offset % wordSize) != 0) {
+		offset += wordSize - (offset % wordSize);
 	}
 	table[256].freq = 1;
 	table[513].freq = 0x7FFF;
@@ -78,30 +106,23 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedS
 		table[codeIdx].falseIdx = smallest1;
 		table[codeIdx].trueIdx = smallest2;
 		++codeIdx;
-		assert(codeIdx < 513);
 	}
+	assert(codeIdx < 513);
 	Common::Array<byte> decoded;
-	decoded.reserve(huffSize * 2);
-	{
-		BitStream bs(huff, huffSize, offset);
-		while (true) {
-			int value = startEntry;
-			while (value > 256) {
-				auto bit = bs.readBit();
-				if (bit)
-					value = table[value].trueIdx;
-				else
-					value = table[value].falseIdx;
-			}
-			if (value == 256)
-				break;
-			decoded.push_back(static_cast<byte>(value));
-		}
-		bs.alignToByte();
-		offset = bs.getBytePos();
+	switch (wordSize) {
+	case 1:
+		decoded = unpackStream<byte>(huff, huffSize, offset, table, startEntry);
+		break;
+	case 4:
+		decoded = unpackStream<uint32>(huff, huffSize, offset, table, startEntry);
+		break;
+	default:
+		error("invalid word size");
 	}
 	debug("decoded %u bytes at %08x", decoded.size(), offset);
-	assert(offset == huffSize); // must decode to the end
+	if (wordSize == 1) {
+		assert(offset == huffSize); // must decode to the end
+	}
 	return decoded;
 }
 

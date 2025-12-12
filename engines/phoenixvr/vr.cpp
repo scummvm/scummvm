@@ -93,7 +93,7 @@ struct Quantisation {
 
 void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, uint acSize, const byte *dcPtr, uint dcSize, int quality, const Common::Array<uint> *prefix = nullptr) {
 	Quantisation quant(quality);
-	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize, false);
+	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize, 1);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 
@@ -101,7 +101,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
-	Video::FourXM::BitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
+	Video::FourXM::ByteBitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	uint blockIdx = 0;

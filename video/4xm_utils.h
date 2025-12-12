@@ -24,26 +24,29 @@
 namespace Video {
 namespace FourXM {
 
+template<typename Type>
 class BitStream {
-	const byte *_data;
+	const Type *_data;
 	uint _size;
-	uint _bytePos;
-	byte _bitMask;
+	uint _wordPos;
+	Type _bitMask;
+	static constexpr Type InitialMask = 1u << (sizeof(Type) * 8 - 1);
+	static constexpr uint WordSize = sizeof(Type);
 
 public:
-	BitStream(const byte *data, uint size, uint bytePos) : _data(data), _size(size), _bytePos(bytePos), _bitMask(0x80) {}
+	BitStream(const Type *data, uint size, uint wordPos) : _data(data), _size(size), _wordPos(wordPos), _bitMask(InitialMask) {}
 
-	uint getBytePos() const {
-		return _bytePos;
+	uint getWordPos() const {
+		return _wordPos;
 	}
 
 	bool readBit() {
-		assert(_bytePos < _size);
-		bool bit = _data[_bytePos] & _bitMask;
+		assert(_wordPos < _size);
+		bool bit = _data[_wordPos] & _bitMask;
 		_bitMask >>= 1;
 		if (_bitMask == 0) {
-			_bitMask = 128;
-			++_bytePos;
+			_bitMask = InitialMask;
+			++_wordPos;
 		}
 		return bit;
 	}
@@ -64,14 +67,15 @@ public:
 		return value;
 	}
 
-	void alignToByte() {
-		if (_bitMask != 0x80) {
-			_bitMask = 128;
-			++_bytePos;
+	void alignToWord() {
+		if (_bitMask != InitialMask) {
+			_bitMask = InitialMask;
+			++_wordPos;
 		}
 	}
 };
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, bool alignedStart);
+using ByteBitStream = BitStream<byte>;
+Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize);
 
 } // namespace FourXM
 } // namespace Video
