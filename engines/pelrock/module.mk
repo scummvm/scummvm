@@ -11,7 +11,8 @@ MODULE_OBJS = \
 	util.o \
 	resources.o\
 	sound.o \
-	video/video.o
+	video/video.o \
+	pathfinding.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

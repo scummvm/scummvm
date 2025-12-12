@@ -49,7 +49,6 @@ public:
 	void waitForKey();
 
 	bool _gameTick = false;
-	long _textTtl = 0;
 	bool countTextDown = false;
 };
 

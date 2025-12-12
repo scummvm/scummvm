@@ -64,14 +64,6 @@ private:
 		Walking alforithm
 	*/
 	void walkTo(int x, int y);
-	bool pathFind(int x, int y, PathContext *context);
-	Common::Point calculateWalkTarget(int mouseX, int mouseY);
-	uint8_t findWalkboxForPoint(uint16_t x, uint16_t y);
-	bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y);
-	uint16_t buildWalkboxPath(uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
-	uint8_t getAdjacentWalkbox(uint8_t current_box_index);
-	void clearVisitedFlags();
-	uint16_t generateMovementSteps(uint8_t *path_buffer, uint16_t path_length, uint16_t start_x, uint16_t start_y, uint16_t dest_x, uint16_t dest_y, MovementStep *movement_buffer);
 
 	void talk(byte object);
 	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
@@ -83,6 +75,7 @@ private:
 
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
 	VerbIcon isActionUnder(int x, int y);
+	bool isAlfredUnder(int x, int y);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
 	Sprite *isSpriteUnder(int x, int y);
@@ -90,7 +83,7 @@ private:
 
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
-	void frames();
+	void renderScene();
 	void animateFadePalette(PaletteAnim *anim);
 	void animateRotatePalette(PaletteAnim *anim);
 	void doAction(byte action, HotSpot *hotspot);
@@ -103,6 +96,7 @@ private:
 	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
 	void drawTalkNPC(Sprite *animSet);
+	void conversationLoop();
 
 	void gameLoop();
 	void menuLoop();
@@ -125,6 +119,7 @@ private:
 	// text display
 	byte _textColor = 0;
 	Common::Point _textPos;
+	int _textDurationFrames = 0;
 	Common::Array<Common::Array<Common::String>> _currentTextPages = Common::Array<Common::Array<Common::String>>();
 	int _currentTextPageIndex = 0;
 
@@ -168,6 +163,7 @@ private:
 	// JAVA
 	bool shouldPlayIntro = false;
 	GameState stateGame = INTRO;
+	bool inConversation = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
 

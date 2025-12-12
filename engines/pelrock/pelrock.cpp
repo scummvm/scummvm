@@ -40,6 +40,7 @@
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "pelrock/pathfinding.h"
 
 namespace Pelrock {
 
@@ -107,6 +108,7 @@ Common::Error PelrockEngine::run() {
 	init();
 
 	while (!shouldQuit()) {
+
 		if (stateGame == SETTINGS) {
 			changeCursor(DEFAULT);
 			menuLoop();
@@ -236,7 +238,7 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 	}
 }
 
-void PelrockEngine::frames() {
+void PelrockEngine::renderScene() {
 
 	if (_chronoManager->_gameTick) {
 
@@ -290,7 +292,7 @@ void PelrockEngine::frames() {
 
 		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
 			_chronoManager->countTextDown = true;
-			if (_chronoManager->_textTtl > 0) {
+			if (_textDurationFrames-- > 0) {
 				if (alfredState.animState == ALFRED_TALKING) {
 					_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
 				}
@@ -302,7 +304,7 @@ void PelrockEngine::frames() {
 				for (int i = 0; i < _currentTextPages[_currentTextPageIndex].size(); i++) {
 					totalChars += _currentTextPages[_currentTextPageIndex][i].size();
 				}
-				_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
+				_textDurationFrames = totalChars / 2;
 			} else {
 				_currentTextPages.clear();
 				_currentTextPageIndex = 0;
@@ -502,34 +504,34 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
 
-		if (step.distance_x > 0) {
+		if (step.distanceX > 0) {
 			if (step.flags & MOVE_RIGHT) {
 				alfredState.direction = ALFRED_RIGHT;
-				alfredState.x += MIN(alfredState.movementSpeed, step.distance_x);
+				alfredState.x += MIN(alfredState.movementSpeed, step.distanceX);
 			}
 			if (step.flags & MOVE_LEFT) {
 				alfredState.direction = ALFRED_LEFT;
-				alfredState.x -= MIN(alfredState.movementSpeed, step.distance_x);
+				alfredState.x -= MIN(alfredState.movementSpeed, step.distanceX);
 			}
 		}
-		if (step.distance_y > 0) {
+		if (step.distanceY > 0) {
 			if (step.flags & MOVE_DOWN) {
 				alfredState.direction = ALFRED_DOWN;
-				alfredState.y += MIN(alfredState.movementSpeed, step.distance_y);
+				alfredState.y += MIN(alfredState.movementSpeed, step.distanceY);
 			}
 			if (step.flags & MOVE_UP) {
 				alfredState.direction = ALFRED_UP;
-				alfredState.y -= MIN(alfredState.movementSpeed, step.distance_y);
+				alfredState.y -= MIN(alfredState.movementSpeed, step.distanceY);
 			}
 		}
 
-		if (step.distance_x > 0)
-			step.distance_x -= MIN(alfredState.movementSpeed, step.distance_x);
+		if (step.distanceX > 0)
+			step.distanceX -= MIN(alfredState.movementSpeed, step.distanceX);
 
-		if (step.distance_y > 0)
-			step.distance_y -= MIN(alfredState.movementSpeed, step.distance_y);
+		if (step.distanceY > 0)
+			step.distanceY -= MIN(alfredState.movementSpeed, step.distanceY);
 
-		if (step.distance_x <= 0 && step.distance_y <= 0) {
+		if (step.distanceX <= 0 && step.distanceY <= 0) {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
@@ -1012,6 +1014,12 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
 }
 
+void PelrockEngine::conversationLoop() {
+	while(inConversation) {
+
+	}
+}
+
 void PelrockEngine::gameLoop() {
 	_chronoManager->updateChrono();
 	Common::Event e;
@@ -1072,7 +1080,12 @@ void PelrockEngine::gameLoop() {
 		}
 	}
 	checkMouseHover();
-	frames();
+
+	if(inConversation) {
+		conversationLoop();
+	} else {
+		renderScene();
+	}
 }
 
 void PelrockEngine::menuLoop() {
@@ -1106,291 +1119,10 @@ void PelrockEngine::menuLoop() {
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;
 	PathContext context = {nullptr, nullptr, nullptr, 0, 0, 0};
-	pathFind(x, y, &context);
+	findPath(alfredState.x, alfredState.y, x, y, _room->_currentRoomWalkboxes, &context);
 	_currentContext = context;
 	alfredState.animState = ALFRED_WALKING;
 	alfredState.curFrame = 0;
-}
-
-bool PelrockEngine::pathFind(int targetX, int targetY, PathContext *context) {
-
-	if (context->pathBuffer == NULL) {
-		context->pathBuffer = (uint8_t *)malloc(MAX_PATH_LENGTH);
-	}
-	if (context->movementBuffer == NULL) {
-		context->movementBuffer = (MovementStep *)malloc(MAX_MOVEMENT_STEPS * sizeof(MovementStep));
-	}
-
-	int startX = alfredState.x;
-	int startY = alfredState.y;
-	Common::Point target = calculateWalkTarget(targetX, targetY);
-	targetX = target.x;
-	targetY = target.y;
-	debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
-
-	uint8_t startBox = findWalkboxForPoint(startX, startY);
-	uint8_t destBox = findWalkboxForPoint(targetX, targetY);
-
-	debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n", startX, startY, startBox, targetX, targetY, destBox);
-	// Check if both points are in valid walkboxes
-	if (startBox == 0xFF || destBox == 0xFF) {
-		debug("Error: Start or destination not in any walkbox\n");
-		return false;
-	}
-	// Special case: same walkbox
-	if (startBox == destBox) {
-		// Generate direct movement
-		MovementStep direct_step;
-		direct_step.flags = 0;
-		if (startX < targetX) {
-			direct_step.distance_x = targetX - startX;
-			direct_step.flags |= MOVE_RIGHT;
-		} else {
-			direct_step.distance_x = startX - targetX;
-			direct_step.flags |= MOVE_LEFT;
-		}
-
-		if (startY < targetY) {
-			direct_step.distance_y = targetY - startY;
-			direct_step.flags |= MOVE_DOWN;
-		} else {
-			direct_step.distance_y = startY - targetY;
-			direct_step.flags |= MOVE_UP;
-		}
-
-		context->movementBuffer[0] = direct_step;
-		context->movementCount = 1;
-	} else {
-		// Build walkbox path
-		context->pathLength = buildWalkboxPath(startBox, destBox, context->pathBuffer);
-		debug("Walkbox path to point");
-		for (int i = 0; i < context->pathLength; i++) {
-			debug("Walkbox %d: %d", i, context->pathBuffer[i]);
-		}
-		if (context->pathLength == 0) {
-			debug("Error: No path found\n");
-			return false;
-		}
-
-		// Generate movement steps
-		context->movementCount = generateMovementSteps(context->pathBuffer, context->pathLength, startX, startY, targetX, targetY, context->movementBuffer);
-		for (int i = 0; i < context->movementCount; i++) {
-			debug("Movement step %d: flags=\"%s\", dx=%d, dy=%d", i, printMovementFlags(context->movementBuffer[i].flags).c_str(), context->movementBuffer[i].distance_x, context->movementBuffer[i].distance_y);
-		}
-	}
-	return true;
-}
-
-/**
- * Calculate movement needed to reach a target within a walkbox
- */
-void calculateMovementToTarget(uint16_t current_x, uint16_t current_y,
-							   uint16_t target_x, uint16_t target_y,
-							   WalkBox *box,
-							   MovementStep *step) {
-	step->flags = 0;
-	step->distance_x = 0;
-	step->distance_y = 0;
-
-	// Calculate horizontal movement
-	if (current_x < box->x) {
-		// Need to move right to enter walkbox
-		step->distance_x = box->x - current_x;
-		step->flags |= MOVE_RIGHT;
-	} else if (current_x > box->x + box->w) {
-		// Need to move left to enter walkbox
-		step->distance_x = current_x - (box->x + box->w);
-		step->flags |= MOVE_LEFT;
-	}
-
-	// Calculate vertical movement
-	if (current_y < box->y) {
-		// Need to move down to enter walkbox
-		step->distance_y = box->y - current_y;
-		step->flags |= MOVE_DOWN;
-	} else if (current_y > box->y + box->h) {
-		// Need to move up to enter walkbox
-		step->distance_y = current_y - (box->y + box->h);
-		step->flags |= MOVE_UP;
-	}
-}
-
-/**
- * Generate movement steps from walkbox path
- * Returns: number of movement steps generated
- */
-uint16_t PelrockEngine::generateMovementSteps(uint8_t *pathBuffer,
-											  uint16_t pathLength,
-											  uint16_t startX, uint16_t startY,
-											  uint16_t destX, uint16_t destY,
-											  MovementStep *movementBuffer) {
-	uint16_t currentX = startX;
-	uint16_t currentY = startY;
-	uint16_t movementIndex = 0;
-
-	// Generate movements for each walkbox in path
-	for (uint16_t i = 0; i < pathLength && pathBuffer[i] != PATH_END; i++) {
-		uint8_t boxIndex = pathBuffer[i];
-		WalkBox *box = &_room->_currentRoomWalkboxes[boxIndex];
-
-		MovementStep step;
-		calculateMovementToTarget(currentX, currentY, destX, destY, box, &step);
-
-		if (step.distance_x > 0 || step.distance_y > 0) {
-			movementBuffer[movementIndex++] = step;
-
-			// Update current position
-			if (step.flags & MOVE_RIGHT) {
-				currentX = box->x;
-			} else if (step.flags & MOVE_LEFT) {
-				currentX = box->x + box->w;
-			}
-
-			if (step.flags & MOVE_DOWN) {
-				currentY = box->y;
-			} else if (step.flags & MOVE_UP) {
-				currentY = box->y + box->h;
-			}
-		}
-	}
-
-	// Final movement to exact destination
-	MovementStep final_step;
-	final_step.flags = 0;
-
-	if (currentX < destX) {
-		final_step.distance_x = destX - currentX;
-		final_step.flags |= MOVE_RIGHT;
-	} else if (currentX > destX) {
-		final_step.distance_x = currentX - destX;
-		final_step.flags |= MOVE_LEFT;
-	} else {
-		final_step.distance_x = 0;
-	}
-
-	if (currentY < destY) {
-		final_step.distance_y = destY - currentY;
-		final_step.flags |= MOVE_DOWN;
-	} else if (currentY > destY) {
-		final_step.distance_y = currentY - destY;
-		final_step.flags |= MOVE_UP;
-	} else {
-		final_step.distance_y = 0;
-	}
-
-	if (final_step.distance_x > 0 || final_step.distance_y > 0) {
-		movementBuffer[movementIndex++] = final_step;
-	}
-
-	return movementIndex;
-}
-
-uint16_t PelrockEngine::buildWalkboxPath(uint8_t startBox, uint8_t destBox, uint8_t *pathBuffer) {
-
-	uint16_t pathIndex = 0;
-	uint8_t currentBox = startBox;
-
-	// Initialize path with start walkbox
-	pathBuffer[pathIndex++] = startBox;
-
-	// Clear visited flags
-	clearVisitedFlags();
-
-	// Breadth-first search through walkboxes
-	while (currentBox != destBox && pathIndex < MAX_PATH_LENGTH - 1) {
-		uint8_t nextBox = getAdjacentWalkbox(currentBox);
-
-		if (nextBox == 0xFF) {
-			// Dead end - backtrack
-			if (pathIndex > 1) {
-				pathIndex--;
-				currentBox = pathBuffer[pathIndex - 1];
-			} else {
-				// No path exists
-				return 0;
-			}
-		} else if (nextBox == destBox) {
-			// Found destination
-			pathBuffer[pathIndex++] = destBox;
-			break;
-		} else {
-			// Continue searching
-			pathBuffer[pathIndex++] = nextBox;
-			currentBox = nextBox;
-		}
-	}
-
-	// Terminate path
-	pathBuffer[pathIndex] = PATH_END;
-	debug("Built walkbox path of length %d", pathIndex);
-	return pathIndex;
-}
-
-void PelrockEngine::clearVisitedFlags() {
-	for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-		_room->_currentRoomWalkboxes[i].flags = 0;
-	}
-}
-
-/**
- * Check if two walkboxes overlap or touch (are adjacent)
- */
-bool areWalkboxesAdjacent(WalkBox *box1, WalkBox *box2) {
-	uint16_t box1_x_max = box1->x + box1->w;
-	uint16_t box1_y_max = box1->y + box1->h;
-	uint16_t box2_x_max = box2->x + box2->w;
-	uint16_t box2_y_max = box2->y + box2->h;
-
-	// Check if X ranges overlap
-	bool xOverlap = (box1->x <= box2_x_max) && (box2->x <= box1_x_max);
-
-	// Check if Y ranges overlap
-	bool yOverlap = (box1->y <= box2_y_max) && (box2->y <= box1_y_max);
-
-	return xOverlap && yOverlap;
-}
-
-uint8_t PelrockEngine::getAdjacentWalkbox(uint8_t currentBoxIndex) {
-	WalkBox *currentBox = &_room->_currentRoomWalkboxes[currentBoxIndex];
-
-	// Mark current walkbox as visited
-	currentBox->flags = 0x01;
-
-	// Search for adjacent unvisited walkbox
-	for (uint8_t i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-		// Skip current walkbox
-		if (i == currentBoxIndex) {
-			continue;
-		}
-
-		// Skip already visited walkboxes
-		if (_room->_currentRoomWalkboxes[i].flags == 0x01) {
-			continue;
-		}
-
-		// Check if walkboxes are adjacent
-		if (areWalkboxesAdjacent(currentBox, &_room->_currentRoomWalkboxes[i])) {
-			return i;
-		}
-	}
-
-	return 0xFF; // No adjacent walkbox found
-}
-
-bool PelrockEngine::isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y) {
-	return (x >= box->x &&
-			x <= box->x + box->w &&
-			y >= box->y &&
-			y <= box->y + box->h);
-}
-
-uint8_t PelrockEngine::findWalkboxForPoint(uint16_t x, uint16_t y) {
-	for (uint8_t i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-		if (isPointInWalkbox(&_room->_currentRoomWalkboxes[i], x, y)) {
-			return i;
-		}
-	}
-	return 0xFF; // Not found
 }
 
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
@@ -1406,6 +1138,20 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	}
 	return NO_ACTION;
 }
+
+bool PelrockEngine::isAlfredUnder(int x, int y) {
+	//TODO: Account for scaling
+	int alfredX = alfredState.x;
+	int alfredY = alfredState.y;
+	int alfredW = kAlfredFrameWidth;
+	int alfredH = kAlfredFrameHeight;
+
+	if(alfredY - alfredH > y || alfredY < y || alfredX > x || alfredX + alfredW < x) {
+		return false;
+	}
+	return true;
+}
+
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
@@ -1426,7 +1172,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_displayPopup = false;
 	_currentHotspot = nullptr;
 
-	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, mouseX, mouseY);
 	_curWalkTarget = walkTarget;
 
 	{ // For quick room navigation
@@ -1449,10 +1195,10 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 }
 
 void PelrockEngine::checkMouseHover() {
-	bool isSomethingUnder = false;
+	bool hotspotDetected = false;
 
 	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget(mouseX, mouseY);
+	Common::Point walkTarget = calculateWalkTarget( _room->_currentRoomWalkboxes, mouseX, mouseY);
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;
@@ -1463,88 +1209,96 @@ void PelrockEngine::checkMouseHover() {
 
 	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
 	if (hotspotIndex != -1) {
-		isSomethingUnder = true;
+		hotspotDetected = true;
 	}
 
 	if (isActionUnder(mouseX, mouseY) != NO_ACTION) {
-		isSomethingUnder = false;
+		hotspotDetected = false;
 	}
 
-	if (isSomethingUnder && exitDetected) {
+	bool alfredDetected = false;
+	if(isAlfredUnder(mouseX, mouseY)) {
+		alfredDetected = true;
+	}
+
+	if(alfredDetected) {
+		changeCursor(ALFRED);
+	} else if (hotspotDetected && exitDetected) {
 		changeCursor(COMBINATION);
-	} else if (isSomethingUnder) {
+	} else if (hotspotDetected) {
 		changeCursor(HOTSPOT);
 	} else if (exitDetected) {
 		changeCursor(EXIT);
-	} else {
+	}
+	else {
 		changeCursor(DEFAULT);
 	}
 }
 
-Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
-	// Starting point for pathfinding
-	int sourceX = mouseX;
-	int sourceY = mouseY;
+// Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
+// 	// Starting point for pathfinding
+// 	int sourceX = mouseX;
+// 	int sourceY = mouseY;
 
-	// TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
-	// For now, just use mouse position
+// 	// TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
+// 	// For now, just use mouse position
 
-	// Find nearest walkable point in walkboxes
-	uint32 minDistance = 0xFFFFFFFF;
-	Common::Point bestTarget(sourceX, sourceY);
+// 	// Find nearest walkable point in walkboxes
+// 	uint32 minDistance = 0xFFFFFFFF;
+// 	Common::Point bestTarget(sourceX, sourceY);
 
-	// for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
-	//  it != _currentRoomWalkboxes.end(); ++it) {
-	for (size_t i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+// 	// for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
+// 	//  it != _currentRoomWalkboxes.end(); ++it) {
+// 	for (size_t i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 
-		// Calculate distance from source point to this walkbox (Manhattan distance)
-		int dx = 0;
-		int dy = 0;
+// 		// Calculate distance from source point to this walkbox (Manhattan distance)
+// 		int dx = 0;
+// 		int dy = 0;
 
-		// Calculate horizontal distance
-		if (sourceX < _room->_currentRoomWalkboxes[i].x) {
-			dx = _room->_currentRoomWalkboxes[i].x - sourceX;
-		} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
-			dx = sourceX - (_room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w);
-		}
-		// else: sourceX is inside walkbox horizontally, dx = 0
+// 		// Calculate horizontal distance
+// 		if (sourceX < _room->_currentRoomWalkboxes[i].x) {
+// 			dx = _room->_currentRoomWalkboxes[i].x - sourceX;
+// 		} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
+// 			dx = sourceX - (_room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w);
+// 		}
+// 		// else: sourceX is inside walkbox horizontally, dx = 0
 
-		// Calculate vertical distance
-		if (sourceY < _room->_currentRoomWalkboxes[i].y) {
-			dy = _room->_currentRoomWalkboxes[i].y - sourceY;
-		} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
-			dy = sourceY - (_room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h);
-		}
-		// else: sourceY is inside walkbox vertically, dy = 0
+// 		// Calculate vertical distance
+// 		if (sourceY < _room->_currentRoomWalkboxes[i].y) {
+// 			dy = _room->_currentRoomWalkboxes[i].y - sourceY;
+// 		} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
+// 			dy = sourceY - (_room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h);
+// 		}
+// 		// else: sourceY is inside walkbox vertically, dy = 0
 
-		uint32 distance = dx + dy;
+// 		uint32 distance = dx + dy;
 
-		if (distance < minDistance) {
-			minDistance = distance;
+// 		if (distance < minDistance) {
+// 			minDistance = distance;
 
-			// Calculate target point (nearest point on walkbox to source)
-			int targetX = sourceX;
-			int targetY = sourceY;
+// 			// Calculate target point (nearest point on walkbox to source)
+// 			int targetX = sourceX;
+// 			int targetY = sourceY;
 
-			if (sourceX < _room->_currentRoomWalkboxes[i].x) {
-				targetX = _room->_currentRoomWalkboxes[i].x;
-			} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
-				targetX = _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w;
-			}
+// 			if (sourceX < _room->_currentRoomWalkboxes[i].x) {
+// 				targetX = _room->_currentRoomWalkboxes[i].x;
+// 			} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
+// 				targetX = _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w;
+// 			}
 
-			if (sourceY < _room->_currentRoomWalkboxes[i].y) {
-				targetY = _room->_currentRoomWalkboxes[i].y;
-			} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
-				targetY = _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h;
-			}
+// 			if (sourceY < _room->_currentRoomWalkboxes[i].y) {
+// 				targetY = _room->_currentRoomWalkboxes[i].y;
+// 			} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
+// 				targetY = _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h;
+// 			}
 
-			bestTarget.x = targetX;
-			bestTarget.y = targetY;
-		}
-	}
+// 			bestTarget.x = targetX;
+// 			bestTarget.y = targetY;
+// 		}
+// 	}
 
-	return bestTarget;
-}
+// 	return bestTarget;
+// }
 
 void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte color) {
 	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
@@ -1576,7 +1330,7 @@ void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
 	}
 	debug("Settijng textpos to %d, %d", anim->x, anim->y - 10);
 	_textPos = Common::Point(anim->x, anim->y - 10);
-	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
+	_textDurationFrames = totalChars / 2;
 }
 
 void PelrockEngine::sayAlfred(Common::String text) {
@@ -1589,7 +1343,7 @@ void PelrockEngine::sayAlfred(Common::String text) {
 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
 		totalChars += _currentTextPages[0][i].size();
 	}
-	_chronoManager->_textTtl = totalChars * kTextCharDisplayTime;
+	_textDurationFrames = totalChars / 2;
 }
 
 bool isEndMarker(char char_byte) {

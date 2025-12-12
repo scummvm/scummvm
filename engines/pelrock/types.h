@@ -124,8 +124,8 @@ struct AlfredState {
 
 typedef struct {
 	uint8_t flags;       /* Direction flags (see MOVE_* constants) */
-	uint16_t distance_x; // Horizontal distance to move
-	uint16_t distance_y; // Vertical distance to move
+	uint16_t distanceX; // Horizontal distance to move
+	uint16_t distanceY; // Vertical distance to move
 } MovementStep;
 
 /**

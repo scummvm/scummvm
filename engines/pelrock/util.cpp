@@ -57,29 +57,6 @@ void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
 	}
 }
 
-Common::String printMovementFlags(uint8_t flags) {
-	Common::String result;
-	if (flags & MOVE_HORIZ) {
-		result += "HORIZ ";
-	}
-	if (flags & MOVE_VERT) {
-		result += "VERT ";
-	}
-	if (flags & MOVE_DOWN) {
-		result += "DOWN ";
-	}
-	if (flags & MOVE_LEFT) {
-		result += "LEFT ";
-	}
-	if (flags & MOVE_UP) {
-		result += "UP ";
-	}
-	if (flags & MOVE_RIGHT) {
-		result += "RIGHT ";
-	}
-	return result;
-}
-
 size_t rleDecompress(
 	const uint8_t *input,
 	size_t inputSize,
