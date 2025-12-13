@@ -1065,6 +1065,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "technicus",			"Technicus: Ten Hours Left" },
 	{ "tiefsee",			"S.O.S. Tiefsee" },
 	{ "tivolaspielebox",	"Die tolle Spiele-Box" },
+	{ "thomastim",			"Thomas & Tim" },
 	{ "tkkgkit",			"TKKG: Identikit" },
 	{ "vorsichthund",		"Vorsicht, bissiger Hund!" },
 	{ "www",				"Wellen, Wracks und Wassermänner" },
@@ -8109,6 +8110,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
 						  "SCORE.DXR",  "9ffb87ff9d3110435da99a052279fb4c", 10434, 501),
 	WINGAME1t("tkkg1", "", "TKKG1_95.EX_", "a6284109fe843164812af767fb9f41c8", 1411299, 501),
+
+	WINGAME1t_l("thomastim", "", "togt.exe", "685f417196d7ae95c22738746b929dd2", 1394011, Common::DE_DEU, 500),
 
 	MACGAME1("treasuresamnh", "", "Treasures of the AMNH/Treasures", "r:d17d1380e3d87863c406e012bd5d8078", 718945, 501),
 	WINGAME1("treasuresamnh", "", "TAMNH/TAMNH.EXE", "t:b8417ced47c60179e0ca1cf59bfc209b", 1641329, 501),
