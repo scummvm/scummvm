@@ -18,39 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef PELROCK_EVENTS_H
+#define PELROCK_EVENTS_H
 
-#ifndef PELROCK_VIDEO_H
-#define PELROCK_VIDEO_H
-
-#include "pelrock/events.h"
+#include "common/events.h"
+#include "common/scummsys.h"
 
 namespace Pelrock {
-
-static const uint32 frame0offset = 0x5000;
-static const uint32 frame1offset = 0x46000;
-static const uint32 chunkSize = 0x5000;
-static const uint32 offsets[] = {
-	0x64000,
-	0x69000,
-	0x6E000,
-	0x73000,
-	0x78000,
-	0x7D000,
-	0x82000,
-	0x87000};
-
-class VideoManager {
-public:
-	VideoManager(Graphics::Screen *screen, PelrockEventManager *events);
-	~VideoManager();
-	void playIntro();
-
+static const int kDoubleClickDelay = 300; // in milliseconds
+class PelrockEventManager {
 private:
-	Graphics::Screen *_screen;
-	PelrockEventManager *_events;
-	void loadPalette(Common::SeekableReadStream &stream);
-	byte *decodeCopyBlock(byte *data, uint32 offset);
-    byte *decodeRLE(byte *data, size_t size, uint32 offset);
+	Common::Event _event;
+	bool _leftMouseButton = 0;
+	bool _rightMouseButton = 0;
+	uint32 _clickTime = 0;
+public:
+	int16 _mouseX = 0;
+	int16 _mouseY = 0;
+	int16 _mouseClickX = 0;
+	int16 _mouseClickY = 0;
+	bool _leftMouseClicked = false;
+	bool _longClicked = false;
+	bool _rightMouseClicked = false;
+	Common::Event _lastKeyEvent;
+	PelrockEventManager();
+	void pollEvent();
+	void waitForKey();
 };
 
 } // End of namespace Pelrock

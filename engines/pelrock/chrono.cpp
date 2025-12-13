@@ -65,19 +65,4 @@ void ChronoManager::delay(uint32 ms) {
 	}
 }
 
-void ChronoManager::waitForKey() {
-	bool waitForKey = false;
-	Common::Event e;
-	debug("Waiting for key!");
-	while (!waitForKey && !g_engine->shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN) {
-				waitForKey = true;
-			}
-		}
-
-		g_engine->_screen->update();
-		g_system->delayMillis(10);
-	}
-}
 } // End of namespace Pelrock

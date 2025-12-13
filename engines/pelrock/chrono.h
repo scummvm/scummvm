@@ -46,7 +46,6 @@ public:
 	void updateChrono();
 	void changeSpeed();
 	void delay(uint32 ms);
-	void waitForKey();
 	uint32 getFrameCount() const {
 		return _frameCount;
 	}

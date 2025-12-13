@@ -49,22 +49,24 @@ PelrockEngine *g_engine;
 PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																				 _gameDescription(gameDesc), _randomSource("Pelrock") {
 	g_engine = this;
-	_chronoManager = new ChronoManager();
+	_chrono = new ChronoManager();
+	_events = new PelrockEventManager();
 }
 
 PelrockEngine::~PelrockEngine() {
 	delete[] _compositeBuffer;
 	delete[] _currentBackground;
 	delete _largeFont;
+	delete _smallFont;
 	delete _screen;
-	delete _chronoManager;
+	delete _chrono;
 	delete _videoManager;
-	delete _soundManager;
+	delete _sound;
 	delete _room;
 	delete _res;
+	delete _events;
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
-	delete _smallFont;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -81,10 +83,10 @@ Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
-	_videoManager = new VideoManager(_screen);
+	_videoManager = new VideoManager(_screen, _events);
 	_room = new RoomManager();
 	_res = new ResourceManager();
-	_soundManager = new SoundManager(_mixer);
+	_sound = new SoundManager(_mixer);
 
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
@@ -95,7 +97,6 @@ Common::Error PelrockEngine::run() {
 		(void)loadGameState(saveSlot);
 
 	// Simple event handling loop
-	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldPlayIntro == false) {
@@ -128,7 +129,7 @@ void PelrockEngine::init() {
 	_res->loadInteractionIcons();
 	_res->loadInventoryItems();
 	_res->loadSettingsMenu();
-	_soundManager->loadSoundIndex();
+	_sound->loadSoundIndex();
 
 	calculateScalingMasks();
 	_compositeBuffer = new byte[640 * 400];
@@ -146,38 +147,11 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreen(0, ALFRED_DOWN);
-		// setScreen(6, 0); // museum entrance
-		// setScreen(13, 1); // restaurants kitchen
-		// setScreen(2, 2); // hooker
 	}
 }
 
 void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
-}
-
-void PelrockEngine::talkLoop() {
-	while (inConversation) {
-
-		// // Display and advance through text
-		// while (/*moresegments*/ 1) {
-
-		// 	// Show each segment with animation
-		// 	while (!time_expired && !click) {
-		// 		← INNER LOOP
-
-		// 		wait_or_process_input();
-		// 		setup_alfred_frame_from_state();
-
-		// 		render_scene(0);
-		// 		← CALLS FULL ANIMATION CODE
-		//             ↓ update_npc_sprite_animations()  ← HERE !-Increment frame counters - Advance animation frames - Process movement - Apply sprite changes
-
-		// 																																	 process_game_state(1);
-
-		// 	} // End animation loop
-		// }
-	}
 }
 
 void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
@@ -264,16 +238,16 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 
 void PelrockEngine::playSoundIfNeeded() {
 
-	int soundIndex = _soundManager->tick(_chronoManager->getFrameCount());
+	int soundIndex = _sound->tick(_chrono->getFrameCount());
 	if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
 		debug("Playing SFX index %d", soundIndex);
-		_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
+		_sound->playSound(_room->_roomSfx[3 + soundIndex]);
 	}
 }
 
 void PelrockEngine::renderScene(bool showTextOverlay) {
 
-	if (_chronoManager->_gameTick) {
+	if (_chrono->_gameTick) {
 		playSoundIfNeeded();
 
 		copyBackgroundToBuffer();
@@ -282,6 +256,8 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		if (showTextOverlay) {
 			displayChoices(_currentTextPages[_currentTextPageIndex], _compositeBuffer);
 		}
+
+		checkMouse();
 
 		presentFrame();
 		updatePaletteAnimations();
@@ -322,6 +298,55 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 
 		_screen->markAllDirty();
 	}
+}
+
+void PelrockEngine::checkMouse() {
+	if(_events->_leftMouseClicked) {
+		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
+		_events->_leftMouseClicked = false;
+		_displayPopup = false;
+	}
+	else if(_events->_longClicked) {
+		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
+		_events->_longClicked = false;
+	}
+	else if(_events->_rightMouseClicked) {
+		debug("Right mouse clicked - entering settings menu");
+		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+		_events->_rightMouseClicked = false;
+		stateGame = SETTINGS;
+	}
+	checkMouseHover();
+
+//else if (e.type == Common::EVENT_MOUSEMOVE) {
+	// 		mouseX = e.mouse.x;
+	// 		mouseY = e.mouse.y;
+	// 		// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+	// 	} else if (e.type == Common::EVENT_LBUTTONDOWN) {
+	// 		if (!_isMouseDown) {
+	// 			_mouseClickTime = g_system->getMillis();
+	// 			_isMouseDown = true;
+	// 		}
+	// 	} else if (e.type == Common::EVENT_LBUTTONUP) {
+	// 		_isMouseDown = false;
+	// 		checkMouseClick(e.mouse.x, e.mouse.y);
+	// 		_displayPopup = false;
+	// 		_longClick = false;
+	// 	} else if (e.type == Common::EVENT_RBUTTONUP) {
+	// 		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+	// 		stateGame = SETTINGS;
+	// 	}
+	// }
+	// if (_isMouseDown) {
+	// 	if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
+	// 		debug("long click!");
+	// 		_longClick = true;
+	// 		_isMouseDown = false;
+	// 		checkLongMouseClick(e.mouse.x, e.mouse.y);
+	// 	}
+	// }
+	// checkMouseHover();
+
 }
 
 void PelrockEngine::copyBackgroundToBuffer() {
@@ -396,12 +421,12 @@ void PelrockEngine::paintDebugLayer() {
 	}
 	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
-	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chronoManager->getFrameCount()), 0, 30, 640, 13);
+	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
 }
 
 void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
 
-	// if (_paletteAnim->curFrameCount >= _paletteAnim->speed) {
+
 	if (anim->data[0] >= anim->data[6] &&
 		anim->data[1] >= anim->data[7] &&
 		anim->data[2] >= anim->data[8]) {
@@ -800,7 +825,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	int curFrame = animData.curFrame;
 	byte *frame = new byte[frameSize];
 	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
-
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, sprite->x, sprite->y, sprite->w, sprite->h, 255);
 
 	if (animData.elpapsedFrames == animData.speed) {
@@ -827,7 +851,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
-	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 
 	if (hotspotIndex != -1) {
 
@@ -998,8 +1022,8 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 	for (size_t i = 0; i < _room->_currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _room->_currentRoomHotspots[i];
 		if (hotspot.isEnabled &&
-			mouseX >= hotspot.x && mouseX <= (hotspot.x + hotspot.w) &&
-			mouseY >= hotspot.y && mouseY <= (hotspot.y + hotspot.h)) {
+			x >= hotspot.x && x <= (hotspot.x + hotspot.w) &&
+			y >= hotspot.y && y <= (hotspot.y + hotspot.h)) {
 			return i;
 		}
 	}
@@ -1021,7 +1045,8 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-	VerbIcon icon = isActionUnder(mouseX, mouseY);
+
+	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
 	for (int i = 0; i < actions.size(); i++) {
 		if (icon == actions[i] && _iconBlink++ < kIconBlinkPeriod / 2) {
 			continue;
@@ -1062,69 +1087,70 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 
 void PelrockEngine::conversationLoop() {
 	while (inConversation) {
+
 	}
 }
 
 void PelrockEngine::gameLoop() {
-	_chronoManager->updateChrono();
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_KEYDOWN) {
-			switch (e.kbd.keycode) {
-			case Common::KEYCODE_w:
-				alfredState.animState = ALFRED_WALKING;
-				break;
-			case Common::KEYCODE_t:
-				alfredState.animState = ALFRED_TALKING;
-				break;
-			case Common::KEYCODE_s:
-				alfredState.animState = ALFRED_IDLE;
-				break;
-			case Common::KEYCODE_c:
-				alfredState.animState = ALFRED_COMB;
-				break;
-			case Common::KEYCODE_i:
-				alfredState.animState = ALFRED_INTERACTING;
-				break;
-			case Common::KEYCODE_z:
-				showShadows = !showShadows;
-				break;
-			case Common::KEYCODE_y:
-				alfredState.x = 193;
-				alfredState.y = 382;
-				walkTo(377, 318);
-				break;
-			default:
-				break;
-			}
-		} else if (e.type == Common::EVENT_MOUSEMOVE) {
-			mouseX = e.mouse.x;
-			mouseY = e.mouse.y;
-			// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
-		} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-			if (!_isMouseDown) {
-				_mouseClickTime = g_system->getMillis();
-				_isMouseDown = true;
-			}
-		} else if (e.type == Common::EVENT_LBUTTONUP) {
-			_isMouseDown = false;
-			checkMouseClick(e.mouse.x, e.mouse.y);
-			_displayPopup = false;
-			_longClick = false;
-		} else if (e.type == Common::EVENT_RBUTTONUP) {
-			g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
-			stateGame = SETTINGS;
-		}
-	}
-	if (_isMouseDown) {
-		if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
-			debug("long click!");
-			_longClick = true;
-			_isMouseDown = false;
-			checkLongMouseClick(e.mouse.x, e.mouse.y);
-		}
-	}
-	checkMouseHover();
+	_chrono->updateChrono();
+	_events->pollEvent();
+	// while (g_system->getEventManager()->pollEvent(e)) {
+	// 	if (e.type == Common::EVENT_KEYDOWN) {
+	// 		switch (e.kbd.keycode) {
+	// 		case Common::KEYCODE_w:
+	// 			alfredState.animState = ALFRED_WALKING;
+	// 			break;
+	// 		case Common::KEYCODE_t:
+	// 			alfredState.animState = ALFRED_TALKING;
+	// 			break;
+	// 		case Common::KEYCODE_s:
+	// 			alfredState.animState = ALFRED_IDLE;
+	// 			break;
+	// 		case Common::KEYCODE_c:
+	// 			alfredState.animState = ALFRED_COMB;
+	// 			break;
+	// 		case Common::KEYCODE_i:
+	// 			alfredState.animState = ALFRED_INTERACTING;
+	// 			break;
+	// 		case Common::KEYCODE_z:
+	// 			showShadows = !showShadows;
+	// 			break;
+	// 		case Common::KEYCODE_y:
+	// 			alfredState.x = 193;
+	// 			alfredState.y = 382;
+	// 			walkTo(377, 318);
+	// 			break;
+	// 		default:
+	// 			break;
+	// 		}
+	// 	} else if (e.type == Common::EVENT_MOUSEMOVE) {
+	// 		mouseX = e.mouse.x;
+	// 		mouseY = e.mouse.y;
+	// 		// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
+	// 	} else if (e.type == Common::EVENT_LBUTTONDOWN) {
+	// 		if (!_isMouseDown) {
+	// 			_mouseClickTime = g_system->getMillis();
+	// 			_isMouseDown = true;
+	// 		}
+	// 	} else if (e.type == Common::EVENT_LBUTTONUP) {
+	// 		_isMouseDown = false;
+	// 		checkMouseClick(e.mouse.x, e.mouse.y);
+	// 		_displayPopup = false;
+	// 		_longClick = false;
+	// 	} else if (e.type == Common::EVENT_RBUTTONUP) {
+	// 		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+	// 		stateGame = SETTINGS;
+	// 	}
+	// }
+	// if (_isMouseDown) {
+	// 	if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
+	// 		debug("long click!");
+	// 		_longClick = true;
+	// 		_isMouseDown = false;
+	// 		checkLongMouseClick(e.mouse.x, e.mouse.y);
+	// 	}
+	// }
+	// checkMouseHover();
 
 	if (inConversation) {
 		conversationLoop();
@@ -1134,16 +1160,16 @@ void PelrockEngine::gameLoop() {
 }
 
 void PelrockEngine::menuLoop() {
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_LBUTTONUP) {
-			checkMouseClickOnSettings(e.mouse.x, e.mouse.y);
+	_events->pollEvent();
 
-		} else if (e.type == Common::EVENT_RBUTTONUP) {
-
-			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-			stateGame = GAME;
-		}
+	if(_events->_leftMouseClicked) {
+		_events->_leftMouseClicked = false;
+		checkMouseClickOnSettings(_events->_mouseX, _events->_mouseY);
+	}
+	else if (_events->_rightMouseClicked) {
+		_events->_rightMouseClicked = false;
+		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+		stateGame = GAME;
 	}
 
 	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
@@ -1216,7 +1242,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_displayPopup = false;
 	_currentHotspot = nullptr;
 
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, mouseX, mouseY);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY);
 	_curWalkTarget = walkTarget;
 
 	{ // For quick room navigation
@@ -1242,7 +1268,7 @@ void PelrockEngine::checkMouseHover() {
 	bool hotspotDetected = false;
 
 	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, mouseX, mouseY);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY);
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;
@@ -1251,17 +1277,17 @@ void PelrockEngine::checkMouseHover() {
 		exitDetected = true;
 	}
 
-	int hotspotIndex = isHotspotUnder(mouseX, mouseY);
+	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
 	}
 
-	if (isActionUnder(mouseX, mouseY) != NO_ACTION) {
+	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
 		hotspotDetected = false;
 	}
 
 	bool alfredDetected = false;
-	if (isAlfredUnder(mouseX, mouseY)) {
+	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {
 		alfredDetected = true;
 	}
 
@@ -1504,7 +1530,7 @@ Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
 }
 
 void PelrockEngine::setScreen(int number, AlfredDirection dir) {
-	_soundManager->stopAllSounds();
+	_sound->stopAllSounds();
 	Common::File roomFile;
 	debug("Loading room %s number %d", _room->getRoomName(number).c_str(), number);
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
@@ -1540,14 +1566,10 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_room->loadRoomMetadata(&roomFile, number);
 	_room->loadRoomTalkingAnimations(number);
 	if (_room->_musicTrack > 0)
-		_soundManager->playMusicTrack(_room->_musicTrack);
+		_sound->playMusicTrack(_room->_musicTrack);
 	else {
-		_soundManager->stopMusic();
+		_sound->stopMusic();
 	}
-	// for (int i = 0; i < kNumSfxPerRoom; i++) {
-	// 	if (_room->_roomSfx[i])
-	// 		_soundManager->playSound(_room->_roomSfx[i]);
-	// }
 
 	_room->_currentRoomNumber = number;
 

@@ -38,6 +38,7 @@
 
 #include "pelrock/chrono.h"
 #include "pelrock/detection.h"
+#include "pelrock/events.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/resources.h"
@@ -56,6 +57,10 @@ private:
 	Common::RandomSource _randomSource;
 	RoomManager *_room = nullptr;
 	ResourceManager *_res = nullptr;
+	ChronoManager *_chrono = nullptr;
+	VideoManager *_videoManager = nullptr;
+	SoundManager *_sound = nullptr;
+	PelrockEventManager *_events = nullptr;
 
 	void init();
 	void loadAnims();
@@ -66,7 +71,6 @@ private:
 	void walkTo(int x, int y);
 
 	void talk(byte object);
-	void talkLoop();
 	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
 	void sayAlfred(Common::String text);
 	void sayNPC(Sprite *anim, Common::String text, byte color);
@@ -85,6 +89,7 @@ private:
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
 	void renderScene(bool showTextOverlay = false);
+	void checkMouse();
 	void copyBackgroundToBuffer();
 	void updateAnimations();
 	void presentFrame();
@@ -136,13 +141,6 @@ private:
 	bool alfredFrameSkip = false;
 	bool isAlkfredWalking = false;
 
-	uint16 mouseX = 0;
-	uint16 mouseY = 0;
-	bool _lMouseDown = false;
-	uint32 _mouseClickTime;
-	bool _isMouseDown = false;
-	bool _longClick = false;
-
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
 	byte *_compositeBuffer;             // Working composition buffer
 
@@ -189,9 +187,6 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	ChronoManager *_chronoManager = nullptr;
-	VideoManager *_videoManager = nullptr;
-	SoundManager *_soundManager = nullptr;
 	AlfredState alfredState;
 
 public:

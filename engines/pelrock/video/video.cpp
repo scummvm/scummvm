@@ -29,7 +29,7 @@
 
 namespace Pelrock {
 
-VideoManager::VideoManager(Graphics::Screen *screen) : _screen(screen) {
+VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events) : _screen(screen), _events(events) {
 }
 
 VideoManager::~VideoManager() {
@@ -56,7 +56,7 @@ void VideoManager::playIntro() {
 	_screen->markAllDirty();
 	_screen->update();
 	delete[] chunk0;
-	g_engine->_chronoManager->waitForKey();
+	_events->waitForKey();
 
 	size_t chunk1Size = chunkSize * 6;
 	byte chunk1_data[chunk1Size];
@@ -75,7 +75,7 @@ void VideoManager::playIntro() {
 	}
 	_screen->markAllDirty();
 	_screen->update();
-	g_engine->_chronoManager->waitForKey();
+	_events->waitForKey();
 
 	for (size_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); i++) {
 		byte *chunk = new byte[chunkSize];
@@ -94,9 +94,9 @@ void VideoManager::playIntro() {
 		delete[] chunk;
 		_screen->markAllDirty();
 		_screen->update();
-		g_engine->_chronoManager->waitForKey();
+		_events->waitForKey();
 	}
-	g_engine->_chronoManager->waitForKey();
+	_events->waitForKey();
 	videoFile.close();
 }
 void VideoManager::loadPalette(Common::SeekableReadStream &stream) {
