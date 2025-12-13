@@ -206,7 +206,7 @@ static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 		else
 			x = imgPosX;
 
-		if (imgPosX + wImg < g_engine->_dirtyMainSpriteX + wBg)
+		if (imgPosX + wImg < static_cast<uint>(g_engine->_dirtyMainSpriteX + wBg))
 			incx = imgPosX + wImg - x;
 		else
 			incx = g_engine->_dirtyMainSpriteX + wBg - x;
@@ -216,7 +216,7 @@ static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 		else
 			y = imgPosY;
 
-		if (imgPosY + hImg < g_engine->_dirtyMainSpriteY + hBg)
+		if (imgPosY + hImg < static_cast<uint>(g_engine->_dirtyMainSpriteY + hBg))
 			incy = imgPosY + hImg - y;
 		else
 			incy = g_engine->_dirtyMainSpriteY + hBg - y;
@@ -891,13 +891,13 @@ void TotEngine::useInventoryObjectWithInventoryObject(int16 objectCode1, int16 o
 	}
 
 	invIndex = 0;
-	while (_inventory[invIndex].code != objectCode1) {
+	while (static_cast<uint>(_inventory[invIndex].code) != objectCode1) {
 		invIndex += 1;
 	}
 	indobj1 = invIndex;
 
 	invIndex = 0;
-	while (_inventory[invIndex].code != objectCode2) {
+	while (static_cast<uint>(_inventory[invIndex].code) != objectCode2) {
 		invIndex += 1;
 	}
 

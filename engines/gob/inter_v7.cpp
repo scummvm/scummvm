@@ -952,9 +952,9 @@ void Inter_v7::o7_getFileInfo() {
 			return;
 		}
 
-		uint32 width = -1;
-		uint32 height = -1;
-		uint32 bpp = -1;
+		uint32 width = (uint32)-1;
+		uint32 height = (uint32)-1;
+		uint32 bpp = (uint32)-1;
 		Surface::getImageInfo(*imageFile, width, height, bpp);
 		if (property == "IMAGELARGEUR")
 			storeValue(resultVar, resultVarType, width);

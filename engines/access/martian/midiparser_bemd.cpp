@@ -67,7 +67,7 @@ bool MidiParser_BEmd::loadMusic(const byte *data, uint32 size) {
 		if (secondBlockOffset < 16 || secondBlockOffset >= size)
 			error("Bad second block offset in BEmd file");
 		uint16 secondBlockSize = READ_LE_UINT16(pos + 4);
-		if (secondBlockOffset + secondBlockSize != size)
+		if (static_cast<uint32>(secondBlockOffset + secondBlockSize) != size)
 			error("Bad second block offset+size in BEmd file");
 
 		_trackDataEnd = data + secondBlockOffset;
