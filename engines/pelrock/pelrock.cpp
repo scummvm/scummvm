@@ -38,9 +38,9 @@
 #include "pelrock/detection.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/offsets.h"
+#include "pelrock/pathfinding.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "pelrock/pathfinding.h"
 
 namespace Pelrock {
 
@@ -156,6 +156,30 @@ void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
 }
 
+void PelrockEngine::talkLoop() {
+	while (inConversation) {
+
+		// // Display and advance through text
+		// while (/*moresegments*/ 1) {
+
+		// 	// Show each segment with animation
+		// 	while (!time_expired && !click) {
+		// 		← INNER LOOP
+
+		// 		wait_or_process_input();
+		// 		setup_alfred_frame_from_state();
+
+		// 		render_scene(0);
+		// 		← CALLS FULL ANIMATION CODE
+		//             ↓ update_npc_sprite_animations()  ← HERE !-Increment frame counters - Advance animation frames - Process movement - Apply sprite changes
+
+		// 																																	 process_game_state(1);
+
+		// 	} // End animation loop
+		// }
+	}
+}
+
 void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
 	int overlayHeight = choices.size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
@@ -238,118 +262,141 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 	}
 }
 
-void PelrockEngine::renderScene() {
+void PelrockEngine::playSoundIfNeeded() {
+
+	int soundIndex = _soundManager->tick(_chronoManager->getFrameCount());
+	if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
+		debug("Playing SFX index %d", soundIndex);
+		_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
+	}
+}
+
+void PelrockEngine::renderScene(bool showTextOverlay) {
 
 	if (_chronoManager->_gameTick) {
+		playSoundIfNeeded();
 
-		int soundIndex = _soundManager->tick();
-		if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
-			// debug("Playing SFX index %d", soundIndex);
-			_soundManager->playSound(_room->_roomSfx[3 + soundIndex]);
+		copyBackgroundToBuffer();
+		updateAnimations();
+
+		if (showTextOverlay) {
+			displayChoices(_currentTextPages[_currentTextPageIndex], _compositeBuffer);
 		}
 
-		// Sort sprites by zOrder (persists in the array)
-		sortAnimsByZOrder(_room->_currentRoomAnims);
+		presentFrame();
+		updatePaletteAnimations();
 
-		memcpy(_compositeBuffer, _currentBackground, 640 * 400);
+		// if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
+		// 	_chronoManager->countTextDown = true;
+		// 	if (_textDurationFrames-- > 0) {
+		// 		if (alfredState.animState == ALFRED_TALKING) {
+		// 			_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
+		// 		}
+		// 		renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
+		// 	} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
+		// 		_currentTextPageIndex++;
 
-		// Create temporary render order partitioned by Alfred's Y position
-		Common::Array<Sprite *> renderOrder;
-		int alfredY = alfredState.y;
+		// 		int totalChars = 0;
+		// 		for (int i = 0; i < _currentTextPages[_currentTextPageIndex].size(); i++) {
+		// 			totalChars += _currentTextPages[_currentTextPageIndex][i].size();
+		// 		}
+		// 		_textDurationFrames = totalChars / 2;
+		// 	} else {
+		// 		_currentTextPages.clear();
+		// 		_currentTextPageIndex = 0;
+		// 		alfredState.animState = ALFRED_IDLE;
+		// 		isNPCATalking = false;
+		// 		isNPCBTalking = false;
+		// 		_chronoManager->countTextDown = false;
+		// 	}
+		// }
 
-		// First pass: sprites behind Alfred (y <= alfredY)
-		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			if (_room->_currentRoomAnims[i].zOrder > 10) {
-				drawNextFrame(&_room->_currentRoomAnims[i]);
-			}
-		}
-
-		// Draw Alfred here (you'll need to add this)
-		chooseAlfredStateAndDraw();
-
-		// Second pass: sprites in front of Alfred (y > alfredY)
-		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			if (_room->_currentRoomAnims[i].zOrder <= 10) {
-				drawNextFrame(&_room->_currentRoomAnims[i]);
-			}
-		}
-
-		if (_displayPopup) {
-			showActionBalloon(_popupX, _popupY, _currentPopupFrame);
-			if (_currentPopupFrame < 3) {
-				_currentPopupFrame++;
-			} else
-				_currentPopupFrame = 0;
-		}
-
-		// Common::Array<Common::String> testChoices;
-		// testChoices.push_back("First choice");
-		// testChoices.push_back("Second choice");
-		// testChoices.push_back("Third choice");
-		// displayChoices(testChoices, _compositeBuffer);
-
-		memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-
-		if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
-			_chronoManager->countTextDown = true;
-			if (_textDurationFrames-- > 0) {
-				if (alfredState.animState == ALFRED_TALKING) {
-					_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
-				}
-				renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
-			} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
-				_currentTextPageIndex++;
-
-				int totalChars = 0;
-				for (int i = 0; i < _currentTextPages[_currentTextPageIndex].size(); i++) {
-					totalChars += _currentTextPages[_currentTextPageIndex][i].size();
-				}
-				_textDurationFrames = totalChars / 2;
-			} else {
-				_currentTextPages.clear();
-				_currentTextPageIndex = 0;
-				alfredState.animState = ALFRED_IDLE;
-				isNPCATalking = false;
-				isNPCBTalking = false;
-				_chronoManager->countTextDown = false;
-			}
-		}
-
-		if (alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
-			// debug("Switching Alfred state from IDLE to %d", alfredState.nextState);
-			alfredState.animState = alfredState.nextState;
-			alfredState.nextState = ALFRED_IDLE;
-			alfredState.curFrame = 0;
-		}
+		// if (alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
+		// 	// debug("Switching Alfred state from IDLE to %d", alfredState.nextState);
+		// 	alfredState.animState = alfredState.nextState;
+		// 	alfredState.nextState = ALFRED_IDLE;
+		// 	alfredState.curFrame = 0;
+		// }
 
 		// debug("Drawing walkboxes..., %d, _currentRoomWalkboxes.size()=%d",  _currentRoomWalkboxes.size(), _currentRoomWalkboxes.size());
-		for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-			// debug("Drawing walkbox %d", i);
-			WalkBox box = _room->_currentRoomWalkboxes[i];
-			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
-			_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
-		}
-
-		drawPos(_screen, alfredState.x, alfredState.y, 13);
-		drawPos(_screen, alfredState.x, alfredState.y - kAlfredFrameHeight, 13);
-		drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
-
-		if (showShadows) {
-			memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
-		}
-		_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
-		_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
-
-		if (_room->_currentPaletteAnim != nullptr) {
-			if (_room->_currentPaletteAnim->paletteMode == 1) {
-				animateFadePalette(_room->_currentPaletteAnim);
-			} else {
-				animateRotatePalette(_room->_currentPaletteAnim);
-			}
-		}
 
 		_screen->markAllDirty();
 	}
+}
+
+void PelrockEngine::copyBackgroundToBuffer() {
+	// copy background to buffer
+	memcpy(_compositeBuffer, _currentBackground, 640 * 400);
+}
+
+void PelrockEngine::updateAnimations() {
+	// Sort sprites by zOrder (persists in the array)
+	sortAnimsByZOrder(_room->_currentRoomAnims);
+
+	// Create temporary render order partitioned by Alfred's Y position
+	Common::Array<Sprite *> renderOrder;
+	int alfredY = alfredState.y;
+
+	// First pass: sprites behind Alfred (y <= alfredY)
+	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+		if (_room->_currentRoomAnims[i].zOrder > 10) {
+			drawNextFrame(&_room->_currentRoomAnims[i]);
+		}
+	}
+
+	// Draw Alfred here (you'll need to add this)
+	chooseAlfredStateAndDraw();
+
+	// Second pass: sprites in front of Alfred (y > alfredY)
+	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+		if (_room->_currentRoomAnims[i].zOrder <= 10) {
+			drawNextFrame(&_room->_currentRoomAnims[i]);
+		}
+	}
+
+	if (_displayPopup) {
+		showActionBalloon(_popupX, _popupY, _currentPopupFrame);
+		if (_currentPopupFrame < 3) {
+			_currentPopupFrame++;
+		} else
+			_currentPopupFrame = 0;
+	}
+}
+
+void PelrockEngine::presentFrame() {
+	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+	paintDebugLayer();
+	_screen->markAllDirty();
+}
+
+void PelrockEngine::updatePaletteAnimations() {
+	if (_room->_currentPaletteAnim != nullptr) {
+		if (_room->_currentPaletteAnim->paletteMode == 1) {
+			animateFadePalette(_room->_currentPaletteAnim);
+		} else {
+			animateRotatePalette(_room->_currentPaletteAnim);
+		}
+	}
+}
+
+void PelrockEngine::paintDebugLayer() {
+	for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+		// debug("Drawing walkbox %d", i);
+		WalkBox box = _room->_currentRoomWalkboxes[i];
+		drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
+		_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+	}
+
+	drawPos(_screen, alfredState.x, alfredState.y, 13);
+	drawPos(_screen, alfredState.x, alfredState.y - kAlfredFrameHeight, 13);
+	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
+
+	if (showShadows) {
+		memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
+	}
+	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
+	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", alfredState.x, alfredState.y, alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
+	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chronoManager->getFrameCount()), 0, 30, 640, 13);
 }
 
 void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
@@ -470,8 +517,7 @@ void PelrockEngine::lookAt(HotSpot *hotspot) {
 }
 
 void PelrockEngine::open(HotSpot *hotspot) {
-	switch (hotspot->extra)
-	{
+	switch (hotspot->extra) {
 	case 261:
 		_room->placeSticker(_res->getSticker(91), _currentBackground);
 		break;
@@ -1015,8 +1061,7 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 }
 
 void PelrockEngine::conversationLoop() {
-	while(inConversation) {
-
+	while (inConversation) {
 	}
 }
 
@@ -1081,7 +1126,7 @@ void PelrockEngine::gameLoop() {
 	}
 	checkMouseHover();
 
-	if(inConversation) {
+	if (inConversation) {
 		conversationLoop();
 	} else {
 		renderScene();
@@ -1140,18 +1185,17 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 }
 
 bool PelrockEngine::isAlfredUnder(int x, int y) {
-	//TODO: Account for scaling
+	// TODO: Account for scaling
 	int alfredX = alfredState.x;
 	int alfredY = alfredState.y;
 	int alfredW = kAlfredFrameWidth;
 	int alfredH = kAlfredFrameHeight;
 
-	if(alfredY - alfredH > y || alfredY < y || alfredX > x || alfredX + alfredW < x) {
+	if (alfredY - alfredH > y || alfredY < y || alfredX > x || alfredX + alfredW < x) {
 		return false;
 	}
 	return true;
 }
-
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
@@ -1198,7 +1242,7 @@ void PelrockEngine::checkMouseHover() {
 	bool hotspotDetected = false;
 
 	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget( _room->_currentRoomWalkboxes, mouseX, mouseY);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, mouseX, mouseY);
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;
@@ -1217,11 +1261,11 @@ void PelrockEngine::checkMouseHover() {
 	}
 
 	bool alfredDetected = false;
-	if(isAlfredUnder(mouseX, mouseY)) {
+	if (isAlfredUnder(mouseX, mouseY)) {
 		alfredDetected = true;
 	}
 
-	if(alfredDetected) {
+	if (alfredDetected) {
 		changeCursor(ALFRED);
 	} else if (hotspotDetected && exitDetected) {
 		changeCursor(COMBINATION);
@@ -1229,8 +1273,7 @@ void PelrockEngine::checkMouseHover() {
 		changeCursor(HOTSPOT);
 	} else if (exitDetected) {
 		changeCursor(EXIT);
-	}
-	else {
+	} else {
 		changeCursor(DEFAULT);
 	}
 }

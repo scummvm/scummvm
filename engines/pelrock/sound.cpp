@@ -104,7 +104,6 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 	// 	int channel = findFreeChannel();
 	// 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
 	// }
-	// TODO: Play sound file
 }
 
 SoundFormat SoundManager::detectFormat(byte *data, uint32 size) {
@@ -254,9 +253,8 @@ void SoundManager::loadSoundIndex() {
 
 int RANDOM_THRESHOLD = 0x4000;
 
-int SoundManager::tick() {
+int SoundManager::tick(uint32 frameCount) {
 
-	soundFrameCounter++;
 
 	uint16 rand1 = _rng.nextRandom();
 	// uint32 random = g_engine->getRandomNumber(1);
@@ -265,7 +263,7 @@ int SoundManager::tick() {
 		return -1;
 	}
 
-	if((soundFrameCounter & COUNTER_MASK) != COUNTER_MASK){
+	if((frameCount & COUNTER_MASK) != COUNTER_MASK){
 		// debug("No SFX this tick due to counter mask (counter = %d)", soundFrameCounter);
 		return -1;
 	}
@@ -273,8 +271,6 @@ int SoundManager::tick() {
 	uint16 rand2 = _rng.nextRandom();
 	int slot = rand2 & 3;
 	// debug("Slot = %d (rand2 = %u)", slot, rand2);
-
-	soundFrameCounter = 0;
 	// uint32 slot = g_engine->getRandomNumber(4);
 	return slot + 1;
 }

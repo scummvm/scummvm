@@ -18,42 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_CHRONO_H
-#define PELROCK_CHRONO_H
+#ifndef PELROCK_GRAPHICS_H
+#define PELROCK_GRAPHICS_H
 
 #include "common/scummsys.h"
 
 namespace Pelrock {
 
-// const int kTickMs = 18;
-// const int kTickMs = 100;
-// const int kTickMs = 15;
-// const int kTickMs = 33;
-// const int kTickMs = 38;
-const int kTickMs = 55;
-// const int kTickMs = 60;
-const int kHalfTickMultiplier = 2;
-
-class ChronoManager {
-private:
-	uint32 _lastTick = 0;
-	byte _speedMultiplier = 1;
-	uint32 _frameCount = 0;
+class GraphicsManager {
 
 public:
-	ChronoManager();
-	~ChronoManager();
-	void updateChrono();
-	void changeSpeed();
-	void delay(uint32 ms);
-	void waitForKey();
-	uint32 getFrameCount() const {
-		return _frameCount;
-	}
+	GraphicsManager();
+	~GraphicsManager();
 
-	bool _gameTick = false;
-	bool countTextDown = false;
+    void renderScene(bool showDialogOverlay);
 };
 
 } // End of namespace Pelrock
-#endif
+#endif // PELROCK_GRAPHICS_H

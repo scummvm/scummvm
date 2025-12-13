@@ -18,42 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_CHRONO_H
-#define PELROCK_CHRONO_H
+#ifndef PELROCK_DIALOG_H
+#define PELROCK_DIALOG_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 
+#include "pelrock/pelrock.h"
+#include "pelrock/types.h"
 namespace Pelrock {
 
-// const int kTickMs = 18;
-// const int kTickMs = 100;
-// const int kTickMs = 15;
-// const int kTickMs = 33;
-// const int kTickMs = 38;
-const int kTickMs = 55;
-// const int kTickMs = 60;
-const int kHalfTickMultiplier = 2;
-
-class ChronoManager {
+class DialogManager
+{
 private:
-	uint32 _lastTick = 0;
-	byte _speedMultiplier = 1;
-	uint32 _frameCount = 0;
-
+    /* data */
 public:
-	ChronoManager();
-	~ChronoManager();
-	void updateChrono();
-	void changeSpeed();
-	void delay(uint32 ms);
-	void waitForKey();
-	uint32 getFrameCount() const {
-		return _frameCount;
-	}
+    DialogManager(/* args */);
+    ~DialogManager();
 
-	bool _gameTick = false;
-	bool countTextDown = false;
+    void startConversation(ConversationNode &root);
 };
 
 } // End of namespace Pelrock
-#endif
+#endif // PELROCK_DIALOG_H

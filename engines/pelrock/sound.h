@@ -201,7 +201,7 @@ public:
 	}
 	void loadSoundIndex();
 
-	int tick();
+	int tick(uint32 frameCount);
 
 private:
 	void playSound(SonidoFile sound, int volume = 255);
@@ -217,7 +217,6 @@ private:
 	byte _currentMusicTrack = 0;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
-	int soundFrameCounter = 0;
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
 	GameRNG _rng = GameRNG(0);
 };

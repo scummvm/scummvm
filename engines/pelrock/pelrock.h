@@ -66,6 +66,7 @@ private:
 	void walkTo(int x, int y);
 
 	void talk(byte object);
+	void talkLoop();
 	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
 	void sayAlfred(Common::String text);
 	void sayNPC(Sprite *anim, Common::String text, byte color);
@@ -83,7 +84,14 @@ private:
 
 	void drawText(Common::String text, int x, int y, int w, byte color);
 
-	void renderScene();
+	void renderScene(bool showTextOverlay = false);
+	void copyBackgroundToBuffer();
+	void updateAnimations();
+	void presentFrame();
+	void updatePaletteAnimations();
+	void paintDebugLayer();
+
+
 	void animateFadePalette(PaletteAnim *anim);
 	void animateRotatePalette(PaletteAnim *anim);
 	void doAction(byte action, HotSpot *hotspot);
@@ -96,8 +104,9 @@ private:
 	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
 	void drawTalkNPC(Sprite *animSet);
-	void conversationLoop();
+	void playSoundIfNeeded();
 
+	void conversationLoop();
 	void gameLoop();
 	void menuLoop();
 
@@ -180,10 +189,10 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	AlfredState alfredState;
 	ChronoManager *_chronoManager = nullptr;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_soundManager = nullptr;
+	AlfredState alfredState;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
