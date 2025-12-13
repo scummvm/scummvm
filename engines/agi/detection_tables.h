@@ -491,6 +491,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Official port by Sierra
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
+	// King's Quest 3 (Hebrew) [2.14 1988-03-15 3.5"/DOS]
+	// Fan made translation by SegMash, based on the English GoG version
+	GAME_LVFPN("kq3", "", "logdir", "e8b8d392396e2b165957752f5784a279", 390, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_KQ3, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.0 1988-07-27", "kq4dir", "f50f7f997208ca0e35b2650baec43a2d", 0x3086, GID_KQ4),
 
