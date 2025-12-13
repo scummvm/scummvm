@@ -575,8 +575,14 @@ void Gui::aboutDialog() {
 	Graphics::MacDialogButtonArray buttons;
 
 	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
+	// add a dummy button to push volume slider position down
+	// to avoid the overlapping of volume slider with OK button in the about section
+	buttons.push_back(new Graphics::MacDialogButton("", 0, aboutMessage.getTextHeight() + 100, 0, 0));
 
 	AboutDialog about(&_screen, _wm, 450, &aboutMessage, 400, &buttons, 0);
+
+	delete buttons.back();
+	buttons.pop_back();
 
 	int button = about.run();
 
