@@ -41,11 +41,7 @@
 
 namespace Sword1 {
 
-#ifdef SCUMM_BIG_ENDIAN
-#define SPEECH_FLAGS (Audio::FLAG_16BITS)
-#else
 #define SPEECH_FLAGS (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN)
-#endif
 
 Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 	: _rnd("sword1sound") {
