@@ -87,6 +87,7 @@ public:
 	virtual Common::Point calculateOffset();
 	void setActive(bool active) override;
 	void setEditable(bool editable);
+	void setInputPadding(bool enable){ _addInputPadding = enable; }	
 
 	void setColors(uint32 fg, uint32 bg) override;
 	// set fgcolor for line x
@@ -245,6 +246,8 @@ private:
 	ManagedSurface *_cursorSurface2;
 
 	int _editableRow;
+
+	bool _addInputPadding;
 
 	bool _inTextSelection;
 	SelectedText _selectedText;
