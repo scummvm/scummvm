@@ -20,7 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -77,7 +76,7 @@ Common::String PelrockEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
+// Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
@@ -87,6 +86,7 @@ Common::Error PelrockEngine::run() {
 	_room = new RoomManager();
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
+	_dialog = new DialogManager(_screen, _events, _largeFont, _smallFont);
 
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
@@ -152,20 +152,6 @@ void PelrockEngine::init() {
 
 void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
-}
-
-void PelrockEngine::displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer) {
-	int overlayHeight = choices.size() * kChoiceHeight + 2;
-	int overlayY = 400 - overlayHeight;
-	for (int x = 0; x < 640; x++) {
-		for (int y = overlayY; y < 400; y++) {
-			int index = y * 640 + x;
-			compositeBuffer[index] = _room->overlayRemap[compositeBuffer[index]];
-		}
-	}
-	for (int i = 0; i < choices.size(); i++) {
-		drawText(choices[i], 10, overlayY + 2 + i * kChoiceHeight, 620, 15);
-	}
 }
 
 byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
@@ -240,13 +226,13 @@ void PelrockEngine::playSoundIfNeeded() {
 
 	int soundIndex = _sound->tick(_chrono->getFrameCount());
 	if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
-		debug("Playing SFX index %d", soundIndex);
 		_sound->playSound(_room->_roomSfx[3 + soundIndex]);
 	}
 }
 
 void PelrockEngine::renderScene(bool showTextOverlay) {
 
+	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
 		playSoundIfNeeded();
 
@@ -254,10 +240,8 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		updateAnimations();
 
 		if (showTextOverlay) {
-			displayChoices(_currentTextPages[_currentTextPageIndex], _compositeBuffer);
+			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
 		}
-
-		checkMouse();
 
 		presentFrame();
 		updatePaletteAnimations();
@@ -288,13 +272,11 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		// }
 
 		// if (alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
-		// 	// debug("Switching Alfred state from IDLE to %d", alfredState.nextState);
 		// 	alfredState.animState = alfredState.nextState;
 		// 	alfredState.nextState = ALFRED_IDLE;
 		// 	alfredState.curFrame = 0;
 		// }
 
-		// debug("Drawing walkboxes..., %d, _currentRoomWalkboxes.size()=%d",  _currentRoomWalkboxes.size(), _currentRoomWalkboxes.size());
 
 		_screen->markAllDirty();
 	}
@@ -311,7 +293,6 @@ void PelrockEngine::checkMouse() {
 		_events->_longClicked = false;
 	}
 	else if(_events->_rightMouseClicked) {
-		debug("Right mouse clicked - entering settings menu");
 		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		stateGame = SETTINGS;
@@ -321,7 +302,6 @@ void PelrockEngine::checkMouse() {
 //else if (e.type == Common::EVENT_MOUSEMOVE) {
 	// 		mouseX = e.mouse.x;
 	// 		mouseY = e.mouse.y;
-	// 		// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
 	// 	} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 	// 		if (!_isMouseDown) {
 	// 			_mouseClickTime = g_system->getMillis();
@@ -339,7 +319,6 @@ void PelrockEngine::checkMouse() {
 	// }
 	// if (_isMouseDown) {
 	// 	if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
-	// 		debug("long click!");
 	// 		_longClick = true;
 	// 		_isMouseDown = false;
 	// 		checkLongMouseClick(e.mouse.x, e.mouse.y);
@@ -406,7 +385,6 @@ void PelrockEngine::updatePaletteAnimations() {
 
 void PelrockEngine::paintDebugLayer() {
 	for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-		// debug("Drawing walkbox %d", i);
 		WalkBox box = _room->_currentRoomWalkboxes[i];
 		drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
 		_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
@@ -506,38 +484,20 @@ void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 }
 
 void PelrockEngine::talkTo(HotSpot *hotspot) {
-	debug("Talking to object %d", hotspot->index);
-	if (_room->_currentRoomConversations.size() == 0)
-		return;
-
 	Sprite *animSet;
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (i == hotspot->index) {
 			animSet = &_room->_currentRoomAnims[i];
+			break;
 		}
 	}
-
-	ConversationNode selectedNode = _room->_currentRoomConversations[0];
-
-	bool isNPC = selectedNode.speakerId != 13;
-	if (isNPC) {
-		sayNPC(animSet, selectedNode.text, selectedNode.speakerId);
-	}
-	// for(int i= 0; i< _currentRoomConversations.size(); i++) {
-	// _currentRoomConversations
-	// }
-
-	// showDescription(_currentRoomConversations[0].text, x, y, _currentRoomConversations[0].speakerId);
-	// for(int i = 0; i < _currentRoomConversations[0].choices.size(); i++) {
-	// 	int idx = _currentRoomConversations.size() - 1 - i;
-	// 	_smallFont->drawString(_screen, _currentRoomConversations[0].choices[idx].text.c_str(), 0, 400 - ((i + 1) * 12), 640, 14);
-	// }
+	debug("Starting conversation with hotspot %d, animSet pos %d", hotspot->index, animSet->x);
+	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet);
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
-	debug("Look action clicked");
 	walkTo(_currentHotspot->x, _currentHotspot->y);
-	sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
+	// sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
 	_displayPopup = false;
 }
 
@@ -565,7 +525,7 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 	for (size_t i = 0; i < lines.size(); i++) {
 		int textX = baseX - (maxW / 2);
 		int textY = baseY - (lineSize * 25) + (i * 25);
-		drawText(lines[i], textX, textY, maxW, color);
+		drawText(_largeFont, lines[i], textX, textY, maxW, color);
 	}
 }
 
@@ -652,7 +612,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.curFrame++;
 		break;
 	default:
-		// debug("Drawing Alfred idle frame for direction %d", alfredState.direction);
 		drawAlfred(_res->alfredIdle[alfredState.direction]);
 		break;
 	}
@@ -678,10 +637,8 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (scaleIndex < 0) {
 		scaleIndex = 0;
 	}
-	// debug("Scaling Alfred frame to final size (%d x %d) from scale factor %.2f", finalWidth, finalHeight, scaleFactor);
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
-	// debug("lines to skip = %d, finalHeight = %d, finalWidth = %d for position (%d, %d)", linesToSkip, finalHeight, finalWidth, xAlfred, yAlfred);
 
 	int shadowPos = alfredState.y; // - finalHeight;
 	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + alfredState.x] != 0xFF;
@@ -696,7 +653,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 			idealSkipPositions.push_back(idealPos);
 		}
 
-		// debug("Height scaling table size =%d", _heightScalingTable.size());
 		Common::Array<int> tableSkipPositions;
 		for (int scanline = 0; scanline < kAlfredFrameHeight; scanline++) {
 			if (_heightScalingTable[scaleIndex][scanline] != 0) {
@@ -704,9 +660,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 			}
 		}
 
-		// debug("Table skip positions:");
 		// for (size_t i = 0; i < tableSkipPositions.size(); i++) {
-		// 	debug("  %d", tableSkipPositions[i]);
 		// }
 
 		Common::Array<int> skipTheseLines;
@@ -748,7 +702,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					int srcIndex = srcY * kAlfredFrameWidth + srcX;
 					int outIndex = outY * finalWidth + outX;
 					if (outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
-						debug("Index out of bounds!");
 					} else
 						finalBuf[outIndex] = buf[srcIndex];
 				}
@@ -869,7 +822,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_displayPopup = true;
 		_currentPopupFrame = 0;
 		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
-		debug("Current hotspot (x=%d, y=%d) with extra = %d type: %d, desc= %s", _currentHotspot->x, _currentHotspot->y, _currentHotspot->extra, _currentHotspot->type, _room->_currentRoomDescriptions[_currentHotspot->index].text.c_str());
 	}
 }
 
@@ -881,7 +833,6 @@ void PelrockEngine::checkMouseClickOnSettings(int x, int y) {
 			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
 			selectedInvIndex = curInventoryPage * 4 + i;
 			_menuText = _res->getInventoryObject(selectedInvIndex).description;
-			debug("Selected inventory index: %d", selectedInvIndex);
 			selectedItem = true;
 			return;
 		}
@@ -1080,19 +1031,11 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 		curFrame = 0;
 	}
 	byte *frame = index ? animHeader->animB[curFrame] : animHeader->animA[curFrame];
-	// debug("Talking NPC frame %d/%d, x=%d, y=%d, w=%d, h=%d", curFrame, numFrames, x, y, w, h);
 
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
 }
 
-void PelrockEngine::conversationLoop() {
-	while (inConversation) {
-
-	}
-}
-
 void PelrockEngine::gameLoop() {
-	_chrono->updateChrono();
 	_events->pollEvent();
 	// while (g_system->getEventManager()->pollEvent(e)) {
 	// 	if (e.type == Common::EVENT_KEYDOWN) {
@@ -1115,46 +1058,18 @@ void PelrockEngine::gameLoop() {
 	// 		case Common::KEYCODE_z:
 	// 			showShadows = !showShadows;
 	// 			break;
-	// 		case Common::KEYCODE_y:
-	// 			alfredState.x = 193;
-	// 			alfredState.y = 382;
-	// 			walkTo(377, 318);
-	// 			break;
 	// 		default:
 	// 			break;
 	// 		}
-	// 	} else if (e.type == Common::EVENT_MOUSEMOVE) {
-	// 		mouseX = e.mouse.x;
-	// 		mouseY = e.mouse.y;
-	// 		// debug(3, "Mouse moved to (%d,%d)", mouseX, mouseY);
-	// 	} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-	// 		if (!_isMouseDown) {
-	// 			_mouseClickTime = g_system->getMillis();
-	// 			_isMouseDown = true;
-	// 		}
-	// 	} else if (e.type == Common::EVENT_LBUTTONUP) {
-	// 		_isMouseDown = false;
-	// 		checkMouseClick(e.mouse.x, e.mouse.y);
-	// 		_displayPopup = false;
-	// 		_longClick = false;
-	// 	} else if (e.type == Common::EVENT_RBUTTONUP) {
-	// 		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
-	// 		stateGame = SETTINGS;
 	// 	}
-	// }
-	// if (_isMouseDown) {
-	// 	if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
-	// 		debug("long click!");
-	// 		_longClick = true;
-	// 		_isMouseDown = false;
-	// 		checkLongMouseClick(e.mouse.x, e.mouse.y);
-	// 	}
-	// }
-	// checkMouseHover();
 
 	if (inConversation) {
-		conversationLoop();
+		// TODO: Pass actual conversation data from room
+		// For now, using nullptr to disable - actual data needs to be loaded
+		_dialog->startConversation(nullptr, 0);
+		inConversation = false;
 	} else {
+		checkMouse();
 		renderScene();
 	}
 }
@@ -1232,7 +1147,6 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 		VerbIcon actionClicked = isActionUnder(x, y);
 		if (actionClicked != NO_ACTION) {
-			debug("Action %d clicked", actionClicked);
 			doAction(actionClicked, _currentHotspot);
 			_displayPopup = false;
 			return;
@@ -1252,7 +1166,6 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 			alfredState.x = exit->targetX;
 			alfredState.y = exit->targetY;
 
-			debug("Placing character at %d, %d", exit->targetX, exit->targetY);
 			setScreen(exit->targetRoom, exit->dir);
 		} else {
 			walkTo(walkTarget.x, walkTarget.y);
@@ -1304,235 +1217,141 @@ void PelrockEngine::checkMouseHover() {
 	}
 }
 
-// Common::Point PelrockEngine::calculateWalkTarget(int mouseX, int mouseY) {
-// 	// Starting point for pathfinding
-// 	int sourceX = mouseX;
-// 	int sourceY = mouseY;
-
-// 	// TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
-// 	// For now, just use mouse position
-
-// 	// Find nearest walkable point in walkboxes
-// 	uint32 minDistance = 0xFFFFFFFF;
-// 	Common::Point bestTarget(sourceX, sourceY);
-
-// 	// for (Common::List<WalkBox>::iterator it = _currentRoomWalkboxes.begin();
-// 	//  it != _currentRoomWalkboxes.end(); ++it) {
-// 	for (size_t i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-
-// 		// Calculate distance from source point to this walkbox (Manhattan distance)
-// 		int dx = 0;
-// 		int dy = 0;
-
-// 		// Calculate horizontal distance
-// 		if (sourceX < _room->_currentRoomWalkboxes[i].x) {
-// 			dx = _room->_currentRoomWalkboxes[i].x - sourceX;
-// 		} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
-// 			dx = sourceX - (_room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w);
-// 		}
-// 		// else: sourceX is inside walkbox horizontally, dx = 0
-
-// 		// Calculate vertical distance
-// 		if (sourceY < _room->_currentRoomWalkboxes[i].y) {
-// 			dy = _room->_currentRoomWalkboxes[i].y - sourceY;
-// 		} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
-// 			dy = sourceY - (_room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h);
-// 		}
-// 		// else: sourceY is inside walkbox vertically, dy = 0
-
-// 		uint32 distance = dx + dy;
-
-// 		if (distance < minDistance) {
-// 			minDistance = distance;
-
-// 			// Calculate target point (nearest point on walkbox to source)
-// 			int targetX = sourceX;
-// 			int targetY = sourceY;
-
-// 			if (sourceX < _room->_currentRoomWalkboxes[i].x) {
-// 				targetX = _room->_currentRoomWalkboxes[i].x;
-// 			} else if (sourceX > _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w) {
-// 				targetX = _room->_currentRoomWalkboxes[i].x + _room->_currentRoomWalkboxes[i].w;
-// 			}
-
-// 			if (sourceY < _room->_currentRoomWalkboxes[i].y) {
-// 				targetY = _room->_currentRoomWalkboxes[i].y;
-// 			} else if (sourceY > _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h) {
-// 				targetY = _room->_currentRoomWalkboxes[i].y + _room->_currentRoomWalkboxes[i].h;
-// 			}
-
-// 			bestTarget.x = targetX;
-// 			bestTarget.y = targetY;
-// 		}
+// void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
+// 	isNPCATalking = true;
+// 	whichNPCTalking = anim->extra;
+// 	_currentTextPages = wordWrap(text);
+// 	_textColor = color;
+// 	int totalChars = 0;
+// 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
+// 		totalChars += _currentTextPages[0][i].size();
 // 	}
-
-// 	return bestTarget;
+// 	_textPos = Common::Point(anim->x, anim->y - 10);
+// 	_textDurationFrames = totalChars / 2;
 // }
 
-void PelrockEngine::drawText(Common::String text, int x, int y, int w, byte color) {
-	Common::Rect rect = _largeFont->getBoundingBox(text.c_str());
-	if (x + rect.width() > 640) {
-		x = 640 - rect.width() - 2;
-	}
-	if (y + rect.height() > 400) {
-		y = 400 - rect.height();
-	}
-	if (x < 0) {
-		x = 0;
-	}
-	if (y < 0) {
-		y = 0;
-	}
-	// Draw main text on top
-	_largeFont->drawString(_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
-}
+// void PelrockEngine::sayAlfred(Common::String text) {
+// 	alfredState.nextState = ALFRED_TALKING;
+// 	alfredState.curFrame = 0;
+// 	_currentTextPages = wordWrap(text);
+// 	_textColor = 13;
+// 	int totalChars = 0;
+// 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
+// 		totalChars += _currentTextPages[0][i].size();
+// 	}
+// 	_textDurationFrames = totalChars / 2;
+// }
 
-void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
-	isNPCATalking = true;
-	whichNPCTalking = anim->extra;
-	debug("NPC says %s, color = %d", text.c_str(), color);
-	_currentTextPages = wordWrap(text);
-	_textColor = color;
-	int totalChars = 0;
-	for (int i = 0; i < _currentTextPages[0].size(); i++) {
-		totalChars += _currentTextPages[0][i].size();
-	}
-	debug("Settijng textpos to %d, %d", anim->x, anim->y - 10);
-	_textPos = Common::Point(anim->x, anim->y - 10);
-	_textDurationFrames = totalChars / 2;
-}
+// int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
+// 	// return word_length, is_end
+// 	int wordLength = 0;
+// 	int pos = startPos;
+// 	while (pos < text.size()) {
+// 		char char_byte = text[pos];
+// 		if (char_byte == CHAR_SPACE || isEndMarker(char_byte)) {
+// 			break;
+// 		}
+// 		wordLength++;
+// 		pos++;
+// 	}
+// 	// Check if we hit an end marker
+// 	if (pos < text.size() && isEndMarker(text[pos])) {
+// 		isEnd = true;
+// 	}
+// 	// Count ALL trailing spaces as part of this word
+// 	if (pos < text.size() && !isEnd) {
+// 		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
+// 			wordLength += 3;
+// 		} else {
+// 			// Count all consecutive spaces
+// 			while (pos < text.size() && text[pos] == CHAR_SPACE) {
+// 				wordLength++;
+// 				pos++;
+// 			}
+// 		}
+// 	}
+// 	return wordLength;
+// }
 
-void PelrockEngine::sayAlfred(Common::String text) {
-	alfredState.nextState = ALFRED_TALKING;
-	alfredState.curFrame = 0;
-	debug("Alfred says: %s", text.c_str());
-	_currentTextPages = wordWrap(text);
-	_textColor = 13;
-	int totalChars = 0;
-	for (int i = 0; i < _currentTextPages[0].size(); i++) {
-		totalChars += _currentTextPages[0][i].size();
-	}
-	_textDurationFrames = totalChars / 2;
-}
+// Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
 
-bool isEndMarker(char char_byte) {
-	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
-}
+// 	Common::Array<Common::Array<Common::String>> pages;
+// 	Common::Array<Common::String> currentPage;
+// 	Common::Array<Common::String> currentLine;
+// 	int charsRemaining = MAX_CHARS_PER_LINE;
+// 	int position = 0;
+// 	int currentLineNum = 0;
+// 	while (position < text.size()) {
+// 		bool isEnd = false;
+// 		int wordLength = calculateWordLength(text, position, isEnd);
+// 		// # Extract the word (including trailing spaces)
+// 		// word = text[position:position + word_length].decode('latin-1', errors='replace')
+// 		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
+// 		// # Key decision: if word_length > chars_remaining, wrap to next line
+// 		if (wordLength > charsRemaining) {
+// 			// Word is longer than the entire line - need to split
+// 			currentPage.push_back(joinStrings(currentLine, ""));
+// 			currentLine.clear();
+// 			charsRemaining = MAX_CHARS_PER_LINE;
+// 			currentLineNum++;
 
-int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
-	// return word_length, is_end
-	int wordLength = 0;
-	int pos = startPos;
-	while (pos < text.size()) {
-		char char_byte = text[pos];
-		if (char_byte == CHAR_SPACE || isEndMarker(char_byte)) {
-			break;
-		}
-		wordLength++;
-		pos++;
-	}
-	// Check if we hit an end marker
-	if (pos < text.size() && isEndMarker(text[pos])) {
-		isEnd = true;
-	}
-	// Count ALL trailing spaces as part of this word
-	if (pos < text.size() && !isEnd) {
-		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
-			wordLength += 3;
-		} else {
-			// Count all consecutive spaces
-			while (pos < text.size() && text[pos] == CHAR_SPACE) {
-				wordLength++;
-				pos++;
-			}
-		}
-	}
-	return wordLength;
-}
+// 			if (currentLineNum >= MAX_LINES) {
+// 				pages.push_back(currentPage);
+// 				currentPage.clear();
+// 				currentLineNum = 0;
+// 			}
+// 		}
+// 		// Add word to current line
+// 		currentLine.push_back(word);
+// 		charsRemaining -= wordLength;
 
-Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
+// 		if (charsRemaining == 0 && isEnd) {
+// 			Common::String lineText = joinStrings(currentLine, "");
+// 			while (lineText.lastChar() == CHAR_SPACE) {
+// 				lineText = lineText.substr(0, lineText.size() - 1);
+// 			}
+// 			int trailingSpaces = currentLine.size() - lineText.size();
+// 			if (trailingSpaces > 0) {
+// 				currentPage.push_back(lineText);
+// 				//  current_line = [' ' * trailing_spaces]
+// 				Common::String currentLine(trailingSpaces, ' ');
+// 				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
+// 				currentLineNum += 1;
 
-	Common::Array<Common::Array<Common::String>> pages;
-	Common::Array<Common::String> currentPage;
-	Common::Array<Common::String> currentLine;
-	int charsRemaining = MAX_CHARS_PER_LINE;
-	int position = 0;
-	int currentLineNum = 0;
-	while (position < text.size()) {
-		bool isEnd = false;
-		int wordLength = calculateWordLength(text, position, isEnd);
-		// # Extract the word (including trailing spaces)
-		// word = text[position:position + word_length].decode('latin-1', errors='replace')
-		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
-		// # Key decision: if word_length > chars_remaining, wrap to next line
-		if (wordLength > charsRemaining) {
-			// Word is longer than the entire line - need to split
-			currentPage.push_back(joinStrings(currentLine, ""));
-			currentLine.clear();
-			charsRemaining = MAX_CHARS_PER_LINE;
-			currentLineNum++;
+// 				if (currentLineNum >= MAX_LINES) {
+// 					pages.push_back(currentPage);
+// 					currentPage.clear();
+// 					currentLineNum = 0;
+// 				}
+// 			}
+// 		}
 
-			if (currentLineNum >= MAX_LINES) {
-				pages.push_back(currentPage);
-				currentPage.clear();
-				currentLineNum = 0;
-			}
-		}
-		// Add word to current line
-		currentLine.push_back(word);
-		charsRemaining -= wordLength;
-
-		if (charsRemaining == 0 && isEnd) {
-			Common::String lineText = joinStrings(currentLine, "");
-			while (lineText.lastChar() == CHAR_SPACE) {
-				lineText = lineText.substr(0, lineText.size() - 1);
-			}
-			int trailingSpaces = currentLine.size() - lineText.size();
-			if (trailingSpaces > 0) {
-				currentPage.push_back(lineText);
-				//  current_line = [' ' * trailing_spaces]
-				Common::String currentLine(trailingSpaces, ' ');
-				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
-				currentLineNum += 1;
-
-				if (currentLineNum >= MAX_LINES) {
-					pages.push_back(currentPage);
-					currentPage.clear();
-					currentLineNum = 0;
-				}
-			}
-		}
-
-		position += wordLength;
-		if (isEnd) {
-			// End of sentence/paragraph/page
-			break;
-		}
-	}
-	if (currentLine.empty() == false) {
-		Common::String lineText = joinStrings(currentLine, "");
-		while (lineText.lastChar() == CHAR_SPACE) {
-			lineText = lineText.substr(0, lineText.size() - 1);
-		}
-		currentPage.push_back(lineText);
-	}
-	if (currentPage.empty() == false) {
-		pages.push_back(currentPage);
-	}
-	debug("Word wrap produced %d pages", pages.size());
-	for (int i = 0; i < pages.size(); i++) {
-		debug(" Page %d:", i);
-		for (int j = 0; j < pages[i].size(); j++) {
-			debug("   Line %d: %s", j, pages[i][j].c_str());
-		}
-	}
-	return pages;
-}
+// 		position += wordLength;
+// 		if (isEnd) {
+// 			// End of sentence/paragraph/page
+// 			break;
+// 		}
+// 	}
+// 	if (currentLine.empty() == false) {
+// 		Common::String lineText = joinStrings(currentLine, "");
+// 		while (lineText.lastChar() == CHAR_SPACE) {
+// 			lineText = lineText.substr(0, lineText.size() - 1);
+// 		}
+// 		currentPage.push_back(lineText);
+// 	}
+// 	if (currentPage.empty() == false) {
+// 		pages.push_back(currentPage);
+// 	}
+// 	for (int i = 0; i < pages.size(); i++) {
+// 		for (int j = 0; j < pages[i].size(); j++) {
+// 		}
+// 	}
+// 	return pages;
+// }
 
 void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_sound->stopAllSounds();
 	Common::File roomFile;
-	debug("Loading room %s number %d", _room->getRoomName(number).c_str(), number);
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
 		error("Could not open ALFRED.1");
 		return;

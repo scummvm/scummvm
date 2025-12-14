@@ -38,6 +38,7 @@
 
 #include "pelrock/chrono.h"
 #include "pelrock/detection.h"
+#include "pelrock/dialog.h"
 #include "pelrock/events.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
@@ -55,12 +56,12 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	RoomManager *_room = nullptr;
 	ResourceManager *_res = nullptr;
 	ChronoManager *_chrono = nullptr;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_sound = nullptr;
 	PelrockEventManager *_events = nullptr;
+	DialogManager *_dialog = nullptr;
 
 	void init();
 	void loadAnims();
@@ -71,7 +72,6 @@ private:
 	void walkTo(int x, int y);
 
 	void talk(byte object);
-	void displayChoices(Common::Array<Common::String> choices, byte *compositeBuffer);
 	void sayAlfred(Common::String text);
 	void sayNPC(Sprite *anim, Common::String text, byte color);
 
@@ -86,9 +86,6 @@ private:
 	Sprite *isSpriteUnder(int x, int y);
 	void showActionBalloon(int posx, int posy, int curFrame);
 
-	void drawText(Common::String text, int x, int y, int w, byte color);
-
-	void renderScene(bool showTextOverlay = false);
 	void checkMouse();
 	void copyBackgroundToBuffer();
 	void updateAnimations();
@@ -111,7 +108,6 @@ private:
 	void drawTalkNPC(Sprite *animSet);
 	void playSoundIfNeeded();
 
-	void conversationLoop();
 	void gameLoop();
 	void menuLoop();
 
@@ -142,7 +138,6 @@ private:
 	bool isAlkfredWalking = false;
 
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
-	byte *_compositeBuffer;             // Working composition buffer
 
 	bool _displayPopup = false;
 	byte _iconBlink = 0;
@@ -152,8 +147,6 @@ private:
 
 	HotSpot *_currentHotspot = nullptr;
 
-	SmallFont *_smallFont = nullptr;
-	LargeFont *_largeFont = nullptr;
 
 	Common::Point _curWalkTarget;
 	bool isNPCATalking = false;
@@ -187,7 +180,13 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	RoomManager *_room = nullptr;
 	AlfredState alfredState;
+	byte *_compositeBuffer;             // Working composition buffer
+
+	SmallFont *_smallFont = nullptr;
+	LargeFont *_largeFont = nullptr;
+	void renderScene(bool showTextOverlay = false);
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);

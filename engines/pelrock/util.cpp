@@ -19,7 +19,9 @@
  *
  */
 #include "common/stream.h"
+#include "graphics/font.h"
 
+#include "pelrock/pelrock.h"
 #include "pelrock/types.h"
 #include "pelrock/util.h"
 #include "util.h"
@@ -50,11 +52,64 @@ void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
 		for (int px = 0; px < w; px++) {
 			int destIdx = (y + py) * 640 + (x + px);
 			int srcIdx = py * w + px;
-			int color  = *((byte *)surface->getBasePtr(px, py));
-			if(color != 0)
-			screenBuffer[destIdx] = color;
+			int color = *((byte *)surface->getBasePtr(px, py));
+			if (color != 0)
+				screenBuffer[destIdx] = color;
 		}
 	}
+}
+
+void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align) {
+	Common::Rect rect = font->getBoundingBox(text.c_str());
+	Graphics::Surface *surface = new Graphics::Surface();
+	int bboxW = rect.width();
+	int bboxH = rect.height();
+
+	surface->create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
+
+	if (x + bboxW > 640) {
+		x = 640 - bboxW - 2;
+	}
+	if (y + bboxH > 400) {
+		y = 400 - bboxH - 2;
+	}
+	if (x < 0) {
+		x = 0;
+	}
+	if (y < 0) {
+		y = 0;
+	}
+
+	// Draw main text on top
+	font->drawString(surface, text.c_str(), 0, 0, bboxW, color, align);
+	drawRect(surface, 0, 0, bboxW - 1, bboxH - 1, color);
+	for (int py = 0; py < bboxH; py++) {
+		for (int px = 0; px < bboxW; px++) {
+			int destIdx = (y + py) * 640 + (x + px);
+			int srcIdx = py * bboxW + px;
+			int color = *((byte *)surface->getBasePtr(px, py));
+			if (color != 0)
+				screenBuffer[destIdx] = color;
+		}
+	}
+}
+
+void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, byte color) {
+	Common::Rect rect = font->getBoundingBox(text.c_str());
+	if (x + rect.width() > 640) {
+		x = 640 - rect.width() - 2;
+	}
+	if (y + rect.height() > 400) {
+		y = 400 - rect.height();
+	}
+	if (x < 0) {
+		x = 0;
+	}
+	if (y < 0) {
+		y = 0;
+	}
+	// Draw main text on top
+	font->drawString(g_engine->_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
 }
 
 size_t rleDecompress(
@@ -246,19 +301,29 @@ void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color) {
 }
 
 byte decodeChar(byte b) {
+	byte returnedChar = 0;
 	switch (b) {
-		case 0x82: return special_chars[1];
-		case 0x83: return special_chars[0];
+	case 0x82:
+		returnedChar = special_chars[1];
+	case 0x83:
+		returnedChar = special_chars[0];
 
-		case 0x80: return special_chars[3]; // n tilde
-		case 0x7F: return special_chars[4];
-		case 0x7E: return special_chars[5];
-		case 0x7D: return special_chars[6];
-		case 0x7C: return special_chars[7];
-		case 0x7B: return special_chars[8];
-		default:
-    		return b;
+	case 0x80:
+		returnedChar = special_chars[3]; // n tilde
+	case 0x7F:
+		returnedChar = special_chars[4];
+	case 0x7E:
+		returnedChar = special_chars[5];
+	case 0x7D:
+		returnedChar = special_chars[6];
+	case 0x7C:
+		returnedChar = special_chars[7];
+	case 0x7B:
+		returnedChar = special_chars[8];
+	default:
+		return returnedChar = b;
 	}
+	return returnedChar;
 }
 
 } // End of namespace Pelrock

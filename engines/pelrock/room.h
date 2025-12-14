@@ -49,43 +49,41 @@ public:
 		return "Unknown Room";
 	}
 
+	byte _currentRoomNumber = 0;
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<Sprite> _currentRoomAnims;
 	Common::Array<Exit> _currentRoomExits;
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
-	Common::Array<ConversationNode> _currentRoomConversations;
+
 	TalkingAnimHeader _talkingAnimHeader;
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
 	byte _roomPalette[768];
 	byte alfredRemap[256];
 	byte overlayRemap[256];
-	Common::StringArray _roomNames;
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
-	byte _currentRoomNumber = 0;
 	PaletteAnim *_currentPaletteAnim = nullptr;
 	Common::Array<Sticker> _currentRoomStickers;
+	byte *_conversationData = nullptr;
+	size_t _conversationDataSize = 0;
 
 private:
 	Common::Array<Sprite> loadRoomAnimations(Common::File *roomFile, int roomOffset);
 	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
 	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
 	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
-	Common::Array<Description> loadRoomDescriptions(Common::File *roomFile, int roomOffset, uint32_t &outPos);
+	Common::Array<Description> loadRoomTexts(Common::File *roomFile, int roomOffset);
 
-	Common::String getControlName(byte b);
-	Common::String cleanText(const Common::String &text);
-	Common::Array<ConversationElement> parseConversationElements(const byte *convData, uint32 size);
-	Common::Array<ConversationNode> buildTreeStructure(const Common::Array<ConversationElement> &elements);
-	Common::Array<ConversationNode> loadConversations(Common::File *roomFile, int roomOffset, uint32_t startPos);
 	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);
 	Common::StringArray loadRoomNames();
 	byte loadMusicTrackForRoom(Common::File *roomFile, int roomOffset);
 	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
+
+	Common::StringArray _roomNames;
 };
 
 } // End of namespace Pelrock

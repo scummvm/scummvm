@@ -21,22 +21,53 @@
 #ifndef PELROCK_DIALOG_H
 #define PELROCK_DIALOG_H
 
-#include "common/array.h"
 #include "common/scummsys.h"
+#include "graphics/screen.h"
 
-#include "pelrock/pelrock.h"
+#include "pelrock/events.h"
+#include "pelrock/fonts/large_font.h"
+#include "pelrock/fonts/small_font.h"
 #include "pelrock/types.h"
+
 namespace Pelrock {
+/**
+ * Structure to hold a parsed choice option
+ */
+struct ChoiceOption {
+	int index;
+	Common::String text;
+	bool isDisabled;
+	uint32 dataOffset;
 
-class DialogManager
-{
+	ChoiceOption() : index(-1), isDisabled(false), dataOffset(0) {}
+};
+
+class DialogManager {
 private:
-    /* data */
-public:
-    DialogManager(/* args */);
-    ~DialogManager();
+	Graphics::Screen *_screen = nullptr;
+	PelrockEventManager *_events = nullptr;
+	LargeFont *_largeFont = nullptr;
+	SmallFont *_smallFont = nullptr;
+	Sprite *_curSprite = nullptr;
 
-    void startConversation(ConversationNode &root);
+	// Private helper functions for conversation parsing
+	void displayDialogue(const Common::String &text, byte speakerId);
+	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos,
+						 Common::String &outText, byte &outSpeakerId);
+	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> &outChoices);
+
+	void checkMouse();
+
+public:
+	DialogManager(Graphics::Screen *screen, PelrockEventManager *events,
+				  LargeFont *largeFont, SmallFont *smallFont);
+	~DialogManager();
+
+	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
+	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
+	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
+
+	Common::Array<ChoiceOption> *_currentChoices = nullptr;
 };
 
 } // End of namespace Pelrock

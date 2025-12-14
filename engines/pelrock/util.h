@@ -21,12 +21,11 @@
 #ifndef PELROCK_UTIL_H
 #define PELROCK_UTIL_H
 
-#include "common/array.h"
 #include "common/stream.h"
 #include "common/types.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
-
 
 namespace Pelrock {
 
@@ -39,23 +38,23 @@ void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth
 void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color);
 void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
 void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color);
+void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, byte color);
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
 void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
 
-
 static const int special_chars[] = {
-    131, // inverted ?
-    130, // inverted !
-    129, // capital N tilde
-    128, // small n tilde
-    127, // small u tilde
-    126, // small o tilde
-    125, // small i tilde
-    124, // small e tilde
-    123, // small a tilde
+	131, // inverted ?
+	130, // inverted !
+	129, // capital N tilde
+	128, // small n tilde
+	127, // small u tilde
+	126, // small o tilde
+	125, // small i tilde
+	124, // small e tilde
+	123, // small a tilde
 };
-
 
 } // End of namespace Pelrock
 #endif // PELROCK_UTIL_H

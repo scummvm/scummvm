@@ -84,15 +84,6 @@ const int kChoiceHeight = 16; // Height of each choice line in pixels
 #define MAX_CHARS_PER_LINE 0x2F // 47 characters
 #define MAX_LINES 5             // Maximum number of lines per page (0-indexed check against 4)
 
-// Control character codes (negative values in signed char)
-#define CHAR_SPACE 0x20        /* ' ' */
-#define CHAR_END_MARKER_1 0xFD /* -3 (end of text marker) */
-#define CHAR_END_MARKER_2 0xF4 /* -0xC (alternate end marker) */
-#define CHAR_END_MARKER_3 0xF8 /* -8 (another end marker) */
-#define CHAR_END_MARKER_4 0xF0 /* -0x10 (another end marker) */
-#define CHAR_NEWLINE 0xF6      /* -10 (newline marker) */
-#define CHAR_PAGE_BREAK 0xF9   /* marker inserted when switching pages */
-
 #define ALFRED_COLOR 0x0D
 
 const byte kIconBlinkPeriod = 4;
