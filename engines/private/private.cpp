@@ -55,7 +55,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
 	  _framePalette(nullptr),
-	  _subtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
+	  _subtitles(nullptr), _subtitledSound(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
 	_highlightMasks = false;
@@ -99,9 +99,10 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_AMRadioArea.clear();
 	_phoneArea.clear();
 	_AMRadio.path = "inface/radio/comm_/";
+	_AMRadio.sound = &_AMRadioSound;
 	_policeRadio.path = "inface/radio/police/";
+	_policeRadio.sound = &_policeRadioSound;
 	_phonePrefix = "inface/telephon/";
-	_phoneCallSound = "phone.wav";
 
 	// Dossiers
 	_dossierPage = 0;
@@ -455,7 +456,7 @@ Common::Error PrivateEngine::run() {
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
 			if (_videoDecoder->getCurFrame() == 0) {
-				stopSound(true);
+				stopSounds();
 			}
 
 			if (_videoDecoder->endOfVideo()) {
@@ -500,8 +501,8 @@ Common::Error PrivateEngine::run() {
 		_system->updateScreen();
 		_system->delayMillis(10);
 		if (_subtitles != nullptr) {
-			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
-				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false, _sfxSubtitles);
+			if (_subtitledSound != nullptr && isSoundPlaying(*_subtitledSound)) {
+				_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
 			} else {
 				destroySubtitles();
 			}
@@ -633,7 +634,8 @@ void PrivateEngine::completePoliceBust() {
 	// Play audio on the second bust movie
 	if (kPoliceBustVideos[_policeBustMovieIndex] == 2) {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
-		playSound(s, 1, true, false);
+		stopSounds();
+		playForegroundSound(s);
 		changeCursor("default");
 		waitForSoundsToStop();
 	}
@@ -659,8 +661,7 @@ void PrivateEngine::checkPoliceBust() {
 
 	if (!_policeSirenPlayed) {
 		// Play siren
-		stopSound(true);
-		playSound(_sirenSound, 1, false, false);
+		playForegroundSound(_sirenSound);
 
 		_policeSirenPlayed = true;
 		_numberOfClicks = _numberClicksAfterSiren;
@@ -901,7 +902,7 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 					_pausedVideo = _videoDecoder;
 				}
 
-				_pausedBackgroundSound = _backgroundSound;
+				_pausedBackgroundSoundName = _bgSound.name;
 
 				_compositeSurface->fillRect(_screenRect, 0);
 				_compositeSurface->setPalette(_framePalette, 0, 256);
@@ -929,9 +930,9 @@ void PrivateEngine::resumeGame() {
 		_needToDrawScreenFrame = true;
 	}
 
-	if (!_pausedBackgroundSound.empty()) {
-		playSound(_pausedBackgroundSound, 0, false, true);
-		_pausedBackgroundSound.clear();
+	if (!_pausedBackgroundSoundName.empty()) {
+		playBackgroundSound(_pausedBackgroundSoundName);
+		_pausedBackgroundSoundName.clear();
 	}
 }
 
@@ -950,7 +951,7 @@ bool PrivateEngine::selectExit(Common::Point mousePos) {
 			if (cs < rs && !e.nextSetting.empty()) { // TODO: check this
 				// an item was not taken
 				if (_toTake) {
-					playSound(getLeaveSound(), 1, false, false);
+					playForegroundSound(_takeLeaveSound, getLeaveSound());
 					_toTake = false;
 				}
 
@@ -987,7 +988,7 @@ bool PrivateEngine::selectMask(Common::Point mousePos) {
 				// an item was taken
 				if (_toTake) {
 					addInventory(m.inventoryItem, *(m.flag1->name));
-					playSound(getTakeSound(), 1, false, false);
+					playForegroundSound(_takeLeaveSound, getTakeSound());
 					_toTake = false;
 					_haveTakenItem = true;
 				}
@@ -1056,7 +1057,7 @@ bool PrivateEngine::selectDiaryNextPage(Common::Point mousePos) {
 		_currentDiaryPage++;
 		_nextSetting = _diaryNextPageExit.nextSetting;
 
-		playSound(getPaperShuffleSound(), 1, false, false);
+		playForegroundSound(getPaperShuffleSound());
 
 		return true;
 	}
@@ -1073,7 +1074,7 @@ bool PrivateEngine::selectDiaryPrevPage(Common::Point mousePos) {
 		_currentDiaryPage--;
 		_nextSetting = _diaryPrevPageExit.nextSetting;
 
-		playSound(getPaperShuffleSound(), 1, false, false);
+		playForegroundSound(getPaperShuffleSound());
 
 		return true;
 	}
@@ -1338,7 +1339,7 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 
 	if (inMask(_dossierNextSuspectMask.surf, mousePos)) {
 		if ((_dossierSuspect + 1) < _dossiers.size()) {
-			playSound(getPaperShuffleSound(), 1, false, false);
+			playForegroundSound(getPaperShuffleSound());
 			_dossierSuspect++;
 			_dossierPage = 0;
 			
@@ -1356,7 +1357,7 @@ bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
 
 	if (inMask(_dossierPrevSheetMask.surf, mousePos)) {
 		if (_dossierPage == 1) {
-			playSound(getPaperShuffleSound(), 1, false, false);
+			playForegroundSound(getPaperShuffleSound());
 			_dossierPage = 0;
 			
 			// reload kDossierOpen
@@ -1374,7 +1375,7 @@ bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
 	if (inMask(_dossierNextSheetMask.surf, mousePos)) {
 		DossierInfo m = _dossiers[_dossierSuspect];
 		if (_dossierPage == 0 && !m.page2.empty()) {
-			playSound(getPaperShuffleSound(), 1, false, false);
+			playForegroundSound(getPaperShuffleSound());
 			_dossierPage = 1;
 			
 			// reload kDossierOpen
@@ -1391,7 +1392,7 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 
 	if (inMask(_dossierPrevSuspectMask.surf, mousePos)) {
 		if (_dossierSuspect > 0) {
-			playSound(getPaperShuffleSound(), 1, false, false);
+			playForegroundSound(getPaperShuffleSound());
 			_dossierSuspect--;
 			_dossierPage = 0;
 			
@@ -1581,6 +1582,12 @@ void PrivateEngine::disableRadioClips(Radio &radio, int priority) {
 }
 
 void PrivateEngine::playRadio(Radio &radio, bool randomlyDisableClips) {
+	// if radio is already playing then turn it off
+	if (isSoundPlaying(*(radio.sound))) {
+		stopForegroundSounds();
+		return;
+	}
+
 	// search channels for first available clip
 	for (uint i = 0; i < ARRAYSIZE(radio.channels); i++) {
 		// skip empty channels
@@ -1606,7 +1613,8 @@ void PrivateEngine::playRadio(Radio &radio, bool randomlyDisableClips) {
 
 		// play the clip
 		Common::String sound = radio.path + clip.name + ".wav";
-		playSound(sound, 1, false, false);
+		stopForegroundSounds();
+		playForegroundSound(*(radio.sound), sound);
 		clip.played = true;
 		if (!clip.flagName.empty()) {
 			Symbol *flag = maps.lookupVariable(&(clip.flagName));
@@ -1616,7 +1624,8 @@ void PrivateEngine::playRadio(Radio &radio, bool randomlyDisableClips) {
 	}
 
 	// play default radio sound
-	playSound("inface/radio/radio.wav", 1, false, false);
+	stopForegroundSounds();
+	playForegroundSound(*(radio.sound), "inface/radio/radio.wav");
 }
 
 void PrivateEngine::addPhone(const Common::String &name, bool once, int startIndex, int endIndex, const Common::String &flagName, int flagValue) {
@@ -1691,7 +1700,7 @@ void PrivateEngine::checkPhoneCall() {
 		return;
 	}
 
-	if (isSoundActive()) {
+	if (isSoundPlaying()) {
 		return;
 	}
 
@@ -1718,7 +1727,7 @@ void PrivateEngine::checkPhoneCall() {
 
 	phone->status = kPhoneStatusCalling;
 	phone->callCount++;
-	playPhoneCallSound();
+	playForegroundSound(_phoneCallSound, _phonePrefix + "phone.wav");
 }
 
 bool PrivateEngine::cursorPhoneArea(Common::Point mousePos) {
@@ -1726,7 +1735,7 @@ bool PrivateEngine::cursorPhoneArea(Common::Point mousePos) {
 		return false;
 	}
 
-	if (!_mixer->isSoundHandleActive(_phoneCallSoundHandle)) {
+	if (!isSoundPlaying(_phoneCallSound)) {
 		return false;
 	}
 
@@ -1743,7 +1752,7 @@ bool PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 		return false;
 	}
 
-	if (!_mixer->isSoundHandleActive(_phoneCallSoundHandle)) {
+	if (!isSoundPlaying(_phoneCallSound)) {
 		return false;
 	}
 
@@ -1773,8 +1782,10 @@ bool PrivateEngine::selectPhoneArea(Common::Point mousePos) {
 			setSymbol(flag, phone->flagValue);
 		}
 
-		playSound(sound, 1, true, false);
+		stopForegroundSounds(); // stop phone ringing
+		playForegroundSound(sound);
 		_nextSetting = getListenToPhoneSetting();
+		changeCursor("default");
 		return true;
 	}
 	return false;
@@ -1909,8 +1920,7 @@ void PrivateEngine::restartGame() {
 	_AMRadio.clear();
 	_policeRadio.clear();
 	_phones.clear();
-	_backgroundSound.clear();
-	_pausedBackgroundSound.clear();
+	_pausedBackgroundSoundName.clear();
 
 	// Movies
 	_repeatedMovieExit = "";
@@ -1932,7 +1942,7 @@ void PrivateEngine::restartGame() {
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	// We don't want to continue with any sound or videos from a previous game
-	stopSound(true);
+	stopSounds();
 	destroyVideo();
 
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
@@ -2093,9 +2103,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	// Sounds
 	if (meta.version >= 4) {
-		_pausedBackgroundSound = stream->readString();
+		_pausedBackgroundSoundName = stream->readString();
 	} else {
-		_pausedBackgroundSound.clear();
+		_pausedBackgroundSoundName.clear();
 	}
 
 	return Common::kNoError;
@@ -2245,7 +2255,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 		stream->writeUint32LE(0);
 
 	// Sounds
-	stream->writeString(_pausedBackgroundSound);
+	stream->writeString(_pausedBackgroundSoundName);
 	stream->writeByte(0);
 
 	return Common::kNoError;
@@ -2269,56 +2279,84 @@ Common::Path PrivateEngine::convertPath(const Common::String &name) {
 	return Common::Path(path);
 }
 
-void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers, bool background) {
-	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), loops, stopOthers, background);
+void PrivateEngine::playBackgroundSound(const Common::String &name) {
+	playSound(_bgSound, name, true);
+}
+
+void PrivateEngine::playForegroundSound(const Common::String &name) {
+	// stop sound if already playing. for example, the wall safe alarm.
+	for (uint i = 0; i < ARRAYSIZE(_fgSounds); i++) {
+		if (_fgSounds[i].name == name) {
+			if (isSoundPlaying(_fgSounds[i])) {
+				stopSound(_fgSounds[i]);
+				break;
+			}
+		}
+	}
+
+	// play using the first available sound
+	for (uint i = 0; i < ARRAYSIZE(_fgSounds); i++) {
+		if (!isSoundPlaying(_fgSounds[i])) {
+			playSound(_fgSounds[i], name, false);
+			break;
+		}
+	}
+}
+
+void PrivateEngine::playForegroundSound(Sound &sound, const Common::String &name) {
+	playSound(sound, name, false);
+}
+
+void PrivateEngine::playSound(Sound &sound, const Common::String &name, bool loop) {
+	sound.name = name;
 
 	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
-	if (!file)
-		error("unable to find sound file %s", path.toString().c_str());
-
-	Audio::LoopingAudioStream *stream;
-	stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loops);
-	if (stopOthers) {
-		stopSound(true);
-	}
-
-	Audio::SoundHandle *sh = nullptr;
-	if (background) {
-		_mixer->stopHandle(_bgSoundHandle);
-		sh = &_bgSoundHandle;
-		_backgroundSound = name;
-	} else {
-		_mixer->stopHandle(_fgSoundHandle);
-		_mixer->stopHandle(_phoneCallSoundHandle);
-		sh = &_fgSoundHandle;
-	}
-
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, sh, stream, -1, Audio::Mixer::kMaxChannelVolume);
-	loadSubtitles(path);
-}
-
-void PrivateEngine::playPhoneCallSound() {
-	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
-
-	Common::Path path = convertPath(_phonePrefix + _phoneCallSound);
-	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
-	if (!file) {
+	if (file == nullptr) {
 		error("unable to find sound file %s", path.toString().c_str());
 	}
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_phoneCallSoundHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume);
+
+	Audio::LoopingAudioStream *stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loop ? 0 : 1);
+	
+	_mixer->stopHandle(sound.handle);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &sound.handle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+
+	loadSubtitles(path, &sound);
 }
 
-bool PrivateEngine::isSoundActive() {
+void PrivateEngine::stopForegroundSounds() {
+	for (uint i = 0; i < ARRAYSIZE(_fgSounds); i++) {
+		stopSound(_fgSounds[i]);
+	}
+	stopSound(_phoneCallSound);
+	stopSound(_AMRadioSound);
+	stopSound(_policeRadioSound);
+	stopSound(_takeLeaveSound);
+}
+
+void PrivateEngine::stopSounds() {
+	stopSound(_bgSound);
+	stopForegroundSounds();
+}
+
+void PrivateEngine::stopSound(Sound &sound) {
+	_mixer->stopHandle(sound.handle);
+	sound.name.clear();
+}
+
+bool PrivateEngine::isSoundPlaying() {
 	return _mixer->isSoundIDActive(-1);
 }
 
+bool PrivateEngine::isSoundPlaying(Sound &sound) {
+	return _mixer->isSoundHandleActive(sound.handle);
+}
+
 void PrivateEngine::waitForSoundsToStop() {
-	while (isSoundActive()) {
+	while (isSoundPlaying()) {
 		if (consumeEvents()) {
-			stopSound(true);
+			stopSounds();
 			return;
 		}
 	}
@@ -2326,7 +2364,7 @@ void PrivateEngine::waitForSoundsToStop() {
 	uint32 i = 100;
 	while (i--) { // one second extra
 		if (consumeEvents()) {
-			stopSound(true);
+			stopSounds();
 			return;
 		}
 	}
@@ -2408,7 +2446,7 @@ void PrivateEngine::adjustSubtitleSize() {
 	}
 }
 
-void PrivateEngine::loadSubtitles(const Common::Path &path) {
+void PrivateEngine::loadSubtitles(const Common::Path &path, Sound *sound) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
 	if (!_useSubtitles)
 		return;
@@ -2435,6 +2473,8 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		return;
 	}
 
+	_subtitledSound = sound;
+
 	_system->showOverlay(false);
 	_system->clearOverlay();
 	adjustSubtitleSize();
@@ -2445,12 +2485,13 @@ void PrivateEngine::destroySubtitles() {
 		delete _subtitles;
 		_subtitles = nullptr;
 		_system->hideOverlay();
+		_subtitledSound = nullptr;
 	}
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
-	//stopSound(true);
+
 	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
@@ -2536,18 +2577,6 @@ void PrivateEngine::destroyVideo() {
 	_videoDecoder = nullptr;
 	_pausedVideo = nullptr;
 	destroySubtitles();
-}
-
-void PrivateEngine::stopSound(bool all) {
-	debugC(1, kPrivateDebugFunction, "%s(%d)", __FUNCTION__, all);
-
-	_mixer->stopHandle(_fgSoundHandle);
-	_mixer->stopHandle(_phoneCallSoundHandle);
-
-	if (all) {
-		_mixer->stopHandle(_bgSoundHandle);
-		_backgroundSound.clear();
-	}
 }
 
 Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette, bool *isNewPalette) {

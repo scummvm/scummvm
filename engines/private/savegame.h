@@ -36,7 +36,7 @@ namespace Private {
 //
 // Version - new/changed feature
 // =============================
-//       4 - _pausedBackgroundSound (December 2025)
+//       4 - _pausedBackgroundSoundName (December 2025)
 //       3 - Radio detailed state (December 2025)
 //       2 - Phone clip detailed state (December 2025)
 //       1 - Metadata header and more game state (November 2025)
