@@ -461,11 +461,7 @@ Common::Error PrivateEngine::run() {
 			if (_videoDecoder->endOfVideo()) {
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
-				if (_subtitles != nullptr) {
-					delete _subtitles;
-					_subtitles = nullptr;
-					_system->hideOverlay();
-				}
+				destroySubtitles();
 				_currentMovie = "";
 			} else if (!_videoDecoder->needsUpdate() && mouseMoved) {
 				_system->updateScreen();
@@ -507,9 +503,7 @@ Common::Error PrivateEngine::run() {
 			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
 				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false, _sfxSubtitles);
 			} else {
-				delete _subtitles;
-				_subtitles = nullptr;
-				_system->hideOverlay();
+				destroySubtitles();
 			}
 		}
 	}
@@ -2401,11 +2395,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	subPath = subPath.appendComponent(subPathStr);
 	debugC(1, kPrivateDebugFunction, "Loading subtitles from %s", subPath.toString().c_str());
 
-	if (_subtitles != nullptr) {
-		delete _subtitles;
-		_subtitles = nullptr;
-		_system->hideOverlay();
-	}
+	destroySubtitles();
 
 	_subtitles = new Video::Subtitles();
 	_subtitles->loadSRTFile(subPath);
@@ -2419,6 +2409,15 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	_system->clearOverlay();
 	adjustSubtitleSize();
 }
+
+void PrivateEngine::destroySubtitles() {
+	if (_subtitles != nullptr) {
+		delete _subtitles;
+		_subtitles = nullptr;
+		_system->hideOverlay();
+	}
+}
+
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	//stopSound(true);
@@ -2495,11 +2494,7 @@ void PrivateEngine::skipVideo() {
 
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
-	if (_subtitles != nullptr) {
-		delete _subtitles;
-		_subtitles = nullptr;
-		_system->hideOverlay();
-	}
+	destroySubtitles();
 	_currentMovie = "";
 }
 
@@ -2510,11 +2505,7 @@ void PrivateEngine::destroyVideo() {
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 	_pausedVideo = nullptr;
-	if (_subtitles != nullptr) {
-		delete _subtitles;
-		_subtitles = nullptr;
-		_system->hideOverlay();
-	}
+	destroySubtitles();
 }
 
 void PrivateEngine::stopSound(bool all) {
