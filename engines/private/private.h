@@ -126,6 +126,11 @@ enum PhoneStatus : byte {
 	kPhoneStatusAnswered
 };
 
+typedef struct Sound {
+	Common::String name;
+	Audio::SoundHandle handle;
+} Sound;
+
 typedef struct PhoneInfo {
 	Common::String name;
 	bool once;
@@ -153,10 +158,11 @@ typedef struct RadioClip {
 
 typedef struct Radio {
 	Common::String path;
+	Sound *sound;
 	Common::Array<RadioClip> clips;
 	int channels[3];
 
-	Radio() {
+	Radio() : sound(nullptr) {
 		clear();
 	}
 
@@ -244,9 +250,6 @@ public:
 
 	SymbolMaps maps;
 
-	Audio::SoundHandle _fgSoundHandle;
-	Audio::SoundHandle _bgSoundHandle;
-	Audio::SoundHandle _phoneCallSoundHandle;
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
 
@@ -297,10 +300,11 @@ public:
 	void skipVideo();
 	void destroyVideo();
 
-	void loadSubtitles(const Common::Path &path);
+	void loadSubtitles(const Common::Path &path, Sound *sound = nullptr);
 	void destroySubtitles();
 	void adjustSubtitleSize();
 	Video::Subtitles *_subtitles;
+	Sound *_subtitledSound;
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
@@ -439,15 +443,25 @@ public:
 	MaskList _masks;
 
 	// Sounds
-	void playSound(const Common::String &, uint, bool, bool);
-	void playPhoneCallSound();
-	void stopSound(bool);
-	bool isSoundActive();
+	void playBackgroundSound(const Common::String &name);
+	void playForegroundSound(const Common::String &name);
+	void playForegroundSound(Sound &sound, const Common::String &name);
+	void playSound(Sound &sound, const Common::String &name, bool loop);
+	void stopForegroundSounds();
+	void stopSounds();
+	void stopSound(Sound &sound);
+	bool isSoundPlaying();
+	bool isSoundPlaying(Sound &sound);
 	void waitForSoundsToStop();
 	bool consumeEvents();
+	Sound _bgSound;
+	Sound _fgSounds[4];
+	Sound _phoneCallSound;
+	Sound _AMRadioSound;
+	Sound _policeRadioSound;
+	Sound _takeLeaveSound;
 	bool _noStopSounds;
-	Common::String _backgroundSound;
-	Common::String _pausedBackgroundSound;
+	Common::String _pausedBackgroundSoundName;
 
 	Common::String getPaperShuffleSound();
 	Common::String _globalAudioPath;
@@ -477,7 +491,6 @@ public:
 	// Phone
 	MaskInfo _phoneArea;
 	Common::String _phonePrefix;
-	Common::String _phoneCallSound;
 	PhoneList _phones;
 	void addPhone(const Common::String &name, bool once, int startIndex, int endIndex, const Common::String &flagName, int flagValue);
 	void initializePhoneOnDesktop();

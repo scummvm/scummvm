@@ -70,7 +70,7 @@ static void fChgMode(ArgArray args) {
 		if (g_private->_noStopSounds) {
 			g_private->_noStopSounds = false;
 		} else {
-			g_private->stopSound(true);
+			g_private->stopSounds();
 		}
 	}
 }
@@ -181,7 +181,8 @@ static void fSyncSound(ArgArray args) {
 	if (s != "\"\"") {
 		g_private->drawScreen();
 
-		g_private->playSound(s, 1, true, false);
+		g_private->stopSounds();
+		g_private->playForegroundSound(s);
 		g_private->waitForSoundsToStop();
 	}
 }
@@ -433,11 +434,10 @@ static void fInventory(ArgArray args) {
 		g_private->_toTake = true;
 		Common::String sound(snd.u.str);
 
-		if (sound != "\"\"") {
-			g_private->playSound(sound, 1, false, false);
-		} else {
-			g_private->playSound(g_private->getTakeLeaveSound(), 1, false, false);
+		if (sound == "\"\"") {
+			sound = g_private->getTakeLeaveSound();
 		}
+		g_private->playForegroundSound(g_private->_takeLeaveSound, sound);
 	} else {
 		Common::String flag;
 		if (v1.type == NAME) {
@@ -500,7 +500,7 @@ static void fSetModifiedFlag(ArgArray args) {
 static void fPaperShuffleSound(ArgArray args) {
 	assert(args.size() == 0);
 	debugC(1, kPrivateDebugScript, "PaperShuffleSound()");
-	g_private->playSound(g_private->getPaperShuffleSound(), 1, false, false);
+	g_private->playForegroundSound(g_private->getPaperShuffleSound());
 }
 
 static void fSoundEffect(ArgArray args) {
@@ -508,9 +508,9 @@ static void fSoundEffect(ArgArray args) {
 	debugC(1, kPrivateDebugScript, "SoundEffect(%s)", args[0].u.str);
 	Common::String s(args[0].u.str);
 	if (s != "\"\"") {
-		g_private->playSound(s, 1, false, false);
+		g_private->playForegroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
@@ -523,18 +523,18 @@ static void fSound(ArgArray args) {
 		int c = args[3].u.val;
 
 		if (!b1 && !b2 && c == 1) {
-			g_private->stopSound(true);
+			g_private->stopSounds();
 		} else if (!b1 && !b2 && c == 2) {
-			g_private->stopSound(false);
+			g_private->stopForegroundSounds();
 		} else
 			assert(0);
 	}
 
 	Common::String s(args[0].u.str);
 	if (s != "\"\"") {
-		g_private->playSound(s, 1, false, false);
+		g_private->playForegroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
@@ -545,9 +545,9 @@ static void fLoopedSound(ArgArray args) {
 	Common::String s(args[0].u.str);
 
 	if (s != "\"\"") {
-		g_private->playSound(s, 0, false, true);
+		g_private->playBackgroundSound(s);
 	} else {
-		g_private->stopSound(true);
+		g_private->stopSounds();
 	}
 }
 
