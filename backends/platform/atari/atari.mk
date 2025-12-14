@@ -24,23 +24,23 @@ atarilitedist: $(EXECUTABLE)
 	$(RM_REC) ${LITE_DIR}
 	$(MKDIR) ${LITE_DIR}
 
-	$(CP) -a $(EXECUTABLE) ${LITE_DIR}
+	$(CP) $(EXECUTABLE) ${LITE_DIR}
 	$(NM) -C ${LITE_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CPPFILT) | sort -u > ${LITE_DIR}/scummvm.sym
 	$(STRIP) -s ${LITE_DIR}/$(EXECUTABLE)
 
 	$(MKDIR) ${LITE_DOCS}
-	$(CP) -a $(DIST_FILES_DOCS) ${LITE_DOCS}
+	$(CP) $(DIST_FILES_DOCS) ${LITE_DOCS}
 
 	$(MKDIR) ${LITE_DATA}
-	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${LITE_DATA}
+	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${LITE_DATA}
 
 	# remove unused files
 	$(RM) ${LITE_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${LITE_DATA}/, achievements classicmacfonts encoding macgui))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
-	mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
-	mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
+	! [ -f ${LITE_DATA}/supernova.dat ] || mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
+	! [ -f ${LITE_DATA}/teenagent.dat ] || mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
 
 	# readme.txt
 	$(CP) -r $(DIST_FILES_PLATFORM) ${LITE_DIR}
@@ -55,28 +55,28 @@ atarifulldist: $(EXECUTABLE)
 	$(RM_REC) ${FULL_DIR}
 	$(MKDIR) ${FULL_DIR}
 
-	$(CP) -a $(EXECUTABLE) ${FULL_DIR}
+	$(CP) $(EXECUTABLE) ${FULL_DIR}
 	$(NM) -C ${FULL_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CPPFILT) | sort -u > ${FULL_DIR}/scummvm.sym
 	$(STRIP) -s ${FULL_DIR}/$(EXECUTABLE)
 
 	$(MKDIR) ${FULL_DOCS}
-	$(CP) -a $(DIST_FILES_DOCS) ${FULL_DOCS}
+	$(CP) $(DIST_FILES_DOCS) ${FULL_DOCS}
 
 	$(MKDIR) ${FULL_DATA}
-	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FULL_DATA}
+	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FULL_DATA}
 
 	# remove unused files
 	$(RM) ${FULL_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${FULL_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
-	mv ${FULL_DATA}/cryomni3d.dat ${FULL_DATA}/cryomni3.dat
-	mv ${FULL_DATA}/neverhood.dat ${FULL_DATA}/neverhoo.dat
-	mv ${FULL_DATA}/supernova.dat ${FULL_DATA}/supernov.dat
-	mv ${FULL_DATA}/teenagent.dat ${FULL_DATA}/teenagen.dat
+	! [ -f ${FULL_DATA}/cryomni3d.dat ] || mv ${FULL_DATA}/cryomni3d.dat ${FULL_DATA}/cryomni3.dat
+	! [ -f ${FULL_DATA}/neverhood.dat ] || mv ${FULL_DATA}/neverhood.dat ${FULL_DATA}/neverhoo.dat
+	! [ -f ${LITE_DATA}/supernova.dat ] || mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
+	! [ -f ${LITE_DATA}/teenagent.dat ] || mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
 
 	$(MKDIR) ${FULL_THEMES}
-	$(CP) -a $(DIST_FILES_THEMES) ${FULL_THEMES}
+	$(CP) $(DIST_FILES_THEMES) ${FULL_THEMES}
 
 	# remove unused files; absent gui-icons.dat massively speeds up startup time (it is used for the grid mode only)
 	$(RM) ${FULL_THEMES}/gui-icons.dat ${FULL_THEMES}/shaders.dat
@@ -101,21 +101,21 @@ fbdist: $(EXECUTABLE)
 	$(RM_REC) ${FB_DIR}
 	$(MKDIR) ${FB_DIR}
 
-	$(CP) -a $(EXECUTABLE) ${FB_DIR}
+	$(CP) $(EXECUTABLE) ${FB_DIR}
 	$(STRIP) -s ${FB_DIR}/$(EXECUTABLE)
 
 	$(MKDIR) ${FB_DOCS}
-	$(CP) -a $(DIST_FILES_DOCS) ${FB_DOCS}
+	$(CP) $(DIST_FILES_DOCS) ${FB_DOCS}
 
 	$(MKDIR) ${FB_DATA}
-	$(CP) -a $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FB_DATA}
+	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FB_DATA}
 
 	# remove unused files
 	$(RM) ${FB_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${FB_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	$(MKDIR) ${FB_THEMES}
-	$(CP) -a $(DIST_FILES_THEMES) ${FB_THEMES}
+	$(CP) $(DIST_FILES_THEMES) ${FB_THEMES}
 
 	# remove unused files
 	$(RM) ${FB_THEMES}/shaders.dat
