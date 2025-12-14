@@ -182,7 +182,7 @@ static void fSyncSound(ArgArray args) {
 		g_private->drawScreen();
 
 		g_private->playSound(s, 1, true, false);
-		g_private->waitForSoundToStop();
+		g_private->waitForSoundsToStop();
 	}
 }
 

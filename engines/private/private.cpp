@@ -510,13 +510,6 @@ Common::Error PrivateEngine::run() {
 	return Common::kNoError;
 }
 
-void PrivateEngine::ignoreEvents() {
-	Common::Event event;
-	_system->getEventManager()->pollEvent(event);
-	_system->updateScreen();
-	_system->delayMillis(10);
-}
-
 void PrivateEngine::initFuncs() {
 	for (const Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
 		Common::String name(fnc->name);
@@ -642,7 +635,7 @@ void PrivateEngine::completePoliceBust() {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
 		playSound(s, 1, true, false);
 		changeCursor("default");
-		waitForSoundToStop();
+		waitForSoundsToStop();
 	}
 
 	// Cycle to the next movie and wrap around
@@ -2322,13 +2315,50 @@ bool PrivateEngine::isSoundActive() {
 	return _mixer->isSoundIDActive(-1);
 }
 
-void PrivateEngine::waitForSoundToStop() {
-	while (isSoundActive())
-		ignoreEvents();
+void PrivateEngine::waitForSoundsToStop() {
+	while (isSoundActive()) {
+		if (consumeEvents()) {
+			stopSound(true);
+			return;
+		}
+	}
 
 	uint32 i = 100;
-	while (i--) // one second extra
-		ignoreEvents();
+	while (i--) { // one second extra
+		if (consumeEvents()) {
+			stopSound(true);
+			return;
+		}
+	}
+}
+
+// returns true if interrupted by user or engine quitting
+bool PrivateEngine::consumeEvents() {
+	if (shouldQuit()) {
+		return true;
+	}
+
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+		case Common::EVENT_QUIT:
+			return true;
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionSkip) {
+				return true;
+			}
+			break;
+
+		default:
+			break;;
+		}
+	}
+
+	_system->updateScreen();
+	_system->delayMillis(10);
+	return false;
 }
 
 void PrivateEngine::adjustSubtitleSize() {
