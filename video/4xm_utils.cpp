@@ -38,7 +38,7 @@ Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset, 
 	Common::Array<byte> decoded;
 	decoded.reserve(huffSize * 2);
 	assert((offset % sizeof(Word)) == 0);
-	BitStream<Word> bs(reinterpret_cast<const Word *>(huff), huffSize / sizeof(Word), offset / sizeof(Word));
+	BitStream<Word, false> bs(reinterpret_cast<const Word *>(huff), huffSize / sizeof(Word), offset / sizeof(Word));
 	while (true) {
 		int value = startEntry;
 		while (value > 256) {

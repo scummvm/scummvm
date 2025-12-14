@@ -24,7 +24,7 @@
 namespace Video {
 namespace FourXM {
 
-template<typename Type>
+template<typename Type, bool BigEndian>
 class BitStream {
 	const Type *_data;
 	uint _size;
@@ -53,9 +53,17 @@ public:
 
 	int readUInt(byte n) {
 		int value = 0;
-		for (int i = 0; i != n; ++i) {
-			if (readBit())
-				value |= 1 << i;
+		if (BigEndian) {
+			for (int i = 0; i != n; ++i) {
+				value <<= 1;
+				if (readBit())
+					value |= 1;
+			}
+		} else {
+			for (int i = 0; i != n; ++i) {
+				if (readBit())
+					value |= 1 << i;
+			}
 		}
 		return value;
 	}
@@ -74,7 +82,8 @@ public:
 		}
 	}
 };
-using ByteBitStream = BitStream<byte>;
+using LEByteBitStream = BitStream<byte, false>;
+using BEByteBitStream = BitStream<byte, true>;
 Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize);
 
 void idct(int16_t block[64]);

@@ -101,7 +101,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
 	Common::Array<byte> planes(planeSize * 3, 0);
 
-	Video::FourXM::ByteBitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
+	Video::FourXM::LEByteBitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
 	uint channel = 0;
 	uint x0 = 0, y0 = 0;
 	uint blockIdx = 0;
