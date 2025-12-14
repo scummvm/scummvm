@@ -25,7 +25,7 @@ atarilitedist: $(EXECUTABLE)
 	$(MKDIR) ${LITE_DIR}
 
 	$(CP) $(EXECUTABLE) ${LITE_DIR}
-	$(NM) -C ${LITE_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CPPFILT) | sort -u > ${LITE_DIR}/scummvm.sym
+	$(NM) -C ${LITE_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CXXFILT) | sort -u > ${LITE_DIR}/scummvm.sym
 	$(STRIP) -s ${LITE_DIR}/$(EXECUTABLE)
 
 	$(MKDIR) ${LITE_DOCS}
@@ -56,7 +56,7 @@ atarifulldist: $(EXECUTABLE)
 	$(MKDIR) ${FULL_DIR}
 
 	$(CP) $(EXECUTABLE) ${FULL_DIR}
-	$(NM) -C ${FULL_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CPPFILT) | sort -u > ${FULL_DIR}/scummvm.sym
+	$(NM) -C ${FULL_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CXXFILT) | sort -u > ${FULL_DIR}/scummvm.sym
 	$(STRIP) -s ${FULL_DIR}/$(EXECUTABLE)
 
 	$(MKDIR) ${FULL_DOCS}

@@ -33,10 +33,10 @@ SAVED_CONFIGFLAGS=$@
 SAVED_AR=$AR
 SAVED_AS=$AS
 SAVED_ASFLAGS=$ASFLAGS
-SAVED_CPPFILT=$CPPFILT
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_CXXFILT=$CXXFILT
 SAVED_DWP=$DWP
 SAVED_LD=$LD
 SAVED_LDFLAGS=$LDFLAGS
@@ -251,7 +251,7 @@ _ext_neon=auto
 # Default commands
 _ar="ar cr"
 _as="as"
-_cppfilt="c++filt"
+_cxxfilt="c++filt"
 _ranlib="ranlib"
 _nm="nm"
 _strip="strip"
@@ -1198,11 +1198,11 @@ Some influential environment variables:
   AS                 assembler command
   ASFLAGS            assembler flags
   CONFIGURE_NO_HOST  Ignore the cross-compile target set by the --host= option
-  CPPFILT            demangle C++ symbols command
   CPPFLAGS           C++ preprocessor flags, e.g. -I<include dir> if you have
                      headers in a nonstandard directory <include dir>
   CXX                C++ compiler command
   CXXFLAGS           C++ compiler flags
+  CXXFILT            demangle C++ symbols command
   DWP                DWARF packing utility command
   LD                 linker command
   LDFLAGS            linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -1231,7 +1231,7 @@ cat >> $TMPLOG <<EOF
 Invocation command line was:
 $0 $@
 Saved environment variables:
-AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFILT="$SAVED_CPPFILT" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" NM="$SAVED_NM" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
+AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CXXFILT="$SAVED_CXXFILT" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" NM="$SAVED_NM" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
 JPEG_LIBS=-ljpeg
@@ -1988,7 +1988,7 @@ else
 	# if _host_alias was set, default to the standard GNU tools
 	_ar="$_host_alias-ar cr"
 	_as=$_host_alias-as
-	_cppfilt=$_host_alias-c++filt
+	_cxxfilt=$_host_alias-c++filt
 	_nm=$_host_alias-nm
 	_ranlib=$_host_alias-ranlib
 	_strip=$_host_alias-strip
@@ -2316,8 +2316,8 @@ if test -n "$AS"; then
 	_as=$AS
 fi
 
-if test -n "$CPPFILT"; then
-	_cppfilt=$CPPFILT
+if test -n "$CXXFILT"; then
+	_cxxfilt=$CXXFILT
 fi
 
 if test -n "$NM"; then
@@ -7781,10 +7781,10 @@ SAVED_CONFIGFLAGS       := $SAVED_CONFIGFLAGS
 SAVED_AR                := $SAVED_AR
 SAVED_AS                := $SAVED_AS
 SAVED_ASFLAGS           := $SAVED_ASFLAGS
-SAVED_CPPFILT           := $SAVED_CPPFILT
 SAVED_CPPFLAGS          := $SAVED_CPPFLAGS
 SAVED_CXX               := $SAVED_CXX
 SAVED_CXXFLAGS          := $SAVED_CXXFLAGS
+SAVED_CXXFILT           := $SAVED_CXXFILT
 SAVED_DWP               := $SAVED_DWP
 SAVED_LD                := $SAVED_LD
 SAVED_LDFLAGS           := $SAVED_LDFLAGS
@@ -7799,9 +7799,9 @@ SAVED_WINDRESFLAGS      := $SAVED_WINDRESFLAGS
 AR := $_ar
 AS := $_as
 ASFLAGS := $ASFLAGS
-CPPFILT := $_cppfilt
 CXX := $CXX
 CXXFLAGS := $CXXFLAGS
+CXXFILT := $_cxxfilt
 LD := $LD
 LIBS += $LIBS
 NM := $_nm
