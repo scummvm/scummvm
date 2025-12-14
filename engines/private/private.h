@@ -288,7 +288,6 @@ public:
 		return true;
 	}
 
-	void ignoreEvents();
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
@@ -444,7 +443,8 @@ public:
 	void playPhoneCallSound();
 	void stopSound(bool);
 	bool isSoundActive();
-	void waitForSoundToStop();
+	void waitForSoundsToStop();
+	bool consumeEvents();
 	bool _noStopSounds;
 	Common::String _backgroundSound;
 	Common::String _pausedBackgroundSound;
