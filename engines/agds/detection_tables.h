@@ -49,6 +49,15 @@ static const ADGameDescription gameDescriptions[] = {
 	{"black-mirror",
 	 0,
 	 AD_ENTRY2s(
+		 "gfx1.grp", "a5f84365d1e15a8403237fa3ad339f86", 850840170,
+		 "data.adb", "5f98eabecf94569be7046d3813edc49a", 2169111),
+	 Common::EN_GRB,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | ADGF_CD,
+	 GUIO1(GUIO_NONE)},
+	{"black-mirror",
+	 0,
+	 AD_ENTRY2s(
 		 "gfx1.grp", "652f931f02c5a79fb9bcbe32abafbdf7", 907732355,
 		 "data.adb", "d8706b17fb89d58d4dba094a73e5490a", 2152794),
 	 Common::RU_RUS,
