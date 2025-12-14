@@ -1,0 +1,75 @@
+cmake_minimum_required(VERSION 3.23)
+
+project(ScummVM)
+
+add_library(graphics)
+
+target_link_libraries(graphics PRIVATE common)
+target_sources(
+  graphics
+  PRIVATE big5.cpp
+          blit/blit.cpp
+          blit/blit-alpha.cpp
+          blit/blit-fast.cpp
+          blit/blit-generic.cpp
+          blit/blit-scale.cpp
+          color_quantizer.cpp
+          cursorman.cpp
+          font.cpp
+          fontman.cpp
+          fonts/amigafont.cpp
+          fonts/bdf.cpp
+          fonts/bgifont.cpp
+          fonts/consolefont.cpp
+          fonts/dosfont.cpp
+          fonts/freetype.cpp
+          fonts/macfont.cpp
+          fonts/newfont_big.cpp
+          fonts/newfont.cpp
+          fonts/ttf.cpp
+          fonts/winfont.cpp
+          framelimiter.cpp
+          image-archive.cpp
+          korfont.cpp
+          larryScale.cpp
+          maccursor.cpp
+          macgui/datafiles.cpp
+          macgui/macbutton.cpp
+          macgui/macdialog.cpp
+          macgui/macfontmanager.cpp
+          macgui/macmenu.cpp
+          macgui/macpopupmenu.cpp
+          macgui/mactext.cpp
+          macgui/mactext-canvas.cpp
+          macgui/mactext-md.cpp
+          macgui/mactextwindow.cpp
+          macgui/macwidget.cpp
+          macgui/macwindow.cpp
+          macgui/macwindowborder.cpp
+          macgui/macwindowmanager.cpp
+          managed_surface.cpp
+          nine_patch.cpp
+          opengl/context.cpp
+          opengl/debug.cpp
+          opengl/shader.cpp
+          opengl/texture.cpp
+          palette.cpp
+          pixelformat.cpp
+          pm5544.cpp
+          primitives.cpp
+          renderer.cpp
+          scalerplugin.cpp
+          scaler/downscaler.cpp
+          scaler/thumbnail_intern.cpp
+          screen.cpp
+          scaler/normal.cpp
+          sjis.cpp
+          surface.cpp
+          svg.cpp
+          transform_struct.cpp
+          transform_tools.cpp
+          thumbnail.cpp
+          VectorRenderer.cpp
+          VectorRendererSpec.cpp
+          wincursor.cpp
+          yuv_to_rgb.cpp)
