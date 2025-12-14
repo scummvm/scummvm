@@ -299,6 +299,7 @@ public:
 	void destroyVideo();
 
 	void loadSubtitles(const Common::Path &path);
+	void destroySubtitles();
 	void adjustSubtitleSize();
 	Video::Subtitles *_subtitles;
 	bool _useSubtitles;
