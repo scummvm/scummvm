@@ -422,6 +422,7 @@ public:
 	bool selectMemory(const Common::Point &mousePos);
 	void setLocationAsVisited(Symbol *location);
 	int getMaxLocationValue();
+	bool selectSkipMemoryVideo(Common::Point mousePos);
 
 	// Save/Load games
 	MaskInfo _saveGameMask;
