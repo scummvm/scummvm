@@ -96,6 +96,7 @@ class HuffmanDecoder {
 
 public:
 	uint loadStatistics(const byte *huff, uint huffSize);
+	void initStatistics(const std::initializer_list<uint> &freqs);
 
 	Common::Array<byte> unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize);
 

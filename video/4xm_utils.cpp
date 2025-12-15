@@ -55,6 +55,14 @@ Common::Array<byte> HuffmanDecoder::unpackStream(const byte *huff, uint huffSize
 	return decoded;
 }
 
+void HuffmanDecoder::initStatistics(const std::initializer_list<uint> &freqs) {
+	auto freqBegin = freqs.begin();
+	for (size_t i = 0; i != freqs.size(); ++i) {
+		_table[i].freq = *freqBegin++;
+	}
+	buildTable(freqs.size());
+}
+
 uint HuffmanDecoder::loadStatistics(const byte *huff, uint huffSize) {
 	uint offset = 0;
 	uint8 freq_first = huff[offset++];

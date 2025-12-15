@@ -86,9 +86,20 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	Common::Rational _frameRate;
 	uint _w, _h;
 	Graphics::Surface *_frame;
+	FourXM::HuffmanDecoder _blockType[2][4] = {};
 
 public:
-	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {}
+	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {
+		_blockType[0][0].initStatistics({16, 8, 4, 2, 1, 1});
+		_blockType[0][1].initStatistics({8, 0, 4, 2, 1, 1});
+		_blockType[0][2].initStatistics({8, 4, 0, 2, 1, 1});
+		_blockType[0][3].initStatistics({8, 0, 0, 4, 2, 1, 1});
+
+		_blockType[1][0].initStatistics({2, 1, 1, 2, 1, 1});
+		_blockType[1][1].initStatistics({2, 0, 2, 2, 1, 1});
+		_blockType[1][2].initStatistics({2, 2, 0, 2, 1, 1});
+		_blockType[1][3].initStatistics({2, 0, 0, 2, 2, 1, 1});
+	}
 	~FourXMVideoTrack();
 
 	uint16 getWidth() const override { return _w; }
