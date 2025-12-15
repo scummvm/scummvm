@@ -22,36 +22,58 @@
 #ifndef FOOL_TOOLBOX_H
 #define FOOL_TOOLBOX_H
 
-#include "common/array.h"
-#include "common/events.h"
+#include "common/scummsys.h"
 #include "common/str.h"
+#include "common/ustr.h"
+#include "graphics/macgui/macwindow.h"
 
 namespace Fool {
+
+typedef uint32 RgnHandle;
+typedef uint32 PicHandle;
+
+struct Pattern {
+	uint8 data[8];
+};
+
+struct RGBColor {
+	uint16 red;
+	uint16 green;
+	uint16 blue;
+};
+
 
 class Toolbox {
 
 public:
+	// Compatibility shim for the Macintosh Toolbox/QuickDraw API.
+
+
 	// PROCEDURE BeginUpdate (theWindow: WindowPtr);
 	// Call BeginUpdate when an update event occurs for theWindow. BeginUpdate replaces the
 	// visRgn of the window's grafPort with the intersection of the visRgn and the update region and
 	// then sets the window's update region to an empty region. You would then usually draw the
 	// entire content region, though it suffices to draw only the visRgn; in either case, only the parts of
 	// the window that require updating will actually be drawn on the screen. Every call to
-	// BeginUpdate must be balanced by a call to EndUpdate. (See "How a Window is Drawn".)
+	// BeginUpdate must be balanced by a call to EndUpdate.
+	void BeginUpdate(Graphics::MacWindow &theWindow);
 
 	// PROCEDURE ClearMenuBar;
 	// Call ClearMenuBar to remove all menus from the menu list when you want to start afresh with all
 	// new menus. Be sure to call DrawMenuBar to update the menu bar.
+	void ClearMenuBar();
 
 	// PROCEDURE ClipRect (r: Rect);
 	// ClipRect changes the clipping region of the current grafPort to a rectangle that's equivalent to the
 	// given rectangle. Note that this doesn't change the region handle, but affects the clipping region
 	// itself.
+	void ClipRect(Common::Rect &r);
 
 	// PROCEDURE ClosePoly;
 	// ClosePoly tells QuickDraw to stop saving the definition of the currently open polygon and computes
 	// the polyBBox rectangle. You should perform one and only one ClosePoly for every OpenPoly.
 	// ClosePoly calls ShowPen, balancing the HidePen call made by OpenPoly.
+	void ClosePoly();
 
 	// PROCEDURE CopyBits (srcBits,dstBits: BitMap; srcRect,dstRect: Rect; mode: INTEGER; maskRgn: RgnHandle);
 	// CopyBits transfers a bit image between any two bit maps and clips the result to the area specified
@@ -62,55 +84,66 @@ public:
 	// just pass NIL for the maskRgn parameter. The dstRect and maskRgn coordinates are in terms of
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
+	void CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
 
 	// FUNCTION CurResFile: INTEGER;
 	// CurResFile returns the reference number of the current resource file. You can call it when the
 	// application starts up to get the reference number of its resource file.
+	uint16 CurResFile();
 
 	// PROCEDURE DrawChar (ch: CHAR);
 	// DrawChar places the given character to the right of the pen location, with the left end of its base
 	// line at the pen's location, and advances the pen accordingly. If the character isn't in the font, the
 	// font's missing symbol is drawn.
+	void DrawChar(Common::u32char_type_t ch);
 
 	// PROCEDURE DrawString (s: Str255);
 	// DrawString calls DrawChar for each character in the given string. The string is placed beginning
 	// at the current pen location and extending right. No formatting (such as carriage returns and line
 	// feeds) is performed by QuickDraw. The pen location ends up to the right of the last character in
 	// the string.
+	void DrawString(const Common::String &s);
 
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
 	// BeginUpdate as described above.
+	void EndUpdate(Graphics::MacWindow &theWindow);
 
 	// PROCEDURE FillOval (r: Rect; pat: Pattern);
 	// FillOval fills an oval just inside the specified rectangle with the given pattern (in patCopy mode).
 	// The grafPort's pnPat, pnMode, and bkPat are all ignored; the pen location is not changed.
+	void FillOval(const Common::Rect &r, const Pattern &pat);
 
 	// PROCEDURE FillRect (r: Rect; pat: Pattern);
 	// FillRect fills the specified rectangle with the given pattern (in patCopy mode). The grafPort's
 	// pnPat, pnMode, and bkPat are all ignored; the pen location is not changed.
+	void FillRect(const Common::Rect &r, const Pattern &pat);
 
 	// PROCEDURE FrameArc (r: Rect; startAngle,arcAngle: INTEGER);
 	// FrameArc draws an arc of the oval that fits inside the specified rectangle, using the current
 	// grafPort's pen pattern, mode, and size. StartAngle indicates where the arc begins and is treated
 	// MOD 360. ArcAngle defines the extent of the arc. The angles are given in positive or negative
 	// degrees; a positive angle goes clockwise, while a negative angle goes counterclockwise.
+	void FrameArc(const Common::Rect &r, int16 startAngle, int16 arcAngle);
 
 	// PROCEDURE FrameOval (r: Rect);
 	// FrameOval draws an outline just inside the oval that fits inside the specified rectangle, using the
 	// current grafPort's pen pattern, mode, and size. The outline is as wide as the pen width and as tall
 	// as the pen height. It's drawn with the pnPat, according to the pattern transfer mode specified by
 	// pnMode. The pen location is not changed by this procedure.
+	void FrameOval(const Common::Rect &r);
 
 	// PROCEDURE FrameRect (r: Rect);
 	// FrameRect draws an outline just inside the specified rectangle, using the current grafPort's pen
 	// pattern, mode, and size. The outline is as wide as the pen width and as tall as the pen height. It's
 	// drawn with the pnPat, according to the pattern transfer mode specified by pnMode. The pen
 	// location is not changed by this procedure.
+	void FrameRect(const Common::Rect &r);
 
 	// PROCEDURE GetCPixel (h,v: INTEGER; VAR cPix: RGBColor);
 	// The GetCPixel function returns the RGB of the pixel at the specified position in the current
 	// port.
+	void GetCPixel(int16 h, int16 v, RGBColor &cPix);
 
 	// FUNCTION GetNextEvent (eventMask: INTEGER; VAR theEvent: EventRecord) : BOOLEAN;
 	// GetNextEvent returns the next available event of a specified type or types and, if the event is in
@@ -125,16 +158,19 @@ public:
 	// resource file if necessary. It calls the Resource Manager function GetResource('PICT',picID). If
 	// the resource can't be read, GetPicture returns NIL. The PicHandle data type is defined in
 	// QuickDraw.
+	PicHandle GetPicture(uint16 picID);
 
 	// PROCEDURE HideCursor;
 	// HideCursor removes the cursor from the screen, restoring the bits under it, and decrements the
 	// cursor level (which InitCursor initialized to 0). Every call to HideCursor should be balanced by a
 	// subsequent call to ShowCursor.
+	void HideCursor();
 
 	// PROCEDURE InitCursor;
 	// InitCursor sets the current cursor to the standard arrow and sets the cursor level to 0, making
 	// the cursor visible. The cursor level keeps track of the number of times the cursor has been
 	// hidden to compensate for nested calls to HideCursor and ShowCursor, explained below.
+	void InitCursor();
 
 	// PROCEDURE InsetRect (VAR r: Rect; dh,dv: INTEGER);
 	// InsetRect shrinks or expands the given rectangle. The left and right sides are moved in by the
@@ -147,11 +183,13 @@ public:
 	// InvertOval inverts the pixels enclosed by an oval just inside the specified rectangle: Every white
 	// pixel becomes black and every black pixel becomes white. The grafPort's pnPat, pnMode, and
 	// bkPat are all ignored; the pen location is not changed.
+	void InvertOval(const Common::Rect &r);
 
 	// PROCEDURE InvertRect (r: Rect);
 	// InvertRect inverts the pixels enclosed by the specified rectangle: Every white pixel becomes
 	// black and every black pixel becomes white. The grafPort's pnPat, pnMode, and bkPat are all
 	// ignored; the pen location is not changed.
+	void InvertRect(const Common::Rect &r);
 
 	// PROCEDURE KillPoly (poly: PolyHandle);
 	// KillPoly releases the memory occupied by the given polygon. Use this only when you're completely
@@ -160,14 +198,17 @@ public:
 	// PROCEDURE LineTo (h,v: INTEGER);
 	// LineTo draws a line from the current pen location to the location specified (in local coordinates)
 	// by h and v. The new pen location is (h,v) after the line is drawn.
+	void LineTo(int16 h, int16 v);
 
 	// PROCEDURE MovePortTo (leftGlobal,topGlobal: INTEGER);
 	// MovePortTo changes the position of the current grafPort's portRect. This does not affect the
 	// screen; it merely changes the location at which subsequent drawing inside the port will appear.
+	void MovePortTo(int16 leftGlobal, int16 topGlobal);
 
 	// PROCEDURE MoveTo (h,v: INTEGER);
 	// MoveTo moves the pen to location (h,v) in the local coordinates of the current grafPort. No
 	// drawing is performed.
+	void MoveTo(int16 h, int16 v);
 
 	// FUNCTION OpenPoly : PolyHandle;
 	// OpenPoly returns a handle to a new polygon and tells QuickDraw to start saving the polygon
@@ -188,6 +229,7 @@ public:
 	// PaintOval paints an oval just inside the specified rectangle with the current grafPort's pen pattern
 	// and mode. The oval is filled with the pnPat, according to the pattern transfer mode specified by
 	// pnMode. The pen location is not changed by this procedure.
+	void PaintOval(const Common::Rect &r);
 
 	// PROCEDURE PaintPoly (poly: PolyHandle);
 	// PaintPoly paints the specified polygon with the current grafPort's pen pattern and pen mode. The
@@ -198,28 +240,34 @@ public:
 	// PaintRect paints the specified rectangle with the current grafPoit's pen pattern and mode. The
 	// rectangle is filled with the pnPat, according to the pattern transfer mode specified by pnMode.
 	// The pen location is not changed by this procedure.
+	void PaintRect(const Common::Rect &r);
 
 	// PROCEDURE PenMode (mode: INTEGER);
 	// PenMode sets the transfer mode through which the pen pattern is transferred onto the bit map
 	// when lines or shapes are drawn in the current grafPort.
+	void PenMode(uint16 mode);
 
 	// PROCEDURE PenNormal;
 	// PenNormal resets the initial state of the pen in the current grafPort.
+	void PenNormal();
 
 	// PROCEDURE PenPat (pat: Pattern);
 	// PenPat sets the pattern that's used by the pen in the current grafPort. The standard patterns
 	// white, black, gray, ltGray, and dkGray are predefined; the initial pen pattern is black. The
 	// current pen pattern can be accessed in the variable thePort .pnPat, and this value can be assigned
 	// to any other variable of type Pattern.
+	void PenPat(const Pattern &pat);
 
 	// PROCEDURE PenSize (width,height: INTEGER);
 	// PenSize sets the dimensions of the graphics pen in the current grafPort. All subsequent calls to
 	// Line, LineTo, and the procedures that draw framed shapes in the current grafPort will use the
 	// new pen dimensions.
+	void PenSize(uint16 width, uint16 height);
 
 	// PROCEDURE PortSize (width,height: INTEGER);
 	// PortSize changes the size of the current grafPort's portRect. This does not affect the screen; it
 	// merely changes the size of the "active area" of the grafPort.
+	void PortSize(uint16 width, uint16 height);
 
 	// PROCEDURE ReleaseResource (theResource: Handle);
 	// Given a handle to a resource, ReleaseResource releases the memory occupied by the resource
@@ -227,10 +275,12 @@ public:
 	// The given handle will no longer be recognized as a handle to a resource; if the Resource Manager
 	// is subsequendy called to get the released resource, a new handle will be allocated. Use this
 	// procedure only after you're completely through with a resource.
+	void ReleaseResource(uint32 handle);
 
 	// PROCEDURE SetCPixel (h,v: INTEGER; cPix: RGBColor);
 	// The SetCPixel function sets the pixel at the specified position to the pixel value that most
 	// closely matches the specified RGB.
+	void SetCPixel(int16 h, int16 v, const RGBColor &cPix);
 
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
@@ -240,24 +290,29 @@ public:
 	// allows you to perform all normal drawing and calculations on a buffer other than the screen—for
 	// example, a small off-screen image for later "stamping" onto the screen (with the CopyBits
 	// procedure, described under "Bit Transfer Operations" below).
+	void SetPortBits(const Graphics::Surface &bm);
 
 	// PROCEDURE SetRect (VAR r: Rect; left,top,right,bottom: INTEGER);
 	// SetRect assigns the four boundary coordinates to the given rectangle. The result is a rectangle
 	// with coordinates (left,top) (right,bottom).
+	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom);
 
 	// PROCEDURE StringWidth (s: Str255) : INTEGER;
 	// StringWidth returns the width of the given text string, which it calculates by adding the
 	// CharWidths of all the characters in the string (see above).
+	uint16 StringWidth(const Common::String &s);
 
 	// FUNCTION TickCount : LONGINT;
 	// TickCount returns the current number of ticks (sixtieths of a second) since the system last started
 	// up.
+	uint32 TickCount();
 
 	// PROCEDURE UseResFile (refNum: INTEGER);
 	// Given the reference number of a resource file, UseResFile sets the current resource file to that
 	// file. If there's no resource file open with the given reference number, UseResFile will do nothing
 	// and the ResError function will return the result code resFNotFound. A refNum of 0 represents
 	// the system resource file.
+	void UseResFile(uint16 refNum);
 };
 
 } // namespace Fool

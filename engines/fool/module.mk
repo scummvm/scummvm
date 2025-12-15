@@ -2,6 +2,9 @@ MODULE := engines/fool
 
 MODULE_OBJS = \
 	fool.o \
+	fool_prologue.o \
+	toolbox.o \
+	zbasic.o \
 	console.o \
 	events.o \
 	messages.o \

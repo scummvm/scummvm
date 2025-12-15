@@ -19,39 +19,10 @@
  *
  */
 
-#ifndef FOOL_PROLOGUE_H
-#define FOOL_PROLOGUE_H
-
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "graphics/surface.h"
-
-#define SCREEN_WIDTH 0x200
-#define SCREEN_HEIGHT 0x156
-#define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8/2)
+#include "fool/toolbox.h"
 
 namespace Fool {
 
-class FoolPrologue {
-public:
-	FoolPrologue();
-	~FoolPrologue();
 
 
-
-	Graphics::Surface var_i32_32; // pointer to bitmap
-	Common::Rect var_i32_38; // pointer to rect
-	Graphics::Surface var_i32_40; // pointer to bitmap
-	Graphics::Surface var_i32_4e; // pointer to bitmap
-
-	Common::Rect arr_i32_1c4;
-
-	Common::String var_str_76;
-
-	void run();
-};
-
-} // End of namespace Fool
-
-#endif // FOOL_PROLOGUE_H
+} // namespace Fool
