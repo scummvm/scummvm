@@ -85,20 +85,21 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	FourXMDecoder *_dec;
 	Common::Rational _frameRate;
 	uint _w, _h;
+	uint16 _version = 0;
 	Graphics::Surface *_frame;
 	FourXM::HuffmanDecoder _blockType[2][4] = {};
 
 public:
-	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _frame(nullptr) {
-		_blockType[0][0].initStatistics({16, 8, 4, 2, 1, 1});
-		_blockType[0][1].initStatistics({8, 0, 4, 2, 1, 1});
-		_blockType[0][2].initStatistics({8, 4, 0, 2, 1, 1});
-		_blockType[0][3].initStatistics({8, 0, 0, 4, 2, 1, 1});
+	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
+		_blockType[0][0].initStatistics({2, 1, 1, 2, 1, 1});
+		_blockType[0][1].initStatistics({2, 0, 2, 2, 1, 1});
+		_blockType[0][2].initStatistics({2, 2, 0, 2, 1, 1});
+		_blockType[0][3].initStatistics({2, 0, 0, 2, 2, 1, 1});
 
-		_blockType[1][0].initStatistics({2, 1, 1, 2, 1, 1});
-		_blockType[1][1].initStatistics({2, 0, 2, 2, 1, 1});
-		_blockType[1][2].initStatistics({2, 2, 0, 2, 1, 1});
-		_blockType[1][3].initStatistics({2, 0, 0, 2, 2, 1, 1});
+		_blockType[1][0].initStatistics({16, 8, 4, 2, 1, 1});
+		_blockType[1][1].initStatistics({8, 0, 4, 2, 1, 1});
+		_blockType[1][2].initStatistics({8, 4, 0, 2, 1, 1});
+		_blockType[1][3].initStatistics({8, 0, 0, 4, 2, 1, 1});
 	}
 	~FourXMVideoTrack();
 
@@ -118,7 +119,7 @@ public:
 	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
-	void decode_pfrm_block(int x, int y, int log2w, int log2h, const Common::MemoryReadStream &bitStream, const Common::MemoryReadStream &wordStream, const Common::MemoryReadStream &byteStream);
+	void decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEByteBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
 	Common::Rational getFrameRate() const override { return _frameRate; }
 };
 
@@ -313,10 +314,77 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	assert(prefixOffset == prefixData.size());
 }
 
-void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(int x, int y, int log2w, int log2h, const Common::MemoryReadStream &bitStream, const Common::MemoryReadStream &wordStream, const Common::MemoryReadStream &byteStream) {
+namespace {
+#define LE_CENTRIC_MUL(dst, src, scale, dc)                     \
+	{                                                           \
+		unsigned tmpval = READ_LE_UINT32(src) * (scale) + (dc); \
+		*(dst) = tmpval;                                        \
+	}
+
+void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
+		  int h, int stride, int scale, unsigned dc) {
+	int i;
+	dc *= 0x10001;
+
+	switch (log2w) {
+	case 0:
+		for (i = 0; i < h; i++) {
+			dst[0] = scale * src[0] + dc;
+			if (scale)
+				src += stride;
+			dst += stride;
+		}
+		break;
+	case 1:
+		for (i = 0; i < h; i++) {
+			LE_CENTRIC_MUL(dst, src, scale, dc);
+			if (scale)
+				src += stride;
+			dst += stride;
+		}
+		break;
+	case 2:
+		for (i = 0; i < h; i++) {
+			LE_CENTRIC_MUL(dst, src, scale, dc);
+			LE_CENTRIC_MUL(dst + 2, src + 2, scale, dc);
+			if (scale)
+				src += stride;
+			dst += stride;
+		}
+		break;
+	case 3:
+		for (i = 0; i < h; i++) {
+			LE_CENTRIC_MUL(dst, src, scale, dc);
+			LE_CENTRIC_MUL(dst + 2, src + 2, scale, dc);
+			LE_CENTRIC_MUL(dst + 4, src + 4, scale, dc);
+			LE_CENTRIC_MUL(dst + 6, src + 6, scale, dc);
+			if (scale)
+				src += stride;
+			dst += stride;
+		}
+		break;
+	default:
+		error("invalid log2w");
+	}
+}
+} // namespace
+
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEByteBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
+	auto h = 1 << log2h, w = 1 << log2w;
+	auto &huff = _blockType[_version > 1][index];
+	auto code = huff.next(bs);
+	int scale = 0;
+	int dc = 0;
+	if (code == 5) {
+		dc = wordStream.readSint16LE();
+	} else {
+		error("invalid code %d", code);
+	}
+
+	mcdc(static_cast<uint16 *>(frame->getBasePtr(x, y)), static_cast<const uint16 *>(_frame->getBasePtr(x, y)), log2w, h, frame->pitch / frame->format.bytesPerPixel, scale, dc);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
@@ -333,15 +401,18 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 	Common::Array<byte> byteStreamData(byteStreamSize);
 	stream->read(byteStreamData.data(), byteStreamData.size());
 
-	Common::MemoryReadStream bitStream(bitStreamData.data(), bitStreamData.size());
+	FourXM::BEByteBitStream bitStream(bitStreamData.data(), bitStreamData.size(), 0);
 	Common::MemoryReadStream wordStream(wordStreamData.data(), wordStreamData.size());
 	Common::MemoryReadStream byteStream(byteStreamData.data(), byteStreamData.size());
 
+	Common::ScopedPtr<Graphics::Surface> frame(new Graphics::Surface());
+	frame->copyFrom(*_frame);
 	for (int y = 0, h = _frame->h; y < h; y += 8) {
 		for (int x = 0, w = _frame->w; x < w; x += 8) {
-			decode_pfrm_block(x, y, 3, 3, bitStream, wordStream, byteStream);
+			decode_pfrm_block(frame.get(), x, y, 3, 3, bitStream, wordStream, byteStream);
 		}
 	}
+	_frame = frame.release();
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *stream) {
@@ -469,11 +540,13 @@ void FourXMDecoder::readList(uint32 listEnd) {
 		case MKTAG('V', 'T', 'R', 'K'):
 			switch (tag) {
 			case MKTAG('v', 't', 'r', 'k'): {
-				_stream->skip(28);
+				_stream->skip(4);
+				auto extra = _stream->readUint32LE();
+				_stream->skip(20);
 				auto w = _stream->readUint32LE();
 				auto h = _stream->readUint32LE();
-				debug("video %ux%u", w, h);
-				addTrack(_video = new FourXMVideoTrack(this, _frameRate, w, h));
+				debug("video %ux%u, version: %u", w, h, extra >> 16);
+				addTrack(_video = new FourXMVideoTrack(this, _frameRate, w, h, extra >> 16));
 			} break;
 			default:
 				break;

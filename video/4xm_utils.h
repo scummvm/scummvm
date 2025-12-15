@@ -102,10 +102,10 @@ public:
 
 	static Common::Array<byte> unpack(const byte *huff, uint huffSize, byte wordSize);
 
-private:
 	template<typename BitStreamType>
 	uint next(BitStreamType &bs);
 
+private:
 	template<typename Word>
 	Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset);
 
