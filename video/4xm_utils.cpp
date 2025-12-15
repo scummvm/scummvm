@@ -67,9 +67,6 @@ uint HuffmanDecoder::loadStatistics(const byte *huff, uint huffSize) {
 		}
 		freq_first = huff[offset++];
 	} while (freq_first != 0);
-	if (_wordSize > 1 && (offset % _wordSize) != 0) {
-		offset += _wordSize - (offset % _wordSize);
-	}
 	_table[256].freq = 1;
 	_table[513].freq = 0x7FFF;
 
@@ -108,9 +105,9 @@ void HuffmanDecoder::buildTable(uint codeIdx) {
 	assert(codeIdx < 513);
 }
 
-Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint &offset) {
+Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize) {
 	Common::Array<byte> decoded;
-	switch (_wordSize) {
+	switch (wordSize) {
 	case 1:
 		decoded = unpackStream<byte>(huff, huffSize, offset);
 		break;
@@ -121,16 +118,19 @@ Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint
 		error("invalid word size");
 	}
 	debug("decoded %u bytes at %08x", decoded.size(), offset);
-	if (_wordSize == 1) {
+	if (wordSize == 1) {
 		assert(offset == huffSize); // must decode to the end
 	}
 	return decoded;
 }
 
 Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte wordSize) {
-	HuffmanDecoder dec(wordSize);
+	HuffmanDecoder dec;
 	auto offset = dec.loadStatistics(huff, huffSize);
-	return dec.unpack(huff, huffSize, offset);
+	if (wordSize > 1 && (offset % wordSize) != 0) {
+		offset += wordSize - (offset % wordSize);
+	}
+	return dec.unpack(huff, huffSize, offset, wordSize);
 }
 
 #define FIX_1_082392200 70936

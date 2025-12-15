@@ -92,14 +92,12 @@ class HuffmanDecoder {
 		ushort trueIdx;
 	};
 	HuffChar _table[514] = {};
-	byte _wordSize;
 	uint _startEntry = 0;
 
 public:
-	HuffmanDecoder(byte wordSize) : _wordSize(wordSize) {}
 	uint loadStatistics(const byte *huff, uint huffSize);
 
-	Common::Array<byte> unpack(const byte *huff, uint huffSize, uint &offset);
+	Common::Array<byte> unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize);
 
 	static Common::Array<byte> unpack(const byte *huff, uint huffSize, byte wordSize);
 
