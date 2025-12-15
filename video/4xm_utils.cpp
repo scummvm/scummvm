@@ -108,25 +108,29 @@ void HuffmanDecoder::buildTable(uint codeIdx) {
 	assert(codeIdx < 513);
 }
 
-Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte wordSize) {
-	HuffmanDecoder dec(wordSize);
-	auto offset = dec.loadStatistics(huff, huffSize);
+Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint &offset) {
 	Common::Array<byte> decoded;
-	switch (wordSize) {
+	switch (_wordSize) {
 	case 1:
-		decoded = dec.unpackStream<byte>(huff, huffSize, offset);
+		decoded = unpackStream<byte>(huff, huffSize, offset);
 		break;
 	case 4:
-		decoded = dec.unpackStream<uint32>(huff, huffSize, offset);
+		decoded = unpackStream<uint32>(huff, huffSize, offset);
 		break;
 	default:
 		error("invalid word size");
 	}
 	debug("decoded %u bytes at %08x", decoded.size(), offset);
-	if (wordSize == 1) {
+	if (_wordSize == 1) {
 		assert(offset == huffSize); // must decode to the end
 	}
 	return decoded;
+}
+
+Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte wordSize) {
+	HuffmanDecoder dec(wordSize);
+	auto offset = dec.loadStatistics(huff, huffSize);
+	return dec.unpack(huff, huffSize, offset);
 }
 
 #define FIX_1_082392200 70936

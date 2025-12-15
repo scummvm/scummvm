@@ -99,6 +99,8 @@ public:
 	HuffmanDecoder(byte wordSize) : _wordSize(wordSize) {}
 	uint loadStatistics(const byte *huff, uint huffSize);
 
+	Common::Array<byte> unpack(const byte *huff, uint huffSize, uint &offset);
+
 	static Common::Array<byte> unpack(const byte *huff, uint huffSize, byte wordSize);
 
 private:
