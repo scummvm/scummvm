@@ -84,7 +84,32 @@ public:
 };
 using LEByteBitStream = BitStream<byte, false>;
 using BEByteBitStream = BitStream<byte, true>;
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize);
+
+class HuffmanDecoder {
+	struct HuffChar {
+		uint freq;
+		ushort falseIdx;
+		ushort trueIdx;
+	};
+	HuffChar _table[514] = {};
+	byte _wordSize;
+	uint _startEntry = 0;
+
+public:
+	HuffmanDecoder(byte wordSize) : _wordSize(wordSize) {}
+	uint loadStatistics(const byte *huff, uint huffSize);
+
+	static Common::Array<byte> unpack(const byte *huff, uint huffSize, byte wordSize);
+
+private:
+	template<typename BitStreamType>
+	uint next(BitStreamType &bs);
+
+	template<typename Word>
+	Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset);
+
+	void buildTable(uint max);
+};
 
 void idct(int16_t block[64]);
 

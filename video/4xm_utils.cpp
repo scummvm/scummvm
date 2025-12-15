@@ -25,29 +25,27 @@
 namespace Video {
 namespace FourXM {
 
-struct HuffChar {
-	int freq;
-	short falseIdx;
-	short trueIdx;
-};
-
-namespace {
+template<typename BitStreamType>
+uint HuffmanDecoder::next(BitStreamType &bs) {
+	uint value = _startEntry;
+	while (value > 256) {
+		auto bit = bs.readBit();
+		if (bit)
+			value = _table[value].trueIdx;
+		else
+			value = _table[value].falseIdx;
+	}
+	return value;
+}
 
 template<typename Word>
-Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset, const HuffChar *table, int startEntry) {
+Common::Array<byte> HuffmanDecoder::unpackStream(const byte *huff, uint huffSize, uint &offset) {
 	Common::Array<byte> decoded;
 	decoded.reserve(huffSize * 2);
 	assert((offset % sizeof(Word)) == 0);
 	BitStream<Word, false> bs(reinterpret_cast<const Word *>(huff), huffSize / sizeof(Word), offset / sizeof(Word));
 	while (true) {
-		int value = startEntry;
-		while (value > 256) {
-			auto bit = bs.readBit();
-			if (bit)
-				value = table[value].trueIdx;
-			else
-				value = table[value].falseIdx;
-		}
+		auto value = next(bs);
 		if (value == 256)
 			break;
 		decoded.push_back(static_cast<byte>(value));
@@ -57,37 +55,37 @@ Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset, 
 	return decoded;
 }
 
-} // namespace
-
-Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize) {
-	HuffChar table[514] = {};
+uint HuffmanDecoder::loadStatistics(const byte *huff, uint huffSize) {
 	uint offset = 0;
 	uint8 freq_first = huff[offset++];
 	do {
 		uint8 freq_last = huff[offset++];
 		if (freq_first <= freq_last) {
 			for (auto idx = freq_first; idx <= freq_last; ++idx) {
-				table[idx].freq = huff[offset++];
+				_table[idx].freq = huff[offset++];
 			}
 		}
 		freq_first = huff[offset++];
 	} while (freq_first != 0);
-	if (wordSize > 1 && (offset % wordSize) != 0) {
-		offset += wordSize - (offset % wordSize);
+	if (_wordSize > 1 && (offset % _wordSize) != 0) {
+		offset += _wordSize - (offset % _wordSize);
 	}
-	table[256].freq = 1;
-	table[513].freq = 0x7FFF;
+	_table[256].freq = 1;
+	_table[513].freq = 0x7FFF;
 
-	int startEntry;
-	short codeIdx = 257;
+	buildTable(257);
+	return offset;
+}
+
+void HuffmanDecoder::buildTable(uint codeIdx) {
 	while (true) {
-		short idx = 0;
-		short smallest2 = 513, smallest1 = 513;
+		ushort idx = 0;
+		ushort smallest2 = 513, smallest1 = 513;
 		while (idx < codeIdx) {
-			auto freq = table[idx].freq;
+			auto freq = _table[idx].freq;
 			if (freq != 0) {
-				if (freq >= table[smallest1].freq) {
-					if (freq < table[smallest2].freq) {
+				if (freq >= _table[smallest1].freq) {
+					if (freq < _table[smallest2].freq) {
 						smallest2 = idx;
 					}
 				} else {
@@ -98,23 +96,28 @@ Common::Array<byte> unpackHuffman(const byte *huff, uint huffSize, byte wordSize
 			++idx;
 		}
 		if (smallest2 == 513) {
-			startEntry = codeIdx - 1;
+			_startEntry = codeIdx - 1;
 			break;
 		}
-		table[codeIdx].freq = table[smallest1].freq + table[smallest2].freq;
-		table[smallest1].freq = table[smallest2].freq = 0;
-		table[codeIdx].falseIdx = smallest1;
-		table[codeIdx].trueIdx = smallest2;
+		_table[codeIdx].freq = _table[smallest1].freq + _table[smallest2].freq;
+		_table[smallest1].freq = _table[smallest2].freq = 0;
+		_table[codeIdx].falseIdx = smallest1;
+		_table[codeIdx].trueIdx = smallest2;
 		++codeIdx;
 	}
 	assert(codeIdx < 513);
+}
+
+Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte wordSize) {
+	HuffmanDecoder dec(wordSize);
+	auto offset = dec.loadStatistics(huff, huffSize);
 	Common::Array<byte> decoded;
 	switch (wordSize) {
 	case 1:
-		decoded = unpackStream<byte>(huff, huffSize, offset, table, startEntry);
+		decoded = dec.unpackStream<byte>(huff, huffSize, offset);
 		break;
 	case 4:
-		decoded = unpackStream<uint32>(huff, huffSize, offset, table, startEntry);
+		decoded = dec.unpackStream<uint32>(huff, huffSize, offset);
 		break;
 	default:
 		error("invalid word size");

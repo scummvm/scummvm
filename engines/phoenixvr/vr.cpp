@@ -93,7 +93,7 @@ struct Quantisation {
 
 void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, uint acSize, const byte *dcPtr, uint dcSize, int quality, const Common::Array<uint> *prefix = nullptr) {
 	Quantisation quant(quality);
-	auto decoded = Video::FourXM::unpackHuffman(huff, huffSize, 1);
+	auto decoded = Video::FourXM::HuffmanDecoder::unpack(huff, huffSize, 1);
 	uint decodedOffset = 0;
 	static const DCT2DIII<6> dct;
 

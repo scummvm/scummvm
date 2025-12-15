@@ -235,7 +235,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	stream->read(prefixStream.data(), prefixStream.size());
 	assert(stream->pos() == stream->size());
 
-	auto prefixData = FourXM::unpackHuffman(prefixStream.data(), prefixStream.size(), 4);
+	auto prefixData = FourXM::HuffmanDecoder::unpack(prefixStream.data(), prefixStream.size(), 4);
 	FourXM::BEByteBitStream bitstream(bitstreamData.data(), bitstreamData.size(), 0);
 	uint prefixOffset = 0;
 	int lastDC = 0;
