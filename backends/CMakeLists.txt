@@ -34,7 +34,7 @@ target_sources(
 
 add_subdirectory(platform)
 
-if(POSIX)
+if(PLATFORM_POSIX)
   target_sources(
     backends
     PRIVATE fs/posix/posix-fs.cpp
@@ -62,6 +62,17 @@ if(PLATFORM_WINDOWS)
             saves/windows/windows-saves.cpp
             updates/win32/win32-updates.cpp
             taskbar/win32/win32-taskbar.cpp)
+endif()
+
+if(PLATFORM_MACOS)
+  target_sources(
+    backends
+    PRIVATE audiocd/macosx/macosx-audiocd.cpp
+            dialogs/macosx/macosx-dialogs.mm
+            midi/coreaudio.cpp
+            midi/coremidi.cpp
+            updates/macosx/macosx-updates.mm
+            taskbar/macosx/macosx-taskbar.mm)
 endif()
 
 if(SDL_BACKEND)

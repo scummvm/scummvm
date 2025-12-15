@@ -5,13 +5,20 @@ include(FetchContent)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar")
-  set(POSIX TRUE)
+  set(PLATFORM_POSIX TRUE)
   add_compile_definitions(POSIX)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(PLATFORM_WINDOWS TRUE)
   add_compile_definitions(WIN32)
+endif()
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(PLATFORM_MACOS TRUE)
+  set(PLATFORM_POSIX TRUE)
+  add_compile_definitions(MACOSX POSIX)
+  link_libraries("-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework Cocoa")
 endif()
 
 set(SDL_BACKEND TRUE)
