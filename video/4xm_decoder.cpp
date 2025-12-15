@@ -383,7 +383,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	} else {
 		error("invalid code %d", code);
 	}
-
 	mcdc(static_cast<uint16 *>(frame->getBasePtr(x, y)), static_cast<const uint16 *>(_frame->getBasePtr(x, y)), log2w, h, frame->pitch / frame->format.bytesPerPixel, scale, dc);
 }
 
