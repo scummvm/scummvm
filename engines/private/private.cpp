@@ -3045,9 +3045,8 @@ int PrivateEngine::getMaxLocationValue() {
 }
 
 bool PrivateEngine::selectSkipMemoryVideo(Common::Point mousePos) {
-	// if a video is playing in mode 0 then it is a memory video.
-	// (this is mode 2 in the original, but we don't use kGoThumbnailMovie)
-	if (_mode == 0 && _videoDecoder != nullptr) {
+	// this is mode 2 in the original, but we don't use kGoThumbnailMovie
+	if (_mode == 0 && _videoDecoder != nullptr && _currentSetting == getDiaryMiddleSetting()) {
 		const uint32 tol = 15;
 		const Common::Point origin(kOriginOne[0], kOriginOne[1]);
 		const Common::Rect window(origin.x - tol, origin.y - tol, _screenW - origin.x + tol, _screenH - origin.y + tol);
