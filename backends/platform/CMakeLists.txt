@@ -34,3 +34,6 @@ endif()
 target_link_libraries(platform PRIVATE common backends base)
 
 target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
+
+set_target_properties(platform PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set_target_properties(platform PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
