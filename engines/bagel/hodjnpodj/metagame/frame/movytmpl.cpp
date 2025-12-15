@@ -107,10 +107,7 @@ bool CMovieWindow::PlayMovie() {
 
 	decoder.stop();
 
-	if (event.type == Common::EVENT_QUIT ||
-		event.type == Common::EVENT_RETURN_TO_LAUNCHER)
-		app->quit();
-	else
+	if (!g_engine->shouldQuit())
 		m_pParent->PostMessage(WM_COMMAND, MOVIE_OVER);
 
 	return true;

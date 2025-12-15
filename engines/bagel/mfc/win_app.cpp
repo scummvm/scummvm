@@ -70,8 +70,6 @@ CWinApp::~CWinApp() {
 	m_pmapHGDIOBJ = nullptr;
 
 	_activeApp = _priorWinApp;
-	if (_activeApp && Engine::shouldQuit())
-		_activeApp->_quitFlag = QUIT_QUITTING;
 }
 
 bool CWinApp::InitApplication() {
@@ -152,7 +150,7 @@ bool CWinApp::SaveAllModified() {
 }
 
 int CWinApp::Run() {
-	if (isQuitting())
+	if (shouldQuit())
 		return 0;
 
 	// Ensure app has been initialized

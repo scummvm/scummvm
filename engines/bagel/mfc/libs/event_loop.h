@@ -103,12 +103,6 @@ private:
 	KeybindProc _keybindProc = nullptr;
 	FocusChangeProc _focusChangeProc = nullptr;
 
-protected:
-	enum QuitFlag {
-		QUIT_NONE, QUIT_QUITTING, QUIT_QUIT
-	};
-	QuitFlag _quitFlag = QUIT_NONE;
-
 private:
 	/**
 	 * Get any pending event
@@ -161,8 +155,6 @@ private:
 	 */
 	void checkForFrameUpdate();
 
-	void handleQuit();
-
 public:
 	EventLoop() {}
 	virtual ~EventLoop() {}
@@ -212,19 +204,13 @@ public:
 
 	/**
 	 * Returns whether the app should quit.
-	 * It does not use g_engine->shouldQuit(),
-	 * since messages need to be processed to
-	 * cleanly shut down any active windows
 	 */
-	bool shouldQuit() const {
-		return _quitFlag == QUIT_QUIT;
-	}
-	bool isQuitting() const {
-		return _quitFlag != QUIT_NONE;
-	}
-	void quit() {
-		_quitFlag = QUIT_QUITTING;
-	}
+	bool shouldQuit() const;
+
+	/**
+	 * Quit the game
+	 */
+	void quit();
 
 	void SetCapture(HWND hWnd);
 	void ReleaseCapture();

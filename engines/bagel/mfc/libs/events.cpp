@@ -169,6 +169,7 @@ bool EventQueue::peekMessage(MSG *lpMsg, HWND hWnd,
 		const MSG &msg = _queue[i];
 		if ((hWnd == nullptr || hWnd == msg.hwnd) &&
 			((wMsgFilterMin == 0 && wMsgFilterMax == 0) ||
+			 (msg.message == WM_QUIT) ||
 				(msg.message >= wMsgFilterMin && msg.message <= wMsgFilterMax))) {
 			// Found a matching message
 			*lpMsg = msg;

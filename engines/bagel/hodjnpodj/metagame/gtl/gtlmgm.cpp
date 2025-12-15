@@ -214,7 +214,7 @@ bool CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 
 	// as long as the computer's on the move, then compute move and
 	// play it
-	while (!AfxGetApp()->isQuitting() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
+	while (!AfxGetApp()->shouldQuit() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == false) && (bExitMetaDLL == false)) {
 
 		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
 		        ((m_xpCurXodj->m_bHodj == false) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
@@ -293,7 +293,7 @@ bool CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	// path, and lpiShortPath[1] contains the total weight.
 	// The remaining array elements contain the path nodes.
 	for (iK = 3 ; _metaGame && !bDone && iK <= lpiShortPath[0] ; ++iK) {
-		if (app->isQuitting())
+		if (app->shouldQuit())
 			break;
 
 		lpNextNode = m_lpNodes + lpiShortPath[iK] ;

@@ -1597,7 +1597,7 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	LPARAM      nGameReturn;
 
 	// Ignore messages during app shutdown
-	if (AfxGetApp()->isQuitting())
+	if (AfxGetApp()->shouldQuit())
 		return;
 
 	switch (msg) {
