@@ -510,6 +510,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teazle",				"Teazle" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
 	{ "thequest",			"The Quest" },
+	{ "thomastim",			"Thomas & Tim" },
 	{ "timewarrior",		"Time Warrior - The Armageddon Device" },
 	{ "timmysafari",		"Timmy's Safari Adventure" },
 	{ "tkkg1",				"A Case for TKKG 1: Jennifer is Missing" },
@@ -8104,6 +8105,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 500),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
+
+	// Danish (original): Thomas og Tim
+	// Swedish: Thomas och Tim
+	// German: Thomas & Tim
+	WINGAME1_l("thomastim", "", "Thomas_og_Tim.exe", "t:0af7314e73d7a1e06e5f167171ee2c1d", 2409357, Common::DA_DNK, 501),
+	WINGAME1_l("thomastim", "", "TochT.exe",		 "t:0af7314e73d7a1e06e5f167171ee2c1d", 2409365, Common::SV_SWE, 501),
+	WINGAME1_l("thomastim", "", "togt.exe",			 "t:685f417196d7ae95c22738746b929dd2", 1394011, Common::DE_DEU, 501),
 
 	// Ein Fall für TKKG: Katjas Geheimnis (bilingual DE/EN)
 	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
