@@ -107,6 +107,7 @@ public:
 	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
+	void decode_pfrm_block(int x, int y, int log2w, int log2h, const Common::MemoryReadStream &bitStream, const Common::MemoryReadStream &wordStream, const Common::MemoryReadStream &byteStream);
 	Common::Rational getFrameRate() const override { return _frameRate; }
 };
 
@@ -210,6 +211,13 @@ const byte zigzag[] = {
 	15, 23, 30, 37, 44, 51, 58, 59, 52, 45, 38, 31, 39,
 	46, 53, 60, 61, 54, 47, 55, 62, 63};
 
+static const int8_t size2index[4][4] = {
+	{-1, 3, 1, 1},
+	{3, 0, 0, 0},
+	{2, 0, 0, 0},
+	{2, 0, 0, 0},
+};
+
 } // namespace
 
 void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
@@ -294,12 +302,35 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	assert(prefixOffset == prefixData.size());
 }
 
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(int x, int y, int log2w, int log2h, const Common::MemoryReadStream &bitStream, const Common::MemoryReadStream &wordStream, const Common::MemoryReadStream &byteStream) {
+	assert(log2w >= 0 && log2h >= 0);
+	auto index = size2index[log2h][log2w];
+	assert(index >= 0);
+}
+
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
 	stream->skip(12);
 	auto bitStreamSize = stream->readUint32LE();
 	auto wordStreamSize = stream->readUint32LE();
 	auto byteStreamSize = stream->readUint32LE();
 	debug("p-frame, bitstream: %u, wordstream: %u, bytestream: %u", bitStreamSize, wordStreamSize, byteStreamSize);
+
+	Common::Array<byte> bitStreamData(bitStreamSize);
+	stream->read(bitStreamData.data(), bitStreamData.size());
+	Common::Array<byte> wordStreamData(wordStreamSize);
+	stream->read(wordStreamData.data(), wordStreamData.size());
+	Common::Array<byte> byteStreamData(byteStreamSize);
+	stream->read(byteStreamData.data(), byteStreamData.size());
+
+	Common::MemoryReadStream bitStream(bitStreamData.data(), bitStreamData.size());
+	Common::MemoryReadStream wordStream(wordStreamData.data(), wordStreamData.size());
+	Common::MemoryReadStream byteStream(byteStreamData.data(), byteStreamData.size());
+
+	for (int y = 0, h = _frame->h; y < h; y += 8) {
+		for (int x = 0, w = _frame->w; x < w; x += 8) {
+			decode_pfrm_block(x, y, 3, 3, bitStream, wordStream, byteStream);
+		}
+	}
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *stream) {
