@@ -48,7 +48,21 @@ if(POSIX)
             saves/posix/posix-saves.cpp
             taskbar/unity/unity-taskbar.cpp
             dialogs/gtk/gtk-dialogs.cpp)
-endif(POSIX)
+endif()
+
+if(PLATFORM_WINDOWS)
+  target_sources(
+    backends
+    PRIVATE audiocd/win32/win32-audiocd.cpp
+            dialogs/win32/win32-dialogs.cpp
+            fs/windows/windows-fs.cpp
+            fs/windows/windows-fs-factory.cpp
+            midi/windows.cpp
+            plugins/win32/win32-provider.cpp
+            saves/windows/windows-saves.cpp
+            updates/win32/win32-updates.cpp
+            taskbar/win32/win32-taskbar.cpp)
+endif()
 
 if(SDL_BACKEND)
   target_sources(

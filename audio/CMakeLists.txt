@@ -8,6 +8,10 @@ target_link_libraries(audio PRIVATE common)
 
 target_compile_definitions(audio PRIVATE DISABLE_NUKED_OPL)
 
+if(PLATFORM_WINDOWS)
+  target_link_libraries(audio PRIVATE winmm)
+endif()
+
 target_sources(
   audio
   PRIVATE adlib.cpp

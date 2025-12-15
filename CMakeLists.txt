@@ -3,13 +3,19 @@ cmake_minimum_required(VERSION 3.23)
 project(ScummVM)
 include(FetchContent)
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar")
+  set(POSIX TRUE)
+  add_compile_definitions(POSIX)
+endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar")
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(PLATFORM_WINDOWS TRUE)
+  add_compile_definitions(WIN32)
+endif()
 
-set(POSIX TRUE)
 set(SDL_BACKEND TRUE)
 set(USE_SDL2 TRUE)
-
 
 # SDL2
 FetchContent_Declare(
@@ -21,7 +27,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL2)
 link_libraries(SDL2::SDL2)
 
-add_compile_definitions(POSIX SDL_BACKEND USE_SDL2)
+add_compile_definitions(SDL_BACKEND USE_SDL2)
 
 add_subdirectory(common)
 
