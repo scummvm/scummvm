@@ -34,7 +34,7 @@ public:
 	DoubleSmallFont();
 	~DoubleSmallFont();
 
-	// Required Font interface methods
+
 	int getFontHeight() const override { return CHAR_HEIGHT; };
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 

@@ -27,6 +27,9 @@
 #include "graphics/surface.h"
 
 namespace Pelrock {
+
+static const int kNumChars = 256;
+
 class SmallFont : public Graphics::Font {
 public:
 	SmallFont();
@@ -39,8 +42,9 @@ public:
 	int getMaxCharWidth() const override { return CHAR_WIDTH; }
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-protected:
+
 	byte *_fontData;
+protected:
 
 private:
 	static const int CHAR_WIDTH = 8;

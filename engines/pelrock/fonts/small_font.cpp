@@ -38,8 +38,8 @@ bool SmallFont::load(const Common::String &filename) {
 
 	file.seek(0x8F32, SEEK_SET);
 
-	// const int dataSize = 256 * 8 * 8; // 256 characters, 8x8 pixels
-	const int dataSize = 2048; // 256 characters, 8x8 pixels
+	const int dataSize = kNumChars * 8; // 256 characters, 8x8 pixels
+	debug("SmallFont::load: Loading font data of size %d from %s", dataSize, filename.c_str());
 	_fontData = new byte[dataSize];
 	file.read(_fontData, dataSize);
 	file.close();
@@ -52,7 +52,7 @@ int SmallFont::getCharWidth(uint32 chr) const {
 }
 
 void SmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	if (!_fontData || chr > 255) {
+	if (!_fontData || chr > kNumChars - 1) {
 		return;
 	}
 

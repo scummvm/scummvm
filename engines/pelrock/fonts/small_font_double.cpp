@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "common/debug.h"
 #include "pelrock/fonts/small_font_double.h"
 
 namespace Pelrock {
@@ -29,61 +29,26 @@ DoubleSmallFont::DoubleSmallFont() : SmallFont() {
 DoubleSmallFont::~DoubleSmallFont() {
 }
 
-// void DoubleSmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-// 	if (!_fontData || chr > 255) {
-// 		return;
-// 	}
-
-// 	int charOffset = chr * 8;
-
-// 	for (int i = 0; i < 8; i++) {
-// 		byte rowByte = _fontData[charOffset + i];
-// 		for (int bit = 0; bit < 8; bit++) {
-// 			bool pixelOn = (rowByte & (0x80 >> bit)) != 0;
-// 			if (pixelOn) {
-// 				if ((x + bit) < dst->w && (y + i) < dst->h) {
-// 					*((byte *)dst->getBasePtr(x + bit, y + i)) = color;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
 void DoubleSmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	if (!_fontData || chr > 255) {
+	if (!_fontData || chr > kNumChars - 1) {
+		// debug("DoubleSmallFont::drawChar: Invalid char %d", chr);
 		return;
 	}
-
 	int charOffset = chr * 8;
 
 	for (int i = 0; i < 8; i++) {
 		byte rowByte = _fontData[charOffset + i];
 		for (int bit = 0; bit < 8; bit++) {
 			bool pixelOn = (rowByte & (0x80 >> bit)) != 0;
-            int yPos = y + (i * 2);
-            // int yPos
+			int yPos = y + (i * 2);
 			if (pixelOn) {
-				if ((x + bit) < dst->w && (y + yPos + 1) < dst->h) {
+				if ((x + bit) < dst->w && (yPos + 1) < dst->h) {
 					*((byte *)dst->getBasePtr(x + bit, yPos)) = color;
-                    *((byte *)dst->getBasePtr(x + bit, yPos + 1)) = color;
-					// *((byte *)dst->getBasePtr(x + bit, y + yPos + 1)) = color;
+					*((byte *)dst->getBasePtr(x + bit, yPos + 1)) = color;
 				}
 			}
 		}
 	}
-
-	// for (int i = 0; i < 8; i++) {
-	// 	byte rowByte = _fontData[charOffset + i];
-	// 	for (int bit = 0; bit < 8; bit++) {
-	// 		bool pixelOn = (rowByte & (0x80 >> bit)) != 0;
-	// 		if (pixelOn) {
-	// 			if ((x + bit) < dst->w && (y + i) < dst->h) {
-	// 				*((byte *)dst->getBasePtr(x + bit, y + i)) = color;
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 }
 
 } // namespace Pelrock
