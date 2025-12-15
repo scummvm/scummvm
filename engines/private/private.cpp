@@ -409,6 +409,8 @@ Common::Error PrivateEngine::run() {
 					_needToDrawScreenFrame = true;
 					break;
 				}
+				if (selectSkipMemoryVideo(mousePos))
+					break;
 
 				if (selectPhoneArea(mousePos))
 					 break;
@@ -3040,6 +3042,21 @@ int PrivateEngine::getMaxLocationValue() {
 		maxValue = MAX(maxValue, s->u.val);
 	}
 	return maxValue;
+}
+
+bool PrivateEngine::selectSkipMemoryVideo(Common::Point mousePos) {
+	// if a video is playing in mode 0 then it is a memory video.
+	// (this is mode 2 in the original, but we don't use kGoThumbnailMovie)
+	if (_mode == 0 && _videoDecoder != nullptr) {
+		const uint32 tol = 15;
+		const Common::Point origin(kOriginOne[0], kOriginOne[1]);
+		const Common::Rect window(origin.x - tol, origin.y - tol, _screenW - origin.x + tol, _screenH - origin.y + tol);
+		if (!window.contains(mousePos)) {
+			skipVideo();
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Private
