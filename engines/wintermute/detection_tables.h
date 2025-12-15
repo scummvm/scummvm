@@ -979,7 +979,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dreams (Demo)
-	WME_WINENTRY("dreams", "Demo",
+	WME_WINENTRY("dreams", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "1c620f51bef1faffbeebb6253542f834", 23622097), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_26),
 
 	// Dreamscape (Beta)
@@ -1378,12 +1378,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_DEMO, WME_1_8_11),
 
 	// Fred (English) (PreAlpha)
-	WME_WINENTRY("fred", "PreAlpha",
+	WME_WINENTRY("fred", "Unsupported WME version (1.0)",
 		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
 					"data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Fred (French) (PreAlpha)
-	WME_WINENTRY("fred", "PreAlpha",
+	WME_WINENTRY("fred", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::FR_FRA, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Ghost in the Sheet (English, v1.00)
@@ -5500,7 +5500,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, GF_3D, WME_1_8_6),
 
 	// Sunny (Demo)
-	WME_WINENTRY("sunny", "Demo",
+	WME_WINENTRY("sunny", "Unsupported WME version (1.0)",
 		WME_ENTRY1s("data.dcp", "685f4db26ed8134aa82bf5b6bae3963e", 4745194), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Sunrise: The game (German)
