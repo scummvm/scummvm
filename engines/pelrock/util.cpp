@@ -82,7 +82,7 @@ void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int
 
 	// Draw main text on top
 	font->drawString(surface, text.c_str(), 0, 0, bboxW, color, align);
-	drawRect(surface, 0, 0, bboxW - 1, bboxH - 1, color);
+	// drawRect(surface, 0, 0, bboxW - 1, bboxH - 1, color);
 	for (int py = 0; py < bboxH; py++) {
 		for (int px = 0; px < bboxW; px++) {
 			int destIdx = (y + py) * 640 + (x + px);

@@ -52,10 +52,8 @@
 
 namespace Pelrock {
 
-DialogManager::DialogManager(Graphics::Screen *screen, PelrockEventManager *events,
-							 LargeFont *largeFont, SmallFont *smallFont)
-	: _screen(screen), _events(events),
-	  _largeFont(largeFont), _smallFont(smallFont) {
+DialogManager::DialogManager(Graphics::Screen *screen, PelrockEventManager *events)
+	: _screen(screen), _events(events) {
 }
 
 DialogManager::~DialogManager() {
@@ -164,7 +162,7 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 		}
 	}
 	for (int i = 0; i < choices->size(); i++) {
-		drawText(compositeBuffer, g_engine->_smallFont, (*choices)[i].text, 10, overlayY + 2 + i * kChoiceHeight, 620, 9);
+		drawText(compositeBuffer, g_engine->_doubleSmallFont, (*choices)[i].text, 10, overlayY + 2 + i * kChoiceHeight, 620, 9);
 	}
 }
 

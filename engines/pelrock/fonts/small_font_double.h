@@ -18,34 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_SMALLFONT_H
-#define PELROCK_SMALLFONT_H
+#ifndef PELROCK_SMALLFONTDOUBLE_H
+#define PELROCK_SMALLFONTDOUBLE_H
 
 #include "common/file.h"
 #include "common/str.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
-namespace Pelrock {
-class SmallFont : public Graphics::Font {
-public:
-	SmallFont();
-	~SmallFont();
+#include "pelrock/fonts/small_font.h"
 
-	bool load(const Common::String &filename);
+namespace Pelrock {
+class DoubleSmallFont : public SmallFont {
+public:
+	DoubleSmallFont();
+	~DoubleSmallFont();
 
 	// Required Font interface methods
-	int getFontHeight() const override { return CHAR_HEIGHT; }
-	int getMaxCharWidth() const override { return CHAR_WIDTH; }
-	int getCharWidth(uint32 chr) const override;
+	int getFontHeight() const override { return CHAR_HEIGHT; };
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-protected:
-	byte *_fontData;
 
 private:
-	static const int CHAR_WIDTH = 8;
-	static const int CHAR_HEIGHT = 8;
+	static const int CHAR_HEIGHT = 16;
 };
 
 } // End of namespace Pelrock
 #endif
+

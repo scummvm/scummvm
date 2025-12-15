@@ -46,8 +46,6 @@ class DialogManager {
 private:
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
-	LargeFont *_largeFont = nullptr;
-	SmallFont *_smallFont = nullptr;
 	Sprite *_curSprite = nullptr;
 
 	// Private helper functions for conversation parsing
@@ -59,8 +57,7 @@ private:
 	void checkMouse();
 
 public:
-	DialogManager(Graphics::Screen *screen, PelrockEventManager *events,
-				  LargeFont *largeFont, SmallFont *smallFont);
+	DialogManager(Graphics::Screen *screen, PelrockEventManager *events);
 	~DialogManager();
 
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);

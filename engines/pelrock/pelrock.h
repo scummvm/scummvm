@@ -42,6 +42,7 @@
 #include "pelrock/events.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
+#include "pelrock/fonts/small_font_double.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/sound.h"
@@ -186,6 +187,7 @@ public:
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
+	DoubleSmallFont *_doubleSmallFont = nullptr;
 	void renderScene(bool showTextOverlay = false);
 
 public:

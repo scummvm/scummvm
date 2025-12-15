@@ -57,6 +57,7 @@ PelrockEngine::~PelrockEngine() {
 	delete[] _currentBackground;
 	delete _largeFont;
 	delete _smallFont;
+	delete _doubleSmallFont;
 	delete _screen;
 	delete _chrono;
 	delete _videoManager;
@@ -86,7 +87,7 @@ Common::Error PelrockEngine::run() {
 	_room = new RoomManager();
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
-	_dialog = new DialogManager(_screen, _events, _largeFont, _smallFont);
+	_dialog = new DialogManager(_screen, _events);
 
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
@@ -139,6 +140,8 @@ void PelrockEngine::init() {
 	_smallFont->load("ALFRED.4");
 	_largeFont = new LargeFont();
 	_largeFont->load("ALFRED.7");
+	_doubleSmallFont = new DoubleSmallFont();
+	_doubleSmallFont->load("ALFRED.4");
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);

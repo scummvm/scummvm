@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	room.o \
 	fonts/small_font.o \
 	fonts/large_font.o \
+	fonts/small_font_double.o \
 	util.o \
 	resources.o\
 	sound.o \
