@@ -3,22 +3,24 @@ cmake_minimum_required(VERSION 3.23)
 project(ScummVM)
 include(FetchContent)
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar")
   set(PLATFORM_POSIX TRUE)
   add_compile_definitions(POSIX)
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(PLATFORM_WINDOWS TRUE)
   add_compile_definitions(WIN32)
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(PLATFORM_MACOS TRUE)
   set(PLATFORM_POSIX TRUE)
   add_compile_definitions(MACOSX POSIX)
-  link_libraries("-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework Cocoa")
+  link_libraries(
+    "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework Cocoa"
+  )
 endif()
 
 set(SDL_BACKEND TRUE)
@@ -28,9 +30,8 @@ set(USE_SDL2 TRUE)
 FetchContent_Declare(
   SDL2
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG        6510d6ccbf446e058ae8ed95233f59057312df02 # release-2.32.6
-  FIND_PACKAGE_ARGS NAMES SDL2
-)
+  GIT_TAG 6510d6ccbf446e058ae8ed95233f59057312df02 # release-2.32.6
+  FIND_PACKAGE_ARGS NAMES SDL2)
 FetchContent_MakeAvailable(SDL2)
 link_libraries(SDL2::SDL2)
 

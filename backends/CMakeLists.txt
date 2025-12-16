@@ -67,12 +67,9 @@ endif()
 if(PLATFORM_MACOS)
   target_sources(
     backends
-    PRIVATE audiocd/macosx/macosx-audiocd.cpp
-            dialogs/macosx/macosx-dialogs.mm
-            midi/coreaudio.cpp
-            midi/coremidi.cpp
-            updates/macosx/macosx-updates.mm
-            taskbar/macosx/macosx-taskbar.mm)
+    PRIVATE audiocd/macosx/macosx-audiocd.cpp dialogs/macosx/macosx-dialogs.mm
+            midi/coreaudio.cpp midi/coremidi.cpp
+            updates/macosx/macosx-updates.mm taskbar/macosx/macosx-taskbar.mm)
 endif()
 
 if(SDL_BACKEND)
