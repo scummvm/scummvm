@@ -39,10 +39,8 @@ void EventLoop::runEventLoop() {
 		if (activeWin->_modalResult != DEFAULT_MODAL_RESULT)
 			break;
 
-		if (!GetMessage(msg)) {
-			activeWin->_modalResult = -9999;
+		if (!GetMessage(msg))
 			break;
-		}
 
 		CWnd *mainWnd = GetActiveWindow();
 		if (msg.message != WM_NULL && mainWnd && !mainWnd->PreTranslateMessage(&msg)) {
@@ -161,6 +159,12 @@ void EventLoop::checkMessages() {
 						MAKELPARAM(HTCLIENT, msg.message)
 					);
 			}
+		} else if (msg.message == WM_QUIT) {
+			// Add a window message close message as well
+			MSG cmsg;
+			cmsg.message = WM_CLOSE;
+			cmsg.hwnd = hWnd;
+			_messages.push(cmsg);
 		}
 	}
 
@@ -196,12 +200,14 @@ bool EventLoop::GetMessage(MSG &msg) {
 			}
 		} else if (msg.message != WM_QUIT) {
 			msg.message = WM_NULL;
+		} else {
+			debug(1, "Got WM_QUIT message..");
 		}
 	} else {
 		msg.message = WM_NULL;
 	}
 
-	return !shouldQuit();
+	return !((msg.message == WM_QUIT) || (shouldQuit() && _messages.empty()));
 }
 
 void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
@@ -348,7 +354,7 @@ bool EventLoop::PostMessage(HWND hWnd, unsigned int Msg,
 		// so we can ignore the WM_PARENTNOTIFY on closure
 		return false;
 
-	assert(hWnd || Msg == WM_QUIT);
+	assert(hWnd);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
 }
