@@ -44,6 +44,10 @@ Common::String tagName(uint32 tag) {
 	char name[5] = {char(tag >> 24), char(tag >> 16), char(tag >> 8), char(tag), 0};
 	return {name};
 }
+
+static const int8_t mv[256][2] = {
+	{0, 0}, {0, -1}, {-1, 0}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}, {0, -2}, {-2, 0}, {2, 0}, {0, 2}, {-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}, {-2, -2}, {2, -2}, {-2, 2}, {2, 2}, {0, -3}, {-3, 0}, {3, 0}, {0, 3}, {-1, -3}, {1, -3}, {-3, -1}, {3, -1}, {-3, 1}, {3, 1}, {-1, 3}, {1, 3}, {-2, -3}, {2, -3}, {-3, -2}, {3, -2}, {-3, 2}, {3, 2}, {-2, 3}, {2, 3}, {0, -4}, {-4, 0}, {4, 0}, {0, 4}, {-1, -4}, {1, -4}, {-4, -1}, {4, -1}, {4, 1}, {-1, 4}, {1, 4}, {-3, -3}, {-3, 3}, {3, 3}, {-2, -4}, {-4, -2}, {4, -2}, {-4, 2}, {-2, 4}, {2, 4}, {-3, -4}, {3, -4}, {4, -3}, {-5, 0}, {-4, 3}, {-3, 4}, {3, 4}, {-1, -5}, {-5, -1}, {-5, 1}, {-1, 5}, {-2, -5}, {2, -5}, {5, -2}, {5, 2}, {-4, -4}, {-4, 4}, {-3, -5}, {-5, -3}, {-5, 3}, {3, 5}, {-6, 0}, {0, 6}, {-6, -1}, {-6, 1}, {1, 6}, {2, -6}, {-6, 2}, {2, 6}, {-5, -4}, {5, 4}, {4, 5}, {-6, -3}, {6, 3}, {-7, 0}, {-1, -7}, {5, -5}, {-7, 1}, {-1, 7}, {4, -6}, {6, 4}, {-2, -7}, {-7, 2}, {-3, -7}, {7, -3}, {3, 7}, {6, -5}, {0, -8}, {-1, -8}, {-7, -4}, {-8, 1}, {4, 7}, {2, -8}, {-2, 8}, {6, 6}, {-8, 3}, {5, -7}, {-5, 7}, {8, -4}, {0, -9}, {-9, -1}, {1, 9}, {7, -6}, {-7, 6}, {-5, -8}, {-5, 8}, {-9, 3}, {9, -4}, {7, -7}, {8, -6}, {6, 8}, {10, 1}, {-10, 2}, {9, -5}, {10, -3}, {-8, -7}, {-10, -4}, {6, -9}, {-11, 0}, {11, 1}, {-11, -2}, {-2, 11}, {7, -9}, {-7, 9}, {10, 6}, {-4, 11}, {8, -9}, {8, 9}, {5, 11}, {7, -10}, {12, -3}, {11, 6}, {-9, -9}, {8, 10}, {5, 12}, {-11, 7}, {13, 2}, {6, -12}, {10, 9}, {-11, 8}, {-7, 12}, {0, 14}, {14, -2}, {-9, 11}, {-6, 13}, {-14, -4}, {-5, -14}, {5, 14}, {-15, -1}, {-14, -6}, {3, -15}, {11, -11}, {-7, 14}, {-5, 15}, {8, -14}, {15, 6}, {3, 16}, {7, -15}, {-16, 5}, {0, 17}, {-16, -6}, {-10, 14}, {-16, 7}, {12, 13}, {-16, 8}, {-17, 6}, {-18, 3}, {-7, 17}, {15, 11}, {16, 10}, {2, -19}, {3, -19}, {-11, -16}, {-18, 8}, {-19, -6}, {2, -20}, {-17, -11}, {-10, -18}, {8, 19}, {-21, -1}, {-20, 7}, {-4, 21}, {21, 5}, {15, 16}, {2, -22}, {-10, -20}, {-22, 5}, {20, -11}, {-7, -22}, {-12, 20}, {23, -5}, {13, -20}, {24, -2}, {-15, 19}, {-11, 22}, {16, 19}, {23, -10}, {-18, -18}, {-9, -24}, {24, -10}, {-3, 26}, {-23, 13}, {-18, -20}, {17, 21}, {-4, 27}, {27, 6}, {1, -28}, {-11, 26}, {-17, -23}, {7, 28}, {11, -27}, {29, 5}, {-23, -19}, {-28, -11}, {-21, 22}, {-30, 7}, {-17, 26}, {-27, 16}, {13, 29}, {19, -26}, {10, -31}, {-14, -30}, {20, -27}, {-29, 18}, {-16, -31}, {-28, -22}, {21, -30}, {-25, 28}, {26, -29}, {25, -32}, {-32, -32}};
+
 } // namespace
 
 class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
@@ -88,6 +92,7 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	uint16 _version = 0;
 	Graphics::Surface *_frame;
 	FourXM::HuffmanDecoder _blockType[2][4] = {};
+	byte _mv[256];
 
 public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
@@ -127,6 +132,13 @@ const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
 	if (!_frame) {
 		_frame = new Graphics::Surface();
 		_frame->create(_w, _h, getPixelFormat());
+
+		for (uint i = 0; i < 256; i++) {
+			if (_version > 1)
+				_mv[i] = mv[i][0] + mv[i][1] * _frame->pitch / 2;
+			else
+				_mv[i] = (i & 15) - 8 + ((i >> 4) - 8) * _frame->pitch / 2;
+		}
 	}
 	debug("decode next video frame");
 	_dec->decodeNextFrameImpl();
@@ -315,11 +327,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 }
 
 namespace {
-#define LE_CENTRIC_MUL(dst, src, scale, dc)                     \
-	{                                                           \
-		unsigned tmpval = READ_LE_UINT32(src) * (scale) + (dc); \
-		*(dst) = tmpval;                                        \
-	}
 
 void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int h, int stride, int scale, unsigned dc) {
@@ -329,7 +336,8 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 	switch (log2w) {
 	case 0:
 		for (i = 0; i < h; i++) {
-			dst[0] = scale * src[0] + dc;
+			for (int j = 0; j != 1; ++j)
+				dst[j] = scale * src[j] + dc;
 			if (scale)
 				src += stride;
 			dst += stride;
@@ -337,7 +345,8 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		break;
 	case 1:
 		for (i = 0; i < h; i++) {
-			LE_CENTRIC_MUL(dst, src, scale, dc);
+			for (int j = 0; j != 2; ++j)
+				dst[j] = scale * src[j] + dc;
 			if (scale)
 				src += stride;
 			dst += stride;
@@ -345,8 +354,8 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		break;
 	case 2:
 		for (i = 0; i < h; i++) {
-			LE_CENTRIC_MUL(dst, src, scale, dc);
-			LE_CENTRIC_MUL(dst + 2, src + 2, scale, dc);
+			for (int j = 0; j != 4; ++j)
+				dst[j] = scale * src[j] + dc;
 			if (scale)
 				src += stride;
 			dst += stride;
@@ -354,10 +363,8 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		break;
 	case 3:
 		for (i = 0; i < h; i++) {
-			LE_CENTRIC_MUL(dst, src, scale, dc);
-			LE_CENTRIC_MUL(dst + 2, src + 2, scale, dc);
-			LE_CENTRIC_MUL(dst + 4, src + 4, scale, dc);
-			LE_CENTRIC_MUL(dst + 6, src + 6, scale, dc);
+			for (int j = 0; j != 8; ++j)
+				dst[j] = scale * src[j] + dc;
 			if (scale)
 				src += stride;
 			dst += stride;
@@ -373,17 +380,50 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
-	auto h = 1 << log2h, w = 1 << log2w;
 	auto &huff = _blockType[_version > 1][index];
 	auto code = huff.next(bs);
-	int scale = 0;
+	int scale = 1;
 	int dc = 0;
-	if (code == 5) {
+
+	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
+	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
+	auto pitch = frame->pitch / frame->format.bytesPerPixel;
+	if (code == 1) {
+		--log2h;
+		decode_pfrm_block(frame, x, y, log2w, log2h, bs, wordStream, byteStream);
+		int dy = 1 << log2h;
+		decode_pfrm_block(frame, x, y + dy, log2w, log2h, bs, wordStream, byteStream);
+		return;
+	} else if (code == 2) {
+		--log2w;
+		decode_pfrm_block(frame, x, y, log2w, log2h, bs, wordStream, byteStream);
+		int dx = 1 << log2w;
+		decode_pfrm_block(frame, x + dx, y, log2w, log2h, bs, wordStream, byteStream);
+		return;
+	} else if (code == 6) {
+		if (log2w) {
+			dst[0] = wordStream.readUint16LE();
+			dst[1] = wordStream.readUint16LE();
+		} else {
+			dst[0] = wordStream.readUint16LE();
+			dst[pitch] = wordStream.readUint16LE();
+		}
+		return;
+	}
+	if (code == 0) {
+		byte b = byteStream.readByte();
+		src += _mv[b];
+	} else if (code == 3 && _version >= 2) {
+	} else if (code == 4) {
+		src += _mv[byteStream.readByte()];
+		dc = wordStream.readSint16LE();
+	} else if (code == 5) {
+		scale = 0;
 		dc = wordStream.readSint16LE();
 	} else {
-		error("invalid code %d", code);
+		error("invalid code %d (steps %u,%u)", code, log2w, log2h);
 	}
-	mcdc(static_cast<uint16 *>(frame->getBasePtr(x, y)), static_cast<const uint16 *>(_frame->getBasePtr(x, y)), log2w, h, frame->pitch / frame->format.bytesPerPixel, scale, dc);
+	mcdc(dst, src, log2w, 1 << log2h, pitch, scale, dc);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
@@ -406,11 +446,14 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 
 	Common::ScopedPtr<Graphics::Surface> frame(new Graphics::Surface());
 	frame->copyFrom(*_frame);
-	for (int y = 0, h = _frame->h; y < h; y += 8) {
-		for (int x = 0, w = _frame->w; x < w; x += 8) {
+	for (int y = 0, h = frame->h; y < h; y += 8) {
+		for (int x = 0, w = frame->w; x < w; x += 8) {
 			decode_pfrm_block(frame.get(), x, y, 3, 3, bitStream, wordStream, byteStream);
 		}
 	}
+	debug("bitStream: %u/%u", bitStream.getWordPos(), bitStreamData.size());
+	debug("wordStream: %lu/%lu", wordStream.pos(), wordStream.size());
+	debug("byteStream: %lu/%lu", byteStream.pos(), byteStream.size());
 	_frame = frame.release();
 }
 
