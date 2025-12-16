@@ -149,7 +149,10 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_DOWN);
+		// setScreen(0, ALFRED_DOWN);
+		setScreen(2, ALFRED_LEFT);
+		alfredState.x = 576;
+		alfredState.y = 374;
 	}
 }
 
@@ -508,9 +511,7 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 void PelrockEngine::chooseAlfredStateAndDraw() {
 	switch (alfredState.animState) {
 	case ALFRED_WALKING: {
-
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
-
 		if (step.distanceX > 0) {
 			if (step.flags & MOVE_RIGHT) {
 				alfredState.direction = ALFRED_RIGHT;
@@ -571,7 +572,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame = 0;
 		}
 		drawAlfred(_res->alfredTalkFrames[alfredState.direction][alfredState.curFrame]);
-		alfredState.curFrame++;
+		if(_chrono->getFrameCount() % 2 == 0) {
+			alfredState.curFrame++;
+		}
 		break;
 	case ALFRED_COMB:
 		if (alfredState.curFrame >= 11) {

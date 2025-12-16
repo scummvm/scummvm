@@ -151,7 +151,15 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 		}
 	}
 	for (int i = 0; i < choices->size(); i++) {
-		drawText(compositeBuffer, g_engine->_doubleSmallFont, (*choices)[i].text, 10, overlayY + 2 + i * kChoiceHeight, 620, 9);
+		ChoiceOption choice = (*choices)[i];
+		int choicePadding = 32;
+		int width = g_engine->_doubleSmallFont->getStringWidth(choice.text);
+		Common::Rect bbox(0, overlayY + i * kChoiceHeight, width + choicePadding * 2, overlayY + i * kChoiceHeight + kChoiceHeight);
+		int color = 14;
+		if (bbox.contains(_events->_mouseX, _events->_mouseY)) {
+			color = 15;
+		}
+		drawText(compositeBuffer, g_engine->_doubleSmallFont, choice.text, choicePadding, overlayY + 2 + i * kChoiceHeight, 620, color);
 	}
 }
 
@@ -179,13 +187,14 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		Common::Array<Common::String> textLines = dialogueLines[curPage];
 
 		int maxWidth = 0;
-		int height = textLines.size() * 20;
+		int height = textLines.size() * 24;
 		for (int i = 0; i < textLines.size(); i++) {
 			maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(textLines[i]));
 		}
 
 		Graphics::Surface s;
 		s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
+		s.fillRect(s.getRect(), 255); // Clear surface
 		s.drawRoundRect(Common::Rect(0, 0, s.getRect().width(), s.getRect().height()), 2, 13, false);
 		int xPos = 0;
 		int yPos = 0;
@@ -208,9 +217,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			int xPos = 0;
 			int yPos = i * 20; // Above sprite, adjust for line
 
-			debug("Drawing dialogue line %s at (%d, %d), speaker =%d, maxWidth = %d, isNPC talking=%d", textLines[i].c_str(), xPos, yPos, speakerId, maxWidth, _curSprite->isTalking ? 1 : 0);
 			g_engine->_largeFont->drawString(&s, textLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
-
 		}
 
 		if (xPos + s.getRect().width() > 640) {
@@ -226,7 +233,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			yPos = 0;
 		}
 
-		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos));
+		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		// Present to screen
 		_screen->markAllDirty();
 		_screen->update();
@@ -453,12 +460,10 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		Common::String text;
 		byte speakerId;
 		uint32 endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
-
 		Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
 
 		// Skip spurious single character artifacts
 		if (!text.empty() && text.size() > 1) {
-			debug("Dialogue: \"%s\" (Speaker ID: %u)", text.c_str(), speakerId);
 			displayDialogue(wrappedText, speakerId);
 		}
 
@@ -508,7 +513,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		}
 
 		// 4. Parse choices
-		debug("Parsing choices at pos %u", position);
 		Common::Array<ChoiceOption> choices;
 		parseChoices(conversationData, dataSize, position, choices);
 		debug("Parsed %u choices", choices.size());
@@ -528,7 +532,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		// Check if this is auto-dialogue (only one choice)
 		if (choices.size() == 1) {
 			// Auto-dialogue: display it automatically
-			displayDialogue(choices[0].text, ALFRED_COLOR);
+			debug("Auto-selecting single choice: \"%s\"", choices[0].text.c_str());
 			selectedIndex = 0;
 		} else {
 			// Real choice: show menu and wait for selection
