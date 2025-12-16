@@ -45,15 +45,15 @@ void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
 
 static const int special_chars[] = {
-	131, // inverted ?
-	130, // inverted !
-	129, // capital N tilde
-	128, // small n tilde
-	127, // small u tilde
-	126, // small o tilde
-	125, // small i tilde
-	124, // small e tilde
-	123, // small a tilde
+	168, // inverted ?
+	173, // inverted !
+	165, // capital N tilde
+	164, // small n tilde
+	163, // small u tilde
+	162, // small o tilde
+	161, // small i tilde
+	132, // small e tilde
+	160, // small a tilde
 };
 
 } // End of namespace Pelrock

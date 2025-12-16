@@ -301,29 +301,27 @@ void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color) {
 }
 
 byte decodeChar(byte b) {
-	byte returnedChar = 0;
+
 	switch (b) {
 	case 0x82:
-		returnedChar = special_chars[1];
+		return special_chars[1];
 	case 0x83:
-		returnedChar = special_chars[0];
-
+		return special_chars[0];
 	case 0x80:
-		returnedChar = special_chars[3]; // n tilde
+		return  special_chars[3]; // n tilde
 	case 0x7F:
-		returnedChar = special_chars[4];
+		return special_chars[4];
 	case 0x7E:
-		returnedChar = special_chars[5];
+		return special_chars[5];
 	case 0x7D:
-		returnedChar = special_chars[6];
+		return special_chars[6];
 	case 0x7C:
-		returnedChar = special_chars[7];
+		return special_chars[7];
 	case 0x7B:
-		returnedChar = special_chars[8];
+		return special_chars[8];
 	default:
-		return returnedChar = b;
+		return b;
 	}
-	return returnedChar;
 }
 
 } // End of namespace Pelrock

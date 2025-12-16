@@ -112,6 +112,7 @@ uint32 DialogManager::readTextBlock(
 		outSpeakerId = ALFRED_COLOR;
 	}
 
+	pos += 2; // Skip line count and blank
 	// Read text until control byte
 	while (pos < dataSize) {
 		byte b = data[pos];
@@ -130,22 +131,8 @@ uint32 DialogManager::readTextBlock(
 			continue;
 		}
 
-		if (b == 0x0A || b == 0x0B || b == 0x00) {
-			debug("Skipping byte 0x%02X at pos %u", b, pos);
-			pos++; // Skip nulls and line feeds
-			continue;
-		}
-
-		// Regular text - decode the character
-		if (b >= 0x20 && b <= 0x7A) {
-			outText += decodeChar(b);
-		} else {
-			// Try to decode special characters
-			byte decoded = decodeChar(b);
-			if (decoded != b || (decoded >= 0x20 && decoded <= 0x83)) {
-				outText += (char)decoded;
-			}
-		}
+		// Regular text - does not need decoding
+		outText += b;
 		pos++;
 	}
 
@@ -272,6 +259,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 
 				// Parse the choice text
 				uint32 textPos = pos + 4; // Skip marker + index + 2 speaker bytes
+				textPos += 2;
 				while (textPos < dataSize) {
 					byte tb = data[textPos];
 					if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
@@ -280,17 +268,12 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 						break;
 					}
 
-					if (b == 0x0A || b == 0x0B || b == 0x00) {
-						debug("Skipping byte 0x%02X at pos %u", b, pos);
-						pos++; // Skip nulls and line feeds
-						continue;
-					}
-
-					if (tb >= 0x20 && tb <= 0x7A) {
+					if (tb >= 0x20 && tb < 0x7A) {
 						opt.text += (char)tb;
 					} else {
 						byte decoded = decodeChar(tb);
-						if (decoded != tb || (decoded >= 0x20 && decoded <= 0x83)) {
+						debug("Parsing choice char: 0x%02X, decoded: 0x%02X", tb, decoded);
+						if (decoded != tb || (decoded >= 0x20 && decoded <= 0xB4)) {
 							opt.text += (char)decoded;
 						}
 					}
@@ -333,6 +316,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 
 					// Parse the choice text
 					uint32 textPos = pos + 4;
+					textPos += 2; // Skip marker + index + 2 speaker bytes
 					while (textPos < dataSize) {
 						byte tb = data[textPos];
 						if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
@@ -341,17 +325,12 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 							break;
 						}
 
-						if (b == 0x0A || b == 0x0B || b == 0x00) {
-							debug("Skipping byte 0x%02X at pos %u", b, pos);
-							pos++; // Skip nulls and line feeds
-							continue;
-						}
-
 						if (tb >= 0x20 && tb <= 0x7A) {
 							opt.text += (char)tb;
 						} else {
 							byte decoded = decodeChar(tb);
-							if (decoded != tb || (decoded >= 0x20 && decoded <= 0x83)) {
+							debug("Parsing choice char: 0x%02X, decoded: 0x%02X", tb, decoded);
+							if (decoded != tb || (decoded >= 0x20 && decoded <= 0xB4)) {
 								opt.text += (char)decoded;
 							}
 						}
