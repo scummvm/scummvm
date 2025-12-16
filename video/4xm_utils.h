@@ -30,7 +30,7 @@ class BitStream {
 	uint _size;
 	uint _wordPos;
 	Type _bitMask;
-	static constexpr Type InitialMask = 1u << (sizeof(Type) * 8 - 1);
+	static constexpr Type InitialMask = Type(1) << (sizeof(Type) * 8 - 1);
 	static constexpr uint WordSize = sizeof(Type);
 
 public:
@@ -93,6 +93,7 @@ class HuffmanDecoder {
 	};
 	HuffChar _table[514] = {};
 	uint _startEntry = 0;
+	uint _numCodes = 0;
 
 public:
 	uint loadStatistics(const byte *huff, uint huffSize);
@@ -109,7 +110,7 @@ private:
 	template<typename Word>
 	Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset);
 
-	void buildTable(uint max);
+	void buildTable(uint numCodes);
 };
 
 void idct(int16_t block[64]);

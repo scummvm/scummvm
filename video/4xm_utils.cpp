@@ -28,7 +28,7 @@ namespace FourXM {
 template<typename BitStreamType>
 uint HuffmanDecoder::next(BitStreamType &bs) {
 	uint value = _startEntry;
-	while (value > 256) {
+	while (value >= _numCodes) {
 		auto bit = bs.readBit();
 		if (bit)
 			value = _table[value].trueIdx;
@@ -78,13 +78,15 @@ uint HuffmanDecoder::loadStatistics(const byte *huff, uint huffSize) {
 		freq_first = huff[offset++];
 	} while (freq_first != 0);
 	_table[256].freq = 1;
-	_table[513].freq = 0x7FFF;
 
 	buildTable(257);
 	return offset;
 }
 
-void HuffmanDecoder::buildTable(uint codeIdx) {
+void HuffmanDecoder::buildTable(uint numCodes) {
+	_numCodes = numCodes;
+	_table[513].freq = 0x7FFF;
+	auto codeIdx = numCodes;
 	while (true) {
 		ushort idx = 0;
 		ushort smallest2 = 513, smallest1 = 513;
