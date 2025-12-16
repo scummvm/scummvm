@@ -539,9 +539,9 @@ void FourXMDecoder::readList(uint32 listEnd) {
 		case MKTAG('V', 'T', 'R', 'K'):
 			switch (tag) {
 			case MKTAG('v', 't', 'r', 'k'): {
-				_stream->skip(4);
+				_stream->skip(8);
 				auto extra = _stream->readUint32LE();
-				_stream->skip(20);
+				_stream->skip(16);
 				auto w = _stream->readUint32LE();
 				auto h = _stream->readUint32LE();
 				debug("video %ux%u, version: %u", w, h, extra >> 16);
