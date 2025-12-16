@@ -302,33 +302,6 @@ void PelrockEngine::checkMouse() {
 	}
 	checkMouseHover();
 
-//else if (e.type == Common::EVENT_MOUSEMOVE) {
-	// 		mouseX = e.mouse.x;
-	// 		mouseY = e.mouse.y;
-	// 	} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-	// 		if (!_isMouseDown) {
-	// 			_mouseClickTime = g_system->getMillis();
-	// 			_isMouseDown = true;
-	// 		}
-	// 	} else if (e.type == Common::EVENT_LBUTTONUP) {
-	// 		_isMouseDown = false;
-	// 		checkMouseClick(e.mouse.x, e.mouse.y);
-	// 		_displayPopup = false;
-	// 		_longClick = false;
-	// 	} else if (e.type == Common::EVENT_RBUTTONUP) {
-	// 		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
-	// 		stateGame = SETTINGS;
-	// 	}
-	// }
-	// if (_isMouseDown) {
-	// 	if (g_system->getMillis() - _mouseClickTime >= kLongClickDuration) {
-	// 		_longClick = true;
-	// 		_isMouseDown = false;
-	// 		checkLongMouseClick(e.mouse.x, e.mouse.y);
-	// 	}
-	// }
-	// checkMouseHover();
-
 }
 
 void PelrockEngine::copyBackgroundToBuffer() {

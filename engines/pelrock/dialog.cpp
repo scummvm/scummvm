@@ -112,7 +112,7 @@ uint32 DialogManager::readTextBlock(
 		outSpeakerId = ALFRED_COLOR;
 	}
 
-	pos += 2; // Skip line count and blank
+	// pos += 2; // Skip line count and blank
 	// Read text until control byte
 	while (pos < dataSize) {
 		byte b = data[pos];
@@ -132,7 +132,9 @@ uint32 DialogManager::readTextBlock(
 		}
 
 		// Regular text - does not need decoding
-		outText += b;
+		if (b >= 0x20 && b <= 0x83) {
+			outText += b;
+		}
 		pos++;
 	}
 
