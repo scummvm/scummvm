@@ -240,12 +240,12 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
+			debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
 			if (curPage < (int)dialogueLines.size() - 1) {
 				curPage++;
 			} else {
 				break; // Exit dialogue on last page click
 			}
-			break;
 		}
 		g_system->delayMillis(10);
 	}
@@ -461,7 +461,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		byte speakerId;
 		uint32 endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
 		Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
-
+		debug("Word wrapping %s produces %d pages", text.c_str(), wrappedText.size());
 		// Skip spurious single character artifacts
 		if (!text.empty() && text.size() > 1) {
 			displayDialogue(wrappedText, speakerId);
