@@ -49,7 +49,8 @@ private:
 	Sprite *_curSprite = nullptr;
 
 	// Private helper functions for conversation parsing
-	void displayDialogue(const Common::String &text, byte speakerId);
+	void displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId);
+	void displayDialogue(Common::String text, byte speakerId);
 	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos,
 						 Common::String &outText, byte &outSpeakerId);
 	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> &outChoices);
@@ -63,7 +64,7 @@ public:
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
-
+	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<ChoiceOption> *_currentChoices = nullptr;
 };
 

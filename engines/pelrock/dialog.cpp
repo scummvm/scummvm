@@ -160,14 +160,14 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
  * @param text The text to display
  * @param speakerId The speaker ID which is used as color
  */
-void DialogManager::displayDialogue(const Common::String &text, byte speakerId) {
-	if (text.empty() || text.size() <= 1) {
+void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId) {
+	if (dialogueLines.empty()) {
 		return;
 	}
 
 	// Clear any existing click state
 	_events->_leftMouseClicked = false;
-
+	int curPage = 0;
 	// Render loop - display text and wait for click
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
@@ -175,9 +175,13 @@ void DialogManager::displayDialogue(const Common::String &text, byte speakerId) 
 		// Render the scene (keeps animations going)
 		g_engine->renderScene(false);
 
+
 		// Draw the dialogue text on top using speaker ID as color
-		drawText(g_engine->_largeFont, text, _curSprite->x, _curSprite->y - 10, 640, speakerId);
-		// drawText(g_engine->_largeFont, "Hola", 10, 10, 640, speakerId);
+		Common::Array<Common::String> textLines = dialogueLines[curPage];
+		for(int i = 0; i < textLines.size(); i++) {
+			int yPos = 400 - (textLines.size() - i) * 20 - 10; // Adjust Y position based on line count
+			drawText(g_engine->_largeFont, textLines[i], 10, yPos, 620, speakerId);
+		}
 
 		// Present to screen
 		_screen->markAllDirty();
@@ -185,10 +189,19 @@ void DialogManager::displayDialogue(const Common::String &text, byte speakerId) 
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
+			if(curPage < (int)dialogueLines.size() - 1) {
+				curPage++;
+			} else {
+				break; // Exit dialogue on last page click
+			}
 			break;
 		}
 		g_system->delayMillis(10);
 	}
+}
+
+void DialogManager::displayDialogue(Common::String text, byte speakerId) {
+	displayDialogue(wordWrap(text), speakerId);
 }
 
 /**
@@ -395,10 +408,13 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		byte speakerId;
 		uint32 endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
 
+
+		Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
+
 		// Skip spurious single character artifacts
 		if (!text.empty() && text.size() > 1) {
 			debug("Dialogue: \"%s\" (Speaker ID: %u)", text.c_str(), speakerId);
-			displayDialogue(text, speakerId);
+			displayDialogue(wrappedText, speakerId);
 		}
 
 		// Move to end of text
@@ -513,4 +529,117 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	debug("Conversation ended");
 	// Note: The caller should set inConversation = false after this returns
 }
+
+bool isEndMarker(char char_byte) {
+	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
+}
+
+
+int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
+	// return word_length, is_end
+	int wordLength = 0;
+	int pos = startPos;
+	while (pos < text.size()) {
+		char char_byte = text[pos];
+		if (char_byte == CHAR_SPACE || isEndMarker(char_byte)) {
+			break;
+		}
+		wordLength++;
+		pos++;
+	}
+	// Check if we hit an end marker
+	if (pos < text.size() && isEndMarker(text[pos])) {
+		isEnd = true;
+	}
+	// Count ALL trailing spaces as part of this word
+	if (pos < text.size() && !isEnd) {
+		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
+			wordLength += 3;
+		} else {
+			// Count all consecutive spaces
+			while (pos < text.size() && text[pos] == CHAR_SPACE) {
+				wordLength++;
+				pos++;
+			}
+		}
+	}
+	return wordLength;
+}
+
+Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::String text) {
+
+	Common::Array<Common::Array<Common::String>> pages;
+	Common::Array<Common::String> currentPage;
+	Common::Array<Common::String> currentLine;
+	int charsRemaining = MAX_CHARS_PER_LINE;
+	int position = 0;
+	int currentLineNum = 0;
+	while (position < text.size()) {
+		bool isEnd = false;
+		int wordLength = calculateWordLength(text, position, isEnd);
+		// # Extract the word (including trailing spaces)
+		// word = text[position:position + word_length].decode('latin-1', errors='replace')
+		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
+		// # Key decision: if word_length > chars_remaining, wrap to next line
+		if (wordLength > charsRemaining) {
+			// Word is longer than the entire line - need to split
+			currentPage.push_back(joinStrings(currentLine, ""));
+			currentLine.clear();
+			charsRemaining = MAX_CHARS_PER_LINE;
+			currentLineNum++;
+
+			if (currentLineNum >= MAX_LINES) {
+				pages.push_back(currentPage);
+				currentPage.clear();
+				currentLineNum = 0;
+			}
+		}
+		// Add word to current line
+		currentLine.push_back(word);
+		charsRemaining -= wordLength;
+
+		if (charsRemaining == 0 && isEnd) {
+			Common::String lineText = joinStrings(currentLine, "");
+			while (lineText.lastChar() == CHAR_SPACE) {
+				lineText = lineText.substr(0, lineText.size() - 1);
+			}
+			int trailingSpaces = currentLine.size() - lineText.size();
+			if (trailingSpaces > 0) {
+				currentPage.push_back(lineText);
+				//  current_line = [' ' * trailing_spaces]
+				Common::String currentLine(trailingSpaces, ' ');
+				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
+				currentLineNum += 1;
+
+				if (currentLineNum >= MAX_LINES) {
+					pages.push_back(currentPage);
+					currentPage.clear();
+					currentLineNum = 0;
+				}
+			}
+		}
+
+		position += wordLength;
+		if (isEnd) {
+			// End of sentence/paragraph/page
+			break;
+		}
+	}
+	if (currentLine.empty() == false) {
+		Common::String lineText = joinStrings(currentLine, "");
+		while (lineText.lastChar() == CHAR_SPACE) {
+			lineText = lineText.substr(0, lineText.size() - 1);
+		}
+		currentPage.push_back(lineText);
+	}
+	if (currentPage.empty() == false) {
+		pages.push_back(currentPage);
+	}
+	for (int i = 0; i < pages.size(); i++) {
+		for (int j = 0; j < pages[i].size(); j++) {
+		}
+	}
+	return pages;
+}
+
 } // namespace Pelrock
