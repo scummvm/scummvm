@@ -462,12 +462,11 @@ void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 void PelrockEngine::talkTo(HotSpot *hotspot) {
 	Sprite *animSet;
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (i == hotspot->index) {
+		if (_room->_currentRoomAnims[i].index == hotspot->index) {
 			animSet = &_room->_currentRoomAnims[i];
 			break;
 		}
 	}
-	debug("Starting conversation with hotspot %d, animSet pos %d", hotspot->index, animSet->x);
 	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet);
 }
 

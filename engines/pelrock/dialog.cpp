@@ -175,21 +175,61 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		// Render the scene (keeps animations going)
 		g_engine->renderScene(false);
 
-
 		// Draw the dialogue text on top using speaker ID as color
 		Common::Array<Common::String> textLines = dialogueLines[curPage];
-		for(int i = 0; i < textLines.size(); i++) {
-			int yPos = 400 - (textLines.size() - i) * 20 - 10; // Adjust Y position based on line count
-			drawText(g_engine->_largeFont, textLines[i], 10, yPos, 620, speakerId);
+
+		int maxWidth = 0;
+		int height = textLines.size() * 20;
+		for (int i = 0; i < textLines.size(); i++) {
+			maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(textLines[i]));
 		}
 
+		Graphics::Surface s;
+		s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
+		s.drawRoundRect(Common::Rect(0, 0, s.getRect().width(), s.getRect().height()), 2, 13, false);
+		int xPos = 0;
+		int yPos = 0;
+
+		if (speakerId == ALFRED_COLOR) {
+			// Offset X position for Alfred to avoid overlapping with his sprite
+			xPos = g_engine->alfredState.x + kAlfredFrameWidth / 2 - maxWidth / 2;
+			yPos = g_engine->alfredState.y - kAlfredFrameHeight - 30; // Above sprite, adjust for line
+		} else {
+			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
+			yPos = _curSprite->y - 30 - height; // Above sprite, adjust for line
+		}
+
+		for (int i = 0; i < textLines.size(); i++) {
+
+			int xPos = 0;
+			int yPos = i * 20; // Above sprite, adjust for line
+
+			debug("Drawing dialogue line %s at (%d, %d), speaker =%d, maxWidth = %d", textLines[i].c_str(), xPos, yPos, speakerId, maxWidth);
+			g_engine->_largeFont->drawString(&s, textLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
+
+		}
+
+		if (xPos + s.getRect().width() > 640) {
+			xPos = 640 - s.getRect().width() - 2;
+		}
+		if (yPos + s.getRect().height() > 400) {
+			yPos = 400 - s.getRect().height();
+		}
+		if (xPos < 0) {
+			xPos = 0;
+		}
+		if (yPos < 0) {
+			yPos = 0;
+		}
+
+		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos));
 		// Present to screen
 		_screen->markAllDirty();
 		_screen->update();
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
-			if(curPage < (int)dialogueLines.size() - 1) {
+			if (curPage < (int)dialogueLines.size() - 1) {
 				curPage++;
 			} else {
 				break; // Exit dialogue on last page click
@@ -408,7 +448,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		byte speakerId;
 		uint32 endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
 
-
 		Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
 
 		// Skip spurious single character artifacts
@@ -533,7 +572,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 bool isEndMarker(char char_byte) {
 	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
 }
-
 
 int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 	// return word_length, is_end
