@@ -464,6 +464,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].index == hotspot->index) {
 			animSet = &_room->_currentRoomAnims[i];
+			animSet->isTalking = true;
 			break;
 		}
 	}
@@ -743,8 +744,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	int y = sprite->y;
 	int w = animData.w;
 	int h = animData.h;
-	int extra = sprite->extra;
-	if (whichNPCTalking == extra) {
+	if (sprite->isTalking) {
 		drawTalkNPC(sprite);
 		return;
 	}

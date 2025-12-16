@@ -191,12 +191,16 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int yPos = 0;
 
 		if (speakerId == ALFRED_COLOR) {
+			g_engine->alfredState.animState = ALFRED_TALKING;
+			_curSprite->isTalking = false;
 			// Offset X position for Alfred to avoid overlapping with his sprite
 			xPos = g_engine->alfredState.x + kAlfredFrameWidth / 2 - maxWidth / 2;
-			yPos = g_engine->alfredState.y - kAlfredFrameHeight - 30; // Above sprite, adjust for line
+			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
 		} else {
+			g_engine->alfredState.animState = ALFRED_IDLE;
+			_curSprite->isTalking = true;
 			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
-			yPos = _curSprite->y - 30 - height; // Above sprite, adjust for line
+			yPos = _curSprite->y - height; // Above sprite, adjust for line
 		}
 
 		for (int i = 0; i < textLines.size(); i++) {
@@ -204,7 +208,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			int xPos = 0;
 			int yPos = i * 20; // Above sprite, adjust for line
 
-			debug("Drawing dialogue line %s at (%d, %d), speaker =%d, maxWidth = %d", textLines[i].c_str(), xPos, yPos, speakerId, maxWidth);
+			debug("Drawing dialogue line %s at (%d, %d), speaker =%d, maxWidth = %d, isNPC talking=%d", textLines[i].c_str(), xPos, yPos, speakerId, maxWidth, _curSprite->isTalking ? 1 : 0);
 			g_engine->_largeFont->drawString(&s, textLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
 
 		}
@@ -238,6 +242,8 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		}
 		g_system->delayMillis(10);
 	}
+	_curSprite->isTalking = false;
+	g_engine->alfredState.animState = ALFRED_IDLE;
 }
 
 void DialogManager::displayDialogue(Common::String text, byte speakerId) {

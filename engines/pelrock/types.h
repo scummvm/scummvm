@@ -173,6 +173,7 @@ struct Sprite {
 	byte spriteType;  // 33
 	byte actionFlags; // 34
 	bool isDisabled;  // 38
+	bool isTalking = false;
 	Anim *animData;
 };
 
