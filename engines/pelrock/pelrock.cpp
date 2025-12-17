@@ -703,7 +703,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	delete[] finalBuf;
 }
 
-void applyMovement(int16_t *x, int16_t *y, /*int8_t *z,*/ uint16_t flags) {
+void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
 	// X-axis movement
 	if (flags & 0x10) {            // Bit 4: X movement enabled
 		int amount = flags & 0x07; // Bits 0-2: pixels per frame
@@ -724,15 +724,15 @@ void applyMovement(int16_t *x, int16_t *y, /*int8_t *z,*/ uint16_t flags) {
 		}
 	}
 
-	// // Z-axis movement
-	// if (flags & 0x4000) {  // Bit 14: Z movement enabled
-	//     int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
-	//     if (flags & 0x2000) {  // Bit 13: direction
-	//         *z += amount;   // 1 = forward (add)
-	//     } else {
-	//         *z -= amount;   // 0 = back (subtract)
-	//     }
-	// }
+	// Z-axis movement
+	if (flags & 0x4000) {  // Bit 14: Z movement enabled
+	    int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
+	    if (flags & 0x2000) {  // Bit 13: direction
+	        *z += amount;   // 1 = forward (add)
+	    } else {
+	        *z -= amount;   // 0 = back (subtract)
+	    }
+	}
 }
 
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
@@ -742,7 +742,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		return;
 	}
 
-	applyMovement(&(sprite->x), &(sprite->y), animData.movementFlags);
+	applyMovement(&(sprite->x), &(sprite->y), &(sprite->zOrder), animData.movementFlags);
 	int x = sprite->x;
 	int y = sprite->y;
 	int w = animData.w;
@@ -758,7 +758,8 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, sprite->x, sprite->y, sprite->w, sprite->h, 255);
 
-	if (animData.elpapsedFrames == animData.speed) {
+	// if (animData.elpapsedFrames == animData.speed) {
+	if(_chrono->getFrameCount() % animData.speed == 0) {
 		animData.elpapsedFrames = 0;
 		if (animData.curFrame < animData.nframes - 1) {
 			animData.curFrame++;
