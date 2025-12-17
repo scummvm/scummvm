@@ -253,7 +253,6 @@ static const int8_t size2index[4][4] = {
 } // namespace
 
 void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *stream) {
-	stream->skip(4);
 	auto bitstreamSize = stream->readUint32LE();
 
 	Common::Array<byte> bitstreamData(bitstreamSize);
@@ -442,7 +441,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
-	stream->skip(12);
+	stream->skip(8);
 	auto bitStreamSize = stream->readUint32LE();
 	auto wordStreamSize = stream->readUint32LE();
 	auto byteStreamSize = stream->readUint32LE();
@@ -473,7 +472,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *stream) {
-	stream->skip(4);
 	auto frameIdx = stream->readUint32LE();
 	auto frameSize = stream->readUint32LE();
 	auto streamSize = stream->size() - stream->pos();
@@ -523,7 +521,7 @@ void FourXMDecoder::decodeNextFrameImpl() {
 	while (_stream->pos() < frame.end) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 size = _stream->readUint32LE();
-		debug("%u: sub frame %s, %u bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos());
+		debug("%u: sub frame %s, 0x%x bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos());
 		auto pos = _stream->pos();
 
 		auto loadBuf = [this](uint bufSize) {
@@ -566,9 +564,11 @@ void FourXMDecoder::decodeNextFrameImpl() {
 		} break;
 		case MKTAG('i', 'f', 'r', 'm'):
 		case MKTAG('p', 'f', 'r', 'm'):
-		case MKTAG('c', 'f', 'r', 'm'):
-			_video->decode(tag, loadBuf(size), size);
-			break;
+		case MKTAG('c', 'f', 'r', 'm'): {
+			auto trackIdx = _stream->readUint32LE();
+			if (trackIdx == 0)
+				_video->decode(tag, loadBuf(size - 4), size - 4);
+		} break;
 		default:
 			warning("unknown frame type %s", tagName(tag).c_str());
 			_stream->skip(size);
