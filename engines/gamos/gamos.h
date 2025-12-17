@@ -513,20 +513,17 @@ private:
 
 	byte *PTR_004173e8 = nullptr;
 
-	int32 DAT_00417220 = 0;
-	int32 DAT_00417224 = 0;
-	int32 DAT_00417228 = 0;
-	int32 DAT_0041722c = 0;
+	Common::Point DAT_00417220;
+	Common::Point DAT_00417228;
 
 	byte *PTR_00417388 = nullptr;
 
 	int32 _curObjIndex = 0;
 
 
-	int32 DAT_004173f0 = 0;
-	int32 DAT_004173f4 = 0;
-	int32 DAT_004173f8 = 0;
-	int32 DAT_004173fc = 0;
+	Common::Point DAT_004173f0;
+	Common::Point DAT_004173f8;
+
 	uint8 DAT_00417803 = 0;
 	uint8 DAT_00417804 = 0;
 	uint8 DAT_00417805 = 0;
@@ -557,12 +554,10 @@ private:
 
 
 	/* path find ? */
-	int32 DAT_00412c8c = 0;
-	int32 DAT_00412c90 = 0;
-	int32 DAT_00412c94 = 0;
-	int32 DAT_00412c98 = 0;
-	int32 INT_00412c9c = 0;
-	int32 INT_00412ca0 = 0;
+	Common::Point DAT_00412c8c;
+	Common::Point DAT_00412c94;
+	int8 INT_00412c9c = 0;
+	int8 INT_00412ca0 = 0;
 
 	Array2D<uint8> _pathMap;
 	uint32 _statesCount = 0;
@@ -654,7 +649,7 @@ protected:
 
 	void FUN_00402a68(ActEntry e);
 
-	void FUN_0040283c(ActEntry e, int32 x, int32 y);
+	void createActiveObject(ActEntry e, int32 x, int32 y);
 
 	void removeObjectAtCoords(Common::Point cell, bool deleteGfxObj);
 

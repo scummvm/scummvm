@@ -1277,23 +1277,20 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 	Common::Array<Common::Point> ARR_00412208(512);
 
 	if (!absolute) {
-		DAT_00417228 = PTR_00417218->cell.x;
-		DAT_0041722c = PTR_00417218->cell.y;
+		DAT_00417228 = PTR_00417218->cell;
 	} else {
 		PTR_00417218 = nullptr;
 		_curObjIndex = -1;
 		PTR_00417214 = nullptr;
 		//DAT_00417238 = 0;
 		//DAT_0041723c = -1;
-		DAT_0041722c = 0;
-		DAT_00417228 = 0;
+		DAT_00417228 = Common::Point();
 		BYTE_004177f6 = 1;
 		_preprocDataId = 0;
 		PTR_004173e8 = nullptr;
 	}
 
 	DAT_00417220 = DAT_00417228;
-	DAT_00417224 = DAT_0041722c;
 
 	int32 spos = -1;
 	int32 sbuf[6];
@@ -1337,8 +1334,8 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 				uint16 fb = 0;
 				if (!absolute) {
 					Common::Point xy;
-					xy.x = (e.x + DAT_00417220 + _statesWidth) % _statesWidth;
-					xy.y = (e.y + DAT_00417224 + _statesHeight) % _statesHeight;
+					xy.x = (e.x + DAT_00417220.x + _statesWidth) % _statesWidth;
+					xy.y = (e.y + DAT_00417220.y + _statesHeight) % _statesHeight;
 					fb = _states.at(xy);
 				} else {
 					fb = _states.at(e.x, e.y);
@@ -1660,32 +1657,31 @@ void GamosEngine::preprocessDataB1(int id, ActEntry *e) {
 int GamosEngine::processData(ActEntry e, bool absolute) {
 	preprocessData(_preprocDataId, &e);
 	if (!absolute) {
-		FUN_0040283c(e,
-		             (e.x + DAT_00417220 + _statesWidth) % _statesWidth,
-		             (e.y + DAT_00417224 + _statesHeight) % _statesHeight);
+		createActiveObject(e,
+		             (e.x + DAT_00417220.x + _statesWidth) % _statesWidth,
+		             (e.y + DAT_00417220.y + _statesHeight) % _statesHeight);
 		if (_needReload)
 			return 0;
 		return e.x == 0 && e.y == 0;
 	} else {
-		FUN_0040283c(e, e.x, e.y);
+		createActiveObject(e, e.x, e.y);
 		return 0;
 	}
 }
 
 void GamosEngine::FUN_00402a68(ActEntry e) {
 	if (e.x != 0 || e.y != 0) {
-		DAT_00417220 = (e.x + DAT_00417220 + _statesWidth) % _statesWidth;
-		DAT_00417224 = (e.y + DAT_00417224 + _statesHeight) % _statesHeight;
+		DAT_00417220.x = (e.x + DAT_00417220.x + _statesWidth) % _statesWidth;
+		DAT_00417220.y = (e.y + DAT_00417220.y + _statesHeight) % _statesHeight;
 
 		uint16 t = PTR_00417218->state;
-		_states.at(DAT_00417228, DAT_0041722c) = PTR_00417218->state & 0xf0ff;
+		_states.at(DAT_00417228) = PTR_00417218->state & 0xf0ff;
 
-		removeObjectAtCoords(Common::Point(DAT_00417220, DAT_00417224), false);
+		removeObjectAtCoords(DAT_00417220, false);
 
-		PTR_00417218->cell.x = DAT_00417220;
-		PTR_00417218->cell.y = DAT_00417224;
+		PTR_00417218->cell = DAT_00417220;
 
-		uint16 &rthing = _states.at(DAT_00417220, DAT_00417224);
+		uint16 &rthing = _states.at(DAT_00417220);
 
 		PTR_00417218->state = (t & 0xf00) | (rthing & 0xf0ff);
 
@@ -1698,14 +1694,14 @@ void GamosEngine::FUN_00402a68(ActEntry e) {
 		BYTE_004177f6 = e.t;
 		PTR_00417218->flags = (PTR_00417218->flags & 0xf) | (e.t << 4);
 
-		uint16 &tref = _states.at(DAT_00417220, DAT_00417224);
+		uint16 &tref = _states.at(DAT_00417220);
 		tref = (tref & 0xff) | (BYTE_004177f6 << 12);
 
 		BYTE_00412200 = 1;
 	}
 }
 
-void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
+void GamosEngine::createActiveObject(ActEntry e, int32 x, int32 y) {
 	uint16 &rthing = _states.at(x, y);
 
 	uint8 oid = e.value;
@@ -1909,20 +1905,18 @@ void GamosEngine::executeScript(uint8 p1, uint32 celly, uint32 cellx, byte *stor
 
 	uint8 sv1 = BYTE_004177f6;
 	byte *sv2 = PTR_004173e8;
-	int32 sv3 = DAT_0041722c;
-	int32 sv4 = DAT_00417228;
-	int32 sv5 = DAT_00417224;
-	int32 sv6 = DAT_00417220;
+	Common::Point sv4 = DAT_00417228;
+	Common::Point sv6 = DAT_00417220;
 	int32 sv7 = _curObjIndex;
 	Object *sv8 = PTR_00417218;
 	ObjectAction *sv9 = PTR_00417214;
 
 	BYTE_004177f6 = p1;
 	PTR_004173e8 = storage;
-	DAT_0041722c = celly;
-	DAT_00417228 = cellx;
-	DAT_00417224 = celly;
-	DAT_00417220 = cellx;
+	DAT_00417228.y = celly;
+	DAT_00417228.x = cellx;
+	DAT_00417220.y = celly;
+	DAT_00417220.x = cellx;
 	_curObjIndex = index;
 	PTR_00417218 = pobj;
 	PTR_00417214 = act;
@@ -1931,9 +1925,7 @@ void GamosEngine::executeScript(uint8 p1, uint32 celly, uint32 cellx, byte *stor
 
 	BYTE_004177f6 = sv1;
 	PTR_004173e8 = sv2;
-	DAT_0041722c = sv3;
-	DAT_00417228 = sv4 ;
-	DAT_00417224 = sv5;
+	DAT_00417228 = sv4;
 	DAT_00417220 = sv6;
 	_curObjIndex = sv7;
 	PTR_00417218 = sv8;
@@ -2436,7 +2428,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 	case 21: {
 		VM::ValAddr regRef = ctx->popReg();
 		arg2 = ctx->pop32();
-		ctx->EAX.setVal( txtInputBegin(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH) );
+		ctx->EAX.setVal( txtInputBegin(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220.x * _gridCellW, DAT_00417220.y * _gridCellH) );
 	} break;
 
 	case 22: {
@@ -2449,7 +2441,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 	case 23: {
 		VM::ValAddr regRef = ctx->popReg();
 		arg2 = ctx->pop32();
-		addSubtitles(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH);
+		addSubtitles(ctx, regRef.getMemType(), regRef.getOffset(), arg2, DAT_00417220.x * _gridCellW, DAT_00417220.y * _gridCellH);
 		ctx->EAX.setVal(1);
 	} break;
 
@@ -2737,14 +2729,14 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 				tmp.value = 0xfe;
 				tmp.t = BYTE_004177f6;
 				tmp.flags = 0;
-				FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+				createActiveObject(tmp, DAT_00412c94.x, DAT_00412c94.y);
 			} else if (arg1 == 2) {
 				ActEntry tmp;
 				tmp.value = 0;
 				tmp.t = BYTE_004177f6;
 				tmp.flags = 0;
-				tmp.x = DAT_00412c94 - DAT_00412c8c;
-				tmp.y = DAT_00412c98 - DAT_00412c90;
+				tmp.x = DAT_00412c94.x - DAT_00412c8c.x;
+				tmp.y = DAT_00412c94.y - DAT_00412c8c.y;
 				FUN_00402a68(tmp);
 			}
 		}
@@ -2758,7 +2750,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			tmp.value = arg1;
 			tmp.t = BYTE_004177f6;
 			tmp.flags = 0;
-			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+			createActiveObject(tmp, DAT_00412c94.x, DAT_00412c94.y);
 		}
 		ctx->EAX.setVal(1);
 	} break;
@@ -2770,7 +2762,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			tmp.value = arg1;
 			tmp.t = BYTE_004177f6;
 			tmp.flags = 1;
-			FUN_0040283c(tmp, DAT_00412c94, DAT_00412c98);
+			createActiveObject(tmp, DAT_00412c94.x, DAT_00412c94.y);
 		}
 		ctx->EAX.setVal(1);
 	} break;
@@ -3001,7 +2993,7 @@ void GamosEngine::callbackVMCallDispatcher(void *engine, VM::Context *ctx, uint3
 
 uint32 GamosEngine::scriptFunc19(uint32 id) {
 	BYTE_004177fc = 1;
-	FUN_0040738c(id, DAT_00417220 * _gridCellW, DAT_00417224 * _gridCellH, false);
+	FUN_0040738c(id, DAT_00417220.x * _gridCellW, DAT_00417220.y * _gridCellH, false);
 
 	return 1;
 }
@@ -3060,7 +3052,7 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 			}
 
 			gfxObj->priority = PTR_00417218->priority;
-			if (DAT_00417220 != DAT_00417228 || DAT_00417224 != DAT_0041722c) {
+			if (DAT_00417220 != DAT_00417228) {
 				PTR_00417218->flags |= Object::FLAG_TRANSITION;
 			}
 		}
@@ -3095,23 +3087,23 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 	} else {
 		if (BYTE_004177f6 == 1) {
 			obj->seqId = 1;
-			if (DAT_00417224 == DAT_0041722c && (spr.field_1 & 8))
+			if (DAT_00417220.y == DAT_00417228.y && (spr.field_1 & 8))
 				obj->seqId = 0;
 		} else if (BYTE_004177f6 == 2) {
 			obj->seqId = 3;
-			if (DAT_0041722c < DAT_00417224)
+			if (DAT_00417228.y < DAT_00417220.y)
 				obj->seqId = 2;
-			else if (DAT_0041722c > DAT_00417224) {
+			else if (DAT_00417228.y > DAT_00417220.y) {
 				obj->seqId = 4;
 				if (spr.field_1 & 4) {
 					obj->seqId = 2;
 					obj->flags |= Object::FLAG_FLIPV;
 				}
-			} else if (DAT_00417220 == DAT_00417228 && (spr.field_1 & 8))
+			} else if (DAT_00417220.x == DAT_00417228.x && (spr.field_1 & 8))
 				obj->seqId = 0;
 		} else if (BYTE_004177f6 == 4) {
 			obj->seqId = 5;
-			if (DAT_00417224 == DAT_0041722c && (spr.field_1 & 8))
+			if (DAT_00417220.y == DAT_00417228.y && (spr.field_1 & 8))
 				obj->seqId = 0;
 			else if (spr.field_1 & 4) {
 				obj->seqId = 1;
@@ -3119,15 +3111,15 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 			}
 		} else {
 			obj->seqId = 7;
-			if (DAT_00417224 == DAT_0041722c) {
-				if ((spr.field_1 & 8) && DAT_00417220 == DAT_00417228)
+			if (DAT_00417220.y == DAT_00417228.y) {
+				if ((spr.field_1 & 8) && DAT_00417220.x == DAT_00417228.x)
 					obj->seqId = 0;
 				else if (spr.field_1 & 2) {
 					obj->seqId = 3;
 					obj->flags |= Object::FLAG_FLIPH;
 				}
 			} else {
-				if (DAT_0041722c < DAT_00417224) {
+				if (DAT_00417228.y < DAT_00417220.y) {
 					obj->seqId = 8;
 					if (spr.field_1 & 2) {
 						obj->seqId = 2;
@@ -3153,8 +3145,7 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 		obj->pImg = &spr.sequences[obj->seqId]->operator[](0);
 	}
 	if (!p) {
-		obj->cell.x = DAT_00417228;
-		obj->cell.y = DAT_0041722c;
+		obj->cell = DAT_00417228;
 		FUN_0040921c(obj);
 	} else {
 		obj->flags |= Object::FLAG_FREECOORDS;
@@ -3167,7 +3158,7 @@ void GamosEngine::FUN_004095a0(Object *obj) {
 	if (obj->curObjectId != -1) {
 		Object &yobj = _objects[obj->curObjectId];
 		addDirtRectOnObject(&yobj);
-		if (DAT_00417228 != DAT_00417220 || DAT_0041722c != DAT_00417224)
+		if (DAT_00417228 != DAT_00417220)
 			obj->flags |= Object::FLAG_TRANSITION;
 		FUN_00409378(yobj.sprId, &yobj, false);
 	}
@@ -3277,9 +3268,9 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	}
 
 	if (!pobj) {
-		DAT_004173f4 = actPos.x / _gridCellW;
-		DAT_004173f0 = actPos.y / _gridCellH;
-		DAT_00417803 = _states.at(DAT_004173f4, DAT_004173f0) & 0xff;
+		DAT_004173f0.x = actPos.x / _gridCellW;
+		DAT_004173f0.y = actPos.y / _gridCellH;
+		DAT_00417803 = _states.at(DAT_004173f0) & 0xff;
 	} else {
 		DAT_00417803 = actT;
 		if (actT == 2) {
@@ -3294,15 +3285,13 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 			pobj->inputFlag = tmpb;
 		}
 
-		DAT_004173f4 = pobj->cell.x;
-		DAT_004173f0 = pobj->cell.y;
+		DAT_004173f0 = pobj->cell;
 	}
 
 	DAT_00417805 = act2;
 	if (act2 == ACT2_82 || act2 == ACT2_83) {
 		DAT_004177fe = act2;
 		DAT_004177fd = DAT_00417803;
-		DAT_004173fc = DAT_004173f4;
 		DAT_004173f8 = DAT_004173f0;
 	} else {
 		if (act2 == ACT2_81)
@@ -3319,10 +3308,8 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 	//uVar11 = DAT_0041723c;
 	//uVar10 = DAT_00417238;
 	uint8 sv6 = _preprocDataId;
-	int32 sv7 = DAT_0041722c;
-	int32 sv8 = DAT_00417228;
-	int32 sv9 = DAT_00417224;
-	int32 sv10 = DAT_00417220;
+	Common::Point sv8 = DAT_00417228;
+	Common::Point sv10 = DAT_00417220;
 	int sv11 = _curObjIndex;
 	Object *sv12 = PTR_00417218;
 	ObjectAction *sv13 = PTR_00417214;
@@ -3335,9 +3322,7 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 	//DAT_0041723c = uVar11;
 	//DAT_00417238 = uVar10;
 	_preprocDataId = sv6;
-	DAT_0041722c = sv7;
 	DAT_00417228 = sv8;
-	DAT_00417224 = sv9;
 	DAT_00417220 = sv10;
 	_curObjIndex = sv11;
 	PTR_00417218 = sv12;
@@ -3481,15 +3466,12 @@ bool GamosEngine::FUN_00402bc4() {
 }
 
 void GamosEngine::FUN_00407db8(uint8 p) {
-	if ((p == 0x82) || (p == 0x83)) {
-		DAT_00412c94 = DAT_004173fc;
-		DAT_00412c98 = DAT_004173f8;
-	} else {
-		DAT_00412c94 = DAT_004173f4;
-		DAT_00412c98 = DAT_004173f0;
-	}
-	DAT_00412c8c = PTR_00417218->cell.x;
-	DAT_00412c90 = PTR_00417218->cell.y;
+	if ((p == 0x82) || (p == 0x83))
+		DAT_00412c94 = DAT_004173f8;
+	else
+		DAT_00412c94 = DAT_004173f0;
+
+	DAT_00412c8c = PTR_00417218->cell;
 	INT_00412ca0 = -1;
 	INT_00412c9c = -1;
 	DAT_00417804 = 0;
@@ -3562,7 +3544,7 @@ byte GamosEngine::FUN_0040856c() {
 				_pathMap.at(i, j) = 3;
 		}
 	}
-	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	_pathMap.at(DAT_00412c94) = 2;
 	return FUN_0040841c(false);
 }
 
@@ -3577,12 +3559,12 @@ byte GamosEngine::FUN_004085d8(uint8 p) {
 				_pathMap.at(i, j) = 3;
 		}
 	}
-	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	_pathMap.at(DAT_00412c94) = 2;
 	return FUN_0040841c(false);
 }
 
 byte GamosEngine::FUN_0040841c(bool p) {
-	_pathMap.at(DAT_00412c8c, DAT_00412c90) = 6;
+	_pathMap.at(DAT_00412c8c.x, DAT_00412c8c.y) = 6;
 
 	while (true) {
 		byte res = FUN_004081b8(6, 4);
@@ -3618,11 +3600,11 @@ byte GamosEngine::FUN_0040841c(bool p) {
 }
 
 byte GamosEngine::FUN_00407e2c() {
-	int32 iVar2 = DAT_00412c8c - DAT_00412c94;
+	int32 iVar2 = DAT_00412c8c.x - DAT_00412c94.x;
 	if (iVar2 < 1)
 		iVar2 = -iVar2;
 
-	int32 iVar1 = DAT_00412c90 - DAT_00412c98;
+	int32 iVar1 = DAT_00412c8c.y - DAT_00412c94.y;
 	if (iVar1 < 1)
 		iVar1 = -iVar1;
 
@@ -3632,39 +3614,39 @@ byte GamosEngine::FUN_00407e2c() {
 	if ((iVar2 == 0) || (iVar1 / iVar2) > 3) {
 		if (iVar1 > 1) {
 			INT_00412c9c = 4;
-			if (DAT_00412c98 <= DAT_00412c90)
+			if (DAT_00412c94.y <= DAT_00412c8c.y)
 				INT_00412c9c = 0;
 		}
 		INT_00412ca0 = 4;
-		if (DAT_00412c98 <= DAT_00412c90)
+		if (DAT_00412c94.y <= DAT_00412c8c.y)
 			INT_00412ca0 = 0;
 	} else if ((iVar1 == 0) || (iVar2 / iVar1) > 3) {
 		if (iVar2 > 1) {
 			INT_00412c9c = 2;
-			if (DAT_00412c94 <= DAT_00412c8c)
+			if (DAT_00412c94.x <= DAT_00412c8c.x)
 				INT_00412c9c = 6;
 		}
 		INT_00412ca0 = 2;
-		if (DAT_00412c94 <= DAT_00412c8c)
+		if (DAT_00412c94.x <= DAT_00412c8c.x)
 			INT_00412ca0 = 6;
 	} else {
-		if (DAT_00412c8c < DAT_00412c94) {
+		if (DAT_00412c8c.x < DAT_00412c94.x) {
 			INT_00412c9c = 3;
-			if (DAT_00412c98 <= DAT_00412c90)
+			if (DAT_00412c94.y <= DAT_00412c8c.y)
 				INT_00412c9c = 1;
 		} else {
 			INT_00412c9c = 5;
-			if (DAT_00412c98 <= DAT_00412c90)
+			if (DAT_00412c94.y <= DAT_00412c8c.y)
 				INT_00412c9c = 7;
 		}
 
 		if (iVar1 < iVar2) {
 			INT_00412ca0 = 2;
-			if (DAT_00412c94 <= DAT_00412c8c)
+			if (DAT_00412c94.x <= DAT_00412c8c.x)
 				INT_00412ca0 = 6;
 		} else {
 			INT_00412ca0 = 4;
-			if (DAT_00412c98 <= DAT_00412c90)
+			if (DAT_00412c94.y <= DAT_00412c8c.y)
 				INT_00412ca0 = 0;
 		}
 	}
@@ -3674,16 +3656,16 @@ byte GamosEngine::FUN_00407e2c() {
 }
 
 byte GamosEngine::FUN_00407f70(uint8 p) {
-	int32 x = DAT_00412c94;
-	int32 y = DAT_00412c98;
+	int32 x = DAT_00412c94.x;
+	int32 y = DAT_00412c94.y;
 	int32 px = -1;
 	int32 py = -1;
 
 	while (true) {
-		int32 xdist = DAT_00412c8c - x;
+		int32 xdist = DAT_00412c8c.x - x;
 		if (xdist < 1)
 			xdist = -xdist;
-		int32 ydist = DAT_00412c90 - y;
+		int32 ydist = DAT_00412c8c.y - y;
 		if (ydist < 1)
 			ydist = -ydist;
 
@@ -3728,7 +3710,7 @@ byte GamosEngine::FUN_00407f70(uint8 p) {
 			}
 		}
 
-		if (xx == DAT_00412c8c && yy == DAT_00412c90) {
+		if (xx == DAT_00412c8c.x && yy == DAT_00412c8c.y) {
 			INT_00412ca0 = 2;
 			if (x <= xx) {
 				INT_00412ca0 = 6;
@@ -3797,8 +3779,8 @@ byte GamosEngine::FUN_004081b8(uint8 cv, uint8 sv) {
 				        (x < _pathRight && _pathMap.at(x + 1, y) == cv) ||
 				        (y > 0 && _pathMap.at(x, y - 1) == cv) ||
 				        (y < _pathBottom && _pathMap.at(x, y + 1) == cv)) {
-					DAT_00412c94 = x;
-					DAT_00412c98 = y;
+					DAT_00412c94.x = x;
+					DAT_00412c94.y = y;
 					return 1;
 				}
 			}
@@ -3875,7 +3857,7 @@ byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
 				_pathMap.at(i, j) = 0;
 		}
 	}
-	_pathMap.at(DAT_00412c94, DAT_00412c98) = 2;
+	_pathMap.at(DAT_00412c94) = 2;
 	return FUN_0040841c(false);
 }
 
