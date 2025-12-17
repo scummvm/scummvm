@@ -94,6 +94,7 @@ public:
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 
 private:
+	bool recalculateBoundingBox() const;
 	void renderSubtitle() const;
 
 	SRTParser _srtParser;
