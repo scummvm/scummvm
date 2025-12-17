@@ -1125,8 +1125,8 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 		VerbIcon actionClicked = isActionUnder(x, y);
 		if (actionClicked != NO_ACTION) {
-			doAction(actionClicked, _currentHotspot);
 			_displayPopup = false;
+			doAction(actionClicked, _currentHotspot);
 			return;
 		}
 	}

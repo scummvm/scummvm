@@ -30,6 +30,33 @@
 #include "pelrock/types.h"
 
 namespace Pelrock {
+
+// Control character codes (negative values in signed char)
+#define CHAR_SPACE 0x20        /* ' ' */
+#define CHAR_END_MARKER_1 0xFD /* -3 (end of text marker) */
+#define CHAR_END_MARKER_2 0xF4 /* -0xC (alternate end marker) */
+#define CHAR_END_MARKER_3 0xF8 /* -8 (another end marker) */
+#define CHAR_END_MARKER_4 0xF0 /* -0x10 (another end marker) */
+#define CHAR_NEWLINE 0xF6      /* -10 (newline marker) */
+#define CHAR_PAGE_BREAK 0xF9   /* marker inserted when switching pages */
+
+// Conversation control bytes
+#define CTRL_SPEAKER_ID 0x08        /* Next byte is speaker ID (color) */
+#define CTRL_END_TEXT 0xFD          /* End of text segment */
+#define CTRL_TEXT_TERMINATOR 0xFC   /* Text terminator */
+#define CTRL_DIALOGUE_MARKER 0xFB   /* Choice marker */
+#define CTRL_DISABLED_CHOICE 0xFA   /* Disabled choice marker */
+#define CTRL_PAGE_BREAK_CONV 0xF9   /* Page break in conversation */
+#define CTRL_ACTION_TRIGGER 0xF8    /* Action trigger */
+#define CTRL_END_BRANCH 0xF7        /* End of branch */
+#define CTRL_LINE_CONTINUE 0xF6     /* Line continue/newline */
+#define CTRL_ALT_END_MARKER_1 0xF5  /* Alt end marker - do nothing */
+#define CTRL_END_CONVERSATION 0xF4  /* End conversation and disable option */
+#define CTRL_DIALOGUE_MARKER_2 0xF1 /* Alt choice marker that disappears */
+#define CTRL_GO_BACK 0xF0           /* Go back in conversation */
+#define CTRL_ALT_END_MARKER_2 0xEB  /* Alt end marker 2 */
+#define CTRL_ALT_END_MARKER_3 0xFE  /* Alt end marker 3 */
+
 /**
  * Structure to hold a parsed choice option
  */
@@ -51,8 +78,7 @@ private:
 	// Private helper functions for conversation parsing
 	void displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId);
 	void displayDialogue(Common::String text, byte speakerId);
-	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos,
-						 Common::String &outText, byte &outSpeakerId);
+	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos, Common::String &outText, byte &outSpeakerId);
 	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> &outChoices);
 
 	void checkMouse();
