@@ -234,6 +234,79 @@ void ResourceManager::loadInventoryItems() {
 	delete[] iconData;
 }
 
+void ResourceManager::loadAlfredResponses() {
+
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+	byte *descBuffer = new byte[kAlfredResponsesSize];
+	exe.seek(kAlfredResponsesOffset, SEEK_SET);
+	exe.read(descBuffer, kAlfredResponsesSize);
+	_alfredResponses = processTextData(descBuffer, kAlfredResponsesSize);
+	delete[] descBuffer;
+	exe.close();
+}
+
+Common::Array<Common::StringArray> ResourceManager::getCredits() {
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+	byte *descBuffer = new byte[kCreditsSize];
+	exe.seek(kCreditsOffset, SEEK_SET);
+	exe.read(descBuffer, kCreditsSize);
+	Common::Array<Common::StringArray> credits = processTextData(descBuffer, kCreditsSize);
+	delete[] descBuffer;
+	exe.close();
+	return credits;
+}
+
+Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(byte *data, size_t size) {
+	int pos = 0;
+	Common::String desc = "";
+	Common::StringArray lines;
+	Common::Array<Common::Array<Common::String>> texts;
+	while (pos < size) {
+		if (data[pos] == 0xFD) {
+			if (!desc.empty()) {
+
+				lines.push_back(desc);
+				texts.push_back(lines);
+				lines.clear();
+				desc = Common::String();
+			}
+			pos++;
+			continue;
+		}
+		if (data[pos] == 0x00) {
+			pos++;
+			continue;
+		}
+		if (data[pos] == 0x08) {
+			byte color = data[pos + 1];
+			desc.append(1, '@');
+			desc.append(1, color);
+			pos += 2;
+			continue;
+		}
+		if (data[pos] == 0xC8) {
+			lines.push_back(desc);
+			desc = Common::String();
+			pos++;
+			continue;
+		}
+
+		desc.append(1, decodeChar(data[pos]));
+		if (pos + 1 == size) {
+			lines.push_back(desc);
+			texts.push_back(lines);
+		}
+		pos++;
+	}
+	return texts;
+}
+
 Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	Common::File alfred6File;
 	if (!alfred6File.open("ALFRED.6")) {
@@ -247,6 +320,8 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	sticker.y = alfred6File.readUint16LE();
 	sticker.w = alfred6File.readByte();
 	sticker.h = alfred6File.readByte();
+	sticker.roomNumber = pegatina_rooms[stickerIndex];
+	sticker.stickerIndex = stickerIndex;
 	sticker.stickerData = new byte[sticker.w * sticker.h];
 	alfred6File.read(sticker.stickerData, sticker.w * sticker.h);
 	alfred6File.close();

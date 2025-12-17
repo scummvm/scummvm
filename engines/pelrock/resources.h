@@ -45,6 +45,9 @@ public:
 	void loadInteractionIcons();
 	void loadAlfredAnims();
 	void loadInventoryItems();
+	void loadAlfredResponses();
+	Common::Array<Common::StringArray> getCredits();
+	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size);
 	Sticker getSticker(int stickerIndex);
 	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
@@ -61,6 +64,7 @@ public:
 	byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
+	Common::Array<Common::StringArray> _alfredResponses;
 };
 
 } // End of namespace Pelrock

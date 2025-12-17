@@ -132,6 +132,8 @@ void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
 	_res->loadInventoryItems();
+	_res->loadAlfredResponses();
+
 	_sound->loadSoundIndex();
 	_menu->loadMenu();
 
@@ -246,6 +248,8 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		playSoundIfNeeded();
 
 		copyBackgroundToBuffer();
+
+		placeStickers();
 		updateAnimations();
 
 		if (showTextOverlay) {
@@ -286,29 +290,25 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		// 	alfredState.curFrame = 0;
 		// }
 
-
 		_screen->markAllDirty();
 	}
 }
 
 void PelrockEngine::checkMouse() {
-	if(_events->_leftMouseClicked) {
+	if (_events->_leftMouseClicked) {
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_leftMouseClicked = false;
 		_displayPopup = false;
-	}
-	else if(_events->_longClicked) {
+	} else if (_events->_longClicked) {
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
-	}
-	else if(_events->_rightMouseClicked) {
+	} else if (_events->_rightMouseClicked) {
 
 		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		stateGame = SETTINGS;
 	}
 	checkMouseHover();
-
 }
 
 void PelrockEngine::copyBackgroundToBuffer() {
@@ -381,8 +381,31 @@ void PelrockEngine::paintDebugLayer() {
 	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
 }
 
-void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
+void PelrockEngine::placeStickers() {
+	for (int i = 0; i < _room->_currentRoomStickers.size(); i++) {
+		Sticker sticker = _room->_currentRoomStickers[i];
+		if (sticker.roomNumber == _room->_currentRoomNumber) {
+			placeSticker(sticker);
+		}
+	}
+}
 
+void PelrockEngine::placeSticker(Sticker sticker) {
+	for (int y = 0; y < sticker.h; y++) {
+		for (int x = 0; x < sticker.w; x++) {
+			byte pixel = sticker.stickerData[y * sticker.w + x];
+			if (pixel != 0) {
+				int bgX = sticker.x + x;
+				int bgY = sticker.y + y;
+				if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
+					_compositeBuffer[bgY * 640 + bgX] = pixel;
+				}
+			}
+		}
+	}
+}
+
+void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
 
 	if (anim->data[0] >= anim->data[6] &&
 		anim->data[1] >= anim->data[7] &&
@@ -457,6 +480,9 @@ void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 	case OPEN:
 		open(hotspot);
 		break;
+	case CLOSE:
+		close(hotspot);
+		break;
 	default:
 		break;
 	}
@@ -483,10 +509,23 @@ void PelrockEngine::lookAt(HotSpot *hotspot) {
 void PelrockEngine::open(HotSpot *hotspot) {
 	switch (hotspot->extra) {
 	case 261:
-		_room->placeSticker(_res->getSticker(91), _currentBackground);
+		_room->addSticker(_res->getSticker(91));
 		break;
 
 	default:
+
+		break;
+	}
+}
+
+void PelrockEngine::close(HotSpot *hotspot) {
+	switch (hotspot->extra) {
+	case 261:
+		_room->removeSticker(91);
+		break;
+
+	default:
+
 		break;
 	}
 }
@@ -570,7 +609,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame = 0;
 		}
 		drawAlfred(_res->alfredTalkFrames[alfredState.direction][alfredState.curFrame]);
-		if(_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
 			alfredState.curFrame++;
 		}
 		break;
@@ -615,7 +654,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 		scaleIndex = 0;
 	}
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
-
 
 	int shadowPos = alfredState.y; // - finalHeight;
 	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + alfredState.x] != 0xFF;
@@ -723,13 +761,13 @@ void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
 	}
 
 	// Z-axis movement
-	if (flags & 0x4000) {  // Bit 14: Z movement enabled
-	    int amount = (flags >> 10) & 0x07;  // Bits 10-12: amount
-	    if (flags & 0x2000) {  // Bit 13: direction
-	        *z += amount;   // 1 = forward (add)
-	    } else {
-	        *z -= amount;   // 0 = back (subtract)
-	    }
+	if (flags & 0x4000) {                  // Bit 14: Z movement enabled
+		int amount = (flags >> 10) & 0x07; // Bits 10-12: amount
+		if (flags & 0x2000) {              // Bit 13: direction
+			*z += amount;                  // 1 = forward (add)
+		} else {
+			*z -= amount; // 0 = back (subtract)
+		}
 	}
 }
 
@@ -757,7 +795,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, sprite->x, sprite->y, sprite->w, sprite->h, 255);
 
 	// if (animData.elpapsedFrames == animData.speed) {
-	if(_chrono->getFrameCount() % animData.speed == 0) {
+	if (_chrono->getFrameCount() % animData.speed == 0) {
 		animData.elpapsedFrames = 0;
 		if (animData.curFrame < animData.nframes - 1) {
 			animData.curFrame++;
@@ -953,11 +991,8 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
 	for (int i = 0; i < actions.size(); i++) {
-		if (icon == actions[i] && _iconBlink++ < kIconBlinkPeriod / 2) {
+		if (icon == actions[i] && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 			continue;
-		}
-		if (_iconBlink > kIconBlinkPeriod) {
-			_iconBlink = 0;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
@@ -976,7 +1011,7 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 	int h = index ? animHeader->hAnimB : animHeader->hAnimA;
 	int numFrames = index ? animHeader->numFramesAnimB : animHeader->numFramesAnimA;
 
-	if(_chrono->getFrameCount() % kTalkAnimationSpeed == 0) {
+	if (_chrono->getFrameCount() % kTalkAnimationSpeed == 0) {
 		if (index) {
 			animHeader->currentFrameAnimB++;
 		} else {

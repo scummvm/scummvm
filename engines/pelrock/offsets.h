@@ -38,37 +38,85 @@ static const uint32_t kBalloonFramesSize = 24950;
 static const uint32_t ALFRED7_ALFRED_COMB_R = 67768;
 static const uint32_t ALFRED7_ALFRED_COMB_L = 88408;
 
-
 static const uint32_t kAlternateSettingsMenuOffset = 910097;
-static const uint32_t kAlternateSettingsPaletteOffset = 1038141;      // 640 * 480
-static const uint32_t kSettingsPaletteOffset = 0x2884c2;      // 640 * 480
+static const uint32_t kAlternateSettingsPaletteOffset = 1038141; // 640 * 480
+static const uint32_t kSettingsPaletteOffset = 0x2884c2;         // 640 * 480
 
 #define DESCRIPTION_BASE_OFFSET 0x4715D
 #define NUM_DESCRIPTIONS 113
 
 static const uint32 kInventoryDescriptionsOffset = 0x4715D;
 static const uint32 kInventoryDescriptionsSize = 7868;
-
+static const uint32 kMenuTextOffset = 0x49203;
+static const uint32 kMenuTextSize = 230;
+static const uint32 kAlfredResponsesOffset = 0x441DC;
+static const uint32 kAlfredResponsesSize = 12163;
+static const uint32 kCreditsOffset = 0x49F60;
+static const uint32 kCreditsSize = 2540;
 
 const uint32_t pegatina_offsets[137] = {
 	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,
-    0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
-    0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
-    0x013759, 0x01391F, 0x014A9D, 0x015C1B, 0x017601, 0x018FE7, 0x019048, 0x0190A9,
-    0x01910A, 0x0197F4, 0x019EDE, 0x01A7EC, 0x01B0FA, 0x01B8C4, 0x01C644, 0x01D83A,
-    0x01E104, 0x01E8C6, 0x01F45D, 0x01FBBB, 0x02011D, 0x02052F, 0x020A95, 0x020E5B,
-    0x0210B3, 0x0216E6, 0x021D5E, 0x0233A3, 0x0249E8, 0x025777, 0x026506, 0x028E2B,
-    0x02B82F, 0x02C9D7, 0x02E4CA, 0x02FFBD, 0x03234A, 0x0346D7, 0x036A83, 0x038E2F,
-    0x03B18D, 0x03D4EB, 0x03DEC9, 0x03F813, 0x04115D, 0x045303, 0x0494A9, 0x04955F,
-    0x049615, 0x0496CB, 0x0499E1, 0x049EC7, 0x04A023, 0x04A447, 0x04BA6D, 0x04BFA1,
-    0x04CE33, 0x04CF09, 0x04DB3B, 0x052885, 0x0575CF, 0x05775B, 0x057D79, 0x058397,
-    0x058969, 0x058F50, 0x05A9DB, 0x05C561, 0x05C72E, 0x05C8FB, 0x05EAC1, 0x060C87,
-    0x060D19, 0x060E62, 0x061039, 0x0613C2, 0x061764, 0x061847, 0x062535, 0x062D4B,
-    0x064F11, 0x0670D7, 0x067381, 0x0675A9, 0x0677EF, 0x067A98, 0x067DDE, 0x068115,
-    0x0684E3, 0x068A76, 0x068F30, 0x0693C8, 0x0696AD, 0x06C2C9, 0x06C84D, 0x07095D,
-    0x071854, 0x07274B, 0x073642, 0x074539, 0x075454, 0x0791DA, 0x07CF60, 0x07E4AB,
-    0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
-    0x0816B1
+	0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
+	0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
+	0x013759, 0x01391F, 0x014A9D, 0x015C1B, 0x017601, 0x018FE7, 0x019048, 0x0190A9,
+	0x01910A, 0x0197F4, 0x019EDE, 0x01A7EC, 0x01B0FA, 0x01B8C4, 0x01C644, 0x01D83A,
+	0x01E104, 0x01E8C6, 0x01F45D, 0x01FBBB, 0x02011D, 0x02052F, 0x020A95, 0x020E5B,
+	0x0210B3, 0x0216E6, 0x021D5E, 0x0233A3, 0x0249E8, 0x025777, 0x026506, 0x028E2B,
+	0x02B82F, 0x02C9D7, 0x02E4CA, 0x02FFBD, 0x03234A, 0x0346D7, 0x036A83, 0x038E2F,
+	0x03B18D, 0x03D4EB, 0x03DEC9, 0x03F813, 0x04115D, 0x045303, 0x0494A9, 0x04955F,
+	0x049615, 0x0496CB, 0x0499E1, 0x049EC7, 0x04A023, 0x04A447, 0x04BA6D, 0x04BFA1,
+	0x04CE33, 0x04CF09, 0x04DB3B, 0x052885, 0x0575CF, 0x05775B, 0x057D79, 0x058397,
+	0x058969, 0x058F50, 0x05A9DB, 0x05C561, 0x05C72E, 0x05C8FB, 0x05EAC1, 0x060C87,
+	0x060D19, 0x060E62, 0x061039, 0x0613C2, 0x061764, 0x061847, 0x062535, 0x062D4B,
+	0x064F11, 0x0670D7, 0x067381, 0x0675A9, 0x0677EF, 0x067A98, 0x067DDE, 0x068115,
+	0x0684E3, 0x068A76, 0x068F30, 0x0693C8, 0x0696AD, 0x06C2C9, 0x06C84D, 0x07095D,
+	0x071854, 0x07274B, 0x073642, 0x074539, 0x075454, 0x0791DA, 0x07CF60, 0x07E4AB,
+	0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
+	0x0816B1};
+
+const byte pegatina_rooms[140] = {
+	0, 0, 0, 0, 0, 0, 0,                            // Sprites 0-6: Room 0
+	2, 2,                                           // Sprites 7-8: Room 2
+	3, 3, 3, 3, 3, 3, 3, 3,                         // Sprites 9-16: Room 3
+	4, 4, 4, 4, 4,                                  // Sprites 17-21: Room 4
+	5, 5,                                           // Sprites 22-23: Room 5
+	7,                                              // Sprite 24: Room 7
+	8, 8,                                           // Sprites 25-26: Room 8
+	9, 9, 9, 9, 9,                                  // Sprites 27-31: Room 9
+	12, 12,                                         // Sprites 32-33: Room 12
+	13, 13, 13,                                     // Sprites 34-36: Room 13
+	12,                                             // Sprite 37: Room 12
+	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, // Sprites 38-49: Room 15
+	16, 16,                                         // Sprites 50-51: Room 16
+	17, 17,                                         // Sprites 52-53: Room 17
+	19, 19, 19, 19, 19,                             // Sprites 54-58: Room 19
+
+	0, 0, 0, 0, 0, 0, 0, // Sprites 59-65: Room 0
+	33, 33,              // Sprites 66-67: Room 33
+	29, 29,              // Sprites 68-69: Room 29
+	0, 0, 0,             // Sprites 70-72: Room 0
+
+	34, 35, 31, 25,         // Sprites 73-76: Various rooms
+	31,                     // Sprite 77: Room 31
+	32,                     // Sprite 78: Room 32
+	21, 25,                 // Sprites 79-80: Rooms 21, 25
+	0,                      // Sprite 81: Room 0
+	0, 0, 0, 0, 0,          // Sprites 82-86: Room 0
+	4, 4, 4, 4,             // Sprites 87-90: Room 4
+	0, 0, 0, 0,             // Sprites 91-94: Room 0
+	0, 0, 0, 0, 0, 0,       // Sprites 95-100: Room 0
+	33, 33,                 // Sprites 101-102: Room 33
+	47, 47,                 // Sprites 103-104: Room 47
+	52, 52, 52, 52, 52,     // Sprites 105-109: Room 52
+	52, 52, 52, 52, 52, 52, // Sprites 110-115: Room 52
+	41,                     // Sprite 116: Room 41
+	0,                      // Sprite 117: Room 0
+	30,                     // Sprite 118: Room 30
+	44, 44, 44, 44,         // Sprites 119-122: Room 44
+	31,                     // Sprite 123: Room 31
+	46, 46,                 // Sprites 124-125: Room 46
+	31,                     // Sprite 126: Room 31
+	51, 52, 53, 54          // Sprites 127-130: Various rooms
 };
 
 // Description offsets relative to DESCRIPTION_BASE_OFFSET

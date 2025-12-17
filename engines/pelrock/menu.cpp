@@ -191,51 +191,6 @@ void MenuManager::loadMenu() {
 	}
 }
 
-Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size) {
-	int pos = 0;
-	Common::String desc = "";
-	Common::StringArray lines;
-	Common::Array<Common::Array<Common::String>> texts;
-	while (pos < size) {
-		if (data[pos] == 0xFD) {
-			if (!desc.empty()) {
-
-				lines.push_back(desc);
-				texts.push_back(lines);
-				lines.clear();
-				desc = Common::String();
-			}
-			pos++;
-			continue;
-		}
-		if (data[pos] == 0x00) {
-			pos++;
-			continue;
-		}
-		if (data[pos] == 0x08) {
-			byte color = data[pos + 1];
-			desc.append(1, '@');
-			desc.append(1, color);
-			pos += 2;
-			continue;
-		}
-		if (data[pos] == 0xC8) {
-			lines.push_back(desc);
-			desc = Common::String();
-			pos++;
-			continue;
-		}
-
-		desc.append(1, decodeChar(data[pos]));
-		if (pos + 1 == size) {
-			lines.push_back(desc);
-			texts.push_back(lines);
-		}
-		pos++;
-	}
-	return texts;
-}
-
 void MenuManager::loadMenuTexts() {
 
 	Common::File exe;
@@ -245,14 +200,14 @@ void MenuManager::loadMenuTexts() {
 	byte *descBuffer = new byte[kInventoryDescriptionsSize];
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
 	exe.read(descBuffer, kInventoryDescriptionsSize);
-	_inventoryDescriptions = processTextData(descBuffer, kInventoryDescriptionsSize);
+	_inventoryDescriptions = _res->processTextData(descBuffer, kInventoryDescriptionsSize);
 	delete[] descBuffer;
 
 	Common::String desc = "";
-	byte *textBuffer = new byte[230];
-	exe.seek(0x49203, SEEK_SET);
-	exe.read(textBuffer, 230);
-	_menuTexts = processTextData(textBuffer, 230);
+	byte *textBuffer = new byte[kMenuTextSize];
+	exe.seek(kMenuTextOffset, SEEK_SET);
+	exe.read(textBuffer, kMenuTextSize);
+	_menuTexts = _res->processTextData(textBuffer, kMenuTextSize);
 
 	_menuText = _menuTexts[0];
 	delete[] textBuffer;

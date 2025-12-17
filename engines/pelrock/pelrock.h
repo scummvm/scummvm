@@ -43,12 +43,12 @@
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/fonts/small_font_double.h"
+#include "pelrock/menu.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
 #include "pelrock/sound.h"
 #include "pelrock/types.h"
 #include "pelrock/video/video.h"
-#include "pelrock/menu.h"
 
 namespace Pelrock {
 
@@ -94,7 +94,8 @@ private:
 	void presentFrame();
 	void updatePaletteAnimations();
 	void paintDebugLayer();
-
+	void placeStickers();
+	void placeSticker(Sticker sticker);
 
 	void animateFadePalette(PaletteAnim *anim);
 	void animateRotatePalette(PaletteAnim *anim);
@@ -102,6 +103,7 @@ private:
 	void talkTo(HotSpot *hotspot);
 	void lookAt(HotSpot *hotspot);
 	void open(HotSpot *hotspot);
+	void close(HotSpot *hotspot);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
@@ -141,13 +143,11 @@ private:
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
 
 	bool _displayPopup = false;
-	byte _iconBlink = 0;
 	int _popupX = 0;
 	int _popupY = 0;
 	int _currentPopupFrame = 0;
 
 	HotSpot *_currentHotspot = nullptr;
-
 
 	Common::Point _curWalkTarget;
 	bool isNPCATalking = false;
@@ -178,7 +178,7 @@ public:
 	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
 	AlfredState alfredState;
-	byte *_compositeBuffer;             // Working composition buffer
+	byte *_compositeBuffer; // Working composition buffer
 	GameState stateGame = INTRO;
 
 	SmallFont *_smallFont = nullptr;

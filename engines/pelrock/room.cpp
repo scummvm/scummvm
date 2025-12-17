@@ -93,19 +93,20 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
-void RoomManager::placeSticker(Sticker sticker, byte *background) {
-	for (int y = 0; y < sticker.h; y++) {
-		for (int x = 0; x < sticker.w; x++) {
-			byte pixel = sticker.stickerData[y * sticker.w + x];
-			if (pixel != 0) {
-				int bgX = sticker.x + x;
-				int bgY = sticker.y + y;
-				if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
-					background[bgY * 640 + bgX] = pixel;
-				}
-			}
+void RoomManager::addSticker(Sticker sticker) {
+	_currentRoomStickers.push_back(sticker);
+}
+
+void RoomManager::removeSticker(int stickerIndex) {
+	int index = -1;
+	for (int i = 0; i < _currentRoomStickers.size(); i++) {
+		if (_currentRoomStickers[i].stickerIndex == stickerIndex) {
+			index = i;
+			break;
 		}
 	}
+	if (index != -1 && index < _currentRoomStickers.size())
+		_currentRoomStickers.remove_at(index);
 }
 
 PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
@@ -440,7 +441,7 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 	// debug("End of descriptions at position %d", pos);
 	size_t conversationStart = lastDescPos + 1;
 	_conversationDataSize = pair12_size - conversationStart;
-	if(_conversationData != nullptr) {
+	if (_conversationData != nullptr) {
 		delete[] _conversationData;
 	}
 	_conversationData = new byte[_conversationDataSize];

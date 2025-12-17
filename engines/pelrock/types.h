@@ -69,9 +69,8 @@ const int kAlfredFrameHeight = 102;
 
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
-const int kTalkAnimationSpeed = 2; // Frames per update
+const int kTalkAnimationSpeed = 2;   // Frames per update
 const int kAlfredAnimationSpeed = 2; // Frames per update
-
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -118,7 +117,7 @@ struct AlfredState {
 };
 
 typedef struct {
-	uint8_t flags;       /* Direction flags (see MOVE_* constants) */
+	uint8_t flags;      /* Direction flags (see MOVE_* constants) */
 	uint16_t distanceX; // Horizontal distance to move
 	uint16_t distanceY; // Vertical distance to move
 } MovementStep;
@@ -129,7 +128,7 @@ typedef struct {
 typedef struct {
 	uint8_t *pathBuffer;          // Sequence of walkbox indices
 	MovementStep *movementBuffer; // Array of movement steps
-	uint8_t *compressed_path;      // Final compressed path
+	uint8_t *compressed_path;     // Final compressed path
 	uint16_t pathLength;
 	uint16_t movementCount;
 	uint16_t compressed_length;
@@ -166,8 +165,8 @@ struct Exit {
 struct Sprite {
 	int index; // number of the animation in the rooms
 	byte type;
-	int16 x;        // 0
-	int16 y;        // 2
+	int16 x;      // 0
+	int16 y;      // 2
 	int w;        // 4
 	int h;        // 5
 	byte extra;   // 6
@@ -326,15 +325,15 @@ struct PaletteAnimFade {
 	byte curFrameCount = 0;
 };
 
-struct Sticker
-{
+struct Sticker {
+	int roomNumber;
+	int stickerIndex;
 	uint16 x;
 	uint16 y;
 	byte w;
 	byte h;
 	byte *stickerData;
 };
-
 
 struct PaletteAnimRotate {
 	byte startIndex;
