@@ -51,6 +51,7 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(sy
 }
 
 M4Engine::~M4Engine() {
+	delete _subtitles;
 }
 
 void M4Engine::initializePath(const Common::FSNode &gamePath) {
@@ -88,6 +89,8 @@ Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
 	syncSoundSettings();
+
+	_subtitles = new M4Subtitles();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
