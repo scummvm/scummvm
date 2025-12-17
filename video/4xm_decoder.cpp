@@ -96,10 +96,12 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 
 public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
+		/* FIXME: double check codes, some bits are swapped
 		_blockType[0][0].initStatistics({2, 1, 1, 2, 1, 1});
 		_blockType[0][1].initStatistics({2, 0, 2, 2, 1, 1});
 		_blockType[0][2].initStatistics({2, 2, 0, 2, 1, 1});
 		_blockType[0][3].initStatistics({2, 0, 0, 2, 2, 1, 1});
+		*/
 
 		_blockType[1][0].initStatistics({16, 8, 4, 2, 1, 1});
 		_blockType[1][1].initStatistics({8, 0, 4, 2, 1, 1});
@@ -385,7 +387,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
-	auto &huff = _blockType[_version > 1][index];
+	auto &huff = _blockType[_version > 1 ? 1 : 0][index];
 	auto code = huff.next(bs);
 	int scale = 1;
 	int dc = 0;
@@ -406,6 +408,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		decode_pfrm_block(frame, x + dx, y, log2w, log2h, bs, wordStream, byteStream);
 		return;
 	} else if (code == 6) {
+		assert(wordStream.pos() + 4 <= wordStream.size());
 		if (log2w) {
 			dst[0] = wordStream.readUint16LE();
 			dst[1] = wordStream.readUint16LE();
@@ -416,13 +419,18 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		return;
 	}
 	if (code == 0) {
+		assert(byteStream.pos() < byteStream.size());
 		byte b = byteStream.readByte();
 		src += _mv[b];
 	} else if (code == 3 && _version >= 2) {
+		return;
 	} else if (code == 4) {
+		assert(byteStream.pos() < byteStream.size());
+		assert(wordStream.pos() + 2 <= wordStream.size());
 		src += _mv[byteStream.readByte()];
 		dc = wordStream.readSint16LE();
 	} else if (code == 5) {
+		assert(wordStream.pos() + 2 <= wordStream.size());
 		scale = 0;
 		dc = wordStream.readSint16LE();
 	} else {
