@@ -93,6 +93,7 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	Graphics::Surface *_frame;
 	FourXM::HuffmanDecoder _blockType[2][4] = {};
 	byte _mv[256];
+	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
 public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
@@ -475,7 +476,20 @@ void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *st
 	stream->skip(4);
 	auto frameIdx = stream->readUint32LE();
 	auto frameSize = stream->readUint32LE();
+	auto streamSize = stream->size() - stream->pos();
 	debug("c-frame, frame id: %u, size: %u", frameIdx, frameSize);
+	auto &cframe = _cframes[frameIdx];
+	auto dstOffset = cframe.size();
+	cframe.resize(cframe.size() + streamSize);
+	stream->read(cframe.data() + dstOffset, streamSize);
+	if (cframe.size() >= frameSize) {
+		assert(_dec->_curFrame == frameIdx);
+		Common::MemoryReadStream ms(cframe.data(), cframe.size());
+		debug("PFRAME");
+		Common::hexdump(cframe.data(), cframe.size());
+		// decode_pfrm(&ms);
+		_cframes.erase(frameIdx);
+	}
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode(uint32 tag, byte *buf, uint size) {
