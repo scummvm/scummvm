@@ -511,7 +511,10 @@ void PelrockEngine::open(HotSpot *hotspot) {
 	case 261:
 		_room->addSticker(_res->getSticker(91));
 		break;
-
+	case 268:
+		_room->addSticker(_res->getSticker(93));
+		_room->_currentRoomExits[0].isEnabled = true;
+		break;
 	default:
 
 		break;
@@ -523,7 +526,10 @@ void PelrockEngine::close(HotSpot *hotspot) {
 	case 261:
 		_room->removeSticker(91);
 		break;
-
+	case 268:
+		_room->removeSticker(93);
+		_room->_currentRoomExits[0].isEnabled = false;
+		break;
 	default:
 
 		break;
@@ -977,7 +983,9 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 	for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
 		Exit exit = _room->_currentRoomExits[i];
 		if (x >= exit.x && x <= (exit.x + exit.w) &&
-			y >= exit.y && y <= (exit.y + exit.h)) {
+			y >= exit.y && y <= (exit.y + exit.h)
+			// && exit.isEnabled
+		) {
 			return &(_room->_currentRoomExits[i]);
 		}
 	}

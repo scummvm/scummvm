@@ -159,7 +159,7 @@ struct Exit {
 	int16 targetY;
 	uint16 targetDir;
 	AlfredDirection dir;
-	byte flags;
+	byte isEnabled;
 };
 
 struct Sprite {

@@ -156,7 +156,7 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 	for (int i = 0; i < exit_count; i++) {
 		Exit exit;
 		exit.targetRoom = roomFile->readUint16LE();
-		exit.flags = roomFile->readByte();
+		exit.isEnabled = roomFile->readByte();
 		exit.x = roomFile->readUint16LE();
 		exit.y = roomFile->readUint16LE();
 		exit.w = roomFile->readByte();
