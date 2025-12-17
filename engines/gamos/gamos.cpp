@@ -1680,7 +1680,7 @@ void GamosEngine::FUN_00402a68(ActEntry e) {
 		uint16 t = PTR_00417218->state;
 		_states.at(DAT_00417228, DAT_0041722c) = PTR_00417218->state & 0xf0ff;
 
-		FUN_00402654(0, DAT_00417224, DAT_00417220);
+		removeObjectAtCoords(Common::Point(DAT_00417220, DAT_00417224), false);
 
 		PTR_00417218->cell.x = DAT_00417220;
 		PTR_00417218->cell.y = DAT_00417224;
@@ -1712,7 +1712,7 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 
 	if ((e.flags & 1) == 0) {
 		if (oid == 0xfe) {
-			FUN_00402654(1, y, x);
+			removeObjectAtCoords(Common::Point(x, y), true);
 			if (_needReload)
 				return;
 
@@ -1742,14 +1742,14 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 
 	ObjectAction &act = _objectActions[oid];
 	if ((act.unk1 & 0xff) == 0) {
-		FUN_00402654(1, y, x);
+		removeObjectAtCoords(Common::Point(x, y), true);
 		if (_needReload)
 			return;
 		obj = nullptr;
 		index = -1;
 		odat = nullptr;
 	} else {
-		FUN_00402654(0, y, x);
+		removeObjectAtCoords(Common::Point(x, y), false);
 		if (_needReload)
 			return;
 		obj = getFreeObject();
@@ -1792,8 +1792,8 @@ void GamosEngine::removeObjectByIDMarkDirty(int32 id) {
 }
 
 
-void GamosEngine::FUN_00402654(int mode, int id, int pos) {
-	uint16 &rthing = _states.at(pos, id);
+void GamosEngine::removeObjectAtCoords(Common::Point cell, bool deleteGfxObj) {
+	uint16 &rthing = _states.at(cell);
 
 	uint8 actid = rthing & 0xff;
 
@@ -1808,7 +1808,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 		Object &obj = _objects[i];
 		if (obj.flags & Object::FLAG_VALID) {
 			if (obj.flags & Object::FLAG_HASACTION) {
-				if (obj.cell.x == pos && obj.cell.y == id) {
+				if (obj.cell == cell) {
 					removeObjectByIDMarkDirty(obj.curObjectId);
 					if (obj.curObjectId != obj.tgtObjectId)
 						removeObjectByIDMarkDirty(obj.tgtObjectId);
@@ -1818,13 +1818,13 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 					removeObject(&obj);
 					FUN_0040255c(&obj);
 					povar4 = &obj;
-					if (!mode || multidel)
+					if (!deleteGfxObj || multidel)
 						break;
 
 					multidel = true;
 				}
 			} else {
-				if (mode && obj.cell.x == pos && obj.cell.y == id &&
+				if (deleteGfxObj && obj.cell == cell &&
 				        obj.actObjIndex == -1 && (obj.flags & Object::FLAG_FREECOORDS) == 0) {
 
 					removeObjectMarkDirty(&obj);
@@ -1840,7 +1840,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	if (povar4)
 		rthing = povar4->state & 0xf0ff;
 
-	executeScript(rthing >> 12, id, pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
+	executeScript(rthing >> 12, cell.y, cell.x, nullptr, -1, nullptr, &act, act.onDeleteAddress);
 }
 
 Object *GamosEngine::getFreeObject() {

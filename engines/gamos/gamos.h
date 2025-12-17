@@ -656,7 +656,7 @@ protected:
 
 	void FUN_0040283c(ActEntry e, int32 x, int32 y);
 
-	void FUN_00402654(int mode, int id, int pos);
+	void removeObjectAtCoords(Common::Point cell, bool deleteGfxObj);
 
 	Object *getFreeObject();
 	void removeObject(Object *obj);
