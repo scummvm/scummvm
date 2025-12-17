@@ -237,6 +237,8 @@ void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textA
 	_editable = false;
 	_selectable = false;
 
+	_addInputPadding = false;
+
 	_editableRow = 0;
 	_autoSelect = true;
 
@@ -826,7 +828,12 @@ void MacText::appendText(const Common::U32String &str, const Font *font, uint16 
 void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	clearChunkInput();
 
-	_canvas.splitString(strWithFont, -1, _defaultFormatting);
+	Common::U32String finalText = strWithFont;
+
+    if (_addInputPadding && _editable && strWithFont.lastChar() != '\n') 
+		finalText += '\n';
+
+	_canvas.splitString(finalText, -1, _defaultFormatting);
 	recalcDims();
 
 	_canvas.render(oldLen - 1, _canvas._text.size());
@@ -836,7 +843,8 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	if (_editable) {
 		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height());
 
-		_cursorRow = MAX<int>(getLineCount() - 1, 0);
+		short paddingLines = _addInputPadding ? 1 : 0;
+        _cursorRow = MAX<int>(getLineCount() - 1 - paddingLines, 0);
 		_cursorCol = _canvas.getLineCharWidth(_cursorRow);
 
 		updateCursorPos();
