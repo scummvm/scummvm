@@ -205,12 +205,43 @@ void MenuManager::loadInventoryDescriptions() {
 		pos++;
 	}
 	delete[] descBuffer;
+    desc = "";
+    byte *textBuffer = new byte[230];
+    exe.seek(0x49203, SEEK_SET);
+	exe.read(textBuffer, 230);
+    pos = 0;
+    while (pos < 230) {
+		if (textBuffer[pos] == 0xFD) {
+			if (!desc.empty()) {
+				_menuTexts.push_back(desc);
+				desc = Common::String();
+			}
+			pos++;
+			continue;
+		}
+		if (textBuffer[pos] == 0x00) {
+			pos++;
+			continue;
+		}
+		if (textBuffer[pos] == 0x08) {
+			pos += 2;
+			continue;
+		}
+		if (textBuffer[pos] == 0xC8) {
+			desc.append(1, '\n');
+			pos++;
+			continue;
+		}
 
-    exe.seek(0x49209, SEEK_SET);
+		desc.append(1, decodeChar(textBuffer[pos]));
+		if (pos + 1 == 230) {
+			_menuTexts.push_back(desc);
+		}
+		pos++;
+	}
 
-
-    _defaultText = exe.readString(0xFD, 35);
-    _menuText = _defaultText;
+    _menuText = _menuTexts[0];
+    delete[] textBuffer;
 
 	exe.close();
 }

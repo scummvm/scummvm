@@ -38,18 +38,19 @@ public:
 private:
 	void checkMouseClick(int x, int y);
     void loadInventoryDescriptions();
+    void loadMenuTexts();
     void tearDown();
     Graphics::Screen *_screen = nullptr;
     PelrockEventManager *_events = nullptr;
     ResourceManager *_res = nullptr;
 	byte *_mainMenu = nullptr;
     byte *_compositeBuffer = nullptr;
-    Common::String _defaultText;
+    Common::StringArray _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
 	int _curInventoryPage = 0;
 	Common::String _menuText;
-	Common::Array<Common::String> _inventoryDescriptions;
+	Common::StringArray _inventoryDescriptions;
 };
 
 } // End of namespace Pelrock
