@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	m4.o \
 	console.o \
 	metaengine.o \
+	subtitles.o \
 	vars.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_background.o \
