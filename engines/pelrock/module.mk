@@ -15,7 +15,8 @@ MODULE_OBJS = \
 	video/video.o \
 	pathfinding.o \
 	events.o \
-	dialog.o
+	dialog.o \
+	menu.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

@@ -48,6 +48,7 @@
 #include "pelrock/sound.h"
 #include "pelrock/types.h"
 #include "pelrock/video/video.h"
+#include "pelrock/menu.h"
 
 namespace Pelrock {
 
@@ -57,12 +58,12 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	ResourceManager *_res = nullptr;
 	ChronoManager *_chrono = nullptr;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_sound = nullptr;
 	PelrockEventManager *_events = nullptr;
 	DialogManager *_dialog = nullptr;
+	MenuManager *_menu = nullptr;
 
 	void init();
 	void loadAnims();
@@ -115,7 +116,6 @@ private:
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
-	void checkMouseClickOnSettings(int x, int y);
 
 	void calculateScalingMasks();
 	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
@@ -156,14 +156,8 @@ private:
 
 	bool showShadows = false;
 
-	// Temporary
-	int selectedInvIndex = 0;
-	int curInventoryPage = 0;
-	Common::String _menuText;
-
 	// JAVA
 	bool shouldPlayIntro = false;
-	GameState stateGame = INTRO;
 	bool inConversation = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
@@ -181,9 +175,11 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
 	AlfredState alfredState;
 	byte *_compositeBuffer;             // Working composition buffer
+	GameState stateGame = INTRO;
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;

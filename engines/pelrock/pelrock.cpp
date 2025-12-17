@@ -65,6 +65,8 @@ PelrockEngine::~PelrockEngine() {
 	delete _room;
 	delete _res;
 	delete _events;
+	delete _dialog;
+	delete _menu;
 	// if (_bgPopupBalloon)
 	// 	delete[] _bgPopupBalloon;
 }
@@ -88,6 +90,7 @@ Common::Error PelrockEngine::run() {
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
 	_dialog = new DialogManager(_screen, _events);
+	_menu = new MenuManager(_screen, _events, _res);
 
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
@@ -113,7 +116,7 @@ Common::Error PelrockEngine::run() {
 
 		if (stateGame == SETTINGS) {
 			changeCursor(DEFAULT);
-			menuLoop();
+			_menu->menuLoop();
 		} else if (stateGame == GAME) {
 			gameLoop();
 		}
@@ -129,8 +132,8 @@ void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
 	_res->loadInventoryItems();
-	_res->loadSettingsMenu();
 	_sound->loadSoundIndex();
+	_menu->loadMenu();
 
 	calculateScalingMasks();
 	_compositeBuffer = new byte[640 * 400];
@@ -299,7 +302,8 @@ void PelrockEngine::checkMouse() {
 		_events->_longClicked = false;
 	}
 	else if(_events->_rightMouseClicked) {
-		g_system->getPaletteManager()->setPalette(_res->_mainMenuPalette, 0, 256);
+
+		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		stateGame = SETTINGS;
 	}
@@ -798,29 +802,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	}
 }
 
-void PelrockEngine::checkMouseClickOnSettings(int x, int y) {
-
-	bool selectedItem = false;
-	for (int i = 0; i < 4; i++) {
-		if (x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
-			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
-			selectedInvIndex = curInventoryPage * 4 + i;
-			_menuText = _res->getInventoryObject(selectedInvIndex).description;
-			selectedItem = true;
-			return;
-		}
-	}
-	if (!selectedItem) {
-		selectedInvIndex = -1;
-		_menuText = "";
-	}
-
-	if (x >= 471 && x <= 471 + 23 &&
-		y >= 87 && y <= 87 + 33) {
-		curInventoryPage++;
-	}
-}
-
 void PelrockEngine::calculateScalingMasks() {
 
 	//    for scale_factor in range(CHAR_WIDTH):
@@ -1057,33 +1038,33 @@ void PelrockEngine::gameLoop() {
 	}
 }
 
-void PelrockEngine::menuLoop() {
-	_events->pollEvent();
+// void PelrockEngine::menuLoop() {
+// 	_events->pollEvent();
 
-	if(_events->_leftMouseClicked) {
-		_events->_leftMouseClicked = false;
-		checkMouseClickOnSettings(_events->_mouseX, _events->_mouseY);
-	}
-	else if (_events->_rightMouseClicked) {
-		_events->_rightMouseClicked = false;
-		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-		stateGame = GAME;
-	}
+// 	if(_events->_leftMouseClicked) {
+// 		_events->_leftMouseClicked = false;
+// 		checkMouseClickOnSettings(_events->_mouseX, _events->_mouseY);
+// 	}
+// 	else if (_events->_rightMouseClicked) {
+// 		_events->_rightMouseClicked = false;
+// 		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+// 		stateGame = GAME;
+// 	}
 
-	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
+// 	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
 
-	for (int i = 0; i < 4; i++) {
-		int itemIndex = curInventoryPage * 4 + i;
-		InventoryObject item = _res->getInventoryObject(itemIndex);
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
-		drawRect(_compositeBuffer, 140 + (82 * i) - 2, 115 - (8 * i) - 2, 64, 64, 255); // Draw border
-	}
+// 	for (int i = 0; i < 4; i++) {
+// 		int itemIndex = curInventoryPage * 4 + i;
+// 		InventoryObject item = _res->getInventoryObject(itemIndex);
+// 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
+// 		drawRect(_compositeBuffer, 140 + (82 * i) - 2, 115 - (8 * i) - 2, 64, 64, 255); // Draw border
+// 	}
 
-	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	_smallFont->drawString(_screen, _menuText, 230, 200, 200, 0);
-	_screen->markAllDirty();
-	_screen->update();
-}
+// 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+// 	_smallFont->drawString(_screen, _menuText, 230, 200, 200, 0);
+// 	_screen->markAllDirty();
+// 	_screen->update();
+// }
 
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;

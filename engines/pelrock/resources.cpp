@@ -60,7 +60,6 @@ ResourceManager::~ResourceManager() {
 
 	delete[] alfredCombFrames[0];
 	delete[] alfredCombFrames[1];
-	delete _mainMenu;
 	delete[] _inventoryIcons;
 }
 
@@ -216,7 +215,7 @@ void ResourceManager::loadAlfredAnims() {
 }
 
 void ResourceManager::loadInventoryItems() {
-	loadInventoryDescriptions();
+	// loadInventoryDescriptions();
 	Common::File alfred4File;
 	if (!alfred4File.open("ALFRED.4")) {
 		error("Couldnt find file ALFRED.4");
@@ -230,7 +229,7 @@ void ResourceManager::loadInventoryItems() {
 	for (int i = 0; i < 69; i++) {
 		_inventoryIcons[i].index = i;
 		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
-		_inventoryIcons[i].description = _inventoryDescriptions[i];
+		// _inventoryIcons[i].description = _inventoryDescriptions[i];
 	}
 	delete[] iconData;
 }
@@ -254,49 +253,6 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	return sticker;
 }
 
-void ResourceManager::loadInventoryDescriptions() {
-	Common::File exe;
-	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
-	}
-	byte *descBuffer = new byte[kInventoryDescriptionsSize];
-	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
-	exe.read(descBuffer, kInventoryDescriptionsSize);
-	int pos = 0;
-	Common::String desc = "";
-	while (pos < kInventoryDescriptionsSize) {
-		if (descBuffer[pos] == 0xFD) {
-			if (!desc.empty()) {
-				_inventoryDescriptions.push_back(desc);
-				desc = Common::String();
-			}
-			pos++;
-			continue;
-		}
-		if (descBuffer[pos] == 0x00) {
-			pos++;
-			continue;
-		}
-		if (descBuffer[pos] == 0x08) {
-			pos += 2;
-			continue;
-		}
-		if(descBuffer[pos] == 0xC8) {
-			desc.append(1, '\n');
-			pos++;
-			continue;
-		}
-
-		desc.append(1, decodeChar(descBuffer[pos]));
-		if (pos + 1 == kInventoryDescriptionsSize) {
-			_inventoryDescriptions.push_back(desc);
-		}
-		pos++;
-	}
-	delete[] descBuffer;
-	exe.close();
-}
-
 InventoryObject ResourceManager::getInventoryObject(byte index) {
 	return _inventoryIcons[index];
 }
@@ -315,80 +271,6 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		combined_size += decompressedSize;
 		free(block_data);
 		free(thisBlock);
-	}
-}
-
-void ResourceManager::loadSettingsMenu() {
-
-	bool alternateMenu = false;
-	Common::File alfred7;
-	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
-		return;
-	}
-
-	_mainMenu = new byte[640 * 400];
-
-	if (!alternateMenu) {
-		alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
-		alfred7.read(_mainMenuPalette, 768);
-		for (int i = 0; i < 256; i++) {
-			_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-			_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-			_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
-		}
-
-		uint32 curPos = 0;
-		alfred7.seek(2405266, SEEK_SET);
-		alfred7.read(_mainMenu, 65536);
-
-		curPos += 65536;
-
-		byte *compressedPart1 = new byte[29418];
-		alfred7.read(compressedPart1, 29418);
-		byte *decompressedPart1 = nullptr;
-		size_t decompressedSize = rleDecompress(compressedPart1, 29418, 0, 0, &decompressedPart1, true);
-
-		memcpy(_mainMenu + curPos, decompressedPart1, decompressedSize);
-		curPos += decompressedSize;
-
-		delete[] compressedPart1;
-		delete[] decompressedPart1;
-		alfred7.seek(2500220, SEEK_SET);
-		alfred7.read(_mainMenu + curPos, 32768);
-		curPos += 32768;
-		byte *compressedPart2 = new byte[30288];
-		alfred7.read(compressedPart2, 30288);
-		byte *decompressedPart2 = nullptr;
-		decompressedSize = rleDecompress(compressedPart2, 30288, 0, 0, &decompressedPart2, true);
-
-		memcpy(_mainMenu + curPos, decompressedPart2, decompressedSize);
-		curPos += decompressedSize;
-		debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + 92160);
-		delete[] compressedPart2;
-		delete[] decompressedPart2;
-		alfred7.seek(2563266, SEEK_SET);
-		alfred7.read(_mainMenu + curPos, 92160);
-		alfred7.close();
-	} else {
-		Common::File alfred7;
-		if (!alfred7.open(Common::Path("ALFRED.7"))) {
-			error("Could not open ALFRED.7");
-			return;
-		}
-
-		_mainMenu = new byte[640 * 400];
-
-		alfred7.seek(kAlternateSettingsPaletteOffset, SEEK_SET);
-		alfred7.read(_mainMenuPalette, 768);
-		for (int i = 0; i < 256; i++) {
-			_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-			_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-			_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
-		}
-
-		mergeRleBlocks(&alfred7, kAlternateSettingsMenuOffset, 8, _mainMenu);
-		alfred7.close();
 	}
 }
 

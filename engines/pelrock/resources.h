@@ -33,13 +33,13 @@ static const int interactingAnimLength = 2;
 
 class ResourceManager {
 private:
-	void mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer);
-	void loadInventoryDescriptions();
 	InventoryObject *_inventoryIcons = nullptr;
+
 public:
 	ResourceManager(/* args */);
 	~ResourceManager();
 
+	void mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer);
 	void loadSettingsMenu();
 	void loadCursors();
 	void loadInteractionIcons();
@@ -61,10 +61,6 @@ public:
 	byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
-
-	byte *_mainMenu = nullptr;
-	byte _mainMenuPalette[768] = {0};
-	Common::Array<Common::String> _inventoryDescriptions;
 };
 
 } // End of namespace Pelrock
