@@ -314,15 +314,11 @@ void PelrockEngine::copyBackgroundToBuffer() {
 
 void PelrockEngine::updateAnimations() {
 	// Sort sprites by zOrder (persists in the array)
+
 	sortAnimsByZOrder(_room->_currentRoomAnims);
-
-	// Create temporary render order partitioned by Alfred's Y position
-	Common::Array<Sprite *> renderOrder;
-	int alfredY = alfredState.y;
-
 	// First pass: sprites behind Alfred (y <= alfredY)
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder > 10) {
+		if (_room->_currentRoomAnims[i].zOrder > 10 || _room->_currentRoomAnims[i].zOrder < 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
@@ -332,7 +328,7 @@ void PelrockEngine::updateAnimations() {
 
 	// Second pass: sprites in front of Alfred (y > alfredY)
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder <= 10) {
+		if (_room->_currentRoomAnims[i].zOrder <= 10 && _room->_currentRoomAnims[i].zOrder >= 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
