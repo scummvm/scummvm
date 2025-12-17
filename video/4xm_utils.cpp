@@ -83,13 +83,40 @@ uint HuffmanDecoder::loadStatistics(const byte *huff, uint huffSize) {
 	return offset;
 }
 
+void HuffmanDecoder::dumpImpl(uint code, uint size, uint index, uint ch) const {
+	if (index == _startEntry) {
+		debug("%u: code %u, size: %u", ch, code, size);
+		return;
+	}
+	for (uint i = 0; i != kLastEntry; ++i) {
+		auto &e = _table[i];
+		if (e.falseIdx == kMaxTableSize)
+			continue;
+
+		if (e.falseIdx == index) {
+			dumpImpl(code, size + 1, i, ch);
+			return;
+		}
+		if (e.trueIdx == index) {
+			dumpImpl(code | (1 << size), size + 1, i, ch);
+			return;
+		}
+	}
+}
+
+void HuffmanDecoder::dump() const {
+	for (uint ch = 0; ch < _numCodes; ++ch) {
+		dumpImpl(0, 0, ch, ch);
+	}
+}
+
 void HuffmanDecoder::buildTable(uint numCodes) {
 	_numCodes = numCodes;
-	_table[513].freq = 0x7FFF;
+	_table[kLastEntry].freq = 0x7FFF;
 	auto codeIdx = numCodes;
 	while (true) {
 		ushort idx = 0;
-		ushort smallest2 = 513, smallest1 = 513;
+		ushort smallest2 = kLastEntry, smallest1 = kLastEntry;
 		while (idx < codeIdx) {
 			auto freq = _table[idx].freq;
 			if (freq != 0) {
@@ -104,7 +131,7 @@ void HuffmanDecoder::buildTable(uint numCodes) {
 			}
 			++idx;
 		}
-		if (smallest2 == 513) {
+		if (smallest2 == kLastEntry) {
 			_startEntry = codeIdx - 1;
 			break;
 		}
@@ -114,7 +141,7 @@ void HuffmanDecoder::buildTable(uint numCodes) {
 		_table[codeIdx].trueIdx = smallest2;
 		++codeIdx;
 	}
-	assert(codeIdx < 513);
+	assert(codeIdx < kLastEntry);
 }
 
 Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize) {

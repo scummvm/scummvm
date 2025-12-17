@@ -105,6 +105,11 @@ public:
 		_blockType[1][1].initStatistics({8, 0, 4, 2, 1, 1});
 		_blockType[1][2].initStatistics({8, 4, 0, 2, 1, 1});
 		_blockType[1][3].initStatistics({8, 0, 0, 4, 2, 1, 1});
+		for (int i = 0; i != 2; ++i)
+			for (int j = 0; j != 4; ++j) {
+				debug("blockType[%d][%d]:", i, j);
+				_blockType[i][j].dump();
+			}
 	}
 	~FourXMVideoTrack();
 

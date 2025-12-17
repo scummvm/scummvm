@@ -86,12 +86,14 @@ using LEByteBitStream = BitStream<byte, false>;
 using BEByteBitStream = BitStream<byte, true>;
 
 class HuffmanDecoder {
+	static constexpr uint kMaxTableSize = 514;
+	static constexpr uint kLastEntry = kMaxTableSize - 1;
 	struct HuffChar {
-		uint freq;
-		ushort falseIdx;
-		ushort trueIdx;
+		uint freq = 0;
+		ushort falseIdx = kMaxTableSize;
+		ushort trueIdx = kMaxTableSize;
 	};
-	HuffChar _table[514] = {};
+	HuffChar _table[kMaxTableSize] = {};
 	uint _startEntry = 0;
 	uint _numCodes = 0;
 
@@ -106,11 +108,14 @@ public:
 	template<typename BitStreamType>
 	uint next(BitStreamType &bs);
 
+	void dump() const;
+
 private:
 	template<typename Word>
 	Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset);
 
 	void buildTable(uint numCodes);
+	void dumpImpl(uint code, uint size, uint index, uint ch) const;
 };
 
 void idct(int16_t block[64]);
