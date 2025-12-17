@@ -132,7 +132,7 @@ public:
 	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
-	void decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::LEWordBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
+	void decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEWordBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
 	Common::Rational getFrameRate() const override { return _frameRate; }
 };
 
@@ -383,7 +383,7 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 }
 } // namespace
 
-void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::LEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
@@ -454,7 +454,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 	Common::Array<byte> byteStreamData(byteStreamSize);
 	stream->read(byteStreamData.data(), byteStreamData.size());
 
-	FourXM::LEWordBitStream bitStream(reinterpret_cast<const uint32 *>(bitStreamData.data()), bitStreamData.size() / 4, 0);
+	FourXM::BEWordBitStream bitStream(reinterpret_cast<const uint32 *>(bitStreamData.data()), bitStreamData.size() / 4, 0);
 	Common::MemoryReadStream wordStream(wordStreamData.data(), wordStreamData.size());
 	Common::MemoryReadStream byteStream(byteStreamData.data(), byteStreamData.size());
 
@@ -483,8 +483,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *st
 	if (cframe.size() >= frameSize) {
 		assert(_dec->_curFrame == frameIdx);
 		Common::MemoryReadStream ms(cframe.data(), cframe.size());
-		debug("PFRAME");
-		Common::hexdump(cframe.data(), cframe.size());
+		// debug("PFRAME");
+		// Common::hexdump(cframe.data(), cframe.size());
 		// decode_pfrm(&ms);
 		_cframes.erase(frameIdx);
 	}

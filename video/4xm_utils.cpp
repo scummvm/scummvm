@@ -39,6 +39,8 @@ uint HuffmanDecoder::next(BitStreamType &bs) {
 }
 template uint HuffmanDecoder::next(LEByteBitStream &bs);
 template uint HuffmanDecoder::next(BEByteBitStream &bs);
+template uint HuffmanDecoder::next(LEWordBitStream &bs);
+template uint HuffmanDecoder::next(BEWordBitStream &bs);
 
 template<typename Word>
 Common::Array<byte> HuffmanDecoder::unpackStream(const byte *huff, uint huffSize, uint &offset) {

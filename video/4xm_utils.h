@@ -85,6 +85,7 @@ public:
 using LEByteBitStream = BitStream<byte, false>;
 using BEByteBitStream = BitStream<byte, true>;
 using LEWordBitStream = BitStream<uint32, false>;
+using BEWordBitStream = BitStream<uint32, true>;
 
 class HuffmanDecoder {
 	static constexpr uint kMaxTableSize = 514;
