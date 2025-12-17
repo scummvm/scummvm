@@ -93,32 +93,35 @@ public:
 	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 
-private:
+protected:
 	bool recalculateBoundingBox() const;
 	void renderSubtitle() const;
 
-	SRTParser _srtParser;
 	bool _loaded;
-	bool _subtitleDev;
 	bool _overlayHasAlpha;
+	mutable Graphics::Surface _surface;
+	mutable const Common::Array<SubtitlePart> *_parts;
+	mutable Common::Rect _drawRect;
+	mutable Common::Rect _realBBox;
+
+	uint32 _transparentColor;
+
+private:
+
+	SRTParser _srtParser;
+	bool _subtitleDev;
 
 	mutable Common::Array<SubtitlePart> _devParts;
 
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _fontHeight;
 
-	mutable Graphics::Surface _surface;
-
-	mutable Common::Rect _drawRect;
 	Common::Rect _requestedBBox;
-	mutable Common::Rect _realBBox;
 	mutable int16 _lastOverlayWidth, _lastOverlayHeight;
 
 	Common::Path _fname;
-	mutable const Common::Array<SubtitlePart> *_parts;
 	uint32 _color;
 	uint32 _blackColor;
-	uint32 _transparentColor;
 	uint16 _hPad;
 	uint16 _vPad;
 };
