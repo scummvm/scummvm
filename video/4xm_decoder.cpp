@@ -474,9 +474,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *st
 	if (cframe.size() >= frameSize) {
 		assert(_dec->_curFrame == frameIdx);
 		Common::MemoryReadStream ms(cframe.data(), cframe.size());
-		// debug("PFRAME");
-		// Common::hexdump(cframe.data(), cframe.size());
-		// decode_pfrm(&ms);
+		decode_pfrm(&ms);
 		_cframes.erase(frameIdx);
 	}
 }
