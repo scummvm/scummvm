@@ -91,28 +91,22 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	uint _w, _h;
 	uint16 _version = 0;
 	Graphics::Surface *_frame;
-	FourXM::HuffmanDecoder _blockType[2][4] = {};
+	FourXM::HuffmanDecoder _blockType[4] = {};
 	byte _mv[256];
 	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
 public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
-		/* FIXME: double check codes, some bits are swapped
-		_blockType[0][0].initStatistics({2, 1, 1, 2, 1, 1});
-		_blockType[0][1].initStatistics({2, 0, 2, 2, 1, 1});
-		_blockType[0][2].initStatistics({2, 2, 0, 2, 1, 1});
-		_blockType[0][3].initStatistics({2, 0, 0, 2, 2, 1, 1});
-		*/
-
-		_blockType[1][0].initStatistics({16, 8, 4, 2, 1, 1});
-		_blockType[1][1].initStatistics({8, 0, 4, 2, 1, 1});
-		_blockType[1][2].initStatistics({8, 4, 0, 2, 1, 1});
-		_blockType[1][3].initStatistics({8, 0, 0, 4, 2, 1, 1});
-		for (int i = 0; i != 2; ++i)
-			for (int j = 0; j != 4; ++j) {
-				debug("blockType[%d][%d]:", i, j);
-				_blockType[i][j].dump();
-			}
+		if (_version <= 1)
+			error("versions 0 and 1 are not supported");
+		_blockType[0].initStatistics({16, 8, 4, 2, 1, 1});
+		_blockType[1].initStatistics({8, 0, 4, 2, 1, 1});
+		_blockType[2].initStatistics({8, 4, 0, 2, 1, 1});
+		_blockType[3].initStatistics({8, 0, 0, 4, 2, 1, 1});
+		for (int i = 0; i != 4; ++i) {
+			debug("blockType[%d]:", i);
+			_blockType[i].dump();
+		}
 	}
 	~FourXMVideoTrack();
 
@@ -140,13 +134,10 @@ const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
 	if (!_frame) {
 		_frame = new Graphics::Surface();
 		_frame->create(_w, _h, getPixelFormat());
+		auto pitch = _frame->pitch / _frame->format.bytesPerPixel;
 
-		for (uint i = 0; i < 256; i++) {
-			if (_version > 1)
-				_mv[i] = mv[i][0] + mv[i][1] * _frame->pitch / 2;
-			else
-				_mv[i] = (i & 15) - 8 + ((i >> 4) - 8) * _frame->pitch / 2;
-		}
+		for (uint i = 0; i < 256; i++)
+			_mv[i] = mv[i][0] + mv[i][1] * pitch;
 	}
 	debug("decode next video frame");
 	_dec->decodeNextFrameImpl();
@@ -387,7 +378,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
-	auto &huff = _blockType[_version > 1 ? 1 : 0][index];
+	auto &huff = _blockType[index];
 	auto code = huff.next(bs);
 	int scale = 1;
 	int dc = 0;
