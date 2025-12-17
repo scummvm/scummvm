@@ -22,6 +22,7 @@
 #define PELROCK_MENU_H
 
 #include "graphics/screen.h"
+#include "graphics/font.h"
 
 #include "pelrock/events.h"
 #include "pelrock/resources.h"
@@ -30,22 +31,22 @@ namespace Pelrock {
 
 class MenuManager {
 public:
-    MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res);
-    ~MenuManager();
-    void menuLoop();
-    void loadMenu();
+	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res);
+	~MenuManager();
+	void menuLoop();
+	void loadMenu();
 	byte _mainMenuPalette[768] = {0};
 private:
 	void checkMouseClick(int x, int y);
-    void loadInventoryDescriptions();
-    void loadMenuTexts();
-    void tearDown();
-    Graphics::Screen *_screen = nullptr;
-    PelrockEventManager *_events = nullptr;
-    ResourceManager *_res = nullptr;
+	void loadMenuTexts();
+	void tearDown();
+	void drawColoredText(Graphics::ManagedSurface *surface, const Common::String &text, int x, int y, int w, Graphics::Font *font);
+	Graphics::Screen *_screen = nullptr;
+	PelrockEventManager *_events = nullptr;
+	ResourceManager *_res = nullptr;
 	byte *_mainMenu = nullptr;
-    byte *_compositeBuffer = nullptr;
-    Common::Array<Common::StringArray> _menuTexts;
+	byte *_compositeBuffer = nullptr;
+	Common::Array<Common::StringArray> _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
 	int _curInventoryPage = 0;

@@ -35,6 +35,31 @@ Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager 
 
 }
 
+void MenuManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, Graphics::Font *font) {
+	int currentX = x;
+	uint32 currentColor = 255;
+
+	Common::String segment;
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == '@' && i + 1 < text.size()) {
+			// Draw accumulated segment
+			if (!segment.empty()) {
+				font->drawString(screen, segment, currentX, y, w, currentColor);
+				currentX += font->getStringWidth(segment);
+				segment.clear();
+			}
+			currentColor = text[i + 1];
+			i++; // skip color code
+		} else {
+			segment += text[i];
+		}
+	}
+
+	// Draw remaining segment
+	if (!segment.empty()) {
+		font->drawString(screen, segment, currentX, y, w, currentColor);
+	}
+}
 
 void MenuManager::checkMouseClick(int x, int y) {
 
@@ -61,7 +86,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 
 
 void MenuManager::menuLoop() {
-    _events->pollEvent();
+	_events->pollEvent();
 
 	if(_events->_leftMouseClicked) {
 		_events->_leftMouseClicked = false;
@@ -71,7 +96,7 @@ void MenuManager::menuLoop() {
 		_events->_rightMouseClicked = false;
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 		g_engine->stateGame = GAME;
-        tearDown();
+		tearDown();
 	}
 
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
@@ -80,13 +105,12 @@ void MenuManager::menuLoop() {
 		int itemIndex = _curInventoryPage * 4 + i;
 		InventoryObject item = _res->getInventoryObject(itemIndex);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
-		drawRect(_compositeBuffer, 140 + (82 * i) - 2, 115 - (8 * i) - 2, 64, 64, 255); // Draw border
 	}
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-    for(int i = 0; _menuText.size() > i; i++) {
-        g_engine->_smallFont->drawString(_screen, _menuText[i], 230, 200 + (i * 10), 200, 255);
-    }
+	for(int i = 0; _menuText.size() > i; i++) {
+		drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, g_engine->_smallFont);
+	}
 
 	_screen->markAllDirty();
 	_screen->update();
@@ -103,7 +127,7 @@ void MenuManager::loadMenu() {
 
 	_compositeBuffer = new byte[640 * 400];
 	_mainMenu = new byte[640 * 400];
-    loadInventoryDescriptions();
+	loadMenuTexts();
 	if (!alternateMenu) {
 		alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
 		alfred7.read(_mainMenuPalette, 768);
@@ -167,7 +191,52 @@ void MenuManager::loadMenu() {
 	}
 }
 
-void MenuManager::loadInventoryDescriptions() {
+Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size) {
+	int pos = 0;
+	Common::String desc = "";
+	Common::StringArray lines;
+	Common::Array<Common::Array<Common::String>> texts;
+	while (pos < size) {
+		if (data[pos] == 0xFD) {
+			if (!desc.empty()) {
+
+				lines.push_back(desc);
+				texts.push_back(lines);
+				lines.clear();
+				desc = Common::String();
+			}
+			pos++;
+			continue;
+		}
+		if (data[pos] == 0x00) {
+			pos++;
+			continue;
+		}
+		if (data[pos] == 0x08) {
+			byte color = data[pos + 1];
+			desc.append(1, '@');
+			desc.append(1, color);
+			pos += 2;
+			continue;
+		}
+		if (data[pos] == 0xC8) {
+			lines.push_back(desc);
+			desc = Common::String();
+			pos++;
+			continue;
+		}
+
+		desc.append(1, decodeChar(data[pos]));
+		if (pos + 1 == size) {
+			lines.push_back(desc);
+			texts.push_back(lines);
+		}
+		pos++;
+	}
+	return texts;
+}
+
+void MenuManager::loadMenuTexts() {
 
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
@@ -176,86 +245,17 @@ void MenuManager::loadInventoryDescriptions() {
 	byte *descBuffer = new byte[kInventoryDescriptionsSize];
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
 	exe.read(descBuffer, kInventoryDescriptionsSize);
-	int pos = 0;
-	Common::String desc = "";
-    Common::StringArray objLines;
-	while (pos < kInventoryDescriptionsSize) {
-		if (descBuffer[pos] == 0xFD) {
-			if (!desc.empty()) {
-
-				objLines.push_back(desc);
-                _inventoryDescriptions.push_back(objLines);
-                objLines.clear();
-				desc = Common::String();
-			}
-			pos++;
-			continue;
-		}
-		if (descBuffer[pos] == 0x00) {
-			pos++;
-			continue;
-		}
-		if (descBuffer[pos] == 0x08) {
-			pos += 2;
-			continue;
-		}
-		if (descBuffer[pos] == 0xC8) {
-            objLines.push_back(desc);
-            desc = Common::String();
-			pos++;
-			continue;
-		}
-
-		desc.append(1, decodeChar(descBuffer[pos]));
-		if (pos + 1 == kInventoryDescriptionsSize) {
-            objLines.push_back(desc);
-			_inventoryDescriptions.push_back(objLines);
-		}
-		pos++;
-	}
+	_inventoryDescriptions = processTextData(descBuffer, kInventoryDescriptionsSize);
 	delete[] descBuffer;
-    desc = "";
-    byte *textBuffer = new byte[230];
-    exe.seek(0x49203, SEEK_SET);
+
+	Common::String desc = "";
+	byte *textBuffer = new byte[230];
+	exe.seek(0x49203, SEEK_SET);
 	exe.read(textBuffer, 230);
-    pos = 0;
-    Common::StringArray textLines;
-    while (pos < 230) {
-		if (textBuffer[pos] == 0xFD) {
-			if (!desc.empty()) {
-                textLines.push_back(desc);
-				_menuTexts.push_back(textLines);
-                textLines.clear();
-				desc = Common::String();
-			}
-			pos++;
-			continue;
-		}
-		if (textBuffer[pos] == 0x00) {
-			pos++;
-			continue;
-		}
-		if (textBuffer[pos] == 0x08) {
-			pos += 2;
-			continue;
-		}
-		if (textBuffer[pos] == 0xC8) {
-            textLines.push_back(desc);
-            desc = Common::String();
-			pos++;
-			continue;
-		}
+	_menuTexts = processTextData(textBuffer, 230);
 
-		desc.append(1, decodeChar(textBuffer[pos]));
-		if (pos + 1 == 230) {
-            textLines.push_back(desc);
-			_menuTexts.push_back(textLines);
-		}
-		pos++;
-	}
-
-    _menuText = _menuTexts[0];
-    delete[] textBuffer;
+	_menuText = _menuTexts[0];
+	delete[] textBuffer;
 
 	exe.close();
 }
