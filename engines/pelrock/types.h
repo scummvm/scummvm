@@ -69,6 +69,9 @@ const int kAlfredFrameHeight = 102;
 
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
+const int kTalkAnimationSpeed = 2; // Frames per update
+const int kAlfredAnimationSpeed = 2; // Frames per update
+
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -111,6 +114,7 @@ struct AlfredState {
 	uint16 movementSpeed = 6; // pixels per frame
 	uint16 x = 319;
 	uint16 y = 302;
+	float currentScale = 1.0f;
 };
 
 typedef struct {

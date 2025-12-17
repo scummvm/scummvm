@@ -562,8 +562,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		}
 
 		drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
-		// if(alfredFrameSkip) alfredState.curFrame++;
-		// alfredFrameSkip = !alfredFrameSkip;
 		alfredState.curFrame++;
 		break;
 	}
@@ -572,7 +570,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame = 0;
 		}
 		drawAlfred(_res->alfredTalkFrames[alfredState.direction][alfredState.curFrame]);
-		if(_chrono->getFrameCount() % 2 == 0) {
+		if(_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
 			alfredState.curFrame++;
 		}
 		break;
@@ -1000,7 +998,17 @@ void PelrockEngine::drawTalkNPC(Sprite *animSet) {
 	int w = index ? animHeader->wAnimB : animHeader->wAnimA;
 	int h = index ? animHeader->hAnimB : animHeader->hAnimA;
 	int numFrames = index ? animHeader->numFramesAnimB : animHeader->numFramesAnimA;
-	int curFrame = index ? animHeader->currentFrameAnimB++ : animHeader->currentFrameAnimA++;
+
+	if(_chrono->getFrameCount() % kTalkAnimationSpeed == 0) {
+		if (index) {
+			animHeader->currentFrameAnimB++;
+		} else {
+			animHeader->currentFrameAnimA++;
+		}
+	}
+
+	byte curFrame = index ? animHeader->currentFrameAnimB : animHeader->currentFrameAnimA;
+
 	if (curFrame >= numFrames) {
 		if (index) {
 			animHeader->currentFrameAnimB = 0;
