@@ -1277,8 +1277,8 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 	Common::Array<Common::Point> ARR_00412208(512);
 
 	if (!absolute) {
-		DAT_00417228 = PTR_00417218->pos;
-		DAT_0041722c = PTR_00417218->blk;
+		DAT_00417228 = PTR_00417218->cell.x;
+		DAT_0041722c = PTR_00417218->cell.y;
 	} else {
 		PTR_00417218 = nullptr;
 		_curObjIndex = -1;
@@ -1405,13 +1405,13 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 	if (a.flags & Actions::HAS_FUNCTION) {
 		uint32 fldsv;
 		if (PTR_00417218)
-			fldsv = PTR_00417218->fld_5;
+			fldsv = PTR_00417218->priority;
 		if (a.functionAddress != -1)
 			doScript(a.functionAddress);
 		if (_needReload)
 			return 0;
-		if (BYTE_004177fc == 0 && BYTE_00412200 == 0 && PTR_00417218 && PTR_00417218->fld_5 != fldsv && PTR_00417218->y != -1)
-			addDirtRectOnObject(&_objects[PTR_00417218->y]);
+		if (BYTE_004177fc == 0 && BYTE_00412200 == 0 && PTR_00417218 && PTR_00417218->priority != fldsv && PTR_00417218->curObjectId != -1)
+			addDirtRectOnObject(&_objects[PTR_00417218->curObjectId]);
 	}
 
 	if (BYTE_004177fc == 0 && BYTE_00412200 != 0)
@@ -1677,19 +1677,17 @@ void GamosEngine::FUN_00402a68(ActEntry e) {
 		DAT_00417220 = (e.x + DAT_00417220 + _statesWidth) % _statesWidth;
 		DAT_00417224 = (e.y + DAT_00417224 + _statesHeight) % _statesHeight;
 
-		uint8 t = PTR_00417218->fld_3;
-
-		_states.at(DAT_00417228, DAT_0041722c) = ((PTR_00417218->fld_3 & 0xf0) << 8) | PTR_00417218->fld_2;
+		uint16 t = PTR_00417218->state;
+		_states.at(DAT_00417228, DAT_0041722c) = PTR_00417218->state & 0xf0ff;
 
 		FUN_00402654(0, DAT_00417224, DAT_00417220);
 
-		PTR_00417218->pos = DAT_00417220;
-		PTR_00417218->blk = DAT_00417224;
+		PTR_00417218->cell.x = DAT_00417220;
+		PTR_00417218->cell.y = DAT_00417224;
 
 		uint16 &rthing = _states.at(DAT_00417220, DAT_00417224);
 
-		PTR_00417218->fld_2 = rthing & 0xff;
-		PTR_00417218->fld_3 = (t & 0xf) | ((rthing >> 8) & 0xf0);
+		PTR_00417218->state = (t & 0xf00) | (rthing & 0xf0ff);
 
 		rthing = ((PTR_00417218->flags & 0xf0) << 8) | PTR_00417218->actID;
 
@@ -1757,16 +1755,15 @@ void GamosEngine::FUN_0040283c(ActEntry e, int32 x, int32 y) {
 		obj = getFreeObject();
 		obj->flags = (e.t << 4) | Object::FLAG_VALID | Object::FLAG_HASACTION;
 		obj->actID = oid;
-		obj->fld_4 = 0;
-		obj->fld_5 = (act.unk1 >> 16) & 0xff;
-		obj->pos = x;
-		obj->blk = y;
-		obj->x = -1;
-		obj->y = -1;
-		obj->fld_2 = rthing & 0xff;
-		obj->fld_3 = (rthing >> 8) & 0xff;
+		obj->inputFlag = 0;
+		obj->priority = (act.unk1 >> 16) & 0xff;
+		obj->cell.x = x;
+		obj->cell.y = y;
+		obj->tgtObjectId = -1;
+		obj->curObjectId = -1;
+		obj->state = rthing;
 		if (PTR_00417218 && obj->index > PTR_00417218->index)
-			obj->fld_3 |= 1;
+			obj->state |= 0x100;
 
 		int storageSize = ((act.unk1 >> 24) & 0xff) + 1;
 		// if (storageSize < 5) {
@@ -1811,10 +1808,10 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 		Object &obj = _objects[i];
 		if (obj.flags & Object::FLAG_VALID) {
 			if (obj.flags & Object::FLAG_HASACTION) {
-				if (obj.pos == pos && obj.blk == id) {
-					removeObjectByIDMarkDirty(obj.y);
-					if (obj.y != obj.x)
-						removeObjectByIDMarkDirty(obj.x);
+				if (obj.cell.x == pos && obj.cell.y == id) {
+					removeObjectByIDMarkDirty(obj.curObjectId);
+					if (obj.curObjectId != obj.tgtObjectId)
+						removeObjectByIDMarkDirty(obj.tgtObjectId);
 					/* if (obj.flags & Object::FLAG_STORAGE)
 					    obj.storage.clear(); */
 					removeSubtitles(&obj);
@@ -1827,8 +1824,8 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 					multidel = true;
 				}
 			} else {
-				if (mode && obj.fld_4 == pos && obj.fld_5 == id &&
-				        obj.pos == 0xff && obj.blk == 0xff && (obj.flags & Object::FLAG_FREECOORDS) == 0) {
+				if (mode && obj.cell.x == pos && obj.cell.y == id &&
+				        obj.actObjIndex == -1 && (obj.flags & Object::FLAG_FREECOORDS) == 0) {
 
 					removeObjectMarkDirty(&obj);
 					if (multidel)
@@ -1841,7 +1838,7 @@ void GamosEngine::FUN_00402654(int mode, int id, int pos) {
 	}
 
 	if (povar4)
-		rthing = ((povar4->fld_3 & 0xf0) << 8) | (povar4->fld_2 & 0xff);
+		rthing = povar4->state & 0xf0ff;
 
 	executeScript(rthing >> 12, id, pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
 }
@@ -1863,19 +1860,24 @@ Object *GamosEngine::getFreeObject() {
 	}
 
 	obj->flags = Object::FLAG_VALID;
+	obj->priority = 0;
+	obj->cell.x = 0;
+	obj->cell.y = 0;
+
 	obj->sprId = -1;
 	obj->seqId = -1;
 	obj->frame = -1;
+	obj->frameMax = -1;
+	obj->position.x = 0;
+	obj->position.y = 0;
+	obj->actObjIndex = -1;
 
 	obj->actID = 0;
-	obj->fld_2 = 0;
-	obj->fld_3 = 0;
-	obj->fld_4 = 0;
-	obj->fld_5 = 0;
-	obj->pos = 0xff;
-	obj->blk = 0xff;
-	obj->x = 0;
-	obj->y = 0;
+	obj->state = 0;
+	obj->inputFlag = 0;
+	obj->tgtObjectId = -1;
+	obj->curObjectId = -1;
+
 	obj->pImg = nullptr;
 	return obj;
 }
@@ -1901,7 +1903,7 @@ void GamosEngine::removeObjectMarkDirty(Object *obj) {
 }
 
 
-void GamosEngine::executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, ObjectAction *act, int32 scriptAddr) {
+void GamosEngine::executeScript(uint8 p1, uint32 celly, uint32 cellx, byte *storage, int32 index, Object *pobj, ObjectAction *act, int32 scriptAddr) {
 	if (scriptAddr == -1)
 		return;
 
@@ -1917,10 +1919,10 @@ void GamosEngine::executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, 
 
 	BYTE_004177f6 = p1;
 	PTR_004173e8 = storage;
-	DAT_0041722c = id;
-	DAT_00417228 = pos;
-	DAT_00417224 = id;
-	DAT_00417220 = pos;
+	DAT_0041722c = celly;
+	DAT_00417228 = cellx;
+	DAT_00417224 = celly;
+	DAT_00417220 = cellx;
 	_curObjIndex = index;
 	PTR_00417218 = pobj;
 	PTR_00417214 = act;
@@ -1951,29 +1953,27 @@ bool GamosEngine::FUN_00402fb4() {
 
 		if (pobj->isActionObject()) {
 			if (!PTR_00417388 || (PTR_00417388[ pobj->actID >> 3 ] & (1 << (pobj->actID & 7)))) {
-				if (pobj->fld_3 & 1) {
-					pobj->fld_3 &= ~1;
+				if (pobj->state & 0x100) {
+					pobj->state &= ~0x100;
 				} else {
 					if ((pobj->flags & Object::FLAG_TRANSITION) == 0) {
-						if (pobj->y != -1 && FUN_00402f34(true, false, &_objects[pobj->y])) {
-							pobj->y = pobj->x;
-							if (pobj->x != -1) {
-								Object &o = _objects[pobj->x];
+						if (pobj->curObjectId != -1 && FUN_00402f34(true, false, &_objects[pobj->curObjectId])) {
+							pobj->curObjectId = pobj->tgtObjectId;
+							if (pobj->tgtObjectId != -1) {
+								Object &o = _objects[pobj->tgtObjectId];
 								o.flags |= Object::FLAG_GRAPHIC;
-								o.fld_4 = pobj->pos;
-								o.fld_5 = pobj->blk;
+								o.cell = pobj->cell;
 								FUN_0040921c(&o);
 								addDirtRectOnObject(&o);
 							}
 						}
 					} else {
-						if (FUN_00402f34(pobj->y != pobj->x, true, &_objects[pobj->y])) {
-							pobj->y = pobj->x;
-							if (pobj->x != -1) {
-								Object &o = _objects[pobj->x];
+						if (FUN_00402f34(pobj->curObjectId != pobj->tgtObjectId, true, &_objects[pobj->curObjectId])) {
+							pobj->curObjectId = pobj->tgtObjectId;
+							if (pobj->tgtObjectId != -1) {
+								Object &o = _objects[pobj->tgtObjectId];
 								o.flags |= Object::FLAG_GRAPHIC;
-								o.fld_4 = pobj->pos;
-								o.fld_5 = pobj->blk;
+								o.cell = pobj->cell;
 								FUN_0040921c(&o);
 								addDirtRectOnObject(&o);
 							}
@@ -2057,7 +2057,7 @@ bool GamosEngine::FUN_00402fb4() {
 				}
 			}
 		} else {
-			if (!PTR_00417388 && pobj->isGraphicObject() && pobj->pos == 0xff && pobj->blk == 0xff)
+			if (!PTR_00417388 && pobj->isGraphicObject() && pobj->actObjIndex == -1)
 				FUN_00402f34(true, false, pobj);
 		}
 continue_to_next_object:
@@ -2071,7 +2071,7 @@ exit:
 }
 
 bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
-	if (obj->fld_2 < 2) {
+	if (obj->frameMax < 2) {
 		if (p2 || (obj->flags & Object::FLAG_DIRTRECT)) {
 			addDirtRectOnObject(obj);
 			if (p1)
@@ -2080,11 +2080,9 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 		}
 	} else {
 		addDirtRectOnObject(obj);
-		obj->actID++;
 		obj->frame++;
 
-		if (obj->frame == obj->fld_2) {
-			obj->actID = 0;
+		if (obj->frame == obj->frameMax) {
 			obj->frame = 0;
 			obj->pImg = &_sprites[obj->sprId].sequences[obj->seqId]->operator[](obj->frame);
 			if (p2 || (obj->flags & Object::FLAG_DIRTRECT)) {
@@ -2105,38 +2103,38 @@ bool GamosEngine::FUN_00402f34(bool p1, bool p2, Object *obj) {
 	return false;
 }
 
-void GamosEngine::FUN_0040921c(Object *obj) {
-	ImagePos *imgPos = obj->pImg;
+void GamosEngine::FUN_0040921c(Object *gfxObj) {
+	ImagePos *imgPos = gfxObj->pImg;
 	Image *img = imgPos->image;
 
-	int32 x = obj->fld_4 * _gridCellW;
-	int32 y = obj->fld_5 * _gridCellH;
+	int32 x = gfxObj->cell.x * _gridCellW;
+	int32 y = gfxObj->cell.y * _gridCellH;
 
-	if (obj->pos != 255 && obj->blk != 255) {
-		Object *o = &_objects[(obj->blk * 0x100) + obj->pos];
+	if (gfxObj->actObjIndex != -1) {
+		Object *o = &_objects[ gfxObj->actObjIndex ];
 		if (o->flags & Object::FLAG_TRANSITION) {
-			int t = obj->frame + 1;
-			x += (o->pos - obj->fld_4) * _gridCellW * t / obj->fld_2;
-			y += (o->blk - obj->fld_5) * _gridCellH * t / obj->fld_2;
+			int t = gfxObj->frame + 1;
+			x += (o->cell.x - gfxObj->cell.x) * _gridCellW * t / gfxObj->frameMax;
+			y += (o->cell.y - gfxObj->cell.y) * _gridCellH * t / gfxObj->frameMax;
 		}
 	}
 
-	if (obj->flags & Object::FLAG_FLIPH)
-		obj->x = x - (img->surface.w - _gridCellW - imgPos->xoffset);
+	if (gfxObj->flags & Object::FLAG_FLIPH)
+		gfxObj->position.x = x - (img->surface.w - _gridCellW - imgPos->xoffset);
 	else
-		obj->x = x - imgPos->xoffset;
+		gfxObj->position.x = x - imgPos->xoffset;
 
-	if (obj->flags & Object::FLAG_FLIPV)
-		obj->y = y - (img->surface.h - _gridCellH - imgPos->yoffset);
+	if (gfxObj->flags & Object::FLAG_FLIPV)
+		gfxObj->position.y = y - (img->surface.h - _gridCellH - imgPos->yoffset);
 	else
-		obj->y = y - imgPos->yoffset;
+		gfxObj->position.y = y - imgPos->yoffset;
 }
 
 void GamosEngine::addDirtRectOnObject(Object *obj) {
 	ImagePos *imgPos = obj->pImg;
 	Common::Rect rect;
-	rect.left = obj->x;
-	rect.top = obj->y;
+	rect.left = obj->position.x;
+	rect.top = obj->position.y;
 	if (obj->flags & Object::FLAG_FREECOORDS) {
 		rect.left -= imgPos->xoffset;
 		rect.top -= imgPos->yoffset;
@@ -2212,7 +2210,7 @@ void GamosEngine::doDraw() {
 			for (int j = i + 1; j < drawList.size(); j++) {
 				Object *o1 = drawList[i];
 				Object *o2 = drawList[j];
-				if (o1->fld_3 < o2->fld_3) {
+				if (o1->priority < o2->priority) {
 					drawList[i] = o2;
 					drawList[j] = o1;
 				}
@@ -2241,8 +2239,8 @@ void GamosEngine::doDraw() {
 			if (o->pImg && loadImage(o->pImg->image)) {
 
 				Common::Rect s;
-				s.left = o->x - _scrollX;
-				s.top = o->y - _scrollY;
+				s.left = o->position.x - _scrollX;
+				s.top = o->position.y - _scrollY;
 
 				if (o->flags & Object::FLAG_FREECOORDS) {
 					s.left -= o->pImg->xoffset;
@@ -2328,55 +2326,55 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		ctx->EAX.setVal(1);
 		break;
 	case 1:
-		ctx->EAX.setVal( PTR_00417218->y == -1 ? 1 : 0 );
+		ctx->EAX.setVal( PTR_00417218->curObjectId == -1 ? 1 : 0 );
 		break;
 
 	case 2:
 		arg1 = ctx->pop32();
-		if (PTR_00417218->x == -1)
+		if (PTR_00417218->tgtObjectId == -1)
 			ctx->EAX.setVal(0);
 		else
-			ctx->EAX.setVal( _objects[ PTR_00417218->x ].sprId == arg1 ? 1 : 0 );
+			ctx->EAX.setVal( _objects[ PTR_00417218->tgtObjectId ].sprId == arg1 ? 1 : 0 );
 		break;
 	case 3:
-		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0x90) == 0x10 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->inputFlag & 0x90) == 0x10 ? 1 : 0 );
 		break;
 	case 4:
-		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0xa0) == 0x20 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->inputFlag & 0xa0) == 0x20 ? 1 : 0 );
 		break;
 	case 5:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0xb0) == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->inputFlag & 0xb0) == arg1 ? 1 : 0 );
 		break;
 	case 6:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( (PTR_00417218->fld_4 & 0x4f) == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->inputFlag & 0x4f) == arg1 ? 1 : 0 );
 		break;
 	case 7:
 		arg1 = ctx->pop32();
-		if ((PTR_00417218->fld_4 & 0x40) == 0 || (PTR_00417218->fld_4 & 8) != (arg1 & 8))
+		if ((PTR_00417218->inputFlag & 0x40) == 0 || (PTR_00417218->inputFlag & 8) != (arg1 & 8))
 			ctx->EAX.setVal(0);
 		else
-			ctx->EAX.setVal( FUN_0040705c(arg1 & 7, PTR_00417218->fld_4 & 7) ? 1 : 0 );
+			ctx->EAX.setVal( FUN_0040705c(arg1 & 7, PTR_00417218->inputFlag & 7) ? 1 : 0 );
 		break;
 	case 8:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( PTR_00417218->fld_5 == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( PTR_00417218->priority == arg1 ? 1 : 0 );
 		break;
 	case 9:
 		arg1 = ctx->pop32();
 		ctx->EAX.setVal( savedDoActions(_subtitleActions[arg1]) );
 		break;
 	case 10:
-		ctx->EAX.setVal( PTR_00417218->fld_2 == 0xfe ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->state & 0xff) == 0xfe ? 1 : 0 );
 		break;
 	case 11:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( PTR_00417218->fld_2 == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( (PTR_00417218->state & 0xff) == arg1 ? 1 : 0 );
 		break;
 	case 12:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( (1 << (PTR_00417218->fld_2 & 7)) & _thing2[arg1].field_0[PTR_00417218->fld_2 >> 3] );
+		ctx->EAX.setVal( _thing2[arg1].field_0[ (PTR_00417218->state >> 3) & 0x1f ] & (1 << (PTR_00417218->state & 7)) );
 		break;
 	case 13: {
 		VM::ValAddr regRef = ctx->popReg();
@@ -2467,15 +2465,15 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 25: {
 		arg1 = ctx->pop32();
-		if (PTR_00417218->fld_5 != arg1) {
-			PTR_00417218->fld_5 = arg1;
-			if (PTR_00417218->x != -1) {
-				Object &obj = _objects[PTR_00417218->x];
-				obj.fld_3 = arg1;
+		if (PTR_00417218->priority != arg1) {
+			PTR_00417218->priority = arg1;
+			if (PTR_00417218->tgtObjectId != -1) {
+				Object &obj = _objects[PTR_00417218->tgtObjectId];
+				obj.priority = arg1;
 			}
-			if (PTR_00417218->y != -1) {
-				Object &obj = _objects[PTR_00417218->y];
-				obj.fld_3 = arg1;
+			if (PTR_00417218->curObjectId != -1) {
+				Object &obj = _objects[PTR_00417218->curObjectId];
+				obj.priority = arg1;
 				addDirtRectOnObject(&obj);
 			}
 		}
@@ -2506,10 +2504,10 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		break;
 
 	case 30: {
-		if (PTR_00417218->y != -1) {
-			Object *obj = &_objects[PTR_00417218->y];
-			PTR_00417218->x = -1;
-			PTR_00417218->y = -1;
+		if (PTR_00417218->curObjectId != -1) {
+			Object *obj = &_objects[PTR_00417218->curObjectId];
+			PTR_00417218->tgtObjectId = -1;
+			PTR_00417218->curObjectId = -1;
 			removeObjectMarkDirty(obj);
 		}
 	} break;
@@ -2526,13 +2524,13 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		break;
 
 	case 33:
-		PTR_00417218->fld_5 = _statesHeight - PTR_00417218->blk;
+		PTR_00417218->priority = _statesHeight - PTR_00417218->cell.y;
 		ctx->EAX.setVal(1);
 		break;
 
 	case 34: {
 		VM::ValAddr regRef = ctx->popReg();
-		ctx->setMem8(regRef, PTR_00417218->fld_5);
+		ctx->setMem8(regRef, PTR_00417218->priority);
 		ctx->EAX.setVal(1);
 	} break;
 
@@ -3025,55 +3023,54 @@ uint32 GamosEngine::scriptFunc16(uint32 id) {
 
 bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 	Sprite &spr = _sprites[id];
-	Object *pobj = getFreeObject();
+	Object *gfxObj = getFreeObject();
 
-	pobj->flags |= Object::FLAG_GRAPHIC;
+	gfxObj->flags |= Object::FLAG_GRAPHIC;
 
 	if (spr.field_1 & 1)
-		pobj->flags |= Object::FLAG_DIRTRECT;
+		gfxObj->flags |= Object::FLAG_DIRTRECT;
 
-	pobj->fld_2 = spr.field_3;
-	int32 idx = 0xffff;
+	gfxObj->frameMax = spr.field_3;
+	int16 idx = -1;
 	if (!p)
 		idx = _curObjIndex;
 
-	pobj->pos = idx & 0xff;
-	pobj->blk = (idx >> 8) & 0xff;
-	pobj->x = x;
-	pobj->y = y;
+	gfxObj->actObjIndex = idx;
+	gfxObj->position.x = x;
+	gfxObj->position.y = y;
 
 	if (!p) {
 		if (!PTR_00417218) {
-			pobj->fld_3 = (PTR_00417214->unk1 >> 16) & 0xFF;
+			gfxObj->priority = (PTR_00417214->unk1 >> 16) & 0xFF;
 		} else {
-			int32 index = pobj->index;
-			if (PTR_00417218->y != -1) {
-				Object *oobj = &_objects[PTR_00417218->y];
-				addDirtRectOnObject(oobj);
-				oobj->flags &= ~Object::FLAG_GRAPHIC;
-				if (PTR_00417218->x != PTR_00417218->y)
-					removeObject(oobj);
+			int32 index = gfxObj->index;
+			if (PTR_00417218->curObjectId != -1) {
+				Object *pgObj = &_objects[PTR_00417218->curObjectId];
+				addDirtRectOnObject(pgObj);
+				pgObj->flags &= ~Object::FLAG_GRAPHIC;
+				if (PTR_00417218->tgtObjectId != PTR_00417218->curObjectId)
+					removeObject(pgObj);
 			}
 
-			PTR_00417218->y = index;
-			if (!(pobj->flags & Object::FLAG_DIRTRECT)) {
-				if (PTR_00417218->x != -1)
-					removeObject(&_objects[PTR_00417218->x]);
-				PTR_00417218->x = index;
+			PTR_00417218->curObjectId = index;
+			if (!(gfxObj->flags & Object::FLAG_DIRTRECT)) {
+				if (PTR_00417218->tgtObjectId != -1)
+					removeObject(&_objects[PTR_00417218->tgtObjectId]);
+				PTR_00417218->tgtObjectId = index;
 			}
 
-			pobj->fld_3 = PTR_00417218->fld_5;
+			gfxObj->priority = PTR_00417218->priority;
 			if (DAT_00417220 != DAT_00417228 || DAT_00417224 != DAT_0041722c) {
 				PTR_00417218->flags |= Object::FLAG_TRANSITION;
 			}
 		}
 	} else {
-		pobj->fld_3 = PTR_00417218->fld_5;
-		pobj->fld_4 = 0xff;
-		pobj->fld_5 = 0xff;
+		gfxObj->priority = PTR_00417218->priority;
+		gfxObj->cell.x = -1;
+		gfxObj->cell.y = -1;
 	}
 
-	FUN_00409378(id, pobj, p);
+	FUN_00409378(id, gfxObj, p);
 	return true;
 }
 
@@ -3082,11 +3079,12 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 	obj->actID = 0;
 	obj->frame = 0;
 	obj->sprId = sprId;
+	obj->seqId = 0;
 
 	Sprite &spr = _sprites[sprId];
 
+
 	if (spr.field_2 == 1) {
-		obj->seqId = 0;
 		obj->pImg = &spr.sequences[0]->operator[](0);
 		if (BYTE_004177f6 == 8) {
 			if (spr.field_1 & 2)
@@ -3095,71 +3093,68 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 			obj->flags |= Object::FLAG_FLIPV;
 		}
 	} else {
-		int frm = 0;
 		if (BYTE_004177f6 == 1) {
-			frm = 1;
+			obj->seqId = 1;
 			if (DAT_00417224 == DAT_0041722c && (spr.field_1 & 8))
-				frm = 0;
+				obj->seqId = 0;
 		} else if (BYTE_004177f6 == 2) {
-			frm = 3;
+			obj->seqId = 3;
 			if (DAT_0041722c < DAT_00417224)
-				frm = 2;
+				obj->seqId = 2;
 			else if (DAT_0041722c > DAT_00417224) {
-				frm = 4;
+				obj->seqId = 4;
 				if (spr.field_1 & 4) {
-					frm = 2;
+					obj->seqId = 2;
 					obj->flags |= Object::FLAG_FLIPV;
 				}
 			} else if (DAT_00417220 == DAT_00417228 && (spr.field_1 & 8))
-				frm = 0;
+				obj->seqId = 0;
 		} else if (BYTE_004177f6 == 4) {
-			frm = 5;
+			obj->seqId = 5;
 			if (DAT_00417224 == DAT_0041722c && (spr.field_1 & 8))
-				frm = 0;
+				obj->seqId = 0;
 			else if (spr.field_1 & 4) {
-				frm = 1;
+				obj->seqId = 1;
 				obj->flags |= Object::FLAG_FLIPV;
 			}
 		} else {
-			frm = 7;
+			obj->seqId = 7;
 			if (DAT_00417224 == DAT_0041722c) {
 				if ((spr.field_1 & 8) && DAT_00417220 == DAT_00417228)
-					frm = 0;
+					obj->seqId = 0;
 				else if (spr.field_1 & 2) {
-					frm = 3;
+					obj->seqId = 3;
 					obj->flags |= Object::FLAG_FLIPH;
 				}
 			} else {
 				if (DAT_0041722c < DAT_00417224) {
-					frm = 8;
+					obj->seqId = 8;
 					if (spr.field_1 & 2) {
-						frm = 2;
+						obj->seqId = 2;
 						obj->flags |= Object::FLAG_FLIPH;
 					}
 				} else {
-					frm = 6;
+					obj->seqId = 6;
 					if (spr.field_1 & 4) {
-						frm = 8;
+						obj->seqId = 8;
 						obj->flags |= Object::FLAG_FLIPV;
 
 						if (spr.field_1 & 2) {
-							frm = 2;
+							obj->seqId = 2;
 							obj->flags |= Object::FLAG_FLIPH;
 						}
 					} else if (spr.field_1 & 2) {
-						frm = 4;
+						obj->seqId = 4;
 						obj->flags |= Object::FLAG_FLIPH;
 					}
 				}
 			}
 		}
-
-		obj->pImg = &spr.sequences[frm]->operator[](0);
-		obj->seqId = frm;
+		obj->pImg = &spr.sequences[obj->seqId]->operator[](0);
 	}
 	if (!p) {
-		obj->fld_4 = DAT_00417228;
-		obj->fld_5 = DAT_0041722c;
+		obj->cell.x = DAT_00417228;
+		obj->cell.y = DAT_0041722c;
 		FUN_0040921c(obj);
 	} else {
 		obj->flags |= Object::FLAG_FREECOORDS;
@@ -3169,8 +3164,8 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 }
 
 void GamosEngine::FUN_004095a0(Object *obj) {
-	if (obj->y != -1) {
-		Object &yobj = _objects[obj->y];
+	if (obj->curObjectId != -1) {
+		Object &yobj = _objects[obj->curObjectId];
 		addDirtRectOnObject(&yobj);
 		if (DAT_00417228 != DAT_00417220 || DAT_0041722c != DAT_00417224)
 			obj->flags |= Object::FLAG_TRANSITION;
@@ -3179,12 +3174,12 @@ void GamosEngine::FUN_004095a0(Object *obj) {
 }
 
 void GamosEngine::removeSubtitles(Object *obj) {
-	if (obj->fld_3 & 2) {
-		obj->fld_3 &= ~2;
+	if (obj->state & 0x200) {
+		obj->state &= ~0x200;
 		//for (int index = obj->index; index < _objects.size(); index++) {
 		for (int index = 0; index < _objects.size(); index++) {
 			Object *pobj = &_objects[index];
-			if (pobj->isOverlayObject() && ((pobj->blk << 8) | pobj->pos) == obj->index)
+			if (pobj->isOverlayObject() && pobj->actObjIndex == obj->index)
 				removeObjectMarkDirty(pobj);
 		}
 	}
@@ -3228,11 +3223,11 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 
 
 bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
-	if (obj->y == -1)
+	if (obj->curObjectId == -1)
 		return false;
 
-	Object &robj = _objects[obj->y];
-	if (Common::Rect(robj.x, robj.y, robj.x + robj.pImg->image->surface.w, robj.y + robj.pImg->image->surface.h).contains(pos))
+	Object &gfxobj = _objects[obj->curObjectId];
+	if (Common::Rect(gfxobj.position.x, gfxobj.position.y, gfxobj.position.x + gfxobj.pImg->image->surface.w, gfxobj.position.y + gfxobj.pImg->image->surface.h).contains(pos))
 		return true;
 	return false;
 }
@@ -3263,19 +3258,19 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 			ObjectAction &action = _objectActions[obj.actID];
 			uint8 tp = action.unk1 & 0xff;
 			if (tp == 1)
-				obj.fld_4 = tmpb;
+				obj.inputFlag = tmpb;
 			else if (tp == 2)
-				obj.fld_4 = tmpb & 0x4f;
+				obj.inputFlag = tmpb & 0x4f;
 			else if (tp == 3) {
 				if (&obj == PTR_004121b4)
-					obj.fld_4 = tmpb & 0x4f;
+					obj.inputFlag = tmpb & 0x4f;
 				else
-					obj.fld_4 = 0;
+					obj.inputFlag = 0;
 			}
 
-			if ((!pobj || obj.fld_5 <= pobjF5) && FUN_00409600(&obj, actPos)) {
+			if ((!pobj || obj.priority <= pobjF5) && FUN_00409600(&obj, actPos)) {
 				actT = tp;
-				pobjF5 = obj.fld_5;
+				pobjF5 = obj.priority;
 				pobj = &obj;
 			}
 		}
@@ -3293,14 +3288,14 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 			else if (act2 == ACT2_81)
 				tmpb |= 0x20;
 
-			pobj->fld_4 = tmpb;
+			pobj->inputFlag = tmpb;
 		} else if (actT == 3 && (tmpb == 0x90 || tmpb == 0xa0)) {
 			PTR_004121b4 = pobj;
-			pobj->fld_4 = tmpb;
+			pobj->inputFlag = tmpb;
 		}
 
-		DAT_004173f4 = pobj->pos;
-		DAT_004173f0 = pobj->blk;
+		DAT_004173f4 = pobj->cell.x;
+		DAT_004173f0 = pobj->cell.y;
 	}
 
 	DAT_00417805 = act2;
@@ -3353,7 +3348,7 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 
 void GamosEngine::addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int32 sprId, int32 x, int32 y) {
 	removeSubtitles(PTR_00417218);
-	PTR_00417218->fld_3 |= 2;
+	PTR_00417218->state |= 0x200;
 
 	while (true) {
 		uint8 ib = ctx->getMem8(memtype, offset);
@@ -3431,26 +3426,25 @@ void GamosEngine::addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int
 }
 
 Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y) {
-	Object *obj = getFreeObject();
-	obj->flags |= Object::FLAG_GRAPHIC | Object::FLAG_OVERLAY | Object::FLAG_FREECOORDS;
-	obj->actID = 0;
-	obj->fld_2 = 1;
-	obj->fld_3 = PTR_00417218->fld_5;
-	obj->fld_4 = 0xff;
-	obj->fld_5 = 0xff;
-	obj->pos = _curObjIndex & 0xff;
-	obj->blk = (_curObjIndex >> 8) & 0xff;
-	obj->x = *pX;
-	obj->y = y;
-	obj->sprId = spr;
-	obj->seqId = 0;
-	obj->frame = frame - _sprites[spr].field_1;
-	obj->pImg = &_sprites[spr].sequences[obj->seqId]->operator[](obj->frame);
+	Object *gfxObj = getFreeObject();
+	gfxObj->flags |= Object::FLAG_GRAPHIC | Object::FLAG_OVERLAY | Object::FLAG_FREECOORDS;
+	gfxObj->frame = 0;
+	gfxObj->frameMax = 1;
+	gfxObj->priority = PTR_00417218->priority;
+	gfxObj->cell.x = -1;
+	gfxObj->cell.y = -1;
+	gfxObj->actObjIndex = _curObjIndex;
+	gfxObj->position.x = *pX;
+	gfxObj->position.y = y;
+	gfxObj->sprId = spr;
+	gfxObj->seqId = 0;
+	gfxObj->frame = frame - _sprites[spr].field_1;
+	gfxObj->pImg = &_sprites[spr].sequences[gfxObj->seqId]->operator[](gfxObj->frame);
 
-	*pX += obj->pImg->image->surface.w - obj->pImg->xoffset;
+	*pX += gfxObj->pImg->image->surface.w - gfxObj->pImg->xoffset;
 
-	addDirtRectOnObject(obj);
-	return obj;
+	addDirtRectOnObject(gfxObj);
+	return gfxObj;
 }
 
 bool GamosEngine::FUN_00402bc4() {
@@ -3494,8 +3488,8 @@ void GamosEngine::FUN_00407db8(uint8 p) {
 		DAT_00412c94 = DAT_004173f4;
 		DAT_00412c98 = DAT_004173f0;
 	}
-	DAT_00412c8c = (uint)PTR_00417218->pos;
-	DAT_00412c90 = (uint)PTR_00417218->blk;
+	DAT_00412c8c = PTR_00417218->cell.x;
+	DAT_00412c90 = PTR_00417218->cell.y;
 	INT_00412ca0 = -1;
 	INT_00412c9c = -1;
 	DAT_00417804 = 0;
@@ -4001,32 +3995,30 @@ void GamosEngine::FUN_0040279c(uint8 val, bool rnd) {
 	if (rnd)
 		val = _thing2[val].field_1[ 1 + rndRange16(_thing2[val].field_1[0]) ];
 
-	PTR_00417218->fld_2 = val;
-	PTR_00417218->fld_3 = 0x10;
+	PTR_00417218->state = 0x1000 | val;
 
 	ObjectAction &act = _objectActions[val];
-	executeScript(1, PTR_00417218->blk, PTR_00417218->pos, nullptr, -1, nullptr, &act, act.onCreateAddress);
+	executeScript(1, PTR_00417218->cell.y, PTR_00417218->cell.x, nullptr, -1, nullptr, &act, act.onCreateAddress);
 }
 
 void GamosEngine::FUN_004025d0() {
-	if (PTR_00417218->fld_2 != 0xfe) {
-		ObjectAction &act = _objectActions[PTR_00417218->fld_2];
+	if ((PTR_00417218->state & 0xff) != 0xfe) {
+		ObjectAction &act = _objectActions[PTR_00417218->state & 0xff];
 
 		for (int i = 0; i < _objects.size(); i++) {
 			Object &obj = _objects[i];
 			if (obj.isStaticObject() &&
-			        obj.pos == 0xff && obj.blk == 0xff &&
-			        obj.fld_4 == PTR_00417218->pos &&
-			        obj.fld_5 == PTR_00417218->blk) {
+			        obj.actObjIndex == -1 &&
+			        obj.cell.x == PTR_00417218->cell.x &&
+			        obj.cell.y == PTR_00417218->cell.y) {
 
 				removeObjectMarkDirty(&obj);
 				break;
 			}
 		}
 
-		executeScript(PTR_00417218->fld_3 >> 4, PTR_00417218->blk, PTR_00417218->pos, nullptr, -1, nullptr, &act, act.onDeleteAddress);
-		PTR_00417218->fld_2 = 0xfe;
-		PTR_00417218->fld_3 = 0xf0;
+		executeScript(PTR_00417218->state >> 12, PTR_00417218->cell.y, PTR_00417218->cell.x, nullptr, -1, nullptr, &act, act.onDeleteAddress);
+		PTR_00417218->state = 0xf0fe;
 	}
 }
 
@@ -4065,7 +4057,7 @@ bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
 bool GamosEngine::scrollAndDraw() {
 	if (_scrollTrackObj != -1) {
 		Object &obj = _objects[_scrollTrackObj];
-		Common::Point objPos(obj.pos * _gridCellW, obj.blk * _gridCellH);
+		Common::Point objPos(obj.cell.x * _gridCellW, obj.cell.y * _gridCellH);
 
 		Common::Rect objArea;
 		objArea.right = _scrollX + _width - (_scrollBorderR + 1) * _gridCellW;
@@ -4206,7 +4198,7 @@ int GamosEngine::txtInputBegin(VM::Context *ctx, byte memtype, int32 offset, int
 
 	if (_txtInputActive == false) {
 		removeSubtitles(PTR_00417218);
-		PTR_00417218->fld_3 |= 2;
+		PTR_00417218->state |= 0x200;
 		_txtInputVmOffset = offset;
 		_txtInputSpriteID = sprId;
 		_txtInputX = x;
@@ -4374,10 +4366,8 @@ bool GamosEngine::onTxtInputUpdate(uint8 c) {
 	for(int i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 		if ((obj.flags & (Object::FLAG_GRAPHIC | Object::FLAG_VALID | Object::FLAG_HASACTION | Object::FLAG_TRANSITION)) == (Object::FLAG_GRAPHIC | Object::FLAG_VALID)) {
-			if ((obj.frame + 1 == obj.fld_2) && obj.pos != 255 && obj.blk != 255) {
-				int32 idx = (obj.blk << 8) | obj.pos;
-				obj.fld_4 = _objects[idx].pos;
-				obj.fld_5 = _objects[idx].blk;
+			if ((obj.frame + 1 == obj.frameMax) && obj.actObjIndex != -1) {
+				obj.cell = _objects[ obj.actObjIndex ].cell;
 			}
 			FUN_00402f34(false, false, &obj);
 		}

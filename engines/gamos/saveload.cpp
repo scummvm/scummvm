@@ -33,7 +33,7 @@ void GamosEngine::storeToGameScreen(int id) {
 	int objCount = 0;
 	for (int i = 0; i < _objects.size(); i++) {
 		const Object &obj = _objects[i];
-		if ((obj.flags & 3) == 3 || (obj.flags & 7) == 1)
+		if ((obj.flags & 3) == 3 || (obj.flags & 7) == Object::FLAG_VALID)
 			objCount++;
 	}
 
@@ -42,23 +42,22 @@ void GamosEngine::storeToGameScreen(int id) {
 	for (int i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 
-		if ((obj.flags & 3) == 3) {
+		if (obj.isActionObject()) {
 			const int refObjIdx = idx;
-			if (obj.x == -1) {
+			if (obj.tgtObjectId == -1) {
 				gs._savedObjects[idx] = obj;
 				gs._savedObjects[idx].index = idx;
 				obj.flags = 0;
 				idx++;
 			} else {
-				Object &drawObj = _objects[ obj.x ];
+				Object &drawObj = _objects[ obj.tgtObjectId ];
 				gs._savedObjects[idx] = obj;
 				gs._savedObjects[idx].index = idx;
-				gs._savedObjects[idx].x = idx + 1;
-				gs._savedObjects[idx].y = idx + 1;
+				gs._savedObjects[idx].tgtObjectId = idx + 1;
+				gs._savedObjects[idx].curObjectId = idx + 1;
 				gs._savedObjects[idx + 1] = drawObj;
 				gs._savedObjects[idx + 1].index = idx + 1;
-				gs._savedObjects[idx + 1].pos = idx & 0xff;
-				gs._savedObjects[idx + 1].blk = (idx >> 8) & 0xff;
+				gs._savedObjects[idx + 1].actObjIndex = idx;
 				obj.flags = 0;
 				drawObj.flags = 0;
 				idx += 2;
@@ -66,16 +65,15 @@ void GamosEngine::storeToGameScreen(int id) {
 
 			for (int j = 0; j < _objects.size(); j++) {
 				Object &lobj = _objects[ j ];
-				if ((lobj.flags & 7) == 1 && ((lobj.blk << 8) | lobj.pos) == obj.index) {
+				if ((lobj.flags & 7) == Object::FLAG_VALID && lobj.actObjIndex == obj.index) {
 					gs._savedObjects[idx] = lobj;
 					gs._savedObjects[idx].index = idx;
-					gs._savedObjects[idx].pos = refObjIdx & 0xff;
-					gs._savedObjects[idx].blk = (refObjIdx >> 8) & 0xff;
+					gs._savedObjects[idx].actObjIndex = refObjIdx;
 					lobj.flags = 0;
 					idx++;
 				}
 			}
-		} else if ((obj.flags & 7) == 1 && obj.pos == 0xff && obj.blk == 0xff) {
+		} else if ((obj.flags & 7) == Object::FLAG_VALID && obj.actObjIndex == -1) {
 			gs._savedObjects[idx] = obj;
 			gs._savedObjects[idx].index = idx;
 			obj.flags = 0;

@@ -209,24 +209,59 @@ struct Object {
 		FLAG_FLIPH = 8,
 		FLAG_DIRTRECT = 4,
 	};
-	/* additional data */
+
 	int16 index = 0;
-	int32 sprId = -1;
-	int32 seqId = -1;
-	int32 frame = -1;
 
 	uint8 flags = 0;
+	uint8 priority = 0;
+	Common::Point cell;
+
+	/* gfx */
+	int32 sprId = -1;
+	int32 seqId = -1;
+	int16 frame = -1;
+	int16 frameMax = -1;
+	Common::Point position;
+	int16 actObjIndex = -1;
+
+	/* action */
 	uint8 actID = 0;
-	uint8 fld_2 = 0;
-	uint8 fld_3 = 0;
-	uint8 fld_4 = 0;
-	uint8 fld_5 = 0;
-	uint8 pos = 0xff;
-	uint8 blk = 0xff;
-	int16 x = 0;
-	int16 y = 0;
+	int16 state = 0;
+	uint8 inputFlag = 0;
+	int16 tgtObjectId = -1;
+	int16 curObjectId = -1;
+
 	ImagePos *pImg = nullptr;
 	Common::Array<byte> storage;
+
+
+	/*
+	Original object structures:
+
+	action:
+	flags   0
+	actID   1
+	state   2
+	inputFlag 4
+	priority  5
+	cell.x 6
+	cell.y 7
+	tgtObjectId 8
+	curObjectId 10
+	pStorage 12
+
+	gfx:
+	flags   0
+	frame   1
+	frameMax  2
+	priority  3
+	cell.x  4
+	cell.y  5
+	actObjIndex  6
+	position.x   8
+	position.y   10
+	pImg 12
+	*/
 
 	inline bool isActionObject() const { return (flags & (FLAG_HASACTION | FLAG_VALID)) == (FLAG_HASACTION | FLAG_VALID); };
 	inline bool isGraphicObject() const { return (flags & (FLAG_GRAPHIC | FLAG_VALID | FLAG_HASACTION)) == (FLAG_GRAPHIC | FLAG_VALID); };
