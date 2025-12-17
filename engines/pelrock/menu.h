@@ -45,12 +45,12 @@ private:
     ResourceManager *_res = nullptr;
 	byte *_mainMenu = nullptr;
     byte *_compositeBuffer = nullptr;
-    Common::StringArray _menuTexts;
+    Common::Array<Common::StringArray> _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
 	int _curInventoryPage = 0;
-	Common::String _menuText;
-	Common::StringArray _inventoryDescriptions;
+	Common::StringArray _menuText;
+	Common::Array<Common::StringArray> _inventoryDescriptions;
 };
 
 } // End of namespace Pelrock

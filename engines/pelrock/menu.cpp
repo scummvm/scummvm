@@ -50,7 +50,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 	}
 	if (!selectedItem) {
 		_selectedInvIndex = -1;
-		_menuText = "";
+		_menuText = _menuTexts[0];
 	}
 
 	if (x >= 471 && x <= 471 + 23 &&
@@ -84,7 +84,10 @@ void MenuManager::menuLoop() {
 	}
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	g_engine->_smallFont->drawString(_screen, _menuText, 230, 200, 200, 255);
+    for(int i = 0; _menuText.size() > i; i++) {
+        g_engine->_smallFont->drawString(_screen, _menuText[i], 230, 200 + (i * 10), 200, 255);
+    }
+
 	_screen->markAllDirty();
 	_screen->update();
 }
@@ -175,10 +178,14 @@ void MenuManager::loadInventoryDescriptions() {
 	exe.read(descBuffer, kInventoryDescriptionsSize);
 	int pos = 0;
 	Common::String desc = "";
+    Common::StringArray objLines;
 	while (pos < kInventoryDescriptionsSize) {
 		if (descBuffer[pos] == 0xFD) {
 			if (!desc.empty()) {
-				_inventoryDescriptions.push_back(desc);
+
+				objLines.push_back(desc);
+                _inventoryDescriptions.push_back(objLines);
+                objLines.clear();
 				desc = Common::String();
 			}
 			pos++;
@@ -193,14 +200,16 @@ void MenuManager::loadInventoryDescriptions() {
 			continue;
 		}
 		if (descBuffer[pos] == 0xC8) {
-			desc.append(1, '\n');
+            objLines.push_back(desc);
+            desc = Common::String();
 			pos++;
 			continue;
 		}
 
 		desc.append(1, decodeChar(descBuffer[pos]));
 		if (pos + 1 == kInventoryDescriptionsSize) {
-			_inventoryDescriptions.push_back(desc);
+            objLines.push_back(desc);
+			_inventoryDescriptions.push_back(objLines);
 		}
 		pos++;
 	}
@@ -210,10 +219,13 @@ void MenuManager::loadInventoryDescriptions() {
     exe.seek(0x49203, SEEK_SET);
 	exe.read(textBuffer, 230);
     pos = 0;
+    Common::StringArray textLines;
     while (pos < 230) {
 		if (textBuffer[pos] == 0xFD) {
 			if (!desc.empty()) {
-				_menuTexts.push_back(desc);
+                textLines.push_back(desc);
+				_menuTexts.push_back(textLines);
+                textLines.clear();
 				desc = Common::String();
 			}
 			pos++;
@@ -228,14 +240,16 @@ void MenuManager::loadInventoryDescriptions() {
 			continue;
 		}
 		if (textBuffer[pos] == 0xC8) {
-			desc.append(1, '\n');
+            textLines.push_back(desc);
+            desc = Common::String();
 			pos++;
 			continue;
 		}
 
 		desc.append(1, decodeChar(textBuffer[pos]));
 		if (pos + 1 == 230) {
-			_menuTexts.push_back(desc);
+            textLines.push_back(desc);
+			_menuTexts.push_back(textLines);
 		}
 		pos++;
 	}
