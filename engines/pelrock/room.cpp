@@ -386,7 +386,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int ro
 		int16 w = roomFile->readSint16LE();
 		int16 h = roomFile->readSint16LE();
 		byte flags = roomFile->readByte();
-		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
 		box.y = y1;

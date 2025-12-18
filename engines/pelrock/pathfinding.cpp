@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 
 #include "pelrock/pathfinding.h"
+#include "pelrock/types.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {
@@ -60,7 +61,7 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 
 	int startX = sourceX;
 	int startY = sourceY;
-	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY);
+	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, false, nullptr);
 	targetX = target.x;
 	targetY = target.y;
 	debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
@@ -118,67 +119,97 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 	return true;
 }
 
-Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int x, int y) {
-	// Starting point for pathfinding
-	int sourceX = x;
-	int sourceY = y;
+Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
+								  int sourceX, int sourceY,
+								  bool mouseHoverState,
+								  HotSpot *hotspot) {
 
-	// TODO: If hovering over a sprite/hotspot, adjust source point to sprite center
-	// For now, just use mouse position
+	// // Step 1: Determine actual source point
+	// if (mouseHoverState == 1) {
+	//     // Hovering over sprite - check if it has action flags or is animated
+	//     Sprite *sprite = getSprite(hotspotSpriteIndex);
+	//     if (sprite->actionFlags != 0 || sprite->frameCount != 1) {
+	//         sourceX = sprite->x + sprite->width / 2;
+	//         sourceY = sprite->y + sprite->height;
+	//     }
+	// }
+	// else if (mouseHoverState == 2) {
+	//     // Hovering over hotspot - use hotspot center-bottom
+	//     Hotspot *hotspot = getHotspot(hotspotSpriteIndex);
+	//     sourceX = hotspot->x + hotspot->width / 2;
+	//     sourceY = hotspot->y + hotspot->height;
+	// }
 
-	// Find nearest walkable point in walkboxes
-	uint32 minDistance = 0xFFFFFFFF;
-	Common::Point bestTarget(sourceX, sourceY);
+	if (mouseHoverState == 1) {
+		// Hovering over hotspot - use hotspot center-bottom
+		sourceX = hotspot->x + hotspot->w / 2;
+		sourceY = hotspot->y + hotspot->h;
+	}
+
+	// else: use sourceX, sourceY as passed (mouse position)
+
+	// Step 2: Find nearest walkbox
+	uint32 minDistance = 0xFFFF;
+	int bestXDistance = 0;
+	int bestYDistance = 0;
+	int bestXDirection = 0; // 0 = left/subtract, 1 = right/add
+	int bestYDirection = 0; // 0 = up/subtract, 1 = down/add
 
 	for (size_t i = 0; i < walkboxes.size(); i++) {
+		int xDistance = 0;
+		int xDirection = 0;
+		int yDistance = 0;
+		int yDirection = 0;
 
-		// Calculate distance from source point to this walkbox (Manhattan distance)
-		int dx = 0;
-		int dy = 0;
-
-		// Calculate horizontal distance
+		// Calculate X distance with direction
 		if (sourceX < walkboxes[i].x) {
-			dx = walkboxes[i].x - sourceX;
+			xDistance = walkboxes[i].x - sourceX;
+			xDirection = 1; // RIGHT
 		} else if (sourceX > walkboxes[i].x + walkboxes[i].w) {
-			dx = sourceX - (walkboxes[i].x + walkboxes[i].w);
+			// KEY: subtract 1 from right edge
+			xDistance = sourceX - (walkboxes[i].x + walkboxes[i].w - 1);
+			xDirection = 0; // LEFT
 		}
-		// else: sourceX is inside walkbox horizontally, dx = 0
+		// else: sourceX is inside, xDistance = 0
 
-		// Calculate vertical distance
+		// Calculate Y distance with direction
 		if (sourceY < walkboxes[i].y) {
-			dy = walkboxes[i].y - sourceY;
+			yDistance = walkboxes[i].y - sourceY;
+			yDirection = 1; // DOWN
 		} else if (sourceY > walkboxes[i].y + walkboxes[i].h) {
-			dy = sourceY - (walkboxes[i].y + walkboxes[i].h);
+			// KEY: subtract 1 from bottom edge
+			yDistance = sourceY - (walkboxes[i].y + walkboxes[i].h - 1);
+			yDirection = 0; // UP
 		}
-		// else: sourceY is inside walkbox vertically, dy = 0
+		// else: sourceY is inside, yDistance = 0
 
-		uint32 distance = dx + dy;
+		uint32 totalDistance = xDistance + yDistance;
 
-		if (distance < minDistance) {
-			minDistance = distance;
-
-			// Calculate target point (nearest point on walkbox to source)
-			int targetX = sourceX;
-			int targetY = sourceY;
-
-			if (sourceX < walkboxes[i].x) {
-				targetX = walkboxes[i].x;
-			} else if (sourceX > walkboxes[i].x + walkboxes[i].w) {
-				targetX = walkboxes[i].x + walkboxes[i].w;
-			}
-
-			if (sourceY < walkboxes[i].y) {
-				targetY = walkboxes[i].y;
-			} else if (sourceY > walkboxes[i].y + walkboxes[i].h) {
-				targetY = walkboxes[i].y + walkboxes[i].h;
-			}
-
-			bestTarget.x = targetX;
-			bestTarget.y = targetY;
+		if (totalDistance < minDistance) {
+			minDistance = totalDistance;
+			bestXDistance = xDistance;
+			bestYDistance = yDistance;
+			bestXDirection = xDirection;
+			bestYDirection = yDirection;
 		}
 	}
 
-	return bestTarget;
+	// Step 3: Calculate final target point
+	Common::Point target;
+
+	if (bestXDirection == 1) {
+		target.x = sourceX + bestXDistance;
+	} else {
+		target.x = sourceX - bestXDistance;
+	}
+
+	if (bestYDirection == 1) {
+		target.y = sourceY + bestYDistance;
+	} else {
+		target.y = sourceY - bestYDistance;
+	}
+
+	return target;
 }
 
 uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint16_t y) {

@@ -607,7 +607,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
-				if(_queuedAction.isQueued) {
+				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
 				}
@@ -1165,7 +1165,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		VerbIcon actionClicked = isActionUnder(x, y);
 		if (actionClicked != NO_ACTION) {
 			_actionPopupState.isActive = false;
-			if(_currentHotspot != nullptr) {
+			if (_currentHotspot != nullptr) {
 				walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
 				_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
 				return;
@@ -1178,21 +1178,34 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
 
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY);
+	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
+	bool isHotspotUnder = false;
+	if(hotspotIndex != -1) {
+		isHotspotUnder = true;
+	}
+
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, isHotspotUnder, isHotspotUnder ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
 	_curWalkTarget = walkTarget;
 
-	{ // For quick room navigation
-		Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
+	// if (hotspotIndex != -1) {
+	// 	_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
+	// 	walkTarget.x = _currentHotspot->x + _currentHotspot->w / 2;
+	// 	walkTarget.y = _currentHotspot->y + _currentHotspot->h;
+	// }
 
-		if (exit != nullptr) {
-			alfredState.x = exit->targetX;
-			alfredState.y = exit->targetY;
+	walkTo(walkTarget.x, walkTarget.y);
 
-			setScreen(exit->targetRoom, exit->dir);
-		} else {
-			walkTo(walkTarget.x, walkTarget.y);
-		}
-	}
+	// { // For quick room navigation
+	// 	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
+
+	// 	if (exit != nullptr) {
+	// 		alfredState.x = exit->targetX;
+	// 		alfredState.y = exit->targetY;
+
+	// 		setScreen(exit->targetRoom, exit->dir);
+	// 	} else {
+	// 	}
+	// }
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -1201,16 +1214,6 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 
 void PelrockEngine::checkMouseHover() {
 	bool hotspotDetected = false;
-
-	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY);
-
-	// Check if walk target hits any exit
-	bool exitDetected = false;
-	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
-	if (exit != nullptr) {
-		exitDetected = true;
-	}
 
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 	if (hotspotIndex != -1) {
@@ -1225,6 +1228,15 @@ void PelrockEngine::checkMouseHover() {
 	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {
 		alfredDetected = true;
 	}
+	// Calculate walk target first (before checking anything else)
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
+
+	// Check if walk target hits any exit
+	bool exitDetected = false;
+	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
+	if (exit != nullptr) {
+		exitDetected = true;
+	}
 
 	if (alfredDetected) {
 		changeCursor(ALFRED);
@@ -1238,138 +1250,6 @@ void PelrockEngine::checkMouseHover() {
 		changeCursor(DEFAULT);
 	}
 }
-
-// void PelrockEngine::sayNPC(Sprite *anim, Common::String text, byte color) {
-// 	isNPCATalking = true;
-// 	whichNPCTalking = anim->extra;
-// 	_currentTextPages = wordWrap(text);
-// 	_textColor = color;
-// 	int totalChars = 0;
-// 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
-// 		totalChars += _currentTextPages[0][i].size();
-// 	}
-// 	_textPos = Common::Point(anim->x, anim->y - 10);
-// 	_textDurationFrames = totalChars / 2;
-// }
-
-// void PelrockEngine::sayAlfred(Common::String text) {
-// 	alfredState.nextState = ALFRED_TALKING;
-// 	alfredState.curFrame = 0;
-// 	_currentTextPages = wordWrap(text);
-// 	_textColor = 13;
-// 	int totalChars = 0;
-// 	for (int i = 0; i < _currentTextPages[0].size(); i++) {
-// 		totalChars += _currentTextPages[0][i].size();
-// 	}
-// 	_textDurationFrames = totalChars / 2;
-// }
-
-// int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
-// 	// return word_length, is_end
-// 	int wordLength = 0;
-// 	int pos = startPos;
-// 	while (pos < text.size()) {
-// 		char char_byte = text[pos];
-// 		if (char_byte == CHAR_SPACE || isEndMarker(char_byte)) {
-// 			break;
-// 		}
-// 		wordLength++;
-// 		pos++;
-// 	}
-// 	// Check if we hit an end marker
-// 	if (pos < text.size() && isEndMarker(text[pos])) {
-// 		isEnd = true;
-// 	}
-// 	// Count ALL trailing spaces as part of this word
-// 	if (pos < text.size() && !isEnd) {
-// 		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
-// 			wordLength += 3;
-// 		} else {
-// 			// Count all consecutive spaces
-// 			while (pos < text.size() && text[pos] == CHAR_SPACE) {
-// 				wordLength++;
-// 				pos++;
-// 			}
-// 		}
-// 	}
-// 	return wordLength;
-// }
-
-// Common::Array<Common::Array<Common::String>> wordWrap(Common::String text) {
-
-// 	Common::Array<Common::Array<Common::String>> pages;
-// 	Common::Array<Common::String> currentPage;
-// 	Common::Array<Common::String> currentLine;
-// 	int charsRemaining = MAX_CHARS_PER_LINE;
-// 	int position = 0;
-// 	int currentLineNum = 0;
-// 	while (position < text.size()) {
-// 		bool isEnd = false;
-// 		int wordLength = calculateWordLength(text, position, isEnd);
-// 		// # Extract the word (including trailing spaces)
-// 		// word = text[position:position + word_length].decode('latin-1', errors='replace')
-// 		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
-// 		// # Key decision: if word_length > chars_remaining, wrap to next line
-// 		if (wordLength > charsRemaining) {
-// 			// Word is longer than the entire line - need to split
-// 			currentPage.push_back(joinStrings(currentLine, ""));
-// 			currentLine.clear();
-// 			charsRemaining = MAX_CHARS_PER_LINE;
-// 			currentLineNum++;
-
-// 			if (currentLineNum >= MAX_LINES) {
-// 				pages.push_back(currentPage);
-// 				currentPage.clear();
-// 				currentLineNum = 0;
-// 			}
-// 		}
-// 		// Add word to current line
-// 		currentLine.push_back(word);
-// 		charsRemaining -= wordLength;
-
-// 		if (charsRemaining == 0 && isEnd) {
-// 			Common::String lineText = joinStrings(currentLine, "");
-// 			while (lineText.lastChar() == CHAR_SPACE) {
-// 				lineText = lineText.substr(0, lineText.size() - 1);
-// 			}
-// 			int trailingSpaces = currentLine.size() - lineText.size();
-// 			if (trailingSpaces > 0) {
-// 				currentPage.push_back(lineText);
-// 				//  current_line = [' ' * trailing_spaces]
-// 				Common::String currentLine(trailingSpaces, ' ');
-// 				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
-// 				currentLineNum += 1;
-
-// 				if (currentLineNum >= MAX_LINES) {
-// 					pages.push_back(currentPage);
-// 					currentPage.clear();
-// 					currentLineNum = 0;
-// 				}
-// 			}
-// 		}
-
-// 		position += wordLength;
-// 		if (isEnd) {
-// 			// End of sentence/paragraph/page
-// 			break;
-// 		}
-// 	}
-// 	if (currentLine.empty() == false) {
-// 		Common::String lineText = joinStrings(currentLine, "");
-// 		while (lineText.lastChar() == CHAR_SPACE) {
-// 			lineText = lineText.substr(0, lineText.size() - 1);
-// 		}
-// 		currentPage.push_back(lineText);
-// 	}
-// 	if (currentPage.empty() == false) {
-// 		pages.push_back(currentPage);
-// 	}
-// 	for (int i = 0; i < pages.size(); i++) {
-// 		for (int j = 0; j < pages[i].size(); j++) {
-// 		}
-// 	}
-// 	return pages;
-// }
 
 void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_sound->stopAllSounds();

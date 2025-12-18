@@ -29,7 +29,7 @@
 namespace Pelrock {
 bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context);
 
-Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int x, int y);
+Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, bool mouseHoverState, HotSpot *hotspot);
 uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint16_t y);
 uint8_t getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, uint8_t current_box_index);
 uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
