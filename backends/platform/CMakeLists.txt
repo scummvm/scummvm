@@ -30,9 +30,15 @@ if(PLATFORM_POSIX)
   target_sources(platform PRIVATE sdl/posix/posix.cpp sdl/posix/posix-main.cpp)
 endif()
 
+if(PLATFORM_WII)
+  add_subdirectory(wii)
+endif()
+
 target_link_libraries(platform PRIVATE common backends base)
 
-target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
+if(SDL_BACKEND)
+  target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
+endif()
 
 set_target_properties(platform PROPERTIES RUNTIME_OUTPUT_DIRECTORY
                                           ${CMAKE_BINARY_DIR})

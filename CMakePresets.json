@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "wii",
+            "toolchainFile": "$env{DEVKITPRO}/cmake/Wii.cmake",
+            "binaryDir": "${sourceDir}/build/wii",
+            "cacheVariables": {
+                "USE_SDL2": "OFF",
+                "PLATFORM_WII": "ON",
+                "DETECT_HOST": "OFF"
+            }
+        }
+    ]
+}

@@ -72,6 +72,12 @@ if(PLATFORM_MACOS)
             updates/macosx/macosx-updates.mm taskbar/macosx/macosx-taskbar.mm)
 endif()
 
+if(PLATFORM_WII)
+  target_sources(
+    backends PRIVATE fs/wii/wii-fs-factory.cpp fs/wii/wii-fs.cpp
+                     plugins/wii/wii-provider.cpp mutex/wii/wii-mutex.cpp)
+endif()
+
 if(SDL_BACKEND)
   target_sources(
     backends
