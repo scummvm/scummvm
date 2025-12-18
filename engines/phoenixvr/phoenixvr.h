@@ -137,7 +137,6 @@ public:
 
 private:
 	static Common::String removeDrive(const Common::String &path);
-	static Common::String resolvePath(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
 	void paint(Graphics::Surface &src, Common::Point dst);
 	PointF currentVRPos() const {
@@ -148,7 +147,7 @@ private:
 
 private:
 	Common::Point _mousePos;
-	Common::String _nextScript;
+	Common::Path _nextScript;
 	Common::String _nextWarp;
 	Common::String _prevWarp;
 

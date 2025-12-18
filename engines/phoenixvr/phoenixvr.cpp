@@ -54,9 +54,6 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _angleY(-M_PI_2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
-	auto path = Common::FSNode(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(path, "NecroES/Data", 1, 1, true);
-	SearchMan.addSubDirectoryMatching(path, "NecroES/Data2", 2, 1, true);
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
@@ -71,12 +68,6 @@ Common::String PhoenixVREngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-Common::String PhoenixVREngine::resolvePath(const Common::String &path) {
-	auto resolved = removeDrive(path);
-	resolved.replace('\\', '/');
-	return resolved;
-}
-
 Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 	if (path.size() < 2 || path[1] != ':')
 		return path;
@@ -84,9 +75,19 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 		return path.substr(2);
 }
 
-void PhoenixVREngine::setNextScript(const Common::String &path) {
-	_nextScript = resolvePath(path);
-	debug("setNextScript %s", _nextScript.c_str());
+void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
+	debug("setNextScript %s", nextScript.c_str());
+	auto nextPath = Common::Path(removeDrive(nextScript), '\\');
+	auto parentDir = nextPath.getParent();
+	_nextScript = nextPath.getLastComponent();
+	auto path = ConfMan.getPath("path");
+	auto dataDir = path;
+	dataDir.appendInPlace(Common::Path("/"));
+	dataDir.appendInPlace(parentDir);
+
+	SearchMan.clear();
+	debug("adding %s to search man", dataDir.toString().c_str());
+	SearchMan.addDirectory(dataDir, 0, 1, true);
 }
 
 void PhoenixVREngine::end() {
@@ -316,11 +317,9 @@ void PhoenixVREngine::tick(float dt) {
 		_mixer->setChannelBalance(sound.handle, balance);
 	}
 	if (!_nextScript.empty()) {
-		debug("loading script from %s", _nextScript.c_str());
+		debug("loading script from %s", _nextScript.toString().c_str());
 		auto nextScript = Common::move(_nextScript);
 		_nextScript.clear();
-
-		nextScript = removeDrive(nextScript);
 
 		Common::File file;
 		Common::Path nextPath(nextScript);
@@ -331,7 +330,7 @@ void PhoenixVREngine::tick(float dt) {
 			pakFile = pakFile.removeExtension().append(".pak");
 			file.open(pakFile);
 			if (!file.isOpen())
-				error("can't open script file %s", nextScript.c_str());
+				error("can't open script file %s", nextScript.toString().c_str());
 			Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
 			_script.reset(new Script(*scriptStream));
 		}
