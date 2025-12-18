@@ -479,10 +479,10 @@ struct LockKey : public Script::Command {
 			code = Common::KeyCode::KEYCODE_F10;
 			break;
 		case 11:
-			code = Common::KeyCode::KEYCODE_F11;
+			code = Common::KeyCode::KEYCODE_RETURN;
 			break;
 		case 12:
-			code = Common::KeyCode::KEYCODE_F12;
+			code = Common::KeyCode::KEYCODE_TAB;
 			break;
 		default:
 			warning("unknown lock key %d", idx);

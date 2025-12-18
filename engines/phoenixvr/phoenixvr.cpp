@@ -436,6 +436,12 @@ Common::Error PhoenixVREngine::run() {
 					}
 				}
 			} break;
+			case Common::EVENT_RBUTTONUP: {
+				debug("right click");
+				auto it = _keys.find(Common::KeyCode::KEYCODE_TAB);
+				if (it != _keys.end())
+					goToWarp(it->_value);
+			}
 			default:
 				break;
 			}
