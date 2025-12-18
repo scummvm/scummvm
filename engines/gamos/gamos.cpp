@@ -467,7 +467,10 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_20) {
 		if (dataSize != 4)
 			return false;
-		_objectActions[pid].unk1 = getU32(data);
+		_objectActions[pid].actType = data[0];
+		_objectActions[pid].mask = data[1];
+		_objectActions[pid].priority = data[2];
+		_objectActions[pid].storageSize = data[3] + 1;
 	} else if (tp == RESTP_21) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onCreateAddress = _loadedDataSize + p3;
@@ -1737,7 +1740,7 @@ void GamosEngine::createActiveObject(ActEntry e, int32 x, int32 y) {
 	byte *odat = nullptr;
 
 	ObjectAction &act = _objectActions[oid];
-	if ((act.unk1 & 0xff) == 0) {
+	if (act.actType == 0) {
 		removeObjectAtCoords(Common::Point(x, y), true);
 		if (_needReload)
 			return;
@@ -1752,7 +1755,7 @@ void GamosEngine::createActiveObject(ActEntry e, int32 x, int32 y) {
 		obj->flags = (e.t << 4) | Object::FLAG_VALID | Object::FLAG_HASACTION;
 		obj->actID = oid;
 		obj->inputFlag = 0;
-		obj->priority = (act.unk1 >> 16) & 0xff;
+		obj->priority = act.priority;
 		obj->cell.x = x;
 		obj->cell.y = y;
 		obj->tgtObjectId = -1;
@@ -1761,7 +1764,6 @@ void GamosEngine::createActiveObject(ActEntry e, int32 x, int32 y) {
 		if (PTR_00417218 && obj->index > PTR_00417218->index)
 			obj->state |= 0x100;
 
-		int storageSize = ((act.unk1 >> 24) & 0xff) + 1;
 		// if (storageSize < 5) {
 		//  obj->pImg = nullptr;
 		//  odat = &obj->pImg;
@@ -1771,10 +1773,10 @@ void GamosEngine::createActiveObject(ActEntry e, int32 x, int32 y) {
 		//  obj->flags |= 8;
 		// }
 		obj->storage.clear();
-		obj->storage.resize(storageSize, 0);
+		obj->storage.resize(act.storageSize, 0);
 		odat = obj->storage.data();
 		index = obj->index;
-		if ((act.unk1 & 0xff) == 3 && PTR_004121b4 == nullptr)
+		if (act.actType == 3 && PTR_004121b4 == nullptr)
 			PTR_004121b4 = obj;
 	}
 
@@ -1997,7 +1999,7 @@ bool GamosEngine::FUN_00402fb4() {
 
 						bool tmp = false;
 						for (int i = 0; i < 8; i++) {
-							if ((PTR_00417214->unk1 >> 8) & (1 << i)) {
+							if (PTR_00417214->mask & (1 << i)) {
 								int fncid = ((i & 3) + ivr8) & 3;
 								if (i > 3)
 									fncid += 4;
@@ -3033,7 +3035,7 @@ bool GamosEngine::FUN_0040738c(uint32 id, int32 x, int32 y, bool p) {
 
 	if (!p) {
 		if (!PTR_00417218) {
-			gfxObj->priority = (PTR_00417214->unk1 >> 16) & 0xFF;
+			gfxObj->priority = PTR_00417214->priority;
 		} else {
 			int32 index = gfxObj->index;
 			if (PTR_00417218->curObjectId != -1) {
@@ -3191,7 +3193,7 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 			if (robj.index > objIndex)
 				n++;
 
-			if (robj.isActionObject() && (_objectActions[robj.actID].unk1 & 0xff) == 3) {
+			if (robj.isActionObject() && _objectActions[robj.actID].actType == 3) {
 				if (n) {
 					PTR_004121b4 = &robj;
 					break;
@@ -3241,18 +3243,17 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 
 	Object *pobj = nullptr;
 	uint8 actT = 0;
-	uint8 pobjF5 = 0xff;
+	uint8 pobjF5 = 255;
 
 	for (int i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 		if (obj.isActionObject()) {
 			ObjectAction &action = _objectActions[obj.actID];
-			uint8 tp = action.unk1 & 0xff;
-			if (tp == 1)
+			if (action.actType == 1)
 				obj.inputFlag = tmpb;
-			else if (tp == 2)
+			else if (action.actType == 2)
 				obj.inputFlag = tmpb & 0x4f;
-			else if (tp == 3) {
+			else if (action.actType == 3) {
 				if (&obj == PTR_004121b4)
 					obj.inputFlag = tmpb & 0x4f;
 				else
@@ -3260,7 +3261,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 			}
 
 			if ((!pobj || obj.priority <= pobjF5) && FUN_00409600(&obj, actPos)) {
-				actT = tp;
+				actT = action.actType;
 				pobjF5 = obj.priority;
 				pobj = &obj;
 			}
@@ -4389,7 +4390,7 @@ void GamosEngine::dumpActions() {
 
 	int i = 0;
 	for (ObjectAction &act : _objectActions) {
-		f.writeString(Common::String::format("Act %d : %x\n", i, act.unk1));
+		f.writeString(Common::String::format("Act %d : actType %x mask %x priority %x storage size %x\n", i, act.actType, act.mask, act.priority, act.storageSize));
 		if (act.onCreateAddress != -1) {
 			t = _vm.disassembly(act.onCreateAddress);
 			f.writeString(Common::String::format("Script1 : \n%s\n", t.c_str()));

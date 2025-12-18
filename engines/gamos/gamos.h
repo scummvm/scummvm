@@ -186,7 +186,10 @@ struct Actions {
 };
 
 struct ObjectAction {
-	uint32 unk1;
+	uint8 actType = 0; // input action type?
+	uint8 mask = 0;
+	uint8 priority = 0;
+	uint8 storageSize = 0;
 	int32 onCreateAddress = -1;
 	Common::Array< Actions > actions;
 	int32 onDeleteAddress = -1;
