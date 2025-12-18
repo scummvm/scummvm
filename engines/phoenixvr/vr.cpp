@@ -200,12 +200,10 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 		error("wrong VR magic");
 	}
 	auto fsize = s.readUint32LE();
-	debug("file size = %08x", fsize);
 	while (s.pos() < fsize) {
 		auto chunkPos = s.pos();
 		auto chunkId = s.readUint32LE();
 		auto chunkSize = s.readUint32LE();
-		debug("chunk %08x %u at %08lx", chunkId, chunkSize, chunkPos);
 		bool pic2d = chunkId == CHUNK_STATIC_2D;
 		bool pic3d = chunkId == CHUNK_STATIC_3D;
 		if (pic2d || pic3d) {
@@ -216,8 +214,6 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			s.read(vrData.data(), vrData.size());
 
 			auto huffSize = READ_LE_UINT32(vrData.data());
-			auto unpHuffSize = READ_LE_UINT32(vrData.data() + 4);
-			debug("static picture header, quality: %u, packed data size: %u, huff size: %08x, unpacked huff size: %u", quality, dataSize, huffSize, unpHuffSize);
 			if (vr._pic)
 				error("2d/3d picture in the same file");
 			vr._pic.reset(new Graphics::Surface());
@@ -335,7 +331,6 @@ void VR::playAnimation(const Common::String &name) {
 	}
 	const auto *data = it->_value.data();
 	auto prefixSize = READ_LE_UINT32(data);
-	debug("prefixes: %u", prefixSize);
 	Common::Array<uint32> prefixData(prefixSize);
 	uint offset = 4;
 	for (uint i = 0; i != prefixSize; ++i) {
@@ -343,13 +338,9 @@ void VR::playAnimation(const Common::String &name) {
 		offset += 4;
 	}
 	auto quality = READ_LE_UINT32(data + offset);
-	auto size = READ_LE_UINT32(data + offset + 4);
-	debug("quality: %u, size: %u", quality, size);
 	offset += 8;
 	auto huffSize = READ_LE_UINT32(data + offset);
-	auto unpHuffSize = READ_LE_UINT32(data + offset + 4);
 	offset += 8;
-	debug("huffman size: %u, unpacked size: %u", huffSize, unpHuffSize);
 	auto *acPtr = data + offset + huffSize + 4;
 	auto dcOffset = READ_LE_UINT32(data + offset + huffSize);
 	auto *dcPtr = data + offset + huffSize + 8 + dcOffset;

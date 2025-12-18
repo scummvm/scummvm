@@ -158,7 +158,6 @@ Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint
 	default:
 		error("invalid word size");
 	}
-	debug("decoded %u bytes at %08x", decoded.size(), offset);
 	if (wordSize == 1) {
 		assert(offset == huffSize); // must decode to the end
 	}
