@@ -146,10 +146,20 @@ struct Unknown1 {
 	uint32 field_3;
 };
 
-struct ActEntry {
-	uint8 value = 0;
+struct ObjState {
+	uint8 actid = 0;
 	uint8 flags = 0;
 	uint8 t = 0;
+
+	ObjState() = default;
+	ObjState(const ObjState&) = default;
+	ObjState(ObjState&&) = default;
+	ObjState& operator=(const ObjState&) = default;
+
+	ObjState(uint8 aa, uint8 af, uint8 at): actid(aa), flags(af), t(at) {};
+};
+
+struct ActEntry: ObjState {
 	int8 x = 0;
 	int8 y = 0;
 };
@@ -229,7 +239,8 @@ struct Object {
 
 	/* action */
 	uint8 actID = 0;
-	int16 state = 0;
+	uint8 t = 0;
+	ObjState state;
 	uint8 inputFlag = 0;
 	int16 tgtObjectId = -1;
 	int16 curObjectId = -1;
@@ -285,7 +296,7 @@ struct GameScreen {
 	Graphics::Surface _bkgImage;
 	byte *palette = nullptr;
 
-	Array2D<uint16> _savedStates;
+	Array2D<ObjState> _savedStates;
 	Common::Array<Object> _savedObjects;
 
 	RawData _bkgImageData;
@@ -491,7 +502,7 @@ private:
 	uint32 _statesWidth = 0;
 	uint32 _statesHeight = 0;
 	uint32 _statesShift = 0;
-	Array2D<uint16> _states;
+	Array2D<ObjState> _states;
 
 
 	uint8 _preprocDataId = 0;
