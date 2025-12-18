@@ -326,50 +326,17 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 
 namespace {
 
-void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
-		  int h, int stride, int scale, unsigned dc) {
-	int i;
-	dc *= 0x10001;
-
-	switch (log2w) {
-	case 0:
-		for (i = 0; i < h; i++) {
-			for (int j = 0; j != 1; ++j)
-				dst[j] = scale * src[j] + dc;
-			if (scale)
-				src += stride;
-			dst += stride;
-		}
-		break;
-	case 1:
-		for (i = 0; i < h; i++) {
-			for (int j = 0; j != 2; ++j)
-				dst[j] = scale * src[j] + dc;
-			if (scale)
-				src += stride;
-			dst += stride;
-		}
-		break;
-	case 2:
-		for (i = 0; i < h; i++) {
-			for (int j = 0; j != 4; ++j)
-				dst[j] = scale * src[j] + dc;
-			if (scale)
-				src += stride;
-			dst += stride;
-		}
-		break;
-	case 3:
-		for (i = 0; i < h; i++) {
-			for (int j = 0; j != 8; ++j)
-				dst[j] = scale * src[j] + dc;
-			if (scale)
-				src += stride;
-			dst += stride;
-		}
-		break;
-	default:
-		error("invalid log2w");
+template<bool Scale>
+void mcdc(uint16_t *__restrict__ dst, const uint16_t *__restrict__ src, int log2w,
+		  int log2h, int stride, int dc) {
+	int h = 1 << log2h;
+	int w = 1 << log2w;
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; ++j)
+			dst[j] = Scale ? src[j] + dc : dc;
+		if (Scale)
+			src += stride;
+		dst += stride;
 	}
 }
 } // namespace
@@ -380,12 +347,13 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	assert(index >= 0);
 	auto &huff = _blockType[index];
 	auto code = huff.next(bs);
-	int scale = 1;
+	bool scale = true;
 	int dc = 0;
 
 	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
 	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
 	auto pitch = frame->pitch / frame->format.bytesPerPixel;
+	assert(_frame->pitch == frame->pitch);
 
 	if (code == 1) {
 		--log2h;
@@ -412,8 +380,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	}
 	if (code == 0) {
 		assert(byteStream.pos() < byteStream.size());
-		byte b = byteStream.readByte();
-		src += _mv[b];
+		src += _mv[byteStream.readByte()];
 	} else if (code == 3 && _version >= 2) {
 		return;
 	} else if (code == 4) {
@@ -423,12 +390,16 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		dc = wordStream.readSint16LE();
 	} else if (code == 5) {
 		assert(wordStream.pos() + 2 <= wordStream.size());
-		scale = 0;
+		scale = false;
 		dc = wordStream.readSint16LE();
 	} else {
 		error("invalid code %d (steps %u,%u)", code, log2w, log2h);
 	}
-	mcdc(dst, src, log2w, 1 << log2h, pitch, scale, dc);
+
+	if (scale)
+		mcdc<true>(dst, src, log2w, log2h, pitch, dc);
+	else
+		mcdc<false>(dst, src, log2w, log2h, pitch, dc);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
