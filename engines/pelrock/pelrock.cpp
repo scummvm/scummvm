@@ -298,7 +298,7 @@ void PelrockEngine::checkMouse() {
 	if (_events->_leftMouseClicked) {
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_leftMouseClicked = false;
-		_displayPopup = false;
+		_actionPopupState.isActive = false;
 	} else if (_events->_longClicked) {
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
@@ -337,12 +337,12 @@ void PelrockEngine::updateAnimations() {
 		}
 	}
 
-	if (_displayPopup) {
-		showActionBalloon(_popupX, _popupY, _currentPopupFrame);
-		if (_currentPopupFrame < 3) {
-			_currentPopupFrame++;
+	if (_actionPopupState.isActive) {
+		showActionBalloon(_actionPopupState.x, _actionPopupState.y, _actionPopupState.curFrame);
+		if (_actionPopupState.curFrame < 3) {
+			_actionPopupState.curFrame++;
 		} else
-			_currentPopupFrame = 0;
+			_actionPopupState.curFrame = 0;
 	}
 }
 
@@ -503,7 +503,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 void PelrockEngine::lookAt(HotSpot *hotspot) {
 	walkTo(_currentHotspot->x, _currentHotspot->y);
 	// sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
-	_displayPopup = false;
+	_actionPopupState.isActive = false;
 }
 
 void PelrockEngine::open(HotSpot *hotspot) {
@@ -790,7 +790,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	int w = animData.w;
 	int h = animData.h;
 	if (sprite->isTalking) {
-		drawTalkNPC(sprite);
+		animateTalkingNPC(sprite);
 		return;
 	}
 
@@ -829,19 +829,19 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 
 	if (hotspotIndex != -1) {
 
-		_popupX = alfredState.x - kBalloonWidth / 2;
-		if (_popupX < 0)
-			_popupX = 0;
-		if (_popupX + kBalloonWidth > 640) {
-			_popupX = 640 - kBalloonWidth;
+		_actionPopupState.x = alfredState.x - kBalloonWidth / 2;
+		if (_actionPopupState.x < 0)
+			_actionPopupState.x = 0;
+		if (_actionPopupState.x + kBalloonWidth > 640) {
+			_actionPopupState.x = 640 - kBalloonWidth;
 		}
 
-		_popupY = alfredState.y - kAlfredFrameHeight - kBalloonHeight;
-		if (_popupY < 0) {
-			_popupY = 0;
+		_actionPopupState.y = alfredState.y - kAlfredFrameHeight - kBalloonHeight;
+		if (_actionPopupState.y < 0) {
+			_actionPopupState.y = 0;
 		}
-		_displayPopup = true;
-		_currentPopupFrame = 0;
+		_actionPopupState.isActive = true;
+		_actionPopupState.curFrame = 0;
 		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
 	}
 }
@@ -1006,7 +1006,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	}
 }
 
-void PelrockEngine::drawTalkNPC(Sprite *animSet) {
+void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	// Change with the right index
 
 	int index = animSet->index;
@@ -1121,8 +1121,8 @@ void PelrockEngine::walkTo(int x, int y) {
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	for (int i = 0; i < actions.size(); i++) {
-		int actionX = _popupX + 20 + (i * (kVerbIconWidth + 2));
-		int actionY = _popupY + 20;
+		int actionX = _actionPopupState.x + 20 + (i * (kVerbIconWidth + 2));
+		int actionY = _actionPopupState.y + 20;
 		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
 		if (actionRect.contains(x, y)) {
 
@@ -1150,17 +1150,17 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	if (whichNPCTalking)
 		whichNPCTalking = false;
 
-	if (_displayPopup) {
+	if (_actionPopupState.isActive) {
 		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 		VerbIcon actionClicked = isActionUnder(x, y);
 		if (actionClicked != NO_ACTION) {
-			_displayPopup = false;
+			_actionPopupState.isActive = false;
 			doAction(actionClicked, _currentHotspot);
 			return;
 		}
 	}
 
-	_displayPopup = false;
+	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
 
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY);

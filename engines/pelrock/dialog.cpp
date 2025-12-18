@@ -31,8 +31,10 @@ DialogManager::DialogManager(Graphics::Screen *screen, PelrockEventManager *even
 }
 
 DialogManager::~DialogManager() {
-	delete _currentChoices;
-	_currentChoices = nullptr;
+	if( _currentChoices ) {
+		delete _currentChoices;
+		_currentChoices = nullptr;
+	}
 }
 
 uint32 DialogManager::readTextBlock(
@@ -274,10 +276,9 @@ int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *co
  * @param outChoices Output: array of choice options
  * @return The position after parsing choices
  */
-uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 startPos,
-								   Common::Array<ChoiceOption> &outChoices) {
+uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> *outChoices) {
 	uint32 pos = startPos;
-	outChoices.clear();
+	outChoices->clear();
 	int firstChoiceIndex = -1;
 	int choiceCount = 0;
 
@@ -322,7 +323,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 					textPos++;
 				}
 
-				outChoices.push_back(opt);
+				outChoices->push_back(opt);
 				choiceCount = 1;
 				pos++;
 				break;
@@ -379,7 +380,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 						textPos++;
 					}
 
-					outChoices.push_back(opt);
+					outChoices->push_back(opt);
 					choiceCount++;
 				} else if (choiceIndex < firstChoiceIndex) {
 					// Different choice index - stop scanning
@@ -488,14 +489,14 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		}
 
 		// 4. Parse choices
-		Common::Array<ChoiceOption> choices;
+		Common::Array<ChoiceOption> *choices = new Common::Array<ChoiceOption>();
 		parseChoices(conversationData, dataSize, position, choices);
-		debug("Parsed %u choices", choices.size());
-		for (uint i = 0; i < choices.size(); i++) {
-			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, choices[i].index, choices[i].text.c_str(),
-				  choices[i].isDisabled ? "Yes" : "No");
+		debug("Parsed %u choices", choices->size());
+		for (uint i = 0; i < choices->size(); i++) {
+			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, (*choices)[i].index, (*choices)[i].text.c_str(),
+				  (*choices)[i].isDisabled ? "Yes" : "No");
 		}
-		if (choices.empty()) {
+		if (choices->empty()) {
 			// No choices, continue reading dialogue
 			position = peekPos;
 			continue;
@@ -505,8 +506,8 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		if (currentChoiceLevel >= 0) {
 			// We've already made a choice, check if the current choices are at the next level
 			bool foundNextLevel = false;
-			for (uint i = 0; i < choices.size(); i++) {
-				if (choices[i].index == currentChoiceLevel + 1) {
+			for (uint i = 0; i < choices->size(); i++) {
+				if ((*choices)[i].index == currentChoiceLevel + 1) {
 					foundNextLevel = true;
 					break;
 				}
@@ -522,29 +523,34 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		int selectedIndex = 0;
 
 		// Check if this is auto-dialogue (only one choice)
-		if (choices.size() == 1) {
+		if (choices->size() == 1) {
 			// Auto-dialogue: display it automatically
-			debug("Auto-selecting single choice: \"%s\"", choices[0].text.c_str());
+			debug("Auto-selecting single choice: \"%s\"", (*choices)[0].text.c_str());
 			selectedIndex = 0;
 		} else {
 			// Real choice: show menu and wait for selection
 			Common::Array<Common::String> choiceTexts;
-			for (uint i = 0; i < choices.size(); i++) {
-				if (choices[i].isDisabled) {
-					choiceTexts.push_back("[DISABLED] " + choices[i].text);
+			for (uint i = 0; i < choices->size(); i++) {
+				if ((*choices)[i].isDisabled) {
+					choiceTexts.push_back("[DISABLED] " + (*choices)[i].text);
 				} else {
-					choiceTexts.push_back(choices[i].text);
+					choiceTexts.push_back((*choices)[i].text);
 				}
 			}
-			_currentChoices = &choices;
+
+			if(_currentChoices) {
+				delete _currentChoices;
+				_currentChoices = nullptr;
+			}
+			_currentChoices = choices;
 			// Use displayChoices to show and select
 			selectedIndex = selectChoice(choiceTexts, g_engine->_compositeBuffer);
 		}
 
 		// 6. Move position to after the selected choice
-		if (selectedIndex >= 0 && selectedIndex < (int)choices.size()) {
-			position = choices[selectedIndex].dataOffset;
-			currentChoiceLevel = choices[selectedIndex].index;
+		if (selectedIndex >= 0 && selectedIndex < (int)choices->size()) {
+			position = (*choices)[selectedIndex].dataOffset;
+			currentChoiceLevel = (*choices)[selectedIndex].index;
 
 			// Read and display the selected choice as dialogue
 			Common::String choiceText;

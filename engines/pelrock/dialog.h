@@ -79,7 +79,7 @@ private:
 	void displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId);
 	void displayDialogue(Common::String text, byte speakerId);
 	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos, Common::String &outText, byte &outSpeakerId);
-	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> &outChoices);
+	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> *outChoices);
 
 	void checkMouse();
 

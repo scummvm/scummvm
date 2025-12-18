@@ -105,6 +105,14 @@ enum AlfredDirection {
 	ALFRED_UP = 3
 };
 
+struct ActionPopupState {
+	bool isActive = false;
+	int curFrame = 0;
+	int x = 0;
+	int y = 0;
+	int displayTime = 0;
+};
+
 struct AlfredState {
 	AlfredAnimState animState = ALFRED_IDLE;
 	AlfredAnimState nextState = ALFRED_IDLE;

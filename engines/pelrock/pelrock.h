@@ -109,7 +109,7 @@ private:
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
-	void drawTalkNPC(Sprite *animSet);
+	void animateTalkingNPC(Sprite *animSet);
 	void playSoundIfNeeded();
 
 	void gameLoop();
@@ -142,10 +142,7 @@ private:
 
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
 
-	bool _displayPopup = false;
-	int _popupX = 0;
-	int _popupY = 0;
-	int _currentPopupFrame = 0;
+	ActionPopupState _actionPopupState;
 
 	HotSpot *_currentHotspot = nullptr;
 
