@@ -147,9 +147,7 @@ private:
 	HotSpot *_currentHotspot = nullptr;
 
 	Common::Point _curWalkTarget;
-	bool isNPCATalking = false;
-	uint16 whichNPCTalking = 0;
-	bool isNPCBTalking = false;
+	QueuedAction _queuedAction;
 
 	bool showShadows = false;
 

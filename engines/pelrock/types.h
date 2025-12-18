@@ -287,6 +287,12 @@ struct WalkBox {
 	byte flags;
 };
 
+struct QueuedAction {
+	VerbIcon verb;
+	int hotspotIndex;
+	bool isQueued;
+};
+
 struct ScalingParams {
 	int16 yThreshold;
 	byte scaleDivisor;

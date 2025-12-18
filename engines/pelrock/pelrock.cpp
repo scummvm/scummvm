@@ -521,7 +521,6 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
-	walkTo(_currentHotspot->x, _currentHotspot->y);
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
 }
@@ -608,6 +607,10 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
+				if(_queuedAction.isQueued) {
+					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
+					_queuedAction.isQueued = false;
+				}
 				alfredState.animState = ALFRED_IDLE;
 			}
 		} else {
@@ -1136,7 +1139,6 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		int actionY = _actionPopupState.y + 20;
 		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
 		if (actionRect.contains(x, y)) {
-
 			return actions[i];
 		}
 	}
@@ -1158,18 +1160,20 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
-	if (whichNPCTalking)
-		whichNPCTalking = false;
-
 	if (_actionPopupState.isActive) {
 		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 		VerbIcon actionClicked = isActionUnder(x, y);
 		if (actionClicked != NO_ACTION) {
 			_actionPopupState.isActive = false;
-			doAction(actionClicked, _currentHotspot);
-			return;
+			if(_currentHotspot != nullptr) {
+				walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
+				_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
+				return;
+			}
 		}
 	}
+
+	_queuedAction = QueuedAction{NO_ACTION, -1, false};
 
 	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
