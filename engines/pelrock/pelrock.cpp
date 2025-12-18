@@ -294,6 +294,26 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 	}
 }
 
+void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
+	debug("Performing action trigger: %d", actionTrigger);
+	switch (actionTrigger) {
+	case 257:
+		byte *palette = new byte[768];
+		if (_extraScreen == nullptr) {
+			_extraScreen = new byte[640 * 400];
+		}
+		_res->getExtraScreen(9, _extraScreen, palette);
+
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		showExtraScreen();
+
+		_dialog->sayAlfred(_res->_alfredResponses[0][0]); // "I found something interesting!");
+
+		delete[] palette;
+		break;
+	}
+}
+
 void PelrockEngine::checkMouse() {
 	if (_events->_leftMouseClicked) {
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
@@ -502,7 +522,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
 	walkTo(_currentHotspot->x, _currentHotspot->y);
-	// sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index].text);
+	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
 }
 
@@ -1081,33 +1101,24 @@ void PelrockEngine::gameLoop() {
 	}
 }
 
-// void PelrockEngine::menuLoop() {
-// 	_events->pollEvent();
+void PelrockEngine::showExtraScreen() {
+	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
+	_screen->markAllDirty();
+	_screen->update();
+	while (!shouldQuit()) {
+		_events->pollEvent();
 
-// 	if(_events->_leftMouseClicked) {
-// 		_events->_leftMouseClicked = false;
-// 		checkMouseClickOnSettings(_events->_mouseX, _events->_mouseY);
-// 	}
-// 	else if (_events->_rightMouseClicked) {
-// 		_events->_rightMouseClicked = false;
-// 		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-// 		stateGame = GAME;
-// 	}
+		if (_events->_leftMouseClicked) {
+			_events->_leftMouseClicked = false;
+			break;
+		}
+		g_system->delayMillis(10);
+	}
 
-// 	memcpy(_compositeBuffer, _res->_mainMenu, 640 * 400);
-
-// 	for (int i = 0; i < 4; i++) {
-// 		int itemIndex = curInventoryPage * 4 + i;
-// 		InventoryObject item = _res->getInventoryObject(itemIndex);
-// 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
-// 		drawRect(_compositeBuffer, 140 + (82 * i) - 2, 115 - (8 * i) - 2, 64, 64, 255); // Draw border
-// 	}
-
-// 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-// 	_smallFont->drawString(_screen, _menuText, 230, 200, 200, 0);
-// 	_screen->markAllDirty();
-// 	_screen->update();
-// }
+	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+	free(_extraScreen);
+	_extraScreen = nullptr;
+}
 
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;

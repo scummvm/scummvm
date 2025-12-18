@@ -236,5 +236,64 @@ const uint16_t description_offsets[NUM_DESCRIPTIONS] = {
 	0x23A4, // Object 112: Una caja de condone
 };
 
+struct ExtraImages {
+	uint32 offset;
+	uint32 paletteOffset;
+	byte numChunks;
+};
+
+const ExtraImages extraScreens[] = {
+	{
+		0x00, // Portrait above bed
+		0x7984,
+		8
+	},
+	{
+		0x1A9EE, // Computer screen
+		0x305A2,
+		8
+	},
+	{
+		0x647C3, // Alfred circle
+		0x7B6B1,
+		4
+	},
+	{
+		0x6FBC9, // Recipe
+		0x7B6B1,
+		8
+	},
+	{
+		0x7BA11, // Newspaper
+		0x88745,
+		8
+	},
+	{
+		0x9237B, // tablet
+		0xB0EE7,
+		8
+	},
+	{
+		0xB11ED, // map
+		0xDE011,
+		8
+	},
+	{
+		0xFFC47, // girl book
+		0x1180C9,
+		8
+	},
+	{
+		0x1183C5, // book
+		0x1358F3,
+		8
+	},
+	{
+		0x152A88, // portrait
+		0x15BFC8,
+		8
+	},
+};
+
 } // End of namespace Pelrock
 #endif

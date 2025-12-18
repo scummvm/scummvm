@@ -74,7 +74,6 @@ private:
 	void walkTo(int x, int y);
 
 	void talk(byte object);
-	void sayAlfred(Common::String text);
 	void sayNPC(Sprite *anim, Common::String text, byte color);
 
 	byte *grabBackgroundSlice(int x, int y, int w, int h);
@@ -114,6 +113,7 @@ private:
 
 	void gameLoop();
 	void menuLoop();
+	void showExtraScreen();
 
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -141,7 +141,7 @@ private:
 	bool isAlkfredWalking = false;
 
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
-
+	byte *_extraScreen = nullptr;
 	ActionPopupState _actionPopupState;
 
 	HotSpot *_currentHotspot = nullptr;
@@ -182,6 +182,7 @@ public:
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
 	void renderScene(bool showTextOverlay = false);
+	void performActionTrigger(uint16 actionTrigger);
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);

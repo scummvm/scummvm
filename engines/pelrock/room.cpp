@@ -428,6 +428,9 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
+					if( description.actionTrigger != 0 ) {
+						description.isAction = true;
+					}
 					pos += 2;
 					break;
 				}

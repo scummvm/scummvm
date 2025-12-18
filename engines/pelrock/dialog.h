@@ -90,6 +90,9 @@ public:
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
+	void sayAlfred(Common::String text);
+	void sayAlfred(Description description);
+
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<ChoiceOption> *_currentChoices = nullptr;
 };

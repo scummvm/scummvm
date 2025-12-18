@@ -248,6 +248,23 @@ void ResourceManager::loadAlfredResponses() {
 	exe.close();
 }
 
+void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *palette) {
+	Common::File alfred7;
+	if (!alfred7.open("ALFRED.7")) {
+		error("Couldnt find file ALFRED.7");
+	}
+	ExtraImages screen = extraScreens[screenIndex];
+	mergeRleBlocks(&alfred7, screen.offset, 8, screenBuf);
+	alfred7.seek(screen.paletteOffset, SEEK_SET);
+	alfred7.read(palette, 768);
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3] = palette[i * 3] << 2;
+		palette[i * 3 + 1] = palette[i * 3 + 1] << 2;
+		palette[i * 3 + 2] = palette[i * 3 + 2] << 2;
+	}
+	alfred7.close();
+}
+
 Common::Array<Common::StringArray> ResourceManager::getCredits() {
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {

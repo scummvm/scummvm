@@ -177,7 +177,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		if (speakerId == ALFRED_COLOR) {
 			g_engine->alfredState.animState = ALFRED_TALKING;
-			_curSprite->isTalking = false;
+			if(_curSprite != nullptr) {
+				_curSprite->isTalking = false;
+			}
 			// Offset X position for Alfred to avoid overlapping with his sprite
 			xPos = g_engine->alfredState.x + kAlfredFrameWidth / 2 - maxWidth / 2;
 			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
@@ -225,7 +227,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		}
 		g_system->delayMillis(10);
 	}
-	_curSprite->isTalking = false;
+	if(_curSprite != nullptr) {
+		_curSprite->isTalking = false;
+	}
 	g_engine->alfredState.animState = ALFRED_IDLE;
 }
 
@@ -576,6 +580,23 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 	debug("Conversation ended");
 	// Note: The caller should set inConversation = false after this returns
+}
+
+void DialogManager::sayAlfred(Common::String text) {
+	g_engine->alfredState.nextState = ALFRED_TALKING;
+	g_engine->alfredState.curFrame = 0;
+
+	Common::Array<Common::Array<Common::String>> textLines = wordWrap(text);
+
+	displayDialogue(textLines, ALFRED_COLOR);
+
+}
+
+void DialogManager::sayAlfred(Description description) {
+	sayAlfred(description.text);
+	if( description.isAction) {
+		g_engine->performActionTrigger(description.actionTrigger);
+	}
 }
 
 bool isEndMarker(char char_byte) {

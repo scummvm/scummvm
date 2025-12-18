@@ -46,6 +46,7 @@ public:
 	void loadAlfredAnims();
 	void loadInventoryItems();
 	void loadAlfredResponses();
+	void getExtraScreen(int screenIndex, byte *screenBuf, byte *palette);
 	Common::Array<Common::StringArray> getCredits();
 	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size);
 	Sticker getSticker(int stickerIndex);
