@@ -92,7 +92,7 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	uint16 _version = 0;
 	Graphics::Surface *_frame;
 	FourXM::HuffmanDecoder _blockType[4] = {};
-	byte _mv[256];
+	int _mv[256];
 	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
 public:
