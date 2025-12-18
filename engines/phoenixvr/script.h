@@ -70,8 +70,8 @@ public:
 
 		void parseLine(const Common::String &line, uint lineno);
 		void setText(int idx, const TestPtr &text);
-		const TestPtr &getTest(int idx) const;
-		const TestPtr &getDefaultTest() const {
+		TestPtr getTest(int idx) const;
+		TestPtr getDefaultTest() const {
 			return getTest(-1);
 		}
 	};

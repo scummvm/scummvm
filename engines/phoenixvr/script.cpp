@@ -243,13 +243,14 @@ void Script::Warp::setText(int idx, const TestPtr &text) {
 	if (idx < -1)
 		error("test id must be >= -1");
 	uint realIdx = idx + 1;
-	if (realIdx + 1 > tests.size())
+	if (realIdx >= tests.size())
 		tests.resize(realIdx + 1);
 	tests[realIdx] = text;
 }
 
-const Script::TestPtr &Script::Warp::getTest(int idx) const {
-	return tests[idx + 1];
+Script::TestPtr Script::Warp::getTest(int idx) const {
+	idx += 1;
+	return idx < (int)tests.size() ? tests[idx] : Script::TestPtr{};
 }
 
 Script::Script(Common::SeekableReadStream &s) {

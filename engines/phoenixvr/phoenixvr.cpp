@@ -352,8 +352,11 @@ void PhoenixVREngine::tick(float dt) {
 
 		Script::ExecutionContext ctx;
 		debug("execute warp script %s", _warp->vrFile.c_str());
-		auto &test = _warp->getDefaultTest();
-		test->scope.exec(ctx);
+		auto test = _warp->getDefaultTest();
+		if (test)
+			test->scope.exec(ctx);
+		else
+			warning("no default script!");
 	}
 
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
