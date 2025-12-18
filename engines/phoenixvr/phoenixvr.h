@@ -94,7 +94,8 @@ public:
 
 	// Script API
 	void setNextScript(const Common::String &path);
-	void goToWarp(const Common::String &warp);
+	void goToWarp(const Common::String &warp, bool savePrev = false);
+	void returnToWarp();
 	void setCursorDefault(int idx, const Common::String &path);
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
 	void hideCursor(const Common::String &warp, int idx);
@@ -149,6 +150,7 @@ private:
 	Common::Point _mousePos;
 	Common::String _nextScript;
 	Common::String _nextWarp;
+	Common::String _prevWarp;
 
 	struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }

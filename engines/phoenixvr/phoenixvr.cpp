@@ -95,9 +95,21 @@ void PhoenixVREngine::end() {
 		quitGame();
 }
 
-void PhoenixVREngine::goToWarp(const Common::String &warp) {
+void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s", warp.c_str());
 	_nextWarp = warp;
+	if (savePrev) {
+		assert(_warp);
+		_prevWarp = _warp->vrFile;
+	}
+}
+
+void PhoenixVREngine::returnToWarp() {
+	if (_prevWarp.empty()) {
+		warning("return: no previous warp");
+	}
+	_nextWarp = _prevWarp;
+	_prevWarp.clear();
 }
 
 Script::ConstWarpPtr PhoenixVREngine::getWarp(const Common::String &name) {
@@ -193,7 +205,7 @@ void PhoenixVREngine::playAnimation(const Common::String &name, const Common::St
 }
 
 void PhoenixVREngine::resetLockKey() {
-	_keys.clear();
+	_prevWarp.clear(); // original game does only this o_O
 }
 
 void PhoenixVREngine::lockKey(Common::KeyCode code, const Common::String &warp) {
@@ -412,7 +424,7 @@ Common::Error PhoenixVREngine::run() {
 				auto it = _keys.find(event.kbd.keycode);
 				if (it != _keys.end()) {
 					debug("matched code %d", static_cast<int>(event.kbd.keycode));
-					goToWarp(it->_value);
+					goToWarp(it->_value, true);
 				} else if (event.kbd.ascii == ' ') {
 					if (_movie) {
 						_movie->stop();
@@ -443,7 +455,7 @@ Common::Error PhoenixVREngine::run() {
 				debug("right click");
 				auto it = _keys.find(Common::KeyCode::KEYCODE_TAB);
 				if (it != _keys.end())
-					goToWarp(it->_value);
+					goToWarp(it->_value, true);
 			}
 			default:
 				break;

@@ -395,8 +395,8 @@ struct End : public Script::Command {
 struct Return : public Script::Command {
 	Return() {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("return");
 		ctx.running = false;
+		g_engine->returnToWarp();
 	}
 };
 
