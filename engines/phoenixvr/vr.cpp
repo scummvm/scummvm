@@ -30,9 +30,7 @@
 #include "graphics/yuv_to_rgb.h"
 #include "image/bmp.h"
 #include "math/vector3d.h"
-#include "phoenixvr/dct.h"
 #include "phoenixvr/dct_tables.h"
-#include "phoenixvr/phoenixvr.h"
 #include "video/4xm_utils.h"
 
 namespace PhoenixVR {
@@ -74,7 +72,7 @@ struct Quantisation {
 				v = 8;
 			}
 			v *= Q[i];
-			v >>= 13;
+			v >>= 12;
 			quantY[i] = v;
 		}
 		for (uint i = 0; i != 64; ++i) {
@@ -85,7 +83,7 @@ struct Quantisation {
 				v = 8;
 			}
 			v *= Q[i];
-			v >>= 13;
+			v >>= 12;
 			quantCbCr[i] = v;
 		}
 	}
@@ -95,7 +93,6 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	Quantisation quant(quality);
 	auto decoded = Video::FourXM::HuffmanDecoder::unpack(huff, huffSize, 1);
 	uint decodedOffset = 0;
-	static const DCT2DIII<6> dct;
 
 	const uint planePitch = prefix ? 8 : pic.w;
 	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
@@ -106,10 +103,10 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	uint x0 = 0, y0 = 0;
 	uint blockIdx = 0;
 	while (decodedOffset < decoded.size()) {
-		float ac[64] = {};
+		int16 ac[64] = {};
 		int8 dc8 = dcBs.readUInt(8);
 		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
-		ac[0] = 1.0f * iquant[0] * (int)dc8;
+		ac[0] = iquant[0] * dc8 + 0x80 * 8 * 8;
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
@@ -122,18 +119,18 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 				idx += h;
 				if (l && idx < 64) {
 					auto ac_idx = ZIGZAG[idx];
-					ac[ac_idx] = 1.0f * iquant[ac_idx] * acBs.readInt(l);
+					ac[ac_idx] = iquant[ac_idx] * acBs.readInt(l);
 					++idx;
 				}
 			}
 		}
-		float out[64];
-		dct.calc(ac, out);
+
+		Video::FourXM::idct(ac);
 		auto *dst = prefix ? planes.data() + channel * planeSize + blockIdx * 64 : planes.data() + channel * planeSize + y0 * planePitch + x0;
-		const auto *src = out;
+		const auto *src = ac;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++ / 4 + 128;
+				int v = *src++;
 				v = clip(v);
 				*dst++ = v;
 			}
