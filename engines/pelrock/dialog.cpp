@@ -171,7 +171,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		Graphics::Surface s;
 		s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
 		s.fillRect(s.getRect(), 255); // Clear surface
-		s.drawRoundRect(Common::Rect(0, 0, s.getRect().width(), s.getRect().height()), 2, 13, false);
+		// s.drawRoundRect(Common::Rect(0, 0, s.getRect().width(), s.getRect().height()), 2, 13, false);
 		int xPos = 0;
 		int yPos = 0;
 
