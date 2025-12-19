@@ -425,8 +425,6 @@ private:
 
 	Common::Array<XorArg> _xorSeq[3];
 
-	static const byte _xorKeys[32];
-
 	uint32 _seed = 1;
 
 	Object _cursorObject;
