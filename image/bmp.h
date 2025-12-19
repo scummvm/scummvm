@@ -87,6 +87,12 @@ private:
  * Outputs an uncompressed BMP stream of the given input surface.
  */
 bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr);
+
+/**
+ * Outputs an uncompressed BMP stream of the given paletted input surface, without converting it to 24 bpp.
+ */
+bool writePalettedBMP(Common::WriteStream &out, const Graphics::Surface &surface, const byte *palette);
+
 /** @} */
 } // End of namespace Image
 

@@ -195,4 +195,60 @@ bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const by
 	return true;
 }
 
+bool writePalettedBMP(Common::WriteStream &out, const Graphics::Surface &surface, const byte *palette) {
+	// We assume surface is already 8bpp indexed
+	// surface->pitch should be >= surface->w
+
+	const int bytesPerPixel = 1;
+	const int rowSize = surface.w * bytesPerPixel;
+	const int rowPadding = (4 - (rowSize & 3)) & 3;
+
+	const uint32 paletteSize = 256 * 4;
+	const uint32 pixelDataSize = (rowSize + rowPadding) * surface.h;
+	const uint32 dataOffset = 14 + 40 + paletteSize;
+	const uint32 fileSize = dataOffset + pixelDataSize;
+
+	/* === BITMAPFILEHEADER === */
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(fileSize);
+	out.writeUint16LE(0);
+	out.writeUint16LE(0);
+	out.writeUint32LE(dataOffset);
+
+	/* === BITMAPINFOHEADER === */
+	out.writeUint32LE(40);                // biSize
+	out.writeUint32LE(surface.w);
+	out.writeUint32LE(surface.h);
+	out.writeUint16LE(1);                 // planes
+	out.writeUint16LE(8);                 // bit count
+	out.writeUint32LE(0);                 // BI_RGB
+	out.writeUint32LE(pixelDataSize);
+	out.writeUint32LE(0);                 // x ppm
+	out.writeUint32LE(0);                 // y ppm
+	out.writeUint32LE(256);               // colors used
+	out.writeUint32LE(256);               // important colors
+
+	/* === PALETTE === */
+	// Input palette: RGBRGBRGB...
+	// BMP palette: B G R 0
+	for (int i = 0; i < 256; i++) {
+		out.writeByte(palette[i * 3 + 2]); // B
+		out.writeByte(palette[i * 3 + 1]); // G
+		out.writeByte(palette[i * 3 + 0]); // R
+		out.writeByte(0);                  // reserved
+	}
+
+	/* === PIXEL DATA (bottom-up) === */
+	byte pad[3] = { 0, 0, 0 };
+
+	for (int y = surface.h - 1; y >= 0; y--) {
+		out.write(surface.getBasePtr(0, y), rowSize);
+		if (rowPadding)
+			out.write(pad, rowPadding);
+	}
+
+	return true;
+}
+
 } // End of namespace Image
