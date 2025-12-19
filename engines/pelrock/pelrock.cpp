@@ -317,13 +317,15 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 void PelrockEngine::checkMouse() {
 	if (_events->_leftMouseClicked) {
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
+		alfredState.idleFrameCounter = 0;
 		_events->_leftMouseClicked = false;
 		_actionPopupState.isActive = false;
 	} else if (_events->_longClicked) {
+		alfredState.idleFrameCounter = 0;
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
 	} else if (_events->_rightMouseClicked) {
-
+		alfredState.idleFrameCounter = 0;
 		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		stateGame = SETTINGS;
@@ -596,6 +598,14 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 }
 
 void PelrockEngine::chooseAlfredStateAndDraw() {
+	if(alfredState.idleFrameCounter++ >= kAlfredIdleAnimationFrameCount &&
+		 alfredState.animState == ALFRED_IDLE &&
+		 (alfredState.direction == ALFRED_LEFT || alfredState.direction == ALFRED_RIGHT)
+	) {
+		alfredState.idleFrameCounter = 0;
+		alfredState.curFrame = 0;
+		alfredState.animState = ALFRED_COMB;
+	}
 	switch (alfredState.animState) {
 	case ALFRED_WALKING: {
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
@@ -667,9 +677,12 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	case ALFRED_COMB:
 		if (alfredState.curFrame >= 11) {
+			alfredState.animState = ALFRED_IDLE;
 			alfredState.curFrame = 0;
+			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[alfredState.direction], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
+			break;
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[0][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[alfredState.direction][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
 		alfredState.curFrame++;
 		break;
 	case ALFRED_INTERACTING:
@@ -1090,31 +1103,6 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 
 void PelrockEngine::gameLoop() {
 	_events->pollEvent();
-	// while (g_system->getEventManager()->pollEvent(e)) {
-	// 	if (e.type == Common::EVENT_KEYDOWN) {
-	// 		switch (e.kbd.keycode) {
-	// 		case Common::KEYCODE_w:
-	// 			alfredState.animState = ALFRED_WALKING;
-	// 			break;
-	// 		case Common::KEYCODE_t:
-	// 			alfredState.animState = ALFRED_TALKING;
-	// 			break;
-	// 		case Common::KEYCODE_s:
-	// 			alfredState.animState = ALFRED_IDLE;
-	// 			break;
-	// 		case Common::KEYCODE_c:
-	// 			alfredState.animState = ALFRED_COMB;
-	// 			break;
-	// 		case Common::KEYCODE_i:
-	// 			alfredState.animState = ALFRED_INTERACTING;
-	// 			break;
-	// 		case Common::KEYCODE_z:
-	// 			showShadows = !showShadows;
-	// 			break;
-	// 		default:
-	// 			break;
-	// 		}
-	// 	}
 
 	if (inConversation) {
 		// TODO: Pass actual conversation data from room
@@ -1276,37 +1264,34 @@ void PelrockEngine::checkMouseHover() {
 }
 
 void PelrockEngine::setScreen(int number, AlfredDirection dir) {
-	_sound->stopAllSounds();
+
 	Common::File roomFile;
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
 		error("Could not open ALFRED.1");
 		return;
 	}
+	_sound->stopAllSounds();
 	alfredState.direction = dir;
 	alfredState.animState = ALFRED_IDLE;
 	_currentStep = 0;
 	int roomOffset = number * kRoomStructSize;
 	alfredState.curFrame = 0;
+
 	byte *palette = new byte[256 * 3];
 	_room->getPalette(&roomFile, roomOffset, palette);
 
-	int paletteOffset = roomOffset + (11 * 8);
-	roomFile.seek(paletteOffset, SEEK_SET);
-	uint32 offset = roomFile.readUint32LE();
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	byte *background = new byte[640 * 400];
 	_room->getBackground(&roomFile, roomOffset, background);
-	if (_currentBackground != nullptr)
-		delete[] _currentBackground;
-	_currentBackground = new byte[640 * 400];
+
+	_screen->clear();
+	_screen->markAllDirty();
+	_screen->update();
+
+
 	Common::copy(background, background + 640 * 400, _currentBackground);
-	for (int i = 0; i < 640; i++) {
-		for (int j = 0; j < 400; j++) {
-			_screen->setPixel(i, j, background[j * 640 + i]);
-		}
-	}
+	copyBackgroundToBuffer();
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	_room->loadRoomMetadata(&roomFile, number);
 	_room->loadRoomTalkingAnimations(number);
@@ -1319,6 +1304,7 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_room->_currentRoomNumber = number;
 
 	_screen->markAllDirty();
+	_screen->update();
 	roomFile.close();
 	delete[] background;
 	delete[] palette;
