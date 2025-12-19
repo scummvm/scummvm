@@ -279,7 +279,7 @@ Common::Array<Common::StringArray> ResourceManager::getCredits() {
 	return credits;
 }
 
-Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(byte *data, size_t size) {
+Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(byte *data, size_t size, bool decode) {
 	int pos = 0;
 	Common::String desc = "";
 	Common::StringArray lines;
@@ -313,8 +313,10 @@ Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(by
 			pos++;
 			continue;
 		}
-
-		desc.append(1, decodeChar(data[pos]));
+		if( decode )
+			desc.append(1, decodeChar(data[pos]));
+		else
+			desc.append(1, data[pos]);
 		if (pos + 1 == size) {
 			lines.push_back(desc);
 			texts.push_back(lines);

@@ -203,14 +203,14 @@ void MenuManager::loadMenuTexts() {
 	byte *descBuffer = new byte[kInventoryDescriptionsSize];
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
 	exe.read(descBuffer, kInventoryDescriptionsSize);
-	_inventoryDescriptions = _res->processTextData(descBuffer, kInventoryDescriptionsSize);
+	_inventoryDescriptions = _res->processTextData(descBuffer, kInventoryDescriptionsSize, true);
 	delete[] descBuffer;
 
 	Common::String desc = "";
 	byte *textBuffer = new byte[kMenuTextSize];
 	exe.seek(kMenuTextOffset, SEEK_SET);
 	exe.read(textBuffer, kMenuTextSize);
-	_menuTexts = _res->processTextData(textBuffer, kMenuTextSize);
+	_menuTexts = _res->processTextData(textBuffer, kMenuTextSize, true);
 
 	_menuText = _menuTexts[0];
 	delete[] textBuffer;
