@@ -193,12 +193,12 @@ struct Sprite {
 struct HotSpot {
 	int index;
 	int id;
-	int x;
-	int y;
+	int16 x;
+	int16 y;
 	int w;
 	int h;
-	byte type;
-	int extra;
+	byte actionFlags;
+	int16 extra;
 	bool isEnabled = true;
 };
 

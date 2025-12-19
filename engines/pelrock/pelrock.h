@@ -98,12 +98,10 @@ private:
 
 	void animateFadePalette(PaletteAnim *anim);
 	void animateRotatePalette(PaletteAnim *anim);
-	void doAction(byte action, HotSpot *hotspot);
+	void doAction(VerbIcon action, HotSpot *hotspot);
 	void talkTo(HotSpot *hotspot);
 	void lookAt(HotSpot *hotspot);
-	void open(HotSpot *hotspot);
-	void close(HotSpot *hotspot);
-	void pick(HotSpot *hotspot);
+
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
@@ -234,6 +232,17 @@ public:
 	void setScreen(int s, AlfredDirection dir);
 	void renderScene(bool showTextOverlay = false);
 	void performActionTrigger(uint16 actionTrigger);
+
+    void executeAction(VerbIcon action, HotSpot *hotspot);
+
+    void openDrawer(HotSpot *hotspot);
+    void closeDrawer(HotSpot *hotspot);
+    void openDoor(HotSpot *hotspot);
+    void closeDoor(HotSpot *hotspot);
+    void pickUpAndDisable(HotSpot *hotspot);
+	void pickUpPhoto(HotSpot *hotspot);
+	void noOp(HotSpot *hotspot);
+
 };
 
 extern PelrockEngine *g_engine;

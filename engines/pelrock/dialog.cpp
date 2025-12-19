@@ -586,10 +586,9 @@ void DialogManager::sayAlfred(Common::String text) {
 	g_engine->alfredState.nextState = ALFRED_TALKING;
 	g_engine->alfredState.curFrame = 0;
 
+	_curSprite = nullptr;
 	Common::Array<Common::Array<Common::String>> textLines = wordWrap(text);
-
 	displayDialogue(textLines, ALFRED_COLOR);
-
 }
 
 void DialogManager::sayAlfred(Description description) {
@@ -604,7 +603,6 @@ bool isEndMarker(char char_byte) {
 }
 
 int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
-	// return word_length, is_end
 	int wordLength = 0;
 	int pos = startPos;
 	while (pos < text.size()) {

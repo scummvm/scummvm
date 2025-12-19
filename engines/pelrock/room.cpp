@@ -109,6 +109,15 @@ void RoomManager::removeSticker(int stickerIndex) {
 		_currentRoomStickers.remove_at(index);
 }
 
+HotSpot *RoomManager::findHotspotByExtra(uint16 extra) {
+	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+		if (_currentRoomHotspots[i].extra == extra) {
+			return &_currentRoomHotspots[i];
+		}
+	}
+	return nullptr;
+}
+
 PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	Common::File exeFile;
 
@@ -203,13 +212,13 @@ Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roo
 		uint32_t obj_offset = hotspot_data_start + i * 9;
 		roomFile->seek(obj_offset, SEEK_SET);
 		HotSpot spot;
-		spot.type = roomFile->readByte();
-		spot.x = roomFile->readUint16LE();
-		spot.y = roomFile->readUint16LE();
+		spot.actionFlags = roomFile->readByte();
+		spot.x = roomFile->readSint16LE();
+		spot.y = roomFile->readSint16LE();
 		spot.w = roomFile->readByte();
 		spot.h = roomFile->readByte();
-		spot.extra = roomFile->readUint16LE();
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.type, spot.x, spot.y, spot.w, spot.h, spot.extra);
+		spot.extra = roomFile->readSint16LE();
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
 	return hotspots;
@@ -232,7 +241,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		thisHotspot.w = anims[i].w;
 		thisHotspot.h = anims[i].h;
 		thisHotspot.extra = anims[i].extra;
-		thisHotspot.type = anims[i].actionFlags;
+		thisHotspot.actionFlags = anims[i].actionFlags;
 		thisHotspot.isEnabled = !anims[i].isDisabled;
 		hotspots.push_back(thisHotspot);
 	}

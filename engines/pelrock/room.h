@@ -41,6 +41,7 @@ public:
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 	void addSticker(Sticker sticker);
 	void removeSticker(int index);
+	HotSpot * findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
 	Common::String getRoomName(int roomNumber) {

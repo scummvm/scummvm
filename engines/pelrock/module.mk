@@ -2,6 +2,7 @@ MODULE := engines/pelrock
 
 MODULE_OBJS = \
 	pelrock.o \
+	actions.o \
 	chrono.o \
 	console.o \
 	metaengine.o \

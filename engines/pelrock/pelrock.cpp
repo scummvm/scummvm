@@ -33,6 +33,7 @@
 #include "image/png.h"
 
 #include "pelrock.h"
+#include "pelrock/actions.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
 #include "pelrock/fonts/small_font.h"
@@ -67,8 +68,6 @@ PelrockEngine::~PelrockEngine() {
 	delete _events;
 	delete _dialog;
 	delete _menu;
-	// if (_bgPopupBalloon)
-	// 	delete[] _bgPopupBalloon;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -195,25 +194,25 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	Common::Array<VerbIcon> verbs;
 	verbs.push_back(LOOK);
 
-	if (hotspot->type & 1) {
+	if (hotspot->actionFlags & 1) {
 		verbs.push_back(OPEN);
 	}
-	if (hotspot->type & 2) {
+	if (hotspot->actionFlags & 2) {
 		verbs.push_back(CLOSE);
 	}
-	if (hotspot->type & 4) {
+	if (hotspot->actionFlags & 4) {
 		verbs.push_back(UNKNOWN);
 	}
-	if (hotspot->type & 8) {
+	if (hotspot->actionFlags & 8) {
 		verbs.push_back(PICKUP);
 	}
-	if (hotspot->type & 16) {
+	if (hotspot->actionFlags & 16) {
 		verbs.push_back(TALK);
 	}
-	if (hotspot->type & 32) {
+	if (hotspot->actionFlags & 32) {
 		verbs.push_back(PUSH);
 	}
-	if (hotspot->type & 128) {
+	if (hotspot->actionFlags & 128) {
 		verbs.push_back(PULL);
 	}
 	return verbs;
@@ -259,37 +258,6 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		presentFrame();
 		updatePaletteAnimations();
 
-		// if (alfredState.animState != ALFRED_WALKING && !_currentTextPages.empty()) {
-		// 	_chronoManager->countTextDown = true;
-		// 	if (_textDurationFrames-- > 0) {
-		// 		if (alfredState.animState == ALFRED_TALKING) {
-		// 			_textPos = Common::Point(alfredState.x, alfredState.y - kAlfredFrameHeight - 10);
-		// 		}
-		// 		renderText(_currentTextPages[_currentTextPageIndex], _textColor, _textPos.x, _textPos.y);
-		// 	} else if (_currentTextPageIndex < _currentTextPages.size() - 1) {
-		// 		_currentTextPageIndex++;
-
-		// 		int totalChars = 0;
-		// 		for (int i = 0; i < _currentTextPages[_currentTextPageIndex].size(); i++) {
-		// 			totalChars += _currentTextPages[_currentTextPageIndex][i].size();
-		// 		}
-		// 		_textDurationFrames = totalChars / 2;
-		// 	} else {
-		// 		_currentTextPages.clear();
-		// 		_currentTextPageIndex = 0;
-		// 		alfredState.animState = ALFRED_IDLE;
-		// 		isNPCATalking = false;
-		// 		isNPCBTalking = false;
-		// 		_chronoManager->countTextDown = false;
-		// 	}
-		// }
-
-		// if (alfredState.animState == ALFRED_IDLE && alfredState.nextState != ALFRED_IDLE) {
-		// 	alfredState.animState = alfredState.nextState;
-		// 	alfredState.nextState = ALFRED_IDLE;
-		// 	alfredState.curFrame = 0;
-		// }
-
 		_screen->markAllDirty();
 	}
 }
@@ -312,6 +280,27 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		delete[] palette;
 		break;
 	}
+}
+
+void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
+    for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
+        if (entry->action == action && entry->hotspotExtra == hotspot->extra) {
+            // Found exact match - call the handler
+            (this->*(entry->handler))(hotspot);
+            return;
+        }
+    }
+
+    // Try wildcard match (hotspotExtra == 0 means "any hotspot")
+    for (const ActionEntry *entry = actionTable; entry->handler != nullptr; ++entry) {
+        if (entry->action == action && entry->hotspotExtra == WILDCARD) {
+            (this->*(entry->handler))(hotspot);
+            return;
+        }
+    }
+
+    // No handler found
+    warning("No handler for hotspot %d with action %d", hotspot->extra, action);
 }
 
 void PelrockEngine::checkMouse() {
@@ -491,7 +480,7 @@ void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
 	}
 }
 
-void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
+void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 	switch (action) {
 	case LOOK:
 		lookAt(hotspot);
@@ -499,16 +488,12 @@ void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 	case TALK:
 		talkTo(hotspot);
 		break;
-	case OPEN:
-		open(hotspot);
-		break;
-	case CLOSE:
-		close(hotspot);
-		break;
 	case PICKUP:
-		pick(hotspot);
+		pickUpAndDisable(hotspot);
+		executeAction(PICKUP, hotspot);
 		break;
 	default:
+		executeAction(action, hotspot);
 		break;
 	}
 }
@@ -528,56 +513,6 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 void PelrockEngine::lookAt(HotSpot *hotspot) {
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
-}
-
-void PelrockEngine::open(HotSpot *hotspot) {
-	switch (hotspot->extra) {
-	case 261:
-		_room->addSticker(_res->getSticker(91));
-		_room->_currentRoomHotspots[hotspot->index].isEnabled = false;
-		break;
-	case 268:
-		_room->addSticker(_res->getSticker(93));
-		_room->_currentRoomExits[0].isEnabled = true;
-		break;
-	default:
-
-		break;
-	}
-}
-
-void PelrockEngine::close(HotSpot *hotspot) {
-	switch (hotspot->extra) {
-	case 261:
-		_room->removeSticker(91);
-		break;
-	case 268:
-		_room->removeSticker(93);
-		_room->_currentRoomExits[0].isEnabled = false;
-		break;
-	default:
-
-		break;
-	}
-}
-
-void PelrockEngine::pick(HotSpot *hotspot) {
-	_inventoryItems.push_back(hotspot->extra);
-	switch (hotspot->extra)
-	{
-	case 0:
-	case 1:
-	case 2:
-		_room->_currentRoomHotspots[hotspot->index].isEnabled = false;
-		break;
-	case 4:
-		_room->addSticker(_res->getSticker(95));
-		/* code */
-		break;
-
-	default:
-		break;
-	}
 }
 
 void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, int baseX, int baseY) {
