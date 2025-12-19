@@ -310,7 +310,16 @@ bool GamosEngine::loadModule(uint id) {
 				if (_runReadDataMod && BYTE_004177f7 == 0)
 					readData2(data);
 				if (BYTE_004177f7 == 0) {
-					//FUN_00403868();
+					_scrollY = 0;
+					_scrollX = 0;
+					_scrollTrackObj = -1;
+					_scrollSpeed = 16;
+					_scrollCutoff = 80;
+					_scrollSpeedReduce = -1;
+					_scrollBorderB = 0;
+					_scrollBorderU = 0;
+					_scrollBorderR = 0;
+					_scrollBorderL = 0;
 				}
 				isResource = false; /* do not loadResHandler */
 			} else if (prevByte == RESTP_10) {
