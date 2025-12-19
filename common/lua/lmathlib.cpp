@@ -256,17 +256,7 @@ LUALIB_API int luaopen_math (lua_State *L) {
   luaL_register(L, LUA_MATHLIBNAME, mathlib);
   lua_pushnumber(L, M_PI);
   lua_setfield(L, -2, "pi");
-#if defined(MACOSX) && defined(__GNUC__) && ! defined( __XLC__ )
-  // WORKAROUND for a bug in the Mac OS X 10.2.8 SDK. It defines
-  // HUGE_VAL simply to 1e500, leading to this compiler error:
-  //   error: floating constant exceeds range of 'double'
-  // However, GCC (at least the version we are using for our cross
-  // compiler) has a __builtin_huge_val which returns the correct
-  // value, so we just use that.
-  lua_pushnumber(L, __builtin_huge_val());
-#else
   lua_pushnumber(L, HUGE_VAL);
-#endif
   lua_setfield(L, -2, "huge");
 #if defined(LUA_COMPAT_MOD)
   lua_getfield(L, -1, "fmod");
