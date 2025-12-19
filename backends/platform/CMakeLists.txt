@@ -40,6 +40,10 @@ if(SDL_BACKEND)
   target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
 endif()
 
+# Adding the detection and engine plumbers libraries here doesn't feel right,
+# but currently needed to compile the platform executable correctly.
+target_link_libraries(platform PRIVATE detection_plumbers engine_plumbers)
+
 set_target_properties(platform PROPERTIES RUNTIME_OUTPUT_DIRECTORY
                                           ${CMAKE_BINARY_DIR})
 set_target_properties(platform PROPERTIES OUTPUT_NAME ${PROJECT_NAME})

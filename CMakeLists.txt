@@ -24,8 +24,11 @@ if(NOT DETECT_HOST)
     )
   endif()
 
-  set(SDL_BACKEND TRUE) set(USE_SDL2 TRUE)
+  set(SDL_BACKEND TRUE)
+  set(USE_SDL2 TRUE)
 endif()
+
+add_compile_definitions(DETECTION_STATIC)
 
 # Wii platform for testing with devkitPPC
 if(PLATFORM_WII)
@@ -47,10 +50,12 @@ if(SDL_BACKEND)
   add_compile_definitions(SDL_BACKEND USE_SDL2)
 endif()
 
-add_subdirectory(common)
-
 # The engines directory
 add_subdirectory(engines)
+
+add_subdirectory(common)
+
+add_subdirectory(video)
 
 add_subdirectory(gui)
 
