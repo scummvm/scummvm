@@ -284,9 +284,7 @@ struct Object {
 	inline bool isStaticObject() const { return (flags & (FLAG_GRAPHIC | FLAG_FREECOORDS | FLAG_VALID)) == (FLAG_GRAPHIC | FLAG_VALID); };
 };
 
-struct SubtitlePoint {
-	int16 x = 0;
-	int16 y = 0;
+struct SubtitlePoint : Common::Point {
 	uint16 sprId = 0;
 };
 
@@ -658,11 +656,11 @@ protected:
 	void preprocessDataB1(int id, ActEntry *e);
 	int processData(ActEntry e, bool absolute);
 
-	void executeScript(uint8 p1, uint32 id, uint32 pos, byte *storage, int32 index, Object *pobj, ObjectAction *act, int32 scriptAddr);
+	void executeScript(int32 scriptAddr, ObjectAction *act, Object *pobj, int32 index, byte *storage, Common::Point cell, uint8 t);
 
 	void FUN_00402a68(ActEntry e);
 
-	void createActiveObject(ActEntry e, int32 x, int32 y);
+	void createActiveObject(ActEntry e, Common::Point cell);
 
 	void removeObjectAtCoords(Common::Point cell, bool deleteGfxObj);
 
@@ -679,7 +677,7 @@ protected:
 	bool updateMouseCursor(Common::Point mouseMove);
 	bool scrollAndDraw();
 	bool FUN_00402bc4();
-	bool FUN_00402f34(bool p1, bool p2, Object *obj);
+	bool updateGfxFrames(Object *obj, bool p2, bool p1);
 
 	void FUN_0040921c(Object *obj);
 	void addDirtRectOnObject(Object *obj);
@@ -695,7 +693,7 @@ protected:
 
 	uint32 doScript(uint32 scriptAddress);
 
-	bool FUN_0040738c(uint32 id, int32 x, int32 y, bool p);
+	bool createGfxObject(uint32 id, Common::Point position, bool p);
 
 	void FUN_00409378(int32 sprId, Object *obj, bool p);
 
