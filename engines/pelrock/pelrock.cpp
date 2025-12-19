@@ -503,6 +503,9 @@ void PelrockEngine::doAction(byte action, HotSpot *hotspot) {
 	case CLOSE:
 		close(hotspot);
 		break;
+	case PICKUP:
+		pick(hotspot);
+		break;
 	default:
 		break;
 	}
@@ -529,6 +532,7 @@ void PelrockEngine::open(HotSpot *hotspot) {
 	switch (hotspot->extra) {
 	case 261:
 		_room->addSticker(_res->getSticker(91));
+		_room->_currentRoomHotspots[hotspot->index].isEnabled = false;
 		break;
 	case 268:
 		_room->addSticker(_res->getSticker(93));
@@ -551,6 +555,25 @@ void PelrockEngine::close(HotSpot *hotspot) {
 		break;
 	default:
 
+		break;
+	}
+}
+
+void PelrockEngine::pick(HotSpot *hotspot) {
+	_inventoryItems.push_back(hotspot->extra);
+	switch (hotspot->extra)
+	{
+	case 0:
+	case 1:
+	case 2:
+		_room->_currentRoomHotspots[hotspot->index].isEnabled = false;
+		break;
+	case 4:
+		_room->addSticker(_res->getSticker(95));
+		/* code */
+		break;
+
+	default:
 		break;
 	}
 }
@@ -1157,6 +1180,7 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 	}
 	return true;
 }
+
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 

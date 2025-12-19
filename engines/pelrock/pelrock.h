@@ -103,6 +103,7 @@ private:
 	void lookAt(HotSpot *hotspot);
 	void open(HotSpot *hotspot);
 	void close(HotSpot *hotspot);
+	void pick(HotSpot *hotspot);
 	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
@@ -179,8 +180,10 @@ public:
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
-	void renderScene(bool showTextOverlay = false);
-	void performActionTrigger(uint16 actionTrigger);
+
+	Common::Array<int> _inventoryItems;
+	int _selectedInventoryItem = -1;
+
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -229,6 +232,8 @@ public:
 	}
 
 	void setScreen(int s, AlfredDirection dir);
+	void renderScene(bool showTextOverlay = false);
+	void performActionTrigger(uint16 actionTrigger);
 };
 
 extern PelrockEngine *g_engine;

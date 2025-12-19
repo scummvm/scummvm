@@ -424,7 +424,7 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 
 				if (data[pos] != 0x00) {
 					// debug("Adding char 0x%02X to description, decoded as %lc", data[pos], decodeChar((byte)data[pos]));
-					description.text.append(1, decodeChar((byte)data[pos]));
+					description.text.append(1, (char)data[pos]);
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
@@ -449,11 +449,7 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 	}
 	_conversationData = new byte[_conversationDataSize];
 	Common::copy(data + conversationStart, data + conversationStart + _conversationDataSize, _conversationData);
-
 	delete[] data;
-	// for (Common::List<Common::String>::iterator i = descriptions.begin(); i != descriptions.end(); i++) {
-	// 	debug("Room description: %s", i->c_str());
-	// }
 	return descriptions;
 }
 
