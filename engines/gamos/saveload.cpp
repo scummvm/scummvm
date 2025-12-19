@@ -330,19 +330,21 @@ bool GamosEngine::writeSaveFile(int id) {
 	for (int i = 0; i < _gameScreens.size(); i++) {
 		GameScreen &scr = _gameScreens[i];
 
-		osv->writeUint32LE(i);
+		if (scr.loaded) {
+			osv->writeUint32LE(i);
 
-		for (int j = 0; j < scr._savedStates.size(); j++) {
-			const ObjState &ost = scr._savedStates[j];
-			osv->writeByte(ost.actid);
-			osv->writeByte(ost.flags);
-			osv->writeByte(ost.t);
-		}
+			for (int j = 0; j < scr._savedStates.size(); j++) {
+				const ObjState &ost = scr._savedStates[j];
+				osv->writeByte(ost.actid);
+				osv->writeByte(ost.flags);
+				osv->writeByte(ost.t);
+			}
 
-		osv->writeUint32LE(scr._savedObjects.size());
+			osv->writeUint32LE(scr._savedObjects.size());
 
-		for (const Object &obj : scr._savedObjects) {
-			writeObjectData(osv, &obj);
+			for (const Object &obj : scr._savedObjects) {
+				writeObjectData(osv, &obj);
+			}
 		}
 	}
 
