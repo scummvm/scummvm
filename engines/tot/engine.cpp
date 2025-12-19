@@ -891,13 +891,13 @@ void TotEngine::useInventoryObjectWithInventoryObject(int16 objectCode1, int16 o
 	}
 
 	invIndex = 0;
-	while (static_cast<uint>(_inventory[invIndex].code) != objectCode1) {
+	while (_inventory[invIndex].code != objectCode1) {
 		invIndex += 1;
 	}
 	indobj1 = invIndex;
 
 	invIndex = 0;
-	while (static_cast<uint>(_inventory[invIndex].code) != objectCode2) {
+	while (_inventory[invIndex].code != objectCode2) {
 		invIndex += 1;
 	}
 
@@ -2365,7 +2365,7 @@ void TotEngine::useScreenObject() {
 					_chrono->_gameTick = false;
 					emptyLoop2();
 					sprites(true);
-				} while (!(_currentSecondaryTrajectoryIndex == (_currentRoomData->secondaryTrajectoryLength / 2)));
+				} while (!(_currentSecondaryTrajectoryIndex == (_currentRoomData->secondaryTrajectoryLength / 2u)));
 
 				animateGive(3, 2);
 				updateInventory(usedObjectIndex);
