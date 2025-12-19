@@ -650,17 +650,15 @@ bool GamosEngine::init(const Common::String &moduleName) {
 
 bool GamosEngine::loadInitModule() {
 	rndSeed(_system->getMillis());
-	//DAT_0041723c = -1;
 	_curObjIndex = -1;
 	PTR_00417218 = nullptr;
 	PTR_00417214 = nullptr;
-	//DAT_00417238 = 0;
 	_xorSeq[2].clear();
 	_xorSeq[1].clear();
 	_xorSeq[0].clear();
 	_isMoviePlay = 0;
 	_txtInputActive = false;
-	//DAT_00417808 = 0;
+	//_updateMouse = false;
 	_runReadDataMod = true;
 	_savedSndVolume = 0;
 	_savedMidiVolume = 0;
@@ -1295,8 +1293,6 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 		PTR_00417218 = nullptr;
 		_curObjIndex = -1;
 		PTR_00417214 = nullptr;
-		//DAT_00417238 = 0;
-		//DAT_0041723c = -1;
 		DAT_00417228 = Common::Point();
 		BYTE_004177f6 = 1;
 		_preprocDataId = 0;
@@ -2808,7 +2804,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			break;
 
 		case 2:
-			ctx->EAX.setVal(1); //BYTE_004177fb != 0 ? 1 : 0;
+			ctx->EAX.setVal(_midiVolumeTarget != 0 ? 1 : 0);
 			break;
 
 		case 3:
@@ -3324,8 +3320,6 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 	uint8 sv1 = BYTE_004177fc;
 	uint8 sv2 = BYTE_004177f6;
 	byte *sv3 = PTR_004173e8;
-	//uVar11 = DAT_0041723c;
-	//uVar10 = DAT_00417238;
 	uint8 sv6 = _preprocDataId;
 	Common::Point sv8 = DAT_00417228;
 	Common::Point sv10 = DAT_00417220;
@@ -3338,8 +3332,6 @@ uint32 GamosEngine::savedDoActions(const Actions &a) {
 	BYTE_004177fc = sv1;
 	BYTE_004177f6 = sv2;
 	PTR_004173e8 = sv3;
-	//DAT_0041723c = uVar11;
-	//DAT_00417238 = uVar10;
 	_preprocDataId = sv6;
 	DAT_00417228 = sv8;
 	DAT_00417220 = sv10;
