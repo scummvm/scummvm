@@ -303,4 +303,220 @@ void GamosEngine::zeroVMData(const Common::Array<XorArg> &seq) {
 		_vm.zeroMemory(xarg.pos, xarg.len);
 }
 
+
+
+
+bool GamosEngine::writeSaveFile(int id) {
+	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::SaveFileManager *sm = _system->getSavefileManager();
+
+	Common::OutSaveFile *osv = sm->openForSaving(fname);
+	if (!osv)
+		return false;
+
+	storeToGameScreen(_currentGameScreen);
+	_svFps = _vm.memory().getU8(_addrFPS);
+	_svFrame = _vm.memory().getU32(_addrCurrentFrame);
+	_d2_fld10 = _countReadedBkg;
+	_svModuleId = _currentModuleID;
+	_svGameScreen = _currentGameScreen;
+
+	writeStateData(osv);
+
+	writeVMData(osv, _xorSeq[0]);
+	writeVMData(osv, _xorSeq[1]);
+	writeVMData(osv, _xorSeq[2]);
+
+	for (int i = 0; i < _gameScreens.size(); i++) {
+		GameScreen &scr = _gameScreens[i];
+
+		osv->writeUint32LE(i);
+
+		for (int j = 0; j < scr._savedStates.size(); j++) {
+			const ObjState &ost = scr._savedStates[j];
+			osv->writeByte(ost.actid);
+			osv->writeByte(ost.flags);
+			osv->writeByte(ost.t);
+		}
+
+		osv->writeUint32LE(scr._savedObjects.size());
+
+		for (const Object &obj : scr._savedObjects) {
+			writeObjectData(osv, &obj);
+		}
+	}
+
+	osv->finalize();
+	delete osv;
+
+	switchToGameScreen(_currentGameScreen, true);
+	return true;
+}
+
+bool GamosEngine::loadSaveFile(int id) {
+	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::SaveFileManager *sm = _system->getSavefileManager();
+
+	Common::SeekableReadStream *rs = sm->openForLoading(fname);
+	if (!rs)
+		return false;
+
+	const uint8 sv1 = _d2_fld18;
+	const uint8 sv2 = _d2_fld17;
+	const uint8 sv3 = _d2_fld16;
+	const bool svmdi = _enableMidi;
+	const uint8 sv4 = _d2_fld14;
+
+	loadStateData(rs);
+
+	_sndVolume = _sndVolumeTarget;
+	_midiVolume = 0;
+	_d2_fld14 = sv4;
+	_enableMidi = svmdi;
+	_d2_fld16 = sv3;
+	_d2_fld17 = sv2;
+	_d2_fld18 = sv1;
+
+	_musicPlayer.setVolume(0);
+
+	const int32 cursorImgId = _mouseCursorImgId;
+	const int32 svMidiTrack = _midiTrack;
+	const uint8 cdtrack = _d2_fld19;
+
+	_runReadDataMod = true;
+	BYTE_004177f7 = 1;
+
+	loadModule(_svModuleId);
+
+	readVMData(rs, _xorSeq[0]);
+	readVMData(rs, _xorSeq[1]);
+	readVMData(rs, _xorSeq[2]);
+
+	for (int i = 0; i < _countReadedBkg; i++) {
+		uint32 val = rs->readUint32LE();
+		GameScreen &scr = _gameScreens[val];
+
+		scr._savedStates.resize( _states.sizes() );
+
+		for (int j = 0; j < scr._savedStates.size(); j++) {
+			ObjState &st = scr._savedStates[j];
+			st.actid = rs->readByte();
+			st.flags = rs->readByte();
+			st.t = rs->readByte();
+		}
+
+		val = rs->readUint32LE();
+
+		scr._savedObjects.resize(val);
+
+		for (Object &obj : scr._savedObjects) {
+			loadObjectData(rs, &obj);
+			if (((obj.flags & Object::FLAG_HASACTION) == 0) && obj.sprId >= 0 && obj.frame >= 0 && obj.seqId >= 0) {
+				obj.pImg = &_sprites[obj.sprId].sequences[obj.seqId]->operator[](obj.frame);
+			}
+		}
+	}
+
+	delete rs;
+
+	switchToGameScreen(_svGameScreen, false);
+
+	_vm.memory().setU8(_addrFPS, _svFps);
+	_vm.memory().setU32(_addrCurrentFrame, _svFrame);
+
+	_runReadDataMod = false;
+	BYTE_004177f7 = 0;
+
+	if (cdtrack != 0xff) {
+		//vmfunc_58(cdtrack);
+	}
+
+	if (svMidiTrack != -1)
+		scriptFunc16(svMidiTrack);
+
+	_midiVolume = 0;
+
+	if (cursorImgId != -1)
+		setCursor(cursorImgId, false);
+
+	setNeedReload();
+	return true;
+}
+
+void GamosEngine::writeObjectData(Common::SeekableWriteStream *stream, const Object *obj) {
+	stream->writeUint16LE(obj->index);
+	stream->writeByte(obj->flags);
+	stream->writeByte(obj->priority);
+	stream->writeSint16LE(obj->cell.x);
+	stream->writeSint16LE(obj->cell.y);
+
+	if (obj->flags & Object::FLAG_HASACTION) {
+		stream->writeByte(obj->actID);
+		stream->writeByte(obj->t);
+		stream->writeByte(obj->state.actid);
+		stream->writeByte(obj->state.flags);
+		stream->writeByte(obj->state.t);
+		stream->writeByte(obj->inputFlag);
+		stream->writeSint16LE(obj->tgtObjectId);
+		stream->writeSint16LE(obj->curObjectId);
+		stream->writeUint32LE(obj->storage.size());
+		stream->write(obj->storage.data(), obj->storage.size());
+	} else {
+		stream->writeSint32LE(obj->sprId);
+		stream->writeSint32LE(obj->seqId);
+		stream->writeSint16LE(obj->frame);
+		stream->writeSint16LE(obj->frameMax);
+		stream->writeSint16LE(obj->position.x);
+		stream->writeSint16LE(obj->position.y);
+		stream->writeSint16LE(obj->actObjIndex);
+	}
+}
+
+void GamosEngine::loadObjectData(Common::SeekableReadStream *stream, Object *obj) {
+	obj->index = stream->readUint16LE();
+	obj->flags = stream->readByte();
+	obj->priority = stream->readByte();
+	obj->cell.x = stream->readSint16LE();
+	obj->cell.y = stream->readSint16LE();
+
+	if (obj->flags & Object::FLAG_HASACTION) {
+		obj->actID = stream->readByte();
+		obj->t = stream->readByte();
+		obj->state.actid = stream->readByte();
+		obj->state.flags = stream->readByte();
+		obj->state.t = stream->readByte();
+		obj->inputFlag = stream->readByte();
+		obj->tgtObjectId = stream->readSint16LE();
+		obj->curObjectId = stream->readSint16LE();
+
+		uint32 storSize = stream->readUint32LE();
+		if (storSize) {
+			obj->storage.resize(storSize);
+			stream->read(obj->storage.data(), storSize);
+		} else
+			obj->storage.clear();
+	} else {
+		obj->sprId = stream->readSint32LE();
+		obj->seqId = stream->readSint32LE();
+		obj->frame = stream->readSint16LE();
+		obj->frameMax = stream->readSint16LE();
+		obj->position.x = stream->readSint16LE();
+		obj->position.y = stream->readSint16LE();
+		obj->actObjIndex = stream->readSint16LE();
+	}
+}
+
+
+bool GamosEngine::deleteSaveFile(int id) {
+	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::SaveFileManager *sm = _system->getSavefileManager();
+
+	if ( !sm->exists(fname) )
+		return true;
+
+	if ( sm->removeSavefile(fname) )
+		return true;
+	return false;
+}
+
 }

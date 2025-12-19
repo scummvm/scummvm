@@ -252,7 +252,7 @@ bool GamosEngine::loadModule(uint id) {
 	//DAT_004126e4 = 1;
 	_currentGameScreen = -1;
 	_readingBkgMainId = -1;
-	//DAT_004172f8 = 0;
+	_countReadedBkg = 0;
 	//DAT_004126ec = 0;
 	//INT_004126e8 = 0;
 
@@ -327,6 +327,7 @@ bool GamosEngine::loadModule(uint id) {
 			} else if (prevByte == RESTP_18) {
 				/* free elements ? */
 				_readingBkgOffset = _arch.pos();
+				_countReadedBkg++;
 			}
 
 			RawData data;
@@ -1876,6 +1877,7 @@ Object *GamosEngine::getFreeObject() {
 	obj->curObjectId = -1;
 
 	obj->pImg = nullptr;
+	obj->storage.clear(); // clear it so gfx object will not have data
 	return obj;
 }
 
@@ -2864,7 +2866,13 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		arg1 = ctx->pop32();
 		arg2 = ctx->pop32();
 
-		warning("Do save-load %d %d", arg1, arg2);
+		if (arg1 == 0) {
+			ctx->EAX.setVal(deleteSaveFile(arg2) ? 1 : 0);
+		} else if (arg1 == 1) {
+			ctx->EAX.setVal(writeSaveFile(arg2) ? 1 : 0);
+		} else if (arg1 == 2) {
+			ctx->EAX.setVal(loadSaveFile(arg2) ? 1 : 0);
+		}
 	}
 	break;
 

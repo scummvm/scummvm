@@ -486,6 +486,7 @@ private:
 
 	uint32 _readingBkgOffset = 0;
 	int32 _readingBkgMainId = -1;
+	int32 _countReadedBkg = 0;
 	int32 _currentGameScreen = -1;
 	int32 _loadedDataSize = -1;
 
@@ -760,6 +761,13 @@ protected:
 
 	bool loadStateFile();
 	void loadStateData(Common::SeekableReadStream *stream);
+
+	bool writeSaveFile(int id);
+	bool loadSaveFile(int id);
+	bool deleteSaveFile(int id);
+
+	void writeObjectData(Common::SeekableWriteStream *stream, const Object *obj);
+	void loadObjectData(Common::SeekableReadStream *stream, Object *obj);
 
 	void vmCallDispatcher(VM::Context *ctx, uint32 funcID);
 
