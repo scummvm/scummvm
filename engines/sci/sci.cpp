@@ -188,6 +188,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 		SearchMan.addSubDirectoryMatching(gameDataDir, "bonus"); // resource patches
 	}
 
+	// Behind the Developer's Shield is an alternate set of articles and
+	// artwork bundled with Inside the Chest.
+	if (_gameId == GID_SHIELD) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "shield", -1);
+	}
+
 	switch (desc->language) {
 	case Common::DE_DEU:
 		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
