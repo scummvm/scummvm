@@ -74,7 +74,7 @@ void MainMenu::copyCircle(const Graphics::Surface *src,
 			y--;
 			p += 2 * (x - y) + 1;
 		}
-		drawCircleLine(src, &dest, x + 1, y + 1);
+		drawCircleLine(src, &dest, x, y);
 	}
 }
 
@@ -86,22 +86,22 @@ void MainMenu::drawCircleLine(const Graphics::Surface *src,
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - x, CIRCLE_RADIUS + y);
-	Common::copy(src1, src2, dest1);
+	Common::copy(src1, src2 + 1, dest1);
 
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS - y);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + x, CIRCLE_Y + CIRCLE_RADIUS - y);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - x, CIRCLE_RADIUS - y);
-	Common::copy(src1, src2, dest1);
+	Common::copy(src1, src2 + 1, dest1);
 
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - y, CIRCLE_Y + CIRCLE_RADIUS - x);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + y, CIRCLE_Y + CIRCLE_RADIUS - x);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - y, CIRCLE_RADIUS - x);
-	Common::copy(src1, src2, dest1);
+	Common::copy(src1, src2 + 1, dest1);
 
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - y, CIRCLE_Y + CIRCLE_RADIUS + x);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + y, CIRCLE_Y + CIRCLE_RADIUS + x);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - y, CIRCLE_RADIUS + x);
-	Common::copy(src1, src2, dest1);
+	Common::copy(src1, src2 + 1, dest1);
 }
 
 void MainMenu::draw() {
