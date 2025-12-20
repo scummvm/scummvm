@@ -113,6 +113,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
    - Fixed errors with M&M1 monster advancement in combat.
    - Fixed doors color in M&M1 enhanced mode
+   - Fix rendering of M&M1 enhanced main menu circles
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
