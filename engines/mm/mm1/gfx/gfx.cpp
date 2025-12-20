@@ -21,7 +21,6 @@
 
 #include "common/system.h"
 #include "common/debug.h"
-#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "mm/mm1/gfx/gfx.h"
@@ -32,26 +31,38 @@ namespace Gfx {
 
 byte EGA_INDEXES[EGA_PALETTE_COUNT];
 
+static const uint32 EGA_PALETTE[16] = {
+	0x000000, 0x0000aa, 0x00aa00, 0x00aaaa,
+	0xaa0000, 0xaa00aa, 0xaa5500, 0xaaaaaa,
+	0x555555, 0x5555ff, 0x55ff55, 0x55ffff,
+	0xff5555, 0xff55ff, 0xffff55, 0xffffff
+};
+
+
 void GFX::setEgaPalette() {
-	const Graphics::Palette ega = Graphics::Palette::createEGAPalette();
-	g_system->getPaletteManager()->setPalette(ega);
+	byte pal[16 * 3];
+	byte *pDest = pal;
+
+	for (int i = 0; i < EGA_PALETTE_COUNT; ++i) {
+		*pDest++ = (EGA_PALETTE[i] >> 16) & 0xff;
+		*pDest++ = (EGA_PALETTE[i] >> 8) & 0xff;
+		*pDest++ = EGA_PALETTE[i] & 0xff;
+		EGA_INDEXES[i] = i;
+	}
+
+	g_system->getPaletteManager()->setPalette(pal, 0, 16);
 
 	uint32 c = 0xffffffff;
 	g_system->getPaletteManager()->setPalette((const byte *)&c, 255, 1);
 
 	// Set the EGA palette indexes to be themselves
-	for (int i = 0; i < EGA_PALETTE_COUNT; ++i)
-		EGA_INDEXES[i] = i;
 }
 
 void GFX::findPalette(const byte palette[256 * 3]) {
-	const Graphics::Palette ega = Graphics::Palette::createEGAPalette();
-	const byte *data = ega.data();
-
 	for (int col = 0; col < 16; ++col) {
-		byte r = data[col * 3 + 2];
-		byte g = data[col * 3 + 1];
-		byte b = data[col * 3 + 0];
+		byte r = (EGA_PALETTE[col] >> 16) & 0xff;
+		byte g = (EGA_PALETTE[col] >> 8) & 0xff;
+		byte b = EGA_PALETTE[col] & 0xff;
 		int closestDiff = 0x7fffffff;
 		byte closest = 0;
 		const byte *pal = &palette[0];
