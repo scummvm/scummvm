@@ -112,6 +112,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed protection from elements spell.
    - Added Text-to-Speech support.
    - Fixed errors with M&M1 monster advancement in combat.
+   - Fixed doors color in M&M1 enhanced mode
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
