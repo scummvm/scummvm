@@ -68,7 +68,11 @@ void PelrockEngine::closeDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
+    if(_inventoryItems.size() == 0) {
+        _selectedInventoryItem = hotspot->extra;
+    }
     _inventoryItems.push_back(hotspot->extra);
+
     hotspot->isEnabled = false;
 }
 

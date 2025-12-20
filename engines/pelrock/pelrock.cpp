@@ -153,10 +153,10 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		// setScreen(0, ALFRED_DOWN);
-		setScreen(2, ALFRED_LEFT);
-		alfredState.x = 576;
-		alfredState.y = 374;
+		setScreen(0, ALFRED_DOWN);
+		// setScreen(2, ALFRED_LEFT);
+		// alfredState.x = 576;
+		// alfredState.y = 374;
 	}
 }
 
@@ -992,12 +992,22 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 
 	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
+	bool shouldBlink = _chrono->getFrameCount() % kIconBlinkPeriod == 0;
 	for (int i = 0; i < actions.size(); i++) {
-		if (icon == actions[i] && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
+		if (icon == actions[i] && shouldBlink) {
 			continue;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+
 	}
+	bool itemUnder = isItemUnder(_events->_mouseX, _events->_mouseY);
+	if(_selectedInventoryItem != -1) {
+		if(itemUnder && shouldBlink) {
+			return;
+		}
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->getInventoryObject(_selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+	}
+
 }
 
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
@@ -1089,6 +1099,17 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		}
 	}
 	return NO_ACTION;
+}
+
+bool PelrockEngine::isItemUnder(int x, int y) {
+	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
+	Common::Rect itemRect = Common::Rect(_actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)), _actionPopupState.y + 20,
+		_actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)) + kVerbIconWidth,
+		_actionPopupState.y + 20 + kVerbIconHeight);
+	if (itemRect.contains(x, y)) {
+		return true;
+	}
+	return false;
 }
 
 bool PelrockEngine::isAlfredUnder(int x, int y) {

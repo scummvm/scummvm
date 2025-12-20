@@ -118,6 +118,7 @@ uint32 DialogManager::readTextBlock(
 }
 
 void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer) {
+
 	int overlayHeight = choices->size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
 	for (int x = 0; x < 640; x++) {

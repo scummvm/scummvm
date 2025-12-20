@@ -81,6 +81,7 @@ private:
 
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
 	VerbIcon isActionUnder(int x, int y);
+	bool isItemUnder(int x, int y);
 	bool isAlfredUnder(int x, int y);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
@@ -108,8 +109,8 @@ private:
 	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
 	void animateTalkingNPC(Sprite *animSet);
-	void playSoundIfNeeded();
 
+	void playSoundIfNeeded();
 	void gameLoop();
 	void menuLoop();
 	void showExtraScreen();
