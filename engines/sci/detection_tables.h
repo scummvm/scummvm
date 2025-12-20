@@ -231,6 +231,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)	},
 
+	{"shield", "", {
+		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
+		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)	},
+
 	// Christmas Card 1988 - English DOS
 	// SCI interpreter version 0.000.294
 	{"christmas1988", "", {
