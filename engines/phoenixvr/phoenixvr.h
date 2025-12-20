@@ -156,6 +156,7 @@ private:
 	};
 
 	Common::HashMap<Common::KeyCode, Common::String, KeyCodeHash> _keys;
+	Common::Array<Common::String> _variableOrder;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	struct Sound {
 		Audio::SoundHandle handle;

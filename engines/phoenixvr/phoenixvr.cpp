@@ -395,11 +395,13 @@ Common::Error PhoenixVREngine::run() {
 	_screenCenter = _screen->getBounds().center();
 	{
 		Common::File vars;
-		if (vars.open(Common::Path("variable.txt"))) {
-			while (!vars.eos()) {
-				auto var = vars.readLine();
-				declareVariable(var);
-			}
+		if (!vars.open(Common::Path("variable.txt")))
+			error("can't read variable.txt");
+
+		while (!vars.eos()) {
+			auto var = vars.readLine();
+			declareVariable(var);
+			_variableOrder.push_back(Common::move(var));
 		}
 	}
 	setNextScript("script.lst");
