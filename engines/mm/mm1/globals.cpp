@@ -22,6 +22,7 @@
 #include "common/engine_data.h"
 #include "engines/engine.h"
 #include "graphics/fonts/ttf.h"
+#include "image/bmp.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/shared/utils/strings.h"
@@ -86,10 +87,15 @@ bool Globals::load(bool isEnhanced) {
 		{
 			// Load the Xeen game screen background
 			Common::File f;
-			if (!f.open("back.raw"))
+			Image::BitmapDecoder decoder;
+			if (f.open("gfx/back.bmp") && decoder.loadStream(f))
+				_gameBackground.copyFrom(*decoder.getSurface());
+			else if (f.open("back.raw")) {
+				_gameBackground.create(320, 200);
+				f.read(_gameBackground.getPixels(), 320 * 200);
+			} else {
 				error("Could not load background");
-			_gameBackground.create(320, 200);
-			f.read(_gameBackground.getPixels(), 320 * 200);
+			}
 		}
 
 		{

@@ -53,8 +53,10 @@ class SpriteResource {
 protected:
 	struct IndexEntry {
 		uint16 _offset1, _offset2;
+		Graphics::ManagedSurface _override;
 	};
 	Common::Array<IndexEntry> _index;
+	Common::Array<Graphics::ManagedSurface> _overrides;
 	size_t _filesize;
 	byte *_data;
 	Common::Path _filename;

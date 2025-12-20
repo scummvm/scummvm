@@ -24,6 +24,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
+#include "image/bmp.h"
 #include "mm/shared/xeen/sprites.h"
 #include "mm/mm.h"
 
@@ -103,6 +104,15 @@ void SpriteResource::load(Common::SeekableReadStream &f) {
 	for (int i = 0; i < count; ++i) {
 		_index[i]._offset1 = f.readUint16LE();
 		_index[i]._offset2 = f.readUint16LE();
+
+		// Check for any bitmaps overriding the default Xeen sprites for M&M1 Enhanced mode
+		Common::String fname = Common::String::format("gfx/%s/image%.2d.bmp", _filename.baseName().c_str(), i);
+		if (Common::File::exists(fname.c_str())) {
+			File fBitmap(fname.c_str());
+			Image::BitmapDecoder decoder;
+			if (decoder.loadStream(fBitmap))
+				_index[i]._override.copyFrom(*decoder.getSurface());
+		}
 	}
 }
 
@@ -149,10 +159,14 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 
 	// WORKAROUND: Crash clicking Vertigo well in Clouds
 	if (frame < (int)_index.size()) {
-		// Sprites can consist of separate background & foreground
-		drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
-		if (_index[frame]._offset2)
-			drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+		if (!_index[frame]._override.empty()) {
+			dest.blitFrom(_index[frame]._override, destPos);
+		} else {
+			// Sprites can consist of separate background & foreground
+			drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
+			if (_index[frame]._offset2)
+				drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+		}
 	}
 
 	delete drawer;
