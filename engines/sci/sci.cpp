@@ -188,6 +188,13 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 		SearchMan.addSubDirectoryMatching(gameDataDir, "bonus"); // resource patches
 	}
 
+	// Inside the Chest and Behind the Developer's Shield are two different
+	// collections of articles, sharing many of the same files. The patches
+	// are inside the shield patch directory.
+	if (_gameId == GID_CHEST && ConfMan.getBool("behind_the_developers_shield")) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "shield", -1);
+	}
+
 	switch (desc->language) {
 	case Common::DE_DEU:
 		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");

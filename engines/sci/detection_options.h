@@ -254,6 +254,20 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_CHEST_BEHIND_THE_SHIELD,
+		{
+			// I18N: The names "Behind the Developer's Shield" and
+			// "Inside the Chest" should probably not be translated.
+			_s("Run as 'Behind the Developer's Shield'"),
+			_s("Show 'Behind the Developer's Shield', which is a different set of articles and artwork than 'Inside the Chest'."),
+			"behind_the_developers_shield",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
