@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -33,7 +34,6 @@
 #include "graphics/framelimiter.h"
 #include "graphics/surface.h"
 #include "image/pcx.h"
-#include "math/utils.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
@@ -504,6 +504,46 @@ void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
 
 bool PhoenixVREngine::testSaveSlot(int idx) const {
 	return _saveFileMan->exists(getSaveStateName(idx));
+}
+
+void PhoenixVREngine::loadSaveSlot(int idx) {
+	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
+	if (!slot) {
+		warning("loadSaveSlot: invalid save slot %d", idx);
+		return;
+	}
+	auto state = loadGameStateObject(slot.get());
+	Common::MemoryReadStream ms(state.state.data(), state.state.size());
+	Common::hexdump(state.state.data(), state.state.size());
+
+	auto angleX = ms.readSint32LE();
+	auto angleY = ms.readSint32LE();
+	auto soundVolumnPanY = ms.readSint32LE();
+	auto soundVolumePanX = ms.readSint32LE();
+	auto angleXMax = ms.readSint32LE();
+	auto angleYMin = ms.readSint32LE();
+	auto angleYMax = ms.readSint32LE();
+	auto currentWarpIdx = ms.readUint32LE();
+	auto currentWarpTests = ms.readUint32LE();
+	auto printText = ms.readString(0, 257);
+	auto text = ms.readString(0, 257);
+	debug("angle: %d %d, sound pan: %d %d, angle X max %d, angle Y range %d %d, warp: %u, tests: %u",
+		  angleX, angleY, soundVolumePanX, soundVolumnPanY,
+		  angleXMax, angleYMin, angleYMax,
+		  currentWarpIdx, currentWarpTests);
+	for (auto &vr : _script->getWarpNames()) {
+		auto warp = getWarp(vr);
+		auto &tests = warp->tests;
+		for (uint testIdx = 1; testIdx < tests.size(); ++testIdx) {
+			auto cursor = ms.readString(0, 257);
+			debug("warp %s.%d: %s", vr.c_str(), testIdx, cursor.c_str());
+		}
+	}
+	debug("vars at %08lx", ms.pos());
+	for (auto &name : _variableOrder) {
+		auto value = ms.readUint32LE();
+		debug("var %s: %u", name.c_str(), value);
+	}
 }
 
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {

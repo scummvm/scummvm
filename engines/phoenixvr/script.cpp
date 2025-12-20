@@ -239,18 +239,9 @@ void Script::Scope::exec(ExecutionContext &ctx) const {
 	}
 }
 
-void Script::Warp::setText(int idx, const TestPtr &text) {
-	if (idx < -1)
-		error("test id must be >= -1");
-	uint realIdx = idx + 1;
-	if (realIdx >= tests.size())
-		tests.resize(realIdx + 1);
-	tests[realIdx] = text;
-}
-
 Script::TestPtr Script::Warp::getTest(int idx) const {
-	idx += 1;
-	return idx < (int)tests.size() ? tests[idx] : Script::TestPtr{};
+	auto it = Common::find_if(tests.begin(), tests.end(), [&](const TestPtr &test) { return test->idx == idx; });
+	return it != tests.end() ? *it : Script::TestPtr{};
 }
 
 Script::Script(Common::SeekableReadStream &s) {
@@ -281,6 +272,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 			_currentWarp.reset(new Warp{vr, test, {}});
 			_warpsIndex[vr] = _warps.size();
 			_warps.push_back(_currentWarp);
+			_warpNames.push_back(vr);
 		} else if (p.maybe("test]=")) {
 			if (!_currentWarp)
 				error("test without warp");
@@ -288,7 +280,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 			if (!_currentWarp)
 				error("text must have parent wrap section");
 			_currentTest.reset(new Test{idx, {}});
-			_currentWarp->setText(idx, _currentTest);
+			_currentWarp->tests.push_back(_currentTest);
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}

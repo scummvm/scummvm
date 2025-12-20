@@ -69,7 +69,6 @@ public:
 		Common::Array<TestPtr> tests;
 
 		void parseLine(const Common::String &line, uint lineno);
-		void setText(int idx, const TestPtr &text);
 		TestPtr getTest(int idx) const;
 		TestPtr getDefaultTest() const {
 			return getTest(-1);
@@ -81,6 +80,7 @@ public:
 
 private:
 	Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _warpsIndex;
+	Common::Array<Common::String> _warpNames;
 	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
@@ -97,6 +97,10 @@ public:
 
 	ConstWarpPtr getWarp(const Common::String &name) const;
 	ConstWarpPtr getInitScript() const;
+
+	const Common::Array<Common::String> &getWarpNames() const {
+		return _warpNames;
+	}
 };
 } // namespace PhoenixVR
 
