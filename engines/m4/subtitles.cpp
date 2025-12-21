@@ -31,10 +31,8 @@ namespace M4 {
 M4Subtitles::M4Subtitles() {
 	_loaded = loadSubtitles(IS_RIDDLE ? "riddle.pot" : "burger.pot");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
-	if (_loaded) {
+	if (_loaded)
 		setupSubtitles();
-		g_system->showOverlay(false);
-	}
 }
 
 M4Subtitles::~M4Subtitles() {
@@ -114,7 +112,6 @@ bool M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 	renderSubtitle();
 	_parts = nullptr;
 
-	g_system->showOverlay(false);
 	updateSubtitleOverlay();
 
 	return true;
@@ -129,8 +126,10 @@ void M4Subtitles::updateSubtitleOverlay() const {
 		g_system->hideOverlay();
 		return;
 	} else {
-		if (!g_system->isOverlayVisible())
+		if (!g_system->isOverlayVisible()) {
+			g_system->clearOverlay();
 			g_system->showOverlay(false);
+		}
 	}
 
 	if (_overlayHasAlpha) {
@@ -151,7 +150,6 @@ void M4Subtitles::clearSubtitle() const {
 		return;
 
 	g_system->hideOverlay();
-	g_system->clearOverlay();
 	_drawRect.setEmpty();
 	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
 }
