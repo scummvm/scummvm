@@ -96,13 +96,13 @@ Common::String M4Subtitles::getSubtitle(const Common::String &audioFile) const {
 	return _subtitles.contains(key) ? _subtitles[key] : "";
 }
 
-bool M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
+void M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 	if (!_loaded || !_subtitlesEnabled)
-		return false;
+		return;
 
 	Common::String subtitle = getSubtitle(audioFile);
 	if (subtitle.empty())
-		return false;
+		return;
 
 	Common::Array<Video::SubtitlePart> parts;
 	parts.push_back(Video::SubtitlePart(subtitle, ""));
@@ -113,8 +113,6 @@ bool M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 	_parts = nullptr;
 
 	updateSubtitleOverlay();
-
-	return true;
 }
 
 void M4Subtitles::updateSubtitleOverlay() const {
