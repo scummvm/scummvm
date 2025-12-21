@@ -92,6 +92,7 @@ const int kAlfredIdleAnimationFrameCount = 300;
 #define OVERLAY_NONE 0
 #define OVERLAY_CHOICES 1
 #define OVERLAY_PICKUP_ICON 2
+#define OVERLAY_ACTION 3
 
 const byte kIconBlinkPeriod = 4;
 
@@ -126,7 +127,8 @@ struct AlfredState {
 	uint16 movementSpeed = 6; // pixels per frame
 	uint16 x = 319;
 	uint16 y = 302;
-	float currentScale = 1.0f;
+	uint16 scaledX = 0;
+	uint16 scaledY = 0;
 	int idleFrameCounter = 0;
 };
 
@@ -204,6 +206,8 @@ struct HotSpot {
 	byte actionFlags;
 	int16 extra;
 	bool isEnabled = true;
+	bool isSprite = false;
+	byte zOrder = 0;
 };
 
 struct TalkingAnimHeader {

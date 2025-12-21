@@ -74,6 +74,7 @@ private:
 		Walking alforithm
 	*/
 	void walkTo(int x, int y);
+	AlfredDirection calculateAlfredsDirection(HotSpot *hotspot);
 
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
 	VerbIcon isActionUnder(int x, int y);
@@ -142,7 +143,6 @@ private:
 
 	// JAVA
 	bool shouldPlayIntro = false;
-	bool inConversation = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
 

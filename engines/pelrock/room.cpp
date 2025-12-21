@@ -226,6 +226,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roo
 		spot.y = roomFile->readSint16LE();
 		spot.w = roomFile->readByte();
 		spot.h = roomFile->readByte();
+		spot.isSprite = false;
 		spot.extra = roomFile->readSint16LE();
 		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
@@ -252,6 +253,8 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		thisHotspot.extra = anims[i].extra;
 		thisHotspot.actionFlags = anims[i].actionFlags;
 		thisHotspot.isEnabled = !anims[i].isDisabled;
+		thisHotspot.isSprite = true;
+		thisHotspot.zOrder = anims[i].zOrder;
 		hotspots.push_back(thisHotspot);
 	}
 

@@ -233,6 +233,8 @@ bool PelrockEngine::renderScene(int overlayMode) {
 			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
 		} else if (overlayMode == OVERLAY_PICKUP_ICON) {
 			pickupIconFlash();
+		} else if (overlayMode == OVERLAY_ACTION) {
+			showActionBalloon(_actionPopupState.x, _actionPopupState.y, _actionPopupState.curFrame);
 		}
 
 		presentFrame();
@@ -290,8 +292,9 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 void PelrockEngine::checkMouse() {
 
 	// Cancel walking animation on mouse click
-	if(_events->_leftMouseButton) {
+	if (_events->_leftMouseButton) {
 		alfredState.curFrame = 0;
+		alfredState.idleFrameCounter = 0;
 		alfredState.animState = ALFRED_IDLE;
 	}
 
@@ -310,19 +313,15 @@ void PelrockEngine::checkMouse() {
 		}
 		_actionPopupState.isActive = false;
 		_events->_popupSelectionMode = false;
-		alfredState.idleFrameCounter = 0;
 	} else if (_events->_leftMouseClicked) {
 		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
-		alfredState.idleFrameCounter = 0;
 		_events->_leftMouseClicked = false;
 		_actionPopupState.isActive = false;
 	} else if (_events->_longClicked) {
-		alfredState.idleFrameCounter = 0;
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
 	} else if (_events->_rightMouseClicked) {
-		alfredState.idleFrameCounter = 0;
 		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		stateGame = SETTINGS;
@@ -367,7 +366,7 @@ void PelrockEngine::updateAnimations() {
 
 void PelrockEngine::presentFrame() {
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	// paintDebugLayer();
+	paintDebugLayer();
 	_screen->markAllDirty();
 }
 
@@ -566,6 +565,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
 				alfredState.animState = ALFRED_IDLE;
+				alfredState.direction = calculateAlfredsDirection(_currentHotspot);
 				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
@@ -608,7 +608,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			break;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[alfredState.direction][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-		alfredState.curFrame++;
+		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+			alfredState.curFrame++;
 		break;
 	case ALFRED_INTERACTING:
 		if (alfredState.curFrame >= interactingAnimLength) {
@@ -813,7 +814,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 
 	if (hotspotIndex != -1 && !_actionPopupState.isActive) {
 
-		_actionPopupState.x = alfredState.x + kAlfredFrameWidth/2 - kBalloonWidth / 2;
+		_actionPopupState.x = alfredState.x + kAlfredFrameWidth / 2 - kBalloonWidth / 2;
 		if (_actionPopupState.x < 0)
 			_actionPopupState.x = 0;
 		if (_actionPopupState.x + kBalloonWidth > 640) {
@@ -977,7 +978,6 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 }
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
-
 	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 
@@ -995,6 +995,11 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 			return;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getInventoryObject(_selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+	}
+	if (_actionPopupState.curFrame < 3) {
+		_actionPopupState.curFrame++;
+	} else {
+		_actionPopupState.curFrame = 0;
 	}
 }
 
@@ -1044,16 +1049,8 @@ void PelrockEngine::pickupIconFlash() {
 
 void PelrockEngine::gameLoop() {
 	_events->pollEvent();
-
-	if (inConversation) {
-		// TODO: Pass actual conversation data from room
-		// For now, using nullptr to disable - actual data needs to be loaded
-		_dialog->startConversation(nullptr, 0);
-		inConversation = false;
-	} else {
-		checkMouse();
-		renderScene();
-	}
+	checkMouse();
+	renderScene();
 }
 
 void PelrockEngine::extraScreenLoop() {
@@ -1083,6 +1080,50 @@ void PelrockEngine::walkTo(int x, int y) {
 	_currentContext = context;
 	alfredState.animState = ALFRED_WALKING;
 	alfredState.curFrame = 0;
+}
+
+AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
+
+	AlfredDirection calculatedDirection = ALFRED_DOWN;
+	if (hotspot->isSprite) {
+		// Check if Alfred's left edge is past sprite's right edge
+		if (hotspot->x + hotspot->w < alfredState.x) {
+			calculatedDirection = ALFRED_LEFT; // Face LEFT
+		}
+		// Check if Alfred's right edge is before sprite's left edge
+		else if ((alfredState.x + kAlfredFrameWidth - alfredState.scaledX) < hotspot->x) {
+			calculatedDirection = ALFRED_RIGHT; // Face RIGHT
+		}
+		// Alfred is horizontally overlapping with sprite
+		else {
+			// Check if Alfred's top is above sprite's bottom OR Alfred is within sprite's Y range
+			if (((alfredState.y + kAlfredFrameHeight - alfredState.scaledY) < hotspot->y) ||
+				(alfredState.y <= hotspot->y + hotspot->h &&
+				 hotspot->zOrder <= ((399 - alfredState.y) / 2) + 10)) {
+				calculatedDirection = ALFRED_DOWN; // Face DOWN
+			} else {
+				calculatedDirection = ALFRED_UP; // Face UP
+			}
+		}
+	} else {
+		// Check if Alfred's left edge is past hotspot's right edge
+		if (hotspot->x + hotspot->w < alfredState.x) {
+			calculatedDirection = ALFRED_LEFT; // Face LEFT
+		}
+		// Check if Alfred's right edge is before hotspot's left edge
+		else if ((alfredState.x + kAlfredFrameWidth - alfredState.scaledX) < hotspot->x) {
+			calculatedDirection = ALFRED_RIGHT; // Face RIGHT
+		}
+		// Check vertical positioning
+		else if (((alfredState.y + kAlfredFrameHeight - alfredState.scaledY) < hotspot->y) ||
+				 (alfredState.y <= hotspot->y + hotspot->h &&
+				  (hotspot->actionFlags & 0x80) == 0x80)) {
+			calculatedDirection = ALFRED_DOWN; // Face DOWN
+		} else {
+			calculatedDirection = ALFRED_UP; // Face UP
+		}
+	}
+	return calculatedDirection;
 }
 
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
@@ -1137,11 +1178,14 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, isHotspotUnder, isHotspotUnder ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
 	_curWalkTarget = walkTarget;
 
-	// if (hotspotIndex != -1) {
-	// 	_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
-	// 	walkTarget.x = _currentHotspot->x + _currentHotspot->w / 2;
-	// 	walkTarget.y = _currentHotspot->y + _currentHotspot->h;
-	// }
+	if (hotspotIndex != -1) {
+		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
+		walkTarget.x = _currentHotspot->x + _currentHotspot->w / 2;
+		walkTarget.y = _currentHotspot->y + _currentHotspot->h;
+	}
+	else {
+		_currentHotspot = nullptr;
+	}
 
 	walkTo(walkTarget.x, walkTarget.y);
 
