@@ -30,6 +30,7 @@
 #define HUGO_OBJECT_H
 
 #include "common/file.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
@@ -94,6 +95,7 @@ public:
 	void setCarriedScreen(int screenNum);
 	void showTakeables();
 	void useObject(int16 objId);
+	Direction getDirection(int16 objId);
 
 	static int y2comp(const void *a, const void *b);
 

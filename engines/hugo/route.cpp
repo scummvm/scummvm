@@ -40,7 +40,7 @@
 
 namespace Hugo {
 Route::Route(HugoEngine *vm) : _vm(vm) {
-	_oldWalkDirection = 0;
+	_oldWalkDirection = kDirectionNone;
 	_routeIndex       = -1;                         // Hero not following a route
 	_routeType        = kRouteSpace;                // Hero walking to space
 	_routeObjId       = -1;                         // Hero not walking to anything
@@ -68,27 +68,27 @@ int16 Route::getRouteIndex() const {
 /**
  * Face hero in new direction, based on cursor key input by user.
  */
-void Route::setDirection(const uint16 direction) {
+void Route::setDirection(const Direction direction) {
 	debugC(1, kDebugRoute, "setDirection(%d)", direction);
 
 	Object *obj = _vm->_hero;                     // Pointer to hero object
 
 	// Set first image in sequence
 	switch (direction) {
-	case kActionMoveTop:
+	case kDirectionTop:
 		obj->_currImagePtr = obj->_seqList[SEQ_UP]._seqPtr;
 		break;
-	case kActionMoveBottom:
+	case kDirectionBottom:
 		obj->_currImagePtr = obj->_seqList[SEQ_DOWN]._seqPtr;
 		break;
-	case kActionMoveLeft:
-	case kActionMoveTopLeft:
-	case kActionMoveBottomLeft:
+	case kDirectionLeft:
+	case kDirectionTopLeft:
+	case kDirectionBottomLeft:
 		obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 		break;
-	case kActionMoveRight:
-	case kActionMoveTopRight:
-	case kActionMoveBottomRight:
+	case kDirectionRight:
+	case kDirectionTopRight:
+	case kDirectionBottomRight:
 		obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 		break;
 	default:
@@ -100,7 +100,7 @@ void Route::setDirection(const uint16 direction) {
  * Set hero walking, based on cursor key input by user.
  * Hitting same key twice will stop hero.
  */
-void Route::setWalk(const uint16 direction) {
+void Route::setWalk(const Direction direction) {
 	debugC(1, kDebugRoute, "setWalk(%d)", direction);
 
 	Object *obj = _vm->_hero;                     // Pointer to hero object
@@ -109,7 +109,7 @@ void Route::setWalk(const uint16 direction) {
 		return;
 
 	if (!obj->_vx && !obj->_vy)
-		_oldWalkDirection = 0;                      // Fix for consistent restarts
+		_oldWalkDirection = kDirectionNone;         // Fix for consistent restarts
 
 	if (direction != _oldWalkDirection) {
 		// Direction has changed
@@ -117,34 +117,34 @@ void Route::setWalk(const uint16 direction) {
 		obj->_vx = obj->_vy = 0;
 
 		switch (direction) {
-		case kActionMoveTop:
+		case kDirectionTop:
 			obj->_vy = -kStepDy;
 			break;
-		case kActionMoveBottom:
+		case kDirectionBottom:
 			obj->_vy = kStepDy;
 			break;
-		case kActionMoveLeft:
+		case kDirectionLeft:
 			obj->_vx = -kStepDx;
 			break;
-		case kActionMoveRight:
+		case kDirectionRight:
 			obj->_vx = kStepDx;
 			break;
-		case kActionMoveTopLeft:
+		case kDirectionTopLeft:
 			obj->_vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->_vy = -kStepDy / 2;
 			break;
-		case kActionMoveTopRight:
+		case kDirectionTopRight:
 			obj->_vx = kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->_vy = -kStepDy / 2;
 			break;
-		case kActionMoveBottomLeft:
+		case kDirectionBottomLeft:
 			obj->_vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->_vy = kStepDy / 2;
 			break;
-		case kActionMoveBottomRight:
+		case kDirectionBottomRight:
 			obj->_vx = kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->_vy = kStepDy / 2;
@@ -158,7 +158,7 @@ void Route::setWalk(const uint16 direction) {
 		// Same key twice - halt hero
 		obj->_vy = 0;
 		obj->_vx = 0;
-		_oldWalkDirection = 0;
+		_oldWalkDirection = kDirectionNone;
 		obj->_cycling = kCycleNotCycling;
 	}
 }
@@ -449,7 +449,7 @@ void Route::processRoute() {
 					_vm->_object->lookObject(&_vm->_object->_objects[_routeObjId]);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[_routeObjId]._direction);
+					setDirection(_vm->_object->getDirection(_routeObjId));
 					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
@@ -459,7 +459,7 @@ void Route::processRoute() {
 					_vm->_object->useObject(_routeObjId);
 					turnedFl = false;
 				} else {
-					setDirection(_vm->_object->_objects[_routeObjId]._direction);
+					setDirection(_vm->_object->getDirection(_routeObjId));
 					_routeIndex++;                  // Come round again
 					turnedFl = true;
 				}
@@ -473,14 +473,14 @@ void Route::processRoute() {
 		// Note realignment when changing to (thinner) up/down sprite,
 		// otherwise hero could bump into boundaries along route.
 		if (herox < routeNode->x) {
-			setWalk(Common::KEYCODE_RIGHT);
+			setWalk(kDirectionRight);
 		} else if (herox > routeNode->x) {
-			setWalk(Common::KEYCODE_LEFT);
+			setWalk(kDirectionLeft);
 		} else if (heroy < routeNode->y) {
-			setWalk(Common::KEYCODE_DOWN);
+			setWalk(kDirectionBottom);
 			_vm->_hero->_x = _vm->_hero->_oldx = routeNode->x - _vm->_hero->_currImagePtr->_x1;
 		} else if (heroy > routeNode->y) {
-			setWalk(Common::KEYCODE_UP);
+			setWalk(kDirectionTop);
 			_vm->_hero->_x = _vm->_hero->_oldx = routeNode->x - _vm->_hero->_currImagePtr->_x1;
 		}
 	}

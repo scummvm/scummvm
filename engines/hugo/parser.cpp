@@ -381,15 +381,44 @@ void Parser::actionHandler(Common::Event event) {
 		}
 		break;
 	case kActionMoveTop:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionTop);
+		break;
 	case kActionMoveBottom:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionBottom);
+		break;
 	case kActionMoveLeft:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionLeft);
+		break;
 	case kActionMoveRight:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionRight);
+		break;
 	case kActionMoveTopLeft:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionTopLeft);
+		break;
 	case kActionMoveTopRight:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionTopRight);
+		break;
 	case kActionMoveBottomLeft:
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionBottomLeft);
+		break;
 	case kActionMoveBottomRight:
-		_vm->_route->resetRoute();              // Stop any automatic route
-		_vm->_route->setWalk(event.customType); // Direction of hero travel
+		// Stop any automatic route and set direction of hero travel
+		_vm->_route->resetRoute();
+		_vm->_route->setWalk(kDirectionBottomRight);
 		break;
 	default:
 		break;

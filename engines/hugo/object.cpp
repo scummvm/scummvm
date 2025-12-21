@@ -187,6 +187,11 @@ void ObjectHandler::useObject(int16 objId) {
 	_vm->_parser->lineHandler();                    // and process command
 }
 
+Direction ObjectHandler::getDirection(int16 objId)
+{
+	return Utils::getDirection(_objects[objId]._direction);
+}
+
 /**
  * Return object index of the topmost object under the cursor, or -1 if none
  * Objects are filtered if not "useful"

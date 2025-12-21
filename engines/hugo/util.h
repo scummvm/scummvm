@@ -35,6 +35,18 @@ enum seqTextUtil {
 	kGameOver = 0
 };
 
+enum Direction {
+	kDirectionNone,
+	kDirectionTop,
+	kDirectionBottom,
+	kDirectionLeft,
+	kDirectionRight,
+	kDirectionTopRight,
+	kDirectionTopLeft,
+	kDirectionBottomRight,
+	kDirectionBottomLeft
+};
+
 namespace Utils {
 
 int   firstBit(byte data);
@@ -66,6 +78,8 @@ bool yesNoBox(const Common::U32String &msg);
  * @return the string which was passed in
  */
 char *hugo_strlwr(char *buffer);
+
+Direction getDirection(const uint16 keyCode);
 
 #ifdef USE_TTS
 /**
