@@ -91,6 +91,7 @@ public:
 	uint16 _objectID;
 	Math::Vector3d _origin, _size, _rotation;
 	Math::AABB _boundingBox;
+	Math::AABB _occlusionBox;
 	Object *_partOfGroup = nullptr;
 };
 

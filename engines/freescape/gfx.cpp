@@ -847,13 +847,13 @@ void Renderer::renderCube(const Math::Vector3d &originalOrigin, const Math::Vect
 	uint color = (*colours)[0];
 	uint ecolor = ecolours ? (*ecolours)[0] : 0;
 
-	if (size.x() <= 1) {
+	/*if (size.x() <= 1) {
 		origin.x() += offset;
 	} else if (size.y() <= 1) {
 		origin.y() += offset;
 	} else if (size.z() <= 1) {
 		origin.z() += offset;
-	}
+	}*/
 
 	if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 		setStippleData(stipple);
@@ -977,8 +977,7 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 	Math::Vector3d size = originalSize;
 	Math::Vector3d origin = originalOrigin;
 
-	if (!_isAccelerated)
-		polygonOffset(true);
+	enableCulling(false);
 
 	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
 		/* According to https://www.shdon.com/freescape/
@@ -995,17 +994,16 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		it were a rectangle perpendicular to the Z axis.
 		TODO: fix this case.
 		*/
-		if (size.x() <= size.y() && size.x() <= size.z())
+		/*if (size.x() <= size.y() && size.x() <= size.z())
 			size.x() = 0;
 		else if (size.y() <= size.x() && size.y() <= size.z())
 			size.y() = 0;
 		else if (size.z() <= size.x() && size.z() <= size.y())
 			size.z() = 0;
 		else
-			error("Invalid size!");
+			error("Invalid size!");*/
 	}
 
-	float dx, dy, dz;
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	Common::Array<Math::Vector3d> vertices;
@@ -1028,33 +1026,36 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
+			float d1x = 0, d1y = 0, d1z = 0;
+			if (size.x() == 0) {
+				d1y = size.y();
+			} else if (size.y() == 0) {
+				d1x = size.x();
+			} else if (size.z() == 0) {
+				d1x = size.x();
+			}
+
+			float d2x = 0, d2y = 0, d2z = 0;
+			if (size.x() == 0) {
+				d2z = size.z();
+			} else if (size.y() == 0) {
+				d2z = size.z();
+			} else if (size.z() == 0) {
+				d2y = size.y();
+			}
+
 			vertices.clear();
-			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
-
-			dx = dy = dz = 0.0;
-			if (size.x() == 0) {
-				dy = size.y();
-			} else if (size.y() == 0) {
-				dx = size.x();
-			} else if (size.z() == 0) {
-				dx = size.x();
+			if (i == 0) {
+				vertices.push_back(origin);
+				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
+				vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+				vertices.push_back(Math::Vector3d(origin.x() + d1x, origin.y() + d1y, origin.z() + d1z));
+			} else {
+				vertices.push_back(origin);
+				vertices.push_back(Math::Vector3d(origin.x() + d1x, origin.y() + d1y, origin.z() + d1z));
+				vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
+				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
 			}
-
-			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
-			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
-			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
-
-			dx = dy = dz = 0.0;
-			if (size.x() == 0) {
-				dz = size.z();
-			} else if (size.y() == 0) {
-				dz = size.z();
-			} else if (size.z() == 0) {
-				dy = size.y();
-			}
-
-			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
-			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1064,7 +1065,8 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 			}
 		}
 	}
-	polygonOffset(false);
+
+	enableCulling(true);
 }
 
 void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
@@ -1079,9 +1081,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 
 	uint color = 0;
 	uint ecolor = 0;
-
+	enableCulling(false);
 	if (ordinates->size() == 6) { // Line
-		polygonOffset(true);
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
 
@@ -1114,12 +1115,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 			renderFace(vertices);
 			useStipple(false);
 		}
-		polygonOffset(false);
 	} else {
-
-		if (!_isAccelerated)
-			polygonOffset(true);
-
 		if (size.x() == 0) {
 			for (int i = 0; i < int(ordinates->size()); i++) {
 				if (i % 3 == 0)
@@ -1174,7 +1170,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 	}
 
-	polygonOffset(false);
+	enableCulling(true);
 	delete(ordinates);
 }
 
