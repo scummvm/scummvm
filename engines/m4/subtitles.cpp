@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
 
@@ -29,6 +30,7 @@ namespace M4 {
 
 M4Subtitles::M4Subtitles() {
 	_loaded = loadSubtitles(IS_RIDDLE ? "riddle.pot" : "burger.pot");
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	if (_loaded) {
 		setupSubtitles();
 		g_system->showOverlay(false);
@@ -91,15 +93,15 @@ bool M4Subtitles::loadSubtitles(const Common::String &filename) {
 }
 
 Common::String M4Subtitles::getSubtitle(const Common::String &audioFile) const {
-	if (!_loaded)
-		return "";
-
 	Common::String key = audioFile;
 	key.toUppercase();
 	return _subtitles.contains(key) ? _subtitles[key] : "";
 }
 
 bool M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
+	if (!_loaded || !_subtitlesEnabled)
+		return false;
+
 	Common::String subtitle = getSubtitle(audioFile);
 	if (subtitle.empty())
 		return false;
@@ -119,7 +121,7 @@ bool M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 }
 
 void M4Subtitles::updateSubtitleOverlay() const {
-	if (!_loaded)
+	if (!_loaded || !_subtitlesEnabled)
 		return;
 
 	if (!digi_play_state(1) && !digi_play_state(2)) {
@@ -145,7 +147,7 @@ void M4Subtitles::updateSubtitleOverlay() const {
 }
 
 void M4Subtitles::clearSubtitle() const {
-	if (!_loaded)
+	if (!_loaded || !_subtitlesEnabled)
 		return;
 
 	g_system->hideOverlay();

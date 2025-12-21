@@ -32,7 +32,6 @@ public:
 	M4Subtitles();
 	~M4Subtitles();
 
-	Common::String getSubtitle(const Common::String &audioFile) const;
 	bool drawSubtitle(const Common::String &audioFile) const;
 	void clearSubtitle() const;
 	void updateSubtitleOverlay() const;
@@ -40,8 +39,10 @@ public:
 private:
 	void setupSubtitles();
 	bool loadSubtitles(const Common::String &filename);
+	Common::String getSubtitle(const Common::String &audioFile) const;
 
 	Common::HashMap<Common::String, Common::String> _subtitles;
+	bool _subtitlesEnabled;
 };
 
 } // namespace M4
