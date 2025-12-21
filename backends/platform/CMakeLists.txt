@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.23)
-
-project(ScummVM)
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   add_executable(platform)
 endif()

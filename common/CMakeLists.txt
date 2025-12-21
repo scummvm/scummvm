@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.23)
-
-project(ScummVM)
-
 add_library(common)
 
 target_sources(
