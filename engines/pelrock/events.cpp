@@ -63,7 +63,10 @@ void PelrockEventManager::pollEvent() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (_leftMouseButton == 1) {
-				_leftMouseClicked = true;
+				// Don't treat as regular click if we're in popup selection mode
+				if (!_popupSelectionMode) {
+					_leftMouseClicked = true;
+				}
 				_mouseClickX = _event.mouse.x;
 				_mouseClickY = _event.mouse.y;
 				_longClicked = false;
@@ -97,7 +100,7 @@ void PelrockEventManager::pollEvent() {
 		if (elapsedLongClick >= kDoubleClickDelay) {
 			elapsedLongClick = 0;
 			_longClicked = true;
-			_leftMouseButton = 0;
+			_popupSelectionMode = true;
 		}
 	}
 }

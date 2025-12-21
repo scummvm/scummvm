@@ -165,7 +165,6 @@ void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
 }
 
-
 Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	if (hotspot == nullptr) {
 		return Common::Array<VerbIcon>();
@@ -230,9 +229,9 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		placeStickers();
 		updateAnimations();
 
-		if (overlayMode == 1) {
+		if (overlayMode == OVERLAY_CHOICES) {
 			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
-		} else if (overlayMode == 2) {
+		} else if (overlayMode == OVERLAY_PICKUP_ICON) {
 			pickupIconFlash();
 		}
 
@@ -289,7 +288,31 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 }
 
 void PelrockEngine::checkMouse() {
-	if (_events->_leftMouseClicked) {
+
+	// Cancel walking animation on mouse click
+	if(_events->_leftMouseButton) {
+		alfredState.curFrame = 0;
+		alfredState.animState = ALFRED_IDLE;
+	}
+
+	// Handle mouse release after long press (popup selection mode)
+	if (_events->_popupSelectionMode && !_events->_leftMouseButton) {
+		// Mouse was released while popup is active
+		VerbIcon actionClicked = isActionUnder(_events->_mouseX, _events->_mouseY);
+		if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
+			// Action was selected - queue it
+			walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
+			_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
+		} else {
+			// Released outside popup - just close it
+			_queuedAction = QueuedAction{NO_ACTION, -1, false};
+			_currentHotspot = nullptr;
+		}
+		_actionPopupState.isActive = false;
+		_events->_popupSelectionMode = false;
+		alfredState.idleFrameCounter = 0;
+	} else if (_events->_leftMouseClicked) {
+		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		alfredState.idleFrameCounter = 0;
 		_events->_leftMouseClicked = false;
@@ -788,9 +811,9 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 
-	if (hotspotIndex != -1) {
+	if (hotspotIndex != -1 && !_actionPopupState.isActive) {
 
-		_actionPopupState.x = alfredState.x - kBalloonWidth / 2;
+		_actionPopupState.x = alfredState.x + kAlfredFrameWidth/2 - kBalloonWidth / 2;
 		if (_actionPopupState.x < 0)
 			_actionPopupState.x = 0;
 		if (_actionPopupState.x + kBalloonWidth > 640) {
@@ -1100,22 +1123,8 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 }
 
 void PelrockEngine::checkMouseClick(int x, int y) {
-
-	if (_actionPopupState.isActive) {
-		// Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-		VerbIcon actionClicked = isActionUnder(x, y);
-		if (actionClicked != NO_ACTION) {
-			_actionPopupState.isActive = false;
-			if (_currentHotspot != nullptr) {
-				walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
-				_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
-				return;
-			}
-		}
-	}
-
+	// This handles regular clicks (not popup selection)
 	_queuedAction = QueuedAction{NO_ACTION, -1, false};
-
 	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
 
