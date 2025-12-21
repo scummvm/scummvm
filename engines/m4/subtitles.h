@@ -32,7 +32,7 @@ public:
 	M4Subtitles();
 	~M4Subtitles();
 
-	bool drawSubtitle(const Common::String &audioFile) const;
+	void drawSubtitle(const Common::String &audioFile) const;
 	void clearSubtitle() const;
 	void updateSubtitleOverlay() const;
 
