@@ -428,8 +428,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 		return false;
 	}
 
-	if (recalculateBoundingBox())
-		force = true;
+	force |= recalculateBoundingBox();
 
 	if (!force && _overlayHasAlpha && parts == _parts)
 		return false;
