@@ -42,7 +42,7 @@ public:
 	void addSticker(Sticker sticker);
 	void removeSticker(int index);
 	bool hasSticker(int index);
-	HotSpot * findHotspotByExtra(uint16 extra);
+	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
 	Common::String getRoomName(int roomNumber) {

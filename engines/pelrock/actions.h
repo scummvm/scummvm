@@ -21,17 +21,18 @@
 #ifndef PELROCK_ACTIONS_H
 #define PELROCK_ACTIONS_H
 
-#include "pelrock/types.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/types.h"
 
 namespace Pelrock {
 
 const int WILDCARD = -1;
+const int kIconFlashDuration = 15; // frames
 
 struct ActionEntry {
-    int hotspotExtra;
-    VerbIcon action;
-    void (PelrockEngine::*handler)(HotSpot *);
+	int hotspotExtra;
+	VerbIcon action;
+	void (PelrockEngine::*handler)(HotSpot *);
 };
 
 // Action table for all rooms

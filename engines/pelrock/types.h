@@ -89,6 +89,10 @@ const int kAlfredIdleAnimationFrameCount = 300;
 
 #define ALFRED_COLOR 0x0D
 
+#define OVERLAY_NONE 0
+#define OVERLAY_CHOICES 1
+#define OVERLAY_PICKUP_ICON 2
+
 const byte kIconBlinkPeriod = 4;
 
 enum AlfredAnimState {

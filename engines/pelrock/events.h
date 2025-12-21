@@ -32,6 +32,7 @@ private:
 	bool _leftMouseButton = 0;
 	bool _rightMouseButton = 0;
 	uint32 _clickTime = 0;
+
 public:
 	int16 _mouseX = 0;
 	int16 _mouseY = 0;

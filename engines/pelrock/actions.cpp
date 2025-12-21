@@ -20,8 +20,9 @@
  */
 
 #include "pelrock/actions.h"
-#include "pelrock/pelrock.h"
 #include "pelrock/offsets.h"
+#include "pelrock/pelrock.h"
+#include "pelrock/util.h"
 
 namespace Pelrock {
 
@@ -50,7 +51,7 @@ const ActionEntry actionTable[] = {
 // Handler implementations
 void PelrockEngine::openDrawer(HotSpot *hotspot) {
 	if (_room->hasSticker(91)) {
-        _dialog->say(_res->_ingameTexts[ALREADY_OPENED_M]);
+		_dialog->say(_res->_ingameTexts[ALREADY_OPENED_M]);
 		return;
 	}
 	_room->addSticker(_res->getSticker(91));
@@ -76,8 +77,18 @@ void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
 	if (_inventoryItems.size() == 0) {
 		_selectedInventoryItem = hotspot->extra;
 	}
-	_inventoryItems.push_back(hotspot->extra);
+	int frameCounter = 0;
+	while (frameCounter < kIconFlashDuration) {
+		_events->pollEvent();
 
+		bool didRender = renderScene(OVERLAY_PICKUP_ICON);
+		_screen->update();
+		if (didRender) {
+			frameCounter++;
+		}
+		g_system->delayMillis(10);
+	}
+	_inventoryItems.push_back(hotspot->extra);
 	hotspot->isEnabled = false;
 }
 

@@ -27,6 +27,7 @@
 #include "pelrock/events.h"
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
+#include "pelrock/graphics.h"
 #include "pelrock/types.h"
 
 namespace Pelrock {
@@ -73,6 +74,7 @@ class DialogManager {
 private:
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
+	GraphicsManager *_graphics = nullptr;
 	Sprite *_curSprite = nullptr;
 
 	// Private helper functions for conversation parsing
@@ -85,7 +87,7 @@ private:
 	void sayAlfred(Common::StringArray texts);
 
 public:
-	DialogManager(Graphics::Screen *screen, PelrockEventManager *events);
+	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);
 	~DialogManager();
 
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);

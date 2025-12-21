@@ -314,7 +314,7 @@ Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(by
 			pos++;
 			continue;
 		}
-		if( decode )
+		if (decode)
 			desc.append(1, decodeChar(data[pos]));
 		else
 			desc.append(1, data[pos]);

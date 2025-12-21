@@ -26,12 +26,12 @@
 
 namespace Pelrock {
 
-DialogManager::DialogManager(Graphics::Screen *screen, PelrockEventManager *events)
-	: _screen(screen), _events(events) {
+DialogManager::DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics)
+	: _screen(screen), _events(events), _graphics(graphics) {
 }
 
 DialogManager::~DialogManager() {
-	if( _currentChoices ) {
+	if (_currentChoices) {
 		delete _currentChoices;
 		_currentChoices = nullptr;
 	}
@@ -120,23 +120,17 @@ uint32 DialogManager::readTextBlock(
 void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer) {
 
 	int overlayHeight = choices->size() * kChoiceHeight + 2;
-	int overlayY = 400 - overlayHeight;
-	for (int x = 0; x < 640; x++) {
-		for (int y = overlayY; y < 400; y++) {
-			int index = y * 640 + x;
-			compositeBuffer[index] = g_engine->_room->overlayRemap[compositeBuffer[index]];
-		}
-	}
+	Common::Point overlayPos = _graphics->showOverlay(overlayHeight, compositeBuffer);
 	for (int i = 0; i < choices->size(); i++) {
 		ChoiceOption choice = (*choices)[i];
 		int choicePadding = 32;
 		int width = g_engine->_doubleSmallFont->getStringWidth(choice.text);
-		Common::Rect bbox(0, overlayY + i * kChoiceHeight, width + choicePadding * 2, overlayY + i * kChoiceHeight + kChoiceHeight);
+		Common::Rect bbox(0, overlayPos.y + i * kChoiceHeight, width + choicePadding * 2, overlayPos.y + i * kChoiceHeight + kChoiceHeight);
 		int color = 14;
 		if (bbox.contains(_events->_mouseX, _events->_mouseY)) {
 			color = 15;
 		}
-		drawText(compositeBuffer, g_engine->_doubleSmallFont, choice.text, choicePadding, overlayY + 2 + i * kChoiceHeight, 620, color);
+		drawText(compositeBuffer, g_engine->_doubleSmallFont, choice.text, choicePadding, overlayPos.y + 2 + i * kChoiceHeight, 620, color);
 	}
 }
 
@@ -158,7 +152,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_events->pollEvent();
 
 		// Render the scene (keeps animations going)
-		g_engine->renderScene(false);
+		g_engine->renderScene(OVERLAY_NONE);
 
 		// Draw the dialogue text on top using speaker ID as color
 		Common::Array<Common::String> textLines = dialogueLines[curPage];
@@ -178,7 +172,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		if (speakerId == ALFRED_COLOR) {
 			g_engine->alfredState.animState = ALFRED_TALKING;
-			if(_curSprite != nullptr) {
+			if (_curSprite != nullptr) {
 				_curSprite->isTalking = false;
 			}
 			// Offset X position for Alfred to avoid overlapping with his sprite
@@ -228,7 +222,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		}
 		g_system->delayMillis(10);
 	}
-	if(_curSprite != nullptr) {
+	if (_curSprite != nullptr) {
 		_curSprite->isTalking = false;
 	}
 	g_engine->alfredState.animState = ALFRED_IDLE;
@@ -253,7 +247,7 @@ int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *co
 		_events->pollEvent();
 
 		// Render the scene with choices overlay
-		g_engine->renderScene(true);
+		g_engine->renderScene(OVERLAY_CHOICES);
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
@@ -562,7 +556,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 				}
 			}
 
-			if(_currentChoices) {
+			if (_currentChoices) {
 				delete _currentChoices;
 				_currentChoices = nullptr;
 			}
@@ -616,25 +610,25 @@ void DialogManager::sayAlfred(Description description) {
 	texts.push_back(description.text);
 
 	sayAlfred(texts);
-	if( description.isAction) {
+	if (description.isAction) {
 		g_engine->performActionTrigger(description.actionTrigger);
 	}
 }
 
 void DialogManager::say(Common::StringArray texts) {
-	if(texts.empty()) {
+	if (texts.empty()) {
 		return;
 	}
 	int speakerMarker = texts[0][0];
 	int color = texts[0][1];
 
-	if(speakerMarker == '@') {
+	if (speakerMarker == '@') {
 
-		for(int i = 0; i < texts.size(); i++) {
+		for (int i = 0; i < texts.size(); i++) {
 			// Remove first two marker bytes
-			if(texts[i].size() > 2) {
+			if (texts[i].size() > 2) {
 				texts[i] = texts[i].substr(2);
-				if(texts[i][0] == 0x78 && texts[i][1] == 0x78) { // Remove additional control chars
+				if (texts[i][0] == 0x78 && texts[i][1] == 0x78) { // Remove additional control chars
 					texts[i] = texts[i].substr(2);
 				}
 			} else {
@@ -642,17 +636,15 @@ void DialogManager::say(Common::StringArray texts) {
 			}
 		}
 
-		if(color == ALFRED_COLOR) {
+		if (color == ALFRED_COLOR) {
 			sayAlfred(texts);
 			return;
-		}
-		else {
+		} else {
 			setCurSprite(0);
 			Common::Array<Common::StringArray> textLines = wordWrap(texts);
 			displayDialogue(textLines, color);
 		}
-	}
-	else {
+	} else {
 		sayAlfred(texts);
 	}
 }
@@ -769,9 +761,9 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 
 Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::StringArray texts) {
 	Common::Array<Common::Array<Common::String>> allWrappedLines;
-	for(int i = 0; i < texts.size(); i++) {
+	for (int i = 0; i < texts.size(); i++) {
 		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(texts[i]);
-		for(int j = 0; j < wrapped.size(); j++) {
+		for (int j = 0; j < wrapped.size(); j++) {
 			allWrappedLines.push_back(wrapped[j]);
 		}
 	}

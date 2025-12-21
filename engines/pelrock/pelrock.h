@@ -43,6 +43,7 @@
 #include "pelrock/fonts/large_font.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/fonts/small_font_double.h"
+#include "pelrock/graphics.h"
 #include "pelrock/menu.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
@@ -64,6 +65,7 @@ private:
 	PelrockEventManager *_events = nullptr;
 	DialogManager *_dialog = nullptr;
 	MenuManager *_menu = nullptr;
+	GraphicsManager *_graphics = nullptr;
 
 	void init();
 	void loadAnims();
@@ -109,6 +111,7 @@ private:
 	void drawNextFrame(Sprite *animSet);
 	void changeCursor(Cursor cursor);
 	void animateTalkingNPC(Sprite *animSet);
+	void pickupIconFlash();
 
 	void playSoundIfNeeded();
 	void gameLoop();
@@ -183,7 +186,6 @@ public:
 	Common::Array<int> _inventoryItems;
 	int _selectedInventoryItem = -1;
 
-
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~PelrockEngine() override;
@@ -231,20 +233,19 @@ public:
 	}
 
 	void setScreen(int s, AlfredDirection dir);
-	void renderScene(bool showTextOverlay = false);
+	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void performActionTrigger(uint16 actionTrigger);
 
-    void executeAction(VerbIcon action, HotSpot *hotspot);
+	void executeAction(VerbIcon action, HotSpot *hotspot);
 
-    void openDrawer(HotSpot *hotspot);
-    void closeDrawer(HotSpot *hotspot);
-    void openDoor(HotSpot *hotspot);
-    void closeDoor(HotSpot *hotspot);
-    void pickUpAndDisable(HotSpot *hotspot);
+	void openDrawer(HotSpot *hotspot);
+	void closeDrawer(HotSpot *hotspot);
+	void openDoor(HotSpot *hotspot);
+	void closeDoor(HotSpot *hotspot);
+	void pickUpAndDisable(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void noOp(HotSpot *hotspot);
-
 };
 
 extern PelrockEngine *g_engine;

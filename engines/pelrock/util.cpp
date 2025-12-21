@@ -308,7 +308,7 @@ byte decodeChar(byte b) {
 	case 0x83:
 		return special_chars[0];
 	case 0x80:
-		return  special_chars[3]; // n tilde
+		return special_chars[3]; // n tilde
 	case 0x7F:
 		return special_chars[4];
 	case 0x7E:

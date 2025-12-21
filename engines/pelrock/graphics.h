@@ -22,16 +22,16 @@
 #define PELROCK_GRAPHICS_H
 
 #include "common/scummsys.h"
+#include "graphics/screen.h"
 
 namespace Pelrock {
 
 class GraphicsManager {
-
 public:
 	GraphicsManager();
 	~GraphicsManager();
 
-    void renderScene(bool showDialogOverlay);
+	Common::Point showOverlay(int height, byte *buf);
 };
 
 } // End of namespace Pelrock

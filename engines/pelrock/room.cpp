@@ -110,7 +110,7 @@ void RoomManager::removeSticker(int stickerIndex) {
 }
 
 bool RoomManager::hasSticker(int index) {
-	for(int i = 0; i < _currentRoomStickers.size(); i++) {
+	for (int i = 0; i < _currentRoomStickers.size(); i++) {
 		if (_currentRoomStickers[i].stickerIndex == index) {
 			return true;
 		}
@@ -446,7 +446,7 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 				}
 				if (data[pos] == 0xF8) {
 					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
-					if( description.actionTrigger != 0 ) {
+					if (description.actionTrigger != 0) {
 						description.isAction = true;
 					}
 					pos += 2;

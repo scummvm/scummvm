@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 
 #include "pelrock/graphics.h"
+#include "pelrock/pelrock.h"
 
 namespace Pelrock {
 
@@ -31,5 +32,16 @@ GraphicsManager::GraphicsManager() {
 GraphicsManager::~GraphicsManager() {
 }
 
-} // End of namespace Pelrock
+Common::Point GraphicsManager::showOverlay(int height, byte *buf) {
+	int overlayY = 400 - height;
+	int overlayX = 0;
+	for (int x = 0; x < 640; x++) {
+		for (int y = overlayY; y < 400; y++) {
+			int index = y * 640 + x;
+			buf[index] = g_engine->_room->overlayRemap[buf[index]];
+		}
+	}
+	return Common::Point(overlayX, overlayY);
+}
 
+} // End of namespace Pelrock

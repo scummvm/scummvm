@@ -23,16 +23,15 @@
 #include "common/file.h"
 #include "graphics/paletteman.h"
 
+#include "menu.h"
 #include "pelrock/menu.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "menu.h"
 
 namespace Pelrock {
 
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res) : _screen(screen), _events(events), _res(res) {
-
 }
 
 void MenuManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, Graphics::Font *font) {
@@ -84,15 +83,13 @@ void MenuManager::checkMouseClick(int x, int y) {
 	}
 }
 
-
 void MenuManager::menuLoop() {
 	_events->pollEvent();
 
-	if(_events->_leftMouseClicked) {
+	if (_events->_leftMouseClicked) {
 		_events->_leftMouseClicked = false;
 		checkMouseClick(_events->_mouseX, _events->_mouseY);
-	}
-	else if (_events->_rightMouseClicked) {
+	} else if (_events->_rightMouseClicked) {
 		_events->_rightMouseClicked = false;
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 		g_engine->stateGame = GAME;
@@ -101,17 +98,16 @@ void MenuManager::menuLoop() {
 
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
 
-
 	for (int i = 0; i < 4; i++) {
 		int itemIndex = _curInventoryPage * 4 + i;
-		if(g_engine->_inventoryItems.size() <= itemIndex)
+		if (g_engine->_inventoryItems.size() <= itemIndex)
 			continue;
 		InventoryObject item = g_engine->_res->getInventoryObject(g_engine->_inventoryItems[itemIndex]);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
 	}
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	for(int i = 0; _menuText.size() > i; i++) {
+	for (int i = 0; _menuText.size() > i; i++) {
 		drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, g_engine->_smallFont);
 	}
 
@@ -219,7 +215,6 @@ void MenuManager::loadMenuTexts() {
 }
 
 void MenuManager::tearDown() {
-
 }
 
 Pelrock::MenuManager::~MenuManager() {

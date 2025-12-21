@@ -68,6 +68,7 @@ PelrockEngine::~PelrockEngine() {
 	delete _events;
 	delete _dialog;
 	delete _menu;
+	delete _graphics;
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -85,12 +86,12 @@ Common::Error PelrockEngine::run() {
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
 	_videoManager = new VideoManager(_screen, _events);
+	_graphics = new GraphicsManager();
 	_room = new RoomManager();
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
-	_dialog = new DialogManager(_screen, _events);
+	_dialog = new DialogManager(_screen, _events, _graphics);
 	_menu = new MenuManager(_screen, _events, _res);
-
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
 
@@ -240,7 +241,7 @@ void PelrockEngine::playSoundIfNeeded() {
 	}
 }
 
-void PelrockEngine::renderScene(bool showTextOverlay) {
+bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
@@ -251,15 +252,19 @@ void PelrockEngine::renderScene(bool showTextOverlay) {
 		placeStickers();
 		updateAnimations();
 
-		if (showTextOverlay) {
+		if (overlayMode == 1) {
 			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
+		} else if (overlayMode == 2) {
+			pickupIconFlash();
 		}
 
 		presentFrame();
 		updatePaletteAnimations();
 
 		_screen->markAllDirty();
+		return true;
 	}
+	return false;
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -576,11 +581,11 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
+				alfredState.animState = ALFRED_IDLE;
 				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
 				}
-				alfredState.animState = ALFRED_IDLE;
 			}
 		} else {
 			_currentContext.movementBuffer[_currentStep] = step;
@@ -1043,6 +1048,14 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	byte *frame = index ? animHeader->animB[curFrame] : animHeader->animA[curFrame];
 
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
+}
+
+void PelrockEngine::pickupIconFlash() {
+	_graphics->showOverlay(65, _compositeBuffer);
+	InventoryObject item = _res->getInventoryObject(_currentHotspot->extra);
+	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 5, 400 - 60 - 5, 60, 60, 1);
+	}
 }
 
 void PelrockEngine::gameLoop() {

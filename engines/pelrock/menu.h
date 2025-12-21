@@ -21,8 +21,8 @@
 #ifndef PELROCK_MENU_H
 #define PELROCK_MENU_H
 
-#include "graphics/screen.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 
 #include "pelrock/events.h"
 #include "pelrock/resources.h"
@@ -36,6 +36,7 @@ public:
 	void menuLoop();
 	void loadMenu();
 	byte _mainMenuPalette[768] = {0};
+
 private:
 	void checkMouseClick(int x, int y);
 	void loadMenuTexts();
