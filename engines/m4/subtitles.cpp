@@ -145,6 +145,9 @@ void M4Subtitles::updateSubtitleOverlay() const {
 }
 
 void M4Subtitles::clearSubtitle() const {
+	if (!_loaded)
+		return;
+
 	g_system->hideOverlay();
 	_drawRect.setEmpty();
 	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
