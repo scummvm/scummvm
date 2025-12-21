@@ -32,6 +32,9 @@ public:
 	~GraphicsManager();
 
 	Common::Point showOverlay(int height, byte *buf);
+	byte *grabBackgroundSlice(byte *buf, int x, int y, int w, int h);
+	void putBackgroundSlice(byte *buf, int x, int y, int w, int h, byte *slice);
+
 };
 
 } // End of namespace Pelrock

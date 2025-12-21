@@ -75,12 +75,6 @@ private:
 	*/
 	void walkTo(int x, int y);
 
-	void talk(byte object);
-	void sayNPC(Sprite *anim, Common::String text, byte color);
-
-	byte *grabBackgroundSlice(int x, int y, int w, int h);
-	void putBackgroundSlice(int x, int y, int w, int h, byte *slice);
-
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
 	VerbIcon isActionUnder(int x, int y);
 	bool isItemUnder(int x, int y);
@@ -88,6 +82,7 @@ private:
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
 	Sprite *isSpriteUnder(int x, int y);
+
 	void showActionBalloon(int posx, int posy, int curFrame);
 
 	void checkMouse();
@@ -105,7 +100,6 @@ private:
 	void talkTo(HotSpot *hotspot);
 	void lookAt(HotSpot *hotspot);
 
-	void renderText(Common::Array<Common::String> lines, int color, int x, int y);
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
@@ -114,8 +108,8 @@ private:
 	void pickupIconFlash();
 
 	void playSoundIfNeeded();
+
 	void gameLoop();
-	void menuLoop();
 	void extraScreenLoop();
 
 	void checkMouseHover();
@@ -125,6 +119,7 @@ private:
 	void calculateScalingMasks();
 	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
 
+
 	Common::Array<Common::Array<int>> _widthScalingTable;
 	Common::Array<Common::Array<int>> _heightScalingTable;
 
@@ -132,24 +127,15 @@ private:
 	int _currentStep = 0;
 	PathContext _currentContext;
 
-	// text display
-	byte _textColor = 0;
-	Common::Point _textPos;
-	int _textDurationFrames = 0;
-	Common::Array<Common::Array<Common::String>> _currentTextPages = Common::Array<Common::Array<Common::String>>();
-	int _currentTextPageIndex = 0;
-
-	// Alfred
-	bool alfredFrameSkip = false;
-	bool isAlkfredWalking = false;
-
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
 	byte *_extraScreen = nullptr;
+
 	ActionPopupState _actionPopupState;
 
 	HotSpot *_currentHotspot = nullptr;
 
 	Common::Point _curWalkTarget;
+
 	QueuedAction _queuedAction;
 
 	bool showShadows = false;
@@ -185,6 +171,7 @@ public:
 
 	Common::Array<int> _inventoryItems;
 	int _selectedInventoryItem = -1;
+
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -234,15 +221,16 @@ public:
 
 	void setScreen(int s, AlfredDirection dir);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
+
+	// Actions
 	void performActionTrigger(uint16 actionTrigger);
 
 	void executeAction(VerbIcon action, HotSpot *hotspot);
-
-	void openDrawer(HotSpot *hotspot);
-	void closeDrawer(HotSpot *hotspot);
-	void openDoor(HotSpot *hotspot);
-	void closeDoor(HotSpot *hotspot);
-	void pickUpAndDisable(HotSpot *hotspot);
+    void openDrawer(HotSpot *hotspot);
+    void closeDrawer(HotSpot *hotspot);
+    void openDoor(HotSpot *hotspot);
+    void closeDoor(HotSpot *hotspot);
+    void pickUpAndDisable(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void noOp(HotSpot *hotspot);

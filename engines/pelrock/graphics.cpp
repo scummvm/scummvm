@@ -44,4 +44,29 @@ Common::Point GraphicsManager::showOverlay(int height, byte *buf) {
 	return Common::Point(overlayX, overlayY);
 }
 
+byte *GraphicsManager::grabBackgroundSlice(byte *buf, int x, int y, int w, int h) {
+	byte *bg = new byte[w * h];
+	for (int j = 0; j < w; j++) {
+		for (int i = 0; i < h; i++) {
+			int idx = i * w + j;
+			if (y + i < 400 && x + j < 640) {
+				*(bg + idx) = buf[(y + i) * 640 + (x + j)];
+			}
+		}
+	}
+	return bg;
+}
+
+void GraphicsManager::putBackgroundSlice(byte *buf, int x, int y, int w, int h, byte *slice) {
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+			int index = (j * w + i);
+			if (x + i < 640 && y + j < 400) {
+				buf[(y + j) * 640 + (x + i)] = slice[index];
+				// *(byte *)_screen->getBasePtr(x + i, y + j) = slice[index];
+			}
+		}
+	}
+}
+
 } // End of namespace Pelrock

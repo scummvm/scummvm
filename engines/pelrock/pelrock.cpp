@@ -165,28 +165,6 @@ void PelrockEngine::loadAnims() {
 	_res->loadAlfredAnims();
 }
 
-byte *PelrockEngine::grabBackgroundSlice(int x, int y, int w, int h) {
-	byte *bg = new byte[w * h];
-	for (int j = 0; j < w; j++) {
-		for (int i = 0; i < h; i++) {
-			int idx = i * w + j;
-			if (y + i < 400 && x + j < 640) {
-				*(bg + idx) = _currentBackground[(y + i) * 640 + (x + j)];
-			}
-		}
-	}
-	return bg;
-}
-
-void PelrockEngine::putBackgroundSlice(int x, int y, int w, int h, byte *slice) {
-	for (int i = 0; i < w; i++) {
-		for (int j = 0; j < h; j++) {
-			int index = (j * w + i);
-			if (x + i < 640 && y + j < 400)
-				*(byte *)_screen->getBasePtr(x + i, y + j) = slice[index];
-		}
-	}
-}
 
 Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	if (hotspot == nullptr) {
@@ -520,23 +498,6 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 void PelrockEngine::lookAt(HotSpot *hotspot) {
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
-}
-
-void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, int baseX, int baseY) {
-
-	int maxW = 0;
-	for (size_t i = 0; i < lines.size(); i++) {
-		Common::Rect r = _largeFont->getBoundingBox(lines[i]);
-		if (r.width() > maxW) {
-			maxW = r.width();
-		}
-	}
-	int lineSize = lines.size();
-	for (size_t i = 0; i < lines.size(); i++) {
-		int textX = baseX - (maxW / 2);
-		int textY = baseY - (lineSize * 25) + (i * 25);
-		drawText(_largeFont, lines[i], textX, textY, maxW, color);
-	}
 }
 
 void PelrockEngine::chooseAlfredStateAndDraw() {
