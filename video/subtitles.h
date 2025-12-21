@@ -85,7 +85,7 @@ public:
 	~Subtitles();
 
 	void loadSRTFile(const Common::Path &fname);
-	void close() { _loaded = false; _parts = nullptr; _fname.clear(); _srtParser.cleanup(); }
+	void close();
 	void setFont(const char *fontname, int height = 18, FontStyle type = kFontStyleRegular);
 	void setBBox(const Common::Rect &bbox);
 	void setColor(byte r, byte g, byte b);
@@ -108,7 +108,7 @@ protected:
 
 private:
 
-	SRTParser _srtParser;
+	SRTParser *_srtParser = nullptr;
 	bool _subtitleDev;
 
 	mutable Common::Array<SubtitlePart> _devParts;
