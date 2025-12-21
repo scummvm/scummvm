@@ -50,10 +50,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(sy
 	g_engine = this;
 }
 
-M4Engine::~M4Engine() {
-	delete _subtitles;
-}
-
 void M4Engine::initializePath(const Common::FSNode &gamePath) {
 	Engine::initializePath(gamePath);
 	SearchMan.addSubDirectoryMatching(gamePath, "goodstuf");
@@ -90,7 +86,7 @@ Common::Error M4Engine::run() {
 	initGraphics(640, 480);
 	syncSoundSettings();
 
-	_subtitles = new M4Subtitles();
+	_subtitles.load();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
