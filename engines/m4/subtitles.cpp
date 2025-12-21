@@ -29,14 +29,17 @@
 namespace M4 {
 
 M4Subtitles::M4Subtitles() {
-	_loaded = loadSubtitles(IS_RIDDLE ? "riddle.pot" : "burger.pot");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
-	if (_loaded)
-		setupSubtitles();
 }
 
 M4Subtitles::~M4Subtitles() {
 	clearSubtitle();
+}
+
+void M4Subtitles::load() {
+	_loaded = loadSubtitles(IS_RIDDLE ? "riddle.pot" : "burger.pot");
+	if (_loaded)
+		setupSubtitles();
 }
 
 void M4Subtitles::setupSubtitles() {

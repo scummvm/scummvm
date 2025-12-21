@@ -35,6 +35,7 @@ public:
 	void drawSubtitle(const Common::String &audioFile) const;
 	void clearSubtitle() const;
 	void updateSubtitleOverlay() const;
+	void load();
 
 private:
 	void setupSubtitles();

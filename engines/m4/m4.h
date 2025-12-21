@@ -47,7 +47,7 @@ class M4Engine : public Engine, public Sections {
 private:
 	const M4GameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	M4Subtitles *_subtitles;
+	M4Subtitles _subtitles;
 
 	/**
 	 * Main game loop
@@ -78,7 +78,7 @@ protected:
 
 public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
-	~M4Engine() override;
+	~M4Engine() override = default;
 
 	uint32 getFeatures() const;
 
@@ -184,15 +184,15 @@ public:
 	virtual void showEngineInfo() = 0;
 
 	void drawSubtitle(const Common::String &soundId) const {
-		_subtitles->drawSubtitle(soundId);
+		_subtitles.drawSubtitle(soundId);
 	}
 
 	void clearSubtitle() const {
-		_subtitles->clearSubtitle();
+		_subtitles.clearSubtitle();
 	}
 
 	void updateSubtitleOverlay() const {
-		_subtitles->updateSubtitleOverlay();
+		_subtitles.updateSubtitleOverlay();
 	}
 };
 
