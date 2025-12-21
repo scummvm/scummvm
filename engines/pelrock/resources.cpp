@@ -243,7 +243,7 @@ void ResourceManager::loadAlfredResponses() {
 	byte *descBuffer = new byte[kAlfredResponsesSize];
 	exe.seek(kAlfredResponsesOffset, SEEK_SET);
 	exe.read(descBuffer, kAlfredResponsesSize);
-	_alfredResponses = processTextData(descBuffer, kAlfredResponsesSize);
+	_ingameTexts = processTextData(descBuffer, kAlfredResponsesSize);
 	delete[] descBuffer;
 	exe.close();
 }
@@ -305,6 +305,7 @@ Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(by
 			desc.append(1, '@');
 			desc.append(1, color);
 			pos += 2;
+
 			continue;
 		}
 		if (data[pos] == 0xC8) {

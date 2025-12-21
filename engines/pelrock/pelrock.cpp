@@ -273,9 +273,11 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_res->getExtraScreen(9, _extraScreen, palette);
 
 		g_system->getPaletteManager()->setPalette(palette, 0, 256);
-		showExtraScreen();
+		extraScreenLoop();
 
-		_dialog->sayAlfred(_res->_alfredResponses[0][0]); // "I found something interesting!");
+		_dialog->say(_res->_ingameTexts[SOHOT]);
+		_screen->markAllDirty();
+		_screen->update();
 
 		delete[] palette;
 		break;
@@ -283,24 +285,24 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 }
 
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
-    for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
-        if (entry->action == action && entry->hotspotExtra == hotspot->extra) {
-            // Found exact match - call the handler
-            (this->*(entry->handler))(hotspot);
-            return;
-        }
-    }
+	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
+		if (entry->action == action && entry->hotspotExtra == hotspot->extra) {
+			// Found exact match - call the handler
+			(this->*(entry->handler))(hotspot);
+			return;
+		}
+	}
 
-    // Try wildcard match (hotspotExtra == 0 means "any hotspot")
-    for (const ActionEntry *entry = actionTable; entry->handler != nullptr; ++entry) {
-        if (entry->action == action && entry->hotspotExtra == WILDCARD) {
-            (this->*(entry->handler))(hotspot);
-            return;
-        }
-    }
+	// Try wildcard match (hotspotExtra == 0 means "any hotspot")
+	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; ++entry) {
+		if (entry->action == action && entry->hotspotExtra == WILDCARD) {
+			(this->*(entry->handler))(hotspot);
+			return;
+		}
+	}
 
-    // No handler found
-    warning("No handler for hotspot %d with action %d", hotspot->extra, action);
+	// No handler found
+	warning("No handler for hotspot %d with action %d", hotspot->extra, action);
 }
 
 void PelrockEngine::checkMouse() {
@@ -533,10 +535,9 @@ void PelrockEngine::renderText(Common::Array<Common::String> lines, int color, i
 }
 
 void PelrockEngine::chooseAlfredStateAndDraw() {
-	if(alfredState.idleFrameCounter++ >= kAlfredIdleAnimationFrameCount &&
-		 alfredState.animState == ALFRED_IDLE &&
-		 (alfredState.direction == ALFRED_LEFT || alfredState.direction == ALFRED_RIGHT)
-	) {
+	if (alfredState.idleFrameCounter++ >= kAlfredIdleAnimationFrameCount &&
+		alfredState.animState == ALFRED_IDLE &&
+		(alfredState.direction == ALFRED_LEFT || alfredState.direction == ALFRED_RIGHT)) {
 		alfredState.idleFrameCounter = 0;
 		alfredState.curFrame = 0;
 		alfredState.animState = ALFRED_COMB;
@@ -998,16 +999,14 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 			continue;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
-
 	}
 	bool itemUnder = isItemUnder(_events->_mouseX, _events->_mouseY);
-	if(_selectedInventoryItem != -1) {
-		if(itemUnder && shouldBlink) {
+	if (_selectedInventoryItem != -1) {
+		if (itemUnder && shouldBlink) {
 			return;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getInventoryObject(_selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
-
 }
 
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
@@ -1060,10 +1059,9 @@ void PelrockEngine::gameLoop() {
 	}
 }
 
-void PelrockEngine::showExtraScreen() {
+void PelrockEngine::extraScreenLoop() {
 	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
-	_screen->markAllDirty();
-	_screen->update();
+
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
@@ -1072,6 +1070,8 @@ void PelrockEngine::showExtraScreen() {
 			break;
 		}
 		g_system->delayMillis(10);
+		_screen->markAllDirty();
+		_screen->update();
 	}
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
@@ -1104,8 +1104,8 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 bool PelrockEngine::isItemUnder(int x, int y) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	Common::Rect itemRect = Common::Rect(_actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)), _actionPopupState.y + 20,
-		_actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)) + kVerbIconWidth,
-		_actionPopupState.y + 20 + kVerbIconHeight);
+										 _actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)) + kVerbIconWidth,
+										 _actionPopupState.y + 20 + kVerbIconHeight);
 	if (itemRect.contains(x, y)) {
 		return true;
 	}
@@ -1124,7 +1124,6 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 	}
 	return true;
 }
-
 
 void PelrockEngine::checkMouseClick(int x, int y) {
 
@@ -1148,7 +1147,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 	bool isHotspotUnder = false;
-	if(hotspotIndex != -1) {
+	if (hotspotIndex != -1) {
 		isHotspotUnder = true;
 	}
 
@@ -1236,14 +1235,12 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	byte *palette = new byte[256 * 3];
 	_room->getPalette(&roomFile, roomOffset, palette);
 
-
 	byte *background = new byte[640 * 400];
 	_room->getBackground(&roomFile, roomOffset, background);
 
 	_screen->clear();
 	_screen->markAllDirty();
 	_screen->update();
-
 
 	Common::copy(background, background + 640 * 400, _currentBackground);
 	copyBackgroundToBuffer();

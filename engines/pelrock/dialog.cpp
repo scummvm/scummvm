@@ -400,12 +400,31 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 	return pos;
 }
 
+void DialogManager::setCurSprite(int index) {
+	// Set current sprite based on index
+	if (g_engine->_room == nullptr) {
+		_curSprite = nullptr;
+		return;
+	}
+
+	for (uint i = 0; i < g_engine->_room->_currentRoomAnims.size(); i++) {
+		Sprite *sprite = &g_engine->_room->_currentRoomAnims[i];
+		if (sprite->index == index) {
+			_curSprite = sprite;
+			return;
+		}
+	}
+
+	_curSprite = nullptr;
+}
+
 void DialogManager::startConversation(const byte *conversationData, uint32 dataSize, Sprite *animSet) {
 	if (!conversationData || dataSize == 0) {
 		debug("startConversation: No conversation data");
 		return;
 	}
-	_curSprite = animSet;
+	setCurSprite(animSet ? animSet->index : -1);
+	// _curSprite = animSet;
 
 	debug("Starting conversation with %u bytes of data", dataSize);
 
@@ -583,19 +602,58 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	// Note: The caller should set inConversation = false after this returns
 }
 
-void DialogManager::sayAlfred(Common::String text) {
+void DialogManager::sayAlfred(Common::StringArray texts) {
 	g_engine->alfredState.nextState = ALFRED_TALKING;
 	g_engine->alfredState.curFrame = 0;
 
 	_curSprite = nullptr;
-	Common::Array<Common::Array<Common::String>> textLines = wordWrap(text);
+	Common::Array<Common::StringArray> textLines = wordWrap(texts);
 	displayDialogue(textLines, ALFRED_COLOR);
 }
 
 void DialogManager::sayAlfred(Description description) {
-	sayAlfred(description.text);
+	Common::StringArray texts;
+	texts.push_back(description.text);
+
+	sayAlfred(texts);
 	if( description.isAction) {
 		g_engine->performActionTrigger(description.actionTrigger);
+	}
+}
+
+void DialogManager::say(Common::StringArray texts) {
+	if(texts.empty()) {
+		return;
+	}
+	int speakerMarker = texts[0][0];
+	int color = texts[0][1];
+
+	if(speakerMarker == '@') {
+
+		for(int i = 0; i < texts.size(); i++) {
+			// Remove first two marker bytes
+			if(texts[i].size() > 2) {
+				texts[i] = texts[i].substr(2);
+				if(texts[i][0] == 0x78 && texts[i][1] == 0x78) { // Remove additional control chars
+					texts[i] = texts[i].substr(2);
+				}
+			} else {
+				texts[i] = "";
+			}
+		}
+
+		if(color == ALFRED_COLOR) {
+			sayAlfred(texts);
+			return;
+		}
+		else {
+			setCurSprite(0);
+			Common::Array<Common::StringArray> textLines = wordWrap(texts);
+			displayDialogue(textLines, color);
+		}
+	}
+	else {
+		sayAlfred(texts);
 	}
 }
 
@@ -707,6 +765,17 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 		}
 	}
 	return pages;
+}
+
+Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::StringArray texts) {
+	Common::Array<Common::Array<Common::String>> allWrappedLines;
+	for(int i = 0; i < texts.size(); i++) {
+		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(texts[i]);
+		for(int j = 0; j < wrapped.size(); j++) {
+			allWrappedLines.push_back(wrapped[j]);
+		}
+	}
+	return allWrappedLines;
 }
 
 } // namespace Pelrock

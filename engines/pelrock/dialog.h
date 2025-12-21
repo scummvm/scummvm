@@ -80,8 +80,9 @@ private:
 	void displayDialogue(Common::String text, byte speakerId);
 	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos, Common::String &outText, byte &outSpeakerId);
 	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> *outChoices);
-
+	void setCurSprite(int index);
 	void checkMouse();
+	void sayAlfred(Common::StringArray texts);
 
 public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events);
@@ -90,10 +91,11 @@ public:
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
-	void sayAlfred(Common::String text);
 	void sayAlfred(Description description);
+	void say(Common::StringArray texts);
 
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
+	Common::Array<Common::Array<Common::String>> wordWrap(Common::StringArray texts);
 	Common::Array<ChoiceOption> *_currentChoices = nullptr;
 };
 

@@ -65,7 +65,7 @@ public:
 	byte *_cursorMasks[5] = {nullptr};
 	byte *_verbIcons[9] = {nullptr};
 	byte *_popUpBalloon = nullptr;
-	Common::Array<Common::StringArray> _alfredResponses;
+	Common::Array<Common::StringArray> _ingameTexts;
 };
 
 } // End of namespace Pelrock

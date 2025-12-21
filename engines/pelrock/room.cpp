@@ -109,6 +109,15 @@ void RoomManager::removeSticker(int stickerIndex) {
 		_currentRoomStickers.remove_at(index);
 }
 
+bool RoomManager::hasSticker(int index) {
+	for(int i = 0; i < _currentRoomStickers.size(); i++) {
+		if (_currentRoomStickers[i].stickerIndex == index) {
+			return true;
+		}
+	}
+	return false;
+}
+
 HotSpot *RoomManager::findHotspotByExtra(uint16 extra) {
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		if (_currentRoomHotspots[i].extra == extra) {

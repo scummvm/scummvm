@@ -113,7 +113,7 @@ private:
 	void playSoundIfNeeded();
 	void gameLoop();
 	void menuLoop();
-	void showExtraScreen();
+	void extraScreenLoop();
 
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -242,6 +242,7 @@ public:
     void closeDoor(HotSpot *hotspot);
     void pickUpAndDisable(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
+	void pickYellowBook(HotSpot *hotspot);
 	void noOp(HotSpot *hotspot);
 
 };
