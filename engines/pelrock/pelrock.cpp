@@ -565,7 +565,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
 				alfredState.animState = ALFRED_IDLE;
-				alfredState.direction = calculateAlfredsDirection(_currentHotspot);
+				if(_currentHotspot != nullptr)
+					alfredState.direction = calculateAlfredsDirection(_currentHotspot);
 				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
@@ -1127,6 +1128,9 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 }
 
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
+	if (_currentHotspot == nullptr) {
+		return NO_ACTION;
+	}
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	for (int i = 0; i < actions.size(); i++) {
 		int actionX = _actionPopupState.x + 20 + (i * (kVerbIconWidth + 2));
@@ -1174,18 +1178,9 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	if (hotspotIndex != -1) {
 		isHotspotUnder = true;
 	}
-
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, isHotspotUnder, isHotspotUnder ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
+	_currentHotspot = isHotspotUnder ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr;
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, isHotspotUnder, _currentHotspot);
 	_curWalkTarget = walkTarget;
-
-	if (hotspotIndex != -1) {
-		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
-		walkTarget.x = _currentHotspot->x + _currentHotspot->w / 2;
-		walkTarget.y = _currentHotspot->y + _currentHotspot->h;
-	}
-	else {
-		_currentHotspot = nullptr;
-	}
 
 	walkTo(walkTarget.x, walkTarget.y);
 
@@ -1253,6 +1248,7 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 		return;
 	}
 	_sound->stopAllSounds();
+	_currentHotspot = nullptr;
 	alfredState.direction = dir;
 	alfredState.animState = ALFRED_IDLE;
 	_currentStep = 0;
