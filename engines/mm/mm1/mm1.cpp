@@ -139,11 +139,6 @@ bool MM1Engine::setupEnhanced() {
 	g_system->getPaletteManager()->setPalette(pal, 0, Graphics::PALETTE_COUNT);
 	Gfx::GFX::findPalette(pal);
 
-	// Show the mouse cursor
-	g_events->loadCursors();
-	g_events->setCursor(0);
-	g_events->showCursor();
-
 	return true;
 }
 

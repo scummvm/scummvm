@@ -123,6 +123,11 @@ bool Globals::load(bool isEnhanced) {
 			XeenFont::setColors(0);
 			f.close();
 		}
+
+		// Show the mouse cursor
+		g_events->loadCursors();
+		g_events->setCursor(0);
+		g_events->showCursor();
 	}
 
 	return true;
