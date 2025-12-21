@@ -169,6 +169,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for SLATER Macintosh.
    - Virtual keyboard now correctly triggers on/off wherever text input is
      needed.
+   - Inside the Chest and Behind the Developer's Shieled are now handled as
+     two separate demos, detected from the same set of files.
 
  SCUMM:
    - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
