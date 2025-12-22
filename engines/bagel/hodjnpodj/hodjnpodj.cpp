@@ -74,6 +74,8 @@ Common::Error HodjNPodjEngine::run() {
 
 		if (getGameId() == "mazeodoom") {
 			app.setStartupMinigame("mazedoom_demo");
+		} else if (getGameId() == "artparts") {
+			app.setStartupMinigame("artparts_demo");
 		} else if (ConfMan.getBool("metagame")) {
 			Metagame::Frame::InitBFCInfo(&_bfcMgr);
 			Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, false);

@@ -104,6 +104,8 @@ namespace ArtParts {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
+	~CMainWindow();
+
 	bool LoadArtWork();
 	void DrawPart(const CPoint &Src, const CPoint &Dst, int nWidth, int nHeight);
 	void SwitchAreas(const CRect &Src, const CRect &Dst);

@@ -61,6 +61,50 @@ int CMainWindow::tempColumns;
 bool CMainWindow::tempFramed;
 
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Dummy class for the Art Parts demo to map art/ and sound/ subfolders to current folder
+ */
+class ArtSoundArchive : public Common::Archive {
+public:
+	bool hasFile(const Common::Path &path) const {
+		Common::String pathStr = path.toString();
+		if (pathStr.hasPrefixIgnoreCase("art/")) {
+			pathStr = pathStr.c_str() + 4;
+		} else if (pathStr.hasPrefixIgnoreCase("sound/")) {
+			pathStr = pathStr.c_str() + 6;
+		} else {
+			return false;
+		}
+		return Common::File::exists(pathStr.c_str());
+	}
+
+	int listMembers(Common::ArchiveMemberList &list) const override {
+		return 0;
+	}
+
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override {
+		return Common::ArchiveMemberPtr();
+	}
+
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const {
+		Common::String pathStr = path.toString();
+		if (pathStr.hasPrefixIgnoreCase("art/")) {
+			pathStr = pathStr.c_str() + 4;
+		} else if (pathStr.hasPrefixIgnoreCase("sound/")) {
+			pathStr = pathStr.c_str() + 6;
+		} else {
+			return nullptr;
+		}
+
+		Common::File f;
+		if (f.open(pathStr.c_str()))
+			return f.readStream(f.size());
+		return nullptr;
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // CMainWindow constructor:
 // Create the window with the appropriate style, size, menu, etc.;
@@ -74,6 +118,9 @@ CMainWindow::CMainWindow() {
 
 	initStatics();
 	BeginWaitCursor();
+
+	if (g_engine->isDemo())
+		SearchMan.add("artparts_demo", new ArtSoundArchive());
 
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
@@ -175,6 +222,10 @@ CMainWindow::CMainWindow() {
 	bStartOkay = true;
 
 } //End of CMainWindow
+
+CMainWindow::~CMainWindow() {
+	SearchMan.remove("artparts_demo");
+}
 
 void CMainWindow::initStatics() {
 	pGamePalette = nullptr;

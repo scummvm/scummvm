@@ -51,6 +51,8 @@ bool CTheApp::InitApplication() {
 		setDirectory("meta");
 	} else if (_startupMinigame == "mazedoom_demo") {
 		addResources("mod.exe");
+	} else if (_startupMinigame == "artparts_demo") {
+		addResources("artparts.exe");
 	}
 
 	addFontResource("msserif.fon");
@@ -96,15 +98,15 @@ int CTheApp::ExitInstance() {
 }
 
 void CTheApp::selectMinigame() {
-	bool isMODDemo = false;
+	bool isMODDemo = false, isAPDemo = false;;
 	const auto *game = Metagame::CMgStatic::cGameTable;
 
 	for (; game->m_iGameCode; ++game) {
 		if (game->_path && _startupMinigame == game->_path)
 			break;
-		isMODDemo = _startupMinigame == "mazedoom_demo" &&
-			game->m_iGameCode == MG_GAME_MAZEODOOM;
-		if (isMODDemo)
+		isMODDemo = _startupMinigame == "mazedoom_demo" && game->m_iGameCode == MG_GAME_MAZEODOOM;
+		isAPDemo = _startupMinigame == "artparts_demo" && game->m_iGameCode == MG_GAME_ARTPARTS;
+		if (isMODDemo || isAPDemo)
 			break;
 	}
 
@@ -123,6 +125,8 @@ void CTheApp::selectMinigame() {
 	// Don't change folder for Maze O Doom demo
 	if (isMODDemo) {
 		addResources("mod.exe");
+	} else if (isAPDemo) {
+		addResources("artparts.exe");
 	} else {
 		setDirectory(game->_path);
 		addResources(game->_dllName);
