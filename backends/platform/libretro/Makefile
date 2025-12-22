@@ -179,6 +179,8 @@ else ifneq (,$(filter $(platform), ps3 psl1ght))
    DEFINES := -DPLAYSTATION3 -D__PS3__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1 -mcpu=cell -mno-fp-in-toc -I$(PS3DEV)/ppu/include
    ifeq ($(platform), psl1ght)
       DEFINES += -D__PSL1GHT__
+      CFLAGS   += -mvsx -mvsx-timode
+      CXXFLAGS += -mvsx -mvsx-timode
       HAVE_OPENGL := 1
    endif
    STATIC_LINKING = 1
