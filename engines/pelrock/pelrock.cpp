@@ -387,6 +387,12 @@ void PelrockEngine::paintDebugLayer() {
 		_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
 	}
 
+	for(int i = 0; i< _room->_currentRoomExits.size(); i++) {
+		Exit exit = _room->_currentRoomExits[i];
+		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
+		_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
+	}
+
 	drawPos(_screen, alfredState.x, alfredState.y, 13);
 	drawPos(_screen, alfredState.x, alfredState.y - kAlfredFrameHeight, 13);
 	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
@@ -402,9 +408,7 @@ void PelrockEngine::paintDebugLayer() {
 void PelrockEngine::placeStickers() {
 	for (int i = 0; i < _room->_currentRoomStickers.size(); i++) {
 		Sticker sticker = _room->_currentRoomStickers[i];
-		if (sticker.roomNumber == _room->_currentRoomNumber) {
-			placeSticker(sticker);
-		}
+		placeSticker(sticker);
 	}
 }
 
@@ -496,6 +500,8 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 		talkTo(hotspot);
 		break;
 	case PICKUP:
+		alfredState.animState = ALFRED_INTERACTING;
+		alfredState.curFrame = 0;
 		pickUpAndDisable(hotspot);
 		executeAction(PICKUP, hotspot);
 		break;
@@ -530,6 +536,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.curFrame = 0;
 		alfredState.animState = ALFRED_COMB;
 	}
+	debug("Alfred state: %d, pos (%d, %d) curFrame %d", alfredState.animState, alfredState.x, alfredState.y, alfredState.curFrame);
 	switch (alfredState.animState) {
 	case ALFRED_WALKING: {
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
@@ -565,11 +572,14 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
 				alfredState.animState = ALFRED_IDLE;
+				alfredState.curFrame = 0;
 				if(_currentHotspot != nullptr)
 					alfredState.direction = calculateAlfredsDirection(_currentHotspot);
+
 				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
+					break;
 				}
 			}
 		} else {
@@ -615,9 +625,11 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	case ALFRED_INTERACTING:
 		if (alfredState.curFrame >= interactingAnimLength) {
 			alfredState.curFrame = 0;
+			alfredState.animState = ALFRED_IDLE;
 		}
 		drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
-		alfredState.curFrame++;
+		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+			alfredState.curFrame++;
 		break;
 	default:
 		drawAlfred(_res->alfredIdle[alfredState.direction]);

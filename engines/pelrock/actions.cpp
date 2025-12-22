@@ -23,6 +23,7 @@
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "pelrock.h"
 
 namespace Pelrock {
 
@@ -34,6 +35,7 @@ const ActionEntry actionTable[] = {
 	{268, CLOSE, &PelrockEngine::closeDoor},
 	{3, PICKUP, &PelrockEngine::pickUpPhoto},
 	{0, PICKUP, &PelrockEngine::pickYellowBook}, // Generic pickup for other items
+    {4, PICKUP, &PelrockEngine::pickUpBrick}, // Brick
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOp}, // Generic pickup action
@@ -98,6 +100,10 @@ void PelrockEngine::pickUpPhoto(HotSpot *hotspot) {
 
 void PelrockEngine::pickYellowBook(HotSpot *hotspot) {
 	_room->addSticker(_res->getSticker(95));
+}
+
+void PelrockEngine::pickUpBrick(HotSpot *hotspot) {
+    _room->addSticker(_res->getSticker(133));
 }
 
 void PelrockEngine::noOp(HotSpot *hotspot) {

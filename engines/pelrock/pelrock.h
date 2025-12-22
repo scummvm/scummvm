@@ -233,6 +233,7 @@ public:
     void pickUpAndDisable(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
+	void pickUpBrick(HotSpot *hotspot);
 	void noOp(HotSpot *hotspot);
 };
 
