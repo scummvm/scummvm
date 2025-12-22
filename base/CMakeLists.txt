@@ -2,7 +2,10 @@ add_library(base)
 
 target_sources(
   base
-  PRIVATE test_new_standards.cpp main.cpp commandLine.cpp plugins.cpp
+  PRIVATE test_new_standards.cpp
+          main.cpp
+          commandLine.cpp
+          plugins.cpp
           version.cpp
   PRIVATE FILE_SET
           HEADERS
@@ -10,4 +13,5 @@ target_sources(
           main.h
           commandLine.h
           plugins.h
-          version.h)
+          version.h
+)

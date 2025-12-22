@@ -25,7 +25,8 @@ target_sources(
           stuffit.h
           unarj.h
           unzip.h
-          vise.h)
+          vise.h
+)
 if(USE_ZLIB)
   target_sources(common_compression PRIVATE zlib.cpp)
 endif()

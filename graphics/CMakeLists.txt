@@ -126,7 +126,8 @@ target_sources(
           VectorRenderer.h
           VectorRendererSpec.h
           wincursor.h
-          yuv_to_rgb.h)
+          yuv_to_rgb.h
+)
 if(USE_ARM_SCALER_ASM)
   target_sources(graphics PRIVATE scaler/downscalerARM.cpp)
 endif()
@@ -166,14 +167,19 @@ if(USE_TINYGL)
             tinygl/zbuffer.h
             tinygl/zmath.h
             tinygl/zblit.h
-            tinygl/zdirtyrect.h)
+            tinygl/zdirtyrect.h
+  )
 endif()
 
 if(USE_ASPECT)
   target_sources(
     graphics
     PRIVATE scaler/aspect.cpp
-    PRIVATE FILE_SET HEADERS FILES scaler/aspect.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            scaler/aspect.h
+  )
 endif()
 
 if(USE_SCALERS)
@@ -195,17 +201,21 @@ if(USE_SCALERS)
             scaler/scale2x.h
             scaler/scale3x.h
             scaler/scalebit.h
-            scaler/tv.h)
+            scaler/tv.h
+  )
   if(USE_ARM_SCALER_ASM)
-    target_sources(graphics PRIVATE scaler/scale2xARM.cpp
-                                    scaler/Normal2xARM.cpp)
+    target_sources(graphics PRIVATE scaler/scale2xARM.cpp scaler/Normal2xARM.cpp)
   endif()
 
   if(USE_HQ_SCALERS)
     target_sources(
       graphics
       PRIVATE scaler/hq.cpp
-      PRIVATE FILE_SET HEADERS FILES scaler/hq.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              scaler/hq.h
+    )
     if(USE_NASM)
       target_sources(graphics PRIVATE scaler/hq2x_i386.cpp scaler/hq3x_i386.cpp)
     endif()
@@ -216,7 +226,11 @@ if(USE_SCALERS)
     target_sources(
       graphics
       PRIVATE scaler/edge.cpp
-      PRIVATE FILE_SET HEADERS FILES scaler/edge.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              scaler/edge.h
+    )
   endif()
 
 endif()

@@ -128,19 +128,28 @@ target_sources(
           softsynth/opl/dbopl.h
           softsynth/opl/dosbox.h
           softsynth/opl/mame.h
-          softsynth/pcspk.h)
+          softsynth/pcspk.h
+)
 if(NOT DISABLE_NUKED_OPL)
   target_sources(
     audio
     PRIVATE softsynth/opl/nuked.cpp
-    PRIVATE FILE_SET HEADERS FILES softsynth/opl/nuked.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            softsynth/opl/nuked.h
+  )
 endif()
 
 if(USE_A52)
   target_sources(
     audio
     PRIVATE decoders/ac3.cpp
-    PRIVATE FILE_SET HEADERS FILES decoders/ac3.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            decoders/ac3.h
+  )
 endif()
 
 if(USE_ALSA)
@@ -167,14 +176,19 @@ if(USE_FMTOWNS_PC98_AUDIO)
             softsynth/fmtowns_pc98/towns_audio.h
             softsynth/fmtowns_pc98/towns_euphony.h
             softsynth/fmtowns_pc98/towns_pc98_driver.h
-            softsynth/fmtowns_pc98/towns_pc98_fmsynth.h)
+            softsynth/fmtowns_pc98/towns_pc98_fmsynth.h
+  )
 endif()
 
 if(USE_MPCDEC)
   target_sources(
     audio
     PRIVATE decoders/mpc.cpp
-    PRIVATE FILE_SET HEADERS FILES decoders/mpc.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            decoders/mpc.h
+  )
 endif()
 
 if(USE_MT32EMU)
@@ -185,7 +199,11 @@ if(USE_SID_AUDIO)
   target_sources(
     audio
     PRIVATE softsynth/sid.cpp softsynth/wave6581.cpp
-    PRIVATE FILE_SET HEADERS FILES softsynth/sid.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            softsynth/sid.h
+  )
 endif()
 
 if(ENABLE_OPL2LPT)
@@ -196,7 +214,11 @@ if(USE_RETROWAVE)
   target_sources(
     audio
     PRIVATE rwopl3.cpp
-    PRIVATE FILE_SET HEADERS FILES rwopl3.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            rwopl3.h
+  )
 endif()
 
 if(USE_VGMTRANS_AUDIO)
@@ -224,5 +246,6 @@ if(USE_VGMTRANS_AUDIO)
             soundfont/vgmitem.h
             soundfont/vgmsamp.h
             soundfont/vab/psxspu.h
-            soundfont/vab/vab.h)
+            soundfont/vab/vab.h
+  )
 endif()

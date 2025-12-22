@@ -56,5 +56,6 @@ if(USE_LUA)
             lua_persistence_util.h
             lvm.h
             lzio.h
-            scummvm_file.h)
+            scummvm_file.h
+  )
 endif()

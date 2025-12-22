@@ -96,47 +96,76 @@ target_sources(
           widgets/richtext.h
           widgets/scrollbar.h
           widgets/scrollcontainer.h
-          widgets/tab.h)
+          widgets/tab.h
+)
 if(USE_CLOUD)
   target_sources(
     gui
     PRIVATE cloudconnectionwizard.cpp downloaddialog.cpp remotebrowser.cpp
-    PRIVATE FILE_SET HEADERS FILES cloudconnectionwizard.h downloaddialog.h
-            remotebrowser.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            cloudconnectionwizard.h
+            downloaddialog.h
+            remotebrowser.h
+  )
 endif()
 
 if(USE_HTTP)
   target_sources(
     gui
     PRIVATE downloadpacksdialog.cpp integrity-dialog.cpp
-    PRIVATE FILE_SET HEADERS FILES downloadpacksdialog.h integrity-dialog.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            downloadpacksdialog.h
+            integrity-dialog.h
+  )
 endif()
 
 if(USE_DLC)
   target_sources(
     gui
     PRIVATE dlcsdialog.cpp downloaddlcsdialog.cpp
-    PRIVATE FILE_SET HEADERS FILES dlcsdialog.h downloaddlcsdialog.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            dlcsdialog.h
+            downloaddlcsdialog.h
+  )
 endif()
 
 if(ENABLE_EVENTRECORDER)
   target_sources(
     gui
     PRIVATE editrecorddialog.cpp onscreendialog.cpp recorderdialog.cpp
-    PRIVATE FILE_SET HEADERS FILES editrecorddialog.h onscreendialog.h
-            recorderdialog.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            editrecorddialog.h
+            onscreendialog.h
+            recorderdialog.h
+  )
 endif()
 
 if(USE_FLUIDSYNTH)
   target_sources(
     gui
     PRIVATE fluidsynth-dialog.cpp
-    PRIVATE FILE_SET HEADERS FILES fluidsynth-dialog.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            fluidsynth-dialog.h
+  )
 endif()
 
 if(USE_UPDATES)
   target_sources(
     gui
     PRIVATE updates-dialog.cpp
-    PRIVATE FILE_SET HEADERS FILES updates-dialog.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            updates-dialog.h
+  )
 endif()

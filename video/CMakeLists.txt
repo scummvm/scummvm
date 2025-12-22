@@ -31,31 +31,49 @@ target_sources(
           qt_decoder.h
           smk_decoder.h
           subtitles.h
-          video_decoder.h)
+          video_decoder.h
+)
 if(USE_BINK)
   target_sources(
     video
     PRIVATE bink_decoder.cpp
-    PRIVATE FILE_SET HEADERS FILES bink_decoder.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            bink_decoder.h
+  )
 endif()
 
 if(USE_HNM)
   target_sources(
     video
     PRIVATE hnm_decoder.cpp
-    PRIVATE FILE_SET HEADERS FILES hnm_decoder.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            hnm_decoder.h
+  )
 endif()
 
 if(USE_THEORADEC)
   target_sources(
     video
     PRIVATE theora_decoder.cpp
-    PRIVATE FILE_SET HEADERS FILES theora_decoder.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            theora_decoder.h
+  )
 endif()
 
 if(USE_VPX)
   target_sources(
     video
     PRIVATE mkv_decoder.cpp mkv/mkvparser.cpp
-    PRIVATE FILE_SET HEADERS FILES mkv_decoder.h mkv/mkvparser.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            mkv_decoder.h
+            mkv/mkvparser.h
+  )
 endif()

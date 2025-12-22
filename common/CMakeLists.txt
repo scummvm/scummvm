@@ -96,7 +96,8 @@ target_sources(
           ustr.h
           util.h
           xpfloat.h
-          zip-set.h)
+          zip-set.h
+)
 
 add_subdirectory(formats)
 add_subdirectory(compression)
@@ -106,12 +107,20 @@ if(ENABLE_EVENTRECORDER)
   target_sources(
     common
     PRIVATE recorderfile.cpp
-    PRIVATE FILE_SET HEADERS FILES recorderfile.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            recorderfile.h
+  )
 endif()
 
 if(USE_UPDATES)
   target_sources(
     common
     PRIVATE updates.cpp
-    PRIVATE FILE_SET HEADERS FILES updates.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            updates.h
+  )
 endif()

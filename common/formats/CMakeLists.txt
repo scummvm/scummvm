@@ -30,4 +30,5 @@ target_sources(
           winexe.h
           winexe_ne.h
           winexe_pe.h
-          xmlparser.h)
+          xmlparser.h
+)

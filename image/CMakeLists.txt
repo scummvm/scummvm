@@ -66,33 +66,50 @@ target_sources(
           codecs/smc.h
           codecs/svq1.h
           codecs/truemotion1.h
-          codecs/xan.h)
+          codecs/xan.h
+)
 if(USE_GIF)
   target_sources(
     image
     PRIVATE gif.cpp
-    PRIVATE FILE_SET HEADERS FILES gif.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            gif.h
+  )
 endif()
 
 if(USE_MPEG2)
   target_sources(
     image
     PRIVATE codecs/mpeg.cpp
-    PRIVATE FILE_SET HEADERS FILES codecs/mpeg.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            codecs/mpeg.h
+  )
 endif()
 
 if(USE_INDEO3)
   target_sources(
     image
     PRIVATE codecs/indeo3.cpp
-    PRIVATE FILE_SET HEADERS FILES codecs/indeo3.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            codecs/indeo3.h
+  )
 endif()
 
 if(USE_INDEO45)
   target_sources(
     image
-    PRIVATE codecs/indeo4.cpp codecs/indeo5.cpp codecs/indeo/indeo.cpp
-            codecs/indeo/indeo_dsp.cpp codecs/indeo/mem.cpp codecs/indeo/vlc.cpp
+    PRIVATE codecs/indeo4.cpp
+            codecs/indeo5.cpp
+            codecs/indeo/indeo.cpp
+            codecs/indeo/indeo_dsp.cpp
+            codecs/indeo/mem.cpp
+            codecs/indeo/vlc.cpp
     PRIVATE FILE_SET
             HEADERS
             FILES
@@ -101,12 +118,17 @@ if(USE_INDEO45)
             codecs/indeo/indeo.h
             codecs/indeo/indeo_dsp.h
             codecs/indeo/mem.h
-            codecs/indeo/vlc.h)
+            codecs/indeo/vlc.h
+  )
 endif()
 
 if(USE_HNM)
   target_sources(
     image
     PRIVATE codecs/hnm.cpp
-    PRIVATE FILE_SET HEADERS FILES codecs/hnm.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            codecs/hnm.h
+  )
 endif()

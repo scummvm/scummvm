@@ -48,4 +48,5 @@ target_sources(
           sinewindows.h
           vector2d.h
           vector3d.h
-          vector4d.h)
+          vector4d.h
+)

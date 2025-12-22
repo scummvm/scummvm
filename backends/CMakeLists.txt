@@ -47,7 +47,8 @@ target_sources(
           keymapper/virtual-mouse.h
           log/log.h
           saves/default/default-saves.h
-          timer/default/default-timer.h)
+          timer/default/default-timer.h
+)
 
 add_subdirectory(platform)
 
@@ -72,7 +73,8 @@ if(USE_HTTP)
             networking/http/postrequest.h
             networking/http/request.h
             networking/http/session.h
-            networking/http/sessionrequest.h)
+            networking/http/sessionrequest.h
+  )
 endif()
 
 if(USE_CLOUD)
@@ -148,21 +150,30 @@ if(USE_CLOUD)
             cloud/onedrive/onedrivecreatedirectoryrequest.h
             cloud/onedrive/onedrivetokenrefresher.h
             cloud/onedrive/onedrivelistdirectoryrequest.h
-            cloud/onedrive/onedriveuploadrequest.h)
+            cloud/onedrive/onedriveuploadrequest.h
+  )
 endif()
 
 if(USE_SCUMMVMDLC)
   target_sources(
     backends
     PRIVATE dlc/scummvmcloud.cpp
-    PRIVATE FILE_SET HEADERS FILES dlc/scummvmcloud.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            dlc/scummvmcloud.h
+  )
 endif()
 
 if(USE_DLC)
   target_sources(
     backends
     PRIVATE dlc/dlcmanager.cpp
-    PRIVATE FILE_SET HEADERS FILES dlc/dlcmanager.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            dlc/dlcmanager.h
+  )
 endif()
 
 if(USE_LIBCURL)
@@ -170,16 +181,24 @@ if(USE_LIBCURL)
     backends
     PRIVATE networking/basic/curl/cacert.cpp networking/basic/curl/socket.cpp
             networking/basic/curl/url.cpp
-    PRIVATE FILE_SET HEADERS FILES networking/basic/curl/cacert.h
-            networking/basic/curl/socket.h networking/basic/curl/url.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            networking/basic/curl/cacert.h
+            networking/basic/curl/socket.h
+            networking/basic/curl/url.h
+  )
   if(USE_HTTP)
     target_sources(
       backends
       PRIVATE networking/http/curl/connectionmanager-curl.cpp
               networking/http/curl/networkreadstream-curl.cpp
-      PRIVATE FILE_SET HEADERS FILES
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
               networking/http/curl/connectionmanager-curl.h
-              networking/http/curl/networkreadstream-curl.h)
+              networking/http/curl/networkreadstream-curl.h
+    )
   endif()
 endif()
 
@@ -187,15 +206,25 @@ if(EMSCRIPTEN)
   target_sources(
     backends
     PRIVATE fs/emscripten/emscripten-fs-factory.cpp
-            fs/emscripten/emscripten-posix-fs.cpp fs/emscripten/http-fs.cpp
+            fs/emscripten/emscripten-posix-fs.cpp
+            fs/emscripten/http-fs.cpp
             midi/webmidi.cpp
-    PRIVATE FILE_SET HEADERS FILES fs/emscripten/emscripten-fs-factory.h
-            fs/emscripten/emscripten-posix-fs.h fs/emscripten/http-fs.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            fs/emscripten/emscripten-fs-factory.h
+            fs/emscripten/emscripten-posix-fs.h
+            fs/emscripten/http-fs.h
+  )
   if(USE_CLOUD)
     target_sources(
       backends
       PRIVATE fs/emscripten/cloud-fs.cpp
-      PRIVATE FILE_SET HEADERS FILES fs/emscripten/cloud-fs.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              fs/emscripten/cloud-fs.h
+    )
   endif()
 
   if(USE_HTTP)
@@ -203,17 +232,23 @@ if(EMSCRIPTEN)
       backends
       PRIVATE networking/http/emscripten/connectionmanager-emscripten.cpp
               networking/http/emscripten/networkreadstream-emscripten.cpp
-      PRIVATE FILE_SET HEADERS FILES
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
               networking/http/emscripten/connectionmanager-emscripten.h
-              networking/http/emscripten/networkreadstream-emscripten.h)
+              networking/http/emscripten/networkreadstream-emscripten.h
+    )
   endif()
 
   if(USE_TTS)
     target_sources(
       backends
       PRIVATE text-to-speech/emscripten/emscripten-text-to-speech.cpp
-      PRIVATE FILE_SET HEADERS FILES
-              text-to-speech/emscripten/emscripten-text-to-speech.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              text-to-speech/emscripten/emscripten-text-to-speech.h
+    )
   endif()
 endif()
 
@@ -252,13 +287,17 @@ if(USE_SDL_NET)
             networking/sdl_net/handlerutils.h
             networking/sdl_net/localwebserver.h
             networking/sdl_net/reader.h
-            networking/sdl_net/uploadfileclienthandler.h)
+            networking/sdl_net/uploadfileclienthandler.h
+  )
   if(USE_CLOUD)
     target_sources(
       backends
       PRIVATE networking/sdl_net/handlers/connectcloudhandler.cpp
-      PRIVATE FILE_SET HEADERS FILES
-              networking/sdl_net/handlers/connectcloudhandler.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              networking/sdl_net/handlers/connectcloudhandler.h
+    )
   endif()
 endif()
 
@@ -272,27 +311,44 @@ if(USE_ENET)
             networking/enet/source/packet.cpp
             networking/enet/source/peer.cpp
             networking/enet/source/protocol.cpp
-    PRIVATE FILE_SET HEADERS FILES networking/enet/source/callbacks.h
-            networking/enet/source/list.h networking/enet/source/protocol.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            networking/enet/source/callbacks.h
+            networking/enet/source/list.h
+            networking/enet/source/protocol.h
+  )
   if(WIN32)
     target_sources(
       backends
       PRIVATE networking/enet/source/win32.cpp
-      PRIVATE FILE_SET HEADERS FILES networking/enet/source/win32.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              networking/enet/source/win32.h
+    )
   else()
     target_sources(
       backends
       PRIVATE networking/enet/source/unix.cpp
-      PRIVATE FILE_SET HEADERS FILES networking/enet/source/unix.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              networking/enet/source/unix.h
+    )
   endif()
 
   # TODO: Is the order important here? If not, merge with the top block.
   target_sources(
     backends
-    PRIVATE networking/enet/enet.cpp networking/enet/host.cpp
-            networking/enet/socket.cpp
-    PRIVATE FILE_SET HEADERS FILES networking/enet/enet.h
-            networking/enet/host.h networking/enet/socket.h)
+    PRIVATE networking/enet/enet.cpp networking/enet/host.cpp networking/enet/socket.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            networking/enet/enet.h
+            networking/enet/host.h
+            networking/enet/socket.h
+  )
 endif()
 
 if(USE_ELF_LOADER)
@@ -316,14 +372,18 @@ if(USE_ELF_LOADER)
             plugins/elf/mips-loader.h
             plugins/elf/ppc-loader.h
             plugins/elf/shorts-segment-manager.h
-            plugins/elf/version.h)
+            plugins/elf/version.h
+  )
 endif()
 
 if(ENABLE_VKEYBD)
   target_sources(
     backends
-    PRIVATE vkeybd/image-map.cpp vkeybd/polygon.cpp vkeybd/virtual-keyboard.cpp
-            vkeybd/virtual-keyboard-gui.cpp vkeybd/virtual-keyboard-parser.cpp
+    PRIVATE vkeybd/image-map.cpp
+            vkeybd/polygon.cpp
+            vkeybd/virtual-keyboard.cpp
+            vkeybd/virtual-keyboard-gui.cpp
+            vkeybd/virtual-keyboard-parser.cpp
     PRIVATE FILE_SET
             HEADERS
             FILES
@@ -331,7 +391,8 @@ if(ENABLE_VKEYBD)
             vkeybd/polygon.h
             vkeybd/virtual-keyboard.h
             vkeybd/virtual-keyboard-gui.h
-            vkeybd/virtual-keyboard-parser.h)
+            vkeybd/virtual-keyboard-parser.h
+  )
 endif()
 
 # OpenGL specific source files.
@@ -362,12 +423,12 @@ if(USE_OPENGL)
             graphics/opengl/pipelines/pipeline.h
             graphics/opengl/pipelines/libretro.h
             graphics/opengl/pipelines/libretro/parser.h
-            graphics/opengl/pipelines/shader.h)
+            graphics/opengl/pipelines/shader.h
+  )
 endif()
 
-# SDL specific source files. We cannot just check $BACKEND = sdl, as various
-# other backends derive from the SDL backend, and they all need the following
-# files.
+# SDL specific source files. We cannot just check $BACKEND = sdl, as various other backends derive
+# from the SDL backend, and they all need the following files.
 if(SDL_BACKEND)
   target_sources(
     backends
@@ -386,7 +447,8 @@ if(SDL_BACKEND)
             mixer/sdl/sdl-mixer.h
             mixer/null/null-mixer.h
             mutex/sdl/sdl-mutex.h
-            timer/sdl/sdl-timer.h)
+            timer/sdl/sdl-timer.h
+  )
 
   # TODO - We can do better with SDL versions in CMake
   if(NOT USE_SDL3 AND NOT USE_SDL2) # SDL 1
@@ -405,7 +467,11 @@ if(SDL_BACKEND)
     target_sources(
       backends
       PRIVATE plugins/sdl/sdl-provider.cpp
-      PRIVATE FILE_SET HEADERS FILES plugins/sdl/sdl-provider.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              plugins/sdl/sdl-provider.h
+    )
   endif()
 
   # SDL 2 removed audio CD support
@@ -413,29 +479,43 @@ if(SDL_BACKEND)
     target_sources(
       backends
       PRIVATE audiocd/sdl/sdl-audiocd.cpp
-      PRIVATE FILE_SET HEADERS FILES audiocd/sdl/sdl-audiocd.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              audiocd/sdl/sdl-audiocd.h
+    )
   endif()
 
   if(USE_OPENGL)
     target_sources(
       backends
       PRIVATE graphics/openglsdl/openglsdl-graphics.cpp
-      PRIVATE FILE_SET HEADERS FILES graphics/openglsdl/openglsdl-graphics.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              graphics/openglsdl/openglsdl-graphics.h
+    )
   endif()
 
   if(USE_DISCORD)
     target_sources(
       backends
       PRIVATE presence/discord/discord.cpp
-      PRIVATE FILE_SET HEADERS FILES presence/discord/discord.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              presence/discord/discord.h
+    )
   endif()
 endif()
 
 if(KOLIBRIOS)
   target_sources(
     backends
-    PRIVATE fs/kolibrios/kolibrios-fs.cpp fs/kolibrios/kolibrios-fs-factory.cpp
-            fs/posix/posix-iostream.cpp plugins/kolibrios/kolibrios-provider.cpp
+    PRIVATE fs/kolibrios/kolibrios-fs.cpp
+            fs/kolibrios/kolibrios-fs-factory.cpp
+            fs/posix/posix-iostream.cpp
+            plugins/kolibrios/kolibrios-provider.cpp
             saves/kolibrios/kolibrios-saves.cpp
     PRIVATE FILE_SET
             HEADERS
@@ -444,7 +524,8 @@ if(KOLIBRIOS)
             fs/kolibrios/kolibrios-fs-factory.h
             fs/posix/posix-iostream.h
             plugins/kolibrios/kolibrios-provider.h
-            saves/kolibrios/kolibrios-saves.h)
+            saves/kolibrios/kolibrios-saves.h
+  )
 endif()
 
 if(POSIX)
@@ -474,43 +555,58 @@ if(POSIX)
             plugins/posix/posix-provider.h
             saves/posix/posix-saves.h
             taskbar/unity/unity-taskbar.h
-            dialogs/gtk/gtk-dialogs.h)
+            dialogs/gtk/gtk-dialogs.h
+  )
   if(USE_SPEECH_DISPATCHER AND NOT USE_TTS)
 
     target_sources(
       backends
       PRIVATE text-to-speech/linux/linux-text-to-speech.cpp
-      PRIVATE FILE_SET HEADERS FILES
-              text-to-speech/linux/linux-text-to-speech.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              text-to-speech/linux/linux-text-to-speech.h
+    )
   endif()
 endif()
 
 if(MACOSX)
   target_sources(
     backends
-    PRIVATE audiocd/macosx/macosx-audiocd.cpp dialogs/macosx/macosx-dialogs.cpp
-            midi/coreaudio.cpp midi/coremidi.cpp
-            updates/macosx/macosx-updates.cpp taskbar/macosx/macosx-taskbar.cpp
+    PRIVATE audiocd/macosx/macosx-audiocd.cpp
+            dialogs/macosx/macosx-dialogs.cpp
+            midi/coreaudio.cpp
+            midi/coremidi.cpp
+            updates/macosx/macosx-updates.cpp
+            taskbar/macosx/macosx-taskbar.cpp
     PRIVATE FILE_SET
             HEADERS
             FILES
             audiocd/macosx/macosx-audiocd.h
             dialogs/macosx/macosx-dialogs.h
             updates/macosx/macosx-updates.h
-            taskbar/macosx/macosx-taskbar.h)
+            taskbar/macosx/macosx-taskbar.h
+  )
   if(USE_TTS)
     target_sources(
       backends
       PRIVATE text-to-speech/macosx/macosx-text-to-speech.cpp
-      PRIVATE FILE_SET HEADERS FILES
-              text-to-speech/macosx/macosx-text-to-speech.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              text-to-speech/macosx/macosx-text-to-speech.h
+    )
   endif()
 
   if(SDL_BACKEND)
     target_sources(
       backends
       PRIVATE plugins/sdl/macosx/macosx-provider.cpp
-      PRIVATE FILE_SET HEADERS FILES plugins/sdl/macosx/macosx-provider.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              plugins/sdl/macosx/macosx-provider.h
+    )
   endif()
 
 endif()
@@ -537,13 +633,17 @@ if(WIN32)
             plugins/win32/win32-provider.h
             saves/windows/windows-saves.h
             updates/win32/win32-updates.h
-            taskbar/win32/win32-taskbar.h)
+            taskbar/win32/win32-taskbar.h
+  )
   if(USE_TTS)
     target_sources(
       backends
       PRIVATE text-to-speech/windows/windows-text-to-speech.cpp
-      PRIVATE FILE_SET HEADERS FILES
-              text-to-speech/windows/windows-text-to-speech.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              text-to-speech/windows/windows-text-to-speech.h
+    )
   endif()
 endif()
 
@@ -551,7 +651,11 @@ if(BACKEND STREQUAL "3ds")
   target_sources(
     backends
     PRIVATE mutex/3ds/3ds-mutex.cpp
-    PRIVATE FILE_SET HEADERS FILES mutex/3ds/3ds-mutex.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            mutex/3ds/3ds-mutex.h
+  )
 endif()
 
 if(BACKEND STREQUAL "android")
@@ -575,15 +679,19 @@ if(BACKEND STREQUAL "android")
             mutex/pthread/pthread-mutex.h
             networking/basic/android/jni.h
             networking/basic/android/socket.h
-            networking/basic/android/url.h)
+            networking/basic/android/url.h
+  )
   if(USE_HTTP)
     target_sources(
       backends
       PRIVATE networking/http/android/connectionmanager-android.cpp
               networking/http/android/networkreadstream-android.cpp
-      PRIVATE FILE_SET HEADERS FILES
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
               networking/http/android/connectionmanager-android.h
-              networking/http/android/networkreadstream-android.h)
+              networking/http/android/networkreadstream-android.h
+    )
   endif()
 
 endif()
@@ -591,19 +699,33 @@ endif()
 if(AMIGAOS)
   target_sources(
     backends
-    PRIVATE dialogs/amigaos/amigaos-dialogs.cpp fs/amigaos/amigaos-fs.cpp
-            fs/amigaos/amigaos-fs-factory.cpp midi/camd.cpp
-    PRIVATE FILE_SET HEADERS FILES dialogs/amigaos/amigaos-dialogs.h
-            fs/amigaos/amigaos-fs.h fs/amigaos/amigaos-fs-factory.h)
+    PRIVATE dialogs/amigaos/amigaos-dialogs.cpp
+            fs/amigaos/amigaos-fs.cpp
+            fs/amigaos/amigaos-fs-factory.cpp
+            midi/camd.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            dialogs/amigaos/amigaos-dialogs.h
+            fs/amigaos/amigaos-fs.h
+            fs/amigaos/amigaos-fs-factory.h
+  )
 endif()
 
 if(MORPHOS)
   target_sources(
     backends
-    PRIVATE fs/morphos/morphos-fs.cpp fs/morphos/morphos-fs-factory.cpp
-            dialogs/morphos/morphos-dialogs.cpp midi/camd.cpp
-    PRIVATE FILE_SET HEADERS FILES fs/morphos/morphos-fs.h
-            fs/morphos/morphos-fs-factory.h dialogs/morphos/morphos-dialogs.h)
+    PRIVATE fs/morphos/morphos-fs.cpp
+            fs/morphos/morphos-fs-factory.cpp
+            dialogs/morphos/morphos-dialogs.cpp
+            midi/camd.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            fs/morphos/morphos-fs.h
+            fs/morphos/morphos-fs-factory.h
+            dialogs/morphos/morphos-dialogs.h
+  )
 endif()
 
 if(RISCOS)
@@ -622,12 +744,17 @@ if(RISCOS)
             graphics/riscossdl/riscossdl-graphics.h
             fs/riscos/riscos-fs.h
             fs/riscos/riscos-fs-factory.h
-            plugins/riscos/riscos-provider.h)
+            plugins/riscos/riscos-provider.h
+  )
   if(NOT SDL_BACKEND)
     target_sources(
       backends
       PRIVATE platform/sdl/riscos/riscos-utils.cpp
-      PRIVATE FILE_SET HEADERS FILES platform/sdl/riscos/riscos-utils.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              platform/sdl/riscos/riscos-utils.h
+    )
   endif()
 
 endif()
@@ -635,8 +762,10 @@ endif()
 if(PLAYSTATION3)
   target_sources(
     backends
-    PRIVATE fs/posix/posix-fs.cpp fs/posix/posix-fs-factory.cpp
-            fs/posix/posix-iostream.cpp fs/ps3/ps3-fs-factory.cpp
+    PRIVATE fs/posix/posix-fs.cpp
+            fs/posix/posix-fs-factory.cpp
+            fs/posix/posix-iostream.cpp
+            fs/ps3/ps3-fs-factory.cpp
             events/ps3sdl/ps3sdl-events.cpp
     PRIVATE FILE_SET
             HEADERS
@@ -645,21 +774,30 @@ if(PLAYSTATION3)
             fs/posix/posix-fs-factory.h
             fs/posix/posix-iostream.h
             fs/ps3/ps3-fs-factory.h
-            events/ps3sdl/ps3sdl-events.h)
+            events/ps3sdl/ps3sdl-events.h
+  )
 endif()
 
 if(USE_LINUXCD)
   target_sources(
     backends
     PRIVATE audiocd/linux/linux-audiocd.cpp
-    PRIVATE FILE_SET HEADERS FILES audiocd/linux/linux-audiocd.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            audiocd/linux/linux-audiocd.h
+  )
 endif()
 
 if((BACKEND STREQUAL "3ds"))
   target_sources(
     backends
     PRIVATE plugins/3ds/3ds-provider.cpp
-    PRIVATE FILE_SET HEADERS FILES plugins/3ds/3ds-provider.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            plugins/3ds/3ds-provider.h
+  )
 endif()
 
 if((BACKEND STREQUAL "atari"))
@@ -691,7 +829,8 @@ if((BACKEND STREQUAL "atari"))
             graphics/atari/atari-screen.h
             graphics/atari/atari-supervidel.h
             graphics/atari/atari-surface.h
-            mixer/atari/atari-mixer.h)
+            mixer/atari/atari-mixer.h
+  )
 endif()
 
 if((BACKEND STREQUAL "ds"))
@@ -717,7 +856,8 @@ if((BACKEND STREQUAL "ds"))
             fs/posix-drives/posix-drives-fs-factory.h
             fs/devoptab/devoptab-fs-factory.h
             mixer/maxmod/maxmod-mixer.h
-            plugins/ds/ds-provider.h)
+            plugins/ds/ds-provider.h
+  )
 endif()
 
 if(IPHONE)
@@ -725,32 +865,49 @@ if(IPHONE)
     backends
     PRIVATE mutex/pthread/pthread-mutex.cpp graphics/ios/ios-graphics.cpp
             graphics/ios/renderbuffer.cpp
-    PRIVATE FILE_SET HEADERS FILES mutex/pthread/pthread-mutex.h
-            graphics/ios/ios-graphics.h graphics/ios/renderbuffer.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            mutex/pthread/pthread-mutex.h
+            graphics/ios/ios-graphics.h
+            graphics/ios/renderbuffer.h
+  )
 endif()
 
 if((BACKEND STREQUAL "maemo"))
   target_sources(
     backends
-    PRIVATE events/maemosdl/maemosdl-events.cpp
-            graphics/maemosdl/maemosdl-graphics.cpp
-    PRIVATE FILE_SET HEADERS FILES events/maemosdl/maemosdl-events.h
-            graphics/maemosdl/maemosdl-graphics.h)
+    PRIVATE events/maemosdl/maemosdl-events.cpp graphics/maemosdl/maemosdl-graphics.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            events/maemosdl/maemosdl-events.h
+            graphics/maemosdl/maemosdl-graphics.h
+  )
 endif()
 
 if((BACKEND STREQUAL "n64"))
   target_sources(
     backends
     PRIVATE fs/n64/n64-fs.cpp fs/n64/n64-fs-factory.cpp fs/n64/romfsstream.cpp
-    PRIVATE FILE_SET HEADERS FILES fs/n64/n64-fs.h fs/n64/n64-fs-factory.h
-            fs/n64/romfsstream.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            fs/n64/n64-fs.h
+            fs/n64/n64-fs-factory.h
+            fs/n64/romfsstream.h
+  )
 endif()
 
 if((BACKEND STREQUAL "null"))
   target_sources(
     backends
     PRIVATE mixer/null/null-mixer.cpp
-    PRIVATE FILE_SET HEADERS FILES mixer/null/null-mixer.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            mixer/null/null-mixer.h
+  )
 endif()
 
 if(MIYOO)
@@ -758,7 +915,11 @@ if(MIYOO)
     target_sources(
       backends
       PRIVATE graphics/miyoo/miyoomini-graphics.cpp
-      PRIVATE FILE_SET HEADERS FILES graphics/miyoo/miyoomini-graphics.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              graphics/miyoo/miyoomini-graphics.h
+    )
   endif()
 
 endif()
@@ -767,23 +928,33 @@ if(OPENDINGUX)
   target_sources(
     backends
     PRIVATE graphics/opendingux/opendingux-graphics.cpp
-    PRIVATE FILE_SET HEADERS FILES graphics/opendingux/opendingux-graphics.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            graphics/opendingux/opendingux-graphics.h
+  )
 endif()
 
 if((BACKEND STREQUAL "openpandora"))
   target_sources(
     backends
-    PRIVATE events/openpandora/op-events.cpp
-            graphics/openpandora/op-graphics.cpp
-    PRIVATE FILE_SET HEADERS FILES events/openpandora/op-events.h
-            graphics/openpandora/op-graphics.h)
+    PRIVATE events/openpandora/op-events.cpp graphics/openpandora/op-graphics.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            events/openpandora/op-events.h
+            graphics/openpandora/op-graphics.h
+  )
 endif()
 
 if((BACKEND STREQUAL "psp"))
   target_sources(
     backends
-    PRIVATE fs/psp/psp-fs.cpp fs/psp/psp-fs-factory.cpp fs/psp/psp-stream.cpp
-            plugins/psp/psp-provider.cpp timer/psp/timer.cpp
+    PRIVATE fs/psp/psp-fs.cpp
+            fs/psp/psp-fs-factory.cpp
+            fs/psp/psp-stream.cpp
+            plugins/psp/psp-provider.cpp
+            timer/psp/timer.cpp
     PRIVATE FILE_SET
             HEADERS
             FILES
@@ -791,7 +962,8 @@ if((BACKEND STREQUAL "psp"))
             fs/psp/psp-fs-factory.h
             fs/psp/psp-stream.h
             plugins/psp/psp-provider.h
-            timer/psp/timer.h)
+            timer/psp/timer.h
+  )
 endif()
 
 if((BACKEND STREQUAL "psp2"))
@@ -811,20 +983,27 @@ if((BACKEND STREQUAL "psp2"))
             fs/posix-drives/posix-drives-fs.h
             fs/posix-drives/posix-drives-fs-factory.h
             plugins/psp2/psp2-provider.h
-            events/psp2sdl/psp2sdl-events.h)
+            events/psp2sdl/psp2sdl-events.h
+  )
 endif()
 
 if((BACKEND STREQUAL "samsungtv"))
   target_sources(
     backends
     PRIVATE events/samsungtvsdl/samsungtvsdl-events.cpp
-    PRIVATE FILE_SET HEADERS FILES events/samsungtvsdl/samsungtvsdl-events.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            events/samsungtvsdl/samsungtvsdl-events.h
+  )
 endif()
 
 if((BACKEND STREQUAL "wii"))
   target_sources(
     backends
-    PRIVATE fs/wii/wii-fs.cpp fs/wii/wii-fs-factory.cpp mutex/wii/wii-mutex.cpp
+    PRIVATE fs/wii/wii-fs.cpp
+            fs/wii/wii-fs-factory.cpp
+            mutex/wii/wii-mutex.cpp
             plugins/wii/wii-provider.cpp
     PRIVATE FILE_SET
             HEADERS
@@ -832,27 +1011,40 @@ if((BACKEND STREQUAL "wii"))
             fs/wii/wii-fs.h
             fs/wii/wii-fs-factory.h
             mutex/wii/wii-mutex.h
-            plugins/wii/wii-provider.h)
+            plugins/wii/wii-provider.h
+  )
 endif()
 
 if((BACKEND STREQUAL "switch"))
   target_sources(
     backends
     PRIVATE events/switchsdl/switchsdl-events.cpp
-    PRIVATE FILE_SET HEADERS FILES events/switchsdl/switchsdl-events.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            events/switchsdl/switchsdl-events.h
+  )
 endif()
 
 if(ENABLE_EVENTRECORDER)
   target_sources(
     backends
     PRIVATE saves/recorder/recorder-saves.cpp
-    PRIVATE FILE_SET HEADERS FILES saves/recorder/recorder-saves.h)
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            saves/recorder/recorder-saves.h
+  )
   if(NOT SDL_BACKEND)
     if(NOT (BACKEND STREQUAL "null"))
       target_sources(
         backends
         PRIVATE mixer/null/null-mixer.cpp
-        PRIVATE FILE_SET HEADERS FILES mixer/null/null-mixer.h)
+        PRIVATE FILE_SET
+                HEADERS
+                FILES
+                mixer/null/null-mixer.h
+      )
     endif()
   endif()
 endif()
@@ -876,26 +1068,39 @@ if(USE_IMGUI)
             imgui/imgui_fonts.h
             imgui/imgui_utils.h
             imgui/components/imgui_logger.h
-            imgui/misc/freetype/imgui_freetype.h)
+            imgui/misc/freetype/imgui_freetype.h
+  )
 
   if(USE_OPENGL)
     target_sources(
       backends
       PRIVATE imgui/backends/imgui_impl_opengl3.cpp
-      PRIVATE FILE_SET HEADERS FILES imgui/backends/imgui_impl_opengl3.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              imgui/backends/imgui_impl_opengl3.h
+    )
   endif()
 
   if(USE_SDL2)
     target_sources(
       backends
       PRIVATE imgui/backends/imgui_impl_sdl2.cpp
-      PRIVATE FILE_SET HEADERS FILES imgui/backends/imgui_impl_sdl2.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              imgui/backends/imgui_impl_sdl2.h
+    )
 
     if(USE_IMGUI_SDLRENDERER2)
       target_sources(
         backends
         PRIVATE imgui/backends/imgui_impl_sdlrenderer2.cpp
-        PRIVATE FILE_SET HEADERS FILES imgui/backends/imgui_impl_sdlrenderer2.h)
+        PRIVATE FILE_SET
+                HEADERS
+                FILES
+                imgui/backends/imgui_impl_sdlrenderer2.h
+      )
     endif()
   endif()
 
@@ -903,13 +1108,21 @@ if(USE_IMGUI)
     target_sources(
       backends
       PRIVATE imgui/backends/imgui_impl_sdl3.cpp
-      PRIVATE FILE_SET HEADERS FILES imgui/backends/imgui_impl_sdl3.h)
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              imgui/backends/imgui_impl_sdl3.h
+    )
 
     if(USE_IMGUI_SDLRENDERER3)
       target_sources(
         backends
         PRIVATE imgui/backends/imgui_impl_sdlrenderer3.cpp
-        PRIVATE FILE_SET HEADERS FILES imgui/backends/imgui_impl_sdlrenderer3.h)
+        PRIVATE FILE_SET
+                HEADERS
+                FILES
+                imgui/backends/imgui_impl_sdlrenderer3.h
+      )
     endif()
   endif()
 endif()

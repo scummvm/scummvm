@@ -12,6 +12,7 @@ if(NOT DETECT_HOST)
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(PLATFORM_WINDOWS TRUE)
+    set(WIN32 TRUE)
     add_compile_definitions(WIN32)
   endif()
 
@@ -23,7 +24,6 @@ if(NOT DETECT_HOST)
       "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework Cocoa"
     )
   endif()
-
   set(SDL_BACKEND TRUE)
   set(USE_SDL2 TRUE)
 endif()
@@ -44,6 +44,8 @@ if(SDL_BACKEND)
   add_compile_definitions(SDL_BACKEND USE_SDL2)
 endif()
 
+include_directories(PRIVATE ${CMAKE_SOURCE_DIR})
+
 # The engines directory
 add_subdirectory(engines)
 
@@ -58,6 +60,8 @@ add_subdirectory(audio)
 add_subdirectory(graphics)
 
 add_subdirectory(image)
+
+add_subdirectory(math)
 
 # The main (base) directory
 add_subdirectory(base)

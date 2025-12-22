@@ -8,5 +8,11 @@ target_link_directories(platform PRIVATE ${DEVKITPRO}/libogc/lib/wii)
 target_link_libraries(platform PRIVATE gxflux fat)
 
 target_sources(
-  platform PRIVATE main.cpp options.cpp osystem.cpp osystem_gfx.cpp
-                   osystem_sfx.cpp osystem_events.cpp)
+  platform
+  PRIVATE main.cpp
+          options.cpp
+          osystem.cpp
+          osystem_gfx.cpp
+          osystem_sfx.cpp
+          osystem_events.cpp
+)
