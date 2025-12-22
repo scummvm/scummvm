@@ -158,6 +158,7 @@ public:
 	void lineHandler() override;
 
 protected:
+	bool  isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const;
 	bool  isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const;
 };
 

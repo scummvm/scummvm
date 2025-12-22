@@ -159,7 +159,7 @@ void Parser_v2d::lineHandler() {
 						return;
 				}
 			}
-			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
+			if ((*farComment == '\0') && isBackgroundWord_v2(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
 				return;
 		} while (noun);
 	}
@@ -182,6 +182,28 @@ void Parser_v2d::lineHandler() {
 			Utils::notifyBox(_vm->_text->getTextParser(kTBEh_2d));
 		}
 	}
+}
+
+/**
+ * Print text for possible background object.  Return TRUE if match found
+ * Only match if both verb and noun found.  Test_ca will match verb-only
+ */
+bool Parser_v2d::isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const {
+	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
+
+	if (!noun)
+		return false;
+
+	for (int i = 0; obj[i]._verbIndex; i++) {
+		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) && (noun == _vm->_text->getNoun(obj[i]._nounIndex, 0)) &&
+			(obj[i]._roomState == kStateDontCare ||
+			 obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])) {
+			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
