@@ -4,8 +4,6 @@ add_library(engine_plumbers)
 
 add_library(detection_plumbers detection.cpp)
 
-target_link_libraries(engine_plumbers PUBLIC engines video)
-
 target_sources(engine_plumbers PRIVATE plumbers.cpp console.cpp metaengine.cpp
                                        windows.cpp)
 

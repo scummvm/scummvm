@@ -32,7 +32,6 @@ target_sources(
           rational.cpp
           rendermode.cpp
           rotationmode.cpp
-          scummsys.h
           str.cpp
           stream.cpp
           streamdebug.cpp
@@ -49,20 +48,70 @@ target_sources(
           util.cpp
           xpfloat.cpp
           zip-set.cpp
-          std/std.cpp)
+          std/std.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          archive.h
+          base64.h
+          btea.h
+          concatstream.h
+          config-manager.h
+          coroutines.h
+          dbcs-str.h
+          debug.h
+          engine_data.h
+          error.h
+          events.h
+          file.h
+          fs.h
+          gui_options.h
+          hashmap.h
+          language.h
+          localization.h
+          macresman.h
+          memory.h
+          memorypool.h
+          md5.h
+          mutex.h
+          osd_message_queue.h
+          path.h
+          platform.h
+          punycode.h
+          random.h
+          rational.h
+          rendermode.h
+          rotationmode.h
+          str.h
+          stream.h
+          streamdebug.h
+          str-base.h
+          str-enc.h
+          system.h
+          textconsole.h
+          text-to-speech.h
+          tokenizer.h
+          translation.h
+          unicode-bidi.h
+          ustr.h
+          util.h
+          xpfloat.h
+          zip-set.h)
 
 add_subdirectory(formats)
 add_subdirectory(compression)
+add_subdirectory(lua)
 
 if(ENABLE_EVENTRECORDER)
-  target_sources(common PRIVATE recorderfile.cpp)
+  target_sources(
+    common
+    PRIVATE recorderfile.cpp
+    PRIVATE FILE_SET HEADERS FILES recorderfile.h)
 endif()
 
-if(ENABLE_UPDATES)
-  target_sources(common PRIVATE updates.cpp)
+if(USE_UPDATES)
+  target_sources(
+    common
+    PRIVATE updates.cpp
+    PRIVATE FILE_SET HEADERS FILES updates.h)
 endif()
-
-target_include_directories(
-  common
-  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/.."
-  INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>)

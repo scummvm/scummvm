@@ -1,3 +1,5 @@
+# add_library(common_formats)
+
 target_sources(
   common
   PRIVATE cue.cpp
@@ -12,4 +14,20 @@ target_sources(
           winexe.cpp
           winexe_ne.cpp
           winexe_pe.cpp
-          xmlparser.cpp)
+          xmlparser.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          cue.h
+          disk_image.h
+          formatinfo.h
+          iff_container.h
+          ini-file.h
+          json.h
+          markdown.h
+          prodos.h
+          quicktime.h
+          winexe.h
+          winexe_ne.h
+          winexe_pe.h
+          xmlparser.h)

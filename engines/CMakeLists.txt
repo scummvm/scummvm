@@ -1,7 +1,5 @@
 add_library(engines)
 
-target_link_libraries(engines PRIVATE common image gui)
-
 target_sources(
   engines
   PRIVATE achievements.cpp

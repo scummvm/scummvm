@@ -30,7 +30,20 @@ if(PLATFORM_WII)
   add_subdirectory(wii)
 endif()
 
-target_link_libraries(platform PRIVATE common backends base)
+# Link all shared libraries to the platform executable
+target_link_libraries(
+  platform
+  PRIVATE common
+          backends
+          base
+          audio
+          base
+          gui
+          graphics
+          engines
+          image
+          video
+          math)
 
 if(SDL_BACKEND)
   target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
