@@ -156,6 +156,9 @@ public:
 	~Parser_v2d() override;
 
 	void lineHandler() override;
+
+protected:
+	bool  isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const;
 };
 
 class Parser_v3d : public Parser_v1d {

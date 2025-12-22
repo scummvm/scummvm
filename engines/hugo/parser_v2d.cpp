@@ -165,10 +165,10 @@ void Parser_v2d::lineHandler() {
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(true, noun, verb, _catchallList)
-		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
+	if (   !isCatchallVerb_v2(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+		&& !isCatchallVerb_v2(true, noun, verb, _catchallList)
+		&& !isCatchallVerb_v2(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+		&& !isCatchallVerb_v2(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::notifyBox(farComment);
 		} else if (_vm->_maze._enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
@@ -182,6 +182,41 @@ void Parser_v2d::lineHandler() {
 			Utils::notifyBox(_vm->_text->getTextParser(kTBEh_2d));
 		}
 	}
+}
+
+/**
+ * Print text for possible background object.  Return TRUE if match found
+ * If test_noun TRUE, must have a noun given
+ * Algorithm:  If (noun matches) OR (match not required AND match specifies NULL) OR
+ * (no noun present and match required) print comment
+ * i.e. NULL allows any or no noun, match TRUE allows no noun or matching noun 
+ */
+bool Parser_v2d::isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const {
+	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
+
+	if (_vm->_maze._enabledFl)
+		return false;
+
+	if (testNounFl && !noun)
+		return false;
+
+	for (int i = 0; obj[i]._verbIndex; i++) {
+		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) &&
+			((noun == _vm->_text->getNoun(obj[i]._nounIndex, 0)) ||
+			 (obj[i]._nounIndex == 0 && !obj[i]._matchFl) ||
+			 (!noun && obj[i]._matchFl)) &&
+			(obj[i]._roomState == kStateDontCare ||
+			 obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])) {
+
+			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
+			// If this is LOOK without a noun, show any takeable objects
+			if (!noun && verb == _vm->_text->getVerb(_vm->_look, 0))
+				_vm->_object->showTakeables();
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Hugo
