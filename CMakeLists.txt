@@ -38,13 +38,7 @@ if(PLATFORM_WII)
 endif()
 
 if(SDL_BACKEND)
-  # SDL2
-  FetchContent_Declare(
-    SDL2
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG 6510d6ccbf446e058ae8ed95233f59057312df02 # release-2.32.6
-    FIND_PACKAGE_ARGS NAMES SDL2)
-  FetchContent_MakeAvailable(SDL2)
+  find_package(SDL2 CONFIG REQUIRED)
   link_libraries(SDL2::SDL2)
 
   add_compile_definitions(SDL_BACKEND USE_SDL2)
