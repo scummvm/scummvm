@@ -204,7 +204,7 @@ else ifeq ($(platform), libnx)
     DEFINES   += -g -O3 -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -ffast-math -mcpu=cortex-a57+crc+fp+simd -march=armv8-a -mtune=cortex-a57 -mtp=soft
     DEFINES += $(INCDIRS)
     DEFINES += -D__SWITCH__ -DHAVE_LIBNX -D__arm64__ -D__ARM_NEON__
-    CXXFLAGS := $(ASFLAGS) -std=gnu++11 -fpermissive
+    CXXFLAGS += $(ASFLAGS) -std=gnu++11 -fpermissive
     STATIC_LINKING = 1
     HAVE_OPENGL := 1
     HAVE_NEON := 1
