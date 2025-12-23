@@ -287,7 +287,7 @@ bool GamosEngine::loadModule(uint id) {
 		case 4: {
 			_resReadOffset = _arch.pos();
 			bool isResource = true;
-			if (prevByte == RESTP_F) {
+			if (prevByte == RESTP_GAMECONF) {
 				RawData data;
 				if (!_arch.readCompressedData(&data))
 					return false;
@@ -306,18 +306,18 @@ bool GamosEngine::loadModule(uint id) {
 					_scrollBorderL = 0;
 				}
 				isResource = false; /* do not loadResHandler */
-			} else if (prevByte == RESTP_10) {
+			} else if (prevByte == RESTP_GAMECONF2) {
 				if (!initMainDatas())
 					return false;
 				isResource = false; /* do not loadResHandler */
-			} else if (prevByte == RESTP_11) {
+			} else if (prevByte == RESTP_DATACONF) {
 				RawData data;
 				if (!_arch.readCompressedData(&data))
 					return false;
 				if (pid == id)
 					readElementsConfig(data);
 				isResource = false; /* do not loadResHandler */
-			} else if (prevByte == RESTP_18) {
+			} else if (prevByte == RESTP_BKG) {
 				/* free elements ? */
 				_readingBkgOffset = _arch.pos();
 				_countReadedBkg++;
@@ -336,15 +336,15 @@ bool GamosEngine::loadModule(uint id) {
 			uint32 datasz = (data.size() + 3) & (~3);
 
 			switch (prevByte) {
-			case RESTP_11:
-			case RESTP_18:
-			case RESTP_19:
-			case RESTP_20:
-			case RESTP_40:
-			case RESTP_50:
+			case RESTP_DATACONF:
+			case RESTP_BKG:
+			case RESTP_INITACT:
+			case RESTP_ACT_INFO:
+			case RESTP_SPR_INFO:
+			case RESTP_UNKNOWN_50:
 				break;
 
-			case RESTP_43:
+			case RESTP_SPR_SEQIMGDATA:
 				//warning("t %x sz %x sum %x", prevByte, data.size(), _loadedDataSize);
 				if (_onlyScanImage)
 					_loadedDataSize += 0x10;
@@ -419,7 +419,7 @@ bool GamosEngine::loadModule(uint id) {
 }
 
 bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, size_t dataSize) {
-	if (tp == RESTP_12) {
+	if (tp == RESTP_VMSTATE) {
 		Common::MemoryReadStream dataStream(data, dataSize, DisposeAfterUse::NO);
 
 		_addrBlk12 = _loadedDataSize;
@@ -436,11 +436,11 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		_vm.memory().setU32(_addrCurrentFrame, dataStream.readUint32LE());
 
 		setFPS(_fps);
-	} else if (tp == RESTP_13) {
+	} else if (tp == RESTP_VMDATA) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
-	} else if (tp == RESTP_18) {
+	} else if (tp == RESTP_BKG) {
 		loadBackground(pid, data, dataSize);
-	} else if (tp == RESTP_19) {
+	} else if (tp == RESTP_INITACT) {
 		if (!_isSaveLoadingProcess) {
 			for (int i = 0; i < _states.size(); i++)
 				_states.at(i) = ObjState(0xfe, 0, 0xf);
@@ -458,66 +458,66 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 
 			storeToGameScreen(pid);
 		}
-	} else if (tp == RESTP_20) {
+	} else if (tp == RESTP_ACT_INFO) {
 		if (dataSize != 4)
 			return false;
 		_objectActions[pid].actType = data[0];
 		_objectActions[pid].mask = data[1];
 		_objectActions[pid].priority = data[2];
 		_objectActions[pid].storageSize = data[3] + 1;
-	} else if (tp == RESTP_21) {
+	} else if (tp == RESTP_ACT_ONCREATE) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onCreateAddress = _loadedDataSize + p3;
-		//warning("RESTP_21 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
-	} else if (tp == RESTP_22) {
+		//warning("RESTP_ACT_ONCREATE %x pid %d sz %x", _loadedDataSize, pid, dataSize);
+	} else if (tp == RESTP_ACT_ONDELETE) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].onDeleteAddress = _loadedDataSize + p3;
-		//warning("RESTP_22 %x pid %d sz %x", _loadedDataSize, pid, dataSize);
-	} else if (tp == RESTP_23) {
+		//warning("RESTP_ACT_ONDELETE %x pid %d sz %x", _loadedDataSize, pid, dataSize);
+	} else if (tp == RESTP_ACT_COUNT) {
 		if (dataSize % 4 != 0 || dataSize < 4)
 			return false;
 		_objectActions[pid].actions.resize(dataSize / 4);
-	} else if (tp == RESTP_2A) {
+	} else if (tp == RESTP_ACT_DATA) {
 		Actions &scr = _objectActions[pid].actions[p1];
 		scr.parse(data, dataSize);
-	} else if (tp == RESTP_2B) {
+	} else if (tp == RESTP_ACT_COND) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].conditionAddress = _loadedDataSize + p3;
-		//warning("RESTP_2B %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
-	} else if (tp == RESTP_2C) {
+		//warning("RESTP_ACT_COND %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
+	} else if (tp == RESTP_ACT_FUNC) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 		_objectActions[pid].actions[p1].functionAddress = _loadedDataSize + p3;
-		//warning("RESTP_2C %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
-	} else if (tp == RESTP_38) {
+		//warning("RESTP_ACT_FUNC %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
+	} else if (tp == RESTP_UNK_MASKS) {
 		//warning("Data 38 size %zu", dataSize);
 		_thing2[pid].masks.assign(data, data + dataSize);
-	} else if (tp == RESTP_39) {
+	} else if (tp == RESTP_UNK_OIDS) {
 		if (data[0] == 0)
 			_thing2[pid].oids.clear();
 		else
 			_thing2[pid].oids.assign(data + 1, data + 1 + data[0]);
-	} else if (tp == RESTP_3A) {
+	} else if (tp == RESTP_UNK_ACTST) {
 		_thing2[pid].actsT.assign(data, data + dataSize);
-	} else if (tp == RESTP_40) {
+	} else if (tp == RESTP_SPR_INFO) {
 		return loadSpriteInfo(pid, data, dataSize);
-	} else if (tp == RESTP_41) {
+	} else if (tp == RESTP_SPR_SEQLEN) {
 		return loadSpriteSeqLength(pid, data, dataSize);
-	} else if (tp == RESTP_42) {
+	} else if (tp == RESTP_SPR_SEQIMGINFO) {
 		return loadSpriteSeqImageInfo(pid, p1, data, dataSize);
-	} else if (tp == RESTP_43) {
+	} else if (tp == RESTP_SPR_SEQIMGDATA) {
 		return loadSpriteSeqImageData(pid, p1, p2, data, dataSize);
-	} else if (tp == RESTP_50) {
+	} else if (tp == RESTP_UNKNOWN_50) {
 		/* just ignore it? */
-	} else if (tp == RESTP_51) {
+	} else if (tp == RESTP_SFX_SAMPLE) {
 		uint32 datSz = getU32(data) & (~3);
 		_soundSamples[pid].assign(data + 4, data + 4 + datSz);
 		//warning("sound  size %d", dataSize);
-	} else if (tp == RESTP_52) {
+	} else if (tp == RESTP_MIDI_TRACK) {
 		return loadMidiTrack(pid, data, dataSize);
 		//warning("midi  size %d", dataSize);
-	} else if (tp == RESTP_60) {
+	} else if (tp == RESTP_SUB_ACT) {
 		_subtitleActions[pid].parse(data, dataSize);
-	} else if (tp == RESTP_61) {
+	} else if (tp == RESTP_SUB_PLACE) {
 		Common::MemoryReadStream dataStream(data, dataSize, DisposeAfterUse::NO);
 		const int count = dataSize / 8;
 		_subtitlePoints[pid].resize(count);
@@ -548,9 +548,9 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 }
 
 bool GamosEngine::reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3) {
-	if (tp == RESTP_43) {
+	if (tp == RESTP_SPR_SEQIMGDATA) {
 		_sprites[pid].sequences[p1]->operator[](p2).image = _images.back();
-	} else if (tp == RESTP_42) {
+	} else if (tp == RESTP_SPR_SEQIMGINFO) {
 		_sprites[pid].sequences[p1] = _imgSeq.back();
 	} else {
 		error("Reuse of resource not implemented: resource type %x, id %d %d %d %d", tp, pid, p1, p2, p3);
