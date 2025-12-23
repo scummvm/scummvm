@@ -276,6 +276,8 @@ void Room::doRoom() {
 
 void Room::roomInit() {
 	_vm->_animation->clearTimers();
+	_vm->_scripts->_continuenceFlag = false;
+	_vm->_scripts->_continuenceType = 0;
 	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
@@ -377,6 +379,8 @@ void Room::loadRoomData(const byte *roomData) {
 }
 
 void Room::roomLoop() {
+	_vm->_scripts->_continuenceType = 1;
+	_vm->_scripts->_continuenceFlag = false;
 	_vm->_scripts->_sequence = ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
