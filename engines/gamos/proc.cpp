@@ -28,7 +28,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
-		if ((_gd2flags & 1) == 0)
+		if ((_inputFlags & 1) == 0)
 			return;
 
 		_ascii = ev.kbd.ascii;
@@ -77,7 +77,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
-		if ((_gd2flags & 2) == 0)
+		if ((_inputFlags & 2) == 0)
 			return;
 
 		_mouseReportedPos = ev.mouse;
@@ -86,7 +86,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
-		if ((_gd2flags & 2) == 0)
+		if ((_inputFlags & 2) == 0)
 			return;
 
 		_mouseActPos = ev.mouse;
@@ -94,7 +94,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		if ((_gd2flags & 2) == 0)
+		if ((_inputFlags & 2) == 0)
 			return;
 
 		_mouseActPos = ev.mouse;
@@ -103,7 +103,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		if ((_gd2flags & 2) == 0)
+		if ((_inputFlags & 2) == 0)
 			return;
 
 		_mouseActPos = ev.mouse;

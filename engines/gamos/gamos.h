@@ -383,7 +383,7 @@ private:
 
 	byte _cmdByte = 0;
 
-	bool _runReadDataMod = false;
+	bool _isResLoadingProcess = false;
 	int _currentModuleID = 0;
 
 	byte _saveLoadID = 0;
@@ -443,8 +443,8 @@ private:
 
 
 
-	uint8 BYTE_004177f7 = 0;
-	uint8 DAT_004177f8 = 0;
+	bool _isSaveLoadingProcess = false;
+	bool _ignoreSoundActions = false;
 
 
 	uint8 _inputMouseActId = 0;
@@ -461,11 +461,11 @@ private:
 	int32 _svModuleId = 0;
 	int32 _svGameScreen = 0;
 	uint32 _d2_fld10 = 0;
-	uint8 _d2_fld14 = 0;
-	uint8 _d2_fld16 = 0;
-	uint8 _d2_fld17 = 0;
-	uint8 _d2_fld18 = 0;
-	uint8 _d2_fld19 = 0;
+	bool _enableSounds = false;
+	bool _enableInput = false;
+	bool _enableMovie = false;
+	bool _enableCDAudio = false;
+	int8 _cdAudioTrack = -1;
 	int32 _scrollX = 0;
 	int32 _scrollY = 0;
 	int32 _scrollTrackObj = 0;
@@ -519,23 +519,23 @@ private:
 
 	Pool<Object> _objects;
 
-	uint8 BYTE_00412200 = 0;
+	bool _curObjectActProcessed = false;
 
-	Object *DAT_00412204 = nullptr;
+	Object *_firstUpdateObject = nullptr;
 
-	ObjectAction *PTR_00417214 = nullptr;
-	Object *PTR_00417218 = nullptr;
+	ObjectAction *_curAction = nullptr;
+	Object *_curObject = nullptr;
 	Object *_inputActObj = nullptr;
 
-	uint8 BYTE_004177f6 = 0;
-	uint8 BYTE_004177fc = 0;
-	bool DAT_004177ff = false;
+	uint8 _curObjectT = 0;
+	bool _gfxObjectCreated = false;
+	bool _restartUpdateObject = false;
 
 
-	byte *PTR_004173e8 = nullptr;
+	byte *_curObjStorage = nullptr;
 
-	Common::Point DAT_00417220;
-	Common::Point DAT_00417228;
+	Common::Point _curObjectCurrentCell;
+	Common::Point _curObjectStartCell;
 
 	byte *PTR_00417388 = nullptr;
 

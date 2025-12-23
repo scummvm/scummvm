@@ -55,7 +55,7 @@ public:
 	Common::Point _mouseReportedPos;
 	Common::Point _mouseActPos;
 
-	uint8 _gd2flags = 0; /* 0x4 */
+	uint8 _inputFlags = 0; /* 0x4 */
 	uint8 _keyCodes[12]; /* 0x40 */
 
 };

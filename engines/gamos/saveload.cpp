@@ -131,7 +131,7 @@ bool GamosEngine::writeStateFile() {
 	Common::String fname = makeSaveName(getGameId(), _saveLoadID, _stateExt);
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
-	if (!_runReadDataMod) {
+	if (!_isResLoadingProcess) {
 		if (sm->exists(fname)) {
 			Common::InSaveFile *rsv = sm->openForLoading(fname);
 			byte svdata[0x4c];
@@ -165,7 +165,7 @@ bool GamosEngine::loadStateFile() {
 	Common::String fname = makeSaveName(getGameId(), _saveLoadID, _stateExt);
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
-	if (!_runReadDataMod) {
+	if (!_isResLoadingProcess) {
 		if (sm->exists(fname)) {
 			Common::SeekableReadStream *rs = sm->openForLoading(fname);
 			rs->seek(0x4c);
@@ -184,7 +184,7 @@ bool GamosEngine::loadStateFile() {
 
 			zeroVMData(_xorSeq[1]);
 
-			_runReadDataMod = false;
+			_isResLoadingProcess = false;
 
 			delete rs;
 		}
@@ -197,19 +197,19 @@ void GamosEngine::writeStateData(Common::SeekableWriteStream *stream) {
 	memcpy(buf, _stateExt.c_str(), _stateExt.size() > 4 ? 4 : _stateExt.size());
 
 	stream->write(buf, 4); // 0
-	stream->writeByte(_messageProc._gd2flags);  // 4
+	stream->writeByte(_messageProc._inputFlags);  // 4
 	stream->writeByte(0);  // 5
 	stream->writeByte(0);  // 6
 	stream->writeByte(0);  // 7
 	stream->writeSint32LE(_svModuleId); // 8
 	stream->writeSint32LE(_svGameScreen); // 0xc
 	stream->writeUint32LE(_d2_fld10); // 0x10
-	stream->writeByte(_d2_fld14); // 0x14
+	stream->writeByte(_enableSounds ? 1 : 0); // 0x14
 	stream->writeByte(_enableMidi ? 1 : 0); // 0x15
-	stream->writeByte(_d2_fld16); // 0x16
-	stream->writeByte(_d2_fld17); // 0x17
-	stream->writeByte(_d2_fld18); // 0x18
-	stream->writeByte(_d2_fld19); // 0x19
+	stream->writeByte(_enableInput ? 1 : 0); // 0x16
+	stream->writeByte(_enableMovie ? 1 : 0); // 0x17
+	stream->writeByte(_enableCDAudio ? 1 : 0); // 0x18
+	stream->writeSByte(_cdAudioTrack); // 0x19
 	stream->writeByte(0); // 0x1a
 	stream->writeByte(0); // 0x1b
 	stream->writeSint32LE(_scrollX); // 0x1c
@@ -237,17 +237,17 @@ void GamosEngine::writeStateData(Common::SeekableWriteStream *stream) {
 void GamosEngine::loadStateData(Common::SeekableReadStream *dataStream) {
 	_stateExt = dataStream->readString(0, 4); // FIX ME
 	dataStream->seek(4);
-	_messageProc._gd2flags = dataStream->readByte(); //4
+	_messageProc._inputFlags = dataStream->readByte(); //4
 	dataStream->seek(8);
 	_svModuleId = dataStream->readSint32LE(); // 8
 	_svGameScreen = dataStream->readSint32LE(); // c
 	_d2_fld10 = dataStream->readUint32LE(); // x10
-	_d2_fld14 = dataStream->readByte(); // x14
+	_enableSounds = dataStream->readByte() != 0 ? true : false; // x14
 	_enableMidi = dataStream->readByte() != 0 ? true : false; //x15
-	_d2_fld16 = dataStream->readByte(); // x16
-	_d2_fld17 = dataStream->readByte(); // x17
-	_d2_fld18 = dataStream->readByte(); // x18
-	_d2_fld19 = dataStream->readByte(); // x19
+	_enableInput = dataStream->readByte() != 0 ? true : false; // x16
+	_enableMovie = dataStream->readByte() != 0 ? true : false; // x17
+	_enableCDAudio = dataStream->readByte() != 0 ? true : false; // x18
+	_cdAudioTrack = dataStream->readSByte(); // x19
 	dataStream->seek(0x1c);
 	_scrollX = dataStream->readSint32LE(); // x1c
 	_scrollY = dataStream->readSint32LE(); // x20
@@ -363,30 +363,30 @@ bool GamosEngine::loadSaveFile(int id) {
 	if (!rs)
 		return false;
 
-	const uint8 sv1 = _d2_fld18;
-	const uint8 sv2 = _d2_fld17;
-	const uint8 sv3 = _d2_fld16;
+	const bool sv1 = _enableCDAudio;
+	const bool sv2 = _enableMovie;
+	const bool sv3 = _enableInput;
 	const bool svmdi = _enableMidi;
-	const uint8 sv4 = _d2_fld14;
+	const bool sv4 = _enableSounds;
 
 	loadStateData(rs);
 
 	_sndVolume = _sndVolumeTarget;
 	_midiVolume = 0;
-	_d2_fld14 = sv4;
+	_enableSounds = sv4;
 	_enableMidi = svmdi;
-	_d2_fld16 = sv3;
-	_d2_fld17 = sv2;
-	_d2_fld18 = sv1;
+	_enableInput = sv3;
+	_enableMovie = sv2;
+	_enableCDAudio = sv1;
 
 	_musicPlayer.setVolume(0);
 
 	const int32 cursorImgId = _mouseCursorImgId;
 	const int32 svMidiTrack = _midiTrack;
-	const uint8 cdtrack = _d2_fld19;
+	const int8 cdtrack = _cdAudioTrack;
 
-	_runReadDataMod = true;
-	BYTE_004177f7 = 1;
+	_isResLoadingProcess = true;
+	_isSaveLoadingProcess = true;
 
 	loadModule(_svModuleId);
 
@@ -426,10 +426,10 @@ bool GamosEngine::loadSaveFile(int id) {
 	_vm.memory().setU8(_addrFPS, _svFps);
 	_vm.memory().setU32(_addrCurrentFrame, _svFrame);
 
-	_runReadDataMod = false;
-	BYTE_004177f7 = 0;
+	_isResLoadingProcess = false;
+	_isSaveLoadingProcess = false;
 
-	if (cdtrack != 0xff) {
+	if (cdtrack != -1) {
 		//vmfunc_58(cdtrack);
 	}
 
