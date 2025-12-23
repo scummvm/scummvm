@@ -97,7 +97,8 @@ protected:
 	void cmdCheckTimer();
 	void cmdJumpGoto();
 	void cmdSetTravel();
-	void cmdSetVideo();
+	void cmdSetVideo_v1();
+	void cmdSetVideo_v3();
 	void cmdPlayVideo();
 	void cmdPlotImage();
 	void cmdSetDisplay();
@@ -167,6 +168,8 @@ protected:
 	void cmdLockInterface();
 	void cmdUnlockInterface();
 	void cmdCharSpeak_v3();
+	void cmdPlayerSpeak();
+	void cmdPlayerChoice();
 
 public:
 	int _sequence;
@@ -176,6 +179,9 @@ public:
 	int _choice;
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
+
+	bool _continuenceFlag; // only used in Noctropolis
+	int _continuenceType;  // only used in Noctropolis
 
 public:
 	Scripts(AccessEngine *vm);

@@ -34,6 +34,8 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_data = nullptr;
 	_sequence = 0;
 	_endFlag = false;
+	_continuenceType = 0;
+	_continuenceFlag = false;
 	_returnCode = 0;
 	_scriptCommand = 0;
 	_choice = 0;
@@ -82,7 +84,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[31] = &Scripts::cmdCheckTimer;
 	COMMAND_LIST[32] = &Scripts::cmdSetTravel;
 	COMMAND_LIST[33] = &Scripts::cmdJumpGoto;
-	COMMAND_LIST[34] = &Scripts::cmdSetVideo;
+	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v1;
 	COMMAND_LIST[35] = &Scripts::cmdPlayVideo;
 	COMMAND_LIST[36] = &Scripts::cmdPlotImage;
 	COMMAND_LIST[37] = &Scripts::cmdSetDisplay;
@@ -138,7 +140,11 @@ void Scripts::setOpcodes_v2() {
 }
 
 void Scripts::setOpcodes_v3() {
+	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
 	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
+	COMMAND_LIST[51] = &Scripts::cmdPlayerSpeak;
+	COMMAND_LIST[52] = &Scripts::cmdPlayerChoice;
+	// 52 to 57 unchanged
 	COMMAND_LIST[57] = &Scripts::cmdDigitalPlay;
 	COMMAND_LIST[60] = &Scripts::cmdFillSound;
 	COMMAND_LIST[61] = &Scripts::cmdBD;
@@ -718,7 +724,7 @@ void Scripts::cmdCheckTimer() {
 	byte val = (byte)_data->readUint16LE();
 
 	if (val != 0 && val != 1)
-        warning("Invalid check value %d in cmdCheckTimer - expect only 1 or 0??", val);
+		warning("Invalid check value %d in cmdCheckTimer - expect only 1 or 0??", val);
 
 	if (_vm->_timers[idx]._flag == val) {
 		debugC(1, kDebugScripts, " -> True");
@@ -748,14 +754,45 @@ void Scripts::cmdJumpGoto() {
 	}
 }
 
-void Scripts::cmdSetVideo() {
+void Scripts::cmdSetVideo_v1() {
 	Common::Point pt;
 	pt.x = _data->readSint16LE();
 	pt.y = _data->readSint16LE();
 	int cellIndex = _data->readUint16LE();
 	int rate = _data->readUint16LE();
-	debugC(1, kDebugScripts, "cmdSetVideo(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
+	debugC(1, kDebugScripts, "cmdSetVideo_v1(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
 	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
+}
+
+void Scripts::cmdSetVideo_v3() {
+	Common::Point pt;
+	short rawx = _data->readSint16LE();
+	pt.y = _data->readSint16LE();
+	int cellIndex = _data->readUint16LE();
+	int rate = _data->readUint16LE();
+
+	if (cellIndex > 0x3f)
+		error("Invalid room video number %d", cellIndex);
+
+	bool loop;
+	const int roomNum = _vm->_player->_roomNumber;
+
+	if ((roomNum == 0x1e && cellIndex == 0) || roomNum == 0x21 || (roomNum == 0x36 && cellIndex < 32))
+		loop = true;
+	else
+		loop = false;
+
+	if (roomNum == 0x1b || roomNum == 0x1e)
+		pt.x = rawx + -5;
+	else
+		pt.x = rawx;
+
+	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
+	warning("TODO: cmdSetVideo_v3: Use loop flag");
+	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
+
+	if (cellIndex == 1 && roomNum == 0x36)
+		_vm->_screen->setIconPalette();
 }
 
 void Scripts::cmdPlayVideo() {
@@ -1013,6 +1050,18 @@ void Scripts::cmdCharSpeak_v3() {
 	findNull();
 }
 
+void Scripts::cmdPlayerSpeak() {
+	int16 a = _data->readUint16LE();
+	int16 b = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d)", a, b);
+	error("TODO: implement cmdPlayerSpeak()");
+}
+
+
+void Scripts::cmdPlayerChoice() {
+	error("TODO: cmdPlayerChoice()");
+}
+
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
@@ -1209,7 +1258,7 @@ void Scripts::cmdSetVideoSound() {
 	_data->skip(4);
 	cmdLoadSound();
 	_data->seek(startPos);
-	cmdSetVideo();
+	cmdSetVideo_v1();
 
 	_vm->_video->_soundFrame = _data->readUint16LE();
 	_vm->_video->_soundFlag = false;
@@ -1257,7 +1306,7 @@ void Scripts::cmdPushLocation_v1() {
 
 void Scripts::cmdPushLocation() {
 	// TODO: Double-check this code.  It doesn't seem to match function
-	//   sub13BC0 in Amazon?
+	// sub13BC0 in Amazon?
 	debugC(1, kDebugScripts, "cmdPushLocation()");
 	_choiceStart = _data->pos() - 1;
 }
@@ -1321,7 +1370,8 @@ void Scripts::cmdEndVideo() {
 }
 
 void Scripts::cmdDigitalPlay() {
-    error("TODO: Implement Scripts::cmdDigitalPlay");
+	error("TODO: Implement Scripts::cmdDigitalPlay");
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdFillSound() {
@@ -1335,14 +1385,16 @@ void Scripts::cmdFillSound() {
 			break;
 		}
 	}
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdPlayVid1() {
-    error("TODO: Implement Scripts::cmdPlayVid1");
+	error("TODO: Implement Scripts::cmdPlayVid1");
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdCharWait() {
-    error("TODO: Implement Scripts::cmdCharWait");
+	error("TODO: Implement Scripts::cmdCharWait");
 }
 
 void Scripts::cmdUndoText() {
@@ -1404,7 +1456,7 @@ void Scripts::cmdSoundEnd() {
 }
 
 void Scripts::cmdFadeWhite() {
-    error("TODO: Implement Scripts::cmdFadeWhite");
+	error("TODO: Implement Scripts::cmdFadeWhite");
 }
 
 void Scripts::cmdGotoFrame() {
@@ -1419,15 +1471,15 @@ void Scripts::cmdGotoFrame() {
 
 void Scripts::cmdPlayerScale() {
 	_vm->_scale = _data->readUint16LE();
-    debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_scale);
+	debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_scale);
 }
 
 void Scripts::cmdRestoreBlock() {
-    error("TODO: Implement Scripts::cmdRestoreBlock");
+	error("TODO: Implement Scripts::cmdRestoreBlock");
 }
 
 void Scripts::cmdCopyScnBuf() {
-    error("TODO: Implement Scripts::cmdCopyScnBuf");
+	error("TODO: Implement Scripts::cmdCopyScnBuf");
 }
 
 void Scripts::cmdStilWalkTo() {
@@ -1468,12 +1520,12 @@ void Scripts::cmdReturnExit() {
 	//_vm->_exitBox = true; -- work out what to do with this.
 	_endFlag = true;
 	_returnCode = 0;
-    error("TODO: Implement Scripts::cmdReturnExit");
+	error("TODO: Implement Scripts::cmdReturnExit");
 }
 
 void Scripts::cmdSetStilCoords() {
-    error("TODO: Implement Scripts::cmdSetStilCoords");
-    // ((Noctropolis::NoctropolisEngine *)_vm)->_stil->
+	error("TODO: Implement Scripts::cmdSetStilCoords");
+	// ((Noctropolis::NoctropolisEngine *)_vm)->_stil->
 }
 
 void Scripts::cmdSetPlayerDir() {
