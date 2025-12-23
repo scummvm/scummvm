@@ -156,6 +156,12 @@ public:
 	~Parser_v2d() override;
 
 	void lineHandler() override;
+
+protected:
+	bool  isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const;
+	bool  isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const;
+	bool  isGenericVerb_v2(const char *word, Object *obj);
+	bool  isObjectVerb_v2(const char *word, Object *obj);
 };
 
 class Parser_v3d : public Parser_v1d {

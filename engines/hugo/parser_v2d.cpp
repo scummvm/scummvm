@@ -154,21 +154,21 @@ void Parser_v2d::lineHandler() {
 			for (int i = 0; i < _vm->_object->_numObj; i++) {
 				Object *obj = &_vm->_object->_objects[i];
 				if (isNear_v1(verb, noun, obj, farComment)) {
-					if (isObjectVerb_v1(verb, obj)  // Foreground object
-					 || isGenericVerb_v1(verb, obj))// Common action type
+					if (isObjectVerb_v2(verb, obj)  // Foreground object
+					 || isGenericVerb_v2(verb, obj))// Common action type
 						return;
 				}
 			}
-			if ((*farComment != '\0') && isBackgroundWord_v1(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
+			if ((*farComment == '\0') && isBackgroundWord_v2(noun, verb, _backgroundObjects[*_vm->_screenPtr]))
 				return;
 		} while (noun);
 	}
 
 	noun = findNextNoun(noun);
-	if (   !isCatchallVerb_v1(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(true, noun, verb, _catchallList)
-		&& !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
-		&& !isCatchallVerb_v1(false, noun, verb, _catchallList)) {
+	if (   !isCatchallVerb_v2(true, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+		&& !isCatchallVerb_v2(true, noun, verb, _catchallList)
+		&& !isCatchallVerb_v2(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])
+		&& !isCatchallVerb_v2(false, noun, verb, _catchallList)) {
 		if (*farComment != '\0') {                  // An object matched but not near enough
 			Utils::notifyBox(farComment);
 		} else if (_vm->_maze._enabledFl && (verb == _vm->_text->getVerb(_vm->_look, 0))) {
@@ -182,6 +182,160 @@ void Parser_v2d::lineHandler() {
 			Utils::notifyBox(_vm->_text->getTextParser(kTBEh_2d));
 		}
 	}
+}
+
+/**
+ * Test whether supplied verb is one of the common variety for this object
+ * say_ok needed for special case of take/drop which may be handled not only
+ * here but also in a cmd_list with a donestr string simultaneously
+ */
+bool Parser_v2d::isGenericVerb_v2(const char *word, Object *obj) {
+	debugC(1, kDebugParser, "isGenericVerb(%s, Object *obj)", word);
+
+	if (!obj->_genericCmd)
+		return false;
+
+	// Following is equivalent to switch, but couldn't do one
+	if (word == _vm->_text->getVerb(_vm->_look, 0)) {
+		if ((LOOK & obj->_genericCmd) == LOOK)
+			if (obj->_dataIndex != 0)
+				Utils::notifyBox(_vm->_text->getTextData(obj->_dataIndex));
+			else
+				return false;
+		else
+			Utils::notifyBox(_vm->_text->getTextParser(kTBUnusual_1d));
+	} else if (word == _vm->_text->getVerb(_vm->_take, 0)) {
+		if (obj->_carriedFl)
+			Utils::notifyBox(_vm->_text->getTextParser(kTBHave));
+		else if ((TAKE & obj->_genericCmd) == TAKE)
+			takeObject(obj);
+		else if (obj->_cmdIndex)                     // No comment if possible commands
+			return false;
+		else if (!obj->_verbOnlyFl)                  // Make sure not taking object in context!
+			Utils::notifyBox(_vm->_text->getTextParser(kTBNoUse));
+		else
+			return false;
+	} else if (word == _vm->_text->getVerb(_vm->_drop, 0)) {
+		if (!obj->_carriedFl)
+			Utils::notifyBox(_vm->_text->getTextParser(kTBDontHave));
+		else if ((DROP & obj->_genericCmd) == DROP)
+			dropObject(obj);
+		else
+			Utils::notifyBox(_vm->_text->getTextParser(kTBNeed));
+	} else {                                        // It was not a generic cmd
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Test whether supplied verb is included in the list of allowed verbs for
+ * this object.  If it is, then perform the tests on it from the cmd list
+ * and if it passes, perform the actions in the action list.  If the verb
+ * is catered for, return TRUE
+ */
+bool Parser_v2d::isObjectVerb_v2(const char *word, Object *obj) {
+	debugC(1, kDebugParser, "isObjectVerb(%s, Object *obj)", word);
+
+	// First, find matching verb in cmd list
+	uint16 cmdIndex = obj->_cmdIndex;                // ptr to list of commands
+	if (!cmdIndex)                                  // No commands for this obj
+		return false;
+
+	int i;
+	for (i = 0; _cmdList[cmdIndex][i]._verbIndex != 0; i++) { // For each cmd
+		if (word == _vm->_text->getVerb(_cmdList[cmdIndex][i]._verbIndex, 0)) // Is this verb catered for?
+			break;
+	}
+
+	if (_cmdList[cmdIndex][i]._verbIndex == 0)       // No
+		return false;
+
+	// Verb match found, check all required objects are being carried
+	cmd *cmnd = &_cmdList[cmdIndex][i];             // ptr to struct cmd
+	if (cmnd->_reqIndex) {                          // At least 1 thing in list
+		uint16 *reqs = _arrayReqs[cmnd->_reqIndex]; // ptr to list of required objects
+		for (i = 0; reqs[i]; i++) {                 // for each obj
+			if (!_vm->_object->isCarrying(reqs[i])) {
+				Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataNoCarryIndex));
+				return true;
+			}
+		}
+	}
+
+	// Required objects are present, now check state is correct
+	if ((obj->_state != cmnd->_reqState) && (cmnd->_reqState != kStateDontCare)){
+		Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataWrongIndex));
+		return true;
+	}
+
+	// Everything checked.  Change the state and carry out any actions
+	if (cmnd->_reqState != kStateDontCare)           // Don't change new state if required state didn't care
+		obj->_state = cmnd->_newState;
+	Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataDoneIndex));
+	_vm->_scheduler->insertActionList(cmnd->_actIndex);
+	// Special case if verb is Take or Drop.  Assume additional generic actions
+	if ((word == _vm->_text->getVerb(_vm->_take, 0)) || (word == _vm->_text->getVerb(_vm->_drop, 0)))
+		isGenericVerb_v2(word, obj);
+	return true;
+}
+
+/**
+ * Print text for possible background object.  Return TRUE if match found
+ * Only match if both verb and noun found.  Test_ca will match verb-only
+ */
+bool Parser_v2d::isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const {
+	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
+
+	if (!noun)
+		return false;
+
+	for (int i = 0; obj[i]._verbIndex; i++) {
+		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) && (noun == _vm->_text->getNoun(obj[i]._nounIndex, 0)) &&
+			(obj[i]._roomState == kStateDontCare ||
+			 obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])) {
+			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Print text for possible background object.  Return TRUE if match found
+ * If test_noun TRUE, must have a noun given
+ * Algorithm:  If (noun matches) OR (match not required AND match specifies NULL) OR
+ * (no noun present and match required) print comment
+ * i.e. NULL allows any or no noun, match TRUE allows no noun or matching noun 
+ */
+bool Parser_v2d::isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const {
+	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
+
+	if (_vm->_maze._enabledFl)
+		return false;
+
+	if (testNounFl && !noun)
+		return false;
+
+	for (int i = 0; obj[i]._verbIndex; i++) {
+		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) &&
+			((noun == _vm->_text->getNoun(obj[i]._nounIndex, 0)) ||
+			 (obj[i]._nounIndex == 0 && !obj[i]._matchFl) ||
+			 (!noun && obj[i]._matchFl)) &&
+			(obj[i]._roomState == kStateDontCare ||
+			 obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr])) {
+
+			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
+			// If this is LOOK without a noun, show any takeable objects
+			if (!noun && verb == _vm->_text->getVerb(_vm->_look, 0))
+				_vm->_object->showTakeables();
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Hugo
