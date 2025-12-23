@@ -1,0 +1,107 @@
+add_library(zvision STATIC)
+
+target_sources(
+  zvision
+  PRIVATE common/scroller.cpp
+          core/clock.cpp
+          core/console.cpp
+          core/events.cpp
+          file/lzss_read_stream.cpp
+          file/file_manager.cpp
+          file/save_manager.cpp
+          file/zfs_archive.cpp
+          graphics/cursors/cursor.cpp
+          graphics/cursors/cursor_manager.cpp
+          graphics/effects/fog.cpp
+          graphics/effects/light.cpp
+          graphics/effects/wave.cpp
+          graphics/render_manager.cpp
+          graphics/render_table.cpp
+          metaengine.cpp
+          scripting/actions.cpp
+          scripting/control.cpp
+          scripting/controls/fist_control.cpp
+          scripting/controls/hotmov_control.cpp
+          scripting/controls/input_control.cpp
+          scripting/controls/lever_control.cpp
+          scripting/controls/paint_control.cpp
+          scripting/controls/push_toggle_control.cpp
+          scripting/controls/safe_control.cpp
+          scripting/controls/save_control.cpp
+          scripting/controls/slot_control.cpp
+          scripting/controls/titler_control.cpp
+          scripting/effects/animation_effect.cpp
+          scripting/effects/distort_effect.cpp
+          scripting/effects/music_effect.cpp
+          scripting/effects/region_effect.cpp
+          scripting/effects/syncsound_effect.cpp
+          scripting/effects/timer_effect.cpp
+          scripting/effects/ttytext_effect.cpp
+          scripting/inventory.cpp
+          scripting/menu.cpp
+          scripting/scr_file_handling.cpp
+          scripting/script_manager.cpp
+          sound/midi.cpp
+          sound/volume_manager.cpp
+          sound/zork_raw.cpp
+          text/string_manager.cpp
+          text/subtitle_manager.cpp
+          text/text.cpp
+          text/truetype_font.cpp
+          video/rlf_decoder.cpp
+          video/video.cpp
+          video/zork_avi_decoder.cpp
+          zvision.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          common/scroller.h
+          core/clock.h
+          core/console.h
+          file/lzss_read_stream.h
+          file/file_manager.h
+          file/save_manager.h
+          file/zfs_archive.h
+          graphics/cursors/cursor.h
+          graphics/cursors/cursor_manager.h
+          graphics/effects/fog.h
+          graphics/effects/light.h
+          graphics/effects/wave.h
+          graphics/render_manager.h
+          graphics/render_table.h
+          scripting/actions.h
+          scripting/control.h
+          scripting/controls/fist_control.h
+          scripting/controls/hotmov_control.h
+          scripting/controls/input_control.h
+          scripting/controls/lever_control.h
+          scripting/controls/paint_control.h
+          scripting/controls/push_toggle_control.h
+          scripting/controls/safe_control.h
+          scripting/controls/save_control.h
+          scripting/controls/slot_control.h
+          scripting/controls/titler_control.h
+          scripting/effects/animation_effect.h
+          scripting/effects/distort_effect.h
+          scripting/effects/music_effect.h
+          scripting/effects/region_effect.h
+          scripting/effects/syncsound_effect.h
+          scripting/effects/timer_effect.h
+          scripting/effects/ttytext_effect.h
+          scripting/menu.h
+          scripting/script_manager.h
+          sound/midi.h
+          sound/volume_manager.h
+          sound/zork_raw.h
+          text/string_manager.h
+          text/subtitle_manager.h
+          text/text.h
+          text/truetype_font.h
+          video/rlf_decoder.h
+          video/zork_avi_decoder.h
+          zvision.h
+)
+
+add_library(zvision_detection)
+
+target_sources(zvision_detection PRIVATE detection.cpp)

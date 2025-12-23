@@ -1,27 +1,23 @@
-cmake_minimum_required(VERSION 3.23)
-
-add_library(engine_plumbers)
-
-add_library(detection_plumbers detection.cpp)
+add_library(plumbers STATIC)
 
 target_sources(
-  engine_plumbers
+  plumbers
   PRIVATE plumbers.cpp
           console.cpp
           metaengine.cpp
           windows.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          plumbers.h
+          console.h
 )
 
-target_include_directories(
-  engine_plumbers
-  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/.."
-  PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../.."
-  INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-)
+if(USE_RGB_COLOR)
+  target_sources(plumbers PRIVATE 3do.cpp)
 
-target_include_directories(
-  detection_plumbers
-  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/.."
-  PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../.."
-  INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-)
+endif()
+
+add_library(plumbers_detection)
+
+target_sources(plumbers_detection PRIVATE detection.cpp)

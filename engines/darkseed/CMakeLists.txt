@@ -1,0 +1,80 @@
+add_library(darkseed STATIC)
+
+target_sources(
+  darkseed
+  PRIVATE adlib_dsf.cpp
+          adlib_worx.cpp
+          animation.cpp
+          anm.cpp
+          big5font.cpp
+          console.cpp
+          cursor.cpp
+          cutscene.cpp
+          darkseed.cpp
+          debugconsole.cpp
+          dialogs.cpp
+          gamefont.cpp
+          img.cpp
+          inventory.cpp
+          kidpic.cpp
+          kofont.cpp
+          langtext.cpp
+          menu.cpp
+          metaengine.cpp
+          midiparser_sbr.cpp
+          morph.cpp
+          music.cpp
+          nsp.cpp
+          objects.cpp
+          pal.cpp
+          pic.cpp
+          player.cpp
+          room.cpp
+          sound.cpp
+          sprites.cpp
+          titlefont.cpp
+          tostext.cpp
+          usecode.cpp
+          zhmenufont.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          adlib_dsf.h
+          adlib_worx.h
+          animation.h
+          anm.h
+          big5font.h
+          console.h
+          cursor.h
+          cutscene.h
+          darkseed.h
+          debugconsole.h
+          dialogs.h
+          gamefont.h
+          img.h
+          inventory.h
+          kidpic.h
+          kofont.h
+          langtext.h
+          menu.h
+          metaengine.h
+          midiparser_sbr.h
+          morph.h
+          music.h
+          nsp.h
+          objects.h
+          pal.h
+          pic.h
+          player.h
+          room.h
+          sound.h
+          sprites.h
+          titlefont.h
+          tostext.h
+          usecode.h
+          zhmenufont.h
+)
+
+add_library(darkseed_detection)
+
+target_sources(darkseed_detection PRIVATE detection.cpp)

@@ -1,0 +1,372 @@
+add_library(scumm STATIC)
+
+target_sources(
+  scumm
+  PRIVATE actor.cpp
+          akos.cpp
+          base-costume.cpp
+          bomp.cpp
+          boxes.cpp
+          camera.cpp
+          cdda.cpp
+          charset.cpp
+          charset-fontdata.cpp
+          costume.cpp
+          cursor.cpp
+          debugger.cpp
+          dialogs.cpp
+          file.cpp
+          file_engine.cpp
+          file_nes.cpp
+          gfx_gui.cpp
+          gfx_mac.cpp
+          gfx_towns.cpp
+          gfx.cpp
+          he/mixer_he.cpp
+          he/resource_he.cpp
+          he/script_v60he.cpp
+          he/script_v70he.cpp
+          he/sound_he.cpp
+          help.cpp
+          imuse/imuse.cpp
+          imuse/imuse_part.cpp
+          imuse/imuse_player.cpp
+          imuse/instrument.cpp
+          imuse/sysex_samnmax.cpp
+          imuse/sysex_scumm.cpp
+          imuse/drivers/amiga.cpp
+          imuse/drivers/fmtowns.cpp
+          imuse/drivers/midi.cpp
+          imuse/drivers/macintosh.cpp
+          imuse/drivers/pcspk.cpp
+          input.cpp
+          ks_check.cpp
+          macgui/macgui.cpp
+          macgui/macgui_dialogwindow.cpp
+          macgui/macgui_impl.cpp
+          macgui/macgui_indy3.cpp
+          macgui/macgui_loom.cpp
+          macgui/macgui_strings.cpp
+          macgui/macgui_v5.cpp
+          macgui/macgui_v6.cpp
+          macgui/macgui_widgets.cpp
+          metaengine.cpp
+          midiparser_ro.cpp
+          object.cpp
+          palette.cpp
+          players/player_ad.cpp
+          players/player_apple2.cpp
+          players/player_he.cpp
+          players/player_mac_indy3.cpp
+          players/player_mac_loom_monkey.cpp
+          players/player_mac_new.cpp
+          players/player_mod.cpp
+          players/player_nes.cpp
+          players/player_pce.cpp
+          players/player_sid.cpp
+          players/player_towns.cpp
+          players/player_v1.cpp
+          players/player_v2.cpp
+          players/player_v2a.cpp
+          players/player_v2base.cpp
+          players/player_v2cms.cpp
+          players/player_v3a.cpp
+          players/player_v4a.cpp
+          resource_v2.cpp
+          resource_v3.cpp
+          resource_v4.cpp
+          resource.cpp
+          room.cpp
+          saveload.cpp
+          script_v0.cpp
+          script_v2.cpp
+          script_v3.cpp
+          script_v4.cpp
+          script_v5.cpp
+          script_v6.cpp
+          script.cpp
+          scumm.cpp
+          sound.cpp
+          soundcd.cpp
+          soundse.cpp
+          string.cpp
+          usage_bits.cpp
+          util.cpp
+          vars.cpp
+          verbs.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          actor.h
+          akos.h
+          base-costume.h
+          bomp.h
+          boxes.h
+          cdda.h
+          charset.h
+          costume.h
+          debugger.h
+          dialogs.h
+          file.h
+          file_nes.h
+          gfx.h
+          he/mixer_he.h
+          he/resource_he.h
+          he/sound_he.h
+          help.h
+          imuse/imuse.h
+          imuse/instrument.h
+          imuse/drivers/amiga.h
+          imuse/drivers/fmtowns.h
+          imuse/drivers/midi.h
+          imuse/drivers/macintosh.h
+          imuse/drivers/pcspk.h
+          ks_check.h
+          macgui/macgui.h
+          macgui/macgui_impl.h
+          macgui/macgui_indy3.h
+          macgui/macgui_loom.h
+          macgui/macgui_v5.h
+          macgui/macgui_v6.h
+          metaengine.h
+          object.h
+          players/player_ad.h
+          players/player_apple2.h
+          players/player_he.h
+          players/player_mac_new.h
+          players/player_mod.h
+          players/player_nes.h
+          players/player_pce.h
+          players/player_sid.h
+          players/player_towns.h
+          players/player_v1.h
+          players/player_v2.h
+          players/player_v2a.h
+          players/player_v2base.h
+          players/player_v2cms.h
+          players/player_v3a.h
+          players/player_v4a.h
+          resource.h
+          script.h
+          scumm.h
+          sound.h
+          soundcd.h
+          soundse.h
+          usage_bits.h
+          util.h
+          verbs.h
+)
+
+if(USE_ARM_COSTUME_ASM)
+  target_sources(scumm PRIVATE proc3ARM.cpp)
+
+endif()
+
+if(ENABLE_SCUMM_7_8)
+  target_sources(
+    scumm
+    PRIVATE nut_renderer.cpp
+            string_v7.cpp
+            script_v8.cpp
+            imuse_digi/dimuse_bndmgr.cpp
+            imuse_digi/dimuse_codecs.cpp
+            imuse_digi/dimuse_sndmgr.cpp
+            imuse_digi/dimuse_tables.cpp
+            imuse_digi/dimuse_engine.cpp
+            imuse_digi/dimuse_cmds.cpp
+            imuse_digi/dimuse_dispatch.cpp
+            imuse_digi/dimuse_fades.cpp
+            imuse_digi/dimuse_files.cpp
+            imuse_digi/dimuse_groups.cpp
+            imuse_digi/dimuse_internalmixer.cpp
+            imuse_digi/dimuse_scripts.cpp
+            imuse_digi/dimuse_streamer.cpp
+            imuse_digi/dimuse_tracks.cpp
+            imuse_digi/dimuse_triggers.cpp
+            imuse_digi/dimuse_utils.cpp
+            imuse_digi/dimuse_wave.cpp
+            imuse_digi/dimuse_waveout.cpp
+            insane/insane.cpp
+            insane/insane_ben.cpp
+            insane/insane_enemy.cpp
+            insane/insane_scenes.cpp
+            insane/insane_iact.cpp
+            smush/codec1.cpp
+            smush/codec20.cpp
+            smush/codec37.cpp
+            smush/codec47.cpp
+            smush/smush_player.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            nut_renderer.h
+            string_v7.h
+            imuse_digi/dimuse_bndmgr.h
+            imuse_digi/dimuse_codecs.h
+            imuse_digi/dimuse_sndmgr.h
+            imuse_digi/dimuse_tables.h
+            imuse_digi/dimuse_engine.h
+            imuse_digi/dimuse_fades.h
+            imuse_digi/dimuse_files.h
+            imuse_digi/dimuse_groups.h
+            imuse_digi/dimuse_internalmixer.h
+            imuse_digi/dimuse_triggers.h
+            insane/insane.h
+            smush/codec37.h
+            smush/codec47.h
+            smush/smush_player.h
+  )
+
+  if(USE_ARM_SMUSH_ASM)
+    target_sources(scumm PRIVATE smush/codec47ARM.cpp)
+
+  endif()
+
+endif()
+
+if(USE_ARM_GFX_ASM)
+  target_sources(scumm PRIVATE gfxARM.cpp)
+
+endif()
+
+if(ENABLE_HE)
+  target_sources(
+    scumm
+    PRIVATE he/animation_he.cpp
+            he/basketball/ai.cpp
+            he/basketball/basketball.cpp
+            he/basketball/collision/bball_collision.cpp
+            he/basketball/collision/bball_collision_basketball.cpp
+            he/basketball/collision/bball_collision_box.cpp
+            he/basketball/collision/bball_collision_cylinder.cpp
+            he/basketball/collision/bball_collision_node.cpp
+            he/basketball/collision/bball_collision_object.cpp
+            he/basketball/collision/bball_collision_player.cpp
+            he/basketball/collision/bball_collision_shields.cpp
+            he/basketball/collision/bball_collision_sphere.cpp
+            he/basketball/collision/bball_collision_stack.cpp
+            he/basketball/collision/bball_collision_tree.cpp
+            he/basketball/court.cpp
+            he/basketball/cursor.cpp
+            he/basketball/geo_translation.cpp
+            he/basketball/obstacle_avoidance.cpp
+            he/basketball/passing.cpp
+            he/basketball/shooting.cpp
+            he/basketball/trajectory.cpp
+            he/cup_player_he.cpp
+            he/gfx_comp/aux_comp.cpp
+            he/gfx_comp/mrle_comp.cpp
+            he/gfx_comp/trle_comp.cpp
+            he/gfx_primitives_he.cpp
+            he/logic_he.cpp
+            he/math_he.cpp
+            he/palette_he.cpp
+            he/polygon_he.cpp
+            he/script_v71he.cpp
+            he/script_v72he.cpp
+            he/script_v80he.cpp
+            he/script_v90he.cpp
+            he/script_v100he.cpp
+            he/sprite_he.cpp
+            he/wiz_he.cpp
+            he/wizwarp_he.cpp
+            he/localizer.cpp
+            he/logic/baseball2001.cpp
+            he/logic/basketball_logic.cpp
+            he/logic/football.cpp
+            he/logic/funshop.cpp
+            he/logic/moonbase_logic.cpp
+            he/logic/puttrace.cpp
+            he/logic/soccer.cpp
+            he/moonbase/ai_defenseunit.cpp
+            he/moonbase/ai_main.cpp
+            he/moonbase/ai_node.cpp
+            he/moonbase/ai_targetacquisition.cpp
+            he/moonbase/ai_traveller.cpp
+            he/moonbase/ai_tree.cpp
+            he/moonbase/ai_types.cpp
+            he/moonbase/ai_weapon.cpp
+            he/moonbase/dialog-mapgenerator.cpp
+            he/moonbase/map_katton.cpp
+            he/moonbase/map_main.cpp
+            he/moonbase/map_mif.cpp
+            he/moonbase/map_spiff.cpp
+            he/moonbase/moonbase.cpp
+            he/moonbase/moonbase_fow.cpp
+            he/moonbase/moonbase_gfx.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            he/animation_he.h
+            he/basketball/ai.h
+            he/basketball/basketball.h
+            he/basketball/collision/bball_collision.h
+            he/basketball/collision/bball_collision_basketball.h
+            he/basketball/collision/bball_collision_box.h
+            he/basketball/collision/bball_collision_cylinder.h
+            he/basketball/collision/bball_collision_node.h
+            he/basketball/collision/bball_collision_object.h
+            he/basketball/collision/bball_collision_player.h
+            he/basketball/collision/bball_collision_shields.h
+            he/basketball/collision/bball_collision_sphere.h
+            he/basketball/collision/bball_collision_stack.h
+            he/basketball/collision/bball_collision_tree.h
+            he/basketball/court.h
+            he/basketball/obstacle_avoidance.h
+            he/basketball/passing.h
+            he/basketball/shooting.h
+            he/cup_player_he.h
+            he/logic_he.h
+            he/sprite_he.h
+            he/wiz_he.h
+            he/localizer.h
+            he/moonbase/ai_defenseunit.h
+            he/moonbase/ai_main.h
+            he/moonbase/ai_node.h
+            he/moonbase/ai_targetacquisition.h
+            he/moonbase/ai_traveller.h
+            he/moonbase/ai_tree.h
+            he/moonbase/ai_types.h
+            he/moonbase/ai_weapon.h
+            he/moonbase/dialog-mapgenerator.h
+            he/moonbase/map_katton.h
+            he/moonbase/map_main.h
+            he/moonbase/map_mif.h
+            he/moonbase/map_spiff.h
+            he/moonbase/moonbase.h
+  )
+
+  if(USE_ENET)
+    target_sources(
+      scumm
+      PRIVATE dialog-createsession.cpp dialog-sessionselector.cpp he/net/net_main.cpp
+      PRIVATE FILE_SET
+              HEADERS
+              FILES
+              dialog-createsession.h
+              dialog-sessionselector.h
+              he/net/net_main.h
+    )
+
+    if(USE_BASIC_NET)
+      target_sources(
+        scumm
+        PRIVATE he/net/net_lobby.cpp
+        PRIVATE FILE_SET
+                HEADERS
+                FILES
+                he/net/net_lobby.h
+      )
+
+    endif()
+
+  endif()
+
+endif()
+
+add_library(scumm_detection)
+
+target_sources(scumm_detection PRIVATE detection.cpp)
+
+# TODO: Remove this when we build this as a DYNAMIC library
+target_sources(scumm_detection PRIVATE file.cpp file_nes.cpp)

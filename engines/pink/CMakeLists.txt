@@ -1,0 +1,105 @@
+add_library(pink STATIC)
+
+target_sources(
+  pink
+  PRIVATE archive.cpp
+          audio_info_mgr.cpp
+          cel_decoder.cpp
+          console.cpp
+          cursor_mgr.cpp
+          screen.cpp
+          file.cpp
+          gui.cpp
+          metaengine.cpp
+          pda_mgr.cpp
+          pink.cpp
+          resource_mgr.cpp
+          saveload.cpp
+          sound.cpp
+          objects/object.cpp
+          objects/module.cpp
+          objects/inventory.cpp
+          objects/side_effect.cpp
+          objects/condition.cpp
+          objects/actions/action.cpp
+          objects/actions/action_cel.cpp
+          objects/actions/action_hide.cpp
+          objects/actions/action_loop.cpp
+          objects/actions/action_play.cpp
+          objects/actions/action_play_with_sfx.cpp
+          objects/actions/action_sound.cpp
+          objects/actions/action_still.cpp
+          objects/actions/action_talk.cpp
+          objects/actions/action_text.cpp
+          objects/actions/walk_action.cpp
+          objects/actors/actor.cpp
+          objects/actors/audio_info_pda_button.cpp
+          objects/actors/lead_actor.cpp
+          objects/actors/pda_button_actor.cpp
+          objects/actors/supporting_actor.cpp
+          objects/handlers/handler.cpp
+          objects/handlers/handler_mgr.cpp
+          objects/pages/game_page.cpp
+          objects/pages/page.cpp
+          objects/pages/pda_page.cpp
+          objects/sequences/seq_timer.cpp
+          objects/sequences/sequence.cpp
+          objects/sequences/sequence_context.cpp
+          objects/sequences/sequence_item.cpp
+          objects/sequences/sequencer.cpp
+          objects/walk/walk_mgr.cpp
+          objects/walk/walk_location.cpp
+          objects/walk/walk_shortest_path.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          archive.h
+          audio_info_mgr.h
+          cel_decoder.h
+          console.h
+          cursor_mgr.h
+          screen.h
+          file.h
+          pda_mgr.h
+          pink.h
+          resource_mgr.h
+          sound.h
+          objects/object.h
+          objects/module.h
+          objects/inventory.h
+          objects/side_effect.h
+          objects/condition.h
+          objects/actions/action.h
+          objects/actions/action_cel.h
+          objects/actions/action_hide.h
+          objects/actions/action_loop.h
+          objects/actions/action_play.h
+          objects/actions/action_play_with_sfx.h
+          objects/actions/action_sound.h
+          objects/actions/action_still.h
+          objects/actions/action_talk.h
+          objects/actions/action_text.h
+          objects/actions/walk_action.h
+          objects/actors/actor.h
+          objects/actors/audio_info_pda_button.h
+          objects/actors/lead_actor.h
+          objects/actors/pda_button_actor.h
+          objects/actors/supporting_actor.h
+          objects/handlers/handler.h
+          objects/handlers/handler_mgr.h
+          objects/pages/game_page.h
+          objects/pages/page.h
+          objects/pages/pda_page.h
+          objects/sequences/seq_timer.h
+          objects/sequences/sequence.h
+          objects/sequences/sequence_context.h
+          objects/sequences/sequence_item.h
+          objects/sequences/sequencer.h
+          objects/walk/walk_mgr.h
+          objects/walk/walk_location.h
+          objects/walk/walk_shortest_path.h
+)
+
+add_library(pink_detection)
+
+target_sources(pink_detection PRIVATE detection.cpp)
