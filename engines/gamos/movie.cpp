@@ -300,10 +300,10 @@ int MoviePlayer::processImageChunk() {
 	uint32 tstamp = 0;
 	uint8 act = processMessages(keepAct, &tstamp);
 
-	if (act == ACT2_82)
+	if (act == ACT2_MOUSEUP_L)
 		return 2;
 
-	if (act == ACT2_83)
+	if (act == ACT2_MOUSEUP_R)
 		return 3;
 
 	if (_hdrBytes[1] == 1) {
@@ -326,10 +326,10 @@ int MoviePlayer::processImageChunk() {
 		} else if (dtime < _frameTime) {
 			while (true) {
 				act = processMessages(false, &tstamp);
-				if (act == ACT2_82)
+				if (act == ACT2_MOUSEUP_L)
 					return 2;
 
-				if (act == ACT2_83)
+				if (act == ACT2_MOUSEUP_R)
 					return 3;
 
 				if ((tstamp - _firstFrameTime) / _currentFrame >= _frameTime)
@@ -603,7 +603,7 @@ uint8 MoviePlayer::processMessages(bool keepAct, uint32 *msecs) {
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (e.type == Common::EVENT_QUIT) {
 			//_errMessage = 1;
-			return ACT2_83;
+			return ACT2_MOUSEUP_R;
 		}
 		_messageProc->processMessage(e);
 	}

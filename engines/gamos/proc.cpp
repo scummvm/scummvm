@@ -56,13 +56,13 @@ void SystemProc::processMessage(const Common::Event &ev) {
 			_act1 = 7;
 		else {
 			if (winKey == _keyCodes[8])
-				_act2 = ACT2_82;
+				_act2 = ACT2_MOUSEUP_L;
 			else if (winKey == _keyCodes[9])
-				_act2 = ACT2_83;
+				_act2 = ACT2_MOUSEUP_R;
 			else if (winKey == _keyCodes[10])
-				_act2 = ACT2_8f;
+				_act2 = ACT2_TAB;
 			else if (winKey == _keyCodes[11])
-				_act2 = ACT2_84;
+				_act2 = ACT2_HELP;
 			else
 				return;
 
@@ -90,7 +90,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 			return;
 
 		_mouseActPos = ev.mouse;
-		_act2 = ACT2_81;
+		_act2 = ACT2_MOUSEDOWN;
 		break;
 
 	case Common::EVENT_LBUTTONUP:
@@ -98,7 +98,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 			return;
 
 		_mouseActPos = ev.mouse;
-		_act2 = ACT2_82;
+		_act2 = ACT2_MOUSEUP_L;
 		_rawKeyCode = _keyCodes[8];
 		break;
 
@@ -107,7 +107,7 @@ void SystemProc::processMessage(const Common::Event &ev) {
 			return;
 
 		_mouseActPos = ev.mouse;
-		_act2 = ACT2_83;
+		_act2 = ACT2_MOUSEUP_R;
 		_rawKeyCode = _keyCodes[9];
 		break;
 

@@ -29,11 +29,11 @@ namespace Gamos {
 
 enum ACT2 {
 	ACT_NONE = 0xe,
-	ACT2_81 = 0x81,
-	ACT2_82 = 0x82,
-	ACT2_83 = 0x83,
-	ACT2_84 = 0x84,
-	ACT2_8f = 0x8f,
+	ACT2_MOUSEDOWN = 0x81,
+	ACT2_MOUSEUP_L = 0x82,
+	ACT2_MOUSEUP_R = 0x83,
+	ACT2_HELP = 0x84,
+	ACT2_TAB = 0x8f,
 };
 
 class SystemProc {

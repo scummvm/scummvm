@@ -455,8 +455,8 @@ private:
 	uint8 DAT_004177f8 = 0;
 
 
-	uint8 DAT_004177fd = 0;
-	uint8 DAT_004177fe = 0;
+	uint8 _inputMouseActId = 0;
+	uint8 _inputMouseActType = 0;
 
 	bool _midiStarted = false;
 
@@ -533,7 +533,7 @@ private:
 
 	ObjectAction *PTR_00417214 = nullptr;
 	Object *PTR_00417218 = nullptr;
-	Object *PTR_004121b4 = nullptr;
+	Object *_inputActObj = nullptr;
 
 	uint8 BYTE_004177f6 = 0;
 	uint8 BYTE_004177fc = 0;
@@ -550,12 +550,11 @@ private:
 	int32 _curObjIndex = 0;
 
 
-	Common::Point DAT_004173f0;
-	Common::Point DAT_004173f8;
+	Common::Point _inputActCell;
+	Common::Point _inputMouseActCell;
 
-	uint8 DAT_00417803 = 0;
+	uint8 _inputActId = 0;
 	bool _pathInMove = false;
-	uint8 DAT_00417805 = 0;
 
 	uint8 RawKeyCode = 0;
 
@@ -688,7 +687,7 @@ protected:
 	void removeObjectByIDMarkDirty(int32 id);
 
 	void removeSubtitles(Object *obj);
-	void FUN_0040255c(Object *obj);
+	void cycleNextInputObj(Object *obj);
 
 	bool FUN_00402fb4();
 
@@ -721,7 +720,7 @@ protected:
 
 	void setCursor(int id, bool dirtRect);
 
-	void FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
+	void processInput(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
 	bool FUN_00409600(Object *obj, Common::Point pos);
 
 	void setNeedReload() {

@@ -982,13 +982,13 @@ void GamosEngine::flushDirtyRects(bool apply) {
 
 	_screen->update();
 
-	DAT_004177fd = 0xff;
-	DAT_004177fe = ACT_NONE;
+	_inputMouseActId = 0xff;
+	_inputMouseActType = ACT_NONE;
 	PTR_00417388 = nullptr;
 
 	rndSeed(_system->getMillis());
-	PTR_004121b4 = nullptr;
-	FUN_0040255c(nullptr);
+	_inputActObj = nullptr;
+	cycleNextInputObj(nullptr);
 }
 
 bool GamosEngine::usePalette(const byte *pal, int num, int fade, bool winColors) {
@@ -1238,7 +1238,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 		_keySeq += RawKeyCode;
 	}
 
-	FUN_00402c2c(mouseMove, actPos, act2, act1);
+	processInput(mouseMove, actPos, act2, act1);
 	changeVolume();
 
 	if (!FUN_00402bc4())
@@ -1773,8 +1773,8 @@ void GamosEngine::createActiveObject(ActEntry e, Common::Point cell) {
 		obj->storage.resize(act.storageSize, 0);
 		odat = obj->storage.data();
 		index = obj->index;
-		if (act.actType == 3 && PTR_004121b4 == nullptr)
-			PTR_004121b4 = obj;
+		if (act.actType == 3 && _inputActObj == nullptr)
+			_inputActObj = obj;
 	}
 
 	stref = ObjState(oid, e.flags, e.t);
@@ -1811,7 +1811,7 @@ void GamosEngine::removeObjectAtCoords(Common::Point cell, bool deleteGfxObj) {
 					    obj.storage.clear(); */
 					removeSubtitles(&obj);
 					removeObject(&obj);
-					FUN_0040255c(&obj);
+					cycleNextInputObj(&obj);
 					povar4 = &obj;
 					if (!deleteGfxObj || multidel)
 						break;
@@ -2014,7 +2014,7 @@ bool GamosEngine::FUN_00402fb4() {
 											DAT_00412204 = nullptr;
 											goto exit;
 										}
-										FUN_0040255c(pobj);
+										cycleNextInputObj(pobj);
 										goto continue_to_next_object;
 									}
 									if (!DAT_004177ff) {
@@ -2541,27 +2541,27 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			break;
 
 		case 6:
-			ret = FUN_00408648(0x82, 0xff, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, 0xff, 0xff);
 			break;
 
 		case 7:
-			ret = FUN_00408648(0x82, 0xfe, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, 0xfe, 0xff);
 			break;
 
 		case 8:
-			ret = FUN_00408648(0x82, 0xfe, 0xfe);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, 0xfe, 0xfe);
 			break;
 
 		case 9:
-			ret = FUN_00408648(0x83, 0xff, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, 0xff, 0xff);
 			break;
 
 		case 10:
-			ret = FUN_00408648(0x83, 0xfe, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, 0xfe, 0xff);
 			break;
 
 		case 11:
-			ret = FUN_00408648(0x83, 0xfe, 0xfe);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, 0xfe, 0xfe);
 			break;
 
 		default:
@@ -2597,27 +2597,27 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			break;
 
 		case 6:
-			ret = FUN_00408648(0x82, arg2, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, arg2, 0xff);
 			break;
 
 		case 7:
-			ret = FUN_00408648(0x82, arg2, 0xfe);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, arg2, 0xfe);
 			break;
 
 		case 8:
-			ret = FUN_00408648(0x82, arg2, arg2);
+			ret = FUN_00408648(ACT2_MOUSEUP_L, arg2, arg2);
 			break;
 
 		case 9:
-			ret = FUN_00408648(0x83, arg2, 0xff);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, arg2, 0xff);
 			break;
 
 		case 10:
-			ret = FUN_00408648(0x83, arg2, 0xfe);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, arg2, 0xfe);
 			break;
 
 		case 11:
-			ret = FUN_00408648(0x83, arg2, arg2);
+			ret = FUN_00408648(ACT2_MOUSEUP_R, arg2, arg2);
 			break;
 
 		default:
@@ -2653,27 +2653,27 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			break;
 
 		case 6:
-			ret = FUN_004088cc(0x82, arg2, 0xff);
+			ret = FUN_004088cc(ACT2_MOUSEUP_L, arg2, 0xff);
 			break;
 
 		case 7:
-			ret = FUN_004088cc(0x82, arg2, 0xfe);
+			ret = FUN_004088cc(ACT2_MOUSEUP_L, arg2, 0xfe);
 			break;
 
 		case 8:
-			ret = FUN_004088cc(0x82, arg2, arg2);
+			ret = FUN_004088cc(ACT2_MOUSEUP_L, arg2, arg2);
 			break;
 
 		case 9:
-			ret = FUN_004088cc(0x83, arg2, 0xff);
+			ret = FUN_004088cc(ACT2_MOUSEUP_R, arg2, 0xff);
 			break;
 
 		case 10:
-			ret = FUN_004088cc(0x83, arg2, 0xfe);
+			ret = FUN_004088cc(ACT2_MOUSEUP_R, arg2, 0xfe);
 			break;
 
 		case 11:
-			ret = FUN_004088cc(0x83, arg2, arg2);
+			ret = FUN_004088cc(ACT2_MOUSEUP_R, arg2, arg2);
 			break;
 
 		default:
@@ -2719,9 +2719,8 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		if (_pathInMove != false) {
 			if (arg1 == 0) {
 				_pathInMove = false;
-				DAT_004177fe = 255;
-				DAT_00417805 = 255;
-				DAT_004177fd = 255;
+				_inputMouseActType = 0xff;
+				_inputMouseActId = 0xff;
 			} else if (arg1 == 1) {
 				ActEntry tmp;
 				tmp.actid = 0xfe;
@@ -3181,9 +3180,9 @@ void GamosEngine::removeSubtitles(Object *obj) {
 	}
 }
 
-void GamosEngine::FUN_0040255c(Object *obj) {
-	if (obj == PTR_004121b4) {
-		PTR_004121b4 = nullptr;
+void GamosEngine::cycleNextInputObj(Object *obj) {
+	if (obj == _inputActObj) {
+		_inputActObj = nullptr;
 		int32 n = 0;
 
 		int16 objIndex = -1;
@@ -3198,11 +3197,11 @@ void GamosEngine::FUN_0040255c(Object *obj) {
 
 			if (robj.isActionObject() && _objectActions[robj.actID].actType == 3) {
 				if (n) {
-					PTR_004121b4 = &robj;
+					_inputActObj = &robj;
 					break;
 				}
-				if (!PTR_004121b4)
-					PTR_004121b4 = &robj;
+				if (!_inputActObj)
+					_inputActObj = &robj;
 			}
 		}
 	}
@@ -3228,13 +3227,13 @@ bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
 	return false;
 }
 
-void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1) {
+void GamosEngine::processInput(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1) {
 	uint8 tmpb = 0;
-	if (act2 == ACT2_8f)
-		FUN_0040255c(PTR_004121b4);
-	else if (act2 == ACT2_82)
+	if (act2 == ACT2_TAB)
+		cycleNextInputObj(_inputActObj);
+	else if (act2 == ACT2_MOUSEUP_L)
 		tmpb = 0x90;
-	else if (act2 == ACT2_83)
+	else if (act2 == ACT2_MOUSEUP_R)
 		tmpb = 0xa0;
 	else if (act2 == ACT_NONE)
 		actPos = move;
@@ -3257,7 +3256,7 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 			else if (action.actType == 2)
 				obj.inputFlag = tmpb & 0x4f;
 			else if (action.actType == 3) {
-				if (&obj == PTR_004121b4)
+				if (&obj == _inputActObj)
 					obj.inputFlag = tmpb & 0x4f;
 				else
 					obj.inputFlag = 0;
@@ -3272,35 +3271,33 @@ void GamosEngine::FUN_00402c2c(Common::Point move, Common::Point actPos, uint8 a
 	}
 
 	if (!pobj) {
-		DAT_004173f0.x = actPos.x / _gridCellW;
-		DAT_004173f0.y = actPos.y / _gridCellH;
-		DAT_00417803 = _states.at(DAT_004173f0).actid;
+		_inputActCell.x = actPos.x / _gridCellW;
+		_inputActCell.y = actPos.y / _gridCellH;
+		_inputActId = _states.at(_inputActCell).actid;
 	} else {
-		DAT_00417803 = actT;
+		_inputActId = actT;
 		if (actT == 2) {
 			if (act2 == ACT_NONE)
 				tmpb |= 0x10;
-			else if (act2 == ACT2_81)
+			else if (act2 == ACT2_MOUSEDOWN)
 				tmpb |= 0x20;
 
 			pobj->inputFlag = tmpb;
 		} else if (actT == 3 && (tmpb == 0x90 || tmpb == 0xa0)) {
-			PTR_004121b4 = pobj;
+			_inputActObj = pobj;
 			pobj->inputFlag = tmpb;
 		}
 
-		DAT_004173f0 = pobj->cell;
+		_inputActCell = pobj->cell;
 	}
 
-	DAT_00417805 = act2;
-	if (act2 == ACT2_82 || act2 == ACT2_83) {
-		DAT_004177fe = act2;
-		DAT_004177fd = DAT_00417803;
-		DAT_004173f8 = DAT_004173f0;
+	if (act2 == ACT2_MOUSEUP_L || act2 == ACT2_MOUSEUP_R) {
+		_inputMouseActType = act2;
+		_inputMouseActId = _inputActId;
+		_inputMouseActCell = _inputActCell;
 	} else {
-		if (act2 == ACT2_81)
-			DAT_004177fe = ACT_NONE;
-		DAT_00417805 = ACT_NONE;
+		if (act2 == ACT2_MOUSEDOWN)
+			_inputMouseActType = ACT_NONE;
 	}
 
 }
@@ -3466,10 +3463,10 @@ bool GamosEngine::FUN_00402bc4() {
 }
 
 void GamosEngine::FUN_00407db8(uint8 p) {
-	if ((p == 0x82) || (p == 0x83))
-		_pathTargetCell = DAT_004173f8;
+	if ((p == ACT2_MOUSEUP_L) || (p == ACT2_MOUSEUP_R))
+		_pathTargetCell = _inputMouseActCell;
 	else
-		_pathTargetCell = DAT_004173f0;
+		_pathTargetCell = _inputActCell;
 
 	_pathStartCell = PTR_00417218->cell;
 	_pathDir4 = -1;
@@ -3480,10 +3477,10 @@ void GamosEngine::FUN_00407db8(uint8 p) {
 byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
 	FUN_00407db8(p1);
 
-	if (p1 == 0x82 || p1 == 0x83) {
-		if (p1 != DAT_004177fe)
+	if (p1 == ACT2_MOUSEUP_L || p1 == ACT2_MOUSEUP_R) {
+		if (p1 != _inputMouseActType)
 			return 0;
-		if (p2 != 0xff && p2 != DAT_004177fd)
+		if (p2 != 0xff && p2 != _inputMouseActId)
 			return 0;
 	} else {
 		if (p1 != 0xe) {
@@ -3492,7 +3489,7 @@ byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
 			else
 				return FUN_00408510(p2);
 		}
-		if (p2 != 0xff && p2 != DAT_00417803)
+		if (p2 != 0xff && p2 != _inputActId)
 			return 0;
 	}
 
@@ -3780,11 +3777,11 @@ byte GamosEngine::pathFindSetNeighbor(uint8 checkVal, uint8 setVal) {
 byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
 	FUN_00407db8(p1);
 
-	if (p1 == 0x82 || p1 == 0x83) {
-		if (p1 != DAT_004177fe)
+	if (p1 == ACT2_MOUSEUP_L || p1 == ACT2_MOUSEUP_R) {
+		if (p1 != _inputMouseActType)
 			return 0;
 
-		if ( (_thing2[p2].field_0[ DAT_004177fd >> 3 ] & (1 << (DAT_004177fd & 7))) == 0 )
+		if ( (_thing2[p2].field_0[ _inputMouseActId >> 3 ] & (1 << (_inputMouseActId & 7))) == 0 )
 			return 0;
 	} else {
 		if (p1 != 0xe) {
@@ -3794,7 +3791,7 @@ byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
 				return FUN_00408778(_thing2[p2].field_0);
 		}
 
-		if ( (_thing2[p2].field_0[ DAT_00417803 >> 3 ] & (1 << (DAT_00417803 & 7))) == 0 )
+		if ( (_thing2[p2].field_0[ _inputActId >> 3 ] & (1 << (_inputActId & 7))) == 0 )
 			return 0;
 	}
 
