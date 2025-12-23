@@ -44,7 +44,7 @@
 namespace Gamos {
 
 GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Gamos"),
+	_gameDescription(gameDesc),
 	_messageProc(this),
 	_vm(this, callbackVMCallDispatcher),
 	_txtInputVMAccess(_vm) {}
@@ -581,21 +581,21 @@ bool GamosEngine::initMainDatas() {
 		return false;
 	}
 
-	_pages1kbCount = dataStream.readUint32LE();
-	_readBufSize = dataStream.readUint32LE();
+	/* skip count of pages 1kb size */
+	dataStream.skip(4);
+	/* skip read buffer size */
+	dataStream.skip(4);
 	_width = dataStream.readUint32LE();
 	_height = dataStream.readUint32LE();
 	_gridCellW = dataStream.readSint32LE();
 	_gridCellH = dataStream.readSint32LE();
 	_movieCount = dataStream.readUint32LE();
-	_unk5 = dataStream.readByte();
-	_unk6 = dataStream.readByte();
-	_unk7 = dataStream.readByte();
+	dataStream.skip(3); // skip unknown unused
 	_fps = dataStream.readByte();
-	_unk8 = dataStream.readByte();
-	_unk9 = dataStream.readByte();
+	dataStream.skip(1); // skip unknown unused
+	_drawCursor = dataStream.readByte();
 	_fadeEffectID = dataStream.readByte();
-	_unk11 = dataStream.readByte();
+	_playIntro = dataStream.readByte();
 
 	_introPos.x = dataStream.readSint32LE();
 	_introPos.y = dataStream.readSint32LE();
@@ -881,7 +881,7 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 
 
 bool GamosEngine::playIntro() {
-	if (_movieCount != 0 && _unk11 == 1)
+	if (_movieCount != 0 && _playIntro == 1)
 		return scriptFunc18(0);
 	return true;
 }
@@ -3208,7 +3208,7 @@ void GamosEngine::cycleNextInputObj(Object *obj) {
 }
 
 void GamosEngine::setCursor(int id, bool dirtRect) {
-	if (_unk9 == 0)
+	if (_drawCursor == 0)
 		_mouseCursorImgId = id;
 	else
 		_mouseCursorImgId = -1;
@@ -3991,7 +3991,7 @@ void GamosEngine::FUN_004025d0() {
 
 
 bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
-	if (_mouseCursorImgId >= 0 && _unk9 == 0) {
+	if (_mouseCursorImgId >= 0 && _drawCursor == 0 && _mouseCursorImgId < _sprites.size()) {
 		Sprite &cursorSpr = _sprites[_mouseCursorImgId];
 
 		if (cursorSpr.field_3 > 1) {

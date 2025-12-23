@@ -375,36 +375,28 @@ class GamosEngine : public Engine, public KeyCodes {
 
 private:
 	const GamosGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
 
 	bool _errSet = false;
 	Common::String _errMessage;
 
 	Archive _arch;
 
-	byte _cmdByte;
+	byte _cmdByte = 0;
 
-	bool _runReadDataMod;
-	int _currentModuleID;
+	bool _runReadDataMod = false;
+	int _currentModuleID = 0;
 
 	byte _saveLoadID = 0;
-
-	uint32 _magic;
-	uint32 _pages1kbCount;
-	uint32 _readBufSize;
-	uint32 _width; //screen output width
-	uint32 _height; //screen output height
-	int32 _gridCellW;
-	int32 _gridCellH;
-	uint32 _movieCount;
-	byte _unk5;
-	byte _unk6;
-	byte _unk7;
-	byte _fps;
-	byte _unk8;
-	byte _unk9;
+	uint32 _magic = 0xBAD00BAD;
+	uint32 _width = 0; //screen output width
+	uint32 _height = 0; //screen output height
+	int32 _gridCellW = 0;
+	int32 _gridCellH = 0;
+	uint32 _movieCount = 0;
+	byte _fps = 1;
+	byte _drawCursor = 0;
 	byte _fadeEffectID = 0;
-	byte _unk11;
+	byte _playIntro = 0;
 
 	byte _currentFade = 0;
 
@@ -840,12 +832,6 @@ public:
 
 	uint32 getEngineVersion() const;
 
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
 
 	bool hasFeature(EngineFeature f) const override {
 		return
