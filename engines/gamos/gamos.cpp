@@ -150,17 +150,6 @@ Common::Error GamosEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error GamosEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
-	return Common::kNoError;
-}
-
 bool GamosEngine::loader2() {
 	int32 skipsz = _arch.readSint32LE();
 	_arch.skip(skipsz);

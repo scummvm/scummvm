@@ -30,13 +30,6 @@ public:
 	const char *getName() const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Gamos::GamosGameDescription *desc) const override;
-
-	/**
-	 * Determine whether the engine supports the specified MetaEngine feature.
-	 *
-	 * Used by e.g. the launcher to determine whether to enable the Load button.
-	 */
-	bool hasFeature(MetaEngineFeature f) const override;
 };
 
 #endif // GAMOS_METAENGINE_H
