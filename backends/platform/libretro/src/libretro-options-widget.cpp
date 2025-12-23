@@ -21,8 +21,8 @@
 #include "backends/platform/libretro/include/libretro-fs.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "gui/launcher.h"
-
 #include "common/translation.h"
+#include "common/formats/json.h"
 
 enum {
 	kPlaylistPathCmd = 'pchp',
@@ -142,6 +142,9 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 	Common::String hookFilePath;
 	Common::String title;
 
+	Common::JSONObject root;
+	Common::JSONArray  items;
+
 	/* Create playlist file */
 	RFILE *playlistFile = filestream_open(Common::String(playlistPath + "/" + CORE_NAME + ".lpl").c_str(), RETRO_VFS_FILE_ACCESS_WRITE, RETRO_VFS_FILE_ACCESS_HINT_NONE);
 	if (!playlistFile) {
@@ -166,9 +169,14 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 		LibRetroFilesystemNode corePath(".");
 		if (cCorePath)
 			corePath = LibRetroFilesystemNode(Common::String(cCorePath));
-		filestream_printf(playlistFile, "{\n  \"version\": \"1.5\",\n  \"default_core_path\": \"%s\",\n  \"default_core_name\": \"ScummVM\",\n  \"label_display_mode\": 0,\n  \"right_thumbnail_mode\": 2,\n  \"left_thumbnail_mode\": 3,\n  \"sort_mode\": 0,\n  \"items\": [", corePath.exists() ? corePath.getPath().c_str() : "");
-		playlistElement = "%s\n    {\n      \"path\": \"%s\",\n      \"label\": \"%s\",\n      \"core_path\": \"DETECT\",\n      \"core_name\": \"DETECT\",\n      \"crc32\": \"DETECT\",\n      \"db_name\": \"" CORE_NAME ".lpl\"\n    }";
-		playlistFooter = "\n  ]\n}";
+
+		root["version"]			= new Common::JSONValue(Common::String("1.5"));
+		root["default_core_path"]  = new Common::JSONValue(corePath.exists() ? corePath.getPath() : Common::String(""));
+		root["default_core_name"]  = new Common::JSONValue(Common::String("ScummVM"));
+		root["label_display_mode"] = new Common::JSONValue((long long)0);
+		root["right_thumbnail_mode"] = new Common::JSONValue((long long)2);
+		root["left_thumbnail_mode"]  = new Common::JSONValue((long long)3);
+		root["sort_mode"]			= new Common::JSONValue((long long)0);
 	} else
 		playlistElement = "%s%s\n%s\nDETECT\nDETECT\nDETECT\nScummVM.lpl\n";
 
@@ -193,11 +201,22 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 		iter->_value.tryGetVal("description", title);
 		hookFilePath = hookPath + + "/" + iter->_key.c_str() + "." + CORE_EXTENSIONS;
 
-		filestream_printf(playlistFile, playlistElement.c_str(), separator, hookFilePath.c_str(), title.c_str());
+		if (ConfMan.getInt("libretro_playlist_version", _domain) != kPlaylistFormat6lines) {
+			Common::JSONObject item;
+			item["path"]	  = new Common::JSONValue(hookFilePath);
+			item["label"]	 = new Common::JSONValue(title);
+			item["core_path"] = new Common::JSONValue(Common::String("DETECT"));
+			item["core_name"] = new Common::JSONValue(Common::String("DETECT"));
+			item["crc32"]	 = new Common::JSONValue(Common::String("DETECT"));
+			item["db_name"]   = new Common::JSONValue(Common::String(CORE_NAME ".lpl"));
 
-		if (isFirstEntry && ConfMan.getInt("libretro_playlist_version", _domain) != kPlaylistFormat6lines) {
-			*separator = ',';
-			isFirstEntry = false;
+			items.push_back(new Common::JSONValue(item));
+		} else {
+			filestream_printf(playlistFile, playlistElement.c_str(), separator, hookFilePath.c_str(), title.c_str());
+			if (isFirstEntry) {
+				*separator = ',';
+				isFirstEntry = false;
+			}
 		}
 
 		/* Create hook file */
@@ -214,7 +233,15 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 		filestream_close(hookFile);
 	}
 
-	filestream_printf(playlistFile, playlistFooter.c_str());
+	if (ConfMan.getInt("libretro_playlist_version", _domain) != kPlaylistFormat6lines) {
+		root["items"] = new Common::JSONValue(items);
+		Common::JSONValue *rootVal = new Common::JSONValue(root);
+		Common::String out = Common::JSON::stringify(rootVal);
+		filestream_write(playlistFile, out.c_str(), out.size());
+		delete rootVal;
+	} else {
+		filestream_printf(playlistFile, playlistFooter.c_str());
+	}
 	filestream_close(playlistFile);
 
 	Common::String response;
