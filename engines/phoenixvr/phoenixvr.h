@@ -145,6 +145,7 @@ private:
 	}
 	void tick(float dt);
 	void tickTimer(float dt);
+	void loadNextScript();
 
 private:
 	Common::Point _mousePos;

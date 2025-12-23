@@ -96,6 +96,7 @@ public:
 	~Script();
 
 	ConstWarpPtr getWarp(const Common::String &name) const;
+	ConstWarpPtr getWarp(uint index) const;
 	ConstWarpPtr getInitScript() const;
 
 	const Common::Array<Common::String> &getWarpNames() const {

@@ -354,6 +354,10 @@ Script::ConstWarpPtr Script::getWarp(const Common::String &name) const {
 	return _warps[idx];
 }
 
+Script::ConstWarpPtr Script::getWarp(uint idx) const {
+	return idx < _warps.size() ? Script::ConstWarpPtr{_warps[idx]} : Script::ConstWarpPtr{};
+}
+
 Script::ConstWarpPtr Script::getInitScript() const {
 	return _warps.front();
 }

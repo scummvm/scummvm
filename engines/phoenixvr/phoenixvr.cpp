@@ -90,6 +90,26 @@ void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
 	SearchMan.addDirectory(dataDir, 0, 1, true);
 }
 
+void PhoenixVREngine::loadNextScript() {
+	debug("loading script from %s", _nextScript.toString().c_str());
+	auto nextScript = Common::move(_nextScript);
+	_nextScript.clear();
+
+	Common::File file;
+	const Common::Path &nextPath(nextScript);
+	if (file.open(nextPath)) {
+		_script.reset(new Script(file));
+	} else {
+		auto pakFile = nextPath;
+		pakFile = pakFile.removeExtension().append(".pak");
+		file.open(pakFile);
+		if (!file.isOpen())
+			error("can't open script file %s", nextScript.toString().c_str());
+		Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
+		_script.reset(new Script(*scriptStream));
+	}
+}
+
 void PhoenixVREngine::end() {
 	debug("end");
 	if (_nextScript.empty())
@@ -317,23 +337,7 @@ void PhoenixVREngine::tick(float dt) {
 		_mixer->setChannelBalance(sound.handle, balance);
 	}
 	if (!_nextScript.empty()) {
-		debug("loading script from %s", _nextScript.toString().c_str());
-		auto nextScript = Common::move(_nextScript);
-		_nextScript.clear();
-
-		Common::File file;
-		Common::Path nextPath(nextScript);
-		if (file.open(nextPath)) {
-			_script.reset(new Script(file));
-		} else {
-			auto pakFile = nextPath;
-			pakFile = pakFile.removeExtension().append(".pak");
-			file.open(pakFile);
-			if (!file.isOpen())
-				error("can't open script file %s", nextScript.toString().c_str());
-			Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
-			_script.reset(new Script(*scriptStream));
-		}
+		loadNextScript();
 		goToWarp(_script->getInitScript()->vrFile);
 	}
 	if (!_nextWarp.empty()) {
@@ -513,6 +517,13 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		return;
 	}
 	auto state = loadGameStateObject(slot.get());
+
+	setNextScript(state.script);
+	// keep it alive until loading finishes.
+	auto currentScript = Common::move(_script);
+	assert(!_nextScript.empty());
+	loadNextScript();
+
 	Common::MemoryReadStream ms(state.state.data(), state.state.size());
 	Common::hexdump(state.state.data(), state.state.size());
 
@@ -531,6 +542,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		  angleX, angleY, soundVolumePanX, soundVolumnPanY,
 		  angleXMax, angleYMin, angleYMax,
 		  currentWarpIdx, currentWarpTests);
+
 	for (auto &vr : _script->getWarpNames()) {
 		auto warp = getWarp(vr);
 		auto &tests = warp->tests;
