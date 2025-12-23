@@ -121,7 +121,6 @@ struct ActionPopupState {
 
 struct AlfredState {
 	AlfredAnimState animState = ALFRED_IDLE;
-	AlfredAnimState nextState = ALFRED_IDLE;
 	AlfredDirection direction = ALFRED_DOWN;
 	int curFrame = 0;
 	uint16 movementSpeed = 6; // pixels per frame
@@ -130,6 +129,11 @@ struct AlfredState {
 	uint16 scaledX = 0;
 	uint16 scaledY = 0;
 	int idleFrameCounter = 0;
+
+	void setState(AlfredAnimState nextState) {
+		animState = nextState;
+		curFrame = 0;
+	}
 };
 
 typedef struct {

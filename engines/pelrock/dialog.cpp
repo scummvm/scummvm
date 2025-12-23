@@ -171,7 +171,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int yPos = 0;
 
 		if (speakerId == ALFRED_COLOR) {
-			g_engine->alfredState.animState = ALFRED_TALKING;
+			g_engine->alfredState.setState(ALFRED_TALKING);
 			if (_curSprite != nullptr) {
 				_curSprite->isTalking = false;
 			}
@@ -179,7 +179,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			xPos = g_engine->alfredState.x + kAlfredFrameWidth / 2 - maxWidth / 2;
 			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
 		} else {
-			g_engine->alfredState.animState = ALFRED_IDLE;
+			g_engine->alfredState.setState(ALFRED_IDLE);
 			_curSprite->isTalking = true;
 			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
 			yPos = _curSprite->y - height; // Above sprite, adjust for line
@@ -225,7 +225,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	if (_curSprite != nullptr) {
 		_curSprite->isTalking = false;
 	}
-	g_engine->alfredState.animState = ALFRED_IDLE;
+	g_engine->alfredState.setState(ALFRED_IDLE);
 }
 
 void DialogManager::displayDialogue(Common::String text, byte speakerId) {
@@ -597,8 +597,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 }
 
 void DialogManager::sayAlfred(Common::StringArray texts) {
-	g_engine->alfredState.nextState = ALFRED_TALKING;
-	g_engine->alfredState.curFrame = 0;
+	g_engine->alfredState.setState(ALFRED_TALKING);
 
 	_curSprite = nullptr;
 	Common::Array<Common::StringArray> textLines = wordWrap(texts);

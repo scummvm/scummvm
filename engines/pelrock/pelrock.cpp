@@ -294,8 +294,7 @@ void PelrockEngine::checkMouse() {
 	// Cancel walking animation on mouse click
 	if (_events->_leftMouseButton) {
 		alfredState.curFrame = 0;
-		alfredState.idleFrameCounter = 0;
-		alfredState.animState = ALFRED_IDLE;
+		alfredState.setState(ALFRED_IDLE);
 	}
 
 	// Handle mouse release after long press (popup selection mode)
@@ -387,7 +386,7 @@ void PelrockEngine::paintDebugLayer() {
 		_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
 	}
 
-	for(int i = 0; i< _room->_currentRoomExits.size(); i++) {
+	for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
 		Exit exit = _room->_currentRoomExits[i];
 		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
 		_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
@@ -500,8 +499,7 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 		talkTo(hotspot);
 		break;
 	case PICKUP:
-		alfredState.animState = ALFRED_INTERACTING;
-		alfredState.curFrame = 0;
+		alfredState.setState(ALFRED_INTERACTING);
 		pickUpAndDisable(hotspot);
 		executeAction(PICKUP, hotspot);
 		break;
@@ -533,8 +531,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.animState == ALFRED_IDLE &&
 		(alfredState.direction == ALFRED_LEFT || alfredState.direction == ALFRED_RIGHT)) {
 		alfredState.idleFrameCounter = 0;
-		alfredState.curFrame = 0;
-		alfredState.animState = ALFRED_COMB;
+		alfredState.setState(ALFRED_COMB);
 	}
 	debug("Alfred state: %d, pos (%d, %d) curFrame %d", alfredState.animState, alfredState.x, alfredState.y, alfredState.curFrame);
 	switch (alfredState.animState) {
@@ -571,9 +568,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
-				alfredState.animState = ALFRED_IDLE;
-				alfredState.curFrame = 0;
-				if(_currentHotspot != nullptr)
+				alfredState.setState(ALFRED_IDLE);
+				if (_currentHotspot != nullptr)
 					alfredState.direction = calculateAlfredsDirection(_currentHotspot);
 
 				if (_queuedAction.isQueued) {
@@ -613,8 +609,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	case ALFRED_COMB:
 		if (alfredState.curFrame >= 11) {
-			alfredState.animState = ALFRED_IDLE;
-			alfredState.curFrame = 0;
+			alfredState.setState(ALFRED_IDLE);
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[alfredState.direction], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
 			break;
 		}
@@ -623,13 +618,15 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame++;
 		break;
 	case ALFRED_INTERACTING:
-		if (alfredState.curFrame >= interactingAnimLength) {
-			alfredState.curFrame = 0;
-			alfredState.animState = ALFRED_IDLE;
+		if (alfredState.curFrame > interactingAnimLength) {
+			alfredState.setState(ALFRED_IDLE);
+			drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
+			break;
 		}
 		drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
-		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+		if (_chrono->getFrameCount() % 15 == 0) {
 			alfredState.curFrame++;
+		}
 		break;
 	default:
 		drawAlfred(_res->alfredIdle[alfredState.direction]);
@@ -1091,8 +1088,7 @@ void PelrockEngine::walkTo(int x, int y) {
 	PathContext context = {nullptr, nullptr, nullptr, 0, 0, 0};
 	findPath(alfredState.x, alfredState.y, x, y, _room->_currentRoomWalkboxes, &context);
 	_currentContext = context;
-	alfredState.animState = ALFRED_WALKING;
-	alfredState.curFrame = 0;
+	alfredState.setState(ALFRED_WALKING);
 }
 
 AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
@@ -1262,7 +1258,7 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_sound->stopAllSounds();
 	_currentHotspot = nullptr;
 	alfredState.direction = dir;
-	alfredState.animState = ALFRED_IDLE;
+	alfredState.setState(ALFRED_IDLE);
 	_currentStep = 0;
 	int roomOffset = number * kRoomStructSize;
 	alfredState.curFrame = 0;
