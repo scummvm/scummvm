@@ -1981,7 +1981,7 @@ bool GamosEngine::FUN_00402fb4() {
 					PTR_00417214 = &_objectActions[pobj->actID];
 					PTR_004173e8 = pobj->storage.data();
 
-					DAT_00417804 = 0;
+					_pathInMove = false;
 					for (Actions &scr : PTR_00417214->actions) {
 						BYTE_004177f6 = PTR_00417218->t;
 
@@ -2684,23 +2684,23 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 38:
 		arg1 = ctx->pop32();
-		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412ca0)
-			ctx->EAX.setVal(0);
-		else
+		if (_pathInMove && (int32)arg1 == _pathDir4)
 			ctx->EAX.setVal(1);
+		else
+			ctx->EAX.setVal(0);
 		break;
 
 	case 39:
 		arg1 = ctx->pop32();
-		if (DAT_00417804 == 0 || (int32)arg1 != INT_00412c9c)
-			ctx->EAX.setVal(0);
-		else
+		if (_pathInMove && (int32)arg1 == _pathDir8)
 			ctx->EAX.setVal(1);
+		else
+			ctx->EAX.setVal(0);
 		break;
 
 	case 40:
 		arg1 = ctx->pop32();
-		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412ca0) != 0)
+		if (_pathInMove && FUN_0040705c(arg1, _pathDir4) != 0)
 			ctx->EAX.setVal(1);
 		else
 			ctx->EAX.setVal(0);
@@ -2708,7 +2708,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 41:
 		arg1 = ctx->pop32();
-		if (DAT_00417804 != 0 && FUN_0040705c(arg1, INT_00412c9c) != 0)
+		if (_pathInMove && FUN_0040705c(arg1, _pathDir8) != 0)
 			ctx->EAX.setVal(1);
 		else
 			ctx->EAX.setVal(0);
@@ -2716,9 +2716,9 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 42: {
 		arg1 = ctx->pop32();
-		if (DAT_00417804 != 0) {
+		if (_pathInMove != false) {
 			if (arg1 == 0) {
-				DAT_00417804 = 0;
+				_pathInMove = false;
 				DAT_004177fe = 255;
 				DAT_00417805 = 255;
 				DAT_004177fd = 255;
@@ -2727,14 +2727,14 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 				tmp.actid = 0xfe;
 				tmp.t = BYTE_004177f6;
 				tmp.flags = 0;
-				createActiveObject(tmp, DAT_00412c94);
+				createActiveObject(tmp, _pathTargetCell);
 			} else if (arg1 == 2) {
 				ActEntry tmp;
 				tmp.actid = 0;
 				tmp.t = BYTE_004177f6;
 				tmp.flags = 0;
-				tmp.x = DAT_00412c94.x - DAT_00412c8c.x;
-				tmp.y = DAT_00412c94.y - DAT_00412c8c.y;
+				tmp.x = _pathTargetCell.x - _pathStartCell.x;
+				tmp.y = _pathTargetCell.y - _pathStartCell.y;
 				FUN_00402a68(tmp);
 			}
 		}
@@ -2743,24 +2743,24 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 43: {
 		arg1 = ctx->pop32();
-		if (DAT_00417804) {
+		if (_pathInMove) {
 			ActEntry tmp;
 			tmp.actid = arg1;
 			tmp.t = BYTE_004177f6;
 			tmp.flags = 0;
-			createActiveObject(tmp, DAT_00412c94);
+			createActiveObject(tmp, _pathTargetCell);
 		}
 		ctx->EAX.setVal(1);
 	} break;
 
 	case 44: {
 		arg1 = ctx->pop32();
-		if (DAT_00417804) {
+		if (_pathInMove) {
 			ActEntry tmp;
 			tmp.actid = arg1;
 			tmp.t = BYTE_004177f6;
 			tmp.flags = 1;
-			createActiveObject(tmp, DAT_00412c94);
+			createActiveObject(tmp, _pathTargetCell);
 		}
 		ctx->EAX.setVal(1);
 	} break;
@@ -3467,14 +3467,14 @@ bool GamosEngine::FUN_00402bc4() {
 
 void GamosEngine::FUN_00407db8(uint8 p) {
 	if ((p == 0x82) || (p == 0x83))
-		DAT_00412c94 = DAT_004173f8;
+		_pathTargetCell = DAT_004173f8;
 	else
-		DAT_00412c94 = DAT_004173f0;
+		_pathTargetCell = DAT_004173f0;
 
-	DAT_00412c8c = PTR_00417218->cell;
-	INT_00412ca0 = -1;
-	INT_00412c9c = -1;
-	DAT_00417804 = 0;
+	_pathStartCell = PTR_00417218->cell;
+	_pathDir4 = -1;
+	_pathDir8 = -1;
+	_pathInMove = false;
 }
 
 byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
@@ -3497,7 +3497,7 @@ byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
 	}
 
 	if (p3 == 0xff)
-		return FUN_00407e2c();
+		return pathFindMoveToTarget();
 	else if (p3 == 0xfe)
 		return FUN_0040856c();
 	else
@@ -3508,13 +3508,13 @@ byte GamosEngine::FUN_004084bc(uint8 p) {
 	for (int j = 0; j < _statesHeight; j++) {
 		for (int i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
-			if (id != p)
-				_pathMap.at(i, j) = 0;
+			if (id == p)
+				_pathMap.at(i, j) = PATH_TARGET;
 			else
-				_pathMap.at(i, j) = 2;
+				_pathMap.at(i, j) = PATH_FREE;
 		}
 	}
-	return FUN_0040841c(true);
+	return pathFindCalcMove(true);
 }
 
 byte GamosEngine::FUN_00408510(uint8 p) {
@@ -3523,14 +3523,14 @@ byte GamosEngine::FUN_00408510(uint8 p) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if (id == 0xfe)
-				_pathMap.at(i, j) = 0;
+				_pathMap.at(i, j) = PATH_FREE;
 			else if (id == p)
-				_pathMap.at(i, j) = 2;
+				_pathMap.at(i, j) = PATH_TARGET;
 			else
-				_pathMap.at(i, j) = 3;
+				_pathMap.at(i, j) = PATH_OBSTACLE;
 		}
 	}
-	return FUN_0040841c(false);
+	return pathFindCalcMove(false);
 }
 
 byte GamosEngine::FUN_0040856c() {
@@ -3539,13 +3539,13 @@ byte GamosEngine::FUN_0040856c() {
 			uint8 id = _states.at(i, j).actid;
 
 			if (id == 0xfe)
-				_pathMap.at(i, j) = 0;
+				_pathMap.at(i, j) = PATH_FREE;
 			else
-				_pathMap.at(i, j) = 3;
+				_pathMap.at(i, j) = PATH_OBSTACLE;
 		}
 	}
-	_pathMap.at(DAT_00412c94) = 2;
-	return FUN_0040841c(false);
+	_pathMap.at(_pathTargetCell) = PATH_TARGET;
+	return pathFindCalcMove(false);
 }
 
 byte GamosEngine::FUN_004085d8(uint8 p) {
@@ -3554,118 +3554,118 @@ byte GamosEngine::FUN_004085d8(uint8 p) {
 			uint8 id = _states.at(i, j).actid;
 
 			if (id == p)
-				_pathMap.at(i, j) = 0;
+				_pathMap.at(i, j) = PATH_FREE;
 			else
-				_pathMap.at(i, j) = 3;
+				_pathMap.at(i, j) = PATH_OBSTACLE;
 		}
 	}
-	_pathMap.at(DAT_00412c94) = 2;
-	return FUN_0040841c(false);
+	_pathMap.at(_pathTargetCell) = PATH_TARGET;
+	return pathFindCalcMove(false);
 }
 
-byte GamosEngine::FUN_0040841c(bool p) {
-	_pathMap.at(DAT_00412c8c.x, DAT_00412c8c.y) = 6;
+byte GamosEngine::pathFindCalcMove(bool faceTarget) {
+	_pathMap.at(_pathStartCell.x, _pathStartCell.y) = PATH_STEP1;
 
 	while (true) {
-		byte res = FUN_004081b8(6, 4);
-		if (res == 0)
+		byte res = pathFindSetNeighbor(PATH_STEP1, PATH_STEP3);
+		if (res == 0) // no set
 			return 0;
-		else if (res == 1) {
-			if (p)
-				return FUN_00407e2c();
+		else if (res == 1) { // target achieve
+			if (faceTarget)
+				return pathFindMoveToTarget();
 			else
-				return FUN_00407f70(6);
+				return pathFindTraceMove(PATH_STEP1);
 		}
 
-		res = FUN_004081b8(4, 5);
-		if (res == 0)
+		res = pathFindSetNeighbor(PATH_STEP3, PATH_STEP2);
+		if (res == 0) // no set
 			return 0;
-		else if (res == 1) {
-			if (p)
-				return FUN_00407e2c();
+		else if (res == 1) { // target achieve
+			if (faceTarget)
+				return pathFindMoveToTarget();
 			else
-				return FUN_00407f70(4);
+				return pathFindTraceMove(PATH_STEP3);
 		}
 
-		res = FUN_004081b8(5, 6);
-		if (res == 0)
+		res = pathFindSetNeighbor(PATH_STEP2, PATH_STEP1);
+		if (res == 0) // no set
 			return 0;
-		else if (res == 1) {
-			if (p)
-				return FUN_00407e2c();
+		else if (res == 1) { // target achieve
+			if (faceTarget)
+				return pathFindMoveToTarget();
 			else
-				return FUN_00407f70(5);
+				return pathFindTraceMove(PATH_STEP2);
 		}
 	}
 }
 
-byte GamosEngine::FUN_00407e2c() {
-	int32 iVar2 = DAT_00412c8c.x - DAT_00412c94.x;
-	if (iVar2 < 1)
-		iVar2 = -iVar2;
+byte GamosEngine::pathFindMoveToTarget() {
+	int32 xdist = _pathStartCell.x - _pathTargetCell.x;
+	if (xdist < 1)
+		xdist = -xdist;
 
-	int32 iVar1 = DAT_00412c8c.y - DAT_00412c94.y;
-	if (iVar1 < 1)
-		iVar1 = -iVar1;
+	int32 ydist = _pathStartCell.y - _pathTargetCell.y;
+	if (ydist < 1)
+		ydist = -ydist;
 
-	if ((iVar2 == 0) && (iVar1 == 0))
+	if ((xdist == 0) && (ydist == 0))
 		return 0;
 
-	if ((iVar2 == 0) || (iVar1 / iVar2) > 3) {
-		if (iVar1 > 1) {
-			INT_00412c9c = 4;
-			if (DAT_00412c94.y <= DAT_00412c8c.y)
-				INT_00412c9c = 0;
+	if ((xdist == 0) || (ydist / xdist) > 3) {
+		if (ydist > 1) {
+			_pathDir8 = PATH_DIR_D;
+			if (_pathTargetCell.y <= _pathStartCell.y)
+				_pathDir8 = PATH_DIR_U;
 		}
-		INT_00412ca0 = 4;
-		if (DAT_00412c94.y <= DAT_00412c8c.y)
-			INT_00412ca0 = 0;
-	} else if ((iVar1 == 0) || (iVar2 / iVar1) > 3) {
-		if (iVar2 > 1) {
-			INT_00412c9c = 2;
-			if (DAT_00412c94.x <= DAT_00412c8c.x)
-				INT_00412c9c = 6;
+		_pathDir4 = PATH_DIR_D;
+		if (_pathTargetCell.y <= _pathStartCell.y)
+			_pathDir4 = PATH_DIR_U;
+	} else if ((ydist == 0) || (xdist / ydist) > 3) {
+		if (xdist > 1) {
+			_pathDir8 = PATH_DIR_R;
+			if (_pathTargetCell.x <= _pathStartCell.x)
+				_pathDir8 = PATH_DIR_L;
 		}
-		INT_00412ca0 = 2;
-		if (DAT_00412c94.x <= DAT_00412c8c.x)
-			INT_00412ca0 = 6;
+		_pathDir4 = PATH_DIR_R;
+		if (_pathTargetCell.x <= _pathStartCell.x)
+			_pathDir4 = PATH_DIR_L;
 	} else {
-		if (DAT_00412c8c.x < DAT_00412c94.x) {
-			INT_00412c9c = 3;
-			if (DAT_00412c94.y <= DAT_00412c8c.y)
-				INT_00412c9c = 1;
+		if (_pathStartCell.x < _pathTargetCell.x) {
+			_pathDir8 = PATH_DIR_DR;
+			if (_pathTargetCell.y <= _pathStartCell.y)
+				_pathDir8 = PATH_DIR_UR;
 		} else {
-			INT_00412c9c = 5;
-			if (DAT_00412c94.y <= DAT_00412c8c.y)
-				INT_00412c9c = 7;
+			_pathDir8 = PATH_DIR_DL;
+			if (_pathTargetCell.y <= _pathStartCell.y)
+				_pathDir8 = PATH_DIR_UL;
 		}
 
-		if (iVar1 < iVar2) {
-			INT_00412ca0 = 2;
-			if (DAT_00412c94.x <= DAT_00412c8c.x)
-				INT_00412ca0 = 6;
+		if (ydist < xdist) {
+			_pathDir4 = PATH_DIR_R;
+			if (_pathTargetCell.x <= _pathStartCell.x)
+				_pathDir4 = PATH_DIR_L;
 		} else {
-			INT_00412ca0 = 4;
-			if (DAT_00412c94.y <= DAT_00412c8c.y)
-				INT_00412ca0 = 0;
+			_pathDir4 = PATH_DIR_D;
+			if (_pathTargetCell.y <= _pathStartCell.y)
+				_pathDir4 = PATH_DIR_U;
 		}
 	}
 
-	DAT_00417804 = 1;
+	_pathInMove = true;
 	return 1;
 }
 
-byte GamosEngine::FUN_00407f70(uint8 p) {
-	int32 x = DAT_00412c94.x;
-	int32 y = DAT_00412c94.y;
+byte GamosEngine::pathFindTraceMove(uint8 p) {
+	int32 x = _pathTargetCell.x;
+	int32 y = _pathTargetCell.y;
 	int32 px = -1;
 	int32 py = -1;
 
 	while (true) {
-		int32 xdist = DAT_00412c8c.x - x;
+		int32 xdist = _pathStartCell.x - x;
 		if (xdist < 1)
 			xdist = -xdist;
-		int32 ydist = DAT_00412c8c.y - y;
+		int32 ydist = _pathStartCell.y - y;
 		if (ydist < 1)
 			ydist = -ydist;
 
@@ -3673,75 +3673,63 @@ byte GamosEngine::FUN_00407f70(uint8 p) {
 		int32 yy = y;
 
 		if (ydist < xdist) {
-			if (x == 0 || _pathMap.at(x - 1, y) != p) {
-				if ((x >= _pathRight) || _pathMap.at(x + 1, y) != p) {
-					if ((y == 0) || _pathMap.at(x, y - 1) != p) {
-						if ((y >= _pathBottom) || _pathMap.at(x, y + 1) != p) {
-							return ydist;
-						} else {
-							yy = y + 1;
-						}
-					} else {
-						yy = y - 1;
-					}
-				} else {
-					xx = x + 1;
-				}
-			} else {
+			if (x >= 1 && _pathMap.at(x - 1, y) == p) {
 				xx = x - 1;
+			} else if (x <= _pathRight - 1 && _pathMap.at(x + 1, y) == p) {
+				xx = x + 1;
+			} else if (y >= 1 && _pathMap.at(x, y - 1) == p) {
+				yy = y - 1;
+			} else if (y <= _pathBottom - 1 && _pathMap.at(x, y + 1) == p) {
+				yy = y + 1;
+			} else {
+				return ydist;
 			}
 		} else {
-			if ((y == 0) || _pathMap.at(x, y - 1) != p) {
-				if ((y >= _pathBottom) || _pathMap.at(x, y + 1) != p) {
-					if ((x == 0) || _pathMap.at(x - 1, y) != p) {
-						if (x >= _pathRight || _pathMap.at(x + 1, y) != p) {
-							return ydist;
-						} else {
-							xx = x + 1;
-						}
-					} else {
-						xx = x - 1;
-					}
-				} else {
-					yy = y + 1;
-				}
-			} else {
+			if (y >= 1 && _pathMap.at(x, y - 1) == p) {
 				yy = y - 1;
+			} else if (y <= _pathBottom - 1 && _pathMap.at(x, y + 1) == p) {
+				yy = y + 1;
+			} else if (x >= 1 && _pathMap.at(x - 1, y) == p) {
+				xx = x - 1;
+			} else if (x <= _pathRight - 1 && _pathMap.at(x + 1, y) == p) {
+				xx = x + 1;
+			} else {
+				return ydist;
 			}
 		}
 
-		if (xx == DAT_00412c8c.x && yy == DAT_00412c8c.y) {
-			INT_00412ca0 = 2;
+		if (xx == _pathStartCell.x && yy == _pathStartCell.y) {
+			_pathDir4 = PATH_DIR_R;
 			if (x <= xx) {
-				INT_00412ca0 = 6;
+				_pathDir4 = PATH_DIR_L;
 				if (x >= xx) {
-					INT_00412ca0 = 4;
+					_pathDir4 = PATH_DIR_D;
 					if (y <= yy)
-						INT_00412ca0 = 0;
+						_pathDir4 = PATH_DIR_U;
 				}
 			}
 			if (px != -1) {
 				if (py > yy) {
-					INT_00412c9c = 3;
+					_pathDir8 = PATH_DIR_DR;
 					if (px <= xx) {
-						INT_00412c9c = 5;
+						_pathDir8 = PATH_DIR_DL;
 						if (px >= xx)
-							INT_00412c9c = 4;
+							_pathDir8 = PATH_DIR_D;
 					}
 				} else if (py < yy) {
-					INT_00412c9c = 1;
+					_pathDir8 = PATH_DIR_UR;
 					if (px <= xx) {
-						INT_00412c9c = 7;
+						_pathDir8 = PATH_DIR_UL;
 						if (px >= xx)
-							INT_00412c9c = 0;
+							_pathDir8 = PATH_DIR_U;
 					}
 				} else {
-					INT_00412c9c = 2;
+					_pathDir8 = PATH_DIR_R;
 					if (px <= xx)
-						INT_00412c9c = 6;
+						_pathDir8 = PATH_DIR_L;
 				}
 			}
-			DAT_00417804 = 1;
+			_pathInMove = true;
 			return 1;
 		}
 
@@ -3751,36 +3739,36 @@ byte GamosEngine::FUN_00407f70(uint8 p) {
 		y = yy;
 		x = xx;
 
-		if (p == 4)
-			p = 6;
-		else if (p == 5)
-			p = 4;
-		else if (p == 6)
-			p = 5;
+		if (p == PATH_STEP3)
+			p = PATH_STEP1;
+		else if (p == PATH_STEP2)
+			p = PATH_STEP3;
+		else if (p == PATH_STEP1)
+			p = PATH_STEP2;
 	}
 }
 
-byte GamosEngine::FUN_004081b8(uint8 cv, uint8 sv) {
+byte GamosEngine::pathFindSetNeighbor(uint8 checkVal, uint8 setVal) {
 	uint8 ret = 0;
 
 	for (int32 y = 0; y < _statesHeight; y++) {
 		for (int32 x = 0; x < _statesWidth; x++) {
 			uint8 &rval = _pathMap.at(x, y);
-			if (rval == 0) {
-				if ((x > 0 && _pathMap.at(x - 1, y) == cv) ||
-				        (x < _pathRight && _pathMap.at(x + 1, y) == cv) ||
-				        (y > 0 && _pathMap.at(x, y - 1) == cv) ||
-				        (y < _pathBottom && _pathMap.at(x, y + 1) == cv)) {
-					ret = sv;
-					rval = sv;
+			if (rval == PATH_FREE) {
+				if ((x > 0 && _pathMap.at(x - 1, y) == checkVal) ||
+				        (x < _pathRight && _pathMap.at(x + 1, y) == checkVal) ||
+				        (y > 0 && _pathMap.at(x, y - 1) == checkVal) ||
+				        (y < _pathBottom && _pathMap.at(x, y + 1) == checkVal)) {
+					ret = setVal;
+					rval = setVal;
 				}
-			} else if (rval == 2) {
-				if ((x > 0 && _pathMap.at(x - 1, y) == cv) ||
-				        (x < _pathRight && _pathMap.at(x + 1, y) == cv) ||
-				        (y > 0 && _pathMap.at(x, y - 1) == cv) ||
-				        (y < _pathBottom && _pathMap.at(x, y + 1) == cv)) {
-					DAT_00412c94.x = x;
-					DAT_00412c94.y = y;
+			} else if (rval == PATH_TARGET) {
+				if ((x > 0 && _pathMap.at(x - 1, y) == checkVal) ||
+				        (x < _pathRight && _pathMap.at(x + 1, y) == checkVal) ||
+				        (y > 0 && _pathMap.at(x, y - 1) == checkVal) ||
+				        (y < _pathBottom && _pathMap.at(x, y + 1) == checkVal)) {
+					_pathTargetCell.x = x;
+					_pathTargetCell.y = y;
 					return 1;
 				}
 			}
@@ -3811,7 +3799,7 @@ byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
 	}
 
 	if (p3 == 0xff)
-		return FUN_00407e2c();
+		return pathFindMoveToTarget();
 	else if (p3 == 0xfe)
 		return FUN_0040881c(_thing2[p2].field_0);
 	else
@@ -3824,12 +3812,12 @@ byte GamosEngine::FUN_004086e4(const Common::Array<byte> &arr) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
-				_pathMap.at(i, j) = 0;
+				_pathMap.at(i, j) = PATH_FREE;
 			else
-				_pathMap.at(i, j) = 2;
+				_pathMap.at(i, j) = PATH_TARGET;
 		}
 	}
-	return FUN_0040841c(true);
+	return pathFindCalcMove(true);
 }
 
 byte GamosEngine::FUN_00408778(const Common::Array<byte> &arr) {
@@ -3838,12 +3826,12 @@ byte GamosEngine::FUN_00408778(const Common::Array<byte> &arr) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
-				_pathMap.at(i, j) = 3;
+				_pathMap.at(i, j) = PATH_OBSTACLE;
 			else
-				_pathMap.at(i, j) = 2;
+				_pathMap.at(i, j) = PATH_TARGET;
 		}
 	}
-	return FUN_0040841c(false);
+	return pathFindCalcMove(false);
 }
 
 byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
@@ -3852,13 +3840,13 @@ byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
-				_pathMap.at(i, j) = 3;
+				_pathMap.at(i, j) = PATH_OBSTACLE;
 			else
-				_pathMap.at(i, j) = 0;
+				_pathMap.at(i, j) = PATH_FREE;
 		}
 	}
-	_pathMap.at(DAT_00412c94) = 2;
-	return FUN_0040841c(false);
+	_pathMap.at(_pathTargetCell) = PATH_TARGET;
+	return pathFindCalcMove(false);
 }
 
 
@@ -4162,7 +4150,7 @@ Common::String GamosEngine::gamos_itoa(int n, uint radix) {
 
 
 bool GamosEngine::FUN_0040705c(int a, int b) {
-	static const int arr[8] = {0, 7, 6, 5, 4, 3, 2, 1};
+	static const int arr[8] = {PATH_DIR_U, PATH_DIR_UL, PATH_DIR_L, PATH_DIR_DL, PATH_DIR_D, PATH_DIR_DR, PATH_DIR_R, PATH_DIR_UR};
 	int v = DAT_004173ec;
 	if (v > 3) {
 		v -= 4;

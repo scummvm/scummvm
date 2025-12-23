@@ -103,6 +103,24 @@ enum RESTYPE {
 	RESTP_XORSEQ2 = 0x7e,
 };
 
+enum {
+	PATH_DIR_U = 0,
+	PATH_DIR_UR = 1,
+	PATH_DIR_R = 2,
+	PATH_DIR_DR = 3,
+	PATH_DIR_D = 4,
+	PATH_DIR_DL = 5,
+	PATH_DIR_L = 6,
+	PATH_DIR_UL = 7,
+
+	PATH_FREE = 0,
+	PATH_TARGET = 2,
+	PATH_OBSTACLE = 3,
+	PATH_STEP1 = 6,
+	PATH_STEP2 = 5,
+	PATH_STEP3 = 4,
+};
+
 struct Image {
 	bool loaded = false;
 	int32 offset = -1;
@@ -536,7 +554,7 @@ private:
 	Common::Point DAT_004173f8;
 
 	uint8 DAT_00417803 = 0;
-	uint8 DAT_00417804 = 0;
+	bool _pathInMove = false;
 	uint8 DAT_00417805 = 0;
 
 	uint8 RawKeyCode = 0;
@@ -565,10 +583,10 @@ private:
 
 
 	/* path find ? */
-	Common::Point DAT_00412c8c;
-	Common::Point DAT_00412c94;
-	int8 INT_00412c9c = 0;
-	int8 INT_00412ca0 = 0;
+	Common::Point _pathStartCell;
+	Common::Point _pathTargetCell;
+	int8 _pathDir8 = 0;
+	int8 _pathDir4 = 0;
 
 	Array2D<uint8> _pathMap;
 	uint32 _statesCount = 0;
@@ -714,21 +732,25 @@ protected:
 	Object *addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y);
 	void addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int32 sprId, int32 x, int32 y);
 
+
+	/* Path find methods */
 	void FUN_00407db8(uint8 p);
 	byte FUN_00408648(uint8 p1, uint8 p2, uint8 p3);
 	byte FUN_004084bc(uint8 p);
 	byte FUN_00408510(uint8 p);
 	byte FUN_0040856c();
 	byte FUN_004085d8(uint8 p);
-	byte FUN_0040841c(bool p);
-	byte FUN_00407e2c();
-	byte FUN_00407f70(uint8 p);
-	byte FUN_004081b8(uint8 cv, uint8 sv);
+	byte pathFindCalcMove(bool faceTarget);
+	byte pathFindMoveToTarget();
+	byte pathFindTraceMove(uint8 p);
+	byte pathFindSetNeighbor(uint8 checkVal, uint8 setVal);
 
 	byte FUN_004088cc(uint8 p1, uint8 p2, uint8 p3);
 	byte FUN_004086e4(const Common::Array<byte> &arr);
 	byte FUN_00408778(const Common::Array<byte> &arr);
 	byte FUN_0040881c(const Common::Array<byte> &arr);
+
+
 
 
 	void FUN_0040279c(uint8 val, bool rnd);
