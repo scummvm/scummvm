@@ -60,6 +60,24 @@ void MenuManager::drawColoredText(Graphics::ManagedSurface *screen, const Common
 	}
 }
 
+MenuButton MenuManager::isButtonClicked(int x, int y) {
+	Common::Rect questionMarkRect(Common::Point(kQuestionMarkPosX, kQuestionMarkPosY), kQuestionMarkWidth, kQuestionMarkHeight);
+	if (questionMarkRect.contains(x, y)) {
+		return QUESTION_MARK_BUTTON;
+	}
+	Common::Rect invPrevRect(Common::Point(469, 87), kInventoryArrowWidth, kInventoryArrowHeight);
+	if (invPrevRect.contains(x, y)) {
+		return INVENTORY_PREV_BUTTON;
+	}
+	Common::Rect invNextRect(Common::Point(459, 140), kInventoryArrowWidth, kInventoryArrowHeight);
+	if (invNextRect.contains(x, y)) {
+		return INVENTORY_NEXT_BUTTON;
+	}
+
+	return NO_BUTTON; // Default fallback
+
+}
+
 void MenuManager::checkMouseClick(int x, int y) {
 
 	bool selectedItem = false;
@@ -77,26 +95,42 @@ void MenuManager::checkMouseClick(int x, int y) {
 		_menuText = _menuTexts[0];
 	}
 
-	if (x >= 471 && x <= 471 + 23 &&
-		y >= 87 && y <= 87 + 33) {
-		_curInventoryPage++;
+	MenuButton button = isButtonClicked(x, y);
+	switch (button) {
+	case QUESTION_MARK_BUTTON:
+		debug("Show credits");
+		break;
+	case INVENTORY_PREV_BUTTON:
+		if (_curInventoryPage > 0)
+			_curInventoryPage--;
+		break;
+	case INVENTORY_NEXT_BUTTON:
+		if ((_curInventoryPage + 1) * 4 < g_engine->_inventoryItems.size())
+			_curInventoryPage++;
+		break;
+	default:
+		break;
 	}
+
 }
+
+
 
 void MenuManager::menuLoop() {
 	_events->pollEvent();
 
 	if (_events->_leftMouseClicked) {
-		_events->_leftMouseClicked = false;
 		checkMouseClick(_events->_mouseX, _events->_mouseY);
+		_events->_leftMouseClicked = false;
 	} else if (_events->_rightMouseClicked) {
-		_events->_rightMouseClicked = false;
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 		g_engine->stateGame = GAME;
+		_events->_rightMouseClicked = false;
 		tearDown();
 	}
 
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
+	drawButtons();
 
 	for (int i = 0; i < 4; i++) {
 		int itemIndex = _curInventoryPage * 4 + i;
@@ -111,6 +145,7 @@ void MenuManager::menuLoop() {
 		drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, g_engine->_smallFont);
 	}
 
+	drawText(g_engine->_smallFont, Common::String::format("%d,%d", _events->_mouseX, _events->_mouseY), 0, 0, 640, 13);
 	_screen->markAllDirty();
 	_screen->update();
 }
@@ -167,7 +202,6 @@ void MenuManager::loadMenu() {
 		delete[] decompressedPart2;
 		alfred7.seek(2563266, SEEK_SET);
 		alfred7.read(_mainMenu + curPos, 92160);
-		alfred7.close();
 	} else {
 		Common::File alfred7;
 		if (!alfred7.open(Common::Path("ALFRED.7"))) {
@@ -186,8 +220,41 @@ void MenuManager::loadMenu() {
 		}
 
 		g_engine->_res->mergeRleBlocks(&alfred7, kAlternateSettingsMenuOffset, 8, _mainMenu);
-		alfred7.close();
 	}
+
+
+	// question mark
+	byte *questionMarks = new byte[kQuestionMarkStride * 2];
+
+	alfred7.seek(3214046, SEEK_SET);
+	alfred7.read(questionMarks, kQuestionMarkStride * 2);
+
+	_questionMark[0] = new byte[kQuestionMarkStride];
+	_questionMark[1] = new byte[kQuestionMarkStride];
+	extractSingleFrame(questionMarks, _questionMark[0], 0, kQuestionMarkWidth, kQuestionMarkHeight);
+	extractSingleFrame(questionMarks, _questionMark[1], 1, kQuestionMarkWidth, kQuestionMarkHeight);
+	delete[] questionMarks;
+
+	//Inventory arrows
+	byte *arrows = new byte[kInventoryArrowStride * 2];
+	alfred7.seek(kInvLeftArrowOffset, SEEK_SET);
+	alfred7.read(arrows, kInventoryArrowStride * 2);
+	_inventoryLeftArrow[0] = new byte[kInventoryArrowStride];
+	_inventoryLeftArrow[1] = new byte[kInventoryArrowStride];
+	extractSingleFrame(arrows, _inventoryLeftArrow[0], 0, kInventoryArrowWidth, kInventoryArrowHeight);
+	extractSingleFrame(arrows, _inventoryLeftArrow[1], 1, kInventoryArrowWidth, kInventoryArrowHeight);
+
+	alfred7.seek(kInvLeftArrowOffset + (kInventoryArrowStride * 2), SEEK_SET);
+	alfred7.read(arrows, kInventoryArrowStride * 2);
+	_inventoryRightArrow[0] = new byte[kInventoryArrowStride];
+	_inventoryRightArrow[1] = new byte[kInventoryArrowStride];
+	extractSingleFrame(arrows, _inventoryRightArrow[0], 0, kInventoryArrowWidth, kInventoryArrowHeight);
+	extractSingleFrame(arrows, _inventoryRightArrow[1], 1, kInventoryArrowWidth, kInventoryArrowHeight);
+
+	delete[] arrows;
+
+
+	alfred7.close();
 }
 
 void MenuManager::loadMenuTexts() {
@@ -217,8 +284,32 @@ void MenuManager::loadMenuTexts() {
 void MenuManager::tearDown() {
 }
 
+void MenuManager::drawButtons() {
+	MenuButton button = NO_BUTTON;
+	if(_events->_leftMouseButton != 0) {
+		button = isButtonClicked(_events->_mouseX, _events->_mouseY);
+	}
+	//Question mark
+	byte *buf = button == QUESTION_MARK_BUTTON ? _questionMark[1] : _questionMark[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, kQuestionMarkPosX, kQuestionMarkPosY, kQuestionMarkWidth, kQuestionMarkHeight, 255);
+
+	buf = button == INVENTORY_PREV_BUTTON ? _inventoryLeftArrow[1] : _inventoryLeftArrow[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, 469, 87, kInventoryArrowWidth, kInventoryArrowHeight, 255);
+
+	buf = button == INVENTORY_NEXT_BUTTON ? _inventoryRightArrow[1] : _inventoryRightArrow[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, 463, 133, kInventoryArrowWidth, kInventoryArrowHeight, 255);
+
+}
+
 Pelrock::MenuManager::~MenuManager() {
 	delete[] _mainMenu;
+	delete[] _compositeBuffer;
+	delete[] _questionMark[0];
+	delete[] _questionMark[1];
+	delete[] _inventoryLeftArrow[0];
+	delete[] _inventoryLeftArrow[1];
+	delete[] _inventoryRightArrow[0];
+	delete[] _inventoryRightArrow[1];
 }
 
 } // End of namespace Pelrock
