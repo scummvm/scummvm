@@ -611,26 +611,26 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (alfredState.curFrame >= 11) {
 			alfredState.setState(ALFRED_IDLE);
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[alfredState.direction], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-			break;
+		} else {
+			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[alfredState.direction][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
+			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+				alfredState.curFrame++;
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[alfredState.direction][alfredState.curFrame], alfredState.x, alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
-			alfredState.curFrame++;
 		break;
 	case ALFRED_INTERACTING:
-		if (alfredState.curFrame > interactingAnimLength) {
+		if (alfredState.curFrame >= interactingAnimLength) {
 			alfredState.setState(ALFRED_IDLE);
+		} else {
 			drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
-			break;
-		}
-		drawAlfred(_res->alfredInteractFrames[alfredState.direction][alfredState.curFrame]);
-		if (_chrono->getFrameCount() % 15 == 0) {
-			alfredState.curFrame++;
+			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+				alfredState.curFrame++;
+			}
 		}
 		break;
-	default:
+	}
+	// This if is needed to draw Alfred when idle, when the switch case results in a state change
+	if (alfredState.animState == ALFRED_IDLE) {
 		drawAlfred(_res->alfredIdle[alfredState.direction]);
-		break;
 	}
 }
 
