@@ -143,10 +143,15 @@ typedef Common::Array<ImagePos> ImageSeq;
 
 struct Sprite {
 	uint32 index = 0;
+
 	byte field_0;
-	byte field_1;
-	byte field_2;
-	byte field_3;
+	union
+	{
+		byte flags;
+		byte startChar; // if it's font
+	};
+	byte lastChar;
+	byte frameCount;
 
 	Common::Array<ImageSeq *> sequences;
 };
@@ -158,10 +163,9 @@ struct XorArg {
 };
 
 struct Unknown1 {
-	Common::Array<byte> field_0;
-	Common::Array<byte> field_1;
-	Common::Array<byte> field_2;
-	uint32 field_3;
+	Common::Array<byte> masks;
+	Common::Array<byte> oids;
+	Common::Array<byte> actsT;
 };
 
 struct ObjState {

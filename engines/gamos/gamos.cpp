@@ -150,6 +150,7 @@ Common::Error GamosEngine::run() {
 	return Common::kNoError;
 }
 
+
 bool GamosEngine::loader2() {
 	int32 skipsz = _arch.readSint32LE();
 	_arch.skip(skipsz);
@@ -489,11 +490,14 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		//warning("RESTP_2C %x pid %d p1 %d sz %x", _loadedDataSize, pid, p1, dataSize);
 	} else if (tp == RESTP_38) {
 		//warning("Data 38 size %zu", dataSize);
-		_thing2[pid].field_0.assign(data, data + dataSize);
+		_thing2[pid].masks.assign(data, data + dataSize);
 	} else if (tp == RESTP_39) {
-		_thing2[pid].field_1.assign(data, data + dataSize);
+		if (data[0] == 0)
+			_thing2[pid].oids.clear();
+		else
+			_thing2[pid].oids.assign(data + 1, data + 1 + data[0]);
 	} else if (tp == RESTP_3A) {
-		_thing2[pid].field_2.assign(data, data + dataSize);
+		_thing2[pid].actsT.assign(data, data + dataSize);
 	} else if (tp == RESTP_40) {
 		return loadSpriteInfo(pid, data, dataSize);
 	} else if (tp == RESTP_41) {
@@ -748,9 +752,9 @@ bool GamosEngine::loadSpriteInfo(int32 id, const byte *data, size_t dataSize) {
 		warning("dataSize > 4");
 
 	_sprites[id].field_0 = data[0];
-	_sprites[id].field_1 = data[1];
-	_sprites[id].field_2 = data[2];
-	_sprites[id].field_3 = data[3];
+	_sprites[id].flags = data[1];
+	_sprites[id].lastChar = data[2];
+	_sprites[id].frameCount = data[3];
 
 	_onlyScanImage = data[1] & 0x80;
 
@@ -810,7 +814,7 @@ bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byt
 		img->offset = s.readSint32LE();
 		img->cSize = s.readSint32LE();
 	} else {
-		if (_sprites[id].field_1 & 0x80) {
+		if (_sprites[id].flags & 0x80) {
 			if (_arch._lastReadDecompressedSize) {
 				img->offset = _arch._lastReadDataOffset;
 				img->cSize = _arch._lastReadSize;
@@ -1341,10 +1345,10 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 						cval = 2;
 					}
 				} else if (fb.actid != 0xfe &&
-				           (_thing2[e.actid].field_0[(fb.actid) >> 3] & (1 << (fb.actid & 7))) != 0) {
+				           (_thing2[e.actid].masks[(fb.actid) >> 3] & (1 << (fb.actid & 7))) != 0) {
 
-					if (!_thing2[e.actid].field_2.empty()) {
-						e.t = _thing2[e.actid].field_2[fb.actid] >> 4;
+					if (!_thing2[e.actid].actsT.empty()) {
+						e.t = _thing2[e.actid].actsT[fb.actid] >> 4;
 						preprocessData(fnc + 8, &e);
 					}
 
@@ -1706,11 +1710,11 @@ void GamosEngine::createActiveObject(ActEntry e, Common::Point cell) {
 		}
 	} else {
 		Unknown1 &unk1 = _thing2[ oid ];
-		uint8 index = rndRange16(unk1.field_1[0]);
-		oid = unk1.field_1[ index + 1 ];
-		if (!unk1.field_2.empty()) {
+		uint8 index = rndRange16(unk1.oids.size());
+		oid = unk1.oids[ index ];
+		if (!unk1.actsT.empty()) {
 			byte id1 = e.t;
-			e.t = unk1.field_2[ oid ] >> 4;
+			e.t = unk1.actsT[ oid ] >> 4;
 			preprocessData(8 + id1, &e);
 		}
 	}
@@ -2353,7 +2357,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		break;
 	case 12:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( _thing2[arg1].field_0[ _curObject->state.actid >> 3 ] & (1 << (_curObject->state.actid & 7)) );
+		ctx->EAX.setVal( _thing2[arg1].masks[ _curObject->state.actid >> 3 ] & (1 << (_curObject->state.actid & 7)) );
 		break;
 	case 13: {
 		VM::ValAddr regRef = ctx->popReg();
@@ -2864,7 +2868,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 50:
 		arg1 = ctx->pop32();
-		PTR_00417388 = _thing2[arg1].field_0.data();
+		PTR_00417388 = _thing2[arg1].masks.data();
 		ctx->EAX.setVal(1);
 		break;
 
@@ -3009,10 +3013,10 @@ bool GamosEngine::createGfxObject(uint32 id, Common::Point position, bool static
 
 	gfxObj->flags |= Object::FLAG_GRAPHIC;
 
-	if (spr.field_1 & 1)
+	if (spr.flags & 1)
 		gfxObj->flags |= Object::FLAG_DIRTRECT;
 
-	gfxObj->frameMax = spr.field_3;
+	gfxObj->frameMax = spr.frameCount;
 	int16 idx = -1;
 	if (!staticObject)
 		idx = _curObjIndex;
@@ -3065,18 +3069,18 @@ void GamosEngine::gfxObjectCalculateFlip(int32 sprId, Object *obj, bool p) {
 	Sprite &spr = _sprites[sprId];
 
 
-	if (spr.field_2 == 1) {
+	if (spr.lastChar == 1) {
 		obj->pImg = &spr.sequences[0]->operator[](0);
 		if (_curObjectT == 8) {
-			if (spr.field_1 & 2)
+			if (spr.flags & 2)
 				obj->flags |= Object::FLAG_FLIPH;
-		} else if (_curObjectT == 4 && (spr.field_1 & 4)) {
+		} else if (_curObjectT == 4 && (spr.flags & 4)) {
 			obj->flags |= Object::FLAG_FLIPV;
 		}
 	} else {
 		if (_curObjectT == 1) {
 			obj->seqId = 1;
-			if (_curObjectCurrentCell.y == _curObjectStartCell.y && (spr.field_1 & 8))
+			if (_curObjectCurrentCell.y == _curObjectStartCell.y && (spr.flags & 8))
 				obj->seqId = 0;
 		} else if (_curObjectT == 2) {
 			obj->seqId = 3;
@@ -3084,47 +3088,47 @@ void GamosEngine::gfxObjectCalculateFlip(int32 sprId, Object *obj, bool p) {
 				obj->seqId = 2;
 			else if (_curObjectStartCell.y > _curObjectCurrentCell.y) {
 				obj->seqId = 4;
-				if (spr.field_1 & 4) {
+				if (spr.flags & 4) {
 					obj->seqId = 2;
 					obj->flags |= Object::FLAG_FLIPV;
 				}
-			} else if (_curObjectCurrentCell.x == _curObjectStartCell.x && (spr.field_1 & 8))
+			} else if (_curObjectCurrentCell.x == _curObjectStartCell.x && (spr.flags & 8))
 				obj->seqId = 0;
 		} else if (_curObjectT == 4) {
 			obj->seqId = 5;
-			if (_curObjectCurrentCell.y == _curObjectStartCell.y && (spr.field_1 & 8))
+			if (_curObjectCurrentCell.y == _curObjectStartCell.y && (spr.flags & 8))
 				obj->seqId = 0;
-			else if (spr.field_1 & 4) {
+			else if (spr.flags & 4) {
 				obj->seqId = 1;
 				obj->flags |= Object::FLAG_FLIPV;
 			}
 		} else {
 			obj->seqId = 7;
 			if (_curObjectCurrentCell.y == _curObjectStartCell.y) {
-				if ((spr.field_1 & 8) && _curObjectCurrentCell.x == _curObjectStartCell.x)
+				if ((spr.flags & 8) && _curObjectCurrentCell.x == _curObjectStartCell.x)
 					obj->seqId = 0;
-				else if (spr.field_1 & 2) {
+				else if (spr.flags & 2) {
 					obj->seqId = 3;
 					obj->flags |= Object::FLAG_FLIPH;
 				}
 			} else {
 				if (_curObjectStartCell.y < _curObjectCurrentCell.y) {
 					obj->seqId = 8;
-					if (spr.field_1 & 2) {
+					if (spr.flags & 2) {
 						obj->seqId = 2;
 						obj->flags |= Object::FLAG_FLIPH;
 					}
 				} else {
 					obj->seqId = 6;
-					if (spr.field_1 & 4) {
+					if (spr.flags & 4) {
 						obj->seqId = 8;
 						obj->flags |= Object::FLAG_FLIPV;
 
-						if (spr.field_1 & 2) {
+						if (spr.flags & 2) {
 							obj->seqId = 2;
 							obj->flags |= Object::FLAG_FLIPH;
 						}
-					} else if (spr.field_1 & 2) {
+					} else if (spr.flags & 2) {
 						obj->seqId = 4;
 						obj->flags |= Object::FLAG_FLIPH;
 					}
@@ -3405,7 +3409,7 @@ Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 
 	gfxObj->position.y = y;
 	gfxObj->sprId = spr;
 	gfxObj->seqId = 0;
-	gfxObj->frame = frame - _sprites[spr].field_1;
+	gfxObj->frame = frame - _sprites[spr].startChar;
 	gfxObj->pImg = &_sprites[spr].sequences[gfxObj->seqId]->operator[](gfxObj->frame);
 
 	*pX += gfxObj->pImg->image->surface.w - gfxObj->pImg->xoffset;
@@ -3766,24 +3770,24 @@ byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
 		if (p1 != _inputMouseActType)
 			return 0;
 
-		if ( (_thing2[p2].field_0[ _inputMouseActId >> 3 ] & (1 << (_inputMouseActId & 7))) == 0 )
+		if ( (_thing2[p2].masks[ _inputMouseActId >> 3 ] & (1 << (_inputMouseActId & 7))) == 0 )
 			return 0;
 	} else {
 		if (p1 != 0xe) {
 			if (p3 == 0xff)
-				return FUN_004086e4(_thing2[p2].field_0);
+				return FUN_004086e4(_thing2[p2].masks);
 			else
-				return FUN_00408778(_thing2[p2].field_0);
+				return FUN_00408778(_thing2[p2].masks);
 		}
 
-		if ( (_thing2[p2].field_0[ _inputActId >> 3 ] & (1 << (_inputActId & 7))) == 0 )
+		if ( (_thing2[p2].masks[ _inputActId >> 3 ] & (1 << (_inputActId & 7))) == 0 )
 			return 0;
 	}
 
 	if (p3 == 0xff)
 		return pathFindMoveToTarget();
 	else if (p3 == 0xfe)
-		return FUN_0040881c(_thing2[p2].field_0);
+		return FUN_0040881c(_thing2[p2].masks);
 	else
 		return FUN_0040856c();
 }
@@ -3945,7 +3949,7 @@ void GamosEngine::runRenewStaticGfxCurObj(uint8 val, bool rnd) {
 	removeStaticGfxCurObj();
 
 	if (rnd)
-		val = _thing2[val].field_1[ 1 + rndRange16(_thing2[val].field_1[0]) ];
+		val = _thing2[val].oids[ rndRange16(_thing2[val].oids.size()) ];
 
 	_curObject->state = ObjState(val, 0, 1);
 
@@ -3979,10 +3983,10 @@ bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
 	if (_mouseCursorImgId >= 0 && _drawCursor == 0 && _mouseCursorImgId < _sprites.size()) {
 		Sprite &cursorSpr = _sprites[_mouseCursorImgId];
 
-		if (cursorSpr.field_3 > 1) {
+		if (cursorSpr.frameCount > 1) {
 
 			_cursorFrame++;
-			if (_cursorFrame >= cursorSpr.field_3)
+			if (_cursorFrame >= cursorSpr.frameCount)
 				_cursorFrame = 0;
 
 			ImagePos &impos = cursorSpr.sequences[0]->operator[](_cursorFrame);
@@ -4284,11 +4288,11 @@ void GamosEngine::txtInputProcess(uint8 c) {
 
 		if (_txtInputTyped) {
 			if (_txtInputLength < _txtInputMaxLength) {
-				if (ib < spr.field_1)
+				if (ib < spr.startChar)
 					ib = tolower(ib);
-				if (ib > spr.field_2)
+				if (ib > spr.lastChar)
 					ib = toupper(ib);
-				if (ib >= spr.field_1 && ib <= spr.field_2 &&
+				if (ib >= spr.startChar && ib <= spr.lastChar &&
 				   (_txtInputIsNumber == false || Common::isDigit(ib))) {
 					_txtInputBuffer[_txtInputLength] = ib;
 					_txtInputObjects[_txtInputLength] = addSubtitleImage(ib, _txtInputSpriteID, &_txtInputX, _txtInputY);
