@@ -548,7 +548,7 @@ private:
 	uint8 _inputActId = 0;
 	bool _pathInMove = false;
 
-	uint8 RawKeyCode = 0;
+	uint8 _pressedKeyCode = 0;
 
 	Common::String _keySeq;
 
@@ -617,14 +617,14 @@ protected:
 
 	void loadXorSeq(const byte *data, size_t dataSize, int id);
 
-	bool loadRes40(int32 id, const byte *data, size_t dataSize);
-	bool loadRes41(int32 id, const byte *data, size_t dataSize);
-	bool loadRes42(int32 id, int32 p1, const byte *data, size_t dataSize);
-	bool loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize);
+	bool loadSpriteInfo(int32 id, const byte *data, size_t dataSize);
+	bool loadSpriteSeqLength(int32 id, const byte *data, size_t dataSize);
+	bool loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, size_t dataSize);
+	bool loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize);
 
-	bool loadRes52(int32 id, const byte *data, size_t dataSize);
+	bool loadMidiTrack(int32 id, const byte *data, size_t dataSize);
 
-	bool loadRes18(int32 id, const byte *data, size_t dataSize);
+	bool loadBackground(int32 id, const byte *data, size_t dataSize);
 
 	void freeImages();
 	void freeSequences();
@@ -639,14 +639,13 @@ protected:
 
 
 	void stopMidi();
-	void stopMCI();
+	void stopCDAudio();
 	void stopSounds();
 
 	bool playIntro();
 
-	bool scriptFunc18(uint32 id);
-	uint32 scriptFunc19(uint32 id);
-	uint32 scriptFunc16(uint32 id);
+	bool playMovie(uint32 id);
+	uint32 playMidiTrack(uint32 id);
 
 	void setErrMessage(const Common::String &msg);
 
@@ -659,7 +658,7 @@ protected:
 	int32 doActions(const Actions &a, bool absolute);
 	uint32 savedDoActions(const Actions &a);
 
-	uint32 getU32(const void *ptr);
+	static uint32 getU32(const void *ptr);
 
 	void preprocessData(int id, ActEntry *e);
 	void preprocessDataB1(int id, ActEntry *e);
@@ -667,7 +666,7 @@ protected:
 
 	void executeScript(int32 scriptAddr, ObjectAction *act, Object *pobj, int32 index, byte *storage, Common::Point cell, uint8 t);
 
-	void FUN_00402a68(ActEntry e);
+	void processActionCurObject(ActEntry e);
 
 	void createActiveObject(ActEntry e, Common::Point cell);
 
@@ -681,14 +680,14 @@ protected:
 	void removeSubtitles(Object *obj);
 	void cycleNextInputObj(Object *obj);
 
-	bool FUN_00402fb4();
+	bool updateObjects();
 
 	bool updateMouseCursor(Common::Point mouseMove);
 	bool scrollAndDraw();
-	bool FUN_00402bc4();
+	bool updateVMInputFrameStates();
 	bool updateGfxFrames(Object *obj, bool p2, bool p1);
 
-	void FUN_0040921c(Object *obj);
+	void updateGfxObjectPosition(Object *obj);
 	void addDirtRectOnObject(Object *obj);
 	void addDirtyRect(const Common::Rect &rect);
 
@@ -704,16 +703,16 @@ protected:
 
 	bool createGfxObject(uint32 id, Common::Point position, bool p);
 
-	void FUN_00409378(int32 sprId, Object *obj, bool p);
+	void gfxObjectCalculateFlip(int32 sprId, Object *obj, bool p);
 
-	void FUN_004095a0(Object *obj);
+	void updateLinkedGfxObject(Object *obj);
 
-	bool playMovie(int id);
+	bool moviePlayerPlay(int id);
 
 	void setCursor(int id, bool dirtRect);
 
 	void processInput(Common::Point move, Common::Point actPos, uint8 act2, uint8 act1);
-	bool FUN_00409600(Object *obj, Common::Point pos);
+	bool checkPointOnLinkedGfx(Object *obj, Common::Point pos);
 
 	void setNeedReload() {
 		_needReload = true;
@@ -741,12 +740,11 @@ protected:
 	byte FUN_00408778(const Common::Array<byte> &arr);
 	byte FUN_0040881c(const Common::Array<byte> &arr);
 
-
-
-
-	void FUN_0040279c(uint8 val, bool rnd);
-	void FUN_004025d0();
 	bool FUN_0040705c(int a, int b);
+
+
+	void runRenewStaticGfxCurObj(uint8 val, bool rnd);
+	void removeStaticGfxCurObj();
 
 	int txtInputBegin(VM::Context *ctx, byte memtype, int32 offset, int sprId, int32 x, int32 y);
 	void txtInputProcess(uint8 c);

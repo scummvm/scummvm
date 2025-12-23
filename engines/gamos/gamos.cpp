@@ -138,7 +138,7 @@ Common::Error GamosEngine::run() {
 
 	stopSounds();
 	stopMidi();
-	stopMCI();
+	stopCDAudio();
 
 	_enableMovie = true;
 	_enableMidi = true;
@@ -255,7 +255,7 @@ bool GamosEngine::loadModule(uint id) {
 	_xorSeq[2].clear();
 
 	stopMidi();
-	stopMCI();
+	stopCDAudio();
 	stopSounds();
 
 	/* Complete me */
@@ -449,7 +449,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_13) {
 		_vm.writeMemory(_loadedDataSize, data, dataSize);
 	} else if (tp == RESTP_18) {
-		loadRes18(pid, data, dataSize);
+		loadBackground(pid, data, dataSize);
 	} else if (tp == RESTP_19) {
 		if (!_isSaveLoadingProcess) {
 			for (int i = 0; i < _states.size(); i++)
@@ -506,13 +506,13 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_3A) {
 		_thing2[pid].field_2.assign(data, data + dataSize);
 	} else if (tp == RESTP_40) {
-		return loadRes40(pid, data, dataSize);
+		return loadSpriteInfo(pid, data, dataSize);
 	} else if (tp == RESTP_41) {
-		return loadRes41(pid, data, dataSize);
+		return loadSpriteSeqLength(pid, data, dataSize);
 	} else if (tp == RESTP_42) {
-		return loadRes42(pid, p1, data, dataSize);
+		return loadSpriteSeqImageInfo(pid, p1, data, dataSize);
 	} else if (tp == RESTP_43) {
-		return loadRes43(pid, p1, p2, data, dataSize);
+		return loadSpriteSeqImageData(pid, p1, p2, data, dataSize);
 	} else if (tp == RESTP_50) {
 		/* just ignore it? */
 	} else if (tp == RESTP_51) {
@@ -520,7 +520,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		_soundSamples[pid].assign(data + 4, data + 4 + datSz);
 		//warning("sound  size %d", dataSize);
 	} else if (tp == RESTP_52) {
-		return loadRes52(pid, data, dataSize);
+		return loadMidiTrack(pid, data, dataSize);
 		//warning("midi  size %d", dataSize);
 	} else if (tp == RESTP_60) {
 		_subtitleActions[pid].parse(data, dataSize);
@@ -751,7 +751,7 @@ void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
 	}
 }
 
-bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteInfo(int32 id, const byte *data, size_t dataSize) {
 	if (dataSize < 4)
 		return false;
 
@@ -768,7 +768,7 @@ bool GamosEngine::loadRes40(int32 id, const byte *data, size_t dataSize) {
 	return true;
 }
 
-bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqLength(int32 id, const byte *data, size_t dataSize) {
 	if (*(const uint32 *)data != 0)
 		error("41 not null!!!");
 
@@ -778,7 +778,7 @@ bool GamosEngine::loadRes41(int32 id, const byte *data, size_t dataSize) {
 	return true;
 }
 
-bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, size_t dataSize) {
 	//warning("loadRes42 pid %d p %d sz %x",id, p1, dataSize);
 
 	if (_sprites[id].sequences.size() == 0)
@@ -802,7 +802,7 @@ bool GamosEngine::loadRes42(int32 id, int32 p1, const byte *data, size_t dataSiz
 	return true;
 }
 
-bool GamosEngine::loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize) {
 	_images.push_back(new Image());
 	_sprites[id].sequences[p1]->operator[](p2).image = _images.back();
 
@@ -840,12 +840,12 @@ bool GamosEngine::loadRes43(int32 id, int32 p1, int32 p2, const byte *data, size
 	return true;
 }
 
-bool GamosEngine::loadRes52(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadMidiTrack(int32 id, const byte *data, size_t dataSize) {
 	_midiTracks[id].assign(data, data + dataSize);
 	return true;
 }
 
-bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadBackground(int32 id, const byte *data, size_t dataSize) {
 	GameScreen &bimg = _gameScreens[id];
 	bimg.loaded = true;
 	bimg.offset = _readingBkgOffset;
@@ -882,20 +882,20 @@ bool GamosEngine::loadRes18(int32 id, const byte *data, size_t dataSize) {
 
 bool GamosEngine::playIntro() {
 	if (_movieCount != 0 && _playIntro == 1)
-		return scriptFunc18(0);
+		return playMovie(0);
 	return true;
 }
 
-bool GamosEngine::playMovie(int id) {
+bool GamosEngine::moviePlayerPlay(int id) {
 	bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
 	return res;
 }
 
 
-bool GamosEngine::scriptFunc18(uint32 id) {
+bool GamosEngine::playMovie(uint32 id) {
 	if (_enableMovie) {
 		_isMoviePlay++;
-		bool res = playMovie(id);
+		bool res = moviePlayerPlay(id);
 		_isMoviePlay--;
 		return res;
 	}
@@ -908,8 +908,9 @@ void GamosEngine::stopMidi() {
 	_midiStarted = false;
 }
 
-void GamosEngine::stopMCI() {
+void GamosEngine::stopCDAudio() {
 	//warning("Not implemented stopMCI");
+	_cdAudioTrack = -1;
 }
 
 void GamosEngine::stopSounds() {
@@ -1226,27 +1227,27 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	if (_enableInput == 0) {
 		act1 = ACT_NONE;
 		act2 = ACT_NONE;
-		RawKeyCode = ACT_NONE;
+		_pressedKeyCode = ACT_NONE;
 	}
 
-	RawKeyCode = keyCode;
+	_pressedKeyCode = keyCode;
 
-	if (RawKeyCode != 0 && RawKeyCode != ACT_NONE) {
+	if (_pressedKeyCode != 0 && _pressedKeyCode != ACT_NONE) {
 		if (_keySeq.size() >= 32)
 			_keySeq = _keySeq.substr(_keySeq.size() - 31);
 
-		_keySeq += RawKeyCode;
+		_keySeq += _pressedKeyCode;
 	}
 
 	processInput(mouseMove, actPos, act2, act1);
 	changeVolume();
 
-	if (!FUN_00402bc4())
+	if (!updateVMInputFrameStates())
 		return 0;
 
 	bool loop = false;
 	if (!_txtInputActive)
-		loop = FUN_00402fb4();
+		loop = updateObjects();
 	else
 		loop = onTxtInputUpdate(act2);
 
@@ -1261,13 +1262,13 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 				return 0;
 		}
 
-		RawKeyCode = ACT_NONE;
+		_pressedKeyCode = ACT_NONE;
 
-		if (!FUN_00402bc4())
+		if (!updateVMInputFrameStates())
 			return 0;
 
 		if (!_txtInputActive)
-			loop = FUN_00402fb4();
+			loop = updateObjects();
 		else
 			loop = onTxtInputUpdate(act2);
 
@@ -1392,7 +1393,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 		preprocessDataB1(e.t, &e);
 		rnd();
 		e.flags = a.act_4.flags;
-		FUN_00402a68(e);
+		processActionCurObject(e);
 		if (_needReload)
 			return 0;
 	}
@@ -1411,7 +1412,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 	}
 
 	if (!_gfxObjectCreated && _curObjectActProcessed)
-		FUN_004095a0(_curObject);
+		updateLinkedGfxObject(_curObject);
 
 	int32 retval = 0;
 
@@ -1668,7 +1669,7 @@ int GamosEngine::processData(ActEntry e, bool absolute) {
 	}
 }
 
-void GamosEngine::FUN_00402a68(ActEntry e) {
+void GamosEngine::processActionCurObject(ActEntry e) {
 	if (e.x != 0 || e.y != 0) {
 		_curObjectCurrentCell.x = (e.x + _curObjectCurrentCell.x + _statesWidth) % _statesWidth;
 		_curObjectCurrentCell.y = (e.y + _curObjectCurrentCell.y + _statesHeight) % _statesHeight;
@@ -1929,7 +1930,7 @@ void GamosEngine::executeScript(int32 scriptAddr, ObjectAction *act, Object *pob
 	_curAction = sv9;
 }
 
-bool GamosEngine::FUN_00402fb4() {
+bool GamosEngine::updateObjects() {
 	if (_objects.empty())
 		return true;
 
@@ -1952,7 +1953,7 @@ bool GamosEngine::FUN_00402fb4() {
 								Object &o = _objects[pobj->tgtObjectId];
 								o.flags |= Object::FLAG_GRAPHIC;
 								o.cell = pobj->cell;
-								FUN_0040921c(&o);
+								updateGfxObjectPosition(&o);
 								addDirtRectOnObject(&o);
 							}
 						}
@@ -1963,7 +1964,7 @@ bool GamosEngine::FUN_00402fb4() {
 								Object &o = _objects[pobj->tgtObjectId];
 								o.flags |= Object::FLAG_GRAPHIC;
 								o.cell = pobj->cell;
-								FUN_0040921c(&o);
+								updateGfxObjectPosition(&o);
 								addDirtRectOnObject(&o);
 							}
 							pobj->flags &= ~Object::FLAG_TRANSITION;
@@ -2085,14 +2086,14 @@ bool GamosEngine::updateGfxFrames(Object *obj, bool p2, bool p1) {
 		}
 
 		if ((obj->flags & Object::FLAG_FREECOORDS) == 0)
-			FUN_0040921c(obj);
+			updateGfxObjectPosition(obj);
 
 		addDirtRectOnObject(obj);
 	}
 	return false;
 }
 
-void GamosEngine::FUN_0040921c(Object *gfxObj) {
+void GamosEngine::updateGfxObjectPosition(Object *gfxObj) {
 	ImagePos *imgPos = gfxObj->pImg;
 	Image *img = imgPos->image;
 
@@ -2372,7 +2373,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		ctx->EAX.setVal(0);
 
 		for(uint i = 0; i < str.size(); i++) {
-			if (str[i] == RawKeyCode) {
+			if (str[i] == _pressedKeyCode) {
 				ctx->EAX.setVal(1);
 				break;
 			}
@@ -2395,7 +2396,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 16:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( scriptFunc16(arg1) );
+		ctx->EAX.setVal( playMidiTrack(arg1) );
 		break;
 
 	case 17:
@@ -2407,12 +2408,14 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 	case 18:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( scriptFunc18(arg1) ? 1 : 0 );
+		ctx->EAX.setVal( playMovie(arg1) ? 1 : 0 );
 		break;
 
 	case 19:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( scriptFunc19(arg1) );
+		_gfxObjectCreated = true;
+		createGfxObject(arg1, Common::Point(_curObjectCurrentCell.x * _gridCellW, _curObjectCurrentCell.y * _gridCellH), false);
+		ctx->EAX.setVal( 1 );
 		break;
 
 	case 20: {
@@ -2477,19 +2480,19 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		break;
 
 	case 27:
-		FUN_004025d0();
+		removeStaticGfxCurObj();
 		ctx->EAX.setVal(1);
 		break;
 
 	case 28:
 		arg1 = ctx->pop32();
-		FUN_0040279c(arg1, false);
+		runRenewStaticGfxCurObj(arg1, false);
 		ctx->EAX.setVal(1);
 		break;
 
 	case 29:
 		arg1 = ctx->pop32();
-		FUN_0040279c(arg1, true);
+		runRenewStaticGfxCurObj(arg1, true);
 		ctx->EAX.setVal(1);
 		break;
 
@@ -2734,7 +2737,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 				tmp.flags = 0;
 				tmp.x = _pathTargetCell.x - _pathStartCell.x;
 				tmp.y = _pathTargetCell.y - _pathStartCell.y;
-				FUN_00402a68(tmp);
+				processActionCurObject(tmp);
 			}
 		}
 		ctx->EAX.setVal(1);
@@ -2918,7 +2921,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 			}
 
 			if (_midiTrack != -1) {
-				scriptFunc16(_midiTrack);
+				playMidiTrack(_midiTrack);
 			}
 		}
 		ctx->EAX.setVal(1);
@@ -2996,14 +2999,7 @@ void GamosEngine::callbackVMCallDispatcher(void *engine, VM::Context *ctx, uint3
 	gamos->vmCallDispatcher(ctx, funcID);
 }
 
-uint32 GamosEngine::scriptFunc19(uint32 id) {
-	_gfxObjectCreated = true;
-	createGfxObject(id, Common::Point(_curObjectCurrentCell.x * _gridCellW, _curObjectCurrentCell.y * _gridCellH), false);
-
-	return 1;
-}
-
-uint32 GamosEngine::scriptFunc16(uint32 id) {
+uint32 GamosEngine::playMidiTrack(uint32 id) {
 	if (!_ignoreSoundActions) {
 		stopMidi();
 		if (_enableMidi) {
@@ -3066,11 +3062,11 @@ bool GamosEngine::createGfxObject(uint32 id, Common::Point position, bool static
 		gfxObj->cell.y = -1;
 	}
 
-	FUN_00409378(id, gfxObj, staticObject);
+	gfxObjectCalculateFlip(id, gfxObj, staticObject);
 	return true;
 }
 
-void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
+void GamosEngine::gfxObjectCalculateFlip(int32 sprId, Object *obj, bool p) {
 	obj->flags &= ~(Object::FLAG_FLIPH | Object::FLAG_FLIPV);
 	obj->actID = 0;
 	obj->frame = 0;
@@ -3150,7 +3146,7 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 	}
 	if (!p) {
 		obj->cell = _curObjectStartCell;
-		FUN_0040921c(obj);
+		updateGfxObjectPosition(obj);
 	} else {
 		obj->flags |= Object::FLAG_FREECOORDS;
 	}
@@ -3158,13 +3154,13 @@ void GamosEngine::FUN_00409378(int32 sprId, Object *obj, bool p) {
 	addDirtRectOnObject(obj);
 }
 
-void GamosEngine::FUN_004095a0(Object *obj) {
+void GamosEngine::updateLinkedGfxObject(Object *obj) {
 	if (obj->curObjectId != -1) {
 		Object &yobj = _objects[obj->curObjectId];
 		addDirtRectOnObject(&yobj);
 		if (_curObjectStartCell != _curObjectCurrentCell)
 			obj->flags |= Object::FLAG_TRANSITION;
-		FUN_00409378(yobj.sprId, &yobj, false);
+		gfxObjectCalculateFlip(yobj.sprId, &yobj, false);
 	}
 }
 
@@ -3217,7 +3213,7 @@ void GamosEngine::setCursor(int id, bool dirtRect) {
 }
 
 
-bool GamosEngine::FUN_00409600(Object *obj, Common::Point pos) {
+bool GamosEngine::checkPointOnLinkedGfx(Object *obj, Common::Point pos) {
 	if (obj->curObjectId == -1)
 		return false;
 
@@ -3262,7 +3258,7 @@ void GamosEngine::processInput(Common::Point move, Common::Point actPos, uint8 a
 					obj.inputFlag = 0;
 			}
 
-			if ((!pobj || obj.priority <= pobjF5) && FUN_00409600(&obj, actPos)) {
+			if ((!pobj || obj.priority <= pobjF5) && checkPointOnLinkedGfx(&obj, actPos)) {
 				actT = action.actType;
 				pobjF5 = obj.priority;
 				pobj = &obj;
@@ -3429,12 +3425,12 @@ Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 
 	return gfxObj;
 }
 
-bool GamosEngine::FUN_00402bc4() {
-	if (RawKeyCode == ACT_NONE) {
+bool GamosEngine::updateVMInputFrameStates() {
+	if (_pressedKeyCode == ACT_NONE) {
 		_vm.memory().setU8(_addrKeyCode, 0);
 		_vm.memory().setU8(_addrKeyDown, 0);
 	} else {
-		_vm.memory().setU8(_addrKeyCode, RawKeyCode);
+		_vm.memory().setU8(_addrKeyCode, _pressedKeyCode);
 		_vm.memory().setU8(_addrKeyDown, 1);
 	}
 
@@ -3956,8 +3952,8 @@ void Actions::parse(const byte *data, size_t dataSize) {
 	}
 }
 
-void GamosEngine::FUN_0040279c(uint8 val, bool rnd) {
-	FUN_004025d0();
+void GamosEngine::runRenewStaticGfxCurObj(uint8 val, bool rnd) {
+	removeStaticGfxCurObj();
 
 	if (rnd)
 		val = _thing2[val].field_1[ 1 + rndRange16(_thing2[val].field_1[0]) ];
@@ -3968,7 +3964,7 @@ void GamosEngine::FUN_0040279c(uint8 val, bool rnd) {
 	executeScript(act.onCreateAddress, &act, nullptr, -1, nullptr, _curObject->cell, 1);
 }
 
-void GamosEngine::FUN_004025d0() {
+void GamosEngine::removeStaticGfxCurObj() {
 	if (_curObject->state.actid != 0xfe) {
 		ObjectAction &act = _objectActions[_curObject->state.actid];
 
@@ -4340,11 +4336,11 @@ bool GamosEngine::onTxtInputUpdate(uint8 c) {
 		}
 	}
 
-	if (RawKeyCode != KeyCodes::WIN_SPACE && RawKeyCode != KeyCodes::WIN_RETURN &&
-		(RawKeyCode == ACT_NONE || c != ACT_NONE) )
+	if (_pressedKeyCode != KeyCodes::WIN_SPACE && _pressedKeyCode != KeyCodes::WIN_RETURN &&
+		(_pressedKeyCode == ACT_NONE || c != ACT_NONE) )
 		return true;
 
-	txtInputProcess(RawKeyCode);
+	txtInputProcess(_pressedKeyCode);
 	return true;
 }
 

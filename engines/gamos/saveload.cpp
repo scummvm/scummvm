@@ -434,7 +434,7 @@ bool GamosEngine::loadSaveFile(int id) {
 	}
 
 	if (svMidiTrack != -1)
-		scriptFunc16(svMidiTrack);
+		playMidiTrack(svMidiTrack);
 
 	_midiVolume = 0;
 

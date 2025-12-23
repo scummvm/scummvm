@@ -48,7 +48,7 @@ bool MoviePlayer::init(Common::File *file, uint32 offset, GamosEngine *gamos) {
 	_frameSize = Common::Point(_screen->w, _screen->h);
 
 	_gamos->stopMidi();
-	_gamos->stopMCI();
+	_gamos->stopCDAudio();
 
 	_file = file;
 	return _file->seek(offset, SEEK_SET);
@@ -59,7 +59,7 @@ bool MoviePlayer::deinit() {
 		_gamos->stopSounds();
 
 	_gamos->stopMidi();
-	_gamos->stopMCI();
+	_gamos->stopCDAudio();
 
 	_gamos->setPaletteCurrentGS();
 
