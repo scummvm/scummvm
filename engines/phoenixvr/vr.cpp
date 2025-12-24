@@ -238,10 +238,11 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				auto animChunkPos = s.pos();
 				auto animChunkId = s.readUint32LE();
 				auto animChunkSize = s.readUint32LE();
+				assert(animChunkSize >= 8);
 				debug("animation chunk %08x %u at %08lx", animChunkId, animChunkSize, animChunkPos);
 				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
 					auto &blockData = vr._animations[name];
-					blockData.resize(animChunkSize);
+					blockData.resize(animChunkSize - 8);
 					s.read(blockData.data(), blockData.size());
 				}
 				s.seek(animChunkPos + animChunkSize);
@@ -329,6 +330,8 @@ void VR::playAnimation(const Common::String &name) {
 		warning("no animation %s", name.c_str());
 		return;
 	}
+	if (it->_value.size() == 0)
+		return;
 	const auto *data = it->_value.data();
 	auto prefixSize = READ_LE_UINT32(data);
 	Common::Array<uint32> prefixData(prefixSize);
