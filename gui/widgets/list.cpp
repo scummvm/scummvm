@@ -505,6 +505,10 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		switch (state.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
+			// Disable activation if multi-select is enabled
+			if (_multiSelectEnabled) {
+					break;
+			}
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
 				if (_editable && (_currentKeyDown != Common::KEYCODE_RETURN && _currentKeyDown != Common::KEYCODE_KP_ENTER)) {
