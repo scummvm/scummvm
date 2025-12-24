@@ -55,7 +55,10 @@ struct LoadSave_Enter_Script : public Script::Command {
 
 	LoadSave_Enter_Script(const Common::Array<Common::String> &args) : reloading(args[0]), notReloading(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Enter_Script %s, %s", reloading.c_str(), notReloading.c_str());
+		debug("LoadSave_Enter_Script %s, %s", reloading.c_str(), notReloading.c_str());
+		auto loading = g_engine->isLoading();
+		g_engine->setVariable(reloading, loading);
+		g_engine->setVariable(notReloading, !loading);
 	}
 };
 

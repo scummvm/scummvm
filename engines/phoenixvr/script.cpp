@@ -263,7 +263,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	case '[': {
 		p.next();
 		if (p.maybe("bool]=")) {
-			g_engine->declareVariable(p.nextWord());
+			_vars.push_back(p.nextWord());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
 			p.expect(',');

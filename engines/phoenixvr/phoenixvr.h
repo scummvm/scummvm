@@ -134,6 +134,12 @@ public:
 	void loadSaveSlot(int idx);
 	void drawSlot(int idx, int face, int x, int y);
 
+	bool isLoading() {
+		bool loading = _loading;
+		_loading = false;
+		return loading;
+	}
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
@@ -183,6 +189,7 @@ private:
 	AngleX _angleX;
 	AngleY _angleY;
 	Audio::Mixer *_mixer;
+	bool _loading = false;
 
 	static constexpr byte kPaused = 2;
 	static constexpr byte kActive = 4;

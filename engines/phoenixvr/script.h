@@ -81,6 +81,7 @@ public:
 private:
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _warpsIndex;
 	Common::Array<Common::String> _warpNames;
+	Common::Array<Common::String> _vars;
 	Common::Array<WarpPtr> _warps;
 	WarpPtr _currentWarp;
 	TestPtr _currentTest;
@@ -101,6 +102,9 @@ public:
 
 	const Common::Array<Common::String> &getWarpNames() const {
 		return _warpNames;
+	}
+	const Common::Array<Common::String> &getVarNames() const {
+		return _vars;
 	}
 };
 } // namespace PhoenixVR

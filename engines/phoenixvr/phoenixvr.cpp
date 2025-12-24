@@ -108,12 +108,16 @@ void PhoenixVREngine::loadNextScript() {
 		Common::ScopedPtr<Common::SeekableReadStream> scriptStream(unpack(file));
 		_script.reset(new Script(*scriptStream));
 	}
+	for (auto &var : _script->getVarNames())
+		declareVariable(var);
 }
 
 void PhoenixVREngine::end() {
 	debug("end");
-	if (_nextScript.empty())
+	if (_nextScript.empty() && _nextWarp < 0 && _nextScript < 0) {
+		debug("quit game");
 		quitGame();
+	}
 }
 
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
@@ -173,7 +177,8 @@ void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
-	_variables.setVal(name, 0);
+	if (!_variables.contains(name))
+		_variables.setVal(name, 0);
 }
 
 void PhoenixVREngine::setVariable(const Common::String &name, int value) {
@@ -340,9 +345,8 @@ void PhoenixVREngine::tick(float dt) {
 	}
 	if (_nextWarp >= 0) {
 		_warp = _script->getWarp(_nextWarp);
+		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
 		_nextWarp = -1;
-
-		debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 
 		Common::File vr;
 		if (vr.open(Common::Path(_warp->vrFile))) {
@@ -402,6 +406,8 @@ Common::Error PhoenixVREngine::run() {
 
 		while (!vars.eos()) {
 			auto var = vars.readLine();
+			if (var == "*")
+				break;
 			declareVariable(var);
 			_variableOrder.push_back(Common::move(var));
 		}
@@ -554,7 +560,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		}
 	}
 	debug("vars at %08lx", ms.pos());
-	for (auto &name : _variableOrder) {
+	for (auto &name : _script->getVarNames()) {
 		auto value = ms.readUint32LE();
 		debug("var %s: %u", name.c_str(), value);
 	}
@@ -569,6 +575,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	auto music = ms.readString(0, 257);
 	auto musicVolume = ms.readUint32LE();
 	debug("current music %s, volume: %u", music.c_str(), musicVolume);
+	_loading = true;
 }
 
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
