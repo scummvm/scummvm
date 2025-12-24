@@ -118,23 +118,21 @@ void PhoenixVREngine::end() {
 
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s", warp.c_str());
-	_nextWarp = warp;
+	_nextWarp = _script->getWarp(warp);
 	if (savePrev) {
 		assert(_warp);
-		_prevWarp = _warp->vrFile;
+		_prevWarp = _script->getWarp(_warp->vrFile);
+		assert(_prevWarp >= 0);
 	}
 }
 
 void PhoenixVREngine::returnToWarp() {
-	if (_prevWarp.empty()) {
+	if (_prevWarp < 0) {
 		warning("return: no previous warp");
 	}
+	debug("returning to previous warp: %d", _prevWarp);
 	_nextWarp = _prevWarp;
-	_prevWarp.clear();
-}
-
-Script::ConstWarpPtr PhoenixVREngine::getWarp(const Common::String &name) {
-	return _script->getWarp(name);
+	_prevWarp = -1;
 }
 
 const Region *PhoenixVREngine::getRegion(int idx) const {
@@ -226,7 +224,7 @@ void PhoenixVREngine::playAnimation(const Common::String &name, const Common::St
 }
 
 void PhoenixVREngine::resetLockKey() {
-	_prevWarp.clear(); // original game does only this o_O
+	_prevWarp = -1; // original game does only this o_O
 }
 
 void PhoenixVREngine::lockKey(Common::KeyCode code, const Common::String &warp) {
@@ -340,9 +338,9 @@ void PhoenixVREngine::tick(float dt) {
 		loadNextScript();
 		goToWarp(_script->getInitScript()->vrFile);
 	}
-	if (!_nextWarp.empty()) {
+	if (_nextWarp >= 0) {
 		_warp = _script->getWarp(_nextWarp);
-		_nextWarp.clear();
+		_nextWarp = -1;
 
 		debug("warp %s %s", _warp->vrFile.c_str(), _warp->testFile.c_str());
 
@@ -525,7 +523,6 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	loadNextScript();
 
 	Common::MemoryReadStream ms(state.state.data(), state.state.size());
-	Common::hexdump(state.state.data(), state.state.size());
 
 	auto angleX = ms.readSint32LE();
 	auto angleY = ms.readSint32LE();
@@ -534,7 +531,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	auto angleXMax = ms.readSint32LE();
 	auto angleYMin = ms.readSint32LE();
 	auto angleYMax = ms.readSint32LE();
-	auto currentWarpIdx = ms.readUint32LE();
+	auto currentWarpIdx = ms.readSint32LE();
 	auto currentWarpTests = ms.readUint32LE();
 	auto printText = ms.readString(0, 257);
 	auto text = ms.readString(0, 257);
@@ -543,12 +540,17 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		  angleXMax, angleYMin, angleYMax,
 		  currentWarpIdx, currentWarpTests);
 
+	_nextWarp = currentWarpIdx;
+
 	for (auto &vr : _script->getWarpNames()) {
-		auto warp = getWarp(vr);
+		auto warpIdx = _script->getWarp(vr);
+		assert(warpIdx >= 0);
+		auto warp = _script->getWarp(warpIdx);
+		assert(warp);
 		auto &tests = warp->tests;
-		for (uint testIdx = 1; testIdx < tests.size(); ++testIdx) {
+		for (uint testIdx = 0; testIdx < tests.size(); ++testIdx) {
 			auto cursor = ms.readString(0, 257);
-			debug("warp %s.%d: %s", vr.c_str(), testIdx, cursor.c_str());
+			// debug("warp %s.%d: %s", vr.c_str(), testIdx, cursor.c_str());
 		}
 	}
 	debug("vars at %08lx", ms.pos());
@@ -556,6 +558,17 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		auto value = ms.readUint32LE();
 		debug("var %s: %u", name.c_str(), value);
 	}
+	debug("vars end at %08lx", ms.pos());
+	auto currentSubroutine = ms.readSint32LE();
+	_prevWarp = ms.readSint32LE();
+	debug("currentSubroutine %d, prev warp %d", currentSubroutine, _prevWarp);
+	for (uint i = 0; i != 12; ++i) {
+		auto lockKey = ms.readString(0, 257);
+		debug("lockKey %d %s", i, lockKey.c_str());
+	}
+	auto music = ms.readString(0, 257);
+	auto musicVolume = ms.readUint32LE();
+	debug("current music %s, volume: %u", music.c_str(), musicVolume);
 }
 
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {

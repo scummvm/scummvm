@@ -1,5 +1,4 @@
 #include "phoenixvr/script.h"
-#include "common/debug.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "phoenixvr/commands.h"
@@ -349,13 +348,12 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 Script::~Script() {
 }
 
-Script::ConstWarpPtr Script::getWarp(const Common::String &name) const {
-	auto idx = _warpsIndex.getVal(name);
-	return _warps[idx];
+int Script::getWarp(const Common::String &name) const {
+	return _warpsIndex.getVal(name);
 }
 
-Script::ConstWarpPtr Script::getWarp(uint idx) const {
-	return idx < _warps.size() ? Script::ConstWarpPtr{_warps[idx]} : Script::ConstWarpPtr{};
+Script::ConstWarpPtr Script::getWarp(int idx) const {
+	return idx >= 0 && idx < static_cast<int>(_warps.size()) ? Script::ConstWarpPtr{_warps[idx]} : Script::ConstWarpPtr{};
 }
 
 Script::ConstWarpPtr Script::getInitScript() const {

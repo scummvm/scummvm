@@ -111,8 +111,6 @@ public:
 	void executeTest(int idx);
 	void end();
 
-	Script::ConstWarpPtr getWarp(const Common::String &name);
-	Script::ConstWarpPtr getCurrentWarp() { return _warp; }
 	const Region *getRegion(int idx) const;
 
 	uint numCursors() const {
@@ -150,8 +148,9 @@ private:
 private:
 	Common::Point _mousePos;
 	Common::Path _nextScript;
-	Common::String _nextWarp;
-	Common::String _prevWarp;
+	Script::ConstWarpPtr _warp;
+	int _nextWarp = -1;
+	int _prevWarp = -1;
 
 	struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }
@@ -168,7 +167,6 @@ private:
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
 
-	Script::ConstWarpPtr _warp;
 	Common::ScopedPtr<RegionSet> _regSet;
 
 	Common::ScopedPtr<Video::VideoDecoder> _movie;

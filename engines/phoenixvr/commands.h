@@ -254,7 +254,9 @@ struct LoadSave_Context_Restored : public Script::Command {
 
 	LoadSave_Context_Restored(const Common::Array<Common::String> &args) : progress(args[0]), done(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Context_Restored %s %s", progress.c_str(), done.c_str());
+		debug("LoadSave_Context_Restored: semi-stub: can be used to report that loading is in a progress");
+		g_engine->setVariable(progress, 0);
+		g_engine->setVariable(done, 1);
 	}
 };
 
@@ -263,6 +265,7 @@ struct LoadSave_Load : public Script::Command {
 
 	LoadSave_Load(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
+		debug("LoadSave_Load %d", slot);
 		g_engine->loadSaveSlot(slot);
 	}
 };
@@ -387,6 +390,7 @@ struct Set : public Script::Command {
 struct End : public Script::Command {
 	End() {}
 	void exec(Script::ExecutionContext &ctx) const override {
+		debug("end");
 		ctx.running = false;
 		g_engine->end();
 	}
