@@ -74,6 +74,7 @@ protected:
 	int				_selectedItem;
 	Common::Array<int> _selectedItems;    /// Multiple selected items
 	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
+	bool			_multiSelectEnabled;	/// Flag for multi-selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 
@@ -142,6 +143,10 @@ public:
 	void setEditable(bool editable)				{ _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
+
+	// Multi-selection methods
+	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
+	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser
 	void startEditMode() override;

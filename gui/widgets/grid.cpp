@@ -269,6 +269,15 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	} else if (_isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
 
+		// If multi-select is not enabled, use simple single-selection
+		if (!_grid->isMultiSelectEnabled()) {
+			_grid->_selectedEntries.clear();
+			_grid->_selectedEntries.push_back(_activeEntry->entryID);
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+			sendCommand(kItemClicked, _activeEntry->entryID);
+			return;
+		}
+
 		// Get the current keyboard state
 		int32 keyState = g_system->getEventManager()->getModifierState();
 		bool ctrlPressed = (keyState & Common::KBD_CTRL) != 0;
@@ -505,6 +514,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 
 	_selectedEntry = nullptr;
 	_isGridInvalid = true;
+	_multiSelectEnabled = false;
 	_selectedEntries.clear();
 	_lastSelectedEntryID = -1;
 	_ctrlPressed = false;

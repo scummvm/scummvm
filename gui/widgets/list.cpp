@@ -52,6 +52,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_currentPos = 0;
 	_selectedItem = -1;
 	_lastSelectionStartItem = -1;
+	_multiSelectEnabled = false;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -96,6 +97,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_currentPos = 0;
 	_selectedItem = -1;
 	_lastSelectionStartItem = -1;
+	_multiSelectEnabled = false;
 	_currentKeyDown = 0;
 
 	_quickSelectTime = 0;
@@ -349,26 +351,28 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
 	bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
 
-	if (shiftClick && _lastSelectionStartItem != -1) {
-		// Shift+Click: Select range from last selection start to current item
-		selectItemRange(_lastSelectionStartItem, newSelectedItem);
-		_selectedItem = newSelectedItem;
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-	} else if (ctrlClick) {
-		// Ctrl+Click: Add/remove from selection
-		if (isItemSelected(newSelectedItem)) {
-			removeSelectedItem(newSelectedItem);
-			// If the primary selection is the same item, clear it to avoid highlight
-			sendCommand(kListSelectionChangedCmd, newSelectedItem);
-			markAsDirty();
-			if (_selectedItem == newSelectedItem)
-				_selectedItem = -1;
-		} else {
-			addSelectedItem(newSelectedItem);
+	// Only handle multi-select if it's enabled
+	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+		if (shiftClick && _lastSelectionStartItem != -1) {
+			// Shift+Click: Select range from last selection start to current item
 			_selectedItem = newSelectedItem;
 			_lastSelectionStartItem = newSelectedItem;
+			selectItemRange(_lastSelectionStartItem, newSelectedItem);
+			sendCommand(kListSelectionChangedCmd, _selectedItem);
+		} else if (ctrlClick) {
+			// Ctrl+Click: Add/remove from selection
+			if (isItemSelected(newSelectedItem)) {
+				removeSelectedItem(newSelectedItem);
+				// If the primary selection is the same item, clear it to avoid highlight
+				sendCommand(kListSelectionChangedCmd, newSelectedItem);
+				markAsDirty();
+			} else {
+				addSelectedItem(newSelectedItem);
+				_selectedItem = newSelectedItem;
+				_lastSelectionStartItem = newSelectedItem;
+			}
+			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	} else {
 		// Regular click: Clear previous selection and select only this item
 		clearSelection();

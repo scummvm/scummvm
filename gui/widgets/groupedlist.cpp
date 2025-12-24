@@ -262,22 +262,25 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
 	bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
 
-	if (shiftClick && _lastSelectionStartItem != -1) {
-		// Shift+Click: Select range in terms of underlying data indices
-		int startDataIndex = _lastSelectionStartItem;
-		selectItemRange(startDataIndex, dataIndex);
-		_selectedItem = newSelectedItem;
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-	} else if (ctrlClick) {
-		// Ctrl+Click: toggle selection for the underlying data index
-		if (isItemSelected(dataIndex)) {
-			removeSelectedItem(dataIndex);
-		} else {
-			addSelectedItem(dataIndex);
+	// Only handle multi-select if it's enabled
+	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+		if (shiftClick && _lastSelectionStartItem != -1) {
+			// Shift+Click: Select range in terms of underlying data indices
+			int startDataIndex = _lastSelectionStartItem;
+			selectItemRange(startDataIndex, dataIndex);
+			_selectedItem = newSelectedItem;
+			sendCommand(kListSelectionChangedCmd, _selectedItem);
+		} else if (ctrlClick) {
+			// Ctrl+Click: toggle selection for the underlying data index
+			if (isItemSelected(dataIndex)) {
+				removeSelectedItem(dataIndex);
+			} else {
+				addSelectedItem(dataIndex);
+			}
+			_selectedItem = newSelectedItem;
+			_lastSelectionStartItem = dataIndex;
+			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
-		_selectedItem = newSelectedItem;
-		_lastSelectionStartItem = dataIndex;
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	} else {
 		// Regular click: clear selection and select only this underlying item
 		clearSelection();
