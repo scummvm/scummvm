@@ -357,7 +357,7 @@ void CBackpack::OnPaint() {
 void CBackpack::UpdateBackpack(CDC *pDC) {
 	CPalette *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
@@ -390,7 +390,7 @@ void CBackpack::UpdatePage(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pBackpackDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pBackpackBitmap, 0, 0, BACKPACK_DX, BACKPACK_DY);
@@ -792,7 +792,7 @@ bool CBackpack::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CBackpack::DoWaitCursor() {
+void CBackpack::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

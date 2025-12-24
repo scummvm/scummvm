@@ -91,7 +91,7 @@ public:
 	static  void UpdateNote(CDC *pDC);
 	static  void ClearDialogImage();
 	static  void RefreshBackground();
-	static  void DoWaitCursor();
+	static  void ShowWaitCursor();
 	static  void DoArrowCursor();
 
 private:

@@ -62,7 +62,7 @@ private:
 	void UnfurlScroll(CDC *pDC);
 	void UpdateMore(CDC *pDC);
 	void WritePage(CDC *pDC, int nPage);
-	void DoWaitCursor();
+	void ShowWaitCursor();
 	void DoWaitCursor(int nCode) override {
 		CDialog::DoWaitCursor(nCode);
 	}

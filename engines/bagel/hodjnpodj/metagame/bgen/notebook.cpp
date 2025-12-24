@@ -381,7 +381,7 @@ void CNotebook::OnPaint() {
 void CNotebook::UpdateNotebook(CDC *pDC) {
 	CPalette *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);  // setup the proper palette
 	(*pDC).RealizePalette();
@@ -414,7 +414,7 @@ void CNotebook::UpdateNote(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pNotebookDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pNotebookBitmap, 0, 0, NOTEBOOK_DX, NOTEBOOK_DY);
@@ -791,7 +791,7 @@ bool CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CNotebook::DoWaitCursor() {
+void CNotebook::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

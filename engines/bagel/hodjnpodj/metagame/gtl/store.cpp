@@ -376,7 +376,7 @@ void CGeneralStore::OnPaint() {
 void CGeneralStore::UpdateStore(CDC *pDC) {
 	CPalette    *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
@@ -409,7 +409,7 @@ void CGeneralStore::UpdatePage(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pStoreDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		if (pBackgroundBitmap != nullptr)
@@ -846,7 +846,7 @@ bool CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned 
 }
 
 
-void CGeneralStore::DoWaitCursor() {
+void CGeneralStore::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();

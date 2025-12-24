@@ -74,7 +74,7 @@ public:
 	static  void UpdatePage(CDC *pDC);
 	static  void ClearDialogImage();
 	static  void RefreshBackground();
-	static  void DoWaitCursor();
+	static  void ShowWaitCursor();
 	static  void DoArrowCursor();
 
 private:

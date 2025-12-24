@@ -374,7 +374,7 @@ void CPawnShop::OnPaint() {
 void CPawnShop::UpdatePawn(CDC *pDC) {
 	CPalette    *pPalOld;
 
-	DoWaitCursor();                                             // put up the hourglass cursor
+	ShowWaitCursor();                                             // put up the hourglass cursor
 
 	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
 	(*pDC).RealizePalette();
@@ -407,7 +407,7 @@ void CPawnShop::UpdatePage(CDC *pDC) {
 	if (pWorkDC == nullptr)                                        // update everything if no work area
 		(*pPawnDialog).InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
-		DoWaitCursor();                                         // put up the hourglass cursor
+		ShowWaitCursor();                                         // put up the hourglass cursor
 		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
 		(*pDC).RealizePalette();
 		if (pBackgroundBitmap != nullptr)
@@ -841,7 +841,7 @@ bool CPawnShop::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CPawnShop::DoWaitCursor() {
+void CPawnShop::ShowWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
