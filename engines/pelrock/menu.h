@@ -32,16 +32,6 @@ namespace Pelrock {
 const int kQuestionMarkOffset = 3214046;
 const int kInvLeftArrowOffset = 3215906;
 
-const int kQuestionMarkPosX = 217;
-const int kQuestionMarkPosY = 293;
-const int kQuestionMarkWidth = 31;
-const int kQuestionMarkHeight = 30;
-const int kQuestionMarkStride = 30 * 31;
-
-const int kInventoryArrowWidth = 26;
-const int kInventoryArrowHeight = 37;
-const int kInventoryArrowStride = kInventoryArrowWidth * kInventoryArrowHeight;
-
 enum MenuButton {
 	QUESTION_MARK_BUTTON,
 	INVENTORY_PREV_BUTTON,
@@ -69,16 +59,42 @@ private:
 	void tearDown();
 	void drawButtons();
 	void drawColoredText(Graphics::ManagedSurface *surface, const Common::String &text, int x, int y, int w, Graphics::Font *font);
+	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
 	MenuButton isButtonClicked(int x, int y);
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
 	ResourceManager *_res = nullptr;
 	byte *_mainMenu = nullptr;
 	byte *_compositeBuffer = nullptr;
+
+	Common::Rect _saveGameRect = Common::Rect(Common::Point(130, 184), 81, 34);
+	byte *_saveButtons[2] = { nullptr };
+
+	Common::Rect _loadGameRect = Common::Rect(Common::Point(130, 221), 80, 31);
+	byte *_loadButtons[2] = { nullptr };
+
+	Common::Rect _soundsRect = Common::Rect(Common::Point(137, 260), 77, 30);
+	byte *_soundsButtons[2] = { nullptr };
+
+	Common::Rect _exitToDosRect = Common::Rect(Common::Point(220, 270), 81, 30);
+	byte *_exitToDosButtons[2] = { nullptr };
+
+
+	Common::Rect _invLeft = Common::Rect(Common::Point(469, 87), 26, 37);
 	byte *_inventoryLeftArrow[2] = { nullptr };
+
+	Common::Rect _invRight = Common::Rect(Common::Point(463, 130), 26, 37);
 	byte *_inventoryRightArrow[2] = { nullptr };
-	byte *_savesArrows[2] = { nullptr };
+
+	Common::Rect _savesUp = Common::Rect(Common::Point(320, 150), 16, 16);
+	byte *_savesUpArrows[2] = { nullptr };
+
+	Common::Rect _savesDown = Common::Rect(Common::Point(385, 150), 16, 16);
+	byte *_savesDownArrows[2] = { nullptr };
+
+	Common::Rect _questionMarkRect = Common::Rect(Common::Point(217, 293), 31, 30);
 	byte *_questionMark[2] = {nullptr};
+
 	Common::Array<Common::StringArray> _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
