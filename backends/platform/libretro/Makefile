@@ -383,8 +383,7 @@ else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
    AR_ALONE := emar
    AR := emar rcs
-   datadir = /share/scummvm
-   DEFINES += -DEMSCRIPTEN -DUSE_CXX11 -DDATA_PATH=\"$(datadir)\"
+   DEFINES += -DEMSCRIPTEN -DUSE_CXX11
    CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
    USE_LIBCO  = 0
@@ -616,6 +615,8 @@ CFLAGS += $(DEFINES) $(INCLUDES)
 
 # Include the build instructions for all modules
 include $(addprefix $(SCUMMVM_PATH)/, $(addsuffix /module.mk,$(MODULES)))
+
+include $(ROOT_PATH)/overrides.mk
 
 # Depdir information
 DEPDIRS := $(addsuffix $(DEPDIR),$(MODULE_PATHS))
