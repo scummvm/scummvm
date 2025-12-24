@@ -128,7 +128,7 @@ Common::String GamosEngine::makeSaveName(const Common::String &main, int id, con
 
 
 bool GamosEngine::writeStateFile() {
-	Common::String fname = makeSaveName(getGameId(), _saveLoadID, _stateExt);
+	Common::String fname = makeSaveName(getRunFile(), _saveLoadID, _stateExt);
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
 	if (!_isResLoadingProcess) {
@@ -162,7 +162,7 @@ bool GamosEngine::writeStateFile() {
 }
 
 bool GamosEngine::loadStateFile() {
-	Common::String fname = makeSaveName(getGameId(), _saveLoadID, _stateExt);
+	Common::String fname = makeSaveName(getRunFile(), _saveLoadID, _stateExt);
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
 	if (!_isResLoadingProcess) {
@@ -307,7 +307,7 @@ void GamosEngine::zeroVMData(const Common::Array<XorArg> &seq) {
 
 
 bool GamosEngine::writeSaveFile(int id) {
-	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::String fname = makeSaveName(getRunFile(), id, "sav");
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
 	Common::OutSaveFile *osv = sm->openForSaving(fname);
@@ -356,7 +356,7 @@ bool GamosEngine::writeSaveFile(int id) {
 }
 
 bool GamosEngine::loadSaveFile(int id) {
-	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::String fname = makeSaveName(getRunFile(), id, "sav");
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
 	Common::SeekableReadStream *rs = sm->openForLoading(fname);
@@ -510,7 +510,7 @@ void GamosEngine::loadObjectData(Common::SeekableReadStream *stream, Object *obj
 
 
 bool GamosEngine::deleteSaveFile(int id) {
-	Common::String fname = makeSaveName(getGameId(), id, "sav");
+	Common::String fname = makeSaveName(getRunFile(), id, "sav");
 	Common::SaveFileManager *sm = _system->getSavefileManager();
 
 	if ( !sm->exists(fname) )
