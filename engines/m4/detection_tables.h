@@ -37,7 +37,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -50,7 +50,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -63,7 +63,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -85,7 +85,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -98,7 +98,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -111,7 +111,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -124,7 +124,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Burger,
 		kFeaturesNonInteractiveDemo
@@ -138,7 +138,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -151,7 +151,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -164,7 +164,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -177,7 +177,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -190,7 +190,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -203,7 +203,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -216,7 +216,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -229,7 +229,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -245,7 +245,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -258,7 +258,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -271,7 +271,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO3(GUIO_NOASPECT, GUIO_NOMUSIC, GUIO_NOSPEECH)
+			GUIO2(GUIO_NOASPECT, GUIO_NOMUSIC)
 		},
 		GType_Riddle,
 		kFeaturesDemo
