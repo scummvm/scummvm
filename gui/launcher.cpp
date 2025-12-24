@@ -1116,6 +1116,7 @@ void LauncherSimple::build() {
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setFilterMatcher(LauncherFilterMatcher, this);
+	_list->setMultiSelectEnabled(true);
 
 	// Populate the list
 	updateListing();
@@ -1772,6 +1773,7 @@ void LauncherGrid::build() {
 
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");
+	_grid->setMultiSelectEnabled(true);
 	// Populate the list
 	updateListing();
 

@@ -156,6 +156,8 @@ protected:
 	int				_gridHeaderWidth;
 	int				_trayHeight;
 
+	bool			_multiSelectEnabled;	/// Flag for multi-selection
+
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
@@ -230,6 +232,10 @@ public:
 
 	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
+
+	// Multi-selection methods
+	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
+	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
 
 public:
 	Common::Array<int> _selectedEntries; // Stores indices of selected entries
