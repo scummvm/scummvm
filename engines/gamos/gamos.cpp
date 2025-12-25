@@ -55,22 +55,6 @@ GamosEngine::~GamosEngine() {
 	delete _screen;
 }
 
-uint32 GamosEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::String GamosEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
-}
-
-Common::String GamosEngine::getRunFile() const {
-	return _gameDescription->runFile;
-}
-
-uint32 GamosEngine::getEngineVersion() const {
-	return _gameDescription->engineVersion;
-}
-
 void GamosEngine::freeImages() {
 	for (Image *img : _images)
 		delete img;

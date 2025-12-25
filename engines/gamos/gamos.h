@@ -823,19 +823,25 @@ public:
 	GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc);
 	~GamosEngine() override;
 
-	uint32 getFeatures() const;
+	uint32 getFeatures() const {
+		return _gameDescription->desc.flags;
+	}
+
+	Common::String getGameId() const {
+		return _gameDescription->desc.gameId;
+	}
 
 	Common::Language getGameLanguage() {
 		return _gameDescription->desc.language;
 	}
-	/**
-	 * Returns the game Id
-	 */
-	Common::String getGameId() const;
 
-	Common::String getRunFile() const;
+	Common::String getRunFile() const {
+		return _gameDescription->runFile;
+	}
 
-	uint32 getEngineVersion() const;
+	uint32 getEngineVersion() const {
+		return _gameDescription->engineVersion;
+	}
 };
 
 extern GamosEngine *g_engine;
