@@ -5879,6 +5879,27 @@ static const uint16 kq5SignatureCdHarpyVolume[] = {
 	SIG_END
 };
 
+static const uint16 kq5SignatureCdHarpyVolumeV2[] = {
+	SIG_MAGICDWORD,
+	0x82, SIG_UINT16(0x0191), // lag global[191h]
+	0x18,                     // not
+	0x31, 0x2b,               // bnt [jump further] (jumping, if global[191h] is 1)
+	0x35, 0x01,               // ldi 01
+	0xa2, SIG_UINT16(0x0191), // sag global[191h] (setting to 1)
+	0x38, SIG_UINT16(0x017b), // pushi 017b
+	0x76,                     // push0
+	0x83, 0x01,               // lag global[1]
+	0x4a, 0x04,               // send 04 - read KQ5::masterVolume
+	0xa5, 0x03,               // sat temp[3] (store volume)
+	0x38, SIG_UINT16(0x017b), // pushi 017b
+	0x76,                     // push0
+	0x83, 0x01,               // lag global[1]
+	0x4a, 0x04,               // send 04 - read KQ5::masterVolume
+	0x36,                     // push
+	0x35, 0x04,               // ldi 04
+	0x20,                     // ge? (followed by bnt)
+	SIG_END};
+
 static const uint16 kq5PatchCdHarpyVolume[] = {
 	0x38, PATCH_UINT16(0x022f),      // pushi 022f (selector theVol) (3 new bytes)
 	0x76,                            // push0 (1 new byte)
@@ -5900,6 +5921,27 @@ static const uint16 kq5PatchCdHarpyVolume[] = {
 	0x22,                            // lt? (because we switched values)
 	PATCH_END
 };
+
+static const uint16 kq5PatchCdHarpyVolumeV2[] = {
+	0x38, PATCH_UINT16(0x022f), // pushi 022f (selector theVol) (3 new bytes)
+	0x76,                       // push0 (1 new byte)
+	0x50, PATCH_UINT16(0x0088), // class SpeakTimer (2 new bytes)
+	0x4a, 0x04,                 // send 04 (2 new bytes) -> read SpeakTimer::theVol
+	0xa5, 0x03,                 // sat temp[3] (2 new bytes)
+	0x82, PATCH_UINT16(0x0191), // lag global[191h]
+	// saving 1 byte due optimization
+	0x2e, PATCH_UINT16(0x0020), // bt [jump further] (jumping, if global[191h] is 1)
+	0x35, 0x01,                 // ldi 01
+	0xa2, PATCH_UINT16(0x0191), // sag global[191h] (setting to 1)
+	0x38, PATCH_UINT16(0x017b), // pushi 017b
+	0x76,                       // push0
+	0x83, 0x01,                 // lag global[1]
+	0x4a, 0x04,                 // send 04 - read KQ5::masterVolume
+	0xa5, 0x03,                 // sat temp[3] (store volume)
+	// saving 8 bytes due removing of duplicate code
+	0x39, 0x04, // pushi 04 (saving 1 byte due swapping)
+	0x22,       // lt? (because we switched values)
+	PATCH_END};
 
 // The witchCage object in script 200 is broken and claims to have 12
 // properties instead of the 8 it should have because it is a Cage.
@@ -6148,6 +6190,7 @@ static const uint16 kq5PatchCdFallingSound[] = {
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
+	{  true,    0, "CD: harpy volume change",					   1, kq5SignatureCdHarpyVolumeV2,	        kq5PatchCdHarpyVolumeV2},
 	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	{ false,    31, "CD: falling sound",                           1, kq5SignatureCdFallingSound,           kq5PatchCdFallingSound },
 	{  true,    47, "sinking boat position",                       1, kq5SignatureSinkingBoatPosition,      kq5PatchSinkingBoatPosition },
