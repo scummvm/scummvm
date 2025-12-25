@@ -28,9 +28,6 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define SYMBOL_WIDTH FRAME_BORDER_SIZE
-#define SYMBOL_HEIGHT FRAME_BORDER_SIZE
-
 ScrollView::ScrollView(const Common::String &name) :
 		TextView(name, g_engine) {
 	_bounds.setBorderSize(FRAME_BORDER_SIZE);
@@ -175,21 +172,7 @@ void ScrollView::fill() {
 
 void ScrollView::writeSymbol(int symbolId) {
 	Graphics::ManagedSurface s = getSurface();
-	const byte *srcP = &g_globals->SYMBOLS[symbolId][0];
-	s.addDirtyRect(Common::Rect(_symbolPos.x, _symbolPos.y,
-		_symbolPos.x + SYMBOL_WIDTH, _symbolPos.y + SYMBOL_HEIGHT));
-
-	for (int yp = 0; yp < SYMBOL_HEIGHT; ++yp) {
-		byte *destP = (byte *)s.getBasePtr(
-			_symbolPos.x, _symbolPos.y + yp);
-
-		for (int xp = 0; xp < SYMBOL_WIDTH; ++xp, ++destP) {
-			byte b = *srcP++;
-			if (b)
-				*destP = b;
-		}
-	}
-
+	g_globals->_symbols.draw(s, Common::Point(_symbolPos.x, _symbolPos.y), symbolId);
 	_symbolPos.x += SYMBOL_WIDTH;
 }
 
