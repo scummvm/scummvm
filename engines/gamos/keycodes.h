@@ -271,10 +271,10 @@ protected:
 	void setCPTable(const uint16 *table, uint16 size, uint16 offset = 0x80);
 
 public:
-	uint8 GetWinCode(uint16 code) {
+	uint8 getWinCode(uint16 code) const {
 		return _winCodes[code];
 	};
-	uint16 GetScummCode(uint8 code) {
+	uint16 getScummCode(uint8 code) const {
 		return _scummCodes[code];
 	};
 
