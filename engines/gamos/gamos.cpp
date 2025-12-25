@@ -97,6 +97,11 @@ Common::Error GamosEngine::run() {
 	CursorMan.setDefaultArrowCursor();
 	CursorMan.showMouse(true);
 
+	if (getGameLanguage() == Common::RU_RUS)
+		setCP1251();
+	else
+		setCP1252();
+
 	init(getRunFile());
 
 	Common::Event e;

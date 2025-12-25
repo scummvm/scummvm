@@ -263,8 +263,12 @@ private:
 	uint8 _winCodes[Common::KEYCODE_LAST];
 	uint16 _scummCodes[256];
 
+	Common::Array<uint8> _cpTable;
+
 protected:
 	KeyCodes();
+
+	void setCPTable(const uint16 *table, uint16 size, uint16 offset = 0x80);
 
 public:
 	uint8 GetWinCode(uint16 code) {
@@ -273,6 +277,15 @@ public:
 	uint16 GetScummCode(uint8 code) {
 		return _scummCodes[code];
 	};
+
+	void setCP1251();
+	void setCP1252();
+
+	uint16 getCPCode(uint16 code) const {
+		if (code >= _cpTable.size())
+			return 0;
+		return _cpTable[code];
+	}
 };
 
 

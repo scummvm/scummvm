@@ -20,6 +20,8 @@
  */
 
 #include "gamos/gamos.h"
+#include "common/enc-internal.h"
+
 namespace Gamos {
 
 KeyCodes::KeyCodes() {
@@ -289,6 +291,34 @@ KeyCodes::KeyCodes() {
 	_scummCodes[WIN_BROWSER_STOP] = Common::KEYCODE_AC_STOP;
 	_scummCodes[WIN_BROWSER_REFRESH] = Common::KEYCODE_AC_REFRESH;
 	_scummCodes[WIN_BROWSER_FAVORITES] = Common::KEYCODE_AC_BOOKMARKS;
+}
+
+void KeyCodes::setCPTable(const uint16 *table, uint16 size, uint16 offset) {
+	uint16 codeMax = 0x7f;
+
+	for(uint32 i = 0; i < size; i++) {
+		if (table[i] > codeMax)
+			codeMax = table[i];
+	}
+
+	_cpTable.clear();
+	_cpTable.resize(codeMax + 1, 0);
+
+	//ascii
+	for (uint8 i = 0x20; i < 0x7f; i++)
+		_cpTable[i] = i;
+
+	//cp
+	for(uint32 i = 0; i < size; i++)
+		_cpTable[ table[i] ] = offset + i;
+}
+
+void KeyCodes::setCP1251() {
+	setCPTable(Common::kWindows1251ConversionTable, 128, 0x80);
+}
+
+void KeyCodes::setCP1252() {
+	setCPTable(Common::kWindows1252ConversionTable, 128, 0x80);
 }
 
 }

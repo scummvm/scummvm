@@ -825,6 +825,9 @@ public:
 
 	uint32 getFeatures() const;
 
+	Common::Language getGameLanguage() {
+		return _gameDescription->desc.language;
+	}
 	/**
 	 * Returns the game Id
 	 */
