@@ -2289,10 +2289,12 @@ bool CMainWindow::MoveBadGuys(CDC *pDC) {
 	CSprite *pSprite;
 	int i, n;
 
+	if (!m_bGameActive)
+		return true;
+
 	// can't access a null pointer
 	assert(pDC != nullptr);
 	assert(m_bTimerActive);
-	assert(m_bGameActive);
 
 	if (!m_bPause && (m_nBadGuys > 0) && (m_pBadGuyList != nullptr) && !m_bNewGame) {
 
