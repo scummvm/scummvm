@@ -42,7 +42,7 @@ public:
 	bool _popupSelectionMode = false;
 	bool _leftMouseButton = 0;
 	bool _rightMouseButton = 0;
-	Common::Event _lastKeyEvent;
+	Common::KeyCode _lastKeyEvent = Common::KEYCODE_INVALID;
 	PelrockEventManager();
 	void pollEvent();
 	void waitForKey();

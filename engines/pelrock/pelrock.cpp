@@ -105,6 +105,7 @@ Common::Error PelrockEngine::run() {
 
 	if (shouldPlayIntro == false) {
 		stateGame = GAME;
+		// stateGame = SETTINGS;
 	} else {
 		stateGame = INTRO;
 		_videoManager->playIntro();

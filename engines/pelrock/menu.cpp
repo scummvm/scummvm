@@ -70,20 +70,25 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_invRight.contains(x, y)) {
 		return INVENTORY_NEXT_BUTTON;
 	}
-	if( _saveGameRect.contains(x, y)) {
+	if (_saveGameRect.contains(x, y)) {
 		return SAVE_GAME_BUTTON;
 	}
-	if( _loadGameRect.contains(x, y)) {
+	if (_loadGameRect.contains(x, y)) {
 		return LOAD_GAME_BUTTON;
 	}
-	if( _soundsRect.contains(x, y)) {
+	if (_soundsRect.contains(x, y)) {
 		return SOUNDS_BUTTON;
 	}
-	if( _exitToDosRect.contains(x, y)) {
+	if (_exitToDosRect.contains(x, y)) {
 		return EXIT_MENU_BUTTON;
 	}
+	if (_savesUp.contains(x, y)) {
+		return SAVEGAME_PREV_BUTTON;
+	}
+	if (_savesDown.contains(x, y)) {
+		return SAVEGAME_NEXT_BUTTON;
+	}
 	return NO_BUTTON; // Default fallback
-
 }
 
 void MenuManager::checkMouseClick(int x, int y) {
@@ -119,10 +124,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 	default:
 		break;
 	}
-
 }
-
-
 
 void MenuManager::menuLoop() {
 	_events->pollEvent();
@@ -135,10 +137,20 @@ void MenuManager::menuLoop() {
 		g_engine->stateGame = GAME;
 		_events->_rightMouseClicked = false;
 		tearDown();
+	} else {
+		if (_events->_lastKeyEvent == Common::KEYCODE_b) {
+			// g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+			// g_engine->stateGame = GAME;
+			showButtons = !showButtons;
+			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+			// tearDown();
+		}
 	}
 
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
-	drawButtons();
+	// memset(_compositeBuffer, 0, 640 * 400);
+	if (showButtons)
+		drawButtons();
 
 	for (int i = 0; i < 4; i++) {
 		int itemIndex = _curInventoryPage * 4 + i;
@@ -233,14 +245,15 @@ void MenuManager::loadMenu() {
 	readButton(alfred7, 3193376, _saveButtons, _saveGameRect);
 	readButton(alfred7, alfred7.pos(), _loadButtons, _loadGameRect);
 	readButton(alfred7, alfred7.pos(), _soundsButtons, _soundsRect);
+	readButton(alfred7, alfred7.pos(), _exitToDosButtons, _exitToDosRect);
 	readButton(alfred7, kInvLeftArrowOffset, _inventoryLeftArrow, _invLeft);
 	readButton(alfred7, alfred7.pos(), _inventoryRightArrow, _invRight);
+	readButton(alfred7, alfred7.pos(), _savesUpArrows, _savesUp);
+	readButton(alfred7, alfred7.pos(), _savesDownArrows, _savesDown);
 	readButton(alfred7, 3214046, _questionMark, _questionMarkRect);
 
 	alfred7.close();
 }
-
-
 
 void MenuManager::readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect) {
 	alfred7.seek(offset, SEEK_SET);
@@ -249,10 +262,9 @@ void MenuManager::readButton(Common::File &alfred7, uint32 offset, byte *outBuff
 	outBuffer[0] = new byte[rect.width() * rect.height()];
 	outBuffer[1] = new byte[rect.width() * rect.height()];
 	extractSingleFrame(buttonData, outBuffer[0], 0, rect.width(), rect.height());
-	extractSingleFrame(buttonData, outBuffer[1], 1	, rect.width(), rect.height());
+	extractSingleFrame(buttonData, outBuffer[1], 1, rect.width(), rect.height());
 	delete[] buttonData;
 }
-
 
 void MenuManager::loadMenuTexts() {
 
@@ -283,29 +295,38 @@ void MenuManager::tearDown() {
 
 void MenuManager::drawButtons() {
 	MenuButton button = NO_BUTTON;
-	if(_events->_leftMouseButton != 0) {
+	if (_events->_leftMouseButton != 0) {
 		button = isButtonClicked(_events->_mouseX, _events->_mouseY);
 	}
 	byte *buf = button == QUESTION_MARK_BUTTON ? _questionMark[1] : _questionMark[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _questionMarkRect.left, _questionMarkRect.top, _questionMarkRect.width(), _questionMarkRect.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _questionMarkRect.left, _questionMarkRect.top, _questionMarkRect.width(), _questionMarkRect.height(), kTransparentColor);
 
 	buf = button == INVENTORY_PREV_BUTTON ? _inventoryLeftArrow[1] : _inventoryLeftArrow[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _invLeft.left, _invLeft.top, _invLeft.width(), _invLeft.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _invLeft.left, _invLeft.top, _invLeft.width(), _invLeft.height(), kTransparentColor);
 
 	buf = button == INVENTORY_NEXT_BUTTON ? _inventoryRightArrow[1] : _inventoryRightArrow[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _invRight.left, _invRight.top, _invRight.width(), _invRight.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _invRight.left, _invRight.top, _invRight.width(), _invRight.height(), kTransparentColor);
 
 	buf = button == SAVE_GAME_BUTTON ? _saveButtons[1] : _saveButtons[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _saveGameRect.left, _saveGameRect.top, _saveGameRect.width(), _saveGameRect.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _saveGameRect.left, _saveGameRect.top, _saveGameRect.width(), _saveGameRect.height(), kTransparentColor);
 
 	buf = button == LOAD_GAME_BUTTON ? _loadButtons[1] : _loadButtons[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), kTransparentColor);
 
 	buf = button == LOAD_GAME_BUTTON ? _loadButtons[1] : _loadButtons[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _loadGameRect.left, _loadGameRect.top, _loadGameRect.width(), _loadGameRect.height(), kTransparentColor);
 
 	buf = button == SOUNDS_BUTTON ? _soundsButtons[1] : _soundsButtons[0];
-	drawSpriteToBuffer(_compositeBuffer, 640, buf, _soundsRect.left, _soundsRect.top, _soundsRect.width(), _soundsRect.height(), 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _soundsRect.left, _soundsRect.top, _soundsRect.width(), _soundsRect.height(), kTransparentColor);
+
+	buf = button == EXIT_MENU_BUTTON ? _exitToDosButtons[1] : _exitToDosButtons[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _exitToDosRect.left, _exitToDosRect.top, _exitToDosRect.width(), _exitToDosRect.height(), kTransparentColor);
+
+	buf = button == SAVEGAME_PREV_BUTTON ? _savesUpArrows[1] : _savesUpArrows[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _savesUp.left, _savesUp.top, _savesUp.width(), _savesUp.height(), kTransparentColor);
+
+	buf = button == SAVEGAME_NEXT_BUTTON ? _savesDownArrows[1] : _savesDownArrows[0];
+	drawSpriteToBuffer(_compositeBuffer, 640, buf, _savesDown.left, _savesDown.top, _savesDown.width(), _savesDown.height(), kTransparentColor);
 }
 
 Pelrock::MenuManager::~MenuManager() {

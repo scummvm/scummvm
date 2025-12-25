@@ -48,10 +48,11 @@ void PelrockEventManager::pollEvent() {
 
 		// case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 		// 	break;
-		// case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN:
 		// 	changeGameSpeed(_event);
-		// 	_keyPressed = true;
-		// 	_lastKeyEvent = _event;
+			// _keyPressed = true;
+			_lastKeyEvent = _event.kbd.keycode;
+			break;
 		// 	return;
 		// case Common::EVENT_KEYUP:
 		// 	return;

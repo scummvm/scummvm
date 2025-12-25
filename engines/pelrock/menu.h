@@ -31,6 +31,7 @@ namespace Pelrock {
 
 const int kQuestionMarkOffset = 3214046;
 const int kInvLeftArrowOffset = 3215906;
+const int kTransparentColor = 15;
 
 enum MenuButton {
 	QUESTION_MARK_BUTTON,
@@ -67,30 +68,29 @@ private:
 	byte *_mainMenu = nullptr;
 	byte *_compositeBuffer = nullptr;
 
-	Common::Rect _saveGameRect = Common::Rect(Common::Point(130, 184), 81, 34);
-	byte *_saveButtons[2] = { nullptr };
+	Common::Rect _saveGameRect = Common::Rect(Common::Point(132, 186), 81, 34);
+	byte *_saveButtons[2] = {nullptr};
 
-	Common::Rect _loadGameRect = Common::Rect(Common::Point(130, 221), 80, 31);
-	byte *_loadButtons[2] = { nullptr };
+	Common::Rect _loadGameRect = Common::Rect(Common::Point(133, 222), 80, 33);
+	byte *_loadButtons[2] = {nullptr};
 
-	Common::Rect _soundsRect = Common::Rect(Common::Point(137, 260), 77, 30);
-	byte *_soundsButtons[2] = { nullptr };
+	Common::Rect _soundsRect = Common::Rect(Common::Point(134, 258), 77, 33);
+	byte *_soundsButtons[2] = {nullptr};
 
-	Common::Rect _exitToDosRect = Common::Rect(Common::Point(220, 270), 81, 30);
-	byte *_exitToDosButtons[2] = { nullptr };
+	Common::Rect _exitToDosRect = Common::Rect(Common::Point(134, 293), 75, 30);
+	byte *_exitToDosButtons[2] = {nullptr};
 
+	Common::Rect _invLeft = Common::Rect(Common::Point(469, 88), 26, 37);
+	byte *_inventoryLeftArrow[2] = {nullptr};
 
-	Common::Rect _invLeft = Common::Rect(Common::Point(469, 87), 26, 37);
-	byte *_inventoryLeftArrow[2] = { nullptr };
+	Common::Rect _invRight = Common::Rect(Common::Point(463, 132), 26, 37);
+	byte *_inventoryRightArrow[2] = {nullptr};
 
-	Common::Rect _invRight = Common::Rect(Common::Point(463, 130), 26, 37);
-	byte *_inventoryRightArrow[2] = { nullptr };
+	Common::Rect _savesUp = Common::Rect(Common::Point(457, 189), 26, 24);
+	byte *_savesUpArrows[2] = {nullptr};
 
-	Common::Rect _savesUp = Common::Rect(Common::Point(320, 150), 16, 16);
-	byte *_savesUpArrows[2] = { nullptr };
-
-	Common::Rect _savesDown = Common::Rect(Common::Point(385, 150), 16, 16);
-	byte *_savesDownArrows[2] = { nullptr };
+	Common::Rect _savesDown = Common::Rect(Common::Point(450, 278), 26, 24);
+	byte *_savesDownArrows[2] = {nullptr};
 
 	Common::Rect _questionMarkRect = Common::Rect(Common::Point(217, 293), 31, 30);
 	byte *_questionMark[2] = {nullptr};
@@ -101,6 +101,8 @@ private:
 	int _curInventoryPage = 0;
 	Common::StringArray _menuText;
 	Common::Array<Common::StringArray> _inventoryDescriptions;
+
+	bool showButtons = true;
 };
 
 } // End of namespace Pelrock
