@@ -355,7 +355,7 @@ void SherlockEngine::detect3DOAssets() {
 	const char *basePaths[] = {
 		"",
 		"Movies",
-		"HolmesData/",
+		"HolmesData/Movies",
 		"HolmesData/videos/",
 		"videos/",
 		"3DO/",
