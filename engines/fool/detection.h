@@ -42,7 +42,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Fool
 
-class FoolMetaEngineDetection : public AdvancedMetaEngineDetection {
+class FoolMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:
@@ -58,7 +58,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Fool (C)";
+		return "(C) Cliff Johnson";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
