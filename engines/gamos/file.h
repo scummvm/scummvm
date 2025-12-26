@@ -61,6 +61,10 @@ public:
 
 	static void decompress(RawData const *in, RawData *out);
 
+	void setVersion(int v) {
+		_version = v;
+	}
+
 public:
 
 	uint32 _lastReadSize = 0;
@@ -75,6 +79,8 @@ private:
 	uint32 _dataOffset;
 
 	Common::Array<ArchiveDir> _directories;
+
+	int _version = 0x18;
 
 	//bool _error;
 };

@@ -45,36 +45,38 @@ void SystemProc::processMessage(const Common::Event &ev) {
 		if (_rawKeyCode == 0)
 			_rawKeyCode = ACT_NONE;
 
-		if (winKey == _keyCodes[0])
-			_act1 = 0;
-		else if (winKey == _keyCodes[1])
-			_act1 = 1;
-		else if (winKey == _keyCodes[2])
-			_act1 = 2;
-		else if (winKey == _keyCodes[3])
-			_act1 = 3;
-		else if (winKey == _keyCodes[4])
-			_act1 = 4;
-		else if (winKey == _keyCodes[5])
-			_act1 = 5;
-		else if (winKey == _keyCodes[6])
-			_act1 = 6;
-		else if (winKey == _keyCodes[7])
-			_act1 = 7;
-		else {
-			if (winKey == _keyCodes[8])
-				_act2 = ACT2_MOUSEUP_L;
-			else if (winKey == _keyCodes[9])
-				_act2 = ACT2_MOUSEUP_R;
-			else if (winKey == _keyCodes[10])
-				_act2 = ACT2_TAB;
-			else if (winKey == _keyCodes[11])
-				_act2 = ACT2_HELP;
-			else
-				return;
+		if (winKey != KeyCodes::WIN_INVALID) {
+			if (winKey == _keyCodes[0])
+				_act1 = 0;
+			else if (winKey == _keyCodes[1])
+				_act1 = 1;
+			else if (winKey == _keyCodes[2])
+				_act1 = 2;
+			else if (winKey == _keyCodes[3])
+				_act1 = 3;
+			else if (winKey == _keyCodes[4])
+				_act1 = 4;
+			else if (winKey == _keyCodes[5])
+				_act1 = 5;
+			else if (winKey == _keyCodes[6])
+				_act1 = 6;
+			else if (winKey == _keyCodes[7])
+				_act1 = 7;
+			else {
+				if (winKey == _keyCodes[8])
+					_act2 = ACT2_MOUSEUP_L;
+				else if (winKey == _keyCodes[9])
+					_act2 = ACT2_MOUSEUP_R;
+				else if (winKey == _keyCodes[10])
+					_act2 = ACT2_TAB;
+				else if (winKey == _keyCodes[11])
+					_act2 = ACT2_HELP;
+				else
+					return;
 
-			_rawKeyCode = winKey;
-			return;
+				_rawKeyCode = winKey;
+				return;
+			}
 		}
 
 		if ((_act1 < 8) && (ev.kbd.flags & Common::KBD_SHIFT))

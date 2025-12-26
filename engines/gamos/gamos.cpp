@@ -86,6 +86,10 @@ Common::Error GamosEngine::run() {
 	else
 		setCP1252();
 
+	_engineVersion = getEngineVersion() & 0xFF;
+
+	_arch.setVersion(_engineVersion);
+
 	init(getRunFile());
 
 	Common::Event e;
@@ -564,30 +568,43 @@ bool GamosEngine::initMainDatas() {
 	}
 
 	/* skip count of pages 1kb size */
-	dataStream.skip(4);
-	/* skip read buffer size */
-	dataStream.skip(4);
-	_width = dataStream.readUint32LE();
-	_height = dataStream.readUint32LE();
-	_gridCellW = dataStream.readSint32LE();
-	_gridCellH = dataStream.readSint32LE();
-	_movieCount = dataStream.readUint32LE();
-	dataStream.skip(3); // skip unknown unused
-	_fps = dataStream.readByte();
-	dataStream.skip(1); // skip unknown unused
-	_drawCursor = dataStream.readByte();
-	_fadeEffectID = dataStream.readByte();
-	_playIntro = dataStream.readByte();
+	dataStream.skip(4); // 4
+	if (_engineVersion >= 0x12) {
+		/* skip read buffer size */
+		dataStream.skip(4); // 8
+	}
+	_width = dataStream.readUint32LE(); // c
+	_height = dataStream.readUint32LE(); // 10
+	_gridCellW = dataStream.readSint32LE(); // 14
+	_gridCellH = dataStream.readSint32LE(); // 18
+	_movieCount = dataStream.readUint32LE(); // 1c
+	dataStream.skip(3); // skip unknown unused 20
+	_fps = dataStream.readByte(); // 23
+	dataStream.skip(1); // skip unknown unused  24
+	_drawCursor = dataStream.readByte(); // 25
 
-	_introPos.x = dataStream.readSint32LE();
-	_introPos.y = dataStream.readSint32LE();
-	_introSize.x = dataStream.readSint32LE();
-	_introSize.y = dataStream.readSint32LE();
+	if (_engineVersion >= 0x12) {
+		_fadeEffectID = dataStream.readByte(); // 26
+		_playIntro = dataStream.readByte(); // 27
+	} else {
+		_playIntro = dataStream.readByte();
+		_fadeEffectID = dataStream.readByte();
+	}
 
-	int64 pos = dataStream.pos();
-	_string1 = dataStream.readString(0, 64);
-	dataStream.seek(pos + 64);
-	_winCaption = dataStream.readString(0, 9);
+	if (_engineVersion >= 0x12) {
+		_introPos.x = dataStream.readSint32LE(); // 28
+		_introPos.y = dataStream.readSint32LE(); // 2c
+		_introSize.x = dataStream.readSint32LE(); // 30
+		_introSize.y = dataStream.readSint32LE(); // 34
+
+		int64 pos = dataStream.pos();
+		_string1 = dataStream.readString(0, 64); // 38
+		dataStream.seek(pos + 64);
+	} else {
+		_string1 = "";
+	}
+
+	_winCaption = dataStream.readString(0, 32); // 78
 
 	if (!_screen) {
 		initGraphics(_width, _height);
@@ -1085,7 +1102,7 @@ void GamosEngine::readData2(const RawData &data) {
 
 	//warning("Game data size %d", data.size());
 
-	if (getEngineVersion() == 0x80000018) {
+	if (_engineVersion == 0x18) {
 		_stateExt = dataStream.readString(0, 4); // FIX ME
 		dataStream.seek(4);
 		_messageProc._inputFlags = dataStream.readByte(); //4
@@ -1121,7 +1138,7 @@ void GamosEngine::readData2(const RawData &data) {
 		for (int i = 0; i < 12; i++) {
 			_messageProc._keyCodes[i] = dataStream.readByte();
 		}
-	} else if (getEngineVersion() == 0x80000016) {
+	} else if (_engineVersion >= 0x12 && _engineVersion <= 0x16) {
 		_stateExt = dataStream.readString(0, 4); // FIX ME
 		dataStream.seek(4);
 		_messageProc._inputFlags = dataStream.readByte(); //4
@@ -1156,6 +1173,52 @@ void GamosEngine::readData2(const RawData &data) {
 		for (int i = 0; i < 12; i++) {
 			_messageProc._keyCodes[i] = dataStream.readByte();
 		}
+	} else if (_engineVersion == 0xb) {
+		_stateExt = dataStream.readString(0, 4); // FIX ME
+		dataStream.seek(4);
+		_messageProc._inputFlags = dataStream.readByte(); //4
+		dataStream.seek(8);
+		_svModuleId = dataStream.readSint32LE(); // 8
+		_svGameScreen = dataStream.readSint32LE(); // c
+		_d2_fld10 = dataStream.readUint32LE(); // 10
+		_enableSounds = dataStream.readByte() != 0 ? true : false; // x14
+		_enableMidi = dataStream.readByte() != 0 ? true : false; //x15
+		_enableInput = dataStream.readByte() != 0 ? true : false; // x16
+		_enableMovie = dataStream.readByte() != 0 ? true : false; // x17
+		_enableCDAudio = false;
+		_cdAudioTrack = -1;
+		_scrollX = 0;
+		_scrollY = 0;
+		_scrollTrackObj = -1;
+		_scrollSpeed = 16;
+		_scrollCutoff = 80;
+		_scrollSpeedReduce = -1;
+		_scrollBorderL = 0;
+		_scrollBorderR = 0;
+		_scrollBorderU = 0;
+		_scrollBorderB = 0;
+		_sndChannels = dataStream.readByte(); // x18
+		_sndVolume = dataStream.readByte(); // x19
+		_midiVolume = dataStream.readByte(); // x1a
+		_svFps = dataStream.readByte(); // x1b
+		_svFrame = dataStream.readSint32LE(); // x1c
+		_midiTrack = dataStream.readUint32LE(); // x20
+		_mouseCursorImgId = dataStream.readSint32LE(); // x24
+		//0x28
+
+		_messageProc._keyCodes[0] = KeyCodes::WIN_UP;
+		_messageProc._keyCodes[1] = KeyCodes::WIN_PRIOR;
+		_messageProc._keyCodes[2] = KeyCodes::WIN_RIGHT;
+		_messageProc._keyCodes[3] = KeyCodes::WIN_NEXT;
+		_messageProc._keyCodes[4] = KeyCodes::WIN_DOWN;
+		_messageProc._keyCodes[5] = KeyCodes::WIN_END;
+		_messageProc._keyCodes[6] = KeyCodes::WIN_LEFT;
+		_messageProc._keyCodes[7] = KeyCodes::WIN_HOME;
+		_messageProc._keyCodes[8] = KeyCodes::WIN_SPACE;
+		_messageProc._keyCodes[9] = KeyCodes::WIN_RETURN;
+		_messageProc._keyCodes[10] = KeyCodes::WIN_TAB;
+		_messageProc._keyCodes[11] = KeyCodes::WIN_INVALID;
+		_messageProc._keyCodes[12] = KeyCodes::WIN_INVALID;
 	}
 }
 
@@ -2291,6 +2354,9 @@ uint32 GamosEngine::doScript(uint32 scriptAddress) {
 
 void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 	uint32 arg1 = 0, arg2 = 0;
+
+	if (_engineVersion <= 0x12 && funcID >= 47) // skip 47 func for old versions
+		funcID++;
 
 	switch (funcID) {
 	case 0:

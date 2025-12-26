@@ -594,6 +594,8 @@ private:
 
 	bool _needReload = false;
 
+	uint32 _engineVersion = 0x18;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;

@@ -37,7 +37,9 @@ bool Archive::open(const Common::Path &name) {
 
 	seek(-12, SEEK_END);
 
-	_dirOffset = 12 + readUint32LE();
+	const uint32 dirInfSize = readUint32LE();
+
+	_dirOffset = 12 + dirInfSize;
 	skip(4);
 	uint32 magic = readUint32LE();
 
@@ -46,8 +48,16 @@ bool Archive::open(const Common::Path &name) {
 
 	seek(-_dirOffset, SEEK_END);
 
-	_dirCount = readUint32LE();
-	_dataOffset = readUint32LE();
+	byte tmpbuf[8] = {0, 0 ,0, 0, 0, 0, 0, 0};
+
+	/* read it into buffer firs, because it's can be less than 8 bytes */
+	if (dirInfSize > 8)
+		read(tmpbuf, 8);
+	else
+		read(tmpbuf, dirInfSize);
+
+	_dirCount = READ_LE_UINT32(tmpbuf);
+	_dataOffset = READ_LE_UINT32(tmpbuf + 4);
 
 	seek(-(_dirOffset + _dirCount * 5), SEEK_END);
 
@@ -141,12 +151,17 @@ bool Archive::readCompressedData(RawData *out) {
 		/* read size */
 		const byte szsize = (t & 3) + 1;
 
+		if (_version == 0xb)
+			skip(szsize);
+
 		/* big data size */
 		for (uint i = 0; i < szsize; ++i)
 			_lastReadSize |= readByte() << (i << 3);
 
 		/* is compressed */
-		if (t & 0xC) {
+		if (_version == 0xb) {
+			skip(szsize + 1);
+		} else if (t & 0xC) {
 			for (uint i = 0; i < szsize; ++i)
 				_lastReadDecompressedSize |= readByte() << (i << 3);
 		}
@@ -159,7 +174,7 @@ bool Archive::readCompressedData(RawData *out) {
 	out->resize(_lastReadSize);
 	read(out->data(), _lastReadSize);
 
-	if (!_lastReadDecompressedSize)
+	if (!_lastReadDecompressedSize || _version != 0x18)
 		return true;
 
 	/* looks hacky but we just allocate array for decompressed and swap it with compressed */
