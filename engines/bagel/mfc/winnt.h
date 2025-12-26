@@ -652,6 +652,23 @@ typedef struct _GUID {
 #define AFX_IDW_PANE_SAVE               0xEA21  // to shift AFX_IDW_PANE_FIRST
 #define AFX_WS_DEFAULT_VIEW		(WS_CHILD | WS_VISIBLE)
 
+
+/*
+ * Dialog Codes
+ */
+#define DLGC_WANTARROWS     0x0001      /* Control wants arrow keys         */
+#define DLGC_WANTTAB        0x0002      /* Control wants tab keys           */
+#define DLGC_WANTALLKEYS    0x0004      /* Control wants all keys           */
+#define DLGC_WANTMESSAGE    0x0004      /* Pass message to control          */
+#define DLGC_HASSETSEL      0x0008      /* Understands EM_SETSEL message    */
+#define DLGC_DEFPUSHBUTTON  0x0010      /* Default pushbutton               */
+#define DLGC_UNDEFPUSHBUTTON 0x0020     /* Non-default pushbutton           */
+#define DLGC_RADIOBUTTON    0x0040      /* Radio button                     */
+#define DLGC_WANTCHARS      0x0080      /* Want WM_CHAR messages            */
+#define DLGC_STATIC         0x0100      /* Static item: don't include       */
+#define DLGC_BUTTON         0x2000      /* Button item: can be checked      */
+
+
 typedef struct tagTEXTMETRICA {
 	long        tmHeight = 0;
 	long        tmAscent = 0;

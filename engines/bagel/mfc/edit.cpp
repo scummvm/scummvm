@@ -35,6 +35,7 @@ ON_WM_CHAR()
 ON_WM_SETFOCUS()
 ON_WM_KILLFOCUS()
 ON_WM_TIMER()
+ON_WM_GETDLGCODE()
 END_MESSAGE_MAP()
 
 bool CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
@@ -139,6 +140,15 @@ void CEdit::OnKillFocus(CWnd *pNewWnd) {
 void CEdit::OnTimer(uintptr nTimerId) {
 	_cursorVisible = !_cursorVisible;
 	Invalidate();
+}
+
+unsigned int CEdit::OnGetDlgCode() {
+	uint style = GetStyle();
+
+	if (style & ES_MULTILINE)
+		return DLGC_WANTMESSAGE | DLGC_HASSETSEL;
+
+	return 0;
 }
 
 } // namespace MFC
