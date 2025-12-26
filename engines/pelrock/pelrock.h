@@ -141,8 +141,7 @@ private:
 
 	bool showShadows = false;
 
-	// JAVA
-	bool shouldPlayIntro = false;
+	bool shouldPlayIntro = true;
 	bool gameInitialized = false;
 	bool screenReady = false;
 
@@ -162,7 +161,7 @@ public:
 	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
 	AlfredState alfredState;
-	byte *_compositeBuffer; // Working composition buffer
+	byte *_compositeBuffer = nullptr; // Working composition buffer
 	GameState stateGame = INTRO;
 
 	SmallFont *_smallFont = nullptr;

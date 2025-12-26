@@ -99,6 +99,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
 			_selectedInvIndex = g_engine->_inventoryItems[_curInventoryPage * 4 + i];
 			_menuText = _inventoryDescriptions[_selectedInvIndex];
+			g_engine->_selectedInventoryItem = _selectedInvIndex;
 			selectedItem = true;
 			return;
 		}

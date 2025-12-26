@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "graphics/screen.h"
+#include "graphics/paletteman.h"
 
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
@@ -29,7 +30,7 @@
 
 namespace Pelrock {
 
-VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events) : _screen(screen), _events(events) {
+VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono) : _screen(screen), _events(events), _chrono(chrono) {
 }
 
 VideoManager::~VideoManager() {
@@ -42,63 +43,46 @@ void VideoManager::playIntro() {
 		return;
 	}
 	loadPalette(videoFile);
-	videoFile.seek(frame0offset, SEEK_SET);
-	size_t firstChunkSize = chunkSize * 13;
-	byte *chunk0 = new byte[firstChunkSize];
-	videoFile.read(chunk0, firstChunkSize);
-	byte *background = decodeCopyBlock(chunk0, 0);
+	videoFile.seek(0, SEEK_SET);
 
-	for (int i = 0; i < 640; i++) {
-		for (int j = 0; j < 400; j++) {
-			_screen->setPixel(i, j, background[j * 640 + i]);
-		}
-	}
-	_screen->markAllDirty();
-	_screen->update();
-	delete[] chunk0;
-	_events->waitForKey();
+	memset(_currentKeyFrame, 0, 256000);
+	for (int sequence = 0; sequence < 1; sequence++) {
+		int frameCounter = 0;
+		int chunksInBuffer = 0;
+		bool videoExitFlag = false;
 
-	size_t chunk1Size = chunkSize * 6;
-	byte chunk1_data[chunk1Size];
-	videoFile.seek(frame1offset, SEEK_SET);
-	videoFile.read(chunk1_data, chunk1Size);
+		while (!videoExitFlag && !g_engine->shouldQuit()) {
+			_chrono->updateChrono();
+			_events->pollEvent();
 
-	byte *delta1 = decodeRLE(chunk1_data, chunk1Size, 0x0D);
-	for (int j = 0; j < 256000; j++) {
-		background[j] ^= delta1[j];
-	}
-	delete[] delta1;
-	for (int x = 0; x < 640; x++) {
-		for (int y = 0; y < 400; y++) {
-			_screen->setPixel(x, y, background[y * 640 + x]);
-		}
-	}
-	_screen->markAllDirty();
-	_screen->update();
-	_events->waitForKey();
+			if(_chrono->_gameTick) {
+				ChunkHeader chunk;
+				readChunk(videoFile, chunk);
 
-	for (size_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); i++) {
-		byte *chunk = new byte[chunkSize];
-		videoFile.seek(offsets[i], SEEK_SET);
-		videoFile.read(chunk, chunkSize);
-		byte *delta = decodeCopyBlock(chunk, 0);
-		for (int j = 0; j < 256000; j++) {
-			background[j] ^= delta[j];
-		}
-		delete[] delta;
-		for (int x = 0; x < 640; x++) {
-			for (int y = 0; y < 400; y++) {
-				_screen->setPixel(x, y, background[y * 640 + x]);
+				switch (chunk.chunkType) {
+				case 1:
+				case 2:
+					processFrame(chunk, frameCounter++);
+					break;
+				case 3:
+					videoExitFlag = true;
+					break;
+				case 4:
+					loadPalette(chunk);
+					break;
+				default:
+					debug("Unknown chunk type %d encountered", chunk.chunkType);
+					break;
+				}
+				presentFrame();
 			}
+			g_system->delayMillis(10);
 		}
-		delete[] chunk;
-		_screen->markAllDirty();
-		_screen->update();
-		_events->waitForKey();
 	}
-	_events->waitForKey();
+
 	videoFile.close();
 }
+
 void VideoManager::loadPalette(Common::SeekableReadStream &stream) {
 
 	byte paletteData[768];
@@ -113,11 +97,21 @@ void VideoManager::loadPalette(Common::SeekableReadStream &stream) {
 	_screen->setPalette(palette);
 }
 
+void VideoManager::loadPalette(ChunkHeader &chunk) {
+	byte palette[768];
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3 + 0] = chunk.data[i * 3 + 0] << 2;
+		palette[i * 3 + 1] = chunk.data[i * 3 + 1] << 2;
+		palette[i * 3 + 2] = chunk.data[i * 3 + 2] << 2;
+	}
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+}
+
 byte *VideoManager::decodeCopyBlock(byte *data, uint32 offset) {
 
 	byte *buf = new byte[256000];
 	memset(buf, 0, 256000);
-	uint32 pos = offset + 0x0D;
+	uint32 pos = offset + 0x04;
 	// frames are encoded so that each block copy has a 5-byte header
 	// the first 3 bytes are the offset within the screen to which to
 	// copy the bytes. The 5th byte is the length of the block to copy.
@@ -139,7 +133,7 @@ byte *VideoManager::decodeCopyBlock(byte *data, uint32 offset) {
 		pos += length;
 	}
 
-	return buf; // Placeholder
+	return buf;
 }
 
 byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
@@ -169,4 +163,42 @@ byte *VideoManager::decodeRLE(byte *data, size_t size, uint32 offset) {
 	}
 	return buf;
 }
+
+void VideoManager::readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk) {
+	chunk.blockCount = stream.readUint32LE();
+	chunk.dataOffset = stream.readUint32LE();
+	chunk.chunkType = stream.readByte();
+
+	chunk.data = new byte[chunk.blockCount * chunkSize + 9];
+	stream.read(chunk.data, chunk.blockCount * chunkSize - 9);
+}
+
+void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
+	byte *frameData = nullptr;
+	if(chunk.chunkType == 1) {
+		// Video data chunk
+		frameData = decodeRLE(chunk.data, chunk.blockCount * chunkSize, 0x04);
+	} else if (chunk.chunkType == 2) {
+		// Block copy chunk
+		frameData = decodeCopyBlock(chunk.data, 0);
+	}
+
+	if(frameCount == 0) {
+		memcpy(_currentKeyFrame, frameData, 256000);
+	} else {
+		// Subsequent frames, XOR with previous frame
+		for (int i = 0; i < 256000; i++) {
+			_currentKeyFrame[i] ^= frameData[i];
+		}
+	}
+	delete[] frameData;
+
+}
+
+void VideoManager::presentFrame() {
+	memcpy(_screen->getPixels(), _currentKeyFrame, 640 * 400);
+	_screen->markAllDirty();
+	_screen->update();
+}
+
 } // End of namespace Pelrock

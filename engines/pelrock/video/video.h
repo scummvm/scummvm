@@ -26,31 +26,35 @@
 
 namespace Pelrock {
 
-static const uint32 frame0offset = 0x5000;
-static const uint32 frame1offset = 0x46000;
+struct ChunkHeader {
+    uint32_t blockCount;      // +0x00: Number of 0x5000-byte blocks
+    uint32_t dataOffset;      // +0x04: Varies by chunk type
+    uint8_t  chunkType;       // +0x08: 1=RLE, 2=BlockCopy, 3=End, 4=Palette, 6=Special
+    // +0x0D: Frame data begins
+	byte *data;
+};
+
 static const uint32 chunkSize = 0x5000;
-static const uint32 offsets[] = {
-	0x64000,
-	0x69000,
-	0x6E000,
-	0x73000,
-	0x78000,
-	0x7D000,
-	0x82000,
-	0x87000};
 
 class VideoManager {
 public:
-	VideoManager(Graphics::Screen *screen, PelrockEventManager *events);
+	VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono);
 	~VideoManager();
 	void playIntro();
 
 private:
 	Graphics::Screen *_screen;
 	PelrockEventManager *_events;
+	ChronoManager *_chrono;
 	void loadPalette(Common::SeekableReadStream &stream);
+	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
     byte *decodeRLE(byte *data, size_t size, uint32 offset);
+	void readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk);
+	void processFrame(ChunkHeader &chunk, const int frameCount);
+	void presentFrame();
+	byte *_currentKeyFrame = new byte[640 * 400];
+	Common::Array<ChunkHeader> _chunkBuffer;
 };
 
 } // End of namespace Pelrock

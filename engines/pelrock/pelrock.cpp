@@ -54,8 +54,10 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 PelrockEngine::~PelrockEngine() {
-	delete[] _compositeBuffer;
-	delete[] _currentBackground;
+	if(_compositeBuffer)
+		delete[] _compositeBuffer;
+	if(_currentBackground)
+		delete[] _currentBackground;
 	delete _largeFont;
 	delete _smallFont;
 	delete _doubleSmallFont;
@@ -85,13 +87,13 @@ Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 400);
 	_screen = new Graphics::Screen();
-	_videoManager = new VideoManager(_screen, _events);
 	_graphics = new GraphicsManager();
 	_room = new RoomManager();
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
 	_dialog = new DialogManager(_screen, _events, _graphics);
 	_menu = new MenuManager(_screen, _events, _res);
+	_videoManager = new VideoManager(_screen, _events, _chrono);
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
 
@@ -111,7 +113,8 @@ Common::Error PelrockEngine::run() {
 		_videoManager->playIntro();
 		stateGame = GAME;
 	}
-	init();
+	if(!shouldQuit())
+		init();
 
 	while (!shouldQuit()) {
 
@@ -534,7 +537,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		alfredState.idleFrameCounter = 0;
 		alfredState.setState(ALFRED_COMB);
 	}
-	debug("Alfred state: %d, pos (%d, %d) curFrame %d", alfredState.animState, alfredState.x, alfredState.y, alfredState.curFrame);
 	switch (alfredState.animState) {
 	case ALFRED_WALKING: {
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
