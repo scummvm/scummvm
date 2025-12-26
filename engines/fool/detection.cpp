@@ -19,6 +19,7 @@
  *
  */
 
+#include "advancedDetector.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -38,8 +39,7 @@ const DebugChannelDef FoolMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-FoolMetaEngineDetection::FoolMetaEngineDetection() : AdvancedMetaEngineDetection(Fool::gameDescriptions,
-	sizeof(ADGameDescription), Fool::foolGames) {
+FoolMetaEngineDetection::FoolMetaEngineDetection() : AdvancedMetaEngineDetection(Fool::gameDescriptions, Fool::foolGames) {
 }
 
 REGISTER_PLUGIN_STATIC(FOOL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, FoolMetaEngineDetection);

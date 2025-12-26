@@ -29,8 +29,11 @@
 
 namespace Fool {
 
+typedef uint32 GrafPtr;
+typedef uint32 Handle;
 typedef uint32 RgnHandle;
 typedef uint32 PicHandle;
+typedef uint32 PolyHandle;
 
 struct Pattern {
 	uint8 data[8];
@@ -90,6 +93,10 @@ public:
 	// CurResFile returns the reference number of the current resource file. You can call it when the
 	// application starts up to get the reference number of its resource file.
 	uint16 CurResFile();
+
+	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
+	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
+	uint32 Delay(uint32 numTicks);
 
 	// PROCEDURE DrawChar (ch: CHAR);
 	// DrawChar places the given character to the right of the pen location, with the left end of its base
@@ -178,6 +185,7 @@ public:
 	// by dv. If dh or dv is negative, the appropriate pair of sides is moved outward instead of inward.
 	// The effect is to alter the size by 2*dh horizontally and 2*dv vertically, with the rectangle
 	// remaining centered in the same place on the coordinate plane.
+	void InsetRect(Common::Rect &r, int16 dh, int16 dv);
 
 	// PROCEDURE InvertOval (r: Rect);
 	// InvertOval inverts the pixels enclosed by an oval just inside the specified rectangle: Every white
@@ -194,6 +202,7 @@ public:
 	// PROCEDURE KillPoly (poly: PolyHandle);
 	// KillPoly releases the memory occupied by the given polygon. Use this only when you're completely
 	// through with a polygon.
+	void KillPoly(PolyHandle poly);
 
 	// PROCEDURE LineTo (h,v: INTEGER);
 	// LineTo draws a line from the current pen location to the location specified (in local coordinates)
@@ -224,6 +233,7 @@ public:
 	// OpenPort is called by the Window Manager when you create a window, and you normally won't
 	// call it yourself. If you do call OpenPort, you can create the grafPtr with the Memory Manager
 	// procedure NewPtr or reserve the space on the stack (with a variable of type GrafPort).
+	void OpenPort(GrafPtr port);
 
 	// PROCEDURE PaintOval (r: Rect);
 	// PaintOval paints an oval just inside the specified rectangle with the current grafPort's pen pattern
@@ -275,7 +285,7 @@ public:
 	// The given handle will no longer be recognized as a handle to a resource; if the Resource Manager
 	// is subsequendy called to get the released resource, a new handle will be allocated. Use this
 	// procedure only after you're completely through with a resource.
-	void ReleaseResource(uint32 handle);
+	void ReleaseResource(Handle &handle);
 
 	// PROCEDURE SetCPixel (h,v: INTEGER; cPix: RGBColor);
 	// The SetCPixel function sets the pixel at the specified position to the pixel value that most
@@ -284,6 +294,7 @@ public:
 
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
+	void SetPort(GrafPtr port);
 
 	// PROCEDURE SetPortBits (bm: BitMap);
 	// SetPortBits sets the portBits field of the current grafPort to any previously defined bit map. This

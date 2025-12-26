@@ -25,11 +25,12 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "fool/toolbox.h"
 #include "graphics/surface.h"
 
 #define SCREEN_WIDTH 0x200
 #define SCREEN_HEIGHT 0x156
-#define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8/2)
+#define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8/2) // 0x2ac0
 
 namespace Fool {
 
@@ -38,16 +39,100 @@ public:
 	FoolPrologue();
 	~FoolPrologue();
 
+	void sub_128_1ba(int16 screen_page);
+	void sub_128_1f4(int16 screen_page);
+	void sub_128_21e(int16 numTicks);
+	void sub_128_24a(int16 numTicks);
+	void sub_128_26c(int16 unk1, int16 unk2);
+	void sub_128_2a6(int16 unk1, int16 unk2);
+	void sub_128_2f0(int16 pattern_id, int16 top, int16 left, int16 bottom, int16 right);
+	void sub_128_354(uint16 unk1, uint16 unk2);
+	void sub_128_3ee(int16 unk1);
+	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screen_page);
+	void sub_128_610(int16 screen_page);
+	void sub_128_64a(int16 unk1);
+	void sub_128_6e4(int16 screen_page);
+	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
+	void sub_128_a6c(int16_t unk1, int16_t unk2);
+	void sub_128_a8c(int16_t unk);
+	void sub_128_c8a();
+	void sub_128_de2();
+	void sub_128_e1c();
+	void sub_128_e58();
+	void sub_128_e80();
+	void sub_128_ed2();
+	void sub_128_ee0();
+	void sub_128_f0a();
+
+	void sub_129_004();
+	void sub_129_764();
+	void sub_129_772();
+
+	void sub_130_004();
+	void sub_130_cea();
+	void sub_130_db0();
+	void sub_130_e82();
+	void sub_130_f48();
+	void sub_130_1002();
+
+	void sub_131_004();
+
+private:
+	// last tick count
+	uint32 var_i32_2;
+	int16 var_i16_6;
+	GrafPtr var_i32_8;
+	GrafPtr var_i32_c;
+
+	int16 var_i16_10;
+	int16 var_i16_12;
+	int16 var_i16_14;
+	int16 var_i16_16;
+
+	Graphics::Surface var_i32_32;
+	Common::Rect var_i16_38;
+
+	Graphics::Surface var_i32_40;
+
+	Graphics::Surface var_i32_4e;
+
+	Common::Rect var_i16_5c;
+	Common::Rect var_i16_64;
+	Common::Rect var_i16_6c;
+
+	// 1 for prologue, 2 for finale
+	int16 var_i16_1aa;
+
+	int32 var_i32_182;
+	int16 var_i16_18c;
+	int16 var_i16_18e;
+
+	int16 var_i16_1a4;
+
+	int16 var_i16_3e0;
+
+	// picture resource handles
+	Handle arr_i32_0[0x30] = { 0 };
+
+	Pattern arr_i16_194[5];
 
 
-	Graphics::Surface var_i32_32; // pointer to bitmap
-	Common::Rect var_i32_38; // pointer to rect
-	Graphics::Surface var_i32_40; // pointer to bitmap
-	Graphics::Surface var_i32_4e; // pointer to bitmap
-
+	Common::Rect arr_i16_1bc;
 	Common::Rect arr_i32_1c4;
 
-	Common::String var_str_76;
+	int16 arr_i16_1e8[1206] = { 0 };
+
+	uint32 arr_i32_41296[12] = { 0 };
+
+	int16 arr_i16_412ea[SCREEN_HEIGHT];
+
+	Common::Rect arr_i16_41af4;
+	Common::Rect arr_i16_41afc;
+	Common::Rect arr_i16_41b0a;
+
+	double arr_f64_41bbe[8] = { 0 };
+
+	Common::U32String var_str_76;
 
 	void run();
 };

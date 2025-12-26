@@ -57,7 +57,6 @@ Common::Error FoolEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	runGame();
 
 	return Common::kNoError;
 }
