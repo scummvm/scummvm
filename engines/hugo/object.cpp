@@ -303,12 +303,31 @@ void ObjectHandler::freeObjects() {
 int ObjectHandler::y2comp(const void *a, const void *b) {
 	debugC(6, kDebugObject, "y2comp");
 
-	const Object *p1 = &HugoEngine::get()._object->_objects[*(const byte *)a];
-	const Object *p2 = &HugoEngine::get()._object->_objects[*(const byte *)b];
+	byte index1 = *(const byte *)a;
+	byte index2 = *(const byte *)b;
+
+	const Object *p1 = &HugoEngine::get()._object->_objects[index1];
+	const Object *p2 = &HugoEngine::get()._object->_objects[index2];
 
 	if (p1 == p2)
 		// Why does qsort try the same indexes?
 		return 0;
+
+	// WORKAROUND: The original y2comp() is ambiguous when both objects have
+	// background priority or when both objects have foreground priority.
+	// The resulting sort order depends on the CRT's qsort implementation.
+	// The original only used Microsoft's qsort, which still happens to work,
+	// but our builds produce different results on other platforms and CRTs.
+	// The only affected objects are the parrot and secret passage in Hugo2,
+	// because they are the only ambiguously sorted objects that overlap.
+	// We work around this by keeping the sort order stable when the
+	// comparison would otherwise be ambiguous. This preserves the original
+	// result in the one scene that depends on it. Fixes the parrot when
+	// entering from the secret passage on Mac and AmigaOS. Bug #6054
+	if ((p1->_priority == kPriorityBackground && p2->_priority == kPriorityBackground) ||
+		(p1->_priority == kPriorityForeground && p2->_priority == kPriorityForeground)) {
+		return (index1 < index2) ? -1 : 1;
+	}
 
 	if (p1->_priority == kPriorityBackground)
 		return -1;
