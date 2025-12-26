@@ -36,13 +36,22 @@ CodeChunk::CodeChunk(Chunk &chunk) {
 
 ScriptValue CodeChunk::executeNextBlock() {
 	uint blockSize = _bytecode->readTypedUint32();
-	uint startingPos = _bytecode->pos();
+	int64 startingPos = _bytecode->pos();
+	debugC(7, kDebugScript, "%s: Entering new block (blockSize: %d, startingPos: %lld)",
+		__func__, blockSize, static_cast<long long int>(startingPos));
 
 	ScriptValue returnValue;
 	ExpressionType expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
 	while (expressionType != kExpressionTypeEmpty && !_returnImmediately) {
 		returnValue = evaluateExpression(expressionType);
 		expressionType = static_cast<ExpressionType>(_bytecode->readTypedUint16());
+
+		if (expressionType == kExpressionTypeEmpty) {
+			debugC(7, kDebugScript, "%s: Done executing block due to end of chunk", __func__);
+		}
+		if (_returnImmediately) {
+			debugC(7, kDebugScript, "%s: Done executing block due to script requesting immediate return", __func__);
+		}
 	}
 
 	// Verify we consumed the right number of script bytes.
@@ -67,6 +76,7 @@ ScriptValue CodeChunk::execute(Common::Array<ScriptValue> *args) {
 	// Rewind the stream once we're finished, in case we need to execute
 	// this code again!
 	_bytecode->seek(0);
+	_returnImmediately = false;
 	_locals.clear();
 	// We don't own the args, so we will prevent a potentially out-of-scope
 	// variable from being re-accessed.
