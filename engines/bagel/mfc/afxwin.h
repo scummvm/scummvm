@@ -50,6 +50,7 @@ namespace MFC {
 constexpr uint32 DEFAULT_MODAL_RESULT = MKTAG('S', 'C', 'V', 'M');
 
 class CBitmap;
+class CButton;
 class CCmdTarget;
 class CCmdUI;
 class CDC;
@@ -1430,6 +1431,10 @@ public:
 	}
 	void DestroyWindow();
 	void Invalidate(bool bErase = true);
+
+	// Message processing for modeless dialog-like windows
+	virtual bool IsDialogMessage(LPMSG lpMsg) { return false; }
+
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(char *lpszStringBuf, int nMaxCount) const;
 	bool SetWindowText(const char *lpszString);
@@ -1610,7 +1615,11 @@ private:
 		HINSTANCE hInst);
 	bool CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		CWnd *pParentWnd, HINSTANCE hInst);
-	CWnd *GetDefaultPushButton() const;
+	CButton *GetDefaultPushButton() const;
+
+	bool handleEnterKey(LPMSG lpMsg);
+	bool handleEscapeKey(LPMSG lpMsg);
+	void sendButtonClicked(CButton *btn);
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -1640,7 +1649,7 @@ public:
 	virtual bool OnInitDialog() {
 		return true;
 	}
-	bool PreTranslateMessage(MSG *pMsg) override;
+	bool IsDialogMessage(LPMSG lpMsg) override;
 
 	uint32 GetDefID() const;
 	void SetDefID(unsigned int nID);
@@ -1750,6 +1759,7 @@ public:
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnKillFocus(CWnd *pNewWnd);
 	afx_msg void OnTimer(uintptr nTimerId);
+	afx_msg unsigned int OnGetDlgCode();
 };
 
 class CScrollBar : public CWnd {

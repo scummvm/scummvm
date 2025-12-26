@@ -159,7 +159,7 @@ public:
 	EventLoop() {}
 	virtual ~EventLoop() {}
 
-	void runEventLoop();
+	void runEventLoop(bool isModalDialog);
 	void SetActiveWindow(CWnd *wnd);
 	void PopActiveWindow();
 	CWnd *GetActiveWindow() const {

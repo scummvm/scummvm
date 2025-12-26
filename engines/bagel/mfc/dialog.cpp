@@ -28,13 +28,13 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CDialog, CWnd)
 BEGIN_MESSAGE_MAP(CDialog, CWnd)
-ON_COMMAND(IDOK, CDialog::OnOK)
-ON_COMMAND(IDCANCEL, CDialog::OnCancel)
-ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
-ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
-ON_WM_SYSCHAR()
-ON_WM_CLOSE()
-ON_WM_ACTIVATE()
+	ON_COMMAND(IDOK, CDialog::OnOK)
+	ON_COMMAND(IDCANCEL, CDialog::OnCancel)
+	ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
+	ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
+	ON_WM_SYSCHAR()
+	ON_WM_CLOSE()
+	ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
 CDialog::CDialog(const char *lpszTemplateName, CWnd *pParentWnd) {
@@ -52,7 +52,7 @@ CDialog::CDialog(unsigned int nIDTemplate, CWnd *pParentWnd) {
 }
 
 bool CDialog::Create(const char *lpszTemplateName,
-        CWnd *pParentWnd) {
+	CWnd *pParentWnd) {
 	m_lpszTemplateName = lpszTemplateName;  // used for help
 	SetParent(pParentWnd);
 
@@ -109,7 +109,7 @@ int CDialog::DoModal() {
 		m_pParentWnd = AfxGetApp()->m_pMainWnd;
 
 	if (CreateDlgIndirect(lpDialogTemplate,
-			this /*m_pParentWnd*/, hInst)) {
+		this /*m_pParentWnd*/, hInst)) {
 		AfxGetApp()->doModal(this);
 	}
 
@@ -221,41 +221,15 @@ LRESULT CDialog::HandleSetFont(WPARAM wParam, LPARAM) {
 	return 0;
 }
 
-bool CDialog::PreTranslateMessage(MSG *pMsg) {
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) {
-		CWnd *pFocus = GetFocus();
-
-		// Special case: prevent multi-line edit controls from handling Enter
-		if (pFocus && pFocus->IsKindOf(RUNTIME_CLASS(CEdit))) {
-			uint32 style = pFocus->GetStyle();
-			if ((style & ES_MULTILINE) == 0) {
-				// Not a multi-line edit box - simulate default pushbutton
-				CWnd *pDefault = GetDefaultPushButton();
-				if (pDefault) {
-					pDefault->SendMessage(WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)pDefault->m_hWnd);
-
-				} else {
-					// No button - just call OnOK directly
-					OnOK();
-				}
-
-				return true;
-			}
-		}
-	} else if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) {
-		OnCancel();
-		return true;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
-}
-
-CWnd *CDialog::GetDefaultPushButton() const {
+CButton *CDialog::GetDefaultPushButton() const {
 	for (auto &child : _children) {
-		CWnd *pChild = child._value;
-		uint32 style = pChild->GetStyle();
-		if ((style & BS_DEFPUSHBUTTON) && pChild->GetDlgCtrlID() == IDOK) {
-			return pChild;
+		CButton *pChild = dynamic_cast<CButton *>(child._value);
+
+		if (pChild) {
+			uint32 style = pChild->GetStyle();
+			if ((style & BS_DEFPUSHBUTTON) && pChild->GetDlgCtrlID() == IDOK) {
+				return pChild;
+			}
 		}
 	}
 
@@ -267,7 +241,7 @@ void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {
 }
 
 void CDialog::DDX_Radio(CDataExchange *pDX,
-                        int nIDCButton1, int &value) {
+	int nIDCButton1, int &value) {
 	error("TODO: CDialog::DDX_Radio");
 }
 
@@ -297,12 +271,12 @@ void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, double &value) {
 }
 
 void CDialog::DDX_Check(CDataExchange *pDX,
-                        int nIDC, bool value) {
+	int nIDC, bool value) {
 	error("CDialog::DDX_Check");
 }
 
 void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
-                            int value, int nMin, int nMax) {
+	int value, int nMin, int nMax) {
 	error("TODO: CDialog::DDV_MinMaxInt");
 }
 
@@ -331,12 +305,12 @@ void CDialog::OnCancel() {
 }
 
 bool CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
-		CWnd *pParentWnd, void *lpDialogInit, HINSTANCE hInst) {
+	CWnd *pParentWnd, void *lpDialogInit, HINSTANCE hInst) {
 	error("TODO: CDialog::CreateIndirect");
 }
 
 bool CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
-		CWnd *pParentWnd, HINSTANCE hInst) {
+	CWnd *pParentWnd, HINSTANCE hInst) {
 	error("TODO: CDialog::CreateIndirect");
 }
 
@@ -372,6 +346,69 @@ void CDialog::OnActivate(unsigned int nState, CWnd *pWndOther, bool bMinimized) 
 	}
 
 	CWnd::OnActivate(nState, pWndOther, bMinimized);
+}
+
+bool CDialog::IsDialogMessage(LPMSG lpMsg) {
+	if (lpMsg->message != WM_KEYDOWN)
+		return false;
+
+	switch (lpMsg->wParam) {
+	case VK_RETURN:
+		return handleEnterKey(lpMsg);
+
+	case VK_ESCAPE:
+		return handleEscapeKey(lpMsg);
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool CDialog::handleEnterKey(LPMSG lpMsg) {
+	HWND hFocus = GetFocus();
+	if (!hFocus)
+		return false;
+
+	// Ask control what it wants
+	LRESULT dlgCode = MFC::SendMessage(hFocus, WM_GETDLGCODE,
+		lpMsg->wParam, (LPARAM)lpMsg);
+
+	// If control wants Enter, do nothing
+	if (dlgCode & DLGC_WANTMESSAGE)
+		return false;
+
+	// Multiline edits implicitly want Enter
+	if (dlgCode & DLGC_HASSETSEL)
+		return false;
+
+	// Find default push button
+	CButton *pDefault = GetDefaultPushButton();
+	if (!pDefault)
+		return false;
+
+	if (!pDefault->IsWindowEnabled())
+		// consume Enter, do nothing
+		return true;
+
+	// Simulate button click
+	sendButtonClicked(pDefault);
+	return true;
+}
+
+bool CDialog::handleEscapeKey(LPMSG lpMsg) {
+	CButton *pCancel = dynamic_cast<CButton *>(GetDlgItem(IDCANCEL));
+	if (!pCancel || !pCancel->IsWindowEnabled())
+		return true;
+
+	sendButtonClicked(pCancel);
+	return true;
+}
+
+void CDialog::sendButtonClicked(CButton *btn) {
+	int id = btn->GetDlgCtrlID();
+	SendMessage(WM_COMMAND, MAKEWPARAM(id, BN_CLICKED), (LPARAM)btn->m_hWnd);
 }
 
 } // namespace MFC

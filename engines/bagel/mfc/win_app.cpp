@@ -166,7 +166,7 @@ int CWinApp::Run() {
 		SetActiveWindow(m_pMainWnd);
 	}
 
-	runEventLoop();
+	runEventLoop(false);
 
 	SaveAllModified();
 	ExitInstance();

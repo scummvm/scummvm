@@ -31,7 +31,7 @@ namespace Libs {
 
 #define FRAME_RATE 50
 
-void EventLoop::runEventLoop() {
+void EventLoop::runEventLoop(bool isModalDialog) {
 	MSG msg;
 
 	while (!shouldQuit() && !_activeWindows.empty()) {
@@ -43,7 +43,8 @@ void EventLoop::runEventLoop() {
 			break;
 
 		CWnd *mainWnd = GetActiveWindow();
-		if (msg.message != WM_NULL && mainWnd && !mainWnd->PreTranslateMessage(&msg)) {
+		if (msg.message != WM_NULL && mainWnd && !mainWnd->PreTranslateMessage(&msg) &&
+				(!isModalDialog || !mainWnd->IsDialogMessage(&msg))) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -90,7 +91,7 @@ void EventLoop::PopActiveWindow() {
 
 void EventLoop::doModal(CWnd *wnd) {
 	SetActiveWindow(wnd);
-	runEventLoop();
+	runEventLoop(true);
 	if (GetActiveWindow() == wnd)
 		wnd->DestroyWindow();
 }
