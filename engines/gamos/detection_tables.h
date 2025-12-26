@@ -103,6 +103,19 @@ const GamosGameDescription gameDescriptions[] = {
 		{
 			"pilots",
 			0,
+			AD_ENTRY1s("pildemo.exe", "t:a1bbaa7e59f69cb2be3223c3336982ac", 10770038),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		"pildemo.exe",
+		0x80000016
+	},
+	{
+		{
+			"pilots",
+			0,
 			AD_ENTRY1s("pilotsrd.exe", "t:a1bbaa7e59f69cb2be3223c3336982ac", 10770038),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
