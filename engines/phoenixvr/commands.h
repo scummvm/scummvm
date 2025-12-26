@@ -194,14 +194,23 @@ struct Cmp : public Script::Command {
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("cmp %s %s %s %s %d", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1);
+		bool r;
+		auto value0 = g_engine->getVariable(arg0);
 		if (op == "==") {
-			auto value0 = g_engine->getVariable(arg0);
-			bool r = value0 == arg1;
-			g_engine->setVariable(var, r);
-			g_engine->setVariable(negativeVar, !r);
+			r = value0 == arg1;
+		} else if (op == "<") {
+			r = value0 < arg1;
+		} else if (op == "<=") {
+			r = value0 <= arg1;
+		} else if (op == ">") {
+			r = value0 > arg1;
+		} else if (op == ">=") {
+			r = value0 >= arg1;
 		} else {
 			error("invalid cmp op %s", op.c_str());
 		}
+		g_engine->setVariable(var, r);
+		g_engine->setVariable(negativeVar, !r);
 	}
 };
 
