@@ -46,15 +46,17 @@ private:
 	void drawScene();
 
 	/**
-	 * Draws the dialog message
-	 */
-	void drawDialogMessage();
-
-	/**
 	 * Draws a business name or other information like
 	 * container container for searches
 	 */
 	void drawDescriptionLine();
+
+protected:
+	/**
+	 * Draws the dialog message
+	 */
+	virtual void drawDialogMessage();
+
 public:
 	GameView(UIElement *owner);
 	virtual ~GameView() {}
