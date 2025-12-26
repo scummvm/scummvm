@@ -126,6 +126,9 @@ int CDialog::DoModal() {
 	if (oldFocus && AfxGetApp()->GetActiveWindow() == oldWin)
 		oldFocus->SetFocus();
 
+	if (_modalResult == DEFAULT_MODAL_RESULT)
+		_modalResult = -1;
+
 	return _modalResult;
 }
 
