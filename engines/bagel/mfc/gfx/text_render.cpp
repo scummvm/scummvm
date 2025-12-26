@@ -95,6 +95,9 @@ CSize TextRender::renderText(const Common::String &str,
 				lineRect.top);
 		}
 
+		lineRect.left = MAX<int16>(lineRect.left, 0);
+		lineRect.right = MIN<int16>(lineRect.right, dest->w);
+
 		// If the background is opaque, clear it
 		if (bkMode == OPAQUE)
 			dest->fillRect(lineRect, bkColor);
