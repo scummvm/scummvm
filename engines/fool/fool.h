@@ -41,20 +41,13 @@ namespace Fool {
 
 struct FoolGameDescription;
 
-class FoolEngine : public Engine, public Events {
+class FoolEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 protected:
 	// Engine APIs
 	Common::Error run() override;
-
-	/**
-	 * Returns true if the game should quit
-	 */
-	bool shouldQuit() const override {
-		return Engine::shouldQuit();
-	}
 
 public:
 	FoolEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -81,10 +74,10 @@ public:
 		    (f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
 
