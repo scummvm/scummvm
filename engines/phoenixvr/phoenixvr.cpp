@@ -563,6 +563,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	for (auto &name : _script->getVarNames()) {
 		auto value = ms.readUint32LE();
 		debug("var %s: %u", name.c_str(), value);
+		g_engine->setVariable(name, value);
 	}
 	debug("vars end at %08lx", ms.pos());
 	auto currentSubroutine = ms.readSint32LE();
