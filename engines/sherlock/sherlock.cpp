@@ -354,6 +354,7 @@ void SherlockEngine::detect3DOAssets() {
 	// Base paths candidates where 3DO assets might be located
 	const char *basePaths[] = {
 		"",
+		"Movies",
 		"HolmesData/",
 		"HolmesData/videos/",
 		"videos/",
@@ -371,7 +372,7 @@ void SherlockEngine::detect3DOAssets() {
 			if (filename.size() < 5) continue;
 
 			Common::String roomNum = filename.substr(3, 2);
-			Common::String streamPath = Common::String::format("Movies/%s/%s.stream",
+			Common::String streamPath = Common::String::format("%s/%s.stream",
 			                                                    roomNum.c_str(), filename.c_str());
 			Common::Path testPath = Common::Path(basePaths[baseIdx]).join(streamPath);
 

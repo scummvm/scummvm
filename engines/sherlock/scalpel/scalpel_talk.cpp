@@ -37,7 +37,7 @@ namespace Sherlock {
 namespace Scalpel {
 
 // Helper function to extract the base filename from a full path
-// e.g. "Movies/03/lst03aec.stream" -> "lst03aec"
+// e.g. "03/lst03aec.stream" -> "lst03aec"
 Common::String getBaseFilenameFromPath(const Common::String &fullPath) {
     size_t lastSlashPos = fullPath.findLastOf('/');
     Common::String filenameWithExt;
@@ -1430,7 +1430,7 @@ bool ScalpelTalk::play3DOConversationAudio(const Common::String &videoFile) {
 
 Common::String ScalpelTalk::get3DOVideoFile(int talkIndex, int speechIndex) {
 	// Dynamic 3DO video filename generation
-	// Pattern: Movies/{room:02d}/{prefix}{room:02d}{last_char}{selector}{subindex}.stream
+	// Pattern: {room:02d}/{prefix}{room:02d}{last_char}{selector}{subindex}.stream
 	// Where prefix = scriptName[0] + scriptName[2] + scriptName[3] (skip 2nd char), lowercased
 
 	// Get current room number
@@ -1479,9 +1479,9 @@ Common::String ScalpelTalk::get3DOVideoFile(int talkIndex, int speechIndex) {
 	char selectorChar = 'a' + selector;
 	char subindexChar = 'a' + subindex;
 
-	// Build filename: Movies/39/wgg39aaa.stream
+	// Build filename: 39/wgg39aaa.stream
 	Common::String videoFile = Common::String::format(
-		"Movies/%02d/%s%02d%c%c%c.stream",
+		"%02d/%s%02d%c%c%c.stream",
 		roomNum,
 		prefix,
 		roomNum,
