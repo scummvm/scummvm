@@ -163,6 +163,51 @@ char *hugo_strlwr(char *buffer) {
 	return result;
 }
 
+/**
+ * Translate a keycode to a direction value enum
+ */
+Direction getDirection(const uint16 keyCode)
+{
+	switch (keyCode)
+	{
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		return kDirectionTop;
+
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		return kDirectionBottom;
+
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		return kDirectionLeft;
+
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		return kDirectionRight;
+
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
+		return kDirectionTopLeft;
+
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
+		return kDirectionBottomLeft;
+
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_KP9:
+		return kDirectionTopLeft;
+
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP3:
+		return kDirectionBottomRight;
+
+	default:
+		break;
+	}
+	return kDirectionNone;
+}
+
 #ifdef USE_TTS
 
 void sayText(const Common::String &text, Common::TextToSpeechManager::Action action, bool replaceNewlines) {

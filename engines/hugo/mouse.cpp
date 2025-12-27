@@ -99,8 +99,8 @@ int MouseHandler::getMouseY() const {
 	return _mouseY;
 }
 
-int16 MouseHandler::getDirection(const int16 hotspotId) const {
-	return _hotspots[hotspotId]._direction;
+Direction MouseHandler::getDirection(const int16 hotspotId) const {
+	return Utils::getDirection(_hotspots[hotspotId]._direction);
 }
 
 int16 MouseHandler::getHotspotActIndex(const int16 hotspotId) const {
@@ -253,9 +253,10 @@ void MouseHandler::processLeftClick(const int16 objId, const int16 cx, const int
 					_vm->_inventory->setInventoryState(kInventoryUp);
 				_vm->_scheduler->insertActionList(_hotspots[i]._actIndex);
 			} else {    // Set up route to exit spot
-				if (_hotspots[i]._direction == Common::KEYCODE_RIGHT)
+				Direction direction = getDirection(i);
+				if (direction == kDirectionRight)
 					x -= kHeroMaxWidth;
-				else if (_hotspots[i]._direction == Common::KEYCODE_LEFT)
+				else if (direction == kDirectionLeft)
 					x += kHeroMaxWidth;
 				if (!_vm->_route->startRoute(kRouteExit, i, x, y))
 					Utils::notifyBox(_vm->_text->getTextMouse(kMsNoWayText)); // Can't get there

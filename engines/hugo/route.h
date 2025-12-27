@@ -30,6 +30,7 @@
 #define HUGO_ROUTE_H
 
 #include "common/rect.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
@@ -52,8 +53,8 @@ public:
 
 	void processRoute();
 	bool startRoute(const RouteType routeType, const int16 objId, int16 cx, int16 cy);
-	void setDirection(const uint16 direction);
-	void setWalk(const uint16 direction);
+	void setDirection(const Direction direction);
+	void setWalk(const Direction direction);
 
 private:
 	HugoEngine *_vm;
@@ -63,7 +64,7 @@ private:
 	static const int kMaxSeg = 256;                 // Maximum number of segments
 	static const int kMaxNodes = 256;               // Maximum nodes in route
 
-	uint16 _oldWalkDirection;                       // Last direction char
+	Direction _oldWalkDirection;                    // Last direction char
 
 	int16     _routeIndex;                          // Index into route list, or -1
 	RouteType _routeType;                           // Purpose of an automatic route

@@ -30,6 +30,7 @@
 #define HUGO_MOUSE_H
 
 #include "hugo/game.h"
+#include "hugo/util.h"
 
 namespace Common {
 class ReadStream;
@@ -55,7 +56,7 @@ public:
 	int  getMouseX() const;
 	int  getMouseY() const;
 
-	int16 getDirection(const int16 hotspotId) const;
+	Direction getDirection(const int16 hotspotId) const;
 	int16 getHotspotActIndex(const int16 hotspotId) const;
 
 	void  drawHotspots() const;
