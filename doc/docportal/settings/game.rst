@@ -1162,6 +1162,13 @@ TTS Narrator
 
 	*tts_narrator*
 
+.. _talkie_mode:
+
+Enable Serrated Scalpel speech
+	Controls speech/talkie mode in the PC version of Serrated Scalpel. Requires 3DO ``.stream`` files to be present in the game directory under under 'Movies' or 'HolmesData/Movies' or 'HolmesData/videos' or 'videos' or '3DO'.. Options: 0 = Disabled (original PC mode), 1 = Audio enabled (Portraits with speech). Defaults to enabled when 3DO assets are detected.
+
+	*talkie_mode*
+
 ,,,,,,,,,,
 
 .. _Sky:

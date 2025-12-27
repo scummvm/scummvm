@@ -113,6 +113,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+                GAMEOPTION_TALKIE_MODE,
+                {
+                        _s("Enable speech"),
+                        _s("Play speech in PC version (requires 3DO .stream files)"),
+                        "talkie_mode",
+                        true,
+                        0,
+                        0
+      }
+      },
+
 #ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
