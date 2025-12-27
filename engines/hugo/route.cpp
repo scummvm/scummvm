@@ -68,27 +68,43 @@ int16 Route::getRouteIndex() const {
 /**
  * Face hero in new direction, based on cursor key input by user.
  */
-void Route::setDirection(const uint16 direction) {
-	debugC(1, kDebugRoute, "setDirection(%d)", direction);
+void Route::setDirection(const uint16 keyCode) {
+	debugC(1, kDebugRoute, "setDirection(%d)", keyCode);
 
 	Object *obj = _vm->_hero;                     // Pointer to hero object
 
 	// Set first image in sequence
-	switch (direction) {
-	case kActionMoveTop:
+	switch (keyCode) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		obj->_currImagePtr = obj->_seqList[SEQ_UP]._seqPtr;
 		break;
-	case kActionMoveBottom:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
 		obj->_currImagePtr = obj->_seqList[SEQ_DOWN]._seqPtr;
 		break;
-	case kActionMoveLeft:
-	case kActionMoveTopLeft:
-	case kActionMoveBottomLeft:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
 		obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 		break;
-	case kActionMoveRight:
-	case kActionMoveTopRight:
-	case kActionMoveBottomRight:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
+		break;
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
+		obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
+		break;
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
+		obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
+		break;
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_KP9:
+		obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+	case Common::KEYCODE_KP3:
 		obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 		break;
 	default:
@@ -115,39 +131,46 @@ void Route::setWalk(const uint16 direction) {
 		// Direction has changed
 		setDirection(direction);                    // Face new direction
 		obj->_vx = obj->_vy = 0;
-
-		switch (direction) {
-		case kActionMoveTop:
+		switch (direction) {                        // And set correct velocity
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
 			obj->_vy = -kStepDy;
 			break;
-		case kActionMoveBottom:
-			obj->_vy = kStepDy;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
+			obj->_vy =  kStepDy;
 			break;
-		case kActionMoveLeft:
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
 			obj->_vx = -kStepDx;
 			break;
-		case kActionMoveRight:
-			obj->_vx = kStepDx;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
+			obj->_vx =  kStepDx;
 			break;
-		case kActionMoveTopLeft:
+		case Common::KEYCODE_HOME:
+		case Common::KEYCODE_KP7:
 			obj->_vx = -kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
 			obj->_vy = -kStepDy / 2;
 			break;
-		case kActionMoveTopRight:
-			obj->_vx = kStepDx;
+		case Common::KEYCODE_END:
+		case Common::KEYCODE_KP1:
+			obj->_vx = -kStepDx;
+			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
+			obj->_vy =  kStepDy / 2;
+			break;
+		case Common::KEYCODE_PAGEUP:
+		case Common::KEYCODE_KP9:
+			obj->_vx =  kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
 			obj->_vy = -kStepDy / 2;
 			break;
-		case kActionMoveBottomLeft:
-			obj->_vx = -kStepDx;
-			// Note: in v1 Dos and v2 Dos, obj->vy is set to -DY
-			obj->_vy = kStepDy / 2;
-			break;
-		case kActionMoveBottomRight:
-			obj->_vx = kStepDx;
+		case Common::KEYCODE_PAGEDOWN:
+		case Common::KEYCODE_KP3:
+			obj->_vx =  kStepDx;
 			// Note: in v1 Dos and v2 Dos, obj->vy is set to DY
-			obj->_vy = kStepDy / 2;
+			obj->_vy =  kStepDy / 2;
 			break;
 		default:
 			break;

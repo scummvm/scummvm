@@ -52,7 +52,7 @@ public:
 
 	void processRoute();
 	bool startRoute(const RouteType routeType, const int16 objId, int16 cx, int16 cy);
-	void setDirection(const uint16 direction);
+	void setDirection(const uint16 keyCode);
 	void setWalk(const uint16 direction);
 
 private:
