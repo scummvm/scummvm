@@ -27,6 +27,7 @@
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Sound {
@@ -118,6 +119,9 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	// Assure no prior sound for the channel is playing
 	stop(channel);
 
+	if (!loop)
+		g_engine->drawSubtitle(name);
+
 	// Load in the new sound
 	preload(name, false, room_num);
 	DigiEntry &entry = _sounds[name];
@@ -164,6 +168,7 @@ void Digi::stop(uint channel, bool calledFromUnload) {
 		_mixer->stopHandle(c._soundHandle);
 		c._trigger = -1;
 		c._name.clear();
+		g_engine->clearSubtitle();
 
 		if (!calledFromUnload) {
 			digi_unload(name);

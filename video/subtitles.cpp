@@ -284,7 +284,9 @@ Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(tr
 }
 
 Subtitles::~Subtitles() {
+	close();
 	_surface.free();
+
 	for (const auto &font : _fonts) {
 		FontMan.mayDeleteFont(font._value);
 	}
@@ -331,10 +333,19 @@ void Subtitles::setFont(const char *fontname, int height, FontStyle type) {
 void Subtitles::loadSRTFile(const Common::Path &fname) {
 	debug(1, "loadSRTFile('%s')", fname.toString().c_str());
 
-	if (_subtitleDev) {
+	if (_subtitleDev)
 		_fname = fname;
-	}
-	_loaded = _srtParser.parseFile(fname);
+
+	_srtParser = new SRTParser();
+	_loaded = _srtParser->parseFile(fname);
+}
+
+void Subtitles::close() {
+	_loaded = false;
+	_parts = nullptr;
+	_fname.clear();
+	delete _srtParser;
+	_srtParser = nullptr;
 }
 
 void Subtitles::setBBox(const Common::Rect &bbox) {
@@ -359,37 +370,7 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
-	const Common::Array<SubtitlePart> *parts;
-	bool isSFX = false;
-	if (_loaded) {
-		parts = _srtParser.getSubtitleParts(timestamp);
-		if (parts && !parts->empty()) {
-			isSFX = (*parts)[0].tag == "sfx";
-		}
-	} else if (_subtitleDev) {
-		// Force refresh
-		_parts = nullptr;
-
-		Common::String subtitle = _fname.toString('/');
-		uint32 hours, mins, secs, msecs;
-		secs = timestamp / 1000;
-		hours = secs / 3600;
-		mins = (secs / 60) % 60;
-		secs %= 60;
-		msecs = timestamp % 1000;
-		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
-
-		if (_devParts.empty()) {
-			_devParts.push_back(SubtitlePart("", ""));
-		}
-		_devParts[0].text = subtitle;
-
-		parts = &_devParts;
-	} else {
-		return false;
-	}
-
+bool Subtitles::recalculateBoundingBox() const {
 	int16 width = g_system->getOverlayWidth(),
 		  height = g_system->getOverlayHeight();
 
@@ -421,8 +402,44 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 			_realBBox.left = 0;
 		}
 
-		force = true;
+		return true;
 	}
+
+	return false;
+}
+
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
+	const Common::Array<SubtitlePart> *parts;
+	bool isSFX = false;
+	if (_loaded && _srtParser) {
+		parts = _srtParser->getSubtitleParts(timestamp);
+		if (parts && !parts->empty()) {
+			isSFX = (*parts)[0].tag == "sfx";
+		}
+	} else if (_subtitleDev) {
+		// Force refresh
+		_parts = nullptr;
+
+		Common::String subtitle = _fname.toString('/');
+		uint32 hours, mins, secs, msecs;
+		secs = timestamp / 1000;
+		hours = secs / 3600;
+		mins = (secs / 60) % 60;
+		secs %= 60;
+		msecs = timestamp % 1000;
+		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
+
+		if (_devParts.empty()) {
+			_devParts.push_back(SubtitlePart("", ""));
+		}
+		_devParts[0].text = subtitle;
+
+		parts = &_devParts;
+	} else {
+		return false;
+	}
+
+	force |= recalculateBoundingBox();
 
 	if (!force && _overlayHasAlpha && parts == _parts)
 		return false;

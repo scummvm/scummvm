@@ -50,9 +50,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(sy
 	g_engine = this;
 }
 
-M4Engine::~M4Engine() {
-}
-
 void M4Engine::initializePath(const Common::FSNode &gamePath) {
 	Engine::initializePath(gamePath);
 	SearchMan.addSubDirectoryMatching(gamePath, "goodstuf");
@@ -88,6 +85,8 @@ Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
 	syncSoundSettings();
+
+	_subtitles.load();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();

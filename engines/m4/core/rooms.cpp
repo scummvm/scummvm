@@ -328,6 +328,7 @@ void Sections::game_control_cycle() {
 		// Ensure the screen is updated
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		g_engine->updateSubtitleOverlay();
 
 		if (g_engine->shouldQuit())
 			_G(kernel).going = false;
