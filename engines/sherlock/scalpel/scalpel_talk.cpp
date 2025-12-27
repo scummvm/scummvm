@@ -968,22 +968,20 @@ int ScalpelTalk::waitLoop(int delay) {
 }
 
 int ScalpelTalk::waitForMore(int delay) {
-	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
+       ScalpelEngine &vm = *(ScalpelEngine *)_vm;
 
-	// Handle native 3DO version - always play video for each text page
-	// (Original behavior: each page has its own video clip)
-	if (IS_3DO) {
-		return handle3DONative();
-	}
+       if (IS_3DO) {
+           return handle3DONative();
+       }
 
-	// Handle PC version with 3DO talkie mode enabled
-	if (vm.getTalkieMode() == SherlockEngine::TALKIE_AUDIO_ONLY) {
-		if (handleTalkieMode())
-			return 254;
-	}
+       if (vm.getTalkieMode() == SherlockEngine::TALKIE_AUDIO_ONLY) {
+           if (handleTalkieMode())
+               return 254;
+           return waitLoop(delay);  // Only talkie uses waitLoop
+       }
 
-	// Custom Wait Loop (Replaces Talk::waitForMore)
-	return waitLoop(delay);
+       // Non-talkie: use original base class
+       return Talk::waitForMore(delay);
 }
 
 bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
