@@ -19,40 +19,26 @@
  *
  */
 
-#include "engines/util.h"
-#include "ultima/ultima0/sdw.h"
-#include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/akalabeth.h"
-#include "ultima/ultima0/sdw.h"
+#include "ultima/ultima0/messages.h"
 
 namespace Ultima {
 namespace Ultima0 {
 
-Ultima0Engine *g_engine;
-
-Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0") {
-	g_engine = this;
-}
-
-Ultima0Engine::~Ultima0Engine() {
-}
-
-Common::Error Ultima0Engine::run() {
-	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
-
-	runGame();
-
-#if 0
-	Display = new Graphics::Screen();
-	GameSpeed = 120;
-
-	// Call the real main program
-//	MAINStart();
-
-	delete Display;
-#endif
-	return Common::kNoError;
+MouseMessage::MouseMessage(Common::EventType type,
+	const Common::Point &pos) : Message(), _pos(pos) {
+	switch (type) {
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
+		_button = MB_RIGHT;
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
+		_button = MB_MIDDLE;
+		break;
+	default:
+		_button = MB_LEFT;
+		break;
+	}
 }
 
 } // namespace Ultima0

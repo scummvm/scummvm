@@ -9,6 +9,8 @@ MODULE_OBJS := \
 ifdef ENABLE_AKALABETH
 MODULE_OBJS += \
 	ultima0/ultima0.o \
+	ultima0/events.o \
+	ultima0/messages.o \
 	ultima0/attack.o \
 	ultima0/british.o \
 	ultima0/ddraw.o \
@@ -26,7 +28,9 @@ MODULE_OBJS += \
 	ultima0/player.o \
 	ultima0/sdw.o \
 	ultima0/town.o \
-	ultima0/world.o
+	ultima0/world.o \
+	ultima0/views/view.o \
+	ultima0/views/startup.o
 endif
 
 ifdef ENABLE_ULTIMA1

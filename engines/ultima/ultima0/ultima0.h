@@ -26,11 +26,12 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/ultima0/defines.h"
+#include "ultima/ultima0/events.h"
 
 namespace Ultima {
 namespace Ultima0 {
 
-class Ultima0Engine : public Engine {
+class Ultima0Engine : public Engine, public Events {
 private:
 	Common::RandomSource _randomSource;
 
@@ -43,6 +44,13 @@ protected:
 public:
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;
+
+	/**
+	 * Returns true if the game should quit
+	 */
+	bool shouldQuit() const override {
+		return Engine::shouldQuit();
+	}
 
 	/**
 	 * Returns supported engine features

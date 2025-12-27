@@ -19,41 +19,21 @@
  *
  */
 
-#include "engines/util.h"
-#include "ultima/ultima0/sdw.h"
-#include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/akalabeth.h"
-#include "ultima/ultima0/sdw.h"
+#ifndef ULTIMA_ULTIMA0_VIEWS_H
+#define ULTIMA_ULTIMA0_VIEWS_H
+
+#include "ultima/ultima0/views/startup.h"
 
 namespace Ultima {
 namespace Ultima0 {
+namespace Views {
 
-Ultima0Engine *g_engine;
+struct Views {
+	Startup _startup;
+};
 
-Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0") {
-	g_engine = this;
-}
-
-Ultima0Engine::~Ultima0Engine() {
-}
-
-Common::Error Ultima0Engine::run() {
-	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
-
-	runGame();
-
-#if 0
-	Display = new Graphics::Screen();
-	GameSpeed = 120;
-
-	// Call the real main program
-//	MAINStart();
-
-	delete Display;
-#endif
-	return Common::kNoError;
-}
-
+} // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif
