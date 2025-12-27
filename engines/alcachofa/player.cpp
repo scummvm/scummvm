@@ -160,6 +160,7 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera, 
 void Player::changeRoomToBeforeInventory() {
 	assert(_roomBeforeInventory != nullptr);
 	changeRoom(_roomBeforeInventory->name(), true);
+	_roomBeforeInventory = nullptr;
 }
 
 MainCharacter *Player::inactiveCharacter() const {
