@@ -21,6 +21,7 @@
 
 namespace Ultima {
 
+#define GUI_OPTIONS_ULTIMA0	GUIO0()
 #define GUI_OPTIONS_ULTIMA1	GUIO0()
 #define GUI_OPTIONS_ULTIMA4	GUIO1(GUIO_NOSPEECH)
 #define GUI_OPTIONS_ULTIMA6	GUIO0()
@@ -45,7 +46,42 @@ namespace Ultima {
 // Ultima 6 normal mode only - unstable (currently only used for the PC98 version)
 #define ENTRY_ULTIMA6_NORMAL_UNSTABLE(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_UNSTABLE, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
 
+static const PlainGameDescriptor ULTIMA_GAMES[] = {
+	{ "akalabeth", "Akalabeth: World of Doom" },
+#ifndef RELEASE_BUILD
+	{ "ultima1", "Ultima I: The First Age of Darkness" },
+#endif
+	{ "ultima4", "Ultima IV: Quest of the Avatar" },
+	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
+	{ "ultima6", "Ultima VI: The False Prophet" },
+	{ "ultima6_enh", "Ultima VI: The False Prophet - Enhanced" },
+	{ "ultima8", "Ultima VIII: Pagan" },
+	{ "remorse", "Crusader: No Remorse" },
+	{ "regret", "Crusader: No Regret" },
+
+	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
+	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
+	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
+	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
+	{ 0, 0 }
+};
+
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
+	{
+		// Akalabeth: World of Doom
+		{
+			"akalabeth",
+			nullptr,
+			AD_ENTRY1s("ak.dat", "f083346a49f450319a624d170a55d9e3", 17241),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA0
+		},
+		GAME_AKALABETH,
+		0
+	},
+
 	{
 		// Ultima I - The First Age of Darkness
 		{

@@ -19,19 +19,37 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_RESOURCES_H
-#define ULTIMA_ULTIMA0_RESOURCES_H
-
-#include "ultima/shared/engine/resources.h"
+#include "engines/util.h"
+#include "ultima/ultima0/sdw.h"
+#include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/akalabeth.h"
+#include "ultima/ultima0/sdw.h"
 
 namespace Ultima {
 namespace Ultima0 {
 
-class Resources : public Shared::LocalResourceFile {
+Ultima0Engine *g_engine;
 
-};
+Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0") {
+	g_engine = this;
+}
 
-} // End of namespace Ultima0
-} // End of namespace Ultima
+Ultima0Engine::~Ultima0Engine() {
+}
 
-#endif
+Common::Error Ultima0Engine::run() {
+	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
+	Display = new Graphics::Screen();
+	GameSpeed = 120;
+
+	// Call the real main program
+	MAINStart();
+
+	delete Display;
+
+	return Common::kNoError;
+}
+
+} // namespace Ultima0
+} // namespace Ultima

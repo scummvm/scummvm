@@ -19,19 +19,54 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_RESOURCES_H
-#define ULTIMA_ULTIMA0_RESOURCES_H
+#ifndef ULTIMA_ULTIMA0_H
+#define ULTIMA_ULTIMA0_H
 
-#include "ultima/shared/engine/resources.h"
+#include "common/random.h"
+#include "engines/engine.h"
+#include "ultima/detection.h"
+#include "ultima/ultima0/defines.h"
 
 namespace Ultima {
 namespace Ultima0 {
 
-class Resources : public Shared::LocalResourceFile {
+class Ultima0Engine : public Engine {
+private:
+	Common::RandomSource _randomSource;
 
+	const UltimaGameDescription *_gameDescription;
+
+protected:
+	// Engine APIs
+	Common::Error run() override;
+
+public:
+	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
+	~Ultima0Engine() override;
+
+	/**
+	 * Returns supported engine features
+	 */
+	bool hasFeature(EngineFeature f) const override {
+		return (f == kSupportsReturnToLauncher);
+	}
+
+	/**
+	 * Sets the random number seed
+	 */
+	void setRandomSeed(uint seed) {
+		_randomSource.setSeed(seed);
+	}
+
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(uint maxVal = RND_MAX) { return _randomSource.getRandomNumber(maxVal); }
 };
 
-} // End of namespace Ultima0
+extern Ultima0Engine *g_engine;
+
+} // End of namespace Ultima4
 } // End of namespace Ultima
 
 #endif

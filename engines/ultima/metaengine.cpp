@@ -27,6 +27,9 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/translation.h"
+#ifdef ENABLE_AKALABETH
+#include "ultima/ultima0/ultima0.h"
+#endif
 #ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
 #endif
@@ -181,6 +184,11 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 
 Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Ultima::UltimaGameDescription *gd) const {
 	switch (gd->gameId) {
+#ifdef ENABLE_AKALABETH
+	case Ultima::GAME_AKALABETH:
+		*engine = new Ultima::Ultima0::Ultima0Engine(syst, gd);
+		break;
+#endif
 #ifdef ENABLE_ULTIMA1
 	case Ultima::GAME_ULTIMA1:
 		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);

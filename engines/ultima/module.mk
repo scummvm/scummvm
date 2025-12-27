@@ -6,6 +6,29 @@ MODULE_OBJS := \
 	shared/conf/xml_tree.o \
 	shared/engine/data_archive.o
 
+ifdef ENABLE_AKALABETH
+MODULE_OBJS += \
+	ultima0/ultima0.o \
+	ultima0/attack.o \
+	ultima0/british.o \
+	ultima0/ddraw.o \
+	ultima0/dead.o \
+	ultima0/draw.o \
+	ultima0/draw2.o \
+	ultima0/draw3.o \
+	ultima0/dungeon.o \
+	ultima0/globals.o \
+	ultima0/hardware.o \
+	ultima0/hdr.o \
+	ultima0/main.o \
+	ultima0/monst.o \
+	ultima0/move.o \
+	ultima0/player.o \
+	ultima0/sdw.o \
+	ultima0/town.o \
+	ultima0/world.o
+endif
+
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
 	shared/actions/action.o \
@@ -53,9 +76,6 @@ MODULE_OBJS += \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	ultima0/core/resources.o \
-	ultima0/game.o \
-	ultima0/resources.o \
 	ultima1/actions/action.o \
 	ultima1/actions/attack.o \
 	ultima1/actions/move.o \
