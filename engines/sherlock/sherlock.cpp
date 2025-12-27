@@ -404,8 +404,8 @@ void SherlockEngine::loadTalkieConfig() {
 		return;
 	}
 
-	int configMode = ConfMan.getInt("talkie_mode");
-	_talkieMode = (configMode > 0) ? TALKIE_AUDIO_ONLY : TALKIE_NONE;
+	bool configMode = ConfMan.getBool("talkie_mode");
+	_talkieMode = configMode ? TALKIE_AUDIO_ONLY : TALKIE_NONE;
 
 	debug(1, "SherlockEngine: Talkie mode set to %d (0=NONE, 1=AUDIO_ONLY)", _talkieMode);
 }
@@ -420,7 +420,8 @@ void SherlockEngine::setTalkieMode(TalkieMode mode) {
 	_talkieMode = mode;
 
 	// Save to configuration
-	ConfMan.setInt("talkie_mode", (int)mode);
+	//ConfMan.setBool("talkie_mode", mode != TALKIE_NONE);
+	ConfMan.setBool("talkie_mode", _talkieMode == TALKIE_AUDIO_ONLY);
 	ConfMan.flushToDisk();
 
 	debug(1, "SherlockEngine::setTalkieMode: Talkie mode changed to %d", mode);
