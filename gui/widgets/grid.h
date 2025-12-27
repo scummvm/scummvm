@@ -156,6 +156,8 @@ protected:
 	int				_gridHeaderWidth;
 	int				_trayHeight;
 
+	bool			_multiSelectEnabled;	/// Flag for multi-selection
+
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
@@ -223,11 +225,24 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	bool handleKeyDown(Common::KeyState state) override;
+	bool handleKeyUp(Common::KeyState state) override;
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
 	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
+
+	// Multi-selection methods
+	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
+	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
+
+public:
+	Common::Array<int> _selectedEntries; // Stores indices of selected entries
+	int _lastSelectedEntryID = -1;       // Track last selected entry for Shift+Click
+	bool _ctrlPressed = false;           // Track if Ctrl key is pressed
+	bool _shiftPressed = false;          // Track if Shift key is pressed
+	const Common::Array<int> &getSelectedEntries() const { return _selectedEntries; }
 };
 
 /* GridItemWidget */

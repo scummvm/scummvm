@@ -76,6 +76,7 @@ protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
 	void drawWidget() override;
+	ThemeEngine::WidgetStateInfo getItemState(int item) const override;
 	int findDataIndex(int) const;
 };
 

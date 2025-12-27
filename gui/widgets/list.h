@@ -72,6 +72,9 @@ protected:
 	int				_currentPos;
 	int				_entriesPerPage;
 	int				_selectedItem;
+	Common::Array<int> _selectedItems;    /// Multiple selected items
+	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
+	bool			_multiSelectEnabled;	/// Flag for multi-selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 
@@ -117,6 +120,13 @@ public:
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
+	/// Multi-selection support
+	const Common::Array<int> &getSelectedItems() const { return _selectedItems; }
+	bool isItemSelected(int item) const;
+	void addSelectedItem(int item);
+	void removeSelectedItem(int item);
+	void clearSelection();
+	void selectItemRange(int from, int to);
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 
 	void scrollTo(int item);
@@ -133,6 +143,10 @@ public:
 	void setEditable(bool editable)				{ _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
+
+	// Multi-selection methods
+	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
+	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser
 	void startEditMode() override;

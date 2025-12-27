@@ -248,6 +248,7 @@ protected:
 	void selectTarget(const Common::String &target) override;
 	int getSelected() override;
 	void build() override;
+	void removeMultipleGames(const Common::Array<int> &selectedItems);
 
 private:
 	GroupedListWidget *_list;

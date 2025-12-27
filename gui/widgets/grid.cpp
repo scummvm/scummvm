@@ -88,7 +88,17 @@ void GridItemWidget::drawWidget() {
 	const int kMarginX = _grid->_gridXSpacing / 3;
 	const int kMarginY = _grid->_gridYSpacing / 3;
 
-	if ((_isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
+	// Check if this entry is in the selected entries list
+	bool isSelected = false;
+	for (size_t i = 0; i < _grid->_selectedEntries.size(); ++i) {
+		if (_grid->_selectedEntries[i] == _activeEntry->entryID) {
+			isSelected = true;
+			break;
+		}
+	}
+
+	// Draw selection highlight if this entry is selected or hovered
+	if (isSelected || _isHighlighted) {
 		Common::Rect r(_x - kMarginX, _y - kMarginY,
 					   _x + _w + kMarginX, _y + _h + kMarginY);
 		// Draw a highlighted BG on hover
@@ -258,6 +268,65 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		_grid->toggleGroup(_activeEntry->entryID);
 	} else if (_isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
+
+		// If multi-select is not enabled, use simple single-selection
+		if (!_grid->isMultiSelectEnabled()) {
+			_grid->_selectedEntries.clear();
+			_grid->_selectedEntries.push_back(_activeEntry->entryID);
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+			sendCommand(kItemClicked, _activeEntry->entryID);
+			return;
+		}
+
+		// Get the current keyboard state
+		int32 keyState = g_system->getEventManager()->getModifierState();
+		bool ctrlPressed = (keyState & Common::KBD_CTRL) != 0;
+		bool shiftPressed = (keyState & Common::KBD_SHIFT) != 0;
+
+		if (ctrlPressed) {
+			// Ctrl+Click: Toggle selection of this item
+			bool found = false;
+			for (size_t i = 0; i < _grid->_selectedEntries.size(); ++i) {
+				if (_grid->_selectedEntries[i] == _activeEntry->entryID) {
+					_grid->_selectedEntries.remove_at(i);
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				_grid->_selectedEntries.push_back(_activeEntry->entryID);
+				// Keep entries sorted
+				Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
+				_grid->_lastSelectedEntryID = _activeEntry->entryID;
+			}
+		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
+			// Clear already selected Items
+			_grid->_selectedEntries.clear();
+			// Shift+Click: Select range from last selected to current item
+			int startID = _grid->_lastSelectedEntryID;
+			int endID = _activeEntry->entryID;
+
+			// Ensure start is before end
+			if (startID > endID) {
+				int temp = startID;
+				startID = endID;
+				endID = temp;
+			}
+
+			// Add all items in range (assuming entry IDs are sequential indices)
+			for (int i = startID; i <= endID; ++i) {
+				_grid->_selectedEntries.push_back(i);
+			}
+			// Keep entries sorted
+			Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+		} else {
+			// Regular click: Select only this item
+			_grid->_selectedEntries.clear();
+			_grid->_selectedEntries.push_back(_activeEntry->entryID);
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+		}
+
 		sendCommand(kItemClicked, _activeEntry->entryID);
 	}
 }
@@ -445,6 +514,11 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 
 	_selectedEntry = nullptr;
 	_isGridInvalid = true;
+	_multiSelectEnabled = false;
+	_selectedEntries.clear();
+	_lastSelectedEntryID = -1;
+	_ctrlPressed = false;
+	_shiftPressed = false;
 }
 
 GridWidget::~GridWidget() {
@@ -926,6 +1000,23 @@ int GridWidget::getNewSel(int index) {
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 	_scrollPos = _scrollBar->_currentPos;
+}
+
+bool GridWidget::handleKeyDown(Common::KeyState state) {
+	if (state.flags & Common::KBD_CTRL)
+		_ctrlPressed = true;
+	if (state.flags & Common::KBD_SHIFT)
+		_shiftPressed = true;
+	return false;
+}
+
+bool GridWidget::handleKeyUp(Common::KeyState state) {
+	// Check which specific key was released based on the key code
+	if (state.keycode == Common::KEYCODE_LCTRL || state.keycode == Common::KEYCODE_RCTRL)
+		_ctrlPressed = false;
+	if (state.keycode == Common::KEYCODE_LSHIFT || state.keycode == Common::KEYCODE_RSHIFT)
+		_shiftPressed = false;
+	return false;
 }
 
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
