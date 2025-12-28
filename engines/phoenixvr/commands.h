@@ -115,7 +115,7 @@ struct While : public Script::Command {
 
 	While(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("while %g", seconds);
+		g_engine->wait(seconds);
 	}
 };
 

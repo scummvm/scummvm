@@ -120,6 +120,41 @@ void PhoenixVREngine::end() {
 	}
 }
 
+void PhoenixVREngine::wait(float seconds) {
+	debug("wait %gs", seconds);
+	auto begin = g_system->getMillis();
+	unsigned millis = seconds * 1000;
+	Graphics::FrameLimiter limiter(g_system, 60);
+	while (!shouldQuit() && g_system->getMillis() - begin < millis) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN: {
+				auto it = _keys.find(event.kbd.keycode);
+				if (it != _keys.end()) {
+					debug("matched code %d", static_cast<int>(event.kbd.keycode));
+					goToWarp(it->_value, true);
+				} else if (event.kbd.ascii == ' ') {
+					if (_movie) {
+						_movie->stop();
+						_movie.reset();
+					}
+				}
+			} break;
+
+			default:
+				break;
+			}
+		}
+
+		// Delay for a bit. All events loops should have a delay
+		// to prevent the system being unduly loaded
+		limiter.delayBeforeSwap();
+		_screen->update();
+		limiter.startFrame();
+	}
+}
+
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s", warp.c_str());
 	_nextWarp = _script->getWarp(warp);

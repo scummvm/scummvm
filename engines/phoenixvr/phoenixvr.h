@@ -110,6 +110,7 @@ public:
 
 	void executeTest(int idx);
 	void end();
+	void wait(float seconds);
 
 	const Region *getRegion(int idx) const;
 
