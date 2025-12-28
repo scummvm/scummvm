@@ -95,6 +95,7 @@ public:
 	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
 	void sayAlfred(Description description);
 	void say(Common::StringArray texts);
+	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);
 
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::StringArray texts);

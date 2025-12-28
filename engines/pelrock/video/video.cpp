@@ -30,7 +30,10 @@
 
 namespace Pelrock {
 
-VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono, LargeFont *largeFont) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont) {
+VideoManager::VideoManager(
+	Graphics::Screen *screen,
+	PelrockEventManager *events,
+	ChronoManager *chrono, LargeFont *largeFont, DialogManager *dialog) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog) {
 	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 }
@@ -79,9 +82,15 @@ void VideoManager::playIntro() {
 					break;
 				}
 
+
 				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
 				if (subtitle != nullptr) {
-					_largeFont->drawString(&_textSurface, subtitle->text, subtitle->x, subtitle->y, 640, 13);
+					Common::StringArray lines;
+					lines.push_back(subtitle->text);
+					byte color;
+					_dialog->processColorAndTrim(lines, color);
+					debug("Displaying subtitle: %s with color %d", subtitle->text.c_str(), color);
+					_largeFont->drawString(&_textSurface, subtitle->text, subtitle->x, subtitle->y, 640, color);
 				}
 
 				presentFrame();
@@ -239,7 +248,7 @@ void VideoManager::initMetadata() {
 						break;
 					}
 				}
-
+				metadataFile.skip(1); // Skip the extra space
 				if (valueIndex == 4) {
 					subtitle.startFrame = values[0];
 					subtitle.endFrame = values[1];
@@ -260,7 +269,10 @@ void VideoManager::initMetadata() {
 								subtitle.text += next;
 							}
 						} else {
-							subtitle.text += c;
+							if(c == 0x08)
+								subtitle.text += '@';
+							else
+								subtitle.text += c;
 						}
 					}
 					_subtitles.push_back(subtitle);

@@ -618,34 +618,42 @@ void DialogManager::say(Common::StringArray texts) {
 	if (texts.empty()) {
 		return;
 	}
-	int speakerMarker = texts[0][0];
-	int color = texts[0][1];
+	byte speakerId;
+	bool wasProcessed = processColorAndTrim(texts, speakerId);
 
-	if (speakerMarker == '@') {
-
-		for (int i = 0; i < texts.size(); i++) {
-			// Remove first two marker bytes
-			if (texts[i].size() > 2) {
-				texts[i] = texts[i].substr(2);
-				if (texts[i][0] == 0x78 && texts[i][1] == 0x78) { // Remove additional control chars
-					texts[i] = texts[i].substr(2);
-				}
-			} else {
-				texts[i] = "";
-			}
-		}
-
-		if (color == ALFRED_COLOR) {
+	if (wasProcessed) {
+		if (speakerId == ALFRED_COLOR) {
 			sayAlfred(texts);
 			return;
 		} else {
 			setCurSprite(0);
 			Common::Array<Common::StringArray> textLines = wordWrap(texts);
-			displayDialogue(textLines, color);
+			displayDialogue(textLines, speakerId);
 		}
 	} else {
 		sayAlfred(texts);
 	}
+}
+
+bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speakerId) {
+	int speakerMarker = lines[0][0];
+	speakerId = lines[0][1];
+	if (speakerMarker == '@') {
+
+		for (int i = 0; i < lines.size(); i++) {
+			// Remove first two marker bytes
+			if (lines[i].size() > 2) {
+				lines[i] = lines[i].substr(2);
+				if (lines[i][0] == 0x78 && lines[i][1] == 0x78) { // Remove additional control chars
+					lines[i] = lines[i].substr(2);
+				}
+			} else {
+				lines[i] = "";
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
 bool isEndMarker(char char_byte) {

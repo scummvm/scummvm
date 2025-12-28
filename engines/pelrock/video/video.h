@@ -68,7 +68,13 @@ static const uint32 chunkSize = 0x5000;
 
 class VideoManager {
 public:
-	VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono, LargeFont *largeFont);
+	VideoManager(
+		Graphics::Screen *screen,
+		PelrockEventManager *events,
+		ChronoManager *chrono,
+		LargeFont *largeFont,
+		DialogManager *dialog
+	);
 	~VideoManager();
 	void playIntro();
 
@@ -77,6 +83,7 @@ private:
 	PelrockEventManager *_events;
 	ChronoManager *_chrono;
 	LargeFont *_largeFont;
+	DialogManager *_dialog;
 	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
     byte *decodeRLE(byte *data, size_t size, uint32 offset);
