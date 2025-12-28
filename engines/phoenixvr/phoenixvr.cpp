@@ -125,8 +125,11 @@ void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	_nextWarp = _script->getWarp(warp);
 	if (savePrev) {
 		assert(_warp);
-		_prevWarp = _script->getWarp(_warp->vrFile);
-		assert(_prevWarp >= 0);
+		// Pretty much a hack to prevent user stuck in inventory
+		if (_prevWarp < 0) {
+			_prevWarp = _script->getWarp(_warp->vrFile);
+			assert(_prevWarp >= 0);
+		}
 	}
 }
 
