@@ -28,6 +28,19 @@
 namespace Ultima {
 namespace Ultima0 {
 
+
+struct _OInfStruct {
+	const char *Name; int Cost; int MaxDamage; char Key;
+};
+struct _MInfStruct {
+	const char *Name; int Level;
+};
+
+extern const _OInfStruct _OInfo[];
+extern const _MInfStruct _MInfo[];
+extern const char *ATTRIB_NAMES[];
+
+
 // point/rect types
 typedef Common::Point COORD;
 typedef Common::Rect RECT;
@@ -75,12 +88,13 @@ struct PLAYER {
 	int	  Task = 0;							// Task set (-1 = none)
 	int	  TaskCompleted = 0;				// Task completed
 	uint32 LuckyNumber = 0;					// Value used for seeding
-	int	  Attributes = 0;					// Number of attributes
-	int	  Objects = 0;						// Number of objects
+	const int Attributes = MAX_ATTR;		// Number of attributes
+	const int Objects = MAX_OBJ;			// Number of objects
 	int   Attr[MAX_ATTR] = {};				// Attribute values
 	double Object[MAX_OBJ] = {};			// Object counts
 
 	void init();
+	void rollAttributes();
 };
 
 } // End of namespace Ultima4

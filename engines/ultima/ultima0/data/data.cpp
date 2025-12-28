@@ -25,17 +25,50 @@
 namespace Ultima {
 namespace Ultima0 {
 
-void PLAYER::init() {
-	LuckyNumber = urand();
+const _OInfStruct _OInfo[] = {
+	{ "Food", 1, 0, 'F' },
+	{ "Rapier", 8, 10, 'R' },
+	{ "Axe", 5, 5, 'A' },
+	{ "Shield", 6, 1, 'S' },
+	{ "Bow+Arrow", 3, 4, 'B' },
+	{ "Amulet", 15, 0, 'M' }
+};
 
-	if (g_engine->isEnhanced()) {
-		// Super Aklabeth : more slots
-		Attributes = MAX_ATTR;
-		Objects = MAX_OBJ;
-	} else {
-		// Aklabeth standards
-		Attributes = Objects = 6;	
-	}
+const _MInfStruct _MInfo[] = {
+	{ "Skeleton", 1 },
+	{ "Thief", 2 },
+	{ "Giant Rat", 3 },
+	{ "Orc", 4 },
+	{ "Viper", 5 },
+	{ "Carrion Crawler", 6 },
+	{ "Gremlin", 7 },
+	{ "Mimic", 8 },
+	{ "Daemon", 9 },
+	{ "Balrog", 10 }
+};
+
+const char *ATTRIB_NAMES[] = { "HP", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
+
+
+void PLAYER::init() {
+	Common::fill(Name, Name + MAX_NAME + 1, '\0');
+	World.x = World.y = 0;
+	Dungeon.x = Dungeon.y = 0;
+	DungDir.x = DungDir.y = 0;
+	Class = '?';
+	HPGain = 0;
+	LuckyNumber = 0;
+	Level = 0;
+	Skill = 0;
+	Task = 0;
+	TaskCompleted = 0;
+	Common::fill(Attr, Attr + MAX_ATTR, 0);
+	Common::fill(Object, Object + MAX_OBJ, 0);
+}
+
+void PLAYER::rollAttributes() {
+	for (int i = 0; i < MAX_ATTR; ++i)
+		Attr[i] = g_engine->getRandomNumber(21) + 4;
 }
 
 } // namespace Ultima0

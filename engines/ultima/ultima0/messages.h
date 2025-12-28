@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/str.h"
+#include "ultima/ultima0/metaengine.h"
 
 namespace Ultima {
 namespace Ultima0 {

@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
 #include "ultima/ultima0/views/title.h"
 #include "ultima/ultima0/metaengine.h"
 
@@ -57,9 +55,11 @@ void Title::updateSelections() {
 }
 
 void Title::draw() {
+	auto s = getSurface();
+	s.clear();
+
 	View::draw();
 
-	auto s = getSurface();
 	s.writeString(Common::Point(20, 8), "Ultima 0 - Akalabeth!", Graphics::kTextAlignCenter);
 }
 

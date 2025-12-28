@@ -19,21 +19,35 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
-#include "ultima/ultima0/views/startup.h"
+#ifndef ULTIMA0_VIEWS_CREATE_CHARACTER_H
+#define ULTIMA0_VIEWS_CREATE_CHARACTER_H
+
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-void Startup::draw() {
-	auto s = getSurface();
-	s.clear();
-	s.writeString(Common::Point(5, 10), "Ultima 0 - Akalabeth!");
-	s.writeString(Common::Point(2, 19), "Ready?");
-}
+class CreateCharacter : public View {
+private:
+	enum Mode { LUCKY_NUMBER, LEVEL, STATS, CLASS };
+	Mode _mode = LUCKY_NUMBER;
+	Common::String _input;
+
+	void characterDone();
+
+public:
+	CreateCharacter() : View("CreateCharacter") {}
+	~CreateCharacter() override {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+};
 
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif

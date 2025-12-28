@@ -51,12 +51,7 @@ void PLAYERInit(PLAYER *p) {
 	p->Task = 0; p->TaskCompleted = 0;
 	p->HPGain = 0;
 	p->LuckyNumber = urand();				/* We do the lucky number ! */
-	p->Attributes = p->Objects = 6;			/* Aklabeth standards */
-	if (MAINSuper())         				/* Super Aklabeth : more */
-	{
-		p->Attributes = MAX_ATTR;
-		p->Objects = MAX_OBJ;
-	}
+
 	for (i = 0; i < p->Attributes; i++) p->Attr[i] = 0;
 	for (i = 0; i < p->Objects; i++) p->Object[i] = 0.0;
 }

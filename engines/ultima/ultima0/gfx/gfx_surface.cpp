@@ -88,6 +88,10 @@ void GfxSurface::newLine() {
 	}
 }
 
+void GfxSurface::setTextPos(const Common::Point &pt) {
+	_textPos = pt;
+}
+
 byte GfxSurface::setColor(byte color) {
 	byte oldColor = _textColor;
 	_textColor = color;

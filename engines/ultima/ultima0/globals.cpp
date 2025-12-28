@@ -28,40 +28,10 @@
 /************************************************************************/
 
 #include "ultima/ultima0/akalabeth.h"
+#include "ultima/ultima0/data/data.h"
 
 namespace Ultima {
 namespace Ultima0 {
-
-struct _OInfStruct {
-	const char *Name; int Cost; int MaxDamage; char Key;
-};
-struct _MInfStruct {
-	const char *Name; int Level;
-};
-
-static struct _OInfStruct _OInfo[] = {
-	{ "Food", 1, 0, 'F' }, 
-	{ "Rapier", 8, 10, 'R' }, 
-	{ "Axe", 5, 5, 'A' }, 
-	{ "Shield", 6, 1, 'S' }, 
-	{ "Bow+Arrow", 3, 4, 'B' }, 
-	{ "Amulet", 15, 0, 'M' }
-};
-
-static struct _MInfStruct _MInfo[] = {
-	{ "Skeleton", 1 }, 
-	{ "Thief", 2 }, 
-	{ "Giant Rat", 3 }, 
-	{ "Orc", 4 }, 
-	{ "Viper", 5 }, 
-	{ "Carrion Crawler", 6 }, 
-	{ "Gremlin", 7 }, 
-	{ "Mimic", 8 }, 
-	{ "Daemon", 9 }, 
-	{ "Balrog", 10 }
-};
-
-static const char *_AName[] = { "HP", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
 
 /************************************************************************/
 /*																		*/
@@ -86,7 +56,7 @@ void GLOGetInfo(int n, int *pDamage, int *pCost, int *pKey) {
 /************************************************************************/
 
 const char *GLOAttribName(int n) {
-	return _AName[n];
+	return ATTRIB_NAMES[n];
 }
 
 /************************************************************************/

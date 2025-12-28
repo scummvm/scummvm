@@ -54,6 +54,7 @@ public:
 	void writeString(const Common::String &str, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void writeChar(uint32 chr);
 
+	void setTextPos(const Common::Point &pt);
 	byte setColor(byte color);
 	byte setColor(byte r, byte g, byte b);
 };
