@@ -257,6 +257,7 @@ public:
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
+	void pauseEngineIntern(bool pause) override;
 	Common::SeekableReadStream *loadAssets();
 	Common::Archive *loadMacInstaller();
 

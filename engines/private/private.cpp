@@ -503,7 +503,11 @@ Common::Error PrivateEngine::run() {
 		if (_subtitles != nullptr) {
 			if (_subtitledSound != nullptr && isSoundPlaying(*_subtitledSound)) {
 				_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
-			} else {
+			}
+			/* Only destroy subtitles if we are not playing a video.
+			If _videoDecoder is valid (even if paused), we must keep the subtitles
+			in memory so they are available when the video resumes. */
+			else if (_videoDecoder == nullptr) {
 				destroySubtitles();
 			}
 		}
@@ -901,6 +905,9 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 					_videoDecoder->pauseVideo(true);
 					_pausedVideo = _videoDecoder;
 				}
+				if (_subtitles) {
+					_system->hideOverlay();
+				}
 
 				_pausedBackgroundSoundName = _bgSound.name;
 
@@ -925,6 +932,11 @@ void PrivateEngine::resumeGame() {
 		_pausedVideo = nullptr;
 	}
 
+	if (_subtitles) {
+		_system->showOverlay(false);
+		_system->clearOverlay();
+	}
+
 	if (_videoDecoder) {
 		_videoDecoder->pauseVideo(false);
 		_needToDrawScreenFrame = true;
@@ -933,6 +945,13 @@ void PrivateEngine::resumeGame() {
 	if (!_pausedBackgroundSoundName.empty()) {
 		playBackgroundSound(_pausedBackgroundSoundName);
 		_pausedBackgroundSoundName.clear();
+	}
+	// force draw the subtitle once
+	// the screen was likely wiped by the pause menu
+	// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
+	// force the subtitle system to ignore its cache and redraw the text.
+	if (_subtitles && _videoDecoder) {
+		_subtitles->drawSubtitle(_videoDecoder->getTime(), true, _sfxSubtitles);
 	}
 }
 
@@ -2355,6 +2374,14 @@ bool PrivateEngine::isSoundPlaying(Sound &sound) {
 
 void PrivateEngine::waitForSoundsToStop() {
 	while (isSoundPlaying()) {
+		// since this is a blocking wait loop, the main engine loop in run() is not called until this loop finishes
+		// we must manually update and draw subtitles here otherwise sounds
+		// played via fSyncSound will play audio but show no subtitles.
+		if (_subtitles != nullptr) {
+			if (_subtitledSound != nullptr && isSoundPlaying(*_subtitledSound)) {
+				_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
+			}
+		}
 		if (consumeEvents()) {
 			stopSounds();
 			return;
@@ -2897,9 +2924,29 @@ void PrivateEngine::drawScreen() {
 		_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
 	}
 
-	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused())
+	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused()) {
 		_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+	}
 	_system->updateScreen();
+}
+
+void PrivateEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	// If we are unpausing (returning from quit dialog, etc.)
+	if (!pause && _subtitles) {
+		// reset the overlay
+		_system->showOverlay(false);
+		_system->clearOverlay();
+
+		// force draw the subtitle once
+		// the screen was likely wiped by the dialog/menu
+		// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
+		// force the subtitle system to ignore its cache and redraw the text.
+		if (_subtitles && _videoDecoder) {
+			_subtitles->drawSubtitle(_videoDecoder->getTime(), true, _sfxSubtitles);
+		}
+	}
 }
 
 bool PrivateEngine::getRandomBool(uint p) {
