@@ -57,6 +57,11 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
+	for (auto it = _cursorCache.begin(); it != _cursorCache.end(); ++it) {
+		auto *s = it->_value;
+		s->free();
+		delete s;
+	}
 	delete _screen;
 }
 
@@ -186,8 +191,7 @@ const Region *PhoenixVREngine::getRegion(int idx) const {
 void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 	debug("setCursorDefault %d: %s", idx, path.c_str());
 	if (idx == 0 || idx == 1) {
-		_defaultCursor[idx].free();
-		_defaultCursor[idx].surface = loadSurface(path);
+		_defaultCursor[idx].surface = loadCursor(path);
 	} else
 		warning("only 2 default cursors supported, got %d", idx);
 }
@@ -203,15 +207,14 @@ void PhoenixVREngine::setCursor(const Common::String &path, const Common::String
 		_cursors.resize(idx + 1);
 	auto &cursor = _cursors[idx];
 	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, reg ? reg->toString().c_str() : "no region", path.c_str());
-	cursor.free();
-	cursor.surface = loadSurface(path);
+	cursor.surface = loadCursor(path);
 	if (reg)
 		cursor.region = *reg;
 }
 
 void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
 	debug("hide cursor %s:%d", warp.c_str(), idx);
-	_cursors[idx].free();
+	_cursors[idx].surface = nullptr;
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
@@ -297,13 +300,15 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	return nullptr;
 }
 
-void PhoenixVREngine::Cursor::free() {
-	if (surface) {
-		surface->free();
-		delete surface;
-		surface = nullptr;
-	}
-	region.setEmpty();
+Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {
+	auto it = _cursorCache.find(path);
+	if (it != _cursorCache.end())
+		return it->_value;
+	auto s = loadSurface(path);
+	if (!s)
+		error("can't load cursor from %s", path.c_str());
+	_cursorCache[path] = s;
+	return s;
 }
 
 void PhoenixVREngine::executeTest(int idx) {
@@ -398,7 +403,7 @@ void PhoenixVREngine::tick(float dt) {
 		_regSet.reset(new RegionSet(_warp->testFile));
 
 		for (auto &c : _cursors)
-			c.free();
+			c.surface = nullptr;
 
 		_cursors.resize(_regSet->size());
 		for (uint i = 0; i != _regSet->size(); ++i) {

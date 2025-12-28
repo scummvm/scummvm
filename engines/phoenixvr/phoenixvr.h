@@ -144,6 +144,7 @@ public:
 private:
 	static Common::String removeDrive(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
+	Graphics::Surface *loadCursor(const Common::String &path);
 	void paint(Graphics::Surface &src, Common::Point dst);
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
@@ -177,11 +178,11 @@ private:
 	Common::ScopedPtr<RegionSet> _regSet;
 
 	Common::ScopedPtr<Video::VideoDecoder> _movie;
+	Common::HashMap<Common::String, Graphics::Surface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 
 	struct Cursor {
 		Region region;
 		Graphics::Surface *surface = nullptr;
-		void free();
 	};
 	Common::Array<Cursor> _cursors;
 	Cursor _defaultCursor[2];
