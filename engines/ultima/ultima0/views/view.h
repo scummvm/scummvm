@@ -53,6 +53,9 @@ private:
 	 */
 	UIElement *getElementAtPos(const Common::Point &pos) const;
 
+protected:
+	byte getColor(byte r, byte g, byte b);
+
 public:
 	View(const Common::String &name, UIElement *uiParent) :
 		UIElement(name, uiParent) {

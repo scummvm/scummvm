@@ -29,6 +29,7 @@
 #include "common/translation.h"
 #ifdef ENABLE_AKALABETH
 #include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/metaengine.h"
 #endif
 #ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
@@ -254,10 +255,14 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-#if defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
+#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
 	const Common::String gameId = getGameId(target);
 #endif
 
+#ifdef ENABLE_AKALABETH
+	if (gameId == "akalabeth")
+		return Ultima::Ultima0::MetaEngine::initKeymaps();
+#endif
 #ifdef ENABLE_ULTIMA4
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();

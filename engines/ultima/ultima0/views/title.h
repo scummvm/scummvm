@@ -19,20 +19,29 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
-#include "ultima/ultima0/views/startup.h"
+#ifndef ULTIMA0_VIEWS_TITLE_H
+#define ULTIMA0_VIEWS_TITLE_H
+
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-void Startup::draw() {
-	auto s = getSurface();
-	s.writeString(Common::Point(5, 10), "Ultima 0 - Akalabeth!");
-	s.writeString(Common::Point(2, 19), "Ready?");
-}
+class Title : public View {
+private:
+	int _highlightedOption = 0;
+
+public:
+	Title() : View("Title") {}
+	~Title() override {}
+
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
+};
 
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif

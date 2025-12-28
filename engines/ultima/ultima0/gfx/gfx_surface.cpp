@@ -33,28 +33,28 @@ void GfxSurface::init() {
 	_textColor = g_engine->_palette.findBestColor(0, 255, 255);
 }
 
-void GfxSurface::writeString(const char *fmt, ...) {
-	va_list alist;
-	va_start(alist, fmt);
-	Common::String str = Common::String::vformat(fmt, alist);
-	va_end(alist);
-
-	writeString(str);
-}
-
-void GfxSurface::writeString(const Common::Point &pt, const char *fmt, ...) {
-	va_list alist;
-	va_start(alist, fmt);
-	Common::String str = Common::String::vformat(fmt, alist);
-	va_end(alist);
-
+void GfxSurface::writeString(const Common::Point &pt, const Common::String &str,
+		Graphics::TextAlign align) {
 	_textPos = pt;
-	writeString(str);
+	writeString(str, align);
 }
 
-void GfxSurface::writeString(const Common::String &str) {
+void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign align) {
+	switch (align) {
+	case Graphics::kTextAlignCenter:
+		_textPos.x -= str.size() / 2;
+		break;
+	case Graphics::kTextAlignRight:
+		_textPos.x -= str.size();
+		break;
+	case Graphics::kTextAlignLeft:
+	default:
+		break;
+	}
+
 	for (const char *p = str.c_str(); *p; ++p) {
 		if (*p == '\n') {
+			assert(align == Graphics::kTextAlignLeft);
 			newLine();
 		} else {
 			writeChar(*p);
@@ -86,6 +86,18 @@ void GfxSurface::newLine() {
 			Common::Point(0, 0));
 		fillRect(Common::Rect(0, DEFAULT_SCX - CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY), 0);
 	}
+}
+
+byte GfxSurface::setColor(byte color) {
+	byte oldColor = _textColor;
+	_textColor = color;
+	return oldColor;
+}
+
+byte GfxSurface::setColor(byte r, byte g, byte b) {
+	byte oldColor = _textColor;
+	_textColor = g_engine->_palette.findBestColor(r, g, b);
+	return oldColor;
 }
 
 } // namespace Gfx

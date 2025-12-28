@@ -22,6 +22,7 @@
 #ifndef ULTIMA0_GFX_SURFACE_H
 #define ULTIMA0_GFX_SURFACE_H
 
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
@@ -34,7 +35,6 @@ private:
 	byte _textColor;
 
 	void init();
-	void writeString(const Common::String &str);
 	void newLine();
 
 public:
@@ -48,10 +48,13 @@ public:
 	/**
 	 * Write some text to the surface
 	 */
-	void writeString(const char *fmt, ...);
-	void writeString(const Common::Point &pt, const char *fmt, ...);
+	void writeString(const Common::Point &pt, const Common::String &str,
+		Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	void writeString(const Common::String &str, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void writeChar(uint32 chr);
 
+	byte setColor(byte color);
+	byte setColor(byte r, byte g, byte b);
 };
 
 } // namespace Gfx

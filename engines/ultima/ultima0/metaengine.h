@@ -19,20 +19,49 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
-#include "ultima/ultima0/views/startup.h"
+#ifndef ULTIMA0_METAENGINE_H
+#define ULTIMA0_METAENGINE_H
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Views {
 
-void Startup::draw() {
-	auto s = getSurface();
-	s.writeString(Common::Point(5, 10), "Ultima 0 - Akalabeth!");
-	s.writeString(Common::Point(2, 19), "Ready?");
-}
+enum KeybindingAction {
+	KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
+	KEYBIND_SELECT, KEYBIND_ESCAPE,
 
-} // namespace Views
-} // namespace Ultima0
-} // namespace Ultima
+	KEYBIND_NONE
+};
+
+enum KeybindingMode {
+	KBMODE_NORMAL		///< Keys available when normal in-game
+};
+
+class MetaEngine {
+private:
+	/**
+	 * Get the method to execute
+	 */
+	static Common::String getMethod(KeybindingAction keyAction);
+
+	/**
+	 * Adds the default actions for the mouse buttons
+	 */
+	static void addMouseClickActions(Common::Keymap &keyMap);
+public:
+	/**
+	 * Initialize keymaps
+	 */
+	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_NORMAL);
+
+	/**
+	 * Sets the current set of actions which are active
+	 */
+	static void setKeybindingMode(KeybindingMode mode);
+};
+
+} // End of namespace Ultima0
+} // End of namespace Ultima
+
+#endif

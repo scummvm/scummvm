@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima0/views/view.h"
+#include "ultima/ultima0/ultima0.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -78,6 +79,10 @@ bool View::msgMouseDown(const MouseDownMessage &msg) {
 bool View::msgMouseUp(const MouseUpMessage &msg) {
 	UIElement *child = getElementAtPos(msg._pos);
 	return child ? child->send(msg) : false;
+}
+
+byte View::getColor(byte r, byte g, byte b) {
+	return g_engine->_palette.findBestColor(r, g, b);
 }
 
 } // namespace Views

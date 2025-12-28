@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima0 {
 
-static const byte PALETTE[8][3] = {
+static const byte PALETTE[][3] = {
 	{ 0, 0, 0 },
 	{ 255, 0, 255 },
 	{ 255, 0, 0 },
@@ -37,6 +37,7 @@ static const byte PALETTE[8][3] = {
 	{ 0, 0, 255 },
 	{ 255, 255, 0 },
 	{ 0, 255, 255 },
+	{ 255, 0, 128 },
 	{ 220, 20, 130 }
 };
 
@@ -44,7 +45,7 @@ Ultima0Engine *g_engine;
 
 Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0"),
-		_palette(&PALETTE[0][0], 8) {
+		_palette(&PALETTE[0][0], sizeof(PALETTE) / 3) {
 	g_engine = this;
 }
 
@@ -57,15 +58,6 @@ Common::Error Ultima0Engine::run() {
 
 	runGame();
 
-#if 0
-	Display = new Graphics::Screen();
-	GameSpeed = 120;
-
-	// Call the real main program
-//	MAINStart();
-
-	delete Display;
-#endif
 	return Common::kNoError;
 }
 

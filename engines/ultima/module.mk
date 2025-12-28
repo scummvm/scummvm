@@ -11,6 +11,7 @@ MODULE_OBJS += \
 	ultima0/ultima0.o \
 	ultima0/events.o \
 	ultima0/messages.o \
+	ultima0/metaengine.o \
 	ultima0/attack.o \
 	ultima0/british.o \
 	ultima0/ddraw.o \
@@ -33,7 +34,8 @@ MODULE_OBJS += \
 	ultima0/gfx/font.o \
 	ultima0/gfx/gfx_surface.o \
 	ultima0/views/view.o \
-	ultima0/views/startup.o
+	ultima0/views/startup.o \
+	ultima0/views/title.o
 endif
 
 ifdef ENABLE_ULTIMA1

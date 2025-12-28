@@ -29,13 +29,28 @@ namespace Ultima0 {
 namespace Views {
 
 class Startup : public View {
+private:
+	void showTitle() {
+		replaceView("Title");
+	}
 public:
 	Startup() : View("Startup") {}
 	~Startup() override {}
 
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
 	void draw() override;
+
+	bool msgKeypress(const KeypressMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgAction(const ActionMessage &msg) override {
+		showTitle();
+		return true;
+	}
 };
 
 } // namespace Views
