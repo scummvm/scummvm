@@ -24,6 +24,7 @@
 
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
+#include "ultima/ultima0/gfx/font.h"
 
 namespace Ultima {
 namespace Ultima0 {

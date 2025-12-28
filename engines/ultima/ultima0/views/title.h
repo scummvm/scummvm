@@ -29,15 +29,37 @@ namespace Ultima0 {
 namespace Views {
 
 class Title : public View {
+	class TitleOption : public UIElement {
+	public:
+		int _index;
+		Common::String _text;
+		byte _color = 0;
+	public:
+		TitleOption(Title *parent, int index, const Common::String &text, int row);
+		void draw() override;
+		bool msgMouseEnter(const MouseEnterMessage &msg) override;
+	};
+
 private:
+	TitleOption _option0;
+	TitleOption _option1;
+	TitleOption _option2;
+	TitleOption _option3;
+	TitleOption *_options[4];
 	int _highlightedOption = 0;
 
+	void updateSelections();
+	void selectOption();
+
 public:
-	Title() : View("Title") {}
+	Title();
 	~Title() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg);
 };
 
 } // namespace Views

@@ -28,37 +28,97 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-void Title::draw() {
-	auto s = getSurface();
-	s.writeString(Common::Point(20, 8), "Ultima 0 - Akalabeth!", Graphics::kTextAlignCenter);
+Title::Title() : View("Title"),
+		_option0(this, 0, "Introduction", 16),
+		_option1(this, 1, "Create a Character", 17),
+		_option2(this, 2, "Acknowledgements", 18),
+		_option3(this, 3, "Journey Onwards", 19) {
+	_options[0] = &_option0;
+	_options[1] = &_option1;
+	_options[2] = &_option2;
+	_options[3] = &_option3;
+}
 
+bool Title::msgFocus(const FocusMessage &msg) {
+	_highlightedOption = 0;
+	updateSelections();
+	return true;
+}
+
+void Title::updateSelections() {
 	const int selected = getColor(255, 0, 128);
 	const int white = getColor(255, 255, 255);
 
-	s.setColor(_highlightedOption == 0 ? selected : white);
-	s.writeString(Common::Point(20, 16), "Introduction", Graphics::kTextAlignCenter);
-	s.setColor(_highlightedOption == 1 ? selected : white);
-	s.writeString(Common::Point(20, 17), "Create a Character", Graphics::kTextAlignCenter);
-	s.setColor(_highlightedOption == 2 ? selected : white);
-	s.writeString(Common::Point(20, 18), "Acknowledgements", Graphics::kTextAlignCenter);
-	s.setColor(_highlightedOption == 3 ? selected : white);
-	s.writeString(Common::Point(20, 19), "Journey Onwards", Graphics::kTextAlignCenter);
+	for (int i = 0; i < 4; ++i) {
+		auto &opt = _options[i];
+		opt->_color = opt->_index == _highlightedOption ? selected : white;
+		opt->redraw();
+	}
+}
+
+void Title::draw() {
+	View::draw();
+
+	auto s = getSurface();
+	s.writeString(Common::Point(20, 8), "Ultima 0 - Akalabeth!", Graphics::kTextAlignCenter);
 }
 
 bool Title::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_UP:
 		_highlightedOption = _highlightedOption ? _highlightedOption - 1 : 3;
-		redraw();
+		updateSelections();
 		break;
 	case KEYBIND_DOWN:
 		_highlightedOption = (_highlightedOption + 1) % 4;
-		redraw();
+		updateSelections();
+		break;
+	case KEYBIND_SELECT:
+		selectOption();
 		break;
 	default:
 		break;
 	}
 
+	return true;
+}
+
+bool Title::msgGame(const GameMessage &msg) {
+	if (msg._name == "SELECTION") {
+		_highlightedOption = msg._value;
+		updateSelections();
+		return true;
+	}
+
+	return false;
+}
+
+bool Title::msgMouseDown(const MouseDownMessage &msg) {
+	selectOption();
+	return true;
+}
+
+void Title::selectOption() {
+	const char *VIEW_NAMES[4] = { "Intro", "CreateCharacter", "Acknowledgements", "Game" };
+	replaceView(VIEW_NAMES[_highlightedOption]);
+}
+
+/*-------------------------------------------------------------------*/
+
+Title::TitleOption::TitleOption(Title *parent, int index, const Common::String &text, int row) :
+		UIElement("TitleOption", parent), _index(index), _text(text) {
+	int xs = 20 - text.size() / 2;
+	setBounds(Gfx::TextRect(xs, row, xs + text.size(), row));
+}
+
+void Title::TitleOption::draw() {
+	auto s = getSurface();
+	s.setColor(_color);
+	s.writeString(_text);
+}
+
+bool Title::TitleOption::msgMouseEnter(const MouseEnterMessage &msg) {
+	_parent->send(GameMessage("SELECTION", _index));
 	return true;
 }
 
