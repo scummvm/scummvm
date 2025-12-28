@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_VIEWS_H
-#define ULTIMA_ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_H
+#define ULTIMA0_VIEWS_H
 
 #include "ultima/ultima0/views/startup.h"
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_VIEWS_VIEW_H
-#define ULTIMA_ULTIMA0_VIEWS_VIEW_H
+#ifndef ULTIMA0_VIEWS_VIEW_H
+#define ULTIMA0_VIEWS_VIEW_H
 
 #include "ultima/ultima0/events.h"
 

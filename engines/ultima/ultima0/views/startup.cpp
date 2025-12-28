@@ -27,12 +27,6 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-bool Startup::msgFocus(const FocusMessage &msg) {
-	Common::fill(&_pal[0], &_pal[256 * 3], 0);
-	_offset = 128;
-	return true;
-}
-
 bool Startup::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	close();
@@ -40,27 +34,9 @@ bool Startup::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Startup::draw() {
-	// Draw a bunch of squares on screen
-	Graphics::ManagedSurface s = getSurface();
+	auto s = getSurface();
+	s.writeString("Hello");
 
-	for (int i = 0; i < 100; ++i)
-		s.frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-}
-
-bool Startup::tick() {
-	// Cycle the palette
-	++_offset;
-	for (int i = 0; i < 256; ++i)
-		_pal[i * 3 + 1] = (i + _offset) % 256;
-	g_system->getPaletteManager()->setPalette(_pal, 0, 256);
-
-	// Below is redundant since we're only cycling the palette, but it demonstrates
-	// how to trigger the view to do further draws after the first time, since views
-	// don't automatically keep redrawing unless you tell it to
-	if ((_offset % 256) == 0)
-		redraw();
-
-	return true;
 }
 
 } // namespace Views

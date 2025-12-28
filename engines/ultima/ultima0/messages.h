@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_MESSAGES_H
-#define ULTIMA_ULTIMA0_MESSAGES_H
+#ifndef ULTIMA0_MESSAGES_H
+#define ULTIMA0_MESSAGES_H
 
 #include "common/array.h"
 #include "common/events.h"

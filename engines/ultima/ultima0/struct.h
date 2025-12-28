@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_STRUCT_H
-#define ULTIMA_ULTIMA0_STRUCT_H
+#ifndef ULTIMA0_STRUCT_H
+#define ULTIMA0_STRUCT_H
 
 #include "ultima/ultima0/defines.h"
 

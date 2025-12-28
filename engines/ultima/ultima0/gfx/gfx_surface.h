@@ -19,55 +19,39 @@
  *
  */
 
-#include "engines/util.h"
-#include "graphics/paletteman.h"
-#include "ultima/ultima0/sdw.h"
-#include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/akalabeth.h"
-#include "ultima/ultima0/sdw.h"
+#ifndef ULTIMA0_GFX_SURFACE_H
+#define ULTIMA0_GFX_SURFACE_H
+
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima0 {
+namespace Gfx {
 
-static const byte PALETTE[8][3] = {
-	{ 0, 0, 0 },
-	{ 255, 0, 255 },
-	{ 255, 0, 0 },
-	{ 0, 255, 0 },
-	{ 0, 0, 255 },
-	{ 255, 255, 0 },
-	{ 0, 255, 255 },
-	{ 220, 20, 130 }
+class GfxSurface : public Graphics::ManagedSurface {
+private:
+	Common::Point _textPos;
+	byte _textColor;
+
+	void init();
+
+public:
+	GfxSurface() : Graphics::ManagedSurface() {
+		init();
+	}
+	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) : Graphics::ManagedSurface(surf, bounds) {
+		init();
+	}
+
+	/**
+	 * Write some text to the surface
+	 */
+	void writeString(const char *format, ...);
+	void writeChar(uint32 chr);
 };
 
-Ultima0Engine *g_engine;
-
-Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0"),
-		_palette(&PALETTE[0][0], 8) {
-	g_engine = this;
-}
-
-Ultima0Engine::~Ultima0Engine() {
-}
-
-Common::Error Ultima0Engine::run() {
-	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
-	g_system->getPaletteManager()->setPalette(_palette);
-
-	runGame();
-
-#if 0
-	Display = new Graphics::Screen();
-	GameSpeed = 120;
-
-	// Call the real main program
-//	MAINStart();
-
-	delete Display;
-#endif
-	return Common::kNoError;
-}
-
+} // namespace Gfx
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif

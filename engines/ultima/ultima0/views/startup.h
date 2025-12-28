@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_VIEWS_STARTUP_H
-#define ULTIMA_ULTIMA0_VIEWS_STARTUP_H
+#ifndef ULTIMA0_VIEWS_STARTUP_H
+#define ULTIMA0_VIEWS_STARTUP_H
 
 #include "ultima/ultima0/views/view.h"
 
@@ -29,20 +29,12 @@ namespace Ultima0 {
 namespace Views {
 
 class Startup : public View {
-private:
-	byte _pal[256 * 3] = { 0 };
-	int _offset = 0;
-
 public:
-	Startup() : View("Startup") {
-	}
-	virtual ~Startup() {
-	}
+	Startup() : View("Startup") {}
+	~Startup() override {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
-	bool tick() override;
 };
 
 } // namespace Views

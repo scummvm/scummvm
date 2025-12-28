@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_SDW_H
-#define ULTIMA_ULTIMA0_SDW_H
+#ifndef ULTIMA0_SDW_H
+#define ULTIMA0_SDW_H
 
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
@@ -36,8 +36,6 @@ extern int GameSpeed;					// Scales the system clock.
 // It's all nicely in a namespace SDLWrapper
 namespace SDLWrapper {
 
-#define DEFAULT_SCX		(1024)					// Default Screen Size and Depth
-#define DEFAULT_SCY		(768)
 #define DEFAULT_SCBPP	(0)
 #define MAXSOUND        (16)                    // Maximum number of sounds
 

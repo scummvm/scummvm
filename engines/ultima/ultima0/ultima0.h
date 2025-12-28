@@ -19,10 +19,11 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_H
-#define ULTIMA_ULTIMA0_H
+#ifndef ULTIMA0_H
+#define ULTIMA0_H
 
 #include "common/random.h"
+#include "graphics/palette.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/ultima0/defines.h"
@@ -42,6 +43,8 @@ protected:
 	Common::Error run() override;
 
 public:
+	Graphics::Palette _palette;
+
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;
 

@@ -19,55 +19,44 @@
  *
  */
 
-#include "engines/util.h"
-#include "graphics/paletteman.h"
-#include "ultima/ultima0/sdw.h"
-#include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/akalabeth.h"
-#include "ultima/ultima0/sdw.h"
+#ifndef ULTIMA0_GFX_FONT_H
+#define ULTIMA0_GFX_FONT_H
+
+#include "graphics/managed_surface.h"
+#include "ultima/ultima0/defines.h"
 
 namespace Ultima {
 namespace Ultima0 {
+namespace Gfx {
 
-static const byte PALETTE[8][3] = {
-	{ 0, 0, 0 },
-	{ 255, 0, 255 },
-	{ 255, 0, 0 },
-	{ 0, 255, 0 },
-	{ 0, 0, 255 },
-	{ 255, 255, 0 },
-	{ 0, 255, 255 },
-	{ 220, 20, 130 }
+constexpr int CHAR_HEIGHT = 16;
+constexpr int CHAR_WIDTH = 16;
+constexpr int TEXT_WIDTH = DEFAULT_SCX / CHAR_WIDTH;
+constexpr int TEXT_HEIGHT = DEFAULT_SCY / CHAR_HEIGHT;
+
+class Font {
+private:
+	/**
+	 * Returns true if a pixel is set in the source font data
+	 */
+	static bool _FONTPixelSet(const byte *Data, int x, int y);
+
+	/**
+	 * Draw an angled line - this stops the squared corners on diagonals showing
+	 */
+	static void _FONTAngleDraw(Graphics::Surface *s, Common::Rect *rc,
+		int w, int h, byte colour);
+
+public:
+	/**
+	 * Draws a character onto the passed surface
+	 */
+	static void writeChar(Graphics::ManagedSurface *dst, uint32 chr,
+		const Common::Point &textPos, byte textColor);
 };
 
-Ultima0Engine *g_engine;
-
-Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0"),
-		_palette(&PALETTE[0][0], 8) {
-	g_engine = this;
-}
-
-Ultima0Engine::~Ultima0Engine() {
-}
-
-Common::Error Ultima0Engine::run() {
-	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
-	g_system->getPaletteManager()->setPalette(_palette);
-
-	runGame();
-
-#if 0
-	Display = new Graphics::Screen();
-	GameSpeed = 120;
-
-	// Call the real main program
-//	MAINStart();
-
-	delete Display;
-#endif
-	return Common::kNoError;
-}
-
+} // namespace Gfx
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif

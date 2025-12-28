@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "graphics/screen.h"
 #include "ultima/ultima0/events.h"
+#include "ultima/ultima0/gfx/gfx_surface.h"
 #include "ultima/ultima0/views/views.h"
 #include "ultima/ultima0/ultima0.h"
 
@@ -319,8 +320,8 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-Graphics::ManagedSurface UIElement::getSurface() const {
-	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
+Gfx::GfxSurface UIElement::getSurface() const {
+	return Gfx::GfxSurface(*g_events->getScreen(), _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {

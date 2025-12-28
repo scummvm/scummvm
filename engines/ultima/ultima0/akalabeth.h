@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_AKALABETH_H
-#define ULTIMA_ULTIMA0_AKALABETH_H
+#ifndef ULTIMA0_AKALABETH_H
+#define ULTIMA0_AKALABETH_H
 
 #include "common/str.h"
 #include "ultima/ultima0/struct.h"			/* Our structure file */

@@ -19,13 +19,16 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_DEFINES_H
-#define ULTIMA_ULTIMA0_DEFINES_H
+#ifndef ULTIMA0_DEFINES_H
+#define ULTIMA0_DEFINES_H
 
 #include "common/scummsys.h"
 
 namespace Ultima {
 namespace Ultima0 {
+
+constexpr int DEFAULT_SCX = 1024;					// Default Screen Size and Depth
+constexpr int DEFAULT_SCY = 768;
 
 #define RND_MAX			    0x7fffffff
 #define RND()			    (((double)g_engine->getRandomNumber())/RND_MAX)

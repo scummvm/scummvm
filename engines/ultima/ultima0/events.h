@@ -19,13 +19,14 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_EVENTS_H
-#define ULTIMA_ULTIMA0_EVENTS_H
+#ifndef ULTIMA0_EVENTS_H
+#define ULTIMA0_EVENTS_H
 
 #include "common/array.h"
 #include "common/stack.h"
 #include "graphics/screen.h"
 #include "ultima/ultima0/messages.h"
+#include "ultima/ultima0/gfx/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -196,7 +197,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Graphics::ManagedSurface getSurface() const;
+	Gfx::GfxSurface getSurface() const;
 
 	/**
 	 * Clear the surface

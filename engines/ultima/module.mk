@@ -29,6 +29,8 @@ MODULE_OBJS += \
 	ultima0/sdw.o \
 	ultima0/town.o \
 	ultima0/world.o \
+	ultima0/gfx/font.o \
+	ultima0/gfx/gfx_surface.o \
 	ultima0/views/view.o \
 	ultima0/views/startup.o
 endif
