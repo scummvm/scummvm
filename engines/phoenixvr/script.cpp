@@ -319,14 +319,10 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 					auto args = p.readStringList();
 					p.expect(')');
 					auto cmd = createCommand(name, args);
-					if (cmd) {
-						if (_conditional) {
-							_conditional->target = Common::move(cmd);
-							commands.push_back(Common::move(_conditional));
-							_conditional.reset();
-						} else
-							_pluginScope->commands.push_back(Common::move(cmd));
-					}
+					if (cmd)
+						_pluginScope->commands.push_back(Common::move(cmd));
+					else
+						error("unhandled plugin command %s", line.c_str());
 				} else {
 					auto cmd = p.parseCommand();
 					if (cmd) {
