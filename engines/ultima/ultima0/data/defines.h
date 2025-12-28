@@ -27,8 +27,8 @@
 namespace Ultima {
 namespace Ultima0 {
 
-constexpr int DEFAULT_SCX = 1024;					// Default Screen Size and Depth
-constexpr int DEFAULT_SCY = 768;
+constexpr int DEFAULT_SCX = 640;					// Default Screen Size and Depth
+constexpr int DEFAULT_SCY = 400;
 
 #define RND_MAX			    0x7fffffff
 #define RND()			    (((double)g_engine->getRandomNumber())/RND_MAX)
