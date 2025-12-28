@@ -461,6 +461,34 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 			renderSubtitle();
 	}
 
+	updateSubtitleOverlay();
+
+	return true;
+}
+
+void Subtitles::clearSubtitle() const {
+	if (!_loaded)
+		return;
+
+	g_system->hideOverlay();
+	_drawRect.setEmpty();
+	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
+}
+
+void Subtitles::updateSubtitleOverlay() const {
+	if (!_loaded)
+		return;
+
+	if (!shouldShowSubtitle()) {
+		g_system->hideOverlay();
+		return;
+	}
+
+	if (!g_system->isOverlayVisible()) {
+		g_system->clearOverlay();
+		g_system->showOverlay(false);
+	}
+
 	if (_overlayHasAlpha) {
 		// When we have alpha, draw the whole surface without thinking it more
 		g_system->copyRectToOverlay(_surface.getPixels(), _surface.pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
@@ -470,10 +498,8 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 		// We then draw the smallest possible surface to minimize black rectangle behind text
 		g_system->clearOverlay();
 		g_system->copyRectToOverlay((byte *)_surface.getPixels() + _drawRect.top * _surface.pitch + _drawRect.left * _surface.format.bytesPerPixel, _surface.pitch,
-				_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
+									_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
 	}
-
-	return true;
 }
 
 struct SubtitleRenderingPart {

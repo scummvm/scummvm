@@ -33,8 +33,9 @@ public:
 	~M4Subtitles();
 
 	void drawSubtitle(const Common::String &audioFile) const;
-	void clearSubtitle() const;
-	void updateSubtitleOverlay() const;
+	void clearSubtitle() const override;
+	void updateSubtitleOverlay() const override;
+	bool shouldShowSubtitle() const override;
 	void load();
 
 private:

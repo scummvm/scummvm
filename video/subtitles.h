@@ -92,10 +92,13 @@ public:
 	void setPadding(uint16 horizontal, uint16 vertical);
 	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
 	bool isLoaded() const { return _loaded || _subtitleDev; }
+	virtual void clearSubtitle() const;
 
 protected:
 	bool recalculateBoundingBox() const;
 	void renderSubtitle() const;
+	virtual void updateSubtitleOverlay() const;
+	virtual bool shouldShowSubtitle() const { return true; }
 
 	bool _loaded;
 	bool _overlayHasAlpha;
