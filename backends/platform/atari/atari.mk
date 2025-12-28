@@ -72,8 +72,8 @@ atarifulldist: $(EXECUTABLE)
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
 	! [ -f ${FULL_DATA}/cryomni3d.dat ] || mv ${FULL_DATA}/cryomni3d.dat ${FULL_DATA}/cryomni3.dat
 	! [ -f ${FULL_DATA}/neverhood.dat ] || mv ${FULL_DATA}/neverhood.dat ${FULL_DATA}/neverhoo.dat
-	! [ -f ${LITE_DATA}/supernova.dat ] || mv ${LITE_DATA}/supernova.dat ${LITE_DATA}/supernov.dat
-	! [ -f ${LITE_DATA}/teenagent.dat ] || mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
+	! [ -f ${FULL_DATA}/supernova.dat ] || mv ${FULL_DATA}/supernova.dat ${FULL_DATA}/supernov.dat
+	! [ -f ${FULL_DATA}/teenagent.dat ] || mv ${FULL_DATA}/teenagent.dat ${FULL_DATA}/teenagen.dat
 
 	$(MKDIR) ${FULL_THEMES}
 	$(CP) $(DIST_FILES_THEMES) ${FULL_THEMES}
