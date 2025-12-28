@@ -31,6 +31,7 @@ namespace Ultima0 {
 
 static const byte PALETTE[][3] = {
 	{ 0, 0, 0 },
+	{ 255, 255, 255 },
 	{ 255, 0, 255 },
 	{ 255, 0, 0 },
 	{ 0, 255, 0 },

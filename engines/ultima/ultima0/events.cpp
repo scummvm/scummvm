@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "graphics/cursorman.h"
 #include "graphics/screen.h"
 #include "ultima/ultima0/events.h"
 #include "ultima/ultima0/gfx/gfx_surface.h"
@@ -31,6 +32,32 @@ namespace Ultima {
 namespace Ultima0 {
 
 Events *g_events;
+
+constexpr int CURSOR_W = 12;
+constexpr int CURSOR_H = 20;
+
+static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
+	0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+	0, 1, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+	0, 1, 1, 0, 9, 9, 9, 9, 9, 9, 9, 9,
+	0, 1, 1, 1, 0, 9, 9, 9, 9, 9, 9, 9,
+	0, 1, 1, 1, 1, 0, 9, 9, 9, 9, 9, 9,
+	0, 1, 1, 1, 1, 1, 0, 9, 9, 9, 9, 9,
+	0, 1, 1, 1, 1, 1, 1, 0, 9, 9, 9, 9,
+	0, 1, 1, 1, 1, 1, 1, 1, 0, 9, 9, 9,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 9, 9,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 9,
+	0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 0, 1, 1, 0, 9, 9, 9, 9,
+	0, 1, 1, 0, 0, 1, 1, 0, 9, 9, 9, 9,
+	0, 1, 0, 9, 9, 0, 1, 1, 0, 9, 9, 9,
+	0, 0, 9, 9, 9, 0, 1, 1, 0, 9, 9, 9,
+	0, 9, 9, 9, 9, 9, 0, 1, 1, 0, 9, 9,
+	9, 9, 9, 9, 9, 9, 0, 1, 1, 0, 9, 9,
+	9, 9, 9, 9, 9, 9, 9, 0, 1, 1, 0, 9,
+	9, 9, 9, 9, 9, 9, 9, 0, 1, 1, 0, 9,
+	9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 9, 9
+};
 
 Events::Events() : UIElement("Root", nullptr) {
 	g_events = this;
@@ -44,6 +71,8 @@ void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 	Views::Views views;	// Loads all views in the structure
+
+	CursorMan.pushCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 9);
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
@@ -82,23 +111,28 @@ void Events::runGame() {
 void Events::processEvent(Common::Event &ev) {
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
+		CursorMan.showMouse(false);
 		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
 			msgKeypress(KeypressMessage(ev.kbd));
 		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		CursorMan.showMouse(false);
 		msgAction(ActionMessage(ev.customType));
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
+		CursorMan.showMouse(true);
 		msgMouseDown(MouseDownMessage(ev.type, ev.mouse));
 		break;
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
+		CursorMan.showMouse(true);
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
 		break;
 	case Common::EVENT_MOUSEMOVE:
+		CursorMan.showMouse(true);
 		msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
 		break;
 	default:
