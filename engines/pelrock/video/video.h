@@ -22,6 +22,8 @@
 #ifndef PELROCK_VIDEO_H
 #define PELROCK_VIDEO_H
 
+#include "graphics/surface.h"
+
 #include "pelrock/events.h"
 
 namespace Pelrock {
@@ -46,14 +48,13 @@ private:
 	Graphics::Screen *_screen;
 	PelrockEventManager *_events;
 	ChronoManager *_chrono;
-	void loadPalette(Common::SeekableReadStream &stream);
 	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
     byte *decodeRLE(byte *data, size_t size, uint32 offset);
 	void readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk);
 	void processFrame(ChunkHeader &chunk, const int frameCount);
 	void presentFrame();
-	byte *_currentKeyFrame = new byte[640 * 400];
+	Graphics::Surface _screenSurface = Graphics::Surface();
 	Common::Array<ChunkHeader> _chunkBuffer;
 };
 

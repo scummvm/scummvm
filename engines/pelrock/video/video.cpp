@@ -31,9 +31,11 @@
 namespace Pelrock {
 
 VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono) : _screen(screen), _events(events), _chrono(chrono) {
+	_screenSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 VideoManager::~VideoManager() {
+	_screenSurface.free();
 }
 
 void VideoManager::playIntro() {
@@ -42,10 +44,9 @@ void VideoManager::playIntro() {
 		error("Could not open ESCENAX.SSN");
 		return;
 	}
-	loadPalette(videoFile);
 	videoFile.seek(0, SEEK_SET);
 
-	memset(_currentKeyFrame, 0, 256000);
+	_screenSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
 	for (int sequence = 0; sequence < 1; sequence++) {
 		int frameCounter = 0;
 		int chunksInBuffer = 0;
@@ -81,20 +82,6 @@ void VideoManager::playIntro() {
 	}
 
 	videoFile.close();
-}
-
-void VideoManager::loadPalette(Common::SeekableReadStream &stream) {
-
-	byte paletteData[768];
-	stream.seek(0x0009, SEEK_SET);
-	stream.read(paletteData, 768);
-	byte palette[768];
-	for (int i = 0; i < 256; i++) {
-		palette[i * 3 + 0] = paletteData[i * 3 + 0] << 2;
-		palette[i * 3 + 1] = paletteData[i * 3 + 1] << 2;
-		palette[i * 3 + 2] = paletteData[i * 3 + 2] << 2;
-	}
-	_screen->setPalette(palette);
 }
 
 void VideoManager::loadPalette(ChunkHeader &chunk) {
@@ -183,12 +170,13 @@ void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
 		frameData = decodeCopyBlock(chunk.data, 0);
 	}
 
+	byte *surfacePixels = (byte *)_screenSurface.getPixels();
 	if(frameCount == 0) {
-		memcpy(_currentKeyFrame, frameData, 256000);
+		memcpy(surfacePixels, frameData, 256000);
 	} else {
 		// Subsequent frames, XOR with previous frame
 		for (int i = 0; i < 256000; i++) {
-			_currentKeyFrame[i] ^= frameData[i];
+			surfacePixels[i] ^= frameData[i];
 		}
 	}
 	delete[] frameData;
@@ -196,7 +184,7 @@ void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
 }
 
 void VideoManager::presentFrame() {
-	memcpy(_screen->getPixels(), _currentKeyFrame, 640 * 400);
+	_screen->blitFrom(_screenSurface);
 	_screen->markAllDirty();
 	_screen->update();
 }

@@ -507,6 +507,9 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 		pickUpAndDisable(hotspot);
 		executeAction(PICKUP, hotspot);
 		break;
+	case OPEN:
+	case CLOSE:
+		alfredState.setState(ALFRED_INTERACTING);
 	default:
 		executeAction(action, hotspot);
 		break;
@@ -572,8 +575,10 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
 				alfredState.setState(ALFRED_IDLE);
+
 				if (_currentHotspot != nullptr)
 					alfredState.direction = calculateAlfredsDirection(_currentHotspot);
+				drawAlfred(_res->alfredIdle[alfredState.direction]);
 
 				if (_queuedAction.isQueued) {
 					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
