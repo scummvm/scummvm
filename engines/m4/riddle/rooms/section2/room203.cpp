@@ -576,6 +576,8 @@ void Room203::daemon() {
 		_oldLadyMode = 5666;
 		_oldLadyShould = 5100;
 		kernel_timing_trigger(1, 130);
+		ws_unhide_walker(_G(my_walker));
+		player_set_commands_allowed(true);
 		break;
 
 	case 60:
@@ -1605,7 +1607,7 @@ void Room203::daemon() {
 
 	case 130:
 		switch (_oldLadyMode) {
-		case 30:
+		case 40:
 			break;
 
 		case 5666:
