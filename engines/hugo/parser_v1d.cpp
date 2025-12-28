@@ -308,7 +308,7 @@ void Parser_v1d::lineHandler() {
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
+		_vm->_sound->playSound(_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus._godModeFl = !gameStatus._godModeFl;
 		return;
 	}
