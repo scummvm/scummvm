@@ -196,7 +196,7 @@ void Events::addKeypress(const Common::KeyCode kc) {
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
-	_bounds(0, 0, 320, 200),
+	_bounds(0, 0, DEFAULT_SCX, DEFAULT_SCY),
 	_innerBounds(innerBounds),
 	left(_bounds.left), top(_bounds.top),
 	right(_bounds.right), bottom(_bounds.bottom) {

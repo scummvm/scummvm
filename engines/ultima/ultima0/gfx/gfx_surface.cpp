@@ -29,7 +29,8 @@ namespace Gfx {
 
 
 void GfxSurface::init() {
-	_textColor = g_engine->_palette.findBestColor(0, 255, 0);
+	// Default text to Cyan
+	_textColor = g_engine->_palette.findBestColor(0, 255, 255);
 }
 
 void GfxSurface::writeString(const char *fmt, ...) {
@@ -38,10 +39,23 @@ void GfxSurface::writeString(const char *fmt, ...) {
 	Common::String str = Common::String::vformat(fmt, alist);
 	va_end(alist);
 
+	writeString(str);
+}
+
+void GfxSurface::writeString(const Common::Point &pt, const char *fmt, ...) {
+	va_list alist;
+	va_start(alist, fmt);
+	Common::String str = Common::String::vformat(fmt, alist);
+	va_end(alist);
+
+	_textPos = pt;
+	writeString(str);
+}
+
+void GfxSurface::writeString(const Common::String &str) {
 	for (const char *p = str.c_str(); *p; ++p) {
 		if (*p == '\n') {
-			_textPos.x = 0;
-			_textPos.y++;
+			newLine();
 		} else {
 			writeChar(*p);
 		}
@@ -56,9 +70,13 @@ void GfxSurface::writeChar(uint32 chr) {
 	}
 
 	if (_textPos.x >= TEXT_WIDTH || chr == '\n') {
-		_textPos.x = 0;
-		_textPos.y++;
+		newLine();
 	}
+}
+
+void GfxSurface::newLine() {
+	_textPos.x = 0;
+	_textPos.y++;
 
 	if (_textPos.y >= TEXT_HEIGHT) {
 		_textPos.y = TEXT_HEIGHT - 1;

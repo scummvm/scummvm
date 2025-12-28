@@ -34,6 +34,7 @@ public:
 	~Startup() override {}
 
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 	void draw() override;
 };
 

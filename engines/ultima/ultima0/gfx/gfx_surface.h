@@ -34,6 +34,8 @@ private:
 	byte _textColor;
 
 	void init();
+	void writeString(const Common::String &str);
+	void newLine();
 
 public:
 	GfxSurface() : Graphics::ManagedSurface() {
@@ -46,8 +48,10 @@ public:
 	/**
 	 * Write some text to the surface
 	 */
-	void writeString(const char *format, ...);
+	void writeString(const char *fmt, ...);
+	void writeString(const Common::Point &pt, const char *fmt, ...);
 	void writeChar(uint32 chr);
+
 };
 
 } // namespace Gfx

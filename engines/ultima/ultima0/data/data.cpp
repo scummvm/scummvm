@@ -19,44 +19,24 @@
  *
  */
 
-#ifndef ULTIMA0_GFX_FONT_H
-#define ULTIMA0_GFX_FONT_H
-
-#include "graphics/managed_surface.h"
-#include "ultima/ultima0/data/defines.h"
+#include "ultima/ultima0/data/data.h"
+#include "ultima/ultima0/ultima0.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Gfx {
 
-constexpr int CHAR_HEIGHT = 16;
-constexpr int CHAR_WIDTH = 16;
-constexpr int TEXT_WIDTH = DEFAULT_SCX / CHAR_WIDTH;
-constexpr int TEXT_HEIGHT = DEFAULT_SCY / CHAR_HEIGHT;
+void PLAYER::init() {
+	LuckyNumber = urand();
 
-class Font {
-private:
-	/**
-	 * Returns true if a pixel is set in the source font data
-	 */
-	static bool _FONTPixelSet(const byte *Data, int x, int y);
+	if (g_engine->isEnhanced()) {
+		// Super Aklabeth : more slots
+		Attributes = MAX_ATTR;
+		Objects = MAX_OBJ;
+	} else {
+		// Aklabeth standards
+		Attributes = Objects = 6;	
+	}
+}
 
-	/**
-	 * Draw an angled line - this stops the squared corners on diagonals showing
-	 */
-	static void _FONTAngleDraw(Graphics::Surface *s, Common::Rect *rc,
-		int w, int h, byte colour);
-
-public:
-	/**
-	 * Draws a character onto the passed surface
-	 */
-	static void writeChar(Graphics::ManagedSurface *dst, uint32 chr,
-		const Common::Point &textPos, byte textColor);
-};
-
-} // namespace Gfx
 } // namespace Ultima0
 } // namespace Ultima
-
-#endif

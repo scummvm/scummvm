@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA0_DEFINES_H
-#define ULTIMA0_DEFINES_H
+#ifndef ULTIMA0_DATA_DEFINES_H
+#define ULTIMA0_DATA_DEFINES_H
 
 #include "common/scummsys.h"
 

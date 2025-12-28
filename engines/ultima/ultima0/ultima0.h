@@ -26,7 +26,7 @@
 #include "graphics/palette.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
-#include "ultima/ultima0/defines.h"
+#include "ultima/ultima0/data/data.h"
 #include "ultima/ultima0/events.h"
 
 namespace Ultima {
@@ -44,6 +44,7 @@ protected:
 
 public:
 	Graphics::Palette _palette;
+	PLAYER _player;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;
@@ -73,6 +74,13 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint maxVal = RND_MAX) { return _randomSource.getRandomNumber(maxVal); }
+
+	/**
+	 * Returns true if enhancements are turned on
+	 */
+	bool isEnhanced() const {
+		return true;
+	}
 };
 
 extern Ultima0Engine *g_engine;

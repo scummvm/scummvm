@@ -27,16 +27,20 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
+void Startup::draw() {
+	auto s = getSurface();
+	s.writeString(Common::Point(5, 10), "Ultima 0 - Akalabeth!");
+	s.writeString(Common::Point(2, 19), "Ready?");
+}
+
 bool Startup::msgKeypress(const KeypressMessage &msg) {
-	// Any keypress to close the view
 	close();
 	return true;
 }
 
-void Startup::draw() {
-	auto s = getSurface();
-	s.writeString("Hello");
-
+bool Startup::msgMouseDown(const MouseDownMessage &msg) {
+	close();
+	return true;
 }
 
 } // namespace Views
