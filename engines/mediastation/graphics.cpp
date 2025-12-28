@@ -32,9 +32,176 @@
 
 namespace MediaStation {
 
+void Region::addRect(const Common::Rect &rect) {
+	if (rect.isEmpty()) {
+		return;
+	}
+
+	// TODO: This is replicating some behavior of the original's IM_Rect::operator|=,
+	// which maybe we SHOULD in fact implement here.
+	if (_bounds.isEmpty()) {
+		_bounds = rect;
+	} else {
+		_bounds.extend(rect);
+	}
+	_rects.clear();
+	_rects.push_back(_bounds);
+}
+
+bool Region::intersects(const Common::Rect &rect) {
+	return _bounds.intersects(rect);
+}
+
+void Region::operator&=(const Common::Rect &rect) {
+	_bounds.clip(rect);
+	_rects.clear();
+	_rects.push_back(_bounds);
+}
+
+void Region::operator+=(const Common::Point &point) {
+	_bounds.translate(point.x, point.y);
+	_rects.clear();
+	_rects.push_back(_bounds);
+}
+
+void Clip::addToRegion(const Region &region) {
+	for (const Common::Rect &rect : region._rects) {
+		addToRegion(rect);
+	}
+}
+
+void Clip::addToRegion(const Common::Rect &rect) {
+	Common::Rect rectRelativeToOrigin = rect;
+	rectRelativeToOrigin.clip(_bounds);
+	if (!rectRelativeToOrigin.isEmpty()) {
+		rectRelativeToOrigin.translate(-_bounds.left, -_bounds.top);
+		_region.addRect(rectRelativeToOrigin);
+	}
+}
+
+bool Clip::clipIntersectsRect(const Common::Rect &rect) {
+	return _region.intersects(rect);
+}
+
+void Clip::intersectWithRegion(const Common::Rect &rect) {
+	Common::Rect rectRelativeToOrigin = rect;
+	rectRelativeToOrigin.clip(_bounds);
+	if (!_region._rects.empty()) {
+		if (_bounds != rectRelativeToOrigin) {
+			rectRelativeToOrigin.translate(-_bounds.left, -_bounds.top);
+			_region &= rectRelativeToOrigin;
+		}
+	}
+}
+
+void Clip::makeEmpty() {
+	_region._bounds.setEmpty();
+	_region._rects.clear();
+}
+
+
+Clip::Clip(const Common::Rect &rect) {
+	_bounds = rect;
+	Common::Rect initialRegion(Common::Rect(0, 0, rect.width(), rect.height()));
+	_region.addRect(initialRegion);
+}
+
+void DisplayContext::addClip() {
+	if (_destImage != nullptr) {
+		Common::Rect rect(0, 0, _destImage->w, _destImage->h);
+		Clip clip(rect);
+		_clips.push(clip);
+	}
+}
+
+Clip *DisplayContext::currentClip() {
+	if (_destImage == nullptr) {
+		return nullptr;
+	}
+
+	if (_clips.empty()) {
+		// The original did some crazy allocation stuff with an external expected
+		// item counter, but we will just do this using the ScummVM classes.
+		addClip();
+	}
+	return &_clips.top();
+}
+
+void DisplayContext::emptyCurrentClip() {
+	if (!_clips.empty()) {
+		_clips.pop();
+	}
+}
+
+Clip *DisplayContext::previousClip() {
+	if (_clips.size() < 2) {
+		return nullptr;
+	} else {
+		return &_clips[_clips.size() - 2];
+	}
+}
+
+void DisplayContext::pushOrigin() {
+	_origins.push(_origin);
+}
+
+void DisplayContext::popOrigin() {
+	if (!_origins.empty()) {
+		_origin = _origins.top();
+		_origins.pop();
+	}
+}
+
+void DisplayContext::verifyClipSize() {
+	if (_destImage != nullptr && !_clips.empty()) {
+		const Clip &firstClip = _clips[0];
+		if (firstClip._bounds.width() != _destImage->w || firstClip._bounds.height() != _destImage->h) {
+			_clips.clear();
+		}
+	}
+}
+
+bool DisplayContext::clipIsEmpty() {
+	Clip *clip = currentClip();
+	if (clip != nullptr) {
+		return clip->_region._rects.empty();
+	}
+	return true;
+}
+
+void DisplayContext::intersectClipWith(const Common::Rect &rect) {
+	Clip *clip = currentClip();
+	if (clip != nullptr) {
+		Common::Rect rectInAbsoluteCoordinates = rect;
+		rectInAbsoluteCoordinates.translate(_origin.x, _origin.y);
+		clip->intersectWithRegion(rectInAbsoluteCoordinates);
+	}
+}
+
+bool DisplayContext::rectIsInClip(const Common::Rect &rect) {
+	bool result = false;
+	Clip *clip = currentClip();
+	if (clip != nullptr) {
+		Common::Rect rectInAbsoluteCoordinates = rect;
+		rectInAbsoluteCoordinates.translate(_origin.x, _origin.y);
+		result = clip->clipIntersectsRect(rectInAbsoluteCoordinates);
+	}
+	return result;
+}
+
+void DisplayContext::setClipTo(Region region) {
+	Clip *clip = currentClip();
+	if (clip != nullptr) {
+		clip->makeEmpty();
+		region += _origin;
+		clip->addToRegion(region);
+	}
+}
+
 VideoDisplayManager::VideoDisplayManager(MediaStationEngine *vm) : _vm(vm) {
 	initGraphics(MediaStationEngine::SCREEN_WIDTH, MediaStationEngine::SCREEN_HEIGHT);
 	_screen = new Graphics::Screen();
+	_displayContext._destImage = _screen;
 }
 
 VideoDisplayManager::~VideoDisplayManager() {
@@ -543,10 +710,10 @@ void VideoDisplayManager::_setPercentToPaletteObject(double percent, uint palett
 }
 
 void VideoDisplayManager::imageBlit(
-	const Common::Point &destinationPoint,
+	Common::Point destinationPoint,
 	const Bitmap *sourceImage,
 	double dissolveFactor,
-	const Common::Array<Common::Rect> &dirtyRegion,
+	DisplayContext *displayContext,
 	Graphics::ManagedSurface *targetImage) {
 
 	byte blitFlags = kClipEnabled;
@@ -585,6 +752,19 @@ void VideoDisplayManager::imageBlit(
 		blitFlags |= kPartialDissolve;
 	}
 	uint integralDissolveFactor = static_cast<uint>(dissolveFactor * 100 + 0.5);
+
+	Common::Array<Common::Rect> dirtyRegion;
+	if (displayContext == nullptr) {
+		if (targetImage == nullptr) {
+			warning("%s: Neither display context nor target image was provided", __func__);
+		}
+		Common::Rect targetImageBounds(0, 0, targetImage->w, targetImage->h);
+		dirtyRegion.push_back(targetImageBounds);
+	} else {
+		Clip *currentClip = displayContext->currentClip();
+		dirtyRegion = currentClip->_region._rects;
+		destinationPoint += _displayContext._origin;
+	}
 
 	if (targetImage == nullptr) {
 		targetImage = _screen;
@@ -757,18 +937,27 @@ void VideoDisplayManager::dissolveBlit1Rect(
 }
 
 void VideoDisplayManager::imageDeltaBlit(
-	const Common::Point &deltaFramePos,
+	Common::Point deltaFramePos,
 	const Common::Point &keyFrameOffset,
 	const Bitmap *deltaFrame,
 	const Bitmap *keyFrame,
 	const double dissolveFactor,
-	const Common::Array<Common::Rect> &dirtyRegion) {
+	DisplayContext *displayContext) {
 
 	if (deltaFrame->getCompressionType() != kRle8BitmapCompression) {
 		error("%s: Unsupported delta frame compression type for delta blit: %d",
 			__func__, static_cast<uint>(keyFrame->getCompressionType()));
 	} else if (dissolveFactor != 1.0) {
 		warning("%s: Delta blit does not support dissolving", __func__);
+	}
+
+	Common::Array<Common::Rect> dirtyRegion;
+	if (displayContext == nullptr) {
+		error("%s: Display context must be provided", __func__);
+	} else {
+		Clip *currentClip = displayContext->currentClip();
+		dirtyRegion = currentClip->_region._rects;
+		deltaFramePos += _displayContext._origin;
 	}
 
 	switch (keyFrame->getCompressionType()) {

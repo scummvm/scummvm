@@ -319,24 +319,28 @@ void StreamMovieActor::updateFrameState() {
 	}
 }
 
-void StreamMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void StreamMovieActor::draw(DisplayContext &displayContext) {
 	for (MovieFrame *frame : _framesOnScreen) {
 		Common::Rect bbox = getFrameBoundingBox(frame);
 
 		switch (frame->blitType) {
 		case kUncompressedMovieBlit:
-			g_engine->getDisplayManager()->imageBlit(bbox.origin(), frame->image, _dissolveFactor, dirtyRegion);
+			g_engine->getDisplayManager()->imageBlit(bbox.origin(), frame->image, _dissolveFactor, &displayContext);
 			break;
 
 		case kUncompressedDeltaMovieBlit:
-			g_engine->getDisplayManager()->imageDeltaBlit(bbox.origin(), frame->diffBetweenKeyframeAndFrame, frame->image, frame->keyframeImage, _dissolveFactor, dirtyRegion);
+			g_engine->getDisplayManager()->imageDeltaBlit(
+				bbox.origin(), frame->diffBetweenKeyframeAndFrame,
+				frame->image, frame->keyframeImage, _dissolveFactor, &displayContext);
 			break;
 
 		case kCompressedDeltaMovieBlit:
 			if (frame->keyframeImage->isCompressed()) {
 				decompressIntoAuxImage(frame);
 			}
-			g_engine->getDisplayManager()->imageDeltaBlit(bbox.origin(), frame->diffBetweenKeyframeAndFrame, frame->image, frame->keyframeImage, _dissolveFactor, dirtyRegion);
+			g_engine->getDisplayManager()->imageDeltaBlit(
+				bbox.origin(), frame->diffBetweenKeyframeAndFrame,
+				frame->image, frame->keyframeImage, _dissolveFactor, &displayContext);
 			break;
 
 		default:
@@ -346,6 +350,8 @@ void StreamMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 }
 
 Common::Rect StreamMovieActor::getFrameBoundingBox(MovieFrame *frame) {
+	// Use _boundingBox directly (which may be temporarily offset by camera rendering)
+	// The camera offset is already applied to _boundingBox by pushBoundingBoxOffset()
 	Common::Point origin = _boundingBox.origin() + frame->leftTop;
 	Common::Rect bbox = Common::Rect(origin, frame->image->width(), frame->image->height());
 	return bbox;
@@ -440,17 +446,14 @@ void StreamMovieActor::parseMovieChunkMarker(Chunk &chunk) {
 }
 
 void StreamMovieActor::invalidateRect(const Common::Rect &rect) {
-	g_engine->addDirtyRect(rect);
+	invalidateLocalBounds();
 }
 
 void StreamMovieActor::decompressIntoAuxImage(MovieFrame *frame) {
 	const Common::Point origin(0, 0);
-	Common::Rect test = Common::Rect(frame->keyframeImage->width(), frame->keyframeImage->height());
-	Common::Array<Common::Rect> allDirty(1);
-	allDirty.push_back(test);
 	frame->keyframeImage->_image.create(frame->keyframeImage->width(), frame->keyframeImage->height(), Graphics::PixelFormat::createFormatCLUT8());
 	frame->keyframeImage->_image.setTransparentColor(0);
-	g_engine->getDisplayManager()->imageBlit(origin, frame->keyframeImage, 1.0, allDirty, &frame->keyframeImage->_image);
+	g_engine->getDisplayManager()->imageBlit(origin, frame->keyframeImage, 1.0, nullptr, &frame->keyframeImage->_image);
 }
 
 void StreamMovieActorFrames::readImageData(Chunk &chunk) {

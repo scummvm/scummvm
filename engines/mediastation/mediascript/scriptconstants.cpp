@@ -270,10 +270,28 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "StageGetWidth";
 	case kStageGetHeightMethod:
 		return "StageGetHeight";
+	case kAddToStageMethod:
+		return "AddToStage\\OpenLens";
+	case kRemoveFromStageMethod:
+		return "RemoveFromStage\\CloseLens";
+	case kAddedToStageMethod:
+		return "AddedToStage";
+	case kStartPanMethod:
+		return "StartPan";
 	case kStopPanMethod:
 		return "StopPan";
+	case kIsPanningMethod:
+		return "IsPanning";
 	case kViewportMoveToMethod:
 		return "ViewportMoveTo";
+	case kAdjustCameraViewportMethod:
+		return "AdjustCameraViewport";
+	case kAdjustCameraViewportSpatialCenterMethod:
+		return "AdjustCameraViewportSpatialCenter";
+	case kSetCameraBoundsMethod:
+		return "SetCameraBounds";
+	case kXViewportPositionMethod:
+		return "XViewportPosition";
 	case kYViewportPositionMethod:
 		return "YViewportPosition";
 	case kPanToMethod:
@@ -336,10 +354,6 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "PrependList";
 	case kSortMethod:
 		return "Sort";
-	case kOpenLensMethod:
-		return "OpenLens";
-	case kCloseLensMethod:
-		return "CloseLens";
 	default:
 		return "UNKNOWN";
 	}
@@ -399,6 +413,8 @@ const char *eventTypeToStr(EventType type) {
 		return "TextInput";
 	case kTextErrorEvent:
 		return "TextError";
+	case kCameraPanStepEvent:
+		return "CameraPanStep";
 	case kCameraPanAbortEvent:
 		return "CameraPanAbort";
 	case kCameraPanEndEvent:

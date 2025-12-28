@@ -25,24 +25,63 @@
 #include "common/events.h"
 
 #include "mediastation/actor.h"
+#include "mediastation/graphics.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
+// Cylindrical wrapping allows content on a stage to wrap around like a cylinder - for example, when you scroll past the
+// right edge, content from the left edge appears, creating the illusion of an infinite looping world.
+enum CylindricalWrapMode : int {
+	kWrapNone = 0,        // No offset (default)
+	kWrapRight = 1,       // Right wrap (X + extent.x)
+	kWrapBottom = 2,      // Bottom wrap (Y + extent.y)
+	kWrapLeftTop = 3,     // Left + Top wrap (X - extent.x, Y - extent.y)
+	kWrapLeft = 4,        // Left wrap (X - extent.x)
+	kWrapRightBottom = 5, // Right + Bottom wrap (X + extent.x, Y + extent.y)
+	kWrapTop = 6,         // Top wrap (Y - extent.y)
+	kWrapLeftBottom = 7,  // Left + Bottom wrap (X - extent.x, Y + extent.y)
+	kWrapRightTop = 8     // Right + Top wrap (X + extent.x, Y - extent.y)
+};
+
+class CameraActor;
 class StageActor : public SpatialEntity {
 public:
 	StageActor();
 	virtual ~StageActor();
 
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
+	virtual void draw(DisplayContext &displayContext) override;
+	void drawUsingStage(DisplayContext &displayContext);
+
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual void preload(const Common::Rect &rect) override;
 	virtual bool isVisible() const override { return _children.size() > 0; }
+	virtual bool isRectInMemory(const Common::Rect &rect) override;
 
 	void addChildSpatialEntity(SpatialEntity *entity);
 	void removeChildSpatialEntity(SpatialEntity *entity);
+	void addCamera(CameraActor *camera);
+	void removeCamera(CameraActor *camera);
+	void setCurrentCamera(CameraActor *camera);
+	CameraActor *getCurrentCamera() const { return _currentCamera; }
 
+	uint16 queryChildrenAboutMouseEvents(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		CylindricalWrapMode wrapMode = kWrapNone);
+	uint16 findActorToAcceptMouseEventsObject(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		bool inBounds);
+	uint16 findActorToAcceptMouseEventsCamera(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		bool inBounds);
 	virtual uint16 findActorToAcceptMouseEvents(
 		const Common::Point &point,
 		uint16 eventMask,
@@ -56,37 +95,49 @@ public:
 	virtual void setMousePosition(int16 x, int16 y) override;
 
 	void invalidateZIndexOf(const SpatialEntity *entity);
+	virtual void invalidateLocalBounds() override;
+	virtual void invalidateRect(const Common::Rect &rect);
+
+	bool cylindricalX() const { return _cylindricalX; }
+	bool cylindricalY() const { return _cylindricalY; }
+	Common::Point extent() const { return _extent; }
 
 protected:
+	// Whether or not cameras on this stage should wrap around this stage.
 	bool _cylindricalX = false;
 	bool _cylindricalY = false;
-	SpatialEntity *_pendingChild = nullptr;
+	Common::Point _extent;
+	SpatialEntity *_pendingParent = nullptr;
+	CameraActor *_currentCamera = nullptr;
 
 	void addActorToStage(uint actorId);
 	void removeActorFromStage(uint actorId);
+	bool isRectInMemoryTest(const Common::Rect &rect, CylindricalWrapMode wrapMode);
+	void preloadTest(const Common::Rect &rect, CylindricalWrapMode wrapMode);
 
 	bool assertHasNoParent(const SpatialEntity *entity);
 	bool assertHasParentThatIsNotMe(const SpatialEntity *entity) { return !assertIsMyChild(entity); }
 	bool assertIsMyChild(const SpatialEntity *entity) { return this == entity->getParentStage();}
 	void removeAllChildren();
 
-	virtual void invalidateLocalBounds() override;
 	virtual void invalidateLocalZIndex() override;
-	virtual void invalidateRect(const Common::Rect &rect);
+	void invalidateUsingCameras(const Common::Rect &rect);
+	void invalidateObject(const Common::Rect &rect, const Common::Rect &visibleRegion);
+	// The function is called this in the original; not sure why though.
+	void invalidateTest(const Common::Rect &rect, const Common::Rect &clip, const Common::Point &originAdjustment);
+
 	virtual void loadIsComplete() override;
 
 	static int compareSpatialActorByZIndex(const SpatialEntity *a, const SpatialEntity *b);
 
 	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _children;
+	Common::SortedArray<CameraActor *, const SpatialEntity *> _cameras;
 };
 
 class RootStage : public StageActor {
 public:
 	friend class StageDirector;
 	RootStage() : StageActor() { _id = ROOT_STAGE_ACTOR_ID; };
-
-	const Common::Array<Common::Rect> &getDirtyRegion() { return _dirtyRegion; }
-	void clearDirtyRegion() { _dirtyRegion.clear(); }
 
 	virtual uint16 findActorToAcceptMouseEvents(
 		const Common::Point &point,
@@ -102,13 +153,13 @@ public:
 	virtual void mouseExitedEvent(const Common::Event &event) override;
 	virtual void mouseOutOfFocusEvent(const Common::Event &event) override;
 
-	void drawAll();
-	void drawDirtyRegion();
-	void invalidateAll();
+	void drawAll(DisplayContext &displayContext);
+	void drawDirtyRegion(DisplayContext &displayContext);
+
+	Region _dirtyRegion;
 
 private:
 	static const uint ROOT_STAGE_ACTOR_ID = 2;
-	Common::Array<Common::Rect> _dirtyRegion;
 	bool _isMouseInside = false;
 };
 

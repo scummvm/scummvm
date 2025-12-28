@@ -126,7 +126,7 @@ public:
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
+	virtual void draw(DisplayContext &displayContext) override;
 
 	virtual bool isVisible() const override { return _isVisible; }
 

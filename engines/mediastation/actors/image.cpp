@@ -97,15 +97,11 @@ ScriptValue ImageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 	}
 }
 
-void ImageActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void ImageActor::draw(DisplayContext &displayContext) {
 	if (_isVisible) {
 		Common::Point origin = getBbox().origin();
-		g_engine->getDisplayManager()->imageBlit(origin, _asset->bitmap, _dissolveFactor, dirtyRegion);
+		g_engine->getDisplayManager()->imageBlit(origin, _asset->bitmap, _dissolveFactor, &displayContext);
 	}
-}
-
-void ImageActor::invalidateLocalBounds() {
-	g_engine->addDirtyRect(getBbox());
 }
 
 void ImageActor::spatialShow() {

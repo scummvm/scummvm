@@ -26,6 +26,7 @@
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/collection.h"
 #include "mediastation/mediascript/function.h"
+#include "mediastation/actors/camera.h"
 #include "mediastation/actors/canvas.h"
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/image.h"
@@ -33,6 +34,7 @@
 #include "mediastation/actors/sound.h"
 #include "mediastation/actors/movie.h"
 #include "mediastation/actors/sprite.h"
+#include "mediastation/actors/stage.h"
 #include "mediastation/actors/hotspot.h"
 #include "mediastation/actors/timer.h"
 #include "mediastation/actors/screen.h"
@@ -84,9 +86,9 @@ void MediaStationEngine::readDestroyActorData(Chunk &chunk) {
 
 void MediaStationEngine::readActorLoadComplete(Chunk &chunk) {
 	uint actorId = chunk.readTypedUint16();
+	debugC(5, kDebugLoading, "%s: Actor %d", __func__, actorId);
 	Actor *actor = g_engine->getActorById(actorId);
 	actor->loadIsComplete();
-	debugC(5, kDebugLoading, "%s: Actor %d", __func__, actorId);
 }
 
 void MediaStationEngine::readCreateActorData(Chunk &chunk) {
@@ -131,6 +133,14 @@ void MediaStationEngine::readCreateActorData(Chunk &chunk) {
 
 	case kActorTypeCanvas:
 		actor = new CanvasActor();
+		break;
+
+	case kActorTypeCamera:
+		actor = new CameraActor();
+		break;
+
+	case kActorTypeStage:
+		actor = new StageActor();
 		break;
 
 	case kActorTypeScreen:

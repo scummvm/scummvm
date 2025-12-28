@@ -2,6 +2,7 @@ MODULE := engines/mediastation
 
 MODULE_OBJS = \
 	actor.o \
+	actors/camera.o \
 	actors/canvas.o \
 	actors/document.o \
 	actors/font.o \

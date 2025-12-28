@@ -48,8 +48,7 @@ public:
 	virtual void readChunk(Chunk &chunk) override;
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
-	virtual void invalidateLocalBounds() override;
+	virtual void draw(DisplayContext &displayContext) override;
 	virtual Common::Rect getBbox() const override;
 
 private:

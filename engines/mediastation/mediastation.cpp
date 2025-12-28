@@ -144,10 +144,6 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 	return _versionInfo.major == 0;
 }
 
-void MediaStationEngine::addDirtyRect(const Common::Rect &rect) {
-	getRootStage()->invalidateRect(rect);
-}
-
 Common::Error MediaStationEngine::run() {
 	initDisplayManager();
 	initCursorManager();

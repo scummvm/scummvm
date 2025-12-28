@@ -375,12 +375,12 @@ void SpriteMovieActor::postMovieEndEventIfNecessary() {
 	runEventHandlerIfExists(kSpriteMovieEndEvent, value);
 }
 
-void SpriteMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void SpriteMovieActor::draw(DisplayContext &displayContext) {
 	SpriteFrame *activeFrame = _asset->frames[_currentFrameIndex];
 	if (_isVisible) {
 		Common::Rect frameBbox = activeFrame->boundingBox();
 		frameBbox.translate(_boundingBox.left, _boundingBox.top);
-		g_engine->getDisplayManager()->imageBlit(frameBbox.origin(), activeFrame, _dissolveFactor, dirtyRegion);
+		g_engine->getDisplayManager()->imageBlit(frameBbox.origin(), activeFrame, _dissolveFactor, &displayContext);
 	}
 }
 

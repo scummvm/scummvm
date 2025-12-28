@@ -177,8 +177,19 @@ enum BuiltInMethod {
 	kStageGetHeightMethod = 0x16D,
 
 	// CAMERA METHODS.
+	// NOTE: IDs 0x15A and 0x15B seem to be double-assigned
+	// between two camera methods and two printer methods.
+	kAddToStageMethod = 0x15A,
+	kRemoveFromStageMethod = 0x15B,
+	kAddedToStageMethod = 0x15C,
+	kStartPanMethod = 0x15D,
 	kStopPanMethod = 0x15E,
+	kIsPanningMethod = 0x15F,
 	kViewportMoveToMethod = 0x160,
+	kAdjustCameraViewportMethod = 0x161,
+	kAdjustCameraViewportSpatialCenterMethod = 0x162,
+	kSetCameraBoundsMethod = 0x163,
+	kXViewportPositionMethod = 0x164,
 	kYViewportPositionMethod = 0x165,
 	kPanToMethod = 0x172,
 
@@ -224,6 +235,8 @@ enum BuiltInMethod {
 	kSortMethod = 0x10A,
 
 	// PRINTER METHODS.
+	// NOTE: IDs 0x15A and 0x15B seem to be double-assigned
+	// between two camera methods and two printer methods.
 	kOpenLensMethod = 0x15A,
 	kCloseLensMethod = 0x15B,
 };
@@ -255,6 +268,7 @@ enum EventType {
 	kPathStoppedEvent = 0x21,
 	kTextInputEvent = 0x25,
 	kTextErrorEvent = 0x26,
+	kCameraPanStepEvent = 0x29,
 	kCameraPanEndEvent = 0x2A,
 	kCameraPanAbortEvent = 0x2B,
 	kContextLoadCompleteEvent = 0x2C,

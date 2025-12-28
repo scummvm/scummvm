@@ -22,6 +22,7 @@
 #include "common/util.h"
 
 #include "mediastation/actor.h"
+#include "mediastation/actors/camera.h"
 #include "mediastation/actors/stage.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
@@ -127,6 +128,12 @@ void Actor::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg)
 void Actor::runEventHandlerIfExists(EventType eventType) {
 	ScriptValue scriptValue;
 	runEventHandlerIfExists(eventType, scriptValue);
+}
+
+SpatialEntity::~SpatialEntity() {
+	if (_parentStage != nullptr) {
+		_parentStage->removeChildSpatialEntity(this);
+	}
 }
 
 ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -265,7 +272,8 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
 	case kActorHeaderBoundingBox:
-		_boundingBox = chunk.readTypedRect();
+		_originalBoundingBox = chunk.readTypedRect();
+		setAdjustedBounds(kWrapNone);
 		break;
 
 	case kActorHeaderDissolveFactor:
@@ -303,14 +311,16 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 
 void SpatialEntity::loadIsComplete() {
 	Actor::loadIsComplete();
-	Actor *pendingParentStageActor = g_engine->getActorById(_stageId);
-	if (pendingParentStageActor == nullptr) {
-		error("%s: Actor %d doesn't exist", __func__, _stageId);
-	} else if (pendingParentStageActor->type() != kActorTypeStage) {
-		error("%s: Requested parent stage %d is not a stage", __func__, _stageId);
+	if (_stageId != 0) {
+		Actor *pendingParentStageActor = g_engine->getActorById(_stageId);
+		if (pendingParentStageActor == nullptr) {
+			error("%s: Actor %d doesn't exist", __func__, _stageId);
+		} else if (pendingParentStageActor->type() != kActorTypeStage) {
+			error("%s: Requested parent stage %d is not a stage", __func__, _stageId);
+		}
+		StageActor *pendingParentStage = static_cast<StageActor *>(pendingParentStageActor);
+		pendingParentStage->addChildSpatialEntity(this);
 	}
-	StageActor *pendingParentStage = static_cast<StageActor *>(pendingParentStageActor);
-	pendingParentStage->addChildSpatialEntity(this);
 }
 
 void SpatialEntity::invalidateMouse() {
@@ -332,7 +342,8 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_boundingBox.moveTo(dest);
+	_originalBoundingBox.moveTo(dest);
+	setAdjustedBounds(kWrapNone);
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
@@ -356,7 +367,8 @@ void SpatialEntity::setBounds(const Common::Rect &bounds) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
-	_boundingBox = bounds;
+	_originalBoundingBox = bounds;
+	setAdjustedBounds(kWrapNone);
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
@@ -393,11 +405,90 @@ void SpatialEntity::setDissolveFactor(double dissolveFactor) {
 }
 
 void SpatialEntity::invalidateLocalBounds() {
-	g_engine->addDirtyRect(getBbox());
+	if (_parentStage != nullptr) {
+		_parentStage->setAdjustedBounds(kWrapNone);
+		_parentStage->invalidateRect(getBbox());
+	} else {
+		error("%s: No parent stage for entity %d", __func__, _id);
+	}
 }
 
 void SpatialEntity::invalidateLocalZIndex() {
 	warning("STUB: %s", __func__);
+}
+
+void SpatialEntity::setAdjustedBounds(CylindricalWrapMode alignmentMode) {
+	_boundingBox = _originalBoundingBox;
+	if (_parentStage == nullptr) {
+		return;
+	}
+
+	Common::Point offset(0, 0);
+	Common::Point stageExtent = _parentStage->extent();
+	switch (alignmentMode) {
+	case kWrapRight: {
+		offset.x = stageExtent.x;
+		offset.y = 0;
+		break;
+	}
+
+	case kWrapLeft: {
+		offset.x = -stageExtent.x;
+		offset.y = 0;
+		break;
+	}
+
+	case kWrapBottom: {
+		offset.x = 0;
+		offset.y = stageExtent.y;
+		break;
+	}
+
+	case kWrapLeftTop: {
+		offset.x = 0;
+		offset.y = -stageExtent.y;
+		break;
+	}
+
+	case kWrapTop: {
+		offset.x = stageExtent.x;
+		offset.y = stageExtent.y;
+		break;
+	}
+
+	case kWrapRightBottom: {
+		offset.x = -stageExtent.x;
+		offset.y = -stageExtent.y;
+		break;
+	}
+
+	case kWrapRightTop: {
+		offset.x = -stageExtent.x;
+		offset.y = stageExtent.y;
+		break;
+	}
+
+	case kWrapLeftBottom: {
+		offset.x = stageExtent.x;
+		offset.y = -stageExtent.y;
+		break;
+	}
+
+	case kWrapNone:
+	default:
+		// No offset adjustment.
+		break;
+	}
+
+	if (alignmentMode != kWrapNone) {
+		// TODO: Implement this once we have a title that actually uses it.
+		warning("%s: Actor %d: Wrapping mode %d not handled yet: (%d, %d, %d, %d) -= (%d, %d)", __func__, _id, static_cast<uint>(alignmentMode), PRINT_RECT(_boundingBox), offset.x, offset.y);
+	}
+
+	if (_scaleX != 0.0 || _scaleY != 0.0) {
+		// TODO: Implement this once we have a title that actually uses it.
+		warning("%s: Scale not handled yet (scaleX: %f, scaleY: %f)", __func__, _scaleX, _scaleY);
+	}
 }
 
 } // End of namespace MediaStation

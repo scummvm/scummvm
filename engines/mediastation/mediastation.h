@@ -86,7 +86,6 @@ public:
 
 	bool isFirstGenerationEngine();
 	void dispatchSystemEvents();
-	void addDirtyRect(const Common::Rect &rect);
 	void draw(bool dirtyOnly = true);
 
 	void registerActor(Actor *actorToAdd);

@@ -20,33 +20,38 @@
  */
 
 #include "mediastation/mediastation.h"
+#include "mediastation/actors/camera.h"
 #include "mediastation/actors/stage.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
 StageActor::StageActor() : SpatialEntity(kActorTypeStage),
-	_children(StageActor::compareSpatialActorByZIndex) {
+	_children(StageActor::compareSpatialActorByZIndex),
+	_cameras(StageActor::compareSpatialActorByZIndex) {
 }
 
 StageActor::~StageActor() {
 	removeAllChildren();
+	if (_parentStage != nullptr) {
+		_parentStage->removeChildSpatialEntity(this);
+	}
+	_currentCamera = nullptr;
 }
 
 void StageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
 	case kActorHeaderChildActorId: {
-		uint actorId = chunk.readTypedUint16();
-		_pendingChild = g_engine->getSpatialEntityById(actorId);
+		// In stages, this basically has the oppose meaning it has outside of stages. Here,
+		// it specifies an actor that is a parent of this stage.
+		uint parentActorId = chunk.readTypedUint16();
+		_pendingParent = g_engine->getSpatialEntityById(parentActorId);
 		break;
 	}
 
-	case kActorHeaderStageSize: {
-		Common::Point size = chunk.readTypedGraphicSize();
-		_boundingBox.setWidth(size.x);
-		_boundingBox.setHeight(size.y);
+	case kActorHeaderStageExtent:
+		_extent = chunk.readTypedGraphicSize();
 		break;
-	}
 
 	case kActorHeaderCylindricalX:
 		_cylindricalX = static_cast<bool>(chunk.readTypedByte());
@@ -61,11 +66,105 @@ void StageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	}
 }
 
-void StageActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void StageActor::preload(const Common::Rect &rect) {
+	if (cylindricalX()) {
+		preloadTest(rect, kWrapLeft);
+	}
+	if (cylindricalY()) {
+		preloadTest(rect, kWrapTop);
+	}
+	if (cylindricalX() && cylindricalY()) {
+		preloadTest(rect, kWrapLeftTop);
+	}
+	preloadTest(rect, kWrapNone);
+}
+
+void StageActor::preloadTest(const Common::Rect &rect, CylindricalWrapMode wrapMode) {
 	for (SpatialEntity *entity : _children) {
+		entity->setAdjustedBounds(wrapMode);
+		if (!entity->isRectInMemory(rect) && !entity->isLoading()) {
+			entity->preload(rect);
+		}
+	}
+}
+
+bool StageActor::isRectInMemory(const Common::Rect &rect) {
+	bool result = true;
+	if (cylindricalX()) {
+		result = isRectInMemoryTest(rect, kWrapLeft);
+	}
+	if (result && cylindricalY()) {
+		result = isRectInMemoryTest(rect, kWrapTop);
+	}
+	if (result && cylindricalY() && cylindricalX()) {
+		result = isRectInMemoryTest(rect, kWrapLeftTop);
+	}
+	if (result) {
+		result = isRectInMemoryTest(rect, kWrapNone);
+	}
+	return result;
+}
+
+bool StageActor::isRectInMemoryTest(const Common::Rect &rect, CylindricalWrapMode wrapMode) {
+	for (SpatialEntity *entity : _children) {
+		entity->setAdjustedBounds(wrapMode);
+		if (!entity->isRectInMemory(rect)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void StageActor::draw(DisplayContext &displayContext) {
+	Clip *currentClip = displayContext.currentClip();
+	if (currentClip != nullptr) {
+		Clip *previousClip = displayContext.previousClip();
+		if (previousClip == nullptr) {
+			currentClip->addToRegion(currentClip->_bounds);
+		} else {
+			currentClip = previousClip;
+		}
+	}
+
+	displayContext.intersectClipWith(getBbox());
+	if (displayContext.clipIsEmpty()) {
+		return;
+	}
+
+	bool boundsNeedsAdjustment = false;
+	Common::Rect bounds = getBbox();
+	if (bounds.left != 0 || bounds.top != 0) {
+		boundsNeedsAdjustment = true;
+	}
+	if (boundsNeedsAdjustment) {
+		displayContext.pushOrigin();
+		displayContext._origin.x = bounds.left + displayContext._origin.x;
+		displayContext._origin.y = bounds.top + displayContext._origin.y;
+	}
+
+	if (_cameras.empty()) {
+		drawUsingStage(displayContext);
+	} else {
+		for (CameraActor *camera : _cameras) {
+			setCurrentCamera(camera);
+			camera->drawUsingCamera(displayContext, _children);
+		}
+	}
+
+	if (boundsNeedsAdjustment) {
+		displayContext.popOrigin();
+	}
+	displayContext.emptyCurrentClip();
+}
+
+void StageActor::drawUsingStage(DisplayContext &displayContext) {
+	for (SpatialEntity *entity : _children) {
+		entity->setAdjustedBounds(kWrapNone);
 		if (entity->isVisible()) {
-			debugC(5, kDebugGraphics, "%s: Redrawing actor %d", __func__, entity->id());
-			entity->draw(dirtyRegion);
+			if (displayContext.rectIsInClip(entity->getBbox())) {
+				debugC(5, kDebugGraphics, "%s: Redrawing actor %d", __func__, entity->id());
+				entity->draw(displayContext);
+			}
 		}
 	}
 }
@@ -75,17 +174,107 @@ void StageActor::invalidateRect(const Common::Rect &rect) {
 		Common::Point origin = _boundingBox.origin();
 		Common::Rect rectRelativeToParent = rect;
 		rectRelativeToParent.translate(origin.x, origin.y);
-		_parentStage->invalidateRect(rect);
+
+		if (_cameras.size() == 0) {
+			_parentStage->invalidateRect(rectRelativeToParent);
+		} else {
+			invalidateUsingCameras(rectRelativeToParent);
+		}
 	} else {
 		error("%s: Attempt to invalidate rect without a parent stage", __func__);
 	}
 }
 
+void StageActor::invalidateUsingCameras(const Common::Rect &rect) {
+	for (CameraActor *camera : _cameras) {
+		Common::Rect adjustedRectToInvalidate = rect;
+		Common::Rect cameraBounds = camera->getBbox();
+
+		Common::Rect cameraBoundsInStageCoordinates = cameraBounds;
+		Common::Rect stageOrigin = getBbox();
+		cameraBoundsInStageCoordinates.translate(stageOrigin.left, stageOrigin.top);
+
+		Common::Point cameraViewportOrigin = camera->getViewportOrigin();
+		Common::Point viewportOffsetFromCameraBounds(
+			cameraViewportOrigin.x - cameraBounds.left,
+			cameraViewportOrigin.y - cameraBounds.top
+		);
+
+		adjustedRectToInvalidate.translate(
+			-viewportOffsetFromCameraBounds.x,
+			-viewportOffsetFromCameraBounds.y
+		);
+		invalidateObject(adjustedRectToInvalidate, cameraBoundsInStageCoordinates);
+	}
+}
+
+void StageActor::invalidateObject(const Common::Rect &rect, const Common::Rect &visibleRegion) {
+	Common::Point xyAdjustment(0, 0);
+	invalidateTest(rect, visibleRegion, xyAdjustment);
+
+	if (_cylindricalX) {
+		xyAdjustment.x = _extent.x;
+		xyAdjustment.y = 0;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+
+		xyAdjustment.x = -_extent.x;
+		xyAdjustment.y = 0;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+	}
+
+	if (_cylindricalY) {
+		xyAdjustment.x = 0;
+		xyAdjustment.y = _extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+
+		xyAdjustment.x = 0;
+		xyAdjustment.y = -_extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+	}
+
+	if (_cylindricalX && _cylindricalY) {
+		xyAdjustment.x = _extent.x;
+		xyAdjustment.y = _extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+
+		xyAdjustment.x = -_extent.x;
+		xyAdjustment.y = -_extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+
+		xyAdjustment.x = -_extent.x;
+		xyAdjustment.y = _extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+
+		xyAdjustment.x = _extent.x;
+		xyAdjustment.y = -_extent.y;
+		invalidateTest(rect, visibleRegion, xyAdjustment);
+	}
+}
+
+void StageActor::invalidateTest(const Common::Rect &rect, const Common::Rect &visibleRegion, const Common::Point &originAdjustment) {
+	Common::Rect rectToInvalidateRelative = rect;
+	rectToInvalidateRelative.translate(-originAdjustment.x, -originAdjustment.y);
+	rectToInvalidateRelative.clip(visibleRegion);
+	_parentStage->invalidateRect(rectToInvalidateRelative);
+}
+
 void StageActor::loadIsComplete() {
+	// This is deliberately calling down to Actor, rather than calling
+	// to SpatialEntity first.
 	Actor::loadIsComplete();
-	if (_pendingChild != nullptr) {
-		addChildSpatialEntity(_pendingChild);
-		_pendingChild = nullptr;
+
+	if (_pendingParent != nullptr) {
+		if (_pendingParent->type() != kActorTypeStage) {
+			error("%s: Parent must be a stage", __func__);
+		}
+		StageActor *parentStage = static_cast<StageActor *>(_pendingParent);
+		parentStage->addChildSpatialEntity(this);
+		_pendingParent = nullptr;
+	}
+
+	if (_extent.x == 0 || _extent.y == 0) {
+		_extent.x = _boundingBox.width();
+		_extent.y = _boundingBox.height();
 	}
 }
 
@@ -103,12 +292,28 @@ void StageActor::removeActorFromStage(uint actorId) {
 	SpatialEntity *spatialEntity = g_engine->getSpatialEntityById(actorId);
 	StageActor *currentParent = spatialEntity->getParentStage();
 	if (currentParent == this) {
-		// Remove the actor from this stage, and add it
-		// back to the root stage.
+		// Remove the actor from this stage, and add it back to the root stage.
 		removeChildSpatialEntity(spatialEntity);
 		RootStage *rootStage = g_engine->getRootStage();
 		rootStage->addChildSpatialEntity(spatialEntity);
 	}
+}
+
+void StageActor::addCamera(CameraActor *camera) {
+	_cameras.insert(camera);
+}
+
+void StageActor::removeCamera(CameraActor *camera) {
+	for (auto it = _cameras.begin(); it != _cameras.end(); ++it) {
+		if (*it == camera) {
+			_cameras.erase(it);
+			break;
+		}
+	}
+}
+
+void StageActor::setCurrentCamera(CameraActor *camera) {
+	_currentCamera = camera;
 }
 
 ScriptValue StageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -189,6 +394,121 @@ void StageActor::removeChildSpatialEntity(SpatialEntity *entity) {
 	}
 }
 
+uint16 StageActor::queryChildrenAboutMouseEvents(
+	const Common::Point &point,
+	uint16 eventMask,
+	MouseActorState &state,
+	CylindricalWrapMode wrapMode) {
+
+	uint16 result = 0;
+	Common::Point adjustedPoint = point - _boundingBox.origin();
+	for (auto childIterator = _children.end(); childIterator != _children.begin();) {
+		--childIterator; // Decrement first, then dereference
+		SpatialEntity *child = *childIterator;
+		debugC(7, kDebugEvents, " %s: Checking actor %d (z-index: %d) (eventMask: 0x%02x) (result: 0x%02x) (wrapMode: %d)", __func__, child->id(), child->zIndex(), eventMask, result, wrapMode);
+
+		child->setAdjustedBounds(wrapMode);
+		uint16 handledEvents = child->findActorToAcceptMouseEvents(adjustedPoint, eventMask, state, true);
+		child->setAdjustedBounds(kWrapNone);
+
+		eventMask &= ~handledEvents;
+		result |= handledEvents;
+	}
+	return result;
+}
+
+uint16 StageActor::findActorToAcceptMouseEventsObject(
+	const Common::Point &point,
+	uint16 eventMask,
+	MouseActorState &state,
+	bool inBounds) {
+
+	uint16 result = 0;
+
+	uint16 handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapNone);
+	if (handledEvents != 0) {
+		eventMask &= ~handledEvents;
+		result |= handledEvents;
+	}
+
+	if ((eventMask != 0) && cylindricalX()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapLeft);
+		if (handledEvents != 0) {
+			eventMask &= ~handledEvents;
+			result |= handledEvents;
+		}
+	}
+
+	if ((eventMask != 0) && cylindricalX()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapRight);
+		if (handledEvents != 0) {
+			eventMask &= ~handledEvents;
+			result |= handledEvents;
+		}
+	}
+
+	if ((eventMask != 0) && cylindricalY()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapTop);
+		if (handledEvents != 0) {
+			eventMask &= ~handledEvents;
+			result |= handledEvents;
+		}
+	}
+
+	if ((eventMask != 0) && cylindricalY()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapBottom);
+		if (handledEvents != 0) {
+			eventMask &= ~handledEvents;
+			result |= handledEvents;
+		}
+	}
+
+	if ((eventMask != 0) && cylindricalY() && cylindricalX()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapLeftTop);
+		if (handledEvents != 0) {
+			eventMask &= ~handledEvents;
+			result |= handledEvents;
+		}
+	}
+
+	if ((eventMask != 0) && cylindricalY() && cylindricalX()) {
+		handledEvents = queryChildrenAboutMouseEvents(point, eventMask, state, kWrapRightBottom);
+		if (handledEvents != 0) {
+			result |= handledEvents;
+		}
+	}
+
+	return result;
+}
+
+uint16 StageActor::findActorToAcceptMouseEventsCamera(
+	const Common::Point &point,
+	uint16 eventMask,
+	MouseActorState &state,
+	bool inBounds) {
+
+	uint16 result = 0;
+	for (CameraActor *camera : _cameras) {
+		Common::Point mousePosRelativeToCamera = point;
+		setCurrentCamera(camera);
+
+		Common::Point cameraViewportOrigin = camera->getViewportOrigin();
+		mousePosRelativeToCamera.x += cameraViewportOrigin.x;
+		mousePosRelativeToCamera.y += cameraViewportOrigin.y;
+
+		if (!inBounds) {
+			Common::Rect viewportBounds = camera->getViewportBounds();
+			if (!viewportBounds.contains(mousePosRelativeToCamera)) {
+				inBounds = true;
+			}
+		}
+
+		result = findActorToAcceptMouseEventsObject(mousePosRelativeToCamera, eventMask, state, inBounds);
+	}
+
+	return result;
+}
+
 uint16 StageActor::findActorToAcceptMouseEvents(
 	const Common::Point &point,
 	uint16 eventMask,
@@ -196,22 +516,21 @@ uint16 StageActor::findActorToAcceptMouseEvents(
 	bool inBounds) {
 
 	debugC(6, kDebugEvents, " --- %s ---", __func__);
-	if (!inBounds) {
-		if (!_boundingBox.contains(point)) {
-			inBounds = true;
+
+	Common::Point mousePosAdjustedByStageOrigin = point;
+	mousePosAdjustedByStageOrigin.x -= _boundingBox.left;
+	mousePosAdjustedByStageOrigin.y -= _boundingBox.top;
+
+	uint16 result;
+	if (_cameras.empty()) {
+		if (!inBounds) {
+			if (!_boundingBox.contains(point)) {
+				inBounds = true;
+			}
 		}
-	}
-
-	uint16 result = 0;
-	Common::Point adjustedPoint = point - _boundingBox.origin();
-	for (auto childIterator = _children.end(); childIterator != _children.begin();) {
-		--childIterator; // Decrement first, then dereference
-		SpatialEntity *child = *childIterator;
-		debugC(7, kDebugEvents, " %s: Checking actor %d (z-index: %d) (eventMask: 0x%02x) (result: 0x%02x)", __func__, child->id(), child->zIndex(), eventMask, result);
-		uint16 handledEvents = child->findActorToAcceptMouseEvents(adjustedPoint, eventMask, state, inBounds);
-
-		eventMask &= ~handledEvents;
-		result |= handledEvents;
+		result = queryChildrenAboutMouseEvents(mousePosAdjustedByStageOrigin, eventMask, state, kWrapNone);
+	} else {
+		result = findActorToAcceptMouseEventsCamera(mousePosAdjustedByStageOrigin, eventMask, state, inBounds);
 	}
 
 	debugC(6, kDebugEvents, " --- END %s ---", __func__);
@@ -322,7 +641,7 @@ void StageActor::currentMousePosition(Common::Point &point) {
 void RootStage::invalidateRect(const Common::Rect &rect) {
 	Common::Rect rectToAdd = rect;
 	rectToAdd.clip(_boundingBox);
-	_dirtyRegion.push_back(rectToAdd);
+	_dirtyRegion.addRect(rectToAdd);
 }
 
 void RootStage::currentMousePosition(Common::Point &point) {
@@ -330,17 +649,14 @@ void RootStage::currentMousePosition(Common::Point &point) {
 	point -= getBbox().origin();
 }
 
-void RootStage::drawAll() {
-	Common::Array<Common::Rect> region;
-	region.push_back(_boundingBox);
-	StageActor::draw(region);
+void RootStage::drawAll(DisplayContext &displayContext) {
+	StageActor::draw(displayContext);
 }
 
-void RootStage::drawDirtyRegion() {
-	if (!_dirtyRegion.empty()) {
-		StageActor::draw(_dirtyRegion);
-		_dirtyRegion.clear();
-	}
+void RootStage::drawDirtyRegion(DisplayContext &displayContext) {
+	displayContext.setClipTo(_dirtyRegion);
+	StageActor::draw(displayContext);
+	displayContext.emptyCurrentClip();
 }
 
 uint16 RootStage::findActorToAcceptMouseEvents(
@@ -407,24 +723,16 @@ StageDirector::~StageDirector() {
 }
 
 void StageDirector::drawAll() {
-	// TODO: This just passes through for now,
-	// but once the original DisplayContext stuff
-	// is reimplemented, there will be more here.
-	_rootStage->drawAll();
+	_rootStage->drawAll(g_engine->getDisplayManager()->_displayContext);
 }
 
 void StageDirector::drawDirtyRegion() {
-	// TODO: This just passes through for now,
-	// but once the original DisplayContext stuff
-	// is reimplemented, there will be more here.
-	_rootStage->drawDirtyRegion();
+	_rootStage->drawDirtyRegion(g_engine->getDisplayManager()->_displayContext);
 }
 
 void StageDirector::clearDirtyRegion() {
-	// TODO: This just passes through for now,
-	// but once the original DisplayContext stuff
-	// is reimplemented, there will be more here.
-	_rootStage->clearDirtyRegion();
+	_rootStage->_dirtyRegion._rects.clear();
+	_rootStage->_dirtyRegion._bounds = Common::Rect(0, 0, 0, 0);
 }
 
 void StageDirector::handleKeyboardEvent(const Common::Event &event) {
