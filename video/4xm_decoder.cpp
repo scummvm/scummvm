@@ -103,10 +103,6 @@ public:
 		_blockType[1].initStatistics({8, 0, 4, 2, 1, 1});
 		_blockType[2].initStatistics({8, 4, 0, 2, 1, 1});
 		_blockType[3].initStatistics({8, 0, 0, 4, 2, 1, 1});
-		for (int i = 0; i != 4; ++i) {
-			debug("blockType[%d]:", i);
-			_blockType[i].dump();
-		}
 	}
 	~FourXMVideoTrack();
 
@@ -139,7 +135,6 @@ const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
 		for (uint i = 0; i < 256; i++)
 			_mv[i] = mv[i][0] + mv[i][1] * pitch;
 	}
-	debug("decode next video frame");
 	_dec->decodeNextFrameImpl();
 	return _frame;
 }
@@ -250,8 +245,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	stream->read(bitstreamData.data(), bitstreamData.size());
 
 	auto prefixSize = stream->readUint32LE();
-	auto tokenCount = stream->readUint32LE();
-	debug("i-frame, bitstream: %u, prefix stream: %u, tokens: %u", bitstreamSize, prefixSize, tokenCount);
+	/* auto tokenCount = */ stream->readUint32LE();
 
 	Common::Array<byte> prefixStream(prefixSize * 4);
 	stream->read(prefixStream.data(), prefixStream.size());
@@ -407,7 +401,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 	auto bitStreamSize = stream->readUint32LE();
 	auto wordStreamSize = stream->readUint32LE();
 	auto byteStreamSize = stream->readUint32LE();
-	debug("p-frame, bitstream: %u, wordstream: %u, bytestream: %u", bitStreamSize, wordStreamSize, byteStreamSize);
 
 	Common::Array<byte> bitStreamData(bitStreamSize);
 	stream->read(bitStreamData.data(), bitStreamData.size());
@@ -427,9 +420,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 			decode_pfrm_block(frame.get(), x, y, 3, 3, bitStream, wordStream, byteStream);
 		}
 	}
-	debug("bitStream: %u/%u", bitStream.getWordPos(), bitStreamData.size() / 4);
-	debug("wordStream: %lu/%lu", wordStream.pos(), wordStream.size());
-	debug("byteStream: %lu/%lu", byteStream.pos(), byteStream.size());
 	_frame = frame.release();
 }
 
@@ -437,7 +427,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *st
 	auto frameIdx = stream->readUint32LE();
 	auto frameSize = stream->readUint32LE();
 	auto streamSize = stream->size() - stream->pos();
-	debug("c-frame, frame id: %u, size: %u", frameIdx, frameSize);
 	auto &cframe = _cframes[frameIdx];
 	auto dstOffset = cframe.size();
 	cframe.resize(cframe.size() + streamSize);
@@ -481,7 +470,6 @@ void FourXMDecoder::decodeNextFrameImpl() {
 	while (_stream->pos() < frame.end) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 size = _stream->readUint32LE();
-		debug("%u: sub frame %s, 0x%x bytes at %08lx", _curFrame, tagName(tag).c_str(), size, _stream->pos());
 		auto pos = _stream->pos();
 
 		auto loadBuf = [this](uint bufSize) {
@@ -545,12 +533,9 @@ void FourXMDecoder::readList(uint32 listEnd) {
 		_frames.push_back({_stream->pos() - 4, listEnd});
 		return;
 	}
-	debug("%08lx: list type %s", _stream->pos() - 4, tagName(listType).c_str());
 	while (_stream->pos() < listEnd) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 size = _stream->readUint32LE();
-		if (listType != MKTAG('F', 'R', 'A', 'M'))
-			debug("%08lx: tag %s, size %u/0x%x", _stream->pos() - 8, tagName(tag).c_str(), size, size);
 		auto pos = _stream->pos();
 		if (tag == MKTAG('L', 'I', 'S', 'T')) {
 			readList(pos + size);
@@ -628,11 +613,9 @@ bool FourXMDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_stream = stream;
 
-	debug("file size %u", fileSize);
 	while (stream->pos() < fileSize) {
 		uint32 tag = stream->readUint32BE();
 		uint32 size = stream->readUint32LE();
-		debug("%08lx: tag %s, size %u/0x%x", stream->pos() - 8, tagName(tag).c_str(), size, size);
 		auto pos = stream->pos();
 		if (tag == MKTAG('L', 'I', 'S', 'T')) {
 			readList(pos + size);
@@ -640,7 +623,6 @@ bool FourXMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		stream->seek(pos + size + (size & 1));
 	}
 
-	debug("loaded %u frames", _frames.size());
 	return getNumTracks() != 0;
 }
 
