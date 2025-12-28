@@ -74,6 +74,20 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{
+	{ // 1994 CD version
+		"adibou1",
+		"ADIBOU 1 Environnement 4-5 ans (CD)",
+		AD_ENTRY2s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104,
+				   "c51.stk", "38daec4f7a7fcedbdf5e47b3c5f28e35", 5680126),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_CD,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesAdLib | kFeatures640x400,
+	0, 0, 0
+},
 
 //  -- German: ADI Jr. Spielerisch lernen --
 
