@@ -30,6 +30,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define ROW_HEIGHT 9
+#define TEXT_COLOR 9
 
 TextView::TextView(const Common::String &name) :
 		UIElement(name, g_engine) {
@@ -50,6 +51,8 @@ XeenFont *TextView::getFont() const {
 		&g_globals->_fontNormal;
 }
 
+static bool flag = false;
+
 void TextView::writeChar(unsigned char c) {
 	XeenFont::setColors(_colorsNum);
 	XeenFont &font = *getFont();
@@ -63,7 +66,7 @@ void TextView::writeChar(unsigned char c) {
 			font.drawChar(&s, c,
 				_bounds.borderSize() + _textPos.x,
 				_bounds.borderSize() + _textPos.y,
-				0xff);
+				TEXT_COLOR);
 
 		_textPos.x += font.getCharWidth(c);
 		if (_textPos.x >= _innerBounds.width()) {
