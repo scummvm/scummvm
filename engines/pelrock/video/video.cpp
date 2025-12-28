@@ -20,8 +20,8 @@
  */
 
 #include "common/file.h"
-#include "graphics/screen.h"
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
@@ -30,15 +30,17 @@
 
 namespace Pelrock {
 
-VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono) : _screen(screen), _events(events), _chrono(chrono) {
-	_screenSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+VideoManager::VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono, LargeFont *largeFont) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont) {
+	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 VideoManager::~VideoManager() {
-	_screenSurface.free();
+	_videoSurface.free();
 }
 
 void VideoManager::playIntro() {
+	initMetadata();
 	Common::File videoFile;
 	if (!videoFile.open("ESCENAX.SSN")) {
 		error("Could not open ESCENAX.SSN");
@@ -46,7 +48,8 @@ void VideoManager::playIntro() {
 	}
 	videoFile.seek(0, SEEK_SET);
 
-	_screenSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
+	_videoSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
+	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
 	for (int sequence = 0; sequence < 1; sequence++) {
 		int frameCounter = 0;
 		int chunksInBuffer = 0;
@@ -56,7 +59,7 @@ void VideoManager::playIntro() {
 			_chrono->updateChrono();
 			_events->pollEvent();
 
-			if(_chrono->_gameTick) {
+			if (_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
 				ChunkHeader chunk;
 				readChunk(videoFile, chunk);
 
@@ -75,12 +78,18 @@ void VideoManager::playIntro() {
 					debug("Unknown chunk type %d encountered", chunk.chunkType);
 					break;
 				}
+
+				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
+				if (subtitle != nullptr) {
+					_largeFont->drawString(&_textSurface, subtitle->text, subtitle->x, subtitle->y, 640, 13);
+				}
+
 				presentFrame();
 			}
 			g_system->delayMillis(10);
 		}
+		debug("Total frames played: %d", frameCounter);
 	}
-
 	videoFile.close();
 }
 
@@ -162,7 +171,7 @@ void VideoManager::readChunk(Common::SeekableReadStream &stream, ChunkHeader &ch
 
 void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
 	byte *frameData = nullptr;
-	if(chunk.chunkType == 1) {
+	if (chunk.chunkType == 1) {
 		// Video data chunk
 		frameData = decodeRLE(chunk.data, chunk.blockCount * chunkSize, 0x04);
 	} else if (chunk.chunkType == 2) {
@@ -170,8 +179,8 @@ void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
 		frameData = decodeCopyBlock(chunk.data, 0);
 	}
 
-	byte *surfacePixels = (byte *)_screenSurface.getPixels();
-	if(frameCount == 0) {
+	byte *surfacePixels = (byte *)_videoSurface.getPixels();
+	if (frameCount == 0) {
 		memcpy(surfacePixels, frameData, 256000);
 	} else {
 		// Subsequent frames, XOR with previous frame
@@ -180,13 +189,115 @@ void VideoManager::processFrame(ChunkHeader &chunk, const int frameCount) {
 		}
 	}
 	delete[] frameData;
-
 }
 
 void VideoManager::presentFrame() {
-	_screen->blitFrom(_screenSurface);
+	_screen->blitFrom(_videoSurface);
+	_screen->transBlitFrom(_textSurface, 255);
 	_screen->markAllDirty();
 	_screen->update();
+}
+
+void VideoManager::initMetadata() {
+	Common::File metadataFile;
+	if (!metadataFile.open("ESCENAX.SCR")) {
+		error("Could not open ESCENAX.SCR");
+		return;
+	}
+
+	while (metadataFile.eos() == false) {
+		char curChar = metadataFile.readByte();
+		if (curChar == '/') {
+			char nextChar = metadataFile.readByte();
+			if (nextChar == 't') { // subtitle
+				Subtitle subtitle;
+				Common::String buffer;
+				int values[4];
+				int valueIndex = 0;
+
+				// Skip spaces after "/t"
+				while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+					;
+				metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+				// Parse 4 space-delimited numbers
+				while (!metadataFile.eos() && valueIndex < 4) {
+					char c = metadataFile.readByte();
+
+					if (c == ' ') {
+						if (!buffer.empty()) {
+							values[valueIndex++] = atoi(buffer.c_str());
+							buffer.clear();
+						}
+					} else if (c >= '0' && c <= '9') {
+						buffer += c;
+					} else if (c == 0x08) {
+						// End of numbers, start of text
+						if (!buffer.empty()) {
+							values[valueIndex++] = atoi(buffer.c_str());
+						}
+						break;
+					}
+				}
+
+				if (valueIndex == 4) {
+					subtitle.startFrame = values[0];
+					subtitle.endFrame = values[1];
+					subtitle.x = values[2];
+					subtitle.y = values[3];
+
+					// Read text until CRLF (0x0D 0x0A)
+					subtitle.text.clear();
+					while (!metadataFile.eos()) {
+						char c = metadataFile.readByte();
+
+						if (c == 0x0D) {
+							char next = metadataFile.readByte();
+							if (next == 0x0A) {
+								break;
+							} else {
+								subtitle.text += c;
+								subtitle.text += next;
+							}
+						} else {
+							subtitle.text += c;
+						}
+					}
+					_subtitles.push_back(subtitle);
+				}
+			}
+		}
+	}
+
+	debug("Loaded %d subtitles", _subtitles.size());
+	debug("Loaded %d audio effects", _audioEffect.size());
+
+	metadataFile.close();
+}
+
+Subtitle *VideoManager::getSubtitleForFrame(uint16 frameCounter) {
+	// Check if current subtitle is still active
+	if (_currentSubtitleIndex < _subtitles.size()) {
+		Subtitle &sub = _subtitles[_currentSubtitleIndex];
+
+		if (frameCounter >= sub.startFrame && frameCounter <= sub.endFrame) {
+			return &sub; // Still showing this subtitle
+		}
+
+		if (frameCounter > sub.endFrame) {
+			_currentSubtitleIndex++; // Move to next subtitle
+			_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
+			// Check if new subtitle should be active
+			if (_currentSubtitleIndex < _subtitles.size()) {
+				Subtitle &nextSub = _subtitles[_currentSubtitleIndex];
+				if (frameCounter >= nextSub.startFrame && frameCounter <= nextSub.endFrame) {
+					return &nextSub;
+				}
+			}
+		}
+	}
+
+	return nullptr; // No active subtitle
 }
 
 } // End of namespace Pelrock

@@ -95,7 +95,14 @@ Common::Error PelrockEngine::run() {
 	_sound = new SoundManager(_mixer);
 	_dialog = new DialogManager(_screen, _events, _graphics);
 	_menu = new MenuManager(_screen, _events, _res);
-	_videoManager = new VideoManager(_screen, _events, _chrono);
+	_smallFont = new SmallFont();
+	_smallFont->load("ALFRED.4");
+	_largeFont = new LargeFont();
+	_largeFont->load("ALFRED.7");
+	_doubleSmallFont = new DoubleSmallFont();
+	_doubleSmallFont->load("ALFRED.4");
+	_videoManager = new VideoManager(_screen, _events, _chrono, _largeFont);
+
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
 
@@ -146,13 +153,6 @@ void PelrockEngine::init() {
 	calculateScalingMasks();
 	_compositeBuffer = new byte[640 * 400];
 	_currentBackground = new byte[640 * 400];
-
-	_smallFont = new SmallFont();
-	_smallFont->load("ALFRED.4");
-	_largeFont = new LargeFont();
-	_largeFont->load("ALFRED.7");
-	_doubleSmallFont = new DoubleSmallFont();
-	_doubleSmallFont->load("ALFRED.4");
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);

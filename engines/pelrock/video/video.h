@@ -25,6 +25,7 @@
 #include "graphics/surface.h"
 
 #include "pelrock/events.h"
+#include "pelrock/fonts/large_font.h"
 
 namespace Pelrock {
 
@@ -36,11 +37,38 @@ struct ChunkHeader {
 	byte *data;
 };
 
+struct Effect {
+	uint16 startFrame;
+};
+
+struct AudioEffect : Effect {
+};
+
+struct Subtitle : Effect {
+	uint16 startFrame;
+	uint16 endFrame;
+	uint16 x;
+	uint16 y;
+	Common::String text;
+};
+
+struct Voice : AudioEffect {
+	char filename[12];
+};
+
+struct Sfx : AudioEffect {
+	uint32 soundId;
+};
+
+struct ExtraSound : AudioEffect {
+	char filename[12];
+};
+
 static const uint32 chunkSize = 0x5000;
 
 class VideoManager {
 public:
-	VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono);
+	VideoManager(Graphics::Screen *screen, PelrockEventManager *events, ChronoManager *chrono, LargeFont *largeFont);
 	~VideoManager();
 	void playIntro();
 
@@ -48,14 +76,21 @@ private:
 	Graphics::Screen *_screen;
 	PelrockEventManager *_events;
 	ChronoManager *_chrono;
+	LargeFont *_largeFont;
 	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
     byte *decodeRLE(byte *data, size_t size, uint32 offset);
 	void readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk);
 	void processFrame(ChunkHeader &chunk, const int frameCount);
 	void presentFrame();
-	Graphics::Surface _screenSurface = Graphics::Surface();
+	void initMetadata();
+	Subtitle *getSubtitleForFrame(uint16 frameNumber);
+	int _currentSubtitleIndex = 0;
+	Graphics::Surface _videoSurface = Graphics::Surface();
+	Graphics::Surface _textSurface = Graphics::Surface();
 	Common::Array<ChunkHeader> _chunkBuffer;
+	Common::Array<Subtitle> _subtitles;
+	Common::Array<AudioEffect> _audioEffect;
 };
 
 } // End of namespace Pelrock
