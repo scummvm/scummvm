@@ -239,7 +239,6 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				auto animChunkId = s.readUint32LE();
 				auto animChunkSize = s.readUint32LE();
 				assert(animChunkSize >= 8);
-				debug("animation chunk %08x %u at %08lx", animChunkId, animChunkSize, animChunkPos);
 				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
 					auto &blockData = vr._animations[name];
 					blockData.resize(animChunkSize - 8);
