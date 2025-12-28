@@ -327,7 +327,7 @@ Cube toCube(float x, float y, float z) {
 void VR::playAnimation(const Common::String &name) {
 	auto it = _animations.find(name);
 	if (it == _animations.end()) {
-		warning("no animation %s", name.c_str());
+		debug("no animation %s", name.c_str());
 		return;
 	}
 	if (it->_value.size() == 0)
