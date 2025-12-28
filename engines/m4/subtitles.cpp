@@ -118,41 +118,22 @@ void M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 	updateSubtitleOverlay();
 }
 
+bool M4Subtitles::shouldShowSubtitle() const {
+	return digi_play_state(1) || digi_play_state(2);
+}
+
 void M4Subtitles::updateSubtitleOverlay() const {
-	if (!_loaded || !_subtitlesEnabled)
+	if (!_subtitlesEnabled)
 		return;
 
-	if (!digi_play_state(1) && !digi_play_state(2)) {
-		// No subtitle to show
-		g_system->hideOverlay();
-		return;
-	} else {
-		if (!g_system->isOverlayVisible()) {
-			g_system->clearOverlay();
-			g_system->showOverlay(false);
-		}
-	}
-
-	if (_overlayHasAlpha) {
-		// When we have alpha, draw the whole surface without thinking it more
-		g_system->copyRectToOverlay(_surface.getPixels(), _surface.pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
-	} else {
-		// When overlay doesn't have alpha, showing it hides the underlying game screen
-		// We force a copy of the game screen to the overlay by clearing it
-		// We then draw the smallest possible surface to minimize black rectangle behind text
-		g_system->clearOverlay();
-		g_system->copyRectToOverlay((byte *)_surface.getPixels() + _drawRect.top * _surface.pitch + _drawRect.left * _surface.format.bytesPerPixel, _surface.pitch,
-									_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
-	}
+	Subtitles::updateSubtitleOverlay();
 }
 
 void M4Subtitles::clearSubtitle() const {
-	if (!_loaded || !_subtitlesEnabled)
+	if (!_subtitlesEnabled)
 		return;
 
-	g_system->hideOverlay();
-	_drawRect.setEmpty();
-	_surface.fillRect(Common::Rect(0, 0, _surface.w, _surface.h), _transparentColor);
+	Subtitles::clearSubtitle();
 }
 
 } // namespace M4
