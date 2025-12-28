@@ -365,8 +365,10 @@ struct IfAnd : public Script::Conditional {
 			if (!value)
 				result = false;
 		}
-		if (!result)
+		if (!result) {
+			debug("ifand: not executing conditional block");
 			return;
+		}
 		debug("ifand: executing conditional block");
 		target->exec(ctx);
 	}
