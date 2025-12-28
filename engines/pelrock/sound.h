@@ -191,6 +191,7 @@ public:
 	void stopAllSounds();
 	void stopSound(int channel);
 	void stopMusic();
+	bool isMusicPlaying();
 	void setVolume(int volume);
 	bool isPlaying() const;
 	bool isPlaying(int channel) const;

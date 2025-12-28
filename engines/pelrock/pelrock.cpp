@@ -32,6 +32,8 @@
 #include "image/pcx.h"
 #include "image/png.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/console.h"

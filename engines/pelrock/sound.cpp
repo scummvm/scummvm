@@ -20,16 +20,17 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
-
 #include "audio/mixer.h"
+
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
+
+#include "backends/audiocd/audiocd.h"
 
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
@@ -37,11 +38,10 @@
 
 namespace Pelrock {
 
-
-
 SoundManager::SoundManager(Audio::Mixer *mixer)
 	: _mixer(mixer), _currentVolume(255), _musicFile(nullptr) {
 	// TODO: Initialize sound manager
+	g_system->getAudioCDManager()->open();
 }
 
 SoundManager::~SoundManager() {
@@ -184,42 +184,21 @@ bool SoundManager::isPlaying(int channel) const {
 }
 
 void SoundManager::stopMusic() {
-	if (_isMusicPlaying) {
-		debug("Stopping music");
-		_mixer->stopHandle(_musicHandle);
-		_isMusicPlaying = false;
-	}
+	g_system->getAudioCDManager()->stop();
+}
+
+bool SoundManager::isMusicPlaying() {
+	return g_system->getAudioCDManager()->isPlaying();
 }
 
 void SoundManager::playMusicTrack(int trackNumber) {
-// 	if (_currentMusicTrack == trackNumber && _isMusicPlaying) {
-// 		// Already playing this track
-// 		return;
-// 	}
-// 	_currentMusicTrack = trackNumber;
-// 	stopMusic();
-// 	// Open the file
-// 	_musicFile = new Common::File();
-// 	Common::String filename = Common::String::format("music/track%d.mp3", trackNumber);
-
-// 	if (!_musicFile->open(Common::Path(filename))) {
-// 		delete _musicFile;
-// 		_musicFile = nullptr;
-// 		return;
-// 	}
-// #ifdef USE_MAD
-// 	Audio::SeekableAudioStream *stream = Audio::makeMP3Stream(_musicFile, DisposeAfterUse::YES);
-// 	if (!stream) {
-// 		_musicFile->close();
-// 		delete _musicFile;
-// 		_musicFile = nullptr;
-// 		return;
-// 	}
-// 	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(stream, 0);
-// 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _currentVolume);
-// 	_isMusicPlaying = true;
-// 	_musicFile = nullptr;
-// #endif
+	if (_currentMusicTrack == trackNumber && isMusicPlaying()) {
+		// Already playing this track
+		return;
+	}
+	_currentMusicTrack = trackNumber;
+	g_system->getAudioCDManager()->stop();
+	g_system->getAudioCDManager()->play(trackNumber, -1, 0, 0);
 }
 
 void SoundManager::loadSoundIndex() {
@@ -255,15 +234,14 @@ int RANDOM_THRESHOLD = 0x4000;
 
 int SoundManager::tick(uint32 frameCount) {
 
-
 	uint16 rand1 = _rng.nextRandom();
 	// uint32 random = g_engine->getRandomNumber(1);
-	if(rand1 <= RANDOM_THRESHOLD){
+	if (rand1 <= RANDOM_THRESHOLD) {
 		// debug("No SFX this tick due to 50% random");
 		return -1;
 	}
 
-	if((frameCount & COUNTER_MASK) != COUNTER_MASK){
+	if ((frameCount & COUNTER_MASK) != COUNTER_MASK) {
 		// debug("No SFX this tick due to counter mask (counter = %d)", soundFrameCounter);
 		return -1;
 	}
