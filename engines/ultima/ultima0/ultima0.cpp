@@ -38,8 +38,8 @@ static const byte PALETTE[][3] = {
 	{ 255, 0, 255 },	// Purple
 	{ 255, 255, 0 },	// Yellow
 	{ 255, 255, 255 },	// White
-	
 	{ 255, 0, 128 },	// Rose
+	{ 80, 80, 255 },	// Violet
 	{ 220, 20, 130 }	// Transparent. Needed?
 };
 

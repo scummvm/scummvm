@@ -37,6 +37,7 @@ MODULE_OBJS += \
 	ultima0/views/view.o \
 	ultima0/views/create_character.o \
 	ultima0/views/startup.o \
+	ultima0/views/status.o \
 	ultima0/views/title.o \
 	ultima0/views/town.o \
 	ultima0/views/world_map.o

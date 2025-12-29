@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/metaengine.h"
+#include "ultima/ultima0/ultima0.h"
 
 namespace Ultima {
 namespace Ultima0 {

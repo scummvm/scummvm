@@ -19,37 +19,29 @@
  *
  */
 
-#include "ultima/ultima0/views/world_map.h"
-#include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/gfx/font.h"
-#include "ultima/ultima0/gfx/map.h"
+#ifndef ULTIMA0_VIEWS_STATUS_H
+#define ULTIMA0_VIEWS_STATUS_H
+
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-WorldMap::WorldMap() : View("WorldMap") {
-}
+class Status : public View {
+private:
+	Common::String _message;
+	Common::String _direction;
 
-bool WorldMap::msgFocus(const FocusMessage &msg) {
-	return true;
-}
+public:
+	Status(const Common::String &name, UIElement *parent);
+	~Status() override {}
 
-void WorldMap::draw() {
-	auto s = getSurface();
-
-	// Draw the map
-	Graphics::ManagedSurface mapArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::CHAR_HEIGHT * 4));
-	Gfx::Map::draw(&mapArea);
-
-	// Allow the status area to draw
-	View::draw();
-}
-
-bool WorldMap::msgAction(const ActionMessage &msg) {
-	return true;
-}
+	void draw() override;
+};
 
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
+
+#endif

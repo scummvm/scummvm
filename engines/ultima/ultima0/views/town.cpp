@@ -87,7 +87,7 @@ void Town::draw() {
 	s.writeString(Common::Point(5, 16), "Price     Damage    Item");
 
 	// Amounts
-	s.setColor(C_PURPLE);
+	s.setColor(C_VIOLET);
 	for (i = 0; i < MAX_ATTR; ++i)
 		s.writeString(Common::Point(15, 4 + i),
 			Common::String::format("%d", player.Attr[i]));

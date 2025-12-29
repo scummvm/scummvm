@@ -19,35 +19,34 @@
  *
  */
 
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/views/status.h"
 #include "ultima/ultima0/ultima0.h"
-#include "ultima/ultima0/gfx/font.h"
-#include "ultima/ultima0/gfx/map.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-WorldMap::WorldMap() : View("WorldMap") {
+Status::Status(const Common::String &name, UIElement *parent) : View(name, parent) {
+	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
 }
 
-bool WorldMap::msgFocus(const FocusMessage &msg) {
-	return true;
-}
-
-void WorldMap::draw() {
+void Status::draw() {
+	const auto &player = g_engine->_player;
 	auto s = getSurface();
+	s.clear();
 
-	// Draw the map
-	Graphics::ManagedSurface mapArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::CHAR_HEIGHT * 4));
-	Gfx::Map::draw(&mapArea);
+	if (!_message.empty())
+		s.writeString(Common::Point(1, 0), _message);
+	if (!_direction.empty())
+		s.writeString(Common::Point(15, 0), _direction);
 
-	// Allow the status area to draw
-	View::draw();
-}
-
-bool WorldMap::msgAction(const ActionMessage &msg) {
-	return true;
+	s.writeString(Common::Point(28, 1), "Food=");
+	s.writeString(Common::Point(28, 2), "H.P.=");
+	s.writeString(Common::Point(28, 3), "Gold=");
+	s.setColor(C_VIOLET);
+	s.writeString(Common::Point(33, 1), Common::String::format("%d", (int)player.Object[OB_FOOD]));
+	s.writeString(Common::Point(33, 2), Common::String::format("%d", player.Attr[AT_HP]));
+	s.writeString(Common::Point(33, 3), Common::String::format("%d", player.Attr[AT_GOLD]));
 }
 
 } // namespace Views

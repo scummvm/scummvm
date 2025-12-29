@@ -23,6 +23,7 @@
 #define ULTIMA0_VIEWS_WORLD_MAP_H
 
 #include "ultima/ultima0/views/view.h"
+#include "ultima/ultima0/views/status.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -30,8 +31,10 @@ namespace Views {
 
 class WorldMap : public View {
 private:
-	void DRAWTile(Gfx::GfxSurface &s, const Common::Rect &r, int Obj);
+	Status _status = Status("MapStatus", this);
 
+	void DRAWTile(Gfx::GfxSurface &s, const Common::Rect &r, int Obj);
+	
 public:
 	WorldMap();
 	~WorldMap() override {}
