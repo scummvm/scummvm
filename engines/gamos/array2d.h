@@ -31,7 +31,7 @@ class Array2D : protected Common::Array<T> {
 private:
 	typedef Common::Array<T> __base;
 public:
-	typedef uint size_type; /*!< Size type of the array. */
+	typedef uint16 size_type; /*!< Size type of the array. */
 
 	using Common::Array<T>::data;
 	using Common::Array<T>::operator[];
