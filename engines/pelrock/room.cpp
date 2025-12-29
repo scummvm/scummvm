@@ -436,15 +436,15 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 		int desc_pos = 0;
 		if (data[pos] == 0xFF) {
 			Description description;
+
 			description.itemId = data[pos + 1];
-			pos += 3;
+			pos += 4;
 			description.index = data[pos++];
 			description.text = "";
 
 			while (pos < (pair12_size) && data[pos] != 0xFD && pos < (pair12_size)) {
 
 				if (data[pos] != 0x00) {
-					// debug("Adding char 0x%02X to description, decoded as %lc", data[pos], decodeChar((byte)data[pos]));
 					description.text.append(1, (char)data[pos]);
 				}
 				if (data[pos] == 0xF8) {

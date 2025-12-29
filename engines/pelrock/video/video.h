@@ -66,6 +66,18 @@ struct ExtraSound : AudioEffect {
 
 static const uint32 chunkSize = 0x5000;
 
+static const int video_special_chars[] = {
+	0x83, // inverted ?
+	0x82, // inverted !
+	165, // capital N tilde
+	0x80, // small n tilde
+	0x7F, // small u tilde
+	0x7E, // small o tilde
+	0x7D, // small i tilde
+	0x7C, // small e tilde
+	0x7B, // small a tilde
+};
+
 class VideoManager {
 public:
 	VideoManager(
@@ -91,6 +103,7 @@ private:
 	void processFrame(ChunkHeader &chunk, const int frameCount);
 	void presentFrame();
 	void initMetadata();
+	char decodeChar(byte c);
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
 	int _currentSubtitleIndex = 0;
 	Graphics::Surface _videoSurface = Graphics::Surface();

@@ -26,7 +26,7 @@
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/video/video.h"
-#include "video.h"
+#include "pelrock/util.h"
 
 namespace Pelrock {
 
@@ -88,7 +88,13 @@ void VideoManager::playIntro() {
 
 					byte color;
 					_dialog->processColorAndTrim(lines, color);
-					_textSurface.transBlitFrom(_dialog->getDialogueSurface(lines, color), Common::Point(subtitle->x, subtitle->y), 255);
+					Graphics::Surface s = _dialog->getDialogueSurface(lines, color);
+					_textSurface.transBlitFrom(s, Common::Point(subtitle->x, subtitle->y), 255);
+
+					drawPos(&_textSurface, subtitle->x, subtitle->y, color);
+					drawRect(&_textSurface, subtitle->x, subtitle->y,
+						s.getRect().width(),
+						s.getRect().height(), color);
 				}
 
 				presentFrame();
@@ -270,7 +276,7 @@ void VideoManager::initMetadata() {
 							if(c == 0x08)
 								subtitle.text += '@';
 							else
-								subtitle.text += c;
+								subtitle.text += decodeChar(c);
 						}
 					}
 					_subtitles.push_back(subtitle);
@@ -283,6 +289,30 @@ void VideoManager::initMetadata() {
 	debug("Loaded %d audio effects", _audioEffect.size());
 
 	metadataFile.close();
+}
+
+char VideoManager::decodeChar(byte c) {
+
+	switch (c) {
+	case 0xAD:
+		return video_special_chars[1];
+	case 0xA8:
+		return video_special_chars[0];
+	case 0xA4:
+		return video_special_chars[3]; // n tilde
+	case 0xA3:
+		return video_special_chars[4];
+	case 0xA2:
+		return video_special_chars[5];
+	case 0xA1:
+		return video_special_chars[6];
+	case 0x82:
+		return video_special_chars[7];
+	case 0xA0:
+		return video_special_chars[8];
+	default:
+		return c;
+	}
 }
 
 Subtitle *VideoManager::getSubtitleForFrame(uint16 frameCounter) {

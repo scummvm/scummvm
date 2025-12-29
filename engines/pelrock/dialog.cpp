@@ -149,8 +149,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 	for (int i = 0; i < dialogueLines.size(); i++) {
 
 		int xPos = 0;
-		int yPos = i * 20; // Above sprite, adjust for line
-
+		int yPos = i * 25; // Above sprite, adjust for line
 		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
 	}
 
@@ -188,7 +187,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int yPos = 0;
 
 		if (speakerId == ALFRED_COLOR) {
-			g_engine->alfredState.setState(ALFRED_TALKING);
+			if(g_engine->alfredState.animState != ALFRED_TALKING) {
+				g_engine->alfredState.setState(ALFRED_TALKING);
+			}
 			if (_curSprite != nullptr) {
 				_curSprite->isTalking = false;
 			}
@@ -198,14 +199,14 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		} else {
 			g_engine->alfredState.setState(ALFRED_IDLE);
 			_curSprite->isTalking = true;
-			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
+			xPos = _curSprite->x + _curSprite->w / 2;
 			yPos = _curSprite->y - height; // Above sprite, adjust for line
 		}
 
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
 		if (xPos + s.getRect().width() > 640) {
-			xPos = 640 - s.getRect().width() - 2;
+			xPos = 640 - s.getRect().width();
 		}
 		if (yPos + s.getRect().height() > 400) {
 			yPos = 400 - s.getRect().height();
@@ -216,8 +217,11 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		if (yPos < 0) {
 			yPos = 0;
 		}
-
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
+		drawPos(_screen, xPos, yPos, speakerId);
+		drawRect(_screen, xPos, yPos,
+			s.getRect().width(),
+			s.getRect().height(), speakerId);
 		// Present to screen
 		_screen->markAllDirty();
 		_screen->update();
@@ -617,8 +621,8 @@ void DialogManager::sayAlfred(Common::StringArray texts) {
 
 void DialogManager::sayAlfred(Description description) {
 	Common::StringArray texts;
-	texts.push_back(description.text);
 
+	texts.push_back(description.text);
 	sayAlfred(texts);
 	if (description.isAction) {
 		g_engine->performActionTrigger(description.actionTrigger);
@@ -649,12 +653,14 @@ void DialogManager::say(Common::StringArray texts) {
 bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speakerId) {
 	int speakerMarker = lines[0][0];
 	speakerId = lines[0][1];
+
 	if (speakerMarker == '@') {
 
 		for (int i = 0; i < lines.size(); i++) {
 			// Remove first two marker bytes
 			if (lines[i].size() > 2) {
 				lines[i] = lines[i].substr(2);
+
 				if (lines[i][0] == 0x78 && lines[i][1] == 0x78) { // Remove additional control chars
 					lines[i] = lines[i].substr(2);
 				}
@@ -713,8 +719,7 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 		bool isEnd = false;
 		int wordLength = calculateWordLength(text, position, isEnd);
 		// # Extract the word (including trailing spaces)
-		// word = text[position:position + word_length].decode('latin-1', errors='replace')
-		Common::String word = text.substr(position, wordLength).decode(Common::kLatin1);
+		Common::String word = text.substr(position, wordLength);
 		// # Key decision: if word_length > chars_remaining, wrap to next line
 		if (wordLength > charsRemaining) {
 			// Word is longer than the entire line - need to split

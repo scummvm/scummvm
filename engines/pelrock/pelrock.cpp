@@ -594,7 +594,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 
 		Exit *exit = isExitUnder(alfredState.x, alfredState.y);
 
-		if (exit != nullptr) {
+		if (exit != nullptr && exit->isEnabled) {
 			alfredState.x = exit->targetX;
 			alfredState.y = exit->targetY;
 			setScreen(exit->targetRoom, exit->dir);
@@ -604,7 +604,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame = 0;
 		}
 
-		drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
+	drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
 		alfredState.curFrame++;
 		break;
 	}
