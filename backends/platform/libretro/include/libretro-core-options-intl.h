@@ -487,7 +487,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_mapper_rr",
-		"RetroPad > Leva Analogica Destra > Leva Analogica Destra",
+		"RetroPad > Leva Analogica Destra > Destra",
 		"Leva Analogica Destra > Destra",
 		NULL,
 		NULL,
