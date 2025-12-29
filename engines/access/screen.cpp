@@ -50,7 +50,7 @@ ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windo
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	Graphics::Screen::create(_vm->getScreenWidth(), _vm->getScreenHeight());
 	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
-	Common::fill(&_manPal[0], &_manPal[0x60], 0);
+	Common::fill(&_manPal[0], &_manPal[0x84], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
 	_savedPaletteCount = 0;
@@ -125,9 +125,15 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::setManPalette() {
-	// Player palette is colors 224~246
-	for (int i = 0; i < 0x42; i++) {
-		_rawPalette[672 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
+	// Player palette is colors 224~246 in MM
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < 0x42; i++) {
+			_rawPalette[0x2a0 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
+		}
+	} else if (_vm->getGameID() == kGameNoctropolis) {
+		for (int i = 0; i < 0x84; i++) {
+			_rawPalette[0x240 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
+		}
 	}
 }
 

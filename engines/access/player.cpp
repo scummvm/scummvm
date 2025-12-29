@@ -26,6 +26,7 @@
 #include "access/resources.h"
 #include "access/amazon/amazon_player.h"
 #include "access/martian/martian_player.h"
+#include "access/noctropolis/noctropolis_player.h"
 
 namespace Access {
 
@@ -37,6 +38,9 @@ Player *Player::init(AccessEngine *vm) {
 	case kGameMartianMemorandum:
 		vm->_playerDataCount = 10;
 		return new Martian::MartianPlayer(vm);
+	case kGameNoctropolis:
+		vm->_playerDataCount = 0;
+		return new Noctropolis::NoctropolisPlayer(vm);
 	default:
 		vm->_playerDataCount = 8;
 		return new Player(vm);
@@ -46,16 +50,15 @@ Player *Player::init(AccessEngine *vm) {
 Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites = nullptr;
 	_playerSprites1 = nullptr;
-	_playerAnimation = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
 	_rawTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
 	_rawYTemp = 0;
-	_playerXLow = 0;
+	//_playerXLow = 0;
 	_playerX = 0;
-	_playerYLow = 0;
+	//_playerYLow = 0;
 	_playerY = 0;
 	_frame = 0;
 	_playerOff = false;
@@ -133,10 +136,18 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		// Those values are from MM as Amazon doesn't use it
-		Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
+		if (_vm->getGameID() == kGameNoctropolis) {
+			if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
+				error("TODO: Copy _stilPal in to palette");
+				//Common::copy(_stilPal + 0x1e0, _stilPal + 0x1e0 + 99, _vm->_screen->_manPal);
+			}
+			Common::copy(_manPal1 + 0x240, _manPal1 + 0x240 + 0x84, _vm->_screen->_manPal);
+		} else {
+			// Those values are from MM as Amazon doesn't use it
+			Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
+		}
 	} else {
-		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x60, 0);
+		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x84, 0);
 	}
 }
 
@@ -157,12 +168,6 @@ void Player::loadNoctPalette(int fileNum, int subFile) {
 	Resource *pal = _vm->_files->loadFile(fileNum, subFile);
 	loadPalResource(pal);
 	delete pal;
-}
-
-void Player::loadAnimation(int fileNum, int subFile) {
-	Resource *data = _vm->_files->loadFile(fileNum, subFile);
-	_playerAnimation = new AnimationResource(_vm, data);
-	delete data;
 }
 
 void Player::loadSprites(const Common::Path &name) {
@@ -767,11 +772,6 @@ void Player::plotCom2() {
 			ie._frameNumber = 13;
 			_vm->_images.addToList(ie);
 		}
-	} else if (_playerAnimation != nullptr) {
-		// Noctropolis player animation
-		int animNum = ((int)_playerDirection + (_playerMove ? 0 : 8));
-		Animation *anim = _playerAnimation->getAnimation(animNum);
-		anim->animate();
 	}
 }
 

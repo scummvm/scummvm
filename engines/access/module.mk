@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	noctropolis/noctropolis_comicviewer.o \
 	noctropolis/noctropolis_font.o \
 	noctropolis/noctropolis_game.o \
+	noctropolis/noctropolis_player.o \
 	noctropolis/noctropolis_resources.o \
 	noctropolis/noctropolis_room.o \
 	noctropolis/noctropolis_scripts.o \

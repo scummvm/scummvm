@@ -223,7 +223,7 @@ public:
 	ASurface _vidBuf;
 	int _vidX, _vidY;
 	SpriteResource *_objectsTable[128];
-	bool _establishTable[100];
+	bool _establishTable[128];
 	bool _establishFlag;
 	int _establishMode;
 	int _establishGroup;

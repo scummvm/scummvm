@@ -75,10 +75,9 @@ void NoctropolisEngine::initVariables() {
 	_inventory->_startInvBox = 0;
 	Common::fill(&_objectsTable[0], &_objectsTable[128], (SpriteResource *)nullptr);
 	_player->_playerOff = false;
-	/*
-	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
-	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
-	*/
+	debug("TODO: set player starting point - using first _TravManPos entry for now");
+	_player->_playerX = _player->_rawPlayer.x = _player->_moveTo.x = 280;
+	_player->_playerY = _player->_rawPlayer.y = _player->_moveTo.y = 390;
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;

@@ -1682,7 +1682,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	}
 	// TODO: These last few files are maybe only ever used from hard-coded points,
 	// so maybe we can just hard-code the names in those places and avoid this hack?
-	while (FILENAMES.size() < 255 - ARRAYSIZE(NOCT_FILES_2))
+	while (FILENAMES.size() < 256 - ARRAYSIZE(NOCT_FILES_2))
 		FILENAMES.push_back(Common::Path());
 	for (int i = 0; i < ARRAYSIZE(NOCT_FILES_2); i++) {
 		Common::Path filename = Common::Path(NOCT_FILES_2[i]).getLastComponent();

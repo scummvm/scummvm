@@ -140,6 +140,7 @@ void Scripts::setOpcodes_v2() {
 }
 
 void Scripts::setOpcodes_v3() {
+	COMMAND_LIST[18] = &Scripts::cmdSetCoords;
 	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
 	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
 	COMMAND_LIST[51] = &Scripts::cmdPlayerSpeak;
@@ -1045,16 +1046,29 @@ void Scripts::cmdCharSpeak_v3() {
 	// TODO: Duck (reduce) music volume to 50%
 
 	Common::String str = _data->readString();
-	debugC(1, kDebugScripts, "cmdCharSpeak(str=\"%s\")", str.c_str());
+	debugC(1, kDebugScripts, "cmdCharSpeak(%d, %d, str=\"%s\")", x, y, str.c_str());
 	_vm->_bubbleBox->placeBubble(str);
 	findNull();
 }
 
 void Scripts::cmdPlayerSpeak() {
-	int16 a = _data->readUint16LE();
-	int16 b = _data->readUint16LE();
-	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d)", a, b);
-	error("TODO: implement cmdPlayerSpeak()");
+	int16 x = _data->readUint16LE();
+	int16 y = _data->readUint16LE();
+	
+	const char *title = _vm->_res->getEgoName();
+	Common::String str = _data->readString();
+	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d, \"%s\", \"%s\")", x, y, title, str.c_str());
+
+	// TODO: Check that this gives correct placement
+	_charsOrg = Common::Point(x, y);
+	_vm->_screen->_printOrg = _charsOrg;
+	_vm->_screen->_printStart = _charsOrg;
+	_vm->_bubbleBox->_bubbleTitle = title;
+
+	_vm->_bubbleBox->placeBubble(str);
+	_continuenceFlag = 1;
+	findNull();
+	warning("TODO: Check rendering for cmdPlayerSpeak() box");
 }
 
 
@@ -1429,6 +1443,7 @@ void Scripts::cmdWalkTo() {
 
 	_vm->_player->_moveTo.x = x;
 	_vm->_player->_moveTo.y = y;
+	_vm->_player->_playerDirection = (Direction)dir;
 	_vm->_player->_move = (Direction)dir;
 	_vm->_player->_playerMove = true;
 }
@@ -1470,8 +1485,8 @@ void Scripts::cmdGotoFrame() {
 }
 
 void Scripts::cmdPlayerScale() {
-	_vm->_scale = _data->readUint16LE();
-	debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_scale);
+	_vm->_manScaleOff = _data->readUint16LE();
+	debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_manScaleOff);
 }
 
 void Scripts::cmdRestoreBlock() {
@@ -1521,6 +1536,20 @@ void Scripts::cmdReturnExit() {
 	_endFlag = true;
 	_returnCode = 0;
 	error("TODO: Implement Scripts::cmdReturnExit");
+}
+
+void Scripts::cmdSetCoords() {
+	const int x = _data->readSint16LE();
+	const int y = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdSetCoords(x=%d, y=%d)", x, y);
+	_vm->_player->_playerX = x;
+	_vm->_player->_moveTo.x = x;
+	_vm->_player->checkScroll();
+	bool hscroll = _vm->_player->_scrollFlag;
+	_vm->_player->_playerY = y;
+	_vm->_player->_moveTo.y = y;
+	_vm->_player->checkScroll();
+	_vm->_player->_scrollFlag |= hscroll;
 }
 
 void Scripts::cmdSetStilCoords() {
