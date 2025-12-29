@@ -55,7 +55,7 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int
 		// Set mouse position
 		*mouseXY += cumulativeXYAcc_int;
 		*mouseXY = (*mouseXY < 0) ? 0 : *mouseXY;
-		*mouseXY = (*mouseXY >= screen_wh) ? screen_wh : *mouseXY;
+		*mouseXY = (*mouseXY >= screen_wh) ? (screen_wh ? screen_wh - 1 : 0) : *mouseXY;
 		// Update accumulator
 		*cumulativeXYAcc -= (float)cumulativeXYAcc_int;
 	}
