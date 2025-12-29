@@ -25,13 +25,14 @@ const PlainGameDescriptor mediastationGames[] = {
 	{ "georgeshrinks", "George Shrinks Interactive Storybook" },
 	{ "mousecookie", "If You Give a Mouse a Cookie Interactive Storybook" },
 	{ "lionking", "Disney's Animated Storybook: The Lion King" },
+	{ "janpienkowski", "Jan Pieńkowski Haunted House" },
 	{ "lambchop", "Lamb Chop Loves Music" },
 	{ "frogprince", "Fractured Fairy Tales: The Frog Prince" },
 	{ "honeytree", "Disney's Animated Storybook: Winnie the Pooh and the Honey Tree" },
 	{ "notredame", "Disney's Animated Storybook: The Hunchback of Notre Dame" },
 	{ "puzzlecastle", "Puzzle Castle" },
 	{ "ibmcrayola", "IBM/Crayola Print Factory" },
-	{ "ibmcrayolaholiday", "IBM/Crayola Print Factory Holiday Activity Pack" },
+	{ "ibmcrayolaholiday", "IBM/Crayola Print Factory Holiday Activity" },
 	{ "101dalmatians", "Disney's Animated Storybook: 101 Dalmatians" },
 	{ "herculesasb", "Disney's Animated Storybook: Hercules" },
 	{ "pocahontas", "Disney's Animated Storybook: Pocahontas"},
@@ -52,6 +53,7 @@ const PlainGameDescriptor mediastationGames[] = {
 // (e.g. "v1.0/DE" or "v1.0/US") but others do not (e.g. "v1.1").
 const ADGameDescription gameDescriptions[] = {
 	// George Shrinks Interactive Storybook
+	// This title seems to be Windows-only.
 	{
 		"georgeshrinks",
 		"v1.0",
@@ -80,6 +82,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"mousecookie",
+		"v2.0",
+		AD_ENTRY3s(
+			"If You Give a Mouse a Cookie", "r:d23bc24ab6da4d97547a6f2c35946f12", 265297,
+			"BOOT.STM", "11d11b2067519d8368175cc8e8caa94f", 59454,
+			"100.CXT", "cac48b9bb5f327d035a831cd15f1688c", 1762032
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Disney's Animated Storybook: The Lion King
 	{
@@ -92,6 +107,47 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"lionking",
+		"v2.0/GB",
+		AD_ENTRY3s(
+			"The Lion King", "r:24a4a5f56188c78d2ef16cd1646379f6", 311245,
+			"BOOT.STM", "dd83fd1fb899b680f00c586404cc7b7c", 23610,
+			"100.CXT", "d5dc4d49df2ea6f2ff0aa33a3f385506", 1455740
+		),
+		Common::EN_GRB,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
+	// Jan Pieńkowski Haunted House
+	{
+		"janpienkowski",
+		"v1.0",
+		AD_ENTRY3s(
+			"HAUNTED.EXE", "869bcbae21bcfd87a63474f9efb042df", 330336,
+			"BOOT.STM", "d01f338d6a3912056aff8f9022867bba", 137830,
+			"100.CXT", "6154f6efef3a8e54476c10d522dcec20", 1164800
+		),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"janpienkowski",
+		"v1.0",
+		AD_ENTRY3s(
+			"Haunted House", "r:9d4e1623d86d0474d3813e2a9ddf51e0", 266166,
+			"BOOT.STM", "d01f338d6a3912056aff8f9022867bba", 137830,
+			"100.CXT", "6154f6efef3a8e54476c10d522dcec20", 1164800
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -110,6 +166,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"lambchop",
+		"v1.0",
+		AD_ENTRY3s(
+			"Lamb Chop Loves Music", "r:5ae7f4d1c5c74470c8f09ca37238c33b", 265388,
+			"BOOT.STM", "c90200e52bcaad52524520d461caef2b", 29884,
+			"100.CXT", "ce40843604b8c52701694cd543072a88", 3253600
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Fractured Fairy Tales: The Frog Prince
 	{
@@ -122,6 +191,32 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"frogprince",
+		"v1.0",
+		AD_ENTRY3s(
+			"FPRINCE.EXE", "a8f3a63ef2032de300f46397cea625df", 518400,
+			"BOOT.STM", "1c6d14c87790d009702be8ba4e4e5906", 13652,
+			"100.CXT", "a5ec9a32c3741a20b82e1793e76234b2", 1630762
+		),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"frogprince",
+		"v1.0",
+		AD_ENTRY3s(
+			"The Frog Prince", "r:d77fd2a5dfb81a7fde03d175f93244bd", 1005600,
+			"BOOT.STM", "1c6d14c87790d009702be8ba4e4e5906", 13652,
+			"100.CXT", "a5ec9a32c3741a20b82e1793e76234b2", 1630762
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -140,7 +235,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-
+	{
+		"honeytree",
+		"v2.0/US", // Also includes Spanish as an in-game language option.
+		AD_ENTRY3s(
+			"Pooh and the Honey Tree", "r:3f0077774418305ccd4c20cb6fa4c765", 764753,
+			"BOOT.STM", "9b9f528bf9c9b8ebe194b0c47dbe485e", 55422,
+			"100.CXT", "30f010077fd0489933989a562db81ad6", 1971940
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 	{
 		"honeytree",
 		"v2.0/SE", // Also includes English as an in-game language option.
@@ -154,7 +261,6 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-
 	{
 		"honeytree",
 		"v2.0/SE", // Also includes English as an in-game language option.
@@ -183,6 +289,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"notredame",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"Hunchback Animated StoryBook", "r:711b5eba6477f801177cd9095a51e1a5", 1044920,
+			"BOOT.STM", "7949e1253a62531e53963a2fffe57211", 55300,
+			"100.CXT", "54c11a94888a1b747e1c8935b7315889", 4766278
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Puzzle Castle
 	{
@@ -200,6 +319,19 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"puzzlecastle",
+		"v1.0",
+		AD_ENTRY3s(
+			"Puzzle Castle", "r:aa2c5c12ec9e0d3cba54efcbd143f8e0", 959690,
+			"BOOT.STM", "7b0faf38da2d76df40b4085eed6f4fc8", 22080,
+			"100.CXT", "ebc4b6247b742733c81456dfd299aa55", 3346944
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"puzzlecastle",
 		"v1.0 Demo",
 		AD_ENTRY3s(
 			"DEMO.EXE", "63dedc1e2cdf8a39725ef9ca99273cc4", 514496,
@@ -208,6 +340,19 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"puzzlecastle",
+		"v1.0 Demo",
+		AD_ENTRY3s(
+			"Puzzle Castle Demo", "r:f9f4715f39e084ac80e6b222cb69b20e", 959563,
+			"BOOT.STM", "b7ce005e0d67021f792ebb73e7fbe34c", 5960,
+			"100.CXT", "cc64a6fcb3af2736d622658cff3ef2b5", 1262
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -226,6 +371,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"ibmcrayola",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"IBM and Crayola Print Factory", "r:f30fbc530b26feb0ed23164e632c1a88", 1583870,
+			"BOOT.STM", "359542015c6665c70252cf21a8467cdb", 11044,
+			"100.CXT", "42bffe4165640dd1e64a6e8565f48af3", 5125226
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// IBM/Crayola Print Factory Holiday Activity Pack
 	{
@@ -238,6 +396,19 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"ibmcrayolaholiday",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"HOLIDAY.EXE", "r:bf5345cf76a4ee24823634b420739771", 1576023,
+			"BOOT.STM", "50f30298bf700f357d98c4390f75cb7a", 10932,
+			"100.CXT", "8110f70f1d01d0f42cac9b1bb6d2de12", 4967390
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -260,7 +431,7 @@ const ADGameDescription gameDescriptions[] = {
 		"101dalmatians",
 		"v1.0/US",
 		AD_ENTRY3s(
-			"101 Dalmatians StoryBook", "1611f83747b3ac4dd33c8b866535e425", 1046272,
+			"101 Dalmatians StoryBook", "r:9ec3f0b3fd6c28650e00475b6bf08615", 1042456,
 			"BOOT.STM", "ee6725a718cbce640d02acec2b84825f", 47970,
 			"100.CXT", "2df853283a3fd2d079b06bc27b50527f", 6784502
 		),
@@ -284,6 +455,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"herculesasb",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"Hercules Animated Storybook", "r:d870f6a3ab564f25428c7a7179cc1e53", 1173749,
+			"BOOT.STM", "afc773416e46e30873f743e234794957", 26924,
+			"100.CXT", "56875e1640320909e9697f11b5a8c9a6", 4895998
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Disney's Animated Storybook: Pocahontas
 	{
@@ -299,8 +483,6 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-
-	// Disney's Animated Storybook: Pocahontas
 	{
 		"pocahontas",
 		"v1.0/SE", // Also includes English as an in-game language option
@@ -310,6 +492,32 @@ const ADGameDescription gameDescriptions[] = {
 			"100.CXT", "7f9fae41a07e8e1cc467d1b2be37ef9d", 1117144
 		),
 		Common::SV_SWE,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"pocahontas",
+		"v1.1.01 English",
+		AD_ENTRY3s(
+			"POCA_ASB.EXE", "0287ca22a971d305e9a67fc4fc87239d", 367552,
+			"BOOT.STM", "d35338f9f014b73a8471523f3b141f2d", 324138,
+			"100.CXT", "8d7b65d4c50515c8b28a91980017d327", 1107900
+		),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"pocahontas",
+		"v1.1.01 English",
+		AD_ENTRY3s(
+			"Pocahontas", "r:6b0d52f286954d7dbb5fd703ff696b40", 319909,
+			"BOOT.STM", "d35338f9f014b73a8471523f3b141f2d", 324138,
+			"100.CXT", "8d7b65d4c50515c8b28a91980017d327", 1107900
+		),
+		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
@@ -329,6 +537,19 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"barbieasrapunzel",
+		"v1.0",
+		AD_ENTRY3s(
+			"Rapunzel", "r:b8b5fc7def85c07ed4c673e8a80ed338", 1043127,
+			"BOOT.STM", "eef6bdf54d2ae25af0ec29361fd4c126", 17530,
+			"100.CXT", "f0bcc27b61bfb33328db2dd537b2b6e3", 1688902
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Tonka Search and Rescue
 	{
@@ -341,6 +562,19 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"tonkasearchandrescue",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"Tonka Search and Rescue", "r:432c202bcc7b259c2927e0f6fb1bbd64", 567011,
+			"BOOT.STM", "90c5f17734219c3a442316d21e6833f8", 25362,
+			"100.CXT", "85a05487b6c499ba3ce86d043305ddfd", 6410562
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
@@ -361,6 +595,19 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"arielstorystudio",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"Ariel's Story Studio", "r:7a21e3080828b50c43e4b7805617db9c", 1523037,
+			"BOOT.STM", "297670b908f887ed6c97b364406575d0", 65480,
+			"100.CXT", "c12c5b784ad931eca293a9816c11043b", 6532022
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"arielstorystudio",
 		"v1.1/US",
 		AD_ENTRY3s(
 			"MERMAID.EXE", "2eabe2910cf5a2df32dcc889ebd90cea", 634240,
@@ -374,11 +621,12 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Tonka Garage
+	// This title seems to be Windows-only.
 	{
 		"tonkagarage",
 		"v1.1/US",
 		AD_ENTRY3s(
-			"TONKA_GR.EXE", "4e7e75ac11c996454b334f9add38c691", 1297408,
+			"TONKA_GR.EXE", "4e7e75ac11c996454b334f9add38c691", 1297408, // 32-bit (PE)
 			"BOOT.STM", "fc8863bb302e94d3b778b3a97556601b", 25208,
 			"100.CXT", "13683c2a06275920181d9dda5b2b69e7", 2691398
 		),
@@ -402,8 +650,35 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+		"dwpickyeater",
+		"v1.0/US (16-bit)",
+		AD_ENTRY3s(
+			"DW_16.EXE", "56553be9eee6130b4458fe9dfa2bcacf", 1007184,
+			"BOOT.STM", "80cc94e3e894ee8c5a22a9c07a33d891", 26402,
+			"100.CXT", "e65e359ab25d7a639cf369a01b9a21c0", 2163750
+		),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"dwpickyeater",
+		"v1.0/US",
+		AD_ENTRY3s(
+			"D.W. the Picky Eater", "r:4f85d13c1d241ffd37787884d0da2aef", 2502801,
+			"BOOT.STM", "80cc94e3e894ee8c5a22a9c07a33d891", 26402,
+			"100.CXT", "e65e359ab25d7a639cf369a01b9a21c0", 2163750
+		),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Tonka Workshop
+	// This title seems to be Windows-only.
 	{
 		"tonkaworkshop",
 		"v1.0/US",
@@ -419,11 +694,12 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Tonka Raceway
+	// This title seems to be Windows-only.
 	{
 		"tonkaraceway",
 		"v1.0/US",
 		AD_ENTRY3s(
-			"TONKA_RA.EXE", "cccd33d4d9e824bada6a1ca115794226", 1735680, // 32-bit (PE)
+			"TONKA_RACEWAY.EXE", "cccd33d4d9e824bada6a1ca115794226", 1735680, // 32-bit (PE)
 			"BOOT.STM", "da512cb9bcd18465294e544ed790881c", 12272,
 			"100.CXT", "30802327b29fbfa722a707c3d3b0f8f8", 2691398
 		),
@@ -434,6 +710,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Stuart Little: Big City Adventures
+	// This title seems to be Windows-only.
 	{
 		"stuartlittlebigcity",
 		"v1.0/US",
