@@ -19,25 +19,26 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_WORLD_MAP_H
+#define ULTIMA0_VIEWS_WORLD_MAP_H
 
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	CreateCharacter _createCharacter;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class WorldMap : public View {
+private:
+	void DRAWTile(Gfx::GfxSurface &s, const Common::Rect &r, int Obj);
+
+public:
+	WorldMap();
+	~WorldMap() override {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views

@@ -19,25 +19,21 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_GFX_MAP_H
+#define ULTIMA0_GFX_MAP_H
 
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Views {
+namespace Gfx {
 
-struct Views {
-	CreateCharacter _createCharacter;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Map {
+private:
+	static void DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int Obj);
+
+public:
+	static void draw(Graphics::ManagedSurface *s, bool showAsMap = false);
 };
 
 } // namespace Views

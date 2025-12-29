@@ -46,6 +46,7 @@ public:
 	Graphics::Palette _palette;
 	PLAYER _player;
 	WORLDMAP _worldMap;
+	DUNGEONMAP _dungeon;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;

@@ -30,18 +30,19 @@ namespace Ultima {
 namespace Ultima0 {
 
 static const byte PALETTE[][3] = {
-	{ 0, 0, 0 },
-	{ 255, 255, 255 },
-	{ 255, 0, 255 },
-	{ 255, 0, 0 },
-	{ 0, 255, 0 },
-	{ 0, 0, 255 },
-	{ 255, 255, 0 },
-	{ 0, 255, 255 },
+	{ 0, 0, 0 },		// Black
+	{ 0, 0, 255 },		// Blue
+	{ 0, 255, 0 },		// Green,
+	{ 0, 255, 255 },	// Cyan
+	{ 255, 0, 0 },		// Red
+	{ 255, 0, 255 },	// Purple
+	{ 255, 255, 0 },	// Yellow
+	{ 255, 255, 255 },	// White
+	
 	{ 255, 0, 128 },	// Rose
-	{ 80, 80, 255 },	// Purple
 	{ 220, 20, 130 }	// Transparent. Needed?
 };
+
 
 Ultima0Engine *g_engine;
 

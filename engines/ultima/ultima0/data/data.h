@@ -100,6 +100,8 @@ struct WORLDMAP {
 	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
 
 	void init(PLAYER &p);
+
+	int read(int x, int y) const;
 };
 
 } // End of namespace Ultima4

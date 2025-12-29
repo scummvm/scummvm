@@ -54,6 +54,7 @@ constexpr int DEFAULT_SCY = 400;
 #define C_YELLOW	RGB(1,1,0)
 #define C_WHITE 	RGB(1,1,1)
 #define C_CYAN		RGB(0,1,1)
+#define C_PURPLE    RGB(1,0,1)
 
 #define	WT_SPACE		(0)					/* World Tiles */
 #define WT_MOUNTAIN		(1)

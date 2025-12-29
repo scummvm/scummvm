@@ -112,5 +112,13 @@ void WORLDMAP::init(PLAYER &p) {
 	Map[x][y] = WT_BRITISH;				// Put LBs castle there
 }
 
+int WORLDMAP::read(int x, int y) const {
+	if (x < 0 || y < 0)
+		return WT_MOUNTAIN;
+	if (x >= WORLD_MAP_SIZE || y >= WORLD_MAP_SIZE)
+		return WT_MOUNTAIN;
+	return Map[x][y];
+}
+
 } // namespace Ultima0
 } // namespace Ultima
