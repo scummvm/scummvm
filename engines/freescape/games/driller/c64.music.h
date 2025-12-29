@@ -247,6 +247,8 @@ private:
 	void applyNote(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1, int voiceIndex);
 	void applyContinuousEffects(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1);
 	void applyHardRestart(VoiceState &v, int sidOffset, const uint8_t *instA0, const uint8_t *instA1);
+	
 };
+
 
 } // namespace Freescape

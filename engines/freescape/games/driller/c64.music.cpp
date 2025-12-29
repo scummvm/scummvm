@@ -17,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * WARNING: This is a Work-In-Progress (WIP) implementation for the Driller C64 
+ * Music Player. The logic is currently being translated from disassembly.
+ * DO NOT MERGE until this notice is removed.
  */
 
 #include "engines/freescape/games/driller/c64.music.h"
