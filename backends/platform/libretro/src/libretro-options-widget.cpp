@@ -149,7 +149,7 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 	RFILE *playlistFile = filestream_open(Common::String(playlistPath + "/" + CORE_NAME + ".lpl").c_str(), RETRO_VFS_FILE_ACCESS_WRITE, RETRO_VFS_FILE_ACCESS_HINT_NONE);
 	if (!playlistFile) {
 		_playlistStatus->setLabel(_("Failed, can't access playlist file"));
-		retro_log_cb(RETRO_LOG_ERROR, "Failed to access playlst file at '%s'.\n", Common::String(playlistPath + CORE_NAME + ".lpl").c_str());
+		retro_log_cb(RETRO_LOG_ERROR, "Failed to access playlst file at '%s'.\n", Common::String(playlistPath +  "/" + CORE_NAME + ".lpl").c_str());
 		return false;
 	} else
 		retro_log_cb(RETRO_LOG_INFO, "Playlist file created in '%s'.\n", Common::String(playlistPath + CORE_NAME + ".lpl").c_str());
