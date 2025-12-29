@@ -63,9 +63,7 @@ public:
 	/**
 	 * Returns supported engine features
 	 */
-	bool hasFeature(EngineFeature f) const override {
-		return (f == kSupportsReturnToLauncher);
-	}
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Sets the random number seed

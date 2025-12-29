@@ -76,10 +76,9 @@ void Events::runGame() {
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		g_engine->loadGameState(saveSlot);
-
-	addView("Title");
+	if (saveSlot == -1 || g_engine->loadGameState(saveSlot).getCode() != Common::kNoError)
+		// Except when loading a savegame from the launcher, default to first screen
+		addView("Startup");
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {

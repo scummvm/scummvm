@@ -64,7 +64,18 @@ Common::Error Ultima0Engine::run() {
 	return Common::kNoError;
 }
 
+bool Ultima0Engine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+
+}
+
 bool Ultima0Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+	auto *view = focusedView();
+	if (!view)
+		return false;
+
 	Common::String name = focusedView()->getName();
 	return name == "WorldMap" || name == "Dungeon";
 }
