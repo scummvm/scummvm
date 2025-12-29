@@ -613,17 +613,25 @@ uint16 retro_setting_get_sample_rate(void) {
 	return sample_rate;
 }
 
+
+static uint32 next_pow2(uint32 x) {
+	if (x <= 1) return 1;
+	x--;
+	x |= x >> 1; x |= x >> 2; x |= x >> 4;
+	x |= x >> 8; x |= x >> 16;
+	return x + 1;
+}
+
 uint16 retro_setting_get_audio_samples_buffer_size(void) {
 	/* ScummVM audio buffer size is normally between 512 and 8192, but the value
 	must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. */
-	uint16 v = audio_samples_per_frame--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-
-	return ++v;
+	static const uint16 allowed[] = {256,512,1024,2048,4096,8192,16384,32768};
+	uint32 target = (uint32)(audio_samples_per_frame * 2.0f + 0.5f); // stereo
+	uint32 pow2   = next_pow2(target);
+	for (uint16 v : allowed) {
+		if (pow2 <= v) return v;
+	}
+	return allowed[sizeof(allowed)/sizeof(allowed[0])];
 }
 
 void init_command_params(void) {
