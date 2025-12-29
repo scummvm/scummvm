@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "ultima/ultima0/views/world_map.h"
 #include "ultima/ultima0/ultima0.h"
 #include "ultima/ultima0/gfx/font.h"
@@ -48,6 +49,15 @@ void WorldMap::draw() {
 
 bool WorldMap::msgAction(const ActionMessage &msg) {
 	return true;
+}
+
+bool WorldMap::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_q:
+		// "Quit" in the original which merely saves the game. For ScummVM,
+		// we open the GMM, allowing the user to either save or quit
+		break;
+	}
 }
 
 } // namespace Views
