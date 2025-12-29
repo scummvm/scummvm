@@ -239,42 +239,6 @@ void Screen::setBackgroundColor(const uint16 color) {
 }
 
 /**
- * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
- * If fore TRUE, force object above any overlay
- */
-void Screen::displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) {
-	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
-
-	ImagePtr image = seq->_imagePtr;                 // Ptr to object image data
-	ImagePtr subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
-	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
-	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
-	OverlayState overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
-	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
-		for (uint16 x = 0; x <= seq->_x2; x++) {
-			if (*image) {                           // Non-transparent
-				byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
-				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
-					if (overlayState == kOvlUndef)  // Overlay defined yet?
-						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
-					if (overlayState == kOvlForeground) // Object foreground
-						*subFrontBuffer = *image;   // Copy pixel
-				} else {                            // No overlay
-					*subFrontBuffer = *image;       // Copy pixel
-				}
-			}
-			image++;
-			subFrontBuffer++;
-		}
-		image += imageWrap;
-		subFrontBuffer += frontBufferwrap;
-	}
-
-	// Add this rectangle to the display list
-	displayList(kDisplayAdd, sx, sy, seq->_x2 + 1, seq->_lines);
-}
-
-/**
  * Merge rectangles A,B leaving result in B
  */
 void Screen::merge(const Rect *rectA, Rect *rectB) {
@@ -742,16 +706,70 @@ void Screen_v1d::loadFontArr(Common::ReadStream &in) {
 }
 
 /**
+ * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
+ * If fore TRUE, force object above any overlay
+ *
+ * Note: The DOS version has subtlety different overlay logic than the Windows version.
+ * The overlay base comparison occurs in a different order, and this alters the outcome.
+ * This may have been unintentional when the original DOS code was rewritten from assembly
+ * in C for Windows, as the Windows version introduces a priority bug when standing in
+ * front of the bed in the second room of Hugo2.
+ */
+void Screen_v1d::displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) {
+	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
+
+	ImagePtr image = seq->_imagePtr;                 // Ptr to object image data
+	ImagePtr subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
+	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
+	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
+	OverlayState overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
+	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
+		for (uint16 x = 0; x <= seq->_x2; x++) {
+			byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
+			if (ovlBound != 0) {
+				if (overlayState == kOvlUndef)  // Overlay defined yet?
+					overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
+			}
+
+			if (*image) {                           // Non-transparent
+				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
+					if (overlayState == kOvlForeground) // Object foreground
+						*subFrontBuffer = *image;   // Copy pixel
+				} else {                            // No overlay
+					*subFrontBuffer = *image;       // Copy pixel
+				}
+			}
+			image++;
+			subFrontBuffer++;
+		}
+		image += imageWrap;
+		subFrontBuffer += frontBufferwrap;
+	}
+
+	// Add this rectangle to the display list
+	displayList(kDisplayAdd, sx, sy, seq->_x2 + 1, seq->_lines);
+}
+
+/**
  * Return the overlay state (Foreground/Background) of the currently
  * processed object by looking down the current column for an overlay
  * base byte set (in which case the object is foreground).
+ *
+ * Note: This DOS function was originally in assembly. We have structured
+ * it to resemble the Windows C code, but the original DOS assembly takes
+ * "y" as the number of lines left to scan, not the number of lines that
+ * have been scanned, so we invert it here. For example, if an object is
+ * 45 lines and and processFrame() locates an overlay byte on the second
+ * line, it will pass 1 for y, so we must scan 44 rows for a base byte
+ * starting from dstPtr (the second row from the top).
  */
 OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	debugC(4, kDebugDisplay, "findOvl()");
 
 	uint16 index = (uint16)(dstPtr - _frontBuffer) >> 3;
 
-	for (int i = 0; i < seqPtr->_lines-y; i++) {      // Each line in object
+	int linesToScan = seqPtr->_lines - y;
+	for (int i = 0; i < linesToScan; i++) {         // Each line in object
 		if (_vm->_object->getBaseBoundary(index))   // If any overlay base byte is non-zero then the object is foreground, else back.
 			return kOvlForeground;
 		index += kCompLineSize;
@@ -808,6 +826,42 @@ void Screen_v1w::loadFontArr(Common::ReadStream &in) {
 		for (int j = 0; j < numElem; j++)
 			in.readByte();
 	}
+}
+
+/**
+ * Merge an object frame into _frontBuffer at sx, sy and update rectangle list.
+ * If fore TRUE, force object above any overlay
+ */
+void Screen_v1w::displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) {
+	debugC(3, kDebugDisplay, "displayFrame(%d, %d, seq, %d)", sx, sy, (foreFl) ? 1 : 0);
+
+	ImagePtr image = seq->_imagePtr;                 // Ptr to object image data
+	ImagePtr subFrontBuffer = &_frontBuffer[sy * kXPix + sx]; // Ptr to offset in _frontBuffer
+	int16 frontBufferwrap = kXPix - seq->_x2 - 1;     // Wraps dest_p after each line
+	int16 imageWrap = seq->_bytesPerLine8 - seq->_x2 - 1;
+	OverlayState overlayState = (foreFl) ? kOvlForeground : kOvlUndef; // Overlay state of object
+	for (uint16 y = 0; y < seq->_lines; y++) {       // Each line in object
+		for (uint16 x = 0; x <= seq->_x2; x++) {
+			if (*image) {                           // Non-transparent
+				byte ovlBound = _vm->_object->getFirstOverlay((uint16)(subFrontBuffer - _frontBuffer) >> 3); // Ptr into overlay bits
+				if (ovlBound & (0x80 >> ((uint16)(subFrontBuffer - _frontBuffer) & 7))) { // Overlay bit is set
+					if (overlayState == kOvlUndef)  // Overlay defined yet?
+						overlayState = findOvl(seq, subFrontBuffer, y);// No, find it.
+					if (overlayState == kOvlForeground) // Object foreground
+						*subFrontBuffer = *image;   // Copy pixel
+				} else {                            // No overlay
+					*subFrontBuffer = *image;       // Copy pixel
+				}
+			}
+			image++;
+			subFrontBuffer++;
+		}
+		image += imageWrap;
+		subFrontBuffer += frontBufferwrap;
+	}
+
+	// Add this rectangle to the display list
+	displayList(kDisplayAdd, sx, sy, seq->_x2 + 1, seq->_lines);
 }
 
 /**
