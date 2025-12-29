@@ -23,6 +23,7 @@
 #define ULTIMA0_H
 
 #include "common/random.h"
+#include "common/serializer.h"
 #include "graphics/palette.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
@@ -35,8 +36,9 @@ namespace Ultima0 {
 class Ultima0Engine : public Engine, public Events {
 private:
 	Common::RandomSource _randomSource;
-
 	const UltimaGameDescription *_gameDescription;
+
+	void syncSavegame(Common::Serializer &s);
 
 protected:
 	// Engine APIs
@@ -86,6 +88,33 @@ public:
 	bool isEnhanced() const {
 		return true;
 	}
+
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
+		return true;
+	}
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+
+	/**
+	 * Load a game state.
+	 * @param stream	the stream to load the savestate from
+	 * @return returns kNoError on success, else an error code.
+	 */
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	/**
+	 * Save a game state.
+	 * @param stream	The write stream to save the savegame data to
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 };
 
 extern Ultima0Engine *g_engine;

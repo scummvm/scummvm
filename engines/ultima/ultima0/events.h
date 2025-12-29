@@ -159,6 +159,13 @@ public:
 	bool isFocused() const;
 
 	/**
+	 * Returns the view name
+	 */
+	Common::String getName() const {
+		return _name;
+	}
+
+	/**
 	 * Sets the focus to a new view
 	 */
 	void replaceView(UIElement *ui, bool replaceAllViews = false);

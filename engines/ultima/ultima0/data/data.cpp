@@ -71,6 +71,28 @@ void PLAYER::rollAttributes() {
 		Attr[i] = g_engine->getRandomNumber(21) + 4;
 }
 
+void PLAYER::synchronize(Common::Serializer &s) {
+	s.syncBytes((byte *)Name, MAX_NAME + 1);
+	s.syncAsSint16LE(World.x);
+	s.syncAsSint16LE(World.y);
+	s.syncAsSint16LE(Dungeon.x);
+	s.syncAsSint16LE(Dungeon.y);
+	s.syncAsSint16LE(DungDir.x);
+	s.syncAsSint16LE(DungDir.y);
+	s.syncAsByte(Class);
+	s.syncAsSint32LE(HPGain);
+	s.syncAsSint32LE(Level);
+	s.syncAsSint32LE(Skill);
+	s.syncAsSint32LE(Task);
+	s.syncAsSint32LE(TaskCompleted);
+	s.syncAsUint32LE(LuckyNumber);
+
+	for (int i = 0; i < MAX_ATTR; ++i)
+		s.syncAsUint32LE(Attr[i]);
+	for (int i = 0; i < MAX_OBJ; ++i)
+		s.syncAsUint32LE(Object[i]);
+}
+
 /*-------------------------------------------------------------------*/
 
 void WORLDMAP::init(PLAYER &p) {
@@ -118,6 +140,11 @@ int WORLDMAP::read(int x, int y) const {
 	if (x >= WORLD_MAP_SIZE || y >= WORLD_MAP_SIZE)
 		return WT_MOUNTAIN;
 	return Map[x][y];
+}
+
+void WORLDMAP::synchronize(Common::Serializer &s) {
+	for (int i = 0; i < WORLD_MAP_SIZE; ++i)
+		s.syncBytes(&Map[i][0], WORLD_MAP_SIZE);
 }
 
 } // namespace Ultima0

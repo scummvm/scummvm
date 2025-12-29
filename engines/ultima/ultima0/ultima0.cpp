@@ -64,5 +64,30 @@ Common::Error Ultima0Engine::run() {
 	return Common::kNoError;
 }
 
+bool Ultima0Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+	Common::String name = focusedView()->getName();
+	return name == "WorldMap" || name == "Dungeon";
+}
+
+Common::Error Ultima0Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
+	syncSavegame(s);
+
+	replaceView(_player.Level == 0 ? "WorldMap" : "Dungeon");
+
+	return Common::kNoError;
+}
+
+Common::Error Ultima0Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer s(nullptr, stream);
+	syncSavegame(s);
+	return Common::kNoError;
+}
+
+void Ultima0Engine::syncSavegame(Common::Serializer &s) {
+	_player.synchronize(s);
+	_worldMap.synchronize(s);
+}
+
 } // namespace Ultima0
 } // namespace Ultima

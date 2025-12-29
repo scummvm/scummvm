@@ -23,6 +23,7 @@
 #define ULTIMA0_DATA_H
 
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "ultima/ultima0/data/defines.h"
 
 namespace Ultima {
@@ -86,10 +87,11 @@ struct PLAYER {
 	const int Attributes = MAX_ATTR;		// Number of attributes
 	const int Objects = MAX_OBJ;			// Number of objects
 	int   Attr[MAX_ATTR] = {};				// Attribute values
-	double Object[MAX_OBJ] = {};			// Object counts
+	int   Object[MAX_OBJ] = {};			// Object counts
 
 	void init();
 	void rollAttributes();
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -100,8 +102,8 @@ struct WORLDMAP {
 	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
 
 	void init(PLAYER &p);
-
 	int read(int x, int y) const;
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Ultima4
