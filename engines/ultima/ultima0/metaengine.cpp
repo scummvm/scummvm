@@ -37,13 +37,14 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord NORMAL_KEYS[] = {
-	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "RETURN", "JOY_A" },
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up/Forward"), "UP", "JOY_UP" },
 	{ KEYBIND_DOWN, "DOWN", _s("Down/Backwards"), "DOWN", "JOY_DOWN" },
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT" },
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT" },
-	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_Y" },
+	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "RETURN", "JOY_A" },
+	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
+	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -86,6 +87,9 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
+			if (r->_action == KEYBIND_ENTER)
+				act->addDefaultInputMapping("x");
+
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 					r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)
 				// Allow movement actions to be triggered on keyboard repeats

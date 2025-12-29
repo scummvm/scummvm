@@ -33,8 +33,8 @@ class WorldMap : public View {
 private:
 	Status _status = Status("MapStatus", this);
 
-	void DRAWTile(Gfx::GfxSurface &s, const Common::Rect &r, int Obj);
-	
+	void endOfTurn();
+
 public:
 	WorldMap();
 	~WorldMap() override {}

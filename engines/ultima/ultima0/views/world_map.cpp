@@ -72,6 +72,10 @@ bool WorldMap::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+void WorldMap::endOfTurn() {
+	// TODO
+}
+
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
