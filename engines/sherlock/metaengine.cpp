@@ -662,6 +662,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_A");
 		scalpelMapKeymap->addAction(act);
 
 		//
@@ -673,6 +674,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_A");
 		scalpelSettingsKeymap->addAction(act);
 
 		act = new Action("SETTINGSEXIT", _("Exit"));
