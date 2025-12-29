@@ -51,7 +51,7 @@ void CreateCharacter::draw() {
 		if (_mode == LEVEL)
 			s.writeString(_input);
 		else
-			s.writeString(Common::String::format("%d", player.Level));
+			s.writeString(Common::String::format("%d", _level));
 	}
 
 	// Stats
@@ -114,8 +114,8 @@ bool CreateCharacter::msgAction(const ActionMessage &msg) {
 			_mode = LEVEL;
 			redraw();
 		} else if (_mode == LEVEL) {
-			player.Level = atoi(_input.c_str());
-			if (player.Level >= 1 && player.Level <= 10) {
+			_level = atoi(_input.c_str());
+			if (_level >= 1 && _level <= 10) {
 				_input.clear();
 				_mode = STATS;
 				player.rollAttributes();
