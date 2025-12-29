@@ -174,7 +174,7 @@ bool Archive::readCompressedData(RawData *out) {
 	out->resize(_lastReadSize);
 	read(out->data(), _lastReadSize);
 
-	if (!_lastReadDecompressedSize || _version != 0x18)
+	if (!_lastReadDecompressedSize || _version < 0x16)
 		return true;
 
 	/* looks hacky but we just allocate array for decompressed and swap it with compressed */
