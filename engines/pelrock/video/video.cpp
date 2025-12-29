@@ -58,7 +58,7 @@ void VideoManager::playIntro() {
 		int chunksInBuffer = 0;
 		bool videoExitFlag = false;
 
-		while (!videoExitFlag && !g_engine->shouldQuit()) {
+		while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
 			_chrono->updateChrono();
 			_events->pollEvent();
 
@@ -82,15 +82,13 @@ void VideoManager::playIntro() {
 					break;
 				}
 
-
 				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
 				if (subtitle != nullptr) {
-					Common::StringArray lines;
-					lines.push_back(subtitle->text);
+					Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
+
 					byte color;
 					_dialog->processColorAndTrim(lines, color);
-					debug("Displaying subtitle: %s with color %d", subtitle->text.c_str(), color);
-					_largeFont->drawString(&_textSurface, subtitle->text, subtitle->x, subtitle->y, 640, color);
+					_textSurface.transBlitFrom(_dialog->getDialogueSurface(lines, color), Common::Point(subtitle->x, subtitle->y), 255);
 				}
 
 				presentFrame();

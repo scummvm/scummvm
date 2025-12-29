@@ -94,7 +94,7 @@ private:
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
 	int _currentSubtitleIndex = 0;
 	Graphics::Surface _videoSurface = Graphics::Surface();
-	Graphics::Surface _textSurface = Graphics::Surface();
+	Graphics::ManagedSurface _textSurface = Graphics::ManagedSurface();
 	Common::Array<ChunkHeader> _chunkBuffer;
 	Common::Array<Subtitle> _subtitles;
 	Common::Array<AudioEffect> _audioEffect;

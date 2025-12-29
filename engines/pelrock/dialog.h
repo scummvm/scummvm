@@ -96,6 +96,7 @@ public:
 	void sayAlfred(Description description);
 	void say(Common::StringArray texts);
 	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);
+	Graphics::Surface getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId);
 
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::StringArray texts);

@@ -134,6 +134,28 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 	}
 }
 
+Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId) {
+
+	int maxWidth = 0;
+	int height = dialogueLines.size() * 24;
+	for (int i = 0; i < dialogueLines.size(); i++) {
+		maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(dialogueLines[i]));
+	}
+
+	Graphics::Surface s;
+	s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
+	s.fillRect(s.getRect(), 255); // Clear surface
+
+	for (int i = 0; i < dialogueLines.size(); i++) {
+
+		int xPos = 0;
+		int yPos = i * 20; // Above sprite, adjust for line
+
+		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
+	}
+
+	return s;
+}
 /**
  * Display dialogue text and wait for click to advance
  * @param text The text to display
@@ -162,11 +184,6 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		for (int i = 0; i < textLines.size(); i++) {
 			maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(textLines[i]));
 		}
-
-		Graphics::Surface s;
-		s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
-		s.fillRect(s.getRect(), 255); // Clear surface
-		// s.drawRoundRect(Common::Rect(0, 0, s.getRect().width(), s.getRect().height()), 2, 13, false);
 		int xPos = 0;
 		int yPos = 0;
 
@@ -185,13 +202,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			yPos = _curSprite->y - height; // Above sprite, adjust for line
 		}
 
-		for (int i = 0; i < textLines.size(); i++) {
-
-			int xPos = 0;
-			int yPos = i * 20; // Above sprite, adjust for line
-
-			g_engine->_largeFont->drawString(&s, textLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
-		}
+		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
 		if (xPos + s.getRect().width() > 640) {
 			xPos = 640 - s.getRect().width() - 2;
