@@ -32,20 +32,20 @@ struct KeybindingRecord {
 	KeybindingAction _action;
 	const char *_id;
 	const char *_desc;
-	const char *_method;
 	const char *_key;
 	const char *_joy;
 };
 
 static const KeybindingRecord NORMAL_KEYS[] = {
-	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "select", "RETURN", nullptr },
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Abort action"), "", "ESCAPE", nullptr },
-	{ KEYBIND_UP, "UP", _s("Up"), "move up", "UP", nullptr },
-	{ KEYBIND_DOWN, "DOWN", _s("Down"), "move down", "DOWN", nullptr },
-	{ KEYBIND_LEFT, "LEFT", _s("Left"), "move left", "LEFT", nullptr },
-	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "move right", "RIGHT", nullptr },
+	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "RETURN", "JOY_A" },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_B" },
+	{ KEYBIND_UP, "UP", _s("Up/Forward"), "UP", "JOY_UP" },
+	{ KEYBIND_DOWN, "DOWN", _s("Down/Backwards"), "DOWN", "JOY_DOWN" },
+	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT" },
+	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT" },
+	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_Y" },
 
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 struct KeysRecord {
@@ -122,17 +122,6 @@ void MetaEngine::setKeybindingMode(KeybindingMode mode) {
 
 	for (uint idx = 0; idx < arr.size(); ++idx)
 		mapper->addGameKeymap(arr[idx]);
-}
-
-Common::String MetaEngine::getMethod(KeybindingAction keyAction) {
-	for (int kCtr = 0; kCtr < 4; ++kCtr) {
-		for (const KeybindingRecord *r = NORMAL_RECORDS[kCtr]._keys; r->_id; ++r) {
-			if (r->_action == keyAction)
-				return r->_method;
-		}
-	}
-
-	return Common::String();
 }
 
 } // End of namespace Ultima0

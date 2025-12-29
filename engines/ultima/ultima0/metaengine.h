@@ -29,7 +29,7 @@ namespace Ultima0 {
 
 enum KeybindingAction {
 	KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
-	KEYBIND_SELECT, KEYBIND_ESCAPE,
+	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_INFO,
 
 	KEYBIND_NONE
 };
@@ -40,11 +40,6 @@ enum KeybindingMode {
 
 class MetaEngine {
 private:
-	/**
-	 * Get the method to execute
-	 */
-	static Common::String getMethod(KeybindingAction keyAction);
-
 	/**
 	 * Adds the default actions for the mouse buttons
 	 */

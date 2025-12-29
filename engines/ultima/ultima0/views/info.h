@@ -19,31 +19,50 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_TOWN_H
-#define ULTIMA0_VIEWS_TOWN_H
+#ifndef ULTIMA0_VIEWS_INFO_H
+#define ULTIMA0_VIEWS_INFO_H
 
-#include "ultima/ultima0/views/info.h"
+#include "ultima/ultima0/views/view.h"
 #include "ultima/ultima0/data/data.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-class Town : public Info {
+class Info : public View {
+	class InfoObject : public UIElement {
+	public:
+		Common::String _text;
+		int _id;
+	public:
+		InfoObject(Info *parent, const Common::Point &pt, int id, const Common::String &text);
+		void draw() override;
+		bool msgMouseDown(const MouseDownMessage &msg) override;
+	};
+
 private:
-	Common::String _message;
+	InfoObject _options[6] = {
+		InfoObject(this, Common::Point(26, 4), 0, OBJECT_INFO[0].Name),
+		InfoObject(this, Common::Point(26, 5), 1, OBJECT_INFO[1].Name),
+		InfoObject(this, Common::Point(26, 6), 2, OBJECT_INFO[2].Name),
+		InfoObject(this, Common::Point(26, 7), 3, OBJECT_INFO[3].Name),
+		InfoObject(this, Common::Point(26, 8), 4, OBJECT_INFO[4].Name),
+		InfoObject(this, Common::Point(26, 9), 5, OBJECT_INFO[5].Name)
+	};
 
 protected:
-	void selectObject(int item) override;
-	void leave() override;
+	virtual void selectObject(int item) {
+	}
+	virtual void leave();
 
 public:
-	Town();
-	~Town() override {}
+	Info(const char *viewName = "Info");
+	~Info() override {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
-	void timeout() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Views
