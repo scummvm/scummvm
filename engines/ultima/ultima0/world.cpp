@@ -40,40 +40,7 @@ namespace Ultima0 {
 /************************************************************************/
 
 void WORLDCreate(PLAYER *p, WORLDMAP *w) {
-	int c, x, y, Size;
-
-	g_engine->setRandomSeed(p->LuckyNumber);		/* Seed the random number */
-	Size = MAINSuper() ? WORLD_MAP_SIZE - 1 : 20;	/* Calculate map size */
-	w->MapSize = Size;						/* Save the map size */
-
-	// Draw the boundaries
-	for (x = 0; x <= Size; x++) {
-		w->Map[Size][x] = WT_MOUNTAIN;
-		w->Map[0][x] = WT_MOUNTAIN;
-		w->Map[x][Size] = WT_MOUNTAIN;
-		w->Map[x][0] = WT_MOUNTAIN;
-	}
-
-	/* Draw the rest of it */
-	for (x = 1; x < Size; x++)
-		for (y = 1; y < Size; y++) {
-			c = (int)(pow(RND(), 5.0) * 4.5);	/* Calculate what's there */
-			if (c == WT_TOWN && RND() > .5)	/* Remove half the towns */
-				c = WT_SPACE;
-			w->Map[x][y] = c;				/* Save in map */
-		}
-	x = urand() % (Size - 1) + 1;				/* Calculate player start */
-	y = urand() % (Size - 1) + 1;
-	p->World.x = x; p->World.y = y;			/* Save it */
-	w->Map[x][y] = WT_TOWN;					/* Make it a town */
-
-	/* Find place for castle */
-	do {
-		x = urand() % Size + 1;
-		y = urand() % Size + 1;
-	} while (w->Map[x][y] != WT_SPACE);
-
-	w->Map[x][y] = WT_BRITISH;				/* Put LBs castle there */
+	w->init(*p);
 }
 
 /************************************************************************/

@@ -30,28 +30,23 @@ namespace Ultima0 {
 
 
 struct _OInfStruct {
-	const char *Name; int Cost; int MaxDamage; char Key;
+	const char *Name;
+	int Cost;
+	int MaxDamage;
+	char Key;
 };
 struct _MInfStruct {
 	const char *Name; int Level;
 };
 
-extern const _OInfStruct _OInfo[];
-extern const _MInfStruct _MInfo[];
+extern const _OInfStruct OBJECT_INFO[];
+extern const _MInfStruct MONSTER_INFO[];
 extern const char *ATTRIB_NAMES[];
 
 
 // point/rect types
 typedef Common::Point COORD;
 typedef Common::Rect RECT;
-
-/**
- * World Map structure
- */
-struct WORLDMAP {
-	int MapSize = 0;							// Size of map
-	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE];	// Map information
-};
 
 /**
  * Monster structure
@@ -95,6 +90,16 @@ struct PLAYER {
 
 	void init();
 	void rollAttributes();
+};
+
+/**
+ * World Map structure
+ */
+struct WORLDMAP {
+	const int MapSize = WORLD_MAP_SIZE - 1;			// Size of map
+	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
+
+	void init(PLAYER &p);
 };
 
 } // End of namespace Ultima4

@@ -128,7 +128,11 @@ bool CreateCharacter::msgAction(const ActionMessage &msg) {
 }
 
 void CreateCharacter::characterDone() {
-	replaceView("Store");
+	// Generate the world map
+	g_engine->_worldMap.init(g_engine->_player);
+
+	// Enter the town
+	replaceView("Town");
 }
 
 } // namespace Views

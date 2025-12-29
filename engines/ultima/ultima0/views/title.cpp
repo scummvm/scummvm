@@ -26,15 +26,7 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-Title::Title() : View("Title"),
-		_option0(this, 0, "Introduction", 16),
-		_option1(this, 1, "Create a Character", 17),
-		_option2(this, 2, "Acknowledgements", 18),
-		_option3(this, 3, "Journey Onwards", 19) {
-	_options[0] = &_option0;
-	_options[1] = &_option1;
-	_options[2] = &_option2;
-	_options[3] = &_option3;
+Title::Title() : View("Title") {
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {
@@ -49,8 +41,8 @@ void Title::updateSelections() {
 
 	for (int i = 0; i < 4; ++i) {
 		auto &opt = _options[i];
-		opt->_color = opt->_index == _highlightedOption ? selected : white;
-		opt->redraw();
+		opt._color = opt._index == _highlightedOption ? selected : white;
+		opt.redraw();
 	}
 }
 

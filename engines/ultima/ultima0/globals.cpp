@@ -40,13 +40,13 @@ namespace Ultima0 {
 /************************************************************************/
 
 const char *GLOObjName(int n) {
-	return _OInfo[n].Name;
+	return OBJECT_INFO[n].Name;
 }
 
 void GLOGetInfo(int n, int *pDamage, int *pCost, int *pKey) {
-	if (pDamage != nullptr) *pDamage = _OInfo[n].MaxDamage;
-	if (pCost != nullptr) 	 *pCost = _OInfo[n].Cost;
-	if (pKey != nullptr) 	 *pKey = _OInfo[n].Key;
+	if (pDamage != nullptr) *pDamage = OBJECT_INFO[n].MaxDamage;
+	if (pCost != nullptr) 	 *pCost = OBJECT_INFO[n].Cost;
+	if (pKey != nullptr) 	 *pKey = OBJECT_INFO[n].Key;
 }
 
 /************************************************************************/
@@ -70,11 +70,11 @@ const char *GLOClassName(char c) {
 }
 
 const char *GLOMonsterName(int n) {
-	return _MInfo[n - 1].Name;
+	return MONSTER_INFO[n - 1].Name;
 }
 
 int GLOMonsterLevel(int n) {
-	return _MInfo[n - 1].Level;
+	return MONSTER_INFO[n - 1].Level;
 }
 
 } // namespace Ultima0

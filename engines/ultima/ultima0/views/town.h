@@ -19,48 +19,51 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_TITLE_H
-#define ULTIMA0_VIEWS_TITLE_H
+#ifndef ULTIMA0_VIEWS_TOWN_H
+#define ULTIMA0_VIEWS_TOWN_H
 
 #include "ultima/ultima0/views/view.h"
+#include "ultima/ultima0/data/data.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-class Title : public View {
+class Town : public View {
 	class TitleOption : public UIElement {
 	public:
-		int _index;
 		Common::String _text;
-		byte _color = 0;
+		int _id;
 	public:
-		TitleOption(Title *parent, int index, const Common::String &text, int row);
+		TitleOption(Town *parent, const Common::Point &pt, int id, const Common::String &text);
 		void draw() override;
-		bool msgMouseEnter(const MouseEnterMessage &msg) override;
+		bool msgMouseDown(const MouseDownMessage &msg) override;
 	};
 
 private:
-	TitleOption _options[4] = {
-		TitleOption(this, 0, "Introduction", 16),
-		TitleOption(this, 1, "Create a Character", 17),
-		TitleOption(this, 2, "Acknowledgements", 18),
-		TitleOption(this, 3, "Journey Onwards", 19)
+	TitleOption _options[6] = {
+		TitleOption(this, Common::Point(26, 4), 0, OBJECT_INFO[0].Name),
+		TitleOption(this, Common::Point(26, 5), 1, OBJECT_INFO[1].Name),
+		TitleOption(this, Common::Point(26, 6), 2, OBJECT_INFO[2].Name),
+		TitleOption(this, Common::Point(26, 7), 3, OBJECT_INFO[3].Name),
+		TitleOption(this, Common::Point(26, 8), 4, OBJECT_INFO[4].Name),
+		TitleOption(this, Common::Point(26, 9), 5, OBJECT_INFO[5].Name)
 	};
-	int _highlightedOption = 0;
+	Common::String _message;
 
-	void updateSelections();
-	void selectOption();
+	void selectObject(int item);
 
 public:
-	Title();
-	~Title() override {}
+	Town();
+	~Town() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
-	bool msgMouseDown(const MouseDownMessage &msg);
+	void timeout() override;
+
 };
 
 } // namespace Views

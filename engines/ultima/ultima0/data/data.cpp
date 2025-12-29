@@ -25,16 +25,16 @@
 namespace Ultima {
 namespace Ultima0 {
 
-const _OInfStruct _OInfo[] = {
+const _OInfStruct OBJECT_INFO[] = {
 	{ "Food", 1, 0, 'F' },
 	{ "Rapier", 8, 10, 'R' },
 	{ "Axe", 5, 5, 'A' },
 	{ "Shield", 6, 1, 'S' },
-	{ "Bow+Arrow", 3, 4, 'B' },
-	{ "Amulet", 15, 0, 'M' }
+	{ "Bow and Arrow", 3, 4, 'B' },
+	{ "Magic Amulet", 15, 0, 'M' }
 };
 
-const _MInfStruct _MInfo[] = {
+const _MInfStruct MONSTER_INFO[] = {
 	{ "Skeleton", 1 },
 	{ "Thief", 2 },
 	{ "Giant Rat", 3 },
@@ -47,7 +47,7 @@ const _MInfStruct _MInfo[] = {
 	{ "Balrog", 10 }
 };
 
-const char *ATTRIB_NAMES[] = { "HP", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
+const char *ATTRIB_NAMES[] = { "Hit Points", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
 
 
 void PLAYER::init() {
@@ -69,6 +69,47 @@ void PLAYER::init() {
 void PLAYER::rollAttributes() {
 	for (int i = 0; i < MAX_ATTR; ++i)
 		Attr[i] = g_engine->getRandomNumber(21) + 4;
+}
+
+/*-------------------------------------------------------------------*/
+
+void WORLDMAP::init(PLAYER &p) {
+	int c, x, y, Size;
+
+	g_engine->setRandomSeed(p.LuckyNumber);
+	Size = MapSize;					// Get hard-coded map size
+
+	// Set the boundaries
+	for (x = 0; x <= Size; x++) {
+		Map[Size][x] = WT_MOUNTAIN;
+		Map[0][x] = WT_MOUNTAIN;
+		Map[x][Size] = WT_MOUNTAIN;
+		Map[x][0] = WT_MOUNTAIN;
+	}
+
+	// Set up the map contents
+	for (x = 1; x < Size; x++) {
+		for (y = 1; y < Size; y++) {
+			c = (int)(pow(RND(), 5.0) * 4.5);	// Calculate what's there
+			if (c == WT_TOWN && RND() > .5)		// Remove half the towns
+				c = WT_SPACE;
+			Map[x][y] = c;
+		}
+	}
+
+	// Calculate player start
+	x = g_engine->getRandomNumber(1, Size - 1);
+	y = g_engine->getRandomNumber(1, Size - 1);
+	p.World.x = x; p.World.y = y;			// Save it
+	Map[x][y] = WT_TOWN;					// Make it a town
+
+	// Find place for castle
+	do {
+		x = g_engine->getRandomNumber(1, Size - 1);
+		y = g_engine->getRandomNumber(1, Size - 1);
+	} while (Map[x][y] != WT_SPACE);
+
+	Map[x][y] = WT_BRITISH;				// Put LBs castle there
 }
 
 } // namespace Ultima0

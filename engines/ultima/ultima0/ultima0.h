@@ -45,6 +45,7 @@ protected:
 public:
 	Graphics::Palette _palette;
 	PLAYER _player;
+	WORLDMAP _worldMap;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;
@@ -74,6 +75,9 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint maxVal = RND_MAX) { return _randomSource.getRandomNumber(maxVal); }
+	uint getRandomNumber(uint minVal, uint maxVal) {
+		return _randomSource.getRandomNumber(maxVal - minVal) + minVal;
+	}
 
 	/**
 	 * Returns true if enhancements are turned on

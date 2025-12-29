@@ -25,6 +25,7 @@
 #include "ultima/ultima0/views/startup.h"
 #include "ultima/ultima0/views/title.h"
 #include "ultima/ultima0/views/create_character.h"
+#include "ultima/ultima0/views/town.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -34,6 +35,7 @@ struct Views {
 	CreateCharacter _createCharacter;
 	Startup _startup;
 	Title _title;
+	Town _town;
 };
 
 } // namespace Views

@@ -40,20 +40,7 @@ namespace Ultima0 {
 /************************************************************************/
 
 void PLAYERInit(PLAYER *p) {
-	int i;
-	memset(p, 0xFF, sizeof(PLAYER));			/* Fill with character $FF */
-	p->Name[0] = '\0';
-	p->World.x = p->World.y = 0;
-	p->Dungeon.x = p->Dungeon.y = 0;
-	p->DungDir.x = p->DungDir.y = 0;
-	p->Class = '?';
-	p->Level = 0; p->Skill = 0;
-	p->Task = 0; p->TaskCompleted = 0;
-	p->HPGain = 0;
-	p->LuckyNumber = urand();				/* We do the lucky number ! */
-
-	for (i = 0; i < p->Attributes; i++) p->Attr[i] = 0;
-	for (i = 0; i < p->Objects; i++) p->Object[i] = 0.0;
+	p->init();
 }
 
 /************************************************************************/

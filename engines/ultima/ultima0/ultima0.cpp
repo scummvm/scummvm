@@ -38,8 +38,9 @@ static const byte PALETTE[][3] = {
 	{ 0, 0, 255 },
 	{ 255, 255, 0 },
 	{ 0, 255, 255 },
-	{ 255, 0, 128 },
-	{ 220, 20, 130 }
+	{ 255, 0, 128 },	// Rose
+	{ 80, 80, 255 },	// Purple
+	{ 220, 20, 130 }	// Transparent. Needed?
 };
 
 Ultima0Engine *g_engine;
