@@ -328,8 +328,9 @@ Common::Error SciEngine::run() {
 		bool undither = ConfMan.getBool("disable_dithering");
 		Common::RenderMode renderMode = SciGfxDriver::getRenderMode();
 
-		// Disable undithering for CGA, Hercules and other unsuitable video modes. The render mode should have been set to
-		// kRenderDefault by determineRenderMode() if undithering is selected, but we want to make sure that this matches.
+		// Disable undithering for CGA, Hercules and other unsuitable video modes. For all other modes,
+		// the render mode should have been changed to kRenderDefault inside SciGfxDriver::getRenderMode()
+		// if undithering is selected.
 		if (renderMode != Common::kRenderDefault)
 			undither = false;
 
