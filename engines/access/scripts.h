@@ -161,6 +161,7 @@ protected:
 	void cmdStilOff();
 	void cmdStilOn();
 	void cmdReturnExit();
+	void cmdSetCoords();
 	void cmdSetStilCoords();
 	void cmdSetPlayerDir();
 	void cmdSetStilDir();

@@ -300,6 +300,7 @@ void EventsManager::nextFrame() {
 void EventsManager::nextTimer() {
 	_vm->_animation->updateTimers();
 	_vm->_timers.updateTimers();
+	_vm->_player->updateTimers();
 }
 
 void EventsManager::delay(int time) {

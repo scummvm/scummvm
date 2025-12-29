@@ -20,6 +20,7 @@
  */
 
 #include "access/noctropolis/noctropolis_room.h"
+#include "access/noctropolis/noctropolis_player.h"
 #include "access/access.h"
 
 namespace Access {
@@ -31,33 +32,35 @@ NoctropolisRoom::NoctropolisRoom(AccessEngine *vm): Room(vm) {
 
 void NoctropolisRoom::reloadRoom() {
 	loadRoom(_vm->_player->_roomNumber);
+	
+	// This is LoadPlayer1
 	int subFileBase = 1;
-	int numSubFiles = 0;
-	int objBase = 0;
-	int fileNum = 0;
-	if (!(_roomFlag & 4)) {
+	int numSubFiles;
+	int objBase;
+	int fileNum;
+	if (!(_roomFlag & kRoomFlagTopView)) {
 		if (_roomFlag) {
 			// Peter
 			numSubFiles = 5;
-			objBase = 0x64;
+			objBase = 100;
 			fileNum = 0xfe;
 		} else {
 			// Dark
 			numSubFiles = 5;
-			objBase = 0x69;
+			objBase = 105;
 			fileNum = 0xff;
 		}
 	} else {
 		// Top
 		numSubFiles = 1;
-		objBase = 0x73;
+		objBase = 115;
 		fileNum = 0xfc;
 	}
 	
 	_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
-	_vm->_player->loadAnimation(fileNum, 0);
+	((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
 
-	for (int i = subFileBase; i < numSubFiles; i++) {
+	for (int i = subFileBase; i <= numSubFiles; i++) {
 		Resource *data = _vm->_files->loadFile(fileNum, i);
 		_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
 	}
@@ -147,6 +150,17 @@ void NoctropolisRoom::buildColumnXScroll(int playX, int screenX) {
 
 		pSrc += _playFieldWidth;
 	}
+}
+
+void NoctropolisRoom::mainAreaClick() {
+	//Common::Point &mousePos = _vm->_events->_mousePos;
+	Common::Point pt = _vm->_events->calcRawMouse();
+	//Screen &screen = *_vm->_screen;
+	Player &player = *_vm->_player;
+
+	// TODO: For now just add a move-to point for the player.
+	player._moveTo = pt;
+	player._playerMove = true;
 }
 
 } // end namespace Noctropolis

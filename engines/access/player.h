@@ -40,7 +40,7 @@ enum Direction {
 	UPRIGHT = 5,
 	DOWNRIGHT = 6,
 	UPLEFT = 7,
-	DOWNLEFT = 8
+	DOWNLEFT = 8,
 };
 
 class AccessEngine;
@@ -83,7 +83,6 @@ protected:
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
-	AnimationResource *_playerAnimation;
 	// Fields in original Player structure
 	byte *_manPal1;
 	int *_walkOffRight;
@@ -99,9 +98,9 @@ public:
 	byte _rawYTempL;
 	int _rawYTemp;
 	Common::Point _playerOffset;
-	int _playerXLow;
+	//int _playerXLow;
 	int _playerX;
-	int _playerYLow;
+	//int _playerYLow;
 	int _playerY;
 	int _frame;
 	int _xFlag, _yFlag;
@@ -131,17 +130,16 @@ public:
 	void loadNoctPalette(int fileNum, int subFile);
 
 	void loadSprites(const Common::Path &name);
-	void loadAnimation(int fileNum, int subFile);
 
 	void freeSprites();
 
 	void removeSprite1();
 
-	void calcManScale();
+	virtual void calcManScale();
 
 	void extracted();
 
-	void walk();
+	virtual void walk();
 
 	void calcPlayer();
 
@@ -152,6 +150,8 @@ public:
 	void checkScroll();
 
 	void checkMove();
+	
+	virtual void updateTimers() {};
 
 	/**
 	* Synchronize savegame data

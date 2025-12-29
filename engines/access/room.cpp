@@ -639,7 +639,7 @@ void Room::doCommands() {
 		handleCommand(7);
 
 	} else if (_vm->_events->_leftButton) {
-		if (_vm->_events->_mouseRow >= 22) {
+		if (_vm->getGameID() != kGameNoctropolis && _vm->_events->_mouseRow >= 22) {
 			// Mouse in user interface area
 			for (commandId = 0; commandId < 10; ++commandId) {
 				if (_vm->_events->_mousePos.x >= _rMouse[commandId][0] &&

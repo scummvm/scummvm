@@ -70,7 +70,7 @@ public:
 	Common::Point _bufferStart;
 	int _windowXAdd, _windowYAdd;
 	int _screenYOff;
-	byte _manPal[0x60];
+	byte _manPal[0x84];
 	byte _scaleTable1[256];
 	byte _scaleTable2[256];
 	int _vWindowWidth;

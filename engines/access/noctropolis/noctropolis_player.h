@@ -19,43 +19,44 @@
  *
  */
 
-#ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H
-#define ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H
+#ifndef ACCESS_NOCTROPOLIS_PLAYER_H
+#define ACCESS_NOCTROPOLIS_PLAYER_H
 
-#include "access/room.h"
+#include "common/scummsys.h"
+#include "access/player.h"
 
 namespace Access {
 
 namespace Noctropolis {
 
-class NoctropolisRoom : public Room {
-public:
-	NoctropolisRoom(AccessEngine *vm);
+class NoctropolisEngine;
 
-	void roomMenu() override {};
-
-	void init4Quads() override {};
-
-	/**
-	 * Like Room::buildScreen, but adds vm->_scrollX for sub-tile scrolling.
-	 */
-	void buildScreenXScroll();
-
-protected:
-	void reloadRoom() override;
-	
-	void reloadRoom1() override;
-
-	void mainAreaClick() override;
-
+class NoctropolisPlayer : public Player {
 private:
-	// Like buildColumn but can handle negative playX.
-	// TODO: Can we just replace Room::buildColumn with this one?
-	void buildColumnXScroll(int playX, int screenX);
+	NoctropolisEngine *_game;
+	Direction _lastDirection;
+	AnimationManager *_animManager;
+
+	void updatePlayerDirection();
+
+	void calcManScale() override;
+	void calcManScale1();
+
+public:
+	NoctropolisPlayer(AccessEngine *vm);
+	~NoctropolisPlayer();
+
+	void load() override;
+
+	void loadAnimation(int fileNum, int subFile);
+	void walk() override;
+
+	void updateTimers() override;
+
 };
 
-} // end namespace Noctropolis
+} // End of namespace Noctropolis
 
-} // end namespace Access
+} // End of namespace Access
 
-#endif // ACCESS_NOCTROPOLIS_NOCTROPOLIS_ROOM_H
+#endif /* ACCESS_NOCTROPOLIS_PLAYER_H */

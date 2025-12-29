@@ -42,7 +42,7 @@ private:
 public:
 	Animation *_animStart;
 	Common::Point _base;
-	int _frameScale;
+	//int _frameScale;
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Remove the last animation timer
 	 */
-	void popBackTimer() { _animationTimers.pop_back(); }
+	void popBackTimer() { if (_animationTimers.size()) _animationTimers.pop_back(); }
 };
 
 class AnimationResource {

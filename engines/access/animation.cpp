@@ -212,6 +212,7 @@ void Animation::anim7() {
 }
 
 void Animation::anim8() {
+	// TODO: In here be careful with whether we are using playerX or raw.x
 	debug("TODO: Animation::anim8");
 }
 
@@ -227,11 +228,41 @@ void Animation::anim11() {
      // Actor idle
 	const AnimationFrame *frame = calcFrame();
 	_countdownTicks += frame->_frameDelay;
+	_scaling = _vm->_scale;
 	setFrame1(frame, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
 }
 
 void Animation::anim12() {
-	debug("TODO: Animation::anim12");
+	// Actor walk
+	const AnimationFrame *frame = calcFrame();
+	if (_countdownTicks == 0) {
+		const AnimationFrame *prevAnimationFrame = frame;
+		_countdownTicks = _initialTicks;
+		_frameNumber++;
+		if (_frameNumber >= (int)_frames.size()) {
+			_frameNumber = 1;
+			prevAnimationFrame = calcFrame1();
+		}
+		frame = calcFrame();
+		int16 deltaX = (frame->_baseX + frame->_parts[0]._position.x) -
+			(prevAnimationFrame->_baseX + prevAnimationFrame->_parts[0]._position.x);
+		int16 deltaY = (frame->_baseY + frame->_parts[0]._position.y) -
+			(prevAnimationFrame->_baseY + prevAnimationFrame->_parts[0]._position.y);
+		int16 xadd = ABS(deltaX) * _vm->_scale / 256;
+		int16 yadd = ABS(deltaY) * _vm->_scale / 256;
+		if (deltaX < 0)
+			_vm->_player->_playerX -= xadd;
+		else
+			_vm->_player->_playerX += xadd;
+		if (deltaY < 0)
+			_vm->_player->_playerY -= yadd;
+		else
+			_vm->_player->_playerY += yadd;
+		_countdownTicks += frame->_frameDelay;
+		debug("anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_player->_playerX, _vm->_player->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
+	}
+	_scaling = _vm->_scale;
+	setFrame1(frame, _vm->_player->_playerX, _vm->_player->_playerY - _vm->_player->_playerOffset.y);
 }
 
 
@@ -259,14 +290,21 @@ void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
 
 		// Set the flags
 		ie._flags = part._flags & ~IMGFLAG_UNSCALED;
-		if (_vm->_animation->_frameScale == -1)
+		if (_scaling == -1)
 			ie._flags |= IMGFLAG_UNSCALED;
 
 		// Set the other fields
 		ie._spritesPtr = _vm->_objectsTable[part._spritesIndex];
 		ie._frameNumber = part._frameIndex;
-		ie._position = part._position + _vm->_animation->_base;
-		ie._offsetY = part._offsetY - ie._position.y;
+		ie._position.x = xoff ? xoff : (part._position.x + _vm->_animation->_base.x);
+		ie._position.y = yoff ? yoff : (part._position.y + _vm->_animation->_base.y);
+		if (xoff && _scaling != -1) {
+			// If xoff is set, the animation is for an actor so we need to apply scale factor
+			// to frame height
+			ie._offsetY = part._offsetY * _scaling / 256 - ie._position.y;
+		} else {
+			ie._offsetY = part._offsetY - ie._position.y;
+		}
 
 		_vm->_images.addToList(ie);
 	}
@@ -312,7 +350,7 @@ AnimationFramePart::AnimationFramePart(Common::SeekableReadStream *stream) {
 AnimationManager::AnimationManager(AccessEngine *vm) : Manager(vm) {
 	_animation = nullptr;
 	_animStart = nullptr;
-	_frameScale = 0;
+	//_frameScale = 0;
 }
 
 AnimationManager::~AnimationManager() {
@@ -360,7 +398,7 @@ Animation *AnimationManager::findAnimation(int animId) {
 
 void AnimationManager::animate(int animId) {
 	Animation *anim = findAnimation(animId);
-	_frameScale = anim->_scaling;
+	//_frameScale = anim->_scaling;
 	anim->animate();
 }
 
