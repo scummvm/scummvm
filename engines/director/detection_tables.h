@@ -578,6 +578,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
 	{ "wrath",				"Wrath of the Gods" },
+	{ "wttf",				"Welcome to the Future" },
 	{ "xanthus",			"Xanthus" },
 	{ "xfools",				"The X-Fools: The Spoof is Out There" },
 	{ "xmasstory",			"A Christmas Story" },
@@ -1878,7 +1879,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "windows95",			"Microsoft Windows 95" },
 	{ "worldatlas",			"World Reference Atlas" },
 	{ "wpmainstreet",		"WordPerfect Main Street" },
-	{ "wttf",				"Welcome to the Future" },
 	{ "wwaldocircus",		"Where's Waldo? At the Circus" },
 	{ "wwaldogeo",			"Where's Waldo? Exploring Geography" },
 	{ "xfiles",				"The X-Files" },
@@ -6493,7 +6493,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("worldatlas", "Sampler", "ATLAS.EXE",		   "t:73fd017684b6fd92d0b8a743994705ab", 696807,
 									  "DATA/CONTENTM.DIR", "f:f4c9435dac6653651bf7c86480c3333b", 681228, 404),
 
-	// Full game is not Director
+	MACGAME1f("wttf", "", "BLUESKY/WELCOME24", "rt:e8072b708d1d05793d0b8a3f1e2f301b", 483808, 404, GF_32BPP),
 	MACDEMO1("wttf", "Demo", "WTTF", "01be45e7241194dad07938e7059b88e3", 483518, 404),
 
 	// Full game is not Director
