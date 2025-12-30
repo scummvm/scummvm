@@ -154,10 +154,23 @@ MacWidget *MacWidget::findEventHandler(Common::Event &event, int dx, int dy) {
 }
 
 Common::Point MacWidget::getAbsolutePos() {
-	if (!_parent)
-		return Common::Point(0, 0);
+	Common::Point absPoint = Common::Point(0, 0);
+	MacWidget *currentParent = _parent;
+	while (currentParent != nullptr) {
+		absPoint = Common::Point(currentParent->_dims.left, currentParent->_dims.top) + absPoint;
+		currentParent = currentParent->_parent;
+	}
 
-	return Common::Point(_parent->_dims.left, _parent->_dims.top) + _parent->getAbsolutePos();
+	return absPoint;
+}
+
+Common::Rect MacWidget::getAbsoluteDimensions() {
+	Common::Point absPos = getAbsolutePos();
+	Common::Rect dims = getDimensions();
+
+	dims.translate(absPos.x, absPos.y);
+
+	return dims;
 }
 
 } // End of namespace Graphics

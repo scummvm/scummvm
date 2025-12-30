@@ -1108,7 +1108,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
 				(_activeWidget && _activeWidget->isEditable() &&
-				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
+				 _activeWidget->getAbsoluteDimensions().contains(event.mouse.x, event.mouse.y))) {
 			if (getCursorType() != kMacCursorBeam) {
 				_tempType = getCursorType();
 				_inEditableArea = true;
