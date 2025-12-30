@@ -39,11 +39,12 @@ void Dungeon::draw() {
 	auto s = getSurface();
 	s.clear();
 
+	// Draw the dungeon view
+	Graphics::ManagedSurface dungArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::CHAR_HEIGHT * 4));
+	Gfx::Dungeon::draw(&dungArea);
+
 	// Allow the status area to draw
 	View::draw();
-
-	// Draw the dungeon view
-	Gfx::Dungeon::draw(&s);
 }
 
 bool Dungeon::msgAction(const ActionMessage &msg) {

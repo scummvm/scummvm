@@ -118,8 +118,9 @@ void WorldMap::endOfTurn() {
 }
 
 void WorldMap::timeout() {
-	auto &player = g_engine->_player;
 	const auto &map = g_engine->_worldMap;
+	auto &player = g_engine->_player;
+	auto &dungeon = g_engine->_dungeon;
 
 	if (player.Attr[AT_HP] <= 0 || player.Object[OB_FOOD] <= 0) {
 		// Timeout from displaying player was killed
@@ -137,6 +138,7 @@ void WorldMap::timeout() {
 			player.Dungeon.y = 1;
 			player.DungDir.x = 1;			// And direction
 			player.DungDir.y = 0;
+			dungeon.create(player);
 
 			replaceView("Dungeon");
 			break;

@@ -46,16 +46,16 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 	s->clear();
 
 	double Level = 0;
-	Common::Rect rOut(0, 1023 / 2, 1260 / 2, 10);
-	Common::Rect rIn;
+	Common::Rect rIn, rOut;
 	COORD Dir, Pos, Next;
 	int Monster, Front, Left, Right;
-	_DDRAWCalcRect(&rOut, 0);
+	_DDRAWCalcRect(s, &rOut, 0);
 	Pos = player.Dungeon;						// Get position
 
+	// Iterate through drawing successively distinct tiles in the facing direction
 	do {
 		Level++;							// Next level
-		_DDRAWCalcRect(&rIn, Level);
+		_DDRAWCalcRect(s, &rIn, Level);
 		Next.x = Pos.x + player.DungDir.x;		// Next position
 		Next.y = Pos.y + player.DungDir.y;
 
@@ -65,13 +65,13 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 		Right = dungeon.Map[Pos.x + Dir.x][Pos.y + Dir.y];
 		Front = dungeon.Map[Next.x][Next.y];		// What's in front ?
 
-		Monster = DDRAWFindMonster(&Pos);	// Find ID of monster here
-		if (Monster >= 0)					// Find Type if Found
-		{
+		// Check for monster present
+		Monster = DDRAWFindMonster(&Pos);
+		if (Monster >= 0)					
 			Monster = dungeon.Monster[Monster].Type;
-		}
-		DRAWDungeon(s, &rOut, &rIn,				// Draw the dungeon
-			Left, Front, Right,
+
+		// Draw the dungeon
+		DRAWDungeon(s, &rOut, &rIn, Left, Front, Right,
 			dungeon.Map[Pos.x][Pos.y], Monster);
 
 		Pos = Next;							// Next position down
@@ -79,16 +79,18 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 	} while (Level < MAX_VIEW_DEPTH && ISDRAWOPEN(Front));
 }
 
-void Dungeon::_DDRAWCalcRect(Common::Rect *r, double Level) {
+void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double Level) {
+	const int surfW = s->w, surfH = s->h;
 	int xWidth, yWidth;
 	xWidth = (int)						// Calculate frame size
-		(atan(1.0 / (Level + 1)) / atan(1.0) * 1279 + 0.5);
-	xWidth = 1279 / (Level + 1);
+		(atan(1.0 / (Level + 1)) / atan(1.0) * surfW + 0.5);
+	xWidth = surfW / (Level + 1);
 	yWidth = xWidth * 10 / 13;
-	r->left = 640 - xWidth / 2;			// Calculate drawing rectangle
-	r->right = 640 + xWidth / 2;
-	r->top = 512 + yWidth / 2;
-	r->bottom = 512 - yWidth / 2;
+
+	r->left = surfW / 2 - xWidth / 2;			// Calculate drawing rectangle
+	r->right = surfW / 2 + xWidth / 2;
+	r->top = surfH / 2 - yWidth / 2;
+	r->bottom = surfH / 2 + yWidth / 2;
 }
 
 void Dungeon::MOVERotLeft(COORD *Dir) {

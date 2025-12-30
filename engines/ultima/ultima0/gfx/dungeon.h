@@ -37,7 +37,7 @@ private:
 	/**
 	 * Calculate display rectangle
 	 */
-	static void _DDRAWCalcRect(Common::Rect *r, double Level);
+	static void _DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double Level);
 
 	/**
 	 * Rotate a direction left
