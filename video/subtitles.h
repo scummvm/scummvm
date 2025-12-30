@@ -103,9 +103,10 @@ protected:
 	bool _loaded;
 	bool _overlayHasAlpha;
 	mutable Graphics::Surface _surface;
-	mutable const Common::Array<SubtitlePart> *_parts;
+	mutable const Common::Array<SubtitlePart> *_parts = nullptr;
 	mutable Common::Rect _drawRect;
 	mutable Common::Rect _realBBox;
+	mutable uint16 _splitPartCount = 0;
 
 	uint32 _transparentColor;
 
