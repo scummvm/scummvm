@@ -734,6 +734,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "barnrunnerbake1", "Barn Runner Bake Sale 1: The Rich Dame Who Cut The Cheese" },
 	{ "barnrunnerfashion", "Barn Runner: Fashionably Late" },
 	{ "barnrunnerhall1", "Barn Runner Halloween 1: Fully Automatic Mojo" },
+	{ "barnrunnerqte", "Barn Runner: The QTE Affair" },
 	{ "barnrunnervalentine1", "Barn Runner Valentine 1: Pucker Factor" },
 	{ "barnrunnervn1", "Barn Runner Visual Novel 1: The Mayor's New Dress" },
 	{ "barnrunnerxmas0", "Barn Runner Xmas 0: Christmas Soup" },
@@ -3758,7 +3759,11 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bugadv", "Bug Adventure Game" },
 	{ "burncloset", "Burn Down The Closet: a game about being agender" },
 	{ "db0oops", "Double-0-Oops!" },
+	{ "evanquest", "Surrealist Tales: Evan's Quest" },
 	{ "magentaspacech12", "Magenta: IN SPACE (Chapter 1 & 2)" },
+	{ "mallicious", "Mallicious" },
+	{ "manster", "MANSTER: the man-monster" },
+	{ "metcego", "How I met Cego" },
 	{ "pqpn1", "Police Quest: Panama Nights - Part 1" },
 	{ "principessasangue", "Principessa della magia del sangue" },
 	{ "raorchard", "The Round-about Orchard: A tiny OtGW fan game" },
@@ -3767,6 +3772,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "snarl", "Snarl" },
 	{ "startrekxeno", "Star Trek - Xenomorph Alert" },
 	{ "theescapeags", "The Escape" },
+	{ "ultrasecreto", "Ultrasecreto - Prólogo" },
 	{ "vasafasa", "The Vasa Fasa" },
 	{ "weightgravity", "Weight of Gravity" },
 	{ "yanms", "You are not my son" },
@@ -4005,6 +4011,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_DEMO_ENTRY_EN("m0ds_test", "TEST.exe", "094135f05cf14fc3903e0d3697911a4e", 1388516),
 	PRE_25_DEMO_ENTRY_EN("m0ds_thedome", "THEDOME.exe", "7f5c957798b7ae603f3f10f54b31bc7c", 2152875),
 	PRE_25_DEMO_ENTRY_EN("m0ds_thunder", "THUNDER.exe", "094135f05cf14fc3903e0d3697911a4e", 1678834),
+	PRE_25_DEMO_ENTRY_EN("manster", "Manster.exe", "b983bef9009919380db95087302440aa", 6662275),  // DOS
 	PRE_25_DEMO_ENTRY_EN("maxdark", "MAX.exe", "89f304332b7bd02ed62f754a3b53f129", 907125),
 	PRE_25_DEMO_ENTRY_EN("miagsremake", "MIDEMO.exe", "ed778afb4f46c3f2a70d330532a83a2f", 1078492),
 	PRE_25_DEMO_ENTRY_LANG("migaiden", "MIGAIDEN.exe", "8e3cad1439a1d3336e721b1918a20704", 969470, Common::DE_DEU),
@@ -4332,9 +4339,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("carnivalags", "Carnival.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 312099935),
 	UNSUPPORTED_DEMO_ENTRY("chuckisland", "Chuck et l'ile aux Geants.ags", "d72d0f45296f9085690d244da1e73d22", 43544604),  // En-Fr
 	UNSUPPORTED_GAME_ENTRY_EN("db0oops", "db0oops.exe", "0ce1f999753709e6bb9d0aac5ab3c5b8", 85067623),
+	UNSUPPORTED_GAME_ENTRY_EN("evanquest", "Evan's Quest.ags", "dc22667b05d7850a1baf5b03abb3060a", 552593),
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "6773b4f0e4406498e0fc544a87d2a591", 4532130),  // v1.1.0.0 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY_EN("magentaspacech12", "Magenta.exe", "d1fb19834d10cd56b763669b320ec6fd", 100972135),
+	UNSUPPORTED_GAME_ENTRY_EN("mallicious", "MalliciousAdventure.ags", "488d26e22b916ed7e436c398d16afb0d", 8722317),
+	UNSUPPORTED_DEMO_ENTRY_EN("manster", "Manster.ags", "c7e58a20aaf9ff6118f407973deff37d", 4487886),
+	UNSUPPORTED_GAME_ENTRY("metcego", "When_I_met_Cego.ags", "4206351a92dfb0bb056bccf87bc690ff", 468059342),  // Eng-Esp
 	UNSUPPORTED_GAME_ENTRY_LANG("mmm61", "BernardsRoom.ags", "2023239ae99f2cebbc4d457fa4d14784", 4656127, Common::DE_DEU),  // Talkie
 	UNSUPPORTED_GAME_ENTRY_EN("pqpn1", "PQPN.ags", "a48d4e2cb25c1fd8c8d48a2832120801", 3266124),
 	UNSUPPORTED_GAME_ENTRY_EN("principessasangue", "principessa.exe", "30ef2c1c7d7fe6f535e14657401d0c89", 9262162),  // Win
@@ -4352,6 +4363,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("startrekxeno", "Star Trek Xenomorph Alert V2.ags", "1422a3b5a3870def6ef910774a0242be", AD_NO_SIZE),  // En-Fr
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.exe", "6dc8f0aedfd55a47f81323f0a412bc15", 19623142),
 	UNSUPPORTED_GAME_ENTRY_EN("theescapeags", "escape.ags", "e5e26631bf6a375ab722f9588e2f82a1", 16513746),
+	UNSUPPORTED_GAME_ENTRY("ultrasecreto", "UltraSecreto.ags", "b4eac3a05a3d442691a061478e4c747b", 12085980),  // v1.0.3
+	UNSUPPORTED_GAME_ENTRY("ultrasecreto", "UltraSecreto.ags", "6e6a8755fdf5a14e5e0dc1aeb1c4b7e8", 11828134),  // v1.0.4
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "ca487ef688d4fa464986b5ff18d15a23", 59310114),
 	UNSUPPORTED_GAME_ENTRY_EN("weightgravity", "Weight of Gravity.ags", "d5532595b86ca80fb656d4343063ab15", 245545607),
@@ -6392,6 +6405,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barnrunnerfashion", "MAGS 04-24.exe", "a21322447ef1d4efc1b6838c246b6f80", 19542970),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52243988),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52252562),  //v1.3
+	GAME_ENTRY_EN("barnrunnerqte", "BR QTE.exe", "bc18e9156b0784c2ad08bfcfff0fc5e4", 12334755),
 	GAME_ENTRY_EN("barnrunnervalentine1", "BR Valentine 1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 101774857),
 	GAME_ENTRY_EN("barnrunnervn1", "BR VN1.exe", "809418706c429cee5d88e8d483c906cc", 26857313),
 	GAME_ENTRY_EN("barnrunnerxmas0", "BR Xmas 0.exe", "615e806856b7730afadf1fea9a756b70", 13689876),
@@ -7804,8 +7818,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Win (fixed)
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.ags", "fdf0ce483760fca13a4279f161b965da", 164061798), // v1.0.5 Linux
 	GAME_ENTRY_EN("kq4retold", "game.ags", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Mac
-	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 209477363, "Basic"),
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 209477363, "Basic"),  // old "complete" version
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 209407984, "Basic Complete"),
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 194567305, "Basic Classic"),
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 188278015, "Basic Light"),
 	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 208806651, "Legacy"),
+	GAME_ENTRY_EN_PLATFORM("kq4retoldvga", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 209066069, "Legacy"),
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),  // En-De
 	GAME_ENTRY_LANG("ksauna", "Karjalan Sauna.exe", "663bbdd33432ee73be23f3c97d10053e", 14485962, Common::FI_FIN),
 	GAME_ENTRY_EN("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
