@@ -56,9 +56,9 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 PelrockEngine::~PelrockEngine() {
-	if(_compositeBuffer)
+	if (_compositeBuffer)
 		delete[] _compositeBuffer;
-	if(_currentBackground)
+	if (_currentBackground)
 		delete[] _currentBackground;
 	delete _largeFont;
 	delete _smallFont;
@@ -122,7 +122,7 @@ Common::Error PelrockEngine::run() {
 		_videoManager->playIntro();
 		stateGame = GAME;
 	}
-	if(!shouldQuit())
+	if (!shouldQuit())
 		init();
 
 	while (!shouldQuit()) {
@@ -604,7 +604,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			alfredState.curFrame = 0;
 		}
 
-	drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
+		drawAlfred(_res->alfredWalkFrames[alfredState.direction][alfredState.curFrame]);
 		alfredState.curFrame++;
 		break;
 	}
@@ -978,6 +978,19 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 		if (hotspot.isEnabled &&
 			x >= hotspot.x && x <= (hotspot.x + hotspot.w) &&
 			y >= hotspot.y && y <= (hotspot.y + hotspot.h)) {
+			// Check against sprite frame
+			if (hotspot.isSprite) {
+				Sprite *sprite = nullptr;
+				for (size_t j = 0; j < _room->_currentRoomAnims.size(); j++) {
+					if (_room->_currentRoomAnims[j].index == hotspot.index) {
+						sprite = &(_room->_currentRoomAnims[j]);
+						break;
+					}
+				}
+				bool spriteUnder = isSpriteUnder(sprite, x, y);
+				return spriteUnder ? i : -1;
+			}
+
 			return i;
 		}
 	}
@@ -995,6 +1008,28 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 		}
 	}
 	return nullptr;
+}
+
+/**
+ * Checks if the given position is actually frame data or transparent pixel
+ */
+bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
+	Anim &animData = sprite->animData[sprite->curAnimIndex];
+	int frameSize = animData.w * animData.h;
+	int curFrame = animData.curFrame;
+	byte *frame = new byte[frameSize];
+	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
+	int localX = x - animData.x;
+	int localY = y - animData.y;
+	if (localX >= 0 && localX < animData.w && localY >= 0 && localY < animData.h) {
+		byte pixel = frame[localY * animData.w + localX];
+		if (pixel != 255) {
+			delete[] frame;
+			return true;
+		}
+	}
+	delete[] frame;
+	return false;
 }
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {

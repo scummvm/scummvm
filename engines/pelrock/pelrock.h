@@ -82,7 +82,7 @@ private:
 	bool isAlfredUnder(int x, int y);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
-	Sprite *isSpriteUnder(int x, int y);
+	bool isSpriteUnder(Sprite *sprite, int x, int y);
 
 	void showActionBalloon(int posx, int posy, int curFrame);
 
