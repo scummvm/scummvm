@@ -81,6 +81,7 @@ public:
 	}
 
 	Common::Point getAbsolutePos();
+	Common::Rect getAbsoluteDimensions();
 	MacWidget *findEventHandler(Common::Event &event, int dx, int dy);
 
 	void removeWidget(MacWidget *child, bool del = true);
