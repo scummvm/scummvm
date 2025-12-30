@@ -555,6 +555,8 @@ void Subtitles::renderSubtitle() const {
 		}
 	}
 
+	_splitPartCount = (uint16)splitParts.size();
+
 	// Then, center all lines and calculate the drawing box
 	auto lineBegin = splitParts.begin();
 	int minX = _realBBox.width();
