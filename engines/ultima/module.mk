@@ -32,12 +32,15 @@ MODULE_OBJS += \
 	ultima0/town.o \
 	ultima0/world.o \
 	ultima0/data/data.o \
+	ultima0/gfx/dungeon.o \
 	ultima0/gfx/font.o \
 	ultima0/gfx/gfx_surface.o \
 	ultima0/gfx/map.o \
+	ultima0/gfx/monster.o \
 	ultima0/views/view.o \
 	ultima0/views/castle.o \
 	ultima0/views/create_character.o \
+	ultima0/views/dungeon.o \
 	ultima0/views/info.o \
 	ultima0/views/startup.o \
 	ultima0/views/status.o \

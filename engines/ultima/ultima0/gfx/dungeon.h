@@ -23,17 +23,60 @@
 #define ULTIMA0_GFX_MAP_H
 
 #include "graphics/managed_surface.h"
+#include "ultima/ultima0/data/data.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Gfx {
 
-class Map {
+class Dungeon {
 private:
-	static void DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int Obj);
+	// Slanted drawing constants
+	static int xLeft, xRight, yBottom, yDiffLeft, yDiffRight;
+
+	/**
+	 * Calculate display rectangle
+	 */
+	static void _DDRAWCalcRect(Common::Rect *r, double Level);
+
+	/**
+	 * Rotate a direction left
+	 */
+	static void MOVERotLeft(COORD *Dir);
+
+	/**
+	 * Find Monster ID at given location
+	 */
+	static int DDRAWFindMonster(COORD *c);
+
+	/**
+	 * Draw part of dungeon
+	 */
+	static void DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
+		Common::Rect *rIn, int Left, int Centre, int Right, int Room, int Monster);
+
+	/**
+	 * Set the oblique drawing routine
+	 */
+	static void _DRAWSetRange(int x1, int x2, int y, int yd1, int yd2);
+
+	/**
+	 * Draw wall object using current setting
+	 */
+	static void _DRAWWall(Graphics::ManagedSurface *s, int n);
+
+	/**
+	 * Convert coordinates from oblique to logical
+	 */
+	static void _DRAWConvert(int *px, int *py);
+
+	/**
+	 * Draw the pits/ladder hole
+	 */
+	static void _DRAWPit(Graphics::ManagedSurface *s, Common::Rect *r, int Dir);
 
 public:
-	static void draw(Graphics::ManagedSurface *s, bool showAsMap = false);
+	static void draw(Graphics::ManagedSurface *s);
 };
 
 } // namespace Gfx

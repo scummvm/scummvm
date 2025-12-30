@@ -25,6 +25,7 @@
 #include "ultima/ultima0/views/castle.h"
 #include "ultima/ultima0/views/create_character.h"
 #include "ultima/ultima0/views/dead.h"
+#include "ultima/ultima0/views/dungeon.h"
 #include "ultima/ultima0/views/info.h"
 #include "ultima/ultima0/views/startup.h"
 #include "ultima/ultima0/views/title.h"
@@ -39,6 +40,7 @@ struct Views {
 	Castle _castle;
 	CreateCharacter _createCharacter;
 	Dead _dead;
+	Dungeon _dungeon;
 	Info _info;
 	Startup _startup;
 	Title _title;

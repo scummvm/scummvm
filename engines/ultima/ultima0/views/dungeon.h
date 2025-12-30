@@ -19,24 +19,39 @@
  *
  */
 
-#ifndef ULTIMA0_GFX_MAP_H
-#define ULTIMA0_GFX_MAP_H
+#ifndef ULTIMA0_VIEWS_DUNGEON_H
+#define ULTIMA0_VIEWS_DUNGEON_H
 
-#include "graphics/managed_surface.h"
+#include "ultima/ultima0/views/view.h"
+#include "ultima/ultima0/views/status.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Gfx {
+namespace Views {
 
-class Map {
+class Dungeon : public View {
 private:
-	static void DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int Obj);
+	Status _status = Status("DungeonStatus", this);
+
+	void move(int xi, int yi);
+	void interact();
+	void endOfTurn();
+	void showMessage(const Common::String &msg) {
+		_status.send(GameMessage("MSG", msg));
+	}
 
 public:
-	static void draw(Graphics::ManagedSurface *s, bool showAsMap = false);
+	Dungeon();
+	~Dungeon() override {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
 };
 
-} // namespace Gfx
+} // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
 
