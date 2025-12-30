@@ -42,9 +42,15 @@ private:
 	void setupSubtitles();
 	bool loadSubtitles(const Common::String &filename);
 	Common::String getSubtitle(const Common::String &audioFile) const;
+	int16 nudgeSubtitle() const;
 
 	Common::HashMap<Common::String, Common::String> _subtitles;
 	bool _subtitlesEnabled;
+	mutable int16 _subtitleYOffset = 0;
+
+	// Font sizing constants (as percentage of screen height)
+	const int MIN_FONT_SIZE = 8;
+	const float BASE_FONT_SIZE_PERCENT = 0.023f; // ~50px at 2160p
 };
 
 } // namespace M4

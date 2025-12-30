@@ -48,10 +48,6 @@ void M4Subtitles::setupSubtitles() {
 	const float BOTTOM_MARGIN_PERCENT = 0.009f; // ~20px at 2160p
 	const float DEFAULT_HEIGHT_PERCENT = IS_RIDDLE ? 0.2f : 0.26f; // ~432px at 2160p
 
-	// Font sizing constants (as percentage of screen height)
-	const int MIN_FONT_SIZE = 8;
-	const float BASE_FONT_SIZE_PERCENT = 0.023f; // ~50px at 2160p
-
 	int16 h = g_system->getOverlayHeight();
 	int16 w = g_system->getOverlayWidth();
 	int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
@@ -113,9 +109,16 @@ void M4Subtitles::drawSubtitle(const Common::String &audioFile) const {
 
 	recalculateBoundingBox();
 	renderSubtitle();
+	_subtitleYOffset = nudgeSubtitle();
 	_parts = nullptr;
+}
 
-	updateSubtitleOverlay();
+int16 M4Subtitles::nudgeSubtitle() const {
+	// Nudge subtitle text box upwards, depending on the lines to draw
+	int16 h = g_system->getOverlayHeight();
+	int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
+
+	return _splitPartCount > 0 ? static_cast<int16>((_splitPartCount - 1) * fontSize) : 0;
 }
 
 bool M4Subtitles::shouldShowSubtitle() const {
@@ -126,7 +129,9 @@ void M4Subtitles::updateSubtitleOverlay() const {
 	if (!_subtitlesEnabled)
 		return;
 
+	_realBBox.translate(0, -_subtitleYOffset);
 	Subtitles::updateSubtitleOverlay();
+	_realBBox.translate(0, _subtitleYOffset);
 }
 
 void M4Subtitles::clearSubtitle() const {
