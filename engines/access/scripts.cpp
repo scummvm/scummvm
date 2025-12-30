@@ -565,6 +565,8 @@ void Scripts::cmdNewRoom() {
 
 	_vm->_room->_function = FN_CLEAR1;
 	_vm->freeChar();
+	if (_vm->getGameID() == kGameNoctropolis)
+		_vm->_events->setCursor(CURSOR_ARROW);
 	_vm->_converseMode = 0;
 	cmdRetPos();
 }
