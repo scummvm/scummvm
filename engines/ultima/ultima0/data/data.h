@@ -29,6 +29,7 @@
 namespace Ultima {
 namespace Ultima0 {
 
+struct PLAYER;
 
 struct _OInfStruct {
 	const char *Name;
@@ -63,10 +64,17 @@ struct MONSTER {
  * Dungeon Map Structure
  */
 struct DUNGEONMAP {
-	int MapSize = 0;								// Size of Map
+private:
+	void addMonster(const PLAYER &player, int Type);
+	int generateContent(int c);
+
+public:
+	const int MapSize = DUNGEON_MAP_SIZE - 1;	// Size of Map
 	byte Map[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE] = {};	// Map information
 	int	MonstCount = 0;							// Number of Monsters
 	MONSTER Monster[MAX_MONSTERS];			// Monster records
+
+	void create(const PLAYER &player);
 };
 
 /**

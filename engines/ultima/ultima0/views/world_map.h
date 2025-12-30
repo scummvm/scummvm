@@ -34,6 +34,7 @@ private:
 	Status _status = Status("MapStatus", this);
 
 	void move(int xi, int yi);
+	void enter();
 	void endOfTurn();
 	void showMessage(const Common::String &msg) {
 		_status.send(GameMessage("MSG", msg));

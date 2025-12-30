@@ -35,6 +35,7 @@ const _OInfStruct OBJECT_INFO[] = {
 };
 
 const _MInfStruct MONSTER_INFO[] = {
+	{ nullptr, 0 },
 	{ "Skeleton", 1 },
 	{ "Thief", 2 },
 	{ "Giant Rat", 3 },
@@ -49,6 +50,7 @@ const _MInfStruct MONSTER_INFO[] = {
 
 const char *ATTRIB_NAMES[] = { "Hit Points", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
 
+/*-------------------------------------------------------------------*/
 
 void PLAYER::init() {
 	Common::fill(Name, Name + MAX_NAME + 1, '\0');
@@ -149,6 +151,106 @@ int WORLDMAP::read(int x, int y) const {
 void WORLDMAP::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < WORLD_MAP_SIZE; ++i)
 		s.syncBytes(&Map[i][0], WORLD_MAP_SIZE);
+}
+
+/*-------------------------------------------------------------------*/
+
+void DUNGEONMAP::create(const PLAYER &player) {
+	int i, x, y;
+	const int Size = DUNGEON_MAP_SIZE - 1;
+
+	// Seed the random number
+	g_engine->setRandomSeed(player.LuckyNumber - player.World.x * 40 -
+		player.World.y * 1000 - player.Level);
+
+	// Clear the dungeon
+	Common::fill((byte *)Map, (byte *)Map + DUNGEON_MAP_SIZE * DUNGEON_MAP_SIZE, DT_SPACE);
+
+	// Draw the boundaries
+	for (x = 0; x <= Size; x++) {
+		Map[Size][x] = DT_SOLID;
+		Map[0][x] = DT_SOLID;
+		Map[x][Size] = DT_SOLID;
+		Map[x][0] = DT_SOLID;
+	}
+
+	// Fill with checkerboard
+	for (x = 2; x < Size; x = x + 2) {
+		for (y = 1; y < Size; y++) {
+			Map[x][y] = DT_SOLID;
+			Map[y][x] = DT_SOLID;
+		}
+	}
+
+	// Fill with stuff
+	for (x = 2; x < Size; x = x + 2) {
+		for (y = 1; y < Size; y = y + 2) {
+			Map[x][y] = generateContent(Map[x][y]);
+			Map[y][x] = generateContent(Map[y][x]);
+		}
+	}
+
+	// Put stairs in
+	Map[2][1] = DT_SPACE;
+
+	// Different ends each level
+	if (player.Level % 2 == 0) {
+		Map[Size - 3][3] = DT_LADDERDN;
+		Map[3][Size - 3] = DT_LADDERUP;
+	} else {
+		Map[Size - 3][3] = DT_LADDERUP;
+		Map[3][Size - 3] = DT_LADDERDN;
+	}
+
+	// On first floor
+	if (player.Level == 1) {
+		Map[1][1] = DT_LADDERUP;		// Ladder at top left
+		Map[Size - 3][3] = DT_SPACE;	// No other ladder up
+	}
+
+	// Add monsters
+	MonstCount = 0;
+	for (i = 1; i <= MAX_MONSTERS; ++i)
+		addMonster(player, i);
+}
+
+int DUNGEONMAP::generateContent(int c) {
+	if (RND() > .95) 	c = DT_TRAP;
+	if (RND() > .6) 	c = DT_HIDDENDOOR;
+	if (RND() > .6) 	c = DT_DOOR;
+	if (RND() > .97) 	c = DT_PIT;
+	if (RND() > .94) 	c = DT_GOLD;
+	return c;
+}
+
+void DUNGEONMAP::addMonster(const PLAYER &player, int Type) {
+	int x, y;
+	int level = MONSTER_INFO[Type].Level;
+
+	// Limit monsters to levels
+	if (level - 2 > player.Level)
+		return;
+	// Not always there anyway
+	if (RND() > 0.4)
+		return;
+
+	// Get monster record
+	MONSTER &m = Monster[MonstCount++];
+
+	// Fill in details */
+	m.Type = Type;
+	m.Strength = level + 3 + player.Level;
+	m.Alive = 1;
+
+	// Find a place for it. Must be empty, not player
+	do {
+		x = urand() % DUNGEON_MAP_SIZE;
+		y = urand() % DUNGEON_MAP_SIZE;
+	} while (Map[x][y] != DT_SPACE ||
+		(x == player.Dungeon.x && y == player.Dungeon.y));
+
+	// Record position
+	m.Loc.x = x; m.Loc.y = y;
 }
 
 } // namespace Ultima0

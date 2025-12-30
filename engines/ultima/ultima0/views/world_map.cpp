@@ -72,7 +72,10 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 		showMessage("");
 		replaceView("Info");
 		break;
-
+	case KEYBIND_ENTER:
+	case KEYBIND_SELECT:
+		enter();
+		break;
 	default:
 		showMessage("");
 		break;
@@ -115,8 +118,35 @@ void WorldMap::endOfTurn() {
 }
 
 void WorldMap::timeout() {
-	// Currently the only delay is for having starved
-	replaceView("Dead");
+	auto &player = g_engine->_player;
+	const auto &map = g_engine->_worldMap;
+
+	if (player.Attr[AT_HP] <= 0 || player.Object[OB_FOOD] <= 0) {
+		// Timeout from displaying player was killed
+		replaceView("Dead");
+	} else {
+		// Otherwise a timeout from entering a location
+		int t = map.read(player.World.x, player.World.y);
+		switch (t) {
+		case WT_TOWN:
+			replaceView("Town");
+			break;
+		case WT_DUNGEON:
+			player.Level = 1;				// Go to level 1
+			player.Dungeon.x = 1;			// Set initial position
+			player.Dungeon.y = 1;
+			player.DungDir.x = 1;			// And direction
+			player.DungDir.y = 0;
+
+			replaceView("Dungeon");
+			break;
+		case WT_BRITISH:
+			replaceView("Castle");
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void WorldMap::move(int xi, int yi) {
@@ -134,6 +164,31 @@ void WorldMap::move(int xi, int yi) {
 		player.World.x = x1;
 		player.World.y = y1;
 		redraw();
+	}
+}
+
+void WorldMap::enter() {
+	const auto &player = g_engine->_player;
+	const auto &map = g_engine->_worldMap;
+
+	int t = map.read(player.World.x, player.World.y);
+	switch (t) {
+	case WT_TOWN:
+		showMessage("Enter Town.");
+		delaySeconds(2);
+		break;
+	case WT_DUNGEON:
+		showMessage("Enter Dungeon.");
+		delaySeconds(2);
+		break;
+	case WT_BRITISH:
+		showMessage("Enter Castle.");
+		delaySeconds(2);
+		break;
+	default:
+		// Nope....
+		showMessage("Huh???");
+		break;
 	}
 }
 
