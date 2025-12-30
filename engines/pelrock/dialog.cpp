@@ -194,7 +194,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 				_curSprite->isTalking = false;
 			}
 			// Offset X position for Alfred to avoid overlapping with his sprite
-			xPos = g_engine->alfredState.x + kAlfredFrameWidth / 2 - maxWidth / 2;
+			xPos = g_engine->alfredState.x - maxWidth / 2; //+ kAlfredFrameWidth / 2 - maxWidth / 2;
 			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
 		} else {
 			g_engine->alfredState.setState(ALFRED_IDLE);
