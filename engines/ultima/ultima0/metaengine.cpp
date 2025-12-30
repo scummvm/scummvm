@@ -41,7 +41,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down/Backwards"), "DOWN", "JOY_DOWN" },
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT" },
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT" },
-	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "RETURN", "JOY_A" },
+	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "SPACE", "JOY_A" },
 	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
 	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },

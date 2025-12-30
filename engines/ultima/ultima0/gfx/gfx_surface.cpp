@@ -27,12 +27,6 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Gfx {
 
-
-void GfxSurface::init() {
-	// Default text to Cyan
-	_textColor = g_engine->_palette.findBestColor(0, 255, 255);
-}
-
 void GfxSurface::writeString(const Common::Point &pt, const Common::String &str,
 		Graphics::TextAlign align) {
 	_textPos = pt;

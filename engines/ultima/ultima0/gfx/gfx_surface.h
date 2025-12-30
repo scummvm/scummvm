@@ -33,18 +33,13 @@ namespace Gfx {
 class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Common::Point _textPos;
-	byte _textColor;
+	byte _textColor = C_TEXT_DEFAULT;
 
-	void init();
 	void newLine();
 
 public:
-	GfxSurface() : Graphics::ManagedSurface() {
-		init();
-	}
-	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) : Graphics::ManagedSurface(surf, bounds) {
-		init();
-	}
+	GfxSurface() : Graphics::ManagedSurface() {}
+	GfxSurface(Graphics::ManagedSurface &surf, const Common::Rect &bounds) : Graphics::ManagedSurface(surf, bounds) {}
 
 	/**
 	 * Write some text to the surface

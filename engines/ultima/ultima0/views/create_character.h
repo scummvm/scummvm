@@ -33,7 +33,6 @@ private:
 	enum Mode { LUCKY_NUMBER, LEVEL, STATS, CLASS };
 	Mode _mode = LUCKY_NUMBER;
 	Common::String _input;
-	int _level = 0;
 
 	void characterDone();
 

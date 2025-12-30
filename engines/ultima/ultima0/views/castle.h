@@ -19,31 +19,38 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_CASTLE_H
+#define ULTIMA0_VIEWS_CASTLE_H
 
-#include "ultima/ultima0/views/castle.h"
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	Castle _castle;
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Info _info;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Castle : public View {
+private:
+	enum Mode {
+		NAMING, GRAND_ADVENTURE, BEGONE, FIRST_TASK, TASK_COMPLETE, TASK_INCOMPLETE
+	};
+	Mode _mode = NAMING;
+	Common::String _playerName;
+
+	void firstTime();
+	void taskCompleted();
+	void taskIncomplete();
+	void nextTask();
+	void pressAnyKey();
+	Common::String getTaskName(int taskNum) const;
+
+public:
+	Castle() : View("Castle") {}
+	~Castle() override {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views

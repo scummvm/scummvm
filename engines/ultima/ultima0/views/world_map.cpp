@@ -113,7 +113,7 @@ void WorldMap::endOfTurn() {
 	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
 	if (player.Object[OB_FOOD] == 0) {
 		showMessage("You have starved...");
-		delaySeconds(2);
+		delaySeconds(1);
 	}
 }
 
@@ -175,15 +175,15 @@ void WorldMap::enter() {
 	switch (t) {
 	case WT_TOWN:
 		showMessage("Enter Town.");
-		delaySeconds(2);
+		delaySeconds(1);
 		break;
 	case WT_DUNGEON:
 		showMessage("Enter Dungeon.");
-		delaySeconds(2);
+		delaySeconds(1);
 		break;
 	case WT_BRITISH:
 		showMessage("Enter Castle.");
-		delaySeconds(2);
+		delaySeconds(1);
 		break;
 	default:
 		// Nope....
