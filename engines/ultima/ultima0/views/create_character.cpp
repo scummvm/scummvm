@@ -83,6 +83,21 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		} else if (msg.keycode == Common::KEYCODE_BACKSPACE && _input.size() > 0) {
 			_input.deleteLastChar();
 			redraw();
+		} else if (msg.keycode == Common::KEYCODE_RETURN && !_input.empty()) {
+			if (_mode == LUCKY_NUMBER) {
+				player.LuckyNumber = atoi(_input.c_str());
+				_input.clear();
+				_mode = LEVEL;
+				redraw();
+			} else {
+				player.Skill = atoi(_input.c_str());
+				if (player.Skill >= 1 && player.Skill <= 10) {
+					_input.clear();
+					_mode = STATS;
+					player.rollAttributes();
+					redraw();
+				}
+			}
 		}
 	} else if (msg.keycode == Common::KEYCODE_y) {
 		_mode = CLASS;
@@ -105,23 +120,6 @@ bool CreateCharacter::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		replaceView("Title");
 		return true;
-	}
-
-	if (msg._action == KEYBIND_SELECT && !_input.empty()) {
-		if (_mode == LUCKY_NUMBER) {
-			player.LuckyNumber = atoi(_input.c_str());
-			_input.clear();
-			_mode = LEVEL;
-			redraw();
-		} else if (_mode == LEVEL) {
-			player.Skill = atoi(_input.c_str());
-			if (player.Skill >= 1 && player.Skill <= 10) {
-				_input.clear();
-				_mode = STATS;
-				player.rollAttributes();
-				redraw();
-			}
-		}
 	}
 
 	return true;

@@ -51,8 +51,8 @@ void WORLDCreate(PLAYER *p, WORLDMAP *w) {
 
 int WORLDRead(WORLDMAP *w, int x, int y) {
 	if (x < 0 || y < 0) return WT_MOUNTAIN;
-	if (x > w->MapSize) return WT_MOUNTAIN;
-	if (y > w->MapSize) return WT_MOUNTAIN;
+	if (x >= WORLD_MAP_SIZE) return WT_MOUNTAIN;
+	if (y >= WORLD_MAP_SIZE) return WT_MOUNTAIN;
 	return w->Map[x][y];
 }
 
@@ -67,7 +67,7 @@ void WORLDDraw(PLAYER *p, WORLDMAP *m, int ShowAsMap) {
 	RECT r;
 	Grid = 7;							/* Number of cells in grid */
 	if (MAINSuper() == 0) Grid = 3;		/* Standard Aklabeth */
-	if (ShowAsMap) Grid = m->MapSize + 1;	/* Displaying as a map ? */
+	if (ShowAsMap) Grid = DUNGEON_MAP_SIZE;	/* Displaying as a map ? */
 	w = 1280 / Grid; h = 1024 / Grid;	/* Get grid sizes */
 	for (x = 0; x < Grid; x++)			/* For all grid cells */
 		for (y = 0; y < Grid; y++)

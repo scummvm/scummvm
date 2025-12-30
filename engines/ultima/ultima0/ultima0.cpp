@@ -105,6 +105,7 @@ Common::Error Ultima0Engine::saveGameStream(Common::WriteStream *stream, bool is
 void Ultima0Engine::syncSavegame(Common::Serializer &s) {
 	_player.synchronize(s);
 	_worldMap.synchronize(s);
+	_dungeon.synchronize(s);
 }
 
 } // namespace Ultima0

@@ -75,6 +75,7 @@ public:
 	MONSTER Monster[MAX_MONSTERS];			// Monster records
 
 	void create(const PLAYER &player);
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -106,7 +107,6 @@ struct PLAYER {
  * World Map structure
  */
 struct WORLDMAP {
-	const int MapSize = WORLD_MAP_SIZE - 1;			// Size of map
 	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
 
 	void init(PLAYER &p);

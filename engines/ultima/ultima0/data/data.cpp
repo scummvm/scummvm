@@ -105,7 +105,7 @@ void WORLDMAP::init(PLAYER &p) {
 	int c, x, y, Size;
 
 	g_engine->setRandomSeed(p.LuckyNumber);
-	Size = MapSize;					// Get hard-coded map size
+	Size = WORLD_MAP_SIZE - 1;
 
 	// Set the boundaries
 	for (x = 0; x <= Size; x++) {
@@ -149,8 +149,9 @@ int WORLDMAP::read(int x, int y) const {
 }
 
 void WORLDMAP::synchronize(Common::Serializer &s) {
-	for (int i = 0; i < WORLD_MAP_SIZE; ++i)
-		s.syncBytes(&Map[i][0], WORLD_MAP_SIZE);
+	for (int y = 0; y < WORLD_MAP_SIZE; ++y)
+		for (int x = 0; x < WORLD_MAP_SIZE; ++x)
+			s.syncAsByte(Map[x][y]);
 }
 
 /*-------------------------------------------------------------------*/
@@ -251,6 +252,12 @@ void DUNGEONMAP::addMonster(const PLAYER &player, int Type) {
 
 	// Record position
 	m.Loc.x = x; m.Loc.y = y;
+}
+
+void DUNGEONMAP::synchronize(Common::Serializer &s) {
+	for (int y = 0; y < DUNGEON_MAP_SIZE; ++y)
+		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x)
+			s.syncAsByte(Map[x][y]);
 }
 
 } // namespace Ultima0

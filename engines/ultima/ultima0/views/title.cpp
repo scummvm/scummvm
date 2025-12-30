@@ -55,6 +55,15 @@ void Title::draw() {
 	s.writeString(Common::Point(20, 8), "Ultima 0 - Akalabeth!", Graphics::kTextAlignCenter);
 }
 
+bool Title::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_RETURN) {
+		selectOption();
+		return true;
+	}
+
+	return false;
+}
+
 bool Title::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_UP:

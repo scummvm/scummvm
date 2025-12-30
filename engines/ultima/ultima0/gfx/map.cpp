@@ -34,7 +34,7 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 
 	int x, y, x1, y1, w, h, Grid;
 	Common::Rect r;
-	Grid = showAsMap ? map.MapSize + 1 : (g_engine->isEnhanced() ? 7 : 3);
+	Grid = showAsMap ? WORLD_MAP_SIZE : (g_engine->isEnhanced() ? 7 : 3);
 	w = s->w / Grid; h = s->h / Grid;	// Get grid sizes
 
 	for (x = 0; x < Grid; x++) {
