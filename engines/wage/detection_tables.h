@@ -145,6 +145,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
 	FANGAMEN("Escape!", "xn--Escape!-z46c", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
 	FANGAMEN("Escape!", "xn--Escape!-lha", "63378d6b032d4337b7e74759337eceaa", 64805), // Original file name " Escape!", alt version
+	FANGAMEN("Escape from Inaka", "Escape from Inaka - 1.0b1", "a1a91e9b7b6ad01d779993dab24fd080", 1112974),
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 49849),
 	FANGAMEN("Escape from School!", "xn--Escape from School!-3g6k", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // Original file name "Escape from School!†", alt version
 	FANGAME("Escape From Saecvrom", "ab401f96ca0755bf5fb849f71cc47d83", 588982),
