@@ -86,7 +86,6 @@ void MAINStart(void) {
 void MAINSetup(void) {
 	PLAYERInit(&Player);					/* Initialise the player */
 	PLAYERCharacter(&Player);				/* Character information */
-	//	PLAYERDebug(&Player);
 	WORLDCreate(&Player, &World);			/* Create the over world */
 	WORLDDraw(&Player, &World, 0);			/* Draw the player map */
 	TOWNEnter(&World, &Player);				/* Visit the shops */

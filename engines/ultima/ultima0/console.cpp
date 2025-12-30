@@ -20,13 +20,18 @@
  */
 
 #include "ultima/ultima0/console.h"
-#include "ultima/ultima0/events.h"
+#include "ultima/ultima0/ultima0.h"
 
 namespace Ultima {
 namespace Ultima0 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("view", WRAP_METHOD(Console, cmdView));
+	registerCmd("food", WRAP_METHOD(Console, cmdFood));
+	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
+	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
+	registerCmd("demo", WRAP_METHOD(Console, cmdDemo));
+	registerCmd("debug", WRAP_METHOD(Console, cmdDebug));
 }
 
 Console::~Console() {
@@ -40,6 +45,87 @@ bool Console::cmdView(int argc, const char **argv) {
 		g_events->replaceView(argv[1]);
 		return false;
 	}
+}
+
+bool Console::cmdFood(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("food <amount>\n");
+		return true;
+	} else {
+		g_engine->_player.Object[OB_FOOD] = atoi(argv[1]);
+		g_engine->focusedView()->redraw();
+		return false;
+	}
+}
+
+bool Console::cmdGold(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("gold <amount>\n");
+		return true;
+	} else {
+		g_engine->_player.Attr[AT_GOLD] = atoi(argv[1]);
+		g_engine->focusedView()->redraw();
+		return false;
+	}
+}
+
+bool Console::cmdHP(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("hp <amount>\n");
+		return true;
+	} else {
+		g_engine->_player.Attr[AT_HP] = atoi(argv[1]);
+		g_engine->focusedView()->redraw();
+		return false;
+	}
+}
+
+bool Console::cmdDemo(int argc, const char **argv) {
+	auto &p = g_engine->_player;
+	auto &map = g_engine->_worldMap;
+
+	Common::strcpy_s(p.Name, "Demo");	// Characters Name
+	p.Class = 'F';						// Fighter
+	p.LuckyNumber = 42;					// Always the same.....
+	p.Skill = 1;						// Skill level 1
+
+	// Nice high attributes
+	Common::fill(p.Attr, p.Attr + MAX_ATTR, 15);
+	p.Attr[AT_HP] = 18;
+	p.Attr[AT_GOLD] = 99;
+
+	for (int i = 0; i < p.Objects; i++)			// Lots of nice objects
+		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 999 : 4.0;
+
+	p.Level = 0;
+	map.init(p);
+	g_engine->replaceView("WorldMap");
+
+	return false;
+}
+
+
+bool Console::cmdDebug(int argc, const char **argv) {
+	auto &p = g_engine->_player;
+	auto &map = g_engine->_worldMap;
+	int i;
+
+	Common::strcpy_s(p.Name, "Debuggo");	// Characters Name
+	p.Class = 'F';							// Fighter
+	p.LuckyNumber = 42;						// Always the same.....
+	p.Skill = 1;							// Skill level 1
+	for (i = 0; i < MAX_ATTR; i++)			// Nice high attributes
+		p.Attr[i] = 99;
+	p.Attr[AT_HP] = 999;
+	p.Attr[AT_GOLD] = 9999;
+	for (i = 0; i < p.Objects; i++)			// Lots of nice objects
+		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 9999.9 : 99.0;
+
+	p.Level = 0;
+	map.init(p);
+	g_engine->replaceView("WorldMap");
+
+	return false;
 }
 
 } // namespace Ultima0

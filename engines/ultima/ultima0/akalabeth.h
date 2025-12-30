@@ -50,8 +50,6 @@ void MAINSetup(void);
 void MAINStart(void);
 
 void PLAYERInit(PLAYER *); 					/* PLAYER.C prototyping */
-void PLAYERDebug(PLAYER *);
-void PLAYERDemo(PLAYER *);
 void PLAYERCharacter(PLAYER *);
 void PLAYERInv(PLAYER *);
 

@@ -45,40 +45,6 @@ void PLAYERInit(PLAYER *p) {
 
 /************************************************************************/
 /*																		*/
-/*							Manage Player Structures					*/
-/*																		*/
-/************************************************************************/
-
-void PLAYERDebug(PLAYER *p) {
-	int i;
-	Common::strcpy_s(p->Name, "Debuggo");				/* Characters Name */
-	p->Class = 'F';							/* Fighter */
-	p->LuckyNumber = 42;					/* Always the same..... */
-	p->Skill = 1;							/* Skill level 1 */
-	for (i = 0; i < p->Attributes; i++)		/* Nice high attributes */
-		p->Attr[i] = 99;
-	p->Attr[AT_HP] = 999;
-	p->Attr[AT_GOLD] = 9999;
-	for (i = 0; i < p->Objects; i++)			/* Lots of nice objects */
-		p->Object[i] = (i == OB_FOOD || i == OB_BOW) ? 9999.9 : 99.0;
-}
-
-void PLAYERDemo(PLAYER *p) {
-	int i;
-	Common::strcpy_s(p->Name, "Demo");					/* Characters Name */
-	p->Class = 'F';							/* Fighter */
-	p->LuckyNumber = 42;					/* Always the same..... */
-	p->Skill = 1;							/* Skill level 1 */
-	for (i = 0; i < p->Attributes; i++)		/* Nice high attributes */
-		p->Attr[i] = 15;
-	p->Attr[AT_HP] = 18;
-	p->Attr[AT_GOLD] = 99;
-	for (i = 0; i < p->Objects; i++)			/* Lots of nice objects */
-		p->Object[i] = (i == OB_FOOD || i == OB_BOW) ? 999 : 4.0;
-}
-
-/************************************************************************/
-/*																		*/
 /*								Player Inventory						*/
 /*																		*/
 /************************************************************************/

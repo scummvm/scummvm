@@ -75,8 +75,8 @@ void Info::draw() {
 		s.writeString(Common::Point(15, 4 + i),
 			Common::String::format("%d", player.Attr[i]));
 	for (i = 0; i < MAX_OBJ; ++i)
-		s.writeString(Common::Point(22, 4 + i),
-			Common::String::format("%3d-", (int)player.Object[i]));
+		s.writeString(Common::Point(21, 4 + i),
+			Common::String::format("%4d-", (int)player.Object[i]));
 	s.writeString(Common::Point(18, 10), "Q-Quit");
 }
 
