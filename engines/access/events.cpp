@@ -82,27 +82,32 @@ void EventsManager::setCursor(CursorType cursorId) {
 		Graphics::Surface cursorSurface;
 		cursorSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		byte *destP = (byte *)cursorSurface.getPixels();
-		Common::fill(destP, destP + width * height, 0);
 
-		// Loop to build up the cursor
-		for (int y = 0; y < height; ++y) {
-			destP = (byte *)cursorSurface.getBasePtr(0, y);
-			int w = width;
-			int skip = *srcP++;
-			int plot = *srcP++;
-			if (skip >= width)
-				break;
+		if (_vm->getGameID() != kGameNoctropolis) {
+			Common::fill(destP, destP + width * height, 0);
+			// Loop to build up the cursor
+			for (int y = 0; y < height; ++y) {
+				destP = (byte *)cursorSurface.getBasePtr(0, y);
+				int w = width;
+				int skip = *srcP++;
+				int plot = *srcP++;
+				if (skip >= width)
+					break;
 
-			// Skip over pixels
-			destP += skip;
-			w -= skip;
+				// Skip over pixels
+				destP += skip;
+				w -= skip;
 
-			// Write out the pixels to plot
-			while (plot > 0 && w > 0) {
-				*destP++ = *srcP++;
-				--plot;
-				--w;
+				// Write out the pixels to plot
+				while (plot > 0 && w > 0) {
+					*destP++ = *srcP++;
+					--plot;
+					--w;
+				}
 			}
+		} else {
+			// Simple bitmaps in Noctropolis.
+			memcpy(destP, srcP, width * height);
 		}
 
 		// Set the cursor
