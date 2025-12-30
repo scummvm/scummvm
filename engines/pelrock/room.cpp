@@ -339,7 +339,6 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 		sprite.w = animData[4];
 		sprite.h = animData[5];
 		sprite.extra = animData[6];
-		// roomFile->skip(1); // reserved
 		sprite.numAnims = animData[8];
 		sprite.zOrder = animData[23];
 		sprite.spriteType = animData[33];
@@ -364,11 +363,14 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 			anim.loopCount = animData[subAnimOffset + 4 + j];
 			anim.speed = animData[subAnimOffset + 8 + j];
 			anim.movementFlags = animData[subAnimOffset + 14 + (j * 2)] | (animData[subAnimOffset + 14 + (j * 2) + 1] << 8);
-			anim.animData = new byte[anim.nframes];
+
+			anim.animData = new byte *[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
 				uint32_t needed = anim.w * anim.h * anim.nframes;
-				anim.animData = new byte[needed];
-				Common::copy(pic + picOffset, pic + picOffset + needed, anim.animData);
+				for(int i = 0; i < anim.nframes; i++) {
+					anim.animData[i] = new byte[anim.w * anim.h];
+					extractSingleFrame(pic + picOffset, anim.animData[i], i, anim.w, anim.h);
+				}
 				sprite.animData[j] = anim;
 				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
 				// debug("  Movement flags: 0x%04X", anim.movementFlags);
@@ -479,7 +481,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	int headerIndex = roomNumber;
 	uint32 offset = kTalkingAnimHeaderSize * headerIndex;
 
-	TalkingAnimHeader talkHeader;
+	TalkingAnims talkHeader;
 	Common::File talkFile;
 	if (!talkFile.open("ALFRED.2")) {
 		error("Couldnt find file ALFRED.2");
@@ -512,10 +514,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		return;
 	}
 
-	// if(talkHeader.animA != nullptr) {
-	// 	delete[] talkHeader.animA;
-	// 	talkHeader.animA = nullptr;
-	// }
 	talkHeader.animA = new byte *[talkHeader.numFramesAnimA];
 
 	byte *data = nullptr;
@@ -532,10 +530,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	}
 
 	if (talkHeader.numFramesAnimB > 0) {
-		// if(talkHeader.animA != nullptr) {
-		// 	delete[] talkHeader.animA;
-		// 	talkHeader.animA = nullptr;
-		// }
 		talkHeader.animB = new byte *[talkHeader.numFramesAnimB];
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];

@@ -162,7 +162,7 @@ struct Anim {
 	int nframes;
 	int curFrame = 0;
 	int curLoop = 0;
-	byte *animData;
+	byte **animData;
 	byte loopCount;
 	byte speed;
 	byte elpapsedFrames = 0;
@@ -214,7 +214,7 @@ struct HotSpot {
 	byte zOrder = 0;
 };
 
-struct TalkingAnimHeader {
+struct TalkingAnims {
 	uint32 spritePointer;
 
 	byte unknown2[3];

@@ -802,8 +802,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	int frameSize = animData.w * animData.h;
 	int curFrame = animData.curFrame;
 	byte *frame = new byte[frameSize];
-	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
-	drawSpriteToBuffer(_compositeBuffer, 640, frame, sprite->x, sprite->y, sprite->w, sprite->h, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], sprite->x, sprite->y, sprite->w, sprite->h, 255);
 
 	// if (animData.elpapsedFrames == animData.speed) {
 	if (_chrono->getFrameCount() % animData.speed == 0) {
@@ -1002,7 +1001,7 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 		Exit exit = _room->_currentRoomExits[i];
 		if (x >= exit.x && x <= (exit.x + exit.w) &&
 			y >= exit.y && y <= (exit.y + exit.h)
-			// && exit.isEnabled
+			&& exit.isEnabled
 		) {
 			return &(_room->_currentRoomExits[i]);
 		}
@@ -1017,18 +1016,15 @@ bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	int frameSize = animData.w * animData.h;
 	int curFrame = animData.curFrame;
-	byte *frame = new byte[frameSize];
-	extractSingleFrame(animData.animData, frame, curFrame, animData.w, animData.h);
+
 	int localX = x - animData.x;
 	int localY = y - animData.y;
 	if (localX >= 0 && localX < animData.w && localY >= 0 && localY < animData.h) {
-		byte pixel = frame[localY * animData.w + localX];
+		byte pixel = animData.animData[curFrame][localY * animData.w + localX];
 		if (pixel != 255) {
-			delete[] frame;
 			return true;
 		}
 	}
-	delete[] frame;
 	return false;
 }
 
@@ -1062,7 +1058,7 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	// Change with the right index
 
 	int index = animSet->index;
-	TalkingAnimHeader *animHeader = &_room->_talkingAnimHeader;
+	TalkingAnims *animHeader = &_room->_talkingAnimHeader;
 
 	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);
 	int y = animSet->y + (index ? animHeader->offsetYAnimB : animHeader->offsetYAnimA);

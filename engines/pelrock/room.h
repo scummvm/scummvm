@@ -59,7 +59,7 @@ public:
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
 
-	TalkingAnimHeader _talkingAnimHeader;
+	TalkingAnims _talkingAnimHeader;
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
 	byte _roomPalette[768];
