@@ -97,35 +97,35 @@ public:
 protected:
 	bool recalculateBoundingBox() const;
 	void renderSubtitle() const;
+	void translateBBox(int16 dx, int16 dy) const { _realBBox.translate(dx, dy); }
 	virtual void updateSubtitleOverlay() const;
 	virtual bool shouldShowSubtitle() const { return true; }
 
 	bool _loaded;
-	bool _overlayHasAlpha;
-	mutable Graphics::Surface _surface;
 	mutable const Common::Array<SubtitlePart> *_parts = nullptr;
-	mutable Common::Rect _drawRect;
-	mutable Common::Rect _realBBox;
 	mutable uint16 _splitPartCount = 0;
 
-	uint32 _transparentColor;
-
 private:
-
 	SRTParser *_srtParser = nullptr;
 	bool _subtitleDev;
+	bool _overlayHasAlpha;
 
 	mutable Common::Array<SubtitlePart> _devParts;
 
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _fontHeight;
 
+	mutable Graphics::Surface _surface;
+
+	mutable Common::Rect _drawRect;
 	Common::Rect _requestedBBox;
+	mutable Common::Rect _realBBox;
 	mutable int16 _lastOverlayWidth, _lastOverlayHeight;
 
 	Common::Path _fname;
 	uint32 _color;
 	uint32 _blackColor;
+	uint32 _transparentColor;
 	uint16 _hPad;
 	uint16 _vPad;
 };
