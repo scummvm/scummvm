@@ -9,6 +9,7 @@ MODULE_OBJS := \
 ifdef ENABLE_AKALABETH
 MODULE_OBJS += \
 	ultima0/ultima0.o \
+	ultima0/console.o \
 	ultima0/events.o \
 	ultima0/messages.o \
 	ultima0/metaengine.o \

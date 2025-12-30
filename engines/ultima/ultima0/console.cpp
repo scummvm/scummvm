@@ -19,33 +19,28 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
-
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/console.h"
+#include "ultima/ultima0/events.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Views {
 
-struct Views {
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Info _info;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
-};
+Console::Console() : GUI::Debugger() {
+	registerCmd("view", WRAP_METHOD(Console, cmdView));
+}
 
-} // namespace Views
+Console::~Console() {
+}
+
+bool Console::cmdView(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("view <view name>\n");
+		return true;
+	} else {
+		g_events->replaceView(argv[1]);
+		return false;
+	}
+}
+
 } // namespace Ultima0
 } // namespace Ultima
-
-#endif

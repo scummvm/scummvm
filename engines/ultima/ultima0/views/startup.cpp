@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/paletteman.h"
 #include "ultima/ultima0/views/startup.h"
 
 namespace Ultima {

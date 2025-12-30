@@ -73,7 +73,10 @@ bool WorldMap::msgKeypress(const KeypressMessage &msg) {
 }
 
 void WorldMap::endOfTurn() {
-	// TODO
+	auto &player = g_engine->_player;
+
+	if (player.Attr[AT_HP] <= 0)
+		replaceView("Dead");
 }
 
 } // namespace Views

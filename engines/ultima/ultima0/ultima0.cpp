@@ -23,6 +23,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima0/sdw.h"
 #include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/console.h"
 #include "ultima/ultima0/akalabeth.h"
 #include "ultima/ultima0/sdw.h"
 
@@ -56,9 +57,14 @@ Ultima0Engine::~Ultima0Engine() {
 }
 
 Common::Error Ultima0Engine::run() {
+	// Initialize the graphics
 	initGraphics(DEFAULT_SCX, DEFAULT_SCY);
 	g_system->getPaletteManager()->setPalette(_palette);
 
+	// Set the debugger console
+	setDebugger(new Console());
+
+	// Play the game
 	runGame();
 
 	return Common::kNoError;

@@ -19,29 +19,38 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_DEAD_H
+#define ULTIMA0_VIEWS_DEAD_H
 
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Info _info;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Dead : public View {
+private:
+	void showTitle() {
+		replaceView("Title");
+	}
+public:
+	Dead();
+	~Dead() override {}
+
+	void draw() override;
+
+	bool msgKeypress(const KeypressMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgAction(const ActionMessage &msg) override {
+		showTitle();
+		return true;
+	}
 };
 
 } // namespace Views

@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,32 +20,22 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA_ULTIMA0_CONSOLE_H
+#define ULTIMA_ULTIMA0_CONSOLE_H
 
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Views {
 
-struct Views {
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Info _info;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Console : public GUI::Debugger {
+private:
+	bool cmdView(int argc, const char **argv);
+public:
+	Console();
+	~Console() override;
 };
 
-} // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
 
