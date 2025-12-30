@@ -129,9 +129,9 @@ void M4Subtitles::updateSubtitleOverlay() const {
 	if (!_subtitlesEnabled)
 		return;
 
-	_realBBox.translate(0, -_subtitleYOffset);
+	translateBBox(0, -_subtitleYOffset);
 	Subtitles::updateSubtitleOverlay();
-	_realBBox.translate(0, _subtitleYOffset);
+	translateBBox(0, _subtitleYOffset);
 }
 
 void M4Subtitles::clearSubtitle() const {
