@@ -87,7 +87,7 @@ struct PLAYER {
 	const int Attributes = MAX_ATTR;		// Number of attributes
 	const int Objects = MAX_OBJ;			// Number of objects
 	int   Attr[MAX_ATTR] = {};				// Attribute values
-	int   Object[MAX_OBJ] = {};			// Object counts
+	double Object[MAX_OBJ] = {};			// Object counts
 
 	void init();
 	void rollAttributes();

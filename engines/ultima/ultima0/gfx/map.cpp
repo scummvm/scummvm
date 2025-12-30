@@ -42,12 +42,12 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 			r = Common::Rect(x * w, y * h, x * w + w - 1, y * h + h - 1);
 
 			if (showAsMap) {
-				// If map, not centred around us
+				// If map, not centered around us
 				x1 = x, y1 = Grid - 1 - y;
 			} else {
 				// Which cell ?
 				x1 = player.World.x - Grid / 2 + x;
-				y1 = player.World.y + Grid / 2 - y;
+				y1 = player.World.y - Grid / 2 + y;
 			}
 
 			DRAWTile(s, r, map.read(x1, y1));

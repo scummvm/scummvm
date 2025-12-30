@@ -49,6 +49,16 @@ void Status::draw() {
 	s.writeString(Common::Point(33, 3), Common::String::format("%d", player.Attr[AT_GOLD]));
 }
 
+bool Status::msgGame(const GameMessage &msg) {
+	if (msg._name == "MSG") {
+		_message = msg._stringValue;
+		redraw();
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima

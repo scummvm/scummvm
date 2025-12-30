@@ -33,7 +33,11 @@ class WorldMap : public View {
 private:
 	Status _status = Status("MapStatus", this);
 
+	void move(int xi, int yi);
 	void endOfTurn();
+	void showMessage(const Common::String &msg) {
+		_status.send(GameMessage("MSG", msg));
+	}
 
 public:
 	WorldMap();
@@ -43,6 +47,7 @@ public:
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
 };
 
 } // namespace Views

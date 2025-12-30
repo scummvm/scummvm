@@ -89,8 +89,12 @@ void PLAYER::synchronize(Common::Serializer &s) {
 
 	for (int i = 0; i < MAX_ATTR; ++i)
 		s.syncAsUint32LE(Attr[i]);
-	for (int i = 0; i < MAX_OBJ; ++i)
-		s.syncAsUint32LE(Object[i]);
+	for (int i = 0; i < MAX_OBJ; ++i) {
+		uint32 val = (uint32)Object[i];
+		s.syncAsUint32LE(val);
+		if (s.isLoading())
+			Object[i] = (double)val;
+	}
 }
 
 /*-------------------------------------------------------------------*/

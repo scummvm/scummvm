@@ -38,6 +38,7 @@ public:
 	~Status() override {}
 
 	void draw() override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Views

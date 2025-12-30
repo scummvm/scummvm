@@ -47,28 +47,57 @@ void WorldMap::draw() {
 }
 
 bool WorldMap::msgAction(const ActionMessage &msg) {
+	if (isDelayActive())
+		return false;
+
 	switch (msg._action) {
+	case KEYBIND_UP:
+		showMessage("North");
+		move(0, -1);
+		break;
+	case KEYBIND_DOWN:
+		showMessage("South");
+		move(0, 1);
+		break;
+	case KEYBIND_LEFT:
+		showMessage("West");
+		move(-1, 0);
+		break;
+	case KEYBIND_RIGHT:
+		showMessage("East");
+		move(1, 0);
+		break;
 	case KEYBIND_INFO:
 		// Show character info screen
+		showMessage("");
 		replaceView("Info");
+		break;
+
+	default:
+		showMessage("");
 		break;
 	}
 
+	endOfTurn();
 	return true;
 }
 
 bool WorldMap::msgKeypress(const KeypressMessage &msg) {
+	if (isDelayActive())
+		return false;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_q:
 		// "Quit" in the original which merely saves the game. For ScummVM,
 		// we open the GMM, allowing the user to either save or quit
 		g_engine->openMainMenuDialog();
-		break;
+		return true;
 
 	default:
 		break;
 	}
 
+	endOfTurn();
 	return true;
 }
 
@@ -77,6 +106,35 @@ void WorldMap::endOfTurn() {
 
 	if (player.Attr[AT_HP] <= 0)
 		replaceView("Dead");
+
+	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
+	if (player.Object[OB_FOOD] == 0) {
+		showMessage("You have starved...");
+		delaySeconds(2);
+	}
+}
+
+void WorldMap::timeout() {
+	// Currently the only delay is for having starved
+	replaceView("Dead");
+}
+
+void WorldMap::move(int xi, int yi) {
+	auto &player = g_engine->_player;
+	auto &map = g_engine->_worldMap;
+
+	// Calculate new position
+	int x1 = player.World.x + xi;
+	int y1 = player.World.y + yi;
+
+	if (map.read(x1, y1) == WT_MOUNTAIN) {
+		showMessage("You can't pass the mountains.");
+	} else {
+		// Move
+		player.World.x = x1;
+		player.World.y = y1;
+		redraw();
+	}
 }
 
 } // namespace Views
