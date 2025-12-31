@@ -54,19 +54,19 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 	// Iterate through drawing successively distinct tiles in the facing direction
 	do {
-		Level++;							// Next level
+		Level++;								// Next level
 		_DDRAWCalcRect(s, &rIn, Level);
 		Next.x = Pos.x + player.DungDir.x;		// Next position
 		Next.y = Pos.y + player.DungDir.y;
 
 		Dir = player.DungDir; MOVERotLeft(&Dir);	// To the left
 		Left = dungeon.Map[Pos.x + Dir.x][Pos.y + Dir.y];
-		MOVERotLeft(&Dir); MOVERotLeft(&Dir);// To the right
+		MOVERotLeft(&Dir); MOVERotLeft(&Dir);		// To the right
 		Right = dungeon.Map[Pos.x + Dir.x][Pos.y + Dir.y];
 		Front = dungeon.Map[Next.x][Next.y];		// What's in front ?
 
 		// Check for monster present
-		Monster = DDRAWFindMonster(&Pos);
+		Monster = dungeon.findMonster(Pos);
 		if (Monster >= 0)					
 			Monster = dungeon.Monster[Monster].Type;
 
@@ -81,11 +81,11 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double Level) {
 	const int centerX = s->w / 2, centerY = s->h / 2;
-	int xWidth, yWidth;
-	xWidth = s->w / (Level + 1);
-	yWidth = s->h / (Level + 1); //	xWidth * 10 / 13;
+	int xWidth = s->w / (Level + 1);
+	int yWidth = s->h / (Level + 1);
 
-	r->left = centerX - xWidth / 2;			// Calculate drawing rectangle
+	// Set bounding box
+	r->left = centerX - xWidth / 2;
 	r->right = centerX + xWidth / 2;
 	r->top = centerY - yWidth / 2;
 	r->bottom = centerY + yWidth / 2;
@@ -99,16 +99,6 @@ void Dungeon::MOVERotLeft(COORD *Dir) {
 	Dir->y = t;
 }
 
-int Dungeon::DDRAWFindMonster(COORD *c) {
-	const auto &dungeon = g_engine->_dungeon;
-	int i, n = -1;
-	for (i = 0; i < dungeon.MonstCount; i++)
-		if (c->x == dungeon.Monster[i].Loc.x &&
-			c->y == dungeon.Monster[i].Loc.y &&
-			dungeon.Monster[i].Alive != 0) n = i;
-	return n;
-}
-
 void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		Common::Rect *rIn, int Left, int Centre, int Right, int Room, int Monster) {
 	int x1, y1, x, y, y2;
@@ -116,50 +106,55 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	double Scale;
 	int color;
 
-	HWColour(COL_WALL);						/* Start on the walls */
+	HWColour(COL_WALL);						// Start on the walls
 
-	if (ISDRAWOPEN(Left))					/* Do we draw the left edge */
-	{
+	// Do we draw the left edge
+	if (ISDRAWOPEN(Left)) {
 		HWLine(rOut->left, rIn->top, rIn->left, rIn->top);
 		HWLine(rOut->left, rIn->bottom, rIn->left, rIn->bottom);
 		HWLine(rOut->left, rOut->top, rOut->left, rOut->bottom);
-	} else									/* If closed, draw left diags */
-	{
+	} else {
+		// If closed, draw left diags
 		HWLine(rOut->left, rOut->top, rIn->left, rIn->top);
 		HWLine(rOut->left, rOut->bottom, rIn->left, rIn->bottom);
 	}
 
-	if (ISDRAWOPEN(Right))					/* Do we draw the right edge */
-	{
+	// Do we draw the right edge
+	if (ISDRAWOPEN(Right)) {
 		HWLine(rOut->right, rIn->top, rIn->right, rIn->top);
 		HWLine(rOut->right, rIn->bottom, rIn->right, rIn->bottom);
 		HWLine(rOut->right, rOut->top, rOut->right, rOut->bottom);
-	} else									/* If closed draw right diags */
-	{
+	} else {
+		// If closed draw right diags
 		HWLine(rOut->right, rOut->top, rIn->right, rIn->top);
 		HWLine(rOut->right, rOut->bottom, rIn->right, rIn->bottom);
 	}
 
-	if (!ISDRAWOPEN(Centre))				/* Back wall ? */
-	{
+	// Back wall ?
+	if (!ISDRAWOPEN(Centre)) {
 		HWLine(rIn->left, rIn->top, rIn->right, rIn->top);
 		HWLine(rIn->left, rIn->bottom, rIn->right, rIn->bottom);
-		if (!ISDRAWOPEN(Left))				/* Corner if left,right closed */
+		if (!ISDRAWOPEN(Left))				// Corner if left,right closed
 			HWLine(rIn->left, rIn->top, rIn->left, rIn->bottom);
 		if (!ISDRAWOPEN(Right))
 			HWLine(rIn->right, rIn->top, rIn->right, rIn->bottom);
 	}
 
-	_DRAWSetRange(rOut->left, rIn->left,		/* Set up for left side */
+	// Set up for left side
+	_DRAWSetRange(rOut->left, rIn->left,
 		rOut->bottom,
 		rOut->bottom - rOut->top,
 		rIn->bottom - rIn->top);
 	_DRAWWall(s, Left);
-	_DRAWSetRange(rIn->right, rOut->right,	/* Set up for right side */
+
+	// Set up for right side
+	_DRAWSetRange(rIn->right, rOut->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
 		rOut->bottom - rOut->top);
-	_DRAWWall(s, Right);						/* Set up for centre */
+	_DRAWWall(s, Right);
+
+	// Set up for centre
 	_DRAWSetRange(rIn->left, rIn->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
@@ -216,9 +211,9 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 }
 
 void Dungeon::_DRAWSetRange(int x1, int x2, int y, int yd1, int yd2) {
-	xLeft = x1; xRight = x2;					/* Set x ranges */
-	yBottom = y;							/* Set lower left y value */
-	yDiffLeft = yd1; yDiffRight = yd2;		/* Set difference for either end */
+	xLeft = x1; xRight = x2;				// Set x ranges
+	yBottom = y;							// Set lower left y value
+	yDiffLeft = yd1; yDiffRight = yd2;		// Set difference for either end
 }
 
 void Dungeon::_DRAWWall(Graphics::ManagedSurface *s, int n) {
@@ -239,16 +234,16 @@ void Dungeon::_DRAWWall(Graphics::ManagedSurface *s, int n) {
 }
 
 void Dungeon::_DRAWConvert(int *px, int *py) {
-	long x, y, yd;							/* Longs for overflow in 16 bit */
-	x = (xRight - xLeft);						/* Calculate width */
-	x = x * (*px) / 100 + xLeft;			/* Work out horiz value */
-	yd = (yDiffRight - yDiffLeft);			/* Work out height of vert for x */
+	long x, y, yd;							// Longs for overflow in 16 bit
+	x = (xRight - xLeft);					// Calculate width
+	x = x * (*px) / 100 + xLeft;			// Work out horiz value
+	yd = (yDiffRight - yDiffLeft);			// Work out height of vert for x
 	yd = yd * (*px) / 100;
-	y = yBottom +							/* Half of the distance */
-		yd / 2 -						/* + Scaled total size */
+	y = yBottom +							// Half of the distance
+		yd / 2 -							// + Scaled total size
 		(yd + yDiffLeft) * (*py) / 100;
 
-	*px = (int)x;							/* Write back, casting to int */
+	*px = (int)x;							// Write back, casting to int
 	*py = (int)y;
 }
 
@@ -270,7 +265,6 @@ void Dungeon::_DRAWPit(Graphics::ManagedSurface *s, Common::Rect *r, int Dir) {
 	HWLine(r->left + x1, r->top, r->left + x2, r->bottom);
 	HWLine(r->left + x2, r->bottom, r->right - x2, r->bottom);
 	HWLine(r->right - x1, r->top, r->right - x2, r->bottom);
-
 }
 
 } // namespace Views

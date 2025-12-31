@@ -50,7 +50,7 @@ void Monster::draw(Graphics::ManagedSurface *s, int x, int y,
 		xPos = xPos - 90;
 
 	// Call appropriate function
-	assert(Monster <= MN_BALROG);
+	assert(Monster > 0 && Monster <= MN_BALROG);
 	(*DRAW_FUNCTIONS)(s, 0, 0, Scale);
 }
 

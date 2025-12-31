@@ -45,11 +45,6 @@ private:
 	static void MOVERotLeft(COORD *Dir);
 
 	/**
-	 * Find Monster ID at given location
-	 */
-	static int DDRAWFindMonster(COORD *c);
-
-	/**
 	 * Draw part of dungeon
 	 */
 	static void DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
