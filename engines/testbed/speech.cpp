@@ -35,6 +35,16 @@ void Speechtests::waitForSpeechEnd(Common::TextToSpeechManager *ttsMan) {
 	}
 }
 
+void Speechtests::delaySeconds(int sec) {
+	Common::Event event;
+	int loop = sec * 10;
+	while (loop) {
+		g_system->delayMillis(100);
+		g_system->getEventManager()->pollEvent(event);
+		--loop;
+	}
+}
+
 TestExitStatus Speechtests::testMale() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	ttsMan->setLanguage("en");
@@ -128,11 +138,11 @@ TestExitStatus Speechtests::testStop() {
 	}
 
 	ttsMan->say("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.");
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->stop();
 	// It is allright if the voice isn't available right away, but a second should be
 	// enough for the TTS to recover and get ready.
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	if (!ttsMan->isReady()) {
 		Testsuite::logDetailedPrintf("TTS stop failed\n");
 		return kTestFailed;
@@ -164,7 +174,7 @@ TestExitStatus Speechtests::testStopAndSpeak() {
 	}
 
 	ttsMan->say("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.");
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->stop();
 	ttsMan->say("Now starting the second sentence.", Common::TextToSpeechManager::QUEUE);
 	ttsMan->say("You should hear that one in totality.", Common::TextToSpeechManager::QUEUE);
@@ -201,14 +211,14 @@ TestExitStatus Speechtests::testPauseResume() {
 	}
 
 	ttsMan->say("Testing text to speech, the speech should pause after a second");
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->pause();
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
 	}
 	ttsMan->say("and then resume again", Common::TextToSpeechManager::QUEUE);
-	g_system->delayMillis(3000);
+	delaySeconds(3);
 	if (!ttsMan->isPaused()) {
 		Testsuite::logDetailedPrintf("TTS pause failed\n");
 		return kTestFailed;
@@ -426,7 +436,7 @@ TestExitStatus Speechtests::testInterrupting() {
 	}
 
 	ttsMan->say("A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z");
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("Speech interrupted", Common::TextToSpeechManager::INTERRUPT);
 	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice saying the engilsh alphabet, but it got interrupted and said: \"Speech interrupted\" instead?";
@@ -486,13 +496,13 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 
 	ttsMan->say("This is the first sentence, this should get interrupted");
 	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
 	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
 	ttsMan->say("Failure", Common::TextToSpeechManager::QUEUE);
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("This is the second sentence, it should play only once", Common::TextToSpeechManager::INTERRUPT_NO_REPEAT);
 	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice say: \"This is the first sentence, this should get interrupted\", but it got interrupted and \"This is the second sentence, it should play only once.\" got said instead?";
@@ -523,11 +533,11 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 
 	ttsMan->say("This is the first sentence.");
 	ttsMan->say("This is the first sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("This is the first sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-	g_system->delayMillis(1000);
+	delaySeconds(1);
 	ttsMan->say("This is the second sentence.", Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	waitForSpeechEnd(ttsMan);
 	Common::String prompt = "Did you hear a voice say: \"This is the first sentence. This the second sentence\" and nothing else?";

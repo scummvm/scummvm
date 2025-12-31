@@ -52,6 +52,7 @@ TestExitStatus testQueueEmptyString();
 
 // Utility function to avoid dupplicated code
 void waitForSpeechEnd(Common::TextToSpeechManager *);
+void delaySeconds(int);
 
 } // End of namespace Speechtests
 
