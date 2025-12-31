@@ -228,6 +228,21 @@ static const PlainGameDescriptor wintermuteGames[] = {
 		version \
 	}
 
+// sotv1 and sotv2 need some extra gui options
+#define WME_SOTVENTRY(shortName, extraName, hashEntry, lang, status, version) \
+	{ \
+		{ \
+			shortName, \
+			extraName, \
+			hashEntry, \
+			lang, \
+			Common::kPlatformWindows, \
+			status, \
+			GUIO2(GAMEOPTION_USE_IT_VOICES, GAMEOPTION_USE_SD_ASSETS), \
+		}, \
+		version \
+	}
+
 /* To add new entries:
  * Make sure you have a target name defined at the top of the file
  *
@@ -4820,6 +4835,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY1s("default.game", "2631e8ba12cdd7ef08c5ee72391ad703", 968), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
+	// Shadows on the Vatican - Act I: Greed (SD/HD Combo Version) (Steam) (Multi-language)
+	WME_SOTVENTRY("sotv1", "SD/HD Combo Version",
+		WME_ENTRY1s("SotV1.exe", "c7302599bcd570cfb8bdb9027e0ad344", 2335232), Common::UNK_LANG, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
 	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (English)
 	WME_WINENTRY("sotv2", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
@@ -5455,6 +5474,10 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
 					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+
+	// Shadows on the Vatican - Act II: Wrath (SD/HD Combo Version) (Steam) (Multi-language)
+	WME_SOTVENTRY("sotv2", "SD/HD Combo Version",
+		WME_ENTRY1s("SotV2.exe", "c7302599bcd570cfb8bdb9027e0ad344", 2335232), Common::UNK_LANG, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// Shelter (Demo)
 	WME_WINENTRY("shelter", "Demo",
