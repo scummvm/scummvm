@@ -407,9 +407,9 @@
 {
 	{
 		"lit",
-		"Demo",
-		AD_ENTRY1("demo.stk", "c06f8cc20eb239d4c71f225ce3093edf"),
-		UNK_LANG,
+		"Demo (v1.0)",
+		AD_ENTRY1s("demo.stk", "c06f8cc20eb239d4c71f225ce3093edf", 609402),
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
