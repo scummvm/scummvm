@@ -65,7 +65,7 @@ enum {
 
 static const char *const copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2025 The ScummVM Team",
+"C0""Copyright (C) 2001-2026 The ScummVM Team",
 "C0""https://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
