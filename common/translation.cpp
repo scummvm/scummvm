@@ -163,6 +163,13 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 	return U32String(message);
 }
 
+U32String TranslationManager::getTranslation(uint32 index) const {
+	if (index >= _currentTranslationMessages.size())
+		return U32String("");
+
+	return _currentTranslationMessages[index].msgstr.decode();
+}
+
 String TranslationManager::getCurrentLanguage() const {
 	if (_currentLang == -1)
 		return "en";
@@ -179,6 +186,16 @@ U32String TranslationManager::getTranslation(const String &message) const {
 
 U32String TranslationManager::getTranslation(const String &message, const String &context) const {
 	return getTranslation(message.c_str(), context.c_str());
+}
+
+const StringArray TranslationManager::getContexts() const {
+	StringArray contexts;
+
+	for (const auto &m : _currentTranslationMessages) {
+		contexts.push_back(m.msgctxt);
+	}
+
+	return contexts;
 }
 
 const TLangArray TranslationManager::getSupportedLanguageNames() const {
