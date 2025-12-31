@@ -76,7 +76,8 @@ void DungeonStatus::draw() {
 	auto s = getSurface();
 
 	// Display the current direction
-	s.writeString(Common::Point(15, 0), DIRECTION_NAMES[player.dungeonDir()]);
+	if (player.Level > 0)
+		s.writeString(Common::Point(15, 0), DIRECTION_NAMES[player.dungeonDir()]);
 
 	// Draw any extra lines
 	for (uint i = 0; i < _lines.size(); ++i)

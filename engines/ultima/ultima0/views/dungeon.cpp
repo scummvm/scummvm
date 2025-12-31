@@ -32,6 +32,8 @@ Dungeon::Dungeon() : View("Dungeon") {
 }
 
 bool Dungeon::msgFocus(const FocusMessage &msg) {
+	showMessage("");
+	showLines("");
 	return true;
 }
 
@@ -151,9 +153,11 @@ void Dungeon::interact() {
 
 		if (player.Level == 0) {
 			showMessage("Leave Dungeon.");
-			showLines(Common::String::format("Thou has gained %d hit points.", player.HPGain));
+			if (player.HPGain > 0)
+				showLines(Common::String::format("Thou has gained %d HP", player.HPGain));
 			player.Attr[AT_HP] += player.HPGain;
 			player.HPGain = 0;
+			delaySeconds(1);	// Brief delay to show text before leaving dungeon
 
 		} else {
 			showMessage("Use Ladder");
@@ -168,11 +172,13 @@ void Dungeon::interact() {
 		showLines(Common::String::format("Go down to Level %d.\n", player.Level));
 	}
 
-	if (done && player.Level > 0)
-		// New Dungeon Map Required
-		dungeon.create(player);
-	else
+	if (done) {
+		if (player.Level > 0)
+			// New Dungeon Map Required
+			dungeon.create(player);
+	} else {
 		showMessage("Huh???");
+	}
 }
 
 void Dungeon::timeout() {

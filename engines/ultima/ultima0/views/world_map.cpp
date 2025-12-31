@@ -32,6 +32,7 @@ WorldMap::WorldMap() : View("WorldMap") {
 }
 
 bool WorldMap::msgFocus(const FocusMessage &msg) {
+	showMessage("");
 	return true;
 }
 
