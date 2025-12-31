@@ -136,7 +136,7 @@ else
 DEFINES += -DUSE_IMGUI
 endif
 
-USE_MPEG2         ?= 0
+USE_MPEG2         ?= 1
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_MPEG2), component_mpeg2)
 ifneq ($(USE_MPEG2),1)
 USE_MPEG2=

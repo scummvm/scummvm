@@ -7,7 +7,7 @@ DEPS_SUBMODULES             := libretro-deps libretro-common
 
 DEPS_FOLDER_libretro-deps   := libretro-deps
 DEPS_URL_libretro-deps      := https://github.com/libretro/libretro-deps
-DEPS_COMMIT_libretro-deps   := f39fbf0707b02486f1cce42ab9bca019b2fb7a7d
+DEPS_COMMIT_libretro-deps   := a2a865e74f58035c416a0c63be5772fdcf35b071
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
@@ -577,6 +577,54 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-arabic.o 
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-run.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-shape.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi.o
+endif
+endif
+
+######################################################################
+# libmpeg2 settings
+######################################################################
+
+ifeq ($(USE_MPEG2), 1)
+DEFINES += -DUSE_MPEG2
+this_lib_subpath :=
+this_lib_header  := mpeg2dec/mpeg2.h
+this_lib_flags   := -lmpeg2
+include $(ROOT_PATH)/sharedlib_test.mk
+ifneq ($(this_lib_available), yes)
+INCLUDES += \
+	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/include \
+	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/include/mpeg2dec \
+	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2
+OBJS_DEPS += \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/alloc.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/header.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/decode.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/slice.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/motion_comp.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/idct.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/cpu_accel.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/cpu_state.o
+
+# --- Optional accelerations --------------
+# x86/x64 -> MMX
+ifneq ($(findstring x86,$(platform))$(findstring x64,$(platform)),)
+OBJS_DEPS += \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/motion_comp_mmx.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/idct_mmx.o
+endif
+
+# PowerPC (PS3/PSL1GHT) -> AltiVec/VMX
+ifneq ($(findstring ps3,$(platform))$(findstring psl1ght,$(platform)),)
+OBJS_DEPS += \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/motion_comp_altivec.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/idct_altivec.o
+endif
+
+# ARM families (rpi*, libnx, ios/tvos, vita, ctr, miyoo/miyoomini)
+ifneq ($(findstring rpi,$(platform))$(findstring armv7,$(platform))$(findstring armv8,$(platform))$(findstring libnx,$(platform))$(findstring ios,$(platform))$(findstring tvos,$(platform))$(findstring vita,$(platform))$(findstring ctr,$(platform))$(findstring miyoo,$(platform))$(findstring miyoomini,$(platform)),)
+OBJS_DEPS += \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/motion_comp_arm.o
+endif
 endif
 endif
 
