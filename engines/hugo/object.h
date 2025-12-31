@@ -72,7 +72,7 @@ public:
 	virtual void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) = 0;
 	virtual void moveObjects() = 0;
 	virtual void updateImages() = 0;
-	virtual void swapImages(int objIndex1, int objIndex2) = 0;
+	virtual void swapImages(int objIndex1, int objIndex2, bool restoring) = 0;
 
 	bool isCarrying(uint16 wordIndex);
 	bool findObjectSpace(Object *obj, int16 *destx, int16 *desty);
@@ -128,7 +128,7 @@ public:
 	void homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) override;
 	void moveObjects() override;
 	void updateImages() override;
-	void swapImages(int objIndex1, int objIndex2) override;
+	void swapImages(int objIndex1, int objIndex2, bool restoring) override;
 };
 
 class ObjectHandler_v2d : public ObjectHandler_v1d {
@@ -148,7 +148,7 @@ public:
 	~ObjectHandler_v3d() override;
 
 	void moveObjects() override;
-	void swapImages(int objIndex1, int objIndex2) override;
+	void swapImages(int objIndex1, int objIndex2, bool restoring) override;
 };
 
 class ObjectHandler_v1w : public ObjectHandler_v3d {
@@ -158,7 +158,7 @@ public:
 
 	void moveObjects() override;
 	void updateImages() override;
-	void swapImages(int objIndex1, int objIndex2) override;
+	void swapImages(int objIndex1, int objIndex2, bool restoring) override;
 };
 
 } // End of namespace Hugo
