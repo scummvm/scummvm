@@ -80,17 +80,15 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 }
 
 void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double Level) {
-	const int surfW = s->w, surfH = s->h;
+	const int centerX = s->w / 2, centerY = s->h / 2;
 	int xWidth, yWidth;
-	xWidth = (int)						// Calculate frame size
-		(atan(1.0 / (Level + 1)) / atan(1.0) * surfW + 0.5);
-	xWidth = surfW / (Level + 1);
-	yWidth = xWidth * 10 / 13;
+	xWidth = s->w / (Level + 1);
+	yWidth = s->h / (Level + 1); //	xWidth * 10 / 13;
 
-	r->left = surfW / 2 - xWidth / 2;			// Calculate drawing rectangle
-	r->right = surfW / 2 + xWidth / 2;
-	r->top = surfH / 2 - yWidth / 2;
-	r->bottom = surfH / 2 + yWidth / 2;
+	r->left = centerX - xWidth / 2;			// Calculate drawing rectangle
+	r->right = centerX + xWidth / 2;
+	r->top = centerY - yWidth / 2;
+	r->bottom = centerY + yWidth / 2;
 }
 
 void Dungeon::MOVERotLeft(COORD *Dir) {
