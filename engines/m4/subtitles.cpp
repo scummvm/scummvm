@@ -21,6 +21,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "m4/m4.h"
 #include "m4/subtitles.h"
@@ -37,7 +38,22 @@ M4Subtitles::~M4Subtitles() {
 }
 
 void M4Subtitles::load() {
-	_loaded = loadSubtitles(IS_RIDDLE ? "riddle.pot" : "burger.pot");
+	Common::StringArray soundFiles;
+	uint32 index = 0;
+
+#ifdef USE_TRANSLATION
+	_transMan = new Common::TranslationManager(IS_RIDDLE ? "riddle_translations.dat" : "burger_translations.dat");
+	_transMan->setLanguage(TransMan.getCurrentLanguage());
+	soundFiles = _transMan->getContexts();
+
+	for (const auto &soundFile : soundFiles) {
+		Common::String key = soundFile;
+		key.toUppercase();
+		_subtitleIndices[key] = index++;
+	}
+#endif
+
+	_loaded = !soundFiles.empty();
 	if (_loaded)
 		setupSubtitles();
 }
@@ -64,35 +80,17 @@ void M4Subtitles::setupSubtitles() {
 	setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
 }
 
-bool M4Subtitles::loadSubtitles(const Common::String &filename) {
-	Common::File inFile;
-	Common::String line;
-	Common::String lastComment;
-
-	if (!inFile.open(filename.c_str()))
-		return false;
-
-	while (!inFile.eos()) {
-		line = inFile.readLine();
-
-		if (line.hasPrefix("#: ")) {
-			lastComment = line.substr(3);
-		}
-
-		if (line.hasPrefix("msgid ") && !lastComment.empty()) {
-			_subtitles[lastComment] = line.substr(7, line.size() - 7 - 1); // Remove trailing "
-		}
-	}
-
-	inFile.close();
-
-	return true;
-}
-
 Common::String M4Subtitles::getSubtitle(const Common::String &audioFile) const {
+#ifdef USE_TRANSLATION
 	Common::String key = audioFile;
 	key.toUppercase();
-	return _subtitles.contains(key) ? _subtitles[key] : "";
+
+	if (_subtitleIndices.contains(key)) {
+		return _transMan->getTranslation(_subtitleIndices[key]).encode();
+	}
+#endif
+
+	return "";
 }
 
 void M4Subtitles::drawSubtitle(const Common::String &audioFile) const {

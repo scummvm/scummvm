@@ -25,6 +25,10 @@
 #include "common/hashmap.h"
 #include "video/subtitles.h"
 
+namespace Common {
+class TranslationManager;
+} // namespace Common
+
 namespace M4 {
 
 class M4Subtitles : Video::Subtitles {
@@ -40,17 +44,20 @@ public:
 
 private:
 	void setupSubtitles();
-	bool loadSubtitles(const Common::String &filename);
 	Common::String getSubtitle(const Common::String &audioFile) const;
 	int16 nudgeSubtitle() const;
 
-	Common::HashMap<Common::String, Common::String> _subtitles;
+	Common::HashMap<Common::String, uint32> _subtitleIndices;
 	bool _subtitlesEnabled;
 	mutable int16 _subtitleYOffset = 0;
 
 	// Font sizing constants (as percentage of screen height)
 	const int MIN_FONT_SIZE = 8;
 	const float BASE_FONT_SIZE_PERCENT = 0.023f; // ~50px at 2160p
+
+#ifdef USE_TRANSLATION
+	Common::TranslationManager *_transMan = nullptr;
+#endif
 };
 
 } // namespace M4
