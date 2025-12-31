@@ -182,15 +182,15 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		HWColour(COL_LADDER);
 		y1 = r.top; y2 = r.bottom;
 		x = (r.right - r.left) * 3 / 10;
+
+		// Vertical lines
 		HWLine(r.left + x, y1, r.left + x, y2);
 		HWLine(r.right - x, y1, r.right - x, y2);
-		x1 = (y1 - y2) / 5;
-		y = y2 + x1 / 2;
-		while (y < y1)
-		{
+		x1 = (y2 - y1) / 5;
+
+		// Horizontal ladder rungs
+		for (y = y1 + x1 / 2; y < y2; y += x1)
 			HWLine(r.left + x, y, r.right - x, y);
-			y = y + x1;
-		}
 	}
 
 	// Scale (trial and error this :))
