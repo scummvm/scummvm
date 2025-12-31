@@ -360,8 +360,8 @@ void ObjectHandler_v1w::moveObjects() {
  * the assumption for now that the first obj is always the HERO) to the object
  * number of the swapped image
  */
-void ObjectHandler_v1w::swapImages(int objIndex1, int objIndex2) {
-	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
+void ObjectHandler_v1w::swapImages(int objIndex1, int objIndex2, bool restoring) {
+	debugC(1, kDebugObject, "swapImages(%d, %d, %d)", objIndex1, objIndex2, restoring);
 
 	saveSeq(&_objects[objIndex1]);
 

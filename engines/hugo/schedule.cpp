@@ -1091,7 +1091,6 @@ void Scheduler::saveSchedulerData(Common::WriteStream *out) {
 
 void Scheduler::restoreSchedulerData(Common::ReadStream *in) {
 	restorePoints(in);
-	_vm->_object->restoreAllSeq();
 
 	// Now restore time of the save and the event queue
 	restoreEvents(in);
@@ -1262,7 +1261,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 		Utils::notifyBox(_vm->_file->fetchString(action->_a12._stringIndex));   // Fetch string from file
 		break;
 	case SWAP_IMAGES:                                 // act13: Swap 2 object images
-		_vm->_object->swapImages(action->_a13._objIndex1, action->_a13._objIndex2);
+		_vm->_object->swapImages(action->_a13._objIndex1, action->_a13._objIndex2, false);
 		break;
 	case COND_SCR:                                    // act14: Conditional on current screen
 		if (_vm->_object->_objects[action->_a14._objIndex]._screenIndex == action->_a14._screenReq)
