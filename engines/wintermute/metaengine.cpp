@@ -88,6 +88,30 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	},
 #endif
 
+	{
+		GAMEOPTION_USE_IT_VOICES,
+		{
+			_s("Use Italian speech pack"),
+			_s("Use Italian dubbing instead of the default English one"),
+			"use_it_voices",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_USE_SD_ASSETS,
+		{
+			_s("Run SD version (1280x800)"),
+			_s("Run the legacy SD version, which is better for small screens"),
+			"use_sd_assets",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
