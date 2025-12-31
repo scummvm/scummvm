@@ -51,7 +51,7 @@ void Monster::draw(Graphics::ManagedSurface *s, int x, int y,
 
 	// Call appropriate function
 	assert(Monster > 0 && Monster <= MN_BALROG);
-	(*DRAW_FUNCTIONS)(s, 0, 0, Scale);
+	(*DRAW_FUNCTIONS[Monster])(s, 0, 0, Scale);
 }
 
 void Monster::_HPlot(Graphics::ManagedSurface *s, double x, double y, ...) {

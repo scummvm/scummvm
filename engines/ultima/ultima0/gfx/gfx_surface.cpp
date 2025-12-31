@@ -34,12 +34,16 @@ void GfxSurface::writeString(const Common::Point &pt, const Common::String &str,
 }
 
 void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign align) {
+	size_t strSize = 0;
+	for (const char *p = str.c_str(); *p; ++p)
+		strSize += Common::isPrint(*p) ? 1 : 0;
+
 	switch (align) {
 	case Graphics::kTextAlignCenter:
-		_textPos.x -= str.size() / 2;
+		_textPos.x -= strSize / 2;
 		break;
 	case Graphics::kTextAlignRight:
-		_textPos.x -= str.size();
+		_textPos.x -= strSize;
 		break;
 	case Graphics::kTextAlignLeft:
 	default:
@@ -50,6 +54,8 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 		if (*p == '\n') {
 			assert(align == Graphics::kTextAlignLeft);
 			newLine();
+		} else if (*p < 32) {
+			setColor((byte)*p);
 		} else {
 			writeChar(*p);
 		}
