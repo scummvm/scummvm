@@ -203,8 +203,10 @@ ifdef DYNAMIC_MODULES
 endif
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	chmod 755 $(bundle_name)/Contents/Resources/licenses
+	chmod 644 $(bundle_name)/Contents/Resources/licenses/*
 ifneq ($(DIST_FILES_SHADERS),)
 	chmod 755 $(bundle_name)/Contents/Resources/shaders
+	chmod 644 $(bundle_name)/Contents/Resources/shaders/*
 endif
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
