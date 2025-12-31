@@ -31,7 +31,7 @@ namespace Views {
 
 class WorldMap : public View {
 private:
-	Status _status = Status("MapStatus", this);
+	OverworldStatus _status = OverworldStatus(this);
 
 	void move(int xi, int yi);
 	void enter();

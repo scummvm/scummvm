@@ -37,8 +37,6 @@ void Status::draw() {
 
 	if (!_message.empty())
 		s.writeString(Common::Point(1, 0), _message);
-	if (!_direction.empty())
-		s.writeString(Common::Point(15, 0), _direction);
 
 	s.writeString(Common::Point(28, 1), "Food=");
 	s.writeString(Common::Point(28, 2), "H.P.=");
@@ -57,6 +55,16 @@ bool Status::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
+}
+
+/*-------------------------------------------------------------------*/
+
+void DungeonStatus::draw() {
+	Status::draw();
+
+	const auto &player = g_engine->_player;
+	auto s = getSurface();
+	s.writeString(Common::Point(15, 0), DIRECTION_NAMES[player.dungeonDir()]);
 }
 
 } // namespace Views

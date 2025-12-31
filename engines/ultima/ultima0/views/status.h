@@ -41,6 +41,20 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 };
 
+class OverworldStatus : public Status {
+public:
+	OverworldStatus(UIElement *parent) : Status("OverworldStatus", parent) {
+	}
+};
+
+class DungeonStatus : public Status {
+public:
+	DungeonStatus(UIElement *parent) : Status("DungeonStatus", parent) {
+	}
+
+	void draw() override;
+};
+
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima

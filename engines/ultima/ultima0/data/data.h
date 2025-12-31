@@ -29,6 +29,8 @@
 namespace Ultima {
 namespace Ultima0 {
 
+enum Direction { DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST };
+
 struct PLAYER;
 
 struct _OInfStruct {
@@ -44,7 +46,7 @@ struct _MInfStruct {
 extern const _OInfStruct OBJECT_INFO[];
 extern const _MInfStruct MONSTER_INFO[];
 extern const char *ATTRIB_NAMES[];
-
+extern const char *const DIRECTION_NAMES[];
 
 // point/rect types
 typedef Common::Point COORD;
@@ -101,6 +103,11 @@ struct PLAYER {
 	void init();
 	void rollAttributes();
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Return the dungeon facing direction
+	 */
+	int dungeonDir() const;
 };
 
 /**

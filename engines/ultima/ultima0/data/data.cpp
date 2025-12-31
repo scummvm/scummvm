@@ -49,6 +49,7 @@ const _MInfStruct MONSTER_INFO[] = {
 };
 
 const char *ATTRIB_NAMES[] = { "Hit Points", "Strength", "Dexterity", "Stamina", "Wisdom", "Gold" };
+const char *const DIRECTION_NAMES[] = { "North", "East", "South", "West" };
 
 /*-------------------------------------------------------------------*/
 
@@ -97,6 +98,17 @@ void PLAYER::synchronize(Common::Serializer &s) {
 		if (s.isLoading())
 			Object[i] = (double)val;
 	}
+}
+
+int PLAYER::dungeonDir() const {
+	if (Dungeon.y < 0)
+		return DIR_NORTH;
+	else if (Dungeon.x > 0)
+		return DIR_EAST;
+	else if (Dungeon.y > 0)
+		return DIR_SOUTH;
+	else
+		return DIR_WEST;
 }
 
 /*-------------------------------------------------------------------*/

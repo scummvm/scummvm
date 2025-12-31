@@ -31,7 +31,7 @@ namespace Views {
 
 class Dungeon : public View {
 private:
-	Status _status = Status("DungeonStatus", this);
+	DungeonStatus _status = DungeonStatus(this);
 
 	void move(int xi, int yi);
 	void interact();
