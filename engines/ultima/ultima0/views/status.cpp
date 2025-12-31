@@ -30,6 +30,11 @@ Status::Status(const Common::String &name, UIElement *parent) : View(name, paren
 	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
 }
 
+bool Status::msgFocus(const FocusMessage &msg) {
+	_message.clear();
+	return View::msgFocus(msg);
+}
+
 void Status::draw() {
 	const auto &player = g_engine->_player;
 	auto s = getSurface();
@@ -59,12 +64,42 @@ bool Status::msgGame(const GameMessage &msg) {
 
 /*-------------------------------------------------------------------*/
 
+bool DungeonStatus::msgFocus(const FocusMessage &msg) {
+	_lines.clear();
+	return Status::msgFocus(msg);
+}
+
 void DungeonStatus::draw() {
 	Status::draw();
 
 	const auto &player = g_engine->_player;
 	auto s = getSurface();
+
+	// Display the current direction
 	s.writeString(Common::Point(15, 0), DIRECTION_NAMES[player.dungeonDir()]);
+
+	// Add any extra
+}
+
+bool DungeonStatus::msgGame(const GameMessage &msg) {
+	if (msg._name == "LINES") {
+		_lines.clear();
+
+		Common::String str = msg._stringValue;
+		uint p;
+		while ((p = str.findFirstOf('\n')) != Common::String::npos) {
+			_lines.push_back(Common::String(str.c_str(), str.c_str() + p));
+			str = Common::String(str.c_str() + p + 1);
+		}
+		if (!str.empty())
+			_lines.push_back(str);
+
+		redraw();
+		return true;
+
+	} else {
+		return Status::msgGame(msg);
+	}
 }
 
 } // namespace Views

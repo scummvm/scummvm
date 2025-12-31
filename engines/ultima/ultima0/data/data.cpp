@@ -100,15 +100,44 @@ void PLAYER::synchronize(Common::Serializer &s) {
 	}
 }
 
-int PLAYER::dungeonDir() const {
-	if (Dungeon.y < 0)
+Direction PLAYER::dungeonDir() const {
+	if (DungDir.y < 0)
 		return DIR_NORTH;
-	else if (Dungeon.x > 0)
+	else if (DungDir.x > 0)
 		return DIR_EAST;
-	else if (Dungeon.y > 0)
+	else if (DungDir.y > 0)
 		return DIR_SOUTH;
 	else
 		return DIR_WEST;
+}
+
+void PLAYER::setDungeonDir(Direction newDir) {
+	DungDir.x = 0;
+	DungDir.y = 0;
+	switch (newDir) {
+	case DIR_NORTH:
+		DungDir.y = -1;
+		break;
+	case DIR_EAST:
+		DungDir.x = 1;
+		break;
+	case DIR_SOUTH:
+		DungDir.y = 1;
+		break;
+	case DIR_WEST:
+		DungDir.x = -1;
+		break;
+	}
+}
+
+void PLAYER::dungeonTurnLeft() {
+	Direction dir = dungeonDir();
+	setDungeonDir((dir == DIR_NORTH) ? DIR_WEST : (Direction)((int)dir - 1));
+}
+
+void PLAYER::dungeonTurnRight() {
+	Direction dir = dungeonDir();
+	setDungeonDir((dir == DIR_WEST) ? DIR_NORTH : (Direction)((int)dir + 1));
 }
 
 /*-------------------------------------------------------------------*/
@@ -270,6 +299,15 @@ void DUNGEONMAP::synchronize(Common::Serializer &s) {
 	for (int y = 0; y < DUNGEON_MAP_SIZE; ++y)
 		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x)
 			s.syncAsByte(Map[x][y]);
+}
+
+int DUNGEONMAP::findMonster(const COORD &c) const {
+	int i, n = -1;
+	for (i = 0; i < MonstCount; i++)
+		if (c.x == Monster[i].Loc.x &&
+			c.y == Monster[i].Loc.y &&
+			Monster[i].Alive != 0) n = i;
+	return n;
 }
 
 } // namespace Ultima0

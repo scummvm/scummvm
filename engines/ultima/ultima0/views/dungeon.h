@@ -33,11 +33,14 @@ class Dungeon : public View {
 private:
 	DungeonStatus _status = DungeonStatus(this);
 
-	void move(int xi, int yi);
+	void moveForward();
 	void interact();
 	void endOfTurn();
 	void showMessage(const Common::String &msg) {
 		_status.send(GameMessage("MSG", msg));
+	}
+	void showLines(const Common::String &msg) {
+		_status.send(GameMessage("LINES", msg));
 	}
 
 public:

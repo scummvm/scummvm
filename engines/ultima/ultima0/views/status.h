@@ -37,6 +37,7 @@ public:
 	Status(const Common::String &name, UIElement *parent);
 	~Status() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 };
@@ -48,11 +49,16 @@ public:
 };
 
 class DungeonStatus : public Status {
+private:
+	Common::StringArray _lines;
+
 public:
 	DungeonStatus(UIElement *parent) : Status("DungeonStatus", parent) {
 	}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Views

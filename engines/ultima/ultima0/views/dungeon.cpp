@@ -48,25 +48,28 @@ void Dungeon::draw() {
 }
 
 bool Dungeon::msgAction(const ActionMessage &msg) {
+	auto &player = g_engine->_player;
+
 	if (isDelayActive())
 		return false;
-#ifdef TODO
+
 	switch (msg._action) {
 	case KEYBIND_UP:
-		showMessage("North");
-		move(0, -1);
+		showMessage("Move Forward");
+		moveForward();
 		break;
 	case KEYBIND_DOWN:
-		showMessage("South");
-		move(0, 1);
+		showMessage("Turn Around");
+		player.dungeonTurnLeft();
+		player.dungeonTurnLeft();
 		break;
 	case KEYBIND_LEFT:
-		showMessage("West");
-		move(-1, 0);
+		showMessage("Turn Left");
+		player.dungeonTurnLeft();
 		break;
 	case KEYBIND_RIGHT:
-		showMessage("East");
-		move(1, 0);
+		showMessage("Turn Right");
+		player.dungeonTurnRight();
 		break;
 	case KEYBIND_INFO:
 		// Show character info screen
@@ -74,14 +77,13 @@ bool Dungeon::msgAction(const ActionMessage &msg) {
 		replaceView("Info");
 		break;
 	case KEYBIND_ENTER:
-	case KEYBIND_SELECT:
-		enter();
+		interact();
 		break;
 	default:
 		showMessage("");
 		break;
 	}
-#endif
+
 	endOfTurn();
 	return true;
 }
@@ -106,76 +108,77 @@ bool Dungeon::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Dungeon::endOfTurn() {
-#ifdef TODO
 	auto &player = g_engine->_player;
 
 	if (player.Attr[AT_HP] <= 0)
 		replaceView("Dead");
 
-	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
+	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 0.1, 0.0);
 	if (player.Object[OB_FOOD] == 0) {
 		showMessage("You have starved...");
 		delaySeconds(1);
 	}
-#endif
+
+	redraw();
 }
 
-void Dungeon::timeout() {
+void Dungeon::moveForward() {
+	const auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
+	COORD New = player.Dungeon + player.DungDir;
 
-	if (player.Attr[AT_HP] <= 0 || player.Object[OB_FOOD] <= 0) {
-		// Timeout from displaying player was killed
-		replaceView("Dead");
-	} else {
-		// TODO: timeout actions
-	}
-}
+	if (!ISWALKTHRU(dungeon.Map[New.x][New.y]) || dungeon.findMonster(New) >= 0)
+		return;
 
-void Dungeon::move(int xi, int yi) {
-#ifdef TODO
-	auto &player = g_engine->_player;
-	auto &map = g_engine->_worldMap;
+	// Set new position
+	player.Dungeon = New;
 
-	// Calculate new position
-	int x1 = player.World.x + xi;
-	int y1 = player.World.y + yi;
-
-	if (map.read(x1, y1) == WT_MOUNTAIN) {
-		showMessage("You can't pass the mountains.");
-	} else {
-		// Move
-		player.World.x = x1;
-		player.World.y = y1;
-		redraw();
-	}
-#endif
+	// TODO: other stuff
 }
 
 void Dungeon::interact() {
-#ifdef TODO
-	const auto &player = g_engine->_player;
-	const auto &map = g_engine->_worldMap;
+	auto &dungeon = g_engine->_dungeon;
+	auto &player = g_engine->_player;
 
-	int t = map.read(player.World.x, player.World.y);
-	switch (t) {
-	case WT_TOWN:
-		showMessage("Enter Town.");
-		delaySeconds(1);
-		break;
-	case WT_DUNGEON:
-		showMessage("Enter Dungeon.");
-		delaySeconds(1);
-		break;
-	case WT_BRITISH:
-		showMessage("Enter Castle.");
-		delaySeconds(1);
-		break;
-	default:
-		// Nope....
-		showMessage("Huh???");
-		break;
+	// Identify what's there
+	int t = dungeon.Map[player.Dungeon.x][player.Dungeon.y];
+	bool done = false;
+
+	if (t == DT_LADDERUP) {
+		// Climbing up a ladder
+		player.Level--;
+		done = true;
+
+		if (player.Level == 0) {
+			showMessage("Leave Dungeon.");
+			showLines(Common::String::format("Thou has gained %d hit points.", player.HPGain));
+			player.Attr[AT_HP] += player.HPGain;
+			player.HPGain = 0;
+
+		} else {
+			showMessage("Use Ladder");
+			showLines(Common::String::format("Go up to Level %d.", player.Level));
+		}
+	} else if (t == DT_LADDERDN) {
+		// Climbing down a ladder
+		player.Level++;
+		done = true;
+
+		showMessage("Use Ladder");
+		showLines(Common::String::format("Go down to Level %d.\n", player.Level));
 	}
-#endif
+
+	if (done && player.Level > 0)
+		// New Dungeon Map Required
+		dungeon.create(player);
+	else
+		showMessage("Huh???");
+}
+
+void Dungeon::timeout() {
+	const auto &player = g_engine->_player;
+
+	replaceView((player.Level == 0) ? "WorldMap" : "Dead");
 }
 
 } // namespace Views

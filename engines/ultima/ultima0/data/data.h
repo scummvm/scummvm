@@ -78,6 +78,11 @@ public:
 
 	void create(const PLAYER &player);
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Find Monster ID at given location
+	 */
+	int findMonster(const COORD &c) const;
 };
 
 /**
@@ -107,7 +112,22 @@ struct PLAYER {
 	/**
 	 * Return the dungeon facing direction
 	 */
-	int dungeonDir() const;
+	Direction dungeonDir() const;
+
+	/**
+	 * Sets the dungeon direction
+	 */
+	void setDungeonDir(Direction newDir);
+
+	/**
+	 * Turn left in the dungeon
+	 */
+	void dungeonTurnLeft();
+
+	/**
+	 * Turn right in the dungeon
+	 */
+	void dungeonTurnRight();
 };
 
 /**

@@ -101,7 +101,8 @@ bool Info::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Info::leave() {
-	replaceView("WorldMap");
+	const auto &player = g_engine->_player;
+	replaceView(player.Level == 0 ? "WorldMap" : "DungeonMap");
 }
 
 bool Info::msgAction(const ActionMessage &msg) {

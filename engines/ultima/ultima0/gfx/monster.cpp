@@ -43,10 +43,8 @@ int Monster::yPos = 512;
 
 void Monster::draw(Graphics::ManagedSurface *s, int x, int y,
 		int Monster, double Scale) {
-	const auto &player = g_engine->_player;
-	const auto &dungeon = g_engine->_dungeon;
-
-	xPos = x; yPos = y;						// Save drawing pos
+	// Save drawing pos
+	xPos = x; yPos = y;
 	if (Monster == MN_MIMIC)
 		// Fix for Mimic/Chest
 		xPos = xPos - 90;
@@ -59,7 +57,7 @@ void Monster::draw(Graphics::ManagedSurface *s, int x, int y,
 void Monster::_HPlot(Graphics::ManagedSurface *s, double x, double y, ...) {
 	va_list alist;
 	double y1, x1;
-	int color;
+	int color = 0;
 
 	// Start reading values
 	va_start(alist, y);
