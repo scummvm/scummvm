@@ -158,6 +158,11 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
+	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
+	act->setKeyEvent(KeyState(KEYCODE_h, 'h'));
+	act->addDefaultInputMapping("h");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 
