@@ -22,7 +22,9 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/array.h"
 #include "common/error.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/language.h"
@@ -181,6 +183,11 @@ protected:
 	const Common::String _targetName;
 
 	int32 _activeEnhancements = kEnhGameBreakingBugFixes;
+
+	/**
+	 * Flag for whether hotspots should be displayed
+	 */
+	bool _showHotspots;
 
 private:
 	/**
@@ -509,10 +516,47 @@ protected:
 	 */
 	virtual void pauseEngineIntern(bool pause);
 
+	/**
+	 * Information about a hotspot for display purposes.
+	 */
+	struct HotspotDisplayInfo {
+		Common::Point position;  ///< Game screen coordinates of the hotspot
+		Common::String name;     ///< Display name of the hotspot
+
+		HotspotDisplayInfo() {}
+		HotspotDisplayInfo(const Common::Point &pos, const Common::String &n)
+			: position(pos), name(n) {}
+	};
+
+	/**
+	 * Get information about all hotspots that should be displayed.
+	 *
+	 * Engines should override this method to populate the hotspots array
+	 * with hotspot information in game screen coordinates.
+	 *
+	 * @param hotspots Array to be filled with hotspot information
+	 */
+	virtual void getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots);
+
+	/**
+	 * Draw hotspot markers on the screen using the overlay.
+	 *
+	 * Default implementation calls getHotspotPositions() and draws semi-transparent
+	 * circles, automatically converting from game coordinates to overlay coordinates.
+	 */
+	virtual void drawHotspots();
+
 	 /** @} */
 
 
 public:
+
+	/**
+	 * Set whether hotspots should be displayed.
+	 *
+	 * @param show true to show hotspots, false to hide them
+	 */
+	virtual void setShowHotspots(bool show);
 
 	/**
 	 * Request the engine to quit.

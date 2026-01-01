@@ -21,35 +21,35 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
-#include "engines/util.h"
 #include "engines/metaengine.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/system.h"
-#include "common/str.h"
-#include "common/ustr.h"
-#include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
+#include "common/singleton.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/singleton.h"
+#include "common/ustr.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/version.h"
 
-#include "gui/gui-manager.h"
+#include "gui/EventRecorder.h"
 #include "gui/chooser.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
-#include "gui/EventRecorder.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 #include "gui/unknown-game-dialog.h"
@@ -57,6 +57,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
@@ -96,11 +97,9 @@ static bool defaultErrorHandler(const char *msg) {
 			handled = true;
 		}
 
-
 #if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->clearError();
 #endif
-
 	}
 
 	return handled;
@@ -139,22 +138,23 @@ DECLARE_SINGLETON(ChainedGamesManager);
 
 Engine::Engine(OSystem *syst)
 	: _system(syst),
-		_mixer(_system->getMixer()),
-		_timer(_system->getTimerManager()),
-		_eventMan(_system->getEventManager()),
-		_saveFileMan(_system->getSavefileManager()),
-		_targetName(ConfMan.getActiveDomainName()),
-		_metaEngine(nullptr),
-		_pauseLevel(0),
-		_pauseStartTime(0),
-		_pauseScreenChangeID(-1),
-		_saveSlotToLoad(-1),
-		_autoSaving(false),
-		_engineStartTime(_system->getMillis()),
-		_mainMenuDialog(NULL),
-		_debugger(NULL),
-		_autosaveInterval(ConfMan.getInt("autosave_period")),
-		_lastAutosaveTime(_system->getMillis()) {
+	  _mixer(_system->getMixer()),
+	  _timer(_system->getTimerManager()),
+	  _eventMan(_system->getEventManager()),
+	  _saveFileMan(_system->getSavefileManager()),
+	  _targetName(ConfMan.getActiveDomainName()),
+	  _metaEngine(nullptr),
+	  _pauseLevel(0),
+	  _pauseStartTime(0),
+	  _pauseScreenChangeID(-1),
+	  _saveSlotToLoad(-1),
+	  _autoSaving(false),
+	  _engineStartTime(_system->getMillis()),
+	  _mainMenuDialog(NULL),
+	  _debugger(NULL),
+	  _autosaveInterval(ConfMan.getInt("autosave_period")),
+	  _lastAutosaveTime(_system->getMillis()),
+	  _showHotspots(false) {
 
 	g_engine = this;
 	_quitRequested = false;
@@ -215,7 +215,8 @@ Engine::~Engine() {
 
 	// Flush any pending remaining events
 	Common::Event evt;
-	while (g_system->getEventManager()->pollEvent(evt)) {}
+	while (g_system->getEventManager()->pollEvent(evt)) {
+	}
 
 	delete _debugger;
 	delete _mainMenuDialog;
@@ -493,7 +494,6 @@ inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::P
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
-
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
 	initGraphics(width, height, &format);
@@ -506,9 +506,9 @@ void initGraphics(int width, int height) {
 
 void initGraphics3d(int width, int height) {
 	g_system->beginGFXTransaction();
-		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
-		initCommonGFX(true);
-		g_system->initSize(width, height);
+	g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
+	initCommonGFX(true);
+	g_system->initSize(width, height);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (!splash && !GUI::GuiManager::instance()._launched) {
@@ -535,8 +535,8 @@ void GUIErrorMessage(const Common::String &msg, const char *url) {
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
-		initCommonGFX(false);
-		g_system->initSize(320, 200);
+	initCommonGFX(false);
+	g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		if (url) {
 			GUI::MessageDialogWithURL dialog(msg, url);
@@ -597,10 +597,11 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 	if (g_system->getAudioCDManager()->isDataAndCDAudioReadFromSameCD()) {
 		GUI::MessageDialog dialog(
 			_("You appear to be playing this game directly\n"
-			"from the CD. This is known to cause problems,\n"
-			"and it is therefore recommended that you copy\n"
-			"the data files to your hard disk instead.\n"
-			"See the documentation (CD audio) for details."), _("OK"));
+			  "from the CD. This is known to cause problems,\n"
+			  "and it is therefore recommended that you copy\n"
+			  "the data files to your hard disk instead.\n"
+			  "See the documentation (CD audio) for details."),
+			_("OK"));
 		dialog.runModal();
 		return true;
 	}
@@ -620,10 +621,11 @@ void Engine::warnMissingExtractedCDAudio() {
 	// - and the tracks have not been ripped.
 	GUI::MessageDialog dialog(
 		_("This game has audio tracks on its CD. These\n"
-		"tracks need to be ripped from the CD using\n"
-		"an appropriate CD audio extracting tool in\n"
-		"order to listen to the game's music.\n"
-		"See the documentation (CD audio) for details."), _("OK"));
+		  "tracks need to be ripped from the CD using\n"
+		  "an appropriate CD audio extracting tool in\n"
+		  "order to listen to the game's music.\n"
+		  "See the documentation (CD audio) for details."),
+		_("OK"));
 	dialog.runModal();
 }
 
@@ -649,24 +651,25 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	altButtons.push_back(_("Delete"));
 	altButtons.push_back(_("Skip autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot contains a saved game named %S, and an autosave is pending.\n"
-				  "Please move this saved game to a new slot, or delete it if it's no longer needed.\n"
-				  "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."), desc.getDescription().c_str());
+		_("WARNING: The autosave slot contains a saved game named %S, and an autosave is pending.\n"
+		  "Please move this saved game to a new slot, or delete it if it's no longer needed.\n"
+		  "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."),
+		desc.getDescription().c_str());
 	GUI::MessageDialog warn(message, _("Move"), altButtons);
 	switch (runDialog(warn)) {
 	case GUI::kMessageOK:
 		if (getMetaEngine()->copySaveFileToFreeSlot(_targetName.c_str(), getAutosaveSlot())) {
-				g_system->getSavefileManager()->removeSavefile(
-							getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
+			g_system->getSavefileManager()->removeSavefile(
+				getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
 		} else {
-				GUI::MessageDialog error(_("ERROR: Could not copy the savegame to a new slot"));
-				error.runModal();
-				return false;
+			GUI::MessageDialog error(_("ERROR: Could not copy the savegame to a new slot"));
+			error.runModal();
+			return false;
 		}
 		return true;
 	case GUI::kMessageAlt: // Delete
 		g_system->getSavefileManager()->removeSavefile(
-					getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
+			getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
 		return true;
 	case GUI::kMessageAlt + 1: // Skip autosave
 		return false;
@@ -750,6 +753,93 @@ void Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
+void Engine::setShowHotspots(bool show) {
+	_showHotspots = show;
+
+	if (!show && g_system->isOverlayVisible())
+		g_system->hideOverlay();
+}
+
+void Engine::getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots) {
+}
+
+void Engine::drawHotspots() {
+	if (!_showHotspots)
+		return;
+
+	Common::Array<HotspotDisplayInfo> hotspots;
+	getHotspotPositions(hotspots);
+
+	if (hotspots.empty())
+		return;
+
+	int16 gameWidth = g_system->getWidth();
+	int16 gameHeight = g_system->getHeight();
+	int16 overlayWidth = g_system->getOverlayWidth();
+	int16 overlayHeight = g_system->getOverlayHeight();
+	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+
+	float scaleX = (float)overlayWidth / (float)gameWidth;
+	float scaleY = (float)overlayHeight / (float)gameHeight;
+
+	if (!g_system->isOverlayVisible())
+		g_system->showOverlay(false);
+
+	g_system->clearOverlay();
+
+	const int radius = 6;
+
+	Graphics::Surface overlayBuffer;
+	overlayBuffer.create(overlayWidth, overlayHeight, overlayFormat);
+	g_system->grabOverlay(overlayBuffer);
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	for (uint i = 0; i < hotspots.size(); i++) {
+		int gameX = hotspots[i].position.x;
+		int gameY = hotspots[i].position.y;
+
+		int overlayX = (int)(gameX * scaleX);
+		int overlayY = (int)(gameY * scaleY);
+
+		if (overlayFormat.bytesPerPixel == 2) {
+			for (int dy = -radius; dy <= radius; dy++) {
+				for (int dx = -radius; dx <= radius; dx++) {
+					if (dx * dx + dy * dy <= radius * radius) {
+						int px = overlayX + dx;
+						int py = overlayY + dy;
+
+						if (px >= 0 && px < overlayWidth && py >= 0 && py < overlayHeight) {
+							uint16 *destPixel = (uint16 *)overlayBuffer.getBasePtr(px, py);
+
+							byte bgR, bgG, bgB, bgA;
+							overlayFormat.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
+
+							const byte alpha = 128;
+							byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
+							byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
+							byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
+
+							*destPixel = overlayFormat.RGBToColor(r, g, b);
+						}
+					}
+				}
+			}
+		}
+
+		if (font && !hotspots[i].name.empty()) {
+			int textX = overlayX + radius;
+			int textY = overlayY;
+
+			uint32 textColor = overlayFormat.RGBToColor(255, 255, 255);
+			font->drawString(&overlayBuffer, hotspots[i].name, textX, textY, overlayWidth - textX, textColor, Graphics::kTextAlignLeft);
+		}
+	}
+
+	g_system->copyRectToOverlay(overlayBuffer.getPixels(), overlayBuffer.pitch, 0, 0, overlayWidth, overlayHeight);
+	overlayBuffer.free();
+}
+
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
@@ -778,8 +868,9 @@ void Engine::openMainMenuDialog() {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
 			Common::U32String failMessage = Common::U32String::format(_("Failed to load saved game (%s)! "
-				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+																		"Please consult the README for basic information, and for "
+																		"instructions on how to obtain further assistance."),
+																	  status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}
@@ -801,11 +892,11 @@ bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 			g_gui.initTextToSpeech();
 		}
 
-		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :
-				 _("WARNING: The game you are about to start is"
-			" not yet fully supported by ScummVM. As such, it is likely to be"
-			" unstable, and any saved game you make might not work in future"
-			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
+		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") : _("WARNING: The game you are about to start is"
+																																 " not yet fully supported by ScummVM. As such, it is likely to be"
+																																 " unstable, and any saved game you make might not work in future"
+																																 " versions of ScummVM."),
+								 _("Start anyway"), _("Cancel"));
 		int status = alert.runModal();
 
 		if (ttsMan != nullptr)
@@ -825,8 +916,8 @@ bool Engine::warnUserAboutUnsupportedAddOn(Common::String addOnName) {
 		}
 
 		Common::U32String messageFormat = _("WARNING: the game you are about to start contains the add-on \"%s\""
-			" which is not yet fully supported by ScummVM. As such, it is likely to be unstable, and any saved"
-			" game you make might not work in future versions of ScummVM.");
+											" which is not yet fully supported by ScummVM. As such, it is likely to be unstable, and any saved"
+											" game you make might not work in future versions of ScummVM.");
 
 		Common::U32String message = Common::U32String::format(messageFormat, addOnName.c_str());
 
@@ -850,7 +941,7 @@ void Engine::errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::S
 	}
 
 	Common::U32String messageFormat = _("The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be run independently."
-		" Please copy the add-on contents into a subdirectory of the base game, and start the base game itself.");
+										" Please copy the add-on contents into a subdirectory of the base game, and start the base game itself.");
 	Common::U32String message = Common::U32String::format(messageFormat, addOnName.c_str(), gameId.c_str());
 
 	GUI::MessageDialog(message).runModal();
@@ -1081,8 +1172,7 @@ void Engine::quitGame() {
 
 bool Engine::shouldQuit() {
 	Common::EventManager *eventMan = g_system->getEventManager();
-	return eventMan->shouldQuit() || eventMan->shouldReturnToLauncher()
-		|| _quitRequested;
+	return eventMan->shouldQuit() || eventMan->shouldReturnToLauncher() || _quitRequested;
 }
 
 GUI::Debugger *Engine::getOrCreateDebugger() {
