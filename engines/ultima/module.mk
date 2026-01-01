@@ -39,6 +39,7 @@ MODULE_OBJS += \
 	ultima0/gfx/map.o \
 	ultima0/gfx/monster.o \
 	ultima0/views/view.o \
+	ultima0/views/attack.o \
 	ultima0/views/castle.o \
 	ultima0/views/create_character.o \
 	ultima0/views/dungeon.o \

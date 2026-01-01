@@ -19,35 +19,23 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_ATTACK_H
+#define ULTIMA0_VIEWS_ATTACK_H
 
-#include "ultima/ultima0/views/attack.h"
-#include "ultima/ultima0/views/castle.h"
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/dungeon.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	Attack _attack;
-	Castle _castle;
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Dungeon _dungeon;
-	Info _info;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Attack : public View {
+public:
+	Attack();
+	~Attack() override {}
+
+	void draw() override;
+
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

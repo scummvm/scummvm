@@ -89,6 +89,11 @@ bool Dungeon::msgAction(const ActionMessage &msg) {
 	case KEYBIND_ENTER:
 		interact();
 		break;
+	case KEYBIND_ATTACK:
+		showMessage("\x9""Attack!");
+		_status.draw();		// Render the message before we switch views
+		addView("Attack");
+		break;
 	default:
 		showMessage("Huh???");
 		break;
