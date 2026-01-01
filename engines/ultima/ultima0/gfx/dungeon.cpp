@@ -193,9 +193,8 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 			HWLine(r.left + x, y, r.right - x, y);
 	}
 
-	// Scale (trial and error this :))
-	Scale = 0.1;
-	Scale = Scale / (r.right - r.left) * 1059.0;
+	// Scale for monsters/gold. Scale factor has been empirically chosen
+	Scale = 0.35 / (r.right - r.left) * s->w;
 
 	// Monster here ?
 	if (Monster > 0) {
@@ -206,7 +205,7 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	// Draw the gold (as a mimic)
 	if (Room == DT_GOLD) {
 		HWColour(COL_MONSTER);
-		Monster::draw(s, (r.left + r.right) / 2, r.bottom, MN_MIMIC, Scale);
+		Monster::draw(s, (r.left + r.right) / 2, r.top, MN_MIMIC, Scale);
 	}
 }
 

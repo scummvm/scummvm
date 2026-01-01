@@ -82,7 +82,7 @@ bool Dungeon::msgAction(const ActionMessage &msg) {
 		interact();
 		break;
 	default:
-		showMessage("");
+		showMessage("Huh???");
 		break;
 	}
 
@@ -102,6 +102,7 @@ bool Dungeon::msgKeypress(const KeypressMessage &msg) {
 		return true;
 
 	default:
+		showMessage("Huh???");
 		break;
 	}
 
@@ -125,7 +126,7 @@ void Dungeon::endOfTurn() {
 }
 
 void Dungeon::moveForward() {
-	const auto &dungeon = g_engine->_dungeon;
+	auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
 	COORD New = player.Dungeon + player.DungDir;
 
@@ -135,7 +136,42 @@ void Dungeon::moveForward() {
 	// Set new position
 	player.Dungeon = New;
 
-	// TODO: other stuff
+	// What's here ?
+	int n = dungeon.Map[player.Dungeon.x][player.Dungeon.y];
+
+	if (n == DT_PIT) {
+		// Fell in a pit
+		player.Level++;					// Down a level
+		showMessage("Aaarrrgghhh! A Trap !");
+		showLines(Common::String::format("Falling to Level %d.", player.Level));
+
+		player.Attr[AT_HP] -= (3 + urand() % (3 * player.Level));
+		dungeon.create(player);		// Create the new level
+	} else if (n == DT_GOLD) {
+		// Gold here
+		// Remove the gold
+		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_SPACE;
+		int gold = (urand() % (5 * player.Level)) + player.Level;	// Calculate amount
+
+		showMessage("Gold !!!!!");
+		Common::String msg = Common::String::format("%d pieces of eight ", gold);
+		player.Attr[AT_GOLD] = MIN<int>(player.Attr[AT_GOLD] + gold, 9999);	// Add to total
+
+		if (gold > 0) {
+			int objNum = urand() % MAX_OBJ;		// Decide which object
+			const char *name = OBJECT_INFO[objNum].Name;
+			const char *prefix = "a";			// Decide a,an or some
+			if (strchr("aeiou", tolower(*name)))
+				prefix = "an";
+			if (objNum == 0)
+				prefix = "some";
+
+			msg += Common::String::format("\nand %s %s.", prefix, name);
+			player.Object[objNum] = MIN<int>(player.Object[objNum] + 1, 9999);	// Bump the total
+		}
+
+		showLines(msg);
+	}
 }
 
 void Dungeon::interact() {

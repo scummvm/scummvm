@@ -32,10 +32,10 @@ Monster::DrawFn Monster::DRAW_FUNCTIONS[] = {
 };
 int Monster::xPos = 640;
 int Monster::yPos = 512;
+constexpr int color = COL_MONSTER;
 
 #define	END		(-9999.99)					/* End marker */
 
-#define HWColour(IDX)   color = IDX
 #define	X(n)			(x1 + w * (n)/10)
 #define	Y(n)			(y1 + h * (n)/10)
 #define HWLine(X1, Y1, X2, Y2) s->drawLine(X1, Y1, X2, Y2, color)
@@ -57,7 +57,6 @@ void Monster::draw(Graphics::ManagedSurface *s, int x, int y,
 void Monster::_HPlot(Graphics::ManagedSurface *s, double x, double y, ...) {
 	va_list alist;
 	double y1, x1;
-	int color = 0;
 
 	// Start reading values
 	va_start(alist, y);
@@ -66,7 +65,7 @@ void Monster::_HPlot(Graphics::ManagedSurface *s, double x, double y, ...) {
 		x1 = va_arg(alist, double);			// Get the next two
 		y1 = va_arg(alist, double);
 		if (x1 != END && y1 != END)			// If legit, draw the line
-			HWLine(xPos + x, yPos - y, xPos + x1, yPos - y1);
+			HWLine(xPos + x, yPos + y, xPos + x1, yPos + y1);
 		x = x1; y = y1;
 	} while (x1 != END && y1 != END);
 
