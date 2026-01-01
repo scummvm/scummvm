@@ -517,6 +517,7 @@ void ToucheEngine::runCycle() {
 	processAnimationTable();
 	updateKeyCharTalk(0);
 	updateDirtyScreenAreas();
+	drawHotspots();
 	++_flagsTable[295];
 	++_flagsTable[296];
 	++_flagsTable[297];
@@ -1502,6 +1503,67 @@ void ToucheEngine::drawHitBoxes() {
 			_programHitBoxTable[i].state = state & 0x7FFF;
 			addToDirtyRect(_programHitBoxTable[i].hitBoxes[1]);
 		}
+	}
+}
+
+void ToucheEngine::getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots) {
+	if (_flagsTable[618] != 0)
+		return;
+
+	int scrollX = _flagsTable[614];
+	int scrollY = _flagsTable[615];
+
+	for (uint i = 0; i < _programHitBoxTable.size(); ++i) {
+		const ProgramHitBoxData &hitBox = _programHitBoxTable[i];
+
+		if (hitBox.item & 0x1000)
+			break;
+
+		if (hitBox.item & 0x2000)
+			continue;
+
+		if (hitBox.hitBoxes[0].top & 0x4000)
+			continue;
+
+		int16 str = hitBox.str;
+		int screenX, screenY;
+
+		if (hitBox.item & 0x4000) {
+			const KeyChar *keyChar = &_keyCharsTable[hitBox.item & ~0x4000];
+			if (keyChar->num == 0 || (keyChar->flags & 0x4000))
+				continue;
+			if (keyChar->strNum != 0)
+				str = hitBox.defaultStr;
+
+			const Common::Rect &charRect = keyChar->prevBoundingRect;
+			if (!charRect.isValidRect())
+				continue;
+
+			screenX = (charRect.left + charRect.right) / 2;
+			screenY = (charRect.top + charRect.bottom) / 2;
+		} else {
+			const Common::Rect &objRect = hitBox.hitBoxes[0];
+			if (!objRect.isValidRect())
+				continue;
+
+			int centerX = (objRect.left + objRect.right) / 2;
+			int centerY = (objRect.top + objRect.bottom) / 2;
+
+			screenX = centerX - scrollX;
+			screenY = centerY - scrollY;
+		}
+
+		if (screenX < 0 || screenX >= kScreenWidth || screenY < 0 || screenY >= kRoomHeight)
+			continue;
+
+		Common::String name;
+		if (str > 0) {
+			const char *strData = getString(str);
+			if (strData)
+				name = Common::String(strData);
+		}
+
+		hotspots.push_back(HotspotDisplayInfo(Common::Point(screenX, screenY), name));
 	}
 }
 

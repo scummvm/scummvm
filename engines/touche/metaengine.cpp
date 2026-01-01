@@ -131,6 +131,11 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
+	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
+	act->setKeyEvent(KeyState(KEYCODE_h, 'h'));
+	act->addDefaultInputMapping("h");
+	engineKeyMap->addAction(act);
+
 	{
 		act = new Action("SKIPORQUIT", _("Skip sequence / open quit dialog"));
 		act->setCustomEngineActionEvent(kToucheActionSkipOrQuit);
