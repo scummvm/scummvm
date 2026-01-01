@@ -43,6 +43,14 @@ struct Interface : public M4::Interface {
 			int16 relaxed, int16 over, int16 picked, int sprite) :
 			ButtonClass(r, btnName, tag, relaxed, over, picked, sprite) {}
 		~BackpackClass() override {}
+
+		void swap_sprites() {
+			const int16 picked = _picked;
+			const int16 over = _over;
+
+			_picked = over;
+			_relaxed = _over = picked;
+		}
 	};
 
 private:
