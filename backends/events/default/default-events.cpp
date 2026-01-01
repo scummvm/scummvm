@@ -114,10 +114,20 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
 		}
+
+		// Show hotspots while 'h' key is held down
+		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
+			g_engine->setShowHotspots(true);
+		}
 		break;
 
 	case Common::EVENT_KEYUP:
 		_modifierState = event.kbd.flags;
+
+		// Hide hotspots when 'h' key is released
+		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
+			g_engine->setShowHotspots(false);
+		}
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
