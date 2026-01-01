@@ -220,6 +220,92 @@ Font *gr_font_get() {
 	return _G(font);
 }
 
+static void get_base_char(byte c, byte &base, int &accent) {
+	base = c;
+	accent = 0;
+
+	// Only apply mapping if the original character has no width (is invisible)
+	// This ensures we don't override valid characters in other fonts.
+	// Mapping:
+	// 0x80-0x84: á, é, í, ó, ú -> a, e, i, o, u (Acute)
+	// 0x85: ñ -> n (Tilde)
+	// 0x86-0x8A: Á, É, Í, Ó, Ú -> A, E, I, O, U (Acute)
+	// 0x8B: Ñ -> N (Tilde)
+	// 0x8C: ü -> u (Umlaut)
+	// 0x8D: ¡ -> !
+	// 0x8E: ¿ -> ?
+
+	switch (c) {
+	case 0x80: base = 'a'; accent = 1; break;
+	case 0x8F: base = 'e'; accent = 1; break;
+	case 0x91: base = 'i'; accent = 1; break;
+	case 0x83: base = 'o'; accent = 1; break;
+	case 0x84: base = 'u'; accent = 1; break;
+	case 0x85: base = 'n'; accent = 2; break;
+	case 0x86: base = 'A'; accent = 1; break;
+	case 0x87: base = 'E'; accent = 1; break;
+	case 0x88: base = 'I'; accent = 1; break;
+	case 0x89: base = 'O'; accent = 1; break;
+	case 0x8A: base = 'U'; accent = 1; break;
+	case 0x8B: base = 'N'; accent = 2; break;
+	case 0x8C: base = 'u'; accent = 3; break;
+	case 0x8D: base = '!'; break;
+	case 0x8E: base = '?'; break;
+	default: break;
+	}
+}
+
+static void draw_accent(Buffer *target, int accent, int32 cursX, int32 y, int32 wdth, int32 skipTop, byte base_c) {
+	// Draw accent
+	int centerX = cursX + wdth / 2;
+	int accentY = y;
+
+	// Adjust for uppercase letters
+	// We don't change accentY to avoid going out of bounds (which might make it invisible)
+	// Instead, we just use a different drawing pattern or position for the accent pixels relative to y.
+
+	// Ensure we have a valid color
+	byte color = font_colors[3]; // Use foreground color
+
+	if (skipTop == 0 && accentY >= 0 && accentY < target->h) {
+		byte *acc_ptr = gr_buffer_pointer(target, centerX, accentY);
+
+		if (base_c >= 'A' && base_c <= 'Z') {
+			if (accent == 1) { // Acute
+				if (centerX < target->w) *acc_ptr = color;
+				if (centerX + 1 < target->w && accentY - 1 >= 0) *(acc_ptr - target->stride + 1) = color;
+				else if (centerX + 1 < target->w && accentY + 1 < target->h) *(acc_ptr + target->stride + 1) = color; // Fallback down
+			} else if (accent == 2) { // Tilde
+				if (centerX - 1 >= 0) *(acc_ptr - 1) = color;
+				if (centerX + 1 < target->w) *(acc_ptr + 1) = color; // Simplified flat line if space is tight
+				if (accentY - 1 >= 0 && centerX < target->w) *(acc_ptr - target->stride) = color; // Middle up
+			} else if (accent == 3) { // Umlaut
+				if (centerX - 1 >= 0) *(acc_ptr - 1) = color;
+				if (centerX + 1 < target->w) *(acc_ptr + 1) = color;
+			}
+		} else {
+			// Lowercase letters
+			int offset = 4 * target->stride;
+			if (accentY + 4 < target->h) {
+				acc_ptr += offset;
+				accentY += 4;
+			}
+
+			if (accent == 1) { // Acute
+				if (centerX < target->w) *acc_ptr = color;
+				if (centerX + 1 < target->w && accentY - 1 >= 0) *(acc_ptr - target->stride + 1) = color;
+			} else if (accent == 2) { // Tilde
+				if (centerX - 1 >= 0) *acc_ptr = color;
+				if (centerX + 1 < target->w) *(acc_ptr + 2) = color;
+				if (centerX + 1 < target->w) *(acc_ptr + 1) = color; // Fill middle
+			} else if (accent == 3) { // Umlaut
+				if (centerX - 1 >= 0) *(acc_ptr - 1) = color;
+				if (centerX + 1 < target->w) *(acc_ptr + 1) = color;
+			}
+		}
+	}
+}
+
 int32 gr_font_string_width(char *out_string, int32 auto_spacing) {
 	if (_G(custom_ascii_converter)) {			 // if there is a function to convert the extended ASCII characters
 		_G(custom_ascii_converter)(out_string);	 // call it with the string
@@ -229,8 +315,17 @@ int32 gr_font_string_width(char *out_string, int32 auto_spacing) {
 	byte *widthArray = _G(font)->width;
 
 	while (*out_string) {
-		width += widthArray[(byte)*out_string] + auto_spacing;
-		out_string++;
+		byte c = *out_string++;
+		if (_G(font) == _G(interfaceFont))
+			c &= 0x7f;
+
+		byte base_c = c;
+		int accent = 0;
+		if (widthArray[c] == 0) {
+			get_base_char(c, base_c, accent);
+		}
+
+		width += widthArray[base_c] + auto_spacing;
 	}
 
 	return width;
@@ -297,8 +392,17 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 	short *offsetArray = _G(font)->offset;
 
 	while (*out_string) {
-		const byte c = (*out_string++) & 0x7f;
-		const int32 wdth = widthArray[c];
+		byte c = *out_string++;
+		if (_G(font) == _G(interfaceFont))
+			c &= 0x7f;
+
+		byte base_c = c;
+		int accent = 0;
+		if (widthArray[c] == 0) {
+			get_base_char(c, base_c, accent);
+		}
+
+		const int32 wdth = widthArray[base_c];
 
 		// if width is zero, nothing to draw
 
@@ -306,41 +410,49 @@ int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w,
 			if ((cursX + wdth) >= target_w) 			// if character doesn't fit in buffer, abort
 				return cursX;
 
-			const int32 offset = offsetArray[c];
+			const int32 offset = offsetArray[base_c];
 			Byte *charData = &fontPixData[offset];
+			const int32 bytesInChar = (_G(font)->width[base_c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
 
-			const int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; // bytesPer[wdth];	// 2 bits per pixel
 			if (skipTop)
 				charData += bytesInChar * skipTop;
 
 			for (int32 i = 0; i < height; i++) {
+				byte *line_ptr = target_ptr;
 				for (int32 j = 0; j < bytesInChar; j++) {
 					const Byte workByte = *charData++;
 					if (workByte & 0xc0)
-						*target_ptr = font_colors[(workByte & 0xc0) >> 6];
-					target_ptr++;
+						*line_ptr = font_colors[(workByte & 0xc0) >> 6];
+					line_ptr++;
 					if (workByte & 0x30)
-						*target_ptr = font_colors[(workByte & 0x30) >> 4];
-					target_ptr++;
+						*line_ptr = font_colors[(workByte & 0x30) >> 4];
+					line_ptr++;
 					if (workByte & 0xc)
-						*target_ptr = font_colors[(workByte & 0xc) >> 2];
-					target_ptr++;
+						*line_ptr = font_colors[(workByte & 0xc) >> 2];
+					line_ptr++;
 					if (workByte & 0x3)
-						*target_ptr = font_colors[workByte & 0x3];
-					target_ptr++;
+						*line_ptr = font_colors[workByte & 0x3];
+					line_ptr++;
 
 				} // end bytes per character line loop
 
-				target_ptr += target->stride - (bytesInChar << 2);
+				target_ptr += target->stride;
 
 			} // end for height loop
+
+			if (accent) {
+				draw_accent(target, accent, cursX, y, wdth, skipTop, base_c);
+			}
 
 			target_ptr = prev_target_ptr + wdth + auto_spacing; // one pixel space
 			prev_target_ptr = target_ptr;
 
 		} // end if there was a drawable character
 
-		cursX += w;
+		if (w)
+			cursX += w;
+		else
+			cursX += wdth + auto_spacing;
 	} // end while there is a character to draw loop
 
 	return cursX;

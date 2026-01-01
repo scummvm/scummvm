@@ -24,11 +24,93 @@
 #include "m4/riddle/inventory.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Riddle {
 
 Vars *g_vars;
+
+static void spanish_ascii_converter(char *str) {
+	while (*str) {
+		byte c = (byte)*str;
+		switch (c) {
+		case 0xA0: // á CP850
+		case 0xE1: // á ISO-8859-1
+			*str = 0x80;
+			break;
+		case 0x82: // é CP850
+		case 0xE9: // é ISO-8859-1
+			*str = 0x8F;
+			break;
+		case 0xA1: // í CP850
+		case 0xED: // í ISO-8859-1
+			*str = 0x91;
+			break;
+		case 0xA2: // ó CP850
+		case 0xF3: // ó ISO-8859-1
+			*str = 0x83;
+			break;
+		case 0xA3: // ú CP850
+		case 0xFA: // ú ISO-8859-1
+			*str = 0x84;
+			break;
+		case 0xA4: // ñ CP850
+		case 0xF1: // ñ ISO-8859-1
+			*str = 0x85;
+			break;
+		// Uppercase
+		case 0xB5: // Á CP850
+		case 0xC1: // Á ISO-8859-1
+			*str = 0x86;
+			break;
+		case 0x90: // É CP850
+		case 0xC9: // É ISO-8859-1
+			*str = 0x87;
+			break;
+		case 0xD6: // Í CP850
+		case 0xCD: // Í ISO-8859-1
+			*str = 0x88;
+			break;
+		case 0xE0: // Ó CP850 (Wait, 0xE0 is alpha in CP437, but usually Ó in 850)
+		case 0xD3: // Ó ISO-8859-1
+			*str = 0x89;
+			break;
+		// case 0xE9: // Ú CP850 - Conflict with é (ISO). Prioritize é.
+		// 	*str = 0x81; 
+		// 	break;
+		case 0xDA: // Ú ISO-8859-1
+			*str = 0x8A;
+			break;
+		
+		case 0xA5: // Ñ CP850
+		case 0xD1: // Ñ ISO-8859-1
+			*str = 0x8B;
+			break;
+		
+		case 0x81: // ü CP850
+		case 0xFC: // ü ISO-8859-1
+			*str = 0x8C;
+			break;
+			
+		case 0xAD: // ¡ CP850
+		// case 0xA1: // ¡ ISO-8859-1 - Conflict with í (CP850). Prioritize í.
+		// 	*str = 0x82; 
+		// 	break;
+		// Special case for ISO ¡ if distinct?
+		// ISO ¡ is 0xA1.
+		// CP850 ¡ is 0xAD.
+			
+		case 0xA8: // ¿ CP850
+		case 0xBF: // ¿ ISO-8859-1
+			*str = 0x8E;
+			break;
+		default:
+			break;
+		}
+		str++;
+	}
+}
 
 Vars::Vars() {
 	g_vars = this;
@@ -83,6 +165,10 @@ void Vars::initialize_game() {
 	_G(flags)[V270] = 824;
 	_G(flags)[V282] = 1;
 	_G(flags)[V292] = 1;
+
+	if (g_engine->getLanguage() == Common::ES_ESP) {
+		_G(custom_ascii_converter) = spanish_ascii_converter;
+	}
 }
 
 } // namespace Riddle
