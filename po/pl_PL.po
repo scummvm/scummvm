@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-12-29 13:13+0000\n"
+"POT-Creation-Date: 2026-01-01 20:46+0000\n"
 "PO-Revision-Date: 2025-08-14 14:36+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -12513,7 +12513,7 @@ msgstr ""
 "Zastąp muzykę, efekty dźwiękowe i klipy mowy zmodyfikowanymi plikami "
 "dźwiękowymi, jeśli są dostępne."
 
-#: engines/scumm/dialogs.cpp:1839
+#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
 msgid "Multiplayer Server:"
 msgstr "Serwer trybu wieloosobowego:"
 
@@ -12539,11 +12539,11 @@ msgstr ""
 "Włącza niestandardowe modyfikacje przeznaczone do rywalizacji w trybie "
 "online."
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid "Enable connection to Multiplayer Server"
 msgstr "Włącz połączenie z serwerem trybu wieloosobowego"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12551,24 +12551,24 @@ msgstr ""
 "Umożliwia połączenie z serwerem, który oferuje hostowanie i dołączanie do "
 "gier online dla wielu graczy przez Internet."
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Host games over LAN"
 msgstr "Hostuj gry przez sieć LAN"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "Umożliwia wykrywanie sesji gry w sieci lokalnej."
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Generate random maps"
 msgstr "Generuj losowe mapy"
 
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "Zezwalaj na losowe generowanie map (na podstawie konsoli Moonbase)."
 
-#: engines/scumm/dialogs.cpp:1860
+#: engines/scumm/dialogs.cpp:1866
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."

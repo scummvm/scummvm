@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-12-29 13:13+0000\n"
+"POT-Creation-Date: 2026-01-01 20:46+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -12448,7 +12448,7 @@ msgid ""
 "available."
 msgstr "若可用则将音乐、音效与语音片段替换为修改文件。"
 
-#: engines/scumm/dialogs.cpp:1839
+#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
 msgid "Multiplayer Server:"
 msgstr "多人游戏服务器："
 
@@ -12470,34 +12470,34 @@ msgstr "启用在线竞争模组"
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "允许为在线竞技游戏设计的自定义更改。"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid "Enable connection to Multiplayer Server"
 msgstr "允许连接到多人游戏服务器"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr "开关服务器连接，用于在互联网上主持与加入在线多人游戏。"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Host games over LAN"
 msgstr "在局域网主持游戏"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "允许游戏会话在局域网范围被发现。"
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Generate random maps"
 msgstr "生成随机地图"
 
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "允许随机生成地图（基于 Moonbase 主机）。"
 
-#: engines/scumm/dialogs.cpp:1860
+#: engines/scumm/dialogs.cpp:1866
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."

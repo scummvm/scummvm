@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-12-29 13:13+0000\n"
+"POT-Creation-Date: 2026-01-01 20:46+0000\n"
 "PO-Revision-Date: 2025-10-05 13:36+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -12608,7 +12608,7 @@ msgid ""
 "available."
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
-#: engines/scumm/dialogs.cpp:1839
+#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
 msgid "Multiplayer Server:"
 msgstr "マルチプレイサーバー："
 
@@ -12635,11 +12635,11 @@ msgstr "オンライン対戦MODの有効化"
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "オンライン対戦を想定したカスタムMODが利用可能です。"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid "Enable connection to Multiplayer Server"
 msgstr "マルチプレイサーバーへの接続を許可"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12647,24 +12647,24 @@ msgstr ""
 "オンラインマルチプレイのホストおよび参加を可能とするサーバーへの接続を切り替"
 "えます。"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Host games over LAN"
 msgstr "LANでゲームを開催"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "セッションをローカルネットワーク上で発見できるようにします。"
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Generate random maps"
 msgstr "マップをランダム生成"
 
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "ランダムなマップ生成を許可(Moonbase Consoleに基づく)。"
 
-#: engines/scumm/dialogs.cpp:1860
+#: engines/scumm/dialogs.cpp:1866
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."

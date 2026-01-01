@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-12-29 13:13+0000\n"
+"POT-Creation-Date: 2026-01-01 20:46+0000\n"
 "PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -12073,7 +12073,7 @@ msgid ""
 msgstr ""
 "가능하다면, 음악, 사운드 효과, 음성 클립을 수정된 오디오 파일로 교체하세요."
 
-#: engines/scumm/dialogs.cpp:1839
+#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
 msgid "Multiplayer Server:"
 msgstr "멀티플레이어 서버:"
 
@@ -12097,11 +12097,11 @@ msgstr "온라인 경쟁 개조 활성화"
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "온라인 경쟁 플레이에 맞춰 맞춤형 수정이 가능합니다."
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid "Enable connection to Multiplayer Server"
 msgstr "멀티플레이어 서버 연결 활성화"
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12109,24 +12109,24 @@ msgstr ""
 "인터넷을 통해 온라인 멀티플레이어 게임을 호스팅하고 참여할 수 있는 서버와의 "
 "연결을 전환합니다."
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Host games over LAN"
 msgstr "LAN을 통한 게임 호스팅"
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "로컬 영역 네트워크를 통해 게임 세션을 검색할 수 있습니다."
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Generate random maps"
 msgstr "무작위 지도 생성"
 
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "무작위 맵 생성을 허용합니다 (Moonbase 콘솔 기반)."
 
-#: engines/scumm/dialogs.cpp:1860
+#: engines/scumm/dialogs.cpp:1866
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
