@@ -273,8 +273,19 @@ void SoundHandler::pcspkr_player() {
 	static const uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
 
 	// Does the user not want any sound?
-	if (!_vm->_config._soundFl || !_vm->_mixer->isReady())
+	if (!_vm->_config._soundFl) {
+		// If user turned off sound during a song then stop note and song
+		if (_DOSSongPtr != nullptr && *_DOSSongPtr != '\0') {
+			_speaker->stop();
+			// Advance to end of song
+			while (*_DOSSongPtr != '\0') {
+				_DOSSongPtr++;
+			}
+		}
 		return;
+	} else if (!_vm->_mixer->isReady()) {
+		return;
+	}
 
 	// Is there no song?
 	if (!_DOSSongPtr)
