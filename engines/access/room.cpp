@@ -654,7 +654,7 @@ void Room::doCommands() {
 			mainAreaClick();
 		}
 	} else if (_vm->_events->getAction(action)) {
-		const AccessActionCode *actionCodes = (_vm->getGameID() == kGameMartianMemorandum) ? MARTIAN_ACTION_CODES : AMAZON_ACTION_CODES;
+		const AccessActionCode *actionCodes = _vm->getActionCodes();
 		for (int i = 0; actionCodes[i]._action != kActionNone; ++i) {
 			if (actionCodes[i]._action == action) {
 				handleCommand(actionCodes[i]._code);

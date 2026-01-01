@@ -594,4 +594,56 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 bool AccessEngine::shouldQuitOrRestart() {
 	return shouldQuit() || _restartFl;
 }
+
+static const AccessActionCode AMAZON_ACTION_CODES[] = {
+	{ kActionLook, 1 },
+	{ kActionUse, 2 },
+	{ kActionTake, 3 },
+	{ kActionInventory, 4 },
+	{ kActionClimb, 5 },
+	{ kActionTalk, 6 },
+	{ kActionWalk, 7 },
+	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
+};
+
+static const AccessActionCode MARTIAN_ACTION_CODES[] = {
+	{ kActionLook, 0 },
+	{ kActionOpen, 1 },
+	{ kActionMove, 2 },
+	{ kActionTake, 3 },
+	{ kActionUse, 4 },
+	{ kActionWalk, 5 },
+	{ kActionTalk, 6 },
+	{ kActionTravel, 7 },
+	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
+};
+
+static const AccessActionCode NOCTROPOLIS_ACTION_CODES[] = {
+    { kActionLook,      0, },
+    { kActionOpen,      1, },
+    { kActionMove,      2, },
+    { kActionTake,      3, },
+    { kActionTalk,      4, },
+    { kActionUse,       5, },
+    { kActionWalk,      6, },
+    { kActionInventory, 7, },
+    { kActionTravel,    8, },
+    { kActionOptions,   9, },
+    { kActionSaveLoad,  10 },
+	{ kActionNone, -1 },
+};
+
+const AccessActionCode *AccessEngine::getActionCodes() {
+	switch (getGameID()) {
+	case kGameMartianMemorandum: return MARTIAN_ACTION_CODES;
+	case kGameAmazon: 			 return AMAZON_ACTION_CODES;
+	case kGameNoctropolis: 		 return NOCTROPOLIS_ACTION_CODES;
+	default: error("Unsupported game ID for action codes: %d", getGameID());
+	}
+}
+
 } // End of namespace Access
