@@ -84,7 +84,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttputt", "Putt-Putt Joins the Parade" },
 	{ "arttime", "Blue's Art Time Activities" },
 	{ "baseball2001", "Backyard Baseball 2001" },
-	{ "Baseball2003", "Backyard Baseball 2003" },
+	{ "baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
 	{ "football2002", "Backyard Football 2002" },
 	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cove" },
@@ -368,7 +368,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"moonbase", "Demo", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR | GF_DEMO, UNK, GUIO5(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_NETWORK, GAMEOPTION_TTS)},
 
 	// HE100 games, which use older o72_debugInput code
-	{"Baseball2003", 0, 0, GID_BASEBALL2003, 6, 101, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO4(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_TTS)},
+	{"baseball2003", 0, 0, GID_BASEBALL2003, 6, 101, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO4(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_TTS)},
 	{"basketball", 0, 0, GID_BASKETBALL, 6, 101, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK, GUIO4(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_TTS)},
 	{"football2002", 0, 0, GID_FOOTBALL2002, 6, 101, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO5(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_NETWORK, GAMEOPTION_TTS)},
 
@@ -535,8 +535,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "baseball2001", "Baseball 2001", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "baseball2001", "baseball 2001", kGenHEPC, UNK_LANG, UNK, 0 },
 
-	{ "Baseball2003", "Baseball2003", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "Baseball2003", "Baseball 2003", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball2003", "Baseball2003", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "baseball2003", "Baseball 2003", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "basketball", "basketball", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
