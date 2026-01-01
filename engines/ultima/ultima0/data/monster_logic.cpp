@@ -42,13 +42,13 @@ void MonsterLogic::checkForAttacks(PLAYER &p, DUNGEONMAP &d) {
 
 			// If within range
 			if (Dist < 1.3)
-				Attacked = _MONSTAttack(m, p);
+				Attacked = attack(m, p);
 
 			// If didn't attack, then move
 			if (Attacked == 0) {
 				// Mimics only if near enough
 				if (m.Type != MN_MIMIC || Dist >= 3.0)
-					_MONSTMove(m, p, d);
+					move(m, p, d);
 
 				// Recovers if didn't attack
 				if (m.Strength < p.Level * p.Skill)
@@ -62,13 +62,13 @@ void MonsterLogic::showLines(const Common::String &msg) {
 	g_events->send("DungeonStatus", GameMessage("LINES", msg));
 }
 
-int MonsterLogic::_MONSTAttack(MONSTER &m, PLAYER &p) {
+int MonsterLogic::attack(MONSTER &m, PLAYER &p) {
 	int n;
 
 	if (m.Type == MN_GREMLIN ||		// Special case for Gremlin/Thief
 		m.Type == MN_THIEF)
 		if (RND() > 0.5)			// Half the time
-			return _MONSTSteal(m, p);
+			return steal(m, p);
 
 	Common::String msg = Common::String::format("You are being attacked by a %s !!!.\n",
 		MONSTER_INFO[m.Type].Name);
@@ -92,7 +92,7 @@ int MonsterLogic::_MONSTAttack(MONSTER &m, PLAYER &p) {
 	return 1;
 }
 
-void MonsterLogic::_MONSTMove(MONSTER &m, PLAYER &p, DUNGEONMAP &d) {
+void MonsterLogic::move(MONSTER &m, PLAYER &p, DUNGEONMAP &d) {
 	int x, y, xi, yi;
 
 	// Calculate direction
@@ -112,25 +112,25 @@ void MonsterLogic::_MONSTMove(MONSTER &m, PLAYER &p, DUNGEONMAP &d) {
 
 	// Check move okay
 	if (ABS(xi) > ABS(yi)) {
-		if (_MONSTCanMoveTo(d, x + xi, yi)) yi = 0;
-		else if (_MONSTCanMoveTo(d, x, y + yi)) xi = 0;
+		if (canMoveTo(d, x + xi, yi)) yi = 0;
+		else if (canMoveTo(d, x, y + yi)) xi = 0;
 	} else {
-		if (_MONSTCanMoveTo(d, x, y + yi)) xi = 0;
-		else if (_MONSTCanMoveTo(d, x + xi, yi)) yi = 0;
+		if (canMoveTo(d, x, y + yi)) xi = 0;
+		else if (canMoveTo(d, x + xi, yi)) yi = 0;
 	}
 
 	if (xi == 0 && yi == 0)
 		return;		// No move
 
 	x = x + xi; y = y + yi;				// Work out new position
-	if (!_MONSTCanMoveTo(d, x, y))	// Fail if can't move there
+	if (!canMoveTo(d, x, y))	// Fail if can't move there
 		return;
 	if (x == p.Dungeon.x &&			// Can't move onto us
 		y == p.Dungeon.y) return;
 	m.Loc.x = x; m.Loc.y = y;			// Move to new position
 }
 
-bool MonsterLogic::_MONSTCanMoveTo(DUNGEONMAP &d, int x, int y) {
+bool MonsterLogic::canMoveTo(DUNGEONMAP &d, int x, int y) {
 	COORD c;
 	int t = d.Map[x][y];				// See what's there
 	if (!ISWALKTHRU(t)) return 0;		// Can't walk through walls
@@ -140,7 +140,7 @@ bool MonsterLogic::_MONSTCanMoveTo(DUNGEONMAP &d, int x, int y) {
 	return d.findMonster(c) < 0;
 }
 
-int MonsterLogic::_MONSTSteal(MONSTER &m, PLAYER &p) {
+int MonsterLogic::steal(MONSTER &m, PLAYER &p) {
 	int n;
 	const char *s1, *s2;
 

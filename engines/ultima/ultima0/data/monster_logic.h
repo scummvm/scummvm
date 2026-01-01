@@ -37,22 +37,22 @@ private:
 	/**
 	 * Monster Attacks
 	 */
-	static int _MONSTAttack(MONSTER &m, PLAYER &p);
+	static int attack(MONSTER &m, PLAYER &p);
 
 	/**
 	 * Monster Moves
 	 */
-	static void _MONSTMove(MONSTER &m, PLAYER &p, DUNGEONMAP &d);
+	static void move(MONSTER &m, PLAYER &p, DUNGEONMAP &d);
 
 	/**
 	 * Can monster move to a square
 	 */
-	static bool _MONSTCanMoveTo(DUNGEONMAP &d, int x, int y);
+	static bool canMoveTo(DUNGEONMAP &d, int x, int y);
 
 	/**
 	 * Monster Stealing
 	 */
-	static int _MONSTSteal(MONSTER &m, PLAYER &p);
+	static int steal(MONSTER &m, PLAYER &p);
 
 public:
 	/**

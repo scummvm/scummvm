@@ -33,10 +33,10 @@
 namespace Ultima {
 namespace Ultima0 {
 
-static int _MONSTAttack(MONSTER *, PLAYER *);
-static int _MONSTSteal(MONSTER *, PLAYER *);
-static void _MONSTMove(MONSTER *, PLAYER *, DUNGEONMAP *);
-static int _MONSTCanMoveTo(DUNGEONMAP *, int, int);
+static int attack(MONSTER *, PLAYER *);
+static int steal(MONSTER *, PLAYER *);
+static void move(MONSTER *, PLAYER *, DUNGEONMAP *);
+static int canMoveTo(DUNGEONMAP *, int, int);
 
 /************************************************************************/
 /*																		*/
@@ -58,12 +58,12 @@ void MONSTAttack(PLAYER *p, DUNGEONMAP *d) {
 		{
 			Attacked = 0;
 			if (Dist < 1.3)					/* If within range */
-				Attacked = _MONSTAttack(m, p);
+				Attacked = attack(m, p);
 			if (Attacked == 0)				/* If didn't attack, then move */
 			{
 				if (m->Type != MN_MIMIC ||  /* Mimics only if near enough */
 					Dist >= 3.0)
-					_MONSTMove(m, p, d);
+					move(m, p, d);
 				if (m->Strength <			/* Recovers if didn't attack */
 					p->Level * p->Skill)
 					m->Strength = m->Strength + p->Level;
@@ -78,13 +78,13 @@ void MONSTAttack(PLAYER *p, DUNGEONMAP *d) {
 /*																		*/
 /************************************************************************/
 
-static int _MONSTAttack(MONSTER *m, PLAYER *p) {
+static int attack(MONSTER *m, PLAYER *p) {
 	int n;
 
 	if (m->Type == MN_GREMLIN ||		/* Special case for Gremlin/Thief */
 		m->Type == MN_THIEF)
 		if (RND() > 0.5)			/* Half the time */
-			return _MONSTSteal(m, p);
+			return steal(m, p);
 
 	DRAWText("You are being attacked by a %s !!!.\n",
 		GLOMonsterName(m->Type));
@@ -111,7 +111,7 @@ static int _MONSTAttack(MONSTER *m, PLAYER *p) {
 /*																		*/
 /************************************************************************/
 
-static void _MONSTMove(MONSTER *m, PLAYER *p, DUNGEONMAP *d) {
+static void move(MONSTER *m, PLAYER *p, DUNGEONMAP *d) {
 	int x, y, xi, yi;
 
 	xi = yi = 0;						/* Calculate direction */
@@ -129,16 +129,16 @@ static void _MONSTMove(MONSTER *m, PLAYER *p, DUNGEONMAP *d) {
 
 	if (abs(xi) > abs(yi))				/* Check move okay */
 	{
-		if (_MONSTCanMoveTo(d, x + xi, yi)) yi = 0;
-		else if (_MONSTCanMoveTo(d, x, y + yi)) xi = 0;
+		if (canMoveTo(d, x + xi, yi)) yi = 0;
+		else if (canMoveTo(d, x, y + yi)) xi = 0;
 	} else
 	{
-		if (_MONSTCanMoveTo(d, x, y + yi)) xi = 0;
-		else if (_MONSTCanMoveTo(d, x + xi, yi)) yi = 0;
+		if (canMoveTo(d, x, y + yi)) xi = 0;
+		else if (canMoveTo(d, x + xi, yi)) yi = 0;
 	}
 	if (xi == 0 && yi == 0) return;		/* No move */
 	x = x + xi; y = y + yi;				/* Work out new position */
-	if (_MONSTCanMoveTo(d, x, y) == 0)	/* Fail if can't move there */
+	if (canMoveTo(d, x, y) == 0)	/* Fail if can't move there */
 		return;
 	if (x == p->Dungeon.x &&			/* Can't move onto us */
 		y == p->Dungeon.y) return;
@@ -151,7 +151,7 @@ static void _MONSTMove(MONSTER *m, PLAYER *p, DUNGEONMAP *d) {
 /*																		*/
 /************************************************************************/
 
-static int _MONSTCanMoveTo(DUNGEONMAP *d, int x, int y) {
+static int canMoveTo(DUNGEONMAP *d, int x, int y) {
 	COORD c;
 	int t = d->Map[x][y];				/* See what's there */
 	if (!ISWALKTHRU(t)) return 0;		/* Can't walk through walls */
@@ -165,7 +165,7 @@ static int _MONSTCanMoveTo(DUNGEONMAP *d, int x, int y) {
 /*																		*/
 /************************************************************************/
 
-static int _MONSTSteal(MONSTER *m, PLAYER *p) {
+static int steal(MONSTER *m, PLAYER *p) {
 	int n;
 	const char *s1, *s2;
 
