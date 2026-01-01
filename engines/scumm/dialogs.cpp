@@ -1836,19 +1836,25 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 	if (guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE))
 		_audioOverride = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.AudioOverride", _("Load modded audio"), _("Replace music, sound effects, and speech clips with modded audio files, if available."));
 
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
-	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
-
 	if (_gameid == "football" || _gameid == "baseball2001") {
 		// Lobby configuration (Do not include LAN settings)
 #ifdef USE_BASIC_NET
+		GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
+		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
 		text->setLabel(_("Online Server:"));
 		_lobbyServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.LobbyServerAddress", Common::U32String(""), _("Address of the server to connect to for online play.  It must start with either \"https://\" or \"http://\" schemas."));
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
 		_enableCompetitiveMods = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableCompetitiveMods", _("Enable online competitive mods"), _("Enables custom-made modifications intended for online competitive play."));
+
+		// Display network version
+		_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
 #endif
 	} else {
 		// Network configuration (Include LAN settings)
+		GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
+		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
 		_enableSessionServer = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableSessionServer", _("Enable connection to Multiplayer Server"), _("Toggles the connection to the server that allows hosting and joining online multiplayer games over the Internet."), kEnableSessionCmd);
 		_enableLANBroadcast = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableLANBroadcast", _("Host games over LAN"), _("Allows the game sessions to be discovered over your local area network."));
 
@@ -1860,10 +1866,10 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 		_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
 
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
-	}
 
-	// Display network version
-	_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
+		// Display network version
+		_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
+	}
 }
 
 void HENetworkGameOptionsWidget::load() {
@@ -1932,11 +1938,11 @@ bool HENetworkGameOptionsWidget::save() {
 
 void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_BASIC_NET
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 				.addPadding(0, 0, 12, 0)
 				.addWidget("AudioOverride", "Checkbox")
+#ifdef USE_BASIC_NET
 				.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 					.addPadding(0, 0, 12, 0)
 					.addWidget("SessionServerLabel", "OptionsLabel")
@@ -1945,9 +1951,9 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 				.closeLayout()
 				.addWidget("EnableCompetitiveMods", "Checkbox")
 				.addWidget("NetworkVersion", "")
+#endif
 			.closeLayout()
 		.closeDialog();
-#endif
 	} else {
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
