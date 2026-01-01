@@ -21,6 +21,7 @@
 
 #include "ultima/ultima0/views/dungeon.h"
 #include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/metaengine.h"
 #include "ultima/ultima0/gfx/font.h"
 #include "ultima/ultima0/gfx/dungeon.h"
 #include "ultima/ultima0/data/monster_logic.h"
@@ -35,6 +36,12 @@ Dungeon::Dungeon() : View("Dungeon") {
 bool Dungeon::msgFocus(const FocusMessage &msg) {
 	showMessage("");
 	showLines("");
+	MetaEngine::setKeybindingMode(KBMODE_DUNGEONS);
+	return true;
+}
+
+bool Dungeon::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return true;
 }
 

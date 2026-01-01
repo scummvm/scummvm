@@ -36,16 +36,29 @@ struct KeybindingRecord {
 	const char *_joy;
 };
 
-static const KeybindingRecord NORMAL_KEYS[] = {
-	{ KEYBIND_UP, "UP", _s("Up/Forward"), "UP", "JOY_UP" },
-	{ KEYBIND_DOWN, "DOWN", _s("Down/Backwards"), "DOWN", "JOY_DOWN" },
-	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT" },
-	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT" },
-	{ KEYBIND_SELECT, "INTERACT", _s("Interact"), "SPACE", "JOY_A" },
-	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
+static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
-	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
 
+static const KeybindingRecord OVERWORLD_KEYS[] = {
+	{ KEYBIND_UP, "UP", _s("North"), "UP", "JOY_UP" },
+	{ KEYBIND_DOWN, "DOWN", _s("South"), "DOWN", "JOY_DOWN" },
+	{ KEYBIND_LEFT, "LEFT", _s("West"), "LEFT", "JOY_LEFT" },
+	{ KEYBIND_RIGHT, "RIGHT", _s("East"), "RIGHT", "JOY_RIGHT" },
+	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
+	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord DUNGEON_KEYS[] = {
+	{ KEYBIND_UP, "UP", _s("Move Forward"), "UP", "JOY_UP" },
+	{ KEYBIND_DOWN, "DOWN", _s("Turn Around"), "DOWN", "JOY_DOWN" },
+	{ KEYBIND_LEFT, "LEFT", _s("Turn Left"), "LEFT", "JOY_LEFT" },
+	{ KEYBIND_RIGHT, "RIGHT", _s("Turn Right"), "RIGHT", "JOY_RIGHT" },
+	{ KEYBIND_ATTACK, "ATTACK", _s("Attack"), "a", "JOY_A" },
+	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
+	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -55,14 +68,35 @@ struct KeysRecord {
 	const KeybindingRecord *_keys;
 };
 
-static const KeysRecord NORMAL_RECORDS[] = {
-	{ "ultima0", "Akalabeth", NORMAL_KEYS },
+static const KeysRecord ALL_RECORDS[] = {
+	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ "overworld", _s("Overworld Keys"), OVERWORLD_KEYS },
+	{ "dungeon", _s("Dungeon Keys"), DUNGEON_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord MINIMAL_RECORDS[] = {
+	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
 
-static const KeysRecord *MODE_RECORDS[1] = {
-	NORMAL_RECORDS
+static const KeysRecord OVERWORLD_RECORDS[] = {
+	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ "overworld", _s("Overworld Keys"), OVERWORLD_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord DUNGEON_RECORDS[] = {
+	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ "dungeon", _s("Dungeon Keys"), DUNGEON_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord *MODE_RECORDS[] = {
+	ALL_RECORDS,
+	MINIMAL_RECORDS,
+	OVERWORLD_RECORDS,
+	DUNGEON_RECORDS,
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {

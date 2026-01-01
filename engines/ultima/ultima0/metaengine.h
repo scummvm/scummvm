@@ -30,12 +30,16 @@ namespace Ultima0 {
 enum KeybindingAction {
 	KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
 	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_ENTER, KEYBIND_INFO,
+	KEYBIND_ATTACK,
 
 	KEYBIND_NONE
 };
 
 enum KeybindingMode {
-	KBMODE_NORMAL		///< Keys available when normal in-game
+	KBMODE_ALL,
+	KBMODE_MINIMAL,
+	KBMODE_OVERWORLD,
+	KBMODE_DUNGEONS
 };
 
 class MetaEngine {
@@ -48,7 +52,7 @@ public:
 	/**
 	 * Initialize keymaps
 	 */
-	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_NORMAL);
+	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_ALL);
 
 	/**
 	 * Sets the current set of actions which are active

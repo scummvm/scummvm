@@ -21,6 +21,7 @@
 
 #include "ultima/ultima0/views/world_map.h"
 #include "ultima/ultima0/ultima0.h"
+#include "ultima/ultima0/metaengine.h"
 #include "ultima/ultima0/gfx/font.h"
 #include "ultima/ultima0/gfx/map.h"
 
@@ -33,6 +34,12 @@ WorldMap::WorldMap() : View("WorldMap") {
 
 bool WorldMap::msgFocus(const FocusMessage &msg) {
 	showMessage("");
+	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
+	return true;
+}
+
+bool WorldMap::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return true;
 }
 
@@ -74,7 +81,6 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 		replaceView("Info");
 		break;
 	case KEYBIND_ENTER:
-	case KEYBIND_SELECT:
 		enter();
 		break;
 	default:

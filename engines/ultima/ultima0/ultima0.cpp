@@ -64,6 +64,7 @@ Common::Error Ultima0Engine::run() {
 
 	// Set the debugger console
 	setDebugger(new Console());
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 
 	// Play the game
 	runGame();
