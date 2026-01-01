@@ -117,6 +117,9 @@ enum EventType {
 	EVENT_FOCUS_GAINED = 36,
 	EVENT_FOCUS_LOST = 37,
 
+	/** Toggle hotspot display. */
+	EVENT_TOGGLE_HOTSPOTS = 38,
+
 	/**
 	 * We reserve some event ids for custom events.
 	 * 
