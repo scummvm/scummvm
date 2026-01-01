@@ -82,7 +82,7 @@ public:
 	};
 
 	Subtitles();
-	~Subtitles();
+	virtual ~Subtitles();
 
 	void loadSRTFile(const Common::Path &fname);
 	void close();
