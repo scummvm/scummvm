@@ -32,6 +32,7 @@ MODULE_OBJS += \
 	ultima0/town.o \
 	ultima0/world.o \
 	ultima0/data/data.o \
+	ultima0/data/monster_logic.o \
 	ultima0/gfx/dungeon.o \
 	ultima0/gfx/font.o \
 	ultima0/gfx/gfx_surface.o \

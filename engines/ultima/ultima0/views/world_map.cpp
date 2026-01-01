@@ -108,13 +108,15 @@ bool WorldMap::msgKeypress(const KeypressMessage &msg) {
 void WorldMap::endOfTurn() {
 	auto &player = g_engine->_player;
 
-	if (player.Attr[AT_HP] <= 0)
+	if (player.Attr[AT_HP] <= 0) {
 		replaceView("Dead");
 
-	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
-	if (player.Object[OB_FOOD] == 0) {
-		showMessage("You have starved...");
-		delaySeconds(1);
+	} else {
+		player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
+		if (player.Object[OB_FOOD] == 0) {
+			showMessage("You have starved...");
+			delaySeconds(1);
+		}
 	}
 }
 

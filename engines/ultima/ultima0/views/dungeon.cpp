@@ -23,6 +23,7 @@
 #include "ultima/ultima0/ultima0.h"
 #include "ultima/ultima0/gfx/font.h"
 #include "ultima/ultima0/gfx/dungeon.h"
+#include "ultima/ultima0/data/monster_logic.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -112,9 +113,15 @@ bool Dungeon::msgKeypress(const KeypressMessage &msg) {
 
 void Dungeon::endOfTurn() {
 	auto &player = g_engine->_player;
+	auto &dungeon = g_engine->_dungeon;
 
-	if (player.Attr[AT_HP] <= 0)
+	if (player.Attr[AT_HP] <= 0) {
 		replaceView("Dead");
+		return;
+	}
+
+	// Check for monster attacks
+	MonsterLogic::checkForAttacks(player, dungeon);
 
 	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 0.1, 0.0);
 	if (player.Object[OB_FOOD] == 0) {

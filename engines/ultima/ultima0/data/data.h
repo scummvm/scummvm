@@ -141,7 +141,7 @@ struct WORLDMAP {
 	void synchronize(Common::Serializer &s);
 };
 
-} // End of namespace Ultima4
-} // End of namespace Ultima
+} // namespace Ultima0
+} // namespace Ultima
 
 #endif
