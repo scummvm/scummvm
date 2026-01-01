@@ -81,49 +81,23 @@ enum ACCESSActions : Common::CustomEventType {
 	kActionMoveDownRight,
 	kActionLook,
 	kActionUse,
-	kActionTake,
+	kActionTake,  // aka GET
 	kActionInventory,
 	kActionClimb,
 	kActionTalk,
-	kActionWalk,
+	kActionWalk, // aka GOTO
 	kActionHelp,
 	kActionOpen,
 	kActionMove,
 	kActionTravel,
 	kActionSkip,
 	kActionSaveLoad,
+	kActionOptions,
 };
 
 struct AccessActionCode {
 	ACCESSActions _action;
 	int8 _code;
-};
-
-static const AccessActionCode AMAZON_ACTION_CODES[] = {
-	{ kActionLook, 1 },
-	{ kActionUse, 2 },
-	{ kActionTake, 3 },
-	{ kActionInventory, 4 },
-	{ kActionClimb, 5 },
-	{ kActionTalk, 6 },
-	{ kActionWalk, 7 },
-	{ kActionHelp, 8 },
-	{ kActionSaveLoad, -2 },
-	{ kActionNone, -1 },
-};
-
-static const AccessActionCode MARTIAN_ACTION_CODES[] = {
-	{ kActionLook, 0 },
-	{ kActionOpen, 1 },
-	{ kActionMove, 2 },
-	{ kActionTake, 3 },
-	{ kActionUse, 4 },
-	{ kActionWalk, 5 },
-	{ kActionTalk, 6 },
-	{ kActionTravel, 7 },
-	{ kActionHelp, 8 },
-	{ kActionSaveLoad, -2 },
-	{ kActionNone, -1 },
 };
 
 #define ACCESS_SAVEGAME_VERSION 1
@@ -185,7 +159,7 @@ protected:
 	* Synchronize savegame data
 	*/
 	virtual Common::Error synchronize(Common::Serializer &s);
-	
+
 	/**
 	 * Create game-specific objects, called just before setupGame.
 	 */
@@ -335,7 +309,7 @@ public:
 	void copyBF2Vid();
 
 	void freeChar();
-	
+
 	virtual int16 getScreenWidth() const { return 320; }
 	virtual int16 getScreenHeight() const { return 200; }
 
@@ -373,6 +347,8 @@ public:
 	static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail = true);
 
 	bool playMovie(const Common::Path &filename, const Common::Point &pos);
+
+	const AccessActionCode *getActionCodes();
 };
 
 } // End of namespace Access
