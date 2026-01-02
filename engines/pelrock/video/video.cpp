@@ -25,8 +25,9 @@
 
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
-#include "pelrock/video/video.h"
 #include "pelrock/util.h"
+#include "pelrock/video/video.h"
+#include "video.h"
 
 namespace Pelrock {
 
@@ -36,10 +37,14 @@ VideoManager::VideoManager(
 	ChronoManager *chrono, LargeFont *largeFont, DialogManager *dialog) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog) {
 	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	if (!_introSndFile.open("introsnd.dat")) {
+		error("Could not open introsnd.dat");
+	}
 }
 
 VideoManager::~VideoManager() {
 	_videoSurface.free();
+	_introSndFile.close();
 }
 
 void VideoManager::playIntro() {
@@ -93,8 +98,8 @@ void VideoManager::playIntro() {
 
 					drawPos(&_textSurface, subtitle->x, subtitle->y, color);
 					drawRect(&_textSurface, subtitle->x, subtitle->y,
-						s.getRect().width(),
-						s.getRect().height(), color);
+							 s.getRect().width(),
+							 s.getRect().height(), color);
 				}
 
 				presentFrame();
@@ -218,69 +223,36 @@ void VideoManager::initMetadata() {
 		return;
 	}
 
+	// 1. Read the file allocation table from introsnd.dat
+	if (_introSndFile.isOpen()) {
+		_introSndFile.seek(0, SEEK_SET);
+		char signature[5] = {0};
+		_introSndFile.read(signature, 4);
+		if (strcmp(signature, "PACK") == 0) {
+			uint32_t numFiles = _introSndFile.readUint32LE();
+			for (uint32_t i = 0; i < numFiles; ++i) {
+				VoiceData sound;
+				Common::String filename = _introSndFile.readString();
+				// _introSndFile.skip(1);
+				sound.offset = _introSndFile.readUint32LE();
+				sound.length = _introSndFile.readUint32LE();
+				_sounds[filename] = sound;
+			}
+		}
+		debug("Loaded %d sound entries", _sounds.size());
+	}
+
 	while (metadataFile.eos() == false) {
 		char curChar = metadataFile.readByte();
 		if (curChar == '/') {
 			char nextChar = metadataFile.readByte();
 			if (nextChar == 't') { // subtitle
-				Subtitle subtitle;
-				Common::String buffer;
-				int values[4];
-				int valueIndex = 0;
-
-				// Skip spaces after "/t"
-				while (!metadataFile.eos() && metadataFile.readByte() == ' ')
-					;
-				metadataFile.seek(-1, SEEK_CUR); // Step back one byte
-
-				// Parse 4 space-delimited numbers
-				while (!metadataFile.eos() && valueIndex < 4) {
-					char c = metadataFile.readByte();
-
-					if (c == ' ') {
-						if (!buffer.empty()) {
-							values[valueIndex++] = atoi(buffer.c_str());
-							buffer.clear();
-						}
-					} else if (c >= '0' && c <= '9') {
-						buffer += c;
-					} else if (c == 0x08) {
-						// End of numbers, start of text
-						if (!buffer.empty()) {
-							values[valueIndex++] = atoi(buffer.c_str());
-						}
-						break;
-					}
-				}
-				metadataFile.skip(1); // Skip the extra space
-				if (valueIndex == 4) {
-					subtitle.startFrame = values[0];
-					subtitle.endFrame = values[1];
-					subtitle.x = values[2];
-					subtitle.y = values[3];
-
-					// Read text until CRLF (0x0D 0x0A)
-					subtitle.text.clear();
-					while (!metadataFile.eos()) {
-						char c = metadataFile.readByte();
-
-						if (c == 0x0D) {
-							char next = metadataFile.readByte();
-							if (next == 0x0A) {
-								break;
-							} else {
-								subtitle.text += c;
-								subtitle.text += next;
-							}
-						} else {
-							if(c == 0x08)
-								subtitle.text += '@';
-							else
-								subtitle.text += decodeChar(c);
-						}
-					}
-					_subtitles.push_back(subtitle);
-				}
+				Subtitle subtitle = readSubtitle(metadataFile);
+				_subtitles.push_back(subtitle);
+			} else if (nextChar == 'x') {
+				Voice voice = readVoice(metadataFile);
+				// Read filename (up to 12 bytes, null-terminated)
+				_audioEffect.push_back(voice);
 			}
 		}
 	}
@@ -289,6 +261,95 @@ void VideoManager::initMetadata() {
 	debug("Loaded %d audio effects", _audioEffect.size());
 
 	metadataFile.close();
+}
+
+Voice VideoManager::readVoice(Common::File &metadataFile) {
+	Voice voice;
+	Common::String buffer;
+
+	// Skip spaces after "/x"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	bool frameCountRead = false;
+	while (!metadataFile.eos()) {
+		char c = metadataFile.readByte();
+		if (c == ' ') {
+			if (!buffer.empty() && !frameCountRead) {
+				voice.startFrame = atoi(buffer.c_str());
+				buffer.clear();
+				frameCountRead = true;
+			}
+		} else if (c == 0x0D || c == 0x0A) {
+			break;
+		} else {
+			buffer += c;
+		}
+	}
+	voice.filename = buffer;
+	debug("Loaded voice: frame %d, file '%s'", voice.startFrame, voice.filename.c_str());
+	return voice;
+}
+
+Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
+	Subtitle subtitle;
+	Common::String buffer;
+	int values[4];
+	int valueIndex = 0;
+
+	// Skip spaces after "/t"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	// Parse 4 space-delimited numbers
+	while (!metadataFile.eos() && valueIndex < 4) {
+		char c = metadataFile.readByte();
+
+		if (c == ' ') {
+			if (!buffer.empty()) {
+				values[valueIndex++] = atoi(buffer.c_str());
+				buffer.clear();
+			}
+		} else if (c >= '0' && c <= '9') {
+			buffer += c;
+		} else if (c == 0x08) {
+			// End of numbers, start of text
+			if (!buffer.empty()) {
+				values[valueIndex++] = atoi(buffer.c_str());
+			}
+			break;
+		}
+	}
+	metadataFile.skip(1); // Skip the extra space
+
+	subtitle.startFrame = values[0];
+	subtitle.endFrame = values[1];
+	subtitle.x = values[2];
+	subtitle.y = values[3];
+
+	// Read text until CRLF (0x0D 0x0A)
+	subtitle.text.clear();
+	while (!metadataFile.eos()) {
+		char c = metadataFile.readByte();
+
+		if (c == 0x0D) {
+			char next = metadataFile.readByte();
+			if (next == 0x0A) {
+				break;
+			} else {
+				subtitle.text += c;
+				subtitle.text += next;
+			}
+		} else {
+			if (c == 0x08)
+				subtitle.text += '@';
+			else
+				subtitle.text += decodeChar(c);
+		}
+	}
+	return subtitle;
 }
 
 char VideoManager::decodeChar(byte c) {

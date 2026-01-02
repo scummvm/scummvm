@@ -53,7 +53,7 @@ struct Subtitle : Effect {
 };
 
 struct Voice : AudioEffect {
-	char filename[12];
+	Common::String filename;
 };
 
 struct Sfx : AudioEffect {
@@ -61,7 +61,12 @@ struct Sfx : AudioEffect {
 };
 
 struct ExtraSound : AudioEffect {
-	char filename[12];
+	Common::String filename;
+};
+
+struct VoiceData {
+	uint32 offset;
+	uint32 length;
 };
 
 static const uint32 chunkSize = 0x5000;
@@ -103,6 +108,9 @@ private:
 	void processFrame(ChunkHeader &chunk, const int frameCount);
 	void presentFrame();
 	void initMetadata();
+	void readSubtitle(Common::File &metadataFile, Pelrock::Subtitle &subtitle);
+	Subtitle readSubtitle(Common::File &metadataFile);
+	Voice readVoice(Common::File &metadataFile);
 	char decodeChar(byte c);
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
 	int _currentSubtitleIndex = 0;
@@ -111,6 +119,8 @@ private:
 	Common::Array<ChunkHeader> _chunkBuffer;
 	Common::Array<Subtitle> _subtitles;
 	Common::Array<AudioEffect> _audioEffect;
+	Common::HashMap<Common::String, VoiceData> _sounds;
+	Common::File _introSndFile;
 };
 
 } // End of namespace Pelrock
