@@ -879,7 +879,8 @@ Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 			break;
 
 		default:
-			error("Wrong string format (%c)", *s);
+			warning("Wrong string format (%c)", *s ? *s : '?');
+			break;
 		}
 	}
 
@@ -953,7 +954,8 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 			break;
 
 		default:
-			error("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s);
+			warning("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s ? *s : '?');
+			break;
 		}
 	}
 
