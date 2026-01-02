@@ -221,7 +221,7 @@ bool BaseSoundBuffer::pause() {
 uint32 BaseSoundBuffer::getLength() {
 	if (_stream) {
 		uint32 len = _stream->getLength().msecs();
-		return len * 1000;
+		return len;
 	}
 	return 0;
 }
