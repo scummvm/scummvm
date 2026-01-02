@@ -54,12 +54,12 @@ II                     mGetSaoDepth    --Getting Water Depth in Now Sao
 XI                     mContinue               --Setting Data in Game Continueing
 IIII           mGetValue               --Getting A Set Of Values
 I                      mGetFuna                --Getting Funa Data
-II                     mWriteData              --Writting Binary Data
+II                     mWriteData              --Writing Binary Data
 II                     mReadData               --Reading Binary Data
 IIS            mAlert                  --Setting Alert Mode
 XII            mSetScore               --Setting Score Data
 XII            mSetChoka               --Setting Choka Data
-ISS            mGyotaku                --Writting Gyotaku data
+ISS            mGyotaku                --Writing Gyotaku data
 II                     mESearch                --Searching Event Data
 XIII           mTournament             --Setting Tournament Data
 X                      mSetYudachi             --Setting Shower Mode
