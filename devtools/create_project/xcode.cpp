@@ -440,6 +440,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("ApplicationServices");
 	DEF_SYSFRAMEWORK("AudioToolbox");
 	DEF_SYSFRAMEWORK("AudioUnit");
+	DEF_SYSFRAMEWORK("AVFAudio");
 	DEF_SYSFRAMEWORK("Carbon");
 	DEF_SYSFRAMEWORK("Cocoa");
 	DEF_SYSFRAMEWORK("CoreAudio");
@@ -602,6 +603,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_osx.push_back("CoreFoundation.framework");
 		frameworks_osx.push_back("Foundation.framework");
 		frameworks_osx.push_back("AudioToolbox.framework");
+		frameworks_osx.push_back("AVFAudio.framework");
 		frameworks_osx.push_back("CoreMIDI.framework");
 		frameworks_osx.push_back("CoreAudio.framework");
 		frameworks_osx.push_back("QuartzCore.framework");
@@ -727,6 +729,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_iOS.push_back("UIKit.framework");
 		frameworks_iOS.push_back("SystemConfiguration.framework");
 		frameworks_iOS.push_back("AudioToolbox.framework");
+		frameworks_iOS.push_back("AVFAudio.framework");
 		frameworks_iOS.push_back("QuartzCore.framework");
 		frameworks_iOS.push_back("OpenGLES.framework");
 
@@ -846,6 +849,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_tvOS.push_back("UIKit.framework");
 		frameworks_tvOS.push_back("SystemConfiguration.framework");
 		frameworks_tvOS.push_back("AudioToolbox.framework");
+		frameworks_tvOS.push_back("AVFAudio.framework");
 		frameworks_tvOS.push_back("QuartzCore.framework");
 		frameworks_tvOS.push_back("OpenGLES.framework");
 
