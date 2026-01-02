@@ -115,8 +115,6 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CreateCharacter::msgAction(const ActionMessage &msg) {
-	auto &player = g_engine->_player;
-
 	if (msg._action == KEYBIND_ESCAPE) {
 		replaceView("Title");
 		return true;

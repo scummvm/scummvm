@@ -94,6 +94,10 @@ bool Dungeon::msgAction(const ActionMessage &msg) {
 		_status.draw();		// Render the message before we switch views
 		addView("Attack");
 		break;
+	case KEYBIND_MINIMAP:
+		g_engine->_showMinimap = !g_engine->_showMinimap;
+		redraw();
+		break;
 	default:
 		showMessage("Huh???");
 		break;

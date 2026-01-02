@@ -52,6 +52,13 @@ void WorldMap::draw() {
 
 	// Allow the status area to draw
 	View::draw();
+
+	if (g_engine->_showMinimap) {
+		s.frameRect(Common::Rect(s.w - WORLD_MINIMAP_SIZE - 4, 0, s.w, WORLD_MINIMAP_SIZE + 4), C_GREY);
+		s.frameRect(Common::Rect(s.w - WORLD_MINIMAP_SIZE - 3, 1, s.w - 1, WORLD_MINIMAP_SIZE + 3), C_GREY);
+		Graphics::ManagedSurface minimapArea(s, Common::Rect(s.w - WORLD_MINIMAP_SIZE - 2, 2, s.w - 2, WORLD_MINIMAP_SIZE + 2));
+		Gfx::Map::draw(&minimapArea, true);
+	}
 }
 
 bool WorldMap::msgAction(const ActionMessage &msg) {
@@ -82,6 +89,10 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 		break;
 	case KEYBIND_ENTER:
 		enter();
+		break;
+	case KEYBIND_MINIMAP:
+		g_engine->_showMinimap = !g_engine->_showMinimap;
+		redraw();
 		break;
 	default:
 		showMessage("");

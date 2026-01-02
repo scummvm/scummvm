@@ -49,6 +49,7 @@ public:
 	PLAYER _player;
 	WORLDMAP _worldMap;
 	DUNGEONMAP _dungeon;
+	bool _showMinimap = false;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;

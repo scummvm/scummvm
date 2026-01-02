@@ -43,9 +43,9 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 
 			if (showAsMap) {
 				// If map, not centered around us
-				x1 = x, y1 = Grid - 1 - y;
+				x1 = x, y1 = y;
 			} else {
-				// Which cell ?
+				// Which cell?
 				x1 = player.World.x - Grid / 2 + x;
 				y1 = player.World.y - Grid / 2 + y;
 			}

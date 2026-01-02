@@ -273,7 +273,7 @@ void Attack::attackHitMonster(const COORD &c) {
 	// If no, or not dexterous
 	if (Monster < 0 || player.Attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player.Level) {
 		// Then a miss.
-		_message += "You missed !!\n";
+		_message += "\nMissed!";
 		_mode = DONE;
 		redraw();
 		delaySeconds(1);
