@@ -55,6 +55,42 @@ void Dungeon::draw() {
 
 	// Allow the status area to draw
 	View::draw();
+
+	if (g_engine->_showMinimap) {
+		s.frameRect(Common::Rect(s.w - DUNGEON_MINIMAP_SIZE - 4, 0, s.w, DUNGEON_MINIMAP_SIZE + 4), C_GREY);
+		s.frameRect(Common::Rect(s.w - DUNGEON_MINIMAP_SIZE - 3, 1, s.w - 1, DUNGEON_MINIMAP_SIZE + 3), C_GREY);
+		Graphics::ManagedSurface minimapArea(s, Common::Rect(s.w - DUNGEON_MINIMAP_SIZE - 2, 2, s.w - 2, DUNGEON_MINIMAP_SIZE + 2));
+		drawMinimap(minimapArea);
+	}
+}
+
+void Dungeon::drawMinimap(Graphics::ManagedSurface &mapArea) {
+	const auto &player = g_engine->_player;
+	const auto &dungeon = g_engine->_dungeon;
+	int tile;
+
+	for (int y = 0; y < DUNGEON_MAP_SIZE; ++y) {
+		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x) {
+			const Common::Rect r(x * MINIMAP_TILE_SIZE, y * MINIMAP_TILE_SIZE,
+				(x + 1) * MINIMAP_TILE_SIZE, (y + 1) * MINIMAP_TILE_SIZE);
+			if (x == player.Dungeon.x && y == player.Dungeon.y) {
+				mapArea.fillRect(r, C_CYAN);
+			} else if (dungeon.findMonster(COORD(x, y)) > 0) {
+				mapArea.fillRect(r, C_RED);
+			} else {
+				tile = dungeon.Map[x][y];
+
+				if (tile == DT_SPACE || tile == DT_DOOR || tile == DT_HIDDENDOOR)
+					mapArea.fillRect(r, C_BLACK);
+				else if (tile == DT_SOLID)
+					mapArea.fillRect(r, C_WHITE);
+				else if (tile == DT_LADDERUP || tile == DT_LADDERDN)
+					mapArea.fillRect(r, C_GREEN);
+				else
+					mapArea.fillRect(r, C_ROSE);
+			}
+		}
+	}
 }
 
 bool Dungeon::msgAction(const ActionMessage &msg) {

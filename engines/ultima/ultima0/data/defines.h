@@ -39,8 +39,9 @@ constexpr int WORLD_GRID_SIZE = 3;			// Visible part of map is axa
 constexpr int MAX_NAME = 8;					// Max size player name
 constexpr int MAX_VIEW_DEPTH = 9;			// Max viewing depth
 
-constexpr int WORLD_MINIMAP_TILE_SIZE = 5;
-constexpr int WORLD_MINIMAP_SIZE = WORLD_MAP_SIZE * WORLD_MINIMAP_TILE_SIZE;
+constexpr int MINIMAP_TILE_SIZE = 5;
+constexpr int WORLD_MINIMAP_SIZE = WORLD_MAP_SIZE * MINIMAP_TILE_SIZE;
+constexpr int DUNGEON_MINIMAP_SIZE = DUNGEON_MAP_SIZE * MINIMAP_TILE_SIZE;
 
 #define RND_MAX			    0x7fffffff
 #define RND()			    (((double)g_engine->getRandomNumber())/RND_MAX)

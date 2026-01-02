@@ -33,6 +33,7 @@ class Dungeon : public View {
 private:
 	DungeonStatus _status = DungeonStatus(this);
 
+	void drawMinimap(Graphics::ManagedSurface &mapArea);
 	void moveForward();
 	void interact();
 	void endOfTurn();
