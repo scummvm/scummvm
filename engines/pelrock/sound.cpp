@@ -100,10 +100,14 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 		return;
 	}
 
-	// if (stream) {
-	// 	int channel = findFreeChannel();
-	// 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
-	// }
+}
+
+void SoundManager::playSound(byte *soundData, uint32 size,int volume) {
+	Audio::AudioStream *stream = Audio::makeRawStream(soundData, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	 if (stream) {
+		int channel = findFreeChannel();
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+	}
 }
 
 SoundFormat SoundManager::detectFormat(byte *data, uint32 size) {

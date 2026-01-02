@@ -101,7 +101,7 @@ Common::Error PelrockEngine::run() {
 	_largeFont->load("ALFRED.7");
 	_doubleSmallFont = new DoubleSmallFont();
 	_doubleSmallFont->load("ALFRED.4");
-	_videoManager = new VideoManager(_screen, _events, _chrono, _largeFont, _dialog);
+	_videoManager = new VideoManager(_screen, _events, _chrono, _largeFont, _dialog, _sound);
 
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));

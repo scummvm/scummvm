@@ -34,7 +34,10 @@ namespace Pelrock {
 VideoManager::VideoManager(
 	Graphics::Screen *screen,
 	PelrockEventManager *events,
-	ChronoManager *chrono, LargeFont *largeFont, DialogManager *dialog) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog) {
+	ChronoManager *chrono,
+	LargeFont *largeFont,
+	DialogManager *dialog,
+	SoundManager *sound) : _screen(screen), _events(events), _chrono(chrono), _largeFont(largeFont), _dialog(dialog), _sound(sound) {
 	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	if (!_introSndFile.open("introsnd.dat")) {
@@ -59,7 +62,7 @@ void VideoManager::playIntro() {
 	_videoSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
 	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
 	for (int sequence = 0; sequence < 1; sequence++) {
-		int frameCounter = 0;
+		uint16 frameCounter = 0;
 		int chunksInBuffer = 0;
 		bool videoExitFlag = false;
 
@@ -85,6 +88,18 @@ void VideoManager::playIntro() {
 				default:
 					debug("Unknown chunk type %d encountered", chunk.chunkType);
 					break;
+				}
+
+				if (_voiceEffect.contains(frameCounter)) {
+					Voice voice = _voiceEffect[frameCounter];
+					debug("Playing voice effect: '%s'", voice.filename.c_str());
+					VoiceData voiceData = _sounds[voice.filename];
+					_introSndFile.seek(voiceData.offset, SEEK_SET);
+					byte *voiceBuffer = new byte[voiceData.length];
+					_introSndFile.read(voiceBuffer, voiceData.length);
+					_sound->playSound(voiceBuffer, voiceData.length);
+					// g_system->getSoundManager()->playSoundBuffer(voiceBuffer, voiceData.length, SOUND_FORMAT_PCM8, 11025);
+					// delete[] voiceBuffer;
 				}
 
 				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
@@ -223,7 +238,6 @@ void VideoManager::initMetadata() {
 		return;
 	}
 
-	// 1. Read the file allocation table from introsnd.dat
 	if (_introSndFile.isOpen()) {
 		_introSndFile.seek(0, SEEK_SET);
 		char signature[5] = {0};
@@ -237,8 +251,10 @@ void VideoManager::initMetadata() {
 				sound.offset = _introSndFile.readUint32LE();
 				sound.length = _introSndFile.readUint32LE();
 				_sounds[filename] = sound;
+				debug("Loaded sound: '%s' (offset: %u, length: %u)", filename.c_str(), sound.offset, sound.length);
 			}
 		}
+
 		debug("Loaded %d sound entries", _sounds.size());
 	}
 
@@ -252,13 +268,13 @@ void VideoManager::initMetadata() {
 			} else if (nextChar == 'x') {
 				Voice voice = readVoice(metadataFile);
 				// Read filename (up to 12 bytes, null-terminated)
-				_audioEffect.push_back(voice);
+				_voiceEffect[voice.startFrame] = voice;
 			}
 		}
 	}
 
 	debug("Loaded %d subtitles", _subtitles.size());
-	debug("Loaded %d audio effects", _audioEffect.size());
+	debug("Loaded %d audio effects", _voiceEffect.size());
 
 	metadataFile.close();
 }

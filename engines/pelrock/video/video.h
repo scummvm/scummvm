@@ -90,7 +90,8 @@ public:
 		PelrockEventManager *events,
 		ChronoManager *chrono,
 		LargeFont *largeFont,
-		DialogManager *dialog
+		DialogManager *dialog,
+		SoundManager *sound
 	);
 	~VideoManager();
 	void playIntro();
@@ -101,6 +102,7 @@ private:
 	ChronoManager *_chrono;
 	LargeFont *_largeFont;
 	DialogManager *_dialog;
+	SoundManager *_sound;
 	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
     byte *decodeRLE(byte *data, size_t size, uint32 offset);
@@ -118,7 +120,7 @@ private:
 	Graphics::ManagedSurface _textSurface = Graphics::ManagedSurface();
 	Common::Array<ChunkHeader> _chunkBuffer;
 	Common::Array<Subtitle> _subtitles;
-	Common::Array<AudioEffect> _audioEffect;
+	Common::HashMap<uint16, Voice> _voiceEffect;
 	Common::HashMap<Common::String, VoiceData> _sounds;
 	Common::File _introSndFile;
 };

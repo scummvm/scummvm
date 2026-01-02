@@ -188,6 +188,7 @@ public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 	void playSound(byte index, int volume = 255);
+	void playSound(byte *soundData, uint32 size, int volume = 255);
 	void stopAllSounds();
 	void stopSound(int channel);
 	void stopMusic();
