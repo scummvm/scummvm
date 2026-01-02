@@ -19,13 +19,11 @@
  *
  */
 
+#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
-#include "ultima/ultima0/sdw.h"
 #include "ultima/ultima0/ultima0.h"
 #include "ultima/ultima0/console.h"
-#include "ultima/ultima0/akalabeth.h"
-#include "ultima/ultima0/sdw.h"
 
 namespace Ultima {
 namespace Ultima0 {

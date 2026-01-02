@@ -13,24 +13,6 @@ MODULE_OBJS += \
 	ultima0/events.o \
 	ultima0/messages.o \
 	ultima0/metaengine.o \
-	ultima0/attack.o \
-	ultima0/british.o \
-	ultima0/ddraw.o \
-	ultima0/dead.o \
-	ultima0/draw.o \
-	ultima0/draw2.o \
-	ultima0/draw3.o \
-	ultima0/dungeon.o \
-	ultima0/globals.o \
-	ultima0/hardware.o \
-	ultima0/hdr.o \
-	ultima0/main.o \
-	ultima0/monst.o \
-	ultima0/move.o \
-	ultima0/player.o \
-	ultima0/sdw.o \
-	ultima0/town.o \
-	ultima0/world.o \
 	ultima0/data/data.o \
 	ultima0/data/monster_logic.o \
 	ultima0/gfx/dungeon.o \
@@ -42,6 +24,7 @@ MODULE_OBJS += \
 	ultima0/views/attack.o \
 	ultima0/views/castle.o \
 	ultima0/views/create_character.o \
+	ultima0/views/dead.o \
 	ultima0/views/dungeon.o \
 	ultima0/views/info.o \
 	ultima0/views/startup.o \
