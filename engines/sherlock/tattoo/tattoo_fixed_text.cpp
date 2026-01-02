@@ -490,17 +490,17 @@ static const char *const fixedTextFR[] = {
 	"Stanley Forbes",
 	"Mycroft Holmes",
 	"Wiggins",
-	"Sergent Burns",
+	"Sergent Burns", // FIXME: Spelling incorrect. Sergent should be Sergeant. Fixing changes game data and thus may cause issues
 	"Augustus Trimble",
-	"Sergent Daley",
+	"Sergent Daley", // FIXME: Spelling incorrect. Sergent should be Sergeant. Fixing changes game data and thus may cause issues
 	"Infirmi\212re chef",
 	"Mme. Grace",
 	"Preston McCabe",
 	"Bob Colleran",
 	"Jonas Rigby",
-	"Sergent Roach",
+	"Sergent Roach", // FIXME: Spelling incorrect. Sergent should be Sergeant. Fixing changes game data and thus may cause issues
 	"James Dewar",
-	"Sergent Jeremy Duncan",
+	"Sergent Jeremy Duncan", // FIXME: Spelling incorrect. Sergent should be Sergeant. Fixing changes game data and thus may cause issues
 	"Inspecteur Gregson",
 	"Inspecteur Lestrade",
 	"Jesse Needhem",
@@ -578,7 +578,7 @@ static const char *const fixedTextFR[] = {
 	"Sidney Ratchet",
 	"Gar\207on",
 	"Client",
-	"Sergent Brit",
+	"Sergent Brit", // FIXME: Spelling incorrect. Sergent should be Sergeant. Fixing changes game data and thus may cause issues
 	"Wagon Driver"
 };
 
