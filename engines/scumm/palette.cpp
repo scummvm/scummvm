@@ -1761,7 +1761,7 @@ void ScummEngine::updatePalette() {
 
 		const byte levels[] = { 0, 27, 49, 71, 87, 103, 119, 130, 146, 157, 174, 190, 206, 228, 255 };
 
-		// For reasons unknown, the orignal interpreter rendered
+		// For reasons unknown, the original interpreter rendered
 		// everything in shadow mode. We could easily emulate the other
 		// two modes as well:
 		//
