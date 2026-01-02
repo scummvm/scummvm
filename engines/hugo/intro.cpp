@@ -27,6 +27,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "common/textconsole.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
@@ -79,6 +80,44 @@ void IntroHandler::freeIntroData() {
 	free(_introX);
 	free(_introY);
 	_introX = _introY = nullptr;
+}
+
+/**
+ * Wait for a delay in milliseconds while processing events.
+ * This keeps the program window responsive during long delays.
+ * Returns false if interrupted by a quit event or the Escape key.
+ */
+bool IntroHandler::wait(uint32 delay) {
+	const uint32 startTime = _vm->_system->getMillis();
+
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		while (_vm->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+			case Common::EVENT_QUIT:
+				return false; // interrupted by quit
+
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionEscape) {
+					return false; // interrupted by Escape
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (_vm->_system->getMillis() - startTime >= delay) {
+			return true; // delay completed
+		}
+
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
+	}
+
+	return false; // interrupted by quit
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
@@ -278,8 +317,11 @@ bool intro_v1d::introPlay() {
 #endif
 
 		_vm->_screen->displayBackground();
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
+		if (!wait(1000)) {
+			// Wait was interrupted by quit event or Escape.
+			// Skip the rest of the introduction.
+			return true;
+		}
 	}
 
 	return (++_introTicks >= introSize);
@@ -331,8 +373,7 @@ void intro_v2d::introInit() {
 #endif
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(5000);
+	wait(5000);
 
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -390,8 +431,7 @@ void intro_v3d::introInit() {
 #endif
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(5000);
+	wait(5000);
 
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -467,8 +507,7 @@ void intro_v2w::introInit() {
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(3000);
+	wait(3000);
 }
 
 bool intro_v2w::introPlay() {
@@ -491,8 +530,7 @@ void intro_v3w::introInit() {
 	_vm->_screen->displayList(kDisplayInit);
 	_vm->_file->readBackground(_vm->_numScreens - 1); // display splash screen
 	_vm->_screen->displayBackground();
-	g_system->updateScreen();
-	g_system->delayMillis(3000);
+	wait(3000);
 	_vm->_file->readBackground(22); // display screen MAP_3w
 	_vm->_screen->displayBackground();
 	_introTicks = 0;

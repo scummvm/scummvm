@@ -63,6 +63,8 @@ protected:
 	byte *_introY;
 	byte  _introXSize;
 	int16 _introTicks;                              // Count calls to introPlay()
+
+	bool wait(uint32 delay);
 };
 
 class intro_v1w : public IntroHandler {
