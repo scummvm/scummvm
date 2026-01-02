@@ -185,7 +185,7 @@ Common::KeymapArray HugoMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("ESC", _("Escape"));
 	act->setCustomEngineActionEvent(kActionEscape);
-	act->addDefaultInputMapping("Escape");
+	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 
