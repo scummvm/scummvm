@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-01 20:46+0000\n"
+"POT-Creation-Date: 2026-01-02 23:15+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3828,7 +3828,7 @@ msgstr "Standaard speltoetsenkoppelingen"
 #: engines/metaengine.cpp:82 engines/agos/metaengine.cpp:158
 #: engines/asylum/metaengine.cpp:159 engines/bbvs/metaengine.cpp:99
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
-#: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
+#: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:114
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
 #: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
 #: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:123
@@ -3863,7 +3863,7 @@ msgstr "Middelste Klik"
 #: engines/metaengine.cpp:93 engines/agos/metaengine.cpp:164
 #: engines/asylum/metaengine.cpp:165 engines/bbvs/metaengine.cpp:105
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
-#: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
+#: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:120
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:217
 #: engines/hugo/metaengine.cpp:130 engines/illusions/metaengine.cpp:101
@@ -3909,7 +3909,7 @@ msgstr "Spelmenu"
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:208
-#: engines/composer/metaengine.cpp:125 engines/drascula/metaengine.cpp:224
+#: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:87
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
 #: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:151
