@@ -219,7 +219,6 @@ struct LoadSave_Init_Slots : public Script::Command {
 
 	LoadSave_Init_Slots(const Common::Array<Common::String> &args) : slots(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Init_Slots %d", slots);
 	}
 };
 
