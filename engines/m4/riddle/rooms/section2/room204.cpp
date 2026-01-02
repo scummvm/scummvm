@@ -363,6 +363,7 @@ void Room204::parser() {
 				_fieldE0_x = 555;
 				deleteMeiCheiHotspot();
 				addMovingMeiHotspot();
+				player_set_commands_allowed(true);
 				break;
 
 			default:
