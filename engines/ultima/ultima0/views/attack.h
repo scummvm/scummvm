@@ -23,19 +23,40 @@
 #define ULTIMA0_VIEWS_ATTACK_H
 
 #include "ultima/ultima0/views/view.h"
+#include "ultima/ultima0/data/data.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
 class Attack : public View {
+private:
+	enum Mode {
+		WHICH_WEAPON, AMULET, THROW_SWING, DONE
+	};
+	Mode _mode = WHICH_WEAPON;
+	int _weapon = -1;
+	int _damage = 0;
+	Common::String _message;
+
+	void selectObject(int objNum);
+	void selectMagic(int magicNum);
+	void attackMissile();
+	void attackWeapon();
+	void attackHitMonster(const COORD &c);
+	void showMessage(const Common::String &msg);
+
 public:
 	Attack();
 	~Attack() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void timeout();
 };
 
 } // namespace Views

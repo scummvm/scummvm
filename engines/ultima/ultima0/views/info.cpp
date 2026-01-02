@@ -85,7 +85,7 @@ bool Info::msgKeypress(const KeypressMessage &msg) {
 		return false;
 
 	for (int i = 0; i < MAX_OBJ; ++i) {
-		if (toupper(msg.ascii) == OBJECT_INFO[i].Key ||
+		if (msg.keycode == OBJECT_INFO[i].keycode ||
 			(Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i].Cost)) {
 			selectObject(i);
 			return true;

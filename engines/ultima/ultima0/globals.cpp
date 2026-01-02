@@ -44,9 +44,11 @@ const char *GLOObjName(int n) {
 }
 
 void GLOGetInfo(int n, int *pDamage, int *pCost, int *pKey) {
+#if 0
 	if (pDamage != nullptr) *pDamage = OBJECT_INFO[n].MaxDamage;
 	if (pCost != nullptr) 	 *pCost = OBJECT_INFO[n].Cost;
 	if (pKey != nullptr) 	 *pKey = OBJECT_INFO[n].Key;
+#endif
 }
 
 /************************************************************************/

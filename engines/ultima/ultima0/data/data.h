@@ -22,6 +22,7 @@
 #ifndef ULTIMA0_DATA_H
 #define ULTIMA0_DATA_H
 
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "ultima/ultima0/data/defines.h"
@@ -37,7 +38,7 @@ struct _OInfStruct {
 	const char *Name;
 	int Cost;
 	int MaxDamage;
-	char Key;
+	Common::KeyCode keycode;
 };
 struct _MInfStruct {
 	const char *Name; int Level;

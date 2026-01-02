@@ -20,6 +20,8 @@
  */
 
 #include "ultima/ultima0/views/attack.h"
+#include "ultima/ultima0/data/data.h"
+#include "ultima/ultima0/ultima0.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -29,13 +31,298 @@ Attack::Attack() : View("Attack") {
 	setBounds(Gfx::TextRect(0, 22, 26, 24));
 }
 
+bool Attack::msgFocus(const FocusMessage &msg) {
+	_mode = WHICH_WEAPON;
+	_message = "";
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return true;
+}
+
+bool Attack::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return true;
+}
+
 void Attack::draw() {
 	auto s = getSurface();
-	s.clear(4);
+	s.clear();
+
+	if (_mode == AMULET) {
+		s.writeString(Common::Point(1, 0), "1] Ladder Up");
+		s.writeString(Common::Point(1, 1), "2] Ladder Down");
+		s.writeString(Common::Point(1, 2), "3] Attack Monster");
+		s.writeString(Common::Point(1, 3), "4] Bad Magic");
+		return;
+	}
+
+	s.writeString(Common::Point(1, 1), "Which Weapon? ");
+	if (_mode != WHICH_WEAPON)
+		s.writeString(_weapon <= 0 ? "Hands" : OBJECT_INFO[_weapon].Name);
+
+	if (!_message.empty())
+		s.writeString(Common::Point(1, 2), _message);
 }
 
 bool Attack::msgKeypress(const KeypressMessage &msg) {
+	int objNum;
+
+	switch (_mode) {
+	case WHICH_WEAPON:
+		// Check for object selection, anything but food
+		objNum = -1;
+		for (uint i = OB_RAPIER; i < MAX_OBJ; ++i) {
+			if (msg.keycode == OBJECT_INFO[i].keycode) {
+				objNum = i;
+				break;
+			}
+		}
+
+		selectObject(objNum);
+		break;
+
+	case AMULET:
+		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_4) {
+			selectMagic(msg.keycode - Common::KEYCODE_1);
+		}
+		break;
+
+	case THROW_SWING:
+		if (msg.keycode == Common::KEYCODE_t) {
+			_message += "Throw\n";
+			attackMissile();
+		} else if (msg.keycode == Common::KEYCODE_s) {
+			_message += "Swing\n";
+			attackWeapon();
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+bool Attack::msgAction(const ActionMessage &msg) {
+	if (_mode == WHICH_WEAPON) {
+		selectObject(-1);
+		return true;
+	}
+
 	return false;
+}
+
+void Attack::selectObject(int objNum) {
+	auto &player = g_engine->_player;
+
+	_weapon = objNum;
+	_damage = (objNum <= 0) ? 0 : OBJECT_INFO[objNum].MaxDamage;
+
+	// Must own an object
+	if (player.Object[_weapon] == 0) {
+		showMessage("Not owned.");
+		return;
+	}
+
+	// Mages are limited
+	if (player.Class == 'M' && (objNum == OB_BOW || objNum == OB_RAPIER)) {
+		showMessage("Mages can't use that.");
+		return;
+	}
+
+	// Use an amulet
+	if (objNum == OB_AMULET) {
+		if (player.Class == 'M') {
+			// Mages can properly select the magic to use
+			_mode = AMULET;
+
+			// Amulet selection requires all four lines
+			_bounds = Gfx::TextRect(0, 22, 26, 24);
+
+			redraw();
+		} else {
+			// Fighters get a random effect
+			selectMagic(g_engine->getRandomNumber(3));
+		}
+		return;
+	}
+
+	if (objNum == OB_BOW) {
+		attackMissile();
+	} else if (objNum == OB_AXE) {
+		_mode = THROW_SWING;
+		_message += "Throw or Swing ? ";
+		redraw();
+	} else {
+		attackWeapon();
+	}
+}
+
+void Attack::selectMagic(int magicNum) {
+	auto &dungeon = g_engine->_dungeon;
+	auto &player = g_engine->_player;
+	int i;
+
+	// Last charge?
+	Common::String msg;
+	if (urand() % 5 == 0) {
+		msg = "Last charge on this Amulet.\n";
+		player.Object[OB_AMULET]--;
+	}
+
+	switch (magicNum) {
+	case 0:
+		// Ladder up
+		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_LADDERUP;
+		break;
+	case 1:
+		// Ladder down
+		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_LADDERDN;
+		break;
+	case 2:
+		// Amulet Attack
+		attackMissile();
+		break;
+	case 3:
+		// Bad Magic
+		switch (urand() % 3) {
+		case 0:
+			msg += "You have been turned into a Toad.\n";
+			for (i = AT_STRENGTH; i <= AT_WISDOM; i++)
+				player.Attr[i] = 3;
+			break;
+		case 1:
+			msg += "You have been turned into a Lizard Man.\n";
+			for (i = AT_HP; i <= AT_WISDOM; i++)
+				player.Attr[i] = floor(player.Attr[i] * 5 / 2);
+			break;
+		case 2:
+			msg += "Backfire !!\n";
+			player.Attr[AT_HP] = floor(player.Attr[AT_HP]) / 2;
+			break;
+		}
+		break;
+	}
+
+	if (msg.empty()) {
+		timeout();
+	} else {
+		redraw();
+		delaySeconds(1);
+	}
+}
+
+void Attack::attackMissile() {
+	const auto &dungeon = g_engine->_dungeon;
+	auto &player = g_engine->_player;
+	COORD c1, c = player.Dungeon;
+	int Dist = -1;
+	
+	// A maximum distance of 5
+	for (int y = 0; y < 5; y++) {
+		c += player.DungDir;
+		int n = dungeon.findMonster(c);		// Monster there ?
+		if (n >= 0) {
+			c1 = c;
+			Dist = n;
+		}
+
+		// If wall, or door, stop
+		if (!ISDRAWOPEN(dungeon.Map[c.x][c.y]))
+			break;
+	}
+
+	if (Dist < 0) {
+		// Hit nothing
+		_message += "You missed !!\n";
+		_mode = DONE;
+		delaySeconds(1);
+	} else {
+		attackHitMonster(c1);
+	}
+}
+
+void Attack::attackWeapon() {
+	const auto &player = g_engine->_player;
+	COORD c = player.Dungeon + player.DungDir;
+	attackHitMonster(c);
+}
+
+void Attack::attackHitMonster(const COORD &c) {
+	auto &player = g_engine->_player;
+	auto &dungeon = g_engine->_dungeon;
+	int n = 0, Monster, Damage;
+	MONSTER *m = nullptr;
+
+	// Is there a monster there ?
+	Monster = dungeon.findMonster(c);
+	if (Monster >= 0) {
+		// Set up a pointer
+		m = &dungeon.Monster[Monster];
+		n = m->Type;
+	}
+
+	// Get weaponry info
+	Damage = 0;
+	if (_weapon >= 0 && _weapon != OB_AMULET)
+		Damage = OBJECT_INFO[_weapon].MaxDamage;
+	if (_weapon == OB_AMULET)
+		// Amulet Special Case
+		Damage = 10 + player.Level;
+
+	// If no, or not dexterous
+	if (Monster < 0 || player.Attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player.Level) {
+		// Then a miss.
+		_message += "You missed !!\n";
+		_mode = DONE;
+		redraw();
+		delaySeconds(1);
+		return;
+	}
+
+	// Scored a hit
+	_message += "Hit !!!\n";
+
+	// Calculate HPs lost
+	n = 0;
+	if (Damage > 0)
+		n = (urand() % Damage);
+	n = n + player.Attr[AT_STRENGTH] / 5;
+	m->Strength = m->Strength - n;			// Lose them
+
+	if (m->Strength < 0)
+		m->Strength = 0;
+	_message += Common::String::format("%s's Hit\nPoints now %d.\n",
+		MONSTER_INFO[m->Type].Name, m->Strength);
+
+	// Killed it ?
+	if (m->Strength == 0) {
+		m->Alive = 0;							// It has ceased to be
+		int gold = (m->Type + player.Level);	// Amount of gold
+		_message += Common::String::format("You get %d pieces of eight.\n", gold);
+		player.Attr[AT_GOLD] += gold;
+
+		player.HPGain += (m->Type * player.Level) / 2;	// Calculate Gain
+
+		if (m->Type == player.Task)						// Check done LB's task
+			player.TaskCompleted = 1;
+	}
+
+	_mode = DONE;
+	redraw();
+	delaySeconds(1);
+}
+
+void Attack::showMessage(const Common::String &msg) {
+	_message = msg;
+	_mode = DONE;
+	redraw();
+	delaySeconds(1);
+}
+
+void Attack::timeout() {
+	close();
+	g_events->send("Dungeon", GameMessage("ENDOFTURN"));
 }
 
 } // namespace Views
