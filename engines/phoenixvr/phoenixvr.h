@@ -135,10 +135,8 @@ public:
 	void loadSaveSlot(int idx);
 	void drawSlot(int idx, int face, int x, int y);
 
-	bool isLoading() {
-		bool loading = _loading;
-		_loading = false;
-		return loading;
+	bool isLoading() const {
+		return _loading;
 	}
 
 private:

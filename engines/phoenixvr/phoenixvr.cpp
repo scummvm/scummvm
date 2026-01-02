@@ -417,6 +417,7 @@ void PhoenixVREngine::tick(float dt) {
 			test->scope.exec(ctx);
 		else
 			warning("no default script!");
+		_loading = false;
 	}
 
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);

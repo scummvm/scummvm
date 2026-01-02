@@ -268,7 +268,7 @@ struct LoadSave_Context_Restored : public Script::Command {
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("LoadSave_Context_Restored: semi-stub: can be used to report that loading is in a progress");
 		g_engine->setVariable(progress, 0);
-		g_engine->setVariable(done, 1);
+		g_engine->setVariable(done, g_engine->isLoading());
 	}
 };
 
