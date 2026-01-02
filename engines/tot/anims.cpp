@@ -826,7 +826,7 @@ static FliHeader readHeader(Common::File *file) {
 	headerfile.magic = file->readSint16LE();
 	headerfile.frames = file->readSint16LE();
 	headerfile.width = file->readSint16LE();
-	headerfile.heigth = file->readSint16LE();
+	headerfile.height = file->readSint16LE();
 	headerfile.depth = file->readSint16LE();
 	headerfile.flags = file->readSint16LE();
 	headerfile.speed = file->readSint32LE();
