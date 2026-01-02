@@ -372,9 +372,11 @@ void Parser::actionHandler(Common::Event event) {
 		switchTurbo();
 		break;
 	case kActionEscape: // Escape key, may want to QUIT
-		if (gameStatus._viewState == kViewIntro)
+		if (gameStatus._viewState == kViewIntro) {
 			gameStatus._skipIntroFl = true;
-		else {
+		} else if (gameStatus._viewState == kViewPlay) {
+			endGamePrompt();
+		} else {
 			if (_vm->_inventory->getInventoryState() == kInventoryActive) // Remove inventory, if displayed
 				_vm->_inventory->setInventoryState(kInventoryUp);
 			_vm->_screen->resetInventoryObjId();
@@ -534,6 +536,12 @@ void Parser::showDosInventory() const {
 	_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 #endif
 	Utils::notifyBox(buffer.c_str(), false);
+}
+
+void Parser::endGamePrompt() {
+	if (Utils::yesNoBox(_vm->_text->getTextParser(kTBExit_1d))) {
+		_vm->endGame();
+	}
 }
 
 } // End of namespace Hugo

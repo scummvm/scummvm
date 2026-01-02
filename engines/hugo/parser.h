@@ -120,6 +120,7 @@ protected:
 	void  readBG(Common::ReadStream &in, Background &curBG);
 	void  readCmd(Common::ReadStream &in, cmd &curCmd);
 	void  showDosInventory() const;
+	void endGamePrompt();
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 	uint16 _getIndex;                               // Index into ring buffer
