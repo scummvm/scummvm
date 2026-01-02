@@ -987,7 +987,7 @@ void TotEngine::initializeScreenFile() {
 	while (!roomFile.eos()) {
 		if (fileSize - roomFile.pos() >= kRoomRegSize) {
 			roomFile.read(roomData + kRoomRegSize * roomCount, kRoomRegSize);
-			// This one doesnt work for some reason:
+			// This one doesn't work for some reason:
 			// rooms->writeStream(roomFile.readStream(roomRegSize), roomRegSize);
 			roomFile.skip(kRoomRegSize * 7);
 			roomCount++;
