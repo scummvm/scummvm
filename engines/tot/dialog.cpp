@@ -557,7 +557,7 @@ void talkToSceneObject() {
 }
 
 /**
- * Loads talking animation of main adn secondary character
+ * Loads talking animation of main and secondary character
  */
 void loadTalkAnimations() {
 	Common::File animFile;
