@@ -166,8 +166,11 @@ Common::Point MacWidget::getAbsolutePos() {
 
 Common::Rect MacWidget::getAbsoluteDimensions() {
 	Common::Point absPos = getAbsolutePos();
+	Common::Rect dims = getDimensions();
 
-	return getDimensions().translate(absPos.x, absPos.y);
+	dims.translate(absPos.x, absPos.y);
+
+	return dims;
 }
 
 } // End of namespace Graphics
