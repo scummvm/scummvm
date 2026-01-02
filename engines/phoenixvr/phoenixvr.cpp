@@ -129,8 +129,9 @@ void PhoenixVREngine::wait(float seconds) {
 	debug("wait %gs", seconds);
 	auto begin = g_system->getMillis();
 	unsigned millis = seconds * 1000;
-	Graphics::FrameLimiter limiter(g_system, 60);
-	while (!shouldQuit() && g_system->getMillis() - begin < millis) {
+	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
+	bool waiting = true;
+	while (!shouldQuit() && waiting && g_system->getMillis() - begin < millis) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -140,12 +141,10 @@ void PhoenixVREngine::wait(float seconds) {
 					debug("matched code %d", static_cast<int>(event.kbd.keycode));
 					goToWarp(it->_value, true);
 				} else if (event.kbd.ascii == ' ') {
-					if (_movie) {
-						_movie->stop();
-						_movie.reset();
-					}
+					waiting = false;
 				}
-			} break;
+				break;
+			}
 
 			default:
 				break;
@@ -257,11 +256,48 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
 	debug("playMovie %s", movie.c_str());
-	_movie.reset(new Video::FourXMDecoder());
-	if (_movie->loadFile(Common::Path{movie})) {
-		_movie->start();
+	Video::FourXMDecoder dec;
+
+	if (dec.loadFile(Common::Path{movie})) {
+		dec.start();
+
+		bool playing = true;
+		Graphics::FrameLimiter limiter(g_system, kFPSLimit);
+		while (!shouldQuit() && playing && !dec.endOfVideo()) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN: {
+					if (event.kbd.ascii == ' ') {
+						playing = false;
+					}
+					break;
+				}
+
+				default:
+					break;
+				}
+			}
+			if (dec.needsUpdate()) {
+				auto *s = dec.decodeNextFrame();
+				if (s) {
+					Common::ScopedPtr<Graphics::Surface> converted;
+					if (s->format != _pixelFormat) {
+						converted.reset(s->convertTo(_pixelFormat));
+						_screen->copyFrom(*converted);
+						converted->free();
+					} else
+						_screen->copyFrom(*s);
+				}
+			}
+
+			// Delay for a bit. All events loops should have a delay
+			// to prevent the system being unduly loaded
+			limiter.delayBeforeSwap();
+			_screen->update();
+			limiter.startFrame();
+		}
 	} else {
-		_movie.reset();
 		warning("playMovie %s failed", movie.c_str());
 	}
 }
@@ -468,7 +504,7 @@ Common::Error PhoenixVREngine::run() {
 
 	Common::Event event;
 
-	Graphics::FrameLimiter limiter(g_system, 60);
+	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	uint frameDuration = 0;
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -478,11 +514,6 @@ Common::Error PhoenixVREngine::run() {
 				if (it != _keys.end()) {
 					debug("matched code %d", static_cast<int>(event.kbd.keycode));
 					goToWarp(it->_value, true);
-				} else if (event.kbd.ascii == ' ') {
-					if (_movie) {
-						_movie->stop();
-						_movie.reset();
-					}
 				}
 			} break;
 			case Common::EVENT_MOUSEMOVE:
@@ -515,24 +546,7 @@ Common::Error PhoenixVREngine::run() {
 			}
 		}
 		float dt = float(frameDuration) / 1000.0f;
-		if (_movie) {
-			if (!_movie->endOfVideo()) {
-				if (_movie->needsUpdate()) {
-					auto *s = _movie->decodeNextFrame();
-					if (s) {
-						Common::ScopedPtr<Graphics::Surface> converted;
-						if (s->format != _pixelFormat) {
-							converted.reset(s->convertTo(_pixelFormat));
-							_screen->copyFrom(*converted);
-							converted->free();
-						} else
-							_screen->copyFrom(*s);
-					}
-				}
-			} else
-				_movie.reset();
-		} else
-			tick(dt);
+		tick(dt);
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded

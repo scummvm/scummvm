@@ -49,6 +49,8 @@ struct PhoenixVRGameDescription;
 
 class PhoenixVREngine : public Engine {
 private:
+	static constexpr uint kFPSLimit = 60;
+
 	Graphics::Screen *_screen = nullptr;
 	Common::Point _screenCenter;
 	const ADGameDescription *_gameDescription;
@@ -175,7 +177,6 @@ private:
 
 	Common::ScopedPtr<RegionSet> _regSet;
 
-	Common::ScopedPtr<Video::VideoDecoder> _movie;
 	Common::HashMap<Common::String, Graphics::Surface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 
 	struct Cursor {
