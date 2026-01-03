@@ -80,6 +80,7 @@ static const char HELP_STRING1[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-targets-json      Display list of configured targets in JSON format and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
+	"  --list-engines-json      Display list of supported engines in JSON format and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
 	"  --dump-all-detection-entries Create a DAT file containing MD5s from detection entries of all engines\n"
 	"  --stats                  Display statistics about engines and games and exit\n"
@@ -702,6 +703,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-engines")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-engines-json")
+			END_COMMAND
+
 			DO_LONG_COMMAND("list-all-engines")
 			END_COMMAND
 
@@ -1137,11 +1141,16 @@ static void listAllGames(const Common::String &engineID) {
 }
 
 /** List all supported engines, i.e. all loaded engine plugins. */
-static void listEngines() {
-	printf("Engine ID       Engine Name                                           \n"
-	       "--------------- ------------------------------------------------------\n");
+static void listEngines(bool jsonOutput) {
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Engine ID       Engine Name                                           \n"
+			"--------------- ------------------------------------------------------\n");
+	}
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	bool first = true;
 	for (const auto &plugin : plugins) {
 		const Plugin *p = EngineMan.findDetectionPlugin(plugin->getName());
 		/* If for some reason, we can't find the MetaEngineDetection for this Engine, just ignore it */
@@ -1149,7 +1158,21 @@ static void listEngines() {
 			continue;
 		}
 
-		printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+		if (jsonOutput) {
+			if (!first) {
+				printf(",\n");
+			} else {
+				printf("\n");
+				first = false;
+			}
+			printf("  \"%s\": \"%s\"", p->get<MetaEngineDetection>().getName(),
+			       p->get<MetaEngineDetection>().getEngineName());
+		} else {
+			printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
+		}
+	}
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 }
 
@@ -2036,7 +2059,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listAllGames(settings["engine"]);
 		return cmdDoExit;
 	} else if (command == "list-engines") {
-		listEngines();
+		listEngines(false);
+		return cmdDoExit;
+	} else if (command == "list-engines-json") {
+		listEngines(true);
 		return cmdDoExit;
 	} else if (command == "list-all-engines") {
 		listAllEngines();
