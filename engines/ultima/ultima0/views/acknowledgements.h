@@ -19,39 +19,44 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
+#ifndef ULTIMA0_VIEWS_ACKNOWLEDGEMENTS_H
+#define ULTIMA0_VIEWS_ACKNOWLEDGEMENTS_H
 
-#include "ultima/ultima0/views/acknowledgements.h"
-#include "ultima/ultima0/views/attack.h"
-#include "ultima/ultima0/views/castle.h"
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/dungeon.h"
-#include "ultima/ultima0/views/info.h"
-#include "ultima/ultima0/views/intro.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
+#include "common/queue.h"
+#include "ultima/ultima0/views/view.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	Acknowledgements _acknowledgements;
-	Attack _attack;
-	Castle _castle;
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Dungeon _dungeon;
-	Info _info;
-	Intro _intro;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
+class Acknowledgements : public View {
+private:
+	Common::Queue<Common::String> _lines;
+	Gfx::GfxSurface _pendingLine;
+	int _ctr = 0;
+
+	void showTitle() {
+		replaceView("Title");
+	}
+public:
+	Acknowledgements() : View("Acknowledgements") {}
+	~Acknowledgements() override {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool tick() override;
+	bool msgKeypress(const KeypressMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgAction(const ActionMessage &msg) override {
+		showTitle();
+		return true;
+	}
 };
 
 } // namespace Views
