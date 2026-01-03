@@ -68,6 +68,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_nextSetting = "";
 	_currentSetting = "";
 	_pausedSetting = "";
+	_pausedMovieName = "";
 	_modified = false;
 	_mode = -1;
 	_toTake = false;
@@ -904,6 +905,7 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 				if (_videoDecoder) {
 					_videoDecoder->pauseVideo(true);
 					_pausedVideo = _videoDecoder;
+					_pausedMovieName = _currentMovie;
 				}
 				if (_subtitles) {
 					_system->hideOverlay();
@@ -930,11 +932,19 @@ void PrivateEngine::resumeGame() {
 	if (_pausedVideo != nullptr) {
 		_videoDecoder = _pausedVideo;
 		_pausedVideo = nullptr;
+
+		// restore the name we saved in selectPauseGame
+		if (!_pausedMovieName.empty()) {
+			_currentMovie = _pausedMovieName;
+			_pausedMovieName.clear();
+		}
 	}
 
-	if (_subtitles) {
-		_system->showOverlay(false);
-		_system->clearOverlay();
+	// always reload subtitles if a movie is active
+	// we do this unconditionally because the casebook might have loaded
+	// different subtitles while we were paused
+	if (!_currentMovie.empty()) {
+		loadSubtitles(convertPath(_currentMovie));
 	}
 
 	if (_videoDecoder) {
@@ -950,8 +960,14 @@ void PrivateEngine::resumeGame() {
 	// the screen was likely wiped by the pause menu
 	// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
 	// force the subtitle system to ignore its cache and redraw the text.
-	if (_subtitles && _videoDecoder) {
-		_subtitles->drawSubtitle(_videoDecoder->getTime(), true, _sfxSubtitles);
+	if (_subtitles) {
+		_system->showOverlay(false);
+		_system->clearOverlay();
+		// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
+		// automatically, so we don't need to pass 'true'
+		adjustSubtitleSize();
+		if (_videoDecoder)
+			_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
 	}
 }
 
@@ -1948,6 +1964,7 @@ void PrivateEngine::restartGame() {
 
 	// Pause
 	_pausedSetting = "";
+	_pausedMovieName.clear();
 
 	// VSPicture
 	_nextVS = "";
@@ -1963,6 +1980,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	// We don't want to continue with any sound or videos from a previous game
 	stopSounds();
 	destroyVideo();
+	_pausedMovieName.clear();
 
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
 
@@ -2943,8 +2961,11 @@ void PrivateEngine::pauseEngineIntern(bool pause) {
 		// the screen was likely wiped by the dialog/menu
 		// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
 		// force the subtitle system to ignore its cache and redraw the text.
-		if (_subtitles && _videoDecoder) {
-			_subtitles->drawSubtitle(_videoDecoder->getTime(), true, _sfxSubtitles);
+		if (_videoDecoder) {
+			// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
+			// automatically, so we don't need to pass 'true'.
+			adjustSubtitleSize();
+			_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
 		}
 	}
 }

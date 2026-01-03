@@ -252,6 +252,7 @@ public:
 
 	Video::SmackerDecoder *_videoDecoder;
 	Video::SmackerDecoder *_pausedVideo;
+	Common::String _pausedMovieName;
 
 	Common::Error run() override;
 	void restartGame();
