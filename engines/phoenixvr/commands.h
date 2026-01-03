@@ -295,7 +295,7 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 
 	LoadSave_Set_Context_Label(const Common::Array<Common::String> &args) : label(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Set_Context_Label %s", label.c_str());
+		g_engine->setContextLabel(label);
 	}
 };
 

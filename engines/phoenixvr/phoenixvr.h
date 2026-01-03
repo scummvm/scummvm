@@ -137,6 +137,10 @@ public:
 	void loadSaveSlot(int idx);
 	void drawSlot(int idx, int face, int x, int y);
 
+	void setContextLabel(const Common::String &contextLabel) {
+		_contextLabel = contextLabel;
+	}
+
 	bool isLoading() const {
 		return _loading;
 	}
@@ -207,6 +211,7 @@ private:
 		Common::Array<byte> thumbnail;
 		Common::Array<byte> state;
 	};
+	Common::String _contextLabel;
 
 	GameState loadGameStateObject(Common::SeekableReadStream *stream);
 };
