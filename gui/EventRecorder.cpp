@@ -393,6 +393,9 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 		DebugMan.enableDebugChannel("EventRec");
 		gDebugLevel = 1;
 	}
+	if (ConfMan.hasKey("fast_mode")) {
+		_fastPlayback = ConfMan.getInt("fast_mode") != 0;
+	}
 	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Load file\" filename=%s", recordFileName.c_str());
 		Common::EventDispatcher *eventDispatcher = g_system->getEventManager()->getEventDispatcher();
