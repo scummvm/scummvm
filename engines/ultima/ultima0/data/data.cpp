@@ -251,7 +251,7 @@ void DungeonMapInfo::create(const PlayerInfo &player) {
 	}
 
 	// Add monsters
-	MonstCount = 0;
+	_monsters.clear();
 	for (i = 1; i <= MAX_MONSTERS; ++i)
 		addMonster(player, i);
 }
@@ -276,10 +276,8 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 	if (RND() > 0.4)
 		return;
 
-	// Get monster record
-	MonsterEntry &m = Monster[MonstCount++];
-
 	// Fill in details */
+	MonsterEntry m;
 	m._type = Type;
 	m._strength = level + 3 + player.Level;
 	m._alive = true;
@@ -293,6 +291,8 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 
 	// Record position
 	m._loc.x = x; m._loc.y = y;
+
+	_monsters.push_back(m);
 }
 
 void DungeonMapInfo::synchronize(Common::Serializer &s) {
@@ -302,10 +302,13 @@ void DungeonMapInfo::synchronize(Common::Serializer &s) {
 }
 
 int DungeonMapInfo::findMonster(const Common::Point &c) const {
-	int i, n = -1;
-	for (i = 0; i < MonstCount; i++)
-		if (c.x == Monster[i]._loc.x && c.y == Monster[i]._loc.y && Monster[i]._alive)
+	int n = -1;
+
+	for (uint i = 0; i < _monsters.size(); i++) {
+		const auto &m = _monsters[i];
+		if (m._loc == c && m._alive)
 			n = i;
+	}
 	return n;
 }
 

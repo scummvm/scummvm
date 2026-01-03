@@ -94,7 +94,7 @@ bool Console::cmdDemo(int argc, const char **argv) {
 	p.Attr[AT_HP] = 18;
 	p.Attr[AT_GOLD] = 99;
 
-	for (int i = 0; i < p.Objects; i++)			// Lots of nice objects
+	for (int i = 0; i < MAX_OBJ; i++)			// Lots of nice objects
 		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 999 : 4.0;
 
 	p.Level = 0;
@@ -118,7 +118,7 @@ bool Console::cmdDebug(int argc, const char **argv) {
 		p.Attr[i] = 99;
 	p.Attr[AT_HP] = 999;
 	p.Attr[AT_GOLD] = 9999;
-	for (i = 0; i < p.Objects; i++)			// Lots of nice objects
+	for (i = 0; i < MAX_OBJ; i++)			// Lots of nice objects
 		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 9999.9 : 99.0;
 
 	p.Level = 0;

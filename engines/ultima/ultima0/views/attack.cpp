@@ -251,27 +251,27 @@ void Attack::attackWeapon() {
 void Attack::attackHitMonster(const Common::Point &c) {
 	auto &player = g_engine->_player;
 	auto &dungeon = g_engine->_dungeon;
-	int n = 0, Monster, Damage;
+	int n = 0, monNum, damage;
 	MonsterEntry *m = nullptr;
 
 	// Is there a monster there ?
-	Monster = dungeon.findMonster(c);
-	if (Monster >= 0) {
+	monNum = dungeon.findMonster(c);
+	if (monNum >= 0) {
 		// Set up a pointer
-		m = &dungeon.Monster[Monster];
+		m = &dungeon._monsters[monNum];
 		n = m->_type;
 	}
 
 	// Get weaponry info
-	Damage = 0;
+	damage = 0;
 	if (_weapon >= 0 && _weapon != OB_AMULET)
-		Damage = OBJECT_INFO[_weapon].MaxDamage;
+		damage = OBJECT_INFO[_weapon].MaxDamage;
 	if (_weapon == OB_AMULET)
 		// Amulet Special Case
-		Damage = 10 + player.Level;
+		damage = 10 + player.Level;
 
 	// If no, or not dexterous
-	if (Monster < 0 || player.Attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player.Level) {
+	if (monNum < 0 || player.Attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player.Level) {
 		// Then a miss.
 		_message += "\nMissed!";
 		_mode = DONE;
@@ -285,8 +285,8 @@ void Attack::attackHitMonster(const Common::Point &c) {
 
 	// Calculate HPs lost
 	n = 0;
-	if (Damage > 0)
-		n = (urand() % Damage);
+	if (damage > 0)
+		n = (urand() % damage);
 	n = n + player.Attr[AT_STRENGTH] / 5;
 	m->_strength = m->_strength - n;			// Lose them
 

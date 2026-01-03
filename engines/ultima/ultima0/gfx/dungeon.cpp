@@ -68,7 +68,7 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 		// Check for monster present
 		monster = dungeon.findMonster(pos);
 		if (monster >= 0)					
-			monster = dungeon.Monster[monster]._type;
+			monster = dungeon._monsters[monster]._type;
 
 		// Draw the dungeon
 		DRAWDungeon(s, &rOut, &rIn, left, front, right,

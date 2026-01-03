@@ -22,6 +22,7 @@
 #ifndef ULTIMA0_DATA_H
 #define ULTIMA0_DATA_H
 
+#include "common/array.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/serializer.h"
@@ -68,10 +69,8 @@ private:
 	int generateContent(int c);
 
 public:
-	const int MapSize = DUNGEON_MAP_SIZE - 1;	// Size of Map
 	byte Map[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE] = {};	// Map information
-	int	MonstCount = 0;							// Number of Monsters
-	MonsterEntry Monster[MAX_MONSTERS];			// Monster records
+	Common::Array<MonsterEntry> _monsters;				// Monster records
 
 	void create(const PlayerInfo &player);
 	void synchronize(Common::Serializer &s);
@@ -86,7 +85,7 @@ public:
  * Player structure
  */
 struct PlayerInfo {
-	char  Name[MAX_NAME + 1] = {};			// Player Name
+	char Name[MAX_NAME + 1] = {};			// Player Name
 	Common::Point World;							// World map position
 	Common::Point Dungeon;							// Dungeon map position
 	Common::Point DungDir;							// Dungeon direction facing
@@ -97,8 +96,6 @@ struct PlayerInfo {
 	int	  Task = 0;							// Task set (-1 = none)
 	int	  TaskCompleted = 0;				// Task completed
 	uint32 LuckyNumber = 0;					// Value used for seeding
-	const int Attributes = MAX_ATTR;		// Number of attributes
-	const int Objects = MAX_OBJ;			// Number of objects
 	int   Attr[MAX_ATTR] = {};				// Attribute values
 	double Object[MAX_OBJ] = {};			// Object counts
 

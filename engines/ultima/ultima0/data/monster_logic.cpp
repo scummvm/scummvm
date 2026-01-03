@@ -30,8 +30,7 @@ void MonsterLogic::checkForAttacks(PlayerInfo &p, DungeonMapInfo &d) {
 	double Dist;
 
 	// Go through all monsters
-	for (i = 0; i < d.MonstCount; i++) {
-		MonsterEntry &m = d.Monster[i];				// Pointer to MONSTER &/
+	for (MonsterEntry &m : d._monsters) {
 		Dist = pow(m._loc.x - p.Dungeon.x, 2);	// Calculate Distance
 		Dist = Dist + pow(m._loc.y - p.Dungeon.y, 2);
 		Dist = sqrt(Dist);
@@ -152,7 +151,7 @@ int MonsterLogic::steal(MonsterEntry &m, PlayerInfo &p) {
 	} else if (m._type == MN_THIEF) {
 		// Figure out what stolen
 		do {
-			n = urand() % p.Objects;
+			n = urand() % MAX_OBJ;
 		} while (p.Object[n] == 0);
 
 		p.Object[n]--;					// Stole one
