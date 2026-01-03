@@ -152,6 +152,14 @@ void MessageDialog::reflowLayout() {
 	}
 }
 
+MessageDialog::MessageDialog(const Common::U32String &message)
+	: MessageDialog(message, _("OK")) {
+}
+
+MessageDialog::MessageDialog(const Common::String &message)
+	: MessageDialog(Common::U32String(message), _("OK")) {
+}
+
 MessageDialog::MessageDialog(const Common::U32String &message,
 							 const Common::U32String &defaultButton,
 							 const Common::U32String &altButton,
@@ -219,6 +227,11 @@ void TimedMessageDialog::handleTickle() {
 }
 
 CountdownMessageDialog::CountdownMessageDialog(const Common::U32String &message,
+				  uint32 duration)
+	: CountdownMessageDialog(message, duration, _("OK")) {
+}
+
+CountdownMessageDialog::CountdownMessageDialog(const Common::U32String &message,
 				  uint32 duration,
 				  const Common::U32String &defaultButton,
 				  const Common::U32String &altButton,
@@ -251,6 +264,14 @@ void CountdownMessageDialog::updateCountdown() {
 	if (msg != _extraMessage->getLabel()) {
 		_extraMessage->setLabel(msg);
 	}
+}
+
+MessageDialogWithURL::MessageDialogWithURL(const Common::U32String &message, const char *url)
+	: MessageDialogWithURL(message, url, _("OK")) {
+}
+
+MessageDialogWithURL::MessageDialogWithURL(const Common::String &message, const char *url)
+	: MessageDialogWithURL(Common::U32String(message), url, _("OK")) {
 }
 
 MessageDialogWithURL::MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton, Graphics::TextAlign alignment)

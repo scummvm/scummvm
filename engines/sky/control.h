@@ -198,7 +198,7 @@ public:
 	void saveDescriptions(const Common::StringArray &list);
 
 private:
-	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
+	int displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 	void initPanel();
 	void removePanel();

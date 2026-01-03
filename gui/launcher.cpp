@@ -563,11 +563,11 @@ void LauncherDialog::loadGame(int item) {
 			}
 		} else {
 			MessageDialog dialog
-				(_("This game does not support loading games from the launcher."), _("OK"));
+				(_("This game does not support loading games from the launcher."));
 			dialog.runModal();
 		}
 	} else {
-		MessageDialog dialog(_("ScummVM could not find any engine capable of running the selected game!"), _("OK"));
+		MessageDialog dialog(_("ScummVM could not find any engine capable of running the selected game!"));
 		dialog.runModal();
 	}
 

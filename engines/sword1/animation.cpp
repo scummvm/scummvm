@@ -563,7 +563,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		Video::VideoDecoder *aviDecoder = new Video::AVIDecoder(12);
 		return new MoviePlayer(vm, textMan, resMan, sound, system, aviDecoder, kVideoDecoderMP2);
 #else
-		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
+		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"));
 		dialog.runModal();
 		return 0;
 #endif
@@ -571,7 +571,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 
 	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {
 		Common::U32String buf = Common::U32String::format(_("Cutscene '%s' not found"), sequenceList[id]);
-		GUI::MessageDialog dialog(buf, _("OK"));
+		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 	}
 

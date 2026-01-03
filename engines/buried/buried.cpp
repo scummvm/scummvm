@@ -619,7 +619,7 @@ void BuriedEngine::showPoints() {
 
 	GUI::MessageDialog dialog(
 		agentEvaluation->_scoringTextDescriptionsWithScores,
-		"OK",
+		_("OK"),
 		Common::U32String(),
 		Graphics::kTextAlignLeft
 	);

@@ -656,7 +656,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"Select the folder containing the game's files, then tap **Choose**. \n"
 				"\n"
 				"Repeat steps 1 and 6 for each game."
-				), _("Ok"),
+				), _("OK"),
 				// I18N: A button caption to dismiss a message and read it later
 				_("Read Later"), Graphics::kTextAlignLeft);
 
@@ -681,7 +681,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"Select the sub-folder containing the game's files, then tap **Choose**."
 				"\n"
 				"Repeat steps 1 and 6 for each game."
-				), _("Ok"),
+				), _("OK"),
 				// I18N: A button caption to dismiss a message and read it later
 				_("Read Later"), Graphics::kTextAlignLeft);
 

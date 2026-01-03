@@ -231,7 +231,7 @@ void ScummEngine::askForDisk(const Common::Path &filename, int disknum) {
 				ConfMan.getPath("path").toString(Common::Path::kNativeSeparator).c_str());
 #endif
 
-		result = displayMessage("Quit", "%s", buf);
+		result = displayMessageOKQuit("%s", buf);
 		if (!result) {
 			error("Cannot find file: '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 		}
@@ -293,7 +293,7 @@ void ScummEngine::readIndexFile() {
 	}
 
 	if (checkTryMedia(_fileHandle)) {
-		displayMessage(nullptr, "You're trying to run game encrypted by ActiveMark. This is not supported.");
+		displayMessage("You're trying to run game encrypted by ActiveMark. This is not supported.");
 		quitGame();
 
 		return;
