@@ -583,9 +583,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		}
 		ConfMan.set("gfx_mode", gfxModeSetting, Common::ConfigManager::kSessionDomain);
 	}
+#ifdef ENABLE_EVENTRECORDER
 	if (settings.contains("disable-display")) {
-		ConfMan.setInt("disable-display", 1, Common::ConfigManager::kTransientDomain);
+		ConfMan.setInt("disable_display", 1, Common::ConfigManager::kTransientDomain);
 	}
+	if (settings.contains("fast-mode")) {
+		ConfMan.setInt("fast_mode", 1, Common::ConfigManager::kTransientDomain);
+	}
+#endif
 	setupGraphics(system);
 
 	if (!configLoadStatus) {
