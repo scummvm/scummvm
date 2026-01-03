@@ -70,7 +70,7 @@ int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 			return steal(m, p);
 
 	Common::String msg = Common::String::format("You are being attacked by a %s !!!.\n",
-		MONSTER_INFO[m._type].Name);
+		MONSTER_INFO[m._type]._name);
 
 	n = urand() % 20;					// Calculate hit chance
 	if (p._object[OB_SHIELD] > 0) n--;

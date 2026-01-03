@@ -293,7 +293,7 @@ void Attack::attackHitMonster(const Common::Point &c) {
 	if (m->_strength < 0)
 		m->_strength = 0;
 	_message += Common::String::format("%s's Hit\nPoints now %d.\n",
-		MONSTER_INFO[m->_type].Name, m->_strength);
+		MONSTER_INFO[m->_type]._name, m->_strength);
 
 	// Killed it ?
 	if (m->_strength == 0) {

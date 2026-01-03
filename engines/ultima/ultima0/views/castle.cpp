@@ -198,7 +198,7 @@ void Castle::nextTask() {
 }
 
 Common::String Castle::getTaskName(int taskNum) const {
-	Common::String mons = MONSTER_INFO[taskNum].Name;
+	Common::String mons = MONSTER_INFO[taskNum]._name;
 
 	return Common::String::format("%s %s",
 		strchr("aeiou", tolower(mons.firstChar())) != nullptr ? "an" : "a",

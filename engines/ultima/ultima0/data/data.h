@@ -42,7 +42,8 @@ struct ObjectInfo {
 	Common::KeyCode _keycode;
 };
 struct MonsterInfo {
-	const char *Name; int _level;
+	const char *_name;
+	int _level;
 };
 
 extern const ObjectInfo OBJECT_INFO[];
@@ -58,6 +59,8 @@ struct MonsterEntry {
 	int _type = 0;			// Monster type
 	int _strength = 0;		// Strength
 	bool _alive = false;	// Alive flag
+
+	void synchronize(Common::Serializer &s);
 };
 
 /**

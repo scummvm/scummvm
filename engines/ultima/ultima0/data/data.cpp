@@ -296,9 +296,19 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 }
 
 void DungeonMapInfo::synchronize(Common::Serializer &s) {
+	// Map data
 	for (int y = 0; y < DUNGEON_MAP_SIZE; ++y)
 		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x)
 			s.syncAsByte(_map[x][y]);
+
+	// Monsters
+	uint count = _monsters.size();
+	s.syncAsByte(count);
+	if (s.isLoading())
+		_monsters.resize(count);
+
+	for (auto &m : _monsters)
+		m.synchronize(s);
 }
 
 int DungeonMapInfo::findMonster(const Common::Point &c) const {
@@ -310,6 +320,16 @@ int DungeonMapInfo::findMonster(const Common::Point &c) const {
 			n = i;
 	}
 	return n;
+}
+
+/*-------------------------------------------------------------------*/
+
+void MonsterEntry::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_loc.x);
+	s.syncAsByte(_loc.y);
+	s.syncAsByte(_type);
+	s.syncAsByte(_strength);
+	s.syncAsByte(_alive);
 }
 
 } // namespace Ultima0
