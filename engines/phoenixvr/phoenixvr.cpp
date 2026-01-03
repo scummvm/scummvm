@@ -633,6 +633,28 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	auto music = ms.readString(0, 257);
 	auto musicVolume = ms.readUint32LE();
 	debug("current music %s, volume: %u", music.c_str(), musicVolume);
+
+	// sound samples
+	for (uint i = 0; i != 8; ++i) {
+		auto name = ms.readString(0, 257);
+		auto vol = ms.readUint32LE();
+		auto loop = ms.readUint32LE();
+		debug("sound: %s vol: %u loop: %u", name.c_str(), vol, loop);
+		if (!name.empty())
+			playSound(name, vol, -1);
+	}
+
+	// sound samples 3D
+	for (uint i = 0; i != 8; ++i) {
+		auto name = ms.readString(0, 257);
+		auto vol = ms.readUint32LE();
+		auto loop = ms.readUint32LE();
+		auto angle = ms.readUint32LE();
+		debug("3d sound: %s %u %u %u", name.c_str(), vol, loop, angle);
+		if (!name.empty())
+			playSound(name, vol, -1, true, float(angle * M_PI));
+	}
+
 	_loading = true;
 }
 
