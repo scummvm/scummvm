@@ -66,7 +66,7 @@ int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 
 	if (m._type == MN_GREMLIN ||		// Special case for Gremlin/Thief
 		m._type == MN_THIEF)
-		if (RND() > 0.5)			// Half the time
+		if (RND() > 0.5)				// Half the time
 			return steal(m, p);
 
 	Common::String msg = Common::String::format("You are being attacked by a %s !!!.\n",
@@ -81,7 +81,7 @@ int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 		msg += "Missed !\n";
 	} else {
 		// Hit !
-		n = urand() % m._type;		// Calculate damage done.
+		n = urand() % m._type;			// Calculate damage done.
 		n = n + p._level;
 		p._attr[AT_HP] -= n;			// Adjust hit points
 		msg += "Hit !!!\n";
@@ -122,7 +122,7 @@ void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 		return;		// No move
 
 	x = x + xi; y = y + yi;				// Work out new position
-	if (!canMoveTo(d, x, y))	// Fail if can't move there
+	if (!canMoveTo(d, x, y))			// Fail if can't move there
 		return;
 	if (x == p._dungeonPos.x &&			// Can't move onto us
 		y == p._dungeonPos.y) return;
@@ -132,7 +132,8 @@ void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 bool MonsterLogic::canMoveTo(DungeonMapInfo &d, int x, int y) {
 	Common::Point c;
 	int t = d._map[x][y];				// See what's there
-	if (!ISWALKTHRU(t)) return 0;		// Can't walk through walls
+	if (!ISWALKTHRU(t))
+		return 0;						// Can't walk through walls
 	c.x = x; c.y = y;					// Set up coord structure
 
 	// True if no monster here

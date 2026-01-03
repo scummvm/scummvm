@@ -34,7 +34,8 @@ int Monster::_xPos = 640;
 int Monster::_yPos = 512;
 constexpr int color = COL_MONSTER;
 
-#define	END		(-9999.99)					/* End marker */
+// End marker
+#define	END		(-9999.99)
 
 #define	X(n)			(x1 + w * (n)/10)
 #define	Y(n)			(y1 + h * (n)/10)
@@ -130,7 +131,7 @@ void Monster::drawViper(Graphics::ManagedSurface *s, double x, double y, double 
 }
 
 void Monster::drawCarrion(Graphics::ManagedSurface *s, double x, double y, double d) {
-	/* 79-dst.recty(d) line here */
+	// 79-dst.recty(d) line here
 	hPlot(s, y - 20 / d, x - 79 / d, y - 20 / d, x - 88 / d, y - 10 / d, x - 83 / d, y + 10 / d, x - 83 / d, y + 20 / d, x - 88 / d, y + 20 / d, x - 79 / d, y - 20 / d, x - 79 / d, END, END);
 	hPlot(s, y - 20 / d, x - 88 / d, y - 30 / d, x - 83 / d, y - 30 / d, x - 78 / d, END, END);
 	hPlot(s, y + 20 / d, x - 88 / d, y + 30 / d, x - 83 / d, y + 40 / d, x - 83 / d, END, END);

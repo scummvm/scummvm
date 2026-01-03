@@ -213,7 +213,7 @@ void Dungeon::drawDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 void Dungeon::setRange(int x1, int x2, int y, int yd1, int yd2) {
 	_xLeft = x1; _xRight = x2;				// Set x ranges
 	_yBottom = y;							// Set lower left y value
-	_yDiffLeft = yd1; _yDiffRight = yd2;		// Set difference for either end
+	_yDiffLeft = yd1; _yDiffRight = yd2;	// Set difference for either end
 }
 
 void Dungeon::drawWall(Graphics::ManagedSurface *s, int n) {
@@ -237,7 +237,7 @@ void Dungeon::drawConvert(int *px, int *py) {
 	long x, y, yd;							// Longs for overflow in 16 bit
 	x = (_xRight - _xLeft);					// Calculate width
 	x = x * (*px) / 100 + _xLeft;			// Work out horiz value
-	yd = (_yDiffRight - _yDiffLeft);			// Work out height of vert for x
+	yd = (_yDiffRight - _yDiffLeft);		// Work out height of vert for x
 	yd = yd * (*px) / 100;
 	y = _yBottom +							// Half of the distance
 		yd / 2 -							// + Scaled total size

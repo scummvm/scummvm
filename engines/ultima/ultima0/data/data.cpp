@@ -169,8 +169,8 @@ void WorldMapInfo::init(PlayerInfo &p) {
 	// Calculate player start
 	x = g_engine->getRandomNumber(1, size - 1);
 	y = g_engine->getRandomNumber(1, size - 1);
-	p._worldPos.x = x; p._worldPos.y = y;			// Save it
-	_map[x][y] = WT_TOWN;					// Make it a town
+	p._worldPos.x = x; p._worldPos.y = y;		// Save it
+	_map[x][y] = WT_TOWN;						// Make it a town
 
 	// Find place for castle
 	do {
@@ -178,7 +178,7 @@ void WorldMapInfo::init(PlayerInfo &p) {
 		y = g_engine->getRandomNumber(1, size - 1);
 	} while (_map[x][y] != WT_SPACE);
 
-	_map[x][y] = WT_BRITISH;				// Put LBs castle there
+	_map[x][y] = WT_BRITISH;					// Put LBs castle there
 }
 
 int WorldMapInfo::read(int x, int y) const {
@@ -265,9 +265,9 @@ int DungeonMapInfo::generateContent(int c) {
 	return c;
 }
 
-void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
+void DungeonMapInfo::addMonster(const PlayerInfo &player, int type) {
 	int x, y;
-	int level = MONSTER_INFO[Type]._level;
+	int level = MONSTER_INFO[type]._level;
 
 	// Limit monsters to levels
 	if (level - 2 > player._level)
@@ -278,7 +278,7 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 
 	// Fill in details
 	MonsterEntry m;
-	m._type = Type;
+	m._type = type;
 	m._strength = level + 3 + player._level;
 	m._alive = true;
 
