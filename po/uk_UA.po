@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 15:46+0000\n"
-"PO-Revision-Date: 2026-01-03 15:44+0000\n"
+"PO-Revision-Date: 2026-01-03 15:52+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8358,15 +8358,11 @@ msgstr "Стрейф наліво"
 
 #: engines/dm/metaengine.cpp:226 engines/titanic/metaengine.cpp:343
 #: engines/titanic/metaengine.cpp:384
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backward"
 msgstr "Рухатись назад"
 
 #: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
 msgstr "Стрейфувати направо"
 
@@ -8390,10 +8386,8 @@ msgstr ""
 "Використовувати автоматичний читач текста для субтитрів (якщо TTS доступне)"
 
 #: engines/draci/metaengine.cpp:212
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
-msgstr "Пропустити вступ/Вийти з мапи чи з інвентарю"
+msgstr "Пропустити вступ / Вийти з мапи чи з інвентарю"
 
 #: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:191
 msgid "Open map"
@@ -8456,8 +8450,6 @@ msgstr ""
 "Дивіться %s"
 
 #: engines/dragons/metaengine.cpp:206
-#, fuzzy
-#| msgid "Left Shoulder"
 msgid "Left shoulder"
 msgstr "Лівий курок"
 
