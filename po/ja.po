@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-10-05 13:36+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -10588,10 +10588,8 @@ msgstr ""
 "選択した場合、イントロ中はデジタルサウンドトラックを使用します。それ以外は"
 "MIDIで再生します。"
 
-#: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr "Windowsのカーソルを使用"
 
 #: engines/made/metaengine.cpp:64
@@ -12088,10 +12086,6 @@ msgstr "CD音楽を使用"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "可能な場合、BGMとしてCDオーディオを使用"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Windowsのカーソルを使用"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -17481,6 +17475,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Use Windows cursors"
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Windowsのカーソルを使用"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "マウスの左ボタン"

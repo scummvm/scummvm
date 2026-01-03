@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2026-01-03 16:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -10347,8 +10347,8 @@ msgstr ""
 "Якщо вибрано, то гра буде використовувати цифрову музику під час вступу. "
 "Інакше буде програватись музика MIDI."
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr "Використовувати Windows курсори"
 
 #: engines/made/metaengine.cpp:64
@@ -11831,10 +11831,6 @@ msgstr "Використовувати CD аудіо"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Використовувати CD аудіо замість ігрового аудіо, якщо такі є"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Використовувати Windows курсори"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -17193,6 +17189,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Використовувати Windows курсори"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "Лівий клік миші"

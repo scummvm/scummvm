@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -10628,10 +10628,8 @@ msgstr ""
 "Калі выбрана, гульня будзе граць дыґітальны саўндтрэк ува ўступе. Іначай "
 "будзе грацца музыка MIDI."
 
-#: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr "Выкарыстоўваць паказальнікі Windows"
 
 #: engines/made/metaengine.cpp:64
@@ -12155,10 +12153,6 @@ msgstr "Выкарыстоўваць гук CD"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Па мажлівасьці выкарыстоўваць гук кампактных дыскаў замест гульнявога"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Выкарыстоўваць паказальнікі Windows"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -17555,6 +17549,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Use Windows cursors"
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Выкарыстоўваць паказальнікі Windows"
 
 #~ msgid "Left Shoulder"
 #~ msgstr "Левы гак"

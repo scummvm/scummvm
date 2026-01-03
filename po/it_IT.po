@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-11-17 12:09+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -10433,9 +10433,9 @@ msgstr ""
 "Se attivato, il gioco riprodurrà la musica in formato digitale durante "
 "l'introduzione. Altrimenti verrà utilizzata la musica MIDI."
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
-msgstr "Usa puntatore mouse di Windows"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
+msgstr "Usa cursori di Windows"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -11822,10 +11822,6 @@ msgstr "Usa audio da CD"
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Usa l'audio da CD al posto di quello incorporato nel gioco, se disponibile"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Usa cursori di Windows"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -16706,6 +16702,9 @@ msgstr ""
 "Zork Nemesis contiene alcuni puzzle musicali the richiedono l'audio MIDI per "
 "poterli risolvere. In alternativa, i puzzle possono essere risolti usando i "
 "sottotitoli, se supportati. Desideri continuare ad avviare il gioco?"
+
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Usa puntatore mouse di Windows"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "Tasto sinistro mouse"

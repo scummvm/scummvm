@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-11-16 13:36+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -10475,9 +10475,9 @@ msgstr ""
 "Si activé, le jeu utilisera une bande-son numérique pendant l'introduction. "
 "Sinon, il jouera la musique MIDI."
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
-msgstr "Utiliser les curseurs de souris Windows"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
+msgstr "Utiliser les curseurs Windows"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -11869,10 +11869,6 @@ msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Utilise la musique du CD quand elle est disponible au lieu de la musique "
 "intégrée"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Utiliser les curseurs Windows"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -16778,6 +16774,9 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Utiliser les curseurs de souris Windows"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "Souris Bouton gauche"

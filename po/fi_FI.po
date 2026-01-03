@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-07-02 00:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -10539,10 +10539,8 @@ msgstr ""
 "Jos valittu, peli käyttää digitaalista musiikkia intron aikana. Muutoin se "
 "käyttää MIDI-musiikkia."
 
-#: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr "Käytä Windowsin kursoreita"
 
 #: engines/made/metaengine.cpp:64
@@ -11986,10 +11984,6 @@ msgstr "Käytä CD-ääntä"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Käytä Windowsin kursoreita"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -17045,6 +17039,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Use Windows cursors"
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Käytä Windowsin kursoreita"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "Vasen hiirennappi"

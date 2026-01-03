@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -10213,9 +10213,9 @@ msgstr ""
 "선택하면, 게임은 인트로에서 디지털 사운드트랙을 사용합니다. 그렇지 않으면, 미"
 "디 음악을 재생합니다."
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
-msgstr "윈도우 커서 사용"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
+msgstr "윈도우즈 커서 사용"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -11562,10 +11562,6 @@ msgstr "CD 오디오 사용"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "사용 가능할 경우, 게임 오디오 대신 CD 오디오를 사용"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "윈도우즈 커서 사용"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -16328,6 +16324,9 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "윈도우 커서 사용"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "왼쪽 마우스 버튼"

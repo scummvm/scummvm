@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2025-11-17 11:06+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -9490,9 +9490,9 @@ msgid ""
 "Otherwise, it will play MIDI music."
 msgstr ""
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
-msgstr "Windows-ის თაგუნას კურსორის გამოყენება"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
+msgstr "Windows-ის კურსორის გამოყენება"
 
 #: engines/made/metaengine.cpp:64
 msgid ""
@@ -10763,10 +10763,6 @@ msgstr "CD აუდიოს გამოყენება"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Windows-ის კურსორის გამოყენება"
 
 #: engines/sci/detection_options.h:133
 msgid ""
@@ -15324,6 +15320,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Windows-ის თაგუნას კურსორის გამოყენება"
 
 #~ msgid "Left Shoulder"
 #~ msgstr "მარცხენა მხარი"

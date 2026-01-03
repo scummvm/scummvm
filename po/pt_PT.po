@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:53+0000\n"
+"POT-Creation-Date: 2026-01-03 16:24+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -10391,10 +10391,8 @@ msgid ""
 "Otherwise, it will play MIDI music."
 msgstr ""
 
-#: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr "Usar cursores do Windows"
 
 #: engines/made/metaengine.cpp:64
@@ -11874,10 +11872,6 @@ msgstr "Usar CD áudio"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Usar áudio CD em vez de som do jogo, se disponível"
-
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr "Usar cursores do Windows"
 
 #: engines/sci/detection_options.h:133
 #, fuzzy
@@ -17104,6 +17098,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Use Windows cursors"
+#~ msgid "Use Windows mouse cursors"
+#~ msgstr "Usar cursores do Windows"
 
 #~ msgid "Left Mouse Button"
 #~ msgstr "Botão Esquerdo do Rato"
