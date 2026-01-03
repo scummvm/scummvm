@@ -126,7 +126,7 @@ void Room207::init() {
 		}
 	}
 
-	if (inv_object_is_here("REBUS AMULET")) {
+	if (!inv_object_is_here("REBUS AMULET")) {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "REBUS AMULET", false);
 	} else {
 		_rebusAmuletSeries = series_load("rebus amulet", -1, nullptr);
