@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 15:38+0000\n"
-"PO-Revision-Date: 2025-11-13 11:41+0000\n"
+"PO-Revision-Date: 2026-01-03 15:39+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Українська\n"
 
 #: audio/mac_plugin.cpp:30
@@ -73,7 +73,7 @@ msgstr "Закрити"
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
 msgid "Show hidden files"
-msgstr "Показати cховані файлі"
+msgstr "Показати cховані файли"
 
 #: gui/browser.cpp:74
 msgid "Show files marked with the hidden attribute"
@@ -5217,7 +5217,7 @@ msgstr "Показувати екранне керування"
 
 #: backends/platform/android/options.cpp:138
 msgid "Ignore safe areas in-game"
-msgstr ""
+msgstr "Ігнорувати безпечні зони в грі"
 
 #: backends/platform/android/options.cpp:139
 #: backends/platform/ios7/ios7_options.mm:112
@@ -7302,7 +7302,7 @@ msgstr ""
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
-msgstr ""
+msgstr "Вибрати/Ударити/Бігти"
 
 #: engines/awe/metaengine.cpp:62 engines/hpl1/metaengine.cpp:83
 msgid "Jump"
@@ -7310,7 +7310,7 @@ msgstr "Стрибок"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter Level Code"
-msgstr ""
+msgstr "Введіть код рівня"
 
 #: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:105
@@ -7339,36 +7339,28 @@ msgid "Escape"
 msgstr "Втікти"
 
 #: engines/bagel/metaengine.cpp:70
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page Up"
-msgstr "Повернути догори"
+msgstr "Сторінка вгору"
 
 #: engines/bagel/metaengine.cpp:71
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page Down"
-msgstr "Повернути донизу"
+msgstr "Сторінка донизу"
 
 #: engines/bagel/metaengine.cpp:72
-#, fuzzy
-#| msgid "Boss key"
 msgid "Home"
-msgstr "Клавіша Начальника"
+msgstr "Додому"
 
 #: engines/bagel/metaengine.cpp:73
 msgid "End"
-msgstr ""
+msgstr "Кінець"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
 msgstr "Загальні клавіші"
 
 #: engines/bagel/metaengine.cpp:180
-#, fuzzy
-#| msgid "Minimal Volume"
 msgid "Minimal Keys"
-msgstr "Мінімальна Гучність"
+msgstr "Мінімальні клавіші"
 
 #. I18N: Escape is a key
 #: engines/bbvs/metaengine.cpp:95
@@ -7529,8 +7521,6 @@ msgstr "Ходити / Дивитись / Говорити / Вибирати / 
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
 #: engines/ultima/nuvie/metaengine.cpp:73
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat"
 msgstr "Перемкнути режим бою"
 
@@ -7554,8 +7544,6 @@ msgstr "Пропустити ролік"
 #: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip dialog"
 msgstr "Пропустити діалог"
 
@@ -7564,8 +7552,6 @@ msgstr "Пропустити діалог"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game options"
 msgstr "Налашт. гри"
 
@@ -7575,16 +7561,12 @@ msgstr "Налашт. гри"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
-#, fuzzy
-#| msgid "Open KIA Database"
 msgid "Open KIA database"
 msgstr "Відкрити базу KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
-#, fuzzy
-#| msgid "Delete Selected Saved Game"
 msgid "Delete selected saved game"
 msgstr "Видалити обране збереження гри"
 
@@ -7631,8 +7613,6 @@ msgstr "Прокручення донизу"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle clue privacy"
 msgstr "Перемкнути приватність підказок"
 
@@ -7695,8 +7675,6 @@ msgstr "Завантажити гру"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
-#, fuzzy
-#| msgid "Crime Scene Database"
 msgid "Crime scene database"
 msgstr "База даних злочинів"
 
@@ -7705,8 +7683,6 @@ msgstr "База даних злочинів"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
-#, fuzzy
-#| msgid "Suspect Database"
 msgid "Suspect database"
 msgstr "База даних підозрюваних"
 
@@ -7715,8 +7691,6 @@ msgstr "База даних підозрюваних"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
-#, fuzzy
-#| msgid "Clue Database"
 msgid "Clue database"
 msgstr "База даних доказів"
 
@@ -7757,45 +7731,33 @@ msgstr "Дозволити пропускати ролики"
 
 #: engines/buried/metaengine.cpp:134 engines/hypno/metaengine.cpp:130
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "Мапа клавіш виходу з екрану"
+msgstr "Мапа клавіш кат-сцени"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Main menu keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш головного меню"
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 #: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Inventory keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапи клавіш інвентарю"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
 #: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
 #: engines/sherlock/metaengine.cpp:1185
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact"
-msgstr "Режим взаємодії"
+msgstr "Вибрати / взаємодіяти"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "Керування"
+msgstr "Клавіша Ctrl"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "Вийти до меню"
+msgstr "Вийти до головного меню"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7808,16 +7770,12 @@ msgid "Look down"
 msgstr "Глянути донизу"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Глянути на"
+msgstr "Глянути наліво"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Глянути на"
+msgstr "Глянути направо"
 
 #: engines/buried/metaengine.cpp:218 engines/dm/metaengine.cpp:196
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
@@ -7834,56 +7792,52 @@ msgstr "Рухатись уперед"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "Повторити останній коментар ШІ"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "Біочіп ШІ"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "Порожній біочіп"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "Біочіп плащ"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
 msgid "Biochip evidence"
-msgstr ""
+msgstr "Біочип докази"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "Показати cховані файлі"
+msgstr "Біочип докази файли"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "Біочип інтерфейс"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "Біочип стрибок"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "Біочип переклад"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Показувати підказки"
+msgstr "Показати рахунок"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -7924,23 +7878,17 @@ msgstr "Мапа клавіш гри"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Exit/Skip"
 msgid "Exit / Skip"
-msgstr "Вийти/Пропустити"
+msgstr "Вийти / Пропустити"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game Info"
 msgid "Game info"
 msgstr "Інфо гри"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Prompt"
 msgid "Quit prompt"
 msgstr "Запит виходу з гри"
 
@@ -7951,87 +7899,61 @@ msgid "ALTered Item"
 msgstr "АЛЬТернативна річ"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory Item 1 (Select/Deselect)"
 msgid "Inventory Item 1 (Select / Deselect)"
-msgstr "Інвентар 1 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 1 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory Item 2 (Select/Deselect)"
 msgid "Inventory Item 2 (Select / Deselect)"
-msgstr "Інвентар 2 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 2 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory Item 3 (Select/Deselect)"
 msgid "Inventory Item 3 (Select / Deselect)"
-msgstr "Інвентар 3 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 3 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory Item 4 (Select/Deselect)"
 msgid "Inventory Item 4 (Select / Deselect)"
-msgstr "Інвентар 4 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 4 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:277
-#, fuzzy
-#| msgid "Inventory Item 5 (Select/Deselect)"
 msgid "Inventory Item 5 (Select / Deselect)"
-msgstr "Інвентар 5 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 5 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:282
-#, fuzzy
-#| msgid "Inventory Item 6 (Select/Deselect)"
 msgid "Inventory Item 6 (Select / Deselect)"
-msgstr "Інвентар 6 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 6 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:287
-#, fuzzy
-#| msgid "Inventory Item 7 (Select/Deselect)"
 msgid "Inventory Item 7 (Select / Deselect)"
-msgstr "Інвентар 7 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 7 (Вибрати / Скасувати вибір)"
 
 #: engines/cge/metaengine.cpp:292
-#, fuzzy
-#| msgid "Inventory Item 8 (Select/Deselect)"
 msgid "Inventory Item 8 (Select / Deselect)"
-msgstr "Інвентар 8 (Вибрати/Скасувати вибір)"
+msgstr "Інвентар 8 (Вибрати / Скасувати вибір)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
-#, fuzzy
-#| msgid "DEBUG: Access to Location 1"
 msgid "DEBUG: Access to location 1"
 msgstr "ВІДЛАДКА: Доступ до локації 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-8"
 msgid "DEBUG: Access to locations 1-8"
 msgstr "ВІДЛАДКА: Доступ до локацій 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-16"
 msgid "DEBUG: Access to locations 1-16"
 msgstr "ВІДЛАДКА: Доступ до локацій 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-23"
 msgid "DEBUG: Access to locations 1-23"
 msgstr "ВІДЛАДКА: Доступ до локацій 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-24"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "ВІДЛАДКА: Доступ до локацій 1-24"
 
@@ -8065,18 +7987,14 @@ msgstr ""
 
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close the dialog box"
 msgstr "Закрити вікно діалогу"
 
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:788 engines/tot/metaengine.cpp:104
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Мапа клавіш панелі виходу"
+msgstr "Мапа клавіш діалогу виходу"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8176,10 +8094,8 @@ msgstr ""
 "Stealth з самого початку, використовуючи нові збережені ігри."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Talk/Interact"
 msgid "Talk / Interact"
-msgstr "Говорити/Взаємодіятя"
+msgstr "Говорити / Взаємодіяти"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
@@ -8304,10 +8220,8 @@ msgstr ""
 "скопійовані до папки SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Гучність ефектів:"
+msgstr "Режим звукових ефектів:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8315,6 +8229,10 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Визначає, чи має гра використовувати звукові ефекти лише версії компакт-"
+"диска, звукові ефекти компакт-диска з додатковими звуковими ефектами дискети "
+"чи лише звукові ефекти з дискети. Звукові ефекти з дискети доступні лише за "
+"умови використання гри з дискети."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
@@ -8335,14 +8253,10 @@ msgid "Action"
 msgstr "Дія"
 
 #: engines/darkseed/metaengine.cpp:48 engines/dragons/metaengine.cpp:141
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change command"
 msgstr "Змінити команду"
 
 #: engines/darkseed/metaengine.cpp:54
-#, fuzzy
-#| msgid "Time Advance"
 msgid "Time advance"
 msgstr "Перескочити час"
 
