@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-02 23:15+0000\n"
+"POT-Creation-Date: 2026-01-03 15:38+0000\n"
 "PO-Revision-Date: 2025-12-22 01:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7127,10 +7127,10 @@ msgstr "Activa / desactiva el combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/hypno/metaengine.cpp:152 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
-#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
-#: engines/zvision/metaengine.cpp:304
+#: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
+#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Salta la seqüència de video"
 
@@ -7861,10 +7861,6 @@ msgstr "Canvia la comanda"
 #: engines/darkseed/metaengine.cpp:54
 msgid "Time advance"
 msgstr "Avanç del temps"
-
-#: engines/darkseed/metaengine.cpp:65
-msgid "Skip Cutscene"
-msgstr "Omet l'escena de vídeo"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
@@ -15880,6 +15876,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Skip Cutscene"
+#~ msgstr "Omet l'escena de vídeo"
 
 #~ msgid "Freefont License"
 #~ msgstr "Llicència Freefont"

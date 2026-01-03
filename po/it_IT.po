@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-02 23:15+0000\n"
+"POT-Creation-Date: 2026-01-03 15:38+0000\n"
 "PO-Revision-Date: 2025-11-17 12:09+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -7601,10 +7601,10 @@ msgstr "Attiva / Disattiva modalità combattimento"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/hypno/metaengine.cpp:152 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
-#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
-#: engines/zvision/metaengine.cpp:304
+#: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
+#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Salta scena di intermezzo"
 
@@ -8332,10 +8332,6 @@ msgstr "Cambia azione"
 #: engines/darkseed/metaengine.cpp:54
 msgid "Time advance"
 msgstr "Avanza orologio"
-
-#: engines/darkseed/metaengine.cpp:65
-msgid "Skip Cutscene"
-msgstr "Salta scena di intermezzo"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
@@ -16658,6 +16654,9 @@ msgstr ""
 "Zork Nemesis contiene alcuni puzzle musicali the richiedono l'audio MIDI per "
 "poterli risolvere. In alternativa, i puzzle possono essere risolti usando i "
 "sottotitoli, se supportati. Desideri continuare ad avviare il gioco?"
+
+#~ msgid "Skip Cutscene"
+#~ msgstr "Salta scena di intermezzo"
 
 #~ msgid "Freefont License"
 #~ msgstr "Licenza Freefont"
