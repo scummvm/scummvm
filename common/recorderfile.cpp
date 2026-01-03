@@ -58,6 +58,9 @@ PlaybackFile::~PlaybackFile() {
 
 bool PlaybackFile::openWrite(const String &fileName) {
 	close();
+	if (fileName.contains("/")) {
+		error("Filename may not contain a path");
+	}
 	_header.fileName = fileName;
 	_writeStream = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(fileName), 128 * 1024);
 	_headerDumped = false;
