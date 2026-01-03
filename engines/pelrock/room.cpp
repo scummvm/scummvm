@@ -162,27 +162,24 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	return anim;
 }
 
-Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffset) {
+Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 	Common::Array<Exit> exits;
-	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	roomFile->seek(pair10_offset_pos, SEEK_SET);
-	uint32_t pair10_data_offset = roomFile->readUint32LE();
-	uint32_t pair10_size = roomFile->readUint32LE();
-	roomFile->seek(pair10_data_offset + 0x1BE, SEEK_SET);
-	int exit_count = roomFile->readByte();
-	roomFile->seek(pair10_data_offset + 0x1BF, SEEK_SET);
-	for (int i = 0; i < exit_count; i++) {
+	int exitCountOffset = 0x1BE;
+	byte exitCount = data[exitCountOffset];
+	int exitDataOffset = 0x1BF;
+	for (int i = 0; i < exitCount; i++) {
+		int exitOffset = exitDataOffset + i * 14;
 		Exit exit;
-		exit.targetRoom = roomFile->readUint16LE();
-		exit.isEnabled = roomFile->readByte();
-		exit.x = roomFile->readUint16LE();
-		exit.y = roomFile->readUint16LE();
-		exit.w = roomFile->readByte();
-		exit.h = roomFile->readByte();
+		exit.targetRoom = READ_LE_INT16(data + exitOffset);
+		exit.isEnabled = data[exitOffset + 2];
+		exit.x = READ_LE_INT16(data + exitOffset + 3);
+		exit.y = READ_LE_INT16(data + exitOffset + 5);
+		exit.w = data[exitOffset + 7];
+		exit.h = data[exitOffset + 8];
 
-		exit.targetX = roomFile->readUint16LE();
-		exit.targetY = roomFile->readUint16LE();
-		byte dir = roomFile->readByte();
+		exit.targetX = READ_LE_INT16(data + exitOffset + 9);
+		exit.targetY = READ_LE_INT16(data + exitOffset + 11);
+		byte dir = data[exitOffset + 13];
 		switch (dir) {
 		case ALFRED_RIGHT:
 			exit.dir = ALFRED_RIGHT;
@@ -202,32 +199,30 @@ Common::Array<Exit> RoomManager::loadExits(Common::File *roomFile, int roomOffse
 		}
 
 		exits.push_back(exit);
+		debug("Exit %d: targetRoom=%d isEnabled=%d x=%d y=%d w=%d h=%d targetX=%d targetY=%d dir=%d",
+			  i, exit.targetRoom, exit.isEnabled, exit.x, exit.y, exit.w, exit.h,
+			  exit.targetX, exit.targetY, exit.dir);
 	}
 	return exits;
 }
 
-Common::Array<HotSpot> RoomManager::loadHotspots(Common::File *roomFile, int roomOffset) {
-	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
+Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
+	int pair10StartingPos = 0x47a;
 
-	roomFile->seek(pair10_offset_pos, SEEK_SET);
-	uint32_t pair10_data_offset = roomFile->readUint32LE();
-	uint32_t pair10_size = roomFile->readUint32LE();
-	uint32_t count_offset = pair10_data_offset + 0x47a;
-	roomFile->seek(count_offset, SEEK_SET);
-	byte hotspot_count = roomFile->readByte();
-	uint32_t hotspot_data_start = pair10_data_offset + 0x47c;
+
+	byte hotspot_count = data[pair10StartingPos];
+	int hotspotsDataStart = pair10StartingPos + 2;
 	Common::Array<HotSpot> hotspots;
 	for (int i = 0; i < hotspot_count; i++) {
-		uint32_t obj_offset = hotspot_data_start + i * 9;
-		roomFile->seek(obj_offset, SEEK_SET);
+		int hotspotOffset = hotspotsDataStart + i * 9;
 		HotSpot spot;
-		spot.actionFlags = roomFile->readByte();
-		spot.x = roomFile->readSint16LE();
-		spot.y = roomFile->readSint16LE();
-		spot.w = roomFile->readByte();
-		spot.h = roomFile->readByte();
+		spot.actionFlags = data[hotspotOffset];
+		spot.x = READ_LE_INT16(data + hotspotOffset + 1);
+		spot.y = READ_LE_INT16(data + hotspotOffset + 3);
+		spot.w = data[hotspotOffset + 5];
+		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
-		spot.extra = roomFile->readSint16LE();
+		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
 		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d", i, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra);
 		hotspots.push_back(spot);
 	}
@@ -238,9 +233,33 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	uint32_t outPos = 0;
 	_currentRoomStickers.clear();
 	int roomOffset = roomNumber * kRoomStructSize;
-	Common::Array<Description> descriptions = loadRoomTexts(roomFile, roomOffset);
-	Common::Array<Sprite> anims = loadRoomAnimations(roomFile, roomOffset);
 
+	uint32_t pair10offset = roomOffset + (10 * 8);
+	roomFile->seek(pair10offset, SEEK_SET);
+	// roomFile->skip(4);
+	uint32_t pair10dataOffset = roomFile->readUint32LE();
+	uint32_t pair10size = roomFile->readUint32LE();
+
+	byte *pair10 = new byte[pair10size];
+	roomFile->seek(pair10dataOffset, SEEK_SET);
+	roomFile->read(pair10, pair10size);
+
+	// The user's game can be in any state so we reset to defaults first
+	resetRoomDefaults(pair10, pair10size);
+
+
+	byte *pic = nullptr;
+	size_t pixelDataSize = 0;
+	loadAnimationPixelData(roomFile, roomOffset, pic, pixelDataSize);
+
+	Common::Array<Sprite> anims = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
+	Common::Array<HotSpot> staticHotspots = loadHotspots(pair10, pair10size);
+	Common::Array<WalkBox> walkboxes = loadWalkboxes(pair10, pair10size);
+	Common::Array<Exit> exits = loadExits(pair10, pair10size);
+	ScalingParams scalingParams = loadScalingParams(pair10, pair10size);
+
+
+	Common::Array<Description> descriptions = loadRoomTexts(roomFile, roomOffset);
 	Common::Array<HotSpot> hotspots;
 	for (int i = 0; i < anims.size(); i++) {
 
@@ -257,11 +276,6 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		thisHotspot.zOrder = anims[i].zOrder;
 		hotspots.push_back(thisHotspot);
 	}
-
-	Common::Array<HotSpot> staticHotspots = loadHotspots(roomFile, roomOffset);
-	Common::Array<Exit> exits = loadExits(roomFile, roomOffset);
-	ScalingParams scalingParams = loadScalingParams(roomFile, roomOffset);
-	Common::Array<WalkBox> walkboxes = loadWalkboxes(roomFile, roomOffset);
 
 	// debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
 	for (int i = 0; i < staticHotspots.size(); i++) {
@@ -302,54 +316,52 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	} else {
 		_currentPaletteAnim = nullptr;
 	}
+
+	delete[] pair10;
 }
 
-Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, int roomOffset) {
+void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
-	// debug("Sprite pair offset position: %d", pair_offset);
 	roomFile->seek(pair_offset, SEEK_SET);
 	uint32_t offset = roomFile->readUint32LE();
 	uint32_t size = roomFile->readUint32LE();
 
-	byte *data = new byte[size];
+	byte  *pixelData = new byte[size];
 	roomFile->seek(offset, SEEK_SET);
-	roomFile->read(data, size);
-
-	unsigned char *pic = nullptr;
+	roomFile->read(pixelData, size);
 	if (offset > 0 && size > 0) {
-		rleDecompress(data, size, 0, size, &pic, true);
-	} else {
-		return Common::Array<Sprite>();
+		outSize = rleDecompress(pixelData, size, 0, size, &buffer, true);
 	}
-	Common::Array<Sprite> anims = Common::Array<Sprite>();
-	uint32_t spriteEnd = offset + size;
+}
 
-	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	uint32_t metadata_start = spriteEnd + 108;
+Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
+
+	Common::Array<Sprite> anims = Common::Array<Sprite>();
+	uint32_t spriteCountPos = 5;
+	byte spriteCount = data[spriteCountPos] - 2;
+	debug("Sprite count: %d", spriteCount);
+	uint32_t metadata_start = spriteCountPos + (44 * 2 + 5);
 	uint32_t picOffset = 0;
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < spriteCount; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
-		byte *animData = new byte[44];
-		roomFile->seek(animOffset, SEEK_SET);
-		roomFile->read(animData, 44);
 		Sprite sprite;
 		sprite.index = i;
-		sprite.x = animData[0] | (animData[1] << 8);
-		sprite.y = animData[2] | (animData[3] << 8);
-		sprite.w = animData[4];
-		sprite.h = animData[5];
-		sprite.extra = animData[6];
-		sprite.numAnims = animData[8];
-		sprite.zOrder = animData[23];
-		sprite.spriteType = animData[33];
-		sprite.actionFlags = animData[34];
-		sprite.isDisabled = animData[38];
+		sprite.x = READ_LE_INT16(data + animOffset + 0);
+		sprite.y = READ_LE_INT16(data + animOffset + 2);
+		sprite.w = data[animOffset + 4];
+		sprite.h = data[animOffset + 5];
+		sprite.extra = data[animOffset + 6];
+		sprite.numAnims = data[animOffset + 8];
+		sprite.zOrder = data[animOffset + 23];
+		sprite.spriteType = data[animOffset + 33];
+		sprite.actionFlags = data[animOffset + 34];
+		sprite.isDisabled = data[animOffset + 38];
 		if (sprite.numAnims == 0) {
 			break;
 		}
 		sprite.animData = new Anim[sprite.numAnims];
 		// debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
-		int subAnimOffset = 10;
+		int subAnimOffset = animOffset + 10;
 		for (int j = 0; j < sprite.numAnims; j++) {
 
 			Anim anim;
@@ -359,17 +371,17 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 			anim.h = sprite.h;
 			anim.curFrame = 0;
 
-			anim.nframes = animData[subAnimOffset + j];
-			anim.loopCount = animData[subAnimOffset + 4 + j];
-			anim.speed = animData[subAnimOffset + 8 + j];
-			anim.movementFlags = animData[subAnimOffset + 14 + (j * 2)] | (animData[subAnimOffset + 14 + (j * 2) + 1] << 8);
+			anim.nframes = data[subAnimOffset + j];
+			anim.loopCount = data[subAnimOffset + 4 + j];
+			anim.speed = data[subAnimOffset + 8 + j];
+			anim.movementFlags = data[subAnimOffset + 14 + (j * 2)] | (data[subAnimOffset + 14 + (j * 2) + 1] << 8);
 
 			anim.animData = new byte *[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
 				uint32_t needed = anim.w * anim.h * anim.nframes;
 				for(int i = 0; i < anim.nframes; i++) {
 					anim.animData[i] = new byte[anim.w * anim.h];
-					extractSingleFrame(pic + picOffset, anim.animData[i], i, anim.w, anim.h);
+					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, anim.w, anim.h);
 				}
 				sprite.animData[j] = anim;
 				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
@@ -387,28 +399,21 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(Common::File *roomFile, in
 	return anims;
 }
 
-Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int roomOffset) {
-	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	roomFile->seek(pair10_offset_pos, SEEK_SET);
-	// roomFile->skip(4);
-	uint32_t pair10_data_offset = roomFile->readUint32LE();
-	uint32_t pair10_size = roomFile->readUint32LE();
+Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 
-	uint32_t walkbox_countOffset = pair10_data_offset + 0x213;
-	roomFile->seek(walkbox_countOffset, SEEK_SET);
-	byte walkbox_count = roomFile->readByte();
+	int walkboxCountOffset = 0x213;
+	byte walkboxCount = data[walkboxCountOffset];
 
 	// debug("Walkbox count: %d", walkbox_count);
-	uint32_t walkbox_offset = pair10_data_offset + 0x218;
+	uint32_t walkboxOffset = 0x218;
 	Common::Array<WalkBox> walkboxes;
-	for (int i = 0; i < walkbox_count; i++) {
-		uint32_t box_offset = walkbox_offset + i * 9;
-		roomFile->seek(box_offset, SEEK_SET);
-		int16 x1 = roomFile->readSint16LE();
-		int16 y1 = roomFile->readSint16LE();
-		int16 w = roomFile->readSint16LE();
-		int16 h = roomFile->readSint16LE();
-		byte flags = roomFile->readByte();
+	for (int i = 0; i < walkboxCount; i++) {
+		uint32_t boxOffset = walkboxOffset + i * 9;
+		int16 x1 = READ_LE_INT16(data + boxOffset);
+		int16 y1 = READ_LE_INT16(data + boxOffset + 2);
+		int16 w = READ_LE_INT16(data + boxOffset + 4);
+		int16 h = READ_LE_INT16(data + boxOffset + 6);
+		byte flags = data[boxOffset + 8];
 		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.x = x1;
@@ -424,7 +429,6 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(Common::File *roomFile, int ro
 Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, int roomOffset) {
 	uint32_t pair12_offset_pos = roomOffset + (12 * 8);
 	roomFile->seek(pair12_offset_pos, SEEK_SET);
-	// roomFile->skip(4);
 	uint32_t pair12_data_offset = roomFile->readUint32LE();
 	uint32_t pair12_size = roomFile->readUint32LE();
 
@@ -474,6 +478,10 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 	Common::copy(data + conversationStart, data + conversationStart + _conversationDataSize, _conversationData);
 	delete[] data;
 	return descriptions;
+}
+
+void RoomManager::resetRoomDefaults(byte *data, size_t size) {
+
 }
 
 void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
@@ -542,19 +550,14 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkFile.close();
 }
 
-ScalingParams RoomManager::loadScalingParams(Common::File *roomFile, int roomOffset) {
-	uint32_t pair10_offset_pos = roomOffset + (10 * 8);
-	roomFile->seek(pair10_offset_pos, SEEK_SET);
-	// roomFile->skip(4);
-	uint32_t pair10_data_offset = roomFile->readUint32LE();
-	uint32_t pair10_size = roomFile->readUint32LE();
-	uint32_t scalingParamsOffset = pair10_data_offset + 0x214;
+ScalingParams RoomManager::loadScalingParams(byte *data, size_t size) {
 
-	roomFile->seek(scalingParamsOffset, SEEK_SET);
+	uint32_t scalingParamsOffset = 0x214;
+
 	ScalingParams scalingParams;
-	scalingParams.yThreshold = roomFile->readSint16LE();
-	scalingParams.scaleDivisor = roomFile->readByte();
-	scalingParams.scaleMode = roomFile->readByte();
+	scalingParams.yThreshold = READ_LE_INT16(data + scalingParamsOffset);
+	scalingParams.scaleDivisor = data[scalingParamsOffset + 2];
+	scalingParams.scaleMode = data[scalingParamsOffset + 3];
 	return scalingParams;
 }
 

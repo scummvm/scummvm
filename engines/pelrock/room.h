@@ -73,13 +73,16 @@ public:
 	size_t _conversationDataSize = 0;
 
 private:
-	Common::Array<Sprite> loadRoomAnimations(Common::File *roomFile, int roomOffset);
-	Common::Array<HotSpot> loadHotspots(Common::File *roomFile, int roomOffset);
-	Common::Array<Exit> loadExits(Common::File *roomFile, int roomOffset);
-	Common::Array<WalkBox> loadWalkboxes(Common::File *roomFile, int roomOffset);
+	void loadAnimationPixelData(Common::File *roomFile,  int roomOffset, byte *&buffer, size_t &outSize);
+	Common::Array<Sprite> loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
+	Common::Array<HotSpot> loadHotspots(byte *data, size_t size);
+	Common::Array<Exit> loadExits(byte *data, size_t size);
+	ScalingParams loadScalingParams(byte *data, size_t size);
+	Common::Array<WalkBox> loadWalkboxes(byte *data, size_t size);
 	Common::Array<Description> loadRoomTexts(Common::File *roomFile, int roomOffset);
 
-	ScalingParams loadScalingParams(Common::File *roomFile, int roomOffset);
+	void resetRoomDefaults(byte *data, size_t size);
+
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);
 	Common::StringArray loadRoomNames();

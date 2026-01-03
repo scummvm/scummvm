@@ -141,7 +141,7 @@ private:
 
 	bool showShadows = false;
 
-	bool shouldPlayIntro = true;
+	bool shouldPlayIntro = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
 

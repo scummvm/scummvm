@@ -73,7 +73,7 @@ void VideoManager::playIntro() {
 			if (_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
 				ChunkHeader chunk;
 				readChunk(videoFile, chunk);
-
+				debug("Read chunk type %d at frame %d", chunk.chunkType, frameCounter);
 				switch (chunk.chunkType) {
 				case 1:
 				case 2:
@@ -98,8 +98,6 @@ void VideoManager::playIntro() {
 					byte *voiceBuffer = new byte[voiceData.length];
 					_introSndFile.read(voiceBuffer, voiceData.length);
 					_sound->playSound(voiceBuffer, voiceData.length);
-					// g_system->getSoundManager()->playSoundBuffer(voiceBuffer, voiceData.length, SOUND_FORMAT_PCM8, 11025);
-					// delete[] voiceBuffer;
 				}
 
 				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
