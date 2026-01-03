@@ -32,32 +32,32 @@ namespace Gfx {
 class Monster {
 private:
 	// Drawing position
-	static int xPos, yPos;
+	static int _xPos, _yPos;
 
 	/**
 	 * Emulate the Apple ][ HPLOT function
 	 */
-	static void _HPlot(Graphics::ManagedSurface *s, double x, double y, ...);
+	static void hPlot(Graphics::ManagedSurface *s, double x, double y, ...);
 
 	/**
 	 * Monster drawing functions
 	 */
 	typedef void(*DrawFn)(Graphics::ManagedSurface *s, double x, double y, double d);
-	static void _DRAWSkeleton(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWThief(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWRat(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWOrc(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWViper(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWCarrion(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWGremlin(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWMimic(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWDaemon(Graphics::ManagedSurface *s, double x,double y,double d);
-	static void _DRAWBalrog(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawSkeleton(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawThief(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawRat(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawOrc(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawViper(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawCarrion(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawGremlin(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawMimic(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawDaemon(Graphics::ManagedSurface *s, double x,double y,double d);
+	static void drawBalrog(Graphics::ManagedSurface *s, double x,double y,double d);
 	static DrawFn DRAW_FUNCTIONS[];
 
 public:
 	static void draw(Graphics::ManagedSurface *s, int x, int y,
-		int Monster, double Scale);
+		int monster, double scale);
 };
 
 } // namespace Gfx

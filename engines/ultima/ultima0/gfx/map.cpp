@@ -32,13 +32,13 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 
 	s->clear();
 
-	int x, y, x1, y1, w, h, Grid;
+	int x, y, x1, y1, w, h, grid;
 	Common::Rect r;
-	Grid = showAsMap ? WORLD_MAP_SIZE : (g_engine->isEnhanced() ? 7 : 3);
-	w = s->w / Grid; h = s->h / Grid;	// Get grid sizes
+	grid = showAsMap ? WORLD_MAP_SIZE : (g_engine->isEnhanced() ? 7 : 3);
+	w = s->w / grid; h = s->h / grid;	// Get grid sizes
 
-	for (x = 0; x < Grid; x++) {
-		for (y = 0; y < Grid; y++) {
+	for (x = 0; x < grid; x++) {
+		for (y = 0; y < grid; y++) {
 			r = Common::Rect(x * w, y * h, x * w + w - 1, y * h + h - 1);
 
 			if (showAsMap) {
@@ -46,8 +46,8 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 				x1 = x, y1 = y;
 			} else {
 				// Which cell?
-				x1 = player.World.x - Grid / 2 + x;
-				y1 = player.World.y - Grid / 2 + y;
+				x1 = player.World.x - grid / 2 + x;
+				y1 = player.World.y - grid / 2 + y;
 			}
 
 			DRAWTile(s, r, map.read(x1, y1));
@@ -65,7 +65,7 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 #define HWLine(X1, Y1, X2, Y2) s->drawLine(X1, Y1, X2, Y2, color)
 #define BOX(x1,y1,x2,y2) { HWLine(X(x1),Y(y1),X(x2),Y(y1));HWLine(X(x1),Y(y1),X(x1),Y(y2));HWLine(X(x2),Y(y2),X(x2),Y(y1));HWLine(X(x2),Y(y2),X(x1),Y(y2)); }
 
-void Map::DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int Obj) {
+void Map::DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int obj) {
 	int x1 = r.left;
 	int y1 = r.top;
 	int w = r.width();
@@ -73,7 +73,7 @@ void Map::DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int Obj) 
 	byte color = 0;
 
 	// Decide on the object
-	switch (Obj) {
+	switch (obj) {
 	case WT_SPACE:
 		// Space does nothing at all
 		break;

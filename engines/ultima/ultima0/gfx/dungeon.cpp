@@ -27,11 +27,11 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Gfx {
 
-int Dungeon::xLeft;
-int Dungeon::xRight;
-int Dungeon::yBottom;
-int Dungeon::yDiffLeft;
-int Dungeon::yDiffRight;
+int Dungeon::_xLeft;
+int Dungeon::_xRight;
+int Dungeon::_yBottom;
+int Dungeon::_yDiffLeft;
+int Dungeon::_yDiffRight;
 
 #define HWColour(IDX)   color = IDX
 #define	X(n)			(x1 + w * (n)/10)
@@ -47,42 +47,42 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 	double Level = 0;
 	Common::Rect rIn, rOut;
-	Common::Point Dir, Pos, Next;
-	int Monster, Front, Left, Right;
+	Common::Point dir, pos, next;
+	int monster, front, left, right;
 	_DDRAWCalcRect(s, &rOut, 0);
-	Pos = player.Dungeon;						// Get position
+	pos = player.Dungeon;						// Get position
 
 	// Iterate through drawing successively distinct tiles in the facing direction
 	do {
 		Level++;								// Next level
 		_DDRAWCalcRect(s, &rIn, Level);
-		Next.x = Pos.x + player.DungDir.x;		// Next position
-		Next.y = Pos.y + player.DungDir.y;
+		next.x = pos.x + player.DungDir.x;		// Next position
+		next.y = pos.y + player.DungDir.y;
 
-		Dir = player.DungDir; MOVERotLeft(&Dir);	// To the left
-		Left = dungeon.Map[Pos.x + Dir.x][Pos.y + Dir.y];
-		MOVERotLeft(&Dir); MOVERotLeft(&Dir);		// To the right
-		Right = dungeon.Map[Pos.x + Dir.x][Pos.y + Dir.y];
-		Front = dungeon.Map[Next.x][Next.y];		// What's in front ?
+		dir = player.DungDir; MOVERotLeft(&dir);	// To the left
+		left = dungeon.Map[pos.x + dir.x][pos.y + dir.y];
+		MOVERotLeft(&dir); MOVERotLeft(&dir);		// To the right
+		right = dungeon.Map[pos.x + dir.x][pos.y + dir.y];
+		front = dungeon.Map[next.x][next.y];		// What's in front ?
 
 		// Check for monster present
-		Monster = dungeon.findMonster(Pos);
-		if (Monster >= 0)					
-			Monster = dungeon.Monster[Monster]._type;
+		monster = dungeon.findMonster(pos);
+		if (monster >= 0)					
+			monster = dungeon.Monster[monster]._type;
 
 		// Draw the dungeon
-		DRAWDungeon(s, &rOut, &rIn, Left, Front, Right,
-			dungeon.Map[Pos.x][Pos.y], Monster);
+		DRAWDungeon(s, &rOut, &rIn, left, front, right,
+			dungeon.Map[pos.x][pos.y], monster);
 
-		Pos = Next;							// Next position down
+		pos = next;							// Next position down
 		rOut = rIn;							// Last in is new out
-	} while (Level < MAX_VIEW_DEPTH && ISDRAWOPEN(Front));
+	} while (Level < MAX_VIEW_DEPTH && ISDRAWOPEN(front));
 }
 
-void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double Level) {
+void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double level) {
 	const int centerX = s->w / 2, centerY = s->h / 2;
-	int xWidth = s->w / (Level + 1);
-	int yWidth = s->h / (Level + 1);
+	int xWidth = s->w / (level + 1);
+	int yWidth = s->h / (level + 1);
 
 	// Set bounding box
 	r->left = centerX - xWidth / 2;
@@ -91,16 +91,16 @@ void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, doubl
 	r->bottom = centerY + yWidth / 2;
 }
 
-void Dungeon::MOVERotLeft(Common::Point *Dir) {
+void Dungeon::MOVERotLeft(Common::Point *dir) {
 	int t;
-	if (Dir->y == 0) Dir->x = -Dir->x;
-	t = Dir->x;
-	Dir->x = Dir->y;
-	Dir->y = t;
+	if (dir->y == 0) dir->x = -dir->x;
+	t = dir->x;
+	dir->x = dir->y;
+	dir->y = t;
 }
 
 void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
-		Common::Rect *rIn, int Left, int Centre, int Right, int Room, int Monster) {
+		Common::Rect *rIn, int left, int centre, int right, int room, int monster) {
 	int x1, y1, x, y, y2;
 	Common::Rect r;
 	double Scale;
@@ -109,7 +109,7 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	HWColour(COL_WALL);						// Start on the walls
 
 	// Do we draw the left edge
-	if (ISDRAWOPEN(Left)) {
+	if (ISDRAWOPEN(left)) {
 		HWLine(rOut->left, rIn->top, rIn->left, rIn->top);
 		HWLine(rOut->left, rIn->bottom, rIn->left, rIn->bottom);
 		HWLine(rOut->left, rOut->top, rOut->left, rOut->bottom);
@@ -120,7 +120,7 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	}
 
 	// Do we draw the right edge
-	if (ISDRAWOPEN(Right)) {
+	if (ISDRAWOPEN(right)) {
 		HWLine(rOut->right, rIn->top, rIn->right, rIn->top);
 		HWLine(rOut->right, rIn->bottom, rIn->right, rIn->bottom);
 		HWLine(rOut->right, rOut->top, rOut->right, rOut->bottom);
@@ -131,12 +131,12 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	}
 
 	// Back wall ?
-	if (!ISDRAWOPEN(Centre)) {
+	if (!ISDRAWOPEN(centre)) {
 		HWLine(rIn->left, rIn->top, rIn->right, rIn->top);
 		HWLine(rIn->left, rIn->bottom, rIn->right, rIn->bottom);
-		if (!ISDRAWOPEN(Left))				// Corner if left,right closed
+		if (!ISDRAWOPEN(left))				// Corner if left,right closed
 			HWLine(rIn->left, rIn->top, rIn->left, rIn->bottom);
-		if (!ISDRAWOPEN(Right))
+		if (!ISDRAWOPEN(right))
 			HWLine(rIn->right, rIn->top, rIn->right, rIn->bottom);
 	}
 
@@ -145,27 +145,27 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		rOut->bottom,
 		rOut->bottom - rOut->top,
 		rIn->bottom - rIn->top);
-	_DRAWWall(s, Left);
+	_DRAWWall(s, left);
 
 	// Set up for right side
 	_DRAWSetRange(rIn->right, rOut->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
 		rOut->bottom - rOut->top);
-	_DRAWWall(s, Right);
+	_DRAWWall(s, right);
 
 	// Set up for centre
 	_DRAWSetRange(rIn->left, rIn->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
 		rIn->bottom - rIn->top);
-	_DRAWWall(s, Centre);
+	_DRAWWall(s, centre);
 
-	if (Room == DT_LADDERUP) {
+	if (room == DT_LADDERUP) {
 		r = Common::Rect(rOut->left, rOut->top, rOut->right, rIn->top);
 		_DRAWPit(s, &r, 1);
 	}
-	if (Room == DT_LADDERDN || Room == DT_PIT) {
+	if (room == DT_LADDERDN || room == DT_PIT) {
 		r = Common::Rect(rOut->left, rIn->bottom, rOut->right, rOut->bottom);
 		_DRAWPit(s, &r, -1);
 	}
@@ -178,7 +178,7 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		(rIn->bottom + rOut->bottom) / 2);
 
 	// Ladder here ?
-	if (Room == DT_LADDERUP || Room == DT_LADDERDN) {
+	if (room == DT_LADDERUP || room == DT_LADDERDN) {
 		HWColour(COL_LADDER);
 		y1 = r.top; y2 = r.bottom;
 		x = (r.right - r.left) * 3 / 10;
@@ -197,22 +197,22 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	Scale = 0.35 / (r.right - r.left) * s->w;
 
 	// Monster here ?
-	if (Monster > 0) {
+	if (monster > 0) {
 		HWColour(COL_MONSTER);
-		Monster::draw(s, (r.left + r.right) / 2, r.bottom, Monster, Scale);
+		Monster::draw(s, (r.left + r.right) / 2, r.bottom, monster, Scale);
 	}
 
 	// Draw the gold (as a mimic)
-	if (Room == DT_GOLD) {
+	if (room == DT_GOLD) {
 		HWColour(COL_MONSTER);
 		Monster::draw(s, (r.left + r.right) / 2, r.top, MN_MIMIC, Scale);
 	}
 }
 
 void Dungeon::_DRAWSetRange(int x1, int x2, int y, int yd1, int yd2) {
-	xLeft = x1; xRight = x2;				// Set x ranges
-	yBottom = y;							// Set lower left y value
-	yDiffLeft = yd1; yDiffRight = yd2;		// Set difference for either end
+	_xLeft = x1; _xRight = x2;				// Set x ranges
+	_yBottom = y;							// Set lower left y value
+	_yDiffLeft = yd1; _yDiffRight = yd2;		// Set difference for either end
 }
 
 void Dungeon::_DRAWWall(Graphics::ManagedSurface *s, int n) {
@@ -234,13 +234,13 @@ void Dungeon::_DRAWWall(Graphics::ManagedSurface *s, int n) {
 
 void Dungeon::_DRAWConvert(int *px, int *py) {
 	long x, y, yd;							// Longs for overflow in 16 bit
-	x = (xRight - xLeft);					// Calculate width
-	x = x * (*px) / 100 + xLeft;			// Work out horiz value
-	yd = (yDiffRight - yDiffLeft);			// Work out height of vert for x
+	x = (_xRight - _xLeft);					// Calculate width
+	x = x * (*px) / 100 + _xLeft;			// Work out horiz value
+	yd = (_yDiffRight - _yDiffLeft);			// Work out height of vert for x
 	yd = yd * (*px) / 100;
-	y = yBottom +							// Half of the distance
+	y = _yBottom +							// Half of the distance
 		yd / 2 -							// + Scaled total size
-		(yd + yDiffLeft) * (*py) / 100;
+		(yd + _yDiffLeft) * (*py) / 100;
 
 	*px = (int)x;							// Write back, casting to int
 	*py = (int)y;

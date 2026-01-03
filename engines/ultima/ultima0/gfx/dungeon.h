@@ -32,7 +32,7 @@ namespace Gfx {
 class Dungeon {
 private:
 	// Slanted drawing constants
-	static int xLeft, xRight, yBottom, yDiffLeft, yDiffRight;
+	static int _xLeft, _xRight, _yBottom, _yDiffLeft, _yDiffRight;
 
 	/**
 	 * Calculate display rectangle
