@@ -83,6 +83,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Hugo:
    - Added Text-to-Speech support.
+   - Fixed unrecognized commands, missing points, and graphics glitches
+     in the DOS version of Hugo 2.
+   - Fixed clicking to walk.
    - Fixed closing the top menu.
 
  Hypno:
