@@ -364,9 +364,10 @@ void RiddleEngine::global_parser() {
 						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 7, true);
 						break;
 					default:
-						player_set_commands_allowed(false);
 						break;
 					}
+
+					player_set_commands_allowed(false);
 				} else {
 					kernel_timing_trigger(1, 2);
 				}
