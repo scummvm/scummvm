@@ -272,8 +272,9 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int type) {
 	// Limit monsters to levels
 	if (level - 2 > player._level)
 		return;
+
 	// Not always there anyway
-	if (RND() > 0.4)
+	if (RND() > 0.6)
 		return;
 
 	// Fill in details
