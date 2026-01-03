@@ -232,7 +232,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 }
 
 bool EventRecorder::processDelayMillis() {
-	return _fastPlayback;
+	return !_fastPlayback;
 }
 
 bool EventRecorder::processAutosave() {
