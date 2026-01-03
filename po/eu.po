@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:46+0000\n"
+"POT-Creation-Date: 2026-01-03 15:53+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4399,35 +4399,36 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:244
 #, fuzzy
-msgid "Left Mouse Button"
+msgid "Left mouse button"
 msgstr "Saguaren ezker botoia simulatu"
 
 #: backends/keymapper/hardware-input.cpp:245
 #, fuzzy
-msgid "Right Mouse Button"
+msgid "Right mouse button"
 msgstr "Saguaren eskuin botoia simulatu"
 
 #: backends/keymapper/hardware-input.cpp:246
 #, fuzzy
-msgid "Middle Mouse Button"
+msgid "Middle mouse button"
 msgstr "Saguaren ezker botoia simulatu"
 
 #: backends/keymapper/hardware-input.cpp:247
-msgid "Mouse Wheel Up"
+msgid "Mouse wheel up"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:248
-msgid "Mouse Wheel Down"
-msgstr ""
+#, fuzzy
+msgid "Mouse wheel down"
+msgstr "Eskuinera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:249
 #, fuzzy
-msgid "X1 Mouse Button"
+msgid "X1 mouse button"
 msgstr "Saguaren ezker botoia simulatu"
 
 #: backends/keymapper/hardware-input.cpp:250
 #, fuzzy
-msgid "X2 Mouse Button"
+msgid "X2 mouse button"
 msgstr "Saguaren ezker botoia simulatu"
 
 #: backends/keymapper/hardware-input.cpp:255
@@ -4452,125 +4453,91 @@ msgstr "Atzera mugitu"
 
 #: backends/keymapper/hardware-input.cpp:259
 #, fuzzy
-msgid "Joy Back"
+msgid "Joy back"
 msgstr "Atzera mugitu"
 
 #: backends/keymapper/hardware-input.cpp:260
-msgid "Joy Guide"
+msgid "Joy guide"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:261
 #, fuzzy
-msgid "Joy Start"
+msgid "Joy start"
 msgstr "~H~asi"
 
 #: backends/keymapper/hardware-input.cpp:262
 #, fuzzy
-msgid "Left Stick"
+msgid "Left stick"
 msgstr "Ezker-klika"
 
 #: backends/keymapper/hardware-input.cpp:263
 #, fuzzy
-msgid "Right Stick"
+msgid "Right stick"
 msgstr "Eskuin-klika"
 
-#: backends/keymapper/hardware-input.cpp:264
-msgid "Left Shoulder"
-msgstr ""
+#: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:206
+#, fuzzy
+#| msgid "Select shader"
+msgid "Left shoulder"
+msgstr "Aukeratu shader-a"
 
-#: backends/keymapper/hardware-input.cpp:265
-msgid "Right Shoulder"
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:212
+msgid "Right shoulder"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:266
-#: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/ds/osystem_ds.cpp:182
-#: backends/platform/sdl/miyoo/miyoo.cpp:74
-#: backends/platform/sdl/miyoo/miyoo.cpp:101
-#: backends/platform/sdl/opendingux/opendingux.cpp:64
-#: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:50
-#: backends/platform/sdl/switch/switch.cpp:48
 #, fuzzy
-msgid "D-pad Up"
+msgid "D-pad up"
 msgstr "Ezkerrera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:267
-#: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:183
-#: backends/platform/sdl/miyoo/miyoo.cpp:75
-#: backends/platform/sdl/miyoo/miyoo.cpp:102
-#: backends/platform/sdl/opendingux/opendingux.cpp:65
-#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:49
 #, fuzzy
-msgid "D-pad Down"
+msgid "D-pad down"
 msgstr "Behera"
 
 #: backends/keymapper/hardware-input.cpp:268
-#: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:184
-#: backends/platform/sdl/miyoo/miyoo.cpp:76
-#: backends/platform/sdl/miyoo/miyoo.cpp:103
-#: backends/platform/sdl/opendingux/opendingux.cpp:66
-#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:52
-#: backends/platform/sdl/switch/switch.cpp:50
 #, fuzzy
-msgid "D-pad Left"
+msgid "D-pad left"
 msgstr "Ezkerrera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:269
-#: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:185
-#: backends/platform/sdl/miyoo/miyoo.cpp:77
-#: backends/platform/sdl/miyoo/miyoo.cpp:104
-#: backends/platform/sdl/opendingux/opendingux.cpp:67
-#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:53
-#: backends/platform/sdl/switch/switch.cpp:51
 #, fuzzy
-msgid "D-pad Right"
+msgid "D-pad right"
 msgstr "Eskuinera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:270
 #, fuzzy
-msgid "D-pad Center"
+msgid "D-pad center"
 msgstr "Ezkerrera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:275
-msgid "Left Trigger"
-msgstr ""
+#, fuzzy
+msgid "Left trigger"
+msgstr "Ezker-klika"
 
 #: backends/keymapper/hardware-input.cpp:276
-msgid "Right Trigger"
-msgstr ""
+#, fuzzy
+msgid "Right trigger"
+msgstr "Eskuin-klika"
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/opendingux/opendingux.cpp:78
-#: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:58
-#: backends/platform/sdl/switch/switch.cpp:58
 #, fuzzy
-msgid "Left Stick X"
+msgid "Left stick X"
 msgstr "Ezker-klika"
 
 #: backends/keymapper/hardware-input.cpp:278
-#: backends/platform/sdl/opendingux/opendingux.cpp:79
-#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:59
-#: backends/platform/sdl/switch/switch.cpp:59
 #, fuzzy
-msgid "Left Stick Y"
+msgid "Left stick Y"
 msgstr "Ezker-klika"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:60
-#: backends/platform/sdl/switch/switch.cpp:60
 #, fuzzy
-msgid "Right Stick X"
+msgid "Right stick X"
 msgstr "Eskuin-klika"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:61
-#: backends/platform/sdl/switch/switch.cpp:61
 #, fuzzy
-msgid "Right Stick Y"
+msgid "Right stick Y"
 msgstr "Eskuin-klika"
 
 #: backends/keymapper/hardware-input.cpp:281
@@ -4932,6 +4899,50 @@ msgstr ""
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
 msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:55
+#: backends/platform/ds/osystem_ds.cpp:182
+#: backends/platform/sdl/miyoo/miyoo.cpp:74
+#: backends/platform/sdl/miyoo/miyoo.cpp:101
+#: backends/platform/sdl/opendingux/opendingux.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:48
+#, fuzzy
+msgid "D-pad Up"
+msgstr "Ezkerrera irristatu"
+
+#: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/ds/osystem_ds.cpp:183
+#: backends/platform/sdl/miyoo/miyoo.cpp:75
+#: backends/platform/sdl/miyoo/miyoo.cpp:102
+#: backends/platform/sdl/opendingux/opendingux.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:49
+#, fuzzy
+msgid "D-pad Down"
+msgstr "Behera"
+
+#: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/ds/osystem_ds.cpp:184
+#: backends/platform/sdl/miyoo/miyoo.cpp:76
+#: backends/platform/sdl/miyoo/miyoo.cpp:103
+#: backends/platform/sdl/opendingux/opendingux.cpp:66
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/sdl/switch/switch.cpp:50
+#, fuzzy
+msgid "D-pad Left"
+msgstr "Ezkerrera irristatu"
+
+#: backends/platform/3ds/osystem-events.cpp:58
+#: backends/platform/ds/osystem_ds.cpp:185
+#: backends/platform/sdl/miyoo/miyoo.cpp:77
+#: backends/platform/sdl/miyoo/miyoo.cpp:104
+#: backends/platform/sdl/opendingux/opendingux.cpp:67
+#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/switch/switch.cpp:51
+#, fuzzy
+msgid "D-pad Right"
+msgstr "Eskuinera irristatu"
 
 #: backends/platform/3ds/osystem-events.cpp:63
 msgid "C-Pad X"
@@ -5868,6 +5879,20 @@ msgstr ""
 msgid "R3"
 msgstr ""
 
+#: backends/platform/sdl/opendingux/opendingux.cpp:78
+#: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:58
+#: backends/platform/sdl/switch/switch.cpp:58
+#, fuzzy
+msgid "Left Stick X"
+msgstr "Ezker-klika"
+
+#: backends/platform/sdl/opendingux/opendingux.cpp:79
+#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:59
+#: backends/platform/sdl/switch/switch.cpp:59
+#, fuzzy
+msgid "Left Stick Y"
+msgstr "Ezker-klika"
+
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:42
 #: engines/dragons/metaengine.cpp:200
 msgid "Cross"
@@ -5894,6 +5919,18 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
 msgstr ""
+
+#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:60
+#: backends/platform/sdl/switch/switch.cpp:60
+#, fuzzy
+msgid "Right Stick X"
+msgstr "Eskuin-klika"
+
+#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:61
+#: backends/platform/sdl/switch/switch.cpp:61
+#, fuzzy
+msgid "Right Stick Y"
+msgstr "Eskuin-klika"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
@@ -8341,16 +8378,6 @@ msgid ""
 "should be copied normally from your game CD.\n"
 "\n"
 " See %s"
-msgstr ""
-
-#: engines/dragons/metaengine.cpp:206
-#, fuzzy
-#| msgid "Select shader"
-msgid "Left shoulder"
-msgstr "Aukeratu shader-a"
-
-#: engines/dragons/metaengine.cpp:212
-msgid "Right shoulder"
 msgstr ""
 
 #: engines/dragons/metaengine.cpp:218
@@ -17072,6 +17099,14 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid "Left Mouse Button"
+#~ msgstr "Saguaren ezker botoia simulatu"
+
+#, fuzzy
+#~ msgid "Right Mouse Button"
+#~ msgstr "Saguaren eskuin botoia simulatu"
+
+#, fuzzy
 #~| msgid "Slide Left"
 #~ msgid "Strafe Left"
 #~ msgstr "Ezkerrera irristatu"
@@ -17700,14 +17735,6 @@ msgstr ""
 
 #~ msgid "Disable power off"
 #~ msgstr "Itzaltzea desgaitu"
-
-#, fuzzy
-#~ msgid "Left mouse button"
-#~ msgstr "Saguaren ezker botoia simulatu"
-
-#, fuzzy
-#~ msgid "Right mouse button"
-#~ msgstr "Saguaren eskuin botoia simulatu"
 
 #, fuzzy
 #~ msgid "Pad Down"
