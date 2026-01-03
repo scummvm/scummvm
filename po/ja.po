@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-10-05 13:36+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -8274,8 +8274,8 @@ msgstr "インベントリー/IQポイント表示の切り替え"
 msgid "Toggle champion 4 inventory"
 msgstr "インベントリー/IQポイント表示の切り替え"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Strafe left"
@@ -8288,8 +8288,8 @@ msgstr "左ステップ"
 msgid "Move backward"
 msgstr "後退"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Strafe right"
@@ -8953,14 +8953,6 @@ msgstr "より滑らかな動き"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "離散的なステップではなく、より滑らかな動きを使用"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "左ステップ"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "右ステップ"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8988,7 +8980,9 @@ msgid "Change mode"
 msgstr "モードを変更"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "インフォ"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -17429,6 +17423,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "左ステップ"
+
+#~ msgid "Strafe Right"
+#~ msgstr "右ステップ"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

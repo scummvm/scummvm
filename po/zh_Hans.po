@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -8280,8 +8280,8 @@ msgstr "开关物品栏/智商显示"
 msgid "Toggle champion 4 inventory"
 msgstr "开关物品栏/智商显示"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Strafe left"
@@ -8294,8 +8294,8 @@ msgstr "向左冲"
 msgid "Move backward"
 msgstr "向后移动"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Strafe right"
@@ -8949,14 +8949,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "向左冲"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "向右冲"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8982,7 +8974,9 @@ msgid "Change mode"
 msgstr "更改模式"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "信息菜单"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -17171,6 +17165,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "向左冲"
+
+#~ msgid "Strafe Right"
+#~ msgstr "向右冲"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

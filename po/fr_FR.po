@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-11-16 13:36+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -8454,8 +8454,8 @@ msgstr "Act. / Désact. l'inventaire du champion 3"
 msgid "Toggle champion 4 inventory"
 msgstr "Act. / Désact. l'inventaire du champion 4"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Esquive gauche"
 
@@ -8464,8 +8464,8 @@ msgstr "Esquive gauche"
 msgid "Move backward"
 msgstr "Bouger en arrière"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Esquive droite"
 
@@ -8991,14 +8991,6 @@ msgstr "Mouvements fluides"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Effectue des mouvements fluides plutôt que des étapes distinctes"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Esquive Gauche"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Esquive Droite"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -9022,7 +9014,9 @@ msgid "Change mode"
 msgstr "Changer de mode"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Menu d'information"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16726,6 +16720,12 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "Esquive Gauche"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Esquive Droite"
 
 #~ msgid "Skip Cutscene"
 #~ msgstr "Passer la cinématique"

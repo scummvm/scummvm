@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -8165,8 +8165,8 @@ msgstr "Inventar"
 msgid "Toggle champion 4 inventory"
 msgstr "Inventar"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Strafe left"
@@ -8178,8 +8178,8 @@ msgstr "Skli til Venstre"
 msgid "Move backward"
 msgstr "Beveg Bakover"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Strafe right"
@@ -8817,18 +8817,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-#, fuzzy
-#| msgid "Slide Left"
-msgid "Strafe Left"
-msgstr "Skli til Venstre"
-
-#: engines/freescape/movement.cpp:56
-#, fuzzy
-#| msgid "Slide Right"
-msgid "Strafe Right"
-msgstr "Skli til Høyre"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8861,7 +8849,7 @@ msgstr "Rask modus"
 #: engines/freescape/movement.cpp:106
 #, fuzzy
 #| msgid "Menu"
-msgid "Info Menu"
+msgid "Info menu"
 msgstr "Meny"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16956,6 +16944,16 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Slide Left"
+#~ msgid "Strafe Left"
+#~ msgstr "Skli til Venstre"
+
+#, fuzzy
+#~| msgid "Slide Right"
+#~ msgid "Strafe Right"
+#~ msgstr "Skli til Høyre"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

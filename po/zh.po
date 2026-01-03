@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -7777,8 +7777,8 @@ msgstr "特殊音效音量"
 msgid "Toggle champion 4 inventory"
 msgstr "特殊音效音量"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 msgid "Strafe left"
 msgstr "向右"
@@ -7790,8 +7790,8 @@ msgstr "向右"
 msgid "Move backward"
 msgstr "后端"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 msgid "Strafe right"
 msgstr "向右"
@@ -8412,15 +8412,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr ""
-
-#: engines/freescape/movement.cpp:56
-#, fuzzy
-msgid "Strafe Right"
-msgstr "向右"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8450,8 +8441,10 @@ msgid "Change mode"
 msgstr "更改模式"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
-msgstr ""
+#, fuzzy
+#| msgid "Interpolation:"
+msgid "Info menu"
+msgstr "插值："
 
 #: engines/freescape/games/castle/castle.cpp:250
 #, fuzzy
@@ -16237,6 +16230,10 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Strafe Right"
+#~ msgstr "向右"
 
 #, fuzzy
 #~| msgid "Speech"

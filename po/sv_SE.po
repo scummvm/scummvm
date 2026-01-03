@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-11-14 09:55+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -8335,8 +8335,8 @@ msgstr "Växla inventarier för champion 3"
 msgid "Toggle champion 4 inventory"
 msgstr "Växla inventarier för champion 4"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Gå vänster och sikta"
 
@@ -8345,8 +8345,8 @@ msgstr "Gå vänster och sikta"
 msgid "Move backward"
 msgstr "Flytta bakåt"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Gå höger och sikta"
 
@@ -8869,14 +8869,6 @@ msgstr "Mjukare rörelse"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Använd mjuka rörelser i stället för diskreta steg"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Gå vänster och sikta"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Gå höger och sikta"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8900,7 +8892,9 @@ msgid "Change mode"
 msgstr "Ändra läge"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Info-meny"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16453,6 +16447,12 @@ msgstr ""
 "Nemesis innehåller flera musikpussel som kräver MIDI-ljud för att kunna "
 "lösas. Dessa pussel kan alternativt lösas med hjälp av undertexter, om detta "
 "stöds. Vill du fortsätta spela?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "Gå vänster och sikta"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Gå höger och sikta"
 
 #~ msgid "Skip Cutscene"
 #~ msgstr "Hoppa över mellansekvens"

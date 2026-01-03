@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -8310,8 +8310,8 @@ msgstr "تبديل عرض الجرد / نقاط الذكاء"
 msgid "Toggle champion 4 inventory"
 msgstr "تبديل عرض الجرد / نقاط الذكاء"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Strafe left"
@@ -8324,8 +8324,8 @@ msgstr "مهاجم اليسار"
 msgid "Move backward"
 msgstr "ارجع للخلف"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Strafe right"
@@ -9000,14 +9000,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "مهاجم اليسار"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "مهاجم الأيمن"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -9041,7 +9033,7 @@ msgstr "تغيير الأمر"
 #: engines/freescape/movement.cpp:106
 #, fuzzy
 #| msgid "Menu"
-msgid "Info Menu"
+msgid "Info menu"
 msgstr "القائمة"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -17589,6 +17581,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "مهاجم اليسار"
+
+#~ msgid "Strafe Right"
+#~ msgstr "مهاجم الأيمن"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8243,8 +8243,8 @@ msgstr "챔피언 3 인벤토리 전환"
 msgid "Toggle champion 4 inventory"
 msgstr "챔피언 4 인벤토리 전환"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "왼쪽 폭격"
 
@@ -8253,8 +8253,8 @@ msgstr "왼쪽 폭격"
 msgid "Move backward"
 msgstr "뒤로 이동"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "오른쪽 폭격"
 
@@ -8772,14 +8772,6 @@ msgstr "더 부드러운 움직임"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "개별적인 단계 대신 더 부드러운 움직임 사용"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "왼쪽으로 폭겨"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "오른쪽으로 폭격"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8803,7 +8795,9 @@ msgid "Change mode"
 msgstr "모드 변경"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "정보 메뉴"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16274,6 +16268,12 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "왼쪽으로 폭겨"
+
+#~ msgid "Strafe Right"
+#~ msgstr "오른쪽으로 폭격"
 
 #~ msgid "Skip Cutscene"
 #~ msgstr "컷씬 건너뛰기"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-08-14 14:36+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -8402,8 +8402,8 @@ msgstr "Włącz/wyłącz widok ekwipunku"
 msgid "Toggle champion 4 inventory"
 msgstr "Włącz/wyłącz widok ekwipunku"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Krok w lewo"
 
@@ -8412,8 +8412,8 @@ msgstr "Krok w lewo"
 msgid "Move backward"
 msgstr "Ruch do tyłu"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Krok w prawo"
 
@@ -9054,14 +9054,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Krok w lewo"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Krok w prawo"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -9085,7 +9077,9 @@ msgid "Change mode"
 msgstr "Zmień tryb"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Menu informacyjne"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16880,6 +16874,12 @@ msgstr ""
 "Nemesis zawiera kilka łamigłówek muzycznych, które wymagają dźwięku MIDI do "
 "rozwiązania. Te łamigłówki można również rozwiązać za pomocą napisów, jeśli "
 "są obsługiwane. Kontynuować uruchamianie gry?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "Krok w lewo"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Krok w prawo"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

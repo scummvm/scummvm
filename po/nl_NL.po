@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -8227,8 +8227,8 @@ msgstr "Tonen Bezittingen/IQ Punten aan-/uitzetten"
 msgid "Toggle champion 4 inventory"
 msgstr "Tonen Bezittingen/IQ Punten aan-/uitzetten"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Strafe left"
@@ -8241,8 +8241,8 @@ msgstr "Schuif Links"
 msgid "Move backward"
 msgstr "Beweeg achteruit"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Strafe right"
@@ -8919,14 +8919,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Schuif Links"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Schuif Rechts"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8958,7 +8950,9 @@ msgid "Change mode"
 msgstr "Verander modus"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Info Menu"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -17470,6 +17464,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "Schuif Links"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Schuif Rechts"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

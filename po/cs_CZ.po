@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-09-29 20:43+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -8210,8 +8210,8 @@ msgstr "Přepínat zobrazení inventáře/chytrostních bodů"
 msgid "Toggle champion 4 inventory"
 msgstr "Přepínat zobrazení inventáře/chytrostních bodů"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Strafe left"
@@ -8223,8 +8223,8 @@ msgstr "Přesunout se Doleva"
 msgid "Move backward"
 msgstr "Vzad"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Strafe right"
@@ -8836,18 +8836,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-#, fuzzy
-#| msgid "Slide Left"
-msgid "Strafe Left"
-msgstr "Přesunout se Doleva"
-
-#: engines/freescape/movement.cpp:56
-#, fuzzy
-#| msgid "Slide Right"
-msgid "Strafe Right"
-msgstr "Přesunout se Doprava"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8880,7 +8868,7 @@ msgstr "Rychlý režim"
 #: engines/freescape/movement.cpp:106
 #, fuzzy
 #| msgid "Menu"
-msgid "Info Menu"
+msgid "Info menu"
 msgstr "Menu"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -17015,6 +17003,16 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Slide Left"
+#~ msgid "Strafe Left"
+#~ msgstr "Přesunout se Doleva"
+
+#, fuzzy
+#~| msgid "Slide Right"
+#~ msgid "Strafe Right"
+#~ msgstr "Přesunout se Doprava"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

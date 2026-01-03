@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-11-17 12:09+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -8426,8 +8426,8 @@ msgstr "Mostra/nascondi inventario del campione 3"
 msgid "Toggle champion 4 inventory"
 msgstr "Mostra/nascondi inventario del campione 4"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Scorri a sinistra"
 
@@ -8436,8 +8436,8 @@ msgstr "Scorri a sinistra"
 msgid "Move backward"
 msgstr "Movimento indietro"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Scorri a destra"
 
@@ -8964,14 +8964,6 @@ msgstr "Movimento fluido"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Effettua movimenti fluidi anzichè spostamenti a passi prestabiliti"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Scorri a sinistra"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Scorri a destra"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8995,7 +8987,9 @@ msgid "Change mode"
 msgstr "Cambia modalità"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Menù Informazioni"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16654,6 +16648,12 @@ msgstr ""
 "Zork Nemesis contiene alcuni puzzle musicali the richiedono l'audio MIDI per "
 "poterli risolvere. In alternativa, i puzzle possono essere risolti usando i "
 "sottotitoli, se supportati. Desideri continuare ad avviare il gioco?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "Scorri a sinistra"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Scorri a destra"
 
 #~ msgid "Skip Cutscene"
 #~ msgstr "Salta scena di intermezzo"

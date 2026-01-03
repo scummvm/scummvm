@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-11-15 10:15+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -8452,8 +8452,8 @@ msgstr "Mostrar/Ocultar inventario de paladín 3"
 msgid "Toggle champion 4 inventory"
 msgstr "Mostrar/Ocultar inventario de paladín 4"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Desplazarse a la izquierda"
 
@@ -8462,8 +8462,8 @@ msgstr "Desplazarse a la izquierda"
 msgid "Move backward"
 msgstr "Retroceder"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Desplazarse a la derecha"
 
@@ -8988,14 +8988,6 @@ msgstr "Suavizar movimiento"
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Muestra movimientos más fluidos en vez de por pasos"
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Desplazarse a la izquierda"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Desplazarse a la derecha"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -9019,7 +9011,9 @@ msgid "Change mode"
 msgstr "Cambiar modo"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Menú de información"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16673,6 +16667,12 @@ msgstr ""
 "que es imprescindible tener audio en MIDI para poder resolverlos.  También "
 "se podrían resolver estos acertijos con subtítulos, si están disponibles. "
 "¿Quieres seguir ejecutando el juego?"
+
+#~ msgid "Strafe Left"
+#~ msgstr "Desplazarse a la izquierda"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Desplazarse a la derecha"
 
 #~ msgid "Skip Cutscene"
 #~ msgstr "Omitir escena"

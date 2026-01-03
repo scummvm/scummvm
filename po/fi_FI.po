@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2025-07-02 00:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -8380,8 +8380,8 @@ msgstr "Inventaario/ÄO Pistenäyttö päälle/pois"
 msgid "Toggle champion 4 inventory"
 msgstr "Inventaario/ÄO Pistenäyttö päälle/pois"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr "Vasemmalle"
 
@@ -8390,8 +8390,8 @@ msgstr "Vasemmalle"
 msgid "Move backward"
 msgstr "Liiku taaksepäin"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr "Oikealle"
 
@@ -9032,14 +9032,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "Vasemmalle"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "Oikealle"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -9063,7 +9055,9 @@ msgid "Change mode"
 msgstr "Vaihda tilaa"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+#, fuzzy
+#| msgid "Info Menu"
+msgid "Info menu"
 msgstr "Infovalikko"
 
 #: engines/freescape/games/castle/castle.cpp:250
@@ -16993,6 +16987,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "Vasemmalle"
+
+#~ msgid "Strafe Right"
+#~ msgstr "Oikealle"
 
 #, fuzzy
 #~| msgid "Skip cutscene"

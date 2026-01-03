@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -8019,8 +8019,8 @@ msgstr "Altyazılar"
 msgid "Toggle champion 4 inventory"
 msgstr "Altyazılar"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 msgid "Strafe left"
 msgstr "Sol"
@@ -8032,8 +8032,8 @@ msgstr "Sol"
 msgid "Move backward"
 msgstr "Altyapı"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 msgid "Strafe right"
 msgstr "Sağ"
@@ -8608,16 +8608,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-#, fuzzy
-msgid "Strafe Left"
-msgstr "Sol"
-
-#: engines/freescape/movement.cpp:56
-#, fuzzy
-msgid "Strafe Right"
-msgstr "Sağ"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8646,8 +8636,9 @@ msgid "Change mode"
 msgstr "Grafik modu:"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
-msgstr ""
+#, fuzzy
+msgid "Info menu"
+msgstr "Müzik cihazı:"
 
 #: engines/freescape/games/castle/castle.cpp:250
 #, fuzzy
@@ -16384,6 +16375,14 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Strafe Left"
+#~ msgstr "Sol"
+
+#, fuzzy
+#~ msgid "Strafe Right"
+#~ msgstr "Sağ"
 
 #, fuzzy
 #~| msgid "Speech"

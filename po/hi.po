@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -7857,8 +7857,8 @@ msgstr "नीचे देखो"
 msgid "Toggle champion 4 inventory"
 msgstr "नीचे देखो"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Strafe left"
@@ -7871,8 +7871,8 @@ msgstr "बाएं Strafe करें"
 msgid "Move backward"
 msgstr "आगे बढ़ो"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Strafe right"
@@ -8492,14 +8492,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr "बाएं Strafe करें"
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr "दाहिने strafe करें"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8531,8 +8523,10 @@ msgid "Change mode"
 msgstr "मैन्युअल मोड"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
-msgstr ""
+#, fuzzy
+#| msgid "Game menu"
+msgid "Info menu"
+msgstr "गेम मेनू"
 
 #: engines/freescape/games/castle/castle.cpp:250
 #, fuzzy
@@ -16408,6 +16402,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Strafe Left"
+#~ msgstr "बाएं Strafe करें"
+
+#~ msgid "Strafe Right"
+#~ msgstr "दाहिने strafe करें"
 
 #, fuzzy
 #~| msgid "Skip autosave"
