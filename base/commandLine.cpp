@@ -208,6 +208,7 @@ static const char HELP_STRING4[] =
 	"  --screenshot-period=NUM  When recording, trigger a screenshot every NUM milliseconds\n"
 	"                           (default: 60000)\n"
 	"  --list-records           Display a list of recordings for the target specified\n"
+	"  --list-records-json      Display a list of recordings in JSON format for the target specified\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -811,6 +812,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-records")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-records-json")
+			END_COMMAND
+
 			DO_LONG_OPTION_INT("screenshot-period")
 			END_OPTION
 #endif
@@ -1308,7 +1312,7 @@ static void assembleTargets(const Common::String &singleTarget, Common::Array<Co
 }
 
 #ifdef ENABLE_EVENTRECORDER
-static Common::Error listRecords(const Common::String &singleTarget) {
+static Common::Error listRecords(const Common::String &singleTarget, bool jsonOutput) {
 	Common::Error result = Common::kNoError;
 
 	Common::Array<Common::String> targets;
@@ -1318,6 +1322,11 @@ static Common::Error listRecords(const Common::String &singleTarget) {
 	g_system->initBackend();
 
 	Common::String oldDomain = ConfMan.getActiveDomainName();
+	bool first = true;
+
+	if (jsonOutput) {
+		printf("{\n");
+	}
 
 	for (const auto &target : targets) {
 		Common::String currentTarget;
@@ -1341,10 +1350,29 @@ static Common::Error listRecords(const Common::String &singleTarget) {
 		if (files.empty()) {
 			continue;
 		}
-		printf("Recordings for target '%s' (gameid '%s'):\n", target.c_str(), qualifiedGameId.c_str());
-		for (const auto &x : files) {
-			printf("  %s\n", x.c_str());
+		if (jsonOutput) {
+			if (!first)
+				printf(",\n");
+			first = false;
+			printf("  \"%s\": {\n", target.c_str());
+			printf("  \"records\": [\n");
+			for (size_t i = 0; i < files.size(); ++i) {
+				printf("    \"%s\"%s\n", files[i].c_str(), (i + 1 < files.size()) ? "," : "");
+			}
+			printf("  ],\n");
+			printf("  \"engine\": \"%s\",\n", game.engineId.c_str());
+			printf("  \"gameid\": \"%s\"\n", qualifiedGameId.c_str());
+			printf("  }");
+		} else {
+			printf("Recordings for target '%s' (gameid '%s'):\n", target.c_str(), qualifiedGameId.c_str());
+			for (const auto &x : files) {
+				printf("  %s\n", x.c_str());
+			}
 		}
+	}
+
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 
 	// Revert to the old active domain
@@ -1949,7 +1977,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return cmdDoExit;
 #ifdef ENABLE_EVENTRECORDER
 	} else if (command == "list-records") {
-		err = listRecords(settings["game"]);
+		err = listRecords(settings["game"], false);
+		return cmdDoExit;
+	} else if (command == "list-records-json") {
+		err = listRecords(settings["game"], true);
 		return cmdDoExit;
 #endif
 	} else if (command == "list-saves") {
