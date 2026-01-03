@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2025-11-15 10:15+0000\n"
+"PO-Revision-Date: 2026-01-03 16:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Español\n"
 
 #: audio/mac_plugin.cpp:30
@@ -4428,32 +4428,22 @@ msgid "Right mouse button"
 msgstr "Botón derecho del ratón"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
 msgstr "Botón central del ratón"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
 msgstr "Rueda del ratón arriba"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
 msgstr "Rueda del ratón abajo"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
 msgstr "Botón X1 del ratón"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
 msgstr "Botón X2 del ratón"
 
@@ -4474,32 +4464,22 @@ msgid "Joy Y"
 msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
 msgstr "Joy Back"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
 msgstr "Joy Guía"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
 msgstr "Joy Start"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
 msgstr "Stick izdo."
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
 msgstr "Stick dcho."
 
@@ -4512,68 +4492,46 @@ msgid "Right shoulder"
 msgstr "Botón sup. dcho."
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "Cruceta arriba"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "Cruceta abajo"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "Cruceta izda."
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "Cruceta dcha."
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "Cruceta centro"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
 msgstr "Gatillo izdo."
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
 msgstr "Gatillo dcho."
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
 msgstr "Stick izdo. X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "Stick izdo. Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "Stick dcho. X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "Stick dcho. Y"
 
@@ -9069,8 +9027,6 @@ msgid "Change mode"
 msgstr "Cambiar modo"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
 msgstr "Menú de información"
 
