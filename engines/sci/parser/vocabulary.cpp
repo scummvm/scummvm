@@ -519,11 +519,12 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 		return;
 
 	// No match so far? Check if it's a number.
-
-	char *tester;
-	if ((strtol(tempword.c_str(), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
-		ResultWord tmp = { VOCAB_CLASS_NUMBER, VOCAB_MAGIC_NUMBER_GROUP };
-		retval.push_back(tmp);
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		char *tester;
+		if ((strtol(tempword.c_str(), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
+			ResultWord tmp = { VOCAB_CLASS_NOUN << 4, VOCAB_MAGIC_NUMBER_GROUP };
+			retval.push_back(tmp);
+		}
 	}
 }
 
