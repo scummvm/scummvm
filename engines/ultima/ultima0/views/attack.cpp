@@ -28,7 +28,7 @@ namespace Ultima0 {
 namespace Views {
 
 Attack::Attack() : View("Attack") {
-	setBounds(Gfx::TextRect(0, 22, 26, 24));
+	setBounds(Gfx::TextRect(1, 22, 26, 24));
 }
 
 bool Attack::msgFocus(const FocusMessage &msg) {
@@ -48,10 +48,10 @@ void Attack::draw() {
 	s.clear();
 
 	if (_mode == AMULET) {
-		s.writeString(Common::Point(1, 0), "1] Ladder Up");
-		s.writeString(Common::Point(1, 1), "2] Ladder Down");
-		s.writeString(Common::Point(1, 2), "3] Attack Monster");
-		s.writeString(Common::Point(1, 3), "4] Bad Magic");
+		s.writeString(Common::Point(0, 0), "1] Ladder Up");
+		s.writeString(Common::Point(0, 1), "2] Ladder Down");
+		s.writeString(Common::Point(0, 2), "3] Attack Monster");
+		s.writeString(Common::Point(0, 3), "4] Bad Magic");
 		return;
 	}
 

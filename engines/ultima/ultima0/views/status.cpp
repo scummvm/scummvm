@@ -81,7 +81,7 @@ void DungeonStatus::draw() {
 
 	// Draw any extra lines
 	for (uint i = 0; i < _lines.size(); ++i)
-		s.writeString(Common::Point(0, 1 + i), _lines[i]);
+		s.writeString(Common::Point(1, 1 + i), _lines[i]);
 }
 
 bool DungeonStatus::msgGame(const GameMessage &msg) {
@@ -101,6 +101,10 @@ bool DungeonStatus::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else {
+		if (msg._name == "MSG")
+			// Changing message also resets any message lines
+			_lines.clear();
+
 		return Status::msgGame(msg);
 	}
 }
