@@ -75,6 +75,7 @@ static const char HELP_STRING1[] =
 	"  -v, --version            Display ScummVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
+	"  --list-games-json        Display list of supported games in JSON format and exit\n"
 	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
@@ -94,7 +95,7 @@ static const char HELP_STRING1[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
-	"  --engine=ID              In combination with --list-games, --list-all-games, --list-targets, or --stats only\n"
+	"  --engine=ID              In combination with --list-games, --list-games-json, --list-all-games, --list-targets, or --stats only\n"
 	"                           lists games for this engine. Multiple engines can be listed separated by a coma.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
@@ -680,6 +681,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-games-json")
+			END_COMMAND
+
 			DO_LONG_COMMAND("list-all-games")
 			END_COMMAND
 
@@ -1056,7 +1060,7 @@ unknownOption:
 }
 
 /** List all available game IDs, i.e. all games which any loaded plugin supports. */
-static void listGames(const Common::String &engineID) {
+static void listGames(const Common::String &engineID, bool jsonOutput) {
 	const bool all = engineID.empty();
 	Common::StringArray engines;
 	if (!all) {
@@ -1064,8 +1068,12 @@ static void listGames(const Common::String &engineID) {
 		engines = tokenizer.split();
 	}
 
-	printf("Game ID                        Full Title                                                 \n"
-	       "------------------------------ -----------------------------------------------------------\n");
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Game ID                        Full Title                                                 \n"
+			"------------------------------ -----------------------------------------------------------\n");
+	}
 
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (const auto &plugin : plugins) {
@@ -1077,10 +1085,25 @@ static void listGames(const Common::String &engineID) {
 
 		if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+			bool first = true;
 			for (const auto &v : list) {
-				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId).c_str(), v.description);
+				const Common::String &gameId = buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v.gameId);
+				if (jsonOutput) {
+					if (!first) {
+						printf(",\n");
+					} else {
+						printf("\n");
+					}
+					first = false;
+					printf("  \"%s\": \"%s\"", gameId.c_str(), v.description);
+				} else {
+					printf("%-30s %s\n", gameId.c_str(), v.description);
+				}
 			}
 		}
+	}
+	if (jsonOutput) {
+		printf("\n}\n");
 	}
 }
 
@@ -1958,7 +1981,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listDebugFlags(settings["list-debugflags"]);
 		return cmdDoExit;
 	} else if (command == "list-games") {
-		listGames(settings["engine"]);
+		listGames(settings["engine"], false);
+		return cmdDoExit;
+	} else if (command == "list-games-json") {
+		listGames(settings["engine"], true);
 		return cmdDoExit;
 	} else if (command == "list-all-games") {
 		listAllGames(settings["engine"]);
