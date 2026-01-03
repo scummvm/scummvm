@@ -165,6 +165,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed KQ1 Amiga crash when incorrectly guessing gnome's name.
    - Fixed LONGBOW Amiga crash when going to abbey.
    - Fixed SQ4 Amiga taking three minutes to display title screen.
+   - Fixed PQ2 phone when dialing wrong numbers.
    - Fixed script bugs in ECO1, LSL6, PEPPER.
    - Added support for SLATER Macintosh.
    - Virtual keyboard now correctly triggers on/off wherever text input is
