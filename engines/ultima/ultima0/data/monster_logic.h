@@ -37,28 +37,28 @@ private:
 	/**
 	 * Monster Attacks
 	 */
-	static int attack(MONSTER &m, PLAYER &p);
+	static int attack(MonsterEntry &m, PlayerInfo &p);
 
 	/**
 	 * Monster Moves
 	 */
-	static void move(MONSTER &m, PLAYER &p, DUNGEONMAP &d);
+	static void move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d);
 
 	/**
 	 * Can monster move to a square
 	 */
-	static bool canMoveTo(DUNGEONMAP &d, int x, int y);
+	static bool canMoveTo(DungeonMapInfo &d, int x, int y);
 
 	/**
 	 * Monster Stealing
 	 */
-	static int steal(MONSTER &m, PLAYER &p);
+	static int steal(MonsterEntry &m, PlayerInfo &p);
 
 public:
 	/**
 	 * Check Monsters Attacking
 	 */
-	static void checkForAttacks(PLAYER &p, DUNGEONMAP &d);
+	static void checkForAttacks(PlayerInfo &p, DungeonMapInfo &d);
 };
 
 } // namespace Ultima0

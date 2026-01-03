@@ -42,7 +42,7 @@ private:
 	/**
 	 * Rotate a direction left
 	 */
-	static void MOVERotLeft(COORD *Dir);
+	static void MOVERotLeft(Common::Point *Dir);
 
 	/**
 	 * Draw part of dungeon

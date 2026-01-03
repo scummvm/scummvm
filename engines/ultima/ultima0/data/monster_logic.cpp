@@ -25,19 +25,19 @@
 namespace Ultima {
 namespace Ultima0 {
 
-void MonsterLogic::checkForAttacks(PLAYER &p, DUNGEONMAP &d) {
+void MonsterLogic::checkForAttacks(PlayerInfo &p, DungeonMapInfo &d) {
 	int i, Attacked;
 	double Dist;
 
 	// Go through all monsters
 	for (i = 0; i < d.MonstCount; i++) {
-		MONSTER &m = d.Monster[i];				// Pointer to MONSTER &/
-		Dist = pow(m.Loc.x - p.Dungeon.x, 2);	// Calculate Distance
-		Dist = Dist + pow(m.Loc.y - p.Dungeon.y, 2);
+		MonsterEntry &m = d.Monster[i];				// Pointer to MONSTER &/
+		Dist = pow(m._loc.x - p.Dungeon.x, 2);	// Calculate Distance
+		Dist = Dist + pow(m._loc.y - p.Dungeon.y, 2);
 		Dist = sqrt(Dist);
 
 		// If alive
-		if (m.Alive != 0) {
+		if (m._alive) {
 			Attacked = 0;
 
 			// If within range
@@ -47,12 +47,12 @@ void MonsterLogic::checkForAttacks(PLAYER &p, DUNGEONMAP &d) {
 			// If didn't attack, then move
 			if (Attacked == 0) {
 				// Mimics only if near enough
-				if (m.Type != MN_MIMIC || Dist >= 3.0)
+				if (m._type != MN_MIMIC || Dist >= 3.0)
 					move(m, p, d);
 
 				// Recovers if didn't attack
-				if (m.Strength < p.Level * p.Skill)
-					m.Strength = m.Strength + p.Level;
+				if (m._strength < p.Level * p.Skill)
+					m._strength = m._strength + p.Level;
 			}
 		}
 	}
@@ -62,27 +62,27 @@ void MonsterLogic::showLines(const Common::String &msg) {
 	g_events->send("DungeonStatus", GameMessage("LINES", msg));
 }
 
-int MonsterLogic::attack(MONSTER &m, PLAYER &p) {
+int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 	int n;
 
-	if (m.Type == MN_GREMLIN ||		// Special case for Gremlin/Thief
-		m.Type == MN_THIEF)
+	if (m._type == MN_GREMLIN ||		// Special case for Gremlin/Thief
+		m._type == MN_THIEF)
 		if (RND() > 0.5)			// Half the time
 			return steal(m, p);
 
 	Common::String msg = Common::String::format("You are being attacked by a %s !!!.\n",
-		MONSTER_INFO[m.Type].Name);
+		MONSTER_INFO[m._type].Name);
 
 	n = urand() % 20;					// Calculate hit chance
 	if (p.Object[OB_SHIELD] > 0) n--;
 	n = n - p.Attr[AT_STAMINA];
-	n = n + m.Type + p.Level;
+	n = n + m._type + p.Level;
 	if (n < 0) {
 		// Missed !
 		msg += "Missed !\n";
 	} else {
 		// Hit !
-		n = urand() % m.Type;		// Calculate damage done.
+		n = urand() % m._type;		// Calculate damage done.
 		n = n + p.Level;
 		p.Attr[AT_HP] -= n;			// Adjust hit points
 		msg += "Hit !!!\n";
@@ -92,23 +92,23 @@ int MonsterLogic::attack(MONSTER &m, PLAYER &p) {
 	return 1;
 }
 
-void MonsterLogic::move(MONSTER &m, PLAYER &p, DUNGEONMAP &d) {
+void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 	int x, y, xi, yi;
 
 	// Calculate direction
 	xi = yi = 0;
-	if (p.Dungeon.x != m.Loc.x)
-		xi = (p.Dungeon.x > m.Loc.x) ? 1 : -1;
-	if (p.Dungeon.y != m.Loc.y)
-		yi = (p.Dungeon.y > m.Loc.y) ? 1 : -1;
+	if (p.Dungeon.x != m._loc.x)
+		xi = (p.Dungeon.x > m._loc.x) ? 1 : -1;
+	if (p.Dungeon.y != m._loc.y)
+		yi = (p.Dungeon.y > m._loc.y) ? 1 : -1;
 
 	// Running away
-	if (m.Strength < p.Level * p.Skill) {
+	if (m._strength < p.Level * p.Skill) {
 		xi = -xi; yi = -yi;
 	}
 
 	// Get position
-	x = m.Loc.x; y = m.Loc.y;
+	x = m._loc.x; y = m._loc.y;
 
 	// Check move okay
 	if (ABS(xi) > ABS(yi)) {
@@ -127,11 +127,11 @@ void MonsterLogic::move(MONSTER &m, PLAYER &p, DUNGEONMAP &d) {
 		return;
 	if (x == p.Dungeon.x &&			// Can't move onto us
 		y == p.Dungeon.y) return;
-	m.Loc.x = x; m.Loc.y = y;			// Move to new position
+	m._loc.x = x; m._loc.y = y;			// Move to new position
 }
 
-bool MonsterLogic::canMoveTo(DUNGEONMAP &d, int x, int y) {
-	COORD c;
+bool MonsterLogic::canMoveTo(DungeonMapInfo &d, int x, int y) {
+	Common::Point c;
 	int t = d.Map[x][y];				// See what's there
 	if (!ISWALKTHRU(t)) return 0;		// Can't walk through walls
 	c.x = x; c.y = y;					// Set up coord structure
@@ -140,16 +140,16 @@ bool MonsterLogic::canMoveTo(DUNGEONMAP &d, int x, int y) {
 	return d.findMonster(c) < 0;
 }
 
-int MonsterLogic::steal(MONSTER &m, PLAYER &p) {
+int MonsterLogic::steal(MonsterEntry &m, PlayerInfo &p) {
 	int n;
 	const char *s1, *s2;
 
-	if (m.Type == MN_GREMLIN) {
+	if (m._type == MN_GREMLIN) {
 		// HALVES the food.... aargh
 		p.Object[OB_FOOD] = floor(p.Object[OB_FOOD]) / 2.0;
 		showLines("A Gremlin stole some food.\n");
 
-	} else if (m.Type == MN_THIEF) {
+	} else if (m._type == MN_THIEF) {
 		// Figure out what stolen
 		do {
 			n = urand() % p.Objects;

@@ -46,9 +46,9 @@ protected:
 
 public:
 	Graphics::Palette _palette;
-	PLAYER _player;
-	WORLDMAP _worldMap;
-	DUNGEONMAP _dungeon;
+	PlayerInfo _player;
+	WorldMapInfo _worldMap;
+	DungeonMapInfo _dungeon;
 	bool _showMinimap = false;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

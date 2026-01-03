@@ -43,7 +43,7 @@ private:
 	void selectMagic(int magicNum);
 	void attackMissile();
 	void attackWeapon();
-	void attackHitMonster(const COORD &c);
+	void attackHitMonster(const Common::Point &c);
 	void showMessage(const Common::String &msg);
 
 public:

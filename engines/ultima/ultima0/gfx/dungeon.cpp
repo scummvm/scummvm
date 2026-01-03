@@ -47,7 +47,7 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 	double Level = 0;
 	Common::Rect rIn, rOut;
-	COORD Dir, Pos, Next;
+	Common::Point Dir, Pos, Next;
 	int Monster, Front, Left, Right;
 	_DDRAWCalcRect(s, &rOut, 0);
 	Pos = player.Dungeon;						// Get position
@@ -68,7 +68,7 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 		// Check for monster present
 		Monster = dungeon.findMonster(Pos);
 		if (Monster >= 0)					
-			Monster = dungeon.Monster[Monster].Type;
+			Monster = dungeon.Monster[Monster]._type;
 
 		// Draw the dungeon
 		DRAWDungeon(s, &rOut, &rIn, Left, Front, Right,
@@ -91,7 +91,7 @@ void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, doubl
 	r->bottom = centerY + yWidth / 2;
 }
 
-void Dungeon::MOVERotLeft(COORD *Dir) {
+void Dungeon::MOVERotLeft(Common::Point *Dir) {
 	int t;
 	if (Dir->y == 0) Dir->x = -Dir->x;
 	t = Dir->x;

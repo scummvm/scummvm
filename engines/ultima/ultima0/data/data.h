@@ -32,68 +32,64 @@ namespace Ultima0 {
 
 enum Direction { DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST };
 
-struct PLAYER;
+struct PlayerInfo;
 
-struct _OInfStruct {
+struct ObjectInfo {
 	const char *Name;
 	int Cost;
 	int MaxDamage;
 	Common::KeyCode keycode;
 };
-struct _MInfStruct {
+struct MonsterInfo {
 	const char *Name; int Level;
 };
 
-extern const _OInfStruct OBJECT_INFO[];
-extern const _MInfStruct MONSTER_INFO[];
+extern const ObjectInfo OBJECT_INFO[];
+extern const MonsterInfo MONSTER_INFO[];
 extern const char *ATTRIB_NAMES[];
 extern const char *const DIRECTION_NAMES[];
-
-// point/rect types
-typedef Common::Point COORD;
-typedef Common::Rect RECT;
 
 /**
  * Monster structure
  */
-struct MONSTER {
-	COORD Loc;				// Position
-	int	  Type = 0;			// Monster type
-	int	  Strength = 0;		// Strength
-	int	  Alive = 0;		// Alive flag
+struct MonsterEntry {
+	Common::Point _loc;		// Position
+	int _type = 0;			// Monster type
+	int _strength = 0;		// Strength
+	bool _alive = false;	// Alive flag
 };
 
 /**
  * Dungeon Map Structure
  */
-struct DUNGEONMAP {
+struct DungeonMapInfo {
 private:
-	void addMonster(const PLAYER &player, int Type);
+	void addMonster(const PlayerInfo &player, int Type);
 	int generateContent(int c);
 
 public:
 	const int MapSize = DUNGEON_MAP_SIZE - 1;	// Size of Map
 	byte Map[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE] = {};	// Map information
 	int	MonstCount = 0;							// Number of Monsters
-	MONSTER Monster[MAX_MONSTERS];			// Monster records
+	MonsterEntry Monster[MAX_MONSTERS];			// Monster records
 
-	void create(const PLAYER &player);
+	void create(const PlayerInfo &player);
 	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Find Monster ID at given location
 	 */
-	int findMonster(const COORD &c) const;
+	int findMonster(const Common::Point &c) const;
 };
 
 /**
  * Player structure
  */
-struct PLAYER {
+struct PlayerInfo {
 	char  Name[MAX_NAME + 1] = {};			// Player Name
-	COORD World;							// World map position
-	COORD Dungeon;							// Dungeon map position
-	COORD DungDir;							// Dungeon direction facing
+	Common::Point World;							// World map position
+	Common::Point Dungeon;							// Dungeon map position
+	Common::Point DungDir;							// Dungeon direction facing
 	byte  Class = '?';						// Player class (F or M)
 	int   HPGain = 0;						// HPs gained in dungeon
 	int	  Level = 0;						// Dungeon level, 0 = world map
@@ -134,10 +130,10 @@ struct PLAYER {
 /**
  * World Map structure
  */
-struct WORLDMAP {
+struct WorldMapInfo {
 	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
 
-	void init(PLAYER &p);
+	void init(PlayerInfo &p);
 	int read(int x, int y) const;
 	void synchronize(Common::Serializer &s);
 };

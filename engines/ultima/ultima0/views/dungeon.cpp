@@ -75,7 +75,7 @@ void Dungeon::drawMinimap(Graphics::ManagedSurface &mapArea) {
 				(x + 1) * MINIMAP_TILE_SIZE, (y + 1) * MINIMAP_TILE_SIZE);
 			if (x == player.Dungeon.x && y == player.Dungeon.y) {
 				mapArea.fillRect(r, C_CYAN);
-			} else if (dungeon.findMonster(COORD(x, y)) > 0) {
+			} else if (dungeon.findMonster(Common::Point(x, y)) > 0) {
 				mapArea.fillRect(r, C_RED);
 			} else {
 				tile = dungeon.Map[x][y];
@@ -187,7 +187,7 @@ void Dungeon::endOfTurn() {
 void Dungeon::moveForward() {
 	auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
-	COORD New = player.Dungeon + player.DungDir;
+	Common::Point New = player.Dungeon + player.DungDir;
 
 	if (!ISWALKTHRU(dungeon.Map[New.x][New.y]) || dungeon.findMonster(New) >= 0)
 		return;

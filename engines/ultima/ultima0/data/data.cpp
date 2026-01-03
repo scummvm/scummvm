@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Ultima0 {
 
-const _OInfStruct OBJECT_INFO[] = {
+const ObjectInfo OBJECT_INFO[] = {
 	{ "Food", 1, 0, Common::KEYCODE_f },
 	{ "Rapier", 8, 10, Common::KEYCODE_r },
 	{ "Axe", 5, 5, Common::KEYCODE_a },
@@ -34,7 +34,7 @@ const _OInfStruct OBJECT_INFO[] = {
 	{ "Magic Amulet", 15, 0, Common::KEYCODE_m }
 };
 
-const _MInfStruct MONSTER_INFO[] = {
+const MonsterInfo MONSTER_INFO[] = {
 	{ nullptr, 0 },
 	{ "Skeleton", 1 },
 	{ "Thief", 2 },
@@ -53,7 +53,7 @@ const char *const DIRECTION_NAMES[] = { "North", "East", "South", "West" };
 
 /*-------------------------------------------------------------------*/
 
-void PLAYER::init() {
+void PlayerInfo::init() {
 	Common::fill(Name, Name + MAX_NAME + 1, '\0');
 	World.x = World.y = 0;
 	Dungeon.x = Dungeon.y = 0;
@@ -69,12 +69,12 @@ void PLAYER::init() {
 	Common::fill(Object, Object + MAX_OBJ, 0);
 }
 
-void PLAYER::rollAttributes() {
+void PlayerInfo::rollAttributes() {
 	for (int i = 0; i < MAX_ATTR; ++i)
 		Attr[i] = g_engine->getRandomNumber(21) + 4;
 }
 
-void PLAYER::synchronize(Common::Serializer &s) {
+void PlayerInfo::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)Name, MAX_NAME + 1);
 	s.syncAsSint16LE(World.x);
 	s.syncAsSint16LE(World.y);
@@ -100,7 +100,7 @@ void PLAYER::synchronize(Common::Serializer &s) {
 	}
 }
 
-Direction PLAYER::dungeonDir() const {
+Direction PlayerInfo::dungeonDir() const {
 	if (DungDir.y < 0)
 		return DIR_NORTH;
 	else if (DungDir.x > 0)
@@ -111,7 +111,7 @@ Direction PLAYER::dungeonDir() const {
 		return DIR_WEST;
 }
 
-void PLAYER::setDungeonDir(Direction newDir) {
+void PlayerInfo::setDungeonDir(Direction newDir) {
 	DungDir.x = 0;
 	DungDir.y = 0;
 	switch (newDir) {
@@ -130,19 +130,19 @@ void PLAYER::setDungeonDir(Direction newDir) {
 	}
 }
 
-void PLAYER::dungeonTurnLeft() {
+void PlayerInfo::dungeonTurnLeft() {
 	Direction dir = dungeonDir();
 	setDungeonDir((dir == DIR_NORTH) ? DIR_WEST : (Direction)((int)dir - 1));
 }
 
-void PLAYER::dungeonTurnRight() {
+void PlayerInfo::dungeonTurnRight() {
 	Direction dir = dungeonDir();
 	setDungeonDir((dir == DIR_WEST) ? DIR_NORTH : (Direction)((int)dir + 1));
 }
 
 /*-------------------------------------------------------------------*/
 
-void WORLDMAP::init(PLAYER &p) {
+void WorldMapInfo::init(PlayerInfo &p) {
 	int c, x, y, Size;
 
 	g_engine->setRandomSeed(p.LuckyNumber);
@@ -181,7 +181,7 @@ void WORLDMAP::init(PLAYER &p) {
 	Map[x][y] = WT_BRITISH;				// Put LBs castle there
 }
 
-int WORLDMAP::read(int x, int y) const {
+int WorldMapInfo::read(int x, int y) const {
 	if (x < 0 || y < 0)
 		return WT_MOUNTAIN;
 	if (x >= WORLD_MAP_SIZE || y >= WORLD_MAP_SIZE)
@@ -189,7 +189,7 @@ int WORLDMAP::read(int x, int y) const {
 	return Map[x][y];
 }
 
-void WORLDMAP::synchronize(Common::Serializer &s) {
+void WorldMapInfo::synchronize(Common::Serializer &s) {
 	for (int y = 0; y < WORLD_MAP_SIZE; ++y)
 		for (int x = 0; x < WORLD_MAP_SIZE; ++x)
 			s.syncAsByte(Map[x][y]);
@@ -197,7 +197,7 @@ void WORLDMAP::synchronize(Common::Serializer &s) {
 
 /*-------------------------------------------------------------------*/
 
-void DUNGEONMAP::create(const PLAYER &player) {
+void DungeonMapInfo::create(const PlayerInfo &player) {
 	int i, x, y;
 	const int Size = DUNGEON_MAP_SIZE - 1;
 
@@ -256,7 +256,7 @@ void DUNGEONMAP::create(const PLAYER &player) {
 		addMonster(player, i);
 }
 
-int DUNGEONMAP::generateContent(int c) {
+int DungeonMapInfo::generateContent(int c) {
 	if (RND() > .95) 	c = DT_TRAP;
 	if (RND() > .6) 	c = DT_HIDDENDOOR;
 	if (RND() > .6) 	c = DT_DOOR;
@@ -265,7 +265,7 @@ int DUNGEONMAP::generateContent(int c) {
 	return c;
 }
 
-void DUNGEONMAP::addMonster(const PLAYER &player, int Type) {
+void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 	int x, y;
 	int level = MONSTER_INFO[Type].Level;
 
@@ -277,12 +277,12 @@ void DUNGEONMAP::addMonster(const PLAYER &player, int Type) {
 		return;
 
 	// Get monster record
-	MONSTER &m = Monster[MonstCount++];
+	MonsterEntry &m = Monster[MonstCount++];
 
 	// Fill in details */
-	m.Type = Type;
-	m.Strength = level + 3 + player.Level;
-	m.Alive = 1;
+	m._type = Type;
+	m._strength = level + 3 + player.Level;
+	m._alive = true;
 
 	// Find a place for it. Must be empty, not player
 	do {
@@ -292,21 +292,20 @@ void DUNGEONMAP::addMonster(const PLAYER &player, int Type) {
 		(x == player.Dungeon.x && y == player.Dungeon.y));
 
 	// Record position
-	m.Loc.x = x; m.Loc.y = y;
+	m._loc.x = x; m._loc.y = y;
 }
 
-void DUNGEONMAP::synchronize(Common::Serializer &s) {
+void DungeonMapInfo::synchronize(Common::Serializer &s) {
 	for (int y = 0; y < DUNGEON_MAP_SIZE; ++y)
 		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x)
 			s.syncAsByte(Map[x][y]);
 }
 
-int DUNGEONMAP::findMonster(const COORD &c) const {
+int DungeonMapInfo::findMonster(const Common::Point &c) const {
 	int i, n = -1;
 	for (i = 0; i < MonstCount; i++)
-		if (c.x == Monster[i].Loc.x &&
-			c.y == Monster[i].Loc.y &&
-			Monster[i].Alive != 0) n = i;
+		if (c.x == Monster[i]._loc.x && c.y == Monster[i]._loc.y && Monster[i]._alive)
+			n = i;
 	return n;
 }
 

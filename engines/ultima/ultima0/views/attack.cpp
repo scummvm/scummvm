@@ -215,7 +215,7 @@ void Attack::selectMagic(int magicNum) {
 void Attack::attackMissile() {
 	const auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
-	COORD c1, c = player.Dungeon;
+	Common::Point c1, c = player.Dungeon;
 	int Dist = -1;
 	
 	// A maximum distance of 5
@@ -244,22 +244,22 @@ void Attack::attackMissile() {
 
 void Attack::attackWeapon() {
 	const auto &player = g_engine->_player;
-	COORD c = player.Dungeon + player.DungDir;
+	Common::Point c = player.Dungeon + player.DungDir;
 	attackHitMonster(c);
 }
 
-void Attack::attackHitMonster(const COORD &c) {
+void Attack::attackHitMonster(const Common::Point &c) {
 	auto &player = g_engine->_player;
 	auto &dungeon = g_engine->_dungeon;
 	int n = 0, Monster, Damage;
-	MONSTER *m = nullptr;
+	MonsterEntry *m = nullptr;
 
 	// Is there a monster there ?
 	Monster = dungeon.findMonster(c);
 	if (Monster >= 0) {
 		// Set up a pointer
 		m = &dungeon.Monster[Monster];
-		n = m->Type;
+		n = m->_type;
 	}
 
 	// Get weaponry info
@@ -288,23 +288,23 @@ void Attack::attackHitMonster(const COORD &c) {
 	if (Damage > 0)
 		n = (urand() % Damage);
 	n = n + player.Attr[AT_STRENGTH] / 5;
-	m->Strength = m->Strength - n;			// Lose them
+	m->_strength = m->_strength - n;			// Lose them
 
-	if (m->Strength < 0)
-		m->Strength = 0;
+	if (m->_strength < 0)
+		m->_strength = 0;
 	_message += Common::String::format("%s's Hit\nPoints now %d.\n",
-		MONSTER_INFO[m->Type].Name, m->Strength);
+		MONSTER_INFO[m->_type].Name, m->_strength);
 
 	// Killed it ?
-	if (m->Strength == 0) {
-		m->Alive = 0;							// It has ceased to be
-		int gold = (m->Type + player.Level);	// Amount of gold
+	if (m->_strength == 0) {
+		m->_alive = false;						// It has ceased to be
+		int gold = (m->_type + player.Level);	// Amount of gold
 		_message += Common::String::format("You get %d pieces of eight.\n", gold);
 		player.Attr[AT_GOLD] += gold;
 
-		player.HPGain += (m->Type * player.Level) / 2;	// Calculate Gain
+		player.HPGain += (m->_type * player.Level) / 2;	// Calculate Gain
 
-		if (m->Type == player.Task)						// Check done LB's task
+		if (m->_type == player.Task)						// Check done LB's task
 			player.TaskCompleted = 1;
 	}
 
