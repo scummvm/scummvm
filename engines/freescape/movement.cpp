@@ -46,14 +46,14 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("k");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
+	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe left"));
 	act->setCustomEngineActionEvent(kActionMoveLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
 	// act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
+	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe right"));
 	act->setCustomEngineActionEvent(kActionMoveRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
@@ -103,7 +103,7 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("MENU", _("Info Menu"));
+	act = new Common::Action("MENU", _("Info menu"));
 	act->setCustomEngineActionEvent(kActionInfoMenu);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
