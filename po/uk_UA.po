@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 15:53+0000\n"
-"PO-Revision-Date: 2026-01-03 15:52+0000\n"
+"PO-Revision-Date: 2026-01-03 16:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4466,8 +4466,6 @@ msgid "Left shoulder"
 msgstr "Лівий курок"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:212
-#, fuzzy
-#| msgid "Right Shoulder"
 msgid "Right shoulder"
 msgstr "Правий курок"
 
@@ -8518,16 +8516,12 @@ msgstr ""
 "Дивіться %s"
 
 #: engines/dragons/metaengine.cpp:218
-#, fuzzy
-#| msgid "Debug Graphics"
 msgid "Debug graphics"
 msgstr "Відладка графіки"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Animation keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапи клавіш анімації"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
@@ -8537,10 +8531,8 @@ msgid "Move / Interact / Select"
 msgstr "Рухатись наліво"
 
 #: engines/drascula/metaengine.cpp:235 engines/tot/metaengine.cpp:129
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
-msgstr "Підібрати"
+msgstr "Вибрати"
 
 #: engines/drascula/metaengine.cpp:266
 #, fuzzy
@@ -8549,10 +8541,8 @@ msgid "Reset selected verb"
 msgstr "Використати обраний об'єкт"
 
 #: engines/drascula/metaengine.cpp:272 engines/tot/metaengine.cpp:159
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Керування дотиком"
+msgstr "Керування гучністю"
 
 #: engines/drascula/metaengine.cpp:279
 #, fuzzy
@@ -8561,28 +8551,20 @@ msgid "Save / load game"
 msgstr "Збережені ігри"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Перемкнути субтитри"
+msgstr "Ввімкнути субтитри"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Перемкнути субтитри"
+msgstr "Вимкнути субтитри"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
 msgstr "Вимкнути озвучку"
 
 #: engines/drascula/metaengine.cpp:322 engines/tot/metaengine.cpp:169
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Підтвердити"
+msgstr "Підтвердити вихід"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -8614,200 +8596,136 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Ввімкнути генератор мови для об'єктів, налаштувань та біблійної цитати"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 1"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select option 2"
-msgstr "Вибрати Актора 2"
+msgstr "Вибрати опцію 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select option 3"
-msgstr "Вибрати Актора 3"
+msgstr "Вибрати опцію 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select Actor 4"
 msgid "Select option 4"
-msgstr "Вибрати Актора 4"
+msgstr "Вибрати опцію 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select Actor 5"
 msgid "Select option 5"
-msgstr "Вибрати Актора 5"
+msgstr "Вибрати опцію 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "Вибрати Актора 6"
+msgstr "Вибрати опцію 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 7"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 8"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 9"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 10"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 11"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 12"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 13"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option 14"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати опцію 14"
 
 #: engines/efh/metaengine.cpp:257 engines/hypno/metaengine.cpp:312
 #: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш меню"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Quit keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш виходу"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "Зберегти/Прочитати мапи клавіш гри"
+msgstr "Мапа клавіш пропуску відео"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Skip song keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш пропуску пісень"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш навігації меню статусу"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш меню статусу"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш підменю статусу"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Interaction keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапи клавіш взаємодії"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Fight keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш бійки"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш вибора персонажу"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Enemy selection keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш вибору ворога"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш меню смерті"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 1 status"
-msgstr "Показувати портрети героїв"
+msgstr "Статус героя 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:347
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 2 status"
-msgstr "Показувати портрети героїв"
+msgstr "Статус героя 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Character 3 status"
-msgstr "Показувати портрети героїв"
+msgstr "Статус героя 3"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip song"
-msgstr "Пропустити ролік"
+msgstr "Пропустити пісню"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "Пропустити вступ"
+msgstr "Пропустити пісню та вступ"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "Активне"
+msgstr "Активні вміння"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8829,10 +8747,8 @@ msgid "Give"
 msgstr "Дати"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "Інфо-меню"
+msgstr "Інфо"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
@@ -8843,26 +8759,20 @@ msgid "Trade"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "Вийти до меню"
+msgstr "Вийти з меню статусу"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "Вийти з гри"
+msgstr "Вийти з підменю"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "Стан:"
+msgstr "Статус"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
@@ -8886,24 +8796,18 @@ msgstr "Вийти з діалогу"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select character 1"
-msgstr "Вибрати Актора 1"
+msgstr "Вибрати героя 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select character 2"
-msgstr "Вибрати Актора 2"
+msgstr "Вибрати героя 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select character 3"
-msgstr "Вибрати Актора 3"
+msgstr "Вибрати героя 3"
 
 #: engines/efh/metaengine.cpp:570
 #, fuzzy
@@ -8912,40 +8816,28 @@ msgid "Cancel character selection"
 msgstr "Змінити налаштування гри"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Вибрати індекс"
+msgstr "Вибрати ворога 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Вибрати індекс"
+msgstr "Вибрати ворога 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Вибрати індекс"
+msgstr "Вибрати ворога 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Вибрати індекс"
+msgstr "Вибрати ворога 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Вибрати індекс"
+msgstr "Вибрати ворога 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Change game options"
 msgid "Cancel enemy selection"
-msgstr "Змінити налаштування гри"
+msgstr "Перервати вибір ворога"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8953,44 +8845,32 @@ msgid "Restart game"
 msgstr "Гра с початку"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "Нота 1: Ля"
+msgstr "Програти звук тип 13"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "Нота 1: Ля"
+msgstr "Програти звук тип 14"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "Нота 1: Ля"
+msgstr "Програти звук тип 15"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "Нота 5: Мі-діез"
+msgstr "Програти звук тип 5"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "Нота 1: Ля"
+msgstr "Програти звук тип 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "Нота 1: Ля"
+msgstr "Програти звук тип 16"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -9096,10 +8976,8 @@ msgid "Change mode"
 msgstr "Змінити режим"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
-msgstr "Інфо-меню"
+msgstr "Інфо меню"
 
 #: engines/freescape/games/castle/castle.cpp:250
 msgid "Select Prince"
@@ -9142,33 +9020,25 @@ msgstr "Повернутись уперед"
 #: engines/freescape/games/dark/dark.cpp:223
 #: engines/freescape/games/driller/driller.cpp:183
 #: engines/ultima/ultima8/metaengine.cpp:98
-#, fuzzy
-#| msgid "Move left"
 msgid "Roll left"
-msgstr "Рухатись наліво"
+msgstr "Перекотитись наліво"
 
 #: engines/freescape/games/dark/dark.cpp:228
 #: engines/freescape/games/driller/driller.cpp:188
 #: engines/ultima/ultima8/metaengine.cpp:99
-#, fuzzy
-#| msgid "Move right"
 msgid "Roll right"
-msgstr "Рухатись направо"
+msgstr "Перекотитись направо"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:234
 #: engines/freescape/games/driller/driller.cpp:155
-#, fuzzy
-#| msgid "Increasing Volume"
 msgid "Increase Turn Angle"
-msgstr "Підвищення гучності"
+msgstr "Підвищення кута повороту"
 
 #: engines/freescape/games/dark/dark.cpp:239
 #: engines/freescape/games/driller/driller.cpp:160
-#, fuzzy
-#| msgid "Decreasing Volume"
 msgid "Decrease Turn Angle"
-msgstr "Пониження гучності"
+msgstr "Пониження кута повороту"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:245
@@ -9354,8 +9224,6 @@ msgid "Magic"
 msgstr "Магія"
 
 #: engines/got/metaengine.cpp:79
-#, fuzzy
-#| msgid "Thor Dies"
 msgid "Thor dies"
 msgstr "Тор помирає"
 
@@ -9368,8 +9236,6 @@ msgid "Menu / Skip"
 msgstr "Меню / Пропустити"
 
 #: engines/griffon/metaengine.cpp:159
-#, fuzzy
-#| msgid "Speed Up Cutscene"
 msgid "Speed up cutscene"
 msgstr "Прискорити ролік"
 
@@ -9386,16 +9252,12 @@ msgstr ""
 "Чи ви все ж таки хочете запустити %s?"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
-#, fuzzy
-#| msgid "Use/Talk"
 msgid "Use / Talk"
-msgstr "Ужити/Говорити"
+msgstr "Ужити / Говорити"
 
 #: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
-#, fuzzy
-#| msgid "Pick up/Put away"
 msgid "Pick up / Put away"
-msgstr "Підібрати/Відкласти"
+msgstr "Підібрати / Відкласти"
 
 #: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
 msgid "Skip dialog lines"
@@ -9403,29 +9265,21 @@ msgstr "Пропустити рядки діалогу"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:584
-#, fuzzy
-#| msgid "Cycle Objects Up"
 msgid "Cycle objects up"
 msgstr "Прокрутити об'єкти догори"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:590
-#, fuzzy
-#| msgid "Cycle Objects Down"
 msgid "Cycle objects down"
 msgstr "Прокрутити об'єкти донизу"
 
 #: engines/grim/grim.cpp:601
-#, fuzzy
-#| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "Швидко вийти з кімнати"
 
 #: engines/grim/grim.cpp:606
-#, fuzzy
-#| msgid "Examine/Look"
 msgid "Examine / Look"
-msgstr "Розглянути/Дивитись"
+msgstr "Розглянути / Дивитись"
 
 #: engines/grim/grim.cpp:1386
 msgid "Error: the game could not be saved."
@@ -9486,12 +9340,12 @@ msgstr ""
 "надає пидтримку для користувачів таких патчей."
 
 #: engines/grim/metaengine.cpp:87
-#, fuzzy
-#| msgid "Escape from Monkey Island support is not compiled in"
 msgid ""
 "Escape from Monkey Island PS2 support required MPEG2 support, which is not "
 "compiled in"
-msgstr "Підтримку для Escape from Monkey Island не скомпільовано"
+msgstr ""
+"Підтримка для Escape from Monkey Island PS2 потребує MPEG2, яку не було "
+"скомпільовано"
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
@@ -9650,8 +9504,6 @@ msgstr "Ввімкнути режим з кров'ю, якщо є доступн
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Options Menu"
 msgid "Options menu"
 msgstr "Меню налаштування"
 
@@ -9664,14 +9516,10 @@ msgid "Backward"
 msgstr "Назад"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
-#| msgid "Lean Left"
 msgid "Lean left"
 msgstr "Нахил вліво"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Lean Right"
 msgid "Lean right"
 msgstr "Нахил вправо"
 
@@ -9682,14 +9530,10 @@ msgid "Crouch"
 msgstr "Повзання"
 
 #: engines/hpl1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Interact mode"
 msgstr "Режим взаємодії"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Look Mode"
 msgid "Look mode"
 msgstr "Режим огляду"
 
@@ -9702,8 +9546,6 @@ msgid "Notebook"
 msgstr "Записник"
 
 #: engines/hpl1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Personal Notes"
 msgid "Personal notes"
 msgstr "Особисті відмітки"
 
@@ -9836,20 +9678,16 @@ msgstr "Додатковий контент, який було вимкнуто 
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
 #: engines/ngi/metaengine.cpp:117 engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш вступу"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Секунд"
+msgstr "Второрядний постріл"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/ngi/metaengine.cpp:168 engines/teenagent/metaengine.cpp:232
@@ -9858,29 +9696,21 @@ msgid "Skip intro"
 msgstr "Пропустити вступ"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Exit menu keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш меню виходу"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш меню вибору складності"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш меню нової спроби"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "Пропустити озвучку"
+msgstr "Пропустити рівень (Чіт)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9907,33 +9737,25 @@ msgstr ""
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "Відступити"
+msgstr "Сектор спочатку"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Запустити анімацію наново"
+msgstr "Територію спочатку"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Pause keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш паузи"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Direction keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш напрямку"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -9952,10 +9774,8 @@ msgstr "Ремора"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Side Step"
 msgid "Side step"
-msgstr "Крок в сторону"
+msgstr "Крок в бік"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
 #: engines/illusions/metaengine.cpp:108 engines/sherlock/metaengine.cpp:1140
@@ -10121,66 +9941,46 @@ msgstr "Підтримку для Eye of Beholder не скомпільован�
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backwards"
-msgstr "Рухатись назад"
+msgstr "Рухатись задом"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open / Close inventory"
-msgstr "Відкрити/закрити інвентар"
+msgstr "Відкрити / Закрити інвентар"
 
 #: engines/kyra/engine/eobcommon.cpp:376
-#, fuzzy
-#| msgid "Switch Inventory/Character screen"
 msgid "Switch inventory / Character screen"
-msgstr "Переключити екран Інвентар/Герой"
+msgstr "Переключити екран Інвентар / Герой"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "Табір"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast spell"
 msgstr "Використати закляття"
 
 #: engines/kyra/engine/eobcommon.cpp:381
-#, fuzzy
-#| msgid "Spell Level 1"
 msgid "Spell level 1"
 msgstr "Закляття 1-го рівня"
 
 #: engines/kyra/engine/eobcommon.cpp:382
-#, fuzzy
-#| msgid "Spell Level 2"
 msgid "Spell level 2"
 msgstr "Закляття 2-го рівня"
 
 #: engines/kyra/engine/eobcommon.cpp:383
-#, fuzzy
-#| msgid "Spell Level 3"
 msgid "Spell level 3"
 msgstr "Закляття 3-го рівня"
 
 #: engines/kyra/engine/eobcommon.cpp:384
-#, fuzzy
-#| msgid "Spell Level 4"
 msgid "Spell level 4"
 msgstr "Закляття 4-го рівня"
 
 #: engines/kyra/engine/eobcommon.cpp:385
-#, fuzzy
-#| msgid "Spell Level 5"
 msgid "Spell level 5"
 msgstr "Закляття 5-го рівня"
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Spell Level 6"
 msgid "Spell level 6"
 msgstr "Закляття 6-го рівня"
 
@@ -10208,24 +10008,18 @@ msgid "Show map"
 msgstr "Показати мапу"
 
 #: engines/kyra/engine/lol.cpp:512
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Slide left"
-msgstr "Ковзати наліво"
+msgstr "Зсув наліво"
 
 #: engines/kyra/engine/lol.cpp:513
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Slide right"
-msgstr "Ковзати направо"
+msgstr "Зсув направо"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "Налаштування"
 
 #: engines/kyra/engine/lol.cpp:518
-#, fuzzy
-#| msgid "Choose Spell"
 msgid "Choose spell"
 msgstr "Вибрати закляття"
 
@@ -10343,24 +10137,18 @@ msgstr ""
 "використовувати оригінальний інтерпретатор та купити ключ у Wyrmkeep"
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:775
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Exit keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш виходу"
 
 #: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:116
 #: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Map keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш мапи"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Journal keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш журналу"
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
@@ -10375,10 +10163,8 @@ msgid "Exit"
 msgstr "Вихід"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "Ввімкнути звук у грі"
+msgstr "Підняти звук у грі"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
@@ -10389,22 +10175,16 @@ msgid "Interact with object with chosen action"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "Наступний об'єкт"
+msgstr "Взяти об'єкт"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "Перейти на наступний об'єкт"
+msgstr "Пересунути або перекинути об'єкт"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open door or object"
-msgstr "Відкрити голомапу"
+msgstr "Відкрити двері або об'єкт"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
@@ -10415,10 +10195,8 @@ msgid "Look at object close-up"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Switch to inventory display"
-msgstr "Прокрутити інвентар догори"
+msgstr "Переключитися до інвентарю"
 
 #: engines/lab/metaengine.cpp:284
 #, fuzzy
@@ -10439,68 +10217,48 @@ msgid "Run while following virtual bread crumbs"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to 2xSai scaling"
 msgid "Switch to main display"
-msgstr "Перемикання до фільтра 2xSai"
+msgstr "Перемикання до головного дісплею"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Діалог збереження / завантаження"
+msgstr "Відкрити діалог збереження / завантаження"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "Глянути на"
+msgstr "Глянути на сцену"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Inventory"
 msgid "Previous inventory item"
-msgstr "Інвентар"
+msgstr "Попередній об'єкт інвентаря"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next inventory item"
-msgstr "Анімований інвентар"
+msgstr "Наступний об'єкт інвентаря"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up one level"
-msgstr "Рівень відладки:"
+msgstr "Рівень вище"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down one level"
-msgstr "Рівень відладки:"
+msgstr "Рівень нижче"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "Показати журнал"
+msgstr "Повернутися до журналу"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Show journal"
 msgid "Exit journal"
-msgstr "Показати журнал"
+msgstr "Вийти з журналу"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "Показати журнал"
+msgstr "Рухатись уперед у журналі"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10590,8 +10348,6 @@ msgstr ""
 "Інакше буде програватись музика MIDI."
 
 #: engines/made/metaengine.cpp:63
-#, fuzzy
-#| msgid "Use Windows cursors"
 msgid "Use Windows mouse cursors"
 msgstr "Використовувати Windows курсори"
 
