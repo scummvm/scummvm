@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 3.0.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 15:38+0000\n"
+"POT-Creation-Date: 2026-01-03 15:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7583,8 +7583,8 @@ msgstr ""
 msgid "Toggle champion 4 inventory"
 msgstr ""
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe left"
 msgstr ""
 
@@ -7593,8 +7593,8 @@ msgstr ""
 msgid "Move backward"
 msgstr ""
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe right"
 msgstr ""
 
@@ -8095,14 +8095,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-msgid "Strafe Left"
-msgstr ""
-
-#: engines/freescape/movement.cpp:56
-msgid "Strafe Right"
-msgstr ""
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8126,7 +8118,7 @@ msgid "Change mode"
 msgstr ""
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
+msgid "Info menu"
 msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:250
