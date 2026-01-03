@@ -448,6 +448,16 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size) {
 		tag  = s->readUint32BE();
 		max_size = s->readUint32LE();
 
+		if (max_size > 0x8000000) {
+			warning("VQADecoder::readMSCI: max_size 0x%x exceeds 128MB limit", max_size);
+			return false;
+		}
+
+		if (roundup(max_size) < max_size) {
+			warning("VQADecoder::readMSCI: max_size 0x%x causes integer overflow in roundup", max_size);
+			return false;
+		}
+
 		switch (tag) {
 		case kVIEW:
 			_maxVIEWChunkSize = max_size;
