@@ -59,7 +59,7 @@ public:
 	int16    stringLength(const char *s) const;
 
 	void     displayBackground();
-	void     displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl);
+	virtual void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) = 0;
 	void     displayList(int update, ...);
 	void     displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
 	void     drawBoundaries();
@@ -118,8 +118,6 @@ protected:
 	inline bool isInY(const int16 y, const Rect *rect) const;
 	inline bool isOverlapping(const Rect *rectA, const Rect *rectB) const;
 
-	virtual OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) = 0;
-
 private:
 	byte     *_curPalette;
 	byte      _iconImage[kInvDx * kInvDy];
@@ -153,8 +151,10 @@ public:
 
 	void loadFont(int16 fontId) override;
 	void loadFontArr(Common::ReadStream &in) override;
+
+	void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) override;
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) override;
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
 
 class Screen_v1w : public Screen {
@@ -164,8 +164,10 @@ public:
 
 	void loadFont(int16 fontId) override;
 	void loadFontArr(Common::ReadStream &in) override;
+
+	void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) override;
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) override;
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
 
 } // End of namespace Hugo
