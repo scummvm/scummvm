@@ -397,6 +397,22 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	// File Paths
 	const Common::FSNode gameDataDir(gamePath);
 	SearchMan.setIgnoreClashes(true);
+
+	switch (getGameId()) {
+	case GID_GRANDINQUISITOR:
+		break;
+	case GID_NEMESIS:
+		//Workaround for production error in English language releases of Zork Nemesis
+		//Multiple copies of audio file wne3hptc.raw exist in the game data subdirectories; the one in the "temple" subdirectory plays at the wrong pitch, thus the other "global" subfolders containing the correct versions of this file must take search precedence to ensure that it is never used.  Non-English releases should not be affected by this.
+		SearchMan.addSubDirectoriesMatching(gameDataDir, "data*/zassets/global*", true);
+		SearchMan.addSubDirectoriesMatching(gameDataDir, "zassets/global*", true);
+		SearchMan.addSubDirectoriesMatching(gameDataDir, "global*", true);
+		break;
+	case GID_NONE:
+	default:
+		break;
+	}
+
 	SearchMan.addDirectory(gamePath, 0, 5, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FONTS");
 
