@@ -78,6 +78,7 @@ static const char HELP_STRING1[] =
 	"  --list-games-json        Display list of supported games in JSON format and exit\n"
 	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
+	"  --list-targets-json      Display list of configured targets in JSON format and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
 	"  --dump-all-detection-entries Create a DAT file containing MD5s from detection entries of all engines\n"
@@ -678,6 +679,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('t', "list-targets")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-targets-json")
+			END_COMMAND
+
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
@@ -1162,7 +1166,7 @@ static void listAllEngines() {
 }
 
 /** List all targets which are configured in the config file. */
-static void listTargets(const Common::String &engineID) {
+static void listTargets(const Common::String &engineID, bool jsonOutput) {
 	const bool any = engineID.empty();
 	Common::StringArray engines;
 	if (!any) {
@@ -1170,41 +1174,80 @@ static void listTargets(const Common::String &engineID) {
 		engines = tokenizer.split();
 	}
 
-	printf("Target               Description                                           \n"
-	       "-------------------- ------------------------------------------------------\n");
+	if (jsonOutput) {
+		printf("{");
+	} else {
+		printf("Target               Description                                           \n"
+			"-------------------- ------------------------------------------------------\n");
+	}
 
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 
-	Common::Array<Common::String> targets;
+	struct Target {
+		Common::String name;
+		Common::String description;
+		Common::String engineId;
+		Common::String gameId;
+
+		Common::String toString() const {
+			return Common::String::format("%-20s %s", name.c_str(), description.c_str());
+		}
+
+		bool operator<(const Target &other) const {
+			return toString() < other.toString();
+		}
+	};
+	Common::Array<Target> targets;
 	targets.reserve(domains.size());
 
 	for (const auto &domain : domains) {
 		Common::String name(domain._key);
 		Common::String description(domain._value.getValOrDefault("description"));
-		Common::String engine;
-		if (!any)
-			engine = domain._value.getValOrDefault("engineid");
+		Common::String engine = domain._value.getValOrDefault("engineid");
+		Common::String gameId = domain._value.getValOrDefault("gameid");
 
 		// If there's no description, fallback on the default description.
-		if (description.empty() || (!any && engine.empty())) {
+		if (description.empty() || engine.empty() || gameId.empty()) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(name);
 			if (description.empty() && !g.description.empty())
 				description = g.description;
-			if (!any && engine.empty() && !g.engineId.empty())
+			if (engine.empty() && !g.engineId.empty())
 				engine = g.engineId;
+			if (gameId.empty() && !g.gameId.empty())
+				gameId = g.gameId;
 		}
 		// If there's still no description, we cannot come up with one. Insert some dummy text.
 		if (description.empty())
 			description = "<Unknown game>";
 
 		if (any || Common::find(engines.begin(), engines.end(), engine) != engines.end())
-			targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
+			targets.push_back({name, description, engine, gameId});
 	}
 
 	Common::sort(targets.begin(), targets.end());
 
-	for (const auto &target : targets)
-		printf("%s\n", target.c_str());
+	bool first = true;
+	for (const auto &target : targets) {
+		if (jsonOutput) {
+			if (!first) {
+				printf(",\n");
+			} else {
+				printf("\n");
+				first = false;
+			}
+			printf("  \"%s\": {\n", target.name.c_str());
+			printf("    \"description\": \"%s\",\n", target.description.c_str());
+			printf("    \"engineId\": \"%s\",\n", target.engineId.c_str());
+			printf("    \"gameId\": \"%s\"\n", target.gameId.c_str());
+			printf("  }");
+		} else {
+			printf("%s\n", target.toString().c_str());
+		}
+	}
+
+	if (jsonOutput) {
+		printf("\n}\n");
+	}
 }
 
 static void printStatistics(const Common::String &engineID) {
@@ -1972,7 +2015,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// --list-games). This must be done after the config file and the plugins
 	// have been loaded.
 	if (command == "list-targets") {
-		listTargets(settings["engine"]);
+		listTargets(settings["engine"], false);
+		return cmdDoExit;
+	} else if (command == "list-targets-json") {
+		listTargets(settings["engine"], true);
 		return cmdDoExit;
 	} else if (command == "list-all-debugflags") {
 		listAllEngineDebugFlags();
