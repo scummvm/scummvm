@@ -855,7 +855,7 @@ uint32 OSystem_SDL::getMillis(bool skipRecord) {
 
 void OSystem_SDL::delayMillis(uint msecs) {
 #ifdef ENABLE_EVENTRECORDER
-	if (!g_eventRec.processDelayMillis())
+	if (g_eventRec.processDelayMillis())
 #endif
 		SDL_Delay(msecs);
 }
