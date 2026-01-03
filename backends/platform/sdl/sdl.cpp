@@ -291,8 +291,11 @@ void OSystem_SDL::initBackend() {
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	debug(2, "SDL Video Detecting OpenGL Features...");
 	detectOpenGLFeaturesSupport();
+	debug(2, "SDL Video Detecting Anti-aliasing Support...");
 	detectAntiAliasingSupport();
+	debug(2, "SDL Video OpenGL Feature Detection Complete");
 #endif
 
 	// Create the default event source, in case a custom backend
