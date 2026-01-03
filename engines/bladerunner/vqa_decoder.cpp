@@ -710,9 +710,9 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_offsetX   = header->offsetX;
 	_offsetY   = header->offsetY;
 
-	_maxVPTRSize = header->maxVPTRSize;
-	_maxCBFZSize = header->maxCBFZSize;
-	_maxZBUFChunkSize = vqaDecoder->_maxZBUFChunkSize;
+	_maxVPTRSize = roundup(header->maxVPTRSize);
+	_maxCBFZSize = roundup(header->maxCBFZSize);
+	_maxZBUFChunkSize = roundup(vqaDecoder->_maxZBUFChunkSize);
 
 	_codebook = nullptr;
 	_cbfz     = nullptr;
@@ -723,7 +723,7 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_curFrame = -1;
 
 	_zbufChunkSize = 0;
-	_zbufChunk     = new uint8[roundup(_maxZBUFChunkSize)];
+	_zbufChunk     = new uint8[_maxZBUFChunkSize];
 
 	_viewDataSize = 0;
 	_viewData     = nullptr;
@@ -844,7 +844,7 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 	codebookInfo.data = new uint8[roundup(codebookSize)];
 
 	if (!_cbfz) {
-		_cbfz = new uint8[roundup(_maxCBFZSize)];
+		_cbfz = new uint8[_maxCBFZSize];
 	}
 
 	s->read(_cbfz, roundup(size));
@@ -871,7 +871,7 @@ bool VQADecoder::VQAVideoTrack::readCBPZ(Common::SeekableReadStream* s, uint32 s
 	}
 
 	if (!_cbfzNext) {
-		_cbfzNext = new uint8[roundup(_maxCBFZSize)];
+		_cbfzNext = new uint8[_maxCBFZSize];
 		_codebookInfoNext = new CodebookInfo();
 		_codebookInfoNext->frame = 0;
 		_codebookInfoNext->data = new uint8[roundup(_cbParts * _maxBlocks)];
@@ -883,20 +883,21 @@ bool VQADecoder::VQAVideoTrack::readCBPZ(Common::SeekableReadStream* s, uint32 s
 	s->read(_cbfzNext + _accumulatedCBPZsizeToCBF, roundup(size));
 
 	_accumulatedCBPZsizeToCBF += size;
-	assert(_accumulatedCBPZsizeToCBF <= roundup(_maxCBFZSize));
+	assert(_accumulatedCBPZsizeToCBF <= _maxCBFZSize);
 	++_countOfCBPsToCBF;
 	return true;
 }
 
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size) {
-	if (size > _maxZBUFChunkSize) {
+	uint32 roundedSize = roundup(size);
+	if (roundedSize > _maxZBUFChunkSize) {
 		warning("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
-		s->skip(roundup(size));
+		s->skip(roundedSize);
 		return false;
 	}
 
 	_zbufChunkSize = size;
-	s->read(_zbufChunk, roundup(size));
+	s->read(_zbufChunk, roundedSize);
 
 	return true;
 }
@@ -1061,7 +1062,7 @@ bool VQADecoder::VQAVideoTrack::readVPTZ(Common::SeekableReadStream* s, uint32 s
 		return false;
 
 	if (!_vptz) {
-		_vptz = new uint8[roundup(_maxVPTRSize)];
+		_vptz = new uint8[_maxVPTRSize];
 	}
 
 	s->read(_vptz, roundup(size));
@@ -1084,7 +1085,7 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 		return false;
 
 	if (!_vpointer) {
-		_vpointer = new uint8[roundup(_maxVPTRSize)];
+		_vpointer = new uint8[_maxVPTRSize];
 	}
 
 	_vpointerSize = size;
