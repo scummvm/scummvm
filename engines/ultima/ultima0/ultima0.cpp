@@ -90,7 +90,7 @@ Common::Error Ultima0Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	Common::Serializer s(stream, nullptr);
 	syncSavegame(s);
 
-	replaceView(_player.Level == 0 ? "WorldMap" : "Dungeon");
+	replaceView(_player._level == 0 ? "WorldMap" : "Dungeon");
 
 	return Common::kNoError;
 }

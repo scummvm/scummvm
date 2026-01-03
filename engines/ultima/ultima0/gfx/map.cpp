@@ -46,14 +46,14 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 				x1 = x, y1 = y;
 			} else {
 				// Which cell?
-				x1 = player.World.x - grid / 2 + x;
-				y1 = player.World.y - grid / 2 + y;
+				x1 = player._worldPos.x - grid / 2 + x;
+				y1 = player._worldPos.y - grid / 2 + y;
 			}
 
 			DRAWTile(s, r, map.read(x1, y1));
 
 			// Draw us if we're there
-			if (x1 == player.World.x && y1 == player.World.y)
+			if (x1 == player._worldPos.x && y1 == player._worldPos.y)
 				DRAWTile(s, r, WT_PLAYER);
 		}
 	}

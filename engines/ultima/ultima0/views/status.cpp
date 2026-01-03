@@ -47,9 +47,9 @@ void Status::draw() {
 	s.writeString(Common::Point(28, 2), "H.P.=");
 	s.writeString(Common::Point(28, 3), "Gold=");
 	s.setColor(C_VIOLET);
-	s.writeString(Common::Point(33, 1), Common::String::format("%d", (int)player.Object[OB_FOOD]));
-	s.writeString(Common::Point(33, 2), Common::String::format("%d", player.Attr[AT_HP]));
-	s.writeString(Common::Point(33, 3), Common::String::format("%d", player.Attr[AT_GOLD]));
+	s.writeString(Common::Point(33, 1), Common::String::format("%d", (int)player._object[OB_FOOD]));
+	s.writeString(Common::Point(33, 2), Common::String::format("%d", player._attr[AT_HP]));
+	s.writeString(Common::Point(33, 3), Common::String::format("%d", player._attr[AT_GOLD]));
 }
 
 bool Status::msgGame(const GameMessage &msg) {
@@ -76,7 +76,7 @@ void DungeonStatus::draw() {
 	auto s = getSurface();
 
 	// Display the current direction
-	if (player.Level > 0)
+	if (player._level > 0)
 		s.writeString(Common::Point(15, 0), DIRECTION_NAMES[player.dungeonDir()]);
 
 	// Draw any extra lines

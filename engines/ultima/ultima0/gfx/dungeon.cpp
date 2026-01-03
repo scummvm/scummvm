@@ -45,25 +45,25 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 	s->clear();
 
-	double Level = 0;
+	double level = 0;
 	Common::Rect rIn, rOut;
 	Common::Point dir, pos, next;
 	int monster, front, left, right;
 	_DDRAWCalcRect(s, &rOut, 0);
-	pos = player.Dungeon;						// Get position
+	pos = player._dungeonPos;						// Get position
 
 	// Iterate through drawing successively distinct tiles in the facing direction
 	do {
-		Level++;								// Next level
-		_DDRAWCalcRect(s, &rIn, Level);
-		next.x = pos.x + player.DungDir.x;		// Next position
-		next.y = pos.y + player.DungDir.y;
+		level++;								// Next level
+		_DDRAWCalcRect(s, &rIn, level);
+		next.x = pos.x + player._dungeonDir.x;		// Next position
+		next.y = pos.y + player._dungeonDir.y;
 
-		dir = player.DungDir; MOVERotLeft(&dir);	// To the left
-		left = dungeon.Map[pos.x + dir.x][pos.y + dir.y];
+		dir = player._dungeonDir; MOVERotLeft(&dir);	// To the left
+		left = dungeon._map[pos.x + dir.x][pos.y + dir.y];
 		MOVERotLeft(&dir); MOVERotLeft(&dir);		// To the right
-		right = dungeon.Map[pos.x + dir.x][pos.y + dir.y];
-		front = dungeon.Map[next.x][next.y];		// What's in front ?
+		right = dungeon._map[pos.x + dir.x][pos.y + dir.y];
+		front = dungeon._map[next.x][next.y];		// What's in front ?
 
 		// Check for monster present
 		monster = dungeon.findMonster(pos);
@@ -72,11 +72,11 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 
 		// Draw the dungeon
 		DRAWDungeon(s, &rOut, &rIn, left, front, right,
-			dungeon.Map[pos.x][pos.y], monster);
+			dungeon._map[pos.x][pos.y], monster);
 
 		pos = next;							// Next position down
 		rOut = rIn;							// Last in is new out
-	} while (Level < MAX_VIEW_DEPTH && ISDRAWOPEN(front));
+	} while (level < MAX_VIEW_DEPTH && ISDRAWOPEN(front));
 }
 
 void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double level) {

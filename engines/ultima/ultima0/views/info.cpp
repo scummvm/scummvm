@@ -48,7 +48,7 @@ void Info::draw() {
 	// Price/Damage/Item
 	for (i = 0; i < MAX_OBJ; ++i) {
 		s.writeString(Common::Point(5, 18 + i),
-			Common::String::format("%d", OBJECT_INFO[i].Cost));
+			Common::String::format("%d", OBJECT_INFO[i]._cost));
 
 		if (i == 0) {
 			s.writeString(" For 10");
@@ -57,10 +57,10 @@ void Info::draw() {
 			s.writeString(Common::Point(15, 18 + i), "?????");
 		} else {
 			s.writeString(Common::Point(15, 18 + i),
-				Common::String::format("1-%d", OBJECT_INFO[i].MaxDamage));
+				Common::String::format("1-%d", OBJECT_INFO[i]._maxDamage));
 		}
 
-		s.writeString(Common::Point(25, 18 + i), OBJECT_INFO[i].Name);
+		s.writeString(Common::Point(25, 18 + i), OBJECT_INFO[i]._name);
 	}
 
 	// Headers
@@ -73,10 +73,10 @@ void Info::draw() {
 	s.setColor(C_VIOLET);
 	for (i = 0; i < MAX_ATTR; ++i)
 		s.writeString(Common::Point(15, 4 + i),
-			Common::String::format("%d", player.Attr[i]));
+			Common::String::format("%d", player._attr[i]));
 	for (i = 0; i < MAX_OBJ; ++i)
 		s.writeString(Common::Point(21, 4 + i),
-			Common::String::format("%4d-", (int)player.Object[i]));
+			Common::String::format("%4d-", (int)player._object[i]));
 	s.writeString(Common::Point(18, 10), "Q-Quit");
 }
 
@@ -85,8 +85,8 @@ bool Info::msgKeypress(const KeypressMessage &msg) {
 		return false;
 
 	for (int i = 0; i < MAX_OBJ; ++i) {
-		if (msg.keycode == OBJECT_INFO[i].keycode ||
-			(Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i].Cost)) {
+		if (msg.keycode == OBJECT_INFO[i]._keycode ||
+			(Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i]._cost)) {
 			selectObject(i);
 			return true;
 		}
@@ -102,7 +102,7 @@ bool Info::msgKeypress(const KeypressMessage &msg) {
 
 void Info::leave() {
 	const auto &player = g_engine->_player;
-	replaceView(player.Level == 0 ? "WorldMap" : "DungeonMap");
+	replaceView(player._level == 0 ? "WorldMap" : "DungeonMap");
 }
 
 bool Info::msgAction(const ActionMessage &msg) {

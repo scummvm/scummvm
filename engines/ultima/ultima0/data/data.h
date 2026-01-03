@@ -36,13 +36,13 @@ enum Direction { DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST };
 struct PlayerInfo;
 
 struct ObjectInfo {
-	const char *Name;
-	int Cost;
-	int MaxDamage;
-	Common::KeyCode keycode;
+	const char *_name;
+	int _cost;
+	int _maxDamage;
+	Common::KeyCode _keycode;
 };
 struct MonsterInfo {
-	const char *Name; int Level;
+	const char *Name; int _level;
 };
 
 extern const ObjectInfo OBJECT_INFO[];
@@ -69,7 +69,7 @@ private:
 	int generateContent(int c);
 
 public:
-	byte Map[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE] = {};	// Map information
+	byte _map[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE] = {};	// Map information
 	Common::Array<MonsterEntry> _monsters;				// Monster records
 
 	void create(const PlayerInfo &player);
@@ -85,19 +85,19 @@ public:
  * Player structure
  */
 struct PlayerInfo {
-	char Name[MAX_NAME + 1] = {};			// Player Name
-	Common::Point World;							// World map position
-	Common::Point Dungeon;							// Dungeon map position
-	Common::Point DungDir;							// Dungeon direction facing
-	byte  Class = '?';						// Player class (F or M)
-	int   HPGain = 0;						// HPs gained in dungeon
-	int	  Level = 0;						// Dungeon level, 0 = world map
-	int	  Skill = 0;						// Skill level
-	int	  Task = 0;							// Task set (-1 = none)
-	int	  TaskCompleted = 0;				// Task completed
-	uint32 LuckyNumber = 0;					// Value used for seeding
-	int   Attr[MAX_ATTR] = {};				// Attribute values
-	double Object[MAX_OBJ] = {};			// Object counts
+	char _name[MAX_NAME + 1] = {};			// Player Name
+	Common::Point _worldPos;				// World map position
+	Common::Point _dungeonPos;				// Dungeon map position
+	Common::Point _dungeonDir;				// Dungeon direction facing
+	byte _class = '?';						// Player class (F or M)
+	int _hpGain = 0;						// HPs gained in dungeon
+	int _level = 0;						// Dungeon level, 0 = world map
+	int _skill = 0;						// Skill level
+	int _task = 0;							// Task set (-1 = none)
+	bool _taskCompleted = 0;				// Task completed
+	uint32 _luckyNumber = 0;					// Value used for seeding
+	int _attr[MAX_ATTR] = {};				// Attribute values
+	double _object[MAX_OBJ] = {};			// Object counts
 
 	void init();
 	void rollAttributes();
@@ -128,7 +128,7 @@ struct PlayerInfo {
  * World Map structure
  */
 struct WorldMapInfo {
-	byte Map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
+	byte _map[WORLD_MAP_SIZE][WORLD_MAP_SIZE] = {};	// Map information
 
 	void init(PlayerInfo &p);
 	int read(int x, int y) const;

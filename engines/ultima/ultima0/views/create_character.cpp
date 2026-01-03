@@ -43,7 +43,7 @@ void CreateCharacter::draw() {
 	if (_mode == LUCKY_NUMBER)
 		s.writeString(_input);
 	else
-		s.writeString(Common::String::format("%d", player.LuckyNumber));
+		s.writeString(Common::String::format("%d", player._luckyNumber));
 
 	// Level of play
 	if (_mode >= LEVEL) {
@@ -51,7 +51,7 @@ void CreateCharacter::draw() {
 		if (_mode == LEVEL)
 			s.writeString(_input);
 		else
-			s.writeString(Common::String::format("%d", player.Skill));
+			s.writeString(Common::String::format("%d", player._skill));
 	}
 
 	// Stats
@@ -60,7 +60,7 @@ void CreateCharacter::draw() {
 			Common::String line = ATTRIB_NAMES[i];
 			while (line.size() < 15)
 				line += ".";
-			line += Common::String::format("%d", player.Attr[i]);
+			line += Common::String::format("%d", player._attr[i]);
 			s.writeString(Common::Point(1, 9 + i), line);
 		}
 
@@ -85,13 +85,13 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 		} else if (msg.keycode == Common::KEYCODE_RETURN && !_input.empty()) {
 			if (_mode == LUCKY_NUMBER) {
-				player.LuckyNumber = atoi(_input.c_str());
+				player._luckyNumber = atoi(_input.c_str());
 				_input.clear();
 				_mode = LEVEL;
 				redraw();
 			} else {
-				player.Skill = atoi(_input.c_str());
-				if (player.Skill >= 1 && player.Skill <= 10) {
+				player._skill = atoi(_input.c_str());
+				if (player._skill >= 1 && player._skill <= 10) {
 					_input.clear();
 					_mode = STATS;
 					player.rollAttributes();
@@ -107,7 +107,7 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	} else if (_mode == CLASS && (msg.keycode == Common::KEYCODE_f ||
 		msg.keycode == Common::KEYCODE_m)) {
-		player.Class = toupper(msg.ascii);
+		player._class = toupper(msg.ascii);
 		characterDone();
 	}
 

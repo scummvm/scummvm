@@ -26,32 +26,32 @@ namespace Ultima {
 namespace Ultima0 {
 
 void MonsterLogic::checkForAttacks(PlayerInfo &p, DungeonMapInfo &d) {
-	int i, Attacked;
-	double Dist;
+	int attacked;
+	double dist;
 
 	// Go through all monsters
 	for (MonsterEntry &m : d._monsters) {
-		Dist = pow(m._loc.x - p.Dungeon.x, 2);	// Calculate Distance
-		Dist = Dist + pow(m._loc.y - p.Dungeon.y, 2);
-		Dist = sqrt(Dist);
+		dist = pow(m._loc.x - p._dungeonPos.x, 2);	// Calculate Distance
+		dist = dist + pow(m._loc.y - p._dungeonPos.y, 2);
+		dist = sqrt(dist);
 
 		// If alive
 		if (m._alive) {
-			Attacked = 0;
+			attacked = 0;
 
 			// If within range
-			if (Dist < 1.3)
-				Attacked = attack(m, p);
+			if (dist < 1.3)
+				attacked = attack(m, p);
 
 			// If didn't attack, then move
-			if (Attacked == 0) {
+			if (attacked == 0) {
 				// Mimics only if near enough
-				if (m._type != MN_MIMIC || Dist >= 3.0)
+				if (m._type != MN_MIMIC || dist >= 3.0)
 					move(m, p, d);
 
 				// Recovers if didn't attack
-				if (m._strength < p.Level * p.Skill)
-					m._strength = m._strength + p.Level;
+				if (m._strength < p._level * p._skill)
+					m._strength = m._strength + p._level;
 			}
 		}
 	}
@@ -73,17 +73,17 @@ int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 		MONSTER_INFO[m._type].Name);
 
 	n = urand() % 20;					// Calculate hit chance
-	if (p.Object[OB_SHIELD] > 0) n--;
-	n = n - p.Attr[AT_STAMINA];
-	n = n + m._type + p.Level;
+	if (p._object[OB_SHIELD] > 0) n--;
+	n = n - p._attr[AT_STAMINA];
+	n = n + m._type + p._level;
 	if (n < 0) {
 		// Missed !
 		msg += "Missed !\n";
 	} else {
 		// Hit !
 		n = urand() % m._type;		// Calculate damage done.
-		n = n + p.Level;
-		p.Attr[AT_HP] -= n;			// Adjust hit points
+		n = n + p._level;
+		p._attr[AT_HP] -= n;			// Adjust hit points
 		msg += "Hit !!!\n";
 	}
 
@@ -96,13 +96,13 @@ void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 
 	// Calculate direction
 	xi = yi = 0;
-	if (p.Dungeon.x != m._loc.x)
-		xi = (p.Dungeon.x > m._loc.x) ? 1 : -1;
-	if (p.Dungeon.y != m._loc.y)
-		yi = (p.Dungeon.y > m._loc.y) ? 1 : -1;
+	if (p._dungeonPos.x != m._loc.x)
+		xi = (p._dungeonPos.x > m._loc.x) ? 1 : -1;
+	if (p._dungeonPos.y != m._loc.y)
+		yi = (p._dungeonPos.y > m._loc.y) ? 1 : -1;
 
 	// Running away
-	if (m._strength < p.Level * p.Skill) {
+	if (m._strength < p._level * p._skill) {
 		xi = -xi; yi = -yi;
 	}
 
@@ -124,14 +124,14 @@ void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 	x = x + xi; y = y + yi;				// Work out new position
 	if (!canMoveTo(d, x, y))	// Fail if can't move there
 		return;
-	if (x == p.Dungeon.x &&			// Can't move onto us
-		y == p.Dungeon.y) return;
+	if (x == p._dungeonPos.x &&			// Can't move onto us
+		y == p._dungeonPos.y) return;
 	m._loc.x = x; m._loc.y = y;			// Move to new position
 }
 
 bool MonsterLogic::canMoveTo(DungeonMapInfo &d, int x, int y) {
 	Common::Point c;
-	int t = d.Map[x][y];				// See what's there
+	int t = d._map[x][y];				// See what's there
 	if (!ISWALKTHRU(t)) return 0;		// Can't walk through walls
 	c.x = x; c.y = y;					// Set up coord structure
 
@@ -145,17 +145,17 @@ int MonsterLogic::steal(MonsterEntry &m, PlayerInfo &p) {
 
 	if (m._type == MN_GREMLIN) {
 		// HALVES the food.... aargh
-		p.Object[OB_FOOD] = floor(p.Object[OB_FOOD]) / 2.0;
+		p._object[OB_FOOD] = floor(p._object[OB_FOOD]) / 2.0;
 		showLines("A Gremlin stole some food.\n");
 
 	} else if (m._type == MN_THIEF) {
 		// Figure out what stolen
 		do {
 			n = urand() % MAX_OBJ;
-		} while (p.Object[n] == 0);
+		} while (p._object[n] == 0);
 
-		p.Object[n]--;					// Stole one
-		s2 = OBJECT_INFO[n].Name; s1 = "a";
+		p._object[n]--;					// Stole one
+		s2 = OBJECT_INFO[n]._name; s1 = "a";
 
 		if (strchr("aeiou", tolower(*s2))) s1 = "an";
 		if (n == 0) s1 = "some";

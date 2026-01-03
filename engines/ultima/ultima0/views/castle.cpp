@@ -34,9 +34,9 @@ static const char *GO_FORTH = "     Go now upon this quest, and may\n"
 bool Castle::msgFocus(const FocusMessage &msg) {
 	const auto &player = g_engine->_player;
 
-	if (Common::String(player.Name).empty())
+	if (Common::String(player._name).empty())
 		_mode = NAMING;
-	else if (player.TaskCompleted) {
+	else if (player._taskCompleted) {
 		_mode = TASK_COMPLETE;
 	} else {
 		_mode = TASK_INCOMPLETE;
@@ -95,17 +95,17 @@ void Castle::taskCompleted() {
 	auto s = getSurface();
 
 	s.writeString(Common::Point(0, 3), "Aaaahhhh.... ");
-	s.writeString(player.Name);
+	s.writeString(player._name);
 	s.writeString("\n\nThou has accomplished\nthy quest.\n\n");
 
-	if (player.Task == MAX_MONSTERS) {
+	if (player._task == MAX_MONSTERS) {
 		s.writeString("Thou hast proved thyself worthy of\n"
 			"Knighthood, continue if thou doth wish\n"
 			"but thou hast accomplished the\n"
 			"main objective of the game.\n\n"
 			"Now, maybe thou art foolhardy enough to\n"
 			"try difficulty level ");
-		s.writeString(Common::String::format("%s.", player.Skill + 1));
+		s.writeString(Common::String::format("%s.", player._skill + 1));
 	} else {
 		nextTask();
 
@@ -131,7 +131,7 @@ void Castle::taskIncomplete() {
 		"Why hast thou returned ?\n"
 		"Thou must kill ");
 	s.setColor(C_VIOLET);
-	s.writeString(getTaskName(player.Task));
+	s.writeString(getTaskName(player._task));
 
 	s.setColor(C_TEXT_DEFAULT);
 	s.writeString("\n\nGo now and complete thy quest");
@@ -151,7 +151,7 @@ bool Castle::msgKeypress(const KeypressMessage &msg) {
 		if (msg.keycode == Common::KEYCODE_BACKSPACE && !_playerName.empty()) {
 			_playerName.deleteLastChar();
 		} else if (msg.keycode == Common::KEYCODE_RETURN && !_playerName.empty()) {
-			Common::strcpy_s(player.Name, _playerName.c_str());
+			Common::strcpy_s(player._name, _playerName.c_str());
 			_mode = GRAND_ADVENTURE;
 		} else if (Common::isAlpha(msg.ascii) && _playerName.size() < MAX_NAME) {
 			_playerName += msg.ascii;
@@ -189,12 +189,12 @@ bool Castle::msgAction(const ActionMessage &msg) {
 void Castle::nextTask() {
 	auto &player = g_engine->_player;
 
-	player.Task++;
-	player.TaskCompleted = 0;
+	player._task++;
+	player._taskCompleted = false;
 
 	// LB gives you extra attributes
 	for (int i = 0; i < MAX_ATTR; i++)
-		player.Attr[i]++;
+		player._attr[i]++;
 }
 
 Common::String Castle::getTaskName(int taskNum) const {

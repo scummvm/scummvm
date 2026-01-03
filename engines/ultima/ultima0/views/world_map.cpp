@@ -125,12 +125,12 @@ bool WorldMap::msgKeypress(const KeypressMessage &msg) {
 void WorldMap::endOfTurn() {
 	auto &player = g_engine->_player;
 
-	if (player.Attr[AT_HP] <= 0) {
+	if (player._attr[AT_HP] <= 0) {
 		replaceView("Dead");
 
 	} else {
-		player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 1.0, 0.0);
-		if (player.Object[OB_FOOD] == 0) {
+		player._object[OB_FOOD] = MAX(player._object[OB_FOOD] - 1.0, 0.0);
+		if (player._object[OB_FOOD] == 0) {
 			showMessage("You have starved...");
 			delaySeconds(1);
 		}
@@ -142,22 +142,22 @@ void WorldMap::timeout() {
 	auto &player = g_engine->_player;
 	auto &dungeon = g_engine->_dungeon;
 
-	if (player.Attr[AT_HP] <= 0 || player.Object[OB_FOOD] <= 0) {
+	if (player._attr[AT_HP] <= 0 || player._object[OB_FOOD] <= 0) {
 		// Timeout from displaying player was killed
 		replaceView("Dead");
 	} else {
 		// Otherwise a timeout from entering a location
-		int t = map.read(player.World.x, player.World.y);
+		int t = map.read(player._worldPos.x, player._worldPos.y);
 		switch (t) {
 		case WT_TOWN:
 			replaceView("Town");
 			break;
 		case WT_DUNGEON:
-			player.Level = 1;				// Go to level 1
-			player.Dungeon.x = 1;			// Set initial position
-			player.Dungeon.y = 1;
-			player.DungDir.x = 1;			// And direction
-			player.DungDir.y = 0;
+			player._level = 1;				// Go to level 1
+			player._dungeonPos.x = 1;			// Set initial position
+			player._dungeonPos.y = 1;
+			player._dungeonDir.x = 1;			// And direction
+			player._dungeonDir.y = 0;
 			dungeon.create(player);
 
 			replaceView("Dungeon");
@@ -176,15 +176,15 @@ void WorldMap::move(int xi, int yi) {
 	auto &map = g_engine->_worldMap;
 
 	// Calculate new position
-	int x1 = player.World.x + xi;
-	int y1 = player.World.y + yi;
+	int x1 = player._worldPos.x + xi;
+	int y1 = player._worldPos.y + yi;
 
 	if (map.read(x1, y1) == WT_MOUNTAIN) {
 		showMessage("You can't pass the mountains.");
 	} else {
 		// Move
-		player.World.x = x1;
-		player.World.y = y1;
+		player._worldPos.x = x1;
+		player._worldPos.y = y1;
 		redraw();
 	}
 }
@@ -193,7 +193,7 @@ void WorldMap::enter() {
 	const auto &player = g_engine->_player;
 	const auto &map = g_engine->_worldMap;
 
-	int t = map.read(player.World.x, player.World.y);
+	int t = map.read(player._worldPos.x, player._worldPos.y);
 	switch (t) {
 	case WT_TOWN:
 		showMessage("Enter Town.");

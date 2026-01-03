@@ -42,12 +42,12 @@ class Info : public View {
 
 private:
 	InfoObject _options[6] = {
-		InfoObject(this, Common::Point(26, 4), 0, OBJECT_INFO[0].Name),
-		InfoObject(this, Common::Point(26, 5), 1, OBJECT_INFO[1].Name),
-		InfoObject(this, Common::Point(26, 6), 2, OBJECT_INFO[2].Name),
-		InfoObject(this, Common::Point(26, 7), 3, OBJECT_INFO[3].Name),
-		InfoObject(this, Common::Point(26, 8), 4, OBJECT_INFO[4].Name),
-		InfoObject(this, Common::Point(26, 9), 5, OBJECT_INFO[5].Name)
+		InfoObject(this, Common::Point(26, 4), 0, OBJECT_INFO[0]._name),
+		InfoObject(this, Common::Point(26, 5), 1, OBJECT_INFO[1]._name),
+		InfoObject(this, Common::Point(26, 6), 2, OBJECT_INFO[2]._name),
+		InfoObject(this, Common::Point(26, 7), 3, OBJECT_INFO[3]._name),
+		InfoObject(this, Common::Point(26, 8), 4, OBJECT_INFO[4]._name),
+		InfoObject(this, Common::Point(26, 9), 5, OBJECT_INFO[5]._name)
 	};
 
 protected:

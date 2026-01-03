@@ -56,7 +56,7 @@ void Town::selectObject(int item) {
 	const auto &obj = OBJECT_INFO[item];
 
 	// Some things mages can't use
-	if (player.Class == 'M') {
+	if (player._class == 'M') {
 		if (item == OB_BOW || item == OB_RAPIER) {
 			_message = MAGES_CANT_USE;
 			redraw();
@@ -64,12 +64,12 @@ void Town::selectObject(int item) {
 		}
 	}
 
-	if (obj.Cost > player.Attr[AT_GOLD]) {
+	if (obj._cost > player._attr[AT_GOLD]) {
 		_message = NOT_ENOUGH;
 
 	} else {
-		player.Attr[AT_GOLD] -= obj.Cost;	// Lose the money
-		player.Object[item] = MIN<int>(player.Object[item] + (item == OB_FOOD ? 10 : 1), 999);
+		player._attr[AT_GOLD] -= obj._cost;	// Lose the money
+		player._object[item] = MIN<int>(player._object[item] + (item == OB_FOOD ? 10 : 1), 999);
 		_message = THANK_YOU;
 	}
 

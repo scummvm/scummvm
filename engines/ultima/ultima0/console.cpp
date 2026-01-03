@@ -52,7 +52,7 @@ bool Console::cmdFood(int argc, const char **argv) {
 		debugPrintf("food <amount>\n");
 		return true;
 	} else {
-		g_engine->_player.Object[OB_FOOD] = atoi(argv[1]);
+		g_engine->_player._object[OB_FOOD] = atoi(argv[1]);
 		g_engine->focusedView()->redraw();
 		return false;
 	}
@@ -63,7 +63,7 @@ bool Console::cmdGold(int argc, const char **argv) {
 		debugPrintf("gold <amount>\n");
 		return true;
 	} else {
-		g_engine->_player.Attr[AT_GOLD] = atoi(argv[1]);
+		g_engine->_player._attr[AT_GOLD] = atoi(argv[1]);
 		g_engine->focusedView()->redraw();
 		return false;
 	}
@@ -74,7 +74,7 @@ bool Console::cmdHP(int argc, const char **argv) {
 		debugPrintf("hp <amount>\n");
 		return true;
 	} else {
-		g_engine->_player.Attr[AT_HP] = atoi(argv[1]);
+		g_engine->_player._attr[AT_HP] = atoi(argv[1]);
 		g_engine->focusedView()->redraw();
 		return false;
 	}
@@ -84,20 +84,20 @@ bool Console::cmdDemo(int argc, const char **argv) {
 	auto &p = g_engine->_player;
 	auto &map = g_engine->_worldMap;
 
-	Common::strcpy_s(p.Name, "Demo");	// Characters Name
-	p.Class = 'F';						// Fighter
-	p.LuckyNumber = 42;					// Always the same.....
-	p.Skill = 1;						// Skill level 1
+	Common::strcpy_s(p._name, "Demo");	// Characters Name
+	p._class = 'F';						// Fighter
+	p._luckyNumber = 42;					// Always the same.....
+	p._skill = 1;						// Skill level 1
 
 	// Nice high attributes
-	Common::fill(p.Attr, p.Attr + MAX_ATTR, 15);
-	p.Attr[AT_HP] = 18;
-	p.Attr[AT_GOLD] = 99;
+	Common::fill(p._attr, p._attr + MAX_ATTR, 15);
+	p._attr[AT_HP] = 18;
+	p._attr[AT_GOLD] = 99;
 
 	for (int i = 0; i < MAX_OBJ; i++)			// Lots of nice objects
-		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 999 : 4.0;
+		p._object[i] = (i == OB_FOOD || i == OB_BOW) ? 999 : 4.0;
 
-	p.Level = 0;
+	p._level = 0;
 	map.init(p);
 	g_engine->replaceView("WorldMap");
 
@@ -110,18 +110,18 @@ bool Console::cmdDebug(int argc, const char **argv) {
 	auto &map = g_engine->_worldMap;
 	int i;
 
-	Common::strcpy_s(p.Name, "Debuggo");	// Characters Name
-	p.Class = 'F';							// Fighter
-	p.LuckyNumber = 42;						// Always the same.....
-	p.Skill = 1;							// Skill level 1
+	Common::strcpy_s(p._name, "Debuggo");	// Characters Name
+	p._class = 'F';							// Fighter
+	p._luckyNumber = 42;					// Always the same.....
+	p._skill = 1;							// Skill level 1
 	for (i = 0; i < MAX_ATTR; i++)			// Nice high attributes
-		p.Attr[i] = 99;
-	p.Attr[AT_HP] = 999;
-	p.Attr[AT_GOLD] = 9999;
+		p._attr[i] = 99;
+	p._attr[AT_HP] = 999;
+	p._attr[AT_GOLD] = 9999;
 	for (i = 0; i < MAX_OBJ; i++)			// Lots of nice objects
-		p.Object[i] = (i == OB_FOOD || i == OB_BOW) ? 9999.9 : 99.0;
+		p._object[i] = (i == OB_FOOD || i == OB_BOW) ? 9999.9 : 99.0;
 
-	p.Level = 0;
+	p._level = 0;
 	map.init(p);
 	g_engine->replaceView("WorldMap");
 

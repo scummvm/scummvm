@@ -57,7 +57,7 @@ void Attack::draw() {
 
 	s.writeString(Common::Point(1, 1), "Which Weapon? ");
 	if (_mode != WHICH_WEAPON)
-		s.writeString(_weapon <= 0 ? "Hands" : OBJECT_INFO[_weapon].Name);
+		s.writeString(_weapon <= 0 ? "Hands" : OBJECT_INFO[_weapon]._name);
 
 	if (!_message.empty())
 		s.writeString(Common::Point(1, 2), _message);
@@ -71,7 +71,7 @@ bool Attack::msgKeypress(const KeypressMessage &msg) {
 		// Check for object selection, anything but food
 		objNum = -1;
 		for (uint i = OB_RAPIER; i < MAX_OBJ; ++i) {
-			if (msg.keycode == OBJECT_INFO[i].keycode) {
+			if (msg.keycode == OBJECT_INFO[i]._keycode) {
 				objNum = i;
 				break;
 			}
@@ -116,23 +116,23 @@ void Attack::selectObject(int objNum) {
 	auto &player = g_engine->_player;
 
 	_weapon = objNum;
-	_damage = (objNum <= 0) ? 0 : OBJECT_INFO[objNum].MaxDamage;
+	_damage = (objNum <= 0) ? 0 : OBJECT_INFO[objNum]._maxDamage;
 
 	// Must own an object
-	if (player.Object[_weapon] == 0) {
+	if (player._object[_weapon] == 0) {
 		showMessage("Not owned.");
 		return;
 	}
 
 	// Mages are limited
-	if (player.Class == 'M' && (objNum == OB_BOW || objNum == OB_RAPIER)) {
+	if (player._class == 'M' && (objNum == OB_BOW || objNum == OB_RAPIER)) {
 		showMessage("Mages can't use that.");
 		return;
 	}
 
 	// Use an amulet
 	if (objNum == OB_AMULET) {
-		if (player.Class == 'M') {
+		if (player._class == 'M') {
 			// Mages can properly select the magic to use
 			_mode = AMULET;
 
@@ -167,17 +167,17 @@ void Attack::selectMagic(int magicNum) {
 	Common::String msg;
 	if (urand() % 5 == 0) {
 		msg = "Last charge on this Amulet.\n";
-		player.Object[OB_AMULET]--;
+		player._object[OB_AMULET]--;
 	}
 
 	switch (magicNum) {
 	case 0:
 		// Ladder up
-		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_LADDERUP;
+		dungeon._map[player._dungeonPos.x][player._dungeonPos.y] = DT_LADDERUP;
 		break;
 	case 1:
 		// Ladder down
-		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_LADDERDN;
+		dungeon._map[player._dungeonPos.x][player._dungeonPos.y] = DT_LADDERDN;
 		break;
 	case 2:
 		// Amulet Attack
@@ -189,16 +189,16 @@ void Attack::selectMagic(int magicNum) {
 		case 0:
 			msg += "You have been turned into a Toad.\n";
 			for (i = AT_STRENGTH; i <= AT_WISDOM; i++)
-				player.Attr[i] = 3;
+				player._attr[i] = 3;
 			break;
 		case 1:
 			msg += "You have been turned into a Lizard Man.\n";
 			for (i = AT_HP; i <= AT_WISDOM; i++)
-				player.Attr[i] = floor(player.Attr[i] * 5 / 2);
+				player._attr[i] = floor(player._attr[i] * 5 / 2);
 			break;
 		case 2:
 			msg += "Backfire !!\n";
-			player.Attr[AT_HP] = floor(player.Attr[AT_HP]) / 2;
+			player._attr[AT_HP] = floor(player._attr[AT_HP]) / 2;
 			break;
 		}
 		break;
@@ -215,12 +215,12 @@ void Attack::selectMagic(int magicNum) {
 void Attack::attackMissile() {
 	const auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
-	Common::Point c1, c = player.Dungeon;
+	Common::Point c1, c = player._dungeonPos;
 	int Dist = -1;
 	
 	// A maximum distance of 5
 	for (int y = 0; y < 5; y++) {
-		c += player.DungDir;
+		c += player._dungeonDir;
 		int n = dungeon.findMonster(c);		// Monster there ?
 		if (n >= 0) {
 			c1 = c;
@@ -228,7 +228,7 @@ void Attack::attackMissile() {
 		}
 
 		// If wall, or door, stop
-		if (!ISDRAWOPEN(dungeon.Map[c.x][c.y]))
+		if (!ISDRAWOPEN(dungeon._map[c.x][c.y]))
 			break;
 	}
 
@@ -244,7 +244,7 @@ void Attack::attackMissile() {
 
 void Attack::attackWeapon() {
 	const auto &player = g_engine->_player;
-	Common::Point c = player.Dungeon + player.DungDir;
+	Common::Point c = player._dungeonPos + player._dungeonDir;
 	attackHitMonster(c);
 }
 
@@ -265,13 +265,13 @@ void Attack::attackHitMonster(const Common::Point &c) {
 	// Get weaponry info
 	damage = 0;
 	if (_weapon >= 0 && _weapon != OB_AMULET)
-		damage = OBJECT_INFO[_weapon].MaxDamage;
+		damage = OBJECT_INFO[_weapon]._maxDamage;
 	if (_weapon == OB_AMULET)
 		// Amulet Special Case
-		damage = 10 + player.Level;
+		damage = 10 + player._level;
 
 	// If no, or not dexterous
-	if (monNum < 0 || player.Attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player.Level) {
+	if (monNum < 0 || player._attr[AT_DEXTERITY] - ((int)urand() % 25) < n + player._level) {
 		// Then a miss.
 		_message += "\nMissed!";
 		_mode = DONE;
@@ -287,7 +287,7 @@ void Attack::attackHitMonster(const Common::Point &c) {
 	n = 0;
 	if (damage > 0)
 		n = (urand() % damage);
-	n = n + player.Attr[AT_STRENGTH] / 5;
+	n = n + player._attr[AT_STRENGTH] / 5;
 	m->_strength = m->_strength - n;			// Lose them
 
 	if (m->_strength < 0)
@@ -298,14 +298,14 @@ void Attack::attackHitMonster(const Common::Point &c) {
 	// Killed it ?
 	if (m->_strength == 0) {
 		m->_alive = false;						// It has ceased to be
-		int gold = (m->_type + player.Level);	// Amount of gold
+		int gold = (m->_type + player._level);	// Amount of gold
 		_message += Common::String::format("You get %d pieces of eight.\n", gold);
-		player.Attr[AT_GOLD] += gold;
+		player._attr[AT_GOLD] += gold;
 
-		player.HPGain += (m->_type * player.Level) / 2;	// Calculate Gain
+		player._hpGain += (m->_type * player._level) / 2;	// Calculate Gain
 
-		if (m->_type == player.Task)						// Check done LB's task
-			player.TaskCompleted = 1;
+		if (m->_type == player._task)						// Check done LB's task
+			player._taskCompleted = true;
 	}
 
 	_mode = DONE;

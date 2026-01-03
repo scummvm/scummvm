@@ -36,7 +36,7 @@ void Dead::draw() {
 	auto s = getSurface();
 	s.clear();
 
-	const char *name = player.Name;
+	const char *name = player._name;
 	if (*name == '\0')
 		name = "the peasant";
 

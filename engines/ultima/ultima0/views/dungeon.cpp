@@ -73,12 +73,12 @@ void Dungeon::drawMinimap(Graphics::ManagedSurface &mapArea) {
 		for (int x = 0; x < DUNGEON_MAP_SIZE; ++x) {
 			const Common::Rect r(x * MINIMAP_TILE_SIZE, y * MINIMAP_TILE_SIZE,
 				(x + 1) * MINIMAP_TILE_SIZE, (y + 1) * MINIMAP_TILE_SIZE);
-			if (x == player.Dungeon.x && y == player.Dungeon.y) {
+			if (x == player._dungeonPos.x && y == player._dungeonPos.y) {
 				mapArea.fillRect(r, C_CYAN);
 			} else if (dungeon.findMonster(Common::Point(x, y)) > 0) {
 				mapArea.fillRect(r, C_RED);
 			} else {
-				tile = dungeon.Map[x][y];
+				tile = dungeon._map[x][y];
 
 				if (tile == DT_SPACE || tile == DT_DOOR || tile == DT_HIDDENDOOR)
 					mapArea.fillRect(r, C_BLACK);
@@ -167,7 +167,7 @@ void Dungeon::endOfTurn() {
 	auto &player = g_engine->_player;
 	auto &dungeon = g_engine->_dungeon;
 
-	if (player.Attr[AT_HP] <= 0) {
+	if (player._attr[AT_HP] <= 0) {
 		replaceView("Dead");
 		return;
 	}
@@ -175,8 +175,8 @@ void Dungeon::endOfTurn() {
 	// Check for monster attacks
 	MonsterLogic::checkForAttacks(player, dungeon);
 
-	player.Object[OB_FOOD] = MAX(player.Object[OB_FOOD] - 0.1, 0.0);
-	if (player.Object[OB_FOOD] == 0) {
+	player._object[OB_FOOD] = MAX(player._object[OB_FOOD] - 0.1, 0.0);
+	if (player._object[OB_FOOD] == 0) {
 		showMessage("You have starved...");
 		delaySeconds(1);
 	}
@@ -187,38 +187,38 @@ void Dungeon::endOfTurn() {
 void Dungeon::moveForward() {
 	auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
-	Common::Point newPos = player.Dungeon + player.DungDir;
+	Common::Point newPos = player._dungeonPos + player._dungeonDir;
 
-	if (!ISWALKTHRU(dungeon.Map[newPos.x][newPos.y]) || dungeon.findMonster(newPos) >= 0)
+	if (!ISWALKTHRU(dungeon._map[newPos.x][newPos.y]) || dungeon.findMonster(newPos) >= 0)
 		return;
 
 	// Set new position
-	player.Dungeon = newPos;
+	player._dungeonPos = newPos;
 
 	// What's here ?
-	int n = dungeon.Map[player.Dungeon.x][player.Dungeon.y];
+	int n = dungeon._map[player._dungeonPos.x][player._dungeonPos.y];
 
 	if (n == DT_PIT) {
 		// Fell in a pit
-		player.Level++;					// Down a level
+		player._level++;					// Down a level
 		showMessage("Aaarrrgghhh! A Trap !");
-		showLines(Common::String::format("Falling to Level %d.", player.Level));
+		showLines(Common::String::format("Falling to Level %d.", player._level));
 
-		player.Attr[AT_HP] -= (3 + urand() % (3 * player.Level));
+		player._attr[AT_HP] -= (3 + urand() % (3 * player._level));
 		dungeon.create(player);		// Create the new level
 	} else if (n == DT_GOLD) {
 		// Gold here
 		// Remove the gold
-		dungeon.Map[player.Dungeon.x][player.Dungeon.y] = DT_SPACE;
-		int gold = (urand() % (5 * player.Level)) + player.Level;	// Calculate amount
+		dungeon._map[player._dungeonPos.x][player._dungeonPos.y] = DT_SPACE;
+		int gold = (urand() % (5 * player._level)) + player._level;	// Calculate amount
 
 		showMessage("Gold !!!!!");
 		Common::String msg = Common::String::format("%d pieces of eight ", gold);
-		player.Attr[AT_GOLD] = MIN<int>(player.Attr[AT_GOLD] + gold, 9999);	// Add to total
+		player._attr[AT_GOLD] = MIN<int>(player._attr[AT_GOLD] + gold, 9999);	// Add to total
 
 		if (gold > 0) {
 			int objNum = urand() % MAX_OBJ;		// Decide which object
-			const char *name = OBJECT_INFO[objNum].Name;
+			const char *name = OBJECT_INFO[objNum]._name;
 			const char *prefix = "a";			// Decide a,an or some
 			if (strchr("aeiou", tolower(*name)))
 				prefix = "an";
@@ -226,7 +226,7 @@ void Dungeon::moveForward() {
 				prefix = "some";
 
 			msg += Common::String::format("\nand %s %s.", prefix, name);
-			player.Object[objNum] = MIN<int>(player.Object[objNum] + 1, 9999);	// Bump the total
+			player._object[objNum] = MIN<int>(player._object[objNum] + 1, 9999);	// Bump the total
 		}
 
 		showLines(msg);
@@ -238,37 +238,37 @@ void Dungeon::interact() {
 	auto &player = g_engine->_player;
 
 	// Identify what's there
-	int t = dungeon.Map[player.Dungeon.x][player.Dungeon.y];
+	int t = dungeon._map[player._dungeonPos.x][player._dungeonPos.y];
 	bool done = false;
 
 	if (t == DT_LADDERUP) {
 		// Climbing up a ladder
-		player.Level--;
+		player._level--;
 		done = true;
 
-		if (player.Level == 0) {
+		if (player._level == 0) {
 			showMessage("Leave Dungeon.");
-			if (player.HPGain > 0)
-				showLines(Common::String::format("Thou has gained %d HP", player.HPGain));
-			player.Attr[AT_HP] += player.HPGain;
-			player.HPGain = 0;
+			if (player._hpGain > 0)
+				showLines(Common::String::format("Thou has gained %d HP", player._hpGain));
+			player._attr[AT_HP] += player._hpGain;
+			player._hpGain = 0;
 			delaySeconds(1);	// Brief delay to show text before leaving dungeon
 
 		} else {
 			showMessage("Use Ladder");
-			showLines(Common::String::format("Go up to Level %d.", player.Level));
+			showLines(Common::String::format("Go up to Level %d.", player._level));
 		}
 	} else if (t == DT_LADDERDN) {
 		// Climbing down a ladder
-		player.Level++;
+		player._level++;
 		done = true;
 
 		showMessage("Use Ladder");
-		showLines(Common::String::format("Go down to Level %d.\n", player.Level));
+		showLines(Common::String::format("Go down to Level %d.\n", player._level));
 	}
 
 	if (done) {
-		if (player.Level > 0)
+		if (player._level > 0)
 			// New Dungeon Map Required
 			dungeon.create(player);
 	} else {
@@ -279,7 +279,7 @@ void Dungeon::interact() {
 void Dungeon::timeout() {
 	const auto &player = g_engine->_player;
 
-	replaceView((player.Level == 0) ? "WorldMap" : "Dead");
+	replaceView((player._level == 0) ? "WorldMap" : "Dead");
 }
 
 } // namespace Views
