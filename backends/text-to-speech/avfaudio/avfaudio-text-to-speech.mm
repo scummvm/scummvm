@@ -269,17 +269,21 @@ void AVFAudioTextToSpeechManager::updateVoices() {
 			NSString *data = [[NSString alloc] initWithString:voice.identifier];
 			Common::String name([voice.name UTF8String]);
 			Common::TTSVoice::Gender gender = Common::TTSVoice::UNKNOWN_GENDER;
-			switch (voice.gender) {
-			case AVSpeechSynthesisVoiceGenderMale:
-				gender = Common::TTSVoice::MALE;
-				break;
-			case AVSpeechSynthesisVoiceGenderFemale:
-				gender = Common::TTSVoice::FEMALE;
-				break;
-			case AVSpeechSynthesisVoiceGenderUnspecified:
-				gender = Common::TTSVoice::UNKNOWN_GENDER;
-				break;
+#if defined(__IPHONE_15_) || defined(MACOSX)
+			if (@available(iOS 13, macOS 10.15, *)) {
+				switch (voice.gender) {
+				case AVSpeechSynthesisVoiceGenderMale:
+					gender = Common::TTSVoice::MALE;
+					break;
+				case AVSpeechSynthesisVoiceGenderFemale:
+					gender = Common::TTSVoice::FEMALE;
+					break;
+				case AVSpeechSynthesisVoiceGenderUnspecified:
+					gender = Common::TTSVoice::UNKNOWN_GENDER;
+					break;
+				}
 			}
+#endif
 			Common::TTSVoice::Age age = Common::TTSVoice::UNKNOWN_AGE;
 			Common::TTSVoice ttsVoice(gender, age, data, name);
 			_ttsState->_availableVoices.push_back(ttsVoice);
