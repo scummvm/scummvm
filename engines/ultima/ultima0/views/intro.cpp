@@ -19,41 +19,31 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_H
-#define ULTIMA0_VIEWS_H
-
-#include "ultima/ultima0/views/attack.h"
-#include "ultima/ultima0/views/castle.h"
-#include "ultima/ultima0/views/create_character.h"
-#include "ultima/ultima0/views/dead.h"
-#include "ultima/ultima0/views/dungeon.h"
-#include "ultima/ultima0/views/info.h"
 #include "ultima/ultima0/views/intro.h"
-#include "ultima/ultima0/views/startup.h"
-#include "ultima/ultima0/views/title.h"
-#include "ultima/ultima0/views/town.h"
-#include "ultima/ultima0/views/world_map.h"
 
 namespace Ultima {
 namespace Ultima0 {
 namespace Views {
 
-struct Views {
-	Attack _attack;
-	Castle _castle;
-	CreateCharacter _createCharacter;
-	Dead _dead;
-	Dungeon _dungeon;
-	Info _info;
-	Intro _intro;
-	Startup _startup;
-	Title _title;
-	Town _town;
-	WorldMap _worldMap;
-};
+void Intro::draw() {
+	auto s = getSurface();
+	s.clear();
+	s.writeString(Common::Point(5, 1), "Many, many, many years ago the");
+	s.writeString(Common::Point(0, 3), "Dark Lord Mondain, Archfoe of British,");
+	s.writeString(Common::Point(0, 5), "traversed the lands of Akalabeth,");
+	s.writeString(Common::Point(0, 7), "spreading evil and death as he passed.");
+	s.writeString(Common::Point(0, 9), "By the time Mondain was driven from the");
+	s.writeString(Common::Point(0, 11), "land by British, bearer of the White");
+	s.writeString(Common::Point(0, 13), "Light, he had done much damage unto");
+	s.writeString(Common::Point(0, 15), "the lands.");
+	s.writeString(Common::Point(0, 17), "`Tis thy duty to help rid Akalabeth of");
+	s.writeString(Common::Point(0, 19), "the foul beasts which infest it,");
+	s.writeString(Common::Point(0, 21), "while trying to stay alive!!!");
+
+	s.writeString(Common::Point(20, 24), "Press any Key to Continue",
+		Graphics::kTextAlignCenter);
+}
 
 } // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
-
-#endif

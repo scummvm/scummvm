@@ -27,6 +27,7 @@ MODULE_OBJS += \
 	ultima0/views/dead.o \
 	ultima0/views/dungeon.o \
 	ultima0/views/info.o \
+	ultima0/views/intro.o \
 	ultima0/views/startup.o \
 	ultima0/views/status.o \
 	ultima0/views/title.o \
