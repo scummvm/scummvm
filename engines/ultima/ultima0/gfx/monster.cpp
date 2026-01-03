@@ -46,7 +46,7 @@ void Monster::draw(Graphics::ManagedSurface *s, int x, int y, int monster, doubl
 	_xPos = x; _yPos = y;
 	if (monster == MN_MIMIC)
 		// Fix for Mimic/Chest
-		_xPos = _xPos - 90;
+		_xPos -= 90;
 
 	// Call appropriate function
 	assert(monster > 0 && monster <= MN_BALROG);

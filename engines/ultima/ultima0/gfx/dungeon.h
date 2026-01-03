@@ -37,33 +37,33 @@ private:
 	/**
 	 * Calculate display rectangle
 	 */
-	static void _DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double _level);
+	static void calcRect(Graphics::ManagedSurface *s, Common::Rect *r, double _level);
 
 	/**
 	 * Rotate a direction left
 	 */
-	static void MOVERotLeft(Common::Point *Dir);
+	static void rotateLeft(Common::Point *Dir);
 
 	/**
 	 * Draw part of dungeon
 	 */
-	static void DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
+	static void drawDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		Common::Rect *rIn, int Left, int Centre, int Right, int Room, int Monster);
 
 	/**
 	 * Set the oblique drawing routine
 	 */
-	static void _DRAWSetRange(int x1, int x2, int y, int yd1, int yd2);
+	static void setRange(int x1, int x2, int y, int yd1, int yd2);
 
 	/**
 	 * Draw wall object using current setting
 	 */
-	static void _DRAWWall(Graphics::ManagedSurface *s, int n);
+	static void drawWall(Graphics::ManagedSurface *s, int n);
 
 	/**
 	 * Convert coordinates from oblique to logical
 	 */
-	static void _DRAWConvert(int *px, int *py);
+	static void drawConvert(int *px, int *py);
 
 	/**
 	 * Draw the pits/ladder hole

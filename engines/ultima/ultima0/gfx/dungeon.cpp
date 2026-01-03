@@ -49,19 +49,20 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 	Common::Rect rIn, rOut;
 	Common::Point dir, pos, next;
 	int monster, front, left, right;
-	_DDRAWCalcRect(s, &rOut, 0);
+	calcRect(s, &rOut, 0);
 	pos = player._dungeonPos;						// Get position
 
 	// Iterate through drawing successively distinct tiles in the facing direction
 	do {
-		level++;								// Next level
-		_DDRAWCalcRect(s, &rIn, level);
+		level++;									// Next level
+		calcRect(s, &rIn, level);
+
 		next.x = pos.x + player._dungeonDir.x;		// Next position
 		next.y = pos.y + player._dungeonDir.y;
 
-		dir = player._dungeonDir; MOVERotLeft(&dir);	// To the left
+		dir = player._dungeonDir; rotateLeft(&dir);	// To the left
 		left = dungeon._map[pos.x + dir.x][pos.y + dir.y];
-		MOVERotLeft(&dir); MOVERotLeft(&dir);		// To the right
+		rotateLeft(&dir); rotateLeft(&dir);		// To the right
 		right = dungeon._map[pos.x + dir.x][pos.y + dir.y];
 		front = dungeon._map[next.x][next.y];		// What's in front ?
 
@@ -71,7 +72,7 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 			monster = dungeon._monsters[monster]._type;
 
 		// Draw the dungeon
-		DRAWDungeon(s, &rOut, &rIn, left, front, right,
+		drawDungeon(s, &rOut, &rIn, left, front, right,
 			dungeon._map[pos.x][pos.y], monster);
 
 		pos = next;							// Next position down
@@ -79,7 +80,7 @@ void Dungeon::draw(Graphics::ManagedSurface *s) {
 	} while (level < MAX_VIEW_DEPTH && ISDRAWOPEN(front));
 }
 
-void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, double level) {
+void Dungeon::calcRect(Graphics::ManagedSurface *s, Common::Rect *r, double level) {
 	const int centerX = s->w / 2, centerY = s->h / 2;
 	int xWidth = s->w / (level + 1);
 	int yWidth = s->h / (level + 1);
@@ -91,7 +92,7 @@ void Dungeon::_DDRAWCalcRect(Graphics::ManagedSurface *s, Common::Rect *r, doubl
 	r->bottom = centerY + yWidth / 2;
 }
 
-void Dungeon::MOVERotLeft(Common::Point *dir) {
+void Dungeon::rotateLeft(Common::Point *dir) {
 	int t;
 	if (dir->y == 0) dir->x = -dir->x;
 	t = dir->x;
@@ -99,7 +100,7 @@ void Dungeon::MOVERotLeft(Common::Point *dir) {
 	dir->y = t;
 }
 
-void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
+void Dungeon::drawDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 		Common::Rect *rIn, int left, int centre, int right, int room, int monster) {
 	int x1, y1, x, y, y2;
 	Common::Rect r;
@@ -141,25 +142,25 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	}
 
 	// Set up for left side
-	_DRAWSetRange(rOut->left, rIn->left,
+	setRange(rOut->left, rIn->left,
 		rOut->bottom,
 		rOut->bottom - rOut->top,
 		rIn->bottom - rIn->top);
-	_DRAWWall(s, left);
+	drawWall(s, left);
 
 	// Set up for right side
-	_DRAWSetRange(rIn->right, rOut->right,
+	setRange(rIn->right, rOut->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
 		rOut->bottom - rOut->top);
-	_DRAWWall(s, right);
+	drawWall(s, right);
 
 	// Set up for centre
-	_DRAWSetRange(rIn->left, rIn->right,
+	setRange(rIn->left, rIn->right,
 		rIn->bottom,
 		rIn->bottom - rIn->top,
 		rIn->bottom - rIn->top);
-	_DRAWWall(s, centre);
+	drawWall(s, centre);
 
 	if (room == DT_LADDERUP) {
 		r = Common::Rect(rOut->left, rOut->top, rOut->right, rIn->top);
@@ -205,34 +206,34 @@ void Dungeon::DRAWDungeon(Graphics::ManagedSurface *s, Common::Rect *rOut,
 	// Draw the gold (as a mimic)
 	if (room == DT_GOLD) {
 		HWColour(COL_MONSTER);
-		Monster::draw(s, (r.left + r.right) / 2, r.top, MN_MIMIC, Scale);
+		Monster::draw(s, (r.left + r.right) / 2, r.bottom, MN_MIMIC, Scale);
 	}
 }
 
-void Dungeon::_DRAWSetRange(int x1, int x2, int y, int yd1, int yd2) {
+void Dungeon::setRange(int x1, int x2, int y, int yd1, int yd2) {
 	_xLeft = x1; _xRight = x2;				// Set x ranges
 	_yBottom = y;							// Set lower left y value
 	_yDiffLeft = yd1; _yDiffRight = yd2;		// Set difference for either end
 }
 
-void Dungeon::_DRAWWall(Graphics::ManagedSurface *s, int n) {
+void Dungeon::drawWall(Graphics::ManagedSurface *s, int n) {
 	int x1, y1, x2, y2;
 	int color = 0;
 
 	if (n == DT_DOOR) {
 		HWColour(COL_DOOR);
 		x1 = 35; y1 = 0; x2 = 35; y2 = 60;
-		_DRAWConvert(&x1, &y1);
-		_DRAWConvert(&x2, &y2);
+		drawConvert(&x1, &y1);
+		drawConvert(&x2, &y2);
 		HWLine(x1, y1, x2, y2);
-		x1 = 65; y1 = 60; _DRAWConvert(&x1, &y1);
+		x1 = 65; y1 = 60; drawConvert(&x1, &y1);
 		HWLine(x1, y1, x2, y2);
-		x2 = 65; y2 = 0; _DRAWConvert(&x2, &y2);
+		x2 = 65; y2 = 0; drawConvert(&x2, &y2);
 		HWLine(x1, y1, x2, y2);
 	}
 }
 
-void Dungeon::_DRAWConvert(int *px, int *py) {
+void Dungeon::drawConvert(int *px, int *py) {
 	long x, y, yd;							// Longs for overflow in 16 bit
 	x = (_xRight - _xLeft);					// Calculate width
 	x = x * (*px) / 100 + _xLeft;			// Work out horiz value

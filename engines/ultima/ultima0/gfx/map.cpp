@@ -50,11 +50,11 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 				y1 = player._worldPos.y - grid / 2 + y;
 			}
 
-			DRAWTile(s, r, map.read(x1, y1));
+			drawTile(s, r, map.read(x1, y1));
 
 			// Draw us if we're there
 			if (x1 == player._worldPos.x && y1 == player._worldPos.y)
-				DRAWTile(s, r, WT_PLAYER);
+				drawTile(s, r, WT_PLAYER);
 		}
 	}
 }
@@ -65,7 +65,7 @@ void Map::draw(Graphics::ManagedSurface *s, bool showAsMap) {
 #define HWLine(X1, Y1, X2, Y2) s->drawLine(X1, Y1, X2, Y2, color)
 #define BOX(x1,y1,x2,y2) { HWLine(X(x1),Y(y1),X(x2),Y(y1));HWLine(X(x1),Y(y1),X(x1),Y(y2));HWLine(X(x2),Y(y2),X(x2),Y(y1));HWLine(X(x2),Y(y2),X(x1),Y(y2)); }
 
-void Map::DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int obj) {
+void Map::drawTile(Graphics::ManagedSurface *s, const Common::Rect &r, int obj) {
 	int x1 = r.left;
 	int y1 = r.top;
 	int w = r.width();

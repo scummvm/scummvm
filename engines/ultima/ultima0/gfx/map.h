@@ -30,7 +30,7 @@ namespace Gfx {
 
 class Map {
 private:
-	static void DRAWTile(Graphics::ManagedSurface *s, const Common::Rect &r, int obj);
+	static void drawTile(Graphics::ManagedSurface *s, const Common::Rect &r, int obj);
 
 public:
 	static void draw(Graphics::ManagedSurface *s, bool showAsMap = false);

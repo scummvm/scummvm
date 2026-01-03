@@ -276,7 +276,7 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int Type) {
 	if (RND() > 0.4)
 		return;
 
-	// Fill in details */
+	// Fill in details
 	MonsterEntry m;
 	m._type = Type;
 	m._strength = level + 3 + player._level;
