@@ -155,3 +155,6 @@ CMakeLists.txt: devtools/create_project/cmake/build/create_project config.mk
 cmake: CMakeLists.txt
 	cmake -H. -Bbuild
 	cmake --build build
+
+test-games: $(EXECUTABLE)
+	devtools/run_event_recorder_tests.py --xunit-output=$(EXECUTABLE).test-results.xml
