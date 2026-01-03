@@ -60,12 +60,19 @@ void Monster::hPlot(Graphics::ManagedSurface *s, double x, double y, ...) {
 
 	// Start reading values
 	va_start(alist, y);
+	bool isPixel = true;
 
 	do {
 		x1 = va_arg(alist, double);			// Get the next two
 		y1 = va_arg(alist, double);
-		if (x1 != END && y1 != END)			// If legit, draw the line
+		if (x1 != END && y1 != END) {
+			// If legit, draw the line
 			HWLine(_xPos + x, _yPos + y, _xPos + x1, _yPos + y1);
+			isPixel = false;
+		} else if (isPixel)
+			// Single pixel only
+			HWLine(_xPos + x, _yPos + y, _xPos + x, _yPos + y);
+
 		x = x1; y = y1;
 	} while (x1 != END && y1 != END);
 
@@ -107,9 +114,9 @@ void Monster::drawRat(Graphics::ManagedSurface *s, double x, double y, double d)
 
 void Monster::drawOrc(Graphics::ManagedSurface *s, double x, double y, double d) {
 	hPlot(s, x, y, x - 15 / d, y, x - 8 / d, y - 8 / d, x - 8 / d, y - 15 / d, x - 15 / d, y - 23 / d, x - 15 / d, y - 15 / d, x - 23 / d, y - 23 / d, END, END);
-	hPlot(s, x - 23 / d, y - 45 / d, x - 15 / d, y - 53 / d, x - 8 / d, y - 53 / d, x - 15 / d, y - 68 / d, x - 8 / d, y - 75 / d, x, y - 75 / d, END, END);
+	hPlot(s, x - 23 / d, y - 23 / d, x - 15 / d, y - 53 / d, x - 8 / d, y - 53 / d, x - 15 / d, y - 68 / d, x - 8 / d, y - 75 / d, x, y - 75 / d, END, END);
 	hPlot(s, x, y, x + 15 / d, y, x + 8 / d, y - 8 / d, x + 8 / d, y - 15 / d, x + 15 / d, y - 23 / d, x + 15 / d, y - 15 / d, x + 23 / d, y - 23 / d, END, END);
-	hPlot(s, x + 23 / d, y - 45 / d, x + 15 / d, y - 53 / d, x + 8 / d, y - 53 / d, x + 15 / d, y - 68 / d, x + 8 / d, y - 75 / d, x, y - 75 / d, END, END);
+	hPlot(s, x + 23 / d, y - 23 / d, x + 15 / d, y - 53 / d, x + 8 / d, y - 53 / d, x + 15 / d, y - 68 / d, x + 8 / d, y - 75 / d, x, y - 75 / d, END, END);
 	hPlot(s, x - 15 / d, y - 68 / d, x + 15 / d, y - 68 / d, END, END);
 	hPlot(s, x - 8 / d, y - 53 / d, x + 8 / d, y - 53 / d, END, END);
 	hPlot(s, x - 23 / d, y - 15 / d, x + 8 / d, y - 45 / d, END, END);
@@ -143,13 +150,13 @@ void Monster::drawCarrion(Graphics::ManagedSurface *s, double x, double y, doubl
 }
 
 void Monster::drawGremlin(Graphics::ManagedSurface *s, double x, double y, double d) {
-	hPlot(s, x + 5 / d + .5, y - 10 / d, x - 5 / d + .5, y - 10 / d, x, y - 15 / d, x + 10 / d, y - 20 / d, x + 5 / d + .5, y - 15 / d, x + 5 / d + .5, y - 10 / d, END, END);
-	hPlot(s, x + 7 / d + .5, y - 6 / d, x + 5 / d + .5, y - 3 / d, x - 5 / d + .5, y - 3 / d, x - 7 / d + .5, y - 6 / d, x - 5 / d + .5, y - 10 / d, END, END);
-	hPlot(s, x + 2 / d + .5, y - 3 / d, x + 5 / d + .5, y, x + 8 / d, y, END, END);
-	hPlot(s, x - 2 / d + .5, y - 3 / d, x - 5 / d + .5, y, x - 8 / d, y, END, END);
-	hPlot(s, x + 3 / d + .5, y - 8 / d, END, END);
-	hPlot(s, x - 3 / d + .5, y - 8 / d, END, END);
-	hPlot(s, x + 3 / d + .5, y - 5 / d, x - 3 / d + .5, y - 5 / d, END, END);
+	hPlot(s, x + 5 / d + 1, y - 10 / d, x - 5 / d + 1, y - 10 / d, x, y - 15 / d, x + 10 / d, y - 20 / d, x + 5 / d + 1, y - 15 / d, x + 5 / d + 1, y - 10 / d, END, END);
+	hPlot(s, x + 5 / d + 1, y - 10 / d, x + 7 / d + 1, y - 6 / d, x + 5 / d + 1, y - 3 / d, x - 5 / d + 1, y - 3 / d, x - 7 / d + 1, y - 6 / d, x - 5 / d + 1, y - 10 / d, END, END);
+	hPlot(s, x + 2 / d + 1, y - 3 / d, x + 5 / d + 1, y, x + 8 / d, y, END, END);
+	hPlot(s, x - 2 / d + 1, y - 3 / d, x - 5 / d + 1, y, x - 8 / d, y, END, END);
+	hPlot(s, x + 3 / d + 1, y - 8 / d, END, END);
+	hPlot(s, x - 3 / d + 1, y - 8 / d, END, END);
+	hPlot(s, x + 3 / d + 1, y - 5 / d, x - 3 / d + 1, y - 5 / d, END, END);
 }
 
 void Monster::drawMimic(Graphics::ManagedSurface *s, double x, double y, double d) {
@@ -161,11 +168,11 @@ void Monster::drawMimic(Graphics::ManagedSurface *s, double x, double y, double 
 
 void Monster::drawDaemon(Graphics::ManagedSurface *s, double x, double y, double d) {
 	hPlot(s, x - 14 / d, y - 46 / d, x - 12 / d, y - 37 / d, x - 20 / d, y - 32 / d, x - 30 / d, y - 32 / d, x - 22 / d, y - 24 / d, x - 40 / d, y - 17 / d, x - 40 / d, y - 7 / d, x - 38 / d, y - 5 / d, x - 40 / d, y - 3 / d, x - 40 / d, y, END, END);
-	hPlot(s, x - 36 / d, y, x - 34 / d, y - 2 / d, x - 32 / d, y, x - 28 / d, y, x - 28 / d, y - 3 / d, x - 30 / d, y - 5 / d, x - 28 / d, y - 7 / d, x - 28 / d, y - 15 / d, x, y - 27 / d, END, END);
+	hPlot(s, x - 40 / d, y, x - 36 / d, y, x - 34 / d, y - 2 / d, x - 32 / d, y, x - 28 / d, y, x - 28 / d, y - 3 / d, x - 30 / d, y - 5 / d, x - 28 / d, y - 7 / d, x - 28 / d, y - 15 / d, x, y - 27 / d, END, END);
 	hPlot(s, x + 14 / d, y - 46 / d, x + 12 / d, y - 37 / d, x + 20 / d, y - 32 / d, x + 30 / d, y - 32 / d, x + 22 / d, y - 24 / d, x + 40 / d, y - 17 / d, x + 40 / d, y - 7 / d, x + 38 / d, y - 5 / d, x + 40 / d, y - 3 / d, x + 40 / d, y, END, END);
-	hPlot(s, x + 36 / d, y, x + 34 / d, y - 2 / d, x + 32 / d, y, x + 28 / d, y, x + 28 / d, y - 3 / d, x + 30 / d, y - 5 / d, x + 28 / d, y - 7 / d, x + 28 / d, y - 15 / d, x, y - 27 / d, END, END);
+	hPlot(s, x + 40 / d, y, x + 36 / d, y, x + 34 / d, y - 2 / d, x + 32 / d, y, x + 28 / d, y, x + 28 / d, y - 3 / d, x + 30 / d, y - 5 / d, x + 28 / d, y - 7 / d, x + 28 / d, y - 15 / d, x, y - 27 / d, END, END);
 	hPlot(s, x + 6 / d, y - 48 / d, x + 38 / d, y - 41 / d, x + 40 / d, y - 42 / d, x + 18 / d, y - 56 / d, x + 12 / d, y - 56 / d, x + 10 / d, y - 57 / d, x + 8 / d, y - 56 / d, x - 8 / d, y - 56 / d, x - 10 / d, y - 58 / d, x + 14 / d, y - 58 / d, x + 16 / d, y - 59 / d, END, END);
-	hPlot(s, x + 8 / d, y - 63 / d, x + 6 / d, y - 63 / d, x + 2 / d + .5, y - 70 / d, x + 2 / d + .5, y - 63 / d, x - 2 / d + .5, y - 63 / d, x - 2 / d + .5, y - 70 / d, x - 6 / d, y - 63 / d, x - 8 / d, y - 63 / d, x - 16 / d, y - 59 / d, x - 14 / d, y - 58 / d, END, END);
+	hPlot(s, x + 16 / d, y - 59 / d, x + 8 / d, y - 63 / d, x + 6 / d, y - 63 / d, x + 2 / d + .5, y - 70 / d, x + 2 / d + .5, y - 63 / d, x - 2 / d + .5, y - 63 / d, x - 2 / d + .5, y - 70 / d, x - 6 / d, y - 63 / d, x - 8 / d, y - 63 / d, x - 16 / d, y - 59 / d, x - 14 / d, y - 58 / d, x - 10 / d, y - 58 / d, END, END);
 	hPlot(s, x - 10 / d, y - 57 / d, x - 12 / d, y - 56 / d, x - 18 / d, y - 56 / d, x - 36 / d, y - 47 / d, x - 36 / d, y - 39 / d, x - 28 / d, y - 41 / d, x - 28 / d, y - 46 / d, x - 20 / d, y - 50 / d, x - 18 / d, y - 50 / d, x - 14 / d, y - 46 / d, END, END);
 	hPlot(s, x - 28 / d, y - 41 / d, x + 30 / d, y - 55 / d, END, END);
 	hPlot(s, x + 28 / d, y - 58 / d, x + 22 / d, y - 56 / d, x + 22 / d, y - 53 / d, x + 28 / d, y - 52 / d, x + 34 / d, y - 54 / d, END, END);
@@ -180,11 +187,11 @@ void Monster::drawBalrog(Graphics::ManagedSurface *s, double x, double y, double
 	hPlot(s, x + 6 / d, y - 60 / d, x + 30 / d, y - 90 / d, x + 60 / d, y - 30 / d, x + 60 / d, y - 10 / d, x + 30 / d, y - 40 / d, x + 15 / d, y - 40 / d, END, END);
 	hPlot(s, x - 6 / d, y - 60 / d, x - 30 / d, y - 90 / d, x - 60 / d, y - 30 / d, x - 60 / d, y - 10 / d, x - 30 / d, y - 40 / d, x - 15 / d, y - 40 / d, END, END);
 	hPlot(s, x, y - 25 / d, x + 6 / d, y - 25 / d, x + 10 / d, y - 20 / d, x + 12 / d, y - 10 / d, x + 10 / d, y - 6 / d, x + 10 / d, y, x + 14 / d, y, x + 15 / d, y - 5 / d, x + 16 / d, y, x + 20 / d, y, END, END);
-	hPlot(s, x + 20 / d, y - 6 / d, x + 18 / d, y - 10 / d, x + 18 / d, y - 20 / d, x + 15 / d, y - 30 / d, x + 15 / d, y - 45 / d, x + 40 / d, y - 60 / d, x + 40 / d, y - 70 / d, END, END);
-	hPlot(s, x + 10 / d, y - 55 / d, x + 6 / d, y - 60 / d, x + 10 / d, y - 74 / d, x + 6 / d, y - 80 / d, x + 4 / d + .5, y - 80 / d, x + 3 / d + .5, y - 82 / d, x + 2 / d + .5, y - 80 / d, x, y - 80 / d, END, END);
+	hPlot(s, x + 20 / d, y, x + 20 / d, y - 6 / d, x + 18 / d, y - 10 / d, x + 18 / d, y - 20 / d, x + 15 / d, y - 30 / d, x + 15 / d, y - 45 / d, x + 40 / d, y - 60 / d, x + 40 / d, y - 70 / d, END, END);
+	hPlot(s, x + 40 / d, y - 70 / d, x + 10 / d, y - 55 / d, x + 6 / d, y - 60 / d, x + 10 / d, y - 74 / d, x + 6 / d, y - 80 / d, x + 4 / d + .5, y - 80 / d, x + 3 / d + .5, y - 82 / d, x + 2 / d + .5, y - 80 / d, x, y - 80 / d, END, END);
 	hPlot(s, x, y - 25 / d, x - 6 / d, y - 25 / d, x - 10 / d, y - 20 / d, x - 12 / d, y - 10 / d, x - 10 / d, y - 6 / d, x - 10 / d, y, x - 14 / d, y, x - 15 / d, y - 5 / d, x - 16 / d, y, x - 20 / d, y, END, END);
-	hPlot(s, x - 20 / d, y - 6 / d, x - 18 / d, y - 10 / d, x - 18 / d, y - 20 / d, x - 15 / d, y - 30 / d, x - 15 / d, y - 45 / d, x - 40 / d, y - 60 / d, x - 40 / d, y - 70 / d, END, END);
-	hPlot(s, x - 10 / d, y - 55 / d, x - 6 / d, y - 60 / d, x - 10 / d, y - 74 / d, x - 6 / d, y - 80 / d, x - 4 / d + .5, y - 80 / d, x - 3 / d + .5, y - 82 / d, x - 2 / d + .5, y - 80 / d, x, y - 80 / d, END, END);
+	hPlot(s, x - 20 / d, y, x - 20 / d, y - 6 / d, x - 18 / d, y - 10 / d, x - 18 / d, y - 20 / d, x - 15 / d, y - 30 / d, x - 15 / d, y - 45 / d, x - 40 / d, y - 60 / d, x - 40 / d, y - 70 / d, END, END); // left wing
+	hPlot(s, x - 40 / d, y - 70 / d, x - 10 / d, y - 55 / d, x - 6 / d, y - 60 / d, x - 10 / d, y - 74 / d, x - 6 / d, y - 80 / d, x - 4 / d + .5, y - 80 / d, x - 3 / d + .5, y - 82 / d, x - 2 / d + .5, y - 80 / d, x, y - 80 / d, END, END);
 	hPlot(s, x - 6 / d, y - 25 / d, x, y - 6 / d, x + 10 / d, y, x + 4 / d + .5, y - 8 / d, x + 6 / d, y - 25 / d, END, END);
 	hPlot(s, x - 40 / d, y - 64 / d, x - 40 / d, y - 90 / d, x - 52 / d, y - 80 / d, x - 52 / d, y - 40 / d, END, END);
 	hPlot(s, x + 40 / d, y - 86 / d, x + 38 / d, y - 92 / d, x + 42 / d, y - 92 / d, x + 40 / d, y - 86 / d, x + 40 / d, y - 50 / d, END, END);
