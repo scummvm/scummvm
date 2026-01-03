@@ -144,7 +144,7 @@ else
 DEFINES += -DUSE_MPEG2
 endif
 
-USE_GIF         ?= 0
+USE_GIF         ?= 1
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_GIF), component_gif)
 ifneq ($(USE_GIF),1)
 USE_GIF=

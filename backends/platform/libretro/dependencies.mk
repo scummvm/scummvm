@@ -7,7 +7,7 @@ DEPS_SUBMODULES             := libretro-deps libretro-common
 
 DEPS_FOLDER_libretro-deps   := libretro-deps
 DEPS_URL_libretro-deps      := https://github.com/libretro/libretro-deps
-DEPS_COMMIT_libretro-deps   := a2a865e74f58035c416a0c63be5772fdcf35b071
+DEPS_COMMIT_libretro-deps   := 7e6e34f0319f4c7448d72f0e949e76265ccf55a1
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
@@ -625,6 +625,33 @@ ifneq ($(findstring rpi,$(platform))$(findstring armv7,$(platform))$(findstring 
 OBJS_DEPS += \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libmpeg2/libmpeg2/motion_comp_arm.o
 endif
+endif
+endif
+
+######################################################################
+# giflib settings
+######################################################################
+
+ifeq ($(USE_GIF), 1)
+DEFINES += -DUSE_GIF
+this_lib_subpath :=
+this_lib_header  := gif_lib.h
+this_lib_flags   := -lgif
+include $(ROOT_PATH)/sharedlib_test.mk
+ifneq ($(this_lib_available), yes)
+INCLUDES += \
+  -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib
+OBJS_DEPS += \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/dgif_lib.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/egif_lib.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/gifalloc.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/gif_err.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/gif_hash.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/quantize.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/gif_font.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/openbsd-reallocarray.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/giflib/qprintf.o
+
 endif
 endif
 
