@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 15:38+0000\n"
-"PO-Revision-Date: 2026-01-03 15:39+0000\n"
+"PO-Revision-Date: 2026-01-03 15:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8304,34 +8304,27 @@ msgid "Enable gamma correction"
 msgstr "Увімкнути гамма-корекцію"
 
 #: engines/director/metaengine.cpp:71
-#, fuzzy
-#| msgid "Brighten the graphics to simulate a Macintosh monitor."
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr "Підвищити яскравість графіки для симуляції монітору Macintosh."
+msgstr "Підвищити яскравість графіки для симуляції монітору Macintosh"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
 msgstr ""
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
-"Використовувати шрифти зі згладжуванням, навіть коли гра цього не запитувала"
+"Використовуйте режим графіки з 32-бітними кольорами, навіть якщо гра для "
+"цього не розроблена"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш вибору діалогу"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle leader inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання інвентаря лідера"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -8340,36 +8333,26 @@ msgstr ""
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 1 inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання івентаря воїна 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 2 inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання івентаря воїна 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 3 inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання івентаря воїна 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 4 inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання івентаря воїна 4"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
 msgstr "Стрейф наліво"
 
