@@ -143,22 +143,22 @@ void PlayerInfo::dungeonTurnRight() {
 /*-------------------------------------------------------------------*/
 
 void WorldMapInfo::init(PlayerInfo &p) {
-	int c, x, y, Size;
+	int c, x, y, size;
 
 	g_engine->setRandomSeed(p.LuckyNumber);
-	Size = WORLD_MAP_SIZE - 1;
+	size = WORLD_MAP_SIZE - 1;
 
 	// Set the boundaries
-	for (x = 0; x <= Size; x++) {
-		Map[Size][x] = WT_MOUNTAIN;
+	for (x = 0; x <= size; x++) {
+		Map[size][x] = WT_MOUNTAIN;
 		Map[0][x] = WT_MOUNTAIN;
-		Map[x][Size] = WT_MOUNTAIN;
+		Map[x][size] = WT_MOUNTAIN;
 		Map[x][0] = WT_MOUNTAIN;
 	}
 
 	// Set up the map contents
-	for (x = 1; x < Size; x++) {
-		for (y = 1; y < Size; y++) {
+	for (x = 1; x < size; x++) {
+		for (y = 1; y < size; y++) {
 			c = (int)(pow(RND(), 5.0) * 4.5);	// Calculate what's there
 			if (c == WT_TOWN && RND() > .5)		// Remove half the towns
 				c = WT_SPACE;
@@ -167,15 +167,15 @@ void WorldMapInfo::init(PlayerInfo &p) {
 	}
 
 	// Calculate player start
-	x = g_engine->getRandomNumber(1, Size - 1);
-	y = g_engine->getRandomNumber(1, Size - 1);
+	x = g_engine->getRandomNumber(1, size - 1);
+	y = g_engine->getRandomNumber(1, size - 1);
 	p.World.x = x; p.World.y = y;			// Save it
 	Map[x][y] = WT_TOWN;					// Make it a town
 
 	// Find place for castle
 	do {
-		x = g_engine->getRandomNumber(1, Size - 1);
-		y = g_engine->getRandomNumber(1, Size - 1);
+		x = g_engine->getRandomNumber(1, size - 1);
+		y = g_engine->getRandomNumber(1, size - 1);
 	} while (Map[x][y] != WT_SPACE);
 
 	Map[x][y] = WT_BRITISH;				// Put LBs castle there
@@ -199,7 +199,7 @@ void WorldMapInfo::synchronize(Common::Serializer &s) {
 
 void DungeonMapInfo::create(const PlayerInfo &player) {
 	int i, x, y;
-	const int Size = DUNGEON_MAP_SIZE - 1;
+	const int SIZE = DUNGEON_MAP_SIZE - 1;
 
 	// Seed the random number
 	g_engine->setRandomSeed(player.LuckyNumber - player.World.x * 40 -
@@ -209,24 +209,24 @@ void DungeonMapInfo::create(const PlayerInfo &player) {
 	Common::fill((byte *)Map, (byte *)Map + DUNGEON_MAP_SIZE * DUNGEON_MAP_SIZE, DT_SPACE);
 
 	// Draw the boundaries
-	for (x = 0; x <= Size; x++) {
-		Map[Size][x] = DT_SOLID;
+	for (x = 0; x <= SIZE; x++) {
+		Map[SIZE][x] = DT_SOLID;
 		Map[0][x] = DT_SOLID;
-		Map[x][Size] = DT_SOLID;
+		Map[x][SIZE] = DT_SOLID;
 		Map[x][0] = DT_SOLID;
 	}
 
 	// Fill with checkerboard
-	for (x = 2; x < Size; x = x + 2) {
-		for (y = 1; y < Size; y++) {
+	for (x = 2; x < SIZE; x = x + 2) {
+		for (y = 1; y < SIZE; y++) {
 			Map[x][y] = DT_SOLID;
 			Map[y][x] = DT_SOLID;
 		}
 	}
 
 	// Fill with stuff
-	for (x = 2; x < Size; x = x + 2) {
-		for (y = 1; y < Size; y = y + 2) {
+	for (x = 2; x < SIZE; x = x + 2) {
+		for (y = 1; y < SIZE; y = y + 2) {
 			Map[x][y] = generateContent(Map[x][y]);
 			Map[y][x] = generateContent(Map[y][x]);
 		}
@@ -237,17 +237,17 @@ void DungeonMapInfo::create(const PlayerInfo &player) {
 
 	// Different ends each level
 	if (player.Level % 2 == 0) {
-		Map[Size - 3][3] = DT_LADDERDN;
-		Map[3][Size - 3] = DT_LADDERUP;
+		Map[SIZE - 3][3] = DT_LADDERDN;
+		Map[3][SIZE - 3] = DT_LADDERUP;
 	} else {
-		Map[Size - 3][3] = DT_LADDERUP;
-		Map[3][Size - 3] = DT_LADDERDN;
+		Map[SIZE - 3][3] = DT_LADDERUP;
+		Map[3][SIZE - 3] = DT_LADDERDN;
 	}
 
 	// On first floor
 	if (player.Level == 1) {
 		Map[1][1] = DT_LADDERUP;		// Ladder at top left
-		Map[Size - 3][3] = DT_SPACE;	// No other ladder up
+		Map[SIZE - 3][3] = DT_SPACE;	// No other ladder up
 	}
 
 	// Add monsters

@@ -187,13 +187,13 @@ void Dungeon::endOfTurn() {
 void Dungeon::moveForward() {
 	auto &dungeon = g_engine->_dungeon;
 	auto &player = g_engine->_player;
-	Common::Point New = player.Dungeon + player.DungDir;
+	Common::Point newPos = player.Dungeon + player.DungDir;
 
-	if (!ISWALKTHRU(dungeon.Map[New.x][New.y]) || dungeon.findMonster(New) >= 0)
+	if (!ISWALKTHRU(dungeon.Map[newPos.x][newPos.y]) || dungeon.findMonster(newPos) >= 0)
 		return;
 
 	// Set new position
-	player.Dungeon = New;
+	player.Dungeon = newPos;
 
 	// What's here ?
 	int n = dungeon.Map[player.Dungeon.x][player.Dungeon.y];
