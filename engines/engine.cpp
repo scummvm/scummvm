@@ -600,7 +600,7 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the documentation (CD audio) for details."), _("OK"));
+			"See the documentation (CD audio) for details."));
 		dialog.runModal();
 		return true;
 	}
@@ -623,7 +623,7 @@ void Engine::warnMissingExtractedCDAudio() {
 		"tracks need to be ripped from the CD using\n"
 		"an appropriate CD audio extracting tool in\n"
 		"order to listen to the game's music.\n"
-		"See the documentation (CD audio) for details."), _("OK"));
+		"See the documentation (CD audio) for details."));
 	dialog.runModal();
 }
 

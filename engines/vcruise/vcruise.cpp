@@ -92,8 +92,7 @@ Common::Error VCruiseEngine::run() {
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_OGG_VORBIS) {
 		GUI::MessageDialog dialog(
 			_("Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
-			  "The game will still play, but will not have any music."),
-			_("OK"));
+			  "The game will still play, but will not have any music."));
 		dialog.runModal();
 	}
 #endif
@@ -102,8 +101,7 @@ Common::Error VCruiseEngine::run() {
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_MP3) {
 		GUI::MessageDialog dialog(
 			_("Music for this game requires MP3 support, which was not compiled in.\n"
-			  "The game will still play, but will not have any music."),
-			_("OK"));
+			  "The game will still play, but will not have any music."));
 		dialog.runModal();
 	}
 #endif

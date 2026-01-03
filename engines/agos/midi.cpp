@@ -316,8 +316,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s. Without this file,\n"
 							  "the music will not sound the same as the original game."),
-							"MT_FM.IBK"),
-						_("OK"));
+							"MT_FM.IBK"));
 					dialog.runModal();
 
 					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
@@ -374,8 +373,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s. Without this file,\n"
 							  "the sound effects will not sound the same as the original game."),
-							"MT_FM.IBK"),
-						_("OK"));
+							"MT_FM.IBK"));
 					dialog.runModal();
 
 					_driverMsSfx = new MidiDriver_ADLIB_Multisource(oplType);
@@ -453,8 +451,7 @@ int MidiPlayer::open() {
 							_("Could not find AdLib instrument definition file\n"
 							  "%s or %s. Without one of these files,\n"
 							  "the music will not sound the same as the original game."),
-							"MIDPAK.AD", "SETUP.SHR"),
-						_("OK"));
+							"MIDPAK.AD", "SETUP.SHR"));
 					dialog.runModal();
 
 					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);

@@ -1356,7 +1356,7 @@ Common::Error ScummEngine::init() {
 
 				GUI::MessageDialog dialog(Common::U32String::format(
 					_("Could not find the '%s' Macintosh executable to read resources from. %s will be disabled."),
-						gameName, (_game.id == GID_MONKEY2 || _game.version > 6) ? _s("The Mac GUI") : _s("The music and the Mac GUI")), _("OK"));
+						gameName, (_game.id == GID_MONKEY2 || _game.version > 6) ? _s("The Mac GUI") : _s("The music and the Mac GUI")));
 				dialog.runModal();
 			} else if (isUsingOriginalGUI() || _game.id == GID_INDY3 || _game.id == GID_LOOM) {
 				// FIXME: THIS IS A TEMPORARY WORKAROUND!
@@ -1810,8 +1810,7 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		GUI::MessageDialog dialog(_(
 			"Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 			"compression is not supported anymore for this game, audio will be disabled.\n"
-			"Please copy the game from the original media without compression."),
-		_("OK"));
+			"Please copy the game from the original media without compression."));
 		dialog.runModal();
 		_imuseDigital->disableEngine();
 	}
@@ -2300,8 +2299,7 @@ void ScummEngine::setupMusic(int midi) {
 			GUI::MessageDialog dialog(
 				Common::U32String::format(
 					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
-					"but %s is missing. Using AdLib instead."), fileName.toString(Common::Path::kNativeSeparator).c_str()),
-				_("OK"));
+					"but %s is missing. Using AdLib instead."), fileName.toString(Common::Path::kNativeSeparator).c_str()));
 			dialog.runModal();
 			_sound->_musicType = MDT_ADLIB;
 		}
@@ -2316,8 +2314,7 @@ void ScummEngine::setupMusic(int midi) {
 		memcmp(_gameMD5, "\xa0\x1f\xab\x4a\x64\xd4\x7b\x96\xe2\xe5\x8e\x6b\x0f\x82\x5c\xc7", 16) == 0) {
 		GUI::MessageDialog dialog(
 			_("This particular version of Monkey Island 1 is known to miss some\n"
-			"required resources for MT-32. Using AdLib instead."),
-			_("OK"));
+			"required resources for MT-32. Using AdLib instead."));
 		dialog.runModal();
 		_sound->_musicType = MDT_ADLIB;
 	}
@@ -4301,7 +4298,7 @@ void ScummEngine::confirmRestartDialog() {
 	}
 }
 
-char ScummEngine::displayMessage(const char *altButton, const char *message, ...) {
+char ScummEngine::displayMessage(const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -4309,7 +4306,7 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+	GUI::MessageDialog dialog(buf);
 	return runDialog(dialog);
 }
 
@@ -4322,6 +4319,18 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 	va_end(va);
 
 	GUI::MessageDialog dialog(buf, _("Yes"), _("No"));
+	return runDialog(dialog) == GUI::kMessageOK;
+}
+
+bool ScummEngine::displayMessageYesNo(const char *message, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, message);
+	vsnprintf(buf, STRINGBUFLEN, message, va);
+	va_end(va);
+
+	GUI::MessageDialog dialog(buf, _("OK"), _("Quit"));
 	return runDialog(dialog) == GUI::kMessageOK;
 }
 

@@ -954,7 +954,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 					saveGameTexts[_selectedGame] = dirtyBufStr;
 					saveDescriptions(saveGameTexts);
 				} else if (clickRes == NO_DISK_SPACE)
-					displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+					displayMessage("Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 				quitPanel = true;
 			}
 			_mouseClicked = false;
@@ -1002,7 +1002,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 							refreshNames = true;
 						}
 						if (clickRes == NO_DISK_SPACE) {
-							displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+							displayMessage("Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 							quitPanel = true;
 						}
 						if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
@@ -1153,7 +1153,7 @@ bool Control::isControlPanelOpen() {
 	return _controlPanel;
 }
 
-int Control::displayMessage(const char *altButton, const char *message, ...) {
+int Control::displayMessage(const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -1161,7 +1161,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+	GUI::MessageDialog dialog(buf);
 	int result = dialog.runModal();
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	return result;
@@ -1182,7 +1182,7 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 		delete outf;
 	}
 	if (ioFailed)
-		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 }
 
 uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool isAutosave) {
@@ -1385,16 +1385,16 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
 	if (saveRev > SAVE_FILE_REVISION) {
-		displayMessage(0, "Unknown save file revision (%d)", saveRev);
+		displayMessage("Unknown save file revision (%d)", saveRev);
 		return RESTORE_FAILED;
 	} else if (saveRev < OLD_SAVEGAME_TYPE) {
-		displayMessage(0, "This saved game version is unsupported.");
+		displayMessage("This saved game version is unsupported.");
 		return RESTORE_FAILED;
 	}
 	LODSD(srcPos, gameVersion);
 	if (gameVersion != SkyEngine::_systemVars->gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
-			displayMessage(NULL, "This saved game was created by\n"
+			displayMessage("This saved game was created by\n"
 				"Beneath a Steel Sky v0.0%03d\n"
 				"It cannot be loaded by this version (v0.0%3d)",
 				gameVersion, SkyEngine::_systemVars->gameVersion);
@@ -1482,7 +1482,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		displayMessage(NULL, "Can't read from file '%s'", filename.c_str());
+		displayMessage("Can't read from file '%s'", filename.c_str());
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;

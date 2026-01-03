@@ -137,7 +137,7 @@ SkyCompact::SkyCompact() {
 		error("unknown \"sky.cpt\" version");
 
 	if (SKY_CPT_SIZE != _cptFile->size()) {
-		GUI::MessageDialog dialog(_("The \"sky.cpt\" engine data file has an incorrect size."), _("OK"));
+		GUI::MessageDialog dialog(_("The \"sky.cpt\" engine data file has an incorrect size."));
 		dialog.runModal();
 		error("Incorrect sky.cpt size (%d, expected: %d)", (int)_cptFile->size(), SKY_CPT_SIZE);
 	}

@@ -207,8 +207,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 				_("This saved game uses version %u, but this engine only "
 					"supports up to version %d. You will need an updated version "
 					"of the engine to use this saved game."), tempVersion, SAVE_VERSION
-			),
-		_("OK"));
+			));
 		dialog.runModal();
 	}
 

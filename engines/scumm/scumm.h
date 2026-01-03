@@ -803,8 +803,9 @@ protected:
 	void drawDraftsInventory();
 
 public:
-	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
+	char displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 	bool displayMessageYesNo(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
+	bool displayMessageOKQuit(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 protected:
 	byte _fastMode = 0;

@@ -662,7 +662,7 @@ void Script::savegame(uint slot, const Common::String &name) {
 
 	if (!file) {
 		debugC(9, kDebugScript, "Save file pointer is null");
-		GUI::MessageDialog dialog(_("Failed to save game"), _("OK"));
+		GUI::MessageDialog dialog(_("Failed to save game"));
 		dialog.runModal();
 		return;
 	}
