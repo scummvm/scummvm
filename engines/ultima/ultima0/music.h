@@ -35,7 +35,7 @@ private:
 
 public:
 	MusicPlayer(const char *filename);
-	void playSMF(bool loop = false);
+	void playSMF(bool loop = true);
 
 	// Overload Audio::MidiPlayer method
 	void sendToChannel(byte channel, uint32 b) override;
