@@ -185,7 +185,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Hotel Caper",		"Hotel Caper V1.0", "138e89e5d5bcac6aba222cf33677bcec", 231127),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V2.0", "eed79653ca95f4e953aa0ff41e8c8034", 260418),
 	FANGAMEN(".i.f.", "xn--.i.f.-", "575fc0c25e9823dd742de1acdcaac325", 183221),
-	FANGAMEN("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
+	FANGAMEND("Introduction to Gothic", "Intro to Gothic", "606eec666f0b2d767e4423747e740434", 207811),
 	FANGAMEN("Intruder", "INTRUDER 1.1", "7d819891784c79fef66ff3bd9d946d6d", 203105),
 	FANGAMEN("Intruder", "INTRUDER v1.2", "a7df3f4196e922153cd4345def774c29", 241007),
 	FANGAME("Intruder ][", "r:a35a5e110bb5e4a3a3b91db26deaa881", 697570),
