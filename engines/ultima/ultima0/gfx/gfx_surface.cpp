@@ -64,8 +64,8 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 
 void GfxSurface::writeChar(uint32 chr) {
 	if (chr >= ' ') {
-		Font::writeChar(this, chr, Common::Point(_textPos.x * CHAR_WIDTH,
-			_textPos.y * CHAR_HEIGHT), _textColor);
+		Font::writeChar(this, chr, Common::Point(_textPos.x * GLYPH_WIDTH,
+			_textPos.y * GLYPH_HEIGHT), _textColor);
 		++_textPos.x;
 	}
 
@@ -82,9 +82,9 @@ void GfxSurface::newLine() {
 		_textPos.y = TEXT_HEIGHT - 1;
 
 		// Scroll the screen contents up
-		blitFrom(*this, Common::Rect(0, CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY),
+		blitFrom(*this, Common::Rect(0, GLYPH_HEIGHT, DEFAULT_SCX, DEFAULT_SCY),
 			Common::Point(0, 0));
-		fillRect(Common::Rect(0, DEFAULT_SCX - CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY), 0);
+		fillRect(Common::Rect(0, DEFAULT_SCX - GLYPH_HEIGHT, DEFAULT_SCX, DEFAULT_SCY), 0);
 	}
 }
 

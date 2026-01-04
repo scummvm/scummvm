@@ -51,7 +51,7 @@ void WorldMap::draw() {
 	auto s = getSurface();
 
 	// Draw the map
-	Graphics::ManagedSurface mapArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::CHAR_HEIGHT * 4));
+	Graphics::ManagedSurface mapArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::GLYPH_HEIGHT * 4));
 	Gfx::Map::draw(&mapArea);
 
 	// Allow the status area to draw

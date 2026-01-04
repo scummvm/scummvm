@@ -28,7 +28,7 @@ namespace Ultima0 {
 namespace Views {
 
 Dead::Dead() : View("Dead") {
-	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
+	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::GLYPH_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
 }
 
 void Dead::draw() {

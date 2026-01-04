@@ -169,7 +169,7 @@ void Font::writeChar(Graphics::ManagedSurface *dst, uint32 chr,
 
 	const byte *GfxData = FONT1 + chr * 8;
 	Graphics::Surface charArea = dst->getSubArea(Common::Rect(textPos.x, textPos.y,
-		textPos.x + CHAR_WIDTH, textPos.y + CHAR_HEIGHT));
+		textPos.x + GLYPH_WIDTH, textPos.y + GLYPH_HEIGHT));
 	const int w = 1;
 	const int h = 1;
 

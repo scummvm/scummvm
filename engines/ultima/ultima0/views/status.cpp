@@ -27,7 +27,7 @@ namespace Ultima0 {
 namespace Views {
 
 Status::Status(const Common::String &name, UIElement *parent) : View(name, parent) {
-	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::CHAR_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
+	setBounds(Common::Rect(0, DEFAULT_SCY - 4 * Gfx::GLYPH_HEIGHT, DEFAULT_SCX, DEFAULT_SCY));
 }
 
 bool Status::msgFocus(const FocusMessage &msg) {

@@ -54,7 +54,7 @@ void Dungeon::draw() {
 	s.clear();
 
 	// Draw the dungeon view
-	Graphics::ManagedSurface dungArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::CHAR_HEIGHT * 4));
+	Graphics::ManagedSurface dungArea(s, Common::Rect(0, 0, s.w, s.h - Gfx::GLYPH_HEIGHT * 4));
 	Gfx::Dungeon::draw(&dungArea);
 
 	// Allow the status area to draw

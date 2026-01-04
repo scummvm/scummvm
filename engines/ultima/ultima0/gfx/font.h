@@ -30,17 +30,17 @@ namespace Ultima {
 namespace Ultima0 {
 namespace Gfx {
 
-constexpr int CHAR_HEIGHT = 16;
-constexpr int CHAR_WIDTH = 16;
-constexpr int TEXT_WIDTH = DEFAULT_SCX / CHAR_WIDTH;
-constexpr int TEXT_HEIGHT = DEFAULT_SCY / CHAR_HEIGHT;
+constexpr int GLYPH_HEIGHT = 16;
+constexpr int GLYPH_WIDTH = 16;
+constexpr int TEXT_WIDTH = DEFAULT_SCX / GLYPH_WIDTH;
+constexpr int TEXT_HEIGHT = DEFAULT_SCY / GLYPH_HEIGHT;
 
 class TextRect : public ::Common::Rect {
 public:
 	TextRect() : ::Common::Rect() {}
-	TextRect(int left, int top, int right, int bottom) :
-		::Common::Rect(left * CHAR_WIDTH, top * CHAR_HEIGHT,
-			(right + 1) * CHAR_WIDTH, (bottom + 1) * CHAR_HEIGHT) {}
+	TextRect(int left_, int top_, int right_, int bottom_) :
+		::Common::Rect(left_ * GLYPH_WIDTH, top_ * GLYPH_HEIGHT,
+			(right_ + 1) * GLYPH_WIDTH, (bottom_ + 1) * GLYPH_HEIGHT) {}
 };
 
 class Font {

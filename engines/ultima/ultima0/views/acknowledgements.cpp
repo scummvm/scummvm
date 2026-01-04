@@ -76,7 +76,7 @@ bool Acknowledgements::msgFocus(const FocusMessage &msg) {
 	s.clear();
 
 	// Create a buffer for rendering new lines
-	_pendingLine.create(s.w, Gfx::CHAR_HEIGHT);
+	_pendingLine.create(s.w, Gfx::GLYPH_HEIGHT);
 
 	return true;
 }
@@ -88,12 +88,12 @@ void Acknowledgements::draw() {
 	s.blitFrom(s, Common::Rect(0, 1, s.w, s.h), Common::Point(0, 0));
 	s.blitFrom(_pendingLine, Common::Rect(0, 0, _pendingLine.w, 1),
 		Common::Point(0, s.h - 1));
-	_pendingLine.blitFrom(_pendingLine, Common::Rect(0, 1, s.w, Gfx::CHAR_HEIGHT),
+	_pendingLine.blitFrom(_pendingLine, Common::Rect(0, 1, s.w, Gfx::GLYPH_HEIGHT),
 		Common::Point(0, 0));
 }
 
 bool Acknowledgements::tick() {
-	_ctr = (_ctr + 1) % Gfx::CHAR_HEIGHT;
+	_ctr = (_ctr + 1) % Gfx::GLYPH_HEIGHT;
 	if (_ctr == 0) {
 		if (_lines.empty()) {
 			showTitle();
