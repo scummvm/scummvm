@@ -154,9 +154,11 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
 			if (r->_action == KEYBIND_ENTER)
-				act->addDefaultInputMapping("x");
+				act->addDefaultInputMapping("x");	// x also works to eXit
 			else if (r->_action == KEYBIND_SELECT)
 				act->addDefaultInputMapping("RETURN");
+			else if (r->_action == KEYBIND_QUIT)
+				act->addDefaultInputMapping("p");	// Map "Pause" to Quit
 
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 					r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)
