@@ -69,6 +69,7 @@ static const KeybindingRecord OVERWORLD_KEYS[] = {
 	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
 	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
 	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass/Wait"), "SPACE", nullptr },
 	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -82,6 +83,7 @@ static const KeybindingRecord DUNGEON_KEYS[] = {
 	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
 	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
 	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass/Wait"), "SPACE", nullptr },
 	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };

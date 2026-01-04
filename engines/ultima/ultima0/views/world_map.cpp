@@ -94,6 +94,9 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 	case KEYBIND_ENTER:
 		enter();
 		break;
+	case KEYBIND_PASS:
+		showMessage("");
+		break;
 	case KEYBIND_QUIT:
 		// "Quit" in the original which merely saves the game. For ScummVM,
 		// we open the GMM, allowing the user to either save or quit
