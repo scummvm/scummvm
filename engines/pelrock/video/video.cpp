@@ -69,8 +69,9 @@ void VideoManager::playIntro() {
 		while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
 			_chrono->updateChrono();
 			_events->pollEvent();
-
-			if (_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
+			Subtitle *subtitle = getSubtitleForFrame(frameCounter);
+			int frameSkip = subtitle != nullptr ? 4 : 2;
+			if (_chrono->_gameTick && _chrono->getFrameCount() % frameSkip == 0) {
 				ChunkHeader chunk;
 				readChunk(videoFile, chunk);
 				debug("Read chunk type %d at frame %d", chunk.chunkType, frameCounter);
@@ -91,6 +92,14 @@ void VideoManager::playIntro() {
 				}
 
 				if (_voiceEffect.contains(frameCounter)) {
+					// Wait for any playing voice to finish before starting new one
+					while (_sound->isPlaying()) {
+						_events->pollEvent();
+						g_system->delayMillis(10);
+						if (g_engine->shouldQuit() || _events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
+							break;
+						}
+					}
 					Voice voice = _voiceEffect[frameCounter];
 					debug("Playing voice effect: '%s'", voice.filename.c_str());
 					VoiceData voiceData = _sounds[voice.filename];
@@ -100,7 +109,7 @@ void VideoManager::playIntro() {
 					_sound->playSound(voiceBuffer, voiceData.length);
 				}
 
-				Subtitle *subtitle = getSubtitleForFrame(frameCounter);
+
 				if (subtitle != nullptr) {
 					Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
 
