@@ -3353,7 +3353,7 @@ EOF
 		# on whether the port has been used before (and is detected) which is unpredictable.
 		if test "$_freetype2" = yes; then
 			# neither pkg-config nor freetype-config work, so we setup freetype manually
-			append_var LDFLAGS "-s USE_FREETYPE=1"
+			append_var LDFLAGS "-s USE_FREETYPE2=1"
 			_freetype_found="true"
 			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
 			FREETYPE2_CFLAGS="-I$_freetypepath"
