@@ -32,6 +32,12 @@ Title::Title() : View("Title") {
 bool Title::msgFocus(const FocusMessage &msg) {
 	_highlightedOption = 0;
 	updateSelections();
+	MetaEngine::setKeybindingMode(KBMODE_MENUS);
+	return true;
+}
+
+bool Title::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return true;
 }
 
@@ -53,15 +59,6 @@ void Title::draw() {
 	View::draw();
 
 	s.writeString(Common::Point(20, 8), "Ultima 0 - Akalabeth!", Graphics::kTextAlignCenter);
-}
-
-bool Title::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
-		selectOption();
-		return true;
-	}
-
-	return false;
 }
 
 bool Title::msgAction(const ActionMessage &msg) {

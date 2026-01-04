@@ -26,12 +26,12 @@ namespace Ultima {
 namespace Ultima0 {
 
 const ObjectInfo OBJECT_INFO[] = {
-	{ "Food", 1, 0, Common::KEYCODE_f },
-	{ "Rapier", 8, 10, Common::KEYCODE_r },
-	{ "Axe", 5, 5, Common::KEYCODE_a },
-	{ "Shield", 6, 1, Common::KEYCODE_s },
-	{ "Bow and Arrow", 3, 4, Common::KEYCODE_b },
-	{ "Magic Amulet", 15, 0, Common::KEYCODE_m }
+	{ "Food", 1, 0, KEYBIND_FOOD },
+	{ "Rapier", 8, 10, KEYBIND_RAPIER },
+	{ "Axe", 5, 5, KEYBIND_AXE },
+	{ "Shield", 6, 1, KEYBIND_SHIELD },
+	{ "Bow and Arrow", 3, 4, KEYBIND_BOW },
+	{ "Magic Amulet", 15, 0, KEYBIND_AMULET }
 };
 
 const MonsterInfo MONSTER_INFO[] = {

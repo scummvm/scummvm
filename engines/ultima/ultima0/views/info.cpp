@@ -80,38 +80,39 @@ void Info::draw() {
 	s.writeString(Common::Point(18, 10), "Q-Quit");
 }
 
+void Info::leave() {
+	const auto &player = g_engine->_player;
+	replaceView(player._level == 0 ? "WorldMap" : "DungeonMap");
+}
+
 bool Info::msgKeypress(const KeypressMessage &msg) {
 	if (isDelayActive())
 		return false;
 
 	for (int i = 0; i < MAX_OBJ; ++i) {
-		if (msg.keycode == OBJECT_INFO[i]._keycode ||
-			(Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i]._cost)) {
+		if (Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i]._cost) {
 			selectObject(i);
 			return true;
 		}
 	}
 
-	if (msg.keycode == Common::KEYCODE_q) {
-		leave();
-		return true;
-	}
-
 	return false;
-}
-
-void Info::leave() {
-	const auto &player = g_engine->_player;
-	replaceView(player._level == 0 ? "WorldMap" : "DungeonMap");
 }
 
 bool Info::msgAction(const ActionMessage &msg) {
 	if (isDelayActive())
 		return false;
 
-	if (msg._action == KEYBIND_ESCAPE) {
+	if (msg._action == KEYBIND_ESCAPE || msg._action == KEYBIND_QUIT) {
 		leave();
 		return true;
+	}
+
+	for (int i = 0; i < MAX_OBJ; ++i) {
+		if (msg._action == OBJECT_INFO[i]._action) {
+			selectObject(i);
+			return true;
+		}
 	}
 
 	return false;

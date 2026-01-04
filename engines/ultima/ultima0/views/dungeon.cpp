@@ -130,6 +130,11 @@ bool Dungeon::msgAction(const ActionMessage &msg) {
 		_status.draw();		// Render the message before we switch views
 		addView("Attack");
 		break;
+	case KEYBIND_QUIT:
+		// "Quit" in the original which merely saves the game. For ScummVM,
+		// we open the GMM, allowing the user to either save or quit
+		g_engine->openMainMenuDialog();
+		return true;
 	case KEYBIND_MINIMAP:
 		g_engine->_showMinimap = !g_engine->_showMinimap;
 		redraw();
@@ -147,18 +152,7 @@ bool Dungeon::msgKeypress(const KeypressMessage &msg) {
 	if (isDelayActive())
 		return false;
 
-	switch (msg.keycode) {
-	case Common::KEYCODE_q:
-		// "Quit" in the original which merely saves the game. For ScummVM,
-		// we open the GMM, allowing the user to either save or quit
-		g_engine->openMainMenuDialog();
-		return true;
-
-	default:
-		showMessage("Huh???");
-		break;
-	}
-
+	showMessage("Huh???");
 	endOfTurn();
 	return true;
 }

@@ -41,6 +41,26 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord MENU_KEYS[] = {
+	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP" },
+	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN" },
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", nullptr },
+	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
+	{ KEYBIND_SWING, "SWING", _s("Swing"), "s", nullptr },
+	{ KEYBIND_THROW, "THROW", _s("Throw"), "t", nullptr },
+	{ KEYBIND_FOOD, "FOOD", _s("Food"), "f", nullptr },
+	{ KEYBIND_RAPIER, "RAPIER", _s("Rapier"), "r", nullptr },
+	{ KEYBIND_AXE, "AXE", _s("Axe"), "a", nullptr },
+	{ KEYBIND_SHIELD, "SHIELD", _s("Shield"), "s", nullptr },
+	{ KEYBIND_BOW, "BOW", _s("Bow & Arrow"), "b", nullptr },
+	{ KEYBIND_AMULET, "AMULET", _s("Magic Amulet"), "a", nullptr },
+	{ KEYBIND_AMULET1, "AMULET1", _s("Amulet Option 1"), "1", nullptr },
+	{ KEYBIND_AMULET2, "AMULET2", _s("Amulet Option 2"), "2", nullptr },
+	{ KEYBIND_AMULET3, "AMULET3", _s("Amulet Option 3"), "3", nullptr },
+	{ KEYBIND_AMULET4, "AMULET4", _s("Amulet Option 4"), "4", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord OVERWORLD_KEYS[] = {
 	{ KEYBIND_UP, "UP", _s("North"), "UP", "JOY_UP" },
 	{ KEYBIND_DOWN, "DOWN", _s("South"), "DOWN", "JOY_DOWN" },
@@ -48,6 +68,7 @@ static const KeybindingRecord OVERWORLD_KEYS[] = {
 	{ KEYBIND_RIGHT, "RIGHT", _s("East"), "RIGHT", "JOY_RIGHT" },
 	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
 	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
+	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
 	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -60,6 +81,7 @@ static const KeybindingRecord DUNGEON_KEYS[] = {
 	{ KEYBIND_ATTACK, "ATTACK", _s("Attack"), "a", "JOY_A" },
 	{ KEYBIND_ENTER, "ENTER", _s("Enter/Exit"), "e", "JOY_B" },
 	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
+	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
 	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
@@ -72,6 +94,7 @@ struct KeysRecord {
 
 static const KeysRecord ALL_RECORDS[] = {
 	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ "menu", _s("Menu Keys"), MENU_KEYS },
 	{ "overworld", _s("Overworld Keys"), OVERWORLD_KEYS },
 	{ "dungeon", _s("Dungeon Keys"), DUNGEON_KEYS },
 	{ nullptr, nullptr, nullptr }
@@ -79,6 +102,12 @@ static const KeysRecord ALL_RECORDS[] = {
 
 static const KeysRecord MINIMAL_RECORDS[] = {
 	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord MENU_RECORDS[] = {
+	{ "ultima0", _s("Basic Keys"), MINIMAL_KEYS },
+	{ "menu", _s("Menu Keys"), MENU_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
@@ -97,6 +126,7 @@ static const KeysRecord DUNGEON_RECORDS[] = {
 static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
 	MINIMAL_RECORDS,
+	MENU_RECORDS,
 	OVERWORLD_RECORDS,
 	DUNGEON_RECORDS,
 };
@@ -125,6 +155,8 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 				act->addDefaultInputMapping(r->_joy);
 			if (r->_action == KEYBIND_ENTER)
 				act->addDefaultInputMapping("x");
+			else if (r->_action == KEYBIND_SELECT)
+				act->addDefaultInputMapping("RETURN");
 
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 					r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)

@@ -90,6 +90,11 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 	case KEYBIND_ENTER:
 		enter();
 		break;
+	case KEYBIND_QUIT:
+		// "Quit" in the original which merely saves the game. For ScummVM,
+		// we open the GMM, allowing the user to either save or quit
+		g_engine->openMainMenuDialog();
+		return true;
 	case KEYBIND_MINIMAP:
 		g_engine->_showMinimap = !g_engine->_showMinimap;
 		redraw();
@@ -106,17 +111,6 @@ bool WorldMap::msgAction(const ActionMessage &msg) {
 bool WorldMap::msgKeypress(const KeypressMessage &msg) {
 	if (isDelayActive())
 		return false;
-
-	switch (msg.keycode) {
-	case Common::KEYCODE_q:
-		// "Quit" in the original which merely saves the game. For ScummVM,
-		// we open the GMM, allowing the user to either save or quit
-		g_engine->openMainMenuDialog();
-		return true;
-
-	default:
-		break;
-	}
 
 	endOfTurn();
 	return true;

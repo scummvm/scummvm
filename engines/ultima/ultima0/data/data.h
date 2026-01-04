@@ -39,7 +39,7 @@ struct ObjectInfo {
 	const char *_name;
 	int _cost;
 	int _maxDamage;
-	Common::KeyCode _keycode;
+	int _action;
 };
 struct MonsterInfo {
 	const char *_name;

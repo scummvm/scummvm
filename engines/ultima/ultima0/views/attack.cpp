@@ -34,7 +34,7 @@ Attack::Attack() : View("Attack") {
 bool Attack::msgFocus(const FocusMessage &msg) {
 	_mode = WHICH_WEAPON;
 	_message = "";
-	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	MetaEngine::setKeybindingMode(KBMODE_MENUS);
 	return true;
 }
 
@@ -64,6 +64,15 @@ void Attack::draw() {
 }
 
 bool Attack::msgKeypress(const KeypressMessage &msg) {
+	if (_mode == WHICH_WEAPON) {
+		selectObject(-1);
+		return true;
+	}
+
+	return false;
+}
+
+bool Attack::msgAction(const ActionMessage &msg) {
 	int objNum;
 
 	switch (_mode) {
@@ -71,7 +80,7 @@ bool Attack::msgKeypress(const KeypressMessage &msg) {
 		// Check for object selection, anything but food
 		objNum = -1;
 		for (uint i = OB_RAPIER; i < MAX_OBJ; ++i) {
-			if (msg.keycode == OBJECT_INFO[i]._keycode) {
+			if (msg._action == OBJECT_INFO[i]._action) {
 				objNum = i;
 				break;
 			}
@@ -81,16 +90,16 @@ bool Attack::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case AMULET:
-		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_4) {
-			selectMagic(msg.keycode - Common::KEYCODE_1);
+		if (msg._action >= KEYBIND_AMULET1 && msg._action <= KEYBIND_AMULET4) {
+			selectMagic(msg._action - KEYBIND_AMULET1);
 		}
 		break;
 
 	case THROW_SWING:
-		if (msg.keycode == Common::KEYCODE_t) {
+		if (msg._action == KEYBIND_THROW) {
 			_message += "Throw\n";
 			attackMissile();
-		} else if (msg.keycode == Common::KEYCODE_s) {
+		} else if (msg._action == KEYBIND_SWING) {
 			_message += "Swing\n";
 			attackWeapon();
 		}
@@ -101,15 +110,6 @@ bool Attack::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
-}
-
-bool Attack::msgAction(const ActionMessage &msg) {
-	if (_mode == WHICH_WEAPON) {
-		selectObject(-1);
-		return true;
-	}
-
-	return false;
 }
 
 void Attack::selectObject(int objNum) {
