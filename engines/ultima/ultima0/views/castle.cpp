@@ -111,7 +111,7 @@ void Castle::taskCompleted() {
 			"main objective of the game.\n\n"
 			"Now, maybe thou art foolhardy enough to\n"
 			"try difficulty level ");
-		s.writeString(Common::String::format("%s.", player._skill + 1));
+		s.writeString(Common::String::format("%d.", player._skill + 1));
 	} else {
 		nextTask();
 
