@@ -250,6 +250,52 @@ void DungeonMapInfo::create(const PlayerInfo &player) {
 		_map[SIZE - 3][3] = DT_SPACE;	// No other ladder up
 	}
 
+	// WORKAROUND: Make sure dungeon is completable
+	byte mapTrace[DUNGEON_MAP_SIZE][DUNGEON_MAP_SIZE];
+	bool isValid;
+	do {
+		isValid = false;
+
+		// Start a new trace, mark solid spaces
+		for (y = 0; y < DUNGEON_MAP_SIZE; ++y)
+			for (x = 0; x < DUNGEON_MAP_SIZE; ++x)
+				mapTrace[x][y] = _map[x][y] == DT_SOLID ? DT_SOLID : DT_SPACE;
+
+		// Iterate through figuring out route
+		Common::Queue<Common::Point> points;
+		if (player._level % 2 == 0)
+			points.push(Common::Point(SIZE - 3, 3));
+		else
+			points.push(Common::Point(3, SIZE - 3));
+		while (!points.empty() && !isValid) {
+			Common::Point pt = points.pop();
+			isValid = _map[pt.x][pt.y] == DT_LADDERUP;
+			if (isValid)
+				break;
+
+			mapTrace[pt.x][pt.y] = DT_LADDERDN;
+			if (pt.x > 1 && _map[pt.x - 1][pt.y] != DT_SOLID && mapTrace[pt.x - 1][pt.y] == DT_SPACE)
+				points.push(Common::Point(pt.x - 1, pt.y));
+			if (pt.x < SIZE && _map[pt.x + 1][pt.y] != DT_SOLID && mapTrace[pt.x + 1][pt.y] == DT_SPACE)
+				points.push(Common::Point(pt.x + 1, pt.y));
+			if (pt.y > 1 && _map[pt.x][pt.y - 1] != DT_SOLID && mapTrace[pt.x][pt.y - 1] == DT_SPACE)
+				points.push(Common::Point(pt.x, pt.y - 1));
+			if (pt.y < SIZE && _map[pt.x][pt.y + 1] != DT_SOLID && mapTrace[pt.x][pt.y + 1] == DT_SPACE)
+				points.push(Common::Point(pt.x, pt.y + 1));
+		}
+
+		if (!isValid) {
+			// If a path wasn't found, randomly replace a solid square. We'll then
+			// loop to check whether the path can now be completed
+			do {
+				x = g_engine->getRandomNumber(1, SIZE);
+				y = g_engine->getRandomNumber(1, SIZE);
+			} while (_map[x][y] != DT_SOLID);
+
+			_map[x][y] = DT_HIDDENDOOR;
+		}
+	} while (!isValid);
+
 	// Add monsters
 	_monsters.clear();
 	for (i = 1; i <= MAX_MONSTERS; ++i)
