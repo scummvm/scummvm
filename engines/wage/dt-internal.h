@@ -34,9 +34,11 @@ typedef struct ImGuiState {
 	bool _showWorld = false;
 
 	Common::HashMap<Common::String, ImGuiImage> _images;
+	Common::Array<ImGuiImage> _patternTextures;
 
 	ImGuiTextFilter _nameFilter;
-
+	int _currentStep = 1;
+	bool _showScriptWindow = false;
 	int _selectedScene = 0;
 	int _selectedObj = 0;
 	int _selectedChr = 0;
