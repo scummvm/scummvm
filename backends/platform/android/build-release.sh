@@ -16,6 +16,9 @@ VERSION_CODE=$(sed -n -e '/versionCode /s/[\t ]*versionCode //p' "${ROOT}/dists/
 # Make sure the last digit is 0
 VERSION_CODE=$((${VERSION_CODE} / 10 * 10))
 
+# Get the version name to name assets
+VERSION_NAME=$(sed -n -e '/versionName /s/[\t ]*versionName "\(.*\)"$/\1/p' "${ROOT}/dists/android/build.gradle")
+
 patch_version() {
 	local dir
 	dir=$2
@@ -38,6 +41,8 @@ patch_version ${VERSION_CODE}
 # Build an AAB bundle with games
 make -j${NPROC} androidfatbundlerelease GAMES_BUNDLE_DIRECTORY="$GAMES_FOLDER"
 
+mv ScummVM-release.aab scummvm-${VERSION_NAME}-android.aab
+
 # For APK strip out the games
 if [ -n "$GAMES_FOLDER" ]; then
 	rm -rf "./android_project/mainAssets/src/main/assets/assets/games"
@@ -58,7 +63,7 @@ plat_build() {
 	fi
 	patch_version $((${VERSION_CODE} + ${subcode})) "${subbuild}"
 	make -j${NPROC} -C ${subbuild} androidrelease
-	mv ${subbuild}/ScummVM-release-unsigned.apk ScummVM-release-unsigned-${subarch}.apk
+	mv ${subbuild}/ScummVM-release-unsigned.apk scummvm-${VERSION_NAME}-android-${subarch}-unsigned.apk
 }
 
 # Build ARMv7a with versionCode 1
@@ -72,3 +77,14 @@ plat_build 3 x86
 
 # Build x86_64 with versionCode 4
 plat_build 4 x86_64
+
+# Finally build ARMv7a without NEON with versionCode 1
+
+# Configure...
+mkdir -p build-androidarmeabi-v7a-nn
+cd build-androidarmeabi-v7a-nn
+"${ROOT}/configure" --host=android-arm-v7a --disable-ext-neon --disable-debug --enable-release
+cd ..
+
+# ...build like the others
+plat_build 1 armeabi-v7a-nn
