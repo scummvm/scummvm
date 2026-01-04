@@ -63,8 +63,8 @@ void HotspotRenderer::render(Surface *surface,
 		drawMarker(surface, overlayX, overlayY, format, markerShape);
 
 		if (font && !hotspots[i].name.empty()) {
-			drawHotspotName(surface, overlayX, overlayY, hotspots[i].name,
-							overlayWidth, overlayHeight, format, font);
+			drawHotspotLabel(surface, overlayX, overlayY, hotspots[i].name,
+							 overlayWidth, overlayHeight, format, font);
 		}
 	}
 }
@@ -86,12 +86,12 @@ void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelForm
 	}
 }
 
-void HotspotRenderer::drawHotspotName(Surface *surface, int overlayX, int overlayY, const Common::String &name,
-									  int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font) {
+void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::String &label,
+									   int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font) {
 	int textX = overlayX + kMarkerSize / 2 + 8;
 	int textY = overlayY - font->getFontHeight() / 2;
 
-	int textWidth = font->getStringWidth(name);
+	int textWidth = font->getStringWidth(label);
 	int textHeight = font->getFontHeight();
 
 	int bgX = textX - 4;
@@ -99,11 +99,11 @@ void HotspotRenderer::drawHotspotName(Surface *surface, int overlayX, int overla
 	int bgW = textWidth + 8;
 	int bgH = textHeight + 4;
 
-	drawNameBox(surface, bgX, bgY, bgW, bgH,
-				overlayWidth, overlayHeight, format);
+	drawLabelBox(surface, bgX, bgY, bgW, bgH,
+				 overlayWidth, overlayHeight, format);
 
 	uint32 textColor = format.RGBToColor(255, 255, 255);
-	font->drawString(surface, name, textX, textY,
+	font->drawString(surface, label, textX, textY,
 					 overlayWidth - textX, textColor, kTextAlignLeft);
 }
 
@@ -228,8 +228,8 @@ void HotspotRenderer::drawRectWithGlow(Surface *surface, int x, int y, int w, in
 	drawLineWithGlow(surface, x + w - 1, y + 1, x + w - 1, y + h - 2, overlayWidth, overlayHeight, format, kLineThickness);
 }
 
-void HotspotRenderer::drawNameBox(Surface *surface, int x, int y, int w, int h,
-								  int overlayWidth, int overlayHeight, const PixelFormat &format) {
+void HotspotRenderer::drawLabelBox(Surface *surface, int x, int y, int w, int h,
+									int overlayWidth, int overlayHeight, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 

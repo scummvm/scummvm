@@ -94,10 +94,10 @@ private:
 	void drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
-	void drawHotspotName(Surface *surface, int overlayX, int overlayY, const Common::String &name,
-						 int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
-	void drawNameBox(Surface *surface, int x, int y, int w, int h,
-					 int overlayWidth, int overlayHeight, const PixelFormat &format);
+	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::String &label,
+						  int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+	void drawLabelBox(Surface *surface, int x, int y, int w, int h,
+					  int overlayWidth, int overlayHeight, const PixelFormat &format);
 	void drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
 						  int overlayWidth, int overlayHeight, const PixelFormat &format);
 
