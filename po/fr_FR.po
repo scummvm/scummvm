@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2025-11-16 13:36+0000\n"
+"PO-Revision-Date: 2026-01-04 14:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Français\n"
 
 #: audio/mac_plugin.cpp:30
@@ -4442,39 +4442,29 @@ msgstr "Basculer vers le scaleur précédent"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Left mouse button"
-msgstr "Bouton gauche de la souris"
+msgstr "Souris Bouton gauche"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Right mouse button"
-msgstr "Bouton droit de la souris"
+msgstr "Souris Bouton droit"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
 msgstr "Souris Bouton du milieu"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
 msgstr "Souris Roulette vers le haut"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
 msgstr "Souris Roulette vers le bas"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
 msgstr "Souris Bouton X1"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
 msgstr "Souris Bouton X2"
 
@@ -4495,34 +4485,24 @@ msgid "Joy Y"
 msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
 msgstr "Joy Arrière"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
 msgstr "Joy Guide"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
 msgstr "Joy Start"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
-msgstr "Stick Gauche"
+msgstr "Stick gauche"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
-msgstr "Stick Droit"
+msgstr "Stick droit"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:206
 msgid "Left shoulder"
@@ -4533,68 +4513,46 @@ msgid "Right shoulder"
 msgstr "Gâchette droite"
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "Croix Haut"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "Croix Bas"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "Croix Gauche"
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "Croix Droite"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "Croix Centre"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
-msgstr "Gâchette Gauche"
+msgstr "Gâchette analogique gauche"
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
-msgstr "Gâchette Droite"
+msgstr "Gâchette analogique droite"
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
 msgstr "Stick gauche X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "Stick gauche Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "Stick droit X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "Stick droit Y"
 
@@ -9072,8 +9030,6 @@ msgid "Change mode"
 msgstr "Changer de mode"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
 msgstr "Menu d'information"
 
