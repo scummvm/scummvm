@@ -706,7 +706,7 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 			if (x1 < 0)
 				x = -x1;
 
-			byte *src = (byte *)tmp.getBasePtr(0, y);
+			byte *src = (byte *)tmp.getBasePtr(x, y);
 			byte *dst = (byte *)surface->getBasePtr(x1 + x, y1 + y);
 			byte *mask = (byte *)_maskImage->getBasePtr(x1 + x, y1 + y);
 
