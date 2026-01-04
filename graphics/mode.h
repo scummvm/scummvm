@@ -23,6 +23,7 @@
 #define GRAPHICS_MODE_H
 
 #include "common/array.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
