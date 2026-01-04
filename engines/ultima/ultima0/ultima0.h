@@ -114,6 +114,11 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+
+	/**
+	 * Returns true if any savegames exist
+	 */
+	bool savegamesExist() const;
 };
 
 extern Ultima0Engine *g_engine;

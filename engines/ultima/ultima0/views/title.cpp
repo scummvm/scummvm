@@ -97,8 +97,17 @@ bool Title::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 void Title::selectOption() {
-	const char *VIEW_NAMES[4] = { "Intro", "CreateCharacter", "Acknowledgements", "Game" };
-	replaceView(VIEW_NAMES[_highlightedOption]);
+	if (_highlightedOption == 3) {
+		if (g_engine->savegamesExist()) {
+			g_engine->loadGameDialog();
+		} else {
+			// Otherwise to go the Create Character view
+			replaceView("CreateCharacter");
+		}
+	} else {
+		const char *VIEW_NAMES[4] = { "Intro", "CreateCharacter", "Acknowledgements" };
+		replaceView(VIEW_NAMES[_highlightedOption]);
+	}
 }
 
 /*-------------------------------------------------------------------*/

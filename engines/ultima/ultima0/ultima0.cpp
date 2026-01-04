@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "ultima/ultima0/ultima0.h"
@@ -105,6 +106,15 @@ void Ultima0Engine::syncSavegame(Common::Serializer &s) {
 	_player.synchronize(s);
 	_worldMap.synchronize(s);
 	_dungeon.synchronize(s);
+}
+
+bool Ultima0Engine::savegamesExist() const {
+	Common::String slotName = getSaveStateName(1);
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+	bool result = saveFile != nullptr;
+
+	delete saveFile;
+	return result;
 }
 
 } // namespace Ultima0
