@@ -379,6 +379,9 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 	return "";
 }
 
+void EventRecorder::setFastPlayback(bool fastPlayback) {
+	_fastPlayback = fastPlayback;
+}
 
 void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullMixerManager();
@@ -389,12 +392,10 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
 	_needcontinueGame = false;
+	_fastPlayback = false;
 	if (ConfMan.hasKey("disable_display")) {
 		DebugMan.enableDebugChannel("EventRec");
 		gDebugLevel = 1;
-	}
-	if (ConfMan.hasKey("fast_mode")) {
-		_fastPlayback = ConfMan.getInt("fast_mode") != 0;
 	}
 	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Load file\" filename=%s", recordFileName.c_str());

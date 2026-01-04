@@ -587,9 +587,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("disable-display")) {
 		ConfMan.setInt("disable_display", 1, Common::ConfigManager::kTransientDomain);
 	}
-	if (settings.contains("fast-mode")) {
-		ConfMan.setInt("fast_mode", 1, Common::ConfigManager::kTransientDomain);
-	}
 #endif
 	setupGraphics(system);
 
@@ -791,6 +788,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderUpdate);
 			} else if (recordMode == "playback") {
 				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
+			} else if (recordMode == "fast_playback") {
+				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
+				g_eventRec.setFastPlayback(true);
 			} else if ((recordMode == "info") && (!recordFileName.empty())) {
 				Common::PlaybackFile record;
 				record.openRead(recordFileName);
