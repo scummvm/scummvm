@@ -59,6 +59,8 @@ public:
 	Info(const char *viewName = "Info");
 	~Info() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

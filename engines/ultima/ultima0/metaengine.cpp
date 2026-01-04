@@ -53,7 +53,7 @@ static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_AXE, "AXE", _s("Axe"), "a", nullptr },
 	{ KEYBIND_SHIELD, "SHIELD", _s("Shield"), "s", nullptr },
 	{ KEYBIND_BOW, "BOW", _s("Bow & Arrow"), "b", nullptr },
-	{ KEYBIND_AMULET, "AMULET", _s("Magic Amulet"), "a", nullptr },
+	{ KEYBIND_AMULET, "AMULET", _s("Magic Amulet"), "m", nullptr },
 	{ KEYBIND_AMULET1, "AMULET1", _s("Amulet Option 1"), "1", nullptr },
 	{ KEYBIND_AMULET2, "AMULET2", _s("Amulet Option 2"), "2", nullptr },
 	{ KEYBIND_AMULET3, "AMULET3", _s("Amulet Option 3"), "3", nullptr },

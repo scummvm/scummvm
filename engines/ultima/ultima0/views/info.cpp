@@ -29,6 +29,16 @@ namespace Views {
 Info::Info(const char *viewName) : View(viewName) {
 }
 
+bool Info::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MENUS);
+	return true;
+}
+
+bool Info::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return true;
+}
+
 void Info::draw() {
 	const auto &player = g_engine->_player;
 	auto s = getSurface();

@@ -38,7 +38,7 @@ Town::Town() : Info("Town") {
 
 bool Town::msgFocus(const FocusMessage &msg) {
 	_message = WELCOME;
-	return true;
+	return Info::msgFocus(msg);
 }
 
 void Town::draw() {
