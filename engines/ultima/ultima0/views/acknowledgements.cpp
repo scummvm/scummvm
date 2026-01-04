@@ -49,7 +49,7 @@ static const char *LINES[] = {
 	"James Ashley",
 	"Chris Harjo",
 	"and everyone else out there",
-	"who helped me out"
+	"who helped me out",
 	"",
 	"",
 	"",
