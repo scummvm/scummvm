@@ -225,7 +225,7 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 void SdlMixerManager::startAudio() {
 	// Start the sound system
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &_obtained, sdl3Callback, this);
+	_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &_obtained, sdlCallback, this);
 	if (_stream)
 		SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(_stream));
 #else
@@ -238,24 +238,25 @@ void SdlMixerManager::callbackHandler(byte *samples, int len) {
 	_mixer->mixCallback(samples, len);
 }
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+void SdlMixerManager::sdlCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount) {
+	if (additional_amount > 0) {
+		Uint8 *data = SDL_stack_alloc(Uint8, additional_amount);
+		if (data) {
+			SdlMixerManager *manager = (SdlMixerManager *)userdata;
+			assert(manager);
+			manager->callbackHandler(data, additional_amount);
+			SDL_PutAudioStreamData(stream, data, additional_amount);
+			SDL_stack_free(data);
+		}
+	}
+}
+#else
 void SdlMixerManager::sdlCallback(void *this_, byte *samples, int len) {
 	SdlMixerManager *manager = (SdlMixerManager *)this_;
 	assert(manager);
 
 	manager->callbackHandler(samples, len);
-}
-
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-void SdlMixerManager::sdl3Callback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount) {
-	if (additional_amount > 0) {
-		Uint8 *data = SDL_stack_alloc(Uint8, additional_amount);
-		if (data) {
-			SdlMixerManager *manager = (SdlMixerManager *)userdata;
-			manager->sdlCallback(userdata, data, additional_amount);
-			SDL_PutAudioStreamData(stream, data, additional_amount);
-			SDL_stack_free(data);
-		}
-	}
 }
 #endif
 
@@ -273,7 +274,7 @@ int SdlMixerManager::resumeAudio() {
 	if (!_audioSuspended)
 		return -2;
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &_obtained, sdl3Callback, this);
+	_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &_obtained, sdlCallback, this);
 	if(!_stream)
 		return -1;
 	if (SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(_stream)))
