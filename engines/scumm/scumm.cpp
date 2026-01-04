@@ -3908,6 +3908,7 @@ void ScummEngine::scummLoop_handleDrawing() {
 	}
 
 	processDrawQue();
+	drawHotspots();
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -4250,6 +4251,11 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		if (_sound && canPauseSoundsDuringSave() && _needsSoundUnpause)
 			_sound->pauseSounds(false);
 	}
+}
+
+void ScummEngine::setShowHotspots(bool show) {
+	Engine::setShowHotspots(show);
+	_fullRedraw = true;
 }
 
 #ifdef ENABLE_SCUMM_7_8

@@ -36,6 +36,7 @@
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
+#include "graphics/hotspot_renderer.h"
 #include "graphics/paletteman.h"
 #include "gui/debugger.h"
 
@@ -1506,7 +1507,7 @@ void ToucheEngine::drawHitBoxes() {
 	}
 }
 
-void ToucheEngine::getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots) {
+void ToucheEngine::getHotspotPositions(Common::Array<::Graphics::HotspotInfo> &hotspots) {
 	if (_flagsTable[618] != 0)
 		return;
 
@@ -1563,7 +1564,7 @@ void ToucheEngine::getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspo
 				name = Common::String(strData);
 		}
 
-		hotspots.push_back(HotspotDisplayInfo(Common::Point(screenX, screenY), name));
+		hotspots.push_back(::Graphics::HotspotInfo(Common::Point(screenX, screenY), name));
 	}
 }
 

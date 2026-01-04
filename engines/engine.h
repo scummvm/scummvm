@@ -54,6 +54,9 @@ namespace GUI {
 class Debugger;
 class Dialog;
 }
+namespace Graphics {
+struct HotspotInfo;
+}
 
 /**
  * @defgroup engines_engine Engine
@@ -517,18 +520,6 @@ protected:
 	virtual void pauseEngineIntern(bool pause);
 
 	/**
-	 * Information about a hotspot for display purposes.
-	 */
-	struct HotspotDisplayInfo {
-		Common::Point position;  ///< Game screen coordinates of the hotspot
-		Common::String name;     ///< Display name of the hotspot
-
-		HotspotDisplayInfo() {}
-		HotspotDisplayInfo(const Common::Point &pos, const Common::String &n)
-			: position(pos), name(n) {}
-	};
-
-	/**
 	 * Get information about all hotspots that should be displayed.
 	 *
 	 * Engines should override this method to populate the hotspots array
@@ -536,7 +527,7 @@ protected:
 	 *
 	 * @param hotspots Array to be filled with hotspot information
 	 */
-	virtual void getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots);
+	virtual void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots);
 
 	/**
 	 * Draw hotspot markers on the screen using the overlay.

@@ -590,6 +590,8 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	void pauseEngineIntern(bool pause) override;
+	void setShowHotspots(bool show) override;
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
 
 protected:
 	virtual void setupScumm(const Common::Path &macResourceFile);
