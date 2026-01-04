@@ -792,13 +792,13 @@ void Engine::drawHotspots() {
 	bool showText = ConfMan.getBool("show_hotspot_text", Common::ConfigManager::kApplicationDomain);
 	if (!ConfMan.hasKey("show_hotspot_text", Common::ConfigManager::kApplicationDomain))
 		showText = true;
-	const Graphics::Font *font = showText ? FontMan.getFontByUsage(Graphics::FontManager::kGUIFont) : nullptr;
+
+	int markerType = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
 
 	Graphics::HotspotRenderer renderer;
-	int markerType = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
-	renderer.setMarkerShape((Graphics::MarkerShape)markerType);
 	renderer.render(&overlayBuffer, hotspots, gameWidth, gameHeight,
-	                overlayWidth, overlayHeight, overlayFormat, font);
+	                overlayWidth, overlayHeight, overlayFormat,
+	                (Graphics::MarkerShape)markerType, showText);
 
 	g_system->copyRectToOverlay(overlayBuffer.getPixels(), overlayBuffer.pitch, 0, 0, overlayWidth, overlayHeight);
 	overlayBuffer.free();

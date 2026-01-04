@@ -36,8 +36,8 @@ struct PixelFormat;
  * Information about a single hotspot to display.
  */
 struct HotspotInfo {
-	Common::Point position;  ///< Position in game coordinates
-	Common::String name;     ///< Display name
+	Common::Point position; ///< Position in game coordinates
+	Common::String name;    ///< Display name
 
 	HotspotInfo() {}
 	HotspotInfo(const Common::Point &pos, const Common::String &n)
@@ -48,7 +48,6 @@ struct HotspotInfo {
  * Marker shape types.
  */
 enum MarkerShape {
-	MARKER_CIRCLE,
 	MARKER_CROSSHAIR,
 	MARKER_SQUARE,
 	MARKER_POINT
@@ -72,42 +71,42 @@ public:
 	 * @param overlayWidth  Width of overlay
 	 * @param overlayHeight Height of overlay
 	 * @param format        Pixel format of overlay
-	 * @param font          Font to use for text rendering
+	 * @param markerShape   Type of marker to display
+	 * @param showText      Whether to display text labels
 	 */
 	void render(Surface *surface,
-	            const Common::Array<HotspotInfo> &hotspots,
-	            int gameWidth, int gameHeight,
-	            int overlayWidth, int overlayHeight,
-	            const PixelFormat &format,
-	            const Font *font);
-
-	/**
-	 * Set the marker radius.
-	 */
-	void setRadius(int radius) { _radius = radius; }
-
-	/**
-	 * Set the glow intensity (0-255).
-	 */
-	void setGlowIntensity(int intensity) { _glowIntensity = intensity; }
-
-	/**
-	 * Set the marker shape.
-	 */
-	void setMarkerShape(MarkerShape shape) { _markerShape = shape; }
+				const Common::Array<HotspotInfo> &hotspots,
+				int gameWidth, int gameHeight,
+				int overlayWidth, int overlayHeight,
+				const PixelFormat &format,
+				MarkerShape markerShape,
+				bool showText);
 
 private:
-	void drawMarker(Surface *surface, int x, int y, const PixelFormat &format);
-	void drawCircleMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
+	enum {
+		kMarkerSize = 10,  ///< Size of square and crosshair markers
+		kGlowSize = 3,     ///< Size of glow effect around markers and text
+		kPointRadius = 3,  ///< Radius of point marker
+		kLineThickness = 1 ///< Thickness of lines for markers and text boxes
+	};
+
+	void drawMarker(Surface *surface, int x, int y, const PixelFormat &format, MarkerShape markerShape);
 	void drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
-	void drawRoundedRectWithGlow(Surface *surface, int x, int y, int w, int h,
-	                              int overlayWidth, int overlayHeight, const PixelFormat &format);
+	void drawHotspotName(Surface *surface, int overlayX, int overlayY, const Common::String &name,
+						 int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+	void drawNameBox(Surface *surface, int x, int y, int w, int h,
+					 int overlayWidth, int overlayHeight, const PixelFormat &format);
+	void drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
+						  int overlayWidth, int overlayHeight, const PixelFormat &format);
 
-	int _radius;
-	int _glowIntensity;
-	MarkerShape _markerShape;
+	void drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
+						  int width, int height, const PixelFormat &format,
+						  int lineThickness);
+
+	void blendPixelWithGlow(Surface *surface, int px, int py, const PixelFormat &format,
+							int distance, int solidSize);
 };
 
 } // End of namespace Graphics

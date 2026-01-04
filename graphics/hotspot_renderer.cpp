@@ -22,14 +22,14 @@
 #include "graphics/hotspot_renderer.h"
 #include "common/util.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include <math.h>
 
 namespace Graphics {
 
-HotspotRenderer::HotspotRenderer()
-	: _radius(10), _glowIntensity(150), _markerShape(MARKER_CIRCLE) {
+HotspotRenderer::HotspotRenderer() {
 }
 
 HotspotRenderer::~HotspotRenderer() {
@@ -40,9 +40,15 @@ void HotspotRenderer::render(Surface *surface,
 							 int gameWidth, int gameHeight,
 							 int overlayWidth, int overlayHeight,
 							 const PixelFormat &format,
-							 const Font *font) {
+							 MarkerShape markerShape,
+							 bool showText) {
 	if (!surface || hotspots.empty())
 		return;
+
+	const Font *font = nullptr;
+	if (showText) {
+		font = FontMan.getFontByUsage(FontManager::kGUIFont);
+	}
 
 	float scaleX = (float)overlayWidth / (float)gameWidth;
 	float scaleY = (float)overlayHeight / (float)gameHeight;
@@ -54,38 +60,20 @@ void HotspotRenderer::render(Surface *surface,
 		int overlayX = (int)(gameX * scaleX);
 		int overlayY = (int)(gameY * scaleY);
 
-		drawMarker(surface, overlayX, overlayY, format);
+		drawMarker(surface, overlayX, overlayY, format, markerShape);
 
 		if (font && !hotspots[i].name.empty()) {
-			int textX = overlayX + _radius / 2 + 8;
-			int textY = overlayY - font->getFontHeight() / 2;
-
-			int textWidth = font->getStringWidth(hotspots[i].name);
-			int textHeight = font->getFontHeight();
-
-			int bgX = textX - 4;
-			int bgY = textY - 2;
-			int bgW = textWidth + 8;
-			int bgH = textHeight + 4;
-
-			drawRoundedRectWithGlow(surface, bgX, bgY, bgW, bgH,
-									overlayWidth, overlayHeight, format);
-
-			uint32 textColor = format.RGBToColor(255, 255, 255);
-			font->drawString(surface, hotspots[i].name, textX, textY,
-							 overlayWidth - textX, textColor, kTextAlignLeft);
+			drawHotspotName(surface, overlayX, overlayY, hotspots[i].name,
+							overlayWidth, overlayHeight, format, font);
 		}
 	}
 }
 
-void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelFormat &format) {
+void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelFormat &format, MarkerShape markerShape) {
 	int width = surface->w;
 	int height = surface->h;
 
-	switch (_markerShape) {
-	case MARKER_CIRCLE:
-		drawCircleMarker(surface, x, y, width, height, format);
-		break;
+	switch (markerShape) {
 	case MARKER_CROSSHAIR:
 		drawCrosshairMarker(surface, x, y, width, height, format);
 		break;
@@ -98,228 +86,53 @@ void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelForm
 	}
 }
 
-void HotspotRenderer::drawCircleMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
-	if (format.bytesPerPixel != 2)
-		return;
+void HotspotRenderer::drawHotspotName(Surface *surface, int overlayX, int overlayY, const Common::String &name,
+									  int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font) {
+	int textX = overlayX + kMarkerSize / 2 + 8;
+	int textY = overlayY - font->getFontHeight() / 2;
 
-	const int borderWidth = 0;
-	const int glowSize = 3;
-	const int radius = _radius / 2;
-	int maxRadius = radius + glowSize;
+	int textWidth = font->getStringWidth(name);
+	int textHeight = font->getFontHeight();
 
-	for (int dy = -maxRadius; dy <= maxRadius; dy++) {
-		for (int dx = -maxRadius; dx <= maxRadius; dx++) {
-			int px = x + dx;
-			int py = y + dy;
+	int bgX = textX - 4;
+	int bgY = textY - 2;
+	int bgW = textWidth + 8;
+	int bgH = textHeight + 4;
 
-			if (px < 0 || px >= width || py < 0 || py >= height)
-				continue;
+	drawNameBox(surface, bgX, bgY, bgW, bgH,
+				overlayWidth, overlayHeight, format);
 
-			int distSq = dx * dx + dy * dy;
-			int dist = (int)(sqrtf((float)distSq) + 0.5f);
-
-			int ringInner = radius - borderWidth;
-			int ringOuter = radius;
-			int glowOuter = radius + glowSize;
-
-			byte r, g, b;
-			bool shouldDraw = false;
-
-			if (dist >= ringInner && dist <= ringOuter) {
-				uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-				byte bgR, bgG, bgB, bgA;
-				format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-				r = ((255 * 180) + (bgR * 75)) / 255;
-				g = ((255 * 180) + (bgG * 75)) / 255;
-				b = ((255 * 180) + (bgB * 75)) / 255;
-				shouldDraw = true;
-			} else if (dist > ringOuter && dist <= glowOuter) {
-				uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-				byte bgR, bgG, bgB, bgA;
-				format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-				int glowDist = dist - ringOuter;
-				int alpha = ((glowSize - glowDist) * 80) / glowSize;
-
-				r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-				g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-				b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-				shouldDraw = true;
-			}
-
-			if (shouldDraw) {
-				uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-				*destPixel = format.RGBToColor(r, g, b);
-			}
-		}
-	}
+	uint32 textColor = format.RGBToColor(255, 255, 255);
+	font->drawString(surface, name, textX, textY,
+					 overlayWidth - textX, textColor, kTextAlignLeft);
 }
 
 void HotspotRenderer::drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
-	const int lineLength = 2;
-	const int borderWidth = 0;
-	const int glowSize = 3;
+	const int lineLength = (kMarkerSize / 2) - 1;
 
-	for (int i = -lineLength - glowSize; i <= lineLength + glowSize; i++) {
-		for (int thickness = -borderWidth - glowSize; thickness <= borderWidth + glowSize; thickness++) {
-			int hx = x + i;
-			int hy = y + thickness;
-			int vx = x + thickness;
-			int vy = y + i;
-
-			bool drawHorizontal = (hx >= 0 && hx < width && hy >= 0 && hy < height);
-			bool drawVertical = (vx >= 0 && vx < width && vy >= 0 && vy < height);
-
-			if (drawHorizontal || drawVertical) {
-				int distFromCenter = ABS(thickness);
-				byte r, g, b;
-
-				if (distFromCenter <= borderWidth) {
-					r = 255;
-					g = 255;
-					b = 255;
-
-					if (drawHorizontal) {
-						uint16 *destPixel = (uint16 *)surface->getBasePtr(hx, hy);
-						byte bgR, bgG, bgB, bgA;
-						format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-						r = ((255 * 180) + (bgR * 75)) / 255;
-						g = ((255 * 180) + (bgG * 75)) / 255;
-						b = ((255 * 180) + (bgB * 75)) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-					if (drawVertical) {
-						uint16 *destPixel = (uint16 *)surface->getBasePtr(vx, vy);
-						byte bgR, bgG, bgB, bgA;
-						format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-						r = ((255 * 180) + (bgR * 75)) / 255;
-						g = ((255 * 180) + (bgG * 75)) / 255;
-						b = ((255 * 180) + (bgB * 75)) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-				} else if (distFromCenter > borderWidth && distFromCenter <= borderWidth + glowSize) {
-					int glowDist = distFromCenter - borderWidth;
-					int alpha = ((glowSize - glowDist) * 80) / glowSize;
-
-					if (drawHorizontal) {
-						uint16 *destPixel = (uint16 *)surface->getBasePtr(hx, hy);
-						byte bgR, bgG, bgB, bgA;
-						format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-						r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-						g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-						b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-					if (drawVertical) {
-						uint16 *destPixel = (uint16 *)surface->getBasePtr(vx, vy);
-						byte bgR, bgG, bgB, bgA;
-						format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-						r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-						g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-						b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-				}
-			}
-		}
-	}
+	drawLineWithGlow(surface, x - lineLength, y, x + lineLength, y, width, height, format, kLineThickness);
+	drawLineWithGlow(surface, x, y - lineLength, x, y + lineLength, width, height, format, kLineThickness);
 }
 
 void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
-	const int cornerRadius = 4;
-	const int glowSize = 3;
-	const int borderWidth = 1;
+	int size = kMarkerSize;
+	int rectX = x - kMarkerSize / 2;
+	int rectY = y - kMarkerSize / 2;
 
-	int size = _radius;
-	int rectX = x - _radius / 2;
-	int rectY = y - _radius / 2;
-
-	for (int py = rectY - glowSize; py < rectY + size + glowSize; py++) {
-		for (int px = rectX - glowSize; px < rectX + size + glowSize; px++) {
-			if (px < 0 || px >= width || py < 0 || py >= height)
-				continue;
-
-			int dx = 0, dy = 0;
-
-			if (px < rectX + cornerRadius && py < rectY + cornerRadius) {
-				dx = (rectX + cornerRadius) - px;
-				dy = (rectY + cornerRadius) - py;
-			} else if (px >= rectX + size - cornerRadius && py < rectY + cornerRadius) {
-				dx = px - (rectX + size - cornerRadius - 1);
-				dy = (rectY + cornerRadius) - py;
-			} else if (px < rectX + cornerRadius && py >= rectY + size - cornerRadius) {
-				dx = (rectX + cornerRadius) - px;
-				dy = py - (rectY + size - cornerRadius - 1);
-			} else if (px >= rectX + size - cornerRadius && py >= rectY + size - cornerRadius) {
-				dx = px - (rectX + size - cornerRadius - 1);
-				dy = py - (rectY + size - cornerRadius - 1);
-			}
-
-			int distSq = dx * dx + dy * dy;
-			int cornerRadiusSq = cornerRadius * cornerRadius;
-
-			bool insideCorner = (dx != 0 || dy != 0) && distSq <= cornerRadiusSq;
-			bool insideRect = (px >= rectX && px < rectX + size && py >= rectY && py < rectY + size);
-			bool inMainArea = insideRect || insideCorner;
-
-			int innerCornerRadiusSq = (cornerRadius - borderWidth) * (cornerRadius - borderWidth);
-			bool insideInnerCorner = (dx != 0 || dy != 0) && distSq <= innerCornerRadiusSq;
-			bool insideInnerRect = (px >= rectX + borderWidth && px < rectX + size - borderWidth &&
-									py >= rectY + borderWidth && py < rectY + size - borderWidth);
-			bool inFillArea = insideInnerRect || insideInnerCorner;
-
-			if ((dx == 0 && dy == 0) || distSq <= (cornerRadius + glowSize) * (cornerRadius + glowSize)) {
-				uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-				byte bgR, bgG, bgB, bgA;
-				format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-				if (inMainArea && !inFillArea) {
-					byte r = ((255 * 180) + (bgR * 75)) / 255;
-					byte g = ((255 * 180) + (bgG * 75)) / 255;
-					byte b = ((255 * 180) + (bgB * 75)) / 255;
-					*destPixel = format.RGBToColor(r, g, b);
-				} else if (!inMainArea) {
-					int glowDist = 0;
-					if (dx != 0 || dy != 0) {
-						glowDist = (int)(sqrtf((float)distSq) + 0.5f) - cornerRadius;
-					} else {
-						if (px < rectX)
-							glowDist = rectX - px;
-						else if (px >= rectX + size)
-							glowDist = px - (rectX + size - 1);
-						else if (py < rectY)
-							glowDist = rectY - py;
-						else if (py >= rectY + size)
-							glowDist = py - (rectY + size - 1);
-					}
-
-					if (glowDist > 0 && glowDist <= glowSize) {
-						int alpha = ((glowSize - glowDist) * 80) / glowSize;
-						byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-						byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-						byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-				}
-			}
-		}
-	}
+	drawRectWithGlow(surface, rectX, rectY, size, size, width, height, format);
 }
 
 void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
-	const int pointRadius = 2;
-	const int glowSize = 3;
-	int maxRadius = pointRadius + glowSize;
+	int maxRadius = kPointRadius + kGlowSize;
 
 	for (int dy = -maxRadius; dy <= maxRadius; dy++) {
 		for (int dx = -maxRadius; dx <= maxRadius; dx++) {
@@ -332,114 +145,111 @@ void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y, int width,
 			int distSq = dx * dx + dy * dy;
 			int dist = (int)(sqrtf((float)distSq) + 0.5f);
 
-			uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-			byte bgR, bgG, bgB, bgA;
-			format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-			if (dist <= pointRadius) {
-				byte r = ((255 * 200) + (bgR * 55)) / 255;
-				byte g = ((255 * 200) + (bgG * 55)) / 255;
-				byte b = ((255 * 200) + (bgB * 55)) / 255;
-				*destPixel = format.RGBToColor(r, g, b);
-			} else if (dist <= pointRadius + glowSize) {
-				int glowDist = dist - pointRadius;
-				int alpha = ((glowSize - glowDist) * 80) / glowSize;
-				byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-				byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-				byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-				*destPixel = format.RGBToColor(r, g, b);
-			}
+			blendPixelWithGlow(surface, px, py, format, dist, kPointRadius);
 		}
 	}
 }
 
-void HotspotRenderer::drawRoundedRectWithGlow(Surface *surface, int x, int y, int w, int h,
-											  int overlayWidth, int overlayHeight, const PixelFormat &format) {
+void HotspotRenderer::blendPixelWithGlow(Surface *surface, int px, int py, const PixelFormat &format,
+										 int distance, int solidSize) {
+	uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
+	byte bgR, bgG, bgB, bgA;
+	format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
+
+	// Convert solidSize to maximum solid distance (solidSize=1 means center pixel only, distance=0)
+	int maxSolidDistance = solidSize - 1;
+
+	if (distance <= maxSolidDistance) {
+		const int solidBeta = 180;
+		const int solidAlpha = 255 - solidBeta;
+		byte r = ((255 * solidBeta) + (bgR * solidAlpha)) / 255;
+		byte g = ((255 * solidBeta) + (bgG * solidAlpha)) / 255;
+		byte b = ((255 * solidBeta) + (bgB * solidAlpha)) / 255;
+		*destPixel = format.RGBToColor(r, g, b);
+	} else if (distance <= maxSolidDistance + kGlowSize) {
+		int glowDist = distance - maxSolidDistance;
+		int alpha = ((kGlowSize - glowDist) * 80) / kGlowSize;
+		byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
+		byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
+		byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
+		*destPixel = format.RGBToColor(r, g, b);
+	}
+}
+
+void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
+									   int width, int height, const PixelFormat &format,
+									   int lineThickness) {
 	if (format.bytesPerPixel != 2)
 		return;
 
-	const int cornerRadius = 4;
-	const int glowSize = 3;
-	const int borderWidth = 1;
+	bool isHorizontal = (y1 == y2);
+	bool isVertical = (x1 == x2);
 
-	for (int py = y - glowSize; py < y + h + glowSize; py++) {
-		for (int px = x - glowSize; px < x + w + glowSize; px++) {
+	if (!isHorizontal && !isVertical)
+		return;
+
+	int alongMin, alongMax, acrossFixed;
+
+	if (isHorizontal) {
+		alongMin = MIN(x1, x2);
+		alongMax = MAX(x1, x2);
+		acrossFixed = y1;
+	} else {
+		alongMin = MIN(y1, y2);
+		alongMax = MAX(y1, y2);
+		acrossFixed = x1;
+	}
+
+	for (int along = alongMin; along <= alongMax; along++) {
+		for (int thickness = -lineThickness - kGlowSize; thickness <= lineThickness + kGlowSize; thickness++) {
+			int px, py;
+			if (isHorizontal) {
+				px = along;
+				py = acrossFixed + thickness;
+			} else {
+				px = acrossFixed + thickness;
+				py = along;
+			}
+
+			if (px < 0 || px >= width || py < 0 || py >= height)
+				continue;
+
+			int distFromCenter = ABS(thickness);
+			blendPixelWithGlow(surface, px, py, format, distFromCenter, lineThickness);
+		}
+	}
+}
+
+void HotspotRenderer::drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
+									   int overlayWidth, int overlayHeight, const PixelFormat &format) {
+	drawLineWithGlow(surface, x, y, x + w - 1, y, overlayWidth, overlayHeight, format, kLineThickness);
+	drawLineWithGlow(surface, x, y + h - 1, x + w - 1, y + h - 1, overlayWidth, overlayHeight, format, kLineThickness);
+	drawLineWithGlow(surface, x, y + 1, x, y + h - 2, overlayWidth, overlayHeight, format, kLineThickness);
+	drawLineWithGlow(surface, x + w - 1, y + 1, x + w - 1, y + h - 2, overlayWidth, overlayHeight, format, kLineThickness);
+}
+
+void HotspotRenderer::drawNameBox(Surface *surface, int x, int y, int w, int h,
+								  int overlayWidth, int overlayHeight, const PixelFormat &format) {
+	if (format.bytesPerPixel != 2)
+		return;
+
+	for (int py = y + 1; py < y + h - 1; py++) {
+		for (int px = x + 1; px < x + w - 1; px++) {
 			if (px < 0 || px >= overlayWidth || py < 0 || py >= overlayHeight)
 				continue;
 
-			int dx = 0, dy = 0;
+			uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
+			byte bgR, bgG, bgB, bgA;
+			format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
 
-			if (px < x + cornerRadius && py < y + cornerRadius) {
-				dx = (x + cornerRadius) - px;
-				dy = (y + cornerRadius) - py;
-			} else if (px >= x + w - cornerRadius && py < y + cornerRadius) {
-				dx = px - (x + w - cornerRadius - 1);
-				dy = (y + cornerRadius) - py;
-			} else if (px < x + cornerRadius && py >= y + h - cornerRadius) {
-				dx = (x + cornerRadius) - px;
-				dy = py - (y + h - cornerRadius - 1);
-			} else if (px >= x + w - cornerRadius && py >= y + h - cornerRadius) {
-				dx = px - (x + w - cornerRadius - 1);
-				dy = py - (y + h - cornerRadius - 1);
-			}
-
-			int distSq = dx * dx + dy * dy;
-			int cornerRadiusSq = cornerRadius * cornerRadius;
-
-			bool insideCorner = (dx != 0 || dy != 0) && distSq <= cornerRadiusSq;
-			bool insideRect = (px >= x && px < x + w && py >= y && py < y + h);
-			bool inMainArea = insideRect || insideCorner;
-
-			int innerCornerRadiusSq = (cornerRadius - borderWidth) * (cornerRadius - borderWidth);
-			bool insideInnerCorner = (dx != 0 || dy != 0) && distSq <= innerCornerRadiusSq;
-			bool insideInnerRect = (px >= x + borderWidth && px < x + w - borderWidth &&
-									py >= y + borderWidth && py < y + h - borderWidth);
-			bool inFillArea = insideInnerRect || insideInnerCorner;
-
-			if ((dx == 0 && dy == 0) || distSq <= (cornerRadius + glowSize) * (cornerRadius + glowSize)) {
-				uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
-				byte bgR, bgG, bgB, bgA;
-				format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-				if (inMainArea) {
-					byte r, g, b;
-
-					if (inFillArea) {
-						r = (bgR * 40) / 100;
-						g = (bgG * 40) / 100;
-						b = (bgB * 40) / 100;
-					} else {
-						r = ((255 * 180) + (bgR * 75)) / 255;
-						g = ((255 * 180) + (bgG * 75)) / 255;
-						b = ((255 * 180) + (bgB * 75)) / 255;
-					}
-					*destPixel = format.RGBToColor(r, g, b);
-				} else {
-					int glowDist = 0;
-					if (dx != 0 || dy != 0) {
-						glowDist = (int)(sqrtf((float)distSq) + 0.5f) - cornerRadius;
-					} else {
-						if (px < x)
-							glowDist = x - px;
-						else if (px >= x + w)
-							glowDist = px - (x + w - 1);
-						else if (py < y)
-							glowDist = y - py;
-						else if (py >= y + h)
-							glowDist = py - (y + h - 1);
-					}
-
-					if (glowDist > 0 && glowDist <= glowSize) {
-						int alpha = ((glowSize - glowDist) * 80) / glowSize;
-						byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-						byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-						byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-						*destPixel = format.RGBToColor(r, g, b);
-					}
-				}
-			}
+			byte r = (bgR * 40) / 100;
+			byte g = (bgG * 40) / 100;
+			byte b = (bgB * 40) / 100;
+			*destPixel = format.RGBToColor(r, g, b);
 		}
 	}
+
+	drawRectWithGlow(surface, x, y, w, h, overlayWidth, overlayHeight, format);
 }
 
 } // End of namespace Graphics

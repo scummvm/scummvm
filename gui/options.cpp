@@ -2775,7 +2775,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::MARKER_POINT);
 	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::MARKER_SQUARE);
 	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::MARKER_CROSSHAIR);
-	_hotspotMarkerPopUp->appendEntry(_("Circle"), Graphics::MARKER_CIRCLE);
 
 	_showHotspotTextCheckbox = new CheckboxWidget(boss, prefix + "ShowHotspotText",
 												  _("Show hotspot labels"),
