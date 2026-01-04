@@ -135,7 +135,7 @@ void MenuManager::menuLoop() {
 		_events->_leftMouseClicked = false;
 	} else if (_events->_rightMouseClicked) {
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
-		g_engine->stateGame = GAME;
+		g_engine->_state.stateGame = GAME;
 		_events->_rightMouseClicked = false;
 		tearDown();
 	} else {

@@ -20,10 +20,10 @@
  */
 
 #include "pelrock/actions.h"
+#include "pelrock.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "pelrock.h"
 
 namespace Pelrock {
 
@@ -35,7 +35,7 @@ const ActionEntry actionTable[] = {
 	{268, CLOSE, &PelrockEngine::closeDoor},
 	{3, PICKUP, &PelrockEngine::pickUpPhoto},
 	{0, PICKUP, &PelrockEngine::pickYellowBook}, // Generic pickup for other items
-    {4, PICKUP, &PelrockEngine::pickUpBrick}, // Brick
+	{4, PICKUP, &PelrockEngine::pickUpBrick},    // Brick
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOp}, // Generic pickup action
@@ -57,16 +57,17 @@ void PelrockEngine::openDrawer(HotSpot *hotspot) {
 		return;
 	}
 	_room->addSticker(_res->getSticker(91));
-	hotspot->isEnabled = false;
+	// TODO: Check if we need to disable the hotspot
+	_room->disableHotspot(hotspot);
 }
 
 void PelrockEngine::closeDrawer(HotSpot *hotspot) {
 	_room->removeSticker(91);
-	hotspot->isEnabled = true;
+	_room->enableHotspot(hotspot);
 }
 
 void PelrockEngine::openDoor(HotSpot *hotspot) {
-	_room->addSticker(_res->getSticker(93));
+	_room->addSticker(_res->getSticker(93), false);
 	_room->_currentRoomExits[0].isEnabled = true;
 }
 
@@ -91,11 +92,11 @@ void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
 		g_system->delayMillis(10);
 	}
 	_inventoryItems.push_back(hotspot->extra);
-	hotspot->isEnabled = false;
+	_room->disableHotspot(hotspot);
 }
 
 void PelrockEngine::pickUpPhoto(HotSpot *hotspot) {
-	_room->findHotspotByExtra(261)->isEnabled = true;
+	_room->enableHotspot(_room->findHotspotByExtra(261));
 }
 
 void PelrockEngine::pickYellowBook(HotSpot *hotspot) {
@@ -103,7 +104,7 @@ void PelrockEngine::pickYellowBook(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickUpBrick(HotSpot *hotspot) {
-    _room->addSticker(_res->getSticker(133));
+	_room->addSticker(_res->getSticker(133));
 }
 
 void PelrockEngine::noOp(HotSpot *hotspot) {

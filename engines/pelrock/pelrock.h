@@ -145,6 +145,7 @@ private:
 	bool gameInitialized = false;
 	bool screenReady = false;
 
+
 	// int prevDirX = 0;
 	// int prevDirY = 0;
 	// Common::String objectToShow = "";
@@ -162,7 +163,8 @@ public:
 	RoomManager *_room = nullptr;
 	AlfredState alfredState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
-	GameState stateGame = INTRO;
+
+	GameStateData _state;
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;

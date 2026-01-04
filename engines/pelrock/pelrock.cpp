@@ -115,22 +115,22 @@ Common::Error PelrockEngine::run() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldPlayIntro == false) {
-		stateGame = GAME;
+		_state.stateGame = GAME;
 		// stateGame = SETTINGS;
 	} else {
-		stateGame = INTRO;
+		_state.stateGame = INTRO;
 		_videoManager->playIntro();
-		stateGame = GAME;
+		_state.stateGame = GAME;
 	}
 	if (!shouldQuit())
 		init();
 
 	while (!shouldQuit()) {
 
-		if (stateGame == SETTINGS) {
+		if (_state.stateGame == SETTINGS) {
 			changeCursor(DEFAULT);
 			_menu->menuLoop();
-		} else if (stateGame == GAME) {
+		} else if (_state.stateGame == GAME) {
 			gameLoop();
 		}
 		_screen->update();
@@ -329,7 +329,7 @@ void PelrockEngine::checkMouse() {
 	} else if (_events->_rightMouseClicked) {
 		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
-		stateGame = SETTINGS;
+		_state.stateGame = SETTINGS;
 	}
 	checkMouseHover();
 }
@@ -411,8 +411,13 @@ void PelrockEngine::paintDebugLayer() {
 }
 
 void PelrockEngine::placeStickers() {
-	for (int i = 0; i < _room->_currentRoomStickers.size(); i++) {
-		Sticker sticker = _room->_currentRoomStickers[i];
+	for (int i = 0; i < _state.roomStickers[_room->_currentRoomNumber].size(); i++) {
+		Sticker sticker = _state.roomStickers[_room->_currentRoomNumber][i];
+		placeSticker(sticker);
+	}
+	// also place temporary stickers
+	for (int i = 0; i < _room->_transientStickers.size(); i++) {
+		Sticker sticker = _room->_transientStickers[i];
 		placeSticker(sticker);
 	}
 }
@@ -830,7 +835,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
-
 	if (hotspotIndex != -1 && !_actionPopupState.isActive) {
 
 		_actionPopupState.x = alfredState.x + kAlfredFrameWidth / 2 - kBalloonWidth / 2;
@@ -990,7 +994,7 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 				return spriteUnder ? i : -1;
 			}
 
-			return i;
+			return hotspot.index;
 		}
 	}
 	return -1;
@@ -1000,9 +1004,7 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 	for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
 		Exit exit = _room->_currentRoomExits[i];
 		if (x >= exit.x && x <= (exit.x + exit.w) &&
-			y >= exit.y && y <= (exit.y + exit.h)
-			&& exit.isEnabled
-		) {
+			y >= exit.y && y <= (exit.y + exit.h) && exit.isEnabled) {
 			return &(_room->_currentRoomExits[i]);
 		}
 	}
@@ -1325,8 +1327,6 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	else {
 		_sound->stopMusic();
 	}
-
-	_room->_currentRoomNumber = number;
 
 	_screen->markAllDirty();
 	_screen->update();

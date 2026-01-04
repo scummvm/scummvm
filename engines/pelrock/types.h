@@ -170,6 +170,7 @@ struct Anim {
 };
 
 struct Exit {
+	byte index;
 	int16 x;
 	int16 y;
 	byte w;
@@ -183,7 +184,7 @@ struct Exit {
 };
 
 struct Sprite {
-	int index; // number of the animation in the rooms
+	byte index; // number of the animation in the rooms
 	byte type;
 	int16 x;      // 0
 	int16 y;      // 2
@@ -201,7 +202,8 @@ struct Sprite {
 };
 
 struct HotSpot {
-	int index;
+	byte index;
+	byte innerIndex;
 	int id;
 	int16 x;
 	int16 y;
@@ -243,48 +245,6 @@ struct TalkingAnims {
 	byte **animB = nullptr;
 };
 
-struct ConversationElement {
-	enum Type {
-		DIALOGUE,
-		CHOICE_MARKER,
-		END_CONV,
-		END_BRANCH
-	} type;
-
-	Common::String speaker;
-	byte speakerId;
-	Common::String text;
-	int choiceIndex;
-	bool isRealChoice;
-
-	ConversationElement() : type(DIALOGUE), choiceIndex(-1), isRealChoice(false) {}
-};
-
-struct ConversationNode {
-	enum NodeType {
-		ROOT,
-		CHOICE,
-		RESPONSE
-	} type;
-
-	Common::String text;
-	Common::String speaker;
-	byte speakerId;
-	int choiceIndex;
-	bool terminated;
-
-	Common::Array<ConversationNode> choices;
-	Common::Array<ConversationNode> responses;
-	Common::Array<ConversationNode> subchoices;
-
-	ConversationNode() : type(ROOT), choiceIndex(-1), terminated(false) {}
-};
-
-struct StackEntry {
-	ConversationNode *node;
-	int index;
-};
-
 struct Description {
 	byte itemId;
 	byte index;
@@ -294,6 +254,7 @@ struct Description {
 };
 
 struct WalkBox {
+	byte index;
 	int16 x;
 	int16 y;
 	int16 w;
@@ -328,6 +289,24 @@ enum GameState {
 	SETTINGS = 104,
 	EXTRA_SCREEN = 105,
 	INTRO = 106,
+};
+
+struct HotSpotChange {
+	byte roomNumber;
+	byte hotspotIndex;
+	HotSpot hotspot;
+};
+
+struct ExitChange {
+	byte roomNumber;
+	byte exitIndex;
+	Exit exit;
+};
+
+struct WalkBoxChange {
+	byte roomNumber;
+	byte walkboxIndex;
+	WalkBox walkbox;
 };
 
 struct InventoryObject {
@@ -378,6 +357,15 @@ struct PaletteAnim {
 	byte paletteMode;
 	byte data[10]; // Based on mode its a rotate or fade
 	byte curFrameCount = 0;
+};
+
+
+struct GameStateData {
+	GameState stateGame = INTRO;
+	Common::HashMap<byte, Common::Array<Sticker>> roomStickers;
+	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
+	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
+	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
 };
 
 } // End of namespace Pelrock

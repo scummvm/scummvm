@@ -53,9 +53,19 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
-	void addSticker(Sticker sticker);
+	void addSticker(Sticker sticker, bool persist = true);
 	void removeSticker(int index);
 	bool hasSticker(int index);
+	void changeExit(Exit exit);
+	void changeWalkBox(WalkBox walkbox);
+	void changeHotSpot(HotSpot hotspot);
+	/**
+	 * Utility function to enable or disable a hotspot, with an option to persist the change.
+	 */
+	void enableHotspot(HotSpot *hotspot, bool persist = true);
+	void disableHotspot(HotSpot *hotspot, bool persist = true);
+	void addWalkbox(WalkBox walkbox);
+
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
@@ -82,13 +92,13 @@ public:
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
 	PaletteAnim *_currentPaletteAnim = nullptr;
-	Common::Array<Sticker> _currentRoomStickers;
 	byte *_conversationData = nullptr;
 	size_t _conversationDataSize = 0;
+	Common::Array<Sticker> _transientStickers;
 
 private:
 	void init();
-	void loadAnimationPixelData(Common::File *roomFile,  int roomOffset, byte *&buffer, size_t &outSize);
+	void loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize);
 	Common::Array<Sprite> loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
 	Common::Array<HotSpot> loadHotspots(byte *data, size_t size);
 	Common::Array<Exit> loadExits(byte *data, size_t size);
