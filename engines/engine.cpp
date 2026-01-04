@@ -59,6 +59,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/hotspot_renderer.h"
 #include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
@@ -760,14 +761,14 @@ void Engine::setShowHotspots(bool show) {
 		g_system->hideOverlay();
 }
 
-void Engine::getHotspotPositions(Common::Array<HotspotDisplayInfo> &hotspots) {
+void Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
 }
 
 void Engine::drawHotspots() {
 	if (!_showHotspots)
 		return;
 
-	Common::Array<HotspotDisplayInfo> hotspots;
+	Common::Array<Graphics::HotspotInfo> hotspots;
 	getHotspotPositions(hotspots);
 
 	if (hotspots.empty())
@@ -779,62 +780,25 @@ void Engine::drawHotspots() {
 	int16 overlayHeight = g_system->getOverlayHeight();
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
 
-	float scaleX = (float)overlayWidth / (float)gameWidth;
-	float scaleY = (float)overlayHeight / (float)gameHeight;
-
 	if (!g_system->isOverlayVisible())
 		g_system->showOverlay(false);
 
 	g_system->clearOverlay();
 
-	const int radius = 6;
-
 	Graphics::Surface overlayBuffer;
 	overlayBuffer.create(overlayWidth, overlayHeight, overlayFormat);
 	g_system->grabOverlay(overlayBuffer);
 
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	bool showText = ConfMan.getBool("show_hotspot_text", Common::ConfigManager::kApplicationDomain);
+	if (!ConfMan.hasKey("show_hotspot_text", Common::ConfigManager::kApplicationDomain))
+		showText = true;
+	const Graphics::Font *font = showText ? FontMan.getFontByUsage(Graphics::FontManager::kGUIFont) : nullptr;
 
-	for (uint i = 0; i < hotspots.size(); i++) {
-		int gameX = hotspots[i].position.x;
-		int gameY = hotspots[i].position.y;
-
-		int overlayX = (int)(gameX * scaleX);
-		int overlayY = (int)(gameY * scaleY);
-
-		if (overlayFormat.bytesPerPixel == 2) {
-			for (int dy = -radius; dy <= radius; dy++) {
-				for (int dx = -radius; dx <= radius; dx++) {
-					if (dx * dx + dy * dy <= radius * radius) {
-						int px = overlayX + dx;
-						int py = overlayY + dy;
-
-						if (px >= 0 && px < overlayWidth && py >= 0 && py < overlayHeight) {
-							uint16 *destPixel = (uint16 *)overlayBuffer.getBasePtr(px, py);
-
-							byte bgR, bgG, bgB, bgA;
-							overlayFormat.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
-
-							const byte alpha = 128;
-							byte r = ((255 * alpha) + (bgR * (255 - alpha))) / 255;
-							byte g = ((255 * alpha) + (bgG * (255 - alpha))) / 255;
-							byte b = ((255 * alpha) + (bgB * (255 - alpha))) / 255;
-
-							*destPixel = overlayFormat.RGBToColor(r, g, b);
-						}
-					}
-				}
-			}
-		}
-
-		if (font && !hotspots[i].name.empty()) {
-			int textX = overlayX + radius;
-			int textY = overlayY;
-
-			uint32 textColor = overlayFormat.RGBToColor(255, 255, 255);
-			font->drawString(&overlayBuffer, hotspots[i].name, textX, textY, overlayWidth - textX, textColor, Graphics::kTextAlignLeft);
-		}
-	}
+	Graphics::HotspotRenderer renderer;
+	int markerType = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
+	renderer.setMarkerShape((Graphics::MarkerShape)markerType);
+	renderer.render(&overlayBuffer, hotspots, gameWidth, gameHeight,
+	                overlayWidth, overlayHeight, overlayFormat, font);
 
 	g_system->copyRectToOverlay(overlayBuffer.getPixels(), overlayBuffer.pitch, 0, 0, overlayWidth, overlayHeight);
 	overlayBuffer.free();

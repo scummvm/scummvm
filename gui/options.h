@@ -329,6 +329,10 @@ protected:
 	EditTextWidget   *_randomSeed;
 	ButtonWidget	 *_randomSeedClearButton;
 	PopUpWidget      *_debugLevelPopUp;
+	CheckboxWidget   *_enableHotspotsCheckbox;
+	StaticTextWidget *_hotspotMarkerPopUpDesc;
+	PopUpWidget      *_hotspotMarkerPopUp;
+	CheckboxWidget   *_showHotspotTextCheckbox;
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;

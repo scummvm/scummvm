@@ -19,42 +19,44 @@
  *
  */
 
-#include "gui/browser.h"
-#include "gui/shaderbrowser-dialog.h"
-#include "gui/themebrowser.h"
-#include "gui/message.h"
-#include "gui/gui-manager.h"
 #include "gui/options.h"
+#include "gui/ThemeEval.h"
+#include "gui/browser.h"
+#include "gui/gui-manager.h"
+#include "gui/launcher.h"
+#include "gui/message.h"
+#include "gui/shaderbrowser-dialog.h"
+#include "gui/textviewer.h"
+#include "gui/themebrowser.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
-#include "gui/ThemeEval.h"
-#include "gui/launcher.h"
-#include "gui/textviewer.h"
 
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"
 
-#include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "common/gui_options.h"
 #include "common/rendermode.h"
 #include "common/rotationmode.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/updates.h"
 #include "common/util.h"
-#include "common/text-to-speech.h"
 
 #include "engines/achievements.h"
 
-#include "audio/mididrv.h"
-#include "audio/musicplugin.h"
-#include "audio/mixer.h"
 #include "audio/fmopl.h"
-#include "widgets/scrollcontainer.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
+#include "audio/musicplugin.h"
+
+#include "graphics/hotspot_renderer.h"
 #include "widgets/edittext.h"
+#include "widgets/scrollcontainer.h"
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
@@ -78,41 +80,42 @@
 namespace GUI {
 
 enum {
-	kMidiGainChanged		= 'mgch',
-	kMusicVolumeChanged		= 'muvc',
-	kSfxVolumeChanged		= 'sfvc',
-	kMuteAllChanged			= 'mute',
-	kSubtitleToggle			= 'sttg',
-	kSubtitleSpeedChanged	= 'stsc',
-	kSpeechVolumeChanged	= 'vcvc',
-	kChooseSoundFontCmd		= 'chsf',
-	kClearSoundFontCmd      = 'clsf',
-	kChooseSaveDirCmd		= 'chos',
-	kSavePathClearCmd		= 'clsp',
-	kChooseThemeDirCmd		= 'chth',
-	kChooseIconDirCmd		= 'chic',
-	kChooseDLCDirCmd		= 'chdc',
-	kThemePathClearCmd		= 'clth',
-	kBrowserPathClearCmd	= 'clbr',
-	kIconPathClearCmd		= 'clic',
-	kDLCPathClearCmd		= 'cldc',
-	kChooseExtraDirCmd		= 'chex',
-	kExtraPathClearCmd		= 'clex',
-	kChoosePluginsDirCmd	= 'chpl',
-	kPluginsPathClearCmd	= 'clpl',
-	kChooseThemeCmd			= 'chtf',
-	kUpdateIconsCmd			= 'upic',
-	kUpdateShadersCmd		= 'upsh',
-	kChooseShaderCmd        = 'chsh',
-	kClearShaderCmd         = 'clsh',
-	kUpdatesCheckCmd		= 'updc',
-	kKbdMouseSpeedChanged	= 'kmsc',
-	kJoystickDeadzoneChanged= 'jodc',
+	kMidiGainChanged = 'mgch',
+	kMusicVolumeChanged = 'muvc',
+	kSfxVolumeChanged = 'sfvc',
+	kMuteAllChanged = 'mute',
+	kSubtitleToggle = 'sttg',
+	kSubtitleSpeedChanged = 'stsc',
+	kSpeechVolumeChanged = 'vcvc',
+	kChooseSoundFontCmd = 'chsf',
+	kClearSoundFontCmd = 'clsf',
+	kChooseSaveDirCmd = 'chos',
+	kSavePathClearCmd = 'clsp',
+	kChooseThemeDirCmd = 'chth',
+	kChooseIconDirCmd = 'chic',
+	kChooseDLCDirCmd = 'chdc',
+	kThemePathClearCmd = 'clth',
+	kBrowserPathClearCmd = 'clbr',
+	kIconPathClearCmd = 'clic',
+	kDLCPathClearCmd = 'cldc',
+	kChooseExtraDirCmd = 'chex',
+	kExtraPathClearCmd = 'clex',
+	kChoosePluginsDirCmd = 'chpl',
+	kPluginsPathClearCmd = 'clpl',
+	kChooseThemeCmd = 'chtf',
+	kUpdateIconsCmd = 'upic',
+	kUpdateShadersCmd = 'upsh',
+	kChooseShaderCmd = 'chsh',
+	kClearShaderCmd = 'clsh',
+	kUpdatesCheckCmd = 'updc',
+	kKbdMouseSpeedChanged = 'kmsc',
+	kJoystickDeadzoneChanged = 'jodc',
 	kGraphicsTabContainerReflowCmd = 'gtcr',
-	kScalerPopUpCmd			= 'scPU',
-	kFullscreenToggled		= 'oful',
-	kRandomSeedClearCmd     = 'rndc',
-	kViewLogCmd             = 'vwlg',
+	kScalerPopUpCmd = 'scPU',
+	kFullscreenToggled = 'oful',
+	kRandomSeedClearCmd = 'rndc',
+	kViewLogCmd = 'vwlg',
+	kEnableHotspotsCmd = 'enhs',
 };
 
 enum {
@@ -123,7 +126,7 @@ enum {
 
 #ifdef USE_FLUIDSYNTH
 enum {
-	kFluidSynthSettingsCmd  = 'flst'
+	kFluidSynthSettingsCmd = 'flst'
 };
 #endif
 
@@ -145,8 +148,8 @@ enum {
 	kApplyCmd = 'appl'
 };
 
-static const char *const savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
-static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
+static const char *const savePeriodLabels[] = {_s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr};
+static const int savePeriodValues[] = {0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1};
 
 static const char *const guiBaseLabels[] = {
 	// I18N: Extremely large GUI scale
@@ -165,13 +168,12 @@ static const char *const guiBaseLabels[] = {
 	_s("50% - Smaller"),
 	// I18N: Smallest GUI scale
 	_s("25% - Smallest"),
-	nullptr
-};
-static const int guiBaseValues[] = { 200, 175, 150, 125, 100, 75, 50, 25, -1 };
+	nullptr};
+static const int guiBaseValues[] = {200, 175, 150, 125, 100, 75, 50, 25, -1};
 
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
-static const char *const kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
+static const char *const kbdMouseSpeedLabels[] = {"3", "5", "8", "10", "13", "15", "18", "20", nullptr};
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsContainer(nullptr), _tabWidget(nullptr) {
@@ -282,7 +284,7 @@ void OptionsDialog::build() {
 	// Control options
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
-			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
+			bool touchpadState = g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
 			if (_touchpadCheckbox != nullptr)
 				_touchpadCheckbox->setState(touchpadState);
 		}
@@ -438,7 +440,6 @@ void OptionsDialog::build() {
 
 					break;
 				}
-
 			}
 		} else {
 			_scalerPopUpDesc->setVisible(false);
@@ -581,7 +582,7 @@ void OptionsDialog::build() {
 void OptionsDialog::clean() {
 	delete _subToggleGroup;
 	while (_firstWidget) {
-		Widget* w = _firstWidget;
+		Widget *w = _firstWidget;
 		removeWidget(w);
 		// This is called from rebuild() which may result from handleCommand being called by
 		// a child widget sendCommand call. In such a case sendCommand is still being executed
@@ -754,7 +755,7 @@ void OptionsDialog::apply() {
 
 			if (_rendererTypePopUp) {
 				if (_rendererTypePopUp->getSelectedTag() > 0) {
-					Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
+					Graphics::RendererType selected = (Graphics::RendererType)_rendererTypePopUp->getSelectedTag();
 					ConfMan.set("renderer", Graphics::Renderer::getTypeCode(selected), _domain);
 				} else {
 					ConfMan.removeKey("renderer", _domain);
@@ -925,7 +926,7 @@ void OptionsDialog::apply() {
 
 			// If shader was changed, show the test dialog
 			if (previousShader != shader && !shader.empty() &&
-					shader != Common::Path("default", Common::Path::kNoSeparator)) {
+				shader != Common::Path("default", Common::Path::kNoSeparator)) {
 				if (!testGraphicsSettings()) {
 					ConfMan.setPath("shader", previousShader, _domain);
 					if (previousShader.empty() || previousShader == Common::Path("default", Common::Path::kNoSeparator)) {
@@ -1325,7 +1326,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 
 	if (g_system->hasFeature(OSystem::kFeatureVSync))
 		_vsyncCheckbox->setEnabled(enabled);
-
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1336,7 +1336,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	bool hasMidiDefined = _guioptions.contains(GUIO_MIDI_PREFIX);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
-		hasMidiDefined && // No Adlib is specified but others are
+		hasMidiDefined &&                                       // No Adlib is specified but others are
 		!(_guioptions.contains(GUIO_MIDIADLIB))) {
 		_oplPopUpDesc->setEnabled(false);
 		_oplPopUp->setEnabled(false);
@@ -1491,7 +1491,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	uint16 yPos = lineHeight + yStep * 3;
 
 	uint16 width;
-	uint16 textline_numchars;  // max number of chars in textline
+	uint16 textline_numchars; // max number of chars in textline
 	uint16 progressBarWidth;
 	uint16 commentDelta = g_gui.useLowResGUI() ? 20 : 30; // textline left tabbing
 	float scale_factor = g_gui.getScaleFactor();
@@ -1513,7 +1513,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
 		// run this twice, first view all achieved, then view all non-hidden & non-achieved
 
-		for (uint16 idx = 0; idx < nMax ; idx++) {
+		for (uint16 idx = 0; idx < nMax; idx++) {
 			const Common::AchievementDescription *descr = AchMan.getAchievementDescription(idx);
 			int16 isAchieved = AchMan.isAchieved(descr->id) ? 1 : 0;
 
@@ -1540,7 +1540,8 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 				Common::U32String comment_line(descr->comment);
 				uint16 str_chars = comment_line.size(), printed_chars = 0, i = 0;
 				while ((str_chars - printed_chars) > textline_numchars) { // check if string needs to go on multiple lines
-					for (i = (printed_chars + textline_numchars - 1); comment_line[i] != ' ' && i > 0; i--) {}; // find a space to avoid breaking words
+					for (i = (printed_chars + textline_numchars - 1); comment_line[i] != ' ' && i > 0; i--) {
+					}; // find a space to avoid breaking words
 					new StaticTextWidget(scrollContainer, lineHeight + commentDelta, yPos, width - commentDelta, yStep, Common::U32String(comment_line.begin() + (!printed_chars ? 0 : (printed_chars + 1)), comment_line.begin() + i), Graphics::kTextAlignStart, Common::U32String(), ThemeEngine::kFontStyleNormal);
 					yPos += yStep;
 					printed_chars = i;
@@ -1563,7 +1564,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr, Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
-		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
+		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight * 2, progressBarWidth, lineHeight);
 		progressBar->setMinValue(0);
 		progressBar->setValue(nAchieved);
 		progressBar->setMaxValue(nMax);
@@ -1584,7 +1585,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 	uint16 yPos = lineHeight;
 	uint16 width = g_gui.useLowResGUI() ? 240 : 410;
 
-	for (uint16 idx = 0; idx < nMax ; idx++) {
+	for (uint16 idx = 0; idx < nMax; idx++) {
 		const Common::StatDescription *descr = AchMan.getStatDescription(idx);
 
 		const Common::String &key = descr->comment.empty() ? descr->id : descr->comment;
@@ -1713,7 +1714,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
 		_rendererTypePopUp->appendEntry("");
 		for (Common::Array<Graphics::RendererTypeDescription>::iterator it = rt.begin();
-		        it != rt.end(); ++it) {
+			 it != rt.end(); ++it) {
 			if (!g_gui.useLowResGUI()) {
 				_rendererTypePopUp->appendEntry(_(it->description), it->id);
 			} else {
@@ -1771,15 +1772,14 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		for (auto &d : i) {
 			Common::String deviceGuiOption = MidiDriver::musicType2GUIO(d.getMusicType());
 
-			if ((_domain == Common::ConfigManager::kApplicationDomain && d.getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS, Macintosh and SegaCD options there
-				 && d.getMusicType() != MT_C64 && d.getMusicType() != MT_AMIGA && d.getMusicType() != MT_APPLEIIGS && d.getMusicType() != MT_PC98 && d.getMusicType() != MT_MACINTOSH && d.getMusicType() != MT_SEGACD)
-				|| (_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
-				|| (_guioptions.contains(deviceGuiOption)) // flag is present
+			if ((_domain == Common::ConfigManager::kApplicationDomain && d.getMusicType() != MT_TOWNS // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS, Macintosh and SegaCD options there
+				 && d.getMusicType() != MT_C64 && d.getMusicType() != MT_AMIGA && d.getMusicType() != MT_APPLEIIGS && d.getMusicType() != MT_PC98 && d.getMusicType() != MT_MACINTOSH && d.getMusicType() != MT_SEGACD) ||
+				(_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
+				|| (_guioptions.contains(deviceGuiOption))                                // flag is present
 				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
 				// else we would not show for example external devices connected via ALSA, since they are always
 				// marked as General MIDI device.
-				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
-				|| d.getMusicDriverId() == "auto" || d.getMusicDriverId() == "null") // always add default and null device
+				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32))) || d.getMusicDriverId() == "auto" || d.getMusicDriverId() == "null") // always add default and null device
 				_midiPopUp->appendEntry(_(d.getCompleteName()), d.getHandle());
 		}
 	}
@@ -1938,7 +1938,8 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	// Subtitle speed
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", Common::U32String(), kSubtitleSpeedChanged);
 	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
-	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
+	_subSpeedSlider->setMinValue(0);
+	_subSpeedSlider->setMaxValue(maxSliderVal);
 	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableSubtitleSettings = true;
@@ -1975,9 +1976,9 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	if (!g_gui.useLowResGUI())
-		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText", _("Speech volume:"));
 	else
-		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText", _c("Speech volume:", "lowres"));
 	if (ConfMan.isKeyTemporary("speech_volume"))
 		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", Common::U32String(), kSpeechVolumeChanged);
@@ -2148,7 +2149,6 @@ void OptionsDialog::updateScaleFactors(uint32 tag) {
 
 #pragma mark -
 
-
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), CommandSender(nullptr), _launcher(launcher) {
 #ifdef USE_FLUIDSYNTH
@@ -2179,6 +2179,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_rendererPopUp = nullptr;
 	_autosavePeriodPopUpDesc = nullptr;
 	_autosavePeriodPopUp = nullptr;
+	_hotspotMarkerPopUpDesc = nullptr;
+	_hotspotMarkerPopUp = nullptr;
 	_guiLanguagePopUpDesc = nullptr;
 	_guiLanguagePopUp = nullptr;
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
@@ -2425,16 +2427,16 @@ void GlobalOptionsDialog::build() {
 
 #if !defined(__DC__)
 	const auto setPath =
-	[&](GUI::PathWidget *const widget, const Common::String &pathType) {
-		Common::Path path(ConfMan.getPath(pathType));
-		if (ConfMan.isKeyTemporary(pathType)) {
-			widget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
-		}
-		if (!ConfMan.hasKey(pathType, _domain)) {
-			path.clear();
-		}
-		widget->setLabel(path);
-	};
+		[&](GUI::PathWidget *const widget, const Common::String &pathType) {
+			Common::Path path(ConfMan.getPath(pathType));
+			if (ConfMan.isKeyTemporary(pathType)) {
+				widget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+			}
+			if (!ConfMan.hasKey(pathType, _domain)) {
+				path.clear();
+			}
+			widget->setLabel(path);
+		};
 
 	setPath(_savePath, "savepath");
 	setPath(_themePath, "themepath");
@@ -2478,6 +2480,20 @@ void GlobalOptionsDialog::build() {
 	}
 
 	_debugLevelPopUp->setSelected(gDebugLevel + 1);
+
+	bool hotspotsEnabled = ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain);
+	_enableHotspotsCheckbox->setState(hotspotsEnabled);
+	_hotspotMarkerPopUpDesc->setEnabled(hotspotsEnabled);
+	_hotspotMarkerPopUp->setEnabled(hotspotsEnabled);
+
+	int hotspotMarker = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
+	_hotspotMarkerPopUp->setSelectedTag(hotspotMarker);
+
+	bool showHotspotText = ConfMan.getBool("show_hotspot_text", Common::ConfigManager::kApplicationDomain);
+	if (!ConfMan.hasKey("show_hotspot_text", Common::ConfigManager::kApplicationDomain))
+		showHotspotText = true;
+	_showHotspotTextCheckbox->setState(showHotspotText);
+	_showHotspotTextCheckbox->setEnabled(hotspotsEnabled);
 
 	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 	if (mode == ThemeEngine::kGfxDisabled)
@@ -2646,24 +2662,21 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		_guiReturnToLauncherAtExit = new CheckboxWidget(boss, prefix + "ReturnToLauncherAtExit",
-			_("Return to the launcher when leaving a game"),
-			_("Return to the launcher when leaving a game instead of closing ScummVM\n(this feature is not supported by all games).")
-		);
+														_("Return to the launcher when leaving a game"),
+														_("Return to the launcher when leaving a game instead of closing ScummVM\n(this feature is not supported by all games)."));
 
 		_guiReturnToLauncherAtExit->setState(ConfMan.getBool("gui_return_to_launcher_at_exit", _domain));
 	}
 
 	_guiConfirmExit = new CheckboxWidget(boss, prefix + "ConfirmExit",
-		_("Ask for confirmation on exit"),
-		_("Ask for permission when closing ScummVM or leaving a game.")
-	);
+										 _("Ask for confirmation on exit"),
+										 _("Ask for permission when closing ScummVM or leaving a game."));
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
 
 	_guiDisableBDFScaling = new CheckboxWidget(boss, prefix + "DisableBDFScaling",
-		_("Disable fixed font scaling"),
-		_("Do not upscale fixed size fonts in the GUI. This reduces artefacts on low resolution screens")
-	);
+											   _("Disable fixed font scaling"),
+											   _("Do not upscale fixed size fonts in the GUI. This reduces artefacts on low resolution screens"));
 
 	_guiDisableBDFScaling->setState(ConfMan.getBool("gui_disable_fixed_font_scaling", _domain));
 
@@ -2689,16 +2702,15 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 	else
 #ifdef USE_DETECTLANG
 		_guiLanguagePopUp->setSelectedTag(Common::kTranslationAutodetectId);
-#else // !USE_DETECTLANG
+#else  // !USE_DETECTLANG
 		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
 #endif // USE_DETECTLANG
 
 	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(boss, prefix + "GuiLanguageUseGameLanguage",
-			_("Switch the ScummVM GUI language to the game language"),
-			_("When starting a game, change the ScummVM GUI language to the game language. "
-			"That way, if a game uses the ScummVM save and load dialogs, they are "
-			"in the same language as the game.")
-	);
+															 _("Switch the ScummVM GUI language to the game language"),
+															 _("When starting a game, change the ScummVM GUI language to the game language. "
+															   "That way, if a game uses the ScummVM save and load dialogs, they are "
+															   "in the same language as the game."));
 
 	if (ConfMan.hasKey("gui_use_game_language")) {
 		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
@@ -2707,15 +2719,14 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 
 	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
 		_useSystemDialogsCheckbox = new CheckboxWidget(boss, prefix + "UseSystemDialogs",
-			_("Use native system file browser"),
-			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
-		);
+													   _("Use native system file browser"),
+													   _("Use the native system file browser instead of the ScummVM one to select a file or directory."));
 
 		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
 #ifdef USE_HTTP
-	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"),  _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
+	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"), _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
 #endif
 }
 
@@ -2754,11 +2765,26 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	// I18N: Debug level 11, all messages
 	_debugLevelPopUp->appendEntry(_("11 (all)"), 11);
 
+	_enableHotspotsCheckbox = new CheckboxWidget(boss, prefix + "EnableHotspots",
+												 _("Enable hotspot display"),
+												 _("Enable visual markers and labels for interactive objects"),
+												 kEnableHotspotsCmd);
+
+	_hotspotMarkerPopUpDesc = new StaticTextWidget(boss, prefix + "HotspotMarkerPopupDesc", _("Hotspot marker:"));
+	_hotspotMarkerPopUp = new PopUpWidget(boss, prefix + "HotspotMarkerPopup");
+	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::MARKER_POINT);
+	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::MARKER_SQUARE);
+	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::MARKER_CROSSHAIR);
+	_hotspotMarkerPopUp->appendEntry(_("Circle"), Graphics::MARKER_CIRCLE);
+
+	_showHotspotTextCheckbox = new CheckboxWidget(boss, prefix + "ShowHotspotText",
+												  _("Show hotspot labels"),
+												  _("Display text labels next to hotspot markers"));
+
 #ifdef USE_DISCORD
 	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
-		_("Enable Discord integration"),
-		_("Show information about the games you are playing on Discord if the Discord client is running.")
-	);
+											 _("Enable Discord integration"),
+											 _("Show information about the games you are playing on Discord if the Discord client is running."));
 
 	_discordRpcCheckbox->setState(ConfMan.getBool("discord_rpc", _domain));
 #endif
@@ -2863,14 +2889,13 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 	}
 
 	reflowNetworkTabLayout();
-
 }
 #endif // USE_SDL_NET
 
 #ifdef USE_TTS
 void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common::String &prefix) {
 	_ttsCheckbox = new CheckboxWidget(boss, prefix + "TTSCheckbox",
-			_("Use Text to speech"), _("Will read text in gui on mouse over."));
+									  _("Use Text to speech"), _("Will read text in gui on mouse over."));
 	if (ConfMan.hasKey("tts_enabled"))
 		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
 	else
@@ -2886,12 +2911,12 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
 	else {
 		_ttsVoiceSelectionPopUp->appendEntry(_("<default>"));
-		for(unsigned i = 0; i < voices.size(); i++)
+		for (unsigned i = 0; i < voices.size(); i++)
 			_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
 	}
 
-	if (ConfMan.hasKey("tts_voice", _domain) && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
-		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
+	if (ConfMan.hasKey("tts_voice", _domain) && (unsigned)ConfMan.getInt("tts_voice", _domain) < voices.size())
+		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain));
 	else
 		_ttsVoiceSelectionPopUp->setSelected(0);
 }
@@ -2902,11 +2927,9 @@ struct ExistingSave {
 	Common::String target;
 	SaveStateDescriptor desc;
 
-	ExistingSave(const Common::String &_engine, const Common::String &_target, const SaveStateDescriptor &_desc) :
-		engine(_engine),
-		target(_target),
-		desc(_desc)
-	{}
+	ExistingSave(const Common::String &_engine, const Common::String &_target, const SaveStateDescriptor &_desc) : engine(_engine),
+																												   target(_target),
+																												   desc(_desc) {}
 };
 
 bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
@@ -2954,10 +2977,10 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 		altButtons.push_back(_("Ignore"));
 		altButtons.push_back(_("Disable autosave"));
 		Common::U32String message = _("WARNING: Autosave was enabled. Some of your games have existing "
-				  "saved games on the autosave slot. You can either move the "
-				  "existing saves to new slots, disable autosave, or ignore (you "
-				  "will be prompted when autosave is about to overwrite a save).\n"
-				  "List of games:\n");
+									  "saved games on the autosave slot. You can either move the "
+									  "existing saves to new slots, disable autosave, or ignore (you "
+									  "will be prompted when autosave is about to overwrite a save).\n"
+									  "List of games:\n");
 		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
 			message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
 		message.deleteLastChar();
@@ -2976,7 +2999,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 				MetaEngine &metaEngine = plugin->get<MetaEngine>();
 				if (metaEngine.copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
 					g_system->getSavefileManager()->removeSavefile(
-							metaEngine.getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
+						metaEngine.getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
 				} else {
 					failedSaves.push_back(*it);
 				}
@@ -3007,16 +3030,16 @@ void GlobalOptionsDialog::apply() {
 	bool isRebuildNeeded = false;
 
 	const auto changePath =
-	[&](GUI::PathWidget *const widget, const Common::String &pathType) {
-		Common::Path label(widget->getLabel());
-		if (label != ConfMan.getPath(pathType)) {
-			widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
-			if (label.empty())
-				ConfMan.removeKey(pathType, _domain);
-			else
-				ConfMan.setPath(pathType, label, _domain);
-		}
-	};
+		[&](GUI::PathWidget *const widget, const Common::String &pathType) {
+			Common::Path label(widget->getLabel());
+			if (label != ConfMan.getPath(pathType)) {
+				widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+				if (label.empty())
+					ConfMan.removeKey(pathType, _domain);
+				else
+					ConfMan.setPath(pathType, label, _domain);
+			}
+		};
 
 	changePath(_savePath, "savepath");
 	changePath(_themePath, "themepath");
@@ -3060,6 +3083,10 @@ void GlobalOptionsDialog::apply() {
 
 		warning("Debug level set to %d", gDebugLevel);
 	}
+
+	ConfMan.setBool("enable_hotspots", _enableHotspotsCheckbox->getState(), Common::ConfigManager::kApplicationDomain);
+	ConfMan.setInt("hotspot_marker", _hotspotMarkerPopUp->getSelectedTag(), Common::ConfigManager::kApplicationDomain);
+	ConfMan.setBool("show_hotspot_text", _showHotspotTextCheckbox->getState(), Common::ConfigManager::kApplicationDomain);
 
 #ifdef USE_UPDATES
 	if (g_system->getUpdateManager()) {
@@ -3425,8 +3452,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-	case kChooseThemeCmd:
-	{
+	case kChooseThemeCmd: {
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
@@ -3440,6 +3466,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (_randomSeed) {
 			_randomSeed->setEditString(Common::U32String());
 		}
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	}
+	case kEnableHotspotsCmd: {
+		bool enabled = _enableHotspotsCheckbox->getState();
+		_hotspotMarkerPopUpDesc->setEnabled(enabled);
+		_hotspotMarkerPopUp->setEnabled(enabled);
+		_showHotspotTextCheckbox->setEnabled(enabled);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
@@ -3469,8 +3503,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	// fall through
 	case kSyncSavesStorageCmd: {
 		CloudMan.syncSaves(
-			new Common::Callback<GlobalOptionsDialog, const Cloud::Storage::BoolResponse &>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
-		);
+			new Common::Callback<GlobalOptionsDialog, const Cloud::Storage::BoolResponse &>(this, &GlobalOptionsDialog::storageSavesSyncedCallback));
 		break;
 	}
 	case kDownloadStorageCmd: {
@@ -3637,8 +3670,10 @@ void GlobalOptionsDialog::reflowLayout() {
 void GlobalOptionsDialog::setupCloudTab() {
 	_selectedStorageIndex = (_storagePopUp ? _storagePopUp->getSelectedTag() : (uint32)Cloud::kStorageNoneId);
 
-	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
-	if (_storagePopUp) _storagePopUp->setVisible(true);
+	if (_storagePopUpDesc)
+		_storagePopUpDesc->setVisible(true);
+	if (_storagePopUp)
+		_storagePopUp->setVisible(true);
 
 	Common::String username = CloudMan.getStorageUsername(_selectedStorageIndex);
 	bool storageConnected = (username != "");
@@ -3649,8 +3684,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	// there goes layout for connected Storage
 
-	if (_storageDisabledHint) _storageDisabledHint->setVisible(showingCurrentStorage && !enabled);
-	if (_storageEnableButton) _storageEnableButton->setVisible(showingCurrentStorage && !enabled);
+	if (_storageDisabledHint)
+		_storageDisabledHint->setVisible(showingCurrentStorage && !enabled);
+	if (_storageEnableButton)
+		_storageEnableButton->setVisible(showingCurrentStorage && !enabled);
 
 	// calculate shift
 	int16 x, y;
@@ -3666,12 +3703,14 @@ void GlobalOptionsDialog::setupCloudTab() {
 		shiftUp = y - shiftUp;
 	}
 
-	if (_storageUsernameDesc) _storageUsernameDesc->setVisible(shownConnectedInfo);
+	if (_storageUsernameDesc)
+		_storageUsernameDesc->setVisible(shownConnectedInfo);
 	if (_storageUsername) {
 		_storageUsername->setLabel(username);
 		_storageUsername->setVisible(shownConnectedInfo);
 	}
-	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shownConnectedInfo);
+	if (_storageUsedSpaceDesc)
+		_storageUsedSpaceDesc->setVisible(shownConnectedInfo);
 	if (_storageUsedSpace) {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		const char *usedSpaceUnits;
@@ -3683,7 +3722,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageSyncHint->setVisible(shownConnectedInfo);
 		_storageSyncHint->setEnabled(false);
 	}
-	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shownConnectedInfo);
+	if (_storageLastSyncDesc)
+		_storageLastSyncDesc->setVisible(shownConnectedInfo);
 	if (_storageLastSync) {
 		Common::U32String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
 		if (sync == "") {
@@ -3701,13 +3741,16 @@ void GlobalOptionsDialog::setupCloudTab() {
 	}
 
 	bool showDownloadButton = (showingCurrentStorage && _selectedStorageIndex != Cloud::kStorageGoogleDriveId); // cannot download via Google Drive
-	if (_storageDownloadHint) _storageDownloadHint->setVisible(showDownloadButton);
+	if (_storageDownloadHint)
+		_storageDownloadHint->setVisible(showDownloadButton);
 	if (_storageDownloadButton) {
 		_storageDownloadButton->setVisible(showDownloadButton);
 		_storageDownloadButton->setEnabled(enabled);
 	}
-	if (_storageDisconnectHint) _storageDisconnectHint->setVisible(shownConnectedInfo);
-	if (_storageDisconnectButton) _storageDisconnectButton->setVisible(shownConnectedInfo);
+	if (_storageDisconnectHint)
+		_storageDisconnectHint->setVisible(shownConnectedInfo);
+	if (_storageDisconnectButton)
+		_storageDisconnectButton->setVisible(shownConnectedInfo);
 
 	int16 disconnectWidgetsAdditionalShift = 0;
 	if (!showDownloadButton) {
@@ -3736,7 +3779,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	shown = (!shownConnectedInfo && shown);
 	bool wizardEnabled = !_connectingStorage;
-	if (_storageWizardNotConnectedHint) _storageWizardNotConnectedHint->setVisible(shown);
+	if (_storageWizardNotConnectedHint)
+		_storageWizardNotConnectedHint->setVisible(shown);
 	if (_storageWizardConnectButton) {
 		_storageWizardConnectButton->setVisible(shown);
 		_storageWizardConnectButton->setEnabled(wizardEnabled);
@@ -3756,7 +3800,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 }
 
 void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset) {
-	if (!widget) return;
+	if (!widget)
+		return;
 
 	int16 x, y;
 	int16 w, h;
@@ -3783,9 +3828,12 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 		else
 			_serverInfoLabel->setLabel(_("Not running"));
 	}
-	if (_rootPathButton) _rootPathButton->setVisible(true);
-	if (_rootPath) _rootPath->setVisible(true);
-	if (_rootPathClearButton) _rootPathClearButton->setVisible(true);
+	if (_rootPathButton)
+		_rootPathButton->setVisible(true);
+	if (_rootPath)
+		_rootPath->setVisible(true);
+	if (_rootPathClearButton)
+		_rootPathClearButton->setVisible(true);
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc) {
 		_serverPortDesc->setVisible(true);
@@ -3799,7 +3847,7 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 		_serverPortClearButton->setVisible(true);
 		_serverPortClearButton->setEnabled(!serverIsRunning);
 	}
-#else // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+#else  // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc)
 		_serverPortDesc->setVisible(false);
 	if (_serverPort)
@@ -3855,9 +3903,9 @@ bool OptionsDialog::testGraphicsSettings() {
 
 	// And display the error
 	GUI::CountdownMessageDialog dialog(_("A test pattern should be displayed.\nDo you want to keep these shader scaler settings?"),
-				10000,
-				_("Yes"), _("No"), Graphics::kTextAlignCenter,
-				_("Reverting automatically in %d seconds"));
+									   10000,
+									   _("Yes"), _("No"), Graphics::kTextAlignCenter,
+									   _("Reverting automatically in %d seconds"));
 
 	g_gui.displayTopDialogOnly(true);
 

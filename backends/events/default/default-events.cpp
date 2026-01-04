@@ -117,7 +117,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		// Show hotspots while 'h' key is held down
 		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
-			g_engine->setShowHotspots(true);
+			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
+				g_engine->setShowHotspots(true);
+			}
 		}
 		break;
 
@@ -126,7 +128,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		// Hide hotspots when 'h' key is released
 		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
-			g_engine->setShowHotspots(false);
+			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
+				g_engine->setShowHotspots(false);
+			}
 		}
 		break;
 
