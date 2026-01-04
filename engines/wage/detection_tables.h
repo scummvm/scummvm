@@ -343,7 +343,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64322), // alt version
 	FANGAMEN("The Time Squisher", "Time Squisher v 1.1", "3e296141e7a7c9b05e0dde779d9bb50d", 463526),
 	FANGAMEND("Time Star", "xn--Time Star-eh2e", "761e91f3da7217dc9516879a8ba08fd9", 210562), // Original file name "Time Star™"
-	FANGAMEN("Time Streak!!", "xn--Time Streak!!-8q9g", "e90f123a113e38c83c205b5fe50521fb", 483488), // Original file name "Time Streak!!™"
+	FANGAMEND("Time Streak!!", "xn--Time Streak!!-8q9g", "e90f123a113e38c83c205b5fe50521fb", 483488), // Original file name "Time Streak!!™"
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556283),
 	FANGAME("The Tower", "r:a79282051dd190bb8d41c7600bdc157e", 733539), // alt version
 	FANGAMEND("Tombworld", "xn--Demo TombWorld-8ra", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"
