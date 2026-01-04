@@ -30,25 +30,27 @@ namespace Views {
 
 class Intro : public View {
 private:
-	void showTitle() {
-		replaceView("Title");
-	}
+	int _page = 0;
+
+	void nextPage();
+
 public:
 	Intro() : View("Intro") {}
 	~Intro() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 
 	bool msgKeypress(const KeypressMessage &msg) override {
-		showTitle();
+		nextPage();
 		return true;
 	}
 	bool msgMouseDown(const MouseDownMessage &msg) override {
-		showTitle();
+		nextPage();
 		return true;
 	}
 	bool msgAction(const ActionMessage &msg) override {
-		showTitle();
+		nextPage();
 		return true;
 	}
 };
