@@ -89,7 +89,7 @@ void Intro::draw() {
 		s.writeString(Common::Point(1, 12), "  Z       Statistics    Statistics");
 		s.writeString(Common::Point(1, 14), "  A       N/A           Attack");
 		s.writeString(Common::Point(1, 16), "  P       Pause         Pause");
-		s.writeString(Common::Point(1, 18), "  E       Go Into Town  Clibm Ladder");
+		s.writeString(Common::Point(1, 18), "  E       Go Into Town  Climb Ladder");
 		s.writeString(Common::Point(1, 20), "  E       Go Castle     Go Hole");
 		s.writeString(Common::Point(1, 22), "SPACE     Pass          Pass");
 		break;
@@ -97,7 +97,7 @@ void Intro::draw() {
 	case 4:
 		s.writeString(Common::Point(0, 2), "     Thou doest know the basics of");
 		s.writeString(Common::Point(0, 4), "the game, experiment with the commands.");
-		s.writeString(Common::Point(0, 6), "There is much left unsid for");
+		s.writeString(Common::Point(0, 6), "There is much left unsaid for");
 		s.writeString(Common::Point(0, 8), "thee to discover in the future...");
 		s.writeString(Common::Point(0, 10), "Go now unto the world and seek");
 		s.writeString(Common::Point(0, 12), "adventure where thou might!!!");
