@@ -1,5 +1,7 @@
+add_library(common_compression)
+
 target_sources(
-  common
+  common_compression
   PRIVATE clickteam.cpp
           dcl.cpp
           gentee_installer.cpp
@@ -28,5 +30,5 @@ target_sources(
           vise.h
 )
 if(USE_ZLIB)
-  target_sources(common_compression PRIVATE zlib.cpp)
+  target_sources(common PRIVATE zlib.cpp)
 endif()

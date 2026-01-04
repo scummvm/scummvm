@@ -1,7 +1,7 @@
-# add_library(common_formats)
+add_library(common_formats)
 
 target_sources(
-  common
+  common_formats
   PRIVATE cue.cpp
           disk_image.cpp
           formatinfo.cpp

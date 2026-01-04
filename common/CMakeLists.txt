@@ -101,7 +101,13 @@ target_sources(
 
 add_subdirectory(formats)
 add_subdirectory(compression)
-add_subdirectory(lua)
+
+target_link_libraries(common PRIVATE common_formats common_compression)
+
+if(USE_LUA)
+  add_subdirectory(lua)
+  target_link_libraries(common PRIVATE common_lua)
+endif()
 
 if(ENABLE_EVENTRECORDER)
   target_sources(
