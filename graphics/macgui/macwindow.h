@@ -45,7 +45,9 @@ enum WindowType {
 };
 
 enum {
-	kBorderWidth = 17
+	kBorderWidth = 17,
+	kWindowMinWidth = 70,
+	kWindowMinHeight = 70
 };
 
 enum WindowClick {
@@ -398,6 +400,7 @@ public:
 
 	void setMode(uint32 mode) { _mode = mode; }
 	void setBorderOffsets(BorderOffsets &offsets) { _macBorder.setOffsets(offsets); }
+	const BorderOffsets &getBorderOffsets() const { return _macBorder.getOffset(); }
 
 	void updateInnerDims();
 
@@ -417,7 +420,6 @@ private:
 protected:
 	void drawBorder();
 	WindowClick isInBorder(int x, int y) const;
-	const BorderOffsets &getBorderOffsets() const { return _macBorder.getOffset(); }
 
 protected:
 	ManagedSurface _borderSurface;

@@ -167,10 +167,29 @@ void Gui::draw() {
 
 		_scene = _engine->_world->_player->_currentScene;
 
-		_sceneWindow->setTitle(_scene->_name);
-		_sceneWindow->setDimensions(*_scene->_designBounds);
+		Common::Rect sceneBounds = *_scene->_designBounds;
+		const Graphics::BorderOffsets &offsets = _sceneWindow->getBorderOffsets();
+
+		int maxTitleWidth = sceneBounds.width() - (kWindowMinWidth - offsets.right);
+		Common::String displayTitle = _scene->_name;
+
+		if (maxTitleWidth > 0) {
+			const Graphics::Font *titleFont = getTitleFont();
+			if (titleFont) {
+				// keep deleting the last character untill the title fits
+				while (displayTitle.size() > 0 && titleFont->getStringWidth(displayTitle) > maxTitleWidth) {
+					displayTitle.deleteLastChar();
+				}
+			}
+		} else {
+			displayTitle.clear();
+		}
+
+		_sceneWindow->setTitle(displayTitle);
+		_sceneWindow->setDimensions(sceneBounds);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
 
+		_wm->setActiveWindow(_consoleWindow->getId());
 		_wm->setFullRefresh(true);
 	}
 
@@ -408,6 +427,10 @@ const Graphics::MacFont *Gui::getConsoleMacFont() {
 
 const Graphics::Font *Gui::getConsoleFont() {
 	return _wm->_fontMan->getFont(*getConsoleMacFont());
+}
+
+const Graphics::Font *Gui::getTitleFont() {
+	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
 }
 
 void Gui::appendText(const char *s) {
