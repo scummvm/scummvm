@@ -28,7 +28,7 @@ namespace Views {
 
 static const char *WELCOME = "Welcome to the Adventure Shop";
 static const char *THANK_YOU = "Thank you m'lord";
-static const char *DONT_HAVE_THAT = "I'm Sorry We Don't have that.";
+//static const char *DONT_HAVE_THAT = "I'm Sorry We Don't have that.";
 static const char *NOT_ENOUGH = "M'Lord thou can not afford that item.";
 static const char *MAGES_CANT_USE = "I'm sorry, Mages can't use that.";
 static const char *BYE = "Bye";
