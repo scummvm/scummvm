@@ -2875,17 +2875,17 @@ void ScummEngine::setTimerAndShakeFrequency() {
 		if (_game.heversion < 70 && _game.platform == Common::kPlatformDOS) {
 			// HE6x DOS games use a slightly different (but not really...)
 			// mechanism to increment "piffies" (a quarter of a jiffy).
-			// 
+			//
 			// Fatty Bear, Putt-Putt's Fun Pack:
 			//   - PIT divisor: 0x5555 (21845) -> ~54.6 Hz timer interrupt
 			//   - The piffy value is directly incremented by 4 on every interrupt
 			//   - Effective jiffy rate: 54.6 Hz
-			// 
+			//
 			// Putt-Putt (1&2), Fatty Bear's Fun Pack, Putt-Putt & Fatty Bear's Activity Pack:
 			//   - PIT divisor: 0x2492 (9362) -> ~127.5 Hz timer interrupt
 			//   - The piffy value is directly incremented by 4 on every *other* interrupt
 			//   - Effective jiffy rate: 63.75 Hz
-			// 
+			//
 			// The multiplication by 4 below re-adapts these jiffy rates to our quarter-frame system.
 
 			if (_game.id == GID_FBEAR || _game.id == GID_FUNPACK) {
@@ -2987,7 +2987,7 @@ void ScummEngine::scummLoop(int delta) {
 				if (_voicePassHelpButtons) {
 					sayText(_passHelpButtons[adjustedObj], Common::TextToSpeechManager::INTERRUPT);
 				}
-				
+
 				_previousSaid = _passHelpButtons[adjustedObj];
 			}
 		} else {
@@ -4322,7 +4322,7 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 	return runDialog(dialog) == GUI::kMessageOK;
 }
 
-bool ScummEngine::displayMessageYesNo(const char *message, ...) {
+bool ScummEngine::displayMessageOKQuit(const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
