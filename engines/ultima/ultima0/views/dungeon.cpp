@@ -79,7 +79,7 @@ void Dungeon::drawMinimap(Graphics::ManagedSurface &mapArea) {
 				(x + 1) * MINIMAP_TILE_SIZE, (y + 1) * MINIMAP_TILE_SIZE);
 			if (x == player._dungeonPos.x && y == player._dungeonPos.y) {
 				mapArea.fillRect(r, C_CYAN);
-			} else if (dungeon.findMonster(Common::Point(x, y)) > 0) {
+			} else if (dungeon.findMonster(Common::Point(x, y)) >= 0) {
 				mapArea.fillRect(r, C_RED);
 			} else {
 				tile = dungeon._map[x][y];
