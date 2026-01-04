@@ -31,6 +31,9 @@ ScummVM Team
     ADL:
        Walter van Niftrik
 
+    AGDS:
+       Vladimir Menshakov
+
     AGI:
        Stuart George
        Matthew Hoops                  - (retired)
@@ -593,6 +596,7 @@ ScummVM Team
        Paul Gilbert
        Matthew Duggan
        Matthew Jimenez
+       Paul Robson                    - (Akalabeth)
        Daniel c. Wuerl                - (Nuvie)
        Eric Fry                       - (Nuvie)
        Jeremy Newman                  - (Nuvie)
@@ -622,6 +626,7 @@ ScummVM Team
     WAGE:
        Alikhan Balpykov
        Eugene Sandulenko
+       Alexei Svitkine                - (Java implementation author)
 
     Watchmaker:
        Einar Johan Troan Somaen;

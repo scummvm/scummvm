@@ -74,6 +74,15 @@ ADL
    * - Walter van Niftrik
      -
 
+AGDS
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Vladimir Menshakov
+     -
+
 AGI
 ^^^
 
@@ -1510,6 +1519,8 @@ Ultima
      -
    * - Matthew Jimenez
      -
+   * - Paul Robson
+     - (Akalabeth)
    * - Daniel c. Würl
      - (Nuvie)
    * - Eric Fry
@@ -1577,6 +1588,8 @@ WAGE
      -
    * - Eugene Sandulenko
      -
+   * - Alexei Svitkine
+     - (Java implementation author)
 
 Watchmaker
 ^^^^^^^^^^
