@@ -177,6 +177,12 @@ int MacDialog::run() {
 	bool shouldQuitEngine = false;
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
+	// we set _fullRefresh to true inside closeMenu() but it does not update the screen
+	// to ensure we capture the background without the menu we must force a draw
+	// draw() checks _fullRefresh flag which is set to true by closeMenu()
+	// so draw() will draw the screen again without the menu pixels
+	// if we don't call draw() then the background captured in the next line has the pixels of the menu.
+	_wm->draw();
 
 	_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 	_wm->pushCursor(kMacCursorArrow, nullptr);
