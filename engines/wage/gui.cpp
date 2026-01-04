@@ -583,6 +583,9 @@ void Gui::aboutDialog() {
 
 	delete buttons.back();
 	buttons.pop_back();
+	// close the menu before calling run because it blocks execution
+	if (_menu)
+		_menu->closeMenu();
 
 	int button = about.run();
 
