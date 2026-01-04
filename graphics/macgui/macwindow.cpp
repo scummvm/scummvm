@@ -138,6 +138,8 @@ void MacWindow::setActive(bool active) {
 bool MacWindow::isActive() const { return _active; }
 
 void MacWindow::resize(int w, int h) {
+	w = MAX(w, (int)kWindowMinWidth);
+	h = MAX(h, (int)kWindowMinHeight);
 	if (_composeSurface->w == w && _composeSurface->h == h)
 		return;
 
