@@ -42,8 +42,34 @@ namespace Wage {
 
 ImGuiState *_state = nullptr;
 
-ImGuiImage getImageID(Designed *d, const char *type) {
-	Common::String key = Common::String::format("%s:%s", d->_name.c_str(), type);
+ImGuiImage getPatternImage(int fillType) {
+	int index = fillType - 1;
+	if (index >= 0 && index < (int)_state->_patternTextures.size()) {
+		return _state->_patternTextures[index];
+	}
+	return {0, 0, 0};
+}
+
+void drawThicknessIcon(int thickness) {
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+
+	// draw Border
+	dl->AddRect(pos, pos + ImVec2(16, 16), IM_COL32(255, 255, 255, 255));
+
+	float half = thickness * 0.5f;
+	// draw Bar
+	dl->AddRectFilled(
+		ImVec2(pos.x, pos.y + 8 - half),
+		ImVec2(pos.x + 16, pos.y + 8 + half),
+		IM_COL32(255, 255, 255, 255));
+
+	ImGui::Dummy(ImVec2(16, 16));
+	ImGui::SetItemTooltip("Line thickness: %d", thickness);
+}
+
+ImGuiImage getImageID(Designed *d, const char *type, int steps = -1) {
+	Common::String key = Common::String::format("%s:%s:%d", d->_name.c_str(), type, steps);
 
 	if (_state->_images.contains(key))
 		return _state->_images[key];
@@ -64,7 +90,7 @@ ImGuiImage getImageID(Designed *d, const char *type) {
 	surface->create(sx, sy, Graphics::PixelFormat::createFormatCLUT8());
 	surface->fillRect(Common::Rect(0, 0, sx, sy), 4); // white background
 
-	d->_design->paint(surface, *g_wage->_world->_patterns, 0, 0);
+	d->_design->paint(surface, *g_wage->_world->_patterns, 0, 0, steps);
 
 	if (surface->surfacePtr()) {
 		_state->_images[key] = { (ImTextureID)g_system->getImGuiTexture(*surface->surfacePtr(), g_wage->_gui->_wm->getPalette(), g_wage->_gui->_wm->getPaletteSize()), sx, sy };
@@ -80,10 +106,135 @@ void showImage(const ImGuiImage &image, float scale) {
 
 	ImGui::BeginGroup();
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
-	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(size.x, size.y), 0xFFFFFFFF);
+    ImGui::Image(image.id, size);
 
-	ImGui::Image(image.id, size);
+	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(size.x, size.y), 0xFFFFFFFF);
 	ImGui::EndGroup();
+}
+
+void showDesignScriptWindow(Design *d) {
+	if (!_state->_showScriptWindow)
+		return;
+
+	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Design Script", &_state->_showScriptWindow)) {
+
+		for (uint i = 0; i < d->_drawOps.size(); i++) {
+			const DrawOp &op = d->_drawOps[i];
+			// check if this is the current step
+			bool isCurrent = (_state->_currentStep == i + 1);
+
+			if (isCurrent) {
+				ImVec2 pos = ImGui::GetCursorScreenPos();
+				float width = ImGui::GetContentRegionAvail().x;
+				ImDrawList *dl = ImGui::GetWindowDrawList();
+
+				ImU32 green = IM_COL32(0, 255, 0, 255);
+				ImU32 greenTransparent = IM_COL32(0, 255, 0, 50);
+
+				// draw Arrow 
+				dl->AddText(pos, green, ICON_MS_ARROW_RIGHT_ALT);
+
+				// draw highlight
+				dl->AddRectFilled(
+					ImVec2(pos.x + 16.f, pos.y),
+					ImVec2(pos.x + width, pos.y + 16.f),
+					greenTransparent,
+					0.4f);
+			}
+
+			// offset text to the right so it doesn't overlap the arrow
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 16.0f);
+
+			// opcode
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "[%5d]", op.offset);
+			ImGui::SameLine();
+
+			// draw current foreground fill pattern
+			if (op.fillType > 0) {
+				ImGuiImage patImg = getPatternImage(op.fillType);
+				if (patImg.id) {
+					showImage(patImg, 1.0f);
+					ImGui::SetItemTooltip("Foreground pattern: %d", op.fillType);
+					ImGui::SameLine();
+				}
+			}
+
+			// draw current border fill pattern
+			if (op.borderFillType > 0) {
+				ImGuiImage patImg = getPatternImage(op.borderFillType);
+				if (patImg.id) {
+					showImage(patImg, 1.0f);
+					ImGui::SetItemTooltip("Border pattern: %d", op.borderFillType);
+					ImGui::SameLine();
+				}
+			}
+
+			// draw line thickness icon
+			if (op.borderThickness > 0) {
+				drawThicknessIcon(op.borderThickness);
+				ImGui::SameLine();
+			}
+
+			Common::String label = Common::String::format("%s##%d", op.opcode.c_str(), i);
+			if (ImGui::Selectable(label.c_str(), isCurrent)) {
+				_state->_currentStep = i + 1;
+			}
+			if (isCurrent) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+	}
+	ImGui::End();
+}
+
+void showDesignViewer(Designed *item, const char *typeStr) {
+	if (!item)
+		return;
+
+	Design *d = item->_design;
+	if (d) {
+		if (d->_drawOps.empty()) {
+			// force render to populate ops
+			Graphics::ManagedSurface tmp;
+			tmp.create(1, 1, Graphics::PixelFormat::createFormatCLUT8());
+			d->paint(&tmp, *g_wage->_world->_patterns, 0, 0, -1);
+			tmp.free();
+		}
+
+		uint totalSteps = d->_drawOps.size();
+
+		if (ImGui::Button(ICON_MS_SKIP_PREVIOUS)) {
+			if (_state->_currentStep > 1)
+				_state->_currentStep--;
+			else
+				_state->_currentStep = totalSteps;
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button(ICON_MS_SKIP_NEXT)) {
+			if (_state->_currentStep < totalSteps)
+				_state->_currentStep++;
+			else
+				_state->_currentStep = 1;
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Script")) {
+			_state->_showScriptWindow = !_state->_showScriptWindow;
+		}
+		ImGui::SameLine();
+		ImGui::Text("Step: %d / %d", (_state->_currentStep), totalSteps);
+
+		if (d->getBounds()) {
+			ImGuiImage imgID = getImageID(item, typeStr, _state->_currentStep);
+			showImage(imgID, 1.0);
+		}
+		showDesignScriptWindow(d);
+	} else {
+		ImGui::Text("No Design Data");
+	}
 }
 
 static void showWorld() {
@@ -122,8 +273,10 @@ static void showWorld() {
 						for (int n = 0; n < (int)g_wage->_world->_orderedScenes.size(); n++) {
 							const bool is_selected = (_state->_selectedScene == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedScenes[n]->_name.c_str(), n);
-							if (ImGui::Selectable(label.c_str(), is_selected))
+							if (ImGui::Selectable(label.c_str(), is_selected)) {
 								_state->_selectedScene = n;
+								_state->_currentStep = 1;
+							}
 
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 							if (is_selected)
@@ -160,9 +313,8 @@ static void showWorld() {
 						}
 
 						if (ImGui::BeginTabItem("Design")) {
-							ImGuiImage imgID = getImageID(g_wage->_world->_orderedScenes[_state->_selectedScene], "obj");
-
-							showImage(imgID, 1.0);
+							Designed *d = g_wage->_world->_orderedScenes[_state->_selectedScene];
+							showDesignViewer(d, "scene");
 							ImGui::EndTabItem();
 						}
 
@@ -201,9 +353,7 @@ static void showWorld() {
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					ImGuiImage imgID = getImageID(g_wage->_world->_orderedObjs[_state->_selectedObj], "obj");
-
-					showImage(imgID, 1.0);
+					showDesignViewer(g_wage->_world->_orderedObjs[_state->_selectedObj], "obj");
 
 					ImGui::EndChild();
 				}
@@ -315,6 +465,25 @@ void onImGuiInit() {
 	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
+
+	// pre-load patterns into array
+	Graphics::MacPatterns &patterns = *g_wage->_world->_patterns;
+	for (uint i = 0; i < patterns.size(); ++i) {
+		Graphics::ManagedSurface surface(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+		Common::Rect rect(16, 16);
+		Design::drawFilledRect(&surface, rect, kColorBlack, patterns, i + 1);
+
+		if (surface.surfacePtr()) {
+			ImTextureID tex = (ImTextureID)g_system->getImGuiTexture(
+				*surface.surfacePtr(),
+				g_wage->_gui->_wm->getPalette(),
+				g_wage->_gui->_wm->getPaletteSize());
+
+			_state->_patternTextures.push_back({tex, 16, 16});
+		} else {
+			_state->_patternTextures.push_back({0, 0, 0});
+		}
+	}
 }
 
 void onImGuiRender() {
