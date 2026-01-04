@@ -84,10 +84,12 @@ bool Console::cmdDemo(int argc, const char **argv) {
 	auto &p = g_engine->_player;
 	auto &map = g_engine->_worldMap;
 
+	p.init();
 	Common::strcpy_s(p._name, "Demo");	// Characters Name
 	p._class = 'F';						// Fighter
 	p._luckyNumber = 42;					// Always the same.....
 	p._skill = 1;						// Skill level 1
+	p._task = 1;						// Starting first task
 
 	// Nice high attributes
 	Common::fill(p._attr, p._attr + MAX_ATTR, 15);
@@ -110,10 +112,13 @@ bool Console::cmdDebug(int argc, const char **argv) {
 	auto &map = g_engine->_worldMap;
 	int i;
 
+	p.init();
 	Common::strcpy_s(p._name, "Debuggo");	// Characters Name
 	p._class = 'F';							// Fighter
 	p._luckyNumber = 42;					// Always the same.....
 	p._skill = 1;							// Skill level 1
+	p._task = 1;							// Starting first task
+
 	for (i = 0; i < MAX_ATTR; i++)			// Nice high attributes
 		p._attr[i] = 99;
 	p._attr[AT_HP] = 999;
