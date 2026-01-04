@@ -61,7 +61,7 @@ public:
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
-	bool msgMouseDown(const MouseDownMessage &msg);
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
 } // namespace Views

@@ -56,7 +56,7 @@ public:
 
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-	void timeout();
+	void timeout() override;
 };
 
 } // namespace Views
