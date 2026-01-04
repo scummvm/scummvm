@@ -48,7 +48,7 @@ static const byte PALETTE[][3] = {
 Ultima0Engine *g_engine;
 
 Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima0"),
+		Engine(syst), /*_gameDescription(gameDesc), */_randomSource("Ultima0"),
 		_palette(&PALETTE[0][0], sizeof(PALETTE) / 3) {
 	g_engine = this;
 }

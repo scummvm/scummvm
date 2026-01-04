@@ -37,7 +37,7 @@ namespace Ultima0 {
 class Ultima0Engine : public Engine, public Events {
 private:
 	Common::RandomSource _randomSource;
-	const UltimaGameDescription *_gameDescription;
+	//const UltimaGameDescription *_gameDescription;
 
 	void syncSavegame(Common::Serializer &s);
 
