@@ -35,6 +35,10 @@ WorldMap::WorldMap() : View("WorldMap") {
 bool WorldMap::msgFocus(const FocusMessage &msg) {
 	showMessage("");
 	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
+
+	if (!g_engine->isMidiPlaying())
+		g_engine->playMidi("over.mid");
+
 	return true;
 }
 
@@ -120,6 +124,7 @@ void WorldMap::endOfTurn() {
 	auto &player = g_engine->_player;
 
 	if (player._attr[AT_HP] <= 0) {
+		g_engine->stopMidi();
 		replaceView("Dead");
 
 	} else {
@@ -135,6 +140,8 @@ void WorldMap::timeout() {
 	const auto &map = g_engine->_worldMap;
 	auto &player = g_engine->_player;
 	auto &dungeon = g_engine->_dungeon;
+
+	g_engine->stopMidi();
 
 	if (player._attr[AT_HP] <= 0 || player._object[OB_FOOD] <= 0) {
 		// Timeout from displaying player was killed

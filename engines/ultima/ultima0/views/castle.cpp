@@ -42,6 +42,12 @@ bool Castle::msgFocus(const FocusMessage &msg) {
 		_mode = TASK_INCOMPLETE;
 	}
 
+	g_engine->playMidi("lordbrit.mid");
+	return true;
+}
+
+bool Castle::msgUnfocus(const UnfocusMessage &msg) {
+	g_engine->stopMidi();
 	return true;
 }
 

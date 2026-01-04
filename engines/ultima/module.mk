@@ -13,6 +13,7 @@ MODULE_OBJS += \
 	ultima0/events.o \
 	ultima0/messages.o \
 	ultima0/metaengine.o \
+	ultima0/music.o \
 	ultima0/data/data.o \
 	ultima0/data/monster_logic.o \
 	ultima0/gfx/dungeon.o \

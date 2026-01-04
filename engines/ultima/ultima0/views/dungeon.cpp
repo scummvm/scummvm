@@ -37,6 +37,10 @@ bool Dungeon::msgFocus(const FocusMessage &msg) {
 	showMessage("");
 	showLines("");
 	MetaEngine::setKeybindingMode(KBMODE_DUNGEONS);
+
+	if (!g_engine->isMidiPlaying())
+		g_engine->playMidi("dungeon.mid");
+
 	return true;
 }
 
@@ -162,6 +166,7 @@ void Dungeon::endOfTurn() {
 	auto &dungeon = g_engine->_dungeon;
 
 	if (player._attr[AT_HP] <= 0) {
+		g_engine->stopMidi();
 		replaceView("Dead");
 		return;
 	}
@@ -172,6 +177,7 @@ void Dungeon::endOfTurn() {
 	player._object[OB_FOOD] = MAX(player._object[OB_FOOD] - 0.1, 0.0);
 	if (player._object[OB_FOOD] == 0) {
 		showMessage("You have starved...");
+		g_engine->stopMidi();
 		delaySeconds(1);
 	}
 
@@ -272,6 +278,7 @@ void Dungeon::interact() {
 
 void Dungeon::timeout() {
 	const auto &player = g_engine->_player;
+	g_engine->stopMidi();
 
 	replaceView((player._level == 0) ? "WorldMap" : "Dead");
 }

@@ -29,6 +29,7 @@
 #include "ultima/detection.h"
 #include "ultima/ultima0/data/data.h"
 #include "ultima/ultima0/events.h"
+#include "ultima/ultima0/music.h"
 
 namespace Ultima {
 namespace Ultima0 {
@@ -50,6 +51,7 @@ public:
 	WorldMapInfo _worldMap;
 	DungeonMapInfo _dungeon;
 	bool _showMinimap = false;
+	MusicPlayer *_music = nullptr;
 
 	Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima0Engine() override;
@@ -119,6 +121,12 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savegamesExist() const;
+
+	void playMidi(const char *name);
+	void stopMidi();
+	bool isMidiPlaying() const {
+		return _music != nullptr;
+	}
 };
 
 extern Ultima0Engine *g_engine;

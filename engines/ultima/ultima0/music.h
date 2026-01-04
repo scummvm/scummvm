@@ -19,42 +19,28 @@
  *
  */
 
-#ifndef ULTIMA0_VIEWS_CASTLE_H
-#define ULTIMA0_VIEWS_CASTLE_H
+// Music class
 
-#include "ultima/ultima0/views/view.h"
+#ifndef ULTIMA_ULTIMA0_MUSIC_H
+#define ULTIMA_ULTIMA0_MUSIC_H
+
+#include "audio/midiplayer.h"
 
 namespace Ultima {
 namespace Ultima0 {
-namespace Views {
 
-class Castle : public View {
+class MusicPlayer : public Audio::MidiPlayer {
 private:
-	enum Mode {
-		NAMING, GRAND_ADVENTURE, BEGONE, FIRST_TASK, TASK_COMPLETE, TASK_INCOMPLETE
-	};
-	Mode _mode = NAMING;
-	Common::String _playerName;
-
-	void firstTime();
-	void taskCompleted();
-	void taskIncomplete();
-	void nextTask();
-	void pressAnyKey();
-	Common::String getTaskName(int taskNum) const;
+	Common::Path _filename;
 
 public:
-	Castle() : View("Castle") {}
-	~Castle() override {}
+	MusicPlayer(const char *filename);
+	void playSMF(bool loop = false);
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
+	// Overload Audio::MidiPlayer method
+	void sendToChannel(byte channel, uint32 b) override;
 };
 
-} // namespace Views
 } // namespace Ultima0
 } // namespace Ultima
 

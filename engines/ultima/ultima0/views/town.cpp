@@ -38,7 +38,13 @@ Town::Town() : Info("Town") {
 
 bool Town::msgFocus(const FocusMessage &msg) {
 	_message = WELCOME;
+	g_engine->playMidi("shop.mid");
 	return Info::msgFocus(msg);
+}
+
+bool Town::msgUnfocus(const UnfocusMessage &msg) {
+	g_engine->stopMidi();
+	return Info::msgUnfocus(msg);
 }
 
 void Town::draw() {

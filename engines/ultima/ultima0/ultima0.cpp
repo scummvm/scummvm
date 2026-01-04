@@ -54,6 +54,7 @@ Ultima0Engine::Ultima0Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 }
 
 Ultima0Engine::~Ultima0Engine() {
+	stopMidi();
 }
 
 Common::Error Ultima0Engine::run() {
@@ -91,6 +92,7 @@ Common::Error Ultima0Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	Common::Serializer s(stream, nullptr);
 	syncSavegame(s);
 
+	stopMidi();
 	replaceView(_player._level == 0 ? "WorldMap" : "Dungeon");
 
 	return Common::kNoError;
@@ -115,6 +117,21 @@ bool Ultima0Engine::savegamesExist() const {
 
 	delete saveFile;
 	return result;
+}
+
+void Ultima0Engine::playMidi(const char *name) {
+	stopMidi();
+
+	_music = new MusicPlayer(name);
+	_music->playSMF(true);
+}
+
+void Ultima0Engine::stopMidi() {
+	if (_music) {
+		_music->stop();
+		delete _music;
+		_music = nullptr;
+	}
 }
 
 } // namespace Ultima0

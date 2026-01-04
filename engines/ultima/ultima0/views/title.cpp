@@ -33,6 +33,13 @@ bool Title::msgFocus(const FocusMessage &msg) {
 	_highlightedOption = 0;
 	updateSelections();
 	MetaEngine::setKeybindingMode(KBMODE_MENUS);
+
+
+	Common::String priorView = msg._priorView->getName();
+	if (priorView == "Startup" || priorView == "Dead") {
+		g_engine->playMidi("intro.mid");
+	}
+
 	return true;
 }
 
@@ -97,6 +104,9 @@ bool Title::msgMouseDown(const MouseDownMessage &msg) {
 }
 
 void Title::selectOption() {
+	if (_highlightedOption == 1 || _highlightedOption == 3)
+		g_engine->stopMidi();
+
 	if (_highlightedOption == 3) {
 		if (g_engine->savegamesExist()) {
 			g_engine->loadGameDialog();
