@@ -167,7 +167,6 @@ Short options are listed where they are available.
         ``--engine=ID``,,"In combination with ``--list-games`` or ``--list-all-games`` only lists games for this engine",
         ``--engine-speed=NUM``,,"Sets frame-per-second limit for Grim Fandango or Escape from Monkey Island. 0 is no limit. Allowed values 0 - 100", 60
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`",
-        ``--fast-mode``,, "Enable fast playback mode (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
         ``--filtering``,,":ref:`Forces filtered graphics mode <filtering>`",false
         ``--fullscreen``,``-f``,":ref:`Forces full-screen mode <fullscreen>`",false
         ``--game=ID``,,"In combination with ``--add`` or ``--detect`` only adds or attempts to detect the game with specified ID.",
@@ -228,7 +227,7 @@ Short options are listed where they are available.
         - windows",
         ``--random-seed=SEED``,,":ref:`Sets the random seed used to initialize entropy <seed>`",
         ``--record-file-name=FILE``,,"Specifies recorded file name (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",record.bin
-        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, info, update, passthrough.", none
+        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, fast_playback, info, update, passthrough.", none
         ``--recursive``,,"In combination with ``--add or ``--detect`` recurses down all subdirectories",
         ``--renderer=RENDERER``,,"Selects 3D renderer. Allowed values: software, opengl, opengl_shaders",
         ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`.

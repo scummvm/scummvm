@@ -204,7 +204,7 @@ static const char HELP_STRING4[] =
 	"                           atari, macintosh, macintoshbw, vgaGray)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
-	"                           info, update, passthrough [default])\n"
+	"                           fast_playback, info, update, passthrough [default])\n"
 	"  --record-file-name=FILE  Specify record file name\n"
 	"  --disable-display        Disable any gfx output. Used for headless events\n"
 	"                           playback by Event Recorder\n"
@@ -212,7 +212,6 @@ static const char HELP_STRING4[] =
 	"                           (default: 60000)\n"
 	"  --list-records           Display a list of recordings for the target specified\n"
 	"  --list-records-json      Display a list of recordings in JSON format for the target specified\n"
-	"  --fast-mode              Enable fast mode for event recorder playback\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -385,7 +384,6 @@ void registerDefaults() {
 
 #ifdef ENABLE_EVENTRECORDER
 	ConfMan.registerDefault("disable_display", false);
-	ConfMan.registerDefault("fast_mode", false);
 #endif
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
@@ -832,9 +830,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_LONG_OPTION_INT("screenshot-period")
-			END_OPTION
-
-			DO_LONG_OPTION_BOOL("fast-mode")
 			END_OPTION
 #endif
 

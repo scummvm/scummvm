@@ -80,6 +80,7 @@ public:
 	void init(const Common::String &recordFileName, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
+	void setFastPlayback(bool fastPlayback);
 	uint32 getRandomSeed(const Common::String &name);
 	void processTimeAndDate(TimeDate &td, bool skipRecord);
 	void processMillis(uint32 &millis, bool skipRecord);
