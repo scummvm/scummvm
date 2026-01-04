@@ -31,6 +31,20 @@ namespace Pelrock {
 
 static const int kNumSfxPerRoom = 8;
 
+struct ResetEntry {
+	uint16 room;
+	uint16 offset;
+	byte dataSize;
+	byte *data = nullptr;
+
+	~ResetEntry() {
+		if (data != nullptr) {
+			delete[] data;
+			data = nullptr;
+		}
+	}
+};
+
 class RoomManager {
 public:
 	RoomManager();
@@ -73,6 +87,7 @@ public:
 	size_t _conversationDataSize = 0;
 
 private:
+	void init();
 	void loadAnimationPixelData(Common::File *roomFile,  int roomOffset, byte *&buffer, size_t &outSize);
 	Common::Array<Sprite> loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
 	Common::Array<HotSpot> loadHotspots(byte *data, size_t size);
@@ -81,7 +96,7 @@ private:
 	Common::Array<WalkBox> loadWalkboxes(byte *data, size_t size);
 	Common::Array<Description> loadRoomTexts(Common::File *roomFile, int roomOffset);
 
-	void resetRoomDefaults(byte *data, size_t size);
+	void resetRoomDefaults(byte room, byte *&data, size_t size);
 
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);
@@ -90,6 +105,7 @@ private:
 	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
 
 	Common::StringArray _roomNames;
+	byte *_resetData = nullptr;
 };
 
 } // End of namespace Pelrock

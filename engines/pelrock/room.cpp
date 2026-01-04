@@ -43,6 +43,7 @@ RoomManager::~RoomManager() {
 		delete[] _pixelsShadows;
 		_pixelsShadows = nullptr;
 	}
+	delete[] _resetData;
 }
 
 void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palette) {
@@ -209,7 +210,6 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 	int pair10StartingPos = 0x47a;
 
-
 	byte hotspot_count = data[pair10StartingPos];
 	int hotspotsDataStart = pair10StartingPos + 2;
 	Common::Array<HotSpot> hotspots;
@@ -245,8 +245,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	roomFile->read(pair10, pair10size);
 
 	// The user's game can be in any state so we reset to defaults first
-	resetRoomDefaults(pair10, pair10size);
-
+	resetRoomDefaults(roomNumber, pair10, pair10size);
 
 	byte *pic = nullptr;
 	size_t pixelDataSize = 0;
@@ -257,7 +256,6 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	Common::Array<WalkBox> walkboxes = loadWalkboxes(pair10, pair10size);
 	Common::Array<Exit> exits = loadExits(pair10, pair10size);
 	ScalingParams scalingParams = loadScalingParams(pair10, pair10size);
-
 
 	Common::Array<Description> descriptions = loadRoomTexts(roomFile, roomOffset);
 	Common::Array<HotSpot> hotspots;
@@ -320,13 +318,24 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	delete[] pair10;
 }
 
+void RoomManager::init() {
+	Common::File alfred8;
+	if (!alfred8.open("ALFRED.8")) {
+		error("Couldnt find file ALFRED.8");
+	}
+	// _resetDataSize = alfred8.size();
+	// _resetData = new byte[_resetDataSize];
+	// alfred8.read(_resetData, _resetDataSize);
+	// alfred8.close();
+}
+
 void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize) {
 	uint32_t pair_offset = roomOffset + (8 * 8);
 	roomFile->seek(pair_offset, SEEK_SET);
 	uint32_t offset = roomFile->readUint32LE();
 	uint32_t size = roomFile->readUint32LE();
 
-	byte  *pixelData = new byte[size];
+	byte *pixelData = new byte[size];
 	roomFile->seek(offset, SEEK_SET);
 	roomFile->read(pixelData, size);
 	if (offset > 0 && size > 0) {
@@ -379,7 +388,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.animData = new byte *[anim.nframes];
 			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
 				uint32_t needed = anim.w * anim.h * anim.nframes;
-				for(int i = 0; i < anim.nframes; i++) {
+				for (int i = 0; i < anim.nframes; i++) {
 					anim.animData[i] = new byte[anim.w * anim.h];
 					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, anim.w, anim.h);
 				}
@@ -480,8 +489,33 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 	return descriptions;
 }
 
-void RoomManager::resetRoomDefaults(byte *data, size_t size) {
-
+void RoomManager::resetRoomDefaults(byte room, byte *&data, size_t size) {
+	Common::File alfred8;
+	if (!alfred8.open("ALFRED.8")) {
+		error("Couldnt find file ALFRED.8");
+	}
+	bool roomDone = false;
+	while (!alfred8.eos() && !roomDone) {
+		ResetEntry entry;
+		entry.room = alfred8.readUint16LE();
+		entry.offset = alfred8.readUint16LE();
+		entry.dataSize = alfred8.readByte();
+		entry.data = new byte[entry.dataSize];
+		alfred8.read(entry.data, entry.dataSize);
+		if (room < entry.room) {
+			// We've passed the room we care about
+			roomDone = true;
+			break;
+		}
+		if (room > entry.room) {
+			// Not the room we care about, skip
+			continue;
+		}
+		debug("Resetting room %d data at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
+		Common::copy(entry.data, entry.data + entry.dataSize, data + entry.offset);
+		// delete[] entry.data;
+	}
+	alfred8.close();
 }
 
 void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
