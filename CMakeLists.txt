@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.23) # Current version in Debian
 
 project(ScummVM)
 include(FetchContent)
+
+include(cmake/Options.cmake)
+include(cmake/Components.cmake)
+include(cmake/Engines.cmake)
+include(cmake/Dependencies.cmake)
 
 if(NOT DETECT_HOST)
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -11,8 +16,8 @@ if(NOT DETECT_HOST)
   endif()
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(PLATFORM_WINDOWS TRUE)
-    set(WIN32 TRUE)
+    set(PLATFORM_WINDOWS TRUE CACHE INTERNAL "" FORCE)
+    set(WIN32 TRUE CACHE INTERNAL "" FORCE)
     add_compile_definitions(WIN32)
   endif()
 
@@ -24,30 +29,20 @@ if(NOT DETECT_HOST)
       "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework Cocoa"
     )
   endif()
-  set(SDL_BACKEND TRUE)
-  set(USE_SDL2 TRUE)
 endif()
-
-add_compile_definitions(DETECTION_STATIC)
 
 # Wii platform for testing with devkitPPC
 if(PLATFORM_WII)
-  # add_compile_definitions(SCUMM_BIG_ENDIAN)
+  add_compile_definitions(SCUMM_BIG_ENDIAN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-multichar")
   add_compile_definitions(__WII__)
 endif()
 
-if(SDL_BACKEND)
-  find_package(SDL2 CONFIG REQUIRED)
-  link_libraries(SDL2::SDL2)
+# Needed so we can include using relative paths
+include_directories(${CMAKE_SOURCE_DIR})
 
-  add_compile_definitions(SDL_BACKEND USE_SDL2)
-endif()
-
-include_directories(PRIVATE ${CMAKE_SOURCE_DIR})
-
-# The engines directory
-add_subdirectory(engines)
+# This library is a shared definition interface that everything should link to.
+add_library(common_libs INTERFACE)
 
 add_subdirectory(common)
 
@@ -67,3 +62,20 @@ add_subdirectory(math)
 add_subdirectory(base)
 
 add_subdirectory(backends)
+
+# The engines directory
+add_subdirectory(engines)
+
+target_link_libraries(
+  common_libs
+  INTERFACE graphics
+            common
+            video
+            gui
+            audio
+            image
+            math
+            base
+            backends
+            engines
+)

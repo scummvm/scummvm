@@ -4,12 +4,10 @@ endif()
 
 if(PLATFORM_WINDOWS)
   add_executable(platform WIN32)
+  set_target_properties(platform PROPERTIES ENABLE_EXPORTS TRUE)
   target_sources(
-    platform
-    PRIVATE sdl/win32/win32-window.cpp
-            sdl/win32/win32_wrapper.cpp
-            sdl/win32/win32.cpp
-            sdl/win32/win32-main.cpp
+    platform PRIVATE sdl/win32/win32-window.cpp sdl/win32/win32_wrapper.cpp sdl/win32/win32.cpp
+                     sdl/win32/win32-main.cpp
   )
 endif()
 
@@ -36,29 +34,11 @@ if(PLATFORM_WII)
 endif()
 
 # Link all shared libraries to the platform executable
-target_link_libraries(
-  platform
-  PRIVATE common
-          backends
-          base
-          audio
-          base
-          gui
-          graphics
-          engines
-          image
-          video
-          math
-)
+target_link_libraries(platform PRIVATE common_libs)
 
-target_link_libraries(platform PRIVATE common backends)
 if(SDL_BACKEND)
   target_sources(platform PRIVATE sdl/sdl.cpp sdl/sdl-window.cpp)
 endif()
-
-# Adding the detection and engine plumbers libraries here doesn't feel right, but currently needed
-# to compile the platform executable correctly.
-target_link_libraries(platform PRIVATE detection_plumbers engine_plumbers)
 
 set_target_properties(platform PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set_target_properties(platform PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
