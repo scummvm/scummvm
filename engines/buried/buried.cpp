@@ -618,7 +618,7 @@ void BuriedEngine::showPoints() {
 	AgentEvaluation *agentEvaluation = new AgentEvaluation(this, sceneView->getGlobalFlags(), -1);
 
 	GUI::MessageDialog dialog(
-		agentEvaluation->_scoringTextDescriptionsWithScores,
+		Common::U32String(agentEvaluation->_scoringTextDescriptionsWithScores),
 		_("OK"),
 		Common::U32String(),
 		Graphics::kTextAlignLeft
