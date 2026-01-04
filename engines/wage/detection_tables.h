@@ -74,6 +74,18 @@ static const ADGameDescription gameDescriptions[] = {
 	//FANGAME("Ovals", "9b5e3d5afe3b4c46e506216a5ae16e14", 38194),
 	//FANGAME("Filled Ovals", "6990174e0b39d85f3069f98511bb0074", 38194),
 
+	// Game series:
+	//
+	// The Axe-orcist
+	// Jamie the Demon Slayer
+	//
+	// Brownie’s Time Travels
+	// SparGate
+	// Brownie’s Dream
+	// Who Shot Brownie Dog?
+	// The Time Squisher
+	// Brownie Saves the Day
+
 	FANGAME("3rd Floor", "931aa0b6ada3aced5117ee6e6daf2fb8", 281153),
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281167), // alt version
 	FANGAME("3rd Floor", "afe1a9eb0d4e5857f9f748570862c88e", 281213), // v1.3
@@ -158,7 +170,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("Explorer", "Explorer DEMO", "0ae79f48754466c4cd65137c7f186384", 460972),
 	FANGAMEND("Explorer", "Explorer DEMO", "6b22972808630201ece7cc96a0ef17f7", 460959), // alt version
 	FANGAME("Fantasy Quest", "b52d3e2680a76c23b2791e2c87f6b6bd", 762498),
-	FANGAME("Finding D - concept demo", "3657a0483c70a1b44641e62120290574", 55723),
+	FANGAMED("Finding D - concept demo", "3657a0483c70a1b44641e62120290574", 55723),
 	FANGAME("Find the Heart", "0c0c282649597ea1ac82d97c8d4029a2", 105979), // From Joshua's Worlds 1.0
 	FANGAME("Find the Heart", "6fb8c6b8bc2287ba225b0ac6580dc073", 105675), // From Joshua's Worlds 1.0, alt version
 	FANGAME("Find the Heart", "08de3248b8c691d9a08af984bdcfa872", 105629), // From Joshua's Worlds, alt version
