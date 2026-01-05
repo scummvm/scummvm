@@ -39,7 +39,7 @@ private:
 	void firstTime();
 	void taskCompleted();
 	void taskIncomplete();
-	void nextTask();
+	void nextTask(bool isFirstTime = false);
 	void pressAnyKey();
 	Common::String getTaskName(int taskNum) const;
 

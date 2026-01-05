@@ -66,6 +66,7 @@ void Castle::draw() {
 
 void Castle::firstTime() {
 	auto s = getSurface();
+	const auto &player = g_engine->_player;
 
 	if (_mode >= NAMING && _mode <= FIRST_TASK) {
 		s.writeString(Common::Point(5, 2), "Welcome Peasant into the halls of\n"
@@ -85,12 +86,14 @@ void Castle::firstTime() {
 	if (_mode == BEGONE) {
 		s.writeString("Then leave and begone!");
 	} else if (_mode == FIRST_TASK) {
+		nextTask(true);
+
 		s.writeString("Good! Thou shalt try to become a\nKnight!!!\n\n"
 			"Thy first task is to go into the\n"
 			"dungeons and to return only after\n"
 			"killing ");
 		s.setColor(C_VIOLET);
-		s.writeString(getTaskName(1));
+		s.writeString(getTaskName(player._task));
 
 		pressAnyKey();
 	}
@@ -192,15 +195,17 @@ bool Castle::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-void Castle::nextTask() {
+void Castle::nextTask(bool isFirstTime) {
 	auto &player = g_engine->_player;
 
-	player._task++;
+	player._task = CLIP(player._attr[AT_WISDOM] / 3, 1, 10);
 	player._taskCompleted = false;
 
-	// LB gives you extra attributes
-	for (int i = 0; i < MAX_ATTR; i++)
-		player._attr[i]++;
+	if (!isFirstTime) {
+		// LB gives you extra attributes
+		for (int i = 0; i < MAX_ATTR; i++)
+			player._attr[i]++;
+	}
 }
 
 Common::String Castle::getTaskName(int taskNum) const {
