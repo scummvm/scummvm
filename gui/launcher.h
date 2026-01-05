@@ -188,6 +188,11 @@ protected:
 	void removeGame(int item);
 
 	/**
+	 * Remove multiple games and their addons.
+	 */
+	void removeGamesWithAddons(const Common::StringArray &domainsToRemove);
+
+	/**
 	 * Handle "Edit game..." button.
 	 */
 	void editGame(int item);

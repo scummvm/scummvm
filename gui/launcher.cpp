@@ -476,6 +476,23 @@ void LauncherDialog::removeGame(int item) {
 	}
 }
 
+void LauncherDialog::removeGamesWithAddons(const Common::StringArray &domainsToRemove) {
+	for (const Common::String &domain : domainsToRemove) {
+		ConfMan.removeGameDomain(domain);
+
+		// Remove all the add-ons for this game
+		const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+		for (const auto &addonDomain : domains) {
+			if (addonDomain._value.getValOrDefault("parent") == domain) {
+				ConfMan.removeGameDomain(addonDomain._key);
+			}
+		}
+	}
+
+	// Write config to disk
+	ConfMan.flushToDisk();
+}
+
 void LauncherDialog::editGame(int item) {
 	// Set game specific options. Most of these should be "optional", i.e. by
 	// default set nothing and use the global ScummVM settings. E.g. the user
@@ -1425,28 +1442,19 @@ void LauncherSimple::removeMultipleGames(const Common::Array<int> &selectedItems
 		Common::sort(sortedItems.begin(), sortedItems.end(), Common::Greater<int>());
 
 		int selPos = -1;
+		Common::StringArray domainsToRemove;
 		for (const int &idx : sortedItems) {
 			if (idx >= 0 && idx < (int)_domains.size()) {
 				// Get position of game item if grouping is enabled
 				if (_groupBy != kGroupByNone) {
 					selPos = getItemPos(idx);
 				}
-
-				// Remove the game domain
-				ConfMan.removeGameDomain(_domains[idx]);
-
-				// Remove all the add-ons for this game
-				const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-				for (const auto &domain : domains) {
-					if (domain._value.getValOrDefault("parent") == _domains[idx]) {
-						ConfMan.removeGameDomain(domain._key);
-					}
-				}
+				domainsToRemove.push_back(_domains[idx]);
 			}
 		}
 
-		// Write config to disk
-		ConfMan.flushToDisk();
+		// Remove games and addons
+		removeGamesWithAddons(domainsToRemove);
 
 		// Clear the selection and update the listing
 		_list->clearSelection();
@@ -1808,13 +1816,13 @@ void LauncherGrid::removeSelectedGames() {
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
-		for (const Common::String &domain : domainsToRemove) {
-			ConfMan.removeGameDomain(domain);
-		}
-		ConfMan.flushToDisk();
+		// Remove games and addons
+		removeGamesWithAddons(domainsToRemove);
 		_grid->_selectedEntries.clear();
 		_grid->_selectedEntries.push_back(_grid->_lastSelectedEntryID);
 		updateListing();
+		updateButtons();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 } // End of namespace GUI
