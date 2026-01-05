@@ -1372,9 +1372,16 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		LauncherDialog::handleCommand(sender, kStartCmd, 0);
 		break;
-	case kListItemRemovalRequestCmd:
-		LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
+	case kListItemRemovalRequestCmd: {
+		const Common::Array<int> &selectedItems = _list->getSelectedItems();
+		if (selectedItems.size() > 1) {
+			// Multi-selection removal: show confirmation dialog with list of games
+			removeMultipleGames(selectedItems);
+		} else {
+			LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
+		}
 		break;
+	}
 	case kListSelectionChangedCmd:
 		updateButtons();
 		break;
