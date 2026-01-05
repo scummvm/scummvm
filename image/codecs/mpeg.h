@@ -25,8 +25,6 @@
 #include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
 
-#ifdef USE_MPEG2
-
 typedef struct mpeg2dec_s mpeg2dec_t;
 typedef struct mpeg2_info_s mpeg2_info_t;
 
@@ -79,5 +77,3 @@ private:
 } // End of namespace Image
 
 #endif // IMAGE_CODECS_MPEG_H
-
-#endif // USE_MPEG2
