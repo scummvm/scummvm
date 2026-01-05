@@ -1407,7 +1407,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void LauncherSimple::removeMultipleGames(const Common::Array<int> &selectedItems) {
 	// Build confirmation message with list of games to remove
-	Common::U32String confirmMsg = _("Are you sure you want to remove the following games?\n\n");
+	Common::U32String confirmMsg = _("Do you really want to remove the following game configurations?\n\n");
 
 	for (const int &idx : selectedItems) {
 		if (idx >= 0 && idx < (int)_domains.size()) {
