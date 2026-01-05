@@ -139,6 +139,13 @@ std::string MSVCProvider::outputLibraryDependencies(const BuildSetup &setup, boo
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
+	if (setup.useSlnx)
+		createWorkspaceXml(setup);
+	else
+		createWorkspaceClassic(setup);
+}
+
+void MSVCProvider::createWorkspaceClassic(const BuildSetup &setup) {
 	UUIDMap::const_iterator svmUUID = _allProjUuidMap.find(setup.projectName);
 	if (svmUUID == _allProjUuidMap.end())
 		error("No UUID for \"" + setup.projectName + "\" project created");
@@ -209,6 +216,51 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	         << "\t\tHideSolutionNode = FALSE\n"
 	         << "\tEndGlobalSection\n"
 	         << "EndGlobal\n";
+}
+
+void MSVCProvider::createWorkspaceXml(const BuildSetup &setup) {
+	const auto svmUUID = _allProjUuidMap.find(setup.projectName);
+	if (svmUUID == _allProjUuidMap.end())
+		error("No UUID for \"" + setup.projectName + "\" project created");
+
+	const std::string &svmProjectUUID = svmUUID->second;
+	assert(!svmProjectUUID.empty());
+	
+	std::ofstream solution((setup.outputDir + '/' + setup.projectName + ".slnx").c_str());
+	if (!solution || !solution.is_open()) {
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".slnx\" for writing");
+		return;
+	}
+
+	solution << "<Solution>\n";
+
+	solution << "\t<Configurations>\n";
+
+	solution << "\t\t<BuildType Name=\"ASan\" />\n";
+	solution << "\t\t<BuildType Name=\"Debug\" />\n";
+	solution << "\t\t<BuildType Name=\"LLVM\" />\n";
+	solution << "\t\t<BuildType Name=\"Release\" />\n";
+	
+	for (const auto &arch : _archs) {
+		solution << "\t\t<Platform Name=\"" << getMSVCConfigName(arch) << "\" />\n"; 
+	}
+	solution << "\t</Configurations>\n";
+
+	// Write main project
+	if (!setup.devTools) {
+		solution << "\t<Project Path=\"" << setup.projectName << getProjectExtension()
+			<< "\" Id=\"" << svmProjectUUID << "\" "
+			<< " DefaultStartup=\"true\""  /* DefaultStartup has no effect in VS2022, needs VS2026+ */
+			<< " />\n";
+	}
+
+	for (const auto &engineUuid : _engineUuidMap) {
+		solution << "\t<Project Path=\"" << engineUuid.first << getProjectExtension()
+			<< "\" Id=\"" << engineUuid.second
+			<< "\" />\n";
+	}
+	
+	solution << "</Solution>\n";
 }
 
 void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {

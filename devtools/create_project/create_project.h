@@ -301,6 +301,7 @@ struct BuildSetup {
 	bool appleEmbedded = false;        ///< Whether the build will target iOS or tvOS instead of macOS.
 	bool useXCFramework = false;       ///< Whether to use Apple XCFrameworks instead of static libraries
 	bool useVcpkg = false;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
+	bool useSlnx = false;              ///< Whether to use old .sln or new .slnx format
 	bool win32 = false;                ///< Target is Windows
 
 	bool featureEnabled(const std::string &feature) const;
