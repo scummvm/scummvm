@@ -226,6 +226,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "grackon",			"Grackon's Curse" },
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
 	{ "greveholm1",			"The Mystery at Greveholm" },
+	/* Greveholm 2 was made with mTropolis, not Director */
+	{ "greveholm3",			"The Mystery at Greveholm 3: The Old Legend" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
 	{ "gusmuse",			"Gus Goes to the Megarific Museum" },
@@ -10103,6 +10105,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("girlspack", "", "Das Girl's Pack", "4ea5fc09f79eee6dded94dc40f303779", 214488, Common::DE_DEU, 800),
 	WINGAME2_l("girlspack", "", "Projector.exe",   "e24d4bab978b1a5c2326d2c56cf4d781", 2251176,
 								"picture.cxt",	   "e69c284d644c4f446b2ec4d876f94f17", 568440, Common::DE_DEU, 800),
+
+	// Swedish version
+	WINGAME1_l("greveholm3", "", "Greveholm3.exe", "t:ea8943fe1d6f2cf8df68d2f77b964f8e", 2408960, Common::SV_SWE, 800),
+	// Multilingual version
+	WINGAME1("greveholm3", "", "Greveholm3.exe", "t:c72fe7b88a22c8a4b28482a6e31fc409", 2286633, 800),
+	
 
 	// Early Education Series from Ariss Computer Inc. of Beirut
 	WINGAME1_l("hamamalachkal", "", "SHAPE.EXE",  "c163f36141579ee374f7b4b2bddee95a", 3784670, Common::AR_ARB, 850),
