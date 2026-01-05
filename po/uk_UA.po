@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2026-01-03 16:23+0000\n"
+"PO-Revision-Date: 2026-01-05 23:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4386,34 +4386,24 @@ msgid "Right mouse button"
 msgstr "Права кнопка миші"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
-msgstr "Середній клік миші"
+msgstr "Середня кнопка миші"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
-msgstr "Колесо миші уверх"
+msgstr "Колесо миші вгору"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
-msgstr "Колесо миші вниз"
+msgstr "Колесо миші донизу"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
-msgstr "Клік миші X1"
+msgstr "Клавіша миші X1"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
-msgstr "Клік миші X2"
+msgstr "Клавіша миші X2"
 
 #: backends/keymapper/hardware-input.cpp:255
 msgid "Joy A"
@@ -4432,32 +4422,22 @@ msgid "Joy Y"
 msgstr "Джойстик Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
-msgstr "Джойстик Назад"
+msgstr "Джойстик назад"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
-msgstr "Джойстик Керування"
+msgstr "Джойстик керування"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
-msgstr "Джойстик Старт"
+msgstr "Джойстик старт"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
 msgstr "Лівий стік"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
 msgstr "Правий стік"
 
@@ -4470,68 +4450,46 @@ msgid "Right shoulder"
 msgstr "Правий курок"
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "Хрестовина уверх"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "Хрестовина донизу"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "Хрестовина вліво"
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "Хрестовина вправо"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "Хрестовина центр"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
 msgstr "Лівий перемикач"
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
 msgstr "Правий перемикач"
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
 msgstr "Лівий стік вісь X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "Лівий стік вісь Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "Правий стік вісь X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "Правий стік вісь Y"
 
@@ -8438,18 +8396,15 @@ msgid "Wake up champion"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "Ввімкнути генератор мови для субтитрів"
+msgstr "Ввімкнути генератор мови для відсутньої озвучки"
 
 #: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
 msgstr ""
-"Використовувати автоматичний читач текста для субтитрів (якщо TTS доступне)"
+"Використовувати автоматичний читач текста для субтитрів без озвучки (якщо "
+"TTS доступне)"
 
 #: engines/draci/metaengine.cpp:212
 msgid "Skip intro / Exit map or inventory"
@@ -8525,30 +8480,24 @@ msgstr "Мапи клавіш анімації"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Interact / Select"
-msgstr "Рухатись наліво"
+msgstr "Рухатись / Взаємодіяти / Вибрати"
 
 #: engines/drascula/metaengine.cpp:235 engines/tot/metaengine.cpp:129
 msgid "Pick"
 msgstr "Вибрати"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use Selected Object"
 msgid "Reset selected verb"
-msgstr "Використати обраний об'єкт"
+msgstr "Відновити обрану дію"
 
 #: engines/drascula/metaengine.cpp:272 engines/tot/metaengine.cpp:159
 msgid "Volume controls"
 msgstr "Керування гучністю"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Збережені ігри"
+msgstr "Зберегти / завантажити гру"
 
 #: engines/drascula/metaengine.cpp:292
 msgid "Enable subtitles"
@@ -8789,10 +8738,8 @@ msgstr "Бігти"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "View terrain"
-msgstr "Вийти з діалогу"
+msgstr "Переглянути місцевість"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
@@ -8810,10 +8757,8 @@ msgid "Select character 3"
 msgstr "Вибрати героя 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Change game options"
 msgid "Cancel character selection"
-msgstr "Змінити налаштування гри"
+msgstr "Скасувати вибір героїв"
 
 #: engines/efh/metaengine.cpp:577
 msgid "Select enemy 1"
@@ -10199,10 +10144,8 @@ msgid "Switch to inventory display"
 msgstr "Переключитися до інвентарю"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "Перейти на наступний об'єкт"
+msgstr "Перемістити фокус на інтерактивний об'єкт"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
@@ -10463,40 +10406,28 @@ msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr "Замінити кольоровий камінь на смужки очок здоров'я та очок заклинань."
 
 #: engines/mm/mm1/metaengine.cpp:54
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "View party member 1"
-msgstr "Дивитись члена №1 в команді"
+msgstr "Дивитись героя №1 в команді"
 
 #: engines/mm/mm1/metaengine.cpp:55
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "View party member 2"
-msgstr "Дивитись члена №2 в команді"
+msgstr "Дивитись героя №2 в команді"
 
 #: engines/mm/mm1/metaengine.cpp:56
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "View party member 3"
-msgstr "Дивитись члена №3 в команді"
+msgstr "Дивитись героя №3 в команді"
 
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "View party member 4"
-msgstr "Дивитись члена №4 в команді"
+msgstr "Дивитись героя №4 в команді"
 
 #: engines/mm/mm1/metaengine.cpp:58
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "View party member 5"
-msgstr "Дивитись члена №5 в команді"
+msgstr "Дивитись героя №5 в команді"
 
 #: engines/mm/mm1/metaengine.cpp:59
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "View party member 6"
-msgstr "Дивитись члена №6 в команді"
+msgstr "Дивитись героя №6 в команді"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
@@ -10516,8 +10447,6 @@ msgstr "Бійка"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
 msgstr "Швидкий огляд"
 
@@ -10548,14 +10477,10 @@ msgid "Backwards"
 msgstr "Назад"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
 msgstr "Перемкнути мапу"
 
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Reorder Party"
 msgid "Reorder party"
 msgstr "Змінити порядок команди"
 
@@ -11049,10 +10974,8 @@ msgid "Nancy Drew - Maze"
 msgstr "Ненсі Дру - Лабіринт"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "Показати/сховати мапу лабіринту"
+msgstr "Показати / сховати мапу лабіринту"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -11116,10 +11039,8 @@ msgstr ""
 "офіційе виправлення від HeR Interactive."
 
 #: engines/nancy/state/loadsave.cpp:108
-#, fuzzy
-#| msgid "Would you like to save or restore a game?"
 msgid "Would you like to load or save a game?"
-msgstr "Чи ви хочете зберегти або завантажити гру?"
+msgstr "Чи ви хочете завантажити або зберегти гру?"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -11155,16 +11076,12 @@ msgid "<original>"
 msgstr "<оригінал>"
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Save file management menus keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш меню управління збереженнями"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Pause menu keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш меню паузи"
 
 #: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:124
 #: engines/prince/metaengine.cpp:231 engines/queen/metaengine.cpp:180
@@ -11174,23 +11091,17 @@ msgstr "Мапа клавіш гри"
 #: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
 #: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
 #: engines/sludge/keymapper_tables.h:529 engines/tot/metaengine.cpp:112
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Interact"
-msgstr "Рухатись наліво"
+msgstr "Рухатись / Взаємодіяти"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "Пропустити ролік"
+msgstr "Пауза / Вихід з меню"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "Пропустити ролік"
+msgstr "Пропустити частину роліка"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
@@ -11199,61 +11110,43 @@ msgstr ""
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "Створити новий запис гри"
+msgstr "Підтвердьте вибране збереження / нове ім'я збереження"
 
 #: engines/ngi/metaengine.cpp:118
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Credits keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш титрів"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
 #: engines/ngi/metaengine.cpp:120
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Dialog keymappings"
-msgstr "Мапа клавіш панелі виходу"
+msgstr "Мапа клавіш діалогу"
 
 #: engines/ngi/metaengine.cpp:130
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Deselect item"
-msgstr "Виберіть тему"
+msgstr "Скасувати вибір елемента"
 
 #. I18N: Stops all currently playing sounds.
 #: engines/ngi/metaengine.cpp:143
-#, fuzzy
-#| msgid "Preload sounds"
 msgid "Stop sounds"
-msgstr "Завантажити звуки заздалегідь"
+msgstr "Зупинити звуки"
 
 #: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикнути інвентар"
 
 #: engines/ngi/metaengine.cpp:176
-#, fuzzy
-#| msgid "Show credits"
 msgid "Skip credits"
-msgstr "Показати авторів"
+msgstr "Пропустити титри"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
 #: engines/ngi/metaengine.cpp:183
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close dialog"
-msgstr "Закрити вікно діалогу"
+msgstr "Закрити діалог"
 
 #: engines/ngi/metaengine.cpp:197
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close map"
-msgstr "Закрити вискакуючий список"
+msgstr "Закрити мапу"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -11313,110 +11206,80 @@ msgstr ""
 "Будь ласка, повідомте про це команді."
 
 #: engines/pegasus/pegasus.cpp:2724
-#, fuzzy
-#| msgid "Up/Zoom In/Move Forward/Open Doors"
 msgid "Up / Zoom in / Move forward / Open door"
-msgstr "Догори/Зменшити масштаб/Вперед/Відчинити двері"
+msgstr "Догори / Зменшити масштаб / Вперед / Відчинити двері"
 
 #: engines/pegasus/pegasus.cpp:2732
-#, fuzzy
-#| msgid "Down/Zoom Out"
 msgid "Down / Zoom out"
-msgstr "Донизу/Збіл. масштаб"
+msgstr "Донизу / Збіл. масштаб"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
 msgstr "Дія/Вибір"
 
 #: engines/pegasus/pegasus.cpp:2774
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory tray"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемикання панелі інвентарю"
 
 #: engines/pegasus/pegasus.cpp:2781
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle biochip tray"
-msgstr "Перемкнути висоту"
+msgstr "Перемикання панелі біочипу"
 
 #: engines/pegasus/pegasus.cpp:2789
-#, fuzzy
-#| msgid "Toggle Center Data Display"
 msgid "Toggle center data display"
-msgstr "Перемикання показування даних в центрі екрану"
+msgstr "Перемикання центрального екрану даних"
 
 #: engines/pegasus/pegasus.cpp:2796
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle info screen"
-msgstr "Перемикання повноекранного режиму"
+msgstr "Перемикання екрану інфо"
 
 #: engines/pegasus/pegasus.cpp:2803
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pause menu"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемикання меню паузи"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
 msgstr "Перемикання балакучого ШІ"
 
 #: engines/petka/metaengine.cpp:117
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Interact / Skip dialog"
-msgstr "Перейти до наступного діалогу"
+msgstr "Взаємодіяти / Пропустити діалог"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
 #: engines/petka/metaengine.cpp:124
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open action menu / Close current interface"
-msgstr "Відкрити меню дій / Закрити меню"
+msgstr "Відкрити меню дій / Закрити поточний інтерфейс"
 
 #. I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
 #: engines/petka/metaengine.cpp:166
-#, fuzzy
-#| msgid "Chapayev's action"
 msgid "Chapayev use object"
-msgstr "Дія Чапаєва"
+msgstr "Чапаєв використати об'єкт"
 
 #: engines/petka/metaengine.cpp:186
-#, fuzzy
-#| msgid "Show / Hide console"
 msgid "Show / Hide options screen"
-msgstr "Показати / cховати консоль"
+msgstr "Показати / Сховати екран налаштувань"
 
 #: engines/petka/metaengine.cpp:192
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Close current interface"
-msgstr "Простий інтерфейс для миші"
+msgstr "Закрити поточний інтерфейс"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
 msgstr "Цей пункт меню ще не реалізовано"
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move left"
 msgid "Interact / Select"
-msgstr "Рухатись наліво"
+msgstr "Взаємодіяти / Вибрати"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Change game options"
 msgid "Cancel interaction"
-msgstr "Змінити налаштування гри"
+msgstr "Перервати дію"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip walk"
-msgstr "Пропустити діалог"
+msgstr "Пропустити ходіння"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
@@ -11425,42 +11288,30 @@ msgstr ""
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip sequence"
-msgstr "Пропустити ролік"
+msgstr "Пропустити весь ролік"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip sub-sequence"
-msgstr "Пропустити ролік"
+msgstr "Пропустити частину роліку"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
-#| msgid "Restart the Scene"
 msgid "Restart sequence"
-msgstr "Сцену заново"
+msgstr "Ролік наново"
 
 #: engines/playground3d/metaengine.cpp:55
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch test"
-msgstr "Переключитися на гру"
+msgstr "Тест перемикання"
 
 #: engines/playground3d/metaengine.cpp:61
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable fog"
-msgstr "Ввімкнути/вимкнути реактивний ранець"
+msgstr "Ввімкнути / Вимкнути мряку"
 
 #: engines/playground3d/metaengine.cpp:67
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable/Disable scissor"
-msgstr "Ввімкнути/вимкнути реактивний ранець"
+msgstr "Ввімкнути/Вимкнути ножиці"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
@@ -11468,24 +11319,18 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "Гра Plumbers для 3DO потребує підтримку RGB."
 
 #: engines/prince/metaengine.cpp:237
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open interaction menu"
-msgstr "Відкрити головне меню"
+msgstr "Відкрити меню взаємодії"
 
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
-#, fuzzy
-#| msgid "Boss key"
 msgid "Z key"
-msgstr "Клавіша Начальника"
+msgstr "Клавіша Z"
 
 #. I18N: This refers to the X key on a keyboard.
 #: engines/prince/metaengine.cpp:263
-#, fuzzy
-#| msgid "Boss key"
 msgid "X key"
-msgstr "Клавіша Начальника"
+msgstr "Клавіша X"
 
 #: engines/private/metaengine.cpp:39
 #, fuzzy
