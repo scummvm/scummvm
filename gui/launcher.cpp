@@ -1133,8 +1133,12 @@ void LauncherSimple::build() {
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setFilterMatcher(LauncherFilterMatcher, this);
+<<<<<<< HEAD
 	_list->setMultiSelectEnabled(true);
 
+=======
+	
+>>>>>>> b8b2b66765c (GUI: Add missing filter matcher to grid widget)
 	// Populate the list
 	updateListing();
 
@@ -1789,6 +1793,7 @@ void LauncherGrid::build() {
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");
 	_grid->setMultiSelectEnabled(true);
+	_grid->setFilterMatcher(LauncherFilterMatcher, this);
 	// Populate the list
 	updateListing();
 
