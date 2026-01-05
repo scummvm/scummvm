@@ -95,20 +95,6 @@ void Info::leave() {
 	replaceView(player._level == 0 ? "WorldMap" : "DungeonMap");
 }
 
-bool Info::msgKeypress(const KeypressMessage &msg) {
-	if (isDelayActive())
-		return false;
-
-	for (int i = 0; i < MAX_OBJ; ++i) {
-		if (Common::isDigit(msg.ascii) && (msg.ascii - '0') == OBJECT_INFO[i]._cost) {
-			selectObject(i);
-			return true;
-		}
-	}
-
-	return false;
-}
-
 bool Info::msgAction(const ActionMessage &msg) {
 	if (isDelayActive())
 		return false;
