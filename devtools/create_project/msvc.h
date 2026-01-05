@@ -55,6 +55,8 @@ protected:
 	std::string outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const;
 
 	void createWorkspace(const BuildSetup &setup) override;
+	void createWorkspaceClassic(const BuildSetup &setup);
+	void createWorkspaceXml(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &setup) override;
 

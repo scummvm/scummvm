@@ -311,6 +311,8 @@ int main(int argc, char *argv[]) {
 			setup.useSDL = kSDLVersion3;
 		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
 			// Deprecated: Kept here so it doesn't error
+		} else if (!std::strcmp(argv[i], "--use-slnx")) {
+			setup.useSlnx = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-unicode")) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
@@ -577,6 +579,11 @@ int main(int argc, char *argv[]) {
 			return -1;
 		}
 
+		if (setup.useSlnx && msvc->version < 17) {
+			std::cerr << "ERROR: Using SLNX solution files requires Visual Studio 2022 17.14 or higher\n";
+			return 1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
@@ -818,7 +825,9 @@ void displayHelp(const char *exe) {
 	        " --tests                    Create project files for the tests\n"
 	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
 	        "                            (default: false)\n"
-	        " --use-windows-unicode      Use Windows Unicode APIs\n"
+			" --use-slnx                 Use new XML-based Visual Studio solution format\n"
+			"                            (default: false)\n"
+			" --use-windows-unicode      Use Windows Unicode APIs\n"
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
