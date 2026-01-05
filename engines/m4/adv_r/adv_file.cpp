@@ -215,15 +215,22 @@ bool kernel_load_variant(const char *variant) {
 
 	// TODO: This is just copied from the room loading code,
 	// rather than disassembling the reset of the original method.
-	// Need to determine whether this is correct or not
+	// Need to determine whether this is correct or not,
+	// then modified to clean screenCodeBuff and the edges.
+
 	GrBuff *scr_orig_data = load_codes(&code_file);
 
 	code_file.close();
 
 	if (scr_orig_data) {
+		_G(screenCodeBuff)->release();
+		free _G(screenCodeBuff);
+		RestoreEdgeList(nullptr);
+
 		Buffer *scr_orig_data_buffer = scr_orig_data->get_buffer();
 		RestoreEdgeList(scr_orig_data_buffer);
-		scr_orig_data->release();
+		
+		_G(screenCodeBuff) = scr_orig_data;
 	}
 
 	return true;
