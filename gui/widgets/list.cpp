@@ -505,8 +505,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		switch (state.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
-			// Disable activation if multi-select is enabled
-			if (_multiSelectEnabled) {
+			// Disable activation if multi-select is enabled and multiple items are selected
+			if (_multiSelectEnabled && _selectedItems.size() > 1) {
 					break;
 			}
 			if (_selectedItem >= 0) {
