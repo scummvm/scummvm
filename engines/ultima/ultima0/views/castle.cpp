@@ -86,8 +86,6 @@ void Castle::firstTime() {
 	if (_mode == BEGONE) {
 		s.writeString("Then leave and begone!");
 	} else if (_mode == FIRST_TASK) {
-		nextTask(true);
-
 		s.writeString("Good! Thou shalt try to become a\nKnight!!!\n\n"
 			"Thy first task is to go into the\n"
 			"dungeons and to return only after\n"
@@ -100,7 +98,7 @@ void Castle::firstTime() {
 }
 
 void Castle::taskCompleted() {
-	const auto &player = g_engine->_player;
+	auto &player = g_engine->_player;
 	auto s = getSurface();
 
 	s.writeString(Common::Point(0, 3), "Aaaahhhh.... ");
@@ -116,13 +114,18 @@ void Castle::taskCompleted() {
 			"try difficulty level ");
 		s.writeString(Common::String::format("%d.", player._skill + 1));
 	} else {
+		// LB gives you extra attributes
+		for (int i = 0; i < MAX_ATTR; i++)
+			player._attr[i]++;
+
+		// Choose the next task
 		nextTask();
 
 		s.writeString("Unfortunately, this is not enough to\n"
 			"become a knight.\n\n");
 		s.writeString("Thou must now kill ");
 		s.setColor(C_VIOLET);
-		s.writeString(getTaskName(1));
+		s.writeString(getTaskName(player._task));
 
 		s.setColor(C_TEXT_DEFAULT);
 		s.writeString("\n\n");
@@ -195,17 +198,11 @@ bool Castle::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-void Castle::nextTask(bool isFirstTime) {
+void Castle::nextTask() {
 	auto &player = g_engine->_player;
 
 	player._task = CLIP(player._attr[AT_WISDOM] / 3, 1, 10);
 	player._taskCompleted = false;
-
-	if (!isFirstTime) {
-		// LB gives you extra attributes
-		for (int i = 0; i < MAX_ATTR; i++)
-			player._attr[i]++;
-	}
 }
 
 Common::String Castle::getTaskName(int taskNum) const {
