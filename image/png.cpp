@@ -313,12 +313,14 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 	} else if (input.format == requiredFormat_3byte) {
 		surface = &input;
 		colorType = PNG_COLOR_TYPE_RGB;
+	} else if (input.format == requiredFormat_4byte) {
+		surface = &input;
+		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
+	} else if (input.format.aBits() == 0) {
+		surface = tmp = input.convertTo(requiredFormat_3byte, palette, paletteCount);
+		colorType = PNG_COLOR_TYPE_RGB;
 	} else {
-		if (input.format == requiredFormat_4byte) {
-			surface = &input;
-		} else {
-			surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
-		}
+		surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
 		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
 	}
 
