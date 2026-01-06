@@ -132,6 +132,14 @@ enum EventType {
 	EVENT_USER_LAST_AVAILABLE = 9999
 };
 
+/**
+ * Custom engine action types for EVENT_CUSTOM_ENGINE_ACTION_START/END.
+ * These are used by cross-engine features.
+ */
+enum EngineAction {
+	kEngineActionHotspotToggle = 1
+};
+
 const int16 JOYAXIS_MIN = -32768;
 const int16 JOYAXIS_MAX = 32767;
 

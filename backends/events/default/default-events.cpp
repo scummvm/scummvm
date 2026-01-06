@@ -114,20 +114,22 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
 		}
+		break;
 
-		// Show hotspots while 'h' key is held down
-		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
+	case Common::EVENT_KEYUP:
+		_modifierState = event.kbd.flags;
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
 			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
 				g_engine->setShowHotspots(true);
 			}
 		}
 		break;
 
-	case Common::EVENT_KEYUP:
-		_modifierState = event.kbd.flags;
-
-		// Hide hotspots when 'h' key is released
-		if (event.kbd.keycode == Common::KEYCODE_h && g_engine) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
 			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
 				g_engine->setShowHotspots(false);
 			}

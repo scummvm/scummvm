@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
+#include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -132,7 +133,7 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
-	act->setKeyEvent(KeyState(KEYCODE_h, 'h'));
+	act->setCustomEngineActionEvent(Common::kEngineActionHotspotToggle);
 	act->addDefaultInputMapping("h");
 	engineKeyMap->addAction(act);
 

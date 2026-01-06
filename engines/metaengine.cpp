@@ -26,6 +26,7 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -159,7 +160,7 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
-	act->setKeyEvent(KeyState(KEYCODE_h, 'h'));
+	act->setCustomEngineActionEvent(Common::kEngineActionHotspotToggle);
 	act->addDefaultInputMapping("h");
 	engineKeyMap->addAction(act);
 
