@@ -128,7 +128,7 @@ void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y, int width
 	drawRectWithGlow(surface, rectX, rectY, size, size, width, height, format);
 }
 
-void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
+void HotspotRenderer::drawPointMarker (Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
