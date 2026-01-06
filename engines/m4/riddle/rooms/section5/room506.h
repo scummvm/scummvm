@@ -32,8 +32,8 @@ class Room506 : public Room {
 private:
 	RGB8 _palette[59] = {};
 	bool _flag1 = false;
-	bool _flag2 = false;
-	bool _flag3 = false;
+	bool _darkPaletteSet = false;
+	bool _lightPaletteSet = false;
 	bool _towerFlag = false;
 	int _destX = 0, _destY = 0;
 	int _destFacing = 0;
@@ -44,7 +44,7 @@ private:
 	int _ripLowReach = 0;
 
 	void restorePalette();
-	void setupPalette();
+	void setDarkPalette();
 	void saveWalk();
 
 public:
