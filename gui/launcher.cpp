@@ -1799,7 +1799,6 @@ void LauncherGrid::build() {
 	// En-/disable the buttons depending on the list selection
 	updateButtons();
 }
-#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 void LauncherGrid::removeSelectedGames() {
 	if (!_grid)
@@ -1832,4 +1831,6 @@ void LauncherGrid::removeSelectedGames() {
 		g_gui.scheduleTopDialogRedraw();
 	}
 }
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
 } // End of namespace GUI
