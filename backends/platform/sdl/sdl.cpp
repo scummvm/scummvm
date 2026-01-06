@@ -480,6 +480,8 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 	int requestedSamples = 2;
 	while (requestedSamples <= 32) {
+		debugN(2, "Checking SDL Antialiasing Support With %d Samples... ", requestedSamples);
+
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
 
@@ -503,6 +505,11 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 				if (actualSamples == requestedSamples) {
 					_antiAliasLevels.push_back(requestedSamples);
+					debug(2, "Yes from SDL3");
+				}
+				else
+				{
+					debug(2, "No from SDL3");
 				}
 
 #if SDL_VERSION_ATLEAST(3, 0, 0)
@@ -511,8 +518,16 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 				SDL_GL_DeleteContext(glContext);
 #endif
 			}
+			else
+			{
+				debug(2, "No GL Context from SDL3");
+			}
 
 			SDL_DestroyWindow(window);
+		}
+		else
+		{
+			debug(2, "No Window from SDL3");
 		}
 #else
 		SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
@@ -524,6 +539,11 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 		if (actualSamples == requestedSamples) {
 			_antiAliasLevels.push_back(requestedSamples);
+			debug(2, "Yes from SDL2");
+		}
+		else
+		{
+			debug(2, "No from SDL2");
 		}
 #endif
 
