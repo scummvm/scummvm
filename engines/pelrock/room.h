@@ -50,6 +50,7 @@ public:
 	RoomManager();
 	~RoomManager();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
+	Common::Array<HotSpot> unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots);
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
@@ -87,8 +88,7 @@ public:
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
 	byte _roomPalette[768];
-	byte alfredRemap[256];
-	byte overlayRemap[256];
+	byte paletteRemaps[4][256];
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
 	PaletteAnim *_currentPaletteAnim = nullptr;
@@ -104,9 +104,10 @@ private:
 	Common::Array<Exit> loadExits(byte *data, size_t size);
 	ScalingParams loadScalingParams(byte *data, size_t size);
 	Common::Array<WalkBox> loadWalkboxes(byte *data, size_t size);
-	Common::Array<Description> loadRoomTexts(Common::File *roomFile, int roomOffset);
-
-	void resetRoomDefaults(byte room, byte *&data, size_t size);
+	uint32 loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions);
+	void loadConversationData(byte *pair12data, size_t pair12size, uint32 startPos, size_t &outConversationDataSize, byte *&outConversationData);
+	void resetConversationStates(byte roomNumber, byte *conversationData, size_t conversationDataSize);
+	void resetMetadataDefaults(byte room, byte *&data, size_t size);
 
 	byte *loadShadowMap(int roomNumber);
 	void loadRemaps(int roomNumber);

@@ -33,12 +33,6 @@ RoomManager::RoomManager() {
 }
 
 RoomManager::~RoomManager() {
-	// delete[] _currentRoomHotspots;
-	// delete[] _currentRoomAnims;
-	// delete[] _currentRoomExits;
-	// delete[] _currentRoomWalkboxes;
-	// delete[] _currentRoomDescriptions;
-	// delete[] _currentRoomConversations;
 	if (_pixelsShadows != nullptr) {
 		delete[] _pixelsShadows;
 		_pixelsShadows = nullptr;
@@ -294,6 +288,36 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 	return hotspots;
 }
 
+void RoomManager::resetConversationStates(byte roomNumber, byte *conversationData, size_t conversationDataSize) {
+	Common::File alfredB;
+	if (!alfredB.open("ALFRED.B")) {
+		debug("Could not open ALFRED.B to reset conversation states!");
+		return;
+	}
+	bool roomDone = false;
+	while (!alfredB.eos() && !roomDone) {
+		ResetEntry entry;
+		entry.room = alfredB.readUint16LE();
+		entry.offset = alfredB.readUint16LE();
+		entry.dataSize = alfredB.readByte();
+		entry.data = new byte[entry.dataSize];
+		alfredB.read(entry.data, entry.dataSize);
+		if (roomNumber < entry.room) {
+			// We've passed the room we care about
+			roomDone = true;
+			break;
+		}
+		if (roomNumber > entry.room) {
+			// Not the room we care about, skip
+			continue;
+		}
+		debug("Resetting room %d conversation data at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
+		Common::copy(entry.data, entry.data + entry.dataSize, conversationData + entry.offset);
+		// delete[] entry.data;
+	}
+	alfredB.close();
+}
+
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	uint32_t outPos = 0;
@@ -301,9 +325,20 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	_currentRoomNumber = roomNumber;
 	int roomOffset = roomNumber * kRoomStructSize;
 
+	// Pairs 0-7 are background data, already loaded
+
+	// Pair 8 - Animation Pixel Data
+	byte *pic = nullptr;
+	size_t pixelDataSize = 0;
+	loadAnimationPixelData(roomFile, roomOffset, pic, pixelDataSize);
+
+	// Pair 9 - Music and sound
+	_musicTrack = loadMusicTrackForRoom(roomFile, roomOffset);
+	_roomSfx = loadRoomSfx(roomFile, roomOffset);
+
+	// Pair 10
 	uint32_t pair10offset = roomOffset + (10 * 8);
 	roomFile->seek(pair10offset, SEEK_SET);
-	// roomFile->skip(4);
 	uint32_t pair10dataOffset = roomFile->readUint32LE();
 	uint32_t pair10size = roomFile->readUint32LE();
 
@@ -312,56 +347,38 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	roomFile->read(pair10, pair10size);
 
 	// The user's game can be in any state so we reset to defaults first
-	resetRoomDefaults(roomNumber, pair10, pair10size);
+	resetMetadataDefaults(roomNumber, pair10, pair10size);
 
-	byte *pic = nullptr;
-	size_t pixelDataSize = 0;
-	loadAnimationPixelData(roomFile, roomOffset, pic, pixelDataSize);
-
-	Common::Array<Sprite> anims = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
+	Common::Array<Sprite> sprites = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
 	Common::Array<HotSpot> staticHotspots = loadHotspots(pair10, pair10size);
-	Common::Array<WalkBox> walkboxes = loadWalkboxes(pair10, pair10size);
-	Common::Array<Exit> exits = loadExits(pair10, pair10size);
-	ScalingParams scalingParams = loadScalingParams(pair10, pair10size);
 
-	Common::Array<Description> descriptions = loadRoomTexts(roomFile, roomOffset);
-	Common::Array<HotSpot> hotspots;
-	for (int i = 0; i < anims.size(); i++) {
+	_currentRoomAnims = sprites;
+	_currentRoomHotspots = unifyHotspots(sprites, staticHotspots);
+	_currentRoomExits = loadExits(pair10, pair10size);
+	_currentRoomWalkboxes = loadWalkboxes(pair10, pair10size);
+	_scaleParams = loadScalingParams(pair10, pair10size);
 
-		HotSpot thisHotspot;
-		thisHotspot.index = i;
-		thisHotspot.x = anims[i].x;
-		thisHotspot.y = anims[i].y;
-		thisHotspot.w = anims[i].w;
-		thisHotspot.h = anims[i].h;
-		thisHotspot.extra = anims[i].extra;
-		thisHotspot.actionFlags = anims[i].actionFlags;
-		thisHotspot.isEnabled = !anims[i].isDisabled;
-		thisHotspot.isSprite = true;
-		thisHotspot.zOrder = anims[i].zOrder;
-		hotspots.push_back(thisHotspot);
-	}
+	// Pair 11 is the palette, already loaded
 
-	// debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
-	for (int i = 0; i < staticHotspots.size(); i++) {
-		HotSpot hotspot = staticHotspots[i];
-		hotspot.index = anims.size() + i;
-		hotspots.push_back(hotspot);
-	}
+	// Pair 12 - Room Texts
+	uint32_t pair12offset = roomOffset + (12 * 8);
+	roomFile->seek(pair12offset, SEEK_SET);
+	uint32_t pair12dataOffset = roomFile->readUint32LE();
+	uint32_t pair12size = roomFile->readUint32LE();
 
-	byte *shadows = loadShadowMap(roomNumber);
+	byte *pair12 = new byte[pair12size];
+	roomFile->seek(pair12dataOffset, SEEK_SET);
+	roomFile->read(pair12, pair12size);
+
+	resetConversationStates(roomNumber, pair12, pair12size);
+	uint32 lastDescPos = loadDescriptions(pair12, pair12size, _currentRoomDescriptions);
+	loadConversationData(pair12, pair12size, lastDescPos, _conversationDataSize, _conversationData);
+
+	if (_pixelsShadows != nullptr)
+		delete[] _pixelsShadows;
+	_pixelsShadows = loadShadowMap(roomNumber);
+
 	loadRemaps(roomNumber);
-
-	int walkboxCount = 0;
-	_currentRoomAnims = anims;
-	_currentRoomHotspots = hotspots;
-	_currentRoomExits = exits;
-	_currentRoomWalkboxes = walkboxes;
-	_currentRoomDescriptions = descriptions;
-	_scaleParams = scalingParams;
-	Common::copy(shadows, shadows + (640 * 400), _pixelsShadows);
-	_musicTrack = loadMusicTrackForRoom(roomFile, roomOffset);
-	_roomSfx = loadRoomSfx(roomFile, roomOffset);
 
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
@@ -370,8 +387,8 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	for (int i = 0; i < _currentRoomExits.size(); i++) {
 		Exit exit = _currentRoomExits[i];
-		// drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 100 + i);
 	}
+
 	PaletteAnim *anim = getPaletteAnimForRoom(roomNumber);
 	if (anim != nullptr) {
 		if (_currentPaletteAnim != nullptr) {
@@ -383,6 +400,33 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	}
 
 	delete[] pair10;
+	delete[] pair12;
+}
+
+Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots) {
+	Common::Array<HotSpot> unifiedHotspots;
+	for (int i = 0; i < anims.size(); i++) {
+		HotSpot thisHotspot;
+		thisHotspot.index = i;
+		thisHotspot.x = anims[i].x;
+		thisHotspot.y = anims[i].y;
+		thisHotspot.w = anims[i].w;
+		thisHotspot.h = anims[i].h;
+		thisHotspot.extra = anims[i].extra;
+		thisHotspot.actionFlags = anims[i].actionFlags;
+		thisHotspot.isEnabled = !anims[i].isDisabled;
+		thisHotspot.isSprite = true;
+		thisHotspot.zOrder = anims[i].zOrder;
+		unifiedHotspots.push_back(thisHotspot);
+	}
+
+	// debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
+	for (int i = 0; i < staticHotspots.size(); i++) {
+		HotSpot hotspot = staticHotspots[i];
+		hotspot.index = anims.size() + i;
+		unifiedHotspots.push_back(hotspot);
+	}
+	return unifiedHotspots;
 }
 
 void RoomManager::init() {
@@ -533,35 +577,26 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 	return walkboxes;
 }
 
-Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, int roomOffset) {
-	uint32_t pair12_offset_pos = roomOffset + (12 * 8);
-	roomFile->seek(pair12_offset_pos, SEEK_SET);
-	uint32_t pair12_data_offset = roomFile->readUint32LE();
-	uint32_t pair12_size = roomFile->readUint32LE();
-
-	roomFile->seek(pair12_data_offset, SEEK_SET);
-	byte *data = new byte[pair12_size];
-	roomFile->read(data, pair12_size);
-	Common::Array<Description> descriptions;
+uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions) {
 	uint32_t pos = 0;
 	uint32_t lastDescPos = 0;
-	while (pos < (pair12_size)) {
+	while (pos < (pair12size)) {
 		int desc_pos = 0;
-		if (data[pos] == 0xFF) {
+		if (pair12data[pos] == 0xFF) {
 			Description description;
 
-			description.itemId = data[pos + 1];
+			description.itemId = pair12data[pos + 1];
 			pos += 4;
-			description.index = data[pos++];
+			description.index = pair12data[pos++];
 			description.text = "";
 
-			while (pos < (pair12_size) && data[pos] != 0xFD && pos < (pair12_size)) {
+			while (pos < (pair12size) && pair12data[pos] != 0xFD && pos < (pair12size)) {
 
-				if (data[pos] != 0x00) {
-					description.text.append(1, (char)data[pos]);
+				if (pair12data[pos] != 0x00) {
+					description.text.append(1, (char)pair12data[pos]);
 				}
-				if (data[pos] == 0xF8) {
-					description.actionTrigger = data[pos + 1] | data[pos + 2] << 8;
+				if (pair12data[pos] == 0xF8) {
+					description.actionTrigger = pair12data[pos + 1] | pair12data[pos + 2] << 8;
 					if (description.actionTrigger != 0) {
 						description.isAction = true;
 					}
@@ -570,24 +605,25 @@ Common::Array<Description> RoomManager::loadRoomTexts(Common::File *roomFile, in
 				}
 				pos++;
 			}
-			descriptions.push_back(description);
+			outDescriptions.push_back(description);
 			lastDescPos = pos;
 		}
 		pos++;
 	}
-	// debug("End of descriptions at position %d", pos);
-	size_t conversationStart = lastDescPos + 1;
-	_conversationDataSize = pair12_size - conversationStart;
-	if (_conversationData != nullptr) {
-		delete[] _conversationData;
-	}
-	_conversationData = new byte[_conversationDataSize];
-	Common::copy(data + conversationStart, data + conversationStart + _conversationDataSize, _conversationData);
-	delete[] data;
-	return descriptions;
+	return lastDescPos + 1;
 }
 
-void RoomManager::resetRoomDefaults(byte room, byte *&data, size_t size) {
+void RoomManager::loadConversationData(byte *pair12data, size_t pair12size, uint32 startPos, size_t &outConversationDataSize, byte *&outConversationData) {
+	size_t conversationStart = startPos;
+	outConversationDataSize = pair12size - conversationStart;
+	if (outConversationData != nullptr) {
+		delete[] outConversationData;
+	}
+	outConversationData = new byte[outConversationDataSize];
+	Common::copy(pair12data + conversationStart, pair12data + conversationStart + outConversationDataSize, outConversationData);
+}
+
+void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 	Common::File alfred8;
 	if (!alfred8.open("ALFRED.8")) {
 		error("Couldnt find file ALFRED.8");
@@ -609,7 +645,7 @@ void RoomManager::resetRoomDefaults(byte room, byte *&data, size_t size) {
 			// Not the room we care about, skip
 			continue;
 		}
-		debug("Resetting room %d data at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
+		debug("Resetting room %d metadata at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
 		Common::copy(entry.data, entry.data + entry.dataSize, data + entry.offset);
 		// delete[] entry.data;
 	}
@@ -731,8 +767,10 @@ void RoomManager::loadRemaps(int roomNumber) {
 	uint32 remapOffset = 0x200 + (roomNumber * 1024);
 
 	remapFile.seek(remapOffset, SEEK_SET);
-	remapFile.read(alfredRemap, 256);
-	remapFile.read(overlayRemap, 256);
+	remapFile.read(paletteRemaps[0], 256);
+	remapFile.read(paletteRemaps[1], 256);
+	remapFile.read(paletteRemaps[2], 256);
+	remapFile.read(paletteRemaps[3], 256);
 	remapFile.close();
 }
 

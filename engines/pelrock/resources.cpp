@@ -285,7 +285,7 @@ Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(by
 	Common::StringArray lines;
 	Common::Array<Common::Array<Common::String>> texts;
 	while (pos < size) {
-		if (data[pos] == 0xFD) {
+		if (data[pos] == CTRL_END_TEXT) {
 			if (!desc.empty()) {
 
 				lines.push_back(desc);
@@ -300,7 +300,7 @@ Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(by
 			pos++;
 			continue;
 		}
-		if (data[pos] == 0x08) {
+		if (data[pos] == CTRL_SPEAKER_ID) {
 			byte color = data[pos + 1];
 			desc.append(1, '@');
 			desc.append(1, color);

@@ -366,6 +366,15 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
+	byte *conversationBranchState = new byte[4 * 56];
+
+	bool getBranchDisabledState(byte room, byte branch) const {
+		return (conversationBranchState[room * 4 + branch] != 0);
+	}
+
+	void setBranchDisabledState(byte room, byte branch, bool disabled) {
+		conversationBranchState[room * 4 + branch] = disabled ? 1 : 0;
+	}
 };
 
 } // End of namespace Pelrock

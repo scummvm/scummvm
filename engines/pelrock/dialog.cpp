@@ -108,7 +108,7 @@ uint32 DialogManager::readTextBlock(
 		}
 
 		// Regular text - does not need decoding
-		if (b >= 0x20 && b <= 0x83) {
+		if (b >= CHAR_SPACE && b <= 0x83) {
 			outText += b;
 		}
 		pos++;
@@ -187,14 +187,14 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int yPos = 0;
 
 		if (speakerId == ALFRED_COLOR) {
-			if(g_engine->alfredState.animState != ALFRED_TALKING) {
+			if (g_engine->alfredState.animState != ALFRED_TALKING) {
 				g_engine->alfredState.setState(ALFRED_TALKING);
 			}
 			if (_curSprite != nullptr) {
 				_curSprite->isTalking = false;
 			}
 			// Offset X position for Alfred to avoid overlapping with his sprite
-			xPos = g_engine->alfredState.x - maxWidth / 2; //+ kAlfredFrameWidth / 2 - maxWidth / 2;
+			xPos = g_engine->alfredState.x - maxWidth / 2;                //+ kAlfredFrameWidth / 2 - maxWidth / 2;
 			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
 		} else {
 			g_engine->alfredState.setState(ALFRED_IDLE);
@@ -220,8 +220,8 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
 		drawRect(_screen, xPos, yPos,
-			s.getRect().width(),
-			s.getRect().height(), speakerId);
+				 s.getRect().width(),
+				 s.getRect().height(), speakerId);
 		// Present to screen
 		_screen->markAllDirty();
 		_screen->update();
@@ -294,58 +294,6 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 	uint32 pos = startPos;
 	outChoices->clear();
 	int firstChoiceIndex = -1;
-	int choiceCount = 0;
-
-	// Find first choice marker
-	while (pos < dataSize) {
-		byte b = data[pos];
-
-		// Stop at end markers
-		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH || b == CTRL_ALT_END_MARKER_3) {
-			break;
-		}
-
-		// Found first choice marker
-		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_2) {
-			if (pos + 1 < dataSize) {
-				firstChoiceIndex = data[pos + 1];
-				ChoiceOption opt;
-				opt.index = firstChoiceIndex;
-				opt.dataOffset = pos;
-				opt.isDisabled = false;
-
-				// Parse the choice text
-				uint32 textPos = pos + 4; // Skip marker + index + 2 speaker bytes
-				textPos += 2;
-				while (textPos < dataSize) {
-					byte tb = data[textPos];
-					if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
-						tb == CTRL_DIALOGUE_MARKER_2 || tb == CTRL_END_BRANCH ||
-						tb == CTRL_ALT_END_MARKER_1) {
-						break;
-					}
-
-					if (tb >= 0x20 && tb < 0x7A) {
-						opt.text += (char)tb;
-					} else {
-						byte decoded = decodeChar(tb);
-						debug("Parsing choice char: 0x%02X, decoded: 0x%02X", tb, decoded);
-						if (decoded != tb || (decoded >= 0x20 && decoded <= 0xB4)) {
-							opt.text += (char)decoded;
-						}
-					}
-					textPos++;
-				}
-
-				outChoices->push_back(opt);
-				choiceCount = 1;
-				pos++;
-				break;
-			}
-		}
-
-		pos++;
-	}
 
 	// Scan for additional choices with SAME index
 	while (pos < dataSize) {
@@ -359,21 +307,25 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 		// Found a dialogue marker
 		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_2) {
 			if (pos + 1 < dataSize) {
+				if (firstChoiceIndex == -1) {
+					firstChoiceIndex = data[pos + 1];
+				}
 				int choiceIndex = data[pos + 1];
 
 				// Only collect choices with same index
 				if (choiceIndex == firstChoiceIndex) {
 					// Check if disabled
-					bool isDisabled = (b == CTRL_DISABLED_CHOICE);
 
 					ChoiceOption opt;
 					opt.index = choiceIndex;
 					opt.dataOffset = pos;
-					opt.isDisabled = isDisabled;
-
+					pos += 2; // Move past marker + index
+					if (data[pos] == CTRL_DISABLED_CHOICE) {
+						opt.isDisabled = true;
+					}
 					// Parse the choice text
 					uint32 textPos = pos + 4;
-					textPos += 2; // Skip marker + index + 2 speaker bytes
+					// textPos += 2; // Skip marker + index + 2 speaker bytes
 					while (textPos < dataSize) {
 						byte tb = data[textPos];
 						if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
@@ -393,9 +345,8 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 						}
 						textPos++;
 					}
-
-					outChoices->push_back(opt);
-					choiceCount++;
+					if (!opt.isDisabled)
+						outChoices->push_back(opt);
 				} else if (choiceIndex < firstChoiceIndex) {
 					// Different choice index - stop scanning
 					break;
@@ -674,7 +625,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 }
 
 bool isEndMarker(char char_byte) {
-	return char_byte == CHAR_END_MARKER_1 || char_byte == CHAR_END_MARKER_2 || char_byte == CHAR_END_MARKER_3 || char_byte == CHAR_END_MARKER_4;
+	return char_byte == CTRL_END_TEXT || char_byte == CTRL_END_CONVERSATION || char_byte == CTRL_ACTION_TRIGGER || char_byte == CTRL_GO_BACK;
 }
 
 int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
@@ -694,7 +645,7 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 	}
 	// Count ALL trailing spaces as part of this word
 	if (pos < text.size() && !isEnd) {
-		if (text[pos] == CHAR_END_MARKER_3) { // 0xF8 (-8) special case
+		if (text[pos] == CTRL_ACTION_TRIGGER) { // 0xF8 (-8) special case
 			wordLength += 3;
 		} else {
 			// Count all consecutive spaces

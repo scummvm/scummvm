@@ -746,7 +746,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (shadeCharacter) {
 		for (int i = 0; i < finalWidth * finalHeight; i++) {
 			if (finalBuf[i] != 255) {
-				finalBuf[i] = _room->alfredRemap[finalBuf[i]];
+				finalBuf[i] = _room->paletteRemaps[0][finalBuf[i]];
 			}
 		}
 	}
