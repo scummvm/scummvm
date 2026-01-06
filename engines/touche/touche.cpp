@@ -1507,7 +1507,7 @@ void ToucheEngine::drawHitBoxes() {
 	}
 }
 
-void ToucheEngine::getHotspotPositions(Common::Array<::Graphics::HotspotInfo> &hotspots) {
+void ToucheEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
 	if (_flagsTable[618] != 0)
 		return;
 
@@ -1564,7 +1564,7 @@ void ToucheEngine::getHotspotPositions(Common::Array<::Graphics::HotspotInfo> &h
 				name = Common::String(strData);
 		}
 
-		hotspots.push_back(::Graphics::HotspotInfo(Common::Point(screenX, screenY), name));
+		hotspots.push_back(Graphics::HotspotInfo(Common::Point(screenX, screenY), name));
 	}
 }
 

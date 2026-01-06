@@ -139,23 +139,23 @@ DECLARE_SINGLETON(ChainedGamesManager);
 
 Engine::Engine(OSystem *syst)
 	: _system(syst),
-	  _mixer(_system->getMixer()),
-	  _timer(_system->getTimerManager()),
-	  _eventMan(_system->getEventManager()),
-	  _saveFileMan(_system->getSavefileManager()),
-	  _targetName(ConfMan.getActiveDomainName()),
-	  _metaEngine(nullptr),
-	  _pauseLevel(0),
-	  _pauseStartTime(0),
-	  _pauseScreenChangeID(-1),
-	  _saveSlotToLoad(-1),
-	  _autoSaving(false),
-	  _engineStartTime(_system->getMillis()),
-	  _mainMenuDialog(NULL),
-	  _debugger(NULL),
-	  _autosaveInterval(ConfMan.getInt("autosave_period")),
-	  _lastAutosaveTime(_system->getMillis()),
-	  _showHotspots(false) {
+		_mixer(_system->getMixer()),
+		_timer(_system->getTimerManager()),
+		_eventMan(_system->getEventManager()),
+		_saveFileMan(_system->getSavefileManager()),
+		_targetName(ConfMan.getActiveDomainName()),
+		_metaEngine(nullptr),
+		_pauseLevel(0),
+		_pauseStartTime(0),
+		_pauseScreenChangeID(-1),
+		_saveSlotToLoad(-1),
+		_autoSaving(false),
+		_engineStartTime(_system->getMillis()),
+		_mainMenuDialog(NULL),
+		_debugger(NULL),
+		_autosaveInterval(ConfMan.getInt("autosave_period")),
+		_lastAutosaveTime(_system->getMillis()),
+		_showHotspots(false) {
 
 	g_engine = this;
 	_quitRequested = false;

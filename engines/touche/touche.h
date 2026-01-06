@@ -637,7 +637,7 @@ protected:
 		return Common::String::format("%s.%d", _targetName.c_str(), slot);
 	}
 
-	void getHotspotPositions(Common::Array<::Graphics::HotspotInfo> &hotspots) override;
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
 
 	void setupOpcodes();
 	void op_nop();
