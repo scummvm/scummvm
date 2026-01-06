@@ -20,14 +20,11 @@
  */
 
 #include "common/system.h"
-#include "graphics/surface.h"
-#include "graphics/hotspot_renderer.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
-#include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v5.h"
@@ -1732,34 +1729,6 @@ void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useB
 		markRectAsDirty(vs->number, x * wScale, (x + 1) * wScale, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
 	}
 }
-
-void ScummEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
-	if (_cursor.state <= 0)
-		return;
-
-	for (int i = 1; i < _numLocalObjects; i++) {
-		ObjectData *od = &_objs[i];
-
-		if (od->obj_nr < 1)
-			continue;
-		if (getClass(od->obj_nr, kObjectClassUntouchable))
-			continue;
-		if (od->width <= 0 || od->height <= 0)
-			continue;
-
-		int centerX = od->x_pos + od->width / 2;
-		int centerY = od->y_pos + od->height / 2;
-		int screenX = centerX - _virtscr[kMainVirtScreen].xstart;
-
-		const byte *nameByte = getObjOrActorName(od->obj_nr);
-		Common::String name;
-		if (nameByte)
-			name = Common::String((const char *)nameByte);
-
-		hotspots.push_back(Graphics::HotspotInfo(Common::Point(screenX, centerY), name));
-	}
-}
-
 
 /**
  * Moves the screen content by the offset specified via dx/dy.
