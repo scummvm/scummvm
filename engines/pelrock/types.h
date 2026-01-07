@@ -359,6 +359,26 @@ struct PaletteAnim {
 	byte curFrameCount = 0;
 };
 
+/**
+ * Structure to hold a parsed choice option
+ */
+struct ChoiceOption {
+	byte room;
+	int choiceIndex;
+	Common::String text;
+	uint32 dataOffset;
+	bool isDisabled;
+	bool shouldDisableOnSelect = false;
+
+	ChoiceOption() : choiceIndex(-1), isDisabled(false), dataOffset(0) {}
+};
+
+struct ResetEntry {
+	uint16 room;
+	uint16 offset;
+	byte dataSize;
+	byte *data = nullptr;
+};
 
 struct GameStateData {
 	GameState stateGame = INTRO;
@@ -366,14 +386,21 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
-	byte *conversationBranchState = new byte[4 * 56];
 
-	bool getBranchDisabledState(byte room, byte branch) const {
-		return (conversationBranchState[room * 4 + branch] != 0);
+	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
+
+	void addDisabledBranch(ResetEntry entry) {
+		disabledBranches[entry.room].push_back(entry);
 	}
 
-	void setBranchDisabledState(byte room, byte branch, bool disabled) {
-		conversationBranchState[room * 4 + branch] = disabled ? 1 : 0;
+	byte *conversationRootsState = new byte[4 * 56];
+
+	bool getRootDisabledState(byte room, byte root) const {
+		return (conversationRootsState[room * 4 + root] != 0);
+	}
+
+	void setRootDisabledState(byte room, byte root, bool disabled) {
+		conversationRootsState[room * 4 + root] = disabled ? 1 : 0;
 	}
 };
 

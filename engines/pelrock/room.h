@@ -31,20 +31,6 @@ namespace Pelrock {
 
 static const int kNumSfxPerRoom = 8;
 
-struct ResetEntry {
-	uint16 room;
-	uint16 offset;
-	byte dataSize;
-	byte *data = nullptr;
-
-	~ResetEntry() {
-		if (data != nullptr) {
-			delete[] data;
-			data = nullptr;
-		}
-	}
-};
-
 class RoomManager {
 public:
 	RoomManager();
@@ -54,6 +40,8 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+
+	/** Methods to modify room data at runtime **/
 	void addSticker(Sticker sticker, bool persist = true);
 	void removeSticker(int index);
 	bool hasSticker(int index);
@@ -66,6 +54,9 @@ public:
 	void enableHotspot(HotSpot *hotspot, bool persist = true);
 	void disableHotspot(HotSpot *hotspot, bool persist = true);
 	void addWalkbox(WalkBox walkbox);
+	void applyDisabledChoices(int roomNumber, byte *conversationData, size_t conversationDataSize);
+	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
+	void addDisabledChoice(ChoiceOption choice);
 
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
@@ -95,6 +86,7 @@ public:
 	byte *_conversationData = nullptr;
 	size_t _conversationDataSize = 0;
 	Common::Array<Sticker> _transientStickers;
+	uint32 _conversationOffset;
 
 private:
 	void init();

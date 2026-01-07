@@ -111,4 +111,11 @@ void PelrockEngine::noOp(HotSpot *hotspot) {
 	// Do nothing
 }
 
+void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
+	if(actionTrigger == 328) {
+		debug("Disabling root %d in room %d", rootIndex, room);
+		_state.setRootDisabledState(room, rootIndex, true);
+	}
+}
+
 } // End of namespace Pelrock

@@ -371,8 +371,8 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	roomFile->read(pair12, pair12size);
 
 	resetConversationStates(roomNumber, pair12, pair12size);
-	uint32 lastDescPos = loadDescriptions(pair12, pair12size, _currentRoomDescriptions);
-	loadConversationData(pair12, pair12size, lastDescPos, _conversationDataSize, _conversationData);
+	_conversationOffset = loadDescriptions(pair12, pair12size, _currentRoomDescriptions);
+	loadConversationData(pair12, pair12size, _conversationOffset, _conversationDataSize, _conversationData);
 
 	if (_pixelsShadows != nullptr)
 		delete[] _pixelsShadows;
@@ -621,6 +621,39 @@ void RoomManager::loadConversationData(byte *pair12data, size_t pair12size, uint
 	}
 	outConversationData = new byte[outConversationDataSize];
 	Common::copy(pair12data + conversationStart, pair12data + conversationStart + outConversationDataSize, outConversationData);
+	if (g_engine->_state.disabledBranches.contains(_currentRoomNumber)) {
+		applyDisabledChoices(_currentRoomNumber, outConversationData, outConversationDataSize);
+	}
+}
+
+void RoomManager::applyDisabledChoices(int roomNumber, byte *conversationData, size_t conversationDataSize) {
+	Common::Array<ResetEntry> disabledBranches = g_engine->_state.disabledBranches[roomNumber];
+	if (disabledBranches.size() == 0) {
+		return;
+	}
+	debug("Disabling %d conversation branches for room %d", disabledBranches.size(), roomNumber);
+	for (int i = 0; i < disabledBranches.size(); i++) {
+		ResetEntry resetEntry = disabledBranches[i];
+		applyDisabledChoice(resetEntry, conversationData, conversationDataSize);
+	}
+}
+
+void RoomManager::applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize) {
+	Common::copy(entry.data, entry.data + entry.dataSize, conversationData + entry.offset);
+}
+
+void RoomManager::addDisabledChoice(ChoiceOption choice) {
+	debug("Adding disabled branch for room %d at offset %d", choice.room, choice.dataOffset);
+	ResetEntry resetEntry = ResetEntry();
+	resetEntry.room = choice.room;
+	resetEntry.offset = choice.dataOffset;
+	resetEntry.dataSize = 1;
+	resetEntry.data = new byte[1];
+	resetEntry.data[0] = 0xFA; // Disabled
+	// Apply immediately
+	applyDisabledChoice(resetEntry, _conversationData, _conversationDataSize);
+	// Store for future loads
+	g_engine->_state.addDisabledBranch(resetEntry);
 }
 
 void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {

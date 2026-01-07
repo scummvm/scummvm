@@ -120,7 +120,6 @@ private:
 	void calculateScalingMasks();
 	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
 
-
 	Common::Array<Common::Array<int>> _widthScalingTable;
 	Common::Array<Common::Array<int>> _heightScalingTable;
 
@@ -144,7 +143,6 @@ private:
 	bool shouldPlayIntro = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
-
 
 	// int prevDirX = 0;
 	// int prevDirY = 0;
@@ -172,7 +170,6 @@ public:
 
 	Common::Array<int> _inventoryItems;
 	int _selectedInventoryItem = -1;
-
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -225,13 +222,14 @@ public:
 
 	// Actions
 	void performActionTrigger(uint16 actionTrigger);
+	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
 
 	void executeAction(VerbIcon action, HotSpot *hotspot);
-    void openDrawer(HotSpot *hotspot);
-    void closeDrawer(HotSpot *hotspot);
-    void openDoor(HotSpot *hotspot);
-    void closeDoor(HotSpot *hotspot);
-    void pickUpAndDisable(HotSpot *hotspot);
+	void openDrawer(HotSpot *hotspot);
+	void closeDrawer(HotSpot *hotspot);
+	void openDoor(HotSpot *hotspot);
+	void closeDoor(HotSpot *hotspot);
+	void pickUpAndDisable(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);

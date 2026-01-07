@@ -274,6 +274,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	}
 }
 
+
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
 		if (entry->action == action && entry->hotspotExtra == hotspot->extra) {

@@ -68,7 +68,7 @@ uint32 DialogManager::readTextBlock(
 		}
 	}
 	// Check for dialogue marker (choice text)
-	else if (data[pos] == CTRL_DIALOGUE_MARKER || data[pos] == CTRL_DIALOGUE_MARKER_2) {
+	else if (data[pos] == CTRL_DIALOGUE_MARKER || data[pos] == CTRL_DIALOGUE_MARKER_ONEOFF) {
 		pos++; // Skip marker
 
 		// Skip choice index
@@ -95,7 +95,7 @@ uint32 DialogManager::readTextBlock(
 
 		// End markers - stop reading text
 		if (b == CTRL_END_TEXT || b == CTRL_END_CONVERSATION || b == CTRL_ACTION_TRIGGER ||
-			b == CTRL_END_BRANCH || b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_2 ||
+			b == CTRL_END_BRANCH || b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF ||
 			b == CTRL_TEXT_TERMINATOR || b == CTRL_ALT_END_MARKER_1 || b == CTRL_ALT_END_MARKER_2 ||
 			b == CTRL_ALT_END_MARKER_3 || b == CTRL_GO_BACK || b == CTRL_SPEAKER_ID) {
 			break;
@@ -305,7 +305,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 		}
 
 		// Found a dialogue marker
-		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_2) {
+		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF) {
 			if (pos + 1 < dataSize) {
 				if (firstChoiceIndex == -1) {
 					firstChoiceIndex = data[pos + 1];
@@ -317,7 +317,9 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 					// Check if disabled
 
 					ChoiceOption opt;
-					opt.index = choiceIndex;
+					opt.room = g_engine->_room->_currentRoomNumber;
+					opt.shouldDisableOnSelect = b == CTRL_DIALOGUE_MARKER_ONEOFF;
+					opt.choiceIndex = choiceIndex;
 					opt.dataOffset = pos;
 					pos += 2; // Move past marker + index
 					if (data[pos] == CTRL_DISABLED_CHOICE) {
@@ -329,7 +331,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 					while (textPos < dataSize) {
 						byte tb = data[textPos];
 						if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
-							tb == CTRL_DIALOGUE_MARKER_2 || tb == CTRL_END_BRANCH ||
+							tb == CTRL_DIALOGUE_MARKER_ONEOFF || tb == CTRL_END_BRANCH ||
 							tb == CTRL_ALT_END_MARKER_1) {
 							break;
 						}
@@ -338,7 +340,6 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 							opt.text += (char)tb;
 						} else {
 							byte decoded = decodeChar(tb);
-							debug("Parsing choice char: 0x%02X, decoded: 0x%02X", tb, decoded);
 							if (decoded != tb || (decoded >= 0x20 && decoded <= 0xB4)) {
 								opt.text += (char)decoded;
 							}
@@ -395,7 +396,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	while (position < dataSize &&
 		   conversationData[position] != CTRL_SPEAKER_ID &&
 		   conversationData[position] != CTRL_DIALOGUE_MARKER &&
-		   conversationData[position] != CTRL_DIALOGUE_MARKER_2) {
+		   conversationData[position] != CTRL_DIALOGUE_MARKER_ONEOFF) {
 		position++;
 	}
 
@@ -443,6 +444,16 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			break;
 		}
 
+		if(controlByte == CTRL_ACTION_TRIGGER) {
+			uint16 actionCode = conversationData[position + 1] | (conversationData[position + 2] << 8);
+			debug("Action trigger %d encountered!", actionCode);
+			g_engine->dialogActionTrigger(
+				actionCode,
+				g_engine->_room->_currentRoomNumber,
+				g_engine->_room->getCurrentConversationRootIndex()
+			);
+		}
+
 		// Move past control byte
 		if (controlByte == CTRL_END_TEXT || controlByte == CTRL_ACTION_TRIGGER) {
 			position++;
@@ -467,7 +478,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		// If not at a choice marker, there's more dialogue to read
 		if (peekPos < dataSize &&
 			conversationData[peekPos] != CTRL_DIALOGUE_MARKER &&
-			conversationData[peekPos] != CTRL_DIALOGUE_MARKER_2 &&
+			conversationData[peekPos] != CTRL_DIALOGUE_MARKER_ONEOFF &&
 			conversationData[peekPos] != CTRL_END_CONVERSATION) {
 			continue;
 		}
@@ -477,7 +488,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		parseChoices(conversationData, dataSize, position, choices);
 		debug("Parsed %u choices", choices->size());
 		for (uint i = 0; i < choices->size(); i++) {
-			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, (*choices)[i].index, (*choices)[i].text.c_str(),
+			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, (*choices)[i].choiceIndex, (*choices)[i].text.c_str(),
 				  (*choices)[i].isDisabled ? "Yes" : "No");
 		}
 		if (choices->empty()) {
@@ -491,7 +502,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			// We've already made a choice, check if the current choices are at the next level
 			bool foundNextLevel = false;
 			for (uint i = 0; i < choices->size(); i++) {
-				if ((*choices)[i].index == currentChoiceLevel + 1) {
+				if ((*choices)[i].choiceIndex == currentChoiceLevel + 1) {
 					foundNextLevel = true;
 					break;
 				}
@@ -515,11 +526,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			// Real choice: show menu and wait for selection
 			Common::Array<Common::String> choiceTexts;
 			for (uint i = 0; i < choices->size(); i++) {
-				if ((*choices)[i].isDisabled) {
-					choiceTexts.push_back("[DISABLED] " + (*choices)[i].text);
-				} else {
-					choiceTexts.push_back((*choices)[i].text);
-				}
+				choiceTexts.push_back((*choices)[i].text);
 			}
 
 			if (_currentChoices) {
@@ -534,7 +541,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		// 6. Move position to after the selected choice
 		if (selectedIndex >= 0 && selectedIndex < (int)choices->size()) {
 			position = (*choices)[selectedIndex].dataOffset;
-			currentChoiceLevel = (*choices)[selectedIndex].index;
+			currentChoiceLevel = (*choices)[selectedIndex].choiceIndex;
 
 			// Read and display the selected choice as dialogue
 			Common::String choiceText;
@@ -543,6 +550,9 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 			if (!choiceText.empty() && choiceText.size() > 1) {
 				displayDialogue(choiceText, ALFRED_COLOR);
+				if ((*choices)[selectedIndex].shouldDisableOnSelect) {
+					g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
+				}
 			}
 
 			position = endPos;
