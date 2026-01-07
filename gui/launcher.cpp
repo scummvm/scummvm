@@ -1789,6 +1789,7 @@ void LauncherGrid::build() {
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");
 	_grid->setMultiSelectEnabled(true);
+	_grid->setFilterMatcher(LauncherFilterMatcher, this);
 	// Populate the list
 	updateListing();
 
