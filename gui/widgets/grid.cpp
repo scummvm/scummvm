@@ -300,8 +300,6 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 				_grid->_lastSelectedEntryID = _activeEntry->entryID;
 			}
 		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
-			// Clear already selected Items
-			_grid->_selectedEntries.clear();
 			// Shift+Click: Select range from last selected to current item
 			int startID = _grid->_lastSelectedEntryID;
 			int endID = _activeEntry->entryID;

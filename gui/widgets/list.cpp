@@ -264,8 +264,6 @@ void ListWidget::selectItemRange(int from, int to) {
 	if (from > to)
 		SWAP(from, to);
 
-	clearSelection();
-
 	for (int i = from; i <= to; ++i) {
 		addSelectedItem(i);
 	}
