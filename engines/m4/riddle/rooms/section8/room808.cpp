@@ -264,11 +264,15 @@ void Room808::pre_parser() {
 		if (_G(flags)[V096] == 0) {
 			ws_walk(_G(my_walker), 185, 165, nullptr, 6, 2, true);
 		} else {
+			// Hack to fix #16098 - Save game before the move to ensure the position is correct when restoring the auto-save
+			other_save_game_for_resurrection();
 			ws_walk(_G(my_walker), 192, 163, nullptr, 10, 2, true);
 		}
 		_G(kernel).trigger_mode = KT_PREPARSE;
 	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[kBridgeWheelPosition] == 4 && check1Fl) {
 		intr_cancel_sentence();
+		// Hack to fix #16098 - Save game before the move to ensure the position is correct when restoring the auto-save
+		other_save_game_for_resurrection();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		ws_walk(_G(my_walker), 274, 142, nullptr, 8, 2, true);
 		_G(kernel).trigger_mode = KT_PREPARSE;
@@ -1450,11 +1454,14 @@ void Room808::daemon() {
 		if (_G(spleenSpraying)) {
 			kernel_timing_trigger(200, 966, nullptr);
 		} else {
+			_G(player).disable_hyperwalk = false;
+
 			ws_unhide_walker(_G(my_walker));
-			ws_demand_location(_G(my_walker), 202, 179);
+			ws_demand_location(_G(my_walker), 190, 179);
 			ws_demand_facing(_G(my_walker), 2);
 
-			other_save_game_for_resurrection();
+			// TODO : remove the hack and use this code when we understand why it doesn't save the right position in the auto-save			
+			// other_save_game_for_resurrection();
 			_G(game).setRoom(413);
 		}
 
@@ -1686,11 +1693,13 @@ void Room808::daemon() {
 		break;
 
 	case 967:
+		// Note : this block is never used as the environment variable spleenSpraying is never set (thus trigger 966 & 967 are never called)
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_location(_G(my_walker), 202, 179);
 		ws_demand_facing(_G(my_walker), 2);
 
-		other_save_game_for_resurrection();
+		// TODO : remove the hack and use this code when we understand why it doesn't save the right position in the auto-save
+		// other_save_game_for_resurrection();
 		_G(game).setRoom(413);
 
 		break;
