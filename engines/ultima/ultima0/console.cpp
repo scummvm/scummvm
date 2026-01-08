@@ -32,6 +32,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("demo", WRAP_METHOD(Console, cmdDemo));
 	registerCmd("debug", WRAP_METHOD(Console, cmdDebug));
+	registerCmd("monster", WRAP_METHOD(Console, cmdMonster));
 }
 
 Console::~Console() {
@@ -131,6 +132,37 @@ bool Console::cmdDebug(int argc, const char **argv) {
 	g_engine->replaceView("WorldMap");
 
 	return false;
+}
+
+bool Console::cmdMonster(int argc, const char **argv) {
+	const auto &player = g_engine->_player;
+	auto &dungeon = g_engine->_dungeon;
+
+	if (argc != 2) {
+		debugPrintf("monster <1 to 10>\n");
+		return true;
+	} else if (player._level == 0) {
+		debugPrintf("Not in a dungeon.\n");
+		return true;
+	} else {
+		Common::Point pt = player._dungeonPos + player._dungeonDir;
+
+		if (!ISWALKTHRU(dungeon._map[pt.x][pt.y])) {
+			debugPrintf("No free spot in front of player.\n");
+			return true;
+		} else {
+			int num = atoi(argv[1]);
+
+			if (num >= 1 && num <= 10) {
+				dungeon.addMonsterAtPos(player, pt, num);
+				g_events->send("Dungeon", GameMessage("ENDOFTURN"));
+				return false;
+			} else {
+				debugPrintf("Invalid monster number.\n");
+				return true;
+			}
+		}
+	}
 }
 
 } // namespace Ultima0

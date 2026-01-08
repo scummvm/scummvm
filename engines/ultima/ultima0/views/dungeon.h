@@ -53,6 +53,7 @@ public:
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void timeout() override;
 };
 

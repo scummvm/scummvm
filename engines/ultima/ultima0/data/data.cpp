@@ -323,12 +323,6 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int type) {
 	if (RND() > 0.6)
 		return;
 
-	// Fill in details
-	MonsterEntry m;
-	m._type = type;
-	m._strength = level + 3 + player._level;
-	m._alive = true;
-
 	// Find a place for it. Must be empty, not player
 	do {
 		x = urand() % DUNGEON_MAP_SIZE;
@@ -336,8 +330,20 @@ void DungeonMapInfo::addMonster(const PlayerInfo &player, int type) {
 	} while (_map[x][y] != DT_SPACE ||
 		(x == player._dungeonPos.x && y == player._dungeonPos.y));
 
+	addMonsterAtPos(player, Common::Point(x, y), type);
+}
+
+void DungeonMapInfo::addMonsterAtPos(const PlayerInfo &player, const Common::Point &pt, int type) {
+	int level = MONSTER_INFO[type]._level;
+
+	// Fill in details
+	MonsterEntry m;
+	m._type = type;
+	m._strength = level + 3 + player._level;
+	m._alive = true;
+
 	// Record position
-	m._loc.x = x; m._loc.y = y;
+	m._loc = pt;
 
 	_monsters.push_back(m);
 }

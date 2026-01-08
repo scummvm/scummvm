@@ -68,7 +68,7 @@ struct MonsterEntry {
  */
 struct DungeonMapInfo {
 private:
-	void addMonster(const PlayerInfo &player, int Type);
+	void addMonster(const PlayerInfo &player, int type);
 	int generateContent(int c);
 
 public:
@@ -82,6 +82,8 @@ public:
 	 * Find Monster ID at given location
 	 */
 	int findMonster(const Common::Point &c) const;
+
+	void addMonsterAtPos(const PlayerInfo &player, const Common::Point &pt, int type);
 };
 
 /**

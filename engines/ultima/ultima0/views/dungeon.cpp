@@ -279,6 +279,15 @@ void Dungeon::interact() {
 	}
 }
 
+bool Dungeon::msgGame(const GameMessage &msg) {
+	if (msg._name == "ENDOFTURN") {
+		endOfTurn();
+		return true;
+	}
+
+	return false;
+}
+
 void Dungeon::timeout() {
 	const auto &player = g_engine->_player;
 	g_engine->stopMidi();
