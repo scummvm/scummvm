@@ -126,7 +126,13 @@ void MonsterLogic::move(MonsterEntry &m, PlayerInfo &p, DungeonMapInfo &d) {
 		return;
 	if (x == p._dungeonPos.x &&			// Can't move onto us
 		y == p._dungeonPos.y) return;
-	m._loc.x = x; m._loc.y = y;			// Move to new position
+
+	// Move to new position
+	m._loc.x = x; m._loc.y = y;
+
+	// If the tile was for a hidden door, flag it as a normal visible door
+	if (d._map[x][y] == DT_HIDDENDOOR)
+		d._map[x][y] = DT_DOOR;
 }
 
 bool MonsterLogic::canMoveTo(DungeonMapInfo &d, int x, int y) {
