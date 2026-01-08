@@ -160,10 +160,10 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_DOWN);
-		// setScreen(2, ALFRED_LEFT);
-		// alfredState.x = 576;
-		// alfredState.y = 374;
+		// setScreen(0, ALFRED_DOWN);
+		setScreen(2, ALFRED_LEFT);
+		alfredState.x = 576;
+		alfredState.y = 374;
 	}
 }
 

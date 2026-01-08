@@ -389,6 +389,15 @@ struct GameStateData {
 
 	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
 
+	GameStateData() {
+		memset(conversationRootsState, 0, 4 * 56);
+	}
+
+	~GameStateData() {
+		delete[] conversationRootsState;
+		conversationRootsState = nullptr;
+	}
+
 	void addDisabledBranch(ResetEntry entry) {
 		disabledBranches[entry.room].push_back(entry);
 	}

@@ -392,18 +392,30 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	uint32 position = 0;
 	int currentChoiceLevel = -1; // Track the current choice level
 
-	bool speakerRootOffsetFound = false;
-	int currentRoot = npcIndex + 1;
-	while(position < dataSize && !speakerRootOffsetFound) {
-		if(conversationData[position] == CTRL_ALT_SPEAKER_ROOT && conversationData[position + 1] == currentRoot) {
-			speakerRootOffsetFound = true;
-			position += 2; // Move past the speaker root marker and npc index
+	// Find the speaker tree for this NPC; they are marked by 0xFE 0xXX where XX is NPC index + 1
+	bool speakerTreeOffsetFound = false;
+	int currentConversationTree = npcIndex + 1;
+	while(position < dataSize && !speakerTreeOffsetFound) {
+		if(conversationData[position] == CTRL_ALT_SPEAKER_ROOT && conversationData[position + 1] == currentConversationTree) {
+			speakerTreeOffsetFound = true;
+			position += 2; // Move past the speaker tree marker and npc index
 		} else {
 			position++;
 		}
 	}
-
-
+	// Right after the speaker conversation tree, we are in branch 0
+	int currentRoot = 0;
+	while(g_engine->_state.getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
+		// This root is disabled, skip to next
+		while(position < dataSize) {
+			if(conversationData[position] == CTRL_END_BRANCH) {
+				position++; // Move past end branch marker
+				currentRoot++;
+				break;
+			}
+			position++;
+		}
+	}
 
 	// Skip any junk at start until we find a speaker marker or choice marker
 	while (position < dataSize &&
@@ -462,7 +474,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			g_engine->dialogActionTrigger(
 				actionCode,
 				g_engine->_room->_currentRoomNumber,
-				0 //FIXME: Pass NPC index?
+				currentRoot
 			);
 		}
 
