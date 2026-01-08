@@ -36,8 +36,12 @@ protected:
 	float _min;
 	float _max;
 
+	float _rangeMin;
+	float _rangeMax;
+
 public:
 	Angle(float angle, float min, float max) : _min(min), _max(max) {
+		resetRange();
 		set(angle);
 	}
 
@@ -49,6 +53,10 @@ public:
 	float angle() const { return _angle; }
 
 	void set(float v) {
+		if (v > _rangeMax)
+			v = _rangeMax;
+		else if (v < _rangeMin)
+			v = _rangeMin;
 		auto range = _max - _min;
 		auto a = fmod(v - _min, range);
 		if (a < 0)
@@ -58,6 +66,15 @@ public:
 
 	void add(float v) {
 		set(_angle + v);
+	}
+
+	void setRange(float min, float max) {
+		_rangeMin = min;
+		_rangeMax = max;
+	}
+
+	void resetRange() {
+		setRange(-INFINITY, INFINITY);
 	}
 };
 struct AngleX : Angle {

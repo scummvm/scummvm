@@ -524,25 +524,28 @@ struct AngleXMax : public Script::Command {
 	AngleXMax(float x) : xMax(x) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("angle x max %g", xMax);
+		debug("anglexmax %g", xMax);
+		g_engine->setXMax(xMax);
 	}
 };
 
 struct AngleYMax : public Script::Command {
-	float yMax0, yMax1;
-	AngleYMax(float y0, float y1) : yMax0(y0), yMax1(y1) {}
+	float yMin, yMax;
+	AngleYMax(float min, float max) : yMin(min), yMax(max) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("angle y max %g %g", yMax0, yMax1);
+		debug("angleymax %g %g", yMin, yMax);
+		g_engine->setYMax(yMin, yMax);
 	}
 };
 
 struct SetAngle : public Script::Command {
-	float a0, a1;
-	SetAngle(float a0_, float a1_) : a0(a0_), a1(a1_) {}
+	float x, y;
+	SetAngle(float x_, float y_) : x(x_), y(y_) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("set angle %g %g", a0, a1);
+		debug("setangle %g %g", x, y);
+		g_engine->setAngle(x, y);
 	}
 };
 

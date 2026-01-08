@@ -126,6 +126,19 @@ public:
 		_fov = M_PI * fov / 180;
 	}
 
+	void setXMax(float max) {
+		static const float baseX = -M_PI_2;
+		_angleY.setRange(baseX - max, baseX + max);
+	}
+
+	// this is set to large values and effectively useless
+	void setYMax(float min, float max) {}
+	void setAngle(float x, float y) {
+		_angleX.set(y);
+		static const float baseX = -M_PI_2;
+		_angleY.set(baseX + x);
+	}
+
 	bool testSaveSlot(int idx) const;
 	void loadSaveSlot(int idx);
 	void saveSaveSlot(int idx);
