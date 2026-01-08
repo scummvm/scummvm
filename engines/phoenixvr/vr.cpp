@@ -249,11 +249,6 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 		}
 		s.seek(chunkPos + chunkSize);
 	}
-	if (vr._pic) {
-		Common::DumpFile out;
-		if (out.open("static.bmp"))
-			Image::writeBMP(out, *vr._pic);
-	}
 	return vr;
 }
 
