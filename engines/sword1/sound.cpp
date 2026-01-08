@@ -571,6 +571,13 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 	if (_cowMode == CowPSX) {
 		Audio::RewindableAudioStream *stream = Audio::makeXAStream(new Common::MemoryReadStream(src, dstSize), 11025);
 		stream->readBuffer((int16 *)_speechSample, _speechSize);
+
+#ifdef SCUMM_BIG_ENDIAN
+		for (int i = 0; i < _speechSize / 2; i++) {
+			((int16 *)_speechSample)[i] = TO_LE_16(((int16 *)_speechSample)[i]);
+		}
+#endif
+
 		return true;
 	} else if (_cowMode != CowWave && _cowMode != CowDemo) {
 		Audio::RewindableAudioStream *stream = nullptr;
@@ -591,6 +598,13 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 #endif
 		if (stream) {
 			stream->readBuffer((int16 *)_speechSample, _speechSize);
+
+#ifdef SCUMM_BIG_ENDIAN
+			for (int i = 0; i < _speechSize / 2; i++) {
+				((int16 *)_speechSample)[i] = TO_LE_16(((int16 *)_speechSample)[i]);
+			}
+#endif
+
 			return true;
 		} else {
 			return false;
@@ -1310,6 +1324,12 @@ void Sound::serveSample(Common::File *file, int32 i) {
 							debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
 					}
 				}
+
+#ifdef SCUMM_BIG_ENDIAN
+				for (int j = 0; j < len; j++) {
+					((int16 *)buf)[j] = TO_LE_16(((int16 *)buf)[j]);
+				}
+#endif
 			}
 
 			if (_musicStreamFormat[i] != MusWav)
