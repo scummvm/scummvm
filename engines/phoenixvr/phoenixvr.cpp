@@ -571,6 +571,41 @@ bool PhoenixVREngine::testSaveSlot(int idx) const {
 	return _saveFileMan->exists(getSaveStateName(idx));
 }
 
+void PhoenixVREngine::captureContext() {
+	Common::MemoryWriteStreamDynamic ms(DisposeAfterUse::YES);
+
+	auto writeString = [&ms](const Common::String &str) {
+		assert(str.size() <= 256);
+		ms.writeString(str);
+		uint tail = 257 - str.size();
+		while (tail--)
+			ms.writeByte(0);
+	};
+
+	ms.writeSint32LE(fromAngle(_angleY.angle() + M_PI_2));
+	ms.writeSint32LE(fromAngle(_angleX.angle()));
+	ms.writeSint32LE(0);
+	ms.writeSint32LE(0);
+	ms.writeSint32LE(fromAngle(_angleY.rangeMax() + M_PI_2));
+	ms.writeSint32LE(fromAngle(_angleX.rangeMin()));
+	ms.writeSint32LE(fromAngle(_angleX.rangeMax()));
+	ms.writeSint32LE(_warpIdx);
+	ms.writeUint32LE(_warp->tests.size());
+	writeString({});
+	writeString({});
+	for (auto &warpCursors : _cursors)
+		for (auto &cursor : warpCursors)
+			writeString(cursor);
+
+	for (auto &name : _script->getVarNames()) {
+		auto value = g_engine->getVariable(name);
+		ms.writeUint32LE(value);
+	}
+
+	ms.writeUint32LE(0); // current subroutine
+	ms.writeSint32LE(_prevWarp);
+}
+
 void PhoenixVREngine::loadSaveSlot(int idx) {
 	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
 	if (!slot) {
@@ -602,6 +637,10 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		  angleX, angleY, soundVolumePanX, soundVolumnPanY,
 		  angleXMax, angleYMin, angleYMax,
 		  currentWarpIdx, currentWarpTests);
+
+	setAngle(toAngle(angleX), toAngle(angleY));
+	setXMax(toAngle(angleXMax));
+	setYMax(toAngle(angleYMin), toAngle(angleYMax));
 
 	_nextWarp = currentWarpIdx;
 

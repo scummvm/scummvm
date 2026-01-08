@@ -32,7 +32,17 @@ class SeekableReadStream;
 }
 
 namespace PhoenixVR {
+namespace {
+inline float toAngle(int a) {
+	static const float angleToFloat = M_PI / 4096.0f;
+	return angleToFloat * a;
+}
 
+inline int fromAngle(float a) {
+	static const float floatToAngle = 4096.0f / M_PI;
+	return floatToAngle * a;
+}
+} // namespace
 class Script {
 public:
 	struct ExecutionContext {

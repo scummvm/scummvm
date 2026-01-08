@@ -255,7 +255,8 @@ struct LoadSave_Test_Slot : public Script::Command {
 struct LoadSave_Capture_Context : public Script::Command {
 	LoadSave_Capture_Context(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Capture_Context");
+		debug("LoadSave_Capture_Context");
+		g_engine->captureContext();
 	}
 };
 

@@ -132,7 +132,10 @@ public:
 	}
 
 	// this is set to large values and effectively useless
-	void setYMax(float min, float max) {}
+	void setYMax(float min, float max) {
+		_angleX.setRange(min, max);
+	}
+
 	void setAngle(float x, float y) {
 		_angleX.set(y);
 		static const float baseX = -M_PI_2;
@@ -143,6 +146,7 @@ public:
 	void loadSaveSlot(int idx);
 	void saveSaveSlot(int idx);
 	void drawSlot(int idx, int face, int x, int y);
+	void captureContext();
 
 	void setContextLabel(const Common::String &contextLabel) {
 		_contextLabel = contextLabel;
@@ -217,6 +221,7 @@ private:
 		Common::Array<byte> state;
 	};
 	Common::String _contextLabel;
+	Common::Array<byte> _capturedState;
 
 	GameState loadGameStateObject(Common::SeekableReadStream *stream);
 };

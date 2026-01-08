@@ -7,7 +7,6 @@
 namespace PhoenixVR {
 
 namespace {
-
 class Parser {
 	const Common::String &_line;
 	uint _lineno;
@@ -136,11 +135,6 @@ public:
 				next();
 		}
 		return list;
-	}
-
-	static float toAngle(int a) {
-		static const float angleToFloat = M_PI / 4096.0f;
-		return angleToFloat * a;
 	}
 
 	Script::CommandPtr parseCommand() {

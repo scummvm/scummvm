@@ -68,6 +68,14 @@ public:
 		set(_angle + v);
 	}
 
+	float rangeMin() const {
+		return _rangeMin;
+	}
+
+	float rangeMax() const {
+		return _rangeMax;
+	}
+
 	void setRange(float min, float max) {
 		_rangeMin = min;
 		_rangeMax = max;
