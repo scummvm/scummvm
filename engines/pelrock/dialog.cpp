@@ -191,24 +191,18 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		} else {
 			g_engine->alfredState.setState(ALFRED_IDLE);
 			_curSprite->isTalking = true;
-			xPos = _curSprite->x + _curSprite->w / 2;
+			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
 			yPos = _curSprite->y - height; // Above sprite, adjust for line
 		}
 
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
-		if (xPos + s.getRect().width() > 640) {
-			xPos = 640 - s.getRect().width();
-		}
-		if (yPos + s.getRect().height() > 400) {
-			yPos = 400 - s.getRect().height();
-		}
-		if (xPos < 0) {
-			xPos = 0;
-		}
-		if (yPos < 0) {
-			yPos = 0;
-		}
+
+
+		// Clamp to screen bounds
+		xPos = CLIP(xPos, 0, 640 - maxWidth);
+		yPos = CLIP(yPos, 0, 400 - s.getRect().height());
+
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
 		drawRect(_screen, xPos, yPos,
