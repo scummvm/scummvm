@@ -658,6 +658,14 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	_loading = true;
 }
 
+void PhoenixVREngine::saveSaveSlot(int idx) {
+	Common::ScopedPtr<Common::OutSaveFile> slot(_saveFileMan->openForSaving(getSaveStateName(idx)));
+	if (!slot) {
+		warning("saveSaveSlot: invalid save slot %d", idx);
+		return;
+	}
+}
+
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
 	if (!slot)

@@ -135,6 +135,7 @@ public:
 
 	bool testSaveSlot(int idx) const;
 	void loadSaveSlot(int idx);
+	void saveSaveSlot(int idx);
 	void drawSlot(int idx, int face, int x, int y);
 
 	void setContextLabel(const Common::String &contextLabel) {

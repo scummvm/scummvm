@@ -286,7 +286,8 @@ struct LoadSave_Save : public Script::Command {
 
 	LoadSave_Save(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadSave_Save %d", slot);
+		debug("LoadSave_Save %d", slot);
+		g_engine->saveSaveSlot(slot);
 	}
 };
 
