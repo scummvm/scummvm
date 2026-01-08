@@ -53,7 +53,7 @@
 namespace Graphics {
 class Font;
 class ManagedSurface;
-}
+} // namespace Graphics
 
 namespace AGDS {
 
@@ -280,7 +280,9 @@ public:
 	bool activeCurtain() const {
 		return _curtainTimer >= 0;
 	}
+
 	bool v2() const;
+	int version() const;
 
 private:
 	void stopAmbientSound();

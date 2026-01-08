@@ -724,7 +724,10 @@ void Process::setAnimationZ() {
 }
 
 void Process::setPanAndVolume() {
-	int pan = pop();
+	int pan = 0;
+	if (_version > 0) {
+		pan = pop();
+	}
 	int volume = pop();
 	debug("setPanAndVolume: pan %d volume %d", pan, volume);
 }

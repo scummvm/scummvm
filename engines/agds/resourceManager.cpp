@@ -32,7 +32,7 @@
 #include "video/flic_decoder.h"
 
 namespace AGDS {
-ResourceManager::ResourceManager() {}
+ResourceManager::ResourceManager(int version) : _version(version) {}
 
 ResourceManager::~ResourceManager() {}
 
@@ -63,10 +63,17 @@ bool ResourceManager::GrpFile::load(const Common::Path &grpPath) {
 		return false;
 	}
 
-	decrypt(header, 0x10);
 	if (strncmp(reinterpret_cast<const char *>(header), kSignature, 0x10) != 0) {
-		warning("invalid signature");
-		return false;
+		decrypt(header, 0x10);
+		if (strncmp(reinterpret_cast<const char *>(header), kSignature, 0x10) != 0) {
+			warning("invalid signature");
+			return false;
+		}
+		debug("load grp file %s, encrypted", grpPath.toString().c_str());
+		_encrypted = true;
+	} else {
+		debug("load grp file %s, unencrypted", grpPath.toString().c_str());
+		_encrypted = false;
 	}
 
 	Common::MemoryReadStreamEndian reader(header + 0x10, sizeof(header) - 0x10, false);
@@ -109,7 +116,8 @@ bool ResourceManager::GrpFile::load(const Common::Path &grpPath) {
 		}
 
 		unsigned nameLength = nameEnd - dirData;
-		decrypt(dirData, nameLength);
+		if (_encrypted)
+			decrypt(dirData, nameLength);
 		Common::String name(reinterpret_cast<char *>(dirData), nameLength);
 
 		Common::MemoryReadStreamEndian dirReader(dirData + 0x21, 8, false);
@@ -206,7 +214,7 @@ Graphics::Surface *ResourceManager::loadPicture(const Common::String &name, cons
 	return NULL;
 }
 
-Common::String ResourceManager::loadText(Common::SeekableReadStream &stream) {
+Common::String ResourceManager::loadText(Common::SeekableReadStream &stream) const {
 	Common::Array<char> text(stream.size());
 	if (stream.read(text.data(), text.size()) != text.size())
 		error("short read from text resource");
@@ -219,7 +227,8 @@ Common::String ResourceManager::loadText(Common::SeekableReadStream &stream) {
 	while (begin != end && end[-1] == 0)
 		--end;
 
-	decrypt(reinterpret_cast<uint8 *>(text.data()), end - begin);
+	if (_version != 0 || (text[0] < ' ' || text[0] >= 0x7f))
+		decrypt(reinterpret_cast<uint8 *>(text.data()), end - begin);
 
 	while (begin != end && end[-1] == 0)
 		--end;

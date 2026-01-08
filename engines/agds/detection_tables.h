@@ -56,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_DROPPLATFORM | ADGF_CD,
 	 GUIO1(GUIO_NONE)},
 	{"black-mirror",
-	 0,
+	 "Demo",
 	 AD_ENTRY2s(
 		 "gfx_en.grp", "7539f35f9242461114c8746b62f884a6", 67516239,
 		 "data.adb", "56680d118afddf9477c57e508d118dc8", 114764),

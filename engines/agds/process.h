@@ -76,7 +76,7 @@ private:
 	Common::Point _mousePosition;
 	int _filmSubtitlesResource;
 	AnimationPtr _processAnimation;
-	bool _v2;
+	int _version;
 
 private:
 	void debug(const char *str, ...);
@@ -90,6 +90,7 @@ private:
 		uint16 h = next();
 		return (h << 8) | l;
 	}
+	uint16 nextOpcode();
 
 	int32 pop();
 	int32 top();
@@ -138,12 +139,12 @@ private:
 	void removeScreenObject(const Common::String &name);
 
 public:
-	Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, bool v2);
+	Process(AGDSEngine *engine, const ObjectPtr &object, unsigned ip, int version);
 	unsigned entryPoint() const {
 		return _entryPoint;
 	}
 
-	static Common::String disassemble(const ObjectPtr &object, bool v2);
+	static Common::String disassemble(const ObjectPtr &object, int version);
 
 	ObjectPtr getObject() const {
 		return _object;

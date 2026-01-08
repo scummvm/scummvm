@@ -67,6 +67,7 @@ private:
 
 	class GrpFile : public Common::Archive {
 		Common::File _file;
+		bool _encrypted;
 
 		using MembersType = Common::HashMap<Common::String, ArchiveMemberPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>;
 		MembersType _members;
@@ -84,11 +85,14 @@ private:
 		Common::SeekableReadStream *createReadStreamForMember(const Common::Path &name) const override;
 	};
 
+	static void decrypt(uint8 *data, unsigned size);
+
+	int _version;
+
 public:
-	ResourceManager();
+	ResourceManager(int version);
 	~ResourceManager();
 
-	static void decrypt(uint8 *data, unsigned size);
 	static bool IsBMP(Common::SeekableReadStream &stream);
 
 	bool addPath(const Common::Path &grpFilename);
@@ -96,7 +100,7 @@ public:
 	Common::SeekableReadStream *getResource(const Common::String &name) const;
 	Graphics::Surface *loadPicture(const Common::String &name, const Graphics::PixelFormat &format);
 
-	static Common::String loadText(Common::SeekableReadStream &stream);
+	Common::String loadText(Common::SeekableReadStream &stream) const;
 	Common::String loadText(const Common::String &name) const;
 };
 
