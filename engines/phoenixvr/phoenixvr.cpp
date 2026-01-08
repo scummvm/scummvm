@@ -645,6 +645,32 @@ void PhoenixVREngine::captureContext() {
 
 	ms.writeUint32LE(0); // current subroutine
 	ms.writeSint32LE(_prevWarp);
+
+	for (uint i = 0; i != 12; ++i) {
+		writeString(_lockKey[i]);
+	}
+	writeString({});     // music
+	ms.writeUint32LE(0); // musicVolume
+
+	// FIXME: serialize sounds here
+	// sound samples
+	for (uint i = 0; i != 8; ++i) {
+		writeString({});
+		ms.writeUint32LE(255);
+		ms.writeUint32LE(0); // volume
+	}
+
+	// sound samples 3D
+	for (uint i = 0; i != 8; ++i) {
+		writeString({});
+		ms.writeUint32LE(2000); // angle
+		ms.writeUint32LE(255);
+		ms.writeUint32LE(0); // volume
+	}
+
+	auto *state = ms.getData();
+	_capturedState.assign(state, state + ms.size());
+	debug("captured %u bytes of state", _capturedState.size());
 }
 
 void PhoenixVREngine::loadSaveSlot(int idx) {
@@ -728,9 +754,9 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	// sound samples 3D
 	for (uint i = 0; i != 8; ++i) {
 		auto name = ms.readString(0, 257);
+		auto angle = ms.readUint32LE();
 		auto vol = ms.readUint32LE();
 		auto loop = ms.readUint32LE();
-		auto angle = ms.readUint32LE();
 		debug("3d sound: %s %u %u %u", name.c_str(), vol, loop, angle);
 		if (!name.empty())
 			playSound(name, vol, -1, true, float(angle * M_PI));
