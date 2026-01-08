@@ -461,53 +461,8 @@ struct LockKey : public Script::Command {
 	LockKey(int i, Common::String w) : idx(i), warp(Common::move(w)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("lock key F%d: %s", idx, warp.c_str());
-		Common::KeyCode code;
-		switch (idx) {
-		case 0:
-			code = Common::KeyCode::KEYCODE_ESCAPE;
-			break;
-		case 1:
-			code = Common::KeyCode::KEYCODE_F1;
-			break;
-		case 2:
-			code = Common::KeyCode::KEYCODE_F2;
-			break;
-		case 3:
-			code = Common::KeyCode::KEYCODE_F3;
-			break;
-		case 4:
-			code = Common::KeyCode::KEYCODE_F4;
-			break;
-		case 5:
-			code = Common::KeyCode::KEYCODE_F5;
-			break;
-		case 6:
-			code = Common::KeyCode::KEYCODE_F6;
-			break;
-		case 7:
-			code = Common::KeyCode::KEYCODE_F7;
-			break;
-		case 8:
-			code = Common::KeyCode::KEYCODE_F8;
-			break;
-		case 9:
-			code = Common::KeyCode::KEYCODE_F9;
-			break;
-		case 10:
-			code = Common::KeyCode::KEYCODE_F10;
-			break;
-		case 11:
-			code = Common::KeyCode::KEYCODE_RETURN;
-			break;
-		case 12:
-			code = Common::KeyCode::KEYCODE_TAB;
-			break;
-		default:
-			warning("unknown lock key %d", idx);
-			return;
-		}
-		g_engine->lockKey(code, warp);
+		debug("lock key %d: %s", idx, warp.c_str());
+		g_engine->lockKey(idx, warp);
 	}
 };
 

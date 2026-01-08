@@ -49,6 +49,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
 																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
+																					 _lockKey(13),
 																					 _fov(M_PI_2),
 																					 _angleX(M_PI),
 																					 _angleY(-M_PI_2),
@@ -143,11 +144,7 @@ void PhoenixVREngine::wait(float seconds) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
-				auto it = _keys.find(event.kbd.keycode);
-				if (it != _keys.end()) {
-					debug("matched code %d", static_cast<int>(event.kbd.keycode));
-					goToWarp(it->_value, true);
-				} else if (event.kbd.ascii == ' ') {
+				if (event.kbd.ascii == ' ') {
 					waiting = false;
 				}
 				break;
@@ -305,8 +302,8 @@ void PhoenixVREngine::resetLockKey() {
 	_prevWarp = -1; // original game does only this o_O
 }
 
-void PhoenixVREngine::lockKey(Common::KeyCode code, const Common::String &warp) {
-	_keys[code] = warp;
+void PhoenixVREngine::lockKey(int idx, const Common::String &warp) {
+	_lockKey[idx] = warp;
 }
 
 Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
@@ -506,10 +503,54 @@ Common::Error PhoenixVREngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
-				auto it = _keys.find(event.kbd.keycode);
-				if (it != _keys.end()) {
+				int code = -1;
+				switch (event.kbd.keycode) {
+				case Common::KeyCode::KEYCODE_ESCAPE:
+					code = 0;
+					break;
+				case Common::KeyCode::KEYCODE_F1:
+					code = 1;
+					break;
+				case Common::KeyCode::KEYCODE_F2:
+					code = 2;
+					break;
+				case Common::KeyCode::KEYCODE_F3:
+					code = 3;
+					break;
+				case Common::KeyCode::KEYCODE_F4:
+					code = 4;
+					break;
+				case Common::KeyCode::KEYCODE_F5:
+					code = 5;
+					break;
+				case Common::KeyCode::KEYCODE_F6:
+					code = 6;
+					break;
+				case Common::KeyCode::KEYCODE_F7:
+					code = 7;
+					break;
+				case Common::KeyCode::KEYCODE_F8:
+					code = 8;
+					break;
+				case Common::KeyCode::KEYCODE_F9:
+					code = 9;
+					break;
+				case Common::KeyCode::KEYCODE_F10:
+					code = 10;
+					break;
+				case Common::KeyCode::KEYCODE_RETURN:
+					code = 11;
+					break;
+				case Common::KeyCode::KEYCODE_TAB:
+					code = 12;
+					break;
+				default:
+					break;
+				}
+
+				if (code >= 0) {
 					debug("matched code %d", static_cast<int>(event.kbd.keycode));
-					goToWarp(it->_value, true);
+					goToWarp(_lockKey[code], true);
 				}
 			} break;
 			case Common::EVENT_MOUSEMOVE:
@@ -537,9 +578,9 @@ Common::Error PhoenixVREngine::run() {
 			} break;
 			case Common::EVENT_RBUTTONUP: {
 				debug("right click");
-				auto it = _keys.find(Common::KeyCode::KEYCODE_TAB);
-				if (it != _keys.end())
-					goToWarp(it->_value, true);
+				auto &rclick = _lockKey[12];
+				if (!rclick.empty())
+					goToWarp(rclick, true);
 			}
 			default:
 				break;
@@ -668,6 +709,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	for (uint i = 0; i != 12; ++i) {
 		auto lockKey = ms.readString(0, 257);
 		debug("lockKey %d %s", i, lockKey.c_str());
+		_lockKey[i] = lockKey;
 	}
 	auto music = ms.readString(0, 257);
 	auto musicVolume = ms.readUint32LE();

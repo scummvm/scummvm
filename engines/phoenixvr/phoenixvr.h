@@ -117,7 +117,7 @@ public:
 	const Region *getRegion(int idx) const;
 
 	void resetLockKey();
-	void lockKey(Common::KeyCode code, const Common::String &warp);
+	void lockKey(int idx, const Common::String &warp);
 	void startTimer(float seconds);
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
@@ -180,7 +180,7 @@ private:
 		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }
 	};
 
-	Common::HashMap<Common::KeyCode, Common::String, KeyCodeHash> _keys;
+	Common::Array<Common::String> _lockKey;
 	Common::Array<Common::String> _variableOrder;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	struct Sound {
