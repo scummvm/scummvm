@@ -100,6 +100,10 @@ public:
 	ConstWarpPtr getWarp(int index) const;
 	ConstWarpPtr getInitScript() const;
 
+	uint numWarps() const {
+		return _warps.size();
+	}
+
 	const Common::Array<Common::String> &getWarpNames() const {
 		return _warpNames;
 	}

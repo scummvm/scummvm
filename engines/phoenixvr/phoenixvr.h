@@ -116,13 +116,6 @@ public:
 
 	const Region *getRegion(int idx) const;
 
-	uint numCursors() const {
-		return _cursors.size();
-	}
-	const Region *getCursorRegion(uint idx) const {
-		return idx < _cursors.size() ? &_cursors[idx].region : nullptr;
-	}
-
 	void resetLockKey();
 	void lockKey(Common::KeyCode code, const Common::String &warp);
 	void startTimer(float seconds);
@@ -161,6 +154,7 @@ private:
 private:
 	Common::Point _mousePos;
 	Common::Path _nextScript;
+	int _warpIdx = -1;
 	Script::ConstWarpPtr _warp;
 	int _nextWarp = -1;
 	int _prevWarp = -1;
@@ -184,12 +178,9 @@ private:
 
 	Common::HashMap<Common::String, Graphics::Surface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 
-	struct Cursor {
-		Region region;
-		Graphics::Surface *surface = nullptr;
-	};
-	Common::Array<Cursor> _cursors;
-	Cursor _defaultCursor[2];
+	Common::Array<Common::Array<Common::String>> _cursors;
+	Common::String _defaultCursor[2];
+
 	VR _vr;
 	float _fov;
 	AngleX _angleX;

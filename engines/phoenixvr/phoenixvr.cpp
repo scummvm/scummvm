@@ -115,6 +115,13 @@ void PhoenixVREngine::loadNextScript() {
 	}
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
+
+	int numWarps = _script->numWarps();
+	_cursors.resize(numWarps);
+	for (int i = 0; i != numWarps; ++i) {
+		auto warp = _script->getWarp(i);
+		_cursors[i].resize(warp->tests.size());
+	}
 }
 
 void PhoenixVREngine::end() {
@@ -190,30 +197,19 @@ const Region *PhoenixVREngine::getRegion(int idx) const {
 void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 	debug("setCursorDefault %d: %s", idx, path.c_str());
 	if (idx == 0 || idx == 1) {
-		_defaultCursor[idx].surface = loadCursor(path);
+		_defaultCursor[idx] = path;
 	} else
 		warning("only 2 default cursors supported, got %d", idx);
 }
 
 void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
 	debug("setCursor %s %s:%d", path.c_str(), wname.c_str(), idx);
-	if (!_warp || !_warp->vrFile.equalsIgnoreCase(wname)) {
-		warning("setting cursor for different warp, active: %s, required: %s", _warp ? _warp->vrFile.c_str() : "null", wname.c_str());
-		return;
-	}
-	auto *reg = g_engine->getRegion(idx);
-	if (idx >= static_cast<int>(_cursors.size()))
-		_cursors.resize(idx + 1);
-	auto &cursor = _cursors[idx];
-	debug("cursor region %s:%d: %s, %s", wname.c_str(), idx, reg ? reg->toString().c_str() : "no region", path.c_str());
-	cursor.surface = loadCursor(path);
-	if (reg)
-		cursor.region = *reg;
+	_cursors[_script->getWarp(wname)][idx] = path;
 }
 
 void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
 	debug("hide cursor %s:%d", warp.c_str(), idx);
-	_cursors[idx].surface = nullptr;
+	_cursors[_script->getWarp(warp)][idx].clear();
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
@@ -337,6 +333,8 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 }
 
 Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {
+	if (path.empty())
+		return nullptr;
 	auto it = _cursorCache.find(path);
 	if (it != _cursorCache.end())
 		return it->_value;
@@ -423,6 +421,7 @@ void PhoenixVREngine::tick(float dt) {
 		goToWarp(_script->getInitScript()->vrFile);
 	}
 	if (_nextWarp >= 0) {
+		_warpIdx = _nextWarp;
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
 		_nextWarp = -1;
@@ -438,14 +437,6 @@ void PhoenixVREngine::tick(float dt) {
 
 		_regSet.reset(new RegionSet(_warp->testFile));
 
-		for (auto &c : _cursors)
-			c.surface = nullptr;
-
-		_cursors.resize(_regSet->size());
-		for (uint i = 0; i != _regSet->size(); ++i) {
-			_cursors[i].region = _regSet->getRegion(i);
-		}
-
 		Script::ExecutionContext ctx;
 		debug("execute warp script %s", _warp->vrFile.c_str());
 		auto test = _warp->getDefaultTest();
@@ -459,17 +450,22 @@ void PhoenixVREngine::tick(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
 
 	Graphics::Surface *cursor = nullptr;
-	for (uint i = 0; i != _cursors.size(); ++i) {
-		auto &c = _cursors[i];
-		if (_vr.isVR() ? c.region.contains3D(currentVRPos()) : c.region.contains2D(_mousePos.x, _mousePos.y)) {
-			cursor = c.surface;
+	auto &cursors = _cursors[_warpIdx];
+	for (uint i = 0; i != cursors.size(); ++i) {
+		auto *region = getRegion(i);
+		if (!region)
+			continue;
+
+		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
+			auto &name = cursors[i];
+			cursor = loadCursor(name);
 			if (!cursor)
-				cursor = _defaultCursor[1].surface;
+				cursor = loadCursor(_defaultCursor[1]);
 			break;
 		}
 	}
 	if (!cursor)
-		cursor = _defaultCursor[0].surface;
+		cursor = loadCursor(_defaultCursor[0]);
 	if (cursor) {
 		paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 	}
@@ -526,9 +522,13 @@ Common::Error PhoenixVREngine::run() {
 				} else
 					debug("click %s", _mousePos.toString().c_str());
 
-				for (uint i = 0, n = _cursors.size(); i != n; ++i) {
-					auto &cur = _cursors[i];
-					if (_vr.isVR() ? cur.region.contains3D(vrPos) : cur.region.contains2D(event.mouse.x, event.mouse.y)) {
+				auto &cursors = _cursors[_warpIdx];
+				for (uint i = 0, n = cursors.size(); i != n; ++i) {
+					auto *region = getRegion(i);
+					if (!region)
+						continue;
+
+					if (_vr.isVR() ? region->contains3D(vrPos) : region->contains2D(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
 						executeTest(i);
 						break;
@@ -605,15 +605,15 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 
 	_nextWarp = currentWarpIdx;
 
-	for (auto &vr : _script->getWarpNames()) {
-		auto warpIdx = _script->getWarp(vr);
-		assert(warpIdx >= 0);
+	for (uint warpIdx = 0; warpIdx != _script->numWarps(); ++warpIdx) {
 		auto warp = _script->getWarp(warpIdx);
 		assert(warp);
 		auto &tests = warp->tests;
+		auto &warpCursors = _cursors[warpIdx];
 		for (uint testIdx = 0; testIdx < tests.size(); ++testIdx) {
 			auto cursor = ms.readString(0, 257);
-			// debug("warp %s.%d: %s", vr.c_str(), testIdx, cursor.c_str());
+			// debug("warp %s.%d: %s", warp->vrFile.c_str(), testIdx, cursor.c_str());
+			warpCursors[testIdx] = cursor;
 		}
 	}
 	debug("vars at %08lx", ms.pos());
