@@ -52,7 +52,7 @@ private:
 	/**
 	 * Monster Stealing
 	 */
-	static int steal(MonsterEntry &m, PlayerInfo &p);
+	static int steal(const Common::String &attackStr, MonsterEntry &m, PlayerInfo &p);
 
 public:
 	/**

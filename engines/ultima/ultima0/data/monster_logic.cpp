@@ -64,27 +64,39 @@ void MonsterLogic::showLines(const Common::String &msg) {
 int MonsterLogic::attack(MonsterEntry &m, PlayerInfo &p) {
 	int n;
 
-	if (m._type == MN_GREMLIN ||		// Special case for Gremlin/Thief
-		m._type == MN_THIEF)
-		if (RND() > 0.5)				// Half the time
-			return steal(m, p);
+	Common::String msg = "You are being attacked\nby a ";
+	msg += (char)C_BLUE;
+	msg += MONSTER_INFO[m._type]._name;
+	msg += (char)C_TEXT_DEFAULT;
+	msg += '\n';
 
-	Common::String msg = Common::String::format("You are being attacked by a %s !!!.\n",
-		MONSTER_INFO[m._type]._name);
+	// Special case for Gremlin/Thief stealing
+	if (m._type == MN_GREMLIN || m._type == MN_THIEF)
+		if (RND() > 0.5)
+			// Half the time
+			return steal(msg, m, p);
 
 	n = urand() % 20;					// Calculate hit chance
 	if (p._object[OB_SHIELD] > 0) n--;
 	n = n - p._attr[AT_STAMINA];
 	n = n + m._type + p._level;
+
 	if (n < 0) {
-		// Missed !
-		msg += "Missed !\n";
+		// Missed
+		msg += (char)C_TOMATO;
+		msg += "Missed!";
 	} else {
-		// Hit !
+		// Hit
 		n = urand() % m._type;			// Calculate damage done.
 		n = n + p._level;
 		p._attr[AT_HP] -= n;			// Adjust hit points
-		msg += "Hit !!!\n";
+
+		msg += (char)C_TOMATO;
+		msg += "Hit! ";
+		msg += (char)C_TEXT_DEFAULT;
+		msg += " Damage = ";
+		msg += (char)C_BLUE;
+		msg += Common::String::format("%d", n);
 	}
 
 	showLines(msg);
@@ -146,14 +158,23 @@ bool MonsterLogic::canMoveTo(DungeonMapInfo &d, int x, int y) {
 	return d.findMonster(c) < 0;
 }
 
-int MonsterLogic::steal(MonsterEntry &m, PlayerInfo &p) {
+int MonsterLogic::steal(const Common::String &attackStr, MonsterEntry &m, PlayerInfo &p) {
 	int n;
 	const char *s1, *s2;
+
+	Common::String msg = attackStr;
+	msg += (char)C_GREEN;
+	msg += "A ";
+	msg += MONSTER_INFO[m._type]._name;
+	msg += " stole ";
 
 	if (m._type == MN_GREMLIN) {
 		// HALVES the food.... aargh
 		p._object[OB_FOOD] = floor(p._object[OB_FOOD]) / 2.0;
-		showLines("A Gremlin stole some food.\n");
+		msg += "some ";
+		msg += (char)C_BLUE;
+		msg += "Food";
+		showLines(msg);
 
 	} else if (m._type == MN_THIEF) {
 		// Figure out what stolen
@@ -162,12 +183,17 @@ int MonsterLogic::steal(MonsterEntry &m, PlayerInfo &p) {
 		} while (p._object[n] == 0);
 
 		p._object[n]--;					// Stole one
-		s2 = OBJECT_INFO[n]._name; s1 = "a";
+		s2 = OBJECT_INFO[n]._name;
+		s1 = "a";
 
 		if (strchr("aeiou", tolower(*s2))) s1 = "an";
 		if (n == 0) s1 = "some";
 
-		showLines(Common::String::format("A Thief stole %s %s.\n", s1, s2));
+		msg += s1;
+		msg += ' ';
+		msg += (char)C_BLUE;
+		msg += s2;
+		showLines(msg);
 	}
 
 	return 1;

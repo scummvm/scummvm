@@ -62,6 +62,7 @@ constexpr int DUNGEON_MINIMAP_SIZE = DUNGEON_MAP_SIZE * MINIMAP_TILE_SIZE;
 #define C_ROSE      8
 #define C_VIOLET    9
 #define C_GREY      10
+#define C_TOMATO	11
 
 #define C_TEXT_DEFAULT C_CYAN
 
