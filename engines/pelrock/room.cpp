@@ -371,6 +371,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	roomFile->read(pair12, pair12size);
 
 	resetConversationStates(roomNumber, pair12, pair12size);
+
 	_conversationOffset = loadDescriptions(pair12, pair12size, _currentRoomDescriptions);
 	loadConversationData(pair12, pair12size, _conversationOffset, _conversationDataSize, _conversationData);
 
@@ -580,6 +581,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions) {
 	uint32_t pos = 0;
 	uint32_t lastDescPos = 0;
+	outDescriptions.clear();
 	while (pos < (pair12size)) {
 		int desc_pos = 0;
 		if (pair12data[pos] == 0xFF) {
