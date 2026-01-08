@@ -212,21 +212,21 @@ void NetworkReadStreamCurl::setupFormMultipart(const Common::HashMap<Common::Str
 }
 
 NetworkReadStreamCurl::NetworkReadStreamCurl(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval)
-	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval),
+	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _backingStream(DisposeAfterUse::YES),
 	_errorBuffer(nullptr), _headersSlist(nullptr) {
 	initCurl(url, headersList);
 	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
 NetworkReadStreamCurl::NetworkReadStreamCurl(const char *url, RequestHeaders *headersList, const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval)
-	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval),
+	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _backingStream(DisposeAfterUse::YES),
 	_errorBuffer(nullptr), _headersSlist(nullptr) {
 	initCurl(url, headersList);
 	setupFormMultipart(formFields, formFiles);
 }
 
 NetworkReadStreamCurl::NetworkReadStreamCurl(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval)
-	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval),
+	: NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _backingStream(DisposeAfterUse::YES),
 	_errorBuffer(nullptr), _headersSlist(nullptr) {
 	initCurl(url, headersList);
 	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
@@ -296,6 +296,29 @@ void NetworkReadStreamCurl::finished(CURLcode errorCode) {
 
 bool NetworkReadStreamCurl::hasError() const {
 	return _errorCode != CURLE_OK;
+}
+
+double NetworkReadStreamCurl::getProgress() const {
+	if (_progressTotal < 1)
+		return 0;
+	return (double)_progressDownloaded / (double)_progressTotal;
+}
+
+void NetworkReadStreamCurl::setProgress(uint64 downloaded, uint64 total) {
+	_progressDownloaded = downloaded;
+	_progressTotal = total;
+}
+
+uint32 NetworkReadStreamCurl::read(void *dataPtr, uint32 dataSize) {
+	uint32 actuallyRead = _backingStream.read(dataPtr, dataSize);
+
+	if (actuallyRead == 0) {
+		if (_requestComplete)
+			_eos = true;
+		return 0;
+	}
+
+	return actuallyRead;
 }
 
 const char *NetworkReadStreamCurl::getError() const {
