@@ -50,7 +50,7 @@ uint32 DialogManager::readTextBlock(
 	// Skip control bytes at start
 	while (pos < dataSize &&
 		   (data[pos] == CTRL_ALT_END_MARKER_1 || data[pos] == CTRL_ALT_END_MARKER_2 ||
-			data[pos] == CTRL_ALT_END_MARKER_3 || data[pos] == CTRL_TEXT_TERMINATOR ||
+			data[pos] == CTRL_TEXT_TERMINATOR ||
 			data[pos] == CTRL_GO_BACK)) {
 		pos++;
 	}
@@ -97,7 +97,7 @@ uint32 DialogManager::readTextBlock(
 		if (b == CTRL_END_TEXT || b == CTRL_END_CONVERSATION || b == CTRL_ACTION_TRIGGER ||
 			b == CTRL_END_BRANCH || b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF ||
 			b == CTRL_TEXT_TERMINATOR || b == CTRL_ALT_END_MARKER_1 || b == CTRL_ALT_END_MARKER_2 ||
-			b == CTRL_ALT_END_MARKER_3 || b == CTRL_GO_BACK || b == CTRL_SPEAKER_ID) {
+			b == CTRL_GO_BACK || b == CTRL_SPEAKER_ID) {
 			break;
 		}
 
@@ -300,7 +300,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 		byte b = data[pos];
 
 		// Stop at end markers
-		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH || b == CTRL_ALT_END_MARKER_3) {
+		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH) {
 			break;
 		}
 
@@ -379,7 +379,7 @@ void DialogManager::setCurSprite(int index) {
 	_curSprite = nullptr;
 }
 
-void DialogManager::startConversation(const byte *conversationData, uint32 dataSize, Sprite *animSet) {
+void DialogManager::startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *animSet) {
 	if (!conversationData || dataSize == 0) {
 		debug("startConversation: No conversation data");
 		return;
@@ -387,10 +387,23 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	setCurSprite(animSet ? animSet->index : -1);
 	// _curSprite = animSet;
 
-	debug("Starting conversation with %u bytes of data", dataSize);
+	debug("Starting conversation with %u bytes of data, for npc %u", dataSize, npcIndex);
 
 	uint32 position = 0;
 	int currentChoiceLevel = -1; // Track the current choice level
+
+	bool speakerRootOffsetFound = false;
+	int currentRoot = npcIndex + 1;
+	while(position < dataSize && !speakerRootOffsetFound) {
+		if(conversationData[position] == CTRL_ALT_SPEAKER_ROOT && conversationData[position + 1] == currentRoot) {
+			speakerRootOffsetFound = true;
+			position += 2; // Move past the speaker root marker and npc index
+		} else {
+			position++;
+		}
+	}
+
+
 
 	// Skip any junk at start until we find a speaker marker or choice marker
 	while (position < dataSize &&
@@ -406,7 +419,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		while (position < dataSize &&
 			   (conversationData[position] == CTRL_ALT_END_MARKER_1 ||
 				conversationData[position] == CTRL_ALT_END_MARKER_2 ||
-				conversationData[position] == CTRL_ALT_END_MARKER_3 ||
 				conversationData[position] == CTRL_TEXT_TERMINATOR ||
 				conversationData[position] == CTRL_GO_BACK)) {
 			position++;
@@ -450,7 +462,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			g_engine->dialogActionTrigger(
 				actionCode,
 				g_engine->_room->_currentRoomNumber,
-				g_engine->_room->getCurrentConversationRootIndex()
+				0 //FIXME: Pass NPC index?
 			);
 		}
 
@@ -469,7 +481,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		while (peekPos < dataSize &&
 			   (conversationData[peekPos] == CTRL_ALT_END_MARKER_1 ||
 				conversationData[peekPos] == CTRL_ALT_END_MARKER_2 ||
-				conversationData[peekPos] == CTRL_ALT_END_MARKER_3 ||
 				conversationData[peekPos] == CTRL_TEXT_TERMINATOR ||
 				conversationData[peekPos] == CTRL_GO_BACK)) {
 			peekPos++;

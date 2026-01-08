@@ -48,7 +48,7 @@ namespace Pelrock {
 #define CTRL_DIALOGUE_MARKER_ONEOFF 0xFB /* Alt choice marker that disappears */
 #define CTRL_GO_BACK 0xF0                /* Go back in conversation */
 #define CTRL_ALT_END_MARKER_2 0xEB       /* Alt end marker 2 */
-#define CTRL_ALT_END_MARKER_3 0xFE       /* Alt end marker 3 */
+#define CTRL_ALT_SPEAKER_ROOT 0xFE       /* Separates conversations from different speakers */
 
 static void debugHexString(const Common::String &str, const char *label = nullptr) {
 	if (label) {
@@ -84,7 +84,7 @@ public:
 
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
-	void startConversation(const byte *conversationData, uint32 dataSize, Sprite *alfredAnimSet = nullptr);
+	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
 	void sayAlfred(Description description);
 	void say(Common::StringArray texts);
 	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);

@@ -533,7 +533,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 			break;
 		}
 	}
-	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet);
+	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, hotspot->index, animSet);
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
