@@ -43,16 +43,14 @@ uint32 DialogManager::readTextBlock(
 	uint32 startPos,
 	Common::String &outText,
 	byte &outSpeakerId) {
+
 	uint32 pos = startPos;
 	outSpeakerId = ALFRED_COLOR; // Default to Alfred's color
 	outText = "";
 
 	// Skip control bytes at start
-	while (pos < dataSize &&
-		   (data[pos] == CTRL_ALT_END_MARKER_1 || data[pos] == CTRL_ALT_END_MARKER_2 ||
-			data[pos] == CTRL_TEXT_TERMINATOR ||
-			data[pos] == CTRL_GO_BACK)) {
-		pos++;
+	if(data[pos] == CTRL_TEXT_TERMINATOR) {
+		pos+=2;
 	}
 
 	if (pos >= dataSize) {
@@ -64,7 +62,6 @@ uint32 DialogManager::readTextBlock(
 		pos++;
 		if (pos < dataSize) {
 			outSpeakerId = data[pos];
-			pos++;
 		}
 	}
 	// Check for dialogue marker (choice text)
@@ -75,20 +72,14 @@ uint32 DialogManager::readTextBlock(
 		if (pos < dataSize) {
 			pos++;
 		}
-
-		// Skip 2 bytes after choice index (speaker marker bytes)
-		if (pos < dataSize) {
-			pos++;
-		}
-		if (pos < dataSize) {
-			pos++;
-		}
-
 		// Choice text is always spoken by ALFRED
 		outSpeakerId = ALFRED_COLOR;
+		pos+=2;
 	}
 
-	// pos += 2; // Skip line count and blank
+	int lineIndex = data[++pos];
+	pos++; //blank
+	debug("Reading text block starting at pos %u, line index %d, speaker ID %d", startPos, lineIndex, outSpeakerId);
 	// Read text until control byte
 	while (pos < dataSize) {
 		byte b = data[pos];
@@ -102,6 +93,7 @@ uint32 DialogManager::readTextBlock(
 		}
 
 		if (b == CTRL_LINE_CONTINUE || b == CTRL_PAGE_BREAK_CONV) {
+			warning("Found unexpected line/page break control code in readTextBlock at pos %u", pos);
 			outText += ' ';
 			pos++;
 			continue;
@@ -431,7 +423,6 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		while (position < dataSize &&
 			   (conversationData[position] == CTRL_ALT_END_MARKER_1 ||
 				conversationData[position] == CTRL_ALT_END_MARKER_2 ||
-				conversationData[position] == CTRL_TEXT_TERMINATOR ||
 				conversationData[position] == CTRL_GO_BACK)) {
 			position++;
 		}
@@ -476,6 +467,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 				g_engine->_room->_currentRoomNumber,
 				currentRoot
 			);
+			break;
 		}
 
 		// Move past control byte

@@ -52,7 +52,7 @@ static const int special_chars[] = {
 	163, // small u tilde
 	162, // small o tilde
 	161, // small i tilde
-	132, // small e tilde
+	130, // small e tilde
 	160, // small a tilde
 };
 
