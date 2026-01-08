@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 		 "data.adb", "56680d118afddf9477c57e508d118dc8", 114764),
 	 Common::EN_ANY,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM | ADGF_DEMO,
+	 ADGF_DROPPLATFORM | ADGF_DEMO | ADGF_UNSTABLE,
 	 GUIO1(GUIO_NONE)},
 	{"black-mirror",
 	 0,
