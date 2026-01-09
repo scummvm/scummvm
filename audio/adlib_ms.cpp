@@ -2089,7 +2089,7 @@ void MidiDriver_ADLIB_Multisource::writeFrequency(uint8 oplChannel, OplInstrumen
 }
 
 void MidiDriver_ADLIB_Multisource::writeRegister(uint16 reg, uint8 value, bool forceWrite) {
-	debug("Writing register %X %X", reg, value);
+	//debug("Writing register %X %X", reg, value);
 
 	// Write the value to the register if it is a timer register, if forceWrite
 	// is specified or if the new register value is different from the current
