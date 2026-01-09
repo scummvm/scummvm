@@ -609,9 +609,10 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (_alfredState.curFrame >= walkingAnimLengths[_alfredState.direction]) {
 			_alfredState.curFrame = 0;
 		}
-
-		drawAlfred(_res->alfredWalkFrames[_alfredState.direction][_alfredState.curFrame]);
-		_alfredState.curFrame++;
+		if(_alfredState.animState == ALFRED_WALKING) {// in case it changed to idle above
+			drawAlfred(_res->alfredWalkFrames[_alfredState.direction][_alfredState.curFrame]);
+			_alfredState.curFrame++;
+		}
 		break;
 	}
 	case ALFRED_TALKING:
