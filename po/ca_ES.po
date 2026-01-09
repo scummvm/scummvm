@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 16:24+0000\n"
+"POT-Creation-Date: 2026-01-09 17:16+0000\n"
 "PO-Revision-Date: 2025-12-22 01:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7813,8 +7813,9 @@ msgstr "Resposta 5"
 msgid "Reply 6"
 msgstr "Resposta 6"
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:460
-#: engines/wintermute/keymapper_tables.h:190
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
+#: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
+#: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
 #: engines/wintermute/keymapper_tables.h:913
@@ -7824,7 +7825,9 @@ msgstr "Resposta 6"
 msgid "Next page"
 msgstr "Pàgina següent"
 
-#: engines/crab/input/input.cpp:226 engines/wintermute/keymapper_tables.h:183
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
+#: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
+#: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
 #: engines/wintermute/keymapper_tables.h:906
@@ -12816,23 +12819,15 @@ msgstr "Primera pàgina"
 msgid "Last page"
 msgstr "Última pàgina"
 
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:572
-msgid "Go back a page"
-msgstr "Torna enrere una pàgina"
-
 #: engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "Desplaça a l'esquerra"
 
 #: engines/sherlock/metaengine.cpp:584
-msgid "Scroll Right"
+#, fuzzy
+#| msgid "Scroll Right"
+msgid "Scroll right"
 msgstr "Desplaça a la dreta"
-
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:591
-msgid "Go ahead a page"
-msgstr ""
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:936
 msgid "Select option"
@@ -15926,6 +15921,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Go back a page"
+#~ msgstr "Torna enrere una pàgina"
 
 #~ msgid "Use Windows mouse cursors"
 #~ msgstr "Utilitza els cursors del ratolí de Windows"

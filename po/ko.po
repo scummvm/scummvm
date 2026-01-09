@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-03 16:24+0000\n"
+"POT-Creation-Date: 2026-01-09 17:16+0000\n"
 "PO-Revision-Date: 2025-11-17 19:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8105,8 +8105,9 @@ msgstr "리플 5"
 msgid "Reply 6"
 msgstr "리플 6"
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:460
-#: engines/wintermute/keymapper_tables.h:190
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
+#: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
+#: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
 #: engines/wintermute/keymapper_tables.h:913
@@ -8116,7 +8117,9 @@ msgstr "리플 6"
 msgid "Next page"
 msgstr "다음 페이지"
 
-#: engines/crab/input/input.cpp:226 engines/wintermute/keymapper_tables.h:183
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
+#: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
+#: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
 #: engines/wintermute/keymapper_tables.h:906
@@ -13196,23 +13199,15 @@ msgstr "첫 페이지"
 msgid "Last page"
 msgstr "마지막 페이지"
 
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:572
-msgid "Go back a page"
-msgstr "한 페이지 뒤로 돌아가기"
-
 #: engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "왼쪽으로 스크롤"
 
 #: engines/sherlock/metaengine.cpp:584
-msgid "Scroll Right"
+#, fuzzy
+#| msgid "Scroll Right"
+msgid "Scroll right"
 msgstr "오른쪽으로 스크롤"
-
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:591
-msgid "Go ahead a page"
-msgstr "한 페이지 넘어가기"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:936
 msgid "Select option"
@@ -16324,6 +16319,12 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Go back a page"
+#~ msgstr "한 페이지 뒤로 돌아가기"
+
+#~ msgid "Go ahead a page"
+#~ msgstr "한 페이지 넘어가기"
 
 #~ msgid "Use Windows mouse cursors"
 #~ msgstr "윈도우 커서 사용"
