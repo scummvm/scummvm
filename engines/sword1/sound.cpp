@@ -516,12 +516,12 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 				break;
 			}
 
+		file.close();
+
 		if (locIndex == 0xFFFFFFFF) {
 			warning("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
 			return;
 		}
-
-		file.close();
 
 		index = _cowHeader[(roomOffset + locIndex) * 2];
 		sampleFileSize = _cowHeader[(roomOffset + locIndex) * 2 + 1];
@@ -560,8 +560,9 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 				memset(_speechSample, 0, _speechSize);
 
 				SwordEngine::_systemVars.speechRunning = expandSpeech(compSample, _speechSample, sampleFileSize);
-				free(compSample);
 			}
+
+			free(compSample);
 		}
 	}
 }
@@ -998,6 +999,7 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 	}
 
 	delete _compressedMusicStream[newHandleId];
+	_compressedMusicStream[newHandleId] = nullptr;
 
 	if (assignedMode == MusWav) {
 		if (_musicFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
@@ -1033,14 +1035,19 @@ bool Sound::prepareMusicStreaming(const Common::Path &filename, int newHandleId,
 		Common::File tableFile;
 		if (!tableFile.open("tunes.tab")) {
 			debug(5, "Sound::streamMusicFile(): couldn't open the tunes.tab file, bailing out...");
+			_musicFile[newHandleId].close();
 			return false;
 		}
 
 		// The PSX demo has a broken/truncated tunes.tab. So we check here
 		// that the offset is not beyond the end of the file.
 		int32 tableOffset = (tuneId - 1) * 8;
-		if (tableOffset >= tableFile.size())
+		if (tableOffset >= tableFile.size()) {
+			tableFile.close();
+			_musicFile[newHandleId].close();
 			return false;
+		}
+
 		tableFile.seek(tableOffset, SEEK_SET);
 		uint32 offset = tableFile.readUint32LE() * 0x800;
 		uint32 size = tableFile.readUint32LE();
