@@ -403,6 +403,10 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	}
 }
 
+// External helpers from smush_player.cpp but we are already in Scumm namespace
+extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 	// Validate userId (1-4 for HUD slots)
 	if (userId < 1 || userId > 4 || !animData || size < 32) {
@@ -410,8 +414,6 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 		return;
 	}
 	
-	// Parse the embedded ANIM structure
-	// Format: ANIM (4 bytes) + size (4 bytes BE) + AHDR (4 bytes) + size (4 bytes BE) + ...
 	Common::MemoryReadStream stream(animData, size);
 	
 	// Read ANIM header
@@ -423,36 +425,21 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	uint32 animSize = stream.readUint32BE();
 	debug("Rebel2: Parsing embedded ANIM: userId=%d, reported size=%u, actual=%d", userId, animSize, size - 8);
 	
-	// Read AHDR header
-	uint32 ahdrTag = stream.readUint32BE();
-	if (ahdrTag != MKTAG('A','H','D','R')) {
-		debug("Rebel2: Embedded SAN missing AHDR tag, got 0x%08X", ahdrTag);
-		return;
-	}
-	uint32 ahdrSize = stream.readUint32BE();
-	
-	// Skip AHDR content (palette etc)
-	stream.skip(ahdrSize);
-	if (ahdrSize & 1) stream.skip(1);  // Padding
-	
-	// Look for first FRME
+	// Iterate through chunks to find FRME -> FOBJ
 	while (!stream.eos() && stream.pos() < size) {
 		uint32 tag = stream.readUint32BE();
 		uint32 chunkSize = stream.readUint32BE();
-		
+		int32 nextChunkPos = stream.pos() + chunkSize;
+
 		if (tag == MKTAG('F','R','M','E')) {
-			debug("Rebel2: Found FRME in embedded SAN, size=%u", chunkSize);
-			
-			// Parse FRME content to find FOBJ
-			int64 frmeEnd = stream.pos() + chunkSize;
-			
-			while (stream.pos() < frmeEnd && !stream.eos()) {
+			// Iterate sub-chunks in FRME
+			while (stream.pos() < nextChunkPos && !stream.eos()) {
 				uint32 subTag = stream.readUint32BE();
 				uint32 subSize = stream.readUint32BE();
-				
+				int32 nextSubPos = stream.pos() + subSize;
+
 				if (subTag == MKTAG('F','O','B','J')) {
-					debug("Rebel2: Found FOBJ in embedded SAN, size=%u", subSize);
-					
+					// Found FOBJ - Embedded HUD Frame
 					// Read FOBJ header
 					int codec = stream.readUint16LE();
 					int left = stream.readUint16LE();
@@ -467,16 +454,16 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					
 					// Allocate storage for the decoded frame
 					EmbeddedSanFrame &frame = _rebelEmbeddedHud[userId];
-					frame.clear();
 					
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
-						frame.pixels = (byte *)calloc(width * height, 1);
-						frame.width = width;
-						frame.height = height;
+						if (frame.width != width || frame.height != height || !frame.pixels) {
+							frame.clear();
+							frame.pixels = (byte *)calloc(width * height, 1);
+							frame.width = width;
+							frame.height = height;
+						}
 						
-						// Use the left/top from FOBJ header as render position
-						// These are the exact screen coordinates for the HUD overlay
-						// The FOBJ header specifies where this frame should be composited
+						// Update render position from FOBJ header
 						frame.renderX = left;
 						frame.renderY = top;
 						
@@ -487,55 +474,18 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 							stream.read(fobjData, dataSize);
 							
 							// Decode based on codec
-							// Codec 1 = RLE, Codec 3 = raw, Codec 21 = line update, Codec 45 = block delta
-							if (codec == 1) {
-								// RLE decode using SMUSH BOMP format
-								// Each line has a 16-bit size header, then BOMP-encoded data
-								// BOMP format: code byte, then data
-								//   code & 1 == 1: fill mode, next byte repeated (code>>1)+1 times
-								//   code & 1 == 0: copy mode, copy next (code>>1)+1 bytes
-								byte *srcPtr = fobjData;
-								for (int row = 0; row < height && srcPtr < fobjData + dataSize; row++) {
-									int lineSize = READ_LE_UINT16(srcPtr);
-									srcPtr += 2;
-									byte *lineEnd = srcPtr + lineSize;
-									byte *lineDst = frame.pixels + row * width;
-									int remaining = width;
-									
-									while (srcPtr < lineEnd && remaining > 0) {
-										byte code = *srcPtr++;
-										int num = (code >> 1) + 1;
-										if (num > remaining)
-											num = remaining;
-										remaining -= num;
-										
-										if (code & 1) {
-											// Fill mode: repeat next byte
-											byte color = (srcPtr < lineEnd) ? *srcPtr++ : 0;
-											memset(lineDst, color, num);
-											lineDst += num;
-										} else {
-											// Copy mode: copy next bytes
-											for (int i = 0; i < num && srcPtr < lineEnd; i++) {
-												*lineDst++ = *srcPtr++;
-											}
-										}
-									}
-									srcPtr = lineEnd;
-								}
+							if (codec == 1 || codec == 3) {
+								// RLE use existing decoder
+								smushDecodeRLE(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
-								debug("Rebel2: Decoded embedded HUD (codec 1/RLE): %dx%d", width, height);
-							} else if (codec == 3 || codec == 20) {
-								// Uncompressed - direct copy
-								int copySize = MIN(dataSize, width * height);
-								memcpy(frame.pixels, fobjData, copySize);
+								debug("Rebel2: Decoded embedded HUD (codec %d/RLE): %dx%d", codec, width, height);
+							} else if (codec == 20) {
+								// Uncompressed
+								smushDecodeUncompressed(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
-								debug("Rebel2: Decoded embedded HUD (codec %d/raw): %dx%d", codec, width, height);
+								debug("Rebel2: Decoded embedded HUD (codec 20/raw): %dx%d", width, height);
 							} else if (codec == 21 || codec == 44) {
 								// Codec 21/44: Line update codec
-								// Format: For each line: 
-								//   16-bit line data size
-								//   Line data: pairs of (16-bit skip, 16-bit count-1, pixels[count])
 								byte *srcPtr = fobjData;
 								for (int row = 0; row < height && srcPtr < fobjData + dataSize; row++) {
 									int lineDataSize = READ_LE_UINT16(srcPtr);
@@ -559,16 +509,13 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 21/line update): %dx%d", width, height);
 							} else if (codec == 45) {
-								// Codec 45: Similar to codec 47 but simpler - block delta
-								// For embedded HUD use, try simple raw copy as fallback
-								// This codec appears in small sprites (11x26, 17x53)
-								int copySize = MIN(dataSize, width * height);
+								// Codec 45: Block delta (simple copy for now)
+								int copySize = MIN((int)dataSize, width * height);
 								memcpy(frame.pixels, fobjData, copySize);
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 45/block): %dx%d", width, height);
 							} else {
 								debug("Rebel2: TODO: Decode codec %d for embedded HUD", codec);
-								// For now, mark as invalid but keep dimensions
 								frame.valid = false;
 							}
 							
@@ -596,21 +543,25 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 						}
 					}
 					
-					return;  // Found and processed FOBJ
+					// Done with FOBJ - assume only one relevant frame per embedded SAN
+					stream.seek(nextChunkPos);
+					goto end_parsing;
 				} else {
-					// Skip other sub-chunks
-					stream.skip(subSize);
+					// Skip other sub-chunks (AHDR inside FRME?) or padding
+					stream.seek(nextSubPos);
 					if (subSize & 1) stream.skip(1);
 				}
 			}
 		} else {
-			// Skip non-FRME chunks
-			stream.skip(chunkSize);
+			// Skip non-FRME chunks (AHDR, etc at top level)
+			stream.seek(nextChunkPos);
 			if (chunkSize & 1) stream.skip(1);
 		}
 	}
 	
 	debug("Rebel2: No FOBJ found in embedded SAN userId=%d", userId);
+
+end_parsing:;
 }
 
 
