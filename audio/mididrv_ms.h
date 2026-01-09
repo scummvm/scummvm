@@ -370,7 +370,7 @@ public:
 	 * @param values The default values which should be set. Must be a 16 value
 	 * array.
 	 */
-	void setControllerDefaults(ControllerDefaultType type, int16 *values);
+	void setControllerDefaults(ControllerDefaultType type, const int16 *values);
 	/**
 	 * Clears a previously set default value for the specified controller.
 	 * 

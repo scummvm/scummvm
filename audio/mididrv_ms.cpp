@@ -292,7 +292,7 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 	}
 }
 
-void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, int16 *value) {
+void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, const int16 *value) {
 	// Set the specified default values on _controllerDefaults on the field
 	// corresponding to the specified controller.
 	switch (type) {

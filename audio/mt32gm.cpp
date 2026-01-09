@@ -41,6 +41,11 @@ const byte MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS[8] = {
 	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A
 };
 
+// Same as above, now numbered by MIDI channel. For use with setControllerDefaults.
+const int16 MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS[16] = {
+	-1, 0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A, -1, -1, -1, -1, -1, -1, -1
+};
+
 // These are the power-on default panning settings for channels 2-9 of the Roland MT-32 family.
 // Internally, the MT-32 has 15 panning positions (0-E with 7 being center).
 // This has been translated to the equivalent MIDI panning values (0-127).

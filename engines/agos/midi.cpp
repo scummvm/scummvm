@@ -250,10 +250,7 @@ int MidiPlayer::open() {
 			_driverMsMusic = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
 			if (_vm->getGameType() == GType_WW) {
 				// WORKAROUND See above.
-				int16 defaultInstruments[16];
-				Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
-				Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
-				_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+				_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS);
 			}
 			if (usesMidiSfx) {
 				if (ConfMan.getBool("multi_midi")) {
@@ -355,10 +352,7 @@ int MidiPlayer::open() {
 			_driverMsMusic = new MidiDriver_MT32GM(_dataType);
 
 			// WORKAROUND See above.
-			int16 defaultInstruments[16];
-			Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
-			Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
-			_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+			_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS);
 
 			if (_vm->getPlatform() == Common::kPlatformDOS && !(_vm->getFeatures() & GF_TALKIE) &&
 					ConfMan.getBool("multi_midi")) {
