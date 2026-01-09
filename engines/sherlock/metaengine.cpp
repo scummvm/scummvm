@@ -569,7 +569,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		scalpelInvKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
-		act = new Action("PAGE_LEFT", _("Go back a page"));
+		act = new Action("PAGE_LEFT", _("Previous page"));
 		act->setCustomEngineActionEvent(kActionScalpelInvPageLeft);
 		act->addDefaultInputMapping("COMMA");
 		act->addDefaultInputMapping("JOY_UP");
@@ -581,14 +581,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		scalpelInvKeymap->addAction(act);
 
-		act = new Action("RIGHT", _("Scroll Right"));
+		act = new Action("RIGHT", _("Scroll right"));
 		act->setCustomEngineActionEvent(kActionScalpelInvRight);
 		act->addDefaultInputMapping("PLUS");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		scalpelInvKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
-		act = new Action("PAGE_RIGHT", _("Go ahead a page"));
+		act = new Action("PAGE_RIGHT", _("Next page"));
 		act->setCustomEngineActionEvent(kActionScalpelInvPageRight);
 		act->addDefaultInputMapping("PERIOD");
 		act->addDefaultInputMapping("JOY_DOWN");
