@@ -24,6 +24,7 @@
 #include "m4/vars.h"
 
 #include "common/config-manager.h"
+#include "audio/adlib_hmisos.h"
 #include "audio/adlib_ms.h"
 #include "audio/fmopl.h"
 #include "audio/midiparser.h"
@@ -75,8 +76,18 @@ int Midi::open() {
 	OPL::Config::OplType oplType;
 	switch (_deviceType) {
 	case MT_ADLIB:
-		oplType = MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
-		_driver = new MidiDriver_ADLIB_Multisource(oplType);
+		oplType = MidiDriver_ADLIB_HMISOS::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+		MidiDriver_ADLIB_HMISOS *adLibDriver;
+		adLibDriver = new MidiDriver_ADLIB_HMISOS(oplType);
+		_driver = adLibDriver;
+
+		Common::SeekableReadStream *instrumentBankStream;
+		instrumentBankStream = SearchMan.createReadStreamForMember(Common::Path("MELODIC.BNK"));
+		Common::SeekableReadStream *rhythmBankStream;
+		rhythmBankStream = SearchMan.createReadStreamForMember(Common::Path("DRUM.BNK"));
+
+		adLibDriver->loadInstrumentBanks(instrumentBankStream, rhythmBankStream);
+
 		break;
 	case MT_GM:
 	case MT_MT32:

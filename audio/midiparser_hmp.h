@@ -19,12 +19,17 @@
  *
  */
 
-
 #ifndef AUDIO_MIDIPARSER_HMP_H
 #define AUDIO_MIDIPARSER_HMP_H
 
 #include "audio/midiparser_smf.h"
 
+/**
+ * MIDI parser for the HMI SOS format HMP.
+ * 
+ * Implementation is incomplete. Currently only the track chunks are read and
+ * played back. Not implented yet: device track mapping, branching, callbacks, etc.
+ */
 class MidiParser_HMP : public MidiParser_SMF {
 protected:
 	enum class HmpVersion {

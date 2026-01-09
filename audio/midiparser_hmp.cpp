@@ -29,6 +29,14 @@ const char MidiParser_HMP::HMP_HEADER_VERSION_1[] = "\x00\x00\x00\x00\x00\x00";
 const char MidiParser_HMP::HMP_HEADER_VERSION_013195[] = "013195";
 
 MidiParser_HMP::MidiParser_HMP(int8 source) : MidiParser_SMF(source) {
+	_version = HmpVersion::VERSION_1;
+	_branchOffset = 0;
+	_songLength = 0;
+	memset(_channelPriorities, 0, sizeof(_channelPriorities));
+	memset(_deviceTrackMappings, 0, sizeof(_deviceTrackMappings));
+	memset(_restoreControllers, 0, sizeof(_restoreControllers));
+	_callbackPointer = 0;
+	_callbackSegment = 0;
 }
 
 uint32 MidiParser_HMP::readDelta(const byte*& data) {
@@ -65,7 +73,7 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	_numSubtracks[0] = READ_LE_UINT32(pos);
 	pos += 4;
 	// Doesn't seem like this field is actually used...
-	uint32 ppqn = READ_LE_UINT32(pos);
+	//uint32 ppqn = READ_LE_UINT32(pos);
 	_ppqn = 60;
 	pos += 4;
 	uint32 bpm = READ_LE_UINT32(pos);
@@ -96,11 +104,11 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 
 	// Read the tracks
 	for (uint currTrack = 0; currTrack < _numSubtracks[0]; currTrack++) {
-		uint32 chunkNumber = READ_LE_UINT32(pos);
+		//uint32 chunkNumber = READ_LE_UINT32(pos);
 		pos += 4;
 		uint32 chunkSize = READ_LE_UINT32(pos);
 		pos += 4;
-		uint32 trackNumber = READ_LE_UINT32(pos);
+		//uint32 trackNumber = READ_LE_UINT32(pos);
 		pos += 4;
 
 		_tracks[0][currTrack] = pos;
@@ -125,7 +133,8 @@ int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
 	stream->skip(18);
 
 	// TODO Figure out size of branching data
-	uint32 branchOffset = stream->readUint32LE();
+	//uint32 branchOffset = stream->readUint32LE();
+	stream->skip(4);
 	stream->skip(12);
 
 	uint32 numTracks = stream->readUint32LE();
