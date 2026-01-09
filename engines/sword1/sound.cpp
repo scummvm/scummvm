@@ -615,7 +615,7 @@ bool Sound::expandSpeech(byte *src, byte *dst, uint32 dstSize, bool *endiannessC
 	uint8 *fBuf = src;
 	uint32 headerPos = 0;
 
-	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
+	while ((READ_BE_UINT32(fBuf + headerPos) != MKTAG('d','a','t','a')) && (headerPos < 100))
 		headerPos++;
 
 	if (headerPos < 100) {
