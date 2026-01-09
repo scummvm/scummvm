@@ -408,8 +408,10 @@ void Parser_v3d::dropObject(Object *obj) {
 bool Parser_v3d::isCatchallVerb_v3(ObjectList obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
-	if (_vm->_maze._enabledFl)
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
 		return false;
+	}
 
 	for (int i = 0; obj[i]._verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) && obj[i]._nounIndex == 0 &&
@@ -436,8 +438,10 @@ bool Parser_v3d::isCatchallVerb_v3(ObjectList obj) const {
 bool Parser_v3d::isBackgroundWord_v3(ObjectList obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
-	if (_vm->_maze._enabledFl)
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
 		return false;
+	}
 
 	for (int i = 0; obj[i]._verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) &&
