@@ -166,6 +166,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelLinks[i][1] = 0;
 		_rebelLinks[i][2] = 0;
 	}
+
+	for (i = 0; i < 5; i++) {
+		_explosions[i].active = false;
+		_explosions[i].counter = 0;
+	}
 }
 
 
@@ -205,11 +210,15 @@ int32 InsaneRebel2::processMouse() {
 				// Enemy hit!
 				it->active = false;
 				it->destroyed = true;  // Mark as destroyed so IACT won't re-activate
-				it->explosionFrame = 0;  // Start explosion animation
-				it->explosionComplete = false;  // Explosion not yet finished
 				debug("Rebel2: HIT enemy ID=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)", 
 					it->id, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
+
+				// Spawn explosion using native system
+				// Use width / 2 as the scale parameter
+				spawnExplosion((it->rect.left + it->rect.right) / 2, 
+							   (it->rect.top + it->rect.bottom) / 2, 
+							   it->rect.width() / 2);
 
 				// Disable self
 				setBit(it->id);
@@ -718,6 +727,21 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 end_parsing:;
 }
 
+void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
+	// Find first free slot (FUN_40A2E0 logic)
+	for (int i = 0; i < 5; i++) {
+		if (!_explosions[i].active || _explosions[i].counter <= 0) {
+			_explosions[i].active = true;
+			_explosions[i].counter = 10;
+			_explosions[i].x = x;
+			_explosions[i].y = y;
+			_explosions[i].scale = objectHalfWidth;
+			// TODO: Play sound via FUN_0041189e equivalent
+			break;
+		}
+	}
+}
+
 
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
@@ -948,35 +972,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (it->destroyed) {
 			// Handle destroyed enemies - draw explosion animation
 			// The enemy frame updates are now skipped in decodeFrameObject via shouldSkipFrameUpdate
-			
-			// Draw explosion animation - only while animation is in progress
-			// CPITIMAG.NUT indices 9-41 contain explosion frames, but we only use 8 for a quick effect
-			const int EXPLOSION_FRAMES = 8;
-			if (it->explosionFrame >= 0 && it->explosionFrame < EXPLOSION_FRAMES) {
-				if (_smush_iconsNut) {
-					int explosionSpriteIndex = 9 + it->explosionFrame;
-					if (_smush_iconsNut->getNumChars() > explosionSpriteIndex) {
-						int ew = _smush_iconsNut->getCharWidth(explosionSpriteIndex);
-						int eh = _smush_iconsNut->getCharHeight(explosionSpriteIndex);
-						// Center explosion on the enemy bounding box
-						int cx = (r.left + r.right) / 2 - ew / 2;
-						int cy = (r.top + r.bottom) / 2 - eh / 2;
-						smlayer_drawSomething(renderBitmap, pitch, cx, cy, 0, _smush_iconsNut, explosionSpriteIndex, 0, 0);
-					}
-				}
-				
-				// Advance explosion frame
-				it->explosionFrame++;
-				
-				// Check if explosion is now complete
-				if (it->explosionFrame >= EXPLOSION_FRAMES) {
-					it->explosionFrame = -1;  // Mark as done - prevents any further animation
-					it->explosionComplete = true;
-					debug("Rebel2: Explosion complete for enemy ID=%d", it->id);
-				}
-			}
-			// After explosion is complete (explosionFrame == -1), do nothing
-			// After explosion is complete (explosionFrame == -1), do nothing
+			// Note: Explosion rendering is now handled by the separate 5-slot system
 		} else if (it->active && !isBitSet(it->id)) { // Only draw if active AND not disabled by IACT
 			// Draw bounding box outline for active enemies (debug visualization)
 			// Draw Top
@@ -1002,6 +998,45 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				for (int y = clipped.top; y < clipped.bottom; y++) {
 					renderBitmap[y * pitch + (r.right - 1)] = 255;
 				}
+			}
+		}
+	}
+
+	// Draw 5-slot Explosion System
+	if (_smush_iconsNut) {
+		for (int i = 0; i < 5; i++) {
+			if (_explosions[i].active) {
+				if (_explosions[i].counter <= 0) {
+					_explosions[i].active = false;
+					continue;
+				}
+
+				// Determine base sprite index based on scale (FUN_409FBC logic)
+				int baseIndex;
+				if (_explosions[i].scale < 11) {
+					baseIndex = 9;  // Small/Medium transition
+				} else if (_explosions[i].scale < 21) {
+					baseIndex = 19; // Medium/Large transition
+				} else {
+					baseIndex = 29; // Large/XL transition
+				}
+				
+				// Formula: Base + (12 - Counter)
+				// Counter goes 10 -> 1.
+				// Frame goes Base+2 -> Base+11.
+				int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+				
+				if (_smush_iconsNut->getNumChars() > spriteIndex) {
+					int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+					int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+					int cx = _explosions[i].x - ew / 2;
+					int cy = _explosions[i].y - eh / 2;
+					
+					// Draw explosion
+					smlayer_drawSomething(renderBitmap, pitch, cx, cy, 0, _smush_iconsNut, spriteIndex, 0, 0);
+				}
+
+				_explosions[i].counter--;
 			}
 		}
 	}

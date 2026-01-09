@@ -170,6 +170,17 @@ public:
 	int16 _rebelLinks[512][3]; // Dependency links: Slot 0 (Disable on death), Slot 1/2 (Enable on death)
 	void clearBit(int n);
 
+	struct Explosion {
+		int x, y;
+		int width, height;
+		int counter;     // Duration counter (starts at 10)
+		int scale;       // Determines sprite set (small/med/large)
+		bool active;
+	};
+	
+	Explosion _explosions[5];
+	void spawnExplosion(int x, int y, int objectHalfWidth);
+
 	int16 _playerDamage;  // 0 to 255 (Accumulated damage)
 	int16 _playerLives;
 	int32 _playerScore;
