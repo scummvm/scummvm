@@ -69,7 +69,6 @@ public:
 	int getNumChars() const { return _numChars; }
 
 	void drawFrame(byte *dst, int c, int x, int y, int pitch = -1);
-	void drawFrame(byte *dst, int c, int x, int y, int pitch, int maxWidth, int maxHeight);
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr);
 	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors = false, bool smushColorMode = false);
 
