@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2026-01-09 15:08+0000\n"
+"PO-Revision-Date: 2026-01-09 17:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7920,7 +7920,7 @@ msgstr "Запит виходу з гри"
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:250
 msgid "ALTered Item"
-msgstr "АЛЬТернативна річ"
+msgstr "АЛЬТернативний елемент"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select / Deselect)"
@@ -8434,11 +8434,11 @@ msgstr "Перемикання між курсором миші та остан�
 
 #: engines/draci/metaengine.cpp:255
 msgid "Previous item in inventory"
-msgstr "Попередній предмет в інвентарі"
+msgstr "Попередній елемент інвентарю"
 
 #: engines/draci/metaengine.cpp:261
 msgid "Next item in inventory"
-msgstr "Наступний предмет в інвентарі"
+msgstr "Наступний елемент інвентарю"
 
 #: engines/dragons/dragons.cpp:1887
 #, c-format
@@ -10173,11 +10173,11 @@ msgstr "Глянути на сцену"
 
 #: engines/lab/metaengine.cpp:335
 msgid "Previous inventory item"
-msgstr "Попередній об'єкт інвентаря"
+msgstr "Попередній елемент інвентаря"
 
 #: engines/lab/metaengine.cpp:342
 msgid "Next inventory item"
-msgstr "Наступний об'єкт інвентаря"
+msgstr "Наступний елемент інвентаря"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
@@ -10379,15 +10379,15 @@ msgstr "Запустити анімацію наново"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
-msgstr "Показати витрати на предмет у стандартному режимі інвентаризації"
+msgstr "Показати вартість предмету у стандартному режимі інвентаря"
 
 #: engines/mm/metaengine.cpp:58
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
-"Показує вартість предметів у стандартному режимі інвентаризації, що дозволяє "
-"порівнювати значення предметів"
+"Показує вартість елементів у стандартному режимі інвентаря, що дозволяє "
+"порівнювати їх цінність"
 
 #: engines/mm/metaengine.cpp:68
 msgid "More durable armor"
@@ -10564,8 +10564,8 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
-"Якщо активовано, клік на речі або площині курсором-блискавкою, миттєво "
-"переносить вас у те місце, перескакуючи проміжні екрани. Ви можете так "
+"Якщо активовано, клік на елементі або ділянці курсором-блискавкою, миттєво "
+"переносить вас туди, перескакуючи проміжні екрани. Ви можете так "
 "\"перелітати\" тільки до місць, які ви вже відвідували."
 
 #: engines/mohawk/dialogs.cpp:116
@@ -11379,6 +11379,7 @@ msgstr "Використовувати більш читабельний шри�
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
 msgstr ""
+"Перейти / Пропустити / Викристовувати дію за замовчення на елементі інвентарю"
 
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
@@ -11400,19 +11401,19 @@ msgstr "Прокрутити інвентар донизу"
 
 #: engines/queen/metaengine.cpp:215
 msgid "Inventory item 1"
-msgstr "Елемент Інвентарю 1"
+msgstr "Елемент інвентарю 1"
 
 #: engines/queen/metaengine.cpp:220
 msgid "Inventory item 2"
-msgstr "Елемент Інвентарю 2"
+msgstr "Елемент інвентарю 2"
 
 #: engines/queen/metaengine.cpp:225
 msgid "Inventory item 3"
-msgstr "Елемент Інвентарю 3"
+msgstr "Елемент інвентарю 3"
 
 #: engines/queen/metaengine.cpp:230
 msgid "Inventory item 4"
-msgstr "Елемент Інвентарю 4"
+msgstr "Елемент інвентарю 4"
 
 #: engines/queen/metaengine.cpp:235
 msgid "Skip cutaway / dialog"
@@ -12578,27 +12579,27 @@ msgstr "Прокручення списку донизу"
 
 #: engines/scumm/help.cpp:265 engines/scumm/help.cpp:273
 msgid "Upper left item"
-msgstr "Верхня ліва річ"
+msgstr "Верхній лівий елемент"
 
 #: engines/scumm/help.cpp:266 engines/scumm/help.cpp:275
 msgid "Lower left item"
-msgstr "Нижня ліва річ"
+msgstr "Нижній лівий елемент"
 
 #: engines/scumm/help.cpp:267 engines/scumm/help.cpp:276
 msgid "Upper right item"
-msgstr "Верхня права річ"
+msgstr "Верхній правий елемент"
 
 #: engines/scumm/help.cpp:268 engines/scumm/help.cpp:278
 msgid "Lower right item"
-msgstr "Нижня права річ"
+msgstr "Нижній правий елемент"
 
 #: engines/scumm/help.cpp:274
 msgid "Middle left item"
-msgstr "Середня ліва річ"
+msgstr "Середній лівий елемент"
 
 #: engines/scumm/help.cpp:277
 msgid "Middle right item"
-msgstr "Середня права річ"
+msgstr "Середній правий елемент"
 
 #: engines/scumm/help.cpp:284 engines/scumm/help.cpp:289
 msgid "Switching characters:"
@@ -13633,7 +13634,7 @@ msgstr "Закрити вискакуючий список"
 
 #: engines/sherlock/metaengine.cpp:1175
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr ""
+msgstr "Вийти з інвентарю / Закрити меню дій / Перервати використання елементу"
 
 #: engines/sherlock/metaengine.cpp:1237
 #, fuzzy
@@ -13865,11 +13866,11 @@ msgstr "Вийти до меню"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr "Прокрутка назад через курсори предметів інвентарю"
+msgstr "Прокрутка назад через курсори елементів інвентарю"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr "Прокрутка вперед через курсори предметів інвентарю"
+msgstr "Прокрутка вперед через курсори елементів інвентарю"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
@@ -14917,28 +14918,20 @@ msgid "Go to next object"
 msgstr "Перейти на наступний об'єкт"
 
 #: engines/twp/metaengine.cpp:158
-#, fuzzy
-#| msgid "Select verb/item Left"
 msgid "Select verb / item left"
-msgstr "Вибрати дію/предмет наліво"
+msgstr "Вибрати дію / предмет зліва"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Select verb/item Right"
 msgid "Select verb / item right"
-msgstr "Вибрати дію/предмет направо"
+msgstr "Вибрати дію / предмет справа"
 
 #: engines/twp/metaengine.cpp:160
-#, fuzzy
-#| msgid "Select verb/item Up"
 msgid "Select verb / item up"
-msgstr "Вибрати дію/предмет догори"
+msgstr "Вибрати дію / предмет згори"
 
 #: engines/twp/metaengine.cpp:161
-#, fuzzy
-#| msgid "Select verb/item Down"
 msgid "Select verb / item down"
-msgstr "Вибрати дію/предмет донизу"
+msgstr "Вибрати дію / предмет знизу"
 
 #: engines/twp/metaengine.cpp:163
 #, fuzzy
@@ -15326,7 +15319,7 @@ msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:111
 msgid "Give items"
-msgstr ""
+msgstr "Дати предмети"
 
 #: engines/ultima/ultima4/metaengine.cpp:112
 msgid "List karma"
@@ -15921,10 +15914,8 @@ msgid "Move back"
 msgstr "Рухатись назад"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight items"
-msgstr "Виділити наступний діалог"
+msgstr "Виділити елементи"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use bedroll"
@@ -15978,16 +15969,12 @@ msgid "Cycle through weapon inventory"
 msgstr "Прокрутка назад через курсори предметів інвентарю"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through item inventory"
-msgstr "Перемикання між режимів розтягування"
+msgstr "Перебір між елементами іниентарю"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Inventory"
 msgid "Use inventory item"
-msgstr "Інвентар"
+msgstr "Використати елемент Інвентарю"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use medikit"
@@ -16010,10 +15997,8 @@ msgid "Drop weapon"
 msgstr "Викинути сторінку"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Search / Select item"
-msgstr "Виберіть тему"
+msgstr "Шукати / Вибрати тему"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 #, fuzzy
@@ -16023,7 +16008,7 @@ msgstr "Наступна дія"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab items"
-msgstr ""
+msgstr "Взяти елементи"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
 #, fuzzy
@@ -16086,16 +16071,12 @@ msgid "Ascend"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:115
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show touching items"
-msgstr "Показувати підказки"
+msgstr "Показати дотичні елементи"
 
 #: engines/ultima/ultima8/metaengine.cpp:116
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show editor items"
-msgstr "Показувати цитати"
+msgstr "Показувати елементи редактора"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
 msgid "Decrement map sort order"
