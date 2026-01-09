@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2026-01-05 23:18+0000\n"
+"PO-Revision-Date: 2026-01-09 15:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -11333,23 +11333,16 @@ msgid "X key"
 msgstr "Клавіша X"
 
 #: engines/private/metaengine.cpp:39
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Display SFX subtitles"
-msgstr "Перемкнути субтитри"
+msgstr "Показувати SFX субтитри"
 
 #: engines/private/metaengine.cpp:40
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr ""
-"Використовувати автоматичний читач текста для субтитрів (якщо TTS доступне)"
+msgstr "Показувати субтитри для SFX (якщо cубтитри було увіменено)"
 
 #: engines/private/metaengine.cpp:50
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "Highlight decision areas"
-msgstr "Виділити наступний діалог"
+msgstr "Підсвітити області рішень"
 
 #: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
@@ -11360,10 +11353,8 @@ msgid "Skip video"
 msgstr "Пропустити відео"
 
 #: engines/qdengine/dialogs.cpp:32
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable 16 bits per pixel mode"
-msgstr "Ввімкнути режим відладки"
+msgstr "Ввімкнути режим 16-бітної графіки"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
@@ -11396,58 +11387,40 @@ msgid "Toggle fast mode"
 msgstr "Перемикання швидкого режиму"
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip Text"
 msgid "Skip text"
 msgstr "Пропустити текст"
 
 #: engines/queen/metaengine.cpp:203
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll inventory up"
 msgstr "Прокрутити інвентар догори"
 
 #: engines/queen/metaengine.cpp:209
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll inventory down"
-msgstr "Прокручення списку донизу"
+msgstr "Прокрутити інвентар донизу"
 
 #: engines/queen/metaengine.cpp:215
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 1"
-msgstr "Інвентар"
+msgstr "Елемент Інвентарю 1"
 
 #: engines/queen/metaengine.cpp:220
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 2"
-msgstr "Інвентар"
+msgstr "Елемент Інвентарю 2"
 
 #: engines/queen/metaengine.cpp:225
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 3"
-msgstr "Інвентар"
+msgstr "Елемент Інвентарю 3"
 
 #: engines/queen/metaengine.cpp:230
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory item 4"
-msgstr "Інвентар"
+msgstr "Елемент Інвентарю 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip cutaway / dialog"
-msgstr "Пропустити діалог"
+msgstr "Пропустити кат-сцену / діалог"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "Показати журнал"
+msgstr "Використати журнал"
 
 #: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
@@ -11468,10 +11441,8 @@ msgid "Talk to"
 msgstr "Говорити до"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "Показати журнал"
+msgstr "Закрити журнал"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -11551,8 +11522,6 @@ msgid "Abort speech"
 msgstr "Перервати озвучку"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
 msgstr "Показати діалог"
 
@@ -12926,26 +12895,18 @@ msgid "Enable ambience sounds."
 msgstr "Ввімкнути фонові звуки."
 
 #: engines/scumm/metaengine.cpp:981
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
 msgstr "Донизу-наліво"
 
 #: engines/scumm/metaengine.cpp:994
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
 msgstr "Донизу-направо"
 
 #: engines/scumm/metaengine.cpp:1014
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "Верхня ліва річ"
+msgstr "Догори-наліво"
 
 #: engines/scumm/metaengine.cpp:1027
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
 msgstr "Догори-направо"
 
@@ -13287,46 +13248,32 @@ msgid "Show windows with a partially transparent background"
 msgstr "Показувати вікна з частково прозорим тлом"
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Scroll keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш сувою"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Main user interface keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш основного ітерфеса користувача"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Darts minigame keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш гри у дартс"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Talk keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш розмови"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Files keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш папок"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Settings keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш налаштувань"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Movie keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш відео"
 
 #: engines/sherlock/metaengine.cpp:349
 #, fuzzy
@@ -13339,10 +13286,8 @@ msgid "Setup"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "Плитки"
+msgstr "Папки"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -13369,10 +13314,8 @@ msgstr "Остання сторінка"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back a page"
-msgstr "Показати журнал"
+msgstr "Попередня сторінка"
 
 #: engines/sherlock/metaengine.cpp:578
 #, fuzzy
