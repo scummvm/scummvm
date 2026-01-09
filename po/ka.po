@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-03 16:24+0000\n"
-"PO-Revision-Date: 2025-11-17 11:06+0000\n"
+"PO-Revision-Date: 2026-01-09 11:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Georgian\n"
 
 #: audio/mac_plugin.cpp:30
@@ -4086,44 +4086,30 @@ msgid "Switch to the previous scaler"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:244
-#, fuzzy
-#| msgid "Left Mouse Button"
 msgid "Left mouse button"
 msgstr "თაგუნას მარცხენა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
-#| msgid "Right Mouse Button"
 msgid "Right mouse button"
 msgstr "თაგუნის მარჯვენა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
 msgstr "თაგუნის შუა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
-msgstr "თაგუნას რგოლი მაღლა"
+msgstr "თაგუნას ბორბალი მაღლა"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
-msgstr "თაგუნას რგოლი დაბლა"
+msgstr "თაგუნას ბორბალი დაბლა"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
 msgstr "X1 თაგუნას ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
 msgstr "X2 თაგუნას ღილაკი"
 
@@ -4144,32 +4130,22 @@ msgid "Joy Y"
 msgstr "ჯოისტიკი Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
 msgstr "ჯოისტიკის უკან"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
 msgstr "ჯოისტიკის მენიუ"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
 msgstr "ჯოისტიკის გაშვება"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
 msgstr "მარცხენა ჯოხი"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
 msgstr "მარჯვენა ჯოხი"
 
@@ -4182,68 +4158,46 @@ msgid "Right shoulder"
 msgstr "მარჯვენა მხარი"
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "ჯვარი მაღლა"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "ჯვარი დაბლა"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "ჯვარი მარცხნივ"
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "ჯვარი მარჯვნივ"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "ჯვარი ცენტრი"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
 msgstr "მარცხენა ტრიგერი"
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
 msgstr "მარჯვენა ტრიგერი"
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
-msgstr "მარჯვენა ჯოისტიკის X"
+msgstr "მარცხენა ჯოისტიკის X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "მარცხენა ჯოისტიკის Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "მარჯვენა ჯოისტიკის X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "მარჯვენა ჯოისტიკის Y"
 
@@ -5518,7 +5472,7 @@ msgstr "R3"
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:58
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
-msgstr "მარჯვენა ჯოისტიკის X"
+msgstr "მარცხენა ჯოისტიკის X"
 
 #: backends/platform/sdl/opendingux/opendingux.cpp:79
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:59
@@ -8212,8 +8166,6 @@ msgid "Change mode"
 msgstr "რეჟიმის შეცვლა"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
 msgstr "ინფორმაციის მენიუ"
 
