@@ -159,7 +159,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
-	AlfredState alfredState;
+	AlfredState _alfredState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
 	GameStateData _state;
@@ -168,8 +168,6 @@ public:
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
 
-	Common::Array<int> _inventoryItems;
-	int _selectedInventoryItem = -1;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -207,6 +205,10 @@ public:
 	 * loading and saving using a single method
 	 */
 	Common::Error syncGame(Common::Serializer &s);
+
+	void loadGame(SaveGameData &saveGame);
+
+	SaveGameData *createSaveGameData() const;
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);

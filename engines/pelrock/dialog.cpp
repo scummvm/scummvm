@@ -179,17 +179,17 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int yPos = 0;
 
 		if (speakerId == ALFRED_COLOR) {
-			if (g_engine->alfredState.animState != ALFRED_TALKING) {
-				g_engine->alfredState.setState(ALFRED_TALKING);
+			if (g_engine->_alfredState.animState != ALFRED_TALKING) {
+				g_engine->_alfredState.setState(ALFRED_TALKING);
 			}
 			if (_curSprite != nullptr) {
 				_curSprite->isTalking = false;
 			}
 			// Offset X position for Alfred to avoid overlapping with his sprite
-			xPos = g_engine->alfredState.x - maxWidth / 2;                //+ kAlfredFrameWidth / 2 - maxWidth / 2;
-			yPos = g_engine->alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
+			xPos = g_engine->_alfredState.x - maxWidth / 2;                //+ kAlfredFrameWidth / 2 - maxWidth / 2;
+			yPos = g_engine->_alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
 		} else {
-			g_engine->alfredState.setState(ALFRED_IDLE);
+			g_engine->_alfredState.setState(ALFRED_IDLE);
 			_curSprite->isTalking = true;
 			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
 			yPos = _curSprite->y - height; // Above sprite, adjust for line
@@ -226,7 +226,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	if (_curSprite != nullptr) {
 		_curSprite->isTalking = false;
 	}
-	g_engine->alfredState.setState(ALFRED_IDLE);
+	g_engine->_alfredState.setState(ALFRED_IDLE);
 }
 
 void DialogManager::displayDialogue(Common::String text, byte speakerId) {
@@ -582,7 +582,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 }
 
 void DialogManager::sayAlfred(Common::StringArray texts) {
-	g_engine->alfredState.setState(ALFRED_TALKING);
+	g_engine->_alfredState.setState(ALFRED_TALKING);
 
 	_curSprite = nullptr;
 	Common::Array<Common::StringArray> textLines = wordWrap(texts);

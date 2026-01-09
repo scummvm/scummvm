@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	events.o \
 	dialog.o \
 	menu.o \
-	graphics.o
+	graphics.o \
+	saveload.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

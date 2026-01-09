@@ -77,8 +77,8 @@ void PelrockEngine::closeDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
-	if (_inventoryItems.size() == 0) {
-		_selectedInventoryItem = hotspot->extra;
+	if (_state.inventoryItems.size() == 0) {
+		_state.selectedInventoryItem = hotspot->extra;
 	}
 	int frameCounter = 0;
 	while (frameCounter < kIconFlashDuration) {
@@ -91,7 +91,7 @@ void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
 		}
 		g_system->delayMillis(10);
 	}
-	_inventoryItems.push_back(hotspot->extra);
+	_state.inventoryItems.push_back(hotspot->extra);
 	_room->disableHotspot(hotspot);
 }
 

@@ -380,13 +380,16 @@ struct ResetEntry {
 	byte *data = nullptr;
 };
 
+
 struct GameStateData {
 	GameState stateGame = INTRO;
+
+	Common::Array<byte> inventoryItems;
+	int16 selectedInventoryItem = -1;
 	Common::HashMap<byte, Common::Array<Sticker>> roomStickers;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
-
 	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
 
 	GameStateData() {
@@ -411,6 +414,14 @@ struct GameStateData {
 	void setRootDisabledState(byte room, byte root, bool disabled) {
 		conversationRootsState[room * 4 + root] = disabled ? 1 : 0;
 	}
+};
+
+struct SaveGameData {
+	byte currentRoom = 0;
+	uint16 alfredX = 0;
+	uint16 alfredY = 0;
+	AlfredDirection alfredDir = ALFRED_DOWN;
+	GameStateData *gameState = nullptr;
 };
 
 } // End of namespace Pelrock
