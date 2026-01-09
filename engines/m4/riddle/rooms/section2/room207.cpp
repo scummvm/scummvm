@@ -892,8 +892,8 @@ void Room207::parser() {
 		}
 
 	} else if (!_pipeFlag && lookFlag && player_said("REBUS AMULET") && !inv_object_is_here("REBUS AMULET")) {
-		if (_G(flags)[V061] == 0) {
-			_G(flags)[V061] = 1;
+		if (_G(flags)[V074] == 0) {
+			_G(flags)[V074] = 1;
 			digi_play("207r04", 1);
 		} else
 			digi_play("207r04a", 1);
