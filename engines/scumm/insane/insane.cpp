@@ -184,7 +184,7 @@ void Insane::initvars() {
 		for (j = 0; j < 9; j++)
 			_enHdlVar[i][j] = 0;
 
-	for (i = 0; i < 0x80; i++)
+	for (i = 0; i < 0x200; i++)
 		_iactBits[i] = 0;
 
 
@@ -1264,7 +1264,7 @@ void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
 			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
 			   int32 c, int32 arg_1C, int32 arg_20) {
-	nutfile->drawFrame(renderBitmap, c, x, y);
+	nutfile->drawFrame(renderBitmap, c, x, y, codecparam); // codecparam appears to be pitch
 }
 
 void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
@@ -1357,13 +1357,13 @@ void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 bool Insane::isBitSet(int n) {
-	assert (n < 0x80);
+	assert (n < 0x200);
 
 	return (_iactBits[n] != 0);
 }
 
 void Insane::setBit(int n) {
-	assert (n < 0x80);
+	assert (n < 0x200);
 
 	_iactBits[n] = 1;
 }

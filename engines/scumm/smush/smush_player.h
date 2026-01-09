@@ -23,6 +23,8 @@
 #define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"
+#include "common/list.h"
+#include "common/rect.h"
 
 namespace Audio {
 class SoundHandle;
@@ -90,6 +92,7 @@ class Insane;
 
 class SmushPlayer {
 	friend class Insane;
+	friend class InsaneRebel2;
 private:
 	struct SmushAudioDispatch {
 		uint8 *headerPtr;
@@ -208,6 +211,14 @@ public:
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
 	void setCurVideoFlags(int16 flags);
+
+	// Masked regions - areas where video should not update (e.g., destroyed enemies)
+	// The Insane class can add/remove regions, and decodeFrameObject will restore
+	// these areas from the previous frame after decoding
+	void addMaskedRegion(const Common::Rect &rect);
+	void removeMaskedRegion(const Common::Rect &rect);
+	void clearMaskedRegions();
+	Common::List<Common::Rect> _maskedRegions;
 
 
 protected:

@@ -26,6 +26,9 @@
 
 #include "scumm/smush/smush_player.h"
 
+#include "common/list.h"
+#include "common/rect.h"
+
 namespace Scumm {
 
 #define INV_CHAIN    0
@@ -49,18 +52,19 @@ namespace Scumm {
 #define EN_BEN       9 // used only with handler
 
 class Insane {
- public:
-	Insane(ScummEngine_v7 *scumm);
-	~Insane();
+public:
+	Insane() {};
+    Insane(ScummEngine_v7 *scumm);
+	virtual ~Insane();
 
 	void setSmushParams(int speed);
 	void setSmushPlayer(SmushPlayer *player);
 	void runScene(int arraynum);
 
 	void procPreRendering();
-	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	void virtual procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
-	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	void virtual procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
@@ -69,7 +73,7 @@ class Insane {
 	bool isInsaneActive() { return _insaneIsRunning; }
 	void syncCurrentSanFlags();
 
- private:
+ protected:
 
 	ScummEngine_v7 *_vm;
 	SmushPlayer *_player;
@@ -154,7 +158,7 @@ class Insane {
 	int16 _smush_frameNum2;
 	byte _smush_earlyFluContents[0x31a];
 	int16 _enemyState[10][10];
-	byte _iactBits[0x80];
+	byte _iactBits[0x200];
 	int16 _mainRoadPos;
 	int16 _posBrokenCar;
 	int16 _posBrokenTruck;
@@ -421,7 +425,7 @@ class Insane {
 	void actor10Reaction(int32 buttons);
 	int32 actionEnemy();
 	int32 processKeyboard();
-	int32 processMouse();
+	int32 virtual processMouse();
 	void setEnemyAnimation(int32 actornum, int anim);
 	void chooseEnemyWeaponAnim(int32 buttons);
 	void switchEnemyWeapon();
@@ -447,12 +451,22 @@ class Insane {
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
-	bool isBitSet(int n);
-	void setBit(int n);
+	bool virtual isBitSet(int n);
+	void virtual setBit(int n);
 	void clearBit(int n);
 	void chooseEnemy();
 	void removeEmptyEnemies();
 	void removeEnemyFromMetList(int32);
+
+ public:
+
+	bool virtual shouldSkipFrameUpdate(int left, int top, int width, int height) { 
+		return false; 
+	};
+
+	void virtual loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
+		// Nothing by default
+	};
 };
 } // End of namespace Insane
 

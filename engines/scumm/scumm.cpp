@@ -52,6 +52,7 @@
 #include "scumm/smush/smush_player.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
+#include "scumm/insane/insane_rebel.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
@@ -1157,6 +1158,8 @@ Common::Error ScummEngine::init() {
 
 			_filenamePattern.pattern = "%.2d.LFL";
 			_filenamePattern.genMethod = kGenRoomNum;
+		} else if (_game.id == GID_REBEL2) {
+			_fileHandle = new ScummFile(this);
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
 			// special meta (container) file format to store the actual SCUMM data
@@ -1504,6 +1507,11 @@ Common::Error ScummEngine::init() {
 
 	setupScumm(macResourceFile);
 
+	if (_game.id == GID_REBEL2) {
+		_setupIsComplete = true;
+		return Common::kNoError;
+	}
+
 	readIndexFile();
 
 	// Create the debugger now that _numVariables has been set
@@ -1778,6 +1786,38 @@ void ScummEngine::setupScumm(const Common::Path &macResourceFile) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
+	if (_game.id == GID_REBEL2) {
+		_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
+		initScreens(0, 200);
+
+		_numVariables = 256;
+		_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
+
+		_numArray = 50;
+		_res->allocResTypeData(rtString, 0, _numArray, kDynamicResTypeMode);
+		_res->allocResTypeData(rtSound, 0, 200, kDynamicResTypeMode);
+		_res->allocResTypeData(rtCostume, 0, 200, kDynamicResTypeMode);
+		_res->allocResTypeData(rtRoom, 0, 20, kDynamicResTypeMode);
+
+		defineArray(0, kIntArray, 0, 1000);
+		_numActors = 0;
+
+		setupScummVars();
+
+		_useOriginalGUI = false;
+
+		_sound = new Sound(this, _mixer, false);
+		_musicEngine = _imuseDigital = new IMuseDigital(this, 11025, _mixer, &_resourceAccessMutex, false);
+		_insane = new InsaneRebel2(this);
+		_splayer = new SmushPlayer(this, _imuseDigital, _insane);
+
+		// Initialize cursor
+		_macGui = nullptr; // Ensure this is null as we don't want MacGui behavior
+		_charset = new CharsetRendererV7(this); // Just in case
+
+		initBanners();
+		return;
+	}
 
 	// The object line toggle is always synchronized from the main game to
 	// our internal Game Options; at startup we do the opposite, since an user
@@ -2576,8 +2616,22 @@ void ScummEngine_v7::syncSoundSettings() {
 	if (!_setupIsComplete)
 		return;
 
+	if (_game.id == GID_REBEL2) {
+		ScummEngine::syncSoundSettings();
+		if (_imuseDigital) {
+			_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
+			_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
+			_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
+		}
+		return;
+	}
+
 	if (!isUsingOriginalGUI()) {
 		ScummEngine::syncSoundSettings();
+		if (_splayer) {
+			_splayer->setChanFlag(0, true);
+			_splayer->setChanFlag(2, true);
+		}
 		return;
 	}
 
@@ -2628,6 +2682,18 @@ int ScummEngine::getTalkSpeed() {
 #pragma mark -
 
 Common::Error ScummEngine::go() {
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL2) {
+		// Use 12 FPS as default, same as The Dig. FT uses 10.
+		// Since we don't have the standard scripts initializing this, we pass it here.
+		if (_game.features & GF_DEMO)
+			((ScummEngine_v7 *)this)->_splayer->play("OPEN/O_DEMO.SAN", 12);
+		else
+			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01P01.SAN", 12);
+		return Common::kNoError;
+	}
+#endif
+
 	setTotalPlayTime();
 
 	_lastWaitTime = _system->getMillis();
@@ -4044,6 +4110,9 @@ void ScummEngine_v7::scummLoop_handleSound() {
 		_imuseDigital->flushTracks();
 		_imuseDigital->refreshScripts();
 	}
+
+	if (_game.id == GID_REBEL2)
+		return;
 
 	_splayer->setChanFlag(0, VAR(VAR_VOICE_MODE) != 0);
 	_splayer->setChanFlag(2, VAR(VAR_VOICE_MODE) != 2);
