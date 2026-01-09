@@ -79,6 +79,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
 
+	_playerDamage = 0;
+	_playerLives = 3;
+	_playerScore = 0;
+
 	_speed = 12;
 	_insaneIsRunning = false;
 
@@ -451,7 +455,62 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		
 	} else if (par1 == 3) {
 		// Opcode 3: Often used for clearing/resetting
-		debug("Rebel2 IACT Opcode 3: par2=%d par3=%d par4=%d", par2, par3, par4);
+		// debug("Rebel2 IACT Opcode 3: par2=%d par3=%d par4=%d", par2, par3, par4);
+		
+		// Handle damage dealing (Subcode 5 in FUN_401234)
+		// Opcode 3 is complicated:
+		// Based on FUN_401234, case 1 (Opcode 3), checks local_c (offset +4 / par2?)
+		// In iactRebel2Scene1, par1=Opcode.
+		// If par1 == 1 (Opcode 1 / FUN_401234 case 1):
+		//   It checks local_c which is from offset +4 (par3).
+		//   If par3 == 5 -> Damage Logic.
+		// 
+		// Actually, FUN_401234 switches on `*local_14 - 2`.
+		// If `*local_14` (Opcode) is 3, switch value is 1.
+		// So Opcode 3 -> Case 1.
+		
+		if (par1 == 3) {
+			// Inside Case 1: local_c = local_14[2] which is offset +4 (par3)
+			if (par3 == 5) {
+				// Damage Logic
+				// bVar1 = FUN_423970(local_14[5]); // Check if source enemy (offset +10 / par6?) is active
+				// Read extra params from stream
+				// Note: `procIACT` already read parems into par1..par4.
+				// But Opcode 3 logic in FUN_401234 uses offset +10 (par6) which isn't passed to `procIACT` signature fully?
+				// Wait, `procIACT` reads 4 shorts.
+				// par1 (+0), par2 (+2), par3 (+4), par4 (+6).
+				// We need +8 and +10.
+				
+				b.skip(2); // Offset +8 (par5 used in assembly but not here yet)
+				int16 par6 = b.readSint16LE(); // Offset +10 (Enemy ID?)
+				
+				// Check if enemy is disabled (processed in FUN_423970)
+				bool enemyDisabled = isBitSet(par6);
+				
+				if (!enemyDisabled) {
+					// Probability check: Random(100) < Limit
+					// The limit seems to come from a table or fixed value?
+					// In FUN_401234: `sVar2 = *(short *)(&DAT_0047e0fc + ...)`
+					// For now, let's just use a fixed probability or assume successful hit
+					// if (rnd < prob) ...
+					
+					// Increment damage
+					// In assembly: DAT_0047a7ec += damage
+					// Damage amount also comes from table?
+					int damageAmount = 5; // Placeholder
+					
+					// Only apply damage occasionally to simulate probability
+					if ((_vm->_system->getMillis() % 100) < 20) { // 20% chance per frame (approx)
+						_playerDamage += damageAmount;
+						if (_playerDamage > 255) _playerDamage = 255;
+						
+						debug("Rebel2: Player HIT by Enemy %d. Damage=%d", par6, _playerDamage);
+						
+						// TODO: Flash screen red / shake
+					}
+				}
+			}
+		}
 		
 	} else if (par1 == 5) {
 		// Opcode 5: Special handling based on par2 value
@@ -803,7 +862,49 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// The width is scaled based on shield value (param_1 >> 2)
 		// For now, draw at position (0, statusBarY) - sprite has internal positioning
 		if (_smush_cockpitNut->getNumChars() > 6) {
-			smlayer_drawSomething(renderBitmap, pitch, 0, statusBarY, 0, _smush_cockpitNut, 6, 0, 0);
+			// Calculate width based on damage. 
+			// Assuming max damage 255 = empty bar.
+			// Bar max width is 64 pixels.
+			// Damage 0 = Width 64. Damage 255 = Width 0.
+			// Width = 64 - (Damage / 4)
+			int barWidth = 64 - (_playerDamage / 4);
+			if (barWidth < 0) barWidth = 0;
+			
+			// We need to draw a partial sprite or use a clip rect.
+			// smlayer_drawSomething supports scaling/clip?
+			// The current implementation of smlayer_drawSomething just draws the whole sprite.
+			// We can pass a "frame" or clip rect if we modify the function or use a lower level draw.
+			// For now, let's just draw the full sprite if damage < 255, to verify it appears.
+			// Ideally we should implement clipping.
+			
+			// NOTE: smlayer_drawSomething calls `_smush_cockpitNut->draw(...)`
+			// We can't easily clip without modifying NutRenderer or using a custom draw loop.
+			// Let's implement a custom draw loop for the shield bar here since it's simple.
+			
+			// Sprite 6 data
+			const byte *src = _smush_cockpitNut->getCharData(6);
+			int sw = _smush_cockpitNut->getCharWidth(6);
+			int sh = _smush_cockpitNut->getCharHeight(6);
+			int sx = 63; // Hardcoded X offset from assembly
+			int sy = 9;  // Hardcoded Y offset (relative to status bar top)
+			
+			// Draw clipped width
+			if (src && sw > 0 && sh > 0) {
+				int drawWidth = MIN(barWidth, sw);
+				for (int y = 0; y < sh; y++) {
+					for (int x = 0; x < drawWidth; x++) {
+						// Render to (0 + sx + x, statusBarY + sy + y)
+						int destX = sx + x;
+						int destY = statusBarY + sy + y;
+						if (destX < pitch && destY < height) {
+							byte pixel = src[y * sw + x];
+							if (pixel != 0) {
+								renderBitmap[destY * pitch + destX] = pixel;
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		// Draw shield alert overlay (sprite 7) when shields critical (> 0xAA = 170)
