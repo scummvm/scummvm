@@ -95,8 +95,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a crash when triggering the game menu early in the game.
 
  Kyra:
-   - Reduce CPU usage in the LoL main menu.
-   - Reduce CPU usage in EoB 1 and 2.
+   - Reduced CPU usage in the LoL main menu.
+   - Reduced CPU usage in EoB 1 and 2.
    - Introduced new launcher checkbox in Eye of the Beholder 1 and 2,
      to enable smarter replacing of thrown weapons from inventory.
    - In Eye of the Beholder 1, Ileria and Beohram NPC data fix is now behind
@@ -116,7 +116,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
    - Fixed errors with M&M1 monster advancement in combat.
    - Fixed doors color in M&M1 enhanced mode
-   - Fix rendering of M&M1 enhanced main menu circles
+   - Fixed rendering of M&M1 enhanced main menu circles
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
@@ -131,6 +131,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  NGI:
    - Added keymapper support.
+   - Fixed a crash when trying to open the game main menu several times in
+     a row.
 
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
@@ -206,10 +208,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added keymapper support.
 
  Stark:
-   - The OpenGL renderer now works on older implementations not supporting non-power-of-two textures
+   - The OpenGL renderer now works on older GPUs not supporting
+     non-power-of-two textures.
 
  Supernova:
    - Added keymapper support.
+
+ Sword1:
+   - Fixed harsh noise being played instead of the intended audio on PS3,
+     Wii, and other big-endian ports.
+   - Fixed some engine leaks that could lead to crashes in some situations.
 
  Sword25:
    - Added keymapper support.
@@ -239,7 +247,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      played.
 
  TwinE:
-   - Activate original bug fixes (FunFrock's HQ door and safe bugs).
+   - Activated original bug fixes (FunFrock's HQ door and safe bugs).
 
  V-Cruise:
    - Fixed text rendering in Chinese and Japanese localizations.
@@ -285,6 +293,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Add support for antialiasing with 3D engines.
    - Remove last remnants from the ResidualVM merge: the codebase is now fully unified.
    - Take screen forbidden zones into account.
+
+ PS3 port:
+   - Fixed crashes for games using a screen shaking effect.
 
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
