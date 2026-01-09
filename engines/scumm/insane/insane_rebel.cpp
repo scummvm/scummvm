@@ -156,6 +156,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	for (i = 0; i < 0x200; i++)
 		_iactBits[i] = 0;
+
+	for (i = 0; i < 512; i++) {
+		_rebelLinks[i][0] = 0;
+		_rebelLinks[i][1] = 0;
+		_rebelLinks[i][2] = 0;
+	}
 }
 
 
@@ -200,6 +206,29 @@ int32 InsaneRebel2::processMouse() {
 				debug("Rebel2: HIT enemy ID=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)", 
 					it->id, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
+
+				// Disable self
+				setBit(it->id);
+
+				// Handle dependencies
+				int id = it->id;
+				if (id >= 0 && id < 512) {
+					// Slot 2: Enable (Explosion?)
+					if (_rebelLinks[id][2] != 0) {
+						clearBit(_rebelLinks[id][2]); 
+						debug("Rebel2: Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
+					}
+					// Slot 1: Enable (Explosion?)
+					if (_rebelLinks[id][1] != 0) {
+						clearBit(_rebelLinks[id][1]);
+						debug("Rebel2: Enabled dependency Slot 1 (ID=%d) for Parent %d", _rebelLinks[id][1], id);
+					}
+					// Slot 0: Disable (Shots?)
+					if (_rebelLinks[id][0] != 0) {
+						setBit(_rebelLinks[id][0]);
+						debug("Rebel2: Disabled dependency Slot 0 (ID=%d) for Parent %d", _rebelLinks[id][0], id);
+					}
+				}
 
 				// Note: Background saving and masking is handled in procPostRendering
 				// where we have access to the render bitmap
@@ -264,6 +293,12 @@ void InsaneRebel2::setBit(int n) {
 	_iactBits[n] = 1;
 }
 
+void InsaneRebel2::clearBit(int n) {
+	assert (n < 0x200);
+
+	_iactBits[n] = 0;
+}
+
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
@@ -300,14 +335,27 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	//   screenX = centerX - DAT_0043e006 (scrollX)
 	//   screenY = centerY - DAT_0043e008 (scrollY)
 
+	//   screenX = centerX - DAT_0043e006 (scrollX)
+	//   screenY = centerY - DAT_0043e008 (scrollY)
+
 	if (par1 == 4) {
 		// Opcode 4: Enemy position update
 		// Read 5 shorts from the stream (offset +8 through +16)
 		int16 enemyId = b.readSint16LE();  // Offset +8
 		int16 x = b.readSint16LE();        // Offset +10 (0x0A)
+		
+		// If enemy is disabled in bit table, skip update
+		bool disabled = isBitSet(enemyId);
+		
 		int16 y = b.readSint16LE();        // Offset +12 (0x0C)
 		int16 w = b.readSint16LE();        // Offset +14 (0x0E) - Width
 		int16 h = b.readSint16LE();        // Offset +16 (0x10) - Height
+
+		// If disabled, stop processing this object
+		if (disabled) {
+			// debug("Rebel2: Skipping Opcode 4 for disabled enemy ID=%d", enemyId);
+			return; 
+		}
 
 		// The disassembly shows half-width/half-height are used for centering:
 		//   halfW = w >> 1
@@ -367,7 +415,39 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	} else if (par1 == 2) {
 		// Opcode 2: Often used for bit setting
 		// Disassembly shows this is handled but we don't have full context
-		debug("Rebel2 IACT Opcode 2: par2=%d par3=%d par4=%d", par2, par3, par4);
+		// debug("Rebel2 IACT Opcode 2: par2=%d par3=%d par4=%d", par2, par3, par4);
+		
+		// Handle dependency linking (par3 == 4)
+		if (par3 == 4) {
+			int16 childId = b.readSint16LE(); // Offset +8
+			int16 parentId = b.readSint16LE(); // Offset +10
+			
+			if (parentId >= 0 && parentId < 512) {
+				// Shift links
+				_rebelLinks[parentId][2] = _rebelLinks[parentId][1];
+				_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
+				_rebelLinks[parentId][0] = childId;
+				
+				// Apply initial state based on parent state
+				// If parent is ALIVE (Bit Clear) -> Disable new Child (Set Bit)
+				// If parent is DEAD (Bit Set) -> Enable new Child (Clear Bit)
+				if (!isBitSet(parentId)) {
+					setBit(childId);
+					debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Alive -> Child Disabled.", childId, parentId);
+				} else {
+					clearBit(childId);
+					debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Dead -> Child Enabled.", childId, parentId);
+				}
+			}
+		} else {
+			// Skip extra data if any? Opcode 2 might vary in size.
+			// Based on disassembly, it accesses offset +8 and +10 for case 4.
+			// Currently we don't know size for other cases, but hopefully they don't crash stream reading.
+			// 'b' is SeekableReadStream, so we might need to skip if we don't read?
+			// The caller `procIACT` passes `size` but that's for the WHOLE chunk.
+			// We can't skip unknown sub-opcodes easily without size map.
+			// Assuming only par3=4 has extra data for now.
+		}
 		
 	} else if (par1 == 3) {
 		// Opcode 3: Often used for clearing/resetting
@@ -795,7 +875,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				}
 			}
 			// After explosion is complete (explosionFrame == -1), do nothing
-		} else if (it->active) {
+			// After explosion is complete (explosionFrame == -1), do nothing
+		} else if (it->active && !isBitSet(it->id)) { // Only draw if active AND not disabled by IACT
 			// Draw bounding box outline for active enemies (debug visualization)
 			// Draw Top
 			if (r.top >= 0 && r.top < height) {
