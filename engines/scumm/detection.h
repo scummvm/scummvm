@@ -221,6 +221,7 @@ enum ScummGameId {
 	GID_CMI,
 	GID_DIG,
 	GID_FT,
+	GID_REBEL2,
 	GID_INDY3,
 	GID_INDY4,
 	GID_LOOM,

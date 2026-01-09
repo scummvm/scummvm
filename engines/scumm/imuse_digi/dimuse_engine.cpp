@@ -59,7 +59,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	}
 
 	_splayer = nullptr;
-	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO));
+	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO) || _vm->_game.id == GID_REBEL2);
 
 	if (_isEarlyDiMUSE) {
 		memset(_ftCrossfadeBuffer, 0, sizeof(_ftCrossfadeBuffer));

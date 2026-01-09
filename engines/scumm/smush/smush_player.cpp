@@ -364,6 +364,52 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
 	assert(subSize >= 8);
 
+	// For Rebel2 large IACT chunks, check for embedded SAN animations
+	if (_vm->_game.id == GID_REBEL2 && subSize > 1000) {
+		int64 startPos = b.pos();
+		
+		// Read header to check for embedded ANIM
+		byte header[64];
+		int bytesRead = b.read(header, MIN<int32>(64, subSize));
+		
+		// Check for ANIM at offset 18 (embedded SAN location)
+		uint32 magicAt18 = (bytesRead >= 22) ? READ_BE_UINT32(header + 18) : 0;
+		
+		if (magicAt18 == MKTAG('A','N','I','M')) {
+			// This IACT contains an embedded SAN animation!
+			uint32 animSize = (bytesRead >= 26) ? READ_BE_UINT32(header + 22) : 0;
+			
+			// Read the userId to determine which HUD slot (1-4)
+			int code = READ_LE_UINT16(header);
+			int flags = READ_LE_UINT16(header + 2);
+			int userId = READ_LE_UINT16(header + 6);
+			
+			debug("Rebel2: Extracting embedded SAN from IACT: userId=%d, animSize=%u", userId, animSize);
+			
+			// Extract the embedded ANIM data (starts at offset 18 from IACT start)
+			b.seek(startPos + 18);
+			
+			int32 embeddedSize = subSize - 18;
+			if (embeddedSize > 0 && _insane) {
+				byte *animData = (byte *)malloc(embeddedSize);
+				if (animData) {
+					b.read(animData, embeddedSize);
+					
+					// Pass to Insane for decoding
+					_insane->loadEmbeddedSan(userId, animData, embeddedSize, _dst);
+					
+					free(animData);
+				}
+			}
+			
+			// Return - don't process as audio
+			return;
+		}
+		
+		// Seek back to start for normal processing
+		b.seek(startPos);
+	}
+
 	int code = b.readUint16LE();
 	int flags = b.readUint16LE();
 	int unknown = b.readSint16LE();
@@ -759,6 +805,19 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		if (_specialBuffer == 0)
 			_specialBuffer = (byte *)malloc(242 * 384);
 		_dst = _specialBuffer;
+	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
+		// For Rebel2, check if this partial update overlaps with a destroyed enemy
+		// If so, skip the update entirely to prevent showing the enemy sprite
+		if (_insane && _insane->shouldSkipFrameUpdate(left, top, width, height)) {
+			return;  // Skip this frame update
+		}
+		
+		if (_specialBuffer == 0) {
+			_specialBuffer = (byte *)malloc(width * height);
+			_width = width;
+			_height = height;
+		}
+		_dst = _specialBuffer;
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -770,15 +829,22 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
+	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
+		// Do not update _width/_height here to preserve original video size
+		// if frames are partial updates
 	} else {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
 	}
 
+	int pitch = _vm->_screenWidth;
+	if (_dst == _specialBuffer)
+		pitch = _width;
+
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
 	case SMUSH_CODEC_RLE_ALT:
-		smushDecodeRLE(_dst, src, left, top, width, height, _vm->_screenWidth);
+		smushDecodeRLE(_dst, src, left, top, width, height, pitch);
 		break;
 	case SMUSH_CODEC_DELTA_BLOCKS:
 		if (!_deltaBlocksCodec)
@@ -1214,6 +1280,9 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	// Hide mouse
 	bool oldMouseState = CursorMan.showMouse(false);
+	if (_vm->_game.id == GID_REBEL2) {
+		insanity(true);
+	}
 
 	// Load the video
 	_seekFile = filename;
@@ -2133,6 +2202,32 @@ void SmushPlayer::feedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int
 
 bool SmushPlayer::isAudioCallbackEnabled() {
 	return _smushAudioCallbackEnabled;
+}
+
+// Only used by Rebel Assault 2
+void SmushPlayer::addMaskedRegion(const Common::Rect &rect) {
+	// Check if the region already exists
+	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
+		if (*it == rect) {
+			return; // Already exists
+		}
+	}
+	_maskedRegions.push_back(rect);
+}
+
+// Only used by Rebel Assault 2
+void SmushPlayer::removeMaskedRegion(const Common::Rect &rect) {
+	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
+		if (*it == rect) {
+			_maskedRegions.erase(it);
+			return;
+		}
+	}
+}
+
+// Only used by Rebel Assault 2
+void SmushPlayer::clearMaskedRegions() {
+	_maskedRegions.clear();
 }
 
 } // End of namespace Scumm

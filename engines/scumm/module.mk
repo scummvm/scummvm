@@ -133,6 +133,7 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/insane_rebel.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \
