@@ -48,6 +48,9 @@
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#include "backends/graphics/rendersdl/rendersdl-graphics.h"
+#endif
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #endif
@@ -957,7 +960,11 @@ Common::Path OSystem_SDL::getScreenshotsPath() {
 #ifdef USE_MULTIPLE_RENDERERS
 
 OSystem_SDL::GraphicsManagerType OSystem_SDL::getDefaultGraphicsManager() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return GraphicsManagerRenderSDL;
+#else
 	return GraphicsManagerSurfaceSDL;
+#endif
 }
 
 SdlGraphicsManager *OSystem_SDL::createGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, GraphicsManagerType type) {
@@ -965,11 +972,19 @@ SdlGraphicsManager *OSystem_SDL::createGraphicsManager(SdlEventSource *sdlEventS
 	case GraphicsManagerSurfaceSDL:
 		debug(1, "creating SurfaceSDL graphics manager");
 		return new SurfaceSdlGraphicsManager(sdlEventSource, window);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case GraphicsManagerRenderSDL:
+		debug(1, "creating RenderSDL graphics manager");
+		return new RenderSdlGraphicsManager(sdlEventSource, window);
+#endif
+
 #ifdef USE_OPENGL
 	case GraphicsManagerOpenGL:
 		debug(1, "creating OpenGL graphics manager");
 		return new OpenGLSdlGraphicsManager(sdlEventSource, window);
 #endif
+
 	default:
 		assert(0);
 		return NULL;
