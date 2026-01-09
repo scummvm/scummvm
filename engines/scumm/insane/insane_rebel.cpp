@@ -63,6 +63,84 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelEnemies.clear();
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
+
+	_speed = 12;
+	_insaneIsRunning = false;
+
+	_numberArray = 0;
+	_emulateInterrupt = 0;
+	_flag1d = 0;
+	_objArray1Idx = 0;
+	_objArray1Idx2 = 0;
+	_objArray2Idx = 0;
+	_objArray2Idx2 = 0;
+	_currSceneId = 1;
+	_timer6Id = 0;
+	_timerSpriteId = 0;
+	_temp2SceneId = 0;
+	_tempSceneId = 0;
+	_currEnemy = -1;
+	_currScenePropIdx = 0;
+	_currScenePropSubIdx = 0;
+	_currTrsMsg = 0;
+	_sceneData2Loaded = 0;
+	_sceneData1Loaded = 0;
+	_keyboardDisable = 0;
+	_needSceneSwitch = false;
+	_idx2Exceeded = 0;
+	_tiresRustle = false;
+	_keybOldDx = 0;
+	_keybOldDy = 0;
+	_velocityX = 0;
+	_velocityY = 0;
+	_keybX = 0;
+	_keybY = 0;
+	_firstBattle = false;
+	_battleScene = true;
+	_kickBenProgress = false;
+	_weaponBenJustSwitched = false;
+	_kickEnemyProgress = false;
+	_weaponEnemyJustSwitched = false;
+	_beenCheated = 0;
+	_posBrokenTruck = 0;
+	_posBrokenCar = 0;
+	_posFatherTorque = 0;
+	_posCave = 0;
+	_posVista = 0;
+	_roadBranch = false;
+	_roadStop = false;
+	_carIsBroken = false;
+	_benHasGoggles = false;
+	_mineCaveIsNear = false;
+	_objectDetected = false;
+	_approachAnim = -1;
+	_val54d = 0;
+	_val57d = 0;
+	_val115_ = false;
+	_roadBumps = false;
+	_val211d = 0;
+	_val213d = 0;
+	_metEnemiesListTail = 0;
+	_smlayer_room = 0;
+	_smlayer_room2 = 0;
+	_isBenCut = 0;
+	_continueFrame = 0;
+	_continueFrame1 = 0;
+	_counter1 = 0;
+	_iactSceneId = 0;
+	_iactSceneId2 = 0;
+
+	int i, j;
+	
+	for (i = 0; i < 12; i++)
+		_metEnemiesList[i] = 0;
+
+	for (i = 0; i < 9; i++)
+		for (j = 0; j < 9; j++)
+			_enHdlVar[i][j] = 0;
+
+	for (i = 0; i < 0x200; i++)
+		_iactBits[i] = 0;
 }
 
 
