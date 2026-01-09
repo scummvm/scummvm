@@ -207,6 +207,13 @@ int NutRenderer::getCharHeight(byte c) const {
 	return _chars[c].height;
 }
 
+const byte *NutRenderer::getCharData(byte c) {
+	if (c >= _numChars)
+		error("invalid character in NutRenderer::getCharData : %d (%d)", c, _numChars);
+
+	return _chars[c].src;
+}
+
 void NutRenderer::drawFrame(byte *dst, int c, int x, int y, int pitch) {
 	const int width = MIN((int)_chars[c].width, _vm->_screenWidth - x);
 	const int height = MIN((int)_chars[c].height, _vm->_screenHeight - y);

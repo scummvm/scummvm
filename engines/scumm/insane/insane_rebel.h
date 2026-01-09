@@ -165,8 +165,15 @@ public:
 	// userId: HUD slot (1-4), animData: raw ANIM data, size: data size, renderBitmap: current frame buffer
 	void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) override;
 
+
+
 	int16 _rebelLinks[512][3]; // Dependency links: Slot 0 (Disable on death), Slot 1/2 (Enable on death)
 	void clearBit(int n);
+
+	int16 _playerDamage;  // 0 to 255 (Accumulated damage)
+	int16 _playerLives;
+	int32 _playerScore;
+
 
 };
 

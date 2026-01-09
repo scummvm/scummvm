@@ -74,6 +74,7 @@ public:
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
+	const byte *getCharData(byte c);
 
 	int getFontHeight() const { return _fontHeight; }
 };
