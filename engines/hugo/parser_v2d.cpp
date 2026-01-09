@@ -287,6 +287,11 @@ bool Parser_v2d::isObjectVerb_v2(const char *word, Object *obj) {
 bool Parser_v2d::isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(%s, %s, object_list_t obj)", noun, verb);
 
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
+		return false;
+	}
+
 	if (!noun)
 		return false;
 
@@ -312,8 +317,10 @@ bool Parser_v2d::isBackgroundWord_v2(const char *noun, const char *verb, ObjectL
 bool Parser_v2d::isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
-	if (_vm->_maze._enabledFl)
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
 		return false;
+	}
 
 	if (testNounFl && !noun)
 		return false;

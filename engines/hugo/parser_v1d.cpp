@@ -283,9 +283,6 @@ void Parser_v1d::dropObject(Object *obj) {
 bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(%d, %s, %s, object_list_t obj)", (testNounFl) ? 1 : 0, noun, verb);
 
-	if (_vm->_maze._enabledFl)
-		return false;
-
 	if (testNounFl && !noun)
 		return false;
 
