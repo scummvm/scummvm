@@ -44,6 +44,21 @@ namespace Scumm {
 
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
+
+	// Initialize parent class pointers to nullptr to avoid crash in ~Insane()
+	// because Insane() default constructor leaves them uninitialized.
+	_smush_roadrashRip = nullptr;
+	_smush_roadrsh2Rip = nullptr;
+	_smush_roadrsh3Rip = nullptr;
+	_smush_goglpaltRip = nullptr;
+	_smush_tovista1Flu = nullptr;
+	_smush_tovista2Flu = nullptr;
+	_smush_toranchFlu = nullptr;
+	_smush_minedrivFlu = nullptr;
+	_smush_minefiteFlu = nullptr;
+	_smush_bencutNut = nullptr;
+	_smush_bensgoggNut = nullptr;
+
 	// Rebel Assault 2 specific initialization can go here
 	_rebelHudPrimary = nullptr;
 	_rebelHudSecondary = nullptr;
