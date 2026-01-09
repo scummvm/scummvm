@@ -242,38 +242,6 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y, int pitch) {
 	}
 }
 
-void NutRenderer::drawFrame(byte *dst, int c, int x, int y, int pitch, int maxWidth, int maxHeight) {
-	const int width = MIN((int)_chars[c].width, maxWidth - x);
-	const int height = MIN((int)_chars[c].height, maxHeight - y);
-	const byte *src = _chars[c].src;
-	const int srcPitch = _chars[c].width;
-	byte bits = 0;
-
-	const int minX = x < 0 ? -x : 0;
-	const int minY = y < 0 ? -y : 0;
-
-	if (height <= 0 || width <= 0) {
-		return;
-	}
-
-	dst += pitch * y + x;
-	if (minY) {
-		src += minY * srcPitch;
-		dst += minY * pitch;
-	}
-
-	for (int ty = minY; ty < height; ty++) {
-		for (int tx = minX; tx < width; tx++) {
-			bits = src[tx];
-			if (bits != 231 && bits) {
-				dst[tx] = bits;
-			}
-		}
-		src += srcPitch;
-		dst += pitch;
-	}
-}
-
 int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors, bool smushColorMode) {
 	if (_direction < 0)
 		x -= _chars[chr].width;
