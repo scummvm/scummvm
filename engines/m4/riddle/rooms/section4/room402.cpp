@@ -1137,7 +1137,7 @@ void Room402::daemon() {
 		break;
 
 	case 216:
-		if (_G(flags)[V111] > 1) {
+		if (_flags111 > 1) {
 			_flags111--;
 			sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 17, 214,
 				_ripPaysWolfie, 17, 17, 0);
