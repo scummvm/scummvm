@@ -27,8 +27,17 @@
 #include "pelrock/types.h"
 
 namespace Pelrock {
-bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context);
+bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context, HotSpot *hotspot = nullptr);
 
+/**
+ * Calculate the walk target point based on source coordinates and mouse hover state.
+ * @param walkboxes         Array of walkboxes in the current room.
+ * @param sourceX           X coordinate of the source point (e.g., mouse position).
+ * @param sourceY           Y coordinate of the source point (e.g., mouse position).
+ * @param mouseHoverState   State indicating what the mouse is hovering over (0 = nothing, 1 = hotspot hover, 2 = hotspot click).
+ * @param hotspot           Pointer to the hotspot being hovered over (if applicable).
+ * @return                  Calculated walk target point.
+ */
 Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, bool mouseHoverState, HotSpot *hotspot);
 uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint16_t y);
 uint8_t getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, uint8_t current_box_index);

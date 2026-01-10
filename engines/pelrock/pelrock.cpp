@@ -1131,7 +1131,7 @@ void PelrockEngine::extraScreenLoop() {
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;
 	PathContext context = {nullptr, nullptr, nullptr, 0, 0, 0};
-	findPath(_alfredState.x, _alfredState.y, x, y, _room->_currentRoomWalkboxes, &context);
+	findPath(_alfredState.x, _alfredState.y, x, y, _room->_currentRoomWalkboxes, &context, _currentHotspot);
 	_currentContext = context;
 	_alfredState.setState(ALFRED_WALKING);
 }

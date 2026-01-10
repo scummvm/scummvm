@@ -50,7 +50,7 @@ Common::String printMovementFlags(uint8_t flags) {
 	return result;
 }
 
-bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context) {
+bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context, HotSpot *hotspot) {
 
 	if (context->pathBuffer == NULL) {
 		context->pathBuffer = (uint8_t *)malloc(MAX_PATH_LENGTH);
@@ -61,7 +61,7 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 
 	int startX = sourceX;
 	int startY = sourceY;
-	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, false, nullptr);
+	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, 2, nullptr);
 	targetX = target.x;
 	targetY = target.y;
 	debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
@@ -140,12 +140,14 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 	//     sourceY = hotspot->y + hotspot->height;
 	// }
 
-	if (mouseHoverState == 1) {
+	// if (mouseHoverState == 1) {
 		// Hovering over hotspot - use hotspot center-bottom
+	if(hotspot != nullptr) {
 		sourceX = hotspot->x + hotspot->w / 2;
 		sourceY = hotspot->y + hotspot->h;
-
 	}
+
+	// }
 
 	// else: use sourceX, sourceY as passed (mouse position)
 
