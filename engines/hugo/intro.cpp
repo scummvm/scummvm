@@ -465,13 +465,13 @@ bool intro_v3d::introPlay() {
 		// Text boxes at various times
 		switch (_introTicks) {
 		case 4:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro1), true);
 			break;
 		case 9:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro2));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro2), true);
 			break;
 		case 35:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro3));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro3), true);
 			break;
 		default:
 			break;
@@ -557,13 +557,13 @@ bool intro_v3w::introPlay() {
 		// Text boxes at various times
 		switch (_introTicks) {
 		case 4:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro1));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro1), true);
 			break;
 		case 9:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro2));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro2), true);
 			break;
 		case 35:
-			Utils::notifyBox(_vm->_text->getTextIntro(kIntro3));
+			_vm->notifyBox(_vm->_text->getTextIntro(kIntro3), true);
 			break;
 		default:
 			break;

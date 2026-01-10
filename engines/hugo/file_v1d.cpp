@@ -132,7 +132,7 @@ void FileManager_v1d::instructions() const {
 			}
 		} while (*wrkLine++ != '#');                // '#' is EOP
 		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
-		Utils::notifyBox(line);
+		_vm->notifyBox(line);
 		wrkLine = line;
 		f.read(&readBuf, 1);                        // Remove CR after EOP
 		if (readBuf == '\r') {
