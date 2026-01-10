@@ -83,6 +83,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_playerLives = 3;
 	_playerScore = 0;
 
+	_difficulty = 1; // Default to Medium (1). TODO: Read from game config
+
 	_speed = 12;
 	_insaneIsRunning = false;
 
@@ -825,6 +827,49 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, in
 	drawTexturedLine(dst, pitch, width, height, startX, startY, endX, endY, nut, spriteIdx);
 }
 
+void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
+	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+	int err = dx + dy, e2;
+
+	for (;;) {
+		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height) {
+			dst[y0 * pitch + x0] = color;
+		}
+		if (x0 == x1 && y0 == y1) break;
+		e2 = 2 * err;
+		if (e2 >= dy) { err += dy; x0 += sx; }
+		if (e2 <= dx) { err += dx; y0 += sy; }
+	}
+}
+
+void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color) {
+	// Draw L-shaped brackets at corners of the rect (x,y,w,h)
+	// Bracket size: approx 8 pixels
+	int armLen = 2;
+	if (armLen > w / 2) armLen = w / 2;
+	if (armLen > h / 2) armLen = h / 2;
+
+	int x2 = x + w - 1;
+	int y2 = y + h - 1;
+
+	// Top-Left Corner
+	drawLine(dst, pitch, width, height, x, y, x + armLen, y, color);
+	drawLine(dst, pitch, width, height, x, y, x, y + armLen, color);
+
+	// Top-Right Corner
+	drawLine(dst, pitch, width, height, x2 - armLen, y, x2, y, color);
+	drawLine(dst, pitch, width, height, x2, y, x2, y + armLen, color);
+
+	// Bottom-Left Corner
+	drawLine(dst, pitch, width, height, x, y2, x + armLen, y2, color);
+	drawLine(dst, pitch, width, height, x, y2 - armLen, x, y2, color);
+
+	// Bottom-Right Corner
+	drawLine(dst, pitch, width, height, x2 - armLen, y2, x2, y2, color);
+	drawLine(dst, pitch, width, height, x2, y2 - armLen, x2, y2, color);
+}
+
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 
@@ -1056,30 +1101,14 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// The enemy frame updates are now skipped in decodeFrameObject via shouldSkipFrameUpdate
 			// Note: Explosion rendering is now handled by the separate 5-slot system
 		} else if (it->active && !isBitSet(it->id)) { // Only draw if active AND not disabled by IACT
-			// Draw bounding box outline for active enemies (debug visualization)
-			// Draw Top
-			if (r.top >= 0 && r.top < height) {
-				for (int x = clipped.left; x < clipped.right; x++) {
-					renderBitmap[r.top * pitch + x] = 255;
-				}
-			}
-			// Draw Bottom
-			if (r.bottom > 0 && r.bottom <= height) {
-				for (int x = clipped.left; x < clipped.right; x++) {
-					renderBitmap[(r.bottom - 1) * pitch + x] = 255;
-				}
-			}
-			// Draw Left
-			if (r.left >= 0 && r.left < width) {
-				for (int y = clipped.top; y < clipped.bottom; y++) {
-					renderBitmap[y * pitch + r.left] = 255;
-				}
-			}
-			// Draw Right
-			if (r.right > 0 && r.right <= width) {
-				for (int y = clipped.top; y < clipped.bottom; y++) {
-					renderBitmap[y * pitch + (r.right - 1)] = 255;
-				}
+			// Draw Green Indicators (Corner Brackets) for Easy (0) and Medium (1) difficulty
+			// Hard (2) mode does not show indicators.
+			if (_difficulty < 2) {
+				const byte color = 5; // Green (Standard VGA Index 10)
+				// Clip the rect to screen bounds for drawing logic is handled inside drawLine if implemented safely,
+				// but drawCornerBrackets relies on drawLine which iterates.
+				// We pass full screen width/height to safe-guard.
+				drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
 			}
 		}
 	}
