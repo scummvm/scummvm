@@ -29,6 +29,9 @@
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
 
+#include "graphics/surface.h"
+#include "graphics/fonts/dosfont.h"
+
 namespace Common {
 class ReadStream;
 class SeekableReadStream;
@@ -84,6 +87,7 @@ public:
 	void     showCursor();
 	void     userHelp() const;
 	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
+	Common::Rect drawDosText(byte x, byte y, const char *text, byte color);
 
 	Icondib &getIconBuffer();
 	Viewdib &getBackBuffer();
@@ -115,7 +119,10 @@ protected:
 	byte *_curPalette;
 	byte _paletteSize;
 
+	Graphics::DosFont _dosFont;
+
 	Viewdib _frontBuffer;
+	Graphics::Surface _frontSurface;
 
 	inline bool isInX(const int16 x, const Rect *rect) const;
 	inline bool isInY(const int16 y, const Rect *rect) const;
