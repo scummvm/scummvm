@@ -52,6 +52,7 @@ public:
 	void remove(const Common::String &name) override;
 
 	static const char *get_name(int32 id);
+	void reset();
 };
 
 } // namespace Riddle
