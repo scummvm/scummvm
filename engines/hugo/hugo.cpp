@@ -727,7 +727,7 @@ void HugoEngine::endGame() {
 
 	if (_boot._registered != kRegRegistered)
 		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
-	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()), true, false);
+	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()), kTtsSpeech);
 	_status._viewState = kViewExit;
 }
 

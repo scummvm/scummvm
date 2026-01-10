@@ -471,7 +471,7 @@ void Screen::userHelp() const {
 	message[kHelpFirstNewlineIndex] = '\n';
 #endif
 
-	Utils::notifyBox(message, false);
+	Utils::notifyBox(message, kTtsNoSpeech);
 }
 
 void Screen::drawStatusText() {

@@ -46,7 +46,7 @@ void  reverseByte(byte *data);
  * Show a dialog notifying the user about something, with
  * only a simple "OK" button to dismiss it.
  */
-void notifyBox(const Common::String &msg, bool ttsVoiceText = true, bool ttsReplaceNewlines = true);	// Redirect to call notifyBox with u32strings
+void notifyBox(const Common::String &msg, TtsOptions ttsOptions = kTtsReplaceNewlines);	// Redirect to call notifyBox with u32strings
 void notifyBox(const Common::U32String &msg);
 
 /**
