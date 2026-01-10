@@ -69,7 +69,9 @@ public:
 
 	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
 	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx);
+
 	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx);
+	void renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx);
 
 	struct enemy {
 		int id;

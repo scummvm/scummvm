@@ -882,6 +882,54 @@ void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int heigh
 	drawLine(dst, pitch, width, height, x2, y2 - armLen, x2, y2, color);
 }
 
+void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars()) return;
+
+	int w = nut->getCharWidth(spriteIdx);
+	int h = nut->getCharHeight(spriteIdx);
+	const byte *src = nut->getCharData(spriteIdx);
+
+	// Clipping
+	int drawX = x;
+	int drawY = y;
+	int drawW = w;
+	int drawH = h;
+	int srcOffsetX = 0;
+	int srcOffsetY = 0;
+
+	if (drawX < 0) {
+		srcOffsetX = -drawX;
+		drawW += drawX;
+		drawX = 0;
+	}
+	if (drawY < 0) {
+		srcOffsetY = -drawY;
+		drawH += drawY;
+		drawY = 0;
+	}
+
+	if (drawX + drawW > width) {
+		drawW = width - drawX;
+	}
+	if (drawY + drawH > height) {
+		drawH = height - drawY;
+	}
+
+	if (drawW <= 0 || drawH <= 0) return;
+
+	// Draw loop
+	for (int iy = 0; iy < drawH; iy++) {
+		const byte *s = src + (srcOffsetY + iy) * w + srcOffsetX;
+		byte *d = dst + (drawY + iy) * pitch + drawX;
+		for (int ix = 0; ix < drawW; ix++) {
+			byte px = s[ix];
+			if (px != 231 && px != 0) { // Check both 0 and 231 (0xE7) for transparency
+				d[ix] = px;
+			}
+		}
+	}
+}
+
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 
@@ -1032,7 +1080,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// Draw status bar background frame (sprite 1) at (0, statusBarY)
 		// This sprite is the full-width status bar background
 		if (_smush_cockpitNut->getNumChars() > 1) {
-			smlayer_drawSomething(renderBitmap, pitch, _viewX, statusBarY + _viewY, 0, _smush_cockpitNut, 1, 0, 0);
+			renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
 		}
 		
 		// Draw difficulty indicator (sprites 2-5 based on difficulty level 0-3)
@@ -1042,7 +1090,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (difficulty > 3) difficulty = 3;
 		int difficultySprite = difficulty + 2;  // sprites 2, 3, 4, or 5
 		if (_smush_cockpitNut->getNumChars() > difficultySprite) {
-			smlayer_drawSomething(renderBitmap, pitch, _viewX, statusBarY + _viewY, 0, _smush_cockpitNut, difficultySprite, 0, 0);
+			renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
 		}
 		
 		// Draw shield bar (sprite 6) 
@@ -1173,7 +1221,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 					int cy = _explosions[i].y - eh / 2;
 					
 					// Draw explosion
-					smlayer_drawSomething(renderBitmap, pitch, cx, cy, 0, _smush_iconsNut, spriteIndex, 0, 0);
+					renderNutSprite(renderBitmap, pitch, width, height, cx, cy, _smush_iconsNut, spriteIndex);
 				}
 
 				_explosions[i].counter--;
@@ -1215,7 +1263,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 				// Draw Projectile Impact
 				// Using Sprite 0 (small flash) or similar at impact point
-				smlayer_drawSomething(renderBitmap, pitch, _shots[i].x - 7, _shots[i].y - 7, 0, _smush_iconsNut, 0, 0, 0);
+				renderNutSprite(renderBitmap, pitch, width, height, _shots[i].x - 7, _shots[i].y - 7, _smush_iconsNut, 0);
 			}
 			
 			_shots[i].counter--;
@@ -1256,7 +1304,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			}
 			
 			// Center the crosshair on mouse position (in world coordinates)
-			smlayer_drawSomething(renderBitmap, pitch, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, 0, _smush_iconsNut, reticleIndex, 0, 0);
+			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
 		}
 	}
 }
