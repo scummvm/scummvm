@@ -270,6 +270,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 	bool isPacked() const;
+	bool useWindowsInterface() const;
 
 	// Used by the qsort function
 	static HugoEngine &get() {
@@ -308,6 +309,11 @@ public:
 	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
 
+	Common::KeyCode notifyBox(const Common::String &text, bool protect = false, TtsOptions ttsOptions = kTtsReplaceNewlines);
+	Common::String promptBox(const Common::String &text);
+	bool yesNoBox(const Common::String &text, bool useFirstKey);
+	void takeObjectBox(const char *name);
+
 #ifdef USE_TTS
 	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
 #endif
@@ -342,6 +348,7 @@ private:
 	GameType _gameType;
 	Common::Platform _platform;
 	bool _packedFl;
+	bool _windowsInterfaceFl;
 
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score

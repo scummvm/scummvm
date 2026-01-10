@@ -86,6 +86,7 @@ public:
 
 	void charHandler();
 	void command(const char *format, ...);
+	void resetCommandLine();
 	void freeParser();
 	void keyHandler(Common::Event event);
 	void actionHandler(Common::Event event);

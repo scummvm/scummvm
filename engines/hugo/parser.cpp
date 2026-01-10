@@ -264,8 +264,13 @@ void Parser::charHandler() {
 	}
 
 	// See if time to blink cursor, set cursor character
-	if ((_cmdLineTick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
-		_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
+	if (_vm->useWindowsInterface()) {
+		if ((_cmdLineTick++ % (_vm->getTPS() / kBlinksPerSec)) == 0)
+			_cmdLineCursor = (_cmdLineCursor == '_') ? ' ' : '_';
+	} else {
+		// DOS: No blinking cursor
+		_cmdLineCursor = ' ';
+	}
 
 	// See if recall button pressed
 	if (gameStatus._recallFl) {
@@ -275,17 +280,8 @@ void Parser::charHandler() {
 		_cmdLineIndex = strlen(_cmdLine);
 	}
 
-	// Format prompt line, pad with spaces to fill row
-	Common::sprintf_s(_vm->_promptLine, ">%s%c", _cmdLine, _cmdLineCursor);
-	for (int i = strlen(_vm->_promptLine); i < kMaxTextCols; i++) {
-		_vm->_promptLine[i] = ' ';
-	}
-	_vm->_promptLine[kMaxTextCols] = '\0';
-
-	// Format status line
-	Common::sprintf_s(_vm->_statusLine, "F1-Help  %s  Score: %3d of %3d  Sound %3s",
-		(_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(),
-		(_vm->_config._soundFl) ? "on" : "off");
+	_vm->_screen->updateStatusText();
+	_vm->_screen->updatePromptText(_cmdLine, _cmdLineCursor);
 
 #ifdef USE_TTS
 	if (_vm->_previousScore != _vm->getScore()) {
@@ -346,11 +342,17 @@ void Parser::actionHandler(Common::Event event) {
 
 	switch (event.customType) {
 	case kActionUserHelp:
-		if (_checkDoubleF1Fl)
-			gameStatus._helpFl = true;
-		else
+		if (_vm->useWindowsInterface()) {
+			// Windows: Track double-F1 with a flag
+			if (_checkDoubleF1Fl)
+				gameStatus._helpFl = true;
+			else
+				_vm->_screen->userHelp();
+			_checkDoubleF1Fl = !_checkDoubleF1Fl;
+		} else {
+			// DOS: userHelp() handles double-F1
 			_vm->_screen->userHelp();
-		_checkDoubleF1Fl = !_checkDoubleF1Fl;
+		}
 		break;
 	case kActionToggleSound:
 		_vm->_sound->toggleSound();
@@ -370,10 +372,15 @@ void Parser::actionHandler(Common::Event event) {
 	case kActionRestoreGame:
 		_vm->_file->restoreGame(-1);
 		break;
-	case kActionNewGame:
-		if (Utils::yesNoBox("Are you sure you want to start a new game?"))
+	case kActionNewGame: {
+		// DOS requires shorter text for message boxes
+		const char *message = _vm->useWindowsInterface() ?
+			                  "Are you sure you want to start a new game?" :
+		                      "Are you sure you want to RESTART?";
+		if (_vm->yesNoBox(message, true))
 			_vm->_file->restoreGame(99);
 		break;
+	}
 	case kActionInventory:
 		showInventory();
 		break;
@@ -444,6 +451,10 @@ void Parser::command(const char *format, ...) {
 	va_end(marker);
 
 	lineHandler();
+}
+
+void Parser::resetCommandLine() {
+	_cmdLine[_cmdLineIndex = 0] = '\0';
 }
 
 /**
@@ -544,11 +555,11 @@ void Parser::showDosInventory() const {
 	ttsMessage += Common::String(_vm->_text->getTextParser(kTBOutro));
 	_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 #endif
-	Utils::notifyBox(buffer, kTtsNoSpeech);
+	_vm->notifyBox(buffer, false, kTtsNoSpeech);
 }
 
 void Parser::endGamePrompt() {
-	if (Utils::yesNoBox(_vm->_text->getTextParser(kTBExit_1d))) {
+	if (_vm->yesNoBox(_vm->_text->getTextParser(kTBExit_1d), true)) {
 		_vm->endGame();
 	}
 }
