@@ -86,7 +86,8 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
 	_packedFl = false;
-	_windowsInterfaceFl = (gd->desc.platform == Common::kPlatformWindows);
+	_windowsInterfaceFl = (gd->desc.platform == Common::kPlatformWindows) ||
+	                      ConfMan.getBool("use_windows_interface");
 
 	_numVariant = 0;
 	_gameVariant = kGameVariantNone;
