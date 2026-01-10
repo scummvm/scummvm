@@ -165,6 +165,10 @@ public:
 	Shot _shots[2];
 	void spawnShot(int x, int y);
 
+	/* Difficulty Level (0, 1, 2 = Easy, Med, Hard) */
+	int _difficulty;
+	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
+
 };
 
 } // End of namespace Insane
