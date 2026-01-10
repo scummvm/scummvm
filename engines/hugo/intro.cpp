@@ -149,6 +149,7 @@ bool intro_v1d::introPlay() {
 		return false;
 	}
 
+	Common::String copyright;
 	Common::String ttsMessage;
 #endif
 	if (_introTicks < introSize) {
@@ -177,13 +178,16 @@ bool intro_v1d::introPlay() {
 				error("Unknown registration flag in hugo.bsf: %d", _vm->_boot._registered);
 
 			_font.drawString(&_surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
-			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+			copyright = Common::String::format("%s %s", _vm->getCopyrightString1(), _vm->getCopyrightString2());
+			_font.drawString(&_surf, copyright, 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 #ifdef USE_TTS
 			ttsMessage = "Hugo's House of Horrors\n\n";
 			ttsMessage += buffer;
 			ttsMessage += '\n';
-			ttsMessage += _vm->getCopyrightString();
+			ttsMessage += _vm->getCopyrightString1();
+			ttsMessage += ' ';
+			ttsMessage += _vm->getCopyrightString2();
 #endif
 
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
@@ -348,9 +352,9 @@ void intro_v2d::introInit() {
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 	if (_vm->_boot._registered)
-		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Registered Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 	else
-		Common::sprintf_s(buffer, "%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Shareware Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 
 	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
@@ -403,9 +407,9 @@ void intro_v3d::introInit() {
 
 	char buffer[128];
 	if (_vm->_boot._registered)
-		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s %s  Registered Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 	else
-		Common::sprintf_s(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer,"%s %s  Shareware Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 
 	// TROMAN, size 10-5
 	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))

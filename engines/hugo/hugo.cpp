@@ -183,8 +183,12 @@ bool HugoEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
-const char *HugoEngine::getCopyrightString() const {
-	return "Copyright 1989-1997 David P Gray, All Rights Reserved.";
+const char *HugoEngine::getCopyrightString1() const {
+	return "Copyright 1989-1997 David P Gray,";
+}
+
+const char *HugoEngine::getCopyrightString2() const {
+	return "All Rights Reserved.";
 }
 
 GameType HugoEngine::getGameType() const {
@@ -727,7 +731,9 @@ void HugoEngine::endGame() {
 
 	if (_boot._registered != kRegRegistered)
 		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
-	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()), kTtsSpeech);
+	Common::String text = Common::String::format("%s\n\n%s\n%s",
+		_episode, getCopyrightString1(), getCopyrightString2());
+	Utils::notifyBox(text, kTtsSpeech);
 	_status._viewState = kViewExit;
 }
 
