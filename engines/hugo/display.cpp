@@ -508,28 +508,34 @@ void Screen::drawShape(const int x, const int y, const int color1, const int col
 		}
 	}
 }
+
 /**
- * Display rectangle (filles or empty)
+ * Display rectangle (filled or empty)
+ *
+ * x1,y1: upper left of rectangle.
+ * x2,y2: lower right of rectangle.
+ *
+ * This is used by DOS code as a replacement for _rectangle() from QuickC
  */
 void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
-	int16 x2Clip = CLIP<int16>(x2, 0, 320);
-	int16 y2Clip = CLIP<int16>(y2, 0, 200);
+	int16 x2Clip = CLIP<int16>(x2, 0, 319);
+	int16 y2Clip = CLIP<int16>(y2, 0, 199);
 
 	if (filledFl) {
-		for (int i = y1; i < y2Clip; i++) {
-			for (int j = x1; j < x2Clip; j++)
+		for (int i = y1; i <= y2Clip; i++) {
+			for (int j = x1; j <= x2Clip; j++)
 				_frontBuffer[320 * i + j] = color;
 		}
 	} else {
-		for (int i = y1; i < y2Clip; i++) {
+		for (int i = y1; i <= y2Clip; i++) {
 			_frontBuffer[320 * i + x1] = color;
-			_frontBuffer[320 * i + x2] = color;
+			_frontBuffer[320 * i + x2Clip] = color;
 		}
 		for (int i = x1; i < x2Clip; i++) {
 			_frontBuffer[320 * y1 + i] = color;
-			_frontBuffer[320 * y2 + i] = color;
+			_frontBuffer[320 * y2Clip + i] = color;
 		}
 	}
 }
