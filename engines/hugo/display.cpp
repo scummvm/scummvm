@@ -477,13 +477,13 @@ void Screen::userHelp() const {
 void Screen::drawStatusText() {
 	debugC(4, kDebugDisplay, "drawStatusText()");
 
-	// Draw score line at top row
-	Common::Rect scoreRect = drawDosText(0, 0, _vm->_scoreLine, _TCYAN);
-	displayList(kDisplayAdd, scoreRect.left, scoreRect.top, scoreRect.width(), scoreRect.height());
-
-	// Draw status line at bottom row
-	Common::Rect statusRect = drawDosText(0, kMaxTextRows - 1, _vm->_statusLine, _TLIGHTYELLOW);
+	// Draw status line at top row
+	Common::Rect statusRect = drawDosText(0, 0, _vm->_statusLine, _TCYAN);
 	displayList(kDisplayAdd, statusRect.left, statusRect.top, statusRect.width(), statusRect.height());
+
+	// Draw prompt line at bottom row
+	Common::Rect promptRect = drawDosText(0, kMaxTextRows - 1, _vm->_promptLine, _TLIGHTYELLOW);
+	displayList(kDisplayAdd, promptRect.left, promptRect.top, promptRect.width(), promptRect.height());
 }
 
 void Screen::drawShape(const int x, const int y, const int color1, const int color2) {
