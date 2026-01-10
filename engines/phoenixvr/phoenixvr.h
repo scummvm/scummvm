@@ -91,9 +91,6 @@ public:
 		return true;
 	}
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-
 	// Script API
 	void setNextScript(const Common::String &path);
 	void goToWarp(const Common::String &warp, bool savePrev = false);

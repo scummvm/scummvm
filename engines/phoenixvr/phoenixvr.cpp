@@ -823,10 +823,6 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	delete src;
 }
 
-Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	return Common::kNoError;
-}
-
 PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::SeekableReadStream *stream) {
 	GameState state;
 
@@ -856,11 +852,6 @@ PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::Seekable
 	state.state.resize(gameStateSize);
 	stream->read(state.state.data(), state.state.size());
 	return state;
-}
-
-Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *stream) {
-
-	return Common::kNoError;
 }
 
 } // End of namespace PhoenixVR
