@@ -825,22 +825,6 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, in
 	drawTexturedLine(dst, pitch, width, height, startX, startY, endX, endY, nut, spriteIdx);
 }
 
-void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
-	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-	int err = dx + dy, e2;
-
-	for (;;) {
-		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height)
-			dst[y0 * pitch + x0] = color;
-		if (x0 == x1 && y0 == y1) break;
-		e2 = 2 * err;
-		if (e2 >= dy) { err += dy; x0 += sx; }
-		if (e2 <= dx) { err += dx; y0 += sy; }
-	}
-}
-
-
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 
@@ -1154,7 +1138,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				continue;
 			}
 			
-			bool drawn = false;
 			// Use Sprite 5 from CPITIMAG.NUT as the laser texture
 			// Confirmed by reverse engineering: Laser uses Sprite 5 (136x13)
 			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
@@ -1175,33 +1158,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				// Draw Projectile Impact
 				// Using Sprite 0 (small flash) or similar at impact point
 				smlayer_drawSomething(renderBitmap, pitch, _shots[i].x - 7, _shots[i].y - 7, 0, _smush_iconsNut, 0, 0, 0);
-				drawn = true;
 			}
 			
-			if (!drawn) {
-				
-				// Fallback if sprite 5 missing
-				static bool warnedOnce = false;
-				assert(false);
-				if (!warnedOnce) {
-					debug("Rebel2: Failed to draw textured laser. _smush_iconsNut=%p, numChars=%d", 
-						(void *)_smush_iconsNut, _smush_iconsNut ? _smush_iconsNut->getNumChars() : -1);
-					warnedOnce = true;
-					
-					// Attempt to lazy load CPITIMHI.NUT if we haven't tried
-					if (true) {
-						delete _smush_iconsNut; 
-						_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMHI.NUT");
-						debug("Rebel2: Attempted to fallback load SYSTM/CPITIMHI.NUT. New numChars=%d", 
-							_smush_iconsNut ? _smush_iconsNut->getNumChars() : -1);
-					}
-				}
-				
-				// Draw WHITE lines to be visible against any background
-				drawLine(renderBitmap, pitch, width, height, GUN_LEFT_X, GUN_LEFT_Y, _shots[i].x, _shots[i].y, 255);
-				drawLine(renderBitmap, pitch, width, height, GUN_RIGHT_X, GUN_RIGHT_Y, _shots[i].x, _shots[i].y, 255);
-			}
-
 			_shots[i].counter--;
 		}
 	}
