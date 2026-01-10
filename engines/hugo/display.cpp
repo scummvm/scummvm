@@ -187,7 +187,7 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 	int16 xClip, yClip;
 	xClip = CLIP<int16>(x, 0, 319);
 	yClip = CLIP<int16>(y, 0, 199);
-	g_system->copyRectToScreen(&_frontBuffer[xClip + yClip * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 319 - xClip), CLIP<int16>(dy, 0, 199 - yClip));
+	g_system->copyRectToScreen(&_frontBuffer[xClip + yClip * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 320 - xClip), CLIP<int16>(dy, 0, 200 - yClip));
 }
 
 /**
