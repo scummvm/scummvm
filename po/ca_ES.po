@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-09 17:16+0000\n"
-"PO-Revision-Date: 2025-12-22 01:36+0000\n"
+"PO-Revision-Date: 2026-01-10 20:50+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Català\n"
 
 #: audio/mac_plugin.cpp:30
@@ -4288,42 +4288,30 @@ msgid "Switch to the previous scaler"
 msgstr "Canvia a l'anterior filtre d'escalada"
 
 #: backends/keymapper/hardware-input.cpp:244
-#, fuzzy
 msgid "Left mouse button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó esquerre del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Right mouse button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó dret del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
 msgstr "Botó del mig del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
 msgstr "Roda del ratolí amunt"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
 msgstr "Roda del ratolí avall"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
 msgstr "Botó X1 del ratolí"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
 msgstr "Botó X2 del ratolí"
 
@@ -4344,32 +4332,22 @@ msgid "Joy Y"
 msgstr "Botó Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
-msgstr "Botó Back"
+msgstr "Joy enrere"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
-msgstr "Botó Guide"
+msgstr "Joy guia"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
-msgstr "Botó Start"
+msgstr "Joy inicia"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
 msgstr "Stick esquerre"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
 msgstr "Stick dret"
 
@@ -4382,68 +4360,46 @@ msgid "Right shoulder"
 msgstr "Botó superior dret"
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "D-pad amunt"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "D-pad avall"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "D-pad esquerra"
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "D-pad dreta"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "Centre del D-pad"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
 msgstr "Gallet esquerre"
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
 msgstr "Gallet dret"
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
 msgstr "Stick esquerre X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "Stick esquerre Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "Stick dret X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "Stick dret Y"
 
@@ -8573,8 +8529,6 @@ msgid "Change mode"
 msgstr "Canvia el mode"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
 msgstr "Menú d'informació"
 
@@ -12824,8 +12778,6 @@ msgid "Scroll left"
 msgstr "Desplaça a l'esquerra"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Scroll Right"
 msgid "Scroll right"
 msgstr "Desplaça a la dreta"
 
@@ -14987,7 +14939,7 @@ msgstr "Utilitza l'element d'inventari"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use medikit"
-msgstr ""
+msgstr "Utilitza el kit mèdic"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use energy cube"
@@ -14995,7 +14947,7 @@ msgstr "Utilitza el cub d'energia"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate bomb"
-msgstr ""
+msgstr "Detona la bomba"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
 msgid "Drop weapon"
@@ -15011,7 +14963,7 @@ msgstr "Utilitza la selecció"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
 msgid "Grab items"
-msgstr ""
+msgstr "Captura els objectes"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
 msgid "Fire weapon"
@@ -15023,7 +14975,7 @@ msgstr "Centra la pantalla al Silencer"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Salta / Roda / Ajupa't"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
 msgid "Short jump"
@@ -15047,7 +14999,7 @@ msgstr "Commuta ajupir-se/aixecar-se"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side step / Advance / Retreat"
-msgstr ""
+msgstr "Pas lateral / Avança / Retrocedeix"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Toggle clipping"
@@ -15055,7 +15007,7 @@ msgstr "Commuta el retallament"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
-msgstr ""
+msgstr "Ascendeix"
 
 #: engines/ultima/ultima8/metaengine.cpp:115
 msgid "Show touching items"
@@ -15067,11 +15019,11 @@ msgstr "Mostra els elements de l'editor"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
 msgid "Decrement map sort order"
-msgstr ""
+msgstr "Redueix l'ordre d'ordenació del mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
 msgid "Increment map sort order"
-msgstr ""
+msgstr "Increment de l'ordre d'ordenació del mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
 msgid "Toggle frame by frame"
@@ -15079,11 +15031,11 @@ msgstr "Commuta el fotograma a fotograma"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Advance frame"
-msgstr ""
+msgstr "Avança fotograma"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Toggle Avatar in stasis"
-msgstr ""
+msgstr "Commuta l'avatar en estasi"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
 msgid "Show shape viewer"
@@ -15273,11 +15225,11 @@ msgstr "Omet l'escena"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Mostra les proves"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Surt / Desa les proves"
 
 #: engines/voyeur/metaengine.cpp:223
 msgid "Enter room"
