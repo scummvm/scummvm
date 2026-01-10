@@ -123,13 +123,7 @@ void Vars::initialize_game() {
 	for (const auto &item : _inventory->_objects)
 		inv_put_thing_in(item->name, item->scene);
 
-	_G(flags)[V071] = 2;
-	_G(flags)[V088] = 1;
-	_G(flags)[V086] = 2;
-	_G(flags)[V014] = 1;
-	_G(flags)[V270] = 824;
-	_G(flags)[V282] = 1;
-	_G(flags)[V292] = 1;
+	_G(flags).reset();
 }
 
 void Vars::spanish_ascii_converter_proc(char *string) {

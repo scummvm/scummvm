@@ -205,5 +205,9 @@ const char * Inventory::get_name(int32 id) {
 	return INVENTORY_ITEMS[id]._name;
 }
 
+void Inventory::reset() {
+	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item)
+		inv_move_object(item->_name, item->_scene);
+}
 } // namespace Riddle
 } // namespace M4
