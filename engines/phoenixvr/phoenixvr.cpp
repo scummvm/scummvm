@@ -564,7 +564,8 @@ Common::Error PhoenixVREngine::run() {
 
 				if (code >= 0) {
 					debug("matched code %d", static_cast<int>(event.kbd.keycode));
-					goToWarp(_lockKey[code], true);
+					if (!_lockKey[code].empty())
+						goToWarp(_lockKey[code], true);
 				}
 			} break;
 			case Common::EVENT_MOUSEMOVE:
