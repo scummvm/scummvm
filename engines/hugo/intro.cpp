@@ -455,7 +455,7 @@ bool intro_v3d::introPlay() {
 		return true;
 
 	if (_introTicks < getIntroSize()) {
-		_font.drawString(&_surf, ".", _introX[_introTicks], _introY[_introTicks] - kDibOffY, 320, _TBRIGHTWHITE);
+		_surf.setPixel(_introX[_introTicks], _introY[_introTicks] - kDibOffY, _TBRIGHTWHITE);
 		_vm->_screen->displayBackground();
 
 		// Text boxes at various times
