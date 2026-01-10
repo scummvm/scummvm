@@ -70,6 +70,10 @@ class InsaneRebel2 : public Insane {
 		}
 	}
 
+	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
+	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx);
+	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx);
+
 public:
 	InsaneRebel2(ScummEngine_v7 *scumm);
 	~InsaneRebel2();
@@ -185,6 +189,14 @@ public:
 	int16 _playerLives;
 	int32 _playerScore;
 
+
+	struct Shot {
+		bool active;
+		int counter;
+		int x, y;       // Target position
+	};
+	Shot _shots[2];
+	void spawnShot(int x, int y);
 
 };
 
