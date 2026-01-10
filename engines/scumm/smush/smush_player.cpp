@@ -243,6 +243,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
+	_scrollX = 0;
+	_scrollY = 0;
 	_IACTpos = 0;
 	_speed = -1;
 	_insanity = false;
@@ -380,8 +382,8 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 			uint32 animSize = (bytesRead >= 26) ? READ_BE_UINT32(header + 22) : 0;
 			
 			// Read the userId to determine which HUD slot (1-4)
-			int code = READ_LE_UINT16(header);
-			int flags = READ_LE_UINT16(header + 2);
+			READ_LE_UINT16(header);
+			READ_LE_UINT16(header + 2);
 			int userId = READ_LE_UINT16(header + 6);
 			
 			debug("Rebel2: Extracting embedded SAN from IACT: userId=%d, animSize=%u", userId, animSize);
@@ -1042,6 +1044,9 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			setDirtyColors(0, 255);
 		}
 
+		_width = READ_LE_UINT16(&headerContent[4]);
+		_height = READ_LE_UINT16(&headerContent[6]);
+
 		free(headerContent);
 	}
 }
@@ -1390,10 +1395,12 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 					int frameWidth = MIN(_width, _vm->_screenWidth);
 					int frameHeight = MIN(_height, _vm->_screenHeight);
 
+					const byte *dst = _dst + _scrollY * _width + _scrollX;
+
 					if (_vm->_macScreen) {
-						_vm->mac_drawBufferToScreen(_dst, frameWidth, 0, 0, frameWidth, frameHeight);
+						_vm->mac_drawBufferToScreen(dst, frameWidth, 0, 0, frameWidth, frameHeight);
 					} else {
-						_vm->_system->copyRectToScreen(_dst, _width, 0, 0, frameWidth, frameHeight);
+						_vm->_system->copyRectToScreen(dst, _width, 0, 0, frameWidth, frameHeight);
 					}
 
 					_vm->_system->updateScreen();
@@ -2228,6 +2235,12 @@ void SmushPlayer::removeMaskedRegion(const Common::Rect &rect) {
 // Only used by Rebel Assault 2
 void SmushPlayer::clearMaskedRegions() {
 	_maskedRegions.clear();
+}
+
+// Only used by Rebel Assault 2
+void SmushPlayer::setScrollOffset(int x, int y) { 
+	_scrollX = x;
+	_scrollY = y;
 }
 
 } // End of namespace Scumm

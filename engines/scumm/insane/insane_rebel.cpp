@@ -82,6 +82,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_playerDamage = 0;
 	_playerLives = 3;
 	_playerScore = 0;
+	_viewX = 0;
+	_viewY = 0;
 
 	_difficulty = 1; // Default to Medium (1). TODO: Read from game config
 
@@ -208,15 +210,18 @@ int32 InsaneRebel2::processMouse() {
 		// Spawn visual shot immediately
 		spawnShot(mousePos.x, mousePos.y);
 
+		// Calculate world position for hit testing
+		Common::Point worldMousePos(mousePos.x + _viewX, mousePos.y + _viewY);
+
 		// Check for hit on any active enemy
 		Common::List<enemy>::iterator it;
 		for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 			debug("  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) contains=%d",
 				it->id, it->active, it->destroyed,
 				it->rect.left, it->rect.top, it->rect.right, it->rect.bottom,
-				it->rect.contains(mousePos));
+				it->rect.contains(worldMousePos));
 				
-			if (it->active && it->rect.contains(mousePos)) {
+			if (it->active && it->rect.contains(worldMousePos)) {
 				// Enemy hit!
 				it->active = false;
 				it->destroyed = true;  // Mark as destroyed so IACT won't re-activate
@@ -744,8 +749,8 @@ void InsaneRebel2::spawnShot(int x, int y) {
 		if (!_shots[i].active) {
 			_shots[i].active = true;
 			_shots[i].counter = 4; // Lasts 4 frames
-			_shots[i].x = x;
-			_shots[i].y = y;
+			_shots[i].x = x + _viewX;
+			_shots[i].y = y + _viewY;
 			// TODO: Play laser sound
 			break;
 		}
@@ -880,14 +885,30 @@ void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int heigh
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
 
-	processMouse();
-
 	// Determine correct pitch for the video buffer (usually 320 for Rebel2)
 	int width = _player->_width;
 	int height = _player->_height;
 	if (width == 0) width = _vm->_screenWidth;
 	if (height == 0) height = _vm->_screenHeight;
 	int pitch = width;
+
+	// Calculate View/Scroll Offsets
+	// Rebel Assault 2 uses a buffer larger (424x260) than screen (320x200)
+	// Map mouse X (0-320) to Scroll X (0-104)
+	// Map mouse Y (0-200) to Scroll Y (0-60)
+	int maxScrollX = width - _vm->_screenWidth;
+	int maxScrollY = height - _vm->_screenHeight;
+	
+	if (maxScrollX < 0) maxScrollX = 0;
+	if (maxScrollY < 0) maxScrollY = 0;
+	
+	// Simple linear mapping: Center of screen corresponds to center of buffer
+	_viewX = (_vm->_mouse.x * maxScrollX) / _vm->_screenWidth;
+	_viewY = (_vm->_mouse.y * maxScrollY) / _vm->_screenHeight;
+	
+	_player->setScrollOffset(_viewX, _viewY);
+
+	processMouse();
 
 	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
 	// Based on FUN_004089ab:
@@ -900,7 +921,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// - Buffer is composited at Y=0xb4 (180) via FUN_0042f780
 	// - DISPFONT.NUT (DAT_00482200) sprites 1-7 contain the status bar elements
 	//
-	// For ScummVM, we draw directly to screen at Y=180
+	// We draw directly to screen at Y=180
 	
 	// Use video content coordinates, NOT buffer coordinates
 	const int videoWidth = 320;    // Native video width
@@ -914,9 +935,14 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Original assembly: FUN_004288c0(local_8, 0, 0, 0xb4, 0x140, 0x14, 4)
 	// This fills width=320, height=20 starting at Y=180 with color index 4
 	const byte statusBarBgColor = 4;
-	for (int y = statusBarY; y < videoHeight && y < height; y++) {
-		for (int x = 0; x < videoWidth && x < pitch; x++) {
-			renderBitmap[y * pitch + x] = statusBarBgColor;
+
+	for (int y = statusBarY; y < videoHeight; y++) {
+		int destY = y + _viewY;
+		if (destY >= height) continue;
+		for (int x = 0; x < videoWidth; x++) {
+			int destX = x + _viewX;
+			if (destX >= pitch) continue;
+			renderBitmap[destY * pitch + destX] = statusBarBgColor;
 		}
 	}
 	
@@ -949,6 +975,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// The cockpit overlay sits at Y = 200 - frameHeight
 			destY = statusBarY - frame.height;
 			if (destY < 0) destY = 0;
+
+			// Apply View Offset for static screen elements
+			destX += _viewX;
+			destY += _viewY;
 			
 			// Draw frame with transparency (pixel 0 = transparent)
 			for (int y = 0; y < frame.height && (destY + y) < height; y++) {
@@ -987,7 +1017,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// For ScummVM, we draw directly at Y=statusBarY
 	if (_smush_cockpitNut) {
 		// Debug: Log DISPFONT.NUT sprite info once
-		static bool loggedDispfont = false;
+		/*static bool loggedDispfont = false;
 		if (!loggedDispfont) {
 			int numSprites = _smush_cockpitNut->getNumChars();
 			debug("Rebel2: DISPFONT.NUT has %d sprites, statusBarY=%d:", numSprites, statusBarY);
@@ -997,12 +1027,12 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				debug("  Sprite %d: %dx%d", i, sw, sh);
 			}
 			loggedDispfont = true;
-		}
+		}*/
 		
 		// Draw status bar background frame (sprite 1) at (0, statusBarY)
 		// This sprite is the full-width status bar background
 		if (_smush_cockpitNut->getNumChars() > 1) {
-			smlayer_drawSomething(renderBitmap, pitch, 0, statusBarY, 0, _smush_cockpitNut, 1, 0, 0);
+			smlayer_drawSomething(renderBitmap, pitch, _viewX, statusBarY + _viewY, 0, _smush_cockpitNut, 1, 0, 0);
 		}
 		
 		// Draw difficulty indicator (sprites 2-5 based on difficulty level 0-3)
@@ -1012,7 +1042,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (difficulty > 3) difficulty = 3;
 		int difficultySprite = difficulty + 2;  // sprites 2, 3, 4, or 5
 		if (_smush_cockpitNut->getNumChars() > difficultySprite) {
-			smlayer_drawSomething(renderBitmap, pitch, 0, statusBarY, 0, _smush_cockpitNut, difficultySprite, 0, 0);
+			smlayer_drawSomething(renderBitmap, pitch, _viewX, statusBarY + _viewY, 0, _smush_cockpitNut, difficultySprite, 0, 0);
 		}
 		
 		// Draw shield bar (sprite 6) 
@@ -1051,9 +1081,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				int drawWidth = MIN(barWidth, sw);
 				for (int y = 0; y < sh; y++) {
 					for (int x = 0; x < drawWidth; x++) {
-						// Render to (0 + sx + x, statusBarY + sy + y)
-						int destX = sx + x;
-						int destY = statusBarY + sy + y;
+						// Render to (0 + sx + x + viewX, statusBarY + sy + y + viewY)
+						int destX = sx + x + _viewX;
+						int destY = statusBarY + sy + y + _viewY;
 						if (destX < pitch && destY < height) {
 							byte pixel = src[y * sw + x];
 							if (pixel != 0) {
@@ -1083,15 +1113,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	}
 
-	// Debug: Draw bounding boxes for enemies
-	// width/height/pitch already calculated above
 
-	// Debug: Verify buffer format and drawing capability
-	static uint32 lastDebugTime = 0;
-	if ((_vm->_system->getMillis() - lastDebugTime) > 2000) {
-		lastDebugTime = _vm->_system->getMillis();
-		debug("Rebel2 Debug: Buffer %dx%d, Pitch %d, BPP %d, Enemies: %d", width, height, pitch, _vm->_virtscr[kMainVirtScreen].format.bytesPerPixel, _enemies.size());
-	}
 
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -1187,9 +1209,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				int param_9 = base - _shots[i].counter;
 
 				// Draw Left Beam
-				drawLaserBeam(renderBitmap, pitch, width, height, GUN_LEFT_X, GUN_LEFT_Y, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
+				drawLaserBeam(renderBitmap, pitch, width, height, GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
 				// Draw Right Beam
-				drawLaserBeam(renderBitmap, pitch, width, height, GUN_RIGHT_X, GUN_RIGHT_Y, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
+				drawLaserBeam(renderBitmap, pitch, width, height, GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
 
 				// Draw Projectile Impact
 				// Using Sprite 0 (small flash) or similar at impact point
@@ -1233,8 +1255,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				debugCrosshairOnce = true;
 			}
 			
-			// Center the crosshair on mouse position
-			smlayer_drawSomething(renderBitmap, pitch, _vm->_mouse.x - cw / 2, _vm->_mouse.y - ch / 2, 0, _smush_iconsNut, reticleIndex, 0, 0);
+			// Center the crosshair on mouse position (in world coordinates)
+			smlayer_drawSomething(renderBitmap, pitch, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, 0, _smush_iconsNut, reticleIndex, 0, 0);
 		}
 	}
 }

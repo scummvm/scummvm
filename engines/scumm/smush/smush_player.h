@@ -229,11 +229,14 @@ protected:
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
 	int16 _curVideoFlags = 0;
+	int _scrollX;
+	int _scrollY;
 
 	void insanity(bool);
 	void setPalette(const byte *palette);
 	void setPaletteValue(int n, byte r, byte g, byte b);
 	void setDirtyColors(int min, int max);
+	void setScrollOffset(int x, int y);
 	void seekSan(const char *file, int32 pos, int32 contFrame);
 	const char *getString(int id);
 
