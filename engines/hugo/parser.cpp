@@ -544,7 +544,7 @@ void Parser::showDosInventory() const {
 	ttsMessage += Common::String(_vm->_text->getTextParser(kTBOutro));
 	_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 #endif
-	Utils::notifyBox(buffer.c_str(), false);
+	Utils::notifyBox(buffer, kTtsNoSpeech);
 }
 
 void Parser::endGamePrompt() {

@@ -196,6 +196,12 @@ struct Hotspot {
 	int16      _viewx, _viewy, _direction;          // Used in auto-route mode
 };
 
+enum TtsOptions {
+	kTtsNoSpeech        = 0,
+	kTtsSpeech          = (1 << 0),
+	kTtsReplaceNewlines = ((1 << 1) | kTtsSpeech)
+};
+
 class FileManager;
 class Scheduler;
 class Screen;
