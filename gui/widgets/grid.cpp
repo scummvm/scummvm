@@ -33,6 +33,10 @@
 
 namespace GUI {
 
+bool GridWidgetDefaultMatcher(void *, int, const Common::U32String &item, const Common::U32String &token) {
+	return item.contains(token);
+}
+
 GridItemWidget::GridItemWidget(GridWidget *boss)
 	: ContainerWidget(boss, 0, 0, 0, 0), CommandSender(boss) {
 
@@ -519,6 +523,9 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_lastSelectedEntryID = -1;
 	_ctrlPressed = false;
 	_shiftPressed = false;
+
+	_filterMatcher = GridWidgetDefaultMatcher;
+	_launcher = nullptr;
 }
 
 GridWidget::~GridWidget() {
@@ -675,9 +682,20 @@ void GridWidget::sortGroups() {
 			bool matches = true;
 			tok.reset();
 			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
-					matches = false;
-					break;
+				Common::U32String token = tok.nextToken();
+				
+				if (_filterMatcher) {
+					// Use the advanced filter matcher with correct index
+					if (!_filterMatcher(_launcher, i->entryID, tmp, token)) {
+						matches = false;
+						break;
+					}
+				} else {
+					// Fallback to simple contains check
+					if (!tmp.contains(token)) {
+						matches = false;
+						break;
+					}
 				}
 			}
 
