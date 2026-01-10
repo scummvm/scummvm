@@ -400,9 +400,9 @@ void PhoenixVREngine::tickTimer(float dt) {
 void PhoenixVREngine::tick(float dt) {
 	tickTimer(dt);
 
-	if (_vr.isVR() && _mousePos != _screenCenter) {
-		auto da = _mousePos - _screenCenter;
-		_system->warpMouse(_screenCenter.x, _screenCenter.y);
+	if (_vr.isVR() && (_mouseRel.x || _mouseRel.y)) {
+		auto da = _mouseRel;
+		_mouseRel = {};
 		_mousePos = _screenCenter;
 		static const float kSpeedX = 0.2f;
 		static const float kSpeedY = 0.2f;
@@ -442,8 +442,9 @@ void PhoenixVREngine::tick(float dt) {
 			_vr = VR::loadStatic(_pixelFormat, vr);
 			if (_vr.isVR()) {
 				_mousePos = _screenCenter;
-				_system->warpMouse(_screenCenter.x, _screenCenter.y);
+				_mouseRel = {};
 			}
+			_system->lockMouse(_vr.isVR());
 		}
 
 		_regSet.reset(new RegionSet(_warp->testFile));
@@ -570,6 +571,7 @@ Common::Error PhoenixVREngine::run() {
 			} break;
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
+				_mouseRel += event.relMouse;
 				break;
 			case Common::EVENT_LBUTTONUP: {
 				auto vrPos = currentVRPos();

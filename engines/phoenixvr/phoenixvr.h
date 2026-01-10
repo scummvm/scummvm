@@ -168,7 +168,7 @@ private:
 	void loadNextScript();
 
 private:
-	Common::Point _mousePos;
+	Common::Point _mousePos, _mouseRel;
 	Common::Path _nextScript;
 	int _warpIdx = -1;
 	Script::ConstWarpPtr _warp;
