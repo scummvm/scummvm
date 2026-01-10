@@ -35,45 +35,6 @@ namespace Scumm {
 
 class InsaneRebel2 : public Insane {
 
- 	// Helper for debugging IACT boxes
-	void drawRect(byte *dst, int pitch, int x, int y, int w, int h, byte color, int bufWidth, int bufHeight) {
-		Common::Rect r(x, y, x + w, y + h);
-		Common::Rect screen(0, 0, bufWidth, bufHeight);
-		Common::Rect clipped = r;
-		clipped.clip(screen);
-
-		if (!clipped.isValidRect()) return;
-
-		// Top
-		if (r.top >= 0 && r.top < bufHeight) {
-			int startX = MAX((int)r.left, 0);
-			int endX = MIN((int)r.right, bufWidth);
-			for (int k = startX; k < endX; k++) dst[r.top * pitch + k] = color;
-		}
-		// Bottom
-		if (r.bottom > 0 && r.bottom <= bufHeight) {
-			int startX = MAX((int)r.left, 0);
-			int endX = MIN((int)r.right, bufWidth);
-			for (int k = startX; k < endX; k++) dst[(r.bottom - 1) * pitch + k] = color;
-		}
-		// Left
-		if (r.left >= 0 && r.left < bufWidth) {
-			int startY = MAX((int)r.top, 0);
-			int endY = MIN((int)r.bottom, bufHeight);
-			for (int k = startY; k < endY; k++) dst[k * pitch + r.left] = color;
-		}
-		// Right
-		if (r.right > 0 && r.right <= bufWidth) {
-			int startY = MAX((int)r.top, 0);
-			int endY = MIN((int)r.bottom, bufHeight);
-			for (int k = startY; k < endY; k++) dst[k * pitch + (r.right - 1)] = color;
-		}
-	}
-
-	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
-	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx);
-	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx);
-
 public:
 	InsaneRebel2(ScummEngine_v7 *scumm);
 	~InsaneRebel2();
@@ -106,6 +67,10 @@ public:
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) override;
 
+	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
+	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx);
+	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx);
+
 	struct RebelEnemy {
 		int id;
 		Common::Rect rect;
@@ -122,6 +87,8 @@ public:
 		               savedBgWidth(0), savedBgHeight(0) {}
 		~RebelEnemy() { free(savedBackground); }
 	};
+
+	void enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	Common::List<RebelEnemy> _rebelEnemies;
 	
