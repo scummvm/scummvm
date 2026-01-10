@@ -354,8 +354,8 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (shiftClick && _lastSelectionStartItem != -1) {
 			// Shift+Click: Select range from last selection start to current item
 			_selectedItem = newSelectedItem;
-			_lastSelectionStartItem = newSelectedItem;
 			selectItemRange(_lastSelectionStartItem, newSelectedItem);
+			_lastSelectionStartItem = newSelectedItem;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		} else if (ctrlClick) {
 			// Ctrl+Click: Add/remove from selection

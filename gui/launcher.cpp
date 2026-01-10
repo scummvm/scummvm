@@ -1027,8 +1027,14 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
 
 public:
-	void removeSelectedGames();
+	void removeGridGames();
 protected:
+	void updateSelectionAfterRemoval() override {
+		if (_grid) {
+			_grid->_selectedEntries.clear();
+			_grid->_selectedEntries.push_back(_grid->_lastSelectedEntryID);
+		}
+	}
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
@@ -1376,7 +1382,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		const Common::Array<int> &selectedItems = _list->getSelectedItems();
 		if (selectedItems.size() > 1) {
 			// Multi-selection removal: show confirmation dialog with list of games
-			removeMultipleGames(selectedItems);
+			removeListGames(selectedItems);
 		} else {
 			LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
 		}
@@ -1417,7 +1423,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		const Common::Array<int> &selectedItems = _list->getSelectedItems();
 		if (selectedItems.size() > 1) {
 			// Multi-selection removal: show confirmation dialog with list of games
-			removeMultipleGames(selectedItems);
+			removeListGames(selectedItems);
 		} else {
 			// Single selection removal
 			LauncherDialog::handleCommand(sender, cmd, data);
@@ -1429,7 +1435,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherSimple::removeMultipleGames(const Common::Array<int> &selectedItems) {
+void LauncherSimple::removeListGames(const Common::Array<int> &selectedItems) {
 	// Build confirmation message with list of games to remove
 	Common::U32String confirmMsg = _("Do you really want to remove the following game configurations?\n\n");
 
@@ -1444,30 +1450,13 @@ void LauncherSimple::removeMultipleGames(const Common::Array<int> &selectedItems
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		// Remove all selected games in reverse order to avoid index shifting issues
-		Common::Array<int> sortedItems = selectedItems;
-		Common::sort(sortedItems.begin(), sortedItems.end(), Common::Greater<int>());
+		performGameRemoval(selectedItems, false);
+	}
+}
 
-		int selPos = -1;
-		Common::StringArray domainsToRemove;
-		for (const int &idx : sortedItems) {
-			if (idx >= 0 && idx < (int)_domains.size()) {
-				// Get position of game item if grouping is enabled
-				if (_groupBy != kGroupByNone) {
-					selPos = getItemPos(idx);
-				}
-				domainsToRemove.push_back(_domains[idx]);
-			}
-		}
-
-		// Remove games and addons
-		removeGamesWithAddons(domainsToRemove);
-
-		// Clear the selection and update the listing
+void LauncherSimple::updateSelectionAfterRemoval() {
+	if (_list) {
 		_list->clearSelection();
-		updateListing(selPos);
-		updateButtons();
-		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -1651,7 +1640,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kRemoveGameCmd:
 		// Handle multi-selection removal
 		if (_grid && _grid->getSelectedEntries().size() > 1) {
-			removeSelectedGames();
+			removeGridGames();
 		} else {
 			LauncherDialog::handleCommand(sender, cmd, data);
 		}
@@ -1800,7 +1789,7 @@ void LauncherGrid::build() {
 	updateButtons();
 }
 
-void LauncherGrid::removeSelectedGames() {
+void LauncherGrid::removeGridGames() {
 	if (!_grid)
 		return;
 	const Common::Array<int> &selectedEntries = _grid->getSelectedEntries();
@@ -1808,29 +1797,54 @@ void LauncherGrid::removeSelectedGames() {
 		return;
 
 	Common::U32String message = _("Do you really want to remove the following game configurations?\n\n");
-	Common::StringArray domainsToRemove;
 
 	for (int entryID : selectedEntries) {
 		// entryID is the index in _domains and _domainTitles
 		if (entryID >= 0 && entryID < (int)_domains.size()) {
 			Common::String domainName = _domains[entryID];
 			Common::String gameTitle = (entryID < (int)_domainTitles.size()) ? _domainTitles[entryID] : domainName;
-			domainsToRemove.push_back(domainName);
 			message += Common::U32String(gameTitle) + "\n";
 		}
 	}
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
-		// Remove games and addons
-		removeGamesWithAddons(domainsToRemove);
-		_grid->_selectedEntries.clear();
-		_grid->_selectedEntries.push_back(_grid->_lastSelectedEntryID);
-		updateListing();
-		updateButtons();
-		g_gui.scheduleTopDialogRedraw();
+		performGameRemoval(selectedEntries, true);
 	}
 }
+
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
+void LauncherDialog::performGameRemoval(const Common::Array<int> &selectedItems, bool isGrid) {
+	if (selectedItems.empty())
+		return;
+
+	Common::Array<int> itemsToProcess = selectedItems;
+	// For list view only, sort in reverse to avoid index shifting
+	if (!isGrid) {
+		Common::sort(itemsToProcess.begin(), itemsToProcess.end(), Common::Greater<int>());
+	}
+
+	int selPos = -1;
+	Common::StringArray domainsToRemove;
+	for (const int &idx : itemsToProcess) {
+		if (idx >= 0 && idx < (int)_domains.size()) {
+			if (_groupBy != kGroupByNone && !isGrid) {
+				selPos = getItemPos(idx);
+			}
+			domainsToRemove.push_back(_domains[idx]);
+		}
+	}
+
+	// Remove games and addons
+	removeGamesWithAddons(domainsToRemove);
+
+	// Update UI - each subclass handles its own selection update
+	updateSelectionAfterRemoval();
+	
+	updateListing(selPos);
+	updateButtons();
+	g_gui.scheduleTopDialogRedraw();
+}
 
 } // End of namespace GUI

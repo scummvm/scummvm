@@ -193,6 +193,18 @@ protected:
 	void removeGamesWithAddons(const Common::StringArray &domainsToRemove);
 
 	/**
+	 * Shared helper for removing games after confirmation.
+	 * Called by subclasses after building their own confirmation message.
+	 */
+	void performGameRemoval(const Common::Array<int> &selectedItems, bool isGrid);
+
+	/**
+	 * Update selection after game removal.
+	 * Each subclass handles its own UI-specific selection logic.
+	 */
+	virtual void updateSelectionAfterRemoval() = 0;
+
+	/**
 	 * Handle "Edit game..." button.
 	 */
 	void editGame(int item);
@@ -244,8 +256,10 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
+	void removeListGames(const Common::Array<int> &selectedItems);
 
 protected:
+	void updateSelectionAfterRemoval() override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
@@ -253,7 +267,6 @@ protected:
 	void selectTarget(const Common::String &target) override;
 	int getSelected() override;
 	void build() override;
-	void removeMultipleGames(const Common::Array<int> &selectedItems);
 
 private:
 	GroupedListWidget *_list;
