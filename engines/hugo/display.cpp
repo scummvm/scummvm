@@ -547,18 +547,6 @@ void Screen::initNewScreenDisplay() {
 }
 
 /**
- * Load palette from Hugo.dat
- */
-void Screen::loadPalette(Common::ReadStream &in) {
-	// Read palette
-	_paletteSize = in.readUint16BE();
-	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	_curPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	for (int i = 0; i < _paletteSize; i++)
-		_curPalette[i] = _mainPalette[i] = in.readByte();
-}
-
-/**
  * Free fonts, main and current palettes
  */
 void Screen::freeScreen() {
@@ -778,6 +766,23 @@ OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	return kOvlBackground;                          // No bits set, must be background
 }
 
+/**
+ * Load default EGA palette. Skip Windows palette from Hugo.dat
+ */
+void Screen_v1d::loadPalette(Common::SeekableReadStream &in) {
+	// Skip Windows palette
+	uint16 winPaletteSize = in.readUint16BE();
+	in.skip(winPaletteSize);
+
+	// Load default EGA palette
+	Graphics::Palette egaPalette = Graphics::Palette::createEGAPalette();
+	_paletteSize = egaPalette.size() * 3;
+	_mainPalette = (byte *)malloc(_paletteSize);
+	_curPalette = (byte *)malloc(_paletteSize);
+	memcpy(_mainPalette, egaPalette.data(), _paletteSize);
+	memcpy(_curPalette, egaPalette.data(), _paletteSize);
+}
+
 Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 }
 
@@ -880,6 +885,18 @@ OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	}
 
 	return kOvlBackground;                          // No bits set, must be background
+}
+
+/**
+ * Load Windows palette from Hugo.dat
+ */
+void Screen_v1w::loadPalette(Common::SeekableReadStream &in) {
+	// Read palette
+	_paletteSize = in.readUint16BE();
+	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	_curPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	for (int i = 0; i < _paletteSize; i++)
+		_curPalette[i] = _mainPalette[i] = in.readByte();
 }
 
 } // End of namespace Hugo
