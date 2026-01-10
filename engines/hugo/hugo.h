@@ -302,7 +302,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	bool hasFeature(EngineFeature f) const override;
-	const char *getCopyrightString() const;
+	const char *getCopyrightString1() const;
+	const char *getCopyrightString2() const;
 
 	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
