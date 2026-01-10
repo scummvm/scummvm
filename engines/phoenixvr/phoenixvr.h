@@ -56,6 +56,8 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::PixelFormat _pixelFormat;
+	Graphics::PixelFormat _rgb565;
+	Graphics::ManagedSurface _thumbnail;
 
 	// Engine APIs
 	Common::Error run() override;
@@ -218,10 +220,12 @@ private:
 		Common::Array<byte> thumbnail;
 		Common::Array<byte> state;
 	};
+	Common::String _contextScript;
 	Common::String _contextLabel;
 	Common::Array<byte> _capturedState;
 
-	GameState loadGameStateObject(Common::SeekableReadStream *stream);
+	GameState loadGameStateObject(Common::SeekableReadStream &stream);
+	void saveGameStateObject(Common::SeekableWriteStream &stream, const GameState &state);
 };
 
 extern PhoenixVREngine *g_engine;

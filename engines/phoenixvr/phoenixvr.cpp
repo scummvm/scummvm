@@ -49,6 +49,8 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
 																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
+																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
+																					 _thumbnail(139, 103, _rgb565),
 																					 _lockKey(13),
 																					 _fov(M_PI_2),
 																					 _angleX(M_PI),
@@ -83,6 +85,7 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 
 void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
 	debug("setNextScript %s", nextScript.c_str());
+	_contextScript = nextScript;
 	auto nextPath = Common::Path(removeDrive(nextScript), '\\');
 	auto parentDir = nextPath.getParent();
 	_nextScript = nextPath.getLastComponent();
@@ -172,6 +175,8 @@ void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		if (_prevWarp < 0) {
 			_prevWarp = _script->getWarp(_warp->vrFile);
 			assert(_prevWarp >= 0);
+			// saving thumbnail
+			_thumbnail.simpleBlitFrom(*_screen, Graphics::FLIP_V);
 		}
 	}
 }
@@ -704,7 +709,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		warning("loadSaveSlot: invalid save slot %d", idx);
 		return;
 	}
-	auto state = loadGameStateObject(slot.get());
+	auto state = loadGameStateObject(*slot);
 
 	setNextScript(state.script);
 	// keep it alive until loading finishes.
@@ -792,18 +797,61 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 }
 
 void PhoenixVREngine::saveSaveSlot(int idx) {
-	Common::ScopedPtr<Common::OutSaveFile> slot(_saveFileMan->openForSaving(getSaveStateName(idx)));
+	Common::ScopedPtr<Common::OutSaveFile> slot(_saveFileMan->openForSaving(getSaveStateName(idx), false));
 	if (!slot) {
 		warning("saveSaveSlot: invalid save slot %d", idx);
 		return;
 	}
+	GameState state;
+	state.script = _contextScript;
+	state.game = _contextLabel;
+
+	static const char *wday[] = {
+		"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+	TimeDate td = {};
+	g_system->getTimeAndDate(td);
+	// Saturday 03 01 2026[\x00]23 h 17
+	state.info = Common::String::format("%s %02d %02d %04d%c%02d h %02d", wday[td.tm_wday], td.tm_mday, td.tm_mon + 1, td.tm_year, 0, td.tm_hour, td.tm_min);
+
+	state.thumbWidth = _thumbnail.w;
+	state.thumbHeight = _thumbnail.h;
+	auto *thumbnailPixels = static_cast<byte *>(_thumbnail.getPixels());
+	auto thumbnailSize = _thumbnail.pitch * _thumbnail.h;
+
+	Common::MemoryWriteStreamDynamic dib(DisposeAfterUse::YES);
+	dib.writeUint32LE(0x28);
+	dib.writeUint32LE(_thumbnail.w);
+	dib.writeUint32LE(_thumbnail.h);
+	dib.writeUint16LE(1); // planes
+	dib.writeUint16LE(16);
+	dib.writeUint32LE(3); // compression
+	dib.writeUint32LE(thumbnailSize);
+	dib.writeUint32LE(0);
+	dib.writeUint32LE(0);
+	dib.writeUint32LE(3);
+	dib.writeUint32LE(0);
+
+	// RGB masks
+	dib.writeUint32LE(0xf800);
+	dib.writeUint32LE(0x07e0);
+	dib.writeUint32LE(0x001f);
+
+	assert(dib.size() == 0x28 + 3 * 4);
+	state.dibHeader.assign(dib.getData(), dib.getData() + dib.size());
+
+	state.thumbnail.assign(thumbnailPixels, thumbnailPixels + thumbnailSize);
+	state.state = Common::move(_capturedState);
+	_capturedState.clear();
+
+	saveGameStateObject(*slot, state);
 }
 
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
 	if (!slot)
 		return;
-	auto state = loadGameStateObject(slot.get());
+	auto state = loadGameStateObject(*slot);
 
 	Graphics::PixelFormat rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Graphics::Surface thumbnail;
@@ -823,12 +871,12 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	delete src;
 }
 
-PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::SeekableReadStream *stream) {
+PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::SeekableReadStream &stream) {
 	GameState state;
 
 	auto readString = [&]() {
-		auto size = stream->readUint32LE();
-		return stream->readString(0, size);
+		auto size = stream.readUint32LE();
+		return stream.readString(0, size);
 	};
 
 	state.script = readString();
@@ -837,21 +885,43 @@ PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::Seekable
 	debug("save.game: %s", state.game.c_str());
 	state.info = readString();
 	debug("save.datetime: %s", state.info.c_str());
-	uint dibHeaderSize = stream->readUint32LE();
-	stream->seek(-4, SEEK_CUR);
+	uint dibHeaderSize = stream.readUint32LE();
+	stream.seek(-4, SEEK_CUR);
 	state.dibHeader.resize(dibHeaderSize + 3 * 4); // rmask/gmask/bmask
-	stream->read(state.dibHeader.data(), state.dibHeader.size());
+	stream.read(state.dibHeader.data(), state.dibHeader.size());
+	debug("DIB header");
+	Common::hexdump(state.dibHeader.data(), state.dibHeader.size());
 	state.thumbWidth = READ_LE_UINT32(state.dibHeader.data() + 0x04);
 	state.thumbHeight = READ_LE_UINT32(state.dibHeader.data() + 0x08);
 	auto imageSize = READ_LE_UINT32(state.dibHeader.data() + 0x14);
 	debug("save.image %dx%d, %u", state.thumbWidth, state.thumbHeight, imageSize);
 	state.thumbnail.resize(imageSize);
-	stream->read(state.thumbnail.data(), state.thumbnail.size());
-	auto gameStateSize = stream->readUint32LE();
+	stream.read(state.thumbnail.data(), state.thumbnail.size());
+	auto gameStateSize = stream.readUint32LE();
 	debug("save.state %u bytes", gameStateSize);
 	state.state.resize(gameStateSize);
-	stream->read(state.state.data(), state.state.size());
+	stream.read(state.state.data(), state.state.size());
 	return state;
+}
+
+void PhoenixVREngine::saveGameStateObject(Common::SeekableWriteStream &stream, const GameState &state) {
+	auto writeString = [&](const Common::String &str) {
+		stream.writeUint32LE(str.size() + 1);
+		stream.writeString(str);
+		stream.writeByte(0);
+	};
+
+	writeString(state.script);
+	writeString(state.game);
+	writeString(state.info);
+
+	assert(state.dibHeader.size() == 0x28 + 3 * 4);
+	stream.write(state.dibHeader.data(), state.dibHeader.size());
+
+	stream.write(state.thumbnail.data(), state.thumbnail.size());
+
+	stream.writeUint32LE(state.state.size());
+	stream.write(state.state.data(), state.state.size());
 }
 
 } // End of namespace PhoenixVR
