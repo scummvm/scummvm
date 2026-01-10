@@ -892,8 +892,6 @@ PhoenixVREngine::GameState PhoenixVREngine::loadGameStateObject(Common::Seekable
 	stream.seek(-4, SEEK_CUR);
 	state.dibHeader.resize(dibHeaderSize + 3 * 4); // rmask/gmask/bmask
 	stream.read(state.dibHeader.data(), state.dibHeader.size());
-	debug("DIB header");
-	Common::hexdump(state.dibHeader.data(), state.dibHeader.size());
 	state.thumbWidth = READ_LE_UINT32(state.dibHeader.data() + 0x04);
 	state.thumbHeight = READ_LE_UINT32(state.dibHeader.data() + 0x08);
 	auto imageSize = READ_LE_UINT32(state.dibHeader.data() + 0x14);
