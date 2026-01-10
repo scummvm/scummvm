@@ -360,79 +360,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	//   screenY = centerY - DAT_0043e008 (scrollY)
 
 	if (par1 == 4) {
-		// Opcode 4: Enemy position update
-		// Read 5 shorts from the stream (offset +8 through +16)
-		int16 enemyId = b.readSint16LE();  // Offset +8
-		int16 x = b.readSint16LE();        // Offset +10 (0x0A)
-		
-		// If enemy is disabled in bit table, skip update
-		bool disabled = isBitSet(enemyId);
-		
-		int16 y = b.readSint16LE();        // Offset +12 (0x0C)
-		int16 w = b.readSint16LE();        // Offset +14 (0x0E) - Width
-		int16 h = b.readSint16LE();        // Offset +16 (0x10) - Height
-
-		// If disabled, stop processing this object
-		if (disabled) {
-			// debug("Rebel2: Skipping Opcode 4 for disabled enemy ID=%d", enemyId);
-			return; 
-		}
-
-		// The disassembly shows half-width/half-height are used for centering:
-		//   halfW = w >> 1
-		//   halfH = h >> 1
-		//   centerX = x + halfW
-		//   centerY = y + halfH
-		// But for drawing the bounding box, we want the top-left corner (x, y) and full dimensions.
-		
-		//debug("Rebel2 IACT Opcode 4: ID=%d X=%d Y=%d W=%d H=%d (par2=%d par3=%d par4=%d)", 
-		//	enemyId, x, y, w, h, par2, par3, par4);
-
-		// Update RebelEnemy list for hit detection
-		bool found = false;
-		Common::List<RebelEnemy>::iterator it;
-		for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
-			if (it->id == enemyId) {
-				it->rect = Common::Rect(x, y, x + w, y + h);
-				// Only re-activate if not destroyed
-				if (!it->destroyed) {
-					it->active = true;
-				}
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			RebelEnemy e;
-			e.id = enemyId;
-			e.rect = Common::Rect(x, y, x + w, y + h);
-			e.active = true;
-			e.destroyed = false;
-			e.explosionFrame = -1;  // No explosion playing
-			_rebelEnemies.push_back(e);
-		}
-
-		// Render Bounding Box for visual verification
-		// Use player dimensions for clipping
-		int bufWidth = (_player && _player->_width > 0) ? _player->_width : 320;
-		int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-		int pitch = bufWidth;
-		
-		// Draw the bounding box in color 255 (bright white) - only for non-destroyed enemies
-		// Skip drawing if this enemy has been destroyed
-		if (renderBitmap && w > 0 && h > 0 && !found) {
-			// Only draw for newly created enemies (not destroyed ones)
-			drawRect(renderBitmap, pitch, x, y, w, h, 255, bufWidth, bufHeight);
-		} else if (found && !it->destroyed) {
-			// Draw for existing non-destroyed enemies
-			drawRect(renderBitmap, pitch, x, y, w, h, 255, bufWidth, bufHeight);
-		}
-
-		// Debug for potential HUD Setup (Opcode 4 with word@8 == 1)
-		if (enemyId == 1) {
-			debug("Rebel2 IACT Opcode 4: HUD Setup Candidate? (enemyId/val@8 == 1). par4=%d", par4);
-		}
-
+		enemyUpdate(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 2) {
 		// Opcode 2: Often used for bit setting
 		// Disassembly shows this is handled but we don't have full context
@@ -571,6 +499,57 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		debug("Rebel2 IACT: Low Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
 	} else {
 		debug("Rebel2 IACT: Unknown Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
+	}
+}
+
+void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Opcode 4: Enemy position update
+	// Read 5 shorts from the stream (offset +8 through +16)
+	int16 enemyId = b.readSint16LE();  // Offset +8
+	int16 x = b.readSint16LE();        // Offset +10 (0x0A)
+
+	// If enemy is disabled in bit table, skip update
+	bool disabled = isBitSet(enemyId);
+
+	int16 y = b.readSint16LE();        // Offset +12 (0x0C)
+	int16 w = b.readSint16LE();        // Offset +14 (0x0E) - Width
+	int16 h = b.readSint16LE();        // Offset +16 (0x10) - Height
+
+	// If disabled, stop processing this object
+	if (disabled) {
+		// debug("Rebel2: Skipping Opcode 4 for disabled enemy ID=%d", enemyId);
+		return;
+	}
+
+	// The disassembly shows half-width/half-height are used for centering:
+	//   halfW = w >> 1
+	//   halfH = h >> 1
+	//   centerX = x + halfW
+	//   centerY = y + halfH
+	// But for drawing the bounding box, we want the top-left corner (x, y) and full dimensions.
+
+	// Update RebelEnemy list for hit detection
+	bool found = false;
+	Common::List<RebelEnemy>::iterator it;
+	for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
+		if (it->id == enemyId) {
+			it->rect = Common::Rect(x, y, x + w, y + h);
+			// Only re-activate if not destroyed
+			if (!it->destroyed) {
+				it->active = true;
+			}
+			found = true;
+			break;
+		}
+	}
+	if (!found) {
+		RebelEnemy e;
+		e.id = enemyId;
+		e.rect = Common::Rect(x, y, x + w, y + h);
+		e.active = true;
+		e.destroyed = false;
+		e.explosionFrame = -1;  // No explosion playing
+		_rebelEnemies.push_back(e);
 	}
 }
 
