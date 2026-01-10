@@ -235,7 +235,7 @@ void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int l
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &h, Audio::makeWAVStream(f.release(), DisposeAfterUse::YES), -1, volume);
 	if (loops < 0)
 		_mixer->loopChannel(h);
-	_sounds[sound] = Sound{h, spatial, angle};
+	_sounds[sound] = Sound{h, spatial, angle, volume};
 }
 
 void PhoenixVREngine::stopSound(const Common::String &sound) {
@@ -405,14 +405,23 @@ void PhoenixVREngine::tick(float dt) {
 		_angleY.add(float(da.y) * kSpeedY * dt);
 		debug("angle %g %g -> %s", _angleX.angle(), _angleY.angle(), currentVRPos().toString().c_str());
 	}
+	Common::Array<Common::String> finishedSounds;
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
+		if (!_mixer->isSoundHandleActive(sound.handle)) {
+			finishedSounds.push_back(kv._key);
+		}
 		if (!sound.spatial)
 			continue;
 
 		int8 balance = 127 * sinf(sound.angle - _angleX.angle());
 		_mixer->setChannelBalance(sound.handle, balance);
 	}
+	for (auto &sound : finishedSounds) {
+		debug("sound %s stopped", sound.c_str());
+		_sounds.erase(sound);
+	}
+
 	if (!_nextScript.empty()) {
 		loadNextScript();
 		goToWarp(_script->getInitScript()->vrFile);
@@ -652,20 +661,36 @@ void PhoenixVREngine::captureContext() {
 	writeString({});     // music
 	ms.writeUint32LE(0); // musicVolume
 
-	// FIXME: serialize sounds here
+	struct SoundState {
+		Common::String name;
+		uint8 volume;
+		int angle;
+	};
+	Common::Array<SoundState> sounds, sounds3d;
+	for (auto &kv : _sounds) {
+		auto &sound = kv._value;
+		if (sound.spatial)
+			sounds3d.push_back({kv._key, sound.volume, fromAngle(sound.angle)});
+		else
+			sounds.push_back({kv._key, sound.volume, 0});
+	}
+
 	// sound samples
+	SoundState def{{}, 255, 0};
 	for (uint i = 0; i != 8; ++i) {
-		writeString({});
-		ms.writeUint32LE(255);
-		ms.writeUint32LE(0); // volume
+		auto *soundState = i < sounds.size() ? &sounds[i] : &def;
+		writeString(soundState->name);
+		ms.writeUint32LE(soundState->volume);
+		ms.writeUint32LE(0); // flags?
 	}
 
 	// sound samples 3D
 	for (uint i = 0; i != 8; ++i) {
-		writeString({});
-		ms.writeUint32LE(2000); // angle
-		ms.writeUint32LE(255);
-		ms.writeUint32LE(0); // volume
+		auto *soundState = i < sounds3d.size() ? &sounds3d[i] : &def;
+		writeString(soundState->name);
+		ms.writeUint32LE(soundState->angle);
+		ms.writeUint32LE(soundState->volume);
+		ms.writeUint32LE(0); // flags?
 	}
 
 	auto *state = ms.getData();
@@ -746,8 +771,8 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	for (uint i = 0; i != 8; ++i) {
 		auto name = ms.readString(0, 257);
 		auto vol = ms.readUint32LE();
-		auto loop = ms.readUint32LE();
-		debug("sound: %s vol: %u loop: %u", name.c_str(), vol, loop);
+		auto flags = ms.readUint32LE();
+		debug("sound: %s vol: %u flags: %u", name.c_str(), vol, flags);
 		if (!name.empty())
 			playSound(name, vol, -1);
 	}
@@ -757,8 +782,8 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 		auto name = ms.readString(0, 257);
 		auto angle = ms.readUint32LE();
 		auto vol = ms.readUint32LE();
-		auto loop = ms.readUint32LE();
-		debug("3d sound: %s %u %u %u", name.c_str(), vol, loop, angle);
+		auto flags = ms.readUint32LE();
+		debug("3d sound: %s vol: %u flags: %u angle: %u", name.c_str(), vol, flags, angle);
 		if (!name.empty())
 			playSound(name, vol, -1, true, float(angle * M_PI));
 	}

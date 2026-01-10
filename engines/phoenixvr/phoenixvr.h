@@ -187,6 +187,7 @@ private:
 		Audio::SoundHandle handle;
 		bool spatial;
 		float angle;
+		uint8 volume;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
