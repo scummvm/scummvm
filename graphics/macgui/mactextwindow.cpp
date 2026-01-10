@@ -27,6 +27,8 @@
 #include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
 
+#define SCROLLBAR_DELAY 300
+
 namespace Graphics {
 
 enum {
@@ -53,8 +55,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor
 		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = nullptr;
-	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment, 0, padding);
-
+	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment, 0, true);
 	_fontRef = font;
 
 	init();
@@ -69,7 +70,17 @@ void MacTextWindow::init() {
 	_selectable = true;
 
 	_textColorRGB = 0;
-	
+
+	_scrollDirection = kBorderNone;
+	_clickedScrollPart = kBorderNone;
+	_nextScrollTime = 0;
+	_nextWheelEventTime = 0;
+	_scrollDelay = 50;
+
+	_isDragging = false;
+	_dragStartY = 0;
+	_dragStartScrollPos = 0;
+
 	// Disable autoselect on activation
 	_mactext->setAutoSelect(false);
 
@@ -90,7 +101,7 @@ void MacTextWindow::resize(int w, int h) {
 	MacWindow::resize(w, h);
 
 	_maxWidth = getInnerDimensions().width();
-	_mactext->resize(_maxWidth, h);
+	_mactext->resize(_maxWidth, getInnerDimensions().height());
 }
 
 void MacTextWindow::setDimensions(const Common::Rect &r) {
@@ -198,28 +209,65 @@ const MacFont *MacTextWindow::getTextWindowFont() {
 }
 
 bool MacTextWindow::draw(bool forceRedraw) {
-	if (!_borderIsDirty && !_contentIsDirty && !_mactext->needsRedraw() && !_inputIsDirty && !forceRedraw)
+
+	uint32 now = g_system->getMillis();
+	// check if we need to hide the scroll bar
+	if (!(_wm->_mode & kWMModeWin95)) {
+		if (_nextWheelEventTime != 0 && now >= _nextWheelEventTime) {
+			if (_scrollDirection == kBorderNone && _clickedScrollPart == kBorderNone) {
+				setScroll(0, 0);         // hide the scrollbar
+				_nextWheelEventTime = 0; // reset timer
+			}
+		}
+	}
+
+	// handle mouse button scrolling
+	if (_scrollDirection != kBorderNone) {
+		Common::Point mousePos = g_system->getEventManager()->getMousePos();
+		if (isInBorder(mousePos.x, mousePos.y) != _clickedScrollPart) {
+			_scrollDirection = kBorderNone;
+			setHighlight(kBorderNone);
+			calcScrollBar();
+			if (!(_wm->_mode & kWMModeWin95)) {
+				setScroll(0, 0);
+			}
+		}
+		if (_scrollDirection != kBorderNone && now >= _nextScrollTime) {
+			if (_scrollDirection == kBorderScrollUp) {
+				_mactext->scroll(-1);
+			} else if (_scrollDirection == kBorderScrollDown) {
+				_mactext->scroll(1);
+			}
+			calcScrollBar();
+			_nextScrollTime = now + _scrollDelay;
+		}
+	}
+
+	bool needsContentRedraw = _contentIsDirty || _inputIsDirty || _mactext->needsRedraw() || forceRedraw;
+
+	if (!_borderIsDirty && !needsContentRedraw)
 		return false;
 
-	if (_borderIsDirty || forceRedraw) {
+	if (_borderIsDirty || forceRedraw)
 		drawBorder();
 
+	if (_inputIsDirty || forceRedraw) {
+		drawInput();
+		_inputIsDirty = false;
+		needsContentRedraw = true; // input update needs a redraw
+	}
+
+	if (needsContentRedraw) {
+		// only clear the surface if we are actually going to redraw the text
 		if (_wm->_mode & kWMModeWin95) {
 			_composeSurface->clear(_bgcolor);
 		} else {
 			_composeSurface->clear(_wm->_colorWhite);
 		}
+
+		_contentIsDirty = false;
+		_mactext->draw(_composeSurface, forceRedraw);
 	}
-
-	if (_inputIsDirty || forceRedraw) {
-		drawInput();
-		_inputIsDirty = false;
-	}
-
-	_contentIsDirty = false;
-
-	// Compose
-	_mactext->draw(_composeSurface, _inputIsDirty || forceRedraw);
 
 	return true;
 }
@@ -260,25 +308,159 @@ void MacTextWindow::calcScrollBar() {
 	int maxText = 0, maxScrollbar = 0, displayHeight = 0;
 
 	displayHeight = getInnerDimensions().height();
-
 	maxScrollbar = getDimensions().height() - getBorderOffsets().upperScrollHeight - getBorderOffsets().lowerScrollHeight;
+	maxText = _mactext->getTextHeight();
 
 	// if we enable the win95 mode but the text height is smaller than window height, then we don't draw the scrollbar
-	if (_wm->_mode & kWMModeWin95 && displayHeight > _mactext->getTextHeight() && !_editable)
+	if (_wm->_mode & kWMModeWin95 && displayHeight > maxText && !_editable)
 		return;
 
+	int maxScroll = 0;
+	// identical to MacText scroll() logic
 	if (_editable)
-		maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+		maxScroll = maxText - kConScrollStep;
 	else
-		maxText = MAX<int>(_mactext->getTextHeight(), displayHeight);
+		maxScroll = maxText - displayHeight;
 
-	float scrollSize = (float)maxScrollbar * (float)displayHeight / (float)maxText;
-	float scrollPos = (float)_mactext->_scrollPos * (float)maxScrollbar / (float)maxText;
+	float contentHeight = (float)(maxText + displayHeight);
+	float scrollSize = (float)(maxScrollbar * displayHeight) / contentHeight;
+	int range = maxScrollbar - (int)scrollSize - 1;
+
+	float ratio = CLIP<float>((float)_mactext->_scrollPos / (float)maxScroll, 0.0f, 1.0f);
+	float scrollPos = ratio * (float)range;
 	setScroll(scrollPos, scrollSize);
+}
+
+void MacTextWindow::calcWin95Scroll(int &scrollAreaTop, int &scrollAreaHeight, int &barY, int &barHeight) {
+	const BorderOffsets &offsets = getBorderOffsets();
+
+	scrollAreaTop = offsets.upperScrollHeight;
+	scrollAreaHeight = _dims.height() - offsets.upperScrollHeight - offsets.lowerScrollHeight;
+
+	int contentHeight = _mactext->getTextHeight();
+	int winHeight = getInnerDimensions().height();
+
+	// if content fits in the current window
+	if (contentHeight <= winHeight || contentHeight == 0) {
+		barHeight = scrollAreaHeight;
+		barY = scrollAreaTop;
+		return;
+	}
+
+	float winRatio = (float)winHeight / (float)contentHeight;
+	barHeight = MAX<int>(8, (int)(scrollAreaHeight * winRatio)); // 8 the min height of scrollBar
+
+	int maxTextScroll = contentHeight - winHeight;
+	int maxBarScroll = scrollAreaHeight - barHeight;
+
+	float scrollAmount = (float)_mactext->_scrollPos / (float)maxTextScroll;
+
+	barY = scrollAreaTop + (int)(maxBarScroll * scrollAmount);
 }
 
 bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
+
+	if (!(g_system->getEventManager()->getButtonState() & Common::EventManager::LBUTTON)) {
+		if (_isDragging) {
+			_isDragging = false;
+		}
+		if (_clickedScrollPart != kBorderNone || _scrollDirection != kBorderNone) {
+			_scrollDirection = kBorderNone;
+			_clickedScrollPart = kBorderNone;
+			setHighlight(kBorderNone);
+
+			if (!(_wm->_mode & kWMModeWin95)) {
+				setScroll(0, 0);
+			}
+			return true;
+		}
+	}
+
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (!(_wm->_mode & kWMModeWin95)) {
+			if (_clickedScrollPart == kBorderScrollUp || _clickedScrollPart == kBorderScrollDown) {
+				if (click == kBorderScrollUp) {
+					if (_scrollDirection != kBorderScrollUp) {
+						_scrollDirection = kBorderScrollUp;
+						_clickedScrollPart = kBorderScrollUp;
+						setHighlight(kBorderScrollUp);
+						calcScrollBar();
+					}
+				} else if (click == kBorderScrollDown) {
+					if (_scrollDirection != kBorderScrollDown) {
+						_scrollDirection = kBorderScrollDown;
+						_clickedScrollPart = kBorderScrollDown;
+						setHighlight(kBorderScrollDown);
+						calcScrollBar();
+					}
+				} else {
+					if (_scrollDirection != kBorderNone) {
+						_scrollDirection = kBorderNone;
+						setHighlight(kBorderNone);
+						calcScrollBar();
+						setScroll(0, 0);
+					}
+				}
+				return true;
+			}
+		} else if ((_wm->_mode & kWMModeWin95) && _isDragging) {
+			int scrollAreaTop, scrollAreaHeight, barY, barHeight;
+			calcWin95Scroll(scrollAreaTop, scrollAreaHeight, barY, barHeight);
+
+			int relMouseY = event.mouse.y - _dims.top;
+			int diffY = relMouseY - _dragStartY;
+
+			if (diffY != 0) {
+				int maxTextScroll = _mactext->getTextHeight() - getInnerDimensions().height();
+				int maxBarScroll = scrollAreaHeight - barHeight;
+
+				if (maxBarScroll > 0) {
+					float pixelsPerUnit = (float)maxTextScroll / (float)maxBarScroll;
+					int newScrollPos = _dragStartScrollPos + (int)(diffY * pixelsPerUnit);
+
+					newScrollPos = CLIP<int>(newScrollPos, 0, maxTextScroll);
+
+					if (newScrollPos != _mactext->_scrollPos) {
+						_mactext->_scrollPos = newScrollPos;
+						_mactext->setDirty(true);
+						_contentIsDirty = true;
+						_borderIsDirty = true;
+						calcScrollBar();
+					}
+				}
+			}
+			return true;
+		}
+	}
+
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		if ((_wm->_mode & kWMModeWin95) && (click == kBorderScrollUp || click == kBorderScrollDown)) {
+			const BorderOffsets &offsets = getBorderOffsets();
+			int scrollBarWidth = offsets.right;
+
+			if (event.mouse.x >= _dims.right - scrollBarWidth && event.mouse.x < _dims.right) {
+				int scrollAreaTop, scrollAreaHeight, barY, barHeight;
+				calcWin95Scroll(scrollAreaTop, scrollAreaHeight, barY, barHeight);
+
+				int relMouseY = event.mouse.y - _dims.top;
+
+				if (relMouseY >= barY && relMouseY < barY + barHeight) {
+					_isDragging = true;
+					_dragStartY = relMouseY; // store window relative Y
+					_dragStartScrollPos = _mactext->_scrollPos;
+					return true;
+				}
+			}
+		}
+	}
+
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		if (_isDragging) {
+			_isDragging = false;
+			return true;
+		}
+	}
 
 	if (event.type == Common::EVENT_KEYDOWN) {
 		if (!_editable)
@@ -331,41 +513,53 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	if (event.type == Common::EVENT_WHEELUP) {
 		//setHighlight(kBorderScrollUp);
 		_mactext->scroll(-2);
+		_contentIsDirty = true;
 		calcScrollBar();
+
+		_nextWheelEventTime = g_system->getMillis() + SCROLLBAR_DELAY; // hide the bar after 300ms from now
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
 		//setHighlight(kBorderScrollDown);
 		_mactext->scroll(2);
+		_contentIsDirty = true;
 		calcScrollBar();
+
+		_nextWheelEventTime = g_system->getMillis() + SCROLLBAR_DELAY; // hide the bar after 300ms from now
 		return true;
 	}
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			setHighlight(click);
-			_mactext->scroll(0);
+			_scrollDirection = click;
+			_clickedScrollPart = click;
 			calcScrollBar();
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
-			switch (click) {
-			case kBorderScrollUp:
-				setHighlight(kBorderNone);
-				_mactext->scroll(-1);
-				break;
-			case kBorderScrollDown:
-				setHighlight(kBorderNone);
-				_mactext->scroll(1);
-				break;
-			default:
-				return false;
+			// reset scrolling state
+			_scrollDirection = kBorderNone;
+			_clickedScrollPart = kBorderNone;
+			setHighlight(kBorderNone);
+			// hide the scroll bar
+			if (!(_wm->_mode & kWMModeWin95)) {
+				setScroll(0, 0);
 			}
-
 			return true;
 		}
 
 		return false;
+	}
+
+	if (event.type == Common::EVENT_LBUTTONUP && _clickedScrollPart != kBorderNone) {
+		_scrollDirection = kBorderNone;
+		_clickedScrollPart = kBorderNone;
+		setHighlight(kBorderNone);
+		if (!(_wm->_mode & kWMModeWin95)) {
+			setScroll(0, 0);
+		}
+		return true;
 	}
 
 	if (click == kBorderInner) {

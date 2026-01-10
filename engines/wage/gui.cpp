@@ -167,10 +167,29 @@ void Gui::draw() {
 
 		_scene = _engine->_world->_player->_currentScene;
 
-		_sceneWindow->setTitle(_scene->_name);
-		_sceneWindow->setDimensions(*_scene->_designBounds);
+		Common::Rect sceneBounds = *_scene->_designBounds;
+		const Graphics::BorderOffsets &offsets = _sceneWindow->getBorderOffsets();
+
+		int maxTitleWidth = sceneBounds.width() - (kWindowMinWidth - offsets.right);
+		Common::String displayTitle = _scene->_name;
+
+		if (maxTitleWidth > 0) {
+			const Graphics::Font *titleFont = getTitleFont();
+			if (titleFont) {
+				// keep deleting the last character untill the title fits
+				while (displayTitle.size() > 0 && titleFont->getStringWidth(displayTitle) > maxTitleWidth) {
+					displayTitle.deleteLastChar();
+				}
+			}
+		} else {
+			displayTitle.clear();
+		}
+
+		_sceneWindow->setTitle(displayTitle);
+		_sceneWindow->setDimensions(sceneBounds);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
 
+		_wm->setActiveWindow(_consoleWindow->getId());
 		_wm->setFullRefresh(true);
 	}
 
@@ -410,6 +429,10 @@ const Graphics::Font *Gui::getConsoleFont() {
 	return _wm->_fontMan->getFont(*getConsoleMacFont());
 }
 
+const Graphics::Font *Gui::getTitleFont() {
+	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
+}
+
 void Gui::appendText(const char *s) {
 	_consoleWindow->appendText(s, getConsoleMacFont());
 }
@@ -575,8 +598,17 @@ void Gui::aboutDialog() {
 	Graphics::MacDialogButtonArray buttons;
 
 	buttons.push_back(new Graphics::MacDialogButton("OK", 191, aboutMessage.getTextHeight() + 30, 68, 28));
+	// add a dummy button to push volume slider position down
+	// to avoid the overlapping of volume slider with OK button in the about section
+	buttons.push_back(new Graphics::MacDialogButton("", 0, aboutMessage.getTextHeight() + 100, 0, 0));
 
 	AboutDialog about(&_screen, _wm, 450, &aboutMessage, 400, &buttons, 0);
+
+	delete buttons.back();
+	buttons.pop_back();
+	// close the menu before calling run because it blocks execution
+	if (_menu)
+		_menu->closeMenu();
 
 	int button = about.run();
 
@@ -619,11 +651,11 @@ bool Gui::saveDialog() {
 	Graphics::MacFont font;
 
 	Graphics::MacText saveBeforeCloseMessage(*_engine->_world->_saveBeforeCloseMessage, _wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
+									  Graphics::kColorWhite, 250, Graphics::kTextAlignCenter);
 
 	_engine->sayText(*_engine->_world->_saveBeforeCloseMessage);
 
-	Graphics::MacDialog save(&_screen, _wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
+	Graphics::MacDialog save(&_screen, _wm, 291, &saveBeforeCloseMessage, 250, &buttons, 1);
 
 	int button = save.run();
 

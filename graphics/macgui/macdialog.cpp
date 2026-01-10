@@ -59,13 +59,26 @@
 namespace Graphics {
 
 enum {
-	kDialogHeight = 113
+	kDialogHeight = 113,
+	kDialogBottomPadding = 15
 };
 
 MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton) :
 	_screen(screen), _wm(wm), _mactext(mactext), _maxTextWidth(maxTextWidth), _buttons(buttons), _defaultButton(defaultButton) {
+	// if we have buttons the height of the dialog box should resize accordingly
+	int buttonBottomPos = 0;
+	if (_buttons) {
+		for (uint i = 0; i < _buttons->size(); i++) {
+			if ((*_buttons)[i]->bounds.bottom > buttonBottomPos)
+				buttonBottomPos = (*_buttons)[i]->bounds.bottom;
+		}
+	}
 
-	int height = kDialogHeight + _mactext->getTextHeight();
+	int height;
+	if (buttonBottomPos > 0)
+		height = buttonBottomPos + kDialogBottomPadding;
+	else 
+		height = kDialogHeight + _mactext->getTextHeight();
 
 	_font = getDialogFont();
 
@@ -164,6 +177,12 @@ int MacDialog::run() {
 	bool shouldQuitEngine = false;
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
+	// we set _fullRefresh to true inside closeMenu() but it does not update the screen
+	// to ensure we capture the background without the menu we must force a draw
+	// draw() checks _fullRefresh flag which is set to true by closeMenu()
+	// so draw() will draw the screen again without the menu pixels
+	// if we don't call draw() then the background captured in the next line has the pixels of the menu.
+	_wm->draw();
 
 	_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 	_wm->pushCursor(kMacCursorArrow, nullptr);

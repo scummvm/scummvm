@@ -57,10 +57,22 @@ namespace Wage {
 
 using namespace Graphics::MacGUIConstants;
 
+// struct to hold design operation data
+struct DrawOp {
+	uint32 offset;
+	Common::String opcode;
+	int fillType;
+	int borderThickness;
+	int borderFillType;
+	int lineSize;
+};
+
 class Design {
 public:
 	Design(Common::SeekableReadStream *data);
 	~Design();
+
+	Common::Array<DrawOp> _drawOps;
 
 	void setBounds(Common::Rect *bounds) {
 		_bounds = bounds;
@@ -70,7 +82,7 @@ public:
 		return _bounds;
 	}
 
-	void paint(Graphics::ManagedSurface *canvas, Graphics::MacPatterns &patterns, int x, int y);
+	void paint(Graphics::ManagedSurface *canvas, Graphics::MacPatterns &patterns, int x, int y, int steps = -1);
 	bool isInBounds(int x, int y);
 	static void drawRect(Graphics::ManagedSurface *surface, const Common::Rect &rect, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType);
 	static void drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType);
@@ -85,13 +97,15 @@ public:
 private:
 	byte *_data;
 	int _len;
+	int _renderedSteps;
+	Common::String _lastOpString;
 	Common::Rect *_bounds;
 	Graphics::ManagedSurface *_surface;
 	bool _boundsCalculationMode;
 	Graphics::ManagedSurface *_maskImage;
 
 private:
-	void render(Graphics::MacPatterns &patterns);
+	void render(Graphics::MacPatterns &patterns, int steps = -1);
 	void drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 		Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType);
 	void drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
