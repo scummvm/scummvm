@@ -251,8 +251,8 @@ public:
 	const char *_episode;
 	Common::Path _picDir;
 
-	Command _statusLine;
-	Command _scoreLine;
+	Command _statusLine; // text at top row of screen
+	Command _promptLine; // text at bottom row of screen
 
 #ifdef USE_TTS
 	bool _voiceScoreLine;

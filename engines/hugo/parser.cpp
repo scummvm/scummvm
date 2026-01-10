@@ -275,15 +275,15 @@ void Parser::charHandler() {
 		_cmdLineIndex = strlen(_cmdLine);
 	}
 
-	// Format status line, pad with spaces to fill row
-	Common::sprintf_s(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
-	for (int i = strlen(_vm->_statusLine); i < kMaxTextCols; i++) {
-		_vm->_statusLine[i] = ' ';
+	// Format prompt line, pad with spaces to fill row
+	Common::sprintf_s(_vm->_promptLine, ">%s%c", _cmdLine, _cmdLineCursor);
+	for (int i = strlen(_vm->_promptLine); i < kMaxTextCols; i++) {
+		_vm->_promptLine[i] = ' ';
 	}
-	_vm->_statusLine[kMaxTextCols] = '\0';
+	_vm->_promptLine[kMaxTextCols] = '\0';
 
-	// Format score line
-	Common::sprintf_s(_vm->_scoreLine, "F1-Help  %s  Score: %3d of %3d  Sound %3s",
+	// Format status line
+	Common::sprintf_s(_vm->_statusLine, "F1-Help  %s  Score: %3d of %3d  Sound %3s",
 		(_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(),
 		(_vm->_config._soundFl) ? "on" : "off");
 
