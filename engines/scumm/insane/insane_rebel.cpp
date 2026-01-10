@@ -757,7 +757,7 @@ void InsaneRebel2::spawnShot(int x, int y) {
 	}
 }
 
-void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int u) {
+void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v) {
 	if (!nut || spriteIdx >= nut->getNumChars()) return;
 
 	const byte *srcData = nut->getCharData(spriteIdx);
@@ -765,27 +765,24 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	int texH = nut->getCharHeight(spriteIdx);
 	
 	if (!srcData || texW <= 0 || texH <= 0) return;
+	if (v < 0) v = 0;
+	if (v >= texH) v = texH - 1;
 
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
 	int err = dx + dy, e2;
 	
 	// Total length approximation for UV mapping
-	// We use Manhattan distance or max dimension for interpolation
 	int totalDist = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
 	if (totalDist == 0) totalDist = 1;
-
-	// If u not specified, use center
-	if (u < 0) u = texW / 2;
-	if (u >= texW) u = texW - 1;
 	
 	int currentDist = 0;
 
 	for (;;) {
 		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height) {
-			// Map currentDist/totalDist to 0..texH (Length of texture mapped to length of line)
-			int v = (currentDist * texH) / totalDist;
-			if (v >= texH) v = texH - 1;
+			// Map currentDist/totalDist to 0..texW (Run along texture width)
+			int u = (currentDist * texW) / totalDist;
+			if (u >= texW) u = texW - 1;
 			
 			byte color = srcData[v * texW + u];
 			
@@ -804,69 +801,67 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	}
 }
 
-void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, NutRenderer *nut, int spriteIdx) {
+void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, int thickness, int param_9, NutRenderer *nut, int spriteIdx) {
 	if (!nut || spriteIdx >= nut->getNumChars()) return;
 
-	// Reverse-engineered math from FUN_0040bbf6 and FUN_0040ad63
-	
-	// Rebel Assault 2 specific params
-	// param_11 is typically 12 for Level 1, 25 or other for different scenarios.
+	int texH = nut->getCharHeight(spriteIdx);
+	// param_11 is typically 12 for Level 1
 	int param_11 = (_rebelLevelType == 1) ? 12 : 25; 
-	// param_9 is also passed as 12 in Level 1 (or 25 otherwise)
-	int param_9 = param_11;
 
 	// sVar7 calculation: (param_11 * progress * 16) / maxProgress
-	// progress = max - counter (goes 0 -> max)
 	if (maxProgress == 0) maxProgress = 1;
 	int sVar7 = (param_11 * progress * 16) / maxProgress;
 	
-	// Extend vector by using param_11 factor
+	// Extend vector by (param_11 + 1) / param_11
 	int dx = x1 - x0;
 	int dy = y1 - y0;
-	
-	// sVar6 / sVar1 calculation (Extended vector)
-	// extDx = (dx * (param_11 + 1)) / param_11
 	int extDx = (dx * (param_11 + 1)) / param_11;
 	int extDy = (dy * (param_11 + 1)) / param_11;
 	
 	int xExt = x0 + extDx;
 	int yExt = y0 + extDy;
 
-	// Calculate New Start Point (sVar4, sVar5)
+	// Calculate New Start Point
 	// Start = ExtEnd - (ExtEnd - Start) * (16 / (sVar7 + 16))
-	// Actually math is: sVar4 = (xExt) - (extDx * 16) / (sVar7 + 16)
 	int startFactor = sVar7 + 16;
 	if (startFactor == 0) startFactor = 1;
 	int startX = xExt - (extDx * 16) / startFactor;
 	int startY = yExt - (extDy * 16) / startFactor;
 
-	// Calculate New End Point (sVar6, sVar7 in asm) w.r.t param_9
+	// Calculate New End Point
 	// End = ExtEnd - (ExtEnd - Start) * (16 / (param_9 + sVar7 + 16))
 	int endFactor = param_9 + sVar7 + 16;
-	if (endFactor == 0) endFactor = 1; // Safety
+	if (endFactor == 0) endFactor = 1; 
 	int endX = xExt - (extDx * 16) / endFactor;
 	int endY = yExt - (extDy * 16) / endFactor;
 
-	// Draw the beam with thickness
-	// Iterate through the texture width columns and draw a line for each
-	int texW = nut->getCharWidth(spriteIdx);
-	if (texW > 0) {
-		for (int i = 0; i < texW; i++) {
-			int u = i;
-			int offset = i - texW / 2;
-			
-			// Calculate perpendicular offset
-			// Simple approximation: If beam is more vertical, offset X. If horizontal, offset Y.
-			int ox = 0, oy = 0;
-			if (abs(dy) > abs(dx)) {
-				ox = offset;
-			} else {
-				oy = offset;
-			}
-			
-			// Draw line for this texture column
-			drawTexturedLine(dst, pitch, width, height, startX + ox, startY + oy, endX + ox, endY + oy, nut, spriteIdx, u);
-		}
+	// Calculate perpendicular offsets for thickness
+	// Perpendicular vector (-dy, dx) normalized?
+	// Assembly just adds to Y or X depending on loop (simplified) but usually laser is line
+	// We'll use a simple approach: if mostly vertical, offset X. If mostly horizontal, offset Y.
+	int perX, perY;
+	if (abs(dx) > abs(dy)) {
+		perX = 0; perY = 1;
+	} else {
+		perX = 1; perY = 0;
+	}
+
+	// Iterate thickness (Rows of texture)
+	// Map loop index 0..thickness to texture row 0..texH
+	// This scales the texture height to the beam width
+	
+	int centerOffset = thickness / 2;
+
+	for (int i = 0; i < thickness; i++) {
+		// Calculate V coordinate: Scale i (0..thickness) to (0..texH)
+		int v = (i * texH) / thickness;
+		if (v >= texH) v = texH - 1;
+		
+		int off = i - centerOffset;
+		int ox = off * perX;
+		int oy = off * perY;
+		
+		drawTexturedLine(dst, pitch, width, height, startX + ox, startY + oy, endX + ox, endY + oy, nut, spriteIdx, v);
 	}
 }
 
@@ -1279,13 +1274,43 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// Confirmed by info.md: indexes 0-4 are laser/projectile
 			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 0) {
 				// Calculate progress
-				int maxProgress = 4;
+				int maxProgress = 4; // Max duration from table (supposedly)
 				int progress = maxProgress - _shots[i].counter;
 
-				// Draw Left Beam
-				drawLaserBeam(renderBitmap, pitch, width, height, GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, _shots[i].x, _shots[i].y, progress, maxProgress, _smush_iconsNut, 0);
-				// Draw Right Beam
-				drawLaserBeam(renderBitmap, pitch, width, height, GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, _shots[i].x, _shots[i].y, progress, maxProgress, _smush_iconsNut, 0);
+				// Draw Beams depending on Level Type
+				// Scene 1 (LevelType 1) has 3 beams: Right, Middle, Left
+				if (_rebelLevelType <= 1) { // Default or Type 1
+					// Right Beam: Origin(310, 170), Thickness 8, LengthFac 12
+					drawLaserBeam(renderBitmap, pitch, width, height, 
+						310 + _viewX, 170 + _viewY, 
+						_shots[i].x, _shots[i].y, 
+						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+
+					// Middle Beam: Origin(160, 380), Thickness 5, LengthFac 8
+					// Note: 380 is virtual origin below screen
+					drawLaserBeam(renderBitmap, pitch, width, height, 
+						160 + _viewX, 380 + _viewY, 
+						_shots[i].x, _shots[i].y, 
+						progress, maxProgress, 5, 8, _smush_iconsNut, 0);
+
+					// Left Beam: Origin(10, 170), Thickness 8, LengthFac 12
+					drawLaserBeam(renderBitmap, pitch, width, height, 
+						10 + _viewX, 170 + _viewY, 
+						_shots[i].x, _shots[i].y, 
+						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+						
+				} else {
+					// Fallback for other levels (2 beams)
+					drawLaserBeam(renderBitmap, pitch, width, height, 
+						GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, 
+						_shots[i].x, _shots[i].y, 
+						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+
+					drawLaserBeam(renderBitmap, pitch, width, height, 
+						GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, 
+						_shots[i].x, _shots[i].y, 
+						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+				}
 
 				// Draw Projectile Impact
 				// Using Sprite 0 (small flash) or similar at impact point
