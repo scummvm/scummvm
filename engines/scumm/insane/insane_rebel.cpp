@@ -757,7 +757,7 @@ void InsaneRebel2::spawnShot(int x, int y) {
 	}
 }
 
-void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v) {
+void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v, bool mask231) {
 	if (!nut || spriteIdx >= nut->getNumChars()) return;
 
 	const byte *srcData = nut->getCharData(spriteIdx);
@@ -786,8 +786,8 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 			
 			byte color = srcData[v * texW + u];
 			
-			// Check for transparency (0 and 231)
-			if (color != 0 && color != 231) { 
+			// Check for transparency (0 and optionally 231)
+			if (color != 0 && (!mask231 || color != 231)) { 
 				dst[y0 * pitch + x0] = color;
 			}
 		}
@@ -801,70 +801,186 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	}
 }
 
-void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, int thickness, int param_9, NutRenderer *nut, int spriteIdx) {
-	if (!nut || spriteIdx >= nut->getNumChars()) return;
+// Helper: draw a textured segment between two points using the game's original routine (FUN_00429360 port)
+static void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8) {
+	// Ported from FUN_00429360 (decompiled). Only 0 in texture is transparent.
+	int sVar4 = 0;                // left
+	int sVar1 = 0;                // top
+	int sVar7 = width - 1;        // right
+	int sVar10 = height - 1;      // bottom
 
-	int texH = nut->getCharHeight(spriteIdx);
-	// param_11 is typically 12 for Level 1
-	int param_11 = (_rebelLevelType == 1) ? 12 : 25; 
+	int px0 = param_3;
+	int py0 = param_4;
+	int px1 = param_5;
+	int py1 = param_6;
 
-	// sVar7 calculation: (param_11 * progress * 16) / maxProgress
-	if (maxProgress == 0) maxProgress = 1;
-	int sVar7 = (param_11 * progress * 16) / maxProgress;
-	
-	// Extend vector by (param_11 + 1) / param_11
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	int extDx = (dx * (param_11 + 1)) / param_11;
-	int extDy = (dy * (param_11 + 1)) / param_11;
-	
-	int xExt = x0 + extDx;
-	int yExt = y0 + extDy;
-
-	// Calculate New Start Point
-	// Start = ExtEnd - (ExtEnd - Start) * (16 / (sVar7 + 16))
-	int startFactor = sVar7 + 16;
-	if (startFactor == 0) startFactor = 1;
-	int startX = xExt - (extDx * 16) / startFactor;
-	int startY = yExt - (extDy * 16) / startFactor;
-
-	// Calculate New End Point
-	// End = ExtEnd - (ExtEnd - Start) * (16 / (param_9 + sVar7 + 16))
-	int endFactor = param_9 + sVar7 + 16;
-	if (endFactor == 0) endFactor = 1; 
-	int endX = xExt - (extDx * 16) / endFactor;
-	int endY = yExt - (extDy * 16) / endFactor;
-
-	// Calculate perpendicular offsets for thickness
-	// Perpendicular vector (-dy, dx) normalized?
-	// Assembly just adds to Y or X depending on loop (simplified) but usually laser is line
-	// We'll use a simple approach: if mostly vertical, offset X. If mostly horizontal, offset Y.
-	int perX, perY;
-	if (abs(dx) > abs(dy)) {
-		perX = 0; perY = 1;
+	// Clip against screen bounds (translation of original clipping logic)
+	if (px0 == px1) {
+		if (px0 < sVar4 || px0 > sVar7) return;
 	} else {
-		perX = 1; perY = 0;
+		if (px0 < sVar4) {
+			if (px1 < sVar4) return;
+			py0 = py1 + ((py0 - py1) * (sVar4 - px1)) / (px0 - px1);
+			px0 = sVar4;
+		} else if (px0 > sVar7) {
+			if (px1 > sVar7) return;
+			py0 = py1 + ((py0 - py1) * (sVar7 - px1)) / (px0 - px1);
+			px0 = sVar7;
+		}
+		if (px1 < sVar4) {
+			py1 = py0 + ((py1 - py0) * (sVar4 - px0)) / (px1 - px0);
+			px1 = sVar4;
+		} else if (px1 > sVar7) {
+			py1 = py0 + ((py1 - py0) * (sVar7 - px0)) / (px1 - px0);
+			px1 = sVar7;
+		}
 	}
 
-	// Iterate thickness (Rows of texture)
-	// Map loop index 0..thickness to texture row 0..texH
-	// This scales the texture height to the beam width
-	
-	int centerOffset = thickness / 2;
+	if (py0 == py1) {
+		if (py0 < sVar1 || py0 > sVar10) return;
+	} else {
+		if (py0 < sVar1) {
+			if (py1 < sVar1) return;
+			px0 = px1 + ((px0 - px1) * (sVar1 - py1)) / (py0 - py1);
+			py0 = sVar1;
+		} else if (py0 > sVar10) {
+			if (py1 > sVar10) return;
+			px0 = px1 + ((px0 - px1) * (sVar10 - py1)) / (py0 - py1);
+			py0 = sVar10;
+		}
+		if (py1 < sVar1) {
+			px1 = px0 + ((px1 - px0) * (sVar1 - py0)) / (py1 - py0);
+			py1 = sVar1;
+		} else if (py1 > sVar10) {
+			px1 = px0 + ((px1 - px0) * (sVar10 - py0)) / (py1 - py0);
+			py1 = sVar10;
+		}
+	}
 
-	for (int i = 0; i < thickness; i++) {
-		// Calculate V coordinate: Scale i (0..thickness) to (0..texH)
-		int v = (i * texH) / thickness;
-		if (v >= texH) v = texH - 1;
-		
-		int off = i - centerOffset;
-		int ox = off * perX;
-		int oy = off * perY;
-		
-		drawTexturedLine(dst, pitch, width, height, startX + ox, startY + oy, endX + ox, endY + oy, nut, spriteIdx, v);
+	int dx = px1 - px0;
+	int dy = py1 - py0;
+	int absdx = dx < 0 ? -dx : dx;
+	int absdy = dy < 0 ? -dy : dy;
+
+	// pointer into destination and texture
+	byte *baseDst = dst;
+	const byte *texPtr = param_8;
+
+	if (absdx == 0) {
+		if (absdy == 0) {
+			if (*texPtr != 0) baseDst[py0 * pitch + px0] = *texPtr;
+			return;
+		}
+		// vertical-ish
+		int step = absdy + 1;
+		int curY = py0;
+		int signY = dy > 0 ? 1 : -1;
+		int iVar9 = step; // adv counter
+		for (int i = 0; i < step; i++) {
+			if (*texPtr != 0) baseDst[curY * pitch + px0] = *texPtr;
+			curY += signY;
+			iVar9 -= param_7;
+			while (iVar9 < 0) { texPtr++; iVar9 += step; }
+		}
+		return;
+	}
+
+	if (absdy == 0) {
+		// horizontal-ish
+		int step = absdx + 1;
+		int curX = px0;
+		int signX = dx > 0 ? 1 : -1;
+		int iVar11 = step;
+		for (int i = 0; i < step; i++) {
+			if (*texPtr != 0) baseDst[py0 * pitch + curX] = *texPtr;
+			curX += signX;
+			iVar11 -= param_7;
+			while (iVar11 < 0) { texPtr++; iVar11 += step; }
+		}
+		return;
+	}
+
+	// general case
+	int steps = (absdx > absdy) ? absdx + 1 : absdy + 1;
+	int x = px0, y = py0;
+	int sx = dx > 0 ? 1 : -1;
+	int sy = dy > 0 ? 1 : -1;
+	int err = absdx - absdy;
+	int iVar12 = steps;
+
+	for (int i = 0; i < steps; i++) {
+		if (x >= 0 && x < width && y >= 0 && y < height) {
+			if (*texPtr != 0) baseDst[y * pitch + x] = *texPtr;
+		}
+		int e2 = 2 * err;
+		if (e2 > -absdy) { err -= absdy; x += sx; }
+		if (e2 < absdx) { err += absdx; y += sy; }
+		iVar12 -= param_7;
+		if (iVar12 < 0) { texPtr++; iVar12 += steps; }
 	}
 }
 
+
+void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, int thickness, int param_9, NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx >= nut->getNumChars()) return;
+
+	// Follow original FUN_0040BBF6 math precisely
+	int texW = nut->getCharWidth(spriteIdx);
+	int texH = nut->getCharHeight(spriteIdx);
+	int param_11 = (_rebelLevelType <= 1) ? 12 : 25;
+
+	if (maxProgress == 0) maxProgress = 1;
+	int sVar7 = (param_11 * progress * 16) / maxProgress;
+
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int sVar6 = ((dx) * (param_11 + 1)) / param_11;
+	int sVar1 = ((dy) * (param_11 + 1)) / param_11;
+
+	int sVar4 = (sVar6 + x0) - (sVar6 * 16) / (sVar7 + 16);
+	int sVar5 = (sVar1 + y0) - (sVar1 * 16) / (sVar7 + 16);
+	int sVar6_end = (sVar6 + x0) - (sVar6 * 16) / (param_9 + sVar7 + 16);
+	int sVar7_end = (sVar1 + y0) - (sVar1 * 16) / (param_9 + sVar7 + 16);
+
+	const byte *srcBase = nut->getCharData(spriteIdx);
+	if (!srcBase || texW <= 0 || texH <= 0) return;
+
+	int iVar2 = abs(sVar5 - sVar7_end);
+	int iVar3 = abs(sVar4 - sVar6_end);
+
+	if (iVar2 < iVar3) {
+		// Column major case (wide)
+		iVar2 = abs(sVar4 - sVar6_end);
+		long long temp = (long long)iVar2 * (long long)texH * (long long)thickness;
+		// sVar1calc = (temp >> 3) / texW + 2
+		int sVar1calc = (int)((temp >> 3) / texW) + 2;
+		int local_24 = -sVar1calc;
+		int sVar8 = sVar1calc >> 1;
+		const byte *local_28 = srcBase;
+		for (int local_2c = 0; local_2c < sVar1calc; local_2c++) {
+			drawTexturedSegment(dst, pitch, width, height, sVar4, (sVar5 - sVar8) + local_2c,
+						 sVar6_end, (sVar7_end - sVar8) + local_2c, texW, local_28);
+			for (local_24 = texH + local_24; local_24 > 0; local_24 -= sVar1calc) {
+				local_28 += texW;
+			}
+		}
+	} else {
+		// Row major case (tall)
+		iVar2 = abs(sVar5 - sVar7_end);
+		int local_30 = (int)(((long long)iVar2 * (long long)texH) / texW) + 2;
+		if (texH < local_30) local_30 = texH;
+		int local_24 = -local_30;
+		const byte *local_28 = srcBase;
+		int sVar1_half = local_30 >> 1;
+		for (int local_2c = 0; local_2c < local_30; local_2c++) {
+			drawTexturedSegment(dst, pitch, width, height, (sVar4 - sVar1_half) + local_2c, sVar5,
+						 (sVar6_end - sVar1_half) + local_2c, sVar7_end, texW, local_28);
+			for (local_24 = texH + local_24; local_24 > 0; local_24 -= local_30) {
+				local_28 += texW;
+			}
+		}
+	}
+}
 void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
