@@ -71,7 +71,7 @@ public:
 	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx);
 	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx);
 
-	struct RebelEnemy {
+	struct enemy {
 		int id;
 		Common::Rect rect;
 		bool active;
@@ -81,16 +81,12 @@ public:
 		byte *savedBackground;    // Saved background pixels at moment of destruction
 		int savedBgWidth;         // Width of saved background
 		int savedBgHeight;        // Height of saved background
-		
-		RebelEnemy() : id(0), active(false), destroyed(false), explosionFrame(-1),
-		               explosionComplete(false), savedBackground(nullptr), 
-		               savedBgWidth(0), savedBgHeight(0) {}
-		~RebelEnemy() { free(savedBackground); }
 	};
 
+	void init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame);
 	void enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
-	Common::List<RebelEnemy> _rebelEnemies;
+	Common::List<enemy> _enemies;
 	
 	// Current handler type for Rebel Assault 2 (determines crosshair sprite)
 	// Handler 0: Background only

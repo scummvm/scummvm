@@ -75,7 +75,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
-	_rebelEnemies.clear();
+	_enemies.clear();
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
 
@@ -203,14 +203,14 @@ int32 InsaneRebel2::processMouse() {
 	if (isPressed && !wasPressed) {
 		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d", 
-			mousePos.x, mousePos.y, _rebelEnemies.size());
+			mousePos.x, mousePos.y, _enemies.size());
 
 		// Spawn visual shot immediately
 		spawnShot(mousePos.x, mousePos.y);
 
 		// Check for hit on any active enemy
-		Common::List<RebelEnemy>::iterator it;
-		for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
+		Common::List<enemy>::iterator it;
+		for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 			debug("  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) contains=%d",
 				it->id, it->active, it->destroyed,
 				it->rect.left, it->rect.top, it->rect.right, it->rect.bottom,
@@ -276,8 +276,8 @@ bool InsaneRebel2::shouldSkipFrameUpdate(int left, int top, int width, int heigh
 	int updateArea = width * height;
 	
 	// Check if this update region significantly overlaps with any destroyed enemy
-	Common::List<RebelEnemy>::iterator it;
-	for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
+	Common::List<enemy>::iterator it;
+	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->destroyed) {
 			// Calculate the intersection of the update rect and enemy rect
 			Common::Rect enemyRect = it->rect;
@@ -530,10 +530,10 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	//   centerY = y + halfH
 	// But for drawing the bounding box, we want the top-left corner (x, y) and full dimensions.
 
-	// Update RebelEnemy list for hit detection
+	// Update enemy list for hit detection
 	bool found = false;
-	Common::List<RebelEnemy>::iterator it;
-	for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
+	Common::List<enemy>::iterator it;
+	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->id == enemyId) {
 			it->rect = Common::Rect(x, y, x + w, y + h);
 			// Only re-activate if not destroyed
@@ -545,14 +545,21 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 		}
 	}
 	if (!found) {
-		RebelEnemy e;
-		e.id = enemyId;
-		e.rect = Common::Rect(x, y, x + w, y + h);
-		e.active = true;
-		e.destroyed = false;
-		e.explosionFrame = -1;  // No explosion playing
-		_rebelEnemies.push_back(e);
+		init_enemyStruct(enemyId, x, y, w, h, true, false, -1);
 	}
+}
+
+void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame) {
+	enemy e;
+	e.id = id;
+	e.rect = Common::Rect(x, y, x + w, y + h);
+	e.active = active;
+	e.destroyed = destroyed;
+	e.explosionFrame = explosionFrame;
+	e.savedBackground = nullptr;
+	e.savedBgWidth = 0;
+	e.savedBgHeight = 0;
+	_enemies.push_back(e);
 }
 
 // External helpers from smush_player.cpp but we are already in Scumm namespace
@@ -1083,11 +1090,11 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	static uint32 lastDebugTime = 0;
 	if ((_vm->_system->getMillis() - lastDebugTime) > 2000) {
 		lastDebugTime = _vm->_system->getMillis();
-		debug("Rebel2 Debug: Buffer %dx%d, Pitch %d, BPP %d, Enemies: %d", width, height, pitch, _vm->_virtscr[kMainVirtScreen].format.bytesPerPixel, _rebelEnemies.size());
+		debug("Rebel2 Debug: Buffer %dx%d, Pitch %d, BPP %d, Enemies: %d", width, height, pitch, _vm->_virtscr[kMainVirtScreen].format.bytesPerPixel, _enemies.size());
 	}
 
-	Common::List<RebelEnemy>::iterator it;
-	for (it = _rebelEnemies.begin(); it != _rebelEnemies.end(); ++it) {
+	Common::List<enemy>::iterator it;
+	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		Common::Rect r = it->rect;
 		
 		// Clip the rect to screen bounds for safety
