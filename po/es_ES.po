@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-09 17:16+0000\n"
-"PO-Revision-Date: 2026-01-03 16:59+0000\n"
+"PO-Revision-Date: 2026-01-10 20:50+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13516,8 +13516,6 @@ msgid "Scroll left"
 msgstr "Desplazar hacia la izquierda"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Scroll Right"
 msgid "Scroll right"
 msgstr "Desplazar hacia la derecha"
 
