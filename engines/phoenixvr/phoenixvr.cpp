@@ -741,6 +741,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	auto musicVolume = ms.readUint32LE();
 	debug("current music %s, volume: %u", music.c_str(), musicVolume);
 
+	_mixer->stopAll();
 	// sound samples
 	for (uint i = 0; i != 8; ++i) {
 		auto name = ms.readString(0, 257);
