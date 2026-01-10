@@ -38,7 +38,7 @@ Common::Point GraphicsManager::showOverlay(int height, byte *buf) {
 	for (int x = 0; x < 640; x++) {
 		for (int y = overlayY; y < 400; y++) {
 			int index = y * 640 + x;
-			buf[index] = g_engine->_room->paletteRemaps[1][buf[index]];
+			buf[index] = g_engine->_room->paletteRemaps[0][buf[index]];
 		}
 	}
 	return Common::Point(overlayX, overlayY);
