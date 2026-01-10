@@ -252,30 +252,22 @@ bool PelrockEngine::renderScene(int overlayMode) {
 	return false;
 }
 
-void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
-	debug("Performing action trigger: %d", actionTrigger);
-	switch (actionTrigger) {
-	case 257:
-		byte *palette = new byte[768];
-		if (_extraScreen == nullptr) {
-			_extraScreen = new byte[640 * 400];
-		}
-		_res->getExtraScreen(9, _extraScreen, palette);
-
-		g_system->getPaletteManager()->setPalette(palette, 0, 256);
-		extraScreenLoop();
-
-		_dialog->say(_res->_ingameTexts[SOHOT]);
-		_screen->markAllDirty();
-		_screen->update();
-
-		delete[] palette;
-		break;
-	}
-}
-
-
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
+
+	if(action == ITEM) {
+		int inventoryObject = _state.selectedInventoryItem;
+		for (const CombinationEntry *entry = combinationTable; entry->handler != nullptr; entry++) {
+			if (entry->inventoryObject == inventoryObject && entry->hotspotExtra == hotspot->extra) {
+				(this->*(entry->handler))(inventoryObject, hotspot);
+				return;
+			}
+		}
+		warning("No handler for using inventory object %d with hotspot %d", inventoryObject, hotspot->extra);
+		return;
+	}
+
+
+
 	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
 		if (entry->action == action && entry->hotspotExtra == hotspot->extra) {
 			// Found exact match - call the handler
@@ -284,7 +276,7 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 		}
 	}
 
-	// Try wildcard match (hotspotExtra == 0 means "any hotspot")
+	// Try wildcard match (hotspotExtra == -1 means "any hotspot")
 	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; ++entry) {
 		if (entry->action == action && entry->hotspotExtra == WILDCARD) {
 			(this->*(entry->handler))(hotspot);
@@ -1096,7 +1088,7 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 
 void PelrockEngine::pickupIconFlash() {
 	_graphics->showOverlay(65, _compositeBuffer);
-	InventoryObject item = _res->getInventoryObject(_currentHotspot->extra);
+	InventoryObject item = _res->getInventoryObject(_flashingIcon);
 	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 5, 400 - 60 - 5, 60, 60, 1);
 	}
@@ -1185,11 +1177,19 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		return NO_ACTION;
 	}
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-	for (int i = 0; i < actions.size(); i++) {
+	int loopEnd = _state.selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
+	for (int i = 0; i < loopEnd; i++) {
 		int actionX = _actionPopupState.x + 20 + (i * (kVerbIconWidth + 2));
 		int actionY = _actionPopupState.y + 20;
 		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
-		if (actionRect.contains(x, y)) {
+
+		if(i == actions.size()) {
+			// Check inventory item
+			if (actionRect.contains(x, y)) {
+				return ITEM;
+			}
+		}
+		else if (actionRect.contains(x, y)) {
 			return actions[i];
 		}
 	}

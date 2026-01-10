@@ -19,6 +19,8 @@
  *
  */
 
+#include "graphics/paletteman.h"
+
 #include "pelrock/actions.h"
 #include "pelrock.h"
 #include "pelrock/offsets.h"
@@ -38,61 +40,48 @@ const ActionEntry actionTable[] = {
 	{4, PICKUP, &PelrockEngine::pickUpBrick},    // Brick
 
 	// Generic handlers
-	{WILDCARD, PICKUP, &PelrockEngine::noOp}, // Generic pickup action
-	{WILDCARD, TALK, &PelrockEngine::noOp},   // Generic talk action
-	{WILDCARD, WALK, &PelrockEngine::noOp},   // Generic walk action
-	{WILDCARD, LOOK, &PelrockEngine::noOp},   // Generic look action
-	{WILDCARD, PUSH, &PelrockEngine::noOp},   // Generic push action
-	{WILDCARD, PULL, &PelrockEngine::noOp},   // Generic pull action
-	{WILDCARD, OPEN, &PelrockEngine::noOp},   // Generic open action
-	{WILDCARD, CLOSE, &PelrockEngine::noOp},  // Generic close action
+	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
+	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
+	{WILDCARD, WALK, &PelrockEngine::noOpAction},   // Generic walk action
+	{WILDCARD, LOOK, &PelrockEngine::noOpAction},   // Generic look action
+	{WILDCARD, PUSH, &PelrockEngine::noOpAction},   // Generic push action
+	{WILDCARD, PULL, &PelrockEngine::noOpAction},   // Generic pull action
+	{WILDCARD, OPEN, &PelrockEngine::noOpAction},   // Generic open action
+	{WILDCARD, CLOSE, &PelrockEngine::noOpAction},  // Generic close action
 
 	// End marker
 	{WILDCARD, NO_ACTION, nullptr}};
 
-// Handler implementations
+
+const CombinationEntry combinationTable[] = {
+	{2, 281, &PelrockEngine::useCardWithATM}, // Use ATM Card with ATM
+	// End marker
+	{WILDCARD, WILDCARD, nullptr}
+};
+
+	// Handler implementations
+void PelrockEngine::openDoor(HotSpot *hotspot) {
+	_room->addSticker(_res->getSticker(93), false);
+	_room->enableExit(0, false);
+}
+
 void PelrockEngine::openDrawer(HotSpot *hotspot) {
 	if (_room->hasSticker(91)) {
-		_dialog->say(_res->_ingameTexts[ALREADY_OPENED_M]);
+		_dialog->say(_res->_ingameTexts[YA_ABIERTO_M]);
 		return;
 	}
 	_room->addSticker(_res->getSticker(91));
 	// TODO: Check if we need to disable the hotspot
-	_room->disableHotspot(hotspot);
-}
-
-void PelrockEngine::closeDrawer(HotSpot *hotspot) {
-	_room->removeSticker(91);
-	_room->enableHotspot(hotspot);
-}
-
-void PelrockEngine::openDoor(HotSpot *hotspot) {
-	_room->addSticker(_res->getSticker(93), false);
-	_room->_currentRoomExits[0].isEnabled = true;
+	if(_room->findHotspotByExtra(1)->isEnabled &&
+	   _room->findHotspotByExtra(2)->isEnabled &&
+	   _room->findHotspotByExtra(3)->isEnabled) {
+	   _room->disableHotspot(hotspot);
+	}
 }
 
 void PelrockEngine::closeDoor(HotSpot *hotspot) {
 	_room->removeSticker(93);
-	_room->_currentRoomExits[0].isEnabled = false;
-}
-
-void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
-	if (_state.inventoryItems.size() == 0) {
-		_state.selectedInventoryItem = hotspot->extra;
-	}
-	int frameCounter = 0;
-	while (frameCounter < kIconFlashDuration) {
-		_events->pollEvent();
-
-		bool didRender = renderScene(OVERLAY_PICKUP_ICON);
-		_screen->update();
-		if (didRender) {
-			frameCounter++;
-		}
-		g_system->delayMillis(10);
-	}
-	_state.inventoryItems.push_back(hotspot->extra);
-	_room->disableHotspot(hotspot);
+	_room->disableExit(0, false);
 }
 
 void PelrockEngine::pickUpPhoto(HotSpot *hotspot) {
@@ -107,15 +96,98 @@ void PelrockEngine::pickUpBrick(HotSpot *hotspot) {
 	_room->addSticker(_res->getSticker(133));
 }
 
-void PelrockEngine::noOp(HotSpot *hotspot) {
-	// Do nothing
+void PelrockEngine::closeDrawer(HotSpot *hotspot) {
+	_room->removeSticker(91);
+	_room->enableHotspot(hotspot);
 }
+
+
+void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
+	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
+	if(_state.JEFE_INGRESA_PASTA) {
+		_state.JEFE_INGRESA_PASTA = 0;
+		addInventoryItem(75);
+	}
+	else {
+		int billCount = 0;
+		for(int i = 0; i < _state.inventoryItems.size(); i++) {
+			if(_state.inventoryItems[i] == 5) {
+				billCount++;
+			}
+		}
+		if(billCount < 13) {
+			addInventoryItem(5); // 1000 pesetas bill
+			_dialog->say(_res->_ingameTexts[109]);
+		}
+		else {
+			_dialog->say(_res->_ingameTexts[NOMONEY_LEFT]);
+		}
+
+	}
+}
+
+void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
+	addInventoryItem(hotspot->extra);
+	_room->disableHotspot(hotspot);
+}
+
+void PelrockEngine::addInventoryItem(int item) {
+	if (_state.inventoryItems.size() == 0) {
+		_state.selectedInventoryItem = item;
+	}
+	_flashingIcon = item;
+	int frameCounter = 0;
+	while (frameCounter < kIconFlashDuration) {
+		_events->pollEvent();
+
+		bool didRender = renderScene(OVERLAY_PICKUP_ICON);
+		_screen->update();
+		if (didRender) {
+			frameCounter++;
+		}
+		g_system->delayMillis(10);
+	}
+	_state.addInventoryItem(item);
+}
+
 
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
 	if(actionTrigger == 328) {
 		debug("Disabling root %d in room %d", rootIndex, room);
 		_state.setRootDisabledState(room, rootIndex, true);
 	}
+}
+
+void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
+	debug("Performing action trigger: %d", actionTrigger);
+	switch (actionTrigger) {
+	case 257:
+		byte *palette = new byte[768];
+		if (_extraScreen == nullptr) {
+			_extraScreen = new byte[640 * 400];
+		}
+		_res->getExtraScreen(9, _extraScreen, palette);
+
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		extraScreenLoop();
+
+		_dialog->say(_res->_ingameTexts[SOHOT]);
+		_screen->markAllDirty();
+		_screen->update();
+
+		delete[] palette;
+		break;
+	}
+}
+
+
+void PelrockEngine::noOpAction(HotSpot *hotspot) {
+	// Do nothing
+}
+
+
+void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
+	// Do nothing
 }
 
 } // End of namespace Pelrock

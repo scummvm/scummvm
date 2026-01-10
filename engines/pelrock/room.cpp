@@ -116,8 +116,18 @@ bool RoomManager::hasSticker(int index) {
 	return false;
 }
 
-void RoomManager::changeExit(Exit exit) {
-	g_engine->_state.roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, exit.index, exit});
+void RoomManager::changeExit(int index, bool enabled, bool persist) {
+	_currentRoomExits[index].isEnabled = enabled;
+	if(persist)
+		g_engine->_state.roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, _currentRoomExits[index].index, _currentRoomExits[index]});
+}
+
+void RoomManager::disableExit(int index, bool persist) {
+	changeExit(index, false, persist);
+}
+
+void RoomManager::enableExit(int index, bool persist) {
+	changeExit(index, true, persist);
 }
 
 void RoomManager::changeWalkBox(WalkBox walkbox) {

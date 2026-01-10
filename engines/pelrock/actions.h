@@ -35,8 +35,15 @@ struct ActionEntry {
 	void (PelrockEngine::*handler)(HotSpot *);
 };
 
+struct CombinationEntry {
+	int inventoryObject;
+	int hotspotExtra;
+	void (PelrockEngine::*handler)(int, HotSpot *);
+};
+
 // Action table for all rooms
 extern const ActionEntry actionTable[];
+extern const CombinationEntry combinationTable[];
 
 } // End of namespace Pelrock
 #endif // PELROCK_ACTIONS_H

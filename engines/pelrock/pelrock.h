@@ -133,9 +133,9 @@ private:
 	ActionPopupState _actionPopupState;
 
 	HotSpot *_currentHotspot = nullptr;
+	int _flashingIcon = -1;
 
 	Common::Point _curWalkTarget;
-
 	QueuedAction _queuedAction;
 
 	bool showShadows = false;
@@ -222,6 +222,7 @@ public:
 	void setScreen(int s, AlfredDirection dir);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 
+	void addInventoryItem(int item);
 	// Actions
 	void performActionTrigger(uint16 actionTrigger);
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
@@ -235,7 +236,9 @@ public:
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);
-	void noOp(HotSpot *hotspot);
+	void noOpAction(HotSpot *hotspot);
+	void noOpItem(int item, HotSpot *hotspot);
+	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
 };
 
 extern PelrockEngine *g_engine;

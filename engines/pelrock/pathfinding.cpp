@@ -142,10 +142,10 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 
 	// if (mouseHoverState == 1) {
 		// Hovering over hotspot - use hotspot center-bottom
-	if(hotspot != nullptr) {
-		sourceX = hotspot->x + hotspot->w / 2;
-		sourceY = hotspot->y + hotspot->h;
-	}
+	// if(hotspot != nullptr) {
+	// 	sourceX = hotspot->x + hotspot->w / 2;
+	// 	sourceY = hotspot->y + hotspot->h;
+	// }
 
 	// }
 

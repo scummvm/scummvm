@@ -45,7 +45,9 @@ public:
 	void addSticker(Sticker sticker, bool persist = true);
 	void removeSticker(int index);
 	bool hasSticker(int index);
-	void changeExit(Exit exit);
+	void changeExit(int index, bool enabled, bool persist = true);
+	void disableExit(int index, bool persist);
+	void enableExit(int index, bool persist);
 	void changeWalkBox(WalkBox walkbox);
 	void changeHotSpot(HotSpot hotspot);
 	/**

@@ -44,6 +44,7 @@ enum VerbIcon {
 	PULL,
 	OPEN,
 	CLOSE,
+	ITEM,
 	UNKNOWN,
 	NO_ACTION
 };
@@ -382,6 +383,8 @@ struct ResetEntry {
 
 
 struct GameStateData {
+	bool JEFE_INGRESA_PASTA = false;
+
 	GameState stateGame = INTRO;
 
 	Common::Array<byte> inventoryItems;
@@ -403,6 +406,18 @@ struct GameStateData {
 
 	void addDisabledBranch(ResetEntry entry) {
 		disabledBranches[entry.room].push_back(entry);
+	}
+
+	void addInventoryItem(int id) {
+		inventoryItems.push_back(id);
+	}
+	void removeInventoyItem(int id) {
+		for(int i = 0; i < inventoryItems.size(); i++) {
+			if (inventoryItems[i] == id) {
+				inventoryItems.remove_at(i);
+				return;
+			}
+		}
 	}
 
 	byte *conversationRootsState = new byte[4 * 56];
