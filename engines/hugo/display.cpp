@@ -106,6 +106,8 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 	}
 	_fnt = 0;
 	_paletteSize = 0;
+
+	_frontSurface.init(320, 200, 320, _frontBuffer, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Screen::~Screen() {
@@ -475,23 +477,13 @@ void Screen::userHelp() const {
 void Screen::drawStatusText() {
 	debugC(4, kDebugDisplay, "drawStatusText()");
 
-	loadFont(U_FONT8);
-	uint16 sdx = stringLength(_vm->_statusLine);
-	uint16 sdy = fontHeight() + 1;                  // + 1 for shadow
-	uint16 posX = 0;
-	uint16 posY = kYPix - sdy;
+	// Draw score line at top row
+	Common::Rect scoreRect = drawDosText(0, 0, _vm->_scoreLine, _TCYAN);
+	displayList(kDisplayAdd, scoreRect.left, scoreRect.top, scoreRect.width(), scoreRect.height());
 
-	// Display the string and add rect to display list
-	writeStr(posX, posY, _vm->_statusLine, _TLIGHTYELLOW);
-	displayList(kDisplayAdd, posX, posY, sdx, sdy);
-
-	sdx = stringLength(_vm->_scoreLine);
-	posY = 0;
-
-	//Display a black behind the score line
-	_vm->_screen->drawRectangle(true, 0, 0, kXPix, 8, _TBLACK);
-	writeStr(posX, posY, _vm->_scoreLine, _TCYAN);
-	displayList(kDisplayAdd, posX, posY, sdx, sdy);
+	// Draw status line at bottom row
+	Common::Rect statusRect = drawDosText(0, kMaxTextRows - 1, _vm->_statusLine, _TLIGHTYELLOW);
+	displayList(kDisplayAdd, statusRect.left, statusRect.top, statusRect.width(), statusRect.height());
 }
 
 void Screen::drawShape(const int x, const int y, const int color1, const int color2) {
@@ -538,6 +530,35 @@ void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, 
 			_frontBuffer[320 * y2Clip + i] = color;
 		}
 	}
+}
+
+/**
+ * Draws text to the screen using DOS font with a black background
+ *
+ * Coordinates are in text: x = 0-39, y = 0-24.
+ * Returns screen rectangle of drawn text so that it can be invalidated.
+ */
+Common::Rect Screen::drawDosText(byte x, byte y, const char *text, byte color) {
+	// Calculate text length
+	assert(x < kMaxTextCols);
+	assert(y < kMaxTextRows);
+	int textLength = strlen(text);
+	if (x + textLength > kMaxTextCols) {
+		textLength = kMaxTextCols - x;
+	}
+
+	// Draw black background
+	int sx = x * 8;
+	int sy = y * 8;
+	Common::Rect rect(sx, sy, sx + (textLength * 8), sy + 8);
+	_frontSurface.fillRect(rect, _TBLACK);
+
+	// Draw text
+	for (int i = 0; i < textLength; i++) {
+		_dosFont.drawChar(&_frontSurface, (byte)text[i], sx, sy, color);
+		sx += 8;
+	}
+	return rect;
 }
 
 /**
