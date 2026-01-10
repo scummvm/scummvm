@@ -294,8 +294,10 @@ Common::Error HugoEngine::run() {
 		return Common::kUnknownError;
 
 	// Use Windows-looking mouse cursor
-	_screen->setCursorPal();
-	_screen->resetInventoryObjId();
+	if (useWindowsInterface()) {
+		_screen->setCursorPal();
+		_screen->resetInventoryObjId();
+	}
 
 	_scheduler->initCypher();
 
@@ -363,7 +365,9 @@ Common::Error HugoEngine::run() {
 			_file->instructions();
 		}
 
-		_mouse->mouseHandler();                     // Mouse activity - adds to display list
+		if (useWindowsInterface()) {
+			_mouse->mouseHandler();                 // Mouse activity - adds to display list
+		}
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_status._doQuitFl |= shouldQuit();           // update game quit flag
 	}
@@ -417,7 +421,9 @@ void HugoEngine::runMachine() {
 		}
 		break;
 	case kViewPlay:                                 // Playing game
-		_screen->showCursor();
+		if (useWindowsInterface()) {
+			_screen->showCursor();
+		}
 		_parser->charHandler();                     // Process user cmd input
 		_object->moveObjects();                     // Process object movement
 		_scheduler->runScheduler();                 // Process any actions
