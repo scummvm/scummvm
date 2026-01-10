@@ -21,11 +21,7 @@
 
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
-#include "common/scummsys.h"
 #include "image/codecs/truemotion1.h"
-
-#ifdef IMAGE_CODECS_TRUEMOTION1_H
-
 #include "image/codecs/truemotion1data.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -427,5 +423,3 @@ const Graphics::Surface *TrueMotion1Decoder::decodeFrame(Common::SeekableReadStr
 }
 
 } // End of namespace Image
-
-#endif

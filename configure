@@ -297,14 +297,18 @@ _need_memalign=yes
 _have_x86=no
 _have_amd64=no
 _imgui=yes
+_cdtoons=auto
 _indeo3=auto
 _indeo45=auto
 _hnm=auto
+_jyv1=auto
 _qdm2=auto
 _fmtowns_pc98_audio=auto
 _sid_audio=auto
 _svq1=auto
+_truemotion1=auto
 _vgmtrans_audio=auto
+_xan=auto
 _midi=auto
 _universaltracker=auto
 
@@ -328,6 +332,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Components are features which may be disabled if unused by the engines
+add_component cdtoons "CDTOONS" "_cdtoons" "USE_CDTOONS"
 add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component gif "GIF" "_gif" "USE_GIF"
@@ -335,6 +340,7 @@ add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
 add_component indeo3 "Indeo 3" "_indeo3" "USE_INDEO3"
 add_component indeo45 "Indeo 4&5" "_indeo45" "USE_INDEO45"
+add_component jyv1 "JYV1" "_jyv1" "USE_JYV1"
 add_component lua "Lua" "_lua" "USE_LUA"
 add_component vpx "libvpx" "_vpx" "USE_VPX"
 add_component theoradec "libtheoradec" "_theoradec" "USE_THEORADEC"
@@ -345,8 +351,10 @@ add_component qdm2 "QDM2" "_qdm2" "USE_QDM2"
 add_component sid_audio "SID audio" "_sid_audio" "USE_SID_AUDIO"
 add_component svq1 "Sorenson Video 1" "_svq1" "USE_SVQ1"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
+add_component truemotion1 "TrueMotion 1" "_truemotion1" "USE_SVQ1"
 add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
+add_component xan "XAN" "_xan" "USE_XAN"
 
 # The following list of features cannot be declared as components
 # because they are used in the common code:

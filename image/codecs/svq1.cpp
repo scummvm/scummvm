@@ -22,10 +22,6 @@
 // Sorenson Video 1 Codec
 // Based off FFmpeg's SVQ1 decoder (written by Arpi and Nick Kurshev)
 
-#include "common/scummsys.h"
-
-#ifdef USE_SVQ1
-
 #include "image/codecs/svq1.h"
 #include "image/codecs/svq1_cb.h"
 #include "image/codecs/svq1_vlc.h"
@@ -806,5 +802,3 @@ bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *curre
 }
 
 } // End of namespace Image
-
-#endif
