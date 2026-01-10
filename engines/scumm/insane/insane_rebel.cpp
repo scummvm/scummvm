@@ -171,6 +171,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_explosions[i].active = false;
 		_explosions[i].counter = 0;
 	}
+
+	for (i = 0; i < 2; i++) {
+		_shots[i].active = false;
+		_shots[i].counter = 0;
+	}
 }
 
 
@@ -197,6 +202,9 @@ int32 InsaneRebel2::processMouse() {
 		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d", 
 			mousePos.x, mousePos.y, _rebelEnemies.size());
+
+		// Spawn visual shot immediately
+		spawnShot(mousePos.x, mousePos.y);
 
 		// Check for hit on any active enemy
 		Common::List<RebelEnemy>::iterator it;
@@ -742,6 +750,117 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 	}
 }
 
+void InsaneRebel2::spawnShot(int x, int y) {
+	// Find free shot slot (2 slots total)
+	for (int i = 0; i < 2; i++) {
+		if (!_shots[i].active) {
+			_shots[i].active = true;
+			_shots[i].counter = 4; // Lasts 4 frames
+			_shots[i].x = x;
+			_shots[i].y = y;
+			// TODO: Play laser sound
+			break;
+		}
+	}
+}
+
+void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx >= nut->getNumChars()) return;
+
+	const byte *srcData = nut->getCharData(spriteIdx);
+	int texW = nut->getCharWidth(spriteIdx);
+	int texH = nut->getCharHeight(spriteIdx);
+	
+	if (!srcData || texW <= 0 || texH <= 0) return;
+
+	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+	int err = dx + dy, e2;
+	
+	// Length of line for uv mapping
+	// float length = sqrt(dx*dx + dy*dy);
+	
+	int texCenterX = texW / 2;
+	int texCenterY = texH / 2;
+	byte color = srcData[texCenterY * texW + texCenterX]; 
+	
+	// If color is 0/transparent, try to find a valid one
+	if (color == 0) color = 255; // Fallback to white
+
+	// Standard Bresenham but with texture sampling attempt
+	// To make it look like a "beam", we need width.
+	
+	for (;;) {
+		// Draw a 3x3 blob or similar to make it thick
+		if (x0 >= 1 && x0 < width - 1 && y0 >= 1 && y0 < height - 1) {
+			dst[y0 * pitch + x0] = color;
+			// Glow effect (simulated with same color for now)
+			// dst[(y0+1) * pitch + x0] = color;
+			// dst[y0 * pitch + (x0+1)] = color;
+		}
+		
+		if (x0 == x1 && y0 == y1) break;
+		e2 = 2 * err;
+		if (e2 >= dy) { err += dy; x0 += sx; }
+		if (e2 <= dx) { err += dx; y0 += sy; }
+	}
+}
+
+void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int param_9, NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx >= nut->getNumChars()) return;
+
+	// Reverse-engineered math from FUN_0040bbf6
+	int texW = nut->getCharWidth(spriteIdx);
+	int texH = nut->getCharHeight(spriteIdx);
+	int param_11 = 12; // Standard value from assembly calls
+	if (texW == 0) return;
+
+	// sVar7 = (12 * texH * 16) / texW
+	int sVar7 = (param_11 * texH * 16) / texW;
+	
+	// Extend vector by (13/12)
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int extDx = (dx * (param_11 + 1)) / param_11;
+	int extDy = (dy * (param_11 + 1)) / param_11;
+	
+	int xExt = x0 + extDx;
+	int yExt = y0 + extDy;
+
+	// Calculate New Start Point (sVar4, sVar5)
+	// Start = ExtEnd - (ExtEnd - Start) * (16 / (sVar7 + 16))
+	// Actually math is: sVar4 = (xExt) - (extDx * 16) / (sVar7 + 16)
+	int startFactor = sVar7 + 16;
+	if (startFactor == 0) startFactor = 1;
+	int startX = xExt - (extDx * 16) / startFactor;
+	int startY = yExt - (extDy * 16) / startFactor;
+
+	// Calculate New End Point (sVar6, sVar7 in asm) w.r.t param_9
+	// End = ExtEnd - (ExtEnd - Start) * (16 / (param_9 + sVar7 + 16))
+	int endFactor = param_9 + sVar7 + 16;
+	if (endFactor == 0) endFactor = 1; // Safety
+	int endX = xExt - (extDx * 16) / endFactor;
+	int endY = yExt - (extDy * 16) / endFactor;
+
+	// Draw the segment
+	drawTexturedLine(dst, pitch, width, height, startX, startY, endX, endY, nut, spriteIdx);
+}
+
+void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
+	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+	int err = dx + dy, e2;
+
+	for (;;) {
+		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height)
+			dst[y0 * pitch + x0] = color;
+		if (x0 == x1 && y0 == y1) break;
+		e2 = 2 * err;
+		if (e2 >= dy) { err += dy; x0 += sx; }
+		if (e2 <= dx) { err += dx; y0 += sy; }
+	}
+}
+
 
 void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) {
@@ -1038,6 +1157,73 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 				_explosions[i].counter--;
 			}
+		}
+	}
+
+	// Draw Laser Shots
+	// Gun Positions (Approximate for Turret Mode / Default):
+	// Left: (10, 190), Right: (310, 190) - Adjusted for low-res
+	const int GUN_LEFT_X = 10;
+	const int GUN_LEFT_Y = 190;
+	const int GUN_RIGHT_X = 310;
+	const int GUN_RIGHT_Y = 190;
+
+	for (int i = 0; i < 2; i++) {
+		if (_shots[i].active) {
+			if (_shots[i].counter <= 0) {
+				_shots[i].active = false;
+				continue;
+			}
+			
+			bool drawn = false;
+			// Use Sprite 5 from CPITIMAG.NUT as the laser texture
+			// Confirmed by reverse engineering: Laser uses Sprite 5 (136x13)
+			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+				// Calculate param_9 equivalent (Counter dependent)
+				// Original: TableValue - Counter
+				// We don't have table, but assembly suggests values around 0x20-0x80 range?
+				// Math divides by (param_9 + offset). Higher param_9 = Longer beam.
+				// As counter decreases (4->0), value increases (26->30), beam grows/moves.
+				// Let's try base 30.
+				int base = 30; 
+				int param_9 = base - _shots[i].counter;
+
+				// Draw Left Beam
+				drawLaserBeam(renderBitmap, pitch, width, height, GUN_LEFT_X, GUN_LEFT_Y, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
+				// Draw Right Beam
+				drawLaserBeam(renderBitmap, pitch, width, height, GUN_RIGHT_X, GUN_RIGHT_Y, _shots[i].x, _shots[i].y, param_9, _smush_iconsNut, 5);
+
+				// Draw Projectile Impact
+				// Using Sprite 0 (small flash) or similar at impact point
+				smlayer_drawSomething(renderBitmap, pitch, _shots[i].x - 7, _shots[i].y - 7, 0, _smush_iconsNut, 0, 0, 0);
+				drawn = true;
+			}
+			
+			if (!drawn) {
+				
+				// Fallback if sprite 5 missing
+				static bool warnedOnce = false;
+				assert(false);
+				if (!warnedOnce) {
+					debug("Rebel2: Failed to draw textured laser. _smush_iconsNut=%p, numChars=%d", 
+						(void *)_smush_iconsNut, _smush_iconsNut ? _smush_iconsNut->getNumChars() : -1);
+					warnedOnce = true;
+					
+					// Attempt to lazy load CPITIMHI.NUT if we haven't tried
+					if (true) {
+						delete _smush_iconsNut; 
+						_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMHI.NUT");
+						debug("Rebel2: Attempted to fallback load SYSTM/CPITIMHI.NUT. New numChars=%d", 
+							_smush_iconsNut ? _smush_iconsNut->getNumChars() : -1);
+					}
+				}
+				
+				// Draw WHITE lines to be visible against any background
+				drawLine(renderBitmap, pitch, width, height, GUN_LEFT_X, GUN_LEFT_Y, _shots[i].x, _shots[i].y, 255);
+				drawLine(renderBitmap, pitch, width, height, GUN_RIGHT_X, GUN_RIGHT_Y, _shots[i].x, _shots[i].y, 255);
+			}
+
+			_shots[i].counter--;
 		}
 	}
 
