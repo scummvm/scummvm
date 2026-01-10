@@ -152,6 +152,9 @@ public:
 	int16 _playerLives;
 	int32 _playerScore;
 
+	int _viewX;
+	int _viewY;
+
 
 	struct Shot {
 		bool active;
