@@ -862,8 +862,7 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	auto &dst = _vr.getSurface();
 	Graphics::Surface *src = thumbnail.convertTo(dst.format);
 	src->flipVertical(src->getRect());
-	static const uint8 mapFaceId[] = {0, 3, 2, 1, 5, 4};
-	y += mapFaceId[face] * 4 * 256;
+	y += face * 4 * 256;
 	if (x > 256) {
 		x -= 256;
 		y += 256;
