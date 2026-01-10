@@ -65,6 +65,10 @@ private:
 	static void cb_Options_Game_Done(void *, void *);
 	static void cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu);
 	static void cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myMenu);
+	static void setDigiVolume(uint16 volume);
+	static void setDigiVolumePerc(uint8 volumePerc);
+	static uint16 getDigiVolume();
+	static uint8 getDigiVolumePerc();
 
 public:
 	static void show(RGB8 *myPalette);

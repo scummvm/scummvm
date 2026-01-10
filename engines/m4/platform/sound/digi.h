@@ -102,8 +102,6 @@ public:
 	bool play_state(int channel) const;
 	void change_volume(int channel, int vol);
 
-	void set_overall_volume(int vol);
-	int get_overall_volume();
 	int32 ticks_to_play(const char *name, int roomNum = -1);
 	void change_panning(int val1, int val2);
 };
@@ -120,8 +118,6 @@ void digi_read_another_chunk();
 void digi_stop(int channel);
 bool digi_play_state(int channel);
 void digi_change_volume(int channel, int vol);
-void digi_set_overall_volume(int vol);
-int digi_get_overall_volume();
 int32 digi_ticks_to_play(const char *name, int roomNum = -1);
 void digi_change_panning(int val1, int val2);
 

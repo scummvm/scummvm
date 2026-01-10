@@ -89,9 +89,10 @@ Common::Error M4Engine::run() {
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
-	syncSoundSettings();
 
 	if (vars->init()) {
+		syncSoundSettings();
+
 		// Set the console
 		setupConsole();
 
@@ -141,10 +142,13 @@ void M4Engine::m4_inflight() {
 void M4Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	const int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
-
 	_G(midi).syncSoundSettings();
+}
+
+void M4Engine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	_G(midi).pause(pause);
 }
 
 bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -267,10 +271,12 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 
 	} else {
 		s.syncAsByte(_G(kernel).restore_game);
-		s.syncAsSint32LE(_G(game).digi_overall_volume_percent);
-		int32 midi_volume_percent = ConfMan.getInt("music_volume") * 100 / 255;
+		int32 sfx_volume_percent = ConfMan.getInt("sfx_volume") * 100 / 256;
+		s.syncAsSint32LE(sfx_volume_percent);
+		ConfMan.setInt("sfx_volume", sfx_volume_percent * 256 / 100);
+		int32 midi_volume_percent = ConfMan.getInt("music_volume") * 100 / 256;
 		s.syncAsSint32LE(midi_volume_percent);
-		ConfMan.setInt("music_volume", midi_volume_percent * 255 / 100);
+		ConfMan.setInt("music_volume", midi_volume_percent * 256 / 100);
 		s.syncAsByte(_G(kernel).camera_pan_instant);
 	}
 
@@ -295,7 +301,6 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 		_G(between_rooms) = true;
 		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
-		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
 		syncSoundSettings();
 		interface_show();
 	}

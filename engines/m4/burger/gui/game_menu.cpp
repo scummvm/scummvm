@@ -38,6 +38,8 @@
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
 
+#include "common/config-manager.h"
+
 namespace M4 {
 namespace Burger {
 namespace GUI {
@@ -254,7 +256,7 @@ enum option_menu_item_tags {
 
 void OptionsMenu::cb_Options_Game_Cancel(void *, void *) {
 	// Reset values of items to what they were when options menu came up
-	digi_set_overall_volume(_GM(remember_digi_volume));
+	setDigiVolume(_GM(remember_digi_volume));
 	_G(flags)[digestability] = _GM(remember_digestability);
 
 	// Destroy the options menu
@@ -276,7 +278,7 @@ void OptionsMenu::cb_Options_Game_Done(void *, void *) {
 
 void OptionsMenu::cb_Options_Digi(menuItemHSlider *myItem, guiMenu *myMenu) {
 	// Set the digi volume
-	digi_set_overall_volume(myItem->percent);
+	setDigiVolumePerc(myItem->percent);
 	term_message("digi volume: %d", myItem->percent);
 
 	// This scroller control has been moved, so make sure that the DONE button is not greyed out
@@ -325,14 +327,14 @@ void OptionsMenu::show(RGB8 *myPalette) {
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_CANCEL, OM_CANCEL_X, OM_CANCEL_Y, OM_CANCEL_W, OM_CANCEL_H, cb_Options_Game_Cancel, menuItemButton::BTN_TYPE_OM_CANCEL);
 	menuItemButton::add(_GM(opMenu), OM_TAG_DONE, OM_DONE_X, OM_DONE_Y, OM_DONE_W, OM_DONE_H, cb_Options_Game_Done, menuItemButton::BTN_TYPE_OM_DONE, true);
-	menuItemHSlider::add(_GM(opMenu), OM_TAG_DIGI, OM_DIGI_X, OM_DIGI_Y, OM_DIGI_W, OM_DIGI_H, digi_get_overall_volume(),
+	menuItemHSlider::add(_GM(opMenu), OM_TAG_DIGI, OM_DIGI_X, OM_DIGI_Y, OM_DIGI_W, OM_DIGI_H, getDigiVolumePerc(),
 		(CALLBACK)cb_Options_Digi, true);
 	menuItemHSlider::add(_GM(opMenu), OM_TAG_DIGESTABILITY, OM_DIGESTABILITY_X, OM_DIGESTABILITY_Y,
 		OM_DIGESTABILITY_W, OM_DIGESTABILITY_H, _G(flags)[digestability],
 		(CALLBACK)cb_Options_Digestability, true);
 
 	// Remember the values of the items in case the user cancels
-	_GM(remember_digi_volume) = digi_get_overall_volume();
+	_GM(remember_digi_volume) = getDigiVolume();
 	_GM(remember_digestability) = _G(flags)[digestability];
 
 	// Configure the game so pressing <esc> will cause the menu to disappear and the gamemenu to reappear
@@ -340,6 +342,23 @@ void OptionsMenu::show(RGB8 *myPalette) {
 
 	vmng_screen_show((void *)_GM(opMenu));
 	LockMouseSprite(0);
+}
+
+void OptionsMenu::setDigiVolume(uint16 volume) {
+	ConfMan.setInt("sfx_volume", volume);
+	g_engine->syncSoundSettings();
+}
+
+void OptionsMenu::setDigiVolumePerc(uint8 volumePerc) {
+	setDigiVolume(volumePerc * 256 / 100);
+}
+
+uint16 OptionsMenu::getDigiVolume() {
+	return ConfMan.getInt("sfx_volume");
+}
+
+uint8 OptionsMenu::getDigiVolumePerc() {
+	return getDigiVolume() * 100 / 256;
 }
 
 //------------------------------------------------------------------------------------//

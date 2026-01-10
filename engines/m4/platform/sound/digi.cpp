@@ -206,14 +206,6 @@ void Digi::change_volume(int channel, int vol) {
 	_mixer->setChannelVolume(_channels[channel]._soundHandle, vol);
 }
 
-void Digi::set_overall_volume(int vol) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
-}
-
-int Digi::get_overall_volume() {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-}
-
 int32 Digi::ticks_to_play(const char *name, int roomNum) {
 	// Get the file and retrieve it's size
 	Common::String filename = expand_name_2_RAW(name, roomNum);
@@ -267,14 +259,6 @@ bool digi_play_state(int channel) {
 
 void digi_change_volume(int channel, int vol) {
 	_G(digi).change_volume(channel, vol);
-}
-
-void digi_set_overall_volume(int vol) {
-	_G(digi).set_overall_volume(vol);
-}
-
-int digi_get_overall_volume() {
-	return _G(digi).get_overall_volume();
 }
 
 int32 digi_ticks_to_play(const char *name, int roomNum) {
