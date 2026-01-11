@@ -202,7 +202,7 @@ int32 InsaneRebel2::processMouse() {
 	int32 buttons = 0;
 
 	// Get button state directly from event manager (SCUMM VARs aren't updated during SMUSH)
-	static bool wasPressed = false;
+	bool wasPressed = false;
 	bool isPressed = (_vm->_system->getEventManager()->getButtonState() & 1) != 0;
 	
 	// Edge detection: only trigger on button press (not hold)
@@ -806,7 +806,7 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 }
 
 // Helper: draw a textured segment between two points using the game's original routine (FUN_00429360 port)
-static void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8) {
+void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8) {
 	// Ported from FUN_00429360 (decompiled). Only 0 in texture is transparent.
 	int sVar4 = 0;                // left
 	int sVar1 = 0;                // top
@@ -1190,13 +1190,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 					}
 				}
 			}
-			
-			static bool debugEmbeddedOnce[5] = {false};
-			if (!debugEmbeddedOnce[hudSlot]) {
-				debug("Rebel2: Drawing embedded HUD slot %d (%dx%d) at (%d,%d)", 
-					hudSlot, frame.width, frame.height, destX, destY);
-				debugEmbeddedOnce[hudSlot] = true;
-			}
 		}
 	}
 	
@@ -1209,23 +1202,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	//   - Sprites 2-5: Difficulty stars (1-4 stars, drawn at 0,0)
 	//   - Sprite 6: Shield bar fill (drawn with clip rect X=0x3f, Y=9, W=64, H=6)
 	//   - Sprite 7: Shield alert (flashing red when shields critical)
-	//
-	// All sprites are drawn to buffer at (0,0), buffer composited at Y=180
-	// For ScummVM, we draw directly at Y=statusBarY
 	if (_smush_cockpitNut) {
-		// Debug: Log DISPFONT.NUT sprite info once
-		/*static bool loggedDispfont = false;
-		if (!loggedDispfont) {
-			int numSprites = _smush_cockpitNut->getNumChars();
-			debug("Rebel2: DISPFONT.NUT has %d sprites, statusBarY=%d:", numSprites, statusBarY);
-			for (int i = 0; i < numSprites && i < 10; i++) {
-				int sw = _smush_cockpitNut->getCharWidth(i);
-				int sh = _smush_cockpitNut->getCharHeight(i);
-				debug("  Sprite %d: %dx%d", i, sw, sh);
-			}
-			loggedDispfont = true;
-		}*/
-		
 		// Draw status bar background frame (sprite 1) at (0, statusBarY)
 		// This sprite is the full-width status bar background
 		if (_smush_cockpitNut->getNumChars() > 1) {
@@ -1302,15 +1279,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		
 		// Draw score - uses FUN_00434cb0 (text rendering) at X=0x101(257)
 		// TODO: Implement score rendering
-	} else {
-		static bool warnedNullOnce = false;
-		if (!warnedNullOnce) {
-			debug("Rebel2: WARNING - _smush_cockpitNut (DISPFONT.NUT) is null!");
-			warnedNullOnce = true;
-		}
-	}
-
-
+	} 
 
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -1330,7 +1299,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// Draw Green Indicators (Corner Brackets) for Easy (0) and Medium (1) difficulty
 			// Hard (2) mode does not show indicators.
 			if (_difficulty < 2) {
-				const byte color = 5; // Green (Standard VGA Index 10)
+				const byte color = 5; // Green color index for brackets
 				// Clip the rect to screen bounds for drawing logic is handled inside drawLine if implemented safely,
 				// but drawCornerBrackets relies on drawLine which iterates.
 				// We pass full screen width/height to safe-guard.
@@ -1469,14 +1438,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (_smush_iconsNut->getNumChars() > reticleIndex) {
 			int cw = _smush_iconsNut->getCharWidth(reticleIndex);
 			int ch = _smush_iconsNut->getCharHeight(reticleIndex);
-			
-			static bool debugCrosshairOnce = false;
-			if (!debugCrosshairOnce) {
-				debug("Rebel2: Drawing crosshair sprite %d at (%d,%d) size %dx%d", 
-					reticleIndex, _vm->_mouse.x - cw / 2, _vm->_mouse.y - ch / 2, cw, ch);
-				debugCrosshairOnce = true;
-			}
-			
 			// Center the crosshair on mouse position (in world coordinates)
 			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
 		}
