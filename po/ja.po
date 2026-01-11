@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-09 17:16+0000\n"
-"PO-Revision-Date: 2025-10-05 13:36+0000\n"
+"PO-Revision-Date: 2026-01-11 10:22+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Japanese\n"
 
 #: audio/mac_plugin.cpp:30
@@ -3669,18 +3669,15 @@ msgid "Start anyway"
 msgstr "承知して開始"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"警告：このゲームはまだ完全なサポートがなされていません。動作が安定せず、また"
-"将来的にセーブデータの互換性が失われる可能性があります。"
+"警告：このゲームは、ScummVMで完全にはサポートしていないアドオン「%s」を含みま"
+"す。そのため動作が安定せず、将来的にセーブデータの互換性が無くなるかもしれま"
+"せん。"
 
 #: engines/engine.cpp:852
 #, c-format
@@ -5259,10 +5256,8 @@ msgid "The game saves couldn't be backed up"
 msgstr "シェーダーを変更できませんでした"
 
 #: backends/platform/android/options.cpp:286
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while saving the backup."
-msgstr "セーブデータ出力時にエラーが発生しました"
+msgstr "バックアップ中にエラーが発生しました。"
 
 #: backends/platform/android/options.cpp:293
 msgid ""
@@ -5283,10 +5278,8 @@ msgid "The backup has been restored successfully."
 msgstr "バックアップが正常に復元されました。"
 
 #: backends/platform/android/options.cpp:319
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An error occured while restoring the backup."
-msgstr "セーブデータ出力時にエラーが発生しました"
+msgstr "復元中にエラーが発生しました。"
 
 #: backends/platform/android/options.cpp:572
 msgid "Remove"
@@ -11749,10 +11742,8 @@ msgid "Display SFX subtitles"
 msgstr "字幕の切替"
 
 #: engines/private/metaengine.cpp:40
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "音声合成で字幕を読み上げる(利用可能な場合のみ)"
+msgstr "SFX字幕を使用します(有効な場合)。"
 
 #: engines/private/metaengine.cpp:50
 #, fuzzy
@@ -13330,10 +13321,8 @@ msgid "Enable ambience sounds"
 msgstr "音声を有効にする"
 
 #: engines/scumm/metaengine.cpp:853
-#, fuzzy
-#| msgid "Enable sound"
 msgid "Enable ambience sounds."
-msgstr "音声を有効にする"
+msgstr "環境音を有効にします。"
 
 #: engines/scumm/metaengine.cpp:981
 #, fuzzy
