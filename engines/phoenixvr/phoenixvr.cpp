@@ -242,7 +242,7 @@ void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int l
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &h, Audio::makeWAVStream(f.release(), DisposeAfterUse::YES), -1, volume);
 	if (loops < 0)
 		_mixer->loopChannel(h);
-	_sounds[sound] = Sound{h, spatial, angle, volume};
+	_sounds[sound] = Sound{h, spatial, angle, volume, loops};
 }
 
 void PhoenixVREngine::stopSound(const Common::String &sound) {
@@ -679,6 +679,8 @@ void PhoenixVREngine::captureContext() {
 	Common::Array<SoundState> sounds, sounds3d;
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
+		if (sound.loops >= 0)
+			continue;
 		if (sound.spatial)
 			sounds3d.push_back({kv._key, sound.volume, fromAngle(sound.angle)});
 		else

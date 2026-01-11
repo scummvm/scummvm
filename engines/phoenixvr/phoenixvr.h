@@ -187,6 +187,7 @@ private:
 		bool spatial;
 		float angle;
 		uint8 volume;
+		int loops;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
