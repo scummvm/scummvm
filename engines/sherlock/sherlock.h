@@ -234,6 +234,74 @@ protected:
 	 */
 	virtual void loadConfig();
 public:
+	// ===== 3DO Talkie Support =====
+
+	/**
+	 * Talkie mode enumeration - defines how conversations are displayed
+	 */
+	enum TalkieMode {
+		TALKIE_NONE = 0,        // Original PC mode - static portraits, no voice
+		TALKIE_AUDIO_ONLY = 1   // Hybrid mode - PC portraits with 3DO voice acting
+	};
+
+	/**
+	 * Get the current talkie mode
+	 * @return Current talkie mode setting
+	 */
+	TalkieMode getTalkieMode() const { return _talkieMode; }
+
+	/**
+	 * Set the talkie mode
+	 * @param mode The talkie mode to use
+	 */
+	void setTalkieMode(TalkieMode mode);
+
+	/**
+	 * Check if 3DO assets are available
+	 * @return true if 3DO video files are detected
+	 */
+	bool has3DOAssets() const { return _has3DOAssets; }
+
+	/**
+	 * Get 3DO assets base path
+	 * @return Path to 3DO assets directory
+	 */
+	const Common::Path &get3DOAssetsPath() const { return _3doAssetsPath; }
+
+	/**
+	 * Construct full path to a 3DO video file
+	 * @param videoFile The video filename
+	 * @return Full path to the video file
+	 */
+	Common::Path get3DOVideoPath(const Common::String &videoFile) const;
+
+	/**
+	 * Check if a specific 3DO video file exists
+	 * @param videoFile The video filename
+	 * @return true if the file exists
+	 */
+	bool has3DOVideo(const Common::String &videoFile) const;
+
+protected:
+	/**
+	 * Detect if 3DO assets are present in the game directory
+	 * Called during engine initialization
+	 */
+	void detect3DOAssets();
+
+	/**
+	 * Register default configuration settings for talkie mode
+	 */
+	void registerTalkieSettings();
+
+	/**
+	 * Load talkie configuration from config file
+	 */
+	void loadTalkieConfig();
+
+	// ===== 3DO Talkie Support =====
+
+public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
 	Debugger *_debugger;
@@ -260,6 +328,13 @@ public:
 	bool _interactiveFl;
 	bool _isScreenDoubled;
 	bool _startupAutosave;
+
+	// ===== talkie member variables =====
+	TalkieMode _talkieMode;         // Current talkie mode
+	bool _has3DOAssets;             // Whether 3DO video files are available
+	Common::Path _3doAssetsPath;    // Path to 3DO assets directory
+	// ===== talkie member variables =====
+
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	~SherlockEngine() override;

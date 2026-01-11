@@ -55,6 +55,12 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close() override;
 
+	/**
+	 * Check if the audio track has finished playing.
+	 * Returns true if all queued audio has been played.
+	 */
+	bool isAudioTrackFinished() const;
+
 protected:
 	void readNextPacket() override;
 	bool supportsAudioTrackSwitching() const override { return true; }
@@ -103,6 +109,7 @@ private:
 		void queueAudio(Common::SeekableReadStream *stream, uint32 size);
 
 		bool matchesId(uint trackId);
+		bool endOfTrack() const override;
 
 	protected:
 		Audio::AudioStream *getAudioStream() const override;
@@ -113,6 +120,7 @@ private:
 
 	public:
 		uint32 getTotalAudioQueued() const { return _totalAudioQueued; }
+		void setFinished() { _audioStream->finish(); }
 
 	private:
 		int16 decodeSample(uint8 dataNibble);
@@ -131,6 +139,6 @@ private:
 	Common::Array<StreamAudioTrack *> _audioTracks;
 };
 
-} // End of namespace Sherlock
+} // End of namespace Video
 
 #endif

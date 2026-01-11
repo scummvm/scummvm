@@ -1794,6 +1794,9 @@ void ScalpelUserInterface::doTalkControl() {
 			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowUp);
 			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowDown);
 
+			// Set the 3DO dialogue selection index for video mapping
+			((ScalpelTalk &)talk).set3DODialogueSelection(_selector);
+
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
 				journal.record(talk._converseNum, _selector);
@@ -1897,6 +1900,9 @@ void ScalpelUserInterface::doTalkControl() {
 							break;
 						} else {
 							_selector = select;
+
+							// Set the 3DO dialogue selection index for video mapping
+							((ScalpelTalk &)talk).set3DODialogueSelection(_selector);
 
 							if (!talk._talkHistory[talk._converseNum][_selector])
 								journal.record(talk._converseNum, _selector);
