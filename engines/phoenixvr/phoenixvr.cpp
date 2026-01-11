@@ -867,12 +867,24 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	Graphics::Surface *src = thumbnail.convertTo(dst.format);
 	src->flipVertical(src->getRect());
 	y += face * 4 * 256;
+	bool splitV = true;
 	if (x > 256) {
 		x -= 256;
 		y += 256;
+		splitV = false;
 	}
-	// FIXME: clip vertically here.
-	dst.copyRectToSurface(*src, x, y, src->getRect());
+
+	int tileY = y / 256;
+	auto srcRect = src->getRect();
+	short srcSplitY = MIN(y + thumbnail.h, (tileY + 1) * 256) - y;
+	if (splitV)
+		srcRect.bottom = srcSplitY;
+	dst.copyRectToSurface(*src, x, y, srcRect);
+	if (splitV) {
+		srcRect.top = srcSplitY;
+		srcRect.bottom = src->h;
+		dst.copyRectToSurface(*src, x, (tileY + 3) * 256, srcRect);
+	}
 	src->free();
 	delete src;
 }
