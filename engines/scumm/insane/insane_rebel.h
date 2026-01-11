@@ -41,6 +41,10 @@ public:
 
 	NutRenderer *_smush_cockpitNut;
 	NutRenderer *_smush_dispfontNut;  // DAT_00482200 - DISPFONT.NUT for status bar (difficulty, shields, lives, score)
+
+	// Font used for opcode 9 text/subtitle rendering (DIHIFONT / TALKFONT)
+	SmushFont *_rebelMsgFont;
+	bool _introCursorPushed; // true when we've pushed an invisible cursor for intro
 	
 	// Rebel Assault 2: Dynamically loaded HUD overlays (from CHK scripts)
 	// These correspond to the original game's global variables
