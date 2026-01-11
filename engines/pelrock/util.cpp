@@ -323,4 +323,8 @@ byte decodeChar(byte b) {
 	}
 }
 
+Common::StringArray arrayOf(Common::String str) {
+	return Common::StringArray(1, str);
+}
+
 } // End of namespace Pelrock

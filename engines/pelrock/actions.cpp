@@ -59,7 +59,6 @@ const CombinationEntry combinationTable[] = {
 	{WILDCARD, WILDCARD, nullptr}
 };
 
-	// Handler implementations
 void PelrockEngine::openDoor(HotSpot *hotspot) {
 	_room->addSticker(_res->getSticker(93), false);
 	_room->enableExit(0, false);
@@ -117,12 +116,11 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 		}
 		if(billCount < 13) {
 			addInventoryItem(5); // 1000 pesetas bill
-			_dialog->say(_res->_ingameTexts[109]);
+			_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
 		}
 		else {
 			_dialog->say(_res->_ingameTexts[NOMONEY_LEFT]);
 		}
-
 	}
 }
 
@@ -182,12 +180,14 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 
 
 void PelrockEngine::noOpAction(HotSpot *hotspot) {
-	// Do nothing
 }
 
 
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	// Do nothing
+	//154 to 169
+	debug("No-op item %d with hotspot %d", item, hotspot->extra);
+	byte response = (byte)getRandomNumber(12);
+	_dialog->say(_res->_ingameTexts[154 + response]);
 }
 
 } // End of namespace Pelrock

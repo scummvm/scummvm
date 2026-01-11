@@ -43,6 +43,7 @@ void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, by
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
 void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
+Common::StringArray arrayOf(Common::String str);
 
 static const int special_chars[] = {
 	168, // inverted ?

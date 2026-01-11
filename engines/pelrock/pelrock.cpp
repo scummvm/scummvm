@@ -262,6 +262,7 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 				return;
 			}
 		}
+		noOpItem(inventoryObject, hotspot);
 		warning("No handler for using inventory object %d with hotspot %d", inventoryObject, hotspot->extra);
 		return;
 	}
