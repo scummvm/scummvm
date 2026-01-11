@@ -233,12 +233,17 @@ public:
 	void openDoor(HotSpot *hotspot);
 	void closeDoor(HotSpot *hotspot);
 	void pickUpAndDisable(HotSpot *hotspot);
+	void grabKetchup(HotSpot *hotspot);
+	void grabMustard(HotSpot *hotspot);
+	void grabSpicey(HotSpot *hotspot);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
+	void openMcDoor(HotSpot *hotspot);
+	void closeMcDoor(HotSpot *hotspot);
 };
 
 extern PelrockEngine *g_engine;

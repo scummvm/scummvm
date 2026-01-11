@@ -42,12 +42,12 @@ public:
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 
 	/** Methods to modify room data at runtime **/
-	void addSticker(Sticker sticker, bool persist = true);
+	void addSticker(int stickerId, bool persist = true);
 	void removeSticker(int index);
 	bool hasSticker(int index);
 	void changeExit(int index, bool enabled, bool persist = true);
-	void disableExit(int index, bool persist);
-	void enableExit(int index, bool persist);
+	void disableExit(int index, bool persist = true);
+	void enableExit(int index, bool persist = true);
 	void changeWalkBox(WalkBox walkbox);
 	void changeHotSpot(HotSpot hotspot);
 	/**

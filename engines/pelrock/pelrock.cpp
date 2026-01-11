@@ -530,6 +530,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
+	debug("Looking at hotspot %d with extra %d", hotspot->index, hotspot->extra);
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
 }

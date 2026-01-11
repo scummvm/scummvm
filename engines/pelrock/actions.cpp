@@ -37,7 +37,14 @@ const ActionEntry actionTable[] = {
 	{268, CLOSE, &PelrockEngine::closeDoor},
 	{3, PICKUP, &PelrockEngine::pickUpPhoto},
 	{0, PICKUP, &PelrockEngine::pickYellowBook}, // Generic pickup for other items
+	// Room 1
 	{4, PICKUP, &PelrockEngine::pickUpBrick},    // Brick
+	// Room 2
+	{282, OPEN, &PelrockEngine::openMcDoor},
+	{282, CLOSE, &PelrockEngine::closeMcDoor},
+	{60, PICKUP, &PelrockEngine::grabKetchup},
+	{61, PICKUP, &PelrockEngine::grabMustard},
+	{62, PICKUP, &PelrockEngine::grabSpicey},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -60,7 +67,7 @@ const CombinationEntry combinationTable[] = {
 };
 
 void PelrockEngine::openDoor(HotSpot *hotspot) {
-	_room->addSticker(_res->getSticker(93), false);
+	_room->addSticker(93, false);
 	_room->enableExit(0, false);
 }
 
@@ -69,7 +76,7 @@ void PelrockEngine::openDrawer(HotSpot *hotspot) {
 		_dialog->say(_res->_ingameTexts[YA_ABIERTO_M]);
 		return;
 	}
-	_room->addSticker(_res->getSticker(91));
+	_room->addSticker(91);
 	// TODO: Check if we need to disable the hotspot
 	if(_room->findHotspotByExtra(1)->isEnabled &&
 	   _room->findHotspotByExtra(2)->isEnabled &&
@@ -88,18 +95,17 @@ void PelrockEngine::pickUpPhoto(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickYellowBook(HotSpot *hotspot) {
-	_room->addSticker(_res->getSticker(95));
+	_room->addSticker(95);
 }
 
 void PelrockEngine::pickUpBrick(HotSpot *hotspot) {
-	_room->addSticker(_res->getSticker(133));
+	_room->addSticker(133);
 }
 
 void PelrockEngine::closeDrawer(HotSpot *hotspot) {
 	_room->removeSticker(91);
 	_room->enableHotspot(hotspot);
 }
-
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
@@ -124,9 +130,39 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	}
 }
 
+void PelrockEngine::openMcDoor(HotSpot *hotspot) {
+	if( _room->hasSticker(7)) {
+		_dialog->say(_res->_ingameTexts[ALREADY_OPENED_F]);
+		return;
+	}
+	_room->enableExit(2);
+	_room->addSticker(7);
+}
+
+void PelrockEngine::closeMcDoor(HotSpot *hotspot) {
+	if( !_room->hasSticker(7)) {
+		_dialog->say(_res->_ingameTexts[ALREADY_CLOSED_F]);
+		return;
+	}
+	_room->disableExit(2);
+	_room->removeSticker(7);
+}
+
 void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
 	addInventoryItem(hotspot->extra);
 	_room->disableHotspot(hotspot);
+}
+
+void PelrockEngine::grabKetchup(HotSpot *hotspot) {
+	_room->addSticker(70);
+}
+
+void PelrockEngine::grabMustard(HotSpot *hotspot) {
+	_room->addSticker(72);
+}
+
+void PelrockEngine::grabSpicey(HotSpot *hotspot) {
+	_room->addSticker(71);
 }
 
 void PelrockEngine::addInventoryItem(int item) {
@@ -186,6 +222,7 @@ void PelrockEngine::noOpAction(HotSpot *hotspot) {
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
 	//154 to 169
 	debug("No-op item %d with hotspot %d", item, hotspot->extra);
+	_alfredState.direction = ALFRED_DOWN;
 	byte response = (byte)getRandomNumber(12);
 	_dialog->say(_res->_ingameTexts[154 + response]);
 }

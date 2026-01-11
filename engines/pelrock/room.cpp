@@ -88,7 +88,8 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
-void RoomManager::addSticker(Sticker sticker, bool persist) {
+void RoomManager::addSticker(int stickerId, bool persist) {
+	Sticker sticker = g_engine->_res->getSticker(stickerId);
 	if (persist)
 		g_engine->_state.roomStickers[_currentRoomNumber].push_back(sticker);
 	else
