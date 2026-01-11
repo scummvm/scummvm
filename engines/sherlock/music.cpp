@@ -308,6 +308,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		}
 		_midiParser->setMidiDriver(_midiDriver);
 		_midiParser->setTimerRate(_midiDriver->getBaseTempo());
+		_midiDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, 1);
 
 		if (IS_SERRATED_SCALPEL) {
 			if (_musicType == MT_MT32) {
@@ -589,6 +590,7 @@ void Music::setMusicVolume(int volume) {
 	_musicVolume = volume;
 	_musicOn = volume > 0;
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void Music::getSongNames(Common::StringArray &songs) {
