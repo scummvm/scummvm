@@ -397,6 +397,14 @@ bool Music::loadSong(const Common::String &songName) {
 
 void Music::syncMusicSettings() {
 	_musicOn = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
+
+	// MIDI synth output is registered with the mixer as kPlainSoundType
+	// (hardcoded in audio/chip.cpp and audio/softsynth/). Map the music
+	// volume to kPlainSoundType so that the Music slider controls MIDI
+	// playback. Engine::defaultSyncSoundSettings() resets kPlainSoundType
+	// to max, so this override must run after it.
+	_musicVolume = ConfMan.getInt("music_volume");
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, _musicVolume);
 }
 
 bool Music::playMusic(const Common::String &name) {
@@ -589,6 +597,7 @@ void Music::setMusicVolume(int volume) {
 	_musicVolume = volume;
 	_musicOn = volume > 0;
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void Music::getSongNames(Common::StringArray &songs) {
