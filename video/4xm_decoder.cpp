@@ -322,7 +322,7 @@ namespace {
 
 template<bool Scale>
 void mcdc(uint16_t *__restrict__ dst, const uint16_t *__restrict__ src, int log2w,
-		  int log2h, int stride, int dc) {
+		  int log2h, int stride, uint dc) {
 	int h = 1 << log2h;
 	int w = 1 << log2w;
 	for (int i = 0; i < h; i++) {
@@ -372,6 +372,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		}
 		return;
 	}
+
 	if (code == 0) {
 		assert(byteStream.pos() < byteStream.size());
 		src += _mv[byteStream.readByte()];
@@ -381,11 +382,11 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		assert(byteStream.pos() < byteStream.size());
 		assert(wordStream.pos() + 2 <= wordStream.size());
 		src += _mv[byteStream.readByte()];
-		dc = wordStream.readSint16LE();
+		dc = wordStream.readUint16LE();
 	} else if (code == 5) {
 		assert(wordStream.pos() + 2 <= wordStream.size());
 		scale = false;
-		dc = wordStream.readSint16LE();
+		dc = wordStream.readUint16LE();
 	} else {
 		error("invalid code %d (steps %u,%u)", code, log2w, log2h);
 	}
