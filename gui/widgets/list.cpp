@@ -201,7 +201,7 @@ void ListWidget::setSelected(int item) {
 bool ListWidget::isItemSelected(int item) const {
 	// Convert to actual item index if filtering is active
 	int actualItem = item;
-	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
 		actualItem = _listIndex[item];
 	}
 
@@ -215,12 +215,12 @@ bool ListWidget::isItemSelected(int item) const {
 void ListWidget::addSelectedItem(int item) {
 	// Convert to actual item index if filtering is active
 	int actualItem = item;
-	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
 		actualItem = _listIndex[item];
 	}
 
 	// Avoid duplicates
-	if (isItemSelected(actualItem))
+	if (isItemSelected(item))
 		return;
 
 	// Insert in ascending order to keep selection sorted
@@ -241,7 +241,7 @@ void ListWidget::addSelectedItem(int item) {
 void ListWidget::removeSelectedItem(int item) {
 	// Convert to actual item index if filtering is active
 	int actualItem = item;
-	if (!_filter.empty() && item >= 0 && item < (int)_listIndex.size()) {
+	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
 		actualItem = _listIndex[item];
 	}
 

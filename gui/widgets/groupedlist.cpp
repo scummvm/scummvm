@@ -266,27 +266,28 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
 		if (shiftClick && _lastSelectionStartItem != -1) {
 			// Shift+Click: Select range in terms of underlying data indices
-			int startDataIndex = _lastSelectionStartItem;
-			selectItemRange(startDataIndex, dataIndex);
-			_selectedItem = newSelectedItem;
+			int startListIndex = _lastSelectionStartItem;
+			int endListIndex = newSelectedItem;              
+			selectItemRange(startListIndex, endListIndex);
+            _selectedItem = newSelectedItem;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		} else if (ctrlClick) {
 			// Ctrl+Click: toggle selection for the underlying data index
-			if (isItemSelected(dataIndex)) {
-				removeSelectedItem(dataIndex);
+			if (isItemSelected(newSelectedItem)) {
+				removeSelectedItem(newSelectedItem);
 			} else {
-				addSelectedItem(dataIndex);
+				addSelectedItem(newSelectedItem);
 			}
 			_selectedItem = newSelectedItem;
-			_lastSelectionStartItem = dataIndex;
+			_lastSelectionStartItem = newSelectedItem;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
 	} else {
 		// Regular click: clear selection and select only this underlying item
 		clearSelection();
 		_selectedItem = newSelectedItem;
-		addSelectedItem(dataIndex);
-		_lastSelectionStartItem = dataIndex;
+		addSelectedItem(newSelectedItem);
+		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
@@ -394,7 +395,7 @@ void GroupedListWidget::drawWidget() {
 		int mapped = _listIndex[pos];
 		bool isRealItem = (mapped >= 0);
 		if (isRealItem) {
-			if (_selectedItem == pos || isItemSelected(mapped))
+			if (_selectedItem == pos || isItemSelected(pos))
 				inverted = _inversion;
 		}
 
