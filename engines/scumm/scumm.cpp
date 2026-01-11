@@ -2686,10 +2686,16 @@ Common::Error ScummEngine::go() {
 	if (_game.id == GID_REBEL2) {
 		// Use 12 FPS as default, same as The Dig. FT uses 10.
 		// Since we don't have the standard scripts initializing this, we pass it here.
-		if (_game.features & GF_DEMO)
+		if (_game.features & GF_DEMO) {
 			((ScummEngine_v7 *)this)->_splayer->play("OPEN/O_DEMO.SAN", 12);
-		else
+		} else {
+			// Mark the following SAN as an intro so HUD isn't rendered during it (bit 0x20)
+			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0x20);
+			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01BEG.SAN", 12);
+			// Clear intro flag and immediately start the mission SAN
+			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0);
 			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01P01.SAN", 12);
+		}
 		return Common::kNoError;
 	}
 #endif

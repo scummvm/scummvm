@@ -75,6 +75,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
+	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
+	_rebelMsgFont = new SmushFont(_vm, "SYSTM/DIHIFONT.NUT", true);
+
 	_enemies.clear();
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
@@ -191,6 +194,7 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _rebelHudDamage;
 	delete _rebelHudEffects;
 	delete _rebelHudHiRes;
+	delete _rebelMsgFont;
 }
 
 
@@ -1117,7 +1121,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const int videoWidth = 320;    // Native video width
 	const int videoHeight = 200;   // Native video height  
 	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
-	
+
+	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)
+	bool introPlaying = ((_player->_curVideoFlags & 0x20) != 0);
+	if (!introPlaying) {
 	// ============================================================
 	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
 	// ============================================================
@@ -1474,6 +1481,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
 		}
 	}
+}
+
 }
 
 }
