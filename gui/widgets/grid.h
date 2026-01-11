@@ -35,6 +35,7 @@ namespace GUI {
 class ScrollBarWidget;
 class GridItemWidget;
 class GridWidget;
+class LauncherDialog;
 
 enum {
 	kPlayButtonCmd = 'PLAY',
@@ -131,7 +132,7 @@ protected:
 	ScrollBarWidget *_scrollBar;
 
 	FilterMatcher _filterMatcher;
-	void *_filterMatcherArg;
+	LauncherDialog *_launcher;
 
 	int				_scrollBarWidth;
 	int				_scrollWindowHeight;
@@ -238,7 +239,7 @@ public:
 
 	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
-	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
+	void setFilterMatcher(FilterMatcher matcher, LauncherDialog *launcher) { _filterMatcher = matcher; _launcher = launcher; }
 
 	// Multi-selection methods
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }

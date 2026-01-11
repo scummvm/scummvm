@@ -525,7 +525,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_shiftPressed = false;
 
 	_filterMatcher = GridWidgetDefaultMatcher;
-	_filterMatcherArg = nullptr;
+	_launcher = nullptr;
 }
 
 GridWidget::~GridWidget() {
@@ -684,7 +684,7 @@ void GridWidget::sortGroups() {
 			while (!tok.empty()) {
 				if (_filterMatcher) {
 					// Use the advanced filter matcher with correct index
-					if (!_filterMatcher(_filterMatcherArg, i->entryID, tmp, tok.nextToken())) {
+					if (!_filterMatcher(_launcher, i->entryID, tmp, tok.nextToken())) {
 						matches = false;
 						break;
 					}
