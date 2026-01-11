@@ -167,19 +167,15 @@ void PhoenixVREngine::wait(float seconds) {
 }
 
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
-	debug("gotowarp %s", warp.c_str());
+	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
 	_nextWarp = _script->getWarp(warp);
 	if (savePrev) {
-		assert(_warp);
-		// Pretty much a hack to prevent user stuck in inventory
-		if (_prevWarp < 0) {
-			_prevWarp = _script->getWarp(_warp->vrFile);
-			assert(_prevWarp >= 0);
-			// saving thumbnail
-			Common::ScopedPtr<Graphics::ManagedSurface> screenshot(_screen->scale(_thumbnail.w, _thumbnail.h, true));
-			screenshot->convertToInPlace(_rgb565);
-			_thumbnail.simpleBlitFrom(*screenshot, Graphics::FLIP_V);
-		}
+		assert(_warpIdx >= 0);
+		_prevWarp = _warpIdx;
+		// saving thumbnail
+		Common::ScopedPtr<Graphics::ManagedSurface> screenshot(_screen->scale(_thumbnail.w, _thumbnail.h, true));
+		screenshot->convertToInPlace(_rgb565);
+		_thumbnail.simpleBlitFrom(*screenshot, Graphics::FLIP_V);
 	}
 }
 
@@ -520,6 +516,8 @@ Common::Error PhoenixVREngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
+				if (_prevWarp != -1)
+					break;
 				int code = -1;
 				switch (event.kbd.keycode) {
 				case Common::KeyCode::KEYCODE_ESCAPE:
@@ -571,6 +569,14 @@ Common::Error PhoenixVREngine::run() {
 						goToWarp(_lockKey[code], true);
 				}
 			} break;
+			case Common::EVENT_RBUTTONUP: {
+				if (_prevWarp != -1)
+					break;
+				debug("right click");
+				auto &rclick = _lockKey[12];
+				if (!rclick.empty())
+					goToWarp(rclick, true);
+			} break;
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
 				_mouseRel += event.relMouse;
@@ -595,12 +601,6 @@ Common::Error PhoenixVREngine::run() {
 					}
 				}
 			} break;
-			case Common::EVENT_RBUTTONUP: {
-				debug("right click");
-				auto &rclick = _lockKey[12];
-				if (!rclick.empty())
-					goToWarp(rclick, true);
-			}
 			default:
 				break;
 			}
