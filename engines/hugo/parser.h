@@ -86,6 +86,7 @@ public:
 
 	void charHandler();
 	void command(const char *format, ...);
+	void resetCommandLine();
 	void freeParser();
 	void keyHandler(Common::Event event);
 	void actionHandler(Common::Event event);
@@ -120,7 +121,10 @@ protected:
 	void  readBG(Common::ReadStream &in, Background &curBG);
 	void  readCmd(Common::ReadStream &in, cmd &curCmd);
 	void  showDosInventory() const;
-	void endGamePrompt();
+#ifdef USE_TTS
+	void  sayInventory(const char *intro, const char *outro, int nounIndex2) const;
+#endif
+	void  endGamePrompt();
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 	uint16 _getIndex;                               // Index into ring buffer

@@ -44,7 +44,7 @@ FileManager_v2w::~FileManager_v2w() {
  * Same comment than in SCI: maybe in the future we can implement this, but for now this message should suffice
  */
 void FileManager_v2w::instructions() const {
-	Utils::notifyBox(Common::String::format("Please use an external viewer to open the game's help file: HUGOWIN%d.HLP", _vm->_gameVariant + 1));
+	_vm->notifyBox(Common::String::format("Please use an external viewer to open the game's help file: HUGOWIN%d.HLP", _vm->_gameVariant + 1));
 }
 
 } // End of namespace Hugo

@@ -39,7 +39,8 @@ class SeekableReadStream;
 namespace Hugo {
 
 // Game specific equates
-#define TAKE_TEXT   "Picked up the %s ok."
+#define TAKE_TEXT_DOS       "Ok"
+#define TAKE_TEXT_WINDOWS   "Picked up the %s ok."
 
 enum {LOOK_NAME = 1, TAKE_NAME};                    // Index of name used in showing takeables and in confirming take
 

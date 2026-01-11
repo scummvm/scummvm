@@ -32,6 +32,7 @@
 #include "common/system.h"
 
 #include "hugo/hugo.h"
+#include "hugo/display.h"
 #include "hugo/parser.h"
 #include "hugo/file.h"
 #include "hugo/schedule.h"
@@ -148,25 +149,25 @@ bool Parser_v1d::isGenericVerb_v1(const char *word, Object *obj) {
 	// Following is equivalent to switch, but couldn't do one
 	if (word == _vm->_text->getVerb(_vm->_look, 0)) {
 		if ((LOOK & obj->_genericCmd) == LOOK)
-			Utils::notifyBox(_vm->_text->getTextData(obj->_dataIndex));
+			_vm->notifyBox(_vm->_text->getTextData(obj->_dataIndex));
 		else
-			Utils::notifyBox(_vm->_text->getTextParser(kTBUnusual_1d));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBUnusual_1d));
 	} else if (word == _vm->_text->getVerb(_vm->_take, 0)) {
 		if (obj->_carriedFl)
-			Utils::notifyBox(_vm->_text->getTextParser(kTBHave));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBHave));
 		else if ((TAKE & obj->_genericCmd) == TAKE)
 			takeObject(obj);
 		else if (!obj->_verbOnlyFl)                  // Make sure not taking object in context!
-			Utils::notifyBox(_vm->_text->getTextParser(kTBNoUse));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBNoUse));
 		else
 			return false;
 	} else if (word == _vm->_text->getVerb(_vm->_drop, 0)) {
 		if (!obj->_carriedFl)
-			Utils::notifyBox(_vm->_text->getTextParser(kTBDontHave));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBDontHave));
 		else if ((DROP & obj->_genericCmd) == DROP)
 			dropObject(obj);
 		else
-			Utils::notifyBox(_vm->_text->getTextParser(kTBNeed));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBNeed));
 	} else {                                        // It was not a generic cmd
 		return false;
 	}
@@ -203,7 +204,7 @@ bool Parser_v1d::isObjectVerb_v1(const char *word, Object *obj) {
 		uint16 *reqs = _arrayReqs[cmnd->_reqIndex]; // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
-				Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataNoCarryIndex));
+				_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataNoCarryIndex));
 				return true;
 			}
 		}
@@ -211,14 +212,14 @@ bool Parser_v1d::isObjectVerb_v1(const char *word, Object *obj) {
 
 	// Required objects are present, now check state is correct
 	if ((obj->_state != cmnd->_reqState) && (cmnd->_reqState != kStateDontCare)){
-		Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataWrongIndex));
+		_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataWrongIndex));
 		return true;
 	}
 
 	// Everything checked.  Change the state and carry out any actions
 	if (cmnd->_reqState != kStateDontCare)           // Don't change new state if required state didn't care
 		obj->_state = cmnd->_newState;
-	Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataDoneIndex));
+	_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataDoneIndex));
 	_vm->_scheduler->insertActionList(cmnd->_actIndex);
 	// Special case if verb is Take or Drop.  Assume additional generic actions
 	if ((word == _vm->_text->getVerb(_vm->_take, 0)) || (word == _vm->_text->getVerb(_vm->_drop, 0)))
@@ -238,7 +239,7 @@ bool Parser_v1d::isBackgroundWord_v1(const char *noun, const char *verb, ObjectL
 
 	for (int i = 0; obj[i]._verbIndex; i++) {
 		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) && (noun == _vm->_text->getNoun(obj[i]._nounIndex, 0))) {
-			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			return true;
 		}
 	}
@@ -256,8 +257,8 @@ void Parser_v1d::takeObject(Object *obj) {
 		obj->_cycling = kCycleAlmostInvisible;
 
 	_vm->adjustScore(obj->_objValue);
-
-	Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(obj->_nounIndex, TAKE_NAME)));
+	_vm->_screen->updateStatusText();
+	_vm->takeObjectBox(_vm->_text->getNoun(obj->_nounIndex, TAKE_NAME));
 }
 
 /**
@@ -273,7 +274,8 @@ void Parser_v1d::dropObject(Object *obj) {
 	obj->_x = _vm->_hero->_x - 1;
 	obj->_y = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2 - 1;
 	_vm->adjustScore(-obj->_objValue);
-	Utils::notifyBox(_vm->_text->getTextParser(kTBOk));
+	_vm->_screen->updateStatusText();
+	_vm->notifyBox("Ok");
 }
 
 /**
@@ -288,7 +290,7 @@ bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char
 
 	for (int i = 0; obj[i]._verbIndex; i++) {
 		if ((verb == _vm->_text->getVerb(obj[i]._verbIndex, 0)) && ((noun == _vm->_text->getNoun(obj[i]._nounIndex, 0)) || (obj[i]._nounIndex == 0))) {
-			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			return true;
 		}
 	}
@@ -300,6 +302,10 @@ bool Parser_v1d::isCatchallVerb_v1(bool testNounFl, const char *noun, const char
  */
 void Parser_v1d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
+
+	// Reset the prompt on screen (DOS only)
+	_vm->_screen->updatePromptText("", ' ');
+	_vm->_screen->displayPromptText();
 
 	Status &gameStatus = _vm->getGameStatus();
 
@@ -411,11 +417,11 @@ void Parser_v1d::lineHandler() {
 	}
 	noun = findNextNoun(noun);
 	if (*farComment != '\0')                        // An object matched but not near enough
-		Utils::notifyBox(farComment);
+		_vm->notifyBox(farComment);
 	else if (!isCatchallVerb_v1(true, noun, verb, _catchallList) &&
 		     !isCatchallVerb_v1(false, noun, verb, _backgroundObjects[*_vm->_screenPtr])  &&
 		     !isCatchallVerb_v1(false, noun, verb, _catchallList))
-		Utils::notifyBox(_vm->_text->getTextParser(kTBEh_1d));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBEh_1d));
 }
 
 void Parser_v1d::showInventory() const {

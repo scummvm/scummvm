@@ -104,25 +104,40 @@ const char *FileManager_v1d::fetchString(const int index) {
  * Only in DOS versions
  */
 void FileManager_v1d::instructions() const {
+	// Note: HELP.DAT uses CRLF line endings. The original used `open()` from
+	// Microsoft's CRT in non-binary mode, so `read()` translated these to LF.
+	// This is necessary because the DOS message boxes only expect LF characters.
+	// The original source code's comments call the surviving character "CR",
+	// but it is really LF. We have copied these comments, so when you see a
+	// comment refer to "CR", such as later in this function, it means LF.
 	Common::File f;
 	if (!f.open("help.dat")) {
 		warning("help.dat not found");
 		return;
 	}
 
-	char readBuf[2];
-	while (f.read(readBuf, 1)) {
+	char readBuf;
+	while (f.read(&readBuf, 1)) {
+		if (readBuf == '\r') {
+			continue; // skip '\r'
+		}
 		char line[1024], *wrkLine;
 		wrkLine = line;
-		wrkLine[0] = readBuf[0];
+		wrkLine[0] = readBuf;
 		wrkLine++;
 		do {
 			f.read(wrkLine, 1);
+			if (*wrkLine == '\r') {
+				f.read(wrkLine, 1); // skip '\r'
+			}
 		} while (*wrkLine++ != '#');                // '#' is EOP
 		wrkLine[-2] = '\0';                         // Remove EOP and previous CR
-		Utils::notifyBox(line);
+		_vm->notifyBox(line);
 		wrkLine = line;
-		f.read(readBuf, 2);                         // Remove CRLF after EOP
+		f.read(&readBuf, 1);                        // Remove CR after EOP
+		if (readBuf == '\r') {
+			f.read(&readBuf, 1); // skip '\r'
+		}
 	}
 	f.close();
 }

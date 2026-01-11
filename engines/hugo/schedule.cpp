@@ -162,6 +162,7 @@ void Scheduler::processBonus(const int bonusIndex) {
 	if (!_points[bonusIndex]._scoredFl) {
 		_vm->adjustScore(_points[bonusIndex]._score);
 		_points[bonusIndex]._scoredFl = true;
+		_vm->_screen->updateStatusText();
 	}
 }
 
@@ -1258,7 +1259,9 @@ Event *Scheduler::doAction(Event *curEvent) {
 			insertActionList(action->_a11._actFailIndex);
 		break;
 	case TEXT:                                        // act12: Text box (CF WARN)
-		Utils::notifyBox(_vm->_file->fetchString(action->_a12._stringIndex));   // Fetch string from file
+		// Text boxes are protected in Hugo1 and Hugo2. Hugo3 added WARN action.
+		_vm->notifyBox(_vm->_file->fetchString(action->_a12._stringIndex),    // Fetch string from file
+		               _vm->getGameType() != kGameTypeHugo3);
 		break;
 	case SWAP_IMAGES:                                 // act13: Swap 2 object images
 		_vm->_object->swapImages(action->_a13._objIndex1, action->_a13._objIndex2, false);
@@ -1326,9 +1329,11 @@ Event *Scheduler::doAction(Event *curEvent) {
 		break;
 	case ADD_SCORE:                                   // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->_a27._objIndex]._objValue);
+		_vm->_screen->updateStatusText();
 		break;
 	case SUB_SCORE:                                   // act28: Subtract object's value from score
 		_vm->adjustScore(-_vm->_object->_objects[action->_a28._objIndex]._objValue);
+		_vm->_screen->updateStatusText();
 		break;
 	case COND_CARRY:                                  // act29: Conditional on object being carried
 		if (_vm->_object->isCarried(action->_a29._objIndex))
@@ -1383,7 +1388,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 		gameStatus._storyModeFl = action->_a39._storyModeFl;
 		break;
 	case WARN:                                        // act40: Text box (CF TEXT)
-		Utils::notifyBox(_vm->_file->fetchString(action->_a40._stringIndex));
+		_vm->notifyBox(_vm->_file->fetchString(action->_a40._stringIndex), true);
 		break;
 	case COND_BONUS:                                  // act41: Perform action if got bonus
 		if (_points[action->_a41._bonusIndex]._scoredFl)
@@ -1392,10 +1397,10 @@ Event *Scheduler::doAction(Event *curEvent) {
 			insertActionList(action->_a41._actFailIndex);
 		break;
 	case TEXT_TAKE:                                   // act42: Text box with "take" message
-		Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->_a42._objIndex]._nounIndex, TAKE_NAME)));
+		_vm->takeObjectBox(_vm->_text->getNoun(_vm->_object->_objects[action->_a42._objIndex]._nounIndex, TAKE_NAME));
 		break;
 	case YESNO:                                       // act43: Prompt user for Yes or No
-		if (Utils::yesNoBox(_vm->_file->fetchString(action->_a43._promptIndex)))
+		if (_vm->yesNoBox(_vm->_file->fetchString(action->_a43._promptIndex), false))
 			insertActionList(action->_a43._actYesIndex);
 		else
 			insertActionList(action->_a43._actNoIndex);
@@ -1547,7 +1552,7 @@ void Scheduler_v1d::runScheduler() {
 void Scheduler_v1d::promptAction(Act *action) {
 	Common::String response;
 
-	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
+	response = _vm->promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 
 #ifdef USE_TTS
 	_vm->_queueAllVoicing = true;
@@ -1594,7 +1599,7 @@ const char *Scheduler_v2d::getCypher() const {
 void Scheduler_v2d::promptAction(Act *action) {
 	Common::String response;
 
-	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
+	response = _vm->promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 	response.toLowercase();
 
 #ifdef USE_TTS

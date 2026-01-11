@@ -66,9 +66,10 @@ static const int kViewSizeX = kXPix;                // Width of window view
 static const int kViewSizeY = 192;                  // Height of window view. In original game: 184
 static const int kDibOffY = 0;                      // Offset into dib SrcY (old status line area). In original game: 8
 static const int kCompLineSize = 40;                // number of bytes in a compressed line
-static const int kMaxLineSize = kCompLineSize - 2;  // Max length of user input line
+static const int kMaxTextCols = 40;                 // Number of text lines in display
 static const int kMaxTextRows = 25;                 // Number of text lines in display
-static const int kMaxBoxChar = kMaxLineSize * kMaxTextRows; // Max chars on screen
+static const int kMaxLineSize = kMaxTextCols - 2;   // Max length of user input line
+static const int kMaxBoxChar = kMaxTextCols * kMaxTextRows; // Max chars on screen
 static const int kOvlSize = kCompLineSize * kYPix;  // Size of an overlay file
 static const int kStateDontCare = 0xFF;             // Any state allowed in command verb
 static const int kHeroIndex = 0;                    // In all enums, HERO is the first element
@@ -195,6 +196,12 @@ struct Hotspot {
 	int16      _viewx, _viewy, _direction;          // Used in auto-route mode
 };
 
+enum TtsOptions {
+	kTtsNoSpeech        = 0,
+	kTtsSpeech          = (1 << 0),
+	kTtsReplaceNewlines = ((1 << 1) | kTtsSpeech)
+};
+
 class FileManager;
 class Scheduler;
 class Screen;
@@ -244,8 +251,8 @@ public:
 	const char *_episode;
 	Common::Path _picDir;
 
-	Command _statusLine;
-	Command _scoreLine;
+	Command _statusLine; // text at top row of screen
+	Command _promptLine; // text at bottom row of screen
 
 #ifdef USE_TTS
 	bool _voiceScoreLine;
@@ -263,6 +270,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 	bool isPacked() const;
+	bool useWindowsInterface() const;
 
 	// Used by the qsort function
 	static HugoEngine &get() {
@@ -295,10 +303,16 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	bool hasFeature(EngineFeature f) const override;
-	const char *getCopyrightString() const;
+	const char *getCopyrightString1() const;
+	const char *getCopyrightString2() const;
 
 	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
+
+	Common::KeyCode notifyBox(const Common::String &text, bool protect = false, TtsOptions ttsOptions = kTtsReplaceNewlines);
+	Common::String promptBox(const Common::String &text);
+	bool yesNoBox(const Common::String &text, bool useFirstKey);
+	void takeObjectBox(const char *name);
 
 #ifdef USE_TTS
 	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
@@ -334,6 +348,7 @@ private:
 	GameType _gameType;
 	Common::Platform _platform;
 	bool _packedFl;
+	bool _windowsInterfaceFl;
 
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score
