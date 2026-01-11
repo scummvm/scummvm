@@ -176,7 +176,9 @@ void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 			_prevWarp = _script->getWarp(_warp->vrFile);
 			assert(_prevWarp >= 0);
 			// saving thumbnail
-			_thumbnail.simpleBlitFrom(*_screen, Graphics::FLIP_V);
+			Common::ScopedPtr<Graphics::ManagedSurface> screenshot(_screen->scale(_thumbnail.w, _thumbnail.h, true));
+			screenshot->convertToInPlace(_rgb565);
+			_thumbnail.simpleBlitFrom(*screenshot, Graphics::FLIP_V);
 		}
 	}
 }
