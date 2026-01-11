@@ -578,6 +578,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
 	{ "wrath",				"Wrath of the Gods" },
+	{ "wttf",				"Welcome to the Future" },
 	{ "xanthus",			"Xanthus" },
 	{ "xfools",				"The X-Fools: The Spoof is Out There" },
 	{ "xmasstory",			"A Christmas Story" },
@@ -1878,7 +1879,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "windows95",			"Microsoft Windows 95" },
 	{ "worldatlas",			"World Reference Atlas" },
 	{ "wpmainstreet",		"WordPerfect Main Street" },
-	{ "wttf",				"Welcome to the Future" },
 	{ "wwaldocircus",		"Where's Waldo? At the Circus" },
 	{ "wwaldogeo",			"Where's Waldo? Exploring Geography" },
 	{ "xfiles",				"The X-Files" },
@@ -2526,10 +2526,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("bestservice", "", "BESTDEMO.EXE", "437d0bc26a89a5f8cda3bef31db23897", 370015, 310),
 
-	MACGAME1("beyondthewall", "",  "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	MACGAME1("beyondthewall", "",  "Desktop Folder/bstars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	WINGAME2t("beyondthewall", "", "WALL.EXE",	"36a8d553a58437752e12b250389a4629", 225253,
-								   "TITLE.MMM",	"1fa63036a9c55cdbec8830219315ee7a", 661220, 300),
+	MACGAME1("beyondthewall", "",  "Beyond The Wall Of Stars", "rt:449d133e14d82d6fc87d76fd048c588d", 465267, 300),
+	MACGAME1("beyondthewall", "",  "Desktop Folder/bstars", "rt:449d133e14d82d6fc87d76fd048c588d", 465267, 300),
+	WINGAME2t("beyondthewall", "", "PCMMMFIL/WALL.EXE",	"t:36a8d553a58437752e12b250389a4629", 225253,
+								   "PCMMMFIL/TITLE.MMM",	"d:9e77d5f51082677628f62112f79f2eeb", 661220, 300),
 
 	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392265, Common::JA_JPN, 311),
 
@@ -6493,7 +6493,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("worldatlas", "Sampler", "ATLAS.EXE",		   "t:73fd017684b6fd92d0b8a743994705ab", 696807,
 									  "DATA/CONTENTM.DIR", "f:f4c9435dac6653651bf7c86480c3333b", 681228, 404),
 
-	// Full game is not Director
+	MACGAME1f("wttf", "", "BLUESKY/WELCOME24", "rt:e8072b708d1d05793d0b8a3f1e2f301b", 483808, 404, GF_32BPP),
 	MACDEMO1("wttf", "Demo", "WTTF", "01be45e7241194dad07938e7059b88e3", 483518, 404),
 
 	// Full game is not Director

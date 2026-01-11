@@ -443,33 +443,53 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		}
 		break;
 	case kInkTypeReverse:
-		// XOR dst palette index with src.
-		// Originally designed for 1-bit mode so that
-		// black pixels would appear white on a black
-		// background.
-		*dst ^= src;
+		if (sizeof(T) == 1) {
+			// XOR dst palette index with src.
+			// Originally designed for 1-bit mode so that
+			// black pixels would appear white on a black
+			// background.
+			*dst ^= src;
+		} else {
+			// In 32-bit mode, this is the opposite??
+			*dst ^= ~(src);
+		}
 		break;
 	case kInkTypeNotReverse:
-		// XOR dst palette index with the inverse of src.
-		*dst ^= ~(src);
+		if (sizeof(T) == 1) {
+			// XOR dst palette index with the inverse of src.
+			*dst ^= ~(src);
+		} else {
+			// In 32-bit mode, this is the opposite??
+			*dst ^= src & 0xffffff00;
+		}
 		break;
 	case kInkTypeGhost:
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorBlack) ? p->backColor : *dst;
 		} else {
-			// AND dst palette index with the inverse of src.
-			// Originally designed for 1-bit mode so that
-			// black pixels would be invisible until they were
-			// over a black background, showing as white.
-			*dst = *dst & ~src;
+			if (sizeof(T) == 1) {
+				// AND dst palette index with the inverse of src.
+				// Originally designed for 1-bit mode so that
+				// black pixels would be invisible until they were
+				// over a black background, showing as white.
+				*dst = *dst & ~src;
+			} else {
+				// In 32-bit mode, OR dst RGBA with inverse src
+				*dst = *dst | ~src;
+			}
 		}
 		break;
 	case kInkTypeNotGhost:
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorWhite) ? p->backColor : *dst;
 		} else {
-			// AND dst palette index with src.
-			*dst = *dst & src;
+			if (sizeof(T) == 1) {
+				// AND dst palette index with src.
+				*dst = *dst & src;
+			} else {
+				// In 32-bit mode, OR dst RGBA with src
+				*dst = *dst | src;
+			}
 		}
 		break;
 	default: {
