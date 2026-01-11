@@ -1,0 +1,121 @@
+add_library(twine STATIC)
+
+target_sources(
+  twine
+  PRIVATE audio/music.cpp
+          audio/sound.cpp
+          debugger/console.cpp
+          debugger/debug_state.cpp
+          menu/interface.cpp
+          menu/menu.cpp
+          menu/menuoptions.cpp
+          parser/anim.cpp
+          parser/anim3ds.cpp
+          parser/blocklibrary.cpp
+          parser/body.cpp
+          parser/entity.cpp
+          parser/holomap.cpp
+          parser/parser.cpp
+          parser/sprite.cpp
+          parser/text.cpp
+          renderer/redraw.cpp
+          renderer/renderer.cpp
+          renderer/screens.cpp
+          scene/actor.cpp
+          scene/animations.cpp
+          scene/buggy.cpp
+          scene/collision.cpp
+          scene/dart.cpp
+          scene/extra.cpp
+          scene/gamestate.cpp
+          scene/grid.cpp
+          scene/movements.cpp
+          scene/rain.cpp
+          scene/scene.cpp
+          scene/wagon.cpp
+          script/script_life.cpp
+          script/script_move.cpp
+          script/script_life_v1.cpp
+          script/script_life_v2.cpp
+          script/script_move_v1.cpp
+          script/script_move_v2.cpp
+          resources/hqr.cpp
+          resources/lzss.cpp
+          resources/resources.cpp
+          movies.cpp
+          holomap_v1.cpp
+          holomap_v2.cpp
+          input.cpp
+          metaengine.cpp
+          shared.cpp
+          slideshow.cpp
+          text.cpp
+          twine.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          audio/music.h
+          audio/sound.h
+          debugger/console.h
+          debugger/debug_state.h
+          menu/interface.h
+          menu/menu.h
+          menu/menuoptions.h
+          parser/anim.h
+          parser/anim3ds.h
+          parser/blocklibrary.h
+          parser/body.h
+          parser/entity.h
+          parser/holomap.h
+          parser/parser.h
+          parser/sprite.h
+          parser/text.h
+          renderer/redraw.h
+          renderer/renderer.h
+          renderer/screens.h
+          scene/actor.h
+          scene/animations.h
+          scene/buggy.h
+          scene/collision.h
+          scene/dart.h
+          scene/extra.h
+          scene/gamestate.h
+          scene/grid.h
+          scene/movements.h
+          scene/rain.h
+          scene/scene.h
+          scene/wagon.h
+          script/script_life.h
+          script/script_move.h
+          script/script_life_v1.h
+          script/script_life_v2.h
+          script/script_move_v1.h
+          script/script_move_v2.h
+          resources/hqr.h
+          resources/lzss.h
+          resources/resources.h
+          movies.h
+          holomap_v1.h
+          holomap_v2.h
+          input.h
+          shared.h
+          slideshow.h
+          text.h
+          twine.h
+)
+
+if(USE_IMGUI)
+  target_sources(
+    twine
+    PRIVATE debugger/debugtools.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            debugger/debugtools.h
+  )
+
+endif()
+
+add_library(twine_detection)
+
+target_sources(twine_detection PRIVATE detection.cpp)

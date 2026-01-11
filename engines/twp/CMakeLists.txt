@@ -1,0 +1,130 @@
+add_library(twp STATIC)
+
+target_sources(
+  twp
+  PRIVATE actorlib.cpp
+          actorswitcher.cpp
+          audio.cpp
+          callback.cpp
+          camera.cpp
+          console.cpp
+          dialog.cpp
+          dialogs.cpp
+          easing.cpp
+          enginedialogtarget.cpp
+          font.cpp
+          genlib.cpp
+          gfx.cpp
+          ggpack.cpp
+          graph.cpp
+          hud.cpp
+          lighting.cpp
+          lip.cpp
+          metaengine.cpp
+          motor.cpp
+          object.cpp
+          objlib.cpp
+          resmanager.cpp
+          rectf.cpp
+          room.cpp
+          roomlib.cpp
+          scenegraph.cpp
+          shaders.cpp
+          soundlib.cpp
+          savegame.cpp
+          spritesheet.cpp
+          sqgame.cpp
+          squtil.cpp
+          syslib.cpp
+          thread.cpp
+          time.cpp
+          tsv.cpp
+          twp.cpp
+          util.cpp
+          vm.cpp
+          walkboxnode.cpp
+          yack.cpp
+          clipper/clipper.cpp
+          squirrel/sqapi.cpp
+          squirrel/sqbaselib.cpp
+          squirrel/sqfuncstate.cpp
+          squirrel/sqdebug.cpp
+          squirrel/sqlexer.cpp
+          squirrel/sqobject.cpp
+          squirrel/sqcompiler.cpp
+          squirrel/sqstate.cpp
+          squirrel/sqtable.cpp
+          squirrel/sqmem.cpp
+          squirrel/sqvm.cpp
+          squirrel/sqclass.cpp
+          squirrel/sqstdmath.cpp
+          squirrel/sqstdstring.cpp
+          squirrel/sqstdrex.cpp
+          squirrel/sqstdaux.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          actorswitcher.h
+          audio.h
+          callback.h
+          camera.h
+          console.h
+          dialog.h
+          dialogs.h
+          easing.h
+          enginedialogtarget.h
+          font.h
+          gfx.h
+          ggpack.h
+          graph.h
+          hud.h
+          lighting.h
+          lip.h
+          metaengine.h
+          motor.h
+          object.h
+          resmanager.h
+          rectf.h
+          room.h
+          scenegraph.h
+          shaders.h
+          savegame.h
+          spritesheet.h
+          sqgame.h
+          squtil.h
+          thread.h
+          time.h
+          tsv.h
+          twp.h
+          util.h
+          vm.h
+          walkboxnode.h
+          yack.h
+          squirrel/sqfuncstate.h
+          squirrel/sqlexer.h
+          squirrel/sqobject.h
+          squirrel/sqcompiler.h
+          squirrel/sqstate.h
+          squirrel/sqtable.h
+          squirrel/sqvm.h
+          squirrel/sqclass.h
+          squirrel/sqstdmath.h
+          squirrel/sqstdstring.h
+          squirrel/sqstdaux.h
+)
+
+if(USE_IMGUI)
+  target_sources(
+    twp
+    PRIVATE debugtools.cpp
+    PRIVATE FILE_SET
+            HEADERS
+            FILES
+            debugtools.h
+  )
+
+endif()
+
+add_library(twp_detection)
+
+target_sources(twp_detection PRIVATE detection.cpp)

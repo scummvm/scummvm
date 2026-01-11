@@ -1,0 +1,79 @@
+add_library(access STATIC)
+
+target_sources(
+  access
+  PRIVATE access.cpp
+          animation.cpp
+          asurface.cpp
+          bubble_box.cpp
+          char.cpp
+          data.cpp
+          debugger.cpp
+          decompress.cpp
+          events.cpp
+          files.cpp
+          font.cpp
+          inventory.cpp
+          metaengine.cpp
+          player.cpp
+          resources.cpp
+          room.cpp
+          screen.cpp
+          scripts.cpp
+          sound.cpp
+          video.cpp
+          amazon/amazon_game.cpp
+          amazon/amazon_logic.cpp
+          amazon/amazon_player.cpp
+          amazon/amazon_resources.cpp
+          amazon/amazon_room.cpp
+          amazon/amazon_scripts.cpp
+          martian/martian_game.cpp
+          martian/martian_player.cpp
+          martian/martian_resources.cpp
+          martian/martian_duct.cpp
+          martian/martian_room.cpp
+          martian/martian_scripts.cpp
+          martian/midiparser_bemd.cpp
+          video/movie_decoder.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          access.h
+          animation.h
+          asurface.h
+          bubble_box.h
+          char.h
+          data.h
+          debugger.h
+          decompress.h
+          events.h
+          files.h
+          font.h
+          inventory.h
+          player.h
+          resources.h
+          room.h
+          screen.h
+          scripts.h
+          sound.h
+          video.h
+          amazon/amazon_game.h
+          amazon/amazon_logic.h
+          amazon/amazon_player.h
+          amazon/amazon_resources.h
+          amazon/amazon_room.h
+          amazon/amazon_scripts.h
+          martian/martian_game.h
+          martian/martian_player.h
+          martian/martian_resources.h
+          martian/martian_duct.h
+          martian/martian_room.h
+          martian/martian_scripts.h
+          martian/midiparser_bemd.h
+          video/movie_decoder.h
+)
+
+add_library(access_detection)
+
+target_sources(access_detection PRIVATE detection.cpp)

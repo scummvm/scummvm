@@ -1,0 +1,106 @@
+add_library(startrek STATIC)
+
+target_sources(
+  startrek
+  PRIVATE actors.cpp
+          awaymission.cpp
+          bitmap.cpp
+          bridge.cpp
+          common.cpp
+          console.cpp
+          events.cpp
+          font.cpp
+          graphics.cpp
+          intro.cpp
+          iwfile.cpp
+          lzss.cpp
+          menu.cpp
+          resource.cpp
+          metaengine.cpp
+          room.cpp
+          saveload.cpp
+          sound.cpp
+          space.cpp
+          sprite.cpp
+          startrek.cpp
+          text.cpp
+          textbox.cpp
+          rooms/demon0.cpp
+          rooms/demon1.cpp
+          rooms/demon2.cpp
+          rooms/demon3.cpp
+          rooms/demon4.cpp
+          rooms/demon5.cpp
+          rooms/demon6.cpp
+          rooms/feather0.cpp
+          rooms/feather1.cpp
+          rooms/feather2.cpp
+          rooms/feather3.cpp
+          rooms/feather4.cpp
+          rooms/feather5.cpp
+          rooms/feather6.cpp
+          rooms/feather7.cpp
+          rooms/love0.cpp
+          rooms/love1.cpp
+          rooms/love2.cpp
+          rooms/love3.cpp
+          rooms/love4.cpp
+          rooms/love5.cpp
+          rooms/lovea.cpp
+          rooms/mudd0.cpp
+          rooms/mudd1.cpp
+          rooms/mudd2.cpp
+          rooms/mudd3.cpp
+          rooms/mudd4.cpp
+          rooms/mudd5.cpp
+          rooms/mudda.cpp
+          rooms/trial0.cpp
+          rooms/trial1.cpp
+          rooms/trial2.cpp
+          rooms/trial3.cpp
+          rooms/trial4.cpp
+          rooms/trial5.cpp
+          rooms/tug0.cpp
+          rooms/tug1.cpp
+          rooms/tug2.cpp
+          rooms/tug3.cpp
+          rooms/sins0.cpp
+          rooms/sins1.cpp
+          rooms/sins2.cpp
+          rooms/sins3.cpp
+          rooms/sins4.cpp
+          rooms/sins5.cpp
+          rooms/veng0.cpp
+          rooms/veng1.cpp
+          rooms/veng2.cpp
+          rooms/veng3.cpp
+          rooms/veng4.cpp
+          rooms/veng5.cpp
+          rooms/veng6.cpp
+          rooms/veng7.cpp
+          rooms/veng8.cpp
+          rooms/venga.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          awaymission.h
+          bitmap.h
+          bridge.h
+          common.h
+          console.h
+          font.h
+          graphics.h
+          iwfile.h
+          lzss.h
+          resource.h
+          room.h
+          sound.h
+          space.h
+          sprite.h
+          startrek.h
+          text.h
+)
+
+add_library(startrek_detection)
+
+target_sources(startrek_detection PRIVATE detection.cpp)

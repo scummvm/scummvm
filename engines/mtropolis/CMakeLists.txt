@@ -1,0 +1,107 @@
+add_library(mtropolis STATIC)
+
+target_sources(
+  mtropolis
+  PRIVATE asset_factory.cpp
+          assets.cpp
+          audio_player.cpp
+          boot.cpp
+          core.cpp
+          coroutine_exec.cpp
+          coroutine_manager.cpp
+          coroutines.cpp
+          data.cpp
+          debug.cpp
+          element_factory.cpp
+          elements.cpp
+          hacks.cpp
+          metaengine.cpp
+          miniscript.cpp
+          modifiers.cpp
+          modifier_factory.cpp
+          mtropolis.cpp
+          plugin/axlogic.cpp
+          plugin/axlogic_data.cpp
+          plugin/ftts.cpp
+          plugin/ftts_data.cpp
+          plugin/hoologic.cpp
+          plugin/hoologic_data.cpp
+          plugin/kw.cpp
+          plugin/kw_data.cpp
+          plugin/midi.cpp
+          plugin/midi_data.cpp
+          plugin/mline.cpp
+          plugin/mline_data.cpp
+          plugin/mti.cpp
+          plugin/mti_data.cpp
+          plugin/obsidian.cpp
+          plugin/obsidian_data.cpp
+          plugin/pierian.cpp
+          plugin/pierian_data.cpp
+          plugin/rwc.cpp
+          plugin/rwc_data.cpp
+          plugin/standard.cpp
+          plugin/standard_data.cpp
+          plugin/thereware.cpp
+          plugin/thereware_data.cpp
+          render.cpp
+          runtime.cpp
+          saveload.cpp
+          subtitles.cpp
+          vfs.cpp
+          vthread.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          asset_factory.h
+          assets.h
+          audio_player.h
+          boot.h
+          core.h
+          coroutine_exec.h
+          coroutine_manager.h
+          coroutines.h
+          data.h
+          debug.h
+          element_factory.h
+          elements.h
+          hacks.h
+          miniscript.h
+          modifiers.h
+          modifier_factory.h
+          mtropolis.h
+          plugin/axlogic.h
+          plugin/axlogic_data.h
+          plugin/ftts.h
+          plugin/ftts_data.h
+          plugin/hoologic.h
+          plugin/hoologic_data.h
+          plugin/kw.h
+          plugin/kw_data.h
+          plugin/midi.h
+          plugin/midi_data.h
+          plugin/mline.h
+          plugin/mline_data.h
+          plugin/mti.h
+          plugin/mti_data.h
+          plugin/obsidian.h
+          plugin/obsidian_data.h
+          plugin/pierian.h
+          plugin/pierian_data.h
+          plugin/rwc.h
+          plugin/rwc_data.h
+          plugin/standard.h
+          plugin/standard_data.h
+          plugin/thereware.h
+          plugin/thereware_data.h
+          render.h
+          runtime.h
+          saveload.h
+          subtitles.h
+          vfs.h
+          vthread.h
+)
+
+add_library(mtropolis_detection)
+
+target_sources(mtropolis_detection PRIVATE detection.cpp)

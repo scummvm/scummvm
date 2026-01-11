@@ -1,0 +1,89 @@
+add_library(dgds STATIC)
+
+target_sources(
+  dgds
+  PRIVATE ads.cpp
+          clock.cpp
+          console.cpp
+          decompress.cpp
+          dgds.cpp
+          dgds_rect.cpp
+          dialog.cpp
+          dragon_native.cpp
+          drawing.cpp
+          font.cpp
+          game_palettes.cpp
+          globals.cpp
+          head.cpp
+          hoc_intro.cpp
+          image.cpp
+          inventory.cpp
+          menu.cpp
+          metaengine.cpp
+          parser.cpp
+          request.cpp
+          resource.cpp
+          scene.cpp
+          scene_condition.cpp
+          scene_op.cpp
+          scripts.cpp
+          sound.cpp
+          sound_raw.cpp
+          ttm.cpp
+          minigames/china_tank.cpp
+          minigames/china_train.cpp
+          minigames/dragon_arcade.cpp
+          minigames/dragon_arcade_ttm.cpp
+          minigames/shell_game.cpp
+          sound/midiparser_sci.cpp
+          sound/music.cpp
+          sound/drivers/adlib.cpp
+          sound/drivers/amigamac1.cpp
+          sound/drivers/cms.cpp
+          sound/drivers/midi.cpp
+          sound/drivers/midipatch.cpp
+          sound/resource/sci_resource.cpp
+          sound/resource/resource_audio.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          ads.h
+          clock.h
+          console.h
+          decompress.h
+          dgds.h
+          dgds_rect.h
+          dialog.h
+          dragon_native.h
+          drawing.h
+          font.h
+          game_palettes.h
+          globals.h
+          head.h
+          hoc_intro.h
+          image.h
+          inventory.h
+          menu.h
+          parser.h
+          request.h
+          resource.h
+          scene.h
+          scene_condition.h
+          scene_op.h
+          scripts.h
+          sound.h
+          sound_raw.h
+          ttm.h
+          minigames/china_tank.h
+          minigames/china_train.h
+          minigames/dragon_arcade.h
+          minigames/dragon_arcade_ttm.h
+          minigames/shell_game.h
+          sound/midiparser_sci.h
+          sound/music.h
+          sound/resource/sci_resource.h
+)
+
+add_library(dgds_detection)
+
+target_sources(dgds_detection PRIVATE detection.cpp)

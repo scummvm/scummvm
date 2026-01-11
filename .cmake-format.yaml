@@ -1,0 +1,9 @@
+format:
+  line_width: 100
+  tab_size: 2
+  use_tabchars: false
+  fractional_tab_policy: use-space
+  max_subgroups_hwrap: 2
+  max_pargs_hwrap: 3
+  dangle_parens: true
+  dangle_align: prefix
