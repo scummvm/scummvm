@@ -236,6 +236,7 @@ public:
 	// Multi-selection methods
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
 	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
+	void addSelectedEntry(int entryID);
 
 public:
 	Common::Array<int> _selectedEntries; // Stores indices of selected entries

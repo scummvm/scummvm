@@ -311,9 +311,9 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 				endID = temp;
 			}
 
-			// Add all items in range (assuming entry IDs are sequential indices)
+			// Add all items in range, avoiding duplicates
 			for (int i = startID; i <= endID; ++i) {
-				_grid->_selectedEntries.push_back(i);
+				_grid->addSelectedEntry(i);
 			}
 			// Keep entries sorted
 			Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
@@ -1244,6 +1244,14 @@ void GridWidget::setSelected(int id) {
 			break;
 		}
 	}
+}
+
+void GridWidget::addSelectedEntry(int entryID) {
+	for (int selected : _selectedEntries) {
+		if (selected == entryID)
+			return; // Already selected, do not add again
+	}
+	_selectedEntries.push_back(entryID);
 }
 
 } // End of namespace GUI
