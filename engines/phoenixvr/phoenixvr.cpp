@@ -748,15 +748,11 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 
 	_nextWarp = currentWarpIdx;
 
-	for (uint warpIdx = 0; warpIdx != _script->numWarps(); ++warpIdx) {
-		auto warp = _script->getWarp(warpIdx);
-		assert(warp);
-		auto &tests = warp->tests;
-		auto &warpCursors = _cursors[warpIdx];
-		for (uint testIdx = 0; testIdx < tests.size(); ++testIdx) {
+	for (auto &warpCursors : _cursors) {
+		for (auto &warpCursor : warpCursors) {
 			auto cursor = ms.readString(0, 257);
-			// debug("warp %s.%d: %s", warp->vrFile.c_str(), testIdx, cursor.c_str());
-			warpCursors[testIdx] = cursor;
+			debug("cursor %s", cursor.c_str());
+			warpCursor = cursor;
 		}
 	}
 	debug("vars at %08lx", ms.pos());
