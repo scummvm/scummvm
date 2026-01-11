@@ -183,6 +183,15 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_shots[i].active = false;
 		_shots[i].counter = 0;
 	}
+
+	for (i = 0; i < 5; i++) {
+		_rebelEmbeddedHud[i].pixels = nullptr;
+		_rebelEmbeddedHud[i].width = 0;
+		_rebelEmbeddedHud[i].height = 0;
+		_rebelEmbeddedHud[i].renderX = 0;
+		_rebelEmbeddedHud[i].renderY = 0;
+		_rebelEmbeddedHud[i].valid = false;
+	}
 }
 
 
@@ -625,7 +634,6 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
 						if (frame.width != width || frame.height != height || !frame.pixels) {
-							frame.clear();
 							frame.pixels = (byte *)calloc(width * height, 1);
 							frame.width = width;
 							frame.height = height;

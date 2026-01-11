@@ -123,11 +123,6 @@ public:
 		int renderX;       // X position to render (0 = centered based on slot)
 		int renderY;       // Y position to render
 		bool valid;        // True if this slot has valid data
-		
-		EmbeddedSanFrame() : pixels(nullptr), width(0), height(0), 
-		                     renderX(0), renderY(0), valid(false) {}
-		~EmbeddedSanFrame() { free(pixels); }
-		void clear() { free(pixels); pixels = nullptr; width = height = 0; valid = false; }
 	};
 	
 	EmbeddedSanFrame _rebelEmbeddedHud[5];  // Index 0 unused, 1-4 for userId slots
