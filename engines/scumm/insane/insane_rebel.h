@@ -55,6 +55,9 @@ public:
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 
+	// Handle IACT opcode 3 subcases (damage, hit-counters, special cases)
+	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) override;
 
@@ -141,12 +144,18 @@ public:
 	Explosion _explosions[5];
 	void spawnExplosion(int x, int y, int objectHalfWidth);
 
-	int16 _playerDamage;  // 0 to 255 (Accumulated damage)
+	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
+	int16 _playerShield;  // Shields: 0..255 where 255 = full
 	int16 _playerLives;
 	int32 _playerScore;
 
 	int _viewX;
 	int _viewY;
+
+	// Rebel per-level counters / flags mapped from retail globals
+	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
+	int _rebelHitCooldown;   // DAT_0045790a - cooldown / timing for damage checks
+	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
 
 
 	struct Shot {
