@@ -1504,7 +1504,7 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 	switch (_groupBy) {
 	case kGroupByFirstLetter: {
 		for (const auto &entry : metadata) {
-			attrs.push_back(entry.title.substr(0, 1));
+			attrs.push_back(entry.description.substr(0, 1));
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String("..."));
 		break;
