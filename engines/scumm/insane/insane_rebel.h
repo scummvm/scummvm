@@ -63,6 +63,7 @@ public:
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) override;
