@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/translation.h"
 
 #include "phoenixvr/detection.h"
@@ -52,9 +53,40 @@ Common::Error PhoenixVRMetaEngine::createInstance(OSystem *syst, Engine **engine
 	return Common::kNoError;
 }
 
+SaveStateList PhoenixVRMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern(getSavegameFilePattern(target));
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (const auto &file : filenames) {
+		auto dotPos = file.rfind('.');
+		if (dotPos == file.npos)
+			continue;
+		int slotNum = atoi(file.c_str() + dotPos + 1);
+
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			SaveStateDescriptor desc = querySaveMetaInfos(target, slotNum);
+			desc.setSaveSlot(slotNum);
+			desc.setDeletableFlag(true);
+			saveList.push_back(desc);
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+SaveStateDescriptor PhoenixVRMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc;
+	return desc;
+}
+
 bool PhoenixVRMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
-		   (f == kSupportsLoadingDuringStartup);
+	return f == kSimpleSavesNames || f == kSupportsListSaves || f == kSupportsLoadingDuringStartup || f == kSavesSupportThumbnail;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PHOENIXVR)

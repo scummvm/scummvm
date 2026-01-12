@@ -37,6 +37,14 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
+	int getMaximumSaveSlot() const override {
+		return 10;
+	}
+
+	SaveStateList listSaves(const char *target) const override;
+
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
