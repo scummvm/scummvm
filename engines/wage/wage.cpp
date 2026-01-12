@@ -71,7 +71,7 @@ WageEngine *g_wage = nullptr;
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
 
-	_aim = Chr::CHEST;
+	_aim = Chr::SIDE;
 	_opponentAim = -1;
 	_temporarilyHidden = false;
 	_isGameOver = false;
@@ -450,25 +450,28 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 
 	if (what != player && what->_classType == CHR) {
 		Chr *chr = (Chr *)what;
-		if (to == _world->_storageScene) {
-			int returnTo = chr->_returnTo;
-			if (returnTo != Chr::RETURN_TO_STORAGE) {
-				Common::String returnToSceneName;
-				if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
-					returnToSceneName = chr->_initialScene;
-					returnToSceneName.toLowercase();
-				} else {
-					returnToSceneName = "random@";
-				}
-				Scene *scene = getSceneByName(returnToSceneName);
-				if (scene != NULL && scene != _world->_storageScene) {
-					_world->move(chr, scene);
-					// To avoid sleeping twice, return if the above move command would cause a sleep.
-					if (scene == currentScene)
-						return;
-				}
-			}
-		} else if (to == player->_currentScene) {
+		// the original code below forced enemies to immediately respawn if moved to storage.
+		// this broke the "Escape" mechanic, comment it out so they stay in storage.
+		//if (to == _world->_storageScene) {
+		//	int returnTo = chr->_returnTo;
+		//	if (returnTo != Chr::RETURN_TO_STORAGE) {
+		//		Common::String returnToSceneName;
+		//		if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
+		//			returnToSceneName = chr->_initialScene;
+		//			returnToSceneName.toLowercase();
+		//		} else {
+		//			returnToSceneName = "random@";
+		//		}
+		//		Scene *scene = getSceneByName(returnToSceneName);
+		//		if (scene != NULL && scene != _world->_storageScene) {
+		//			_world->move(chr, scene);
+		//			// To avoid sleeping twice, return if the above move command would cause a sleep.
+		//			if (scene == currentScene)
+		//				return;
+		//		}
+		//	}
+		//}
+		if (to == player->_currentScene) {
 			if (getMonster() == NULL) {
 				_monster = chr;
 				encounter(player, chr);
@@ -574,7 +577,8 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_commandWasQuick = false;
 	Scene *prevScene = _world->_player->_currentScene;
-	Chr *prevMonster = getMonster();
+	Chr *prevMonster = _monster;
+	Chr *runner = _running;
 	Common::String input;
 
 	if (textInput)
@@ -582,17 +586,61 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 
 	input.toLowercase();
 
-	processTurnInternal(&input, clickInput);
+	// if the player is frozen, we loop automatically to process enemy turns
+	// without waiting for user input
+	while (_world->_player->_context._frozen) {
+		// decrement Timer
+		_world->_player->_context._freezeTimer--;
+
+		if (_world->_player->_context._freezeTimer <= 0) {
+			_world->_player->_context._frozen = false;
+			_world->_player->_context._freezeTimer = 0;
+			// we break the loop. The player regains control for the next input
+			break;
+		}
+
+		// enemy gets a free attack
+		if (getMonster() != NULL)
+			performCombatAction(getMonster(), _world->_player);
+
+		// since we are inside a while loop, we must
+		// force a screen update or the text will not appear until the end
+		if (_gui) _gui->draw();
+		g_system->updateScreen();
+
+		// if player died during freeze, return
+		if (_isGameOver || _world->_player->_currentScene == _world->_storageScene)
+			return;
+	}
+
+	// only process the player's input if they are not frozen
+	if (!_world->_player->_context._frozen)
+		processTurnInternal(&input, clickInput);
+
 	Scene *playerScene = _world->_player->_currentScene;
 
 	if (prevScene != playerScene && playerScene != _world->_storageScene) {
 		if (prevMonster != NULL) {
 			bool followed = false;
-			if (getMonster() == NULL) {
+			bool monsterEscaped = false;
+
+			// check if the previous monster followed us to the new room
+			if (prevMonster->_currentScene != playerScene) {
+				// monster is gone did it escape?
+				// if the monster we were fighting was running, and is now in storage that means it escaped
+				if (prevMonster == runner && prevMonster->_currentScene == _world->_storageScene) {
+					char buf[512];
+					snprintf(buf, 512, "%s%s escapes!", prevMonster->getDefiniteArticle(true), prevMonster->_name.c_str());
+					appendText(buf);
+					monsterEscaped = true;
+				}
 				// TODO: adjacent scenes doesn't contain up/down etc... verify that monsters can't follow these...
-				if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
-					int chance = _rnd->getRandomNumber(255);
-					followed = (chance < prevMonster->_followsOpponent);
+				// only check follow logic if monster did not just escape to storage
+				if (!monsterEscaped) {
+					if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
+						int chance = _rnd->getRandomNumber(255);
+						followed = (chance < prevMonster->_followsOpponent);
+					}
 				}
 			}
 
@@ -603,7 +651,8 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 				appendText(buf);
 
 				_world->move(prevMonster, playerScene);
-			} else {
+			} else if (!monsterEscaped) {
+				// only say "You escape" if the monster did not already "Escape"
 				snprintf(buf, 512, "You escape %s%s.", prevMonster->getDefiniteArticle(false), prevMonster->_name.c_str());
 				appendText(buf);
 			}
