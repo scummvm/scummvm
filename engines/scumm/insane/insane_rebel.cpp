@@ -60,13 +60,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_bensgoggNut = nullptr;
 
 	// Rebel Assault 2 specific initialization can go here
-	_rebelHudPrimary = nullptr;
-	_rebelHudSecondary = nullptr;
-	_rebelHudCockpit = nullptr;
-	_rebelHudExplosion = nullptr;
-	_rebelHudDamage = nullptr;
-	_rebelHudEffects = nullptr;
-	_rebelHudHiRes = nullptr;
 
 	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs, explosions, status bar
 	// CPITIMAG.NUT = low-res (320x200), CPITIMHI.NUT = high-res (640x480)
@@ -196,13 +189,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 
 InsaneRebel2::~InsaneRebel2() {
-	delete _rebelHudPrimary;
-	delete _rebelHudSecondary;
-	delete _rebelHudCockpit;
-	delete _rebelHudExplosion;
-	delete _rebelHudDamage;
-	delete _rebelHudEffects;
-	delete _rebelHudHiRes;
 	delete _rebelMsgFont;
 }
 

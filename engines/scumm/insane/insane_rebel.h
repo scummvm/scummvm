@@ -46,15 +46,6 @@ public:
 	SmushFont *_rebelMsgFont;
 	bool _introCursorPushed; // true when we've pushed an invisible cursor for intro
 	
-	// Rebel Assault 2: Dynamically loaded HUD overlays (from CHK scripts)
-	// These correspond to the original game's global variables
-	NutRenderer *_rebelHudPrimary;     // DAT_00482240 - Primary HUD overlay
-	NutRenderer *_rebelHudSecondary;   // DAT_00482238 - Secondary HUD graphics
-	NutRenderer *_rebelHudCockpit;     // DAT_00482268 - Ship cockpit frame overlay
-	NutRenderer *_rebelHudExplosion;   // DAT_00482250 - Explosion overlay sprites
-	NutRenderer *_rebelHudDamage;      // DAT_00482248 - Damage indicator sprites
-	NutRenderer *_rebelHudEffects;     // DAT_00482258 - Additional effects
-	NutRenderer *_rebelHudHiRes;       // DAT_00482260 - High-res HUD alternative
 
 	int32 processMouse() override;
 	bool isBitSet(int n) override;
