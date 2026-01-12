@@ -914,6 +914,13 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleZlibFrameObject(subSize, b);
 			break;
 		case MKTAG('P','S','A','D'):
+			// Rebel Assault 2 only: Skip sound when _skipNext is set (enemy killed)
+			// This mirrors the original game's FUN_00423A50 behavior where
+			// SKIP tags cause subsequent PSAD/SAUD chunks to be skipped
+			if (_vm->_game.id == GID_REBEL2 && _skipNext) {
+				_skipNext = false;
+				break;
+			}
 			if (!_compressedFileMode) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
