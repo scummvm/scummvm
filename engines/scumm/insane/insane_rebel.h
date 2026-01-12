@@ -40,7 +40,10 @@ public:
 	~InsaneRebel2();
 
 	NutRenderer *_smush_cockpitNut;
-	NutRenderer *_smush_dispfontNut;  // DAT_00482200 - DISPFONT.NUT for status bar (difficulty, shields, lives, score)
+
+	// Font used for HUD score/lives/damage display (SMALFONT.NUT)
+	// DAT_00482200 equivalent - used by FUN_0041c012 for status bar rendering
+	NutRenderer *_smush_dispfontNut;
 
 	// Font used for opcode 9 text/subtitle rendering (DIHIFONT / TALKFONT)
 	SmushFont *_rebelMsgFont;
@@ -191,6 +194,24 @@ public:
 	/* Difficulty Level (0, 1, 2 = Easy, Med, Hard) */
 	int _difficulty;
 	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
+
+	// Score system (FUN_0041bf8d equivalent)
+	// Adds points to score and awards bonus life when crossing threshold
+	void addScore(int points);
+
+	// Score lookup tables (indices into per-level point values)
+	// DAT_0047e0fe: Points for destroying enemies
+	// DAT_0047e100: Points for certain special events
+	// DAT_0047e102: Points awarded per frame (time bonus)
+	static const int16 kScoreTableEnemyDestroy[16];  // Per difficulty/level
+	static const int16 kScoreTableSpecial[16];
+	static const int16 kScoreTableTimeBonus[16];
+
+	// Render score text to HUD (called from procPostRendering)
+	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);
+
+	// Target lock timer (DAT_00443676) - set to 7 when crosshair is over enemy
+	int _targetLockTimer;
 
 };
 
