@@ -236,6 +236,10 @@ public:
 	void grabKetchup(HotSpot *hotspot);
 	void grabMustard(HotSpot *hotspot);
 	void grabSpicey(HotSpot *hotspot);
+	void openKitchenDoor(HotSpot *hotspot);
+	void closeKitchenDoor(HotSpot *HotSpot);
+	void openDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayClosed);
+	void closeDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayOpen);
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);

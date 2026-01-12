@@ -21,13 +21,16 @@
 
 #include "graphics/paletteman.h"
 
-#include "pelrock/actions.h"
 #include "pelrock.h"
+#include "pelrock/actions.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {
+
+#define MASCULINE true
+#define FEMININE false
 
 const ActionEntry actionTable[] = {
 	// Room 0
@@ -38,13 +41,17 @@ const ActionEntry actionTable[] = {
 	{3, PICKUP, &PelrockEngine::pickUpPhoto},
 	{0, PICKUP, &PelrockEngine::pickYellowBook}, // Generic pickup for other items
 	// Room 1
-	{4, PICKUP, &PelrockEngine::pickUpBrick},    // Brick
+	{4, PICKUP, &PelrockEngine::pickUpBrick}, // Brick
 	// Room 2
 	{282, OPEN, &PelrockEngine::openMcDoor},
 	{282, CLOSE, &PelrockEngine::closeMcDoor},
+
+	// Room 12
 	{60, PICKUP, &PelrockEngine::grabKetchup},
 	{61, PICKUP, &PelrockEngine::grabMustard},
 	{62, PICKUP, &PelrockEngine::grabSpicey},
+	{370, OPEN, &PelrockEngine::openKitchenDoor},
+	{370, CLOSE, &PelrockEngine::closeKitchenDoor},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -59,16 +66,13 @@ const ActionEntry actionTable[] = {
 	// End marker
 	{WILDCARD, NO_ACTION, nullptr}};
 
-
 const CombinationEntry combinationTable[] = {
 	{2, 281, &PelrockEngine::useCardWithATM}, // Use ATM Card with ATM
 	// End marker
-	{WILDCARD, WILDCARD, nullptr}
-};
+	{WILDCARD, WILDCARD, nullptr}};
 
 void PelrockEngine::openDoor(HotSpot *hotspot) {
-	_room->addSticker(93, false);
-	_room->enableExit(0, false);
+	openDoor(hotspot, 0, 93, FEMININE, true);
 }
 
 void PelrockEngine::openDrawer(HotSpot *hotspot) {
@@ -78,16 +82,15 @@ void PelrockEngine::openDrawer(HotSpot *hotspot) {
 	}
 	_room->addSticker(91);
 	// TODO: Check if we need to disable the hotspot
-	if(_room->findHotspotByExtra(1)->isEnabled &&
-	   _room->findHotspotByExtra(2)->isEnabled &&
-	   _room->findHotspotByExtra(3)->isEnabled) {
-	   _room->disableHotspot(hotspot);
+	if (_room->findHotspotByExtra(1)->isEnabled &&
+		_room->findHotspotByExtra(2)->isEnabled &&
+		_room->findHotspotByExtra(3)->isEnabled) {
+		_room->disableHotspot(hotspot);
 	}
 }
 
 void PelrockEngine::closeDoor(HotSpot *hotspot) {
-	_room->removeSticker(93);
-	_room->disableExit(0, false);
+	closeDoor(hotspot, 0, 93, FEMININE, true);
 }
 
 void PelrockEngine::pickUpPhoto(HotSpot *hotspot) {
@@ -109,29 +112,27 @@ void PelrockEngine::closeDrawer(HotSpot *hotspot) {
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
-	if(_state.JEFE_INGRESA_PASTA) {
+	if (_state.JEFE_INGRESA_PASTA) {
 		_state.JEFE_INGRESA_PASTA = 0;
 		addInventoryItem(75);
-	}
-	else {
+	} else {
 		int billCount = 0;
-		for(int i = 0; i < _state.inventoryItems.size(); i++) {
-			if(_state.inventoryItems[i] == 5) {
+		for (int i = 0; i < _state.inventoryItems.size(); i++) {
+			if (_state.inventoryItems[i] == 5) {
 				billCount++;
 			}
 		}
-		if(billCount < 13) {
+		if (billCount < 13) {
 			addInventoryItem(5); // 1000 pesetas bill
 			_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
-		}
-		else {
+		} else {
 			_dialog->say(_res->_ingameTexts[NOMONEY_LEFT]);
 		}
 	}
 }
 
 void PelrockEngine::openMcDoor(HotSpot *hotspot) {
-	if( _room->hasSticker(7)) {
+	if (_room->hasSticker(7)) {
 		_dialog->say(_res->_ingameTexts[ALREADY_OPENED_F]);
 		return;
 	}
@@ -140,7 +141,8 @@ void PelrockEngine::openMcDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::closeMcDoor(HotSpot *hotspot) {
-	if( !_room->hasSticker(7)) {
+	closeDoor(hotspot, 2, 7, FEMININE, true);
+	if (!_room->hasSticker(7)) {
 		_dialog->say(_res->_ingameTexts[ALREADY_CLOSED_F]);
 		return;
 	}
@@ -162,7 +164,36 @@ void PelrockEngine::grabMustard(HotSpot *hotspot) {
 }
 
 void PelrockEngine::grabSpicey(HotSpot *hotspot) {
+
 	_room->addSticker(71);
+}
+
+void PelrockEngine::openKitchenDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 1, 32, MASCULINE, true);
+}
+
+void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
+	closeDoor(HotSpot, 1, 32, MASCULINE, true);
+}
+
+void PelrockEngine::openDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayClosed) {
+	if (_room->hasSticker(sticker)) {
+		int text = masculine == MASCULINE ? YA_ABIERTO_M : ALREADY_OPENED_F;
+		_dialog->say(_res->_ingameTexts[text]);
+		return;
+	}
+	_room->enableExit(doorIndex, !stayClosed);
+	_room->addSticker(sticker, !stayClosed);
+}
+
+void PelrockEngine::closeDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayOpen) {
+	if (!_room->hasSticker(sticker)) {
+		int text = masculine == MASCULINE ? ALREADY_CLOSED_M : ALREADY_CLOSED_F;
+		_dialog->say(_res->_ingameTexts[text]);
+		return;
+	}
+	_room->disableExit(doorIndex, !stayOpen);
+	_room->removeSticker(sticker);
 }
 
 void PelrockEngine::addInventoryItem(int item) {
@@ -184,9 +215,8 @@ void PelrockEngine::addInventoryItem(int item) {
 	_state.addInventoryItem(item);
 }
 
-
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
-	if(actionTrigger == 328) {
+	if (actionTrigger == 328) {
 		debug("Disabling root %d in room %d", rootIndex, room);
 		_state.setRootDisabledState(room, rootIndex, true);
 	}
@@ -214,13 +244,11 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	}
 }
 
-
 void PelrockEngine::noOpAction(HotSpot *hotspot) {
 }
 
-
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	//154 to 169
+	// 154 to 169
 	debug("No-op item %d with hotspot %d", item, hotspot->extra);
 	_alfredState.direction = ALFRED_DOWN;
 	byte response = (byte)getRandomNumber(12);

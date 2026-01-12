@@ -98,12 +98,24 @@ void RoomManager::addSticker(int stickerId, bool persist) {
 
 void RoomManager::removeSticker(int stickerIndex) {
 	int index = -1;
+	if (index == -1) {
+		for (int i = 0; i < _transientStickers.size(); i++) {
+			if (_transientStickers[i].stickerIndex == stickerIndex) {
+				index = i;
+				_transientStickers.remove_at(index);
+				return;
+			}
+		}
+	}
+
 	for (int i = 0; i < g_engine->_state.roomStickers[_currentRoomNumber].size(); i++) {
 		if (g_engine->_state.roomStickers[_currentRoomNumber][i].stickerIndex == stickerIndex) {
 			index = i;
+			g_engine->_state.roomStickers[_currentRoomNumber].remove_at(index);
 			break;
 		}
 	}
+
 	if (index != -1 && index < g_engine->_state.roomStickers[_currentRoomNumber].size())
 		g_engine->_state.roomStickers[_currentRoomNumber].remove_at(index);
 }
@@ -114,12 +126,19 @@ bool RoomManager::hasSticker(int index) {
 			return true;
 		}
 	}
+
+	for (int i = 0; i < _transientStickers.size(); i++) {
+		if (_transientStickers[i].stickerIndex == index) {
+			return true;
+		}
+	}
+
 	return false;
 }
 
 void RoomManager::changeExit(int index, bool enabled, bool persist) {
 	_currentRoomExits[index].isEnabled = enabled;
-	if(persist)
+	if (persist)
 		g_engine->_state.roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, _currentRoomExits[index].index, _currentRoomExits[index]});
 }
 
