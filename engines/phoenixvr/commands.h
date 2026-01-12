@@ -449,8 +449,7 @@ struct HideCursor : public Script::Command {
 
 struct ResetLockKey : public Script::Command {
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("resetlockkey");
-		// FIXME: scripts don't restore lockkey after reset
+		g_engine->resetLockKey();
 	}
 };
 

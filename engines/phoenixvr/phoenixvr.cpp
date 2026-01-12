@@ -302,6 +302,7 @@ void PhoenixVREngine::playAnimation(const Common::String &name, const Common::St
 }
 
 void PhoenixVREngine::resetLockKey() {
+	debug("resetlockkey");
 	_prevWarp = -1; // original game does only this o_O
 }
 
