@@ -2679,10 +2679,14 @@ Common::Error ScummEngine::go() {
 		if (_game.features & GF_DEMO) {
 			((ScummEngine_v7 *)this)->_splayer->play("OPEN/O_DEMO.SAN", 12);
 		} else {
-			// Mark the following SAN as an intro so HUD isn't rendered during it (bit 0x20)
-			//((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0x20);
-			//((ScummEngine_v7 *)this)->_splayer->play("LEV01/01BEG.SAN", 12);
-			// Clear intro flag and immediately start the mission SAN
+			// Play Level 1 intro cinematic (01BEG.SAN)
+			// Set video flags to 0x20 to mark this as a non-interactive intro sequence
+			// This flag tells procPostRendering to skip HUD/crosshair rendering
+			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0x20);
+			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01BEG.SAN", 12);
+
+			// After intro completes, start the gameplay mission video (01P01.SAN)
+			// Clear the intro flag so HUD renders during gameplay
 			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0);
 			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01P01.SAN", 12);
 		}

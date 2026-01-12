@@ -54,7 +54,7 @@
 
 namespace Scumm {
 
-static const int MAX_STRINGS = 200;
+static const int MAX_STRINGS = 800;  // RA2 has ~658 strings
 static const int ETRS_HEADER_LENGTH = 16;
 
 class StringResource {
@@ -136,7 +136,24 @@ public:
 			}
 
 			data_end -= 2;
-			assert(data_end > data_start);
+			// Handle empty entries (e.g., RA2 TRS files have entries with no content)
+			if (data_end <= data_start) {
+				// Skip this entry - no content
+				def_start = strchr(def_end + 1, '#');
+				continue;
+			}
+
+			// Strip leading // from first line (RA2 format uses // prefix for content)
+			if (data_start[0] == '/' && data_start[1] == '/') {
+				data_start += 2;
+			}
+
+			// Recalculate length after stripping
+			if (data_end <= data_start) {
+				def_start = strchr(def_end + 1, '#');
+				continue;
+			}
+
 			char *value = new char[data_end - data_start + 1];
 			assert(value);
 			memcpy(value, data_start, data_end - data_start);
@@ -183,14 +200,16 @@ public:
 };
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
-	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
+	debugC(DEBUG_SMUSH, "getStrings: trying to read text resources from %s", file);
 	ScummFile *theFile = vm->instantiateScummFile();
 
 	vm->openFile(*theFile, file);
 	if (!theFile->isOpen()) {
+		debugC(DEBUG_SMUSH, "getStrings: Failed to open %s", file);
 		delete theFile;
 		return 0;
 	}
+	debugC(DEBUG_SMUSH, "getStrings: Successfully opened %s", file);
 	int32 length = theFile->size();
 	char *filebuffer = new char [length + 1];
 	assert(filebuffer);
@@ -575,9 +594,18 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		b.read(string, subSize - 16);
 	} else {
 		int string_id = b.readUint16LE();
-		if (!_strings)
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: TRES string_id=%d pos=(%d,%d) flags=0x%x clip=(%d,%d,%d,%d) _strings=%p",
+			  string_id, pos_x, pos_y, flags, left, top, width, height, (void*)_strings);
+		if (!_strings) {
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: _strings is null, cannot look up string");
 			return;
+		}
 		str = _strings->get(string_id);
+		if (str) {
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: Found string: \"%s\"", str);
+		} else {
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: String ID %d not found", string_id);
+		}
 	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
@@ -1018,8 +1046,18 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
+		if (_vm->_game.id == GID_REBEL2) {
+			// Rebel Assault 2 uses SYSTM/GAME.TRS for all subtitle strings
+			// The TRS file is ETRS-encoded (XOR with 0xCC)
+			_strings = getStrings(_vm, "SYSTM/GAME.TRS", true);
+			if (_strings) {
+				debugC(DEBUG_SMUSH, "SmushPlayer::setupAnim: Loaded GAME.TRS string resources successfully");
+			} else {
+				debugC(DEBUG_SMUSH, "SmushPlayer::setupAnim: Failed to load GAME.TRS!");
+			}
+		} else if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			readString("mineroad.trs");
+		}
 	} else
 		readString(file);
 }
@@ -1046,6 +1084,26 @@ SmushFont *SmushPlayer::getFont(int font) {
 			assert(font >= 0 && font < ARRAYSIZE(ft_fonts));
 
 			_sf[font] = new SmushFont(_vm, ft_fonts[font], true);
+		}
+	} else if (_vm->_game.id == GID_REBEL2) {
+		// Rebel Assault 2 fonts:
+		// font 0: TALKFONT.NUT - main dialog/subtitle font
+		// font 1: DIHIFONT.NUT - high-res dialog font
+		// font 2: TITLFONT.NUT - title font
+		// font 3: SMALFONT.NUT - small font for HUD
+		const char *ra2_fonts[] = {
+			"SYSTM/TALKFONT.NUT",
+			"SYSTM/DIHIFONT.NUT",
+			"SYSTM/TITLFONT.NUT",
+			"SYSTM/SMALFONT.NUT"
+		};
+		int numFonts = ARRAYSIZE(ra2_fonts);
+		if (font >= 0 && font < numFonts) {
+			_sf[font] = new SmushFont(_vm, ra2_fonts[font], true);
+		} else {
+			// Fallback to font 0 for unknown font indices
+			debugC(DEBUG_SMUSH, "SmushPlayer::getFont: RA2 unknown font %d, using TALKFONT", font);
+			_sf[font] = new SmushFont(_vm, ra2_fonts[0], true);
 		}
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;

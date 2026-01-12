@@ -78,6 +78,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_enemies.clear();
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
+	_introCursorPushed = false;  // Cursor state tracking for intro sequences
 
 	_playerDamage = 0;
 	_playerShield = 255; // Full shields by default (255)
@@ -552,8 +553,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		iactRebel2Opcode8(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 9) {
 		// Opcode 9: Text/subtitle display
-		debug("Rebel2 IACT Opcode 9: par2=%d par3=%d par4=%d (text)", par2, par3, par4);
-		
+		iactRebel2Opcode9(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 0 || par1 == 1) {
 		// Low Opcodes seen in logs
 		debug("Rebel2 IACT: Low Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
@@ -971,6 +971,162 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		debug("Rebel2 Opcode 8: Sound loading subcase %d (not implemented)", par3);
 		// TODO: Implement sound loading when needed
 	}
+}
+
+void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Opcode 9: Text/Subtitle Display via IACT chunk
+	// Note: Most RA2 subtitles use TRES chunks handled by SmushPlayer::handleTextResource()
+	// This opcode handles inline text in IACT chunks (less common)
+	//
+	// IACT Chunk Layout (par1-par4 already read by handleIACT):
+	// +0x00 (2): opcode = 9 (par1, already read)
+	// +0x02 (2): par2 (already read)
+	// +0x04 (2): par3 (already read)
+	// +0x06 (2): par4 (already read)
+	// +0x08 onwards: Text data structure
+	//
+	// Text Data Structure:
+	// +0x00 (2): X position
+	// +0x02 (2): Y position
+	// +0x04 (2): flags (bit 0=center, bit 1=right, bit 2=wrap, bit 3=difficulty gated)
+	// +0x06 (2): clipX (when flag & 4)
+	// +0x08 (2): clipY
+	// +0x0A (2): clipW
+	// +0x0C (2): clipH
+	// +0x10 onwards: NUL-terminated text string
+
+	int64 startPos = b.pos();
+
+	// Check for "TRES" tag (0x54524553) indicating string resource lookup
+	uint32 tag = b.readUint32BE();
+
+	const char *textStr = nullptr;
+	char textBuffer[512];
+	int16 posX = 160;  // Default center position
+	int16 posY = 150;  // Default bottom-ish position
+	int16 textFlags = 1;  // Default: center aligned
+	int16 clipX = 16, clipY = 16, clipW = 288, clipH = 168;
+
+	if (tag == MKTAG('T','R','E','S')) {
+		// String resource lookup via TRES tag
+		// The string index follows after the tag
+		int32 stringIndex = b.readSint32LE();
+
+		// Try to get string from SMUSH player's string resource
+		if (_player && _player->getString(stringIndex)) {
+			textStr = _player->getString(stringIndex);
+			debug("Rebel2 Opcode 9: TRES string index=%d -> \"%s\"", stringIndex, textStr);
+		} else {
+			debug("Rebel2 Opcode 9: TRES string index=%d not found", stringIndex);
+			return;
+		}
+
+		// After TRES + index, read positioning data
+		// The remaining data contains X, Y, flags etc.
+		if (b.size() - b.pos() >= 14) {
+			posX = b.readSint16LE();
+			posY = b.readSint16LE();
+			textFlags = b.readSint16LE();
+			clipX = b.readSint16LE();
+			clipY = b.readSint16LE();
+			clipW = b.readSint16LE();
+			clipH = b.readSint16LE();
+		}
+	} else {
+		// Inline text data - go back and read positioning structure
+		b.seek(startPos);
+
+		// Read text data structure
+		posX = b.readSint16LE();      // +0x00
+		posY = b.readSint16LE();      // +0x02
+		textFlags = b.readSint16LE(); // +0x04
+		clipX = b.readSint16LE();     // +0x06
+		clipY = b.readSint16LE();     // +0x08
+		clipW = b.readSint16LE();     // +0x0A
+		clipH = b.readSint16LE();     // +0x0C
+		b.skip(2);                    // +0x0E padding
+
+		// Read inline text string (NUL-terminated)
+		int textLen = 0;
+		while (textLen < (int)sizeof(textBuffer) - 1) {
+			byte ch = b.readByte();
+			if (ch == 0 || b.eos()) break;
+			textBuffer[textLen++] = ch;
+		}
+		textBuffer[textLen] = '\0';
+		textStr = textBuffer;
+
+		debug("Rebel2 Opcode 9: Inline text at (%d,%d) flags=0x%x -> \"%s\"", posX, posY, textFlags, textStr);
+	}
+
+	if (!textStr || textStr[0] == '\0') {
+		debug("Rebel2 Opcode 9: Empty text string, skipping");
+		return;
+	}
+
+	// Check difficulty gate (flag bit 3 = 0x08)
+	// If set, only show text if difficulty check passes (we skip this check for simplicity)
+	// In retail: FUN_00425d30(0) is called
+
+	// Get render buffer dimensions
+	int width = (_player && _player->_width > 0) ? _player->_width : 320;
+	int height = (_player && _player->_height > 0) ? _player->_height : 200;
+
+	// Apply coordinate clamping (from FUN_004033cf disassembly)
+	// Low-res: X clamped to [16, 304], Y clamped to [16, 196]
+	if (posX < 16) posX = 16;
+	if (posX > 304) posX = 304;
+	if (posY < 16) posY = 16;
+	if (posY > 196) posY = 196;
+
+	// Use the message font loaded during initialization (DIHIFONT.NUT)
+	if (!_rebelMsgFont) {
+		debug("Rebel2 Opcode 9: No message font loaded (_rebelMsgFont is null)");
+		return;
+	}
+
+	// Calculate clipping rectangle
+	if (!(textFlags & 0x04)) {
+		// No clip rect specified, use default full-screen clip
+		clipX = 0;
+		clipY = 0;
+		clipW = width;
+		clipH = height;
+	}
+
+	Common::Rect clipRect(
+		MAX<int>(0, clipX),
+		MAX<int>(0, clipY),
+		MIN<int>(clipX + clipW, width),
+		MIN<int>(clipY + clipH, height)
+	);
+
+	// Determine text alignment flags
+	TextStyleFlags styleFlags = kStyleAlignLeft;
+	if (textFlags & 0x01) {
+		styleFlags = kStyleAlignCenter;
+	} else if (textFlags & 0x02) {
+		styleFlags = kStyleAlignRight;
+	}
+	if (textFlags & 0x04) {
+		styleFlags = (TextStyleFlags)(styleFlags | kStyleWordWrap);
+	}
+
+	// Use white color (index 255) for subtitle text
+	// The original uses colors from the palette, commonly white or yellow for subtitles
+	int16 textColor = 255;
+
+	// Draw the text string
+	if (textFlags & 0x04) {
+		// Word-wrapped text
+		_rebelMsgFont->drawStringWrap(textStr, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+	} else {
+		// Single-line text
+		_rebelMsgFont->drawString(textStr, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+	}
+
+	debug("Rebel2 Opcode 9: Rendered subtitle at (%d,%d) flags=0x%x clip=(%d,%d,%d,%d)",
+		posX, posY, textFlags, clipX, clipY, clipW, clipH);
 }
 
 void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
@@ -1582,7 +1738,31 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
 
 	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)
+	// The 0x20 flag indicates a non-interactive cutscene/intro sequence
 	bool introPlaying = ((_player->_curVideoFlags & 0x20) != 0);
+
+	// During intro sequences:
+	// - Hide the crosshair/cursor (handled by not drawing it)
+	// - Skip all HUD/status bar rendering
+	// - Skip mouse input processing
+	// The mouse cursor is already hidden by SmushPlayer during video playback
+	if (introPlaying) {
+		// Track state transition for debugging
+		if (!_introCursorPushed) {
+			_introCursorPushed = true;
+			debug("Rebel2: Intro sequence detected (flags=0x%x) - HUD disabled", _player->_curVideoFlags);
+		}
+		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9
+		return;
+	} else {
+		// Gameplay mode - restore normal rendering
+		if (_introCursorPushed) {
+			_introCursorPushed = false;
+			debug("Rebel2: Gameplay started - HUD enabled");
+		}
+	}
+
+	// From here on, we're in gameplay mode (not intro)
 	if (!introPlaying) {
 	// ============================================================
 	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
