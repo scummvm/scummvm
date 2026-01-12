@@ -1807,9 +1807,10 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		_useOriginalGUI = false;
 
 		_sound = new Sound(this, _mixer, false);
-		_musicEngine = _imuseDigital = new IMuseDigital(this, 11025, _mixer, &_resourceAccessMutex, false);
+		// Rebel Assault 2 doesn't use iMUSE for audio - audio is handled directly by INSANE
+		_musicEngine = _imuseDigital = nullptr;
 		_insane = new InsaneRebel2(this);
-		_splayer = new SmushPlayer(this, _imuseDigital, _insane);
+		_splayer = new SmushPlayer(this, nullptr, _insane);
 
 		// Initialize cursor
 		_macGui = nullptr; // Ensure this is null as we don't want MacGui behavior

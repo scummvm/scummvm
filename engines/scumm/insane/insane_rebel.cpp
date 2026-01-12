@@ -39,6 +39,8 @@
 
 #include "scumm/insane/insane_rebel.h"
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Scumm {
 
@@ -216,10 +218,18 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelEmbeddedHud[i].renderY = 0;
 		_rebelEmbeddedHud[i].valid = false;
 	}
+
+	// Initialize audio system for RA2 (since we don't use iMUSE)
+	_audioSampleRate = 11025;  // RA2 audio is 11025 Hz, not 22050 Hz
+	for (i = 0; i < kRA2MaxAudioTracks; i++) {
+		_audioStreams[i] = nullptr;
+		_audioTrackActive[i] = false;
+	}
 }
 
 
 InsaneRebel2::~InsaneRebel2() {
+	terminateAudio();
 	delete _rebelMsgFont;
 	delete _smush_dispfontNut;
 }
@@ -2162,6 +2172,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// This is called after all other rendering so it appears on top
 	renderScoreHUD(renderBitmap, pitch, width, height, 0);
 
+	} // End of if (!introPlaying) block
+
 	// ============================================================
 	// FRAME END RESET: Clear active flags for all enemies (FUN_403240 equivalent)
 	// ============================================================
@@ -2179,6 +2191,227 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 }
 
+// ========== Audio Handling for Rebel Assault 2 ==========
+// RA2 doesn't use iMUSE - we handle audio directly through the mixer
+
+void InsaneRebel2::initAudio(int sampleRate) {
+	_audioSampleRate = sampleRate;
+	for (int i = 0; i < kRA2MaxAudioTracks; i++) {
+		_audioStreams[i] = nullptr;
+		_audioTrackActive[i] = false;
+	}
 }
 
+void InsaneRebel2::terminateAudio() {
+	for (int i = 0; i < kRA2MaxAudioTracks; i++) {
+		if (_audioTrackActive[i]) {
+			_vm->_mixer->stopHandle(_audioHandles[i]);
+			_audioTrackActive[i] = false;
+		}
+		if (_audioStreams[i]) {
+			_audioStreams[i]->finish();
+			_audioStreams[i] = nullptr;
+		}
+	}
 }
+
+void InsaneRebel2::queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan) {
+	if (trackIdx < 0 || trackIdx >= kRA2MaxAudioTracks || size <= 0 || !data) {
+		debug(5, "InsaneRebel2::queueAudioData: Invalid params trackIdx=%d size=%d data=%p", trackIdx, size, (void*)data);
+		return;
+	}
+
+	debug(5, "InsaneRebel2::queueAudioData: trackIdx=%d size=%d volume=%d pan=%d", trackIdx, size, volume, pan);
+
+	// Create audio stream if not already active
+	if (!_audioStreams[trackIdx]) {
+		// RA2 audio is 8-bit unsigned mono at the track's sample rate
+		debug("InsaneRebel2: Creating audio stream for track %d at %d Hz", trackIdx, _audioSampleRate);
+		_audioStreams[trackIdx] = Audio::makeQueuingAudioStream(_audioSampleRate, false);
+		_audioTrackActive[trackIdx] = true;
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandles[trackIdx],
+								_audioStreams[trackIdx], -1, Audio::Mixer::kMaxChannelVolume, 0,
+								DisposeAfterUse::NO);
+	}
+
+	debug(6, "InsaneRebel2: Queueing %d bytes to track %d (vol=%d)", size, trackIdx, volume);
+
+	// Copy the audio data since queueBuffer may need to own it
+	byte *audioCopy = (byte *)malloc(size);
+	if (!audioCopy) {
+		return;
+	}
+	memcpy(audioCopy, data, size);
+
+	// Queue the audio data - RA2 SMUSH audio is 8-bit unsigned mono
+	_audioStreams[trackIdx]->queueBuffer(audioCopy, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+
+	// Apply volume and pan to the channel
+	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	int scaledPan = (pan * 127) / 128;  // Convert -128..127 to -127..127
+	_vm->_mixer->setChannelVolume(_audioHandles[trackIdx], scaledVolume);
+	_vm->_mixer->setChannelBalance(_audioHandles[trackIdx], scaledPan);
+}
+
+void InsaneRebel2::processAudioFrame(int16 feedSize) {
+	if (!_player) {
+		return;
+	}
+
+	// Initialize dispatch data if needed (normally done in processDispatches for iMUSE games)
+	if (_player->_smushTracksNeedInit) {
+		_player->_smushTracksNeedInit = false;
+		for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
+			_player->_smushDispatch[i].fadeRemaining = 0;
+			_player->_smushDispatch[i].fadeVolume = 0;
+			_player->_smushDispatch[i].fadeSampleRate = 0;
+			_player->_smushDispatch[i].elapsedAudio = 0;
+			_player->_smushDispatch[i].audioLength = 0;
+		}
+	}
+
+	// Access SmushPlayer's audio track data (InsaneRebel2 is a friend class)
+	// Only iterate over actually allocated tracks (not SMUSH_MAX_TRACKS)
+	for (int i = 0; i < _player->_smushNumTracks; i++) {
+		SmushPlayer::SmushAudioTrack &track = _player->_smushTracks[i];
+		SmushPlayer::SmushAudioDispatch &dispatch = _player->_smushDispatch[i];
+
+		if (track.state == TRK_STATE_INACTIVE) {
+			continue;
+		}
+
+		// Skip tracks that don't have valid buffer pointers yet
+		// Note: dispatch.dataBuf is set when transitioning from FADING to PLAYING,
+		// so tracks in FADING state won't have it set yet - that's OK, they'll be
+		// transitioned below and then processed
+		if (!track.blockPtr) {
+			debug(5, "InsaneRebel2: Skipping track %d - blockPtr=%p state=%d",
+				  i, (void*)track.blockPtr, track.state);
+			continue;
+		}
+
+		// Check if this track type should be played
+		bool isPlayableTrack = ((track.flags & TRK_TYPE_MASK) == IS_SPEECH && _player->isChanActive(CHN_SPEECH)) ||
+							   ((track.flags & TRK_TYPE_MASK) == IS_BKG_MUSIC && _player->isChanActive(CHN_BKGMUS)) ||
+							   ((track.flags & TRK_TYPE_MASK) == IS_SFX && _player->isChanActive(CHN_OTHER));
+
+		if (!isPlayableTrack) {
+			continue;
+		}
+
+		// Calculate base volume for this track type
+		int baseVolume;
+		switch (track.flags & TRK_TYPE_MASK) {
+		case IS_SFX:
+			baseVolume = (_player->_smushTrackVols[1] * track.volume) >> 7;
+			break;
+		case IS_BKG_MUSIC:
+			baseVolume = (_player->_smushTrackVols[3] * track.volume) >> 7;
+			break;
+		case IS_SPEECH:
+			baseVolume = (_player->_smushTrackVols[2] * track.volume) >> 7;
+			break;
+		default:
+			baseVolume = track.volume;
+			break;
+		}
+		int mixVolume = baseVolume * _player->_smushTrackVols[0] / 127;
+
+		// Handle track state transitions: FADING -> PLAYING
+		if (track.state == TRK_STATE_FADING) {
+			dispatch.headerPtr = track.dataBuf;
+			dispatch.dataBuf = track.subChunkPtr;
+			dispatch.dataSize = track.dataSize;
+			dispatch.currentOffset = 0;
+			dispatch.audioLength = 0;
+			track.state = TRK_STATE_PLAYING;
+		}
+
+		// Process audio for this track
+		if (track.state != TRK_STATE_INACTIVE) {
+			int32 tmpFeedSize = feedSize;
+
+			while (tmpFeedSize > 0) {
+				int32 mixInFrameCount = dispatch.currentOffset;
+
+				// Use dispatch.dataBuf and dispatch.dataSize which are set consistently
+				// when the track transitions from FADING to PLAYING, and audioRemaining
+				// is calculated relative to these values by processAudioCodes
+				if (mixInFrameCount > 0 && dispatch.dataBuf && dispatch.dataSize > 0) {
+					// Ensure audioRemaining is non-negative for proper circular buffer access
+					if (dispatch.audioRemaining < 0) {
+						debug(5, "InsaneRebel2: Resetting negative audioRemaining=%d for track %d", dispatch.audioRemaining, i);
+						dispatch.audioRemaining = 0;
+					}
+					int32 offset = dispatch.audioRemaining % dispatch.dataSize;
+
+					// Limit to feed size proportional to sample rate
+					if (dispatch.sampleRate > 0 && _player->_smushAudioSampleRate > 0) {
+						int32 maxFrames = dispatch.sampleRate * tmpFeedSize / _player->_smushAudioSampleRate;
+						if (mixInFrameCount > maxFrames) {
+							mixInFrameCount = maxFrames;
+						}
+					}
+
+					// Don't read past the buffer
+					if (offset + mixInFrameCount > dispatch.dataSize) {
+						mixInFrameCount = dispatch.dataSize - offset;
+					}
+
+					// Make sure we don't exceed available data
+					if (dispatch.audioRemaining + mixInFrameCount > track.availableSize) {
+						mixInFrameCount = track.availableSize - dispatch.audioRemaining;
+						if (mixInFrameCount <= 0) {
+							// Track is ending - no more data
+							track.state = TRK_STATE_ENDING;
+							break;
+						}
+					}
+
+					if (mixInFrameCount > 0) {
+						// Safety check: verify the pointer and offset are within bounds
+						if (!dispatch.dataBuf || offset < 0 || offset + mixInFrameCount > dispatch.dataSize) {
+							debug(1, "InsaneRebel2: Invalid audio buffer access track=%d dataBuf=%p offset=%d mixInFrameCount=%d dataSize=%d",
+								  i, (void*)dispatch.dataBuf, offset, mixInFrameCount, dispatch.dataSize);
+							break;
+						}
+
+						// Queue audio data directly to our audio streams
+						queueAudioData(i, &dispatch.dataBuf[offset], mixInFrameCount, mixVolume, track.pan);
+
+						// Update dispatch state
+						dispatch.currentOffset -= mixInFrameCount;
+						dispatch.audioRemaining += mixInFrameCount;
+
+						// Calculate how much feed time was consumed
+						if (dispatch.sampleRate > 0) {
+							int32 consumedFeed = mixInFrameCount * _player->_smushAudioSampleRate / dispatch.sampleRate;
+							tmpFeedSize -= consumedFeed;
+						} else {
+							tmpFeedSize -= mixInFrameCount;
+						}
+					}
+				}
+
+				// If currentOffset is depleted, process audio codes to get more
+				if (dispatch.currentOffset <= 0) {
+					// processAudioCodes returns true if there's more audio, false if done
+					if (!_player->processAudioCodes(i, tmpFeedSize, mixVolume)) {
+						break;
+					}
+					// If still no offset after processing codes, we're done
+					if (dispatch.currentOffset <= 0) {
+						break;
+					}
+				} else if (tmpFeedSize <= 0) {
+					break;
+				}
+			}
+		}
+
+		track.audioRemaining = dispatch.audioRemaining;
+		dispatch.state = track.state;
+	}
+}
+
+} // End of namespace Scumm

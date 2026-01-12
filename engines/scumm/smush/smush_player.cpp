@@ -43,6 +43,7 @@
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
+#include "scumm/insane/insane_rebel.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -292,7 +293,13 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_smushAudioInitialized = false;
 	_smushAudioCallbackEnabled = false;
 
-	initAudio(_imuseDigital->getSampleRate(), 200000);
+	// Rebel Assault 2 doesn't use iMUSE for audio, so _imuseDigital may be null
+	if (_imuseDigital) {
+		initAudio(_imuseDigital->getSampleRate(), 200000);
+	} else {
+		// RA2 audio is 11025 Hz
+		initAudio(11025, 200000);
+	}
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -1191,7 +1198,15 @@ void SmushPlayer::parseNextFrame() {
 	if (_insanity)
 		_vm->_sound->processSound();
 
-	_vm->_imuseDigital->flushTracks();
+	if (_vm->_imuseDigital)
+		_vm->_imuseDigital->flushTracks();
+
+	// Rebel Assault 2 audio processing - call processDispatches directly since no iMUSE
+	if (!_imuseDigital && _vm->_game.id == GID_REBEL2) {
+		// Use a feed size based on frame rate (similar to iMUSE)
+		// 11025 Hz / 12 fps = ~918 samples per frame
+		processDispatches(_smushAudioSampleRate / 12);
+	}
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1330,10 +1345,13 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	// This piece of code is used to ensure there are
 	// no audio hiccups while loading the SMUSH video;
 	// Each version of the engine does it in its own way.
-	if (_imuseDigital->isFTSoundEngine()) {
-		_imuseDigital->fillStreamsWhileMusicCritical(20);
-	} else {
-		_imuseDigital->floodMusicBuffer();
+	// Rebel Assault 2 doesn't use iMUSE for audio.
+	if (_imuseDigital) {
+		if (_imuseDigital->isFTSoundEngine()) {
+			_imuseDigital->fillStreamsWhileMusicCritical(20);
+		} else {
+			_imuseDigital->floodMusicBuffer();
+		}
 	}
 
 	int skipped = 0;
@@ -1440,7 +1458,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_IACTpos = 0;
 
 			resetAudioTracks(); // For DIG demo
-			_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
+			if (_imuseDigital)
+				_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
 			break;
 		}
 
@@ -1461,7 +1480,9 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	int32 maxSizes[SMUSH_MAX_TRACKS] = {100000, 100000, 100000, 400000};
 
-	_imuseDigital->setSmushPlayer(this);
+	// Rebel Assault 2 doesn't use iMUSE for audio
+	if (_imuseDigital)
+		_imuseDigital->setSmushPlayer(this);
 
 	// DIG demo uses this audio system but doesn't use INSANE
 	if (_insane)
@@ -1470,6 +1491,23 @@ void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	setGainReductionParams(114, 2048);
 
 	memset(_smushAudioTable, 0, sizeof(_smushAudioTable));
+
+	// Initialize dispatch structures to safe defaults
+	for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
+		_smushDispatch[i].headerPtr = nullptr;
+		_smushDispatch[i].dataBuf = nullptr;
+		_smushDispatch[i].dataSize = 0;
+		_smushDispatch[i].audioRemaining = 0;
+		_smushDispatch[i].currentOffset = 0;
+		_smushDispatch[i].sampleRate = 0;
+		_smushDispatch[i].state = TRK_STATE_INACTIVE;
+		_smushDispatch[i].fadeSampleRate = 0;
+		_smushDispatch[i].fadeVolume = 0;
+		_smushDispatch[i].fadeRemaining = 0;
+		_smushDispatch[i].volumeStep = 0;
+		_smushDispatch[i].elapsedAudio = 0;
+		_smushDispatch[i].audioLength = 0;
+	}
 
 	for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
 		_smushTrackVols[i] = 127;
@@ -1516,6 +1554,9 @@ int SmushPlayer::addAudioTrack(int32 trackBlockSize, int32 maxBlockSize) {
 	_smushTracks[id].groupId = GRP_MASTER;
 	_smushTracks[id].blockSize = trackBlockSize;
 	_smushTracks[id].parsedChunks = 0;
+	_smushTracks[id].dataBuf = nullptr;
+	_smushTracks[id].subChunkPtr = nullptr;
+	_smushTracks[id].dataSize = 0;
 
 	_smushTracks[id].fadeBuf = (uint8 *)malloc(SMUSH_FADE_SIZE);
 	if (!_smushTracks[id].fadeBuf)
@@ -1736,6 +1777,15 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 	bool isPlayableTrack;
 	bool speechIsPlaying = false;
+
+	// Rebel Assault 2 doesn't use iMUSE for audio - use InsaneRebel2's audio handler
+	if (!_imuseDigital) {
+		if (_vm->_game.id == GID_REBEL2 && _insane) {
+			InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
+			rebel2->processAudioFrame(feedSize);
+		}
+		return;
+	}
 
 	int engineBaseFeedSize = _imuseDigital->getFeedSize();
 
@@ -2166,6 +2216,10 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 }
 
 void SmushPlayer::sendAudioToDiMUSE(uint8 *mixBuf, int32 mixStartingPoint, int32 mixFeedSize, int32 mixInFrameCount, int volume, int pan) {
+	// Rebel Assault 2 doesn't use iMUSE for audio
+	if (!_imuseDigital)
+		return;
+
 	int clampedVol, clampedPan;
 	bool is11025Hz = false;
 

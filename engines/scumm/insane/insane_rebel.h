@@ -31,6 +31,14 @@
 #include "common/list.h"
 #include "common/rect.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
+namespace Audio {
+class QueuingAudioStream;
+class SoundHandle;
+}
+
 namespace Scumm {
 
 class InsaneRebel2 : public Insane {
@@ -213,6 +221,29 @@ public:
 
 	// Target lock timer (DAT_00443676) - set to 7 when crosshair is over enemy
 	int _targetLockTimer;
+
+	// ========== Audio Handling ==========
+	// Rebel Assault 2 doesn't use iMUSE - audio is handled directly here
+
+	static const int kRA2MaxAudioTracks = 4;
+
+	Audio::QueuingAudioStream *_audioStreams[kRA2MaxAudioTracks];
+	Audio::SoundHandle _audioHandles[kRA2MaxAudioTracks];
+	bool _audioTrackActive[kRA2MaxAudioTracks];
+	int _audioSampleRate;
+
+	// Initialize audio system for RA2
+	void initAudio(int sampleRate);
+
+	// Terminate audio system
+	void terminateAudio();
+
+	// Process audio dispatches - called from SmushPlayer when iMUSE is null
+	// This replaces the iMUSE audio path for RA2
+	void processAudioFrame(int16 feedSize);
+
+	// Queue audio data for playback on a specific track
+	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 
 };
 
