@@ -46,6 +46,7 @@
 namespace PhoenixVR {
 
 struct PhoenixVRGameDescription;
+struct GameState;
 
 class PhoenixVREngine : public Engine {
 private:
@@ -90,7 +91,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return _prevWarp == -1;
 	}
 
 	// Script API
@@ -211,22 +212,9 @@ private:
 	byte _timerFlags = 0;
 	float _timer = 0;
 
-	struct GameState {
-		Common::String script;
-		Common::String game;
-		Common::String info;
-		Common::Array<byte> dibHeader;
-		int16 thumbWidth;
-		int16 thumbHeight;
-		Common::Array<byte> thumbnail;
-		Common::Array<byte> state;
-	};
 	Common::String _contextScript;
 	Common::String _contextLabel;
 	Common::Array<byte> _capturedState;
-
-	GameState loadGameStateObject(Common::SeekableReadStream &stream);
-	void saveGameStateObject(Common::SeekableWriteStream &stream, const GameState &state);
 };
 
 extern PhoenixVREngine *g_engine;

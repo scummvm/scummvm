@@ -23,6 +23,7 @@
 #include "common/translation.h"
 
 #include "phoenixvr/detection.h"
+#include "phoenixvr/game_state.h"
 #include "phoenixvr/metaengine.h"
 #include "phoenixvr/phoenixvr.h"
 
@@ -69,8 +70,6 @@ SaveStateList PhoenixVRMetaEngine::listSaves(const char *target) const {
 
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			SaveStateDescriptor desc = querySaveMetaInfos(target, slotNum);
-			desc.setSaveSlot(slotNum);
-			desc.setDeletableFlag(true);
 			saveList.push_back(desc);
 		}
 	}
@@ -80,13 +79,35 @@ SaveStateList PhoenixVRMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor PhoenixVRMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor PhoenixVRMetaEngine::querySaveMetaInfos(const char *target, int slotIdx) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+
+	auto fname = getSavegameFile(slotIdx, target);
+	Common::ScopedPtr<Common::InSaveFile> slot(saveFileMan->openForLoading(fname));
+	if (!slot)
+		return {};
+
+	auto state = PhoenixVR::GameState::load(*slot);
+
 	SaveStateDescriptor desc;
+	desc.setSaveSlot(slotIdx);
+	desc.setDeletableFlag(true);
+	desc.setDescription(state.game + " " + state.info);
+	desc.setThumbnail(state.getThumbnail(Graphics::BlendBlit::getSupportedPixelFormat()));
 	return desc;
 }
 
 bool PhoenixVRMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return f == kSimpleSavesNames || f == kSupportsListSaves || f == kSupportsLoadingDuringStartup || f == kSavesSupportThumbnail;
+	switch (f) {
+	case kSimpleSavesNames:
+	case kSupportsListSaves:
+	case kSupportsLoadingDuringStartup:
+	case kSavesSupportThumbnail:
+	case kSavesSupportMetaInfo:
+		return true;
+	default:
+		return false;
+	}
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PHOENIXVR)

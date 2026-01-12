@@ -1,10 +1,11 @@
 MODULE := engines/phoenixvr
 
 MODULE_OBJS = \
-	pakf.o \
-	phoenixvr.o \
+	game_state.o \
 	console.o \
 	metaengine.o \
+	pakf.o \
+	phoenixvr.o \
 	rectf.o \
 	region_set.o \
 	script.o \
