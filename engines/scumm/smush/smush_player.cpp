@@ -366,51 +366,9 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
 	assert(subSize >= 8);
 
-	// For Rebel2 large IACT chunks, check for embedded SAN animations
-	if (_vm->_game.id == GID_REBEL2 && subSize > 1000) {
-		int64 startPos = b.pos();
-		
-		// Read header to check for embedded ANIM
-		byte header[64];
-		int bytesRead = b.read(header, MIN<int32>(64, subSize));
-		
-		// Check for ANIM at offset 18 (embedded SAN location)
-		uint32 magicAt18 = (bytesRead >= 22) ? READ_BE_UINT32(header + 18) : 0;
-		
-		if (magicAt18 == MKTAG('A','N','I','M')) {
-			// This IACT contains an embedded SAN animation!
-			uint32 animSize = (bytesRead >= 26) ? READ_BE_UINT32(header + 22) : 0;
-			
-			// Read the userId to determine which HUD slot (1-4)
-			READ_LE_UINT16(header);
-			READ_LE_UINT16(header + 2);
-			int userId = READ_LE_UINT16(header + 6);
-			
-			debug("Rebel2: Extracting embedded SAN from IACT: userId=%d, animSize=%u", userId, animSize);
-			
-			// Extract the embedded ANIM data (starts at offset 18 from IACT start)
-			b.seek(startPos + 18);
-			
-			int32 embeddedSize = subSize - 18;
-			if (embeddedSize > 0 && _insane) {
-				byte *animData = (byte *)malloc(embeddedSize);
-				if (animData) {
-					b.read(animData, embeddedSize);
-					
-					// Pass to Insane for decoding
-					_insane->loadEmbeddedSan(userId, animData, embeddedSize, _dst);
-					
-					free(animData);
-				}
-			}
-			
-			// Return - don't process as audio
-			return;
-		}
-		
-		// Seek back to start for normal processing
-		b.seek(startPos);
-	}
+	// Embedded SAN detection moved to InsaneRebel2::iactRebel2Scene1
+	// (previously handled here in SmushPlayer; centralized to the engine)
+
 
 	int code = b.readUint16LE();
 	int flags = b.readUint16LE();

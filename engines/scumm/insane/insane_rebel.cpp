@@ -417,6 +417,46 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 			debug("Rebel2: Handler set to TURRET (0x26/38) - status bar sprite 5, crosshair sprites 48+");
 		}
 
+		// Detect embedded ANIM (SAN) within the remaining IACT payload and load into HUD slots.
+		// Centralized here so SmushPlayer no longer needs game-specific checks.
+		{
+			int64 startPos = b.pos();
+			int64 totalSize = b.size();
+			if (totalSize >= 0 && totalSize > startPos) {
+				int64 remaining = totalSize - startPos;
+				int scanSize = (int)MIN<int64>(remaining, 65536);
+				byte *scanBuf = (byte *)malloc(scanSize);
+				if (scanBuf) {
+					int bytesRead = b.read(scanBuf, scanSize);
+					for (int i = 0; i + 8 <= bytesRead; ++i) {
+						if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+							int64 animStreamPos = startPos + i;
+							uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
+							int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+							if (toCopy > 0) {
+								byte *animData = (byte *)malloc(toCopy);
+								if (animData) {
+									b.seek(animStreamPos);
+									b.read(animData, toCopy);
+									// par4 is the userId passed by SmushPlayer
+									loadEmbeddedSan(par4, animData, toCopy, renderBitmap);
+									free(animData);
+								}
+							}
+							// Restore stream position and stop scanning after first ANIM
+							b.seek(startPos);
+							free(scanBuf);
+							goto after_anim_detection;
+						}
+					}
+					// No ANIM found: restore position
+					b.seek(startPos);
+					free(scanBuf);
+				}
+			}
+		}
+	after_anim_detection:;
+
 	} else if (par1 == 8) {
 		// TODO
 	} else if (par1 == 9) {
