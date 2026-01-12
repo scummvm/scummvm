@@ -56,6 +56,7 @@ public:
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 
 	// Handle IACT opcode 3 subcases (damage, hit-counters, special cases)
+	void iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -156,6 +157,11 @@ public:
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelHitCooldown;   // DAT_0045790a - cooldown / timing for damage checks
 	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
+
+	// Retail counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
+	short _rebelValueCounters[10]; // Index 0 -> value 100, ... Index 9 -> 109
+	short _rebelMaskCounters[10];  // Index 1..9 used; index 0 unused
+	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
 
 
 	struct Shot {

@@ -87,6 +87,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelHitCooldown = 0;
 	_rebelInvulnerable = false;
 
+	// Initialize mirrored retail counters
+	for (int i = 0; i < 10; ++i) {
+		_rebelValueCounters[i] = 0;
+		_rebelMaskCounters[i] = 0;
+	}
+	_rebelLastCounter = 0;
+
 	_difficulty = 1; // Default to Medium (1). TODO: Read from game config
 
 	_speed = 12;
@@ -374,42 +381,8 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	if (par1 == 4) {
 		enemyUpdate(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 2) {
-		// Opcode 2: Often used for bit setting
-		// Disassembly shows this is handled but we don't have full context
-		// debug("Rebel2 IACT Opcode 2: par2=%d par3=%d par4=%d", par2, par3, par4);
-		
-		// Handle dependency linking (par3 == 4)
-		if (par3 == 4) {
-			int16 childId = b.readSint16LE(); // Offset +8
-			int16 parentId = b.readSint16LE(); // Offset +10
-			
-			if (parentId >= 0 && parentId < 512) {
-				// Shift links
-				_rebelLinks[parentId][2] = _rebelLinks[parentId][1];
-				_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
-				_rebelLinks[parentId][0] = childId;
-				
-				// Apply initial state based on parent state
-				// If parent is ALIVE (Bit Clear) -> Disable new Child (Set Bit)
-				// If parent is DEAD (Bit Set) -> Enable new Child (Clear Bit)
-				if (!isBitSet(parentId)) {
-					setBit(childId);
-					debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Alive -> Child Disabled.", childId, parentId);
-				} else {
-					clearBit(childId);
-					debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Dead -> Child Enabled.", childId, parentId);
-				}
-			}
-		} else {
-			// Skip extra data if any? Opcode 2 might vary in size.
-			// Based on disassembly, it accesses offset +8 and +10 for case 4.
-			// Currently we don't know size for other cases, but hopefully they don't crash stream reading.
-			// 'b' is SeekableReadStream, so we might need to skip if we don't read?
-			// The caller `procIACT` passes `size` but that's for the WHOLE chunk.
-			// We can't skip unknown sub-opcodes easily without size map.
-			// Assuming only par3=4 has extra data for now.
-		}
-		
+		// Delegate handling to dedicated opcode 2 handler
+		iactRebel2Opcode2(b, par2, par3, par4);
 	} else if (par1 == 3) {
 		iactRebel2Opcode3(b, par2, par3, par4);
 	}
@@ -457,7 +430,82 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		debug("Rebel2 IACT: Unknown Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
 	}
 }
+void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Handle IACT opcode 2 subcases based on par3 (type). Mirrors FUN_00407fcb behavior where relevant.
+	// Keep existing linking behavior (par3 == 4) for compatibility.
 
+	// Link case: par3 == 4
+	if (par3 == 4) {
+		int16 childId = b.readSint16LE(); // Offset +8
+		int16 parentId = b.readSint16LE(); // Offset +10
+		
+		if (parentId >= 0 && parentId < 512) {
+			// Shift links
+			_rebelLinks[parentId][2] = _rebelLinks[parentId][1];
+			_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
+			_rebelLinks[parentId][0] = childId;
+			
+			// Apply initial state based on parent state
+			if (!isBitSet(parentId)) {
+				setBit(childId);
+				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Alive -> Child Disabled.", childId, parentId);
+			} else {
+				clearBit(childId);
+				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Dead -> Child Enabled.", childId, parentId);
+			}
+		}
+		return;
+	} else if (par3 == 1) { // Probabilistic / counter cases: par3 == 1
+		int16 value = par4; // sVar6
+		int16 targetId = b.readSint16LE(); // Offset +8 (sVar7)
+		
+		if (targetId < 0 || targetId >= 0x200) 
+			return;
+		
+		if (value > 1 && value < 10) { // 1 < value < 10: random disable
+			if (_vm->_rnd.getRandomNumber(value) == 0) {
+				setBit(targetId);
+				debug("Rebel2 IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
+			}
+		} else if (value > 10 && value < 20) { // 10 < value < 20: enable/disable with special value==11 = force enable
+			if (value == 11) {
+				clearBit(targetId);
+				debug("Rebel2 IACT Opcode2: FORCE ENABLE target=%d (value=11)", targetId);
+			} else {
+				if (_vm->_rnd.getRandomNumber(value - 10) == 0) {
+					clearBit(targetId);
+					debug("Rebel2 IACT Opcode2: Random ENABLE target=%d (value=%d)", targetId, value);
+				} else {
+					setBit(targetId);
+					debug("Rebel2 IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
+				}
+			}
+		} else if (value > 99 && value < 110) { // 99 < value < 110: increment value counter if target active
+			if (!isBitSet(targetId)) {
+				int idx = value - 100;
+				if (idx >= 0 && idx < 10) {
+					_rebelValueCounters[idx]++;
+					_rebelLastCounter = _rebelValueCounters[idx];
+					debug("Rebel2 IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
+				}
+			}
+
+		} else if (value > 0x3ff) { // Bitmask case: value > 0x3FF
+ 			for (int slot = 1; slot <= 9; ++slot) {
+				if ((value & (1 << (slot - 1))) != 0) {
+					if (!isBitSet(targetId)) {
+						_rebelMaskCounters[slot]++;
+						_rebelLastCounter = _rebelMaskCounters[slot];
+						debug("Rebel2 IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
+					}
+				}
+			}
+		}
+
+		// Unknown sub-type: log and return
+		debug("Rebel2 IACT Opcode2: Unhandled par3=%d par4=%d", par3, par4);
+	}
+}
 void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Handle IACT opcode 3 subcases (damage, counters, special 100 branch)
 	// Mirrors retail FUN_0041CADB case 1 behavior where possible.
