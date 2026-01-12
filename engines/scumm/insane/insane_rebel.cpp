@@ -68,6 +68,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
+	// Load SMALFONT.NUT for HUD score/lives rendering (DAT_00482200 equivalent)
+	// This is used by FUN_0041c012 to render the score in the status bar
+	_smush_dispfontNut = new NutRenderer(_vm, "SYSTM/SMALFONT.NUT");
+
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = new SmushFont(_vm, "SYSTM/DIHIFONT.NUT", true);
 
@@ -107,6 +111,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelLastCounter = 0;
 
 	_difficulty = 1; // Default to Medium (1). TODO: Read from game config
+	_targetLockTimer = 0;  // DAT_00443676 equivalent
 
 	_speed = 12;
 	_insaneIsRunning = false;
@@ -215,8 +220,137 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 InsaneRebel2::~InsaneRebel2() {
 	delete _rebelMsgFont;
+	delete _smush_dispfontNut;
 }
 
+// Score lookup tables (from DAT_0047e0fe, DAT_0047e100, DAT_0047e102)
+// These are indexed by: DAT_0047a7fa * 0x242 + DAT_0047a7f8 * 0x22
+// For simplicity, we use fixed values based on difficulty level
+// Values estimated from disassembly patterns (actual values would need extraction from game data)
+const int16 InsaneRebel2::kScoreTableEnemyDestroy[16] = {
+	100, 100, 100, 100,   // Easy (difficulty 0)
+	150, 150, 150, 150,   // Medium (difficulty 1)
+	200, 200, 200, 200,   // Hard (difficulty 2)
+	250, 250, 250, 250    // Expert (difficulty 3)
+};
+
+const int16 InsaneRebel2::kScoreTableSpecial[16] = {
+	50, 50, 50, 50,
+	75, 75, 75, 75,
+	100, 100, 100, 100,
+	125, 125, 125, 125
+};
+
+const int16 InsaneRebel2::kScoreTableTimeBonus[16] = {
+	1, 1, 1, 1,
+	2, 2, 2, 2,
+	3, 3, 3, 3,
+	4, 4, 4, 4
+};
+
+// Score system implementation (FUN_0041bf8d equivalent)
+// Adds points to score and awards bonus life when crossing threshold
+void InsaneRebel2::addScore(int points) {
+	// Calculate bonus life threshold based on difficulty (DAT_0047a7fa)
+	// From FUN_0041bf8d:
+	//   if (difficulty < 4) threshold = (difficulty * 5 + 5) * 1000
+	//   else threshold = 15000
+	int threshold;
+	if (_difficulty < 4) {
+		threshold = (_difficulty * 5 + 5) * 1000;  // 5000, 10000, 15000, 20000
+	} else {
+		threshold = 15000;
+	}
+
+	// Check if we're crossing a threshold (award bonus life)
+	// Formula: score / threshold < (score + points) / threshold
+	if (threshold > 0) {
+		int oldMilestone = _playerScore / threshold;
+		int newMilestone = (_playerScore + points) / threshold;
+		if (oldMilestone < newMilestone) {
+			// Award bonus life
+			_playerLives++;
+			// TODO: Play bonus life sound (FUN_0041189e(5, 0, 0x7f, 0, 0))
+			debug("Rebel2: BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
+		}
+	}
+
+	// Add points to score
+	_playerScore += points;
+	debug("Rebel2: Score +%d = %d", points, _playerScore);
+}
+
+// Render score to HUD (part of FUN_0041c012)
+// Score is drawn using FUN_00434cb0 with format string "%07ld"
+// In retail, score is rendered to a status bar buffer, then blitted to screen at Y=180 (0xb4)
+// The text within the status bar is at local Y=4, so screen Y = 180 + 4 = 184
+void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY) {
+	// In retail, score is rendered by FUN_0041c012 which calls FUN_00434cb0
+	// The status bar is blitted to screen at Y = DAT_0047ab2c + 0xb4 (typically 0 + 180 = 180)
+	// Text position within status bar from FUN_0041c012 line 136-137:
+	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 (257) for low-res
+	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 for low-res
+	// So final screen position: X=257, Y=180+4=184
+	// Format: 7-digit zero-padded decimal ("%07ld")
+
+	(void)statusBarY; // Not used - we use fixed Y positions
+
+	// Use SMALFONT.NUT (NutRenderer) for rendering digits
+	// If not available, skip rendering
+	if (!_smush_dispfontNut) {
+		debug(1, "renderScoreHUD: _smush_dispfontNut is NULL!");
+		return;
+	}
+
+	// The SMUSH buffer is 424x260, but the visible screen is 320x200
+	// The view offset (_viewX, _viewY) determines where in the buffer the screen is showing
+	// To render at fixed screen positions, we add the view offset
+
+	// Convert score to 7-digit string
+	char scoreStr[16];
+	Common::sprintf_s(scoreStr, "%07d", _playerScore);
+
+	// Status bar is at Y=180 (0xb4), text within it at Y=4, so total Y=184
+	// Score X position is 257 (0x101)
+	const int STATUS_BAR_Y = 180;  // 0xb4 from FUN_41C012 line 149/152
+	const int SCORE_TEXT_Y = 4;    // Text position within status bar
+
+	int scoreX = 257 + _viewX;
+	int scoreY = STATUS_BAR_Y + SCORE_TEXT_Y + _viewY;
+
+	debug(5, "renderScoreHUD: Drawing score=%d at buffer(%d,%d) viewOffset(%d,%d)",
+		  _playerScore, scoreX, scoreY, _viewX, _viewY);
+
+	// Draw each character manually using NutRenderer::drawCharV7
+	Common::Rect clipRect(0, 0, width, height);
+	int x = scoreX;
+	for (int i = 0; scoreStr[i] != '\0'; i++) {
+		byte ch = (byte)scoreStr[i];
+		int charWidth = _smush_dispfontNut->getCharWidth(ch);
+		if (charWidth > 0) {
+			// Use drawCharV7 with color 255 (white) for visibility
+			_smush_dispfontNut->drawCharV7(renderBitmap, clipRect, x, scoreY, pitch, 255, kStyleAlignLeft, ch, true, true);
+			x += charWidth;
+		}
+	}
+
+	// Also draw lives counter - in status bar at X=168 (0xa8), Y=7 within bar
+	const int LIVES_TEXT_Y = 7;
+	char livesStr[8];
+	Common::sprintf_s(livesStr, "%d", _playerLives);
+	int livesX = 168 + _viewX;
+	int livesY = STATUS_BAR_Y + LIVES_TEXT_Y + _viewY;
+
+	x = livesX;
+	for (int i = 0; livesStr[i] != '\0'; i++) {
+		byte ch = (byte)livesStr[i];
+		int charWidth = _smush_dispfontNut->getCharWidth(ch);
+		if (charWidth > 0) {
+			_smush_dispfontNut->drawCharV7(renderBitmap, clipRect, x, livesY, pitch, 255, kStyleAlignLeft, ch, true, true);
+			x += charWidth;
+		}
+	}
+}
 
 int32 InsaneRebel2::processMouse() {
 	int32 buttons = 0;
@@ -285,7 +419,14 @@ int32 InsaneRebel2::processMouse() {
 				// Note: Background saving and masking is handled in procPostRendering
 				// where we have access to the render bitmap
 				// TODO: Play explosion sound
-				// TODO: Update score
+
+				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
+				// Score value comes from lookup table DAT_0047e0fe indexed by difficulty
+				int scoreIndex = _difficulty * 4;  // Simplified index
+				if (scoreIndex >= 0 && scoreIndex < 16) {
+					addScore(kScoreTableEnemyDestroy[scoreIndex]);
+				}
+
 				// Only hit one enemy per click
 				break;
 			}
@@ -1749,28 +1890,83 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	}
 
+	// ============================================================
+	// TARGET LOCK DETECTION (DAT_00443676 equivalent)
+	// ============================================================
+	// In retail: When crosshair is over an active enemy, set target lock timer to 7
+	// This triggers the animated crosshair cycling for Handler 0x26 (turret)
+	// Check from FUN_40A2E0 lines 127-143
+	{
+		Common::Point worldMousePos(_vm->_mouse.x + _viewX, _vm->_mouse.y + _viewY);
+		bool targetLocked = false;
+
+		for (Common::List<enemy>::iterator enemyIt = _enemies.begin(); enemyIt != _enemies.end(); ++enemyIt) {
+			if (enemyIt->active && !enemyIt->destroyed && enemyIt->rect.contains(worldMousePos)) {
+				targetLocked = true;
+				break;
+			}
+		}
+
+		// Update target lock timer
+		if (targetLocked) {
+			_targetLockTimer = 7;  // Set to 7 when over target (retail behavior)
+		} else if (_targetLockTimer > 0) {
+			_targetLockTimer--;  // Count down when not over target
+		}
+	}
+
 	// Draw Crosshair/Reticle cursor
-	// Sprite indices based on handler type (from original game disassembly):
+	// Sprite indices based on handler type (from original game disassembly FUN_004089ab, FUN_0040d836, etc):
 	// - Handler 8 (ground vehicle): Index 0x2E (46)
 	// - Handler 7 (space flight): Index 0x2F (47)
 	// - Handler 0x19 (mixed/turret view): Index 0x2F (47)
-	// - Handler 0x26 (full turret): Index 0x30+ (48+) with animation
+	// - Handler 0x26 (full turret): Index varies by levelType and animation
+	//
+	// For Handler 0x26 (turret), the crosshair sprite formula from FUN_004089ab line 192-193:
+	//   (-(ushort)(DAT_004436de == 5) & 0x30) + local_28
+	// where local_28 is an animation offset (0-3) based on target lock timer (DAT_00443676)
+	//
+	// When DAT_00443676 == 0 (no target locked): local_28 = 0
+	// When DAT_00443676 != 0: local_28 = 3 - (DAT_0047fe98 & 3) -- animated cycling
 	if (_smush_iconsNut) {
-		//CursorMan.showMouse(false);
 		int reticleIndex;
 		switch (_rebelHandler) {
-		case 7:   // Space flight
-		case 0x19: // Mixed/turret view
-			reticleIndex = 47;  // 0x2F
+		case 7:   // Space flight - uses crosshair sprite 0x2F (47)
+			reticleIndex = 47;
 			break;
-		case 0x26: // Full turret (with animation - simplified for now)
-			reticleIndex = 48;  // 0x30
+		case 0x19: // Mixed/turret view - uses crosshair sprite 0x2F (47)
+			reticleIndex = 47;
 			break;
-		case 8:   // Ground vehicle (Level 1) - FALLTHROUGH
-		default:
-			reticleIndex = 46;  // 0x2E
+		case 0x26: { // Full turret mode - animated crosshair
+			// Calculate animation offset based on target lock state
+			// In retail: DAT_00443676 is the "target lock timer" (set to 7 when targeting)
+			// DAT_0047fe98 is a per-frame counter incremented each frame
+			static int turretAnimCounter = 0;
+			turretAnimCounter++;
+
+			int animOffset;
+			// Use actual target lock timer (DAT_00443676 equivalent)
+			if (_targetLockTimer == 0) {
+				animOffset = 0;  // No target - use static crosshair
+			} else {
+				animOffset = 3 - (turretAnimCounter & 3);  // Cycles 3, 2, 1, 0
+			}
+
+			// If levelType == 5, use sprites 0x30-0x33 (48-51)
+			// Otherwise use sprites 0-3 (basic targeting reticle)
+			if (_rebelLevelType == 5) {
+				reticleIndex = 0x30 + animOffset;  // 48-51
+			} else {
+				reticleIndex = animOffset;  // 0-3
+			}
 			break;
 		}
+		case 8:   // Ground vehicle - uses crosshair sprite 0x2E (46)
+		default:
+			reticleIndex = 46;
+			break;
+		}
+
 		if (_smush_iconsNut->getNumChars() > reticleIndex) {
 			int cw = _smush_iconsNut->getCharWidth(reticleIndex);
 			int ch = _smush_iconsNut->getCharHeight(reticleIndex);
@@ -1778,6 +1974,13 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
 		}
 	}
+
+	// ============================================================
+	// HUD SCORE/LIVES RENDERING (FUN_0041c012 equivalent)
+	// ============================================================
+	// Render score and lives counter on the status bar
+	// This is called after all other rendering so it appears on top
+	renderScoreHUD(renderBitmap, pitch, width, height, 0);
 
 	// ============================================================
 	// FRAME END RESET: Clear active flags for all enemies (FUN_403240 equivalent)
@@ -1789,9 +1992,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	//
 	// We achieve the same by marking all non-destroyed enemies inactive at frame end.
 	// The next frame's IACT opcode 4 (enemyUpdate) will re-activate them if present.
-	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
-		if (!it->destroyed) {
-			it->active = false;
+	for (Common::List<enemy>::iterator resetIt = _enemies.begin(); resetIt != _enemies.end(); ++resetIt) {
+		if (!resetIt->destroyed) {
+			resetIt->active = false;
 		}
 	}
 }
