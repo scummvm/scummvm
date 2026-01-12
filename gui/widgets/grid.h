@@ -214,6 +214,8 @@ public:
 
 	int getItemPos(int item);
 	int getNewSel(int index);
+	int getVisualPos(int entryID) const;
+	void selectVisualRange(int startPos, int endPos);
 	int getScrollPos() const { return _scrollPos; }
 	int getSelected() const { return ((_selectedEntry == nullptr) ? -1 : _selectedEntry->entryID); }
 	int getThumbnailHeight() const { return _thumbnailHeight; }

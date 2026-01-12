@@ -301,19 +301,13 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			}
 		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
 			// Shift+Click: Select range from last selected to current item
-			int startID = _grid->_lastSelectedEntryID;
-			int endID = _activeEntry->entryID;
+			// Must select based on visual order, not by entryID range
+			int startID = _grid->getVisualPos(_grid->_lastSelectedEntryID);
+			int endID = _grid->getVisualPos(_activeEntry->entryID);
 
-			// Ensure start is before end
-			if (startID > endID) {
-				int temp = startID;
-				startID = endID;
-				endID = temp;
-			}
-
-			// Add all items in range, avoiding duplicates
-			for (int i = startID; i <= endID; ++i) {
-				_grid->addSelectedEntry(i);
+			// If we found both positions, select all items between them (visually)
+			if (startID >= 0 && endID >= 0) {
+				_grid->selectVisualRange(startID, endID);
 			}
 			// Keep entries sorted
 			Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
@@ -992,6 +986,41 @@ int GridWidget::getNewSel(int index) {
 		return _sortedEntryList[_sortedEntryList.size() - 1]->entryID;
 	} else {
 		return -1;
+	}
+}
+
+int GridWidget::getVisualPos(int entryID) const {
+	// Returns the visual position in _sortedEntryList for the given entryID
+	// Counts only non-header items
+	int visPos = 0;
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if (!_sortedEntryList[i]->isHeader) {
+			if (_sortedEntryList[i]->entryID == entryID) {
+				return visPos;
+			}
+			visPos++;
+		}
+	}
+	return -1;
+}
+
+void GridWidget::selectVisualRange(int startPos, int endPos) {
+	// Selects all non-header items in visual range [startPos, endPos]
+	// visPos counts only non-header items
+	if (startPos > endPos) {
+		int temp = startPos;
+		startPos = endPos;
+		endPos = temp;
+	}
+
+	int visPos = 0;
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if (!_sortedEntryList[i]->isHeader) {
+			if (visPos >= startPos && visPos <= endPos) {
+				addSelectedEntry(_sortedEntryList[i]->entryID);
+			}
+			visPos++;
+		}
 	}
 }
 
