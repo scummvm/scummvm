@@ -55,9 +55,11 @@ public:
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
 
-	// Handle IACT opcode 3 subcases (damage, hit-counters, special cases)
+	// Handle IACT opcode subcases
 	void iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 							   int32 setupsan13, int32 curFrame, int32 maxFrame) override;
@@ -157,6 +159,20 @@ public:
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelHitCooldown;   // DAT_0045790a - cooldown / timing for damage checks
 	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
+
+	// Opcode 6 state variables (from FUN_41CADB case 4)
+	int _rebelAutopilot;     // DAT_00457904 - autopilot flag (0 or 1)
+	int _rebelDamageLevel;   // DAT_0045790a - damage level (0-5)
+	int _rebelFlightDir;     // DAT_00457902 - flight direction (0 or 1)
+	int _rebelControlMode;   // DAT_0047a7e4 - control mode flags
+
+	// View offset variables (calculated from level type)
+	int _rebelViewOffsetX;   // DAT_0045790c
+	int _rebelViewOffsetY;   // DAT_0045790e
+	int _rebelViewOffset2X;  // DAT_00457910
+	int _rebelViewOffset2Y;  // DAT_00457912
+	int _rebelViewMode1;     // DAT_00482270
+	int _rebelViewMode2;     // DAT_00482274
 
 	// Retail counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
 	short _rebelValueCounters[10]; // Index 0 -> value 100, ... Index 9 -> 109

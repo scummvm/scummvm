@@ -87,6 +87,18 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelHitCooldown = 0;
 	_rebelInvulnerable = false;
 
+	// Opcode 6 state variables
+	_rebelAutopilot = 0;
+	_rebelDamageLevel = 0;
+	_rebelFlightDir = 0;
+	_rebelControlMode = 0;
+	_rebelViewOffsetX = 0;
+	_rebelViewOffsetY = 0;
+	_rebelViewOffset2X = 0;
+	_rebelViewOffset2Y = 0;
+	_rebelViewMode1 = 0;
+	_rebelViewMode2 = 0;
+
 	// Initialize mirrored retail counters
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
@@ -392,73 +404,11 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		debug("Rebel2 IACT Opcode 5: par2=%d par3=%d par4=%d", par2, par3, par4);
 		
 	} else if (par1 == 6) {
-		// Opcode 6: Scene trigger / mode switch
-		// Disassembly shows it sets DAT_0047ee84 (handler type) to par2 for values 7, 8, 0x19, 0x26
-		// This determines which rendering handler and crosshair sprite to use
-		// par3 is stored as DAT_004436de (level type) which affects HUD sprite selection
-		
-		// Update handler type if par2 is a known handler value
-		if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
-			_rebelHandler = par2;
-			_rebelLevelType = par3;  // Store level type (affects HUD sprite: 5 vs 53)
-			debug("Rebel2 IACT Opcode 6: Setting handler=%d levelType=%d (par4=%d)", par2, par3, par4);
-		}
-		
-		// Check for Status Bar Enable trigger (par4 == 1 means enable status bar drawing)
-		// Based on FUN_407FCB line 79: if (param_5[4] == 1) { FUN_0040bb87(...) }
-		// Note: Sprite 5 is a 136x13 status bar, NOT the full cockpit (which is baked into video)
-		if (par4 == 1) {
-			debug("Rebel2 IACT Opcode 6: Status Bar ENABLED - will draw sprite %d (136x13) from CPITIMAG.NUT", 
-				(_rebelLevelType == 5) ? 53 : 5);
-		}
-		
-		// Debug: Confirm handler type after update
-		if (_rebelHandler == 0x26) {
-			debug("Rebel2: Handler set to TURRET (0x26/38) - status bar sprite 5, crosshair sprites 48+");
-		}
-
-		// Detect embedded ANIM (SAN) within the remaining IACT payload and load into HUD slots.
-		// Centralized here so SmushPlayer no longer needs game-specific checks.
-		{
-			int64 startPos = b.pos();
-			int64 totalSize = b.size();
-			if (totalSize >= 0 && totalSize > startPos) {
-				int64 remaining = totalSize - startPos;
-				int scanSize = (int)MIN<int64>(remaining, 65536);
-				byte *scanBuf = (byte *)malloc(scanSize);
-				if (scanBuf) {
-					int bytesRead = b.read(scanBuf, scanSize);
-					for (int i = 0; i + 8 <= bytesRead; ++i) {
-						if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
-							int64 animStreamPos = startPos + i;
-							uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
-							int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
-							if (toCopy > 0) {
-								byte *animData = (byte *)malloc(toCopy);
-								if (animData) {
-									b.seek(animStreamPos);
-									b.read(animData, toCopy);
-									// par4 is the userId passed by SmushPlayer
-									loadEmbeddedSan(par4, animData, toCopy, renderBitmap);
-									free(animData);
-								}
-							}
-							// Restore stream position and stop scanning after first ANIM
-							b.seek(startPos);
-							free(scanBuf);
-							goto after_anim_detection;
-						}
-					}
-					// No ANIM found: restore position
-					b.seek(startPos);
-					free(scanBuf);
-				}
-			}
-		}
-	after_anim_detection:;
-
+		// Opcode 6: Level setup / mode switch (FUN_41CADB case 4)
+		iactRebel2Opcode6(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 8) {
-		// TODO
+		// Opcode 8: HUD resource loading (FUN_41CADB case 6)
+		iactRebel2Opcode8(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 9) {
 		// Opcode 9: Text/subtitle display
 		debug("Rebel2 IACT Opcode 9: par2=%d par3=%d par4=%d (text)", par2, par3, par4);
@@ -611,6 +561,275 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 		}
 	}
 	// other subcases not implemented yet
+}
+
+void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Opcode 6: Level setup / mode switch
+	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
+	//
+	// Assembly behavior:
+	// 1. If par4 == 1: Draw status bar sprite 5, clear link tables, reset state
+	// 2. Set level type (DAT_00457900 = par3)
+	// 3. Handle autopilot/control mode logic
+	// 4. Update damage level counter
+	// 5. Calculate view offsets based on level type
+
+	debug("Rebel2 IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
+
+	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6)
+	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
+		_rebelHandler = par2;
+		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
+	}
+
+	// Step 1: If par4 == 1, initialize/reset state (lines 114-121)
+	if (par4 == 1) {
+		// Draw status bar sprite 5 (FUN_0040bb87 equivalent)
+		_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
+		debug("Rebel2 Opcode 6: Status Bar ENABLED - sprite %d", _rebelStatusBarSprite);
+
+		// Clear link tables (DAT_0045797c through DAT_0045917c)
+		// These are 4 tables of 0x400 (1024) shorts each
+		for (int i = 0; i < 512; i++) {
+			_rebelLinks[i][0] = 0;
+			_rebelLinks[i][1] = 0;
+			_rebelLinks[i][2] = 0;
+		}
+
+		// DAT_0047ab98 = DAT_0047ab9c (reset state flags)
+		// We don't have a direct equivalent, but we can reset relevant counters
+		_rebelHitCounter = 0;
+	}
+
+	// Step 2: Set level type (DAT_00457900 = par3)
+	_rebelLevelType = par3;
+
+	// Step 3: Autopilot/control mode logic (lines 123-146)
+	// This determines whether the ship flies on autopilot or manual control
+	if (!_rebelInvulnerable) {
+		// Normal mode: check control mode flags
+		if (_rebelAutopilot == 0) {
+			if ((_rebelControlMode & 2) != 0) {
+				_rebelAutopilot = 1;
+			}
+		} else {
+			if (_rebelControlMode != 0) {
+				_rebelAutopilot = 0;
+			}
+		}
+	} else {
+		// Invulnerable mode: random autopilot changes
+		if (_rebelAutopilot == 0) {
+			if (_vm->_rnd.getRandomNumber(100) == 0) {
+				_rebelAutopilot = 1;
+			}
+		} else {
+			if (_vm->_rnd.getRandomNumber(15) == 0) {
+				_rebelAutopilot = 0;
+				_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
+			}
+		}
+	}
+
+	// Step 4: Update damage level counter (lines 147-154)
+	if (_rebelAutopilot == 0) {
+		if (_rebelDamageLevel > 0) {
+			_rebelDamageLevel--;
+		}
+	} else {
+		if (_rebelDamageLevel < 5) {
+			_rebelDamageLevel++;
+		}
+	}
+
+	// Handle level type 3 special direction logic (lines 155-181)
+	if (_rebelLevelType == 3) {
+		if (_rebelDamageLevel == 5) {
+			// Check for joystick/key input to change direction
+			// Simplified: use mouse position
+			if (_vm->_mouse.x > 75) {
+				_rebelFlightDir = 1;
+			}
+			if (_vm->_mouse.x < -75) {
+				_rebelFlightDir = 0;
+			}
+		}
+	} else {
+		_rebelFlightDir = 0;
+	}
+
+	// Step 5: Calculate view offsets based on level type (lines 182-213)
+	switch (_rebelLevelType) {
+	case 1:
+		// Type 1: Vertical movement
+		_rebelViewMode1 = 0x0e;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * -5 - 0x0e;
+		_rebelViewOffset2X = _rebelDamageLevel * -0x16;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	case 4:
+		// Type 4: Different vertical movement
+		_rebelViewMode1 = 0x22;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = _rebelDamageLevel * 10 - 0x10;
+		_rebelViewOffset2X = _rebelDamageLevel * 0x11 - 0x55;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	case 2:
+		// Type 2: Horizontal movement
+		_rebelViewMode1 = 0;
+		_rebelViewMode2 = 0x0e;
+		_rebelViewOffsetY = _rebelDamageLevel * -5 - 0x0e;
+		_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 0x0f - 0x3c;
+		_rebelViewOffsetX = 0;
+		_rebelViewOffset2X = 0;
+		break;
+
+	case 3:
+		// Type 3: Direction-based movement
+		_rebelViewMode1 = 0x0f;
+		_rebelViewMode2 = 0;
+		{
+			int dirFactor = (_rebelFlightDir == 0) ? 3 : -3;  // (-(ushort)(DAT_00457902 == 0) & 6) - 3
+			int dirFactor2 = (_rebelFlightDir == 0) ? 0x14 : -0x14;  // (-(ushort)(DAT_00457902 == 0) & 0x28) - 0x14
+			_rebelViewOffsetX = dirFactor * (5 - _rebelDamageLevel) - 0x0f;
+			_rebelViewOffset2X = dirFactor2 * (5 - _rebelDamageLevel);
+		}
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+
+	default:
+		// Default: No special offsets
+		_rebelViewMode1 = 0;
+		_rebelViewMode2 = 0;
+		_rebelViewOffsetX = 0;
+		_rebelViewOffsetY = 0;
+		_rebelViewOffset2X = 0;
+		_rebelViewOffset2Y = 0;
+		break;
+	}
+
+	debug("Rebel2 Opcode 6: levelType=%d autopilot=%d damageLevel=%d viewOffset=(%d,%d)",
+		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
+
+	// Detect and load embedded ANIM (SAN) within the remaining IACT payload
+	{
+		int64 startPos = b.pos();
+		int64 totalSize = b.size();
+		if (totalSize >= 0 && totalSize > startPos) {
+			int64 remaining = totalSize - startPos;
+			int scanSize = (int)MIN<int64>(remaining, 65536);
+			byte *scanBuf = (byte *)malloc(scanSize);
+			if (scanBuf) {
+				int bytesRead = b.read(scanBuf, scanSize);
+				for (int i = 0; i + 8 <= bytesRead; ++i) {
+					if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+						int64 animStreamPos = startPos + i;
+						uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
+						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+						if (toCopy > 0) {
+							byte *animData = (byte *)malloc(toCopy);
+							if (animData) {
+								b.seek(animStreamPos);
+								b.read(animData, toCopy);
+								loadEmbeddedSan(par4, animData, toCopy, renderBitmap);
+								free(animData);
+							}
+						}
+						b.seek(startPos);
+						free(scanBuf);
+						return;
+					}
+				}
+				b.seek(startPos);
+				free(scanBuf);
+			}
+		}
+	}
+}
+
+void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+	// Opcode 8: HUD resource loading
+	// Based on FUN_41CADB case 6 (switch on *local_14 - 2 == 6, meaning opcode 8)
+	//
+	// par3 determines which HUD slot to load:
+	// case 1: DAT_00482240 - Primary HUD overlay (GRD001)
+	// case 2: DAT_00482238 - Secondary HUD graphics (GRD002)
+	// case 4: DAT_00482268 - Ship cockpit frame (GRD010)
+	// case 5: DAT_0048226c - Mask buffer (GRD011)
+	// case 6: DAT_00482250 - Explosion overlay (GRD003)
+	// case 7: DAT_00482248 - Damage indicator (GRD004)
+	// case 10: DAT_00482258 - Additional effects (GRD005)
+	// case 12/13: DAT_00482260 - High-res HUD alternative (GRD007)
+	// cases 21-27: Sound loading slot 0
+	// cases 31-37: Sound loading slot 1
+	// case 40: Sound loading slot 3
+	// cases 41-47: Sound loading slot 2
+
+	debug("Rebel2 IACT Opcode 8: par2=%d par3=%d par4=%d (HUD loading)", par2, par3, par4);
+
+	// Read the data size from the stream (at offset +14, which is local_14[7])
+	// The actual NUT/resource data starts at offset +18 (param_5 + 9 in assembly)
+	int64 startPos = b.pos();
+
+	// Skip to where embedded data would be and scan for ANIM tag
+	// The assembly shows data at param_5 + 9 (18 bytes from IACT header start)
+	// Since we're already past the header params, scan remaining data
+
+	int64 totalSize = b.size();
+	if (totalSize > startPos) {
+		int64 remaining = totalSize - startPos;
+		int scanSize = (int)MIN<int64>(remaining, 65536);
+		byte *scanBuf = (byte *)malloc(scanSize);
+		if (scanBuf) {
+			int bytesRead = b.read(scanBuf, scanSize);
+
+			// Look for ANIM tag (embedded SAN)
+			for (int i = 0; i + 8 <= bytesRead; ++i) {
+				if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+					int64 animStreamPos = startPos + i;
+					uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
+					int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+					if (toCopy > 0) {
+						byte *animData = (byte *)malloc(toCopy);
+						if (animData) {
+							b.seek(animStreamPos);
+							b.read(animData, toCopy);
+							// Map par3 to userId for HUD slots
+							int userId = 0;
+							switch (par3) {
+							case 1: userId = 1; break;  // Primary HUD
+							case 2: userId = 2; break;  // Secondary HUD
+							case 4: userId = 3; break;  // Cockpit frame
+							case 6: userId = 4; break;  // Explosion overlay
+							default: userId = par3; break;
+							}
+							loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
+							free(animData);
+						}
+					}
+					b.seek(startPos);
+					free(scanBuf);
+					return;
+				}
+			}
+
+			b.seek(startPos);
+			free(scanBuf);
+		}
+	}
+
+	// Handle sound loading cases (par3 21-47)
+	if (par3 >= 21 && par3 <= 47) {
+		debug("Rebel2 Opcode 8: Sound loading subcase %d (not implemented)", par3);
+		// TODO: Implement sound loading when needed
+	}
 }
 
 void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
