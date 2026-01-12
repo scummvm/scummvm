@@ -1617,28 +1617,30 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
-		Common::Rect r = it->rect;
-		
-		// Clip the rect to screen bounds for safety
-		Common::Rect clipped = r;
-		clipped.clip(Common::Rect(0, 0, width, height));
+		// Skip destroyed enemies (explosion handled by 5-slot system)
+		if (it->destroyed) continue;
 
-		if (!clipped.isValidRect()) continue;
-		
-		if (it->destroyed) {
-			// Handle destroyed enemies - draw explosion animation
-			// The enemy frame updates are now skipped in decodeFrameObject via shouldSkipFrameUpdate
-			// Note: Explosion rendering is now handled by the separate 5-slot system
-		} else if (it->active && !isBitSet(it->id)) { // Only draw if active AND not disabled by IACT
-			// Draw Green Indicators (Corner Brackets) for Easy (0) and Medium (1) difficulty
-			// Hard (2) mode does not show indicators.
-			if (_difficulty < 2) {
-				const byte color = 5; // Green color index for brackets
-				// Clip the rect to screen bounds for drawing logic is handled inside drawLine if implemented safely,
-				// but drawCornerBrackets relies on drawLine which iterates.
-				// We pass full screen width/height to safe-guard.
-				drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
-			}
+		// Skip inactive enemies or those disabled by IACT bit
+		if (!it->active || isBitSet(it->id)) continue;
+
+		Common::Rect r = it->rect;
+
+		// Check if enemy rect is visible within the current view area
+		// (matching FUN_00428b90 clip logic: reject lines entirely outside clip rect)
+		// The visible area in video coordinates is the current scroll viewport
+		Common::Rect viewRect(_viewX, _viewY, _viewX + videoWidth, _viewY + videoHeight);
+
+		// If enemy rect doesn't intersect the view area at all, skip drawing
+		if (r.right <= viewRect.left || r.left >= viewRect.right ||
+		    r.bottom <= viewRect.top || r.top >= viewRect.bottom) {
+			continue;
+		}
+
+		// Draw Green Indicators (Corner Brackets) for Easy (0) and Medium (1) difficulty
+		// Hard (2) mode does not show indicators (matching FUN_00425d30(4) check)
+		if (_difficulty < 2) {
+			const byte color = 5; // Green color index for brackets
+			drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
 		}
 	}
 
@@ -1774,6 +1776,22 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			int ch = _smush_iconsNut->getCharHeight(reticleIndex);
 			// Center the crosshair on mouse position (in world coordinates)
 			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
+		}
+	}
+
+	// ============================================================
+	// FRAME END RESET: Clear active flags for all enemies (FUN_403240 equivalent)
+	// ============================================================
+	// The original game rebuilds the object list from scratch each frame:
+	// - FUN_4033CF (IACT processing) adds objects to DAT_0043fb00 list
+	// - FUN_4092D9 iterates only over objects in the current frame's list
+	// - FUN_403240 (called at frame end) resets DAT_0047ee74 = 0 (clears list counter)
+	//
+	// We achieve the same by marking all non-destroyed enemies inactive at frame end.
+	// The next frame's IACT opcode 4 (enemyUpdate) will re-activate them if present.
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (!it->destroyed) {
+			it->active = false;
 		}
 	}
 }
