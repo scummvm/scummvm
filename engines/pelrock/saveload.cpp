@@ -268,6 +268,37 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 		}
 	}
 
+	uint16 disabledSpritesSize = (uint16)gameState->disabledSprites.size();
+	s.syncAsUint16LE(disabledSpritesSize);
+	if (s.isSaving()) {
+		for (const auto &spritePair : gameState->disabledSprites) {
+			byte roomNumber = spritePair._key;
+			s.syncAsByte(roomNumber);
+			const Common::Array<int> &sprites = spritePair._value;
+			uint16 numSprites = (uint16)sprites.size();
+			s.syncAsUint16LE(numSprites);
+			for (uint16 i = 0; i < numSprites; ++i) {
+				int spriteIndex = sprites[i];
+				s.syncAsSint32LE(spriteIndex);
+			}
+		}
+	} else {
+		gameState->disabledSprites.clear();
+		for (uint16 idx = 0; idx < disabledSpritesSize; ++idx) {
+			byte roomNumber;
+			s.syncAsByte(roomNumber);
+			uint16 numSprites;
+			s.syncAsUint16LE(numSprites);
+			Common::Array<int> sprites;
+			for (uint16 i = 0; i < numSprites; ++i) {
+				int spriteIndex;
+				s.syncAsSint32LE(spriteIndex);
+				sprites.push_back(spriteIndex);
+			}
+			gameState->disabledSprites[roomNumber] = sprites;
+		}
+	}
+
 	// Disabled branches
 	uint16 disabledBranchesSize = (uint16)gameState->disabledBranches.size();
 	s.syncAsUint16LE(disabledBranchesSize);

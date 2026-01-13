@@ -220,6 +220,7 @@ public:
 	}
 
 	void setScreen(int s, AlfredDirection dir);
+	void doExtraActions(int roomNumber);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 
 	void addInventoryItem(int item);
@@ -228,16 +229,19 @@ public:
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
 
 	void executeAction(VerbIcon action, HotSpot *hotspot);
-	void openDrawer(HotSpot *hotspot);
-	void closeDrawer(HotSpot *hotspot);
-	void openDoor(HotSpot *hotspot);
-	void closeDoor(HotSpot *hotspot);
+	void openRoomDrawer(HotSpot *hotspot);
+	void closeRoomDrawer(HotSpot *hotspot);
+	void openRoomDoor(HotSpot *hotspot);
+	void closeRoomDoor(HotSpot *hotspot);
 	void pickUpAndDisable(HotSpot *hotspot);
 	void grabKetchup(HotSpot *hotspot);
 	void grabMustard(HotSpot *hotspot);
 	void grabSpicey(HotSpot *hotspot);
 	void openKitchenDoor(HotSpot *hotspot);
 	void closeKitchenDoor(HotSpot *HotSpot);
+	void openKitchenDrawer(HotSpot *hotspot);
+	void openKitchenDoorFromInside(HotSpot *hotspot);
+	void useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot);
 	void openDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayClosed);
 	void closeDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayOpen);
 	void pickUpPhoto(HotSpot *hotspot);

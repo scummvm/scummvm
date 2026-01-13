@@ -30,6 +30,9 @@ namespace Pelrock {
 
 ResourceManager::ResourceManager(/* args */) {
 	_inventoryIcons = new InventoryObject[69];
+	for (int i = 0; i < 4; i++) {
+		alfredIdle[i] = nullptr;
+	}
 }
 
 ResourceManager::~ResourceManager() {

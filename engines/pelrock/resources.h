@@ -53,7 +53,7 @@ public:
 	InventoryObject getInventoryObject(byte index);
 	byte *loadExtra();
 
-	byte *alfredIdle[4] = {nullptr}; // 4 directions
+	byte *alfredIdle[4]; // 4 directions
 
 	byte **alfredWalkFrames[4]; // 4 arrays of arrays
 
@@ -62,8 +62,8 @@ public:
 	byte **alfredCombFrames[2];
 	byte **alfredInteractFrames[4];
 
-	byte *_cursorMasks[5] = {nullptr};
-	byte *_verbIcons[9] = {nullptr};
+	byte *_cursorMasks[5];
+	byte *_verbIcons[9];
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
 };

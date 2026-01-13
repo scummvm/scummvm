@@ -92,12 +92,16 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 		delete[] data;
 
 		// Create raw audio stream (8-bit unsigned mono is common for old games)
-		stream = Audio::makeRawStream(pcmData, pcmSize, sampleRate,
-									  Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		stream = Audio::makeRawStream(pcmData, pcmSize, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	} else {
 		debug("Unknown sound format");
 		delete[] data;
 		return;
+	}
+
+	if (stream) {
+		int channel = findFreeChannel();
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -201,7 +205,7 @@ void SoundManager::playMusicTrack(int trackNumber) {
 	}
 	_currentMusicTrack = trackNumber;
 	g_system->getAudioCDManager()->stop();
-	g_system->getAudioCDManager()->play(trackNumber, -1, 0, 0);
+	// g_system->getAudioCDManager()->play(trackNumber, -1, 0, 0);
 }
 
 void SoundManager::loadSoundIndex() {

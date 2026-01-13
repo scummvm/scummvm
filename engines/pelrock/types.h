@@ -197,7 +197,7 @@ struct Sprite {
 	int8 zOrder;
 	byte spriteType;  // 33
 	byte actionFlags; // 34
-	bool isDisabled;  // 38
+	bool isHotspotDisabled;  // 38
 	bool isTalking = false;
 	Anim *animData;
 };
@@ -384,6 +384,8 @@ struct ResetEntry {
 
 struct GameStateData {
 	bool JEFE_INGRESA_PASTA = false;
+	bool JEFE_ENCARCELADO = false;
+	bool PUESTA_SALSA_PICANTE = false;
 
 	GameState stateGame = INTRO;
 
@@ -394,6 +396,7 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
 	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
+	Common::HashMap<byte, Common::Array<int>> disabledSprites;
 
 	GameStateData() {
 		memset(conversationRootsState, 0, 4 * 56);

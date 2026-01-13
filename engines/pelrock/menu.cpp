@@ -101,6 +101,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 			_menuText = _inventoryDescriptions[_selectedInvIndex];
 			g_engine->_state.selectedInventoryItem = _selectedInvIndex;
 			selectedItem = true;
+			debug("Selected inventory item %d", _selectedInvIndex);
 			return;
 		}
 	}

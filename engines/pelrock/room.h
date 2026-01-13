@@ -50,6 +50,8 @@ public:
 	void enableExit(int index, bool persist = true);
 	void changeWalkBox(WalkBox walkbox);
 	void changeHotSpot(HotSpot hotspot);
+	void disableSprite(int roomNumber, int spriteIndex, bool persist = true);
+	void enableSprite(int spriteIndex, int zOrder, bool persist = true);
 	/**
 	 * Utility function to enable or disable a hotspot, with an option to persist the change.
 	 */

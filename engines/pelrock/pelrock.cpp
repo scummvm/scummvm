@@ -641,6 +641,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	}
 	// This if is needed to draw Alfred when idle, when the switch case results in a state change
 	if (_alfredState.animState == ALFRED_IDLE) {
+		debug("Drawing Alfred idle frame, direction %d", _alfredState.direction);
 		drawAlfred(_res->alfredIdle[_alfredState.direction]);
 	}
 }
@@ -1331,12 +1332,40 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	else {
 		_sound->stopMusic();
 	}
-
+	doExtraActions(number);
 	_screen->markAllDirty();
 	_screen->update();
 	roomFile.close();
 	delete[] background;
 	delete[] palette;
+}
+
+void PelrockEngine::doExtraActions(int roomNumber) {
+switch (roomNumber)
+{
+case 4:
+	if(_state.PUESTA_SALSA_PICANTE && !_state.JEFE_ENCARCELADO) {
+		_state.JEFE_ENCARCELADO = true;
+		_room->disableSprite(13, 0, true); // Disable Jefe hotspot
+		byte *palette = new byte[768];
+		if (_extraScreen == nullptr) {
+			_extraScreen = new byte[640 * 400];
+		}
+		_res->getExtraScreen(4, _extraScreen, palette);
+
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		extraScreenLoop();
+
+		_screen->markAllDirty();
+		_screen->update();
+
+	}
+	break;
+
+default:
+	break;
+}
+
 }
 
 } // End of namespace Pelrock

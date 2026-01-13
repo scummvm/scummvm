@@ -158,6 +158,17 @@ void RoomManager::changeHotSpot(HotSpot hotspot) {
 	g_engine->_state.roomHotSpotChanges[_currentRoomNumber].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
 }
 
+void RoomManager::disableSprite(int roomNumber, int spriteIndex, bool persist) {
+	if(roomNumber == _currentRoomNumber) {
+		_currentRoomAnims[spriteIndex].zOrder = 255;
+	}
+	g_engine->_state.disabledSprites[roomNumber].push_back(spriteIndex);
+}
+
+void RoomManager::enableSprite(int spriteIndex, int zOrder, bool persist) {
+	// _currentRoomAnims[spriteIndex].zOrder = zOrder;
+}
+
 void RoomManager::enableHotspot(HotSpot *hotspot, bool persist) {
 	hotspot->isEnabled = true;
 	if (persist) {
@@ -445,7 +456,7 @@ Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite>
 		thisHotspot.h = anims[i].h;
 		thisHotspot.extra = anims[i].extra;
 		thisHotspot.actionFlags = anims[i].actionFlags;
-		thisHotspot.isEnabled = !anims[i].isDisabled;
+		thisHotspot.isEnabled = !anims[i].isHotspotDisabled;
 		thisHotspot.isSprite = true;
 		thisHotspot.zOrder = anims[i].zOrder;
 		unifiedHotspots.push_back(thisHotspot);
@@ -493,6 +504,9 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 	debug("Sprite count: %d", spriteCount);
 	uint32_t metadata_start = spriteCountPos + (44 * 2 + 5);
 	uint32_t picOffset = 0;
+
+	Common::Array<int> disabledSprites = g_engine->_state.disabledSprites[_currentRoomNumber];
+
 	for (int i = 0; i < spriteCount; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
 		Sprite sprite;
@@ -504,9 +518,15 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.extra = data[animOffset + 6];
 		sprite.numAnims = data[animOffset + 8];
 		sprite.zOrder = data[animOffset + 23];
+		for(int i = 0; i < disabledSprites.size(); i++) {
+			if (disabledSprites[i] == sprite.index) {
+				sprite.zOrder = 255;
+				break;
+			}
+		}
 		sprite.spriteType = data[animOffset + 33];
 		sprite.actionFlags = data[animOffset + 34];
-		sprite.isDisabled = data[animOffset + 38];
+		sprite.isHotspotDisabled = data[animOffset + 38];
 		if (sprite.numAnims == 0) {
 			break;
 		}
