@@ -22,6 +22,7 @@
 
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/util.h"
 
 namespace Pelrock {
 
@@ -49,7 +50,7 @@ void PelrockEventManager::pollEvent() {
 		// case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 		// 	break;
 		case Common::EVENT_KEYDOWN:
-		// 	changeGameSpeed(_event);
+			changeGameSpeed(_event);
 			// _keyPressed = true;
 			_lastKeyEvent = _event.kbd.keycode;
 			break;
@@ -61,6 +62,8 @@ void PelrockEventManager::pollEvent() {
 				_clickTime = g_system->getMillis();
 			}
 			_leftMouseButton = 1;
+			_mouseClickX = _event.mouse.x;
+			_mouseClickY = _event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (_leftMouseButton == 1) {
@@ -68,8 +71,8 @@ void PelrockEventManager::pollEvent() {
 				if (!_popupSelectionMode) {
 					_leftMouseClicked = true;
 				}
-				_mouseClickX = _event.mouse.x;
-				_mouseClickY = _event.mouse.y;
+				_releaseX = _event.mouse.x;
+				_releaseY = _event.mouse.y;
 				_longClicked = false;
 			} else {
 				_leftMouseClicked = false;

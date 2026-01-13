@@ -31,19 +31,6 @@ namespace Pelrock {
 // Helper functions for syncing structs
 void syncSticker(Common::Serializer &s, Sticker &sticker) {
 	s.syncAsSint32LE(sticker.stickerIndex);
-	// if(s.isLoading()) {
-
-	// }
-	// s.syncAsSint32LE(sticker.roomNumber);
-
-	// if(s.isLoading()) {
-	//     sticker.stickerData = new byte[sticker.w * sticker.h];
-	// }
-	// s.syncAsUint16LE(sticker.x);
-	// s.syncAsUint16LE(sticker.y);
-	// s.syncAsByte(sticker.w);
-	// s.syncAsByte(sticker.h);
-	// // Note: stickerData pointer not serialized - must be reconstructed on load
 }
 
 void syncExit(Common::Serializer &s, Exit &exit) {
@@ -119,7 +106,13 @@ bool syncGeneralData(Common::Serializer &s, SaveGameData *game) {
 	// Uint16
 	s.syncAsUint16LE(game->alfredX);
 	s.syncAsUint16LE(game->alfredY);
-	s.syncAsByte(game->alfredDir);
+	s.syncAsByte((byte &)game->alfredDir);
+
+	if (s.isLoading()) {
+		debug("LOAD: room=%d, x=%d, y=%d, dir=%d", game->currentRoom, game->alfredX, game->alfredY, game->alfredDir);
+	} else {
+		debug("SAVE: room=%d, x=%d, y=%d, dir=%d", game->currentRoom, game->alfredX, game->alfredY, game->alfredDir);
+	}
 
 	return !s.err();
 }
@@ -279,7 +272,7 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 			s.syncAsUint16LE(numSprites);
 			for (uint16 i = 0; i < numSprites; ++i) {
 				int spriteIndex = sprites[i];
-				s.syncAsSint32LE(spriteIndex);
+				s.syncAsByte(spriteIndex);
 			}
 		}
 	} else {
@@ -292,7 +285,7 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 			Common::Array<int> sprites;
 			for (uint16 i = 0; i < numSprites; ++i) {
 				int spriteIndex;
-				s.syncAsSint32LE(spriteIndex);
+				s.syncAsByte(spriteIndex);
 				sprites.push_back(spriteIndex);
 			}
 			gameState->disabledSprites[roomNumber] = sprites;
@@ -367,19 +360,19 @@ void PelrockEngine::loadGame(SaveGameData &saveGame) {
 	_alfredState.x = saveGame.alfredX;
 	_alfredState.y = saveGame.alfredY;
 	_alfredState.direction = (AlfredDirection)saveGame.alfredDir;
-	_state = *(saveGame.gameState);
+	_state = saveGame.gameState;
 
 	setScreen(saveGame.currentRoom, _alfredState.direction);
-	_state.stateGame = GAME;
+	_state->stateGame = GAME;
 }
 
 SaveGameData *PelrockEngine::createSaveGameData() const {
 	SaveGameData *saveGame = new SaveGameData();
-	saveGame->gameState = &g_engine->_state;
 	saveGame->currentRoom = _room->_currentRoomNumber;
 	saveGame->alfredX = _alfredState.x;
 	saveGame->alfredY = _alfredState.y;
 	saveGame->alfredDir = _alfredState.direction;
+	saveGame->gameState = g_engine->_state;
 	return saveGame;
 }
 

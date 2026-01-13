@@ -196,7 +196,7 @@ public:
 	void setVolume(int volume);
 	bool isPlaying() const;
 	bool isPlaying(int channel) const;
-	void playMusicTrack(int trackNumber);
+	void playMusicTrack(int trackNumber, bool loop = true);
 	bool isMusicPlaying() const {
 		return _isMusicPlaying;
 	}

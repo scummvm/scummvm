@@ -72,7 +72,7 @@ const ActionEntry actionTable[] = {
 
 const CombinationEntry combinationTable[] = {
 	{2, 281, &PelrockEngine::useCardWithATM}, // Use ATM Card with ATM
-	{62, 185, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
+	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -117,13 +117,13 @@ void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
-	if (_state.JEFE_INGRESA_PASTA) {
-		_state.JEFE_INGRESA_PASTA = 0;
+	if (_state->JEFE_INGRESA_PASTA) {
+		_state->JEFE_INGRESA_PASTA = 0;
 		addInventoryItem(75);
 	} else {
 		int billCount = 0;
-		for (int i = 0; i < _state.inventoryItems.size(); i++) {
-			if (_state.inventoryItems[i] == 5) {
+		for (int i = 0; i < _state->inventoryItems.size(); i++) {
+			if (_state->inventoryItems[i] == 5) {
 				billCount++;
 			}
 		}
@@ -171,12 +171,13 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 }
 
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
-	if(_state.JEFE_ENCARCELADO == false) {
+	if(_state->JEFE_ENCARCELADO == false) {
 		_dialog->say(_res->_ingameTexts[QUITA_ESAS_MANOS]);
 	}
 	else {
 		_room->addSticker(36);
-		_room->disableHotspot(hotspot);
+		addInventoryItem(73); // Add recipe
+		_dialog->say(_res->_ingameTexts[QUESESTO_RECETA]);
 	}
 }
 
@@ -185,7 +186,7 @@ void PelrockEngine::openKitchenDoorFromInside(HotSpot *hotspot) {
 }
 
 void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot) {
-	_state.PUESTA_SALSA_PICANTE = true;
+	_state->PUESTA_SALSA_PICANTE = true;
 	_dialog->say(_res->_ingameTexts[VAESTAR_POCOFUERTE]);
 }
 
@@ -210,8 +211,8 @@ void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool
 }
 
 void PelrockEngine::addInventoryItem(int item) {
-	if (_state.inventoryItems.size() == 0) {
-		_state.selectedInventoryItem = item;
+	if (_state->inventoryItems.size() == 0) {
+		_state->selectedInventoryItem = item;
 	}
 	_flashingIcon = item;
 	int frameCounter = 0;
@@ -225,13 +226,13 @@ void PelrockEngine::addInventoryItem(int item) {
 		}
 		g_system->delayMillis(10);
 	}
-	_state.addInventoryItem(item);
+	_state->addInventoryItem(item);
 }
 
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
 	if (actionTrigger == 328) {
 		debug("Disabling root %d in room %d", rootIndex, room);
-		_state.setRootDisabledState(room, rootIndex, true);
+		_state->setRootDisabledState(room, rootIndex, true);
 	}
 }
 
@@ -239,21 +240,11 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
 	case 257:
-		byte *palette = new byte[768];
-		if (_extraScreen == nullptr) {
-			_extraScreen = new byte[640 * 400];
-		}
-		_res->getExtraScreen(9, _extraScreen, palette);
-
-		g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		_sound->playMusicTrack(25);
-		extraScreenLoop();
-
+		loadExtraScreenAndPresent(9);
 		_dialog->say(_res->_ingameTexts[SOHOT]);
 		_screen->markAllDirty();
 		_screen->update();
-
-		delete[] palette;
 		break;
 	}
 }
@@ -267,6 +258,23 @@ void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
 	_alfredState.direction = ALFRED_DOWN;
 	byte response = (byte)getRandomNumber(12);
 	_dialog->say(_res->_ingameTexts[154 + response]);
+}
+
+void PelrockEngine::useOnAlfred(int inventoryObject) {
+
+	debug("Using item %d on Alfred", inventoryObject);
+	switch (inventoryObject)
+	{
+	case 73: // Recipe book
+		_res->loadAlfredSpecialAnim(0);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		loadExtraScreenAndPresent(3);
+		_dialog->say(_res->_ingameTexts[QUEASCO]);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // End of namespace Pelrock

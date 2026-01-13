@@ -91,7 +91,7 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 void RoomManager::addSticker(int stickerId, bool persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
 	if (persist)
-		g_engine->_state.roomStickers[_currentRoomNumber].push_back(sticker);
+		g_engine->_state->roomStickers[_currentRoomNumber].push_back(sticker);
 	else
 		_transientStickers.push_back(sticker);
 }
@@ -108,21 +108,21 @@ void RoomManager::removeSticker(int stickerIndex) {
 		}
 	}
 
-	for (int i = 0; i < g_engine->_state.roomStickers[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state.roomStickers[_currentRoomNumber][i].stickerIndex == stickerIndex) {
+	for (int i = 0; i < g_engine->_state->roomStickers[_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->roomStickers[_currentRoomNumber][i].stickerIndex == stickerIndex) {
 			index = i;
-			g_engine->_state.roomStickers[_currentRoomNumber].remove_at(index);
+			g_engine->_state->roomStickers[_currentRoomNumber].remove_at(index);
 			break;
 		}
 	}
 
-	if (index != -1 && index < g_engine->_state.roomStickers[_currentRoomNumber].size())
-		g_engine->_state.roomStickers[_currentRoomNumber].remove_at(index);
+	if (index != -1 && index < g_engine->_state->roomStickers[_currentRoomNumber].size())
+		g_engine->_state->roomStickers[_currentRoomNumber].remove_at(index);
 }
 
 bool RoomManager::hasSticker(int index) {
-	for (int i = 0; i < g_engine->_state.roomStickers[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state.roomStickers[_currentRoomNumber][i].stickerIndex == index) {
+	for (int i = 0; i < g_engine->_state->roomStickers[_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->roomStickers[_currentRoomNumber][i].stickerIndex == index) {
 			return true;
 		}
 	}
@@ -139,7 +139,7 @@ bool RoomManager::hasSticker(int index) {
 void RoomManager::changeExit(int index, bool enabled, bool persist) {
 	_currentRoomExits[index].isEnabled = enabled;
 	if (persist)
-		g_engine->_state.roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, _currentRoomExits[index].index, _currentRoomExits[index]});
+		g_engine->_state->roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, _currentRoomExits[index].index, _currentRoomExits[index]});
 }
 
 void RoomManager::disableExit(int index, bool persist) {
@@ -151,18 +151,18 @@ void RoomManager::enableExit(int index, bool persist) {
 }
 
 void RoomManager::changeWalkBox(WalkBox walkbox) {
-	g_engine->_state.roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
 }
 
 void RoomManager::changeHotSpot(HotSpot hotspot) {
-	g_engine->_state.roomHotSpotChanges[_currentRoomNumber].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
+	g_engine->_state->roomHotSpotChanges[_currentRoomNumber].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
 }
 
 void RoomManager::disableSprite(int roomNumber, int spriteIndex, bool persist) {
 	if(roomNumber == _currentRoomNumber) {
 		_currentRoomAnims[spriteIndex].zOrder = 255;
 	}
-	g_engine->_state.disabledSprites[roomNumber].push_back(spriteIndex);
+	g_engine->_state->disabledSprites[roomNumber].push_back(spriteIndex);
 }
 
 void RoomManager::enableSprite(int spriteIndex, int zOrder, bool persist) {
@@ -184,7 +184,7 @@ void RoomManager::disableHotspot(HotSpot *hotspot, bool persist) {
 }
 
 void RoomManager::addWalkbox(WalkBox walkbox) {
-	g_engine->_state.roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
 }
 
 HotSpot *RoomManager::findHotspotByExtra(uint16 extra) {
@@ -239,11 +239,11 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 	for (int i = 0; i < exitCount; i++) {
 		int exitOffset = exitDataOffset + i * 14;
 		bool isChanged = false;
-		if (g_engine->_state.roomExitChanges.contains(_currentRoomNumber)) {
+		if (g_engine->_state->roomExitChanges.contains(_currentRoomNumber)) {
 			// if the exit has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state.roomExitChanges[_currentRoomNumber].size(); j++) {
-				if (g_engine->_state.roomExitChanges[_currentRoomNumber][j].exitIndex == i) {
-					exits.push_back(g_engine->_state.roomExitChanges[_currentRoomNumber][j].exit);
+			for (int j = 0; j < g_engine->_state->roomExitChanges[_currentRoomNumber].size(); j++) {
+				if (g_engine->_state->roomExitChanges[_currentRoomNumber][j].exitIndex == i) {
+					exits.push_back(g_engine->_state->roomExitChanges[_currentRoomNumber][j].exit);
 					isChanged = true;
 					break;
 				}
@@ -303,11 +303,11 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.innerIndex = i;
 		spot.index = i;
 		bool isChanged = false;
-		if (g_engine->_state.roomHotSpotChanges.contains(_currentRoomNumber)) {
+		if (g_engine->_state->roomHotSpotChanges.contains(_currentRoomNumber)) {
 			// if the hotspot has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state.roomHotSpotChanges[_currentRoomNumber].size(); j++) {
-				if (g_engine->_state.roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
-					hotspots.push_back(g_engine->_state.roomHotSpotChanges[_currentRoomNumber][j].hotspot);
+			for (int j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
+				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
+					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
 					isChanged = true;
 					break;
 				}
@@ -352,7 +352,6 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 			// Not the room we care about, skip
 			continue;
 		}
-		debug("Resetting room %d conversation data at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
 		Common::copy(entry.data, entry.data + entry.dataSize, conversationData + entry.offset);
 		// delete[] entry.data;
 	}
@@ -505,7 +504,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 	uint32_t metadata_start = spriteCountPos + (44 * 2 + 5);
 	uint32_t picOffset = 0;
 
-	Common::Array<int> disabledSprites = g_engine->_state.disabledSprites[_currentRoomNumber];
+	Common::Array<int> disabledSprites = g_engine->_state->disabledSprites[_currentRoomNumber];
 
 	for (int i = 0; i < spriteCount; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
@@ -515,18 +514,20 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.y = READ_LE_INT16(data + animOffset + 2);
 		sprite.w = data[animOffset + 4];
 		sprite.h = data[animOffset + 5];
-		sprite.extra = data[animOffset + 6];
+		sprite.stride = READ_LE_INT16(data + animOffset + 6);
 		sprite.numAnims = data[animOffset + 8];
 		sprite.zOrder = data[animOffset + 23];
-		for(int i = 0; i < disabledSprites.size(); i++) {
-			if (disabledSprites[i] == sprite.index) {
-				sprite.zOrder = 255;
-				break;
-			}
-		}
+		sprite.extra = data[animOffset + 32];
 		sprite.spriteType = data[animOffset + 33];
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
+		for(int i = 0; i < disabledSprites.size(); i++) {
+			if (disabledSprites[i] == sprite.index) {
+				sprite.zOrder = 255;
+				sprite.isHotspotDisabled = 1;
+				break;
+			}
+		}
 		if (sprite.numAnims == 0) {
 			break;
 		}
@@ -589,11 +590,11 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		WalkBox box;
 		box.index = i;
 		bool isChanged = false;
-		if (g_engine->_state.roomWalkBoxChanges.contains(_currentRoomNumber)) {
+		if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
 			// if the walkbox has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state.roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
-				if (g_engine->_state.roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
-					walkboxes.push_back(g_engine->_state.roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
+			for (int j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
+				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
+					walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 					isChanged = true;
 					break;
 				}
@@ -609,18 +610,18 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		walkboxes.push_back(box);
 	}
 
-	if (g_engine->_state.roomWalkBoxChanges.contains(_currentRoomNumber)) {
+	if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
 		// Add any new walkboxes that were added
-		for (int j = 0; j < g_engine->_state.roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
+		for (int j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 			bool found = false;
 			for (int i = 0; i < walkboxes.size(); i++) {
-				if (g_engine->_state.roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == walkboxes[i].index) {
+				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == walkboxes[i].index) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				walkboxes.push_back(g_engine->_state.roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
+				walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 			}
 		}
 	}
@@ -673,13 +674,13 @@ void RoomManager::loadConversationData(byte *pair12data, size_t pair12size, uint
 	}
 	outConversationData = new byte[outConversationDataSize];
 	Common::copy(pair12data + conversationStart, pair12data + conversationStart + outConversationDataSize, outConversationData);
-	if (g_engine->_state.disabledBranches.contains(_currentRoomNumber)) {
+	if (g_engine->_state->disabledBranches.contains(_currentRoomNumber)) {
 		applyDisabledChoices(_currentRoomNumber, outConversationData, outConversationDataSize);
 	}
 }
 
 void RoomManager::applyDisabledChoices(int roomNumber, byte *conversationData, size_t conversationDataSize) {
-	Common::Array<ResetEntry> disabledBranches = g_engine->_state.disabledBranches[roomNumber];
+	Common::Array<ResetEntry> disabledBranches = g_engine->_state->disabledBranches[roomNumber];
 	if (disabledBranches.size() == 0) {
 		return;
 	}
@@ -705,7 +706,7 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 	// Apply immediately
 	applyDisabledChoice(resetEntry, _conversationData, _conversationDataSize);
 	// Store for future loads
-	g_engine->_state.addDisabledBranch(resetEntry);
+	g_engine->_state->addDisabledBranch(resetEntry);
 }
 
 void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
@@ -730,7 +731,6 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 			// Not the room we care about, skip
 			continue;
 		}
-		debug("Resetting room %d metadata at offset %d, size %d", entry.room, entry.offset, entry.dataSize);
 		Common::copy(entry.data, entry.data + entry.dataSize, data + entry.offset);
 		// delete[] entry.data;
 	}

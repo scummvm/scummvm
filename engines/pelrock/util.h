@@ -21,8 +21,10 @@
 #ifndef PELROCK_UTIL_H
 #define PELROCK_UTIL_H
 
+#include "common/events.h"
 #include "common/stream.h"
 #include "common/types.h"
+
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
@@ -43,6 +45,7 @@ void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, by
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
 void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
+void changeGameSpeed(Common::Event e);
 Common::StringArray arrayOf(Common::String str);
 
 static const int special_chars[] = {

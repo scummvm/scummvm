@@ -97,9 +97,9 @@ void MenuManager::checkMouseClick(int x, int y) {
 	for (int i = 0; i < 4; i++) {
 		if (x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
 			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
-			_selectedInvIndex = g_engine->_state.inventoryItems[_curInventoryPage * 4 + i];
+			_selectedInvIndex = g_engine->_state->inventoryItems[_curInventoryPage * 4 + i];
 			_menuText = _inventoryDescriptions[_selectedInvIndex];
-			g_engine->_state.selectedInventoryItem = _selectedInvIndex;
+			g_engine->_state->selectedInventoryItem = _selectedInvIndex;
 			selectedItem = true;
 			debug("Selected inventory item %d", _selectedInvIndex);
 			return;
@@ -120,7 +120,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 			_curInventoryPage--;
 		break;
 	case INVENTORY_NEXT_BUTTON:
-		if ((_curInventoryPage + 1) * 4 < g_engine->_state.inventoryItems.size())
+		if ((_curInventoryPage + 1) * 4 < g_engine->_state->inventoryItems.size())
 			_curInventoryPage++;
 		break;
 	case SAVE_GAME_BUTTON:
@@ -142,7 +142,7 @@ void MenuManager::menuLoop() {
 		_events->_leftMouseClicked = false;
 	} else if (_events->_rightMouseClicked) {
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
-		g_engine->_state.stateGame = GAME;
+		g_engine->_state->stateGame = GAME;
 		_events->_rightMouseClicked = false;
 		tearDown();
 	} else {
@@ -162,9 +162,9 @@ void MenuManager::menuLoop() {
 
 	for (int i = 0; i < 4; i++) {
 		int itemIndex = _curInventoryPage * 4 + i;
-		if (g_engine->_state.inventoryItems.size() <= itemIndex)
+		if (g_engine->_state->inventoryItems.size() <= itemIndex)
 			continue;
-		InventoryObject item = g_engine->_res->getInventoryObject(g_engine->_state.inventoryItems[itemIndex]);
+		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
 	}
 

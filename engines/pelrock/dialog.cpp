@@ -391,7 +391,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	}
 	// Right after the speaker conversation tree, we are in branch 0
 	int currentRoot = 0;
-	while(g_engine->_state.getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
+	while(g_engine->_state->getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
 		// This root is disabled, skip to next
 		while(position < dataSize) {
 			if(conversationData[position] == CTRL_END_BRANCH) {

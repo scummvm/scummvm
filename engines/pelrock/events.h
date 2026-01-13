@@ -36,6 +36,8 @@ public:
 	int16 _mouseY = 0;
 	int16 _mouseClickX = 0;
 	int16 _mouseClickY = 0;
+	int16 _releaseX = 0;
+	int16 _releaseY = 0;
 	bool _leftMouseClicked = false;
 	bool _longClicked = false;
 	bool _rightMouseClicked = false;

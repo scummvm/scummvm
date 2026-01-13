@@ -115,22 +115,22 @@ Common::Error PelrockEngine::run() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldPlayIntro == false) {
-		_state.stateGame = GAME;
+		_state->stateGame = GAME;
 		// stateGame = SETTINGS;
 	} else {
-		_state.stateGame = INTRO;
+		_state->stateGame = INTRO;
 		_videoManager->playIntro();
-		_state.stateGame = GAME;
+		_state->stateGame = GAME;
 	}
 	if (!shouldQuit())
 		init();
 
 	while (!shouldQuit()) {
 
-		if (_state.stateGame == SETTINGS) {
+		if (_state->stateGame == SETTINGS) {
 			changeCursor(DEFAULT);
 			_menu->menuLoop();
-		} else if (_state.stateGame == GAME) {
+		} else if (_state->stateGame == GAME) {
 			gameLoop();
 		}
 		_screen->update();
@@ -254,8 +254,8 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 
-	if(action == ITEM) {
-		int inventoryObject = _state.selectedInventoryItem;
+	if (action == ITEM) {
+		int inventoryObject = _state->selectedInventoryItem;
 		for (const CombinationEntry *entry = combinationTable; entry->handler != nullptr; entry++) {
 			if (entry->inventoryObject == inventoryObject && entry->hotspotExtra == hotspot->extra) {
 				(this->*(entry->handler))(inventoryObject, hotspot);
@@ -266,8 +266,6 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 		warning("No handler for using inventory object %d with hotspot %d", inventoryObject, hotspot->extra);
 		return;
 	}
-
-
 
 	for (const ActionEntry *entry = actionTable; entry->handler != nullptr; entry++) {
 		if (entry->action == action && entry->hotspotExtra == hotspot->extra) {
@@ -300,8 +298,11 @@ void PelrockEngine::checkMouse() {
 	// Handle mouse release after long press (popup selection mode)
 	if (_events->_popupSelectionMode && !_events->_leftMouseButton) {
 		// Mouse was released while popup is active
-		VerbIcon actionClicked = isActionUnder(_events->_mouseX, _events->_mouseY);
-		if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
+		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
+		if (_actionPopupState.isAlfredUnder) {
+			debug("Using item on Alfred");
+			useOnAlfred(_state->selectedInventoryItem);
+		} else if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
 			// Action was selected - queue it
 			walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
 			_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
@@ -323,7 +324,7 @@ void PelrockEngine::checkMouse() {
 	} else if (_events->_rightMouseClicked) {
 		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
-		_state.stateGame = SETTINGS;
+		_state->stateGame = SETTINGS;
 	}
 	checkMouseHover();
 }
@@ -405,8 +406,8 @@ void PelrockEngine::paintDebugLayer() {
 }
 
 void PelrockEngine::placeStickers() {
-	for (int i = 0; i < _state.roomStickers[_room->_currentRoomNumber].size(); i++) {
-		Sticker sticker = _state.roomStickers[_room->_currentRoomNumber][i];
+	for (int i = 0; i < _state->roomStickers[_room->_currentRoomNumber].size(); i++) {
+		Sticker sticker = _state->roomStickers[_room->_currentRoomNumber][i];
 		placeSticker(sticker);
 	}
 	// also place temporary stickers
@@ -603,13 +604,13 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (_alfredState.curFrame >= walkingAnimLengths[_alfredState.direction]) {
 			_alfredState.curFrame = 0;
 		}
-		if(_alfredState.animState == ALFRED_WALKING) {// in case it changed to idle above
+		if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
 			drawAlfred(_res->alfredWalkFrames[_alfredState.direction][_alfredState.curFrame]);
 			_alfredState.curFrame++;
 		}
 		break;
 	}
-	case ALFRED_TALKING:
+	case ALFRED_TALKING: {
 		if (_alfredState.curFrame >= talkingAnimLengths[_alfredState.direction] - 1) {
 			_alfredState.curFrame = 0;
 		}
@@ -618,7 +619,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.curFrame++;
 		}
 		break;
-	case ALFRED_COMB:
+	}
+	case ALFRED_COMB: {
 		if (_alfredState.curFrame >= 11) {
 			_alfredState.setState(ALFRED_IDLE);
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[_alfredState.direction], _alfredState.x, _alfredState.y - kAlfredFrameHeight, 51, 102, 255);
@@ -628,7 +630,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				_alfredState.curFrame++;
 		}
 		break;
-	case ALFRED_INTERACTING:
+	}
+	case ALFRED_INTERACTING: {
 		if (_alfredState.curFrame >= interactingAnimLength) {
 			_alfredState.setState(ALFRED_IDLE);
 		} else {
@@ -639,9 +642,34 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		}
 		break;
 	}
+	case ALFRED_SPECIAL_ANIM: {
+		if (_res->_specialAnimCurFrame > _res->_curSpecialAnim.numFrames) {
+			_res->clearSpecialAnim();
+			_alfredState.setState(ALFRED_IDLE);
+		} else {
+			byte *frame = new byte[_res->_curSpecialAnim.stride * _res->_curSpecialAnim.numFrames];
+			extractSingleFrame(_res->_specialAnimData,
+							   frame,
+							   _res->_specialAnimCurFrame,
+							   _res->_curSpecialAnim.w,
+							   _res->_curSpecialAnim.h);
+			drawSpriteToBuffer(_compositeBuffer,
+							   640,
+							   frame,
+							   _alfredState.x,
+							   _alfredState.y - _res->_curSpecialAnim.h,
+							   _res->_curSpecialAnim.w,
+							   _res->_curSpecialAnim.h,
+							   255);
+			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+				_res->_specialAnimCurFrame++;
+			}
+			delete[] frame;
+		}
+	}
+	}
 	// This if is needed to draw Alfred when idle, when the switch case results in a state change
 	if (_alfredState.animState == ALFRED_IDLE) {
-		debug("Drawing Alfred idle frame, direction %d", _alfredState.direction);
 		drawAlfred(_res->alfredIdle[_alfredState.direction]);
 	}
 }
@@ -801,10 +829,10 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		return;
 	}
 
-	int frameSize = animData.w * animData.h;
+	int frameSize = sprite->stride;
 	int curFrame = animData.curFrame;
 	byte *frame = new byte[frameSize];
-	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], sprite->x, sprite->y, sprite->w, sprite->h, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], x, y, w, h, 255);
 
 	// if (animData.elpapsedFrames == animData.speed) {
 	if (_chrono->getFrameCount() % animData.speed == 0) {
@@ -831,8 +859,9 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
-	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
-	if (hotspotIndex != -1 && !_actionPopupState.isActive) {
+	int hotspotIndex = isHotspotUnder(x, y);
+	bool alfredUnder = isAlfredUnder(x, y);
+	if ((hotspotIndex != -1 || alfredUnder) && !_actionPopupState.isActive) {
 
 		_actionPopupState.x = _alfredState.x + kAlfredFrameWidth / 2 - kBalloonWidth / 2;
 		if (_actionPopupState.x < 0)
@@ -847,7 +876,11 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		}
 		_actionPopupState.isActive = true;
 		_actionPopupState.curFrame = 0;
-		_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
+
+		if (hotspotIndex != -1) {
+			_actionPopupState.isAlfredUnder = alfredUnder;
+			_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
+		}
 	}
 }
 
@@ -1040,11 +1073,11 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 	bool itemUnder = isItemUnder(_events->_mouseX, _events->_mouseY);
-	if (_state.selectedInventoryItem != -1) {
+	if (_state->selectedInventoryItem != -1) {
 		if (itemUnder && shouldBlink) {
 			return;
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->getInventoryObject(_state.selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 	if (_actionPopupState.curFrame < 3) {
 		_actionPopupState.curFrame++;
@@ -1091,7 +1124,10 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 
 void PelrockEngine::pickupIconFlash() {
 	_graphics->showOverlay(65, _compositeBuffer);
-	InventoryObject item = _res->getInventoryObject(_flashingIcon);
+	if(_flashingIcon == -1)
+		return;
+	debug("Flashing icon %d", _flashingIcon);
+	InventoryObject item = _res->getIconForObject(_flashingIcon);
 	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 5, 400 - 60 - 5, 60, 60, 1);
 	}
@@ -1180,19 +1216,18 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		return NO_ACTION;
 	}
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-	int loopEnd = _state.selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
+	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (int i = 0; i < loopEnd; i++) {
 		int actionX = _actionPopupState.x + 20 + (i * (kVerbIconWidth + 2));
 		int actionY = _actionPopupState.y + 20;
 		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
 
-		if(i == actions.size()) {
+		if (i == actions.size()) {
 			// Check inventory item
 			if (actionRect.contains(x, y)) {
 				return ITEM;
 			}
-		}
-		else if (actionRect.contains(x, y)) {
+		} else if (actionRect.contains(x, y)) {
 			return actions[i];
 		}
 	}
@@ -1283,14 +1318,14 @@ void PelrockEngine::checkMouseHover() {
 		exitDetected = true;
 	}
 
-	if (alfredDetected) {
-		changeCursor(ALFRED);
-	} else if (hotspotDetected && exitDetected) {
+	if (hotspotDetected && exitDetected) {
 		changeCursor(COMBINATION);
 	} else if (hotspotDetected) {
 		changeCursor(HOTSPOT);
 	} else if (exitDetected) {
 		changeCursor(EXIT);
+	} else if (alfredDetected) {
+		changeCursor(ALFRED);
 	} else {
 		changeCursor(DEFAULT);
 	}
@@ -1340,32 +1375,36 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	delete[] palette;
 }
 
-void PelrockEngine::doExtraActions(int roomNumber) {
-switch (roomNumber)
-{
-case 4:
-	if(_state.PUESTA_SALSA_PICANTE && !_state.JEFE_ENCARCELADO) {
-		_state.JEFE_ENCARCELADO = true;
-		_room->disableSprite(13, 0, true); // Disable Jefe hotspot
-		byte *palette = new byte[768];
-		if (_extraScreen == nullptr) {
-			_extraScreen = new byte[640 * 400];
-		}
-		_res->getExtraScreen(4, _extraScreen, palette);
-
-		g_system->getPaletteManager()->setPalette(palette, 0, 256);
-		extraScreenLoop();
-
-		_screen->markAllDirty();
-		_screen->update();
-
+void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
+	byte *palette = new byte[768];
+	if (_extraScreen == nullptr) {
+		_extraScreen = new byte[640 * 400];
 	}
-	break;
+	_res->getExtraScreen(screenIndex, _extraScreen, palette);
 
-default:
-	break;
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	extraScreenLoop();
+	delete[] _extraScreen;
+	delete[] palette;
+	_screen->markAllDirty();
+	_screen->update();
 }
 
+void PelrockEngine::doExtraActions(int roomNumber) {
+	switch (roomNumber) {
+	case 4:
+		if (_state->PUESTA_SALSA_PICANTE && !_state->JEFE_ENCARCELADO) {
+			_state->JEFE_ENCARCELADO = true;
+			_room->disableSprite(13, 0, true);
+			loadExtraScreenAndPresent(4);
+			_screen->markAllDirty();
+			_screen->update();
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // End of namespace Pelrock

@@ -102,7 +102,8 @@ enum AlfredAnimState {
 	ALFRED_WALKING,
 	ALFRED_TALKING,
 	ALFRED_INTERACTING,
-	ALFRED_COMB
+	ALFRED_COMB,
+	ALFRED_SPECIAL_ANIM
 };
 
 enum AlfredDirection {
@@ -118,6 +119,7 @@ struct ActionPopupState {
 	int x = 0;
 	int y = 0;
 	int displayTime = 0;
+	bool isAlfredUnder = false;
 };
 
 struct AlfredState {
@@ -191,7 +193,7 @@ struct Sprite {
 	int16 y;      // 2
 	int w;        // 4
 	int h;        // 5
-	byte extra;   // 6
+	uint16 stride; // 6-7
 	int numAnims; // 8
 	int curAnimIndex = 0;
 	int8 zOrder;
@@ -200,6 +202,7 @@ struct Sprite {
 	bool isHotspotDisabled;  // 38
 	bool isTalking = false;
 	Anim *animData;
+	byte extra;
 };
 
 struct HotSpot {
@@ -381,17 +384,63 @@ struct ResetEntry {
 	byte *data = nullptr;
 };
 
-
 struct GameStateData {
 	bool JEFE_INGRESA_PASTA = false;
 	bool JEFE_ENCARCELADO = false;
 	bool PUESTA_SALSA_PICANTE = false;
+	bool CRISTAL_ROTO = false;
+	bool ENTRA_EN_TIENDA_PRIMERA_VEZ = false;
+	bool ELECTROCUTACION = false;
+	bool CABLES_PUESTOS = false;
+	bool SOBORNO_PORTERO = false;
+	bool MEMORIZA_LIBRO = false;
+	bool ALFRED_INTELIGENTE = false;
+	bool ALFRED_SABE_EGIPCIO = false;
+	bool VENDEDOR_DEJA_DE_JODER = false;
+	bool VIAJE_A_EGIPTO = false;
+	bool PARADOJA_RESUELTA = false;
+	bool CROCODILLO_ENCENDIDO = false;
+	bool MIRA_SIMBOLO_FUERA_MUSEO = false;
+	bool PUERTA_SECRETA_ABIERTA = false;
+	bool ROBA_PELO_PRINCESA = false;
+	bool A_LA_CARCEL = false;
+	bool CLAVE_CAJA_FUERTE = false;
+	bool SE_HA_PUESTO_EL_MUNECO = false;
+	bool VIGILANTE_BEBE_AGUA = false;
+	bool VIGILANTE_MEANDO = false;
+	bool PIRAMIDE_JODIDA = false;
+	bool PIRAMIDE_JODIDA2 = false;
+	bool VIGILANTE_PAJEANDOSE = false;
+	bool FORMULA_MAGICA = false;
+	bool VIAJA_AL_PASADO = false;
+	bool APARECE_EUNUCO = false;
+	bool AL_FARAON = false;
+	bool A_CURRAR = false;
+	bool DA_PIEDRA = false;
+	byte NUMERO_DE_COPAS = false;
+	bool PIEDRAS_COGIDAS = false;
+	bool GUARDIAS_BORRACHOS = false;
+	bool PIEDRA_FAKE_MOJADA = false;
+	bool PUERTA_BUENA = false;
+	bool TRAMPILLA_ABIERTA = false;
+	bool HABITACION_PRINCESA = false;
+	bool A_POR_LA_PRINCESA = false;
+	bool VUELTA_A_EMPEZAR = false;
+	bool A_LOS_PASILLOS = false;
+	bool COMO_ESTAN_LOS_DIOSES = false;
+	bool END_OF_GAME = false;
+	bool FROM_INTRO = false;
+	byte INGREDIENTES_CONSEGUIDOS = 0;
+	bool HE_TIRADO_PIEDRA = false;
+	bool HA_USADO_AGUA = false;
 
 	GameState stateGame = INTRO;
 
 	Common::Array<byte> inventoryItems;
 	int16 selectedInventoryItem = -1;
+
 	Common::HashMap<byte, Common::Array<Sticker>> roomStickers;
+	// Common::HashMap<byte, ResetEntry> roomExitChanges;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;

@@ -198,14 +198,14 @@ bool SoundManager::isMusicPlaying() {
 	return g_system->getAudioCDManager()->isPlaying();
 }
 
-void SoundManager::playMusicTrack(int trackNumber) {
+void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 	if (_currentMusicTrack == trackNumber && isMusicPlaying()) {
 		// Already playing this track
 		return;
 	}
 	_currentMusicTrack = trackNumber;
 	g_system->getAudioCDManager()->stop();
-	// g_system->getAudioCDManager()->play(trackNumber, -1, 0, 0);
+	// g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, 0, 0);
 }
 
 void SoundManager::loadSoundIndex() {

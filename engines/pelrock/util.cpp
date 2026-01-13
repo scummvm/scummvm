@@ -323,6 +323,17 @@ byte decodeChar(byte b) {
 	}
 }
 
+
+void changeGameSpeed(Common::Event e) {
+	if (e.type == Common::EVENT_KEYDOWN) {
+		if (e.kbd.hasFlags(Common::KBD_CTRL)) {
+			if (e.kbd.keycode == Common::KEYCODE_f) {
+				g_engine->_chrono->changeSpeed();
+			}
+		}
+	}
+}
+
 Common::StringArray arrayOf(Common::String str) {
 	return Common::StringArray(1, str);
 }

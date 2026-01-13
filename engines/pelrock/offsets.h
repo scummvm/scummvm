@@ -441,56 +441,56 @@ struct ExtraImages {
 };
 
 const ExtraImages extraScreens[] = {
-	{
-		0x00, // Portrait above bed
-		0x7984,
-		8
-	},
-	{
-		0x1A9EE, // Computer screen
-		0x305A2,
-		8
-	},
-	{
-		0x647C3, // Alfred circle
-		0x7B6B1,
-		4
-	},
-	{
-		0x6FBC9, // Recipe
-		0x7B6B1,
-		8
-	},
-	{
-		0x7BA11, // Newspaper
-		0x88745,
-		8
-	},
-	{
-		0x9237B, // tablet
-		0xB0EE7,
-		8
-	},
-	{
-		0xB11ED, // map
-		0xDE011,
-		8
-	},
-	{
-		0xFFC47, // girl book
-		0x1180C9,
-		8
-	},
-	{
-		0x1183C5, // book
-		0x1358F3,
-		8
-	},
-	{
-		0x152A88, // portrait
-		0x15BFC8,
-		8
-	},
+	{0x00, // Portrait above bed
+	 0x7984,
+	 8},
+	{0x1A9EE, // Computer screen
+	 0x305A2,
+	 8},
+	{0x647C3, // Alfred circle
+	 0x7B6B1,
+	 4},
+	{0x6FBC9, // Recipe
+	 0x7B6B1,
+	 8},
+	{0x7BA11, // Newspaper
+	 0x88745,
+	 8},
+	{0x9237B, // tablet
+	 0xB0EE7,
+	 8},
+	{0xB11ED, // map
+	 0xDE011,
+	 8},
+	{0xFFC47, // girl book
+	 0x1180C9,
+	 8},
+	{0x1183C5, // book
+	 0x1358F3,
+	 8},
+	{0x152A88, // portrait
+	 0x15BFC8,
+	 8},
+};
+
+struct AlfredSpecialAnimOffset {
+	int numFrames = 0;
+	int w = 0;
+	int h = 0;
+	int numBudas;
+	uint32 offset;
+	int stride = 0;
+
+	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, uint32 off)
+		: numFrames(nF), w(width), h(height), numBudas(nBudas), offset(off) {
+		stride = w * h;
+	}
+	AlfredSpecialAnimOffset() {
+	}
+};
+
+const AlfredSpecialAnimOffset alfredSpecialAnims[] = {
+	{20, 51, 102, 2, 559681}, // READ
 };
 
 } // End of namespace Pelrock

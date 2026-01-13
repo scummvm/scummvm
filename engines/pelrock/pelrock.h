@@ -59,7 +59,6 @@ class PelrockEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	ChronoManager *_chrono = nullptr;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_sound = nullptr;
 	PelrockEventManager *_events = nullptr;
@@ -159,10 +158,11 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
+	ChronoManager *_chrono = nullptr;
 	AlfredState _alfredState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
-	GameStateData _state;
+	GameStateData *_state = new GameStateData();
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
@@ -220,6 +220,7 @@ public:
 	}
 
 	void setScreen(int s, AlfredDirection dir);
+	void loadExtraScreenAndPresent(int screenIndex);
 	void doExtraActions(int roomNumber);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 
@@ -249,6 +250,7 @@ public:
 	void pickUpBrick(HotSpot *hotspot);
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
+	void useOnAlfred(int inventoryObject);
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

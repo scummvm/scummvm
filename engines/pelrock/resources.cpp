@@ -217,6 +217,27 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombLeftRaw);
 }
 
+void ResourceManager::loadAlfredSpecialAnim(int numAnim) {
+	_curSpecialAnim = alfredSpecialAnims[numAnim];
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("Could not open ALFRED.7");
+		return;
+	}
+
+	alfred7.seek(_curSpecialAnim.offset, SEEK_SET);
+	_specialAnimData = new byte[_curSpecialAnim.numFrames * _curSpecialAnim.w * _curSpecialAnim.h];
+	mergeRleBlocks(&alfred7, _curSpecialAnim.offset, 2, _specialAnimData);
+	_specialAnimCurFrame = 0;
+	alfred7.close();
+}
+
+void ResourceManager::clearSpecialAnim() {
+	delete[] _specialAnimData;
+	_specialAnimData = nullptr;
+	_specialAnimCurFrame = 0;
+}
+
 void ResourceManager::loadInventoryItems() {
 	// loadInventoryDescriptions();
 	Common::File alfred4File;
@@ -351,8 +372,18 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	return sticker;
 }
 
-InventoryObject ResourceManager::getInventoryObject(byte index) {
-	return _inventoryIcons[index];
+InventoryObject ResourceManager::getIconForObject(byte objectIndex) {
+	byte iconIndex = 0;
+	if (objectIndex < 59) {
+		if (11 < objectIndex < 59) {
+			iconIndex = ((objectIndex - 11) & 3) + 11; // Books cycle through icons 11-14
+		} else {
+			iconIndex = objectIndex; // Direct mapping for IDs 0-11
+		}
+	} else {
+		iconIndex = objectIndex - 44; // Offset for high IDs (59+)
+	}
+	return _inventoryIcons[iconIndex];
 }
 
 void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer) {

@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "pelrock/types.h"
+#include "pelrock/offsets.h"
 
 namespace Pelrock {
 
@@ -44,13 +45,15 @@ public:
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
+	void loadAlfredSpecialAnim(int numAnim);
+	void clearSpecialAnim();
 	void loadInventoryItems();
 	void loadAlfredResponses();
 	void getExtraScreen(int screenIndex, byte *screenBuf, byte *palette);
 	Common::Array<Common::StringArray> getCredits();
 	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size, bool decode = false);
 	Sticker getSticker(int stickerIndex);
-	InventoryObject getInventoryObject(byte index);
+	InventoryObject getIconForObject(byte index);
 	byte *loadExtra();
 
 	byte *alfredIdle[4]; // 4 directions
@@ -66,6 +69,11 @@ public:
 	byte *_verbIcons[9];
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
+
+	//Special anims
+	byte *_specialAnimData = nullptr;
+	int _specialAnimCurFrame = 0;
+	AlfredSpecialAnimOffset _curSpecialAnim;
 };
 
 } // End of namespace Pelrock
