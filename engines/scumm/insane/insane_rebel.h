@@ -47,6 +47,54 @@ public:
 	InsaneRebel2(ScummEngine_v7 *scumm);
 	~InsaneRebel2();
 
+	// ======================= Menu System =======================
+	// Main game states (emulates retail state machine from FUN_004142BD)
+	enum GameState {
+		kStateIntro = 0,      // Stage 0: Intro/Credits sequence
+		kStateMainMenu = 1,   // Stage 1: Main menu (FUN_004147B2)
+		kStateLevelSelect = 2,// Stage 2: Level selection (FUN_00414A41)
+		kStateBriefing = 3,   // Stage 3: Mission briefing (FUN_00415CF8)
+		kStateGameplay = 4,   // Stage 4: Gameplay (FUN_00416787)
+		kStateCredits = 5,    // Credits sequence
+		kStateQuit = 6        // Exit game
+	};
+
+	// Menu selection results (return values from FUN_004147B2)
+	enum MenuResult {
+		kMenuNewGame = 2,     // case 0: New Game
+		kMenuContinue = 4,    // case 1: Continue
+		kMenuOptions = 0,     // case 2: Options (stays in menu)
+		kMenuExit = 0,        // case 3: Exit to title
+		kMenuUnknown = 0,     // case 4: Unknown function
+		kMenuCredits = 1,     // case 5: Show credits
+		kMenuQuit = 0         // case 6: Quit game
+	};
+
+	GameState _gameState;           // Current game state
+	int _menuSelection;             // Current menu item (0-6), mirrors DAT_00459988
+	int _menuItemCount;             // Number of menu items (7 for main menu)
+	int _menuInactivityTimer;       // Timeout counter (300 frames = ~10 sec)
+	int _lastMenuVariant;           // Last random menu video shown (DAT_00482400)
+	int _menuRepeatDelay;           // Delay for key repeat (DAT_00459ce0)
+	bool _levelUnlocked[16];        // Which levels are available (progress flags)
+
+	// Run the main menu loop - returns when game should start or quit
+	// This is the main entry point called from ScummEngine::go()
+	int runMainMenu();
+
+	// Process menu input (keyboard/mouse) - returns selected item or -1
+	int processMenuInput();
+
+	// Draw menu overlay (selection highlight) on current frame
+	void drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height);
+
+	// Get random menu video filename (emulates FUN_0041FDC8)
+	Common::String getRandomMenuVideo();
+
+	// Reset menu state for fresh start
+	void resetMenu();
+	// =============================================================
+
 	NutRenderer *_smush_cockpitNut;
 
 	// Font used for HUD score/lives/damage display (SMALFONT.NUT)
@@ -55,6 +103,24 @@ public:
 
 	// Font used for opcode 9 text/subtitle rendering (DIHIFONT / TALKFONT)
 	SmushFont *_rebelMsgFont;
+
+	// Menu system fonts (from info.md - FUN_403BD0 font loading)
+	// Low resolution mode font list (stored in DAT_00485058 linked list):
+	//   Font 0 (^f00): TALKFONT.NUT - Default menu font
+	//   Font 1 (^f01): SMALFONT.NUT - Small font (for format code switching)
+	//   Font 2 (^f02): TITLFONT.NUT - Title font
+	//   Font 3 (^f03): POVFONT.NUT - POV font
+	NutRenderer *_smush_talkfontNut;   // Font 0 - primary menu font (DAT_00485058)
+	NutRenderer *_smush_smalfontNut;   // Font 1 - small font for ^f01 switching
+	NutRenderer *_smush_titlefontNut;  // Font 2 - title font
+
+	// SmushFont for menu text rendering (uses SMALFONT.NUT with proper string drawing)
+	SmushFont *_menuFont;
+
+	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
+	// Loaded into DAT_0047aba8 and rendered via FUN_004236e0 as background
+	NutRenderer *_smush_mouseoverNut;
+
 	bool _introCursorPushed; // true when we've pushed an invisible cursor for intro
 	
 

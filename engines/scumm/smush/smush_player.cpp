@@ -401,7 +401,18 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	int unknown = b.readSint16LE();
 	int userId = b.readUint16LE();
 
-	if ((code != 8) && (flags != 46)) {
+	debug("SmushPlayer::handleIACT: code=%d flags=%d unknown=%d userId=%d subSize=%d",
+		code, flags, unknown, userId, subSize);
+
+	// Route to procIACT for:
+	// 1. Non-audio IACT (code != 8 or flags != 46)
+	// 2. RA2 menu/graphics IACT (userId >= 1000 indicates graphics data, not audio)
+	bool isAudioIACT = (code == 8) && (flags == 46);
+	bool isRA2GraphicsIACT = (_vm->_game.id == GID_REBEL2) && (userId >= 1000);
+
+	if (!isAudioIACT || isRA2GraphicsIACT) {
+		debug("SmushPlayer::handleIACT: Routing to procIACT (isAudioIACT=%d, isRA2GraphicsIACT=%d)",
+			isAudioIACT, isRA2GraphicsIACT);
 		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, userId);
 		return;
 	}
@@ -1003,8 +1014,15 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 
+	// Debug: Check if updateScreen is being called
+	if (_vm->_game.id == GID_REBEL2 && _frame < 3) {
+		debug("SmushPlayer: frame=%d _width=%d _height=%d _dst=%p", _frame, _width, _height, (void*)_dst);
+	}
+
 	if (_width != 0 && _height != 0) {
 		updateScreen();
+	} else if (_vm->_game.id == GID_REBEL2 && _frame < 3) {
+		debug("SmushPlayer: SKIPPING updateScreen (width=%d height=%d)", _width, _height);
 	}
 
 	_frame++;
@@ -1012,6 +1030,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 
 void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
+	debug("SmushPlayer::handleAnimHeader: subSize=%d", subSize);
 	assert(subSize >= 0x300 + 6);
 	byte *headerContent = (byte *)malloc(subSize * sizeof(byte));
 
@@ -1046,6 +1065,17 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 		_width = READ_LE_UINT16(&headerContent[4]);
 		_height = READ_LE_UINT16(&headerContent[6]);
+		debug("SmushPlayer::handleAnimHeader: nbframes=%d width=%d height=%d", _nbframes, _width, _height);
+
+		// RA2 menu videos (O_MENU*.SAN) report width/height=0 in AHDR, but they DO have
+		// FOBJ frames with full 320x200 images. The FOBJ chunks contain the correct dimensions.
+		// We set default screen dimensions here so updateScreen() gets called and the
+		// _frameBuffer allocation in handleStore/handleFetch uses correct size.
+		if (_vm->_game.id == GID_REBEL2 && _width == 0 && _height == 0) {
+			_width = _vm->_screenWidth;   // 320
+			_height = _vm->_screenHeight; // 200
+			debug("SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
+		}
 
 		free(headerContent);
 	}

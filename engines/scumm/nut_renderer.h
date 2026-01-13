@@ -75,6 +75,8 @@ public:
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
 	const byte *getCharData(byte c);
+	byte getCharTransparency(byte c) const { return _chars[c].transparency; }
+	byte getBpp() const { return _bpp; }
 
 	int getFontHeight() const { return _fontHeight; }
 };

@@ -25,6 +25,8 @@
 #include "common/system.h"
 #include "common/memstream.h"
 
+#include "graphics/cursorman.h"
+
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/resource.h"
@@ -76,6 +78,24 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = new SmushFont(_vm, "SYSTM/DIHIFONT.NUT", true);
+
+	// Load menu system fonts (from info.md - FUN_403BD0 lines 302-348)
+	// In low resolution mode, fonts are loaded as a linked list:
+	//   Font 0 (^f00): TALKFONT.NUT - Default menu font (DAT_00485058)
+	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
+	//   Font 2 (^f02): TITLFONT.NUT - Title font
+	//   Font 3 (^f03): POVFONT.NUT - POV font (not loaded here)
+	_smush_talkfontNut = new NutRenderer(_vm, "SYSTM/TALKFONT.NUT");
+	_smush_smalfontNut = new NutRenderer(_vm, "SYSTM/SMALFONT.NUT");
+	_smush_titlefontNut = new NutRenderer(_vm, "SYSTM/TITLFONT.NUT");
+
+	// SmushFont for menu text rendering - uses SMALFONT with proper drawString support
+	_menuFont = new SmushFont(_vm, "SYSTM/SMALFONT.NUT", true);
+
+	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
+	// This is loaded into DAT_0047aba8 and used as a background overlay via FUN_004236e0
+	// The original game uses the standard Windows arrow cursor (IDC_ARROW via LoadCursorA)
+	_smush_mouseoverNut = new NutRenderer(_vm, "SYSTM/MSTOVER.NUT");
 
 	_enemies.clear();
 	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
@@ -225,13 +245,32 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_audioStreams[i] = nullptr;
 		_audioTrackActive[i] = false;
 	}
+
+	// Initialize menu system
+	_gameState = kStateMainMenu;  // Start at main menu
+	_menuSelection = 0;           // First item selected
+	// Main menu has 6 selectable items (0-5): START, OPTIONS, CONTINUE INTRO, TOP PILOTS, CREDITS, QUIT
+	// Note: The coordinate formula uses param_3 = 7 (includes title) for Y position calculation
+	// but _menuItemCount is the number of SELECTABLE items for bounds checking
+	_menuItemCount = 6;
+	_menuInactivityTimer = 0;
+	_lastMenuVariant = -1;        // No previous menu video
+	_menuRepeatDelay = 0;
+	for (i = 0; i < 16; i++) {
+		_levelUnlocked[i] = (i == 0);  // Only level 1 unlocked initially
+	}
 }
 
 
 InsaneRebel2::~InsaneRebel2() {
 	terminateAudio();
 	delete _rebelMsgFont;
+	delete _menuFont;
 	delete _smush_dispfontNut;
+	delete _smush_talkfontNut;
+	delete _smush_smalfontNut;
+	delete _smush_titlefontNut;
+	delete _smush_mouseoverNut;
 }
 
 // Score lookup tables (from DAT_0047e0fe, DAT_0047e100, DAT_0047e102)
@@ -506,8 +545,67 @@ void InsaneRebel2::clearBit(int n) {
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
+	// Debug: Log all IACT opcodes
+	debug("Rebel2 IACT: opcode=%d par2=%d par3=%d par4=%d gameState=%d sceneId=%d",
+		par1, par2, par3, par4, _gameState, _currSceneId);
+
 	if (_keyboardDisable)
 		return;
+
+	// Handle menu IACT - menu videos have embedded ANIM data in IACT chunks
+	// Menu IACTs have par1=8 (code), par2=46 (flags), par4>=1000 (userId)
+	// The embedded ANIM contains the full menu frame
+	if (_gameState == kStateMainMenu && par1 == 8 && par4 >= 1000) {
+		debug("Rebel2 IACT: Menu mode - processing embedded ANIM (userId=%d)", par4);
+
+		// Scan for embedded ANIM tag in the IACT data
+		int64 startPos = b.pos();
+		int64 totalSize = b.size();
+		debug("Rebel2 IACT: stream pos=%d, size=%d, remaining=%d",
+			(int)startPos, (int)totalSize, (int)(totalSize - startPos));
+
+		if (totalSize > startPos) {
+			int64 remaining = totalSize - startPos;
+			int scanSize = (int)MIN<int64>(remaining, 65536);
+			byte *scanBuf = (byte *)malloc(scanSize);
+			if (scanBuf) {
+				int bytesRead = b.read(scanBuf, scanSize);
+				debug("Rebel2 IACT: Read %d bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+					bytesRead, scanBuf[0], scanBuf[1], scanBuf[2], scanBuf[3],
+					scanBuf[4], scanBuf[5], scanBuf[6], scanBuf[7],
+					scanBuf[8], scanBuf[9], scanBuf[10], scanBuf[11],
+					scanBuf[12], scanBuf[13], scanBuf[14], scanBuf[15]);
+
+				// Look for ANIM tag (embedded SAN containing menu frame)
+				for (int i = 0; i + 8 <= bytesRead; ++i) {
+					if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+						int64 animStreamPos = startPos + i;
+						uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
+						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+						debug("Rebel2 IACT: Found embedded ANIM at offset %d, size %d", (int)i, (int)animReportedSize);
+						if (toCopy > 0) {
+							byte *animData = (byte *)malloc(toCopy);
+							if (animData) {
+								b.seek(animStreamPos);
+								b.read(animData, toCopy);
+								// Use userId as the HUD slot (1000 -> slot 0 for menu background)
+								loadEmbeddedSan(0, animData, toCopy, renderBitmap);
+								free(animData);
+							}
+						}
+						b.seek(startPos);
+						free(scanBuf);
+						return;
+					}
+				}
+
+				debug("Rebel2 IACT: No ANIM tag found in menu IACT data");
+				b.seek(startPos);
+				free(scanBuf);
+			}
+		}
+		return;
+	}
 
 	if (_currSceneId == 1)
 		iactRebel2Scene1(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
@@ -1202,8 +1300,8 @@ extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int wi
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
-	// Validate userId (1-4 for HUD slots)
-	if (userId < 1 || userId > 4 || !animData || size < 32) {
+	// Validate userId (0 for menu background, 1-4 for HUD slots)
+	if (userId < 0 || userId > 4 || !animData || size < 32) {
 		debug("Rebel2: Invalid embedded SAN: userId=%d, size=%d", userId, size);
 		return;
 	}
@@ -1748,10 +1846,65 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
 
 	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)
-	// The 0x20 flag indicates a non-interactive cutscene/intro sequence
+	// The 0x20 flag indicates a non-interactive cutscene/intro sequence OR menu
 	bool introPlaying = ((_player->_curVideoFlags & 0x20) != 0);
 
-	// During intro sequences:
+	// Check if we're in menu mode (menu state + intro flag)
+	bool menuMode = (introPlaying && _gameState == kStateMainMenu);
+
+	// Handle menu input and rendering if in menu mode
+	if (menuMode) {
+		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
+		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt
+		// MSTOVER.NUT is a background overlay, NOT a cursor
+		static const byte arrowCursor[11 * 16] = {
+			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 255, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0,
+			1, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0,
+			1, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0,
+			1, 255, 255, 255, 255, 255, 1, 0, 0, 0, 0,
+			1, 255, 255, 255, 255, 255, 255, 1, 0, 0, 0,
+			1, 255, 255, 255, 255, 255, 255, 255, 1, 0, 0,
+			1, 255, 255, 255, 255, 255, 255, 255, 255, 1, 0,
+			1, 255, 255, 255, 255, 255, 1, 1, 1, 1, 1,
+			1, 255, 255, 1, 255, 255, 1, 0, 0, 0, 0,
+			1, 255, 1, 0, 1, 255, 255, 1, 0, 0, 0,
+			1, 1, 0, 0, 1, 255, 255, 1, 0, 0, 0,
+			1, 0, 0, 0, 0, 1, 255, 255, 1, 0, 0,
+			0, 0, 0, 0, 0, 1, 255, 255, 1, 0, 0,
+			0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
+		};
+		CursorMan.replaceCursor(arrowCursor, 11, 16, 0, 0, 0);
+		CursorMan.showMouse(true);
+
+		// Process menu input during each frame
+		int selection = processMenuInput();
+
+		// Update inactivity timer
+		_menuInactivityTimer++;
+
+		// Check for inactivity timeout (300 frames = ~10 sec at 30fps, or ~25 sec at 12fps)
+		if (_menuInactivityTimer > 300) {
+			debug("Rebel2: Menu inactivity timeout");
+			// Reset timer but don't take action yet
+			_menuInactivityTimer = 0;
+		}
+
+		// Draw menu selection overlay
+		drawMenuOverlay(renderBitmap, pitch, width, height);
+
+		// If a selection was confirmed, signal video to stop
+		if (selection >= 0) {
+			debug("Rebel2: Menu selection confirmed: %d", selection);
+			_vm->_smushVideoShouldFinish = true;
+		}
+
+		// Skip normal HUD rendering in menu mode
+		return;
+	}
+
+	// During intro sequences (non-menu):
 	// - Hide the crosshair/cursor (handled by not drawing it)
 	// - Skip all HUD/status bar rendering
 	// - Skip mouse input processing
@@ -2412,6 +2565,412 @@ void InsaneRebel2::processAudioFrame(int16 feedSize) {
 		track.audioRemaining = dispatch.audioRemaining;
 		dispatch.state = track.state;
 	}
+}
+
+// ======================= Menu System Implementation =======================
+// Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8
+
+void InsaneRebel2::resetMenu() {
+	_menuSelection = 0;
+	_menuInactivityTimer = 0;
+	_menuRepeatDelay = 0;
+}
+
+Common::String InsaneRebel2::getRandomMenuVideo() {
+	// Emulates FUN_0041FDC8 - selects random menu video variant
+	//
+	// NOTE: The original game plays O_MENU.SAN when no progress flags are set,
+	// but that file contains ONLY audio (no FOBJ video frames). The O_MENU_X.SAN
+	// variants (A through O) contain actual 320x200 background images in Frame 0.
+	//
+	// We ALWAYS use a random variant to ensure a proper background is displayed.
+	// The original behavior of showing O_MENU.SAN (audio-only) would result in
+	// a black/undefined background which doesn't match the intended experience.
+
+	// Select random variant (0-14 maps to A-O), ensuring different from last
+	int variant;
+	do {
+		variant = _vm->_rnd.getRandomNumber(14);  // 0-14
+	} while (variant == _lastMenuVariant && _lastMenuVariant >= 0);
+	_lastMenuVariant = variant;
+
+	// Map 0-14 to A-O (case 0/default = A, 1 = B, etc.)
+	char letter = 'A' + variant;
+	debug("Rebel2: Selected menu variant %c", letter);
+	return Common::String::format("OPEN/O_MENU_%c.SAN", letter);
+}
+
+int InsaneRebel2::processMenuInput() {
+	// Emulates FUN_0041f5ae menu input handling
+	// Returns: -1 = no action, 0-6 = menu item selected
+
+	Common::Event event;
+	int result = -1;
+
+	// Check for key/mouse events
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+
+	// Get current key state from _vm's VAR system or direct polling
+	// Key codes: 0x148 = Up, 0x150 = Down, 0x1B = ESC, 0x0D = Enter
+
+	// Poll for keyboard input
+	while (eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			_menuInactivityTimer = 0;  // Reset inactivity timer on any input
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_UP:
+				// Navigate up (wrap around)
+				if (_menuRepeatDelay == 0) {
+					_menuSelection--;
+					if (_menuSelection < 0) {
+						_menuSelection = _menuItemCount - 1;
+					}
+					_menuRepeatDelay = 3;  // Delay before repeat
+					debug("Menu: Selection changed to %d (UP)", _menuSelection);
+				}
+				break;
+
+			case Common::KEYCODE_DOWN:
+				// Navigate down (wrap around)
+				if (_menuRepeatDelay == 0) {
+					_menuSelection++;
+					if (_menuSelection >= _menuItemCount) {
+						_menuSelection = 0;
+					}
+					_menuRepeatDelay = 3;
+					debug("Menu: Selection changed to %d (DOWN)", _menuSelection);
+				}
+				break;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				// Confirm selection
+				if (_menuSelection >= 0 && _menuSelection < _menuItemCount) {
+					result = _menuSelection;
+					debug("Menu: Item %d selected (ENTER)", _menuSelection);
+				}
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				// ESC - Exit/Quit (return special value)
+				result = 6;  // Quit option
+				debug("Menu: ESC pressed - quit");
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			// Mouse click - check if over a menu item
+			// Menu items are vertically stacked, centered at X=160
+			// Y positions from FUN_41F5AE: param_3 * -5 + local_c * 10 + 0x68
+			// With param_3 = 7: base Y = 69, items at Y = 69, 79, 89, 99, 109, 119
+			_menuInactivityTimer = 0;
+			{
+				int mouseY = event.mouse.y;
+				int baseY = 69;  // First item Y position (low-res)
+				int itemHeight = 10;
+
+				// Check which item was clicked
+				for (int i = 0; i < _menuItemCount; i++) {
+					int itemY = baseY + i * itemHeight;
+					if (mouseY >= itemY - 5 && mouseY <= itemY + 5) {
+						_menuSelection = i;
+						result = i;
+						debug("Menu: Item %d clicked at Y=%d", i, mouseY);
+						break;
+					}
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	// Handle key repeat delay
+	if (_menuRepeatDelay > 0) {
+		_menuRepeatDelay--;
+	}
+
+	return result;
+}
+
+void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	// Emulates FUN_0041f5ae menu text overlay rendering
+	//
+	// IMPORTANT: The menu background comes from the O_MENU_X.SAN video file, NOT from MSTOVER.NUT.
+	// The O_MENU_X.SAN files (A through O) each contain a full 320x200 FOBJ frame in Frame 0
+	// which is decoded by SmushPlayer and stored in renderBitmap before this function is called.
+	// MSTOVER.NUT is only used in cheat mode (when DAT_0047aba4 != 0).
+	//
+	// From FUN_4147B2: param_3 = (DAT_0047a806 == 0) + 6 = 7 for keyboard mode
+	// Menu structure: 1 title + 6 selectable items = 7 total items
+	static const char *menuItems[] = {
+		"GAME MAIN MENU",   // Title (index 0)
+		"START GAME",       // Item 0 (index 1)
+		"OPTIONS",          // Item 1 (index 2)
+		"CONTINUE INTRO",   // Item 2 (index 3)
+		"SHOW TOP PILOTS",  // Item 3 (index 4)
+		"SHOW CREDITS",     // Item 4 (index 5)
+		"QUIT"              // Item 5 (index 6)
+	};
+
+	const int numItemsTotal = 7;  // Title + 6 menu options (used for Y calculations)
+	const int numSelectableItems = 6;  // Selectable menu options (0-5)
+
+	// The O_MENU_X.SAN video frame is already in renderBitmap from SmushPlayer.
+	// We only draw text and selection highlights on top.
+
+	// From assembly FUN_0041f5ae (low-res mode, DAT_0047a808 < 2):
+	// Center X = 160 for 320px, scale for actual width
+	// Title Y = 46, Item base Y = 69, spacing = 10
+	const int centerX = width / 2;  // Center in actual buffer
+	const int titleY = numItemsTotal * -5 + 0x51;  // 46
+	const int itemBaseY = numItemsTotal * -5 + 0x68;  // 69
+	const int itemSpacing = 10;
+
+	debug(5, "drawMenuOverlay: buffer %dx%d, centerX=%d", width, height, centerX);
+
+	// Use SMALFONT.NUT for menu text rendering
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) {
+		debug(1, "drawMenuOverlay: font is NULL!");
+		return;
+	}
+
+	// Get the number of characters in the font
+	int numFontChars = font->getNumChars();
+	debug(5, "drawMenuOverlay: font has %d chars", numFontChars);
+
+	// Helper: calculate string width with bounds checking
+	auto getStringWidth = [&](const char *str) -> int {
+		int w = 0;
+		while (*str) {
+			byte c = (byte)*str++;
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c < numFontChars) {
+				w += font->getCharWidth(c);
+			}
+		}
+		return w;
+	};
+
+	// Debug: Check if renderBitmap has video content (non-zero pixels)
+	static int debugFrameCount = 0;
+	if (debugFrameCount < 5) {
+		int nonZeroCount = 0;
+		for (int i = 0; i < MIN(width * height, 1000); i++) {
+			if (renderBitmap[i] != 0) nonZeroCount++;
+		}
+		debug(1, "drawMenuOverlay: frame %d, buffer sample has %d non-zero pixels in first 1000",
+		      debugFrameCount, nonZeroCount);
+		debugFrameCount++;
+	}
+
+	// Set up clipRect for the entire rendering area
+	// Use screen dimensions (320x200) for the clip rect, not the video frame dimensions.
+	// The menu text is designed for a 320x200 screen, and the underlying renderBitmap
+	// (from SmushPlayer's virtual screen buffer) is always screen-sized. The width/height
+	// parameters come from _player->_width/_height which may be smaller if the video
+	// frame doesn't cover the full screen, but that would incorrectly clip the menu text.
+	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
+
+	// Use screen width as the actual pitch for rendering. During SMUSH playback,
+	// SmushPlayer sets vs->pitch = vs->w = _screenWidth (see smush_player.cpp init()).
+	// The 'pitch' parameter comes from _player->_width which may differ from the actual
+	// buffer pitch if the video frame has different dimensions. Using the wrong pitch
+	// would cause character rows to be written at incorrect offsets in the buffer.
+	int actualPitch = _vm->_screenWidth;
+
+	auto drawString = [&](const char *str, int x, int y) {
+		while (*str) {
+			byte c = (byte)*str++;
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+
+			// Skip characters outside font range
+			if (c >= numFontChars) {
+				debug(5, "drawMenuOverlay: char %d out of range (max %d)", c, numFontChars);
+				continue;
+			}
+
+			int charW = font->getCharWidth(c);
+
+			// Use NutRenderer's drawCharV7 which properly handles character rendering
+			// col=-1 means use original font colors, hardcodedColors=true, smushColorMode=true
+			if (x >= 0 && y >= 0 && charW > 0) {
+				font->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, -1,
+				                 kStyleAlignLeft, c, true, true);
+			}
+			x += charW;
+		}
+	};
+
+	// Draw title centered at Y = 46
+	{
+		int titleWidth = getStringWidth(menuItems[0]);
+		int titleX = centerX - titleWidth / 2;
+		drawString(menuItems[0], titleX, titleY);
+	}
+
+	// Draw menu items starting at Y = 69
+	for (int i = 0; i < numSelectableItems; i++) {
+		int itemY = itemBaseY + i * itemSpacing;
+		const char *text = menuItems[i + 1];
+
+		int textWidth = getStringWidth(text);
+		int textX = centerX - textWidth / 2;
+		drawString(text, textX, itemY);
+
+		// Draw selection highlight box around selected item
+		if (i == _menuSelection) {
+			int bracketWidth = textWidth + 12;
+			int bracketHeight = 10;
+			byte highlightColor = 255;  // White/bright color for visibility
+
+			int leftX = centerX - bracketWidth / 2;
+			int rightX = centerX + bracketWidth / 2;
+			int topY = itemY - 1;
+			int bottomY = itemY + bracketHeight - 1;
+
+			// Clamp to screen bounds (use screen dimensions, not video frame dimensions)
+			int screenW = _vm->_screenWidth;
+			int screenH = _vm->_screenHeight;
+			if (leftX < 0) leftX = 0;
+			if (rightX >= screenW) rightX = screenW - 1;
+			if (topY < 0) topY = 0;
+			if (bottomY >= screenH) bottomY = screenH - 1;
+
+			// Draw selection rectangle using actualPitch (screen width)
+			for (int x = leftX; x <= rightX && x < screenW; x++) {
+				if (topY >= 0 && topY < screenH)
+					renderBitmap[topY * actualPitch + x] = highlightColor;
+				if (bottomY >= 0 && bottomY < screenH)
+					renderBitmap[bottomY * actualPitch + x] = highlightColor;
+			}
+			for (int py = topY; py <= bottomY && py < screenH; py++) {
+				if (leftX >= 0 && leftX < screenW)
+					renderBitmap[py * actualPitch + leftX] = highlightColor;
+				if (rightX >= 0 && rightX < screenW)
+					renderBitmap[py * actualPitch + rightX] = highlightColor;
+			}
+		}
+	}
+}
+
+int InsaneRebel2::runMainMenu() {
+	// Main menu loop - emulates FUN_004147B2
+	// Returns:
+	//   kMenuNewGame (2) = Start new game
+	//   kMenuContinue (4) = Continue game (level select)
+	//   kMenuCredits (1) = Show credits then return to menu
+	//   0 = Quit game
+
+	debug("Rebel2: Entering main menu");
+
+	resetMenu();
+	_gameState = kStateMainMenu;
+
+	// Get the SmushPlayer from ScummEngine_v7
+	// Note: _player isn't set until SmushPlayer::initAudio() is called during playback
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Main menu loop
+	while (!_vm->shouldQuit()) {
+		// Reset video finish flag before playing menu
+		_vm->_smushVideoShouldFinish = false;
+
+		// Select and play a random menu video
+		Common::String menuVideo = getRandomMenuVideo();
+		debug("Rebel2: Playing menu video: %s", menuVideo.c_str());
+
+		// Set video flags for menu (0x20 = intro/menu flag)
+		// This tells procPostRendering we're in menu mode
+		splayer->setCurVideoFlags(0x20);
+
+		// Play the menu video
+		// Input is processed in procPostRendering during playback
+		// When user confirms selection, _vm->_smushVideoShouldFinish is set
+		splayer->play(menuVideo.c_str(), 12);
+
+		// Check for quit
+		if (_vm->shouldQuit()) {
+			return 0;
+		}
+
+		// If video ended naturally (not by selection), loop back
+		if (!_vm->_smushVideoShouldFinish) {
+			// Video ended without selection (reached end or ESC during video)
+			// Continue looping menu videos
+			continue;
+		}
+
+		// Clear the flag
+		_vm->_smushVideoShouldFinish = false;
+
+		// A selection was made - process it
+		debug("Rebel2: Menu video ended with selection=%d", _menuSelection);
+
+		// Process the menu result based on current selection
+		// Menu items (from FUN_004147B2 disassembly):
+		// case 0: return 2 (New Game)
+		// case 1: return 4 (Continue)
+		// case 2: Options menu (stays in loop)
+		// case 3: return 0 (Exit)
+		// case 4: Unknown function
+		// case 5: Credits (play O_CREDIT.SAN, then return 1)
+		// case 6: Quit (stop video, exit)
+		switch (_menuSelection) {
+		case 0:  // New Game
+			debug("Rebel2: New Game selected");
+			_gameState = kStateGameplay;
+			return kMenuNewGame;
+
+		case 1:  // Continue
+			debug("Rebel2: Continue selected");
+			_gameState = kStateLevelSelect;
+			return kMenuContinue;
+
+		case 2:  // Options
+			debug("Rebel2: Options selected");
+			// TODO: Show options menu (FUN_00406ed2)
+			// For now, just continue menu loop
+			break;
+
+		case 3:  // Exit (back to title/intro)
+			debug("Rebel2: Exit selected");
+			// Return to menu loop
+			break;
+
+		case 4:  // Unknown function (FUN_00420116)
+			debug("Rebel2: Unknown menu item 4 selected");
+			break;
+
+		case 5:  // Credits
+			debug("Rebel2: Credits selected");
+			_gameState = kStateCredits;
+			splayer->setCurVideoFlags(0x20);
+			splayer->play("OPEN/O_CREDIT.SAN", 12);
+			_gameState = kStateMainMenu;
+			// After credits, return to menu
+			break;
+
+		case 6:  // Quit
+			debug("Rebel2: Quit selected");
+			return 0;
+
+		default:
+			debug("Rebel2: Unknown menu selection %d", _menuSelection);
+			break;
+		}
+	}
+
+	return 0;
 }
 
 } // End of namespace Scumm

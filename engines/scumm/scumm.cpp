@@ -2675,21 +2675,45 @@ int ScummEngine::getTalkSpeed() {
 Common::Error ScummEngine::go() {
 #ifdef ENABLE_SCUMM_7_8
 	if (_game.id == GID_REBEL2) {
+		ScummEngine_v7 *vm7 = (ScummEngine_v7 *)this;
+		InsaneRebel2 *rebel = (InsaneRebel2 *)vm7->getInsane();
+
 		// Use 12 FPS as default, same as The Dig. FT uses 10.
 		// Since we don't have the standard scripts initializing this, we pass it here.
 		if (_game.features & GF_DEMO) {
-			((ScummEngine_v7 *)this)->_splayer->play("OPEN/O_DEMO.SAN", 12);
-		} else {
-			// Play Level 1 intro cinematic (01BEG.SAN)
-			// Set video flags to 0x20 to mark this as a non-interactive intro sequence
-			// This flag tells procPostRendering to skip HUD/crosshair rendering
-			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0x20);
-			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01BEG.SAN", 12);
+			vm7->_splayer->play("OPEN/O_DEMO.SAN", 12);
+			return Common::kNoError;
+		}
 
-			// After intro completes, start the gameplay mission video (01P01.SAN)
-			// Clear the intro flag so HUD renders during gameplay
-			((ScummEngine_v7 *)this)->_splayer->setCurVideoFlags(0);
-			((ScummEngine_v7 *)this)->_splayer->play("LEV01/01P01.SAN", 12);
+		// Full game: Run the main menu loop
+		// This emulates the retail game flow from FUN_004142BD
+		while (!shouldQuit()) {
+			// Run main menu and get result
+			int menuResult = rebel->runMainMenu();
+
+			if (menuResult == 0 || shouldQuit()) {
+				// Quit selected
+				break;
+			}
+
+			if (menuResult == InsaneRebel2::kMenuNewGame ||
+			    menuResult == InsaneRebel2::kMenuContinue) {
+				// Start gameplay
+				// Play Level 1 intro cinematic (01BEG.SAN)
+				// Set video flags to 0x20 to mark this as a non-interactive intro sequence
+				vm7->_splayer->setCurVideoFlags(0x20);
+				vm7->_splayer->play("LEV01/01BEG.SAN", 12);
+
+				if (shouldQuit()) break;
+
+				// After intro completes, start the gameplay mission video (01P01.SAN)
+				// Clear the intro flag so HUD renders during gameplay
+				vm7->_splayer->setCurVideoFlags(0);
+				vm7->_splayer->play("LEV01/01P01.SAN", 12);
+
+				// After gameplay, return to menu
+				// TODO: Handle level progression, game over, etc.
+			}
 		}
 		return Common::kNoError;
 	}

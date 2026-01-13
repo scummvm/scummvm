@@ -105,6 +105,7 @@ public:
 	void displayDialog() override;
 	bool isSmushActive() override { return _smushActive; }
 	bool isInsaneActive() override { return _insane ? _insane->isInsaneActive() : false; }
+	Insane *getInsane() { return _insane; }
 	void removeBlastTexts() override;
 	void restoreBlastTextsRects();
 
