@@ -148,6 +148,14 @@ enum ZBasicDatumType {
 	kDatumSTR = 8,
 };
 
+enum ZBasicWindowType {
+	kWindowDocument = 1,
+	kWindowDialogTwoLine = 2,
+	kWindowDialogOneLine = 3,
+	kWindowShadow = 4,
+	kWindowDocumentFixed = 5,
+};
+
 struct ZBasicDatum {
 	ZBasicDatumType type = kDatumNULL;
 	uint32 offset = 0;
@@ -211,13 +219,20 @@ struct ZBasicDatum {
 
 class ZBasic {
 
+private:
+	Common::Array<ZBasicDatum> _dataTable;
+	uint32 _dataPtr;
+	Common::Array<ZBasicDatum> _stringTable;
+
 public:
 
 	void loadProgram(const Common::Path &path);
 	void loadSCOT();
 
 	void bufferFlush(const Common::U32String &str);
-	void blockMove(int16 srcptr, int16 destptr, uint16 size);
+	void blockMove(void *srcptr, void *destptr, uint16 size) {
+		memmove(destptr, srcptr, size);
+	}
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	bool maybe();
@@ -226,8 +241,14 @@ public:
 	void text(int16 font, int16 size, int16 face, ZBasicTextMode mode);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	int16 rndInt(int16 max);
+	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
 
+	const Common::U32String &str(size_t index) {
+		return *_stringTable[index].data.str;
+	}
 
+	int16 readInt();
+	Common::U32String readStr();
 
 };
 

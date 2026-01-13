@@ -23,6 +23,15 @@
 
 namespace Fool {
 
+void Toolbox::OpenPort(GrafPtr port) {
+	// source: QuickDraw Routines I-163
+	port->device = 0;
+	//port->portBits = screenBits;
+	//port->portRect = screenBits.bounds;
+	//port->visRgn
+	//port->clipRgn
+	//port->bkPat = white
+}
 
 
 } // namespace Fool
