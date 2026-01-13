@@ -2696,23 +2696,33 @@ Common::Error ScummEngine::go() {
 				break;
 			}
 
-			if (menuResult == InsaneRebel2::kMenuNewGame ||
-			    menuResult == InsaneRebel2::kMenuContinue) {
-				// Start gameplay
-				// Play Level 1 intro cinematic (01BEG.SAN)
-				// Set video flags to 0x20 to mark this as a non-interactive intro sequence
-				vm7->_splayer->setCurVideoFlags(0x20);
-				vm7->_splayer->play("LEV01/01BEG.SAN", 12);
+			if (menuResult == InsaneRebel2::kMenuContinue) {
+				// Continue: Show level selection menu
+				int levelResult = rebel->runLevelSelect();
 
-				if (shouldQuit()) break;
+				if (levelResult == InsaneRebel2::kLevelSelectQuit || shouldQuit()) {
+					break;
+				}
 
-				// After intro completes, start the gameplay mission video (01P01.SAN)
-				// Clear the intro flag so HUD renders during gameplay
-				vm7->_splayer->setCurVideoFlags(0);
-				vm7->_splayer->play("LEV01/01P01.SAN", 12);
+				if (levelResult == InsaneRebel2::kLevelSelectPlay) {
+					// Play the selected level (currently only level 1 is supported)
+					int selectedLevel = rebel->_selectedLevel;
+					debug("ScummEngine: Starting level %d", selectedLevel);
 
-				// After gameplay, return to menu
-				// TODO: Handle level progression, game over, etc.
+					// For now, only level 1 is implemented
+					// Play Level 1 intro cinematic
+					vm7->_splayer->setCurVideoFlags(0x20);
+					vm7->_splayer->play("LEV01/01BEG.SAN", 12);
+
+					if (shouldQuit()) break;
+
+					// Start gameplay
+					vm7->_splayer->setCurVideoFlags(0);
+					vm7->_splayer->play("LEV01/01P01.SAN", 12);
+
+					// After gameplay, return to menu
+				}
+				// If kLevelSelectBack, loop back to main menu
 			}
 		}
 		return Common::kNoError;

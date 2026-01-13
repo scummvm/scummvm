@@ -24,8 +24,10 @@
 #include "engines/engine.h"
 #include "common/system.h"
 #include "common/memstream.h"
+#include "common/events.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
@@ -259,10 +261,24 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	for (i = 0; i < 16; i++) {
 		_levelUnlocked[i] = (i == 0);  // Only level 1 unlocked initially
 	}
+
+	// Initialize level selection system
+	_levelSelection = 0;          // First level selected
+	_levelItemCount = 2;          // Level 1 + MAIN MENU (will grow as more levels implemented)
+	_selectedLevel = 1;           // Default selected level
+
+	// Initialize menu input capture system
+	_menuInputActive = false;
+
+	// Register as EventObserver to capture input events before ScummEngine consumes them
+	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
 }
 
 
 InsaneRebel2::~InsaneRebel2() {
+	// Unregister EventObserver
+	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+
 	terminateAudio();
 	delete _rebelMsgFont;
 	delete _menuFont;
@@ -271,6 +287,31 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _smush_smalfontNut;
 	delete _smush_titlefontNut;
 	delete _smush_mouseoverNut;
+}
+
+bool InsaneRebel2::notifyEvent(const Common::Event &event) {
+	// Capture menu-related input events when menu input is active.
+	// This is called before ScummEngine::parseEvents() consumes events,
+	// so we can reliably capture keyboard/mouse input for menu navigation.
+	if (!_menuInputActive)
+		return false;  // Not capturing, let normal processing occur
+
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_MOUSEMOVE:
+	case Common::EVENT_QUIT:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
+		// Queue these events for processing in processMenuInput()
+		_menuEventQueue.push(event);
+		break;
+	default:
+		break;
+	}
+
+	// Return false to allow ScummEngine to also process the event
+	// (needed for quit handling, etc.)
+	return false;
 }
 
 // Score lookup tables (from DAT_0047e0fe, DAT_0047e100, DAT_0047e102)
@@ -1224,13 +1265,73 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	// The original uses colors from the palette, commonly white or yellow for subtitles
 	int16 textColor = 255;
 
-	// Draw the text string
+	// RA2 fonts (like DIHIFONT.NUT) have only 58 characters starting at ASCII 32 (space).
+	// We need to convert ASCII codes to font indices by subtracting 32.
+	// Character mapping: font index = ASCII code - 32
+	// So 'D' (68) becomes index 36, 'A' (65) becomes index 33, etc.
+	// IMPORTANT: Skip format codes (^f00, ^c255, ^l) which TextRenderer parses as raw ASCII.
+	char convertedText[512];
+	int srcLen = strlen(textStr);
+	int dstIdx = 0;
+	int numChars = _rebelMsgFont->getNumChars();
+
+	for (int i = 0; i < srcLen && dstIdx < (int)sizeof(convertedText) - 1; i++) {
+		byte ch = (byte)textStr[i];
+
+		// Check for format codes (^f, ^c, ^l) - keep them as raw ASCII
+		if (ch == '^' && i + 1 < srcLen) {
+			byte next = (byte)textStr[i + 1];
+			if (next == 'f' && i + 3 < srcLen) {
+				// ^fXX - font switch (4 chars total)
+				convertedText[dstIdx++] = textStr[i++];  // ^
+				convertedText[dstIdx++] = textStr[i++];  // f
+				convertedText[dstIdx++] = textStr[i++];  // X
+				convertedText[dstIdx++] = textStr[i];    // X
+				continue;
+			} else if (next == 'c' && i + 4 < srcLen) {
+				// ^cXXX - color switch (5 chars total)
+				convertedText[dstIdx++] = textStr[i++];  // ^
+				convertedText[dstIdx++] = textStr[i++];  // c
+				convertedText[dstIdx++] = textStr[i++];  // X
+				convertedText[dstIdx++] = textStr[i++];  // X
+				convertedText[dstIdx++] = textStr[i];    // X
+				continue;
+			} else if (next == 'l') {
+				// ^l - line break marker (2 chars)
+				convertedText[dstIdx++] = textStr[i++];  // ^
+				convertedText[dstIdx++] = textStr[i];    // l
+				continue;
+			} else if (next == '^') {
+				// ^^ - escaped caret (becomes single ^)
+				i++;  // Skip first ^
+				// Fall through to convert second ^ as normal char
+				ch = '^';
+			}
+		}
+
+		// Convert regular characters from ASCII to font index
+		// First convert lowercase to uppercase (the font likely only has uppercase)
+		if (ch >= 'a' && ch <= 'z') {
+			ch = ch - 'a' + 'A';  // Convert to uppercase
+		}
+
+		if (ch >= 32 && ch < (byte)(32 + numChars)) {
+			convertedText[dstIdx++] = ch - 32;  // Convert ASCII to font index
+		} else if (ch == '\n' || ch == '\r') {
+			convertedText[dstIdx++] = ch;  // Keep control characters as-is
+		} else {
+			convertedText[dstIdx++] = 0;  // Replace invalid characters with space (index 0)
+		}
+	}
+	convertedText[dstIdx] = '\0';
+
+	// Draw the text string (with converted character indices)
 	if (textFlags & 0x04) {
 		// Word-wrapped text
-		_rebelMsgFont->drawStringWrap(textStr, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+		_rebelMsgFont->drawStringWrap(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
 	} else {
 		// Single-line text
-		_rebelMsgFont->drawString(textStr, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
+		_rebelMsgFont->drawString(convertedText, renderBitmap, clipRect, posX, posY, textColor, styleFlags);
 	}
 
 	debug("Rebel2 Opcode 9: Rendered subtitle at (%d,%d) flags=0x%x clip=(%d,%d,%d,%d)",
@@ -1851,31 +1952,40 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// Check if we're in menu mode (menu state + intro flag)
 	bool menuMode = (introPlaying && _gameState == kStateMainMenu);
+	bool levelSelectMode = (introPlaying && _gameState == kStateLevelSelect);
+
+	// Handle level selection input and rendering
+	if (levelSelectMode) {
+		// Show the standard Windows arrow cursor (same as menu)
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+		CursorMan.replaceCursor(cursor);
+		delete cursor;
+		CursorMan.showMouse(true);
+
+		// Process level selection input
+		int selection = processLevelSelectInput();
+
+		// Draw level selection overlay
+		drawLevelSelectOverlay(renderBitmap, pitch, width, height);
+
+		// If a selection was confirmed, signal video to stop
+		if (selection >= 0) {
+			debug("Rebel2: Level selection confirmed: %d", selection);
+			_vm->_smushVideoShouldFinish = true;
+		}
+
+		// Skip normal HUD rendering in level select mode
+		return;
+	}
 
 	// Handle menu input and rendering if in menu mode
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
 		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt
 		// MSTOVER.NUT is a background overlay, NOT a cursor
-		static const byte arrowCursor[11 * 16] = {
-			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 255, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0,
-			1, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0,
-			1, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0,
-			1, 255, 255, 255, 255, 255, 1, 0, 0, 0, 0,
-			1, 255, 255, 255, 255, 255, 255, 1, 0, 0, 0,
-			1, 255, 255, 255, 255, 255, 255, 255, 1, 0, 0,
-			1, 255, 255, 255, 255, 255, 255, 255, 255, 1, 0,
-			1, 255, 255, 255, 255, 255, 1, 1, 1, 1, 1,
-			1, 255, 255, 1, 255, 255, 1, 0, 0, 0, 0,
-			1, 255, 1, 0, 1, 255, 255, 1, 0, 0, 0,
-			1, 1, 0, 0, 1, 255, 255, 1, 0, 0, 0,
-			1, 0, 0, 0, 0, 1, 255, 255, 1, 0, 0,
-			0, 0, 0, 0, 0, 1, 255, 255, 1, 0, 0,
-			0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-		};
-		CursorMan.replaceCursor(arrowCursor, 11, 16, 0, 0, 0);
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+		CursorMan.replaceCursor(cursor);
+		delete cursor;
 		CursorMan.showMouse(true);
 
 		// Process menu input during each frame
@@ -2603,18 +2713,22 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 int InsaneRebel2::processMenuInput() {
 	// Emulates FUN_0041f5ae menu input handling
 	// Returns: -1 = no action, 0-6 = menu item selected
+	//
+	// Events are captured by notifyEvent() (EventObserver) which runs before
+	// ScummEngine::parseEvents() consumes them. This ensures we don't miss
+	// any input events even though we only process them on video frames.
 
-	Common::Event event;
 	int result = -1;
 
-	// Check for key/mouse events
-	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	// Menu item Y positions (low-res 320x200 mode):
+	// From assembly: baseY = numItems * -5 + 0x68 = 7 * -5 + 104 = 69
+	// Items at Y = 69, 79, 89, 99, 109, 119 with spacing of 10
+	const int baseY = 69;
+	const int itemHeight = 10;
 
-	// Get current key state from _vm's VAR system or direct polling
-	// Key codes: 0x148 = Up, 0x150 = Down, 0x1B = ESC, 0x0D = Enter
-
-	// Poll for keyboard input
-	while (eventMan->pollEvent(event)) {
+	// Process events from the queue (populated by notifyEvent)
+	while (!_menuEventQueue.empty()) {
+		Common::Event event = _menuEventQueue.pop();
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_menuInactivityTimer = 0;  // Reset inactivity timer on any input
@@ -2622,26 +2736,20 @@ int InsaneRebel2::processMenuInput() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_UP:
 				// Navigate up (wrap around)
-				if (_menuRepeatDelay == 0) {
-					_menuSelection--;
-					if (_menuSelection < 0) {
-						_menuSelection = _menuItemCount - 1;
-					}
-					_menuRepeatDelay = 3;  // Delay before repeat
-					debug("Menu: Selection changed to %d (UP)", _menuSelection);
+				_menuSelection--;
+				if (_menuSelection < 0) {
+					_menuSelection = _menuItemCount - 1;
 				}
+				debug("Menu: Selection changed to %d (UP)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_DOWN:
 				// Navigate down (wrap around)
-				if (_menuRepeatDelay == 0) {
-					_menuSelection++;
-					if (_menuSelection >= _menuItemCount) {
-						_menuSelection = 0;
-					}
-					_menuRepeatDelay = 3;
-					debug("Menu: Selection changed to %d (DOWN)", _menuSelection);
+				_menuSelection++;
+				if (_menuSelection >= _menuItemCount) {
+					_menuSelection = 0;
 				}
+				debug("Menu: Selection changed to %d (DOWN)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_RETURN:
@@ -2655,7 +2763,7 @@ int InsaneRebel2::processMenuInput() {
 
 			case Common::KEYCODE_ESCAPE:
 				// ESC - Exit/Quit (return special value)
-				result = 6;  // Quit option
+				result = 5;  // Quit option (index 5)
 				debug("Menu: ESC pressed - quit");
 				break;
 
@@ -2665,37 +2773,44 @@ int InsaneRebel2::processMenuInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			// Mouse click - check if over a menu item
-			// Menu items are vertically stacked, centered at X=160
-			// Y positions from FUN_41F5AE: param_3 * -5 + local_c * 10 + 0x68
-			// With param_3 = 7: base Y = 69, items at Y = 69, 79, 89, 99, 109, 119
 			_menuInactivityTimer = 0;
-			{
-				int mouseY = event.mouse.y;
-				int baseY = 69;  // First item Y position (low-res)
-				int itemHeight = 10;
 
-				// Check which item was clicked
+			{
+				// Get mouse position from the event
+				int mouseX = event.mouse.x;
+				int mouseY = event.mouse.y;
+
+				debug("Menu: Click detected at (%d, %d)", mouseX, mouseY);
+
+				// Check which item was clicked (larger hit area for better usability)
 				for (int i = 0; i < _menuItemCount; i++) {
 					int itemY = baseY + i * itemHeight;
-					if (mouseY >= itemY - 5 && mouseY <= itemY + 5) {
+					// Use a larger vertical hit area (full item height)
+					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
 						_menuSelection = i;
 						result = i;
-						debug("Menu: Item %d clicked at Y=%d", i, mouseY);
+						debug("Menu: Item %d clicked at Y=%d (itemY=%d)", i, mouseY, itemY);
 						break;
 					}
 				}
 			}
 			break;
 
+		case Common::EVENT_MOUSEMOVE:
+			// Update mouse position for hover effects (optional)
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
+			break;
+
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			// Handle quit request
+			result = 5;  // Quit option
+			break;
+
 		default:
 			break;
 		}
-	}
-
-	// Handle key repeat delay
-	if (_menuRepeatDelay > 0) {
-		_menuRepeatDelay--;
 	}
 
 	return result;
@@ -2876,6 +2991,10 @@ int InsaneRebel2::runMainMenu() {
 	resetMenu();
 	_gameState = kStateMainMenu;
 
+	// Enable menu input capture via EventObserver
+	_menuInputActive = true;
+	while (!_menuEventQueue.empty()) _menuEventQueue.pop();  // Clear any stale events
+
 	// Get the SmushPlayer from ScummEngine_v7
 	// Note: _player isn't set until SmushPlayer::initAudio() is called during playback
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -2900,6 +3019,7 @@ int InsaneRebel2::runMainMenu() {
 
 		// Check for quit
 		if (_vm->shouldQuit()) {
+			_menuInputActive = false;
 			return 0;
 		}
 
@@ -2926,14 +3046,16 @@ int InsaneRebel2::runMainMenu() {
 		// case 5: Credits (play O_CREDIT.SAN, then return 1)
 		// case 6: Quit (stop video, exit)
 		switch (_menuSelection) {
-		case 0:  // New Game
-			debug("Rebel2: New Game selected");
-			_gameState = kStateGameplay;
-			return kMenuNewGame;
-
-		case 1:  // Continue
-			debug("Rebel2: Continue selected");
+		case 0:  // Start Game -> Level Selection
+			debug("Rebel2: Start Game selected - going to level selection");
 			_gameState = kStateLevelSelect;
+			_menuInputActive = false;
+			return kMenuContinue;  // Go to level selection
+
+		case 1:  // Continue (same as Start Game for now)
+			debug("Rebel2: Continue selected - going to level selection");
+			_gameState = kStateLevelSelect;
+			_menuInputActive = false;
 			return kMenuContinue;
 
 		case 2:  // Options
@@ -2962,6 +3084,7 @@ int InsaneRebel2::runMainMenu() {
 
 		case 6:  // Quit
 			debug("Rebel2: Quit selected");
+			_menuInputActive = false;
 			return 0;
 
 		default:
@@ -2970,7 +3093,330 @@ int InsaneRebel2::runMainMenu() {
 		}
 	}
 
+	_menuInputActive = false;
 	return 0;
+}
+
+// ==================== Level Selection Menu ====================
+// Emulates FUN_00414A41 - Level selection menu
+// For now, only Level 1 is available. This will be expanded later.
+
+int InsaneRebel2::runLevelSelect() {
+	// Level selection menu loop - emulates FUN_00414A41
+	// Returns:
+	//   kLevelSelectPlay (1) = Play selected level
+	//   kLevelSelectBack (0) = Return to main menu
+	//   kLevelSelectQuit (2) = Quit game
+
+	debug("Rebel2: Entering level selection");
+
+	// Enable menu input capture via EventObserver and clear any stale events
+	_menuInputActive = true;
+	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
+
+	// Initialize level selection state
+	_levelSelection = 0;
+	_levelItemCount = 2;  // Selectable items: Level 1, MAIN MENU
+	_selectedLevel = 1;   // Default to level 1
+	_menuRepeatDelay = 0;
+	_gameState = kStateLevelSelect;
+
+	// Get the SmushPlayer
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Level selection loop - we'll reuse the menu video as background
+	// In the original, this uses the same O_MENU_X.SAN videos
+	while (!_vm->shouldQuit()) {
+		_vm->_smushVideoShouldFinish = false;
+
+		// Use a menu video as background for level selection
+		Common::String menuVideo = getRandomMenuVideo();
+		debug("Rebel2: Playing level select background: %s", menuVideo.c_str());
+
+		// Set video flags for menu mode
+		splayer->setCurVideoFlags(0x20);
+
+		// Play the menu video - input is processed in procPostRendering
+		splayer->play(menuVideo.c_str(), 12);
+
+		if (_vm->shouldQuit()) {
+			_menuInputActive = false;
+			return kLevelSelectQuit;
+		}
+
+		// If video ended without selection, continue looping
+		if (!_vm->_smushVideoShouldFinish) {
+			continue;
+		}
+
+		_vm->_smushVideoShouldFinish = false;
+
+		debug("Rebel2: Level selection made: %d", _levelSelection);
+
+		// Process level selection
+		// Menu items (based on FUN_414A41 analysis):
+		// 0: Level 1 (CHAPTER 1)
+		// 1: MAIN MENU (back)
+		// Future: More levels, NEW PILOT, DELETE PILOT, etc.
+		switch (_levelSelection) {
+		case 0:  // Level 1
+			debug("Rebel2: Level 1 selected");
+			_selectedLevel = 1;
+			_menuInputActive = false;
+			return kLevelSelectPlay;
+
+		case 1:  // Main Menu (back)
+			debug("Rebel2: Back to main menu selected");
+			_menuInputActive = false;
+			return kLevelSelectBack;
+
+		default:
+			// For now, any other selection defaults to Level 1
+			if (_levelSelection < _levelItemCount - 1) {
+				debug("Rebel2: Level %d selected (defaulting to 1)", _levelSelection + 1);
+				_selectedLevel = 1;  // Only level 1 available for now
+				_menuInputActive = false;
+				return kLevelSelectPlay;
+			}
+			break;
+		}
+	}
+
+	_menuInputActive = false;
+	return kLevelSelectQuit;
+}
+
+int InsaneRebel2::processLevelSelectInput() {
+	// Process input for level selection menu
+	// Similar to processMenuInput but for level selection
+	// Returns: -1 = no action, 0+ = item selected
+	//
+	// Events are captured by notifyEvent() - see processMenuInput for details.
+
+	int result = -1;
+
+	// Level menu Y positions (similar to main menu)
+	// Using same formula: base Y = numItemsTotal * -5 + 104
+	// numItemsTotal = 3 (title + 2 selectable items)
+	const int numItemsTotal = 3;
+	const int baseY = numItemsTotal * -5 + 104;  // 89
+	const int itemHeight = 10;
+
+	// Process events from the queue (populated by notifyEvent)
+	while (!_menuEventQueue.empty()) {
+		Common::Event event = _menuEventQueue.pop();
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_UP:
+				_levelSelection--;
+				if (_levelSelection < 0) {
+					_levelSelection = _levelItemCount - 1;
+				}
+				debug("LevelSelect: Selection changed to %d (UP)", _levelSelection);
+				break;
+
+			case Common::KEYCODE_DOWN:
+				_levelSelection++;
+				if (_levelSelection >= _levelItemCount) {
+					_levelSelection = 0;
+				}
+				debug("LevelSelect: Selection changed to %d (DOWN)", _levelSelection);
+				break;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				if (_levelSelection >= 0 && _levelSelection < _levelItemCount) {
+					result = _levelSelection;
+					debug("LevelSelect: Item %d selected (ENTER)", _levelSelection);
+				}
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				// ESC - Back to main menu
+				result = _levelItemCount - 1;  // Last item is "MAIN MENU"
+				debug("LevelSelect: ESC pressed - back to menu");
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			{
+				// Get mouse position from the event
+				int mouseX = event.mouse.x;
+				int mouseY = event.mouse.y;
+
+				debug("LevelSelect: Click detected at (%d, %d)", mouseX, mouseY);
+
+				for (int i = 0; i < _levelItemCount; i++) {
+					int itemY = baseY + i * itemHeight;
+					// Use a larger vertical hit area (full item height)
+					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+						_levelSelection = i;
+						result = i;
+						debug("LevelSelect: Item %d clicked at Y=%d (itemY=%d)", i, mouseY, itemY);
+						break;
+					}
+				}
+			}
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			// Update mouse position for hover effects
+			_vm->_mouse.x = event.mouse.x;
+			_vm->_mouse.y = event.mouse.y;
+			break;
+
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			// Handle quit request - go back to main menu
+			result = _levelItemCount - 1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return result;
+}
+
+void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	// Draw level selection menu overlay
+	// Emulates FUN_0041f5ae for level selection mode
+	//
+	// From info.md - Low Resolution Coordinate Formulas:
+	// Center X = 160, Title Y = numItems * -5 + 81, Item Base Y = numItems * -5 + 104
+	// Item spacing = 10 pixels, Selection box height = 10 pixels
+
+	// Level menu items - for now just Level 1 and Main Menu
+	// In the original game, this would show all unlocked levels plus options
+	static const char *levelItems[] = {
+		"SELECT CHAPTER",    // Title (index 0)
+		"CHAPTER 1",         // Level 1 (index 1) - selectable
+		"MAIN MENU"          // Back to menu (index 2) - selectable
+	};
+
+	const int numItemsTotal = 3;     // Title + 2 selectable items
+	const int numSelectableItems = 2;
+
+	// Calculate positions (low-res 320x200 mode)
+	const int centerX = width / 2;
+	const int titleY = numItemsTotal * -5 + 81;      // 81 - 15 = 66
+	const int itemBaseY = numItemsTotal * -5 + 104;  // 104 - 15 = 89
+	const int itemSpacing = 10;
+
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) {
+		debug(1, "drawLevelSelectOverlay: font is NULL!");
+		return;
+	}
+
+	int numFontChars = font->getNumChars();
+	int actualPitch = pitch;
+	Common::Rect clipRect(0, 0, width, height);
+
+	// Helper function to draw centered text with optional highlight box
+	// We'll use a simple loop instead of lambda for compatibility
+	auto drawTextCentered = [&](const char *text, int y, bool highlight) {
+		// Calculate text width first
+		int textWidth = 0;
+		for (const char *c = text; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numFontChars) {
+				textWidth += font->getCharWidth(charIdx);
+			}
+		}
+
+		int curX = centerX - textWidth / 2;
+
+		// Draw each character using drawCharV7
+		for (const char *c = text; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numFontChars) {
+				int charWidth = font->getCharWidth(charIdx);
+				if (curX >= 0 && curX + charWidth <= width && y >= 0) {
+					// Use drawCharV7 with color -1 (original colors), hardcodedColors=true, smushColorMode=true
+					font->drawCharV7(renderBitmap, clipRect, curX, y, actualPitch, -1,
+					                 kStyleAlignLeft, charIdx, true, true);
+				}
+				curX += charWidth;
+			}
+		}
+
+		// If highlighted, draw selection box around text
+		if (highlight) {
+			int boxWidth = textWidth + 12;
+			int boxHeight = 10;
+			int boxX = centerX - boxWidth / 2;
+			int boxY = y - 1;
+
+			// Highlight color (bright color for visibility)
+			byte highlightColor = 0xF0;
+
+			// Draw box border (top, bottom, left, right edges)
+			if (boxY >= 0 && boxY < height && boxX >= 0 && boxX + boxWidth <= width) {
+				// Top edge
+				for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
+					if (px >= 0) renderBitmap[boxY * actualPitch + px] = highlightColor;
+				}
+				// Bottom edge
+				int bottomY = boxY + boxHeight - 1;
+				if (bottomY < height) {
+					for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
+						if (px >= 0) renderBitmap[bottomY * actualPitch + px] = highlightColor;
+					}
+				}
+				// Left edge
+				for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
+					if (py >= 0 && boxX >= 0) renderBitmap[py * actualPitch + boxX] = highlightColor;
+				}
+				// Right edge
+				int rightX = boxX + boxWidth - 1;
+				if (rightX < width) {
+					for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
+						if (py >= 0) renderBitmap[py * actualPitch + rightX] = highlightColor;
+					}
+				}
+			}
+		}
+	};
+
+	// Draw title (not selectable)
+	drawTextCentered(levelItems[0], titleY, false);
+
+	// Draw selectable items
+	for (int i = 0; i < numSelectableItems; i++) {
+		int itemY = itemBaseY + i * itemSpacing;
+		bool isSelected = (i == _levelSelection);
+		drawTextCentered(levelItems[i + 1], itemY, isSelected);
+	}
+
+	// Draw info text at bottom if a level is selected (not "MAIN MENU")
+	if (_levelSelection < numSelectableItems - 1) {
+		// Show difficulty or other info
+		// From info.md: Difficulty at X=30, Y=180
+		const char *difficultyText = "DIFFICULTY: EASY";
+		int infoY = 180;
+		int infoX = 30;
+
+		// Draw left-aligned text using drawCharV7
+		int curX = infoX;
+		for (const char *c = difficultyText; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numFontChars) {
+				int charWidth = font->getCharWidth(charIdx);
+				if (curX >= 0 && curX + charWidth <= width && infoY >= 0) {
+					font->drawCharV7(renderBitmap, clipRect, curX, infoY, actualPitch, -1,
+					                 kStyleAlignLeft, charIdx, true, true);
+				}
+				curX += charWidth;
+			}
+		}
+	}
 }
 
 } // End of namespace Scumm

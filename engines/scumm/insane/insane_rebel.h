@@ -28,8 +28,11 @@
 
 #include "scumm/insane/insane.h"
 
+#include "common/keyboard.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/events.h"
+#include "common/queue.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -41,11 +44,18 @@ class SoundHandle;
 
 namespace Scumm {
 
-class InsaneRebel2 : public Insane {
+class InsaneRebel2 : public Insane, public Common::EventObserver {
 
 public:
 	InsaneRebel2(ScummEngine_v7 *scumm);
 	~InsaneRebel2();
+
+	// EventObserver interface - captures events before ScummEngine consumes them
+	bool notifyEvent(const Common::Event &event) override;
+
+	// Menu input event queue - events are captured by notifyEvent() and processed by processMenuInput()
+	Common::Queue<Common::Event> _menuEventQueue;
+	bool _menuInputActive;  // True when we're capturing menu input events
 
 	// ======================= Menu System =======================
 	// Main game states (emulates retail state machine from FUN_004142BD)
@@ -93,6 +103,27 @@ public:
 
 	// Reset menu state for fresh start
 	void resetMenu();
+
+	// ================= Level Selection Menu ====================
+	// Level selection results
+	enum LevelSelectResult {
+		kLevelSelectBack = 0,     // Return to main menu
+		kLevelSelectPlay = 1,     // Play selected level
+		kLevelSelectQuit = 2      // Quit game
+	};
+
+	int _levelSelection;          // Current level selection (0-based)
+	int _levelItemCount;          // Number of level items (levels + options)
+	int _selectedLevel;           // Final selected level ID (1-15)
+
+	// Run level selection menu - returns LevelSelectResult
+	int runLevelSelect();
+
+	// Draw level selection overlay
+	void drawLevelSelectOverlay(byte *renderBitmap, int pitch, int width, int height);
+
+	// Process level select input - returns -1 (no action) or action code
+	int processLevelSelectInput();
 	// =============================================================
 
 	NutRenderer *_smush_cockpitNut;
