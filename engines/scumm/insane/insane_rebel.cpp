@@ -3753,6 +3753,15 @@ int InsaneRebel2::runLevel(int levelId) {
 		return kLevelReturnToMenu;
 	}
 
+	// Switch to gameplay state to stop menu overlay rendering
+	_gameState = kStateGameplay;
+	_menuInputActive = false;
+
+	// Clear the screen to remove any leftover menu pixels
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+	_vm->markRectAsDirty(kMainVirtScreen, 0, vs->w, 0, vs->h);
+
 	// Set the current level
 	_selectedLevel = levelId;
 
