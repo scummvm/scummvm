@@ -19,9 +19,6 @@
  *
  */
 
-#include "fool/fool.h"
-#include "fool/detection.h"
-#include "fool/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -30,6 +27,10 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 
+#include "fool/fool.h"
+#include "fool/detection.h"
+#include "fool/console.h"
+
 namespace Fool {
 
 FoolEngine *g_engine;
@@ -37,6 +38,7 @@ FoolEngine *g_engine;
 FoolEngine::FoolEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Fool") {
 	g_engine = this;
+
 }
 
 FoolEngine::~FoolEngine() {
@@ -51,11 +53,16 @@ Common::String FoolEngine::getGameId() const {
 }
 
 Common::Error FoolEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+	_screen.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_wm.setScreen(&_screen);
+
+	// Menu
+	_menu = _wm.addMenu();
 
 
 	return Common::kNoError;

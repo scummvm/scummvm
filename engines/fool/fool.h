@@ -32,10 +32,15 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/screen.h"
 
 #include "fool/detection.h"
 #include "fool/events.h"
+
+#define SCREEN_WIDTH 0x200
+#define SCREEN_HEIGHT 0x156
+#define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8) // 0x5580
 
 namespace Fool {
 
@@ -50,6 +55,10 @@ protected:
 	Common::Error run() override;
 
 public:
+	Graphics::ManagedSurface _screen;
+	Graphics::MacWindowManager _wm;
+	Graphics::MacMenu *_menu;
+
 	FoolEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~FoolEngine() override;
 
