@@ -41,8 +41,9 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		return;
 	}
 
-	Common::Array<ZBasicDatum> dataTable;
-	Common::Array<ZBasicDatum> stringTable;
+	this->_dataTable.clear();
+	this->_dataPtr = 0;
+	this->_stringTable.clear();
 	bool hasStringTable = false;
 	while (scot->pos() < scot->size()) {
 		uint32 offset = scot->pos();
@@ -53,15 +54,15 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		}
 		switch (opcode) {
 		case kDatumNULL:
-			dataTable.push_back(ZBasicDatum::newNull(offset));
+		this->_dataTable.push_back(ZBasicDatum::newNull(offset));
 			break;
 		case kDatumINT:
 			{
 				uint8 size = scot->readByte();
 				if (size == 0) {
-					dataTable.push_back(ZBasicDatum::newInt(offset, 0));
+				this->_dataTable.push_back(ZBasicDatum::newInt(offset, 0));
 				} else if (size == 2) {
-					dataTable.push_back(ZBasicDatum::newInt(offset, scot->readSint16BE()));
+				this->_dataTable.push_back(ZBasicDatum::newInt(offset, scot->readSint16BE()));
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for int %d", size);
 					scot->skip(size);
@@ -72,9 +73,9 @@ void ZBasic::loadProgram(const Common::Path &path) {
 			{
 				uint8 size = scot->readByte();
 				if (size == 0) {
-					dataTable.push_back(ZBasicDatum::newDblInt(offset, 0));
+				this->_dataTable.push_back(ZBasicDatum::newDblInt(offset, 0));
 				} else if (size == 2) {
-					dataTable.push_back(ZBasicDatum::newDblInt(offset, scot->readSint32BE()));
+				this->_dataTable.push_back(ZBasicDatum::newDblInt(offset, scot->readSint32BE()));
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for dblint %d", size);
 					scot->skip(size);
@@ -86,18 +87,28 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				uint8 size = scot->readByte();
 				char *buf = new char[size];
 				scot->read(buf, size);
-				dataTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
+			this->_dataTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
 				delete[] buf;
 			}
 			break;
 		case kDatumBCD:
 			{
 				scot->seek(-1);
-				dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
+			this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
 			}
 			break;
 		default:
 			break;
+		}
+	}
+	if (hasStringTable) {
+		uint32 offset = 0;
+		while (scot->pos() < scot->size()) {
+			uint8 size = scot->readByte();
+			char *buf = new char[size];
+			scot->read(buf, size);
+			this->_stringTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
+			offset += size + 1;
 		}
 	}
 
@@ -129,5 +140,34 @@ int16 ZBasic::rndInt(int16 max) {
 	return (int16)(g_engine->getRandomNumber(max - 1) + 1);
 }
 
+int16 ZBasic::readInt() {
+	if (_dataPtr >= _dataTable.size()) {
+		warning("ZBasic::readInt: no more data left");
+		return 0;
+	}
+	ZBasicDatum &el = _dataTable[_dataPtr];
+	_dataPtr++;
+	if (el.type != kDatumINT) {
+		warning("ZBasic::readInt: entry %d was unexpected type %d", el.type);
+		return 0;
+	}
+	return el.data.i16;
+}
+
+Common::U32String ZBasic::readStr() {
+	Common::U32String result;
+	if (_dataPtr >= _dataTable.size()) {
+		warning("ZBasic::readStr: no more data left");
+		return result;
+	}
+	ZBasicDatum &el = _dataTable[_dataPtr];
+	_dataPtr++;
+	if (el.type != kDatumSTR) {
+		warning("ZBasic::readStr: entry %d was unexpected type %d", el.type);
+		return result;
+	}
+	result = *el.data.str;
+	return result;
+}
 
 } // namespace Fool

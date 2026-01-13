@@ -29,7 +29,6 @@
 
 namespace Fool {
 
-typedef uint32 GrafPtr;
 typedef uint32 Handle;
 typedef uint32 RgnHandle;
 typedef uint32 PicHandle;
@@ -45,6 +44,76 @@ struct RGBColor {
 	uint16 blue;
 };
 
+enum EventCode {
+	kNullEvent = 0,
+	kMouseDown = 1,
+	kMouseUp = 2,
+	kKeyDown = 3,
+	kKeyUp = 4,
+	kAutoKey = 5,
+	kUpdateEvt = 6,
+	kDiskEvt = 7,
+	kActivateEvt = 8,
+	kNetworkEvt = 10,
+	kDriverEvt = 11,
+	kApp1Evt = 12,
+	kApp2Evt = 13,
+	kApp3Evt = 14,
+	kApp4Evt = 15
+};
+
+struct EventRecord {
+	EventCode what;
+	uint32 message;
+	uint32 when;
+	Common::Point where;
+	uint16 modifiers;
+};
+
+enum WindowDefinition {
+	kDocumentProc = 0,
+	kDBoxProc = 1,
+	kPlainDBox = 2,
+	kAltDBoxProc = 3,
+	kNoGrowDocProc = 4,
+	kRDocProc = 16,
+};
+
+struct GrafPort {
+	uint16 device;
+	Graphics::Surface *portBits;
+	Common::Rect portRect;
+	RgnHandle visRgn;
+	RgnHandle clipRgn;
+	Pattern bkPat;
+	Pattern fillPat;
+	Common::Point pnLoc;
+	Common::Point pnSize;
+	uint16 pnMode;
+	Pattern pnPat;
+	uint16 pnVis;
+	uint16 txFont;
+	uint16 txFace;
+	uint16 txMode;
+	uint16 txSize;
+	uint32 spExtra;
+	uint32 fgColor;
+	uint32 bkColor;
+	uint16 colrBit;
+	uint16 patStretch;
+	Handle picSave;
+	Handle rgnSave;
+	Handle polySave;
+
+};
+typedef GrafPort * GrafPtr;
+
+struct WindowRecord {
+	GrafPort port;
+	uint16 windowKind;
+};
+
+// TYPE Rect: top: INTEGER; left: INTEGER; bottom: INTEGER; right: INTEGER;
 
 class Toolbox {
 
@@ -159,6 +228,7 @@ public:
 	// available event of any type designated by the mask, subject to the priority rules discussed above
 	// under "Priority of Events". If no event of any of the designated types is available, GetNextEvent
 	// returns a null event.
+	bool GetNextEvent(uint16 eventMask, EventRecord &theEvent);
 
 	// FUNCTION GetPicture (picID: INTEGER) : PicHandle;
 	// GetPicture returns a handle to the picture having the given resource ID, reading it from the
@@ -301,12 +371,17 @@ public:
 	// allows you to perform all normal drawing and calculations on a buffer other than the screen—for
 	// example, a small off-screen image for later "stamping" onto the screen (with the CopyBits
 	// procedure, described under "Bit Transfer Operations" below).
-	void SetPortBits(const Graphics::Surface &bm);
+	void SetPortBits(const Graphics::Surface *bm);
 
 	// PROCEDURE SetRect (VAR r: Rect; left,top,right,bottom: INTEGER);
 	// SetRect assigns the four boundary coordinates to the given rectangle. The result is a rectangle
 	// with coordinates (left,top) (right,bottom).
-	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom);
+	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom) {
+		r.left = left;
+		r.top = top;
+		r.right = right;
+		r.bottom = bottom;
+	}
 
 	// PROCEDURE StringWidth (s: Str255) : INTEGER;
 	// StringWidth returns the width of the given text string, which it calculates by adding the

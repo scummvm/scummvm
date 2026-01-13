@@ -28,9 +28,6 @@
 #include "fool/toolbox.h"
 #include "graphics/surface.h"
 
-#define SCREEN_WIDTH 0x200
-#define SCREEN_HEIGHT 0x156
-#define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8/2) // 0x2ac0
 
 namespace Fool {
 
@@ -88,13 +85,18 @@ private:
 	int16 var_i16_12;
 	int16 var_i16_14;
 	int16 var_i16_16;
+	int16 var_i16_1c;
+	int16 var_i16_1e;
+	int16 var_i16_20;
 
-	Graphics::Surface var_i32_32;
+	EventRecord var_ev_22;
+
+	Graphics::Surface *var_i32_32;
 	Common::Rect var_i16_38;
 
-	Graphics::Surface var_i32_40;
+	Graphics::Surface *var_i32_40;
 
-	Graphics::Surface var_i32_4e;
+	byte *var_i32_4e;
 
 	Common::Rect var_i16_5c;
 	Common::Rect var_i16_64;
@@ -108,7 +110,10 @@ private:
 	int16 var_i16_18e;
 
 	int16 var_i16_1a4;
+	uint32 var_i32_1a6;
 
+	int16 var_i16_1b8;
+	int16 var_i16_1ba;
 	int16 var_i16_3e0;
 
 	// picture resource handles
@@ -122,7 +127,12 @@ private:
 
 	int16 arr_i16_1e8[1206] = { 0 };
 
-	uint32 arr_i32_41296[12] = { 0 };
+	GrafPort arr_grafport_9c0;
+	GrafPort arr_grafport_a8a;
+
+	byte arr_i32_b54[SCREEN_PAGE_SIZE*12];
+
+	byte *arr_i32_41296[12];
 
 	int16 arr_i16_412ea[SCREEN_HEIGHT];
 
