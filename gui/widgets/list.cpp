@@ -553,8 +553,14 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_DOWN:
-			if (_selectedItem < (int)_list.size() - 1)
-				_selectedItem++;
+			// Down: Add next item to selection (Ctrl+Click logic without toggle)
+			if (_selectedItem < (int)_list.size() - 1) {
+				int newItem = _selectedItem + 1;
+				addSelectedItem(newItem);
+				_selectedItem = newItem;
+				_lastSelectionStartItem = newItem;
+				dirty = true;
+			}
 			break;
 
 		case Common::KEYCODE_KP3:
@@ -586,8 +592,14 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_UP:
-			if (_selectedItem > 0)
-				_selectedItem--;
+			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
+			if (_selectedItem > 0) {
+				int newItem = _selectedItem - 1;
+				addSelectedItem(newItem);
+				_selectedItem = newItem;
+				_lastSelectionStartItem = newItem;
+				dirty = true;
+			}
 			break;
 
 		case Common::KEYCODE_KP9:
