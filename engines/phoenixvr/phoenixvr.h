@@ -91,7 +91,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return _prevWarp == -1;
+		return false;
 	}
 
 	// Script API
