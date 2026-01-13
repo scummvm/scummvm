@@ -124,6 +124,90 @@ public:
 
 	// Process level select input - returns -1 (no action) or action code
 	int processLevelSelectInput();
+
+	// ======================= Level Loading System =======================
+	// Emulates the level handler functions FUN_00417E53 through FUN_0041BBE8
+	// Each level has: BEG (intro), gameplay SANs, END (completion), DIE variants,
+	// RETRY, and OVER (game over) videos.
+
+	// Level playback result (returned by runLevel)
+	enum LevelResult {
+		kLevelCompleted = 0,      // Level completed successfully
+		kLevelNextLevel = 1,      // Proceed to next level
+		kLevelGameOver = 2,       // No lives remaining
+		kLevelQuit = 3,           // Player quit
+		kLevelReturnToMenu = 4    // Return to main menu
+	};
+
+	// Play the intro sequence (CREDITS/O_OPEN_C, O_OPEN_D, OPEN/O_OPEN_A, O_OPEN_B)
+	// Emulates case 0 in FUN_004142BD
+	void playIntroSequence();
+
+	// Play the mission briefing video (OPEN/O_LEVEL.SAN)
+	// Emulates FUN_00415CF8
+	void playMissionBriefing();
+
+	// Main level runner - plays a complete level by ID (1-15)
+	// Handles all videos: BEG, gameplay, END/DIE/RETRY/OVER
+	// Returns LevelResult
+	int runLevel(int levelId);
+
+	// Play level beginning cinematic (LEVXX/XXBEG.SAN)
+	void playLevelBegin(int levelId);
+
+	// Play main gameplay video(s) for a level
+	// Returns true if level completed, false if player died
+	bool playLevelGameplay(int levelId);
+
+	// Play level completion video (LEVXX/XXEND.SAN)
+	void playLevelEnd(int levelId);
+
+	// Play death video (LEVXX/XXDIE_X.SAN) - variant based on frame/location
+	void playLevelDeath(int levelId);
+
+	// Play retry prompt video (LEVXX/XXRETRY.SAN)
+	void playLevelRetry(int levelId);
+
+	// Play game over video (LEVXX/XXOVER.SAN)
+	void playLevelGameOver(int levelId);
+
+	// Play the ending/credits sequence
+	void playCreditsSequence();
+
+	// Get the directory name for a level (e.g., "LEV01" for level 1)
+	Common::String getLevelDir(int levelId);
+
+	// Get the file prefix for a level (e.g., "01" for level 1)
+	Common::String getLevelPrefix(int levelId);
+
+	// Per-level handlers (emulate FUN_00417E53 through FUN_0041BBE8)
+	// These implement the complete level logic including retry handling
+	int runLevel1();   // FUN_00417E53 - Single gameplay phase
+	int runLevel2();   // FUN_00418063 - Multiple parts with P1/P2/P3 subdirs
+	int runLevel3();   // FUN_0041885F - Two phases with per-phase retry
+	int runLevel4();   // Cutscene + single gameplay
+	int runLevel5();   // FUN_00418EC6 - Single gameplay phase
+	int runLevel6();   // FUN_00419317 - Two phases with per-phase retry
+
+	// Random number helper (emulates FUN_004233a0)
+	int getRandomVariant(int max);
+
+	// Select death video variant based on level, phase, and frame
+	// Returns suffix like "A", "B", "C" for DIE_X.SAN
+	Common::String selectDeathVideoVariant(int levelId, int phase, int frame);
+
+	// Play death video with proper variant selection
+	void playLevelDeathVariant(int levelId, int phase, int frame);
+
+	// Play retry video (phase-specific for multi-phase levels)
+	void playLevelRetryVariant(int levelId, int phase);
+
+	// Level state tracking for multi-phase levels
+	int _currentPhase;        // Current gameplay phase (1, 2, 3 for Level 2; 1, 2 for Level 3/6)
+	int _deathFrame;          // Frame number where player died (for death video selection)
+	int _phaseScore;          // Accumulated score from previous phases (preserved on phase retry)
+	int _phaseMisses;         // Accumulated misses from previous phases
+
 	// =============================================================
 
 	NutRenderer *_smush_cockpitNut;
