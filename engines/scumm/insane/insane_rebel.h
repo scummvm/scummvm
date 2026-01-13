@@ -400,6 +400,11 @@ public:
 	// Render score text to HUD (called from procPostRendering)
 	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);
 
+	// ======================= Pause Overlay =======================
+	// Show pause overlay with dimming effect and "PAUSED" text
+	// Emulates FUN_405A21 pause rendering (lines 242-305)
+	void showPauseOverlay();
+
 	// Target lock timer (DAT_00443676) - set to 7 when crosshair is over enemy
 	int _targetLockTimer;
 

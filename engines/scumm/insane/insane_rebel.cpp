@@ -296,6 +296,44 @@ InsaneRebel2::~InsaneRebel2() {
 }
 
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
+	// Handle global key events (ESC to skip, SPACE to pause)
+	// These work regardless of menu state
+	if (event.type == Common::EVENT_KEYDOWN) {
+		SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_ESCAPE:
+			// ESC skips cutscenes (videos with 0x20 flag = non-interactive)
+			// Emulates FUN_0041f537 behavior: if key == 0x1b, skip video
+			if (splayer && (splayer->_curVideoFlags & 0x20) != 0) {
+				debug("Rebel2: ESC pressed - skipping cutscene");
+				_vm->_smushVideoShouldFinish = true;
+				return true;  // Consume the event
+			}
+			break;
+
+		case Common::KEYCODE_SPACE:
+			// SPACE toggles pause (emulates FUN_405A21 pause handling)
+			// Only allow pausing during gameplay, not in menus
+			if (splayer && _gameState == kStateGameplay) {
+				if (splayer->_paused) {
+					debug("Rebel2: SPACE pressed - unpausing");
+					splayer->unpause();
+				} else {
+					debug("Rebel2: SPACE pressed - pausing");
+					splayer->pause();
+					// Show the pause overlay with dimming effect and "PAUSED" text
+					showPauseOverlay();
+				}
+				return true;  // Consume the event
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	// Capture menu-related input events when menu input is active.
 	// This is called before ScummEngine::parseEvents() consumes events,
 	// so we can reliably capture keyboard/mouse input for menu navigation.
@@ -2982,6 +3020,165 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			}
 		}
 	}
+}
+
+// ======================= Pause Overlay =======================
+// Emulates FUN_405A21 pause rendering (lines 242-305)
+// Creates a dimmed overlay effect and displays "PAUSED" text
+void InsaneRebel2::showPauseOverlay() {
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer) {
+		debug("showPauseOverlay: No SmushPlayer active");
+		return;
+	}
+
+	// Get frame buffer and palette from SmushPlayer
+	// _dst points to the virtual screen pixels (the actual rendering destination)
+	// _frameBuffer is only used for store/fetch operations, not general rendering
+	byte *frameBuffer = splayer->_dst;
+	byte *palette = splayer->_pal;
+	int width = splayer->_width;
+	int height = splayer->_height;
+
+	if (!frameBuffer || !palette || width <= 0 || height <= 0) {
+		debug("showPauseOverlay: No frame buffer (%p), palette (%p), or invalid dimensions (%dx%d)",
+		      (void*)frameBuffer, (void*)palette, width, height);
+		return;
+	}
+
+	debug("showPauseOverlay: Applying dimming effect to %dx%d buffer", width, height);
+
+	// Apply dimming effect (emulates FUN_405A21 lines 242-251)
+	// Original algorithm:
+	//   For each pixel, take the green component of its palette entry
+	//   and the green component of the previous pixel's palette entry,
+	//   add them, divide by 8, add 16.
+	// This creates a dark dimmed effect.
+	int bufferSize = width * height;
+	byte prevPixel = 0;
+
+	for (int i = 0; i < bufferSize; i++) {
+		byte curPixel = frameBuffer[i];
+
+		// Get green components from palette (offset +1 in RGB triplets)
+		int greenCur = palette[curPixel * 3 + 1];
+		int greenPrev = palette[prevPixel * 3 + 1];
+
+		// Apply dimming formula: (green1 + green2) >> 3 + 0x10
+		byte dimmedValue = ((greenCur + greenPrev) >> 3) + 0x10;
+
+		frameBuffer[i] = dimmedValue;
+		prevPixel = curPixel;
+	}
+
+	// Draw border decorations (simplified version of FUN_405A21 lines 261-283)
+	// Draw horizontal lines at top and bottom of a centered box
+	int boxLeft = 12;
+	int boxRight = width - 12;
+	int boxTop = 23;   // 0x17
+	int boxBottom = height - 23;  // ~175 for 200 height
+
+	byte borderColor = 0x50;  // Gray border color
+
+	// Top and bottom borders
+	for (int x = boxLeft; x < boxRight; x++) {
+		if (boxTop >= 0 && boxTop < height)
+			frameBuffer[boxTop * width + x] = borderColor;
+		if (boxBottom >= 0 && boxBottom < height)
+			frameBuffer[boxBottom * width + x] = borderColor;
+	}
+
+	// Left and right borders
+	for (int y = boxTop; y < boxBottom; y++) {
+		if (boxLeft >= 0 && boxLeft < width)
+			frameBuffer[y * width + boxLeft] = borderColor;
+		if (boxRight >= 0 && boxRight < width)
+			frameBuffer[y * width + boxRight] = borderColor;
+	}
+
+	// Draw corner decorations (simplified)
+	byte cornerColor = 0x51;  // Slightly brighter for corners
+	for (int i = 0; i < 5; i++) {
+		// Top-left corner
+		if (boxTop + i < height && boxLeft + 5 < width)
+			frameBuffer[(boxTop + i) * width + boxLeft + 5] = cornerColor;
+		if (boxTop + 5 < height && boxLeft + i < width)
+			frameBuffer[(boxTop + 5) * width + boxLeft + i] = cornerColor;
+
+		// Top-right corner
+		if (boxTop + i < height && boxRight - 5 >= 0)
+			frameBuffer[(boxTop + i) * width + boxRight - 5] = cornerColor;
+		if (boxTop + 5 < height && boxRight - i >= 0)
+			frameBuffer[(boxTop + 5) * width + boxRight - i] = cornerColor;
+
+		// Bottom-left corner
+		if (boxBottom - i >= 0 && boxLeft + 5 < width)
+			frameBuffer[(boxBottom - i) * width + boxLeft + 5] = cornerColor;
+		if (boxBottom - 5 >= 0 && boxLeft + i < width)
+			frameBuffer[(boxBottom - 5) * width + boxLeft + i] = cornerColor;
+
+		// Bottom-right corner
+		if (boxBottom - i >= 0 && boxRight - 5 >= 0)
+			frameBuffer[(boxBottom - i) * width + boxRight - 5] = cornerColor;
+		if (boxBottom - 5 >= 0 && boxRight - i >= 0)
+			frameBuffer[(boxBottom - 5) * width + boxRight - i] = cornerColor;
+	}
+
+	// Draw "PAUSED" text centered
+	// Use hardcoded "PAUSED" string (TRS string 0x79 is "Quit Game" in RA2)
+	const char *pauseText = "PAUSED";
+
+	// Draw text using SmushFont if available
+	if (_menuFont) {
+		Common::Rect clipRect(0, 0, width, height);
+
+		// Calculate centered position
+		// Text should be centered horizontally and vertically in the box
+		int textX = width / 2;  // SmushFont handles centering with kStyleAlignCenter
+		int textY = height / 2 - 4;  // Slightly above center
+
+		// Draw with color 4 and background 0x10 (matching original parameters)
+		// FUN_00434cb0 params: x=10, y=10 or 20, color=4, bg=0x10
+		_menuFont->drawString(pauseText, frameBuffer, clipRect, textX, textY, 0x10, kStyleAlignCenter);
+	} else if (_smush_smalfontNut) {
+		// Fallback: draw using NutRenderer directly
+		NutRenderer *font = _smush_smalfontNut;
+		int numFontChars = font->getNumChars();
+		Common::Rect clipRect(0, 0, width, height);
+
+		// Calculate text width
+		int textWidth = 0;
+		const char *p = pauseText;
+		while (*p) {
+			byte c = (byte)*p++;
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c < numFontChars) {
+				textWidth += font->getCharWidth(c);
+			}
+		}
+
+		// Draw centered
+		int textX = (width - textWidth) / 2;
+		int textY = height / 2 - 4;
+
+		p = pauseText;
+		while (*p) {
+			byte c = (byte)*p++;
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c < numFontChars && textX >= 0 && textY >= 0) {
+				font->drawCharV7(frameBuffer, clipRect, textX, textY, width, -1,
+				                 kStyleAlignLeft, c, true, true);
+				textX += font->getCharWidth(c);
+			}
+		}
+	}
+
+	// Update the screen to show the pause overlay
+	// SmushPlayer uses copyRectToScreen to transfer the buffer to the display backend
+	_vm->_system->copyRectToScreen(frameBuffer, width, 0, 0, width, height);
+	_vm->_system->updateScreen();
+
+	debug("showPauseOverlay: Overlay displayed");
 }
 
 int InsaneRebel2::runMainMenu() {
