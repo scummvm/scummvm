@@ -2705,22 +2705,19 @@ Common::Error ScummEngine::go() {
 				}
 
 				if (levelResult == InsaneRebel2::kLevelSelectPlay) {
-					// Play the selected level (currently only level 1 is supported)
+					// Play the selected level using the level loading system
 					int selectedLevel = rebel->_selectedLevel;
 					debug("ScummEngine: Starting level %d", selectedLevel);
 
-					// For now, only level 1 is implemented
-					// Play Level 1 intro cinematic
-					vm7->_splayer->setCurVideoFlags(0x20);
-					vm7->_splayer->play("LEV01/01BEG.SAN", 12);
+					// Run the complete level (handles BEG, gameplay, END/DIE/RETRY/OVER)
+					int result = rebel->runLevel(selectedLevel);
 
-					if (shouldQuit()) break;
+					if (shouldQuit() || result == InsaneRebel2::kLevelQuit) {
+						break;
+					}
 
-					// Start gameplay
-					vm7->_splayer->setCurVideoFlags(0);
-					vm7->_splayer->play("LEV01/01P01.SAN", 12);
-
-					// After gameplay, return to menu
+					// After level completion or game over, return to menu
+					// Could also handle kLevelNextLevel to auto-start next level
 				}
 				// If kLevelSelectBack, loop back to main menu
 			}
