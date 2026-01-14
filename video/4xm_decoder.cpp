@@ -321,7 +321,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 namespace {
 
 template<bool Scale>
-void mcdc(uint16_t *__restrict__ dst, const uint16_t *__restrict__ src, int log2w,
+void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int log2h, int stride, uint dc) {
 	int h = 1 << log2h;
 	int w = 1 << log2w;
