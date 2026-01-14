@@ -32,6 +32,8 @@ namespace Noctropolis {
 
 class NoctropolisEngine;
 
+extern const byte ICON_PALETTE[];
+
 class NoctropolisResources : public Resources {
 public:
 	NoctropolisResources(AccessEngine *_vm);
@@ -46,6 +48,11 @@ public:
 
 	int getCursorWidth(int num) const override;
 	int getCursorHeight(int num) const override;
+
+	const char *getGeneralMessage(int command) const override;
+
+	const char *getEndMessage() const;
+	const char *getStilEndMessage() const;
 
 private:
 	Font *_fontChaleteu;

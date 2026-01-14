@@ -28,6 +28,17 @@ namespace Access {
 
 namespace Noctropolis {
 
+const byte ICON_PALETTE[] = {
+	// List sorted from hard-coded instructions in SetIconPal
+	0x4f, 0x24, 0, 0xc1, 100, 2, 0xff, 0xc1, 0, 0,
+	0x46, 0xff, 0, 0x11, 0xc1, 0, 0, 0x82, 0, 0xba,
+	0, 0, 0x60, 0, 0xff, 0, 0, 0x8c, 0, 0,
+	0, 0, 0, 0x23, 0x23, 0x23, 0x3d, 0x3d, 0x3d, 0x57,
+	0x57, 0x57, 0x71, 0x71, 0x71, 0x8b, 0x8b, 0x8b, 0xa5, 0xa5,
+	0xa5, 0xbf, 0xbf, 0xbf, 0xd9, 0xd9, 0xd9, 0xfc, 0xfc, 0xfc,
+};
+
+
 // The original game has 4 files after a bunch of nullptrs.
 // We add them separately to make this file a little smaller.
 static const char *NOCT_FILES_1[] = {
@@ -1840,6 +1851,90 @@ const byte *NoctropolisResources::getCursor(int num) const {
 	case 8:  return CURSOR_8_DATA;
 	case 9:  return CURSOR_9_DATA;
 	case 10: return CURSOR_10_DATA;
+	}
+}
+
+static const char *const NOCT_GENERAL_MESSAGES_EN[] = {
+	"Looking there reveals nothing of interest.",
+	"That doesn't open.",
+	"That won't move.",
+	"You can't take that.",
+	"There seems to be no response.",
+	"That doesn't seem to work.",
+	"You can't go there.",
+	"That doesn't seem to work.",
+	"That doesn't seem to work.",
+	"That doesn't seem to work.",
+};
+
+static const char *const NOCT_GENERAL_MESSAGES_FR[] = {
+	"Vous ne d\x82""couvrez rien d'int\x82""ressant.",
+	"\x80""a ne s'ouvre pas.",
+	"\x80""a ne bouge pas.",
+	"Vous ne pouvez pas prendre \x87""a.",
+	"Vous n'obtenez aucune r\x82""ponse.",
+	"\x80""a ne marche pas.",
+	"Vous ne pouvez pas aller l\x85.",
+	"\x80""a ne marche pas.",
+	"\x80""a ne marche pas.",
+	"\x80""a ne marche pas.",
+};
+
+static const char *const NOCT_GENERAL_MESSAGES_ES[] = {
+	"No descubres nada de interes.",
+	"No se abre.",
+	"No se mueve.",
+	"No puedes coger eso.",
+	"No hay respuesta.",
+	"Eso no funciona.",
+	"No puedes ir ahi.",
+	"Eso no funciona.",
+	"Eso no funciona.",
+	"Eso no funciona.",
+};
+
+static const char *const NOCT_GENERAL_MESSAGES_DE[] = {
+	"Dieser Anblick zeigt nichts Interessantes.",
+	"Das l\x84\xe1t sich nicht \x94""ffnen.",
+	"Bewegt sich keinen Millimeter.",
+	"Das kannst Du nicht mitnehmen.",
+	"Offensichtlich erh\x84ltst Du keine Antwort.",
+	"Das scheint nicht zu funktionieren.",
+	"Dahin kannst Du nicht gehen.",
+	"Das scheint nicht zu funktionieren.",
+	"Das scheint nicht zu funktionieren.",
+	"Das scheint nicht zu funktionieren.",
+};
+
+const char *NoctropolisResources::getGeneralMessage(int command) const {
+	if (command < 0 || command >= ARRAYSIZE(NOCT_GENERAL_MESSAGES_EN))
+		error("No general message for command %d", command);
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return NOCT_GENERAL_MESSAGES_EN[command];
+	case Common::FR_FRA: return NOCT_GENERAL_MESSAGES_FR[command];
+	case Common::ES_ESP: return NOCT_GENERAL_MESSAGES_ES[command];
+	case Common::DE_DEU: return NOCT_GENERAL_MESSAGES_DE[command];
+	default: error("Unsupported language for general message");
+	}
+}
+
+const char *NoctropolisResources::getEndMessage() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "Don't look at me, you're the city's new champion.";
+	case Common::FR_FRA: return "Ne me regardez pas. C'est vous le nouveau\nchampion de la ville.";
+	case Common::ES_ESP: return "No me mires. Eres tu el nuevo campeon.";
+	case Common::DE_DEU: return "Schau mich nicht an, du bist der neue Held der Stadt.";
+	default: error("Unsupported language for end message");
+	}
+}
+
+const char *NoctropolisResources::getStilEndMessage() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "Don't worry about me, Peter. You know I'll\nsupport whatever you've got planned.";
+	case Common::FR_FRA: return "Ne vous inqui\x82tez pas pour moi, Peter. Vous\nsavez que je supporterai tous vos plans.";
+	case Common::ES_ESP: return "No te preocupes por mi, Peter. Te ayudare\nen cualquier cosa que intentes.";
+	case Common::DE_DEU: return "K\x81mmer' dich nicht um mich, Peter. Du wei\xe1t, ich\nunterst\x81tze dich bei allem, was du vorhast.";
+	default: error("Unsupported language for stil end message");
 	}
 }
 

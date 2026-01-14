@@ -79,7 +79,7 @@ void NoctropolisEngine::initVariables() {
 	_player->_playerX = _player->_rawPlayer.x = _player->_moveTo.x = 280;
 	_player->_playerY = _player->_rawPlayer.y = _player->_moveTo.y = 390;
 	_room->_selectCommand = -1;
-	_events->setNormalCursor(CURSOR_CROSSHAIRS);
+	_events->setNormalCursor(CURSOR_ARROW);
 	_mouseMode = 0;
 	_animation->clearTimers();
 }

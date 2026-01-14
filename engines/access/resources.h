@@ -34,9 +34,6 @@ namespace Access {
 
 extern const byte INITIAL_PALETTE[18 * 3];
 
-extern const char *const GENERAL_MESSAGES[];
-extern const char *const ESP_GENERAL_MESSAGES[];
-
 extern const int INVCOORDS[][4];
 
 class AccessEngine;
@@ -125,6 +122,13 @@ public:
 	 * or -1 if no button range matches.
 	 */
 	virtual int inButtonXRange(int x) const = 0;
+
+	/**
+	 * Get the generic failure message for a command,
+	 * eg "THAT DOESN'T OPEN.".  Messages will be localized
+	 * as appropriate.
+	 */
+	virtual const char *getGeneralMessage(int command) const;
 };
 
 } // End of namespace Access

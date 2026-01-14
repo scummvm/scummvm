@@ -30,6 +30,7 @@
 #include "access/screen.h"
 #include "access/resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_resources.h"
 
 
 // for frame contents debugging
@@ -142,6 +143,10 @@ void Screen::setIconPalette() {
 	if (_vm->getGameID() == kGameMartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
 			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
+		}
+	} else if (_vm->getGameID() == kGameNoctropolis) {
+		for (int i = 0; i < 60; i++) {
+			_rawPalette[708 + i] = Noctropolis::ICON_PALETTE[i];
 		}
 	}
 }

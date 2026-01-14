@@ -46,7 +46,7 @@ protected:
 
 	void setupRoom() override;
 
-	void mainAreaClick() override;
+	void mainAreaLClick() override;
 
 	void clearRoom() override;
 

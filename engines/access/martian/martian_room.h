@@ -44,7 +44,7 @@ protected:
 
 	void reloadRoom1() override;
 
-	void mainAreaClick() override;
+	void mainAreaLClick() override;
 public:
 	MartianRoom(AccessEngine *vm);
 
