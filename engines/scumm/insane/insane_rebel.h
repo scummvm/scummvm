@@ -251,7 +251,7 @@ public:
 	void iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
-	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -288,7 +288,7 @@ public:
 	// Current handler type for Rebel Assault 2 (determines crosshair sprite)
 	// Handler 0: Background only
 	// Handler 7: Space flight - uses crosshair sprite 0x2F (47)
-	// Handler 8: Ground vehicle - uses crosshair sprite 0x2E (46)  
+	// Handler 8: Third-person vehicle - uses crosshair sprite 0x2E (46)  
 	// Handler 0x19: Mixed/turret view - uses crosshair sprite 0x2F (47)
 	// Handler 0x26: Full turret - crosshair varies by level type
 	int _rebelHandler;
@@ -315,7 +315,7 @@ public:
 		bool valid;        // True if this slot has valid data
 	};
 	
-	EmbeddedSanFrame _rebelEmbeddedHud[5];  // Index 0 unused, 1-4 for userId slots
+	EmbeddedSanFrame _rebelEmbeddedHud[16];  // HUD overlay slots (userId 0-15)
 	
 	// Check if a partial frame update should be skipped (overlaps with destroyed enemy)
 	bool shouldSkipFrameUpdate(int left, int top, int width, int height) override;
@@ -380,6 +380,75 @@ public:
 	};
 	Shot _shots[2];
 	void spawnShot(int x, int y);
+
+	// ======================= Handler 8 Ship System =======================
+	// For third-person vehicle missions (Levels 2, 3), the player controls a ship
+	// that can turn in different directions. The ship sprite comes from
+	// NUT files loaded via IACT opcode 8.
+	//
+	// Based on FUN_00401234 and FUN_00401ccf disassembly:
+	// - DAT_0047e010: Primary ship sprite (POV001, subcase 1)
+	// - DAT_0047e028: Secondary ship sprite (POV004, subcase 3)
+	// - DAT_0047e020: Additional overlay (POV002, subcase 6)
+	// - DAT_0047e018: Additional overlay (POV003, subcase 7)
+	// - DAT_0043e006: Ship X position (raw, needs conversion for display)
+	// - DAT_0043e008: Ship Y position (raw, needs conversion for display)
+	// - DAT_0043e000: Level mode from opcode 6 par3
+
+	NutRenderer *_shipSprite;        // DAT_0047e010 - Primary ship NUT
+	NutRenderer *_shipSprite2;       // DAT_0047e028 - Secondary ship NUT
+	NutRenderer *_shipOverlay1;      // DAT_0047e020 - Additional overlay
+	NutRenderer *_shipOverlay2;      // DAT_0047e018 - Additional overlay
+
+	// Ship position tracking (matches DAT_0043e006/008)
+	// These are "raw" positions that get converted for display
+	int16 _shipPosX;                 // DAT_0043e006
+	int16 _shipPosY;                 // DAT_0043e008
+
+	// Ship target positions (where ship is trying to move to)
+	// Set from mouse/joystick input in opcode 6 processing
+	int16 _shipTargetX;              // DAT_0043e002 - Target X
+	int16 _shipTargetY;              // DAT_0043e004 - Target Y
+
+	// Level mode for handler 8 (different from _rebelLevelType)
+	// Set by opcode 6 par3, affects ship rendering behavior
+	int16 _shipLevelMode;            // DAT_0043e000
+
+	// Ship firing state (from mouse button)
+	bool _shipFiring;
+
+	// Ship direction index for sprite selection (Handler 7)
+	// Calculated from ship position: horizontal * 7 + vertical
+	// horizontal: 0-4 (left to right), vertical: 0-6 (up to down)
+	// Used to select which embedded HUD userId to render
+	int16 _shipDirectionIndex;
+	int16 _shipDirectionH;           // Horizontal direction (0-4, center=2)
+	int16 _shipDirectionV;           // Vertical direction (0-6, center=3)
+
+	// Helper to load a NUT file from IACT chunk data
+	NutRenderer *loadNutFromIact(Common::SeekableReadStream &b, int dataSize);
+
+	// ======================= Handler 7 FLY Ship System =======================
+	// For space flight missions (Level 3, etc.), Handler 7 uses a 35-frame
+	// direction-based ship sprite system. The ship visually banks and turns
+	// based on player position using a 5x7 grid of sprites.
+	//
+	// Based on FUN_0040c3cc and FUN_0040d836 disassembly:
+	// - DAT_0047fee8: Ship direction sprites (FLY001, par3=1, 35 frames)
+	// - DAT_0047fef0: Laser fire sprites (FLY002, par3=3)
+	// - DAT_0047fef8: Targeting overlay (FLY003, par3=2)
+	// - DAT_0047ff00: High-res alternative (FLY004, par3=11)
+	// - DAT_0044370c: Ship Y screen position
+	// - DAT_0044370e: Ship X screen position
+
+	NutRenderer *_flyShipSprite;     // DAT_0047fee8 - FLY001 (35 direction frames)
+	NutRenderer *_flyLaserSprite;    // DAT_0047fef0 - FLY002
+	NutRenderer *_flyTargetSprite;   // DAT_0047fef8 - FLY003
+	NutRenderer *_flyHiResSprite;    // DAT_0047ff00 - FLY004
+
+	// Handler 7 screen position (different from Handler 8's raw positions)
+	int16 _flyShipScreenX;           // DAT_0044370e - Ship X screen position
+	int16 _flyShipScreenY;           // DAT_0044370c - Ship Y screen position
 
 	/* Difficulty Level (0, 1, 2 = Easy, Med, Hard) */
 	int _difficulty;

@@ -62,9 +62,11 @@ protected:
 	void codec21(byte *dst, const byte *src, int width, int height, int pitch);
 
 	void loadFont(const char *filename);
+	void loadFontFromData(const byte *data, int32 dataSize);
 
 public:
 	NutRenderer(ScummEngine *vm, const char *filename);
+	NutRenderer(ScummEngine *vm, const byte *data, int32 dataSize);
 	virtual ~NutRenderer();
 	int getNumChars() const { return _numChars; }
 
@@ -76,7 +78,7 @@ public:
 	int getCharHeight(byte c) const;
 	const byte *getCharData(byte c);
 	byte getCharTransparency(byte c) const { return _chars[c].transparency; }
-	byte getBpp() const { return _bpp; }
+	byte getBpp() const { return 8; }
 
 	int getFontHeight() const { return _fontHeight; }
 };
