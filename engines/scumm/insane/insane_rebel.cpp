@@ -1597,16 +1597,40 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 
 							if (!loadedAsNut) {
 								// Load as embedded SAN (HUD overlays)
-								// The userId comes from par4 (not par3!)
+								// The userId parameter varies by handler type:
+								//
+								// Handler 0x26 (turret): Uses par3 for HUD slot (GRD files)
+								//   par3=1: GRD001 (Primary HUD overlay)
+								//   par3=2: GRD002 (Secondary HUD graphics)
+								//   par3=4: GRD010 (Ship cockpit frame)
+								//   etc.
+								//
+								// Handler 7 (space flight): Uses par4 for userId (FLY files handled above)
+								// Other handlers: Use par4 for userId
+								//
 								// par4 values seen in Level 3:
 								//   1000 = audio track
 								//   1-11 = HUD overlay slots
-								// The embedded HUD system uses userId to track different overlay elements
-								int userId = par4;
+								//
+								// Note: Handler may not be set yet if opcode 8 arrives before opcode 6
+								// Use heuristics: if par3 is in valid GRD range (1-13) and par4 is >= 1000
+								// or invalid, prefer par3
+								int userId;
+								bool usePar3 = (_rebelHandler == 0x26 || _rebelHandler == 0x19);
+
+								// Heuristic: if par3 is in typical GRD slot range (1-13) and par4 is
+								// out of range (0 or >= 1000), use par3 as it's likely a turret/GRD case
+								if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
+									usePar3 = true;
+									debug("Rebel2 Opcode 8: Using par3 heuristic (par3=%d, par4=%d)", par3, par4);
+								}
+
+								userId = usePar3 ? par3 : par4;
 
 								// Audio tracks (userId >= 1000) are handled separately, skip them
-								if (userId < 1000) {
-									debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d", userId);
+								if (userId > 0 && userId < 1000) {
+									debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d (handler=%d, par3=%d, par4=%d)",
+										userId, _rebelHandler, par3, par4);
 									loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
 								}
 							}
@@ -2806,6 +2830,24 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// The renderX/renderY are set from FOBJ's left/top values
 			destX = frame.renderX;
 			destY = frame.renderY;
+
+			// For Handler 0x26 (turret) and 0x19 (mixed): Cockpit overlays positioned at bottom
+			// The cockpit pieces (slots 1-2) should be rendered just above the status bar (Y=180)
+			// The FOBJ top value might be 0, so we override it for cockpit pieces
+			if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
+				// Cockpit overlay position: just above status bar
+				// Status bar is at Y=180, cockpit sits right above it
+				// For slot 1 (left piece): X = 0
+				// For slot 2 (right piece): X = width of slot 1
+				if (hudSlot == 1) {
+					destX = 0;
+				} else if (hudSlot == 2 && _rebelEmbeddedHud[1].valid) {
+					// Position slot 2 right after slot 1
+					destX = _rebelEmbeddedHud[1].width;
+				}
+				// Y position: status bar (180) minus cockpit height
+				destY = 180 - frame.height;
+			}
 
 			// For Handler 7: Apply position offset based on ship position
 			// This makes the ship sprite follow the mouse/crosshair
@@ -4617,6 +4659,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 	switch (levelId) {
 	case 1:
 		// Level 1: Single gameplay file (01P01.SAN)
+		// Level 1 uses Handler 0x26 (turret mode) - set before gameplay
+		_rebelHandler = 0x26;
 		filename = Common::String::format("%s/%sP01.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);
@@ -4699,6 +4743,7 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		break;
 
 	case 4:
+		_rebelHandler = 0x26;
 		// Level 4: Has cutscene, then single gameplay
 		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing cutscene %s", filename.c_str());
