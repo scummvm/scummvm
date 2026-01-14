@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/scummsys.h"
+
+#include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
 #include "access/noctropolis/noctropolis_player.h"
 #include "access/access.h"
@@ -32,7 +35,7 @@ NoctropolisRoom::NoctropolisRoom(AccessEngine *vm): Room(vm) {
 
 void NoctropolisRoom::reloadRoom() {
 	loadRoom(_vm->_player->_roomNumber);
-	
+
 	// This is LoadPlayer1
 	int subFileBase = 1;
 	int numSubFiles;
@@ -56,7 +59,7 @@ void NoctropolisRoom::reloadRoom() {
 		objBase = 115;
 		fileNum = 0xfc;
 	}
-	
+
 	_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
 	((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
 
@@ -64,7 +67,7 @@ void NoctropolisRoom::reloadRoom() {
 		Resource *data = _vm->_files->loadFile(fileNum, i);
 		_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
 	}
-	
+
 	reloadRoom1();
 }
 
@@ -133,7 +136,7 @@ void NoctropolisRoom::buildColumnXScroll(int playX, int screenX) {
 		xo = -screenX;
 		screenX = 0;
 	}
-	
+
 	if (colWidth <= xo)
 		return;
 
@@ -152,15 +155,165 @@ void NoctropolisRoom::buildColumnXScroll(int playX, int screenX) {
 	}
 }
 
-void NoctropolisRoom::mainAreaClick() {
-	//Common::Point &mousePos = _vm->_events->_mousePos;
-	Common::Point pt = _vm->_events->calcRawMouse();
-	//Screen &screen = *_vm->_screen;
-	Player &player = *_vm->_player;
+void NoctropolisRoom::doCommands() {
+	// aka NoctDoCommandLoop::ticker
+
+	if (_vm->_events->_interfaceOff) {
+		_vm->_events->setCursor(CURSOR_DARK_ANKH);
+	} else {
+		if (_vm->_events->_rightButton) {
+			_vm->_events->debounceRight();
+			roomMenu();
+		}
+
+		// TODO: Check keyboard commands
+		Common::Point pt = _vm->_events->calcRawMouse();
+		int hotspotIndex = -1;
+
+		_vm->_exitBox = false;
+
+		if (_selectCommand != 1 && _selectCommand != 2 &&
+			_selectCommand != 3 && _selectCommand != 5 &&
+			_selectCommand != 6) {
+			hotspotIndex = checkPlayerBox(pt);
+			// Mouse is at the player or Stiletto, check what the script says
+			if (hotspotIndex >= 0 && !(validateBox(hotspotIndex) & 0x80))
+				hotspotIndex = -1;
+		}
+
+		if (hotspotIndex < 0) {
+			hotspotIndex = checkBoxes1(pt);
+			while (hotspotIndex >= 0 && !(validateBox(hotspotIndex) & 0x80))
+				hotspotIndex = checkBoxes2(pt, hotspotIndex + 1, 0);
+		}
+
+		if (hotspotIndex >= 0) {
+			if (_vm->_exitBox)
+				_vm->_events->setCursor(CURSOR_HELP);
+			else if (_selectCommand <= 6)
+				_vm->_events->setCursor((CursorType)(_selectCommand + 2));
+			else
+				_vm->_events->setCursor(CURSOR_ARROW);
+
+			if (_vm->_events->_leftButton) {
+				_vm->_events->debounceLeft();
+				// Double-clicking on something selects the goto command
+				uint32 endTicks = g_system->getMillis() + 100;
+				while (g_system->getMillis() < endTicks) {
+					_vm->_events->pollEvents();
+					if (_vm->_events->_leftButton) {
+						_selectCommand = 1;
+						break;
+					}
+				}
+				// Also the script can force a goto command
+				if (_vm->_exitBox)
+					_selectCommand = 3;
+				_vm->_events->debounceLeft();
+				if (_selectCommand >= 0) {
+					_conFlag = true;
+					while (_conFlag && !_vm->shouldQuitOrRestart()) {
+						_conFlag = false;
+						_vm->_scripts->executeScript();
+					}
+				}
+			}
+		} else {
+			_vm->_exitBox = false;
+			_vm->_events->setCursor(CURSOR_ARROW);
+		}
+
+	}
+}
+
+
+int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
+	if (!_vm->_player->_playerOff) {
+		_vm->_player->calcManScale();
+		if (_vm->_player->_rawPlayer.x <= pt.x) {
+			byte bVar1 = _roomFlag >> 2 & 1;
+			long lVar3 = 200;
+			if (bVar1 != 0) {
+				lVar3 = 6;
+			}
+			long lVar2 = 0x3c;
+			if (bVar1 != 0) {
+				lVar2 = 6;
+			}
+			if (((pt.y <= _vm->_player->_rawPlayer.y) && ((_vm->_player->_rawPlayer.y - _vm->_screen->_scaleTable1[lVar3]) <= pt.y)) &&
+				(pt.x <= (_vm->_player->_rawPlayer.x + _vm->_screen->_scaleTable1[lVar2]))) {
+				_plotter._blockIn = 99;
+				return 0;
+			}
+		}
+	}
+
+	if (_vm->_flags[0xcd] == 1 || (_roomFlag & 2) == 0 || _vm->_flags[0xea] != 2)
+		return 1;
+
+	Player *stil = ((NoctropolisEngine *)_vm)->_stil;
+
+	if (stil->_playerOff != 0)
+		return 1;
+
+	_vm->_scale = _vm->_stilScale;
+	if (_vm->_stilScale == 0) {
+		_vm->_scale = (_vm->_scaleI *
+						(((_vm->_scaleH2 << 8) +
+						  _vm->_scaleT1 *
+						  (_vm->_scaleN1 + (stil->_rawPlayer.y - _vm->_scaleMaxY)) & 0xff00)
+						 / (uint)_vm->_scaleH1) >> 8);
+	}
+	_vm->_screen->setScaleTable(_vm->_scale);
+	_vm->_player->_playerOffset.y = _vm->_screen->_scaleTable1[180];
+	_vm->_player->_playerOffset.x = _vm->_screen->_scaleTable1[60];
+	if (pt.x < stil->_rawPlayer.x || stil->_rawPlayer.y < pt.y)
+		return 1;
+
+	if ((stil->_rawPlayer.y - _vm->_player->_playerOffset.y) <= pt.y && (pt.x <= (_vm->_player->_playerOffset.x + stil->_rawPlayer.x))) {
+		_plotter._blockIn = 98;
+		return 0;
+	}
+	return 1;
+}
+
+
+void NoctropolisRoom::mainAreaLClick() {
+	const Common::Point &mousePos = _vm->_events->_mousePos;
+	const Common::Point pt = _vm->_events->calcRawMouse();
+	const Screen &screen = *_vm->_screen;
 
 	// TODO: For now just add a move-to point for the player.
-	player._moveTo = pt;
-	player._playerMove = true;
+	//Player &player = *_vm->_player;
+	//player._moveTo = pt;
+	//player._playerMove = true;
+
+	//if (_selectCommand == -1) {
+	//	player._moveTo = pt;
+	//	player._playerMove = true;
+	/*} else {*/
+	if (mousePos.x >= screen._windowXAdd &&
+		mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
+		mousePos.y >= screen._windowYAdd &&
+		mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
+			if (checkBoxes1(pt) >= 0) {
+				checkBoxes3();
+			}
+	}
+}
+
+int NoctropolisRoom::validateBox(int boxId) {
+	int result = Room::validateBox(boxId);
+
+	if (_vm->_player->_roomNumber == 54) {
+		_vm->_scripts->_continuenceType = 1;
+	}
+	return result;
+}
+
+
+void NoctropolisRoom::roomMenu() {
+	warning("TODO: Implement NoctropolisRoom::RoomMenu (see gRoomMenuLoop?)");
 }
 
 } // end namespace Noctropolis

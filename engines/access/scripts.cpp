@@ -25,6 +25,7 @@
 #include "access/scripts.h"
 #include "access/martian/martian_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
+#include "access/noctropolis/noctropolis_resources.h"
 
 namespace Access {
 
@@ -35,7 +36,6 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_sequence = 0;
 	_endFlag = false;
 	_continuenceType = 0;
-	_continuenceFlag = false;
 	_returnCode = 0;
 	_scriptCommand = 0;
 	_choice = 0;
@@ -140,6 +140,8 @@ void Scripts::setOpcodes_v2() {
 }
 
 void Scripts::setOpcodes_v3() {
+	// Modify command list for Noctropolis
+	COMMAND_LIST[1] = &Scripts::cmdEndObject_v3;
 	COMMAND_LIST[18] = &Scripts::cmdSetCoords;
 	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
 	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
@@ -308,16 +310,56 @@ void Scripts::cmdObject() {
 }
 
 void Scripts::cmdEndObject() {
-	const char *msg;
-	if (_vm->getLanguage() == Common::ES_ESP)
-		msg = ESP_GENERAL_MESSAGES[_vm->_room->_selectCommand];
-	else
-		msg = GENERAL_MESSAGES[_vm->_room->_selectCommand];
+	const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
 	debugC(1, kDebugScripts, "cmdEndObject(msg=\"%s\")", msg);
 	if (_vm->getGameID() == kGameMartianMemorandum)
 		doCmdPrint_v1(msg);
 	else
 		printString(msg);
+}
+
+
+void Scripts::cmdEndObject_v3() {
+	if (_vm->_room->_selectCommand == 4 && _vm->_boxSelectY == 0x62) {
+		Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
+		const char *vidfile = "DARK/VID/A4IN00.VID";
+		if (_vm->_flags[91] == 2) {
+			vidfile = "DARK/VID/A4IN26.VID";
+		}
+
+		if (_vm->_textFlag) {
+			const char *subtitle = res->getEndMessage();
+			if (_vm->_flags[91] == 2) {
+				subtitle = res->getStilEndMessage();
+			}
+			//NoctRoomEngine::setBoxInfo(&_gNoctRoomEngine,0x46,0xcd,"STILETTO",subtitle,3);
+		}
+		error("TODO: Finish the special case for cmdEndObject_v3");
+		/*
+		// duck the sound here.. SetRelVolume(0x32);
+		_vm->setRoomVideo(100,100,vidfile,true,false);
+		gNoctRoomVideo.videoEnd = 0;
+		gNoctRoomVideo.field27_0x2a = 0;
+		gNoctRoomVideo.playState = 1;
+		gNoctRoomVideo.field28_0x2b = 1;
+		gNoctRoomVideo.field25_0x28 = 1;
+		NoctRoomEngine::playRoomVideo(&_gNoctRoomEngine,(bool *)&gNoctRoomVideo.videoEnd);
+		gNoctRoomVideo.playState = 2;
+		NoctRoomSubEngine::acceptControl((NoctRoomSubEngine *)&gNoctRoomVideo);
+		*/
+	} else {
+		const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
+		debugC(1, kDebugScripts, "cmdEndObject_v3(msg=\"%s\")", msg);
+
+		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctCenter);
+		if (_vm->_player->_roomNumber <= 4)
+          _vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
+
+		printString(msg);
+	}
+	_vm->_room->_conFlag = true;
+	_endFlag = true;
+	_returnCode = 0;
 }
 
 void Scripts::cmdJumpLook() {
@@ -428,11 +470,15 @@ void Scripts::cmdPrint_v1() {
 }
 
 void Scripts::printString(const Common::String &msg) {
-	if (_vm->getGameID() != kGameMartianMemorandum) {
-		_vm->_screen->_printOrg = Common::Point(20, 42);
-		_vm->_screen->_printStart = Common::Point(20, 42);
+	if (_vm->getGameID() == kGameNoctropolis) {
+		_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(320, 200);
 		_vm->_timers[PRINT_TIMER]._timer = 50;
 		_vm->_timers[PRINT_TIMER]._initTm = 50;
+		++_vm->_timers[PRINT_TIMER]._flag;
+	} else if (_vm->getGameID() != kGameMartianMemorandum) {
+		_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(20, 42);
+		_vm->_timers[PRINT_TIMER]._timer = 1;
+		_vm->_timers[PRINT_TIMER]._initTm = 1;
 		++_vm->_timers[PRINT_TIMER]._flag;
 	}
 
@@ -1068,7 +1114,7 @@ void Scripts::cmdPlayerSpeak() {
 	_vm->_bubbleBox->_bubbleTitle = title;
 
 	_vm->_bubbleBox->placeBubble(str);
-	_continuenceFlag = 1;
+	_vm->_room->_conFlag = true;
 	findNull();
 	warning("TODO: Check rendering for cmdPlayerSpeak() box");
 }
@@ -1387,7 +1433,7 @@ void Scripts::cmdEndVideo() {
 
 void Scripts::cmdDigitalPlay() {
 	error("TODO: Implement Scripts::cmdDigitalPlay");
-	_continuenceFlag = true;
+	_vm->_room->_conFlag = true;
 }
 
 void Scripts::cmdFillSound() {
@@ -1401,12 +1447,12 @@ void Scripts::cmdFillSound() {
 			break;
 		}
 	}
-	_continuenceFlag = true;
+	_vm->_room->_conFlag = true;
 }
 
 void Scripts::cmdPlayVid1() {
 	error("TODO: Implement Scripts::cmdPlayVid1");
-	_continuenceFlag = true;
+	_vm->_room->_conFlag = true;
 }
 
 void Scripts::cmdCharWait() {
@@ -1534,10 +1580,9 @@ void Scripts::cmdStilOn() {
 
 void Scripts::cmdReturnExit() {
 	debugCN(1, kDebugScripts, "cmdReturnExit()");
-	//_vm->_exitBox = true; -- work out what to do with this.
+	_vm->_exitBox = true;
 	_endFlag = true;
 	_returnCode = 0;
-	error("TODO: Implement Scripts::cmdReturnExit");
 }
 
 void Scripts::cmdSetCoords() {

@@ -103,7 +103,7 @@ protected:
 	int checkBoxes2(const Common::Point &pt, int start, int count);
 	void checkBoxes3();
 
-	int validateBox(int boxId);
+	virtual int validateBox(int boxId);
 
 	/**
 	 * Inner handler for switching to a given command mode
@@ -122,7 +122,9 @@ protected:
 
 	virtual void doCommands();
 
-	virtual void mainAreaClick() = 0;
+	virtual void mainAreaLClick() = 0;
+
+	virtual void mainAreaRClick() {};
 
 	virtual void walkCursor();
 public:
@@ -137,7 +139,7 @@ public:
 	int _playFieldHeight;
 	byte *_tile;
 	int _selectCommand;
-	bool _conFlag;
+	bool _conFlag; // aka _continuenceFlag
 	int _rMouse[10][2];
 public:
 	Room(AccessEngine *vm);

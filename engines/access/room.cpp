@@ -276,7 +276,7 @@ void Room::doRoom() {
 
 void Room::roomInit() {
 	_vm->_animation->clearTimers();
-	_vm->_scripts->_continuenceFlag = false;
+	_conFlag = false;
 	_vm->_scripts->_continuenceType = 0;
 	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
@@ -380,7 +380,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 void Room::roomLoop() {
 	_vm->_scripts->_continuenceType = 1;
-	_vm->_scripts->_continuenceFlag = false;
+	_conFlag = false;
 	_vm->_scripts->_sequence = ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
@@ -651,8 +651,10 @@ void Room::doCommands() {
 
 		} else {
 			// Mouse click in main game area
-			mainAreaClick();
+			mainAreaLClick();
 		}
+	} else if (_vm->_events->_rightButton) {
+		mainAreaRClick();
 	} else if (_vm->_events->getAction(action)) {
 		const AccessActionCode *actionCodes = _vm->getActionCodes();
 		for (int i = 0; actionCodes[i]._action != kActionNone; ++i) {
@@ -789,7 +791,8 @@ void Room::executeCommand(int commandId) {
 		}
 	} else {
 		assert(_vm->getGameID() == kGameNoctropolis);
-		warning("TODO: implement executeCommand for Noctropolis");
+		error("TODO: implement executeCommand for Noctropolis");
+		// See the code in NoctRoomEngine::afterDoCommandsTick
 	}
 	screen.saveScreen();
 	screen.setDisplayScan();

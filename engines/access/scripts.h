@@ -58,6 +58,7 @@ protected:
 
 	void cmdObject();
 	void cmdEndObject();
+	void cmdEndObject_v3();
 	void cmdJumpLook();
 	void cmdJumpOpen();
 	void cmdJumpHelp();
@@ -181,7 +182,6 @@ public:
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
 
-	bool _continuenceFlag; // only used in Noctropolis
 	int _continuenceType;  // only used in Noctropolis
 
 public:

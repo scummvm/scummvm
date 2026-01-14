@@ -160,23 +160,31 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		if (height >= 0)
 			bounds.setHeight(bounds.height() + 13 - (height % 13));
 	} else {
-		assert(gameType == kGameNoctropolis);/*
-		if (!_bubbleTitle.empty())
+		assert(gameType == kGameNoctropolis);
+		// Don't do the same bounds offset as the other games
+		bounds = Common::Rect(printOrg.x, printOrg.y, printOrg.x, printOrg.y);
+
+		int textHeight = _vm->_fonts.getFont(4)->stringHeight(msg);
+		int textWidth = _vm->_fonts.getFont(4)->stringWidth(msg);
+
+		if (_type & kTextBoxNoctCaption)
 			textHeight += _vm->_fonts.getFont(4)->stringHeight(_bubbleTitle) - 4;
 
-		if (_type & kTextBoxCenter) {
+		if (_type & kTextBoxNoctCenter) {
 			// Center the box
-			boxX -= (textWidth + 27) / 2;
-			boxY -= (textHeight + 23) / 2;
+			bounds.left -= (textWidth + 27) / 2;
+			bounds.top -= (textHeight + 23) / 2;
 		}
 
-		boxWidth = (textWidth + 13) / 16;
-		boxHeight = (textHeight + 13) / 16;
+		bounds.setWidth((textWidth + 13) / 16);
+		bounds.setHeight((textHeight + 13) / 16);
 
-		if (!(flags & kTextBoxPlain)) {
-			boxWidth = MAX<int16>(boxWidth, 3);
-			boxHeight = MAX<int16>(boxHeight, 3);
-		}*/
+		if (!(_type & kTextBoxNoctPlain)) {
+			if (bounds.width() < 3)
+				bounds.setWidth(3);
+			if (bounds.height() < 3)
+				bounds.setHeight(3);
+		}
 	}
 
 	if (bounds.bottom > screen.h)
@@ -269,7 +277,8 @@ void BubbleBox::printBubble_v3(const Common::String &msg) {
 
 	drawBubble(_bubbles.size() - 1);
 
-	Font::_fontColors[1] = 247;
+	Font::_fontColors[1] = 255;
+	Font::_fontColors[0] = 0;
 
 	// Loop through drawing the lines
 	Common::String s = msg;
@@ -288,7 +297,6 @@ void BubbleBox::printBubble_v3(const Common::String &msg) {
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	} while (!lastLine);
-
 }
 
 
@@ -313,8 +321,100 @@ void BubbleBox::drawBubble(int index) {
 
 
 void BubbleBox::doBox_v3(int item, int box) {
+	// In practice this is the second half of Noctropolis' DoBox - the first half
+	// was in the noctropolis case part of calcBubble
 	const Font *font = _vm->_fonts.getFont(4);
-	int textWidth = font->stringWidth(_bubbleDisplStr);
+	const SpriteResource *icons = _vm->getIcons();
+	Screen &screen = *_vm->_screen;
+
+	screen.saveScreen();
+	screen.setDisplayScan();
+	//bool saveRect = true; // TODO: decide about this?
+
+	int boxX = _bounds.left;
+	int boxY = _bounds.top;
+	int boxHeight = _bounds.height();
+	int boxWidth = _bounds.width();
+	int fontHeight = font->stringHeight(_bubbleDisplStr);
+
+	// Convert the "draw" size (rows and cols of sprites) to actual pixel size
+	if (_type & kTextBoxNoctPlain)
+		_bounds = Common::Rect(Common::Point(boxX, boxY), boxWidth * 16 + 27, boxHeight * 16 + 20);
+	else
+		_bounds = Common::Rect(Common::Point(boxX - 34, boxY - 43), boxWidth * 16 + 27 + 34, boxHeight * 16 + 20 + 43);
+
+	screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 15, boxY + 5 + boxHeight * 16 + 8), 246);
+
+	if (_type & kTextBoxNoctCaption) {
+		screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 15, boxY + 5 + fontHeight), 236);
+		screen.hLine(boxX + 5, boxY + 5 + fontHeight, boxX + 5 + boxWidth * 16 + 15, 237);
+	}
+
+	int16 drawX = boxX, drawWidth = boxWidth;
+	int16 drawY = boxY, drawHeight = boxHeight;
+
+	if (!(_type & kTextBoxNoctPlain)) {
+		// Draw the Gargoyle
+		screen.plotImage(icons, 1, Common::Point(boxX - 34, boxY - 43));
+		drawX += 61;
+		drawWidth -= 3;
+		drawHeight -= 3;
+	} else {
+		screen.plotImage(icons, 7, Common::Point(boxX, boxY));
+		drawX += 13;
+	}
+
+	for (int i = 0; i < drawWidth; i++) {
+		screen.plotImage(icons, 2, Common::Point(drawX, drawY));
+		drawX += 16;
+	}
+
+	screen.plotImage(icons, 4, Common::Point(drawX, drawY));
+
+	drawY += 10;
+
+	for (int i = 0; i < boxHeight; i++) {
+		screen.plotImage(icons, 3, Common::Point(drawX + 8, drawY));
+		drawY += 16;
+	}
+
+	screen.plotImage(icons, 5, Common::Point(drawX, drawY));
+
+	for (int i = 0; i < boxWidth; i++) {
+		drawX -= 16;
+		screen.plotImage(icons, 2, Common::Point(drawX, drawY + 4));
+	}
+
+	drawX -= 13;
+
+	screen.plotImage(icons, 6, Common::Point(drawX, drawY));
+
+	for (int i = 0; i < drawHeight; i++) {
+		drawY -= 16;
+		screen.plotImage(icons, 3, Common::Point(drawX, drawY));
+	}
+
+	font->_fontColors[0] = 0;
+	if (_type & kTextBoxNoctCaption) {
+		int captionWidth = font->stringWidth(_bubbleTitle);
+		font->_fontColors[1] = 238;
+		font->drawString(&screen, _bubbleTitle, Common::Point(boxX + 14 + (boxWidth * 8) - (captionWidth / 2), boxY + 6));
+		_vm->_screen->_printOrg.x = boxX + 14;
+		_vm->_screen->_printOrg.y = boxY + 6 + fontHeight;
+		//font->_fontColors[1] = 255;
+		//font->drawString(&screen, _bubbleDisplStr, Common::Point(boxX + 14, boxY + 6 + fontHeight));
+	} else {
+		font->_fontColors[1] = 255;
+		font->drawString(&screen, _bubbleDisplStr, Common::Point(boxX + 14, boxY + 10));
+	}
+
+	/*if (boxDimensions) {
+		boxDimensions->x = boxX;
+		boxDimensions->y = boxY;
+		boxDimensions->width = boxWidth;
+		boxDimensions->height = boxHeight;
+	}*/
+	_vm->_screen->restoreScreen();
 }
 
 void BubbleBox::doBox_v2(int item, int box) {
@@ -422,7 +522,6 @@ void BubbleBox::setCursorPos(int posX, int posY) {
 }
 
 void BubbleBox::printString(Common::String msg) {
-
 	if (_vm->_fonts._charSet._hi & 2) {
 		// Draw a shadow for the text
 		Common::Point shadowPt = _vm->_screen->_printOrg + Common::Point(1, 1);

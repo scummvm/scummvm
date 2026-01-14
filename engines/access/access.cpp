@@ -113,6 +113,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_pictureTaken = 0;
 
 	_vidEnd = false;
+	_textFlag = false;
+	_exitBox = false;
 
 	_icons = nullptr;
 	_stilScale = 0;

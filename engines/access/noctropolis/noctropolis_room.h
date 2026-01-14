@@ -32,7 +32,7 @@ class NoctropolisRoom : public Room {
 public:
 	NoctropolisRoom(AccessEngine *vm);
 
-	void roomMenu() override {};
+	void roomMenu() override;
 
 	void init4Quads() override {};
 
@@ -43,15 +43,21 @@ public:
 
 protected:
 	void reloadRoom() override;
-	
+
 	void reloadRoom1() override;
 
-	void mainAreaClick() override;
+	void mainAreaLClick() override;
+
+	void doCommands() override;
+
+	int validateBox(int boxId) override;
 
 private:
 	// Like buildColumn but can handle negative playX.
 	// TODO: Can we just replace Room::buildColumn with this one?
 	void buildColumnXScroll(int playX, int screenX);
+
+	int checkPlayerBox(const Common::Point &pt);
 };
 
 } // end namespace Noctropolis
