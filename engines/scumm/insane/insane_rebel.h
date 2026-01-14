@@ -196,6 +196,9 @@ public:
 	// Returns suffix like "A", "B", "C" for DIE_X.SAN
 	Common::String selectDeathVideoVariant(int levelId, int phase, int frame);
 
+	// Play cinematic video by filename
+	void playCinematic(const char *filename);
+
 	// Play death video with proper variant selection
 	void playLevelDeathVariant(int levelId, int phase, int frame);
 
@@ -340,6 +343,62 @@ public:
 	Explosion _explosions[5];
 	void spawnExplosion(int x, int y, int objectHalfWidth);
 
+	// ======================= Collision Zone System =======================
+	// For Level 3 "pilot" ship obstacle avoidance (FUN_40E35E, FUN_40C3CC)
+	// Collision zones are quadrilaterals defined by IACT Opcode 5
+	// The player's ship position is tested against these zones each frame
+	//
+	// Zone Data Layout from IACT chunk:
+	//   +0x00: opcode (5)
+	//   +0x02: sub-opcode (0x0D = primary, 0x0E = secondary)
+	//   +0x04: par3 (flags)
+	//   +0x06: zoneType (e.g., 5 for damage zones)
+	//   +0x08: frameStart
+	//   +0x0A: frameEnd
+	//   +0x0C-0x1A: X1,Y1,X2,Y2,X3,Y3,X4,Y4 vertex coordinates
+
+	struct CollisionZone {
+		int16 x1, y1;  // Top-left
+		int16 x2, y2;  // Top-right
+		int16 x3, y3;  // Bottom-right
+		int16 x4, y4;  // Bottom-left
+		int16 frameStart;
+		int16 frameEnd;
+		int16 zoneType;
+		int16 subOpcode;  // 0x0D = primary, 0x0E = secondary
+		bool active;
+	};
+
+	// Two zone tables matching retail DAT_0043fb00 (primary) and DAT_0043f9c8 (secondary)
+	static const int kMaxCollisionZones = 5;
+	CollisionZone _primaryZones[kMaxCollisionZones];    // Sub-opcode 0x0D zones
+	CollisionZone _secondaryZones[kMaxCollisionZones];  // Sub-opcode 0x0E zones
+	int _primaryZoneCount;
+	int _secondaryZoneCount;
+
+	// Corridor boundaries from IACT opcode 7 sub-opcodes 1 and 2
+	int16 _corridorLeftX;    // DAT_00443b0a - Left X boundary
+	int16 _corridorTopY;     // DAT_00443b0c - Top Y boundary
+	int16 _corridorRightX;   // DAT_00443b0e - Right X boundary
+	int16 _corridorBottomY;  // DAT_00443b10 - Bottom Y boundary
+
+	// Hit cooldown timer (DAT_0044374c) - prevents rapid damage stacking
+	int16 _hitCooldown;
+
+	// Draw collision zone quadrilaterals for visualization/debugging
+	// Called from procPostRendering when collision zones should be visible
+	void drawCollisionZones(byte *dst, int pitch, int width, int height, byte color);
+
+	// Draw a single quadrilateral (4 edges)
+	void drawQuad(byte *dst, int pitch, int width, int height, 
+	              int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color);
+
+	// Register a collision zone from IACT opcode 5 data
+	void registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode);
+
+	// Reset collision zone counters (called at end of frame)
+	void resetCollisionZones();
+
 	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
 	int16 _playerShield;  // Shields: 0..255 where 255 = full
 	int16 _playerLives;
@@ -413,6 +472,16 @@ public:
 	// Level mode for handler 8 (different from _rebelLevelType)
 	// Set by opcode 6 par3, affects ship rendering behavior
 	int16 _shipLevelMode;            // DAT_0043e000
+
+	// Control mode for Handler 7 (space flight) - DAT_004437c0
+	// Set by IACT opcode 6 par3 when handler is 7
+	// Determines shooting capability and collision zone type:
+	//   Mode 0: Flight/avoid mode - no shooting, uses secondary zones (sub-opcode 0x0E)
+	//   Mode 1: Alternate flight mode - no shooting, uses primary zones (sub-opcode 0x0D)
+	//   Mode 2: Combat mode - shooting ENABLED, crosshair shown, uses secondary zones
+	// In Level 3's first sequence, par3=0 (no shooting - pure obstacle avoidance)
+	// In combat sequences, par3=2 (shooting enabled)
+	int16 _flyControlMode;           // DAT_004437c0
 
 	// Ship firing state (from mouse button)
 	bool _shipFiring;
