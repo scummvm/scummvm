@@ -344,8 +344,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	bool scale = true;
 	int dc = 0;
 
-	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
-	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
 	auto pitch = frame->pitch / frame->format.bytesPerPixel;
 	assert(_frame->pitch == frame->pitch);
 
@@ -362,6 +360,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		decode_pfrm_block(frame, x + dx, y, log2w, log2h, bs, wordStream, byteStream);
 		return;
 	} else if (code == 6) {
+		auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
 		assert(wordStream.pos() + 4 <= wordStream.size());
 		if (log2w) {
 			dst[0] = wordStream.readUint16LE();
@@ -373,6 +372,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		return;
 	}
 
+	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
+	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
 	if (code == 0) {
 		assert(byteStream.pos() < byteStream.size());
 		src += _mv[byteStream.readByte()];
