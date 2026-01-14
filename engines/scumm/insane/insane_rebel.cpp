@@ -100,7 +100,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_mouseoverNut = new NutRenderer(_vm, "SYSTM/MSTOVER.NUT");
 
 	_enemies.clear();
-	_rebelHandler = 8;  // Default to Handler 8 (ground vehicle) for Level 1
+	_rebelHandler = 8;  // Default to Handler 8 (third-person vehicle) for Level 1
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
 	_introCursorPushed = false;  // Cursor state tracking for intro sequences
 
@@ -232,7 +232,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_shots[i].counter = 0;
 	}
 
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 16; i++) {
 		_rebelEmbeddedHud[i].pixels = nullptr;
 		_rebelEmbeddedHud[i].width = 0;
 		_rebelEmbeddedHud[i].height = 0;
@@ -240,6 +240,29 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelEmbeddedHud[i].renderY = 0;
 		_rebelEmbeddedHud[i].valid = false;
 	}
+
+	// Initialize Handler 8 ship system
+	_shipSprite = nullptr;
+	_shipSprite2 = nullptr;
+	_shipOverlay1 = nullptr;
+	_shipOverlay2 = nullptr;
+	_shipPosX = 0xa0;      // Start centered (160 in hex)
+	_shipPosY = 0x28;      // Start at vertical center (40)
+	_shipTargetX = 0xa0;
+	_shipTargetY = 0x28;
+	_shipLevelMode = 0;
+	_shipFiring = false;
+	_shipDirectionH = 2;   // Start centered horizontally (0-4 range)
+	_shipDirectionV = 3;   // Start centered vertically (0-6 range)
+	_shipDirectionIndex = 2 * 7 + 3;  // Center = 17
+
+	// Initialize Handler 7 FLY ship system
+	_flyShipSprite = nullptr;    // FLY001 - 35 direction frames
+	_flyLaserSprite = nullptr;   // FLY002 - laser sprites
+	_flyTargetSprite = nullptr;  // FLY003 - targeting overlay
+	_flyHiResSprite = nullptr;   // FLY004 - high-res alternative
+	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
+	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
 
 	// Initialize audio system for RA2 (since we don't use iMUSE)
 	_audioSampleRate = 11025;  // RA2 audio is 11025 Hz, not 22050 Hz
@@ -293,6 +316,24 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _smush_smalfontNut;
 	delete _smush_titlefontNut;
 	delete _smush_mouseoverNut;
+
+	// Clean up Handler 8 ship sprites
+	delete _shipSprite;
+	delete _shipSprite2;
+	delete _shipOverlay1;
+	delete _shipOverlay2;
+
+	// Clean up Handler 7 FLY ship sprites
+	delete _flyShipSprite;
+	delete _flyLaserSprite;
+	delete _flyTargetSprite;
+	delete _flyHiResSprite;
+
+	// Clean up embedded HUD overlays
+	for (int i = 0; i < 16; i++) {
+		free(_rebelEmbeddedHud[i].pixels);
+		_rebelEmbeddedHud[i].pixels = nullptr;
+	}
 }
 
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
@@ -737,13 +778,51 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		// Opcode 5: Special handling based on par2 value
 		// Disassembly shows sub-opcodes 0xD (13) and 0xE (14)
 		debug("Rebel2 IACT Opcode 5: par2=%d par3=%d par4=%d", par2, par3, par4);
-		
+
+	} else if (par1 == 7) {
+		// Opcode 7: Sprite/HUD control for Handler 7 (space flight levels like Level 3)
+		// par2 = control type (41 = sprite selection?)
+		// par3 = usually 0
+		// par4 = sprite/slot ID (0 or 5 seen in Level 3)
+		//
+		// This opcode may control which ship direction sprite to display
+		// or reference embedded graphics loaded elsewhere
+		debug("Rebel2 IACT Opcode 7: par2=%d par3=%d par4=%d handler=%d",
+			par2, par3, par4, _rebelHandler);
+
+		// Read remaining IACT data to understand structure
+		int64 startPos = b.pos();
+		int64 remaining = b.size() - startPos;
+		if (remaining > 0 && remaining <= 64) {
+			byte payload[64];
+			int bytesRead = b.read(payload, MIN((int64)64, remaining));
+			debug("Rebel2 Opcode 7: payload (%d bytes): %02X %02X %02X %02X %02X %02X %02X %02X",
+				bytesRead,
+				bytesRead > 0 ? payload[0] : 0, bytesRead > 1 ? payload[1] : 0,
+				bytesRead > 2 ? payload[2] : 0, bytesRead > 3 ? payload[3] : 0,
+				bytesRead > 4 ? payload[4] : 0, bytesRead > 5 ? payload[5] : 0,
+				bytesRead > 6 ? payload[6] : 0, bytesRead > 7 ? payload[7] : 0);
+			b.seek(startPos);
+		}
+
+		// par2 == 41 (0x29) seems to be a common value
+		// This might be a "show sprite" command referencing par4 as the slot
+		if (par2 == 41) {
+			// par4 could be a HUD slot or sprite index
+			// For Handler 7, set which embedded HUD frame to display
+			if (_rebelHandler == 7 && par4 >= 0 && par4 < 16) {
+				// Mark this slot as the active one for direction-based rendering
+				// This will be used in post-rendering to know which frame to show
+				debug("Rebel2 Opcode 7: Activating HUD slot %d for Handler 7", par4);
+			}
+		}
+
 	} else if (par1 == 6) {
 		// Opcode 6: Level setup / mode switch (FUN_41CADB case 4)
 		iactRebel2Opcode6(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 8) {
 		// Opcode 8: HUD resource loading (FUN_41CADB case 6)
-		iactRebel2Opcode8(renderBitmap, b, par2, par3, par4);
+		iactRebel2Opcode8(renderBitmap, b, size, par2, par3, par4);
 	} else if (par1 == 9) {
 		// Opcode 9: Text/subtitle display
 		iactRebel2Opcode9(renderBitmap, b, par2, par3, par4);
@@ -901,12 +980,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// Opcode 6: Level setup / mode switch
 	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
 	//
-	// Assembly behavior:
-	// 1. If par4 == 1: Draw status bar sprite 5, clear link tables, reset state
-	// 2. Set level type (DAT_00457900 = par3)
-	// 3. Handle autopilot/control mode logic
-	// 4. Update damage level counter
-	// 5. Calculate view offsets based on level type
+	// For Handler 8 (third-person vehicle) - FUN_00401234 case 4:
+	// - par3 sets ship level mode (DAT_0043e000)
+	// - par4 == 1 triggers status bar display and state reset
+	// - Updates ship position based on mouse input
+	//
+	// For Handler 0x26/0x19 (turret/space):
+	// - Same par4 == 1 behavior
+	// - Different view offset calculations
 
 	debug("Rebel2 IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
 
@@ -914,6 +995,218 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
 		_rebelHandler = par2;
 		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
+	}
+
+	// Handler 8 specific logic (third-person vehicle) - FUN_00401234 case 4
+	if (_rebelHandler == 8) {
+		// Set ship level mode (DAT_0043e000 = par3)
+		_shipLevelMode = par3;
+
+		// If par4 == 1, enable status bar and reset state
+		if (par4 == 1) {
+			_rebelStatusBarSprite = 5;  // Status bar sprite for Handler 8
+			// Reset link tables
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			debug("Rebel2 Opcode 6 (Handler 8): Status bar enabled, state reset");
+		}
+
+		// Skip position calculation for special modes 4 and 5
+		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
+			// Calculate target position from mouse input
+			// Mouse X maps to ship horizontal tilt, Mouse Y to vertical tilt
+			// Based on FUN_00401234 lines 151-166:
+			// local_18 = ((DAT_0047a7e0 * 5 + 0x27b) * 0x40) / 0xfe
+			// local_1c = ((DAT_0047a7e2 * 5 + 0x27b) * 0x10) / 0xfe
+
+			// Map mouse position (-127 to 127 range) to ship target
+			// Mouse is 0-320, center is 160. Map to -127 to 127 range
+			int16 mouseOffsetX = (int16)((_vm->_mouse.x - 160) * 127 / 160);
+			int16 mouseOffsetY = (int16)((_vm->_mouse.y - 100) * 127 / 100);
+
+			// Clamp to valid range
+			if (mouseOffsetX > 127) mouseOffsetX = 127;
+			if (mouseOffsetX < -127) mouseOffsetX = -127;
+			if (mouseOffsetY > 127) mouseOffsetY = 127;
+			if (mouseOffsetY < -127) mouseOffsetY = -127;
+
+			// Calculate target positions using the original formula
+			_shipTargetX = (int16)(((mouseOffsetX * 5 + 0x27b) * 0x40) / 0xfe);
+			_shipTargetY = (int16)(-((mouseOffsetY * 5 + 0x27b) * 0x10) / 0xfe);
+
+			// Smooth interpolation toward target (max 50 pixels per frame)
+			const int16 maxStep = 50;  // 0x32 in hex
+			if (_shipPosX < _shipTargetX) {
+				int16 newX = _shipPosX + maxStep;
+				_shipPosX = (newX > _shipTargetX) ? _shipTargetX : newX;
+			} else if (_shipPosX > _shipTargetX) {
+				int16 newX = _shipPosX - maxStep;
+				_shipPosX = (newX < _shipTargetX) ? _shipTargetX : newX;
+			}
+
+			if (_shipPosY < _shipTargetY) {
+				int16 newY = _shipPosY + maxStep;
+				_shipPosY = (newY > _shipTargetY) ? _shipTargetY : newY;
+			} else if (_shipPosY > _shipTargetY) {
+				int16 newY = _shipPosY - maxStep;
+				_shipPosY = (newY < _shipTargetY) ? _shipTargetY : newY;
+			}
+
+			// Calculate ship direction indices for sprite selection
+			// Map mouse position to 5x7 direction grid (like Handler 7)
+			int16 mouseX = _vm->_mouse.x;
+			int16 mouseY = _vm->_mouse.y;
+
+			// Scale mouse if video is larger than 320x200
+			if (_player && _player->_width > 320) {
+				mouseX = (mouseX * 320) / _player->_width;
+			}
+			if (_player && _player->_height > 200) {
+				mouseY = (mouseY * 200) / _player->_height;
+			}
+
+			// Horizontal: 5 zones (0=far left, 2=center, 4=far right)
+			if (mouseX < 64) _shipDirectionH = 0;
+			else if (mouseX < 128) _shipDirectionH = 1;
+			else if (mouseX < 192) _shipDirectionH = 2;
+			else if (mouseX < 256) _shipDirectionH = 3;
+			else _shipDirectionH = 4;
+
+			// Vertical: 7 zones (0=far up, 3=center, 6=far down)
+			if (mouseY < 28) _shipDirectionV = 0;
+			else if (mouseY < 57) _shipDirectionV = 1;
+			else if (mouseY < 86) _shipDirectionV = 2;
+			else if (mouseY < 114) _shipDirectionV = 3;
+			else if (mouseY < 143) _shipDirectionV = 4;
+			else if (mouseY < 171) _shipDirectionV = 5;
+			else _shipDirectionV = 6;
+
+			_shipDirectionIndex = _shipDirectionH * 7 + _shipDirectionV;
+		}
+
+		// Update firing state from mouse button
+		_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+
+		debug("Rebel2 Opcode 6 (Handler 8): mode=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
+			_shipLevelMode, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
+			_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
+
+		// Handler 8 doesn't use the same view offset logic as other handlers
+		// Skip the rest of the function for Handler 8
+		return;
+	}
+
+	// Handler 7 specific logic (space flight) - FUN_0040d836 / FUN_0040c3cc
+	// Used for Level 3 and similar space combat levels
+	if (_rebelHandler == 7) {
+		// Set level mode (same as Handler 8)
+		_shipLevelMode = par3;
+
+		// If par4 == 1, enable status bar
+		if (par4 == 1) {
+			_rebelStatusBarSprite = 5;  // Status bar sprite
+			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled");
+		}
+
+		// Update ship screen position from mouse
+		// Handler 7 uses DAT_0044370c (Y) and DAT_0044370e (X) for screen position
+		// Get raw mouse position
+		int16 rawMouseX = _vm->_mouse.x;
+		int16 rawMouseY = _vm->_mouse.y;
+
+		// Scale mouse to 320x200 logical space if video is larger
+		int16 mouseX = rawMouseX;
+		int16 mouseY = rawMouseY;
+		if (_player && _player->_width > 320) {
+			mouseX = (rawMouseX * 320) / _player->_width;
+		}
+		if (_player && _player->_height > 200) {
+			mouseY = (rawMouseY * 200) / _player->_height;
+		}
+
+		// Clamp to screen bounds (matching FUN_0040c3cc bounds)
+		if (mouseX < 0) mouseX = 0;
+		if (mouseX > 319) mouseX = 319;
+		if (mouseY < 0) mouseY = 0;
+		if (mouseY > 199) mouseY = 199;
+
+		// Update ship position with smooth interpolation
+		// FUN_0040c3cc uses complex smoothing, we use simpler immediate response
+		const int16 maxStep = 15;
+		if (_shipPosX < mouseX) {
+			_shipPosX = MIN((int16)(_shipPosX + maxStep), mouseX);
+		} else if (_shipPosX > mouseX) {
+			_shipPosX = MAX((int16)(_shipPosX - maxStep), mouseX);
+		}
+		if (_shipPosY < mouseY) {
+			_shipPosY = MIN((int16)(_shipPosY + maxStep), mouseY);
+		} else if (_shipPosY > mouseY) {
+			_shipPosY = MAX((int16)(_shipPosY - maxStep), mouseY);
+		}
+
+		// Update Handler 7 screen position (DAT_0044370c/e)
+		// These track the actual on-screen position for direction calculation
+		_flyShipScreenX = _shipPosX;
+		_flyShipScreenY = _shipPosY;
+
+		// Calculate ship direction from position (FUN_0040d836 lines 88-106)
+		// Formula from assembly:
+		//   hDir = (0xa0 - posX) >> 6  (with signed rounding)
+		//   vDir = (0x95 - posY) / 0x2b
+		//   dirIndex = hDir * 7 + vDir
+		//
+		// Note: The assembly formula gives:
+		//   hDir: 0-4 where 2 is center (0xa0=160, range is -96 to +96, >> 6 gives -1 to 1, but clamped to 0-4)
+		//   vDir: 0-6 where 3 is center (0x95=149, 0x2b=43, so 149/43 ≈ 3.5)
+		//
+		// Simplified direction calculation based on mouse position relative to center
+
+		// Horizontal direction (0-4, center=2)
+		// Formula: (160 - posX) >> 6, clamped to 0-4
+		int16 hDiff = 160 - _flyShipScreenX;
+		int16 hDir = (hDiff + 64) >> 6;  // Add 64 to shift range, divide by 64
+		if (hDir < 0) hDir = 0;
+		if (hDir > 4) hDir = 4;
+
+		// Vertical direction (0-6, center=3)
+		// Formula: (149 - posY) / 43, clamped to 0-6
+		int16 vDir = (149 - _flyShipScreenY) / 43;
+		if (vDir < 0) vDir = 0;
+		if (vDir > 6) vDir = 6;
+
+		// Additional adjustment from assembly (lines 90-105):
+		// If vDir==3 and abs(posY) > 10, adjust by +/-1
+		// If hDir==2 and abs(posX) > 15, adjust by +/-1
+		// This creates a "deadzone" at center to reduce flicker
+		if (vDir == 3 && ABS(_flyShipScreenY - 100) > 10) {
+			if (_flyShipScreenY < 100) vDir = 2;
+			else vDir = 4;
+		}
+		if (hDir == 2 && ABS(_flyShipScreenX - 160) > 15) {
+			if (_flyShipScreenX < 160) hDir = 3;
+			else hDir = 1;
+		}
+
+		_shipDirectionH = hDir;
+		_shipDirectionV = vDir;
+		_shipDirectionIndex = hDir * 7 + vDir;
+
+		// Clamp direction index to valid range (0-34)
+		if (_shipDirectionIndex < 0) _shipDirectionIndex = 0;
+		if (_shipDirectionIndex > 34) _shipDirectionIndex = 34;
+
+		// Update firing state
+		_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+
+		debug("Rebel2 Handler7: rawMouse=(%d,%d) scaled=(%d,%d) shipPos=(%d,%d) screenPos=(%d,%d) dir=(%d,%d) idx=%d flySprite=%p",
+			rawMouseX, rawMouseY, mouseX, mouseY, _shipPosX, _shipPosY,
+			_flyShipScreenX, _flyShipScreenY, _shipDirectionH, _shipDirectionV, _shipDirectionIndex,
+			(void*)_flyShipSprite);
+
+		return;
 	}
 
 	// Step 1: If par4 == 1, initialize/reset state (lines 114-121)
@@ -1088,11 +1381,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	}
 }
 
-void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
-	// Opcode 8: HUD resource loading
+void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
+	// Opcode 8: HUD/Ship resource loading
 	// Based on FUN_41CADB case 6 (switch on *local_14 - 2 == 6, meaning opcode 8)
 	//
-	// par3 determines which HUD slot to load:
+	// For Handler 0x26 (turret) - par3 determines HUD slot:
 	// case 1: DAT_00482240 - Primary HUD overlay (GRD001)
 	// case 2: DAT_00482238 - Secondary HUD graphics (GRD002)
 	// case 4: DAT_00482268 - Ship cockpit frame (GRD010)
@@ -1101,50 +1394,222 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	// case 7: DAT_00482248 - Damage indicator (GRD004)
 	// case 10: DAT_00482258 - Additional effects (GRD005)
 	// case 12/13: DAT_00482260 - High-res HUD alternative (GRD007)
-	// cases 21-27: Sound loading slot 0
-	// cases 31-37: Sound loading slot 1
-	// case 40: Sound loading slot 3
-	// cases 41-47: Sound loading slot 2
+	//
+	// For Handler 8 (third-person vehicle) - par3 determines ship sprite slot (FUN_00401234):
+	// case 1: DAT_0047e010 - Primary ship sprite (POV001)
+	// case 3: DAT_0047e028 - Secondary ship sprite (POV004)
+	// case 6: DAT_0047e020 - Ship overlay 1 (POV002)
+	// case 7: DAT_0047e018 - Ship overlay 2 (POV003)
+	//
+	// cases 21-47: Sound loading (both handlers)
 
-	debug("Rebel2 IACT Opcode 8: par2=%d par3=%d par4=%d (HUD loading)", par2, par3, par4);
+	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)", _rebelHandler, par2, par3, par4, _gameState);
 
-	// Read the data size from the stream (at offset +14, which is local_14[7])
-	// The actual NUT/resource data starts at offset +18 (param_5 + 9 in assembly)
 	int64 startPos = b.pos();
+	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
 
-	// Skip to where embedded data would be and scan for ANIM tag
-	// The assembly shows data at param_5 + 9 (18 bytes from IACT header start)
-	// Since we're already past the header params, scan remaining data
+	// Handler 7 FLY NUT loading - fixed offset format (FUN_0040c3cc case 6)
+	// IACT structure after par1-par4 (we're at offset +8):
+	//   +0-5 (6 bytes): additional header
+	//   +6-9 (4 bytes): NUT data size (little-endian)
+	//   +10+: NUT data
+	// Assembly: param_5[7] = size at offset 14, param_5+9 = data at offset 18
+	// Since we've read 8 bytes (par1-par4), that's offset +6 and +10 from current pos
+	//
+	// IMPORTANT: The assembly switches on param_5[3] which is the 4th short (bytes 6-7)
+	// In SMUSH handleIACT, this corresponds to userId (par4), NOT unknown (par3)!
+	// So we use par4 for the FLY slot selection.
+	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
 
-	int64 totalSize = b.size();
-	if (totalSize > startPos) {
-		int64 remaining = totalSize - startPos;
+	if (isHandler7FLY && remaining >= 14) {
+		// Read additional header and size from fixed offset
+		// Based on FUN_0040c3cc assembly:
+		//   param_5[7] = size at offset 14 (we're at offset 8, so read 6+4 bytes)
+		//   param_5+9 = data at offset 18
+		byte header[10];
+		if (b.read(header, 10) == 10) {
+			// Debug: dump all header bytes
+			debug("Rebel2 Opcode 8 Handler7: header bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+				header[0], header[1], header[2], header[3], header[4],
+				header[5], header[6], header[7], header[8], header[9]);
+
+			// Size is at offset 14 from IACT start = bytes 6-9 of our header buffer
+			// Try both endianness
+			uint32 nutSizeLE = READ_LE_UINT32(header + 6);
+			uint32 nutSizeBE = READ_BE_UINT32(header + 6);
+			debug("Rebel2 Opcode 8 Handler7: par4=%d sizesLE=%u sizeBE=%u remaining=%lld",
+				par4, nutSizeLE, nutSizeBE, (long long)remaining);
+
+			// The assembly uses direct memory read on x86 which is LE
+			uint32 nutSize = nutSizeLE;
+
+			if (nutSize > 0 && nutSize <= (uint32)(remaining - 10)) {
+				byte *nutData = (byte *)malloc(nutSize);
+				if (nutData) {
+					int bytesRead = b.read(nutData, nutSize);
+					debug("Rebel2 Opcode 8 Handler7: Read %d/%u bytes of NUT data, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+						bytesRead, nutSize,
+						bytesRead > 0 ? nutData[0] : 0, bytesRead > 1 ? nutData[1] : 0,
+						bytesRead > 2 ? nutData[2] : 0, bytesRead > 3 ? nutData[3] : 0,
+						bytesRead > 4 ? nutData[4] : 0, bytesRead > 5 ? nutData[5] : 0,
+						bytesRead > 6 ? nutData[6] : 0, bytesRead > 7 ? nutData[7] : 0,
+						bytesRead > 8 ? nutData[8] : 0, bytesRead > 9 ? nutData[9] : 0,
+						bytesRead > 10 ? nutData[10] : 0, bytesRead > 11 ? nutData[11] : 0,
+						bytesRead > 12 ? nutData[12] : 0, bytesRead > 13 ? nutData[13] : 0,
+						bytesRead > 14 ? nutData[14] : 0, bytesRead > 15 ? nutData[15] : 0);
+
+					// Verify we read the expected amount
+					if (bytesRead != (int)nutSize) {
+						warning("Rebel2 Opcode 8 Handler7: Short read! Got %d expected %u", bytesRead, nutSize);
+					}
+
+					// Verify ANIM header
+					if (bytesRead >= 8) {
+						uint32 animTag = READ_BE_UINT32(nutData);
+						uint32 animSize = READ_BE_UINT32(nutData + 4);
+						debug("Rebel2 Opcode 8 Handler7: ANIM tag=%08X size=%u (expected %08X, size should be ~%d)",
+							animTag, animSize, MKTAG('A','N','I','M'), bytesRead - 8);
+						if (animTag != MKTAG('A','N','I','M')) {
+							warning("Rebel2 Opcode 8 Handler7: No ANIM tag! Data may be corrupted");
+						}
+						if ((int32)animSize > bytesRead - 8) {
+							warning("Rebel2 Opcode 8 Handler7: ANIM size %u exceeds data %d", animSize, bytesRead - 8);
+						}
+					}
+
+					// Try loading as NUT
+					NutRenderer *newNut = new NutRenderer(_vm, nutData, bytesRead);
+					if (newNut && newNut->getNumChars() > 0) {
+						debug("Rebel2 Opcode 8 Handler7: Loaded FLY NUT par4=%d with %d sprites",
+							par4, newNut->getNumChars());
+
+						// Switch on par4 (userId) - matches assembly param_5[3]
+						switch (par4) {
+						case 1:  // FLY001 - Ship direction sprites (35 frames)
+							delete _flyShipSprite;
+							_flyShipSprite = newNut;
+							debug("Rebel2 Opcode 8: _flyShipSprite set with %d sprites", newNut->getNumChars());
+							break;
+						case 2:  // FLY003 - Targeting overlay
+							delete _flyTargetSprite;
+							_flyTargetSprite = newNut;
+							break;
+						case 3:  // FLY002 - Laser fire sprites
+							delete _flyLaserSprite;
+							_flyLaserSprite = newNut;
+							break;
+						case 11: // FLY004 - High-res alternative
+							delete _flyHiResSprite;
+							_flyHiResSprite = newNut;
+							break;
+						default:
+							delete newNut;
+							break;
+						}
+					} else {
+						debug("Rebel2 Opcode 8 Handler7: NUT load failed for par4=%d", par4);
+						delete newNut;
+					}
+					free(nutData);
+				}
+			}
+		}
+		b.seek(startPos);
+		return;
+	}
+
+	// For non-Handler7 or non-FLY cases, scan for ANIM tag
+	debug("Rebel2 Opcode 8: startPos=%lld chunkSize=%d remaining=%lld", (long long)startPos, chunkSize, (long long)remaining);
+	if (remaining > 0) {
 		int scanSize = (int)MIN<int64>(remaining, 65536);
 		byte *scanBuf = (byte *)malloc(scanSize);
 		if (scanBuf) {
 			int bytesRead = b.read(scanBuf, scanSize);
+			debug("Rebel2 Opcode 8: Read %d bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+				bytesRead,
+				bytesRead > 0 ? scanBuf[0] : 0, bytesRead > 1 ? scanBuf[1] : 0,
+				bytesRead > 2 ? scanBuf[2] : 0, bytesRead > 3 ? scanBuf[3] : 0,
+				bytesRead > 4 ? scanBuf[4] : 0, bytesRead > 5 ? scanBuf[5] : 0,
+				bytesRead > 6 ? scanBuf[6] : 0, bytesRead > 7 ? scanBuf[7] : 0,
+				bytesRead > 8 ? scanBuf[8] : 0, bytesRead > 9 ? scanBuf[9] : 0,
+				bytesRead > 10 ? scanBuf[10] : 0, bytesRead > 11 ? scanBuf[11] : 0,
+				bytesRead > 12 ? scanBuf[12] : 0, bytesRead > 13 ? scanBuf[13] : 0,
+				bytesRead > 14 ? scanBuf[14] : 0, bytesRead > 15 ? scanBuf[15] : 0);
 
-			// Look for ANIM tag (embedded SAN)
+			// Look for ANIM tag (embedded SAN or NUT)
 			for (int i = 0; i + 8 <= bytesRead; ++i) {
 				if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+					debug("Rebel2 Opcode 8: Found ANIM at offset %d", i);
 					int64 animStreamPos = startPos + i;
 					uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
-					int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+					// Limit toCopy to remaining data in this chunk
+					int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, remaining - i);
 					if (toCopy > 0) {
 						byte *animData = (byte *)malloc(toCopy);
 						if (animData) {
 							b.seek(animStreamPos);
 							b.read(animData, toCopy);
-							// Map par3 to userId for HUD slots
-							int userId = 0;
-							switch (par3) {
-							case 1: userId = 1; break;  // Primary HUD
-							case 2: userId = 2; break;  // Secondary HUD
-							case 4: userId = 3; break;  // Cockpit frame
-							case 6: userId = 4; break;  // Explosion overlay
-							default: userId = par3; break;
+
+							// Handler 8 (Third-Person Vehicle) - FUN_00401234 case 6:
+							// par3 == 1: POV001 -> DAT_0047e010 (primary ship)
+							// par3 == 3: POV004 -> DAT_0047e028 (secondary ship)
+							// par3 == 6: POV002 -> DAT_0047e020 (overlay 1)
+							// par3 == 7: POV003 -> DAT_0047e018 (overlay 2)
+							bool isHandler8Par3 = (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7);
+							bool loadedAsNut = false;
+
+							if (_rebelHandler == 8 && isHandler8Par3) {
+								// Try loading as NUT (ship sprites for Handler 8)
+								NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
+								if (newNut && newNut->getNumChars() > 0) {
+									debug("Rebel2 Opcode 8: Loaded ship NUT par3=%d with %d sprites (handler=%d)",
+										par3, newNut->getNumChars(), _rebelHandler);
+									loadedAsNut = true;
+
+									switch (par3) {
+									case 1:  // POV001 - Primary ship sprite
+										delete _shipSprite;
+										_shipSprite = newNut;
+										debug("Rebel2 Opcode 8: _shipSprite set to %p", (void*)_shipSprite);
+										break;
+									case 3:  // POV004 - Secondary ship sprite
+										delete _shipSprite2;
+										_shipSprite2 = newNut;
+										break;
+									case 6:  // POV002 - Ship overlay 1
+										delete _shipOverlay1;
+										_shipOverlay1 = newNut;
+										break;
+									case 7:  // POV003 - Ship overlay 2
+										delete _shipOverlay2;
+										_shipOverlay2 = newNut;
+										break;
+									default:
+										delete newNut;
+										loadedAsNut = false;
+										break;
+									}
+								} else {
+									debug("Rebel2 Opcode 8: NUT load failed for par3=%d, trying as embedded SAN", par3);
+									delete newNut;
+								}
 							}
-							loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
+
+							if (!loadedAsNut) {
+								// Load as embedded SAN (HUD overlays)
+								// The userId comes from par4 (not par3!)
+								// par4 values seen in Level 3:
+								//   1000 = audio track
+								//   1-11 = HUD overlay slots
+								// The embedded HUD system uses userId to track different overlay elements
+								int userId = par4;
+
+								// Audio tracks (userId >= 1000) are handled separately, skip them
+								if (userId < 1000) {
+									debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d", userId);
+									loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
+								}
+							}
 							free(animData);
 						}
 					}
@@ -1445,8 +1910,8 @@ extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int wi
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
-	// Validate userId (0 for menu background, 1-4 for HUD slots)
-	if (userId < 0 || userId > 4 || !animData || size < 32) {
+	// Validate userId - Level 3 uses slots 0-11, allow up to 15 for safety
+	if (userId < 0 || userId > 15 || !animData || size < 32) {
 		debug("Rebel2: Invalid embedded SAN: userId=%d, size=%d", userId, size);
 		return;
 	}
@@ -1477,6 +1942,21 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 
 				if (subTag == MKTAG('F','O','B','J')) {
 					// Found FOBJ - Embedded HUD Frame
+					// Dump raw FOBJ bytes for analysis
+					int32 fobjStart = stream.pos();
+					byte rawHeader[20];
+					int headerBytesToRead = MIN((int)subSize, 20);
+					stream.read(rawHeader, headerBytesToRead);
+					stream.seek(fobjStart);  // Reset to read normally
+
+					debug("Rebel2: Raw FOBJ header (%d bytes): %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+						headerBytesToRead,
+						rawHeader[0], rawHeader[1], rawHeader[2], rawHeader[3],
+						rawHeader[4], rawHeader[5], rawHeader[6], rawHeader[7],
+						rawHeader[8], rawHeader[9], rawHeader[10], rawHeader[11],
+						rawHeader[12], rawHeader[13], rawHeader[14], rawHeader[15],
+						rawHeader[16], rawHeader[17], rawHeader[18], rawHeader[19]);
+
 					// Read FOBJ header
 					int codec = stream.readUint16LE();
 					int left = stream.readUint16LE();
@@ -1485,8 +1965,8 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					int height = stream.readUint16LE();
 					stream.readUint16LE();  // unknown
 					stream.readUint16LE();  // unknown
-					
-					debug("Rebel2: Embedded HUD frame: userId=%d, %dx%d at (%d,%d), codec=%d", 
+
+					debug("Rebel2: Embedded HUD frame: userId=%d, %dx%d at (%d,%d), codec=%d",
 						userId, width, height, left, top, codec);
 					
 					// Allocate storage for the decoded frame
@@ -1494,11 +1974,14 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
 						if (frame.width != width || frame.height != height || !frame.pixels) {
-							frame.pixels = (byte *)calloc(width * height, 1);
+							free(frame.pixels);
+							frame.pixels = (byte *)malloc(width * height);
 							frame.width = width;
 							frame.height = height;
 						}
-						
+						// Clear buffer before decode (important for delta codecs)
+						memset(frame.pixels, 0, width * height);
+
 						// Update render position from FOBJ header
 						frame.renderX = left;
 						frame.renderY = top;
@@ -1545,25 +2028,167 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 21/line update): %dx%d", width, height);
 							} else if (codec == 45) {
-								// Codec 45: Block delta (simple copy for now)
-								int copySize = MIN((int)dataSize, width * height);
-								memcpy(frame.pixels, fobjData, copySize);
+								// Codec 45: RA2-specific codec with BOMP-style RLE
+								// Header: 01 FE 00 00 01 00 (6 bytes)
+								//   Byte 0: sub-codec (01)
+								//   Byte 1: transparent color (FE = 254)
+								//   Bytes 2-5: unknown/padding
+								debug("Rebel2: Codec 45 first 20 bytes: %02X %02X %02X %02X %02X %02X | %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+									fobjData[0], fobjData[1], fobjData[2], fobjData[3],
+									fobjData[4], fobjData[5], fobjData[6], fobjData[7],
+									fobjData[8], fobjData[9], fobjData[10], fobjData[11],
+									fobjData[12], fobjData[13], fobjData[14], fobjData[15],
+									fobjData[16], fobjData[17], fobjData[18], fobjData[19]);
+
+								// Parse 6-byte sub-header
+								int headerSkip = 0;
+								if (dataSize > 6 && fobjData[0] == 0x01 && fobjData[1] == 0xFE) {
+									headerSkip = 6;
+									debug("Rebel2: Codec 45 header: sub-codec=%d, transparent=%d",
+										fobjData[0], fobjData[1]);
+								}
+
+								byte *srcPtr = fobjData + headerSkip;
+								byte *dataEnd = fobjData + dataSize;
+
+								// Try per-line RLE with 2-byte LE size headers
+								int firstVal = READ_LE_UINT16(srcPtr);
+								bool validPerLine = (firstVal > 0 && firstVal <= width * 2);
+
+								if (validPerLine) {
+									debug("Rebel2: Codec 45 using per-line RLE (firstLineSize=%d)", firstVal);
+									for (int row = 0; row < height && srcPtr < dataEnd; row++) {
+										int lineSize = READ_LE_UINT16(srcPtr);
+										srcPtr += 2;
+										if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr)) break;
+
+										byte *lineEnd = srcPtr + lineSize;
+										byte *dst = frame.pixels + row * width;
+										int x = 0;
+
+										while (srcPtr < lineEnd && x < width) {
+											byte ctrl = *srcPtr++;
+											int count = (ctrl >> 1) + 1;
+											if (ctrl & 1) {
+												byte color = (srcPtr < lineEnd) ? *srcPtr++ : 0;
+												for (int i = 0; i < count && x < width; i++) dst[x++] = color;
+											} else {
+												for (int i = 0; i < count && x < width && srcPtr < lineEnd; i++)
+													dst[x++] = *srcPtr++;
+											}
+										}
+										srcPtr = lineEnd;
+									}
+								} else {
+									// Try continuous BOMP RLE (no per-line headers)
+									// Each line produces exactly 'width' pixels
+									debug("Rebel2: Codec 45 using continuous BOMP RLE");
+									for (int row = 0; row < height && srcPtr < dataEnd; row++) {
+										byte *dst = frame.pixels + row * width;
+										int x = 0;
+
+										while (x < width && srcPtr < dataEnd) {
+											byte ctrl = *srcPtr++;
+											int count = (ctrl >> 1) + 1;
+
+											if (ctrl & 1) {
+												// RLE fill
+												byte color = (srcPtr < dataEnd) ? *srcPtr++ : 0;
+												for (int i = 0; i < count && x < width; i++) {
+													dst[x++] = color;
+												}
+											} else {
+												// Literal copy
+												for (int i = 0; i < count && x < width && srcPtr < dataEnd; i++) {
+													dst[x++] = *srcPtr++;
+												}
+											}
+										}
+									}
+								}
 								frame.valid = true;
-								debug("Rebel2: Decoded embedded HUD (codec 45/block): %dx%d", width, height);
+
+								// Count non-zero pixels
+								int nonZero = 0;
+								for (int i = 0; i < width * height; i++) {
+									if (frame.pixels[i] != 0) nonZero++;
+								}
+								debug("Rebel2: Decoded codec 45: %dx%d, %d non-zero (%d%%)",
+									width, height, nonZero, (nonZero * 100) / (width * height));
+							} else if (codec == 23) {
+								// Codec 23: Skip/copy with RLE in copy runs
+								// Format: each line has pairs of (skip, copy_count, RLE_data)
+								byte *srcPtr = fobjData;
+								for (int row = 0; row < height && srcPtr < fobjData + dataSize; row++) {
+									int lineDataSize = READ_LE_UINT16(srcPtr);
+									srcPtr += 2;
+									byte *lineEnd = srcPtr + lineDataSize;
+									byte *lineDst = frame.pixels + row * width;
+									int x = 0;
+
+									while (srcPtr < lineEnd && x < width) {
+										int skip = READ_LE_UINT16(srcPtr);
+										srcPtr += 2;
+										x += skip;
+										if (srcPtr >= lineEnd || x >= width) break;
+
+										int runSize = READ_LE_UINT16(srcPtr);
+										srcPtr += 2;
+
+										// Decode RLE within this run
+										byte *runEnd = srcPtr + runSize;
+										while (srcPtr < runEnd && x < width) {
+											byte code = *srcPtr++;
+											int num = (code >> 1) + 1;
+											if (num > width - x) num = width - x;
+
+											if (code & 1) {
+												// RLE run
+												byte color = (srcPtr < runEnd) ? *srcPtr++ : 0;
+												for (int i = 0; i < num && x < width; i++) {
+													lineDst[x++] = color;
+												}
+											} else {
+												// Literal run
+												for (int i = 0; i < num && x < width && srcPtr < runEnd; i++) {
+													lineDst[x++] = *srcPtr++;
+												}
+											}
+										}
+										srcPtr = runEnd;
+									}
+									srcPtr = lineEnd;
+								}
+								frame.valid = true;
+								debug("Rebel2: Decoded embedded HUD (codec 23/skip-RLE): %dx%d", width, height);
 							} else {
 								debug("Rebel2: TODO: Decode codec %d for embedded HUD", codec);
 								frame.valid = false;
 							}
-							
+
+							// Count non-zero pixels to verify frame has content
+							if (frame.valid) {
+								int nonZeroPixels = 0;
+								for (int i = 0; i < width * height; i++) {
+									if (frame.pixels[i] != 0) nonZeroPixels++;
+								}
+								debug("Rebel2: Frame userId=%d has %d non-zero pixels (%d%%)",
+									userId, nonZeroPixels, (nonZeroPixels * 100) / (width * height));
+							}
+
 							// Draw immediately to renderBitmap if valid
-							if (frame.valid && renderBitmap) {
+							// Skip immediate draw for Handler 7/8 - these are ship direction sprites
+							// that should be selected based on direction and drawn during post-rendering
+							bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8);
+
+							if (frame.valid && renderBitmap && !skipImmediateDraw) {
 								int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
 								int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-								
+
 								for (int y = 0; y < height && (frame.renderY + y) < bufHeight; y++) {
 									for (int x = 0; x < width && (frame.renderX + x) < pitch; x++) {
 										byte pixel = frame.pixels[y * width + x];
-										if (pixel != 0) {  // 0 = transparent
+										if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
 											int destX = frame.renderX + x;
 											int destY = frame.renderY + y;
 											if (destX >= 0 && destY >= 0) {
@@ -1573,6 +2198,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 									}
 								}
 								debug("Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
+							} else if (skipImmediateDraw) {
+								debug("Rebel2: Skipped immediate draw for Handler %d HUD %d (will render during post-processing)",
+									_rebelHandler, userId);
 							}
 							
 							free(fobjData);
@@ -2058,16 +2686,19 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		return;
 	}
 
-	// During intro sequences (non-menu):
+	// During intro sequences (non-menu, non-gameplay):
 	// - Hide the crosshair/cursor (handled by not drawing it)
 	// - Skip all HUD/status bar rendering
 	// - Skip mouse input processing
 	// The mouse cursor is already hidden by SmushPlayer during video playback
-	if (introPlaying) {
+	//
+	// IMPORTANT: During gameplay (_gameState == kStateGameplay), we MUST render HUD
+	// even if video flags have 0x20 set (which can happen for some level videos)
+	if (introPlaying && _gameState != kStateGameplay) {
 		// Track state transition for debugging
 		if (!_introCursorPushed) {
 			_introCursorPushed = true;
-			debug("Rebel2: Intro sequence detected (flags=0x%x) - HUD disabled", _player->_curVideoFlags);
+			debug("Rebel2: Intro sequence detected (flags=0x%x, state=%d) - HUD disabled", _player->_curVideoFlags, _gameState);
 		}
 		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9
 		return;
@@ -2075,12 +2706,13 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// Gameplay mode - restore normal rendering
 		if (_introCursorPushed) {
 			_introCursorPushed = false;
-			debug("Rebel2: Gameplay started - HUD enabled");
+			debug("Rebel2: Gameplay started - HUD enabled (flags=0x%x, state=%d)", _player->_curVideoFlags, _gameState);
 		}
 	}
 
 	// From here on, we're in gameplay mode (not intro)
-	if (!introPlaying) {
+	// Render HUD if NOT in intro mode, OR if we ARE in gameplay state
+	if (!introPlaying || _gameState == kStateGameplay) {
 	// ============================================================
 	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
 	// ============================================================
@@ -2100,44 +2732,101 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 	
 	// ============================================================
-	// STEP 1: Draw embedded SAN cockpit overlay FIRST (from IACT chunks)
+	// STEP 1: Draw embedded SAN HUD overlays FIRST (from IACT chunks)
 	// ============================================================
-	// The cockpit overlay forms the decorative frame at the bottom
-	// userId 1: Left piece at X=0
-	// userId 2: Right piece at X=slot1Width
+	// For Handler 7 (Level 3): HUD elements are scattered across the screen
+	//   - Each frame has its own renderX/renderY position from FOBJ left/top
+	//   - userId 1-11 are different HUD elements
+	//   - userIds at the same position are direction variants (select one based on direction)
+	// For turret handlers: slots 1-2 form a two-part cockpit overlay
+	//   - userId 1: Left piece at X=0
+	//   - userId 2: Right piece at X=slot1Width
 	// These are drawn BEFORE the status bar so status bar appears on top
-	
-	int slot1Width = 0;
-	if (_rebelEmbeddedHud[1].valid && _rebelEmbeddedHud[1].width > 0) {
-		slot1Width = _rebelEmbeddedHud[1].width;
-	}
-	
-	for (int hudSlot = 1; hudSlot <= 2; hudSlot++) {
+
+	// For Handler 7 ship direction: identify ship frames at same position
+	// Level 3 has userId 1 and 2 at position (162, 105) - these are direction variants
+	// We select one based on the current direction to simulate ship turning
+
+	for (int hudSlot = 1; hudSlot < 16; hudSlot++) {
 		EmbeddedSanFrame &frame = _rebelEmbeddedHud[hudSlot];
 		if (frame.valid && frame.pixels && frame.width > 0 && frame.height > 0) {
 			int destX, destY;
-			
-			// Position the two HUD pieces horizontally adjacent
-			if (hudSlot == 1) {
-				destX = 0;
-			} else {
-				destX = slot1Width;
-			}
-			
-			// Position at bottom of 320x200 video content
-			// The cockpit overlay sits at Y = 200 - frameHeight
-			destY = statusBarY - frame.height;
-			if (destY < 0) destY = 0;
 
-			// Apply View Offset for static screen elements
+			// For Handler 7: Check if this is a ship direction frame
+			// Ship frames are at the same position - skip all but the selected one
+			if (_rebelHandler == 7) {
+				// Collect all frame IDs in this position group (may not be consecutive)
+				int groupMembers[16];
+				int groupCount = 0;
+
+				for (int id = 1; id < 16; id++) {
+					EmbeddedSanFrame &g = _rebelEmbeddedHud[id];
+					if (g.valid && g.renderX == frame.renderX && g.renderY == frame.renderY &&
+						g.width == frame.width && g.height == frame.height) {
+						groupMembers[groupCount++] = id;
+					}
+				}
+
+				// If there's more than one frame in this group, select based on direction
+				if (groupCount > 1) {
+					// Map direction index (0-34) to group index (0 to groupCount-1)
+					int selectedOffset = _shipDirectionIndex % groupCount;
+					int selectedId = groupMembers[selectedOffset];
+
+					// Check if selected frame has pixels, if not find one that does
+					EmbeddedSanFrame &selectedFrame = _rebelEmbeddedHud[selectedId];
+					int nonZero = 0;
+					for (int i = 0; i < selectedFrame.width * selectedFrame.height; i++) {
+						if (selectedFrame.pixels[i] != 0) nonZero++;
+					}
+
+					if (nonZero == 0) {
+						// Selected frame is empty, find another with pixels
+						for (int i = 0; i < groupCount; i++) {
+							EmbeddedSanFrame &altFrame = _rebelEmbeddedHud[groupMembers[i]];
+							int altNonZero = 0;
+							for (int j = 0; j < altFrame.width * altFrame.height; j++) {
+								if (altFrame.pixels[j] != 0) altNonZero++;
+							}
+							if (altNonZero > 0) {
+								selectedId = groupMembers[i];
+								break;
+							}
+						}
+					}
+
+					// Only render if this is the selected frame
+					if (hudSlot != selectedId) {
+						continue;  // Skip this frame, render the selected one instead
+					}
+				}
+			}
+
+			// Use the stored render position from the embedded ANIM data
+			// The renderX/renderY are set from FOBJ's left/top values
+			destX = frame.renderX;
+			destY = frame.renderY;
+
+			// For Handler 7: Apply position offset based on ship position
+			// This makes the ship sprite follow the mouse/crosshair
+			if (_rebelHandler == 7 && destX > 100 && destY > 50) {
+				// This appears to be a ship sprite (center of screen)
+				// Offset based on ship position relative to center
+				int16 offsetX = (_shipPosX - 160) / 8;  // Scale down movement
+				int16 offsetY = (_shipPosY - 100) / 8;
+				destX += offsetX;
+				destY += offsetY;
+			}
+
+			// Apply View Offset for all HUD elements
 			destX += _viewX;
 			destY += _viewY;
-			
-			// Draw frame with transparency (pixel 0 = transparent)
+
+			// Draw frame with transparency (pixel 0 and 231 = transparent, matching NUT rendering)
 			for (int y = 0; y < frame.height && (destY + y) < height; y++) {
 				for (int x = 0; x < frame.width && (destX + x) < pitch; x++) {
 					byte pixel = frame.pixels[y * frame.width + x];
-					if (pixel != 0) {  // Skip transparent pixels
+					if (pixel != 0 && pixel != 231) {  // Skip transparent pixels (0 and 231/0xE7)
 						int fx = destX + x;
 						int fy = destY + y;
 						if (fx >= 0 && fy >= 0) {
@@ -2248,10 +2937,213 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// Draw lives indicator - assembly shows at X=0xa8 (168), Y=7
 		// Uses sprite 1 again with different clip rect
 		// TODO: Implement lives rendering
-		
+
 		// Draw score - uses FUN_00434cb0 (text rendering) at X=0x101(257)
 		// TODO: Implement score rendering
-	} 
+	}
+
+	// ============================================================
+	// HANDLER 8 SHIP RENDERING (FUN_00401ccf equivalent)
+	// ============================================================
+	// For third-person vehicle missions (Handler 8), draw the player's ship sprite
+	// The ship position is calculated from _shipPosX/_shipPosY
+	//
+	// From FUN_00401ccf disassembly (lines 87-95):
+	// - Ship is drawn when DAT_0047e010 != NULL AND DAT_0043e000 != 5
+	// - Position offset X: (DAT_0043e006 - 0xa0) >> 3 = (shipPosX - 160) >> 3
+	// - Position offset Y: (DAT_0043e008 - 0x28) >> 2 = (shipPosY - 40) >> 2
+	// - Sprite index: param_5 & 1 (0 = normal, 1 = firing)
+	//
+	// The crosshair is drawn at lines 128-135 with base position:
+	// - Low-res: X = offset + 0xa0 (160), Y = offset + 0x69 (105)
+	// - High-res: X = offset*2 + 0x140 (320), Y = offset*2 + 0xd2 (210)
+	//
+	// The ship sprite is drawn using the same offset calculation but passed directly
+	// to FUN_004236e0. The rendering function treats these as screen coordinates.
+	debug("Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
+		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
+		_shipSprite ? _shipSprite->getNumChars() : 0,
+		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
+
+	// Handler 7 Ship Rendering (Space Flight - FLY sprites)
+	// Handler 7 uses _flyShipSprite (FLY001) with 35 direction frames (5x7 grid)
+	// Different from Handler 8's POV sprites
+	if (_rebelHandler == 7 && _flyShipSprite && _shipLevelMode != 5) {
+		// Handler 7 position calculation from FUN_0040d836 lines 173-175
+		// Draw position: (transformedX - 0xd4, transformedY - 0x82)
+		// where transformedX/Y come from FUN_0041c720 transformation
+		// For simplicity, we calculate based on ship direction
+
+		// Base position calculation (simplified from assembly)
+		// The ship is drawn at a fixed position offset by direction
+		int baseX = 160;  // Screen center X
+		int baseY = 105;  // Screen center Y (0x69)
+
+		// Add small offset based on ship position for "flight feel"
+		int16 posOffsetX = (_flyShipScreenX - 160) / 10;
+		int16 posOffsetY = (_flyShipScreenY - 100) / 10;
+
+		int shipScreenX = baseX + posOffsetX;
+		int shipScreenY = baseY + posOffsetY;
+
+		int numSprites = _flyShipSprite->getNumChars();
+		int spriteIndex = _shipDirectionIndex;
+
+		// Validate sprite index
+		if (spriteIndex < 0) spriteIndex = 0;
+		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+
+		// Get sprite dimensions and center it
+		int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
+		int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
+		int drawX = shipScreenX - spriteW / 2 + _viewX;
+		int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+		// Draw the ship sprite (DAT_0047fee8 / FLY001)
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
+
+		// Draw laser overlay if firing and laser sprite loaded (FLY002)
+		if (_shipFiring && _flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
+			// Laser sprite uses same direction index for frame animation
+			int laserIndex = spriteIndex % _flyLaserSprite->getNumChars();
+			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, laserIndex);
+		}
+
+		// Draw targeting overlay if loaded (FLY003) - goes at crosshair position
+		if (_flyTargetSprite && _flyTargetSprite->getNumChars() > 0) {
+			// Draw targeting reticle at ship position
+			int targetW = _flyTargetSprite->getCharWidth(0);
+			int targetH = _flyTargetSprite->getCharHeight(0);
+			int targetX = shipScreenX - targetW / 2 + _viewX;
+			int targetY = shipScreenY - targetH / 2 + _viewY;
+			renderNutSprite(renderBitmap, pitch, width, height, targetX, targetY, _flyTargetSprite, 0);
+		}
+
+		debug("Rebel2 Handler7: Ship drawn at (%d,%d) screenPos=(%d,%d) sprite=%d/%d dir=(%d,%d) idx=%d",
+			drawX, drawY, shipScreenX, shipScreenY, spriteIndex, numSprites,
+			_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
+	}
+
+	// Handler 8 Ship Rendering (Third-Person Vehicle - POV sprites)
+	// Handler 8 uses _shipSprite (POV001) with position-based offset
+	else if (_rebelHandler == 8 && _shipSprite && _shipLevelMode != 5) {
+		// Calculate display offset from raw ship position (FUN_00401ccf lines 88-89)
+		// The shift operations create a dampened movement effect
+		int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;  // (shipPosX - 160) >> 3
+		int16 displayOffsetY = (_shipPosY - 0x28) >> 2;  // (shipPosY - 40) >> 2
+
+		// Base screen position from crosshair calculation (FUN_00401ccf lines 128-129)
+		// Low-res mode: base X = 0xa0 (160), base Y = 0x69 (105)
+		int shipScreenX = 0xa0 + displayOffsetX;  // 160 + offset
+		int shipScreenY = 0x69 + displayOffsetY;  // 105 + offset
+
+		int numSprites = _shipSprite->getNumChars();
+		int spriteIndex = 0;
+
+		// Select sprite based on direction when multiple sprites are available
+		// The ship sprite sheet is organized as a grid of direction sprites:
+		// - 35 sprites (5x7): Full direction grid
+		// - 25 sprites (5x5): Reduced grid
+		// - 5 sprites: Horizontal direction only
+		// - 2 sprites: Normal (0) and firing (1)
+		// - 1 sprite: Static ship
+		if (numSprites >= 35) {
+			spriteIndex = _shipDirectionH * 7 + _shipDirectionV;
+			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		} else if (numSprites >= 25) {
+			int vDir5 = (_shipDirectionV * 5) / 7;
+			spriteIndex = _shipDirectionH * 5 + vDir5;
+			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		} else if (numSprites >= 5) {
+			spriteIndex = _shipDirectionH;
+			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		} else if (numSprites == 2) {
+			spriteIndex = _shipFiring ? 1 : 0;
+		}
+
+		// Get sprite dimensions and center it at the calculated position
+		int spriteW = _shipSprite->getCharWidth(spriteIndex);
+		int spriteH = _shipSprite->getCharHeight(spriteIndex);
+		int drawX = shipScreenX - spriteW / 2 + _viewX;
+		int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+		// Draw the primary ship sprite (DAT_0047e010)
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
+
+		// Draw secondary ship sprite if available (DAT_0047e028)
+		if (_shipSprite2 && _shipSprite2->getNumChars() > spriteIndex) {
+			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, spriteIndex);
+		}
+
+		debug("Rebel2 Handler8: Ship drawn at screen(%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
+			drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
+			spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
+	}
+
+	// Fallback: Use embedded HUD frame as ship sprite
+	else if ((_rebelHandler == 7 || _rebelHandler == 8) && _shipLevelMode != 5) {
+		// Fallback: Use embedded HUD frame as ship sprite (Level 3 style)
+		// userId=11 contains the ship sprite strip
+		EmbeddedSanFrame &shipFrame = _rebelEmbeddedHud[11];
+		if (shipFrame.valid && shipFrame.pixels && shipFrame.width > 0 && shipFrame.height > 0) {
+			// Calculate display offset from raw ship position
+			int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;
+			int16 displayOffsetY = (_shipPosY - 0x28) >> 2;
+			int shipScreenX = 0xa0 + displayOffsetX;
+			int shipScreenY = 0x69 + displayOffsetY;
+
+			// Check if this is a sprite strip (multiple directions in one image)
+			// 205 width / 5 directions = 41 pixels per direction
+			int spriteW = shipFrame.width;
+			int spriteH = shipFrame.height;
+			int srcX = 0;
+			int srcY = 0;
+			int numHorizontal = 1;
+			int numVertical = 1;
+
+			// Detect sprite strip layout - look for common patterns
+			if (spriteW >= 200 && spriteW % 5 == 0) {
+				// 5 horizontal directions (like 205 = 41 * 5)
+				numHorizontal = 5;
+				spriteW = shipFrame.width / 5;
+			}
+			if (spriteH >= 350 && spriteH % 7 == 0) {
+				// 7 vertical directions
+				numVertical = 7;
+				spriteH = shipFrame.height / 7;
+			}
+
+			// Select sprite from strip based on direction
+			int hDir = _shipDirectionH;
+			int vDir = _shipDirectionV;
+			if (hDir >= numHorizontal) hDir = numHorizontal - 1;
+			if (vDir >= numVertical) vDir = numVertical - 1;
+			srcX = hDir * spriteW;
+			srcY = vDir * spriteH;
+
+			// Draw position (centered)
+			int drawX = shipScreenX - spriteW / 2 + _viewX;
+			int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+			// Blit from embedded HUD to render buffer
+			for (int y = 0; y < spriteH && (drawY + y) < height; y++) {
+				if (drawY + y < 0) continue;
+				for (int x = 0; x < spriteW && (drawX + x) < width; x++) {
+					if (drawX + x < 0) continue;
+					int srcIdx = (srcY + y) * shipFrame.width + (srcX + x);
+					byte pixel = shipFrame.pixels[srcIdx];
+					// Skip transparent pixels (0 and 231)
+					if (pixel != 0 && pixel != 231) {
+						int dstIdx = (drawY + y) * pitch + (drawX + x);
+						renderBitmap[dstIdx] = pixel;
+					}
+				}
+			}
+
+			debug("Rebel2: Ship (embedded HUD) at screen(%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
+				drawX, drawY, srcX, srcY, numHorizontal, numVertical, _shipDirectionH, _shipDirectionV);
+		}
+	}
 
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -2414,7 +3306,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// Draw Crosshair/Reticle cursor
 	// Sprite indices based on handler type (from original game disassembly FUN_004089ab, FUN_0040d836, etc):
-	// - Handler 8 (ground vehicle): Index 0x2E (46)
+	// - Handler 8 (third-person vehicle): Index 0x2E (46)
 	// - Handler 7 (space flight): Index 0x2F (47)
 	// - Handler 0x19 (mixed/turret view): Index 0x2F (47)
 	// - Handler 0x26 (full turret): Index varies by levelType and animation
@@ -3732,6 +4624,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 
 	case 2:
 		// Level 2: Has cutscene first, then multiple parts
+		// Level 2 uses Handler 8 (third-person vehicle mode) - set before gameplay
+		_rebelHandler = 8;
 		// First play the cutscene
 		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing cutscene %s", filename.c_str());
@@ -3780,7 +4674,9 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		break;
 
 	case 3:
-		// Level 3: Two gameplay phases
+		// Level 3: Two gameplay phases (space flight)
+		// Level 3 uses Handler 7 (space flight mode) - FUN_0040d836/FUN_0040c3cc
+		_rebelHandler = 7;
 		filename = Common::String::format("%s/%sPLAY1.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);

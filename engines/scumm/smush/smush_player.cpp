@@ -405,15 +405,17 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 		code, flags, unknown, userId, subSize);
 
 	// Route to procIACT for:
-	// 1. Non-audio IACT (code != 8 or flags != 46)
-	// 2. RA2 menu/graphics IACT (userId >= 1000 indicates graphics data, not audio)
+	// 1. Non-audio IACT (code != 8 or flags != 46) - Full Throttle uses code=8, flags=46 for audio
+	// 2. ALL Rebel Assault 2 IACTs - RA2 uses a different IACT format where code=opcode, flags=par2
+	//    RA2 audio is handled through PSAD chunks, not IACT, so all RA2 IACTs go to procIACT
 	bool isAudioIACT = (code == 8) && (flags == 46);
-	bool isRA2GraphicsIACT = (_vm->_game.id == GID_REBEL2) && (userId >= 1000);
+	bool isRA2 = (_vm->_game.id == GID_REBEL2);
 
-	if (!isAudioIACT || isRA2GraphicsIACT) {
-		debug("SmushPlayer::handleIACT: Routing to procIACT (isAudioIACT=%d, isRA2GraphicsIACT=%d)",
-			isAudioIACT, isRA2GraphicsIACT);
-		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, userId);
+	if (!isAudioIACT || isRA2) {
+		debug("SmushPlayer::handleIACT: Routing to procIACT (isAudioIACT=%d, isRA2=%d)",
+			isAudioIACT, isRA2);
+		// Pass subSize - 8 as the remaining payload size (after 8-byte header)
+		_vm->_insane->procIACT(_dst, 0, 0, 0, b, subSize - 8, 0, code, flags, unknown, userId);
 		return;
 	}
 
