@@ -227,6 +227,19 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_explosions[i].counter = 0;
 	}
 
+	// Initialize collision zone system (for Level 3 pilot ship obstacle avoidance)
+	_primaryZoneCount = 0;
+	_secondaryZoneCount = 0;
+	for (i = 0; i < kMaxCollisionZones; i++) {
+		_primaryZones[i].active = false;
+		_secondaryZones[i].active = false;
+	}
+	_corridorLeftX = 0;
+	_corridorTopY = 0;
+	_corridorRightX = 320;
+	_corridorBottomY = 200;
+	_hitCooldown = 0;
+
 	for (i = 0; i < 2; i++) {
 		_shots[i].active = false;
 		_shots[i].counter = 0;
@@ -251,6 +264,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_shipTargetX = 0xa0;
 	_shipTargetY = 0x28;
 	_shipLevelMode = 0;
+	_flyControlMode = 0;   // DAT_004437c0 - Start in flight-only mode (no shooting)
 	_shipFiring = false;
 	_shipDirectionH = 2;   // Start centered horizontally (0-4 range)
 	_shipDirectionV = 3;   // Start centered vertically (0-6 range)
@@ -775,9 +789,16 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		iactRebel2Opcode3(b, par2, par3, par4);
 	}
 	else if (par1 == 5) {
-		// Opcode 5: Special handling based on par2 value
-		// Disassembly shows sub-opcodes 0xD (13) and 0xE (14)
+		// Opcode 5: Collision Zone Registration (FUN_004033cf case 5)
+		// Sub-opcode 0x0D (13) = Primary collision zones (obstacles)
+		// Sub-opcode 0x0E (14) = Secondary collision zones (boundaries)
+		// par2 is the sub-opcode that determines which zone table to use
 		debug("Rebel2 IACT Opcode 5: par2=%d par3=%d par4=%d", par2, par3, par4);
+
+		if (par2 == 0x0D || par2 == 0x0E) {
+			// Register the collision zone from the remaining IACT data
+			registerCollisionZone(b, par2);
+		}
 
 	} else if (par1 == 7) {
 		// Opcode 7: Sprite/HUD control for Handler 7 (space flight levels like Level 3)
@@ -1102,8 +1123,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// Handler 7 specific logic (space flight) - FUN_0040d836 / FUN_0040c3cc
 	// Used for Level 3 and similar space combat levels
 	if (_rebelHandler == 7) {
-		// Set level mode (same as Handler 8)
-		_shipLevelMode = par3;
+		// Set control mode (DAT_004437c0 = par3 in FUN_40C3CC case 4)
+		// This determines shooting capability:
+		//   Mode 0: Flight/avoid mode - no shooting
+		//   Mode 1: Alternate flight mode - no shooting
+		//   Mode 2: Combat mode - shooting ENABLED
+		_flyControlMode = par3;
+		debug("Rebel2 Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
+			par3, (par3 == 2) ? "ENABLED" : "DISABLED");
 
 		// If par4 == 1, enable status bar
 		if (par4 == 1) {
@@ -2548,6 +2575,152 @@ void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int heigh
 	drawLine(dst, pitch, width, height, x2, y2 - armLen, x2, y2, color);
 }
 
+// ============================================================
+// COLLISION ZONE SYSTEM (for Level 3 pilot ship obstacle avoidance)
+// ============================================================
+// Based on FUN_40E35E, FUN_40C3CC disassembly from info.md
+// Zones are quadrilaterals registered via IACT opcode 5
+
+void InsaneRebel2::registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode) {
+	// IACT Opcode 5 data layout (from info.md):
+	//   +0x00: opcode (5) - already read by caller
+	//   +0x02: sub-opcode (0x0D or 0x0E) - passed as parameter
+	//   +0x04: par3 (flags)
+	//   +0x06: zoneType
+	//   +0x08: frameStart
+	//   +0x0A: frameEnd
+	//   +0x0C-0x1A: X1,Y1,X2,Y2,X3,Y3,X4,Y4 vertex coordinates
+	//
+	// The stream position is currently at offset +0x04 (after opcode and sub-opcode)
+
+	int16 par3 = b.readSint16LE();       // +0x04 (flags - unused for now)
+	(void)par3;  // Suppress unused variable warning
+	int16 zoneType = b.readSint16LE();   // +0x06
+	int16 frameStart = b.readSint16LE(); // +0x08
+	int16 frameEnd = b.readSint16LE();   // +0x0A
+	int16 x1 = b.readSint16LE();         // +0x0C
+	int16 y1 = b.readSint16LE();         // +0x0E
+	int16 x2 = b.readSint16LE();         // +0x10
+	int16 y2 = b.readSint16LE();         // +0x12
+	int16 x3 = b.readSint16LE();         // +0x14
+	int16 y3 = b.readSint16LE();         // +0x16
+	int16 x4 = b.readSint16LE();         // +0x18
+	int16 y4 = b.readSint16LE();         // +0x1A
+
+	CollisionZone zone;
+	zone.x1 = x1;
+	zone.y1 = y1;
+	zone.x2 = x2;
+	zone.y2 = y2;
+	zone.x3 = x3;
+	zone.y3 = y3;
+	zone.x4 = x4;
+	zone.y4 = y4;
+	zone.frameStart = frameStart;
+	zone.frameEnd = frameEnd;
+	zone.zoneType = zoneType;
+	zone.subOpcode = subOpcode;
+	zone.active = true;
+
+	// Register zone into appropriate table based on sub-opcode
+	if (subOpcode == 0x0D && _primaryZoneCount < kMaxCollisionZones) {
+		// Primary collision zones (obstacles)
+		_primaryZones[_primaryZoneCount++] = zone;
+		debug("Rebel2: Registered PRIMARY collision zone %d: type=%d frames=[%d-%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+			_primaryZoneCount - 1, zoneType, frameStart, frameEnd,
+			x1, y1, x2, y2, x3, y3, x4, y4);
+	} else if (subOpcode == 0x0E && _secondaryZoneCount < kMaxCollisionZones) {
+		// Secondary collision zones (boundaries)
+		_secondaryZones[_secondaryZoneCount++] = zone;
+		debug("Rebel2: Registered SECONDARY collision zone %d: type=%d frames=[%d-%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+			_secondaryZoneCount - 1, zoneType, frameStart, frameEnd,
+			x1, y1, x2, y2, x3, y3, x4, y4);
+	} else {
+		debug("Rebel2: WARNING - Could not register zone (subOpcode=%d, primary=%d, secondary=%d)",
+			subOpcode, _primaryZoneCount, _secondaryZoneCount);
+	}
+}
+
+void InsaneRebel2::resetCollisionZones() {
+	// Reset zone counters at end of frame (FUN_403240 equivalent)
+	// This clears the zone tables so they can be rebuilt from the next frame's IACT chunks
+	_primaryZoneCount = 0;
+	_secondaryZoneCount = 0;
+}
+
+void InsaneRebel2::drawQuad(byte *dst, int pitch, int width, int height,
+                            int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color) {
+	// Draw a quadrilateral by connecting its 4 vertices with lines
+	// Vertex order: top-left (1), top-right (2), bottom-right (3), bottom-left (4)
+	drawLine(dst, pitch, width, height, x1, y1, x2, y2, color);  // Top edge
+	drawLine(dst, pitch, width, height, x2, y2, x3, y3, color);  // Right edge
+	drawLine(dst, pitch, width, height, x3, y3, x4, y4, color);  // Bottom edge
+	drawLine(dst, pitch, width, height, x4, y4, x1, y1, color);  // Left edge
+}
+
+void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int height, byte color) {
+	// Draw all active collision zones as wireframe quadrilaterals for debugging
+	// Uses different colors for primary vs secondary zones
+
+	const byte primaryColor = 44;    // Bright red for primary (obstacle) zones
+	const byte secondaryColor = 47;  // Yellow for secondary (boundary) zones
+
+	// Draw primary zones (sub-opcode 0x0D - obstacles)
+	for (int i = 0; i < _primaryZoneCount; i++) {
+		CollisionZone &zone = _primaryZones[i];
+		if (!zone.active) continue;
+
+		// Apply view offset to convert from video coords to screen coords
+		int x1 = zone.x1 + _viewX;
+		int y1 = zone.y1 + _viewY;
+		int x2 = zone.x2 + _viewX;
+		int y2 = zone.y2 + _viewY;
+		int x3 = zone.x3 + _viewX;
+		int y3 = zone.y3 + _viewY;
+		int x4 = zone.x4 + _viewX;
+		int y4 = zone.y4 + _viewY;
+
+		drawQuad(dst, pitch, width, height, x1, y1, x2, y2, x3, y3, x4, y4, primaryColor);
+	}
+
+	// Draw secondary zones (sub-opcode 0x0E - boundaries)
+	for (int i = 0; i < _secondaryZoneCount; i++) {
+		CollisionZone &zone = _secondaryZones[i];
+		if (!zone.active) continue;
+
+		// Apply view offset
+		int x1 = zone.x1 + _viewX;
+		int y1 = zone.y1 + _viewY;
+		int x2 = zone.x2 + _viewX;
+		int y2 = zone.y2 + _viewY;
+		int x3 = zone.x3 + _viewX;
+		int y3 = zone.y3 + _viewY;
+		int x4 = zone.x4 + _viewX;
+		int y4 = zone.y4 + _viewY;
+
+		drawQuad(dst, pitch, width, height, x1, y1, x2, y2, x3, y3, x4, y4, secondaryColor);
+	}
+
+	// Draw corridor boundaries as a rectangle (from IACT opcode 7)
+	if (_corridorLeftX != 0 || _corridorRightX != 320) {
+		const byte corridorColor = 45;  // Cyan for corridor boundaries
+		// Draw vertical lines for left/right boundaries
+		drawLine(dst, pitch, width, height,
+			_corridorLeftX + _viewX, _corridorTopY + _viewY,
+			_corridorLeftX + _viewX, _corridorBottomY + _viewY, corridorColor);
+		drawLine(dst, pitch, width, height,
+			_corridorRightX + _viewX, _corridorTopY + _viewY,
+			_corridorRightX + _viewX, _corridorBottomY + _viewY, corridorColor);
+		// Draw horizontal lines for top/bottom boundaries
+		drawLine(dst, pitch, width, height,
+			_corridorLeftX + _viewX, _corridorTopY + _viewY,
+			_corridorRightX + _viewX, _corridorTopY + _viewY, corridorColor);
+		drawLine(dst, pitch, width, height,
+			_corridorLeftX + _viewX, _corridorBottomY + _viewY,
+			_corridorRightX + _viewX, _corridorBottomY + _viewY, corridorColor);
+	}
+}
+
 void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx) {
 	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars()) return;
 
@@ -2621,8 +2794,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	_viewY = (_vm->_mouse.y * maxScrollY) / _vm->_screenHeight;
 	
 	_player->setScrollOffset(_viewX, _viewY);
-
-	processMouse();
 
 	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
 	// Based on FUN_004089ab:
@@ -2710,33 +2881,42 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		return;
 	}
 
-	// During intro sequences (non-menu, non-gameplay):
-	// - Hide the crosshair/cursor (handled by not drawing it)
-	// - Skip all HUD/status bar rendering
-	// - Skip mouse input processing
-	// The mouse cursor is already hidden by SmushPlayer during video playback
+	// During intro/cinematic sequences:
+	// - Hide the mouse cursor (original: ShowCursor(0) at startup in FUN_00420c70)
+	// - Skip all HUD/status bar/crosshair rendering
+	// - Skip mouse input processing (no shooting during intros)
 	//
-	// IMPORTANT: During gameplay (_gameState == kStateGameplay), we MUST render HUD
-	// even if video flags have 0x20 set (which can happen for some level videos)
-	if (introPlaying && _gameState != kStateGameplay) {
+	// Original behavior from FUN_00403240:
+	// - if (DAT_0047a814 == 0) { switch(DAT_0047ee84) { ... } }
+	// - DAT_0047ee84 (handler) is only set by IACT opcode 6 during gameplay videos
+	// - Cinematics/intros don't have opcode 6, so handler stays 0
+	// - We use _rebelHandler == 0 as the primary indicator for intro/cinematic mode
+	if (_rebelHandler == 0) {
+		// Hide mouse cursor during intro - no crosshair, no clicking
+		CursorMan.showMouse(false);
+
 		// Track state transition for debugging
 		if (!_introCursorPushed) {
 			_introCursorPushed = true;
-			debug("Rebel2: Intro sequence detected (flags=0x%x, state=%d) - HUD disabled", _player->_curVideoFlags, _gameState);
+			debug("Rebel2: Intro/cinematic mode (handler=0, flags=0x%x, state=%d) - HUD disabled, mouse hidden",
+				  _player->_curVideoFlags, _gameState);
 		}
 		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9
 		return;
 	} else {
-		// Gameplay mode - restore normal rendering
+		// Gameplay mode - handler was set by IACT opcode 6
 		if (_introCursorPushed) {
 			_introCursorPushed = false;
-			debug("Rebel2: Gameplay started - HUD enabled (flags=0x%x, state=%d)", _player->_curVideoFlags, _gameState);
+			debug("Rebel2: Gameplay mode (handler=%d, flags=0x%x, state=%d) - HUD enabled",
+				  _rebelHandler, _player->_curVideoFlags, _gameState);
 		}
 	}
 
-	// From here on, we're in gameplay mode (not intro)
-	// Render HUD if NOT in intro mode, OR if we ARE in gameplay state
-	if (!introPlaying || _gameState == kStateGameplay) {
+	// From here on, we're in gameplay mode (_rebelHandler != 0)
+	// Process mouse input for shooting
+	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0
+	processMouse();
+
 	// ============================================================
 	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
 	// ============================================================
@@ -3322,6 +3502,16 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 
 	// ============================================================
+	// COLLISION ZONE VISUALIZATION (for debugging Level 3 pilot mode)
+	// ============================================================
+	// Draw collision zones as wireframe quadrilaterals when in Handler 7 (space flight)
+	// or Handler 8 (ground vehicle) modes. This helps verify parsing is correct.
+	// The zones are drawn BEFORE the crosshair so they appear under the UI.
+	if (_rebelHandler == 7 || _rebelHandler == 8) {
+		drawCollisionZones(renderBitmap, pitch, width, height, 0);
+	}
+
+	// ============================================================
 	// TARGET LOCK DETECTION (DAT_00443676 equivalent)
 	// ============================================================
 	// In retail: When crosshair is over an active enemy, set target lock timer to 7
@@ -3413,8 +3603,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// This is called after all other rendering so it appears on top
 	renderScoreHUD(renderBitmap, pitch, width, height, 0);
 
-	} // End of if (!introPlaying) block
-
 	// ============================================================
 	// FRAME END RESET: Clear active flags for all enemies (FUN_403240 equivalent)
 	// ============================================================
@@ -3430,6 +3618,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			resetIt->active = false;
 		}
 	}
+
+	// Reset collision zone counters for next frame (DAT_0047ee74/DAT_0047ee78 = 0)
+	// The zones are rebuilt from IACT opcode 5 chunks each frame
+	resetCollisionZones();
 }
 
 // ========== Audio Handling for Rebel Assault 2 ==========
@@ -4617,6 +4809,21 @@ void InsaneRebel2::playMissionBriefing() {
 	splayer->play("OPEN/O_LEVEL.SAN", 12);
 }
 
+void InsaneRebel2::playCinematic(const char *filename) {
+	// Play a cinematic/cutscene video with proper intro mode setup
+	// This helper ensures:
+	// 1. Handler is reset to 0 (no HUD, no shooting)
+	// 2. Video flags are set to 0x20 (cinematic mode)
+	//
+	// Original: DAT_0047ee84 is only set by IACT opcode 6 during gameplay videos
+	// Cinematics don't have opcode 6, so handler stays 0
+	_rebelHandler = 0;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	splayer->setCurVideoFlags(0x20);  // Cinematic mode
+	splayer->play(filename, 12);
+}
+
 void InsaneRebel2::playLevelBegin(int levelId) {
 	// Play the level beginning cinematic (LEVXX/XXBEG.SAN)
 	// Emulates FUN_004171c5 call in each level handler
@@ -4626,10 +4833,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	Common::String filename = Common::String::format("%s/%sBEG.SAN", dir.c_str(), prefix.c_str());
 
 	debug("Rebel2: Playing level %d beginning: %s", levelId, filename.c_str());
-
-	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);  // Cinematic mode
-	splayer->play(filename.c_str(), 12);
+	playCinematic(filename.c_str());
 }
 
 bool InsaneRebel2::playLevelGameplay(int levelId) {
@@ -5111,8 +5315,7 @@ int InsaneRebel2::runLevel2() {
 	int bonusCount = 0;  // Tracks special events (local_1c in assembly)
 
 	// Play cutscene (02CUT.SAN)
-	splayer->setCurVideoFlags(0x20);
-	splayer->play("LEV02/02CUT.SAN", 12);
+	playCinematic("LEV02/02CUT.SAN");
 	if (_vm->shouldQuit()) return kLevelQuit;
 
 	// Play level beginning cinematic (02BEG.SAN)
