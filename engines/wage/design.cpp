@@ -357,8 +357,8 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE() - 1;
-	int16 x2 = in.readSint16BE() - 1;
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
 
 	if (x1 > x2)
 		SWAP(x1, x2);
@@ -401,10 +401,10 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
-		primitives.drawLine(x1, y1, x2, y1, kColorBlack, &pd);
-		primitives.drawLine(x2, y1, x2, y2, kColorBlack, &pd);
-		primitives.drawLine(x2, y2, x1, y2, kColorBlack, &pd);
-		primitives.drawLine(x1, y2, x1, y1, kColorBlack, &pd);
+		primitives.drawLine(x1, y1, x2 - 1, y1, kColorBlack, &pd);
+		primitives.drawLine(x2 - 1, y1, x2 - 1, y2 - 1, kColorBlack, &pd);
+		primitives.drawLine(x2 - 1, y2 - 1, x1, y2 - 1, kColorBlack, &pd);
+		primitives.drawLine(x1, y2 - 1, x1, y1, kColorBlack, &pd);
 	}
 }
 
