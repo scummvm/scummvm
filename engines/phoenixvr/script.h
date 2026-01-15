@@ -69,6 +69,7 @@ public:
 
 	struct Test {
 		int idx;
+		int hover;
 		Scope scope;
 	};
 	using TestPtr = Common::SharedPtr<Test>;

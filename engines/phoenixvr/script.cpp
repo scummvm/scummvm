@@ -270,9 +270,13 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 			if (!_currentWarp)
 				error("test without warp");
 			auto idx = p.nextInt();
+			auto hover = 0;
 			if (!_currentWarp)
 				error("text must have parent wrap section");
-			_currentTest.reset(new Test{idx, {}});
+			if (p.maybe(',')) {
+				hover = p.nextInt();
+			}
+			_currentTest.reset(new Test{idx, hover, {}});
 			_currentWarp->tests.push_back(_currentTest);
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
