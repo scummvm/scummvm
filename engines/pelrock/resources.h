@@ -23,8 +23,8 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "pelrock/types.h"
 #include "pelrock/offsets.h"
+#include "pelrock/types.h"
 
 namespace Pelrock {
 
@@ -70,10 +70,12 @@ public:
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
 
-	//Special anims
+	// Special anims
 	byte *_specialAnimData = nullptr;
 	int _specialAnimCurFrame = 0;
+	int _speciaAnimLoopCount = 0;
 	AlfredSpecialAnimOffset _curSpecialAnim;
+	bool _isSpecialAnimFinished = false;
 };
 
 } // End of namespace Pelrock

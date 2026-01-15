@@ -227,8 +227,10 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim) {
 
 	alfred7.seek(_curSpecialAnim.offset, SEEK_SET);
 	_specialAnimData = new byte[_curSpecialAnim.numFrames * _curSpecialAnim.w * _curSpecialAnim.h];
-	mergeRleBlocks(&alfred7, _curSpecialAnim.offset, 2, _specialAnimData);
+	debug("Special anim buffer size: %d", _curSpecialAnim.numFrames * _curSpecialAnim.w * _curSpecialAnim.h);
+	mergeRleBlocks(&alfred7, _curSpecialAnim.offset, _curSpecialAnim.numBudas, _specialAnimData);
 	_specialAnimCurFrame = 0;
+	_isSpecialAnimFinished = false;
 	alfred7.close();
 }
 
@@ -236,6 +238,7 @@ void ResourceManager::clearSpecialAnim() {
 	delete[] _specialAnimData;
 	_specialAnimData = nullptr;
 	_specialAnimCurFrame = 0;
+	_speciaAnimLoopCount = 0;
 }
 
 void ResourceManager::loadInventoryItems() {
@@ -393,6 +396,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 	for (int i = 0; i < numBlocks; i++) {
 		byte *thisBlock = nullptr;
 		size_t blockSize = 0;
+		uint32 pos = stream->pos();
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);

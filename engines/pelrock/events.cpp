@@ -83,11 +83,9 @@ void PelrockEventManager::pollEvent() {
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			_rightMouseButton = 1;
-			debug("Right mouse button down");
 			break;
 		case Common::EVENT_RBUTTONUP:
 			if (_rightMouseButton == 1) {
-				debug("Right mouse clicked");
 				_rightMouseClicked = true;
 			} else {
 				_rightMouseClicked = false;

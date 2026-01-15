@@ -450,7 +450,7 @@ const ExtraImages extraScreens[] = {
 	{0x647C3, // Alfred circle
 	 0x7B6B1,
 	 4},
-	{0x6FBC9, // Recipe
+	{0x6FBCD, // Recipe
 	 0x7B6B1,
 	 8},
 	{0x7BA11, // Newspaper
@@ -478,11 +478,12 @@ struct AlfredSpecialAnimOffset {
 	int w = 0;
 	int h = 0;
 	int numBudas;
+	int loops;
 	uint32 offset;
 	int stride = 0;
 
-	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, uint32 off)
-		: numFrames(nF), w(width), h(height), numBudas(nBudas), offset(off) {
+	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, uint32 off, int loops)
+		: numFrames(nF), w(width), h(height), numBudas(nBudas), offset(off), loops(loops) {
 		stride = w * h;
 	}
 	AlfredSpecialAnimOffset() {
@@ -490,7 +491,8 @@ struct AlfredSpecialAnimOffset {
 };
 
 const AlfredSpecialAnimOffset alfredSpecialAnims[] = {
-	{20, 51, 102, 2, 559681}, // READ
+	{10, 51, 102, 1, 559685, 1}, // READ BOOK
+	{10, 51, 102, 1, 578943, 1}, // READ RECIPE
 };
 
 } // End of namespace Pelrock

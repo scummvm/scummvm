@@ -297,6 +297,10 @@ void PelrockEngine::checkMouse() {
 
 	// Handle mouse release after long press (popup selection mode)
 	if (_events->_popupSelectionMode && !_events->_leftMouseButton) {
+		_events->_leftMouseButton = false;
+		_events->_leftMouseClicked = false;
+		_events->_popupSelectionMode = false;
+		_actionPopupState.isActive = false;
 		// Mouse was released while popup is active
 		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
 		if (_actionPopupState.isAlfredUnder) {
@@ -311,8 +315,6 @@ void PelrockEngine::checkMouse() {
 			_queuedAction = QueuedAction{NO_ACTION, -1, false};
 			_currentHotspot = nullptr;
 		}
-		_actionPopupState.isActive = false;
-		_events->_popupSelectionMode = false;
 	} else if (_events->_leftMouseClicked) {
 		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
@@ -643,9 +645,15 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	case ALFRED_SPECIAL_ANIM: {
-		if (_res->_specialAnimCurFrame > _res->_curSpecialAnim.numFrames) {
-			_res->clearSpecialAnim();
-			_alfredState.setState(ALFRED_IDLE);
+		if (_res->_specialAnimCurFrame >= _res->_curSpecialAnim.numFrames) {
+			if (_res->_speciaAnimLoopCount < _res->_curSpecialAnim.loops) {
+				_res->_speciaAnimLoopCount++;
+				_res->_specialAnimCurFrame = 0;
+			} else {
+				_res->clearSpecialAnim();
+				_alfredState.setState(ALFRED_IDLE);
+				_res->_isSpecialAnimFinished = true;
+			}
 		} else {
 			byte *frame = new byte[_res->_curSpecialAnim.stride * _res->_curSpecialAnim.numFrames];
 			extractSingleFrame(_res->_specialAnimData,
@@ -1124,9 +1132,8 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 
 void PelrockEngine::pickupIconFlash() {
 	_graphics->showOverlay(65, _compositeBuffer);
-	if(_flashingIcon == -1)
+	if (_flashingIcon == -1)
 		return;
-	debug("Flashing icon %d", _flashingIcon);
 	InventoryObject item = _res->getIconForObject(_flashingIcon);
 	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 5, 400 - 60 - 5, 60, 60, 1);
@@ -1141,7 +1148,6 @@ void PelrockEngine::gameLoop() {
 
 void PelrockEngine::extraScreenLoop() {
 	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
-
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
@@ -1391,6 +1397,15 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 	_screen->update();
 }
 
+void PelrockEngine::waitForSpecialAnimation() {
+	while (!g_engine->shouldQuit() && !_res->_isSpecialAnimFinished) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+}
+
 void PelrockEngine::doExtraActions(int roomNumber) {
 	switch (roomNumber) {
 	case 4:
@@ -1398,8 +1413,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_state->setFlag(FLAG_JEFE_ENCARCELADO, true);
 			_room->disableSprite(13, 0, true);
 			loadExtraScreenAndPresent(4);
-			_screen->markAllDirty();
-			_screen->update();
 		}
 		break;
 

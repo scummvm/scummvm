@@ -221,6 +221,7 @@ public:
 
 	void setScreen(int s, AlfredDirection dir);
 	void loadExtraScreenAndPresent(int screenIndex);
+	void waitForSpecialAnimation();
 	void doExtraActions(int roomNumber);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 

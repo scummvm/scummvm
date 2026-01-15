@@ -71,7 +71,7 @@ const ActionEntry actionTable[] = {
 	{WILDCARD, NO_ACTION, nullptr}};
 
 const CombinationEntry combinationTable[] = {
-	{2, 281, &PelrockEngine::useCardWithATM}, // Use ATM Card with ATM
+	{2, 281, &PelrockEngine::useCardWithATM},           // Use ATM Card with ATM
 	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
@@ -141,7 +141,7 @@ void PelrockEngine::openMcDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::closeMcDoor(HotSpot *hotspot) {
-	//FIXME: Impossible to close right now
+	// FIXME: Impossible to close right now
 	closeDoor(hotspot, 2, 7, FEMININE, false);
 }
 
@@ -171,10 +171,9 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 }
 
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
-	if(!_state->flagIsSet(FLAG_JEFE_ENCARCELADO)) {
+	if (!_state->flagIsSet(FLAG_JEFE_ENCARCELADO)) {
 		_dialog->say(_res->_ingameTexts[QUITA_ESAS_MANOS]);
-	}
-	else {
+	} else {
 		_room->addSticker(36);
 		addInventoryItem(63); // Add recipe
 		_dialog->say(_res->_ingameTexts[QUESESTO_RECETA]);
@@ -263,13 +262,15 @@ void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
 void PelrockEngine::useOnAlfred(int inventoryObject) {
 
 	debug("Using item %d on Alfred", inventoryObject);
-	switch (inventoryObject)
-	{
+	switch (inventoryObject) {
 	case 63: // Recipe book
-		_res->loadAlfredSpecialAnim(0);
+		_res->loadAlfredSpecialAnim(1);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		debug("After special anim");
 		loadExtraScreenAndPresent(3);
-		// _dialog->say(_res->_ingameTexts[QUEASCO]);
+		debug("After extra screen");
+		_dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;
 
 	default:
