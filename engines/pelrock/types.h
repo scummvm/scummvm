@@ -282,8 +282,8 @@ struct ScalingParams {
 struct ScaleCalculation {
 	int scaledWidth;
 	int scaledHeight;
-	int scaleUp;
-	int scaleDown;
+	int scaleX;  // Amount to subtract from width (was scaleUp)
+	int scaleY;  // Amount to subtract from height (was scaleDown)
 };
 
 enum GameState {

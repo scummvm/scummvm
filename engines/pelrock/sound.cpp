@@ -94,7 +94,7 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 		// Create raw audio stream (8-bit unsigned mono is common for old games)
 		stream = Audio::makeRawStream(pcmData, pcmSize, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	} else {
-		debug("Unknown sound format");
+		debug("Unknown sound format at offset %d, with size %d", sound.offset, sound.size);
 		delete[] data;
 		return;
 	}

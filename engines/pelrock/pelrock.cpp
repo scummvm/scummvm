@@ -629,19 +629,17 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.curFrame = 0;
 		}
 		drawAlfred(_res->alfredTalkFrames[_alfredState.direction][_alfredState.curFrame]);
-		// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
-			_alfredState.curFrame++;
+		_alfredState.curFrame++;
 		// }
 		break;
 	}
 	case ALFRED_COMB: {
 		if (_alfredState.curFrame >= 11) {
 			_alfredState.setState(ALFRED_IDLE);
-			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[_alfredState.direction], _alfredState.x, _alfredState.y - kAlfredFrameHeight, 51, 102, 255);
+			drawAlfred(_res->alfredIdle[_alfredState.direction]);
 		} else {
-			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
-				_alfredState.curFrame++;
+			drawAlfred(_res->alfredCombFrames[_alfredState.direction][_alfredState.curFrame]);
+			_alfredState.curFrame++;
 		}
 		break;
 	}
@@ -650,9 +648,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.setState(ALFRED_IDLE);
 		} else {
 			drawAlfred(_res->alfredInteractFrames[_alfredState.direction][_alfredState.curFrame]);
-			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
-				_alfredState.curFrame++;
-			// }
+			_alfredState.curFrame++;
 		}
 		break;
 	}
@@ -673,17 +669,16 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 							   _res->_specialAnimCurFrame,
 							   _res->_curSpecialAnim.w,
 							   _res->_curSpecialAnim.h);
-			drawSpriteToBuffer(_compositeBuffer,
-							   640,
-							   frame,
-							   _alfredState.x,
-							   _alfredState.y - _res->_curSpecialAnim.h,
-							   _res->_curSpecialAnim.w,
-							   _res->_curSpecialAnim.h,
-							   255);
-			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
-				_res->_specialAnimCurFrame++;
-			// }
+			drawAlfred(frame);
+			// drawSpriteToBuffer(_compositeBuffer,
+			// 				   640,
+			// 				   frame,
+			// 				   _alfredState.x,
+			// 				   _alfredState.y - _res->_curSpecialAnim.h,
+			// 				   _res->_curSpecialAnim.w,
+			// 				   _res->_curSpecialAnim.h,
+			// 				   255);
+			_res->_specialAnimCurFrame++;
 			delete[] frame;
 		}
 	}
@@ -698,17 +693,19 @@ void PelrockEngine::drawAlfred(byte *buf) {
 
 	ScaleCalculation scale = calculateScaling(_alfredState.y, _room->_scaleParams);
 
-	int finalHeight = kAlfredFrameHeight - scale.scaleDown + scale.scaleUp;
+	// Use the pre-calculated scaled dimensions from calculateScaling
+	int finalHeight = scale.scaledHeight;
+	int finalWidth = scale.scaledWidth;
+
 	if (finalHeight <= 0) {
 		finalHeight = 1;
 	}
-	float scaleFactor = static_cast<float>(finalHeight) / static_cast<float>(kAlfredFrameHeight);
-	int finalWidth = static_cast<int>(kAlfredFrameWidth * scaleFactor);
 	if (finalWidth <= 0) {
 		finalWidth = 1;
 	}
+
 	int scaleIndex = finalHeight - 1;
-	if (scaleIndex >= _heightScalingTable.size()) {
+	if (scaleIndex >= (int)_heightScalingTable.size()) {
 		scaleIndex = _heightScalingTable.size() - 1;
 	}
 	if (scaleIndex < 0) {
@@ -981,45 +978,52 @@ void PelrockEngine::calculateScalingMasks() {
 }
 
 ScaleCalculation PelrockEngine::calculateScaling(int yPos, ScalingParams scalingParams) {
-	int scaleDown = 0;
-	int scaleUp = 0;
+	// scaleY = amount to subtract from height (94 max for 0xFF mode)
+	// scaleX = amount to subtract from width (47 max for 0xFF mode, = scaleY/2)
+	int scaleY = 0;
+	int scaleX = 0;
 	if (scalingParams.scaleMode == 0xFF) {
-		scaleDown = 0x5e;
-		scaleUp = 0x2f;
+		// Maximum scaling - character is very small (used for bird's eye view maps)
+		scaleY = 0x5e; // 94
+		scaleX = 0x2f; // 47
 	} else if (scalingParams.scaleMode == 0xFE) {
-		scaleDown = 0;
-		scaleUp = 0;
+		// No scaling - full size character
+		scaleY = 0;
+		scaleX = 0;
 	} else if (scalingParams.scaleMode == 0) {
+		// Dynamic scaling based on Y position
 		if (scalingParams.yThreshold < yPos) {
-			scaleDown = 0;
-			scaleUp = 0;
+			// Below threshold - no scaling
+			scaleY = 0;
+			scaleX = 0;
 		} else {
 			if (scalingParams.scaleDivisor != 0) {
-				scaleDown = (scalingParams.yThreshold - yPos) / scalingParams.scaleDivisor;
-				scaleUp = scaleDown / 2;
+				scaleY = (scalingParams.yThreshold - yPos) / scalingParams.scaleDivisor;
+				scaleX = scaleY / 2;
 			} else {
-				scaleDown = 0;
-				scaleUp = 0;
+				scaleY = 0;
+				scaleX = 0;
 			}
 		}
 	} else {
-		scaleDown = 0;
-		scaleUp = 0;
+		scaleY = 0;
+		scaleX = 0;
 	}
 
-	int finalHeight = kAlfredFrameHeight - scaleDown + scaleUp;
+	// Original game formula: actual dimensions = base - scale amount
+	int finalHeight = kAlfredFrameHeight - scaleY;
 	if (finalHeight < 1)
 		finalHeight = 1;
 
-	int finalWidth = kAlfredFrameWidth * (finalHeight / kAlfredFrameHeight);
+	int finalWidth = kAlfredFrameWidth - scaleX;
 	if (finalWidth < 1)
 		finalWidth = 1;
 
 	ScaleCalculation scaleCalc;
 	scaleCalc.scaledHeight = finalHeight;
 	scaleCalc.scaledWidth = finalWidth;
-	scaleCalc.scaleDown = scaleDown;
-	scaleCalc.scaleUp = scaleUp;
+	scaleCalc.scaleY = scaleY;
+	scaleCalc.scaleX = scaleX;
 	return scaleCalc;
 }
 

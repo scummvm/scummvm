@@ -124,34 +124,12 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 								  bool mouseHoverState,
 								  HotSpot *hotspot) {
 
-	// // Step 1: Determine actual source point
-	// if (mouseHoverState == 1) {
-	//     // Hovering over sprite - check if it has action flags or is animated
-	//     Sprite *sprite = getSprite(hotspotSpriteIndex);
-	//     if (sprite->actionFlags != 0 || sprite->frameCount != 1) {
-	//         sourceX = sprite->x + sprite->width / 2;
-	//         sourceY = sprite->y + sprite->height;
-	//     }
-	// }
-	// else if (mouseHoverState == 2) {
-	//     // Hovering over hotspot - use hotspot center-bottom
-	//     Hotspot *hotspot = getHotspot(hotspotSpriteIndex);
-	//     sourceX = hotspot->x + hotspot->width / 2;
-	//     sourceY = hotspot->y + hotspot->height;
-	// }
+	if(hotspot != nullptr) {
+		sourceX = hotspot->x + hotspot->w / 2;
+		sourceY = hotspot->y + hotspot->h;
+	}
 
-	// if (mouseHoverState == 1) {
-		// Hovering over hotspot - use hotspot center-bottom
-	// if(hotspot != nullptr) {
-	// 	sourceX = hotspot->x + hotspot->w / 2;
-	// 	sourceY = hotspot->y + hotspot->h;
-	// }
-
-	// }
-
-	// else: use sourceX, sourceY as passed (mouse position)
-
-	// Step 2: Find nearest walkbox
+	// Find nearest walkbox
 	uint32 minDistance = 0xFFFF;
 	int bestXDistance = 0;
 	int bestYDistance = 0;
