@@ -466,6 +466,28 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 	return true;
 }
 
+bool Subtitles::isSfxFile(const Common::Path &fname) {
+	// create a temporary parser
+	SRTParser parser;
+
+	// try to parse the file
+	if (!parser.parseFile(fname))
+		return false; // file doesn't exist or is invalid we assume it's not a sfx
+
+	// get the entries
+	const Common::Array<SRTEntry *> &entries = parser.getEntries();
+
+	// since the function SRTParser::parseTextAndTags reads text from left to right, if the line starts immediately
+	// with the <sfx> tag, it will always be the first item in the list
+	// so, we don't have to search the whole array
+	if (!entries.empty() && !entries[0]->parts.empty()) {
+		if (entries[0]->parts[0].tag == "sfx") {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Subtitles::clearSubtitle() const {
 	if (!_loaded)
 		return;

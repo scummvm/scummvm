@@ -69,6 +69,7 @@ public:
 	bool parseFile(const Common::Path &fname);
 	void parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const;
 	const Common::Array<SubtitlePart> *getSubtitleParts(uint32 timestamp) const;
+	const Common::Array<SRTEntry *> &getEntries() const { return _entries; }
 
 private:
 	Common::Array<SRTEntry *> _entries;
@@ -91,6 +92,7 @@ public:
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
 	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
+	static bool isSfxFile(const Common::Path &fname);
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 	virtual void clearSubtitle() const;
 
