@@ -71,7 +71,7 @@ const int kAlfredFrameHeight = 102;
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
 const int kTalkAnimationSpeed = 2;   // Frames per update
-const int kAlfredAnimationSpeed = 2; // Frames per update
+
 const int kAlfredIdleAnimationFrameCount = 300;
 
 // Direction flags (bit-packed)
@@ -126,7 +126,8 @@ struct AlfredState {
 	AlfredAnimState animState = ALFRED_IDLE;
 	AlfredDirection direction = ALFRED_DOWN;
 	int curFrame = 0;
-	uint16 movementSpeed = 6; // pixels per frame
+	uint16 movementSpeedX = 6; // pixels per frame
+	uint16 movementSpeedY = 5; // pixels per frame
 	uint16 x = 319;
 	uint16 y = 302;
 	uint16 scaledX = 0;
@@ -360,7 +361,8 @@ struct PaletteAnim {
 	byte startIndex;
 	byte paletteMode;
 	byte data[10]; // Based on mode its a rotate or fade
-	byte curFrameCount = 0;
+	byte curFrame = 0;
+	byte tickCount = 0;
 };
 
 /**

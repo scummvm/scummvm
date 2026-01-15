@@ -435,36 +435,47 @@ void PelrockEngine::placeSticker(Sticker sticker) {
 }
 
 void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
+	// FADE palette animation - cycles a single palette entry between min/max RGB values
+	// Data layout (after loading from EXE):
+	//   data[0] = current R
+	//   data[1] = current G
+	//   data[2] = current B
+	//   data[3] = min R
+	//   data[4] = min G
+	//   data[5] = min B
+	//   data[6] = max R
+	//   data[7] = max G
+	//   data[8] = max B
+	//   data[9] = flags byte:
+	//             bits 0-1: R increment
+	//             bits 2-3: G increment
+	//             bits 4-5: B increment
+	//             bit 6: direction (0=decreasing toward min, 1=increasing toward max)
 
-	if (anim->data[0] >= anim->data[6] &&
-		anim->data[1] >= anim->data[7] &&
-		anim->data[2] >= anim->data[8]) {
-		anim->data[10] = 0;
-	} else if (anim->data[0] <= anim->data[3] &&
-			   anim->data[1] <= anim->data[4] &&
-			   anim->data[2] <= anim->data[5]) {
-		anim->data[10] = 1;
-	}
+	byte flags = anim->data[9];
+	// Increments are scaled by 4 (<<2) to match the shifted RGB values
+	byte rInc = (flags & 0x03) << 2;
+	byte gInc = ((flags >> 2) & 0x03) << 2;
+	byte bInc = ((flags >> 4) & 0x03) << 2;
+	bool increasing = (flags & 0x40) != 0;
 
-	if (anim->data[10]) {
-		if (anim->data[0] < anim->data[6]) {
-			anim->data[0] += anim->data[9];
-		}
-		if (anim->data[1] < anim->data[7]) {
-			anim->data[1] += anim->data[9];
-		}
-		if (anim->data[2] < anim->data[8]) {
-			anim->data[2] += anim->data[9];
+	if (increasing) {
+		// Increasing toward max values
+		anim->data[0] += rInc;
+		anim->data[1] += gInc;
+		anim->data[2] += bInc;
+		// Check if R reached max, then reverse direction
+		if (anim->data[0] >= anim->data[6]) {
+			anim->data[9] &= ~0x40; // Clear direction bit
 		}
 	} else {
-		if (anim->data[0] > anim->data[3]) {
-			anim->data[0] -= anim->data[9];
-		}
-		if (anim->data[1] > anim->data[4]) {
-			anim->data[1] -= anim->data[9];
-		}
-		if (anim->data[2] > anim->data[5]) {
-			anim->data[2] -= anim->data[9];
+		// Decreasing toward min values
+		anim->data[0] -= rInc;
+		anim->data[1] -= gInc;
+		anim->data[2] -= bInc;
+		// Check if R reached min, then reverse direction
+		if (anim->data[0] <= anim->data[3]) {
+			anim->data[9] |= 0x40; // Set direction bit
 		}
 	}
 
@@ -475,8 +486,9 @@ void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
 }
 
 void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
-	if (anim->curFrameCount >= anim->data[1]) {
-		anim->curFrameCount = 0;
+
+	if (anim->curFrame >= anim->data[1]) {
+		anim->curFrame = 0;
 		int colors = anim->paletteMode;
 		byte *paletteValues = new byte[colors * 3];
 		for (int i = 0; i < colors; i++) {
@@ -494,7 +506,7 @@ void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
 		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 
 	} else {
-		anim->curFrameCount++;
+		anim->curFrame++;
 	}
 }
 
@@ -551,29 +563,29 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (step.distanceX > 0) {
 			if (step.flags & MOVE_RIGHT) {
 				_alfredState.direction = ALFRED_RIGHT;
-				_alfredState.x += MIN(_alfredState.movementSpeed, step.distanceX);
+				_alfredState.x += MIN(_alfredState.movementSpeedX, step.distanceX);
 			}
 			if (step.flags & MOVE_LEFT) {
 				_alfredState.direction = ALFRED_LEFT;
-				_alfredState.x -= MIN(_alfredState.movementSpeed, step.distanceX);
+				_alfredState.x -= MIN(_alfredState.movementSpeedX, step.distanceX);
 			}
 		}
 		if (step.distanceY > 0) {
 			if (step.flags & MOVE_DOWN) {
 				_alfredState.direction = ALFRED_DOWN;
-				_alfredState.y += MIN(_alfredState.movementSpeed, step.distanceY);
+				_alfredState.y += MIN(_alfredState.movementSpeedY, step.distanceY);
 			}
 			if (step.flags & MOVE_UP) {
 				_alfredState.direction = ALFRED_UP;
-				_alfredState.y -= MIN(_alfredState.movementSpeed, step.distanceY);
+				_alfredState.y -= MIN(_alfredState.movementSpeedY, step.distanceY);
 			}
 		}
 
 		if (step.distanceX > 0)
-			step.distanceX -= MIN(_alfredState.movementSpeed, step.distanceX);
+			step.distanceX -= MIN(_alfredState.movementSpeedX, step.distanceX);
 
 		if (step.distanceY > 0)
-			step.distanceY -= MIN(_alfredState.movementSpeed, step.distanceY);
+			step.distanceY -= MIN(_alfredState.movementSpeedY, step.distanceY);
 
 		if (step.distanceX <= 0 && step.distanceY <= 0) {
 			_currentStep++;
@@ -617,9 +629,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.curFrame = 0;
 		}
 		drawAlfred(_res->alfredTalkFrames[_alfredState.direction][_alfredState.curFrame]);
-		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+		// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
 			_alfredState.curFrame++;
-		}
+		// }
 		break;
 	}
 	case ALFRED_COMB: {
@@ -628,7 +640,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredIdle[_alfredState.direction], _alfredState.x, _alfredState.y - kAlfredFrameHeight, 51, 102, 255);
 		} else {
 			drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCombFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - kAlfredFrameHeight, 51, 102, 255);
-			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
 				_alfredState.curFrame++;
 		}
 		break;
@@ -638,9 +650,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.setState(ALFRED_IDLE);
 		} else {
 			drawAlfred(_res->alfredInteractFrames[_alfredState.direction][_alfredState.curFrame]);
-			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
 				_alfredState.curFrame++;
-			}
+			// }
 		}
 		break;
 	}
@@ -669,9 +681,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 							   _res->_curSpecialAnim.w,
 							   _res->_curSpecialAnim.h,
 							   255);
-			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+			// if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
 				_res->_specialAnimCurFrame++;
-			}
+			// }
 			delete[] frame;
 		}
 	}
@@ -842,8 +854,9 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	byte *frame = new byte[frameSize];
 	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], x, y, w, h, 255);
 
-	// if (animData.elpapsedFrames == animData.speed) {
-	if (_chrono->getFrameCount() % animData.speed == 0) {
+	// Original in the game: increment FIRST, then check (not check-then-increment)
+	animData.elpapsedFrames++;
+	if (animData.elpapsedFrames >= animData.speed) {
 		animData.elpapsedFrames = 0;
 		if (animData.curFrame < animData.nframes - 1) {
 			animData.curFrame++;
@@ -861,8 +874,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				}
 			}
 		}
-	} else {
-		animData.elpapsedFrames++;
 	}
 }
 

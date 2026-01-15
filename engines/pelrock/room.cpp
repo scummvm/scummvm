@@ -222,7 +222,12 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	anim->paletteMode = exeFile.readByte();
 	exeFile.read(anim->data, 10);
 	if (anim->paletteMode == 1) {
-		for (int i = 2; i < 10; i++) {
+		// FADE mode: shift RGB values to convert from 6-bit VGA to 8-bit
+		// data[0-2] = current R,G,B
+		// data[3-5] = min R,G,B
+		// data[6-8] = max R,G,B
+		// data[9] = flags (R/G/B increments + direction) - NOT shifted
+		for (int i = 0; i < 9; i++) {
 			anim->data[i] = anim->data[i] << 2;
 		}
 	}
