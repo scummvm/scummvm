@@ -2359,7 +2359,15 @@ void PrivateEngine::playSound(Sound &sound, const Common::String &name, bool loo
 	_mixer->stopHandle(sound.handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &sound.handle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 
-	loadSubtitles(path, &sound);
+	bool shouldLoad = true;
+	if (_subtitledSound && isSoundPlaying(*_subtitledSound)) {
+		// if current is speech and new is sfx, block it
+		// speech gets priority over sound effects
+		if (!isSfx(_subtitledSound->name) && isSfx(name))
+			shouldLoad = false;
+	}
+
+	if (shouldLoad) loadSubtitles(path, &sound);
 }
 
 void PrivateEngine::stopForegroundSounds() {
@@ -2491,21 +2499,46 @@ void PrivateEngine::adjustSubtitleSize() {
 	}
 }
 
+bool PrivateEngine::isSfx(const Common::String &filename) {
+	if (_sfxCache.contains(filename))
+		return _sfxCache[filename];
+	Common::Path path = getSubtitlePath(filename);
+
+	// check the file content
+	bool result = Video::Subtitles::isSfxFile(path);
+	// update cache
+	_sfxCache[filename] = result;
+
+	return result;
+}
+
+Common::Path PrivateEngine::getSubtitlePath(const Common::String &soundName) {
+	// call convertPath to fix slashes, make lowercase etc.
+	Common::Path path = convertPath(soundName);
+
+	// add extension and replace '/' with '_' (audio/file -> audio_file)
+	Common::String subPathStr = path.toString() + ".srt";
+	subPathStr.replace('/', '_');
+
+	// get language code
+	Common::String language(Common::getLanguageCode(_language));
+	if (language == "us")
+		language = "en";
+
+	// construct full path: subtitles/language/subPathStr
+	Common::Path subPath = "subtitles";
+	subPath = subPath.appendComponent(language);
+	subPath = subPath.appendComponent(subPathStr);
+
+	return subPath;
+}
+
 void PrivateEngine::loadSubtitles(const Common::Path &path, Sound *sound) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
 	if (!_useSubtitles)
 		return;
 
-	Common::String subPathStr = path.toString() + ".srt";
-	subPathStr.toLowercase();
-	subPathStr.replace('/', '_');
-	Common::String language(Common::getLanguageCode(_language));
-	if (language == "us")
-		language = "en";
-
-	Common::Path subPath = "subtitles";
-	subPath = subPath.appendComponent(language);
-	subPath = subPath.appendComponent(subPathStr);
+	Common::Path subPath = getSubtitlePath(path.toString());
 	debugC(1, kPrivateDebugFunction, "Loading subtitles from %s", subPath.toString().c_str());
 
 	destroySubtitles();

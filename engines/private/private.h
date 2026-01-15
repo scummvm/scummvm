@@ -236,6 +236,11 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Image::ImageDecoder *_image;
 	int _screenW, _screenH;
+	// cache to store if a sound is sfx or not to avoid repeated parsing
+	Common::HashMap<Common::String, bool> _sfxCache;
+
+	// helper to generate the correct subtitle path
+	Common::Path getSubtitlePath(const Common::String &soundName);
 
 public:
 	bool _shouldHighlightMasks;
@@ -305,6 +310,7 @@ public:
 	void loadSubtitles(const Common::Path &path, Sound *sound = nullptr);
 	void destroySubtitles();
 	void adjustSubtitleSize();
+	bool isSfx(const Common::String &filename);
 	Video::Subtitles *_subtitles;
 	Sound *_subtitledSound;
 	bool _useSubtitles;
