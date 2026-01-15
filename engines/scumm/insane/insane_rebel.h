@@ -519,6 +519,24 @@ public:
 	int16 _flyShipScreenX;           // DAT_0044370e - Ship X screen position
 	int16 _flyShipScreenY;           // DAT_0044370c - Ship Y screen position
 
+	// ======================= Handler 0x26 Turret HUD Overlays =======================
+	// For turret missions (Level 1, etc.), Handler 0x26 uses NUT-based HUD overlays
+	// loaded via IACT opcode 8. These contain animated cockpit panel elements.
+	//
+	// Based on FUN_00407fcb and FUN_004089ab disassembly:
+	// - DAT_0047fe78: Primary HUD overlay (GRD001/002, par3=1 or 2, 6 animation frames)
+	// - DAT_0047fe80: Secondary HUD overlay (GRD010, par3=3 or 4, static or animated)
+	//
+	// Animation: The HUD overlay cycles through 6 sprite frames for blinking lights
+	// Formula: spriteIndex = (frameCounter / 2) % 6
+	//
+	// Position formula (from FUN_004089ab lines 203-222):
+	// X = 160 + (mouseOffsetX >> 4) - (width / 2) - spriteOffsetX
+	// Y = 182 - (mouseOffsetY >> 4) - height - spriteOffsetY
+
+	NutRenderer *_hudOverlayNut;     // DAT_0047fe78 - Primary HUD overlay (animated)
+	NutRenderer *_hudOverlay2Nut;    // DAT_0047fe80 - Secondary HUD overlay
+
 	/* Difficulty Level (0, 1, 2 = Easy, Med, Hard) */
 	int _difficulty;
 	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
