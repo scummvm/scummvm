@@ -149,9 +149,11 @@ bool intro_v1d::introPlay() {
 		return false;
 	}
 
-	Common::String copyright;
 	Common::String ttsMessage;
 #endif
+
+	Common::String copyright;
+
 	if (_introTicks < introSize) {
 		switch (_introState++) {
 		case 0:
