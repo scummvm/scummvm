@@ -3161,6 +3161,15 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	for (int hudSlot = 1; hudSlot < 16; hudSlot++) {
 		EmbeddedSanFrame &frame = _rebelEmbeddedHud[hudSlot];
 		if (frame.valid && frame.pixels && frame.width > 0 && frame.height > 0) {
+			// Skip frames at position (0,0) with small dimensions - these are likely animation patches
+			// that need special handling (userId=3: 11x26, userId=4: 17x53 in Level 1)
+			// TODO: Investigate how these are used in the original assembly
+			if (frame.renderX == 0 && frame.renderY == 0 && frame.width < 50 && frame.height < 60) {
+				debug(3, "Rebel2: Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
+					hudSlot, frame.width, frame.height);
+				continue;
+			}
+
 			int destX, destY;
 
 			// For Handler 7: Check if this is a ship direction frame
@@ -3219,24 +3228,30 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			destY = frame.renderY;
 
 			// For Handler 0x26 (turret) and 0x19 (mixed): HUD overlay positioning
-			// From FUN_004089ab lines 203-222:
+			// From FUN_004089ab assembly lines 560-582:
 			// X = 160 + (mouseOffsetX >> 4) - width/2 - spriteOffsetX
-			// Y = 182 - ((mouseOffsetY - 128) >> 4) - height - spriteOffsetY
-			// When mouse at center: X = 160 - width/2 - offsetX, Y = 190 - height - offsetY
+			// Y = 0xb6 (182) - (mouseY >> 4) - height - spriteOffsetY (low-res mode)
+			// When mouse centered (mouseY=0), local_38=-128, offset=-8, so Y = 190 - height - offsetY
+			// For embedded cockpit frames at fixed position, use screen bottom (200) as base
 			if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
 				// Position based on assembly formula (static center position)
 				// X: centered horizontally, adjusted by sprite offset
 				destX = 160 - frame.width / 2 - frame.renderX;
-				// Y: 190 - height - offsetY (just above status bar at Y=180)
-				destY = 190 - frame.height - frame.renderY;
+				// Y: screen bottom (200) - height - offsetY for bottom-aligned cockpit
+				destY = 200 - frame.height - frame.renderY;
 			}
 
-			// For Handler 7: Apply position offset based on ship position
-			// This makes the ship sprite follow the mouse/crosshair
-			if (_rebelHandler == 7 && destX > 100 && destY > 50) {
-				// This appears to be a ship sprite (center of screen)
-				// Offset based on ship position relative to center
-				int16 offsetX = (_shipPosX - 160) / 8;  // Scale down movement
+			// For Handler 7 (space flight): HUD cockpit overlays use FOBJ position directly
+			// From FUN_0040d836: The clip region is 320x170 (0x140 x 0xaa)
+			// Large cockpit frames (hudSlot 1/2) need centering like turret handler
+			if (_rebelHandler == 7 && (hudSlot == 1 || hudSlot == 2) && frame.width > 100) {
+				// Large cockpit frame - center horizontally, position at bottom
+				destX = 160 - frame.width / 2 - frame.renderX;
+				// Position above status bar area (170 is render height for Handler 7)
+				destY = 170 - frame.height - frame.renderY;
+			} else if (_rebelHandler == 7 && destX > 100 && destY > 50) {
+				// Ship sprite in center of screen - apply position offset
+				int16 offsetX = (_shipPosX - 160) / 8;
 				int16 offsetY = (_shipPosY - 100) / 8;
 				destX += offsetX;
 				destY += offsetY;
