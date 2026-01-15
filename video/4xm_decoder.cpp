@@ -323,14 +323,48 @@ namespace {
 template<bool Scale>
 void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int log2h, int stride, uint dc) {
+	dc |= dc << 16;
 	int h = 1 << log2h;
-	int w = 1 << log2w;
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; ++j)
-			dst[j] = Scale ? src[j] + dc : dc;
-		if (Scale)
+	if (Scale) {
+		for (int i = 0; i < h; ++i) {
+			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
+			auto *src32 = reinterpret_cast<const uint32_t *>(src);
+			switch (log2w) {
+			case 3:
+				dst32[2] = src32[2] + dc;
+				dst32[3] = src32[3] + dc;
+				// fall through
+			case 2:
+				dst32[1] = src32[1] + dc;
+				// fall through
+			case 1:
+				dst32[0] = src32[0] + dc;
+				break;
+			case 0:
+				*dst = *src + dc;
+			}
 			src += stride;
-		dst += stride;
+			dst += stride;
+		}
+	} else {
+		for (int i = 0; i < h; ++i) {
+			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
+			switch (log2w) {
+			case 3:
+				dst32[2] = dc;
+				dst32[3] = dc;
+				// fall through
+			case 2:
+				dst32[1] = dc;
+				// fall through
+			case 1:
+				dst32[0] = dc;
+				break;
+			case 0:
+				*dst = dc;
+			}
+			dst += stride;
+		}
 	}
 }
 } // namespace
@@ -341,8 +375,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 	assert(index >= 0);
 	auto &huff = _blockType[index];
 	auto code = huff.next(bs);
-	bool scale = true;
-	int dc = 0;
 
 	auto pitch = frame->pitch / frame->format.bytesPerPixel;
 	assert(_frame->pitch == frame->pitch);
@@ -371,31 +403,28 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame
 		}
 		return;
 	}
+	if (code == 3 && _version >= 2)
+		return;
 
 	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
 	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
 	if (code == 0) {
 		assert(byteStream.pos() < byteStream.size());
 		src += _mv[byteStream.readByte()];
-	} else if (code == 3 && _version >= 2) {
-		return;
+		mcdc<true>(dst, src, log2w, log2h, pitch, 0);
 	} else if (code == 4) {
 		assert(byteStream.pos() < byteStream.size());
 		assert(wordStream.pos() + 2 <= wordStream.size());
 		src += _mv[byteStream.readByte()];
-		dc = wordStream.readUint16LE();
+		auto dc = wordStream.readUint16LE();
+		mcdc<true>(dst, src, log2w, log2h, pitch, dc);
 	} else if (code == 5) {
 		assert(wordStream.pos() + 2 <= wordStream.size());
-		scale = false;
-		dc = wordStream.readUint16LE();
+		auto dc = wordStream.readUint16LE();
+		mcdc<false>(dst, src, log2w, log2h, pitch, dc);
 	} else {
 		error("invalid code %d (steps %u,%u)", code, log2w, log2h);
 	}
-
-	if (scale)
-		mcdc<true>(dst, src, log2w, log2h, pitch, dc);
-	else
-		mcdc<false>(dst, src, log2w, log2h, pitch, dc);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *stream) {
