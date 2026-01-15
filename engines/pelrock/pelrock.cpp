@@ -877,8 +877,8 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_actionPopupState.isActive = true;
 		_actionPopupState.curFrame = 0;
 
+		_actionPopupState.isAlfredUnder = alfredUnder;
 		if (hotspotIndex != -1) {
-			_actionPopupState.isAlfredUnder = alfredUnder;
 			_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
 		}
 	}
@@ -1381,9 +1381,10 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 		_extraScreen = new byte[640 * 400];
 	}
 	_res->getExtraScreen(screenIndex, _extraScreen, palette);
-
+	CursorMan.showMouse(false);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	extraScreenLoop();
+	CursorMan.showMouse(true);
 	delete[] _extraScreen;
 	delete[] palette;
 	_screen->markAllDirty();
@@ -1393,8 +1394,8 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 void PelrockEngine::doExtraActions(int roomNumber) {
 	switch (roomNumber) {
 	case 4:
-		if (_state->PUESTA_SALSA_PICANTE && !_state->JEFE_ENCARCELADO) {
-			_state->JEFE_ENCARCELADO = true;
+		if (_state->flagIsSet(FLAG_PUESTA_SALSA_PICANTE) && !_state->flagIsSet(FLAG_JEFE_ENCARCELADO)) {
+			_state->setFlag(FLAG_JEFE_ENCARCELADO, true);
 			_room->disableSprite(13, 0, true);
 			loadExtraScreenAndPresent(4);
 			_screen->markAllDirty();

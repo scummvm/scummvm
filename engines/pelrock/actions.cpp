@@ -117,8 +117,8 @@ void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
-	if (_state->JEFE_INGRESA_PASTA) {
-		_state->JEFE_INGRESA_PASTA = 0;
+	if (_state->flagIsSet(FLAG_JEFE_INGRESA_PASTA)) {
+		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
 		addInventoryItem(75);
 	} else {
 		int billCount = 0;
@@ -171,12 +171,12 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 }
 
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
-	if(_state->JEFE_ENCARCELADO == false) {
+	if(!_state->flagIsSet(FLAG_JEFE_ENCARCELADO)) {
 		_dialog->say(_res->_ingameTexts[QUITA_ESAS_MANOS]);
 	}
 	else {
 		_room->addSticker(36);
-		addInventoryItem(73); // Add recipe
+		addInventoryItem(63); // Add recipe
 		_dialog->say(_res->_ingameTexts[QUESESTO_RECETA]);
 	}
 }
@@ -186,7 +186,7 @@ void PelrockEngine::openKitchenDoorFromInside(HotSpot *hotspot) {
 }
 
 void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot) {
-	_state->PUESTA_SALSA_PICANTE = true;
+	_state->setFlag(FLAG_PUESTA_SALSA_PICANTE, true);
 	_dialog->say(_res->_ingameTexts[VAESTAR_POCOFUERTE]);
 }
 
@@ -265,11 +265,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	debug("Using item %d on Alfred", inventoryObject);
 	switch (inventoryObject)
 	{
-	case 73: // Recipe book
+	case 63: // Recipe book
 		_res->loadAlfredSpecialAnim(0);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		loadExtraScreenAndPresent(3);
-		_dialog->say(_res->_ingameTexts[QUEASCO]);
+		// _dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;
 
 	default:

@@ -121,6 +121,10 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 	// GameState
 	s.syncAsUint32LE((uint32 &)gameState->stateGame);
 
+	// Flags
+	for (int i = 0; i < 46; ++i) {
+		s.syncAsByte((byte &)gameState->flags[i]);
+	}
 	// Inventory items
 	uint16 inventorySize = (uint16)gameState->inventoryItems.size();
 	s.syncAsUint16LE(inventorySize);

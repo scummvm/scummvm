@@ -189,17 +189,17 @@ struct Exit {
 struct Sprite {
 	byte index; // number of the animation in the rooms
 	byte type;
-	int16 x;      // 0
-	int16 y;      // 2
-	int w;        // 4
-	int h;        // 5
+	int16 x;       // 0
+	int16 y;       // 2
+	int w;         // 4
+	int h;         // 5
 	uint16 stride; // 6-7
-	int numAnims; // 8
+	int numAnims;  // 8
 	int curAnimIndex = 0;
 	int8 zOrder;
-	byte spriteType;  // 33
-	byte actionFlags; // 34
-	bool isHotspotDisabled;  // 38
+	byte spriteType;        // 33
+	byte actionFlags;       // 34
+	bool isHotspotDisabled; // 38
 	bool isTalking = false;
 	Anim *animData;
 	byte extra;
@@ -384,55 +384,58 @@ struct ResetEntry {
 	byte *data = nullptr;
 };
 
+#define FLAG_JEFE_INGRESA_PASTA 0
+#define FLAG_JEFE_ENCARCELADO 1
+#define FLAG_PUESTA_SALSA_PICANTE 2
+#define FLAG_CRISTAL_ROTO 3
+#define FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ 4
+#define FLAG_ELECTROCUTACION 5
+#define FLAG_CABLES_PUESTOS 6
+#define FLAG_SOBORNO_PORTERO 7
+#define FLAG_MEMORIZA_LIBRO 8
+#define FLAG_ALFRED_INTELIGENTE 9
+#define FLAG_ALFRED_SABE_EGIPCIO 10
+#define FLAG_VENDEDOR_DEJA_DE_JODER 11
+#define FLAG_VIAJE_A_EGIPTO 12
+#define FLAG_PARADOJA_RESUELTA 13
+#define FLAG_CROCODILLO_ENCENDIDO 14
+#define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
+#define FLAG_PUERTA_SECRETA_ABIERTA 16
+#define FLAG_ROBA_PELO_PRINCESA 17
+#define FLAG_A_LA_CARCEL 18
+#define FLAG_CLAVE_CAJA_FUERTE 19
+#define FLAG_SE_HA_PUESTO_EL_MUNECO 20
+#define FLAG_VIGILANTE_BEBE_AGUA 21
+#define FLAG_VIGILANTE_MEANDO 22
+#define FLAG_PIRAMIDE_JODIDA 23
+#define FLAG_PIRAMIDE_JODIDA2 24
+#define FLAG_VIGILANTE_PAJEANDOSE 25
+#define FLAG_FORMULA_MAGICA 26
+#define FLAG_VIAJA_AL_PASADO 27
+#define FLAG_APARECE_EUNUCO 28
+#define FLAG_AL_FARAON 29
+#define FLAG_A_CURRAR 30
+#define FLAG_DA_PIEDRA 31
+#define FLAG_PIEDRAS_COGIDAS 32
+#define FLAG_GUARDIAS_BORRACHOS 33
+#define FLAG_PIEDRA_FAKE_MOJADA 34
+#define FLAG_PUERTA_BUENA 35
+#define FLAG_TRAMPILLA_ABIERTA 36
+#define FLAG_HABITACION_PRINCESA 37
+#define FLAG_A_POR_LA_PRINCESA 38
+#define FLAG_VUELTA_A_EMPEZAR 39
+#define FLAG_A_LOS_PASILLOS 40
+#define FLAG_COMO_ESTAN_LOS_DIOSES 41
+#define FLAG_END_OF_GAME 42
+#define FLAG_FROM_INTRO 43
+#define FLAG_HE_TIRADO_PIEDRA 44
+#define FLAG_HA_USADO_AGUA 45
+
 struct GameStateData {
-	bool JEFE_INGRESA_PASTA = false;
-	bool JEFE_ENCARCELADO = false;
-	bool PUESTA_SALSA_PICANTE = false;
-	bool CRISTAL_ROTO = false;
-	bool ENTRA_EN_TIENDA_PRIMERA_VEZ = false;
-	bool ELECTROCUTACION = false;
-	bool CABLES_PUESTOS = false;
-	bool SOBORNO_PORTERO = false;
-	bool MEMORIZA_LIBRO = false;
-	bool ALFRED_INTELIGENTE = false;
-	bool ALFRED_SABE_EGIPCIO = false;
-	bool VENDEDOR_DEJA_DE_JODER = false;
-	bool VIAJE_A_EGIPTO = false;
-	bool PARADOJA_RESUELTA = false;
-	bool CROCODILLO_ENCENDIDO = false;
-	bool MIRA_SIMBOLO_FUERA_MUSEO = false;
-	bool PUERTA_SECRETA_ABIERTA = false;
-	bool ROBA_PELO_PRINCESA = false;
-	bool A_LA_CARCEL = false;
-	bool CLAVE_CAJA_FUERTE = false;
-	bool SE_HA_PUESTO_EL_MUNECO = false;
-	bool VIGILANTE_BEBE_AGUA = false;
-	bool VIGILANTE_MEANDO = false;
-	bool PIRAMIDE_JODIDA = false;
-	bool PIRAMIDE_JODIDA2 = false;
-	bool VIGILANTE_PAJEANDOSE = false;
-	bool FORMULA_MAGICA = false;
-	bool VIAJA_AL_PASADO = false;
-	bool APARECE_EUNUCO = false;
-	bool AL_FARAON = false;
-	bool A_CURRAR = false;
-	bool DA_PIEDRA = false;
+	bool flags[46];
+
 	byte NUMERO_DE_COPAS = false;
-	bool PIEDRAS_COGIDAS = false;
-	bool GUARDIAS_BORRACHOS = false;
-	bool PIEDRA_FAKE_MOJADA = false;
-	bool PUERTA_BUENA = false;
-	bool TRAMPILLA_ABIERTA = false;
-	bool HABITACION_PRINCESA = false;
-	bool A_POR_LA_PRINCESA = false;
-	bool VUELTA_A_EMPEZAR = false;
-	bool A_LOS_PASILLOS = false;
-	bool COMO_ESTAN_LOS_DIOSES = false;
-	bool END_OF_GAME = false;
-	bool FROM_INTRO = false;
 	byte INGREDIENTES_CONSEGUIDOS = 0;
-	bool HE_TIRADO_PIEDRA = false;
-	bool HA_USADO_AGUA = false;
 
 	GameState stateGame = INTRO;
 
@@ -460,11 +463,23 @@ struct GameStateData {
 		disabledBranches[entry.room].push_back(entry);
 	}
 
+	bool flagIsSet(int flagIndex) const {
+		if (flagIndex < 0 || flagIndex >= 46)
+			return false;
+		return flags[flagIndex];
+	}
+
+	void setFlag(int flagIndex, bool value) {
+		if (flagIndex < 0 || flagIndex >= 46)
+			return;
+		flags[flagIndex] = value;
+	}
+
 	void addInventoryItem(int id) {
 		inventoryItems.push_back(id);
 	}
 	void removeInventoyItem(int id) {
-		for(int i = 0; i < inventoryItems.size(); i++) {
+		for (int i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {
 				inventoryItems.remove_at(i);
 				return;
