@@ -100,8 +100,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_mouseoverNut = new NutRenderer(_vm, "SYSTM/MSTOVER.NUT");
 
 	_enemies.clear();
-	_rebelHandler = 8;  // Default to Handler 8 (third-person vehicle) for Level 1
+	_rebelHandler = 0;  // Not set yet - will be set by IACT opcode 6
 	_rebelLevelType = 0;  // Level type from Opcode 6 par3, determines HUD sprite variant
+	_rebelStatusBarSprite = 0;  // 0 = disabled, 5 or 53 = enabled (set by IACT opcode 6 par4==1)
 	_introCursorPushed = false;  // Cursor state tracking for intro sequences
 
 	_playerDamage = 0;
@@ -278,6 +279,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
 	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
 
+	// Initialize Handler 0x26 turret HUD overlay system
+	_hudOverlayNut = nullptr;    // DAT_0047fe78 - Primary HUD overlay (GRD files, animated)
+	_hudOverlay2Nut = nullptr;   // DAT_0047fe80 - Secondary HUD overlay
+
 	// Initialize audio system for RA2 (since we don't use iMUSE)
 	_audioSampleRate = 11025;  // RA2 audio is 11025 Hz, not 22050 Hz
 	for (i = 0; i < kRA2MaxAudioTracks; i++) {
@@ -342,6 +347,10 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _flyLaserSprite;
 	delete _flyTargetSprite;
 	delete _flyHiResSprite;
+
+	// Clean up Handler 0x26 turret HUD overlays
+	delete _hudOverlayNut;
+	delete _hudOverlay2Nut;
 
 	// Clean up embedded HUD overlays
 	for (int i = 0; i < 16; i++) {
@@ -1577,88 +1586,142 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 							b.seek(animStreamPos);
 							b.read(animData, toCopy);
 
-							// Handler 8 (Third-Person Vehicle) - FUN_00401234 case 6:
-							// par3 == 1: POV001 -> DAT_0047e010 (primary ship)
-							// par3 == 3: POV004 -> DAT_0047e028 (secondary ship)
-							// par3 == 6: POV002 -> DAT_0047e020 (overlay 1)
-							// par3 == 7: POV003 -> DAT_0047e018 (overlay 2)
-							bool isHandler8Par3 = (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7);
+							// Handler-dependent NUT loading for opcode 8:
+							//
+							// Handler 0x26/0x19 (turret) - FUN_00407fcb:
+							//   par3 == 1: Low-res primary HUD (GRD001) -> DAT_0047fe78
+							//   par3 == 2: High-res primary HUD (skip in low-res mode)
+							//   par3 == 3: Low-res secondary HUD (GRD010) -> DAT_0047fe80
+							//   par3 == 4: High-res secondary HUD (skip in low-res mode)
+							//
+							// Handler 8 (vehicle) - FUN_00401234:
+							//   par3 == 1: POV001 - Primary ship sprite -> DAT_0047e010
+							//   par3 == 3: POV004 - Secondary ship sprite -> DAT_0047e028
+							//   par3 == 6: POV002 - Ship overlay 1 -> DAT_0047e020
+							//   par3 == 7: POV003 - Ship overlay 2 -> DAT_0047e018
+							//
+							// ScummVM runs at 320x200 (low-res), so turret HUD uses par3 == 1/3 only.
 							bool loadedAsNut = false;
 
-							if (_rebelHandler == 8 && isHandler8Par3) {
-								// Try loading as NUT (ship sprites for Handler 8)
-								NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
-								if (newNut && newNut->getNumChars() > 0) {
-									debug("Rebel2 Opcode 8: Loaded ship NUT par3=%d with %d sprites (handler=%d)",
-										par3, newNut->getNumChars(), _rebelHandler);
-									loadedAsNut = true;
-
-									switch (par3) {
-									case 1:  // POV001 - Primary ship sprite
-										delete _shipSprite;
-										_shipSprite = newNut;
-										debug("Rebel2 Opcode 8: _shipSprite set to %p", (void*)_shipSprite);
-										break;
-									case 3:  // POV004 - Secondary ship sprite
-										delete _shipSprite2;
-										_shipSprite2 = newNut;
-										break;
-									case 6:  // POV002 - Ship overlay 1
-										delete _shipOverlay1;
-										_shipOverlay1 = newNut;
-										break;
-									case 7:  // POV003 - Ship overlay 2
-										delete _shipOverlay2;
-										_shipOverlay2 = newNut;
-										break;
-									default:
+							// Handler 0x26/0x19 (turret modes): Load HUD overlays
+							if (_rebelHandler == 0x26 || _rebelHandler == 0x19) {
+								if (par3 == 1) {
+									// Low-res primary HUD overlay
+									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
+									if (newNut && newNut->getNumChars() > 0) {
+										debug("Rebel2 Opcode 8: Loaded turret HUD NUT par3=%d with %d sprites (handler=0x%x, low-res)",
+											par3, newNut->getNumChars(), _rebelHandler);
+										delete _hudOverlayNut;
+										_hudOverlayNut = newNut;
+										loadedAsNut = true;
+									} else {
+										debug("Rebel2 Opcode 8: Turret HUD NUT load failed for par3=%d", par3);
 										delete newNut;
-										loadedAsNut = false;
-										break;
 									}
-								} else {
-									debug("Rebel2 Opcode 8: NUT load failed for par3=%d, trying as embedded SAN", par3);
-									delete newNut;
+								} else if (par3 == 3) {
+									// Low-res secondary HUD overlay
+									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
+									if (newNut && newNut->getNumChars() > 0) {
+										debug("Rebel2 Opcode 8: Loaded turret HUD2 NUT par3=%d with %d sprites (handler=0x%x, low-res)",
+											par3, newNut->getNumChars(), _rebelHandler);
+										delete _hudOverlay2Nut;
+										_hudOverlay2Nut = newNut;
+										loadedAsNut = true;
+									} else {
+										debug("Rebel2 Opcode 8: Turret HUD2 NUT load failed for par3=%d", par3);
+										delete newNut;
+									}
+								} else if (par3 == 2 || par3 == 4) {
+									// High-res versions - skip in low-res mode
+									debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d (running in low-res mode)", par3);
+									loadedAsNut = true;
+								}
+							}
+
+							// Handler 8 (Third-Person Vehicle): Load ship sprites
+							if (!loadedAsNut && _rebelHandler == 8) {
+								bool isHandler8Par3 = (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7);
+								if (isHandler8Par3) {
+									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
+									if (newNut && newNut->getNumChars() > 0) {
+										debug("Rebel2 Opcode 8: Loaded ship NUT par3=%d with %d sprites (handler=%d)",
+											par3, newNut->getNumChars(), _rebelHandler);
+										loadedAsNut = true;
+
+										switch (par3) {
+										case 1:  // POV001 - Primary ship sprite
+											delete _shipSprite;
+											_shipSprite = newNut;
+											break;
+										case 3:  // POV004 - Secondary ship sprite
+											delete _shipSprite2;
+											_shipSprite2 = newNut;
+											break;
+										case 6:  // POV002 - Ship overlay 1
+											delete _shipOverlay1;
+											_shipOverlay1 = newNut;
+											break;
+										case 7:  // POV003 - Ship overlay 2
+											delete _shipOverlay2;
+											_shipOverlay2 = newNut;
+											break;
+										default:
+											delete newNut;
+											loadedAsNut = false;
+											break;
+										}
+									} else {
+										debug("Rebel2 Opcode 8: Ship NUT load failed for par3=%d", par3);
+										delete newNut;
+									}
 								}
 							}
 
 							if (!loadedAsNut) {
-								// Load as embedded SAN (HUD overlays)
-								// The userId parameter varies by handler type:
-								//
-								// Handler 0x26 (turret): Uses par3 for HUD slot (GRD files)
-								//   par3=1: GRD001 (Primary HUD overlay)
-								//   par3=2: GRD002 (Secondary HUD graphics)
-								//   par3=4: GRD010 (Ship cockpit frame)
-								//   etc.
-								//
-								// Handler 7 (space flight): Uses par4 for userId (FLY files handled above)
-								// Other handlers: Use par4 for userId
-								//
-								// par4 values seen in Level 3:
-								//   1000 = audio track
-								//   1-11 = HUD overlay slots
-								//
-								// Note: Handler may not be set yet if opcode 8 arrives before opcode 6
-								// Use heuristics: if par3 is in valid GRD range (1-13) and par4 is >= 1000
-								// or invalid, prefer par3
-								int userId;
-								bool usePar3 = (_rebelHandler == 0x26 || _rebelHandler == 0x19);
+								// Skip high-res turret HUD data (par3 == 2, 4) regardless of handler
+								// ScummVM runs at 320x200, so we only want low-res data (par3 == 1, 3)
+								debug("Rebel2 Opcode 8: Fallback path - handler=%d par3=%d par4=%d animSize=%d",
+									_rebelHandler, par3, par4, toCopy);
+								if (par3 == 2 || par3 == 4) {
+									debug("Rebel2 Opcode 8: SKIPPING high-res HUD par3=%d (low-res mode)", par3);
+									// Don't load anything - skip this data entirely
+								} else {
+									// Load as embedded SAN (HUD overlays)
+									// The userId parameter varies by handler type:
+									//
+									// Handler 0x26 (turret): Uses par3 for HUD slot (GRD files)
+									//   par3=1: GRD001 (Primary HUD overlay)
+									//   par3=3: GRD010 (Secondary HUD)
+									//
+									// Handler 7 (space flight): Uses par4 for userId (FLY files handled above)
+									// Other handlers: Use par4 for userId
+									//
+									// par4 values seen in Level 3:
+									//   1000 = audio track
+									//   1-11 = HUD overlay slots
+									//
+									// Note: Handler may not be set yet if opcode 8 arrives before opcode 6
+									// Use heuristics: if par3 is in valid GRD range (1-13) and par4 is >= 1000
+									// or invalid, prefer par3
+									int userId;
+									// Handler 0x19 uses par3; Handler 0x26 and others use par4
+									bool usePar3 = (_rebelHandler == 0x19);
 
-								// Heuristic: if par3 is in typical GRD slot range (1-13) and par4 is
-								// out of range (0 or >= 1000), use par3 as it's likely a turret/GRD case
-								if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
-									usePar3 = true;
-									debug("Rebel2 Opcode 8: Using par3 heuristic (par3=%d, par4=%d)", par3, par4);
-								}
+									// Heuristic: if par3 is in typical GRD slot range (1-13) and par4 is
+									// out of range (0 or >= 1000), use par3 as it's likely a turret/GRD case
+									if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
+										usePar3 = true;
+										debug("Rebel2 Opcode 8: Using par3 heuristic (par3=%d, par4=%d)", par3, par4);
+									}
 
-								userId = usePar3 ? par3 : par4;
+									userId = usePar3 ? par3 : par4;
 
-								// Audio tracks (userId >= 1000) are handled separately, skip them
-								if (userId > 0 && userId < 1000) {
-									debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d (handler=%d, par3=%d, par4=%d)",
-										userId, _rebelHandler, par3, par4);
-									loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
+									// Audio tracks (userId >= 1000) are handled separately, skip them
+									if (userId > 0 && userId < 1000) {
+										debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d (handler=%d, par3=%d, par4=%d)",
+											userId, _rebelHandler, par3, par4);
+										loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
+									}
 								}
 							}
 							free(animData);
@@ -2019,10 +2082,19 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 
 					debug("Rebel2: Embedded HUD frame: userId=%d, %dx%d at (%d,%d), codec=%d",
 						userId, width, height, left, top, codec);
-					
+
+					// Skip high-resolution frames - ScummVM runs at 320x200
+					// If frame dimensions exceed low-res screen size, it's high-res data
+					if (width > 400 || height > 250) {
+						debug("Rebel2: SKIPPING high-res embedded frame: userId=%d, %dx%d (exceeds 400x250)",
+							userId, width, height);
+						stream.seek(nextSubPos);
+						continue;
+					}
+
 					// Allocate storage for the decoded frame
 					EmbeddedSanFrame &frame = _rebelEmbeddedHud[userId];
-					
+
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
 						if (frame.width != width || frame.height != height || !frame.pixels) {
 							free(frame.pixels);
@@ -2080,10 +2152,8 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								debug("Rebel2: Decoded embedded HUD (codec 21/line update): %dx%d", width, height);
 							} else if (codec == 45) {
 								// Codec 45: RA2-specific codec with BOMP-style RLE
-								// Header: 01 FE 00 00 01 00 (6 bytes)
-								//   Byte 0: sub-codec (01)
-								//   Byte 1: transparent color (FE = 254)
-								//   Bytes 2-5: unknown/padding
+								// May have a variable-length sub-header before RLE data
+								// Common patterns: "01 FE 00 00 01 00" (6 bytes) or others
 								debug("Rebel2: Codec 45 first 20 bytes: %02X %02X %02X %02X %02X %02X | %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
 									fobjData[0], fobjData[1], fobjData[2], fobjData[3],
 									fobjData[4], fobjData[5], fobjData[6], fobjData[7],
@@ -2091,12 +2161,56 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 									fobjData[12], fobjData[13], fobjData[14], fobjData[15],
 									fobjData[16], fobjData[17], fobjData[18], fobjData[19]);
 
-								// Parse 6-byte sub-header
+								// Probe multiple header offsets to find where valid RLE data starts
+								// RLE data has 2-byte line sizes that should be reasonable values
 								int headerSkip = 0;
+								bool foundValidOffset = false;
+
+								// Check common header patterns
 								if (dataSize > 6 && fobjData[0] == 0x01 && fobjData[1] == 0xFE) {
+									// Known 6-byte header: 01 FE XX XX XX XX
 									headerSkip = 6;
-									debug("Rebel2: Codec 45 header: sub-codec=%d, transparent=%d",
-										fobjData[0], fobjData[1]);
+									debug("Rebel2: Codec 45 found 01 FE header, skipping 6 bytes");
+									foundValidOffset = true;
+								}
+
+								// If no known header found, probe offsets 0, 2, 4, 6 to find valid RLE start
+								if (!foundValidOffset) {
+									for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
+										int testLineSize = READ_LE_UINT16(fobjData + testOffset);
+										// A valid first line size should be: > 0, <= width*2 (reasonable for RLE)
+										// Also check that the total data is enough for at least height lines
+										if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
+											// Further validation: sum line sizes should roughly match data size
+											int sumTest = 0;
+											int linesTest = 0;
+											byte *testPtr = fobjData + testOffset;
+											bool validSum = true;
+
+											while (linesTest < height && testPtr + 2 <= fobjData + dataSize) {
+												int ls = READ_LE_UINT16(testPtr);
+												if (ls <= 0 || ls > width * 2) {
+													validSum = false;
+													break;
+												}
+												sumTest += ls + 2;
+												testPtr += ls + 2;
+												linesTest++;
+											}
+
+											// Accept if we got close to expected number of lines
+											if (validSum && linesTest >= height - 1) {
+												headerSkip = testOffset;
+												foundValidOffset = true;
+												debug("Rebel2: Codec 45 found valid RLE at offset %d (tested %d lines)", testOffset, linesTest);
+												break;
+											}
+										}
+									}
+								}
+
+								if (!foundValidOffset) {
+									debug("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
 								}
 
 								byte *srcPtr = fobjData + headerSkip;
@@ -2228,9 +2342,11 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 							}
 
 							// Draw immediately to renderBitmap if valid
-							// Skip immediate draw for Handler 7/8 - these are ship direction sprites
-							// that should be selected based on direction and drawn during post-rendering
-							bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8);
+							// Skip immediate draw for handlers that render HUD during post-processing:
+							// - Handler 7/8: Ship direction sprites selected based on direction
+							// - Handler 0x26/0x19: Cockpit HUD positioned based on mouse/crosshair
+							bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8 ||
+							                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
 
 							if (frame.valid && renderBitmap && !skipImmediateDraw) {
 								int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
@@ -2923,6 +3039,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Clear the status bar area at Y=180-199 with background color
 	// Original assembly: FUN_004288c0(local_8, 0, 0, 0xb4, 0x140, 0x14, 4)
 	// This fills width=320, height=20 starting at Y=180 with color index 4
+	// Status bar is ALWAYS shown during gameplay (_rebelHandler != 0)
+	// Hidden during cinematics/intros when _rebelHandler == 0 (handled by early return above)
 	const byte statusBarBgColor = 4;
 
 	for (int y = statusBarY; y < videoHeight; y++) {
@@ -2936,7 +3054,96 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 	
 	// ============================================================
-	// STEP 1: Draw embedded SAN HUD overlays FIRST (from IACT chunks)
+	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (turret modes)
+	// ============================================================
+	// For turret handlers, the HUD overlay is loaded as a NUT file via IACT opcode 8
+	// and contains animated frames for blinking cockpit lights.
+	//
+	// From FUN_004089ab disassembly (lines 195-226):
+	// - DAT_0047fe78 (_hudOverlayNut): Primary HUD overlay with 6 animation frames
+	// - Position formula (low-res):
+	//   X = 160 + (mouseOffsetX >> 4) - (width / 2) - spriteOffsetX
+	//   Y = 182 - (mouseOffsetY >> 4) - height - spriteOffsetY
+	// - Animation: spriteIndex = (frameCounter / 2) % 6
+	//
+	// The mouse offset creates a subtle parallax effect as the view pans.
+	if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && _hudOverlayNut && _hudOverlayNut->getNumChars() > 0) {
+		// Calculate mouse offset (clamped to -127..127)
+		// These match DAT_0047a7e0/DAT_0047a7e2 in the original
+		int mouseOffsetX = (_vm->_mouse.x - 160);  // Relative to screen center
+		int mouseOffsetY = (_vm->_mouse.y - 100);  // Relative to screen center
+		if (mouseOffsetX > 127) mouseOffsetX = 127;
+		if (mouseOffsetX < -127) mouseOffsetX = -127;
+		if (mouseOffsetY > 127) mouseOffsetY = 127;
+		if (mouseOffsetY < -127) mouseOffsetY = -127;
+
+		// Animation frame cycling: (frameCounter / 2) % 6
+		// This creates a 12-frame cycle (each sprite shown for 2 video frames)
+		int numSprites = _hudOverlayNut->getNumChars();
+		int animFrameCount = MIN(numSprites, 6);  // Use up to 6 frames for animation
+		int animFrame = 0;
+		if (animFrameCount > 0) {
+			animFrame = (curFrame / 2) % animFrameCount;
+		}
+
+		// Get sprite dimensions and offset
+		// NUT format stores sprite offsets that affect positioning
+		int spriteW = _hudOverlayNut->getCharWidth(animFrame);
+		int spriteH = _hudOverlayNut->getCharHeight(animFrame);
+
+		// Position calculation from assembly (low-res mode):
+		// X = 0xa0 (160) + (mouseOffsetX >> 4) - (width / 2) - offsetX
+		// Y = 0xb6 (182) - (mouseOffsetY >> 4) - height - offsetY
+		// Note: The sprite offset is embedded in the NUT data; for simplicity we use 0
+		int spriteOffsetX = 0;  // Could be extracted from NUT if needed
+		int spriteOffsetY = 0;
+
+		int hudX = 160 + (mouseOffsetX >> 4) - (spriteW / 2) - spriteOffsetX;
+		int hudY = 182 - (mouseOffsetY >> 4) - spriteH - spriteOffsetY;
+
+		// Apply view offset for scrolling background
+		hudX += _viewX;
+		hudY += _viewY;
+
+		// Draw the HUD overlay:
+		// From FUN_004089ab: Sprite 0 is ALWAYS drawn first (base cockpit)
+		// Then if animation frame != 0, draw the animation frame on top (blinking lights)
+		renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, 0);
+
+		// Draw animation overlay frame if not frame 0
+		// Animation frames 1-5 contain the blinking light states
+		if (animFrame != 0 && animFrame < numSprites) {
+			renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, animFrame);
+		}
+
+		debug(5, "Rebel2 HUD: Drawing NUT overlay frame %d/%d at (%d,%d) mouseOffset=(%d,%d)",
+			  animFrame, numSprites, hudX, hudY, mouseOffsetX, mouseOffsetY);
+	}
+
+	// Draw secondary HUD overlay if present (DAT_0047fe80)
+	if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && _hudOverlay2Nut && _hudOverlay2Nut->getNumChars() > 0) {
+		// Similar positioning to primary overlay
+		int mouseOffsetX = (_vm->_mouse.x - 160);
+		int mouseOffsetY = (_vm->_mouse.y - 100);
+		if (mouseOffsetX > 127) mouseOffsetX = 127;
+		if (mouseOffsetX < -127) mouseOffsetX = -127;
+		if (mouseOffsetY > 127) mouseOffsetY = 127;
+		if (mouseOffsetY < -127) mouseOffsetY = -127;
+
+		int spriteW = _hudOverlay2Nut->getCharWidth(0);
+		int spriteH = _hudOverlay2Nut->getCharHeight(0);
+
+		int hudX = 160 + (mouseOffsetX >> 4) - (spriteW / 2);
+		int hudY = 182 - (mouseOffsetY >> 4) - spriteH;
+
+		hudX += _viewX;
+		hudY += _viewY;
+
+		renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlay2Nut, 0);
+	}
+
+	// ============================================================
+	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
 	// ============================================================
 	// For Handler 7 (Level 3): HUD elements are scattered across the screen
 	//   - Each frame has its own renderX/renderY position from FOBJ left/top
@@ -3011,22 +3218,17 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			destX = frame.renderX;
 			destY = frame.renderY;
 
-			// For Handler 0x26 (turret) and 0x19 (mixed): Cockpit overlays positioned at bottom
-			// The cockpit pieces (slots 1-2) should be rendered just above the status bar (Y=180)
-			// The FOBJ top value might be 0, so we override it for cockpit pieces
+			// For Handler 0x26 (turret) and 0x19 (mixed): HUD overlay positioning
+			// From FUN_004089ab lines 203-222:
+			// X = 160 + (mouseOffsetX >> 4) - width/2 - spriteOffsetX
+			// Y = 182 - ((mouseOffsetY - 128) >> 4) - height - spriteOffsetY
+			// When mouse at center: X = 160 - width/2 - offsetX, Y = 190 - height - offsetY
 			if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
-				// Cockpit overlay position: just above status bar
-				// Status bar is at Y=180, cockpit sits right above it
-				// For slot 1 (left piece): X = 0
-				// For slot 2 (right piece): X = width of slot 1
-				if (hudSlot == 1) {
-					destX = 0;
-				} else if (hudSlot == 2 && _rebelEmbeddedHud[1].valid) {
-					// Position slot 2 right after slot 1
-					destX = _rebelEmbeddedHud[1].width;
-				}
-				// Y position: status bar (180) minus cockpit height
-				destY = 180 - frame.height;
+				// Position based on assembly formula (static center position)
+				// X: centered horizontally, adjusted by sprite offset
+				destX = 160 - frame.width / 2 - frame.renderX;
+				// Y: 190 - height - offsetY (just above status bar at Y=180)
+				destY = 190 - frame.height - frame.renderY;
 			}
 
 			// For Handler 7: Apply position offset based on ship position
@@ -3043,6 +3245,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			// Apply View Offset for all HUD elements
 			destX += _viewX;
 			destY += _viewY;
+
+			// Debug: log embedded frame render dimensions
+			debug(3, "Rebel2: Rendering embedded HUD slot=%d size=%dx%d at (%d,%d) screen=%dx%d",
+				hudSlot, frame.width, frame.height, destX, destY, pitch, height);
 
 			// Draw frame with transparency (pixel 0 and 231 = transparent, matching NUT rendering)
 			for (int y = 0; y < frame.height && (destY + y) < height; y++) {
@@ -3069,6 +3275,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	//   - Sprites 2-5: Difficulty stars (1-4 stars, drawn at 0,0)
 	//   - Sprite 6: Damage bar fill (drawn with clip rect X=0x3f, Y=9, W=64, H=6)
 	//   - Sprite 7: Damage alert (flashing red when damage critical)
+	// Status bar is ALWAYS drawn during gameplay (_rebelHandler != 0)
 	if (_smush_cockpitNut) {
 		// Draw status bar background frame (sprite 1) at (0, statusBarY)
 		// This sprite is the full-width status bar background
@@ -4818,6 +5025,7 @@ void InsaneRebel2::playCinematic(const char *filename) {
 	// Original: DAT_0047ee84 is only set by IACT opcode 6 during gameplay videos
 	// Cinematics don't have opcode 6, so handler stays 0
 	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during cinematics
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x20);  // Cinematic mode
@@ -4857,6 +5065,7 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 	// Reset damage/shield for this level
 	_playerShield = 255;
 	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Will be set by IACT opcode 6 if par4==1
 
 	debug("Rebel2: Starting gameplay for level %d", levelId);
 
@@ -5009,6 +5218,9 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	// Play level completion video (LEVXX/XXEND.SAN)
 	// Emulates FUN_00417327 call
 
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
+
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sEND.SAN", dir.c_str(), prefix.c_str());
@@ -5024,6 +5236,9 @@ void InsaneRebel2::playLevelDeath(int levelId) {
 	// Play death video (LEVXX/XXDIE_X.SAN)
 	// The variant depends on the frame where player died
 	// For simplicity, we'll play the A variant
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -5045,6 +5260,10 @@ void InsaneRebel2::playLevelDeath(int levelId) {
 
 void InsaneRebel2::playLevelRetry(int levelId) {
 	// Play retry prompt video (LEVXX/XXRETRY.SAN)
+	// Reset handler state for the retry cinematic
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -5060,6 +5279,9 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 void InsaneRebel2::playLevelGameOver(int levelId) {
 	// Play game over video (LEVXX/XXOVER.SAN)
 	// Emulates FUN_00417ab2 call
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -5207,6 +5429,9 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	// Play death video with proper variant selection
 
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
+
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String variant = selectDeathVideoVariant(levelId, phase, frame);
@@ -5228,6 +5453,9 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 	// Play retry video - phase-specific for multi-phase levels
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
