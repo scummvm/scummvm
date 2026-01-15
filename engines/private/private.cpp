@@ -2966,6 +2966,9 @@ void PrivateEngine::pauseEngineIntern(bool pause) {
 			// automatically, so we don't need to pass 'true'.
 			adjustSubtitleSize();
 			_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+		} else if (_subtitledSound && isSoundPlaying(*_subtitledSound)) {
+			adjustSubtitleSize();
+			_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
 		}
 	}
 }
