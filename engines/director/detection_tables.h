@@ -6923,8 +6923,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	},
 
 	// Mini-game from Star Warped can also be launched separately
+	// German version from TRAC report #16437
 	MACGAME1("deathstar", "Minigame", "Death Star Destructo", "11aea1c6868839f53cc6312df724364f", 107835, 501),
 	WINGAME1t("deathstar", "Minigame", "DSD32.EXE", "9e3c304fdd669c79b5670057557cd1fb", 2758841, 501),
+	WINGAME1_l("deathstar", "Minigame", "DSD32.EXE", "t:4e5328a0a3092d65813101d96bc77994", 3016037, Common::DE_DEU, 501),
 
 	// From MacFormat #42
 	MACGAME1("digihbd", "", "Digital Happy Birthday Card", "61f3e061ae6236d8f72312ae9de83f46", 703153, 500),
@@ -8046,9 +8048,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version requires installation, Install Star Warped, VISE
 	// Preview is from X-Fools disc
 	// Win/Mac previews from Microshaft Winblows are D6
+	// German version from TRAC report #16437
 	MACGAME1("starwarped", "", "Star Warped", "d2531c0b8c0553be7c7cd5f6c6a07b78", 107835, 501),
 	WINGAME1t("starwarped", "", "STARW32.EXE", "6fb02f659d0a3e8dd24bbf1933930138", 1863971, 501),
 	WINDEMO1("starwarped", "Preview", "EWOK32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411571, 501),
+	WINGAME1_l("starwarped", "", "STARW32.EXE", "t:c79bd82a757e5908a822069a03db0f2f", 1863219, Common::DE_DEU, 501),
 
 	MACGAME1("staytooned", "", "Power Mac Stay Tooned!", "r:d692140f81aaf86096538f66d6477404",   94045, 500),
 	WINGAME2("staytooned", "", "WIN95/START32.EXE",		 "t:32c18644025e9d2560d002f5a8024216", 1394421,
@@ -9013,6 +9017,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pingu1", "", "Pingu",		 "r:5c4cee7e93b3ee1dbc7ce29e8e26ecd7", 1032759, Common::FR_FRA, 601),
 	WINGAME2_l("pingu1", "", "PINGU.EXE",	 "t:92bec8aaa2eb0534fcaa8926550af7e6", 2210575,
 							 "PINTITLE.DXR", "f:407aee858eb8b3a55565dc04a374651d",  499574, Common::FR_FRA, 602),
+	// Pingu: Jede Menge Spaß!
+	// German version
+	MACGAME1_l("pingu1", "", "Pingu",		 "r:7ec09e0a52e48d9e3d203c120b8262a7", 117136, Common::DE_DEU, 650),
+	WINGAME2_l("pingu1", "", "PINGU.EXE",	 "t:d1c1bce44761a5a04b839f0b4d83fdcb", 1519348,
+							 "PINTITLE.DIR", "f:a0caee07360fdf553d77cc6fa3688b6d",  488146, Common::DE_DEU, 650),
 
 	WINGAME1t("pinguss", "Screen Saver Selector, 1282C", "SetSaver.exe", "0f21f1be9dd5342dba28168ab3841378", 2736484, 602),
 	WINGAME1t("pinguss", "Screen Saver Player, 1282C", "Pingu_ss.exe", "75ef68e4bb5b6d0cc4f2bd194dccd1d1", 1513419, 602),
