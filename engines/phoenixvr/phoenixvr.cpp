@@ -410,6 +410,12 @@ void PhoenixVREngine::tick(float dt) {
 		_angleX.add(float(da.x) * kSpeedX * dt);
 		_angleY.add(float(da.y) * kSpeedY * dt);
 		debug("angle %g %g -> %s", _angleX.angle(), _angleY.angle(), currentVRPos().toString().c_str());
+		if (_regSet) {
+			for (uint i = 0, n = _regSet->size(); i != n; ++i) {
+				auto &reg = _regSet->getRegion(i);
+				debug("region %d: %s, in: %d", i, reg.toString().c_str(), reg.contains3D(currentVRPos()));
+			}
+		}
 	}
 	Common::Array<Common::String> finishedSounds;
 	for (auto &kv : _sounds) {
