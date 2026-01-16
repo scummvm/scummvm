@@ -755,6 +755,11 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	auto currentScript = Common::move(_script);
 	assert(!_nextScript.empty());
 	loadNextScript();
+	{
+		auto test = _script->getWarp(0)->getDefaultTest();
+		Script::ExecutionContext ctx;
+		test->scope.exec(ctx);
+	}
 
 	Common::MemoryReadStream ms(state.state.data(), state.state.size());
 
