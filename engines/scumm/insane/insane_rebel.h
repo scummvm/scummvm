@@ -253,7 +253,7 @@ public:
 	// Handle IACT opcode subcases
 	void iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
-	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
+	void iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4);
 	void iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
@@ -263,6 +263,14 @@ public:
 	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) override;
+
+	// Override procSKIP to disable Full Throttle's conditional frame skip mechanism
+	// RA2 uses a different system for conditional frames via IACT opcodes
+	void procSKIP(int32 subSize, Common::SeekableReadStream &b) override;
+
+	// Override procPreRendering to restore Level 2 background before FOBJ decoding
+	// This is called at the start of each frame, before FOBJ sprites are decoded
+	void procPreRendering(byte *renderBitmap) override;
 
 	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
 	// mask231: when true, color 231 is treated as transparent (legacy sprites). For laser beams set false.
@@ -458,6 +466,12 @@ public:
 	NutRenderer *_shipSprite2;       // DAT_0047e028 - Secondary ship NUT
 	NutRenderer *_shipOverlay1;      // DAT_0047e020 - Additional overlay
 	NutRenderer *_shipOverlay2;      // DAT_0047e018 - Additional overlay
+
+	// Level 2 background buffer (DAT_0047e030)
+	// Loaded from IACT opcode 8, par4=5 - contains 320x200 background image
+	// decoded from embedded ANIM in gameplay video frame 0
+	byte *_level2Background;
+	bool _level2BackgroundLoaded;
 
 	// Ship position tracking (matches DAT_0043e006/008)
 	// These are "raw" positions that get converted for display

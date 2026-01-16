@@ -48,6 +48,10 @@
 
 namespace Scumm {
 
+// External codec functions from codec1.cpp
+extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 
@@ -260,6 +264,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_shipSprite2 = nullptr;
 	_shipOverlay1 = nullptr;
 	_shipOverlay2 = nullptr;
+	_level2Background = nullptr;
+	_level2BackgroundLoaded = false;
 	_shipPosX = 0xa0;      // Start centered (160 in hex)
 	_shipPosY = 0x28;      // Start at vertical center (40)
 	_shipTargetX = 0xa0;
@@ -341,6 +347,8 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _shipSprite2;
 	delete _shipOverlay1;
 	delete _shipOverlay2;
+	free(_level2Background);
+	_level2Background = nullptr;
 
 	// Clean up Handler 7 FLY ship sprites
 	delete _flyShipSprite;
@@ -367,10 +375,9 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
-			// ESC skips cutscenes (videos with 0x20 flag = non-interactive)
-			// Emulates FUN_0041f537 behavior: if key == 0x1b, skip video
-			if (splayer && (splayer->_curVideoFlags & 0x20) != 0) {
-				debug("Rebel2: ESC pressed - skipping cutscene");
+			// ESC skips videos
+			if (splayer) {
+				debug("Rebel2: ESC pressed - skipping video");
 				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
@@ -691,6 +698,37 @@ void InsaneRebel2::clearBit(int n) {
 	_iactBits[n] = 0;
 }
 
+void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
+	// Rebel Assault 2 does NOT use Full Throttle's conditional frame skip mechanism.
+	// The base Insane::procSKIP() uses _iactBits to decide whether to skip frame objects,
+	// but RA2 handles conditional content differently through IACT opcodes 2/3/4.
+	//
+	// By overriding this to do nothing, we prevent random frame objects from being
+	// skipped due to uninitialized _iactBits state.
+	//
+	// If RA2 SKIP chunks need to be handled, implement RA2-specific logic here.
+	// For now, just consume the data without setting _skipNext.
+	(void)subSize;
+	(void)b;
+}
+
+void InsaneRebel2::procPreRendering(byte *renderBitmap) {
+	// Call base class implementation first (handles Full Throttle state machine)
+	Insane::procPreRendering(renderBitmap);
+
+	// For Level 2 gameplay (Handler 8 or 25), restore the background BEFORE FOBJ decoding.
+	// The tiny FOBJ sprites (7x10, 9x38 pixels) only draw new sprite positions but don't
+	// clear old ones. By restoring the full background each frame, we ensure old sprite
+	// positions are erased before new ones are drawn.
+	//
+	// This is called at the start of handleFrame(), before any FOBJ chunks are processed.
+	if ((_rebelHandler == 8 || _rebelHandler == 25) && _level2BackgroundLoaded && _level2Background && renderBitmap) {
+		for (int y = 0; y < 200; y++) {
+			memcpy(renderBitmap + y * 320, _level2Background + y * 320, 320);
+		}
+	}
+}
+
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
@@ -849,7 +887,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 
 	} else if (par1 == 6) {
 		// Opcode 6: Level setup / mode switch (FUN_41CADB case 4)
-		iactRebel2Opcode6(renderBitmap, b, par2, par3, par4);
+		iactRebel2Opcode6(renderBitmap, b, size, par2, par3, par4);
 	} else if (par1 == 8) {
 		// Opcode 8: HUD resource loading (FUN_41CADB case 6)
 		iactRebel2Opcode8(renderBitmap, b, size, par2, par3, par4);
@@ -1006,7 +1044,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 	// other subcases not implemented yet
 }
 
-void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
+void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
 	// Opcode 6: Level setup / mode switch
 	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
 	//
@@ -1023,6 +1061,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6)
 	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
+		// Reset Level 2 background flag when transitioning away from Handler 8
+		if (_rebelHandler == 8 && par2 != 8) {
+			_level2BackgroundLoaded = false;
+		}
 		_rebelHandler = par2;
 		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
 	}
@@ -1382,11 +1424,12 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
 
 	// Detect and load embedded ANIM (SAN) within the remaining IACT payload
+	// Note: chunkSize is the remaining IACT payload size after par1-par4 header
 	{
 		int64 startPos = b.pos();
-		int64 totalSize = b.size();
-		if (totalSize >= 0 && totalSize > startPos) {
-			int64 remaining = totalSize - startPos;
+		// Use chunkSize (remaining IACT payload) rather than b.size() (entire FRME stream)
+		int64 remaining = chunkSize;
+		if (remaining > 0) {
 			int scanSize = (int)MIN<int64>(remaining, 65536);
 			byte *scanBuf = (byte *)malloc(scanSize);
 			if (scanBuf) {
@@ -1395,7 +1438,8 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 					if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
 						int64 animStreamPos = startPos + i;
 						uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
-						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
+						// Limit to remaining IACT payload (chunkSize - offset into payload)
+						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, chunkSize - i);
 						if (toCopy > 0) {
 							byte *animData = (byte *)malloc(toCopy);
 							if (animData) {
@@ -1675,6 +1719,99 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 										delete newNut;
 									}
 								}
+							}
+
+							// Handler 8/25 (Level 2): Load background
+							// par4=5 contains the background image embedded as ANIM with FOBJ codec 3
+							// FUN_00401234 case 6 switch case 5: Creates 320x200 buffer (DAT_0047e030)
+							// Handler 8 = third-person vehicle, Handler 25 (0x19) = turret/mixed view
+							// Level 2 uses handler 25 but background loading is the same mechanism
+							if (!loadedAsNut && (_rebelHandler == 8 || _rebelHandler == 25) && par4 == 5) {
+								debug("Rebel2 Opcode 8: Loading Level 2 background (par4=5, animSize=%d)", toCopy);
+
+								// Allocate background buffer if needed (320x200 = 64000 bytes)
+								if (_level2Background == nullptr) {
+									_level2Background = (byte *)malloc(320 * 200);
+									if (_level2Background) {
+										memset(_level2Background, 0, 320 * 200);
+									}
+								}
+
+								if (_level2Background) {
+									// Parse embedded ANIM to find FOBJ
+									// Structure: ANIM tag at offset 0, AHDR, then FRME with FOBJ
+									int animOffset = 0;
+									if (toCopy >= 8 && READ_BE_UINT32(animData) == MKTAG('A','N','I','M')) {
+										uint32 animSize = READ_BE_UINT32(animData + 4);
+										debug("Rebel2 Opcode 8: Found ANIM tag, size=%u", animSize);
+
+										// Skip ANIM header (8 bytes) + AHDR chunk
+										// AHDR starts at offset 8, size is at offset 12 (big endian)
+										if (toCopy >= 16 && READ_BE_UINT32(animData + 8) == MKTAG('A','H','D','R')) {
+											uint32 ahdrSize = READ_BE_UINT32(animData + 12);
+											animOffset = 8 + 8 + ahdrSize;  // After ANIM tag + AHDR
+											debug("Rebel2 Opcode 8: AHDR size=%u, FRME expected at offset %d", ahdrSize, animOffset);
+										}
+									}
+
+									// Look for FRME containing FOBJ
+									bool foundBackground = false;
+									for (int scanPos = animOffset; scanPos + 16 < toCopy && !foundBackground; scanPos++) {
+										if (READ_BE_UINT32(animData + scanPos) == MKTAG('F','R','M','E')) {
+											// Found FRME, look for FOBJ inside
+											int frmeSize = READ_BE_UINT32(animData + scanPos + 4);
+											debug("Rebel2 Opcode 8: Found FRME at %d, size=%d", scanPos, frmeSize);
+
+											for (int fobjPos = scanPos + 8; fobjPos + 18 < scanPos + 8 + frmeSize && fobjPos + 18 < toCopy; fobjPos++) {
+												if (READ_BE_UINT32(animData + fobjPos) == MKTAG('F','O','B','J')) {
+													uint32 fobjSize = READ_BE_UINT32(animData + fobjPos + 4);
+													byte *fobjData = animData + fobjPos + 8;
+
+													// FOBJ header: codec(2), x(2), y(2), w(2), h(2)
+													int16 codec = READ_LE_INT16(fobjData);
+													int16 fobjX = READ_LE_INT16(fobjData + 2);
+													int16 fobjY = READ_LE_INT16(fobjData + 4);
+													int16 fobjW = READ_LE_INT16(fobjData + 6);
+													int16 fobjH = READ_LE_INT16(fobjData + 8);
+
+													debug("Rebel2 Opcode 8: Found FOBJ at %d: codec=%d pos=(%d,%d) size=%dx%d dataSize=%u",
+														fobjPos, codec, fobjX, fobjY, fobjW, fobjH, fobjSize);
+
+													// Decode codec 3 (RLE) into background buffer
+													// Codec 3 uses bomp RLE format with line-by-line structure
+													// FOBJ header is 14 bytes: codec(2), x(2), y(2), w(2), h(2), unk(2), unk(2)
+													if (codec == 3 && fobjW > 0 && fobjH > 0 && fobjW <= 320 && fobjH <= 200) {
+														byte *rleData = fobjData + 14;  // Skip full 14-byte FOBJ header
+
+														// Use the existing smushDecodeRLE function from codec1.cpp
+														// This properly decodes BOMP RLE with line size headers
+														smushDecodeRLE(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+
+														debug("Rebel2 Opcode 8: Decoded Level 2 background (%dx%d at %d,%d)",
+															fobjW, fobjH, fobjX, fobjY);
+														_level2BackgroundLoaded = true;
+														foundBackground = true;
+
+														// Draw background to render bitmap immediately
+														if (renderBitmap) {
+															for (int by = 0; by < 200; by++) {
+																memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
+															}
+															debug("Rebel2 Opcode 8: Copied Level 2 background to renderBitmap");
+														}
+													}
+													break;  // Found FOBJ, stop searching
+												}
+											}
+											break;  // Found FRME, stop searching
+										}
+									}
+
+									if (!foundBackground) {
+										debug("Rebel2 Opcode 8: Failed to find/decode background FOBJ");
+									}
+								}
+								loadedAsNut = true;  // Mark as handled even if decode failed
 							}
 
 							if (!loadedAsNut) {
@@ -2018,10 +2155,6 @@ void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, 
 	e.savedBgHeight = 0;
 	_enemies.push_back(e);
 }
-
-// External helpers from smush_player.cpp but we are already in Scumm namespace
-extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 	// Validate userId - Level 3 uses slots 0-11, allow up to 15 for safety
@@ -3033,6 +3166,12 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0
 	processMouse();
 
+	// NOTE: Level 2 background is drawn ONCE during IACT opcode 8 par4=5 processing
+	// (in procIACT when the background ANIM is first loaded). The 0x08 video flag
+	// (preserve background) prevents the frame buffer from being cleared, so the
+	// background persists. FOBJ sprites (enemies) are then decoded on top by SMUSH.
+	// We do NOT redraw the background here as that would overwrite FOBJ content.
+
 	// ============================================================
 	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
 	// ============================================================
@@ -3227,17 +3366,15 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			destX = frame.renderX;
 			destY = frame.renderY;
 
-			// For Handler 0x26 (turret) and 0x19 (mixed): HUD overlay positioning
-			// From FUN_004089ab assembly lines 560-582:
-			// X = 160 + (mouseOffsetX >> 4) - width/2 - spriteOffsetX
-			// Y = 0xb6 (182) - (mouseY >> 4) - height - spriteOffsetY (low-res mode)
-			// When mouse centered (mouseY=0), local_38=-128, offset=-8, so Y = 190 - height - offsetY
-			// For embedded cockpit frames at fixed position, use screen bottom (200) as base
+			// For Handler 0x26 (turret) and 0x19 (mixed): Embedded ANIM frame positioning
+			// From FUN_00407fcb assembly lines 389-391: screen dimensions are 320x200 (0x140 x 0xc8)
+			// Unlike NUT overlays (which use 0xb6=182 base with mouse parallax), embedded ANIM
+			// frames use screen height (200) as the base for bottom-aligned positioning.
+			// Formula: X = 160 - width/2 - fobj_left, Y = 200 - height - fobj_top
 			if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
-				// Position based on assembly formula (static center position)
-				// X: centered horizontally, adjusted by sprite offset
+				// X: centered horizontally, adjusted by FOBJ left offset
 				destX = 160 - frame.width / 2 - frame.renderX;
-				// Y: screen bottom (200) - height - offsetY for bottom-aligned cockpit
+				// Y: screen height (0xc8=200) - height - fobj_top for bottom-aligned cockpit
 				destY = 200 - frame.height - frame.renderY;
 			}
 
@@ -5573,13 +5710,24 @@ int InsaneRebel2::runLevel2() {
 		bonusCount = 0;
 
 		// ===== PHASE 1: P1/02P01_X.SAN =====
-		// Select random variant (B, C, or D - not A in main loop)
+		// First play variant A which contains the background IACT (opcode 8, par4=5)
+		// The background is loaded during this video and persists for B/C/D variants
 		{
+			debug("Rebel2: Level 2 Phase 1 - playing 02P01_A.SAN (background loader)");
+			splayer->setCurVideoFlags(0x28);
+			splayer->play("LEV02/P1/02P01_A.SAN", 12);
+			_deathFrame = splayer->_frame;
+		}
+
+		if (_vm->shouldQuit()) return kLevelQuit;
+
+		// Now select random variant (B, C, or D) for actual gameplay
+		if (_playerShield > 0) {
 			int variant = getRandomVariant(3);
 			const char *variants[] = {"B", "C", "D"};
 			Common::String filename = Common::String::format("LEV02/P1/02P01_%s.SAN", variants[variant]);
 
-			debug("Rebel2: Level 2 Phase 1 - playing %s", filename.c_str());
+			debug("Rebel2: Level 2 Phase 1 - playing %s (gameplay)", filename.c_str());
 			splayer->setCurVideoFlags(0x28);
 			splayer->play(filename.c_str(), 12);
 			_deathFrame = splayer->_frame;
@@ -5611,13 +5759,23 @@ int InsaneRebel2::runLevel2() {
 		_currentPhase = 2;
 
 		// ===== PHASE 2: P2/02P02_X.SAN =====
-		// Variant selection based on switch (more complex in original)
+		// First play variant A which contains the background IACT for this phase
 		{
-			int variant = getRandomVariant(6);
-			const char *variants[] = {"A", "B", "C", "D", "E", "F"};
+			debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background loader)");
+			splayer->setCurVideoFlags(0x28);
+			splayer->play("LEV02/P2/02P02_A.SAN", 12);
+			_deathFrame = splayer->_frame;
+		}
+
+		if (_vm->shouldQuit()) return kLevelQuit;
+
+		// Now select gameplay variant (B through F)
+		if (_playerShield > 0) {
+			int variant = getRandomVariant(5);
+			const char *variants[] = {"B", "C", "D", "E", "F"};
 			Common::String filename = Common::String::format("LEV02/P2/02P02_%s.SAN", variants[variant]);
 
-			debug("Rebel2: Level 2 Phase 2 - playing %s", filename.c_str());
+			debug("Rebel2: Level 2 Phase 2 - playing %s (gameplay)", filename.c_str());
 			splayer->setCurVideoFlags(0x28);
 			splayer->play(filename.c_str(), 12);
 			_deathFrame = splayer->_frame;
@@ -5649,13 +5807,23 @@ int InsaneRebel2::runLevel2() {
 		_currentPhase = 3;
 
 		// ===== PHASE 3: P3/02P03_X.SAN =====
-		// Variant selection with more options (A through I)
+		// First play variant A which contains the background IACT for this phase
 		{
-			int variant = getRandomVariant(9);
-			const char *variants[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I"};
+			debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background loader)");
+			splayer->setCurVideoFlags(0x28);
+			splayer->play("LEV02/P3/02P03_A.SAN", 12);
+			_deathFrame = splayer->_frame;
+		}
+
+		if (_vm->shouldQuit()) return kLevelQuit;
+
+		// Now select gameplay variant (B through I)
+		if (_playerShield > 0) {
+			int variant = getRandomVariant(8);
+			const char *variants[] = {"B", "C", "D", "E", "F", "G", "H", "I"};
 			Common::String filename = Common::String::format("LEV02/P3/02P03_%s.SAN", variants[variant]);
 
-			debug("Rebel2: Level 2 Phase 3 - playing %s", filename.c_str());
+			debug("Rebel2: Level 2 Phase 3 - playing %s (gameplay)", filename.c_str());
 			splayer->setCurVideoFlags(0x28);
 			splayer->play(filename.c_str(), 12);
 			_deathFrame = splayer->_frame;

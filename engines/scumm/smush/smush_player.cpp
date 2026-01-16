@@ -258,11 +258,20 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_seekPos = -1;
 
 	_skipNext = false;
+	_ra2FastForwarding = false;
 	_dst = nullptr;
 	_storeFrame = false;
 	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
+
+	// LOAD chunk streaming buffer (RA2)
+	_loadBuffer = nullptr;
+	_loadBufferSize = 0;
+	_loadBufferOffset = 0;
+	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
+	_lastLoadChunkIdx = -1;
+	_totalLoadChunks = 0;
 	_scrollX = 0;
 	_scrollY = 0;
 	_IACTpos = 0;
@@ -306,6 +315,14 @@ SmushPlayer::~SmushPlayer() {
 	delete _IACTchannel;
 	delete _compressedFileSoundHandle;
 	terminateAudio();
+
+	// Free any preserved frame buffer (RA2 preserves this across videos)
+	free(_frameBuffer);
+	_frameBuffer = nullptr;
+	free(_specialBuffer);
+	_specialBuffer = nullptr;
+	free(_loadBuffer);
+	_loadBuffer = nullptr;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -320,6 +337,31 @@ void SmushPlayer::init(int32 speed) {
 
 	_vm->setDirtyColors(0, 255);
 	_dst = vs->getPixels(0, 0);
+
+	// For Rebel Assault 2, handle background preservation between videos:
+	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
+	// - Gameplay videos (flags 0x28) preserve the existing screen content
+	//
+	// The virtual screen (_dst = vs->getPixels) persists between videos, so
+	// when a gameplay video starts, _dst already contains the last frame of
+	// the previous cinematic video - which is exactly what we want.
+	// We do NOT restore from _frameBuffer because STOR captures frame 0
+	// (often a black initialization frame), not the last frame.
+	if (_vm->_game.id == GID_REBEL2 && _dst != nullptr) {
+		if ((_curVideoFlags & 0x08) == 0) {
+			// Cinematic mode (flags 0x20) - clear buffer for fresh video
+			memset(_dst, 0, vs->w * vs->h);
+		} else {
+			// Gameplay mode (flags 0x28) - do nothing, preserve existing screen content
+			// Count non-zero pixels to verify there's actual content
+			int nonZero = 0;
+			for (int i = 0; i < vs->w * vs->h; i++) {
+				if (_dst[i] != 0) nonZero++;
+			}
+			debug("SmushPlayer::init: Preserving screen for gameplay video (%dx%d, %d%% non-zero)",
+				vs->w, vs->h, (nonZero * 100) / (vs->w * vs->h));
+		}
+	}
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1792. A proper solution would change all the
@@ -354,8 +396,14 @@ void SmushPlayer::release() {
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
 
-	free(_frameBuffer);
-	_frameBuffer = nullptr;
+	// For Rebel Assault 2, preserve _frameBuffer across videos so that
+	// gameplay videos (which have no background FOBJ) can use the stored
+	// background from the previous BEG cinematic video.
+	// The _frameBuffer will be freed in the destructor or reused by the next video.
+	if (_vm->_game.id != GID_REBEL2) {
+		free(_frameBuffer);
+		_frameBuffer = nullptr;
+	}
 
 	_IACTstream = nullptr;
 
@@ -385,6 +433,97 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 
 	if (_frameBuffer != nullptr) {
 		memcpy(_dst, _frameBuffer, _width * _height);
+	}
+}
+
+/**
+ * Handle LOAD chunk for Rebel Assault 2
+ *
+ * LOAD chunks stream embedded resource data (likely audio for streaming playback)
+ * across multiple frames. The data is accumulated in a buffer and consumed by
+ * the audio system.
+ *
+ * Chunk format (from FUN_00424450 in original):
+ *   Offset 0 (2 bytes): totalChunks - Total number of LOAD chunks in sequence
+ *   Offset 2 (2 bytes): chunkIndex - Current chunk index (0-based)
+ *   Offset 4 (6 bytes): unknown/padding
+ *   Offset 10+: Actual data payload
+ *
+ * Processing:
+ *   - First chunk (index 0) resets the buffer
+ *   - Chunks must arrive sequentially (lastIndex + 1 == currentIndex)
+ *   - Data is accumulated until all chunks are received
+ *   - Consumer reads from buffer via getLoadData() (DAT_00482c18 read offset)
+ */
+void SmushPlayer::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad()");
+
+	if (subSize < 10) {
+		warning("SmushPlayer::handleLoad: chunk too small (%d bytes)", subSize);
+		return;
+	}
+
+	// Read LOAD header
+	int16 totalChunks = b.readUint16LE();
+	int16 chunkIndex = b.readUint16LE();
+	b.skip(6);  // Unknown/padding
+
+	int32 dataSize = subSize - 10;
+
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: chunk %d/%d, dataSize=%d, bufferOffset=%d",
+		chunkIndex, totalChunks, dataSize, _loadBufferOffset);
+
+	// First chunk in sequence - reset buffer state
+	if (chunkIndex == 0) {
+		_loadBufferOffset = 0;
+		_loadReadOffset = 8;  // Original skips 8 bytes at start (header in accumulated data?)
+		_lastLoadChunkIdx = -1;
+		_totalLoadChunks = totalChunks;
+
+		// Allocate/reallocate buffer if needed
+		// Estimate buffer size: typical LOAD data per chunk is ~350 bytes
+		// Total expected: totalChunks * 400 bytes (with margin)
+		int32 estimatedSize = totalChunks * 400;
+		if (_loadBuffer == nullptr || _loadBufferSize < estimatedSize) {
+			free(_loadBuffer);
+			_loadBufferSize = estimatedSize;
+			_loadBuffer = (byte *)malloc(_loadBufferSize);
+			if (_loadBuffer == nullptr) {
+				warning("SmushPlayer::handleLoad: Failed to allocate %d bytes for LOAD buffer",
+					_loadBufferSize);
+				_loadBufferSize = 0;
+				return;
+			}
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Allocated %d bytes for LOAD buffer",
+				_loadBufferSize);
+		}
+	}
+
+	// Check sequential order (original: DAT_00482c3c - sVar1 == -1)
+	if (_lastLoadChunkIdx + 1 != chunkIndex) {
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Non-sequential chunk %d (expected %d), skipping",
+			chunkIndex, _lastLoadChunkIdx + 1);
+		return;
+	}
+
+	// Check buffer capacity (original: DAT_00482c14 + param_2 < DAT_00482c10)
+	if (_loadBuffer == nullptr || _loadBufferOffset + dataSize >= _loadBufferSize) {
+		warning("SmushPlayer::handleLoad: Buffer overflow - offset=%d size=%d limit=%d",
+			_loadBufferOffset, dataSize, _loadBufferSize);
+		return;
+	}
+
+	// Copy data to buffer
+	b.read(_loadBuffer + _loadBufferOffset, dataSize);
+	_loadBufferOffset += dataSize;
+	_lastLoadChunkIdx = chunkIndex;
+
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Accumulated %d bytes total", _loadBufferOffset);
+
+	// Check if sequence is complete
+	if (chunkIndex == totalChunks - 1) {
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Sequence complete - %d chunks, %d bytes total",
+			totalChunks, _loadBufferOffset);
 	}
 }
 
@@ -807,8 +946,11 @@ byte *SmushPlayer::getVideoPalette() {
 
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 
-void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
+void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize) {
 	if ((height == 242) && (width == 384)) {
 		if (_specialBuffer == 0)
 			_specialBuffer = (byte *)malloc(242 * 384);
@@ -819,13 +961,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		if (_insane && _insane->shouldSkipFrameUpdate(left, top, width, height)) {
 			return;  // Skip this frame update
 		}
-		
-		if (_specialBuffer == 0) {
-			_specialBuffer = (byte *)malloc(width * height);
-			_width = width;
-			_height = height;
-		}
-		_dst = _specialBuffer;
+		// Rebel2 partial frames decode directly to main video buffer at (left, top)
+		// using screen pitch - don't use _specialBuffer
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -870,7 +1007,26 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		// Used by Full Throttle Classic (from Remastered)
 		smushDecodeUncompressed(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
+	case SMUSH_CODEC_LINE_UPDATE:
+	case SMUSH_CODEC_LINE_UPDATE2:
+		// RA2: Skip/copy with literal pixels (used for fonts and HUD overlays)
+		smushDecodeLineUpdate(_dst, src, left, top, width, height, pitch);
+		break;
+	case SMUSH_CODEC_SKIP_RLE:
+		// RA2: Skip/copy with embedded RLE (used for HUD frames with transparency)
+		smushDecodeSkipRLE(_dst, src, left, top, width, height, pitch);
+		break;
+	case SMUSH_CODEC_RA2_BOMP:
+		// RA2: BOMP RLE with variable header (used for small animation elements)
+		smushDecodeRA2Bomp(_dst, src, left, top, width, height, pitch, dataSize);
+		break;
 	default:
+		if (_vm->_game.id == GID_REBEL2) {
+			// Rebel Assault 2 may have other unknown codecs
+			debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
+				codec, left, top, width, height);
+			break;
+		}
 		error("Invalid codec for frame object : %d", codec);
 	}
 
@@ -907,7 +1063,8 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 	int width = READ_LE_UINT16(ptr); ptr += 2;
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
-	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height);
+	int fobjDataSize = (int)decompressedSize - 14;
+	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height, fobjDataSize);
 
 	free(fobjBuffer);
 }
@@ -915,6 +1072,7 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
 	if (_skipNext) {
+		debug("SmushPlayer::handleFrameObject: SKIPPING due to _skipNext, frame=%d", _frame);
 		_skipNext = false;
 		return;
 	}
@@ -928,12 +1086,15 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	b.readUint16LE();
 	b.readUint16LE();
 
+	debug("SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
+		_frame, codec, left, top, width, height, subSize - 14);
+
 	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	decodeFrameObject(codec, chunk_buffer, left, top, width, height);
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
 
 	free(chunk_buffer);
 }
@@ -944,13 +1105,19 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	_skipNext = false;
 
 	if (_insanity) {
-		_vm->_insane->procPreRendering();
+		_vm->_insane->procPreRendering(_dst);
 	}
 
 	while (frameSize > 0) {
 		const uint32 subType = b.readUint32BE();
 		const int32 subSize = b.readUint32BE();
 		const int32 subOffset = b.pos();
+
+		// Debug: Log all chunk types for first few frames
+		if (_vm->_game.id == GID_REBEL2 && _frame < 5) {
+			debug("SmushPlayer::handleFrame: frame=%d chunk=%s size=%d", _frame, tag2str(subType), subSize);
+		}
+
 		switch (subType) {
 		case MKTAG('N','P','A','L'):
 			handleNewPalette(subSize, b);
@@ -999,6 +1166,9 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			break;
 		case MKTAG('T','E','X','T'):
 			handleTextResource(subType, subSize, b);
+			break;
+		case MKTAG('L','O','A','D'):
+			handleLoad(subSize, b);
 			break;
 		default:
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
@@ -1484,6 +1654,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 		if (_endOfFile)
 			break;
+
 		if (_vm->shouldQuit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(*_IACTchannel);
@@ -1492,6 +1663,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			resetAudioTracks(); // For DIG demo
 			if (_imuseDigital)
 				_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
+
 			break;
 		}
 

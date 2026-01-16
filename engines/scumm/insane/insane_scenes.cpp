@@ -812,7 +812,8 @@ void Insane::setEnemyCostumes() {
 	smush_warpMouse(160, 100, -1);
 }
 
-void Insane::procPreRendering() {
+void Insane::procPreRendering(byte *renderBitmap) {
+	(void)renderBitmap;  // Base class doesn't use this
 	_smush_isSanFileSetup = 0; // FIXME: This shouldn't be here
 
 	switchSceneIfNeeded();
