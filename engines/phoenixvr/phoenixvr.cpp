@@ -170,6 +170,7 @@ void PhoenixVREngine::wait(float seconds) {
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
 	_nextWarp = _script->getWarp(warp);
+	_hoverIndex = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
 		_prevWarp = _warpIdx;
@@ -464,17 +465,30 @@ void PhoenixVREngine::tick(float dt) {
 
 	Graphics::Surface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
-	for (uint i = 0; i != cursors.size(); ++i) {
+	for (int i = 0, n = cursors.size(); i != n; ++i) {
 		auto *region = getRegion(i);
 		if (!region)
 			continue;
 
 		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
+			auto test = _warp->getTest(i);
+			if (test && test->hover == 1 && _hoverIndex < 0) {
+				debug("executing hover test %d", i);
+				_hoverIndex = i;
+				executeTest(i);
+			}
+
 			auto &name = cursors[i];
 			cursor = loadCursor(name);
 			if (!cursor)
 				cursor = loadCursor(_defaultCursor[1]);
-			break;
+		} else if (i == _hoverIndex) {
+			debug("leaving hover region");
+			auto leave = _warp->getTest(i + 1);
+			if (leave && leave->hover == 2) {
+				executeTest(i + 1);
+			}
+			_hoverIndex = -1;
 		}
 	}
 	if (!cursor)
@@ -597,6 +611,10 @@ Common::Error PhoenixVREngine::run() {
 				for (uint i = 0, n = cursors.size(); i != n; ++i) {
 					auto *region = getRegion(i);
 					if (!region)
+						continue;
+
+					auto test = _warp->getTest(i);
+					if (test && test->hover != 0)
 						continue;
 
 					if (_vr.isVR() ? region->contains3D(vrPos) : region->contains2D(event.mouse.x, event.mouse.y)) {

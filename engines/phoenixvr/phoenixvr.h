@@ -175,6 +175,7 @@ private:
 	Script::ConstWarpPtr _warp;
 	int _nextWarp = -1;
 	int _prevWarp = -1;
+	int _hoverIndex = -1;
 
 	struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }
