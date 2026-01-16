@@ -383,16 +383,35 @@ void PelrockEngine::updatePaletteAnimations() {
 }
 
 void PelrockEngine::paintDebugLayer() {
-	for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-		WalkBox box = _room->_currentRoomWalkboxes[i];
-		drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
-		_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+	bool showWalkboxes = false;
+
+	if (showWalkboxes) {
+		for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+			WalkBox box = _room->_currentRoomWalkboxes[i];
+			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
+			_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+		}
 	}
 
-	for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
-		Exit exit = _room->_currentRoomExits[i];
-		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
-		_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
+	bool showHotspots = true;
+	if (showHotspots) {
+		for (int i = 0; i < _room->_currentRoomHotspots.size(); i++) {
+			HotSpot hotspot = _room->_currentRoomHotspots[i];
+			if (!hotspot.isEnabled)
+				continue;
+			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 180 + i);
+			_smallFont->drawString(_screen, Common::String::format("HS %d", i), hotspot.x + 2, hotspot.y + 2, 640, 14);
+			_smallFont->drawString(_screen, Common::String::format("x=%d", hotspot.extra), hotspot.x + 2, hotspot.y + 2 + 14, 640, 14);
+		}
+	}
+
+	bool showExits = true;
+	if (showExits) {
+		for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
+			Exit exit = _room->_currentRoomExits[i];
+			drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
+			_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
+		}
 	}
 
 	drawPos(_screen, _alfredState.x, _alfredState.y, 13);
@@ -670,14 +689,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 							   _res->_curSpecialAnim.w,
 							   _res->_curSpecialAnim.h);
 			drawAlfred(frame);
-			// drawSpriteToBuffer(_compositeBuffer,
-			// 				   640,
-			// 				   frame,
-			// 				   _alfredState.x,
-			// 				   _alfredState.y - _res->_curSpecialAnim.h,
-			// 				   _res->_curSpecialAnim.w,
-			// 				   _res->_curSpecialAnim.h,
-			// 				   255);
 			_res->_specialAnimCurFrame++;
 			delete[] frame;
 		}
@@ -689,6 +700,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	}
 }
 
+/**
+ * Scales and shades alfred sprite and draws it to the composite buffer
+ */
 void PelrockEngine::drawAlfred(byte *buf) {
 
 	ScaleCalculation scale = calculateScaling(_alfredState.y, _room->_scaleParams);

@@ -32,6 +32,7 @@ class PelrockConsole : public GUI::Debugger {
 private:
 	PelrockEngine *_engine;
 	bool cmdLoadRoom(int argc, const char **argv);
+	bool cmdGiveItems(int argc, const char **argv);
 	bool cmdTest(int argc, const char **argv);
 
 public:

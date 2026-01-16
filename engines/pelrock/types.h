@@ -70,7 +70,7 @@ const int kAlfredFrameHeight = 102;
 
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
-const int kTalkAnimationSpeed = 2;   // Frames per update
+const int kTalkAnimationSpeed = 2; // Frames per update
 
 const int kAlfredIdleAnimationFrameCount = 300;
 
@@ -282,8 +282,8 @@ struct ScalingParams {
 struct ScaleCalculation {
 	int scaledWidth;
 	int scaledHeight;
-	int scaleX;  // Amount to subtract from width (was scaleUp)
-	int scaleY;  // Amount to subtract from height (was scaleDown)
+	int scaleX; // Amount to subtract from width (was scaleUp)
+	int scaleY; // Amount to subtract from height (was scaleDown)
 };
 
 enum GameState {
@@ -480,6 +480,7 @@ struct GameStateData {
 	void addInventoryItem(int id) {
 		inventoryItems.push_back(id);
 	}
+
 	void removeInventoyItem(int id) {
 		for (int i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {

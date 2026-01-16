@@ -51,6 +51,7 @@ public:
 	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res);
 	~MenuManager();
 	void menuLoop();
+	void drawInventoryIcons();
 	void loadMenu();
 	byte _mainMenuPalette[768] = {0};
 

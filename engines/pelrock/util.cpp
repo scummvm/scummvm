@@ -323,7 +323,6 @@ byte decodeChar(byte b) {
 	}
 }
 
-
 void changeGameSpeed(Common::Event e) {
 	if (e.type == Common::EVENT_KEYDOWN) {
 		if (e.kbd.hasFlags(Common::KBD_CTRL)) {

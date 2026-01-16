@@ -378,7 +378,7 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 InventoryObject ResourceManager::getIconForObject(byte objectIndex) {
 	byte iconIndex = 0;
 	if (objectIndex < 59) {
-		if (11 < objectIndex < 59) {
+		if (objectIndex >= 11 && objectIndex < 59) {
 			iconIndex = ((objectIndex - 11) & 3) + 11; // Books cycle through icons 11-14
 		} else {
 			iconIndex = objectIndex; // Direct mapping for IDs 0-11

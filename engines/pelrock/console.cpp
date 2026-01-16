@@ -28,11 +28,11 @@ namespace Pelrock {
 
 PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("setScreen", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
+	registerCmd("give", WRAP_METHOD(PelrockConsole, cmdGiveItems));
 }
 
 PelrockConsole::~PelrockConsole() {
 }
-
 
 bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
 	if (argc < 2) {
@@ -42,9 +42,24 @@ bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
 
 	int roomNumber = atoi(argv[1]);
 	g_engine->setScreen(roomNumber, ALFRED_DOWN);
+	const WalkBox w = g_engine->_room->_currentRoomWalkboxes[0];
+	g_engine->_alfredState.x = w.x;
+	g_engine->_alfredState.y = w.y;
 	debugPrintf("Loaded room %d", roomNumber);
 	return true;
 }
 
+bool PelrockConsole::cmdGiveItems(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: giveItems <itemId> [itemId] ...");
+		return true;
+	}
+	for (int i = 1; i < argc; i++) {
+		int itemId = atoi(argv[i]);
+		g_engine->_state->addInventoryItem(itemId);
+		debugPrintf("Gave item %d\n", itemId);
+	}
+	return true;
+}
 
 } // End of namespace Pelrock

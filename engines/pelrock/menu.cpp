@@ -160,13 +160,7 @@ void MenuManager::menuLoop() {
 	if (showButtons)
 		drawButtons();
 
-	for (int i = 0; i < 4; i++) {
-		int itemIndex = _curInventoryPage * 4 + i;
-		if (g_engine->_state->inventoryItems.size() <= itemIndex)
-			continue;
-		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
-	}
+	drawInventoryIcons();
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
 	for (int i = 0; _menuText.size() > i; i++) {
@@ -176,6 +170,21 @@ void MenuManager::menuLoop() {
 	drawText(g_engine->_smallFont, Common::String::format("%d,%d", _events->_mouseX, _events->_mouseY), 0, 0, 640, 13);
 	_screen->markAllDirty();
 	_screen->update();
+}
+
+void MenuManager::drawInventoryIcons() {
+	bool debugIcons = true;
+	for (int i = 0; i < 4; i++) {
+		int itemIndex = _curInventoryPage * 4 + i;
+		if (g_engine->_state->inventoryItems.size() <= itemIndex)
+			continue;
+		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
+		if (debugIcons) {
+			drawRect(_compositeBuffer, 140 + (82 * i), 115 - (8 * i), 60, 60, 13);
+			drawText(_compositeBuffer, g_engine->_smallFont, Common::String::format("ID %d", g_engine->_state->inventoryItems[itemIndex]), 140 + (82 * i) + 2, 115 - (8 * i) + 2, 640, 13);
+		}
+	}
 }
 
 void MenuManager::loadMenu() {

@@ -159,7 +159,7 @@ void RoomManager::changeHotSpot(HotSpot hotspot) {
 }
 
 void RoomManager::disableSprite(int roomNumber, int spriteIndex, bool persist) {
-	if(roomNumber == _currentRoomNumber) {
+	if (roomNumber == _currentRoomNumber) {
 		_currentRoomAnims[spriteIndex].zOrder = 255;
 	}
 	g_engine->_state->disabledSprites[roomNumber].push_back(spriteIndex);
@@ -526,7 +526,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.spriteType = data[animOffset + 33];
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
-		for(int i = 0; i < disabledSprites.size(); i++) {
+		for (int i = 0; i < disabledSprites.size(); i++) {
 			if (disabledSprites[i] == sprite.index) {
 				sprite.zOrder = 255;
 				sprite.isHotspotDisabled = 1;
