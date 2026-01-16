@@ -211,6 +211,39 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	case 2:
 		offset = 0x0004B860;
 		break;
+	case 9:
+		offset = 0x0004B874;
+		break;
+	case 17:
+		offset = 0x0004B86C;
+		break;
+	case 18:
+		offset = 0x0004B870;
+		break;
+	case 19:
+		offset = 0x0004B878;
+		break;
+	case 21:
+		offset = 0x0004B884;
+		break;
+	case 25:
+		offset = 0x0004B890;
+		break;
+	case 32:
+		offset = 0x0004B898;
+		break;
+	case 33:
+		offset = 0x0004B89C;
+		break;
+	case 38:
+		offset = 0x0004B894;
+		break;
+	case 39:
+		offset = 0x0004B888;
+		break;
+	case 46:
+		offset = 0x0004B8A0;
+		break;
 	default:
 		exeFile.close();
 		return nullptr;
