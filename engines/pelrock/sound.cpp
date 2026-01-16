@@ -237,27 +237,23 @@ void SoundManager::loadSoundIndex() {
 	sonidosFile.close();
 }
 
-int RANDOM_THRESHOLD = 0x4000;
+static const uint kAmbientCounterMask = 0x1F;  // Trigger when (counter & mask) == mask
 
-int SoundManager::tick(uint32 frameCount) {
-
-	uint16 rand1 = _rng.nextRandom();
-	// uint32 random = g_engine->getRandomNumber(1);
-	if (rand1 <= RANDOM_THRESHOLD) {
-		// debug("No SFX this tick due to 50% random");
+int SoundManager::tickAmbientSound(uint32 frameCount) {
+	// Counter gate: only trigger every 32 frames when (counter & 0x1F) == 0x1F
+	if ((frameCount & kAmbientCounterMask) != kAmbientCounterMask) {
 		return -1;
 	}
 
-	if ((frameCount & COUNTER_MASK) != COUNTER_MASK) {
-		// debug("No SFX this tick due to counter mask (counter = %d)", soundFrameCounter);
+	// 50% probability gate using ScummVM's random source
+	if (g_engine->getRandomNumber(1) == 0) {
 		return -1;
 	}
 
-	uint16 rand2 = _rng.nextRandom();
-	int slot = rand2 & 3;
-	// debug("Slot = %d (rand2 = %u)", slot, rand2);
-	// uint32 slot = g_engine->getRandomNumber(4);
-	return slot + 1;
+	// Pick random ambient slot 0-3 (corresponds to room sound indices 4-7)
+	int ambientSlotOffset = g_engine->getRandomNumber(3);
+
+	return ambientSlotOffset;  // Caller adds 4 to get room sound index
 }
 
 } // End of namespace Pelrock
