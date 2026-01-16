@@ -61,13 +61,13 @@ public:
 	void setSmushPlayer(SmushPlayer *player);
 	void runScene(int arraynum);
 
-	void procPreRendering();
+	virtual void procPreRendering(byte *renderBitmap);
 	void virtual procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void virtual procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
-	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
+	virtual void procSKIP(int32 subSize, Common::SeekableReadStream &b);
 	void escapeKeyHandler();
 
 	bool isInsaneActive() { return _insaneIsRunning; }

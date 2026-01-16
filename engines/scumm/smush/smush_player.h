@@ -78,7 +78,11 @@ namespace Scumm {
 #define SMUSH_CODEC_RLE          1
 #define SMUSH_CODEC_RLE_ALT      3
 #define SMUSH_CODEC_UNCOMPRESSED 20
+#define SMUSH_CODEC_LINE_UPDATE  21   // RA2: Skip/copy with literal pixels
+#define SMUSH_CODEC_SKIP_RLE     23   // RA2: Skip/copy with embedded RLE
 #define SMUSH_CODEC_DELTA_BLOCKS 37
+#define SMUSH_CODEC_LINE_UPDATE2 44   // RA2: Variant of codec 21
+#define SMUSH_CODEC_RA2_BOMP     45   // RA2: BOMP RLE with variable header
 #define SMUSH_CODEC_DELTA_GLYPHS 47
 
 class ScummEngine_v7;
@@ -151,6 +155,7 @@ private:
 	uint32 _seekFrame;
 
 	bool _skipNext;
+	bool _ra2FastForwarding;  // Fast-forwarding RA2 BEG video to establish background
 	uint32 _frame;
 
 	Audio::SoundHandle *_IACTchannel;
@@ -249,7 +254,7 @@ private:
 	void tryCmpFile(const char *filename);
 
 	bool readString(const char *file);
-	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height);
+	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize = 0);
 	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
 	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
 	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
@@ -261,7 +266,16 @@ private:
 	void handleIACT(int32 subSize, Common::SeekableReadStream &);
 	void handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &);
 	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
+	void handleLoad(int32 subSize, Common::SeekableReadStream &);
 	void readPalette(byte *, Common::SeekableReadStream &);
+
+	// LOAD chunk streaming buffer (RA2 - embedded resource data)
+	byte *_loadBuffer;        // Accumulated LOAD data
+	int32 _loadBufferSize;    // Allocated buffer size
+	int32 _loadBufferOffset;  // Current write position (how much data accumulated)
+	int32 _loadReadOffset;    // Current read position (for streaming consumption)
+	int16 _lastLoadChunkIdx;  // Last processed chunk index (-1 = none)
+	int16 _totalLoadChunks;   // Total chunks expected in current sequence
 
 	void initAudio(int samplerate, int32 maxChunkSize);
 	void terminateAudio();
