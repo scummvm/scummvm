@@ -1379,10 +1379,15 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		LauncherDialog::handleCommand(sender, kStartCmd, 0);
 		break;
 	case kListItemRemovalRequestCmd: {
-		const Common::Array<int> &selectedItems = _list->getSelectedItems();
-		if (selectedItems.size() > 1) {
+		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+		// Count selected items
+		int selectedCount = 0;
+		for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
+			if (selectedItemsBool[i]) selectedCount++;
+		}
+		if (selectedCount > 1) {
 			// Multi-selection removal: show confirmation dialog with list of games
-			removeListGames(selectedItems);
+			removeListGames(selectedItemsBool);
 		} else {
 			LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
 		}
@@ -1420,10 +1425,15 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	case kRemoveGameCmd: {
 		// Handle multi-selection removal
-		const Common::Array<int> &selectedItems = _list->getSelectedItems();
-		if (selectedItems.size() > 1) {
+		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+		// Count selected items
+		int selectedCount = 0;
+		for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
+			if (selectedItemsBool[i]) selectedCount++;
+		}
+		if (selectedCount > 1) {
 			// Multi-selection removal: show confirmation dialog with list of games
-			removeListGames(selectedItems);
+			removeListGames(selectedItemsBool);
 		} else {
 			// Single selection removal
 			LauncherDialog::handleCommand(sender, cmd, data);
@@ -1435,14 +1445,17 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherSimple::removeListGames(const Common::Array<int> &selectedItems) {
+void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBool) {
 	// Build confirmation message with list of games to remove
 	Common::U32String confirmMsg = _("Do you really want to remove the following game configurations?\n\n");
 
-	for (const int &idx : selectedItems) {
-		if (idx >= 0 && idx < (int)_domains.size()) {
+	// Convert bool array to indices and build message
+	Common::Array<int> dataIndicesToRemove;
+	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
+		if (selectedItemsBool[i]) {
+			dataIndicesToRemove.push_back(i);
 			// Get the game title from the list
-			confirmMsg += _list->getList()[idx];
+			confirmMsg += _list->getList()[i];
 			confirmMsg += Common::U32String("\n");
 		}
 	}
@@ -1450,7 +1463,7 @@ void LauncherSimple::removeListGames(const Common::Array<int> &selectedItems) {
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(selectedItems, false);
+		performGameRemoval(dataIndicesToRemove, false);
 	}
 }
 
@@ -1462,8 +1475,13 @@ void LauncherSimple::updateSelectionAfterRemoval() {
 
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
-	const Common::Array<int> &selectedItems = _list->getSelectedItems();
-	bool hasMultiSelection = selectedItems.size() > 1;
+	const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+	// Count selected items
+	int selectedCount = 0;
+	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
+		if (selectedItemsBool[i]) selectedCount++;
+	}
+	bool hasMultiSelection = selectedCount > 1;
 
 	bool isAddOn = false;
 	if (item >= 0) {

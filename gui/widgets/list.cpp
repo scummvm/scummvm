@@ -205,9 +205,8 @@ bool ListWidget::isItemSelected(int item) const {
 		actualItem = _listIndex[item];
 	}
 
-	for (const int &selected : _selectedItems) {
-		if (selected == actualItem)
-			return true;
+	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
+		return _selectedItems[actualItem];
 	}
 	return false;
 }
@@ -219,23 +218,10 @@ void ListWidget::addSelectedItem(int item) {
 		actualItem = _listIndex[item];
 	}
 
-	// Avoid duplicates
-	if (isItemSelected(item))
-		return;
-
-	// Insert in ascending order to keep selection sorted
-	bool inserted = false;
-	for (uint i = 0; i < _selectedItems.size(); ++i) {
-		if (_selectedItems[i] > actualItem) {
-			_selectedItems.insert_at(i, actualItem);
-			inserted = true;
-			break;
-		}
+	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
+		_selectedItems[actualItem] = true;
+		markAsDirty();
 	}
-	if (!inserted)
-		_selectedItems.push_back(actualItem);
-
-	markAsDirty();
 }
 
 void ListWidget::removeSelectedItem(int item) {
@@ -245,17 +231,15 @@ void ListWidget::removeSelectedItem(int item) {
 		actualItem = _listIndex[item];
 	}
 
-	for (uint i = 0; i < _selectedItems.size(); ++i) {
-		if (_selectedItems[i] == actualItem) {
-			_selectedItems.remove_at(i);
-			break;
-		}
+	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
+		_selectedItems[actualItem] = false;
+		markAsDirty();
 	}
-	markAsDirty();
 }
 
 void ListWidget::clearSelection() {
-	_selectedItems.clear();
+	// Fill all with false to clear selection
+	Common::fill(_selectedItems.begin(), _selectedItems.end(), false);
 	_lastSelectionStartItem = -1;
 	markAsDirty();
 }
@@ -268,6 +252,17 @@ void ListWidget::selectItemRange(int from, int to) {
 		addSelectedItem(i);
 	}
 	markAsDirty();
+}
+
+Common::Array<int> ListWidget::getSelectedItems() const {
+	// Convert bool array to int array of selected indices
+	Common::Array<int> _selectedItemsIndices;
+	for (int i = 0; i < (int)_selectedItems.size(); ++i) {
+		if (_selectedItems[i]) {
+			_selectedItemsIndices.push_back(i);
+		}
+	}
+	return _selectedItemsIndices;
 }
 
 void ListWidget::setList(const Common::U32StringArray &list) {
@@ -286,7 +281,9 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_currentPos < 0)
 		_currentPos = 0;
 	_selectedItem = -1;
-	_selectedItems.clear(); // Clear multi-selection
+	// Resize and clear bool array
+	_selectedItems.clear();
+	_selectedItems.resize(size, false);
 	_lastSelectionStartItem = -1;
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
@@ -502,9 +499,13 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 
 		switch (state.keycode) {
 		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_KP_ENTER: {
 			// Disable activation if multi-select is enabled and multiple items are selected
-			if (_multiSelectEnabled && _selectedItems.size() > 1) {
+			int selectedCount = 0;
+			for (int i = 0; i < (int)_selectedItems.size(); ++i) {
+				if (_selectedItems[i]) selectedCount++;
+			}
+			if (_multiSelectEnabled && selectedCount > 1) {
 					break;
 			}
 			if (_selectedItem >= 0) {
@@ -516,6 +517,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
+		}
 
 		// Keypad & special keys
 		//   - if num lock is set, we do not handle the keypress

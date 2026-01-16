@@ -256,7 +256,7 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
-	void removeListGames(const Common::Array<int> &selectedItems);
+	void removeListGames(const Common::Array<bool> &selectedItems);
 
 protected:
 	void updateSelectionAfterRemoval() override;
