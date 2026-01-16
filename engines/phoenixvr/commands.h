@@ -319,6 +319,13 @@ struct RolloverSecretaire : public Script::Command {
 	}
 };
 
+struct SaveVariable : public Script::Command {
+	SaveVariable(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("SaveVariable()");
+	}
+};
+
 #define PLUGIN_LIST(E)               \
 	E(Add)                           \
 	E(ChangeCurseur)                 \
@@ -341,6 +348,7 @@ struct RolloverSecretaire : public Script::Command {
 	E(Play_Movie)                    \
 	E(RolloverMalette)               \
 	E(RolloverSecretaire)            \
+	E(SaveVariable)                  \
 	E(StartTimer)                    \
 	E(Sub)                           \
 	E(Until)                         \
