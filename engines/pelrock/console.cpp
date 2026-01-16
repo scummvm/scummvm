@@ -42,9 +42,6 @@ bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
 
 	int roomNumber = atoi(argv[1]);
 	g_engine->setScreen(roomNumber, ALFRED_DOWN);
-	const WalkBox w = g_engine->_room->_currentRoomWalkboxes[0];
-	g_engine->_alfredState.x = w.x;
-	g_engine->_alfredState.y = w.y;
 	debugPrintf("Loaded room %d", roomNumber);
 	return true;
 }
@@ -56,7 +53,11 @@ bool PelrockConsole::cmdGiveItems(int argc, const char **argv) {
 	}
 	for (int i = 1; i < argc; i++) {
 		int itemId = atoi(argv[i]);
+		bool markAsSelected = g_engine->_state->inventoryItems.empty();
 		g_engine->_state->addInventoryItem(itemId);
+		if (markAsSelected)
+			g_engine->_state->selectedInventoryItem = itemId;
+
 		debugPrintf("Gave item %d\n", itemId);
 	}
 	return true;

@@ -244,6 +244,9 @@ public:
 	void openKitchenDrawer(HotSpot *hotspot);
 	void openKitchenDoorFromInside(HotSpot *hotspot);
 	void useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot);
+	void openShopDoor(HotSpot *hotspot);
+	void closeShopDoor(HotSpot *hotspot);
+	void openLamppost(HotSpot *hotspot);
 	void openDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayClosed);
 	void closeDoor(HotSpot *hotspot, int doorIndex, int sticker, bool masculine, bool stayOpen);
 	void pickUpPhoto(HotSpot *hotspot);
@@ -253,6 +256,7 @@ public:
 	void noOpItem(int item, HotSpot *hotspot);
 	void useOnAlfred(int inventoryObject);
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
+	void useBrickWithWindow(int inventoryObject, HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };

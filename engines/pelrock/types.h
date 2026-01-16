@@ -432,9 +432,12 @@ struct ResetEntry {
 #define FLAG_FROM_INTRO 43
 #define FLAG_HE_TIRADO_PIEDRA 44
 #define FLAG_HA_USADO_AGUA 45
+#define FLAG_TIENDA_ABIERTA 46
+
+const int kNumGameFlags = 47;
 
 struct GameStateData {
-	bool flags[46];
+	bool flags[kNumGameFlags];
 
 	byte NUMERO_DE_COPAS = false;
 	byte INGREDIENTES_CONSEGUIDOS = 0;
@@ -442,9 +445,9 @@ struct GameStateData {
 	GameState stateGame = INTRO;
 
 	Common::Array<byte> inventoryItems;
-	int16 selectedInventoryItem = -1;
+	int16 selectedInventoryItem = 0;
 
-	Common::HashMap<byte, Common::Array<Sticker>> roomStickers;
+	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
 	// Common::HashMap<byte, ResetEntry> roomExitChanges;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
@@ -454,6 +457,7 @@ struct GameStateData {
 
 	GameStateData() {
 		memset(conversationRootsState, 0, 4 * 56);
+		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
 	}
 
 	~GameStateData() {
@@ -481,7 +485,7 @@ struct GameStateData {
 		inventoryItems.push_back(id);
 	}
 
-	void removeInventoyItem(int id) {
+	void removeInventoryItem(int id) {
 		for (int i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {
 				inventoryItems.remove_at(i);

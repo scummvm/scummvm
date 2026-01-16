@@ -57,6 +57,11 @@ const ActionEntry actionTable[] = {
 	{375, OPEN, &PelrockEngine::openKitchenDrawer},
 	{374, OPEN, &PelrockEngine::openKitchenDoorFromInside},
 
+	// Room 3
+	{290, OPEN, &PelrockEngine::openShopDoor},
+	{290, CLOSE, &PelrockEngine::closeShopDoor},
+	{32, OPEN, &PelrockEngine::openLamppost},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -73,6 +78,7 @@ const ActionEntry actionTable[] = {
 const CombinationEntry combinationTable[] = {
 	{2, 281, &PelrockEngine::useCardWithATM},           // Use ATM Card with ATM
 	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
+	{4, 294, &PelrockEngine::useBrickWithWindow},       // Use Brick with Window (Room 3)
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -131,7 +137,7 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 			addInventoryItem(5); // 1000 pesetas bill
 			_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
 		} else {
-			_dialog->say(_res->_ingameTexts[NOMONEY_LEFT]);
+			_dialog->say(_res->_ingameTexts[NOTENGOMASDINERO]);
 		}
 	}
 }
@@ -189,9 +195,90 @@ void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspo
 	_dialog->say(_res->_ingameTexts[VAESTAR_POCOFUERTE]);
 }
 
+void PelrockEngine::openShopDoor(HotSpot *hotspot) {
+	if (!_state->flagIsSet(FLAG_TIENDA_ABIERTA)) {
+		_dialog->say(_res->_ingameTexts[TIENDA_CERRADA]);
+		return;
+	} else {
+		openDoor(hotspot, 0, 13, MASCULINE, false);
+	}
+}
+
+void PelrockEngine::closeShopDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 13, MASCULINE, false);
+}
+
+void PelrockEngine::openLamppost(HotSpot *hotspot) {
+	debug("Opening lamppost");
+	_room->addSticker(14);
+}
+
+void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
+	debug("Using brick with window - sticker 11 will be added");
+
+	// Check if window is already broken
+	if (_room->hasSticker(11)) {
+		// Window already broken, say something generic
+		_alfredState.direction = ALFRED_UP;
+		_dialog->say(_res->_ingameTexts[YA_ABIERTO_M]); // "It's already open/broken"
+		return;
+	}
+
+	// TODO: Play Alfred's throwing animation
+	// This would require adding a new special animation entry
+	// _res->loadAlfredSpecialAnim(BRICK_THROW_ANIM);
+	// _alfredState.animState = ALFRED_SPECIAL_ANIM;
+	// waitForSpecialAnimation();
+
+	// TODO: Animate sprite 8 (brick projectile) moving to window
+	Sprite *brickSprite = _room->findSpriteByIndex(7);
+	HotSpot *windowHotspot = _room->findHotspotByExtra(294);
+	brickSprite->x = _alfredState.x - brickSprite->w / 2;
+	brickSprite->y = _alfredState.y - kAlfredFrameHeight;
+	brickSprite->zOrder = 20; // Make it visible
+	int target = windowHotspot->y + windowHotspot->h / 2;
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		if (_chrono->_gameTick) {
+			_room->findSpriteByIndex(7)->y -= 40;
+			if (_room->findSpriteByIndex(7)->y < target) {
+				_room->findSpriteByIndex(7)->zOrder = -1;
+				break;
+			}
+		}
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+	// This would involve loading and animating the room sprite
+
+	// Add the broken window sticker
+	_room->addSticker(11);
+	_sound->playSound(_room->_roomSfx[2]); // Play glass breaking sound
+
+	// Remove brick from inventory
+	_state->removeInventoryItem(4);
+
+	int16 x = 639; // put at the very edge of the screen
+	int16 y = windowHotspot->y;
+	// Play the NPC dialog sequence
+	int16 dialog1y = y + 22;
+	int16 dialog2y = dialog1y + 10 + _largeFont->getFontHeight();
+	_dialog->say(_res->_ingameTexts[QUEHASIDOESO], x, dialog1y);
+	_dialog->say(_res->_ingameTexts[QUIENANDAAHI], x, dialog2y);
+	_dialog->say(_res->_ingameTexts[YOMEVOY]);
+
+	_state->setFlag(FLAG_TIENDA_ABIERTA, true);
+	_room->onlyPersistSticker(_room->_currentRoomNumber, 9);
+	_room->onlyPersistSticker(_room->_currentRoomNumber, 10);
+	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
+	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
+	walkTo(639, _alfredState.y);
+}
+
 void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayClosed) {
 	if (_room->hasSticker(sticker)) {
-		int text = masculine == MASCULINE ? YA_ABIERTO_M : ALREADY_OPENED_F;
+		int text = masculine == MASCULINE ? YA_ABIERTO_M : YA_ABIERTA_F;
 		_dialog->say(_res->_ingameTexts[text]);
 		return;
 	}
@@ -201,7 +288,7 @@ void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool 
 
 void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayOpen) {
 	if (!_room->hasSticker(sticker)) {
-		int text = masculine == MASCULINE ? ALREADY_CLOSED_M : ALREADY_CLOSED_F;
+		int text = masculine == MASCULINE ? YA_CERRADO_M : YA_CERRADA_F;
 		_dialog->say(_res->_ingameTexts[text]);
 		return;
 	}
@@ -241,7 +328,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	case 257:
 		_sound->playMusicTrack(25);
 		loadExtraScreenAndPresent(9);
-		_dialog->say(_res->_ingameTexts[SOHOT]);
+		_dialog->say(_res->_ingameTexts[QUEBUENA_ESTA]);
 		_screen->markAllDirty();
 		_screen->update();
 		break;
@@ -267,12 +354,17 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_res->loadAlfredSpecialAnim(1);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
-		debug("After special anim");
+
 		loadExtraScreenAndPresent(3);
 		debug("After extra screen");
 		_dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;
-
+	case 0: // yellow book
+		_res->loadAlfredSpecialAnim(2);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		_dialog->say(_res->_ingameTexts[CUENTOPARECIDO]);
+		break;
 	default:
 		break;
 	}

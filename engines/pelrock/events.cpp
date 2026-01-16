@@ -23,6 +23,7 @@
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "events.h"
 
 namespace Pelrock {
 
@@ -58,6 +59,7 @@ void PelrockEventManager::pollEvent() {
 		// case Common::EVENT_KEYUP:
 		// 	return;
 		case Common::EVENT_LBUTTONDOWN:
+
 			if (_leftMouseButton == 0) {
 				_clickTime = g_system->getMillis();
 			}
@@ -122,4 +124,5 @@ void PelrockEventManager::waitForKey() {
 		g_system->delayMillis(10);
 	}
 }
+
 } // namespace Pelrock

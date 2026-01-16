@@ -30,7 +30,6 @@ class PelrockEventManager {
 private:
 	Common::Event _event;
 	uint32 _clickTime = 0;
-
 public:
 	int16 _mouseX = 0;
 	int16 _mouseY = 0;

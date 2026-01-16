@@ -43,6 +43,7 @@ public:
 
 	/** Methods to modify room data at runtime **/
 	void addSticker(int stickerId, bool persist = true);
+	void onlyPersistSticker(byte room, int stickerId);
 	void removeSticker(int index);
 	bool hasSticker(int index);
 	void changeExit(int index, bool enabled, bool persist = true);
@@ -62,6 +63,8 @@ public:
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
 
+	Sprite *findSpriteByIndex(byte index);
+	HotSpot *findHotspotByIndex(byte index);
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
@@ -89,7 +92,7 @@ public:
 	PaletteAnim *_currentPaletteAnim = nullptr;
 	byte *_conversationData = nullptr;
 	size_t _conversationDataSize = 0;
-	Common::Array<Sticker> _transientStickers;
+	Common::Array<Sticker> _roomStickers;
 	uint32 _conversationOffset;
 
 private:

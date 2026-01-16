@@ -90,45 +90,49 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 
 void RoomManager::addSticker(int stickerId, bool persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
+	_roomStickers.push_back(sticker);
 	if (persist)
-		g_engine->_state->roomStickers[_currentRoomNumber].push_back(sticker);
-	else
-		_transientStickers.push_back(sticker);
+		g_engine->_state->stickersPerRoom[_currentRoomNumber].push_back(sticker);
+}
+
+void RoomManager::onlyPersistSticker(byte room, int stickerId) {
+	Sticker sticker = g_engine->_res->getSticker(stickerId);
+	g_engine->_state->stickersPerRoom[room].push_back(sticker);
 }
 
 void RoomManager::removeSticker(int stickerIndex) {
 	int index = -1;
 	if (index == -1) {
-		for (int i = 0; i < _transientStickers.size(); i++) {
-			if (_transientStickers[i].stickerIndex == stickerIndex) {
+		for (int i = 0; i < _roomStickers.size(); i++) {
+			if (_roomStickers[i].stickerIndex == stickerIndex) {
 				index = i;
-				_transientStickers.remove_at(index);
+				_roomStickers.remove_at(index);
 				return;
 			}
 		}
 	}
 
-	for (int i = 0; i < g_engine->_state->roomStickers[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state->roomStickers[_currentRoomNumber][i].stickerIndex == stickerIndex) {
+	for (int i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == stickerIndex) {
 			index = i;
-			g_engine->_state->roomStickers[_currentRoomNumber].remove_at(index);
+			g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(index);
 			break;
 		}
 	}
 
-	if (index != -1 && index < g_engine->_state->roomStickers[_currentRoomNumber].size())
-		g_engine->_state->roomStickers[_currentRoomNumber].remove_at(index);
+	if (index != -1 && index < g_engine->_state->stickersPerRoom[_currentRoomNumber].size())
+		g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(index);
 }
 
 bool RoomManager::hasSticker(int index) {
-	for (int i = 0; i < g_engine->_state->roomStickers[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state->roomStickers[_currentRoomNumber][i].stickerIndex == index) {
+	for (int i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == index) {
 			return true;
 		}
 	}
 
-	for (int i = 0; i < _transientStickers.size(); i++) {
-		if (_transientStickers[i].stickerIndex == index) {
+	for (int i = 0; i < _roomStickers.size(); i++) {
+		if (_roomStickers[i].stickerIndex == index) {
 			return true;
 		}
 	}
@@ -166,7 +170,7 @@ void RoomManager::disableSprite(int roomNumber, int spriteIndex, bool persist) {
 }
 
 void RoomManager::enableSprite(int spriteIndex, int zOrder, bool persist) {
-	// _currentRoomAnims[spriteIndex].zOrder = zOrder;
+	_currentRoomAnims[spriteIndex].zOrder = zOrder;
 }
 
 void RoomManager::enableHotspot(HotSpot *hotspot, bool persist) {
@@ -185,6 +189,24 @@ void RoomManager::disableHotspot(HotSpot *hotspot, bool persist) {
 
 void RoomManager::addWalkbox(WalkBox walkbox) {
 	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+}
+
+Sprite *RoomManager::findSpriteByIndex(byte index) {
+	for (int i = 0; i < _currentRoomAnims.size(); i++) {
+		if (_currentRoomAnims[i].index == index) {
+			return &_currentRoomAnims[i];
+		}
+	}
+	return nullptr;
+}
+
+HotSpot *RoomManager::findHotspotByIndex(byte index) {
+	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+		if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == index) {
+			return &_currentRoomHotspots[i];
+		}
+	}
+	return nullptr;
 }
 
 HotSpot *RoomManager::findHotspotByExtra(uint16 extra) {
@@ -360,7 +382,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
 		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.isEnabled);
+		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.isEnabled);
 		hotspots.push_back(spot);
 	}
 
@@ -399,7 +421,7 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	uint32_t outPos = 0;
-	_transientStickers.clear();
+	_roomStickers.clear();
 	_currentRoomNumber = roomNumber;
 	int roomOffset = roomNumber * kRoomStructSize;
 
@@ -435,7 +457,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	_currentRoomExits = loadExits(pair10, pair10size);
 	_currentRoomWalkboxes = loadWalkboxes(pair10, pair10size);
 	_scaleParams = loadScalingParams(pair10, pair10size);
-
+	_roomStickers = g_engine->_state->stickersPerRoom[roomNumber];
 	// Pair 11 is the palette, already loaded
 
 	// Pair 12 - Room Texts
@@ -570,7 +592,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			break;
 		}
 		sprite.animData = new Anim[sprite.numAnims];
-		// debug("AnimSet %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, animSet.numAnims, animSet.spriteType, animSet.actionFlags, animSet.isDisabled);
+		// debug("Sprite %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, sprite.numAnims, sprite.spriteType, sprite.actionFlags, sprite.isHotspotDisabled);
 		int subAnimOffset = animOffset + 10;
 		for (int j = 0; j < sprite.numAnims; j++) {
 
@@ -696,11 +718,16 @@ uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common
 				}
 				pos++;
 			}
+			// Hardcoded fix in the original!
+			if(_currentRoomNumber == 3 && description.text.size() == 1 && description.text[0] == 0x2D) {
+				outDescriptions.push_back(description);
+			}
 			outDescriptions.push_back(description);
 			lastDescPos = pos;
 		}
 		pos++;
 	}
+
 	return lastDescPos + 1;
 }
 

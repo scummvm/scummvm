@@ -122,7 +122,7 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 	s.syncAsUint32LE((uint32 &)gameState->stateGame);
 
 	// Flags
-	for (int i = 0; i < 46; ++i) {
+	for (int i = 0; i < kNumGameFlags; ++i) {
 		s.syncAsByte((byte &)gameState->flags[i]);
 	}
 	// Inventory items
@@ -138,10 +138,10 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 	s.syncAsSint16LE(gameState->selectedInventoryItem);
 
 	// Room stickers
-	uint16 stickersSize = (uint16)gameState->roomStickers.size();
+	uint16 stickersSize = (uint16)gameState->stickersPerRoom.size();
 	s.syncAsUint16LE(stickersSize);
 	if (s.isSaving()) {
-		for (const auto &pair : gameState->roomStickers) {
+		for (const auto &pair : gameState->stickersPerRoom) {
 			byte roomNumber = pair._key;
 			s.syncAsByte(roomNumber);
 			const Common::Array<Sticker> &stickers = pair._value;
@@ -153,7 +153,7 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 			}
 		}
 	} else {
-		gameState->roomStickers.clear();
+		gameState->stickersPerRoom.clear();
 		for (uint16 idx = 0; idx < stickersSize; ++idx) {
 			byte roomNumber;
 			s.syncAsByte(roomNumber);
@@ -165,7 +165,7 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 				s.syncAsSint32LE(stickerIndex);
 				stickers.push_back(g_engine->_res->getSticker(stickerIndex));
 			}
-			gameState->roomStickers[roomNumber] = stickers;
+			gameState->stickersPerRoom[roomNumber] = stickers;
 		}
 	}
 

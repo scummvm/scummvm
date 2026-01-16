@@ -160,7 +160,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_DOWN);
+		// setScreen(0, ALFRED_DOWN);
+		setScreen(3, ALFRED_RIGHT);
+		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
 		// alfredState.y = 374;
@@ -217,10 +219,17 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 }
 
 void PelrockEngine::playSoundIfNeeded() {
-
-	int soundIndex = _sound->tick(_chrono->getFrameCount());
-	if (soundIndex >= 0 && soundIndex < _room->_roomSfx.size()) {
-		_sound->playSound(_room->_roomSfx[3 + soundIndex]);
+	// Get ambient slot offset (0-3) or -1 if no sound this frame
+	int ambientSlotOffset = _sound->tickAmbientSound(_chrono->getFrameCount());
+	if (ambientSlotOffset >= 0) {
+		// Convert to room sound index: slots 12-15 = room indices 4-7
+		int roomSoundIndex = kAmbientSoundSlotBase + ambientSlotOffset;
+		if (roomSoundIndex < _room->_roomSfx.size()) {
+			byte soundFileIndex = _room->_roomSfx[roomSoundIndex];
+			if (soundFileIndex != 0) { // 0 = NO_SOUND.SMP (disabled)
+				_sound->playSound(soundFileIndex);
+			}
+		}
 	}
 }
 
@@ -234,6 +243,15 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 		placeStickers();
 		updateAnimations();
+		// Some stickers need to be placed AFTER sprites, hardcoded in the original
+		if (_room->_currentRoomNumber == 3) {
+			for (int i = 0; i < _state->stickersPerRoom[3].size(); i++) {
+				if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
+					placeSticker(_state->stickersPerRoom[3][i]);
+					break;
+				}
+			}
+		}
 
 		if (overlayMode == OVERLAY_CHOICES) {
 			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
@@ -253,7 +271,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 }
 
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
-
+	debug("Executing action %d on hotspot %d", action, hotspot->extra);
 	if (action == ITEM) {
 		int inventoryObject = _state->selectedInventoryItem;
 		for (const CombinationEntry *entry = combinationTable; entry->handler != nullptr; entry++) {
@@ -389,7 +407,16 @@ void PelrockEngine::paintDebugLayer() {
 		for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 			WalkBox box = _room->_currentRoomWalkboxes[i];
 			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
-			_smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+			// _smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+		}
+	}
+
+	bool showSprites = true;
+	if (showSprites) {
+		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+			Sprite sprite = _room->_currentRoomAnims[i];
+			drawRect(_screen, sprite.x, sprite.y, sprite.animData->w, sprite.animData->h, 14);
+			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
 		}
 	}
 
@@ -397,11 +424,11 @@ void PelrockEngine::paintDebugLayer() {
 	if (showHotspots) {
 		for (int i = 0; i < _room->_currentRoomHotspots.size(); i++) {
 			HotSpot hotspot = _room->_currentRoomHotspots[i];
-			if (!hotspot.isEnabled)
+			if (!hotspot.isEnabled || hotspot.isSprite)
 				continue;
-			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 180 + i);
-			_smallFont->drawString(_screen, Common::String::format("HS %d", i), hotspot.x + 2, hotspot.y + 2, 640, 14);
-			_smallFont->drawString(_screen, Common::String::format("x=%d", hotspot.extra), hotspot.x + 2, hotspot.y + 2 + 14, 640, 14);
+			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
+			_smallFont->drawString(_screen, Common::String::format("HS %d", hotspot.index - _room->_currentRoomAnims.size()), hotspot.x + 2, hotspot.y + 2, 640, 12);
+			// _smallFont->drawString(_screen, Common::String::format("x=%d", hotspot.extra), hotspot.x + 2, hotspot.y + 2 + 14, 640, 14);
 		}
 	}
 
@@ -427,13 +454,9 @@ void PelrockEngine::paintDebugLayer() {
 }
 
 void PelrockEngine::placeStickers() {
-	for (int i = 0; i < _state->roomStickers[_room->_currentRoomNumber].size(); i++) {
-		Sticker sticker = _state->roomStickers[_room->_currentRoomNumber][i];
-		placeSticker(sticker);
-	}
 	// also place temporary stickers
-	for (int i = 0; i < _room->_transientStickers.size(); i++) {
-		Sticker sticker = _room->_transientStickers[i];
+	for (int i = 0; i < _room->_roomStickers.size(); i++) {
+		Sticker sticker = _room->_roomStickers[i];
 		placeSticker(sticker);
 	}
 }
@@ -564,7 +587,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
-	debug("Looking at hotspot %d with extra %d", hotspot->index, hotspot->extra);
+	debug("Looking at hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
 }
@@ -628,7 +651,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 
 		Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
 
-		if (exit != nullptr && exit->isEnabled) {
+		if (exit != nullptr /*&& exit->isEnabled*/) {
+			debug("Using exit to room %d", exit->targetRoom);
 			_alfredState.x = exit->targetX;
 			_alfredState.y = exit->targetY;
 			setScreen(exit->targetRoom, exit->dir);
@@ -1049,7 +1073,9 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 			x >= hotspot.x && x <= (hotspot.x + hotspot.w) &&
 			y >= hotspot.y && y <= (hotspot.y + hotspot.h)) {
 			// Check against sprite frame
-			if (hotspot.isSprite) {
+			if (!hotspot.isSprite) {
+				return hotspot.index;
+			} else {
 				Sprite *sprite = nullptr;
 				for (size_t j = 0; j < _room->_currentRoomAnims.size(); j++) {
 					if (_room->_currentRoomAnims[j].index == hotspot.index) {
@@ -1058,10 +1084,10 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 					}
 				}
 				bool spriteUnder = isSpriteUnder(sprite, x, y);
-				return spriteUnder ? i : -1;
+				if(spriteUnder)
+					return i;
+				else continue;
 			}
-
-			return hotspot.index;
 		}
 	}
 	return -1;
@@ -1110,7 +1136,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 	bool itemUnder = isItemUnder(_events->_mouseX, _events->_mouseY);
-	if (_state->selectedInventoryItem != -1) {
+	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
 		if (itemUnder && shouldBlink) {
 			return;
 		}
@@ -1366,7 +1392,7 @@ void PelrockEngine::checkMouseHover() {
 	}
 }
 
-void PelrockEngine::setScreen(int number, AlfredDirection dir) {
+void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 
 	Common::File roomFile;
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
@@ -1378,7 +1404,7 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	_alfredState.direction = dir;
 	_alfredState.setState(ALFRED_IDLE);
 	_currentStep = 0;
-	int roomOffset = number * kRoomStructSize;
+	int roomOffset = roomNumber * kRoomStructSize;
 	_alfredState.curFrame = 0;
 
 	byte *palette = new byte[256 * 3];
@@ -1395,16 +1421,25 @@ void PelrockEngine::setScreen(int number, AlfredDirection dir) {
 	copyBackgroundToBuffer();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	_room->loadRoomMetadata(&roomFile, number);
-	_room->loadRoomTalkingAnimations(number);
+	_room->loadRoomMetadata(&roomFile, roomNumber);
+	_room->loadRoomTalkingAnimations(roomNumber);
 	if (_room->_musicTrack > 0)
 		_sound->playMusicTrack(_room->_musicTrack);
 	else {
 		_sound->stopMusic();
 	}
-	doExtraActions(number);
+
+	if (findWalkboxForPoint(_room->_currentRoomWalkboxes, _alfredState.x, _alfredState.y) == 0xFF) {
+		const WalkBox w = _room->_currentRoomWalkboxes[0];
+		_alfredState.x = w.x;
+		_alfredState.y = w.y;
+	}
+
 	_screen->markAllDirty();
 	_screen->update();
+
+
+	doExtraActions(roomNumber);
 	roomFile.close();
 	delete[] background;
 	delete[] palette;
@@ -1444,6 +1479,13 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			loadExtraScreenAndPresent(4);
 		}
 		break;
+	case 15:
+		if(_state->flagIsSet(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ)) {
+			_state->setFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ, false);
+			_dialog->say(_res->_ingameTexts[GAMBERROS]);
+			_dialog->say(_res->_ingameTexts[QUIENYO]);
+			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
+		}
 
 	default:
 		break;

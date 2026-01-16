@@ -49,8 +49,8 @@ uint32 DialogManager::readTextBlock(
 	outText = "";
 
 	// Skip control bytes at start
-	if(data[pos] == CTRL_TEXT_TERMINATOR) {
-		pos+=2;
+	if (data[pos] == CTRL_TEXT_TERMINATOR) {
+		pos += 2;
 	}
 
 	if (pos >= dataSize) {
@@ -74,11 +74,11 @@ uint32 DialogManager::readTextBlock(
 		}
 		// Choice text is always spoken by ALFRED
 		outSpeakerId = ALFRED_COLOR;
-		pos+=2;
+		pos += 2;
 	}
 
 	int lineIndex = data[++pos];
-	pos++; //blank
+	pos++; // blank
 	debug("Reading text block starting at pos %u, line index %d, speaker ID %d", startPos, lineIndex, outSpeakerId);
 	// Read text until control byte
 	while (pos < dataSize) {
@@ -147,12 +147,37 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 
 	return s;
 }
+
+void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId) {
+	int16 xBasePos = 0;
+	int16 yBasePos = 0;
+	if (speakerId == ALFRED_COLOR) {
+		if (g_engine->_alfredState.animState != ALFRED_TALKING) {
+			g_engine->_alfredState.setState(ALFRED_TALKING);
+		}
+		if (_curSprite != nullptr) {
+			_curSprite->isTalking = false;
+		}
+		// Offset X position for Alfred to avoid overlapping with his sprite
+		xBasePos = g_engine->_alfredState.x;                      //+ kAlfredFrameWidth / 2 - maxWidth / 2;
+		yBasePos = g_engine->_alfredState.y - kAlfredFrameHeight; // Above sprite, adjust for line
+	} else {
+		g_engine->_alfredState.setState(ALFRED_IDLE);
+		if (_curSprite != nullptr) {
+			_curSprite->isTalking = true;
+			xBasePos = _curSprite->x + _curSprite->w / 2;
+			yBasePos = _curSprite->y; // Above sprite, adjust for line
+		}
+	}
+	displayDialogue(dialogueLines, speakerId, xBasePos, yBasePos); // Default position
+}
+
 /**
  * Display dialogue text and wait for click to advance
  * @param text The text to display
  * @param speakerId The speaker ID which is used as color
  */
-void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId) {
+void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId, int xBasePos, int yBasePos) {
 	if (dialogueLines.empty()) {
 		return;
 	}
@@ -160,6 +185,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	// Clear any existing click state
 	_events->_leftMouseClicked = false;
 	int curPage = 0;
+
 	// Render loop - display text and wait for click
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
@@ -175,29 +201,11 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		for (int i = 0; i < textLines.size(); i++) {
 			maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(textLines[i]));
 		}
-		int xPos = 0;
-		int yPos = 0;
 
-		if (speakerId == ALFRED_COLOR) {
-			if (g_engine->_alfredState.animState != ALFRED_TALKING) {
-				g_engine->_alfredState.setState(ALFRED_TALKING);
-			}
-			if (_curSprite != nullptr) {
-				_curSprite->isTalking = false;
-			}
-			// Offset X position for Alfred to avoid overlapping with his sprite
-			xPos = g_engine->_alfredState.x - maxWidth / 2;                //+ kAlfredFrameWidth / 2 - maxWidth / 2;
-			yPos = g_engine->_alfredState.y - kAlfredFrameHeight - height; // Above sprite, adjust for line
-		} else {
-			g_engine->_alfredState.setState(ALFRED_IDLE);
-			_curSprite->isTalking = true;
-			xPos = _curSprite->x + _curSprite->w / 2 - maxWidth / 2;
-			yPos = _curSprite->y - height; // Above sprite, adjust for line
-		}
+		int xPos = xBasePos - maxWidth / 2;
+		int yPos = yBasePos - height;
 
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
-
-
 
 		// Clamp to screen bounds
 		xPos = CLIP(xPos, 0, 640 - maxWidth);
@@ -356,7 +364,7 @@ void DialogManager::setCurSprite(int index) {
 
 	for (uint i = 0; i < g_engine->_room->_currentRoomAnims.size(); i++) {
 		Sprite *sprite = &g_engine->_room->_currentRoomAnims[i];
-		if (sprite->index == index) {
+		if (sprite->index == index && (sprite->actionFlags & 16)) {
 			_curSprite = sprite;
 			return;
 		}
@@ -381,8 +389,8 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	// Find the speaker tree for this NPC; they are marked by 0xFE 0xXX where XX is NPC index + 1
 	bool speakerTreeOffsetFound = false;
 	int currentConversationTree = npcIndex + 1;
-	while(position < dataSize && !speakerTreeOffsetFound) {
-		if(conversationData[position] == CTRL_ALT_SPEAKER_ROOT && conversationData[position + 1] == currentConversationTree) {
+	while (position < dataSize && !speakerTreeOffsetFound) {
+		if (conversationData[position] == CTRL_ALT_SPEAKER_ROOT && conversationData[position + 1] == currentConversationTree) {
 			speakerTreeOffsetFound = true;
 			position += 2; // Move past the speaker tree marker and npc index
 		} else {
@@ -391,10 +399,10 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	}
 	// Right after the speaker conversation tree, we are in branch 0
 	int currentRoot = 0;
-	while(g_engine->_state->getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
+	while (g_engine->_state->getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
 		// This root is disabled, skip to next
-		while(position < dataSize) {
-			if(conversationData[position] == CTRL_END_BRANCH) {
+		while (position < dataSize) {
+			if (conversationData[position] == CTRL_END_BRANCH) {
 				position++; // Move past end branch marker
 				currentRoot++;
 				break;
@@ -453,14 +461,13 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			break;
 		}
 
-		if(controlByte == CTRL_ACTION_TRIGGER) {
+		if (controlByte == CTRL_ACTION_TRIGGER) {
 			uint16 actionCode = conversationData[position + 1] | (conversationData[position + 2] << 8);
 			debug("Action trigger %d encountered!", actionCode);
 			g_engine->dialogActionTrigger(
 				actionCode,
 				g_engine->_room->_currentRoomNumber,
-				currentRoot
-			);
+				currentRoot);
 			break;
 		}
 
@@ -618,6 +625,23 @@ void DialogManager::say(Common::StringArray texts) {
 	} else {
 		sayAlfred(texts);
 	}
+}
+
+void DialogManager::say(Common::StringArray texts, int16 x, int16 y) {
+	if (texts.empty()) {
+		return;
+	}
+	byte speakerId;
+	bool wasProcessed = processColorAndTrim(texts, speakerId);
+
+	if (wasProcessed) {
+		// Create a temporary sprite at the specified position
+		Common::Array<Common::StringArray> textLines = wordWrap(texts);
+		displayDialogue(textLines, speakerId, x, y);
+	} else {
+		sayAlfred(texts);
+	}
+
 }
 
 bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speakerId) {
