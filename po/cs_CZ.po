@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-09 17:16+0000\n"
+"POT-Creation-Date: 2026-01-16 01:06+0000\n"
 "PO-Revision-Date: 2025-09-29 20:43+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -14268,7 +14268,7 @@ msgstr "Další volby:"
 msgid "Main menu"
 msgstr "~H~lavní nabídka"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 

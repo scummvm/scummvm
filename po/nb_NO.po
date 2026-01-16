@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-09 17:16+0000\n"
+"POT-Creation-Date: 2026-01-16 01:06+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -14954,7 +14954,7 @@ msgstr "Retningsknapp:"
 msgid "Main menu"
 msgstr "Hoved~m~eny"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 #, fuzzy
 #| msgid ""
 #| "Enhanced Edition not supported. Please, use the original files which are "

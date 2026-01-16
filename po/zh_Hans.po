@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-09 17:16+0000\n"
+"POT-Creation-Date: 2026-01-16 01:06+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -14442,7 +14442,7 @@ msgstr "附加设置："
 msgid "Main menu"
 msgstr "主菜单"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr "不支持重制版。请使用原版"
 

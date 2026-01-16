@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-09 17:16+0000\n"
+"POT-Creation-Date: 2026-01-16 01:06+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -14822,7 +14822,7 @@ msgstr "Kiegészítő opciók:"
 msgid "Main menu"
 msgstr "Fő Menü"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 "A Remastered kiadás nem támogatott. Kérem, használja a klasszikus verzót"

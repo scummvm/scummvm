@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-09 17:16+0000\n"
+"POT-Creation-Date: 2026-01-16 01:06+0000\n"
 "PO-Revision-Date: 2026-01-10 12:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -14255,7 +14255,7 @@ msgstr "Options supplémentaires :"
 msgid "Main menu"
 msgstr "Menu principal"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 "L'édition Remastered n'est pas prise en charge. Veuillez utiliser la version "
