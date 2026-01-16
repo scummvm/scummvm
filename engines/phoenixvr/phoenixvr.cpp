@@ -87,17 +87,20 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
 	debug("setNextScript %s", nextScript.c_str());
 	_contextScript = nextScript;
+	if (nextScript.find('\\') == nextScript.npos) {
+		// simple filename, e.g. "script.lst"
+		_nextScript = nextScript;
+		return;
+	}
+
 	auto nextPath = Common::Path(removeDrive(nextScript), '\\');
 	auto parentDir = nextPath.getParent();
 	_nextScript = nextPath.getLastComponent();
 	auto path = ConfMan.getPath("path");
-	auto dataDir = path;
-	dataDir.appendInPlace(Common::Path("/"));
-	dataDir.appendInPlace(parentDir);
 
 	SearchMan.clear();
-	debug("adding %s to search man", dataDir.toString().c_str());
-	SearchMan.addDirectory(dataDir, 0, 1, true);
+	debug("adding %s ~ %s to search man", path.toString().c_str(), parentDir.toString().c_str());
+	SearchMan.addSubDirectoryMatching(Common::FSNode{path}, parentDir.toString(), true, 2, false);
 }
 
 void PhoenixVREngine::loadNextScript() {
