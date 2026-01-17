@@ -2249,7 +2249,7 @@ if test "$_host_os" = android; then
 	if test -z "$PKG_CONFIG_LIBDIR"; then
 		PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
 	fi
-	_libcurlpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libcurlpath"
+	_libmikmodpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libmikmodpath"
 fi
 
 #
