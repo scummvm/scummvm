@@ -56,6 +56,8 @@ void TranslationDatabases::setLanguage(Common::Language language) {
 		lang = "G";
 	else if (language == Common::FR_FRA)
 		lang = "F";
+	else if (language == Common::FR_CAN)
+		lang = "F";
 	else
 		warning("TranslationDatabases::setLanguage(): Language \"%s\" not supported",
 				Common::getLanguageDescription(language));
