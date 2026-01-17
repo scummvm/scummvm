@@ -1,6 +1,9 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2026.1.1 (2026-XX-XX)
+
+
 #### 2026.1.0 (2026-01-31)
 
  New games:
@@ -26,10 +29,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Adibou 2: Nature & Sciences.
    - Added support for WAGE-based game. More than 160 titles so far.
    - Added support for Penumbra: Overture.
-   - Added support for Tex Murphy: Martian Memorandum
+   - Added support for Tex Murphy: Martian Memorandum.
    - Added support for Mort&Phil: A Movie Adventure (Special Edition).
-   - Added support for Trick or Treat
-   - Added support for Hodj 'n' Podj
+   - Added support for Trick or Treat.
+   - Added support for Hodj 'n' Podj.
 
  Access:
    - Added keymapper support.
@@ -86,7 +89,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Grim:
  - Added support for the fantranslated Polish version of Grim Fandango.
- 
+
  Hugo:
    - Added Text-to-Speech support.
    - Fixed unrecognized commands, missing points, and graphics glitches
@@ -121,8 +124,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed protection from elements spell.
    - Added Text-to-Speech support.
    - Fixed errors with M&M1 monster advancement in combat.
-   - Fixed doors color in M&M1 enhanced mode
-   - Fixed rendering of M&M1 enhanced main menu circles
+   - Fixed doors color in M&M1 enhanced mode.
+   - Fixed rendering of M&M1 enhanced main menu circles.
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
