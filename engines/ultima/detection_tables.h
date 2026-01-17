@@ -623,28 +623,119 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// REMARK: The next 4 versions are unsupported!
+	// Reason: different graphic files depending on the installation type.
+	// Detailed: User can choose between (Time/Space) x (Tandy/EGA/VGA) during installation.
+	//           These files will be converted according to the selection.
 
-	// The Savage Empire v1.6
+	// The Savage Empire v1.6 Tandy - Space saving installation
 	{
 		{
 			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/TGA",
+			{
+				{"endgame.lzc", 0, "aed2d979ea10c4adf907f7babe82776e", 56905},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 Tandy - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/TGA",
+			{
+				{"endgame.lzc", 0, "e1c362564e5754fb9d79c01d33286e14", 168092},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
 	},
 
-	// The Savage Empire v1.6
+	// The Savage Empire v1.6 EGA - Space saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6S/EGA",
+			{
+				{"endgame.lzc", 0, "e917bd55bb3b895b06e250abe269680a", 60695},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 EGA - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/EGA",
+			{
+				{"endgame.lzc", 0, "893cd767e54711939f1694a87cace3b4", 99270},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v1.6 VGA - Space saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/VGA",
+			{
+				{"endgame.lzc", 0, "32bd4f1daf9b97816f906623753d657b", 100947},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+	// The Savage Empire v1.6 VGA - Time saving installation
+	{
+		{
+			"thesavageempire_enh",
+			"V1.6T/VGA",
+			{
+				{"endgame.lzc", 0, "04e34a7c9f2934507673ef8477a7763a", 172957},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
